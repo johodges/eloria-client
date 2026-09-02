@@ -35,10 +35,13 @@ from pathlib import Path
 from PIL import Image
 
 import import_generated_equipment as ige
+import import_generated_weapons as igw
 
 HERE = Path(__file__).resolve().parent
 CLIENT = HERE.parent.parent / "godot-client"
 ICONS = ige.PROJECT / "generate_models" / "equipment_icons" / "out" / "icons"
+WEAPON_ICONS = (ige.PROJECT / "generate_models" / "weapon_icons"
+                / "out" / "icons")
 ATLAS_PNGS = CLIENT / "assets/ui/items"
 ATLAS_CONFIG = CLIENT / "data/items/atlases.json"
 ATLAS_DDS = HERE.parent / "ui/items"
@@ -98,16 +101,31 @@ def main() -> int:
     ap = argparse.ArgumentParser(
         description="pack the generated set's rendered icons into the atlases")
     ap.add_argument("--icons", type=Path, default=ICONS,
-                    help="directory of 50px per-piece icons")
+                    help="directory of 50px per-piece armour icons")
+    ap.add_argument("--weapon-icons", type=Path, default=WEAPON_ICONS,
+                    help="the same for the weapon and shield set")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
-    pieces = ige.roster()
-    missing = [p.slug for p in pieces
-               if not (args.icons / (p.source.stem + ".png")).exists()]
+    # Both generated sets, armour first.  Their image ids are handed out from
+    # a single run of numbers -- the armour from 118, the weapons from 374 --
+    # so the painted prefix stays contiguous and one atlas series carries
+    # everything.  Packing them separately would leave a hole at whichever
+    # boundary the shorter set stopped at.
+    # Each set renders into its own directory, so a piece is carried with the
+    # directory it came from rather than looked up again afterwards.
+    pieces, icon_of = [], {}
+    for roster, icons in ((ige.roster(), args.icons),
+                          (igw.roster(), args.weapon_icons)):
+        for piece in roster:
+            pieces.append(piece)
+            icon_of[piece.image_id] = icons / (piece.source.stem + ".png")
+
+    missing = [p.slug for p in pieces if not icon_of[p.image_id].exists()]
     if missing:
         print("no rendered icon for: %s" % ", ".join(missing), file=sys.stderr)
-        print("(render them with generate_models/equipment_icons/make_icons.py)",
+        print("(render them with make_icons.py in the matching "
+              "generate_models/*_icons directory)",
               file=sys.stderr)
         return 2
 
@@ -124,7 +142,7 @@ def main() -> int:
 
     atlases = {index: read_atlas(index) for index in touched}
     for piece in pieces:
-        icon = Image.open(args.icons / (piece.source.stem + ".png"))
+        icon = Image.open(icon_of[piece.image_id])
         icon = icon.convert("RGBA")
         if icon.size != (CELL, CELL):
             icon = icon.resize((CELL, CELL), Image.LANCZOS)

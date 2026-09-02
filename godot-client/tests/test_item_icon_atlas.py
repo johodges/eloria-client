@@ -25,8 +25,13 @@ FIRST_GENERATED_IMAGE_ID = 118
 
 
 def generated_piece_count() -> int:
-    import import_generated_equipment as importer
-    return len(importer.roster())
+    # Both generated sets: the armour from 118 and the weapons and shields
+    # after it, handed out from one run of numbers so the painted prefix stays
+    # contiguous.  Counting only one of them would leave the other's cells
+    # looking like a gap the atlas had failed to fill.
+    import import_generated_equipment as armour
+    import import_generated_weapons as weapons
+    return len(armour.roster()) + len(weapons.roster())
 
 ROOT = Path(__file__).resolve().parents[2]
 CLIENT = ROOT / "godot-client"

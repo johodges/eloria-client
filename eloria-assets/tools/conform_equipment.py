@@ -159,6 +159,85 @@ SOCKET_KIND = {
 }
 
 
+#: Weapons and shields.  Unlike headwear these are not sized to anything on the
+#: body -- a sword is as long as a sword regardless of who holds it -- so each
+#: class carries its own length in metres and how much of it hangs below the
+#: grip.  Both numbers are read off the authored props rather than invented:
+#: ranger_leafblade spans -0.143..+0.785 (0.93 long, 15 per cent below the
+#: hand), glasswarden_staff -0.480..+1.139 (1.62, 30 per cent), and
+#: amberwood_longbow -0.621..+0.621, which is a bow held at its middle.
+#:
+#: Shields are the same shape of record with ``below`` at a half, because a
+#: shield is centred on the socket: amberwood_roundshield is 0.49 x 0.49 about
+#: its own origin and glasswarden_shield 0.43 x 0.70.
+PROP_KIND = {
+    "dagger": {"part": 0, "length": 0.42, "below": .16},
+    "sword": {"part": 0, "length": 0.93, "below": .15},
+    "greatsword": {"part": 0, "length": 1.36, "below": .18},
+    "axe": {"part": 0, "length": 0.86, "below": .18},
+    "greataxe": {"part": 0, "length": 1.24, "below": .24},
+    "mace": {"part": 0, "length": 0.78, "below": .18},
+    "maul": {"part": 0, "length": 1.22, "below": .25},
+    "spear": {"part": 0, "length": 1.79, "below": .29},
+    "polearm": {"part": 0, "length": 2.02, "below": .30},
+    "staff": {"part": 0, "length": 1.62, "below": .30},
+    "bow": {"part": 0, "length": 1.24, "below": .50},
+    "crossbow": {"part": 0, "length": 0.76, "below": .45},
+    "thrown": {"part": 0, "length": 0.36, "below": .50},
+    "wand": {"part": 0, "length": 0.44, "below": .22},
+    "fist": {"part": 0, "length": 0.32, "below": .50},
+    "whip": {"part": 0, "length": 1.18, "below": .20},
+    "shield": {"part": 1, "length": 0.49, "below": .50},
+    "greatshield": {"part": 1, "length": 0.70, "below": .50},
+}
+
+
+def seat_prop(surface: "Imported", kind: str, flip: bool = False) -> None:
+    """Stand a generated prop up along +Y and put its grip on the socket.
+
+    A generated weapon arrives in whatever frame the drawing implied, boxed
+    into a unit cube.  The authored props are all built the same way -- the
+    long axis is Y, the grip is the origin, and the blade runs up from it --
+    because the socket's own rotation is what lays the weapon into the hand.
+    So the mesh is turned to that frame rather than measured against a body.
+
+    The turn is a permutation of axes, not a fitted rotation: longest to Y,
+    shortest to Z, middle to X.  A permutation can mirror, which would turn
+    every asymmetric hilt inside out, so the handedness is put back when it
+    does.
+
+    ``flip`` is per item and exists because nothing in the mesh reliably says
+    which end is the tip.  A guard is the widest part of a sword and sits low,
+    but an axe head is the widest part of an axe and sits high, so the same
+    rule cannot serve both -- it is decided by looking at a render, the way
+    lowpoly_rigged/models.json decides a donor's facing.
+    """
+    spec = PROP_KIND[kind]
+    points = np.array(surface.positions, dtype=np.float64)
+    normals = np.array(surface.normals, dtype=np.float64)
+
+    extent = points.max(axis=0) - points.min(axis=0)
+    order = np.argsort(extent)                   # shortest, middle, longest
+    perm = [int(order[1]), int(order[2]), int(order[0])]
+    points, normals = points[:, perm], normals[:, perm]
+    if np.linalg.det(np.eye(3)[:, perm]) < 0:
+        points[:, 0] *= -1.
+        normals[:, 0] *= -1.
+    if flip:
+        points[:, 1] *= -1.
+        normals[:, 1] *= -1.
+
+    span = float(points[:, 1].max() - points[:, 1].min())
+    points *= spec["length"] / max(span, 1e-9)
+    for axis in (0, 2):
+        points[:, axis] -= (points[:, axis].max() + points[:, axis].min()) / 2.
+    points[:, 1] -= points[:, 1].min() + spec["below"] * spec["length"]
+
+    surface.positions = points
+    lengths = np.linalg.norm(normals, axis=1, keepdims=True)
+    surface.normals = normals / np.where(lengths < 1e-9, 1., lengths)
+
+
 class Imported:
     """A ``Surface``-shaped view of a mesh that came from a file.
 
@@ -1495,11 +1574,16 @@ def seat_socket(points: np.ndarray, rig: ea.Rig, kind: str) -> np.ndarray:
 
 
 def build_socket(source: Path, out: Path, rig: ea.Rig, kind: str,
-                 label: str) -> dict:
+                 label: str, flip: bool = False) -> dict:
     """Size and place one socket piece, and write it unskinned."""
     surface, png = read_source(source)
     before = surface.positions.copy()
-    surface.positions = seat_socket(surface.positions, rig, kind)
+    if kind in PROP_KIND:
+        # A weapon or shield is sized from its own class rather than from the
+        # body: it hangs off a hand and owes nothing to the wearer's build.
+        seat_prop(surface, kind, flip)
+    else:
+        surface.positions = seat_socket(surface.positions, rig, kind)
     # Socket pieces carry concept-sheet debris too, and the runtime-size
     # scale swings a buried splinter clear of the shell.
     _drop_orphan_shards(surface)
@@ -1812,14 +1896,17 @@ def _slim_legs(points: np.ndarray, rig: ea.Rig, region: str,
 
 def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
           clearance: float = CLEARANCE, fit: str = "seat",
-          taper: bool = False, race_path: Path | None = None) -> dict:
+          taper: bool = False, race_path: Path | None = None,
+          flip: bool = False) -> dict:
     """Fit one generated mesh to the rig and write it as a skinned piece."""
-    if kind in SOCKET_KIND:
-        return build_socket(source, out, rig, kind, label)
+    if kind in SOCKET_KIND or kind in PROP_KIND:
+        return build_socket(source, out, rig, kind, label, flip)
     if kind not in ea.GARMENT_KINDS:
-        raise ValueError("%s is neither a garment kind (%s) nor a socket kind "
-                         "(%s)" % (kind, ", ".join(sorted(ea.GARMENT_KINDS)),
-                                   ", ".join(sorted(SOCKET_KIND))))
+        raise ValueError(
+            "%s is none of a garment kind (%s), a socket kind (%s) or a prop "
+            "kind (%s)" % (kind, ", ".join(sorted(ea.GARMENT_KINDS)),
+                           ", ".join(sorted(SOCKET_KIND)),
+                           ", ".join(sorted(PROP_KIND))))
     region = ea.garment_region(kind)
     if region not in MEASURE:
         raise ValueError(f"no measuring rule for region {region!r}; "
@@ -2022,9 +2109,10 @@ def main() -> int:
     ap.add_argument("-o", "--output", required=True,
                     help="output file (one input) or directory")
     ap.add_argument("--kind", required=True,
-                    help="garment kind (%s) or socket kind (%s)"
+                    help="garment kind (%s), socket kind (%s) or prop kind (%s)"
                          % (", ".join(sorted(ea.GARMENT_KINDS)),
-                            ", ".join(sorted(SOCKET_KIND))))
+                            ", ".join(sorted(SOCKET_KIND)),
+                            ", ".join(sorted(PROP_KIND))))
     ap.add_argument("--race", default="luminous_male",
                     help="race rig to author against (default luminous_male)")
     ap.add_argument("--races-dir", default=str(RACES))
@@ -2041,6 +2129,9 @@ def main() -> int:
                          "whole piece.  Experimental: the band measurement "
                          "saturates on multi-shell solids -- see the comment "
                          "in seat() before trusting it")
+    ap.add_argument("--flip", action="store_true",
+                    help="turn a prop end for end.  Nothing in a mesh says "
+                         "which end is the tip, so it is decided by eye")
     ap.add_argument("--pattern", default="*.glb")
     ap.add_argument("--report", default=None, help="write fit measurements here")
     args = ap.parse_args()
