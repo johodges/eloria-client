@@ -523,10 +523,37 @@ func _init() -> void:
 	_expect(is_equal_approx(
 		float(animation_actor.call("_playback_speed_for", &"walk")), 1.5),
 		"a locomotion clip plays at the speed the actor is really travelling")
+	var facing_adapter := CoordinateAdapter.new()
 	var seated_yaw: float = ReplicatedActor3D.target_yaw_for_state(
-		1.25, 13, 0, CoordinateAdapter.new())
+		1.25, 13, 0, facing_adapter)
 	_expect(is_equal_approx(seated_yaw, 1.25),
 		"sitting preserves the actor's facing direction")
+	# An actor command carries no rotation field. The rotation on the actor
+	# state is whatever it spawned with, so a creature that had turned to face
+	# the player it was attacking used to snap back to it on every swing.
+	var swinging_yaw: float = ReplicatedActor3D.target_yaw_for_state(
+		1.25, 46, 0, facing_adapter)
+	_expect(is_equal_approx(swinging_yaw, 1.25),
+		"attacking preserves the facing the actor was turned to")
+	var entering_combat_yaw: float = ReplicatedActor3D.target_yaw_for_state(
+		1.25, 18, 0, facing_adapter)
+	_expect(is_equal_approx(entering_combat_yaw, 1.25),
+		"so does entering combat")
+	# What still states a facing: a turn or a step, which name their own
+	# direction, and a spawn packet, which carries no command and a rotation
+	# the server means.
+	_expect(is_equal_approx(
+		ReplicatedActor3D.target_yaw_for_state(1.25, 38, 0, facing_adapter),
+		facing_adapter.direction_to_godot(Vector2i(0, 1))),
+		"a turn command still turns the actor")
+	_expect(is_equal_approx(
+		ReplicatedActor3D.target_yaw_for_state(1.25, 22, 0, facing_adapter),
+		facing_adapter.direction_to_godot(Vector2i(1, 0))),
+		"a step still faces the way it walks")
+	_expect(is_equal_approx(
+		ReplicatedActor3D.target_yaw_for_state(1.25, -1, 16384, facing_adapter),
+		facing_adapter.direction_to_godot(Vector2i(1, 0))),
+		"a spawn packet's rotation is the actor's facing")
 	var animation_file: FileAccess = FileAccess.open(
 		"res://data/animations/luminous.json", FileAccess.READ)
 	var animation_data: Dictionary = JSON.parse_string(animation_file.get_as_text()) as Dictionary

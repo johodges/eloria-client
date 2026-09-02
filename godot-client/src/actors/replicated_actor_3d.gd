@@ -1455,9 +1455,14 @@ static func target_yaw_for_state(current_yaw: float, actor_command: int,
 	var command_direction: Vector2i = EloriaProtocol.actor_command_direction(actor_command)
 	if command_direction != Vector2i.ZERO:
 		return adapter.direction_to_godot(command_direction)
-	# Sitting and standing are pose transitions. Their packet rotation can be
-	# stale, so preserve the direction the actor was already facing.
-	if actor_command in [13, 14]:
+	# Every other actor command - sitting, standing, entering combat, swinging
+	# at someone - carries no rotation of its own. The rotation on the state is
+	# the one the actor was last spawned with, so reading it here threw away
+	# the facing the actor had been turned to: a creature that turned to face
+	# the player it was attacking snapped back to its spawn facing on the very
+	# next attack command it sent. Only a spawn packet, which carries no
+	# command at all, states a facing this way.
+	if actor_command >= 0:
 		return current_yaw
 	return adapter.rotation_to_godot(server_rotation)
 
