@@ -247,6 +247,10 @@ def main() -> int:
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--skip-build", action="store_true",
                     help="rewrite the definitions without rebuilding meshes")
+    ap.add_argument("--meshes-only", action="store_true",
+                    help="rebuild meshes and leave every definition alone: "
+                         "the item stats belong to whoever balances them, and "
+                         "a refit has no business restating them")
     args = ap.parse_args()
     items_path = args.server / "config/eloria/items.txt"
     items_py_path = args.server / "eloria/items.py"
@@ -298,6 +302,11 @@ def main() -> int:
                   % (piece.slug, info.get("attach", "skinned"),
                      info["vertices"], info["bytes"] / 1e6,
                      "pose " + " ".join(posed) if posed else ""))
+
+    if args.meshes_only:
+        print("\nmeshes only: %d built, %d failed -- registry, items and "
+              "visuals left untouched" % (built, failed))
+        return 0 if failed == 0 else 1
 
     # Definitions always cover the WHOLE roster: --sheet narrows which
     # meshes rebuild, but the fences are rewritten whole, and writing them
