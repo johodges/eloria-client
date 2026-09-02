@@ -199,7 +199,8 @@ def main() -> int:
         print("\nnothing written (--dry-run)")
         return 0
 
-    rig = ea.load_rig(ce.RACES / ("%s.glb" % args.race), ce.BODY_MESH)
+    race_path = ce.RACES / ("%s.glb" % args.race)
+    rig = ea.load_rig(race_path, ce.BODY_MESH)
     built, failed = 0, 0
     if not args.skip_build:
         EQUIPMENT.mkdir(parents=True, exist_ok=True)
@@ -207,15 +208,22 @@ def main() -> int:
             target = EQUIPMENT / ("%s.glb" % piece.slug)
             try:
                 info = ce.build(piece.source, target, rig, piece.kind,
-                                piece.name)
+                                piece.name, race_path=race_path)
             except Exception as exc:                    # noqa: BLE001
                 print("  FAILED %-32s %s" % (piece.slug, exc))
                 failed += 1
                 continue
             built += 1
-            print("  %-34s %-7s %5d verts  %.2f MB"
+            posed = []
+            for step in info.get("repose", []):
+                if step.get("applied"):
+                    posed.append("%s %+.0f" % (step["limb"].split("_")[0][0]
+                                               + step["limb"][-1],
+                                               step.get("poseDeg", 0.0)))
+            print("  %-34s %-7s %5d verts  %.2f MB  %s"
                   % (piece.slug, info.get("attach", "skinned"),
-                     info["vertices"], info["bytes"] / 1e6))
+                     info["vertices"], info["bytes"] / 1e6,
+                     "pose " + " ".join(posed) if posed else ""))
 
     registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
     for piece in pieces:

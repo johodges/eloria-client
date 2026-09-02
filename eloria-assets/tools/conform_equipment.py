@@ -22,6 +22,14 @@ right size and bound to the skeleton:
   seat    uniform scale and translate, matching the piece's height to the body
           region it covers.  Uniform because the proportions are the design,
           and the design is the reason to import the mesh at all.
+  repose  carry each limb of the garment from the pose the concept was drawn
+          in -- arms dropped, feet a stance apart -- onto the rig's rest pose.
+          Found with the ray caster from the limb's own bone axis, never from
+          percentiles of the garment's point cloud; see ``repose``.  Without
+          this a sleeved piece is wearable but wrong everywhere that moves:
+          its sleeves inherit chest weights from wherever they hang, and in
+          the running client they neither follow the arm nor stay on the
+          chest.
   skin    ``Rig.weights_for``, which hands each vertex the blend of the body
           surface nearest it.  That is what keeps cloth and skin bending as
           one; solving from bone distance instead lets a knee come through a
@@ -52,6 +60,7 @@ Exits non-zero if a piece could not be fitted.
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import json
 import math
 import sys
@@ -96,6 +105,10 @@ MEASURE = {
               "bones": ("calf_%s", "foot_%s", "ball_%s")},
 }
 
+#: The (height, girth) factors the most recent seat() call applied, for the
+#: torso's axis equalisation to read back.
+LAST_SEAT_FACTORS = (1.0, 1.0)
+
 #: How far outside the skin a fitted vertex is parked, in metres.  The authored
 #: shells sit at 11 mm; matching that keeps an imported piece from reading as
 #: baggier than the set it joins.
@@ -135,7 +148,10 @@ SPAN = {
 SOCKET_KIND = {
     "helm": {"part": 3, "bones": ["Head"], "clearance": .014},
     "hood": {"part": 3, "bones": ["Head"], "clearance": .018},
-    "circlet": {"part": 3, "bones": ["Head"], "clearance": .010},
+    # A band, not a shell: centred on the skull like a helm it hangs over the
+    # eyes, so it anchors to the crown instead.
+    "circlet": {"part": 3, "bones": ["Head"], "clearance": .010,
+                "anchor": "crown"},
 }
 
 
@@ -537,6 +553,8 @@ def seat(points: np.ndarray, rig: ea.Rig, region: str,
     if span is not None:
         body_span = float(body[:, 1].max()) - float(body[:, 1].min())
         girth = body_span / max(float(extent[1]), 1e-9)
+    global LAST_SEAT_FACTORS
+    LAST_SEAT_FACTORS = (scale, girth)
 
     seated = (points - (points.max(axis=0) + points.min(axis=0)) / 2.)
     seated[:, 1] *= scale
@@ -614,6 +632,334 @@ def seat(points: np.ndarray, rig: ea.Rig, region: str,
                                   + pivot[index])
             seated[own] = block
     return seated
+
+
+#: Which limbs a generated piece may arrive posed around, and how far.  A
+#: concept sheet draws its figure at ease -- arms dropped toward an A-pose,
+#: feet a stance apart -- and the generator models the garment exactly as
+#: drawn, so a sleeved cuirass arrives with its sleeves 50-60 degrees below the
+#: rig's T-pose arms and legwear arrives splayed wider than the rig stands.
+#: Seating cannot fix that: it is a rotation, not a size or a place.  Worn
+#: as-is, the sleeves inherit whatever body surface happens to be nearest their
+#: hanging position -- chest and lats -- and the moment the idle clip drops the
+#: arms, the sleeve neither follows the arm nor stays on the chest.  That is
+#: the "pauldrons hovering beside the upper arms" defect: the authored pose
+#: showing through, not the runtime retarget.
+#:
+#: Per region: (pivot bone per side, how many degrees of drop/splay to search).
+#: Arms only ever drop from the T and legs only ever splay outward, because
+#: that is the whole space of at-ease figures; searching the other way just
+#: gives noise somewhere to land.
+REPOSE = {
+    # 88, not the A-pose's 60: some sheets drop the arms nearly straight down,
+    # and a sweep that stops short reads a 84-degree sleeve as no sleeve.
+    "torso": (("upperarm_l", 88), ("upperarm_r", 88)),
+    "legs": (("thigh_l", 25), ("thigh_r", 25)),
+}
+
+#: Bones a torso garment may weight beyond the region's own set.  The region
+#: stops at the upper arms because a lofted piece never reaches further, but a
+#: generated jacket ships full sleeves; once those lie along the arm they need
+#: the forearm to bend with, or the cuff rides through the body at the first
+#: elbow bend.
+REPOSE_SKIN = {
+    "torso": ["lowerarm_l", "lowerarm_r"],
+}
+
+#: What counts as the limb being inside the garment: the fraction of radial
+#: rays, cast outward from the posed bone axis, that meet garment surface
+#: within ``REPOSE_REACH`` metres.  A sleeve is a tube and surrounds its axis,
+#: so an enclosed sample answers 0.75-1.0; a hip fauld hanging beside the axis
+#: answers a third or less.
+REPOSE_ENCLOSED = 0.55
+REPOSE_REACH = 0.15
+
+
+def _limb_axis_enclosure(origin: np.ndarray, axis: np.ndarray,
+                         verts: np.ndarray, sectors: int = 8) -> float:
+    """How surrounded one point of a limb axis is by garment surface."""
+    seed = (np.array([0., 0., 1.]) if abs(axis[2]) < 0.9
+            else np.array([1., 0., 0.]))
+    u = np.cross(axis, seed)
+    u /= max(np.linalg.norm(u), 1e-9)
+    v = np.cross(axis, u)
+    hits = 0
+    for sector in range(sectors):
+        angle = 2.0 * math.pi * (sector + 0.5) / sectors
+        direction = math.cos(angle) * u + math.sin(angle) * v
+        distance, _ = cast(origin, direction, verts)
+        if distance <= REPOSE_REACH:
+            hits += 1
+    return hits / float(sectors)
+
+
+def _frontal_turn(points: np.ndarray, pivot: np.ndarray,
+                  angle: np.ndarray | float) -> np.ndarray:
+    """Rotate points about the world-Z line through ``pivot``, per point."""
+    turned = points.copy()
+    cos = np.cos(angle)
+    sin = np.sin(angle)
+    x = points[:, 0] - pivot[0]
+    y = points[:, 1] - pivot[1]
+    turned[:, 0] = pivot[0] + cos * x - sin * y
+    turned[:, 1] = pivot[1] + sin * x + cos * y
+    return turned
+
+
+def _limb_bones(rig: ea.Rig, root: str) -> set[str]:
+    """The chain that rides a pivot: the bone and everything below it."""
+    names = {root}
+    grew = True
+    while grew:
+        grew = False
+        for child, parent in rig.parent.items():
+            if parent in names and child not in names:
+                names.add(child)
+                grew = True
+    return names
+
+
+def _weld(points: np.ndarray, triangles: np.ndarray
+          ) -> tuple[np.ndarray, np.ndarray, int]:
+    """Vertices welded by position, so the graph sees solids, not UV islands.
+
+    A generated mesh splits vertices along every texture seam, which leaves
+    each little patch its own island: an edge graph over the raw indices calls
+    a single sleeve four hundred components.  Coincident positions are one
+    point of the same solid, whatever the UVs did.
+    """
+    keys = np.round(points * 1e5).astype(np.int64)
+    _, canon, inverse = np.unique(keys, axis=0, return_index=True,
+                                  return_inverse=True)
+    edges = np.sort(inverse[triangles[:, [0, 1, 1, 2, 2, 0]].reshape(-1, 2)],
+                    axis=1)
+    edges = np.unique(edges[edges[:, 0] != edges[:, 1]], axis=0)
+    return inverse, edges, len(canon)
+
+
+def _graph_smooth(values: np.ndarray, edges: np.ndarray,
+                  rounds: int = 8) -> np.ndarray:
+    """Average a per-vertex signal over the mesh graph."""
+    degree = np.zeros(len(values))
+    np.add.at(degree, edges[:, 0], 1.0)
+    np.add.at(degree, edges[:, 1], 1.0)
+    degree = np.maximum(degree, 1.0)
+    smoothed = values.astype(np.float64).copy()
+    for _ in range(rounds):
+        pooled = np.zeros(len(values))
+        np.add.at(pooled, edges[:, 0], smoothed[edges[:, 1]])
+        np.add.at(pooled, edges[:, 1], smoothed[edges[:, 0]])
+        smoothed = 0.5 * smoothed + 0.5 * pooled / degree
+    return smoothed
+
+
+def _components(edges: np.ndarray, count: int) -> np.ndarray:
+    """Connected-component label per vertex, by union-find."""
+    parent = np.arange(count)
+
+    def find(index: int) -> int:
+        root = index
+        while parent[root] != root:
+            root = parent[root]
+        while parent[index] != root:
+            parent[index], index = root, parent[index]
+        return root
+
+    for a, b in edges:
+        ra, rb = find(int(a)), find(int(b))
+        if ra != rb:
+            parent[ra] = rb
+    return np.array([find(int(index)) for index in range(count)])
+
+
+def _wraps_axis(points: np.ndarray, origin: np.ndarray, axis: np.ndarray,
+                reach: float, radius_cap: float = 0.13,
+                sectors: int = 12) -> bool:
+    """Whether a component encircles a limb axis, the way a sleeve ring does.
+
+    A ring worn on the limb has surface most of the way around the axis and
+    close to it.  A belt the axis merely passes near, or a flank plate beside
+    it, fails one of the two: the belt's surface rings the torso and sits too
+    far from the arm, the plate covers half a turn at most.
+    """
+    relative = points - origin
+    travel = relative @ axis
+    across = relative - np.outer(travel, axis)
+    radius = np.linalg.norm(across, axis=1)
+    near = (travel >= -0.05) & (travel <= reach)
+    if int(near.sum()) < 12:
+        return False
+    if float(np.median(radius[near])) > radius_cap:
+        return False
+    seed = (np.array([0., 0., 1.]) if abs(axis[2]) < 0.9
+            else np.array([1., 0., 0.]))
+    u = np.cross(axis, seed)
+    u /= max(np.linalg.norm(u), 1e-9)
+    v = np.cross(axis, u)
+    angles = np.arctan2(across[near] @ v, across[near] @ u)
+    bins = np.unique(((angles + math.pi) / (2 * math.pi) * sectors)
+                     .astype(int).clip(0, sectors - 1))
+    return len(bins) >= sectors // 2
+
+
+def repose(points: np.ndarray, normals: np.ndarray, rig: ea.Rig, region: str,
+           triangles: np.ndarray) -> tuple[np.ndarray, np.ndarray, list[dict]]:
+    """Carry each limb of the garment from its authored pose onto the rig's.
+
+    Nothing here trusts a percentile of the garment's own point cloud -- that
+    is how every earlier fit went wrong, because decorative geometry pollutes
+    any such measure.  The pose is found with the ray caster instead, from the
+    limb's real bone axis: drop the axis through the candidate poses and keep
+    the ones the garment's surface actually surrounds.  A sleeve is a tube, so
+    the arm axis that threads it is enclosed by it; a hip fauld beside the
+    sleeve never surrounds the axis at any pose, and a skirt surrounds the leg
+    at *every* pose, which is why a pose only counts when it beats the rig's
+    own rest pose -- a piece that already encloses the rest axis is already
+    wearable and is left exactly as it arrived.
+
+    Sorting the garment into limb and trunk is then not geometric guesswork
+    either: the body itself is posed into the found stance, each garment
+    vertex inherits the weights of the body surface nearest it -- the same
+    rule the final skinning uses, in the one configuration where sleeve wraps
+    arm and fauld hugs hip unambiguously -- and the limb share of that blend
+    is how far each vertex turns back onto the rig.  The turn is confined to
+    the frontal plane, which is where a sheet-drawn figure's pose lives.
+    """
+    reports: list[dict] = []
+    out = points.copy()
+    turned = normals.copy()
+    for pivot_bone, most_degrees in REPOSE.get(region, ()):
+        start = rig.origin(pivot_bone)
+        seg_start, seg_end = rig.segment(pivot_bone)
+        rig_dir = seg_end - seg_start
+        rig_dir /= max(np.linalg.norm(rig_dir), 1e-9)
+        side = 1.0 if start[0] >= 0 else -1.0
+        drop_sign = -side if region == "torso" else side
+        report = {"limb": pivot_bone, "applied": False}
+        reports.append(report)
+        verts = out[triangles]
+        # Sample points sit along the garment-covered run of the limb: past
+        # the elbow for a sleeve, down the shin for a trouser leg.  The near
+        # and far halves are scored apart, and the far half only ever helps:
+        # a cap sleeve encloses nothing past the elbow at any pose, and
+        # averaging that silence in would veto a pose the near half found.
+        near_spans, far_spans = ((np.linspace(0.14, 0.28, 3),
+                                  np.linspace(0.36, 0.50, 3))
+                                 if region == "torso"
+                                 else (np.linspace(0.15, 0.38, 3),
+                                       np.linspace(0.46, 0.65, 3)))
+        samples: list[tuple[int, float, float]] = []
+        for degrees in range(0, most_degrees + 1, 4):
+            angle = math.radians(degrees) * drop_sign
+            cos, sin = math.cos(angle), math.sin(angle)
+            axis = np.array([cos * rig_dir[0] - sin * rig_dir[1],
+                             sin * rig_dir[0] + cos * rig_dir[1],
+                             rig_dir[2]])
+            near, far = (float(np.mean([
+                _limb_axis_enclosure(start + reach * axis, axis, verts)
+                for reach in spans])) for spans in (near_spans, far_spans))
+            samples.append((degrees, near, far))
+        long_limb = max(far for _, _, far in samples) >= 0.5
+        curve = [(degrees, (near + far) / 2.0 if long_limb else near)
+                 for degrees, near, far in samples]
+        best = max(value for _, value in curve)
+        at_rest = curve[0][1]
+        report["enclosure"] = {"rest": round(at_rest, 2),
+                               "best": round(best, 2)}
+        if best < REPOSE_ENCLOSED:
+            report["reason"] = "nothing surrounds this limb at any pose"
+            continue
+        if at_rest >= best - 0.08:
+            report["reason"] = "already encloses the rest axis"
+            continue
+        # The band's onset, not its middle: past the true angle the axis dives
+        # out of the sleeve into the flank, where hem and fauld geometry keeps
+        # the score saturated, so the top edge of the band is noise while its
+        # first near-max angle is the sleeve itself.
+        plateau = [degrees for degrees, value in curve if value >= best - 0.02]
+        chosen = math.radians(float(plateau[0])) * drop_sign
+        report["poseDeg"] = round(math.degrees(chosen), 1)
+
+        limb = _limb_bones(rig, pivot_bone)
+        limb_slots = np.isin(
+            rig.joints, [rig.joint_names.index(name) for name in limb
+                         if name in rig.joint_names])
+        share = (rig.weights * limb_slots).sum(axis=1, keepdims=True)
+        posed_body = (share * _frontal_turn(rig.positions, start, chosen)
+                      + (1.0 - share) * rig.positions)
+        posed_rig = dataclasses.replace(rig, positions=posed_body)
+        candidates = (list(ea.GARMENT_SKIN[region])
+                      + REPOSE_SKIN.get(region, []))
+        inherited = posed_rig._weights_from_body(out, candidates)
+        if inherited is None:
+            report["reason"] = "posed body offered no weights to inherit"
+            continue
+        joints, weights = inherited
+        member = np.isin(joints, [rig.joint_names.index(name) for name in limb
+                                  if name in rig.joint_names])
+        blend = (weights * member).sum(axis=1)
+        # A generated piece is a stack of disjoint closed solids, and a solid
+        # turns whole or not at all: blending the turn per vertex smears a
+        # rigid sleeve, because its inner wall lies nearer the flank than the
+        # arm and inherits a different answer than its outer wall.  Each
+        # component votes with its mean inherited share; only a component that
+        # genuinely spans limb and trunk -- a one-piece trouser, say -- falls
+        # back to the smoothed per-vertex blend, where the shear belongs.
+        canon, edges, welded = _weld(out, triangles)
+        pooled = np.zeros(welded)
+        counts = np.zeros(welded)
+        np.add.at(pooled, canon, blend)
+        np.add.at(counts, canon, 1.0)
+        pooled /= np.maximum(counts, 1.0)
+        pooled = _graph_smooth(pooled, edges)
+        labels = _components(edges, welded)
+        chosen_cos = math.cos(chosen)
+        chosen_sin = math.sin(chosen)
+        posed_axis = np.array([
+            chosen_cos * rig_dir[0] - chosen_sin * rig_dir[1],
+            chosen_sin * rig_dir[0] + chosen_cos * rig_dir[1], rig_dir[2]])
+        reach = 0.55 if region == "torso" else 0.75
+        turn = np.zeros(welded)
+        for label in np.unique(labels):
+            inside = labels == label
+            vote = float(pooled[inside].mean())
+            if vote >= 0.7:
+                turn[inside] = 1.0
+            else:
+                # The inherited weights under-report a sleeve ring whose
+                # inner wall hugs the flank -- it can vote nearly all trunk
+                # and still be worn on the arm.  Geometry settles it: a piece
+                # worn *on* the limb encircles the posed axis, and a piece
+                # that merely hangs beside it -- a belt the axis threads, a
+                # fauld, half a chest plate -- does not.
+                indexed = np.zeros(welded, dtype=bool)
+                indexed[inside] = True
+                verts_of = indexed[canon]
+                if _wraps_axis(out[verts_of], start, posed_axis, reach):
+                    turn[inside] = 1.0
+        # What sits on top of the joint stays there.  A pauldron is drawn
+        # draped over the shoulder crest, and it covers the crest wherever
+        # the arm points; rotating it with the sleeve swings it down the
+        # arm and bares the trapezius.  A component whose body lies above
+        # the pivot is such a cap, and keeps its authored drape.
+        for label in np.unique(labels):
+            indexed = np.zeros(welded, dtype=bool)
+            indexed[labels == label] = True
+            verts_of = indexed[canon]
+            if not verts_of.any() or float(turn[canon][verts_of].mean()) < 0.99:
+                continue
+            centroid = out[verts_of].mean(axis=0)
+            above = float(centroid[1] - start[1])
+            outboard = abs(float(centroid[0])) - abs(float(start[0]))
+            if above > 0.01 and outboard < 0.10:
+                turn[indexed] = 0.0
+        turn = turn[canon]
+        out = _frontal_turn(out, start, -chosen * turn)
+        turned = _frontal_turn(turned, np.zeros(3), -chosen * turn)
+        report["applied"] = True
+        report["limbVertices"] = int((turn > 0.5).sum())
+        report["components"] = int(len(np.unique(labels)))
+    return out, turned, reports
 
 
 def _push_axis(points: np.ndarray, indices: np.ndarray, rig: ea.Rig,
@@ -742,7 +1088,7 @@ def clear_body(points: np.ndarray, rig: ea.Rig, region: str,
 
 
 def textured_material(glb: ea.EquipmentGLB, name: str, png: bytes | None,
-                      colour=(190, 185, 178)) -> int:
+                      colour=(190, 185, 178), double_sided: bool = False) -> int:
     """Base colour straight off the generated map, when there is one."""
     pbr = {"baseColorFactor": ea.srgb_to_linear(colour) + [1.],
            "metallicFactor": 0.0, "roughnessFactor": 0.72}
@@ -750,8 +1096,243 @@ def textured_material(glb: ea.EquipmentGLB, name: str, png: bytes | None,
         pbr["baseColorFactor"] = [1., 1., 1., 1.]
         pbr["baseColorTexture"] = {"index": glb.texture(png)}
     glb.doc["materials"].append(
-        {"name": name, "pbrMetallicRoughness": pbr, "doubleSided": False})
+        {"name": name, "pbrMetallicRoughness": pbr,
+         "doubleSided": double_sided})
     return len(glb.doc["materials"]) - 1
+
+
+#: The liner's reach over the body, as world heights and a half-width: the
+#: hip line up to the base of the neck, and inboard of the mid-forearm.  The
+#: painted shirt lives entirely inside this band on every race body, so the
+#: liner needs no opinion about which texels are shirt -- every earlier
+#: attempt to classify the shirt by colour left a sliver of it bare at some
+#: boundary the classifier misread: the blacked-out armpit, the shaded seam
+#: rows of the collar, the last teal row under the hem.
+LINER_BAND = (0.90, 1.64)
+#: 0.85, not the mid-forearm: the painted body keeps a few teal texels on
+#: the back of the right hand, and an idle pose hangs that hand exactly where
+#: the armpit slit looks.  Lining the arm to the fingertips reads as gloves
+#: and closes the last of it.
+LINER_HALF_WIDTH = 0.85
+LINER_LIFT = 0.008
+LINER_COLOUR = (56, 47, 40)
+
+_LINER_CACHE: dict[str, tuple | None] = {}
+
+
+def shirt_liner(race_path: Path):
+    """The clothed band of the body, lifted a few millimetres, to wear under
+    a torso piece.
+
+    The meshy race bodies paint their wardrobe into the body texture, so
+    there is no shirt mesh for the runtime to hide when armour goes on --
+    and a generated cuirass is an open design of straps and plates, so the
+    teal shirt shows through every gap in it.  No amount of fitting closes
+    that: the gaps are the design.  What a real wardrobe does is layer, so
+    each torso piece ships an underlayer: the body's own triangles from hip
+    to neck, offset out along their welded normals and carrying the body's
+    own skin weights.  It deforms exactly as the body does, in every pose,
+    on every rig the runtime refits to -- so whatever the armour leaves open
+    shows underpadding, never the shirt.
+
+    Returns (positions, normals, uvs, indices, joints, weights) in body
+    space, or None when the body offers nothing to line.
+    """
+    key = str(race_path)
+    if key in _LINER_CACHE:
+        return _LINER_CACHE[key]
+    document, binary = ea.read_glb(race_path)
+    node = next((n for n in document.get("nodes", [])
+                 if "mesh" in n and "skin" in n), None)
+    if node is None:
+        _LINER_CACHE[key] = None
+        return None
+    primitive = document["meshes"][node["mesh"]]["primitives"][0]
+    attributes = primitive["attributes"]
+    positions = ea.accessor_array(document, binary, attributes["POSITION"]).astype(np.float64)
+    normals = ea.accessor_array(document, binary, attributes["NORMAL"]).astype(np.float64)
+    uvs = ea.accessor_array(document, binary, attributes["TEXCOORD_0"]).astype(np.float64)
+    joints = ea.accessor_array(document, binary, attributes["JOINTS_0"]).astype(np.int64)
+    weights = ea.accessor_array(document, binary, attributes["WEIGHTS_0"]).astype(np.float64)
+    triangles = ea.accessor_array(
+        document, binary, primitive["indices"]).astype(np.int64).reshape(-1, 3)
+
+    # The face stays bare -- the eyes are teal too, and lining them would
+    # trade a shirt sliver for a masked face -- but the band runs high enough
+    # to swallow the back of the collar, whose last texels ride the
+    # trapezius at 1.56.
+    shirt = ((positions[:, 1] > LINER_BAND[0])
+             & (positions[:, 1] < LINER_BAND[1])
+             & (np.abs(positions[:, 0]) < LINER_HALF_WIDTH)
+             & ~((positions[:, 1] > 1.585) & (positions[:, 2] > 0.0)))
+    if int(shirt.sum()) < 40:
+        _LINER_CACHE[key] = None
+        return None
+    canon, edges, welded = _weld(positions, triangles)
+    chosen = np.zeros(welded, dtype=bool)
+    np.logical_or.at(chosen, canon, shirt)
+    picked = chosen[canon]
+    keep = picked[triangles].any(axis=1)
+    used = np.unique(triangles[keep])
+    remap = np.full(len(positions), -1, dtype=np.int64)
+    remap[used] = np.arange(len(used))
+    base_faces = remap[triangles[keep]].reshape(-1, 3)
+    base_positions = positions[used]
+    base_normals = normals[used]
+    base_uvs = uvs[used]
+    base_joints = joints[used].astype(np.int64)
+    base_weights = weights[used]
+    # Subdivision was tried here -- the sagitta argument says a flat liner
+    # facet can dip inside the arm's curve between vertices -- and measured
+    # worse than it reasoned: splitting edges means inventing blends for the
+    # midpoints, and a midpoint whose merged weights differ a hair from the
+    # skin's own interpolation drifts under pose everywhere, trading two
+    # stubborn pixels for fifty.  The band ships with the body's own
+    # vertices, nothing more.
+    positions_band = base_positions
+    normals_band = base_normals
+    uvs_band = base_uvs
+    joints_band = base_joints
+    weights_band = base_weights
+    faces_band = base_faces
+    # Lift along the welded normal, one direction per position: the band
+    # splits its vertices along texture seams, and lifting each copy along
+    # its own normal tears the liner open a millimetre at every seam.
+    band_canon, band_edges, band_welded = _weld(positions_band, faces_band)
+    pooled = np.zeros((band_welded, 3))
+    np.add.at(pooled, band_canon, normals_band)
+    pooled /= np.maximum(np.linalg.norm(pooled, axis=1, keepdims=True), 1e-9)
+    lift = pooled[band_canon]
+    liner_positions = positions_band + lift * LINER_LIFT
+    liner_normals = normals_band.copy()
+    liner_uvs = uvs_band.copy()
+    liner_faces = faces_band.copy()
+    liner_joints = joints_band.copy()
+    liner_weights = weights_band.copy()
+    # Close the rim.  A lifted shell is a tunnel over the body, and a grazing
+    # ray can enter its open mouth -- at a hem, a collar, an armhole -- and
+    # find the shirt on the tunnel floor.  Every boundary edge gets a skirt
+    # quad tucked back under the skin, so the shell has no mouth at all.
+    edge_pairs = np.sort(band_canon[faces_band[:, [0, 1, 1, 2, 2, 0]]
+                                    .reshape(-1, 2)], axis=1)
+    keys, counts = np.unique(edge_pairs, axis=0, return_counts=True)
+    open_edges = keys[counts == 1]
+    representative = np.full(band_welded, -1, dtype=np.int64)
+    order = np.arange(len(positions_band))
+    representative[band_canon[order[::-1]]] = order[::-1]
+    rim_faces: list[list[int]] = []
+    rim_of: dict[int, int] = {}
+    extra_positions: list[np.ndarray] = []
+    for edge in open_edges:
+        corners: list[int] = []
+        for canon_id in edge:
+            original = int(representative[canon_id])
+            if original < 0:
+                break
+            if canon_id not in rim_of:
+                rim_of[int(canon_id)] = (len(liner_positions)
+                                         + len(extra_positions))
+                extra_positions.append(
+                    positions_band[original] - lift[original] * 0.004)
+            corners.append(original)
+        if len(corners) < 2:
+            continue
+        top_a, top_b = corners
+        low_a, low_b = (rim_of[int(canon_id)] for canon_id in edge)
+        rim_faces.append([top_a, top_b, low_b])
+        rim_faces.append([top_a, low_b, low_a])
+    if rim_faces:
+        drop = np.array([representative[int(canon_id)] for canon_id in rim_of],
+                        dtype=np.int64)
+        liner_positions = np.vstack([liner_positions,
+                                     np.array(extra_positions)])
+        liner_normals = np.vstack([liner_normals, normals_band[drop]])
+        liner_uvs = np.vstack([liner_uvs, uvs_band[drop]])
+        liner_joints = np.vstack([liner_joints, joints_band[drop]])
+        liner_weights = np.vstack([liner_weights, weights_band[drop]])
+        liner_faces = np.vstack([liner_faces, np.array(rim_faces)])
+    # Under the padded shell, a coat of paint: a second copy of the band
+    # dead on the skin.  Its material is alpha-blended, and transparents
+    # draw after the opaque body with a depth test ties pass -- so wherever
+    # paint and skin coincide, the paint wins, even inside a crease that
+    # folded the shell.  Lifting it instead was tried at every offset: any
+    # offset is an offset linear blend skinning can fold under the surface.
+    paint = (positions_band + lift * 0.00005, normals_band.copy(),
+             uvs_band.copy(), faces_band.reshape(-1).copy(),
+             joints_band.copy(), weights_band.copy())
+    # Plug the crease pockets.  Linear blend skinning folds a lifted shell
+    # into the body wherever a joint closes -- the armpit once the idle
+    # drops the arm, the inner elbow once it bends -- and through the
+    # resulting slit a needle of shirt stays visible from exactly one
+    # angle.  No lift fixes a folding offset, so a small charcoal ellipsoid
+    # rides each pocket: weighted half to each side of the joint, it stays
+    # centred in the crease in every pose, and anything peering in meets it.
+    skin_joints = document["skins"][0]["joints"]
+    joint_names = [document["nodes"][j].get("name", "") for j in skin_joints]
+    matrices = ea.global_matrices(document)
+
+    def joint_at(name):
+        return (joint_names.index(name), matrices[
+            skin_joints[joint_names.index(name)]][:3, 3])
+
+    pockets = []
+    for side in ("l", "r"):
+        if ("upperarm_" + side not in joint_names
+                or "lowerarm_" + side not in joint_names
+                or "spine_02" not in joint_names):
+            continue
+        arm, shoulder = joint_at("upperarm_" + side)
+        forearm, elbow = joint_at("lowerarm_" + side)
+        spine, _ = joint_at("spine_02")
+        inboard = -0.02 if shoulder[0] > 0 else 0.02
+        pockets.append((shoulder + np.array([inboard, -0.05, 0.0]),
+                        np.array([0.05, 0.065, 0.055]), arm, spine))
+        # Behind the joint, not on it: the surface a slit ray actually
+        # lands on is the triceps side of the elbow (measured by
+        # intersecting the failing pixel's ray with the posed body).
+        pockets.append((elbow + np.array([inboard * 0.5, -0.005, -0.045]),
+                        np.array([0.05, 0.055, 0.05]), arm, forearm))
+    for centre_at, radii, bone_a, bone_b in pockets:
+        rings, sectors = 5, 8
+        plug_positions = []
+        plug_normals = []
+        for ring in range(rings + 1):
+            polar = math.pi * ring / rings
+            for sector in range(sectors):
+                azimuth = 2 * math.pi * sector / sectors
+                direction = np.array([
+                    math.sin(polar) * math.cos(azimuth),
+                    math.cos(polar),
+                    math.sin(polar) * math.sin(azimuth)])
+                plug_positions.append(centre_at + direction * radii)
+                plug_normals.append(direction)
+        plug_faces = []
+        for ring in range(rings):
+            for sector in range(sectors):
+                a = ring * sectors + sector
+                b = ring * sectors + (sector + 1) % sectors
+                c = (ring + 1) * sectors + sector
+                d = (ring + 1) * sectors + (sector + 1) % sectors
+                plug_faces += [[a, b, c], [b, d, c]]
+        base_index = len(liner_positions)
+        count = len(plug_positions)
+        liner_positions = np.vstack([liner_positions, np.array(plug_positions)])
+        liner_normals = np.vstack([liner_normals, np.array(plug_normals)])
+        liner_uvs = np.vstack([liner_uvs, np.zeros((count, 2))])
+        plug_joint_row = np.zeros((count, liner_joints.shape[1]), dtype=liner_joints.dtype)
+        plug_weight_row = np.zeros((count, liner_weights.shape[1]))
+        plug_joint_row[:, 0] = bone_a
+        plug_joint_row[:, 1] = bone_b
+        plug_weight_row[:, 0] = 0.5
+        plug_weight_row[:, 1] = 0.5
+        liner_joints = np.vstack([liner_joints, plug_joint_row])
+        liner_weights = np.vstack([liner_weights, plug_weight_row])
+        liner_faces = np.vstack([liner_faces,
+                                 np.array(plug_faces) + base_index])
+    liner = ((liner_positions, liner_normals, liner_uvs,
+              liner_faces.reshape(-1), liner_joints, liner_weights), paint)
+    _LINER_CACHE[key] = liner
+    return liner
 
 
 def socket_origin(rig: ea.Rig, part: int) -> np.ndarray:
@@ -784,6 +1365,13 @@ def seat_socket(points: np.ndarray, rig: ea.Rig, kind: str) -> np.ndarray:
                 for axis in (0, 2))
     seated = (points - (points.max(axis=0) + points.min(axis=0)) / 2.) * scale
     centre = (head.max(axis=0) + head.min(axis=0)) / 2.
+    # A piece much shorter than the head is a band or a visor, not a shell,
+    # and centring it on the skull hangs it over the eyes.  Anything short
+    # rides the crown, whatever its kind claims.
+    head_height = float(head[:, 1].max() - head[:, 1].min())
+    piece_height = float(seated[:, 1].max() - seated[:, 1].min())
+    if spec.get("anchor") == "crown" or piece_height < 0.75 * head_height:
+        centre[1] = float(head[:, 1].max()) - float(seated[:, 1].max())
     return seated + (centre - socket_origin(rig, spec["part"]))
 
 
@@ -816,7 +1404,7 @@ def build_socket(source: Path, out: Path, rig: ea.Rig, kind: str,
 
 def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
           clearance: float = CLEARANCE, fit: str = "seat",
-          taper: bool = False) -> dict:
+          taper: bool = False, race_path: Path | None = None) -> dict:
     """Fit one generated mesh to the rig and write it as a skinned piece."""
     if kind in SOCKET_KIND:
         return build_socket(source, out, rig, kind, label)
@@ -831,8 +1419,45 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
 
     surface, png = read_source(source)
     before = surface.positions.copy()
-    seated = seat(surface.positions, rig, region,
-                  surface.indices.reshape(-1, 3), taper)
+    triangles = surface.indices.reshape(-1, 3)
+    # Seat, repose, and -- only if a pose was actually taken out -- seat
+    # again.  The first seat is provisional for a posed piece: a hanging
+    # sleeve is part of the height it divides by, so its vertical scale runs
+    # ~15% small, but it puts the shoulders and hips where the rig has them,
+    # which is what the pose search needs.  The second pass re-derives every
+    # measurement from the corrected geometry; its girth ratio re-widens the
+    # piece, and that is not the accident it looks like -- it is the same
+    # widening the droop denied the first pass, so sleeves squashed while
+    # they hung come back out to length once they lie along the arm.  (A
+    # uniform second pass was tried instead and measured worse on both
+    # counts.)  A piece with no pose to correct is seated once: seat() is not
+    # idempotent -- its girth-to-height ratio compounds -- and a second pass
+    # over the boots flattened the pair into a half-metre disc.
+    seated = seat(surface.positions, rig, region, triangles, taper)
+    seated, surface.normals, posed = repose(
+        seated, surface.normals, rig, region, triangles)
+    if any(step.get("applied") for step in posed):
+        seated = seat(seated, rig, region, triangles, taper)
+    if region == "torso":
+        # Equalise the axes, hung from the collar.  The seat scales height to
+        # the authored span but girth to the body region, and the height's
+        # denominator is a bounding box stretched by whatever strap dangles
+        # lowest -- so the chest shell lands a quarter squatter than the
+        # concept drew it.  The width the seat picked is right; the height is
+        # brought up to the same factor -- read from the seat itself, since
+        # a bounding-box comparison is confounded by the reposed sleeves --
+        # the collar stays put, and the hem falls where the design's own
+        # proportions put it.
+        raised, widened = LAST_SEAT_FACTORS
+        if widened > raised * 1.02:
+            # Below the shoulder line only.  The yoke -- collar, shoulder
+            # caps, sleeve tops -- is fitted to the body and must not move;
+            # what reads short is the trunk, so the trunk alone stretches
+            # down toward the hem.
+            stretch = min(widened / raised, 1.35)
+            pivot = float(rig.origin("upperarm_l")[1]) - 0.06
+            below = seated[:, 1] < pivot
+            seated[below, 1] = pivot - (pivot - seated[below, 1]) * stretch
     if fit == "push":
         fitted, pushed = clear_body(seated, rig, region, clearance)
         grown = 1.0
@@ -850,10 +1475,35 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
     glb.skeleton(rig)
     positions, normals, uvs, indices = surface.arrays()[0]
     joints, weights = ea.Rig.weights_for(
-        rig, positions.astype(np.float64), list(ea.GARMENT_SKIN[region]))
-    primitive = glb.primitive(positions, normals, uvs, indices, material,
-                              joints=joints, weights=weights)
-    glb.mesh(label, [primitive], skin=0)
+        rig, positions.astype(np.float64),
+        list(ea.GARMENT_SKIN[region]) + REPOSE_SKIN.get(region, []))
+    primitives = [glb.primitive(positions, normals, uvs, indices, material,
+                                joints=joints, weights=weights)]
+    lined = False
+    if region == "torso" and race_path is not None:
+        layers = shirt_liner(race_path)
+        if layers is not None:
+            shell, paint = layers
+            # Double sided: a lifted shell can fold at the armpit crease once
+            # a pose compresses it, and a culled backface there is a pinhole
+            # straight through to the shirt.
+            liner_material = textured_material(glb, "%s Liner" % label, None,
+                                               colour=LINER_COLOUR,
+                                               double_sided=True)
+            primitives.append(glb.primitive(
+                shell[0], shell[1], shell[2], shell[3], liner_material,
+                joints=shell[4], weights=shell[5], weight_floats=True))
+            # The paint coat ships alpha-blended so it draws after the body
+            # and wins their depth ties -- see shirt_liner.
+            paint_material = textured_material(glb, "%s Paint" % label, None,
+                                               colour=LINER_COLOUR,
+                                               double_sided=True)
+            glb.doc["materials"][paint_material]["alphaMode"] = "BLEND"
+            primitives.append(glb.primitive(
+                paint[0], paint[1], paint[2], paint[3], paint_material,
+                joints=paint[4], weights=paint[5], weight_floats=True))
+            lined = True
+    glb.mesh(label, primitives, skin=0)
     glb.write(out)
 
     span_before = (before.max(axis=0) - before.min(axis=0))
@@ -865,6 +1515,7 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
             "scale": round(float(span_after[1] / max(span_before[1], 1e-9)), 4),
             "spanBefore": [round(float(v), 3) for v in span_before],
             "spanAfter": [round(float(v), 3) for v in span_after],
+            "repose": posed, "liner": lined,
             "fit": fit, "grew": round(float(grown), 4),
             "pushedOut": pushed, "textured": png is not None,
             "bytes": out.stat().st_size}
@@ -931,7 +1582,8 @@ def main() -> int:
         label = source.stem.replace("_", " ")[:48]
         try:
             info = build(source, target, rig, args.kind, label,
-                         args.clearance, args.fit, args.taper)
+                         args.clearance, args.fit, args.taper,
+                         race_path=race_path)
         except Exception as exc:
             print("  FAILED %-44s %s" % (source.stem[:44], exc))
             failed += 1
