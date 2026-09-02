@@ -38,6 +38,12 @@ const LEG_RADIUS := 0.115
 const MAX_STEP := 1.0 / 30.0
 ## Move further than this in one step and the actor was teleported, not walked.
 const TELEPORT := 1.5
+## Once the anchor is slower than this the wearer has stopped, and the cape
+## should come back down briskly instead of drifting: gravity multiplies and
+## the damping drops so the swing dies in a fraction of the travelling time.
+const SETTLE_SPEED := 0.15
+const SETTLE_GRAVITY := 5.0
+const SETTLE_DAMPING := 0.45
 
 var _cached := false
 var _anchor := -1
@@ -47,6 +53,7 @@ var _previous: Array[PackedVector3Array] = []
 var _lengths: Array[PackedFloat32Array] = []
 var _legs: Array[PackedInt32Array] = []
 var _settled := false
+var _last_anchor := Vector3.ZERO
 
 
 func _cache(skeleton: Skeleton3D) -> bool:
@@ -123,7 +130,13 @@ func _process_modification_with_delta(delta: float) -> void:
 	var to_world := skeleton.global_transform
 	var to_local := to_world.affine_inverse()
 	var step := minf(maxf(delta, 0.0), MAX_STEP)
-	var fall := GRAVITY * step * step
+	var anchor_world := to_world * skeleton.get_bone_global_pose(_anchor).origin
+	var anchor_speed := 0.0 if step <= 0.0 else (
+		anchor_world.distance_to(_last_anchor) / step)
+	_last_anchor = anchor_world
+	var still := anchor_speed < SETTLE_SPEED
+	var fall := GRAVITY * (SETTLE_GRAVITY if still else 1.0) * step * step
+	var damping := SETTLE_DAMPING if still else DAMPING
 
 	for chain in range(_bones.size()):
 		var rest := _rest_joints(skeleton, to_world, chain)
@@ -140,7 +153,7 @@ func _process_modification_with_delta(delta: float) -> void:
 			previous = rest.duplicate()
 		for index in range(1, points.size()):
 			var current := points[index]
-			points[index] = current + (current - previous[index]) * DAMPING + fall
+			points[index] = current + (current - previous[index]) * damping + fall
 			previous[index] = current
 		for _pass in range(RELAX_PASSES):
 			for index in range(1, points.size()):
