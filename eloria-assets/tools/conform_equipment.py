@@ -1317,7 +1317,7 @@ def shirt_liner(race_path: Path):
         # and the shoulders drawn forward, the rear armpit opens up and a
         # generous ball shows behind the cap as a smooth grey bump.
         pockets.append((shoulder + np.array([inboard * 3.0, -0.065, 0.005]),
-                        np.array([0.034, 0.05, 0.038]), arm, spine))
+                        np.array([0.042, 0.055, 0.044]), arm, spine))
         # Behind the joint, not on it: the surface a slit ray actually
         # lands on is the triceps side of the elbow (measured by
         # intersecting the failing pixel's ray with the posed body).
