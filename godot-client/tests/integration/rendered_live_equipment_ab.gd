@@ -1,13 +1,11 @@
 extends SceneTree
-## Live-client A/B evidence for generated-equipment fit.
+## Live-client evidence for the generated armour set.
 ##
-## Connects to a running development server, creates a character, and for each
-## wearable slot equips the authored reference piece and then the generated
-## piece through the real inventory path -- `#give`, MOVE_INVENTORY_ITEM into a
-## wear slot, ACTOR_WEAR_ITEM back from the server -- capturing the running
-## client for each.  Both sides of a pair go through the same runtime retarget
-## on the same character, so any difference in how they land is a difference
-## between the assets.
+## Connects to a running development server, creates a character, and for
+## each wearable slot equips the generated piece through the real inventory
+## path -- `#give`, MOVE_INVENTORY_ITEM into a wear slot, ACTOR_WEAR_ITEM back
+## from the server -- capturing the running client.  The generated set only;
+## the older authored pieces are not involved.
 ##
 ## Needs the dev server on 127.0.0.1:2000 with the Eloria catalogue:
 ##   python -m eloria.server --items config/eloria/items.txt ... (see
@@ -16,14 +14,17 @@ extends SceneTree
 const SESSION_TIMEOUT_SECONDS := 45.0
 const SCREEN_SIZE := Vector2i(1280, 720)
 
-## slot -> [part, authored item, authored visual, generated item, generated visual]
-const PAIRS := {
-	"body": [5, 1248, 100, 1274, 184],
-	"legs": [4, 1242, 100, 1282, 171],
-	"boots": [6, 1258, 100, 1290, 192],
-	"helm": [3, 1233, 100, 1298, 109],
-	"helm2": [3, 1233, 100, 1306, 117],
-	"boots2": [6, 1258, 100, 1314, 200],
+## slot -> [part, generated item id, generated visual].  The generated set
+## only: it is equipped through the real server path -- #give,
+## MOVE_INVENTORY_ITEM into a wear slot, ACTOR_WEAR_ITEM back -- and captured
+## in the running client.  The older authored pieces are not involved.
+const PIECES := {
+	"body": [5, 1274, 184],
+	"legs": [4, 1282, 171],
+	"boots": [6, 1290, 192],
+	"helm": [3, 1306, 117],
+	"circlet": [3, 1298, 109],
+	"boots2": [6, 1314, 200],
 }
 
 var _failures := 0
@@ -117,23 +118,20 @@ func _run() -> void:
 	_main.get_node(
 		"GameView/ViewportContainer/Viewport/WorldRoot").add_child(_camera)
 
-	for slot: String in PAIRS:
-		var config: Array = PAIRS[slot] as Array
+	for slot: String in PIECES:
+		var config: Array = PIECES[slot] as Array
 		var part: int = int(config[0])
-		for side: int in range(2):
-			var item_id: int = int(config[1 + side * 2])
-			var visual: int = int(config[2 + side * 2])
-			var label: String = "authored" if side == 0 else "generated"
-			await _unequip_all()
-			if not await _equip(part, item_id, visual):
-				_fail("%s %s: item %d never landed on the actor" % [
-					slot, label, item_id])
-				continue
-			for _settle: int in range(30):
-				await process_frame
-			await _capture_actor("live-%s-%s" % [slot, label],
-				"%s %s (item %d, visual %d:%d) in the running client" % [
-					slot, label, item_id, part, visual])
+		var item_id: int = int(config[1])
+		var visual: int = int(config[2])
+		await _unequip_all()
+		if not await _equip(part, item_id, visual):
+			_fail("%s: item %d never landed on the actor" % [slot, item_id])
+			continue
+		for _settle: int in range(30):
+			await process_frame
+		await _capture_actor("live-%s" % slot,
+			"%s (item %d, visual %d:%d) in the running client" % [
+				slot, item_id, part, visual])
 
 	# The whole generated kit at once, then the gameplay camera the player
 	# actually plays with.
@@ -153,7 +151,7 @@ func _run() -> void:
 	await _capture("live-gameplay-view.png",
 		"the generated kit from the gameplay camera")
 
-	print("live equipment A/B: ", "PASS" if _failures == 0
+	print("live generated equipment: ", "PASS" if _failures == 0
 		else "FAIL (%d)" % _failures)
 	_finish()
 
@@ -334,5 +332,5 @@ func _expect(value: bool, label: String) -> bool:
 	return value
 
 func _finish() -> void:
-	print("live equipment A/B finished with %d failure(s)" % _failures)
+	print("live generated equipment finished with %d failure(s)" % _failures)
 	quit(_failures)

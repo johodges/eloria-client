@@ -1,27 +1,37 @@
 extends SceneTree
-## Rendered A/B evidence for generated-equipment fit.
+## Rendered evidence for the generated armour set, on its own.
 ##
-## For each wearable slot, two luminous_male actors stand side by side through
-## the client's own actor build path: the left one wearing the authored
-## reference piece for that slot, the right one the generated piece that is
-## supposed to match it. Both go through the same runtime retarget
-## (`_rebound_skin` / `_bone_fit`), so any visual difference between the two is
-## a difference between the assets themselves.
+## Every generated visual is worn by a luminous_male through the client's own
+## actor build and runtime retarget, at the relaxed idle the set is meant to be
+## seen in, and captured front and three-quarter.  A full generated kit is
+## shown together at the end.  Nothing here involves the older authored pieces:
+## the deliverable is the generated set standing correctly by itself.
+##
+## Set ELORIA_FIT_RACE to check the same set on another body (ssarathi_male,
+## stoneborn_male); it defaults to luminous_male.
 
 const SCREEN_SIZE := Vector2i(1280, 720)
 
-## slot label -> [part, authored visual, generated visual]
-const PAIRS := {
-	"body": [5, 100, 184],
-	"legs": [4, 100, 171],
-	"boots": [6, 100, 192],
-	"boots2": [6, 100, 200],
-	"helm": [3, 100, 109],
-	"helm2": [3, 100, 117],
+## slot -> [part, [generated visuals...]]
+const SLOTS := {
+	"body": [5, [184, 185, 186, 187, 188, 189, 190, 191]],
+	"legs": [4, [171, 172, 173, 174, 179, 180, 187, 188]],
+	"boots": [6, [192, 193, 194, 200, 201, 202]],
+	"helm": [3, [109, 110, 111, 117, 118, 119]],
 }
+## A representative head-to-toe kit, all generated.
+const KIT := {5: 184, 4: 171, 6: 192, 3: 117}
 
 var _artifacts := ""
 var _failures := 0
+var _main: Control
+var _stage: Node3D
+var _camera: Camera3D
+var _adapter: CoordinateAdapter
+var _model_config: Dictionary
+var _animation_config: Dictionary
+var _equipment_config: Dictionary
+var _next_id := 9000
 
 func _init() -> void:
 	call_deferred("_run")
@@ -34,193 +44,136 @@ func _run() -> void:
 		"artifact directory is writable")
 	root.size = SCREEN_SIZE
 
-	var main: Control = (load("res://src/app/main.tscn") as PackedScene).instantiate() as Control
-	root.add_child(main)
+	_main = (load("res://src/app/main.tscn") as PackedScene).instantiate() as Control
+	root.add_child(_main)
 	await process_frame
-	main.hide()
+	_main.hide()
 	await process_frame
 
-	var models: Dictionary = main.get("models") as Dictionary
-	var equipment_config: Dictionary = main.get("equipment_config") as Dictionary
+	var models: Dictionary = _main.get("models") as Dictionary
+	_equipment_config = _main.get("equipment_config") as Dictionary
 	var race: String = OS.get_environment("ELORIA_FIT_RACE")
 	if race.is_empty():
 		race = "luminous_male"
-	var model_config: Dictionary = models.get(race, {}) as Dictionary
-	_expect(not model_config.is_empty(), race + " is in the model registry")
+	_model_config = models.get(race, {}) as Dictionary
+	_expect(not _model_config.is_empty(), race + " is in the model registry")
+	_animation_config = _main.call("_animation_for_model", _model_config) as Dictionary
+	_adapter = CoordinateAdapter.new({"walkingHeight": 0.0})
 
-	var stage := Node3D.new()
-	root.add_child(stage)
+	_stage = Node3D.new()
+	root.add_child(_stage)
 	var environment := WorldEnvironment.new()
 	environment.environment = Environment.new()
 	environment.environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	environment.environment.ambient_light_color = Color(0.42, 0.45, 0.5)
 	environment.environment.ambient_light_energy = 1.1
-	stage.add_child(environment)
+	_stage.add_child(environment)
 	var key := DirectionalLight3D.new()
 	key.rotation_degrees = Vector3(-38.0, 142.0, 0.0)
 	key.light_energy = 1.5
-	stage.add_child(key)
-	var camera := Camera3D.new()
-	camera.current = true
-	camera.fov = 40.0
-	# Gameplay layers only, or the actors' map-only discs end up in frame.
-	camera.cull_mask = 3
-	stage.add_child(camera)
+	_stage.add_child(key)
+	_camera = Camera3D.new()
+	_camera.current = true
+	_camera.fov = 40.0
+	_camera.cull_mask = 3
+	_stage.add_child(_camera)
 
-	var adapter := CoordinateAdapter.new({"walkingHeight": 0.0})
-	var animation_config: Dictionary = main.call("_animation_for_model", model_config) as Dictionary
-	var next_id := 9000
-	var pair_x := 0.0
-	var slots: Array = PAIRS.keys()
-	for slot: String in slots:
-		var config: Array = PAIRS[slot] as Array
-		var part: int = int(config[0])
-		for side: int in range(2):
-			var visual: int = int(config[1 + side])
-			var actor := ReplicatedActor3D.new()
-			stage.add_child(actor)
-			var dto := {
-				"actor_id": next_id, "x": 0, "y": 0, "rotation": 0,
-				"kind": 1, "name": "%s %d:%d" % [slot, part, visual],
-				"appearance": {},
-				"equipment_visuals": {str(part): visual},
-			}
-			next_id += 1
-			var errors: Array[String] = actor.configure(dto, adapter, model_config,
-				animation_config, equipment_config)
-			_expect(errors.is_empty(), "%s %d:%d builds without errors: %s" % [
-				slot, part, visual, errors])
-			actor.server_target = Vector3(pair_x + (side * 1.4) - 0.7, 0.0, 0.0)
-			actor.global_position = actor.server_target
-			actor.rotation.y = PI
-			var diagnostics: Dictionary = actor.equipment_diagnostics()
-			print("diagnostics %s %d:%d -> %s" % [slot, part, visual, diagnostics])
-			_expect(int(diagnostics.get("native", 0)) > 0
-				and int(diagnostics.get("fallback", 0)) == 0,
-				"%s %d:%d attaches natively" % [slot, part, visual])
-		pair_x += 5.0
-
-	for _settle: int in range(24):
+	var prefix: String = "" if race == "luminous_male" else race + "-"
+	for slot: String in SLOTS:
+		var spec: Array = SLOTS[slot] as Array
+		var part: int = int(spec[0])
+		var visuals: Array = spec[1] as Array
+		var actors: Array[ReplicatedActor3D] = []
+		var offset := 0.0
+		for visual: int in visuals:
+			var actor := _spawn({str(part): visual}, offset)
+			var diag: Dictionary = actor.equipment_diagnostics()
+			_expect(int(diag.get("native", 0)) > 0 and int(diag.get("fallback", 0)) == 0,
+				"%d:%d attaches natively" % [part, visual])
+			actors.append(actor)
+			offset += 1.6
+		await _settle(actors)
+		await _capture_row(actors, "%sfit-%s.png" % [prefix, slot],
+			"%s: generated %d:%s at idle" % [slot, part, str(visuals)])
+		for actor: ReplicatedActor3D in actors:
+			actor.queue_free()
 		await process_frame
 
-	# Freeze every skeleton at its rest pose first: at rest the retarget
-	# collapses to identity, so a piece that is already wrong here has wrong
-	# binds, while a piece that is right here but wrong once idle plays has
-	# weights that break under pose.
-	var actors: Array[Node] = []
-	for child: Node in stage.get_children():
-		if child is ReplicatedActor3D:
-			actors.append(child)
-	for actor_node: Node in actors:
-		var actor := actor_node as ReplicatedActor3D
-		if actor.animation_player != null:
-			actor.animation_player.stop()
-		var skeleton: Skeleton3D = actor.get_skeleton()
-		if skeleton != null:
-			skeleton.reset_bone_poses()
-	for _settle: int in range(4):
-		await process_frame
-	for actor_node: Node in actors:
-		_audit_skinning(actor_node as ReplicatedActor3D)
-	pair_x = 0.0
-	for slot: String in slots:
-		var centre := Vector3(pair_x, 0.95, 0.0)
-		camera.global_position = centre + Vector3(0.0, 0.45, 3.4)
-		camera.look_at(centre, Vector3.UP)
-		for _settle: int in range(3):
-			await process_frame
-		await _capture("equipfit-%s-rest.png" % slot,
-			"%s at skeleton rest pose: authored (left) vs generated (right)" % slot)
-		pair_x += 5.0
-
-	for actor_node: Node in actors:
-		var actor := actor_node as ReplicatedActor3D
-		actor.play_action(&"idle")
-	for _settle: int in range(24):
-		await process_frame
-
-	pair_x = 0.0
-	for slot: String in slots:
-		var centre := Vector3(pair_x, 0.95, 0.0)
-		camera.global_position = centre + Vector3(0.0, 0.45, 3.4)
-		camera.look_at(centre, Vector3.UP)
-		for _settle: int in range(3):
-			await process_frame
-		await _capture("equipfit-%s-%s.png" % [OS.get_environment("ELORIA_FIT_RACE"), slot] if not OS.get_environment("ELORIA_FIT_RACE").is_empty() else "equipfit-%s.png" % slot,
-			"%s: authored (left) vs generated (right)" % slot)
-		var focus_part: int = int((PAIRS[slot] as Array)[0])
-		var focus_height := 0.55
-		if focus_part == 5:
-			focus_height = 1.25
-		elif focus_part == 3:
-			focus_height = 1.62
-		var close := Vector3(pair_x, focus_height, 0.0)
-		camera.global_position = close + Vector3(0.6, 0.25, 1.9)
-		camera.look_at(close, Vector3.UP)
-		for _settle: int in range(3):
-			await process_frame
-		await _capture("equipfit-%s-close.png" % slot,
-			"%s close-up: authored (left) vs generated (right)" % slot)
-		pair_x += 5.0
+	# A full generated kit, framed close, front and three-quarter.
+	var worn := {}
+	for part_key: int in KIT:
+		worn[str(part_key)] = KIT[part_key]
+	var hero := _spawn(worn, 0.0)
+	await _settle([hero])
+	for angle_name: String in ["front", "threequarter"]:
+		var yaw: float = 0.0 if angle_name == "front" else deg_to_rad(35.0)
+		await _frame_hero(hero, yaw, "%skit-%s.png" % [prefix, angle_name],
+			"full generated kit (%s)" % angle_name)
 
 	print("rendered equipment fit evidence: ",
 		"PASS" if _failures == 0 else "FAIL (%d)" % _failures)
-	stage.queue_free()
-	main.queue_free()
+	_stage.queue_free()
+	_main.queue_free()
 	await process_frame
 	quit(_failures)
 
-## CPU cross-check of what the renderer should be drawing: with the skeleton
-## frozen at rest, every bind composed with its bone's pose must be identity,
-## and a CPU-skinned marker vertex must land exactly on its authored position.
-func _audit_skinning(actor: ReplicatedActor3D) -> void:
-	var skeleton: Skeleton3D = actor.get_skeleton()
-	if skeleton == null:
-		return
-	for child: Node in skeleton.get_children():
-		var clone := child as MeshInstance3D
-		if clone == null or not clone.has_meta("native_equipment"):
+func _spawn(visuals: Dictionary, x: float) -> ReplicatedActor3D:
+	var actor := ReplicatedActor3D.new()
+	_stage.add_child(actor)
+	_next_id += 1
+	actor.configure({
+		"actor_id": _next_id, "x": 0, "y": 0, "rotation": 0, "kind": 1,
+		"name": "fit", "appearance": {}, "equipment_visuals": visuals,
+	}, _adapter, _model_config, _animation_config, _equipment_config)
+	actor.server_target = Vector3(x, 0.0, 0.0)
+	actor.global_position = actor.server_target
+	actor.rotation.y = 0.0  # face the +z camera: fronts, not backs
+	return actor
+
+func _settle(actors: Array) -> void:
+	for actor: ReplicatedActor3D in actors:
+		actor.play_action(&"idle")
+	for _f: int in range(24):
+		await process_frame
+
+func _bounds(actors: Array) -> AABB:
+	var bounds := AABB()
+	var found := false
+	for actor: ReplicatedActor3D in actors:
+		var model: Node = actor.get_node_or_null("NativeModel")
+		if model == null:
 			continue
-		var skin: Skin = clone.skin
-		if skin == null:
-			print("AUDIT %s: no skin (socketed)" % clone.name)
-			continue
-		var worst := 0.0
-		var worst_bone := ""
-		for index: int in range(skin.get_bind_count()):
-			var bone_name: String = skin.get_bind_name(index)
-			var bone: int = skeleton.find_bone(bone_name)
-			if bone < 0:
-				print("AUDIT %s: bind %d name %s NOT FOUND" % [clone.name, index, bone_name])
+		for mesh: Node in model.find_children("*", "MeshInstance3D", true, false):
+			var vi := mesh as VisualInstance3D
+			if vi == null or not vi.visible:
 				continue
-			var product: Transform3D = skeleton.get_bone_global_pose(bone) * skin.get_bind_pose(index)
-			var drift: float = product.origin.length()
-			drift = maxf(drift, (product.basis.x - Vector3.RIGHT).length())
-			drift = maxf(drift, (product.basis.y - Vector3.UP).length())
-			drift = maxf(drift, (product.basis.z - Vector3.BACK).length())
-			if drift > worst:
-				worst = drift
-				worst_bone = bone_name
-		var arrays: Array = clone.mesh.surface_get_arrays(0)
-		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
-		var vertex_bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
-		var vertex_weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
-		var marker := 0
-		for index: int in range(vertices.size()):
-			if absf(vertices[index].x) > absf(vertices[marker].x):
-				marker = index
-		var skinned := Vector3.ZERO
-		var weight_sum := 0.0
-		for slot: int in range(4):
-			var bind: int = vertex_bones[marker * 4 + slot]
-			var weight: float = vertex_weights[marker * 4 + slot]
-			weight_sum += weight
-			var bone: int = skeleton.find_bone(skin.get_bind_name(bind))
-			skinned += weight * (skeleton.get_bone_global_pose(bone)
-				* skin.get_bind_pose(bind) * vertices[marker])
-		print("AUDIT %s: worst pose*bind drift %.6f at %s; marker v%d authored %s cpu-skinned %s wsum %.4f" % [
-			clone.name, worst, worst_bone, marker,
-			vertices[marker], skinned, weight_sum])
+			var box: AABB = vi.global_transform * vi.get_aabb()
+			bounds = box if not found else bounds.merge(box)
+			found = true
+	return bounds if found else AABB(Vector3.ZERO, Vector3.ONE)
+
+func _capture_row(actors: Array, name: String, description: String) -> void:
+	var b: AABB = _bounds(actors)
+	var centre: Vector3 = b.get_center()
+	var radius: float = maxf(b.size.x, b.size.y) * 0.62
+	_camera.global_position = centre + Vector3(0.0, 0.0, radius) + Vector3(0.0, 0.1, 0.0)
+	_camera.look_at(centre, Vector3.UP)
+	for _f: int in range(3):
+		await process_frame
+	await _capture(name, description)
+
+func _frame_hero(actor: ReplicatedActor3D, yaw: float, name: String,
+		description: String) -> void:
+	# Actor faces the +z camera; the three-quarter orbits the camera, not the
+	# actor, so the idle pose is seen from the front-ish.
+	var b: AABB = _bounds([actor])
+	var centre: Vector3 = b.get_center()
+	var radius: float = maxf(b.size.length() * 0.5, 0.9)
+	_camera.global_position = centre + Vector3(sin(yaw), 0.12, cos(yaw)) * radius * 2.1
+	_camera.look_at(centre, Vector3.UP)
+	for _f: int in range(3):
+		await process_frame
+	await _capture(name, description)
 
 func _capture(name: String, description: String) -> void:
 	await process_frame
