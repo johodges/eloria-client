@@ -2981,13 +2981,24 @@ class EquipmentGLB:
         return len(self.doc["materials"]) - 1
 
     def primitive(self, positions, normals, uvs, indices, material, *,
-                  joints=None, weights=None) -> dict:
+                  joints=None, weights=None, weight_floats=False) -> dict:
         attributes = {
             "POSITION": self.accessor(positions.astype("float32"), "VEC3",
                                       target=34962, bounds=True),
             "NORMAL": self.accessor(normals.astype("float32"), "VEC3", target=34962),
             "TEXCOORD_0": self.accessor(uvs.astype("float32"), "VEC2", target=34962)}
-        if joints is not None:
+        if joints is not None and weight_floats:
+            # For geometry that must deform bit-identically with another mesh
+            # -- a torso underlayer carrying the body's own blend -- byte
+            # quantisation is a real error: half a step of 1/255 opens a
+            # millimetre at a bent elbow, and a needle of whatever the layer
+            # was hiding comes through it.
+            attributes["JOINTS_0"] = self.accessor(joints.astype("uint8"), "VEC4",
+                                                   target=34962)
+            attributes["WEIGHTS_0"] = self.accessor(
+                np.asarray(weights, dtype=np.float64).astype("float32"), "VEC4",
+                target=34962)
+        elif joints is not None:
             # The shared rig has 65 joints, so byte indices and normalised byte
             # weights are exact here and save a third of the vertex payload.
             quantised = np.round(np.asarray(weights, dtype=np.float64) * 255.)
