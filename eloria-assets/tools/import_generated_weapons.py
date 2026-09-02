@@ -91,31 +91,165 @@ FIRST_IMAGE_ID = 374
 #: (weapon 113, shield 105) so restoring those models could not collide.
 FIRST_VISUAL = {0: 114, 1: 106}
 
-#: emu, damage low/high, accuracy for the weapon classes; emu, armour low/high,
-#: defense for the shields.  Same shape of ladder the armour finishes use, so a
-#: generated weapon is worth about what its class implies rather than whatever
-#: the concept art happened to be called.
+#: emu, damage low/high, accuracy, defense for the weapon classes; emu, armour
+#: low/high, defense, accuracy for the shields.  The scale is Eternal Lands'
+#: (damage in the single digits to the twenties, modifiers a few points either
+#: way), and the classes divide it the way EL's families do: one-handed
+#: weapons pay for their free shield hand with modest damage, two-handed
+#: weapons hit hardest in their own specialty and pay for it somewhere else --
+#: a greatsword swings past your own guard (defense), a maul is slow to line
+#: up (accuracy), a polearm keeps its point between you and the enemy
+#: (defense bonus) but is clumsy up close (accuracy).
 WEAPON_STATS = {
-    "dagger": (3, (2, 6), 2),
-    "sword": (8, (4, 12), 1),
-    "greatsword": (16, (8, 20), 0),
-    "axe": (9, (5, 14), 0),
-    "greataxe": (15, (8, 18), -1),
-    "mace": (8, (4, 13), 0),
-    "maul": (17, (8, 19), -1),
-    "spear": (11, (6, 15), 1),
-    "polearm": (14, (7, 17), 0),
-    "staff": (7, (3, 9), 1),
-    "bow": (6, (5, 14), 2),
-    "crossbow": (10, (7, 16), 1),
-    "thrown": (2, (3, 8), 2),
-    "wand": (2, (2, 7), 2),
-    "fist": (4, (3, 9), 2),
-    "whip": (6, (4, 11), 1),
+    "dagger": (3, (2, 6), 3, 0),
+    "sword": (8, (4, 11), 2, 1),
+    "axe": (9, (5, 13), 0, 0),
+    "mace": (8, (4, 12), 1, 0),
+    "wand": (2, (2, 5), 2, 0),
+    "thrown": (2, (3, 8), 2, 0),
+    "fist": (4, (3, 8), 2, 1),
+    "whip": (6, (4, 10), 1, 0),
+    # Two-handed: the specialty is strong and the trade-off is explicit.
+    "greatsword": (16, (10, 22), -1, -2),
+    "greataxe": (15, (12, 24), -2, -3),
+    "maul": (17, (11, 25), -3, -3),
+    "spear": (11, (7, 16), 1, 1),
+    "polearm": (14, (9, 20), -1, 2),
+    "staff": (7, (4, 10), 0, 3),
+    "bow": (6, (6, 16), 2, -2),
+    "crossbow": (10, (9, 20), 1, -2),
 }
+
+#: Extra swing weight behind a true two-handed blow: crits land harder.  Reach
+#: classes (spear, polearm, staff) and aimed classes (bow, crossbow) already
+#: take their benefit as defense or accuracy instead.
+TWO_HANDED_CRIT = {"greatsword": 3, "greataxe": 4, "maul": 5}
+
 SHIELD_STATS = {
-    "shield": (10, (2, 8), 2),
-    "greatshield": (16, (3, 12), 3),
+    "shield": (10, (2, 7), 2, 0),
+    "greatshield": (16, (4, 11), 3, -1),
+}
+
+#: Which classes loose ammunition rather than swing.  The item declares the
+#: class it fires so eloria's own catalogue arms the ranging tables without an
+#: entry in the shared Eternal Lands ones (eloria/ranging.py).
+AMMUNITION_OF = {"bow": "arrow", "crossbow": "bolt"}
+
+
+def missile_speed(kind: str, tier: int) -> int:
+    """EL firing-speed values: reload is (40 - speed)/10 seconds.
+
+    The trade follows the Eternal Lands bow ladder: the harder a launcher
+    hits (tier), the slower it cycles, and a crossbow always cycles slower
+    than a bow of its rank.
+    """
+    if kind == "bow":
+        return 30 - 2 * tier
+    if kind == "crossbow":
+        return 24 - tier
+    return 0
+
+#: Design tiers.  2 is honest regional work and the default; 1 is militia and
+#: frontier kit; 3 is knightly or otherwise refined; 4 is arcane or exotic
+#: mechanism; 5 is the named relics.  Rarer is better: the tier widens the
+#: damage range, and from tier 4 the piece picks up a point of accuracy.
+DEFAULT_TIER = 2
+TIERS = {
+    "001_militia_arming_sword": 1,
+    "003_frontier_cutlass": 1,
+    "011_woodsmans_hatchet": 1,
+    "021_militia_short_spear": 1,
+    "022_throwing_javelin": 1,
+    "041_militia_pike": 1,
+    "046_iron_sledgehammer": 1,
+    "049_studded_frontier_club": 1,
+    "050_fighting_quarterstaff": 1,
+    "061_wooden_round_shield": 1,
+    "040_frontier_voulge": 1,
+    "075_frontier_barricade_shield": 1,
+    "002_knightly_cavalry_sword": 3,
+    "010_swept_hilt_rapier": 3,
+    "013_knightly_battle_axe": 3,
+    "018_chain_morningstar": 3,
+    "024_knightly_boar_spear": 3,
+    "025_hooked_dueling_spear": 3,
+    "031_knightly_greatsword": 3,
+    "032_highland_claymore": 3,
+    "033_flamberge_zweihander": 3,
+    "034_executioners_sword": 3,
+    "036_classic_halberd": 3,
+    "038_knightly_poleaxe": 3,
+    "047_lucerne_hammer": 3,
+    "048_knightly_great_maul": 3,
+    "053_siege_great_crossbow": 3,
+    "059_knightly_relic_banner_spear": 4,
+    "062_steel_rimmed_heater_shield": 3,
+    "063_norman_kite_shield": 3,
+    "065_rectangular_tower_shield": 3,
+    "066_crossbowmans_pavise": 3,
+    "068_legionary_scutum": 3,
+    "070_long_dueling_shield": 3,
+    "071_knightly_lion_shield": 3,
+    "020_arcane_crystal_cudgel": 4,
+    "029_arcane_focus_wand": 4,
+    "030_crescent_spellblade_sickle": 4,
+    "035_arcane_flame_greatblade": 4,
+    "054_clockwork_repeating_arbalest": 4,
+    "055_alchemical_hand_cannon": 4,
+    "056_arcane_double_staff": 4,
+    "057_amberwood_branch_bowblade": 4,
+    "058_sunmane_twin_crescent_glaive": 4,
+    "060_storm_tuning_fork_spear": 4,
+    "069_mechanical_lantern_shield": 4,
+    "074_arcane_crystal_shield": 4,
+    "076_polished_mirror_shield": 4,
+    "077_dragon_scale_shield": 4,
+    "078_ice_crystal_shield": 4,
+    "079_molten_forge_shield": 4,
+    "080_thorned_root_shield": 4,
+    "081_segmented_whip_sword": 4,
+    "084_lantern_flail": 4,
+    "086_double_ended_twinblade": 4,
+    "087_circular_ringblade": 4,
+    "090_folding_crescent_bow": 4,
+    "091_rune_battle_gauntlet": 4,
+    "092_alchemist_cannon": 4,
+    "093_crystal_prism_staff": 4,
+    "094_clockwork_saw_lance": 4,
+    "088_polarity_war_hammer": 5,
+    "089_gravity_anchor_weapon": 5,
+    "095_living_vine_bow": 5,
+    "096_phoenix_feather_spear": 5,
+    "097_void_glass_greatblade": 5,
+    "098_radiant_sun_disc_chakram": 5,
+    "099_echo_bell_hammer": 5,
+    "100_stormglass_shield_spear": 5,
+}
+
+#: Elemental and warding character read off the design itself, stated per stem
+#: so a piece's flavour is a decision rather than a substring accident.
+THEME_STATS = {
+    "020_arcane_crystal_cudgel": (("magic_damage", 2),),
+    "029_arcane_focus_wand": (("magic_damage", 2), ("max_ether", 4)),
+    "030_crescent_spellblade_sickle": (("magic_damage", 2),),
+    "035_arcane_flame_greatblade": (("heat_damage", 3),),
+    "056_arcane_double_staff": (("magic_damage", 2), ("max_ether", 6)),
+    "060_storm_tuning_fork_spear": (("magic_damage", 2),),
+    "074_arcane_crystal_shield": (("magic_protection", 3),),
+    "076_polished_mirror_shield": (("magic_protection", 2),),
+    "077_dragon_scale_shield": (("heat_protection", 3),),
+    "078_ice_crystal_shield": (("cold_protection", 3),),
+    "079_molten_forge_shield": (("heat_protection", 3),),
+    "080_thorned_root_shield": (("critical_to_damage", 1),),
+    "088_polarity_war_hammer": (("magic_damage", 3),),
+    "089_gravity_anchor_weapon": (("critical_to_damage", 2),),
+    "093_crystal_prism_staff": (("magic_damage", 3), ("max_ether", 8)),
+    "095_living_vine_bow": (("perception_bonus", 2),),
+    "096_phoenix_feather_spear": (("heat_damage", 3),),
+    "097_void_glass_greatblade": (("magic_damage", 4),),
+    "098_radiant_sun_disc_chakram": (("heat_damage", 2),),
+    "099_echo_bell_hammer": (("magic_damage", 2), ("critical_to_hit", 2)),
+    "100_stormglass_shield_spear": (("magic_damage", 2), ("magic_protection", 2)),
 }
 
 #: Which classes are held in one hand.  ``both_hands`` is a weapon slot on the
@@ -362,19 +496,41 @@ def roster() -> list[Piece]:
     return pieces
 
 
+def design_tier(stem: str) -> int:
+    return TIERS.get(stem, DEFAULT_TIER)
+
+
 def item_block(piece: Piece) -> str:
+    stem = piece.source.stem
+    tier = design_tier(stem)
     shield = piece.kind in SHIELD_STATS
+    themed = list(THEME_STATS.get(stem, ()))
     if shield:
-        emu, (low, high), defense = SHIELD_STATS[piece.kind]
-        rows = ["armor: %d/%d" % (low, high), "damage: 0/0", "accuracy: 0",
-                "defense: %d" % defense]
+        emu, (low, high), defense, accuracy = SHIELD_STATS[piece.kind]
+        low += max(0, tier - 2)
+        high += 2 * (tier - 1)
+        if tier >= 4:
+            defense += 1
+        rows = ["armor: %d/%d" % (low, high), "damage: 0/0",
+                "accuracy: %d" % accuracy, "defense: %d" % defense]
         category, slot = "Armor", "left_hand"
     else:
-        emu, (low, high), accuracy = WEAPON_STATS[piece.kind]
+        emu, (low, high), accuracy, defense = WEAPON_STATS[piece.kind]
+        low += max(0, tier - 2)
+        high += 2 * (tier - 1)
+        if tier >= 4:
+            accuracy += 1
         rows = ["armor: 0/0", "damage: %d/%d" % (low, high),
-                "accuracy: %d" % accuracy, "defense: 0"]
+                "accuracy: %d" % accuracy, "defense: %d" % defense]
+        crit = TWO_HANDED_CRIT.get(piece.kind, 0)
+        if crit:
+            themed.insert(0, ("critical_to_damage", crit))
         category = "Weapons"
         slot = "right_hand" if piece.kind in ONE_HANDED else "both_hands"
+    rows.extend("%s: %d" % (key, value) for key, value in themed if value)
+    if piece.kind in AMMUNITION_OF:
+        rows.append("ranged_ammunition: %s" % AMMUNITION_OF[piece.kind])
+        rows.append("missile_speed: %d" % missile_speed(piece.kind, tier))
     return "\n".join([
         "", "[item]",
         "name: %s" % piece.name,

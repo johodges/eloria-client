@@ -55,16 +55,56 @@ CLOSE_PY = "    # --- end generated armour set ---"
 #: nothing here is inside a range that test pins.
 FIRST_ITEM_ID = 1274
 
-#: What a piece of each finish is worth, as (emu, armour low/high, defense).
-#: The ladder is the one tools/sync_torso_items.py already established for the
-#: torso designs, so a generated piece is worth what an authored one of the
-#: same material is worth.
-FINISH_STATS = {
-    "cloth": (4, (0, 2), 0),
-    "leather": (8, (2, 8), -1),
-    "mail": (14, (3, 12), -2),
-    "plate": (18, (4, 16), -3),
+#: What a piece is worth is decided by three things: its finish (the material
+#: family -- emu and the armour base), its slot (a cuirass stops more than a
+#: boot), and its sheet's tier (militia kit up to legendary regalia).  The
+#: numbers stay on the Eternal Lands scale the old flat ladder used -- single
+#: digits per piece, a worn set in the twenties -- the tiers spread the sheets
+#: across that scale instead of stacking them all on one rung.
+FINISH_EMU = {"cloth": 4, "leather": 8, "mail": 14, "plate": 18}
+
+#: (armour low, armour high, defense) for a TORSO piece of the finish at
+#: tier 1; SLOT_SHARE scales the other slots down from it.
+FINISH_BASE = {
+    "cloth": (0, 2, 0),
+    "leather": (2, 6, -1),
+    "mail": (3, 9, -2),
+    "plate": (5, 12, -3),
 }
+
+#: How much of the torso's protection each part carries (part id -> share).
+SLOT_SHARE = {5: 1.0, 4: 0.65, 3: 0.55, 6: 0.45}
+
+#: Sheet tiers.  1 is field kit anyone drills in, 5 is regalia with a name.
+#: Rarer gear is better gear: the tier widens the armour range, and from
+#: tier 4 the piece is balanced enough to shed a point of defense penalty.
+TIER_COMMON, TIER_STURDY, TIER_FINE, TIER_SUPERIOR, TIER_LEGENDARY = 1, 2, 3, 4, 5
+
+#: Sheet themes that carry stats beyond armour.  Arcane work channels the
+#: wearer (ether and magic protection); legendary pieces are simply better
+#: made and harder to kill in.
+THEME_EXTRAS = {
+    "arcane": lambda tier: (
+        [("magic_protection", max(0, tier - 2)),
+         ("max_ether", 4 * max(0, tier - 2))] if tier >= 3 else []),
+    "legendary": lambda tier: (
+        [("max_health", 4 * max(0, tier - 2))] if tier >= 3 else []),
+}
+
+
+def finish_stats(finish: str, part: int, tier: int, theme: str):
+    """(emu, armour low/high, defense, extras) on the Eternal Lands scale."""
+    base_low, base_high, base_defense = FINISH_BASE[finish]
+    share = SLOT_SHARE[part]
+    low = int(round(base_low * share)) + max(0, tier - 2)
+    high = int(round(base_high * share)) + 2 * (tier - 1)
+    defense = int(round(base_defense * share))
+    if tier >= TIER_SUPERIOR and defense < 0:
+        defense += 1
+    extras = list(THEME_EXTRAS.get(theme, lambda _: [])(tier))
+    if theme == "legendary":
+        low, high = low + 1, high + 2
+    return FINISH_EMU[finish], (low, high), defense, extras
 
 #: Where the set's inventory icons start.  Each piece gets its own icon --
 #: rendered from its mesh by generate_models/equipment_icons and packed into
@@ -77,26 +117,27 @@ FIRST_IMAGE_ID = 118
 ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"]
 
 #: One row per concept sheet: the stem it generated under, what the pieces are,
-#: and where their visual ids begin.  The ranges start above every id the
-#: registry already uses (helmet 108, legs 170, body 183, boots 191) and stay
-#: inside a byte, which is all ACTOR_WEAR_ITEM gives a visual.
+#: where their visual ids begin, the finish, and the sheet's tier and theme.
+#: The ranges start above every id the registry already uses (helmet 108,
+#: legs 170, body 183, boots 191) and stay inside a byte, which is all
+#: ACTOR_WEAR_ITEM gives a visual.
 SHEETS = [
     ("Amberwood_Woodland_Armor_Concept_Sheet", "Amberwood Woodland Cuirass",
-     "amberwood_woodland_cuirass", "cuirass", 5, 184, "leather"),
+     "amberwood_woodland_cuirass", "cuirass", 5, 184, "leather", 2, ""),
     ("Amberwood_Woodland_Legwear_Concept_Sheet", "Amberwood Woodland Legguards",
-     "amberwood_woodland_legguards", "legs", 4, 171, "leather"),
+     "amberwood_woodland_legguards", "legs", 4, 171, "leather", 2, ""),
     ("Arcane_Fantasy_Boots_Concept_Sheet", "Arcane Fantasy Boots",
-     "arcane_fantasy_boots", "boots", 6, 192, "leather"),
+     "arcane_fantasy_boots", "boots", 6, 192, "leather", 4, "arcane"),
     ("Arcane_ethereal_headgear_design_sheet", "Arcane Ethereal Circlet",
-     "arcane_ethereal_circlet", "circlet", 3, 109, "cloth"),
+     "arcane_ethereal_circlet", "circlet", 3, 109, "cloth", 4, "arcane"),
     ("Eight_amberwood_forest_headgear_designs", "Amberwood Forest Helm",
-     "amberwood_forest_helm", "helm", 3, 117, "mail"),
+     "amberwood_forest_helm", "helm", 3, 117, "mail", 2, ""),
     ("Eight_amberwood_woodland_boot_designs", "Amberwood Woodland Boots",
-     "amberwood_woodland_boots", "boots", 6, 200, "leather"),
+     "amberwood_woodland_boots", "boots", 6, 200, "leather", 2, ""),
     ("Eight_arcane_leg_armor_designs", "Arcane Leg Armor",
-     "arcane_leg_armor", "legs", 4, 179, "plate"),
+     "arcane_leg_armor", "legs", 4, 179, "plate", 4, "arcane"),
     ("Eight_ceremonial_knight_leg_armor_designs", "Ceremonial Knight Greaves",
-     "ceremonial_knight_greaves", "legs", 4, 187, "plate"),
+     "ceremonial_knight_greaves", "legs", 4, 187, "plate", 4, ""),
     # The rest of the concept art, appended rather than inserted: `roster`
     # hands out item ids in this order, so a row added anywhere but the end
     # would renumber every piece below it and break the names the server
@@ -111,75 +152,76 @@ SHEETS = [
     # spare, so another leg sheet after this needs the range reclaimed rather
     # than extended.
     ("Eight_Legendary_Helms_of_Eloria", "Legendary Eloria Helm",
-     "legendary_eloria_helm", "helm", 3, 125, "plate"),
+     "legendary_eloria_helm", "helm", 3, 125, "plate", 5, "legendary"),
     ("Eight_grounded_militia_helmet_designs", "Militia Helmet",
-     "militia_helmet", "helm", 3, 133, "mail"),
+     "militia_helmet", "helm", 3, 133, "mail", 1, ""),
     ("Refined_knightly_headgear_concept_sheet", "Knightly Headgear",
-     "knightly_headgear", "helm", 3, 141, "mail"),
+     "knightly_headgear", "helm", 3, 141, "mail", 3, ""),
     ("Eight_frontier_hats_concept_sheet", "Frontier Hat",
-     "frontier_hat", "hood", 3, 149, "cloth"),
+     "frontier_hat", "hood", 3, 149, "cloth", 1, ""),
     ("Eight_leather_adventurer_headwear_designs", "Adventurer Headwear",
-     "adventurer_headwear", "hood", 3, 157, "leather"),
+     "adventurer_headwear", "hood", 3, 157, "leather", 2, ""),
     ("Sunmane_Steppe_Headgear_Collection", "Sunmane Steppe Headgear",
-     "sunmane_steppe_headgear", "hood", 3, 165, "leather"),
+     "sunmane_steppe_headgear", "hood", 3, 165, "leather", 2, ""),
 
     ("Eight_legendary_hero_armor_designs", "Legendary Hero Cuirass",
-     "legendary_hero_cuirass", "cuirass", 5, 192, "plate"),
+     "legendary_hero_cuirass", "cuirass", 5, 192, "plate", 5, "legendary"),
     ("Eight_refined_knightly_torso_armor_designs", "Knightly Torso Armor",
-     "knightly_torso_armor", "cuirass", 5, 200, "mail"),
+     "knightly_torso_armor", "cuirass", 5, 200, "mail", 3, ""),
     ("Militia_torso_armor_concept_sheet", "Militia Torso Armor",
-     "militia_torso_armor", "cuirass", 5, 208, "mail"),
+     "militia_torso_armor", "cuirass", 5, 208, "mail", 1, ""),
     ("Eloria_Arcane_Armor_Design_Sheet", "Eloria Arcane Armor",
-     "eloria_arcane_armor", "cuirass", 5, 216, "plate"),
+     "eloria_arcane_armor", "cuirass", 5, 216, "plate", 4, "arcane"),
     ("Eight_leather_ranger_torso_designs", "Leather Ranger Torso",
-     "leather_ranger_torso", "cuirass", 5, 224, "leather"),
+     "leather_ranger_torso", "cuirass", 5, 224, "leather", 2, ""),
     ("Eight_Eloria_frontier_shirt_designs", "Eloria Frontier Shirt",
-     "eloria_frontier_shirt", "shirt", 5, 232, "cloth"),
+     "eloria_frontier_shirt", "shirt", 5, 232, "cloth", 1, ""),
     ("Sunmane_Steppe_Shirts_and_Armor", "Sunmane Steppe Shirt",
-     "sunmane_steppe_shirt", "shirt", 5, 240, "cloth"),
+     "sunmane_steppe_shirt", "shirt", 5, 240, "cloth", 1, ""),
 
     ("Eight_legendary_fantasy_leg_armor_designs", "Legendary Leg Armor",
-     "legendary_leg_armor", "legs", 4, 195, "plate"),
+     "legendary_leg_armor", "legs", 4, 195, "plate", 5, "legendary"),
     ("Eight_Refined_Knightly_Greave_Designs", "Knightly Greaves",
-     "knightly_greaves", "legs", 4, 203, "mail"),
+     "knightly_greaves", "legs", 4, 203, "mail", 3, ""),
     ("Eight_medieval_militia_greaves", "Militia Greaves",
-     "militia_greaves", "legs", 4, 211, "mail"),
+     "militia_greaves", "legs", 4, 211, "mail", 1, ""),
     ("Eloria_Militia_Leg_Armor_Variants", "Militia Leg Armor",
-     "militia_leg_armor", "legs", 4, 219, "mail"),
+     "militia_leg_armor", "legs", 4, 219, "mail", 1, ""),
     ("Eight_rugged_ranger_legwear_designs", "Rugged Ranger Legwear",
-     "rugged_ranger_legwear", "legs", 4, 227, "leather"),
+     "rugged_ranger_legwear", "legs", 4, 227, "leather", 2, ""),
     ("Sunmane_Steppe_Legwear_Concept_Sheet", "Sunmane Steppe Legwear",
-     "sunmane_steppe_legwear", "legs", 4, 235, "leather"),
+     "sunmane_steppe_legwear", "legs", 4, 235, "leather", 2, ""),
     ("Eight_Humble_Frontier_Pants_Designs", "Humble Frontier Pants",
-     "humble_frontier_pants", "pants", 4, 243, "cloth"),
+     "humble_frontier_pants", "pants", 4, 243, "cloth", 1, ""),
 
     ("Legendary_Eloria_Fantasy_Boots_Concept_Sheet", "Legendary Eloria Boots",
-     "legendary_eloria_boots", "boots", 6, 208, "plate"),
+     "legendary_eloria_boots", "boots", 6, 208, "plate", 5, "legendary"),
     ("Eight_Sunmane_Steppe_Boot_Designs", "Sunmane Steppe Boots",
-     "sunmane_steppe_boots", "boots", 6, 216, "leather"),
+     "sunmane_steppe_boots", "boots", 6, 216, "leather", 2, ""),
     ("Eight_frontier_boot_designs", "Frontier Boots",
-     "frontier_boots", "boots", 6, 224, "leather"),
+     "frontier_boots", "boots", 6, 224, "leather", 1, ""),
     ("Eight_leather_adventurer_boot_designs", "Leather Adventurer Boots",
-     "leather_adventurer_boots", "boots", 6, 232, "leather"),
+     "leather_adventurer_boots", "boots", 6, 232, "leather", 2, ""),
 ]
 
 
 class Piece:
     __slots__ = ("source", "slug", "name", "kind", "part", "visual", "finish",
-                 "item_id", "image_id")
+                 "item_id", "image_id", "tier", "theme")
 
     def __init__(self, source, slug, name, kind, part, visual, finish,
-                 item_id, image_id):
+                 item_id, image_id, tier, theme):
         self.source, self.slug, self.name = source, slug, name
         self.kind, self.part, self.visual = kind, part, visual
         self.finish, self.item_id, self.image_id = finish, item_id, image_id
+        self.tier, self.theme = tier, theme
 
 
 def roster() -> list[Piece]:
     """Every generated piece, in a fixed order so ids never move."""
     pieces: list[Piece] = []
     item_id = FIRST_ITEM_ID
-    for stem, label, slug, kind, part, first_visual, finish in SHEETS:
+    for stem, label, slug, kind, part, first_visual, finish, tier, theme in SHEETS:
         sources = sorted(GENERATED.glob(stem + "__*.glb"))
         # Only sources that have been through the preprocessing pass (which
         # leaves the raw meshy export beside them as ``.glb.orig``): a raw
@@ -200,13 +242,14 @@ def roster() -> list[Piece]:
                 source, "%s_%02d" % (slug, index + 1),
                 "%s %s" % (label, ROMAN[index]), kind, part,
                 first_visual + index, finish, item_id,
-                FIRST_IMAGE_ID + (item_id - FIRST_ITEM_ID)))
+                FIRST_IMAGE_ID + (item_id - FIRST_ITEM_ID), tier, theme))
             item_id += 1
     return pieces
 
 
 def item_block(piece: Piece) -> str:
-    emu, (low, high), defense = FINISH_STATS[piece.finish]
+    emu, (low, high), defense, extras = finish_stats(
+        piece.finish, piece.part, piece.tier, piece.theme)
     slot = {3: "head", 4: "legs", 5: "body", 6: "feet"}[piece.part]
     lines = ["", "[item]",
              "name: %s" % piece.name,
@@ -221,6 +264,7 @@ def item_block(piece: Piece) -> str:
              "armor: %d/%d" % (low, high)]
     if defense:
         lines.append("defense: %d" % defense)
+    lines.extend("%s: %d" % (key, value) for key, value in extras if value)
     lines.append("[/item]")
     return "\n".join(lines)
 
