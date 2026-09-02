@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "fallbackAction": "idle",
   "strideMetresPerSecond": {
-    "walk": 0.516,
+    "walk": 0.595,
     "run": 2.666
   },
   "facingOffsets": {
