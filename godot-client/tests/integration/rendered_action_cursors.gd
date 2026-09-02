@@ -143,6 +143,29 @@ func _run() -> void:
 	_check_spot("ground-spell-pending", ground, "", MouseCursors.WAND, [])
 	app_state.set("pending_spell_target", "")
 
+	# A bag dropped at your own feet: the sack outranks your own body for the
+	# pointer and for the click - you are not a click target for yourself -
+	# while a pending actor spell still claims you.
+	var self_spot: Vector3 = _actor_position(99)
+	_check_spot("self-no-underfoot-bag", self_spot, "self", MouseCursors.EYE, [])
+	(app_state.get("ground_bags") as Dictionary)[8] = {"bag_id": 8, "x": 58, "y": 58}
+	_main.call("_sync_ground_bags")
+	_check_spot("self-underfoot-bag", self_spot, "bag", MouseCursors.PICK, [])
+	app_state.set("pending_spell_target", "actor")
+	_check_spot("self-underfoot-bag-spell", self_spot, "self", MouseCursors.WAND, [])
+	app_state.set("pending_spell_target", "")
+	var self_click := InputEventMouseButton.new()
+	self_click.button_index = MOUSE_BUTTON_LEFT
+	self_click.pressed = true
+	var world_viewport: SubViewport = _main.get_node(
+		"GameView/ViewportContainer/Viewport") as SubViewport
+	_main.call("_handle_world_click", self_click,
+		world_viewport.get_camera_3d().unproject_position(self_spot))
+	_expect(int((app_state.get("ground_bag") as Dictionary).get("bag_id", -1)) == 8,
+		"clicking your own body with a bag below begins opening that bag")
+	(app_state.get("ground_bags") as Dictionary).erase(8)
+	_main.call("_sync_ground_bags")
+
 	await _capture_annotated("action-cursors.png", annotations)
 	_finish()
 
@@ -226,6 +249,7 @@ func _finish() -> void:
 		app_state.set("local_actor_id", -1)
 		app_state.set("current_map", "")
 		app_state.set("pending_spell_target", "")
+		app_state.call("close_ground_bag")
 		(app_state.get("actors") as Dictionary).clear()
 		(app_state.get("ground_bags") as Dictionary).clear()
 		(app_state.get("map_objects") as Dictionary).clear()

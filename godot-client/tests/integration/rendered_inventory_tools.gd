@@ -73,6 +73,28 @@ func _run() -> void:
 	await _capture("inventory-inspect-card.png")
 	app_state.call("close_item_detail")
 
+	# Ctrl+click: the default action becomes the drop - the whole stack is
+	# sent to the ground for the bag at your feet, whatever tool is in hand.
+	var hold_ctrl := InputEventKey.new()
+	hold_ctrl.keycode = KEY_CTRL
+	hold_ctrl.pressed = true
+	Input.parse_input_event(hold_ctrl)
+	await process_frame
+	main.call("_on_inventory_slot_pressed", 0)
+	var description: RichTextLabel = main.get_node("%InventoryDescription") as RichTextLabel
+	_expect(description.text.begins_with("Dropped")
+		or description.text.begins_with("Could not drop"),
+		"Ctrl+click routed the click to the drop, not to the tool in hand")
+	var release_ctrl := InputEventKey.new()
+	release_ctrl.keycode = KEY_CTRL
+	release_ctrl.pressed = false
+	Input.parse_input_event(release_ctrl)
+	await process_frame
+	main.call("_on_inventory_slot_pressed", 0)
+	_expect(description.text.contains("Asking about slot 1"),
+		"a plain click still runs the tool in hand")
+	main.call("_cancel_carry")
+
 	# The bag window at its own size, beside an inventory that keeps its own.
 	app_state.set("ground_bag", {"open": true, "bag_id": 4, "items": {
 		0: {"image_id": 3, "quantity": 12, "slot": 0},
