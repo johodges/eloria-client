@@ -437,8 +437,11 @@ def build_materials(size: int = 512, hero: int = 1024, seed: int = 20260827
                                        double_sided=True)
 
     # -- sapphire beacon crystal (emissive) --
-    facet, _, cell = worley(S, 6, rng)
-    edges = np.clip(1.0 - facet * 8.0, 0, 1)
+    # The bright veins follow the seams between facets. Cut from the nearest
+    # distance they lit a disc in the middle of each one instead, which is the
+    # same misreading the paving and the rubble carried.
+    facet, second, cell = worley(S, 6, rng)
+    edges = np.clip(1.0 - (second - facet) * 70.0, 0, 1)
     inner = fbm(S, 8, 5, rng)
     height = 0.5 + (1 - facet) * 0.4 + inner * 0.12
     core = np.array([0.129, 0.522, 0.980])
@@ -496,8 +499,8 @@ def build_materials(size: int = 512, hero: int = 1024, seed: int = 20260827
     # -- exposed cliff rock (terrain): isotropic, no directional banding --
     coarse = fbm(S, 4, 7, rng)
     detail = fbm(S, 13, 5, rng)
-    blocks, _, cell_id = worley(S, 8, rng)
-    crack = np.clip(1.0 - blocks * 12.0, 0, 1)
+    near, far, cell_id = worley(S, 8, rng)
+    crack = np.clip(1.0 - (far - near) * 55.0, 0, 1)
     height = 0.40 + coarse * 0.34 + detail * 0.26 - crack * 0.30
     facet = (cell_id % 37) / 36.0
     colour = tint(height, (0.400, 0.376, 0.345), coarse * 0.45 + detail * 0.30
