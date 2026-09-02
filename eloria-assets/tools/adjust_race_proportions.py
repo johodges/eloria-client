@@ -60,6 +60,20 @@ TORSO_TAPER = {
 }
 MOVED_ROOTS = ("clavicle_l", "clavicle_r")
 
+#: Even out the arm, the Eternal Lands way: the authored bicep is half
+#: again the forearm's girth (radii 0.074 vs 0.048) where the reference
+#: wears near-uniform tubes.  Radial scaling about each arm's own bone
+#: line, parametrized by the fraction along shoulder-to-wrist so both
+#: bodies work: the deltoid and bicep draw in, the forearm swells, the
+#: hand stays.  No joints move and no binds change -- the field is
+#: purely radial.
+ARM_BALANCE = {
+    "upper": 0.88,     # deltoid + bicep
+    "forearm": 1.18,
+    "blendLo": 0.50, "blendHi": 0.58,   # elbow crossfade, as fraction
+    "fadeLo": 0.85, "fadeHi": 1.00,     # back to 1.0 at the wrist
+}
+
 #: Sloped shoulders, the Eternal Lands way: the shoulder line falls away
 #: from the neck instead of running out as a square shelf.  Same recipe
 #: as the taper, turned vertical --
@@ -138,6 +152,103 @@ def _field_factory(spec):
         return -np.sign(x) * reach * (1.0 - factor)
 
     return dx
+
+
+def balance_arms(document, binary) -> bool:
+    spec = ARM_BALANCE
+    extras = document.setdefault("asset", {}).setdefault("extras", {})
+    current = float(extras.get("eloriaArmBalance", 0.0))
+    if abs(current - spec["upper"]) < 1e-6:
+        print("arm balance already %.2f -- nothing to do" % current)
+        return False
+    if abs(current) > 1e-6:
+        print("arm balance is %.2f, target %.2f: restore the GLB from git "
+              "first (balance edits do not compose)"
+              % (current, spec["upper"]))
+        raise SystemExit(1)
+
+    bin_len, bin_tag = struct.unpack_from("<I4s", binary, 0)
+    assert bin_tag[:3] == b"BIN", bin_tag
+    payload = 8
+
+    nodes = document["nodes"]
+    names = [n.get("name", "") for n in nodes]
+    globals_, parent = _matrices(document)
+
+    def joint(name):
+        for i, n in enumerate(names):
+            if n == name:
+                return globals_[i][:3, 3]
+        raise KeyError(name)
+
+    sides = {}
+    for side in ("l", "r"):
+        sides[side] = (joint("upperarm_" + side),
+                       joint("lowerarm_" + side),
+                       joint("hand_" + side))
+
+    def smoothstep(t):
+        t = min(max(t, 0.0), 1.0)
+        return 3 * t * t - 2 * t * t * t
+
+    def factor(u):
+        if u <= spec["blendLo"]:
+            f = spec["upper"]
+        elif u <= spec["blendHi"]:
+            f = spec["upper"] + (spec["forearm"] - spec["upper"]) * smoothstep(
+                (u - spec["blendLo"]) / (spec["blendHi"] - spec["blendLo"]))
+        elif u <= spec["fadeLo"]:
+            f = spec["forearm"]
+        else:
+            f = spec["forearm"] + (1.0 - spec["forearm"]) * smoothstep(
+                (u - spec["fadeLo"]) / (spec["fadeHi"] - spec["fadeLo"]))
+        return f
+
+    seen = set()
+    moved = 0
+    for node in nodes:
+        if "mesh" not in node or "skin" not in node:
+            continue
+        for prim in document["meshes"][node["mesh"]]["primitives"]:
+            acc_index = prim["attributes"]["POSITION"]
+            if acc_index in seen:
+                continue
+            seen.add(acc_index)
+            acc = document["accessors"][acc_index]
+            view = document["bufferViews"][acc["bufferView"]]
+            offset = (payload + view.get("byteOffset", 0)
+                      + acc.get("byteOffset", 0))
+            stride = view.get("byteStride", 12)
+            for v in range(acc["count"]):
+                at = offset + v * stride
+                x, y, z = struct.unpack_from("<3f", binary, at)
+                if y < 1.25:
+                    continue
+                side = "l" if x >= 0 else "r"
+                sh, el, wr = sides[side]
+                span = wr[0] - sh[0]
+                u = (x - sh[0]) / span if span > 1e-6 else -1.0
+                if u < 0.02 or u > 1.05:
+                    continue
+                f = factor(min(u, 1.0))
+                if abs(f - 1.0) < 1e-6:
+                    continue
+                if x < el[0] if side == "l" else x > el[0]:
+                    a, b = sh, el
+                else:
+                    a, b = el, wr
+                t = (x - a[0]) / (b[0] - a[0]) if abs(b[0] - a[0]) > 1e-9 else 0.0
+                cy = a[1] + t * (b[1] - a[1])
+                cz = a[2] + t * (b[2] - a[2])
+                ny = cy + (y - cy) * f
+                nz = cz + (z - cz) * f
+                struct.pack_into("<3f", binary, at, x, ny, nz)
+                moved += 1
+
+    extras["eloriaArmBalance"] = spec["upper"]
+    print("arm balance %.2f/%.2f: %d vertices scaled"
+          % (spec["upper"], spec["forearm"], moved))
+    return True
 
 
 def droop_shoulders(document, binary) -> bool:
@@ -388,6 +499,7 @@ def main() -> int:
     if not args.dry_run:
         tapered = taper_torso(document, binary)
         tapered = droop_shoulders(document, binary) or tapered
+        tapered = balance_arms(document, binary) or tapered
 
     if args.dry_run:
         print("\nnothing written (--dry-run)")
