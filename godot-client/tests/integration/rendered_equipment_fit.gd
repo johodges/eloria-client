@@ -65,13 +65,17 @@ func _run() -> void:
 	var environment := WorldEnvironment.new()
 	environment.environment = Environment.new()
 	environment.environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	environment.environment.ambient_light_color = Color(0.42, 0.45, 0.5)
-	environment.environment.ambient_light_energy = 1.1
+	environment.environment.ambient_light_color = Color(0.8, 0.82, 0.86)
+	environment.environment.ambient_light_energy = 1.2
 	_stage.add_child(environment)
 	var key := DirectionalLight3D.new()
 	key.rotation_degrees = Vector3(-38.0, 142.0, 0.0)
 	key.light_energy = 1.5
 	_stage.add_child(key)
+	var fill := DirectionalLight3D.new()
+	fill.rotation_degrees = Vector3(-20.0, -40.0, 0.0)
+	fill.light_energy = 0.6
+	_stage.add_child(fill)
 	_camera = Camera3D.new()
 	_camera.current = true
 	_camera.fov = 40.0
@@ -106,7 +110,7 @@ func _run() -> void:
 	var hero := _spawn(worn, 0.0)
 	await _settle([hero])
 	for angle_name: String in ["front", "threequarter"]:
-		var yaw: float = 0.0 if angle_name == "front" else deg_to_rad(35.0)
+		var yaw: float = PI if angle_name == "front" else PI - deg_to_rad(35.0)
 		await _frame_hero(hero, yaw, "%skit-%s.png" % [prefix, angle_name],
 			"full generated kit (%s)" % angle_name)
 
@@ -127,7 +131,7 @@ func _spawn(visuals: Dictionary, x: float) -> ReplicatedActor3D:
 	}, _adapter, _model_config, _animation_config, _equipment_config)
 	actor.server_target = Vector3(x, 0.0, 0.0)
 	actor.global_position = actor.server_target
-	actor.rotation.y = 0.0  # face the +z camera: fronts, not backs
+	actor.rotation.y = 0.0  # faces the +z camera on this rig
 	return actor
 
 func _settle(actors: Array) -> void:
