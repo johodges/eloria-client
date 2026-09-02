@@ -41,20 +41,22 @@ var _smoothed_server_interval := 0.6
 ## tile direction the server named. See `_rendered_target_yaw`.
 var _travel_yaw_active := false
 var _travel_yaw := 0.0
-## Recent authoritative tile centres, newest last. The rendered facing is the
-## bearing of the net travel across the last `FACING_TRAIL_METRES` of them, not
-## of the single step that just arrived. A straight click-path that is not one
-## of the eight tile directions is walked as a zigzag of orthogonal and diagonal
-## steps; facing each step on its own swung the body up to 23 degrees to either
-## side of the line it was actually walking. The net over a couple of tiles is
-## the line itself, so the body points along it. See `_facing_anchor`.
+## The recent authoritative tile centres, newest last. The rendered facing is
+## the direction of the straight line least-squares-fitted through them, not the
+## bearing of the single step that just arrived. A straight click-path that is
+## not one of the eight tile directions is walked as a zigzag of orthogonal and
+## diagonal steps; facing each step on its own swung the body up to 23 degrees
+## to either side of the line it was actually walking. Every one of those tiles
+## still lies on the line the player asked for, off it only by the half-tile the
+## server rounded each to, so the best-fit line through a handful of them is that
+## line however shallow its angle - which the net of just the two ends is not,
+## being at the mercy of where the rounding fell on the ends. See `_fit_heading`.
 var _travel_history: PackedVector3Array = PackedVector3Array()
-## How far back along the recent path the facing bearing is measured. Four tiles
-## is long enough to average the lone diagonal steps that straighten a shallow
-## line - the ones that swung the body up to 23 degrees off its heading when it
-## faced each step alone - yet short enough that a real change of direction turns
-## the body within about four steps rather than being averaged away.
-const FACING_TRAIL_METRES := 3.0
+## How many recent tiles the line is fitted through. Six matches the run of
+## straight steps `actor_facing.gd` holds before it checks the facing, so the
+## fit is clean of the previous leg by the time a real turn must have settled,
+## and is enough tiles to pin a shallow line through the rounding.
+const FACING_FIT_SAMPLES := 6
 ## Whether the server says this actor is under the double-speed buff. The
 ## server paces a hastened actor at half the move interval but still names the
 ## ordinary walk commands, so the buff is the only thing that says an actor is
@@ -602,7 +604,10 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 			_smoothed_server_interval, arrival_margin,
 			minimum_segment_duration, maximum_segment_duration)
 		_travel_history.append(server_target)
-		_travel_yaw = travel_yaw(_facing_anchor(), server_target, _target_yaw)
+		if _travel_history.size() > FACING_FIT_SAMPLES:
+			_travel_history = _travel_history.slice(
+				_travel_history.size() - FACING_FIT_SAMPLES)
+		_travel_yaw = _fit_heading(_target_yaw)
 		_travel_yaw_active = true
 	_wake()
 	if dto.has("command") and resolver != null:
@@ -1432,22 +1437,43 @@ static func travel_yaw(from: Vector3, to: Vector3, fallback: float) -> float:
 		return fallback
 	return atan2(-travel.x, -travel.z)
 
-## The point the current bearing is measured from: the most recent past tile
-## that is at least `FACING_TRAIL_METRES` behind the target, or the oldest one
-## on record if the trail is not that long yet. Measuring the bearing from here
-## rather than from the immediately preceding tile is what averages a zigzagged
-## straight line into the straight line the player actually asked for. History
-## older than the chosen anchor is dropped, since nothing will read it again.
-func _facing_anchor() -> Vector3:
-	var target: Vector3 = _travel_history[_travel_history.size() - 1]
-	var anchor_index := 0
-	for index in range(_travel_history.size() - 2, -1, -1):
-		if _travel_history[index].distance_to(target) >= FACING_TRAIL_METRES:
-			anchor_index = index
-			break
-	if anchor_index > 0:
-		_travel_history = _travel_history.slice(anchor_index)
-	return _travel_history[0]
+## The bearing of the straight line least-squares-fitted through the recent
+## tiles in `_travel_history`, in the x-z ground plane. The line's direction is
+## the major axis of the tiles' scatter - the eigenvector of their 2x2 second-
+## moment matrix for the larger eigenvalue, which for a 2x2 is a closed form, no
+## iteration. Its sign is set from the net travel so the body faces along the
+## path rather than back down it; with fewer than two tiles, or none that differ,
+## the bearing is left as the caller's fallback (the server-named direction).
+func _fit_heading(fallback: float) -> float:
+	var count := _travel_history.size()
+	if count < 2:
+		return fallback
+	var mean_x := 0.0
+	var mean_z := 0.0
+	for point: Vector3 in _travel_history:
+		mean_x += point.x
+		mean_z += point.z
+	mean_x /= count
+	mean_z /= count
+	var sxx := 0.0
+	var szz := 0.0
+	var sxz := 0.0
+	for point: Vector3 in _travel_history:
+		var dx := point.x - mean_x
+		var dz := point.z - mean_z
+		sxx += dx * dx
+		szz += dz * dz
+		sxz += dx * dz
+	if sxx + szz < 0.000001:
+		return fallback
+	# Major-axis angle of a 2x2 symmetric second-moment matrix.
+	var axis := 0.5 * atan2(2.0 * sxz, sxx - szz)
+	var direction := Vector2(cos(axis), sin(axis))  # (x, z)
+	var first: Vector3 = _travel_history[0]
+	var last: Vector3 = _travel_history[count - 1]
+	if direction.dot(Vector2(last.x - first.x, last.z - first.z)) < 0.0:
+		direction = -direction
+	return atan2(-direction.x, -direction.y)
 
 ## Where the body is pointed this frame. The authoritative facing is still
 ## `_target_yaw`; this only decides what is drawn while the actor is crossing
