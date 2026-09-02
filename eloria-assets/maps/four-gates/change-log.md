@@ -396,3 +396,48 @@ grid already refuses.
 **Not included:** the six Four Gates interiors still carry `metresPerTile: 0.25`.
 They are registered in the client but no server serves them yet, so there is no
 tile grid to migrate them onto — re-tiling them would mean inventing one.
+
+## 1.0.8 — the roads' paving
+
+Reported from the client: the street and avenue surfaces shade dark to light
+and back over and over down their length, which reads as banding rather than as
+stone.
+
+**Cause.** Two defects in the two paving materials in `texturing.py`, both of
+them in how the Worley cell field was read.
+
+The stone tone came from `(cell % 53) / 52`, meant as a per-flagstone hash.
+`worley` numbers its cells in raster order, and the street field has 7×7 = 49 of
+them, so the modulo is a no-op and the "hash" is the cell's row: the tile ramps
+smoothly from dark at one edge to light at the other. The avenue's 9×9 = 81
+cells wrap the divisor exactly once, giving a ramp and one hard step. The street
+tile spans 6.5 m, so that gradient repeated every 6.5 m of carriageway — a 1.6×
+swing in brightness, tile after tile, which is the banding as seen.
+
+The mortar came from `1 - dist × 11` on the *nearest* distance. That distance is
+zero at the cell's seed and largest at its rim, so thresholding it darkened a
+disc in the middle of every flagstone and left the seams between them bright:
+each stone carried a soft round shadow at its centre instead of a joint around
+its edge, over 31% of the street's area.
+
+**Fix.** `worley` now returns the second-nearest distance alongside the first,
+which is the form the other region toolkits already use (`order=1`). The gap
+between the two falls to zero along the seam between neighbouring cells, so the
+joint is cut from that instead and runs where mortar belongs. A `cell_hash`
+helper scatters cell ids over [0, 1) so neighbouring stones are uncorrelated,
+and the roads shade from it, tightened to 55% of its range so stones differ
+without checkerboarding.
+
+Tile-scale brightness drift across the street tile falls from 0.233 to 0.049 —
+what is left is the weathering noise, not a ramp — and the joints cover 9% of
+the surface as lines along the cell edges.
+
+The remaining 29 materials draw from the same generator in the same order and
+are **bit-identical** before and after; only `paving_road` and
+`paving_ceremonial` change. The rebuilt `world.glb` differs from its predecessor
+in exactly those six texture images: all 2,919 geometry and animation buffers,
+and the glTF structure, are unchanged, so the manifest and the walk grid are
+untouched.
+
+**Not included:** the six interiors floor their rooms with `paving_road` and
+still carry the old synthesis. Rebuilding them is a separate package pass.
