@@ -275,7 +275,7 @@ def recenter_world_x_axis(clip: WalkClip, sk: base.Skeleton, bone: str,
 
 
 def posture(clip: WalkClip, sk: base.Skeleton, shoulder_z: float,
-            hand_z: float | None, hand_x: dict) -> None:
+            hand_z: float | None, hand_x: dict | None) -> None:
     """Steer the clip's MEAN posture -- where the swing averages -- onto
     the standing pose's targets, side by side."""
     for side in ("l", "r"):
@@ -293,13 +293,13 @@ def posture(clip: WalkClip, sk: base.Skeleton, shoulder_z: float,
             return phase_mean(clip, sk, lambda g, s=side: float(
                 abs(sk.origin(g, "hand_" + s)[0])))
 
-        sign = -1.0 if side == "l" else 1.0
         steer_channel_mean(clip, sk, "clavicle_" + side, [0, 1, 0],
                            sh_mean, shoulder_z)
         if hand_z is not None:
             steer_channel_mean(clip, sk, arm, [1, 0, 0], hz_mean, hand_z)
-        steer_channel_mean(clip, sk, "lowerarm_" + side, [0, 0, 1],
-                           hx_mean, hand_x[side])
+        if hand_x is not None:
+            steer_channel_mean(clip, sk, "lowerarm_" + side, [0, 0, 1],
+                               hx_mean, hand_x[side])
 
 
 def adjust_run(js, data, bin_off, sk: base.Skeleton) -> list:
@@ -324,6 +324,45 @@ def adjust_run(js, data, bin_off, sk: base.Skeleton) -> list:
     return [(bone, clip.channels[bone]) for bone in edited]
 
 
+def sagittal_swing(clip: WalkClip, sk: base.Skeleton, bone: str) -> None:
+    """Flatten one channel's swing to the sagittal plane.
+
+    Each key's deviation from the channel's temporal mean is conjugated
+    into world space, reduced to its world-X (fore-aft) component, and
+    folded back -- the pendulum keeps its full swing but loses the
+    adduction that walked the hands left and right across the body.
+    """
+    ch = clip.channels[bone]
+    mean = mean_quat(ch["quats"])
+    mean_pose = {b: mean_quat(c["quats"]) for b, c in clip.channels.items()}
+    g = sk.fk(mean_pose, {})
+    G = g[sk.index[bone]][:3, :3]
+    for i in range(len(ch["quats"])):
+        dev = base.quat_mul(quat_conj(mean), ch["quats"][i])
+        axis, angle = axis_angle_of(dev)
+        world_axis = G @ axis
+        x_part = float(world_axis[0]) * np.degrees(angle)
+        dev_flat = base.mat_to_quat(
+            G.T @ base.quat_to_mat(base.axis_angle_quat([1, 0, 0], x_part))
+            @ G)
+        ch["quats"][i] = base.quat_mul(mean, dev_flat)
+
+
+def copy_idle_arm(clip: WalkClip, js, data, bin_off) -> None:
+    """Hold the walk's forearms and hands at the idle's exact
+    configuration: the elbow bend and the palm orientation are then the
+    same in both by construction, and nothing wobbles through the swing.
+    """
+    idle_local, _ = base.sampled_idle(js, data, bin_off)
+    for bone in ("lowerarm_l", "lowerarm_r", "hand_l", "hand_r"):
+        value = idle_local.get(bone)
+        if value is None:
+            continue
+        ch = clip.channels[bone]
+        for i in range(len(ch["quats"])):
+            ch["quats"][i] = np.asarray(value, dtype=np.float64)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="rework the shared Walk clip")
     ap.add_argument("--dry-run", action="store_true")
@@ -334,8 +373,8 @@ def main() -> int:
     clip = WalkClip(js, data, bin_off)
 
     edited = ["thigh_l", "thigh_r", "calf_l", "calf_r", "upperarm_l",
-              "upperarm_r", "lowerarm_l", "lowerarm_r", "spine_01",
-              "clavicle_l", "clavicle_r"]
+              "upperarm_r", "lowerarm_l", "lowerarm_r", "hand_l", "hand_r",
+              "spine_01", "clavicle_l", "clavicle_r"]
     shared = [b for b in edited if clip.channels[b]["shared"]]
     assert not shared, "shared accessors, unsafe to rewrite: %s" % shared
 
@@ -366,20 +405,17 @@ def main() -> int:
     for side in ("l", "r"):
         scale_channel(clip, "upperarm_" + side,
                       TARGET_ARM_AMP / max(before["armAmp"], 1e-6))
-    posture(clip, sk, TARGET_SHOULDER_Z, TARGET_HAND_Z_MEAN,
-            TARGET_HAND_X_MEAN)
-    # Elbows after the posture, then the hand widths once more -- but by
-    # TWISTING the forearm about the hanging arm's near-vertical axis,
-    # which moves the hand sideways without reopening the bend the elbow
-    # pass just set.
+    # Forearms and hands come straight from the idle -- same ten-degree
+    # elbow, same palms-to-the-body rotation, held constant through the
+    # cycle -- and the upper-arm swing flattens to the sagittal plane so
+    # the hands stop crossing the body.  Posture steers afterwards along
+    # world X only, which the flattening preserves.
+    copy_idle_arm(clip, js, data, bin_off)
     for side in ("l", "r"):
-        set_elbow(clip, sk, side, TARGET_ELBOW)
-    for side in ("l", "r"):
-        def hx_mean(s=side):
-            return phase_mean(clip, sk, lambda g: float(
-                abs(sk.origin(g, "hand_" + s)[0])))
-        steer_channel_mean(clip, sk, "lowerarm_" + side, [0, 1, 0],
-                           hx_mean, TARGET_HAND_X_MEAN[side])
+        sagittal_swing(clip, sk, "upperarm_" + side)
+    # hand_x deliberately None: the forearms belong to the idle copy now,
+    # and the width steer would twist the ten-degree elbow right back out.
+    posture(clip, sk, TARGET_SHOULDER_Z, TARGET_HAND_Z_MEAN, None)
 
     after = measures(clip, sk)
     report("after: ", after)
