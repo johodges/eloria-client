@@ -2298,6 +2298,623 @@
       "kind": "boots",
       "authoredFor": "luminous_male"
     },
+    "2:100": {
+      "scene": "res://assets/actors/native/equipment/amberwood_leaf_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male"
+    },
+    "2:101": {
+      "scene": "res://assets/actors/native/equipment/glasswarden_crystal_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male"
+    },
+    "2:102": {
+      "scene": "res://assets/actors/native/equipment/greyhaven_storm_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male"
+    },
+    "2:103": {
+      "scene": "res://assets/actors/native/equipment/orun_rider_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male"
+    },
+    "2:104": {
+      "scene": "res://assets/actors/native/equipment/ssarathi_frond_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male"
+    },
+    "2:105": {
+      "scene": "res://assets/actors/native/equipment/four_gates_guard_cape_native.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male"
+    },
+    "2:0": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "Black Cape",
+      "tint": [
+        [
+          44,
+          44,
+          48
+        ],
+        [
+          86,
+          86,
+          92
+        ],
+        [
+          38,
+          38,
+          40
+        ]
+      ]
+    },
+    "2:1": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "Blue Cape",
+      "tint": [
+        [
+          52,
+          76,
+          124
+        ],
+        [
+          104,
+          133,
+          186
+        ],
+        [
+          42,
+          53,
+          75
+        ]
+      ]
+    },
+    "2:2": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "Blue-Gray Cape",
+      "tint": [
+        [
+          84,
+          100,
+          122
+        ],
+        [
+          140,
+          156,
+          178
+        ],
+        [
+          57,
+          64,
+          74
+        ]
+      ]
+    },
+    "2:3": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "Brown Cape",
+      "tint": [
+        [
+          96,
+          70,
+          46
+        ],
+        [
+          146,
+          113,
+          76
+        ],
+        [
+          62,
+          50,
+          39
+        ]
+      ]
+    },
+    "2:4": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "Brown-Gray Cape",
+      "tint": [
+        [
+          104,
+          92,
+          80
+        ],
+        [
+          152,
+          140,
+          126
+        ],
+        [
+          66,
+          60,
+          55
+        ]
+      ]
+    },
+    "2:5": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "Gray Cape",
+      "tint": [
+        [
+          98,
+          100,
+          104
+        ],
+        [
+          148,
+          150,
+          155
+        ],
+        [
+          63,
+          64,
+          66
+        ]
+      ]
+    },
+    "2:6": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "Green Cape",
+      "tint": [
+        [
+          62,
+          92,
+          58
+        ],
+        [
+          108,
+          143,
+          98
+        ],
+        [
+          47,
+          60,
+          45
+        ]
+      ]
+    },
+    "2:7": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "Green-Gray Cape",
+      "tint": [
+        [
+          92,
+          106,
+          92
+        ],
+        [
+          140,
+          155,
+          138
+        ],
+        [
+          60,
+          67,
+          60
+        ]
+      ]
+    },
+    "2:8": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "Purple Cape",
+      "tint": [
+        [
+          92,
+          62,
+          124
+        ],
+        [
+          144,
+          108,
+          182
+        ],
+        [
+          60,
+          47,
+          75
+        ]
+      ]
+    },
+    "2:9": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "White Cape",
+      "tint": [
+        [
+          208,
+          206,
+          198
+        ],
+        [
+          240,
+          239,
+          234
+        ],
+        [
+          114,
+          113,
+          109
+        ]
+      ]
+    },
+    "2:11": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "Gold Cape",
+      "tint": [
+        [
+          178,
+          142,
+          58
+        ],
+        [
+          232,
+          200,
+          108
+        ],
+        [
+          100,
+          83,
+          45
+        ]
+      ]
+    },
+    "2:12": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "Red Cape",
+      "tint": [
+        [
+          132,
+          48,
+          44
+        ],
+        [
+          186,
+          88,
+          78
+        ],
+        [
+          79,
+          40,
+          38
+        ]
+      ]
+    },
+    "2:13": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "Orange Cape",
+      "tint": [
+        [
+          186,
+          108,
+          44
+        ],
+        [
+          232,
+          158,
+          84
+        ],
+        [
+          104,
+          68,
+          38
+        ]
+      ]
+    },
+    "2:14": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "Warden Cape",
+      "tint": [
+        [
+          58,
+          62,
+          118
+        ],
+        [
+          108,
+          114,
+          178
+        ],
+        [
+          45,
+          47,
+          72
+        ]
+      ]
+    },
+    "2:15": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "Tidewatch Cape",
+      "tint": [
+        [
+          46,
+          108,
+          112
+        ],
+        [
+          96,
+          162,
+          166
+        ],
+        [
+          39,
+          68,
+          70
+        ]
+      ]
+    },
+    "2:16": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "Nightfall Cape",
+      "tint": [
+        [
+          122,
+          34,
+          46
+        ],
+        [
+          180,
+          74,
+          84
+        ],
+        [
+          74,
+          34,
+          39
+        ]
+      ]
+    },
+    "2:17": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "Quiet Cape",
+      "tint": [
+        [
+          78,
+          96,
+          62
+        ],
+        [
+          126,
+          146,
+          104
+        ],
+        [
+          54,
+          62,
+          47
+        ]
+      ]
+    },
+    "2:18": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "Highreach Cape",
+      "tint": [
+        [
+          72,
+          82,
+          92
+        ],
+        [
+          122,
+          134,
+          146
+        ],
+        [
+          51,
+          56,
+          60
+        ]
+      ]
+    },
+    "2:19": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "Dawnward Cape",
+      "tint": [
+        [
+          176,
+          156,
+          116
+        ],
+        [
+          218,
+          203,
+          168
+        ],
+        [
+          99,
+          90,
+          71
+        ]
+      ]
+    },
+    "2:20": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "Sunwake Cape",
+      "tint": [
+        [
+          94,
+          44,
+          62
+        ],
+        [
+          146,
+          84,
+          102
+        ],
+        [
+          61,
+          38,
+          47
+        ]
+      ]
+    },
+    "2:21": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "Farhold Cape",
+      "tint": [
+        [
+          118,
+          116,
+          112
+        ],
+        [
+          168,
+          166,
+          162
+        ],
+        [
+          72,
+          71,
+          70
+        ]
+      ]
+    },
+    "2:22": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "Learner Cape",
+      "tint": [
+        [
+          146,
+          112,
+          74
+        ],
+        [
+          192,
+          160,
+          118
+        ],
+        [
+          85,
+          70,
+          52
+        ]
+      ]
+    },
+    "2:10": {
+      "scene": "res://assets/actors/native/equipment/generic_cape_fur.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "kind": "cape",
+      "authoredFor": "luminous_male",
+      "name": "Fur Cape",
+      "tint": [
+        [
+          156,
+          142,
+          124
+        ],
+        [
+          208,
+          197,
+          181
+        ],
+        [
+          90,
+          83,
+          75
+        ]
+      ]
+    },
     "0:114": {
       "scene": "res://assets/actors/native/equipment/militia_arming_sword.glb",
       "name": "Militia Arming Sword",

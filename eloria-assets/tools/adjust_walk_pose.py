@@ -60,6 +60,11 @@ TARGET_SHOULDER_Z = -0.016
 TARGET_HAND_Z_MEAN = 0.065
 TARGET_HAND_X_MEAN = {"l": 0.266, "r": 0.249}
 TARGET_ELBOW = 12.0
+#: Phase of the thigh-swing peak relative to the torso-sway peak, as a
+#: fraction of the cycle (0 = in phase).  The authored clip runs the
+#: legs 0.072 of a cycle BEHIND the torso -- the body drags the feet
+#: after it; at zero the step leads the weight onto it.
+TARGET_LEG_PHASE = 0.0
 #: The run keeps its pumping gait but loses its handedness: the authored
 #: clip carries the left shoulder six centimetres ahead of the right and
 #: the left hand five centimetres wider.
@@ -246,6 +251,47 @@ def set_elbow(clip: WalkClip, sk: base.Skeleton, side: str,
         ch["quats"][i] = base.quat_mul(ch["quats"][i], delta)
 
 
+def _first_harmonic_phase(signal) -> float:
+    signal = np.asarray(signal, dtype=np.float64)
+    signal = signal - signal.mean()
+    k = np.exp(-2j * np.pi * np.arange(len(signal)) / len(signal))
+    return float((np.angle(np.sum(signal * k)) / (2 * np.pi)) % 1.0)
+
+
+def leg_phase(clip: WalkClip, sk: base.Skeleton, phases: int = 32) -> float:
+    thigh, sway = [], []
+    for p in np.linspace(0, 1, phases, endpoint=False):
+        g = sk.fk(clip.pose_at(float(p) * clip.duration), {})
+        v = sk.origin(g, "calf_l") - sk.origin(g, "thigh_l")
+        thigh.append(np.degrees(np.arctan2(v[2], -v[1])))
+        sway.append(float(sk.origin(g, "spine_03")[0]))
+    lead = (_first_harmonic_phase(thigh)
+            - _first_harmonic_phase(sway)) % 1.0
+    return lead if lead <= 0.5 else lead - 1.0
+
+
+def shift_channels(clip: WalkClip, bones, fraction: float) -> None:
+    """Resample channels ``fraction`` of a cycle later in their own loop,
+    which plays their content that much EARLIER against everything else."""
+    dt = fraction * clip.duration
+    for bone in bones:
+        if bone not in clip.channels:
+            continue
+        ch = clip.channels[bone]
+        times, quats = ch["times"], ch["quats"]
+        span = times[-1] - times[0]
+        if span <= 0:
+            continue
+        resampled = np.empty_like(quats)
+        for i, t in enumerate(times):
+            u = times[0] + ((t - times[0] + dt) % span)
+            j = int(np.searchsorted(times, u, "right")) - 1
+            j = max(0, min(j, len(times) - 2))
+            f = (u - times[j]) / max(times[j + 1] - times[j], 1e-9)
+            resampled[i] = quat_slerp(quats[j], quats[j + 1], float(f))
+        ch["quats"][:] = resampled
+
+
 def phase_mean(clip: WalkClip, sk: base.Skeleton, probe, phases: int = 12):
     return float(np.mean([probe(sk.fk(clip.pose_at(
         float(p) * clip.duration), {}))
@@ -372,9 +418,11 @@ def main() -> int:
     sk = base.Skeleton(base.BODY)
     clip = WalkClip(js, data, bin_off)
 
-    edited = ["thigh_l", "thigh_r", "calf_l", "calf_r", "upperarm_l",
-              "upperarm_r", "lowerarm_l", "lowerarm_r", "hand_l", "hand_r",
-              "spine_01", "clavicle_l", "clavicle_r"]
+    edited = ["thigh_l", "thigh_r", "calf_l", "calf_r", "foot_l", "foot_r",
+              "upperarm_l", "upperarm_r", "lowerarm_l", "lowerarm_r",
+              "hand_l", "hand_r", "spine_01", "clavicle_l", "clavicle_r"]
+    edited += [b for b in ("ball_l", "ball_r") if b in clip.channels
+               and not clip.channels[b]["shared"]]
     shared = [b for b in edited if clip.channels[b]["shared"]]
     assert not shared, "shared accessors, unsafe to rewrite: %s" % shared
 
@@ -393,6 +441,16 @@ def main() -> int:
     for side in ("l", "r"):
         scale_channel(clip, "thigh_" + side,
                       TARGET_THIGH_AMP / max(before["thighAmp"], 1e-6))
+    # The legs step ahead of the torso: their channels shift together
+    # around the loop until the thigh-swing peak lands on the torso-sway
+    # peak instead of trailing it.
+    lag = leg_phase(clip, sk) - TARGET_LEG_PHASE
+    if abs(lag) > 0.01:
+        shift_channels(clip, ["thigh_l", "thigh_r", "calf_l", "calf_r",
+                              "foot_l", "foot_r", "ball_l", "ball_r"], -lag)
+        print("legs shifted %.3f of a cycle earlier (lag was %+.3f)"
+              % (-lag, lag))
+
     # Knees ease toward the target foot lift multiplicatively, a few
     # convergence rounds in place of a hand-tuned one-shot multiplier.
     for _ in range(6):
