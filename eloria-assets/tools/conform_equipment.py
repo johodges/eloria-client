@@ -149,6 +149,8 @@ SPAN = {
 #: placement, to seat headgear high like a hat rather than centred like a
 #: bucket.  Helms ride up a third of the head so the brow line clears the
 #: eyes; circlets and bands ride higher still to sit at the hairline.
+SOCKET_SHRINK = 0.8
+
 SOCKET_KIND = {
     "helm": {"part": 3, "bones": ["Head"], "clearance": .010, "lift": 0.12,
              "setback": 0.120},
@@ -1547,6 +1549,10 @@ def seat_socket(points: np.ndarray, rig: ea.Rig, kind: str) -> np.ndarray:
     extent = np.maximum(hi - lo, 1e-9)
     scale = max((span[axis] + 2 * spec["clearance"]) / float(extent[axis])
                 for axis in (0, 2))
+    # Reviewed in game: pieces sized strictly to the skull read a fifth
+    # too big -- their flares and trim inflate the visual bulk past the
+    # measured span -- so every socket piece takes a flat trim.
+    scale *= SOCKET_SHRINK
     seated = (points - (points.max(axis=0) + points.min(axis=0)) / 2.) * scale
     # Centre on the head's own centre by the MEDIAN of the piece, not its
     # bounding box: circlets and helms carry danglers and spikes that skew a
