@@ -88,7 +88,7 @@ func _run() -> void:
 		if step >= 6:
 			worst_offaxis = maxf(worst_offaxis, absf(rad_to_deg(
 				wrapf(actor.rotation.y - offaxis_heading, -PI, PI))))
-	_expect(worst_offaxis < 6.0,
+	_expect(worst_offaxis < 5.0,
 		"body points along an off-axis straight line, not at each zigzag step (worst %.1f deg)"
 			% worst_offaxis)
 
