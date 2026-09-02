@@ -74,6 +74,9 @@ TARGET_ELBOW_BEND = 12.0
 #: with it) forward; zero here means the head joint sits directly above
 #: the neck joint, stacked over the torso.
 TARGET_NECK_FORWARD = 0.0
+#: The crown sits level: the head's own up axis steered to world
+#: vertical (degrees of sagittal tilt; positive = crown tilted back).
+TARGET_HEAD_PITCH = 0.0
 #: The stance stands centred: the ankle midpoint sits on the body's own
 #: midline (world x zero) once the pelvis channel's lateral drift and the
 #: rest pose's own offset are taken out.
@@ -209,10 +212,16 @@ class Skeleton:
             name = self.names[j]
             node = self.js["nodes"][j]
             m = np.eye(4)
-            if name in local_rot:
-                q = local_rot[name]
-                if name in deltas:
-                    q = quat_mul(q, deltas[name])
+            # The runtime aliases library track names onto race bones
+            # (models.json boneAliases: the library's lowercase "head"
+            # drives the race's "Head"), so the FK honours the same
+            # fallback -- without it, head-channel edits are invisible
+            # here while fully live in the game.
+            key = name if name in local_rot else name.lower()
+            if key in local_rot:
+                q = local_rot[key]
+                if key in deltas:
+                    q = quat_mul(q, deltas[key])
                 rot = quat_to_mat(q)
             else:
                 rot = quat_to_mat(node.get("rotation", [0, 0, 0, 1]))
@@ -425,6 +434,26 @@ def main() -> int:
             deltas["neck_01"],
             sk.world_delta(g, "neck_01", [1, 0, 0],
                            (TARGET_NECK_FORWARD - neck_forward()) / slope_n))
+
+    # And the crown levels: the neck fix carried the head back with it,
+    # leaving the face tilted up a touch, so the head channel steers
+    # about world X until the head's own up axis stands vertical.
+    def head_pitch():
+        g2 = sk.fk(local, deltas)
+        up = g2[sk.index["Head"]][:3, 1]
+        return float(np.degrees(np.arctan2(up[2], up[1])))
+    start_head = head_pitch()
+    g = sk.fk(local, deltas)
+    probe_h = sk.world_delta(g, "Head", [1, 0, 0], 2.0)
+    deltas["head"] = (quat_mul(deltas["head"], probe_h)
+                      if "head" in deltas else probe_h)
+    slope_h = (head_pitch() - start_head) / 2.0
+    if abs(slope_h) > 1e-9:
+        g = sk.fk(local, deltas)
+        deltas["head"] = quat_mul(
+            deltas["head"],
+            sk.world_delta(g, "Head", [1, 0, 0],
+                           (TARGET_HEAD_PITCH - head_pitch()) / slope_h))
 
     # Shoulders forward: each clavicle protracts (a yaw about world up -- the
     # clavicle runs along x, so a pitch about x would spin it in place) until
