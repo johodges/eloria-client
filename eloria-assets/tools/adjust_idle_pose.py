@@ -59,6 +59,11 @@ CLIP = "Idle_Subtle"
 #: under the hip and the ankle under the knee, in the frontal plane only (the
 #: sagittal crouch is the clip's own and stays).  Feet face straight forward.
 TARGET_ARM_DROP = 79.0
+#: Both upper arms hang with this slight forward lean (degrees; the
+#: authored right arm angled eleven degrees BACK while the left sat
+#: forward), and both elbows hold the same soft bend.
+TARGET_ARM_LEAN = 3.0
+TARGET_ELBOW_BEND = 12.0
 TARGET_SHOULDER_FORWARD = -0.04
 SAMPLE_AT = 0.1
 #: Ground contact, measured from the authored clip as the rest-rooted
@@ -280,8 +285,10 @@ def measurements(sk: Skeleton, glob) -> dict:
     o = lambda n: sk.origin(glob, n)
     arm = o("lowerarm_l") - o("upperarm_l")
     fl, fr = o("ball_l") - o("foot_l"), o("ball_r") - o("foot_r")
+    arm_r = o("lowerarm_r") - o("upperarm_r")
     out = {
         "armDrop": float(np.degrees(np.arctan2(-arm[1], abs(arm[0])))),
+        "armDropR": float(np.degrees(np.arctan2(-arm_r[1], abs(arm_r[0])))),
         "chestTwist": float(np.degrees(np.arctan2(
             o("upperarm_l")[2] - o("upperarm_r")[2],
             o("upperarm_l")[0] - o("upperarm_r")[0]))),
@@ -314,11 +321,12 @@ def main() -> int:
     local, channels = sampled_idle(js, data, bin_off)
 
     def report(tag, m):
-        print("%s arm drop %.1f, chest twist %+.1f, hip twist %+.1f, "
+        print("%s arm drop L%.1f R%.1f, chest twist %+.1f, hip twist %+.1f, "
               "shoulder z %+.3f, knee d(x,z) L(%+.3f,%+.3f) R(%+.3f,%+.3f), "
               "ankle d(x,z) L(%+.3f,%+.3f) R(%+.3f,%+.3f), ankle y %.3f, "
               "gap %.1f cm, foot yaw L %.1f R %.1f"
-              % (tag, m["armDrop"], m["chestTwist"], m["hipTwist"],
+              % (tag, m["armDrop"], m["armDropR"], m["chestTwist"],
+                 m["hipTwist"],
                  m["shoulderZ"], m["kneeDxL"], m["kneeDzL"], m["kneeDxR"],
                  m["kneeDzR"], m["ankleDxL"], m["ankleDzL"], m["ankleDxR"],
                  m["ankleDzR"], m["ankleY"], m["ankleGap"] * 100,
@@ -402,18 +410,57 @@ def main() -> int:
         deltas["clavicle_" + side] = sk.world_delta(
             g, "clavicle_" + side, [0, 1, 0], sign * clav_angles[side])
 
-    # Arms: abduct both about world forward (+Z) until the drop hits target,
-    # measured with the clavicles already forward.
-    def arm_drop(angle):
-        d = dict(deltas)
-        g = sk.fk(local, deltas)
-        d["upperarm_l"] = sk.world_delta(g, "upperarm_l", [0, 0, 1], angle)
-        d["upperarm_r"] = sk.world_delta(g, "upperarm_r", [0, 0, 1], -angle)
-        return measurements(sk, sk.fk(local, d))["armDrop"]
-    arm_angle = solve_angle(arm_drop, TARGET_ARM_DROP, 8.0, -16.0, 20.0)
-    g = sk.fk(local, deltas)
-    deltas["upperarm_l"] = sk.world_delta(g, "upperarm_l", [0, 0, 1], arm_angle)
-    deltas["upperarm_r"] = sk.world_delta(g, "upperarm_r", [0, 0, 1], -arm_angle)
+    # Arms: each side solved on its own measurements against the shared
+    # targets -- the authored clip hangs the right arm twelve degrees
+    # wider, eleven degrees further back, and three times more bent at the
+    # elbow than the left, and a symmetric +/- delta preserves every bit
+    # of that.  Each correction steers by the pose's measured response.
+    def steer(bone, axis, measure, target, probe_deg=2.0):
+        start = measure()
+        g2 = sk.fk(local, deltas)
+        step = sk.world_delta(g2, bone, axis, probe_deg)
+        deltas[bone] = (quat_mul(deltas[bone], step)
+                        if bone in deltas else step)
+        slope = (measure() - start) / probe_deg
+        if abs(slope) < 1e-9:
+            return
+        g2 = sk.fk(local, deltas)
+        fix = sk.world_delta(g2, bone, axis, (target - measure()) / slope)
+        deltas[bone] = quat_mul(deltas[bone], fix)
+
+    for side in ("l", "r"):
+        arm_bone = "upperarm_" + side
+
+        def drop():
+            g2 = sk.fk(local, deltas)
+            v = sk.origin(g2, "lowerarm_" + side) - sk.origin(g2, arm_bone)
+            return float(np.degrees(np.arctan2(-v[1], abs(v[0]))))
+
+        def lean():
+            g2 = sk.fk(local, deltas)
+            v = sk.origin(g2, "lowerarm_" + side) - sk.origin(g2, arm_bone)
+            return float(np.degrees(np.arctan2(v[2], -v[1])))
+
+        def bend():
+            g2 = sk.fk(local, deltas)
+            v = sk.origin(g2, "lowerarm_" + side) - sk.origin(g2, arm_bone)
+            f = (sk.origin(g2, "hand_" + side)
+                 - sk.origin(g2, "lowerarm_" + side))
+            v /= max(np.linalg.norm(v), 1e-9)
+            f /= max(np.linalg.norm(f), 1e-9)
+            return float(np.degrees(np.arccos(np.clip(np.dot(v, f),
+                                                      -1.0, 1.0))))
+
+        steer(arm_bone, [0, 0, 1], drop, TARGET_ARM_DROP)
+        steer(arm_bone, [1, 0, 0], lean, TARGET_ARM_LEAN)
+        g2 = sk.fk(local, deltas)
+        v = sk.origin(g2, "lowerarm_" + side) - sk.origin(g2, arm_bone)
+        f = sk.origin(g2, "hand_" + side) - sk.origin(g2, "lowerarm_" + side)
+        axis = np.cross(v, f)
+        if np.linalg.norm(axis) > 1e-6:
+            steer("lowerarm_" + side, axis / np.linalg.norm(axis), bend,
+                  TARGET_ELBOW_BEND)
+    arm_angle = 0.0
 
     # Legs: verticalised segment by segment, in both planes at once.  The
     # authored clip both bows the legs frontally and bends them into a
