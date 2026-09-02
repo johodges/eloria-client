@@ -733,6 +733,12 @@ def load_rig(path: Path, body_mesh_names=("Body",)) -> Rig:
     bone_weights: list[np.ndarray] = []
     faces: list[np.ndarray] = []
     offset = 0
+    # A split body's surfaces SHARE one attribute set and differ only in
+    # their index buffers; gathering per primitive would take every vertex
+    # once per surface, and duplicated points collapse the two-neighbour
+    # weight inheritance onto single verts.  Each attribute accessor is
+    # read once; later primitives that reuse it only contribute faces.
+    seen: dict[int, int] = {}
     for node in nodes:
         if "mesh" not in node or "skin" not in node:
             continue
@@ -741,13 +747,19 @@ def load_rig(path: Path, body_mesh_names=("Body",)) -> Rig:
             continue
         for primitive in mesh["primitives"]:
             attributes = primitive["attributes"]
-            positions.append(accessor_array(document, binary, attributes["POSITION"]).astype(np.float64))
-            bone_indices.append(accessor_array(document, binary, attributes["JOINTS_0"]).astype(np.int32))
-            bone_weights.append(accessor_array(document, binary, attributes["WEIGHTS_0"]).astype(np.float64))
+            acc_id = int(attributes["POSITION"])
+            if acc_id in seen:
+                base = seen[acc_id]
+            else:
+                base = offset
+                seen[acc_id] = base
+                positions.append(accessor_array(document, binary, attributes["POSITION"]).astype(np.float64))
+                bone_indices.append(accessor_array(document, binary, attributes["JOINTS_0"]).astype(np.int32))
+                bone_weights.append(accessor_array(document, binary, attributes["WEIGHTS_0"]).astype(np.float64))
+                offset += len(positions[-1])
             if "indices" in primitive:
                 tri = accessor_array(document, binary, primitive["indices"])
-                faces.append(tri.reshape(-1, 3).astype(np.int64) + offset)
-            offset += len(positions[-1])
+                faces.append(tri.reshape(-1, 3).astype(np.int64) + base)
     return Rig(joint_names=joint_names, rest=rest, parent=parent,
                positions=np.vstack(positions), joints=np.vstack(bone_indices),
                weights=np.vstack(bone_weights),

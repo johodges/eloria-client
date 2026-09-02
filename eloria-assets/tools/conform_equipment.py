@@ -79,7 +79,11 @@ RACES = CLIENT / "assets/actors/native/races"
 # came back named `char1`; `load_rig` still defaults to ("Body",), so it has to
 # be told.  Passing None takes every skinned mesh in the file, which is what
 # these single-mesh race GLBs want.
-BODY_MESH = None
+#: The split race bodies carry generated wardrobe extras (head band, cap)
+#: that are runtime toggles, not anatomy -- measuring them would grow the
+#: helm fit.  Everything that used to be the fused char1 mesh, by name.
+BODY_MESH = ("char1", "body", "eyes", "hair", "wardrobe_shirt",
+             "wardrobe_pants", "wardrobe_boots")
 
 #: How each region's silhouette is measured, mirroring what the lofted shells
 #: do rather than inventing a second rule.
@@ -1247,8 +1251,21 @@ def shirt_liner(race_path: Path):
     uvs = ea.accessor_array(document, binary, attributes["TEXCOORD_0"]).astype(np.float64)
     joints = ea.accessor_array(document, binary, attributes["JOINTS_0"]).astype(np.int64)
     weights = ea.accessor_array(document, binary, attributes["WEIGHTS_0"]).astype(np.float64)
-    triangles = ea.accessor_array(
-        document, binary, primitive["indices"]).astype(np.int64).reshape(-1, 3)
+    # A split body spreads its faces over several surface primitives that
+    # all share this attribute set; the liner needs the whole hide-to-neck
+    # surface, so the triangles are the union of every primitive built on
+    # the same positions accessor.
+    triangle_sets = []
+    for other in document.get("nodes", []):
+        if "mesh" not in other or "skin" not in other:
+            continue
+        for prim_other in document["meshes"][other["mesh"]]["primitives"]:
+            if (prim_other["attributes"].get("POSITION")
+                    == attributes["POSITION"] and "indices" in prim_other):
+                triangle_sets.append(ea.accessor_array(
+                    document, binary,
+                    prim_other["indices"]).astype(np.int64).reshape(-1, 3))
+    triangles = np.vstack(triangle_sets)
 
     # The face stays bare -- the eyes are teal too, and lining them would
     # trade a shirt sliver for a masked face -- but the band runs high enough

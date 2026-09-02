@@ -1167,13 +1167,12 @@ func _creation_appearance() -> Dictionary:
 		"skin": int(%CreateSkin.value), "hair": int(%CreateHair.value),
 		"eyes": int(%CreateEyes.value),
 		"head": int(%CreateHead.value),
-		# Deprecated 2026-09-01 for Eloria Client: the wardrobe picker is gone.
-		# The race bodies wear their clothing in their own texture, so a starter
-		# shirt, pants and boots put a second outfit over a painted one.  The
-		# three bytes stay at zero because the create packet's legacy order is
-		# skin, hair, shirt, pants, boots, actor type, head, eyes and the server
-		# still reads all eight; zero means an empty slot, which renders bare.
-		"shirt": 0, "pants": 0, "boots": 0,
+		# Reinstated 2026-09-02 for Eloria Client: the race bodies' painted
+		# outfits are split into their own wardrobe surfaces now, so these
+		# three bytes recolour the shirt, the trousers and the boots the way
+		# the create packet always intended.
+		"shirt": int(%CreateShirt.value), "pants": int(%CreatePants.value),
+		"boots": int(%CreateBoots.value),
 	}
 
 func _on_character_preview_gui_input(event: InputEvent) -> void:
