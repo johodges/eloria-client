@@ -2373,7 +2373,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		["toggle_help", _on_help_button_pressed],
 		["toggle_notepad", _on_info_button_pressed],
 		["toggle_options", _on_options_pressed],
-		["toggle_mail", func() -> void: extension_windows.call("toggle_mail")]]
+		["toggle_mail", func() -> void: extension_windows.call("toggle_mail")],
+		["toggle_party", func() -> void: extension_windows.call("toggle_party")]]
 	for action_and_handler: Array in window_actions:
 		if event.is_action_pressed(str(action_and_handler[0])):
 			(action_and_handler[1] as Callable).call()

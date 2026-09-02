@@ -75,6 +75,7 @@ enum ServerMessage {
 	ELORIA_SPECIAL_EVENT_STATE = 232, ELORIA_PLAYER_INFO = 228,
 	ELORIA_SPELL_POWER = 231,
 	ELORIA_ALMANAC_STATE = 238, ELORIA_STORAGE_STATE = 239,
+	ELORIA_PARTY_STATE = 240,
 	ADD_ACTOR_ANIMATION = 89,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
@@ -168,6 +169,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"market_window_v1",
 	"merchant_window_v1",
 	"navigation_hud_v1",
+	"party_window_v1",
 	"player_info_v1",
 	"quest_journal_v1",
 	"spell_power_v1",
@@ -904,6 +906,8 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			if payload.size() != 2:
 				return {"type": "invalid", "error": "remove_map_marker_length"}
 			return {"type": "remove_map_marker", "marker_id": u16(payload)}
+		ServerMessage.ELORIA_PARTY_STATE:
+			return decode_party(payload)
 		ServerMessage.ELORIA_MARKETPLACE_STATE:
 			return decode_marketplace(payload)
 		ServerMessage.ELORIA_MERCHANT_STATE:
@@ -969,6 +973,49 @@ static func _nul_run(payload: PackedByteArray, offset: int,
 		values.append(str(field.value))
 		offset = int(field.offset)
 	return {"values": values, "offset": offset}
+
+## Command 240. Who is in the party, how they are doing, and where they are.
+##
+## An offline member still arrives with a row: the server states their absence
+## rather than dropping them, so the window can say "offline" instead of
+## quietly shrinking and leaving the player to notice on their own.
+static func decode_party(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 5:
+		return {"type": "invalid", "error": "party_length"}
+	var in_party: bool = payload[0] != 0
+	var count: int = int(payload[1])
+	var offset: int = 2
+	var members: Array[Dictionary] = []
+	for _index: int in range(count):
+		if offset + 13 > payload.size():
+			return {"type": "invalid", "error": "party_entry_length"}
+		var flags: int = int(payload[offset])
+		var member: Dictionary = {
+			"online": (flags & 1) != 0,
+			"leader": (flags & 2) != 0,
+			"is_self": (flags & 4) != 0,
+			"health": u16(payload, offset + 1),
+			"max_health": u16(payload, offset + 3),
+			"ether": u16(payload, offset + 5),
+			"max_ether": u16(payload, offset + 7),
+			"x": u16(payload, offset + 9),
+			"y": u16(payload, offset + 11)}
+		offset += 13
+		var text: Dictionary = _nul_run(payload, offset, 2)
+		if text.is_empty():
+			return {"type": "invalid", "error": "party_entry_text"}
+		member["name"] = (text.values as Array)[0]
+		member["map_id"] = (text.values as Array)[1]
+		offset = int(text.offset)
+		members.append(member)
+	var invite: Dictionary = _nul_at(payload, offset)
+	if invite.is_empty():
+		return {"type": "invalid", "error": "party_invite_text"}
+	offset = int(invite.offset)
+	if offset + 2 != payload.size():
+		return {"type": "invalid", "error": "party_trailing"}
+	return {"type": "party", "in_party": in_party, "members": members,
+		"invited_by": str(invite.value), "invite_seconds": u16(payload, offset)}
 
 ## Command 222. The Nymara Exchange: the player's gold, how many items are
 ## waiting in escrow, and the listings on offer.

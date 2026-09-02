@@ -65,6 +65,7 @@ toggle_help={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode
 toggle_notepad={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":78,"ctrl_pressed":true)] }
 toggle_options={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":79,"ctrl_pressed":true)] }
 toggle_mail={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":76,"ctrl_pressed":true)] }
+toggle_party={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":80,"ctrl_pressed":true)] }
 recenter_viewport={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":32)] }
 move_north={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":87)] }
 move_south={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":83)] }

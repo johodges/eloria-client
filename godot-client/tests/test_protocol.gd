@@ -37,6 +37,7 @@ func _init() -> void:
 		"market_window_v1": EloriaProtocol.ServerMessage.ELORIA_MARKETPLACE_STATE,
 		"merchant_window_v1": EloriaProtocol.ServerMessage.ELORIA_MERCHANT_STATE,
 		"navigation_hud_v1": EloriaProtocol.ServerMessage.ELORIA_NAVIGATION_STATE,
+		"party_window_v1": EloriaProtocol.ServerMessage.ELORIA_PARTY_STATE,
 		"player_info_v1": EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO,
 		"quest_journal_v1": EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE,
 		"spell_power_v1": EloriaProtocol.ServerMessage.ELORIA_SPELL_POWER,
@@ -57,6 +58,8 @@ func _init() -> void:
 			"5b00fa000000140000005000000000005300",
 		EloriaProtocol.ServerMessage.ELORIA_NAVIGATION_STATE:
 			"000000000000000000",
+		# No party, no invitation: the shortest frame the server ever sends.
+		EloriaProtocol.ServerMessage.ELORIA_PARTY_STATE: "0000000000",
 		EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO: "5b0000004100",
 		EloriaProtocol.ServerMessage.ELORIA_SPELL_POWER: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE: "0000",
@@ -1185,6 +1188,51 @@ func _init() -> void:
 	# output of the server's own builder in eloria/protocol.py, captured from
 	# the independent Eloria configuration, so a change to either side of one
 	# of these contracts breaks this suite rather than a window.
+	# Command 240, the party window. Offline members arrive as rows rather than
+	# being omitted, which is what lets the window say "offline" instead of
+	# quietly shrinking when somebody drops.
+	var party: Dictionary = EloriaProtocol.decode_server(240, _hex(
+		"0102037800b40028003c000003e0014b656c6c616e00666f75725f67617465730004"
+		+ "5a0096000a0037009a00b6004d6172656e006d6972726f72686f6c6400000000"))
+	_expect(party.type == "party" and bool(party.in_party)
+		and (party.members as Array).size() == 2,
+		"the party state decodes both of its members")
+	var leader: Dictionary = (party.members as Array)[0]
+	_expect(bool(leader.online) and bool(leader.leader) and not bool(leader.is_self)
+		and int(leader.health) == 120 and int(leader.max_health) == 180
+		and int(leader.ether) == 40 and int(leader.max_ether) == 60
+		and str(leader.name) == "Kellan" and str(leader.map_id) == "four_gates"
+		and int(leader.x) == 768 and int(leader.y) == 480,
+		"the leader's row carries vitals, map and tile")
+	var absent: Dictionary = (party.members as Array)[1]
+	_expect(not bool(absent.online) and not bool(absent.leader)
+		and bool(absent.is_self) and str(absent.name) == "Maren"
+		and str(absent.map_id) == "mirrorhold",
+		"an offline member keeps a row, and the reader's own row is flagged")
+
+	var invited: Dictionary = EloriaProtocol.decode_server(240,
+		_hex("00004b656c6c616e004b00"))
+	_expect(invited.type == "party" and not bool(invited.in_party)
+		and str(invited.invited_by) == "Kellan"
+		and int(invited.invite_seconds) == 75,
+		"a pending invitation arrives without a party")
+	var no_party: Dictionary = EloriaProtocol.decode_server(240, _hex("0000000000"))
+	_expect(no_party.type == "party" and not bool(no_party.in_party)
+		and (no_party.members as Array).is_empty()
+		and str(no_party.invited_by) == "",
+		"an empty party is a state rather than a missing packet")
+	_expect(str(EloriaProtocol.decode_server(240,
+		_hex("0102000000")).get("error", "")) == "party_entry_length",
+		"a party frame that promises more members than it carries is refused")
+	_expect(str(EloriaProtocol.decode_server(240, _hex("0102")).get("error", ""))
+		== "party_length",
+		"a party frame too short to hold its own header is refused")
+	_expect(str(EloriaProtocol.decode_server(240,
+		_hex("000000000000")).get("error", "")) == "party_trailing",
+		"a party frame with trailing bytes is refused")
+	_expect(EloriaProtocol.CLIENT_CAPABILITIES.has("party_window_v1"),
+		"the client advertises the party window it can now draw")
+
 	var marketplace: Dictionary = EloriaProtocol.decode_server(222, _hex(
 		"00fa000000030000000100070000000c0000002300000058020000140053756e6c65"
 		+ "616600416c69636500"))

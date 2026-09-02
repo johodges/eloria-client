@@ -69,6 +69,13 @@ var market_panel: PanelContainer
 var market_header: Label
 var market_list: ItemList
 var market_status: Label
+var party_panel: PanelContainer
+var party_header: Label
+var party_rows: VBoxContainer
+var party_invite_row: HBoxContainer
+var party_invite_label: Label
+var party_status: Label
+var party_leave_button: Button
 
 # The quantity ladder the server offers for a shop trade, and the response ids
 # that drive one. These are the legacy dialogue response ids; a client with
@@ -140,7 +147,8 @@ func toggle_mail() -> void:
 func _cascade() -> Array[PanelContainer]:
 	# The tracked-quest readout is deliberately absent: it is a HUD element the
 	# player pinned, not a window covering the screen, so cancel leaves it be.
-	return [merchant_panel, market_panel, detail_panel, mail_panel, quest_panel]
+	return [merchant_panel, market_panel, detail_panel, mail_panel,
+		quest_panel, party_panel]
 
 func _toggle(panel: PanelContainer) -> void:
 	if panel.visible:
@@ -170,6 +178,8 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_merchant()
 		&"marketplace":
 			_sync_marketplace()
+		&"party":
+			_sync_party()
 		&"connection":
 			if AppState.connection_state == "disconnected":
 				# A dropped session is not a fight that just ended: nothing
@@ -187,6 +197,7 @@ func sync_all() -> void:
 	_sync_detail()
 	_sync_merchant()
 	_sync_marketplace()
+	_sync_party()
 
 # --- navigation --------------------------------------------------------------
 
@@ -577,6 +588,106 @@ func _duration_text(seconds: int) -> String:
 		return "%dh" % (seconds / 3600)
 	return "%dm" % maxi(1, seconds / 60)
 
+# --- party -------------------------------------------------------------------
+
+## The window exists to answer one question the world view cannot: how is
+## somebody doing who is not on your screen. So every row carries health and
+## ether as bars and states where that person is standing, and a member the
+## server reports offline keeps their row and says so.
+func _sync_party() -> void:
+	var state: Dictionary = AppState.party
+	var members: Array = state.get("members", []) as Array
+	var invited_by: String = str(state.get("invited_by", ""))
+
+	party_invite_label.text = "%s invited you. Accept?" % invited_by
+	party_invite_row.visible = not invited_by.is_empty()
+
+	if not bool(state.get("in_party", false)) and invited_by.is_empty():
+		party_panel.hide()
+		return
+
+	for child: Node in party_rows.get_children():
+		child.queue_free()
+	var online_count := 0
+	for raw: Variant in members:
+		var member: Dictionary = raw as Dictionary
+		if bool(member.get("online", false)):
+			online_count += 1
+		party_rows.add_child(_party_row(member))
+	party_header.text = ("Party - %d of %d online" % [online_count, members.size()]
+		if not members.is_empty() else "No party")
+	party_leave_button.disabled = members.is_empty()
+	party_panel.show()
+	party_panel.move_to_front()
+
+func _party_row(member: Dictionary) -> Control:
+	var row := VBoxContainer.new()
+	row.name = "Member" + str(member.get("name", ""))
+
+	var title := Label.new()
+	var marks := ""
+	if bool(member.get("leader", false)):
+		marks += "  (leader)"
+	if bool(member.get("is_self", false)):
+		marks += "  (you)"
+	var online: bool = bool(member.get("online", false))
+	title.text = "%s%s" % [str(member.get("name", "")), marks]
+	# A row that has stopped updating should look like it has stopped, rather
+	# than showing the last health the player had before they vanished.
+	title.modulate = Color(1, 1, 1, 1) if online else Color(1, 1, 1, 0.45)
+	row.add_child(title)
+
+	var health := _bar("Health", Color(0.78, 0.24, 0.22))
+	health.max_value = maxf(1.0, float(member.get("max_health", 1)))
+	health.value = float(member.get("health", 0))
+	row.add_child(health)
+
+	var ether := _bar("Ether", Color(0.27, 0.45, 0.78))
+	ether.max_value = maxf(1.0, float(member.get("max_ether", 1)))
+	ether.value = float(member.get("ether", 0))
+	row.add_child(ether)
+
+	var where := Label.new()
+	if online:
+		where.text = "%d/%d health   %d/%d ether   %s (%d, %d)" % [
+			int(member.get("health", 0)), int(member.get("max_health", 0)),
+			int(member.get("ether", 0)), int(member.get("max_ether", 0)),
+			str(member.get("map_id", "")), int(member.get("x", 0)),
+			int(member.get("y", 0))]
+	else:
+		where.text = "offline"
+	where.modulate = title.modulate
+	row.add_child(where)
+	return row
+
+func _on_party_accept() -> void:
+	_send_party_command("#party accept")
+
+func _on_party_decline() -> void:
+	_send_party_command("#party decline")
+
+func _on_party_leave() -> void:
+	_send_party_command("#party leave")
+
+func _send_party_command(command: String) -> void:
+	var error: Error = Network.send_chat(command)
+	party_status.text = ("Sent to the server; the window updates when it answers."
+		if error == OK else "Party request failed: " + error_string(error))
+
+func toggle_party() -> void:
+	if party_panel.visible:
+		party_panel.hide()
+		return
+	_sync_party()
+	# Nothing to show is worth saying, rather than a button that does nothing.
+	if not party_panel.visible:
+		party_status.text = ""
+		party_header.text = "No party"
+		for child: Node in party_rows.get_children():
+			child.queue_free()
+		party_panel.show()
+		party_panel.move_to_front()
+
 # --- construction ------------------------------------------------------------
 
 func _selected_index(list: ItemList) -> int:
@@ -753,6 +864,56 @@ func _build() -> void:
 	market_status = Label.new()
 	market_status.name = "MarketplaceStatus"
 	market_body.add_child(market_status)
+
+	party_panel = _window("PartyWindow", "Party")
+	var party_body: VBoxContainer = _window_body(party_panel)
+	party_header = Label.new()
+	party_header.name = "PartyHeader"
+	party_body.add_child(party_header)
+	party_invite_row = HBoxContainer.new()
+	party_invite_row.name = "PartyInvite"
+	party_invite_row.hide()
+	party_body.add_child(party_invite_row)
+	party_invite_label = Label.new()
+	party_invite_label.name = "PartyInviteLabel"
+	party_invite_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	party_invite_row.add_child(party_invite_label)
+	var accept := Button.new()
+	accept.name = "PartyAccept"
+	accept.text = "Accept"
+	accept.pressed.connect(_on_party_accept)
+	party_invite_row.add_child(accept)
+	var decline := Button.new()
+	decline.name = "PartyDecline"
+	decline.text = "Decline"
+	decline.pressed.connect(_on_party_decline)
+	party_invite_row.add_child(decline)
+	var party_scroll := ScrollContainer.new()
+	party_scroll.name = "PartyScroll"
+	party_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	party_body.add_child(party_scroll)
+	party_rows = VBoxContainer.new()
+	party_rows.name = "PartyMembers"
+	party_rows.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	party_scroll.add_child(party_rows)
+	var party_actions := HBoxContainer.new()
+	party_body.add_child(party_actions)
+	party_leave_button = Button.new()
+	party_leave_button.name = "PartyLeave"
+	party_leave_button.text = "Leave party"
+	party_leave_button.pressed.connect(_on_party_leave)
+	party_actions.add_child(party_leave_button)
+	# Inviting needs a name, and a name needs typing; the chat command already
+	# reads well, so the window points at it rather than growing a text field
+	# that would duplicate it.
+	var party_hint := Label.new()
+	party_hint.name = "PartyHint"
+	party_hint.text = "  #party invite <name>   ·   #p <message>"
+	party_actions.add_child(party_hint)
+	party_status = Label.new()
+	party_status.name = "PartyStatus"
+	party_body.add_child(party_status)
+	party_panel.hide()
 
 func _bar(bar_name: String, colour: Color) -> ProgressBar:
 	var bar := ProgressBar.new()
