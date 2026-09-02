@@ -38,6 +38,8 @@ func _init() -> void:
 		"merchant_window_v1": EloriaProtocol.ServerMessage.ELORIA_MERCHANT_STATE,
 		"navigation_hud_v1": EloriaProtocol.ServerMessage.ELORIA_NAVIGATION_STATE,
 		"party_window_v1": EloriaProtocol.ServerMessage.ELORIA_PARTY_STATE,
+		"quest_archive_v1":
+			EloriaProtocol.ServerMessage.ELORIA_QUEST_ARCHIVE_STATE,
 		"player_info_v1": EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO,
 		"quest_journal_v1": EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE,
 		"spell_power_v1": EloriaProtocol.ServerMessage.ELORIA_SPELL_POWER,
@@ -60,6 +62,7 @@ func _init() -> void:
 			"000000000000000000",
 		# No party, no invitation: the shortest frame the server ever sends.
 		EloriaProtocol.ServerMessage.ELORIA_PARTY_STATE: "0000000000",
+		EloriaProtocol.ServerMessage.ELORIA_QUEST_ARCHIVE_STATE: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO: "5b0000004100",
 		EloriaProtocol.ServerMessage.ELORIA_SPELL_POWER: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE: "0000",
@@ -1188,6 +1191,34 @@ func _init() -> void:
 	# output of the server's own builder in eloria/protocol.py, captured from
 	# the independent Eloria configuration, so a change to either side of one
 	# of these contracts breaks this suite rather than a window.
+	# Command 241, the completed-quest archive. Server-held on purpose: the
+	# journal says what is open, this says what is done, and it has to survive
+	# a reinstall - which a client-side log does not.
+	var archive: Dictionary = EloriaProtocol.decode_server(241, _hex(
+		"0200426567696e6e6572205475746f7269616c0049736c61205072696d6100596f75"
+		+ "206c6561726e656420746f206d6f76652c2066696768742c2067617468657220616e"
+		+ "64206d69782e00546865205765737465726e20526f6164004e796d6172610059"
+		+ "6f752077616c6b65642074686520726f6164207765737420616e642063616d652062"
+		+ "61636b2e00"))
+	_expect(archive.type == "quest_archive"
+		and (archive.entries as Array).size() == 2,
+		"the quest archive decodes every completed entry")
+	var archived: Dictionary = (archive.entries as Array)[0]
+	_expect(str(archived.title) == "Beginner Tutorial"
+		and str(archived.location) == "Isla Prima"
+		and str(archived.detail).begins_with("You learned to move"),
+		"an archive entry carries its title, where it happened and what it was")
+	var no_archive: Dictionary = EloriaProtocol.decode_server(241, _hex("0000"))
+	_expect(no_archive.type == "quest_archive"
+		and (no_archive.entries as Array).is_empty(),
+		"having finished nothing is a state rather than a missing packet")
+	_expect(str(EloriaProtocol.decode_server(241,
+		_hex("020041004200430000")).get("error", "")) == "quest_archive_entry_text",
+		"an archive frame that promises more entries than it carries is refused")
+	_expect(str(EloriaProtocol.decode_server(241,
+		_hex("000000")).get("error", "")) == "quest_archive_trailing",
+		"an archive frame with trailing bytes is refused")
+
 	# Command 240, the party window. Offline members arrive as rows rather than
 	# being omitted, which is what lets the window say "offline" instead of
 	# quietly shrinking when somebody drops.

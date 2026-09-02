@@ -105,6 +105,10 @@ var marketplace: Dictionary = {"open": false, "gold": 0, "returned_items": 0,
 var merchant: Dictionary = {"open": false, "actor_id": -1, "npc_name": "",
 	"gold": 0, "carried": 0, "capacity": 0, "items": []}
 var quest_journal: Array[Dictionary] = []
+## What this character has finished. Held separately from the journal because
+## the two answer different questions and arrive in different packets: the
+## journal is what is open now, this is the record that outlives the machine.
+var quest_archive: Array[Dictionary] = []
 ## The party, exactly as the server last stated it. `in_party` false with an
 ## `invited_by` name is a real state - somebody has been asked to join and has
 ## not answered - so the two are held together rather than as separate flags
@@ -234,6 +238,7 @@ func _on_connection_state_changed(value: String) -> void:
 		marketplace = _empty_marketplace_state()
 		merchant = _empty_merchant_state()
 		quest_journal.clear()
+		quest_archive.clear()
 		# Cleared on logout, not on a map change: a party outlives walking
 		# through a portal, and the server re-states it at login either way.
 		party = _empty_party_state()
@@ -770,6 +775,9 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			npc_dialogue["open"] = false
 			npc_dialogue["options"] = []
 			state_changed.emit(&"npc_dialogue")
+		"quest_archive":
+			quest_archive = event.entries
+			state_changed.emit(&"quest_archive")
 		"party":
 			party = {"in_party": bool(event.in_party),
 				"members": event.members,

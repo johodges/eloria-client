@@ -210,6 +210,38 @@ func _run() -> void:
 	_expect(int(windows.market_list.get_item_metadata(0)) == 7,
 		"a listing row carries the server's listing id, not its row index")
 
+	# 241 the completed-quest archive: the half of the journal that answers
+	# "what have I done", which no client-side log could survive a reinstall.
+	windows.close_all()
+	app_state.call("_on_packet", 241, _hex(
+		"0200426567696e6e6572205475746f7269616c0049736c61205072696d6100596f75"
+		+ "206c6561726e656420746f206d6f76652c2066696768742c2067617468657220616e"
+		+ "64206d69782e00546865205765737465726e20526f6164004e796d6172610059"
+		+ "6f752077616c6b65642074686520726f6164207765737420616e642063616d652062"
+		+ "61636b2e00"))
+	windows.toggle_quest_journal()
+	await process_frame
+	_expect(windows.quest_done_button.text.contains("2"),
+		"the completed tab counts what the server says is finished")
+	windows._on_quest_view(true)
+	await process_frame
+	_expect(windows.quest_list.item_count == 2
+		and windows.quest_list.get_item_text(0).contains("Beginner Tutorial")
+		and windows.quest_detail.text.contains("You learned to move")
+		and windows.quest_track_button.disabled,
+		"the completed view lists finished quests and cannot track them")
+	windows._on_quest_view(false)
+	await process_frame
+	_expect(not windows.quest_done_button.button_pressed
+		and windows.quest_active_button.button_pressed,
+		"switching back to active leaves exactly one view selected")
+	# Pressing the tab that is already down must not leave the window blank.
+	windows._on_quest_view(false)
+	await process_frame
+	_expect(windows.quest_active_button.button_pressed,
+		"pressing the selected tab keeps it selected")
+	windows.close_all()
+
 	# 240 party. The window's job is the member who is not on your screen, so
 	# what matters is that an absent one is still drawn and still says so.
 	app_state.call("_on_packet", 240, _hex(

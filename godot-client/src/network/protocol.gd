@@ -75,7 +75,7 @@ enum ServerMessage {
 	ELORIA_SPECIAL_EVENT_STATE = 232, ELORIA_PLAYER_INFO = 228,
 	ELORIA_SPELL_POWER = 231,
 	ELORIA_ALMANAC_STATE = 238, ELORIA_STORAGE_STATE = 239,
-	ELORIA_PARTY_STATE = 240,
+	ELORIA_PARTY_STATE = 240, ELORIA_QUEST_ARCHIVE_STATE = 241,
 	ADD_ACTOR_ANIMATION = 89,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
@@ -171,6 +171,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"navigation_hud_v1",
 	"party_window_v1",
 	"player_info_v1",
+	"quest_archive_v1",
 	"quest_journal_v1",
 	"spell_power_v1",
 	"special_events_v1",
@@ -908,6 +909,8 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return {"type": "remove_map_marker", "marker_id": u16(payload)}
 		ServerMessage.ELORIA_PARTY_STATE:
 			return decode_party(payload)
+		ServerMessage.ELORIA_QUEST_ARCHIVE_STATE:
+			return decode_quest_archive(payload)
 		ServerMessage.ELORIA_MARKETPLACE_STATE:
 			return decode_marketplace(payload)
 		ServerMessage.ELORIA_MERCHANT_STATE:
@@ -973,6 +976,29 @@ static func _nul_run(payload: PackedByteArray, offset: int,
 		values.append(str(field.value))
 		offset = int(field.offset)
 	return {"values": values, "offset": offset}
+
+## Command 241. What this character has finished.
+##
+## The journal says what is open; this says what is done. It is server-held, so
+## it survives a reinstall and a new machine - which is the whole reason it
+## exists rather than being read out of a local log.
+static func decode_quest_archive(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 2:
+		return {"type": "invalid", "error": "quest_archive_length"}
+	var count: int = u16(payload)
+	var offset: int = 2
+	var entries: Array[Dictionary] = []
+	for _index: int in range(count):
+		var text: Dictionary = _nul_run(payload, offset, 3)
+		if text.is_empty():
+			return {"type": "invalid", "error": "quest_archive_entry_text"}
+		var values: Array = text.values as Array
+		entries.append({"title": values[0], "location": values[1],
+			"detail": values[2]})
+		offset = int(text.offset)
+	if offset != payload.size():
+		return {"type": "invalid", "error": "quest_archive_trailing"}
+	return {"type": "quest_archive", "entries": entries}
 
 ## Command 240. Who is in the party, how they are doing, and where they are.
 ##

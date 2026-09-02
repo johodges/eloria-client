@@ -53,6 +53,11 @@ var quest_panel: PanelContainer
 var quest_list: ItemList
 var quest_detail: RichTextLabel
 var quest_track_button: Button
+var quest_active_button: Button
+var quest_done_button: Button
+## Which half of the journal is showing. The player's choice about their own
+## window, so it is kept here; both lists are the server's own state.
+var _quest_showing_archive := false
 var tracked_quest: PanelContainer
 var tracked_quest_text: RichTextLabel
 var mail_panel: PanelContainer
@@ -168,7 +173,7 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_combat()
 		&"special_events":
 			_sync_events()
-		&"quest_journal":
+		&"quest_journal", &"quest_archive":
 			_sync_quests()
 		&"mail":
 			_sync_mail()
@@ -331,6 +336,12 @@ func _sync_events() -> void:
 # --- quest journal -----------------------------------------------------------
 
 func _sync_quests() -> void:
+	quest_active_button.button_pressed = not _quest_showing_archive
+	quest_done_button.button_pressed = _quest_showing_archive
+	quest_done_button.text = "Completed (%d)" % AppState.quest_archive.size()
+	if _quest_showing_archive:
+		_sync_quest_archive()
+		return
 	var selected: int = _selected_index(quest_list)
 	quest_list.clear()
 	for entry: Dictionary in AppState.quest_journal:
@@ -352,6 +363,34 @@ func _sync_quests() -> void:
 	quest_track_button.text = ("Untrack"
 		if str((AppState.quest_journal[index] as Dictionary).get("title", ""))
 			== _tracked_quest_title else "Track")
+
+## The finished half of the same window. Tracking is meaningless here - there
+## is nothing left to do - so the button is disabled rather than removed, which
+## would move everything else when the view changes.
+func _sync_quest_archive() -> void:
+	var selected: int = _selected_index(quest_list)
+	quest_list.clear()
+	for entry: Dictionary in AppState.quest_archive:
+		quest_list.add_item("%s  [%s]" % [str(entry.get("title", "")),
+			str(entry.get("location", ""))])
+	quest_track_button.disabled = true
+	if AppState.quest_archive.is_empty():
+		quest_detail.text = "[center]You have not finished any quests yet.[/center]"
+		return
+	var index: int = clampi(selected, 0, AppState.quest_archive.size() - 1)
+	quest_list.select(index)
+	_show_archived_quest(index)
+
+func _on_quest_view(archive: bool) -> void:
+	if _quest_showing_archive == archive:
+		# Both are toggle buttons, so pressing the one already down would
+		# otherwise un-press it and leave the window showing neither view.
+		quest_active_button.button_pressed = not archive
+		quest_done_button.button_pressed = archive
+		return
+	_quest_showing_archive = archive
+	quest_list.deselect_all()
+	_sync_quests()
 
 ## Pins the selected quest to the screen, or unpins it when it is already the
 ## tracked one.
@@ -390,6 +429,23 @@ func _sync_tracked_quest() -> void:
 		lines.append(str(tracked.get("location", "unknown")))
 	tracked_quest_text.text = "\n".join(lines)
 	tracked_quest.show()
+
+## One list serves both halves of the window, so a selection has to be read
+## against whichever half is showing - against the other one it would either
+## describe the wrong quest or silently describe nothing.
+func _on_quest_selected(index: int) -> void:
+	if _quest_showing_archive:
+		_show_archived_quest(index)
+	else:
+		_show_quest(index)
+
+func _show_archived_quest(index: int) -> void:
+	if index < 0 or index >= AppState.quest_archive.size():
+		return
+	var entry: Dictionary = AppState.quest_archive[index]
+	quest_detail.text = "[b]%s[/b]\n[i]%s[/i]\n\n%s" % [
+		str(entry.get("title", "")), str(entry.get("location", "")),
+		str(entry.get("detail", ""))]
 
 func _show_quest(index: int) -> void:
 	if index < 0 or index >= AppState.quest_journal.size():
@@ -748,13 +804,29 @@ func _build() -> void:
 	events_panel.add_child(events_text)
 
 	quest_panel = _window("QuestJournal", "Quest journal")
+	var quest_views := HBoxContainer.new()
+	quest_views.name = "QuestViews"
+	_window_body(quest_panel).add_child(quest_views)
+	quest_active_button = Button.new()
+	quest_active_button.name = "QuestActive"
+	quest_active_button.text = "Active"
+	quest_active_button.toggle_mode = true
+	quest_active_button.button_pressed = true
+	quest_active_button.pressed.connect(_on_quest_view.bind(false))
+	quest_views.add_child(quest_active_button)
+	quest_done_button = Button.new()
+	quest_done_button.name = "QuestDone"
+	quest_done_button.text = "Completed (0)"
+	quest_done_button.toggle_mode = true
+	quest_done_button.pressed.connect(_on_quest_view.bind(true))
+	quest_views.add_child(quest_done_button)
 	var quest_columns := HSplitContainer.new()
 	quest_columns.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_window_body(quest_panel).add_child(quest_columns)
 	quest_list = ItemList.new()
 	quest_list.name = "QuestList"
 	quest_list.custom_minimum_size = Vector2(240.0, 0.0)
-	quest_list.item_selected.connect(_show_quest)
+	quest_list.item_selected.connect(_on_quest_selected)
 	quest_columns.add_child(quest_list)
 	var quest_side := VBoxContainer.new()
 	quest_columns.add_child(quest_side)
