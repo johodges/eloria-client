@@ -14,6 +14,12 @@ var stride_speeds: Dictionary
 ## left one-shot plays through once and freezes mid-stride until the next
 ## step packet restarts it.
 var looping_clips: PackedStringArray
+## Degrees of yaw to turn the body while an action plays, cancelling a clip
+## whose authored pose faces off the rig's forward. The locomotion clips carry
+## the pelvis about 23 degrees round, so a walk or run faces that far off its
+## travel; this puts it back. Absent for poses meant to face off (a bladed
+## combat idle, a lunge), which are left as authored.
+var facing_offsets: Dictionary
 var fallback_action: StringName
 
 func _init(config: Dictionary) -> void:
@@ -22,6 +28,7 @@ func _init(config: Dictionary) -> void:
 	playback_speeds = config.get("playbackSpeeds", {}).duplicate(true)
 	stride_speeds = config.get("strideMetresPerSecond", {}).duplicate(true)
 	looping_clips = PackedStringArray(config.get("loopingClips", []))
+	facing_offsets = config.get("facingOffsets", {}).duplicate(true)
 	fallback_action = StringName(config.get("fallbackAction", "idle"))
 
 func action_for_command(command: int, combat_mode := false) -> StringName:
@@ -41,6 +48,11 @@ func playback_speed_for_action(action: StringName) -> float:
 ## the fixed playback speed instead.
 func stride_speed_for_action(action: StringName) -> float:
 	return maxf(0.0, float(stride_speeds.get(String(action), 0.0)))
+
+## Degrees to turn the body while this action plays, zero unless the action map
+## names a correction for it.
+func facing_offset_for_action(action: StringName) -> float:
+	return float(facing_offsets.get(String(action), 0.0))
 
 ## Every clip this resolver can ever ask an AnimationPlayer to play. The native
 ## animation importer uses it to rebuild only the clips an actor needs instead
