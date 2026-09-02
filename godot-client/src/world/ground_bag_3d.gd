@@ -20,7 +20,9 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter) -> void:
 	collision_mask = 0
 	# Configure before the node enters the scene tree; its parent WorldRoot uses
 	# the same authored coordinate space, so a local transform is correct here.
-	position = adapter.server_to_godot(server_tile.x, server_tile.y)
+	# Centered on the tile like the actor who dropped it, who stands at the
+	# tile's center - a bag at the corner sat half a tile away from its owner.
+	position = adapter.tile_center(server_tile.x, server_tile.y)
 	_build_visual()
 
 func set_surface_height(height: float) -> void:

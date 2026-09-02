@@ -27,7 +27,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter) -> void:
 	server_tile = Vector2i(int(dto.get("x", 0)), int(dto.get("y", 0)))
 	label = str(dto.get("label", ""))
 	name = "MapMarker_%d" % marker_id
-	position = adapter.server_to_godot(server_tile.x, server_tile.y)
+	position = adapter.tile_center(server_tile.x, server_tile.y)
 	_build_visual()
 
 func set_surface_height(height: float) -> void:

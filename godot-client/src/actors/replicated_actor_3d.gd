@@ -41,6 +41,20 @@ var _smoothed_server_interval := 0.6
 ## tile direction the server named. See `_rendered_target_yaw`.
 var _travel_yaw_active := false
 var _travel_yaw := 0.0
+## Recent authoritative tile centres, newest last. The rendered facing is the
+## bearing of the net travel across the last `FACING_TRAIL_METRES` of them, not
+## of the single step that just arrived. A straight click-path that is not one
+## of the eight tile directions is walked as a zigzag of orthogonal and diagonal
+## steps; facing each step on its own swung the body up to 23 degrees to either
+## side of the line it was actually walking. The net over a couple of tiles is
+## the line itself, so the body points along it. See `_facing_anchor`.
+var _travel_history: PackedVector3Array = PackedVector3Array()
+## How far back along the recent path the facing bearing is measured. Four tiles
+## is long enough to average the lone diagonal steps that straighten a shallow
+## line - the ones that swung the body up to 23 degrees off its heading when it
+## faced each step alone - yet short enough that a real change of direction turns
+## the body within about four steps rather than being averaged away.
+const FACING_TRAIL_METRES := 3.0
 ## Whether the server says this actor is under the double-speed buff. The
 ## server paces a hastened actor at half the move interval but still names the
 ## ordinary walk commands, so the buff is the only thing that says an actor is
@@ -123,6 +137,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	server_target = adapter.tile_center(int(dto.x), int(dto.y))
 	position = server_target
 	_segment_start = position
+	_travel_history = PackedVector3Array([server_target])
 	_smoothed_server_interval = initial_server_interval
 	rotation.y = adapter.rotation_to_godot(int(dto.rotation))
 	_target_yaw = rotation.y
@@ -181,7 +196,9 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 			_attach_cape_cloth(skeleton)
 			apply_appearance_variants(dto.get("appearance", {}) as Dictionary)
 			var animation_path := _external_path(str(model_config.get("animationLibrary", "")))
-			var imported := NativeAnimationImporter.import_library(self, animation_path, skeleton, model_config.get("boneAliases", {}))
+			var imported := NativeAnimationImporter.import_library(self,
+					animation_path, skeleton, model_config.get("boneAliases", {}),
+					PackedStringArray(), resolver.looping_clips)
 			animation_player = imported.player
 			errors.append_array(Array(imported.errors))
 			if animation_player != null:
@@ -559,6 +576,7 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 		_movement_coast_remaining = 0.0
 		_snap_pending = false
 		_travel_yaw_active = false
+		_travel_history = PackedVector3Array([server_target])
 	elif target_changed:
 		var now_msec: int = Time.get_ticks_msec()
 		if _last_movement_update_msec >= 0:
@@ -583,7 +601,8 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 			global_position.distance_to(server_target), _presentation_speed,
 			_smoothed_server_interval, arrival_margin,
 			minimum_segment_duration, maximum_segment_duration)
-		_travel_yaw = travel_yaw(_segment_start, server_target, _target_yaw)
+		_travel_history.append(server_target)
+		_travel_yaw = travel_yaw(_facing_anchor(), server_target, _target_yaw)
 		_travel_yaw_active = true
 	_wake()
 	if dto.has("command") and resolver != null:
@@ -1412,6 +1431,23 @@ static func travel_yaw(from: Vector3, to: Vector3, fallback: float) -> float:
 	if travel.length_squared() < 0.000001:
 		return fallback
 	return atan2(-travel.x, -travel.z)
+
+## The point the current bearing is measured from: the most recent past tile
+## that is at least `FACING_TRAIL_METRES` behind the target, or the oldest one
+## on record if the trail is not that long yet. Measuring the bearing from here
+## rather than from the immediately preceding tile is what averages a zigzagged
+## straight line into the straight line the player actually asked for. History
+## older than the chosen anchor is dropped, since nothing will read it again.
+func _facing_anchor() -> Vector3:
+	var target: Vector3 = _travel_history[_travel_history.size() - 1]
+	var anchor_index := 0
+	for index in range(_travel_history.size() - 2, -1, -1):
+		if _travel_history[index].distance_to(target) >= FACING_TRAIL_METRES:
+			anchor_index = index
+			break
+	if anchor_index > 0:
+		_travel_history = _travel_history.slice(anchor_index)
+	return _travel_history[0]
 
 ## Where the body is pointed this frame. The authoritative facing is still
 ## `_target_yaw`; this only decides what is drawn while the actor is crossing

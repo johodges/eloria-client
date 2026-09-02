@@ -8,6 +8,12 @@ var playback_speeds: Dictionary
 ## speed 1.0, measured from its planted foot. The clips animate in place, so
 ## this is what tells an actor how fast to run one for its own travel speed.
 var stride_speeds: Dictionary
+## The clips that are cycles - travel, idles, dances - rather than one-shot
+## transitions. glTF has no way to say a clip loops, so a runtime import
+## leaves every clip one-shot; this list is where looping is stated. A walk
+## left one-shot plays through once and freezes mid-stride until the next
+## step packet restarts it.
+var looping_clips: PackedStringArray
 var fallback_action: StringName
 
 func _init(config: Dictionary) -> void:
@@ -15,6 +21,7 @@ func _init(config: Dictionary) -> void:
 	command_to_action = config.get("serverCommands", {}).duplicate(true)
 	playback_speeds = config.get("playbackSpeeds", {}).duplicate(true)
 	stride_speeds = config.get("strideMetresPerSecond", {}).duplicate(true)
+	looping_clips = PackedStringArray(config.get("loopingClips", []))
 	fallback_action = StringName(config.get("fallbackAction", "idle"))
 
 func action_for_command(command: int, combat_mode := false) -> StringName:

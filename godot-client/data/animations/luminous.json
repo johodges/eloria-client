@@ -5,6 +5,16 @@
   "walk": 0.685,
   "run": 2.666
  },
+ "loopingClips": [
+  "Dance_Simple",
+  "Fighting_Idle",
+  "Idle_A",
+  "Idle_Subtle",
+  "Meditate",
+  "Run_Female",
+  "Sitting_Idle",
+  "Walk"
+ ],
  "playbackSpeeds": {
   "walk": 1.45,
   "run": 1.35,

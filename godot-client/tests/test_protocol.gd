@@ -413,6 +413,33 @@ func _init() -> void:
 		"server north faces Godot forward")
 	_expect(is_equal_approx(coordinate.direction_to_godot(Vector2i(1, 0)), -PI / 2.0),
 		"server east faces Godot right")
+	# Everything the server addresses by tile stands where the actor on that
+	# tile stands: the tile's center. A bag placed at the tile's corner sat
+	# half a tile away from the player who had just dropped it.
+	var bag_fixture := GroundBag3D.new()
+	bag_fixture.configure({"bag_id": 9, "x": 102, "y": 198}, coordinate)
+	_expect(bag_fixture.position.is_equal_approx(coordinate.tile_center(102, 198)),
+		"a dropped bag stands at the same tile center as the actor on it")
+	bag_fixture.free()
+	# The click-to-walk cross, behaving as the legacy highlight.c does: born
+	# with its corners half a tile out and 0.3 m off the ground, collapsed
+	# most of the way in at half life (age² pacing), and gone once its half
+	# second is spent.
+	var highlight_fixture := HighlightMarker3D.new()
+	highlight_fixture.configure(Vector3(4.0, 2.0, 6.0), 1.0)
+	var first_wedge: MeshInstance3D = highlight_fixture.get_node("Wedge0") as MeshInstance3D
+	_expect(first_wedge != null
+		and first_wedge.position.is_equal_approx(Vector3(-0.5, 0.0, -0.5))
+		and is_equal_approx(highlight_fixture.position.y, 2.3),
+		"a fresh walk cross starts half a tile wide and lifted off the ground")
+	highlight_fixture.call("_process", 0.25)
+	_expect(first_wedge.position.is_equal_approx(Vector3(-0.125, 0.0, -0.125))
+		and is_equal_approx(highlight_fixture.position.y, 2.15),
+		"the walk cross collapses towards the clicked tile as it ages")
+	highlight_fixture.restart()
+	_expect(first_wedge.position.is_equal_approx(Vector3(-0.5, 0.0, -0.5)),
+		"re-clicking a tile restarts its cross instead of stacking another")
+	highlight_fixture.free()
 
 	var walk_segment := ReplicatedActor3D.presentation_segment_duration(
 		1.0, 6.0, 0.25, 1.05, 0.06, 0.75)
@@ -501,6 +528,30 @@ func _init() -> void:
 	_expect(is_equal_approx(transition_resolver.playback_speed_for_action(&"sit"), 2.0)
 		and is_equal_approx(transition_resolver.playback_speed_for_action(&"stand"), 2.0),
 		"sit and stand transitions play at twice speed")
+	# Actions the server holds an actor in must cycle for as long as they hold
+	# it: a one-shot walk plays through and freezes mid-stride until the next
+	# step packet restarts it. glTF cannot carry a loop flag, so the action
+	# map's loopingClips list is the only place looping is stated - and
+	# renaming an action's clip has to keep that list in step.
+	for species_path: String in ["res://data/animations/luminous.json",
+			"res://data/animations/creature.json"]:
+		var species_file: FileAccess = FileAccess.open(species_path, FileAccess.READ)
+		var species_resolver := AnimationResolver.new(
+			JSON.parse_string(species_file.get_as_text()) as Dictionary)
+		for held_action: String in ["idle", "walk", "run", "combat_idle", "seated_idle"]:
+			_expect(species_resolver.looping_clips.has(
+				str(species_resolver.clip_for_action(StringName(held_action)))),
+				"%s declares a looping %s clip" % [species_path.get_file(), held_action])
+		# Death and pain finish; a looping death is a corpse that keeps dying.
+		for finishing_action: String in ["death", "pain"]:
+			_expect(not species_resolver.looping_clips.has(
+				str(species_resolver.clip_for_action(StringName(finishing_action)))),
+				"%s keeps %s one-shot" % [species_path.get_file(), finishing_action])
+	# The stand transition hands off to idle when it finishes, so the species
+	# whose stand is a real transition clip must not loop it.
+	_expect(not transition_resolver.looping_clips.has(
+		str(transition_resolver.clip_for_action(&"stand"))),
+		"the stand transition stays one-shot")
 	# Emote actions the server can name. Each has to reach a distinct clip: two
 	# emotes sharing one would look identical, and an action with no clip is
 	# silently not animated, which is a thing to notice here rather than in

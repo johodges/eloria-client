@@ -65,6 +65,33 @@ func _run() -> void:
 		_expect(actor.global_position.distance_to(actor.server_target) < 0.6,
 			"command %d leaves the actor within a tile of its own position (%.2f m)"
 				% [int(leg[0]), actor.global_position.distance_to(actor.server_target)])
+
+	# A straight line the player asked for that is not one of the eight tile
+	# directions. The server walks it as a zigzag - here two east steps then one
+	# northeast, a heading of atan(1/3) north of east - naming each step's own
+	# 8-way command. Facing each step alone swung the body up to 23 degrees to
+	# either side of that line; the body must instead point along the line it is
+	# walking, because the net of the last few steps is that line.
+	actor.apply_server_state({"actor_id": 7, "x": 0, "y": 0, "rotation": 0,
+		"command": 22}, adapter, true)
+	var zx := 0
+	var zy := 0
+	var worst_offaxis := 0.0
+	var offaxis_heading: float = adapter.direction_to_godot(Vector2i(3, 1))
+	for step: int in range(24):
+		var diagonal: bool = step % 3 == 2
+		zx += 1
+		zy += 1 if diagonal else 0
+		actor.apply_server_state({"actor_id": 7, "x": zx, "y": zy, "rotation": 0,
+			"command": 21 if diagonal else 22}, adapter)
+		await create_timer(cadence).timeout
+		if step >= 6:
+			worst_offaxis = maxf(worst_offaxis, absf(rad_to_deg(
+				wrapf(actor.rotation.y - offaxis_heading, -PI, PI))))
+	_expect(worst_offaxis < 6.0,
+		"body points along an off-axis straight line, not at each zigzag step (worst %.1f deg)"
+			% worst_offaxis)
+
 	print("actor facing tests: ",
 		"PASS" if _failures == 0 else "FAIL (%d)" % _failures)
 	quit(_failures)
