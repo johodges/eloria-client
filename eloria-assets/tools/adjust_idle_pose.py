@@ -62,7 +62,7 @@ TARGET_ARM_DROP = 79.0
 #: Both hands land at the same absolute spot: this far in front of the
 #: body (the user's 0.1 m forward of where they hung), this far out from
 #: the midline, with the same soft elbow bend.
-TARGET_HAND_Z = 0.065
+TARGET_HAND_Z = 0.045
 #: Per side, in the tool's rest-rooted frame, which sits 16 mm to the
 #: right of the runtime one (the pelvis channel recentring) -- so the
 #: same world shift SUBTRACTS from the left hand's distance and ADDS to
