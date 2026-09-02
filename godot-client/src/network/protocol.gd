@@ -74,7 +74,7 @@ enum ServerMessage {
 	ELORIA_MAIL_STATE = 229, ELORIA_NAVIGATION_STATE = 230,
 	ELORIA_SPECIAL_EVENT_STATE = 232, ELORIA_PLAYER_INFO = 228,
 	ELORIA_SPELL_POWER = 231,
-	ELORIA_ALMANAC_STATE = 238,
+	ELORIA_ALMANAC_STATE = 238, ELORIA_STORAGE_STATE = 239,
 	ADD_ACTOR_ANIMATION = 89,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
@@ -172,6 +172,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"quest_journal_v1",
 	"spell_power_v1",
 	"special_events_v1",
+	"storage_window_v1",
 ]
 
 ## `#clientcaps` is an ordinary chat command; the server parses it out of
@@ -622,6 +623,8 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return decode_storage_categories(payload)
 		ServerMessage.STORAGE_ITEMS:
 			return decode_storage_items(payload)
+		ServerMessage.ELORIA_STORAGE_STATE:
+			return decode_storage_state(payload)
 		ServerMessage.STORAGE_TEXT:
 			if payload.is_empty():
 				return {"type": "invalid", "error": "storage_text_length"}
@@ -1627,6 +1630,36 @@ static func decode_storage_items(payload: PackedByteArray) -> Dictionary:
 			"position": u16(payload, offset + 6)})
 	return {"type": "storage_items", "category_id": int(payload[1]),
 		"update": update, "items": items}
+
+## The Eloria organizer packet: what each stored position actually is, so the
+## window can filter a category by type and sort it by name, strength, or
+## rarity. Positions match the stock STORAGE_ITEMS packet exactly.
+static func decode_storage_state(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 3:
+		return {"type": "invalid", "error": "storage_state_length"}
+	var count: int = u16(payload, 1)
+	var rows: Array[Dictionary] = []
+	var offset: int = 3
+	for _index: int in range(count):
+		if offset + 13 > payload.size():
+			return {"type": "invalid", "error": "storage_state_row"}
+		var row: Dictionary = {
+			"position": u16(payload, offset),
+			"image_id": u16(payload, offset + 2),
+			"quantity": u32(payload, offset + 4),
+			"strength": s32(payload, offset + 8),
+			"rarity": int(payload[offset + 12])}
+		offset += 13
+		for key: String in ["name", "subtype"]:
+			var terminator: int = payload.find(0, offset)
+			if terminator < 0:
+				return {"type": "invalid", "error": "storage_state_text"}
+			row[key] = payload.slice(offset, terminator).get_string_from_utf8()
+			offset = terminator + 1
+		rows.append(row)
+	if offset != payload.size():
+		return {"type": "invalid", "error": "storage_state_trailing"}
+	return {"type": "storage_state", "category_id": int(payload[0]), "rows": rows}
 
 static func decode_stats(payload: PackedByteArray) -> Dictionary:
 	if payload.size() < 230:

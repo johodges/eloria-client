@@ -531,6 +531,9 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			storage["open"] = true
 			storage["categories"] = (event.categories as Array).duplicate(true)
 			storage["text"] = ""
+			# A fresh window: drop descriptions of whatever was open before,
+			# so a stale row can never be filtered or sorted into this one.
+			storage["described"] = {}
 			state_changed.emit(&"storage")
 		"storage_items":
 			var storage_items: Dictionary = (storage.get("items", {}) as Dictionary).duplicate(true)
@@ -546,6 +549,16 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			storage["items"] = storage_items
 			storage["category_id"] = int(event.category_id)
 			storage["open"] = true
+			state_changed.emit(&"storage")
+		"storage_state":
+			# Keyed by position so it lines up with the stock storage packet.
+			# A category the server re-describes replaces its rows outright.
+			var described: Dictionary = {}
+			for raw_row: Variant in event.rows:
+				var row: Dictionary = raw_row as Dictionary
+				described[int(row.get("position", -1))] = row
+			storage["described"] = described
+			storage["category_id"] = int(event.category_id)
 			state_changed.emit(&"storage")
 		"storage_text":
 			storage["text"] = str(event.text)
@@ -1021,7 +1034,7 @@ func close_storage() -> void:
 
 func _empty_storage_state() -> Dictionary:
 	return {"open": false, "categories": [], "category_id": -1,
-		"items": {}, "text": ""}
+		"items": {}, "described": {}, "text": ""}
 
 func begin_ground_bag_inspection(bag_id: int) -> void:
 	ground_bag["bag_id"] = bag_id
