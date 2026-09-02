@@ -422,6 +422,13 @@ var _interaction_mode := "walk"
 ## mode: letting Alt go puts the move icon back, and it never disturbs an
 ## attack mode the player chose from the HUD.
 var _alt_attack_preview := false
+## The action pointer: the cursor names what a click would do (walk, talk,
+## attack, harvest...), the way the legacy client's does. Refreshed on a short
+## clock rather than per motion event, because the answer also changes while
+## the mouse holds still - the camera turns, an actor walks under the pointer,
+## a mode button is pressed.
+var mouse_cursors := MouseCursors.new()
+var _cursor_refresh_msec := 0
 var _encyclopedia_bookmarks: Array = []
 var _hud_icon_regions: Dictionary = {}
 var _hud_active_atlas: Texture2D
@@ -619,6 +626,10 @@ const UI_SCALE_MAX := 1.5
 # identically at a fraction of the rate.
 const MINIMAP_REFRESH_MSEC := 66
 const FULL_MAP_REFRESH_MSEC := 200
+## The action pointer re-reads what it is over ten times a second: quick
+## enough that the swap reads as immediate, and rare enough that its three
+## pick rays never matter.
+const ACTION_CURSOR_REFRESH_MSEC := 100
 ## The sky only has to keep up with a six-hour day; twice a second is already
 ## finer than the eye can follow and costs a handful of property writes.
 const DAY_NIGHT_REFRESH_MSEC := 500
@@ -731,6 +742,9 @@ func _ready() -> void:
 	world_root.add_child(weather_layer)
 	world_loader.load_completed.connect(_on_world_loaded)
 	world_loader.load_failed.connect(_on_world_load_failed)
+	if mouse_cursors.configure("res://assets/ui/cursors/cursors.json"):
+		mouse_cursors.install_text_caret()
+		mouse_cursors.apply(MouseCursors.ARROW)
 	viewport_container.gui_input.connect(_on_world_gui_input)
 	minimap.gui_input.connect(_on_minimap_gui_input)
 	minimap_frame.gui_input.connect(_on_minimap_frame_gui_input)
@@ -868,6 +882,7 @@ func _bind_shared_world() -> void:
 
 func _process(delta: float) -> void:
 	_update_preview_viewport()
+	_update_action_cursor()
 	if game_view.visible:
 		_update_carried_item()
 		_update_map_viewports()
@@ -7293,6 +7308,69 @@ func _pick_ground_bag(viewport_position: Vector2) -> int:
 	if collider_value is GroundBag3D:
 		return (collider_value as GroundBag3D).bag_id
 	return -1
+
+## Keeps the pointer stating what a click would do. Ten refreshes a second is
+## enough to feel immediate and keeps the three pick rays off the per-motion
+## path; the apply call itself is free when the answer has not changed.
+func _update_action_cursor() -> void:
+	if not mouse_cursors.loaded():
+		return
+	var now: int = Time.get_ticks_msec()
+	if now < _cursor_refresh_msec:
+		return
+	_cursor_refresh_msec = now + ACTION_CURSOR_REFRESH_MSEC
+	mouse_cursors.apply(MouseCursors.choose(_cursor_context()))
+
+## What the pointer is over, in the terms the cursor table decides on. Empty
+## means "not over the world" - the login screen, a window, the HUD - which
+## the table answers with the plain arrow.
+func _cursor_context() -> Dictionary:
+	if not game_view.visible or gameplay_world == null:
+		return {}
+	if get_viewport().gui_get_hovered_control() != viewport_container:
+		return {}
+	return _cursor_context_at(_local_viewport_position(
+		viewport_container.get_local_mouse_position()))
+
+## The world half of the pointer question, split from the hover gate so a test
+## can ask it about any spot without owning the operating system's mouse.
+func _cursor_context_at(viewport_position: Vector2) -> Dictionary:
+	var context: Dictionary = {
+		"over_world": true,
+		"mode": _interaction_mode,
+		"alt": _alt_attack_preview,
+		"spell_target": AppState.pending_spell_target,
+	}
+	# The same ray order the click handler resolves in: actors win over bags,
+	# bags over world objects, so the pointer promises what the click does.
+	var actor_id: int = _pick_actor(viewport_position)
+	if actor_id >= 0:
+		var dto: Dictionary = AppState.actors.get(actor_id, {})
+		var kind: int = int(dto.get("kind", 0))
+		if actor_id == AppState.local_actor_id:
+			context["target"] = "self"
+		elif kind == 2:
+			context["target"] = "npc"
+		elif kind in [3, 5]:
+			context["target"] = "creature"
+		else:
+			# Players, and any kind this client cannot attack, trade with or
+			# greet: the honest promise for those is a look.
+			context["target"] = "player"
+		context["alive"] = bool(dto.get("alive", int(dto.get("health", 0)) > 0))
+		return context
+	if _pick_ground_bag(viewport_position) >= 0:
+		context["target"] = "bag"
+		return context
+	var map_object: MapObject3D = _pick_map_object(viewport_position)
+	if map_object != null:
+		if map_object.is_harvestable():
+			context["target"] = "harvest"
+		elif map_object.model_id == "portal" or map_object.label == "Portal":
+			context["target"] = "portal"
+		else:
+			context["target"] = "interactive"
+	return context
 
 func _apply_eloria_art() -> void:
 	login_background.texture = _external_texture("res://assets/ui/eloria_login_background.jpg")
