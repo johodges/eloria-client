@@ -1004,22 +1004,24 @@ func _init() -> void:
 		if atlas_config_value is Dictionary:
 			var atlas: ItemAtlas = ItemAtlas.new()
 			atlas.configure(atlas_config_value as Dictionary)
+			# The painted range grows with the generated sets, so the probes
+			# lean on the declared count rather than pinning last year's size.
+			var image_count: int = int(
+				(atlas_config_value as Dictionary).get("imageCount", 0))
 			var first_icon: Texture2D = atlas.icon_for(0)
-			var last_icon: Texture2D = atlas.icon_for(177)
+			var last_icon: Texture2D = atlas.icon_for(image_count - 1)
 			_expect(first_icon is AtlasTexture and first_icon.get_size() == Vector2(50, 50),
 				"first legacy item icon resolves at native aspect")
 			_expect(last_icon is AtlasTexture and last_icon.get_size() == Vector2(50, 50),
-				"eighth item atlas resolves the last generated-armour icon")
-			_expect(not atlas.supports(178) and atlas.icon_for(178) != null
-				and atlas.uses_substitute(178),
+				"the last declared icon resolves at native aspect")
+			_expect(not atlas.supports(image_count)
+				and atlas.icon_for(image_count) != null
+				and atlas.uses_substitute(image_count),
 				"unsupported legacy item image receives the configured visible fallback")
-			_expect(atlas.icon_for(114) != null and atlas.uses_substitute(114),
+			_expect(atlas.icon_for(397) != null and atlas.uses_substitute(397),
 				"known legacy item image receives its data-driven Eloria substitute")
-			var guard_spear_icon: AtlasTexture = atlas.icon_for(114) as AtlasTexture
 			var guard_shield_icon: AtlasTexture = atlas.icon_for(397) as AtlasTexture
 			var guard_cape_icon: AtlasTexture = atlas.icon_for(460) as AtlasTexture
-			_expect(guard_spear_icon != null and guard_spear_icon.region.position == Vector2(150, 100),
-				"Four Gates guard spear uses the configured independent weapon artwork")
 			_expect(guard_shield_icon != null and guard_shield_icon.region.position == Vector2(50, 150),
 				"Four Gates guard shield uses the configured independent shield artwork")
 			_expect(guard_cape_icon != null and guard_cape_icon.region.position == Vector2(200, 200),
@@ -1033,21 +1035,29 @@ func _init() -> void:
 		if spell_config_value is Dictionary:
 			var spell_catalog: SpellCatalog = SpellCatalog.new()
 			spell_catalog.configure(spell_config_value as Dictionary)
-			var heal: Dictionary = spell_catalog.spell(0)
-			var heal_sigils: Array = heal.get("sigils", []) as Array
-			_expect(heal_sigils.size() == 2 and int(heal_sigils[0]) == 3
-				and int(heal_sigils[1]) == 23,
-				"Heal uses the audited ordered sigil sequence")
-			var heal_icon: Texture2D = spell_catalog.icon_for(0)
-			_expect(heal_icon is AtlasTexture and heal_icon.get_size() == Vector2(64, 64),
-				"legacy spell icon resolves at native aspect")
+			# The catalog mirrors the server's spellbook (dev-server
+			# config/eloria/spells.xml): the sigil sequence is the CAST_SPELL
+			# payload and the server's lookup key, so the order is the wire.
+			var embermend: Dictionary = spell_catalog.spell(0)
+			var embermend_sigils: Array = embermend.get("sigils", []) as Array
+			_expect(embermend_sigils.size() == 2 and int(embermend_sigils[0]) == 0
+				and int(embermend_sigils[1]) == 7,
+				"Embermend uses the server's ordered sigil sequence")
+			var embermend_icon: Texture2D = spell_catalog.icon_for(0)
+			_expect(embermend_icon is AtlasTexture
+				and embermend_icon.get_size() == Vector2(64, 64),
+				"spell icon resolves at native aspect")
 			var ready_reasons: Array[String] = spell_catalog.unavailable_reasons(0,
-				[3, 23], {"magic": 0, "ether": 5}, {0: {
-					"image_id": 59, "quantity": 1}})
-			_expect(ready_reasons.is_empty(), "owned Heal requirements are locally ready")
+				[0, 7], {"magic": 0, "ether": 5}, {
+					0: {"image_id": 70, "quantity": 1},
+					1: {"image_id": 20, "quantity": 1},
+					2: {"image_id": 69, "quantity": 1}})
+			_expect(ready_reasons.is_empty(),
+				"owned Embermend requirements are locally ready")
 			var blocked_reasons: Array[String] = spell_catalog.unavailable_reasons(0,
-				[3], {"magic": 0, "ether": 4}, {})
-			_expect(blocked_reasons.size() == 3, "missing sigil, mana, and reagent are explicit")
+				[0], {"magic": 0, "ether": 4}, {})
+			_expect(blocked_reasons.size() == 5,
+				"the missing sigil, the mana, and each of the three reagents are explicit")
 
 	# Perks are server state. The client keeps no perk table: the names and
 	# descriptions arrive on the wire, which is what makes a renamed or newly

@@ -23,8 +23,8 @@ const RESERVED_RIGHT_RAIL := 96.0
 ## The four Eternal Lands groups, in the order the legacy window draws them.
 const GROUP_ORDER: Array[String] = ["Health", "General", "Attack", "Defense"]
 ## Which group each catalogued effect belongs to. Anything the table does not
-## name - the teleports, Bones to Gold, True Sight, Invisibility, spells with
-## no effect at all - is a General spell.
+## name - Blinkstep and any other spell with no effect at all - is a General
+## spell.
 const EFFECT_GROUPS := {
 	"heal": "Health",
 	"poison": "Attack",
