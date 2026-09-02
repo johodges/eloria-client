@@ -942,6 +942,7 @@ def repose(points: np.ndarray, normals: np.ndarray, rig: ea.Rig, region: str,
         # the arm points; rotating it with the sleeve swings it down the
         # arm and bares the trapezius.  A component whose body lies above
         # the pivot is such a cap, and keeps its authored drape.
+        caps = np.zeros(welded, dtype=bool)
         for label in np.unique(labels):
             indexed = np.zeros(welded, dtype=bool)
             indexed[labels == label] = True
@@ -953,12 +954,19 @@ def repose(points: np.ndarray, normals: np.ndarray, rig: ea.Rig, region: str,
             outboard = abs(float(centroid[0])) - abs(float(start[0]))
             if above > 0.01 and outboard < 0.10:
                 turn[indexed] = 0.0
+                caps[indexed] = True
         turn = turn[canon]
         out = _frontal_turn(out, start, -chosen * turn)
         turned = _frontal_turn(turned, np.zeros(3), -chosen * turn)
         report["applied"] = True
         report["limbVertices"] = int((turn > 0.5).sum())
         report["components"] = int(len(np.unique(labels)))
+        # The masks ride along so the finishing passes in build() -- seated
+        # and stretched geometry -- can still tell sleeve from cap from
+        # trunk without re-deriving the segmentation.
+        report["sleeve"] = turn > 0.5
+        report["cap"] = caps[canon]
+        report["pivot"] = pivot_bone
     return out, turned, reports
 
 
@@ -1251,13 +1259,15 @@ def shirt_liner(race_path: Path):
         liner_joints = np.vstack([liner_joints, joints_band[drop]])
         liner_weights = np.vstack([liner_weights, weights_band[drop]])
         liner_faces = np.vstack([liner_faces, np.array(rim_faces)])
-    # Under the padded shell, a coat of paint: a second copy of the band
-    # dead on the skin.  Its material is alpha-blended, and transparents
-    # draw after the opaque body with a depth test ties pass -- so wherever
-    # paint and skin coincide, the paint wins, even inside a crease that
-    # folded the shell.  Lifting it instead was tried at every offset: any
-    # offset is an offset linear blend skinning can fold under the surface.
-    paint = (positions_band + lift * 0.00005, normals_band.copy(),
+    # Under the padded shell, a coat of paint: a second copy of the band a
+    # bare two millimetres off the skin.  It is alpha-blended, so it draws
+    # after the opaque body and needs only to sit in front of it to win --
+    # but *dead* on the skin it shares the body's exact depth, and at a
+    # crease the depth-test tie is a per-pixel, per-frame coin flip that
+    # flickers a needle of shirt through.  Two millimetres clears the tie
+    # while staying far under the 8 mm shell, so a crease that folds the
+    # shell into the arm still meets paint before skin.
+    paint = (positions_band + lift * 0.002, normals_band.copy(),
              uvs_band.copy(), faces_band.reshape(-1).copy(),
              joints_band.copy(), weights_band.copy())
     # Plug the crease pockets.  Linear blend skinning folds a lifted shell
@@ -1402,6 +1412,57 @@ def build_socket(source: Path, out: Path, rig: ea.Rig, kind: str,
             "textured": png is not None, "bytes": out.stat().st_size}
 
 
+def _slim_to_body(points: np.ndarray, rig: ea.Rig, region: str,
+                  movable: np.ndarray, target_clear: float) -> np.ndarray:
+    """Draw a garment's trunk in toward the body's vertical axis until it hugs.
+
+    A pull, never a push: each height band is scaled about the body's own
+    centre in the x-z plane by the ratio that lands the band's proudest shell
+    point at the body's surface plus ``target_clear``, clamped to [floor, 1]
+    so the shell only ever comes in and a real relief is thinned rather than
+    erased.  Measured against the body -- which is a single closed surface --
+    not against the garment's own multi-shell point cloud, which is what made
+    every earlier girth measurement unreliable.
+    """
+    body = region_points(rig, region)
+    centre = np.array([float(np.median(body[:, 0])), float(np.median(body[:, 2]))])
+    low, high = float(body[:, 1].min()), float(body[:, 1].max())
+    rows = 12
+    floor = 0.7
+    factors = np.ones(rows)
+    for row in range(rows):
+        lo = low + (high - low) * row / rows
+        hi = low + (high - low) * (row + 1) / rows
+        skin = body[(body[:, 1] >= lo) & (body[:, 1] < hi)]
+        mid = (points[:, 1] >= lo) & (points[:, 1] < hi) & movable
+        if len(skin) < 6 or int(mid.sum()) < 6:
+            factors[row] = np.nan
+            continue
+        skin_r = float(np.percentile(
+            np.linalg.norm(skin[:, [0, 2]] - centre, axis=1), 92.0))
+        shell_r = float(np.percentile(
+            np.linalg.norm(points[mid][:, [0, 2]] - centre, axis=1), 92.0))
+        if shell_r <= 1e-4:
+            factors[row] = np.nan
+            continue
+        factors[row] = float(np.clip((skin_r + target_clear) / shell_r,
+                                     floor, 1.0))
+    centres = low + (high - low) * (np.arange(rows) + 0.5) / rows
+    good = ~np.isnan(factors)
+    if not good.any():
+        return points
+    factors = np.interp(centres, centres[good], factors[good])
+    for _ in range(2):
+        factors = np.convolve(np.pad(factors, 1, mode="edge"),
+                              [1 / 3.0, 1 / 3.0, 1 / 3.0], mode="valid")
+    out = points.copy()
+    scale = np.interp(out[movable, 1], centres, factors)
+    for index, axis in enumerate((0, 2)):
+        out[movable, axis] = ((out[movable, axis] - centre[index]) * scale
+                              + centre[index])
+    return out
+
+
 def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
           clearance: float = CLEARANCE, fit: str = "seat",
           taper: bool = False, race_path: Path | None = None) -> dict:
@@ -1458,6 +1519,63 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
             pivot = float(rig.origin("upperarm_l")[1]) - 0.06
             below = seated[:, 1] < pivot
             seated[below, 1] = pivot - (pivot - seated[below, 1]) * stretch
+        for step in posed:
+            if not step.get("applied") or "sleeve" not in step:
+                continue
+            pivot_name = str(step.get("pivot", ""))
+            shoulder = rig.origin(pivot_name)
+            seg_start, seg_end = rig.segment(pivot_name)
+            arm_axis = seg_end - seg_start
+            arm_axis /= max(np.linalg.norm(arm_axis), 1e-9)
+            # Sleeves stop at the wrist.  Every horizontal pass -- the girth
+            # reseat, the design's own proportions -- conspires to run the
+            # sleeve past the hand, and a cuff over the fingers reads as a
+            # mistake however faithful it is to the sheet.  The sleeve set is
+            # compressed along the arm about the shoulder until its far edge
+            # lands on the wrist; across the arm nothing changes, so cuffs
+            # keep their thickness.
+            sleeve = np.asarray(step["sleeve"], dtype=bool)
+            hand = rig.origin("hand_" + pivot_name[-1])
+            allowed = float(np.linalg.norm(hand - shoulder)) + 0.01
+            if sleeve.any():
+                travel = (seated[sleeve] - shoulder) @ arm_axis
+                forward = travel[travel > 0.02]
+                if len(forward) >= 12:
+                    furthest = float(np.percentile(forward, 98.0))
+                    if furthest > allowed:
+                        squeeze = allowed / furthest
+                        pull = np.where(travel > 0.0,
+                                        travel * (squeeze - 1.0), 0.0)
+                        seated[sleeve] += np.outer(pull, arm_axis)
+                        step["sleeveSqueeze"] = round(squeeze, 3)
+            # And the caps climb the trapezius.  Left at their authored
+            # drape they sit on the deltoid with the slope to the neck bare;
+            # a pauldron is worn riding up over the shoulder, so each cap
+            # slides up and inboard along that slope.
+            cap = np.asarray(step["cap"], dtype=bool)
+            if cap.any():
+                inboard = -1.0 if shoulder[0] > 0 else 1.0
+                seated[cap] += np.array([inboard * 0.022, 0.028, 0.0])
+                step["capRaised"] = True
+        # Slim the trunk onto the body.  The seat sizes girth from the design's
+        # own depth-to-height ratio, and these are chunky plate designs, so the
+        # chest shell stood 4-5 cm proud and read barrel-chested.  With the
+        # body's covered region hidden under the liner there is nothing to
+        # clear, so the trunk is drawn in toward the body's own vertical axis
+        # until it hugs -- per height band, shrink-only, floored so a genuine
+        # pauldron or breastplate relief is thinned rather than flattened, and
+        # never past the body plus clearance so the shirt cannot surface.
+        # Sleeves and caps are exempt: they are fitted to the limb already, and
+        # a sleeve pulled to the torso axis collapses onto the arm.
+        exempt = np.zeros(len(seated), dtype=bool)
+        for step in posed:
+            if step.get("applied"):
+                exempt |= np.asarray(step.get("sleeve", np.zeros(len(seated))),
+                                     dtype=bool)
+                exempt |= np.asarray(step.get("cap", np.zeros(len(seated))),
+                                     dtype=bool)
+        seated = _slim_to_body(seated, rig, region, ~exempt,
+                               clearance + SLACK * 0.5)
     if fit == "push":
         fitted, pushed = clear_body(seated, rig, region, clearance)
         grown = 1.0
@@ -1515,7 +1633,9 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
             "scale": round(float(span_after[1] / max(span_before[1], 1e-9)), 4),
             "spanBefore": [round(float(v), 3) for v in span_before],
             "spanAfter": [round(float(v), 3) for v in span_after],
-            "repose": posed, "liner": lined,
+            "repose": [{key: value for key, value in step.items()
+                        if key not in ("sleeve", "cap")}
+                       for step in posed], "liner": lined,
             "fit": fit, "grew": round(float(grown), 4),
             "pushedOut": pushed, "textured": png is not None,
             "bytes": out.stat().st_size}
