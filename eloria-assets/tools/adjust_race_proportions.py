@@ -60,6 +60,21 @@ TORSO_TAPER = {
 }
 MOVED_ROOTS = ("clavicle_l", "clavicle_r")
 
+#: Sloped shoulders, the Eternal Lands way: the shoulder line falls away
+#: from the neck instead of running out as a square shelf.  Same recipe
+#: as the taper, turned vertical --
+#:     dy = -drop * (min(|x|, anchor) / anchor) * w(x, y)
+#: so the drop grows linearly from the spine to the shoulder point and
+#: the arms beyond the anchor ride down rigidly with it.  w fades the
+#: trunk's share in at the chest band and out again up the neck so the
+#: waist and face stay put; arm vertices always take the full plateau,
+#: because any height dependence would shear across the arm itself.
+SHOULDER_DROOP = {
+    "drop": 0.020,
+    "bandLo": 1.28, "bandHi": 1.38,
+    "fadeLo": 1.52, "fadeHi": 1.62,
+}
+
 
 def _matrices(document):
     nodes = document["nodes"]
@@ -123,6 +138,119 @@ def _field_factory(spec):
         return -np.sign(x) * reach * (1.0 - factor)
 
     return dx
+
+
+def droop_shoulders(document, binary) -> bool:
+    spec = SHOULDER_DROOP
+    extras = document.setdefault("asset", {}).setdefault("extras", {})
+    current = float(extras.get("eloriaShoulderDroop", 0.0))
+    if abs(current - spec["drop"]) < 1e-6:
+        print("shoulder droop already %.3f -- nothing to do" % current)
+        return False
+    if abs(current) > 1e-6:
+        print("shoulder droop is %.3f, target %.3f: restore the GLB from "
+              "git first (droop edits do not compose)"
+              % (current, spec["drop"]))
+        raise SystemExit(1)
+
+    bin_len, bin_tag = struct.unpack_from("<I4s", binary, 0)
+    assert bin_tag[:3] == b"BIN", bin_tag
+    payload = 8
+
+    nodes = document["nodes"]
+    names = [n.get("name", "") for n in nodes]
+    globals_, parent = _matrices(document)
+    anchor = None
+    for i, n in enumerate(names):
+        if n == "upperarm_l":
+            anchor = abs(float(globals_[i][0, 3]))
+    assert anchor and anchor > 0.05, "no upperarm_l joint"
+
+    def smoothstep(t):
+        t = min(max(t, 0.0), 1.0)
+        return 3 * t * t - 2 * t * t * t
+
+    def dy(x, y):
+        share = min(abs(x), anchor) / anchor
+        if abs(x) >= anchor:
+            # The plateau is for the arm band only: after the width taper
+            # the hips reach the anchor too, and an ungated plateau sagged
+            # three hundred hip-side vertices by the full drop.
+            w = 1.0 if y >= 1.30 else 0.0
+        else:
+            w = smoothstep((y - spec["bandLo"])
+                           / (spec["bandHi"] - spec["bandLo"]))
+            w *= 1.0 - smoothstep((y - spec["fadeLo"])
+                                  / (spec["fadeHi"] - spec["fadeLo"]))
+        return -spec["drop"] * share * w
+
+    seen = set()
+    moved_verts = 0
+    for node in nodes:
+        if "mesh" not in node or "skin" not in node:
+            continue
+        for prim in document["meshes"][node["mesh"]]["primitives"]:
+            acc_index = prim["attributes"]["POSITION"]
+            if acc_index in seen:
+                continue
+            seen.add(acc_index)
+            acc = document["accessors"][acc_index]
+            view = document["bufferViews"][acc["bufferView"]]
+            offset = (payload + view.get("byteOffset", 0)
+                      + acc.get("byteOffset", 0))
+            stride = view.get("byteStride", 12)
+            for v in range(acc["count"]):
+                at = offset + v * stride
+                x, y, z = struct.unpack_from("<3f", binary, at)
+                shift = dy(x, y)
+                if shift:
+                    struct.pack_into("<3f", binary, at, x, y + shift, z)
+                    moved_verts += 1
+
+    index_of = {n: i for i, n in enumerate(names)}
+    moved = []
+
+    def collect(i):
+        moved.append(i)
+        for child in nodes[i].get("children", []):
+            collect(child)
+
+    for root in MOVED_ROOTS:
+        collect(index_of[root])
+    new_global_t = {}
+    for i in moved:
+        g = globals_[i]
+        x, y = float(g[0, 3]), float(g[1, 3])
+        new_global_t[i] = g[:3, 3] + np.array([0.0, dy(x, y), 0.0])
+    for i in moved:
+        p = parent.get(i)
+        parent_g = globals_[p].copy() if p is not None else np.eye(4)
+        if p in new_global_t:
+            parent_g[:3, 3] = new_global_t[p]
+        child_g = globals_[i].copy()
+        child_g[:3, 3] = new_global_t[i]
+        local_new = np.linalg.inv(parent_g) @ child_g
+        nodes[i]["translation"] = [round(float(v), 6)
+                                   for v in local_new[:3, 3]]
+
+    for skin in document.get("skins", []):
+        acc = document["accessors"][skin["inverseBindMatrices"]]
+        view = document["bufferViews"][acc["bufferView"]]
+        offset = (payload + view.get("byteOffset", 0)
+                  + acc.get("byteOffset", 0))
+        for row, joint in enumerate(skin["joints"]):
+            if joint not in new_global_t:
+                continue
+            g = globals_[joint].copy()
+            g[:3, 3] = new_global_t[joint]
+            ibm = np.linalg.inv(g)
+            struct.pack_into("<16f", binary, offset + row * 64,
+                             *ibm.T.reshape(-1))
+
+    extras["eloriaShoulderDroop"] = spec["drop"]
+    print("shoulder droop %.3f: %d vertices lowered, %d joints moved"
+          % (spec["drop"], moved_verts, len(moved)))
+    return True
 
 
 def taper_torso(document, binary) -> bool:
@@ -259,6 +387,7 @@ def main() -> int:
     tapered = False
     if not args.dry_run:
         tapered = taper_torso(document, binary)
+        tapered = droop_shoulders(document, binary) or tapered
 
     if args.dry_run:
         print("\nnothing written (--dry-run)")
