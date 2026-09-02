@@ -95,6 +95,45 @@ func _run() -> void:
 		"a plain click still runs the tool in hand")
 	main.call("_cancel_carry")
 
+	# The grasping hand's contract: it shows exactly where a click would move
+	# an item, and nowhere else.
+	var slot_buttons: Array = main.get("inventory_slot_buttons") as Array
+	var equipment_buttons: Array = main.get("equipment_slot_buttons") as Array
+	var first_slot: Button = slot_buttons[0] as Button
+	var empty_slot: Button = slot_buttons[3] as Button
+	main.call("_set_inventory_tool", "grab")
+	_expect(bool(main.call("_slot_click_moves_item", first_slot)),
+		"the grab tool over an item promises the hand")
+	_expect(not bool(main.call("_slot_click_moves_item", empty_slot)),
+		"an empty slot promises nothing while the hand is empty")
+	main.call("_set_inventory_tool", "inspect")
+	_expect(not bool(main.call("_slot_click_moves_item", first_slot)),
+		"the inspect tool over an item does not promise a move")
+	Input.parse_input_event(hold_ctrl)
+	await process_frame
+	_expect(bool(main.call("_slot_click_moves_item", first_slot)),
+		"held Ctrl promises the drop whatever tool is in hand")
+	Input.parse_input_event(release_ctrl)
+	await process_frame
+	main.call("_set_inventory_tool", "equip")
+	_expect(bool(main.call("_slot_click_moves_item", first_slot)),
+		"the equip tool promises the move to a wear slot")
+	main.call("_set_inventory_tool", "unequip")
+	_expect(bool(main.call("_slot_click_moves_item", equipment_buttons[0])),
+		"the unequip tool over worn gear promises the move back")
+	_expect(not bool(main.call("_slot_click_moves_item", first_slot)),
+		"the unequip tool over carried gear does not")
+	main.call("_set_inventory_tool", "grab")
+	main.call("_begin_carry", 0)
+	_expect(bool(main.call("_slot_click_moves_item", empty_slot)),
+		"while carrying, an empty slot is a placement target")
+	# A drop that cannot be sent leaves the stack in hand: nothing left it.
+	main.call("_drop_carry")
+	_expect(int(main.get("_carried_slot")) == 0,
+		"a drop that could not be sent keeps the stack in hand")
+	main.call("_cancel_carry")
+	main.call("_set_inventory_tool", "inspect")
+
 	# The bag window at its own size, beside an inventory that keeps its own.
 	app_state.set("ground_bag", {"open": true, "bag_id": 4, "items": {
 		0: {"image_id": 3, "quantity": 12, "slot": 0},

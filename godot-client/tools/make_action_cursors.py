@@ -3,8 +3,9 @@
 
 Eternal Lands swaps the hardware pointer to say what a click will do: an eye
 over something inspectable, a speech bubble over an NPC, a sword over an enemy,
-and so on (thirteen glyphs, listed in the legacy client's cursors.h).  Eloria
-keeps that behaviour but not the legacy artwork: every glyph below is original
+and so on (thirteen glyphs, listed in the legacy client's cursors.h, plus
+Eloria's own grasping hand for an item the click will move).  Eloria keeps
+that behaviour but not the legacy artwork: every glyph below is original
 pixel art, drawn in the same visual language - white fill, single black
 outline, transparent elsewhere - so the pointer stays readable over any part
 of the scene.
@@ -301,6 +302,28 @@ glyph("text", (7, 8), """
 ...oooo#oooo....
 ...o###o###o....
 ...oooo.oooo....
+""")
+
+# A grasping hand, reaching from above: the click moves the item under it.
+# Not part of the legacy thirteen - the reference reserved its hand for bags
+# on the ground, which Eloria's sack covers - but the same visual language.
+glyph("grab", (7, 7), """
+..oo.oo.oo.oo...
+.o##o##o##o##o..
+.o##o##o##o##o..
+.o############o.
+.o############o.
+oo############o.
+o#o###########o.
+o##o##########o.
+.o############o.
+.o###########o..
+..o##########o..
+...o########o...
+....o######o....
+....oooooooo....
+................
+................
 """)
 
 

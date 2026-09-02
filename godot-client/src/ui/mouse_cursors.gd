@@ -26,8 +26,11 @@ const USE_WITEM := 9
 const USE := 10
 const WAND := 11
 const TEXT := 12
+## Eloria's own, past the legacy thirteen: the grasping hand over an item the
+## click will move - place the carry, pick up, equip, unequip, or drop.
+const GRAB := 13
 
-const CURSOR_COUNT := 13
+const CURSOR_COUNT := 14
 
 var _textures: Array = []
 var _hotspots: Array = []
@@ -120,12 +123,16 @@ func install_text_caret() -> void:
 ##   over_world: bool - the pointer is over the 3D scene, not a window or HUD.
 ##   target: "" | "npc" | "player" | "self" | "creature" | "bag" | "harvest"
 ##       | "portal" | "interactive" - what the pick rays found, first hit wins
-##       in the click handler's own order (actors, then bags, then objects).
+##       in the click handler's own order (actors, then bags, then objects) -
+##       or "item_grab", the one target that lives on the interface instead:
+##       an item slot whose click will move the item.
 ##   alive: bool - the hovered actor is alive.
 ##   mode: "walk" | "attack" | "trade" - the icon bar's interaction mode.
 ##   alt: bool - Alt is held, the click-to-attack preview.
 ##   spell_target: "" | "actor" | "location" - a cast is waiting for a target.
 static func choose(context: Dictionary) -> int:
+	if str(context.get("target", "")) == "item_grab":
+		return GRAB
 	if not bool(context.get("over_world", false)):
 		return ARROW
 	var target: String = str(context.get("target", ""))
