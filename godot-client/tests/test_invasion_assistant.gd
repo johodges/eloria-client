@@ -82,6 +82,9 @@ func _run() -> void:
 	assistant._teleport()
 	_expect(commands[-1].begins_with("#invasion_assistant teleport ember "),
 		"teleport requests an immediate server-authoritative refresh response")
+	assistant.god_storage_button.pressed.emit()
+	_expect(commands[-1] == "#god_storage",
+		"header button opens the invasion-master god storage")
 	assistant.queue_free()
 	if failures == 0:
 		print("invasion assistant tests passed")

@@ -19,6 +19,7 @@ var selected_monster: Dictionary = {}
 
 var tabs: TabContainer
 var summary: Label
+var god_storage_button: Button
 var map_filter: LineEdit
 var map_list: ItemList
 var map_canvas
@@ -164,6 +165,12 @@ func _build_ui() -> void:
 	summary = Label.new()
 	summary.text = "Waiting for server snapshot…"
 	header.add_child(summary)
+	god_storage_button = Button.new()
+	god_storage_button.text = "God storage"
+	god_storage_button.tooltip_text = ("Open the god storage: 99999 of every item in the "
+		+ "game, usable from anywhere. Deposits go to your own storage.")
+	god_storage_button.pressed.connect(func() -> void: command_requested.emit("#god_storage"))
+	header.add_child(god_storage_button)
 	var refresh_all := Button.new()
 	refresh_all.text = "Refresh"
 	refresh_all.tooltip_text = "Refresh map counts and the current tab from the server"
