@@ -62,14 +62,14 @@ TARGET_ARM_DROP = 79.0
 #: Both hands land at the same absolute spot: this far in front of the
 #: body (the user's 0.1 m forward of where they hung), this far out from
 #: the midline, with the same soft elbow bend.
-TARGET_HAND_Z = 0.115
+TARGET_HAND_Z = 0.065
 TARGET_HAND_X = 0.247
 TARGET_ELBOW_BEND = 12.0
 #: The stance stands centred: the ankle midpoint sits on the body's own
 #: midline (world x zero) once the pelvis channel's lateral drift and the
 #: rest pose's own offset are taken out.
 TARGET_ANKLE_MID_X = 0.0
-TARGET_SHOULDER_FORWARD = 0.009
+TARGET_SHOULDER_FORWARD = -0.016
 SAMPLE_AT = 0.1
 #: Ground contact, measured from the authored clip as the rest-rooted
 #: ankle height PLUS the pelvis channel's own offset above the skeleton
