@@ -155,6 +155,10 @@ class Rig:
     positions: np.ndarray
     joints: np.ndarray
     weights: np.ndarray
+    #: Body mesh triangles as indices into ``positions`` -- carried so a
+    #: fitter can ask parity questions (is this vertex inside the skin?)
+    #: against the actual body surface rather than a ring approximation.
+    faces: np.ndarray | None = None
 
     @property
     def fit_scale(self) -> float:
@@ -727,6 +731,8 @@ def load_rig(path: Path, body_mesh_names=("Body",)) -> Rig:
     positions: list[np.ndarray] = []
     bone_indices: list[np.ndarray] = []
     bone_weights: list[np.ndarray] = []
+    faces: list[np.ndarray] = []
+    offset = 0
     for node in nodes:
         if "mesh" not in node or "skin" not in node:
             continue
@@ -738,9 +744,14 @@ def load_rig(path: Path, body_mesh_names=("Body",)) -> Rig:
             positions.append(accessor_array(document, binary, attributes["POSITION"]).astype(np.float64))
             bone_indices.append(accessor_array(document, binary, attributes["JOINTS_0"]).astype(np.int32))
             bone_weights.append(accessor_array(document, binary, attributes["WEIGHTS_0"]).astype(np.float64))
+            if "indices" in primitive:
+                tri = accessor_array(document, binary, primitive["indices"])
+                faces.append(tri.reshape(-1, 3).astype(np.int64) + offset)
+            offset += len(positions[-1])
     return Rig(joint_names=joint_names, rest=rest, parent=parent,
                positions=np.vstack(positions), joints=np.vstack(bone_indices),
-               weights=np.vstack(bone_weights))
+               weights=np.vstack(bone_weights),
+               faces=np.vstack(faces) if faces else None)
 
 
 def cape_weights(rig, points: np.ndarray, chains=("l", "c", "r"), links: int = 4):
