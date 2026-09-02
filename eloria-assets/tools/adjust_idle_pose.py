@@ -58,7 +58,7 @@ CLIP = "Idle_Subtle"
 #: knee swung 4 cm out and ankle kicked 10 cm back in -- so the knee lands
 #: under the hip and the ankle under the knee, in the frontal plane only (the
 #: sagittal crouch is the clip's own and stays).  Feet face straight forward.
-TARGET_ARM_DROP = 74.0
+TARGET_ARM_DROP = 79.0
 TARGET_SHOULDER_FORWARD = -0.09
 SAMPLE_AT = 0.1
 

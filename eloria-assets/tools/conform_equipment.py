@@ -1453,6 +1453,14 @@ def seat_socket(points: np.ndarray, rig: ea.Rig, kind: str) -> np.ndarray:
     """
     spec = SOCKET_KIND[kind]
     head = rig._region(spec["bones"])
+    # Author at RUNTIME size: a race may carry a rest scale on the head
+    # joint (adjust_race_proportions.py), which the engine applies to the
+    # skinned head but not to socketed pieces -- so the piece itself must
+    # be built for the scaled head.  The raw mesh verts are unscaled in
+    # the file; grow them about the joint by the joint's own rest scale.
+    anchor = rig.origin(spec["bones"][0])
+    joint_scale = np.linalg.norm(rig.basis(spec["bones"][0]), axis=0)
+    head = anchor + (head - anchor) * joint_scale
     span = head.max(axis=0) - head.min(axis=0)
     # Size to the head's widest horizontal axis, from a robust span: a helm
     # is a shell around a skull, and matching height instead lets a tall crest

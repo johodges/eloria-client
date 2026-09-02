@@ -117,7 +117,17 @@ def roster() -> list[Piece]:
     item_id = FIRST_ITEM_ID
     for stem, label, slug, kind, part, first_visual, finish in SHEETS:
         sources = sorted(GENERATED.glob(stem + "__*.glb"))
-        for index, source in enumerate(sources):
+        # Only sources that have been through the preprocessing pass (which
+        # leaves the raw meshy export beside them as ``.glb.orig``): a raw
+        # drop-in would otherwise be swept into the roster the moment it
+        # lands, defining items whose icons and compressed textures do not
+        # exist yet.
+        ready = [s for s in sources
+                 if s.with_name(s.name + ".orig").exists()]
+        for skipped in (s for s in sources if s not in ready):
+            print("  %s has no .orig sibling (unprocessed) -- skipped"
+                  % skipped.name)
+        for index, source in enumerate(ready):
             if index >= len(ROMAN):
                 print("  more than %d in %s, skipping %s"
                       % (len(ROMAN), stem, source.name))
