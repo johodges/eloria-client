@@ -151,11 +151,11 @@ SPAN = {
 #: eyes; circlets and bands ride higher still to sit at the hairline.
 SOCKET_KIND = {
     "helm": {"part": 3, "bones": ["Head"], "clearance": .010, "lift": 0.12,
-             "setback": 0.020},
+             "setback": 0.120},
     "hood": {"part": 3, "bones": ["Head"], "clearance": .014, "lift": 0.06,
-             "setback": 0.020},
+             "setback": 0.120},
     "circlet": {"part": 3, "bones": ["Head"], "clearance": .008, "lift": 0.18,
-                "setback": 0.010},
+                "setback": 0.110},
 }
 
 
@@ -1516,7 +1516,8 @@ def build_socket(source: Path, out: Path, rig: ea.Rig, kind: str,
 def _slim_to_body(points: np.ndarray, rig: ea.Rig, region: str,
                   movable: np.ndarray, target_clear: float,
                   body_points: np.ndarray | None = None,
-                  centre: np.ndarray | None = None) -> np.ndarray:
+                  centre: np.ndarray | None = None,
+                  grow: bool = False) -> np.ndarray:
     """Draw a garment's trunk in toward the body until it hugs.
 
     A pull, never a push, and per axis: the torso is an ellipse -- wide across
@@ -1541,7 +1542,12 @@ def _slim_to_body(points: np.ndarray, rig: ea.Rig, region: str,
     body = body_points
     low, high = float(body[:, 1].min()), float(body[:, 1].max())
     rows = 12
-    floor = 0.55
+    # Growing is the same banded, per-axis move in the other direction --
+    # and the only body-clearing move a closed generated solid can take:
+    # scaling a whole band keeps inner and outer surfaces together, where a
+    # per-vertex push (clear_body) turns the inside of the shell out.
+    lo_clip, hi_clip = (1.0, 1.35) if grow else (0.55, 1.0)
+    floor = lo_clip
     factors = np.ones((rows, 2))
     for row in range(rows):
         lo = low + (high - low) * row / rows
@@ -1558,7 +1564,7 @@ def _slim_to_body(points: np.ndarray, rig: ea.Rig, region: str,
             shell_h = float(np.percentile(np.abs(shell[:, axis] - centre[index]),
                                           92.0))
             factors[row, index] = (float(np.clip(
-                (skin_h + target_clear) / shell_h, floor, 1.0))
+                (skin_h + target_clear) / shell_h, lo_clip, hi_clip))
                 if shell_h > 1e-4 else np.nan)
     centres = low + (high - low) * (np.arange(rows) + 0.5) / rows
     out = points.copy()
@@ -1576,6 +1582,47 @@ def _slim_to_body(points: np.ndarray, rig: ea.Rig, region: str,
         out[movable, axis] = ((out[movable, axis] - centre[index]) * scale
                               + centre[index])
     return out
+
+
+def _push_waist_out(points: np.ndarray, waist: np.ndarray, rig: ea.Rig,
+                    clearance: float) -> int:
+    """Push waistband vertices that sit inside the body out to the skin.
+
+    The banded slim-and-grow levels whole rows, but a row that mixes deep
+    side tassets with a shallow front panel satisfies its percentile while
+    the panel stays sunk.  This is the per-vertex remainder, done the only
+    way a closed solid tolerates: parity against the actual body mesh picks
+    the vertices genuinely inside the skin -- the garment's own inner
+    surface, lying between shell and body, is outside the body and never
+    moves -- and each one rides a radial ray to just past the surface it
+    was under.
+    """
+    faces = getattr(rig, "faces", None)
+    if faces is None or not waist.any():
+        return 0
+    soup = rig.positions[faces]
+    near = soup[(soup[:, :, 1].min(axis=1) < 1.25)
+                & (soup[:, :, 1].max(axis=1) > 0.85)]
+    if not len(near):
+        return 0
+    probe = np.array([0.2913, 0.0412, 0.9557])
+    probe /= np.linalg.norm(probe)
+    index = np.nonzero(waist)[0]
+    inside = gf._crossings(points[index], near, probe) % 2 == 1
+    moved = 0
+    for vertex in index[inside]:
+        point = points[vertex]
+        outward = np.array([point[0], 0.0, point[2]])
+        length = float(np.linalg.norm(outward))
+        if length < 1e-6:
+            outward = np.array([0.0, 0.0, 1.0])
+        else:
+            outward /= length
+        distance, crossings = cast(point, outward, near)
+        if np.isfinite(distance) and crossings % 2 == 1:
+            points[vertex] = point + outward * (distance + clearance)
+            moved += 1
+    return moved
 
 
 def _harden_plates(points: np.ndarray, triangles: np.ndarray, rig: ea.Rig,
@@ -1666,6 +1713,14 @@ def _slim_legs(points: np.ndarray, rig: ea.Rig, region: str,
     against that side's own body points and centre.
     """
     out = points.copy()
+    # Only below the hip line: the tube slim measures against the limb's own
+    # points, and at waistband height those are upper-thigh verts -- far
+    # shallower front-to-back than the belly the waistband actually wraps.
+    # Slimmed to them, the waist panels sink inside the torso and the body's
+    # painted shirt renders over the top of the trousers.
+    hip_line = min(float(rig.origin("thigh_l")[1]),
+                   float(rig.origin("thigh_r")[1])) - 0.01
+    movable = movable & (points[:, 1] < hip_line)
     for side in ("l", "r"):
         limb = rig._region(measure_bones(region, side))
         own = ((points[:, 0] >= 0) if side == "l" else (points[:, 0] < 0)) & movable
@@ -1675,6 +1730,22 @@ def _slim_legs(points: np.ndarray, rig: ea.Rig, region: str,
                            float(np.median(limb[:, 2]))])
         out = _slim_to_body(out, rig, region, own, target_clear,
                             body_points=limb, centre=centre)
+    # The waist is slimmed like the tubes, but against the body it actually
+    # wraps -- the skirt region's belly and hips, not the thighs.  Measured
+    # against the thighs it sank inside the torso and the body's painted
+    # shirt rendered over the trousers; left authored, a deep tasset flares
+    # fifteen centimetres proud.  Banded, per-axis and shrink-only, so it
+    # hugs the hips and can never pass inside them.
+    waist = points[:, 1] >= hip_line
+    if region == "legs" and int(waist.sum()) >= 6:
+        out = _slim_to_body(out, rig, "skirt", waist, target_clear)
+        # Grown to convergence: the row smoothing that keeps banded factors
+        # from stepping dilutes an edge row's growth by about a third per
+        # pass, and one pass left a centimetre of waistband inside the hip.
+        for _ in range(3):
+            out = _slim_to_body(out, rig, "skirt", waist, target_clear,
+                                grow=True)
+        _push_waist_out(out, waist, rig, 0.006)
     return out
 
 
