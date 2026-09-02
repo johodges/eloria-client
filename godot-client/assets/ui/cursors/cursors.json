@@ -104,6 +104,14 @@
         14,
         16
       ]
+    },
+    {
+      "name": "grab",
+      "file": "cursor_grab.png",
+      "hotspot": [
+        14,
+        14
+      ]
     }
   ]
 }

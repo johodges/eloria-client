@@ -21,13 +21,15 @@ func _check_library() -> void:
 	_expect(cursors.configure("res://assets/ui/cursors/cursors.json"),
 		"cursor manifest and its glyphs load")
 	_expect(cursors.loaded(), "all thirteen cursors are present")
-	# The manifest order is the legacy cursors.h order; the ids only mean
-	# something while that holds.
-	var legacy_order: Array[String] = ["eye", "talk", "attack", "enter", "pick",
-		"harvest", "walk", "arrow", "trade", "use_witem", "use", "wand", "text"]
-	for cursor_id in range(legacy_order.size()):
-		_expect(cursors.name_of(cursor_id) == legacy_order[cursor_id],
-			"cursor %d is %s" % [cursor_id, legacy_order[cursor_id]])
+	# The manifest order is the legacy cursors.h order for the first thirteen;
+	# the ids only mean something while that holds. Past them sit Eloria's own,
+	# today the grasping hand.
+	var manifest_order: Array[String] = ["eye", "talk", "attack", "enter", "pick",
+		"harvest", "walk", "arrow", "trade", "use_witem", "use", "wand", "text",
+		"grab"]
+	for cursor_id in range(manifest_order.size()):
+		_expect(cursors.name_of(cursor_id) == manifest_order[cursor_id],
+			"cursor %d is %s" % [cursor_id, manifest_order[cursor_id]])
 	for cursor_id in range(MouseCursors.CURSOR_COUNT):
 		var hotspot: Vector2 = cursors.hotspot_of(cursor_id)
 		_expect(hotspot.x >= 0.0 and hotspot.y >= 0.0
@@ -93,6 +95,11 @@ func _check_decision_table() -> void:
 		"a portal offers an entrance")
 	_choice({"over_world": true, "target": "interactive"}, MouseCursors.USE,
 		"a service point offers a use")
+	# The one interface target: an item slot whose click will move the item.
+	_choice({"target": "item_grab"}, MouseCursors.GRAB,
+		"an item the click will move shows the grasping hand")
+	_choice({"over_world": false, "target": "item_grab"}, MouseCursors.GRAB,
+		"the hand does not need the world - it lives on the interface")
 
 ## The seams main.gd relies on: the scene builds a loaded cursor set, and the
 ## hover question it asks the viewport exists on this engine.

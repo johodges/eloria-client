@@ -6404,10 +6404,17 @@ func _update_carried_item() -> void:
 	if _carried_slot < 0:
 		return
 	# The server may empty the slot underneath us - a stack consumed, a trade
-	# settled - and a cursor still holding a phantom would place nothing.
+	# settled, the last of a stack dropped - and a cursor still holding a
+	# phantom would place nothing.
 	if not AppState.inventory.has(_carried_slot):
 		_cancel_carry()
 		return
+	# The count in hand follows the authoritative slot, so dropping part of
+	# the stack shows what is left to keep dropping.
+	var quantity: int = int((AppState.inventory.get(_carried_slot, {})
+		as Dictionary).get("quantity", 0))
+	(carried_item.get_node("Quantity") as Label).text = (str(quantity)
+		if quantity > 1 else "")
 	carried_item.global_position = (get_viewport().get_mouse_position()
 		- carried_item.size * 0.5)
 
@@ -6426,24 +6433,28 @@ func _place_carry(destination: int) -> void:
 	_sync_inventory()
 
 ## Clicking the world puts the stack down. The server answers by creating a
-## bag on the tile, or by adding to the bag already standing there.
+## bag on the tile, or by adding to the bag already standing there. Dropping
+## part of the stack keeps the rest in hand, so more clicks keep dropping;
+## the hand only empties with the stack (Ctrl drops it whole).
 func _drop_carry() -> void:
 	var source: int = _carried_slot
 	if source < 0:
 		return
 	var item_value: Variant = AppState.inventory.get(source)
-	_carried_slot = -1
-	carried_item.visible = false
-	carried_item.texture = null
 	if not item_value is Dictionary:
-		_sync_inventory()
+		_cancel_carry()
 		return
 	var available: int = maxi(1, int((item_value as Dictionary).get("quantity", 1)))
 	var quantity: int = (available if Input.is_key_pressed(KEY_CTRL)
 		else mini(available, _selected_quantity()))
 	var error: Error = Network.drop_inventory_item(source, quantity)
 	if error != OK:
+		# Nothing was sent, so nothing left the hand.
 		push_warning("DROP_ITEM failed: " + error_string(error))
+		return
+	if quantity >= available:
+		_cancel_carry()
+		return
 	_sync_inventory()
 
 func _on_inventory_slot_pressed(slot: int) -> void:
@@ -7364,10 +7375,41 @@ func _update_action_cursor() -> void:
 func _cursor_context() -> Dictionary:
 	if not game_view.visible or gameplay_world == null:
 		return {}
-	if get_viewport().gui_get_hovered_control() != viewport_container:
+	var hovered: Control = get_viewport().gui_get_hovered_control()
+	if hovered != viewport_container:
+		# The one interface hover with a cursor of its own: an item slot whose
+		# click will move the item shows the grasping hand.
+		if hovered is Button and _slot_click_moves_item(hovered as Button):
+			return {"target": "item_grab"}
 		return {}
 	return _cursor_context_at(_local_viewport_position(
 		viewport_container.get_local_mouse_position()))
+
+## True when a click on this slot button moves an item rather than acting on
+## it: the carry in hand is placed here, or the stack under the pointer is
+## about to be picked up, equipped, unequipped, or Ctrl-dropped. This is the
+## grasping hand's promise, so it must match _on_inventory_slot_pressed.
+func _slot_click_moves_item(button: Button) -> bool:
+	var slot: int = inventory_slot_buttons.find(button)
+	if slot < 0:
+		var equipment_index: int = equipment_slot_buttons.find(button)
+		if equipment_index < 0:
+			return false
+		slot = 36 + equipment_index
+	if _carried_slot >= 0:
+		return true
+	if not AppState.inventory.has(slot):
+		return false
+	if slot < 36 and Input.is_key_pressed(KEY_CTRL):
+		return true
+	match _inventory_tool:
+		"grab":
+			return _carry_enabled()
+		"equip":
+			return slot < 36
+		"unequip":
+			return slot >= 36
+	return false
 
 ## The world half of the pointer question, split from the hover gate so a test
 ## can ask it about any spot without owning the operating system's mouse.
