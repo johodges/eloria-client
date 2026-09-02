@@ -1517,6 +1517,20 @@ def _align_arm_sleeves(points: np.ndarray, triangles: np.ndarray,
             centre = np.median(points[members], axis=0)
             gap_upper = _segment_gap(centre, shoulder, elbow)
             gap_fore = _segment_gap(centre, elbow, wrist)
+            pivot, tip = ((shoulder, elbow) if gap_upper <= gap_fore
+                          else (elbow, wrist))
+            # Only ring-like components are worn ON the arm and belong in
+            # the alignment: a shoulder mantle or drape classified as
+            # sleeve must keep its authored hang -- rotated onto the bone
+            # it crumples around the arm like a wrung rag (the legendary
+            # hero's half-cape found this).
+            axis = tip - pivot
+            axis = axis / max(np.linalg.norm(axis), 1e-9)
+            travel = (points[members] - centre) @ axis
+            half = float(np.percentile(np.abs(travel), 95.0))
+            if not _wraps_axis(points[members] - (centre - axis * half),
+                               np.zeros(3), axis, 2.0 * half + 0.05):
+                continue
             groups["upper" if gap_upper <= gap_fore else "fore"].append(members)
         for name, pivot, tip in (("upper", shoulder, elbow),
                                  ("fore", elbow, wrist)):
