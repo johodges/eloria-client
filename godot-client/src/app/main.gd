@@ -2847,6 +2847,16 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 		return
 	var picked_actor_id: int = _pick_actor(viewport_position)
 	if picked_actor_id >= 0:
+		# A bag at your own feet outranks your own body: you are not a click
+		# target for yourself, so the click opens the sack you are standing
+		# over. A pending actor spell still wins - clicking yourself casts
+		# at yourself.
+		if (picked_actor_id == AppState.local_actor_id
+				and AppState.pending_spell_target != "actor"):
+			var bag_below: int = _ground_bag_below_player()
+			if bag_below >= 0:
+				_open_ground_bag(bag_below)
+				return
 		AppState.select_actor(picked_actor_id)
 		var selected_dto: Dictionary = AppState.actors.get(picked_actor_id, {})
 		if AppState.pending_spell_target == "actor":
@@ -2878,12 +2888,7 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 		return
 	var picked_bag_id: int = _pick_ground_bag(viewport_position)
 	if picked_bag_id >= 0:
-		print_debug("ground_bag_input command=INSPECT_BAG bag_id=", picked_bag_id,
-			" redacted_bytes=not_sensitive")
-		AppState.begin_ground_bag_inspection(picked_bag_id)
-		var inspect_error: Error = Network.inspect_bag(picked_bag_id)
-		if inspect_error != OK:
-			push_warning("INSPECT_BAG failed: " + error_string(inspect_error))
+		_open_ground_bag(picked_bag_id)
 		return
 	var picked_object: MapObject3D = _pick_map_object(viewport_position)
 	if picked_object != null:
@@ -2914,6 +2919,16 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 			push_warning("MOVE_TO failed: " + error_string(move_error))
 		else:
 			_show_walk_highlight(tile, (point as Vector3).y)
+
+## Opens one ground bag: the optimistic reducer state first, so the window
+## can say it is opening, then the request the server answers with contents.
+func _open_ground_bag(bag_id: int) -> void:
+	print_debug("ground_bag_input command=INSPECT_BAG bag_id=", bag_id,
+		" redacted_bytes=not_sensitive")
+	AppState.begin_ground_bag_inspection(bag_id)
+	var inspect_error: Error = Network.inspect_bag(bag_id)
+	if inspect_error != OK:
+		push_warning("INSPECT_BAG failed: " + error_string(inspect_error))
 
 ## The legacy client's click feedback: a walk order marks its destination
 ## with a collapsing green cross, so the player sees where the click landed
@@ -6440,9 +6455,31 @@ func _on_inventory_slot_pressed(slot: int) -> void:
 				and AppState.inventory.has(selected_inventory_slot)):
 			_move_inventory_item(selected_inventory_slot, slot)
 		return
+	# Ctrl+click drops the whole stack to the ground, whatever tool is in
+	# hand - the reference items window's "Left-click +ctrl to drop all".
+	# Worn slots stay out of it: worn gear is unequipped first, as there.
+	if slot < 36 and Input.is_key_pressed(KEY_CTRL):
+		_drop_inventory_stack(slot)
+		return
 	selected_inventory_slot = slot
 	_apply_inventory_tool(slot)
 	_sync_equipment_slots()
+	_sync_inventory()
+
+## Drops all of one carried stack. The server answers by creating a bag at
+## your feet, or by adding to the one already standing there.
+func _drop_inventory_stack(slot: int) -> void:
+	var item: Dictionary = AppState.inventory.get(slot, {}) as Dictionary
+	var quantity: int = int(item.get("quantity", 0))
+	if quantity <= 0:
+		return
+	var error: Error = Network.drop_inventory_item(slot, quantity)
+	if error != OK:
+		inventory_description.text = "Could not drop the stack: " + error_string(error)
+		push_warning("DROP_ITEM failed: " + error_string(error))
+		return
+	inventory_description.text = "Dropped %s from slot %d into the bag at your feet." % [
+		_grouped(quantity), slot + 1]
 	_sync_inventory()
 
 ## Carries out the current tool on a slot. Every tool ends by asking the server
@@ -7348,6 +7385,14 @@ func _cursor_context_at(viewport_position: Vector2) -> Dictionary:
 		var dto: Dictionary = AppState.actors.get(actor_id, {})
 		var kind: int = int(dto.get("kind", 0))
 		if actor_id == AppState.local_actor_id:
+			# A bag at your own feet outranks your own body: you are not a
+			# click target for yourself, and the click handler resolves the
+			# same way. A pending actor spell still claims you - clicking
+			# yourself casts at yourself.
+			if AppState.pending_spell_target != "actor" \
+					and _ground_bag_below_player() >= 0:
+				context["target"] = "bag"
+				return context
 			context["target"] = "self"
 		elif kind == 2:
 			context["target"] = "npc"
