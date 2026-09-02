@@ -239,6 +239,8 @@ func apply_appearance_variants(appearance: Dictionary) -> void:
 			_tint_mesh(mesh_node, skin_tint)
 		elif mesh_name == "hair":
 			_tint_mesh(mesh_node, hair_tint)
+		elif mesh_name == "scalp":
+			_tint_mesh(mesh_node, skin_tint)
 		elif mesh_name == "wardrobe_shirt":
 			_set_mesh_color(mesh_node, AppearanceVariants.wardrobe_color(
 				culture, AppearanceVariants.PART_SHIRT, int(appearance.get("shirt", 0))))
@@ -336,6 +338,12 @@ func _add_hair_variant(style: int, color: Color) -> void:
 		(node_value as MeshInstance3D).visible = false
 	attachment.name = "AppearanceHair_%d" % style
 	native_hair.name = "NativeHair"
+	# Socketed nodes do not inherit a bone's rest scale (the helm trim
+	# learned this first), so a race with a scaled head wears every
+	# hairstyle a size too small unless the attachment scales itself.
+	var head_bone: int = _native_skeleton.find_bone("Head")
+	if head_bone >= 0:
+		native_hair.scale = _native_skeleton.get_bone_rest(head_bone).basis.get_scale()
 	attachment.add_child(native_hair)
 	for node_value: Node in native_hair.find_children("*", "MeshInstance3D", true, false):
 		_tint_mesh(node_value as MeshInstance3D, color)
