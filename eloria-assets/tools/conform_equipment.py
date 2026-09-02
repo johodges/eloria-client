@@ -145,13 +145,14 @@ SPAN = {
 #: to be the size of a head, and to be authored about the socket rather than
 #: about the world, because the runtime hangs them off a bone and the mesh has
 #: to be drawn where that bone will put it.
+#: ``lift`` is a fraction of head height added above the median-centred
+#: placement, to seat headgear high like a hat rather than centred like a
+#: bucket.  Helms ride up a third of the head so the brow line clears the
+#: eyes; circlets and bands ride higher still to sit at the hairline.
 SOCKET_KIND = {
-    "helm": {"part": 3, "bones": ["Head"], "clearance": .014},
-    "hood": {"part": 3, "bones": ["Head"], "clearance": .018},
-    # A band, not a shell: centred on the skull like a helm it hangs over the
-    # eyes, so it anchors to the crown instead.
-    "circlet": {"part": 3, "bones": ["Head"], "clearance": .010,
-                "anchor": "crown"},
+    "helm": {"part": 3, "bones": ["Head"], "clearance": .010, "lift": 0.12},
+    "hood": {"part": 3, "bones": ["Head"], "clearance": .014, "lift": 0.06},
+    "circlet": {"part": 3, "bones": ["Head"], "clearance": .008, "lift": 0.18},
 }
 
 
@@ -1366,22 +1367,26 @@ def seat_socket(points: np.ndarray, rig: ea.Rig, kind: str) -> np.ndarray:
     spec = SOCKET_KIND[kind]
     head = rig._region(spec["bones"])
     span = head.max(axis=0) - head.min(axis=0)
-    extent = points.max(axis=0) - points.min(axis=0)
-    # Enclose the head on its widest axis rather than matching height: a helm
-    # is a shell around a skull, and sizing it by height alone leaves a tall
-    # crest pulling the whole piece down inside the face.
-    scale = max((span[axis] + 2 * spec["clearance"]) / max(float(extent[axis]),
-                                                           1e-9)
+    # Size to the head's widest horizontal axis, from a robust span: a helm
+    # is a shell around a skull, and matching height instead lets a tall crest
+    # pull the whole piece down inside the face.  The span uses the 4th-96th
+    # percentile so a single spike does not inflate the scale.
+    lo = np.percentile(points, 4, axis=0)
+    hi = np.percentile(points, 96, axis=0)
+    extent = np.maximum(hi - lo, 1e-9)
+    scale = max((span[axis] + 2 * spec["clearance"]) / float(extent[axis])
                 for axis in (0, 2))
     seated = (points - (points.max(axis=0) + points.min(axis=0)) / 2.) * scale
-    centre = (head.max(axis=0) + head.min(axis=0)) / 2.
-    # A piece much shorter than the head is a band or a visor, not a shell,
-    # and centring it on the skull hangs it over the eyes.  Anything short
-    # rides the crown, whatever its kind claims.
-    head_height = float(head[:, 1].max() - head[:, 1].min())
-    piece_height = float(seated[:, 1].max() - seated[:, 1].min())
-    if spec.get("anchor") == "crown" or piece_height < 0.75 * head_height:
-        centre[1] = float(head[:, 1].max()) - float(seated[:, 1].max())
+    # Centre on the head's own centre by the MEDIAN of the piece, not its
+    # bounding box: circlets and helms carry danglers and spikes that skew a
+    # bbox centre and drag the band down over the eyes.  The head sits inside
+    # the shell, riding high, and a per-kind lift seats it like a hat on the
+    # crown rather than a bucket over the face.
+    centre = np.array([float(np.median(head[:, 0])), 0.0,
+                       float(np.median(head[:, 2]))])
+    head_mid = 0.5 * (float(head[:, 1].min()) + float(head[:, 1].max()))
+    lift = float(spec.get("lift", 0.0)) * (head[:, 1].max() - head[:, 1].min())
+    centre[1] = head_mid - float(np.median(seated[:, 1])) + lift
     return seated + (centre - socket_origin(rig, spec["part"]))
 
 
@@ -1413,7 +1418,9 @@ def build_socket(source: Path, out: Path, rig: ea.Rig, kind: str,
 
 
 def _slim_to_body(points: np.ndarray, rig: ea.Rig, region: str,
-                  movable: np.ndarray, target_clear: float) -> np.ndarray:
+                  movable: np.ndarray, target_clear: float,
+                  body_points: np.ndarray | None = None,
+                  centre: np.ndarray | None = None) -> np.ndarray:
     """Draw a garment's trunk in toward the body until it hugs.
 
     A pull, never a push, and per axis: the torso is an ellipse -- wide across
@@ -1425,13 +1432,20 @@ def _slim_to_body(points: np.ndarray, rig: ea.Rig, region: str,
     [floor, 1] so the shell only comes in, never past the body, and a real
     relief is thinned rather than erased.  Measured against the body's closed
     surface, never the garment's multi-shell point cloud.
+    A limb region -- two tubes -- is slimmed a tube at a time: the caller
+    passes the movable subset for one leg and the body points and centre of
+    that same leg, so each trouser leg hugs its own thigh rather than a
+    midline between them.
     """
-    body = region_points(rig, region)
-    centre = np.array([float(np.median(body[:, 0])),
-                       float(np.median(body[:, 2]))])
+    if body_points is None:
+        body_points = region_points(rig, region)
+    if centre is None:
+        centre = np.array([float(np.median(body_points[:, 0])),
+                           float(np.median(body_points[:, 2]))])
+    body = body_points
     low, high = float(body[:, 1].min()), float(body[:, 1].max())
     rows = 12
-    floor = 0.7
+    floor = 0.55
     factors = np.ones((rows, 2))
     for row in range(rows):
         lo = low + (high - low) * row / rows
@@ -1465,6 +1479,28 @@ def _slim_to_body(points: np.ndarray, rig: ea.Rig, region: str,
         scale = np.interp(out[movable, 1], centres, column)
         out[movable, axis] = ((out[movable, axis] - centre[index]) * scale
                               + centre[index])
+    return out
+
+
+def _slim_legs(points: np.ndarray, rig: ea.Rig, region: str,
+               movable: np.ndarray, target_clear: float) -> np.ndarray:
+    """Slim each trouser leg onto its own limb.
+
+    The trunk slim centres on one axis, which for a two-tube region is the gap
+    between the legs; run there it pinches the inner seams together.  So each
+    leg is slimmed separately, split at the crotch (the pelvis x centre),
+    against that side's own body points and centre.
+    """
+    out = points.copy()
+    for side in ("l", "r"):
+        limb = rig._region(measure_bones(region, side))
+        own = ((points[:, 0] >= 0) if side == "l" else (points[:, 0] < 0)) & movable
+        if int(own.sum()) < 12 or len(limb) < 12:
+            continue
+        centre = np.array([float(np.median(limb[:, 0])),
+                           float(np.median(limb[:, 2]))])
+        out = _slim_to_body(out, rig, region, own, target_clear,
+                            body_points=limb, centre=centre)
     return out
 
 
@@ -1580,7 +1616,16 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
                 exempt |= np.asarray(step.get("cap", np.zeros(len(seated))),
                                      dtype=bool)
         seated = _slim_to_body(seated, rig, region, ~exempt,
-                               clearance + SLACK * 0.5)
+                               clearance + 0.008)
+    elif region == "legs":
+        # Legwear is chunky for the same reason: sized to the design's own
+        # girth, it stands proud of the leg.  With the leg's own skin hidden
+        # under the garment's weighting there is room to draw each tube onto
+        # its thigh -- per leg, shrink-only, never inside the limb.  A little
+        # more clearance than the torso: knees bend and a trouser cut dead to
+        # the calf creases into it.
+        seated = _slim_legs(seated, rig, region,
+                            np.ones(len(seated), dtype=bool), clearance + 0.02)
     if fit == "push":
         fitted, pushed = clear_body(seated, rig, region, clearance)
         grown = 1.0
