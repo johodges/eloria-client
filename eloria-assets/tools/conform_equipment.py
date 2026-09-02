@@ -1117,12 +1117,12 @@ def textured_material(glb: ea.EquipmentGLB, name: str, png: bytes | None,
 #: attempt to classify the shirt by colour left a sliver of it bare at some
 #: boundary the classifier misread: the blacked-out armpit, the shaded seam
 #: rows of the collar, the last teal row under the hem.
-LINER_BAND = (0.90, 1.64)
+LINER_BAND = (0.90, 1.70)
 #: 0.85, not the mid-forearm: the painted body keeps a few teal texels on
 #: the back of the right hand, and an idle pose hangs that hand exactly where
 #: the armpit slit looks.  Lining the arm to the fingertips reads as gloves
 #: and closes the last of it.
-LINER_HALF_WIDTH = 0.85
+LINER_HALF_WIDTH = 0.66
 LINER_LIFT = 0.008
 LINER_COLOUR = (56, 47, 40)
 
@@ -1295,9 +1295,26 @@ def shirt_liner(race_path: Path):
         arm, shoulder = joint_at("upperarm_" + side)
         forearm, elbow = joint_at("lowerarm_" + side)
         spine, _ = joint_at("spine_02")
+        # A third crease guards the neck-shoulder junction: once the idle
+        # draws the clavicles forward, the liner folds along the top of the
+        # trapezius and a patch of shirt shows through from high frontal
+        # angles.
+        if ("clavicle_" + side in joint_names
+                and "spine_03" in joint_names):
+            clav, _ = joint_at("clavicle_" + side)
+            chest, _ = joint_at("spine_03")
+            inboard_trap = -1.0 if shoulder[0] > 0 else 1.0
+            # Placed by measurement, not eye: the failing pixels unproject to
+            # rest (+/-0.081, 1.566, -0.111), the rear lip of the junction.
+            pockets.append((shoulder + np.array([inboard_trap * 0.127,
+                                                 0.105, -0.01]),
+                            np.array([0.05, 0.045, 0.055]), clav, chest))
         inboard = -0.02 if shoulder[0] > 0 else 0.02
-        pockets.append((shoulder + np.array([inboard, -0.05, 0.0]),
-                        np.array([0.05, 0.065, 0.055]), arm, spine))
+        # Tucked deeper than it once was: with the idle's arms hanging wider
+        # and the shoulders drawn forward, the rear armpit opens up and a
+        # generous ball shows behind the cap as a smooth grey bump.
+        pockets.append((shoulder + np.array([inboard * 2.0, -0.06, 0.01]),
+                        np.array([0.045, 0.055, 0.042]), arm, spine))
         # Behind the joint, not on it: the surface a slit ray actually
         # lands on is the triceps side of the elbow (measured by
         # intersecting the failing pixel's ray with the posed body).
@@ -1382,9 +1399,14 @@ def seat_socket(points: np.ndarray, rig: ea.Rig, kind: str) -> np.ndarray:
     # bbox centre and drag the band down over the eyes.  The head sits inside
     # the shell, riding high, and a per-kind lift seats it like a hat on the
     # crown rather than a bucket over the face.
-    centre = np.array([float(np.median(head[:, 0])), 0.0,
-                       float(np.median(head[:, 2]))])
     head_mid = 0.5 * (float(head[:, 1].min()) + float(head[:, 1].max()))
+    # Centre depth on the cranium alone: the full head region includes the
+    # nose and jaw, whose verts drag a median forward and wear the piece out
+    # over the brow.  A skull is round above its midline, so the upper half
+    # is the shell the piece actually wraps.
+    crown = head[head[:, 1] >= head_mid]
+    centre = np.array([float(np.median(head[:, 0])), 0.0,
+                       float(np.median(crown[:, 2]))])
     lift = float(spec.get("lift", 0.0)) * (head[:, 1].max() - head[:, 1].min())
     centre[1] = head_mid - float(np.median(seated[:, 1])) + lift
     return seated + (centre - socket_origin(rig, spec["part"]))
@@ -1596,7 +1618,13 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
             cap = np.asarray(step["cap"], dtype=bool)
             if cap.any():
                 inboard = -1.0 if shoulder[0] > 0 else 1.0
-                seated[cap] += np.array([inboard * 0.022, 0.028, 0.0])
+                # Grown about its own centroid first: the authored caps are
+                # cut to the concept's narrow silhouette and leave the round
+                # of the shoulder bare, so each spreads a quarter wider
+                # before it climbs.
+                centroid = seated[cap].mean(axis=0)
+                seated[cap] = centroid + (seated[cap] - centroid) * 1.25
+                seated[cap] += np.array([inboard * 0.018, 0.026, 0.0])
                 step["capRaised"] = True
         # Slim the trunk onto the body.  The seat sizes girth from the design's
         # own depth-to-height ratio, and these are chunky plate designs, so the
@@ -1617,15 +1645,19 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
                                      dtype=bool)
         seated = _slim_to_body(seated, rig, region, ~exempt,
                                clearance + 0.008)
-    elif region == "legs":
+    elif region in ("legs", "boots"):
         # Legwear is chunky for the same reason: sized to the design's own
         # girth, it stands proud of the leg.  With the leg's own skin hidden
         # under the garment's weighting there is room to draw each tube onto
         # its thigh -- per leg, shrink-only, never inside the limb.  A little
         # more clearance than the torso: knees bend and a trouser cut dead to
-        # the calf creases into it.
+        # the calf creases into it.  Boots take the same treatment against
+        # calf, foot and ball -- seated to the region box they overshot the
+        # foot both fore and aft -- with tighter clearance, since ankles flex
+        # less than knees inside a shaft.
         seated = _slim_legs(seated, rig, region,
-                            np.ones(len(seated), dtype=bool), clearance + 0.02)
+                            np.ones(len(seated), dtype=bool),
+                            clearance + (0.02 if region == "legs" else 0.012))
     if fit == "push":
         fitted, pushed = clear_body(seated, rig, region, clearance)
         grown = 1.0
