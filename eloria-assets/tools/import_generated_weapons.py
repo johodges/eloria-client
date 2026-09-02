@@ -241,10 +241,14 @@ DESIGNS = [
     ("100_stormglass_shield_spear", "Stormglass Shield Spear", "spear"),
 ]
 
-#: Pieces whose mesh comes out of the generator pointing the wrong way.  Set
-#: from renders, one line per piece, so the reason a weapon is upside down is
-#: never a mystery in the fitter.
-FLIPPED: set[str] = set()
+#: Pieces that arrive the opposite way round to the rest of their class, which
+#: turns the class default off for them as readily as on.  The art is drawn per
+#: piece and not to a rule, so a class default is only ever a majority: the
+#: greatswords come out blade down like every other blade, except this one.
+#: Each line is settled by looking at a render.
+FLIP_EXCEPTIONS = {
+    "097_void_glass_greatblade",
+}
 
 #: How a prop is laid into the hand, as a socket this set overrides the shared
 #: part socket with.  The runtime already allows that -- it is how a two-handed
@@ -353,7 +357,7 @@ def roster() -> list[Piece]:
         pieces.append(Piece(
             source, stem[4:], label, kind, part, nxt[part],
             FIRST_ITEM_ID + index, FIRST_IMAGE_ID + index,
-            stem in FLIPPED))
+            stem in FLIP_EXCEPTIONS))
         nxt[part] += 1
     return pieces
 
@@ -396,9 +400,14 @@ def main() -> int:
     ap.add_argument("--skip-build", action="store_true")
     args = ap.parse_args()
 
-    pieces = roster()
+    # `--only` narrows what is *built*, never what is defined.  The server
+    # blocks are one marker-fenced region rewritten whole, so writing them from
+    # a filtered roster deletes every piece the filter excluded -- a one-piece
+    # rebuild would take the other ninety-nine out of the catalogue with it.
+    everything = roster()
+    pieces = everything
     if args.only:
-        pieces = [p for p in pieces
+        pieces = [p for p in everything
                   if args.only in p.slug or args.only == p.kind]
     if not pieces:
         print("nothing to do (are the meshes generated and texture-shrunk?)")
@@ -427,7 +436,7 @@ def main() -> int:
         catalogue = head + rest.partition(CLOSE_ITEMS)[2]
     taken = {line.partition(":")[2].strip().casefold()
              for line in catalogue.splitlines() if line.startswith("name:")}
-    clash = sorted(p.name for p in pieces if p.name.casefold() in taken)
+    clash = sorted(p.name for p in everything if p.name.casefold() in taken)
     if clash:
         print("these names are already in the catalogue: %s"
               % ", ".join(clash), file=sys.stderr)
@@ -454,7 +463,7 @@ def main() -> int:
         rig, ce.RACES / ("%s.glb" % args.race),
         CLIENT / "assets/actors/native/shared/Universal_Animation_Library.glb",
         {int(k): v for k, v in registry["sockets"].items()})
-    for p in pieces:
+    for p in everything:
         entry = {"scene": "res://assets/actors/native/equipment/%s.glb" % p.slug,
                  "name": p.name, "attach": "socket",
                  "socket": sockets[p.part]}
@@ -465,7 +474,7 @@ def main() -> int:
                         encoding="utf-8")
 
     items = args.server / "config/eloria/items.txt"
-    body = "\n".join(item_block(p) for p in pieces).lstrip("\n")
+    body = "\n".join(item_block(p) for p in everything).lstrip("\n")
     items.write_text(
         armour.fence(items.read_text(encoding="utf-8"), OPEN_ITEMS,
                      CLOSE_ITEMS, body), encoding="utf-8")
@@ -473,7 +482,7 @@ def main() -> int:
     items_py = args.server / "eloria/items.py"
     source = items_py.read_text(encoding="utf-8")
     rows = "\n".join('    "%s": (%d, %d),' % (p.name.casefold(), p.part,
-                                              p.visual) for p in pieces)
+                                              p.visual) for p in everything)
     if OPEN_PY in source:
         source = armour.fence(source, OPEN_PY, CLOSE_PY, rows)
     else:

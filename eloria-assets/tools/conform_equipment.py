@@ -232,7 +232,12 @@ def seat_prop(surface: "Imported", kind: str, flip: bool = False) -> None:
     if np.linalg.det(np.eye(3)[:, perm]) < 0:
         points[:, 0] *= -1.
         normals[:, 0] *= -1.
-    if flip or spec.get("flip", False):
+    # Exclusive: the caller's flag means "this piece differs from its class",
+    # so it can turn a piece the class leaves alone and leave alone a piece the
+    # class turns.  An OR could only ever add turns, and the void glass
+    # greatblade needs the other direction -- it arrives blade up where the
+    # rest of its class arrives blade down.
+    if bool(flip) != bool(spec.get("flip", False)):
         points[:, 1] *= -1.
         normals[:, 1] *= -1.
 
