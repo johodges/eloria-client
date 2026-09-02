@@ -1414,22 +1414,25 @@ def build_socket(source: Path, out: Path, rig: ea.Rig, kind: str,
 
 def _slim_to_body(points: np.ndarray, rig: ea.Rig, region: str,
                   movable: np.ndarray, target_clear: float) -> np.ndarray:
-    """Draw a garment's trunk in toward the body's vertical axis until it hugs.
+    """Draw a garment's trunk in toward the body until it hugs.
 
-    A pull, never a push: each height band is scaled about the body's own
-    centre in the x-z plane by the ratio that lands the band's proudest shell
-    point at the body's surface plus ``target_clear``, clamped to [floor, 1]
-    so the shell only ever comes in and a real relief is thinned rather than
-    erased.  Measured against the body -- which is a single closed surface --
-    not against the garment's own multi-shell point cloud, which is what made
-    every earlier girth measurement unreliable.
+    A pull, never a push, and per axis: the torso is an ellipse -- wide across
+    the shoulders, shallow front to back -- so a single radial factor cut to
+    the wide sides drives the shallow front and back panels straight through
+    the body and leaves the chest bare padding.  Each height band therefore
+    gets its own x factor and z factor, each landing that side of the shell at
+    the body's own half-extent plus ``target_clear`` on that axis, clamped to
+    [floor, 1] so the shell only comes in, never past the body, and a real
+    relief is thinned rather than erased.  Measured against the body's closed
+    surface, never the garment's multi-shell point cloud.
     """
     body = region_points(rig, region)
-    centre = np.array([float(np.median(body[:, 0])), float(np.median(body[:, 2]))])
+    centre = np.array([float(np.median(body[:, 0])),
+                       float(np.median(body[:, 2]))])
     low, high = float(body[:, 1].min()), float(body[:, 1].max())
     rows = 12
     floor = 0.7
-    factors = np.ones(rows)
+    factors = np.ones((rows, 2))
     for row in range(rows):
         lo = low + (high - low) * row / rows
         hi = low + (high - low) * (row + 1) / rows
@@ -1438,26 +1441,28 @@ def _slim_to_body(points: np.ndarray, rig: ea.Rig, region: str,
         if len(skin) < 6 or int(mid.sum()) < 6:
             factors[row] = np.nan
             continue
-        skin_r = float(np.percentile(
-            np.linalg.norm(skin[:, [0, 2]] - centre, axis=1), 92.0))
-        shell_r = float(np.percentile(
-            np.linalg.norm(points[mid][:, [0, 2]] - centre, axis=1), 92.0))
-        if shell_r <= 1e-4:
-            factors[row] = np.nan
-            continue
-        factors[row] = float(np.clip((skin_r + target_clear) / shell_r,
-                                     floor, 1.0))
+        shell = points[mid]
+        for index, axis in enumerate((0, 2)):
+            skin_h = float(np.percentile(np.abs(skin[:, axis] - centre[index]),
+                                         92.0))
+            shell_h = float(np.percentile(np.abs(shell[:, axis] - centre[index]),
+                                          92.0))
+            factors[row, index] = (float(np.clip(
+                (skin_h + target_clear) / shell_h, floor, 1.0))
+                if shell_h > 1e-4 else np.nan)
     centres = low + (high - low) * (np.arange(rows) + 0.5) / rows
-    good = ~np.isnan(factors)
-    if not good.any():
-        return points
-    factors = np.interp(centres, centres[good], factors[good])
-    for _ in range(2):
-        factors = np.convolve(np.pad(factors, 1, mode="edge"),
-                              [1 / 3.0, 1 / 3.0, 1 / 3.0], mode="valid")
     out = points.copy()
-    scale = np.interp(out[movable, 1], centres, factors)
-    for index, axis in enumerate((0, 2)):
+    for index in range(2):
+        column = factors[:, index]
+        good = ~np.isnan(column)
+        if not good.any():
+            continue
+        column = np.interp(centres, centres[good], column[good])
+        for _ in range(2):
+            column = np.convolve(np.pad(column, 1, mode="edge"),
+                                 [1 / 3.0, 1 / 3.0, 1 / 3.0], mode="valid")
+        axis = (0, 2)[index]
+        scale = np.interp(out[movable, 1], centres, column)
         out[movable, axis] = ((out[movable, axis] - centre[index]) * scale
                               + centre[index])
     return out
