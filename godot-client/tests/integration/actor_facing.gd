@@ -117,6 +117,29 @@ func _run() -> void:
 		"a sharp mid-path redirect faces the new heading within a few steps (took %d)"
 			% redirect_settle)
 
+	# The walk clip turns the body ~23 deg off its travel; the model correction
+	# eases in as the walk clip blends in and turns the visual root back, so the
+	# body a player sees faces the way it walks. It rides on the NativeModel node,
+	# and is absent for the resting idle, so the two must differ by the correction.
+	var native_model: Node3D = actor.get_node_or_null("NativeModel") as Node3D
+	actor.apply_server_state({"actor_id": 7, "x": 0, "y": 0, "rotation": 0,
+		"command": 22}, adapter, true)
+	actor.play_action(&"idle")
+	for _settle: int in range(3):
+		await create_timer(cadence).timeout
+	var idle_model_yaw: float = native_model.rotation.y
+	var wx := 0
+	for _w: int in range(5):
+		wx += 1
+		actor.apply_server_state({"actor_id": 7, "x": wx, "y": 0, "rotation": 0,
+			"command": 22}, adapter)
+		await create_timer(cadence).timeout
+	var walk_correction: float = absf(rad_to_deg(
+		wrapf(native_model.rotation.y - idle_model_yaw, -PI, PI)))
+	_expect(walk_correction > 15.0,
+		"walking turns the model back onto its travel (%.1f deg from idle)"
+			% walk_correction)
+
 	print("actor facing tests: ",
 		"PASS" if _failures == 0 else "FAIL (%d)" % _failures)
 	quit(_failures)

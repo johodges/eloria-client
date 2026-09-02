@@ -5,6 +5,10 @@
   "walk": 0.685,
   "run": 2.666
  },
+ "facingOffsets": {
+  "walk": 23.3,
+  "run": 23.2
+ },
  "loopingClips": [
   "Dance_Simple",
   "Fighting_Idle",
