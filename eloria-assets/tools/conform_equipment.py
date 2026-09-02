@@ -150,9 +150,12 @@ SPAN = {
 #: bucket.  Helms ride up a third of the head so the brow line clears the
 #: eyes; circlets and bands ride higher still to sit at the hairline.
 SOCKET_KIND = {
-    "helm": {"part": 3, "bones": ["Head"], "clearance": .010, "lift": 0.12},
-    "hood": {"part": 3, "bones": ["Head"], "clearance": .014, "lift": 0.06},
-    "circlet": {"part": 3, "bones": ["Head"], "clearance": .008, "lift": 0.18},
+    "helm": {"part": 3, "bones": ["Head"], "clearance": .010, "lift": 0.12,
+             "setback": 0.020},
+    "hood": {"part": 3, "bones": ["Head"], "clearance": .014, "lift": 0.06,
+             "setback": 0.020},
+    "circlet": {"part": 3, "bones": ["Head"], "clearance": .008, "lift": 0.18,
+                "setback": 0.010},
 }
 
 
@@ -1313,13 +1316,13 @@ def shirt_liner(race_path: Path):
         # Tucked deeper than it once was: with the idle's arms hanging wider
         # and the shoulders drawn forward, the rear armpit opens up and a
         # generous ball shows behind the cap as a smooth grey bump.
-        pockets.append((shoulder + np.array([inboard * 2.0, -0.06, 0.01]),
-                        np.array([0.045, 0.055, 0.042]), arm, spine))
+        pockets.append((shoulder + np.array([inboard * 3.0, -0.065, 0.005]),
+                        np.array([0.034, 0.05, 0.038]), arm, spine))
         # Behind the joint, not on it: the surface a slit ray actually
         # lands on is the triceps side of the elbow (measured by
         # intersecting the failing pixel's ray with the posed body).
-        pockets.append((elbow + np.array([inboard * 0.5, -0.005, -0.045]),
-                        np.array([0.05, 0.055, 0.05]), arm, forearm))
+        pockets.append((elbow + np.array([inboard * 0.5, -0.005, -0.028]),
+                        np.array([0.04, 0.045, 0.034]), arm, forearm))
     for centre_at, radii, bone_a, bone_b in pockets:
         rings, sectors = 5, 8
         plug_positions = []
@@ -1372,6 +1375,73 @@ def socket_origin(rig: ea.Rig, part: int) -> np.ndarray:
     return origin + offset
 
 
+def _centre_sleeves(points: np.ndarray, triangles: np.ndarray, rig: ea.Rig,
+                    steps: list[dict]) -> int:
+    """Rigidly re-centre each wrapping sleeve ring on its own limb axis.
+
+    The repose turns a sleeve down about the shoulder by the angle the sweep
+    detected, and every residual error in that angle -- or forward lean the
+    concept drew that a frontal turn cannot see -- lands as a translation
+    that grows with distance from the pivot.  A bracer half a metre out rides
+    visibly off the forearm while still swinging with it.  The fix is the
+    measurement the sweep already trusts: a component that encircles the limb
+    axis is worn on it, so slide it (perpendicular to the axis only -- the
+    wrist clamp owns the length) until its ring centre sits on the bone.
+    The median centre shrugs off a decorative fin; plates that do not wrap
+    stay where the design drew them.  Returns how many rings moved.
+    """
+    inverse, edges, count = _weld(points, triangles)
+    labels = _components(edges, count)[inverse]
+    moved = 0
+    for step in steps:
+        if not step.get("applied") or "sleeve" not in step:
+            continue
+        side = step["limb"].rsplit("_", 1)[-1]
+        segments = []
+        for top, bottom in (("upperarm", "lowerarm"), ("lowerarm", "hand")):
+            try:
+                a = rig.origin("%s_%s" % (top, side))
+                b = rig.origin("%s_%s" % (bottom, side))
+            except (KeyError, ValueError):
+                continue
+            segments.append((a, b))
+        if not segments:
+            continue
+        sleeve = np.asarray(step["sleeve"], dtype=bool)
+        for label in np.unique(labels[sleeve]):
+            members = labels == label
+            if int((members & sleeve).sum()) * 2 < int(members.sum()):
+                continue
+            centre = np.median(points[members], axis=0)
+            nearest = None
+            for a, b in segments:
+                span = b - a
+                t = float(np.clip(np.dot(centre - a, span)
+                                  / max(np.dot(span, span), 1e-12), 0.0, 1.0))
+                on = a + t * span
+                gap = float(np.linalg.norm(centre - on))
+                if nearest is None or gap < nearest[0]:
+                    nearest = (gap, on, a, span)
+            gap, on, a, span = nearest
+            axis = span / max(np.linalg.norm(span), 1e-9)
+            # Ring-ness is judged about the component's OWN centre, not the
+            # limb line: the very displacement being corrected can put the
+            # limb axis outside the ring, where the sector test sees a gap
+            # and vetoes exactly the components that need the fix.
+            travel = (points[members] - centre) @ axis
+            half = float(np.percentile(np.abs(travel), 95.0))
+            if not _wraps_axis(points[members] - (centre - axis * half),
+                               np.zeros(3), axis, 2.0 * half + 0.05):
+                continue
+            delta = on - centre
+            delta -= axis * float(np.dot(delta, axis))
+            if float(np.linalg.norm(delta)) < 0.004:
+                continue
+            points[members] += delta
+            moved += 1
+    return moved
+
+
 def seat_socket(points: np.ndarray, rig: ea.Rig, kind: str) -> np.ndarray:
     """Size a socket piece to what it is worn on and centre it on the socket.
 
@@ -1405,8 +1475,12 @@ def seat_socket(points: np.ndarray, rig: ea.Rig, kind: str) -> np.ndarray:
     # over the brow.  A skull is round above its midline, so the upper half
     # is the shell the piece actually wraps.
     crown = head[head[:, 1] >= head_mid]
+    # And a per-kind setback on top of the cranium median: even centred on
+    # the skull the shells kept reading worn out over the brow in game, so
+    # each kind slides back a touch further.
     centre = np.array([float(np.median(head[:, 0])), 0.0,
-                       float(np.median(crown[:, 2]))])
+                       float(np.median(crown[:, 2]))
+                       - float(spec.get("setback", 0.0))])
     lift = float(spec.get("lift", 0.0)) * (head[:, 1].max() - head[:, 1].min())
     centre[1] = head_mid - float(np.median(seated[:, 1])) + lift
     return seated + (centre - socket_origin(rig, spec["part"]))
@@ -1502,6 +1576,84 @@ def _slim_to_body(points: np.ndarray, rig: ea.Rig, region: str,
         out[movable, axis] = ((out[movable, axis] - centre[index]) * scale
                               + centre[index])
     return out
+
+
+def _harden_plates(points: np.ndarray, triangles: np.ndarray, rig: ea.Rig,
+                   steps: list[dict], joints: np.ndarray,
+                   weights: np.ndarray) -> int:
+    """Bind each rigid arm plate to exactly one bone, in place.
+
+    The nearest-surface inheritance is right for the trunk, which drapes like
+    the skin it covers, and wrong for plate: a bracer picks up a 0.15 share of
+    the upper arm from the verts near its elbow end, and that share smears a
+    sixth of every elbow bend into the plate -- in motion the cuff visibly
+    trails the forearm it should be riding.  Solids turn whole or not at all
+    (the repose rule), so a welded component that the repose called sleeve
+    snaps to its own dominant arm bone -- but only when that bone already
+    holds a clear majority, so a true elbow-spanning sleeve keeps its blend
+    and its bend.  A component the repose called cap instead binds to that
+    side's clavicle: a pauldron worn on the shoulder must stay capping it,
+    and weighted to the upper arm it dives outboard the moment the idle
+    drops the arm.  Returns how many components were hardened.
+    """
+    inverse, edges, count = _weld(points, triangles)
+    parent = np.arange(count)
+
+    def find(a: int) -> int:
+        while parent[a] != a:
+            parent[a] = parent[parent[a]]
+            a = parent[a]
+        return a
+
+    for a, b in edges:
+        ra, rb = find(int(a)), find(int(b))
+        if ra != rb:
+            parent[rb] = ra
+    component = np.array([find(int(i)) for i in inverse])
+
+    sleeve = np.zeros(len(points), dtype=bool)
+    cap_side = {}
+    for step in steps:
+        if not step.get("applied"):
+            continue
+        if "sleeve" in step:
+            sleeve |= np.asarray(step["sleeve"], dtype=bool)
+        if "cap" in step:
+            side = step["limb"][-1]
+            mask = cap_side.get(side, np.zeros(len(points), dtype=bool))
+            cap_side[side] = mask | np.asarray(step["cap"], dtype=bool)
+
+    arm_bones = {name % side for name in ("upperarm_%s", "lowerarm_%s",
+                                          "hand_%s") for side in "lr"}
+    hardened = 0
+    for comp in np.unique(component):
+        members = component == comp
+        total = int(members.sum())
+        if total < 4:
+            continue
+        snap_to = None
+        for side, mask in cap_side.items():
+            if int((members & mask).sum()) * 2 >= total:
+                snap_to = rig.joint_names.index("clavicle_" + side)
+                break
+        if snap_to is None and int((members & sleeve).sum()) * 2 >= total:
+            mass: dict[int, float] = {}
+            for slot in range(joints.shape[1]):
+                for j, w in zip(joints[members, slot], weights[members, slot]):
+                    if w > 0:
+                        mass[int(j)] = mass.get(int(j), 0.0) + float(w)
+            top = max(mass, key=mass.get)
+            share = mass[top] / max(sum(mass.values()), 1e-9)
+            if rig.joint_names[top] in arm_bones and share >= 0.55:
+                snap_to = top
+        if snap_to is None:
+            continue
+        joints[members] = 0
+        joints[members, 0] = snap_to
+        weights[members] = 0.0
+        weights[members, 0] = 1.0
+        hardened += 1
+    return hardened
 
 
 def _slim_legs(points: np.ndarray, rig: ea.Rig, region: str,
@@ -1624,8 +1776,11 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
                 # before it climbs.
                 centroid = seated[cap].mean(axis=0)
                 seated[cap] = centroid + (seated[cap] - centroid) * 1.25
-                seated[cap] += np.array([inboard * 0.018, 0.026, 0.0])
+                seated[cap] += np.array([inboard * 0.018, 0.042, 0.0])
                 step["capRaised"] = True
+        step0 = posed[0] if posed else {}
+        step0["sleeveRingsCentred"] = _centre_sleeves(
+            seated, surface.indices.reshape(-1, 3), rig, posed)
         # Slim the trunk onto the body.  The seat sizes girth from the design's
         # own depth-to-height ratio, and these are chunky plate designs, so the
         # chest shell stood 4-5 cm proud and read barrel-chested.  With the
@@ -1677,6 +1832,10 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
     joints, weights = ea.Rig.weights_for(
         rig, positions.astype(np.float64),
         list(ea.GARMENT_SKIN[region]) + REPOSE_SKIN.get(region, []))
+    plates = 0
+    if region == "torso":
+        plates = _harden_plates(positions, surface.indices.reshape(-1, 3),
+                                rig, posed, joints, weights)
     primitives = [glb.primitive(positions, normals, uvs, indices, material,
                                 joints=joints, weights=weights)]
     lined = False
