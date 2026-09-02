@@ -103,6 +103,17 @@ func _run() -> void:
 		"minimap zoom stops at its widest bound")
 	main.set("_minimap_zoom", float(main.get("MINIMAP_ZOOM_DEFAULT")))
 	main.call("_apply_minimap_zoom")
+	# The world camera zooms in to three metres - close enough to fill the
+	# frame with the character - and stops there instead of inverting. The
+	# floor is what the 1 m near plane allows (see the rig's own comment);
+	# interiors override it through their manifests' camera blocks.
+	var rig_start_distance: float = float(camera_rig.get("distance"))
+	for _step: int in range(80):
+		camera_rig.handle_mouse_button(zoom_in)
+	_expect(is_equal_approx(float(camera_rig.get("distance")), 3.0),
+		"the world camera zooms in to the three-metre floor")
+	camera_rig.set("distance", rig_start_distance)
+	camera_rig.call("_update_camera")
 	main.call("_on_minimap_orientation_selected", 1)
 	_expect(str(main.get("_minimap_orientation")) == "player_up",
 		"minimap can rotate with the player")

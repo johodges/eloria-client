@@ -13,8 +13,11 @@ extends Node3D
 # depth step at distance z is about z^2 / (near * 2^24) metres. At the engine
 # default near of 0.05 that is 12 mm at 100 m and 48 mm at 200 m, and every
 # authored 5 mm clearance in the map kits shimmers; at 1 m it is 0.6 mm and
-# 2.4 mm. Lowering `min_distance` below a couple of metres means revisiting it.
-@export var min_distance := 8.0
+# 2.4 mm. Three metres is as near as that near plane allows without clipping
+# into the focused actor; going below it means revisiting the near plane.
+# Interiors keep their own tighter limits through their manifests' camera
+# blocks, which override these.
+@export var min_distance := 3.0
 @export var max_distance := 90.0
 
 @onready var camera: Camera3D = %Camera
