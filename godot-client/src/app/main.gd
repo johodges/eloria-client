@@ -173,6 +173,8 @@ var map_light_root: Node3D
 @onready var trade_storage_destination: CheckBox = %TradeStorageDestination
 @onready var storage_panel: Control = %StoragePanel
 @onready var storage_categories: ItemList = %StorageCategories
+@onready var storage_type: OptionButton = %StorageType
+@onready var storage_sort: OptionButton = %StorageSort
 @onready var storage_items: ItemList = %StorageItems
 @onready var storage_inventory: ItemList = %StorageInventory
 @onready var storage_quantity: SpinBox = %StorageQuantity
@@ -332,6 +334,11 @@ var selected_trade_side := ""
 var trade_destinations: PackedByteArray = PackedByteArray()
 var trade_was_open := false
 var selected_storage_side := ""
+## The stored-items organizer. Both are this client's own view of the shelf:
+## nothing is sent to the server, and the positions it withdraws by are
+## unaffected by how the list happens to be filtered or ordered.
+var storage_type_filter := ""
+var storage_sort_mode := "name"
 var selected_manufacturing_recipe := -1
 var manufacturing_server_status := "Select a recipe."
 var cooldown_display_second := -1
@@ -798,6 +805,9 @@ func _ready() -> void:
 	storage_categories.item_selected.connect(_on_storage_category_selected)
 	storage_items.item_selected.connect(_on_storage_item_selected)
 	storage_inventory.item_selected.connect(_on_storage_inventory_selected)
+	storage_type.item_selected.connect(_on_storage_type_selected)
+	storage_sort.item_selected.connect(_on_storage_sort_selected)
+	_build_storage_sort_modes()
 	ground_bag_header.gui_input.connect(_on_ground_bag_header_gui_input)
 	knowledge_list.item_selected.connect(_on_knowledge_selected)
 	knowledge_known_only.toggled.connect(_on_knowledge_filter_toggled)
@@ -6849,6 +6859,7 @@ func _sync_storage() -> void:
 			storage_categories.set_item_metadata(index, int(category.get("id", -1)))
 			if int(category.get("id", -1)) == active_category:
 				storage_categories.select(index)
+	_sync_storage_organizer()
 	_fill_storage_item_list(storage_items,
 		AppState.storage.get("items", {}) as Dictionary, "Stored")
 	var backpack: Dictionary = {}
@@ -6862,24 +6873,146 @@ func _sync_storage() -> void:
 		"Select an inventory item to deposit or a stored item to withdraw.")
 	_sync_storage_actions()
 
-func _fill_storage_item_list(list_control: ItemList, items: Dictionary, prefix: String) -> void:
-	list_control.clear()
+## The sort orders the stored list offers, as (mode, label) pairs. The mode is
+## the value `storage_sort_mode` holds and the dropdown carries as metadata.
+const STORAGE_SORT_MODES: Array[Array] = [
+	["name", "Name"], ["strength", "Strength"], ["rarity", "Rarity"]]
+const STORAGE_RARITY_LABELS: Array[String] = [
+	"Common", "Uncommon", "Rare", "Epic", "Legendary"]
+
+func _build_storage_sort_modes() -> void:
+	storage_sort.clear()
+	for index: int in range(STORAGE_SORT_MODES.size()):
+		var mode: Array = STORAGE_SORT_MODES[index]
+		storage_sort.add_item(str(mode[1]))
+		storage_sort.set_item_metadata(index, str(mode[0]))
+		if str(mode[0]) == storage_sort_mode:
+			storage_sort.select(index)
+
+## The server's description of one stored position, or an empty dictionary
+## where the server has not described it (an older server, or a row that
+## arrived before its description did).
+func _storage_description_for(position: int) -> Dictionary:
+	var described: Variant = AppState.storage.get("described", {})
+	if not described is Dictionary:
+		return {}
+	var row: Variant = (described as Dictionary).get(position)
+	return row as Dictionary if row is Dictionary else {}
+
+## Rebuilds the Type dropdown from whatever the open category actually holds,
+## so each category offers exactly its own types and nothing else.
+func _sync_storage_organizer() -> void:
+	var items: Dictionary = AppState.storage.get("items", {}) as Dictionary
+	var subtypes: Array[String] = []
+	for raw_position: Variant in items:
+		var subtype: String = str(_storage_description_for(
+			int(raw_position)).get("subtype", ""))
+		if not subtype.is_empty() and not subtypes.has(subtype):
+			subtypes.append(subtype)
+	subtypes.sort()
+	# A category whose items are all one type has nothing to filter.
+	var worth_filtering: bool = subtypes.size() > 1
+	storage_type.disabled = not worth_filtering
+	if not worth_filtering:
+		storage_type_filter = ""
+	if not subtypes.has(storage_type_filter):
+		storage_type_filter = ""
+	storage_type.clear()
+	storage_type.add_item("All types")
+	storage_type.set_item_metadata(0, "")
+	for subtype: String in subtypes:
+		var index: int = storage_type.item_count
+		storage_type.add_item(subtype)
+		storage_type.set_item_metadata(index, subtype)
+		if subtype == storage_type_filter:
+			storage_type.select(index)
+	if storage_type_filter.is_empty():
+		storage_type.select(0)
+
+## Sorts descending for the numeric orders, because "best first" is what a
+## player means by strength or rarity; name sorts A to Z. Ties fall back to
+## the name so the list never reshuffles between identical redraws.
+func _storage_sorted_positions(items: Dictionary) -> Array:
 	var positions: Array = items.keys()
 	positions.sort()
+	var mode: String = storage_sort_mode
+	if mode == "name":
+		positions.sort_custom(func(left: Variant, right: Variant) -> bool:
+			return _storage_name_of(int(left)).naturalnocasecmp_to(
+				_storage_name_of(int(right))) < 0)
+		return positions
+	var key: String = "strength" if mode == "strength" else "rarity"
+	positions.sort_custom(func(left: Variant, right: Variant) -> bool:
+		var left_value: int = int(_storage_description_for(int(left)).get(key, 0))
+		var right_value: int = int(_storage_description_for(int(right)).get(key, 0))
+		if left_value == right_value:
+			return _storage_name_of(int(left)).naturalnocasecmp_to(
+				_storage_name_of(int(right))) < 0
+		return left_value > right_value)
+	return positions
+
+func _storage_name_of(position: int) -> String:
+	return str(_storage_description_for(position).get("name", ""))
+
+func _on_storage_type_selected(index: int) -> void:
+	var metadata: Variant = storage_type.get_item_metadata(index)
+	storage_type_filter = str(metadata) if metadata != null else ""
+	_fill_storage_item_list(storage_items,
+		AppState.storage.get("items", {}) as Dictionary, "Stored")
+	_sync_storage_actions()
+
+func _on_storage_sort_selected(index: int) -> void:
+	var metadata: Variant = storage_sort.get_item_metadata(index)
+	storage_sort_mode = str(metadata) if metadata != null else "name"
+	_fill_storage_item_list(storage_items,
+		AppState.storage.get("items", {}) as Dictionary, "Stored")
+	_sync_storage_actions()
+
+func _fill_storage_item_list(list_control: ItemList, items: Dictionary, prefix: String) -> void:
+	list_control.clear()
+	# Only the stored side is described by the server, so only it can be
+	# organized; the inventory column keeps its plain positional order.
+	var stored: bool = list_control == storage_items
+	var positions: Array = _storage_sorted_positions(items) if stored else items.keys()
+	if not stored:
+		positions.sort()
 	for raw_position: Variant in positions:
 		var position: int = int(raw_position)
 		var item_value: Variant = items.get(position)
 		if not item_value is Dictionary:
 			continue
 		var item: Dictionary = item_value as Dictionary
+		var described: Dictionary = _storage_description_for(position) if stored else {}
+		if stored and not storage_type_filter.is_empty() \
+				and str(described.get("subtype", "")) != storage_type_filter:
+			continue
 		var image_id: int = int(item.get("image_id", 0))
 		var index: int = list_control.item_count
-		list_control.add_item("%s %d  •  item #%d  ×%d" % [prefix,
-			position + 1, image_id, int(item.get("quantity", 0))])
+		var name: String = str(described.get("name", ""))
+		var label: String = ""
+		if name.is_empty():
+			label = "%s %d  •  item #%d  ×%d" % [prefix, position + 1,
+				image_id, int(item.get("quantity", 0))]
+		else:
+			label = "%s  ×%d  •  %s" % [name, int(item.get("quantity", 0)),
+				_storage_row_detail(described)]
+		list_control.add_item(label)
 		list_control.set_item_metadata(index, position)
 		var icon: Texture2D = item_atlas.icon_for(image_id)
 		if icon != null:
 			list_control.set_item_icon(index, icon)
+
+## The trailing detail on a described row: its type, plus whichever figure
+## the current sort is ordering by, so the ordering is legible on the row.
+func _storage_row_detail(described: Dictionary) -> String:
+	var subtype: String = str(described.get("subtype", ""))
+	if storage_sort_mode == "strength":
+		return "%s  •  strength %d" % [subtype, int(described.get("strength", 0))]
+	if storage_sort_mode == "rarity":
+		var rarity: int = clampi(int(described.get("rarity", 0)), 0,
+			STORAGE_RARITY_LABELS.size() - 1)
+		return "%s  •  %s" % [subtype, STORAGE_RARITY_LABELS[rarity]]
+	return subtype
 
 func _list_metadata_int(list_control: ItemList, index: int) -> int:
 	if index < 0 or index >= list_control.item_count:

@@ -40,7 +40,8 @@ func _init() -> void:
 		"player_info_v1": EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO,
 		"quest_journal_v1": EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE,
 		"spell_power_v1": EloriaProtocol.ServerMessage.ELORIA_SPELL_POWER,
-		"special_events_v1": EloriaProtocol.ServerMessage.ELORIA_SPECIAL_EVENT_STATE}
+		"special_events_v1": EloriaProtocol.ServerMessage.ELORIA_SPECIAL_EVENT_STATE,
+		"storage_window_v1": EloriaProtocol.ServerMessage.ELORIA_STORAGE_STATE}
 	var capability_probes: Dictionary = {
 		EloriaProtocol.ServerMessage.ELORIA_COMBAT_STATE:
 			"016600120014001e002c00050052656564686f726e205374616700",
@@ -60,6 +61,9 @@ func _init() -> void:
 		EloriaProtocol.ServerMessage.ELORIA_SPELL_POWER: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_SPECIAL_EVENT_STATE: "00",
+		# Category 0 holding one described row: "A", worn on "B".
+		EloriaProtocol.ServerMessage.ELORIA_STORAGE_STATE:
+			"000100" + "0000000001000000010000000041004200",
 		EloriaProtocol.ServerMessage.ELORIA_ALMANAC_STATE: "010101000064004f7264696e61727920446179004e6f7468696e6720697320696e20666f7263652e0000000000"}
 	for capability: String in EloriaProtocol.CLIENT_CAPABILITIES:
 		_expect(decoded_extensions.has(capability),
@@ -777,6 +781,33 @@ func _init() -> void:
 		and EloriaProtocol.decode_server(68, PackedByteArray([0, 1, 2])).type == "invalid"
 		and EloriaProtocol.decode_server(69, PackedByteArray()).type == "invalid",
 		"malformed storage packets rejected")
+	# The organizer packet: one described row, "Helm" worn on the Head, with a
+	# strength of 12 and rarity tier 3, sitting at position 0x0102.
+	var storage_state: Dictionary = EloriaProtocol.decode_server(239,
+		PackedByteArray([4, 1, 0,
+			0x02, 0x01, 0x34, 0x12, 7, 0, 0, 0, 12, 0, 0, 0, 3,
+			72, 101, 108, 109, 0, 72, 101, 97, 100, 0]))
+	_expect(storage_state.type == "storage_state"
+		and storage_state.category_id == 4
+		and storage_state.rows.size() == 1
+		and storage_state.rows[0].position == 0x0102
+		and storage_state.rows[0].image_id == 0x1234
+		and storage_state.rows[0].quantity == 7
+		and storage_state.rows[0].strength == 12
+		and storage_state.rows[0].rarity == 3
+		and storage_state.rows[0].name == "Helm"
+		and storage_state.rows[0].subtype == "Head",
+		"storage organizer fields")
+	# A penalty on an item must survive as a negative, not wrap to two billion.
+	var negative_strength: Dictionary = EloriaProtocol.decode_server(239,
+		PackedByteArray([0, 1, 0,
+			0, 0, 0, 0, 1, 0, 0, 0, 0xFB, 0xFF, 0xFF, 0xFF, 0,
+			88, 0, 89, 0]))
+	_expect(negative_strength.rows[0].strength == -5, "storage organizer signed strength")
+	_expect(EloriaProtocol.decode_server(239, PackedByteArray([0, 1])).type == "invalid"
+		and EloriaProtocol.decode_server(239, PackedByteArray([0, 1, 0, 1, 2])).type == "invalid"
+		and EloriaProtocol.decode_server(239, PackedByteArray([0, 0, 0, 9])).type == "invalid",
+		"malformed storage organizer rejected")
 	var cooldown_event: Dictionary = EloriaProtocol.decode_server(77,
 		PackedByteArray([7, 30, 0, 12, 0, 2, 60, 0, 1, 0]))
 	_expect(cooldown_event.type == "item_cooldowns"

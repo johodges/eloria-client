@@ -2577,6 +2577,32 @@ layout_mode = 2
 text = "STORED ITEMS"
 horizontal_alignment = 1
 
+[node name="Organizer" type="HBoxContainer" parent="GameView/StoragePanel/Content/Columns/Stored" unique_id=1704632733]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="TypeLabel" type="Label" parent="GameView/StoragePanel/Content/Columns/Stored/Organizer" unique_id=1704632734]
+layout_mode = 2
+text = "Type"
+
+[node name="StorageType" type="OptionButton" parent="GameView/StoragePanel/Content/Columns/Stored/Organizer" unique_id=1704632735]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Show only one type of item from this category."
+
+[node name="SortLabel" type="Label" parent="GameView/StoragePanel/Content/Columns/Stored/Organizer" unique_id=1704632736]
+layout_mode = 2
+text = "Sort"
+
+[node name="StorageSort" type="OptionButton" parent="GameView/StoragePanel/Content/Columns/Stored/Organizer" unique_id=1704632737]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Order the stored items by name, strength, or rarity."
+
 [node name="StorageItems" type="ItemList" parent="GameView/StoragePanel/Content/Columns/Stored" unique_id=562090784]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(260, 320)
