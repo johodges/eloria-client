@@ -225,8 +225,12 @@ def main() -> int:
                      info["vertices"], info["bytes"] / 1e6,
                      "pose " + " ".join(posed) if posed else ""))
 
+    # Definitions always cover the WHOLE roster: --sheet narrows which
+    # meshes rebuild, but the fences are rewritten whole, and writing them
+    # from the filtered list silently drops every other piece's item.
+    everyone = roster()
     registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
-    for piece in pieces:
+    for piece in everyone:
         entry = {"scene": "res://assets/actors/native/equipment/%s.glb"
                           % piece.slug,
                  "name": piece.name}
@@ -244,14 +248,14 @@ def main() -> int:
                         encoding="utf-8")
 
     items = items_path.read_text(encoding="utf-8")
-    body = "\n".join(item_block(piece) for piece in pieces).lstrip("\n")
+    body = "\n".join(item_block(piece) for piece in everyone).lstrip("\n")
     items_path.write_text(fence(items, OPEN_ITEMS, CLOSE_ITEMS, body),
                           encoding="utf-8")
 
     source = items_py_path.read_text(encoding="utf-8")
     rows = "\n".join('    "%s": (%d, %d),'
                      % (piece.name.casefold(), piece.part, piece.visual)
-                     for piece in pieces)
+                     for piece in everyone)
     if OPEN_PY in source:
         source = fence(source, OPEN_PY, CLOSE_PY, rows)
     else:

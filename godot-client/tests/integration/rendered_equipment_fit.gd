@@ -109,8 +109,12 @@ func _run() -> void:
 		worn[str(part_key)] = KIT[part_key]
 	var hero := _spawn(worn, 0.0)
 	await _settle([hero])
-	for angle_name: String in ["front", "threequarter"]:
-		var yaw: float = PI if angle_name == "front" else PI - deg_to_rad(35.0)
+	for angle_name: String in ["front", "threequarter", "side"]:
+		var yaw: float = PI
+		if angle_name == "threequarter":
+			yaw = PI - deg_to_rad(35.0)
+		elif angle_name == "side":
+			yaw = PI / 2.0
 		await _frame_hero(hero, yaw, "%skit-%s.png" % [prefix, angle_name],
 			"full generated kit (%s)" % angle_name)
 

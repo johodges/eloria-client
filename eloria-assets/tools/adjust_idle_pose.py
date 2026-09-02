@@ -47,13 +47,19 @@ BODY = CLIENT / "assets/actors/native/races/luminous_male.glb"
 CLIP = "Idle_Subtle"
 
 #: The relaxed idle, as forward-kinematic measurements on the luminous_male
-#: rig.  Arm drop is the upper arm's angle below horizontal (bigger = closer to
-#: the side); the wide authored idle sat at 74, and 66 clears a fitted sleeve
-#: while still reading as arms-at-rest.  Ankle gap is the distance between the
-#: foot joints; 31 was a straddle, 19 is a natural stand.  Feet face straight
-#: forward.
+#: rig.  Arm drop is the upper arm's angle below horizontal (bigger = closer
+#: to the side); the wide authored idle sat at 74, and 66 clears a fitted
+#: sleeve while still reading as arms-at-rest.  The shoulder target is the
+#: upper-arm joint's forward position: the authored idle holds it 4.6 cm
+#: behind the body's centre line, which reads as a puffed chest with the arms
+#: hanging behind the torso, so the clavicles protract until the joint sits
+#: near the centre line.  The legs are not given a stance target but
+#: straightened segment by segment -- the authored clip bows the right leg,
+#: knee swung 4 cm out and ankle kicked 10 cm back in -- so the knee lands
+#: under the hip and the ankle under the knee, in the frontal plane only (the
+#: sagittal crouch is the clip's own and stays).  Feet face straight forward.
 TARGET_ARM_DROP = 66.0
-TARGET_ANKLE_GAP = 0.19
+TARGET_SHOULDER_FORWARD = -0.045
 SAMPLE_AT = 0.1
 
 
@@ -267,12 +273,22 @@ def measurements(sk: Skeleton, glob) -> dict:
     o = lambda n: sk.origin(glob, n)
     arm = o("lowerarm_l") - o("upperarm_l")
     fl, fr = o("ball_l") - o("foot_l"), o("ball_r") - o("foot_r")
-    return {
+    out = {
         "armDrop": float(np.degrees(np.arctan2(-arm[1], abs(arm[0])))),
+        "chestTwist": float(np.degrees(np.arctan2(
+            o("upperarm_l")[2] - o("upperarm_r")[2],
+            o("upperarm_l")[0] - o("upperarm_r")[0]))),
+        "shoulderZ": float((o("upperarm_l")[2] + o("upperarm_r")[2]) / 2.0),
         "ankleGap": float(abs(o("foot_l")[0] - o("foot_r")[0])),
         "footYawL": float(np.degrees(np.arctan2(fl[0], fl[2]))),
         "footYawR": float(np.degrees(np.arctan2(fr[0], fr[2]))),
     }
+    for side in ("l", "r"):
+        hip, knee, ankle = (o("thigh_" + side), o("calf_" + side),
+                            o("foot_" + side))
+        out["kneeDx" + side.upper()] = float(knee[0] - hip[0])
+        out["ankleDx" + side.upper()] = float(ankle[0] - knee[0])
+    return out
 
 
 def main() -> int:
@@ -284,35 +300,86 @@ def main() -> int:
     sk = Skeleton(BODY)
     local, channels = sampled_idle(js, data, bin_off)
 
-    before = measurements(sk, sk.fk(local, {}))
-    print("before: arm drop %.1f, ankle gap %.1f cm, foot yaw L %.1f R %.1f"
-          % (before["armDrop"], before["ankleGap"] * 100,
-             before["footYawL"], before["footYawR"]))
+    def report(tag, m):
+        print("%s arm drop %.1f, chest twist %+.1f, shoulder z %+.3f, "
+              "knee dx L%+.3f R%+.3f, ankle dx L%+.3f R%+.3f, ankle gap "
+              "%.1f cm, foot yaw L %.1f R %.1f"
+              % (tag, m["armDrop"], m["chestTwist"], m["shoulderZ"],
+                 m["kneeDxL"], m["kneeDxR"], m["ankleDxL"], m["ankleDxR"],
+                 m["ankleGap"] * 100, m["footYawL"], m["footYawR"]))
+    report("before:", measurements(sk, sk.fk(local, {})))
 
     deltas: dict = {}
-    # Arms: abduct both about world forward (+Z) until the drop hits target.
-    def arm_drop(angle):
+    # De-twist the chest first: the authored clip yaws the whole upper torso
+    # about 18 degrees (left shoulder swung forward, right swung back), which
+    # is most of why the right shoulder reads pulled behind.  spine_03 turns
+    # about world up until the shoulder line is square, and neck_01 counter-
+    # turns by the same world rotation so the head keeps facing where it was
+    # authored (the clavicles hang off spine_03, the neck subtree does not
+    # need the twist).
+    def chest_twist(angle):
         d = dict(deltas)
         g = sk.fk(local, {})
+        d["spine_03"] = sk.world_delta(g, "spine_03", [0, 1, 0], angle)
+        return measurements(sk, sk.fk(local, d))["chestTwist"]
+    twist_angle = solve_angle(chest_twist, 0.0, 12.0, -4.0, 30.0)
+    g = sk.fk(local, {})
+    deltas["spine_03"] = sk.world_delta(g, "spine_03", [0, 1, 0], twist_angle)
+    g = sk.fk(local, deltas)
+    deltas["neck_01"] = sk.world_delta(g, "neck_01", [0, 1, 0], -twist_angle)
+
+    # Shoulders forward: each clavicle protracts (a yaw about world up -- the
+    # clavicle runs along x, so a pitch about x would spin it in place) until
+    # its own upper-arm joint reaches the target forward position.  Per side,
+    # because a residual asymmetry survives the de-twist.
+    clav_angles = {}
+    for side, sign in (("l", -1.0), ("r", 1.0)):
+        def one_shoulder(angle, side=side, sign=sign):
+            d = dict(deltas)
+            g = sk.fk(local, deltas)
+            d["clavicle_" + side] = sk.world_delta(
+                g, "clavicle_" + side, [0, 1, 0], sign * angle)
+            return float(sk.origin(sk.fk(local, d),
+                                   "upperarm_" + side)[2])
+        clav_angles[side] = solve_angle(one_shoulder, TARGET_SHOULDER_FORWARD,
+                                        8.0, -16.0, 32.0)
+        g = sk.fk(local, deltas)
+        deltas["clavicle_" + side] = sk.world_delta(
+            g, "clavicle_" + side, [0, 1, 0], sign * clav_angles[side])
+
+    # Arms: abduct both about world forward (+Z) until the drop hits target,
+    # measured with the clavicles already forward.
+    def arm_drop(angle):
+        d = dict(deltas)
+        g = sk.fk(local, deltas)
         d["upperarm_l"] = sk.world_delta(g, "upperarm_l", [0, 0, 1], angle)
         d["upperarm_r"] = sk.world_delta(g, "upperarm_r", [0, 0, 1], -angle)
         return measurements(sk, sk.fk(local, d))["armDrop"]
-    arm_angle = solve_angle(arm_drop, TARGET_ARM_DROP, 8.0, -2.0, 20.0)
-    g = sk.fk(local, {})
+    arm_angle = solve_angle(arm_drop, TARGET_ARM_DROP, 8.0, -6.0, 20.0)
+    g = sk.fk(local, deltas)
     deltas["upperarm_l"] = sk.world_delta(g, "upperarm_l", [0, 0, 1], arm_angle)
     deltas["upperarm_r"] = sk.world_delta(g, "upperarm_r", [0, 0, 1], -arm_angle)
 
-    # Thighs: adduct both about world forward until the ankle gap hits target.
-    def ankle_gap(angle):
-        d = dict(deltas)
-        g = sk.fk(local, d)
-        d["thigh_l"] = sk.world_delta(g, "thigh_l", [0, 0, 1], -angle)
-        d["thigh_r"] = sk.world_delta(g, "thigh_r", [0, 0, 1], angle)
-        return measurements(sk, sk.fk(local, d))["ankleGap"]
-    thigh_angle = solve_angle(ankle_gap, TARGET_ANKLE_GAP, 4.0, -2.0, 12.0)
-    g = sk.fk(local, deltas)
-    deltas["thigh_l"] = sk.world_delta(g, "thigh_l", [0, 0, 1], -thigh_angle)
-    deltas["thigh_r"] = sk.world_delta(g, "thigh_r", [0, 0, 1], thigh_angle)
+    # Legs: straightened segment by segment rather than steered to a stance
+    # width.  The authored clip bows a leg -- knee swung outboard, ankle
+    # kicked back in -- and no single hip rotation unbends that.  The thigh
+    # turns about world forward until the knee is directly below the hip in
+    # the frontal plane, then the calf until the ankle is below the knee; a
+    # frontal turn leaves the sagittal crouch exactly as authored.  The
+    # correction angle is closed-form: the segment's own frontal lean.
+    for side in ("l", "r"):
+        g = sk.fk(local, deltas)
+        hip = sk.origin(g, "thigh_" + side)
+        knee = sk.origin(g, "calf_" + side)
+        lean = -np.degrees(np.arctan2(knee[0] - hip[0], -(knee[1] - hip[1])))
+        deltas["thigh_" + side] = sk.world_delta(g, "thigh_" + side,
+                                                 [0, 0, 1], lean)
+        g = sk.fk(local, deltas)
+        knee = sk.origin(g, "calf_" + side)
+        ankle = sk.origin(g, "foot_" + side)
+        lean = -np.degrees(np.arctan2(ankle[0] - knee[0], -(ankle[1] - knee[1])))
+        deltas["calf_" + side] = sk.world_delta(g, "calf_" + side,
+                                                [0, 0, 1], lean)
 
     # Feet: rotate each about world up to zero its residual yaw.
     g = sk.fk(local, deltas)
@@ -320,12 +387,10 @@ def main() -> int:
     deltas["foot_l"] = sk.world_delta(g, "foot_l", [0, 1, 0], -now["footYawL"])
     deltas["foot_r"] = sk.world_delta(g, "foot_r", [0, 1, 0], -now["footYawR"])
 
-    after = measurements(sk, sk.fk(local, deltas))
-    print("after:  arm drop %.1f, ankle gap %.1f cm, foot yaw L %.1f R %.1f"
-          % (after["armDrop"], after["ankleGap"] * 100,
-             after["footYawL"], after["footYawR"]))
-    print("deltas: arm +/-%.1f deg, thigh -/+%.1f deg, feet to forward"
-          % (arm_angle, thigh_angle))
+    report("after: ", measurements(sk, sk.fk(local, deltas)))
+    print("deltas: chest de-twist %.1f deg, clavicle L%.1f R%.1f deg, arm "
+          "+/-%.1f deg, legs straightened, feet to forward"
+          % (twist_angle, clav_angles["l"], clav_angles["r"], arm_angle))
 
     if args.dry_run:
         print("\nnothing written (--dry-run)")
