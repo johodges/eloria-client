@@ -69,7 +69,7 @@ TARGET_HAND_Z = 0.045
 #: the right's.  These land the REAL hands at 0.250 and 0.265 off the
 #: midline: the right two centimetres wider, as reviewed in game.
 TARGET_HAND_X = {"l": 0.266, "r": 0.249}
-TARGET_ELBOW_BEND = 12.0
+TARGET_ELBOW_BEND = 10.0
 #: The neck stands vertical -- the authored clip leans it (and the head
 #: with it) forward; zero here means the head joint sits directly above
 #: the neck joint, stacked over the torso.
