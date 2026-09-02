@@ -7,17 +7,24 @@ extends Node3D
 @export var zoom_step := 2.5
 @export var rotation_sensitivity := 0.25
 @export var pan_sensitivity := 0.012
-# The rig never brings the camera nearer than this to its focus, which is what
-# lets `main.tscn` carry a 1 m near plane. That matters: the client renders
-# through GL Compatibility, whose depth buffer is fixed-point, so the resolvable
-# depth step at distance z is about z^2 / (near * 2^24) metres. At the engine
-# default near of 0.05 that is 12 mm at 100 m and 48 mm at 200 m, and every
-# authored 5 mm clearance in the map kits shimmers; at 1 m it is 0.6 mm and
-# 2.4 mm. Three metres is as near as that near plane allows without clipping
-# into the focused actor; going below it means revisiting the near plane.
-# Interiors keep their own tighter limits through their manifests' camera
-# blocks, which override these.
-@export var min_distance := 3.0
+# The camera's near plane follows the zoom: a quarter of the orbit distance,
+# never wider than the 1 m the scene is authored for, never narrower than
+# 0.2 m. The width matters because the client renders through GL
+# Compatibility, whose depth buffer is fixed-point: the resolvable depth step
+# at distance z is about z^2 / (near * 2^24) metres, so at the engine default
+# near of 0.05 every authored 5 mm clearance in the map kits shimmers from
+# 100 m away. At 1 m the step is 0.6 mm; even at this floor of 0.2 m it is
+# 3 mm, still inside those clearances - and the plane is only ever that
+# narrow while the camera sits closer than a metre from its focus, when the
+# frame is a portrait and the far vista is mostly out of it.
+const NEAR_PLANE_RATIO := 0.25
+const NEAR_PLANE_MAX := 1.0
+const NEAR_PLANE_MIN := 0.2
+# The floor keeps the focused actor outside the (shrinking) near plane: at
+# 1.5 m the plane sits 0.375 m out and the actor's surface no closer than
+# about a metre. Interiors keep their own tighter limits through their
+# manifests' camera blocks, which override these.
+@export var min_distance := 1.5
 @export var max_distance := 90.0
 
 @onready var camera: Camera3D = %Camera
@@ -110,4 +117,6 @@ func _update_camera() -> void:
 		cos(yaw) * cos(pitch)) * distance
 	global_position = focus + pan_offset
 	camera.position = offset
+	camera.near = clampf(distance * NEAR_PLANE_RATIO,
+		NEAR_PLANE_MIN, NEAR_PLANE_MAX)
 	camera.look_at(global_position + Vector3.UP * 1.2, Vector3.UP)

@@ -103,17 +103,27 @@ func _run() -> void:
 		"minimap zoom stops at its widest bound")
 	main.set("_minimap_zoom", float(main.get("MINIMAP_ZOOM_DEFAULT")))
 	main.call("_apply_minimap_zoom")
-	# The world camera zooms in to three metres - close enough to fill the
-	# frame with the character - and stops there instead of inverting. The
-	# floor is what the 1 m near plane allows (see the rig's own comment);
-	# interiors override it through their manifests' camera blocks.
+	# The world camera zooms in to a portrait at a metre and a half and stops
+	# there instead of inverting. The near plane follows the zoom - a quarter
+	# of the orbit distance, capped at the authored 1 m - which is what lets
+	# the floor sit inside the old fixed plane without clipping the actor,
+	# while a zoomed-out camera keeps the full metre the fixed-point depth
+	# buffer needs over long vistas (see the rig's own comment). Interiors
+	# override the floor through their manifests' camera blocks.
 	var rig_start_distance: float = float(camera_rig.get("distance"))
+	var rig_camera: Camera3D = camera_rig.get("camera") as Camera3D
+	_expect(rig_camera != null and is_equal_approx(rig_camera.near, 1.0),
+		"zoomed out, the camera keeps the authored one-metre near plane")
 	for _step: int in range(80):
 		camera_rig.handle_mouse_button(zoom_in)
-	_expect(is_equal_approx(float(camera_rig.get("distance")), 3.0),
-		"the world camera zooms in to the three-metre floor")
+	_expect(is_equal_approx(float(camera_rig.get("distance")), 1.5),
+		"the world camera zooms in to the metre-and-a-half floor")
+	_expect(rig_camera != null and is_equal_approx(rig_camera.near, 0.375),
+		"the near plane narrows with the zoom, so the close camera clips nothing")
 	camera_rig.set("distance", rig_start_distance)
 	camera_rig.call("_update_camera")
+	_expect(rig_camera != null and is_equal_approx(rig_camera.near, 1.0),
+		"zooming back out restores the full near plane and its depth precision")
 	main.call("_on_minimap_orientation_selected", 1)
 	_expect(str(main.get("_minimap_orientation")) == "player_up",
 		"minimap can rotate with the player")
