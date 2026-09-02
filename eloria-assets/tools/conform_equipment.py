@@ -1805,6 +1805,35 @@ def _slim_to_body(points: np.ndarray, rig: ea.Rig, region: str,
     return out
 
 
+def _floor_backplate(points: np.ndarray, rig: ea.Rig, region: str,
+                     movable: np.ndarray) -> int:
+    """Keep the back panel outside the liner, band by band.
+
+    The banded slim scales each band by its proudest plates, so a back
+    with deep relief -- raised bosses over recessed panels -- lands its
+    recesses INSIDE the 8 mm liner, and the wearer shows a patchwork of
+    armour and underpadding from behind.  Any back-half vertex that ends
+    up nearer the body than the liner line is pushed straight back out to
+    it; inner shell walls get carried along, which only thickens hidden
+    geometry.
+    """
+    body = region_points(rig, region)
+    floored = 0
+    for lo, hi in ((0.92, 1.00), (1.00, 1.12), (1.12, 1.24), (1.24, 1.36),
+                   (1.36, 1.48), (1.48, 1.58)):
+        skin = body[(body[:, 1] >= lo) & (body[:, 1] < hi)]
+        if len(skin) < 6:
+            continue
+        limit = float(np.percentile(skin[:, 2], 2.0)) - (LINER_LIFT + 0.006)
+        band = (movable & (points[:, 1] >= lo) & (points[:, 1] < hi)
+                & (points[:, 2] < 0.0) & (points[:, 2] > limit)
+                & (np.abs(points[:, 0]) < 0.22))
+        if band.any():
+            points[band, 2] = limit
+            floored += int(band.sum())
+    return floored
+
+
 def _flatten_bust(points: np.ndarray, rig: ea.Rig, region: str,
                   movable: np.ndarray) -> int:
     """Press the chest panel flat against the wearer.
@@ -2176,6 +2205,7 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
                                clearance + 0.008)
         step0 = posed[0] if posed else {}
         step0["bustFlattened"] = _flatten_bust(seated, rig, region, ~exempt)
+        step0["backFloored"] = _floor_backplate(seated, rig, region, ~exempt)
     elif region in ("legs", "boots"):
         # Legwear is chunky for the same reason: sized to the design's own
         # girth, it stands proud of the leg.  With the leg's own skin hidden
