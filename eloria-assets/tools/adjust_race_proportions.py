@@ -31,13 +31,17 @@ TOOLS = Path(__file__).resolve().parent
 CLIENT = TOOLS.parent.parent / "godot-client"
 RACES = CLIENT / "assets" / "actors" / "native" / "races"
 
-#: Absolute rest scale per joint.  The reference head is nearly round
-#: (width about 0.95 of its height) where the authored head is a narrow
-#: oval (0.65), so the width leads, the depth follows halfway, and the
-#: height barely moves.
-JOINT_SCALE = {
-    "Head": (1.35, 1.10, 1.15),
-}
+#: The head grows in VERTEX space, weighted by how much each vertex
+#: belongs to the head joint.
+#:
+#: It used to be a rest scale on the Head node, which measurement showed
+#: is a phantom: Godot rebuilds the bind matrices from the scaled rest,
+#: so the skinned body renders at exactly its authored size -- the head
+#: never actually grew in game -- while BoneAttachment3D children DO
+#: inherit the scale, so every hairstyle and every socketed helm was
+#: sized against a head that only existed offline.  Scaling the vertices
+#: makes the head real and leaves the joint alone.
+HEAD_SCALE = (1.35, 1.10, 1.15)
 
 #: Boxy torso: the authored chest is a 1.7x superhero V (0.56 m shoulder
 #: line over a 0.32 m waist); the reference reads nearer 1.3x.  The edit
@@ -88,6 +92,92 @@ SHOULDER_DROOP = {
     "bandLo": 1.28, "bandHi": 1.38,
     "fadeLo": 1.52, "fadeHi": 1.62,
 }
+
+
+def scale_head_vertices(document, binary) -> bool:
+    """Grow the head about its joint, in the mesh rather than the rig.
+
+    Blended by each vertex's own head weight, so the jaw and neck taper
+    into the unscaled body instead of tearing at a seam, and applied to
+    every skinned primitive -- the split surfaces and the generated
+    scalp, band and cap all ride it.
+    """
+    extras = document.setdefault("asset", {}).setdefault("extras", {})
+    if extras.get("eloriaHeadVertexScale"):
+        return False
+
+    bin_len, bin_tag = struct.unpack_from("<I4s", binary, 0)
+    assert bin_tag[:3] == b"BIN", bin_tag
+    payload = 8
+    nodes = document["nodes"]
+    names = [n.get("name", "") for n in nodes]
+
+    # The phantom rest scale goes back to identity in the same pass; a
+    # file carrying both would grow the head twice for attachments.
+    head_node = next(n for n in nodes if n.get("name") == "Head")
+    head_node.pop("scale", None)
+
+    globals_, _ = _matrices(document)
+    head_index = names.index("Head")
+    anchor = globals_[head_index][:3, 3].copy()
+    scale = np.asarray(HEAD_SCALE, dtype=np.float64)
+
+    skin = document["skins"][0]
+    joint_rows = {row: index for index, row in enumerate(skin["joints"])}
+    head_row = joint_rows[head_index]
+
+    moved = 0
+    seen = set()
+    for node in nodes:
+        if "mesh" not in node or "skin" not in node:
+            continue
+        for prim in document["meshes"][node["mesh"]]["primitives"]:
+            acc_index = prim["attributes"]["POSITION"]
+            if acc_index in seen:
+                continue
+            seen.add(acc_index)
+            weights = _read_vec4(document, binary, payload,
+                                 prim["attributes"]["WEIGHTS_0"])
+            joints = _read_vec4(document, binary, payload,
+                                prim["attributes"]["JOINTS_0"])
+            acc = document["accessors"][acc_index]
+            view = document["bufferViews"][acc["bufferView"]]
+            offset = (payload + view.get("byteOffset", 0)
+                      + acc.get("byteOffset", 0))
+            stride = view.get("byteStride", 12)
+            for v in range(acc["count"]):
+                share = float(weights[v][joints[v] == head_row].sum())
+                if share <= 0.001:
+                    continue
+                at = offset + v * stride
+                x, y, z = struct.unpack_from("<3f", binary, at)
+                point = np.array([x, y, z], dtype=np.float64)
+                grown = anchor + (point - anchor) * scale
+                blended = point + (grown - point) * share
+                struct.pack_into("<3f", binary, at, *[float(c) for c in blended])
+                moved += 1
+
+    extras["eloriaHeadVertexScale"] = list(HEAD_SCALE)
+    print("head vertex scale %s: %d vertices grown, joint scale cleared"
+          % (list(HEAD_SCALE), moved))
+    return True
+
+
+def _read_vec4(document, binary, payload, index):
+    acc = document["accessors"][index]
+    view = document["bufferViews"][acc["bufferView"]]
+    offset = payload + view.get("byteOffset", 0) + acc.get("byteOffset", 0)
+    kind = {5121: ("<4B", 4, 255.0), 5123: ("<4H", 8, 65535.0),
+            5126: ("<4f", 16, None)}[acc["componentType"]]
+    fmt, size, norm = kind
+    stride = view.get("byteStride", size)
+    out = np.empty((acc["count"], 4), dtype=np.float64)
+    for v in range(acc["count"]):
+        values = struct.unpack_from(fmt, binary, offset + v * stride)
+        out[v] = values
+    if norm is not None and acc.get("normalized"):
+        out /= norm
+    return out
 
 
 def _matrices(document):
@@ -484,20 +574,11 @@ def main() -> int:
     binary = bytearray(data[20 + json_len:])
 
     changed = []
-    for name, scale in JOINT_SCALE.items():
-        nodes = [n for n in document["nodes"] if n.get("name") == name]
-        if len(nodes) != 1:
-            print("joint %r matched %d nodes -- skipped" % (name, len(nodes)))
-            continue
-        before = nodes[0].get("scale", [1.0, 1.0, 1.0])
-        nodes[0]["scale"] = list(scale)
-        changed.append((name, before, scale))
-        print("%s scale %s -> %s" % (name, [round(v, 3) for v in before],
-                                     list(scale)))
 
     tapered = False
     if not args.dry_run:
-        tapered = taper_torso(document, binary)
+        tapered = scale_head_vertices(document, binary)
+        tapered = taper_torso(document, binary) or tapered
         tapered = droop_shoulders(document, binary) or tapered
         tapered = balance_arms(document, binary) or tapered
 

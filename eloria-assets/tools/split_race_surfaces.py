@@ -257,9 +257,10 @@ def add_scalp(document, binary) -> int:
     near = ((centroids[:, 1] > float(head_global[1]) + 0.005)
             & (horizontal < 0.115))
     kept3 = faces3[near]
-    # And only the shell itself: the filters can leave a detached chip of
-    # a tail or braid floating behind the neck, so the largest connected
-    # piece wins and stray fragments go.
+    # Every piece that hugs the skull, not merely the biggest: a sculpt
+    # is many separate locks, so keeping only the largest left an eight
+    # centimetre patch instead of a cap.  Each connected piece is judged
+    # on its own -- close to the head's axis and not a stray chip.
     parent = {}
     def find(a):
         while parent.setdefault(a, a) != a:
@@ -270,10 +271,16 @@ def add_scalp(document, binary) -> int:
         ra, rb, rc = find(int(a)), find(int(b)), find(int(c))
         parent[rb] = ra
         parent[find(rc)] = find(ra)
-    from collections import Counter
-    roots = Counter(find(int(v)) for v in kept3.reshape(-1))
-    main_root = roots.most_common(1)[0][0]
-    keep_face = np.array([find(int(f[0])) == main_root for f in kept3])
+    groups = {}
+    for face_index, face in enumerate(kept3):
+        groups.setdefault(find(int(face[0])), []).append(face_index)
+    keep_face = np.zeros(len(kept3), dtype=bool)
+    for root, members in groups.items():
+        block = kept3[members]
+        centre = positions[block.reshape(-1)].mean(axis=0)
+        reach = float(np.linalg.norm(centre[[0, 2]] - head_global[[0, 2]]))
+        if len(members) >= 8 and reach < 0.09:
+            keep_face[members] = True
     kept = kept3[keep_face].reshape(-1)
     used = np.unique(kept)
     remap = np.full(len(positions), -1, dtype=np.int64)
@@ -327,7 +334,7 @@ def add_scalp(document, binary) -> int:
 def split(path: Path, calibrate: bool) -> str:
     document, binary = read_glb(path)
     extras = document.setdefault("asset", {}).setdefault("extras", {})
-    if int(extras.get("eloriaSurfacesSplit", 0)) >= 13:
+    if int(extras.get("eloriaSurfacesSplit", 0)) >= 14:
         return "already split"
     if extras.get("eloriaSurfacesSplit"):
         # v2's scalp cloned the whole hair; rebuild it skull-only by
@@ -347,9 +354,9 @@ def split(path: Path, calibrate: bool) -> str:
                 break
         else:
             count = add_scalp(document, binary)
-        extras["eloriaSurfacesSplit"] = 13
+        extras["eloriaSurfacesSplit"] = 14
         write_glb(path, document, binary)
-        return "scalp rebuilt (whole shell above the joint, -> v13)"
+        return "scalp rebuilt (whole shell above the joint, -> v14)"
     mesh_node_index = next(i for i, n in enumerate(document["nodes"])
                            if "mesh" in n and "skin" in n)
     mesh_node = document["nodes"][mesh_node_index]
@@ -456,7 +463,7 @@ def split(path: Path, calibrate: bool) -> str:
 
     del mesh_node["mesh"]
     add_scalp(document, binary)
-    extras["eloriaSurfacesSplit"] = 13
+    extras["eloriaSurfacesSplit"] = 14
     write_glb(path, document, binary)
     return "split: %s" % counts
 
