@@ -1375,6 +1375,82 @@ def socket_origin(rig: ea.Rig, part: int) -> np.ndarray:
     return origin + offset
 
 
+def _align_arm_sleeves(points: np.ndarray, triangles: np.ndarray,
+                       rig: ea.Rig, steps: list[dict]) -> int:
+    """Rigidly turn each arm-sleeve group onto its own bone line.
+
+    The repose corrects the shoulder angle the concept drew, but a sheet
+    that poses its knight akimbo bends the FOREARM of the sleeve too --
+    and a bracer bound rigidly to a straight forearm bone then juts
+    across the chest at the concept's elbow angle.  Per side, the sleeve
+    components are grouped by their nearest bone segment, and each group
+    takes the one rotation about its pivot (shoulder for the upper group,
+    elbow for the forearm group) that carries its centroid direction onto
+    the bone; ring centring afterwards handles the residual translation.
+    Small angles are left alone so already-straight sheets pass through
+    byte-stable.  Returns how many groups turned.
+    """
+    inverse, edges, count = _weld(points, triangles)
+    labels = _components(edges, count)[inverse]
+    turned = 0
+    for step in steps:
+        if not step.get("applied") or "sleeve" not in step:
+            continue
+        side = step["limb"].rsplit("_", 1)[-1]
+        try:
+            shoulder = rig.origin("upperarm_" + side)
+            elbow = rig.origin("lowerarm_" + side)
+            wrist = rig.origin("hand_" + side)
+        except (KeyError, ValueError):
+            continue
+        sleeve = np.asarray(step["sleeve"], dtype=bool)
+        groups = {"upper": [], "fore": []}
+        for label in np.unique(labels[sleeve]):
+            members = labels == label
+            if int((members & sleeve).sum()) * 2 < int(members.sum()):
+                continue
+            centre = np.median(points[members], axis=0)
+            gap_upper = _segment_gap(centre, shoulder, elbow)
+            gap_fore = _segment_gap(centre, elbow, wrist)
+            groups["upper" if gap_upper <= gap_fore else "fore"].append(members)
+        for name, pivot, tip in (("upper", shoulder, elbow),
+                                 ("fore", elbow, wrist)):
+            if not groups[name]:
+                continue
+            members = np.zeros(len(points), dtype=bool)
+            for m in groups[name]:
+                members |= m
+            centroid = points[members].mean(axis=0)
+            d0 = centroid - pivot
+            d1 = tip - pivot
+            n0, n1 = np.linalg.norm(d0), np.linalg.norm(d1)
+            if n0 < 1e-6 or n1 < 1e-6:
+                continue
+            d0, d1 = d0 / n0, d1 / n1
+            axis = np.cross(d0, d1)
+            norm = float(np.linalg.norm(axis))
+            angle = float(np.degrees(np.arccos(np.clip(np.dot(d0, d1),
+                                                       -1.0, 1.0))))
+            if norm < 1e-6 or angle < 4.0:
+                continue
+            axis /= norm
+            c, s = np.cos(np.radians(angle)), np.sin(np.radians(angle))
+            K = np.array([[0, -axis[2], axis[1]],
+                          [axis[2], 0, -axis[0]],
+                          [-axis[1], axis[0], 0]])
+            R = np.eye(3) + s * K + (1 - c) * (K @ K)
+            points[members] = (points[members] - pivot) @ R.T + pivot
+            turned += 1
+    return turned
+
+
+def _segment_gap(point: np.ndarray, a: np.ndarray, b: np.ndarray) -> float:
+    span = b - a
+    t = float(np.clip(np.dot(point - a, span)
+                      / max(np.dot(span, span), 1e-12), 0.0, 1.0))
+    return float(np.linalg.norm(point - (a + t * span)))
+
+
 def _centre_sleeves(points: np.ndarray, triangles: np.ndarray, rig: ea.Rig,
                     steps: list[dict]) -> int:
     """Rigidly re-centre each wrapping sleeve ring on its own limb axis.
@@ -1911,6 +1987,8 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
                 seated[cap] += np.array([inboard * 0.018, 0.042, 0.0])
                 step["capRaised"] = True
         step0 = posed[0] if posed else {}
+        step0["sleeveGroupsAligned"] = _align_arm_sleeves(
+            seated, surface.indices.reshape(-1, 3), rig, posed)
         step0["sleeveRingsCentred"] = _centre_sleeves(
             seated, surface.indices.reshape(-1, 3), rig, posed)
         # Slim the trunk onto the body.  The seat sizes girth from the design's
