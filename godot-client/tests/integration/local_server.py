@@ -74,21 +74,31 @@ class LocalServer:
     """A real `eloria.server` process on a free loopback port."""
 
     def __init__(self, server_root: Path, prefix: str = "eloria-local-",
-                 overrides: dict[str, str] | None = None):
+                 overrides: dict[str, str] | None = None,
+                 extra_arguments: list[str] | None = None,
+                 secure_port: int | None = None):
         """`overrides` maps a config flag to replacement file text.
 
         A probe that needs one creature standing next to the player writes its
         own spawn table rather than editing the shipped configuration, so the
         real server is still driving the real content everywhere else.
+
+        `extra_arguments` are appended to the command line verbatim, for flags
+        a probe needs and the shipped profile has no opinion about - the TLS
+        certificate is the first of them. `secure_port` names the port the
+        readiness check should wait on when the cleartext listener is not the
+        one under test.
         """
         self.server_root = Path(server_root).resolve()
         self._prefix = prefix
         self._overrides = dict(overrides or {})
+        self._extra_arguments = list(extra_arguments or [])
         self._process: subprocess.Popen | None = None
         self._workdir: tempfile.TemporaryDirectory | None = None
         self._log: deque[str] = deque(maxlen=400)
         self._reader_thread: threading.Thread | None = None
         self.port = 0
+        self.secure_port = secure_port or 0
 
     def __enter__(self) -> "LocalServer":
         with socket.socket() as probe:
@@ -102,6 +112,7 @@ class LocalServer:
         config_root = self._prepare_config()
         for flag, name in ELORIA_CONFIG:
             arguments += [flag, str(config_root / name)]
+        arguments += self._extra_arguments
         self._process = subprocess.Popen(
             arguments, cwd=self.server_root, stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT, text=True, bufsize=1)
@@ -159,10 +170,15 @@ class LocalServer:
         return "\n".join(list(self._log)[-lines:])
 
     async def _wait_for_listener(self) -> None:
+        # A TLS-only server never opens the cleartext port, so waiting on it
+        # would time out against a server that started perfectly. The TCP
+        # connection alone is enough either way: this only needs to know that
+        # something is accepting, not to complete a handshake.
+        port = self.secure_port or self.port
         for _ in range(200):
             try:
                 _reader, writer = await asyncio.open_connection(
-                    "127.0.0.1", self.port)
+                    "127.0.0.1", port)
                 writer.close()
                 await writer.wait_closed()
                 return
@@ -187,8 +203,16 @@ async def collect_command(reader: asyncio.StreamReader, wanted: int,
             return payload
 
 
-async def open_client(port: int):
-    reader, writer = await asyncio.open_connection("127.0.0.1", port)
+async def open_client(port: int, ssl_context=None, server_hostname: str = "localhost"):
+    """Open a protocol session, in the clear or inside TLS.
+
+    Everything above the socket is identical either way, which is the point:
+    a probe proves the protocol survives encryption by running the same
+    exchange through both.
+    """
+    reader, writer = await asyncio.open_connection(
+        "127.0.0.1", port, ssl=ssl_context,
+        server_hostname=server_hostname if ssl_context else None)
     version = (struct.pack("<HH4B", 10, 31, 1, 9, 7, 0) + bytes(4)
                + struct.pack(">H", port))
     writer.write(packet(SEND_VERSION, version) + packet(SEND_OPENING_SCREEN))
@@ -201,8 +225,9 @@ def disposable_credentials(prefix: str) -> tuple[str, str]:
     return prefix + secrets.token_hex(4), secrets.token_urlsafe(28)
 
 
-async def create_character(port: int, name: str, password: str) -> None:
-    reader, writer = await open_client(port)
+async def create_character(port: int, name: str, password: str,
+                           ssl_context=None) -> None:
+    reader, writer = await open_client(port, ssl_context)
     writer.write(packet(
         CREATE_CHAR,
         (name + " " + password).encode("ascii") + b"\0" + bytes(8)))
@@ -218,9 +243,9 @@ async def create_character(port: int, name: str, password: str) -> None:
     await writer.wait_closed()
 
 
-async def login(port: int, name: str, password: str):
+async def login(port: int, name: str, password: str, ssl_context=None):
     """Log in and return (reader, writer, actor_id) once the world is sent."""
-    reader, writer = await open_client(port)
+    reader, writer = await open_client(port, ssl_context)
     writer.write(packet(LOG_IN, (name + " " + password).encode("ascii") + b"\0"))
     await writer.drain()
     actor_id = None

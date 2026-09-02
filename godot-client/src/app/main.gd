@@ -18,6 +18,7 @@ extends Control
 @onready var preview_rim_light: DirectionalLight3D = %RimLight
 @onready var host_edit: LineEdit = %Host
 @onready var port_edit: SpinBox = %Port
+@onready var secure_check: CheckBox = %Secure
 @onready var user_edit: LineEdit = %Username
 @onready var password_edit: LineEdit = %Password
 @onready var connect_button: Button = %Connect
@@ -1079,10 +1080,23 @@ func _on_connect_pressed() -> void:
 	connect_button.disabled = true
 	login_button.disabled = true
 	status_label.text = "Connecting…"
-	var error := Network.connect_to_server(host_edit.text.strip_edges(), int(port_edit.value))
+	# Remembered per player rather than per session: someone who connects to a
+	# server that speaks TLS should not have to re-tick the box every launch.
+	_save_hud_settings()
+	var error := Network.connect_to_server(
+		host_edit.text.strip_edges(), int(port_edit.value),
+		secure_check.button_pressed, _trusted_certificate_path())
 	if error != OK:
 		status_label.text = "Connection failed: " + error_string(error)
 		connect_button.disabled = false
+
+## A development server signs its own certificate, which no trust store will
+## accept. If the player has dropped that certificate next to their settings,
+## it is trusted in addition to the system store - which is different from
+## trusting anything, and keeps verification on for real servers.
+func _trusted_certificate_path() -> String:
+	var path := "user://eloria-server.crt"
+	return path if FileAccess.file_exists(path) else ""
 
 func _on_new_character_pressed() -> void:
 	if AppState.connection_state != "connected":
@@ -2112,9 +2126,10 @@ func _on_login_failed(message: String) -> void:
 	login_button.disabled = false
 
 func _on_connection_state_changed(value: String) -> void:
-	status_label.text = value.capitalize()
+	status_label.text = ("Securing the connection…" if value == "securing"
+		else value.capitalize())
 	connect_button.text = "Disconnect" if value == "connected" else "Connect"
-	connect_button.disabled = value == "connecting"
+	connect_button.disabled = value == "connecting" or value == "securing"
 	login_button.disabled = value != "connected" or AppState.authenticated
 	new_character_button.disabled = value != "connected" or AppState.authenticated
 	var was_in_world: bool = game_view.visible
@@ -2148,8 +2163,11 @@ func _sync_connection_banner() -> void:
 				Network.reconnect_attempt(), Network.RECONNECT_DELAYS_MSEC.size()]
 		"connecting":
 			text = "Connecting…"
+		"securing":
+			text = "Securing the connection…"
 		"connected":
-			text = "Connected - not signed in"
+			text = ("Connected securely - not signed in" if Network.is_secure()
+				else "Connected - not signed in")
 		_:
 			text = "Disconnected"
 	connection_banner.text = text
@@ -3791,6 +3809,9 @@ func _friendly_map_name(server_map: String) -> String:
 func _load_hud_settings() -> void:
 	var config: ConfigFile = ConfigFile.new()
 	if config.load(SETTINGS_PATH) == OK:
+		if secure_check != null:
+			secure_check.button_pressed = bool(config.get_value(
+				"connection", "secure", false))
 		_minimap_scale = clampf(float(config.get_value(
 			"hud", "minimap_scale", 1.0)), 0.75, 1.75)
 		_ui_scale = clampf(float(config.get_value(
@@ -3980,6 +4001,8 @@ func _save_hud_settings() -> void:
 	var config: ConfigFile = ConfigFile.new()
 	config.load(SETTINGS_PATH)
 	config.set_value("notes", "text", _player_notes)
+	config.set_value("connection", "secure",
+		secure_check != null and secure_check.button_pressed)
 	config.set_value("encyclopedia", "bookmarks", _encyclopedia_bookmarks)
 	config.set_value("graphics", "shadows", _shadows_enabled)
 	config.set_value("graphics", "particles", _effects_enabled)
