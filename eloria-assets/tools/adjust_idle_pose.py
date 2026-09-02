@@ -58,8 +58,8 @@ CLIP = "Idle_Subtle"
 #: knee swung 4 cm out and ankle kicked 10 cm back in -- so the knee lands
 #: under the hip and the ankle under the knee, in the frontal plane only (the
 #: sagittal crouch is the clip's own and stays).  Feet face straight forward.
-TARGET_ARM_DROP = 66.0
-TARGET_SHOULDER_FORWARD = -0.045
+TARGET_ARM_DROP = 74.0
+TARGET_SHOULDER_FORWARD = -0.09
 SAMPLE_AT = 0.1
 
 
@@ -355,7 +355,7 @@ def main() -> int:
         d["upperarm_l"] = sk.world_delta(g, "upperarm_l", [0, 0, 1], angle)
         d["upperarm_r"] = sk.world_delta(g, "upperarm_r", [0, 0, 1], -angle)
         return measurements(sk, sk.fk(local, d))["armDrop"]
-    arm_angle = solve_angle(arm_drop, TARGET_ARM_DROP, 8.0, -6.0, 20.0)
+    arm_angle = solve_angle(arm_drop, TARGET_ARM_DROP, 8.0, -16.0, 20.0)
     g = sk.fk(local, deltas)
     deltas["upperarm_l"] = sk.world_delta(g, "upperarm_l", [0, 0, 1], arm_angle)
     deltas["upperarm_r"] = sk.world_delta(g, "upperarm_r", [0, 0, 1], -arm_angle)
