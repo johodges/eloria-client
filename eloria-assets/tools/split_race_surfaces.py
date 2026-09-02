@@ -72,7 +72,8 @@ def accessor_array(document, binary, index):
     view = document["bufferViews"][acc["bufferView"]]
     comp = {5121: np.uint8, 5123: np.uint16, 5125: np.uint32,
             5126: np.float32}[acc["componentType"]]
-    n = {"SCALAR": 1, "VEC2": 2, "VEC3": 3, "VEC4": 4}[acc["type"]]
+    n = {"SCALAR": 1, "VEC2": 2, "VEC3": 3, "VEC4": 4,
+         "MAT4": 16}[acc["type"]]
     offset = 8 + view.get("byteOffset", 0) + acc.get("byteOffset", 0)
     raw = np.frombuffer(bytes(binary[offset:offset
                                      + acc["count"] * n * np.dtype(comp).itemsize]),
@@ -216,33 +217,92 @@ def add_scalp(document, binary) -> int:
     weights = accessor_array(document, binary, prim["attributes"]["WEIGHTS_0"])
     indices = accessor_array(document, binary,
                              prim["indices"]).reshape(-1).astype(np.int64)
-    used = np.unique(indices)
+    # Skull-adjacent faces only: the sculpted hair can carry a ponytail
+    # or a crest, and a scalp cloned from those hangs off the head as a
+    # skin-coloured streamer.  The hole that needs closing hugs the
+    # skull, so faces keep only if every corner sits near the head joint.
+    skin = document["skins"][0]
+    joints_list = skin["joints"]
+    names = [document["nodes"][j].get("name", "") for j in joints_list]
+    ibms = accessor_array(document, binary, skin["inverseBindMatrices"])
+    head_row = names.index("Head")
+    ibm = np.asarray(ibms[head_row], dtype=np.float64).reshape(4, 4).T
+    head_global = np.linalg.inv(ibm)[:3, 3]
+    # The scalp is a fitted cranium dome, not a shrunk hair clone: tall
+    # sculpted hair (the male pompadour, the female tail) reaches far
+    # enough from the skull that pulling its shell inward either leaves
+    # crown holes or dangles streamers.  A sphere least-squares fitted to
+    # the head's own SKIN vertices gives the true cranium; the dome is
+    # its upper reach with the rim tucked slightly inward under the
+    # hairline.
+    body_node = next(n for n in document["nodes"]
+                     if n.get("name") == "body" and "mesh" in n)
+    body_prim = document["meshes"][body_node["mesh"]]["primitives"][0]
+    body_positions = accessor_array(document, binary,
+                                    body_prim["attributes"]["POSITION"])
+    body_indices = accessor_array(
+        document, binary, body_prim["indices"]).reshape(-1).astype(np.int64)
+    skin_used = np.unique(body_indices)
+    del skin_used
+    # The whole hair shell, pulled inward, proved the right scalp -- its
+    # seam meets the face exactly and the crown reads as a buzz cut (the
+    # painted forehead hairline hides the 12 mm inset fringe).  The one
+    # genuine defect was cloning geometry that hangs BELOW the head
+    # joint: a ponytail became a skin streamer down the neck.  So: every
+    # hair face whose centroid sits above the joint, nothing else.
+    faces3 = indices.reshape(-1, 3)
+    centroids = positions[faces3].mean(axis=1)
+    horizontal = np.linalg.norm(
+        centroids[:, [0, 2]] - head_global[[0, 2]], axis=1)
+    near = ((centroids[:, 1] > float(head_global[1]) + 0.005)
+            & (horizontal < 0.115))
+    kept3 = faces3[near]
+    # And only the shell itself: the filters can leave a detached chip of
+    # a tail or braid floating behind the neck, so the largest connected
+    # piece wins and stray fragments go.
+    parent = {}
+    def find(a):
+        while parent.setdefault(a, a) != a:
+            parent[a] = parent[parent[a]]
+            a = parent[a]
+        return a
+    for a, b, c in kept3:
+        ra, rb, rc = find(int(a)), find(int(b)), find(int(c))
+        parent[rb] = ra
+        parent[find(rc)] = find(ra)
+    from collections import Counter
+    roots = Counter(find(int(v)) for v in kept3.reshape(-1))
+    main_root = roots.most_common(1)[0][0]
+    keep_face = np.array([find(int(f[0])) == main_root for f in kept3])
+    kept = kept3[keep_face].reshape(-1)
+    used = np.unique(kept)
     remap = np.full(len(positions), -1, dtype=np.int64)
     remap[used] = np.arange(len(used))
     unit = normals[used]
     unit = unit / np.maximum(np.linalg.norm(unit, axis=1, keepdims=True),
                              1e-9)
-    scalp_pos = (positions[used] - unit * 0.012).astype(np.float32)
-    pos_acc = append_accessor(document, binary, scalp_pos, 5126, "VEC3",
-                              34962)
-    norm_acc = append_accessor(document, binary,
-                               normals[used].astype(np.float32), 5126,
+    scalp_positions = (positions[used] - unit * 0.012).astype(np.float32)
+    dome_indices = remap[kept].astype(np.uint32)
+    scalp_normals = unit.astype(np.float32)
+    scalp_uv = uvs[used].astype(np.float32)
+    pos_acc = append_accessor(document, binary, scalp_positions, 5126,
+                              "VEC3", 34962)
+    norm_acc = append_accessor(document, binary, scalp_normals, 5126,
                                "VEC3", 34962)
-    uv_acc = append_accessor(document, binary, uvs[used].astype(np.float32),
-                             5126, "VEC2", 34962)
+    uv_acc = append_accessor(document, binary, scalp_uv, 5126, "VEC2",
+                             34962)
     joints_acc = append_accessor(document, binary,
                                  joints[used].astype(np.uint16), 5123,
                                  "VEC4", 34962)
     weights_acc = append_accessor(document, binary,
                                   weights[used].astype(np.float32), 5126,
                                   "VEC4", 34962)
-    idx_acc = append_accessor(document, binary,
-                              remap[indices].astype(np.uint32), 5125,
+    idx_acc = append_accessor(document, binary, dome_indices, 5125,
                               "SCALAR", 34963)
     document["materials"].append({
         "name": "Scalp",
         "pbrMetallicRoughness": {
-            "baseColorFactor": [0.85, 0.70, 0.58, 1.0],
+            "baseColorFactor": [0.78, 0.60, 0.47, 1.0],
             "metallicFactor": 0.0, "roughnessFactor": 0.85,
         },
     })
@@ -261,19 +321,35 @@ def add_scalp(document, binary) -> int:
                   if any(document["nodes"][c].get("name") == "hair"
                          for c in n.get("children", [])))
     document["nodes"][parent]["children"].append(len(document["nodes"]) - 1)
-    return int(len(used))
+    return int(len(scalp_positions))
 
 
 def split(path: Path, calibrate: bool) -> str:
     document, binary = read_glb(path)
     extras = document.setdefault("asset", {}).setdefault("extras", {})
-    if int(extras.get("eloriaSurfacesSplit", 0)) >= 2:
+    if int(extras.get("eloriaSurfacesSplit", 0)) >= 13:
         return "already split"
     if extras.get("eloriaSurfacesSplit"):
-        count = add_scalp(document, binary)
-        extras["eloriaSurfacesSplit"] = 2
+        # v2's scalp cloned the whole hair; rebuild it skull-only by
+        # pointing the existing scalp mesh at freshly written accessors.
+        for i, n in enumerate(document["nodes"]):
+            if n.get("name") == "scalp" and "mesh" in n:
+                scalp_mesh = n["mesh"]
+                document["nodes"] = [m for m in document["nodes"]]
+                count = add_scalp(document, binary)
+                document["meshes"][scalp_mesh]["primitives"] =                     document["meshes"][-1]["primitives"]
+                document["meshes"].pop()
+                dangling = len(document["nodes"]) - 1
+                for m in document["nodes"]:
+                    if dangling in m.get("children", []):
+                        m["children"].remove(dangling)
+                document["nodes"].pop()
+                break
+        else:
+            count = add_scalp(document, binary)
+        extras["eloriaSurfacesSplit"] = 13
         write_glb(path, document, binary)
-        return "scalp added (%d verts, v1 -> v2)" % count
+        return "scalp rebuilt (whole shell above the joint, -> v13)"
     mesh_node_index = next(i for i, n in enumerate(document["nodes"])
                            if "mesh" in n and "skin" in n)
     mesh_node = document["nodes"][mesh_node_index]
@@ -380,7 +456,7 @@ def split(path: Path, calibrate: bool) -> str:
 
     del mesh_node["mesh"]
     add_scalp(document, binary)
-    extras["eloriaSurfacesSplit"] = 2
+    extras["eloriaSurfacesSplit"] = 13
     write_glb(path, document, binary)
     return "split: %s" % counts
 

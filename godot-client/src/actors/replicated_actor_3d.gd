@@ -340,10 +340,25 @@ func _add_hair_variant(style: int, color: Color) -> void:
 	native_hair.name = "NativeHair"
 	# Socketed nodes do not inherit a bone's rest scale (the helm trim
 	# learned this first), so a race with a scaled head wears every
-	# hairstyle a size too small unless the attachment scales itself.
+	# hairstyle a size too small unless the attachment scales itself --
+	# and the scaling must happen about the style's own centre, or the
+	# growth pushes the whole style up off the skull by a third of its
+	# height.
 	var head_bone: int = _native_skeleton.find_bone("Head")
 	if head_bone >= 0:
-		native_hair.scale = _native_skeleton.get_bone_rest(head_bone).basis.get_scale()
+		var head_scale: Vector3 = _native_skeleton.get_bone_rest(head_bone).basis.get_scale()
+		var bounds := AABB()
+		var found := false
+		for node_value: Node in native_hair.find_children("*", "MeshInstance3D", true, false):
+			var mesh_node: MeshInstance3D = node_value as MeshInstance3D
+			var world_box: AABB = mesh_node.transform * mesh_node.get_aabb()
+			bounds = world_box if not found else bounds.merge(world_box)
+			found = true
+		if found:
+			var centre: Vector3 = bounds.get_center()
+			native_hair.position += centre - Vector3(centre.x * head_scale.x,
+				centre.y * head_scale.y, centre.z * head_scale.z)
+		native_hair.scale = head_scale
 	attachment.add_child(native_hair)
 	for node_value: Node in native_hair.find_children("*", "MeshInstance3D", true, false):
 		_tint_mesh(node_value as MeshInstance3D, color)
