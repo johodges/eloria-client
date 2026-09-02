@@ -97,6 +97,70 @@ SHEETS = [
      "arcane_leg_armor", "legs", 4, 179, "plate"),
     ("Eight_ceremonial_knight_leg_armor_designs", "Ceremonial Knight Greaves",
      "ceremonial_knight_greaves", "legs", 4, 187, "plate"),
+    # The rest of the concept art, appended rather than inserted: `roster`
+    # hands out item ids in this order, so a row added anywhere but the end
+    # would renumber every piece below it and break the names the server
+    # already ships.  Ceremonial above is the one sheet that was cut mid-way by
+    # a --limit, and it simply grows from four pieces to eight -- the four it
+    # has keep their numerals and visuals because the sources sort before the
+    # new ones.
+    #
+    # Visual ranges continue above what each part already uses (helmet 124,
+    # legs 190, body 191, boots 207) and stay inside a byte, which is all
+    # ACTOR_WEAR_ITEM carries.  Legs is the tight one: it ends at 250 with five
+    # spare, so another leg sheet after this needs the range reclaimed rather
+    # than extended.
+    ("Eight_Legendary_Helms_of_Eloria", "Legendary Eloria Helm",
+     "legendary_eloria_helm", "helm", 3, 125, "plate"),
+    ("Eight_grounded_militia_helmet_designs", "Militia Helmet",
+     "militia_helmet", "helm", 3, 133, "mail"),
+    ("Refined_knightly_headgear_concept_sheet", "Knightly Headgear",
+     "knightly_headgear", "helm", 3, 141, "mail"),
+    ("Eight_frontier_hats_concept_sheet", "Frontier Hat",
+     "frontier_hat", "hood", 3, 149, "cloth"),
+    ("Eight_leather_adventurer_headwear_designs", "Adventurer Headwear",
+     "adventurer_headwear", "hood", 3, 157, "leather"),
+    ("Sunmane_Steppe_Headgear_Collection", "Sunmane Steppe Headgear",
+     "sunmane_steppe_headgear", "hood", 3, 165, "leather"),
+
+    ("Eight_legendary_hero_armor_designs", "Legendary Hero Cuirass",
+     "legendary_hero_cuirass", "cuirass", 5, 192, "plate"),
+    ("Eight_refined_knightly_torso_armor_designs", "Knightly Torso Armor",
+     "knightly_torso_armor", "cuirass", 5, 200, "mail"),
+    ("Militia_torso_armor_concept_sheet", "Militia Torso Armor",
+     "militia_torso_armor", "cuirass", 5, 208, "mail"),
+    ("Eloria_Arcane_Armor_Design_Sheet", "Eloria Arcane Armor",
+     "eloria_arcane_armor", "cuirass", 5, 216, "plate"),
+    ("Eight_leather_ranger_torso_designs", "Leather Ranger Torso",
+     "leather_ranger_torso", "cuirass", 5, 224, "leather"),
+    ("Eight_Eloria_frontier_shirt_designs", "Eloria Frontier Shirt",
+     "eloria_frontier_shirt", "shirt", 5, 232, "cloth"),
+    ("Sunmane_Steppe_Shirts_and_Armor", "Sunmane Steppe Shirt",
+     "sunmane_steppe_shirt", "shirt", 5, 240, "cloth"),
+
+    ("Eight_legendary_fantasy_leg_armor_designs", "Legendary Leg Armor",
+     "legendary_leg_armor", "legs", 4, 195, "plate"),
+    ("Eight_Refined_Knightly_Greave_Designs", "Knightly Greaves",
+     "knightly_greaves", "legs", 4, 203, "mail"),
+    ("Eight_medieval_militia_greaves", "Militia Greaves",
+     "militia_greaves", "legs", 4, 211, "mail"),
+    ("Eloria_Militia_Leg_Armor_Variants", "Militia Leg Armor",
+     "militia_leg_armor", "legs", 4, 219, "mail"),
+    ("Eight_rugged_ranger_legwear_designs", "Rugged Ranger Legwear",
+     "rugged_ranger_legwear", "legs", 4, 227, "leather"),
+    ("Sunmane_Steppe_Legwear_Concept_Sheet", "Sunmane Steppe Legwear",
+     "sunmane_steppe_legwear", "legs", 4, 235, "leather"),
+    ("Eight_Humble_Frontier_Pants_Designs", "Humble Frontier Pants",
+     "humble_frontier_pants", "pants", 4, 243, "cloth"),
+
+    ("Legendary_Eloria_Fantasy_Boots_Concept_Sheet", "Legendary Eloria Boots",
+     "legendary_eloria_boots", "boots", 6, 208, "plate"),
+    ("Eight_Sunmane_Steppe_Boot_Designs", "Sunmane Steppe Boots",
+     "sunmane_steppe_boots", "boots", 6, 216, "leather"),
+    ("Eight_frontier_boot_designs", "Frontier Boots",
+     "frontier_boots", "boots", 6, 224, "leather"),
+    ("Eight_leather_adventurer_boot_designs", "Leather Adventurer Boots",
+     "leather_adventurer_boots", "boots", 6, 232, "leather"),
 ]
 
 

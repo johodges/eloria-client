@@ -2,7 +2,7 @@
   "cellSize": [50, 50],
   "columns": 5,
   "imagesPerAtlas": 25,
-  "imageCount": 178,
+  "imageCount": 374,
   "fallbackImageId": 117,
   "aliases": {
     "397": 41,
@@ -16,6 +16,13 @@
     "res://assets/ui/items/items5.png",
     "res://assets/ui/items/items6.png",
     "res://assets/ui/items/items7.png",
-    "res://assets/ui/items/items8.png"
+    "res://assets/ui/items/items8.png",
+    "res://assets/ui/items/items9.png",
+    "res://assets/ui/items/items10.png",
+    "res://assets/ui/items/items11.png",
+    "res://assets/ui/items/items12.png",
+    "res://assets/ui/items/items13.png",
+    "res://assets/ui/items/items14.png",
+    "res://assets/ui/items/items15.png"
   ]
 }

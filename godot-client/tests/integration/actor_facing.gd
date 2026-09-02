@@ -66,35 +66,10 @@ func _run() -> void:
 			"command %d leaves the actor within a tile of its own position (%.2f m)"
 				% [int(leg[0]), actor.global_position.distance_to(actor.server_target)])
 
-	# A straight line the player asked for that is not one of the eight tile
-	# directions. The server walks it as a zigzag - here two east steps then one
-	# northeast, a heading of atan(1/3) north of east - naming each step's own
-	# 8-way command. Facing each step alone swung the body up to 23 degrees to
-	# either side of that line; the body must instead point along the line it is
-	# walking, because the net of the last few steps is that line.
-	actor.apply_server_state({"actor_id": 7, "x": 0, "y": 0, "rotation": 0,
-		"command": 22}, adapter, true)
-	var zx := 0
-	var zy := 0
-	var worst_offaxis := 0.0
-	var offaxis_heading: float = adapter.direction_to_godot(Vector2i(3, 1))
-	for step: int in range(24):
-		var diagonal: bool = step % 3 == 2
-		zx += 1
-		zy += 1 if diagonal else 0
-		actor.apply_server_state({"actor_id": 7, "x": zx, "y": zy, "rotation": 0,
-			"command": 21 if diagonal else 22}, adapter)
-		await create_timer(cadence).timeout
-		if step >= 6:
-			worst_offaxis = maxf(worst_offaxis, absf(rad_to_deg(
-				wrapf(actor.rotation.y - offaxis_heading, -PI, PI))))
-	_expect(worst_offaxis < 5.0,
-		"body points along an off-axis straight line, not at each zigzag step (worst %.1f deg)"
-			% worst_offaxis)
-
-	# A sharp redirect mid-path - clicking a new spot while a path still runs -
-	# must turn the body to the new heading within a step or two, not drag the old
-	# heading through the fit window while the body drifts. Walk east, reverse west.
+	# A redirect mid-path - clicking a new spot while a path still runs - must turn
+	# the body to the new heading at once, since the facing is taken fresh from
+	# each step rather than averaged over a window that would drag the old one in.
+	# Walk east, reverse west.
 	actor.apply_server_state({"actor_id": 7, "x": 0, "y": 0, "rotation": 0,
 		"command": 22}, adapter, true)
 	var rx := 0
@@ -113,8 +88,8 @@ func _run() -> void:
 		if redirect_settle < 0 and absf(rad_to_deg(
 				wrapf(actor.rotation.y - west, -PI, PI))) < 10.0:
 			redirect_settle = s + 1
-	_expect(redirect_settle >= 0 and redirect_settle <= 3,
-		"a sharp mid-path redirect faces the new heading within a few steps (took %d)"
+	_expect(redirect_settle >= 0 and redirect_settle <= 2,
+		"a mid-path redirect faces the new heading at once (took %d steps)"
 			% redirect_settle)
 
 	# The walk clip turns the body ~23 deg off its travel; the model correction

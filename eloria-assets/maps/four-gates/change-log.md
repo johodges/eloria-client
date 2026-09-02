@@ -441,3 +441,103 @@ untouched.
 
 **Not included:** the six interiors floor their rooms with `paving_road` and
 still carry the old synthesis. Rebuilding them is a separate package pass.
+
+## 1.0.9 — the rest of the Worley surfaces, and 1.0.8's missing joints
+
+**1.0.8 landed only half of itself.** `worley` returns `(nearest, second
+nearest, cell id)`, and the two paving materials bound the second distance to a
+name of `gap` and then thresholded it directly, without subtracting the first.
+The intended mask needs the *difference*: F2 alone runs from about half the seed
+spacing at a cell edge to a full spacing at its centre and never approaches
+zero, so `1 - F2 x 80` clipped to zero across the whole tile. The streets and
+avenues shipped with no mortar at all — no groove in the height field, no
+occlusion in the seams. What did land was the tone hash, which is what removed
+the banding, so the defect the fix was reported against was genuinely gone and
+this went unnoticed. Both now read `1 - (far - near) x K`, and the joints cover
+10.8% of the street tile and 12.0% of the avenue.
+
+Two more materials carried the 1.0.8 defects. They were found by measuring
+every material in the library rather than by eye: a raster-ramp correlation
+against a 400-sample random null on the same cell grid, and the spread of
+neighbouring cell values against the same null.
+
+**`stone_rubble`** — the base course under nearly every building in the city,
+so it sits at eye level along every street. It had both defects. Its tone came
+from `(cell % 71) / 70` over 81 Worley cells, which wraps the divisor once and
+so ramps and then steps (ramp r = 0.477 against a null 95th percentile of
+0.169; neighbour spread z = +3.8). Its `cracks` came from the nearest distance
+and covered 64% of the tile as hollows in the middle of each block rather than
+seams between them. Tile-scale tone drift falls from 0.190 to 0.122.
+
+**`roof_slate`** — a different failure of the same kind. `brick_mask` numbers
+its bricks `(row * 977 + col * 131) % 9973`, and reducing that modulo 61 again
+leaves a lattice: the slates correlated along diagonals into chevrons a roof
+wide, repeating every 2.4 m. The row-ramp test does not see it because the
+correlation is diagonal, not vertical; the neighbour-spread test does
+(z = +2.6). Hashing the brick id scatters them, and drift falls from 0.135 to
+0.021.
+
+Cleared by the same measurements, and deliberately left alone: `stone_ashlar`
+(z = -0.4) and `roof_tile` (z = +1.6, inside the null) hash acceptably;
+`cloth_banner` has the library's largest tone drift, 0.236, because that is the
+authored crest; and `foliage_flowers` thresholds the nearest distance on
+purpose, since a bloom *should* be a blob at the seed.
+
+**Not included:** `terrain_rock` and `crystal_blue` still cut an edge mask from
+the nearest distance (33% and 41% coverage). Their tone hashes measure clean and
+neither bands, so the symptom is missing detail — cliffs get soft discs instead
+of cracks, crystals glow at the centre rather than the facet edges — on
+surfaces tiled at 17 m and 1.2 m. Worth a pass, but not this one.
+
+27 of the 31 materials are bit-identical across this change, and the rebuilt
+`world.glb` differs only in the twelve texture images of the four that moved;
+all 2,919 geometry and animation buffers and the glTF structure are unchanged.
+
+## 1.0.10 — the last two edge masks, and the interiors catch up
+
+Closes out the Worley audit begun in 1.0.9.
+
+**`terrain_rock`** and **`crystal_blue`** were the two materials left cutting an
+edge mask from the nearest distance. Neither banded — their tone hashes measure
+inside the random null — so the symptom was absent detail rather than an
+artefact: the cliff's `crack` darkened a disc in the middle of each block
+instead of a fissure between them, and the beacon crystal's `edges` lit a blob
+at the centre of every facet instead of a vein along its seams. Both now read
+`1 - (far - near) * K`, at 17.3% coverage for the rock and 9.9% for the crystal.
+Their tone hashes are left alone: `(cell_id % 37) / 36` measures clean
+(z = +1.0), though it is clean by luck rather than by construction, and would
+want `cell_hash` if the cell count ever moved.
+
+**Deliberately not changed: `stone_rubble`'s remaining tone drift.** At 0.122 it
+is still the largest in the library after `cloth_banner`'s authored crest, and
+all of it is the material's own `fbm(S, 6, 6)` layer rather than a defect.
+Measured against the heights the material is actually used at — plinths,
+podiums and chimney stacks, against a 4.5 m tile — the drift resolves to a tone
+difference *between* objects of 0.060 for a 0.6 m plinth, 0.036 at 1.6 m and
+0.000 across a full tile. That is variation from one building's base course to
+the next, which is what rubble should do, not banding within one. Flattening it
+would need either a fresh draw from the generator, which would perturb every
+material after it, or a high-pass that rewrites the material's character.
+
+Rebuilt `world.glb` differs from its predecessor in the five texture images of
+those two materials; geometry, animation and glTF structure are unchanged.
+
+## Interiors — floors catch up with the street
+
+The six interiors floor their rooms with `paving_road` and had not been rebuilt
+since 1.0.7, so they still carried the pre-1.0.8 synthesis: the raster tone
+ramp, the hollow in the middle of every flagstone, and no mortar at all. A room
+opened onto a street whose paving no longer matched it. All six are rebuilt
+against the current library.
+
+Of the 41 texture maps in each package, 36 come back **pixel-identical**; the
+five that move are `paving_road`'s three and `crystal_blue`'s base colour and
+emissive. The GLB bytes nonetheless change throughout, because the PNGs are
+re-encoded by a newer zlib than the checked-in files were written with — which
+is also why every material's compressed payload differs while its pixels do not.
+
+Geometry is unchanged and was checked rather than assumed: vertex POSITION and
+NORMAL deltas are exactly zero and the index buffers are identical. TANGENT and
+TEXCOORD_0 differ by at most 4.8e-7, and one quaternion component by one ULP,
+which is float32 rounding from a different numpy build and not a change in the
+authored scene. Each `world.json` moves by one line, the recorded GLB byte size.
