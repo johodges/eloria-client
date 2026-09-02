@@ -59,12 +59,17 @@ CLIP = "Idle_Subtle"
 #: under the hip and the ankle under the knee, in the frontal plane only (the
 #: sagittal crouch is the clip's own and stays).  Feet face straight forward.
 TARGET_ARM_DROP = 79.0
-#: Both upper arms hang with this slight forward lean (degrees; the
-#: authored right arm angled eleven degrees BACK while the left sat
-#: forward), and both elbows hold the same soft bend.
-TARGET_ARM_LEAN = 3.0
+#: Both hands land at the same absolute spot: this far in front of the
+#: body (the user's 0.1 m forward of where they hung), this far out from
+#: the midline, with the same soft elbow bend.
+TARGET_HAND_Z = 0.115
+TARGET_HAND_X = 0.247
 TARGET_ELBOW_BEND = 12.0
-TARGET_SHOULDER_FORWARD = -0.04
+#: The stance stands centred: the ankle midpoint sits on the body's own
+#: midline (world x zero) once the pelvis channel's lateral drift and the
+#: rest pose's own offset are taken out.
+TARGET_ANKLE_MID_X = 0.0
+TARGET_SHOULDER_FORWARD = 0.009
 SAMPLE_AT = 0.1
 #: Ground contact, measured from the authored clip as the rest-rooted
 #: ankle height PLUS the pelvis channel's own offset above the skeleton
@@ -436,10 +441,13 @@ def main() -> int:
             v = sk.origin(g2, "lowerarm_" + side) - sk.origin(g2, arm_bone)
             return float(np.degrees(np.arctan2(-v[1], abs(v[0]))))
 
-        def lean():
+        def hand_z():
             g2 = sk.fk(local, deltas)
-            v = sk.origin(g2, "lowerarm_" + side) - sk.origin(g2, arm_bone)
-            return float(np.degrees(np.arctan2(v[2], -v[1])))
+            return float(sk.origin(g2, "hand_" + side)[2])
+
+        def hand_x():
+            g2 = sk.fk(local, deltas)
+            return float(abs(sk.origin(g2, "hand_" + side)[0]))
 
         def bend():
             g2 = sk.fk(local, deltas)
@@ -452,7 +460,6 @@ def main() -> int:
                                                       -1.0, 1.0))))
 
         steer(arm_bone, [0, 0, 1], drop, TARGET_ARM_DROP)
-        steer(arm_bone, [1, 0, 0], lean, TARGET_ARM_LEAN)
         g2 = sk.fk(local, deltas)
         v = sk.origin(g2, "lowerarm_" + side) - sk.origin(g2, arm_bone)
         f = sk.origin(g2, "hand_" + side) - sk.origin(g2, "lowerarm_" + side)
@@ -460,6 +467,11 @@ def main() -> int:
         if np.linalg.norm(axis) > 1e-6:
             steer("lowerarm_" + side, axis / np.linalg.norm(axis), bend,
                   TARGET_ELBOW_BEND)
+        # The whole arm pitches until the hand sits at the target reach in
+        # front of the body, then the forearm eases in or out until both
+        # hands stand the same distance off the midline.
+        steer(arm_bone, [1, 0, 0], hand_z, TARGET_HAND_Z)
+        steer("lowerarm_" + side, [0, 0, 1], hand_x, TARGET_HAND_X)
     arm_angle = 0.0
 
     # Legs: verticalised segment by segment, in both planes at once.  The
@@ -547,6 +559,19 @@ def main() -> int:
             channel_dy = float(np.dot(np.mean(vecs, axis=0) - rest, up_local))
     lift = (TARGET_ANKLE_HEIGHT - channel_dy
             - measurements(sk, sk.fk(local, deltas))["ankleY"])
+    # Lateral centring rides the same channel: the rest pose itself holds
+    # the pelvis a touch to the right and the clip drifts further, so the
+    # feet land off the body's midline -- visible from above as the legs
+    # standing beside, not below, the torso.
+    # The rest-rooted FK here CANNOT measure lateral drift: it differs
+    # from the runtime by the root node's transform, and estimating the
+    # channel's world offset from key means confuses idle sway for drift.
+    # The stance was centred once, closed-loop against the runtime-
+    # faithful probe (feet midpoint to world x zero, 2026-09-02); this
+    # stays zero so reruns leave that centring alone.  Re-centre with the
+    # probe loop, not from here.
+    x_local = parent_rot.T @ np.array([1.0, 0.0, 0.0])
+    recentre = 0.0
 
     after = measurements(sk, sk.fk(local, deltas))
     report("after: ", after)
@@ -567,7 +592,7 @@ def main() -> int:
         adjusted = np.array([quat_mul(q, delta) for q in quats])
         adjusted /= np.linalg.norm(adjusted, axis=1, keepdims=True)
         write_floats(data, base, stride, ncomp, adjusted)
-    if abs(lift) > 0.0005:
+    if abs(lift) > 0.0005 or abs(recentre) > 0.0005:
         names = [n.get("name", "") for n in js["nodes"]]
         anim = next(a for a in js["animations"] if a.get("name") == CLIP)
         for ch in anim["channels"]:
@@ -578,9 +603,10 @@ def main() -> int:
                     js, data, bin_off, sampler["output"])
                 vecs = vecs.copy()
                 vecs += up_local[np.newaxis, :] * lift
+                vecs += x_local[np.newaxis, :] * recentre
                 write_floats(data, vbase, vstride, vncomp, vecs)
-                print("pelvis raised %.3f m so the soles keep the ground"
-                      % lift)
+                print("pelvis raised %.3f m, recentred %+.3f m"
+                      % (lift, recentre))
     LIBRARY.write_bytes(bytes(data))
     print("\nwrote %s (%d channels, %s only)" % (LIBRARY.name, len(deltas), CLIP))
     return 0
