@@ -2988,6 +2988,33 @@ unique_name_in_owner = true
 layout_mode = 2
 max_value = 4.0
 
+[node name="ShirtLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1006247301]
+layout_mode = 2
+text = "Shirt"
+
+[node name="CreateShirt" type="SpinBox" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1006247302]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 3.0
+
+[node name="PantsLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1006247303]
+layout_mode = 2
+text = "Trousers"
+
+[node name="CreatePants" type="SpinBox" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1006247304]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 3.0
+
+[node name="BootsLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1006247305]
+layout_mode = 2
+text = "Boots"
+
+[node name="CreateBoots" type="SpinBox" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1006247306]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 3.0
+
 [node name="CreateStatus" type="Label" parent="CreationPanel/Columns/Form" unique_id=147417984]
 unique_name_in_owner = true
 layout_mode = 2
@@ -3150,6 +3177,9 @@ horizontal_alignment = 1
 [connection signal="value_changed" from="CreationPanel/Columns/Form/AppearanceGrid/CreateHair" to="." method="_on_create_appearance_changed"]
 [connection signal="value_changed" from="CreationPanel/Columns/Form/AppearanceGrid/CreateEyes" to="." method="_on_create_appearance_changed"]
 [connection signal="value_changed" from="CreationPanel/Columns/Form/AppearanceGrid/CreateHead" to="." method="_on_create_appearance_changed"]
+[connection signal="value_changed" from="CreationPanel/Columns/Form/AppearanceGrid/CreateShirt" to="." method="_on_create_appearance_changed"]
+[connection signal="value_changed" from="CreationPanel/Columns/Form/AppearanceGrid/CreatePants" to="." method="_on_create_appearance_changed"]
+[connection signal="value_changed" from="CreationPanel/Columns/Form/AppearanceGrid/CreateBoots" to="." method="_on_create_appearance_changed"]
 [connection signal="pressed" from="CreationPanel/Columns/Form/Actions/Back" to="." method="_on_creation_back_pressed"]
 [connection signal="pressed" from="CreationPanel/Columns/Form/Actions/Create" to="." method="_on_create_pressed"]
 [connection signal="text_submitted" from="LoginPanel/Content/Password" to="." method="_on_login_submitted"]

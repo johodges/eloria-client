@@ -237,6 +237,8 @@ func apply_appearance_variants(appearance: Dictionary) -> void:
 			_tint_mesh(mesh_node, hair_tint)
 		elif mesh_name == "body":
 			_tint_mesh(mesh_node, skin_tint)
+		elif mesh_name == "hair":
+			_tint_mesh(mesh_node, hair_tint)
 		elif mesh_name == "wardrobe_shirt":
 			_set_mesh_color(mesh_node, AppearanceVariants.wardrobe_color(
 				culture, AppearanceVariants.PART_SHIRT, int(appearance.get("shirt", 0))))
@@ -328,6 +330,10 @@ func _add_hair_variant(style: int, color: Color) -> void:
 	if attachment == null:
 		native_hair.queue_free()
 		return
+	# The chosen style replaces the sculpted hair, not sits on top of it:
+	# the split body carries that hair as its own surface, so it hides.
+	for node_value: Node in find_children("hair", "MeshInstance3D", true, false):
+		(node_value as MeshInstance3D).visible = false
 	attachment.name = "AppearanceHair_%d" % style
 	native_hair.name = "NativeHair"
 	attachment.add_child(native_hair)
