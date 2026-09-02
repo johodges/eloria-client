@@ -2297,6 +2297,506 @@
       "skinRegion": "boots",
       "kind": "boots",
       "authoredFor": "luminous_male"
+    },
+    "0:114": {
+      "scene": "res://assets/actors/native/equipment/militia_arming_sword.glb",
+      "name": "Militia Arming Sword",
+      "attach": "socket"
+    },
+    "0:115": {
+      "scene": "res://assets/actors/native/equipment/knightly_cavalry_sword.glb",
+      "name": "Knightly Cavalry Sword",
+      "attach": "socket"
+    },
+    "0:116": {
+      "scene": "res://assets/actors/native/equipment/frontier_cutlass.glb",
+      "name": "Frontier Cutlass",
+      "attach": "socket"
+    },
+    "0:117": {
+      "scene": "res://assets/actors/native/equipment/amberwood_leafblade.glb",
+      "name": "Amberwood Leafblade",
+      "attach": "socket"
+    },
+    "0:118": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_saber.glb",
+      "name": "Sunmane Steppe Saber",
+      "attach": "socket"
+    },
+    "0:119": {
+      "scene": "res://assets/actors/native/equipment/rondel_dagger.glb",
+      "name": "Rondel Dagger",
+      "attach": "socket"
+    },
+    "0:120": {
+      "scene": "res://assets/actors/native/equipment/ring_guard_parrying_dagger.glb",
+      "name": "Ring Guard Parrying Dagger",
+      "attach": "socket"
+    },
+    "0:121": {
+      "scene": "res://assets/actors/native/equipment/gladius.glb",
+      "name": "Gladius",
+      "attach": "socket"
+    },
+    "0:122": {
+      "scene": "res://assets/actors/native/equipment/heavy_falchion.glb",
+      "name": "Heavy Falchion",
+      "attach": "socket"
+    },
+    "0:123": {
+      "scene": "res://assets/actors/native/equipment/swept_hilt_rapier.glb",
+      "name": "Swept Hilt Rapier",
+      "attach": "socket"
+    },
+    "0:124": {
+      "scene": "res://assets/actors/native/equipment/woodsmans_hatchet.glb",
+      "name": "Woodsman's Hatchet",
+      "attach": "socket"
+    },
+    "0:125": {
+      "scene": "res://assets/actors/native/equipment/bearded_raider_axe.glb",
+      "name": "Bearded Raider Axe",
+      "attach": "socket"
+    },
+    "0:126": {
+      "scene": "res://assets/actors/native/equipment/knightly_battle_axe.glb",
+      "name": "Knightly Battle Axe",
+      "attach": "socket"
+    },
+    "0:127": {
+      "scene": "res://assets/actors/native/equipment/sunmane_crescent_axe.glb",
+      "name": "Sunmane Crescent Axe",
+      "attach": "socket"
+    },
+    "0:128": {
+      "scene": "res://assets/actors/native/equipment/amberwood_tomahawk.glb",
+      "name": "Amberwood Tomahawk",
+      "attach": "socket"
+    },
+    "0:129": {
+      "scene": "res://assets/actors/native/equipment/flanged_mace.glb",
+      "name": "Flanged Mace",
+      "attach": "socket"
+    },
+    "0:130": {
+      "scene": "res://assets/actors/native/equipment/war_hammer.glb",
+      "name": "War Hammer",
+      "attach": "socket"
+    },
+    "0:131": {
+      "scene": "res://assets/actors/native/equipment/chain_morningstar.glb",
+      "name": "Chain Morningstar",
+      "attach": "socket"
+    },
+    "0:132": {
+      "scene": "res://assets/actors/native/equipment/blacksmith_maul.glb",
+      "name": "Blacksmith Maul",
+      "attach": "socket"
+    },
+    "0:133": {
+      "scene": "res://assets/actors/native/equipment/arcane_crystal_cudgel.glb",
+      "name": "Arcane Crystal Cudgel",
+      "attach": "socket"
+    },
+    "0:134": {
+      "scene": "res://assets/actors/native/equipment/militia_short_spear.glb",
+      "name": "Militia Short Spear",
+      "attach": "socket"
+    },
+    "0:135": {
+      "scene": "res://assets/actors/native/equipment/throwing_javelin.glb",
+      "name": "Throwing Javelin",
+      "attach": "socket"
+    },
+    "0:136": {
+      "scene": "res://assets/actors/native/equipment/mariners_trident.glb",
+      "name": "Mariner's Trident",
+      "attach": "socket"
+    },
+    "0:137": {
+      "scene": "res://assets/actors/native/equipment/knightly_boar_spear.glb",
+      "name": "Knightly Boar Spear",
+      "attach": "socket"
+    },
+    "0:138": {
+      "scene": "res://assets/actors/native/equipment/hooked_dueling_spear.glb",
+      "name": "Hooked Dueling Spear",
+      "attach": "socket"
+    },
+    "0:139": {
+      "scene": "res://assets/actors/native/equipment/frontier_hand_crossbow.glb",
+      "name": "Frontier Hand Crossbow",
+      "attach": "socket"
+    },
+    "0:140": {
+      "scene": "res://assets/actors/native/equipment/throwing_knife_fan.glb",
+      "name": "Throwing Knife Fan",
+      "attach": "socket"
+    },
+    "0:141": {
+      "scene": "res://assets/actors/native/equipment/engraved_war_chakram.glb",
+      "name": "Engraved War Chakram",
+      "attach": "socket"
+    },
+    "0:142": {
+      "scene": "res://assets/actors/native/equipment/arcane_focus_wand.glb",
+      "name": "Arcane Focus Wand",
+      "attach": "socket"
+    },
+    "0:143": {
+      "scene": "res://assets/actors/native/equipment/crescent_spellblade_sickle.glb",
+      "name": "Crescent Spellblade Sickle",
+      "attach": "socket"
+    },
+    "0:144": {
+      "scene": "res://assets/actors/native/equipment/knightly_greatsword.glb",
+      "name": "Knightly Greatsword",
+      "attach": "socket"
+    },
+    "0:145": {
+      "scene": "res://assets/actors/native/equipment/highland_claymore.glb",
+      "name": "Highland Claymore",
+      "attach": "socket"
+    },
+    "0:146": {
+      "scene": "res://assets/actors/native/equipment/flamberge_zweihander.glb",
+      "name": "Flamberge Zweihander",
+      "attach": "socket"
+    },
+    "0:147": {
+      "scene": "res://assets/actors/native/equipment/executioners_sword.glb",
+      "name": "Executioner's Sword",
+      "attach": "socket"
+    },
+    "0:148": {
+      "scene": "res://assets/actors/native/equipment/arcane_flame_greatblade.glb",
+      "name": "Arcane Flame Greatblade",
+      "attach": "socket"
+    },
+    "0:149": {
+      "scene": "res://assets/actors/native/equipment/classic_halberd.glb",
+      "name": "Classic Halberd",
+      "attach": "socket"
+    },
+    "0:150": {
+      "scene": "res://assets/actors/native/equipment/single_edged_glaive.glb",
+      "name": "Single Edged Glaive",
+      "attach": "socket"
+    },
+    "0:151": {
+      "scene": "res://assets/actors/native/equipment/knightly_poleaxe.glb",
+      "name": "Knightly Poleaxe",
+      "attach": "socket"
+    },
+    "0:152": {
+      "scene": "res://assets/actors/native/equipment/steppe_bardiche.glb",
+      "name": "Steppe Bardiche",
+      "attach": "socket"
+    },
+    "0:153": {
+      "scene": "res://assets/actors/native/equipment/frontier_voulge.glb",
+      "name": "Frontier Voulge",
+      "attach": "socket"
+    },
+    "0:154": {
+      "scene": "res://assets/actors/native/equipment/militia_pike.glb",
+      "name": "Militia Pike",
+      "attach": "socket"
+    },
+    "0:155": {
+      "scene": "res://assets/actors/native/equipment/forged_war_scythe.glb",
+      "name": "Forged War Scythe",
+      "attach": "socket"
+    },
+    "0:156": {
+      "scene": "res://assets/actors/native/equipment/three_pronged_ranseur.glb",
+      "name": "Three Pronged Ranseur",
+      "attach": "socket"
+    },
+    "0:157": {
+      "scene": "res://assets/actors/native/equipment/winged_partisan.glb",
+      "name": "Winged Partisan",
+      "attach": "socket"
+    },
+    "0:158": {
+      "scene": "res://assets/actors/native/equipment/heavy_boar_spear.glb",
+      "name": "Heavy Boar Spear",
+      "attach": "socket"
+    },
+    "0:159": {
+      "scene": "res://assets/actors/native/equipment/iron_sledgehammer.glb",
+      "name": "Iron Sledgehammer",
+      "attach": "socket"
+    },
+    "0:160": {
+      "scene": "res://assets/actors/native/equipment/lucerne_hammer.glb",
+      "name": "Lucerne Hammer",
+      "attach": "socket"
+    },
+    "0:161": {
+      "scene": "res://assets/actors/native/equipment/knightly_great_maul.glb",
+      "name": "Knightly Great Maul",
+      "attach": "socket"
+    },
+    "0:162": {
+      "scene": "res://assets/actors/native/equipment/studded_frontier_club.glb",
+      "name": "Studded Frontier Club",
+      "attach": "socket"
+    },
+    "0:163": {
+      "scene": "res://assets/actors/native/equipment/fighting_quarterstaff.glb",
+      "name": "Fighting Quarterstaff",
+      "attach": "socket"
+    },
+    "0:164": {
+      "scene": "res://assets/actors/native/equipment/amberwood_longbow.glb",
+      "name": "Amberwood Yew Longbow",
+      "attach": "socket"
+    },
+    "0:165": {
+      "scene": "res://assets/actors/native/equipment/sunmane_recurve_bow.glb",
+      "name": "Sunmane Recurve Bow",
+      "attach": "socket"
+    },
+    "0:166": {
+      "scene": "res://assets/actors/native/equipment/siege_great_crossbow.glb",
+      "name": "Siege Great Crossbow",
+      "attach": "socket"
+    },
+    "0:167": {
+      "scene": "res://assets/actors/native/equipment/clockwork_repeating_arbalest.glb",
+      "name": "Clockwork Repeating Arbalest",
+      "attach": "socket"
+    },
+    "0:168": {
+      "scene": "res://assets/actors/native/equipment/alchemical_hand_cannon.glb",
+      "name": "Alchemical Hand Cannon",
+      "attach": "socket"
+    },
+    "0:169": {
+      "scene": "res://assets/actors/native/equipment/arcane_double_staff.glb",
+      "name": "Arcane Double Staff",
+      "attach": "socket"
+    },
+    "0:170": {
+      "scene": "res://assets/actors/native/equipment/amberwood_branch_bowblade.glb",
+      "name": "Amberwood Branch Bowblade",
+      "attach": "socket"
+    },
+    "0:171": {
+      "scene": "res://assets/actors/native/equipment/sunmane_twin_crescent_glaive.glb",
+      "name": "Sunmane Twin Crescent Glaive",
+      "attach": "socket"
+    },
+    "0:172": {
+      "scene": "res://assets/actors/native/equipment/knightly_relic_banner_spear.glb",
+      "name": "Knightly Relic Banner Spear",
+      "attach": "socket"
+    },
+    "0:173": {
+      "scene": "res://assets/actors/native/equipment/storm_tuning_fork_spear.glb",
+      "name": "Storm Tuning Fork Spear",
+      "attach": "socket"
+    },
+    "1:106": {
+      "scene": "res://assets/actors/native/equipment/wooden_round_shield.glb",
+      "name": "Wooden Round Shield",
+      "attach": "socket"
+    },
+    "1:107": {
+      "scene": "res://assets/actors/native/equipment/steel_rimmed_heater_shield.glb",
+      "name": "Steel Rimmed Heater Shield",
+      "attach": "socket"
+    },
+    "1:108": {
+      "scene": "res://assets/actors/native/equipment/norman_kite_shield.glb",
+      "name": "Norman Kite Shield",
+      "attach": "socket"
+    },
+    "1:109": {
+      "scene": "res://assets/actors/native/equipment/parrying_buckler.glb",
+      "name": "Parrying Buckler",
+      "attach": "socket"
+    },
+    "1:110": {
+      "scene": "res://assets/actors/native/equipment/rectangular_tower_shield.glb",
+      "name": "Rectangular Tower Shield",
+      "attach": "socket"
+    },
+    "1:111": {
+      "scene": "res://assets/actors/native/equipment/crossbowmans_pavise.glb",
+      "name": "Crossbowman's Pavise",
+      "attach": "socket"
+    },
+    "1:112": {
+      "scene": "res://assets/actors/native/equipment/reinforced_highland_targe.glb",
+      "name": "Reinforced Highland Targe",
+      "attach": "socket"
+    },
+    "1:113": {
+      "scene": "res://assets/actors/native/equipment/legionary_scutum.glb",
+      "name": "Legionary Scutum",
+      "attach": "socket"
+    },
+    "1:114": {
+      "scene": "res://assets/actors/native/equipment/mechanical_lantern_shield.glb",
+      "name": "Mechanical Lantern Shield",
+      "attach": "socket"
+    },
+    "1:115": {
+      "scene": "res://assets/actors/native/equipment/long_dueling_shield.glb",
+      "name": "Long Dueling Shield",
+      "attach": "socket"
+    },
+    "1:116": {
+      "scene": "res://assets/actors/native/equipment/knightly_lion_shield.glb",
+      "name": "Knightly Lion Shield",
+      "attach": "socket"
+    },
+    "1:117": {
+      "scene": "res://assets/actors/native/equipment/sunmane_hide_bronze_shield.glb",
+      "name": "Sunmane Hide Bronze Shield",
+      "attach": "socket"
+    },
+    "1:118": {
+      "scene": "res://assets/actors/native/equipment/amberwood_living_bark_shield.glb",
+      "name": "Amberwood Living Bark Shield",
+      "attach": "socket"
+    },
+    "1:119": {
+      "scene": "res://assets/actors/native/equipment/arcane_crystal_shield.glb",
+      "name": "Arcane Crystal Shield",
+      "attach": "socket"
+    },
+    "1:120": {
+      "scene": "res://assets/actors/native/equipment/frontier_barricade_shield.glb",
+      "name": "Frontier Barricade Shield",
+      "attach": "socket"
+    },
+    "1:121": {
+      "scene": "res://assets/actors/native/equipment/polished_mirror_shield.glb",
+      "name": "Polished Mirror Shield",
+      "attach": "socket"
+    },
+    "1:122": {
+      "scene": "res://assets/actors/native/equipment/dragon_scale_shield.glb",
+      "name": "Dragon Scale Shield",
+      "attach": "socket"
+    },
+    "1:123": {
+      "scene": "res://assets/actors/native/equipment/ice_crystal_shield.glb",
+      "name": "Ice Crystal Shield",
+      "attach": "socket"
+    },
+    "1:124": {
+      "scene": "res://assets/actors/native/equipment/molten_forge_shield.glb",
+      "name": "Molten Forge Shield",
+      "attach": "socket"
+    },
+    "1:125": {
+      "scene": "res://assets/actors/native/equipment/thorned_root_shield.glb",
+      "name": "Thorned Root Shield",
+      "attach": "socket"
+    },
+    "0:174": {
+      "scene": "res://assets/actors/native/equipment/segmented_whip_sword.glb",
+      "name": "Segmented Whip Sword",
+      "attach": "socket"
+    },
+    "0:175": {
+      "scene": "res://assets/actors/native/equipment/chain_sickle.glb",
+      "name": "Chain Sickle",
+      "attach": "socket"
+    },
+    "0:176": {
+      "scene": "res://assets/actors/native/equipment/bladed_war_fans.glb",
+      "name": "Bladed War Fans",
+      "attach": "socket"
+    },
+    "0:177": {
+      "scene": "res://assets/actors/native/equipment/lantern_flail.glb",
+      "name": "Lantern Flail",
+      "attach": "socket"
+    },
+    "0:178": {
+      "scene": "res://assets/actors/native/equipment/serpent_coil_whip.glb",
+      "name": "Serpent Coil Whip",
+      "attach": "socket"
+    },
+    "0:179": {
+      "scene": "res://assets/actors/native/equipment/double_ended_twinblade.glb",
+      "name": "Double Ended Twinblade",
+      "attach": "socket"
+    },
+    "0:180": {
+      "scene": "res://assets/actors/native/equipment/circular_ringblade.glb",
+      "name": "Circular Ringblade",
+      "attach": "socket"
+    },
+    "0:181": {
+      "scene": "res://assets/actors/native/equipment/polarity_war_hammer.glb",
+      "name": "Polarity War Hammer",
+      "attach": "socket"
+    },
+    "0:182": {
+      "scene": "res://assets/actors/native/equipment/gravity_anchor_weapon.glb",
+      "name": "Gravity Anchor",
+      "attach": "socket"
+    },
+    "0:183": {
+      "scene": "res://assets/actors/native/equipment/folding_crescent_bow.glb",
+      "name": "Folding Crescent Bow",
+      "attach": "socket"
+    },
+    "0:184": {
+      "scene": "res://assets/actors/native/equipment/rune_battle_gauntlet.glb",
+      "name": "Rune Battle Gauntlet",
+      "attach": "socket"
+    },
+    "0:185": {
+      "scene": "res://assets/actors/native/equipment/alchemist_cannon.glb",
+      "name": "Alchemist Cannon",
+      "attach": "socket"
+    },
+    "0:186": {
+      "scene": "res://assets/actors/native/equipment/crystal_prism_staff.glb",
+      "name": "Crystal Prism Staff",
+      "attach": "socket"
+    },
+    "0:187": {
+      "scene": "res://assets/actors/native/equipment/clockwork_saw_lance.glb",
+      "name": "Clockwork Saw Lance",
+      "attach": "socket"
+    },
+    "0:188": {
+      "scene": "res://assets/actors/native/equipment/living_vine_bow.glb",
+      "name": "Living Vine Bow",
+      "attach": "socket"
+    },
+    "0:189": {
+      "scene": "res://assets/actors/native/equipment/phoenix_feather_spear.glb",
+      "name": "Phoenix Feather Spear",
+      "attach": "socket"
+    },
+    "0:190": {
+      "scene": "res://assets/actors/native/equipment/void_glass_greatblade.glb",
+      "name": "Void Glass Greatblade",
+      "attach": "socket"
+    },
+    "0:191": {
+      "scene": "res://assets/actors/native/equipment/radiant_sun_disc_chakram.glb",
+      "name": "Radiant Sun Disc Chakram",
+      "attach": "socket"
+    },
+    "0:192": {
+      "scene": "res://assets/actors/native/equipment/echo_bell_hammer.glb",
+      "name": "Echo Bell Hammer",
+      "attach": "socket"
+    },
+    "0:193": {
+      "scene": "res://assets/actors/native/equipment/stormglass_shield_spear.glb",
+      "name": "Stormglass Shield Spear",
+      "attach": "socket"
     }
   },
   "aliases": {},
