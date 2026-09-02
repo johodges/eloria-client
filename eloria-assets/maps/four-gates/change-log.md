@@ -492,3 +492,52 @@ surfaces tiled at 17 m and 1.2 m. Worth a pass, but not this one.
 27 of the 31 materials are bit-identical across this change, and the rebuilt
 `world.glb` differs only in the twelve texture images of the four that moved;
 all 2,919 geometry and animation buffers and the glTF structure are unchanged.
+
+## 1.0.10 — the last two edge masks, and the interiors catch up
+
+Closes out the Worley audit begun in 1.0.9.
+
+**`terrain_rock`** and **`crystal_blue`** were the two materials left cutting an
+edge mask from the nearest distance. Neither banded — their tone hashes measure
+inside the random null — so the symptom was absent detail rather than an
+artefact: the cliff's `crack` darkened a disc in the middle of each block
+instead of a fissure between them, and the beacon crystal's `edges` lit a blob
+at the centre of every facet instead of a vein along its seams. Both now read
+`1 - (far - near) * K`, at 17.3% coverage for the rock and 9.9% for the crystal.
+Their tone hashes are left alone: `(cell_id % 37) / 36` measures clean
+(z = +1.0), though it is clean by luck rather than by construction, and would
+want `cell_hash` if the cell count ever moved.
+
+**Deliberately not changed: `stone_rubble`'s remaining tone drift.** At 0.122 it
+is still the largest in the library after `cloth_banner`'s authored crest, and
+all of it is the material's own `fbm(S, 6, 6)` layer rather than a defect.
+Measured against the heights the material is actually used at — plinths,
+podiums and chimney stacks, against a 4.5 m tile — the drift resolves to a tone
+difference *between* objects of 0.060 for a 0.6 m plinth, 0.036 at 1.6 m and
+0.000 across a full tile. That is variation from one building's base course to
+the next, which is what rubble should do, not banding within one. Flattening it
+would need either a fresh draw from the generator, which would perturb every
+material after it, or a high-pass that rewrites the material's character.
+
+Rebuilt `world.glb` differs from its predecessor in the five texture images of
+those two materials; geometry, animation and glTF structure are unchanged.
+
+## Interiors — floors catch up with the street
+
+The six interiors floor their rooms with `paving_road` and had not been rebuilt
+since 1.0.7, so they still carried the pre-1.0.8 synthesis: the raster tone
+ramp, the hollow in the middle of every flagstone, and no mortar at all. A room
+opened onto a street whose paving no longer matched it. All six are rebuilt
+against the current library.
+
+Of the 41 texture maps in each package, 36 come back **pixel-identical**; the
+five that move are `paving_road`'s three and `crystal_blue`'s base colour and
+emissive. The GLB bytes nonetheless change throughout, because the PNGs are
+re-encoded by a newer zlib than the checked-in files were written with — which
+is also why every material's compressed payload differs while its pixels do not.
+
+Geometry is unchanged and was checked rather than assumed: vertex POSITION and
+NORMAL deltas are exactly zero and the index buffers are identical. TANGENT and
+TEXCOORD_0 differ by at most 4.8e-7, and one quaternion component by one ULP,
+which is float32 rounding from a different numpy build and not a change in the
+authored scene. Each `world.json` moves by one line, the recorded GLB byte size.
