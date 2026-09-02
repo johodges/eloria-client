@@ -1048,7 +1048,13 @@ def repose(points: np.ndarray, normals: np.ndarray, rig: ea.Rig, region: str,
             centroid = out[verts_of].mean(axis=0)
             above = float(centroid[1] - start[1])
             outboard = abs(float(centroid[0])) - abs(float(start[0]))
-            if above > 0.01 and outboard < 0.10:
+            # And it must DRAPE, not encircle: a long armoured sleeve's
+            # upper section also sits above the joint in an A-pose, but it
+            # wraps the authored arm axis where a pauldron shell does not
+            # -- demoting it to cap left the legendary hero's upper
+            # sleeves standing off the shoulders at the concept's angle.
+            wraps = _wraps_axis(out[verts_of], start, posed_axis, reach)
+            if above > 0.01 and outboard < 0.10 and not wraps:
                 turn[indexed] = 0.0
                 caps[indexed] = True
         turn = turn[canon]
