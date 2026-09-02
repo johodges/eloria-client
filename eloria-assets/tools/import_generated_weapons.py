@@ -267,6 +267,11 @@ FORWARD_LEAN = 90.0
 #: 43 degrees across the body in the pose a player actually stands in.
 IDLE_CLIP = "Idle_Subtle"
 
+#: A quarter turn about the weapon's own length.  It does not change where the
+#: weapon points, only which way its flat faces: without it a blade is carried
+#: flat, face to the floor, and reads as a plank rather than a sword.
+BLADE_ROLL = 90.0
+
 #: The shield is worn half again larger than it is authored, pushed clear of the
 #: hip, and turned out from the body so its face is seen rather than its edge.
 SHIELD_SCALE = 1.5
@@ -291,6 +296,15 @@ def prop_sockets(rig, race: Path, library: Path, base: dict) -> dict:
     sockets = {}
 
     blade = ea.upright_grip_basis(rig, "r", idle["r"], forward_lean=FORWARD_LEAN)
+    # Rolled about the weapon's own length, which leaves where it points alone
+    # and only turns which way its flat faces.  `upright_grip_basis` hands back
+    # a blade lying flat -- face down, edges to the sides -- and a sword read
+    # that way is a plank.  A quarter turn stands the blade up, edges above and
+    # below, which is how one is carried.
+    roll = math.radians(BLADE_ROLL)
+    blade = blade @ np.array([[math.cos(roll), 0., math.sin(roll)],
+                              [0., 1., 0.],
+                              [-math.sin(roll), 0., math.cos(roll)]])
     sockets[0] = {"bone": "hand_r",
                   "offset": list(base[0]["offset"]),
                   "rotationDegrees": _euler_degrees(blade)}
