@@ -681,6 +681,1622 @@
       "skinRegion": "legs",
       "kind": "legs",
       "authoredFor": "luminous_male"
+    },
+    "4:191": {
+      "scene": "res://assets/actors/native/equipment/ceremonial_knight_greaves_05.glb",
+      "name": "Ceremonial Knight Greaves V",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:192": {
+      "scene": "res://assets/actors/native/equipment/ceremonial_knight_greaves_06.glb",
+      "name": "Ceremonial Knight Greaves VI",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:193": {
+      "scene": "res://assets/actors/native/equipment/ceremonial_knight_greaves_07.glb",
+      "name": "Ceremonial Knight Greaves VII",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:194": {
+      "scene": "res://assets/actors/native/equipment/ceremonial_knight_greaves_08.glb",
+      "name": "Ceremonial Knight Greaves VIII",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "3:125": {
+      "scene": "res://assets/actors/native/equipment/legendary_eloria_helm_01.glb",
+      "name": "Legendary Eloria Helm I",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:126": {
+      "scene": "res://assets/actors/native/equipment/legendary_eloria_helm_02.glb",
+      "name": "Legendary Eloria Helm II",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:127": {
+      "scene": "res://assets/actors/native/equipment/legendary_eloria_helm_03.glb",
+      "name": "Legendary Eloria Helm III",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:128": {
+      "scene": "res://assets/actors/native/equipment/legendary_eloria_helm_04.glb",
+      "name": "Legendary Eloria Helm IV",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:129": {
+      "scene": "res://assets/actors/native/equipment/legendary_eloria_helm_05.glb",
+      "name": "Legendary Eloria Helm V",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:130": {
+      "scene": "res://assets/actors/native/equipment/legendary_eloria_helm_06.glb",
+      "name": "Legendary Eloria Helm VI",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:131": {
+      "scene": "res://assets/actors/native/equipment/legendary_eloria_helm_07.glb",
+      "name": "Legendary Eloria Helm VII",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:132": {
+      "scene": "res://assets/actors/native/equipment/legendary_eloria_helm_08.glb",
+      "name": "Legendary Eloria Helm VIII",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:133": {
+      "scene": "res://assets/actors/native/equipment/militia_helmet_01.glb",
+      "name": "Militia Helmet I",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:134": {
+      "scene": "res://assets/actors/native/equipment/militia_helmet_02.glb",
+      "name": "Militia Helmet II",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:135": {
+      "scene": "res://assets/actors/native/equipment/militia_helmet_03.glb",
+      "name": "Militia Helmet III",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:136": {
+      "scene": "res://assets/actors/native/equipment/militia_helmet_04.glb",
+      "name": "Militia Helmet IV",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:137": {
+      "scene": "res://assets/actors/native/equipment/militia_helmet_05.glb",
+      "name": "Militia Helmet V",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:138": {
+      "scene": "res://assets/actors/native/equipment/militia_helmet_06.glb",
+      "name": "Militia Helmet VI",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:139": {
+      "scene": "res://assets/actors/native/equipment/militia_helmet_07.glb",
+      "name": "Militia Helmet VII",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:140": {
+      "scene": "res://assets/actors/native/equipment/militia_helmet_08.glb",
+      "name": "Militia Helmet VIII",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:141": {
+      "scene": "res://assets/actors/native/equipment/knightly_headgear_01.glb",
+      "name": "Knightly Headgear I",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:142": {
+      "scene": "res://assets/actors/native/equipment/knightly_headgear_02.glb",
+      "name": "Knightly Headgear II",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:143": {
+      "scene": "res://assets/actors/native/equipment/knightly_headgear_03.glb",
+      "name": "Knightly Headgear III",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:144": {
+      "scene": "res://assets/actors/native/equipment/knightly_headgear_04.glb",
+      "name": "Knightly Headgear IV",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:145": {
+      "scene": "res://assets/actors/native/equipment/knightly_headgear_05.glb",
+      "name": "Knightly Headgear V",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:146": {
+      "scene": "res://assets/actors/native/equipment/knightly_headgear_06.glb",
+      "name": "Knightly Headgear VI",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:147": {
+      "scene": "res://assets/actors/native/equipment/knightly_headgear_07.glb",
+      "name": "Knightly Headgear VII",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:148": {
+      "scene": "res://assets/actors/native/equipment/knightly_headgear_08.glb",
+      "name": "Knightly Headgear VIII",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:149": {
+      "scene": "res://assets/actors/native/equipment/frontier_hat_01.glb",
+      "name": "Frontier Hat I",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:150": {
+      "scene": "res://assets/actors/native/equipment/frontier_hat_02.glb",
+      "name": "Frontier Hat II",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:151": {
+      "scene": "res://assets/actors/native/equipment/frontier_hat_03.glb",
+      "name": "Frontier Hat III",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:152": {
+      "scene": "res://assets/actors/native/equipment/frontier_hat_04.glb",
+      "name": "Frontier Hat IV",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:153": {
+      "scene": "res://assets/actors/native/equipment/frontier_hat_05.glb",
+      "name": "Frontier Hat V",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:154": {
+      "scene": "res://assets/actors/native/equipment/frontier_hat_06.glb",
+      "name": "Frontier Hat VI",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:155": {
+      "scene": "res://assets/actors/native/equipment/frontier_hat_07.glb",
+      "name": "Frontier Hat VII",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:156": {
+      "scene": "res://assets/actors/native/equipment/frontier_hat_08.glb",
+      "name": "Frontier Hat VIII",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:157": {
+      "scene": "res://assets/actors/native/equipment/adventurer_headwear_01.glb",
+      "name": "Adventurer Headwear I",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:158": {
+      "scene": "res://assets/actors/native/equipment/adventurer_headwear_02.glb",
+      "name": "Adventurer Headwear II",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:159": {
+      "scene": "res://assets/actors/native/equipment/adventurer_headwear_03.glb",
+      "name": "Adventurer Headwear III",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:160": {
+      "scene": "res://assets/actors/native/equipment/adventurer_headwear_04.glb",
+      "name": "Adventurer Headwear IV",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:161": {
+      "scene": "res://assets/actors/native/equipment/adventurer_headwear_05.glb",
+      "name": "Adventurer Headwear V",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:162": {
+      "scene": "res://assets/actors/native/equipment/adventurer_headwear_06.glb",
+      "name": "Adventurer Headwear VI",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:163": {
+      "scene": "res://assets/actors/native/equipment/adventurer_headwear_07.glb",
+      "name": "Adventurer Headwear VII",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:164": {
+      "scene": "res://assets/actors/native/equipment/adventurer_headwear_08.glb",
+      "name": "Adventurer Headwear VIII",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:165": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_headgear_01.glb",
+      "name": "Sunmane Steppe Headgear I",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:166": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_headgear_02.glb",
+      "name": "Sunmane Steppe Headgear II",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:167": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_headgear_03.glb",
+      "name": "Sunmane Steppe Headgear III",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:168": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_headgear_04.glb",
+      "name": "Sunmane Steppe Headgear IV",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:169": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_headgear_05.glb",
+      "name": "Sunmane Steppe Headgear V",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:170": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_headgear_06.glb",
+      "name": "Sunmane Steppe Headgear VI",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:171": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_headgear_07.glb",
+      "name": "Sunmane Steppe Headgear VII",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:172": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_headgear_08.glb",
+      "name": "Sunmane Steppe Headgear VIII",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "5:192": {
+      "scene": "res://assets/actors/native/equipment/legendary_hero_cuirass_01.glb",
+      "name": "Legendary Hero Cuirass I",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:193": {
+      "scene": "res://assets/actors/native/equipment/legendary_hero_cuirass_02.glb",
+      "name": "Legendary Hero Cuirass II",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:194": {
+      "scene": "res://assets/actors/native/equipment/legendary_hero_cuirass_03.glb",
+      "name": "Legendary Hero Cuirass III",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:195": {
+      "scene": "res://assets/actors/native/equipment/legendary_hero_cuirass_04.glb",
+      "name": "Legendary Hero Cuirass IV",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:196": {
+      "scene": "res://assets/actors/native/equipment/legendary_hero_cuirass_05.glb",
+      "name": "Legendary Hero Cuirass V",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:197": {
+      "scene": "res://assets/actors/native/equipment/legendary_hero_cuirass_06.glb",
+      "name": "Legendary Hero Cuirass VI",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:198": {
+      "scene": "res://assets/actors/native/equipment/legendary_hero_cuirass_07.glb",
+      "name": "Legendary Hero Cuirass VII",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:199": {
+      "scene": "res://assets/actors/native/equipment/legendary_hero_cuirass_08.glb",
+      "name": "Legendary Hero Cuirass VIII",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:200": {
+      "scene": "res://assets/actors/native/equipment/knightly_torso_armor_01.glb",
+      "name": "Knightly Torso Armor I",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:201": {
+      "scene": "res://assets/actors/native/equipment/knightly_torso_armor_02.glb",
+      "name": "Knightly Torso Armor II",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:202": {
+      "scene": "res://assets/actors/native/equipment/knightly_torso_armor_03.glb",
+      "name": "Knightly Torso Armor III",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:203": {
+      "scene": "res://assets/actors/native/equipment/knightly_torso_armor_04.glb",
+      "name": "Knightly Torso Armor IV",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:204": {
+      "scene": "res://assets/actors/native/equipment/knightly_torso_armor_05.glb",
+      "name": "Knightly Torso Armor V",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:205": {
+      "scene": "res://assets/actors/native/equipment/knightly_torso_armor_06.glb",
+      "name": "Knightly Torso Armor VI",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:206": {
+      "scene": "res://assets/actors/native/equipment/knightly_torso_armor_07.glb",
+      "name": "Knightly Torso Armor VII",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:207": {
+      "scene": "res://assets/actors/native/equipment/knightly_torso_armor_08.glb",
+      "name": "Knightly Torso Armor VIII",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:208": {
+      "scene": "res://assets/actors/native/equipment/militia_torso_armor_01.glb",
+      "name": "Militia Torso Armor I",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:209": {
+      "scene": "res://assets/actors/native/equipment/militia_torso_armor_02.glb",
+      "name": "Militia Torso Armor II",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:210": {
+      "scene": "res://assets/actors/native/equipment/militia_torso_armor_03.glb",
+      "name": "Militia Torso Armor III",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:211": {
+      "scene": "res://assets/actors/native/equipment/militia_torso_armor_04.glb",
+      "name": "Militia Torso Armor IV",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:212": {
+      "scene": "res://assets/actors/native/equipment/militia_torso_armor_05.glb",
+      "name": "Militia Torso Armor V",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:213": {
+      "scene": "res://assets/actors/native/equipment/militia_torso_armor_06.glb",
+      "name": "Militia Torso Armor VI",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:214": {
+      "scene": "res://assets/actors/native/equipment/militia_torso_armor_07.glb",
+      "name": "Militia Torso Armor VII",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:215": {
+      "scene": "res://assets/actors/native/equipment/militia_torso_armor_08.glb",
+      "name": "Militia Torso Armor VIII",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:216": {
+      "scene": "res://assets/actors/native/equipment/eloria_arcane_armor_01.glb",
+      "name": "Eloria Arcane Armor I",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:217": {
+      "scene": "res://assets/actors/native/equipment/eloria_arcane_armor_02.glb",
+      "name": "Eloria Arcane Armor II",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:218": {
+      "scene": "res://assets/actors/native/equipment/eloria_arcane_armor_03.glb",
+      "name": "Eloria Arcane Armor III",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:219": {
+      "scene": "res://assets/actors/native/equipment/eloria_arcane_armor_04.glb",
+      "name": "Eloria Arcane Armor IV",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:220": {
+      "scene": "res://assets/actors/native/equipment/eloria_arcane_armor_05.glb",
+      "name": "Eloria Arcane Armor V",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:221": {
+      "scene": "res://assets/actors/native/equipment/eloria_arcane_armor_06.glb",
+      "name": "Eloria Arcane Armor VI",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:222": {
+      "scene": "res://assets/actors/native/equipment/eloria_arcane_armor_07.glb",
+      "name": "Eloria Arcane Armor VII",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:223": {
+      "scene": "res://assets/actors/native/equipment/eloria_arcane_armor_08.glb",
+      "name": "Eloria Arcane Armor VIII",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:224": {
+      "scene": "res://assets/actors/native/equipment/leather_ranger_torso_01.glb",
+      "name": "Leather Ranger Torso I",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:225": {
+      "scene": "res://assets/actors/native/equipment/leather_ranger_torso_02.glb",
+      "name": "Leather Ranger Torso II",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:226": {
+      "scene": "res://assets/actors/native/equipment/leather_ranger_torso_03.glb",
+      "name": "Leather Ranger Torso III",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:227": {
+      "scene": "res://assets/actors/native/equipment/leather_ranger_torso_04.glb",
+      "name": "Leather Ranger Torso IV",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:228": {
+      "scene": "res://assets/actors/native/equipment/leather_ranger_torso_05.glb",
+      "name": "Leather Ranger Torso V",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:229": {
+      "scene": "res://assets/actors/native/equipment/leather_ranger_torso_06.glb",
+      "name": "Leather Ranger Torso VI",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:230": {
+      "scene": "res://assets/actors/native/equipment/leather_ranger_torso_07.glb",
+      "name": "Leather Ranger Torso VII",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:231": {
+      "scene": "res://assets/actors/native/equipment/leather_ranger_torso_08.glb",
+      "name": "Leather Ranger Torso VIII",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:232": {
+      "scene": "res://assets/actors/native/equipment/eloria_frontier_shirt_01.glb",
+      "name": "Eloria Frontier Shirt I",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male"
+    },
+    "5:233": {
+      "scene": "res://assets/actors/native/equipment/eloria_frontier_shirt_02.glb",
+      "name": "Eloria Frontier Shirt II",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male"
+    },
+    "5:234": {
+      "scene": "res://assets/actors/native/equipment/eloria_frontier_shirt_03.glb",
+      "name": "Eloria Frontier Shirt III",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male"
+    },
+    "5:235": {
+      "scene": "res://assets/actors/native/equipment/eloria_frontier_shirt_04.glb",
+      "name": "Eloria Frontier Shirt IV",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male"
+    },
+    "5:236": {
+      "scene": "res://assets/actors/native/equipment/eloria_frontier_shirt_05.glb",
+      "name": "Eloria Frontier Shirt V",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male"
+    },
+    "5:237": {
+      "scene": "res://assets/actors/native/equipment/eloria_frontier_shirt_06.glb",
+      "name": "Eloria Frontier Shirt VI",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male"
+    },
+    "5:238": {
+      "scene": "res://assets/actors/native/equipment/eloria_frontier_shirt_07.glb",
+      "name": "Eloria Frontier Shirt VII",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male"
+    },
+    "5:239": {
+      "scene": "res://assets/actors/native/equipment/eloria_frontier_shirt_08.glb",
+      "name": "Eloria Frontier Shirt VIII",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male"
+    },
+    "5:240": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_shirt_01.glb",
+      "name": "Sunmane Steppe Shirt I",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male"
+    },
+    "5:241": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_shirt_02.glb",
+      "name": "Sunmane Steppe Shirt II",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male"
+    },
+    "5:242": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_shirt_03.glb",
+      "name": "Sunmane Steppe Shirt III",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male"
+    },
+    "5:243": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_shirt_04.glb",
+      "name": "Sunmane Steppe Shirt IV",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male"
+    },
+    "5:244": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_shirt_05.glb",
+      "name": "Sunmane Steppe Shirt V",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male"
+    },
+    "5:245": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_shirt_06.glb",
+      "name": "Sunmane Steppe Shirt VI",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male"
+    },
+    "5:246": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_shirt_07.glb",
+      "name": "Sunmane Steppe Shirt VII",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male"
+    },
+    "5:247": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_shirt_08.glb",
+      "name": "Sunmane Steppe Shirt VIII",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male"
+    },
+    "4:195": {
+      "scene": "res://assets/actors/native/equipment/legendary_leg_armor_01.glb",
+      "name": "Legendary Leg Armor I",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:196": {
+      "scene": "res://assets/actors/native/equipment/legendary_leg_armor_02.glb",
+      "name": "Legendary Leg Armor II",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:197": {
+      "scene": "res://assets/actors/native/equipment/legendary_leg_armor_03.glb",
+      "name": "Legendary Leg Armor III",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:198": {
+      "scene": "res://assets/actors/native/equipment/legendary_leg_armor_04.glb",
+      "name": "Legendary Leg Armor IV",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:199": {
+      "scene": "res://assets/actors/native/equipment/legendary_leg_armor_05.glb",
+      "name": "Legendary Leg Armor V",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:200": {
+      "scene": "res://assets/actors/native/equipment/legendary_leg_armor_06.glb",
+      "name": "Legendary Leg Armor VI",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:201": {
+      "scene": "res://assets/actors/native/equipment/legendary_leg_armor_07.glb",
+      "name": "Legendary Leg Armor VII",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:202": {
+      "scene": "res://assets/actors/native/equipment/legendary_leg_armor_08.glb",
+      "name": "Legendary Leg Armor VIII",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:203": {
+      "scene": "res://assets/actors/native/equipment/knightly_greaves_01.glb",
+      "name": "Knightly Greaves I",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:204": {
+      "scene": "res://assets/actors/native/equipment/knightly_greaves_02.glb",
+      "name": "Knightly Greaves II",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:205": {
+      "scene": "res://assets/actors/native/equipment/knightly_greaves_03.glb",
+      "name": "Knightly Greaves III",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:206": {
+      "scene": "res://assets/actors/native/equipment/knightly_greaves_04.glb",
+      "name": "Knightly Greaves IV",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:207": {
+      "scene": "res://assets/actors/native/equipment/knightly_greaves_05.glb",
+      "name": "Knightly Greaves V",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:208": {
+      "scene": "res://assets/actors/native/equipment/knightly_greaves_06.glb",
+      "name": "Knightly Greaves VI",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:209": {
+      "scene": "res://assets/actors/native/equipment/knightly_greaves_07.glb",
+      "name": "Knightly Greaves VII",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:210": {
+      "scene": "res://assets/actors/native/equipment/knightly_greaves_08.glb",
+      "name": "Knightly Greaves VIII",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:211": {
+      "scene": "res://assets/actors/native/equipment/militia_greaves_01.glb",
+      "name": "Militia Greaves I",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:212": {
+      "scene": "res://assets/actors/native/equipment/militia_greaves_02.glb",
+      "name": "Militia Greaves II",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:213": {
+      "scene": "res://assets/actors/native/equipment/militia_greaves_03.glb",
+      "name": "Militia Greaves III",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:214": {
+      "scene": "res://assets/actors/native/equipment/militia_greaves_04.glb",
+      "name": "Militia Greaves IV",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:215": {
+      "scene": "res://assets/actors/native/equipment/militia_greaves_05.glb",
+      "name": "Militia Greaves V",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:216": {
+      "scene": "res://assets/actors/native/equipment/militia_greaves_06.glb",
+      "name": "Militia Greaves VI",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:217": {
+      "scene": "res://assets/actors/native/equipment/militia_greaves_07.glb",
+      "name": "Militia Greaves VII",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:218": {
+      "scene": "res://assets/actors/native/equipment/militia_greaves_08.glb",
+      "name": "Militia Greaves VIII",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:219": {
+      "scene": "res://assets/actors/native/equipment/militia_leg_armor_01.glb",
+      "name": "Militia Leg Armor I",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:220": {
+      "scene": "res://assets/actors/native/equipment/militia_leg_armor_02.glb",
+      "name": "Militia Leg Armor II",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:221": {
+      "scene": "res://assets/actors/native/equipment/militia_leg_armor_03.glb",
+      "name": "Militia Leg Armor III",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:222": {
+      "scene": "res://assets/actors/native/equipment/militia_leg_armor_04.glb",
+      "name": "Militia Leg Armor IV",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:223": {
+      "scene": "res://assets/actors/native/equipment/militia_leg_armor_05.glb",
+      "name": "Militia Leg Armor V",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:224": {
+      "scene": "res://assets/actors/native/equipment/militia_leg_armor_06.glb",
+      "name": "Militia Leg Armor VI",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:225": {
+      "scene": "res://assets/actors/native/equipment/militia_leg_armor_07.glb",
+      "name": "Militia Leg Armor VII",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:226": {
+      "scene": "res://assets/actors/native/equipment/militia_leg_armor_08.glb",
+      "name": "Militia Leg Armor VIII",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:227": {
+      "scene": "res://assets/actors/native/equipment/rugged_ranger_legwear_01.glb",
+      "name": "Rugged Ranger Legwear I",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:228": {
+      "scene": "res://assets/actors/native/equipment/rugged_ranger_legwear_02.glb",
+      "name": "Rugged Ranger Legwear II",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:229": {
+      "scene": "res://assets/actors/native/equipment/rugged_ranger_legwear_03.glb",
+      "name": "Rugged Ranger Legwear III",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:230": {
+      "scene": "res://assets/actors/native/equipment/rugged_ranger_legwear_04.glb",
+      "name": "Rugged Ranger Legwear IV",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:231": {
+      "scene": "res://assets/actors/native/equipment/rugged_ranger_legwear_05.glb",
+      "name": "Rugged Ranger Legwear V",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:232": {
+      "scene": "res://assets/actors/native/equipment/rugged_ranger_legwear_06.glb",
+      "name": "Rugged Ranger Legwear VI",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:233": {
+      "scene": "res://assets/actors/native/equipment/rugged_ranger_legwear_07.glb",
+      "name": "Rugged Ranger Legwear VII",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:234": {
+      "scene": "res://assets/actors/native/equipment/rugged_ranger_legwear_08.glb",
+      "name": "Rugged Ranger Legwear VIII",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:235": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_legwear_01.glb",
+      "name": "Sunmane Steppe Legwear I",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:236": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_legwear_02.glb",
+      "name": "Sunmane Steppe Legwear II",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:237": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_legwear_03.glb",
+      "name": "Sunmane Steppe Legwear III",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:238": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_legwear_04.glb",
+      "name": "Sunmane Steppe Legwear IV",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:239": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_legwear_05.glb",
+      "name": "Sunmane Steppe Legwear V",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:240": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_legwear_06.glb",
+      "name": "Sunmane Steppe Legwear VI",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:241": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_legwear_07.glb",
+      "name": "Sunmane Steppe Legwear VII",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:242": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_legwear_08.glb",
+      "name": "Sunmane Steppe Legwear VIII",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:243": {
+      "scene": "res://assets/actors/native/equipment/humble_frontier_pants_01.glb",
+      "name": "Humble Frontier Pants I",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male"
+    },
+    "4:244": {
+      "scene": "res://assets/actors/native/equipment/humble_frontier_pants_02.glb",
+      "name": "Humble Frontier Pants II",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male"
+    },
+    "4:245": {
+      "scene": "res://assets/actors/native/equipment/humble_frontier_pants_03.glb",
+      "name": "Humble Frontier Pants III",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male"
+    },
+    "4:246": {
+      "scene": "res://assets/actors/native/equipment/humble_frontier_pants_04.glb",
+      "name": "Humble Frontier Pants IV",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male"
+    },
+    "4:247": {
+      "scene": "res://assets/actors/native/equipment/humble_frontier_pants_05.glb",
+      "name": "Humble Frontier Pants V",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male"
+    },
+    "4:248": {
+      "scene": "res://assets/actors/native/equipment/humble_frontier_pants_06.glb",
+      "name": "Humble Frontier Pants VI",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male"
+    },
+    "4:249": {
+      "scene": "res://assets/actors/native/equipment/humble_frontier_pants_07.glb",
+      "name": "Humble Frontier Pants VII",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male"
+    },
+    "4:250": {
+      "scene": "res://assets/actors/native/equipment/humble_frontier_pants_08.glb",
+      "name": "Humble Frontier Pants VIII",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male"
+    },
+    "6:208": {
+      "scene": "res://assets/actors/native/equipment/legendary_eloria_boots_01.glb",
+      "name": "Legendary Eloria Boots I",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:209": {
+      "scene": "res://assets/actors/native/equipment/legendary_eloria_boots_02.glb",
+      "name": "Legendary Eloria Boots II",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:210": {
+      "scene": "res://assets/actors/native/equipment/legendary_eloria_boots_03.glb",
+      "name": "Legendary Eloria Boots III",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:211": {
+      "scene": "res://assets/actors/native/equipment/legendary_eloria_boots_04.glb",
+      "name": "Legendary Eloria Boots IV",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:212": {
+      "scene": "res://assets/actors/native/equipment/legendary_eloria_boots_05.glb",
+      "name": "Legendary Eloria Boots V",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:213": {
+      "scene": "res://assets/actors/native/equipment/legendary_eloria_boots_06.glb",
+      "name": "Legendary Eloria Boots VI",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:214": {
+      "scene": "res://assets/actors/native/equipment/legendary_eloria_boots_07.glb",
+      "name": "Legendary Eloria Boots VII",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:215": {
+      "scene": "res://assets/actors/native/equipment/legendary_eloria_boots_08.glb",
+      "name": "Legendary Eloria Boots VIII",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:216": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_boots_01.glb",
+      "name": "Sunmane Steppe Boots I",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:217": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_boots_02.glb",
+      "name": "Sunmane Steppe Boots II",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:218": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_boots_03.glb",
+      "name": "Sunmane Steppe Boots III",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:219": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_boots_04.glb",
+      "name": "Sunmane Steppe Boots IV",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:220": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_boots_05.glb",
+      "name": "Sunmane Steppe Boots V",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:221": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_boots_06.glb",
+      "name": "Sunmane Steppe Boots VI",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:222": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_boots_07.glb",
+      "name": "Sunmane Steppe Boots VII",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:223": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_boots_08.glb",
+      "name": "Sunmane Steppe Boots VIII",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:224": {
+      "scene": "res://assets/actors/native/equipment/frontier_boots_01.glb",
+      "name": "Frontier Boots I",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:225": {
+      "scene": "res://assets/actors/native/equipment/frontier_boots_02.glb",
+      "name": "Frontier Boots II",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:226": {
+      "scene": "res://assets/actors/native/equipment/frontier_boots_03.glb",
+      "name": "Frontier Boots III",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:227": {
+      "scene": "res://assets/actors/native/equipment/frontier_boots_04.glb",
+      "name": "Frontier Boots IV",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:228": {
+      "scene": "res://assets/actors/native/equipment/frontier_boots_05.glb",
+      "name": "Frontier Boots V",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:229": {
+      "scene": "res://assets/actors/native/equipment/frontier_boots_06.glb",
+      "name": "Frontier Boots VI",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:230": {
+      "scene": "res://assets/actors/native/equipment/frontier_boots_07.glb",
+      "name": "Frontier Boots VII",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:231": {
+      "scene": "res://assets/actors/native/equipment/frontier_boots_08.glb",
+      "name": "Frontier Boots VIII",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:232": {
+      "scene": "res://assets/actors/native/equipment/leather_adventurer_boots_01.glb",
+      "name": "Leather Adventurer Boots I",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:233": {
+      "scene": "res://assets/actors/native/equipment/leather_adventurer_boots_02.glb",
+      "name": "Leather Adventurer Boots II",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:234": {
+      "scene": "res://assets/actors/native/equipment/leather_adventurer_boots_03.glb",
+      "name": "Leather Adventurer Boots III",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:235": {
+      "scene": "res://assets/actors/native/equipment/leather_adventurer_boots_04.glb",
+      "name": "Leather Adventurer Boots IV",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:236": {
+      "scene": "res://assets/actors/native/equipment/leather_adventurer_boots_05.glb",
+      "name": "Leather Adventurer Boots V",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:237": {
+      "scene": "res://assets/actors/native/equipment/leather_adventurer_boots_06.glb",
+      "name": "Leather Adventurer Boots VI",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:238": {
+      "scene": "res://assets/actors/native/equipment/leather_adventurer_boots_07.glb",
+      "name": "Leather Adventurer Boots VII",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:239": {
+      "scene": "res://assets/actors/native/equipment/leather_adventurer_boots_08.glb",
+      "name": "Leather Adventurer Boots VIII",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
     }
   },
   "aliases": {},

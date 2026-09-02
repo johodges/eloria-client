@@ -12,9 +12,21 @@ coverage and the fallback so a future atlas edit cannot silently drift again.
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 import struct
 import unittest
+
+# The generated armour set is defined once, by the importer's roster, and this
+# suite counts its icons from there so the two cannot disagree.
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]
+                       / "eloria-assets" / "tools"))
+FIRST_GENERATED_IMAGE_ID = 118
+
+
+def generated_piece_count() -> int:
+    import import_generated_equipment as importer
+    return len(importer.roster())
 
 ROOT = Path(__file__).resolve().parents[2]
 CLIENT = ROOT / "godot-client"
@@ -59,9 +71,15 @@ class ItemIconAtlasTest(unittest.TestCase):
                                    column * self.cell:(column + 1) * self.cell]
 
     def test_atlas_declares_its_painted_range(self) -> None:
-        # 0-117 are the painted originals, 118-177 the generated armour set's
-        # per-piece renders (tools/build_item_icon_atlases.py).
-        self.assertEqual(178, self.config["imageCount"])
+        # 0-117 are the painted originals and everything above them is the
+        # generated armour set, one rendered cell per piece
+        # (tools/build_item_icon_atlases.py).  Counted from the roster rather
+        # than written down: the set grew from sixty pieces to two hundred and
+        # fifty-six, and a number pinned here only says what the set used to
+        # be.  What matters is that the painted prefix stays contiguous with
+        # the generated range and that the declared count covers all of it.
+        self.assertEqual(FIRST_GENERATED_IMAGE_ID + generated_piece_count(),
+                         self.config["imageCount"])
         self.assertEqual(117, self.config["fallbackImageId"])
         capacity = len(self.config["atlases"]) * self.per_atlas
         self.assertLessEqual(self.config["imageCount"], capacity)
