@@ -59,8 +59,15 @@ CLIP = "Idle_Subtle"
 #: under the hip and the ankle under the knee, in the frontal plane only (the
 #: sagittal crouch is the clip's own and stays).  Feet face straight forward.
 TARGET_ARM_DROP = 79.0
-TARGET_SHOULDER_FORWARD = -0.09
+TARGET_SHOULDER_FORWARD = -0.04
 SAMPLE_AT = 0.1
+#: Ground contact, measured from the authored clip as the rest-rooted
+#: ankle height PLUS the pelvis channel's own offset above the skeleton
+#: rest (0.115 + 0.043) -- the skeleton's rest pose is not the contact
+#: reference, the authored channel already rides above it.
+TARGET_ANKLE_HEIGHT = 0.158
+#: Both feet keep the authored sole slope once the legs verticalise.
+TARGET_FOOT_PITCH = -28.8
 
 
 # --------------------------------------------------------------------------
@@ -288,6 +295,12 @@ def measurements(sk: Skeleton, glob) -> dict:
                             o("foot_" + side))
         out["kneeDx" + side.upper()] = float(knee[0] - hip[0])
         out["ankleDx" + side.upper()] = float(ankle[0] - knee[0])
+        out["kneeDz" + side.upper()] = float(knee[2] - hip[2])
+        out["ankleDz" + side.upper()] = float(ankle[2] - knee[2])
+    out["hipTwist"] = float(np.degrees(np.arctan2(
+        o("thigh_l")[2] - o("thigh_r")[2],
+        o("thigh_l")[0] - o("thigh_r")[0])))
+    out["ankleY"] = float((o("foot_l")[1] + o("foot_r")[1]) / 2.0)
     return out
 
 
@@ -301,15 +314,57 @@ def main() -> int:
     local, channels = sampled_idle(js, data, bin_off)
 
     def report(tag, m):
-        print("%s arm drop %.1f, chest twist %+.1f, shoulder z %+.3f, "
-              "knee dx L%+.3f R%+.3f, ankle dx L%+.3f R%+.3f, ankle gap "
-              "%.1f cm, foot yaw L %.1f R %.1f"
-              % (tag, m["armDrop"], m["chestTwist"], m["shoulderZ"],
-                 m["kneeDxL"], m["kneeDxR"], m["ankleDxL"], m["ankleDxR"],
-                 m["ankleGap"] * 100, m["footYawL"], m["footYawR"]))
+        print("%s arm drop %.1f, chest twist %+.1f, hip twist %+.1f, "
+              "shoulder z %+.3f, knee d(x,z) L(%+.3f,%+.3f) R(%+.3f,%+.3f), "
+              "ankle d(x,z) L(%+.3f,%+.3f) R(%+.3f,%+.3f), ankle y %.3f, "
+              "gap %.1f cm, foot yaw L %.1f R %.1f"
+              % (tag, m["armDrop"], m["chestTwist"], m["hipTwist"],
+                 m["shoulderZ"], m["kneeDxL"], m["kneeDzL"], m["kneeDxR"],
+                 m["kneeDzR"], m["ankleDxL"], m["ankleDzL"], m["ankleDxR"],
+                 m["ankleDzR"], m["ankleY"], m["ankleGap"] * 100,
+                 m["footYawL"], m["footYawR"]))
     report("before:", measurements(sk, sk.fk(local, {})))
 
     deltas: dict = {}
+    # Square the hips before anything above them is measured: the authored
+    # clip stands contrapposto, the right hip trailing nine centimetres,
+    # which reads from the side as one bent, staggered leg.  The pelvis
+    # yaws level about world up and spine_01 counter-yaws so the trunk
+    # above keeps its own (separately corrected) facing.
+    def hip_twist(angle):
+        d = dict(deltas)
+        g = sk.fk(local, {})
+        d["pelvis"] = sk.world_delta(g, "pelvis", [0, 1, 0], angle)
+        return measurements(sk, sk.fk(local, d))["hipTwist"]
+    hip_angle = solve_angle(hip_twist, 0.0, 6.0, -25.0, 25.0)
+    g = sk.fk(local, {})
+    deltas["pelvis"] = sk.world_delta(g, "pelvis", [0, 1, 0], hip_angle)
+    g = sk.fk(local, deltas)
+    deltas["spine_01"] = sk.world_delta(g, "spine_01", [0, 1, 0], -hip_angle)
+
+    # And LEVEL: the authored pelvis rolls, carrying one hip higher, and
+    # with both legs verticalised an uneven hip line becomes uneven feet.
+    # Steered by response like every other correction here.
+    def hip_level():
+        g2 = sk.fk(local, deltas)
+        return float(sk.origin(g2, "thigh_l")[1]
+                     - sk.origin(g2, "thigh_r")[1])
+    start_level = hip_level()
+    g = sk.fk(local, deltas)
+    probe_q = sk.world_delta(g, "pelvis", [0, 0, 1], 2.0)
+    deltas["pelvis"] = quat_mul(deltas["pelvis"], probe_q)
+    slope = (hip_level() - start_level) / 2.0
+    if abs(slope) > 1e-9:
+        g = sk.fk(local, deltas)
+        roll_fix = (0.0 - hip_level()) / slope
+        deltas["pelvis"] = quat_mul(
+            deltas["pelvis"],
+            sk.world_delta(g, "pelvis", [0, 0, 1], roll_fix))
+        g = sk.fk(local, deltas)
+        deltas["spine_01"] = quat_mul(
+            deltas["spine_01"],
+            sk.world_delta(g, "spine_01", [0, 0, 1], -(2.0 + roll_fix)))
+
     # De-twist the chest first: the authored clip yaws the whole upper torso
     # about 18 degrees (left shoulder swung forward, right swung back), which
     # is most of why the right shoulder reads pulled behind.  spine_03 turns
@@ -360,34 +415,96 @@ def main() -> int:
     deltas["upperarm_l"] = sk.world_delta(g, "upperarm_l", [0, 0, 1], arm_angle)
     deltas["upperarm_r"] = sk.world_delta(g, "upperarm_r", [0, 0, 1], -arm_angle)
 
-    # Legs: straightened segment by segment rather than steered to a stance
-    # width.  The authored clip bows a leg -- knee swung outboard, ankle
-    # kicked back in -- and no single hip rotation unbends that.  The thigh
-    # turns about world forward until the knee is directly below the hip in
-    # the frontal plane, then the calf until the ankle is below the knee; a
-    # frontal turn leaves the sagittal crouch exactly as authored.  The
-    # correction angle is closed-form: the segment's own frontal lean.
+    # Legs: verticalised segment by segment, in both planes at once.  The
+    # authored clip both bows the legs frontally and bends them into a
+    # sagittal crouch; each segment takes the single closed-form rotation
+    # carrying its own direction onto straight down (axis = v x down), so
+    # the knee lands under the hip and the ankle under the knee exactly.
+    down = np.array([0.0, -1.0, 0.0])
     for side in ("l", "r"):
-        g = sk.fk(local, deltas)
-        hip = sk.origin(g, "thigh_" + side)
-        knee = sk.origin(g, "calf_" + side)
-        lean = -np.degrees(np.arctan2(knee[0] - hip[0], -(knee[1] - hip[1])))
-        deltas["thigh_" + side] = sk.world_delta(g, "thigh_" + side,
-                                                 [0, 0, 1], lean)
-        g = sk.fk(local, deltas)
-        knee = sk.origin(g, "calf_" + side)
-        ankle = sk.origin(g, "foot_" + side)
-        lean = -np.degrees(np.arctan2(ankle[0] - knee[0], -(ankle[1] - knee[1])))
-        deltas["calf_" + side] = sk.world_delta(g, "calf_" + side,
-                                                [0, 0, 1], lean)
+        for top, bottom in (("thigh_" + side, "calf_" + side),
+                            ("calf_" + side, "foot_" + side)):
+            g = sk.fk(local, deltas)
+            v = sk.origin(g, bottom) - sk.origin(g, top)
+            v = v / max(np.linalg.norm(v), 1e-9)
+            axis = np.cross(v, down)
+            norm = float(np.linalg.norm(axis))
+            if norm < 1e-6:
+                continue
+            angle = np.degrees(np.arccos(np.clip(np.dot(v, down), -1, 1)))
+            deltas[top] = sk.world_delta(g, top, axis / norm, angle)
 
-    # Feet: rotate each about world up to zero its residual yaw.
+    # Feet: zero the yaw, then hold both soles at the authored slope --
+    # verticalising the calf pitched them with it.
     g = sk.fk(local, deltas)
     now = measurements(sk, g)
     deltas["foot_l"] = sk.world_delta(g, "foot_l", [0, 1, 0], -now["footYawL"])
     deltas["foot_r"] = sk.world_delta(g, "foot_r", [0, 1, 0], -now["footYawR"])
+    def foot_pitch(side):
+        g2 = sk.fk(local, deltas)
+        ankle = sk.origin(g2, "foot_" + side)
+        ball = sk.origin(g2, "ball_" + side)
+        return float(np.degrees(np.arctan2(ball[1] - ankle[1],
+                                           ball[2] - ankle[2])))
+    for side in ("l", "r"):
+        # Steered by measured response, not a derived sign: the world-X
+        # delta conjugated through the foot's basis turned the first draft
+        # the wrong way and put the heels through the floor.
+        start = foot_pitch(side)
+        g = sk.fk(local, deltas)
+        probe = sk.world_delta(g, "foot_" + side, [1, 0, 0], 2.0)
+        deltas["foot_" + side] = quat_mul(deltas["foot_" + side], probe)
+        slope = (foot_pitch(side) - start) / 2.0
+        if abs(slope) > 1e-6:
+            g = sk.fk(local, deltas)
+            fix = sk.world_delta(g, "foot_" + side, [1, 0, 0],
+                                 (TARGET_FOOT_PITCH - foot_pitch(side))
+                                 / slope)
+            deltas["foot_" + side] = quat_mul(deltas["foot_" + side], fix)
 
-    report("after: ", measurements(sk, sk.fk(local, deltas)))
+    # Pelvis height: straight legs reach further down than crouched ones,
+    # so the hips rise until the soles sit back at the authored contact
+    # height.  This is the one translation edit; the channel is private to
+    # this clip.  The FK above ignores the clip's pelvis translation, so
+    # the lift must credit whatever offset the channel already carries --
+    # without that, every rerun would hoist the hips another three
+    # centimetres.
+    # The pelvis channel is authored in the pelvis node's PARENT frame,
+    # which is rotated (its local y points along world forward), so both
+    # the lift axis and the already-carried offset must go through the
+    # parent's basis -- adding to the raw y component once walked the hips
+    # three centimetres forward instead of up.
+    names_lift = [n.get("name", "") for n in js["nodes"]]
+    anim_lift = next(a for a in js["animations"] if a.get("name") == CLIP)
+    # The up axis expressed in the pelvis channel's own frame comes from
+    # the same Skeleton matrices every other measure here uses -- deriving
+    # it from raw node quaternions with a second convention is how a lift
+    # once walked the hips forward instead of raising them.
+    g_up = sk.fk(local, {})
+    pelvis_global = g_up[sk.index["pelvis"]][:3, :3]
+    pelvis_local_rot = None
+    for ch_up in anim_lift["channels"] if False else []:
+        pass
+    local_rot = quat_to_mat(local["pelvis"])
+    parent_rot = pelvis_global @ np.linalg.inv(local_rot)
+    up_local = parent_rot.T @ np.array([0.0, 1.0, 0.0])
+    channel_dy = 0.0
+    for ch in anim_lift["channels"]:
+        if (ch["target"]["path"] == "translation"
+                and names_lift[ch["target"]["node"]] == "pelvis"):
+            vecs, _, _, _ = accessor_floats(
+                js, data, bin_off, anim_lift["samplers"][ch["sampler"]]["output"])
+            node = js["nodes"][ch["target"]["node"]]
+            rest = np.asarray(node.get("translation", [0, 0, 0]),
+                              dtype=np.float64)
+            channel_dy = float(np.dot(np.mean(vecs, axis=0) - rest, up_local))
+    lift = (TARGET_ANKLE_HEIGHT - channel_dy
+            - measurements(sk, sk.fk(local, deltas))["ankleY"])
+
+    after = measurements(sk, sk.fk(local, deltas))
+    report("after: ", after)
+    print("pelvis lift pending: %+.3f m (ankle y %.3f -> %.3f)"
+          % (lift, after["ankleY"], TARGET_ANKLE_HEIGHT))
     print("deltas: chest de-twist %.1f deg, clavicle L%.1f R%.1f deg, arm "
           "+/-%.1f deg, legs straightened, feet to forward"
           % (twist_angle, clav_angles["l"], clav_angles["r"], arm_angle))
@@ -403,6 +520,20 @@ def main() -> int:
         adjusted = np.array([quat_mul(q, delta) for q in quats])
         adjusted /= np.linalg.norm(adjusted, axis=1, keepdims=True)
         write_floats(data, base, stride, ncomp, adjusted)
+    if abs(lift) > 0.0005:
+        names = [n.get("name", "") for n in js["nodes"]]
+        anim = next(a for a in js["animations"] if a.get("name") == CLIP)
+        for ch in anim["channels"]:
+            if (ch["target"]["path"] == "translation"
+                    and names[ch["target"]["node"]] == "pelvis"):
+                sampler = anim["samplers"][ch["sampler"]]
+                vecs, vbase, vstride, vncomp = accessor_floats(
+                    js, data, bin_off, sampler["output"])
+                vecs = vecs.copy()
+                vecs += up_local[np.newaxis, :] * lift
+                write_floats(data, vbase, vstride, vncomp, vecs)
+                print("pelvis raised %.3f m so the soles keep the ground"
+                      % lift)
     LIBRARY.write_bytes(bytes(data))
     print("\nwrote %s (%d channels, %s only)" % (LIBRARY.name, len(deltas), CLIP))
     return 0
