@@ -115,6 +115,26 @@ func _run() -> void:
 		"walking turns the model back onto its travel (%.1f deg from idle)"
 			% walk_correction)
 
+	# A creature turned to face the player it is attacking must stay turned.
+	# The turn is an actor command and carries no rotation field, so the
+	# rotation on the packet is still the one the actor spawned with. Reading
+	# it for the attack commands that follow snapped the body back to its
+	# spawn facing on every swing - a wolf hitting a player it faced away from.
+	actor.apply_server_state({"actor_id": 7, "x": 0, "y": 0, "rotation": 0,
+		"command": 22}, adapter, true)
+	for _still: int in range(3):
+		await create_timer(cadence).timeout
+	# CMD_TURN_W, then enter combat and two swings from the same tile.
+	for standing_command: int in [44, 18, 46, 46]:
+		actor.apply_server_state({"actor_id": 7, "x": 0, "y": 0, "rotation": 0,
+			"command": standing_command}, adapter)
+		await create_timer(cadence).timeout
+	var faced_west: float = absf(rad_to_deg(wrapf(
+		actor.rotation.y - adapter.direction_to_godot(Vector2i(-1, 0)), -PI, PI)))
+	_expect(faced_west < 1.0,
+		"an actor keeps the facing it was turned to while it attacks (off by %.1f deg)"
+			% faced_west)
+
 	print("actor facing tests: ",
 		"PASS" if _failures == 0 else "FAIL (%d)" % _failures)
 	quit(_failures)
