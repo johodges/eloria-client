@@ -42,8 +42,8 @@ const TELEPORT := 1.5
 ## should come back down briskly instead of drifting: gravity multiplies and
 ## the damping drops so the swing dies in a fraction of the travelling time.
 const SETTLE_SPEED := 0.15
-const SETTLE_GRAVITY := 5.0
-const SETTLE_DAMPING := 0.45
+const SETTLE_GRAVITY := 25.0
+const SETTLE_DAMPING := 0.30
 
 var _cached := false
 var _anchor := -1
@@ -54,6 +54,9 @@ var _lengths: Array[PackedFloat32Array] = []
 var _legs: Array[PackedInt32Array] = []
 var _settled := false
 var _last_anchor := Vector3.ZERO
+var _torso := PackedInt32Array()
+## The trunk capsule is fatter than a leg.
+const TORSO_RADIUS := 0.185
 
 
 func _cache(skeleton: Skeleton3D) -> bool:
@@ -83,6 +86,14 @@ func _cache(skeleton: Skeleton3D) -> bool:
 		pair.append(skeleton.find_bone("calf_%s" % side))
 		if pair[0] >= 0 and pair[1] >= 0:
 			_legs.append(pair)
+	# The trunk keeps the upper sheet off the back the same way the legs
+	# keep the hem off the shins; without it the simulation relaxes the
+	# top links straight into the shoulder blades.
+	var trunk := PackedInt32Array()
+	trunk.append(skeleton.find_bone("spine_01"))
+	trunk.append(skeleton.find_bone("neck_01"))
+	if trunk[0] >= 0 and trunk[1] >= 0:
+		_torso = trunk
 	return true
 
 
@@ -102,20 +113,30 @@ func _rest_joints(skeleton: Skeleton3D, to_world: Transform3D,
 
 func _push_out_of_legs(skeleton: Skeleton3D, to_world: Transform3D,
 		point: Vector3) -> Vector3:
+	if not _torso.is_empty():
+		point = _push_out_of_capsule(skeleton, to_world, point, _torso,
+			TORSO_RADIUS)
 	for pair in _legs:
-		var a := to_world * skeleton.get_bone_global_pose(pair[0]).origin
-		var b := to_world * skeleton.get_bone_global_pose(pair[1]).origin
-		var axis := b - a
-		var span := axis.length_squared()
-		var travel := 0.0 if span < 1e-9 else clampf((point - a).dot(axis) / span, 0.0, 1.0)
-		var near := a + axis * travel
-		var away := point - near
-		var gap := away.length()
-		if gap < LEG_RADIUS:
-			# Straight out from the bone, or straight back if the point landed
-			# exactly on it, which happens the frame a leg swings through.
-			var direction := (away / gap) if gap > 1e-5 else -to_world.basis.z.normalized()
-			point = near + direction * LEG_RADIUS
+		point = _push_out_of_capsule(skeleton, to_world, point, pair,
+			LEG_RADIUS)
+	return point
+
+
+func _push_out_of_capsule(skeleton: Skeleton3D, to_world: Transform3D,
+		point: Vector3, pair: PackedInt32Array, radius: float) -> Vector3:
+	var a := to_world * skeleton.get_bone_global_pose(pair[0]).origin
+	var b := to_world * skeleton.get_bone_global_pose(pair[1]).origin
+	var axis := b - a
+	var span := axis.length_squared()
+	var travel := 0.0 if span < 1e-9 else clampf((point - a).dot(axis) / span, 0.0, 1.0)
+	var near := a + axis * travel
+	var away := point - near
+	var gap := away.length()
+	if gap < radius:
+		# Straight out from the bone, or straight back if the point landed
+		# exactly on it, which happens the frame a leg swings through.
+		var direction := (away / gap) if gap > 1e-5 else -to_world.basis.z.normalized()
+		point = near + direction * radius
 	return point
 
 

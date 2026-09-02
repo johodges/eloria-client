@@ -41,6 +41,9 @@ COLLAR_BAND = 1.30
 #: The cloth's top edge blends onto the arc from here up.
 SHEET_BLEND_LO = 1.32
 SHEET_BLEND_HI = 1.44
+#: The sheet stays at least this far behind the wearer's own back.
+BACK_CLEARANCE = 0.02
+RACES = TOOLS.parent.parent / "godot-client" / "assets" / "actors"     / "native" / "races"
 
 
 def smoothstep(t: float) -> float:
@@ -97,11 +100,57 @@ def write_positions(document, binary, prim, points) -> None:
                          *[float(c) for c in points[v]])
 
 
+def back_profile():
+    """The wearer's back line: most-negative z of the trunk per height
+    band, so the sheet can be held behind it."""
+    document, binary = read_glb(RACES / "luminous_male.glb")
+    zs = {}
+    for node in document["nodes"]:
+        if "mesh" not in node or "skin" not in node:
+            continue
+        for prim in document["meshes"][node["mesh"]]["primitives"]:
+            pts = positions_of(document, binary, prim)
+            trunk = (np.abs(pts[:, 0]) < 0.20) & (pts[:, 1] > 0.95)
+            for x, y, z in pts[trunk]:
+                band = round(y * 20) / 20
+                zs[band] = min(zs.get(band, 0.0), float(z))
+        break
+    bands = sorted(zs)
+    return np.array(bands), np.array([zs[b] for b in bands])
+
+
+def clamp_behind_back(document, binary, base_prim, dry: bool) -> int:
+    bands, depth = back_profile()
+    base = positions_of(document, binary, base_prim)
+    moved = 0
+    for i in range(len(base)):
+        y = base[i, 1]
+        if y < 1.0 or abs(base[i, 0]) > 0.30:
+            continue
+        limit = float(np.interp(y, bands, depth)) - BACK_CLEARANCE
+        if base[i, 2] > limit:
+            base[i, 2] = limit
+            moved += 1
+    if not dry and moved:
+        write_positions(document, binary, base_prim, base)
+    return moved
+
+
 def rework(path: Path, dry: bool) -> str:
     document, binary = read_glb(path)
     extras = document.setdefault("asset", {}).setdefault("extras", {})
-    if extras.get("eloriaCapeCollar"):
+    marker = extras.get("eloriaCapeCollar")
+    if marker and marker.get("version", 1) >= 2:
         return "already reworked"
+    if marker:
+        # Version 1 shipped without the back clamp; apply just that.
+        base_prim = document["meshes"][0]["primitives"][0]
+        moved = clamp_behind_back(document, binary, base_prim, dry)
+        if not dry:
+            marker["version"] = 2
+            extras["eloriaCapeCollar"] = marker
+            write_glb(path, document, binary)
+        return "back-clamped %d verts (v1 -> v2)" % moved
     meshes = document.get("meshes", [])
     if not meshes or len(meshes[0]["primitives"]) < 2:
         return "no trim primitive"
@@ -155,8 +204,10 @@ def rework(path: Path, dry: bool) -> str:
         new_base[i] = base[i] * (1.0 - weight) + target * weight
     if not dry:
         write_positions(document, binary, base_prim, new_base)
+    clamped = clamp_behind_back(document, binary, base_prim, dry)
+    if not dry:
         extras["eloriaCapeCollar"] = {"arc": ARC_HALF_ANGLE,
-                                      "lift": COLLAR_LIFT}
+                                      "lift": COLLAR_LIFT, "version": 2}
         write_glb(path, document, binary)
     return "reworked (collar %d verts, radius %.3f)" % (
         int(collar.sum()), radius)
