@@ -123,6 +123,20 @@ var achievements_state: Dictionary = {"counters": [], "completed": []}
 ## legacy stats packet carries the same numbers through a 32-bit window and
 ## the two would disagree above four billion - this one is the truth.
 var experience64: Dictionary = {}
+## How much ground each actor type stands on, as {actor_type: Vector2i(w, d)}.
+## Per species rather than per actor, and stated once at login. A type that
+## is absent stands on one tile, which is nearly all of them.
+##
+## This decides where a model is drawn: the tile an actor reports is the
+## anchor of its box, and for an even-sized box the anchor is not the centre,
+## so without this a two-by-two creature would be drawn half a tile off the
+## ground the server has reserved for it.
+var actor_footprints: Dictionary = {}
+
+## The footprint of an actor type, defaulting to a single tile.
+func footprint_for_actor_type(actor_type: int) -> Vector2i:
+	var size: Variant = actor_footprints.get(actor_type)
+	return size if size is Vector2i else Vector2i.ONE
 
 func post_cap_points_for(skill: String) -> int:
 	var row: Variant = experience64.get(skill)
@@ -269,6 +283,9 @@ func _on_connection_state_changed(value: String) -> void:
 		worn_slots_mask = 0
 		achievements_state = {"counters": [], "completed": []}
 		experience64.clear()
+		# Per profile rather than per character, but a different server may
+		# size its creatures differently, so it is cleared with the rest.
+		actor_footprints.clear()
 		# Cleared on logout, not on a map change: a party outlives walking
 		# through a portal, and the server re-states it at login either way.
 		party = _empty_party_state()
@@ -826,6 +843,9 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 				var row: Dictionary = raw_skill as Dictionary
 				experience64[str(row.get("skill", ""))] = row
 			state_changed.emit(&"experience_state")
+		"actor_footprints":
+			actor_footprints = event.footprints
+			state_changed.emit(&"actor_footprints")
 		"party":
 			party = {"in_party": bool(event.in_party),
 				"members": event.members,

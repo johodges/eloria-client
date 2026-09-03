@@ -39,6 +39,8 @@ func _init() -> void:
 		"navigation_hud_v1": EloriaProtocol.ServerMessage.ELORIA_NAVIGATION_STATE,
 		"achievements_window_v1":
 			EloriaProtocol.ServerMessage.ELORIA_ACHIEVEMENTS_STATE,
+		"actor_footprints_v1":
+			EloriaProtocol.ServerMessage.ELORIA_ACTOR_FOOTPRINTS,
 		"degraded_items_v1": EloriaProtocol.ServerMessage.ELORIA_DEGRADED_ITEMS,
 		"experience64_v1": EloriaProtocol.ServerMessage.ELORIA_EXPERIENCE_STATE,
 		"party_window_v1": EloriaProtocol.ServerMessage.ELORIA_PARTY_STATE,
@@ -71,6 +73,9 @@ func _init() -> void:
 		EloriaProtocol.ServerMessage.ELORIA_DEGRADED_ITEMS: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_ACHIEVEMENTS_STATE: "00000000",
 		EloriaProtocol.ServerMessage.ELORIA_EXPERIENCE_STATE: "0000",
+		# No creature larger than one tile in this profile: a real
+		# answer, and the one an unchanged content pack still gives.
+		EloriaProtocol.ServerMessage.ELORIA_ACTOR_FOOTPRINTS: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO: "5b0000004100",
 		EloriaProtocol.ServerMessage.ELORIA_SPELL_POWER: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE: "0000",
