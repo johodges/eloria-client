@@ -550,6 +550,32 @@ def classify(positions, uvs, indices, texture: Image.Image,
         for i, name in enumerate(names):
             labels[nearest == i] = name
 
+    # Boots and pants are not always a shading gap like the two above --
+    # checked directly on Orun Male, EVERY 0.04-wide slice of mesh height
+    # from the sole (0.00) up through mid-thigh (0.50) reads the same
+    # dark brown, [50-57, 33-39, 23-26], so their reference samples land
+    # only 0.03 apart (versus 0.10-0.24 on every other body checked) and
+    # the colour vote has nothing real to key off between them: tinting
+    # each a saturated colour in the live preview showed a jagged,
+    # interleaved speckle up the whole shin, not a clean seam. No colour
+    # fix can separate two regions that are the same colour, but boots
+    # and pants do not need one -- unlike skin and a collar, a boot is
+    # never above a knee on this rig, so the split is just Y position.
+    # 0.22 is not a guess: it is where Luminous's own boots/pants seam
+    # already measures (see the reference-band comment above), reused
+    # here as the ordinary case for this rig rather than a new number.
+    # Gating on the two references' own distance -- not on this body by
+    # name -- means only a pair this close ever gets overridden by
+    # position: every other body's boots and pants, including the
+    # closest of the rest at 0.05, are left on the colour vote that
+    # already works for them.
+    boots_ref, pants_ref = references["wardrobe_boots"], references["wardrobe_pants"]
+    if (boots_ref is not None and pants_ref is not None
+            and np.linalg.norm(boots_ref - pants_ref) < 0.04):
+        ambiguous = (labels == "wardrobe_boots") | (labels == "wardrobe_pants")
+        labels[ambiguous & (frac < 0.22)] = "wardrobe_boots"
+        labels[ambiguous & (frac >= 0.22)] = "wardrobe_pants"
+
     # Nearest-reference-colour is a per-face vote with no notion of its
     # neighbours, so a handful of faces near a seam -- a fold's shading,
     # a sliver of sole geometry that registers as pants-coloured -- vote
@@ -966,13 +992,13 @@ def add_scalp(document, binary) -> int:
 def split(path: Path, calibrate: bool) -> str:
     document, binary = read_glb(path)
     extras = document.setdefault("asset", {}).setdefault("extras", {})
-    if int(extras.get("eloriaSurfacesSplit", 0)) >= 30:
+    if int(extras.get("eloriaSurfacesSplit", 0)) >= 31:
         return "already split"
-    if int(extras.get("eloriaSurfacesSplit", 0)) in (15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29):
+    if int(extras.get("eloriaSurfacesSplit", 0)) in (15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30):
         report = reclassify_surfaces(document, binary)
-        extras["eloriaSurfacesSplit"] = 30
+        extras["eloriaSurfacesSplit"] = 31
         write_glb(path, document, binary)
-        return "%s -> v30" % report
+        return "%s -> v31" % report
     if int(extras.get("eloriaSurfacesSplit", 0)) == 14:
         count = resmooth_shared_surfaces(document, binary)
         extras["eloriaSurfacesSplit"] = 15
@@ -1109,7 +1135,7 @@ def split(path: Path, calibrate: bool) -> str:
 
     del mesh_node["mesh"]
     add_scalp(document, binary)
-    extras["eloriaSurfacesSplit"] = 30
+    extras["eloriaSurfacesSplit"] = 31
     write_glb(path, document, binary)
     return "split: %s" % counts
 
