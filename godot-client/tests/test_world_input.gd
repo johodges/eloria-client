@@ -2200,9 +2200,26 @@ func _run() -> void:
 	# out of reach. Ownership is the server's; the names are the catalog's.
 	_expect((main.get("spell_slot_buttons") as Array).size() == 12,
 		"the quickbar has twelve spell slots, not six")
+	# Eternal Lands binds K_SPELL1..12 to Alt with the number row, ending on
+	# the two keys right of zero (keys.c). Every slot carries that modifier,
+	# and slot 12 is checked by name because it is the odd one.
+	var spell_keys: Array[int] = [KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6,
+		KEY_7, KEY_8, KEY_9, KEY_0, KEY_MINUS, KEY_EQUAL]
 	for slot: int in range(1, 13):
 		_expect(InputMap.has_action("quick_spell_%d" % slot),
 			"quick_spell_%d is a rebindable action" % slot)
+		var bound: Array[InputEvent] = InputMap.action_get_events(
+			"quick_spell_%d" % slot)
+		var key_event: InputEventKey = (bound[0] if not bound.is_empty()
+			else null) as InputEventKey
+		_expect(key_event != null and key_event.alt_pressed
+				and not key_event.shift_pressed
+				and key_event.physical_keycode == spell_keys[slot - 1],
+			"quick_spell_%d is Alt+%s" % [slot, OS.get_keycode_string(
+				spell_keys[slot - 1])])
+	_expect(main.call("_spell_slot_shortcut", 11) == "Alt+=",
+		"the twelfth slot's tooltip names the key it is on: %s"
+			% str(main.call("_spell_slot_shortcut", 11)))
 	var sigils: Control = main.get("sigil_window") as Control
 	var sigil_panel: PanelContainer = sigils.get_node("SigilWindow") as PanelContainer
 	_expect(not sigil_panel.visible, "the sigils window starts closed")

@@ -652,8 +652,9 @@ const ACTION_CURSOR_REFRESH_MSEC := 100
 const DAY_NIGHT_REFRESH_MSEC := 500
 ## How many submitted lines the console remembers for its up/down history.
 const CONSOLE_HISTORY_LIMIT := 60
-## The fork's spell quickbar. Twelve slots, shifted 1-0 then Ctrl+1/Ctrl+2 -
-## the legacy client's six were never enough for the catalog's 22 spells.
+## The fork's spell quickbar. Twelve slots on Alt+1-0, Alt+- and Alt+=,
+## which is where Eternal Lands puts K_SPELL1..12 (keys.c); the legacy
+## client showed six of them, and the catalog has more than six spells.
 const SPELL_QUICK_SLOTS := 12
 const INVENTORY_MIN_SCALE := 0.65
 const INVENTORY_MAX_SCALE := 1.75
@@ -6048,11 +6049,22 @@ func _sync_spells() -> void:
 		_:
 			spell_status.text = _spell_result_text(AppState.last_spell_result)
 
+## What a player presses for one spell quick slot, written the way the key
+## is labelled rather than as a slot number. The tenth slot is Alt+0 and the
+## last two are the two keys right of it, which is where Eternal Lands puts
+## them; a slot with no binding says so instead of naming a key.
+func _spell_slot_shortcut(slot: int) -> String:
+	const LABELS: Array[String] = ["1", "2", "3", "4", "5", "6", "7", "8", "9",
+		"0", "-", "="]
+	if slot < 0 or slot >= LABELS.size():
+		return "unbound"
+	return "Alt+%s" % LABELS[slot]
+
 func _spell_tooltip(definition: Dictionary, reasons: Array[String], slot: int) -> String:
 	var lines: Array[String] = [str(definition.get("name", "Unknown spell")),
 		str(definition.get("description", "")), "Mana: %d  Magic: %d" % [
 			int(definition.get("mana", 0)), int(definition.get("level", 0))],
-		"Shortcut: Shift+%d" % (slot + 1)]
+		"Shortcut: %s" % _spell_slot_shortcut(slot)]
 	var effect: String = str(definition.get("effect", ""))
 	if AppState.spell_power.has(effect):
 		var stated: Dictionary = AppState.spell_power[effect] as Dictionary
