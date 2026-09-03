@@ -72,6 +72,27 @@ func _run() -> void:
 		"the journal's finished half: three completions the server holds, so"
 			+ " they survive a reinstall")
 
+	# Worn goods. Command 19 fills the inventory; 243 states which of those
+	# slots hold something that has worn down. Slots 0, 2 and 5 are marked, so
+	# the cuirass, the cloak and the bones are drawn mirrored with the orange
+	# mark while their neighbours are untouched - which is the comparison the
+	# screenshot exists to make.
+	_windows.close_all()
+	_send(19, "0676000100000000027601010000000102340001000000020201000c00000003"
+		+ "0e04000100000004060b00010000000506")
+	_send(243, "2500000000000000")
+	await _settle()
+	_main.call("_sync_inventory")
+	var inventory_panel: Control = _main.get("inventory_panel") as Control
+	if inventory_panel != null:
+		inventory_panel.show()
+	await _settle()
+	_expect(_app_state.get("worn_slots_mask") == 37,
+		"the worn-slot mask arrived")
+	await _capture("worn-items.png",
+		"three worn items among six: mirrored artwork with an orange"
+			+ " exclamation in the lower-right corner, as Eternal Lands draws it")
+
 	_app_state.set("authenticated", false)
 	_main.queue_free()
 	await process_frame

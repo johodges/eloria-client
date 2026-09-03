@@ -552,7 +552,8 @@ func _sync_merchant() -> void:
 			str(entry.get("name", "")), price, int(entry.get("owned", 0))])
 		merchant_list.set_item_metadata(index, int(entry.get("index", index)))
 		if item_atlas != null:
-			var icon: Texture2D = item_atlas.icon_for(int(entry.get("image_id", 0)))
+			var icon: Texture2D = _named_icon(int(entry.get("image_id", 0)),
+				str(entry.get("name", "")))
 			if icon != null:
 				merchant_list.set_item_icon(index, icon)
 	if merchant_list.item_count > 0:
@@ -608,7 +609,8 @@ func _sync_marketplace() -> void:
 			_duration_text(int(listing.get("seconds_left", 0)))])
 		market_list.set_item_metadata(index, int(listing.get("listing_id", -1)))
 		if item_atlas != null:
-			var icon: Texture2D = item_atlas.icon_for(int(listing.get("image_id", 0)))
+			var icon: Texture2D = _named_icon(int(listing.get("image_id", 0)),
+				str(listing.get("item_name", "")))
 			if icon != null:
 				market_list.set_item_icon(index, icon)
 	if market_list.item_count > 0:
@@ -757,6 +759,18 @@ func toggle_party() -> void:
 		party_panel.move_to_front()
 
 # --- construction ------------------------------------------------------------
+
+## Worn goods look worn here too: a merchant's stock and the exchange both name
+## what they are selling, so the name is enough to decide without the server
+## restating it per row.
+func _named_icon(image_id: int, name: String) -> Texture2D:
+	if item_atlas == null:
+		return null
+	if AppState.is_degraded_item(name):
+		var worn: Texture2D = item_atlas.worn_icon_for(image_id)
+		if worn != null:
+			return worn
+	return item_atlas.icon_for(image_id)
 
 func _selected_index(list: ItemList) -> int:
 	var selected: PackedInt32Array = list.get_selected_items()

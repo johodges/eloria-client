@@ -468,7 +468,14 @@ var _hud_timer_last_tick_msec := 0
 var _hud_element_options: Dictionary = {
 	"show_fps": true, "show_game_seconds": true, "hud_timer": true,
 	"knowledge_bar": true, "side_stats": true, "indicators": true,
-	"analog_clock": true, "digital_clock": true, "chat_timestamps": true}
+	"analog_clock": true, "digital_clock": true, "chat_timestamps": true,
+	# Damage and healing float over whoever took them, kept as three switches
+	# because the three are wanted at different times.
+	"damage_numbers_self": true, "damage_numbers_players": true,
+	"damage_numbers_creatures": true}
+## The health each actor was last seen at, so the next update is a change
+## rather than a number. Cleared with the actors it describes.
+var _actor_health_seen: Dictionary = {}
 ## The per-skill rail rows, keyed by stat name, each holding bar + labels.
 var _skill_row_nodes: Dictionary = {}
 ## The indicator letters, keyed by their Eternal Lands letter.
@@ -3040,6 +3047,14 @@ func _on_state_changed(path: StringName) -> void:
 				_sync_storage()
 			if bool(AppState.ground_bag.get("open", false)):
 				_sync_ground_bag()
+		&"achievements_state":
+			_sync_counters()
+		&"worn_slots", &"degraded_items":
+			# Which slots are worn changes independently of what is in them,
+			# so the icons are redrawn on the mask as well as on the contents.
+			_sync_inventory()
+			if bool(AppState.storage.get("open", false)):
+				_sync_storage()
 		&"world_objects":
 			_sync_placed_objects()
 		&"weather":
@@ -3308,11 +3323,17 @@ func _sync_world() -> void:
 			(stale_actor as Node).queue_free()
 		actor_nodes.erase(id)
 		_actor_surface_samples.erase(id)
+		# Otherwise a recycled actor id inherits the last health of whoever
+		# held it before, and the next update floats a change nobody took.
+		_actor_health_seen.erase(id)
 	for id in AppState.actors:
 		var dto: Dictionary = _presentation_dto(AppState.actors[id])
 		if actor_nodes.has(id):
 			var existing_actor: ReplicatedActor3D = actor_nodes[id] as ReplicatedActor3D
 			existing_actor.apply_server_state(dto, adapter)
+			# Before apply_vitals, which is what overwrites the old value.
+			_report_health_change(int(id), int(dto.get("health", 0)),
+				int(dto.get("max_health", 0)), existing_actor)
 			existing_actor.apply_vitals(int(dto.get("health", 0)),
 				int(dto.get("max_health", 0)))
 			existing_actor.set_nameplate_visible(_nameplate_visible_for(int(id)))
@@ -4666,7 +4687,7 @@ func _sync_counters() -> void:
 	var total: int = int(AppState.activity_counters.get(_selected_counter_category, 0))
 	var session_total: int = maxi(0, total - int(
 		_counter_session_baseline.get(_selected_counter_category, 0)))
-	counter_text.text = ("[table=3][cell][b]Name[/b][/cell]"
+	counter_text.text = (("[table=3][cell][b]Name[/b][/cell]"
 		+ "[cell][right][b]This Session[/b][/right][/cell]"
 		+ "[cell][right][b]Total[/b][/right][/cell]"
 		+ "[cell]%s[/cell][cell][right]%d[/right][/cell]"
@@ -4676,6 +4697,33 @@ func _sync_counters() -> void:
 		+ "Totals are the server's confirmed events.
 Distance this session: %d tiles") % [
 		_selected_counter_category, session_total, total, _session_distance]
+		) + _achievement_section()
+
+## The rest of what the server counts, under the activity totals rather than in
+## a second window. These were tracked all along and readable only as a chat
+## command that printed a dozen lines and scrolled away - the point of the
+## window is that a number worth keeping has somewhere to live.
+func _achievement_section() -> String:
+	var counters: Array = AppState.achievements_state.get("counters", []) as Array
+	var completed: Array = AppState.achievements_state.get("completed", []) as Array
+	if counters.is_empty() and completed.is_empty():
+		return ""
+	var lines: Array[String] = ["\n\n[b]Achievements[/b]\n"]
+	if not counters.is_empty():
+		var cells: Array[String] = []
+		for raw: Variant in counters:
+			var row: Dictionary = raw as Dictionary
+			# Zero is the honest answer for something never done, and hiding it
+			# would make the list look shorter the less the player has done.
+			cells.append("[cell]%s[/cell][cell][right]%d[/right][/cell]" % [
+				str(row.get("label", "")), int(row.get("value", 0))])
+		lines.append("[table=2]%s[/table]" % "".join(cells))
+	if not completed.is_empty():
+		var names: PackedStringArray = PackedStringArray()
+		for raw_name: Variant in completed:
+			names.append(str(raw_name))
+		lines.append("\n\nCompleted: %s" % ", ".join(names))
+	return "".join(lines)
 
 
 ## Reading progress. `researching` is the knowledge index the character has
@@ -5845,7 +5893,7 @@ func _sync_inventory() -> void:
 		if item_value is Dictionary:
 			var item: Dictionary = item_value as Dictionary
 			var image_id: int = int(item.get("image_id", 0))
-			button.icon = item_atlas.icon_for(image_id)
+			button.icon = _slot_icon(image_id, slot)
 			button.text = ""
 			_set_slot_quantity(inventory_quantity_labels[slot],
 				int(item.get("quantity", 0)))
@@ -5891,7 +5939,7 @@ func _sync_equipment_slots() -> void:
 		var item_value: Variant = AppState.inventory.get(slot)
 		if item_value is Dictionary:
 			var item: Dictionary = item_value as Dictionary
-			button.icon = item_atlas.icon_for(int(item.get("image_id", 0)))
+			button.icon = _slot_icon(int(item.get("image_id", 0)), slot)
 			button.text = ""
 			button.tooltip_text = _inventory_tooltip(item, slot) + "\nEquipped position %d" % (index + 1)
 			button.disabled = false
@@ -5915,7 +5963,7 @@ func _sync_quick_slots() -> void:
 			var quick_item: Dictionary = quick_item_value as Dictionary
 			var usable: bool = bool(quick_item.get("inventory_usable", false))
 			var cooldown_seconds: int = _inventory_cooldown_remaining(slot)
-			quick_button.icon = item_atlas.icon_for(int(quick_item.get("image_id", 0)))
+			quick_button.icon = _slot_icon(int(quick_item.get("image_id", 0)), slot)
 			quick_button.expand_icon = true
 			quick_button.text = ""
 			quick_button.disabled = not usable or cooldown_seconds > 0
@@ -6323,6 +6371,97 @@ func _inventory_tooltip(item: Dictionary, slot: int) -> String:
 
 ## The command 226 entry for a slot, or an empty dictionary when the server has
 ## not described that slot.
+## Floats the change in an actor's health over that actor.
+##
+## Derived from the health the server already sends for every visible actor
+## rather than from a new packet: the damage is in the difference, and asking
+## for it separately would be asking twice for something already on the wire.
+##
+## Three switches rather than one, because the three cases are wanted in
+## different situations: your own damage while soloing, other players' while
+## healing a party, creatures' while judging whether a fight is going your way.
+func _report_health_change(actor_id: int, health: int, max_health: int,
+		actor: ReplicatedActor3D) -> void:
+	var previous: Variant = _actor_health_seen.get(actor_id)
+	_actor_health_seen[actor_id] = health
+	if max_health <= 0 or not (previous is int):
+		return
+	var delta: int = health - int(previous)
+	if delta == 0:
+		return
+	var is_self: bool = actor_id == AppState.local_actor_id
+	var option: String = ("damage_numbers_self" if is_self
+		else ("damage_numbers_players" if _is_player_actor(actor_id)
+			else "damage_numbers_creatures"))
+	if not bool(_hud_element_options.get(option, true)):
+		return
+	_spawn_health_change_label(actor, delta)
+
+func _is_player_actor(actor_id: int) -> bool:
+	var actor_value: Variant = AppState.actors.get(actor_id)
+	if not actor_value is Dictionary:
+		return false
+	return int((actor_value as Dictionary).get("kind", 0)) == 0
+
+## The same rise-and-fade the experience labels use, over whichever actor took
+## the hit rather than always over the player.
+func _spawn_health_change_label(actor: ReplicatedActor3D, delta: int) -> void:
+	if not game_view.visible or not is_instance_valid(actor):
+		return
+	var world_position: Vector3 = actor.global_position + Vector3(0.0, 2.45, 0.0)
+	if gameplay_camera.is_position_behind(world_position):
+		return
+	var viewport_position: Vector2 = gameplay_camera.unproject_position(world_position)
+	var viewport_scale := Vector2.ONE
+	if main_viewport.size.x > 0 and main_viewport.size.y > 0:
+		viewport_scale = viewport_container.size / Vector2(main_viewport.size)
+	var screen_position: Vector2 = (viewport_container.position
+		+ viewport_position * viewport_scale)
+	var label: Label = Label.new()
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 15)
+	label.add_theme_color_override("font_outline_color", Color(0.015, 0.02, 0.025, 0.98))
+	label.add_theme_constant_override("outline_size", 4)
+	label.text = ("+%d" % delta) if delta > 0 else str(delta)
+	label.add_theme_color_override("font_color",
+		Color(0.42, 0.94, 0.45, 1.0) if delta > 0 else Color(0.96, 0.36, 0.30, 1.0))
+	_floating_feedback_layer.add_child(label)
+	label.reset_size()
+	label.position = Vector2(screen_position.x - label.size.x * 0.5,
+		screen_position.y)
+	_active_floating_labels.append(label)
+	var tween: Tween = create_tween().set_parallel(true)
+	tween.tween_property(label, "position",
+		label.position - Vector2(0.0, FLOATING_FEEDBACK_RISE),
+		FLOATING_FEEDBACK_LIFETIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "modulate:a", 0.0,
+		FLOATING_FEEDBACK_LIFETIME - FLOATING_FEEDBACK_FADE_DELAY).set_delay(
+		FLOATING_FEEDBACK_FADE_DELAY)
+	tween.finished.connect(func() -> void:
+		_active_floating_labels.erase(label)
+		label.queue_free())
+
+## An inventory or equipment slot's icon, drawn worn when the server says that
+## slot holds worn goods. The slot rather than the image id is what decides it:
+## a degraded item shares its artwork with the fresh one it came from, so the
+## picture alone cannot answer the question - which is exactly why Eternal
+## Lands drew the worn one mirrored instead of giving it a second icon.
+func _slot_icon(image_id: int, slot: int) -> Texture2D:
+	if AppState.is_worn_slot(slot):
+		var worn: Texture2D = item_atlas.worn_icon_for(image_id)
+		if worn != null:
+			return worn
+	return item_atlas.icon_for(image_id)
+
+## The same decision for a window that knows the item's name instead of a slot.
+func _named_icon(image_id: int, name: String) -> Texture2D:
+	if AppState.is_degraded_item(name):
+		var worn: Texture2D = item_atlas.worn_icon_for(image_id)
+		if worn != null:
+			return worn
+	return item_atlas.icon_for(image_id)
+
 func _inventory_description_for(slot: int) -> Dictionary:
 	for entry: Variant in AppState.inventory_state.get("items", []):
 		var described: Dictionary = entry as Dictionary
@@ -6420,7 +6559,7 @@ func _begin_carry(slot: int) -> void:
 		return
 	var item: Dictionary = item_value as Dictionary
 	_carried_slot = slot
-	carried_item.texture = item_atlas.icon_for(int(item.get("image_id", 0)))
+	carried_item.texture = _slot_icon(int(item.get("image_id", 0)), slot)
 	var quantity: int = int(item.get("quantity", 0))
 	(carried_item.get_node("Quantity") as Label).text = (str(quantity)
 		if quantity > 1 else "")
@@ -7022,7 +7161,7 @@ func _fill_storage_item_list(list_control: ItemList, items: Dictionary, prefix: 
 				_storage_row_detail(described)]
 		list_control.add_item(label)
 		list_control.set_item_metadata(index, position)
-		var icon: Texture2D = item_atlas.icon_for(image_id)
+		var icon: Texture2D = _named_icon(image_id, name)
 		if icon != null:
 			list_control.set_item_icon(index, icon)
 

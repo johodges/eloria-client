@@ -109,6 +109,21 @@ var quest_journal: Array[Dictionary] = []
 ## the two answer different questions and arrive in different packets: the
 ## journal is what is open now, this is the record that outlives the machine.
 var quest_archive: Array[Dictionary] = []
+## Worn goods, stated two ways because the two wires carry different identity.
+## `degraded_item_names` serves every window that knows an item's name; the
+## inventory grid knows only an image id, and a worn item shares its artwork
+## with the fresh one, so for those slots the server states the answer.
+var degraded_item_names: Dictionary = {}
+var worn_slots_mask: int = 0
+## Everything countable this character has done: the achievement tallies and
+## the achievements themselves, which used to exist only as a chat dump.
+var achievements_state: Dictionary = {"counters": [], "completed": []}
+
+func is_degraded_item(name: String) -> bool:
+	return degraded_item_names.has(name)
+
+func is_worn_slot(slot: int) -> bool:
+	return slot >= 0 and slot < 64 and (worn_slots_mask & (1 << slot)) != 0
 ## The party, exactly as the server last stated it. `in_party` false with an
 ## `invited_by` name is a real state - somebody has been asked to join and has
 ## not answered - so the two are held together rather than as separate flags
@@ -239,6 +254,11 @@ func _on_connection_state_changed(value: String) -> void:
 		merchant = _empty_merchant_state()
 		quest_journal.clear()
 		quest_archive.clear()
+		# The catalog half is per-profile and the mask is per-character, so a
+		# logout clears both rather than carrying one into the next session.
+		degraded_item_names.clear()
+		worn_slots_mask = 0
+		achievements_state = {"counters": [], "completed": []}
 		# Cleared on logout, not on a map change: a party outlives walking
 		# through a portal, and the server re-states it at login either way.
 		party = _empty_party_state()
@@ -778,6 +798,18 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 		"quest_archive":
 			quest_archive = event.entries
 			state_changed.emit(&"quest_archive")
+		"degraded_items":
+			degraded_item_names.clear()
+			for raw_name: Variant in event.names:
+				degraded_item_names[str(raw_name)] = true
+			state_changed.emit(&"degraded_items")
+		"worn_slots":
+			worn_slots_mask = int(event.mask)
+			state_changed.emit(&"worn_slots")
+		"achievements_state":
+			achievements_state = {"counters": event.counters,
+				"completed": event.completed}
+			state_changed.emit(&"achievements_state")
 		"party":
 			party = {"in_party": bool(event.in_party),
 				"members": event.members,
