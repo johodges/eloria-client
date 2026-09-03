@@ -1838,13 +1838,18 @@ func _run() -> void:
 		"GameView/FullMap/MapLayout/Sidebar/SidebarContent/MapLegend") as RichTextLabel
 	_expect(map_legend != null and map_legend.text.contains("Harvest node")
 		and map_legend.text.contains("Interactive")
-		and map_legend.text.contains("NPC"),
+		and map_legend.text.contains("Player / NPC")
+		and map_legend.text.contains("Invasion creature"),
 		"the legend names every colour the map draws")
-	# Each of the three is the colour the legend's own swatch is written in, so
+	# Each of the five is the colour the legend's own swatch is written in, so
 	# a reader comparing the sidebar to the map is comparing like with like.
 	_expect(map_legend != null
-		and map_legend.text.contains("[color=#%s]●[/color] NPC" % (
+		and map_legend.text.contains("[color=#%s]●[/color] Player / NPC" % (
 			ReplicatedActor3D.MAP_DOT_COLOUR.to_html(false)))
+		and map_legend.text.contains("[color=#%s]●[/color] Invasion creature" % (
+			ReplicatedActor3D.INVASION_MAP_DOT_COLOUR.to_html(false)))
+		and map_legend.text.contains("[color=#%s]●[/color] Creature" % (
+			ReplicatedActor3D.CREATURE_MAP_DOT_COLOUR.to_html(false)))
 		and map_legend.text.contains("[color=#%s]●[/color] Harvest node" % (
 			MapObject3D.HARVEST_COLOUR.to_html(false)))
 		and map_legend.text.contains("[color=#%s]●[/color] Interactive" % (
@@ -2660,9 +2665,13 @@ func _check_travel_facing() -> void:
 	actor.free()
 
 ## Everyone the server replicates carries the light blue dot the full map's
-## legend calls NPC. The local player draws its own white mark over the top of
-## its dot; nobody else has one, so without this an NPC standing in a town is
-## on the map only for as long as somebody is looking at the world.
+## legend calls Player / NPC. The local player draws its own white mark over
+## the top of its dot; nobody else has one, so without this an NPC standing in
+## a town is on the map only for as long as somebody is looking at the world.
+##
+## Creatures are the exception, and the reason the dot has a colour at all: a
+## player reading the map during an invasion is reading it to find out where
+## the invasion is, so an invasion creature is red and wildlife is yellow.
 func _check_map_dot() -> void:
 	var actor := ReplicatedActor3D.new()
 	root.add_child(actor)
@@ -2679,3 +2688,73 @@ func _check_map_dot() -> void:
 		and material.albedo_color.is_equal_approx(ReplicatedActor3D.MAP_DOT_COLOUR),
 		"the dot is the light blue the legend names")
 	actor.free()
+
+	# The creature dots are read off the wire rather than out of a fixture,
+	# because the only thing on the wire that says "invasion" is the colour
+	# marker the server prefixes the creature's name with.
+	var wildlife: Dictionary = EloriaProtocol.decode_actor(
+		_creature_packet(0, "Mirrorfin Otter"), false)
+	_expect(str(wildlife.get("name", "")) == "Mirrorfin Otter"
+		and int(wildlife.get("name_colour", 0)) == 0,
+		"a natural spawn reaches the client uncoloured and whole")
+	_expect(_map_dot_colour(wildlife).is_equal_approx(
+			ReplicatedActor3D.CREATURE_MAP_DOT_COLOUR),
+		"a natural spawn is a yellow dot on the map")
+	var invader: Dictionary = EloriaProtocol.decode_actor(_creature_packet(
+		ReplicatedActor3D.INVASION_NAME_COLOUR, "Armed Goblin"), false)
+	_expect(str(invader.get("name", "")) == "Armed Goblin",
+		"the colour marker is read as a colour rather than left in the name")
+	_expect(_map_dot_colour(invader).is_equal_approx(
+			ReplicatedActor3D.INVASION_MAP_DOT_COLOUR),
+		"an invasion creature is a red dot on the map")
+	# EL blue1 is a summon: neither an invasion nor wildlife, and a player's
+	# own summon standing next to them must not read as something to run from.
+	var summon: Dictionary = EloriaProtocol.decode_actor(
+		_creature_packet(4, "Brown Rabbit"), false)
+	_expect(_map_dot_colour(summon).is_equal_approx(
+			ReplicatedActor3D.MAP_DOT_COLOUR),
+		"a summoned creature keeps the ordinary actor dot")
+	_expect(not ReplicatedActor3D.INVASION_MAP_DOT_COLOUR.is_equal_approx(
+			ReplicatedActor3D.CREATURE_MAP_DOT_COLOUR)
+		and not ReplicatedActor3D.INVASION_MAP_DOT_COLOUR.is_equal_approx(
+			ReplicatedActor3D.MAP_DOT_COLOUR)
+		and not ReplicatedActor3D.CREATURE_MAP_DOT_COLOUR.is_equal_approx(
+			ReplicatedActor3D.MAP_DOT_COLOUR),
+		"the three dots are three colours")
+
+## One plain ADD_NEW_ACTOR payload for a creature, laid out the way the server
+## writes it: the creature's fields, then its name behind an optional colour
+## marker byte.
+func _creature_packet(name_colour: int, creature_name: String) -> PackedByteArray:
+	var payload := PackedByteArray()
+	payload.resize(17)
+	payload.encode_u16(0, 4242)
+	payload.encode_u16(2, 704)
+	payload.encode_u16(4, 816)
+	payload.encode_u16(6, 0)
+	payload.encode_s16(8, 0)
+	payload.encode_u8(10, 6)
+	payload.encode_u8(11, 7)
+	payload.encode_u16(12, 40)
+	payload.encode_u16(14, 40)
+	# PKABLE_COMPUTER_CONTROLLED: the kind the server gives every creature.
+	payload.encode_u8(16, 5)
+	if name_colour > 0:
+		payload.append(127 + name_colour)
+	payload.append_array(creature_name.to_ascii_buffer())
+	payload.append(0)
+	return payload
+
+## The colour the dot a spawn packet actually builds is painted in, rather than
+## the colour the rule says it should be: the two only agree while the spawn
+## path keeps handing the packet to the dot.
+func _map_dot_colour(dto: Dictionary) -> Color:
+	var actor := ReplicatedActor3D.new()
+	root.add_child(actor)
+	actor.configure(dto, CoordinateAdapter.new(), {}, {})
+	var dot: MeshInstance3D = actor.get_node_or_null("MapDot") as MeshInstance3D
+	var material: StandardMaterial3D = (dot.mesh.surface_get_material(0)
+		as StandardMaterial3D) if dot != null else null
+	var colour: Color = material.albedo_color if material != null else Color.BLACK
+	actor.free()
+	return colour

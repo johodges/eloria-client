@@ -636,7 +636,7 @@ horizontal_alignment = 1
 
 [node name="MapLegend" type="RichTextLabel" parent="GameView/FullMap/MapLayout/Sidebar/SidebarContent" unique_id=1862950269]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(210, 312)
+custom_minimum_size = Vector2(210, 354)
 layout_mode = 2
 theme_override_font_sizes/normal_font_size = 14
 bbcode_enabled = true
@@ -649,7 +649,9 @@ text = "[color=#ef795f]◆[/color] Tavern
 [color=#9d73d8]◆[/color] Blacksmith
 [color=#58b8d9]◆[/color] Potion / tailor
 [color=#e8a84f]◆[/color] Temple / school
-[color=#9fd2ff]●[/color] NPC
+[color=#9fd2ff]●[/color] Player / NPC
+[color=#fa5a5a]●[/color] Invasion creature
+[color=#fcec38]●[/color] Creature
 [color=#6bdb70]●[/color] Harvest node
 [color=#f29e3d]●[/color] Interactive
 [color=#ffffff]●[/color] Your position
