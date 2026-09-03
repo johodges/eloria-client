@@ -44,6 +44,7 @@ func _init() -> void:
 		"degraded_items_v1": EloriaProtocol.ServerMessage.ELORIA_DEGRADED_ITEMS,
 		"experience64_v1": EloriaProtocol.ServerMessage.ELORIA_EXPERIENCE_STATE,
 		"party_window_v1": EloriaProtocol.ServerMessage.ELORIA_PARTY_STATE,
+		"perk_catalog_v1": EloriaProtocol.ServerMessage.ELORIA_PERK_CATALOG,
 		"quest_archive_v1":
 			EloriaProtocol.ServerMessage.ELORIA_QUEST_ARCHIVE_STATE,
 		"player_info_v1": EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO,
@@ -69,6 +70,9 @@ func _init() -> void:
 		# No party, no invitation: the shortest frame the server ever sends.
 		EloriaProtocol.ServerMessage.ELORIA_PARTY_STATE: "0000000000",
 		EloriaProtocol.ServerMessage.ELORIA_QUEST_ARCHIVE_STATE: "0000",
+		# One perk, priced, with no reason to refuse it.
+		EloriaProtocol.ServerMessage.ELORIA_PERK_CATALOG:
+			"01000500c800000041004200 00".replace(" ", ""),
 		# No degradation chains authored: a real answer, not a missing packet.
 		EloriaProtocol.ServerMessage.ELORIA_DEGRADED_ITEMS: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_ACHIEVEMENTS_STATE: "00000000",

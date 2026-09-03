@@ -121,6 +121,15 @@ var map_light_root: Node3D
 @onready var stats_panel: Control = %StatsPanel
 @onready var stats_text: RichTextLabel = %StatsText
 @onready var stats_tabs: TabContainer = %StatsTabs
+## The Perks tab and its parts, built in code beside the scene's own tabs.
+var perk_tab: MarginContainer
+var perk_summary: Label
+var perk_rows: VBoxContainer
+var purchase_confirm: PanelContainer
+var purchase_prompt: Label
+## What the confirmation dialog is currently asking about: the kind the
+## server understands and the name it takes, or empty when nothing is asked.
+var _pending_purchase: Array[String] = []
 @onready var stats_close: Button = %StatsClose
 @onready var counter_categories: ItemList = %CounterCategories
 @onready var counter_text: RichTextLabel = %CounterText
@@ -656,6 +665,11 @@ const CONSOLE_HISTORY_LIMIT := 60
 ## which is where Eternal Lands puts K_SPELL1..12 (keys.c); the legacy
 ## client showed six of them, and the catalog has more than six spells.
 const SPELL_QUICK_SLOTS := 12
+## The ceilings the server enforces on what a pick point can buy, so the "+"
+## is not offered on a line that is already full. They are the server's, from
+## `eloria/perks.py`; a purchase is still the server's to refuse.
+const ATTRIBUTE_MAXIMUM := 48
+const NEXUS_MAXIMUM := 10
 const INVENTORY_MIN_SCALE := 0.65
 const INVENTORY_MAX_SCALE := 1.75
 const TILE_DIRECTIONS: Array[Vector2i] = [
@@ -829,6 +843,8 @@ func _ready() -> void:
 	knowledge_list.item_selected.connect(_on_knowledge_selected)
 	knowledge_known_only.toggled.connect(_on_knowledge_filter_toggled)
 	stats_tabs.tab_changed.connect(_on_stats_tab_changed)
+	stats_text.meta_clicked.connect(_on_stats_meta_clicked)
+	_build_perks_tab()
 	stats_close.pressed.connect(func() -> void: stats_panel.hide())
 	counter_categories.item_selected.connect(_on_counter_category_selected)
 	session_reset.pressed.connect(_reset_session_tracking)
@@ -3053,8 +3069,9 @@ func _on_state_changed(path: StringName) -> void:
 			_update_legacy_clock_and_compass()
 			_apply_day_night()
 			_sync_diagnostics()
-		&"perks":
+		&"perks", &"perk_catalog":
 			_sync_stats()
+			_sync_perk_catalog()
 		&"counters":
 			_sync_counter_categories()
 			_sync_counters()
@@ -4493,13 +4510,20 @@ func _sync_stats() -> void:
 	# wherever its label happened to end.
 	# Every section header is the same quiet green Eternal Lands paints its
 	# statistics headings in, so the window reads as one document.
+	# A pick point buys one attribute point or one nexus point. The "+" beside
+	# a line appears only while the server's own numbers allow it: a point to
+	# spend, and a base value below the ceiling the server enforces.
+	var pickpoints_left: int = _available_pickpoints()
 	var basic_lines: Array[String] = [_stat_heading(
 		"[color=#7fd87f][b]Basic Attributes[/b][/color]")]
 	for label_and_key: Array in [["Physique", "physique"],
 			["Coordination", "coordination"], ["Reasoning", "reasoning"],
 			["Will", "will"], ["Instinct", "instinct"], ["Vitality", "vitality"]]:
+		var attribute: String = str(label_and_key[1])
 		basic_lines.append(_stat_row(str(label_and_key[0]),
-			_stat_pair(stats, str(label_and_key[1]))))
+			_stat_pair(stats, attribute) + _spend_link("attribute", attribute,
+				pickpoints_left > 0 and int(stats.get(attribute + "_base",
+					stats.get(attribute, 0))) < ATTRIBUTE_MAXIMUM)))
 	basic_lines.append(_stat_heading(
 		"[color=#7fd87f][b]Cross Attributes[/b][/color]", true))
 	for cross: Array in [["Might", "physique", "coordination"],
@@ -4514,11 +4538,12 @@ func _sync_stats() -> void:
 	for label_and_key: Array in [["Human", "human_nexus"], ["Animal", "animal_nexus"],
 			["Vegetal", "vegetal_nexus"], ["Inorganic", "inorganic_nexus"],
 			["Artificial", "artificial_nexus"], ["Magic", "magic_nexus"]]:
+		var nexus_key: String = str(label_and_key[1])
 		nexus_lines.append(_stat_row(str(label_and_key[0]),
-			_stat_pair(stats, str(label_and_key[1]))))
-	var pickpoints: int = int(stats.get("pickpoints_earned", stats.get("overall", 0))) \
-		- int(stats.get("pickpoints_spent", 0))
-	nexus_lines.append(_stat_row("Pickpoints", _grouped(pickpoints), true))
+			_stat_pair(stats, nexus_key) + _spend_link("nexus", nexus_key,
+				pickpoints_left > 0 and int(stats.get(nexus_key + "_base",
+					stats.get(nexus_key, 0))) < NEXUS_MAXIMUM)))
+	nexus_lines.append(_stat_row("Pickpoints", _grouped(pickpoints_left), true))
 	nexus_lines.append(_stat_heading("[color=#7fd87f][b]Perks[/b][/color]", true))
 	if AppState.perks.is_empty():
 		nexus_lines.append(_stat_row("None", ""))
@@ -4599,6 +4624,195 @@ static func _cross_pair(stats: Dictionary, first: String, second: String) -> Str
 	var base: int = (int(stats.get(first + "_base", stats.get(first, 0)))
 		+ int(stats.get(second + "_base", stats.get(second, 0)))) / 2
 	return "%d/%d" % [current, base]
+
+## The spend control drawn beside one buyable line, or nothing at all.
+##
+## It is a link rather than a button because these rows are cells in a bbcode
+## table, and the whole statistics document is one RichTextLabel. What it says
+## is only ever what the server has already told this client: the pick points
+## come from the stats packet, the ceilings from the same packet's own values,
+## and a perk's refusal is the server's sentence, quoted.
+static func _spend_link(kind: String, name: String, affordable: bool) -> String:
+	if not affordable:
+		return ""
+	return " [url=spend:%s:%s][color=#7fd87f][b]+[/b][/color][/url]" % [kind, name]
+
+## How many pick points the server says are unspent.
+func _available_pickpoints() -> int:
+	var earned: int = int(AppState.stats.get("pickpoints_earned",
+		AppState.stats.get("overall", 0)))
+	return earned - int(AppState.stats.get("pickpoints_spent", 0))
+
+func _on_stats_meta_clicked(meta: Variant) -> void:
+	var parts: PackedStringArray = str(meta).split(":", false)
+	if parts.size() != 3 or parts[0] != "spend":
+		return
+	_ask_to_spend(parts[1], parts[2])
+
+## Asks before spending, because nothing here can be taken back: a pick point
+## returns only through a removal stone. The wraith asks the same question in
+## its own dialogue, so buying from this window is not the quicker path to a
+## mistake.
+func _ask_to_spend(kind: String, name: String) -> void:
+	_pending_purchase = [kind, name]
+	var readable: String = name.capitalize()
+	match kind:
+		"nexus":
+			purchase_prompt.text = (
+				"Spend 1 pick point to raise your %s nexus?" % readable)
+		"perk":
+			var cost: int = 0
+			var gold: int = 0
+			for raw_perk: Variant in AppState.perk_catalog:
+				var perk: Dictionary = raw_perk as Dictionary
+				if str(perk.get("name", "")).to_lower() == name.to_lower():
+					cost = int(perk.get("pickpoints", 0))
+					gold = int(perk.get("gold", 0))
+			var price: String = ("%d pick points" % cost if cost > 0
+				else "no pick points" if cost == 0
+				else "and gain %d pick points" % -cost)
+			if gold > 0:
+				price += " and %s gold" % _grouped(gold)
+			readable = str(name)
+			purchase_prompt.text = "Take the %s perk for %s?" % [
+				readable, price]
+		_:
+			purchase_prompt.text = (
+				"Spend 1 pick point to raise your %s?" % readable)
+	purchase_confirm.show()
+	# Nothing lays this panel out - it hangs off the root rather than a
+	# container - so it is sized to its own contents and then centred on the
+	# viewport, which is where a question about to spend something belongs.
+	purchase_confirm.reset_size()
+	purchase_confirm.position = (get_viewport_rect().size
+		- purchase_confirm.size) * 0.5
+	purchase_confirm.move_to_front()
+
+## The server owns every one of these rules; this only asks. What comes back
+## is a line of text and fresh stats, perks and catalogue packets, so the
+## window redraws from the server's answer rather than from the request.
+func _on_purchase_cancelled() -> void:
+	_pending_purchase.clear()
+	purchase_confirm.hide()
+
+func _on_purchase_confirmed() -> void:
+	purchase_confirm.hide()
+	if _pending_purchase.size() != 2:
+		return
+	var error: Error = Network.send_chat("#spend %s %s" % [
+		_pending_purchase[0], _pending_purchase[1]])
+	if error != OK:
+		push_warning("#spend failed: " + error_string(error))
+	_pending_purchase.clear()
+
+## The Perks tab, built here rather than in the scene because the perk table
+## is the server's and arrives on the wire; there is nothing to lay out until
+## it does.
+func _build_perks_tab() -> void:
+	perk_tab = MarginContainer.new()
+	perk_tab.name = "Perks"
+	stats_tabs.add_child(perk_tab)
+	var column := VBoxContainer.new()
+	column.name = "PerkContent"
+	perk_tab.add_child(column)
+	perk_summary = Label.new()
+	perk_summary.name = "PerkSummary"
+	perk_summary.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	column.add_child(perk_summary)
+	var scroll := ScrollContainer.new()
+	scroll.name = "PerkScroll"
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	column.add_child(scroll)
+	perk_rows = VBoxContainer.new()
+	perk_rows.name = "PerkRows"
+	perk_rows.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(perk_rows)
+
+	# An in-HUD panel rather than a ConfirmationDialog: every other window
+	# this client draws is one of these, and a native dialog would be the
+	# only piece of the game wearing the desktop's chrome.
+	purchase_confirm = PanelContainer.new()
+	purchase_confirm.name = "PurchaseConfirm"
+	purchase_confirm.mouse_filter = Control.MOUSE_FILTER_STOP
+	# Above the statistics panel that raises it, and below the server's own
+	# popup at 40, which is the one thing that should interrupt this.
+	purchase_confirm.z_index = 35
+	purchase_confirm.hide()
+	# Beside the other windows rather than on the root: they are all children
+	# of the game view, and a question about spending has to come up over the
+	# statistics panel that asked it.
+	game_view.add_child(purchase_confirm)
+	var confirm_column := VBoxContainer.new()
+	confirm_column.name = "PurchaseBody"
+	purchase_confirm.add_child(confirm_column)
+	purchase_prompt = Label.new()
+	purchase_prompt.name = "PurchasePrompt"
+	purchase_prompt.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	purchase_prompt.custom_minimum_size = Vector2(360.0, 0.0)
+	confirm_column.add_child(purchase_prompt)
+	var confirm_buttons := HBoxContainer.new()
+	confirm_buttons.name = "PurchaseButtons"
+	confirm_buttons.alignment = BoxContainer.ALIGNMENT_END
+	confirm_column.add_child(confirm_buttons)
+	var confirm_yes := Button.new()
+	confirm_yes.name = "PurchaseYes"
+	confirm_yes.text = "Spend"
+	confirm_yes.pressed.connect(_on_purchase_confirmed)
+	confirm_buttons.add_child(confirm_yes)
+	var confirm_no := Button.new()
+	confirm_no.name = "PurchaseNo"
+	confirm_no.text = "Cancel"
+	confirm_no.pressed.connect(_on_purchase_cancelled)
+	confirm_buttons.add_child(confirm_no)
+	_sync_perk_catalog()
+
+## Redraws the Perks tab from the catalogue the server sent. A perk it refuses
+## carries the refusal instead of a Take button, in the server's own words -
+## this window decides nothing about who may have what.
+func _sync_perk_catalog() -> void:
+	if perk_rows == null:
+		return
+	for child: Node in perk_rows.get_children():
+		perk_rows.remove_child(child)
+		child.queue_free()
+	perk_summary.text = "Pick points available: %d" % _available_pickpoints()
+	if AppState.perk_catalog.is_empty():
+		var waiting := Label.new()
+		waiting.name = "PerksWaiting"
+		waiting.text = "The server has not listed the perks it offers."
+		perk_rows.add_child(waiting)
+		return
+	for raw_perk: Variant in AppState.perk_catalog:
+		var perk: Dictionary = raw_perk as Dictionary
+		var perk_name: String = str(perk.get("name", ""))
+		var cost: int = int(perk.get("pickpoints", 0))
+		var gold: int = int(perk.get("gold", 0))
+		var blocker: String = str(perk.get("blocker", ""))
+		var row := HBoxContainer.new()
+		# Node names keep spaces, and a row is looked up by name; the perk
+		# names with two words would otherwise be the awkward ones.
+		row.name = "Perk%s" % perk_name.replace(" ", "").validate_node_name()
+		perk_rows.add_child(row)
+		var take := Button.new()
+		take.name = "Take"
+		take.text = "Take"
+		take.disabled = not blocker.is_empty()
+		take.tooltip_text = blocker if not blocker.is_empty() else str(
+			perk.get("description", ""))
+		take.pressed.connect(_ask_to_spend.bind("perk", perk_name))
+		row.add_child(take)
+		var price: String = ("%d pp" % cost if cost > 0
+			else "free" if cost == 0 else "+%d pp" % -cost)
+		if gold > 0:
+			price += ", %s gold" % _grouped(gold)
+		var label := Label.new()
+		label.name = "Detail"
+		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		label.text = "%s (%s)  -  %s%s" % [perk_name, price,
+			str(perk.get("description", "")),
+			"" if blocker.is_empty() else "  [%s]" % blocker]
+		row.add_child(label)
 
 func _on_stats_tab_changed(tab: int) -> void:
 	if tab == 1:

@@ -100,6 +100,29 @@ func _run() -> void:
 	(main.get_node("GameView/StatsPanel/Content/StatsTabs") as TabContainer).current_tab = 3
 	main.call("_sync_session_experience")
 	await _capture("legacy-session-experience.png")
+	# The pick-point spending this client adds: the "+" beside a raisable
+	# line on the statistics tab, and the perks the server offers on its own.
+	var app_state_perks: Node = root.get_node("AppState")
+	app_state_perks.call("_on_packet", 215, ("02000500c8000000457863617661746f72005477696365206173206d616e79206974656d732e0000fdff00000000506f7765722048756e677279004c6f7365203320666f6f6420706572206d696e7574652e00596f7520616c726561647920686176652074686174207065726b2e00").hex_decode())
+	(main.get_node("GameView/StatsPanel/Content/StatsTabs")
+		as TabContainer).current_tab = 4
+	for unused_perk_frame: int in range(3):
+		await process_frame
+	await _capture("legacy-perks.png")
+	(main.get_node("GameView/StatsPanel/Content/StatsTabs")
+		as TabContainer).current_tab = 0
+	main.call("_on_stats_meta_clicked", "spend:attribute:physique")
+	for unused_confirm_frame: int in range(3):
+		await process_frame
+	var confirm_panel: PanelContainer = main.get(
+		"purchase_confirm") as PanelContainer
+	_expect(confirm_panel.visible and confirm_panel.size.x > 0.0
+			and confirm_panel.get_global_rect().intersects(
+				Rect2(Vector2.ZERO, Vector2(1280.0, 720.0))),
+		"the spend question is drawn on screen: visible=%s rect=%s" % [
+			confirm_panel.visible, confirm_panel.get_global_rect()])
+	await _capture("legacy-spend-pickpoint.png")
+	main.call("_on_purchase_cancelled")
 	(main.get_node("GameView/StatsPanel") as Control).hide()
 	main.call("_toggle_full_map")
 	for unused_frame: int in range(4):
