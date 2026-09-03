@@ -1705,28 +1705,65 @@ func _run() -> void:
 		"reading progress is presented from the authoritative research statistics")
 
 	var cooldown_slot: Button = (main.get("quick_slot_buttons") as Array)[0] as Button
+	var cooldown_slot_two: Button = (main.get("quick_slot_buttons") as Array)[1] as Button
+	var inventory_cooldown_slot: Button = (main.get("inventory_slot_buttons") as Array)[10] as Button
 	var cooldowns: Dictionary = app_state_inventory.get("inventory_cooldowns") as Dictionary
 	cooldowns.clear()
 	main.call("_update_cooldown_overlays")
-	var cooldown_overlay: Control = cooldown_slot.get_node_or_null("Cooldown") as Control
-	_expect(cooldown_overlay != null and not cooldown_overlay.visible,
+	var cooldown_shade: Control = cooldown_slot.get_node_or_null("Cooldown") as Control
+	_expect(cooldown_shade != null and not cooldown_shade.visible,
 		"a slot with no cooldown draws no cooldown art")
+	var cooldown_seconds: Label = cooldown_slot.get_node_or_null("Seconds") as Label
+	_expect(cooldown_seconds != null and cooldown_seconds.get_parent() == cooldown_slot,
+		"the countdown label sits directly on the slot instead of inside the"
+		+ " shade that drains, so it cannot drift down the icon as the shade does")
 	cooldowns[0] = {"maximum_msec": 10000,
 		"end_msec": Time.get_ticks_msec() + 10000}
 	main.call("_update_cooldown_overlays")
-	_expect(cooldown_overlay.visible
-		and is_equal_approx(snappedf(cooldown_overlay.anchor_top, 0.05), 0.0),
+	_expect(cooldown_shade.visible
+		and is_equal_approx(snappedf(cooldown_shade.anchor_top, 0.05), 0.0),
 		"a cooldown at its full duration covers the whole slot")
 	cooldowns[0] = {"maximum_msec": 10000,
 		"end_msec": Time.get_ticks_msec() + 2500}
 	main.call("_update_cooldown_overlays")
-	_expect(is_equal_approx(snappedf(cooldown_overlay.anchor_top, 0.05), 0.75),
+	_expect(is_equal_approx(snappedf(cooldown_shade.anchor_top, 0.05), 0.75),
 		"a quarter-remaining cooldown draws a quarter of the slot")
-	_expect((cooldown_overlay.get_node("Seconds") as Label).text == "3",
+	_expect(cooldown_seconds.text == "3",
 		"the cooldown art also states the seconds remaining")
-	cooldowns[0] = {"maximum_msec": 10000, "end_msec": Time.get_ticks_msec() - 1}
+	_expect(is_equal_approx(cooldown_seconds.anchor_top, 0.0)
+		and is_equal_approx(cooldown_seconds.anchor_bottom, 1.0),
+		"the countdown label still spans the whole slot rather than the"
+		+ " shrunken shade, so it stays centered as the cooldown runs out")
+
+	# The quick bar and the inventory grid share the same slot numbers, so a
+	# second and third slot going on cooldown must not blank the first: every
+	# slot on cooldown draws its own countdown at once, in both places.
+	cooldowns[1] = {"maximum_msec": 8000, "end_msec": Time.get_ticks_msec() + 8000}
+	cooldowns[10] = {"maximum_msec": 6000, "end_msec": Time.get_ticks_msec() + 6000}
 	main.call("_update_cooldown_overlays")
-	_expect(not cooldown_overlay.visible, "an expired cooldown clears its art")
+	_expect(cooldown_shade.visible
+		and (cooldown_slot_two.get_node("Cooldown") as Control).visible
+		and (cooldown_slot_two.get_node("Seconds") as Label).text == "8",
+		"two quick-bar slots on cooldown at once both show their own countdown")
+	_expect((inventory_cooldown_slot.get_node_or_null("Cooldown") as Control) != null
+		and (inventory_cooldown_slot.get_node("Cooldown") as Control).visible
+		and (inventory_cooldown_slot.get_node("Seconds") as Label).text == "6",
+		"the inventory grid draws the same cooldown art as the quick bar")
+
+	# The server announces one slot's cooldown per packet and never resends
+	# the full active set. A second slot's packet used to wipe the first
+	# slot's still-running countdown; it must merge instead.
+	cooldowns.clear()
+	app_state_inventory.call("_on_packet", 77, PackedByteArray([0, 10, 0, 10, 0]))
+	app_state_inventory.call("_on_packet", 77, PackedByteArray([1, 8, 0, 8, 0]))
+	_expect(cooldowns.has(0) and cooldowns.has(1),
+		"a second slot's cooldown packet merges instead of replacing the first")
+
+	cooldowns[0] = {"maximum_msec": 10000, "end_msec": Time.get_ticks_msec() - 1}
+	cooldowns[1] = {"maximum_msec": 10000, "end_msec": Time.get_ticks_msec() - 1}
+	cooldowns[10] = {"maximum_msec": 10000, "end_msec": Time.get_ticks_msec() - 1}
+	main.call("_update_cooldown_overlays")
+	_expect(not cooldown_shade.visible, "an expired cooldown clears its art")
 	cooldowns.clear()
 
 	# Server popups. The server had no way to ask the player anything: the
