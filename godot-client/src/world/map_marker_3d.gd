@@ -6,15 +6,17 @@ extends Node3D
 ## The server owns markers entirely - it states each one with `SEND_MAP_MARKER`
 ## and takes it away with `REMOVE_MAP_MARKER` - so this node carries no state of
 ## its own and never decides that a marker has been reached. It draws on the
-## map-marker layer both top-down cameras render and nothing else, because a
+## map-marker layer the full-map camera renders and nothing else, because a
 ## marker is a navigation aid, not scenery: showing it in the gameplay view
 ## would put a floating pin over map artwork that already stands on its own.
+## The minimap marks the same marker in pixels over its own render, so that the
+## mark holds its size through a zoom; see `minimap_marker_overlay.gd`.
 ##
 ## The label is not drawn here. A full map covers a whole map at once, so no
 ## text at that scale is readable; `main.gd` lists the labels in the map
 ## sidebar instead, where they can be read.
 
-## The visual layer both map cameras render, shared with world objects.
+## The visual layer the full-map camera renders, shared with world objects.
 const MAP_MARKER_LAYER := 4
 const MARKER_COLOUR := Color(0.98, 0.78, 0.22)
 

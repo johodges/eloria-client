@@ -79,6 +79,12 @@ func set_active(active: bool) -> void:
 func _marker_colour() -> Color:
 	return HARVEST_COLOUR if is_harvestable() else INTERACTIVE_COLOUR
 
+## The colour this object is marked in on either map. The full map draws the
+## modelled disc below; the minimap draws its own mark and asks for the colour
+## here, so both maps mark an ore seam in one green rather than two.
+func map_dot_colour() -> Color:
+	return _marker_colour()
+
 ## The registry entry for this object, or an empty dictionary.
 ##
 ## A harvest node is named by its resource label and an interactive by the label

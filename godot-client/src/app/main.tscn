@@ -413,7 +413,7 @@ render_target_update_mode = 0
 [node name="MapCamera" type="Camera3D" parent="GameView/MapViewport" unique_id=1016038437]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 220, 0)
-cull_mask = 5
+cull_mask = 1
 projection = 1
 current = true
 size = 180.0
@@ -514,7 +514,7 @@ offset_left = 16.0
 offset_top = 42.0
 offset_right = 280.0
 offset_bottom = 306.0
-tooltip_text = "Floating minimap [Alt+M] — drag its thick compass border; right-click for north/player/viewport orientation"
+tooltip_text = "Floating minimap [Alt+M] — drag its compass border; right-click for orientation, marker types and appearance"
 
 [node name="Minimap" type="TextureRect" parent="GameView/MinimapFrame" unique_id=1494890654]
 unique_name_in_owner = true
