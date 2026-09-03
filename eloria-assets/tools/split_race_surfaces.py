@@ -363,7 +363,31 @@ def absorb_small_islands(faces: np.ndarray, positions: np.ndarray,
     return new_labels
 
 
-def classify(positions, uvs, indices, texture: Image.Image):
+def head_bone_y(document, binary, skin_index: int) -> float:
+    """The Head joint's own rest-pose Y, in this mesh's coordinate space.
+
+    Every body on the common skeleton binds to the identical rig, so
+    this is the one anchor for "where the head is" that does not depend
+    on THIS body's own sculpt -- unlike a fraction of the whole mesh's
+    Y span, which silently assumes nothing sits above the head. That
+    assumption holds for a bald human skull but not for a body whose
+    concept art gives it horns: measured on Whitehorn Votary, whose
+    horns are real geometry, the old "top 20% of total height" band
+    landed mostly ON the horns, which is what "eyes on the horn" turned
+    out to be -- not a colour bug at all, but the geometric zone that
+    feeds it being anchored to the wrong thing.
+    """
+    skin = document["skins"][skin_index]
+    joints_list = skin["joints"]
+    names = [document["nodes"][j].get("name", "") for j in joints_list]
+    ibms = accessor_array(document, binary, skin["inverseBindMatrices"])
+    head_row = names.index("Head")
+    ibm = np.asarray(ibms[head_row], dtype=np.float64).reshape(4, 4).T
+    return float(np.linalg.inv(ibm)[1, 3])
+
+
+def classify(positions, uvs, indices, texture: Image.Image,
+            head_anchor: float):
     """Boots/pants/shirt/skin by nearest colour to a per-body sample of
     each; eyes by geometry.
 
@@ -478,33 +502,73 @@ def classify(positions, uvs, indices, texture: Image.Image):
         faces, positions, labels,
         ("body", "wardrobe_shirt", "wardrobe_pants", "wardrobe_boots"))
 
-    # Eyes: two lobes, symmetric about centre, at 0.60-0.69 of the way up
-    # the HEAD's own Y span (not the whole body's -- "head" is frac >= 0.80
-    # of the body, everything from there to the crown). Measured on the
-    # male body: the nose tip -- the true most-forward point, found by
-    # sweeping max Z across 2 cm Y-slices -- peaks around 0.52-0.58 of
-    # that same span, so this band sits well above it, under the brow
-    # rather than on it. The upper edge was pulled in from an original
-    # 0.72: on the female body specifically, the extra sliver between
-    # 0.69 and 0.72 held nothing but a stray eyebrow/eyelash mark that
-    # happened to be dark enough, and connected enough to the true eye's
-    # own triangles, to survive both the colour and connected-component
-    # filters below -- checked directly by sweeping this edge from 0.72
-    # down to 0.67 and re-rendering at each step, which showed the kept
-    # face count plateau at 0.68-0.70 (the true eye, unaffected) before
-    # dropping further at 0.67 (cutting into the eye itself). The gap and
-    # half-width are likewise fractions of the head span rather than
-    # fixed metres, so a larger or smaller head on the same rig gets a
-    # proportionally placed, proportionally sized pair rather than one
-    # calibrated to this body's absolute scale.
-    head = frac >= 0.80
+    # Eyes: two lobes, symmetric about centre. The search is bounded to a
+    # window around the skeleton's own Head joint (head_anchor) rather
+    # than a fraction of the whole mesh's height -- a fraction assumes
+    # nothing sits above the head, which held for the bald Luminous
+    # pilot but not for a body whose concept art gives it horns: checked
+    # directly on Whitehorn Votary, the old "top 20% of total height"
+    # band landed mostly ON the horns ("eyes" ending up ON a horn was
+    # never a colour bug; it was this). HEAD_LO_OFFSET/HEAD_HI_OFFSET
+    # are metres from the joint, not a fraction, deliberately: a head is
+    # much the same size regardless of how tall the rest of the body is.
+    #
+    # The window is wide on both sides because the joint's OWN position
+    # relative to the face turned out not to be consistent enough to
+    # trim it tighter: checked directly, Whitehorn Votary's nose tip
+    # sits 1.5-2.5 cm BELOW its Head joint, while both Luminous bodies'
+    # sit 7.5-9 cm ABOVE theirs -- over 10 cm of spread from a single
+    # other body, from what should be the same joint on the same rig. A
+    # first version bounded this at +0.025 specifically (comfortably
+    # below both Luminous noses) and it silently cost Whitehorn Votary
+    # its own nose entirely: every slice inside that window was still on
+    # the rising side of the true peak, so the sweep below just kept
+    # picking the window's own lower edge, and everything downstream
+    # inherited a nose position that was never a real local maximum.
+    # -0.10 clears that with margin; +0.20 stays short of where Whitehorn
+    # Votary's horns start mattering (measured past +0.24).
+    HEAD_LO_OFFSET, HEAD_HI_OFFSET = -0.10, 0.20
+    head = ((y >= head_anchor + HEAD_LO_OFFSET)
+            & (y <= head_anchor + HEAD_HI_OFFSET))
     if head.any():
         head_lo, head_hi = float(y[head].min()), float(y[head].max())
         head_span = head_hi - head_lo
         if head_span > 1e-9:
-            eye_level = (y >= head_lo + 0.60 * head_span) & (y < head_lo + 0.69 * head_span)
+            # Within that window, WHERE the eyes actually sit is anchored
+            # to the nose tip, not to a fraction of the window itself:
+            # checked directly, the Head joint's own position relative to
+            # the face varies far more across bodies (2.5-9 cm to the
+            # nose tip, Whitehorn Votary vs both Luminous bodies) than
+            # the nose-to-eye distance does on a face (3.7-3.8 cm on
+            # both Luminous bodies, despite one having a visibly bigger
+            # head span than the other) -- the joint's placement is an
+            # artefact of how each concept image happened to generate,
+            # the nose-to-eye gap is an actual facial proportion. Find
+            # it the same way the old fraction was originally measured:
+            # sweep max Z (most forward) across 1 cm Y-slices within the
+            # head window near the centreline, and take the Y of
+            # whichever slice reaches furthest forward.
+            near_axis = np.abs(x) < 0.06
+            slice_lo = np.floor(head_lo * 100) / 100
+            nose_y, nose_z = head_lo, -1e9
+            for edge in np.arange(slice_lo, head_hi, 0.01):
+                sel = head & near_axis & (y >= edge) & (y < edge + 0.01)
+                if sel.any():
+                    z_max = float(z[sel].max())
+                    if z_max > nose_z:
+                        nose_z, nose_y = z_max, edge + 0.005
+            eye_level = (y >= nose_y + 0.017) & (y < nose_y + 0.057)
+            # gap/half-width stay fractions of head_span, which still
+            # scales with this body's own head size regardless of how
+            # its eye level was found. Checked directly against the real
+            # eye's own X on both Luminous bodies, it sits at 0.10-0.29
+            # of head_span depending on body and side -- the two genders
+            # alone span nearly that whole range, so this stays wide
+            # enough to hold either. The colour and connected-component
+            # filters below are what actually finds the eye inside this
+            # net; widening the net does not weaken them.
             gap = 0.05 * head_span
-            half_width = 0.11 * head_span
+            half_width = 0.35 * head_span
             eye_zone = eye_level & (np.abs(x) >= gap) & (np.abs(x) < gap + half_width)
             # The zone is mostly eyelid/brow skin around a small painted
             # eye -- keep only the zone's own colour outliers, measured
@@ -585,7 +649,8 @@ def reclassify_surfaces(document, binary) -> str:
     view = document["bufferViews"][image["bufferView"]]
     start = 8 + view.get("byteOffset", 0)
     texture = Image.open(io.BytesIO(bytes(binary[start:start + view["byteLength"]])))
-    _, labels = classify(positions, uvs, all_faces.reshape(-1), texture)
+    anchor = head_bone_y(document, binary, next(iter(by_name.values()))["skin"])
+    _, labels = classify(positions, uvs, all_faces.reshape(-1), texture, anchor)
 
     orphaned = set(np.unique(labels).tolist()) - set(by_name)
     # "eyes" is the one label expected to appear with no node yet: a body
@@ -842,13 +907,13 @@ def add_scalp(document, binary) -> int:
 def split(path: Path, calibrate: bool) -> str:
     document, binary = read_glb(path)
     extras = document.setdefault("asset", {}).setdefault("extras", {})
-    if int(extras.get("eloriaSurfacesSplit", 0)) >= 22:
+    if int(extras.get("eloriaSurfacesSplit", 0)) >= 27:
         return "already split"
-    if int(extras.get("eloriaSurfacesSplit", 0)) in (15, 16, 17, 18, 19, 20, 21):
+    if int(extras.get("eloriaSurfacesSplit", 0)) in (15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26):
         report = reclassify_surfaces(document, binary)
-        extras["eloriaSurfacesSplit"] = 22
+        extras["eloriaSurfacesSplit"] = 27
         write_glb(path, document, binary)
-        return "%s -> v22" % report
+        return "%s -> v27" % report
     if int(extras.get("eloriaSurfacesSplit", 0)) == 14:
         count = resmooth_shared_surfaces(document, binary)
         extras["eloriaSurfacesSplit"] = 15
@@ -890,7 +955,8 @@ def split(path: Path, calibrate: bool) -> str:
     smoothed = smooth_normals(positions, indices.astype(np.int64))
     overwrite_accessor(document, binary, prim["attributes"]["NORMAL"], smoothed)
 
-    faces, labels = classify(positions, uvs, indices, texture)
+    anchor = head_bone_y(document, binary, mesh_node["skin"])
+    faces, labels = classify(positions, uvs, indices, texture, anchor)
     counts = {c: int((labels == c).sum()) for c in CLASSES}
     if calibrate:
         return "faces per class: %s" % counts
@@ -984,7 +1050,7 @@ def split(path: Path, calibrate: bool) -> str:
 
     del mesh_node["mesh"]
     add_scalp(document, binary)
-    extras["eloriaSurfacesSplit"] = 22
+    extras["eloriaSurfacesSplit"] = 27
     write_glb(path, document, binary)
     return "split: %s" % counts
 
