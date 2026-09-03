@@ -122,10 +122,27 @@ const GAMEPLAY_ONLY_VISUAL_LAYER := 2
 ## it needs a dot sized for the map rather than for the world.
 const MAP_MARKER_LAYER := 4
 const MAP_DOT_RADIUS := 6.0
-## The light blue the full map's legend calls NPC, written the way the legend
+## The light blue the full map's legend calls Player / NPC, written the way it
 ## writes it so a reader comparing the swatch to the map is comparing one
 ## colour to itself rather than to a rounding of it.
 const MAP_DOT_COLOUR := Color("9fd2ff")
+## An invasion creature's dot, and an ordinary creature's. Both are read off
+## the map at a glance while something is coming for the player, so they are
+## the two colours a map already means danger with: an invasion is the red one
+## and the wildlife is the yellow one. Written the way the legend writes them,
+## for the same reason MAP_DOT_COLOUR is.
+const INVASION_MAP_DOT_COLOUR := Color("fa5a5a")
+const CREATURE_MAP_DOT_COLOUR := Color("fcec38")
+## The actor kind the server gives every creature - EL's
+## PKABLE_COMPUTER_CONTROLLED. Players are HUMAN and scenery NPCs are NPC, so
+## this is what separates the two creature dots from everybody else's.
+const CREATURE_ACTOR_KIND := 5
+## EL red3, the colour the server prefixes an invasion creature's name with.
+## Nothing else on the wire says "invasion": the name's colour is how the
+## legacy client knew to draw the banner red, and it is how this knows to draw
+## the dot red. A summoned creature carries EL blue1 instead and is neither an
+## invasion nor wildlife, so it keeps the ordinary actor dot.
+const INVASION_NAME_COLOUR := 14
 const SETTLED_YAW_EPSILON := 0.0005
 
 # Overhead health bar geometry, in world units, measured downwards from the
@@ -176,7 +193,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	selection_ring.layers = GAMEPLAY_ONLY_VISUAL_LAYER
 	add_child(selection_ring)
 	_add_nameplate(dto)
-	_add_map_dot()
+	_add_map_dot(dto)
 	resolver = AnimationResolver.new(animation_config)
 	_model_config = model_config.duplicate(true)
 	_attachment_bones = (model_config.get("attachments", {}) as Dictionary).duplicate(true)
@@ -386,15 +403,30 @@ func _add_fallback_visual(dto: Dictionary) -> void:
 	mesh_instance.position.y = 0.85
 	add_child(mesh_instance)
 
-## The dot this actor shows on the minimap and the full map. The legend calls
-## it NPC, but every actor gets one: a player standing somewhere is the same
-## kind of thing to read off a map as an NPC is, and the local player already
-## has its own white mark drawn over the top of this one.
-func _add_map_dot() -> void:
+## The dot this actor shows on the minimap and the full map. Every actor gets
+## one: a player standing somewhere is the same kind of thing to read off a map
+## as an NPC is, and the local player already has its own white mark drawn over
+## the top of this one. Creatures are the exception, because what a player
+## wants off a map during an invasion is where the invasion is - so a creature
+## takes a colour of its own, and an invasion creature a third.
+func _add_map_dot(dto: Dictionary) -> void:
 	var dot: MeshInstance3D = MapMarkerDisc.build(
-		"MapDot", MAP_DOT_RADIUS, MAP_DOT_COLOUR)
+		"MapDot", MAP_DOT_RADIUS, map_dot_colour(dto))
 	dot.position.y = 3.0
 	add_child(dot)
+
+## The map-dot colour a spawn packet asks for. Static and public so the map
+## legend and the tests can name the same three colours this does rather than
+## copies of them.
+static func map_dot_colour(dto: Dictionary) -> Color:
+	if int(dto.get("kind", 0)) != CREATURE_ACTOR_KIND:
+		return MAP_DOT_COLOUR
+	var name_colour: int = int(dto.get("name_colour", 0))
+	if name_colour == INVASION_NAME_COLOUR:
+		return INVASION_MAP_DOT_COLOUR
+	# Only an uncoloured creature is wildlife. A summon is a creature the
+	# server coloured, and it stays on the ordinary dot.
+	return CREATURE_MAP_DOT_COLOUR if name_colour == 0 else MAP_DOT_COLOUR
 
 ## The nameplate. A guild tag arrives as part of the display name in the actor
 ## packet - "Alice ELO" - so a client that takes the whole string as a
