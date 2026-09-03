@@ -26,6 +26,20 @@ extends CharacterBody3D
 
 var actor_id := -1
 var server_target := Vector3.ZERO
+## How many tiles this actor stands on, across by along. The server
+## reserves that box around the tile the actor reports and measures reach
+## from its edges, so the model is drawn in the middle of the box rather
+## than on the anchor tile - they differ by half a tile whenever an extent
+## is even. One tile, the overwhelming majority, is unaffected.
+var footprint := Vector2i.ONE
+## How large this actor is drawn, as a multiple of its model's own size.
+## The species' scale from the server profile, times whatever an invasion
+## boss or another per-actor effect asks for. One is the model as authored,
+## which is every actor unless a packet says otherwise.
+var server_scale := 1.0
+## The client's own import scale for this model, kept so the two can be
+## multiplied rather than one overwriting the other.
+var _import_scale := 1.0
 var resolver: AnimationResolver
 var animation_player: AnimationPlayer
 var current_action: StringName = &"idle"
@@ -154,11 +168,23 @@ const HEALTH_BAR_WIDTH := 0.9
 const HEALTH_BAR_THICKNESS := 0.085
 const HEALTH_BAR_BORDER := 0.02
 
+## Click target and selection ring for an actor standing on one tile.
+## Both are scaled by the widest side of the footprint: a giant that can
+## only be clicked on the middle tile of the nine it stands on is a giant
+## players will keep missing, and a ring drawn around that one tile says
+## the wrong thing about what is standing there.
+const SELECTION_RADIUS := 0.45
+const RING_INNER_RADIUS := 0.48
+const RING_OUTER_RADIUS := 0.58
+
 func configure(dto: Dictionary, adapter: CoordinateAdapter,
 		model_config: Dictionary, animation_config: Dictionary,
 		equipment_config: Dictionary = {}) -> Array[String]:
 	actor_id = int(dto.actor_id)
-	server_target = adapter.tile_center(int(dto.x), int(dto.y))
+	footprint = dto.get("footprint", Vector2i.ONE) as Vector2i
+	server_scale = maxf(0.01, float(dto.get("scale", 1.0)))
+	server_target = adapter.footprint_center(
+		int(dto.x), int(dto.y), footprint)
 	position = server_target
 	_segment_start = position
 	_smoothed_server_interval = initial_server_interval
@@ -169,7 +195,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	var selection_shape: CollisionShape3D = CollisionShape3D.new()
 	selection_shape.name = "SelectionCollision"
 	var capsule_shape: CapsuleShape3D = CapsuleShape3D.new()
-	capsule_shape.radius = 0.45
+	capsule_shape.radius = SELECTION_RADIUS
 	capsule_shape.height = 1.9
 	selection_shape.shape = capsule_shape
 	selection_shape.position.y = 0.95
@@ -177,8 +203,8 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	var selection_ring: MeshInstance3D = MeshInstance3D.new()
 	selection_ring.name = "SelectionRing"
 	var ring: TorusMesh = TorusMesh.new()
-	ring.inner_radius = 0.48
-	ring.outer_radius = 0.58
+	ring.inner_radius = RING_INNER_RADIUS
+	ring.outer_radius = RING_OUTER_RADIUS
 	var ring_material: StandardMaterial3D = StandardMaterial3D.new()
 	ring_material.albedo_color = Color(0.95, 0.76, 0.18, 0.9)
 	ring_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -192,6 +218,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	# shows at their scale.
 	selection_ring.layers = GAMEPLAY_ONLY_VISUAL_LAYER
 	add_child(selection_ring)
+	_resize_selection()
 	_add_nameplate(dto)
 	_add_map_dot(dto)
 	resolver = AnimationResolver.new(animation_config)
@@ -202,6 +229,10 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	var errors := _load_native_scene(source_path)
 	if not errors.is_empty():
 		_add_fallback_visual(dto)
+		# The native model never loaded, so the import adapter below will not
+		# run and the scale would never be applied. A stand-in for a giant
+		# should still be giant, and its nameplate still above it.
+		_apply_model_scale()
 	if errors.is_empty():
 		_apply_import_adapter(model_config.get("import", {}))
 		var visual_error: String = _validate_native_visual()
@@ -594,8 +625,77 @@ func clear_speech_bubble() -> void:
 	if is_instance_valid(_speech_bubble):
 		_speech_bubble.hide()
 
+## Restate how large this actor is drawn. Separate from `configure` for the
+## same reason the footprint's setter is: the size can change after the
+## model is built - an ordinary creature is promoted to an invasion boss
+## and is redrawn larger without being respawned.
+func set_server_scale(value: float) -> void:
+	var next := maxf(0.01, value)
+	if is_equal_approx(next, server_scale):
+		return
+	server_scale = next
+	_apply_model_scale()
+
+## The model's size is the two multipliers together: the client's import
+## scale for this GLB, and what the server says this actor is. Applied to
+## the model node rather than to the actor, so the nameplate, health bar,
+## selection ring and map dot keep their own sizes - a giant's name should
+## not be drawn in giant letters. Their heights do follow, below, or they
+## would end up inside its head.
+func _apply_model_scale() -> void:
+	var total: float = _import_scale * server_scale
+	for node_name: String in ["NativeModel", "MissingModelFallback"]:
+		var model := get_node_or_null(node_name) as Node3D
+		if model != null:
+			model.scale = Vector3.ONE * total
+	_lift_overhead(server_scale)
+
+## Keep the overhead furniture above the model as it grows.
+func _lift_overhead(factor: float) -> void:
+	var heights := {
+		"Nameplate": NAMEPLATE_HEIGHT,
+		"HealthBarBackground": HEALTH_BAR_HEIGHT,
+		"HealthBarFill": HEALTH_BAR_HEIGHT,
+		"HealthNumbers": HEALTH_LABEL_HEIGHT,
+	}
+	for node_name: Variant in heights:
+		var node := get_node_or_null(str(node_name)) as Node3D
+		if node != null:
+			node.position.y = float(heights[node_name]) * factor
+
+## Restate how much ground this actor stands on, resizing what depends on
+## it. Separate from `configure` because the footprint table is a login
+## packet: if it lands after an actor has already been built, that actor
+## corrects itself on the next state update instead of staying the wrong
+## size until it walks out of view.
+func set_footprint(value: Vector2i) -> void:
+	var next := Vector2i(maxi(1, value.x), maxi(1, value.y))
+	if next == footprint:
+		return
+	footprint = next
+	_resize_selection()
+
+## Grow the click target and the selection ring to the actor's own size.
+func _resize_selection() -> void:
+	var span: float = float(maxi(footprint.x, footprint.y))
+	var shape: CollisionShape3D = get_node_or_null(
+		"SelectionCollision") as CollisionShape3D
+	if shape != null and shape.shape is CapsuleShape3D:
+		(shape.shape as CapsuleShape3D).radius = SELECTION_RADIUS * span
+	var ring_node: MeshInstance3D = get_node_or_null(
+		"SelectionRing") as MeshInstance3D
+	if ring_node != null and ring_node.mesh is TorusMesh:
+		var torus: TorusMesh = ring_node.mesh as TorusMesh
+		torus.inner_radius = RING_INNER_RADIUS * span
+		torus.outer_radius = RING_OUTER_RADIUS * span
+
 func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport := false) -> void:
-	var next_target: Vector3 = adapter.tile_center(int(dto.x), int(dto.y))
+	if dto.has("footprint"):
+		set_footprint(dto.get("footprint") as Vector2i)
+	if dto.has("scale"):
+		set_server_scale(float(dto.get("scale")))
+	var next_target: Vector3 = adapter.footprint_center(
+		int(dto.x), int(dto.y), footprint)
 	# Server movement contains tile coordinates only. Keep the last sampled
 	# rendered-surface height until Main performs the ray sample for the new tile;
 	# otherwise each packet temporarily pushes actors back to the flat manifest
@@ -1693,7 +1793,8 @@ func _apply_import_adapter(config: Dictionary) -> void:
 	var model := get_node_or_null("NativeModel") as Node3D
 	if model == null:
 		return
-	model.scale = Vector3.ONE * float(config.get("scale", 1.0))
+	_import_scale = float(config.get("scale", 1.0))
+	_apply_model_scale()
 	# The two rig families are authored facing opposite ways: the race rigs
 	# down +Z to face the creation-preview camera, the creature rigs down -Z,
 	# which is already Godot's logical forward axis. Each model states its own

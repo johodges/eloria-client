@@ -8147,6 +8147,12 @@ func _presentation_dto(dto: Dictionary) -> Dictionary:
 	for raw_part: Variant in look_visuals:
 		visuals[int(raw_part)] = int(look_visuals[raw_part])
 	result["equipment_visuals"] = visuals
+	# How much ground this actor stands on. Keyed by actor type because a
+	# footprint belongs to the species, and defaulted to a single tile, so an
+	# older server that never sends the table leaves every actor exactly where
+	# it drew them before.
+	result["footprint"] = AppState.footprint_for_actor_type(
+		int(dto.get("actor_type", -1)))
 	return result
 
 func _animation_for_model(model_config: Dictionary) -> Dictionary:
