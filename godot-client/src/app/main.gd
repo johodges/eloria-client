@@ -5944,7 +5944,8 @@ func _sync_equipment_slots() -> void:
 			var worn_tooltip: String = (_inventory_tooltip(item, slot)
 				+ "\nEquipped position %d" % (index + 1))
 			if _carried_slot >= 0 and _carried_slot < 36:
-				worn_tooltip += "\nDropping the item in hand here takes this one off."
+				worn_tooltip += ("\nDropping the item in hand here takes this one off"
+					+ " when the two cannot both be worn.")
 			button.tooltip_text = worn_tooltip
 			button.disabled = false
 		else:
@@ -6789,7 +6790,8 @@ func _wear_destination() -> int:
 ## Wears what is in a backpack slot. The wear position sent is only a
 ## suggestion: the server puts the piece where the piece it replaces was
 ## standing, so swapping a helmet for a helmet keeps the position the player
-## gave it, and only a piece with nothing to replace needs a free one.
+## gave it, and a piece with nothing to replace takes a free position -
+## worn gear it can be worn alongside is never taken off to make room.
 func _equip_inventory_slot(slot: int) -> void:
 	# The first of the two clicks may have picked the stack up. The second is
 	# not a placing click, so the hand is emptied before the move is sent.
