@@ -7,6 +7,19 @@ const MapCanvasScript := preload("res://src/ui/invasion_map_canvas.gd")
 const MAP_REFRESH_SECONDS := 5.0
 const INDEX_REFRESH_SECONDS := 15.0
 const VIEWPORT_MARGIN := Vector2i(32, 32)
+const PREFERENCE_KEY := "invasion_assistant"
+## Half the footprint the assistant used to claim - 0.7 of each edge of the
+## 1120x720 it opened at, which covered most of a 1280x720 client. That is
+## more room than three tabs of lists need. Every font and column below is
+## sized for this window rather than for the old one, so the same content
+## fits without scrolling sideways.
+const DEFAULT_SIZE := Vector2i(784, 504)
+const MINIMUM_SIZE := Vector2i(520, 360)
+const COMPACT_FONT_SIZE := 12
+const RESIZE_GRIP_SIZE := Vector2(22, 22)
+## A border drag fires size_changed on every pixel; the preference is written
+## once the player stops moving rather than once per frame.
+const SIZE_SAVE_DELAY := 0.5
 
 var map_registry: Dictionary = {}
 var index_state: Dictionary = {}
@@ -64,6 +77,13 @@ var create_name: LineEdit
 var create_map: OptionButton
 var create_description: LineEdit
 var status: Label
+var resize_grip: Button
+var _preferred_size := DEFAULT_SIZE
+var _applying_layout := false
+var _resizing := false
+var _resize_start_mouse := Vector2i.ZERO
+var _resize_start_size := Vector2i.ZERO
+var _size_save_countdown := 0.0
 var _map_refresh_elapsed := 0.0
 var _index_refresh_elapsed := 0.0
 var _pending_created_group := ""
@@ -73,9 +93,14 @@ var _texture_cache: Dictionary = {}
 
 func _ready() -> void:
 	title = "Invasion Assistant"
-	min_size = Vector2i(680, 460)
+	# Laying the window out is not the player resizing it: every size the
+	# build below forces has to stay out of the remembered preference.
+	_applying_layout = true
+	min_size = MINIMUM_SIZE
+	_preferred_size = WindowPreferences.stored_size(PREFERENCE_KEY, DEFAULT_SIZE)
 	close_requested.connect(hide)
 	visibility_changed.connect(_on_visibility_changed)
+	size_changed.connect(_on_size_changed)
 	_build_ui()
 	get_tree().root.size_changed.connect(_fit_to_viewport)
 	_fit_to_viewport()
@@ -84,6 +109,10 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if _size_save_countdown > 0.0:
+		_size_save_countdown -= delta
+		if _size_save_countdown <= 0.0:
+			_flush_size_preference()
 	if not visible or tabs == null or tabs.current_tab != 0 or selected_map_id.is_empty():
 		return
 	_map_refresh_elapsed += delta
@@ -96,14 +125,95 @@ func _process(delta: float) -> void:
 		command_requested.emit("#invasion_assistant refresh")
 
 
+func _available_size() -> Vector2i:
+	var viewport_size := get_tree().root.size
+	return Vector2i(maxi(240, viewport_size.x - VIEWPORT_MARGIN.x),
+		maxi(200, viewport_size.y - VIEWPORT_MARGIN.y))
+
+
+## Reopening the assistant restores the size the player left it at rather than
+## the shipped one. A viewport too small to hold that size only trims what is
+## shown - the preference itself is untouched, so the window comes back at its
+## full remembered size on a screen that can hold it.
 func _fit_to_viewport() -> void:
 	var viewport_size := get_tree().root.size
-	var available := Vector2i(maxi(240, viewport_size.x - VIEWPORT_MARGIN.x),
-		maxi(200, viewport_size.y - VIEWPORT_MARGIN.y))
-	min_size = Vector2i(mini(680, available.x), mini(460, available.y))
-	size = Vector2i(mini(1120, available.x), mini(720, available.y))
+	var available := _available_size()
+	_applying_layout = true
+	min_size = Vector2i(mini(MINIMUM_SIZE.x, available.x),
+		mini(MINIMUM_SIZE.y, available.y))
+	size = Vector2i(mini(_preferred_size.x, available.x),
+		mini(_preferred_size.y, available.y))
 	position = Vector2i(maxi(0, (viewport_size.x - size.x) / 2),
 		maxi(0, (viewport_size.y - size.y) / 2))
+	set_deferred("_applying_layout", false)
+
+
+## Applies a size the player asked for, from the corner grip or from a border
+## drag, and records it as the new preference.
+func resize_window(requested: Vector2i) -> void:
+	var available := _available_size()
+	var clamped := Vector2i(
+		clampi(requested.x, min_size.x, available.x),
+		clampi(requested.y, min_size.y, available.y))
+	_applying_layout = true
+	size = clamped
+	set_deferred("_applying_layout", false)
+	_remember_size(clamped)
+	_keep_on_screen()
+
+
+func _keep_on_screen() -> void:
+	var viewport_size := get_tree().root.size
+	position = Vector2i(
+		clampi(position.x, 0, maxi(0, viewport_size.x - size.x)),
+		clampi(position.y, 0, maxi(0, viewport_size.y - size.y)))
+
+
+func _on_size_changed() -> void:
+	# Trimming the window to a shrinking viewport is not the player choosing a
+	# smaller assistant, so only their own drags reach the preference.
+	if _applying_layout:
+		return
+	_remember_size(size)
+
+
+func _remember_size(value: Vector2i) -> void:
+	_preferred_size = value
+	_size_save_countdown = SIZE_SAVE_DELAY
+
+
+func _flush_size_preference() -> void:
+	_size_save_countdown = 0.0
+	WindowPreferences.store_size(PREFERENCE_KEY, _preferred_size)
+
+
+func _on_resize_grip_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mouse: InputEventMouseButton = event as InputEventMouseButton
+		if mouse.button_index != MOUSE_BUTTON_LEFT:
+			return
+		_resizing = mouse.pressed
+		if mouse.pressed:
+			_resize_start_mouse = _pointer_position()
+			_resize_start_size = size
+		else:
+			_flush_size_preference()
+		resize_grip.accept_event()
+	elif event is InputEventMouseMotion and _resizing:
+		# The screen pointer rather than a position inside the window: the grip
+		# travels as the window grows, so a window-relative delta would chase
+		# itself.
+		resize_window(_resize_start_size + _pointer_position() - _resize_start_mouse)
+		resize_grip.accept_event()
+
+
+func _pointer_position() -> Vector2i:
+	# An embedded subwindow is positioned and sized in the root viewport's
+	# space, so the drag has to be measured there too - the screen pointer
+	# would run ahead of the grip whenever the HUD scale is not 100%.
+	if is_embedded():
+		return Vector2i(get_tree().root.get_mouse_position())
+	return DisplayServer.mouse_get_position()
 
 
 func _on_visibility_changed() -> void:
@@ -111,6 +221,9 @@ func _on_visibility_changed() -> void:
 	_index_refresh_elapsed = 0.0
 	if visible:
 		_fit_to_viewport()
+	elif _size_save_countdown > 0.0:
+		# Closing the window must not lose a resize that was still settling.
+		_flush_size_preference()
 
 
 func configure_registry(value: Dictionary) -> void:
@@ -144,22 +257,28 @@ func apply_update(update: Dictionary) -> void:
 
 
 func _build_ui() -> void:
+	# One theme for the whole window instead of a font size on each control:
+	# lists, buttons and spin boxes all shrink together, which is what buys
+	# back the rows the halved window would otherwise lose.
+	var compact := Theme.new()
+	compact.default_font_size = COMPACT_FONT_SIZE
+	theme = compact
 	var margin := MarginContainer.new()
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	margin.add_theme_constant_override("margin_left", 12)
-	margin.add_theme_constant_override("margin_top", 10)
-	margin.add_theme_constant_override("margin_right", 12)
-	margin.add_theme_constant_override("margin_bottom", 10)
+	margin.add_theme_constant_override("margin_left", 8)
+	margin.add_theme_constant_override("margin_top", 7)
+	margin.add_theme_constant_override("margin_right", 8)
+	margin.add_theme_constant_override("margin_bottom", 7)
 	add_child(margin)
 	var root := VBoxContainer.new()
-	root.add_theme_constant_override("separation", 8)
+	root.add_theme_constant_override("separation", 5)
 	margin.add_child(root)
 
 	var header := HBoxContainer.new()
 	root.add_child(header)
 	var heading := Label.new()
 	heading.text = "INVASION ASSISTANT"
-	heading.add_theme_font_size_override("font_size", 22)
+	heading.add_theme_font_size_override("font_size", 15)
 	heading.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(heading)
 	summary = Label.new()
@@ -179,7 +298,7 @@ func _build_ui() -> void:
 	var close_button := Button.new()
 	close_button.text = "×"
 	close_button.tooltip_text = "Close invasion assistant"
-	close_button.custom_minimum_size.x = 38
+	close_button.custom_minimum_size.x = 26
 	close_button.pressed.connect(hide)
 	header.add_child(close_button)
 
@@ -192,10 +311,40 @@ func _build_ui() -> void:
 	_build_monsters_tab()
 	_build_create_dialog()
 
+	var status_row := HBoxContainer.new()
+	root.add_child(status_row)
 	status = Label.new()
 	status.text = "Server-authorized invasion masters only. Click the map to stage a teleport."
 	status.add_theme_color_override("font_color", Color("9fc0d4"))
-	root.add_child(status)
+	status.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	status.clip_text = true
+	status_row.add_child(status)
+	# Keeps the status line clear of the corner grip, which is anchored to the
+	# window rather than to this row.
+	var grip_gutter := Control.new()
+	grip_gutter.custom_minimum_size.x = RESIZE_GRIP_SIZE.x
+	status_row.add_child(grip_gutter)
+	_build_resize_grip()
+
+
+## The inventory panel resizes from a corner grip; the assistant gets the same
+## handle so the two windows are dragged the same way, and it remembers where
+## the drag left it.
+func _build_resize_grip() -> void:
+	resize_grip = Button.new()
+	resize_grip.text = "◢"
+	resize_grip.flat = true
+	resize_grip.focus_mode = Control.FOCUS_NONE
+	resize_grip.tooltip_text = "Drag to resize the invasion assistant"
+	resize_grip.mouse_default_cursor_shape = Control.CURSOR_FDIAGSIZE
+	resize_grip.custom_minimum_size = RESIZE_GRIP_SIZE
+	resize_grip.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	resize_grip.offset_left = -RESIZE_GRIP_SIZE.x
+	resize_grip.offset_top = -RESIZE_GRIP_SIZE.y
+	resize_grip.offset_right = 0.0
+	resize_grip.offset_bottom = 0.0
+	resize_grip.gui_input.connect(_on_resize_grip_gui_input)
+	add_child(resize_grip)
 
 
 func _build_maps_tab() -> void:
@@ -203,7 +352,7 @@ func _build_maps_tab() -> void:
 	page.name = "Maps"
 	tabs.add_child(page)
 	var sidebar := VBoxContainer.new()
-	sidebar.custom_minimum_size.x = 250
+	sidebar.custom_minimum_size.x = 190
 	page.add_child(sidebar)
 	map_filter = LineEdit.new()
 	map_filter.placeholder_text = "Filter server maps…"
@@ -217,7 +366,7 @@ func _build_maps_tab() -> void:
 	var legend := RichTextLabel.new()
 	legend.bbcode_enabled = true
 	legend.fit_content = true
-	legend.custom_minimum_size.y = 92
+	legend.custom_minimum_size.y = 58
 	legend.text = ("[color=#68e7ff]●[/color] Player   "
 		+ "[color=#ff6b63]◆[/color] Invader   "
 		+ "[color=#ffc94f]◆[/color] Boss\n"
@@ -232,7 +381,7 @@ func _build_maps_tab() -> void:
 	map_title = Label.new()
 	map_title.text = "Select a map"
 	map_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	map_title.add_theme_font_size_override("font_size", 18)
+	map_title.add_theme_font_size_override("font_size", 13)
 	map_column.add_child(map_title)
 	var map_split := HSplitContainer.new()
 	map_split.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -244,7 +393,7 @@ func _build_maps_tab() -> void:
 	map_split.add_child(map_canvas)
 	map_roster = RichTextLabel.new()
 	map_roster.bbcode_enabled = true
-	map_roster.custom_minimum_size.x = 230
+	map_roster.custom_minimum_size.x = 150
 	map_roster.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	map_split.add_child(map_roster)
 
@@ -258,13 +407,13 @@ func _build_maps_tab() -> void:
 	coordinate_x.prefix = "X "
 	coordinate_x.min_value = 0
 	coordinate_x.max_value = 2047
-	coordinate_x.custom_minimum_size.x = 115
+	coordinate_x.custom_minimum_size.x = 84
 	location_row.add_child(coordinate_x)
 	coordinate_y = SpinBox.new()
 	coordinate_y.prefix = "Y "
 	coordinate_y.min_value = 0
 	coordinate_y.max_value = 2047
-	coordinate_y.custom_minimum_size.x = 115
+	coordinate_y.custom_minimum_size.x = 84
 	location_row.add_child(coordinate_y)
 	teleport_button = Button.new()
 	teleport_button.text = "Teleport"
@@ -283,7 +432,7 @@ func _build_groups_tab() -> void:
 	page.name = "Spawn Groups"
 	tabs.add_child(page)
 	var list_column := VBoxContainer.new()
-	list_column.custom_minimum_size.x = 330
+	list_column.custom_minimum_size.x = 228
 	page.add_child(list_column)
 	var list_actions := HBoxContainer.new()
 	list_column.add_child(list_actions)
@@ -316,12 +465,12 @@ func _build_groups_tab() -> void:
 	page.add_child(detail_scroll)
 	var detail_column := VBoxContainer.new()
 	detail_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	detail_column.add_theme_constant_override("separation", 7)
+	detail_column.add_theme_constant_override("separation", 5)
 	detail_scroll.add_child(detail_column)
 	group_detail = RichTextLabel.new()
 	group_detail.bbcode_enabled = true
 	group_detail.fit_content = true
-	group_detail.custom_minimum_size.y = 120
+	group_detail.custom_minimum_size.y = 84
 	group_detail.text = "Select a configured invasion spawn group."
 	detail_column.add_child(group_detail)
 	var runtime_actions := HBoxContainer.new()
@@ -345,7 +494,7 @@ func _build_groups_tab() -> void:
 
 	var editor_title := Label.new()
 	editor_title.text = "LIVE GROUP BUILDER"
-	editor_title.add_theme_font_size_override("font_size", 16)
+	editor_title.add_theme_font_size_override("font_size", 12)
 	detail_column.add_child(editor_title)
 	var editor := GridContainer.new()
 	editor.columns = 2
@@ -398,10 +547,10 @@ func _build_groups_tab() -> void:
 
 	var composition_title := Label.new()
 	composition_title.text = "COMPOSITION"
-	composition_title.add_theme_font_size_override("font_size", 16)
+	composition_title.add_theme_font_size_override("font_size", 12)
 	detail_column.add_child(composition_title)
 	group_composition = ItemList.new()
-	group_composition.custom_minimum_size.y = 105
+	group_composition.custom_minimum_size.y = 72
 	group_composition.item_selected.connect(_on_composition_selected)
 	detail_column.add_child(group_composition)
 	var remove_row := HBoxContainer.new()
@@ -411,6 +560,7 @@ func _build_groups_tab() -> void:
 	group_remove_quantity.min_value = 1
 	group_remove_quantity.max_value = 100
 	group_remove_quantity.value = 1
+	group_remove_quantity.custom_minimum_size.x = 96
 	remove_row.add_child(group_remove_quantity)
 	group_remove_monster = Button.new()
 	group_remove_monster.text = "Remove selected monster"
@@ -424,7 +574,7 @@ func _build_monsters_tab() -> void:
 	page.name = "Monsters"
 	tabs.add_child(page)
 	var list_column := VBoxContainer.new()
-	list_column.custom_minimum_size.x = 400
+	list_column.custom_minimum_size.x = 300
 	page.add_child(list_column)
 	monster_filter = LineEdit.new()
 	monster_filter.placeholder_text = "Filter type, name, tier, or configured…"
@@ -445,7 +595,7 @@ func _build_monsters_tab() -> void:
 	detail_column.add_child(monster_detail)
 	var builder_title := Label.new()
 	builder_title.text = "ADD TO LIVE SPAWN GROUP"
-	builder_title.add_theme_font_size_override("font_size", 16)
+	builder_title.add_theme_font_size_override("font_size", 12)
 	detail_column.add_child(builder_title)
 	var builder_row := HBoxContainer.new()
 	detail_column.add_child(builder_row)
@@ -454,6 +604,7 @@ func _build_monsters_tab() -> void:
 	monster_quantity.min_value = 1
 	monster_quantity.max_value = 100
 	monster_quantity.value = 1
+	monster_quantity.custom_minimum_size.x = 96
 	monster_quantity.value_changed.connect(func(_value: float) -> void: _update_monster_actions())
 	builder_row.add_child(monster_quantity)
 	monster_group = OptionButton.new()
@@ -482,7 +633,7 @@ func _build_create_dialog() -> void:
 	create_dialog = ConfirmationDialog.new()
 	create_dialog.title = "Create live spawn group"
 	create_dialog.ok_button_text = "Create group"
-	create_dialog.min_size = Vector2i(520, 240)
+	create_dialog.min_size = Vector2i(380, 180)
 	create_dialog.confirmed.connect(_create_group_confirmed)
 	add_child(create_dialog)
 	var form := GridContainer.new()
@@ -692,7 +843,7 @@ func _on_group_selected(index: int) -> void:
 	group_spawn.disabled = bool(selected_group.get("active", false)) or int(selected_group.get("points", 0)) == 0
 	group_clear.disabled = not bool(selected_group.get("active", false))
 	group_save.disabled = not dynamic
-	group_detail.text = ("[font_size=22][b]%s[/b][/font_size]  %s\n%s\n\n"
+	group_detail.text = ("[font_size=15][b]%s[/b][/font_size]  %s\n%s\n\n"
 		+ "[b]Map[/b]  %s (%s)\n"
 		+ "[b]Population[/b]  %d–%d across %d points\n"
 		+ "[b]Current state[/b]  %s\n"
@@ -861,7 +1012,7 @@ func _rebuild_monsters() -> void:
 
 func _on_monster_selected(index: int) -> void:
 	selected_monster = (monster_list.get_item_metadata(index) as Dictionary).duplicate(true)
-	monster_detail.text = ("[font_size=22][b]%s[/b][/font_size]\n[color=#9fc0d4]%s[/color]\n\n"
+	monster_detail.text = ("[font_size=15][b]%s[/b][/font_size]\n[color=#9fc0d4]%s[/color]\n\n"
 		+ "[b]General strength[/b]  %s (rating %d)\n"
 		+ "[b]Combat level[/b]  %d\n[b]Native level[/b]  %d\n"
 		+ "[b]Health / Ether[/b]  %d / %d\n"
