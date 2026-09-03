@@ -61,6 +61,7 @@ toggle_manufacture={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_
 ; window, Ctrl+K for the behaviour popup the server opens.
 toggle_summoning={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":85,"ctrl_pressed":true)] }
 summon_behavior={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":75,"ctrl_pressed":true)] }
+combat_target={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":70,"ctrl_pressed":true)] }
 toggle_emotes={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":74,"ctrl_pressed":true)] }
 toggle_quest_journal={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":71,"ctrl_pressed":true)] }
 toggle_buddy={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":66,"ctrl_pressed":true)] }
