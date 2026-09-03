@@ -57,6 +57,18 @@ var _last_anchor := Vector3.ZERO
 var _torso := PackedInt32Array()
 ## The trunk capsule is fatter than a leg.
 const TORSO_RADIUS := 0.185
+## The shoulder line and the neck give the torso a forward axis each frame,
+## so the cape can be held behind the back however the torso twists or leans.
+var _shoulder_l := -1
+var _shoulder_r := -1
+var _neck := -1
+## Which way `side.cross(up)` points, locked at cache time against the rest
+## hang: a cape hangs behind, so forward is whichever sign opposes it.
+var _forward_sign := 1.0
+## Cape points stay this far behind the spine plane. The bone runs down the
+## middle of the torso, so a small negative keeps cloth off the chest and the
+## sternum while never disturbing a cape already hanging down the back.
+const BACK_OFFSET := -0.02
 
 
 func _cache(skeleton: Skeleton3D) -> bool:
@@ -94,7 +106,44 @@ func _cache(skeleton: Skeleton3D) -> bool:
 	trunk.append(skeleton.find_bone("neck_01"))
 	if trunk[0] >= 0 and trunk[1] >= 0:
 		_torso = trunk
+	# The torso's forward axis, for holding the cape behind the back. The
+	# shoulder line and the spine-up cross to a forward that follows every
+	# twist and lean; its sign is fixed once against the rest hang, since a
+	# cape at rest drapes behind and forward must oppose it.
+	_shoulder_l = skeleton.find_bone("upperarm_l")
+	_shoulder_r = skeleton.find_bone("upperarm_r")
+	_neck = skeleton.find_bone("neck_01")
+	if _shoulder_l >= 0 and _shoulder_r >= 0 and _neck >= 0:
+		var anchor_rest := skeleton.get_bone_global_rest(_anchor).origin
+		var up := (skeleton.get_bone_global_rest(_neck).origin
+			- anchor_rest).normalized()
+		var side := (skeleton.get_bone_global_rest(_shoulder_l).origin
+			- skeleton.get_bone_global_rest(_shoulder_r).origin).normalized()
+		var forward := side.cross(up)
+		var hang := skeleton.get_bone_global_rest(_bones[1][1]).origin - anchor_rest
+		hang -= up * hang.dot(up)
+		if forward.dot(hang) > 0.0:
+			_forward_sign = -1.0
 	return true
+
+
+## The torso's forward direction in world space, or ZERO if the bones that
+## define it are missing. Recomputed each frame so a leaning, twisting attack
+## carries the "behind the back" plane with it.
+func _torso_forward(skeleton: Skeleton3D, to_world: Transform3D) -> Vector3:
+	if _shoulder_l < 0 or _shoulder_r < 0 or _neck < 0:
+		return Vector3.ZERO
+	var anchor_pos := to_world * skeleton.get_bone_global_pose(_anchor).origin
+	var up := (to_world * skeleton.get_bone_global_pose(_neck).origin
+		- anchor_pos)
+	var side := (to_world * skeleton.get_bone_global_pose(_shoulder_l).origin
+		- to_world * skeleton.get_bone_global_pose(_shoulder_r).origin)
+	if up.length_squared() < 1e-9 or side.length_squared() < 1e-9:
+		return Vector3.ZERO
+	var forward := side.normalized().cross(up.normalized()) * _forward_sign
+	if forward.length_squared() < 1e-9:
+		return Vector3.ZERO
+	return forward.normalized()
 
 
 func _rest_joints(skeleton: Skeleton3D, to_world: Transform3D,
@@ -158,6 +207,12 @@ func _process_modification_with_delta(delta: float) -> void:
 	var still := anchor_speed < SETTLE_SPEED
 	var fall := GRAVITY * (SETTLE_GRAVITY if still else 1.0) * step * step
 	var damping := SETTLE_DAMPING if still else DAMPING
+	# The back-of-the-torso plane, held for every chain this frame: a cape
+	# swings and cannot pass to the chest, which is what an attack's lean and
+	# twist made it do.
+	var forward := _torso_forward(skeleton, to_world)
+	var plane_at := (to_world * skeleton.get_bone_global_pose(_anchor).origin).dot(
+		forward) + BACK_OFFSET if forward != Vector3.ZERO else 0.0
 
 	for chain in range(_bones.size()):
 		var rest := _rest_joints(skeleton, to_world, chain)
@@ -185,6 +240,10 @@ func _process_modification_with_delta(delta: float) -> void:
 						_lengths[chain][index - 1] / length)
 			for index in range(1, points.size()):
 				points[index] = _push_out_of_legs(skeleton, to_world, points[index])
+				if forward != Vector3.ZERO:
+					var ahead := points[index].dot(forward) - plane_at
+					if ahead > 0.0:
+						points[index] -= forward * ahead
 		_points[chain] = points
 		_previous[chain] = previous
 
