@@ -135,12 +135,14 @@ var _overhead_visible := true
 var _settled := false
 var _silhouette: OccludedSilhouette
 
-# Visual layer 2. The gameplay camera renders layers 1 and 2; the minimap and
-# full-map cameras render layers 1 and 3.
+# Visual layer 2. The gameplay camera renders layers 1 and 2; the full-map
+# camera renders layers 1 and 3, and the minimap camera renders layer 1 alone.
 const GAMEPLAY_ONLY_VISUAL_LAYER := 2
-## Layer 3, which only the two map cameras render. An actor's own body is a
+## Layer 3, which only the full-map camera renders. An actor's own body is a
 ## third of a pixel on a map that frames 1600 metres, so everyone standing on
-## it needs a dot sized for the map rather than for the world.
+## it needs a dot sized for the map rather than for the world. The minimap
+## draws its own marks in pixels over its render, so that they hold their size
+## through a zoom; see `minimap_marker_overlay.gd`.
 const MAP_MARKER_LAYER := 4
 const MAP_DOT_RADIUS := 6.0
 ## The light blue the full map's legend calls Player / NPC, written the way it

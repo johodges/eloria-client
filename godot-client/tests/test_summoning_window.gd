@@ -110,11 +110,12 @@ func _run() -> void:
 	stats["animal_nexus"] = 0
 	stats["food"] = 40
 	stats["ether"] = 60
-	inventory[0] = {"image_id": 11, "quantity": 9}    # Bones
-	inventory[1] = {"image_id": 85, "quantity": 4}    # Mirror Reed
-	inventory[2] = {"image_id": 37, "quantity": 6}    # Aether Salt
-	inventory[3] = {"image_id": 113, "quantity": 4}   # Pale Quartz
-	inventory[4] = {"image_id": 95, "quantity": 2}    # Stormglass Shard
+	# Stocked from the catalog's own image ids rather than from a list written
+	# out here. The ids are the server's, and it renumbered 43 of them once
+	# already: a fixture that spells them out goes on passing against artwork
+	# the server stopped using, which is exactly how the shipped catalog came
+	# to hunt for an Aether Salt nobody had.
+	var slot_of_ingredient: Dictionary = _stock(inventory, catalog, listed)
 	window.call("sync")
 	_expect(not otter.disabled and is_equal_approx(otter.modulate.a, 1.0),
 		"a summon the client can see no obstacle to is lit and clickable")
@@ -148,9 +149,15 @@ func _run() -> void:
 		var pick: Dictionary = pick_value as Dictionary
 		slots.append(int(pick.get("slot", -1)))
 		quantities.append(int(pick.get("quantity", 0)))
-	_expect(slots == [0, 1, 2] and quantities == [1, 2, 1],
-		"with the inventory slots holding each ingredient: %s %s"
-		% [str(slots), str(quantities)])
+	var wanted_slots: Array[int] = []
+	var wanted_quantities: Array[int] = []
+	for ingredient_value: Variant in catalog.recipe(listed[0]).get("ingredients", []) as Array:
+		var ingredient: Dictionary = ingredient_value as Dictionary
+		wanted_slots.append(int(slot_of_ingredient[int(ingredient.get("imageId", -1))]))
+		wanted_quantities.append(int(ingredient.get("quantity", 0)))
+	_expect(slots == wanted_slots and quantities == wanted_quantities,
+		"with the inventory slots holding each ingredient: %s %s, wanted %s %s"
+		% [str(slots), str(quantities), str(wanted_slots), str(wanted_quantities)])
 
 	# The behaviour popup is the server's, and it refuses below summoning 30.
 	var behavior: Button = window.get_node(
@@ -252,6 +259,24 @@ func _creature_packet(actor_type: int, display_name: PackedByteArray) -> Diction
 	payload.append_array(display_name)
 	payload.append(0)
 	return EloriaProtocol.decode_actor(payload, false, true)
+
+## Puts every ingredient the listed summons need into its own inventory slot,
+## keyed by the image id the catalog actually carries. Returns image id to
+## slot, so the assertions can name an ingredient without naming a number.
+func _stock(inventory: Dictionary, catalog: ManufacturingCatalog,
+		listed: Array[int]) -> Dictionary:
+	var slot_of: Dictionary = {}
+	for index: int in listed:
+		for ingredient_value: Variant in catalog.recipe(index).get("ingredients", []) as Array:
+			var ingredient: Dictionary = ingredient_value as Dictionary
+			var image_id: int = int(ingredient.get("imageId", -1))
+			if slot_of.has(image_id):
+				continue
+			var slot: int = slot_of.size()
+			slot_of[image_id] = slot
+			# Generous, so a shortfall is never what a test is measuring.
+			inventory[slot] = {"image_id": image_id, "quantity": 20}
+	return slot_of
 
 func _json(path: String) -> Dictionary:
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))

@@ -1,14 +1,17 @@
 class_name MapMarkerDisc
 extends RefCounted
-## The coloured disc a mark shows on the minimap and the full map.
+## The coloured disc a mark shows on the full map.
 ##
-## Every circular mark on the two maps is the same disc in a different colour
+## Every circular mark on the full map is the same disc in a different colour
 ## and size - the actor dots, the harvest nodes and interactives, a dropped
 ## bag, the player's own position - so it is built here rather than four times
 ## over. The diamond pins the server places are not discs and are not built
-## here; `map_marker_3d.gd` still draws those.
+## here; `map_marker_3d.gd` still draws those. The minimap once shared these
+## discs and no longer does: a disc measured in metres is a different size at
+## every zoom, so the minimap draws its marks in pixels instead. See
+## `minimap_marker_overlay.gd`.
 ##
-## The discs carry a black outline because the maps they are read against are
+## The discs carry a black outline because the map they are read against is
 ## not a flat background: a green harvest node sits on parkland and a light
 ## blue actor dot sits on water, and at the sizes these draw at, a disc that
 ## shares a tone with the ground under it is not a mark, it is a texture.
@@ -19,12 +22,12 @@ extends RefCounted
 ## instead, and `render_priority` orders them, which keeps every outline behind
 ## every fill no matter which way the map camera is facing.
 
-## The visual layer both map cameras render, and nothing else does.
+## The visual layer the full-map camera renders, and nothing else does.
 const MAP_MARKER_LAYER := 4
-## How far the outline stands out past the disc, in metres. The maps frame
-## between 180 metres and 1600 across, so this is about a pixel on the full map
-## and a few on the minimap: enough to hold a disc off the ground it shares a
-## tone with, without the outline closing over the colour it is meant to frame.
+## How far the outline stands out past the disc, in metres. The full map frames
+## 1600 metres across, so this is about a pixel there: enough to hold a disc
+## off the ground it shares a tone with, without the outline closing over the
+## colour it is meant to frame.
 const OUTLINE_WIDTH := 1.6
 const OUTLINE_COLOUR := Color(0.04, 0.04, 0.05)
 ## Thin enough that the disc reads as a mark drawn on the map rather than as a

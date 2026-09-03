@@ -35,6 +35,7 @@ const OccluderFadeScript := preload("res://src/world/occluder_fade.gd")
 const InvasionAssistantScript := preload("res://src/ui/invasion_assistant.gd")
 const ExtensionWindowsScript := preload("res://src/ui/extension_windows.gd")
 const MapMarkerOverlayScript := preload("res://src/ui/map_marker_overlay.gd")
+const MinimapMarkerOverlayScript := preload("res://src/ui/minimap_marker_overlay.gd")
 const PlayerInfoPanelScript := preload("res://src/ui/player_info_panel.gd")
 const AudioDirectorScript := preload("res://src/audio/audio_director.gd")
 const SigilWindowScript := preload("res://src/ui/sigil_window.gd")
@@ -260,6 +261,9 @@ var map_object_nodes: Dictionary = {}
 ## Server-placed map markers on the current map, keyed by the server's marker id.
 var map_marker_nodes: Dictionary = {}
 var map_marker_overlay: Control
+## The minimap's marks. The full map's are still modelled in the world; see
+## `minimap_marker_overlay.gd` for why the minimap's cannot be.
+var minimap_marker_overlay: Control
 ## Short-lived world effects the server announced. Kept only so a test can see
 ## what is on screen; each one frees itself when it finishes.
 var world_effects: Array = []
@@ -351,6 +355,13 @@ var _current_map_display_name := "Unknown map"
 var _minimap_scale := 1.0
 var _minimap_orientation := "north_up"
 var _minimap_zoom := MINIMAP_ZOOM_DEFAULT
+var _minimap_marker_scale := 1.0
+var _minimap_border := MINIMAP_DRAG_BORDER
+## "square" or "round". A round minimap is the map masked to the circle its
+## frame holds, which is the shape the compass letters were always arranged in.
+var _minimap_shape := "square"
+## Which marker types are drawn, keyed by MINIMAP_MARKER_TYPES.
+var _minimap_marker_types: Dictionary = _default_minimap_marker_types()
 var _map_environment: Environment
 var _minimap_dragging := false
 var _minimap_drag_offset := Vector2.ZERO
@@ -370,6 +381,17 @@ var _item_lists: Dictionary = {}
 var _store_options_menu: PopupMenu
 var _drop_options_menu: PopupMenu
 var _minimap_menu: PopupMenu
+var _minimap_orientation_menu: PopupMenu
+var _minimap_marker_type_menu: PopupMenu
+var _minimap_visualization_menu: PopupMenu
+var _minimap_marker_size_menu: PopupMenu
+var _minimap_shape_menu: PopupMenu
+var _minimap_window_size_menu: PopupMenu
+var _minimap_border_menu: PopupMenu
+## Kept so the round/square choice can round the frame's own corners off. The
+## style is built in `_apply_eloria_theme()` along with every other window's.
+var _minimap_panel_style: StyleBoxFlat
+var _minimap_mask_material: ShaderMaterial
 var _minimap_visible := false
 ## Set when the socket dropped without the player asking. The next successful
 ## login resynchronises rather than trusting anything from before the drop.
@@ -580,6 +602,48 @@ const INVENTORY_TOOL_LABELS := {
 ## drags the window. 54 left more empty frame than map; half of it still
 ## grabs comfortably and hands the render the rest.
 const MINIMAP_DRAG_BORDER := 27.0
+## The widths that border can be set to, narrowest first. The band is also the
+## only thing the minimap window can be dragged by, so the narrowest is a band
+## a mouse can still find rather than none at all: a minimap that cannot be
+## moved is worse than one with a visible edge.
+## Masks the minimap render to the circle its frame holds. A shader rather than
+## a cut-out texture, because the frame is any of five sizes and a texture cut
+## for one of them is a jagged edge at the other four.
+const MINIMAP_MASK_SHADER := """
+shader_type canvas_item;
+uniform bool rounded = false;
+void fragment() {
+	if (rounded) {
+		vec2 offset = UV - vec2(0.5);
+		if (dot(offset, offset) > 0.25) {
+			discard;
+		}
+	}
+}
+"""
+const MINIMAP_BORDER_STEPS: Array[float] = [8.0, 16.0, 27.0, 40.0]
+const MINIMAP_BORDER_LABELS: Array[String] = ["Minimal", "Thin", "Normal", "Wide"]
+## What the minimap window's size option offers, matching the range the
+## settings window's slider already moves between so the two cannot disagree.
+const MINIMAP_SIZE_STEPS: Array[float] = [0.75, 1.0, 1.25, 1.5, 1.75]
+## What the marker size option offers. These multiply the pixel radii in
+## `minimap_marker_overlay.gd`, which is the whole size of a mark now that the
+## zoom no longer contributes to it.
+const MINIMAP_MARKER_SCALES: Array[float] = [0.6, 0.8, 1.0, 1.3, 1.7]
+const MINIMAP_MARKER_SCALE_LABELS: Array[String] = [
+	"Tiny", "Small", "Normal", "Large", "Huge"]
+## Every kind of mark the minimap draws, in the order the marker-types menu
+## lists them, with the label each is switched on and off by. The keys are also
+## the settings-file keys, so a type added here is remembered without anything
+## else being taught about it.
+const MINIMAP_MARKER_TYPES: Array[StringName] = [&"self", &"player", &"npc",
+	&"creature", &"invasion", &"harvest", &"interactive", &"bag", &"marker"]
+const MINIMAP_MARKER_TYPE_LABELS := {
+	&"self": "Your position", &"player": "Players", &"npc": "NPCs",
+	&"creature": "Creatures", &"invasion": "Invasion creatures",
+	&"harvest": "Harvest nodes", &"interactive": "Interactives",
+	&"bag": "Dropped bags", &"marker": "Map markers",
+}
 ## The floor under the ambient light the two map cameras render with, so a
 ## minimap at midnight is still a map.
 const MAP_MINIMUM_AMBIENT := 0.9
@@ -683,6 +747,12 @@ func _ready() -> void:
 	map_image.add_child(map_marker_overlay)
 	map_marker_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	map_marker_overlay.configure(full_map_camera, adapter, full_map_viewport.size)
+	minimap_marker_overlay = MinimapMarkerOverlayScript.new()
+	minimap_marker_overlay.name = "MinimapMarkerOverlay"
+	minimap_marker_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	minimap.add_child(minimap_marker_overlay)
+	minimap_marker_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	minimap_marker_overlay.configure(map_camera, map_viewport.size)
 	audio_director = AudioDirectorScript.new()
 	add_child(audio_director)
 	player_info_panel = PlayerInfoPanelScript.new()
@@ -944,6 +1014,9 @@ func _update_map_viewports() -> void:
 	if minimap_frame.visible and now >= _minimap_refresh_msec:
 		_minimap_refresh_msec = now + MINIMAP_REFRESH_MSEC
 		map_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+		# The marks are drawn over that image and follow the same camera, so
+		# they are collected when it is redrawn and never while it is hidden.
+		minimap_marker_overlay.set_marks(_collect_minimap_marks())
 	if _day_night_active and now >= _day_night_refresh_msec:
 		_day_night_refresh_msec = now + DAY_NIGHT_REFRESH_MSEC
 		_apply_day_night()
@@ -3875,6 +3948,18 @@ func _load_hud_settings() -> void:
 		_minimap_zoom = clampf(float(config.get_value(
 			"hud", "minimap_zoom", MINIMAP_ZOOM_DEFAULT)),
 			MINIMAP_ZOOM_MIN, MINIMAP_ZOOM_MAX)
+		_minimap_marker_scale = clampf(float(config.get_value(
+			"hud", "minimap_marker_scale", 1.0)),
+			MINIMAP_MARKER_SCALES[0], MINIMAP_MARKER_SCALES[-1])
+		_minimap_border = clampf(float(config.get_value(
+			"hud", "minimap_border", MINIMAP_DRAG_BORDER)),
+			MINIMAP_BORDER_STEPS[0], MINIMAP_BORDER_STEPS[-1])
+		_minimap_shape = str(config.get_value("hud", "minimap_shape", "square"))
+		if _minimap_shape not in ["square", "round"]:
+			_minimap_shape = "square"
+		for type: StringName in MINIMAP_MARKER_TYPES:
+			_minimap_marker_types[type] = bool(config.get_value(
+				"hud", "minimap_marker_%s" % type, true))
 		extension_windows.call("set_combat_hud_enabled",
 			bool(config.get_value("hud", "combat_hud", true)))
 		extension_windows.call("set_combat_hud_pinned",
@@ -4083,6 +4168,12 @@ func _save_hud_settings() -> void:
 	config.set_value("hud", "minimap_zoom", _minimap_zoom)
 	config.set_value("hud", "minimap_position", minimap_frame.position)
 	config.set_value("hud", "minimap_visible", _minimap_visible)
+	config.set_value("hud", "minimap_marker_scale", _minimap_marker_scale)
+	config.set_value("hud", "minimap_border", _minimap_border)
+	config.set_value("hud", "minimap_shape", _minimap_shape)
+	for type: StringName in MINIMAP_MARKER_TYPES:
+		config.set_value("hud", "minimap_marker_%s" % type,
+			bool(_minimap_marker_types.get(type, true)))
 	for option_key: String in _hud_element_options:
 		config.set_value("hud", option_key, bool(_hud_element_options[option_key]))
 	config.set_value("hud", "timer_stopwatch", _hud_timer_stopwatch)
@@ -4104,7 +4195,7 @@ func _save_hud_settings() -> void:
 
 func _apply_minimap_scale() -> void:
 	var frame_size: float = roundf(264.0 * _minimap_scale)
-	var border_size: float = roundf(MINIMAP_DRAG_BORDER * _minimap_scale)
+	var border_size: float = roundf(_minimap_border * _minimap_scale)
 	minimap_frame.offset_right = minimap_frame.offset_left + frame_size
 	minimap_frame.offset_bottom = minimap_frame.offset_top + frame_size
 	minimap.offset_left = border_size
@@ -4117,6 +4208,8 @@ func _apply_minimap_scale() -> void:
 		clampf(minimap_frame.position.x, 0.0, maximum.x),
 		clampf(minimap_frame.position.y, 30.0, maxf(30.0, maximum.y)))
 	minimap_size_value.text = "%d%%" % roundi(_minimap_scale * 100.0)
+	# The round mask is cut to the frame, so a resize re-cuts it.
+	_apply_minimap_shape()
 	_layout_minimap_cardinals()
 
 func _on_inventory_header_gui_input(event: InputEvent) -> void:
@@ -4270,21 +4363,110 @@ func _apply_equipment_side() -> void:
 	inventory_body.move_child(equipment_column,
 		inventory_body.get_child_count() - 1 if _equipment_side == "right" else 0)
 
+## The minimap's right-click menu. It began as three orientation radio items at
+## the top level, which is all there was to choose; the marker work added
+## enough choices that a flat list would have been twenty items deep and the
+## orientation would have been three of them. Each group is a submenu of its
+## own instead - Orientation, Marker types, Visualization - so the menu opens
+## as three words and the player descends into the one they came for.
 func _configure_minimap_menu() -> void:
 	_minimap_menu = PopupMenu.new()
-	_minimap_menu.add_radio_check_item("North always up", 0)
-	_minimap_menu.add_radio_check_item("Rotate with player", 1)
-	_minimap_menu.add_radio_check_item("Rotate with viewport", 2)
-	_minimap_menu.id_pressed.connect(_on_minimap_orientation_selected)
+	_minimap_orientation_menu = _build_minimap_submenu("Orientation",
+		["North always up", "Rotate with player", "Rotate with viewport"],
+		_on_minimap_orientation_selected)
+	_minimap_menu.add_child(_minimap_orientation_menu)
+	_minimap_menu.add_submenu_node_item("Orientation", _minimap_orientation_menu)
+
+	# The marker types are check items rather than radios: they are nine
+	# independent switches, and a player hiding creature dots is not thereby
+	# choosing to see anything else.
+	_minimap_marker_type_menu = PopupMenu.new()
+	_minimap_marker_type_menu.name = "MarkerTypes"
+	_minimap_marker_type_menu.hide_on_checkable_item_selection = false
+	for index: int in range(MINIMAP_MARKER_TYPES.size()):
+		_minimap_marker_type_menu.add_check_item(
+			str(MINIMAP_MARKER_TYPE_LABELS[MINIMAP_MARKER_TYPES[index]]), index)
+	_minimap_marker_type_menu.id_pressed.connect(_on_minimap_marker_type_toggled)
+	_minimap_menu.add_child(_minimap_marker_type_menu)
+	_minimap_menu.add_submenu_node_item("Marker types", _minimap_marker_type_menu)
+
+	_minimap_visualization_menu = PopupMenu.new()
+	_minimap_visualization_menu.name = "Visualization"
+	_minimap_marker_size_menu = _build_minimap_submenu("MarkerSize",
+		MINIMAP_MARKER_SCALE_LABELS, _on_minimap_marker_scale_selected)
+	_minimap_shape_menu = _build_minimap_submenu("Shape", ["Square", "Round"],
+		_on_minimap_shape_selected)
+	var size_labels: Array[String] = []
+	for step: float in MINIMAP_SIZE_STEPS:
+		size_labels.append("%d%%" % roundi(step * 100.0))
+	_minimap_window_size_menu = _build_minimap_submenu("WindowSize", size_labels,
+		_on_minimap_size_step_selected)
+	_minimap_border_menu = _build_minimap_submenu("Border", MINIMAP_BORDER_LABELS,
+		_on_minimap_border_selected)
+	for submenu: PopupMenu in [_minimap_marker_size_menu, _minimap_shape_menu,
+			_minimap_window_size_menu, _minimap_border_menu]:
+		_minimap_visualization_menu.add_child(submenu)
+	_minimap_visualization_menu.add_submenu_node_item("Marker size",
+		_minimap_marker_size_menu)
+	_minimap_visualization_menu.add_submenu_node_item("Minimap shape",
+		_minimap_shape_menu)
+	_minimap_visualization_menu.add_submenu_node_item("Minimap size",
+		_minimap_window_size_menu)
+	_minimap_visualization_menu.add_submenu_node_item("Border width",
+		_minimap_border_menu)
+	_minimap_menu.add_child(_minimap_visualization_menu)
+	_minimap_menu.add_submenu_node_item("Visualization", _minimap_visualization_menu)
+
 	minimap_frame.add_child(_minimap_menu)
 	_sync_minimap_menu()
+
+## One submenu of radio items, ids running from zero in the order given.
+func _build_minimap_submenu(submenu_name: String, labels: Array,
+		handler: Callable) -> PopupMenu:
+	var submenu := PopupMenu.new()
+	submenu.name = submenu_name
+	for index: int in range(labels.size()):
+		submenu.add_radio_check_item(str(labels[index]), index)
+	submenu.id_pressed.connect(handler)
+	return submenu
 
 func _sync_minimap_menu() -> void:
 	if _minimap_menu == null:
 		return
-	_minimap_menu.set_item_checked(0, _minimap_orientation == "north_up")
-	_minimap_menu.set_item_checked(1, _minimap_orientation == "player_up")
-	_minimap_menu.set_item_checked(2, _minimap_orientation == "viewport_up")
+	var orientations: Array[String] = ["north_up", "player_up", "viewport_up"]
+	for index: int in range(orientations.size()):
+		_minimap_orientation_menu.set_item_checked(index,
+			_minimap_orientation == orientations[index])
+	for index: int in range(MINIMAP_MARKER_TYPES.size()):
+		_minimap_marker_type_menu.set_item_checked(index,
+			bool(_minimap_marker_types.get(MINIMAP_MARKER_TYPES[index], true)))
+	_check_one_of(_minimap_marker_size_menu,
+		_nearest_step(MINIMAP_MARKER_SCALES, _minimap_marker_scale))
+	_check_one_of(_minimap_shape_menu, 1 if _minimap_shape == "round" else 0)
+	_check_one_of(_minimap_window_size_menu,
+		_nearest_step(MINIMAP_SIZE_STEPS, _minimap_scale))
+	_check_one_of(_minimap_border_menu,
+		_nearest_step(MINIMAP_BORDER_STEPS, _minimap_border))
+
+func _check_one_of(menu: PopupMenu, chosen: int) -> void:
+	for index: int in range(menu.item_count):
+		menu.set_item_checked(index, index == chosen)
+
+## Which step a stored value sits on. The settings window's slider moves the
+## minimap size continuously, so a value between two steps is real and has to
+## tick the step it is nearest rather than none of them.
+static func _nearest_step(steps: Array[float], value: float) -> int:
+	var chosen := 0
+	for index: int in range(steps.size()):
+		if absf(steps[index] - value) < absf(steps[chosen] - value):
+			chosen = index
+	return chosen
+
+static func _default_minimap_marker_types() -> Dictionary:
+	var defaults: Dictionary = {}
+	for type: StringName in MINIMAP_MARKER_TYPES:
+		defaults[type] = true
+	return defaults
 
 func _on_minimap_orientation_selected(id: int) -> void:
 	match id:
@@ -4293,6 +4475,135 @@ func _on_minimap_orientation_selected(id: int) -> void:
 		_: _minimap_orientation = "north_up"
 	_sync_minimap_menu()
 	_save_hud_settings()
+
+func _on_minimap_marker_type_toggled(id: int) -> void:
+	if id < 0 or id >= MINIMAP_MARKER_TYPES.size():
+		return
+	var type: StringName = MINIMAP_MARKER_TYPES[id]
+	_minimap_marker_types[type] = not bool(_minimap_marker_types.get(type, true))
+	_apply_minimap_marker_settings()
+	_sync_minimap_menu()
+	_save_hud_settings()
+
+func _on_minimap_marker_scale_selected(id: int) -> void:
+	_minimap_marker_scale = MINIMAP_MARKER_SCALES[clampi(
+		id, 0, MINIMAP_MARKER_SCALES.size() - 1)]
+	_apply_minimap_marker_settings()
+	_sync_minimap_menu()
+	_save_hud_settings()
+
+func _on_minimap_shape_selected(id: int) -> void:
+	_minimap_shape = "round" if id == 1 else "square"
+	_apply_minimap_shape()
+	_sync_minimap_menu()
+	_save_hud_settings()
+
+## The same setting the settings window's slider moves, so the slider is moved
+## with it: two controls over one value that disagree are two bugs waiting.
+func _on_minimap_size_step_selected(id: int) -> void:
+	_minimap_scale = MINIMAP_SIZE_STEPS[clampi(
+		id, 0, MINIMAP_SIZE_STEPS.size() - 1)]
+	minimap_size.set_value_no_signal(_minimap_scale)
+	_apply_minimap_scale()
+	_sync_minimap_menu()
+	_save_hud_settings()
+
+func _on_minimap_border_selected(id: int) -> void:
+	_minimap_border = MINIMAP_BORDER_STEPS[clampi(
+		id, 0, MINIMAP_BORDER_STEPS.size() - 1)]
+	_apply_minimap_scale()
+	_sync_minimap_menu()
+	_save_hud_settings()
+
+func _apply_minimap_marker_settings() -> void:
+	if minimap_marker_overlay == null:
+		return
+	minimap_marker_overlay.set_enabled_types(_minimap_marker_types)
+	minimap_marker_overlay.set_marker_scale(_minimap_marker_scale)
+	minimap_marker_overlay.set_round(_minimap_shape == "round")
+
+## Rounds the minimap off, or squares it up again. The render is masked in a
+## shader rather than by a texture, so the mask follows the frame at every size
+## the player can set; the frame's own corners are rounded to match, and the
+## marker overlay masks itself the same way so a mark cannot be drawn on the
+## border the map no longer reaches.
+func _apply_minimap_shape() -> void:
+	var is_round: bool = _minimap_shape == "round"
+	if _minimap_mask_material == null:
+		var shader := Shader.new()
+		shader.code = MINIMAP_MASK_SHADER
+		_minimap_mask_material = ShaderMaterial.new()
+		_minimap_mask_material.shader = shader
+	_minimap_mask_material.set_shader_parameter("rounded", is_round)
+	minimap.material = _minimap_mask_material
+	if _minimap_panel_style != null:
+		var radius: int = (roundi(minimap_frame.size.x * 0.5) if is_round else 1)
+		_minimap_panel_style.corner_radius_top_left = radius
+		_minimap_panel_style.corner_radius_top_right = radius
+		_minimap_panel_style.corner_radius_bottom_left = radius
+		_minimap_panel_style.corner_radius_bottom_right = radius
+	_apply_minimap_marker_settings()
+
+## Everything the minimap marks, as world positions the overlay can project.
+##
+## The positions are read off the nodes rather than out of AppState, because a
+## node stands where the world is drawing it this frame and the packet names a
+## tile the actor may already be walking off. A mark whose type the player
+## switched off is still gathered here and dropped by the overlay, so the
+## switch is read in one place rather than in five.
+func _collect_minimap_marks() -> Array[Dictionary]:
+	var marks: Array[Dictionary] = []
+	if player_map_marker != null and player_map_marker.visible:
+		marks.append({"position": player_map_marker.global_position,
+			"type": &"self", "colour": Color.WHITE,
+			"radius": MinimapMarkerOverlayScript.SELF_RADIUS})
+	for raw_id: Variant in actor_nodes:
+		var actor_id: int = int(raw_id)
+		# The local player already has the white mark above; a second dot
+		# under it says nothing and is never the one being looked for.
+		if actor_id == AppState.local_actor_id:
+			continue
+		var actor: ReplicatedActor3D = actor_nodes[raw_id] as ReplicatedActor3D
+		if actor == null or not is_instance_valid(actor):
+			continue
+		var dto: Dictionary = AppState.actors.get(actor_id, {}) as Dictionary
+		marks.append({"position": actor.global_position,
+			"type": _minimap_actor_type(dto),
+			"colour": ReplicatedActor3D.map_dot_colour(dto)})
+	for raw_object: Variant in map_object_nodes.values():
+		var map_object: MapObject3D = raw_object as MapObject3D
+		if map_object == null or not is_instance_valid(map_object):
+			continue
+		marks.append({"position": map_object.global_position,
+			"type": (&"harvest" if map_object.is_harvestable() else &"interactive"),
+			"colour": map_object.map_dot_colour()})
+	for raw_bag: Variant in ground_bag_nodes.values():
+		var bag: GroundBag3D = raw_bag as GroundBag3D
+		if bag == null or not is_instance_valid(bag):
+			continue
+		marks.append({"position": bag.global_position, "type": &"bag",
+			"colour": GroundBag3D.MAP_MARKER_COLOUR})
+	for raw_marker: Variant in map_marker_nodes.values():
+		var marker: MapMarker3D = raw_marker as MapMarker3D
+		if marker == null or not is_instance_valid(marker):
+			continue
+		marks.append({"position": marker.global_position, "type": &"marker",
+			"colour": MapMarker3D.MARKER_COLOUR,
+			"radius": MinimapMarkerOverlayScript.PIN_RADIUS})
+	return marks
+
+## Which switch an actor's dot answers to. What colour that dot is drawn in is
+## decided by `ReplicatedActor3D` from the same two fields; this only decides
+## which of the marker-type switches turns it off.
+static func _minimap_actor_type(dto: Dictionary) -> StringName:
+	var kind: int = int(dto.get("kind", 0))
+	if kind == ReplicatedActor3D.CREATURE_ACTOR_KIND:
+		return (&"invasion" if int(dto.get("name_colour", 0))
+			== ReplicatedActor3D.INVASION_NAME_COLOUR else &"creature")
+	# EL's HUMAN, COMPUTER_CONTROLLED_HUMAN and PKABLE_HUMAN. Everything else
+	# the server replicates and does not call a creature is scenery: a trader,
+	# a guard, a gate warden.
+	return &"player" if kind in [1, 3, 4] else &"npc"
 
 func _on_minimap_frame_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
@@ -4304,7 +4615,7 @@ func _on_minimap_frame_gui_input(event: InputEvent) -> void:
 			return
 		if mouse.button_index == MOUSE_BUTTON_LEFT:
 			if mouse.pressed:
-				var drag_border: float = MINIMAP_DRAG_BORDER * _minimap_scale
+				var drag_border: float = _minimap_border * _minimap_scale
 				var inner := Rect2(Vector2.ONE * drag_border,
 					minimap_frame.size - Vector2.ONE * drag_border * 2.0)
 				if not inner.has_point(mouse.position):
@@ -7989,6 +8300,7 @@ func _apply_eloria_theme() -> void:
 	minimap_panel_style.set_border_width_all(6)
 	minimap_panel_style.border_color = Color(0.86, 0.64, 0.25, 1.0)
 	minimap_frame.add_theme_stylebox_override("panel", minimap_panel_style)
+	_minimap_panel_style = minimap_panel_style
 	var map_sidebar_style: StyleBoxFlat = panel.duplicate() as StyleBoxFlat
 	map_sidebar_style.bg_color = Color(0.0, 0.0, 0.0, 0.98)
 	($GameView/FullMap/MapLayout/Sidebar as PanelContainer).add_theme_stylebox_override(
