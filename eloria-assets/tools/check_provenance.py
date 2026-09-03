@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import subprocess
 import sys
 
 # Official Eternal Lands map names. `startmap.elm` is on this list and was, for
@@ -42,6 +43,25 @@ SKIP_DIRECTORIES = {".git", ".github", "__pycache__", "build", "dist",
 
 
 def walk(root: Path):
+    """Every file the repository contains.
+
+    Tracked files, not whatever is lying in the working directory. This is a
+    statement about what the project ships, and a developer's checkout is full
+    of things that are not that - an unpacked dependency tarball, a stale
+    worktree, an old build. Failing on those is a false alarm, and a compliance
+    check that cries wolf is one nobody reads.
+    """
+    listed = subprocess.run(["git", "-C", str(root), "ls-files", "-z"],
+                            capture_output=True, text=True, check=False)
+    if listed.returncode == 0:
+        for name in listed.stdout.split("\0"):
+            if not name:
+                continue
+            path = root / name
+            if path.is_file():
+                yield path
+        return
+    # Not a git checkout - an exported tarball, say. Fall back to the tree.
     for path in root.rglob("*"):
         if not path.is_file():
             continue
