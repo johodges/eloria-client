@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
-"""Pack the generated armour set's icons into the runtime item atlases.
+"""Pack the generated sets' icons into the runtime item atlases.
 
 Added 2026-09-02 for Eloria Client.
 
-``import_generated_equipment`` defines the sixty wearables and gives each an
-``image_id``; this is the other half of that contract, the one that makes
-those ids resolve to pixels.  The icons themselves are rendered from the same
-meshes by ``generate_models/equipment_icons`` (a sibling of this repository),
-one 50px cell per piece, already framed like the painted set.  Everything
-that knows the atlas shape is written here so it cannot drift apart --
+Each generated set defines its wearables and gives each an ``image_id``; this
+is the other half of that contract, the one that makes those ids resolve to
+pixels.  The icons themselves are rendered from the same meshes by
+``generate_models/equipment_icons`` and ``generate_models/weapon_icons``
+(siblings of this repository), one 50px cell per piece, already framed like
+the painted set; the potion shelf has no meshes and is painted here.
+Everything that knows the atlas shape is written here so it cannot drift --
 
-  the pixels    godot-client/assets/ui/items/items5-8.png -- the blank tail
-                of items5 takes the first seven, three new sheets the rest
+  the pixels    godot-client/assets/ui/items/items*.png
   the registry  godot-client/data/items/atlases.json
   the layout    godot-client/data/items/atlas_layout.json
 
-Ids are ``FIRST_IMAGE_ID + roster index`` in the fixed roster order, which
-keeps the painted range contiguous: imageCount moves 118 -> 178 with no gap,
-so ItemAtlas's painted-prefix contract and the fallback behaviour for
-everything at 178 and above both hold.
+Ids are ``FIRST_IMAGE_ID + roster index`` within each set, and the sets follow
+one another with no gap, which is what keeps the painted range contiguous:
+ItemAtlas's painted-prefix contract and the fallback behaviour for everything
+at ``imageCount`` and above both depend on it.
 
   python build_item_icon_atlases.py            write everything
   python build_item_icon_atlases.py --dry-run  say what would change
@@ -35,12 +35,14 @@ from PIL import Image
 import import_generated_equipment as ige
 import import_generated_weapons as igw
 import potion_icons
+import torso_items
 
 HERE = Path(__file__).resolve().parent
 CLIENT = HERE.parent.parent / "godot-client"
 ICONS = ige.PROJECT / "generate_models" / "equipment_icons" / "out" / "icons"
 WEAPON_ICONS = (ige.PROJECT / "generate_models" / "weapon_icons"
                 / "out" / "icons")
+TORSO_ICONS = torso_items.ICONS
 ATLAS_PNGS = CLIENT / "assets/ui/items"
 ATLAS_CONFIG = CLIENT / "data/items/atlases.json"
 LAYOUT = CLIENT / "data/items/atlas_layout.json"
@@ -53,6 +55,18 @@ CANVAS = 256
 
 def atlas_name(index: int) -> str:
     return "items%d.png" % (index + 1)
+
+
+def _named_image_ids(items_txt: Path):
+    """(name, image_id) for every [item] block in a server catalogue."""
+    for part in items_txt.read_text(encoding="utf-8").split("[item]")[1:]:
+        fields = {}
+        for line in part.split("[/item]", 1)[0].splitlines():
+            key, separator, value = line.partition(":")
+            if separator:
+                fields[key.strip()] = value.strip()
+        if "name" in fields and "image_id" in fields:
+            yield fields["name"], int(fields["image_id"])
 
 
 def read_atlas(index: int) -> Image.Image:
@@ -86,19 +100,23 @@ def main() -> int:
                     help="directory of 50px per-piece armour icons")
     ap.add_argument("--weapon-icons", type=Path, default=WEAPON_ICONS,
                     help="the same for the weapon and shield set")
+    ap.add_argument("--torso-icons", type=Path, default=TORSO_ICONS,
+                    help="the same for the sixty-four torso concept designs")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
-    # All three generated sets, armour first.  Their image ids are handed out
+    # All four generated sets, armour first.  Their image ids are handed out
     # from a single run of numbers -- the armour from 118, the weapons from
-    # 374, the potion shelf from 480 -- so the painted prefix stays contiguous
-    # and one atlas series carries everything.  Packing them separately would
-    # leave a hole at whichever boundary the shorter set stopped at.
+    # 374, the potion shelf from 474, the torso designs from 506 -- so the
+    # painted prefix stays contiguous and one atlas series carries everything.
+    # Packing them separately would leave a hole at whichever boundary the
+    # shorter set stopped at.
     # Each rendered set carries its own icon directory; the potions have no
     # meshes and are painted here instead of read from disk.
     pieces, icon_of = [], {}
     for roster, icons in ((ige.roster(), args.icons),
-                          (igw.roster(), args.weapon_icons)):
+                          (igw.roster(), args.weapon_icons),
+                          (torso_items.roster(), args.torso_icons)):
         for piece in roster:
             pieces.append(piece)
             icon_of[piece.image_id] = icons / (piece.source.stem + ".png")
@@ -110,6 +128,25 @@ def main() -> int:
               "generate_models/*_icons directory)",
               file=sys.stderr)
         return 2
+
+    # The torso set is the one whose items are defined in the other
+    # repository -- dev-server/tools/sync_torso_items.py writes them -- so the
+    # image ids it hands out are stated in two places.  Read the profile back
+    # and say so if they have come apart, rather than painting cells the
+    # server points nothing at.
+    served = potion_icons.SERVER / "config/eloria/items.txt"
+    if served.is_file():
+        catalogue = dict(_named_image_ids(served))
+        adrift = [(p.name, p.image_id, catalogue.get(p.name))
+                  for p in torso_items.roster()
+                  if catalogue.get(p.name) != p.image_id]
+        if adrift:
+            for name, wanted, found in adrift:
+                print("%s: this packs icon %d, %s has %s"
+                      % (name, wanted, served, found), file=sys.stderr)
+            print("(re-run dev-server/tools/sync_torso_items.py)",
+                  file=sys.stderr)
+            return 2
 
     potions = potion_icons.roster()
     pieces.extend(potions)
@@ -155,8 +192,10 @@ def main() -> int:
         "is the dedicated unknown-item fallback; 118 up are the generated "
         "sets' per-piece icons -- armour from 118 and weapons from 374 in "
         "their import roster orders, the painted potion shelf from %d "
-        "(potion_icons roster order) -- ending at %d."
-        % (potion_icons.FIRST_IMAGE_ID, image_count - 1))
+        "(potion_icons roster order), the torso concept designs from %d "
+        "(torso_designs order) -- ending at %d."
+        % (potion_icons.FIRST_IMAGE_ID, torso_items.FIRST_IMAGE_ID,
+           image_count - 1))
     LAYOUT.write_text(json.dumps(layout, indent=1) + "\n", encoding="utf-8")
     print("wrote %s" % LAYOUT)
     return 0
