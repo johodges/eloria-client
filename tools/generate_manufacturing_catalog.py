@@ -102,6 +102,11 @@ def main() -> int:
                     ITEMS[recipe.output].image_id if recipe.output in ITEMS else -1
                 ),
                 "level": recipe.level,
+                # Summoning is the one skill whose recipes also cost a nexus,
+                # and the server refuses the mix without it. Exporting it lets
+                # the summoning window say so instead of offering a summon
+                # that will be turned down. Zero for every other skill.
+                "animalNexus": recipe.animal_nexus,
                 "experience": recipe.experience,
                 "food": recipe.food,
                 "mana": recipe.mana,

@@ -39,6 +39,7 @@ const PlayerInfoPanelScript := preload("res://src/ui/player_info_panel.gd")
 const AudioDirectorScript := preload("res://src/audio/audio_director.gd")
 const SigilWindowScript := preload("res://src/ui/sigil_window.gd")
 const SpellsWindowScript := preload("res://src/ui/spells_window.gd")
+const SummoningWindowScript := preload("res://src/ui/summoning_window.gd")
 const EmotesWindowScript := preload("res://src/ui/emotes_window.gd")
 const RangingWindowScript := preload("res://src/ui/ranging_window.gd")
 const SettingsWindowScript := preload("res://src/ui/settings_window.gd")
@@ -270,6 +271,7 @@ var audio_director: Node
 var map_ambience_root: Node3D
 var sigil_window: Control
 var spells_window: Control
+var summoning_window: Control
 var emotes_window: Control
 var ranging_window: Control
 var settings_window: Control
@@ -695,6 +697,10 @@ func _ready() -> void:
 	game_view.add_child(spells_window)
 	# Configured further down, once the spell catalog has read its data file:
 	# the window builds its group rows from the catalog it is handed.
+	summoning_window = SummoningWindowScript.new()
+	game_view.add_child(summoning_window)
+	# Also configured further down: it builds its rows from the manufacturing
+	# catalog, which is read at the same point the spell catalog is.
 	emotes_window = EmotesWindowScript.new()
 	game_view.add_child(emotes_window)
 	emotes_window.call("configure", _perform_emote)
@@ -727,6 +733,8 @@ func _ready() -> void:
 	spell_catalog.configure(_json("res://data/spells/catalog.json"))
 	spells_window.call("configure", spell_catalog, _cast_spell_by_id)
 	manufacturing_catalog.configure(_json("res://data/manufacturing/recipes.json"))
+	summoning_window.call("configure", manufacturing_catalog, item_atlas,
+		_summon_by_ingredients, _request_summon_behavior)
 	var knowledge_catalog_value: Variant = _json(
 		"res://data/knowledge/catalog.json").get("entries", [])
 	if knowledge_catalog_value is Array:
@@ -2371,6 +2379,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	# opening the ranging window - the turn_right/Ctrl+E collision over again.
 	var window_actions: Array[Array] = [
 		["toggle_spells", _on_spells_button_pressed],
+		["toggle_summoning", _on_summoning_button_pressed],
 		["toggle_manufacture", _on_manufacturing_button_pressed],
 		["toggle_emotes", _on_emotes_button_pressed],
 		["toggle_quest_journal", _on_quest_button_pressed],
@@ -2387,6 +2396,13 @@ func _unhandled_input(event: InputEvent) -> void:
 			(action_and_handler[1] as Callable).call()
 			get_viewport().set_input_as_handled()
 			return
+	# Not a window: it asks the server to open its own summon-behaviour popup.
+	# Resolved here with the window keys because it is the same kind of Ctrl
+	# binding and wants the same place in the order.
+	if event.is_action_pressed("summon_behavior"):
+		_request_summon_behavior()
+		get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed("chat_focus"):
 		_show_chat_input()
 		get_viewport().set_input_as_handled()
@@ -2401,6 +2417,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			player_info_panel.close()
 		elif spells_window != null and bool(spells_window.call("is_open")):
 			spells_window.call("close")
+		elif summoning_window != null and bool(summoning_window.call("is_open")):
+			summoning_window.call("close")
 		elif emotes_window != null and bool(emotes_window.call("is_open")):
 			emotes_window.call("close")
 		elif ranging_window != null and bool(ranging_window.call("is_open")):
@@ -2916,7 +2934,13 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 				return
 			_send_attack(picked_actor_id)
 			return
-		if int(selected_dto.get("kind", 0)) == 2:
+		# NPCs and summons are the two actors a plain click talks to. The
+		# summon was missing: TOUCH_PLAYER on your own summon is how the
+		# server opens the behaviour popup, and gating this on the NPC kind
+		# alone left the whole six-mode behaviour system unreachable, with
+		# every summon stuck on the default "do not attack".
+		if int(selected_dto.get("kind", 0)) == 2 \
+				or ReplicatedActor3D.is_summon(selected_dto):
 			var touch_error: Error = Network.touch_actor(picked_actor_id)
 			if touch_error != OK:
 				push_warning("TOUCH_PLAYER failed: " + error_string(touch_error))
@@ -4326,8 +4350,9 @@ func _configure_window_layers() -> void:
 	# at z 1 so it can clear the world viewport, and a window left at the
 	# default 0 slides underneath the local player's name and bars, which
 	# follow the player around the middle of the screen.
-	for window_layer: Control in [spells_window, emotes_window, ranging_window,
-			settings_window, reference_window, player_info_panel, sigil_window]:
+	for window_layer: Control in [spells_window, summoning_window, emotes_window,
+			ranging_window, settings_window, reference_window, player_info_panel,
+			sigil_window]:
 		if window_layer != null:
 			window_layer.z_index = 26
 	_make_scene_windows_draggable()
@@ -6154,6 +6179,30 @@ func _on_spells_button_pressed() -> void:
 	spells_window.toggle()
 	audio_director.play("ui_click" if spells_window.is_open() else "ui_close")
 	_sync_hud_button_states(true)
+
+## The summoning window: the catalog's summoning recipes on their own, with
+## what each creature costs written beside it.
+func _on_summoning_button_pressed() -> void:
+	summoning_window.call("toggle")
+	audio_director.play("ui_click" if bool(summoning_window.call("is_open"))
+		else "ui_close")
+
+## Summoning is a mix whose result is a creature, so it goes out as the same
+## MANUFACTURE_THIS the manufacture window sends. One seam, so the two windows
+## can never disagree about what asking for a mix looks like on the wire.
+func _summon_by_ingredients(selection: Array[Dictionary]) -> void:
+	var error: Error = Network.manufacture(selection, 1)
+	if error != OK:
+		push_warning("MANUFACTURE_THIS summon failed: " + error_string(error))
+
+## Asks the server to open its own summon-behaviour popup. There is no packet
+## for "open a popup" - the server offers it on a command and on touching one
+## of your own summons - so the command is what the hotkey and the window's
+## button both send.
+func _request_summon_behavior() -> void:
+	var error: Error = Network.send_chat("#summon_behavior")
+	if error != OK:
+		push_warning("#summon_behavior failed: " + error_string(error))
 
 func _on_emotes_button_pressed() -> void:
 	emotes_window.toggle()
