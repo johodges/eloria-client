@@ -78,8 +78,20 @@ func _run() -> void:
 	# mark while their neighbours are untouched - which is the comparison the
 	# screenshot exists to make.
 	_windows.close_all()
-	_send(19, "0676000100000000027601010000000102340001000000020201000c00000003"
-		+ "0e04000100000004060b00010000000506")
+	# Regenerated after config/eloria/items.txt renumbered 57 image ids: Green
+	# Cloak moved 52 -> 49 and Healing Tonic 4 -> 3. A hex fixture encodes ids
+	# rather than names, so a renumber silently repoints it at whatever
+	# artwork now sits at the old number - the assertions cannot tell, which
+	# is why this one is regenerated from the catalog rather than hand-edited.
+	#
+	# Slot 2 draws no icon on purpose, and it is not this feature failing.
+	# atlases.json declares 21 sheets but only items1-9 are in the repository,
+	# and every weapon in the profile has an image id above 225 - the sword
+	# here is 374, which is sheet 15. A checkout where somebody has run
+	# `godot --headless --import` fabricates stubs and hides this; a clean one
+	# shows it. Leaving it visible is the point.
+	_send(19, "0676000100000000027601010000000102310001000000020201000c000000"
+		+ "030e03000100000004060b00010000000506")
 	_send(243, "2500000000000000")
 	await _settle()
 	_main.call("_sync_inventory")
@@ -91,7 +103,9 @@ func _run() -> void:
 		"the worn-slot mask arrived")
 	await _capture("worn-items.png",
 		"three worn items among six: mirrored artwork with an orange"
-			+ " exclamation in the lower-right corner, as Eternal Lands draws it")
+			+ " exclamation in the lower-right corner, as Eternal Lands draws"
+			+ " it. The empty second slot is the missing atlas sheets, not the"
+			+ " marking - see the note above it")
 
 	_app_state.set("authenticated", false)
 	_main.queue_free()
