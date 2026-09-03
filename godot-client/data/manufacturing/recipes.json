@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "sources": {
     "profile": "eloria",
-    "recipesSha256": "b2a224cba0f90d34fa6958db3892c763fbd48355affacfc2a5211477eb41a949",
-    "itemsSha256": "e29ac4bbcfba3c24d726314a4e76397458e34f6a649a4b2c66b6ebd51a3019b3",
+    "recipesSha256": "0f7a8480f44b5d4c235b5829c329ec51b3554cd654b5d1368d55b722037acff5",
+    "itemsSha256": "6d31383191adfb5c2764999ce5b686721ebd1b48be7ad67470cf7a374ae9e917",
     "booksSha256": "dbaf97061c7578ece676a3d6ff122d25af0bb69a01d4c4bcec9b16653df00329"
   },
   "recipes": [
@@ -11,7 +11,7 @@
       "id": 0,
       "skill": "manufacturing",
       "output": "Torch",
-      "outputImageId": 56,
+      "outputImageId": 53,
       "level": 0,
       "animalNexus": 0,
       "experience": 5,
@@ -23,14 +23,14 @@
         {
           "name": "Wood Plank",
           "quantity": 1,
-          "imageId": 39,
+          "imageId": 35,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Cloth Roll",
           "quantity": 1,
-          "imageId": 40,
+          "imageId": 36,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -39,7 +39,7 @@
         {
           "name": "Hatchet",
           "quantity": 1,
-          "imageId": 7,
+          "imageId": 6,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -49,7 +49,7 @@
       "id": 1,
       "skill": "alchemy",
       "output": "Iron Bar",
-      "outputImageId": 38,
+      "outputImageId": 31,
       "level": 8,
       "animalNexus": 0,
       "experience": 18,
@@ -61,14 +61,14 @@
         {
           "name": "Iron Ore",
           "quantity": 3,
-          "imageId": 34,
+          "imageId": 26,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Deep Coal",
           "quantity": 2,
-          "imageId": 33,
+          "imageId": 25,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -77,7 +77,7 @@
         {
           "name": "Mortar and Pestle",
           "quantity": 1,
-          "imageId": 9,
+          "imageId": 8,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -86,8 +86,8 @@
     {
       "id": 2,
       "skill": "manufacturing",
-      "output": "Iron Sword",
-      "outputImageId": 43,
+      "output": "Militia Arming Sword",
+      "outputImageId": 374,
       "level": 12,
       "animalNexus": 0,
       "experience": 30,
@@ -99,14 +99,14 @@
         {
           "name": "Iron Bar",
           "quantity": 3,
-          "imageId": 38,
+          "imageId": 31,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Wood Plank",
           "quantity": 1,
-          "imageId": 39,
+          "imageId": 35,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -115,7 +115,7 @@
         {
           "name": "Hatchet",
           "quantity": 1,
-          "imageId": 7,
+          "imageId": 6,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -124,8 +124,8 @@
     {
       "id": 3,
       "skill": "manufacturing",
-      "output": "Wooden Shield",
-      "outputImageId": 45,
+      "output": "Wooden Round Shield",
+      "outputImageId": 434,
       "level": 5,
       "animalNexus": 0,
       "experience": 15,
@@ -137,14 +137,14 @@
         {
           "name": "Wood Plank",
           "quantity": 3,
-          "imageId": 39,
+          "imageId": 35,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Leather",
           "quantity": 1,
-          "imageId": 41,
+          "imageId": 37,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -153,7 +153,7 @@
         {
           "name": "Hatchet",
           "quantity": 1,
-          "imageId": 7,
+          "imageId": 6,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -162,8 +162,8 @@
     {
       "id": 4,
       "skill": "tailoring",
-      "output": "Cloth Tunic",
-      "outputImageId": 46,
+      "output": "Eloria Frontier Shirt I",
+      "outputImageId": 270,
       "level": 4,
       "animalNexus": 0,
       "experience": 12,
@@ -175,7 +175,7 @@
         {
           "name": "Cloth Roll",
           "quantity": 2,
-          "imageId": 40,
+          "imageId": 36,
           "ambiguousImage": false,
           "imageAliases": []
         },
@@ -191,7 +191,7 @@
         {
           "name": "Needle",
           "quantity": 1,
-          "imageId": 8,
+          "imageId": 7,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -200,8 +200,8 @@
     {
       "id": 5,
       "skill": "manufacturing",
-      "output": "Leather Armor",
-      "outputImageId": 47,
+      "output": "Leather Ranger Torso I",
+      "outputImageId": 262,
       "level": 10,
       "animalNexus": 0,
       "experience": 25,
@@ -213,7 +213,7 @@
         {
           "name": "Leather",
           "quantity": 4,
-          "imageId": 41,
+          "imageId": 37,
           "ambiguousImage": false,
           "imageAliases": []
         },
@@ -229,7 +229,7 @@
         {
           "name": "Needle",
           "quantity": 1,
-          "imageId": 8,
+          "imageId": 7,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -239,7 +239,7 @@
       "id": 6,
       "skill": "alchemy",
       "output": "Aether Salt",
-      "outputImageId": 37,
+      "outputImageId": 29,
       "level": 12,
       "animalNexus": 0,
       "experience": 24,
@@ -251,14 +251,14 @@
         {
           "name": "Moon Salt",
           "quantity": 2,
-          "imageId": 65,
+          "imageId": 71,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Quartz",
           "quantity": 1,
-          "imageId": 35,
+          "imageId": 27,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -267,7 +267,7 @@
         {
           "name": "Mortar and Pestle",
           "quantity": 1,
-          "imageId": 9,
+          "imageId": 8,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -277,7 +277,7 @@
       "id": 7,
       "skill": "alchemy",
       "output": "Cinder Resin",
-      "outputImageId": 70,
+      "outputImageId": 68,
       "level": 18,
       "animalNexus": 0,
       "experience": 36,
@@ -289,21 +289,21 @@
         {
           "name": "Ember Crystal",
           "quantity": 1,
-          "imageId": 23,
+          "imageId": 30,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Deep Coal",
           "quantity": 2,
-          "imageId": 33,
+          "imageId": 25,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Sulfur",
           "quantity": 1,
-          "imageId": 36,
+          "imageId": 28,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -312,7 +312,7 @@
         {
           "name": "Mortar and Pestle",
           "quantity": 1,
-          "imageId": 9,
+          "imageId": 8,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -322,7 +322,7 @@
       "id": 8,
       "skill": "potion",
       "output": "Frost Distillate",
-      "outputImageId": 71,
+      "outputImageId": 74,
       "level": 16,
       "animalNexus": 0,
       "experience": 32,
@@ -334,14 +334,14 @@
         {
           "name": "Frost Reed",
           "quantity": 2,
-          "imageId": 21,
+          "imageId": 17,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Moon Salt",
           "quantity": 1,
-          "imageId": 65,
+          "imageId": 71,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -350,7 +350,7 @@
         {
           "name": "Mortar and Pestle",
           "quantity": 1,
-          "imageId": 9,
+          "imageId": 8,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -360,7 +360,7 @@
       "id": 9,
       "skill": "potion",
       "output": "Verdant Tincture",
-      "outputImageId": 72,
+      "outputImageId": 69,
       "level": 14,
       "animalNexus": 0,
       "experience": 28,
@@ -372,7 +372,7 @@
         {
           "name": "Sunleaf",
           "quantity": 2,
-          "imageId": 20,
+          "imageId": 16,
           "ambiguousImage": false,
           "imageAliases": []
         },
@@ -388,7 +388,7 @@
         {
           "name": "Mortar and Pestle",
           "quantity": 1,
-          "imageId": 9,
+          "imageId": 8,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -398,7 +398,7 @@
       "id": 10,
       "skill": "alchemy",
       "output": "Gloam Wax",
-      "outputImageId": 73,
+      "outputImageId": 72,
       "level": 22,
       "animalNexus": 0,
       "experience": 44,
@@ -410,21 +410,24 @@
         {
           "name": "Grave Moss",
           "quantity": 2,
-          "imageId": 66,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 94,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Grave Moss",
+            "Ssarathi Scale Moss"
+          ]
         },
         {
           "name": "Moon Salt",
           "quantity": 1,
-          "imageId": 65,
+          "imageId": 71,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Lavender",
           "quantity": 1,
-          "imageId": 27,
+          "imageId": 21,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -433,7 +436,7 @@
         {
           "name": "Mortar and Pestle",
           "quantity": 1,
-          "imageId": 9,
+          "imageId": 8,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -443,7 +446,7 @@
       "id": 11,
       "skill": "crafting",
       "output": "Quartz Lens",
-      "outputImageId": 67,
+      "outputImageId": 66,
       "level": 15,
       "animalNexus": 0,
       "experience": 30,
@@ -455,23 +458,26 @@
         {
           "name": "Quartz",
           "quantity": 3,
-          "imageId": 35,
+          "imageId": 27,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Slate",
           "quantity": 1,
-          "imageId": 24,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 87,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Slate",
+            "Deep Lake Clay"
+          ]
         }
       ],
       "tools": [
         {
           "name": "Mortar and Pestle",
           "quantity": 1,
-          "imageId": 9,
+          "imageId": 8,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -481,7 +487,7 @@
       "id": 12,
       "skill": "crafting",
       "output": "Iron Rune",
-      "outputImageId": 68,
+      "outputImageId": 65,
       "level": 20,
       "animalNexus": 0,
       "experience": 40,
@@ -493,23 +499,26 @@
         {
           "name": "Iron Bar",
           "quantity": 1,
-          "imageId": 38,
+          "imageId": 31,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Slate",
           "quantity": 2,
-          "imageId": 24,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 87,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Slate",
+            "Deep Lake Clay"
+          ]
         }
       ],
       "tools": [
         {
           "name": "Mortar and Pestle",
           "quantity": 1,
-          "imageId": 9,
+          "imageId": 8,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -519,7 +528,7 @@
       "id": 13,
       "skill": "tailoring",
       "output": "Woven Charm",
-      "outputImageId": 69,
+      "outputImageId": 67,
       "level": 18,
       "animalNexus": 0,
       "experience": 36,
@@ -538,14 +547,14 @@
         {
           "name": "Sunleaf",
           "quantity": 1,
-          "imageId": 20,
+          "imageId": 16,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Frost Reed",
           "quantity": 1,
-          "imageId": 21,
+          "imageId": 17,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -554,7 +563,7 @@
         {
           "name": "Needle",
           "quantity": 1,
-          "imageId": 8,
+          "imageId": 7,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -564,7 +573,7 @@
       "id": 14,
       "skill": "engineering",
       "output": "Portal Shard",
-      "outputImageId": 58,
+      "outputImageId": 55,
       "level": 28,
       "animalNexus": 0,
       "experience": 60,
@@ -576,21 +585,21 @@
         {
           "name": "Stormglass",
           "quantity": 2,
-          "imageId": 64,
+          "imageId": 73,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Quartz Lens",
           "quantity": 1,
-          "imageId": 67,
+          "imageId": 66,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Aether Salt",
           "quantity": 2,
-          "imageId": 37,
+          "imageId": 29,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -599,7 +608,7 @@
         {
           "name": "Mortar and Pestle",
           "quantity": 1,
-          "imageId": 9,
+          "imageId": 8,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -621,21 +630,21 @@
         {
           "name": "Quartz Lens",
           "quantity": 1,
-          "imageId": 67,
+          "imageId": 66,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Iron Rune",
           "quantity": 1,
-          "imageId": 68,
+          "imageId": 65,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Aether Salt",
           "quantity": 1,
-          "imageId": 37,
+          "imageId": 29,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -644,7 +653,7 @@
         {
           "name": "Mortar and Pestle",
           "quantity": 1,
-          "imageId": 9,
+          "imageId": 8,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -654,7 +663,7 @@
       "id": 16,
       "skill": "crafting",
       "output": "Hearthstone Focus",
-      "outputImageId": 74,
+      "outputImageId": 70,
       "level": 32,
       "animalNexus": 0,
       "experience": 90,
@@ -666,14 +675,14 @@
         {
           "name": "Iron Rune",
           "quantity": 2,
-          "imageId": 68,
+          "imageId": 65,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Woven Charm",
           "quantity": 2,
-          "imageId": 69,
+          "imageId": 67,
           "ambiguousImage": false,
           "imageAliases": []
         },
@@ -687,7 +696,7 @@
         {
           "name": "Aether Salt",
           "quantity": 4,
-          "imageId": 37,
+          "imageId": 29,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -696,7 +705,7 @@
         {
           "name": "Mortar and Pestle",
           "quantity": 1,
-          "imageId": 9,
+          "imageId": 8,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -718,14 +727,14 @@
         {
           "name": "Quartz Lens",
           "quantity": 2,
-          "imageId": 67,
+          "imageId": 66,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Portal Shard",
           "quantity": 2,
-          "imageId": 58,
+          "imageId": 55,
           "ambiguousImage": false,
           "imageAliases": []
         },
@@ -739,7 +748,7 @@
         {
           "name": "Stormglass",
           "quantity": 4,
-          "imageId": 64,
+          "imageId": 73,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -748,7 +757,7 @@
         {
           "name": "Mortar and Pestle",
           "quantity": 1,
-          "imageId": 9,
+          "imageId": 8,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -770,14 +779,14 @@
         {
           "name": "Iron Rune",
           "quantity": 2,
-          "imageId": 68,
+          "imageId": 65,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Gloam Wax",
           "quantity": 3,
-          "imageId": 73,
+          "imageId": 72,
           "ambiguousImage": false,
           "imageAliases": []
         },
@@ -785,21 +794,13 @@
           "name": "Memory of Rain",
           "quantity": 1,
           "imageId": 80,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Memory of Rain",
-            "Amberwood Ranger Leggings",
-            "Glasswarden Crystal Greaves",
-            "Greyhaven League Trousers",
-            "Orun Rider Leggings",
-            "Ssarathi Scale Leggings",
-            "Votary Winter Leggings"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Aether Salt",
           "quantity": 5,
-          "imageId": 37,
+          "imageId": 29,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -808,7 +809,7 @@
         {
           "name": "Mortar and Pestle",
           "quantity": 1,
-          "imageId": 9,
+          "imageId": 8,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -830,14 +831,14 @@
         {
           "name": "Quartz Lens",
           "quantity": 2,
-          "imageId": 67,
+          "imageId": 66,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Ember Crystal",
           "quantity": 4,
-          "imageId": 23,
+          "imageId": 30,
           "ambiguousImage": false,
           "imageAliases": []
         },
@@ -860,7 +861,7 @@
         {
           "name": "Mortar and Pestle",
           "quantity": 1,
-          "imageId": 9,
+          "imageId": 8,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -882,21 +883,21 @@
         {
           "name": "Aether Salt",
           "quantity": 2,
-          "imageId": 37,
+          "imageId": 29,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Moon Salt",
           "quantity": 1,
-          "imageId": 65,
+          "imageId": 71,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Stormglass",
           "quantity": 1,
-          "imageId": 64,
+          "imageId": 73,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -905,7 +906,7 @@
         {
           "name": "Mortar and Pestle",
           "quantity": 1,
-          "imageId": 9,
+          "imageId": 8,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -915,7 +916,7 @@
       "id": 21,
       "skill": "alchemy",
       "output": "Aether Salt",
-      "outputImageId": 37,
+      "outputImageId": 29,
       "level": 14,
       "animalNexus": 0,
       "experience": 28,
@@ -928,19 +929,8 @@
           "name": "Glacier Salt",
           "quantity": 2,
           "imageId": 90,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Glacier Salt",
-            "Amberwood Ranger Hood",
-            "Glasswarden Crystal Helm",
-            "Greyhaven League Helm",
-            "Orun Sunmane Helm",
-            "Ssarathi Crest Helm",
-            "Luminous Compact Circlet",
-            "Votary Fur Hood",
-            "Stoneborn Crystal Crown",
-            "Mycelari Spore Cap"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Voltaic Geode",
@@ -954,7 +944,7 @@
         {
           "name": "Mortar and Pestle",
           "quantity": 1,
-          "imageId": 9,
+          "imageId": 8,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -964,7 +954,7 @@
       "id": 22,
       "skill": "crafting",
       "output": "Quartz Lens",
-      "outputImageId": 67,
+      "outputImageId": 66,
       "level": 16,
       "animalNexus": 0,
       "experience": 32,
@@ -984,15 +974,18 @@
           "name": "Deep Lake Clay",
           "quantity": 1,
           "imageId": 87,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Slate",
+            "Deep Lake Clay"
+          ]
         }
       ],
       "tools": [
         {
           "name": "Mortar and Pestle",
           "quantity": 1,
-          "imageId": 9,
+          "imageId": 8,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -1002,7 +995,7 @@
       "id": 23,
       "skill": "tailoring",
       "output": "Woven Charm",
-      "outputImageId": 69,
+      "outputImageId": 67,
       "level": 18,
       "animalNexus": 0,
       "experience": 36,
@@ -1037,7 +1030,7 @@
         {
           "name": "Needle",
           "quantity": 1,
-          "imageId": 8,
+          "imageId": 7,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -1047,7 +1040,7 @@
       "id": 24,
       "skill": "potion",
       "output": "Frost Distillate",
-      "outputImageId": 71,
+      "outputImageId": 74,
       "level": 18,
       "animalNexus": 0,
       "experience": 36,
@@ -1067,26 +1060,15 @@
           "name": "Glacier Salt",
           "quantity": 1,
           "imageId": 90,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Glacier Salt",
-            "Amberwood Ranger Hood",
-            "Glasswarden Crystal Helm",
-            "Greyhaven League Helm",
-            "Orun Sunmane Helm",
-            "Ssarathi Crest Helm",
-            "Luminous Compact Circlet",
-            "Votary Fur Hood",
-            "Stoneborn Crystal Crown",
-            "Mycelari Spore Cap"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
         {
           "name": "Mortar and Pestle",
           "quantity": 1,
-          "imageId": 9,
+          "imageId": 8,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -1096,7 +1078,7 @@
       "id": 25,
       "skill": "potion",
       "output": "Verdant Tincture",
-      "outputImageId": 72,
+      "outputImageId": 69,
       "level": 20,
       "animalNexus": 0,
       "experience": 40,
@@ -1116,15 +1098,18 @@
           "name": "Ssarathi Scale Moss",
           "quantity": 1,
           "imageId": 94,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Grave Moss",
+            "Ssarathi Scale Moss"
+          ]
         }
       ],
       "tools": [
         {
           "name": "Mortar and Pestle",
           "quantity": 1,
-          "imageId": 9,
+          "imageId": 8,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -1134,7 +1119,7 @@
       "id": 26,
       "skill": "alchemy",
       "output": "Gloam Wax",
-      "outputImageId": 73,
+      "outputImageId": 72,
       "level": 22,
       "animalNexus": 0,
       "experience": 44,
@@ -1161,23 +1146,15 @@
           "name": "Amber Resin",
           "quantity": 1,
           "imageId": 100,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Amber Resin",
-            "Amberwood Leaf Cape",
-            "Glasswarden Crystal Cape",
-            "Greyhaven Storm Cape",
-            "Orun Rider Cape",
-            "Ssarathi Frond Cape",
-            "Four Gates Guardian Cape"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
         {
           "name": "Mortar and Pestle",
           "quantity": 1,
-          "imageId": 9,
+          "imageId": 8,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -1187,7 +1164,7 @@
       "id": 27,
       "skill": "potion",
       "output": "Antidote",
-      "outputImageId": 60,
+      "outputImageId": 57,
       "level": 16,
       "animalNexus": 0,
       "experience": 30,
@@ -1222,7 +1199,7 @@
         {
           "name": "Mortar and Pestle",
           "quantity": 1,
-          "imageId": 9,
+          "imageId": 8,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -1265,7 +1242,7 @@
         {
           "name": "Aether Salt",
           "quantity": 1,
-          "imageId": 37,
+          "imageId": 29,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -1274,7 +1251,7 @@
         {
           "name": "Mortar and Pestle",
           "quantity": 1,
-          "imageId": 9,
+          "imageId": 8,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -1310,7 +1287,7 @@
         {
           "name": "Aether Salt",
           "quantity": 1,
-          "imageId": 37,
+          "imageId": 29,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -1340,21 +1317,30 @@
         {
           "name": "Deer Hide",
           "quantity": 1,
-          "imageId": 15,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 13,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Fox Fur",
+            "Bear Fur",
+            "Deer Hide",
+            "Wolf Fur",
+            "Snake Hide"
+          ]
         },
         {
           "name": "Wayside Sage",
           "quantity": 2,
           "imageId": 101,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Rosemary",
+            "Wayside Sage"
+          ]
         },
         {
           "name": "Aether Salt",
           "quantity": 2,
-          "imageId": 37,
+          "imageId": 29,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -1398,7 +1384,7 @@
         {
           "name": "Aether Salt",
           "quantity": 3,
-          "imageId": 37,
+          "imageId": 29,
           "ambiguousImage": false,
           "imageAliases": []
         }
