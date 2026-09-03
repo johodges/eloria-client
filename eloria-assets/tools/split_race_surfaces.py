@@ -135,12 +135,22 @@ def classify(positions, uvs, indices, texture: Image.Image):
     reference it is nearest, with no Y restriction on the match itself,
     so a shirt-coloured sleeve at hip height still reads as shirt.
 
-    Eyes are a handful of triangles on a body this low-poly -- too few
-    for either hue or a per-band colour sample to isolate reliably (the
-    two bald heads here have no eye-coloured patch that stands out from
-    skin at this sampling resolution).  What DOES find them is geometry:
-    within a narrow eye-level slice of the head, the narrowest, most
-    forward-facing sliver of the face is the eyes and nothing else.
+    Eyes are a handful of triangles on a body this low-poly, and NEITHER
+    colour nor "most forward" geometry finds them -- both tried and
+    checked directly.  Colour: the two bald heads here have no
+    eye-coloured patch that stands out from skin at this sampling
+    resolution.  Geometry: sweeping the most-forward Z across fine Y
+    slices up the face finds one continuous ridge (nose tip, then brow),
+    centred on X in every slice -- this low-poly a sculpt has no eye
+    socket concavity distinguishing eyes from the nose or brow ridge, so
+    "forward-facing" just picks whichever of those a Y-band happens to
+    contain, which is how a first version coloured half the face.  What
+    does hold, measured on both Luminous Human bodies: eyes sit ABOVE the
+    nose tip -- the actual most-forward point of the head, found by that
+    same Y-sweep -- as two lobes symmetric about the face's own
+    centreline.  Anthropometric, not discovered per body, but expressed
+    as a fraction of THIS head's own vertical span so it scales with
+    head size rather than assuming one body's absolute measurements.
     """
     tex = np.asarray(texture.convert("RGB")).astype(np.float64) / 255.0
     height, width = tex.shape[:2]
@@ -178,22 +188,55 @@ def classify(positions, uvs, indices, texture: Image.Image):
         for i, name in enumerate(names):
             labels[nearest == i] = name
 
-    # Eyes: eye-level slice of the head band (not the crown, not the
-    # jaw), then the narrowest, most forward-facing sliver of that slice.
-    eye_level = (frac >= 0.82) & (frac < 0.94)
-    if eye_level.any():
-        z_level = z[eye_level]
-        forward = z > np.percentile(z_level, 88)
-        eye_zone = eye_level & forward & (np.abs(x) < 0.045)
-        labels[eye_zone] = "eyes"
+    # Eyes: two lobes, symmetric about centre, at 0.70-0.82 of the way up
+    # the HEAD's own Y span (not the whole body's -- "head" is frac >= 0.80
+    # of the body, everything from there to the crown). Measured on the
+    # male body: the nose tip -- the true most-forward point, found by
+    # sweeping max Z across 2 cm Y-slices -- peaks around 0.52-0.58 of
+    # that same span, so 0.70-0.82 sits well above it, under the brow
+    # rather than on it. The gap and half-width are likewise fractions of
+    # the head span rather than fixed metres, so a larger or smaller head
+    # on the same rig gets a proportionally placed, proportionally sized
+    # pair rather than one calibrated to this body's absolute scale.
+    head = frac >= 0.80
+    if head.any():
+        head_lo, head_hi = float(y[head].min()), float(y[head].max())
+        head_span = head_hi - head_lo
+        if head_span > 1e-9:
+            eye_level = (y >= head_lo + 0.60 * head_span) & (y < head_lo + 0.72 * head_span)
+            gap = 0.05 * head_span
+            half_width = 0.11 * head_span
+            eye_zone = eye_level & (np.abs(x) >= gap) & (np.abs(x) < gap + half_width)
+            labels[eye_zone] = "eyes"
 
     return faces, labels
 
 
 def grayscale_texture(texture: Image.Image) -> bytes:
+    """Desaturate for tinting, without carrying the source's full contrast.
+
+    Checked directly (a pixel-position diff against the untinted render):
+    the dark lines a saturated wardrobe tint made look like cuts in the
+    mesh are real-time shading on the model's OWN fold/seam geometry, at
+    the exact same screen positions with or without any of this -- not
+    baked texture detail, so no amount of filtering the source image
+    (median, Gaussian blur, nearest-neighbour sampling: all three were
+    tried here and none moved those pixels) can remove them.  What this
+    function can still do something about is the texture's OWN dark
+    values -- e.g. this body's navy trousers reads as near-black once
+    desaturated -- so straight per-pixel luminance is remapped into
+    [floor, 1.0] rather than [0.0, 1.0], which keeps a lit fabric looking
+    like fabric instead of a flat colour swatch without also making a
+    dark source garment crush to black once tinted.  The shading itself
+    is addressed separately, in replicated_actor_3d.gd, the same way
+    eyes already avoid the same problem: a floor under how dark real-time
+    shadow can take the material, not a change to what it is shaded with.
+    """
     tex = np.asarray(texture.convert("RGB")).astype(np.float64) / 255.0
     lum = tex @ np.array([0.299, 0.587, 0.114])
-    lifted = np.clip(lum / max(float(np.percentile(lum, 75)), 1e-6), 0, 1)
+    floor = 0.5
+    ceiling = max(float(np.percentile(lum, 90)), 1e-6)
+    lifted = floor + (1.0 - floor) * np.clip(lum / ceiling, 0, 1)
     img = Image.fromarray((lifted * 255).astype(np.uint8)).convert("RGB")
     out = io.BytesIO()
     img.save(out, format="PNG")

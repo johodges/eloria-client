@@ -369,6 +369,17 @@ func _set_mesh_color(mesh_node: MeshInstance3D, color: Color) -> void:
 		return
 	var material: StandardMaterial3D = (source as StandardMaterial3D).duplicate()
 	material.albedo_color = color
+	# A wardrobe surface on the common-skeleton redraw bodies is one fused
+	# shell with real fold/seam creases baked into its geometry, not flat
+	# cloth -- checked directly, a pixel-position diff against the same
+	# body untinted found the same dark lines at the same screen positions
+	# either way, so they are this mesh's own real-time shadow, not
+	# something split_race_surfaces.py's texture painted on. Invisible
+	# against the source art's own varied colouring; a hard black crack
+	# once a single saturated tint replaces it, the same problem eyes
+	# already solve with emission. Same fix, same reason.
+	material.emission_enabled = true
+	material.emission = color * 0.28
 	mesh_node.material_override = material
 
 ## Lifts a garment off the skin it is fitted to. Reuses the override the tint
