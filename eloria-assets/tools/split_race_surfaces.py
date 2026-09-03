@@ -37,6 +37,7 @@ RACES = (TOOLS.parent.parent / "godot-client" / "assets" / "actors"
 
 CLASSES = ("body", "eyes", "hair", "wardrobe_shirt", "wardrobe_pants",
            "wardrobe_boots")
+EYE_COLOUR_MIN_DISTANCE = 0.18
 CLASS_COLOURS = {
     "body": (205, 170, 140), "eyes": (0, 255, 255), "hair": (255, 0, 255),
     "wardrobe_shirt": (40, 160, 220), "wardrobe_pants": (60, 60, 200),
@@ -256,22 +257,32 @@ def classify(positions, uvs, indices, texture: Image.Image):
     reference it is nearest, with no Y restriction on the match itself,
     so a shirt-coloured sleeve at hip height still reads as shirt.
 
-    Eyes are a handful of triangles on a body this low-poly, and NEITHER
-    colour nor "most forward" geometry finds them -- both tried and
-    checked directly.  Colour: the two bald heads here have no
-    eye-coloured patch that stands out from skin at this sampling
-    resolution.  Geometry: sweeping the most-forward Z across fine Y
-    slices up the face finds one continuous ridge (nose tip, then brow),
-    centred on X in every slice -- this low-poly a sculpt has no eye
-    socket concavity distinguishing eyes from the nose or brow ridge, so
-    "forward-facing" just picks whichever of those a Y-band happens to
-    contain, which is how a first version coloured half the face.  What
-    does hold, measured on both Luminous Human bodies: eyes sit ABOVE the
-    nose tip -- the actual most-forward point of the head, found by that
-    same Y-sweep -- as two lobes symmetric about the face's own
-    centreline.  Anthropometric, not discovered per body, but expressed
-    as a fraction of THIS head's own vertical span so it scales with
-    head size rather than assuming one body's absolute measurements.
+    Eyes are a handful of triangles on a body this low-poly, and "most
+    forward" geometry alone does not find them: sweeping the most-forward
+    Z across fine Y slices up the face finds one continuous ridge (nose
+    tip, then brow), centred on X in every slice -- this low-poly a
+    sculpt has no eye socket concavity distinguishing eyes from the nose
+    or brow ridge, so "forward-facing" just picks whichever of those a
+    Y-band happens to contain, which is how a first version coloured half
+    the face.  What does hold, measured on both Luminous Human bodies:
+    eyes sit ABOVE the nose tip -- the actual most-forward point of the
+    head, found by that same Y-sweep -- as two lobes symmetric about the
+    face's own centreline.  Anthropometric, not discovered per body, but
+    expressed as a fraction of THIS head's own vertical span so it scales
+    with head size rather than assuming one body's absolute measurements.
+
+    That geometric zone is only a coarse net, though: checked directly
+    (Godot's own import preview, isolating the "eyes" primitive) there
+    IS a real painted eye -- iris, pupil, sclera -- sitting in a small
+    UV island, but most of the zone's triangles are the plain-skin eyelid
+    and brow around it, so classifying the whole zone as "eyes" pulled in
+    far more skin than eye.  What separates the two within the zone is
+    colour: the painted eye is nowhere near this body's skin tone, while
+    the surrounding eyelid triangles ARE that skin tone almost by
+    definition. So the zone is sampled for its own local skin reference
+    (median of everything in it, since skin is the overwhelming
+    majority) and only the zone's outliers -- far enough from that local
+    reference -- keep the "eyes" label; the rest fall back to "body".
     """
     tex = np.asarray(texture.convert("RGB")).astype(np.float64) / 255.0
     height, width = tex.shape[:2]
@@ -328,9 +339,86 @@ def classify(positions, uvs, indices, texture: Image.Image):
             gap = 0.05 * head_span
             half_width = 0.11 * head_span
             eye_zone = eye_level & (np.abs(x) >= gap) & (np.abs(x) < gap + half_width)
-            labels[eye_zone] = "eyes"
+            # The zone is mostly eyelid/brow skin around a small painted
+            # eye -- keep only the zone's own colour outliers, measured
+            # against a reference sampled from the zone itself (its
+            # median, since skin is the overwhelming majority there) so
+            # this adapts to each body's own skin tone with no hard-coded
+            # colour. EYE_COLOUR_MIN_DISTANCE is in the same normalised
+            # (0-1 per channel) RGB space as every other reference in
+            # this function; a painted iris/pupil/sclera sits at 0.4-1.2
+            # from either Luminous body's skin, eyelid shading noise
+            # under 0.1 -- 0.18 sits well clear of the shading noise
+            # without creeping into it.
+            if eye_zone.any():
+                zone_rgb = rgb[eye_zone]
+                local_skin = np.median(zone_rgb, axis=0)
+                zone_dist = np.linalg.norm(zone_rgb - local_skin, axis=1)
+                zone_indices = np.flatnonzero(eye_zone)
+                labels[zone_indices[zone_dist >= EYE_COLOUR_MIN_DISTANCE]] = "eyes"
 
     return faces, labels
+
+
+def reclassify_eyes(document, binary) -> str:
+    """Re-run eye/body classification on an already-split (v15) file.
+
+    Only "eyes" and "body" can change membership here -- the colour-vs-
+    reference wardrobe classes are untouched by the fix this re-runs, so
+    their primitives are read (classify() needs every shared-surface face
+    to recompute the same head Y-span a fresh split would see) but never
+    repointed. Faces move between the two primitives by writing each a
+    freshly classified index accessor and repointing "indices" at it; the
+    previous index accessors are left as orphaned, unreferenced buffer
+    bytes, the same way add_scalp's v2->v14 migration leaves its old
+    scalp accessors -- harmless in a GLB, and simpler than compacting the
+    buffer.
+    """
+    by_name = {n["name"]: n for n in document["nodes"]
+               if n.get("name") in CLASSES and "mesh" in n}
+    body_node = by_name["body"]
+    eyes_node = by_name.get("eyes")
+    first_prim = document["meshes"][next(iter(by_name.values()))["mesh"]]["primitives"][0]
+    positions = accessor_array(document, binary, first_prim["attributes"]["POSITION"])
+    uvs = accessor_array(document, binary, first_prim["attributes"]["TEXCOORD_0"])
+
+    all_faces = []
+    owners = []
+    for name, n in by_name.items():
+        prim = document["meshes"][n["mesh"]]["primitives"][0]
+        idx = accessor_array(document, binary, prim["indices"]).reshape(-1).astype(np.uint32)
+        all_faces.append(idx.reshape(-1, 3))
+        owners += [name] * (len(idx) // 3)
+    all_faces = np.concatenate(all_faces, axis=0)
+    owners = np.array(owners)
+    old_eye_count = int((owners == "eyes").sum())
+
+    image = document["images"][0]
+    view = document["bufferViews"][image["bufferView"]]
+    start = 8 + view.get("byteOffset", 0)
+    texture = Image.open(io.BytesIO(bytes(binary[start:start + view["byteLength"]])))
+    _, labels = classify(positions, uvs, all_faces.reshape(-1), texture)
+
+    is_body_family = np.isin(owners, ["body", "eyes"])
+    eyes_mask = (labels == "eyes") & is_body_family
+    body_mask = (labels != "eyes") & is_body_family
+    new_eyes = all_faces[eyes_mask]
+    new_body = all_faces[body_mask]
+    if eyes_node is None and len(new_eyes):
+        raise RuntimeError("reclassify_eyes found eye faces but this "
+                            "model has no 'eyes' node to hold them")
+
+    def repoint(node, faces):
+        prim = document["meshes"][node["mesh"]]["primitives"][0]
+        acc = append_accessor(document, binary,
+                              faces.reshape(-1).astype(np.uint32), 5125,
+                              "SCALAR", 34963)
+        prim["indices"] = acc
+
+    repoint(body_node, new_body)
+    if eyes_node is not None:
+        repoint(eyes_node, new_eyes)
+    return "eyes %d -> %d faces" % (old_eye_count, len(new_eyes))
 
 
 def grayscale_texture(texture: Image.Image) -> bytes:
@@ -540,8 +628,13 @@ def add_scalp(document, binary) -> int:
 def split(path: Path, calibrate: bool) -> str:
     document, binary = read_glb(path)
     extras = document.setdefault("asset", {}).setdefault("extras", {})
-    if int(extras.get("eloriaSurfacesSplit", 0)) >= 15:
+    if int(extras.get("eloriaSurfacesSplit", 0)) >= 16:
         return "already split"
+    if int(extras.get("eloriaSurfacesSplit", 0)) == 15:
+        report = reclassify_eyes(document, binary)
+        extras["eloriaSurfacesSplit"] = 16
+        write_glb(path, document, binary)
+        return "%s -> v16" % report
     if int(extras.get("eloriaSurfacesSplit", 0)) == 14:
         count = resmooth_shared_surfaces(document, binary)
         extras["eloriaSurfacesSplit"] = 15
@@ -677,7 +770,7 @@ def split(path: Path, calibrate: bool) -> str:
 
     del mesh_node["mesh"]
     add_scalp(document, binary)
-    extras["eloriaSurfacesSplit"] = 15
+    extras["eloriaSurfacesSplit"] = 16
     write_glb(path, document, binary)
     return "split: %s" % counts
 
