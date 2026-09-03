@@ -75,7 +75,9 @@ func _run() -> void:
 		# is caught, with the layout settled and the real font measured. A
 		# blocked row is exempt on its first line: that carries a sentence, not
 		# a reagent list, and its whole text is on the tooltip.
-		var lines: Array[String] = (["Requirements", "Cost"] if ready else ["Cost"])
+		var lines: Array[String] = ["Requirements", "Cost"]
+		if not ready:
+			lines = ["Cost"]
 		for line: String in lines:
 			var label: Label = row.get_node("Row/Asks/" + line) as Label
 			var needed: float = label.get_theme_font("font").get_string_size(
@@ -89,7 +91,8 @@ func _run() -> void:
 		"the stag says what is holding it back")
 	await _capture("summoning-window-stocked.png",
 		"the same window with the skill, the nexus and the reagents in hand:"
-			+ " every row lit, listing what it will spend")
+			+ " the otter and the turtle lit and listing what they spend, the"
+			+ " stag held back by reagents that share their artwork")
 
 	_app_state.set("authenticated", false)
 	_main.queue_free()
