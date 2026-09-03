@@ -148,9 +148,10 @@ SHEETS = [
     #
     # Visual ranges continue above what each part already uses (helmet 124,
     # legs 190, body 191, boots 207) and stay inside a byte, which is all
-    # ACTOR_WEAR_ITEM carries.  Legs is the tight one: it ends at 250 with five
-    # spare, so another leg sheet after this needs the range reclaimed rather
-    # than extended.
+    # ACTOR_WEAR_ITEM carries.  Boots is now the full part -- the two greaves
+    # sets that moved into it (below) take it to 255 -- so a further boot sheet
+    # needs an existing range compacted first.  Legs ends at 250 with 203-218
+    # freed where the greaves used to sit.
     ("Eight_Legendary_Helms_of_Eloria", "Legendary Eloria Helm",
      "legendary_eloria_helm", "helm", 3, 125, "plate", 5, "legendary"),
     ("Eight_grounded_militia_helmet_designs", "Militia Helmet",
@@ -181,10 +182,18 @@ SHEETS = [
 
     ("Eight_legendary_fantasy_leg_armor_designs", "Legendary Leg Armor",
      "legendary_leg_armor", "legs", 4, 195, "plate", 5, "legendary"),
+    # Both "greaves" sets are foot armour, not leg armour: the medieval militia
+    # sheet is a pair of buckled boots and the refined knightly sheet is plate
+    # greaves with sabatons over the foot (their leg counterparts are Militia
+    # Leg Armor and Ceremonial Knight Greaves, which stay part 4).  Filed as
+    # legs they stretched a boot up the whole thigh and sorted under Legs in
+    # storage; boots/part 6 fits the foot region and lands them under Feet.
+    # Visuals move into the free foot range above the six boot sheets (which
+    # end at 239) rather than colliding inside part 4's occupied 200-215.
     ("Eight_Refined_Knightly_Greave_Designs", "Knightly Greaves",
-     "knightly_greaves", "legs", 4, 203, "mail", 3, ""),
+     "knightly_greaves", "boots", 6, 240, "mail", 3, ""),
     ("Eight_medieval_militia_greaves", "Militia Greaves",
-     "militia_greaves", "legs", 4, 211, "mail", 1, ""),
+     "militia_greaves", "boots", 6, 248, "mail", 1, ""),
     ("Eloria_Militia_Leg_Armor_Variants", "Militia Leg Armor",
      "militia_leg_armor", "legs", 4, 219, "mail", 1, ""),
     ("Eight_rugged_ranger_legwear_designs", "Rugged Ranger Legwear",
@@ -371,6 +380,18 @@ def main() -> int:
             if piece.part == 3:
                 entry["hides"] = list(ea.PARTS[3]["hides"])
         registry["models"]["%d:%d" % (piece.part, piece.visual)] = entry
+    # A piece that changes part or visual -- a slot correction, say -- leaves
+    # its old "part:visual" key behind still pointing at its mesh, which now
+    # holds the rebuilt geometry: a stale key hands a boot to the leg slot, and
+    # the leg-seam fixtures read it as legwear and fail.  Drop any key that
+    # names one of our own slugs but is not that slug's current key; authored
+    # models under other slugs are never one of our slugs, so they are untouched.
+    current_keys = {"%d:%d" % (piece.part, piece.visual) for piece in everyone}
+    our_slugs = {piece.slug for piece in everyone}
+    for key in [key for key, entry in registry["models"].items()
+                if Path(str(entry.get("scene", ""))).stem in our_slugs
+                and key not in current_keys]:
+        del registry["models"][key]
     REGISTRY.write_text(json.dumps(registry, indent=2) + "\n",
                         encoding="utf-8")
 

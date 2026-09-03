@@ -1658,134 +1658,6 @@
       "kind": "legs",
       "authoredFor": "luminous_male"
     },
-    "4:203": {
-      "scene": "res://assets/actors/native/equipment/knightly_greaves_01.glb",
-      "name": "Knightly Greaves I",
-      "attach": "skinned",
-      "skinRegion": "legs",
-      "kind": "legs",
-      "authoredFor": "luminous_male"
-    },
-    "4:204": {
-      "scene": "res://assets/actors/native/equipment/knightly_greaves_02.glb",
-      "name": "Knightly Greaves II",
-      "attach": "skinned",
-      "skinRegion": "legs",
-      "kind": "legs",
-      "authoredFor": "luminous_male"
-    },
-    "4:205": {
-      "scene": "res://assets/actors/native/equipment/knightly_greaves_03.glb",
-      "name": "Knightly Greaves III",
-      "attach": "skinned",
-      "skinRegion": "legs",
-      "kind": "legs",
-      "authoredFor": "luminous_male"
-    },
-    "4:206": {
-      "scene": "res://assets/actors/native/equipment/knightly_greaves_04.glb",
-      "name": "Knightly Greaves IV",
-      "attach": "skinned",
-      "skinRegion": "legs",
-      "kind": "legs",
-      "authoredFor": "luminous_male"
-    },
-    "4:207": {
-      "scene": "res://assets/actors/native/equipment/knightly_greaves_05.glb",
-      "name": "Knightly Greaves V",
-      "attach": "skinned",
-      "skinRegion": "legs",
-      "kind": "legs",
-      "authoredFor": "luminous_male"
-    },
-    "4:208": {
-      "scene": "res://assets/actors/native/equipment/knightly_greaves_06.glb",
-      "name": "Knightly Greaves VI",
-      "attach": "skinned",
-      "skinRegion": "legs",
-      "kind": "legs",
-      "authoredFor": "luminous_male"
-    },
-    "4:209": {
-      "scene": "res://assets/actors/native/equipment/knightly_greaves_07.glb",
-      "name": "Knightly Greaves VII",
-      "attach": "skinned",
-      "skinRegion": "legs",
-      "kind": "legs",
-      "authoredFor": "luminous_male"
-    },
-    "4:210": {
-      "scene": "res://assets/actors/native/equipment/knightly_greaves_08.glb",
-      "name": "Knightly Greaves VIII",
-      "attach": "skinned",
-      "skinRegion": "legs",
-      "kind": "legs",
-      "authoredFor": "luminous_male"
-    },
-    "4:211": {
-      "scene": "res://assets/actors/native/equipment/militia_greaves_01.glb",
-      "name": "Militia Greaves I",
-      "attach": "skinned",
-      "skinRegion": "legs",
-      "kind": "legs",
-      "authoredFor": "luminous_male"
-    },
-    "4:212": {
-      "scene": "res://assets/actors/native/equipment/militia_greaves_02.glb",
-      "name": "Militia Greaves II",
-      "attach": "skinned",
-      "skinRegion": "legs",
-      "kind": "legs",
-      "authoredFor": "luminous_male"
-    },
-    "4:213": {
-      "scene": "res://assets/actors/native/equipment/militia_greaves_03.glb",
-      "name": "Militia Greaves III",
-      "attach": "skinned",
-      "skinRegion": "legs",
-      "kind": "legs",
-      "authoredFor": "luminous_male"
-    },
-    "4:214": {
-      "scene": "res://assets/actors/native/equipment/militia_greaves_04.glb",
-      "name": "Militia Greaves IV",
-      "attach": "skinned",
-      "skinRegion": "legs",
-      "kind": "legs",
-      "authoredFor": "luminous_male"
-    },
-    "4:215": {
-      "scene": "res://assets/actors/native/equipment/militia_greaves_05.glb",
-      "name": "Militia Greaves V",
-      "attach": "skinned",
-      "skinRegion": "legs",
-      "kind": "legs",
-      "authoredFor": "luminous_male"
-    },
-    "4:216": {
-      "scene": "res://assets/actors/native/equipment/militia_greaves_06.glb",
-      "name": "Militia Greaves VI",
-      "attach": "skinned",
-      "skinRegion": "legs",
-      "kind": "legs",
-      "authoredFor": "luminous_male"
-    },
-    "4:217": {
-      "scene": "res://assets/actors/native/equipment/militia_greaves_07.glb",
-      "name": "Militia Greaves VII",
-      "attach": "skinned",
-      "skinRegion": "legs",
-      "kind": "legs",
-      "authoredFor": "luminous_male"
-    },
-    "4:218": {
-      "scene": "res://assets/actors/native/equipment/militia_greaves_08.glb",
-      "name": "Militia Greaves VIII",
-      "attach": "skinned",
-      "skinRegion": "legs",
-      "kind": "legs",
-      "authoredFor": "luminous_male"
-    },
     "4:219": {
       "scene": "res://assets/actors/native/equipment/militia_leg_armor_01.glb",
       "name": "Militia Leg Armor I",
@@ -4734,6 +4606,134 @@
           25.9186
         ]
       }
+    },
+    "6:240": {
+      "scene": "res://assets/actors/native/equipment/knightly_greaves_01.glb",
+      "name": "Knightly Greaves I",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:241": {
+      "scene": "res://assets/actors/native/equipment/knightly_greaves_02.glb",
+      "name": "Knightly Greaves II",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:242": {
+      "scene": "res://assets/actors/native/equipment/knightly_greaves_03.glb",
+      "name": "Knightly Greaves III",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:243": {
+      "scene": "res://assets/actors/native/equipment/knightly_greaves_04.glb",
+      "name": "Knightly Greaves IV",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:244": {
+      "scene": "res://assets/actors/native/equipment/knightly_greaves_05.glb",
+      "name": "Knightly Greaves V",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:245": {
+      "scene": "res://assets/actors/native/equipment/knightly_greaves_06.glb",
+      "name": "Knightly Greaves VI",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:246": {
+      "scene": "res://assets/actors/native/equipment/knightly_greaves_07.glb",
+      "name": "Knightly Greaves VII",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:247": {
+      "scene": "res://assets/actors/native/equipment/knightly_greaves_08.glb",
+      "name": "Knightly Greaves VIII",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:248": {
+      "scene": "res://assets/actors/native/equipment/militia_greaves_01.glb",
+      "name": "Militia Greaves I",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:249": {
+      "scene": "res://assets/actors/native/equipment/militia_greaves_02.glb",
+      "name": "Militia Greaves II",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:250": {
+      "scene": "res://assets/actors/native/equipment/militia_greaves_03.glb",
+      "name": "Militia Greaves III",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:251": {
+      "scene": "res://assets/actors/native/equipment/militia_greaves_04.glb",
+      "name": "Militia Greaves IV",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:252": {
+      "scene": "res://assets/actors/native/equipment/militia_greaves_05.glb",
+      "name": "Militia Greaves V",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:253": {
+      "scene": "res://assets/actors/native/equipment/militia_greaves_06.glb",
+      "name": "Militia Greaves VI",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:254": {
+      "scene": "res://assets/actors/native/equipment/militia_greaves_07.glb",
+      "name": "Militia Greaves VII",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:255": {
+      "scene": "res://assets/actors/native/equipment/militia_greaves_08.glb",
+      "name": "Militia Greaves VIII",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
     }
   },
   "aliases": {},
