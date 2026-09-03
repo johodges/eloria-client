@@ -100,6 +100,12 @@ func _check_decision_table() -> void:
 		"an item the click will move shows the grasping hand")
 	_choice({"over_world": false, "target": "item_grab"}, MouseCursors.GRAB,
 		"the hand does not need the world - it lives on the interface")
+	_choice({"target": "item_use"}, MouseCursors.USE,
+		"an item the use tool would spend shows the pressing finger")
+	_choice({"target": "item_inspect"}, MouseCursors.EYE,
+		"an item the click will only look at shows the eye")
+	_choice({"over_world": true, "target": "item_inspect"}, MouseCursors.EYE,
+		"the interface pointers outrank the world, since the window is on top")
 
 ## The seams main.gd relies on: the scene builds a loaded cursor set, and the
 ## hover question it asks the viewport exists on this engine.

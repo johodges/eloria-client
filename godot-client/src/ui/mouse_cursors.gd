@@ -32,6 +32,11 @@ const GRAB := 13
 
 const CURSOR_COUNT := 14
 
+## The item-slot pointers, which live on the interface rather than in the
+## world: the inventory's tool in hand decides which of the three a slot
+## promises, so the pointer says "move", "use" or "look" before the click.
+const SLOT_CURSORS := {"item_grab": GRAB, "item_use": USE, "item_inspect": EYE}
+
 var _textures: Array = []
 var _hotspots: Array = []
 var _names: Array[String] = []
@@ -124,15 +129,16 @@ func install_text_caret() -> void:
 ##   target: "" | "npc" | "player" | "self" | "creature" | "bag" | "harvest"
 ##       | "portal" | "interactive" - what the pick rays found, first hit wins
 ##       in the click handler's own order (actors, then bags, then objects) -
-##       or "item_grab", the one target that lives on the interface instead:
-##       an item slot whose click will move the item.
+##       or one of SLOT_CURSORS' keys, the targets that live on the interface
+##       instead: an item slot whose click will move, use or look at the item.
 ##   alive: bool - the hovered actor is alive.
 ##   mode: "walk" | "attack" | "trade" - the icon bar's interaction mode.
 ##   alt: bool - Alt is held, the click-to-attack preview.
 ##   spell_target: "" | "actor" | "location" - a cast is waiting for a target.
 static func choose(context: Dictionary) -> int:
-	if str(context.get("target", "")) == "item_grab":
-		return GRAB
+	var slot_cursor: Variant = SLOT_CURSORS.get(str(context.get("target", "")))
+	if slot_cursor is int:
+		return int(slot_cursor)
 	if not bool(context.get("over_world", false)):
 		return ARROW
 	var target: String = str(context.get("target", ""))
