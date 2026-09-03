@@ -17,6 +17,8 @@ func _init() -> void:
 	_decoding()
 	_centring()
 	_selection()
+	_scale_decoding()
+	_scale_applied()
 	print("actor footprints: ", "PASS" if _failures == 0 else "FAIL (%d)" % _failures)
 	quit(_failures)
 
@@ -143,6 +145,126 @@ func _selection() -> void:
 		_expect(is_equal_approx((shape.shape as CapsuleShape3D).radius,
 			ReplicatedActor3D.SELECTION_RADIUS),
 			"a later correction resizes the click target")
+	actor.queue_free()
+
+
+# --- how large the model is drawn -------------------------------------------
+#
+# A creature's scale rides after its name's terminator and only when it is not
+# life size, so where it sits depends on how long the name was. A player's is
+# in a fixed trailer and always written. Both were previously ignored - the
+# plain one entirely, the player's read under the name "attached actor id",
+# which is what it never was.
+
+func _u16(value: int) -> PackedByteArray:
+	return PackedByteArray([value & 0xFF, (value >> 8) & 0xFF])
+
+## ADD_NEW_ACTOR: the creature layout, name at 17, optional scale after it.
+func _plain_actor(name: String, scale_word: int) -> PackedByteArray:
+	var payload := PackedByteArray()
+	payload.append_array(_u16(42))       # actor id
+	payload.append_array(_u16(10))       # x
+	payload.append_array(_u16(20))       # y
+	payload.append_array(_u16(0))        # reserved
+	payload.append_array(_u16(0))        # rotation
+	payload.append(40)                   # actor type
+	payload.append(0)                    # frame
+	payload.append_array(_u16(30))       # max health
+	payload.append_array(_u16(30))       # health
+	payload.append(3)                    # kind
+	payload.append_array(name.to_utf8_buffer())
+	payload.append(0)
+	if scale_word > 0:
+		payload.append_array(_u16(scale_word))
+	return payload
+
+func _scale_decoding() -> void:
+	var life_size: Dictionary = EloriaProtocol.decode_server(
+		EloriaProtocol.ServerMessage.ADD_NEW_ACTOR, _plain_actor("Rat", 0))
+	_expect(life_size.get("type") == "actor_spawn",
+		"a creature with no scale word still decodes")
+	_expect(float(life_size.get("scale", -1.0)) == 1.0,
+		"an actor with no scale word is life size, not zero")
+
+	var scaled: Dictionary = EloriaProtocol.decode_server(
+		EloriaProtocol.ServerMessage.ADD_NEW_ACTOR,
+		_plain_actor("Rat", int(round(1.5 * EloriaProtocol.ACTOR_SCALE_UNIT))))
+	_expect(is_equal_approx(float(scaled.get("scale", 0.0)), 1.5),
+		"a creature's scale decodes from after its name")
+
+	# The offset depends on the name's length, which is the part that would
+	# break if the trailer were read from a fixed position.
+	var long_name: Dictionary = EloriaProtocol.decode_server(
+		EloriaProtocol.ServerMessage.ADD_NEW_ACTOR,
+		_plain_actor("Ancient Sunscale Basilisk",
+			int(round(2.5 * EloriaProtocol.ACTOR_SCALE_UNIT))))
+	_expect(is_equal_approx(float(long_name.get("scale", 0.0)), 2.5),
+		"a long-named creature's scale is found after its own terminator")
+	_expect(str(long_name.get("name", "")) == "Ancient Sunscale Basilisk",
+		"and the name is still read whole")
+
+	_expect(EloriaProtocol.ACTOR_SCALE_UNIT == 16384.0,
+		"life size is the unit the server encodes it as")
+
+	# The player packet: a fixed trailer of scale, attachment sentinel, eyes,
+	# neck. The first two bytes used to be read as an attached actor id.
+	var enhanced := PackedByteArray()
+	enhanced.append_array(_u16(7))
+	enhanced.append_array(_u16(5))
+	enhanced.append_array(_u16(6))
+	enhanced.append_array(_u16(0))
+	enhanced.append_array(_u16(0))
+	enhanced.append(1)                   # actor type
+	enhanced.append(0)
+	for _look: int in range(10):
+		enhanced.append(1)
+	enhanced.append(0)                   # frame
+	enhanced.append_array(_u16(50))      # max health
+	enhanced.append_array(_u16(50))      # health
+	enhanced.append(0)                   # kind
+	enhanced.append_array("Kellan".to_utf8_buffer())
+	enhanced.append(0)
+	enhanced.append_array(_u16(int(EloriaProtocol.ACTOR_SCALE_UNIT)))
+	enhanced.append_array(PackedByteArray([255, 4, 0]))
+	var player: Dictionary = EloriaProtocol.decode_server(
+		EloriaProtocol.ServerMessage.ADD_NEW_ENHANCED_ACTOR, enhanced)
+	_expect(player.get("type") == "actor_spawn", "the player packet decodes")
+	_expect(float(player.get("scale", 0.0)) == 1.0,
+		"the player's trailer is read as a scale, not an actor id")
+	_expect(int(player.get("attachment_type", -1)) == 255,
+		"the no-attachment sentinel is where it belongs")
+	_expect(int((player.get("appearance", {}) as Dictionary).get("eyes", -1)) == 4,
+		"and the eyes after it are still read correctly")
+
+func _scale_applied() -> void:
+	var adapter := CoordinateAdapter.new({"metresPerTile": 1.0, "walkingHeight": 0.0})
+	var actor := ReplicatedActor3D.new()
+	root.add_child(actor)
+	# No model config, so this takes the missing-model fallback - which is the
+	# path that would silently skip the scale if only the import adapter set it.
+	actor.configure({"actor_id": 1, "x": 0, "y": 0, "rotation": 0,
+		"actor_type": 40, "kind": 3, "name": "Dire Giant", "health": 10,
+		"max_health": 10, "scale": 2.0}, adapter, {}, {})
+	_expect(is_equal_approx(actor.server_scale, 2.0),
+		"the actor takes the scale its packet carried")
+	var fallback: Node3D = actor.get_node_or_null("MissingModelFallback") as Node3D
+	if _expect(fallback != null, "the fallback stand-in was built"):
+		_expect(is_equal_approx(fallback.scale.x, 2.0),
+			"a stand-in for a giant is drawn giant")
+	var plate: Node3D = actor.get_node_or_null("Nameplate") as Node3D
+	if _expect(plate != null, "the actor has a nameplate"):
+		_expect(is_equal_approx(plate.position.y,
+			ReplicatedActor3D.NAMEPLATE_HEIGHT * 2.0),
+			"the nameplate is lifted clear of the larger model")
+
+	# Scale can change without a respawn - an ordinary creature promoted to an
+	# invasion boss is redrawn larger in place.
+	actor.set_server_scale(1.0)
+	_expect(is_equal_approx(actor.server_scale, 1.0)
+		and is_equal_approx((actor.get_node("MissingModelFallback") as Node3D).scale.x, 1.0)
+		and is_equal_approx((actor.get_node("Nameplate") as Node3D).position.y,
+			ReplicatedActor3D.NAMEPLATE_HEIGHT),
+		"a later scale change is applied to model and nameplate together")
 	actor.queue_free()
 
 func _expect(value: bool, label: String) -> bool:

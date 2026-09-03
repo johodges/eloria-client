@@ -2007,6 +2007,12 @@ static func stat_key(slot: int) -> String:
 		88: "max_action_points", 113: "action_points", 114: "max_action_points"}
 	return str(keys.get(slot, "slot_%d" % slot))
 
+## What the actor packets encode a model scale in: an unsigned 16-bit field
+## of 1/16384ths, so 0x4000 is life size. Matches the server's
+## `protocol.ACTOR_SCALE_UNIT`; the two have to agree or every scaled
+## creature is drawn at the wrong size.
+const ACTOR_SCALE_UNIT := 16384.0
+
 static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := false) -> Dictionary:
 	var minimum := 31 if enhanced else (19 if extended else 18)
 	if payload.size() < minimum:
@@ -2016,7 +2022,8 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := f
 		"type": "actor_spawn", "enhanced": enhanced, "actor_id": u16(payload),
 		"x": u16(payload, 2) & 0x7ff, "y": u16(payload, 4) & 0x7ff,
 		"rotation": s16(payload, 8),
-		"actor_type": u16(payload, 10) if extended else int(payload[10])}
+		"actor_type": u16(payload, 10) if extended else int(payload[10]),
+		"scale": 1.0}
 	if enhanced:
 		actor["appearance"] = {
 			"skin": int(payload[12]), "hair": int(payload[13]), "shirt": int(payload[14]),
@@ -2037,13 +2044,19 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := f
 		if name_end < 0:
 			name_end = min(payload.size(), 58)
 		actor.merge(decode_actor_name(payload.slice(28, name_end)))
-		# The enhanced-actor trailer follows the variable-length name: attached
-		# actor id, mount type, eye style, and neck visual. Preserve eye choices
-		# across the real server round trip instead of silently reverting to 0.
+		# The enhanced-actor trailer follows the variable-length name: model
+		# scale, the attachment sentinel, eye style, and neck visual. Preserve
+		# eye choices across the real server round trip instead of silently
+		# reverting to 0.
+		#
+		# The first two bytes were read as an attached actor id, which they
+		# never were - the server writes a scale there, and 255 at +2 is the
+		# no-attachment sentinel. Nothing read either field, so the mistake
+		# was invisible until a scale other than life size was sent.
 		var trailer_offset: int = name_end + 1
 		if payload.size() >= trailer_offset + 5:
-			actor["attached_actor_id"] = u16(payload, trailer_offset)
-			actor["mount_type"] = int(payload[trailer_offset + 2])
+			actor["scale"] = float(u16(payload, trailer_offset)) / ACTOR_SCALE_UNIT
+			actor["attachment_type"] = int(payload[trailer_offset + 2])
 			var appearance: Dictionary = actor["appearance"] as Dictionary
 			appearance["eyes"] = int(payload[trailer_offset + 3])
 			var neck_visual: int = int(payload[trailer_offset + 4])
@@ -2062,6 +2075,13 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := f
 		# guild, and their names routinely contain spaces.
 		actor.merge(decode_actor_name(plain_name if plain_end < 0
 			else plain_name.slice(0, plain_end), false))
+		# A creature's scale rides after the name's terminator and only when
+		# it is not life size, so its offset depends on how long the name
+		# was. No terminator means no trailer to find.
+		if plain_end >= 0:
+			var scale_offset: int = 17 + shift + plain_end + 1
+			if payload.size() >= scale_offset + 2:
+				actor["scale"] = float(u16(payload, scale_offset)) / ACTOR_SCALE_UNIT
 	actor["alive"] = int(actor.get("health", 0)) > 0
 	# The frame byte is the actor's current animation state. FRAME_COMBAT_IDLE
 	# is the only value that carries gameplay meaning at spawn: an actor

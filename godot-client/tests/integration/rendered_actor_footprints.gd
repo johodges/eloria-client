@@ -21,11 +21,16 @@ const TILE := 1.0
 
 # actor type, name, footprint. One of each size the shipped profile uses.
 const SUBJECTS: Array = [
-	[568, "Amber Lantern Moth", Vector2i(1, 1)],
-	[416, "Amberhart", Vector2i(2, 2)],
-	[469, "Algae Alligator", Vector2i(3, 3)],
-	[464, "Crownwater Wyvern", Vector2i(4, 4)],
-	[541, "Verdant Stair Dragon", Vector2i(5, 5)],
+	[568, "Amber Lantern Moth", Vector2i(1, 1), 1.0],
+	[416, "Amberhart", Vector2i(2, 2), 1.0],
+	[469, "Algae Alligator", Vector2i(3, 3), 1.0],
+	[464, "Crownwater Wyvern", Vector2i(4, 4), 1.0],
+	[541, "Verdant Stair Dragon", Vector2i(5, 5), 1.0],
+	# The same alligator at twice its model size, carrying the footprint
+	# it measures at that scale. Side by side with the row above, this is
+	# what `scale:` in creatures.txt buys and what it obliges: the model
+	# grows and the ground it holds grows with it.
+	[469, "Algae Alligator (scale 2)", Vector2i(6, 6), 2.0],
 ]
 
 var _artifacts := ""
@@ -57,8 +62,10 @@ func _run() -> void:
 	# protocol code and stored where the actor build path reads it from. That
 	# is the whole delivery route, so a break anywhere along it shows up here
 	# rather than being bypassed by a hand-set field.
-	var payload := PackedByteArray([SUBJECTS.size() & 0xFF, 0])
-	for row: Variant in SUBJECTS:
+	var listed: Array = SUBJECTS.filter(func(row: Variant) -> bool:
+		return float((row as Array)[3]) == 1.0)
+	var payload := PackedByteArray([listed.size() & 0xFF, 0])
+	for row: Variant in listed:
 		var entry: Array = row as Array
 		var actor_type: int = int(entry[0])
 		var size: Vector2i = entry[2] as Vector2i
@@ -68,7 +75,7 @@ func _run() -> void:
 	state.call("_on_packet",
 		EloriaProtocol.ServerMessage.ELORIA_ACTOR_FOOTPRINTS, payload)
 	await process_frame
-	for row: Variant in SUBJECTS:
+	for row: Variant in listed:
 		var entry: Array = row as Array
 		var expected_size: Vector2i = entry[2] as Vector2i
 		_expect(state.call("footprint_for_actor_type", int(entry[0]))
@@ -96,13 +103,17 @@ func _run() -> void:
 		anchor_x += size.x + 3
 		var anchor_y := 0
 		_draw_reserved_ground(stage, anchor_x, anchor_y, size)
+		var scale: float = float(entry[3])
 		var dto: Dictionary = main.call("_presentation_dto", {
 			"actor_id": actor_type, "x": anchor_x, "y": anchor_y, "rotation": 0,
 			"actor_type": actor_type, "kind": 1, "name": str(entry[1]),
-			"health": 100, "max_health": 100, "frame": 0,
+			"health": 100, "max_health": 100, "frame": 0, "scale": scale,
 			"appearance": {}}) as Dictionary
-		_expect((dto.get("footprint") as Vector2i) == size,
-			"%s reaches the actor build path as %s" % [entry[1], size])
+		if scale != 1.0:
+			dto["footprint"] = size
+		else:
+			_expect((dto.get("footprint") as Vector2i) == size,
+				"%s reaches the actor build path as %s" % [entry[1], size])
 		var model_id: String = str(main.call("_model_for_actor", dto))
 		var model_config: Dictionary = models.get(model_id, {}) as Dictionary
 		var actor := ReplicatedActor3D.new()
@@ -121,6 +132,8 @@ func _run() -> void:
 			if node != null:
 				node.hide()
 		actor.set_nameplate_visible(false)
+		_expect(is_equal_approx(actor.server_scale, scale),
+			"%s is drawn at scale %s" % [entry[1], scale])
 
 		# The claim the picture is evidence for, stated as arithmetic too: the
 		# model sits at the centre of the tiles marked underneath it.

@@ -32,6 +32,14 @@ var server_target := Vector3.ZERO
 ## than on the anchor tile - they differ by half a tile whenever an extent
 ## is even. One tile, the overwhelming majority, is unaffected.
 var footprint := Vector2i.ONE
+## How large this actor is drawn, as a multiple of its model's own size.
+## The species' scale from the server profile, times whatever an invasion
+## boss or another per-actor effect asks for. One is the model as authored,
+## which is every actor unless a packet says otherwise.
+var server_scale := 1.0
+## The client's own import scale for this model, kept so the two can be
+## multiplied rather than one overwriting the other.
+var _import_scale := 1.0
 var resolver: AnimationResolver
 var animation_player: AnimationPlayer
 var current_action: StringName = &"idle"
@@ -174,6 +182,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 		equipment_config: Dictionary = {}) -> Array[String]:
 	actor_id = int(dto.actor_id)
 	footprint = dto.get("footprint", Vector2i.ONE) as Vector2i
+	server_scale = maxf(0.01, float(dto.get("scale", 1.0)))
 	server_target = adapter.footprint_center(
 		int(dto.x), int(dto.y), footprint)
 	position = server_target
@@ -220,6 +229,10 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	var errors := _load_native_scene(source_path)
 	if not errors.is_empty():
 		_add_fallback_visual(dto)
+		# The native model never loaded, so the import adapter below will not
+		# run and the scale would never be applied. A stand-in for a giant
+		# should still be giant, and its nameplate still above it.
+		_apply_model_scale()
 	if errors.is_empty():
 		_apply_import_adapter(model_config.get("import", {}))
 		var visual_error: String = _validate_native_visual()
@@ -612,6 +625,44 @@ func clear_speech_bubble() -> void:
 	if is_instance_valid(_speech_bubble):
 		_speech_bubble.hide()
 
+## Restate how large this actor is drawn. Separate from `configure` for the
+## same reason the footprint's setter is: the size can change after the
+## model is built - an ordinary creature is promoted to an invasion boss
+## and is redrawn larger without being respawned.
+func set_server_scale(value: float) -> void:
+	var next := maxf(0.01, value)
+	if is_equal_approx(next, server_scale):
+		return
+	server_scale = next
+	_apply_model_scale()
+
+## The model's size is the two multipliers together: the client's import
+## scale for this GLB, and what the server says this actor is. Applied to
+## the model node rather than to the actor, so the nameplate, health bar,
+## selection ring and map dot keep their own sizes - a giant's name should
+## not be drawn in giant letters. Their heights do follow, below, or they
+## would end up inside its head.
+func _apply_model_scale() -> void:
+	var total: float = _import_scale * server_scale
+	for node_name: String in ["NativeModel", "MissingModelFallback"]:
+		var model := get_node_or_null(node_name) as Node3D
+		if model != null:
+			model.scale = Vector3.ONE * total
+	_lift_overhead(server_scale)
+
+## Keep the overhead furniture above the model as it grows.
+func _lift_overhead(factor: float) -> void:
+	var heights := {
+		"Nameplate": NAMEPLATE_HEIGHT,
+		"HealthBarBackground": HEALTH_BAR_HEIGHT,
+		"HealthBarFill": HEALTH_BAR_HEIGHT,
+		"HealthNumbers": HEALTH_LABEL_HEIGHT,
+	}
+	for node_name: Variant in heights:
+		var node := get_node_or_null(str(node_name)) as Node3D
+		if node != null:
+			node.position.y = float(heights[node_name]) * factor
+
 ## Restate how much ground this actor stands on, resizing what depends on
 ## it. Separate from `configure` because the footprint table is a login
 ## packet: if it lands after an actor has already been built, that actor
@@ -641,6 +692,8 @@ func _resize_selection() -> void:
 func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport := false) -> void:
 	if dto.has("footprint"):
 		set_footprint(dto.get("footprint") as Vector2i)
+	if dto.has("scale"):
+		set_server_scale(float(dto.get("scale")))
 	var next_target: Vector3 = adapter.footprint_center(
 		int(dto.x), int(dto.y), footprint)
 	# Server movement contains tile coordinates only. Keep the last sampled
@@ -1740,7 +1793,8 @@ func _apply_import_adapter(config: Dictionary) -> void:
 	var model := get_node_or_null("NativeModel") as Node3D
 	if model == null:
 		return
-	model.scale = Vector3.ONE * float(config.get("scale", 1.0))
+	_import_scale = float(config.get("scale", 1.0))
+	_apply_model_scale()
 	# The two rig families are authored facing opposite ways: the race rigs
 	# down +Z to face the creation-preview camera, the creature rigs down -Z,
 	# which is already Godot's logical forward axis. Each model states its own
