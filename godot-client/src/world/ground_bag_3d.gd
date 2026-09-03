@@ -26,8 +26,13 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter) -> void:
 	_build_visual()
 
 func set_surface_height(height: float) -> void:
-	global_position.y = height + 0.22
+	# Half the sack's own height, so it rests on the ground.
+	global_position.y = height + 0.123
 
+## Sized for the person who dropped it: the sack reads at 0.40 m across
+## beside a 1.87 m body, knee high, rather than the 0.72 m boulder it was.
+## Every part shares one scale so the shape is the authored one.
+##
 ## The reference sack: a round-bellied bag of warm tan cloth, gathered into a
 ## short neck, tied with a dark cord, a small puff of cloth above the knot.
 ## The belly is a barely squashed sphere - the shape that reads as "full bag"
@@ -40,8 +45,8 @@ func _build_visual() -> void:
 	cloth.albedo_color = Color(0.8, 0.55, 0.32, 1.0)
 	cloth.roughness = 0.95
 	var body_mesh: SphereMesh = SphereMesh.new()
-	body_mesh.radius = 0.36
-	body_mesh.height = 0.72
+	body_mesh.radius = 0.20
+	body_mesh.height = 0.40
 	body_mesh.radial_segments = 24
 	body_mesh.rings = 12
 	body_mesh.material = cloth
@@ -51,43 +56,43 @@ func _build_visual() -> void:
 	# Almost a full sphere: barely settled under its own weight, and sunk a
 	# touch into the ground so it sits rather than floats.
 	body.scale = Vector3(1.0, 0.9, 1.0)
-	body.position.y = 0.08
+	body.position.y = 0.045
 	add_child(body)
 
 	var neck_mesh: CylinderMesh = CylinderMesh.new()
-	neck_mesh.bottom_radius = 0.16
-	neck_mesh.top_radius = 0.1
-	neck_mesh.height = 0.14
+	neck_mesh.bottom_radius = 0.09
+	neck_mesh.top_radius = 0.056
+	neck_mesh.height = 0.078
 	neck_mesh.material = cloth
 	var neck: MeshInstance3D = MeshInstance3D.new()
 	neck.name = "BagNeck"
 	neck.mesh = neck_mesh
-	neck.position.y = 0.39
+	neck.position.y = 0.218
 	add_child(neck)
 
 	var cord_material: StandardMaterial3D = StandardMaterial3D.new()
 	cord_material.albedo_color = Color(0.33, 0.19, 0.09, 1.0)
 	cord_material.roughness = 0.9
 	var cord_mesh: CylinderMesh = CylinderMesh.new()
-	cord_mesh.bottom_radius = 0.115
-	cord_mesh.top_radius = 0.115
-	cord_mesh.height = 0.045
+	cord_mesh.bottom_radius = 0.064
+	cord_mesh.top_radius = 0.064
+	cord_mesh.height = 0.025
 	cord_mesh.material = cord_material
 	var cord: MeshInstance3D = MeshInstance3D.new()
 	cord.name = "BagTie"
 	cord.mesh = cord_mesh
-	cord.position.y = 0.455
+	cord.position.y = 0.255
 	add_child(cord)
 
 	var puff_mesh: SphereMesh = SphereMesh.new()
-	puff_mesh.radius = 0.125
-	puff_mesh.height = 0.25
+	puff_mesh.radius = 0.07
+	puff_mesh.height = 0.14
 	puff_mesh.material = cloth
 	var puff: MeshInstance3D = MeshInstance3D.new()
 	puff.name = "BagPuff"
 	puff.mesh = puff_mesh
 	puff.scale = Vector3(1.0, 0.65, 1.0)
-	puff.position.y = 0.495
+	puff.position.y = 0.277
 	add_child(puff)
 
 	var map_marker: MeshInstance3D = MapMarkerDisc.build(
@@ -96,8 +101,8 @@ func _build_visual() -> void:
 	add_child(map_marker)
 
 	var shape: CapsuleShape3D = CapsuleShape3D.new()
-	shape.radius = 0.5
-	shape.height = 0.9
+	shape.radius = 0.32
+	shape.height = 0.62
 	var collision: CollisionShape3D = CollisionShape3D.new()
 	collision.name = "BagPickShape"
 	collision.shape = shape

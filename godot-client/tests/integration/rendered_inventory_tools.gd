@@ -95,37 +95,37 @@ func _run() -> void:
 		"a plain click still runs the tool in hand")
 	main.call("_cancel_carry")
 
-	# The grasping hand's contract: it shows exactly where a click would move
-	# an item, and nowhere else.
+	# The pointer's contract: the hand shows exactly where a click would move
+	# an item and nowhere else, and the other tools answer with their own.
 	var slot_buttons: Array = main.get("inventory_slot_buttons") as Array
 	var equipment_buttons: Array = main.get("equipment_slot_buttons") as Array
 	var first_slot: Button = slot_buttons[0] as Button
 	var empty_slot: Button = slot_buttons[3] as Button
 	main.call("_set_inventory_tool", "grab")
-	_expect(bool(main.call("_slot_click_moves_item", first_slot)),
+	_expect(str(main.call("_slot_cursor_target", first_slot)) == "item_grab",
 		"the grab tool over an item promises the hand")
-	_expect(not bool(main.call("_slot_click_moves_item", empty_slot)),
+	_expect(str(main.call("_slot_cursor_target", empty_slot)).is_empty(),
 		"an empty slot promises nothing while the hand is empty")
 	main.call("_set_inventory_tool", "inspect")
-	_expect(not bool(main.call("_slot_click_moves_item", first_slot)),
-		"the inspect tool over an item does not promise a move")
+	_expect(str(main.call("_slot_cursor_target", first_slot)) == "item_inspect",
+		"the inspect tool over an item promises the eye, not a move")
 	Input.parse_input_event(hold_ctrl)
 	await process_frame
-	_expect(bool(main.call("_slot_click_moves_item", first_slot)),
+	_expect(str(main.call("_slot_cursor_target", first_slot)) == "item_grab",
 		"held Ctrl promises the drop whatever tool is in hand")
 	Input.parse_input_event(release_ctrl)
 	await process_frame
 	main.call("_set_inventory_tool", "equip")
-	_expect(bool(main.call("_slot_click_moves_item", first_slot)),
+	_expect(str(main.call("_slot_cursor_target", first_slot)) == "item_grab",
 		"the equip tool promises the move to a wear slot")
 	main.call("_set_inventory_tool", "unequip")
-	_expect(bool(main.call("_slot_click_moves_item", equipment_buttons[0])),
+	_expect(str(main.call("_slot_cursor_target", equipment_buttons[0])) == "item_grab",
 		"the unequip tool over worn gear promises the move back")
-	_expect(not bool(main.call("_slot_click_moves_item", first_slot)),
+	_expect(str(main.call("_slot_cursor_target", first_slot)).is_empty(),
 		"the unequip tool over carried gear does not")
 	main.call("_set_inventory_tool", "grab")
 	main.call("_begin_carry", 0)
-	_expect(bool(main.call("_slot_click_moves_item", empty_slot)),
+	_expect(str(main.call("_slot_cursor_target", empty_slot)) == "item_grab",
 		"while carrying, an empty slot is a placement target")
 	# A drop that cannot be sent leaves the stack in hand: nothing left it.
 	main.call("_drop_carry")
