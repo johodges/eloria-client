@@ -207,7 +207,7 @@ def interior_manifest(spec: Interior, stats: dict, extras: dict) -> dict:
             "id": "exit",
             "position": [round(spawn[0], 2), 0.0, round(spec.depth * 0.5 - 0.9, 2)],
             "radius": 1.6,
-            "targetMap": "maps/startmap.elm",
+            "targetMap": "four_gates",
             "targetPosition": [round(v, 2) for v in spec.door_world],
             "label": "Out to the street",
         }],

@@ -19,10 +19,9 @@ Ssarthi gain a swept head crest, Stoneborn gain hewn plates and crystal seams,
 and Mycelari gain layered caps, shelf growths, and mycelial motifs without
 changing attachment anchors.
 
-```sh
-python3 eloria-assets/tools/generate_all_assets.py build/eloria-data
-python3 eloria-assets/tools/validate_generated_assets.py build/eloria-data
-```
+> Reproduction commands removed: this stage was validated against the
+> Eternal Lands format data pack, which was deleted with the C client
+> on 2026-09-03. The evidence below is kept as the record of it.
 
 Validation asserts the frozen actor IDs, race/gender metadata, complete section
 mesh references, topology floors, valid Cal3D geometry, normalized influences,

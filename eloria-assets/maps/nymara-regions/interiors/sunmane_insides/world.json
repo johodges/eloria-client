@@ -1234,7 +1234,7 @@
         43,
         27
       ],
-      "destinationMap": "maps/nymara/sunmane_steppe.elm",
+      "destinationMap": "sunmane_steppe",
       "destinationTile": [
         128,
         175
@@ -1254,7 +1254,7 @@
         169,
         28
       ],
-      "destinationMap": "maps/nymara/sunmane_steppe.elm",
+      "destinationMap": "sunmane_steppe",
       "destinationTile": [
         182,
         154

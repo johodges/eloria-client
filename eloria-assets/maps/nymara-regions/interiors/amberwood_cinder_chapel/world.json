@@ -154,7 +154,7 @@
         -1.0
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/amberwood.elm",
+      "destinationMap": "amberwood",
       "destinationSpawn": "cinder-chapel-door",
       "authority": "server"
     }

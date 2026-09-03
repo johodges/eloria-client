@@ -9,7 +9,7 @@ reasonably want to overrule the build.
    tile is kept, so movement granularity is unchanged; the server map grows
    instead, from 32×32 to 96×96 ELM tiles (192 to 576 height cells). The arrival
    datum moves from server (58, 58) to (174, 174), so it still lands on the Godot
-   origin. `../source-elm/manymouth_delta.elm` is regenerated to match and must
+   origin. `../server-collision/manymouth_delta.bin` is regenerated to match and must
    be loaded server-side, together with
    `feature/manymouth-delta-96-server-map` in `eloria-server`.
    The whole composition is written in a 192 m design space and scaled by

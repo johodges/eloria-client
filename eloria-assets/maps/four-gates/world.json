@@ -178,7 +178,7 @@
         174.11
       ],
       "doorNode": "Door_four-gates-lantern-row",
-      "map": "maps/four-gates-lantern-row.elm",
+      "map": "four-gates-lantern-row",
       "description": "Covered market hall; general goods and Nima Vey's counting desk."
     },
     {
@@ -192,7 +192,7 @@
         248.49
       ],
       "doorNode": "Door_four-gates-reedworks",
-      "map": "maps/four-gates-reedworks.elm",
+      "map": "four-gates-reedworks",
       "description": "Cordage, canvas and cloth from mirror reed; dye vats and looms."
     },
     {
@@ -206,7 +206,7 @@
         -172.46
       ],
       "doorNode": "Door_four-gates-stormglass-house",
-      "map": "maps/four-gates-stormglass-house.elm",
+      "map": "four-gates-stormglass-house",
       "description": "Glazier and alchemist; buys stormglass, sells lenses and reagents."
     },
     {
@@ -220,7 +220,7 @@
         -254.05
       ],
       "doorNode": "Door_four-gates-mirrorsmith-forge",
-      "map": "maps/four-gates-mirrorsmith-forge.elm",
+      "map": "four-gates-mirrorsmith-forge",
       "description": "The smithy behind the civic equipment set; repair and reforge."
     },
     {
@@ -234,7 +234,7 @@
         -301.26
       ],
       "doorNode": "Door_four-gates-ferrymans-rest",
-      "map": "maps/four-gates-ferrymans-rest.elm",
+      "map": "four-gates-ferrymans-rest",
       "description": "Inn, tavern and the Crownwater ferry office at the north dock."
     },
     {
@@ -248,7 +248,7 @@
         16.98
       ],
       "doorNode": "Door_four-gates-deposit-four-keys",
-      "map": "maps/four-gates-deposit-four-keys.elm",
+      "map": "four-gates-deposit-four-keys",
       "description": "Storage and banking; four keyed vault doors and a plastered fifth."
     }
   ],
@@ -682,7 +682,7 @@
         174.11
       ],
       "radius": 2.4,
-      "targetMap": "maps/four-gates-lantern-row.elm",
+      "targetMap": "four-gates-lantern-row",
       "targetSpawn": "entrance",
       "doorNode": "Door_four-gates-lantern-row",
       "label": "Lantern Row",
@@ -697,7 +697,7 @@
         248.49
       ],
       "radius": 2.4,
-      "targetMap": "maps/four-gates-reedworks.elm",
+      "targetMap": "four-gates-reedworks",
       "targetSpawn": "entrance",
       "doorNode": "Door_four-gates-reedworks",
       "label": "The Reedworks",
@@ -712,7 +712,7 @@
         -172.46
       ],
       "radius": 2.4,
-      "targetMap": "maps/four-gates-stormglass-house.elm",
+      "targetMap": "four-gates-stormglass-house",
       "targetSpawn": "entrance",
       "doorNode": "Door_four-gates-stormglass-house",
       "label": "The Stormglass House",
@@ -727,7 +727,7 @@
         -254.05
       ],
       "radius": 2.4,
-      "targetMap": "maps/four-gates-mirrorsmith-forge.elm",
+      "targetMap": "four-gates-mirrorsmith-forge",
       "targetSpawn": "entrance",
       "doorNode": "Door_four-gates-mirrorsmith-forge",
       "label": "Mirrorsmith's Forge",
@@ -742,7 +742,7 @@
         -301.26
       ],
       "radius": 2.4,
-      "targetMap": "maps/four-gates-ferrymans-rest.elm",
+      "targetMap": "four-gates-ferrymans-rest",
       "targetSpawn": "entrance",
       "doorNode": "Door_four-gates-ferrymans-rest",
       "label": "The Ferryman's Rest",
@@ -757,7 +757,7 @@
         16.98
       ],
       "radius": 2.4,
-      "targetMap": "maps/four-gates-deposit-four-keys.elm",
+      "targetMap": "four-gates-deposit-four-keys",
       "targetSpawn": "entrance",
       "doorNode": "Door_four-gates-deposit-four-keys",
       "label": "The Deposit of Four Keys",

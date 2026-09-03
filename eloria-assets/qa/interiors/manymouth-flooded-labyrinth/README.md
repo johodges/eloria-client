@@ -9,10 +9,9 @@ eight flood channels, six smuggler shelves, and six fishing-crate clusters.
 Eight green water lights supplement the four transition lights. The `(58,10)`
 arrival, map identity, and transition metadata remain unchanged.
 
-```sh
-python3 eloria-assets/tools/generate_nymara_complete.py build/eloria-data
-python3 eloria-assets/tools/validate_generated_assets.py build/eloria-data
-```
+> Reproduction commands removed: this stage was validated against the
+> Eternal Lands format data pack, which was deleted with the C client
+> on 2026-09-03. The evidence below is kept as the record of it.
 
 Validation asserts exact module counts, dependencies, scenery and lighting
 density, and a clear arrival radius. Shaded map-editor and client captures

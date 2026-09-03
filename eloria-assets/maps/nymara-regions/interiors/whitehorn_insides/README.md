@@ -81,12 +81,12 @@ to the door they came in by, not to one shared exit.
 ```sh
 cd ../../whitehorn_range/source
 python3 build_interiors.py
-python3 export_insides_elm.py
+python3 export_insides_collision.py
 python3 preview_interior.py insides /tmp/sheet.png
 python3 ../../_toolkit/verify_runtime.py --package ../../interiors/whitehorn_insides
 ```
 
-`export_insides_elm.py` downsamples this package's own `collision.bin` to the
+`export_insides_collision.py` downsamples this package's own `collision.bin` to the
 one-metre ELM height map, so the client grid and the server map cannot drift
 apart. The result is 192 × 192 cells — inside the 32 tiles an interior map
 already allows, so **no server-side change is needed**.

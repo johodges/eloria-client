@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-"""Canonical Nymara harvestable catalogue: geometry, materials and lists.
+"""Canonical Nymara harvestable catalogue: geometry and materials.
 
 This module is the single source of truth for every harvestable resource in
 the world.  Before it existed the client carried three disjoint harvestable
 vocabularies (the legacy Emberhaven scenery set, the Nymara region set placed
 by the map generator, and the icon/2D set shipped in the client asset pack),
-and none of them agreed with the names the client's `harvestable.lst` lookup
-actually needs.
+and none of them agreed with each other.
 
 Fidelity contract
 -----------------
@@ -20,21 +19,16 @@ regional kit rather than to the placeholder standard they had before:
 * one authored 256x256 RGBA material per resource, quartered into stalk,
   blade, bloom and bed regions so faces sample matching texel density instead
   of stretching a single checker over every surface;
-* foliage models declare a transparent material, which is what makes the
-  client enable alpha test and disable back-face culling for them
-  (`3d_objects.c`), so leaf cards read as foliage and stay visible from every
-  camera angle instead of being culled away from behind;
+* foliage entries declare a transparent material, which is what makes
+  `build_native_world_object_glbs.py` give the GLB an alpha-tested,
+  double-sided material, so leaf cards read as foliage and stay visible from
+  every camera angle instead of being culled away from behind;
 * stable pivots: every model sits on z=0 and is centred on the node position.
 """
 from __future__ import annotations
 
 import math
-import struct
-from pathlib import Path
 
-from generate_bootstrap_pack import png
-
-MODEL_DIR = "3dobjects/nymara"
 TEXTURE_SIZE = 256
 
 # Quadrants of the shared per-resource material.
@@ -663,30 +657,6 @@ def region_resources(region: str) -> tuple:
     return tuple(entry[0] for entry in CATALOGUE if region in entry[4])
 
 
-def model_path(resource_id: str) -> str:
-    return f"{MODEL_DIR}/{resource_id}.e3d"
-
-
-def harvest_list_entries() -> list:
-    """Basenames for harvestable.lst.
-
-    `is_harvestable()` in cursors.c binary-searches the loaded list with an
-    exact strcmp against the *basename* of the object file (3d_objects.c
-    lowercases the name first), so the list must hold lowercase basenames.
-    Full relative paths, which is what the generators used to write, never
-    match and leave every object in the world unharvestable.
-    """
-    names = sorted({f"{i}.e3d" for i in IDS} | {f"{i}.e3d" for i in LEGACY_IDS})
-    return names
-
-
-def write_harvest_list(root: Path) -> list:
-    entries = harvest_list_entries()
-    (root / "harvestable.lst").write_text("\n".join(entries) + "\n",
-                                          encoding="utf-8")
-    return entries
-
-
 # --------------------------------------------------------------------------
 # materials
 # --------------------------------------------------------------------------
@@ -739,308 +709,3 @@ def material_pixel(base, accent, bloom):
     return pixel
 
 
-# --------------------------------------------------------------------------
-# E3D output
-# --------------------------------------------------------------------------
-
-def write_e3d(path: Path, texture_name: str, build, transparent: bool) -> tuple:
-    """Write a single-material E3D.
-
-    `options` is the material transparency flag.  3d_objects.c turns a
-    non-zero value into GL_ALPHA_TEST plus a disabled GL_CULL_FACE, which is
-    exactly what foliage cards need; solid mineral nodes stay opaque so they
-    keep back-face culling and the cheaper solid draw path.
-    """
-    vertices: list = []
-    indices: list = []
-    build(vertices, indices)
-    if len(vertices) > 65535:
-        raise ValueError(f"{path.name}: too many vertices for 16-bit indices")
-    vertex_data = b"".join(struct.pack("<8f", *v) for v in vertices)
-    index_data = struct.pack("<" + "H" * len(indices), *indices)
-    mn = [min(v[5 + i] for v in vertices) for i in range(3)]
-    mx = [max(v[5 + i] for v in vertices) for i in range(3)]
-    name = texture_name.encode()[:127] + b"\0"
-    material = struct.pack("<i128s6f4i", 1 if transparent else 0,
-                           name.ljust(128, b"\0"), *mn, *mx,
-                           min(indices), max(indices), 0, len(indices))
-    elc_size = 28
-    vertex_offset = elc_size + 40
-    index_offset = vertex_offset + len(vertex_data)
-    material_offset = index_offset + len(index_data)
-    header = struct.pack("<9i4B", len(vertices), 32, vertex_offset,
-                         len(indices), 2, index_offset, 1, 172,
-                         material_offset, 1, 0x10, 0, 0)
-    payload = header + vertex_data + index_data + material
-    import hashlib
-    elc = struct.pack("<4s4s16si", b"e3dx", bytes((1, 1, 0, 0)),
-                      hashlib.md5(payload).digest(), elc_size)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(elc + payload)
-    return len(vertices), len(indices) // 3
-
-
-def write_obj(path: Path, build, material_name: str, texture: str) -> None:
-    vertices: list = []
-    indices: list = []
-    build(vertices, indices)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    out = [f"mtllib {path.stem}.mtl", f"usemtl {material_name}"]
-    out += [f"v {v[5]:.5f} {v[6]:.5f} {v[7]:.5f}" for v in vertices]
-    out += [f"vt {v[0]:.5f} {1 - v[1]:.5f}" for v in vertices]
-    out += [f"vn {v[2]:.5f} {v[3]:.5f} {v[4]:.5f}" for v in vertices]
-    out += [
-        "f " + " ".join(f"{indices[k + o] + 1}/{indices[k + o] + 1}/"
-                        f"{indices[k + o] + 1}" for o in range(3))
-        for k in range(0, len(indices), 3)
-    ]
-    path.write_text("\n".join(out) + "\n")
-    path.with_suffix(".mtl").write_text(
-        f"newmtl {material_name}\nKd 1 1 1\nd 1\nmap_Kd {texture}\n"
-        f"map_d {texture}\n")
-
-
-def write_models(root: Path, obj_source: Path | None = None) -> list:
-    """Write every catalogue model, material and (optionally) OBJ source."""
-    records = []
-    for entry in CATALOGUE:
-        rid, label, kind, tier, regions, colors, (build, foliage) = entry
-        model = root / MODEL_DIR / f"{rid}.e3d"
-        texture = model.with_suffix(".png")
-        png(texture, TEXTURE_SIZE, TEXTURE_SIZE, material_pixel(*colors))
-        vertex_count, triangles = write_e3d(model, texture.name, build,
-                                            foliage)
-        if obj_source is not None:
-            write_obj(obj_source / f"{rid}.obj", build, rid, texture.name)
-        records.append({
-            "id": rid, "label": label, "kind": kind, "tier": tier,
-            "regions": list(regions),
-            "model": model_path(rid),
-            "texture": f"{MODEL_DIR}/{rid}.png",
-            "alpha_tested": foliage,
-            "vertices": vertex_count, "triangles": triangles,
-            "respawn_seconds": RESPAWN_SECONDS[tier],
-        })
-    return records
-
-
-# --------------------------------------------------------------------------
-# decorative ground flora (2D sprites)
-# --------------------------------------------------------------------------
-# The client has always supported 2D map objects (`obj_2d_io` in io/map_io.h,
-# `.2d` definitions in 2d_objects.c) and the generated maps never used them:
-# every ELM was written with obj_2d_no == 0.  Ground flora is what that system
-# is for, and it costs one alpha-tested quad per instance, so the regions get
-# undergrowth without spending landmark budget on it.
-
-FLORA_ATLAS = "nymara_flora.png"
-FLORA_DIR = "2dobjects/nymara/flora"
-FLORA_CELL = 64
-FLORA_COLUMNS = 4
-
-# id, kind, sprite family, (base, tip), size (x, y)
-FLORA = (
-    ("grass_tuft", "plant", "blades", ((70, 104, 62), (140, 168, 96)), (1.1, 0.8)),
-    ("tall_grass", "plant", "blades", ((78, 108, 60), (168, 186, 104)), (1.3, 1.5)),
-    ("fern_frond", "plant", "frond", ((42, 92, 58), (96, 150, 84)), (1.4, 1.2)),
-    ("wildflower", "plant", "flower", ((74, 108, 66), (214, 176, 96)), (0.9, 0.9)),
-    ("reed_tuft", "plant", "blades", ((58, 106, 92), (128, 178, 150)), (1.0, 1.7)),
-    ("heather", "plant", "flower", ((72, 82, 66), (150, 118, 168)), (1.0, 0.7)),
-    ("dry_brush", "plant", "brush", ((116, 98, 58), (170, 148, 88)), (1.3, 0.9)),
-    ("snow_tuft", "plant", "blades", ((122, 140, 142), (206, 224, 226)), (1.0, 0.6)),
-    ("jungle_frond", "plant", "frond", ((36, 88, 52), (86, 152, 74)), (1.8, 1.6)),
-    ("cattail", "plant", "cattail", ((62, 100, 74), (128, 96, 58)), (0.8, 1.9)),
-    ("saltgrass", "plant", "blades", ((124, 128, 96), (188, 190, 150)), (1.1, 0.9)),
-    ("thistle_tuft", "plant", "flower", ((70, 88, 72), (108, 112, 176)), (0.9, 1.0)),
-    ("lily_pad", "ground", "disc", ((44, 100, 66), (104, 154, 96)), (1.6, 1.6)),
-    ("moss_patch", "ground", "patch", ((48, 84, 60), (98, 138, 88)), (1.8, 1.8)),
-    ("pebbles", "ground", "patch", ((88, 86, 80), (146, 142, 132)), (1.4, 1.4)),
-    ("crystal_grit", "ground", "patch", ((92, 78, 116), (168, 138, 208)), (1.4, 1.4)),
-)
-
-REGION_FLORA = {
-    "four_gates": ("grass_tuft", "tall_grass", "wildflower", "moss_patch",
-                   "pebbles"),
-    "mirrorhold": ("reed_tuft", "grass_tuft", "lily_pad", "moss_patch",
-                   "wildflower"),
-    "crownwater": ("reed_tuft", "cattail", "lily_pad", "grass_tuft",
-                   "pebbles"),
-    "whitehorn_range": ("snow_tuft", "pebbles", "moss_patch", "heather"),
-    "amethyst_barrens": ("dry_brush", "crystal_grit", "pebbles",
-                         "thistle_tuft"),
-    "sunmane_steppe": ("saltgrass", "dry_brush", "tall_grass", "thistle_tuft",
-                       "pebbles"),
-    "amberwood": ("grass_tuft", "fern_frond", "wildflower", "moss_patch",
-                  "tall_grass"),
-    "grey_moors": ("heather", "moss_patch", "tall_grass", "thistle_tuft",
-                   "pebbles"),
-    "westhaven": ("saltgrass", "grass_tuft", "pebbles", "wildflower"),
-    "verdant_stair": ("jungle_frond", "fern_frond", "moss_patch",
-                      "wildflower", "lily_pad"),
-    "ssarathi_ruins": ("fern_frond", "moss_patch", "jungle_frond", "pebbles"),
-    "manymouth_delta": ("cattail", "reed_tuft", "lily_pad", "jungle_frond",
-                        "moss_patch"),
-}
-
-
-def flora_pixel(index):
-    """One 64x64 alpha sprite per flora entry inside the shared atlas."""
-    _, _, family, (base, tip), _ = FLORA[index]
-
-    def mix(a, b, t):
-        t = max(0.0, min(1.0, t))
-        return tuple(int(p + (q - p) * t) for p, q in zip(a, b))
-
-    def pixel(x, y):
-        u = (x + 0.5) / FLORA_CELL
-        v = (y + 0.5) / FLORA_CELL
-        up = 1.0 - v                      # 0 at the ground, 1 at the top
-        grain = ((x * 29 + y * 17 + (x ^ y) * 3) % 21) - 10
-        inside = False
-        shade = up
-        if family == "blades":
-            for k in range(5):
-                cx = 0.16 + 0.17 * k
-                lean = 0.13 * math.sin(k * 2.1)
-                axis = cx + lean * up
-                width = 0.036 * (1.0 - 0.85 * up)
-                if abs(u - axis) < width and up < 0.55 + 0.42 * math.sin(k):
-                    inside = True
-        elif family == "frond":
-            spine = 0.5 + 0.09 * math.sin(up * 2.6)
-            d = u - spine
-            if abs(d) < 0.024 and up < 0.94:
-                inside = True
-            for k in range(9):
-                t = 0.06 + 0.098 * k
-                envelope = 0.44 * math.sin(math.pi * min(1.0, (t + 0.06) * 1.02))
-                for side in (-1, 1):
-                    if side * d < 0 or abs(d) > envelope:
-                        continue
-                    lift = t + 0.34 * abs(d)
-                    if abs(up - lift) < 0.030 + 0.030 * (1 - abs(d) / max(envelope, 1e-4)):
-                        inside = True
-                        shade = 0.35 + 0.65 * (1 - abs(d) / max(envelope, 1e-4))
-        elif family == "flower":
-            if abs(u - 0.5 - 0.04 * up) < 0.022 and up < 0.70:
-                inside = True
-                shade = 0.15
-            for k in range(2):
-                a = 0.9 + 1.4 * k
-                lx = 0.5 + math.cos(a) * 0.16
-                ly = 0.22 + 0.12 * k
-                if math.hypot((u - lx) / 0.13, (up - ly) / 0.055) < 1.0:
-                    inside = True
-                    shade = 0.25
-            head = (0.5 + 0.04 * 0.78, 0.78)
-            for k in range(6):
-                a = 2 * math.pi * k / 6 + 0.3
-                px = head[0] + math.cos(a) * 0.135
-                py = head[1] + math.sin(a) * 0.135
-                du = (u - px) * math.cos(a) + (up - py) * math.sin(a)
-                dv = -(u - px) * math.sin(a) + (up - py) * math.cos(a)
-                if math.hypot(du / 0.115, dv / 0.062) < 1.0:
-                    inside = True
-                    shade = 0.92
-            if math.hypot(u - head[0], up - head[1]) < 0.070:
-                inside = True
-                shade = 0.55
-        elif family == "brush":
-            for k in range(11):
-                a = math.pi / 2 + (k - 5) * 0.17
-                r = math.hypot(u - 0.5, up)
-                if r < 0.02:
-                    continue
-                ang = math.atan2(up, u - 0.5)
-                reach = 0.40 + 0.16 * math.cos((k - 5) * 0.5)
-                if abs(ang - a) < 0.030 + 0.020 * (1 - r / reach) and r < reach:
-                    inside = True
-                    shade = 0.30 + 0.70 * (r / reach)
-                if abs(r - reach) < 0.035 and abs(ang - a) < 0.055 and k % 3 == 1:
-                    inside = True
-                    shade = 1.0
-        elif family == "cattail":
-            if abs(u - 0.5) < 0.026 and up < 0.96:
-                inside = True
-            if abs(u - 0.5) < 0.085 and 0.62 < up < 0.90:
-                inside = True
-                shade = 0.2
-            for k in range(3):
-                axis = 0.5 + (k - 1) * 0.14
-                if abs(u - axis) < 0.03 and up < 0.55:
-                    inside = True
-        elif family == "disc":
-            d = math.hypot(u - 0.5, v - 0.5)
-            notch = math.atan2(v - 0.5, u - 0.5)
-            if d < 0.44 and not (abs(notch) < 0.10 and d > 0.06):
-                inside = True
-                shade = 1.0 - d
-        else:                              # patch
-            d = math.hypot(u - 0.5, v - 0.5)
-            wobble = 0.36 + 0.08 * math.sin(math.atan2(v - 0.5, u - 0.5) * 5)
-            if d < wobble:
-                inside = True
-                shade = 1.0 - d * 1.4
-        if not inside:
-            return (0, 0, 0, 0)
-        col = mix(base, tip, shade)
-        return (*(max(0, min(255, c + grain // 2)) for c in col), 255)
-
-    return pixel
-
-
-def write_flora(root: Path) -> list:
-    """Write the flora atlas and one `.2d` definition per sprite."""
-    rows = (len(FLORA) + FLORA_COLUMNS - 1) // FLORA_COLUMNS
-    width = FLORA_COLUMNS * FLORA_CELL
-    height = rows * FLORA_CELL
-
-    def atlas(x, y):
-        index = (x // FLORA_CELL) + (y // FLORA_CELL) * FLORA_COLUMNS
-        if index >= len(FLORA):
-            return (0, 0, 0, 0)
-        return flora_pixel(index)(x % FLORA_CELL, y % FLORA_CELL)
-
-    directory = root / FLORA_DIR
-    directory.mkdir(parents=True, exist_ok=True)
-    png(directory / FLORA_ATLAS, width, height, atlas)
-    records = []
-    for index, (fid, kind, _family, _colors, (sx, sy)) in enumerate(FLORA):
-        u0 = (index % FLORA_COLUMNS) * FLORA_CELL
-        v0 = (index // FLORA_COLUMNS) * FLORA_CELL
-        (directory / f"{fid}.2d").write_text(
-            f"file_x_len: {width}\n"
-            f"file_y_len: {height}\n"
-            f"u_start: {u0}\n"
-            f"u_end: {u0 + FLORA_CELL}\n"
-            f"v_start: {v0}\n"
-            f"v_end: {v0 + FLORA_CELL}\n"
-            f"x_size: {sx}\n"
-            f"y_size: {sy}\n"
-            "alpha_test: 0.22\n"
-            f"texture: {FLORA_ATLAS}\n"
-            f"type: {kind}\n")
-        records.append({"id": fid, "kind": kind,
-                        "definition": f"{FLORA_DIR}/{fid}.2d"})
-    return records
-
-
-def flora_for(region: str) -> tuple:
-    return REGION_FLORA.get(region, ("grass_tuft", "wildflower", "moss_patch"))
-
-
-if __name__ == "__main__":
-    import argparse
-    import json
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("output", nargs="?", default="build/eloria-data")
-    parser.add_argument("--obj-source", default=None)
-    args = parser.parse_args()
-    out = Path(args.output)
-    records = write_models(out, Path(args.obj_source) if args.obj_source
-                           else None)
-    write_flora(out)
-    write_harvest_list(out)
-    print(json.dumps({"harvestables": len(records),
-                      "triangles": {r["id"]: r["triangles"] for r in records}},
-                     indent=2))

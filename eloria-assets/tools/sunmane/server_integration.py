@@ -52,7 +52,7 @@ def main() -> int:
 
     add("## Hooks\n")
     add("The region's hook names come from")
-    add("`maps/nymara-regions/source-elm/regions-connections.json` and are")
+    add("`maps/nymara-regions/region-connections.json` and are")
     add("unchanged:\n")
     out.extend(table(["Hook", "Name"], [
         ["npc", "`npcs.nymara.sunmane_steppe`"],

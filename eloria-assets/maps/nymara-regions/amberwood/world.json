@@ -2698,7 +2698,7 @@
         246,
         558
       ],
-      "destinationMap": "maps/nymara/whitehorn_range.elm",
+      "destinationMap": "whitehorn_range",
       "radius": 3.5,
       "authority": "server"
     },
@@ -2715,7 +2715,7 @@
         330,
         12
       ],
-      "destinationMap": "maps/nymara/westhaven.elm",
+      "destinationMap": "westhaven",
       "radius": 3.5,
       "authority": "server"
     },
@@ -2732,7 +2732,7 @@
         567,
         240
       ],
-      "destinationMap": "maps/nymara/amethyst_barrens.elm",
+      "destinationMap": "amethyst_barrens",
       "radius": 3.5,
       "authority": "server"
     },
@@ -2749,7 +2749,7 @@
         54,
         150
       ],
-      "destinationMap": "maps/nymara/crownwater.elm",
+      "destinationMap": "crownwater",
       "radius": 3.5,
       "authority": "server"
     },
@@ -2767,7 +2767,7 @@
         438
       ],
       "landmark": "great-tree",
-      "destinationMap": "maps/nymara/amberwood_motherroot.elm",
+      "destinationMap": "amberwood_motherroot",
       "destinationSpawn": "default",
       "radius": 2.5,
       "authority": "server"
@@ -2786,7 +2786,7 @@
         276
       ],
       "landmark": "great-arch",
-      "destinationMap": "maps/nymara/amberwood_gate_undercroft.elm",
+      "destinationMap": "amberwood_gate_undercroft",
       "destinationSpawn": "default",
       "radius": 2.5,
       "authority": "server"
@@ -2805,7 +2805,7 @@
         324
       ],
       "landmark": "amber-hall",
-      "destinationMap": "maps/nymara/amberwood_amber_hall.elm",
+      "destinationMap": "amberwood_amber_hall",
       "destinationSpawn": "default",
       "radius": 2.5,
       "authority": "server"
@@ -2824,7 +2824,7 @@
         396
       ],
       "landmark": "ash-chapel",
-      "destinationMap": "maps/nymara/amberwood_cinder_chapel.elm",
+      "destinationMap": "amberwood_cinder_chapel",
       "destinationSpawn": "default",
       "radius": 2.5,
       "authority": "server"

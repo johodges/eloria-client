@@ -7,8 +7,8 @@ extends SceneTree
 const TIMEOUT := 90.0
 const SCREEN := Vector2i(1280, 720)
 const GROUND_TOLERANCE := 0.6
-const INTERIOR := "maps/four-gates-lantern-row.elm"
-const CITY := "maps/startmap.elm"
+const INTERIOR := "four-gates-lantern-row"
+const CITY := "four_gates"
 
 var _failures := 0
 var _artifacts := ""

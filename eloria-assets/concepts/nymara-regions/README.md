@@ -10,4 +10,5 @@ RGBA DDS with four mip levels.  The PNGs are also editable production inputs for
 terrain, architecture, vegetation, lighting, and map-layout refinement.
 
 The paintings are not collision maps.  Gameplay coordinates and traversal are
-defined by `generate_nymara_complete.py` and the authoritative server profile.
+defined by the region packages under `maps/nymara-regions/` and the
+authoritative server profile.

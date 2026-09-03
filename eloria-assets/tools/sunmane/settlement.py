@@ -1107,7 +1107,7 @@ def population_records(layout: Layout) -> dict:
             "note": ("Server-owned placements. The client does not spawn these; "
                      "they are recorded so the eloria-server region profile can "
                      "register them against the hooks in "
-                     "maps/nymara-regions/source-elm/regions-connections.json."),
+                     "maps/nymara-regions/region-connections.json."),
             "npcs": npcs, "resources": resources, "creatures": creatures,
             "hooks": {"npc": "npcs.nymara.sunmane_steppe",
                       "spawn": "spawns.nymara.sunmane_steppe",

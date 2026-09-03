@@ -198,7 +198,7 @@
         0.05,
         60.0
       ],
-      "destinationMap": "maps/nymara/crownwater.elm",
+      "destinationMap": "crownwater",
       "destinationSpawn": "default",
       "radius": 2.5,
       "section": "drowned_crown",
@@ -213,7 +213,7 @@
         0.05,
         60.0
       ],
-      "destinationMap": "maps/nymara/crownwater.elm",
+      "destinationMap": "crownwater",
       "destinationSpawn": "default",
       "radius": 2.5,
       "section": "tide_cistern",
@@ -228,7 +228,7 @@
         0.05,
         261.0
       ],
-      "destinationMap": "maps/nymara/crownwater.elm",
+      "destinationMap": "crownwater",
       "destinationSpawn": "default",
       "radius": 2.5,
       "section": "customs_hall",
@@ -243,7 +243,7 @@
         0.05,
         300.0
       ],
-      "destinationMap": "maps/nymara/crownwater.elm",
+      "destinationMap": "crownwater",
       "destinationSpawn": "default",
       "radius": 2.5,
       "section": "tide_campanile",

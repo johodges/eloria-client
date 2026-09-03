@@ -396,13 +396,18 @@ func _init() -> void:
 				"weapon and shield use explicit native skeleton anchors")
 
 	_expect(MapRegistry.normalize_server_map_id(" /MAPS\\StartMap.ELM ") ==
-		"maps/startmap.elm", "map id normalization")
+		"startmap", "map id normalization")
+	# The registry is keyed by Eloria map id; the server still sends the path
+	# of an Eternal Lands map file, so normalisation strips the directory and
+	# the extension to land on the id.
+	_expect(MapRegistry.normalize_server_map_id("./maps/nymara/Westhaven.elm") ==
+		"westhaven", "a nymara map reference reduces to its id")
 	var registry: Dictionary = {
-		"maps/startmap.elm": {"manifest": "res://world.json"},
-		"startmap.elm": {"alias": "maps/startmap.elm"}}
-	var resolved: Dictionary = MapRegistry.resolve(registry, "STARTMAP.ELM")
+		"four_gates": {"manifest": "res://world.json"},
+		"startmap": {"alias": "four_gates"}}
+	var resolved: Dictionary = MapRegistry.resolve(registry, "maps/STARTMAP.ELM")
 	_expect(resolved.get("manifest", "") == "res://world.json"
-		and resolved.get("registryKey", "") == "maps/startmap.elm", "map alias resolution")
+		and resolved.get("registryKey", "") == "four_gates", "map alias resolution")
 	var registry_file: FileAccess = FileAccess.open("res://data/maps/registry.json", FileAccess.READ)
 	_expect(registry_file != null, "production map registry opens")
 	if registry_file != null:
@@ -415,8 +420,12 @@ func _init() -> void:
 				var production_maps: Dictionary = production_maps_value as Dictionary
 				var four_gates: Dictionary = MapRegistry.resolve(production_maps, "four_gates")
 				_expect(not four_gates.is_empty(), "runtime four_gates map id resolves")
-				_expect(str(four_gates.get("registryKey", "")) == "maps/startmap.elm",
-					"runtime four_gates resolves to production start map")
+				_expect(str(four_gates.get("registryKey", "")) == "four_gates",
+					"runtime four_gates resolves to the production city map")
+				var legacy: Dictionary = MapRegistry.resolve(production_maps,
+					"./maps/startmap.elm")
+				_expect(str(legacy.get("registryKey", "")) == "four_gates",
+					"the server's own map reference still resolves")
 				var transform: Dictionary = four_gates.get("coordinateTransform", {})
 				_expect(is_equal_approx(float(transform.get("walkingHeight", 0.0)), 31.15),
 					"Four Gates actors stand above the authored y=31 walk surface")

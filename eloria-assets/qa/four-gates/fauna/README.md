@@ -14,15 +14,6 @@ complete 256px textures used by those nodes.
 
 Regenerate after building the complete data pack:
 
-```sh
-for name in mirrorfin_otter reedhorn_stag gate_turtle lakeglass_drake; do
-  python3 eloria-assets/tools/render_cal3d_wireframe.py \
-    "build/eloria-data/actors/nymara/creatures/$name.xmf" \
-    "eloria-assets/qa/four-gates/fauna/${name}_wireframe.png"
-done
-for name in resonant_crystal stormglass_shard mirror_reed sunmane_seed; do
-  python3 eloria-assets/tools/render_e3d_wireframe.py \
-    "build/eloria-data/3dobjects/nymara/$name.e3d" \
-    "eloria-assets/qa/four-gates/fauna/${name}_wireframe.png"
-done
-```
+> Reproduction commands removed: this stage was validated against the
+> Eternal Lands format data pack, which was deleted with the C client
+> on 2026-09-03. The evidence below is kept as the record of it.

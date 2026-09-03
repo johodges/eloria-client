@@ -5,8 +5,8 @@
   "status": "concept-complete-production-queued",
   "parentRegion": "ssarathi_ruins",
   "source": {
-    "elm": "../../source-elm/ssarathi_royal_archive.elm",
-    "sha256": "31a6476f2737f841439ca0fd83bf3d61a875f29272bb351eaeafca252d72fe0f"
+    "walkGrid": "../../server-collision/ssarathi_royal_archive.bin",
+    "sha256": "b645be20e630dcab4bbc41e45aa73b0ed1c71f858f0c0b0efc2e7a09c2f977a6"
   },
   "conceptArt": {
     "culturalReference": "../../../../concepts/nymara-regions/ssarathi_ruins_region_concept.png",

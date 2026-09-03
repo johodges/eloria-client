@@ -12,7 +12,7 @@ rather than assumed, and every one of them was present.
 | flat terrain | `world.glb` POSITION accessor `min [−96, 0, −96] max [96, 0, 96]` — y = 0 everywhere, and the extent only 192 m |
 | foreign landmarks | 58 landmarks, opening with Crownwater Fishing Boat, Crownwater Ferry, Whitehorn Carved Stairs, Crownwater Patrol Boat, Mirrorhold Canal Stairs, Ssarathi Curved Wall, Sunmane Dry Cave, Mirrorhold Lake House, Amberwood Estate |
 | truncated detail board | the tracked `00-concept-detail-board.png` was the broken 786,445-byte copy; only the top row of five panels decoded |
-| flat placeholder ELM | `source-elm/grey_moors.elm` was 39,880 bytes, 32 × 32 tiles |
+| flat placeholder ELM | `server-collision/grey_moors.bin` was 39,880 bytes, 32 × 32 tiles |
 | QA README | present at `eloria-assets/qa/regions/grey-moors/README.md` — note the hyphen, not the underscore the guide implies |
 
 **None of the placeholder geometry or metadata is preserved.** The package was

@@ -8,7 +8,7 @@ to overrule the build.
    so the server map is 96x96 ELM tiles and the arrival datum is server
    (174, 174). The composition is authored in a 192 m design space and scaled by
    `region.SCALE`, so the aerial concept's layout is preserved rather than
-   stretched. `../source-elm/crownwater.elm` is regenerated to match and must be
+   stretched. `../server-collision/crownwater.bin` is regenerated to match and must be
    loaded server-side.
 
 2. **The lagoon floor is terrain, not a hole.** The client casts its grounding

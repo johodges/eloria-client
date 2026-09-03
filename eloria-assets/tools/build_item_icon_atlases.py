@@ -12,10 +12,8 @@ that knows the atlas shape is written here so it cannot drift apart --
 
   the pixels    godot-client/assets/ui/items/items5-8.png -- the blank tail
                 of items5 takes the first seven, three new sheets the rest
-  the sources   eloria-assets/ui/items/items5-8.dds, which the atlas test
-                holds the shipped PNGs to
   the registry  godot-client/data/items/atlases.json
-  the layout    eloria-assets/ui/items/atlas_layout.json
+  the layout    godot-client/data/items/atlas_layout.json
 
 Ids are ``FIRST_IMAGE_ID + roster index`` in the fixed roster order, which
 keeps the painted range contiguous: imageCount moves 118 -> 178 with no gap,
@@ -45,8 +43,7 @@ WEAPON_ICONS = (ige.PROJECT / "generate_models" / "weapon_icons"
                 / "out" / "icons")
 ATLAS_PNGS = CLIENT / "assets/ui/items"
 ATLAS_CONFIG = CLIENT / "data/items/atlases.json"
-ATLAS_DDS = HERE.parent / "ui/items"
-LAYOUT = ATLAS_DDS / "atlas_layout.json"
+LAYOUT = CLIENT / "data/items/atlas_layout.json"
 
 CELL = 50
 COLUMNS = 5
@@ -63,22 +60,6 @@ def read_atlas(index: int) -> Image.Image:
     if path.exists():
         return Image.open(path).convert("RGBA")
     return Image.new("RGBA", (CANVAS, CANVAS), (0, 0, 0, 0))
-
-
-def write_dds(index: int, image: Image.Image) -> Path:
-    """The authored twin of a shipped atlas: plain 32-bit BGRA under the
-    128-byte header every existing items*.dds carries (same size, same
-    format), which is also exactly what the atlas test's reader assumes."""
-    header = (ATLAS_DDS / "items1.dds").read_bytes()[:128]
-    pixels = image.tobytes()
-    bgra = bytearray(len(pixels))
-    bgra[0::4] = pixels[2::4]
-    bgra[1::4] = pixels[1::4]
-    bgra[2::4] = pixels[0::4]
-    bgra[3::4] = pixels[3::4]
-    target = ATLAS_DDS / ("items%d.dds" % (index + 1))
-    target.write_bytes(header + bytes(bgra))
-    return target
 
 
 def config_text(atlas_count: int, image_count: int) -> str:
@@ -160,7 +141,6 @@ def main() -> int:
         target = ATLAS_PNGS / atlas_name(index)
         image.save(target)
         print("wrote %s" % target)
-        print("wrote %s" % write_dds(index, image))
 
     ATLAS_CONFIG.write_text(config_text(atlas_count, image_count),
                             encoding="utf-8")

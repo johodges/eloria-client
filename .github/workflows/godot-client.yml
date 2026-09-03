@@ -2,20 +2,8 @@ name: Godot Client
 
 on:
   pull_request:
-    paths:
-      - "godot-client/**"
-      - "eloria-assets/tools/build_native_nymara_glbs.py"
-      - "eloria-assets/tools/build_native_sounds.py"
-      - "eloria-assets/tools/render_native_glb_preview.py"
-      - "eloria-assets/maps/four-gates-city/**"
-      - "eloria-assets/maps/nymara-regions/sunmane_steppe/**"
-      - "eloria-assets/tools/*four_gates*.py"
-      - "eloria-assets/tools/sunmane/**"
-      - ".github/workflows/godot-client.yml"
   push:
-    branches: [develop, feature/godot-client-migration]
-    paths:
-      - "godot-client/**"
+    branches: [develop]
 
 permissions:
   contents: read
@@ -34,7 +22,7 @@ jobs:
         run: |
           apt-get update
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-            python3 python3-numpy
+            python3 python3-numpy python3-pytest
       - name: Validate native Nymara GLB catalog
         run: python3 godot-client/tests/test_native_glb_assets.py -v
       - name: Validate the generated sound set
@@ -109,8 +97,10 @@ jobs:
           ! grep -E "SCRIPT ERROR|Parse Error" model-scene.log
       - name: Sunmane Steppe package validation
         run: python3 eloria-assets/tools/sunmane/validate_package.py
-      - name: Asset provenance
+      - name: Asset provenance and no Eternal Lands content
         run: python3 eloria-assets/tools/check_provenance.py
+      - name: Shared asset contracts
+        run: python3 -m pytest tests -q
       - name: Sunmane Steppe grounding
         run: |
           godot --headless --path godot-client --script res://tests/integration/sunmane_grounding.gd 2>&1 | tee sunmane-grounding.log

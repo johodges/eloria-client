@@ -5,8 +5,8 @@
   "status": "concept-complete-production-queued",
   "parentRegion": "amberwood",
   "source": {
-    "elm": "../../source-elm/amberwood_estate.elm",
-    "sha256": "7d0e3d0a331e72a7f01b567e09268f88a5a70d2d567055d4e3fb73d4ce61a1cb"
+    "walkGrid": "../../interiors/amberwood_insides/collision.bin",
+    "sha256": "049abc88e41e3da1ebabea505a126313c320baecfa9e94cf4b3ace7be839c585"
   },
   "conceptArt": {
     "culturalReference": "../../../../concepts/nymara-regions/amberwood_region_concept.png",

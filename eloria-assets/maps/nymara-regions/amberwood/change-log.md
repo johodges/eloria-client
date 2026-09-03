@@ -5,7 +5,7 @@
 Amberwood grows again, to **576 m x 576 m** — three times its original linear
 extent, nine times the area — still at one metre per tile. The server map goes
 to 96x96 ELM tiles and the arrival datum to server (174, 174);
-`../source-elm/amberwood.elm` is regenerated to match.
+`../server-collision/amberwood.bin` is regenerated to match.
 
 The brief for this pass was more forested area with slightly thinner stands, and
 the two pull in opposite directions, so they are handled separately:
@@ -47,7 +47,7 @@ with zero misses.
 Amberwood grows from 192 m x 192 m to **384 m x 384 m** — four times the area —
 at the same one metre per tile. The server map goes from 32x32 to 64x64 ELM
 tiles and the arrival datum from server (58, 58) to (116, 116);
-`../source-elm/amberwood.elm` is regenerated with real elevation and walkability
+`../server-collision/amberwood.bin` is regenerated with real elevation and walkability
 to match, replacing the flat placeholder, and must be loaded server-side.
 
 The composition is written in the original design space and scaled, so the
@@ -177,7 +177,7 @@ verify_runtime.py       0 errors, 331776 tiles sampled, 0 grounding misses
 region_client_check.gd  in-engine, through the real WorldLoader
 ```
 
-`../source-elm/amberwood.elm` is regenerated from the rebuilt collision grid.
+`../server-collision/amberwood.bin` is regenerated from the rebuilt collision grid.
 
 
 ## Material pin trimmed to what the package actually references

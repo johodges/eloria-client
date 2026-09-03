@@ -262,7 +262,7 @@ def _add_spawns_and_portals(build: REG.RegionBuild, network: dict) -> None:
             "position": [round(x, 2), round(y + 0.1, 2), round(z, 2)],
             "serverTile": [int(round(x + REG.SERVER_ORIGIN[0])),
                            int(round(REG.SERVER_ORIGIN[1] - z))],
-            "destinationMap": "maps/nymara/manymouth_flooded_labyrinth.elm",
+            "destinationMap": "manymouth_flooded_labyrinth",
             "destinationSpawn": door_id,
             "radius": 3.5, "authority": "server"})
 

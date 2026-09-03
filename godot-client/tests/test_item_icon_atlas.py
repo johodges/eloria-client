@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import sys
 from pathlib import Path
-import struct
 import unittest
 
 # The generated armour set is defined once, by the importer's roster, and this
@@ -49,17 +48,6 @@ def read_png(path: Path):
     from PIL import Image
     import numpy as np
     return np.asarray(Image.open(path).convert("RGBA"), dtype=np.int16)
-
-
-def read_dds(path: Path):
-    import numpy as np
-    raw = path.read_bytes()
-    header = struct.unpack("<31I", raw[4:128])
-    height, width = header[2], header[3]
-    pixels = np.frombuffer(raw[128:128 + width * height * 4],
-                           dtype=np.uint8).reshape(height, width, 4)
-    return np.dstack((pixels[:, :, 2], pixels[:, :, 1], pixels[:, :, 0],
-                      pixels[:, :, 3])).astype(np.int16)
 
 
 class ItemIconAtlasTest(unittest.TestCase):
@@ -128,12 +116,17 @@ class ItemIconAtlasTest(unittest.TestCase):
                 self.assertGreater(colours, 600,
                                    f"image {image_id} is still flat art")
 
-    def test_client_png_matches_the_authored_dds(self) -> None:
-        import numpy as np
-        for index, path in enumerate(self.config["atlases"]):
-            source = ROOT / f"eloria-assets/ui/items/items{index + 1}.dds"
+    def test_every_declared_atlas_ships(self) -> None:
+        """The PNGs are the atlas source; nothing authors them elsewhere.
+
+        They used to be checked against DDS twins under `eloria-assets/ui`,
+        which existed only for the retired C client. With those gone the
+        shipped PNG is the art, so what is left to hold is that every path
+        `atlases.json` declares actually resolves to one.
+        """
+        for path in self.config["atlases"]:
             with self.subTest(atlas=path):
-                self.assertTrue(np.array_equal(read_dds(source), self.atlases[index]))
+                self.assertTrue((CLIENT / path.removeprefix("res://")).is_file())
 
 
 if __name__ == "__main__":

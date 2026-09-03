@@ -203,7 +203,7 @@
         39.0
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/amethyst_barrens.elm",
+      "destinationMap": "amethyst_barrens",
       "destinationSpawn": "resonant-vault-stair",
       "section": "resonant_vault",
       "authority": "server"
@@ -218,7 +218,7 @@
         39.0
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/amethyst_barrens.elm",
+      "destinationMap": "amethyst_barrens",
       "destinationSpawn": "geode-hollow-mouth",
       "section": "geode_hollow",
       "authority": "server"
@@ -233,7 +233,7 @@
         229.0
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/amethyst_barrens.elm",
+      "destinationMap": "amethyst_barrens",
       "destinationSpawn": "shardworks-headframe",
       "section": "shardworks",
       "authority": "server"
@@ -248,7 +248,7 @@
         230.0
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/amethyst_barrens.elm",
+      "destinationMap": "amethyst_barrens",
       "destinationSpawn": "storm-barrow-stair",
       "section": "storm_barrow",
       "authority": "server"

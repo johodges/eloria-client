@@ -18,7 +18,7 @@ lists, verified rather than assumed:
 * **Pre-schema manifest.** No `bounds`, no `coordinateTransform`,
   `spawnPoints` where the schema wants `spawns`, and a `collision` block that
   was a bare list of node names.
-* **Flat placeholder ELM.** `source-elm/verdant_stair.elm` was 32 × 32 tiles at
+* **Flat placeholder ELM.** `server-collision/verdant_stair.bin` was 32 × 32 tiles at
   height 11 throughout, 39,880 bytes.
 * **Truncated detail board.** `references/00-concept-detail-board.png` was cut
   to 786,445 bytes, of which only the top row of five panels decodes — but an

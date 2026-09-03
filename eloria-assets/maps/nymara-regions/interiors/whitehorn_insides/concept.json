@@ -5,8 +5,8 @@
   "status": "concept-complete-production-queued",
   "parentRegion": "whitehorn_range",
   "source": {
-    "elm": "../../source-elm/whitehorn_glacier_temple.elm",
-    "sha256": "6dbcef790e34fea7ad830b32c6bdc0a37d241cd6cf360aef7c6b04b8ee288c1b"
+    "walkGrid": "../../server-collision/whitehorn_glacier_temple.bin",
+    "sha256": "4ab50acc5956f536e4c275fdf1bc5280a50dc4d77c66afc5e496b02824fc4f49"
   },
   "conceptArt": {
     "culturalReference": "../../../../concepts/nymara-regions/whitehorn_range_region_concept.png",

@@ -116,7 +116,7 @@ mechanical (`grey-barrow-0`, `grey-stone-ring-3`) so renaming is a display-strin
 change, not a data migration.
 
 The interior doors target `maps/nymara/grey_moor_barrows.elm`, which is a real
-planned map — `source-elm/grey_moor_barrows.elm` and
+planned map — `server-collision/grey_moor_barrows.bin` and
 `interiors/grey_moor_barrows/` both already exist. That interior is **not built
 by this package** and is out of scope for this branch.
 

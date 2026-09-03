@@ -32,7 +32,7 @@ python3 ../../_toolkit/validate_gltf.py ../world.glb
 # the same grounding contract in-engine, through the real WorldLoader
 cd ../../../../godot-client
 Godot --path . --headless \n  --script ../eloria-assets/maps/nymara-regions/_toolkit/region_client_check.gd \n  -- --manifest=<abs>/mirrorhold/world.json
-python3 ../../_toolkit/export_source_elm.py    # regenerates ../source-elm/mirrorhold.elm
+python3 ../../_toolkit/export_server_collision.py    # regenerates ../server-collision/mirrorhold.bin
 python3 ../../_toolkit/capture_views.py        # offline preview captures
 python3 ../../_toolkit/make_comparison.py      # concept-versus-build sheets
 ```
@@ -81,7 +81,7 @@ server map and its three portal pairs are on
 ## Server dependency
 
 This package needs a 96 x 96 ELM server map with its arrival at tile
-(174, 174). `../source-elm/mirrorhold.elm` is regenerated to match, and the
+(174, 174). `../server-collision/mirrorhold.bin` is regenerated to match, and the
 server-side change is on `feature/mirrorhold-576m-server-map` in
 `eloria-server`. Without it the region loads against a 32 x 32 map and most of
 the world is unreachable.

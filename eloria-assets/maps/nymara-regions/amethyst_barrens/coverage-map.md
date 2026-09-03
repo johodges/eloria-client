@@ -74,7 +74,7 @@ surface.
 
 Neighbour assignments are inferred from the Nymara region layout and the
 server's map table. **They are not verified against a canonical adjacency
-map** — `source-elm/regions-connections.json` exists and was not reconciled
+map** — `region-connections.json` exists and was not reconciled
 against these. The server is authoritative for transitions regardless.
 
 ## Server-owned metadata

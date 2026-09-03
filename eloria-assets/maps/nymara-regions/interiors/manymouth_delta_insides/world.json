@@ -218,7 +218,7 @@
         39.5
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/manymouth_delta.elm",
+      "destinationMap": "manymouth_delta",
       "destinationSpawn": "labyrinth-mouth",
       "section": "flooded_labyrinth",
       "authority": "server"
@@ -233,7 +233,7 @@
         185.0
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/manymouth_delta.elm",
+      "destinationMap": "manymouth_delta",
       "destinationSpawn": "gate-descent",
       "section": "flooded_labyrinth",
       "authority": "server"
@@ -248,7 +248,7 @@
         39.5
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/manymouth_delta.elm",
+      "destinationMap": "manymouth_delta",
       "destinationSpawn": "underdeck-hatch",
       "section": "smugglers_warren",
       "authority": "server"
@@ -263,7 +263,7 @@
         238.0
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/manymouth_delta.elm",
+      "destinationMap": "manymouth_delta",
       "destinationSpawn": "tide-hall-door",
       "section": "tide_hall",
       "authority": "server"
@@ -278,7 +278,7 @@
         229.0
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/manymouth_delta.elm",
+      "destinationMap": "manymouth_delta",
       "destinationSpawn": "temple-sanctum-door",
       "section": "temple_sanctum",
       "authority": "server"

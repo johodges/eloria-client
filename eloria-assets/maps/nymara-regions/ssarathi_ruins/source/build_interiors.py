@@ -241,7 +241,7 @@ def write_manifest(interior: I.Interior, stats, collision_stats, path: Path):
             "type": "map-transition",
             "position": spawn,
             "radius": 3.0,
-            "destinationMap": "maps/nymara/ssarathi_ruins.elm",
+            "destinationMap": "ssarathi_ruins",
             "destinationSpawn": interior.destination_spawn,
             "authority": "server",
         }],

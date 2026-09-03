@@ -36,7 +36,7 @@ func _run() -> void:
 	var app_state: Node = root.get_node("AppState")
 	app_state.set("authenticated", true)
 	app_state.set("local_actor_id", 99)
-	app_state.set("current_map", "maps/four_gates.elm")
+	app_state.set("current_map", "four_gates")
 	app_state.set("actors", {99: {
 		"actor_id": 99, "x": 360, "y": 229, "rotation": 0, "actor_type": 1,
 		"kind": 1, "name": "Ari", "health": 72, "max_health": 100,

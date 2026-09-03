@@ -9,7 +9,7 @@ reasonably want to overrule the build.
    32x32 to 96x96 ELM tiles (192 to 576 height cells) and the arrival datum
    moves from server (58, 58) to (174, 174), so it still lands on the Godot
    origin. This follows the shape of the change Amberwood already made rather
-   than inventing a second convention. `../source-elm/mirrorhold.elm` is
+   than inventing a second convention. `../server-collision/mirrorhold.bin` is
    regenerated to match and must be loaded server-side; the matching server
    change is on `feature/mirrorhold-576m-server-map`.
 

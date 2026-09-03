@@ -1,5 +1,0 @@
-newmtl mirror_reed
-Kd 1 1 1
-d 1
-map_Kd mirror_reed.png
-map_d mirror_reed.png

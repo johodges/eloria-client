@@ -206,7 +206,7 @@
         30.0
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/westhaven.elm",
+      "destinationMap": "westhaven",
       "destinationSpawn": "custom-house-hall",
       "section": "custom_house",
       "authority": "server"
@@ -221,7 +221,7 @@
         29.0
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/westhaven.elm",
+      "destinationMap": "westhaven",
       "destinationSpawn": "bonded-vaults-tunnel",
       "section": "bonded_vaults",
       "authority": "server"
@@ -236,7 +236,7 @@
         170.0
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/westhaven.elm",
+      "destinationMap": "westhaven",
       "destinationSpawn": "lamp-rock-foot",
       "section": "lamp_rock_light",
       "authority": "server"
@@ -251,7 +251,7 @@
         170.0
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/westhaven.elm",
+      "destinationMap": "westhaven",
       "destinationSpawn": "gullstone-cleft",
       "section": "gullstone_cave",
       "authority": "server"

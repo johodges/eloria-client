@@ -5,8 +5,8 @@
   "status": "concept-complete-production-queued",
   "parentRegion": "manymouth_delta",
   "source": {
-    "elm": "../../source-elm/manymouth_flooded_labyrinth.elm",
-    "sha256": "3115f4d8dcacd649955f80caa483a2044086346112e332f4c305f51f7cf2c9f9"
+    "walkGrid": "../../server-collision/manymouth_flooded_labyrinth.bin",
+    "sha256": "c2b23568388b2010b1d63d4a6569120d6c1ba751f1ea6f7396a6b97dd56c61cc"
   },
   "conceptArt": {
     "culturalReference": "../../../../concepts/nymara-regions/manymouth_delta_region_concept.png",

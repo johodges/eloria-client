@@ -89,7 +89,7 @@ python build_westhaven.py                 # the region, including its four doors
 python build_interiors.py                 # the combined insides map
 python preview_interior.py insides ../../interiors/westhaven_insides/references/00-checkpoint-contact-sheet.png \
        --captures ../../interiors/westhaven_insides/references/captures --cols 6
-python export_insides_elm.py              # the server ELM, from the package's own collision.bin
+python export_insides_collision.py              # the server walk grid, from the package's own collision.bin
 NYMARA_REGION_PACKAGE=../../interiors/westhaven_insides \
        python ../../_toolkit/verify_runtime.py --package ../../interiors/westhaven_insides
 ```
@@ -133,7 +133,7 @@ twenty groups sited inside the four sections rather than on the shared interior
 point grid, which on this map is void.
 
 Every tile in the portal table is derived from the two packages' own manifests
-by `export_insides_elm.py` rather than counted by hand.
+by `export_insides_collision.py` rather than counted by hand.
 
 ## Verification
 
@@ -208,7 +208,7 @@ lit by lanterns - and legible. The other three sections keep the defaults.
   means, so the generated server map is flat and fully walkable and a player is
   not stopped from crossing the void server-side. This is exactly the situation
   the Amethyst Barrens insides are already in. The authored map with real
-  blackspace is exported to `source-elm/westhaven_insides.elm` and is ready if
+  blackspace is exported to `server-collision/westhaven_insides.bin` and is ready if
   that guard is ever given a per-map opt-out.
 - **These interiors have no concept art of their own.** The region's ten-panel
   board covers the exterior; the four sections are authored from it and from the

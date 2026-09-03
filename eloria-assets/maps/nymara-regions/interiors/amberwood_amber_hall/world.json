@@ -155,7 +155,7 @@
         -1.5
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/amberwood.elm",
+      "destinationMap": "amberwood",
       "destinationSpawn": "amber-hall-door",
       "authority": "server"
     }

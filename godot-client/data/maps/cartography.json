@@ -7,62 +7,62 @@
   "regions": [
     {
       "name": "Four Gates City",
-      "serverMap": "maps/startmap.elm",
+      "serverMap": "four_gates",
       "preview": "res://../eloria-assets/concepts/nymara-regions/four_gates_region_concept.png"
     },
     {
       "name": "Mirrorhold",
-      "serverMap": "maps/nymara/mirrorhold.elm",
+      "serverMap": "mirrorhold",
       "preview": "res://../eloria-assets/concepts/nymara-regions/mirrorhold_region_concept.png"
     },
     {
       "name": "Crownwater",
-      "serverMap": "maps/nymara/crownwater.elm",
+      "serverMap": "crownwater",
       "preview": "res://../eloria-assets/concepts/nymara-regions/crownwater_region_concept.png"
     },
     {
       "name": "Whitehorn Range",
-      "serverMap": "maps/nymara/whitehorn_range.elm",
+      "serverMap": "whitehorn_range",
       "preview": "res://../eloria-assets/concepts/nymara-regions/whitehorn_range_region_concept.png"
     },
     {
       "name": "Amethyst Barrens",
-      "serverMap": "maps/nymara/amethyst_barrens.elm",
+      "serverMap": "amethyst_barrens",
       "preview": "res://../eloria-assets/concepts/nymara-regions/amethyst_barrens_region_concept.png"
     },
     {
       "name": "Sunmane Steppe",
-      "serverMap": "maps/nymara/sunmane_steppe.elm",
+      "serverMap": "sunmane_steppe",
       "preview": "res://../eloria-assets/concepts/nymara-regions/sunmane_steppe_region_concept.png"
     },
     {
       "name": "Amberwood",
-      "serverMap": "maps/nymara/amberwood.elm",
+      "serverMap": "amberwood",
       "preview": "res://../eloria-assets/concepts/nymara-regions/amberwood_region_concept.png"
     },
     {
       "name": "Grey Moors",
-      "serverMap": "maps/nymara/grey_moors.elm",
+      "serverMap": "grey_moors",
       "preview": "res://../eloria-assets/concepts/nymara-regions/grey_moors_region_concept.png"
     },
     {
       "name": "Westhaven",
-      "serverMap": "maps/nymara/westhaven.elm",
+      "serverMap": "westhaven",
       "preview": "res://../eloria-assets/concepts/nymara-regions/westhaven_region_concept.png"
     },
     {
       "name": "Verdant Stair",
-      "serverMap": "maps/nymara/verdant_stair.elm",
+      "serverMap": "verdant_stair",
       "preview": "res://../eloria-assets/concepts/nymara-regions/verdant_stair_region_concept.png"
     },
     {
       "name": "Ssarathi Ruins",
-      "serverMap": "maps/nymara/ssarathi_ruins.elm",
+      "serverMap": "ssarathi_ruins",
       "preview": "res://../eloria-assets/concepts/nymara-regions/ssarathi_ruins_region_concept.png"
     },
     {
       "name": "Manymouth Delta",
-      "serverMap": "maps/nymara/manymouth_delta.elm",
+      "serverMap": "manymouth_delta",
       "preview": "res://../eloria-assets/concepts/nymara-regions/manymouth_delta_region_concept.png"
     }
   ]

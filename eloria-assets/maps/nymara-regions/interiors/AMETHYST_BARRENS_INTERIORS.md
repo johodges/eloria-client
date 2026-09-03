@@ -64,7 +64,7 @@ cd ../amethyst_barrens/source
 python build_interiors.py                 # the combined map
 python preview_interior.py insides ../../interiors/amethyst_barrens_insides/references/00-checkpoint-contact-sheet.png \
        --captures ../../interiors/amethyst_barrens_insides/references/captures --cols 6
-python export_insides_elm.py              # the server ELM, from the package's own collision.bin
+python export_insides_collision.py              # the server walk grid, from the package's own collision.bin
 PYTHONPATH=../../_toolkit python ../../_toolkit/verify_runtime.py \
        --package ../../interiors/amethyst_barrens_insides
 ```
@@ -85,7 +85,7 @@ The server side is in `eloria-server` on `feature/amethyst-insides-server-map`:
 Vault is — with one portal pair per door, and the generator builds it at 64
 tiles with the arrival at (25, 307).
 
-`export_insides_elm.py` writes the server ELM by downsampling the package's own
+`export_insides_collision.py` writes the server walk grid by downsampling the package's own
 `collision.bin`, so the client and server maps cannot drift apart. Every portal
 coordinate in `maps.txt` was checked against that ELM and lands on a walkable
 cell.
