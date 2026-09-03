@@ -55,8 +55,12 @@ var _legs: Array[PackedInt32Array] = []
 var _settled := false
 var _last_anchor := Vector3.ZERO
 var _torso := PackedInt32Array()
-## The trunk capsule is fatter than a leg.
-const TORSO_RADIUS := 0.185
+var _lumbar := PackedInt32Array()
+## The trunk capsule is fatter than a leg, and fat enough to clear a worn
+## cuirass: measured, the armour's back plate stands about 0.196 behind the
+## spine where the bare back reaches 0.18, so the cape rides at 0.205 to stay
+## outside the plate rather than letting it poke through the cloth.
+const TORSO_RADIUS := 0.205
 ## The shoulder line and the neck give the torso a forward axis each frame,
 ## so the cape can be held behind the back however the torso twists or leans.
 var _shoulder_l := -1
@@ -106,6 +110,14 @@ func _cache(skeleton: Skeleton3D) -> bool:
 	trunk.append(skeleton.find_bone("neck_01"))
 	if trunk[0] >= 0 and trunk[1] >= 0:
 		_torso = trunk
+	# The lumbar capsule covers the waist, between the trunk and the thighs.
+	# Without it the lower back and the fauld of a cuirass sat in a gap that
+	# no capsule guarded, and the cape crept through them during a lean.
+	var lumbar := PackedInt32Array()
+	lumbar.append(skeleton.find_bone("pelvis"))
+	lumbar.append(skeleton.find_bone("spine_01"))
+	if lumbar[0] >= 0 and lumbar[1] >= 0:
+		_lumbar = lumbar
 	# The torso's forward axis, for holding the cape behind the back. The
 	# shoulder line and the spine-up cross to a forward that follows every
 	# twist and lean; its sign is fixed once against the rest hang, since a
@@ -164,6 +176,9 @@ func _push_out_of_legs(skeleton: Skeleton3D, to_world: Transform3D,
 		point: Vector3) -> Vector3:
 	if not _torso.is_empty():
 		point = _push_out_of_capsule(skeleton, to_world, point, _torso,
+			TORSO_RADIUS)
+	if not _lumbar.is_empty():
+		point = _push_out_of_capsule(skeleton, to_world, point, _lumbar,
 			TORSO_RADIUS)
 	for pair in _legs:
 		point = _push_out_of_capsule(skeleton, to_world, point, pair,
