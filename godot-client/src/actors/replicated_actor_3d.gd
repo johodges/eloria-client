@@ -26,6 +26,12 @@ extends CharacterBody3D
 
 var actor_id := -1
 var server_target := Vector3.ZERO
+## How many tiles this actor stands on, across by along. The server
+## reserves that box around the tile the actor reports and measures reach
+## from its edges, so the model is drawn in the middle of the box rather
+## than on the anchor tile - they differ by half a tile whenever an extent
+## is even. One tile, the overwhelming majority, is unaffected.
+var footprint := Vector2i.ONE
 var resolver: AnimationResolver
 var animation_player: AnimationPlayer
 var current_action: StringName = &"idle"
@@ -154,11 +160,22 @@ const HEALTH_BAR_WIDTH := 0.9
 const HEALTH_BAR_THICKNESS := 0.085
 const HEALTH_BAR_BORDER := 0.02
 
+## Click target and selection ring for an actor standing on one tile.
+## Both are scaled by the widest side of the footprint: a giant that can
+## only be clicked on the middle tile of the nine it stands on is a giant
+## players will keep missing, and a ring drawn around that one tile says
+## the wrong thing about what is standing there.
+const SELECTION_RADIUS := 0.45
+const RING_INNER_RADIUS := 0.48
+const RING_OUTER_RADIUS := 0.58
+
 func configure(dto: Dictionary, adapter: CoordinateAdapter,
 		model_config: Dictionary, animation_config: Dictionary,
 		equipment_config: Dictionary = {}) -> Array[String]:
 	actor_id = int(dto.actor_id)
-	server_target = adapter.tile_center(int(dto.x), int(dto.y))
+	footprint = dto.get("footprint", Vector2i.ONE) as Vector2i
+	server_target = adapter.footprint_center(
+		int(dto.x), int(dto.y), footprint)
 	position = server_target
 	_segment_start = position
 	_smoothed_server_interval = initial_server_interval
@@ -169,7 +186,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	var selection_shape: CollisionShape3D = CollisionShape3D.new()
 	selection_shape.name = "SelectionCollision"
 	var capsule_shape: CapsuleShape3D = CapsuleShape3D.new()
-	capsule_shape.radius = 0.45
+	capsule_shape.radius = SELECTION_RADIUS
 	capsule_shape.height = 1.9
 	selection_shape.shape = capsule_shape
 	selection_shape.position.y = 0.95
@@ -177,8 +194,8 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	var selection_ring: MeshInstance3D = MeshInstance3D.new()
 	selection_ring.name = "SelectionRing"
 	var ring: TorusMesh = TorusMesh.new()
-	ring.inner_radius = 0.48
-	ring.outer_radius = 0.58
+	ring.inner_radius = RING_INNER_RADIUS
+	ring.outer_radius = RING_OUTER_RADIUS
 	var ring_material: StandardMaterial3D = StandardMaterial3D.new()
 	ring_material.albedo_color = Color(0.95, 0.76, 0.18, 0.9)
 	ring_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -192,6 +209,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	# shows at their scale.
 	selection_ring.layers = GAMEPLAY_ONLY_VISUAL_LAYER
 	add_child(selection_ring)
+	_resize_selection()
 	_add_nameplate(dto)
 	_add_map_dot(dto)
 	resolver = AnimationResolver.new(animation_config)
@@ -594,8 +612,37 @@ func clear_speech_bubble() -> void:
 	if is_instance_valid(_speech_bubble):
 		_speech_bubble.hide()
 
+## Restate how much ground this actor stands on, resizing what depends on
+## it. Separate from `configure` because the footprint table is a login
+## packet: if it lands after an actor has already been built, that actor
+## corrects itself on the next state update instead of staying the wrong
+## size until it walks out of view.
+func set_footprint(value: Vector2i) -> void:
+	var next := Vector2i(maxi(1, value.x), maxi(1, value.y))
+	if next == footprint:
+		return
+	footprint = next
+	_resize_selection()
+
+## Grow the click target and the selection ring to the actor's own size.
+func _resize_selection() -> void:
+	var span: float = float(maxi(footprint.x, footprint.y))
+	var shape: CollisionShape3D = get_node_or_null(
+		"SelectionCollision") as CollisionShape3D
+	if shape != null and shape.shape is CapsuleShape3D:
+		(shape.shape as CapsuleShape3D).radius = SELECTION_RADIUS * span
+	var ring_node: MeshInstance3D = get_node_or_null(
+		"SelectionRing") as MeshInstance3D
+	if ring_node != null and ring_node.mesh is TorusMesh:
+		var torus: TorusMesh = ring_node.mesh as TorusMesh
+		torus.inner_radius = RING_INNER_RADIUS * span
+		torus.outer_radius = RING_OUTER_RADIUS * span
+
 func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport := false) -> void:
-	var next_target: Vector3 = adapter.tile_center(int(dto.x), int(dto.y))
+	if dto.has("footprint"):
+		set_footprint(dto.get("footprint") as Vector2i)
+	var next_target: Vector3 = adapter.footprint_center(
+		int(dto.x), int(dto.y), footprint)
 	# Server movement contains tile coordinates only. Keep the last sampled
 	# rendered-surface height until Main performs the ray sample for the new tile;
 	# otherwise each packet temporarily pushes actors back to the flat manifest

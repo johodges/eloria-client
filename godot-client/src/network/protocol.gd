@@ -78,6 +78,7 @@ enum ServerMessage {
 	ELORIA_PARTY_STATE = 240, ELORIA_QUEST_ARCHIVE_STATE = 241,
 	ELORIA_DEGRADED_ITEMS = 242, ELORIA_WORN_SLOTS = 243,
 	ELORIA_ACHIEVEMENTS_STATE = 244, ELORIA_EXPERIENCE_STATE = 245,
+	ELORIA_ACTOR_FOOTPRINTS = 246,
 	ADD_ACTOR_ANIMATION = 89,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
@@ -174,6 +175,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"party_window_v1",
 	"player_info_v1",
 	"achievements_window_v1",
+	"actor_footprints_v1",
 	"degraded_items_v1",
 	"experience64_v1",
 	"quest_archive_v1",
@@ -922,6 +924,8 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return decode_achievements_state(payload)
 		ServerMessage.ELORIA_EXPERIENCE_STATE:
 			return decode_experience_state(payload)
+		ServerMessage.ELORIA_ACTOR_FOOTPRINTS:
+			return decode_actor_footprints(payload)
 		ServerMessage.ELORIA_WORN_SLOTS:
 			if payload.size() != 8:
 				return {"type": "invalid", "error": "worn_slots_length"}
@@ -1024,6 +1028,31 @@ static func decode_experience_state(payload: PackedByteArray) -> Dictionary:
 	if offset != payload.size():
 		return {"type": "invalid", "error": "experience_trailing"}
 	return {"type": "experience_state", "skills": skills}
+
+## Command 246. Which actor types stand on more than one tile.
+##
+## Sent once at login, because a footprint belongs to the species rather than
+## to the individual. The client needs it to place a model: the tile an actor
+## reports is the anchor of its box, and for an even-sized box the anchor is
+## not the middle of it, so a two-by-two creature drawn on its anchor sits
+## half a tile off the ground it is actually standing on.
+##
+## A type that is not listed is one tile, which is most of them.
+static func decode_actor_footprints(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 2:
+		return {"type": "invalid", "error": "footprints_length"}
+	var count: int = u16(payload)
+	if payload.size() != 2 + count * 4:
+		return {"type": "invalid", "error": "footprints_count"}
+	var sizes: Dictionary = {}
+	for index: int in range(count):
+		var offset: int = 2 + index * 4
+		var width: int = int(payload[offset + 2])
+		var depth: int = int(payload[offset + 3])
+		if width < 1 or depth < 1:
+			return {"type": "invalid", "error": "footprints_size"}
+		sizes[u16(payload, offset)] = Vector2i(width, depth)
+	return {"type": "actor_footprints", "footprints": sizes}
 
 ## Command 244. Every countable thing this character has done.
 ##
