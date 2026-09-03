@@ -84,12 +84,12 @@ func _run() -> void:
 	# artwork now sits at the old number - the assertions cannot tell, which
 	# is why this one is regenerated from the catalog rather than hand-edited.
 	#
-	# Slot 2 draws no icon on purpose, and it is not this feature failing.
-	# atlases.json declares 21 sheets but only items1-9 are in the repository,
-	# and every weapon in the profile has an image id above 225 - the sword
-	# here is 374, which is sheet 15. A checkout where somebody has run
-	# `godot --headless --import` fabricates stubs and hides this; a clean one
-	# shows it. Leaving it visible is the point.
+	# Run `godot --headless --path . --import` before rendering this. All 21
+	# atlas sheets are committed, but `.import` files are gitignored
+	# project-wide on purpose - the project is imported by CI - so a fresh
+	# checkout has no import metadata for any asset and high image ids
+	# resolve to nothing until that step has run. The sword here is id 374,
+	# in sheet 15, which is exactly the range that needs it.
 	_send(19, "0676000100000000027601010000000102310001000000020201000c000000"
 		+ "030e03000100000004060b00010000000506")
 	_send(243, "2500000000000000")
@@ -103,9 +103,7 @@ func _run() -> void:
 		"the worn-slot mask arrived")
 	await _capture("worn-items.png",
 		"three worn items among six: mirrored artwork with an orange"
-			+ " exclamation in the lower-right corner, as Eternal Lands draws"
-			+ " it. The empty second slot is the missing atlas sheets, not the"
-			+ " marking - see the note above it")
+			+ " exclamation in the lower-right corner, as Eternal Lands draws it")
 
 	_app_state.set("authenticated", false)
 	_main.queue_free()
