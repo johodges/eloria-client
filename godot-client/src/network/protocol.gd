@@ -125,8 +125,13 @@ static func login(username: String, password: String) -> PackedByteArray:
 static func create_character(username: String, password: String, appearance: Dictionary) -> PackedByteArray:
 	var payload := (username + " " + password).to_utf8_buffer()
 	payload.append(0)
-	# Exact legacy order: skin, hair, shirt, pants, boots, actor type, head, eyes.
-	for key in ["skin", "hair", "shirt", "pants", "boots", "actor_type", "head", "eyes"]:
+	# Exact legacy order: skin, hair, shirt, pants, boots, actor type, head,
+	# eyes. hair_color is appended rather than interleaved so the first
+	# eight offsets, which the server has always read positionally, do not
+	# move; a server built before hair_color existed just reads eight
+	# bytes and never sees the ninth.
+	for key in ["skin", "hair", "shirt", "pants", "boots", "actor_type", "head", "eyes",
+			"hair_color"]:
 		payload.append(clampi(int(appearance.get(key, 0)), 0, 255))
 	return encode(ClientMessage.CREATE_CHAR, payload)
 
@@ -2142,6 +2147,12 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := f
 			if neck_visual > 0:
 				var equipment_visuals: Dictionary = actor["equipment_visuals"] as Dictionary
 				equipment_visuals[7] = neck_visual
+			# hair_color is the newest trailer byte, checked separately so a
+			# server built before it exists (5-byte trailer) still decodes
+			# everything before it; this actor's hair just tints with the
+			# same colour its style does, same as before the field existed.
+			if payload.size() >= trailer_offset + 6:
+				appearance["hair_color"] = int(payload[trailer_offset + 5])
 	else:
 		actor["frame"] = int(payload[11 + shift])
 		actor["max_health"] = u16(payload, 12 + shift)

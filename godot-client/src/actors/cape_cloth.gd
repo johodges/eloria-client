@@ -38,6 +38,14 @@ const LEG_RADIUS := 0.115
 const MAX_STEP := 1.0 / 30.0
 ## Move further than this in one step and the actor was teleported, not walked.
 const TELEPORT := 1.5
+## The most a single cape point may travel in one step. A trail moves a hem a
+## few centimetres a frame; a spike is a point flung far past that, so capping
+## the step kills the spike and leaves the trail alone.
+const MAX_MOVE := 0.09
+## How far above its own animated rest a cape point may rise. A trailing cape
+## lags below its rest; a spike flings a corner well above it, so a small cap
+## cuts the spike without touching the trail or the high-sitting collar.
+const CAPE_RISE := 0.05
 ## Once the anchor is slower than this the wearer has stopped, and the cape
 ## should come back down briskly instead of drifting: gravity multiplies and
 ## the damping drops so the swing dies in a fraction of the travelling time.
@@ -55,16 +63,17 @@ var _legs: Array[PackedInt32Array] = []
 var _settled := false
 var _last_anchor := Vector3.ZERO
 var _torso := PackedInt32Array()
-## The trunk capsule is fatter than a leg.
-const TORSO_RADIUS := 0.185
-## The shoulder line and the neck give the torso a forward axis each frame,
-## so the cape can be held behind the back however the torso twists or leans.
-var _shoulder_l := -1
-var _shoulder_r := -1
-var _neck := -1
-## Which way `side.cross(up)` points, locked at cache time against the rest
-## hang: a cape hangs behind, so forward is whichever sign opposes it.
-var _forward_sign := 1.0
+var _lumbar := PackedInt32Array()
+## The trunk capsule is fatter than a leg, and fat enough to clear a worn
+## cuirass: measured, the armour's back plate stands about 0.196 behind the
+## spine where the bare back reaches 0.18, so the cape rides at 0.205 to stay
+## outside the plate rather than letting it poke through the cloth.
+const TORSO_RADIUS := 0.205
+## The spine bone's own local axis that points at the chest, found once at
+## cache time against the rest hang. Multiplied by the bone's live basis each
+## frame it gives a forward that follows the torso's lean and twist without
+## being thrown off by an arm swinging across the body during an attack.
+var _forward_local := Vector3.ZERO
 ## Cape points stay this far behind the spine plane. The bone runs down the
 ## middle of the torso, so a small negative keeps cloth off the chest and the
 ## sternum while never disturbing a cape already hanging down the back.
@@ -106,41 +115,55 @@ func _cache(skeleton: Skeleton3D) -> bool:
 	trunk.append(skeleton.find_bone("neck_01"))
 	if trunk[0] >= 0 and trunk[1] >= 0:
 		_torso = trunk
-	# The torso's forward axis, for holding the cape behind the back. The
-	# shoulder line and the spine-up cross to a forward that follows every
-	# twist and lean; its sign is fixed once against the rest hang, since a
-	# cape at rest drapes behind and forward must oppose it.
-	_shoulder_l = skeleton.find_bone("upperarm_l")
-	_shoulder_r = skeleton.find_bone("upperarm_r")
-	_neck = skeleton.find_bone("neck_01")
-	if _shoulder_l >= 0 and _shoulder_r >= 0 and _neck >= 0:
-		var anchor_rest := skeleton.get_bone_global_rest(_anchor).origin
-		var up := (skeleton.get_bone_global_rest(_neck).origin
-			- anchor_rest).normalized()
-		var side := (skeleton.get_bone_global_rest(_shoulder_l).origin
-			- skeleton.get_bone_global_rest(_shoulder_r).origin).normalized()
-		var forward := side.cross(up)
-		var hang := skeleton.get_bone_global_rest(_bones[1][1]).origin - anchor_rest
-		hang -= up * hang.dot(up)
-		if forward.dot(hang) > 0.0:
-			_forward_sign = -1.0
+	# The lumbar capsule covers the waist, between the trunk and the thighs.
+	# Without it the lower back and the fauld of a cuirass sat in a gap that
+	# no capsule guarded, and the cape crept through them during a lean.
+	var lumbar := PackedInt32Array()
+	lumbar.append(skeleton.find_bone("pelvis"))
+	lumbar.append(skeleton.find_bone("spine_01"))
+	if lumbar[0] >= 0 and lumbar[1] >= 0:
+		_lumbar = lumbar
+	# The torso's forward axis, for holding the cape behind the back, taken
+	# from the SPINE bone's own orientation rather than the shoulder line: an
+	# attack swings one arm across the body, and a forward derived from the
+	# arms swung with it, so the "behind the back" plane stopped being behind
+	# the torso exactly when the swing threw the cape forward. The spine bone
+	# turns with the torso and not the arms. Which of its local axes points at
+	# the chest is found once, against the rest hang the cape drapes opposite.
+	var anchor_rest := skeleton.get_bone_global_rest(_anchor)
+	var up_rest := Vector3.UP
+	var neck := skeleton.find_bone("neck_01")
+	if neck >= 0:
+		up_rest = (skeleton.get_bone_global_rest(neck).origin
+			- anchor_rest.origin).normalized()
+	var hang := skeleton.get_bone_global_rest(_bones[1][1]).origin - anchor_rest.origin
+	hang -= up_rest * hang.dot(up_rest)
+	if hang.length_squared() > 1e-9:
+		hang = hang.normalized()
+		var best := -2.0
+		for local in [Vector3.RIGHT, Vector3.LEFT, Vector3.UP, Vector3.DOWN,
+				Vector3.FORWARD, Vector3.BACK]:
+			var world: Vector3 = (anchor_rest.basis * local).normalized()
+			var flat := world - up_rest * world.dot(up_rest)
+			if flat.length_squared() < 1e-4:
+				continue
+			# Forward opposes the hang, which points behind.
+			var score: float = flat.normalized().dot(-hang)
+			if score > best:
+				best = score
+				_forward_local = local
 	return true
 
 
-## The torso's forward direction in world space, or ZERO if the bones that
-## define it are missing. Recomputed each frame so a leaning, twisting attack
-## carries the "behind the back" plane with it.
+## The torso's forward direction in world space, or ZERO if it is undefined.
+## Recomputed each frame from the spine bone's live basis so a leaning,
+## twisting attack carries the "behind the back" plane with the torso -- and
+## only the torso, not the arms.
 func _torso_forward(skeleton: Skeleton3D, to_world: Transform3D) -> Vector3:
-	if _shoulder_l < 0 or _shoulder_r < 0 or _neck < 0:
+	if _forward_local == Vector3.ZERO:
 		return Vector3.ZERO
-	var anchor_pos := to_world * skeleton.get_bone_global_pose(_anchor).origin
-	var up := (to_world * skeleton.get_bone_global_pose(_neck).origin
-		- anchor_pos)
-	var side := (to_world * skeleton.get_bone_global_pose(_shoulder_l).origin
-		- to_world * skeleton.get_bone_global_pose(_shoulder_r).origin)
-	if up.length_squared() < 1e-9 or side.length_squared() < 1e-9:
-		return Vector3.ZERO
-	var forward := side.normalized().cross(up.normalized()) * _forward_sign
+	var basis: Basis = to_world.basis * skeleton.get_bone_global_pose(_anchor).basis
+	var forward := (basis * _forward_local)
 	if forward.length_squared() < 1e-9:
 		return Vector3.ZERO
 	return forward.normalized()
@@ -164,6 +187,9 @@ func _push_out_of_legs(skeleton: Skeleton3D, to_world: Transform3D,
 		point: Vector3) -> Vector3:
 	if not _torso.is_empty():
 		point = _push_out_of_capsule(skeleton, to_world, point, _torso,
+			TORSO_RADIUS)
+	if not _lumbar.is_empty():
+		point = _push_out_of_capsule(skeleton, to_world, point, _lumbar,
 			TORSO_RADIUS)
 	for pair in _legs:
 		point = _push_out_of_capsule(skeleton, to_world, point, pair,
@@ -229,7 +255,16 @@ func _process_modification_with_delta(delta: float) -> void:
 			previous = rest.duplicate()
 		for index in range(1, points.size()):
 			var current := points[index]
-			points[index] = current + (current - previous[index]) * damping + fall
+			var candidate := current + (current - previous[index]) * damping + fall
+			# Cap how far a point may travel in one step. An attack lunges the
+			# anchor half a metre in a few frames, and the carried velocity flung
+			# a hem corner into a sharp spike above the shoulder; a per-step cap
+			# bleeds that off without stiffening the ordinary trail.
+			var move := candidate - current
+			var far := move.length()
+			if far > MAX_MOVE:
+				candidate = current + move * (MAX_MOVE / far)
+			points[index] = candidate
 			previous[index] = current
 		for _pass in range(RELAX_PASSES):
 			for index in range(1, points.size()):
@@ -244,6 +279,14 @@ func _process_modification_with_delta(delta: float) -> void:
 					var ahead := points[index].dot(forward) - plane_at
 					if ahead > 0.0:
 						points[index] -= forward * ahead
+				# No point may rise far above where the animation alone would
+				# place it. A trailing cape lags below its rest; a spike is the
+				# simulation flinging a hem corner well above it, over the
+				# shoulder. Capping the rise against each point's own rest keeps
+				# the collar high where it belongs and only cuts the spike.
+				var ceiling := rest[index].y + CAPE_RISE
+				if points[index].y > ceiling:
+					points[index].y = ceiling
 		_points[chain] = points
 		_previous[chain] = previous
 

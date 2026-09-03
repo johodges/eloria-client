@@ -288,7 +288,13 @@ func apply_appearance_variants(appearance: Dictionary) -> void:
 		return
 	var culture: String = str(_model_config.get("culture", "luminous"))
 	var skin_tint: Color = AppearanceVariants.skin_tint(int(appearance.get("skin", 0)))
-	var hair_tint: Color = AppearanceVariants.hair_color(int(appearance.get("hair", 0)))
+	# hair_color is independent of "hair", which now picks the style only.
+	# Falls back to the style index when hair_color is absent -- an actor
+	# from a server built before the field existed -- rather than to a
+	# fixed colour, so hair still varies instead of every such actor
+	# reading as the same near-black.
+	var hair_tint: Color = AppearanceVariants.hair_color(
+		int(appearance.get("hair_color", appearance.get("hair", 0))))
 	var eye_tint: Color = AppearanceVariants.eye_color(int(appearance.get("eyes", 0)))
 	var head_style: int = AppearanceVariants.head_style(int(appearance.get("head", 0)))
 	var native_model: Node3D = get_node_or_null("NativeModel") as Node3D
