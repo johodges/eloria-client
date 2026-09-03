@@ -638,7 +638,12 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			storage["text"] = str(event.text)
 			state_changed.emit(&"storage")
 		"item_cooldowns":
-			inventory_cooldowns.clear()
+			# The server announces one slot per packet - a fresh cooldown
+			# starting, or a reuse attempt while one is still running - and
+			# never resends the full active set, so incoming slots must be
+			# merged rather than replacing the map: clearing here dropped
+			# every other slot's countdown the moment a second item's
+			# cooldown was announced.
 			var received_msec: int = Time.get_ticks_msec()
 			for raw_cooldown: Variant in event.cooldowns:
 				var cooldown: Dictionary = raw_cooldown as Dictionary

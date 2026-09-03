@@ -6896,51 +6896,64 @@ func _cast_spell_slot(slot: int) -> void:
 	else:
 		spell_status.text = "Casting %s…" % str(definition.get("name", "spell"))
 
-## Draws each item cooldown as a proportional drain over its quick slot.
-## `maximum_msec` came off the wire in every cooldown packet and was stored and
-## never read, so a cooldown was a disabled button with a number in a tooltip
-## and no sense of how far through it was. Runs every frame: it only moves an
-## anchor and sets a label, and a chunky one-second step would defeat the
-## point of showing progress at all.
+## Draws each item cooldown as a proportional drain over its slot, in both
+## the quick bar and the inventory grid. `maximum_msec` came off the wire in
+## every cooldown packet and was stored and never read, so a cooldown was a
+## disabled button with a number in a tooltip and no sense of how far through
+## it was. Runs every frame: it only moves an anchor and sets a label, and a
+## chunky one-second step would defeat the point of showing progress at all.
 func _update_cooldown_overlays() -> void:
 	for slot: int in range(quick_slot_buttons.size()):
-		var overlay: Control = _cooldown_overlay(quick_slot_buttons[slot])
-		var cooldown_value: Variant = AppState.inventory_cooldowns.get(slot)
-		if not cooldown_value is Dictionary:
-			overlay.visible = false
-			continue
-		var cooldown: Dictionary = cooldown_value as Dictionary
-		var remaining_msec: int = int(cooldown.get("end_msec", 0)) - Time.get_ticks_msec()
-		var maximum_msec: int = maxi(1, int(cooldown.get("maximum_msec", 0)))
-		if remaining_msec <= 0:
-			overlay.visible = false
-			continue
-		overlay.visible = true
-		# The shade drains from full to empty as the cooldown runs out.
-		overlay.anchor_top = 1.0 - clampf(float(remaining_msec) / float(maximum_msec),
-			0.0, 1.0)
-		var seconds_label: Label = overlay.get_node("Seconds") as Label
-		seconds_label.text = str(maxi(1, ceili(float(remaining_msec) / 1000.0)))
+		_apply_cooldown_shade(quick_slot_buttons[slot], slot)
+	for slot: int in range(inventory_slot_buttons.size()):
+		_apply_cooldown_shade(inventory_slot_buttons[slot], slot)
 
-func _cooldown_overlay(button: Button) -> Control:
-	var existing: Control = button.get_node_or_null("Cooldown") as Control
+func _apply_cooldown_shade(button: Button, slot: int) -> void:
+	var shade: ColorRect = _cooldown_shade(button)
+	var seconds_label: Label = button.get_node("Seconds") as Label
+	var cooldown_value: Variant = AppState.inventory_cooldowns.get(slot)
+	if not cooldown_value is Dictionary:
+		shade.visible = false
+		seconds_label.visible = false
+		return
+	var cooldown: Dictionary = cooldown_value as Dictionary
+	var remaining_msec: int = int(cooldown.get("end_msec", 0)) - Time.get_ticks_msec()
+	var maximum_msec: int = maxi(1, int(cooldown.get("maximum_msec", 0)))
+	if remaining_msec <= 0:
+		shade.visible = false
+		seconds_label.visible = false
+		return
+	shade.visible = true
+	seconds_label.visible = true
+	# The shade drains from full to empty as the cooldown runs out.
+	shade.anchor_top = 1.0 - clampf(float(remaining_msec) / float(maximum_msec),
+		0.0, 1.0)
+	seconds_label.text = str(maxi(1, ceili(float(remaining_msec) / 1000.0)))
+
+## The shade's own anchor moves as it drains, so the seconds label is added
+## as its sibling rather than its child: nested inside the shade, the label
+## inherited the shrinking rect and drifted down the icon over the course of
+## the cooldown instead of staying centered on it.
+func _cooldown_shade(button: Button) -> ColorRect:
+	var existing: ColorRect = button.get_node_or_null("Cooldown") as ColorRect
 	if existing != null:
 		return existing
-	var overlay := ColorRect.new()
-	overlay.name = "Cooldown"
-	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	overlay.color = Color(0.05, 0.06, 0.09, 0.66)
-	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
-	overlay.visible = false
-	button.add_child(overlay)
+	var shade := ColorRect.new()
+	shade.name = "Cooldown"
+	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	shade.color = Color(0.05, 0.06, 0.09, 0.66)
+	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	shade.visible = false
+	button.add_child(shade)
 	var seconds := Label.new()
 	seconds.name = "Seconds"
 	seconds.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	seconds.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	seconds.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	seconds.set_anchors_preset(Control.PRESET_FULL_RECT)
-	overlay.add_child(seconds)
-	return overlay
+	seconds.visible = false
+	button.add_child(seconds)
+	return shade
 
 func _inventory_cooldown_remaining(slot: int) -> int:
 	var cooldown_value: Variant = AppState.inventory_cooldowns.get(slot)
