@@ -37,7 +37,7 @@ RACES = (TOOLS.parent.parent / "godot-client" / "assets" / "actors"
 
 CLASSES = ("body", "eyes", "hair", "wardrobe_shirt", "wardrobe_pants",
            "wardrobe_boots")
-EYE_COLOUR_MIN_DISTANCE = 0.30
+EYE_COLOUR_OUTLIER_PERCENT = 8
 ISLAND_MAX_FACES = 100
 CLASS_COLOURS = {
     "body": (205, 170, 140), "eyes": (0, 255, 255), "hair": (255, 0, 255),
@@ -511,25 +511,27 @@ def classify(positions, uvs, indices, texture: Image.Image):
             # against a reference sampled from the zone itself (its
             # median, since skin is the overwhelming majority there) so
             # this adapts to each body's own skin tone with no hard-coded
-            # colour. EYE_COLOUR_MIN_DISTANCE is in the same normalised
-            # (0-1 per channel) RGB space as every other reference in
-            # this function. Checked directly (tinting the classified
-            # primitive a saturated colour in the live preview and
-            # zooming in): the actual iris/pupil/sclera sits at 0.4-1.2
-            # from either Luminous body's skin, but a brightly lit or
-            # shadowed patch of plain eyelid skin can still reach
-            # 0.15-0.28 on its own -- a lower cut here does not merely
-            # admit shading noise, it admits a second, real skin-toned
-            # population wide enough to overlap the low end of the eye
-            # itself, and no single cut fully separates the two. 0.30
-            # sits above where that skin population thins out; the
-            # connected-component pass just below cleans up the rest.
+            # colour. The cut itself is a PERCENTILE of the zone's own
+            # distance distribution, not a fixed absolute number: a fixed
+            # 0.30 (tuned against Luminous, where the painted iris/pupil/
+            # sclera sits 0.4-1.2 from its skin) was checked directly
+            # against the other seven common-skeleton races and left two
+            # of them with zero eye triangles -- Stoneborn's own skin is
+            # a dark stone-grey, so a dark eye never reaches 0.30 away
+            # from it (its zone tops out at 0.235); Votary's whole
+            # palette is lower-contrast the same way (tops out at 0.290).
+            # EYE_COLOUR_OUTLIER_PERCENT is chosen so this reproduces
+            # Luminous's own already-verified result closely (checked by
+            # re-rendering both Luminous bodies after the change): its
+            # zone's outlier population thins out in the same 6-10% range
+            # this percentile sits in, on both bodies.
             if eye_zone.any():
                 zone_rgb = rgb[eye_zone]
                 local_skin = np.median(zone_rgb, axis=0)
                 zone_dist = np.linalg.norm(zone_rgb - local_skin, axis=1)
                 zone_indices = np.flatnonzero(eye_zone)
-                colour_outliers = zone_indices[zone_dist >= EYE_COLOUR_MIN_DISTANCE]
+                cut = np.percentile(zone_dist, 100 - EYE_COLOUR_OUTLIER_PERCENT)
+                colour_outliers = zone_indices[zone_dist >= cut]
                 # A handful of those outliers are far from skin for a
                 # reason that has nothing to do with being an eye (a UV
                 # chart border sampled at the face centroid, a stray
@@ -586,9 +588,37 @@ def reclassify_surfaces(document, binary) -> str:
     _, labels = classify(positions, uvs, all_faces.reshape(-1), texture)
 
     orphaned = set(np.unique(labels).tolist()) - set(by_name)
-    if orphaned:
+    # "eyes" is the one label expected to appear with no node yet: a body
+    # whose zone never crossed the old fixed colour cut got zero eye
+    # faces at its original split, so add_mesh_node was never called for
+    # it (see the CLASSES loop in split()) and no "eyes" node exists to
+    # repoint. A later, more sensitive classify() can still find eyes on
+    # such a body -- that is the whole point of making the cut adaptive
+    # -- so build the missing node the same way the fresh-split path
+    # would have, from "body"'s own primitive (attributes and material
+    # are shared across every class in this split; see the module
+    # docstring), rather than treating it as an error.
+    if orphaned - {"eyes"}:
         raise RuntimeError("reclassify_surfaces produced label(s) %s with "
-                            "no matching node to hold them" % sorted(orphaned))
+                            "no matching node to hold them"
+                            % sorted(orphaned - {"eyes"}))
+    if "eyes" in orphaned:
+        body_node = by_name["body"]
+        body_prim = document["meshes"][body_node["mesh"]]["primitives"][0]
+        body_index = next(i for i, n in enumerate(document["nodes"])
+                          if n is body_node)
+        parent = next(i for i, n in enumerate(document["nodes"])
+                      if body_index in n.get("children", []))
+        document["meshes"].append({"name": "eyes", "primitives": [{
+            "attributes": dict(body_prim["attributes"]),
+            "indices": body_prim["indices"],
+            "material": body_prim.get("material", 0)}]})
+        document["nodes"].append({"name": "eyes",
+                                  "mesh": len(document["meshes"]) - 1,
+                                  "skin": body_node["skin"]})
+        eyes_index = len(document["nodes"]) - 1
+        document["nodes"][parent]["children"].append(eyes_index)
+        by_name["eyes"] = document["nodes"][eyes_index]
 
     def repoint(node, faces):
         prim = document["meshes"][node["mesh"]]["primitives"][0]
@@ -601,7 +631,7 @@ def reclassify_surfaces(document, binary) -> str:
     for name, node in by_name.items():
         new_faces = all_faces[labels == name]
         repoint(node, new_faces)
-        changes.append("%s %d->%d" % (name, old_counts[name], len(new_faces)))
+        changes.append("%s %d->%d" % (name, old_counts.get(name, 0), len(new_faces)))
     return ", ".join(changes)
 
 
@@ -812,13 +842,13 @@ def add_scalp(document, binary) -> int:
 def split(path: Path, calibrate: bool) -> str:
     document, binary = read_glb(path)
     extras = document.setdefault("asset", {}).setdefault("extras", {})
-    if int(extras.get("eloriaSurfacesSplit", 0)) >= 21:
+    if int(extras.get("eloriaSurfacesSplit", 0)) >= 22:
         return "already split"
-    if int(extras.get("eloriaSurfacesSplit", 0)) in (15, 16, 17, 18, 19, 20):
+    if int(extras.get("eloriaSurfacesSplit", 0)) in (15, 16, 17, 18, 19, 20, 21):
         report = reclassify_surfaces(document, binary)
-        extras["eloriaSurfacesSplit"] = 21
+        extras["eloriaSurfacesSplit"] = 22
         write_glb(path, document, binary)
-        return "%s -> v21" % report
+        return "%s -> v22" % report
     if int(extras.get("eloriaSurfacesSplit", 0)) == 14:
         count = resmooth_shared_surfaces(document, binary)
         extras["eloriaSurfacesSplit"] = 15
@@ -954,7 +984,7 @@ def split(path: Path, calibrate: bool) -> str:
 
     del mesh_node["mesh"]
     add_scalp(document, binary)
-    extras["eloriaSurfacesSplit"] = 21
+    extras["eloriaSurfacesSplit"] = 22
     write_glb(path, document, binary)
     return "split: %s" % counts
 
