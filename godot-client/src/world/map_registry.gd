@@ -1,11 +1,13 @@
 class_name MapRegistry
 extends RefCounted
 
-## The registry is keyed by Eloria map id. The server still names a map by the
-## path of an Eternal Lands map file - "./maps/nymara/westhaven.elm" - so what
-## arrives on the wire is reduced to that id here rather than stored anywhere:
-## the directory and the .elm extension are dropped, and what is left is the id.
-## Once the server names its maps directly this only has to stop lowercasing.
+## The registry is keyed by Eloria map id, and eloria-server sends that id.
+##
+## It used to send the path of an Eternal Lands map file instead
+## ("./maps/nymara/westhaven.elm"), so a name is still reduced to its basename
+## with any extension dropped. That is kept as tolerance, not as a contract: a
+## map id has neither a directory nor an extension, so reducing one is a no-op,
+## and an older server or a hand-typed console argument still resolves.
 static func normalize_server_map_id(value: String) -> String:
 	var normalized: String = value.strip_edges().replace("\\", "/")
 	while normalized.begins_with("/"):
@@ -13,7 +15,7 @@ static func normalize_server_map_id(value: String) -> String:
 	while normalized.contains("//"):
 		normalized = normalized.replace("//", "/")
 	normalized = normalized.get_file()
-	if normalized.get_extension().to_lower() == "elm":
+	if not normalized.get_extension().is_empty():
 		normalized = normalized.get_basename()
 	return normalized.to_lower()
 

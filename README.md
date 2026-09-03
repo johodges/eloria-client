@@ -50,11 +50,12 @@ under `eloria-assets/maps/`. `godot-client/data/maps/registry.json` binds each
 **Eloria map id** — `four_gates`, `westhaven` — to its manifest and to the
 coordinate transform that puts the server's tiles on the authored geometry.
 
-eloria-server still names maps by the path of an Eternal Lands map file
-(`./maps/nymara/westhaven.elm`). `MapRegistry.normalize_server_map_id` reduces
-whatever arrives to the map id, so both spellings resolve; the compatibility
-strip and the `startmap` alias can go once the server names its maps directly.
+eloria-server sends that id. It used to send the path of an Eternal Lands map
+file instead; `MapRegistry.normalize_server_map_id` still reduces a path-shaped
+name to its id, as tolerance for an older server rather than as a contract.
+`tests/test_protocol.gd` holds every registry key to a bare id, and the server
+holds the other half in its `tests/test_client_content_sync.py`.
 
 Server walk grids for the composed interior maps live in
-`eloria-assets/maps/nymara-regions/server-collision/`. See that directory's
-README — it also carries the one change eloria-server needs to read them.
+`eloria-assets/maps/nymara-regions/server-collision/`; see that directory's
+README for the format and for how eloria-server reads them.

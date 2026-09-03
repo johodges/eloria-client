@@ -51,30 +51,25 @@ demand. The server does not read those, so none are checked in.
 
 ## The matching server change
 
-`eloria-server`'s `tools/collision_sources.py` reads this repository directly.
-Its eight `Source("elm", …)` entries have to become, verbatim:
+`eloria-server` reads this repository directly. Its `tools/collision_sources.py`
+now declares these eight as
 
 ```python
 _WALK = "nymara-regions/server-collision"
-_TILE = GridTransform(cell_tiles=1.0, shift=0.0)
+_SERVER_TILE = GridTransform(cell_tiles=1.0, shift=0.0)
 
 def _composed(name: str) -> Source:
-    return Source("ewcg", f"{_WALK}/{name}.bin", _TILE)
-
-    "drowned_crown": _composed("drowned_crown"),
-    "grey_moor_barrows": _composed("grey_moor_barrows"),
-    "manymouth_flooded_labyrinth": _composed("manymouth_flooded_labyrinth"),
-    "resonant_vault": _composed("resonant_vault"),
-    "ssarathi_royal_archive": _composed("ssarathi_royal_archive"),
-    "verdant_stair_insides": _composed("verdant_stair_insides"),
-    "westhaven_insides": _composed("westhaven_insides"),
-    "whitehorn_glacier_temple": _composed("whitehorn_glacier_temple"),
+    return Source("ewcg", f"{_WALK}/{name}.bin", _SERVER_TILE)
 ```
 
 `cell_tiles=1.0` makes the server's `resample` the identity, and `rebase=False`
-leaves the elevation codes alone, so `Source.load` returns exactly the array
-`read_elm_heights` returned. Nothing else in that module changes, and
-`read_elm_heights` itself can go once no source names it.
+leaves the elevation codes alone, so `Source.load` returns exactly the array its
+ELM height reader returned. Re-running `tools/sync_authored_collision.py` against
+this repository reproduces all 23 vendored `tools/collision/*.escg.gz` grids byte
+for byte, which is the check that the format change moved nothing.
+
+That module no longer reads ELM at all, and its tests refuse a source that asks
+for one.
 
 ## Known divergence, carried over deliberately
 

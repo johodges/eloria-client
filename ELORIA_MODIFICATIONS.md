@@ -44,13 +44,17 @@ Maura Privantu. No Eternal Lands Binary Data was ever included.
   `maps/nymara-regions/server-collision/*.bin`, EWCG grids holding the identical
   bytes. The nine `export_*_elm.py` scripts became
   `export_insides_collision.py` over a shared `_toolkit` module, each stating
-  the downsample its map shipped with. **eloria-server needs a matching change**;
-  the exact edit is in `server-collision/README.md`.
+  the downsample its map shipped with. eloria-server was changed to match in
+  the same cycle: it reads no ELM at all now, and re-running its
+  `tools/sync_authored_collision.py` against this tree reproduces all 23 of its
+  vendored walk grids byte for byte.
 - Renamed every map key from the Eternal Lands file path to the Eloria map id:
   `maps/nymara/westhaven.elm` is `westhaven`, and the city served as
-  `maps/startmap.elm` is `four_gates`. `MapRegistry.normalize_server_map_id`
-  reduces what the server still sends to that id, so the client works against
-  both; the `startmap` alias and that strip go when the server is updated.
+  `maps/startmap.elm` is `four_gates`. eloria-server sends that id now: its map
+  definitions gained a `client_name`, which is the id, while `file` stays the
+  server's own height map. `MapRegistry.normalize_server_map_id` still reduces
+  a path-shaped name to its id, as tolerance for an older server rather than as
+  a contract; both ends pin their half of the naming contract in tests.
 - Dropped the `Build check` and `independent-data` workflows and the C half of
   `world-package`. `Godot Client` now runs on the whole repository and includes
   the provenance guard and the shared asset contracts under `tests/`.

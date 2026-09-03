@@ -599,10 +599,6 @@
     },
     "four-gates": {
       "alias": "four_gates"
-    },
-    "startmap": {
-      "alias": "four_gates",
-      "note": "The server still names Four Gates by the Eternal Lands map file it started from. Delete this entry, and the .elm strip in MapRegistry.normalize_server_map_id, once it names it four_gates."
     }
   }
 }

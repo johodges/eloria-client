@@ -3852,7 +3852,7 @@ func _friendly_map_name(server_map: String) -> String:
 	# file reference included - to the Eloria map id, so this only has to know
 	# the ids and the one the city still answers to.
 	var normalized: String = MapRegistry.normalize_server_map_id(server_map)
-	if normalized in ["four_gates", "four-gates", "startmap"]:
+	if normalized in ["four_gates", "four-gates"]:
 		return "Four Gates City"
 	return normalized.replace("_", " ").replace("-", " ").capitalize()
 
