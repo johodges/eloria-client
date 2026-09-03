@@ -95,6 +95,27 @@ func _run() -> void:
 		and not InputMap.action_get_events("toggle_map").is_empty(),
 		"an unreadable stored binding leaves the action exactly as it was")
 
+	# The spell quick slots moved from Shift+number to Alt+number. A settings
+	# file records every bound action, not only chosen ones, so restoring a
+	# stored Shift+1 would hand the old default back to somebody who never
+	# picked it. It is dropped; a binding that is not the old default stands.
+	_expect(int(window.call("restore_bindings", {"quick_spell_1": "Shift+1"})) == 0,
+		"the superseded spell-slot default is not restored")
+	var spell_slot: InputEventKey = InputMap.action_get_events(
+		"quick_spell_1")[0] as InputEventKey
+	_expect(spell_slot.alt_pressed and not spell_slot.shift_pressed
+			and spell_slot.physical_keycode == KEY_1,
+		"quick_spell_1 keeps the current Alt+1 default")
+	window.call("restore_bindings", {"quick_spell_1": "Ctrl+1"})
+	spell_slot = InputMap.action_get_events("quick_spell_1")[0] as InputEventKey
+	_expect(spell_slot.ctrl_pressed and not spell_slot.alt_pressed,
+		"a spell slot the player actually rebound is still restored")
+	InputMap.action_erase_events("quick_spell_1")
+	var alt_one := InputEventKey.new()
+	alt_one.physical_keycode = KEY_1
+	alt_one.alt_pressed = true
+	InputMap.action_add_event("quick_spell_1", alt_one)
+
 	# The presentation switches actually change what is drawn.
 	var effects_before: int = (main.get("world_effects") as Array).size()
 	main.call("_on_client_setting_changed", "Graphics", "particles", false)

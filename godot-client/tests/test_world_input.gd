@@ -524,12 +524,15 @@ func _run() -> void:
 	chat_input.release_focus()
 	chat_input.hide()
 	await process_frame
-	_expect(stats_tabs.get_tab_count() == 4
+	# Four Eternal Lands-style tabs, and a fifth this client adds: the perks
+	# the server offers, which Eternal Lands only ever sells through an NPC.
+	_expect(stats_tabs.get_tab_count() == 5
 		and stats_tabs.get_tab_title(0) == "Statistics"
 		and stats_tabs.get_tab_title(1) == "Knowledge"
 		and stats_tabs.get_tab_title(2) == "Counters"
-		and stats_tabs.get_tab_title(3) == "Session",
-		"statistics frame provides the four Eternal Lands-style tabs")
+		and stats_tabs.get_tab_title(3) == "Session"
+		and stats_tabs.get_tab_title(4) == "Perks",
+		"statistics frame provides the Eternal Lands tabs and the perks tab")
 	_expect(main.get_node("GameView/StatsPanel/Content/Header/StatsClose") is Button
 		and main.get_node("GameView/StatsPanel/Content/StatsTabs/Counters/CounterColumns/CounterCategories") is ItemList
 		and main.get_node("GameView/StatsPanel/Content/StatsTabs/Session/SessionContent/SessionXpText") is RichTextLabel,
@@ -2223,9 +2226,89 @@ func _run() -> void:
 	# out of reach. Ownership is the server's; the names are the catalog's.
 	_expect((main.get("spell_slot_buttons") as Array).size() == 12,
 		"the quickbar has twelve spell slots, not six")
+	# Eternal Lands binds K_SPELL1..12 to Alt with the number row, ending on
+	# the two keys right of zero (keys.c). Every slot carries that modifier,
+	# and slot 12 is checked by name because it is the odd one.
+	var spell_keys: Array[int] = [KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6,
+		KEY_7, KEY_8, KEY_9, KEY_0, KEY_MINUS, KEY_EQUAL]
 	for slot: int in range(1, 13):
 		_expect(InputMap.has_action("quick_spell_%d" % slot),
 			"quick_spell_%d is a rebindable action" % slot)
+		var bound: Array[InputEvent] = InputMap.action_get_events(
+			"quick_spell_%d" % slot)
+		var key_event: InputEventKey = (bound[0] if not bound.is_empty()
+			else null) as InputEventKey
+		_expect(key_event != null and key_event.alt_pressed
+				and not key_event.shift_pressed
+				and key_event.physical_keycode == spell_keys[slot - 1],
+			"quick_spell_%d is Alt+%s" % [slot, OS.get_keycode_string(
+				spell_keys[slot - 1])])
+	_expect(main.call("_spell_slot_shortcut", 11) == "Alt+=",
+		"the twelfth slot's tooltip names the key it is on: %s"
+			% str(main.call("_spell_slot_shortcut", 11)))
+	# Pick points are spent from the statistics window. Everything it offers
+	# is the server's word: the points come from the stats packet, the perks
+	# and their prices from the catalogue, and a perk it refuses carries the
+	# server's own refusal rather than a Take button.
+	app_state_inventory.set("stats", {"physique": 4, "physique_base": 4,
+		"magic_nexus": 0, "magic_nexus_base": 0, "overall": 10,
+		"pickpoints_earned": 10, "pickpoints_spent": 0})
+	app_state_inventory.call("_on_packet", 215, ("02000500c8000000457863617661746f72005477696365206173206d616e79206974656d732e0000fdff00000000506f7765722048756e677279004c6f7365203320666f6f6420706572206d696e7574652e00596f7520616c726561647920686176652074686174207065726b2e00").hex_decode())
+	await process_frame
+	var perk_rows: VBoxContainer = main.get("perk_rows") as VBoxContainer
+	_expect(perk_rows != null and perk_rows.get_child_count() == 2,
+		"the perks tab lists every perk the server offers: %d"
+			% (perk_rows.get_child_count() if perk_rows != null else -1))
+	var excavator: HBoxContainer = perk_rows.get_node("PerkExcavator") as HBoxContainer
+	var excavator_take: Button = excavator.get_node("Take") as Button
+	var excavator_text: String = (excavator.get_node("Detail") as Label).text
+	_expect(not excavator_take.disabled,
+		"a perk the server does not refuse can be taken")
+	_expect(excavator_text.contains("5 pp") and excavator_text.contains("200"),
+		"a perk states what it costs in points and gold: " + excavator_text)
+	var hungry: HBoxContainer = perk_rows.get_node("PerkPowerHungry") as HBoxContainer
+	var hungry_take: Button = hungry.get_node("Take") as Button
+	_expect(hungry_take.disabled
+			and hungry_take.tooltip_text == "You already have that perk.",
+		"a refused perk is disabled and quotes the server: "
+			+ hungry_take.tooltip_text)
+	_expect((hungry.get_node("Detail") as Label).text.contains("+3 pp"),
+		"a perk with a negative cost is shown as paying points out: "
+			+ (hungry.get_node("Detail") as Label).text)
+	var perk_summary: Label = main.get("perk_summary") as Label
+	_expect(perk_summary.text.contains("10"),
+		"the tab says how many pick points are unspent: " + perk_summary.text)
+
+	# The "+" beside a line is offered only while the server's numbers allow
+	# it, and clicking one asks before anything is spent.
+	main.call("_sync_stats")
+	var stats_body: String = (main.get("stats_text") as RichTextLabel).text
+	_expect(stats_body.contains("spend:attribute:physique")
+			and stats_body.contains("spend:nexus:magic_nexus"),
+		"an attribute and a nexus below their ceilings can be raised")
+	app_state_inventory.set("stats", {"physique": 4, "physique_base": 4,
+		"overall": 10, "pickpoints_earned": 10, "pickpoints_spent": 10})
+	main.call("_sync_stats")
+	_expect(not (main.get("stats_text") as RichTextLabel).text.contains("spend:"),
+		"with nothing left to spend, nothing offers to spend it")
+	app_state_inventory.set("stats", {"physique": 48, "physique_base": 48,
+		"overall": 10, "pickpoints_earned": 10, "pickpoints_spent": 0})
+	main.call("_sync_stats")
+	_expect(not (main.get("stats_text") as RichTextLabel).text.contains(
+			"spend:attribute:physique"),
+		"an attribute at the server's ceiling is not offered again")
+	main.call("_on_stats_meta_clicked", "spend:attribute:physique")
+	var confirm: PanelContainer = main.get("purchase_confirm") as PanelContainer
+	var prompt: Label = main.get("purchase_prompt") as Label
+	_expect(confirm.visible and prompt.text.contains("Physique"),
+		"clicking a + asks first, naming what it would buy: " + prompt.text)
+	_expect((main.get("_pending_purchase") as Array) == ["attribute", "physique"],
+		"and holds the purchase until the question is answered")
+	main.call("_on_purchase_cancelled")
+	_expect(not confirm.visible
+			and (main.get("_pending_purchase") as Array).is_empty(),
+		"cancelling spends nothing and forgets the question")
+
 	var sigils: Control = main.get("sigil_window") as Control
 	var sigil_panel: PanelContainer = sigils.get_node("SigilWindow") as PanelContainer
 	_expect(not sigil_panel.visible, "the sigils window starts closed")
