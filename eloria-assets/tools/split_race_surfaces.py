@@ -110,6 +110,38 @@ def append_accessor(document, binary, array, ctype, atype,
 
 
 def classify(positions, uvs, indices, texture: Image.Image):
+    """Boots/pants/shirt/skin by nearest colour to a per-body sample of
+    each; eyes by geometry.
+
+    The original version thresholded absolute Y and a "teal" hue tuned to
+    one body's blue-green shirt -- and both assumptions broke on the
+    common-skeleton redraw art (Luminous Human, and the races still to
+    come on the same skeleton): the male shirt here is off-white, not
+    teal, and a garment's OWN height range is not a narrow band -- a
+    sleeve runs from the shoulder down past the hip, overlapping pants'
+    Y range while still being shirt-coloured.  A first version that kept
+    Y as the classifier (proportional this time, not absolute) still put
+    every sleeve and cuff in "body" for exactly that reason: the sleeve's
+    centroids scatter across the whole torso-to-hip range, and no single
+    band contains them.
+
+    What generalises across both colour schemes AND that shape problem is
+    colour distance to a small set of reference colours -- but sampled
+    from THIS body, not hard-coded, because the palette differs per race.
+    Each reference is the median texel colour in the middle of a Y-band
+    that is unambiguous by construction (boots at the ankle, pants at
+    mid-thigh, shirt at mid-chest, skin at the crown of the head, all
+    picked well clear of any seam); every face then goes to whichever
+    reference it is nearest, with no Y restriction on the match itself,
+    so a shirt-coloured sleeve at hip height still reads as shirt.
+
+    Eyes are a handful of triangles on a body this low-poly -- too few
+    for either hue or a per-band colour sample to isolate reliably (the
+    two bald heads here have no eye-coloured patch that stands out from
+    skin at this sampling resolution).  What DOES find them is geometry:
+    within a narrow eye-level slice of the head, the narrowest, most
+    forward-facing sliver of the face is the eyes and nothing else.
+    """
     tex = np.asarray(texture.convert("RGB")).astype(np.float64) / 255.0
     height, width = tex.shape[:2]
     faces = indices.reshape(-1, 3)
@@ -118,33 +150,43 @@ def classify(positions, uvs, indices, texture: Image.Image):
     px = np.clip((uv[:, 0] % 1.0) * (width - 1), 0, width - 1).astype(int)
     py = np.clip((uv[:, 1] % 1.0) * (height - 1), 0, height - 1).astype(int)
     rgb = tex[py, px]
-    mx = rgb.max(axis=1)
-    mn = rgb.min(axis=1)
-    delta = mx - mn
-    sat = np.where(mx > 0, delta / np.maximum(mx, 1e-9), 0)
-    hue = np.zeros(len(rgb))
-    r, g, b = rgb[:, 0], rgb[:, 1], rgb[:, 2]
-    m = (mx == g) & (delta > 0)
-    hue[m] = (2.0 + (b - r)[m] / delta[m]) / 6.0
-    m = (mx == b) & (delta > 0)
-    hue[m] = (4.0 + (r - g)[m] / delta[m]) / 6.0
-    m = (mx == r) & (delta > 0)
-    hue[m] = (((g - b)[m] / delta[m]) / 6.0) % 1.0
-    y = centroids[:, 1]
+    y, x, z = centroids[:, 1], centroids[:, 0], centroids[:, 2]
+    span = float(y.max() - y.min())
+    frac = (y - y.min()) / span if span > 1e-9 else np.zeros_like(y)
 
-    teal = (hue > 0.40) & (hue < 0.62) & (sat > 0.25)
-    dark = mx < 0.32
+    def band_colour(lo, hi):
+        sel = (frac >= lo) & (frac < hi)
+        return np.median(rgb[sel], axis=0) if sel.any() else None
+
+    # The middle third of each unambiguous band, well clear of the
+    # transition seams measured on both Luminous Human bodies (boots/pants
+    # at 0.17-0.22, pants/shirt at 0.57-0.61, shirt/skin at 0.74-0.87).
+    references = {
+        "wardrobe_boots": band_colour(0.04, 0.14),
+        "wardrobe_pants": band_colour(0.30, 0.50),
+        "wardrobe_shirt": band_colour(0.63, 0.72),
+        "body": band_colour(0.92, 0.98),
+    }
+    known = {name: colour for name, colour in references.items()
+             if colour is not None}
     labels = np.full(len(faces), "body", dtype=object)
-    labels[(y < 0.34)] = "wardrobe_boots"
-    pantsish = (y >= 0.30) & (y < 1.12) & ((mx < 0.45) | (sat < 0.22))
-    labels[pantsish] = "wardrobe_pants"
-    labels[teal & (y >= 0.85) & (y < 1.58)] = "wardrobe_shirt"
-    # Eyes are teal too, but only inside the face box -- the shirt's
-    # V-collar reaches past 1.52 and grabbed the class before the box.
-    eye_zone = teal & (y >= 1.58) & (np.abs(centroids[:, 0]) < 0.09)
-    labels[eye_zone] = "eyes"
-    labels[teal & (y >= 1.58) & ~eye_zone] = "wardrobe_shirt"
-    labels[dark & (y >= 1.45) & ~teal] = "hair"
+    if known:
+        names = list(known.keys())
+        palette = np.stack([known[n] for n in names])
+        dist = np.linalg.norm(rgb[:, None, :] - palette[None, :, :], axis=2)
+        nearest = np.argmin(dist, axis=1)
+        for i, name in enumerate(names):
+            labels[nearest == i] = name
+
+    # Eyes: eye-level slice of the head band (not the crown, not the
+    # jaw), then the narrowest, most forward-facing sliver of that slice.
+    eye_level = (frac >= 0.82) & (frac < 0.94)
+    if eye_level.any():
+        z_level = z[eye_level]
+        forward = z > np.percentile(z_level, 88)
+        eye_zone = eye_level & forward & (np.abs(x) < 0.045)
+        labels[eye_zone] = "eyes"
+
     return faces, labels
 
 
