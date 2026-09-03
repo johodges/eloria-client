@@ -7,6 +7,13 @@ static func apply_command(actor: Dictionary, actor_command: int) -> Dictionary:
 	next["x"] = int(next.get("x", 0)) + step.x
 	next["y"] = int(next.get("y", 0)) + step.y
 	next["command"] = actor_command
+	# The last command that named a direction, kept apart from the last command
+	# of any kind. A frame's packets are reduced to one state before anything
+	# renders it, so a turn followed by the swing it was made for - which is
+	# every round of every creature fight - left "command" holding the swing,
+	# and the facing the turn carried was gone before it was ever read.
+	if EloriaProtocol.actor_command_direction(actor_command) != Vector2i.ZERO:
+		next["facing_command"] = actor_command
 	if actor_command == 13:
 		next["sitting"] = true
 	elif actor_command == 14:

@@ -602,6 +602,36 @@ func _init() -> void:
 		ReplicatedActor3D.target_yaw_for_state(1.25, -1, 16384, facing_adapter),
 		facing_adapter.direction_to_godot(Vector2i(1, 0))),
 		"a spawn packet's rotation is the actor's facing")
+	# Everything one socket read carries is decoded, reduced and rendered as a
+	# single state, so a creature's combat round - the turn onto its target and
+	# the swing made behind it - reaches the actor as one dto. The turn is what
+	# states the facing and the swing is what states the action; taking both
+	# from the same field left only the swing, and every creature in a
+	# multi-combat went on hitting the ground it spawned facing.
+	var combat_round: Dictionary = ActorReducer.apply_command(actor, 44)
+	combat_round = ActorReducer.apply_command(combat_round, 46)
+	_expect(int(combat_round.get("command", -1)) == 46
+		and int(combat_round.get("facing_command", -1)) == 44,
+		"a coalesced round keeps the swing and the turn made behind it")
+	var turning_actor := ReplicatedActor3D.new()
+	turning_actor.apply_server_state(combat_round, facing_adapter)
+	_expect(is_equal_approx(turning_actor.desired_facing_yaw(),
+		facing_adapter.direction_to_godot(Vector2i(-1, 0))),
+		"a creature turns west though its swing arrives in the same frame")
+	# The burst that opens the fight is the same shape, with the enter-combat
+	# command after the turn instead of a swing.
+	var opening: Dictionary = ActorReducer.apply_command(actor, 40)
+	opening = ActorReducer.apply_command(opening, 18)
+	turning_actor.apply_server_state(opening, facing_adapter)
+	_expect(is_equal_approx(turning_actor.desired_facing_yaw(),
+		facing_adapter.direction_to_godot(Vector2i(1, 0))),
+		"and so is the one that opens the fight")
+	# A step names a direction too, and the later one wins: a creature that
+	# walked after it turned is looking where it walked.
+	var walked: Dictionary = ActorReducer.apply_command(combat_round, 24)
+	_expect(int(walked.get("facing_command", -1)) == 24,
+		"a step supersedes the turn before it")
+	turning_actor.free()
 	var animation_file: FileAccess = FileAccess.open(
 		"res://data/animations/luminous.json", FileAccess.READ)
 	var animation_data: Dictionary = JSON.parse_string(animation_file.get_as_text()) as Dictionary

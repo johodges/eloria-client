@@ -786,12 +786,20 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 	var target_changed: bool = server_target.distance_squared_to(next_target) > 0.000001
 	server_target = next_target
 	var actor_command: int = int(dto.get("command", -1))
+	# Which command the facing comes from, and which it does not. Everything
+	# arriving in one socket read is reduced to a single state and rendered
+	# once, so the last command of a frame is rarely the one that named a
+	# direction: a creature sends the turn that puts it on its target and the
+	# swing that follows it in the same flush, and reading the facing off the
+	# last command threw the turn away every round. The reducer keeps the last
+	# directional command of the burst apart for exactly this.
+	var facing_command: int = int(dto.get("facing_command", actor_command))
 	# The server has answered a predicted turn. Drop the prediction so the
 	# rendered facing is the authoritative one from here on.
-	if _predicted_turn_pending and EloriaProtocol.is_turn_command(actor_command):
+	if _predicted_turn_pending and EloriaProtocol.is_turn_command(facing_command):
 		_predicted_turn_pending = false
 	var authoritative_yaw: float = target_yaw_for_state(
-		_target_yaw, actor_command, int(dto.rotation), adapter)
+		_target_yaw, facing_command, int(dto.rotation), adapter)
 	_target_yaw = _predicted_turn_yaw if _predicted_turn_pending else authoritative_yaw
 	_hastened = (int(dto.get("buffs", 0))
 		& EloriaProtocol.ACTOR_BUFF_DOUBLE_SPEED) != 0
