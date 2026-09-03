@@ -1349,20 +1349,40 @@ func _run() -> void:
 	for quick_index: int in range(1, 9):
 		_expect(InputMap.has_action("quick_item_%d" % quick_index),
 			"item quick slot %d has a centralized input action" % quick_index)
-	var ready_sigils: Array[int] = [3, 23]
+	# What the first quick slot holds is Embermend, and the fixture states
+	# everything it asks for: its two sigils, its mana, and its three
+	# reagents by the image id the inventory packet reports for each.
+	var ready_sigils: Array[int] = [0, 7]
 	app_state_inventory.set("owned_sigils", ready_sigils)
 	app_state_inventory.set("pending_spell_target", "")
 	app_state_inventory.set("stats", {"magic": 0, "ether": 5})
-	app_state_inventory.set("inventory", {0: {
-		"image_id": 59, "quantity": 1, "slot": 0, "flags": 6}})
+	app_state_inventory.set("inventory", {
+		0: {"image_id": 68, "quantity": 1, "slot": 0, "flags": 6},
+		1: {"image_id": 16, "quantity": 1, "slot": 1, "flags": 6},
+		2: {"image_id": 67, "quantity": 1, "slot": 2, "flags": 6}})
 	main.call("_sync_spells")
 	var first_spell_slot: Button = main.get_node(
 		"GameView/SpellQuickbar/SpellContent/SpellSlots/Spell1") as Button
 	_expect(not first_spell_slot.disabled,
 		"owned castable spell is enabled; tooltip=" + first_spell_slot.tooltip_text)
 	_expect(first_spell_slot.icon != null, "owned castable spell has its legacy icon")
-	_expect(first_spell_slot.tooltip_text.contains("Heal"),
-		"owned castable spell tooltip identifies Heal: " + first_spell_slot.tooltip_text)
+	_expect(first_spell_slot.tooltip_text.contains("Embermend"),
+		"owned castable spell tooltip names the spell: "
+			+ first_spell_slot.tooltip_text)
+	# One reagent short and the same slot goes dark, naming what is missing.
+	app_state_inventory.set("inventory", {
+		0: {"image_id": 68, "quantity": 1, "slot": 0, "flags": 6},
+		1: {"image_id": 16, "quantity": 1, "slot": 1, "flags": 6}})
+	main.call("_sync_spells")
+	_expect(first_spell_slot.disabled
+			and first_spell_slot.tooltip_text.contains("Woven Charm"),
+		"a missing reagent disables the slot and is named: "
+			+ first_spell_slot.tooltip_text)
+	app_state_inventory.set("inventory", {
+		0: {"image_id": 68, "quantity": 1, "slot": 0, "flags": 6},
+		1: {"image_id": 16, "quantity": 1, "slot": 1, "flags": 6},
+		2: {"image_id": 67, "quantity": 1, "slot": 2, "flags": 6}})
+	main.call("_sync_spells")
 	var no_sigils: Array[int] = []
 	app_state_inventory.set("owned_sigils", no_sigils)
 	main.call("_sync_spells")

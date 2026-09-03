@@ -173,6 +173,10 @@ func _sigils_line(definition: Dictionary) -> String:
 			parts.append(sigil_label)
 	return "Sigils: " + (", ".join(parts) if not parts.is_empty() else "none")
 
+## The required reagents by the name the server gives the item, with a
+## leading "!" on any the backpack is short of - the same mark the sigils
+## line uses, so both lines answer "what am I missing" the same way. What is
+## carried is the server's inventory in AppState.
 func _reagents_line(definition: Dictionary) -> String:
 	var parts: Array[String] = []
 	var reagents_value: Variant = definition.get("reagents", [])
@@ -180,8 +184,12 @@ func _reagents_line(definition: Dictionary) -> String:
 		for raw_reagent: Variant in reagents_value as Array:
 			if raw_reagent is Dictionary:
 				var reagent: Dictionary = raw_reagent as Dictionary
-				parts.append("#%d x%d" % [
-					int(reagent.get("image_id", -1)), int(reagent.get("quantity", 0))])
+				var required: int = int(reagent.get("quantity", 0))
+				var label: String = "%s x%d" % [
+					SpellCatalog.reagent_name(reagent), required]
+				if catalog.reagent_quantity(reagent, AppState.inventory) < required:
+					label = "!" + label
+				parts.append(label)
 	return "Reagents: " + (", ".join(parts) if not parts.is_empty() else "none")
 
 ## Fills the four group rows from the catalog: one icon button per spell,

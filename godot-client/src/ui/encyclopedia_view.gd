@@ -55,10 +55,6 @@ var _books_category := ""
 ## Book name to the recipe pages it opens, filled while the recipe pages are
 ## built so both sides of the link agree on what a page is called.
 var _recipes_by_book: Dictionary = {}
-## Item image id to the name the recipe table gives it. A spell states its
-## reagents by image id alone, and this is the only place in the client that
-## names one, so a reagent can be read rather than looked up.
-var _item_names: Dictionary = {}
 var _page: Dictionary = {"kind": PAGE_INDEX}
 var _history: Array[Dictionary] = []
 
@@ -302,7 +298,6 @@ func _entry_record(id: String, title: String, summary: String, body: String,
 ## gives back.
 func _recipe_entries(skill_categories: Dictionary) -> Dictionary:
 	var by_skill: Dictionary = {}
-	_item_names.clear()
 	_recipes_by_book.clear()
 	var catalogue: ManufacturingCatalog = _catalogues.get("manufacturing") as ManufacturingCatalog
 	if catalogue == null:
@@ -323,7 +318,6 @@ func _recipe_entries(skill_categories: Dictionary) -> Dictionary:
 		if category_id.is_empty():
 			continue
 		var output: String = str(recipe.get("output", ""))
-		_remember_name(int(recipe.get("outputImageId", -1)), output)
 		var readable_skill: String = skill.capitalize()
 		var title: String = _recipe_title(recipe, repeated)
 		var entry_id: String = _slug(title)
@@ -509,8 +503,6 @@ func _ingredient_lines(value: Variant) -> String:
 		if not raw is Dictionary:
 			continue
 		var ingredient: Dictionary = raw as Dictionary
-		_remember_name(int(ingredient.get("imageId", -1)),
-			str(ingredient.get("name", "")))
 		var image: Dictionary = _item_image(int(ingredient.get("imageId", -1)))
 		lines.append("%s%d %s" % [_image_tag(image, 22),
 			maxi(1, int(ingredient.get("quantity", 1))),
@@ -525,19 +517,11 @@ func _reagent_lines(value: Variant) -> String:
 		if not raw is Dictionary:
 			continue
 		var reagent: Dictionary = raw as Dictionary
-		var image_id: int = int(reagent.get("image_id", -1))
-		var named: String = str(_item_names.get(image_id, ""))
-		lines.append("%s%d %s" % [_image_tag(_item_image(image_id), 22),
+		lines.append("%s%d %s" % [
+			_image_tag(_item_image(int(reagent.get("image_id", -1))), 22),
 			maxi(1, int(reagent.get("quantity", 1))),
-			_escape(named) if not named.is_empty()
-				else "of the server's item %d" % image_id])
+			_escape(SpellCatalog.reagent_name(reagent))])
 	return "\n".join(lines)
-
-## Only the first name wins. Several recipes share one image and the recipe
-## table is read in its own order, so this stays stable between runs.
-func _remember_name(image_id: int, name: String) -> void:
-	if image_id >= 0 and not name.is_empty() and not _item_names.has(image_id):
-		_item_names[image_id] = name
 
 func _item_image(image_id: int) -> Dictionary:
 	var atlas: ItemAtlas = _catalogues.get("items") as ItemAtlas

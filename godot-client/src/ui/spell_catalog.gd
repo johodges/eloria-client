@@ -150,13 +150,26 @@ func unavailable_reasons(spell_id: int, owned_sigils: Array[int], stats: Diction
 			if not raw_reagent is Dictionary:
 				continue
 			var reagent: Dictionary = raw_reagent as Dictionary
-			var image_id: int = int(reagent.get("image_id", -1))
 			var required_quantity: int = int(reagent.get("quantity", 0))
-			var available_quantity: int = inventory_quantity(image_id, inventory)
+			var available_quantity: int = reagent_quantity(reagent, inventory)
 			if available_quantity < required_quantity:
-				reasons.append("Requires reagent #%d ×%d (have %d)" % [
-					image_id, required_quantity, available_quantity])
+				reasons.append("Requires %d %s (have %d)" % [
+					required_quantity, reagent_name(reagent), available_quantity])
 	return reasons
+
+## What one reagent is called, for anything that writes a requirement where a
+## player reads it. The catalog carries the server's own item name; only a
+## reagent the catalog has failed to name falls back to its number.
+static func reagent_name(reagent: Dictionary) -> String:
+	var named: String = str(reagent.get("name", ""))
+	return named if not named.is_empty() else "item %d" % int(
+		reagent.get("item_id", -1))
+
+## How many of one reagent the backpack holds. Reagents are matched by the
+## image id, because that is the only identity the inventory packet carries -
+## the item id beside it is the server's, for its own accounting.
+func reagent_quantity(reagent: Dictionary, inventory: Dictionary) -> int:
+	return inventory_quantity(int(reagent.get("image_id", -1)), inventory)
 
 func inventory_quantity(image_id: int, inventory: Dictionary) -> int:
 	var total := 0
