@@ -81,6 +81,46 @@ func _run() -> void:
 		"a sun below the horizon casts no shadow")
 	_expect(sun.rotation_degrees.x > noon_elevation,
 		"the sun is somewhere else at midnight than at noon")
+
+	# Regression: a sun still below the horizon must not cast a shadow, even
+	# once `light` has climbed past a small fraction. Minute 40 sits at
+	# light ~0.117 - past the old flat 0.08 cutoff, but the interpolated
+	# elevation (MIDNIGHT_ELEVATION 12 -> NOON_ELEVATION -62) is still
+	# positive there, i.e. still on the below-horizon side. The old check
+	# turned shadows on anyway, and a directional light aimed away from the
+	# ground casts a huge, wrong-angle shadow - the giveaway a player sees as
+	# a shadow glued to their character every dawn and dusk.
+	DayNightBinder.apply(outdoor, world_environment, sun, 40.0)
+	_expect(sun.rotation_degrees.x > 0.0,
+		"minute 40's interpolated elevation is still below the horizon: %f"
+			% sun.rotation_degrees.x)
+	_expect(not sun.shadow_enabled,
+		"a sun still below the horizon casts no shadow even past minute 0")
+
+	# Regression: a sun that has genuinely cleared the horizon but is still at
+	# a grazing angle must also wait. Minute 60 sits at elevation ~-6.5, well
+	# past the horizon crossing above, yet a caster there still throws a
+	# shadow ~9x its own height - a rendered Four Gates capture at this minute
+	# is exactly the huge trailing shadow a player reported, glued behind them
+	# for most of a walk down the plaza. Minute 90 (~-25 degrees) is
+	# comfortably past SHADOW_ELEVATION_CUTOFF and must have shadows back on,
+	# so the cutoff does not just push the same bug later into the morning.
+	DayNightBinder.apply(outdoor, world_environment, sun, 60.0)
+	_expect(sun.rotation_degrees.x < 0.0
+			and sun.rotation_degrees.x > DayNightBinder.SHADOW_ELEVATION_CUTOFF,
+		"minute 60 is above the horizon but still inside the grazing band: %f"
+			% sun.rotation_degrees.x)
+	_expect(not sun.shadow_enabled,
+		"a grazing-angle sun does not cast a shadow long enough to dominate the screen")
+	DayNightBinder.apply(outdoor, world_environment, sun, 90.0)
+	_expect(sun.rotation_degrees.x < DayNightBinder.SHADOW_ELEVATION_CUTOFF,
+		"minute 90 has climbed clear of the grazing band: %f" % sun.rotation_degrees.x)
+	_expect(sun.shadow_enabled,
+		"shadows return well before noon, once the angle is sane")
+	# Back to exact midnight so the checks below still read the state their
+	# comments describe.
+	DayNightBinder.apply(outdoor, world_environment, sun, 0.0)
+
 	var night_sky: Color = (environment.sky.sky_material as ProceduralSkyMaterial).sky_top_color
 	_expect(night_sky.get_luminance() < noon_sky.get_luminance(),
 		"the sky is darker at midnight than at noon")
