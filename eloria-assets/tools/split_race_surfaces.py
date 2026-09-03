@@ -38,6 +38,7 @@ RACES = (TOOLS.parent.parent / "godot-client" / "assets" / "actors"
 CLASSES = ("body", "eyes", "hair", "wardrobe_shirt", "wardrobe_pants",
            "wardrobe_boots")
 EYE_COLOUR_MIN_DISTANCE = 0.30
+ISLAND_MAX_FACES = 100
 CLASS_COLOURS = {
     "body": (205, 170, 140), "eyes": (0, 255, 255), "hair": (255, 0, 255),
     "wardrobe_shirt": (40, 160, 220), "wardrobe_pants": (60, 60, 200),
@@ -283,6 +284,85 @@ def largest_component_per_side(face_indices: np.ndarray, faces: np.ndarray,
     return np.array(kept, dtype=face_indices.dtype)
 
 
+def absorb_small_islands(faces: np.ndarray, positions: np.ndarray,
+                         labels: np.ndarray,
+                         target_labels: tuple) -> np.ndarray:
+    """Fold small, disconnected fragments of target_labels into whichever
+    label actually borders them.
+
+    "Keep only the single largest piece per label" -- the rule that
+    cleaned up the eyes -- is the WRONG rule for body/wardrobe: a real
+    boot or hand is naturally its own connected piece (left and right
+    are never vertex-connected to each other or to the torso, and even
+    one boot can split into an upper-cuff piece and a lower-foot piece
+    across a seam), so that rule would discard both hands and every
+    boot but one. Checked directly (component sizes dumped per label on
+    both bodies): what actually marks a piece as a stray -- like the
+    sliver of "wardrobe_pants" colour that re-registers down at the
+    sole, inside boot territory, and shows up as a red patch through
+    the boot once pants are tinted, or the handful of "wardrobe_shirt"
+    triangles that land out at the wrist -- is that a real anatomical
+    piece runs to the hundreds of triangles (both hands: 749-793 on the
+    female body; both boots: 238-750) while a stray runs to the tens
+    (in the same dump: 6-83). ISLAND_MAX_FACES sits in the gap between
+    those two populations. Below it, a fragment is relabelled to
+    whichever OTHER label is most common among the faces actually
+    touching it (by shared position, not shared vertex index, for the
+    same reason largest_component_per_side uses position); at or above
+    it, left alone even when it is not that label's largest piece.
+    """
+    position_id = {}
+    def pid(vertex_index):
+        key = tuple(np.round(positions[vertex_index], 4))
+        return position_id.setdefault(key, len(position_id))
+
+    face_pids = [tuple(pid(v) for v in f) for f in faces]
+    position_faces = {}
+    for face_index, face_pid in enumerate(face_pids):
+        for p in face_pid:
+            position_faces.setdefault(p, []).append(face_index)
+
+    new_labels = labels.copy()
+    for target in target_labels:
+        member = np.flatnonzero(labels == target)
+        if len(member) == 0:
+            continue
+        member_set = set(int(i) for i in member)
+        parent = {}
+        def find(a):
+            while parent.setdefault(a, a) != a:
+                parent[a] = parent[parent[a]]
+                a = parent[a]
+            return a
+        def union(a, b):
+            ra, rb = find(a), find(b)
+            if ra != rb:
+                parent[ra] = rb
+        for face_index in member:
+            for p in face_pids[face_index]:
+                for other in position_faces[p]:
+                    if other in member_set:
+                        union(int(face_index), other)
+        groups = {}
+        for face_index in member:
+            groups.setdefault(find(int(face_index)), []).append(int(face_index))
+        for pieces in groups.values():
+            if len(pieces) >= ISLAND_MAX_FACES:
+                continue
+            neighbour_labels = []
+            for face_index in pieces:
+                for p in face_pids[face_index]:
+                    for other in position_faces[p]:
+                        if other not in member_set:
+                            neighbour_labels.append(labels[other])
+            if neighbour_labels:
+                values, counts = np.unique(neighbour_labels, return_counts=True)
+                winner = values[np.argmax(counts)]
+                for face_index in pieces:
+                    new_labels[face_index] = winner
+    return new_labels
+
+
 def classify(positions, uvs, indices, texture: Image.Image):
     """Boots/pants/shirt/skin by nearest colour to a per-body sample of
     each; eyes by geometry.
@@ -387,6 +467,17 @@ def classify(positions, uvs, indices, texture: Image.Image):
         for i, name in enumerate(names):
             labels[nearest == i] = name
 
+    # Nearest-reference-colour is a per-face vote with no notion of its
+    # neighbours, so a handful of faces near a seam -- a fold's shading,
+    # a sliver of sole geometry that registers as pants-coloured -- vote
+    # for the WRONG side of it. Absorb those into whichever real region
+    # actually surrounds them before eyes (below) carves its own labels
+    # out of "body"; see absorb_small_islands for why this is a size
+    # threshold and not "keep the biggest piece".
+    labels = absorb_small_islands(
+        faces, positions, labels,
+        ("body", "wardrobe_shirt", "wardrobe_pants", "wardrobe_boots"))
+
     # Eyes: two lobes, symmetric about centre, at 0.60-0.69 of the way up
     # the HEAD's own Y span (not the whole body's -- "head" is frac >= 0.80
     # of the body, everything from there to the crown). Measured on the
@@ -454,24 +545,25 @@ def classify(positions, uvs, indices, texture: Image.Image):
     return faces, labels
 
 
-def reclassify_eyes(document, binary) -> str:
-    """Re-run eye/body classification on an already-split (v15) file.
+def reclassify_surfaces(document, binary) -> str:
+    """Re-run full classification on an already-split file and repoint
+    every existing class primitive at the result.
 
-    Only "eyes" and "body" can change membership here -- the colour-vs-
-    reference wardrobe classes are untouched by the fix this re-runs, so
-    their primitives are read (classify() needs every shared-surface face
-    to recompute the same head Y-span a fresh split would see) but never
-    repointed. Faces move between the two primitives by writing each a
-    freshly classified index accessor and repointing "indices" at it; the
-    previous index accessors are left as orphaned, unreferenced buffer
-    bytes, the same way add_scalp's v2->v14 migration leaves its old
-    scalp accessors -- harmless in a GLB, and simpler than compacting the
-    buffer.
+    classify() is what actually changes between migrations -- eye
+    colour/connectivity, then absorb_small_islands for the wardrobe
+    seams -- so this just re-derives every shared-surface face's label
+    from scratch and moves faces between whichever of the EXISTING
+    primitives changed. Only classes that already have a node are ever
+    written to: a label classify() produces with nowhere to hold it
+    would otherwise vanish silently, so that raises instead. Faces move
+    by writing each primitive a freshly classified index accessor and
+    repointing "indices" at it; the previous index accessors are left
+    as orphaned, unreferenced buffer bytes, the same way add_scalp's
+    v2->v14 migration leaves its old scalp accessors -- harmless in a
+    GLB, and simpler than compacting the buffer.
     """
     by_name = {n["name"]: n for n in document["nodes"]
                if n.get("name") in CLASSES and "mesh" in n}
-    body_node = by_name["body"]
-    eyes_node = by_name.get("eyes")
     first_prim = document["meshes"][next(iter(by_name.values()))["mesh"]]["primitives"][0]
     positions = accessor_array(document, binary, first_prim["attributes"]["POSITION"])
     uvs = accessor_array(document, binary, first_prim["attributes"]["TEXCOORD_0"])
@@ -485,7 +577,7 @@ def reclassify_eyes(document, binary) -> str:
         owners += [name] * (len(idx) // 3)
     all_faces = np.concatenate(all_faces, axis=0)
     owners = np.array(owners)
-    old_eye_count = int((owners == "eyes").sum())
+    old_counts = {name: int((owners == name).sum()) for name in by_name}
 
     image = document["images"][0]
     view = document["bufferViews"][image["bufferView"]]
@@ -493,14 +585,10 @@ def reclassify_eyes(document, binary) -> str:
     texture = Image.open(io.BytesIO(bytes(binary[start:start + view["byteLength"]])))
     _, labels = classify(positions, uvs, all_faces.reshape(-1), texture)
 
-    is_body_family = np.isin(owners, ["body", "eyes"])
-    eyes_mask = (labels == "eyes") & is_body_family
-    body_mask = (labels != "eyes") & is_body_family
-    new_eyes = all_faces[eyes_mask]
-    new_body = all_faces[body_mask]
-    if eyes_node is None and len(new_eyes):
-        raise RuntimeError("reclassify_eyes found eye faces but this "
-                            "model has no 'eyes' node to hold them")
+    orphaned = set(np.unique(labels).tolist()) - set(by_name)
+    if orphaned:
+        raise RuntimeError("reclassify_surfaces produced label(s) %s with "
+                            "no matching node to hold them" % sorted(orphaned))
 
     def repoint(node, faces):
         prim = document["meshes"][node["mesh"]]["primitives"][0]
@@ -509,10 +597,12 @@ def reclassify_eyes(document, binary) -> str:
                               "SCALAR", 34963)
         prim["indices"] = acc
 
-    repoint(body_node, new_body)
-    if eyes_node is not None:
-        repoint(eyes_node, new_eyes)
-    return "eyes %d -> %d faces" % (old_eye_count, len(new_eyes))
+    changes = []
+    for name, node in by_name.items():
+        new_faces = all_faces[labels == name]
+        repoint(node, new_faces)
+        changes.append("%s %d->%d" % (name, old_counts[name], len(new_faces)))
+    return ", ".join(changes)
 
 
 def grayscale_texture(texture: Image.Image) -> bytes:
@@ -722,18 +812,13 @@ def add_scalp(document, binary) -> int:
 def split(path: Path, calibrate: bool) -> str:
     document, binary = read_glb(path)
     extras = document.setdefault("asset", {}).setdefault("extras", {})
-    if int(extras.get("eloriaSurfacesSplit", 0)) >= 20:
+    if int(extras.get("eloriaSurfacesSplit", 0)) >= 21:
         return "already split"
-    if int(extras.get("eloriaSurfacesSplit", 0)) in (16, 17, 18, 19):
-        report = reclassify_eyes(document, binary)
-        extras["eloriaSurfacesSplit"] = 20
+    if int(extras.get("eloriaSurfacesSplit", 0)) in (15, 16, 17, 18, 19, 20):
+        report = reclassify_surfaces(document, binary)
+        extras["eloriaSurfacesSplit"] = 21
         write_glb(path, document, binary)
-        return "%s -> v20" % report
-    if int(extras.get("eloriaSurfacesSplit", 0)) == 15:
-        report = reclassify_eyes(document, binary)
-        extras["eloriaSurfacesSplit"] = 16
-        write_glb(path, document, binary)
-        return "%s -> v16" % report
+        return "%s -> v21" % report
     if int(extras.get("eloriaSurfacesSplit", 0)) == 14:
         count = resmooth_shared_surfaces(document, binary)
         extras["eloriaSurfacesSplit"] = 15
@@ -869,7 +954,7 @@ def split(path: Path, calibrate: bool) -> str:
 
     del mesh_node["mesh"]
     add_scalp(document, binary)
-    extras["eloriaSurfacesSplit"] = 20
+    extras["eloriaSurfacesSplit"] = 21
     write_glb(path, document, binary)
     return "split: %s" % counts
 
