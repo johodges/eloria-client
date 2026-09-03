@@ -133,3 +133,16 @@ Toolkit changes, all additive:
   lamps rather than an outdoor sun.
 - `interior_views.py` derives an interior's camera set from its manifest's own
   space list.
+
+## The frozen lake was blended
+
+`glacier_ice` originated here, as a blended material at 94% opacity for the
+frozen lake. That was wrong for a walk surface: this region's `Terrain_Ice` is
+a 448 x 108 m sheet with 78 m of relief, and the client renders through GL
+Compatibility, where an alpha-blended surface writes no depth and where Godot's
+depth pre-pass mode falls back to plain blending. The lake sorted as one whole
+instance, drew over its own nearer folds and lost its shadow. Whitehorn Range,
+which reuses the material for a far larger glacier, reported it from live play.
+
+The material is opaque now, here and in Whitehorn Range and both ice interiors.
+See `whitehorn_range/change-log.md` for the full account.

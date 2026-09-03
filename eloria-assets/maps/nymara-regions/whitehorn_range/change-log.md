@@ -155,3 +155,24 @@ regeneration landed there. The toolkit changes this region originally made were
 dropped in favour of the equivalent ones already on develop, except the
 `DAY_LIGHTING`/`GOLDEN_LIGHTING` hooks and the `--check-sun` mode, which are
 this region's contributions to the shared harness.
+
+## The glacier was blended
+
+Reported from live play: whole slabs of the range showed a different surface
+through them, with hard rectangular edges that moved as the camera turned.
+
+`glacier_ice` was authored for Mirrorhold's frozen lake as a blended material
+at 94% opacity, and this region's `SURFACE_MATERIALS` mapped the whole `TER.ICE`
+class onto it. `Terrain_Ice` is a 140 x 436 m sheet folded 128 m down the gorge,
+so the client - which renders through GL Compatibility, where an alpha-blended
+surface writes no depth and where Godot's depth pre-pass mode falls back to
+plain blending - drew it with no depth of its own and sorted the whole sheet as
+one instance. Its far folds painted over its near ones, the seracs standing on
+it washed out as the sorting flipped, and the shadow map skipped it entirely.
+
+The material is now opaque, here and in Mirrorhold and both ice interiors. The
+6% of translucency never showed: ice reads through its texture and its 0.30
+roughness. `_toolkit/amberwood/materials.py` carries the change for any later
+rebuild; the shipped GLBs were edited in place by
+`eloria-assets/tools/make_glacier_ice_opaque.py`, which touches the material
+entry in the JSON chunk and nothing else.
