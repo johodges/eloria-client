@@ -1660,7 +1660,7 @@ func _on_manufacturing_close_pressed() -> void:
 func _send_manufacturing_request(wanted: int) -> void:
 	var availability: Dictionary = manufacturing_catalog.availability(
 		selected_manufacturing_recipe, AppState.inventory, AppState.known_knowledge,
-		AppState.stats)
+		AppState.stats, AppState.inventory_names)
 	var reasons: Array = availability.get("reasons", []) as Array
 	var selection: Array = availability.get("selection", []) as Array
 	if not reasons.is_empty() or selection.is_empty():
@@ -3742,7 +3742,8 @@ func _sync_manufacturing() -> void:
 		if not filter_text.is_empty() and not searchable.contains(filter_text):
 			continue
 		var availability: Dictionary = manufacturing_catalog.availability(recipe_index,
-			AppState.inventory, AppState.known_knowledge, AppState.stats)
+			AppState.inventory, AppState.known_knowledge, AppState.stats,
+			AppState.inventory_names)
 		var reasons: Array = availability.get("reasons", []) as Array
 		var reason_lines: Array[String] = []
 		for reason_value: Variant in reasons:
@@ -3794,7 +3795,7 @@ func _sync_manufacturing_detail() -> void:
 		lines.append("Knowledge: " + knowledge)
 	var availability: Dictionary = manufacturing_catalog.availability(
 		selected_manufacturing_recipe, AppState.inventory, AppState.known_knowledge,
-		AppState.stats)
+		AppState.stats, AppState.inventory_names)
 	var reasons: Array = availability.get("reasons", []) as Array
 	if reasons.is_empty():
 		lines.append("\nReady. The server remains authoritative for skill chance, special days, combat, capacity, and ingredient state.")

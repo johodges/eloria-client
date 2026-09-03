@@ -7,10 +7,12 @@ extends SceneTree
 ## name, the requirements and the costs actually land in their four places
 ## instead of on top of each other.
 ##
-## Two states are captured, because the window's job is to distinguish them:
-## a summoner who can afford one of the three and not the other two, and the
-## same window once the server has granted the skill, the nexus and the
-## reagents for all three.
+## Three states are captured, because telling them apart is the window's job:
+## a summoner who can afford one of the three and not the other two; the same
+## window once the server has granted the skill, the nexus and the reagents
+## for all three; and the same again against a server that does not name the
+## inventory slots, where a reagent whose artwork is shared cannot be picked
+## and the window says so rather than guessing.
 
 const SCREEN_SIZE := Vector2i(1280, 720)
 
@@ -50,35 +52,23 @@ func _run() -> void:
 		"three summons: the otter affordable and lit, the stag and the turtle"
 			+ " dimmed with the reason where their ingredients would be")
 
-	# The server grants the skill, the nexus and every reagent. Two of the three
-	# light; the stag does not, and should not. Two of its reagents share their
-	# artwork with other items - Deer Hide with four other pelts, Wayside Sage
-	# with Rosemary - and the inventory the client is sent carries image ids and
-	# no names, so there is no honest way to pick the right slot. Six of the
-	# profile's thirty-two recipes are in that position; the manufacture window
-	# refuses them for the same reason. Saying so is the correct behaviour, and
-	# this pins it so a later change cannot start guessing instead.
+	# The server grants the skill, the nexus and every reagent, and names the
+	# slots. All three light - including the stag, whose Deer Hide shares its
+	# picture with four other pelts and whose Wayside Sage shares one with
+	# Rosemary. Before the slot names it was refused outright, because a
+	# client told only an image id cannot say which pelt it is holding.
 	_stats({"summoning": 30, "animal_nexus": 2, "food": 40, "ether": 60})
 	_stock([0, 1, 2])
 	_window.call("sync")
 	await _settle()
-	var stag: Button = rows.get_node("SummonRow%d" % (
-		(_window.call("summon_recipes") as Array[int])[1])) as Button
 	for row: Node in rows.get_children():
-		var ready: bool = row != stag
-		_expect((row as Button).disabled != ready,
-			"%s is %s once the server has granted everything"
-			% [row.name, "clickable" if ready else "held back by shared artwork"])
+		_expect(not (row as Button).disabled,
+			"%s is clickable once the server has granted everything" % row.name)
 		# The window is only worth opening if the costs can be read off it. Both
 		# lines trim with an ellipsis rather than overflowing, so a panel too
 		# narrow for the longest reagent list fails quietly - here is where that
-		# is caught, with the layout settled and the real font measured. A
-		# blocked row is exempt on its first line: that carries a sentence, not
-		# a reagent list, and its whole text is on the tooltip.
-		var lines: Array[String] = ["Requirements", "Cost"]
-		if not ready:
-			lines = ["Cost"]
-		for line: String in lines:
+		# is caught, with the layout settled and the real font measured.
+		for line: String in ["Requirements", "Cost"]:
 			var label: Label = row.get_node("Row/Asks/" + line) as Label
 			var needed: float = label.get_theme_font("font").get_string_size(
 				label.text, HORIZONTAL_ALIGNMENT_LEFT, -1.0,
@@ -86,13 +76,26 @@ func _run() -> void:
 			_expect(needed <= label.size.x,
 				"%s's %s fits without an ellipsis: %.0f of %.0f px for %s"
 				% [row.name, line, needed, label.size.x, label.text])
-	_expect(str((stag.get_node("Row/Asks/Requirements") as Label).text)
-			.contains("shares legacy artwork"),
-		"the stag says what is holding it back")
 	await _capture("summoning-window-stocked.png",
-		"the same window with the skill, the nexus and the reagents in hand:"
-			+ " the otter and the turtle lit and listing what they spend, the"
-			+ " stag held back by reagents that share their artwork")
+		"the same window with the skill, the nexus, the reagents in hand and"
+			+ " the slots named: every row lit and listing what it spends,"
+			+ " the stag included")
+
+	# Without the slot names the stag is refused rather than guessed at, which
+	# is what a server that does not send them still gets.
+	var stag: Button = rows.get_node("SummonRow%d" % (
+		(_window.call("summon_recipes") as Array[int])[1])) as Button
+	(_app_state.get("inventory_names") as Dictionary).clear()
+	_window.call("sync")
+	await _settle()
+	_expect(stag.disabled
+		and str((stag.get_node("Row/Asks/Requirements") as Label).text)
+			.contains("shares legacy artwork"),
+		"the stag says what holds it back when the slots are unnamed")
+	await _capture("summoning-window-unnamed.png",
+		"the same window against a server that does not name the slots: the"
+			+ " stag refused rather than guessed at, because five pelts share"
+			+ " one picture")
 
 	_app_state.set("authenticated", false)
 	_main.queue_free()
@@ -125,17 +128,25 @@ func _stats(values: Dictionary) -> void:
 func _stock(rows: Array[int]) -> void:
 	var inventory: Dictionary = _app_state.get("inventory") as Dictionary
 	inventory.clear()
+	var names: Dictionary = _app_state.get("inventory_names") as Dictionary
+	names.clear()
 	var listed: Array[int] = _window.call("summon_recipes") as Array[int]
 	var catalog: ManufacturingCatalog = _window.get("catalog") as ManufacturingCatalog
 	var seen: Dictionary = {}
 	for row: int in rows:
 		for ingredient_value: Variant in catalog.recipe(
 				listed[row]).get("ingredients", []) as Array:
-			var image_id: int = int((ingredient_value as Dictionary).get("imageId", -1))
-			if seen.has(image_id):
+			var ingredient: Dictionary = ingredient_value as Dictionary
+			var item: String = str(ingredient.get("name", ""))
+			if seen.has(item):
 				continue
-			seen[image_id] = true
-			inventory[inventory.size()] = {"image_id": image_id, "quantity": 20}
+			seen[item] = true
+			var slot: int = inventory.size()
+			inventory[slot] = {
+				"image_id": int(ingredient.get("imageId", -1)), "quantity": 20}
+			# The server names every slot it sends; that is what lets two items
+			# sharing one picture be told apart.
+			names[slot] = item
 
 func _settle() -> void:
 	for _frame: int in range(4):

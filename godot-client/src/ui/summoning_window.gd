@@ -122,7 +122,8 @@ func blocking_reasons(index: int) -> Array[String]:
 		if nexus > 0 and int(stats.get("animal_nexus", 0)) < nexus:
 			reasons.append("Needs Animal Nexus %d" % nexus)
 	var availability: Dictionary = catalog.availability(
-		index, AppState.inventory, AppState.known_knowledge, stats)
+		index, AppState.inventory, AppState.known_knowledge, stats,
+		AppState.inventory_names)
 	for reason: Variant in availability.get("reasons", []) as Array:
 		reasons.append(str(reason))
 	return reasons
@@ -143,7 +144,7 @@ func sync() -> void:
 		_reasons[index] = reasons
 		_selections[index] = (catalog.availability(
 			index, AppState.inventory, AppState.known_knowledge,
-			AppState.stats).get("selection", []) as Array)
+			AppState.stats, AppState.inventory_names).get("selection", []) as Array)
 		var row: Button = _rows.get(index) as Button
 		if row == null:
 			continue

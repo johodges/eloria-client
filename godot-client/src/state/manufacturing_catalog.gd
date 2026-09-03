@@ -1,6 +1,11 @@
 class_name ManufacturingCatalog
 extends RefCounted
 
+## Returned when the client cannot honestly tell which slot holds the item:
+## its artwork is shared and no name table has arrived to settle it. Distinct
+## from -1, which means the item is simply not there.
+const AMBIGUOUS := -2
+
 var _recipes: Array[Dictionary] = []
 
 func configure(config: Dictionary) -> void:
@@ -20,8 +25,17 @@ func recipe(index: int) -> Dictionary:
 		return {}
 	return _recipes[index]
 
+## What the client can see standing between the player and this recipe, and
+## which slots it would spend.
+##
+## `names` is the server's slot-to-name table when the session has one. With
+## it, an ingredient is found by identity and shared artwork stops mattering.
+## Without it - an older server, or before the first table arrives - matching
+## falls back to the image id, and an ingredient whose picture is shared by
+## another item is refused rather than guessed at, because picking the wrong
+## slot spends the wrong item.
 func availability(index: int, inventory: Dictionary, known_knowledge: Array[int],
-		stats: Dictionary) -> Dictionary:
+		stats: Dictionary, names: Dictionary = {}) -> Dictionary:
 	var definition: Dictionary = recipe(index)
 	if definition.is_empty():
 		return {"selection": [], "reasons": ["Unknown recipe"]}
@@ -34,12 +48,13 @@ func availability(index: int, inventory: Dictionary, known_knowledge: Array[int]
 				continue
 			var ingredient: Dictionary = ingredient_value as Dictionary
 			var name: String = str(ingredient.get("name", "ingredient"))
-			if bool(ingredient.get("ambiguousImage", false)):
+			var required: int = maxi(1, int(ingredient.get("quantity", 1)))
+			var slot: int = _inventory_slot_for(inventory, names, name,
+				int(ingredient.get("imageId", -1)), required, false,
+				bool(ingredient.get("ambiguousImage", false)))
+			if slot == AMBIGUOUS:
 				reasons.append("%s shares legacy artwork; automatic selection is unavailable" % name)
 				continue
-			var required: int = maxi(1, int(ingredient.get("quantity", 1)))
-			var slot: int = _inventory_slot_for_image(inventory,
-				int(ingredient.get("imageId", -1)), required, false)
 			if slot < 0:
 				reasons.append("Missing %s ×%d" % [name, required])
 			else:
@@ -51,10 +66,12 @@ func availability(index: int, inventory: Dictionary, known_knowledge: Array[int]
 				continue
 			var tool: Dictionary = tool_value as Dictionary
 			var tool_name: String = str(tool.get("name", "tool"))
-			if bool(tool.get("ambiguousImage", false)):
+			var tool_slot: int = _inventory_slot_for(inventory, names, tool_name,
+				int(tool.get("imageId", -1)), 1, true,
+				bool(tool.get("ambiguousImage", false)))
+			if tool_slot == AMBIGUOUS:
 				reasons.append("%s shares legacy artwork; tool identity is uncertain" % tool_name)
-				continue
-			if _inventory_slot_for_image(inventory, int(tool.get("imageId", -1)), 1, true) < 0:
+			elif tool_slot < 0:
 				reasons.append("Required tool: %s" % tool_name)
 	var knowledge_index: int = int(definition.get("knowledgeIndex", -1))
 	if knowledge_index >= 0 and not known_knowledge.has(knowledge_index):
@@ -68,6 +85,53 @@ func availability(index: int, inventory: Dictionary, known_knowledge: Array[int]
 		if int(stats.get("ether", 0)) < mana:
 			reasons.append("Need %d ethereal points" % mana)
 	return {"selection": selection, "reasons": reasons}
+
+## The slot holding enough of one item, by name where the server has named the
+## slots and by artwork where it has not.
+func _inventory_slot_for(inventory: Dictionary, names: Dictionary, name: String,
+		image_id: int, quantity: int, include_equipment: bool,
+		shares_artwork: bool) -> int:
+	if not names.is_empty():
+		var slot: int = _inventory_slot_for_name(inventory, names, name,
+			quantity, include_equipment)
+		# A name table that does not mention the item is a table that says the
+		# player is not carrying it, which is an answer rather than a gap.
+		if slot >= 0 or _names_cover(names, inventory, include_equipment):
+			return slot
+	if shares_artwork:
+		return AMBIGUOUS
+	return _inventory_slot_for_image(inventory, image_id, quantity,
+		include_equipment)
+
+## Whether the name table accounts for every slot the grid says is occupied.
+## Until it does, the two packets have not met yet and the image id is still
+## the better answer.
+func _names_cover(names: Dictionary, inventory: Dictionary,
+		include_equipment: bool) -> bool:
+	for slot_value: Variant in inventory:
+		var slot: int = int(slot_value)
+		if slot < 0 or slot >= (44 if include_equipment else 36):
+			continue
+		if not names.has(slot):
+			return false
+	return true
+
+func _inventory_slot_for_name(inventory: Dictionary, names: Dictionary,
+		name: String, quantity: int, include_equipment: bool) -> int:
+	var slots: Array = inventory.keys()
+	slots.sort()
+	for slot_value: Variant in slots:
+		var slot: int = int(slot_value)
+		if slot < 0 or slot >= (44 if include_equipment else 36):
+			continue
+		if str(names.get(slot, "")) != name:
+			continue
+		var item_value: Variant = inventory.get(slot)
+		if not item_value is Dictionary:
+			continue
+		if int((item_value as Dictionary).get("quantity", 0)) >= quantity:
+			return slot
+	return -1
 
 func _inventory_slot_for_image(inventory: Dictionary, image_id: int, quantity: int,
 		include_equipment: bool) -> int:
