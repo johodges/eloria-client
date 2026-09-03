@@ -109,6 +109,127 @@ def append_accessor(document, binary, array, ctype, atype,
     return len(document["accessors"]) - 1
 
 
+def overwrite_accessor(document, binary, index: int, array: np.ndarray) -> None:
+    """Overwrite an existing accessor's data in place, same count/dtype/width.
+
+    Same buffer-addressing math as ``accessor_array``'s read, run in
+    reverse, so that nothing else in the buffer moves -- every other
+    accessor, including the OTHER split primitives that share this one,
+    stays valid with no renumbering.
+    """
+    acc = document["accessors"][index]
+    view = document["bufferViews"][acc["bufferView"]]
+    comp = {5121: np.uint8, 5123: np.uint16, 5125: np.uint32,
+            5126: np.float32}[acc["componentType"]]
+    n = {"SCALAR": 1, "VEC2": 2, "VEC3": 3, "VEC4": 4,
+         "MAT4": 16}[acc["type"]]
+    offset = 8 + view.get("byteOffset", 0) + acc.get("byteOffset", 0)
+    packed = np.ascontiguousarray(array, dtype=comp)
+    assert packed.shape == (acc["count"], n), (packed.shape, acc["count"], n)
+    raw = packed.tobytes()
+    binary[offset:offset + len(raw)] = raw
+    if n == 3 and comp == np.float32:
+        acc["min"] = [float(v) for v in array.min(axis=0)]
+        acc["max"] = [float(v) for v in array.max(axis=0)]
+
+
+def smooth_normals(positions: np.ndarray, indices: np.ndarray,
+                    crease_deg: float = 100.0) -> np.ndarray:
+    """Re-average vertex normals within each crease-angle-limited group.
+
+    Checked directly: the shirt's duplicate-position vertices (the ones the
+    exporter split apart, at the SAME 3D point) disagree in normal
+    direction across a broad, near-continuous spread from 0 to 180 degrees
+    -- not a small handful of deliberate hard edges among otherwise-smooth
+    duplicates. That is a mesh that was never smooth-shaded to begin with,
+    not something the surface split introduced: the split (see the module
+    docstring) copies the source's own POSITION/NORMAL accessors into every
+    class primitive UNCHANGED, so it cannot have moved a single normal.
+    Blender's viewport and Godot's own import-preview both light with
+    soft, non-shadow-casting fill, so this pre-existing per-facet noise is
+    invisible there; the character-creation screen's raking, shadow-casting
+    key light (main.tscn's KeyLight) turns every one of those facets into a
+    crisp self-shadowed line -- confirmed by re-rendering the same camera
+    with that light's shadow turned off, which removes nearly all of it.
+
+    Re-averaging by POSITION rather than by vertex index is what actually
+    reunites duplicates the exporter treats as separate vertices into the
+    one surface point they really are. A high crease-angle cap still keeps
+    this from smoothing over the rare duplicate that is genuinely two
+    surfaces meeting at an open boundary loop (a collar or cuff rim's
+    outer and inner shell, close to 180 degrees apart) rather than a
+    spurious split of one continuous face -- averaging those would produce
+    a degenerate, near-zero normal instead of preserving either surface.
+    """
+    faces = indices.reshape(-1, 3).astype(np.int64)
+    v0, v1, v2 = positions[faces[:, 0]], positions[faces[:, 1]], positions[faces[:, 2]]
+    face_normals = np.cross(v1 - v0, v2 - v0)
+    lengths = np.maximum(np.linalg.norm(face_normals, axis=1, keepdims=True), 1e-12)
+    unit_face_normals = face_normals / lengths
+
+    position_groups = {}
+    for i, key in enumerate(map(tuple, np.round(positions, 4))):
+        position_groups.setdefault(key, []).append(i)
+
+    vertex_faces = {}
+    for f, (a, b, c) in enumerate(faces):
+        vertex_faces.setdefault(int(a), []).append(f)
+        vertex_faces.setdefault(int(b), []).append(f)
+        vertex_faces.setdefault(int(c), []).append(f)
+
+    cos_thresh = np.cos(np.radians(crease_deg))
+    out = np.array(positions, copy=True) * 0.0
+    for idxs in position_groups.values():
+        group_faces = sorted({f for i in idxs for f in vertex_faces.get(i, [])})
+        if not group_faces:
+            continue
+        group_fn = unit_face_normals[group_faces]
+        group_fw = face_normals[group_faces]
+        for i in idxs:
+            own_faces = vertex_faces.get(i)
+            if not own_faces:
+                continue
+            own_ref = face_normals[own_faces].sum(axis=0)
+            own_norm = np.linalg.norm(own_ref)
+            if own_norm < 1e-12:
+                continue
+            own_ref = own_ref / own_norm
+            mask = (group_fn @ own_ref) >= cos_thresh
+            accum = group_fw[mask].sum(axis=0)
+            accum_norm = np.linalg.norm(accum)
+            out[i] = accum / accum_norm if accum_norm > 1e-12 else own_ref
+    return out.astype(np.float32)
+
+
+def resmooth_shared_surfaces(document, binary) -> int:
+    """Recompute and overwrite the shared body/wardrobe NORMAL accessor.
+
+    Runs on an already-split (v14) file. The class primitives still all
+    point at the ORIGINAL mesh's shared POSITION/NORMAL accessors -- that
+    sharing is the whole point of the split -- so finding the one NORMAL
+    accessor those primitives use, rebuilding it from ALL of their faces
+    combined, and overwriting it in place reaches every split surface
+    through the accessor they still share, exactly as if this had run
+    before the class split instead of after.
+    """
+    shared_nodes = [n for n in document["nodes"]
+                    if n.get("name") in CLASSES and "mesh" in n]
+    if not shared_nodes:
+        return 0
+    prims = [document["meshes"][n["mesh"]]["primitives"][0] for n in shared_nodes]
+    position_acc = prims[0]["attributes"]["POSITION"]
+    normal_acc = prims[0]["attributes"]["NORMAL"]
+    assert all(p["attributes"]["POSITION"] == position_acc for p in prims)
+    assert all(p["attributes"]["NORMAL"] == normal_acc for p in prims)
+    positions = accessor_array(document, binary, position_acc)
+    all_indices = np.concatenate([
+        accessor_array(document, binary, p["indices"]).reshape(-1).astype(np.int64)
+        for p in prims])
+    smoothed = smooth_normals(positions, all_indices)
+    overwrite_accessor(document, binary, normal_acc, smoothed)
+    return int(len(np.unique(all_indices)))
+
+
 def classify(positions, uvs, indices, texture: Image.Image):
     """Boots/pants/shirt/skin by nearest colour to a per-body sample of
     each; eyes by geometry.
@@ -419,8 +540,13 @@ def add_scalp(document, binary) -> int:
 def split(path: Path, calibrate: bool) -> str:
     document, binary = read_glb(path)
     extras = document.setdefault("asset", {}).setdefault("extras", {})
-    if int(extras.get("eloriaSurfacesSplit", 0)) >= 14:
+    if int(extras.get("eloriaSurfacesSplit", 0)) >= 15:
         return "already split"
+    if int(extras.get("eloriaSurfacesSplit", 0)) == 14:
+        count = resmooth_shared_surfaces(document, binary)
+        extras["eloriaSurfacesSplit"] = 15
+        write_glb(path, document, binary)
+        return "shading seams smoothed (%d verts) -> v15" % count
     if extras.get("eloriaSurfacesSplit"):
         # v2's scalp cloned the whole hair; rebuild it skull-only by
         # pointing the existing scalp mesh at freshly written accessors.
@@ -453,6 +579,9 @@ def split(path: Path, calibrate: bool) -> str:
     view = document["bufferViews"][image["bufferView"]]
     start = 8 + view.get("byteOffset", 0)
     texture = Image.open(io.BytesIO(bytes(binary[start:start + view["byteLength"]])))
+
+    smoothed = smooth_normals(positions, indices.astype(np.int64))
+    overwrite_accessor(document, binary, prim["attributes"]["NORMAL"], smoothed)
 
     faces, labels = classify(positions, uvs, indices, texture)
     counts = {c: int((labels == c).sum()) for c in CLASSES}
@@ -548,7 +677,7 @@ def split(path: Path, calibrate: bool) -> str:
 
     del mesh_node["mesh"]
     add_scalp(document, binary)
-    extras["eloriaSurfacesSplit"] = 14
+    extras["eloriaSurfacesSplit"] = 15
     write_glb(path, document, binary)
     return "split: %s" % counts
 
