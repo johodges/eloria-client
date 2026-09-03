@@ -3,13 +3,14 @@ extends Control
 
 signal coordinate_selected(tile: Vector2i)
 
-const PAD := 28.0
+const PAD := 16.0
 const GRID_COLOR := Color("324454")
 const LOCATION_COLOR := Color("c8a8ff")
 const PORTAL_COLOR := Color("55cfee")
 const PLAYER_COLOR := Color("68e7ff")
 const INVASION_COLOR := Color("ff6b63")
 const BOSS_COLOR := Color("ffc94f")
+const MARKER_FONT_SIZE := 10
 
 var state: Dictionary = {}
 var selected_tile := Vector2i(-1, -1)
@@ -18,8 +19,11 @@ var _hover_text := ""
 
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(360, 300)
+	custom_minimum_size = Vector2(238, 188)
 	mouse_default_cursor_shape = Control.CURSOR_CROSS
+	# A marker near the right edge draws its name past the canvas, where the
+	# roster is; unclipped, the two read as one smeared column.
+	clip_contents = true
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	set_process(false)
 
@@ -83,30 +87,30 @@ func _draw() -> void:
 		var location := raw_location as Dictionary
 		var point := _point(Vector2(float(location.get("x", 0)), float(location.get("y", 0))))
 		var color := PORTAL_COLOR if str(location.get("kind", "")) == "portal" else LOCATION_COLOR
-		draw_rect(Rect2(point - Vector2(4, 4), Vector2(8, 8)), color, true)
-		draw_string(font, point + Vector2(7, -5), str(location.get("name", "Location")),
-			HORIZONTAL_ALIGNMENT_LEFT, -1.0, 12, Color.WHITE)
+		draw_rect(Rect2(point - Vector2(3, 3), Vector2(6, 6)), color, true)
+		draw_string(font, point + Vector2(6, -4), str(location.get("name", "Location")),
+			HORIZONTAL_ALIGNMENT_LEFT, -1.0, MARKER_FONT_SIZE, Color.WHITE)
 	for raw_player: Variant in state.get("players", []):
 		var player := raw_player as Dictionary
 		var point := _point(Vector2(float(player.get("x", 0)), float(player.get("y", 0))))
-		draw_circle(point, 6.0, PLAYER_COLOR)
-		draw_circle(point, 2.0, Color.WHITE)
-		draw_string(font, point + Vector2(8, 4), str(player.get("name", "Player")),
-			HORIZONTAL_ALIGNMENT_LEFT, -1.0, 12, PLAYER_COLOR)
+		draw_circle(point, 4.5, PLAYER_COLOR)
+		draw_circle(point, 1.5, Color.WHITE)
+		draw_string(font, point + Vector2(6, 3), str(player.get("name", "Player")),
+			HORIZONTAL_ALIGNMENT_LEFT, -1.0, MARKER_FONT_SIZE, PLAYER_COLOR)
 	for raw_creature: Variant in state.get("creatures", []):
 		var creature := raw_creature as Dictionary
 		var point := _point(Vector2(float(creature.get("x", 0)), float(creature.get("y", 0))))
 		var color := BOSS_COLOR if bool(creature.get("boss", false)) else INVASION_COLOR
 		var diamond := PackedVector2Array([
-			point + Vector2(0, -7), point + Vector2(7, 0),
-			point + Vector2(0, 7), point + Vector2(-7, 0)])
+			point + Vector2(0, -5), point + Vector2(5, 0),
+			point + Vector2(0, 5), point + Vector2(-5, 0)])
 		draw_colored_polygon(diamond, color)
 	if selected_tile.x >= 0:
 		var selected_point := _point(Vector2(selected_tile))
-		draw_circle(selected_point, 10.0, Color("f4ef7a"), false, 2.0)
-		draw_line(selected_point - Vector2(14, 0), selected_point + Vector2(14, 0),
+		draw_circle(selected_point, 7.0, Color("f4ef7a"), false, 2.0)
+		draw_line(selected_point - Vector2(10, 0), selected_point + Vector2(10, 0),
 			Color("f4ef7a"), 1.0)
-		draw_line(selected_point - Vector2(0, 14), selected_point + Vector2(0, 14),
+		draw_line(selected_point - Vector2(0, 10), selected_point + Vector2(0, 10),
 			Color("f4ef7a"), 1.0)
 
 
@@ -128,7 +132,7 @@ func _update_hover(position: Vector2) -> void:
 		tooltip_text = "Click the tactical map to select teleport coordinates."
 		return
 	var nearest_text := ""
-	var nearest_distance := 14.0
+	var nearest_distance := 10.0
 	for key: String in ["locations", "players", "creatures"]:
 		for raw_marker: Variant in state.get(key, []):
 			var marker := raw_marker as Dictionary

@@ -1,6 +1,7 @@
 extends SceneTree
 
 const AssistantScript := preload("res://src/ui/invasion_assistant.gd")
+const SETTINGS_PATH := "user://eloria_hud.cfg"
 
 var failures := 0
 
@@ -10,8 +11,13 @@ func _init() -> void:
 
 
 func _run() -> void:
+	root.size = Vector2i(1280, 720)
+	_forget_stored_size()
 	var assistant = AssistantScript.new()
 	root.add_child(assistant)
+	# The assistant used to open at 1120x720 and swallow a 1280x720 client.
+	_expect(assistant.size == Vector2i(784, 504),
+		"the assistant opens at about half the footprint it used to claim")
 	var commands: Array[String] = []
 	assistant.command_requested.connect(func(command: String) -> void: commands.append(command))
 	var registry_file := FileAccess.open("res://data/maps/registry.json", FileAccess.READ)
@@ -43,6 +49,35 @@ func _run() -> void:
 	assistant._fit_to_viewport()
 	_expect(assistant.size.x <= root.size.x and assistant.size.y <= root.size.y,
 		"assistant stays within the viewport")
+
+	# Resizing from the corner grip, and the preference that outlives it.
+	root.size = Vector2i(1280, 720)
+	assistant._fit_to_viewport()
+	assistant.resize_window(Vector2i(80, 80))
+	_expect(assistant.size == assistant.min_size,
+		"the grip cannot shrink the assistant below its minimum size")
+	assistant.resize_window(Vector2i(4000, 4000))
+	_expect(assistant.size.x <= root.size.x and assistant.size.y <= root.size.y,
+		"the grip cannot grow the assistant past the viewport")
+	assistant.resize_window(Vector2i(720, 480))
+	_expect(assistant.size == Vector2i(720, 480), "the grip resizes the window")
+	assistant._flush_size_preference()
+	root.size = Vector2i(640, 400)
+	assistant._fit_to_viewport()
+	_expect(assistant.size.x < 720 and assistant._preferred_size == Vector2i(720, 480),
+		"a viewport too small to hold the window trims it without forgetting the size")
+	root.size = Vector2i(1280, 720)
+	assistant._fit_to_viewport()
+	_expect(assistant.size == Vector2i(720, 480),
+		"the remembered size comes back once the viewport can hold it")
+
+	# A window opened again - in this session or the next one - starts at the
+	# size the player left it at rather than at the shipped one.
+	var reopened = AssistantScript.new()
+	root.add_child(reopened)
+	_expect(reopened.size == Vector2i(720, 480),
+		"a freshly opened assistant restores the stored size preference")
+	reopened.queue_free()
 
 	assistant.apply_update({"kind": "groups", "groups": [{
 		"name": "ashfall", "description": "Ashfall Ridge", "map_id": "ember",
@@ -86,9 +121,23 @@ func _run() -> void:
 	_expect(commands[-1] == "#god_storage",
 		"header button opens the invasion-master god storage")
 	assistant.queue_free()
+	_forget_stored_size()
 	if failures == 0:
 		print("invasion assistant tests passed")
 	quit(failures)
+
+
+## The preference is written to the real settings file, so the assertions
+## above have to start from a client that has never been resized.
+func _forget_stored_size() -> void:
+	var config := ConfigFile.new()
+	if config.load(SETTINGS_PATH) != OK:
+		return
+	if not config.has_section_key(WindowPreferences.SECTION,
+			"invasion_assistant_size"):
+		return
+	config.erase_section_key(WindowPreferences.SECTION, "invasion_assistant_size")
+	config.save(SETTINGS_PATH)
 
 
 func _expect(condition: bool, message: String) -> void:
