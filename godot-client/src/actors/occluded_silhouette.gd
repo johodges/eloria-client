@@ -23,7 +23,8 @@ const MARKER_SHADER := preload("res://src/actors/silhouette_stencil_marker.gdsha
 const SILHOUETTE_SHADER := preload("res://src/actors/occluded_silhouette.gdshader")
 
 ## Visual layer 2, matching ReplicatedActor3D: the gameplay camera renders
-## layers 1 and 2, the minimap and full-map cameras render layers 1 and 3.
+## layers 1 and 2, the full-map camera renders layers 1 and 3, and the minimap
+## camera renders layer 1 alone. No map camera renders this one.
 const GAMEPLAY_ONLY_VISUAL_LAYER := 2
 const CLONE_META := "occlusion_silhouette_clone"
 const CLONE_PREFIX := "OcclusionSilhouette_"

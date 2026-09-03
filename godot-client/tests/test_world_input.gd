@@ -68,12 +68,11 @@ func _run() -> void:
 	var minimap_menu: PopupMenu = main.get("_minimap_menu") as PopupMenu
 	var minimap_border_style: StyleBoxFlat = minimap_frame.get_theme_stylebox(
 		"panel") as StyleBoxFlat
-	_expect(minimap_menu != null and minimap_menu.item_count == 3,
-		"minimap right-click menu exposes north, player, and viewport orientation")
+	_check_minimap_menu(main, minimap_menu)
 	_expect(minimap_border_style != null
 		and minimap_border_style.get_border_width(SIDE_LEFT) == 6
 		and is_equal_approx(minimap_image.offset_left,
-			float(main.get("MINIMAP_DRAG_BORDER"))),
+			float(main.get("_minimap_border"))),
 		"minimap keeps its thick compass ring over a margin the render fills")
 	# Scroll wheel over the minimap frames more or less ground. The camera is
 	# orthographic, so its size is that width in metres.
@@ -153,8 +152,12 @@ func _run() -> void:
 		"minimap camera ray resolves a server walking target")
 	_expect(main.call("_map_target_tile", full_map_camera, full_map_center) is Vector2i,
 		"Tab map camera ray resolves a server walking target")
-	_expect((map_camera.cull_mask & 4) != 0 and (full_map_camera.cull_mask & 4) != 0,
-		"both map cameras render the local-player marker layer")
+	# The full map draws the modelled marker layer; the minimap camera no
+	# longer does, because a disc modelled in metres is a different size at
+	# every zoom. Its marks are drawn over the render in pixels instead.
+	_expect((full_map_camera.cull_mask & 4) != 0
+		and (map_camera.cull_mask & 4) == 0,
+		"the full map renders the modelled marker layer and the minimap does not")
 	var marker_material: StandardMaterial3D = player_marker.material_override as StandardMaterial3D
 	if marker_material == null and player_marker.mesh != null:
 		marker_material = player_marker.mesh.material as StandardMaterial3D
@@ -1510,7 +1513,7 @@ func _run() -> void:
 	for _frame: int in range(3):
 		await process_frame
 	var minimap_border: float = roundf(
-		float(main.get("MINIMAP_DRAG_BORDER")) * float(main.get("_minimap_scale")))
+		float(main.get("_minimap_border")) * float(main.get("_minimap_scale")))
 	_expect(minimap_image.position.is_equal_approx(Vector2.ONE * minimap_border)
 		and minimap_image.size.is_equal_approx(
 			minimap_frame.size - Vector2.ONE * minimap_border * 2.0),
@@ -1524,6 +1527,9 @@ func _run() -> void:
 		minimap_image.size * 0.5, minimap_image.size, minimap_viewport.size) as Vector2
 	_expect(shown_centre.is_equal_approx(Vector2(minimap_viewport.size) * 0.5),
 		"a visible minimap still converts clicks into minimap viewport pixels")
+	# The marks are only measurable once the frame has been laid out, so the
+	# overlay is checked here rather than beside the menu it is configured by.
+	_check_minimap_markers(main, minimap_image, map_camera)
 	minimap_frame.hide()
 	await process_frame
 
@@ -2683,6 +2689,135 @@ func _check_travel_facing() -> void:
 	_expect(is_equal_approx(actor.rotation.y, actor.desired_facing_yaw()),
 		"the actor comes to rest on the authoritative facing")
 	actor.free()
+
+## The minimap's right-click menu. It used to be three orientation radio items
+## and nothing else; there are now enough choices that a flat list would bury
+## the orientation among twenty siblings, so the menu is three submenus and
+## this asserts that shape rather than a count that any regrouping satisfies.
+func _check_minimap_menu(main: Node, menu: PopupMenu) -> void:
+	_expect(menu != null and menu.item_count == 3,
+		"the minimap menu opens as three groups rather than a flat list")
+	if menu == null or menu.item_count != 3:
+		return
+	var groups: Dictionary = {}
+	for index: int in range(menu.item_count):
+		groups[menu.get_item_text(index)] = menu.get_item_submenu_node(index)
+	_expect(groups.has("Orientation") and groups.has("Marker types")
+		and groups.has("Visualization"),
+		"the minimap menu names orientation, marker types and visualization")
+	var orientation: PopupMenu = groups.get("Orientation") as PopupMenu
+	_expect(orientation != null and orientation.item_count == 3
+		and orientation.is_item_radio_checkable(0),
+		"the three rotation options moved under Orientation")
+	var types: PopupMenu = groups.get("Marker types") as PopupMenu
+	var declared: Array = main.get("MINIMAP_MARKER_TYPES") as Array
+	_expect(types != null and types.item_count == declared.size()
+		and types.is_item_checkable(0) and not types.is_item_radio_checkable(0),
+		"every marker type is its own switch under Marker types")
+	var visualization: PopupMenu = groups.get("Visualization") as PopupMenu
+	_expect(visualization != null and visualization.item_count == 4,
+		"Visualization holds marker size, shape, minimap size and border")
+	if visualization == null:
+		return
+	var appearance: Dictionary = {}
+	for index: int in range(visualization.item_count):
+		appearance[visualization.get_item_text(index)] = (
+			visualization.get_item_submenu_node(index))
+	_expect(appearance.has("Marker size") and appearance.has("Minimap shape")
+		and appearance.has("Minimap size") and appearance.has("Border width"),
+		"Visualization names each of the four things it changes")
+	var shape: PopupMenu = appearance.get("Minimap shape") as PopupMenu
+	_expect(shape != null and shape.item_count == 2
+		and shape.get_item_text(0) == "Square" and shape.get_item_text(1) == "Round",
+		"the minimap can be squared off or rounded")
+
+## The marks the minimap draws over its render, and the settings that change
+## them.
+##
+## The size of a mark is the point of the overlay: the marks were discs
+## modelled in the world, so zooming the minimap out shrank them to specks and
+## zooming in swelled them into saucers. A mark's radius owes nothing to the
+## camera now, which is asserted here at both ends of the zoom range - against
+## the projected positions, which do move, so that a zoom that did nothing
+## cannot pass this by holding everything still.
+func _check_minimap_markers(main: Node, minimap_image: Control,
+		minimap_camera: Camera3D) -> void:
+	var overlay: Control = main.get("minimap_marker_overlay") as Control
+	_expect(overlay != null and overlay.get_parent() == minimap_image
+		and overlay.mouse_filter == Control.MOUSE_FILTER_IGNORE,
+		"the minimap's marks are drawn over its render and swallow no clicks")
+	if overlay == null:
+		return
+	var near_mark := {"position": minimap_camera.global_position
+		+ Vector3(24.0, -220.0, 0.0), "type": &"player", "colour": Color.WHITE}
+	var restore_zoom: float = float(main.get("_minimap_zoom"))
+	main.set("_minimap_zoom", float(main.get("MINIMAP_ZOOM_MIN")))
+	main.call("_apply_minimap_zoom")
+	var close_radius: float = float(overlay.call("mark_radius", near_mark))
+	var close_point: Variant = overlay.call("mark_point", near_mark)
+	main.set("_minimap_zoom", float(main.get("MINIMAP_ZOOM_MAX")))
+	main.call("_apply_minimap_zoom")
+	var far_radius: float = float(overlay.call("mark_radius", near_mark))
+	var far_point: Variant = overlay.call("mark_point", near_mark)
+	_expect(close_point is Vector2 and far_point is Vector2
+		and not (close_point as Vector2).is_equal_approx(far_point as Vector2),
+		"zooming the minimap moves a mark over the ground it names")
+	_expect(is_equal_approx(close_radius, far_radius) and close_radius > 0.0,
+		"a mark is the same size on screen at both ends of the zoom range")
+	main.set("_minimap_zoom", restore_zoom)
+	main.call("_apply_minimap_zoom")
+
+	# Marker size is the only thing that changes it.
+	main.call("_on_minimap_marker_scale_selected", 0)
+	var smallest: float = float(overlay.call("mark_radius", near_mark))
+	main.call("_on_minimap_marker_scale_selected", 4)
+	var largest: float = float(overlay.call("mark_radius", near_mark))
+	_expect(largest > smallest,
+		"the marker size option is what changes how big a mark is drawn")
+	main.call("_on_minimap_marker_scale_selected", 2)
+
+	# Each type is a switch of its own, and the overlay reads the same switch
+	# main.gd wrote rather than a copy of it.
+	var types: Array = main.get("MINIMAP_MARKER_TYPES") as Array
+	var creature_index: int = types.find(&"creature")
+	main.call("_on_minimap_marker_type_toggled", creature_index)
+	_expect(not bool(overlay.call("type_enabled", &"creature"))
+		and bool(overlay.call("type_enabled", &"player")),
+		"switching creature marks off leaves every other type drawn")
+	main.call("_on_minimap_marker_type_toggled", creature_index)
+	_expect(bool(overlay.call("type_enabled", &"creature")),
+		"switching a marker type back on draws it again")
+
+	main.call("_on_minimap_shape_selected", 1)
+	var mask: ShaderMaterial = minimap_image.material as ShaderMaterial
+	_expect(str(main.get("_minimap_shape")) == "round" and mask != null
+		and bool(mask.get_shader_parameter("rounded"))
+		and bool(overlay.get("_round")),
+		"a round minimap masks both the render and the marks over it")
+	main.call("_on_minimap_shape_selected", 0)
+	_expect(mask != null and not bool(mask.get_shader_parameter("rounded")),
+		"squaring the minimap up again unmasks the corners")
+
+	# The border is the black margin and the drag band at once, so the
+	# narrowest step is still a band a mouse can find.
+	var border_steps: Array = main.get("MINIMAP_BORDER_STEPS") as Array
+	main.call("_on_minimap_border_selected", 0)
+	_expect(float(border_steps[0]) > 0.0
+		and is_equal_approx(minimap_image.offset_left,
+			roundf(float(border_steps[0]) * float(main.get("_minimap_scale")))),
+		"the narrowest border still leaves a band the window is dragged by")
+	main.call("_on_minimap_border_selected", 2)
+
+	# One value, two controls: the menu step and the settings window's slider.
+	var size_steps: Array = main.get("MINIMAP_SIZE_STEPS") as Array
+	main.call("_on_minimap_size_step_selected", size_steps.size() - 1)
+	var size_slider: Range = main.get_node(
+		"%MinimapSize") as Range
+	_expect(is_equal_approx(float(main.get("_minimap_scale")),
+			float(size_steps[-1]))
+		and is_equal_approx(size_slider.value, float(size_steps[-1])),
+		"setting the minimap size from the menu moves the settings slider with it")
+	main.call("_on_minimap_size_step_selected", 1)
 
 ## Everyone the server replicates carries the light blue dot the full map's
 ## legend calls Player / NPC. The local player draws its own white mark over

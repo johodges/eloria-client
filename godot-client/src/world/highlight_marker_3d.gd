@@ -13,8 +13,9 @@ extends Node3D
 ## marker colours - spell target, attack target, lock - can join later
 ## through `configure`'s colour.
 
-## Layer 2: the gameplay camera renders it, the minimap and full-map cameras
-## do not. The legacy client never draws the cross on its maps either.
+## Layer 2: the gameplay camera renders it, neither map camera does, and the
+## minimap's marker overlay does not mark it. The legacy client never draws the
+## cross on its maps either.
 const GAMEPLAY_ONLY_VISUAL_LAYER := 2
 const LIFESPAN_SECONDS := 0.5
 ## Metres the cross floats above the ground when it appears.
