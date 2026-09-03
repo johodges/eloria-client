@@ -78,7 +78,7 @@ enum ServerMessage {
 	ELORIA_PARTY_STATE = 240, ELORIA_QUEST_ARCHIVE_STATE = 241,
 	ELORIA_DEGRADED_ITEMS = 242, ELORIA_WORN_SLOTS = 243,
 	ELORIA_ACHIEVEMENTS_STATE = 244, ELORIA_EXPERIENCE_STATE = 245,
-	ELORIA_ACTOR_FOOTPRINTS = 246,
+	ELORIA_ACTOR_FOOTPRINTS = 246, ELORIA_INVENTORY_NAMES = 248,
 	ADD_ACTOR_ANIMATION = 89,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
@@ -166,6 +166,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"actor16_v1",
 	"almanac_v1",
 	"combat_hud_v1",
+	"inventory_names_v1",
 	"inventory_window_v1",
 	"item_detail_v1",
 	"mail_window_v1",
@@ -924,6 +925,8 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return decode_achievements_state(payload)
 		ServerMessage.ELORIA_EXPERIENCE_STATE:
 			return decode_experience_state(payload)
+		ServerMessage.ELORIA_INVENTORY_NAMES:
+			return decode_inventory_names(payload)
 		ServerMessage.ELORIA_ACTOR_FOOTPRINTS:
 			return decode_actor_footprints(payload)
 		ServerMessage.ELORIA_WORN_SLOTS:
@@ -1090,6 +1093,33 @@ static func decode_achievements_state(payload: PackedByteArray) -> Dictionary:
 ##
 ## Sent once at login. An empty list is a real answer: it means this profile
 ## authors no degradation chains, not that the packet went missing.
+## Command 248. What is in each of the player's own slots, by name.
+##
+## The stock inventory packet carries an image id and no name, and in this
+## profile plenty of items share their artwork - five pelts draw as one
+## picture. A window that has to choose an item by identity rather than by
+## the player pointing at it cannot do so from a picture, which is why six
+## recipes could not be mixed at all. Positions are the stock packet's own,
+## equipment slots included.
+static func decode_inventory_names(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 2:
+		return {"type": "invalid", "error": "inventory_names_length"}
+	var count: int = u16(payload)
+	var offset: int = 2
+	var names: Dictionary = {}
+	for _index: int in range(count):
+		if offset >= payload.size():
+			return {"type": "invalid", "error": "inventory_names_slot"}
+		var slot: int = int(payload[offset])
+		var field: Dictionary = _nul_at(payload, offset + 1)
+		if field.is_empty():
+			return {"type": "invalid", "error": "inventory_names_text"}
+		names[slot] = str(field.value)
+		offset = int(field.offset)
+	if offset != payload.size():
+		return {"type": "invalid", "error": "inventory_names_trailing"}
+	return {"type": "inventory_names", "names": names}
+
 static func decode_degraded_items(payload: PackedByteArray) -> Dictionary:
 	if payload.size() < 2:
 		return {"type": "invalid", "error": "degraded_items_length"}

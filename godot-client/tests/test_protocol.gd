@@ -31,6 +31,7 @@ func _init() -> void:
 		"actor16_v1": EloriaProtocol.ServerMessage.ADD_NEW_ACTOR_EXTENDED,
 		"almanac_v1": EloriaProtocol.ServerMessage.ELORIA_ALMANAC_STATE,
 		"combat_hud_v1": EloriaProtocol.ServerMessage.ELORIA_COMBAT_STATE,
+		"inventory_names_v1": EloriaProtocol.ServerMessage.ELORIA_INVENTORY_NAMES,
 		"inventory_window_v1": EloriaProtocol.ServerMessage.ELORIA_INVENTORY_STATE,
 		"item_detail_v1": EloriaProtocol.ServerMessage.ELORIA_ITEM_DETAIL,
 		"mail_window_v1": EloriaProtocol.ServerMessage.ELORIA_MAIL_STATE,
@@ -59,6 +60,10 @@ func _init() -> void:
 		EloriaProtocol.ServerMessage.ELORIA_ITEM_DETAIL:
 			"a0000200000000410042004300440045004600470"
 			+ "0",
+		# One named slot: slot 2 holds "Deer Hide", the item whose shared
+		# artwork is the reason this packet exists.
+		EloriaProtocol.ServerMessage.ELORIA_INVENTORY_NAMES:
+			"0100" + "02" + "44656572204869646500",
 		EloriaProtocol.ServerMessage.ELORIA_MAIL_STATE: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_MARKETPLACE_STATE:
 			"00fa0000000300000000 00".replace(" ", ""),
@@ -1019,11 +1024,16 @@ func _init() -> void:
 			var manufacturing_data: Dictionary = manufacturing_value as Dictionary
 			var manufacturing_recipes: Array = manufacturing_data.get("recipes", []) as Array
 			var sources: Dictionary = manufacturing_data.get("sources", {}) as Dictionary
+			# The exact source digest used to be pinned here. It is not any
+			# more: this side cannot see the server's config, so the constant
+			# only ever said "somebody wrote a hex string down", and when
+			# items.txt was renumbered and the catalog regenerated it went
+			# stale along with every fixture below. What the catalog was built
+			# from is now asserted where both halves are visible - the
+			# server's client_content_manifest.json and its content-sync test.
 			_expect(str(sources.get("profile", "")) == "eloria"
 				and manufacturing_recipes.size() == 32
-				and str((manufacturing_recipes[0] as Dictionary).get("output", "")) == "Torch"
-				and str(sources.get("recipesSha256", "")) ==
-					"b2a224cba0f90d34fa6958db3892c763fbd48355affacfc2a5211477eb41a949",
+				and str((manufacturing_recipes[0] as Dictionary).get("output", "")) == "Torch",
 				"manufacturing catalog matches the served profile's own recipes")
 			# Both catalogs come out of one generator run, so an index into the
 			# knowledge catalog cannot point past its end.
@@ -1038,17 +1048,30 @@ func _init() -> void:
 					+ " catalog: %s" % str(dangling))
 			var catalog: ManufacturingCatalog = ManufacturingCatalog.new()
 			catalog.configure(manufacturing_data)
-			# Recipe 0 is a Torch: a Wood Plank and a Cloth Roll, held with a
-			# Hatchet. The tool is checked but never consumed, so it is not one
-			# of the selected slots.
-			var ready: Dictionary = catalog.availability(0, {
-				4: {"image_id": 39, "quantity": 1},
-				5: {"image_id": 40, "quantity": 1},
-				6: {"image_id": 7, "quantity": 1}}, [], {"food": 45, "ether": 0})
+			# Recipe 0 is a Torch: two reagents held with a tool. The tool is
+			# checked but never consumed, so it is not one of the selected
+			# slots. Its ingredients are stocked from the catalog's own image
+			# ids rather than from numbers written out here - the server has
+			# renumbered them once already, and every fixture that spelled
+			# them out went on passing against artwork nobody used.
+			var torch: Dictionary = catalog.recipe(0)
+			var stocked: Dictionary = {}
+			var first_slot: int = -1
+			for group: String in ["ingredients", "tools"]:
+				for entry_value: Variant in torch.get(group, []) as Array:
+					var entry: Dictionary = entry_value as Dictionary
+					var slot: int = stocked.size()
+					if first_slot < 0:
+						first_slot = slot
+					stocked[slot] = {
+						"image_id": int(entry.get("imageId", -1)),
+						"quantity": maxi(1, int(entry.get("quantity", 1)))}
+			var ready: Dictionary = catalog.availability(0, stocked, [],
+				{"food": 45, "ether": 0})
 			var ready_selection: Array = ready.get("selection", []) as Array
 			_expect((ready.get("reasons", []) as Array).is_empty()
-				and ready_selection.size() == 2
-				and int((ready_selection[0] as Dictionary).get("slot", -1)) == 4,
+				and ready_selection.size() == (torch.get("ingredients", []) as Array).size()
+				and int((ready_selection[0] as Dictionary).get("slot", -1)) == first_slot,
 				"recipe resolves authoritative inventory slots and quantities: "
 					+ str(ready))
 			var missing: Dictionary = catalog.availability(0, {}, [],
@@ -1056,22 +1079,58 @@ func _init() -> void:
 			_expect((missing.get("reasons", []) as Array).size() == 3,
 				"missing ingredients and the absent tool each block"
 					+ " manufacturing explicitly: %s" % str(missing))
-			# Recipe 18 is the Gloam Focus, whose Memory of Rain shares its
-			# artwork with seven pieces of armour. The client cannot tell them
-			# apart from an image id, so it says so rather than picking one.
-			var ambiguous: Dictionary = catalog.availability(18, {
-				0: {"image_id": 68, "quantity": 2},
-				1: {"image_id": 73, "quantity": 3},
-				2: {"image_id": 80, "quantity": 1},
-				3: {"image_id": 37, "quantity": 5},
-				4: {"image_id": 9, "quantity": 1}}, [],
-				{"food": 45, "ether": 40})
-			var ambiguous_reasons: Array = ambiguous.get("reasons", []) as Array
-			_expect(ambiguous_reasons.size() == 1
-				and str(ambiguous_reasons[0]).contains(
-					"automatic selection is unavailable"),
-				"ambiguous item artwork never guesses an authoritative item: "
-					+ str(ambiguous_reasons))
+			# Shared artwork. Several items in this profile draw as one
+			# picture - five pelts do - so a client told only an image id
+			# cannot say which of them a slot holds. Found rather than named,
+			# because which recipe is affected is content, not contract.
+			var shared_index: int = -1
+			var shared_name := ""
+			for index: int in range(catalog.count()):
+				for entry_value: Variant in catalog.recipe(index).get("ingredients", []) as Array:
+					var entry: Dictionary = entry_value as Dictionary
+					if shared_index < 0 and bool(entry.get("ambiguousImage", false)):
+						shared_index = index
+						shared_name = str(entry.get("name", ""))
+			_expect(shared_index >= 0,
+				"the profile still has an item whose artwork is shared")
+			if shared_index >= 0:
+				var shared_stock: Dictionary = {}
+				var shared_names: Dictionary = {}
+				for entry_value: Variant in catalog.recipe(shared_index).get(
+						"ingredients", []) as Array:
+					var entry: Dictionary = entry_value as Dictionary
+					var slot: int = shared_stock.size()
+					shared_stock[slot] = {
+						"image_id": int(entry.get("imageId", -1)),
+						"quantity": maxi(1, int(entry.get("quantity", 1)))}
+					shared_names[slot] = str(entry.get("name", ""))
+				for entry_value: Variant in catalog.recipe(shared_index).get(
+						"tools", []) as Array:
+					var entry: Dictionary = entry_value as Dictionary
+					var slot: int = shared_stock.size()
+					shared_stock[slot] = {
+						"image_id": int(entry.get("imageId", -1)), "quantity": 1}
+					shared_names[slot] = str(entry.get("name", ""))
+				# Without the server's slot names there is no honest way to
+				# pick, so it says so rather than guessing.
+				var guessed: Array = (catalog.availability(shared_index,
+					shared_stock, [], {"food": 45, "ether": 40}).get(
+						"reasons", []) as Array)
+				var refused := false
+				for reason: Variant in guessed:
+					if str(reason).contains("automatic selection is unavailable"):
+						refused = true
+				_expect(refused,
+					"ambiguous item artwork never guesses an authoritative item: "
+						+ str(guessed))
+				# With them, identity settles it and the recipe is offered.
+				var named: Dictionary = catalog.availability(shared_index,
+					shared_stock, [], {"food": 45, "ether": 40}, shared_names)
+				_expect((named.get("reasons", []) as Array).is_empty()
+					and (named.get("selection", []) as Array).size()
+						== (catalog.recipe(shared_index).get("ingredients", []) as Array).size(),
+					"the server's slot names resolve %s rather than refusing it: %s"
+						% [shared_name, str(named)])
 	var atlas_config_file: FileAccess = FileAccess.open(
 		"res://data/items/atlases.json", FileAccess.READ)
 	_expect(atlas_config_file != null, "legacy item atlas registry opens")

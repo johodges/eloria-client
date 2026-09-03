@@ -955,12 +955,26 @@ func _run() -> void:
 		"GameView/Quickbar/QuickRows/Buttons/ManufacturingButton") as Button
 	_expect(not manufacturing_panel.visible and not manufacturing_button.disabled,
 		"manufacturing window starts closed with its real HUD action enabled")
-	# Recipe 0 on this profile is a Torch: a Wood Plank (39) and a Cloth Roll
-	# (40), held with a Hatchet (7), which is checked but never consumed.
-	app_state_inventory.set("inventory", {
-		4: {"image_id": 39, "quantity": 1, "slot": 4, "flags": 6},
-		5: {"image_id": 40, "quantity": 1, "slot": 5, "flags": 6},
-		6: {"image_id": 7, "quantity": 1, "slot": 6, "flags": 6}})
+	# Recipe 0 on this profile is a Torch: two reagents held with a tool, which
+	# is checked but never consumed. Stocked from the catalog rather than from
+	# image ids written out here - the server renumbered 43 of them once, and
+	# every fixture that spelled them out went on passing against artwork
+	# nobody used. The slots are named too, as the server names them.
+	var torch: Dictionary = (main.get("manufacturing_catalog")
+		as ManufacturingCatalog).recipe(0)
+	var torch_inventory: Dictionary = {}
+	var torch_names: Dictionary = {}
+	for group: String in ["ingredients", "tools"]:
+		for entry_value: Variant in torch.get(group, []) as Array:
+			var entry: Dictionary = entry_value as Dictionary
+			var slot: int = 4 + torch_inventory.size()
+			torch_inventory[slot] = {
+				"image_id": int(entry.get("imageId", -1)),
+				"quantity": maxi(1, int(entry.get("quantity", 1))),
+				"slot": slot, "flags": 6}
+			torch_names[slot] = str(entry.get("name", ""))
+	app_state_inventory.set("inventory", torch_inventory)
+	app_state_inventory.set("inventory_names", torch_names)
 	app_state_inventory.set("stats", {"food": 45, "ether": 0})
 	main.call("_on_manufacturing_button_pressed")
 	var manufacturing_list: ItemList = main.get_node(
@@ -976,10 +990,13 @@ func _run() -> void:
 	main.call("_on_manufacturing_selected", 0)
 	_expect(not manufacturing_mix_one.disabled
 		and manufacturing_detail.text.contains("Torch")
-		and manufacturing_detail.text.contains("Wood Plank ×1"),
+		and manufacturing_detail.text.contains("%s ×%d" % [
+			str((torch.get("ingredients", []) as Array)[0].get("name", "")),
+			int((torch.get("ingredients", []) as Array)[0].get("quantity", 0))]),
 		"available recipe resolves ingredients and enables the real server"
 			+ " action: " + manufacturing_detail.text)
 	app_state_inventory.set("inventory", {})
+	app_state_inventory.set("inventory_names", {})
 	main.call("_sync_manufacturing")
 	_expect(manufacturing_mix_one.disabled
 		and manufacturing_detail.text.contains("Missing Wood Plank ×1"),

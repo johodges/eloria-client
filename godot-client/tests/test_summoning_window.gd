@@ -28,8 +28,10 @@ func _run() -> void:
 	var app_state: Node = root.get_node("/root/AppState")
 	var stats: Dictionary = app_state.get("stats") as Dictionary
 	var inventory: Dictionary = app_state.get("inventory") as Dictionary
+	var slot_names: Dictionary = app_state.get("inventory_names") as Dictionary
 	stats.clear()
 	inventory.clear()
+	slot_names.clear()
 
 	var catalog := ManufacturingCatalog.new()
 	catalog.configure(_json("res://data/manufacturing/recipes.json"))
@@ -115,7 +117,7 @@ func _run() -> void:
 	# already: a fixture that spells them out goes on passing against artwork
 	# the server stopped using, which is exactly how the shipped catalog came
 	# to hunt for an Aether Salt nobody had.
-	var slot_of_ingredient: Dictionary = _stock(inventory, catalog, listed)
+	var slot_of_ingredient: Dictionary = _stock(inventory, slot_names, catalog, listed)
 	window.call("sync")
 	_expect(not otter.disabled and is_equal_approx(otter.modulate.a, 1.0),
 		"a summon the client can see no obstacle to is lit and clickable")
@@ -153,11 +155,28 @@ func _run() -> void:
 	var wanted_quantities: Array[int] = []
 	for ingredient_value: Variant in catalog.recipe(listed[0]).get("ingredients", []) as Array:
 		var ingredient: Dictionary = ingredient_value as Dictionary
-		wanted_slots.append(int(slot_of_ingredient[int(ingredient.get("imageId", -1))]))
+		wanted_slots.append(int(slot_of_ingredient[str(ingredient.get("name", ""))]))
 		wanted_quantities.append(int(ingredient.get("quantity", 0)))
 	_expect(slots == wanted_slots and quantities == wanted_quantities,
 		"with the inventory slots holding each ingredient: %s %s, wanted %s %s"
 		% [str(slots), str(quantities), str(wanted_slots), str(wanted_quantities)])
+
+	# The stag's Deer Hide shares its picture with four other pelts and its
+	# Wayside Sage with Rosemary. Before the server named the slots there was
+	# no honest way to pick either, and the window refused. With the names it
+	# is an ordinary summon.
+	var stag: Button = rows.get_node("SummonRow%d" % listed[1]) as Button
+	_expect(not stag.disabled,
+		"the server's slot names make the stag summonable: %s"
+			% str(window.call("blocking_reasons", listed[1])))
+	slot_names.clear()
+	window.call("sync")
+	_expect(stag.disabled
+		and str((stag.get_node("Row/Asks/Requirements") as Label).text)
+			.contains("shares legacy artwork"),
+		"and without them it refuses rather than guessing")
+	_stock(inventory, slot_names, catalog, listed)
+	window.call("sync")
 
 	# The behaviour popup is the server's, and it refuses below summoning 30.
 	var behavior: Button = window.get_node(
@@ -180,6 +199,7 @@ func _run() -> void:
 	# Leave AppState as this suite found it.
 	stats.clear()
 	inventory.clear()
+	slot_names.clear()
 
 	print("summoning window tests: ",
 		"PASS" if failures == 0 else "FAIL (%d)" % failures)
@@ -263,19 +283,23 @@ func _creature_packet(actor_type: int, display_name: PackedByteArray) -> Diction
 ## Puts every ingredient the listed summons need into its own inventory slot,
 ## keyed by the image id the catalog actually carries. Returns image id to
 ## slot, so the assertions can name an ingredient without naming a number.
-func _stock(inventory: Dictionary, catalog: ManufacturingCatalog,
-		listed: Array[int]) -> Dictionary:
+func _stock(inventory: Dictionary, names: Dictionary,
+		catalog: ManufacturingCatalog, listed: Array[int]) -> Dictionary:
 	var slot_of: Dictionary = {}
 	for index: int in listed:
 		for ingredient_value: Variant in catalog.recipe(index).get("ingredients", []) as Array:
 			var ingredient: Dictionary = ingredient_value as Dictionary
-			var image_id: int = int(ingredient.get("imageId", -1))
-			if slot_of.has(image_id):
+			var item: String = str(ingredient.get("name", ""))
+			if slot_of.has(item):
 				continue
 			var slot: int = slot_of.size()
-			slot_of[image_id] = slot
+			slot_of[item] = slot
 			# Generous, so a shortfall is never what a test is measuring.
-			inventory[slot] = {"image_id": image_id, "quantity": 20}
+			inventory[slot] = {
+				"image_id": int(ingredient.get("imageId", -1)), "quantity": 20}
+			# The server names every slot it sends, which is what lets two
+			# items sharing one picture be told apart.
+			names[slot] = item
 	return slot_of
 
 func _json(path: String) -> Dictionary:

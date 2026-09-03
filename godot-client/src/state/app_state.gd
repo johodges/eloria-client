@@ -61,6 +61,12 @@ var local_actor_id := -1
 var current_map := ""
 var actors: Dictionary = {}
 var inventory: Dictionary = {}
+## Slot to the name the server calls what is in it, for the same positions
+## `inventory` uses. Kept apart from the entries rather than merged into
+## them because the two arrive on their own packets and either may land
+## first; a consumer that needs a name asks here and copes with not
+## finding one, which is also what an older server gets it.
+var inventory_names: Dictionary = {}
 var inventory_text := ""
 var inventory_cooldowns: Dictionary = {}
 var owned_sigils: Array[int] = []
@@ -299,6 +305,7 @@ func _on_connection_state_changed(value: String) -> void:
 		buddies = {}
 		world_objects = {}
 		teleporters = []
+		inventory_names.clear()
 		inventory_state = {"gold": 0, "carried": 0, "capacity": 0, "items": []}
 		combat_state = _empty_combat_state()
 		mail.clear()
@@ -877,6 +884,11 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			item_detail["open"] = true
 			item_detail.erase("type")
 			state_changed.emit(&"item_detail")
+		"inventory_names":
+			inventory_names = (event.names as Dictionary).duplicate()
+			# The grid did not change, but what the client can say about it
+			# did, so anything reading a slot by identity re-asks.
+			state_changed.emit(&"inventory")
 		"inventory_state":
 			inventory_state = {"gold": int(event.gold),
 				"carried": int(event.carried), "capacity": int(event.capacity),
