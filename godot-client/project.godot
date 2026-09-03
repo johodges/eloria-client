@@ -56,6 +56,11 @@ toggle_encyclopedia={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical
 ; so a focused text field keeps its own Ctrl shortcuts.
 toggle_spells={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":83,"ctrl_pressed":true)] }
 toggle_manufacture={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":77,"ctrl_pressed":true)] }
+; Eternal Lands has no summoning window and no summon-behaviour key, so these
+; two take free Ctrl letters rather than a legacy binding: Ctrl+U for the
+; window, Ctrl+K for the behaviour popup the server opens.
+toggle_summoning={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":85,"ctrl_pressed":true)] }
+summon_behavior={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":75,"ctrl_pressed":true)] }
 toggle_emotes={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":74,"ctrl_pressed":true)] }
 toggle_quest_journal={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":71,"ctrl_pressed":true)] }
 toggle_buddy={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":66,"ctrl_pressed":true)] }

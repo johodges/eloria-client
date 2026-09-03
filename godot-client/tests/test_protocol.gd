@@ -1135,15 +1135,29 @@ func _init() -> void:
 				"spell icon resolves at native aspect")
 			var ready_reasons: Array[String] = spell_catalog.unavailable_reasons(0,
 				[0, 7], {"magic": 0, "ether": 5}, {
-					0: {"image_id": 70, "quantity": 1},
-					1: {"image_id": 20, "quantity": 1},
-					2: {"image_id": 69, "quantity": 1}})
+					0: {"image_id": 68, "quantity": 1},
+					1: {"image_id": 16, "quantity": 1},
+					2: {"image_id": 67, "quantity": 1}})
 			_expect(ready_reasons.is_empty(),
 				"owned Embermend requirements are locally ready")
 			var blocked_reasons: Array[String] = spell_catalog.unavailable_reasons(0,
 				[0], {"magic": 0, "ether": 4}, {})
 			_expect(blocked_reasons.size() == 5,
 				"the missing sigil, the mana, and each of the three reagents are explicit")
+			# A reagent is stated by the server's name for the item, not by
+			# the number the catalog files it under.
+			_expect(blocked_reasons.has("Requires 1 Cinder Resin (have 0)"),
+				"a missing reagent is named: %s" % str(blocked_reasons))
+			# The two ids are not interchangeable: a backpack holding the
+			# item id rather than the image id is not holding the reagent.
+			var mistaken_reasons: Array[String] = spell_catalog.unavailable_reasons(0,
+				[0, 7], {"magic": 0, "ether": 5}, {
+					0: {"image_id": 70, "quantity": 1},
+					1: {"image_id": 20, "quantity": 1},
+					2: {"image_id": 69, "quantity": 1}})
+			_expect(mistaken_reasons.size() == 3,
+				"reagents are counted by image id, not by the server's item id: %s"
+					% str(mistaken_reasons))
 
 	# Perks are server state. The client keeps no perk table: the names and
 	# descriptions arrive on the wire, which is what makes a renamed or newly
