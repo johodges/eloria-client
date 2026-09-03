@@ -226,6 +226,11 @@ var harvest: Dictionary = {"active": false, "object_id": -1, "resource": ""}
 var popup: Dictionary = {"open": false, "popup_id": -1, "title": "", "text": "",
 	"options": []}
 var perks: Array[Dictionary] = []
+## Every perk that can be bought, as the server prices it, each carrying the
+## server's own reason for refusing it where there is one. The client keeps no
+## perk table; this is the table, and it arrives again whenever a purchase
+## could have changed what is still on offer.
+var perk_catalog: Array[Dictionary] = []
 ## Lifetime activity totals keyed by the server's own category name, plus the
 ## order the server listed them in so the window needs no local table.
 var activity_counters: Dictionary = {}
@@ -318,6 +323,7 @@ func _on_connection_state_changed(value: String) -> void:
 		harvest = _empty_harvest_state()
 		popup = _empty_popup_state()
 		perks.clear()
+		perk_catalog.clear()
 		activity_counters.clear()
 		activity_counter_order.clear()
 		invasion_assistant = {"open": false}
@@ -974,6 +980,11 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			for raw_perk: Variant in event.perks:
 				perks.append((raw_perk as Dictionary).duplicate(true))
 			state_changed.emit(&"perks")
+		"perk_catalog":
+			perk_catalog.clear()
+			for raw_perk: Variant in event.perks:
+				perk_catalog.append((raw_perk as Dictionary).duplicate(true))
+			state_changed.emit(&"perk_catalog")
 		"activity_counters":
 			if bool(event.full):
 				activity_counters.clear()

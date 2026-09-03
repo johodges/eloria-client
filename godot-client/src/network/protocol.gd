@@ -79,6 +79,11 @@ enum ServerMessage {
 	ELORIA_DEGRADED_ITEMS = 242, ELORIA_WORN_SLOTS = 243,
 	ELORIA_ACHIEVEMENTS_STATE = 244, ELORIA_EXPERIENCE_STATE = 245,
 	ELORIA_ACTOR_FOOTPRINTS = 246, ELORIA_INVENTORY_NAMES = 248,
+	# 222-247 are full - 247 is ADD_NEW_ACTOR_EXTENDED above - so the
+	# extensions continue in the run below the stock commands instead.
+	# 216-219 are free. NOTE 248 above is REDEFINE_YOUR_COLORS in stock
+	# Eternal Lands, as 249-253 are YOU_DONT_EXIST and the log-in replies.
+	ELORIA_PERK_CATALOG = 215,
 	ADD_ACTOR_ANIMATION = 89,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
@@ -174,6 +179,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"merchant_window_v1",
 	"navigation_hud_v1",
 	"party_window_v1",
+	"perk_catalog_v1",
 	"player_info_v1",
 	"achievements_window_v1",
 	"actor_footprints_v1",
@@ -929,6 +935,8 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return decode_inventory_names(payload)
 		ServerMessage.ELORIA_ACTOR_FOOTPRINTS:
 			return decode_actor_footprints(payload)
+		ServerMessage.ELORIA_PERK_CATALOG:
+			return decode_perk_catalog(payload)
 		ServerMessage.ELORIA_WORN_SLOTS:
 			if payload.size() != 8:
 				return {"type": "invalid", "error": "worn_slots_length"}
@@ -1757,6 +1765,33 @@ static func decode_perks(payload: PackedByteArray) -> Dictionary:
 	if offset != payload.size():
 		return {"type": "invalid", "error": "perks_trailing"}
 	return {"type": "perks", "perks": perks}
+
+## Every perk that can be bought, what it costs, and the server's own reason
+## for refusing it where there is one. The perks packet says what a character
+## has; this says what is on offer, so the statistics window can price a perk
+## and grey out what would be refused without keeping a perk table of its own.
+static func decode_perk_catalog(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 2:
+		return {"type": "invalid", "error": "perk_catalog_length"}
+	var count: int = u16(payload)
+	var offset: int = 2
+	var perks: Array[Dictionary] = []
+	for _index: int in range(count):
+		if offset + 6 > payload.size():
+			return {"type": "invalid", "error": "perk_catalog_entry_length"}
+		var pickpoints: int = s16(payload, offset)
+		var gold: int = u32(payload, offset + 2)
+		offset += 6
+		var text: Dictionary = _nul_run(payload, offset, 3)
+		if text.is_empty():
+			return {"type": "invalid", "error": "perk_catalog_entry_text"}
+		var values: Array = text.values
+		offset = int(text.offset)
+		perks.append({"name": values[0], "description": values[1],
+			"pickpoints": pickpoints, "gold": gold, "blocker": values[2]})
+	if offset != payload.size():
+		return {"type": "invalid", "error": "perk_catalog_trailing"}
+	return {"type": "perk_catalog", "perks": perks}
 
 ## Lifetime activity totals. `full` marks a complete snapshot; otherwise the
 ## packet carries only the categories that just changed. The category name

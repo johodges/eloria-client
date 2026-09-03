@@ -126,6 +126,23 @@ func stored_bindings() -> Dictionary:
 				stored[name] = described
 	return stored
 
+## Defaults this client used to ship and has since replaced. The settings
+## file records every bound action, not only the ones a player chose, so a
+## stored value equal to the superseded default is somebody who never touched
+## it: the current default applies instead. Anything else is a real choice
+## and is restored, including a player who picked the old key deliberately
+## after the change, because by then it is no longer what this map says.
+##
+## The spell quick slots were Shift+number until they moved to Alt+number,
+## where Eternal Lands has kept K_SPELL1..12 all along.
+const SUPERSEDED_DEFAULTS := {
+	"quick_spell_1": "Shift+1", "quick_spell_2": "Shift+2",
+	"quick_spell_3": "Shift+3", "quick_spell_4": "Shift+4",
+	"quick_spell_5": "Shift+5", "quick_spell_6": "Shift+6",
+	"quick_spell_7": "Shift+7", "quick_spell_8": "Shift+8",
+	"quick_spell_9": "Shift+9", "quick_spell_10": "Shift+0",
+}
+
 ## Restores bindings saved by a previous session.
 ##
 ## A stored value that cannot be read back leaves the action exactly as it is.
@@ -137,6 +154,8 @@ func restore_bindings(stored: Dictionary) -> int:
 	for action: Variant in stored:
 		var name: String = str(action)
 		if not InputMap.has_action(name):
+			continue
+		if str(stored[action]) == str(SUPERSEDED_DEFAULTS.get(name, "")):
 			continue
 		var event: InputEventKey = _parse(str(stored[action]))
 		if event == null:
