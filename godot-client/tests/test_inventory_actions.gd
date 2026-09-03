@@ -132,12 +132,33 @@ func _check_double_click(main: Node) -> void:
 		as RichTextLabel).text)
 	_expect(line.contains("slot 1"),
 		"the window says which slot is being worn (said %s)" % line)
-	# Worn positions are not wearable, so a double click there does nothing.
-	main.call("_begin_carry", 0)
-	main.call("_on_inventory_slot_gui_input", event, 36)
-	_expect(int(main.get("_carried_slot")) == 0,
-		"double-clicking a worn position leaves the hand alone")
+	# A worn position double-clicks the other way: it comes off into the
+	# backpack. Slots 0 and 1 are taken in the fixture, so the destination is
+	# the first slot past them.
 	main.call("_cancel_carry")
+	_fixture(main)
+	_expect(int(main.call("_unequip_destination")) == 2,
+		"a double click on worn gear asks for the first free backpack slot")
+	main.call("_on_inventory_slot_gui_input", event, 36)
+	var unequip_line: String = str((main.get("inventory_description")
+		as RichTextLabel).text)
+	_expect(unequip_line.contains("position 1"),
+		"the window says which equipped position is coming off (said %s)"
+			% unequip_line)
+	# The first of the two clicks may have picked something else up; that
+	# is emptied before the unequip is sent, same as wearing.
+	_fixture(main)
+	main.call("_begin_carry", 1)
+	main.call("_on_inventory_slot_gui_input", event, 36)
+	_expect(int(main.get("_carried_slot")) == -1,
+		"the unequip empties whatever the hand was carrying")
+	# With every backpack slot full there is nowhere to send the piece, so
+	# the double click is a no-op rather than guessing a destination.
+	for slot: int in range(2, 36):
+		_inventory()[slot] = {"image_id": 5, "quantity": 1}
+	_expect(int(main.call("_unequip_destination")) == -1,
+		"a full backpack has no destination to offer")
+	_fixture(main)
 
 func _promise(main: Node, button: Button, target: String, cursor: int,
 		label: String) -> void:
