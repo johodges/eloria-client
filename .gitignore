@@ -1,4 +1,3 @@
-*.o
 __pycache__/
 *.py[cod]
 godot-client/.godot/
@@ -7,15 +6,6 @@ godot-client/**/*.import
 godot-client/**/*.uid
 godot-client/assets/actors/native/races/* *.png
 godot-client/assets/actors/native/hair/* *.png
-.deps/
-make.conf
-el.linux.bin
-git_version
-map_editor/mapedit.x86.linux.bin
-docs/DOXYTAGS
-docs/html
-pawn_scripts/*.amx
-pawn_scripts/features.inc
 
 # macOS Specific
 .DS_Store
@@ -24,7 +14,6 @@ xcuserdata/
 
 # CLion workspace files
 .idea/
-cmake-build-*/
 
 # The Godot editor/runtime binary, kept beside the project for local runs. It
 # is 180 MB and must never enter a commit.

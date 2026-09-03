@@ -48,7 +48,7 @@ python3 build_verdant_stair.py --stage terrain    # terrain and water only
 python3 build_verdant_stair.py                    # the whole package
 python3 ../../_toolkit/verify_runtime.py --package ..
 python3 ../../_toolkit/validate_gltf.py ../world.glb
-python3 ../../_toolkit/export_source_elm.py       # the 96x96 server ELM
+python3 ../../_toolkit/export_server_collision.py       # the 96x96 server walk grid
 python3 ../../_toolkit/capture_views.py           # offline preview captures
 python3 ../../_toolkit/compress_captures.py       # PNG -> WebP
 python3 ../../_toolkit/make_comparison.py         # concept/build sheets
@@ -107,7 +107,7 @@ shelf a place stands on. See `modeling-assumptions.md`.
 | temple | 100 m | the Green Temple and its court |
 | summit | 124 m | the ridge, the quarry, the Ssarathi pass |
 
-**This needs a matching server map.** `../source-elm/verdant_stair.elm` is
+**This needs a matching server map.** `../server-collision/verdant_stair.bin` is
 regenerated here at 96 × 96 tiles (576 × 576 height cells) with real elevation
 and walkability, replacing the flat 32 × 32 placeholder. The matching server
 change is `johodges/eloria-server` `feature/verdant-stair-576m-server-map`; the

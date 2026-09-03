@@ -118,7 +118,7 @@ A tomb niche off the side is what it was built for.
 cd ../ssarathi_ruins/source
 python build_insides.py                                  # the one map
 python verify_interiors.py --report ../../interiors/ssarathi_insides/verification-report.json
-python export_insides_elm.py                             # the server ELM
+python export_insides_collision.py                             # the server walk grid
 python ../../_toolkit/interior_views.py --package ../../interiors/ssarathi_insides
 ```
 

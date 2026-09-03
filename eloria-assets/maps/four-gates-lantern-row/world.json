@@ -73,7 +73,7 @@
         6.6
       ],
       "radius": 1.6,
-      "targetMap": "maps/startmap.elm",
+      "targetMap": "four_gates",
       "targetPosition": [
         -38.05,
         31.0,

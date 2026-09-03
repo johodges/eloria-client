@@ -20,7 +20,7 @@ all of which were confirmed here before anything was built:
   Westhaven Harbor Crane, Westhaven Lighthouse, Westhaven Sea Cave, Whitehorn
   Glacier. Only seven of the fifty-four instances were Mirrorhold's own. None
   of it was preserved.
-- **`source-elm/mirrorhold.elm` was a 32x32 flat placeholder** at height 11.
+- **`server-collision/mirrorhold.bin` was a 32x32 flat placeholder** at height 11.
 - **`references/00-concept-detail-board.png` is truncated** to 786,446 bytes;
   only its top row of five panels decodes. Still true in this commit — see
   `validation-report.md`.
@@ -43,7 +43,7 @@ all of which were confirmed here before anything was built:
   terrace dressing.
 - 31 landmarks, 8 interactives, 18 NPC and creature markers, 38 harvestables,
   6 portals, 3 spawns.
-- `source/` in full, and a regenerated 96x96 `source-elm/mirrorhold.elm`.
+- `source/` in full, and a regenerated 96x96 `server-collision/mirrorhold.bin`.
 
 ### Shared toolkit
 

@@ -21,7 +21,7 @@ records for every region. All were verified rather than assumed:
   exactly 786,445 bytes and its IDAT stream would not inflate; only the top row
   of five panels decoded. An intact 3,171,071-byte board was supplied and
   replaces it.
-- **Placeholder server map.** `source-elm/westhaven.elm` was 32 x 32 tiles, tile
+- **Placeholder server map.** `server-collision/westhaven.bin` was 32 x 32 tiles, tile
   0 and height 11 everywhere.
 
 ## What was built
@@ -185,7 +185,7 @@ ridge-and-noise field puts land where the client has 240 m of open harbour.
 The generated map passes `validate_generated_map`: 96 x 96 tiles, 576 x 576
 height cells, heights 7–24, arrival datum exactly 11.
 
-On the client side, `source-elm/westhaven.elm` was regenerated from the built
+On the client side, `server-collision/westhaven.bin` was regenerated from the built
 terrain — 96 x 96 tiles, 341,112 bytes, 55.8% walkable, real relief, water
 blocked.
 
@@ -196,6 +196,6 @@ blocked.
 | `_toolkit/regionpaths.py` | added `region_material_sets` |
 | `_toolkit/capture_views.py` | one line, to call it |
 | `_toolkit/godot_capture.gd` | write `index.json` for the frames it produced |
-| `source-elm/westhaven.elm` | regenerated at 96 x 96 from the built terrain |
+| `server-collision/westhaven.bin` | regenerated at 96 x 96 from the built terrain |
 | `godot-client/data/maps/registry.json` | Westhaven's entry only |
 | `maps/nymara-regions/production-index.json` | Westhaven's entry only |

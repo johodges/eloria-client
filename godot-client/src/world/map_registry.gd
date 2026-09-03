@@ -1,12 +1,22 @@
 class_name MapRegistry
 extends RefCounted
 
+## The registry is keyed by Eloria map id, and eloria-server sends that id.
+##
+## It used to send the path of an Eternal Lands map file instead
+## ("./maps/nymara/westhaven.elm"), so a name is still reduced to its basename
+## with any extension dropped. That is kept as tolerance, not as a contract: a
+## map id has neither a directory nor an extension, so reducing one is a no-op,
+## and an older server or a hand-typed console argument still resolves.
 static func normalize_server_map_id(value: String) -> String:
 	var normalized: String = value.strip_edges().replace("\\", "/")
 	while normalized.begins_with("/"):
 		normalized = normalized.substr(1)
 	while normalized.contains("//"):
 		normalized = normalized.replace("//", "/")
+	normalized = normalized.get_file()
+	if not normalized.get_extension().is_empty():
+		normalized = normalized.get_basename()
 	return normalized.to_lower()
 
 static func resolve(maps: Dictionary, server_map_id: String) -> Dictionary:

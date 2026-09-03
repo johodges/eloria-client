@@ -2110,7 +2110,7 @@
         20,
         424
       ],
-      "destinationMap": "maps/nymara/amberwood.elm",
+      "destinationMap": "amberwood",
       "radius": 3.5,
       "authority": "server"
     },
@@ -2127,7 +2127,7 @@
         204,
         504
       ],
-      "destinationMap": "maps/nymara/whitehorn_range.elm",
+      "destinationMap": "whitehorn_range",
       "radius": 3.5,
       "authority": "server"
     },
@@ -2144,7 +2144,7 @@
         558,
         186
       ],
-      "destinationMap": "maps/nymara/crownwater.elm",
+      "destinationMap": "crownwater",
       "radius": 3.5,
       "authority": "server"
     },
@@ -2161,7 +2161,7 @@
         204,
         12
       ],
-      "destinationMap": "maps/nymara/sunmane_steppe.elm",
+      "destinationMap": "sunmane_steppe",
       "radius": 3.5,
       "authority": "server"
     },
@@ -2179,7 +2179,7 @@
         378
       ],
       "landmark": "glasswarden-observatory",
-      "destinationMap": "maps/nymara/resonant_vault.elm",
+      "destinationMap": "resonant_vault",
       "destinationSpawn": "resonant-vault-stair",
       "radius": 2.5,
       "authority": "server"
@@ -2198,7 +2198,7 @@
         282
       ],
       "landmark": "amethyst-geode-cave-1",
-      "destinationMap": "maps/nymara/resonant_vault.elm",
+      "destinationMap": "resonant_vault",
       "destinationSpawn": "geode-hollow-mouth",
       "radius": 2.5,
       "authority": "server"
@@ -2217,7 +2217,7 @@
         216
       ],
       "landmark": "resonant-crystal-cluster-0",
-      "destinationMap": "maps/nymara/resonant_vault.elm",
+      "destinationMap": "resonant_vault",
       "destinationSpawn": "shardworks-headframe",
       "radius": 2.5,
       "authority": "server"
@@ -2236,7 +2236,7 @@
         345
       ],
       "landmark": "amethyst-storm-ruin-0",
-      "destinationMap": "maps/nymara/resonant_vault.elm",
+      "destinationMap": "resonant_vault",
       "destinationSpawn": "storm-barrow-stair",
       "radius": 2.5,
       "authority": "server"

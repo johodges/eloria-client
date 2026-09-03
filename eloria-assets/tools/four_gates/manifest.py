@@ -218,7 +218,7 @@ def build(stats: dict, bounds: dict, landmark_records: List[dict],
             "id": f"interior-{entry['id']}",
             "position": entry["door"],
             "radius": 2.4,
-            "targetMap": f"maps/{entry['id']}.elm",
+            "targetMap": f"{entry['id']}",
             "targetSpawn": "entrance",
             "doorNode": f"Door_{entry['id']}",
             "label": entry["name"],
@@ -324,7 +324,7 @@ def build(stats: dict, bounds: dict, landmark_records: List[dict],
         "interiors": [
             {"id": e["id"], "name": e["name"], "quarter": e["quarter"],
              "trade": e["trade"], "door": e["door"],
-             "doorNode": f"Door_{e['id']}", "map": f"maps/{e['id']}.elm",
+             "doorNode": f"Door_{e['id']}", "map": f"{e['id']}",
              "description": e["blurb"]}
             for e in INDEX.INTERIORS
         ],

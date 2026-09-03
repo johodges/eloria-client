@@ -53,7 +53,7 @@ cd grey_moors/source
 python3 build_grey_moors.py                    # world.glb, world.json, collision.bin, minimap, lod2
 python3 ../../_toolkit/validate_gltf.py ../world.glb
 python3 ../../_toolkit/verify_runtime.py --report ../verification-report.json
-python3 ../../_toolkit/export_source_elm.py    # writes ../../source-elm/grey_moors.elm
+python3 ../../_toolkit/export_server_collision.py    # writes ../server-collision/grey_moors.bin
 python3 ../../_toolkit/capture_views.py
 python3 ../../_toolkit/make_comparison.py
 ```

@@ -148,7 +148,7 @@
         0.0
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/amberwood.elm",
+      "destinationMap": "amberwood",
       "destinationSpawn": "gate-undercroft-stair",
       "authority": "server"
     }

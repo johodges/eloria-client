@@ -16,7 +16,7 @@ gain a recipe here, not a private copy of the module.
 | noise, mesh, textures, materials, gltf, terrain, trees, architecture, stonework, treecraft, crystalcraft, junglecraft, props, render | `region.py`-equivalent composition, `populate.py`-equivalent placement |
 | `validate_gltf.py`, `verify_runtime.py` | `build_<region>.py` |
 | `capture_views.py`, `make_comparison.py`, `compress_captures.py` | `views.py` (the `VIEWS` camera set and `PANELS` board mapping) |
-| `export_source_elm.py`, `preview.py` | |
+| `export_server_collision.py`, `preview.py` | |
 
 The Python package is still named `amberwood` because that is where it grew and
 renaming it would have touched every import in the same commit that moved the

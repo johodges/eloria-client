@@ -99,8 +99,8 @@ strict criterion exactly, so nothing regresses there.
    possible for this package; the preview sheet is one frame per room instead.
 4. **Every name is invented**, as with the region above.
 5. **The server's generated collision for this key does not match this
-   geometry.** `export_insides_elm.py` writes
-   `source-elm/whitehorn_glacier_temple.elm` from this package's own
+   geometry.** `export_insides_collision.py` writes
+   `server-collision/whitehorn_glacier_temple.bin` from this package's own
    `collision.bin` — 192 × 192 cells, 21.6% walkable, the rest void and rock —
    and it fits the 32 tiles an interior map already allows, so no server change
    is needed for extent. But `tools/generate_nymara_maps.py` still generates its

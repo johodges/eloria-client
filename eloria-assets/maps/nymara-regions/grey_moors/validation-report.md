@@ -106,7 +106,7 @@ tower, a croft roof or the top of a menhir.
 
 ## Server-side agreement
 
-The regenerated `source-elm/grey_moors.elm` is 341,112 bytes, 96 x 96 tiles,
+The regenerated `server-collision/grey_moors.bin` is 341,112 bytes, 96 x 96 tiles,
 576 x 576 height cells, 88.3% walkable — byte-identical in size and shape to
 Amethyst Barrens' and Crownwater's, which is what the server's collision
 contract test asserts.

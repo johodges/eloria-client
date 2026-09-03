@@ -2841,7 +2841,7 @@
       "id": "cave-wind_caves",
       "kind": "portal",
       "label": "Sunmane Wind Caves",
-      "destinationMap": "maps/nymara/sunmane_wind_caves.elm",
+      "destinationMap": "sunmane_wind_caves",
       "destinationSpawn": "entrance-hall",
       "destinationTile": [
         30,
@@ -2862,7 +2862,7 @@
       "id": "cave-crystal_hollow",
       "kind": "portal",
       "label": "Amethyst Crystal Hollow",
-      "destinationMap": "maps/nymara/sunmane_crystal_hollow.elm",
+      "destinationMap": "sunmane_crystal_hollow",
       "destinationSpawn": "adit-mouth",
       "destinationTile": [
         30,
@@ -3835,7 +3835,7 @@
     ]
   },
   "runtimePopulation": {
-    "note": "Server-owned placements. The client does not spawn these; they are recorded so the eloria-server region profile can register them against the hooks in maps/nymara-regions/source-elm/regions-connections.json.",
+    "note": "Server-owned placements. The client does not spawn these; they are recorded so the eloria-server region profile can register them against the hooks in maps/nymara-regions/region-connections.json.",
     "npcs": [
       {
         "id": "khan-of-the-sunmane",
@@ -4624,7 +4624,7 @@
       "eloria-assets/qa/regions/sunmane-steppe/README.md",
       "eloria-assets/NYMARA_ASSET_MANIFEST.md"
     ],
-    "sourceConnections": "../source-elm/regions-connections.json",
+    "sourceConnections": "../region-connections.json",
     "license": "Original Eloria project work, CC-BY-4.0",
     "thirdPartyAssets": "none"
   },

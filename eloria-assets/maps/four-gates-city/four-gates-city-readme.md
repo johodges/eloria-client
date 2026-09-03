@@ -28,7 +28,7 @@ Seven optional standard glTF clips are embedded: five portcullis open/close clip
 
 ## Portable gameplay package
 
-Run `python3 eloria-assets/tools/package_four_gates_world.py` to build `runtime/maps/four_gates/`. The portable package includes the authored GLB, terrain- and building-aware EWCG collision, convex navigation data, portal hooks, NPC/creature/harvest markers, five gameplay regions, eight waterfall effect stacks, and a matching four-mip `four_gates.dds` minimap. The client applies manifest-driven water UV scrolling and landmark-energy pulsing; static geometry remains the fallback.
+The retired `package_four_gates_world.py` built a portable package under `runtime/maps/four_gates/` for the C client; the map the Godot client loads is `eloria-assets/maps/four-gates/`, built by `eloria-assets/tools/four_gates/`. That portable package included the authored GLB, terrain- and building-aware EWCG collision, convex navigation data, portal hooks, NPC/creature/harvest markers, five gameplay regions, eight waterfall effect stacks, and a matching four-mip `four_gates.dds` minimap. The client applies manifest-driven water UV scrolling and landmark-energy pulsing; static geometry remains the fallback.
 
 ## Reference coverage
 

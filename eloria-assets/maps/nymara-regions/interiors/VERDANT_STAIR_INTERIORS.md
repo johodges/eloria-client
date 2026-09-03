@@ -71,7 +71,7 @@ cd ../verdant_stair/source
 python build_interiors.py                 # the combined map
 python preview_interior.py insides ../../interiors/verdant_stair_insides/references/00-checkpoint-contact-sheet.png \
        --captures ../../interiors/verdant_stair_insides/references/captures --cols 5
-python export_insides_elm.py              # the server ELM, from the package's own collision.bin
+python export_insides_collision.py              # the server walk grid, from the package's own collision.bin
 PYTHONPATH=../../_toolkit python ../../_toolkit/verify_runtime.py \
        --package ../../interiors/verdant_stair_insides
 ```
@@ -117,7 +117,7 @@ The server side is in `eloria-server` on
 `feature/verdant-stair-insides-server-map`: `config/eloria/maps.txt` registers
 the map and routes four portal pairs between `verdant_stair` and
 `verdant_stair_insides`, and the generator builds it at 64 tiles with the
-arrival at (47, 284). `export_insides_elm.py` writes the server ELM by
+arrival at (47, 284). `export_insides_collision.py` writes the server walk grid by
 downsampling the package's own `collision.bin`, so the client and server maps
 cannot drift apart, and every portal coordinate in `maps.txt` was checked
 against that ELM.

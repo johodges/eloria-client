@@ -3922,11 +3922,13 @@ func _preview_region(region_index: int) -> void:
 	map_coordinates.text = "Preview only — click Current map to return."
 
 func _friendly_map_name(server_map: String) -> String:
+	# Normalisation already reduces every spelling the server uses - its own
+	# file reference included - to the Eloria map id, so this only has to know
+	# the ids and the one the city still answers to.
 	var normalized: String = MapRegistry.normalize_server_map_id(server_map)
-	if normalized in ["maps/startmap.elm", "startmap.elm", "four_gates", "four-gates"]:
+	if normalized in ["four_gates", "four-gates"]:
 		return "Four Gates City"
-	var file_name: String = normalized.get_file().get_basename()
-	return file_name.replace("_", " ").replace("-", " ").capitalize()
+	return normalized.replace("_", " ").replace("-", " ").capitalize()
 
 func _load_hud_settings() -> void:
 	var config: ConfigFile = ConfigFile.new()

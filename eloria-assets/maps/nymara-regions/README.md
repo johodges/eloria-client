@@ -15,9 +15,12 @@ The generated GLBs are production starters, not final art. Terrain, routes, wate
 
 ## Rebuild and verify
 
+Each region builds itself, from its own `source/build_<region>.py` over the
+shared `_toolkit/`. The single ELM-driven builder that produced the first pass
+went with the C client; see `REGION-PRODUCTION-GUIDE.md`.
+
 ```sh
-python3 eloria-assets/tools/build_nymara_region_maps.py
-python3 eloria-assets/tools/validate_nymara_region_maps.py
+cd eloria-assets/maps/nymara-regions/<region>/source && python3 build_<region>.py
 python3 eloria-assets/tools/render_nymara_region_maps.py \
   eloria-assets/maps/nymara-regions/*/world.glb \
   --columns 4 \

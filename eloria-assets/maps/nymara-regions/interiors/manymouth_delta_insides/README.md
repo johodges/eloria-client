@@ -83,7 +83,7 @@ lamps out of the next.
 
 The consequence, which is expected and is the point: `verify_runtime.py` reports
 **88.8% grounding-ray misses** on this map. It is measuring the void. The
-server-side ELM comes out 90.7% blocked for the same reason.
+server-side walk grid comes out 90.7% blocked for the same reason.
 
 ## Lighting
 
@@ -101,7 +101,7 @@ Two classes, because one is not enough:
 ```sh
 cd ../../manymouth_delta/source
 python3 build_interiors.py                       # writes this package
-python3 export_insides_elm.py                    # writes the 64x64 server ELM
+python3 export_insides_collision.py                    # writes the 64x64 server ELM
 python3 preview_interior.py insides sheet.png --captures ../../interiors/manymouth_delta_insides/references/captures
 python3 ../../_toolkit/verify_runtime.py --package ../../interiors/manymouth_delta_insides
 ```

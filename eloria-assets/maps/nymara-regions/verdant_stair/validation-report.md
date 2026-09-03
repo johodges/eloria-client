@@ -133,7 +133,7 @@ sampled or traced. The build is seeded and deterministic.
 
 ## The server map — the real open gap
 
-`../source-elm/verdant_stair.elm` is regenerated here at 96 × 96 tiles with
+`../server-collision/verdant_stair.bin` is regenerated here at 96 × 96 tiles with
 real elevation and walkability, replacing the flat 32 × 32 placeholder.
 
 **The server does not read it.** `eloria-server/tools/generate_nymara_maps.py`

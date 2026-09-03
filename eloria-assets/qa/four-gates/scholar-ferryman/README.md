@@ -15,9 +15,6 @@ substitute for the required in-client comparison capture.
 
 Validation commands:
 
-```bash
-python3 eloria-assets/tools/generate_all_assets.py --dry-run --jobs 4 build/eloria-data
-python3 eloria-assets/tools/generate_all_assets.py --jobs 4 build/eloria-data
-python3 eloria-assets/tools/check_provenance.py
-python3 eloria-assets/tools/validate_generated_assets.py build/eloria-data
-```
+> Reproduction commands removed: this stage was validated against the
+> Eternal Lands format data pack, which was deleted with the C client
+> on 2026-09-03. The evidence below is kept as the record of it.

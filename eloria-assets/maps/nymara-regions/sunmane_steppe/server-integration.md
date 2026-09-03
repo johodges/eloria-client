@@ -14,7 +14,7 @@ request is transcription rather than redesign.
 ## Hooks
 
 The region's hook names come from
-`maps/nymara-regions/source-elm/regions-connections.json` and are
+`maps/nymara-regions/region-connections.json` and are
 unchanged:
 
 | Hook | Name |

@@ -23,15 +23,11 @@ are distinct rather than aliases of the former primitive presets.
 
 ## Reproduction and validation
 
-```sh
-python3 eloria-assets/tools/generate_all_assets.py build/eloria-data
-python3 eloria-assets/tools/validate_generated_assets.py build/eloria-data
-python3 eloria-assets/tools/render_cal3d_wireframe.py \
-  build/eloria-data/actors/nymara/npcs/luminous_official_m.xmf \
-  eloria-assets/qa/four-gates/npcs-equipment/luminous_official_m_wireframe.png
-```
+> Reproduction commands removed: this stage was validated against the
+> Eternal Lands format data pack, which was deleted with the C client
+> on 2026-09-03. The evidence below is kept as the record of it.
 
-`validate_generated_assets.py` now asserts the exact actor paths for IDs 307
+Validation asserted the exact actor paths for IDs 307
 and 309, and the exact names, slots, attachment bones, topology floors,
 material sizes, and icon sizes for item IDs 1000 through 1005.
 

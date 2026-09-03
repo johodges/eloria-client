@@ -1,5 +1,0 @@
-newmtl verdigris_bloom
-Kd 1 1 1
-d 1
-map_Kd verdigris_bloom.png
-map_d verdigris_bloom.png

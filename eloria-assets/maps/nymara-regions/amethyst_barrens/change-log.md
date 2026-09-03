@@ -11,7 +11,7 @@ defect the region production guide lists.
 | 12 of 55 landmarks belonged to other regions (Ssarathi, Mirrorhold, Sunmane, Manymouth x3, Orun x2, Crownwater, Whitehorn, Amberwood) | None preserved. 47 landmarks, all region-correct |
 | `references/00-concept-detail-board.png` truncated to 786,444 bytes; only 113 of 793 rows decode (14%) | Intact board supplied by the user and installed. Full decode |
 | `references/01-concept-aerial-overview.png` missing | Copied from `eloria-assets/concepts/nymara-regions/` |
-| `source-elm/amethyst_barrens.elm` a flat placeholder: 32x32 tiles, height 11 everywhere | Regenerated at 96x96 tiles, 576x576 cells, 52 distinct height bytes |
+| `server-collision/amethyst_barrens.bin` a flat placeholder: 32x32 tiles, height 11 everywhere | Regenerated at 96x96 tiles, 576x576 cells, 52 distinct height bytes |
 | `world.json` had no `bounds`, no `coordinateTransform`, no collision | Complete against the schema; `collision.bin` written |
 | `production-index.json` recorded `water: false` | Corrected. The aerial shows sea in two corners |
 | Package carried loose `textures/` PNGs | Removed; the GLB is self-contained |
@@ -94,7 +94,7 @@ Crownwater sessions running concurrently.
 - `regionpaths.load_region_build()`: `capture_views.py` did
   `from build_amberwood import build_region`, so it could only ever capture
   Amberwood.
-- `export_source_elm.py`: took `SERVER_CELLS` from Amberwood's region module,
+- `export_server_collision.py`: took `SERVER_CELLS` from Amberwood's region module,
   which would size every region's ELM to Amberwood's grid.
 - `capture_views.py`: a region may supply its own `LIGHTING` dict. The default
   is Amberwood's warm afternoon sun, which turns a bruised violet basin into a

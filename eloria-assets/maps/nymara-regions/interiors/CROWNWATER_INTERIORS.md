@@ -76,7 +76,7 @@ shaft with a switchback stair, a ringing floor and an open belfry.
 cd ../crownwater/source
 python build_insides.py                                  # the one map
 python verify_interiors.py --report ../interiors-verification.json
-python export_insides_elm.py                             # the server ELM
+python export_insides_collision.py                             # the server walk grid
 ```
 
 `build_interiors.py` still builds the four as **separate** packages and is kept

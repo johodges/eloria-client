@@ -37,7 +37,7 @@ cd source
 python3 build_ssarathi.py                        # writes the package one dir up
 python3 ../../_toolkit/verify_runtime.py --package ..
 python3 ../../_toolkit/validate_gltf.py ../world.glb
-python3 ../../_toolkit/export_source_elm.py      # regenerates the 96x96 server ELM
+python3 ../../_toolkit/export_server_collision.py      # regenerates the 96x96 server walk grid
 python3 ../../_toolkit/capture_views.py          # offline comparison captures
 python3 ../../_toolkit/compress_captures.py      # PNG -> WebP
 python3 ../../_toolkit/make_comparison.py        # concept/build comparison sheets
@@ -69,7 +69,7 @@ so the reachable footprint is `x ∈ [-174, 401]`, `z ∈ [-401, 174]`. Terrain 
 cut 30 m larger on every side and the surplus is raised into jungle-clad valley
 walls, so a character cannot reach an unfinished void.
 
-**This needs a matching server map.** `../source-elm/ssarathi_ruins.elm` is
+**This needs a matching server map.** `../server-collision/ssarathi_ruins.bin` is
 regenerated here at 96 x 96 tiles (576 x 576 height cells) with real elevation
 and walkability, replacing the flat 32 x 32 placeholder. The server-side change
 is `johodges/eloria-server` branch `feature/ssarathi-ruins-576m-server-map`; the

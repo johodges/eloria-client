@@ -12,7 +12,7 @@ work started:
 | Landmarks belong to other regions | yes, **all 65** - Grey Moor Ritual Shrine, Sunmane Caravan Camp, Amberwood Hollow Tree, eight Mirrorhold Civic Towers | discarded entirely; 10 authored landmarks replace them |
 | `world.json` incomplete | worse than stated - **no `bounds`, no `coordinateTransform`** | full schema-1 manifest |
 | Detail board truncated | yes, 786,445 bytes; **only 91 of 793 rows decode** | **resolved** - an intact 3,395,261-byte board was supplied and is committed here; all ten panels crop |
-| `source-elm/crownwater.elm` a 32x32 flat placeholder | yes | regenerated, 96x96 tiles / 576x576 cells, from this build's collision grid |
+| `server-collision/crownwater.bin` a 32x32 flat placeholder | yes | regenerated, 96x96 tiles / 576x576 cells, from this build's collision grid |
 
 ## Build history, in order
 
@@ -71,7 +71,7 @@ Only this region's entries, so a merge keeps both sides:
   entry only: `serverOrigin` 58 -> 174, `walkingHeight` 0.0 -> 4.5, status, and
   `requiresServerMap`.
 - `maps/nymara-regions/production-index.json` - the `crownwater` entry only.
-- `maps/nymara-regions/source-elm/crownwater.elm` - regenerated.
+- `maps/nymara-regions/server-collision/crownwater.bin` - regenerated.
 
 New files outside the package:
 

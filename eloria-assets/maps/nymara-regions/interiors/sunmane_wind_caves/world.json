@@ -557,7 +557,7 @@
         30,
         10
       ],
-      "destinationMap": "maps/nymara/sunmane_steppe.elm",
+      "destinationMap": "sunmane_steppe",
       "destinationTile": [
         128,
         175

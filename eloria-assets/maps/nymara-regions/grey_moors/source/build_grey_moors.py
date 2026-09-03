@@ -178,7 +178,7 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
         build.portals.append({
             "id": portal_id, "name": name, "type": "interior-entrance",
             "position": position, "serverTile": tile, "landmark": landmark_id,
-            "destinationMap": "maps/nymara/grey_moor_barrows.elm",
+            "destinationMap": "grey_moor_barrows",
             "destinationSpawn": portal_id, "radius": 2.5,
             "authority": "server"})
         build.spawns.append({

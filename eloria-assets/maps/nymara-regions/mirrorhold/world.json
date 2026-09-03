@@ -1655,7 +1655,7 @@
         336,
         558
       ],
-      "destinationMap": "maps/nymara/whitehorn_range.elm",
+      "destinationMap": "whitehorn_range",
       "radius": 3.5,
       "authority": "server"
     },
@@ -1672,7 +1672,7 @@
         294,
         6
       ],
-      "destinationMap": "maps/nymara/westhaven.elm",
+      "destinationMap": "westhaven",
       "radius": 3.5,
       "authority": "server"
     },
@@ -1689,7 +1689,7 @@
         564,
         234
       ],
-      "destinationMap": "maps/nymara/amethyst_barrens.elm",
+      "destinationMap": "amethyst_barrens",
       "radius": 3.5,
       "authority": "server"
     },
@@ -1706,7 +1706,7 @@
         18,
         162
       ],
-      "destinationMap": "maps/nymara/crownwater.elm",
+      "destinationMap": "crownwater",
       "radius": 3.5,
       "authority": "server"
     },
@@ -1724,7 +1724,7 @@
         441
       ],
       "landmark": "orrery",
-      "destinationMap": "maps/nymara/mirrorhold_interiors.elm",
+      "destinationMap": "mirrorhold_interiors",
       "destinationSpawn": "lens-vault-stair",
       "radius": 2.5,
       "authority": "server"
@@ -1743,7 +1743,7 @@
         264
       ],
       "landmark": "plaza",
-      "destinationMap": "maps/nymara/mirrorhold_interiors.elm",
+      "destinationMap": "mirrorhold_interiors",
       "destinationSpawn": "cistern-door",
       "radius": 2.5,
       "authority": "server"
@@ -1762,7 +1762,7 @@
         228
       ],
       "landmark": "cliff-town",
-      "destinationMap": "maps/nymara/mirrorhold_interiors.elm",
+      "destinationMap": "mirrorhold_interiors",
       "destinationSpawn": "stair-cellars-door",
       "radius": 2.5,
       "authority": "server"

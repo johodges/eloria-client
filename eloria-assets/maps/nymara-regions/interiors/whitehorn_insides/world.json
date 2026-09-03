@@ -204,7 +204,7 @@
         14.0
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/whitehorn_range.elm",
+      "destinationMap": "whitehorn_range",
       "destinationSpawn": "whitehorn-glacier-temple-door",
       "section": "glacier_temple",
       "authority": "server"
@@ -219,7 +219,7 @@
         21.0
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/whitehorn_range.elm",
+      "destinationMap": "whitehorn_range",
       "destinationSpawn": "whitehorn-mine-adit",
       "section": "whitehorn_mine",
       "authority": "server"
@@ -234,7 +234,7 @@
         113.0
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/whitehorn_range.elm",
+      "destinationMap": "whitehorn_range",
       "destinationSpawn": "whitehorn-ice-cave-mouth",
       "section": "ice_cave",
       "authority": "server"
@@ -249,7 +249,7 @@
         147.0
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/whitehorn_range.elm",
+      "destinationMap": "whitehorn_range",
       "destinationSpawn": "whitehorn-barrow-door",
       "section": "frost_barrow",
       "authority": "server"

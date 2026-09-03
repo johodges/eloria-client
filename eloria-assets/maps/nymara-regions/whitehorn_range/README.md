@@ -38,7 +38,7 @@ cd source
 python3 build_whitehorn.py                        # writes the package one directory up
 python3 ../../_toolkit/verify_runtime.py --package ..
 python3 ../../_toolkit/validate_gltf.py ../world.glb
-python3 ../../_toolkit/export_source_elm.py --package ..
+python3 ../../_toolkit/export_server_collision.py --package ..
 cd ..
 python3 ../_toolkit/capture_views.py              # comparison captures (run from the package)
 python3 ../_toolkit/make_comparison.py
@@ -60,7 +60,7 @@ so the reachable footprint is `x ∈ [-174, 401]`, `z ∈ [-401, 174]`. Terrain 
 cut 30 m larger on every side and the surplus is raised into mountain wall, so a
 character cannot reach an unfinished void.
 
-**This needs a matching server map.** `../source-elm/whitehorn_range.elm` is
+**This needs a matching server map.** `../server-collision/whitehorn_range.bin` is
 regenerated here at 96 x 96 tiles (576 x 576 height cells) with real elevation
 and walkability, replacing the flat 32 x 32 placeholder. The corresponding
 server change is on `feature/whitehorn-range-576m-server-map` in `eloria-server`.

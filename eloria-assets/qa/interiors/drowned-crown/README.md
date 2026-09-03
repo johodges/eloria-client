@@ -11,13 +11,9 @@ additional teal lights supplement the four transition lights. The entrance at
 `(58,10)` remains unobstructed and the existing map ID and transition metadata
 are unchanged.
 
-```sh
-python3 eloria-assets/tools/generate_nymara_complete.py build/eloria-data
-python3 eloria-assets/tools/validate_generated_assets.py build/eloria-data
-python3 eloria-assets/tools/render_map_qa.py \
-  build/eloria-data/maps/nymara/drowned_crown.elm \
-  eloria-assets/qa/interiors/drowned-crown/drowned_crown_overhead.png
-```
+> Reproduction commands removed: this stage was validated against the
+> Eternal Lands format data pack, which was deleted with the C client
+> on 2026-09-03. The evidence below is kept as the record of it.
 
 The validator asserts the authored module counts, minimum scenery density,
 lighting density, dependency resolution, and clear arrival radius. The overhead

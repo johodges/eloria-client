@@ -212,7 +212,7 @@ def main() -> int:
     manifest["portals"] = [
         {"id": f"exit-{s['spawn']}", "name": f"Return to Ssarathi Ruins ({s['name']})",
          "type": "map-transition", "position": s["arrival"],
-         "destinationMap": "maps/nymara/ssarathi_ruins.elm",
+         "destinationMap": "ssarathi_ruins",
          "destinationSpawn": s["spawn"], "radius": 2.5,
          "section": s["id"], "authority": "server"}
         for s in sections]

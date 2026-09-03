@@ -1,5 +1,13 @@
 # Nymara production asset manifest
 
+> **Historical.** This describes the Eternal Lands format data pack the retired
+> C client loaded — ELM maps, DDS minimaps, Cal3D actors — and the generators
+> that produced it. All of that was removed on 2026-09-03; see
+> [../ELORIA_MODIFICATIONS.md](../ELORIA_MODIFICATIONS.md). It is kept for the
+> content design it records: the region roster, the arrival datums, the actor
+> id ranges and the roster counts, which the Godot client's own assets still
+> follow. Do not read the file layouts or the tool names as current.
+
 ## Runtime contracts
 
 - Client maps: 27 ELM files: six bootstrap, twelve Nymara exteriors, seven
@@ -100,10 +108,9 @@ concept-comparison, overhead, and representative topology QA under
 
 ## Regeneration and validation
 
-```sh
-python3 eloria-assets/tools/generate_all_assets.py build/eloria-data
-python3 eloria-assets/tools/validate_generated_assets.py build/eloria-data
-```
+> Reproduction commands removed: this stage was validated against the
+> Eternal Lands format data pack, which was deleted with the C client
+> on 2026-09-03. The evidence below is kept as the record of it.
 
 The validator checks the exact map count, ELM sections and dependencies,
 Cal3D skeleton/mesh/animation contracts, customization DDS layouts, all local
