@@ -17,6 +17,7 @@ func _init() -> void:
 	_decoding()
 	_centring()
 	_selection()
+	_ground_marker()
 	_scale_decoding()
 	_scale_applied()
 	print("actor footprints: ", "PASS" if _failures == 0 else "FAIL (%d)" % _failures)
@@ -301,6 +302,88 @@ func _scale_applied() -> void:
 		and is_equal_approx((actor.get_node("Nameplate") as Node3D).position.y,
 			ReplicatedActor3D.NAMEPLATE_HEIGHT),
 		"a later scale change is applied to model and nameplate together")
+	actor.queue_free()
+
+
+# --- the ground marker ------------------------------------------------------
+#
+# It used to be a torus scaled by the widest side of the footprint, which for
+# anything but a single tile said the wrong thing: a circle cannot show which
+# way a rectangle lies, and it either overhangs the ground the creature holds
+# or sits inside it. It is now the box itself.
+
+## The marker's extent on each axis, read back off the mesh it was built from.
+func _outline_size(width_m: float, depth_m: float) -> Vector2:
+	var mesh: ArrayMesh = ReplicatedActor3D.footprint_outline(width_m, depth_m)
+	var box: AABB = mesh.get_aabb()
+	return Vector2(box.size.x, box.size.z)
+
+func _ground_marker() -> void:
+	var single: Vector2 = _outline_size(1.0, 1.0)
+	_expect(single.x < 1.0 and single.y < 1.0,
+		"a single tile's marker sits inside its tile rather than covering it")
+
+	# The claim the whole change is about: three tiles of creature, three tiles
+	# of marker.
+	var three: Vector2 = _outline_size(3.0, 3.0)
+	_expect(absf(three.x - three.y) < 0.001, "a square footprint is marked square")
+	_expect(three.x > single.x * 2.5,
+		"a three-tile creature's marker is about three times a one-tile one")
+
+	# A rectangle is marked as a rectangle, the right way round. A circle could
+	# never have shown this.
+	var wide: Vector2 = _outline_size(4.0, 2.0)
+	_expect(wide.x > wide.y, "a marker wider than it is deep is drawn that way")
+	_expect(absf(wide.x - wide.y - 2.0) < 0.01,
+		"and by the two tiles that separate its sides")
+	var deep: Vector2 = _outline_size(2.0, 4.0)
+	_expect(is_equal_approx(deep.x, wide.y) and is_equal_approx(deep.y, wide.x),
+		"the two axes are not transposed")
+
+	# It is an outline: a hollow frame, not a filled slab.
+	var mesh: ArrayMesh = ReplicatedActor3D.footprint_outline(4.0, 4.0)
+	var arrays: Array = mesh.surface_get_arrays(0)
+	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	_expect(vertices.size() == 24,
+		"four sides of two triangles: %d vertices" % vertices.size())
+	var interior := 0
+	for point: Vector3 in vertices:
+		if absf(point.x) < 1.5 and absf(point.z) < 1.5:
+			interior += 1
+	_expect(interior == 0, "the middle of the box is left open")
+
+	# Every footprint the server can send builds a mesh rather than degenerating.
+	for width: int in range(1, 11):
+		for depth: int in range(1, 11):
+			var size: Vector2 = _outline_size(float(width), float(depth))
+			if size.x <= 0.0 or size.y <= 0.0:
+				_expect(false, "%dx%d built an empty marker" % [width, depth])
+				return
+	_expect(true, "every footprint from 1x1 to 10x10 builds a marker")
+
+	# A footprint does not rotate with the creature standing in it, so the
+	# marker gives back the yaw it inherits as a child of the actor.
+	var adapter := CoordinateAdapter.new({"metresPerTile": 1.0, "walkingHeight": 0.0})
+	var actor := ReplicatedActor3D.new()
+	root.add_child(actor)
+	actor.configure({"actor_id": 2, "x": 4, "y": 4, "rotation": 0,
+		"actor_type": 40, "kind": 3, "name": "Bear", "health": 10,
+		"max_health": 10, "footprint": Vector2i(2, 2)}, adapter, {}, {})
+	var ring: MeshInstance3D = actor.get_node_or_null("SelectionRing") as MeshInstance3D
+	if _expect(ring != null, "the actor has a ground marker"):
+		var marked: AABB = (ring.mesh as ArrayMesh).get_aabb()
+		_expect(marked.size.x > 1.5 and marked.size.z > 1.5,
+			"a two-tile creature is marked across two tiles, not one")
+		actor.set_selected(true)
+		actor.rotation.y = PI / 2.0
+		actor.call("_level_selection_ring")
+		_expect(is_equal_approx(ring.rotation.y, -PI / 2.0),
+			"the marker stays square to the world while the actor turns")
+		# And it follows the actor back, rather than sticking at one correction.
+		actor.rotation.y = 0.0
+		actor.call("_level_selection_ring")
+		_expect(is_equal_approx(ring.rotation.y, 0.0),
+			"the correction tracks the actor rather than latching")
 	actor.queue_free()
 
 func _expect(value: bool, label: String) -> bool:
