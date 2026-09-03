@@ -135,6 +135,31 @@ func _run() -> void:
 		"an actor keeps the facing it was turned to while it attacks (off by %.1f deg)"
 			% faced_west)
 
+	# And the same round as it really arrives. The server queues a creature's
+	# turn and the swing behind it into one flush, so the client decodes both
+	# in one read and renders the single state they reduce to - the turn is
+	# never a frame of its own. Every aggressor in a multi-combat swings on
+	# this shape, which is why a crowd of them all faced away at once.
+	# Reset it facing west, so the eastward turn in the burst has somewhere to
+	# turn from and a dropped one leaves the body pointing the wrong way.
+	actor.apply_server_state({"actor_id": 7, "x": 0, "y": 0, "rotation": 0,
+		"command": 26}, adapter, true)
+	for _still_again: int in range(3):
+		await create_timer(cadence).timeout
+	var burst: Dictionary = {"actor_id": 7, "x": 0, "y": 0, "rotation": 0}
+	for burst_command: int in [40, 18]:
+		burst = ActorReducer.apply_command(burst, burst_command)
+	actor.apply_server_state(burst, adapter)
+	for _round: int in range(3):
+		burst = ActorReducer.apply_command(burst, 46)
+		actor.apply_server_state(burst, adapter)
+		await create_timer(cadence).timeout
+	var faced_east: float = absf(rad_to_deg(wrapf(
+		actor.rotation.y - adapter.direction_to_godot(Vector2i(1, 0)), -PI, PI)))
+	_expect(faced_east < 1.0,
+		"a turn coalesced into one frame with the swing behind it still turns the actor (off by %.1f deg)"
+			% faced_east)
+
 	print("actor facing tests: ",
 		"PASS" if _failures == 0 else "FAIL (%d)" % _failures)
 	quit(_failures)
