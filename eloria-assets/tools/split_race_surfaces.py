@@ -480,12 +480,71 @@ def classify(positions, uvs, indices, texture: Image.Image,
         "wardrobe_shirt": band_colour(0.63, 0.72),
         "body": band_colour(0.92, 0.98),
     }
-    known = {name: colour for name, colour in references.items()
-             if colour is not None}
+    # The crown alone is not always a big enough sample of "skin": checked
+    # directly on Whitehorn Votary, whose shirt and skin are both pale
+    # (0.29 apart, versus 0.85 on Luminous), the hand -- reliably bare
+    # skin too, out at the T-pose's own wingspan -- reads as a colour
+    # 0.16 from the crown but only 0.14 from the shirt, so the whole hand
+    # (thousands of triangles, not a handful a size-based cleanup could
+    # absorb) voted for "shirt". A patch of confirmed-correct jaw skin
+    # measured the same way reads closer to the hand than the crown too
+    # (baked shading, not a UV or geometry bug -- checked directly by
+    # comparing a confirmed-correct patch of chin skin against known
+    # crown and hand samples). Whatever bakes into this body's skin
+    # shading differently in different places, one blended midpoint
+    # does not represent either extreme it was built from. Keeping the
+    # crown and hand as TWO SEPARATE anchors for "body" -- instead of
+    # averaging them into one colour -- lets a face match whichever one
+    # it actually resembles; checked directly, this alone recovers
+    # 1500+ of Whitehorn Votary's jaw faces with no extra sampling, and
+    # changes under 10 faces total across both Luminous bodies (isolated
+    # single triangles at the mesh's own top/bottom extremes, the kind
+    # absorb_small_islands (below) already cleans up regardless of which
+    # side they land on).
+    names, colours = [], []
+    for name, colour in references.items():
+        if name != "body" and colour is not None:
+            names.append(name)
+            colours.append(colour)
+    if references["body"] is not None:
+        names.append("body")
+        colours.append(references["body"])
+    wingspan = float(np.abs(x).max())
+    hand_sel = np.abs(x) > 0.7 * wingspan
+    if hand_sel.any():
+        names.append("body")
+        colours.append(np.median(rgb[hand_sel], axis=0))
+    # The same baked-shading gap shows up between two WARDROBE classes
+    # too, not just body-vs-shirt: checked directly on Glasswarden
+    # Female, the sleeve cuff -- just inboard of the hand, at 0.50-0.68
+    # of the model's own wingspan -- reads noticeably darker than the
+    # torso sample "wardrobe_shirt" was built from (0.63-0.72 of mesh
+    # height, chest-level), and by coincidence that darker shade sits
+    # closer to THIS body's own pants reference than to its own shirt
+    # one, so the cuff voted for "pants" ("pants mixed in the shirt").
+    # A second, cuff-level anchor for "wardrobe_shirt" fixes it the same
+    # way the hand anchor fixed skin, but the cuff band is not always
+    # sleeve: checked directly on Mycelari Female it is half bare
+    # forearm, and on both Ssarathi bodies it is a three-way mix with
+    # pants, because those bodies' own proportions or rest pose put the
+    # wrist somewhere else. Rather than guess a narrower band per body,
+    # gate the anchor on the sample's own colour spread -- a sleeve is
+    # one material and reads as a tight cluster (spread under 0.024 on
+    # the 13 bodies checked directly where this band is clean); a band
+    # that is actually straddling two different materials reads far
+    # looser (0.198-0.573 on the 3 checked directly where it is not).
+    # 0.05 sits in the wide gap between those two populations.
+    cuff_sel = (np.abs(x) > 0.50 * wingspan) & (np.abs(x) <= 0.68 * wingspan)
+    if references["wardrobe_shirt"] is not None and cuff_sel.sum() > 20:
+        cuff_colour = np.median(rgb[cuff_sel], axis=0)
+        cuff_spread = float(np.median(
+            np.linalg.norm(rgb[cuff_sel] - cuff_colour, axis=1)))
+        if cuff_spread < 0.05:
+            names.append("wardrobe_shirt")
+            colours.append(cuff_colour)
     labels = np.full(len(faces), "body", dtype=object)
-    if known:
-        names = list(known.keys())
-        palette = np.stack([known[n] for n in names])
+    if colours:
+        palette = np.stack(colours)
         dist = np.linalg.norm(rgb[:, None, :] - palette[None, :, :], axis=2)
         nearest = np.argmin(dist, axis=1)
         for i, name in enumerate(names):
@@ -907,13 +966,13 @@ def add_scalp(document, binary) -> int:
 def split(path: Path, calibrate: bool) -> str:
     document, binary = read_glb(path)
     extras = document.setdefault("asset", {}).setdefault("extras", {})
-    if int(extras.get("eloriaSurfacesSplit", 0)) >= 27:
+    if int(extras.get("eloriaSurfacesSplit", 0)) >= 30:
         return "already split"
-    if int(extras.get("eloriaSurfacesSplit", 0)) in (15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26):
+    if int(extras.get("eloriaSurfacesSplit", 0)) in (15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29):
         report = reclassify_surfaces(document, binary)
-        extras["eloriaSurfacesSplit"] = 27
+        extras["eloriaSurfacesSplit"] = 30
         write_glb(path, document, binary)
-        return "%s -> v27" % report
+        return "%s -> v30" % report
     if int(extras.get("eloriaSurfacesSplit", 0)) == 14:
         count = resmooth_shared_surfaces(document, binary)
         extras["eloriaSurfacesSplit"] = 15
@@ -1050,7 +1109,7 @@ def split(path: Path, calibrate: bool) -> str:
 
     del mesh_node["mesh"]
     add_scalp(document, binary)
-    extras["eloriaSurfacesSplit"] = 27
+    extras["eloriaSurfacesSplit"] = 30
     write_glb(path, document, binary)
     return "split: %s" % counts
 
