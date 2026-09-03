@@ -1302,6 +1302,8 @@ func _creation_appearance() -> Dictionary:
 		# the create packet always intended.
 		"shirt": int(%CreateShirt.value), "pants": int(%CreatePants.value),
 		"boots": int(%CreateBoots.value),
+		# Independent of "hair", which now picks the style only.
+		"hair_color": int(%CreateHairColor.value),
 	}
 
 func _on_character_preview_gui_input(event: InputEvent) -> void:

@@ -216,9 +216,9 @@ func _init() -> void:
 	_expect_bytes("create character fixture",
 		EloriaProtocol.create_character("Test", "secret",
 			{"skin": 1, "hair": 2, "shirt": 3, "pants": 4, "boots": 5,
-			"actor_type": 0, "head": 2, "eyes": 6}),
-		PackedByteArray([141, 21, 0, 84, 101, 115, 116, 32, 115, 101, 99, 114,
-			101, 116, 0, 1, 2, 3, 4, 5, 0, 2, 6]))
+			"actor_type": 0, "head": 2, "eyes": 6, "hair_color": 7}),
+		PackedByteArray([141, 22, 0, 84, 101, 115, 116, 32, 115, 101, 99, 114,
+			101, 116, 0, 1, 2, 3, 4, 5, 0, 2, 6, 7]))
 	# Creation choices are skinned actor surfaces, never rigid attachments.
 	# AppearanceVariants no longer exposes a function that says so by returning
 	# an empty dictionary; the refusal lives at the one call site that built
@@ -391,6 +391,12 @@ func _init() -> void:
 	_expect(int((enhanced_actor.appearance as Dictionary).eyes) == 12
 		and int((enhanced_actor.equipment_visuals as Dictionary).get(7, 0)) == 13,
 		"enhanced actor trailer preserves eyes and neck visual")
+	_expect(not (enhanced_actor.appearance as Dictionary).has("hair_color"),
+		"a five-byte trailer from a server built before hair_color leaves it unset, not zeroed")
+	var hair_colour_payload := enhanced_actor_payload + PackedByteArray([9])
+	var hair_colour_actor: Dictionary = EloriaProtocol.decode_server(51, hair_colour_payload)
+	_expect(int((hair_colour_actor.appearance as Dictionary).get("hair_color", -1)) == 9,
+		"a six-byte trailer's extra byte decodes as hair colour")
 	var equipment_config_file: FileAccess = FileAccess.open(
 		"res://data/actors/equipment.json", FileAccess.READ)
 	_expect(equipment_config_file != null, "equipment part registry opens")
