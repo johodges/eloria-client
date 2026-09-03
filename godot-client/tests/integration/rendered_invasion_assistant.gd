@@ -48,8 +48,8 @@ func _run() -> void:
 	_assistant = _main.get("invasion_assistant_window") as Window
 	_expect(_assistant != null and _assistant.visible,
 		"the assistant is on screen")
-	_expect(_assistant.size.x * _assistant.size.y <= 1120 * 720 / 2,
-		"the assistant covers at most half the footprint it used to")
+	_expect(_assistant.size == Vector2i(784, 504),
+		"the assistant covers about half the footprint it used to")
 	_expect(_assistant.size.x <= SCREEN_SIZE.x
 		and _assistant.size.y <= SCREEN_SIZE.y,
 		"the assistant fits the client it opens over")
@@ -101,16 +101,27 @@ func _run() -> void:
 		"the monsters tab: the catalog beside a full ten-line stat block and"
 			+ " the add-to-group row")
 
-	# The corner grip: the same handle the inventory panel carries, dragged
-	# out to the size an invasion master with room to spare would want.
+	# The corner grip: the same handle the inventory panel carries. The pair of
+	# captures below is the whole argument for scaling the window rather than
+	# resizing its frame - the same eleven maps, the same canvas and the same
+	# roster are in both, drawn larger and smaller.
 	_assistant.tabs.current_tab = 0
-	_assistant.resize_window(Vector2i(1100, 660))
+	_assistant.resize_to_scale(1.35)
 	await _settle()
-	_expect(_assistant.size == Vector2i(1100, 660),
-		"the grip enlarges the window")
-	await _capture("invasion-assistant-resized.png",
-		"the same maps tab after the corner grip is dragged out to 1100x660:"
-			+ " the layout grows into the room rather than stretching")
+	_expect(_assistant.size.x > 1000, "the grip enlarges the window")
+	await _capture("invasion-assistant-enlarged.png",
+		"the maps tab dragged out to its largest scale on a 1280x720 client:"
+			+ " the same layout, drawn bigger")
+
+	_assistant.resize_to_scale(0.65)
+	await _settle()
+	_expect(_assistant.size == Vector2i(510, 328),
+		"the grip shrinks the window to its smallest scale")
+	_expect(absf(_assistant.get_visible_rect().size.x - 784.0) <= 2.0,
+		"the smallest window still lays its contents out across the full 784")
+	await _capture("invasion-assistant-smallest.png",
+		"the maps tab at its smallest scale, 510x328: the sidebar, the canvas"
+			+ " and the roster are all still there, just smaller")
 
 	_forget_stored_size()
 	await _settle()
@@ -128,9 +139,9 @@ func _forget_stored_size() -> void:
 	if config.load(SETTINGS_PATH) != OK:
 		return
 	if not config.has_section_key(WindowPreferences.SECTION,
-			"invasion_assistant_size"):
+			"invasion_assistant_scale"):
 		return
-	config.erase_section_key(WindowPreferences.SECTION, "invasion_assistant_size")
+	config.erase_section_key(WindowPreferences.SECTION, "invasion_assistant_scale")
 	config.save(SETTINGS_PATH)
 
 

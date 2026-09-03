@@ -53,29 +53,51 @@ func _run() -> void:
 	# Resizing from the corner grip, and the preference that outlives it.
 	root.size = Vector2i(1280, 720)
 	assistant._fit_to_viewport()
-	assistant.resize_window(Vector2i(80, 80))
-	_expect(assistant.size == assistant.min_size,
-		"the grip cannot shrink the assistant below its minimum size")
-	assistant.resize_window(Vector2i(4000, 4000))
+	var full_extent: Vector2 = assistant.get_visible_rect().size
+	_expect(absf(full_extent.x - 784.0) <= 1.0 and absf(full_extent.y - 504.0) <= 1.0,
+		"the layout is 784x504 at its shipped scale")
+
+	# The point of scaling rather than resizing: a smaller window draws the
+	# same layout smaller. A frame that shrank without its contents would take
+	# the roster or the map sidebar off the edge instead.
+	assistant.resize_to_scale(0.1)
+	_expect(assistant.size.x < 784 and assistant.size.y < 504,
+		"the grip shrinks the window")
+	var shrunk: Vector2 = assistant.get_visible_rect().size
+	_expect(absf(shrunk.x - full_extent.x) <= 2.0
+		and absf(shrunk.y - full_extent.y) <= 2.0,
+		"a shrunken window lays its contents out across the same extent,"
+			+ " so the elements get smaller rather than cut off")
+	_expect(assistant.size.x >= roundi(784.0 * 0.65),
+		"the grip cannot shrink the assistant past its smallest scale")
+	assistant.resize_to_scale(9.0)
 	_expect(assistant.size.x <= root.size.x and assistant.size.y <= root.size.y,
 		"the grip cannot grow the assistant past the viewport")
-	assistant.resize_window(Vector2i(720, 480))
-	_expect(assistant.size == Vector2i(720, 480), "the grip resizes the window")
+	var grown: Vector2 = assistant.get_visible_rect().size
+	_expect(absf(grown.x - full_extent.x) <= 2.0
+		and absf(grown.y - full_extent.y) <= 2.0,
+		"an enlarged window draws the same layout larger rather than"
+			+ " stretching it into more room than it has content for")
+
+	assistant.resize_to_scale(1.25)
+	_expect(assistant.size == Vector2i(980, 630), "the grip scales the window")
 	assistant._flush_size_preference()
 	root.size = Vector2i(640, 400)
 	assistant._fit_to_viewport()
-	_expect(assistant.size.x < 720 and assistant._preferred_size == Vector2i(720, 480),
-		"a viewport too small to hold the window trims it without forgetting the size")
+	_expect(assistant.size.x < 980
+		and is_equal_approx(assistant._preferred_scale, 1.25),
+		"a viewport too small for the chosen scale draws it smaller without"
+			+ " forgetting the choice")
 	root.size = Vector2i(1280, 720)
 	assistant._fit_to_viewport()
-	_expect(assistant.size == Vector2i(720, 480),
-		"the remembered size comes back once the viewport can hold it")
+	_expect(assistant.size == Vector2i(980, 630),
+		"the remembered scale comes back once the viewport can hold it")
 
 	# A window opened again - in this session or the next one - starts at the
 	# size the player left it at rather than at the shipped one.
 	var reopened = AssistantScript.new()
 	root.add_child(reopened)
-	_expect(reopened.size == Vector2i(720, 480),
+	_expect(reopened.size == Vector2i(980, 630),
 		"a freshly opened assistant restores the stored size preference")
 	reopened.queue_free()
 
@@ -134,9 +156,9 @@ func _forget_stored_size() -> void:
 	if config.load(SETTINGS_PATH) != OK:
 		return
 	if not config.has_section_key(WindowPreferences.SECTION,
-			"invasion_assistant_size"):
+			"invasion_assistant_scale"):
 		return
-	config.erase_section_key(WindowPreferences.SECTION, "invasion_assistant_size")
+	config.erase_section_key(WindowPreferences.SECTION, "invasion_assistant_scale")
 	config.save(SETTINGS_PATH)
 
 

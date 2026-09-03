@@ -8,17 +8,20 @@ const MAP_REFRESH_SECONDS := 5.0
 const INDEX_REFRESH_SECONDS := 15.0
 const VIEWPORT_MARGIN := Vector2i(32, 32)
 const PREFERENCE_KEY := "invasion_assistant"
-## Half the footprint the assistant used to claim - 0.7 of each edge of the
-## 1120x720 it opened at, which covered most of a 1280x720 client. That is
-## more room than three tabs of lists need. Every font and column below is
-## sized for this window rather than for the old one, so the same content
-## fits without scrolling sideways.
-const DEFAULT_SIZE := Vector2i(784, 504)
-const MINIMUM_SIZE := Vector2i(520, 360)
+## The window is laid out at this size at every scale, and drawn at whatever
+## scale the grip has been dragged to. It is half the footprint the assistant
+## used to claim - 0.7 of each edge of the 1120x720 it opened at, which
+## covered most of a 1280x720 client - and every font and column below is
+## sized for it rather than for the old one.
+const CONTENT_SIZE := Vector2i(784, 504)
+## The bounds the inventory panel's grip already uses, so the two windows
+## resize with the same reach and stop in the same places.
+const MIN_SCALE := 0.65
+const MAX_SCALE := 1.75
 const COMPACT_FONT_SIZE := 12
 const RESIZE_GRIP_SIZE := Vector2(22, 22)
-## A border drag fires size_changed on every pixel; the preference is written
-## once the player stops moving rather than once per frame.
+## A drag changes the scale every frame; the preference is written once the
+## player stops moving rather than once per frame.
 const SIZE_SAVE_DELAY := 0.5
 
 var map_registry: Dictionary = {}
@@ -78,11 +81,14 @@ var create_map: OptionButton
 var create_description: LineEdit
 var status: Label
 var resize_grip: Button
-var _preferred_size := DEFAULT_SIZE
-var _applying_layout := false
+## What the player chose, and what the viewport currently allows. They part
+## company on a screen too small for the chosen scale, and the choice is the
+## one that gets remembered.
+var _preferred_scale := 1.0
+var _window_scale := 1.0
 var _resizing := false
 var _resize_start_mouse := Vector2i.ZERO
-var _resize_start_size := Vector2i.ZERO
+var _resize_start_scale := 1.0
 var _size_save_countdown := 0.0
 var _map_refresh_elapsed := 0.0
 var _index_refresh_elapsed := 0.0
@@ -93,14 +99,14 @@ var _texture_cache: Dictionary = {}
 
 func _ready() -> void:
 	title = "Invasion Assistant"
-	# Laying the window out is not the player resizing it: every size the
-	# build below forces has to stay out of the remembered preference.
-	_applying_layout = true
-	min_size = MINIMUM_SIZE
-	_preferred_size = WindowPreferences.stored_size(PREFERENCE_KEY, DEFAULT_SIZE)
+	# The corner grip is the only way to resize this window. A border drag
+	# would change the frame without changing the scale of what is inside it,
+	# which is exactly how a narrowed window loses a column.
+	unresizable = true
+	_preferred_scale = WindowPreferences.stored_scale(PREFERENCE_KEY, 1.0,
+		MIN_SCALE, MAX_SCALE)
 	close_requested.connect(hide)
 	visibility_changed.connect(_on_visibility_changed)
-	size_changed.connect(_on_size_changed)
 	_build_ui()
 	get_tree().root.size_changed.connect(_fit_to_viewport)
 	_fit_to_viewport()
@@ -131,34 +137,39 @@ func _available_size() -> Vector2i:
 		maxi(200, viewport_size.y - VIEWPORT_MARGIN.y))
 
 
-## Reopening the assistant restores the size the player left it at rather than
-## the shipped one. A viewport too small to hold that size only trims what is
-## shown - the preference itself is untouched, so the window comes back at its
-## full remembered size on a screen that can hold it.
+## Reopening the assistant restores the scale the player left it at rather
+## than the shipped one. A viewport too small to hold that scale only draws it
+## smaller - the preference itself is untouched, so the window comes back at
+## its full remembered size on a screen that can hold it.
 func _fit_to_viewport() -> void:
+	_apply_window_scale(_preferred_scale)
 	var viewport_size := get_tree().root.size
-	var available := _available_size()
-	_applying_layout = true
-	min_size = Vector2i(mini(MINIMUM_SIZE.x, available.x),
-		mini(MINIMUM_SIZE.y, available.y))
-	size = Vector2i(mini(_preferred_size.x, available.x),
-		mini(_preferred_size.y, available.y))
 	position = Vector2i(maxi(0, (viewport_size.x - size.x) / 2),
 		maxi(0, (viewport_size.y - size.y) / 2))
-	set_deferred("_applying_layout", false)
 
 
-## Applies a size the player asked for, from the corner grip or from a border
-## drag, and records it as the new preference.
-func resize_window(requested: Vector2i) -> void:
+## The window's pixel size and the scale its contents are drawn at move
+## together, so the control tree is laid out across the same CONTENT_SIZE at
+## every scale. Shrinking the window makes the type, the lists and the map
+## smaller; it never takes a column away, which is the whole point of scaling
+## the window rather than resizing its frame.
+func _apply_window_scale(requested: float) -> void:
 	var available := _available_size()
-	var clamped := Vector2i(
-		clampi(requested.x, min_size.x, available.x),
-		clampi(requested.y, min_size.y, available.y))
-	_applying_layout = true
-	size = clamped
-	set_deferred("_applying_layout", false)
-	_remember_size(clamped)
+	var ceiling: float = maxf(MIN_SCALE, minf(MAX_SCALE, minf(
+		float(available.x) / float(CONTENT_SIZE.x),
+		float(available.y) / float(CONTENT_SIZE.y))))
+	_window_scale = clampf(requested, MIN_SCALE, ceiling)
+	content_scale_factor = _window_scale
+	size = Vector2i(roundi(float(CONTENT_SIZE.x) * _window_scale),
+		roundi(float(CONTENT_SIZE.y) * _window_scale))
+
+
+## Applies a scale the player asked for from the corner grip, and records it
+## as the new preference.
+func resize_to_scale(requested: float) -> void:
+	_apply_window_scale(requested)
+	_preferred_scale = _window_scale
+	_size_save_countdown = SIZE_SAVE_DELAY
 	_keep_on_screen()
 
 
@@ -169,22 +180,9 @@ func _keep_on_screen() -> void:
 		clampi(position.y, 0, maxi(0, viewport_size.y - size.y)))
 
 
-func _on_size_changed() -> void:
-	# Trimming the window to a shrinking viewport is not the player choosing a
-	# smaller assistant, so only their own drags reach the preference.
-	if _applying_layout:
-		return
-	_remember_size(size)
-
-
-func _remember_size(value: Vector2i) -> void:
-	_preferred_size = value
-	_size_save_countdown = SIZE_SAVE_DELAY
-
-
 func _flush_size_preference() -> void:
 	_size_save_countdown = 0.0
-	WindowPreferences.store_size(PREFERENCE_KEY, _preferred_size)
+	WindowPreferences.store_scale(PREFERENCE_KEY, _preferred_scale)
 
 
 func _on_resize_grip_gui_input(event: InputEvent) -> void:
@@ -195,15 +193,22 @@ func _on_resize_grip_gui_input(event: InputEvent) -> void:
 		_resizing = mouse.pressed
 		if mouse.pressed:
 			_resize_start_mouse = _pointer_position()
-			_resize_start_size = size
+			_resize_start_scale = _window_scale
 		else:
 			_flush_size_preference()
 		resize_grip.accept_event()
 	elif event is InputEventMouseMotion and _resizing:
-		# The screen pointer rather than a position inside the window: the grip
-		# travels as the window grows, so a window-relative delta would chase
+		# Measured against the unscaled layout and read off whichever axis the
+		# player moved further, which is how the inventory panel's grip reads a
+		# drag. The pointer is taken from outside the window because the grip
+		# travels as the window grows, and a window-relative delta would chase
 		# itself.
-		resize_window(_resize_start_size + _pointer_position() - _resize_start_mouse)
+		var delta := Vector2(_pointer_position() - _resize_start_mouse)
+		var normalized := Vector2(delta.x / float(CONTENT_SIZE.x),
+			delta.y / float(CONTENT_SIZE.y))
+		var scale_delta: float = (normalized.x if absf(normalized.x) >= absf(normalized.y)
+			else normalized.y)
+		resize_to_scale(_resize_start_scale + scale_delta)
 		resize_grip.accept_event()
 
 
