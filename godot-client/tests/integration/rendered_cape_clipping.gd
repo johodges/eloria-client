@@ -78,6 +78,10 @@ func _run() -> void:
 	var moved: float = idle_ref.distance_to(
 		_joint(skeleton, cape_bones[cape_bones.size() - 1]))
 	print("cloth live check: hem moved %.3f m from idle to mid-attack" % moved)
+	actor.play_action(&"idle")
+	for _f: int in range(20):
+		await process_frame
+	await _capture(actor, "cape-idle-back.png", true)
 
 	for clip: String in ATTACKS:
 		if not player.has_animation(clip):
@@ -100,7 +104,8 @@ func _run() -> void:
 		player.seek(worst_phase * length, true)
 		for _f: int in range(6):
 			await process_frame
-		await _capture(actor, "cape-%s.png" % clip.to_lower())
+		await _capture(actor, "cape-%s.png" % clip.to_lower(), false)
+		await _capture(actor, "cape-%s-back.png" % clip.to_lower(), true)
 		var verdict: String = "ok" if worst <= AHEAD_TOLERANCE else "CLIPS"
 		print("  %-22s worst joint %+.3f m ahead at phase %.2f  %s"
 			% [clip, worst, worst_phase, verdict])
@@ -113,13 +118,14 @@ func _run() -> void:
 	await process_frame
 	quit(_failures)
 
-func _capture(actor: ReplicatedActor3D, name: String) -> void:
+func _capture(actor: ReplicatedActor3D, name: String, back: bool) -> void:
 	var skeleton: Skeleton3D = _skeleton_of(actor)
 	var chest: Vector3 = skeleton.global_transform * skeleton.get_bone_global_pose(
 		skeleton.find_bone("spine_03")).origin
-	# Front of the actor: a +z camera sees this rig's back (the model carries
-	# a 180 correction), so the chest is viewed from -z.
-	_camera.global_position = chest + Vector3(0.0, 0.0, -1.9)
+	# A +z camera sees this rig's back (the model carries a 180 correction),
+	# so the chest is viewed from -z and the back from +z.
+	var z: float = 1.9 if back else -1.9
+	_camera.global_position = chest + Vector3(0.0, 0.0, z)
 	_camera.look_at(chest, Vector3.UP)
 	for _f: int in range(3):
 		await process_frame
