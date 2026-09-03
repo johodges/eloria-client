@@ -3127,6 +3127,13 @@ func _on_state_changed(path: StringName) -> void:
 			# times inside a single frame; coalescing collapses a burst into one
 			# pass without delaying anything past the frame it arrived in.
 			_queue_world_sync()
+		&"actor_footprints":
+			# The table arrives after login - the server can only send it once
+			# this client has said it can decode it, which is after LOG_IN_OK -
+			# so actors are usually already on screen and already drawn as one
+			# tile each. Re-syncing is what takes them to the size the server
+			# has actually reserved for them.
+			_queue_world_sync()
 		&"chat":
 			_capture_speech_bubble_from_chat()
 			_count_unseen_private_messages()
