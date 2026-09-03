@@ -40,6 +40,7 @@ func _init() -> void:
 		"achievements_window_v1":
 			EloriaProtocol.ServerMessage.ELORIA_ACHIEVEMENTS_STATE,
 		"degraded_items_v1": EloriaProtocol.ServerMessage.ELORIA_DEGRADED_ITEMS,
+		"experience64_v1": EloriaProtocol.ServerMessage.ELORIA_EXPERIENCE_STATE,
 		"party_window_v1": EloriaProtocol.ServerMessage.ELORIA_PARTY_STATE,
 		"quest_archive_v1":
 			EloriaProtocol.ServerMessage.ELORIA_QUEST_ARCHIVE_STATE,
@@ -69,6 +70,7 @@ func _init() -> void:
 		# No degradation chains authored: a real answer, not a missing packet.
 		EloriaProtocol.ServerMessage.ELORIA_DEGRADED_ITEMS: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_ACHIEVEMENTS_STATE: "00000000",
+		EloriaProtocol.ServerMessage.ELORIA_EXPERIENCE_STATE: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO: "5b0000004100",
 		EloriaProtocol.ServerMessage.ELORIA_SPELL_POWER: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE: "0000",
@@ -1197,6 +1199,32 @@ func _init() -> void:
 	# output of the server's own builder in eloria/protocol.py, captured from
 	# the independent Eloria configuration, so a change to either side of one
 	# of these contracts breaks this suite rather than a window.
+	# Command 245, experience without the legacy packet's 32-bit ceiling. A
+	# capped player's total reads as exactly 4,294,967,295 through the old
+	# window forever, which is the wall Eternal Lands never got past.
+	var wide: Dictionary = EloriaProtocol.decode_server(245, _hex(
+		"020061747461636b000080c6a47e8d030029b5017b000000000f2700006861727665"
+		+ "7374696e67003930000000000000204e00000000000000000000"))
+	_expect(wide.type == "experience_state"
+		and (wide.skills as Array).size() == 2,
+		"the wide experience packet decodes every skill it carries")
+	var capped: Dictionary = (wide.skills as Array)[0]
+	_expect(str(capped.skill) == "attack"
+		and int(capped.experience) == 1000000000000000
+		and int(capped.next_level) == 2063709481
+		and int(capped.post_cap_points) == 9999,
+		"a total far past 32 bits survives the read intact")
+	var levelling: Dictionary = (wide.skills as Array)[1]
+	_expect(str(levelling.skill) == "harvesting"
+		and int(levelling.experience) == 12345
+		and int(levelling.post_cap_points) == 0,
+		"a skill still levelling reports no post-cap points")
+	_expect(str(EloriaProtocol.decode_server(245,
+		_hex("010061007b00")).get("error", "")) == "experience_skill_values",
+		"a skill row cut short of its values is refused")
+	_expect(EloriaProtocol.u64(_hex("ffffffffffffff7f")) == 9223372036854775807,
+		"the 64-bit reader carries the whole signed range")
+
 	# Command 244, everything countable in one packet rather than a dozen chat
 	# lines that scroll away.
 	var achievements: Dictionary = EloriaProtocol.decode_server(244, _hex(

@@ -118,6 +118,15 @@ var worn_slots_mask: int = 0
 ## Everything countable this character has done: the achievement tallies and
 ## the achievements themselves, which used to exist only as a chat dump.
 var achievements_state: Dictionary = {"counters": [], "completed": []}
+## True lifetime experience per skill, keyed by skill name, and what it has
+## bought past the level ceiling. Held separately from `stats` because the
+## legacy stats packet carries the same numbers through a 32-bit window and
+## the two would disagree above four billion - this one is the truth.
+var experience64: Dictionary = {}
+
+func post_cap_points_for(skill: String) -> int:
+	var row: Variant = experience64.get(skill)
+	return int((row as Dictionary).get("post_cap_points", 0)) if row is Dictionary else 0
 
 func is_degraded_item(name: String) -> bool:
 	return degraded_item_names.has(name)
@@ -259,6 +268,7 @@ func _on_connection_state_changed(value: String) -> void:
 		degraded_item_names.clear()
 		worn_slots_mask = 0
 		achievements_state = {"counters": [], "completed": []}
+		experience64.clear()
 		# Cleared on logout, not on a map change: a party outlives walking
 		# through a portal, and the server re-states it at login either way.
 		party = _empty_party_state()
@@ -810,6 +820,12 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			achievements_state = {"counters": event.counters,
 				"completed": event.completed}
 			state_changed.emit(&"achievements_state")
+		"experience_state":
+			experience64.clear()
+			for raw_skill: Variant in event.skills:
+				var row: Dictionary = raw_skill as Dictionary
+				experience64[str(row.get("skill", ""))] = row
+			state_changed.emit(&"experience_state")
 		"party":
 			party = {"in_party": bool(event.in_party),
 				"members": event.members,

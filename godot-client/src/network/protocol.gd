@@ -77,7 +77,7 @@ enum ServerMessage {
 	ELORIA_ALMANAC_STATE = 238, ELORIA_STORAGE_STATE = 239,
 	ELORIA_PARTY_STATE = 240, ELORIA_QUEST_ARCHIVE_STATE = 241,
 	ELORIA_DEGRADED_ITEMS = 242, ELORIA_WORN_SLOTS = 243,
-	ELORIA_ACHIEVEMENTS_STATE = 244,
+	ELORIA_ACHIEVEMENTS_STATE = 244, ELORIA_EXPERIENCE_STATE = 245,
 	ADD_ACTOR_ANIMATION = 89,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
@@ -175,6 +175,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"player_info_v1",
 	"achievements_window_v1",
 	"degraded_items_v1",
+	"experience64_v1",
 	"quest_archive_v1",
 	"quest_journal_v1",
 	"spell_power_v1",
@@ -919,6 +920,8 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return decode_degraded_items(payload)
 		ServerMessage.ELORIA_ACHIEVEMENTS_STATE:
 			return decode_achievements_state(payload)
+		ServerMessage.ELORIA_EXPERIENCE_STATE:
+			return decode_experience_state(payload)
 		ServerMessage.ELORIA_WORN_SLOTS:
 			if payload.size() != 8:
 				return {"type": "invalid", "error": "worn_slots_length"}
@@ -991,6 +994,36 @@ static func _nul_run(payload: PackedByteArray, offset: int,
 		values.append(str(field.value))
 		offset = int(field.offset)
 	return {"values": values, "offset": offset}
+
+## Command 245. A skill's true lifetime experience, in 64 bits.
+##
+## The legacy stats packet carries experience in a 32-bit field at a fixed
+## offset, so a total past four billion shows as four billion there. This is
+## the same number without that ceiling, plus what it has bought since the
+## skill stopped levelling. GDScript integers are signed 64-bit, which covers
+## every value this can carry short of the top bit.
+static func decode_experience_state(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 2:
+		return {"type": "invalid", "error": "experience_length"}
+	var count: int = u16(payload)
+	var offset: int = 2
+	var skills: Array[Dictionary] = []
+	for _index: int in range(count):
+		var field: Dictionary = _nul_at(payload, offset)
+		if field.is_empty():
+			return {"type": "invalid", "error": "experience_skill_text"}
+		offset = int(field.offset)
+		if offset + 20 > payload.size():
+			return {"type": "invalid", "error": "experience_skill_values"}
+		skills.append({
+			"skill": str(field.value),
+			"experience": u64(payload, offset),
+			"next_level": u64(payload, offset + 8),
+			"post_cap_points": u32(payload, offset + 16)})
+		offset += 20
+	if offset != payload.size():
+		return {"type": "invalid", "error": "experience_trailing"}
+	return {"type": "experience_state", "skills": skills}
 
 ## Command 244. Every countable thing this character has done.
 ##
@@ -2125,6 +2158,11 @@ static func u16(bytes: PackedByteArray, offset := 0) -> int:
 static func s16(bytes: PackedByteArray, offset := 0) -> int:
 	var value := u16(bytes, offset)
 	return value - 65536 if value >= 32768 else value
+
+## Little-endian 64-bit. Read as two 32-bit halves because shifting a byte to
+## bit 56 in one expression is where a signed-integer surprise would hide.
+static func u64(bytes: PackedByteArray, offset := 0) -> int:
+	return u32(bytes, offset) | (u32(bytes, offset + 4) << 32)
 
 static func u32(bytes: PackedByteArray, offset := 0) -> int:
 	return (int(bytes[offset]) | (int(bytes[offset + 1]) << 8)

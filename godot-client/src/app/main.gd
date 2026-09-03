@@ -3049,6 +3049,8 @@ func _on_state_changed(path: StringName) -> void:
 				_sync_ground_bag()
 		&"achievements_state":
 			_sync_counters()
+		&"experience_state":
+			_sync_stats()
 		&"worn_slots", &"degraded_items":
 			# Which slots are worn changes independently of what is in them,
 			# so the icons are redrawn on the mask as well as on the contents.
@@ -4519,9 +4521,7 @@ func _sync_stats() -> void:
 		skill_lines.append("[cell]%s[/cell][cell]%s[/cell][cell]%s[/cell]" % [
 			skill.capitalize(),
 			"[right]%d/%d[/right]" % [current_level, base_level],
-			"[right]%s / %s[/right]" % [
-				_grouped(int(stats.get(skill + "_exp", 0))),
-				_grouped(int(stats.get(skill + "_exp_next", 0)))]])
+			"[right]%s[/right]" % _experience_text(skill, stats)])
 	# Each section opens with a heading, so its inner table starts closed and
 	# the heading tag reopens it; the leading "[table=2]" here is the one the
 	# first heading closes. The skills column is given the larger share of the
@@ -6441,6 +6441,26 @@ func _spawn_health_change_label(actor: ReplicatedActor3D, delta: int) -> void:
 	tween.finished.connect(func() -> void:
 		_active_floating_labels.erase(label)
 		label.queue_free())
+
+## One skill's experience for the statistics table.
+##
+## Prefers the 64-bit figure when the server has sent one: the legacy stats
+## packet carries experience through a 32-bit field, so a capped player's
+## total reads as exactly 4,294,967,295 there forever. A skill that has
+## stopped levelling shows what its extra experience has bought instead of a
+## "next level" it will never reach.
+func _experience_text(skill: String, stats: Dictionary) -> String:
+	var wide: Variant = AppState.experience64.get(skill)
+	if wide is Dictionary:
+		var row: Dictionary = wide as Dictionary
+		var points: int = int(row.get("post_cap_points", 0))
+		var earned: int = int(row.get("experience", 0))
+		if points > 0:
+			return "%s  (+%d)" % [_grouped(earned), points]
+		return "%s / %s" % [_grouped(earned),
+			_grouped(int(row.get("next_level", 0)))]
+	return "%s / %s" % [_grouped(int(stats.get(skill + "_exp", 0))),
+		_grouped(int(stats.get(skill + "_exp_next", 0)))]
 
 ## An inventory or equipment slot's icon, drawn worn when the server says that
 ## slot holds worn goods. The slot rather than the image id is what decides it:
