@@ -56,6 +56,14 @@ const NIGHT_FOG := Color(0.24, 0.28, 0.38)
 ## midnight.
 const NOON_ELEVATION := -62.0
 const MIDNIGHT_ELEVATION := 12.0
+## A caster's shadow length is roughly height / tan(elevation above the
+## horizon): ~9x its own height at 6 degrees, ~5x at 12, ~2x at 25. Below this
+## cutoff the sun is close enough to the horizon that the shadow it throws
+## stretches most of the way across the screen behind a walking player - a
+## long shadow at dusk reads as atmosphere, one that dominates the view reads
+## as broken. Shadows fade in once the sun has climbed clear of that band
+## rather than the instant it crosses the horizon.
+const SHADOW_ELEVATION_CUTOFF := -15.0
 
 ## The server's own daylight curve, for a continuous minute.
 static func daylight(minute: float) -> float:
@@ -106,9 +114,17 @@ static func apply(manifest: WorldManifest, world_environment: WorldEnvironment,
 	sun.light_color = noon_colour.lerp(NIGHT_SUN_COLOUR, 1.0 - light) \
 		.lerp(DAWN_SUN_COLOUR, edge * 0.55)
 	sun.rotation_degrees.x = lerpf(MIDNIGHT_ELEVATION, NOON_ELEVATION, light)
-	# The key light stops casting once it is below the horizon; a shadow from
-	# a sun that has set is the giveaway that nothing is really moving.
-	sun.shadow_enabled = bool(declared_sun.get("shadows", true)) and light > 0.08
+	# Gate on the elevation itself rather than a fraction of `light`: a fixed
+	# 0.08 cutoff on `light` was never the horizon - MIDNIGHT_ELEVATION is
+	# positive (sun below the horizon) and NOON_ELEVATION is negative (sun
+	# above it), and that cutoff fell well inside the still-below-horizon side
+	# of the interpolation, so the key light kept casting for a while after
+	# "sunset" and again before "sunrise". Comparing the interpolated angle
+	# directly ties the two together at whatever `light` the crossing actually
+	# falls at, and SHADOW_ELEVATION_CUTOFF holds the light off further still,
+	# until the shadow it would throw has come down to a sane length.
+	sun.shadow_enabled = bool(declared_sun.get("shadows", true)) \
+		and sun.rotation_degrees.x < SHADOW_ELEVATION_CUTOFF
 
 	var declared_ambient: Dictionary = declared.get("ambient", {}) as Dictionary
 	var noon_ambient: float = float(declared_ambient.get("energy", 0.85))
