@@ -1614,8 +1614,9 @@ static func decode_player_info(payload: PackedByteArray) -> Dictionary:
 		"name": str(values[0]), "achievements": achievements}
 
 ## Command 90. One map marker the server placed: a waypoint, a quest target or
-## a tutorial pointer. The map name arrives as the server's own file reference
-## (`./maps/four_gates.elm`); the marker belongs to that map and no other.
+## a tutorial pointer. The map arrives as the server's own file reference, which
+## is still an Eternal Lands map path (`./maps/four_gates.elm`); the marker
+## belongs to that map and no other.
 static func decode_map_marker(payload: PackedByteArray) -> Dictionary:
 	if payload.size() < 6:
 		return {"type": "invalid", "error": "map_marker_length"}
@@ -1631,7 +1632,8 @@ static func decode_map_marker(payload: PackedByteArray) -> Dictionary:
 
 ## `./maps/four_gates.elm` is the map id `four_gates`. The server names its own
 ## maps this way in every marker; matching on the reference itself would tie the
-## client to a path layout that has nothing to do with what it renders.
+## client to a path layout, and to a file format, that have nothing to do with
+## what it renders.
 static func map_id_from_reference(reference: String) -> String:
 	return reference.get_file().get_basename()
 

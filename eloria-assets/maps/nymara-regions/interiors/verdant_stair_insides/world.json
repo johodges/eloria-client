@@ -213,7 +213,7 @@
         32.0
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/verdant_stair.elm",
+      "destinationMap": "verdant_stair",
       "destinationSpawn": "temple-sanctum-door",
       "section": "temple_sanctum",
       "authority": "server"
@@ -228,7 +228,7 @@
         34.0
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/verdant_stair.elm",
+      "destinationMap": "verdant_stair",
       "destinationSpawn": "cenote-deeps-stair",
       "section": "cenote_deeps",
       "authority": "server"
@@ -243,7 +243,7 @@
         207.5
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/verdant_stair.elm",
+      "destinationMap": "verdant_stair",
       "destinationSpawn": "banyan-hollow-arch",
       "section": "banyan_hollow",
       "authority": "server"
@@ -258,7 +258,7 @@
         210.0
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/verdant_stair.elm",
+      "destinationMap": "verdant_stair",
       "destinationSpawn": "stair-quarry-adit",
       "section": "stair_quarry",
       "authority": "server"

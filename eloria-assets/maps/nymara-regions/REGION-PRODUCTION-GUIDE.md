@@ -29,7 +29,7 @@ previews. **Do not write a second one.** Copy or import it.
 | `validate_gltf.py` | standalone glTF 2.0 validator |
 | `verify_runtime.py` | reproduces the client's grounding contract offline |
 | `capture_views.py`, `make_comparison.py`, `compress_captures.py` | comparison captures and sheets |
-| `export_source_elm.py` | writes the server-side ELM from the built terrain |
+| `export_server_collision.py` | writes the server-side walk grid from the built terrain |
 
 **Region-specific**, i.e. what you actually write: `region.py` (extents, anchors,
 routes, watercourses, terrain sculpting) and `populate.py` (placement passes).
@@ -47,7 +47,7 @@ commit, before any region work:
 
 1. `git mv amberwood/source/amberwood _toolkit/amberwood`, and move
    `native/`, `validate_gltf.py`, `verify_runtime.py`, `capture_views.py`,
-   `make_comparison.py`, `compress_captures.py`, `export_source_elm.py` and
+   `make_comparison.py`, `compress_captures.py`, `export_server_collision.py` and
    `preview.py` with it.
 2. Leave `build_amberwood.py` in `amberwood/source/` — it is the region's build,
    not toolkit — and point it at the new location.
@@ -127,8 +127,10 @@ each for your region, then fix or document it.
    in `eloria-assets/concepts/nymara-regions/<region>_region_concept.png` are
    intact and are your composition authority; the board is your player-scale
    authority and you cannot do panel-level work without it.
-4. **`source-elm/<region>.elm` is a flat placeholder** — tile 0 and height 11
-   everywhere, 32x32 tiles.
+4. **The region ships no authored walk grid** beyond what its own
+   `collision.bin` carries. The server resamples that; only a map composing
+   several interiors needs one written for it, by
+   `<region>/source/export_insides_collision.py`.
 5. **`eloria-assets/qa/regions/<region>/README.md`** describes the *intended*
    layout in prose. It is a useful starting brief, but it describes the
    placeholder generator's plan, not the concept art. The painting wins.
@@ -144,7 +146,8 @@ Read these files, do not assume:
 - `godot-client/src/world/coordinate_adapter.gd` — server tile ↔ Godot metres
 - `godot-client/src/app/main.gd`, `_place_actor_on_surface` — actor grounding
 - `godot-client/schemas/world-manifest-1.schema.json` — the manifest schema
-- `docs/world-packages.md` — the package layout and collision binary format
+- `maps/nymara-regions/server-collision/README.md` — the walk grid format,
+  and any region's `world.json` for the package layout
 - `eloria-assets/maps/four-gates-city/` — the repository's own best-practice
   exemplar: validator report, performance summary, coverage map, change log
 
@@ -172,9 +175,9 @@ The three rules that matter most:
    aerial concept and its detail board (once you have an intact one), and the
    QA README. Record the current package's defects.
 2. **Establish scale and coordinates before modelling.** Read the region's entry
-   in `godot-client/data/maps/registry.json` and the header of
-   `source-elm/<region>.elm` (`struct.unpack('<4s10i', data[:44])` gives magic,
-   tile_map_x_len, tile_map_y_len, offsets). Decide the extent with the user —
+   in `godot-client/data/maps/registry.json` — `coordinateTransform` is what
+   puts the server's tiles on your geometry — and the `collision` block of the
+   package's `world.json`. Decide the extent with the user —
    Amberwood went to 576 m on a 96x96-tile server map at one metre per tile,
    which required a server-side change they agreed to.
 3. **Terrain first, and prove grounding on it** before any detail work. Build
@@ -300,18 +303,18 @@ All ten are at `terrain-landmark-material-pass` with the defects in section 3.
 Their composition authority is
 `eloria-assets/concepts/nymara-regions/<region>_region_concept.png`.
 
-| region | registry key |
+| region | map id |
 | --- | --- |
-| `mirrorhold` | `maps/nymara/mirrorhold.elm` |
-| `crownwater` | `maps/nymara/crownwater.elm` |
-| `whitehorn_range` | `maps/nymara/whitehorn_range.elm` |
-| `amethyst_barrens` | `maps/nymara/amethyst_barrens.elm` |
-| `sunmane_steppe` | `maps/nymara/sunmane_steppe.elm` |
-| `grey_moors` | `maps/nymara/grey_moors.elm` |
-| `westhaven` | `maps/nymara/westhaven.elm` |
-| `verdant_stair` | `maps/nymara/verdant_stair.elm` |
-| `ssarathi_ruins` | `maps/nymara/ssarathi_ruins.elm` |
-| `manymouth_delta` | `maps/nymara/manymouth_delta.elm` |
+| `mirrorhold` | `mirrorhold` |
+| `crownwater` | `crownwater` |
+| `whitehorn_range` | `whitehorn_range` |
+| `amethyst_barrens` | `amethyst_barrens` |
+| `sunmane_steppe` | `sunmane_steppe` |
+| `grey_moors` | `grey_moors` |
+| `westhaven` | `westhaven` |
+| `verdant_stair` | `verdant_stair` |
+| `ssarathi_ruins` | `ssarathi_ruins` |
+| `manymouth_delta` | `manymouth_delta` |
 
 Do not take the biome from the region's name or from my guesses — open the
 painting. Several will need kit Amberwood does not have (open steppe grass,

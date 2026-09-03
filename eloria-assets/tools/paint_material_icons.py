@@ -27,7 +27,6 @@ from __future__ import annotations
 import argparse
 import json
 import math
-import struct
 from pathlib import Path
 
 import numpy as np
@@ -48,7 +47,14 @@ IMAGE_COUNT = 117
 ATLAS_ROW_OFFSETS = (0, 5, 11, 19, 0)
 
 # Records how much of the paste offset is still baked into the authored art.
+# It belongs with the rest of the client's item data rather than beside the
+# pixels, which is where the retired DDS twins used to keep it.
 LAYOUT_MANIFEST = "atlas_layout.json"
+
+
+def layout_path(source: Path) -> Path:
+    """`atlas_layout.json` for atlases living in `source`."""
+    return source.parents[2] / "data" / "items" / LAYOUT_MANIFEST
 
 # Ids whose lower rows are missing from the source: the last row of atlases 2
 # and 3 runs past the 250-pixel canvas once the paste offset is undone, and the
@@ -102,24 +108,13 @@ LIGHT = LIGHT / np.linalg.norm(LIGHT)
 # Atlas io
 # ---------------------------------------------------------------------------
 
-def read_dds(path: Path) -> np.ndarray:
-    raw = path.read_bytes()
-    header = struct.unpack("<31I", raw[4:128])
-    height, width = header[2], header[3]
-    pixels = np.frombuffer(raw[128:128 + width * height * 4],
-                           dtype=np.uint8).reshape(height, width, 4)
-    return np.dstack((pixels[:, :, 2], pixels[:, :, 1], pixels[:, :, 0],
-                      pixels[:, :, 3])).copy()
+def read_atlas(path: Path) -> np.ndarray:
+    return np.asarray(Image.open(path).convert("RGBA"), dtype=np.uint8).copy()
 
 
-def write_dds(path: Path, image: np.ndarray) -> None:
-    height, width = image.shape[:2]
-    header = [124, 0x0002100F, height, width, width * 4, 0, 0] + [0] * 11 + [
-        32, 0x41, 0, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000] + [
-        0x1000, 0, 0, 0, 0]
-    body = np.dstack((image[:, :, 2], image[:, :, 1], image[:, :, 0],
-                      image[:, :, 3])).astype(np.uint8)
-    path.write_bytes(b"DDS " + struct.pack("<31I", *header) + body.tobytes())
+def write_atlas(path: Path, image: np.ndarray) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    Image.fromarray(image.astype(np.uint8), "RGBA").save(path, optimize=True)
 
 
 def cell_slice(image: np.ndarray, local_id: int) -> np.ndarray:
@@ -136,7 +131,7 @@ def paste_offsets(source: Path) -> list[int]:
     fully opaque, they simply contain a slice of the neighbouring icon - and
     guessing wrong would skew corrected art straight back out.
     """
-    manifest = source / LAYOUT_MANIFEST
+    manifest = layout_path(source)
     if manifest.is_file():
         recorded = json.loads(manifest.read_text(encoding="utf-8"))
         offsets = [int(value) for value in recorded.get("rowOffsets", [])]
@@ -146,7 +141,7 @@ def paste_offsets(source: Path) -> list[int]:
 
 
 def write_paste_offsets(source: Path) -> None:
-    (source / LAYOUT_MANIFEST).write_text(json.dumps({
+    layout_path(source).write_text(json.dumps({
         "cellSize": [CELL, CELL],
         "columns": COLUMNS,
         "imagesPerAtlas": PER_ATLAS,
@@ -498,7 +493,7 @@ def compose(plate: np.ndarray, shape: str, base, accent) -> np.ndarray:
 
 def rebuild_atlases(source: Path) -> list[np.ndarray]:
     """Rebuild every atlas on the grid ``ItemAtlas`` samples."""
-    atlases = [read_dds(source / f"items{index + 1}.dds")
+    atlases = [read_atlas(source / f"items{index + 1}.png")
                for index in range(ATLAS_COUNT)]
     offsets = paste_offsets(source)
     print(f"correcting paste offsets: {offsets}")
@@ -529,18 +524,14 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     assets_root = Path(__file__).resolve().parents[1]
     repo_root = assets_root.parent
-    parser.add_argument("--source", type=Path, default=assets_root / "ui/items",
-                        help="authored DDS atlases, rewritten in place")
-    parser.add_argument("--client", type=Path,
+    parser.add_argument("--source", type=Path,
                         default=repo_root / "godot-client/assets/ui/items",
-                        help="PNG copies the Godot client samples")
+                        help="the atlas PNGs the client samples, rewritten "
+                             "in place")
     arguments = parser.parse_args()
     rebuilt = rebuild_atlases(arguments.source)
     for index, image in enumerate(rebuilt):
-        write_dds(arguments.source / f"items{index + 1}.dds", image)
-        arguments.client.mkdir(parents=True, exist_ok=True)
-        Image.fromarray(image, "RGBA").save(
-            arguments.client / f"items{index + 1}.png", optimize=True)
+        write_atlas(arguments.source / f"items{index + 1}.png", image)
         print(f"items{index + 1}: rewrote {(image[:, :, 3] > 8).sum()} opaque pixels")
     write_paste_offsets(arguments.source)
     print(f"{IMAGE_COUNT} icons aligned to the {CELL}px grid")

@@ -73,14 +73,14 @@ sessions before landing.
 
 | Change | Why |
 | --- | --- |
-| `regionpaths.load_region_build()` / `load_region_module()` | shared module discovery, previously duplicated in `export_source_elm.py` |
+| `regionpaths.load_region_build()` / `load_region_module()` | shared module discovery, previously duplicated in `export_server_collision.py` |
 | `capture_views.py` no longer imports `build_amberwood` and `amberwood.region` by name | it rendered Amberwood's terrain whichever package you pointed it at |
 | `capture_views.py` sea-level guard | a region with no sea has no sea level to reject a camera against |
 | `capture_views.py` `DAY_LIGHTING` / `GOLDEN_LIGHTING` hooks | the presets are tuned for an autumn forest; a snow region under them renders brown. Regions that declare neither are unaffected |
 | `make_comparison.py` region-aware labels | sheets said "Amberwood build" for every region |
 | `make_comparison.py` tolerates an undecodable board | nine of eleven region packages ship a truncated board; crashing on it loses the aerial sheet and the contact sheet too |
 
-`export_source_elm.py`'s local `load_region_build` now delegates to
+`export_server_collision.py`'s local `load_region_build` now delegates to
 `regionpaths`, so there is one implementation. Amberwood was re-checked through
 the new path and resolves to the same modules.
 

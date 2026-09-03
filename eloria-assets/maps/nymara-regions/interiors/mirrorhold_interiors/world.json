@@ -195,7 +195,7 @@
         16.55
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/amberwood.elm",
+      "destinationMap": "amberwood",
       "destinationSpawn": "lens-vault-stair",
       "authority": "server"
     }

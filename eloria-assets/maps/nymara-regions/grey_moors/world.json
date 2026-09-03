@@ -2061,7 +2061,7 @@
         18,
         174
       ],
-      "destinationMap": "maps/nymara/sunmane_steppe.elm",
+      "destinationMap": "sunmane_steppe",
       "radius": 3.5,
       "authority": "server"
     },
@@ -2078,7 +2078,7 @@
         330,
         174
       ],
-      "destinationMap": "maps/nymara/westhaven.elm",
+      "destinationMap": "westhaven",
       "radius": 3.5,
       "authority": "server"
     },
@@ -2096,7 +2096,7 @@
         427
       ],
       "landmark": "grey-great-barrow",
-      "destinationMap": "maps/nymara/grey_moor_barrows.elm",
+      "destinationMap": "grey_moor_barrows",
       "destinationSpawn": "great-barrow-mouth",
       "radius": 2.5,
       "authority": "server"
@@ -2115,7 +2115,7 @@
         427
       ],
       "landmark": "grey-crypt-west",
-      "destinationMap": "maps/nymara/grey_moor_barrows.elm",
+      "destinationMap": "grey_moor_barrows",
       "destinationSpawn": "west-crypt-stair",
       "radius": 2.5,
       "authority": "server"
@@ -2134,7 +2134,7 @@
         373
       ],
       "landmark": "grey-crypt-east",
-      "destinationMap": "maps/nymara/grey_moor_barrows.elm",
+      "destinationMap": "grey_moor_barrows",
       "destinationSpawn": "east-crypt-stair",
       "radius": 2.5,
       "authority": "server"
@@ -2153,7 +2153,7 @@
         157
       ],
       "landmark": "grey-crypt-south",
-      "destinationMap": "maps/nymara/grey_moor_barrows.elm",
+      "destinationMap": "grey_moor_barrows",
       "destinationSpawn": "south-crypt-stair",
       "radius": 2.5,
       "authority": "server"

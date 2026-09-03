@@ -67,13 +67,13 @@ Tide Cistern (under the garden islet), The Harbour Customs Hall and The Tide
 Campanile - and they share **one map with unwalkable blackspace between them**,
 as Eternal Lands lays out a region's interiors. Built by
 `source/build_insides.py`, verified by `source/verify_interiors.py`, server map
-written by `source/export_insides_elm.py`, documented in
+written by `source/export_insides_collision.py`, documented in
 `../interiors/CROWNWATER_INTERIORS.md`.
 
 ## Server
 
 Crownwater needs a bigger server map, as Amberwood does.
-`../source-elm/crownwater.elm` is regenerated to 96x96 tiles / 576x576 height
+`../server-collision/crownwater.bin` is regenerated to 96x96 tiles / 576x576 height
 cells from this build's own collision grid and must be loaded server-side. The
 matching generator and contract-test change is on the `eloria-server` branch
 `feature/crownwater-96-server-map`.

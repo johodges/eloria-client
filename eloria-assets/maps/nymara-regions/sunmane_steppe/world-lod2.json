@@ -3792,7 +3792,7 @@
     ]
   },
   "runtimePopulation": {
-    "note": "Server-owned placements. The client does not spawn these; they are recorded so the eloria-server region profile can register them against the hooks in maps/nymara-regions/source-elm/regions-connections.json.",
+    "note": "Server-owned placements. The client does not spawn these; they are recorded so the eloria-server region profile can register them against the hooks in maps/nymara-regions/region-connections.json.",
     "npcs": [
       {
         "id": "khan-of-the-sunmane",
@@ -4581,7 +4581,7 @@
       "eloria-assets/qa/regions/sunmane-steppe/README.md",
       "eloria-assets/NYMARA_ASSET_MANIFEST.md"
     ],
-    "sourceConnections": "../source-elm/regions-connections.json",
+    "sourceConnections": "../region-connections.json",
     "license": "Original Eloria project work, CC-BY-4.0",
     "thirdPartyAssets": "none"
   },

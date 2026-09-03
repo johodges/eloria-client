@@ -145,7 +145,7 @@
         0.0
       ],
       "radius": 3.0,
-      "destinationMap": "maps/nymara/amethyst_barrens.elm",
+      "destinationMap": "amethyst_barrens",
       "destinationSpawn": "resonant-vault-stair",
       "authority": "server"
     }

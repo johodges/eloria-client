@@ -8,9 +8,9 @@ cultures' generic hood/crown/armor variants with region-specific silhouettes.
 The clean generated roster is validated for complete actor references, all six cultures,
 a 950-vertex minimum, valid Cal3D geometry and influences, and a unique mesh payload for
 every NPC record. The comparison image was rendered directly from the generated XMF files
-with `render_cal3d_wireframe.py`. GPU-backed shaded client captures remain pending.
+with the Cal3D wireframe renderer, removed with the pack. GPU-backed shaded
+client captures remain pending.
 
-```sh
-python3 eloria-assets/tools/generate_all_assets.py build/eloria-data
-python3 eloria-assets/tools/validate_generated_assets.py build/eloria-data
-```
+> Reproduction commands removed: this stage was validated against the
+> Eternal Lands format data pack, which was deleted with the C client
+> on 2026-09-03. The evidence below is kept as the record of it.

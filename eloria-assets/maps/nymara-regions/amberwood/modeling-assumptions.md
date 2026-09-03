@@ -9,7 +9,7 @@ reasonably want to overrule the build.
    movement granularity is unchanged; the server map grows instead, from 32x32
    to 96x96 ELM tiles (192 to 576 height cells). The arrival datum keeps its
    position relative to the map, moving from server (58, 58) to (174, 174), so
-   it still lands on the Godot origin. `../source-elm/amberwood.elm` is
+   it still lands on the Godot origin. `../server-collision/amberwood.bin` is
    regenerated to match and must be loaded server-side.
    The whole composition is written in the original 192 m design space and
    scaled by `region.SCALE`, so the aerial concept's layout is preserved rather

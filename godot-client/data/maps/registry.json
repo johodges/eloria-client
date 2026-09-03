@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "maps": {
-    "maps/startmap.elm": {
+    "four_gates": {
       "manifest": "res://../eloria-assets/maps/four-gates/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -19,19 +19,7 @@
       },
       "status": "production_map_v1"
     },
-    "startmap.elm": {
-      "alias": "maps/startmap.elm"
-    },
-    "four_gates": {
-      "alias": "maps/startmap.elm"
-    },
-    "four-gates": {
-      "alias": "maps/startmap.elm"
-    },
-    "maps/four_gates.elm": {
-      "alias": "maps/startmap.elm"
-    },
-    "maps/nymara/mirrorhold.elm": {
+    "mirrorhold": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/mirrorhold/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -48,15 +36,9 @@
         "invertServerY": true
       },
       "status": "production-geometry-materials-population",
-      "requiresServerMap": "96x96 ELM tiles (576 cells); see maps/nymara-regions/source-elm/mirrorhold.elm"
+      "requiresServerMap": "96x96 server tiles (576 cells)"
     },
-    "mirrorhold": {
-      "alias": "maps/nymara/mirrorhold.elm"
-    },
-    "mirrorhold.elm": {
-      "alias": "maps/nymara/mirrorhold.elm"
-    },
-    "maps/nymara/crownwater.elm": {
+    "crownwater": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/crownwater/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -73,15 +55,9 @@
         "invertServerY": true
       },
       "status": "production-geometry-materials-population",
-      "requiresServerMap": "96x96 ELM tiles (576 cells); see maps/nymara-regions/source-elm/crownwater.elm"
+      "requiresServerMap": "96x96 server tiles (576 cells)"
     },
-    "crownwater": {
-      "alias": "maps/nymara/crownwater.elm"
-    },
-    "crownwater.elm": {
-      "alias": "maps/nymara/crownwater.elm"
-    },
-    "maps/nymara/whitehorn_range.elm": {
+    "whitehorn_range": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/whitehorn_range/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -98,15 +74,9 @@
         "invertServerY": true
       },
       "status": "production-geometry-materials-population",
-      "requiresServerMap": "96x96 ELM tiles (576 cells); see maps/nymara-regions/source-elm/whitehorn_range.elm"
+      "requiresServerMap": "96x96 server tiles (576 cells)"
     },
-    "whitehorn_range": {
-      "alias": "maps/nymara/whitehorn_range.elm"
-    },
-    "whitehorn_range.elm": {
-      "alias": "maps/nymara/whitehorn_range.elm"
-    },
-    "maps/nymara/amethyst_barrens.elm": {
+    "amethyst_barrens": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/amethyst_barrens/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -131,16 +101,10 @@
           174,
           174
         ],
-        "note": "Amethyst Barrens is authored at 576 m x 576 m. The server map grows from 32x32 to 96x96 ELM tiles; see eloria-server tools/generate_nymara_maps.py and eloria-assets/maps/nymara-regions/source-elm/amethyst_barrens.elm."
+        "note": "Amethyst Barrens is authored at 576 m x 576 m. The server map grows from 32x32 to 96x96 tiles; see eloria-server tools/generate_nymara_maps.py."
       }
     },
-    "amethyst_barrens": {
-      "alias": "maps/nymara/amethyst_barrens.elm"
-    },
-    "amethyst_barrens.elm": {
-      "alias": "maps/nymara/amethyst_barrens.elm"
-    },
-    "maps/nymara/sunmane_steppe.elm": {
+    "sunmane_steppe": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/sunmane_steppe/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -161,13 +125,7 @@
         "lod2": "res://../eloria-assets/maps/nymara-regions/sunmane_steppe/world-lod2.json"
       }
     },
-    "sunmane_steppe": {
-      "alias": "maps/nymara/sunmane_steppe.elm"
-    },
-    "sunmane_steppe.elm": {
-      "alias": "maps/nymara/sunmane_steppe.elm"
-    },
-    "maps/nymara/amberwood.elm": {
+    "amberwood": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/amberwood/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -184,15 +142,9 @@
         "invertServerY": true
       },
       "status": "production-geometry-materials-population",
-      "requiresServerMap": "96x96 ELM tiles (576 cells); see maps/nymara-regions/source-elm/amberwood.elm"
+      "requiresServerMap": "96x96 server tiles (576 cells)"
     },
-    "amberwood": {
-      "alias": "maps/nymara/amberwood.elm"
-    },
-    "amberwood.elm": {
-      "alias": "maps/nymara/amberwood.elm"
-    },
-    "maps/nymara/grey_moors.elm": {
+    "grey_moors": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/grey_moors/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -209,15 +161,9 @@
         "invertServerY": true
       },
       "status": "production-geometry-materials-population",
-      "requiresServerMap": "96x96 ELM tiles (576 cells); see maps/nymara-regions/source-elm/grey_moors.elm"
+      "requiresServerMap": "96x96 server tiles (576 cells)"
     },
-    "grey_moors": {
-      "alias": "maps/nymara/grey_moors.elm"
-    },
-    "grey_moors.elm": {
-      "alias": "maps/nymara/grey_moors.elm"
-    },
-    "maps/nymara/westhaven.elm": {
+    "westhaven": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/westhaven/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -234,15 +180,9 @@
         "invertServerY": true
       },
       "status": "production-geometry-materials-population",
-      "requiresServerMap": "96x96 ELM tiles (576 cells) with the arrival datum at (174, 250), not the (174, 174) the other 576 m regions share; see maps/nymara-regions/source-elm/westhaven.elm"
+      "requiresServerMap": "96x96 server tiles (576 cells) with the arrival datum at (174, 250), not the (174, 174) the other 576 m regions share"
     },
-    "westhaven": {
-      "alias": "maps/nymara/westhaven.elm"
-    },
-    "westhaven.elm": {
-      "alias": "maps/nymara/westhaven.elm"
-    },
-    "maps/nymara/verdant_stair.elm": {
+    "verdant_stair": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/verdant_stair/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -259,15 +199,9 @@
         "invertServerY": true
       },
       "status": "production-geometry-materials-population",
-      "requiresServerMap": "96x96 ELM tiles (576 cells); see maps/nymara-regions/source-elm/verdant_stair.elm"
+      "requiresServerMap": "96x96 server tiles (576 cells)"
     },
-    "verdant_stair": {
-      "alias": "maps/nymara/verdant_stair.elm"
-    },
-    "verdant_stair.elm": {
-      "alias": "maps/nymara/verdant_stair.elm"
-    },
-    "maps/nymara/ssarathi_ruins.elm": {
+    "ssarathi_ruins": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/ssarathi_ruins/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -284,15 +218,9 @@
         "invertServerY": true
       },
       "status": "production-geometry-materials-population",
-      "requiresServerMap": "96x96 ELM tiles (576 cells)"
+      "requiresServerMap": "96x96 server tiles (576 cells)"
     },
-    "ssarathi_ruins": {
-      "alias": "maps/nymara/ssarathi_ruins.elm"
-    },
-    "ssarathi_ruins.elm": {
-      "alias": "maps/nymara/ssarathi_ruins.elm"
-    },
-    "maps/nymara/manymouth_delta.elm": {
+    "manymouth_delta": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/manymouth_delta/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -309,15 +237,9 @@
         "invertServerY": true
       },
       "status": "production-geometry-materials-population",
-      "requiresServerMap": "96x96 ELM tiles (576 cells)"
+      "requiresServerMap": "96x96 server tiles (576 cells)"
     },
-    "manymouth_delta": {
-      "alias": "maps/nymara/manymouth_delta.elm"
-    },
-    "manymouth_delta.elm": {
-      "alias": "maps/nymara/manymouth_delta.elm"
-    },
-    "maps/nymara/sunmane_wind_caves.elm": {
+    "sunmane_wind_caves": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/sunmane_insides/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -334,8 +256,8 @@
         "invertServerY": true
       },
       "status": "production",
-      "interiorOf": "maps/nymara/sunmane_steppe.elm",
-      "insidesOf": "maps/nymara/sunmane_steppe.elm",
+      "interiorOf": "sunmane_steppe",
+      "insidesOf": "sunmane_steppe",
       "sections": [
         "sunmane_wind_caves",
         "sunmane_crystal_hollow"
@@ -346,19 +268,7 @@
         "note": "both cave systems on one map with blackspace between them"
       }
     },
-    "sunmane_wind_caves": {
-      "alias": "maps/nymara/sunmane_wind_caves.elm"
-    },
-    "sunmane_wind_caves.elm": {
-      "alias": "maps/nymara/sunmane_wind_caves.elm"
-    },
-    "sunmane_crystal_hollow": {
-      "alias": "maps/nymara/sunmane_wind_caves.elm"
-    },
-    "sunmane_crystal_hollow.elm": {
-      "alias": "maps/nymara/sunmane_wind_caves.elm"
-    },
-    "maps/four-gates-lantern-row.elm": {
+    "four-gates-lantern-row": {
       "manifest": "res://../eloria-assets/maps/four-gates-lantern-row/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -376,13 +286,7 @@
       },
       "status": "interior_v1"
     },
-    "four-gates-lantern-row": {
-      "alias": "maps/four-gates-lantern-row.elm"
-    },
-    "four-gates-lantern-row.elm": {
-      "alias": "maps/four-gates-lantern-row.elm"
-    },
-    "maps/four-gates-reedworks.elm": {
+    "four-gates-reedworks": {
       "manifest": "res://../eloria-assets/maps/four-gates-reedworks/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -400,13 +304,7 @@
       },
       "status": "interior_v1"
     },
-    "four-gates-reedworks": {
-      "alias": "maps/four-gates-reedworks.elm"
-    },
-    "four-gates-reedworks.elm": {
-      "alias": "maps/four-gates-reedworks.elm"
-    },
-    "maps/four-gates-stormglass-house.elm": {
+    "four-gates-stormglass-house": {
       "manifest": "res://../eloria-assets/maps/four-gates-stormglass-house/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -424,13 +322,7 @@
       },
       "status": "interior_v1"
     },
-    "four-gates-stormglass-house": {
-      "alias": "maps/four-gates-stormglass-house.elm"
-    },
-    "four-gates-stormglass-house.elm": {
-      "alias": "maps/four-gates-stormglass-house.elm"
-    },
-    "maps/four-gates-mirrorsmith-forge.elm": {
+    "four-gates-mirrorsmith-forge": {
       "manifest": "res://../eloria-assets/maps/four-gates-mirrorsmith-forge/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -448,13 +340,7 @@
       },
       "status": "interior_v1"
     },
-    "four-gates-mirrorsmith-forge": {
-      "alias": "maps/four-gates-mirrorsmith-forge.elm"
-    },
-    "four-gates-mirrorsmith-forge.elm": {
-      "alias": "maps/four-gates-mirrorsmith-forge.elm"
-    },
-    "maps/four-gates-ferrymans-rest.elm": {
+    "four-gates-ferrymans-rest": {
       "manifest": "res://../eloria-assets/maps/four-gates-ferrymans-rest/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -472,13 +358,7 @@
       },
       "status": "interior_v1"
     },
-    "four-gates-ferrymans-rest": {
-      "alias": "maps/four-gates-ferrymans-rest.elm"
-    },
-    "four-gates-ferrymans-rest.elm": {
-      "alias": "maps/four-gates-ferrymans-rest.elm"
-    },
-    "maps/four-gates-deposit-four-keys.elm": {
+    "four-gates-deposit-four-keys": {
       "manifest": "res://../eloria-assets/maps/four-gates-deposit-four-keys/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -496,13 +376,7 @@
       },
       "status": "interior_v1"
     },
-    "four-gates-deposit-four-keys": {
-      "alias": "maps/four-gates-deposit-four-keys.elm"
-    },
-    "four-gates-deposit-four-keys.elm": {
-      "alias": "maps/four-gates-deposit-four-keys.elm"
-    },
-    "maps/nymara/amberwood_motherroot.elm": {
+    "amberwood_motherroot": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/amberwood_motherroot/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -519,15 +393,9 @@
         "invertServerY": true
       },
       "status": "authored-geometry-materials-population",
-      "interiorOf": "maps/nymara/amberwood.elm"
+      "interiorOf": "amberwood"
     },
-    "amberwood_motherroot": {
-      "alias": "maps/nymara/amberwood_motherroot.elm"
-    },
-    "amberwood_motherroot.elm": {
-      "alias": "maps/nymara/amberwood_motherroot.elm"
-    },
-    "maps/nymara/amberwood_gate_undercroft.elm": {
+    "amberwood_gate_undercroft": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/amberwood_gate_undercroft/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -544,15 +412,9 @@
         "invertServerY": true
       },
       "status": "authored-geometry-materials-population",
-      "interiorOf": "maps/nymara/amberwood.elm"
+      "interiorOf": "amberwood"
     },
-    "amberwood_gate_undercroft": {
-      "alias": "maps/nymara/amberwood_gate_undercroft.elm"
-    },
-    "amberwood_gate_undercroft.elm": {
-      "alias": "maps/nymara/amberwood_gate_undercroft.elm"
-    },
-    "maps/nymara/amberwood_amber_hall.elm": {
+    "amberwood_amber_hall": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/amberwood_amber_hall/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -569,15 +431,9 @@
         "invertServerY": true
       },
       "status": "authored-geometry-materials-population",
-      "interiorOf": "maps/nymara/amberwood.elm"
+      "interiorOf": "amberwood"
     },
-    "amberwood_amber_hall": {
-      "alias": "maps/nymara/amberwood_amber_hall.elm"
-    },
-    "amberwood_amber_hall.elm": {
-      "alias": "maps/nymara/amberwood_amber_hall.elm"
-    },
-    "maps/nymara/amberwood_cinder_chapel.elm": {
+    "amberwood_cinder_chapel": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/amberwood_cinder_chapel/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -594,15 +450,9 @@
         "invertServerY": true
       },
       "status": "authored-geometry-materials-population",
-      "interiorOf": "maps/nymara/amberwood.elm"
+      "interiorOf": "amberwood"
     },
-    "amberwood_cinder_chapel": {
-      "alias": "maps/nymara/amberwood_cinder_chapel.elm"
-    },
-    "amberwood_cinder_chapel.elm": {
-      "alias": "maps/nymara/amberwood_cinder_chapel.elm"
-    },
-    "maps/nymara/resonant_vault.elm": {
+    "resonant_vault": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/amethyst_barrens_insides/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -619,7 +469,7 @@
         "invertServerY": true
       },
       "status": "authored-geometry-materials-population",
-      "interiorOf": "maps/nymara/amethyst_barrens.elm",
+      "interiorOf": "amethyst_barrens",
       "insidesMap": true,
       "sections": [
         "resonant_vault",
@@ -633,16 +483,7 @@
         "note": "four insides on one map with blackspace between them"
       }
     },
-    "resonant_vault": {
-      "alias": "maps/nymara/resonant_vault.elm"
-    },
-    "resonant_vault.elm": {
-      "alias": "maps/nymara/resonant_vault.elm"
-    },
-    "amethyst_barrens_insides": {
-      "alias": "maps/nymara/resonant_vault.elm"
-    },
-    "maps/nymara/whitehorn_glacier_temple.elm": {
+    "whitehorn_glacier_temple": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/whitehorn_insides/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -667,16 +508,7 @@
         "frost_barrow"
       ]
     },
-    "whitehorn_glacier_temple": {
-      "alias": "maps/nymara/whitehorn_glacier_temple.elm"
-    },
-    "whitehorn_glacier_temple.elm": {
-      "alias": "maps/nymara/whitehorn_glacier_temple.elm"
-    },
-    "whitehorn_insides": {
-      "alias": "maps/nymara/whitehorn_glacier_temple.elm"
-    },
-    "maps/nymara/drowned_crown.elm": {
+    "drowned_crown": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/crownwater_insides/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -693,8 +525,8 @@
         "invertServerY": true
       },
       "status": "authored-geometry-materials-population",
-      "interiorOf": "maps/nymara/crownwater.elm",
-      "insidesOf": "maps/nymara/crownwater.elm",
+      "interiorOf": "crownwater",
+      "insidesOf": "crownwater",
       "sections": [
         "drowned_crown",
         "tide_cistern",
@@ -702,19 +534,7 @@
         "tide_campanile"
       ]
     },
-    "drowned_crown": {
-      "alias": "maps/nymara/drowned_crown.elm"
-    },
-    "drowned_crown.elm": {
-      "alias": "maps/nymara/drowned_crown.elm"
-    },
-    "crownwater_insides": {
-      "alias": "maps/nymara/drowned_crown.elm"
-    },
-    "crownwater_insides.elm": {
-      "alias": "maps/nymara/drowned_crown.elm"
-    },
-    "maps/nymara/mirrorhold_interiors.elm": {
+    "mirrorhold_interiors": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/mirrorhold_interiors/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -731,16 +551,10 @@
         "invertServerY": true
       },
       "status": "authored-geometry-materials-population",
-      "interiorOf": "maps/nymara/mirrorhold.elm",
-      "requiresServerMap": "34x34 ELM tiles (204 cells)"
+      "interiorOf": "mirrorhold",
+      "requiresServerMap": "34x34 server tiles (204 cells)"
     },
-    "mirrorhold_interiors": {
-      "alias": "maps/nymara/mirrorhold_interiors.elm"
-    },
-    "mirrorhold_interiors.elm": {
-      "alias": "maps/nymara/mirrorhold_interiors.elm"
-    },
-    "maps/nymara/ssarathi_royal_archive.elm": {
+    "ssarathi_royal_archive": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/ssarathi_insides/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
@@ -757,8 +571,8 @@
         "invertServerY": true
       },
       "status": "authored-geometry-materials-population",
-      "interiorOf": "maps/nymara/ssarathi_ruins.elm",
-      "insidesOf": "maps/nymara/ssarathi_ruins.elm",
+      "interiorOf": "ssarathi_ruins",
+      "insidesOf": "ssarathi_ruins",
       "sections": [
         "royal_archive",
         "serpent_hatchery",
@@ -771,14 +585,20 @@
         "note": "four insides on one map with blackspace between them"
       }
     },
-    "ssarathi_royal_archive": {
-      "alias": "maps/nymara/ssarathi_royal_archive.elm"
+    "amethyst_barrens_insides": {
+      "alias": "resonant_vault"
     },
-    "ssarathi_royal_archive.elm": {
-      "alias": "maps/nymara/ssarathi_royal_archive.elm"
+    "crownwater_insides": {
+      "alias": "drowned_crown"
     },
-    "maps/nymara/sunmane_crystal_hollow.elm": {
-      "alias": "maps/nymara/sunmane_wind_caves.elm"
+    "sunmane_crystal_hollow": {
+      "alias": "sunmane_wind_caves"
+    },
+    "whitehorn_insides": {
+      "alias": "whitehorn_glacier_temple"
+    },
+    "four-gates": {
+      "alias": "four_gates"
     }
   }
 }

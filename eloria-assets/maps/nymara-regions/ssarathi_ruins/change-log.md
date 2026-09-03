@@ -12,7 +12,7 @@ package is preserved.
 | Flat terrain | `world.json` had no `bounds`, no `coordinateTransform`, no spawns; the GLB was a single flat `Terrain_ELM_Authority` mesh | Sculpted heightfield over the whole 636 m x 636 m cut, playable relief −9.9 m to +104.7 m |
 | Foreign landmarks | 10 of 47 named other regions — Mirrorhold Floating Market, Manymouth Hidden Dock, Whitehorn Rope Bridge, Resonant Crystal Cluster, Verdant Vine Bridge, Verdant Jungle Cave, Four Gates Waystone, Westhaven Lantern Tower, Verdant Tree Platform; the remaining 37 were six Ssarathi silhouettes repeated | 14 landmarks, all Ssarathi, each derived from the placement that actually carries it |
 | Truncated concept board | `references/00-concept-detail-board.png` cut to exactly 786,444 bytes; only the top row of five panels decoded | Replaced with the intact 1983x793 board supplied for this build; all ten panels decode |
-| Flat placeholder ELM | `source-elm/ssarathi_ruins.elm` was 32x32, tile 0 and height 11 everywhere | Regenerated at 96x96 with real elevation and 42.4% walkability |
+| Flat placeholder ELM | `server-collision/ssarathi_ruins.bin` was 32x32, tile 0 and height 11 everywhere | Regenerated at 96x96 with real elevation and 42.4% walkability |
 | Registry status | `terrain-landmark-material-pass`, `serverOrigin [58, 58]` | `production-geometry-materials-population`, `serverOrigin [174, 174]`, `requiresServerMap` recorded |
 
 ## What was built

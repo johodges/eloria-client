@@ -51,7 +51,7 @@ catalogue (legacy Emberhaven set included).
 * `generate_scenery.py` produced eighteen Eternal-Lands-generic harvestables
   (`sunleaf`, `wheat`, `coal`, `moon_salt`, …) and wrote them to
   `harvestables_eloria.lst`, a filename the client never reads.
-* `generate_nymara_complete.py` placed a different sixteen (`REGION_HARVESTS`).
+* the Nymara pack generator placed a different sixteen (`REGION_HARVESTS`).
 * the client asset pack shipped a third sixteen as `.2d` sprites and inventory
   icons, on item ids `1000+`, colliding with the equipment range recorded in
   `nymara_id_allocations.json` (`nymara_equipment: [1000, 1035]`).
@@ -184,11 +184,10 @@ rarities stay regional.
 
 ## Verifying
 
-```sh
-python3 eloria-assets/tools/generate_all_assets.py build/eloria-data
-python3 eloria-assets/tools/validate_harvestables.py build/eloria-data
-```
+> Reproduction commands removed: this stage was validated against the
+> Eternal Lands format data pack, which was deleted with the C client
+> on 2026-09-03. The evidence below is kept as the record of it.
 
-`validate_harvestables.py` runs as part of the pipeline's validation stage and
+`validate_harvestables.py` ran as part of that pipeline's validation stage and
 checks the list format, model presence, the triangle band, the alpha-test flag,
 material size, per-region node counts and spread, and the flora definitions.

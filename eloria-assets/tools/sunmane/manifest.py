@@ -208,7 +208,7 @@ def build(builder, landform: terrain.Landform, statistics: dict) -> dict:
             "writtenDescription": [
                 "eloria-assets/qa/regions/sunmane-steppe/README.md",
                 "eloria-assets/NYMARA_ASSET_MANIFEST.md"],
-            "sourceConnections": "../source-elm/regions-connections.json",
+            "sourceConnections": "../region-connections.json",
             "license": "Original Eloria project work, CC-BY-4.0",
             "thirdPartyAssets": "none",
         },

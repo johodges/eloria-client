@@ -20,7 +20,7 @@ Every defect the production guide lists was checked for this region:
 3. **The committed detail board was truncated** to exactly 786,445 bytes; its
    IDAT stream fails to inflate and only the top row of five panels decodes. An
    intact board was supplied and is now committed in its place.
-4. **`source-elm/manymouth_delta.elm` was a flat placeholder** — 32×32 tiles,
+4. **`server-collision/manymouth_delta.bin` was a flat placeholder** — 32×32 tiles,
    every tile id 0, every height byte 11. Confirmed and replaced.
 5. **`world.json` had no `bounds` key** and no production status.
 6. **There is no `qa/regions/manymouth_delta/` brief at all**, so unlike the

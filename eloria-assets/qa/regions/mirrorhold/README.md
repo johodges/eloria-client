@@ -10,10 +10,9 @@ canal walls, six radial bridges, six fountains, and eight field stations. Nine
 cool landmark lights supplement the four transition lights. Custom tile and
 height functions provide distinct citadel, road, upland, and lake zones.
 
-```sh
-python3 eloria-assets/tools/generate_nymara_complete.py build/eloria-data
-python3 eloria-assets/tools/validate_generated_assets.py build/eloria-data
-```
+> Reproduction commands removed: this stage was validated against the
+> Eternal Lands format data pack, which was deleted with the C client
+> on 2026-09-03. The evidence below is kept as the record of it.
 
 Validation asserts landmark counts, scenery and lighting density, all four
 terrain classes, elevation variation, dependencies, and the clear arrival

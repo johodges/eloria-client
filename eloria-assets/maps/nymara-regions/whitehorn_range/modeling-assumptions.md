@@ -8,7 +8,7 @@ to overrule the build.
    per tile, matching Amberwood so the two regions share a coordinate
    convention and the same server-side change shape. The arrival datum moves
    from server (58, 58) to (174, 174) so it still lands on the Godot origin.
-   `../source-elm/whitehorn_range.elm` is regenerated to match and must be
+   `../server-collision/whitehorn_range.bin` is regenerated to match and must be
    loaded server-side. The whole composition is written in a 192 m design space
    and scaled by `region.SCALE`, so the extent is one constant.
 

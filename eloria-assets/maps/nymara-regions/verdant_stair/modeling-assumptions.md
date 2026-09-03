@@ -36,7 +36,7 @@ reasonably want to overrule the build.
 3. **The extent is 576 m × 576 m on a 96 × 96-tile server map at one metre per
    tile**, the shape Amberwood, Mirrorhold, Amethyst Barrens and Crownwater
    already use. The arrival datum moves from server (58, 58) to (174, 174), so
-   it still lands on the Godot origin. `../source-elm/verdant_stair.elm` is
+   it still lands on the Godot origin. `../server-collision/verdant_stair.bin` is
    regenerated to match and must be loaded server-side — see
    `validation-report.md` for what the server does and does not do with it.
 

@@ -4479,7 +4479,7 @@
         6,
         174
       ],
-      "destinationMap": "maps/nymara/westhaven.elm",
+      "destinationMap": "westhaven",
       "radius": 3.5,
       "authority": "server"
     },
@@ -4496,7 +4496,7 @@
         564,
         324
       ],
-      "destinationMap": "maps/nymara/ssarathi_ruins.elm",
+      "destinationMap": "ssarathi_ruins",
       "radius": 3.5,
       "authority": "server"
     },
@@ -4514,7 +4514,7 @@
         372
       ],
       "landmark": "great-temple",
-      "destinationMap": "maps/nymara/verdant_stair_insides.elm",
+      "destinationMap": "verdant_stair_insides",
       "destinationSpawn": "temple-sanctum-door",
       "radius": 2.5,
       "authority": "server"
@@ -4533,7 +4533,7 @@
         276
       ],
       "landmark": "cenote",
-      "destinationMap": "maps/nymara/verdant_stair_insides.elm",
+      "destinationMap": "verdant_stair_insides",
       "destinationSpawn": "cenote-deeps-stair",
       "radius": 2.5,
       "authority": "server"
@@ -4552,7 +4552,7 @@
         300
       ],
       "landmark": "canopy-village",
-      "destinationMap": "maps/nymara/verdant_stair_insides.elm",
+      "destinationMap": "verdant_stair_insides",
       "destinationSpawn": "banyan-hollow-arch",
       "radius": 2.5,
       "authority": "server"
@@ -4571,7 +4571,7 @@
         348
       ],
       "landmark": "quarry",
-      "destinationMap": "maps/nymara/verdant_stair_insides.elm",
+      "destinationMap": "verdant_stair_insides",
       "destinationSpawn": "stair-quarry-adit",
       "radius": 2.5,
       "authority": "server"

@@ -2152,7 +2152,7 @@
         452,
         533
       ],
-      "destinationMap": "maps/nymara/amberwood.elm",
+      "destinationMap": "amberwood",
       "radius": 3.5,
       "authority": "server"
     },
@@ -2170,7 +2170,7 @@
         515,
         323
       ],
-      "destinationMap": "maps/nymara/grey_moors.elm",
+      "destinationMap": "grey_moors",
       "radius": 3.5,
       "authority": "server",
       "nudgedMetres": 6.67
@@ -2189,7 +2189,7 @@
         96,
         262
       ],
-      "destinationMap": "maps/nymara/crownwater.elm",
+      "destinationMap": "crownwater",
       "radius": 3.5,
       "authority": "server"
     },
@@ -2207,7 +2207,7 @@
         261,
         226
       ],
-      "destinationMap": "maps/nymara/mirrorhold.elm",
+      "destinationMap": "mirrorhold",
       "radius": 3.5,
       "authority": "server",
       "nudgedMetres": 1.45
@@ -2226,7 +2226,7 @@
         101,
         259
       ],
-      "destinationMap": "maps/nymara/westhaven_insides.elm",
+      "destinationMap": "westhaven_insides",
       "destinationSpawn": "custom-house-hall",
       "radius": 3.0,
       "authority": "server",
@@ -2246,7 +2246,7 @@
         134,
         285
       ],
-      "destinationMap": "maps/nymara/westhaven_insides.elm",
+      "destinationMap": "westhaven_insides",
       "destinationSpawn": "bonded-vaults-tunnel",
       "radius": 3.0,
       "authority": "server"
@@ -2265,7 +2265,7 @@
         469,
         130
       ],
-      "destinationMap": "maps/nymara/westhaven_insides.elm",
+      "destinationMap": "westhaven_insides",
       "destinationSpawn": "lamp-rock-foot",
       "radius": 3.0,
       "authority": "server"
@@ -2284,7 +2284,7 @@
         94,
         149
       ],
-      "destinationMap": "maps/nymara/westhaven_insides.elm",
+      "destinationMap": "westhaven_insides",
       "destinationSpawn": "gullstone-cleft",
       "radius": 3.0,
       "authority": "server",

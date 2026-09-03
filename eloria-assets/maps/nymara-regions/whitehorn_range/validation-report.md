@@ -122,7 +122,7 @@ Stated plainly, because a clean validator report does not cover any of this.
 6. **Server map content.** The server change makes `whitehorn_range` a 96 x 96
    map with the arrival datum at (174, 174), matching Amberwood. The server
    still generates its own procedural heights; it does **not** consume
-   `source-elm/whitehorn_range.elm`. The server's validator forbids blocked
+   `server-collision/whitehorn_range.bin`. The server's validator forbids blocked
    cells entirely (`if not heights or 0 in heights: raise`), and this region's
    exported ELM is 28% blocked, so the two cannot currently be the same file.
    Client-rendered walk surfaces and server collision are therefore *not*

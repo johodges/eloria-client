@@ -73,7 +73,7 @@ the terrain classes plus the real decks.
 
 ## Server-side ELM
 
-`../source-elm/amethyst_barrens.elm`, 341,112 bytes, 96 × 96 tiles,
+`../server-collision/amethyst_barrens.bin`, 341,112 bytes, 96 × 96 tiles,
 576 × 576 height cells, 81.3% walkable. Loaded through **eloria-server's own**
 `eloria.collision.load_elm_collision`:
 

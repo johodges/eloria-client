@@ -1,5 +1,0 @@
-newmtl resonant_crystal
-Kd 1 1 1
-d 1
-map_Kd resonant_crystal.png
-map_d resonant_crystal.png

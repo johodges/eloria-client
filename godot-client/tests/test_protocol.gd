@@ -396,13 +396,19 @@ func _init() -> void:
 				"weapon and shield use explicit native skeleton anchors")
 
 	_expect(MapRegistry.normalize_server_map_id(" /MAPS\\StartMap.ELM ") ==
-		"maps/startmap.elm", "map id normalization")
+		"startmap", "map id normalization")
+	# The registry is keyed by Eloria map id, which is what eloria-server
+	# sends. A path-shaped name reduces to its basename with the extension
+	# dropped, so an older server naming an Eternal Lands map file still
+	# lands on the right map.
+	_expect(MapRegistry.normalize_server_map_id("./maps/nymara/Westhaven.elm") ==
+		"westhaven", "a nymara map reference reduces to its id")
 	var registry: Dictionary = {
-		"maps/startmap.elm": {"manifest": "res://world.json"},
-		"startmap.elm": {"alias": "maps/startmap.elm"}}
-	var resolved: Dictionary = MapRegistry.resolve(registry, "STARTMAP.ELM")
+		"four_gates": {"manifest": "res://world.json"},
+		"four-gates": {"alias": "four_gates"}}
+	var resolved: Dictionary = MapRegistry.resolve(registry, "Four-Gates")
 	_expect(resolved.get("manifest", "") == "res://world.json"
-		and resolved.get("registryKey", "") == "maps/startmap.elm", "map alias resolution")
+		and resolved.get("registryKey", "") == "four_gates", "map alias resolution")
 	var registry_file: FileAccess = FileAccess.open("res://data/maps/registry.json", FileAccess.READ)
 	_expect(registry_file != null, "production map registry opens")
 	if registry_file != null:
@@ -413,10 +419,29 @@ func _init() -> void:
 			var production_maps_value: Variant = registry_root.get("maps", {})
 			if production_maps_value is Dictionary:
 				var production_maps: Dictionary = production_maps_value as Dictionary
+				# Every key is an Eloria map id: no directory, no extension. This is
+				# the client half of the naming contract eloria-server keeps in
+				# tests/test_client_content_sync.py - the server sends a map id, and
+				# a key that drifted back to an Eternal Lands map path would only be
+				# reachable by the tolerance in normalize_server_map_id.
+				var malformed: Array[String] = []
+				for raw_key: Variant in production_maps.keys():
+					var key: String = str(raw_key)
+					if key.contains("/") or not key.get_extension().is_empty():
+						malformed.append(key)
+				_expect(malformed.is_empty(),
+					"every registry key is a bare map id: " + str(malformed))
 				var four_gates: Dictionary = MapRegistry.resolve(production_maps, "four_gates")
 				_expect(not four_gates.is_empty(), "runtime four_gates map id resolves")
-				_expect(str(four_gates.get("registryKey", "")) == "maps/startmap.elm",
-					"runtime four_gates resolves to production start map")
+				_expect(str(four_gates.get("registryKey", "")) == "four_gates",
+					"runtime four_gates resolves to the production city map")
+				# eloria-server sends the map id. A path-shaped name is still
+				# reduced to one, so an older server or a typed console
+				# argument resolves rather than dropping the player nowhere.
+				var pathlike: Dictionary = MapRegistry.resolve(production_maps,
+					"./maps/nymara/westhaven.elm")
+				_expect(str(pathlike.get("registryKey", "")) == "westhaven",
+					"a path-shaped map name still reduces to its id")
 				var transform: Dictionary = four_gates.get("coordinateTransform", {})
 				_expect(is_equal_approx(float(transform.get("walkingHeight", 0.0)), 31.15),
 					"Four Gates actors stand above the authored y=31 walk surface")

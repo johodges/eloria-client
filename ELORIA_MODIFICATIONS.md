@@ -1,12 +1,63 @@
 # Eloria Client modifications
 
-Eloria Client is an independent modified version of the Eternal Lands Official
-Client source code. It is not affiliated with or endorsed by Eternal Lands,
-Radu Privantu, or Maura Privantu.
+**This is a historical record.** Eloria Client began as a modified version of
+the Eternal Lands Official Client source, and the entries below are the change
+notices section 3(c) of the Eternal Lands Client Public License 1.0 required
+while that source was present.
 
-The client source and modifications remain available under the Eternal Lands
-Client Public License 1.0 in `eternal_lands_license.txt`. No official Eternal
-Lands Binary Data is included in the Eloria data pack.
+On 2026-09-03 the C client and everything that existed to serve it were removed
+from this repository. Nothing in the working tree is derived from the Eternal
+Lands client source any more; see [Removal](#2026-09-03--removal-of-the-c-client)
+below for what went and what took its place. `eternal_lands_license.txt` is kept
+because the history reachable from this repository still contains that source,
+and `eloria-assets/tools/check_provenance.py` fails the build if Eternal Lands
+names or file formats reappear.
+
+Eloria is not affiliated with or endorsed by Eternal Lands, Radu Privantu, or
+Maura Privantu. No Eternal Lands Binary Data was ever included.
+
+## 2026-09-03 — Removal of the C client
+
+- Removed the Eternal Lands C/C++ client fork: every root source file, the
+  CMake/Make/meson/Android build files, the Debian, macOS, snap and pkgfiles
+  packaging, and the `eye_candy`, `map_editor`, `io`, `engine`, `pawn`, `xz`,
+  `shader`, `fsaa`, `exceptions`, `xml` and `nlohmann_json` trees.
+- Removed the Eternal Lands data the client loaded: `books/`, `dev-data-files/`,
+  `pawn_scripts/`, `shaders/`, `skybox/`, `textures/` and `templates/`.
+- Removed the generators that produced that data pack — the Cal3D actor,
+  native-E3D scenery, ELM region and BMP/DDS atlas chain under
+  `eloria-assets/tools/generate_*.py`, its `validate_*` and `render_*`
+  companions, and `generate_all_assets.py` which drove them.
+- Removed the Eternal Lands format asset packs: `eloria-assets/nymara-packs/`
+  (E3D objects, DDS textures, 2D objects and the retired portable Four Gates
+  package) and `eloria-assets/ui/` (DDS atlases, branding and generated pack
+  textures). The item atlases the client samples are the PNGs under
+  `godot-client/assets/ui/items/`, which are now their own source;
+  `atlas_layout.json` moved to `godot-client/data/items/`.
+- Removed the portable world-package validator, fixture and schema
+  (`tools/eloria-map-validate`, `tests/fixtures/world_package/`,
+  `docs/world-package*`), which described the C client's map loader and not the
+  manifests the Godot client reads.
+- Replaced the ELM map export with an Eloria-native walk grid.
+  `maps/nymara-regions/source-elm/*.elm` existed so eloria-server could read a
+  height field; the eight composed interiors it actually sourced are now
+  `maps/nymara-regions/server-collision/*.bin`, EWCG grids holding the identical
+  bytes. The nine `export_*_elm.py` scripts became
+  `export_insides_collision.py` over a shared `_toolkit` module, each stating
+  the downsample its map shipped with. eloria-server was changed to match in
+  the same cycle: it reads no ELM at all now, and re-running its
+  `tools/sync_authored_collision.py` against this tree reproduces all 23 of its
+  vendored walk grids byte for byte.
+- Renamed every map key from the Eternal Lands file path to the Eloria map id:
+  `maps/nymara/westhaven.elm` is `westhaven`, and the city served as
+  `maps/startmap.elm` is `four_gates`. eloria-server sends that id now: its map
+  definitions gained a `client_name`, which is the id, while `file` stays the
+  server's own height map. `MapRegistry.normalize_server_map_id` still reduces
+  a path-shaped name to its id, as tolerance for an older server rather than as
+  a contract; both ends pin their half of the naming contract in tests.
+- Dropped the `Build check` and `independent-data` workflows and the C half of
+  `world-package`. `Godot Client` now runs on the whole repository and includes
+  the provenance guard and the shared asset contracts under `tests/`.
 
 ## 2026-08-22
 
@@ -64,6 +115,3 @@ Lands Binary Data is included in the Eloria data pack.
 - Wrote ELM object and light coordinates in world units instead of height-map cells.
 - Added decorative 2D ground flora and the map writer support the client already had.
 - Moved harvestable item ids out of the equipment range and added `validate_harvestables.py`.
-
-Every later modification to an upstream source file must carry a prominent
-dated notice as required by section 3(c) of the client license.

@@ -65,8 +65,8 @@ what does and does not match the concept.
 ## Server side
 
 The region needs the regenerated 96 × 96 ELM at
-`../source-elm/amethyst_barrens.elm`, written by
-`../_toolkit/export_source_elm.py` from the same terrain the GLB is built from.
+`../server-collision/amethyst_barrens.bin`, written by
+`../_toolkit/export_server_collision.py` from the same terrain the GLB is built from.
 The matching server change is on `feature/amethyst-barrens-576m-server-map` in
 `eloria-server`. The client registry records this under `requiresServerMap`.
 

@@ -106,7 +106,7 @@ covers.
    contract they depend on is verified twice over, offline and in-engine.
 
 2. **The server does not load this region's ELM.**
-   `../source-elm/ssarathi_ruins.elm` is regenerated at 96x96 with real
+   `../server-collision/ssarathi_ruins.bin` is regenerated at 96x96 with real
    elevation, but the server still generates its own procedural heights;
    `validate_generated_map` rejects maps containing blocked cells and this one
    is 58% blocked. The server branch makes the two maps agree on size and datum,

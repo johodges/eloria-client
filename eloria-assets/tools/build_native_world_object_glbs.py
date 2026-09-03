@@ -39,7 +39,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import harvestables as H
 from build_native_nymara_glbs import GLB
-from generate_bootstrap_pack import png
+from png_writer import png
 
 CLIENT_HARVESTABLE_DIR = "assets/world/harvestables"
 CLIENT_INTERACTIVE_DIR = "assets/world/interactives"

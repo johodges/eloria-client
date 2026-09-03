@@ -1,0 +1,500 @@
+{
+  "schema": 1,
+  "regions": [
+    {
+      "id": "mirrorhold",
+      "title": "Mirrorhold",
+      "map": "mirrorhold",
+      "arrival": [
+        58,
+        58
+      ],
+      "npc_hook": "npcs.nymara.mirrorhold",
+      "spawn_hook": "spawns.nymara.mirrorhold",
+      "hazard_hook": "hazards.nymara.mirrorhold",
+      "harvest_hook": "harvest.nymara.mirrorhold"
+    },
+    {
+      "id": "crownwater",
+      "title": "Crownwater",
+      "map": "crownwater",
+      "arrival": [
+        58,
+        58
+      ],
+      "npc_hook": "npcs.nymara.crownwater",
+      "spawn_hook": "spawns.nymara.crownwater",
+      "hazard_hook": "hazards.nymara.crownwater",
+      "harvest_hook": "harvest.nymara.crownwater"
+    },
+    {
+      "id": "four_gates",
+      "title": "Four Gates",
+      "map": "four_gates",
+      "arrival": [
+        58,
+        58
+      ],
+      "npc_hook": "npcs.nymara.four_gates",
+      "spawn_hook": "spawns.nymara.four_gates",
+      "hazard_hook": "hazards.nymara.four_gates",
+      "harvest_hook": "harvest.nymara.four_gates"
+    },
+    {
+      "id": "whitehorn_range",
+      "title": "Whitehorn Range",
+      "map": "whitehorn_range",
+      "arrival": [
+        58,
+        58
+      ],
+      "npc_hook": "npcs.nymara.whitehorn_range",
+      "spawn_hook": "spawns.nymara.whitehorn_range",
+      "hazard_hook": "hazards.nymara.whitehorn_range",
+      "harvest_hook": "harvest.nymara.whitehorn_range"
+    },
+    {
+      "id": "amethyst_barrens",
+      "title": "Amethyst Barrens",
+      "map": "amethyst_barrens",
+      "arrival": [
+        58,
+        58
+      ],
+      "npc_hook": "npcs.nymara.amethyst_barrens",
+      "spawn_hook": "spawns.nymara.amethyst_barrens",
+      "hazard_hook": "hazards.nymara.amethyst_barrens",
+      "harvest_hook": "harvest.nymara.amethyst_barrens"
+    },
+    {
+      "id": "sunmane_steppe",
+      "title": "Sunmane Steppe",
+      "map": "sunmane_steppe",
+      "arrival": [
+        58,
+        58
+      ],
+      "npc_hook": "npcs.nymara.sunmane_steppe",
+      "spawn_hook": "spawns.nymara.sunmane_steppe",
+      "hazard_hook": "hazards.nymara.sunmane_steppe",
+      "harvest_hook": "harvest.nymara.sunmane_steppe"
+    },
+    {
+      "id": "amberwood",
+      "title": "Amberwood",
+      "map": "amberwood",
+      "arrival": [
+        58,
+        58
+      ],
+      "npc_hook": "npcs.nymara.amberwood",
+      "spawn_hook": "spawns.nymara.amberwood",
+      "hazard_hook": "hazards.nymara.amberwood",
+      "harvest_hook": "harvest.nymara.amberwood"
+    },
+    {
+      "id": "grey_moors",
+      "title": "Grey Moors",
+      "map": "grey_moors",
+      "arrival": [
+        58,
+        58
+      ],
+      "npc_hook": "npcs.nymara.grey_moors",
+      "spawn_hook": "spawns.nymara.grey_moors",
+      "hazard_hook": "hazards.nymara.grey_moors",
+      "harvest_hook": "harvest.nymara.grey_moors"
+    },
+    {
+      "id": "westhaven",
+      "title": "Westhaven",
+      "map": "westhaven",
+      "arrival": [
+        58,
+        58
+      ],
+      "npc_hook": "npcs.nymara.westhaven",
+      "spawn_hook": "spawns.nymara.westhaven",
+      "hazard_hook": "hazards.nymara.westhaven",
+      "harvest_hook": "harvest.nymara.westhaven"
+    },
+    {
+      "id": "verdant_stair",
+      "title": "Verdant Stair",
+      "map": "verdant_stair",
+      "arrival": [
+        58,
+        58
+      ],
+      "npc_hook": "npcs.nymara.verdant_stair",
+      "spawn_hook": "spawns.nymara.verdant_stair",
+      "hazard_hook": "hazards.nymara.verdant_stair",
+      "harvest_hook": "harvest.nymara.verdant_stair"
+    },
+    {
+      "id": "ssarathi_ruins",
+      "title": "Ssarathi Ruins",
+      "map": "ssarathi_ruins",
+      "arrival": [
+        58,
+        58
+      ],
+      "npc_hook": "npcs.nymara.ssarathi_ruins",
+      "spawn_hook": "spawns.nymara.ssarathi_ruins",
+      "hazard_hook": "hazards.nymara.ssarathi_ruins",
+      "harvest_hook": "harvest.nymara.ssarathi_ruins"
+    },
+    {
+      "id": "manymouth_delta",
+      "title": "Manymouth Delta",
+      "map": "manymouth_delta",
+      "arrival": [
+        58,
+        58
+      ],
+      "npc_hook": "npcs.nymara.manymouth_delta",
+      "spawn_hook": "spawns.nymara.manymouth_delta",
+      "hazard_hook": "hazards.nymara.manymouth_delta",
+      "harvest_hook": "harvest.nymara.manymouth_delta"
+    },
+    {
+      "id": "drowned_crown",
+      "title": "Drowned Crown",
+      "map": "drowned_crown",
+      "arrival": [
+        58,
+        58
+      ],
+      "npc_hook": "npcs.nymara.drowned_crown",
+      "spawn_hook": "spawns.nymara.drowned_crown",
+      "hazard_hook": "hazards.nymara.drowned_crown",
+      "harvest_hook": "harvest.nymara.drowned_crown"
+    },
+    {
+      "id": "whitehorn_glacier_temple",
+      "title": "Whitehorn Glacier Temple",
+      "map": "whitehorn_glacier_temple",
+      "arrival": [
+        58,
+        58
+      ],
+      "npc_hook": "npcs.nymara.whitehorn_glacier_temple",
+      "spawn_hook": "spawns.nymara.whitehorn_glacier_temple",
+      "hazard_hook": "hazards.nymara.whitehorn_glacier_temple",
+      "harvest_hook": "harvest.nymara.whitehorn_glacier_temple"
+    },
+    {
+      "id": "resonant_vault",
+      "title": "Resonant Vault",
+      "map": "resonant_vault",
+      "arrival": [
+        58,
+        58
+      ],
+      "npc_hook": "npcs.nymara.resonant_vault",
+      "spawn_hook": "spawns.nymara.resonant_vault",
+      "hazard_hook": "hazards.nymara.resonant_vault",
+      "harvest_hook": "harvest.nymara.resonant_vault"
+    },
+    {
+      "id": "amberwood_estate",
+      "title": "Amberwood Estate",
+      "map": "amberwood_estate",
+      "arrival": [
+        58,
+        58
+      ],
+      "npc_hook": "npcs.nymara.amberwood_estate",
+      "spawn_hook": "spawns.nymara.amberwood_estate",
+      "hazard_hook": "hazards.nymara.amberwood_estate",
+      "harvest_hook": "harvest.nymara.amberwood_estate"
+    },
+    {
+      "id": "grey_moor_barrows",
+      "title": "Grey Moor Barrows",
+      "map": "grey_moor_barrows",
+      "arrival": [
+        58,
+        58
+      ],
+      "npc_hook": "npcs.nymara.grey_moor_barrows",
+      "spawn_hook": "spawns.nymara.grey_moor_barrows",
+      "hazard_hook": "hazards.nymara.grey_moor_barrows",
+      "harvest_hook": "harvest.nymara.grey_moor_barrows"
+    },
+    {
+      "id": "ssarathi_royal_archive",
+      "title": "Ssarathi Royal Archive",
+      "map": "ssarathi_royal_archive",
+      "arrival": [
+        58,
+        58
+      ],
+      "npc_hook": "npcs.nymara.ssarathi_royal_archive",
+      "spawn_hook": "spawns.nymara.ssarathi_royal_archive",
+      "hazard_hook": "hazards.nymara.ssarathi_royal_archive",
+      "harvest_hook": "harvest.nymara.ssarathi_royal_archive"
+    },
+    {
+      "id": "manymouth_flooded_labyrinth",
+      "title": "Manymouth Flooded Labyrinth",
+      "map": "manymouth_flooded_labyrinth",
+      "arrival": [
+        58,
+        58
+      ],
+      "npc_hook": "npcs.nymara.manymouth_flooded_labyrinth",
+      "spawn_hook": "spawns.nymara.manymouth_flooded_labyrinth",
+      "hazard_hook": "hazards.nymara.manymouth_flooded_labyrinth",
+      "harvest_hook": "harvest.nymara.manymouth_flooded_labyrinth"
+    }
+  ],
+  "connections": [
+    {
+      "from": "mirrorhold",
+      "to": "crownwater",
+      "from_xy": [
+        110,
+        58
+      ],
+      "to_xy": [
+        6,
+        58
+      ],
+      "type": "walk"
+    },
+    {
+      "from": "crownwater",
+      "to": "four_gates",
+      "from_xy": [
+        110,
+        58
+      ],
+      "to_xy": [
+        6,
+        58
+      ],
+      "type": "walk"
+    },
+    {
+      "from": "four_gates",
+      "to": "whitehorn_range",
+      "from_xy": [
+        110,
+        58
+      ],
+      "to_xy": [
+        6,
+        58
+      ],
+      "type": "walk"
+    },
+    {
+      "from": "whitehorn_range",
+      "to": "amethyst_barrens",
+      "from_xy": [
+        110,
+        58
+      ],
+      "to_xy": [
+        6,
+        58
+      ],
+      "type": "walk"
+    },
+    {
+      "from": "amethyst_barrens",
+      "to": "sunmane_steppe",
+      "from_xy": [
+        110,
+        58
+      ],
+      "to_xy": [
+        6,
+        58
+      ],
+      "type": "walk"
+    },
+    {
+      "from": "sunmane_steppe",
+      "to": "amberwood",
+      "from_xy": [
+        110,
+        58
+      ],
+      "to_xy": [
+        6,
+        58
+      ],
+      "type": "walk"
+    },
+    {
+      "from": "amberwood",
+      "to": "grey_moors",
+      "from_xy": [
+        110,
+        58
+      ],
+      "to_xy": [
+        6,
+        58
+      ],
+      "type": "walk"
+    },
+    {
+      "from": "grey_moors",
+      "to": "westhaven",
+      "from_xy": [
+        110,
+        58
+      ],
+      "to_xy": [
+        6,
+        58
+      ],
+      "type": "walk"
+    },
+    {
+      "from": "westhaven",
+      "to": "verdant_stair",
+      "from_xy": [
+        110,
+        58
+      ],
+      "to_xy": [
+        6,
+        58
+      ],
+      "type": "walk"
+    },
+    {
+      "from": "verdant_stair",
+      "to": "ssarathi_ruins",
+      "from_xy": [
+        110,
+        58
+      ],
+      "to_xy": [
+        6,
+        58
+      ],
+      "type": "walk"
+    },
+    {
+      "from": "ssarathi_ruins",
+      "to": "manymouth_delta",
+      "from_xy": [
+        110,
+        58
+      ],
+      "to_xy": [
+        6,
+        58
+      ],
+      "type": "walk"
+    },
+    {
+      "from": "mirrorhold",
+      "to": "drowned_crown",
+      "from_xy": [
+        58,
+        100
+      ],
+      "to_xy": [
+        58,
+        10
+      ],
+      "type": "entrance"
+    },
+    {
+      "from": "crownwater",
+      "to": "whitehorn_glacier_temple",
+      "from_xy": [
+        58,
+        100
+      ],
+      "to_xy": [
+        58,
+        10
+      ],
+      "type": "entrance"
+    },
+    {
+      "from": "four_gates",
+      "to": "resonant_vault",
+      "from_xy": [
+        58,
+        100
+      ],
+      "to_xy": [
+        58,
+        10
+      ],
+      "type": "entrance"
+    },
+    {
+      "from": "whitehorn_range",
+      "to": "amberwood_estate",
+      "from_xy": [
+        58,
+        100
+      ],
+      "to_xy": [
+        58,
+        10
+      ],
+      "type": "entrance"
+    },
+    {
+      "from": "amethyst_barrens",
+      "to": "grey_moor_barrows",
+      "from_xy": [
+        58,
+        100
+      ],
+      "to_xy": [
+        58,
+        10
+      ],
+      "type": "entrance"
+    },
+    {
+      "from": "sunmane_steppe",
+      "to": "ssarathi_royal_archive",
+      "from_xy": [
+        58,
+        100
+      ],
+      "to_xy": [
+        58,
+        10
+      ],
+      "type": "entrance"
+    },
+    {
+      "from": "amberwood",
+      "to": "manymouth_flooded_labyrinth",
+      "from_xy": [
+        58,
+        100
+      ],
+      "to_xy": [
+        58,
+        10
+      ],
+      "type": "entrance"
+    }
+  ],
+  "ferries": [
+    {
+      "from": "crownwater",
+      "to": "four_gates",
+      "service": "crownwater_ferry"
+    },
+    {
+      "from": "manymouth_delta",
+      "to": "westhaven",
+      "service": "delta_ferry"
+    }
+  ]
+}

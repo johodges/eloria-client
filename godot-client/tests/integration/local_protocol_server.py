@@ -9,7 +9,7 @@ work can be validated through the genuine login and gameplay flow without
 touching a shared or production database.
 
 Usage:
-    python3 local_protocol_server.py --port 2000 --map maps/startmap.elm \
+    python3 local_protocol_server.py --port 2000 --map four_gates \
         --spawn 384 266
 """
 
@@ -365,7 +365,10 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=2000)
-    parser.add_argument("--map", default="maps/startmap.elm")
+    # An Eloria map id. eloria-server still names its maps by the path of
+    # an Eternal Lands map file; the client normalises either form, and
+    # test_protocol.gd is what holds that compatibility.
+    parser.add_argument("--map", default="four_gates")
     parser.add_argument("--spawn", nargs=2, type=int, default=[384, 266])
     parser.add_argument("--step-seconds", type=float, default=0.05,
                         help="server tick between walk steps")

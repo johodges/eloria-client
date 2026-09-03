@@ -194,7 +194,7 @@
         -1.85,
         39.0
       ],
-      "destinationMap": "maps/nymara/ssarathi_ruins.elm",
+      "destinationMap": "ssarathi_ruins",
       "destinationSpawn": "archive-vault-door",
       "radius": 2.5,
       "section": "royal_archive",
@@ -209,7 +209,7 @@
         -1.95,
         46.0
       ],
-      "destinationMap": "maps/nymara/ssarathi_ruins.elm",
+      "destinationMap": "ssarathi_ruins",
       "destinationSpawn": "hatchery-descent",
       "radius": 2.5,
       "section": "serpent_hatchery",
@@ -224,7 +224,7 @@
         -0.55,
         258.0
       ],
-      "destinationMap": "maps/nymara/ssarathi_ruins.elm",
+      "destinationMap": "ssarathi_ruins",
       "destinationSpawn": "cistern-shaft",
       "radius": 2.5,
       "section": "drowned_cistern",
@@ -239,7 +239,7 @@
         -0.45,
         264.0
       ],
-      "destinationMap": "maps/nymara/ssarathi_ruins.elm",
+      "destinationMap": "ssarathi_ruins",
       "destinationSpawn": "undercroft-mouth",
       "radius": 2.5,
       "section": "root_undercroft",

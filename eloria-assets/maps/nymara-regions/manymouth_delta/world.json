@@ -3699,7 +3699,7 @@
         392,
         192
       ],
-      "destinationMap": "maps/nymara/manymouth_flooded_labyrinth.elm",
+      "destinationMap": "manymouth_flooded_labyrinth",
       "destinationSpawn": "labyrinth-mouth",
       "radius": 3.5,
       "authority": "server"
@@ -3717,7 +3717,7 @@
         224,
         216
       ],
-      "destinationMap": "maps/nymara/manymouth_flooded_labyrinth.elm",
+      "destinationMap": "manymouth_flooded_labyrinth",
       "destinationSpawn": "underdeck-hatch",
       "radius": 3.5,
       "authority": "server"
@@ -3735,7 +3735,7 @@
         208,
         231
       ],
-      "destinationMap": "maps/nymara/manymouth_flooded_labyrinth.elm",
+      "destinationMap": "manymouth_flooded_labyrinth",
       "destinationSpawn": "tide-hall-door",
       "radius": 3.5,
       "authority": "server"
@@ -3753,7 +3753,7 @@
         475,
         482
       ],
-      "destinationMap": "maps/nymara/manymouth_flooded_labyrinth.elm",
+      "destinationMap": "manymouth_flooded_labyrinth",
       "destinationSpawn": "temple-sanctum-door",
       "radius": 3.5,
       "authority": "server"
@@ -3771,7 +3771,7 @@
         253,
         266
       ],
-      "destinationMap": "maps/nymara/manymouth_flooded_labyrinth.elm",
+      "destinationMap": "manymouth_flooded_labyrinth",
       "destinationSpawn": "gate-descent",
       "radius": 3.5,
       "authority": "server"
@@ -3789,7 +3789,7 @@
         276,
         525
       ],
-      "destinationMap": "maps/nymara/verdant_stair.elm",
+      "destinationMap": "verdant_stair",
       "radius": 3.5,
       "authority": "server"
     },
@@ -3806,7 +3806,7 @@
         537,
         210
       ],
-      "destinationMap": "maps/nymara/ssarathi_ruins.elm",
+      "destinationMap": "ssarathi_ruins",
       "radius": 3.5,
       "authority": "server"
     },
@@ -3823,7 +3823,7 @@
         471,
         117
       ],
-      "destinationMap": "maps/nymara/westhaven.elm",
+      "destinationMap": "westhaven",
       "radius": 3.5,
       "authority": "server"
     },
@@ -3840,7 +3840,7 @@
         42,
         504
       ],
-      "destinationMap": "maps/nymara/crownwater.elm",
+      "destinationMap": "crownwater",
       "radius": 3.5,
       "authority": "server"
     }

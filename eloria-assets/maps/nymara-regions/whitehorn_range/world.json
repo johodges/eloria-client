@@ -1618,7 +1618,7 @@
     {
       "id": "whitehorn-glacier-temple-door",
       "name": "Glacier Temple",
-      "destination": "maps/nymara/whitehorn_glacier_temple.elm",
+      "destination": "whitehorn_glacier_temple",
       "destinationSpawn": "whitehorn-glacier-temple-door",
       "serverTile": null,
       "position": [
@@ -1631,7 +1631,7 @@
     {
       "id": "whitehorn-mine-adit",
       "name": "Whitehorn Mine",
-      "destination": "maps/nymara/whitehorn_glacier_temple.elm",
+      "destination": "whitehorn_glacier_temple",
       "destinationSpawn": "whitehorn-mine-adit",
       "serverTile": null,
       "position": [
@@ -1644,7 +1644,7 @@
     {
       "id": "whitehorn-ice-cave-mouth",
       "name": "Whitehorn Ice Cave",
-      "destination": "maps/nymara/whitehorn_glacier_temple.elm",
+      "destination": "whitehorn_glacier_temple",
       "destinationSpawn": "whitehorn-ice-cave-mouth",
       "serverTile": null,
       "position": [
@@ -1657,7 +1657,7 @@
     {
       "id": "whitehorn-barrow-door",
       "name": "The Frost Barrow",
-      "destination": "maps/nymara/whitehorn_glacier_temple.elm",
+      "destination": "whitehorn_glacier_temple",
       "destinationSpawn": "whitehorn-barrow-door",
       "serverTile": null,
       "position": [
@@ -1670,7 +1670,7 @@
     {
       "id": "whitehorn-south-road",
       "name": "Road to Amberwood",
-      "destination": "maps/nymara/amberwood.elm",
+      "destination": "amberwood",
       "serverTile": [
         174,
         330
@@ -1685,7 +1685,7 @@
     {
       "id": "whitehorn-east-pass",
       "name": "Pass to the Amethyst Barrens",
-      "destination": "maps/nymara/amethyst_barrens.elm",
+      "destination": "amethyst_barrens",
       "serverTile": [
         330,
         174
@@ -1700,7 +1700,7 @@
     {
       "id": "whitehorn-west-road",
       "name": "Road to the Four Gates",
-      "destination": "maps/nymara/four_gates.elm",
+      "destination": "four_gates",
       "serverTile": [
         18,
         174

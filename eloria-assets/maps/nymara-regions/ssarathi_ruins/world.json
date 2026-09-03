@@ -3781,7 +3781,7 @@
         306,
         450
       ],
-      "destinationMap": "maps/nymara/verdant_stair.elm",
+      "destinationMap": "verdant_stair",
       "radius": 3.5,
       "authority": "server"
     },
@@ -3798,7 +3798,7 @@
         474,
         306
       ],
-      "destinationMap": "maps/nymara/manymouth_delta.elm",
+      "destinationMap": "manymouth_delta",
       "radius": 3.5,
       "authority": "server"
     },
@@ -3815,7 +3815,7 @@
         36,
         336
       ],
-      "destinationMap": "maps/nymara/grey_moors.elm",
+      "destinationMap": "grey_moors",
       "radius": 3.5,
       "authority": "server"
     },
@@ -3832,7 +3832,7 @@
         150,
         36
       ],
-      "destinationMap": "maps/nymara/westhaven.elm",
+      "destinationMap": "westhaven",
       "radius": 3.5,
       "authority": "server"
     },
@@ -3850,7 +3850,7 @@
         382
       ],
       "landmark": "sun-vault",
-      "destinationMap": "maps/nymara/ssarathi_royal_archive.elm",
+      "destinationMap": "ssarathi_royal_archive",
       "destinationSpawn": "archive-vault-door",
       "radius": 2.5,
       "authority": "server"
@@ -3869,7 +3869,7 @@
         291
       ],
       "landmark": "hatchery-descent",
-      "destinationMap": "maps/nymara/ssarathi_royal_archive.elm",
+      "destinationMap": "ssarathi_royal_archive",
       "destinationSpawn": "hatchery-descent",
       "radius": 2.5,
       "authority": "server"
@@ -3888,7 +3888,7 @@
         234
       ],
       "landmark": "cistern-shaft",
-      "destinationMap": "maps/nymara/ssarathi_royal_archive.elm",
+      "destinationMap": "ssarathi_royal_archive",
       "destinationSpawn": "cistern-shaft",
       "radius": 2.5,
       "authority": "server"
@@ -3907,7 +3907,7 @@
         96
       ],
       "landmark": "undercroft-mouth",
-      "destinationMap": "maps/nymara/ssarathi_royal_archive.elm",
+      "destinationMap": "ssarathi_royal_archive",
       "destinationSpawn": "undercroft-mouth",
       "radius": 2.5,
       "authority": "server"

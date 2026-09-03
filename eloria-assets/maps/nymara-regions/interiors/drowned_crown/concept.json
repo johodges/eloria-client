@@ -5,8 +5,8 @@
   "status": "concept-complete-production-queued",
   "parentRegion": "crownwater",
   "source": {
-    "elm": "../../source-elm/drowned_crown.elm",
-    "sha256": "eacc253b09d4722ef6697f35e8f5f18cab173c4092b773117a3170120fdd7c64"
+    "walkGrid": "../../server-collision/drowned_crown.bin",
+    "sha256": "8a34c701d5d019acf9851bc58e2e8927554199000cbad25bf9304943315c6370"
   },
   "conceptArt": {
     "culturalReference": "../../../../concepts/nymara-regions/crownwater_region_concept.png",

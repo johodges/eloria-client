@@ -67,7 +67,7 @@ cd ../grey_moors/source
 python build_interiors.py                 # the combined map
 python preview_interior.py insides ../../interiors/grey_moors_insides/references/00-checkpoint-contact-sheet.png \
        --captures ../../interiors/grey_moors_insides/references/captures --cols 5
-python export_insides_elm.py              # the server ELM, from the package's own collision.bin
+python export_insides_collision.py              # the server walk grid, from the package's own collision.bin
 PYTHONPATH=../../_toolkit python ../../_toolkit/verify_runtime.py \
        --package ../../interiors/grey_moors_insides
 ```

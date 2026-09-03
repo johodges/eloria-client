@@ -1426,7 +1426,7 @@
         389,
         532
       ],
-      "destinationMap": "maps/nymara/mirrorhold.elm",
+      "destinationMap": "mirrorhold",
       "radius": 3.5,
       "authority": "server"
     },
@@ -1443,7 +1443,7 @@
         532,
         187
       ],
-      "destinationMap": "maps/nymara/amethyst_barrens.elm",
+      "destinationMap": "amethyst_barrens",
       "radius": 3.5,
       "authority": "server"
     },
@@ -1460,7 +1460,7 @@
         187,
         44
       ],
-      "destinationMap": "maps/nymara/westhaven.elm",
+      "destinationMap": "westhaven",
       "radius": 3.5,
       "authority": "server"
     },
@@ -1477,7 +1477,7 @@
         44,
         389
       ],
-      "destinationMap": "maps/nymara/amberwood.elm",
+      "destinationMap": "amberwood",
       "radius": 3.5,
       "authority": "server"
     },
@@ -1495,7 +1495,7 @@
         306
       ],
       "landmark": "crownwater-cathedral",
-      "destinationMap": "maps/nymara/drowned_crown.elm",
+      "destinationMap": "drowned_crown",
       "destinationSpawn": "basilica-undercroft",
       "radius": 2.5,
       "authority": "server"
@@ -1514,7 +1514,7 @@
         324
       ],
       "landmark": "crownwater-campanile",
-      "destinationMap": "maps/nymara/drowned_crown.elm",
+      "destinationMap": "drowned_crown",
       "destinationSpawn": "campanile-door",
       "radius": 2.5,
       "authority": "server"
@@ -1533,7 +1533,7 @@
         288
       ],
       "landmark": "crownwater-pavilion-pavilion_west",
-      "destinationMap": "maps/nymara/drowned_crown.elm",
+      "destinationMap": "drowned_crown",
       "destinationSpawn": "cistern-stair",
       "radius": 2.5,
       "authority": "server"
@@ -1552,7 +1552,7 @@
         176
       ],
       "landmark": "crownwater-customs-hall",
-      "destinationMap": "maps/nymara/drowned_crown.elm",
+      "destinationMap": "drowned_crown",
       "destinationSpawn": "customs-door",
       "radius": 2.5,
       "authority": "server"

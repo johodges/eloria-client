@@ -41,10 +41,26 @@ def test_native_animation_library_is_not_rebuilt():
     assert {"rotation", "translation"} <= paths
 
 
-def test_runtime_has_no_legacy_joint_or_atlas_remapping():
-    source = (ROOT / "actor_glb_runtime.cpp").read_text()
-    for clip in REQUIRED:
-        assert f'"{clip}"' in source
-    assert "joint==32" not in source
-    assert "EloriaActorAtlas" not in source
-    assert '"Universal_Animation_Library.glb"' in source
+def test_the_client_binds_the_clips_it_ships():
+    """The action map has to name clips that are actually in the library.
+
+    This held `actor_glb_runtime.cpp` to a required clip list while the C
+    client was the one playing them. That client is gone, and the Godot client
+    binds actions to clips in `data/animations/luminous.json` instead, so what
+    is worth holding is that every clip it names exists in the library it
+    loads - a typo there is an action that silently does nothing.
+    """
+    contract = json.loads((ROOT / "godot-client/data/animations/luminous.json")
+                          .read_text(encoding="utf-8"))
+    library = glb_document(NATIVE / "Universal_Animation_Library.glb")
+    clips = {animation["name"] for animation in library["animations"]}
+
+    named = set(contract.get("loopingClips", []))
+    for action in contract.get("actions", {}).values():
+        if isinstance(action, str):
+            named.add(action)
+        elif isinstance(action, dict):
+            named.update(str(value) for key, value in action.items()
+                         if key in ("clip", "enter", "loop", "exit"))
+    assert named, "the animation contract binds no clips at all"
+    assert named <= clips, sorted(named - clips)

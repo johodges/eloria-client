@@ -31,7 +31,7 @@ PYTHONPATH=../_toolkit python ../_toolkit/validate_gltf.py world.glb
 PYTHONPATH=../_toolkit python ../_toolkit/verify_runtime.py --report verification-report.json
 PYTHONPATH=../_toolkit python ../_toolkit/capture_views.py
 PYTHONPATH=../_toolkit python ../_toolkit/make_comparison.py
-PYTHONPATH=../_toolkit python ../_toolkit/export_source_elm.py --out ../source-elm/amethyst_barrens.elm
+PYTHONPATH=../_toolkit python ../_toolkit/export_server_collision.py --out ../server-collision/amethyst_barrens.bin
 ```
 
 ## Real client frames
