@@ -120,8 +120,34 @@ func _run() -> void:
 		"rating": 120, "combat_level": 60, "level": 10, "health": 180,
 		"ether": 30, "attack": 40, "defense": 20, "damage_min": 6,
 		"damage_max": 12, "armor_min": 2, "armor_max": 5,
-		"configured": true}]})
-	_expect(assistant.monster_list.item_count == 1, "monster catalog populates")
+		"configured": true, "placeholder_model": false},
+		{"type": "slag_crawler", "name": "*Slag Crawler", "tier": "Average",
+		"rating": 38, "combat_level": 19, "level": 3, "health": 45,
+		"ether": 10, "attack": 12, "defense": 8, "damage_min": 1,
+		"damage_max": 3, "armor_min": 0, "armor_max": 1,
+		"configured": false, "placeholder_model": true},
+		{"type": "moss_bear", "name": "*Moss Bear", "tier": "Dangerous",
+		"rating": 66, "combat_level": 33, "level": 5, "health": 90,
+		"ether": 20, "attack": 20, "defense": 14, "damage_min": 3,
+		"damage_max": 6, "armor_min": 1, "armor_max": 2,
+		"configured": false}]})
+	_expect(assistant.monster_list.item_count == 3, "monster catalog populates")
+
+	# Only the creatures whose model has been through review - the ones the
+	# server does not mark with a leading asterisk.
+	assistant.monster_updated_only.button_pressed = true
+	_expect(assistant.monster_list.item_count == 1,
+		"the updated-models filter hides the creatures still on a stand-in model")
+	_expect(str(assistant.monster_list.get_item_text(0)).contains("Ash Wyrm"),
+		"the reviewed creature is the one left")
+	_expect(not assistant.has_placeholder_model({"placeholder_model": false,
+			"name": "*Mislabelled"}),
+		"the server's own flag decides, not the decorated name")
+	_expect(assistant.has_placeholder_model({"name": "*Moss Bear"}),
+		"a server that sends only the mark is still filtered on")
+	assistant.monster_updated_only.button_pressed = false
+	_expect(assistant.monster_list.item_count == 3,
+		"clearing the filter brings the whole catalog back")
 	assistant._on_monster_selected(0)
 	assistant.monster_quantity.value = 3
 	assistant._add_monster_to_group()
