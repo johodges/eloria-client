@@ -37,7 +37,7 @@ RACES = (TOOLS.parent.parent / "godot-client" / "assets" / "actors"
 
 CLASSES = ("body", "eyes", "hair", "wardrobe_shirt", "wardrobe_pants",
            "wardrobe_boots")
-EYE_COLOUR_MIN_DISTANCE = 0.18
+EYE_COLOUR_MIN_DISTANCE = 0.30
 CLASS_COLOURS = {
     "body": (205, 170, 140), "eyes": (0, 255, 255), "hair": (255, 0, 255),
     "wardrobe_shirt": (40, 160, 220), "wardrobe_pants": (60, 60, 200),
@@ -231,6 +231,58 @@ def resmooth_shared_surfaces(document, binary) -> int:
     return int(len(np.unique(all_indices)))
 
 
+def largest_component_per_side(face_indices: np.ndarray, faces: np.ndarray,
+                               positions: np.ndarray,
+                               side: np.ndarray) -> np.ndarray:
+    """Keep only the largest position-connected group of faces per side.
+
+    ``side`` is a boolean array over ALL faces (True/False, e.g. x >= 0)
+    splitting candidates into left/right before grouping, so a same-size
+    stray fragment on one side can never be mistaken for the other eye.
+    Connectivity is by shared 3D position rather than shared vertex INDEX
+    -- this mesh duplicates vertices at UV/normal seams (see
+    smooth_normals), so two triangles that visibly touch often do not
+    share an index, only a position. The same union-find add_scalp
+    already uses for its own connected pieces, scoped to just the
+    candidate faces so an unrelated face elsewhere can't bridge two
+    fragments into one.
+    """
+    if len(face_indices) == 0:
+        return face_indices
+    position_id = {}
+    def pid(vertex_index):
+        key = tuple(np.round(positions[vertex_index], 4))
+        return position_id.setdefault(key, len(position_id))
+
+    parent = {}
+    def find(a):
+        while parent.setdefault(a, a) != a:
+            parent[a] = parent[parent[a]]
+            a = parent[a]
+        return a
+    def union(a, b):
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            parent[ra] = rb
+
+    for face_index in face_indices:
+        a, b, c = (pid(v) for v in faces[face_index])
+        union(a, b)
+        union(b, c)
+
+    kept = []
+    for side_value in (True, False):
+        side_faces = [f for f in face_indices if bool(side[f]) == side_value]
+        if not side_faces:
+            continue
+        groups = {}
+        for face_index in side_faces:
+            root = find(pid(faces[face_index][0]))
+            groups.setdefault(root, []).append(face_index)
+        kept.extend(max(groups.values(), key=len))
+    return np.array(kept, dtype=face_indices.dtype)
+
+
 def classify(positions, uvs, indices, texture: Image.Image):
     """Boots/pants/shirt/skin by nearest colour to a per-body sample of
     each; eyes by geometry.
@@ -283,6 +335,21 @@ def classify(positions, uvs, indices, texture: Image.Image):
     (median of everything in it, since skin is the overwhelming
     majority) and only the zone's outliers -- far enough from that local
     reference -- keep the "eyes" label; the rest fall back to "body".
+
+    That colour outlier test still keeps a few triangles that are far
+    from skin for an unrelated reason -- a UV chart border sampled at the
+    face centroid, a stray fold catching a highlight -- and, checked
+    directly by tinting the classified "eyes" primitive a saturated
+    colour in the live creation preview, those show up as small jagged
+    wedges disconnected from the eye itself, not touching it at any
+    shared vertex. The real eye is one connected patch of geometry (per
+    side), so the fix is connectivity, not a better colour rule: group
+    the colour-selected triangles by shared position into left/right
+    sides, keep only the largest connected piece on each side, and
+    return the rest to "body". Measured on both Luminous Human bodies,
+    the true eye is always the largest piece by a wide margin -- the
+    female zone's outliers split into two 47-48 triangle eyes plus eight
+    fragments of 8 or fewer.
     """
     tex = np.asarray(texture.convert("RGB")).astype(np.float64) / 255.0
     height, width = tex.shape[:2]
@@ -320,22 +387,31 @@ def classify(positions, uvs, indices, texture: Image.Image):
         for i, name in enumerate(names):
             labels[nearest == i] = name
 
-    # Eyes: two lobes, symmetric about centre, at 0.70-0.82 of the way up
+    # Eyes: two lobes, symmetric about centre, at 0.60-0.69 of the way up
     # the HEAD's own Y span (not the whole body's -- "head" is frac >= 0.80
     # of the body, everything from there to the crown). Measured on the
     # male body: the nose tip -- the true most-forward point, found by
     # sweeping max Z across 2 cm Y-slices -- peaks around 0.52-0.58 of
-    # that same span, so 0.70-0.82 sits well above it, under the brow
-    # rather than on it. The gap and half-width are likewise fractions of
-    # the head span rather than fixed metres, so a larger or smaller head
-    # on the same rig gets a proportionally placed, proportionally sized
-    # pair rather than one calibrated to this body's absolute scale.
+    # that same span, so this band sits well above it, under the brow
+    # rather than on it. The upper edge was pulled in from an original
+    # 0.72: on the female body specifically, the extra sliver between
+    # 0.69 and 0.72 held nothing but a stray eyebrow/eyelash mark that
+    # happened to be dark enough, and connected enough to the true eye's
+    # own triangles, to survive both the colour and connected-component
+    # filters below -- checked directly by sweeping this edge from 0.72
+    # down to 0.67 and re-rendering at each step, which showed the kept
+    # face count plateau at 0.68-0.70 (the true eye, unaffected) before
+    # dropping further at 0.67 (cutting into the eye itself). The gap and
+    # half-width are likewise fractions of the head span rather than
+    # fixed metres, so a larger or smaller head on the same rig gets a
+    # proportionally placed, proportionally sized pair rather than one
+    # calibrated to this body's absolute scale.
     head = frac >= 0.80
     if head.any():
         head_lo, head_hi = float(y[head].min()), float(y[head].max())
         head_span = head_hi - head_lo
         if head_span > 1e-9:
-            eye_level = (y >= head_lo + 0.60 * head_span) & (y < head_lo + 0.72 * head_span)
+            eye_level = (y >= head_lo + 0.60 * head_span) & (y < head_lo + 0.69 * head_span)
             gap = 0.05 * head_span
             half_width = 0.11 * head_span
             eye_zone = eye_level & (np.abs(x) >= gap) & (np.abs(x) < gap + half_width)
@@ -346,16 +422,34 @@ def classify(positions, uvs, indices, texture: Image.Image):
             # this adapts to each body's own skin tone with no hard-coded
             # colour. EYE_COLOUR_MIN_DISTANCE is in the same normalised
             # (0-1 per channel) RGB space as every other reference in
-            # this function; a painted iris/pupil/sclera sits at 0.4-1.2
-            # from either Luminous body's skin, eyelid shading noise
-            # under 0.1 -- 0.18 sits well clear of the shading noise
-            # without creeping into it.
+            # this function. Checked directly (tinting the classified
+            # primitive a saturated colour in the live preview and
+            # zooming in): the actual iris/pupil/sclera sits at 0.4-1.2
+            # from either Luminous body's skin, but a brightly lit or
+            # shadowed patch of plain eyelid skin can still reach
+            # 0.15-0.28 on its own -- a lower cut here does not merely
+            # admit shading noise, it admits a second, real skin-toned
+            # population wide enough to overlap the low end of the eye
+            # itself, and no single cut fully separates the two. 0.30
+            # sits above where that skin population thins out; the
+            # connected-component pass just below cleans up the rest.
             if eye_zone.any():
                 zone_rgb = rgb[eye_zone]
                 local_skin = np.median(zone_rgb, axis=0)
                 zone_dist = np.linalg.norm(zone_rgb - local_skin, axis=1)
                 zone_indices = np.flatnonzero(eye_zone)
-                labels[zone_indices[zone_dist >= EYE_COLOUR_MIN_DISTANCE]] = "eyes"
+                colour_outliers = zone_indices[zone_dist >= EYE_COLOUR_MIN_DISTANCE]
+                # A handful of those outliers are far from skin for a
+                # reason that has nothing to do with being an eye (a UV
+                # chart border sampled at the face centroid, a stray
+                # highlight) -- checked directly, by tinting the
+                # classified primitive in the live preview, these show up
+                # as small wedges disconnected from the eye itself. The
+                # real eye is the largest connected piece on each side by
+                # a wide margin, so keep only that.
+                eye_faces = largest_component_per_side(
+                    colour_outliers, faces, positions, x >= 0)
+                labels[eye_faces] = "eyes"
 
     return faces, labels
 
@@ -628,8 +722,13 @@ def add_scalp(document, binary) -> int:
 def split(path: Path, calibrate: bool) -> str:
     document, binary = read_glb(path)
     extras = document.setdefault("asset", {}).setdefault("extras", {})
-    if int(extras.get("eloriaSurfacesSplit", 0)) >= 16:
+    if int(extras.get("eloriaSurfacesSplit", 0)) >= 20:
         return "already split"
+    if int(extras.get("eloriaSurfacesSplit", 0)) in (16, 17, 18, 19):
+        report = reclassify_eyes(document, binary)
+        extras["eloriaSurfacesSplit"] = 20
+        write_glb(path, document, binary)
+        return "%s -> v20" % report
     if int(extras.get("eloriaSurfacesSplit", 0)) == 15:
         report = reclassify_eyes(document, binary)
         extras["eloriaSurfacesSplit"] = 16
@@ -770,7 +869,7 @@ def split(path: Path, calibrate: bool) -> str:
 
     del mesh_node["mesh"]
     add_scalp(document, binary)
-    extras["eloriaSurfacesSplit"] = 16
+    extras["eloriaSurfacesSplit"] = 20
     write_glb(path, document, binary)
     return "split: %s" % counts
 
