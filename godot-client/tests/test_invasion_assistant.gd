@@ -115,6 +115,22 @@ func _run() -> void:
 	assistant._on_group_selected(0)
 	_expect(not assistant.group_spawn.disabled, "defined group can be spawned")
 	_expect(not assistant.group_save.disabled, "dynamic group is editable")
+
+	# A group built in the assistant spawns once. The three respawn windows
+	# the server can report have to read differently, because activating a
+	# wave that comes back forever in front of players is not recoverable.
+	_expect(assistant._respawn_summary({"auto_respawn_minutes": -1})
+		== "none — spawns once",
+		"a shut respawn window reads as spawning once")
+	_expect(assistant._respawn_summary({"auto_respawn_minutes": 0})
+		== "every wipe, while active",
+		"an open respawn window reads as respawning for as long as it is active")
+	_expect(assistant._respawn_summary({"auto_respawn_minutes": 30})
+		== "every wipe for 30 min", "a timed respawn window reads as its length")
+	_expect(assistant._respawn_summary({}) == "every wipe, while active",
+		"a server that says nothing is read as the server default, not as none")
+	_expect(assistant.group_detail.text.contains("Respawns"),
+		"the selected group states its respawn window")
 	assistant.apply_update({"kind": "monsters", "monsters": [{
 		"type": "ash_wyrm", "name": "Ash Wyrm", "tier": "Formidable",
 		"rating": 120, "combat_level": 60, "level": 10, "health": 180,

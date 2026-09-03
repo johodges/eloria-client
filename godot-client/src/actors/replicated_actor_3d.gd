@@ -40,6 +40,13 @@ var server_scale := 1.0
 ## The client's own import scale for this model, kept so the two can be
 ## multiplied rather than one overwriting the other.
 var _import_scale := 1.0
+## The ground marker, kept rather than looked up: it is counter-rotated
+## every physics frame and a node path lookup per frame per actor is
+## not what that should cost.
+var _selection_ring: MeshInstance3D = null
+## Metres per tile on the map this actor is on, so the marker can be
+## the size of the ground the server reserved rather than a guess.
+var _metres_per_tile := 1.0
 var resolver: AnimationResolver
 var animation_player: AnimationPlayer
 var current_action: StringName = &"idle"
@@ -181,13 +188,17 @@ const HEALTH_BAR_BORDER := 0.02
 ## players will keep missing, and a ring drawn around that one tile says
 ## the wrong thing about what is standing there.
 const SELECTION_RADIUS := 0.45
-const RING_INNER_RADIUS := 0.48
-const RING_OUTER_RADIUS := 0.58
+## Width of the selection outline's border, in metres.
+const RING_THICKNESS := 0.09
+## How far a single-tile outline is inset from its tile's edges, so a
+## rabbit's marker does not read as a solid square of floor.
+const RING_INSET := 0.06
 
 func configure(dto: Dictionary, adapter: CoordinateAdapter,
 		model_config: Dictionary, animation_config: Dictionary,
 		equipment_config: Dictionary = {}) -> Array[String]:
 	actor_id = int(dto.actor_id)
+	_metres_per_tile = maxf(0.01, adapter.metres_per_tile)
 	footprint = dto.get("footprint", Vector2i.ONE) as Vector2i
 	server_scale = maxf(0.01, float(dto.get("scale", 1.0)))
 	server_target = adapter.footprint_center(
@@ -209,15 +220,14 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	add_child(selection_shape)
 	var selection_ring: MeshInstance3D = MeshInstance3D.new()
 	selection_ring.name = "SelectionRing"
-	var ring: TorusMesh = TorusMesh.new()
-	ring.inner_radius = RING_INNER_RADIUS
-	ring.outer_radius = RING_OUTER_RADIUS
 	var ring_material: StandardMaterial3D = StandardMaterial3D.new()
 	ring_material.albedo_color = Color(0.95, 0.76, 0.18, 0.9)
 	ring_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	ring_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	ring.material = ring_material
-	selection_ring.mesh = ring
+	# Both faces: this is a flat decal on the ground and the winding
+	# it is built with should not decide whether it can be seen.
+	ring_material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	selection_ring.material_override = ring_material
 	selection_ring.position.y = 0.05
 	selection_ring.visible = false
 	# Gameplay-only visual layer. The minimap and full-map cameras cull it, so
@@ -225,6 +235,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	# shows at their scale.
 	selection_ring.layers = GAMEPLAY_ONLY_VISUAL_LAYER
 	add_child(selection_ring)
+	_selection_ring = selection_ring
 	_resize_selection()
 	_add_nameplate(dto)
 	_add_map_dot(dto)
@@ -693,21 +704,74 @@ func set_footprint(value: Vector2i) -> void:
 	footprint = next
 	_resize_selection()
 
-## Grow the click target and the selection ring to the actor's own size.
+## Grow the click target and the ground marker to the actor's own size.
 func _resize_selection() -> void:
 	var span: float = float(maxi(footprint.x, footprint.y))
 	var shape: CollisionShape3D = get_node_or_null(
 		"SelectionCollision") as CollisionShape3D
 	if shape != null and shape.shape is CapsuleShape3D:
 		(shape.shape as CapsuleShape3D).radius = SELECTION_RADIUS * span
-	var ring_node: MeshInstance3D = get_node_or_null(
-		"SelectionRing") as MeshInstance3D
-	if ring_node != null and ring_node.mesh is TorusMesh:
-		var torus: TorusMesh = ring_node.mesh as TorusMesh
-		torus.inner_radius = RING_INNER_RADIUS * span
-		torus.outer_radius = RING_OUTER_RADIUS * span
+	if _selection_ring != null:
+		_selection_ring.mesh = footprint_outline(
+			float(footprint.x) * _metres_per_tile,
+			float(footprint.y) * _metres_per_tile)
+
+## The ground an actor is standing on, drawn as the box the server
+## actually reserved rather than as a circle around its middle.
+##
+## A circle could only ever suggest one tile: it says nothing about which
+## way a rectangle lies, and for anything larger than a single tile it
+## either overhangs the ground the creature holds or sits inside it. The
+## outline is the box, so what is drawn under a creature is the same set
+## of tiles the server will not let you walk through.
+##
+## Static so a test can build the same mesh and measure it without
+## standing up an actor.
+## Hold the marker square to the world while the actor turns inside it.
+##
+## A footprint is axis-aligned in world space and does not rotate - that
+## is deliberate, because combat turns a creature on the spot and a box
+## that swept round with it would have to be able to fail to turn. The
+## marker is a child of the actor, so it inherits a yaw the ground it
+## describes never has, and has to give it back. A circle never showed
+## this; a rectangle shows it immediately.
+func _level_selection_ring() -> void:
+	if _selection_ring != null and _selection_ring.visible:
+		_selection_ring.rotation.y = -rotation.y
+
+static func footprint_outline(width_m: float, depth_m: float) -> ArrayMesh:
+	var half_x: float = maxf(0.1, width_m * 0.5 - RING_INSET)
+	var half_z: float = maxf(0.1, depth_m * 0.5 - RING_INSET)
+	var thickness: float = minf(RING_THICKNESS,
+		minf(half_x, half_z) * 0.9)
+	var outer: Array[Vector3] = [
+		Vector3(-half_x, 0.0, -half_z), Vector3(half_x, 0.0, -half_z),
+		Vector3(half_x, 0.0, half_z), Vector3(-half_x, 0.0, half_z)]
+	var inner_x: float = half_x - thickness
+	var inner_z: float = half_z - thickness
+	var inner: Array[Vector3] = [
+		Vector3(-inner_x, 0.0, -inner_z), Vector3(inner_x, 0.0, -inner_z),
+		Vector3(inner_x, 0.0, inner_z), Vector3(-inner_x, 0.0, inner_z)]
+	var vertices := PackedVector3Array()
+	var normals := PackedVector3Array()
+	for side: int in range(4):
+		var next: int = (side + 1) % 4
+		for point: Vector3 in [outer[side], outer[next], inner[next],
+				outer[side], inner[next], inner[side]]:
+			vertices.append(point)
+			normals.append(Vector3.UP)
+	var arrays: Array = []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	arrays[Mesh.ARRAY_NORMAL] = normals
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	return mesh
 
 func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport := false) -> void:
+	if not is_equal_approx(_metres_per_tile, adapter.metres_per_tile):
+		_metres_per_tile = maxf(0.01, adapter.metres_per_tile)
+		_resize_selection()
 	if dto.has("footprint"):
 		set_footprint(dto.get("footprint") as Vector2i)
 	if dto.has("scale"):
@@ -1630,9 +1694,9 @@ func _finish_movement_presentation() -> void:
 			_smoothed_server_interval * 0.75)
 
 func set_selected(value: bool) -> void:
-	var ring: Node3D = get_node_or_null("SelectionRing") as Node3D
-	if ring != null:
-		ring.visible = value
+	if _selection_ring != null:
+		_selection_ring.visible = value
+		_level_selection_ring()
 
 func set_surface_height(value: float) -> void:
 	if not _snap_pending and is_equal_approx(server_target.y, value):
@@ -1657,6 +1721,7 @@ func _physics_process(delta: float) -> void:
 	if _snap_pending:
 		global_position = server_target
 		rotation.y = _target_yaw
+		_level_selection_ring()
 		_segment_start = server_target
 		_snap_pending = false
 		_travel_yaw_active = false
@@ -1676,6 +1741,7 @@ func _physics_process(delta: float) -> void:
 		_travel_yaw_active = false
 	rotation.y = rotate_toward(rotation.y, _rendered_target_yaw(),
 		turn_speed_radians * delta)
+	_level_selection_ring()
 	_advance_facing_offset(delta)
 	if _movement_coast_remaining > 0.0:
 		_movement_coast_remaining = maxf(0.0, _movement_coast_remaining - delta)
