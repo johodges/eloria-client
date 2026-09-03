@@ -210,10 +210,80 @@ func _run() -> void:
 	_expect(int(windows.market_list.get_item_metadata(0)) == 7,
 		"a listing row carries the server's listing id, not its row index")
 
+	# 241 the completed-quest archive: the half of the journal that answers
+	# "what have I done", which no client-side log could survive a reinstall.
+	windows.close_all()
+	app_state.call("_on_packet", 241, _hex(
+		"0200426567696e6e6572205475746f7269616c0049736c61205072696d6100596f75"
+		+ "206c6561726e656420746f206d6f76652c2066696768742c2067617468657220616e"
+		+ "64206d69782e00546865205765737465726e20526f6164004e796d6172610059"
+		+ "6f752077616c6b65642074686520726f6164207765737420616e642063616d652062"
+		+ "61636b2e00"))
+	windows.toggle_quest_journal()
+	await process_frame
+	_expect(windows.quest_done_button.text.contains("2"),
+		"the completed tab counts what the server says is finished")
+	windows._on_quest_view(true)
+	await process_frame
+	_expect(windows.quest_list.item_count == 2
+		and windows.quest_list.get_item_text(0).contains("Beginner Tutorial")
+		and windows.quest_detail.text.contains("You learned to move")
+		and windows.quest_track_button.disabled,
+		"the completed view lists finished quests and cannot track them")
+	windows._on_quest_view(false)
+	await process_frame
+	_expect(not windows.quest_done_button.button_pressed
+		and windows.quest_active_button.button_pressed,
+		"switching back to active leaves exactly one view selected")
+	# Pressing the tab that is already down must not leave the window blank.
+	windows._on_quest_view(false)
+	await process_frame
+	_expect(windows.quest_active_button.button_pressed,
+		"pressing the selected tab keeps it selected")
+	windows.close_all()
+
+	# 240 party. The window's job is the member who is not on your screen, so
+	# what matters is that an absent one is still drawn and still says so.
+	app_state.call("_on_packet", 240, _hex(
+		"0102037800b40028003c000003e0014b656c6c616e00666f75725f67617465730004"
+		+ "5a0096000a0037009a00b6004d6172656e006d6972726f72686f6c6400000000"))
+	await process_frame
+	_expect(windows.party_panel.visible
+		and windows.party_rows.get_child_count() == 2
+		and windows.party_header.text.contains("1 of 2"),
+		"the party window draws every member and counts who is online")
+	var absent_row: Control = windows.party_rows.get_child(1) as Control
+	_expect(_row_text(absent_row).contains("Maren")
+		and _row_text(absent_row).contains("offline"),
+		"an offline member keeps their row and is named as offline")
+	var leader_row: Control = windows.party_rows.get_child(0) as Control
+	_expect(_row_text(leader_row).contains("leader")
+		and _row_text(leader_row).contains("four_gates"),
+		"the leader is marked and their location is stated")
+	var leader_health: ProgressBar = leader_row.get_node("Health") as ProgressBar
+	_expect(is_equal_approx(leader_health.value, 120.0)
+		and is_equal_approx(leader_health.max_value, 180.0),
+		"a member's health bar reads the server's numbers")
+
+	# An invitation with no party is a real state: the window has to appear to
+	# carry the answer buttons, with nothing else in it.
+	app_state.call("_on_packet", 240, _hex("00004b656c6c616e004b00"))
+	await process_frame
+	_expect(windows.party_panel.visible and windows.party_invite_row.visible
+		and windows.party_invite_label.text.contains("Kellan")
+		and windows.party_rows.get_child_count() == 0,
+		"a pending invitation opens the window with no members in it")
+
+	# And the party going away closes it rather than leaving a stale roster.
+	app_state.call("_on_packet", 240, _hex("0000000000"))
+	await process_frame
+	_expect(not windows.party_panel.visible and not windows.party_invite_row.visible,
+		"no party and no invitation hides the window")
+
 	# Bounds and the fixed resource rail, for every window at once.
 	for panel: PanelContainer in [windows.combat_panel, windows.events_panel,
 			windows.quest_panel, windows.mail_panel, windows.detail_panel,
-			windows.merchant_panel, windows.market_panel]:
+			windows.merchant_panel, windows.market_panel, windows.party_panel]:
 		var was_visible: bool = panel.visible
 		panel.show()
 		await process_frame
@@ -267,6 +337,18 @@ func _run() -> void:
 	main.queue_free()
 	await process_frame
 	quit(failures)
+
+## Every Label under one member row, joined. The row is built from several
+## controls, so asserting against any single one of them would pin the layout
+## rather than what the row says.
+func _row_text(row: Control) -> String:
+	var parts: PackedStringArray = PackedStringArray()
+	for child: Node in row.get_children():
+		if child is Label:
+			parts.append((child as Label).text)
+		elif child is Container:
+			parts.append(_row_text(child as Control))
+	return " ".join(parts)
 
 func _hex(value: String) -> PackedByteArray:
 	var bytes := PackedByteArray()

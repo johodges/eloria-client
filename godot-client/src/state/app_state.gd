@@ -105,6 +105,31 @@ var marketplace: Dictionary = {"open": false, "gold": 0, "returned_items": 0,
 var merchant: Dictionary = {"open": false, "actor_id": -1, "npc_name": "",
 	"gold": 0, "carried": 0, "capacity": 0, "items": []}
 var quest_journal: Array[Dictionary] = []
+## What this character has finished. Held separately from the journal because
+## the two answer different questions and arrive in different packets: the
+## journal is what is open now, this is the record that outlives the machine.
+var quest_archive: Array[Dictionary] = []
+## Worn goods, stated two ways because the two wires carry different identity.
+## `degraded_item_names` serves every window that knows an item's name; the
+## inventory grid knows only an image id, and a worn item shares its artwork
+## with the fresh one, so for those slots the server states the answer.
+var degraded_item_names: Dictionary = {}
+var worn_slots_mask: int = 0
+## Everything countable this character has done: the achievement tallies and
+## the achievements themselves, which used to exist only as a chat dump.
+var achievements_state: Dictionary = {"counters": [], "completed": []}
+
+func is_degraded_item(name: String) -> bool:
+	return degraded_item_names.has(name)
+
+func is_worn_slot(slot: int) -> bool:
+	return slot >= 0 and slot < 64 and (worn_slots_mask & (1 << slot)) != 0
+## The party, exactly as the server last stated it. `in_party` false with an
+## `invited_by` name is a real state - somebody has been asked to join and has
+## not answered - so the two are held together rather than as separate flags
+## that could disagree.
+var party: Dictionary = {"in_party": false, "members": [],
+	"invited_by": "", "invite_seconds": 0}
 var item_detail: Dictionary = {"open": false}
 var inventory_state: Dictionary = {"gold": 0, "carried": 0, "capacity": 0,
 	"items": []}
@@ -228,6 +253,15 @@ func _on_connection_state_changed(value: String) -> void:
 		marketplace = _empty_marketplace_state()
 		merchant = _empty_merchant_state()
 		quest_journal.clear()
+		quest_archive.clear()
+		# The catalog half is per-profile and the mask is per-character, so a
+		# logout clears both rather than carrying one into the next session.
+		degraded_item_names.clear()
+		worn_slots_mask = 0
+		achievements_state = {"counters": [], "completed": []}
+		# Cleared on logout, not on a map change: a party outlives walking
+		# through a portal, and the server re-states it at login either way.
+		party = _empty_party_state()
 		item_detail = {"open": false}
 		almanac = {}
 		fires = {}
@@ -761,6 +795,27 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			npc_dialogue["open"] = false
 			npc_dialogue["options"] = []
 			state_changed.emit(&"npc_dialogue")
+		"quest_archive":
+			quest_archive = event.entries
+			state_changed.emit(&"quest_archive")
+		"degraded_items":
+			degraded_item_names.clear()
+			for raw_name: Variant in event.names:
+				degraded_item_names[str(raw_name)] = true
+			state_changed.emit(&"degraded_items")
+		"worn_slots":
+			worn_slots_mask = int(event.mask)
+			state_changed.emit(&"worn_slots")
+		"achievements_state":
+			achievements_state = {"counters": event.counters,
+				"completed": event.completed}
+			state_changed.emit(&"achievements_state")
+		"party":
+			party = {"in_party": bool(event.in_party),
+				"members": event.members,
+				"invited_by": str(event.invited_by),
+				"invite_seconds": int(event.invite_seconds)}
+			state_changed.emit(&"party")
 		"marketplace":
 			marketplace = {"open": true, "gold": int(event.gold),
 				"returned_items": int(event.returned_items),
@@ -995,6 +1050,10 @@ func close_player_info() -> void:
 
 func _empty_player_info() -> Dictionary:
 	return {"open": false, "actor_id": -1, "name": "", "achievements": []}
+
+func _empty_party_state() -> Dictionary:
+	return {"in_party": false, "members": [], "invited_by": "",
+		"invite_seconds": 0}
 
 func _empty_marketplace_state() -> Dictionary:
 	return {"open": false, "gold": 0, "returned_items": 0, "listings": []}

@@ -37,6 +37,12 @@ func _init() -> void:
 		"market_window_v1": EloriaProtocol.ServerMessage.ELORIA_MARKETPLACE_STATE,
 		"merchant_window_v1": EloriaProtocol.ServerMessage.ELORIA_MERCHANT_STATE,
 		"navigation_hud_v1": EloriaProtocol.ServerMessage.ELORIA_NAVIGATION_STATE,
+		"achievements_window_v1":
+			EloriaProtocol.ServerMessage.ELORIA_ACHIEVEMENTS_STATE,
+		"degraded_items_v1": EloriaProtocol.ServerMessage.ELORIA_DEGRADED_ITEMS,
+		"party_window_v1": EloriaProtocol.ServerMessage.ELORIA_PARTY_STATE,
+		"quest_archive_v1":
+			EloriaProtocol.ServerMessage.ELORIA_QUEST_ARCHIVE_STATE,
 		"player_info_v1": EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO,
 		"quest_journal_v1": EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE,
 		"spell_power_v1": EloriaProtocol.ServerMessage.ELORIA_SPELL_POWER,
@@ -57,6 +63,12 @@ func _init() -> void:
 			"5b00fa000000140000005000000000005300",
 		EloriaProtocol.ServerMessage.ELORIA_NAVIGATION_STATE:
 			"000000000000000000",
+		# No party, no invitation: the shortest frame the server ever sends.
+		EloriaProtocol.ServerMessage.ELORIA_PARTY_STATE: "0000000000",
+		EloriaProtocol.ServerMessage.ELORIA_QUEST_ARCHIVE_STATE: "0000",
+		# No degradation chains authored: a real answer, not a missing packet.
+		EloriaProtocol.ServerMessage.ELORIA_DEGRADED_ITEMS: "0000",
+		EloriaProtocol.ServerMessage.ELORIA_ACHIEVEMENTS_STATE: "00000000",
 		EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO: "5b0000004100",
 		EloriaProtocol.ServerMessage.ELORIA_SPELL_POWER: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE: "0000",
@@ -1185,6 +1197,128 @@ func _init() -> void:
 	# output of the server's own builder in eloria/protocol.py, captured from
 	# the independent Eloria configuration, so a change to either side of one
 	# of these contracts breaks this suite rather than a window.
+	# Command 244, everything countable in one packet rather than a dozen chat
+	# lines that scroll away.
+	var achievements: Dictionary = EloriaProtocol.decode_server(244, _hex(
+		"030002004d757368726f6f6d7320656174656e000c000000506c616e747320686172"
+		+ "76657374656400e0010000496e766173696f6e20626f73736573206b696c6c656400"
+		+ "03000000426567696e6e6572205475746f7269616c00466972737420426c6f6f6400"))
+	_expect(achievements.type == "achievements_state"
+		and (achievements.counters as Array).size() == 3
+		and (achievements.completed as Array).size() == 2,
+		"the achievements packet decodes its counters and its completions")
+	var harvested: Dictionary = (achievements.counters as Array)[1]
+	_expect(str(harvested.label) == "Plants harvested"
+		and int(harvested.value) == 480,
+		"a counter carries its label and a value wider than one byte")
+	_expect((achievements.completed as Array)[0] == "Beginner Tutorial",
+		"completed achievements arrive by name")
+	var no_achievements: Dictionary = EloriaProtocol.decode_server(244,
+		_hex("00000000"))
+	_expect(no_achievements.type == "achievements_state"
+		and (no_achievements.counters as Array).is_empty(),
+		"a character who has done nothing countable is still answered")
+	_expect(str(EloriaProtocol.decode_server(244,
+		_hex("010000004100")).get("error", "")) == "achievements_counter_value",
+		"a counter whose value was cut off is refused rather than read as zero")
+
+	# Commands 242 and 243, the two halves of the worn-item answer. They exist
+	# separately because the two wires carry different identity: a window that
+	# knows an item's name can look it up, and the inventory grid, which knows
+	# only an image id shared with the fresh item, cannot.
+	var degraded: Dictionary = EloriaProtocol.decode_server(242,
+		_hex("0200576f726e20426f6f747300576f726e2049726f6e204d61696c00"))
+	_expect(degraded.type == "degraded_items"
+		and (degraded.names as Array) == ["Worn Boots", "Worn Iron Mail"],
+		"the worn-item names decode in the order the server sent them")
+	_expect(str(EloriaProtocol.decode_server(242,
+		_hex("020041000000")).get("error", "")) == "degraded_items_trailing",
+		"a worn-item list with trailing bytes is refused")
+	var worn: Dictionary = EloriaProtocol.decode_server(243,
+		_hex("2500000000000000"))
+	_expect(worn.type == "worn_slots" and int(worn.mask) == 37,
+		"the worn-slot mask decodes as a bitmask over the player's own slots")
+	var high_slot: Dictionary = EloriaProtocol.decode_server(243,
+		_hex("0000000000010000"))
+	_expect(high_slot.type == "worn_slots" and int(high_slot.mask) == 1 << 40,
+		"a slot above the first byte survives the little-endian read")
+	_expect(str(EloriaProtocol.decode_server(243,
+		_hex("250000")).get("error", "")) == "worn_slots_length",
+		"a short worn-slot frame is refused rather than read as zero")
+
+	# Command 241, the completed-quest archive. Server-held on purpose: the
+	# journal says what is open, this says what is done, and it has to survive
+	# a reinstall - which a client-side log does not.
+	var archive: Dictionary = EloriaProtocol.decode_server(241, _hex(
+		"0200426567696e6e6572205475746f7269616c0049736c61205072696d6100596f75"
+		+ "206c6561726e656420746f206d6f76652c2066696768742c2067617468657220616e"
+		+ "64206d69782e00546865205765737465726e20526f6164004e796d6172610059"
+		+ "6f752077616c6b65642074686520726f6164207765737420616e642063616d652062"
+		+ "61636b2e00"))
+	_expect(archive.type == "quest_archive"
+		and (archive.entries as Array).size() == 2,
+		"the quest archive decodes every completed entry")
+	var archived: Dictionary = (archive.entries as Array)[0]
+	_expect(str(archived.title) == "Beginner Tutorial"
+		and str(archived.location) == "Isla Prima"
+		and str(archived.detail).begins_with("You learned to move"),
+		"an archive entry carries its title, where it happened and what it was")
+	var no_archive: Dictionary = EloriaProtocol.decode_server(241, _hex("0000"))
+	_expect(no_archive.type == "quest_archive"
+		and (no_archive.entries as Array).is_empty(),
+		"having finished nothing is a state rather than a missing packet")
+	_expect(str(EloriaProtocol.decode_server(241,
+		_hex("020041004200430000")).get("error", "")) == "quest_archive_entry_text",
+		"an archive frame that promises more entries than it carries is refused")
+	_expect(str(EloriaProtocol.decode_server(241,
+		_hex("000000")).get("error", "")) == "quest_archive_trailing",
+		"an archive frame with trailing bytes is refused")
+
+	# Command 240, the party window. Offline members arrive as rows rather than
+	# being omitted, which is what lets the window say "offline" instead of
+	# quietly shrinking when somebody drops.
+	var party: Dictionary = EloriaProtocol.decode_server(240, _hex(
+		"0102037800b40028003c000003e0014b656c6c616e00666f75725f67617465730004"
+		+ "5a0096000a0037009a00b6004d6172656e006d6972726f72686f6c6400000000"))
+	_expect(party.type == "party" and bool(party.in_party)
+		and (party.members as Array).size() == 2,
+		"the party state decodes both of its members")
+	var leader: Dictionary = (party.members as Array)[0]
+	_expect(bool(leader.online) and bool(leader.leader) and not bool(leader.is_self)
+		and int(leader.health) == 120 and int(leader.max_health) == 180
+		and int(leader.ether) == 40 and int(leader.max_ether) == 60
+		and str(leader.name) == "Kellan" and str(leader.map_id) == "four_gates"
+		and int(leader.x) == 768 and int(leader.y) == 480,
+		"the leader's row carries vitals, map and tile")
+	var absent: Dictionary = (party.members as Array)[1]
+	_expect(not bool(absent.online) and not bool(absent.leader)
+		and bool(absent.is_self) and str(absent.name) == "Maren"
+		and str(absent.map_id) == "mirrorhold",
+		"an offline member keeps a row, and the reader's own row is flagged")
+
+	var invited: Dictionary = EloriaProtocol.decode_server(240,
+		_hex("00004b656c6c616e004b00"))
+	_expect(invited.type == "party" and not bool(invited.in_party)
+		and str(invited.invited_by) == "Kellan"
+		and int(invited.invite_seconds) == 75,
+		"a pending invitation arrives without a party")
+	var no_party: Dictionary = EloriaProtocol.decode_server(240, _hex("0000000000"))
+	_expect(no_party.type == "party" and not bool(no_party.in_party)
+		and (no_party.members as Array).is_empty()
+		and str(no_party.invited_by) == "",
+		"an empty party is a state rather than a missing packet")
+	_expect(str(EloriaProtocol.decode_server(240,
+		_hex("0102000000")).get("error", "")) == "party_entry_length",
+		"a party frame that promises more members than it carries is refused")
+	_expect(str(EloriaProtocol.decode_server(240, _hex("0102")).get("error", ""))
+		== "party_length",
+		"a party frame too short to hold its own header is refused")
+	_expect(str(EloriaProtocol.decode_server(240,
+		_hex("000000000000")).get("error", "")) == "party_trailing",
+		"a party frame with trailing bytes is refused")
+	_expect(EloriaProtocol.CLIENT_CAPABILITIES.has("party_window_v1"),
+		"the client advertises the party window it can now draw")
+
 	var marketplace: Dictionary = EloriaProtocol.decode_server(222, _hex(
 		"00fa000000030000000100070000000c0000002300000058020000140053756e6c65"
 		+ "616600416c69636500"))

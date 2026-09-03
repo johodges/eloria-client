@@ -53,6 +53,11 @@ var quest_panel: PanelContainer
 var quest_list: ItemList
 var quest_detail: RichTextLabel
 var quest_track_button: Button
+var quest_active_button: Button
+var quest_done_button: Button
+## Which half of the journal is showing. The player's choice about their own
+## window, so it is kept here; both lists are the server's own state.
+var _quest_showing_archive := false
 var tracked_quest: PanelContainer
 var tracked_quest_text: RichTextLabel
 var mail_panel: PanelContainer
@@ -69,6 +74,13 @@ var market_panel: PanelContainer
 var market_header: Label
 var market_list: ItemList
 var market_status: Label
+var party_panel: PanelContainer
+var party_header: Label
+var party_rows: VBoxContainer
+var party_invite_row: HBoxContainer
+var party_invite_label: Label
+var party_status: Label
+var party_leave_button: Button
 
 # The quantity ladder the server offers for a shop trade, and the response ids
 # that drive one. These are the legacy dialogue response ids; a client with
@@ -140,7 +152,8 @@ func toggle_mail() -> void:
 func _cascade() -> Array[PanelContainer]:
 	# The tracked-quest readout is deliberately absent: it is a HUD element the
 	# player pinned, not a window covering the screen, so cancel leaves it be.
-	return [merchant_panel, market_panel, detail_panel, mail_panel, quest_panel]
+	return [merchant_panel, market_panel, detail_panel, mail_panel,
+		quest_panel, party_panel]
 
 func _toggle(panel: PanelContainer) -> void:
 	if panel.visible:
@@ -160,7 +173,7 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_combat()
 		&"special_events":
 			_sync_events()
-		&"quest_journal":
+		&"quest_journal", &"quest_archive":
 			_sync_quests()
 		&"mail":
 			_sync_mail()
@@ -170,6 +183,8 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_merchant()
 		&"marketplace":
 			_sync_marketplace()
+		&"party":
+			_sync_party()
 		&"connection":
 			if AppState.connection_state == "disconnected":
 				# A dropped session is not a fight that just ended: nothing
@@ -187,6 +202,7 @@ func sync_all() -> void:
 	_sync_detail()
 	_sync_merchant()
 	_sync_marketplace()
+	_sync_party()
 
 # --- navigation --------------------------------------------------------------
 
@@ -320,6 +336,12 @@ func _sync_events() -> void:
 # --- quest journal -----------------------------------------------------------
 
 func _sync_quests() -> void:
+	quest_active_button.button_pressed = not _quest_showing_archive
+	quest_done_button.button_pressed = _quest_showing_archive
+	quest_done_button.text = "Completed (%d)" % AppState.quest_archive.size()
+	if _quest_showing_archive:
+		_sync_quest_archive()
+		return
 	var selected: int = _selected_index(quest_list)
 	quest_list.clear()
 	for entry: Dictionary in AppState.quest_journal:
@@ -341,6 +363,34 @@ func _sync_quests() -> void:
 	quest_track_button.text = ("Untrack"
 		if str((AppState.quest_journal[index] as Dictionary).get("title", ""))
 			== _tracked_quest_title else "Track")
+
+## The finished half of the same window. Tracking is meaningless here - there
+## is nothing left to do - so the button is disabled rather than removed, which
+## would move everything else when the view changes.
+func _sync_quest_archive() -> void:
+	var selected: int = _selected_index(quest_list)
+	quest_list.clear()
+	for entry: Dictionary in AppState.quest_archive:
+		quest_list.add_item("%s  [%s]" % [str(entry.get("title", "")),
+			str(entry.get("location", ""))])
+	quest_track_button.disabled = true
+	if AppState.quest_archive.is_empty():
+		quest_detail.text = "[center]You have not finished any quests yet.[/center]"
+		return
+	var index: int = clampi(selected, 0, AppState.quest_archive.size() - 1)
+	quest_list.select(index)
+	_show_archived_quest(index)
+
+func _on_quest_view(archive: bool) -> void:
+	if _quest_showing_archive == archive:
+		# Both are toggle buttons, so pressing the one already down would
+		# otherwise un-press it and leave the window showing neither view.
+		quest_active_button.button_pressed = not archive
+		quest_done_button.button_pressed = archive
+		return
+	_quest_showing_archive = archive
+	quest_list.deselect_all()
+	_sync_quests()
 
 ## Pins the selected quest to the screen, or unpins it when it is already the
 ## tracked one.
@@ -379,6 +429,23 @@ func _sync_tracked_quest() -> void:
 		lines.append(str(tracked.get("location", "unknown")))
 	tracked_quest_text.text = "\n".join(lines)
 	tracked_quest.show()
+
+## One list serves both halves of the window, so a selection has to be read
+## against whichever half is showing - against the other one it would either
+## describe the wrong quest or silently describe nothing.
+func _on_quest_selected(index: int) -> void:
+	if _quest_showing_archive:
+		_show_archived_quest(index)
+	else:
+		_show_quest(index)
+
+func _show_archived_quest(index: int) -> void:
+	if index < 0 or index >= AppState.quest_archive.size():
+		return
+	var entry: Dictionary = AppState.quest_archive[index]
+	quest_detail.text = "[b]%s[/b]\n[i]%s[/i]\n\n%s" % [
+		str(entry.get("title", "")), str(entry.get("location", "")),
+		str(entry.get("detail", ""))]
 
 func _show_quest(index: int) -> void:
 	if index < 0 or index >= AppState.quest_journal.size():
@@ -485,7 +552,8 @@ func _sync_merchant() -> void:
 			str(entry.get("name", "")), price, int(entry.get("owned", 0))])
 		merchant_list.set_item_metadata(index, int(entry.get("index", index)))
 		if item_atlas != null:
-			var icon: Texture2D = item_atlas.icon_for(int(entry.get("image_id", 0)))
+			var icon: Texture2D = _named_icon(int(entry.get("image_id", 0)),
+				str(entry.get("name", "")))
 			if icon != null:
 				merchant_list.set_item_icon(index, icon)
 	if merchant_list.item_count > 0:
@@ -541,7 +609,8 @@ func _sync_marketplace() -> void:
 			_duration_text(int(listing.get("seconds_left", 0)))])
 		market_list.set_item_metadata(index, int(listing.get("listing_id", -1)))
 		if item_atlas != null:
-			var icon: Texture2D = item_atlas.icon_for(int(listing.get("image_id", 0)))
+			var icon: Texture2D = _named_icon(int(listing.get("image_id", 0)),
+				str(listing.get("item_name", "")))
 			if icon != null:
 				market_list.set_item_icon(index, icon)
 	if market_list.item_count > 0:
@@ -577,7 +646,131 @@ func _duration_text(seconds: int) -> String:
 		return "%dh" % (seconds / 3600)
 	return "%dm" % maxi(1, seconds / 60)
 
+# --- party -------------------------------------------------------------------
+
+## The window exists to answer one question the world view cannot: how is
+## somebody doing who is not on your screen. So every row carries health and
+## ether as bars and states where that person is standing, and a member the
+## server reports offline keeps their row and says so.
+func _sync_party() -> void:
+	var state: Dictionary = AppState.party
+	var members: Array = state.get("members", []) as Array
+	var invited_by: String = str(state.get("invited_by", ""))
+
+	party_invite_label.text = "%s invited you. Accept?" % invited_by
+	party_invite_row.visible = not invited_by.is_empty()
+
+	if not bool(state.get("in_party", false)) and invited_by.is_empty():
+		party_panel.hide()
+		return
+
+	for child: Node in party_rows.get_children():
+		child.queue_free()
+	var online_count := 0
+	for raw: Variant in members:
+		var member: Dictionary = raw as Dictionary
+		if bool(member.get("online", false)):
+			online_count += 1
+		party_rows.add_child(_party_row(member))
+	party_header.text = ("Party - %d of %d online" % [online_count, members.size()]
+		if not members.is_empty() else "No party")
+	party_leave_button.disabled = members.is_empty()
+	party_panel.show()
+	party_panel.move_to_front()
+
+func _party_row(member: Dictionary) -> Control:
+	var row := VBoxContainer.new()
+	row.name = "Member" + str(member.get("name", ""))
+	var online: bool = bool(member.get("online", false))
+	# A row that has stopped updating should look like it has stopped, rather
+	# than showing the last health the player had before they vanished.
+	var tint: Color = Color(1, 1, 1, 1) if online else Color(1, 1, 1, 0.45)
+
+	# Name and standing share a line so a full party of eight fits without
+	# the window becoming a scroll of near-identical blocks.
+	var header := HBoxContainer.new()
+	header.name = "Header"
+	row.add_child(header)
+	var title := Label.new()
+	title.name = "Name"
+	var marks := ""
+	if bool(member.get("leader", false)):
+		marks += "  (leader)"
+	if bool(member.get("is_self", false)):
+		marks += "  (you)"
+	title.text = "%s%s" % [str(member.get("name", "")), marks]
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title.modulate = tint
+	header.add_child(title)
+	var where := Label.new()
+	where.name = "Standing"
+	if online:
+		where.text = "%d/%d · %d/%d · %s (%d, %d)" % [
+			int(member.get("health", 0)), int(member.get("max_health", 0)),
+			int(member.get("ether", 0)), int(member.get("max_ether", 0)),
+			str(member.get("map_id", "")), int(member.get("x", 0)),
+			int(member.get("y", 0))]
+	else:
+		where.text = "offline"
+	where.modulate = tint
+	header.add_child(where)
+
+	var health := _bar("Health", Color(0.78, 0.24, 0.22))
+	health.custom_minimum_size = Vector2(0.0, 9.0)
+	health.max_value = maxf(1.0, float(member.get("max_health", 1)))
+	health.value = float(member.get("health", 0))
+	health.modulate = tint
+	row.add_child(health)
+
+	var ether := _bar("Ether", Color(0.27, 0.45, 0.78))
+	ether.custom_minimum_size = Vector2(0.0, 9.0)
+	ether.max_value = maxf(1.0, float(member.get("max_ether", 1)))
+	ether.value = float(member.get("ether", 0))
+	ether.modulate = tint
+	row.add_child(ether)
+	return row
+
+func _on_party_accept() -> void:
+	_send_party_command("#party accept")
+
+func _on_party_decline() -> void:
+	_send_party_command("#party decline")
+
+func _on_party_leave() -> void:
+	_send_party_command("#party leave")
+
+func _send_party_command(command: String) -> void:
+	var error: Error = Network.send_chat(command)
+	party_status.text = ("Sent to the server; the window updates when it answers."
+		if error == OK else "Party request failed: " + error_string(error))
+
+func toggle_party() -> void:
+	if party_panel.visible:
+		party_panel.hide()
+		return
+	_sync_party()
+	# Nothing to show is worth saying, rather than a button that does nothing.
+	if not party_panel.visible:
+		party_status.text = ""
+		party_header.text = "No party"
+		for child: Node in party_rows.get_children():
+			child.queue_free()
+		party_panel.show()
+		party_panel.move_to_front()
+
 # --- construction ------------------------------------------------------------
+
+## Worn goods look worn here too: a merchant's stock and the exchange both name
+## what they are selling, so the name is enough to decide without the server
+## restating it per row.
+func _named_icon(image_id: int, name: String) -> Texture2D:
+	if item_atlas == null:
+		return null
+	if AppState.is_degraded_item(name):
+		var worn: Texture2D = item_atlas.worn_icon_for(image_id)
+		if worn != null:
+			return worn
+	return item_atlas.icon_for(image_id)
 
 func _selected_index(list: ItemList) -> int:
 	var selected: PackedInt32Array = list.get_selected_items()
@@ -637,13 +830,29 @@ func _build() -> void:
 	events_panel.add_child(events_text)
 
 	quest_panel = _window("QuestJournal", "Quest journal")
+	var quest_views := HBoxContainer.new()
+	quest_views.name = "QuestViews"
+	_window_body(quest_panel).add_child(quest_views)
+	quest_active_button = Button.new()
+	quest_active_button.name = "QuestActive"
+	quest_active_button.text = "Active"
+	quest_active_button.toggle_mode = true
+	quest_active_button.button_pressed = true
+	quest_active_button.pressed.connect(_on_quest_view.bind(false))
+	quest_views.add_child(quest_active_button)
+	quest_done_button = Button.new()
+	quest_done_button.name = "QuestDone"
+	quest_done_button.text = "Completed (0)"
+	quest_done_button.toggle_mode = true
+	quest_done_button.pressed.connect(_on_quest_view.bind(true))
+	quest_views.add_child(quest_done_button)
 	var quest_columns := HSplitContainer.new()
 	quest_columns.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_window_body(quest_panel).add_child(quest_columns)
 	quest_list = ItemList.new()
 	quest_list.name = "QuestList"
 	quest_list.custom_minimum_size = Vector2(240.0, 0.0)
-	quest_list.item_selected.connect(_show_quest)
+	quest_list.item_selected.connect(_on_quest_selected)
 	quest_columns.add_child(quest_list)
 	var quest_side := VBoxContainer.new()
 	quest_columns.add_child(quest_side)
@@ -753,6 +962,56 @@ func _build() -> void:
 	market_status = Label.new()
 	market_status.name = "MarketplaceStatus"
 	market_body.add_child(market_status)
+
+	party_panel = _window("PartyWindow", "Party")
+	var party_body: VBoxContainer = _window_body(party_panel)
+	party_header = Label.new()
+	party_header.name = "PartyHeader"
+	party_body.add_child(party_header)
+	party_invite_row = HBoxContainer.new()
+	party_invite_row.name = "PartyInvite"
+	party_invite_row.hide()
+	party_body.add_child(party_invite_row)
+	party_invite_label = Label.new()
+	party_invite_label.name = "PartyInviteLabel"
+	party_invite_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	party_invite_row.add_child(party_invite_label)
+	var accept := Button.new()
+	accept.name = "PartyAccept"
+	accept.text = "Accept"
+	accept.pressed.connect(_on_party_accept)
+	party_invite_row.add_child(accept)
+	var decline := Button.new()
+	decline.name = "PartyDecline"
+	decline.text = "Decline"
+	decline.pressed.connect(_on_party_decline)
+	party_invite_row.add_child(decline)
+	var party_scroll := ScrollContainer.new()
+	party_scroll.name = "PartyScroll"
+	party_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	party_body.add_child(party_scroll)
+	party_rows = VBoxContainer.new()
+	party_rows.name = "PartyMembers"
+	party_rows.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	party_scroll.add_child(party_rows)
+	var party_actions := HBoxContainer.new()
+	party_body.add_child(party_actions)
+	party_leave_button = Button.new()
+	party_leave_button.name = "PartyLeave"
+	party_leave_button.text = "Leave party"
+	party_leave_button.pressed.connect(_on_party_leave)
+	party_actions.add_child(party_leave_button)
+	# Inviting needs a name, and a name needs typing; the chat command already
+	# reads well, so the window points at it rather than growing a text field
+	# that would duplicate it.
+	var party_hint := Label.new()
+	party_hint.name = "PartyHint"
+	party_hint.text = "  #party invite <name>   ·   #p <message>"
+	party_actions.add_child(party_hint)
+	party_status = Label.new()
+	party_status.name = "PartyStatus"
+	party_body.add_child(party_status)
+	party_panel.hide()
 
 func _bar(bar_name: String, colour: Color) -> ProgressBar:
 	var bar := ProgressBar.new()

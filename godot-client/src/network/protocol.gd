@@ -75,6 +75,9 @@ enum ServerMessage {
 	ELORIA_SPECIAL_EVENT_STATE = 232, ELORIA_PLAYER_INFO = 228,
 	ELORIA_SPELL_POWER = 231,
 	ELORIA_ALMANAC_STATE = 238, ELORIA_STORAGE_STATE = 239,
+	ELORIA_PARTY_STATE = 240, ELORIA_QUEST_ARCHIVE_STATE = 241,
+	ELORIA_DEGRADED_ITEMS = 242, ELORIA_WORN_SLOTS = 243,
+	ELORIA_ACHIEVEMENTS_STATE = 244,
 	ADD_ACTOR_ANIMATION = 89,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
@@ -168,7 +171,11 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"market_window_v1",
 	"merchant_window_v1",
 	"navigation_hud_v1",
+	"party_window_v1",
 	"player_info_v1",
+	"achievements_window_v1",
+	"degraded_items_v1",
+	"quest_archive_v1",
 	"quest_journal_v1",
 	"spell_power_v1",
 	"special_events_v1",
@@ -904,6 +911,21 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			if payload.size() != 2:
 				return {"type": "invalid", "error": "remove_map_marker_length"}
 			return {"type": "remove_map_marker", "marker_id": u16(payload)}
+		ServerMessage.ELORIA_PARTY_STATE:
+			return decode_party(payload)
+		ServerMessage.ELORIA_QUEST_ARCHIVE_STATE:
+			return decode_quest_archive(payload)
+		ServerMessage.ELORIA_DEGRADED_ITEMS:
+			return decode_degraded_items(payload)
+		ServerMessage.ELORIA_ACHIEVEMENTS_STATE:
+			return decode_achievements_state(payload)
+		ServerMessage.ELORIA_WORN_SLOTS:
+			if payload.size() != 8:
+				return {"type": "invalid", "error": "worn_slots_length"}
+			var mask: int = 0
+			for index: int in range(8):
+				mask |= int(payload[index]) << (index * 8)
+			return {"type": "worn_slots", "mask": mask}
 		ServerMessage.ELORIA_MARKETPLACE_STATE:
 			return decode_marketplace(payload)
 		ServerMessage.ELORIA_MERCHANT_STATE:
@@ -969,6 +991,124 @@ static func _nul_run(payload: PackedByteArray, offset: int,
 		values.append(str(field.value))
 		offset = int(field.offset)
 	return {"values": values, "offset": offset}
+
+## Command 244. Every countable thing this character has done.
+##
+## These numbers were always tracked and the only way to read them was a chat
+## command that printed a dozen lines and scrolled away.
+static func decode_achievements_state(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 4:
+		return {"type": "invalid", "error": "achievements_length"}
+	var counter_count: int = u16(payload)
+	var name_count: int = u16(payload, 2)
+	var offset: int = 4
+	var counters: Array[Dictionary] = []
+	for _index: int in range(counter_count):
+		var field: Dictionary = _nul_at(payload, offset)
+		if field.is_empty():
+			return {"type": "invalid", "error": "achievements_counter_text"}
+		offset = int(field.offset)
+		if offset + 4 > payload.size():
+			return {"type": "invalid", "error": "achievements_counter_value"}
+		counters.append({"label": str(field.value), "value": u32(payload, offset)})
+		offset += 4
+	var completed: Array[String] = []
+	for _index: int in range(name_count):
+		var name_field: Dictionary = _nul_at(payload, offset)
+		if name_field.is_empty():
+			return {"type": "invalid", "error": "achievements_name_text"}
+		completed.append(str(name_field.value))
+		offset = int(name_field.offset)
+	if offset != payload.size():
+		return {"type": "invalid", "error": "achievements_trailing"}
+	return {"type": "achievements_state", "counters": counters,
+		"completed": completed}
+
+## Command 242. Which item names exist only because something wore out.
+##
+## Sent once at login. An empty list is a real answer: it means this profile
+## authors no degradation chains, not that the packet went missing.
+static func decode_degraded_items(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 2:
+		return {"type": "invalid", "error": "degraded_items_length"}
+	var count: int = u16(payload)
+	var offset: int = 2
+	var names: Array[String] = []
+	for _index: int in range(count):
+		var field: Dictionary = _nul_at(payload, offset)
+		if field.is_empty():
+			return {"type": "invalid", "error": "degraded_items_text"}
+		names.append(str(field.value))
+		offset = int(field.offset)
+	if offset != payload.size():
+		return {"type": "invalid", "error": "degraded_items_trailing"}
+	return {"type": "degraded_items", "names": names}
+
+## Command 241. What this character has finished.
+##
+## The journal says what is open; this says what is done. It is server-held, so
+## it survives a reinstall and a new machine - which is the whole reason it
+## exists rather than being read out of a local log.
+static func decode_quest_archive(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 2:
+		return {"type": "invalid", "error": "quest_archive_length"}
+	var count: int = u16(payload)
+	var offset: int = 2
+	var entries: Array[Dictionary] = []
+	for _index: int in range(count):
+		var text: Dictionary = _nul_run(payload, offset, 3)
+		if text.is_empty():
+			return {"type": "invalid", "error": "quest_archive_entry_text"}
+		var values: Array = text.values as Array
+		entries.append({"title": values[0], "location": values[1],
+			"detail": values[2]})
+		offset = int(text.offset)
+	if offset != payload.size():
+		return {"type": "invalid", "error": "quest_archive_trailing"}
+	return {"type": "quest_archive", "entries": entries}
+
+## Command 240. Who is in the party, how they are doing, and where they are.
+##
+## An offline member still arrives with a row: the server states their absence
+## rather than dropping them, so the window can say "offline" instead of
+## quietly shrinking and leaving the player to notice on their own.
+static func decode_party(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 5:
+		return {"type": "invalid", "error": "party_length"}
+	var in_party: bool = payload[0] != 0
+	var count: int = int(payload[1])
+	var offset: int = 2
+	var members: Array[Dictionary] = []
+	for _index: int in range(count):
+		if offset + 13 > payload.size():
+			return {"type": "invalid", "error": "party_entry_length"}
+		var flags: int = int(payload[offset])
+		var member: Dictionary = {
+			"online": (flags & 1) != 0,
+			"leader": (flags & 2) != 0,
+			"is_self": (flags & 4) != 0,
+			"health": u16(payload, offset + 1),
+			"max_health": u16(payload, offset + 3),
+			"ether": u16(payload, offset + 5),
+			"max_ether": u16(payload, offset + 7),
+			"x": u16(payload, offset + 9),
+			"y": u16(payload, offset + 11)}
+		offset += 13
+		var text: Dictionary = _nul_run(payload, offset, 2)
+		if text.is_empty():
+			return {"type": "invalid", "error": "party_entry_text"}
+		member["name"] = (text.values as Array)[0]
+		member["map_id"] = (text.values as Array)[1]
+		offset = int(text.offset)
+		members.append(member)
+	var invite: Dictionary = _nul_at(payload, offset)
+	if invite.is_empty():
+		return {"type": "invalid", "error": "party_invite_text"}
+	offset = int(invite.offset)
+	if offset + 2 != payload.size():
+		return {"type": "invalid", "error": "party_trailing"}
+	return {"type": "party", "in_party": in_party, "members": members,
+		"invited_by": str(invite.value), "invite_seconds": u16(payload, offset)}
 
 ## Command 222. The Nymara Exchange: the player's gold, how many items are
 ## waiting in escrow, and the listings on offer.
