@@ -861,7 +861,7 @@ func _on_group_selected(index: int) -> void:
 	group_detail.text = ("[font_size=15][b]%s[/b][/font_size]  %s\n%s\n\n"
 		+ "[b]Map[/b]  %s (%s)\n"
 		+ "[b]Population[/b]  %d–%d across %d points\n"
-		+ "[b]Current state[/b]  %s\n"
+		+ "[b]Current state[/b]  %s  ·  [b]Respawns[/b]  %s\n"
 		+ "[b]Peak strength[/b]  %d  ·  [b]Health[/b] ×%.2f  ·  [b]Boss[/b] %s") % [
 		selected_group.get("name", "Group"),
 		("[color=#78dce8]LIVE BUILDER[/color]" if dynamic else "[color=#a9bdc9]CONFIGURED · READ-ONLY[/color]"),
@@ -870,6 +870,7 @@ func _on_group_selected(index: int) -> void:
 		selected_group.get("minimum", 0), selected_group.get("maximum", 0),
 		selected_group.get("points", 0),
 		("ACTIVE — %d alive" % int(selected_group.get("alive", 0))) if bool(selected_group.get("active", false)) else "Ready",
+		_respawn_summary(selected_group),
 		selected_group.get("strength", 0),
 		float(selected_group.get("health_multiplier", 1.0)),
 		selected_group.get("boss", "None") if not str(selected_group.get("boss", "")).is_empty() else "None"]
@@ -896,6 +897,19 @@ func _on_group_selected(index: int) -> void:
 			entry.get("name", entry.get("type", "Monster")), entry.get("quantity", 0)])
 		group_composition.set_item_metadata(item, entry)
 	group_remove_monster.disabled = true
+
+
+## The server keeps a respawn window rather than an interval: a wiped group
+## comes back until the window shuts. Groups the assistant builds ship with it
+## already shut, so this line exists to say which of the three a group is
+## before an invasion master activates it in front of players.
+func _respawn_summary(group: Dictionary) -> String:
+	var minutes := int(group.get("auto_respawn_minutes", 0))
+	if minutes < 0:
+		return "none — spawns once"
+	if minutes == 0:
+		return "every wipe, while active"
+	return "every wipe for %d min" % minutes
 
 
 func _open_group_map() -> void:

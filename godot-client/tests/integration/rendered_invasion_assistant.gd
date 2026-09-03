@@ -73,9 +73,12 @@ func _run() -> void:
 		"the configured and live groups are listed")
 	_expect(_assistant.group_composition.item_count == 3,
 		"the selected group's composition is listed")
+	_expect(_assistant.group_detail.text.contains("none — spawns once"),
+		"a group built in the assistant states that it spawns once")
 	await _capture("invasion-assistant-groups.png",
-		"the spawn-groups tab: group list, detail block, the live builder's"
-			+ " eight fields, with the composition list one scroll below")
+		"the spawn-groups tab: group list, detail block - including the respawn"
+			+ " window, which reads none for a group built here - and the live"
+			+ " builder's eight fields, with the composition list one scroll below")
 
 	# The composition list is the shortest list in the window and the one
 	# most likely to have been squeezed to nothing by the halving, so it
@@ -230,14 +233,15 @@ func _groups_state() -> Dictionary:
 			"locations": [{"x": 128, "y": 20, "quantity": 12}], "strength": 1840,
 			"active": true, "alive": 17, "boss": "The Cinder Maw",
 			"boss_type": "ash_wyrm", "boss_name": "The Cinder Maw",
-			"health_multiplier": 1.5, "dynamic": true},
+			"health_multiplier": 1.5, "auto_respawn_minutes": -1, "dynamic": true},
 		{"name": "Ashfall Ridge", "description": "Emberhaven escalation",
 			"map_id": "ember", "map_name": "Emberhaven", "minimum": 4, "maximum": 8,
 			"points": 1, "creatures": ["ash_wyrm"],
 			"composition": [{"type": "ash_wyrm", "name": "Ash Wyrm", "quantity": 4}],
 			"locations": [{"x": 80, "y": 90, "quantity": 4}], "strength": 480,
 			"active": false, "alive": 0, "boss": "", "boss_type": "",
-			"boss_name": "", "health_multiplier": 1.0, "dynamic": false},
+			"boss_name": "", "health_multiplier": 1.0, "auto_respawn_minutes": 0,
+			"dynamic": false},
 		{"name": "Marsh Creep", "description": "Slow build in the reeds",
 			"map_id": "manymouth", "map_name": "Manymouth Marsh", "minimum": 6,
 			"maximum": 10, "points": 2, "creatures": ["slag_crawler"],
