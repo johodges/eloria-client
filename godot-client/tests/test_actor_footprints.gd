@@ -156,6 +156,22 @@ func _selection() -> void:
 # plain one entirely, the player's read under the name "attached actor id",
 # which is what it never was.
 
+## A scale is held to half a step of the encoding, which is a sixtieth of
+## a percent - finer than anything will notice and coarser than
+## `is_equal_approx`, which is why comparisons below use this instead.
+## Powers of two are exact and are checked with equality.
+const SCALE_TOLERANCE := 0.0005
+
+func _scale_near(actual: float, expected: float) -> bool:
+	return absf(actual - expected) <= expected * SCALE_TOLERANCE
+
+## The server's encoder, mirrored so the fixtures below are built the way
+## the wire really carries a scale rather than by copying constants out
+## of the decoder they are meant to check.
+func _scale_word(scale: float) -> int:
+	return int(round(EloriaProtocol.ACTOR_SCALE_ZERO
+		+ log(scale) / log(2.0) * EloriaProtocol.ACTOR_SCALE_STEPS_PER_OCTAVE))
+
 func _u16(value: int) -> PackedByteArray:
 	return PackedByteArray([value & 0xFF, (value >> 8) & 0xFF])
 
@@ -188,23 +204,43 @@ func _scale_decoding() -> void:
 
 	var scaled: Dictionary = EloriaProtocol.decode_server(
 		EloriaProtocol.ServerMessage.ADD_NEW_ACTOR,
-		_plain_actor("Rat", int(round(1.5 * EloriaProtocol.ACTOR_SCALE_UNIT))))
-	_expect(is_equal_approx(float(scaled.get("scale", 0.0)), 1.5),
+		_plain_actor("Rat", _scale_word(1.5)))
+	_expect(_scale_near(float(scaled.get("scale", 0.0)), 1.5),
 		"a creature's scale decodes from after its name")
 
 	# The offset depends on the name's length, which is the part that would
 	# break if the trailer were read from a fixed position.
 	var long_name: Dictionary = EloriaProtocol.decode_server(
 		EloriaProtocol.ServerMessage.ADD_NEW_ACTOR,
-		_plain_actor("Ancient Sunscale Basilisk",
-			int(round(2.5 * EloriaProtocol.ACTOR_SCALE_UNIT))))
-	_expect(is_equal_approx(float(long_name.get("scale", 0.0)), 2.5),
+		_plain_actor("Ancient Sunscale Basilisk", _scale_word(2.5)))
+	_expect(_scale_near(float(long_name.get("scale", 0.0)), 2.5),
 		"a long-named creature's scale is found after its own terminator")
 	_expect(str(long_name.get("name", "")) == "Ancient Sunscale Basilisk",
 		"and the name is still read whole")
 
-	_expect(EloriaProtocol.ACTOR_SCALE_UNIT == 16384.0,
-		"life size is the unit the server encodes it as")
+	_expect(EloriaProtocol.ACTOR_SCALE_ZERO == 32768.0
+		and _scale_word(1.0) == 32768,
+		"life size is the midpoint the server encodes it as")
+
+	# The range the profile allows, both ends and a power of two between.
+	# Exactness at powers of two is the property the logarithmic field was
+	# chosen for - a linear one could not even reach 128x in sixteen bits.
+	for scale: float in [1.0 / 128.0, 0.25, 1.0, 8.0, 128.0]:
+		var word: int = _scale_word(scale)
+		_expect(word >= 0 and word <= 0xFFFF,
+			"scale %f fits the 16-bit field" % scale)
+		_expect(EloriaProtocol.decode_actor_scale(word) == scale,
+			"scale %f is a power of two and survives exactly" % scale)
+	var extreme: Dictionary = EloriaProtocol.decode_server(
+		EloriaProtocol.ServerMessage.ADD_NEW_ACTOR,
+		_plain_actor("World Serpent", _scale_word(128.0)))
+	_expect(float(extreme.get("scale", 0.0)) == 128.0,
+		"a hundred and twenty-eight times life size decodes from the wire")
+	var tiny: Dictionary = EloriaProtocol.decode_server(
+		EloriaProtocol.ServerMessage.ADD_NEW_ACTOR,
+		_plain_actor("Mote", _scale_word(1.0 / 128.0)))
+	_expect(float(tiny.get("scale", 0.0)) == 1.0 / 128.0,
+		"and a hundred and twenty-eighth of it does too")
 
 	# The player packet: a fixed trailer of scale, attachment sentinel, eyes,
 	# neck. The first two bytes used to be read as an attached actor id.
@@ -224,7 +260,7 @@ func _scale_decoding() -> void:
 	enhanced.append(0)                   # kind
 	enhanced.append_array("Kellan".to_utf8_buffer())
 	enhanced.append(0)
-	enhanced.append_array(_u16(int(EloriaProtocol.ACTOR_SCALE_UNIT)))
+	enhanced.append_array(_u16(_scale_word(1.0)))
 	enhanced.append_array(PackedByteArray([255, 4, 0]))
 	var player: Dictionary = EloriaProtocol.decode_server(
 		EloriaProtocol.ServerMessage.ADD_NEW_ENHANCED_ACTOR, enhanced)

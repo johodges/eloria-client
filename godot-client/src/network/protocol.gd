@@ -2007,11 +2007,23 @@ static func stat_key(slot: int) -> String:
 		88: "max_action_points", 113: "action_points", 114: "max_action_points"}
 	return str(keys.get(slot, "slot_%d" % slot))
 
-## What the actor packets encode a model scale in: an unsigned 16-bit field
-## of 1/16384ths, so 0x4000 is life size. Matches the server's
-## `protocol.ACTOR_SCALE_UNIT`; the two have to agree or every scaled
-## creature is drawn at the wrong size.
-const ACTOR_SCALE_UNIT := 16384.0
+## How the actor packets encode a model scale: an unsigned 16-bit field
+## holding the base-two logarithm of the scale in 1/2048ths of an octave,
+## offset so 0x8000 is life size.
+##
+## Logarithmic because scale is multiplicative and the range wanted of it
+## is fourteen octaves - 128x down to 1/128 - which a linear field would
+## hold to half a percent at the top and fifty percent at the bottom.
+## Every power of two lands exactly.
+##
+## Must match the server's `protocol.ACTOR_SCALE_ZERO` and steps, or every
+## scaled creature is drawn at the wrong size.
+const ACTOR_SCALE_ZERO := 32768.0
+const ACTOR_SCALE_STEPS_PER_OCTAVE := 2048.0
+
+## The scale an actor packet's 16-bit field asks for.
+static func decode_actor_scale(value: int) -> float:
+	return pow(2.0, (float(value) - ACTOR_SCALE_ZERO) / ACTOR_SCALE_STEPS_PER_OCTAVE)
 
 static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := false) -> Dictionary:
 	var minimum := 31 if enhanced else (19 if extended else 18)
@@ -2055,7 +2067,7 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := f
 		# was invisible until a scale other than life size was sent.
 		var trailer_offset: int = name_end + 1
 		if payload.size() >= trailer_offset + 5:
-			actor["scale"] = float(u16(payload, trailer_offset)) / ACTOR_SCALE_UNIT
+			actor["scale"] = decode_actor_scale(u16(payload, trailer_offset))
 			actor["attachment_type"] = int(payload[trailer_offset + 2])
 			var appearance: Dictionary = actor["appearance"] as Dictionary
 			appearance["eyes"] = int(payload[trailer_offset + 3])
@@ -2081,7 +2093,7 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := f
 		if plain_end >= 0:
 			var scale_offset: int = 17 + shift + plain_end + 1
 			if payload.size() >= scale_offset + 2:
-				actor["scale"] = float(u16(payload, scale_offset)) / ACTOR_SCALE_UNIT
+				actor["scale"] = decode_actor_scale(u16(payload, scale_offset))
 	actor["alive"] = int(actor.get("health", 0)) > 0
 	# The frame byte is the actor's current animation state. FRAME_COMBAT_IDLE
 	# is the only value that carries gameplay meaning at spawn: an actor
