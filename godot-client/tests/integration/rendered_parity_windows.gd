@@ -41,6 +41,9 @@ func _run() -> void:
 	# silently rejected by set(), so the value must be typed to land.
 	var fixture_sigils: Array[int] = [3, 9, 23]
 	app_state.set("owned_sigils", fixture_sigils)
+	# One of Embermend's three reagents, so the spell book's reagent line is
+	# captured with both states it can draw: what is carried, and what is not.
+	app_state.set("inventory", {0: {"image_id": 16, "quantity": 4}})
 	main.call("_sync_stats")
 	for unused_frame: int in range(8):
 		await process_frame
@@ -48,6 +51,14 @@ func _run() -> void:
 	var spells_window: Control = main.get("spells_window") as Control
 	spells_window.call("toggle")
 	_expect(bool(spells_window.call("is_open")), "the spells window opens")
+	# The detail block is the half of this window worth reviewing - the
+	# requirements it writes out - and it is blank until a spell is picked.
+	var embermend: Button = spells_window.get_node(
+		"SpellsWindow/SpellsBody/HealthSpellsRow/SpellButton0") as Button
+	_expect(embermend != null, "Embermend has a button to select")
+	if embermend != null:
+		embermend.pressed.emit()
+		await process_frame
 	await _capture("parity-spells-window.png")
 	spells_window.call("close")
 
