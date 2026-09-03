@@ -156,12 +156,17 @@ SPAN = {
 SOCKET_SHRINK = 0.8
 
 SOCKET_KIND = {
+    # The setbacks were measured against a head that had only ever grown
+    # offline: with the phantom joint scale gone and headgear sized to the
+    # real skull, the old 0.12 pushed every helm five centimetres past the
+    # back of the head.  These land the median piece on the skull's own
+    # centre, measured in the client.
     "helm": {"part": 3, "bones": ["Head"], "clearance": .010, "lift": 0.12,
-             "setback": 0.120},
+             "setback": 0.070},
     "hood": {"part": 3, "bones": ["Head"], "clearance": .014, "lift": 0.06,
-             "setback": 0.120},
+             "setback": 0.070},
     "circlet": {"part": 3, "bones": ["Head"], "clearance": .008, "lift": 0.18,
-                "setback": 0.110},
+                "setback": 0.060},
 }
 
 
@@ -1023,6 +1028,22 @@ def repose(points: np.ndarray, normals: np.ndarray, rig: ea.Rig, region: str,
         turn = np.zeros(welded)
         for label in np.unique(labels):
             inside = labels == label
+            # A sleeve belongs to ONE arm.  A component that straddles the
+            # midline is the garment's trunk however well it scores: a
+            # closed chest shell encloses the arm axis at the shoulder as
+            # surely as a sleeve does, and one that voted its way into a
+            # turn swung the whole cuirass off the body and up to head
+            # height (knightly torso VIII).  Sidedness is not a vote.
+            indexed_side = np.zeros(welded, dtype=bool)
+            indexed_side[inside] = True
+            side_points = out[indexed_side[canon]]
+            if len(side_points):
+                spans_midline = (float(side_points[:, 0].max()) > 0.08
+                                 and float(side_points[:, 0].min()) < -0.08)
+                wrong_side = (float(np.median(side_points[:, 0]))
+                              * float(start[0])) < 0.0
+                if spans_midline or wrong_side:
+                    continue
             vote = float(pooled[inside].mean())
             if vote >= 0.7:
                 turn[inside] = 1.0
@@ -1659,14 +1680,11 @@ def seat_socket(points: np.ndarray, rig: ea.Rig, kind: str) -> np.ndarray:
     """
     spec = SOCKET_KIND[kind]
     head = rig._region(spec["bones"])
-    # Author at RUNTIME size: a race may carry a rest scale on the head
-    # joint (adjust_race_proportions.py), which the engine applies to the
-    # skinned head but not to socketed pieces -- so the piece itself must
-    # be built for the scaled head.  The raw mesh verts are unscaled in
-    # the file; grow them about the joint by the joint's own rest scale.
-    anchor = rig.origin(spec["bones"][0])
-    joint_scale = np.linalg.norm(rig.basis(spec["bones"][0]), axis=0)
-    head = anchor + (head - anchor) * joint_scale
+    # Measured as it stands: the head's size lives in its vertices now
+    # (adjust_race_proportions.py grows them), so the region this reads
+    # IS the runtime head.  The joint carries no scale to compensate for
+    # -- when it did, every helm was authored a third too large for a
+    # head that had only ever grown offline.
     span = head.max(axis=0) - head.min(axis=0)
     # Size to the head's widest horizontal axis, from a robust span: a helm
     # is a shell around a skull, and matching height instead lets a tall crest

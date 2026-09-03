@@ -282,19 +282,18 @@
       "Walk_Landmark_EastStair"
     ],
     "binary": "collision.bin",
-    "format": "EWCG-v1",
+    "format": "EWCG-v2",
     "cellMetres": 0.5,
     "width": 1152,
     "height": 1152,
     "heightEncoding": {
-      "origin": -2.2,
-      "step": 0.2,
+      "origin": -3.5908,
+      "step": 3.940913,
       "range": [
         1,
         63
       ],
-      "zeroMeansBlocked": true,
-      "note": "Heights above 10.4 m clamp to 63 because the legacy six-bit field cannot express Mirrorhold's relief; the grid is authoritative for walkability, and the Godot loader takes elevation from the rendered walk surfaces, not from this file."
+      "zeroMeansBlocked": true
     },
     "walkableCells": 666896,
     "walkableFraction": 0.5025

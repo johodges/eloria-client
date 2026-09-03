@@ -63,6 +63,11 @@ MATERIALS = frozenset({
 COLLISION_CELL = 0.5
 COLLISION_HEIGHT_STEP = 0.2
 COLLISION_HEIGHT_ORIGIN = -2.2
+# Levels an ELM height byte holds: the server masks it with 0x3F, so 1..63.
+COLLISION_HEIGHT_LEVELS = 63
+# Metres of rise per metre travelled that a walker will not climb. Eternal
+# Lands allows two 0.2 m stages across a half-metre tile, which is this.
+MAX_WALK_GRADIENT = 1.0
 
 
 # --------------------------------------------------------------------------
@@ -281,6 +286,7 @@ def build_collision(build: RegionBuild) -> tuple[bytes, int, int, dict]:
     walkable &= ~blockers
 
     surface = ground.copy()
+    decks = np.zeros_like(walkable)
     # An overhead walk surface owns its footprint: the client grounds an actor
     # on the first walk surface below the ray, so a two-level column cannot be
     # expressed on a flat server grid. The rope bridges therefore take their
@@ -301,20 +307,46 @@ def build_collision(build: RegionBuild) -> tuple[bytes, int, int, dict]:
         if not footprint.any():
             continue
         elevated += 1
+        decks |= footprint
         surface = np.where(footprint, deck_y, surface)
         walkable = np.where(footprint, True, walkable)
 
-    quantised = np.clip(np.round((surface - COLLISION_HEIGHT_ORIGIN)
-                                 / COLLISION_HEIGHT_STEP), 1, 63).astype(np.uint8)
+    # Steepness has to be part of walkability, not of the height byte. That
+    # byte holds 63 steps, and a region with 253 m of relief cannot be encoded
+    # finely enough for a two-stage climb limit to mean anything - which is how
+    # a mountainside ended up walkable. Measured here on the *composed* surface
+    # at the walk grid's own resolution, so a bridge reads as the bridge rather
+    # than the gorge under it, unlike the bare-terrain `slope` above.
+    rise_z, rise_x = np.gradient(surface, COLLISION_CELL)
+    too_steep = np.hypot(rise_x, rise_z) > MAX_WALK_GRADIENT
+    # A deck is flat but its rim is a cliff. The package put it there to be
+    # walked on, so it keeps its footprint and its own edges do the stopping.
+    steep_ground = too_steep & ~decks
+    walkable &= ~steep_ground
+
+    # The map's own relief, at the finest step that fits the byte. Clipping to
+    # 63 at 0.2 m held 12.4 m and flattened everything above it into one value.
+    floor = float(surface[walkable].min()) if walkable.any() else 0.0
+    relief = (float(surface[walkable].max()) - floor) if walkable.any() else 0.0
+    height_step = max(COLLISION_HEIGHT_STEP,
+                      relief / (COLLISION_HEIGHT_LEVELS - 1))
+    quantised = np.clip(np.round((surface - floor) / height_step) + 1,
+                        1, COLLISION_HEIGHT_LEVELS).astype(np.uint8)
     grid = np.where(walkable, quantised, 0).astype(np.uint8)
 
-    payload = struct.pack("<4sHHII", b"EWCG", 1, 0, width, height) + grid.tobytes()
+    payload = struct.pack("<4sHHII", b"EWCG", 2, 0, width, height) + grid.tobytes()
     stats = {
         "width": width, "height": height, "cellMetres": COLLISION_CELL,
         "walkableCells": int(walkable.sum()),
         "blockedCells": int((~walkable).sum()),
         "walkableFraction": round(float(walkable.mean()), 4),
         "elevatedDecks": elevated,
+        "steepCells": int(steep_ground.sum()),
+        "reliefMetres": round(relief, 2),
+        "heightEncoding": {"origin": round(floor - height_step, 4),
+                           "step": round(height_step, 6),
+                           "range": [1, COLLISION_HEIGHT_LEVELS],
+                           "zeroMeansBlocked": True},
         "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
         "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     }
