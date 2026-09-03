@@ -26,7 +26,9 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter) -> void:
 	_build_visual()
 
 func set_surface_height(height: float) -> void:
-	global_position.y = height + 0.22
+	# Half the visual's own height, so the sack rests on the ground rather
+	# than hovering over it or sinking into it.
+	global_position.y = height + 0.14
 
 func _build_visual() -> void:
 	if get_child_count() > 0:
@@ -34,9 +36,15 @@ func _build_visual() -> void:
 	var material: StandardMaterial3D = StandardMaterial3D.new()
 	material.albedo_color = Color(0.34, 0.19, 0.07, 1.0)
 	material.roughness = 0.9
+	# A dropped sack, not a boulder.  At the old 0.32 the bag stood three
+	# quarters of a metre across -- two hip widths, and 40 per cent of a
+	# character's height -- which read as scenery beside the person who
+	# dropped it.  This is knee high on a 1.87 m body and still drawn
+	# chunkier than life, the way the bags it descends from were, so it
+	# stays easy to see and to click at the gameplay camera's distance.
 	var bag_mesh: CapsuleMesh = CapsuleMesh.new()
-	bag_mesh.radius = 0.32
-	bag_mesh.height = 0.52
+	bag_mesh.radius = 0.18
+	bag_mesh.height = 0.32
 	bag_mesh.radial_segments = 16
 	bag_mesh.rings = 8
 	bag_mesh.material = material
@@ -50,14 +58,14 @@ func _build_visual() -> void:
 	tie_material.albedo_color = Color(0.82, 0.58, 0.18, 1.0)
 	tie_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	var tie_mesh: CylinderMesh = CylinderMesh.new()
-	tie_mesh.top_radius = 0.11
-	tie_mesh.bottom_radius = 0.14
-	tie_mesh.height = 0.1
+	tie_mesh.top_radius = 0.062
+	tie_mesh.bottom_radius = 0.079
+	tie_mesh.height = 0.057
 	tie_mesh.material = tie_material
 	var tie: MeshInstance3D = MeshInstance3D.new()
 	tie.name = "BagTie"
 	tie.mesh = tie_mesh
-	tie.position.y = 0.3
+	tie.position.y = 0.17
 	add_child(tie)
 
 	var map_marker: MeshInstance3D = MapMarkerDisc.build(
@@ -65,9 +73,11 @@ func _build_visual() -> void:
 	map_marker.position.y = 4.0
 	add_child(map_marker)
 
+	# Deliberately roomier than the sack it picks: the shape is what a
+	# player clicks, and a smaller bag should not become a harder target.
 	var shape: CapsuleShape3D = CapsuleShape3D.new()
-	shape.radius = 0.5
-	shape.height = 0.9
+	shape.radius = 0.32
+	shape.height = 0.62
 	var collision: CollisionShape3D = CollisionShape3D.new()
 	collision.name = "BagPickShape"
 	collision.shape = shape

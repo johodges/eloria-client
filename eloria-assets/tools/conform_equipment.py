@@ -161,10 +161,13 @@ SOCKET_KIND = {
     # real skull, the old 0.12 pushed every helm five centimetres past the
     # back of the head.  These land the median piece on the skull's own
     # centre, measured in the client.
+    # ``covers`` says the piece is meant to enclose the skull: a helm or a
+    # hat that leaves the crown in the air is wrong, where a circlet that
+    # does is a circlet.
     "helm": {"part": 3, "bones": ["Head"], "clearance": .010, "lift": 0.12,
-             "setback": 0.070},
+             "setback": 0.070, "covers": True},
     "hood": {"part": 3, "bones": ["Head"], "clearance": .014, "lift": 0.06,
-             "setback": 0.070},
+             "setback": 0.070, "covers": True},
     "circlet": {"part": 3, "bones": ["Head"], "clearance": .008, "lift": 0.18,
                 "setback": 0.060},
 }
@@ -1628,7 +1631,32 @@ def seat_socket(points: np.ndarray, rig: ea.Rig, kind: str) -> np.ndarray:
                        - float(spec.get("setback", 0.0))])
     lift = float(spec.get("lift", 0.0)) * (head[:, 1].max() - head[:, 1].min())
     centre[1] = head_mid - float(np.median(seated[:, 1])) + lift
-    return seated + (centre - socket_origin(rig, spec["part"]))
+    placed = seated + centre
+
+    # Cover the skull.  Sizing a piece by the head's WIDTH says nothing
+    # about how deep its shell is, so a shallow crown -- and the shrink
+    # every socket piece takes -- can leave the head standing out of the
+    # top of its own helmet.  The piece grows about its brim until its
+    # crown clears the head, and only lifts if growing alone cannot do it:
+    # a hat pulled up off the head reads worse than a slightly tall one.
+    if spec.get("covers"):
+        # The margin is measured, not chosen: the fitter works in the rest
+        # pose while the wearer stands in the idle, whose levelled head
+        # reads about two centimetres taller, so a helm that just covers
+        # here leaves the crown out in the client.
+        wanted = float(head[:, 1].max()) + 0.055
+        base = float(placed[:, 1].min())
+        top = float(placed[:, 1].max())
+        height = top - base
+        if top < wanted and height > 1e-4:
+            # Upward only: growing a piece whole to cover the crown also
+            # spreads a wide brim, and a hat's brim was never the problem.
+            factor = float(np.clip((wanted - base) / height, 1.0, 1.45))
+            placed[:, 1] = base + (placed[:, 1] - base) * factor
+            short = wanted - float(placed[:, 1].max())
+            if short > 0.0:
+                placed[:, 1] += min(short, 0.045)
+    return placed - socket_origin(rig, spec["part"])
 
 
 def build_socket(source: Path, out: Path, rig: ea.Rig, kind: str,
@@ -1732,6 +1760,46 @@ def _slim_to_body(points: np.ndarray, rig: ea.Rig, region: str,
     return out
 
 
+def _settle_floaters(points: np.ndarray, triangles: np.ndarray, rig: ea.Rig,
+                     region: str, limit: float = 0.05,
+                     rest: float = 0.025) -> int:
+    """Bring ornaments that hover back onto the wearer.
+
+    A concept sheet draws its mantles and sashes against the body it was
+    drawn on; seated onto a different body, a small welded ornament can
+    end up hanging in the air beside the wearer with nothing touching it
+    -- the sunmane shirts stood a fur mantle nine centimetres clear.  Any
+    small component whose closest approach exceeds ``limit`` slides
+    straight toward the body until it rests ``rest`` from it, which keeps
+    its shape and its place in the design while taking the float out.
+    Large components are the garment itself and are never moved.
+    """
+    body = region_points(rig, region)
+    inverse, edges, count = _weld(points, triangles)
+    labels = _components(edges, count)[inverse]
+    settled = 0
+    for label in np.unique(labels):
+        members = labels == label
+        size = int(members.sum())
+        if size < 8 or size > 220:
+            continue
+        block = points[members]
+        gaps = np.linalg.norm(
+            body[None, :, :] - block[:, None, :], axis=2)
+        near = int(np.argmin(gaps.min(axis=0)))
+        gap = float(gaps.min())
+        if gap <= limit:
+            continue
+        source = block[int(np.argmin(gaps[:, near]))]
+        toward = body[near] - source
+        span = float(np.linalg.norm(toward))
+        if span < 1e-6:
+            continue
+        points[members] += toward / span * (gap - rest)
+        settled += 1
+    return settled
+
+
 def _floor_backplate(points: np.ndarray, rig: ea.Rig, region: str,
                      movable: np.ndarray) -> int:
     """Keep the back panel outside the liner, band by band.
@@ -1830,7 +1898,7 @@ def _push_waist_out(points: np.ndarray, waist: np.ndarray, rig: ea.Rig,
 
 
 def _drop_orphan_shards(surface, max_verts: int = 60,
-                        min_gap: float = 0.04) -> int:
+                        min_gap: float = 0.04, steps: list | None = None) -> int:
     """Delete tiny welded fragments floating clear of the garment.
 
     The concept-sheet meshes ship with debris -- splinters of strap or
@@ -1872,6 +1940,13 @@ def _drop_orphan_shards(surface, max_verts: int = 60,
     keep = ~drop
     remap = np.cumsum(keep) - 1
     face_keep = keep[triangles].all(axis=1)
+    # The repose's masks are indexed by vertex, so dropping vertices
+    # without shrinking them leaves every later pass reading the wrong
+    # rows -- and `_harden_plates` reading past the end.
+    for step in steps or []:
+        for key in ("sleeve", "cap"):
+            if key in step:
+                step[key] = np.asarray(step[key], dtype=bool)[keep]
     surface.positions = surface.positions[keep]
     surface.normals = surface.normals[keep]
     surface.uvs = surface.uvs[keep]
@@ -2130,6 +2205,8 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
         step0 = posed[0] if posed else {}
         step0["bustFlattened"] = _flatten_bust(seated, rig, region, ~exempt)
         step0["backFloored"] = _floor_backplate(seated, rig, region, ~exempt)
+        step0["floatersSettled"] = _settle_floaters(
+            seated, surface.indices.reshape(-1, 3), rig, region)
     elif region in ("legs", "boots"):
         # Legwear is chunky for the same reason: sized to the design's own
         # girth, it stands proud of the leg.  With the leg's own skin hidden
@@ -2143,6 +2220,9 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
         seated = _slim_legs(seated, rig, region,
                             np.ones(len(seated), dtype=bool),
                             clearance + (0.02 if region == "legs" else 0.012))
+        # Legwear hangs ornaments too -- knee cloths, boot ties -- and they
+        # float for the same reason a mantle does.
+        _settle_floaters(seated, surface.indices.reshape(-1, 3), rig, region)
     if fit == "push":
         fitted, pushed = clear_body(seated, rig, region, clearance)
         grown = 1.0
@@ -2154,7 +2234,7 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
     else:
         fitted, grown, pushed = seated, 1.0, 0
     surface.positions = fitted
-    shards = _drop_orphan_shards(surface)
+    shards = _drop_orphan_shards(surface, steps=posed)
 
     glb = ea.EquipmentGLB(generator="Eloria conform_equipment")
     material = textured_material(glb, f"{label} Base", png)

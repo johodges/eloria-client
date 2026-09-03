@@ -157,6 +157,17 @@ func _audit_part(part: int, visuals: PackedInt32Array, reference: AABB) -> void:
 				var grown: AABB = box.grow(0.02)
 				grown.position.x -= actor.global_position.x
 				row["covers"] = grown.has_point(home)
+				# Headgear has one more duty: it has to enclose the skull.
+				# A helm that clears the centre can still leave the crown
+				# out in the air, which is what a shrunken helm looks like.
+				# Circlets and bands are not meant to enclose anything, so only
+				# pieces that claim to cover are asked to.
+				var scene: String = str((_equipment_config.get("models", {}) as Dictionary)
+					.get("%d:%d" % [part, batch[slot]], {}).get("scene", ""))
+				if row["part"] == 3 and not scene.contains("circlet"):
+					var top: float = box.position.y + box.size.y
+					row["crown"] = top - (here.position.y + here.size.y)
+					row["skullWidth"] = box.size.x - here.size.x
 			_rows.append(row)
 			actor.queue_free()
 		await process_frame
@@ -192,6 +203,10 @@ func _report() -> void:
 			why.append("sideways %.3f" % row["offset"])
 		if not bool(row.get("covers", true)):
 			why.append("sits off the body it covers (dy %+.3f)" % row["dy"])
+		if row.has("crown") and float(row["crown"]) < -0.005:
+			why.append("crown out by %.3f" % -float(row["crown"]))
+		if row.has("skullWidth") and float(row["skullWidth"]) < -0.005:
+			why.append("narrower than the skull by %.3f" % -float(row["skullWidth"]))
 		if not why.is_empty():
 			row["why"] = ", ".join(why)
 			bad.append(row)
