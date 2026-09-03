@@ -7,10 +7,12 @@
       "animationMap": "res://data/animations/luminous.json",
       "culture": "luminous",
       "gender": "female",
-      "hairFit": {
-        "scale": [0.8609, 0.9908, 0.6918],
-        "offset": [-0.00057, 0.00234, -0.01174]
-      },
+      "hairFit": [
+        { "scale": [1.0904, 1.1481, 1.146], "offset": [0.0, 0.0, -0.0272] },
+        { "scale": [0.9862, 0.8736, 1.2118], "offset": [0.0, 0.0, -0.02729] },
+        { "scale": [0.707, 1.1171, 0.8429], "offset": [0.0, 0.0, -0.02198] },
+        { "scale": [0.5738, 1.1077, 0.952], "offset": [0.0, 0.0, -0.02887] }
+      ],
       "hairStyles": [
         "res://assets/actors/native/hair/buzzed_female.glb",
         "res://assets/actors/native/hair/parted_female.glb",
@@ -47,10 +49,12 @@
       "animationMap": "res://data/animations/luminous.json",
       "culture": "luminous",
       "gender": "male",
-      "hairFit": {
-        "scale": [0.7379, 0.9593, 0.8308],
-        "offset": [-0.00136, 0.01003, -0.05578]
-      },
+      "hairFit": [
+        { "scale": [1.3533, 1.1534, 1.2218], "offset": [0.0, 0.0, -0.05531] },
+        { "scale": [1.1926, 1.0226, 1.2484], "offset": [0.0, 0.0, -0.05276] },
+        { "scale": [0.8549, 1.3911, 0.8716], "offset": [0.0, 0.0, -0.04619] },
+        { "scale": [0.6938, 1.3762, 0.9778], "offset": [0.0, 0.0, -0.05325] }
+      ],
       "hairStyles": [
         "res://assets/actors/native/hair/buzzed_male.glb",
         "res://assets/actors/native/hair/parted_male.glb",

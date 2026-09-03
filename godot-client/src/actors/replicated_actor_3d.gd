@@ -429,18 +429,28 @@ func _add_hair_variant(style: int, color: Color) -> void:
 	#
 	# hairFit is the opt-in exception, for a body whose head is a genuinely
 	# different shape from the one the shared hair styles were authored
-	# against (measured by comparing head-weighted vertex bounding boxes
-	# against the previous luminous_male/female): a per-axis scale and
-	# offset applied to the hair holder alone, so the plain-mount case
-	# above is untouched for every other race.
-	var fit: Variant = _model_config.get("hairFit")
-	if fit is Dictionary:
-		var fit_dict: Dictionary = fit as Dictionary
-		var scale: Array = fit_dict.get("scale", [1.0, 1.0, 1.0]) as Array
-		var offset: Array = fit_dict.get("offset", [0.0, 0.0, 0.0]) as Array
-		native_hair.transform = Transform3D(
-			Basis.from_scale(Vector3(scale[0], scale[1], scale[2])),
-			Vector3(offset[0], offset[1], offset[2]))
+	# against, measured directly against THIS body's own skull geometry
+	# (its head-region vertices relative to the Head bone) rather than
+	# against another body. It is one fit per style, not one for the
+	# whole model: checked directly, a buzzed cut and a voluminous bun
+	# have wildly different native bounding boxes (a tight cap versus
+	# hair that flows well past the skull), so the single scale this
+	# used to be either buried the tight styles inside the head or left
+	# the voluminous ones oversized -- there is no one number that fits
+	# both. Indexed the same way as hairStyles (posmod by style), so a
+	# style with no matching entry -- every race but this one -- mounts
+	# plainly, same as before.
+	var fits_value: Variant = _model_config.get("hairFit")
+	if fits_value is Array and not (fits_value as Array).is_empty():
+		var fits: Array = fits_value as Array
+		var fit: Variant = fits[posmod(style, fits.size())]
+		if fit is Dictionary:
+			var fit_dict: Dictionary = fit as Dictionary
+			var scale: Array = fit_dict.get("scale", [1.0, 1.0, 1.0]) as Array
+			var offset: Array = fit_dict.get("offset", [0.0, 0.0, 0.0]) as Array
+			native_hair.transform = Transform3D(
+				Basis.from_scale(Vector3(scale[0], scale[1], scale[2])),
+				Vector3(offset[0], offset[1], offset[2]))
 	attachment.add_child(native_hair)
 	for node_value: Node in native_hair.find_children("*", "MeshInstance3D", true, false):
 		_tint_mesh(node_value as MeshInstance3D, color)
