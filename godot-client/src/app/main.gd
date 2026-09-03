@@ -6770,13 +6770,17 @@ func _on_inventory_slot_gui_input(event: InputEvent, slot: int) -> void:
 		_cycle_inventory_tool(slot)
 		get_viewport().set_input_as_handled()
 		return
-	# Double-clicking a carried item wears it, whichever tool is in hand. The
-	# event is taken here so the button never sees the second press: without
-	# that the grab tool would place the carry the first click picked up, and
-	# the wear would race the move.
+	# Double-clicking a stack wears it, and double-clicking a worn piece
+	# takes it off - whichever tool is in hand. The event is taken here so
+	# the button never sees the second press: without that the grab tool
+	# would place the carry the first click picked up, and the move would
+	# race the one this sends.
 	if (mouse.button_index == MOUSE_BUTTON_LEFT and mouse.double_click
-			and slot < 36 and AppState.inventory.has(slot)):
-		_equip_inventory_slot(slot)
+			and AppState.inventory.has(slot)):
+		if slot < 36:
+			_equip_inventory_slot(slot)
+		else:
+			_unequip_inventory_slot(slot)
 		get_viewport().set_input_as_handled()
 
 ## The wear position a double-click asks for: a free one where there is
@@ -6804,6 +6808,31 @@ func _equip_inventory_slot(slot: int) -> void:
 	# inventory line over this one.
 	inventory_description.text = "[%s]  Wearing what is in slot %d…" % [
 		str(INVENTORY_TOOL_LABELS.get("equip", "Equip")), slot + 1]
+
+## The backpack slot a double-click asks to unequip into: the first free
+## one, or -1 with none free. Unlike wearing, there is no piece already
+## standing at the destination for the server to have swapped out, so
+## with nothing free the move is not sent - the same rule the Unequip
+## tool already follows.
+func _unequip_destination() -> int:
+	return _first_empty_slot(0, 36)
+
+## Takes off what is worn in an equipment slot.
+func _unequip_inventory_slot(slot: int) -> void:
+	if _carried_slot >= 0:
+		_cancel_carry()
+	selected_inventory_slot = slot
+	var carry: int = _unequip_destination()
+	if carry < 0:
+		inventory_description.text = "Your backpack has no free slot to take that off into."
+		_sync_inventory()
+		return
+	_move_inventory_item(slot, carry)
+	_sync_inventory()
+	# After the refresh, which would otherwise write the server's last
+	# inventory line over this one.
+	inventory_description.text = "[%s]  Taking off equipped position %d…" % [
+		str(INVENTORY_TOOL_LABELS.get("unequip", "Unequip")), slot - 35]
 
 ## Composes the one-line summary written along the bottom of the inventory when
 ## the server describes an item. It reports only what arrived in the reply.
