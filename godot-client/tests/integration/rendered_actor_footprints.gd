@@ -39,6 +39,8 @@ var _adapter: CoordinateAdapter
 ## The union of every reserved box, which is what the camera frames.
 var _ground_bounds := AABB()
 var _ground_started := false
+## Where the three-by-three landed, for the close-up.
+var _close_up_anchor := 0
 
 func _init() -> void:
 	call_deferred("_run")
@@ -134,6 +136,9 @@ func _run() -> void:
 		actor.set_nameplate_visible(false)
 		_expect(is_equal_approx(actor.server_scale, scale),
 			"%s is drawn at scale %s" % [entry[1], scale])
+		# The ground marker is what this capture is now also for: it should
+		# outline the same tiles that are shaded underneath it.
+		actor.set_selected(true)
 
 		# The claim the picture is evidence for, stated as arithmetic too: the
 		# model sits at the centre of the tiles marked underneath it.
@@ -141,6 +146,8 @@ func _run() -> void:
 		_expect(Vector2(actor.global_position.x, actor.global_position.z)
 			.is_equal_approx(Vector2(expected.x, expected.z)),
 			"%s stands at the centre of its %s box" % [entry[1], size])
+		if size == Vector2i(3, 3) and scale == 1.0:
+			_close_up_anchor = anchor_x
 		anchor_x += size.x
 
 	for _settle: int in range(16):
@@ -155,7 +162,19 @@ func _run() -> void:
 		await process_frame
 	await _capture("actor-footprints.png",
 		"one creature of each size the profile authors, each standing centred"
-			+ " on the tiles the server reserves for it")
+			+ " on the tiles the server reserves for it, with the selection"
+			+ " marker outlining that same box")
+
+	# And one close enough to check the marker against the tile edges it is
+	# claiming, which the wide shot is too small to settle.
+	var subject: Vector3 = _reserved_centre(_close_up_anchor, 0, Vector2i(3, 3))
+	camera.global_position = subject + Vector3(0.0, 4.6, 5.4)
+	camera.look_at(subject, Vector3.UP)
+	for _settle: int in range(4):
+		await process_frame
+	await _capture("actor-footprint-marker.png",
+		"the three-by-three marker against the tiles it claims: the outline"
+			+ " traces the whole reserved box, not the anchor tile")
 
 	main.queue_free()
 	await process_frame
