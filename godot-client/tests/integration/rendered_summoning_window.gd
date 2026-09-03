@@ -36,7 +36,10 @@ func _run() -> void:
 	# wants, and nothing on hand for the stag. All three rows are drawn; two
 	# are dimmed and say why where their ingredients would be.
 	_stats({"summoning": 5, "animal_nexus": 0, "food": 40, "ether": 60})
-	_inventory({0: [11, 4], 1: [85, 3], 2: [37, 2]})
+	# The otter's reagents only, taken from the catalog rather than written
+	# out: the server has renumbered its image ids before now, and a fixture
+	# that spells them out keeps passing against artwork nobody uses.
+	_stock([0])
 	_main.call("_on_summoning_button_pressed")
 	await _settle()
 	_expect(bool(_window.call("is_open")), "the summoning window opened")
@@ -47,21 +50,35 @@ func _run() -> void:
 		"three summons: the otter affordable and lit, the stag and the turtle"
 			+ " dimmed with the reason where their ingredients would be")
 
-	# The server grants everything. Every row lights, and each one now lists
-	# what it will spend rather than what is missing.
+	# The server grants the skill, the nexus and every reagent. Two of the three
+	# light; the stag does not, and should not. Two of its reagents share their
+	# artwork with other items - Deer Hide with four other pelts, Wayside Sage
+	# with Rosemary - and the inventory the client is sent carries image ids and
+	# no names, so there is no honest way to pick the right slot. Six of the
+	# profile's thirty-two recipes are in that position; the manufacture window
+	# refuses them for the same reason. Saying so is the correct behaviour, and
+	# this pins it so a later change cannot start guessing instead.
 	_stats({"summoning": 30, "animal_nexus": 2, "food": 40, "ether": 60})
-	_inventory({0: [11, 9], 1: [85, 4], 2: [37, 8], 3: [15, 2],
-		4: [101, 4], 5: [113, 4], 6: [95, 3]})
+	_stock([0, 1, 2])
 	_window.call("sync")
 	await _settle()
+	var stag: Button = rows.get_node("SummonRow%d" % (
+		(_window.call("summon_recipes") as Array[int])[1])) as Button
 	for row: Node in rows.get_children():
-		_expect(not (row as Button).disabled,
-			"%s is clickable once the server has granted everything" % row.name)
-		# The window is only worth opening if the costs can be read off it.
-		# Both lines trim with an ellipsis rather than overflowing, so a panel
-		# too narrow for the longest reagent list fails quietly - here is where
-		# that is caught, with the layout settled and the real font measured.
-		for line: String in ["Requirements", "Cost"]:
+		var ready: bool = row != stag
+		_expect((row as Button).disabled != ready,
+			"%s is %s once the server has granted everything"
+			% [row.name, "clickable" if ready else "held back by shared artwork"])
+		# The window is only worth opening if the costs can be read off it. Both
+		# lines trim with an ellipsis rather than overflowing, so a panel too
+		# narrow for the longest reagent list fails quietly - here is where that
+		# is caught, with the layout settled and the real font measured. A
+		# blocked row is exempt on its first line: that carries a sentence, not
+		# a reagent list, and its whole text is on the tooltip.
+		var lines: Array[String] = ["Requirements", "Cost"]
+		if not ready:
+			lines = ["Cost"]
+		for line: String in lines:
 			var label: Label = row.get_node("Row/Asks/" + line) as Label
 			var needed: float = label.get_theme_font("font").get_string_size(
 				label.text, HORIZONTAL_ALIGNMENT_LEFT, -1.0,
@@ -69,9 +86,13 @@ func _run() -> void:
 			_expect(needed <= label.size.x,
 				"%s's %s fits without an ellipsis: %.0f of %.0f px for %s"
 				% [row.name, line, needed, label.size.x, label.text])
+	_expect(str((stag.get_node("Row/Asks/Requirements") as Label).text)
+			.contains("shares legacy artwork"),
+		"the stag says what is holding it back")
 	await _capture("summoning-window-stocked.png",
 		"the same window with the skill, the nexus and the reagents in hand:"
-			+ " every row lit, listing what it will spend")
+			+ " the otter and the turtle lit and listing what they spend, the"
+			+ " stag held back by reagents that share their artwork")
 
 	_app_state.set("authenticated", false)
 	_main.queue_free()
@@ -98,14 +119,23 @@ func _stats(values: Dictionary) -> void:
 	stats.clear()
 	stats.merge(values)
 
-## Inventory as AppState holds it: slot to image id and count.
-func _inventory(slots: Dictionary) -> void:
+## Inventory as AppState holds it, stocked for the summons named by their
+## position in the window's own list: every reagent those recipes ask for, one
+## to a slot, at the image id the catalog carries.
+func _stock(rows: Array[int]) -> void:
 	var inventory: Dictionary = _app_state.get("inventory") as Dictionary
 	inventory.clear()
-	for slot: Variant in slots:
-		var entry: Array = slots[slot] as Array
-		inventory[int(slot)] = {
-			"image_id": int(entry[0]), "quantity": int(entry[1])}
+	var listed: Array[int] = _window.call("summon_recipes") as Array[int]
+	var catalog: ManufacturingCatalog = _window.get("catalog") as ManufacturingCatalog
+	var seen: Dictionary = {}
+	for row: int in rows:
+		for ingredient_value: Variant in catalog.recipe(
+				listed[row]).get("ingredients", []) as Array:
+			var image_id: int = int((ingredient_value as Dictionary).get("imageId", -1))
+			if seen.has(image_id):
+				continue
+			seen[image_id] = true
+			inventory[inventory.size()] = {"image_id": image_id, "quantity": 20}
 
 func _settle() -> void:
 	for _frame: int in range(4):
