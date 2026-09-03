@@ -2476,6 +2476,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		_request_summon_behavior()
 		get_viewport().set_input_as_handled()
 		return
+	if event.is_action_pressed("combat_target"):
+		_request_combat_target()
+		get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed("chat_focus"):
 		_show_chat_input()
 		get_viewport().set_input_as_handled()
@@ -6517,6 +6521,15 @@ func _request_summon_behavior() -> void:
 	var error: Error = Network.send_chat("#summon_behavior")
 	if error != OK:
 		push_warning("#summon_behavior failed: " + error_string(error))
+
+## Asks the server to open its combat-target popup: which of several creatures
+## attacking you at once you turn to fight. Same shape as the summon-behaviour
+## key above - a standing preference on the character, offered on a command,
+## and answered through the ordinary popup reply.
+func _request_combat_target() -> void:
+	var error: Error = Network.send_chat("#targetmode")
+	if error != OK:
+		push_warning("#targetmode failed: " + error_string(error))
 
 func _on_emotes_button_pressed() -> void:
 	emotes_window.toggle()
