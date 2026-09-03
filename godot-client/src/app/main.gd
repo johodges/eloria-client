@@ -5941,7 +5941,11 @@ func _sync_equipment_slots() -> void:
 			var item: Dictionary = item_value as Dictionary
 			button.icon = _slot_icon(int(item.get("image_id", 0)), slot)
 			button.text = ""
-			button.tooltip_text = _inventory_tooltip(item, slot) + "\nEquipped position %d" % (index + 1)
+			var worn_tooltip: String = (_inventory_tooltip(item, slot)
+				+ "\nEquipped position %d" % (index + 1))
+			if _carried_slot >= 0 and _carried_slot < 36:
+				worn_tooltip += "\nDropping the item in hand here takes this one off."
+			button.tooltip_text = worn_tooltip
 			button.disabled = false
 		else:
 			button.icon = null
@@ -6759,10 +6763,45 @@ func _on_inventory_slot_gui_input(event: InputEvent, slot: int) -> void:
 	if not event is InputEventMouseButton:
 		return
 	var mouse: InputEventMouseButton = event as InputEventMouseButton
-	if mouse.button_index != MOUSE_BUTTON_RIGHT or not mouse.pressed:
+	if not mouse.pressed:
 		return
-	_cycle_inventory_tool(slot)
-	get_viewport().set_input_as_handled()
+	if mouse.button_index == MOUSE_BUTTON_RIGHT:
+		_cycle_inventory_tool(slot)
+		get_viewport().set_input_as_handled()
+		return
+	# Double-clicking a carried item wears it, whichever tool is in hand. The
+	# event is taken here so the button never sees the second press: without
+	# that the grab tool would place the carry the first click picked up, and
+	# the wear would race the move.
+	if (mouse.button_index == MOUSE_BUTTON_LEFT and mouse.double_click
+			and slot < 36 and AppState.inventory.has(slot)):
+		_equip_inventory_slot(slot)
+		get_viewport().set_input_as_handled()
+
+## The wear position a double-click asks for: a free one where there is
+## one, and otherwise the first, which the server overrules with the
+## position of the piece being replaced. All eight are only ever full
+## when one of every kind is worn, so there is always such a piece.
+func _wear_destination() -> int:
+	var wear: int = _first_empty_slot(36, 44)
+	return wear if wear >= 0 else 36
+
+## Wears what is in a backpack slot. The wear position sent is only a
+## suggestion: the server puts the piece where the piece it replaces was
+## standing, so swapping a helmet for a helmet keeps the position the player
+## gave it, and only a piece with nothing to replace needs a free one.
+func _equip_inventory_slot(slot: int) -> void:
+	# The first of the two clicks may have picked the stack up. The second is
+	# not a placing click, so the hand is emptied before the move is sent.
+	if _carried_slot >= 0:
+		_cancel_carry()
+	selected_inventory_slot = slot
+	_move_inventory_item(slot, _wear_destination())
+	_sync_inventory()
+	# After the refresh, which would otherwise write the server's last
+	# inventory line over this one.
+	inventory_description.text = "[%s]  Wearing what is in slot %d…" % [
+		str(INVENTORY_TOOL_LABELS.get("equip", "Equip")), slot + 1]
 
 ## Composes the one-line summary written along the bottom of the inventory when
 ## the server describes an item. It reports only what arrived in the reply.
@@ -7692,39 +7731,60 @@ func _cursor_context() -> Dictionary:
 		return {}
 	var hovered: Control = get_viewport().gui_get_hovered_control()
 	if hovered != viewport_container:
-		# The one interface hover with a cursor of its own: an item slot whose
-		# click will move the item shows the grasping hand.
-		if hovered is Button and _slot_click_moves_item(hovered as Button):
-			return {"target": "item_grab"}
+		# The interface hovers with cursors of their own: an item slot shows
+		# what the tool in hand would do to the stack under the pointer.
+		if hovered is Button:
+			var slot_target: String = _slot_cursor_target(hovered as Button)
+			if not slot_target.is_empty():
+				return {"target": slot_target}
 		return {}
 	return _cursor_context_at(_local_viewport_position(
 		viewport_container.get_local_mouse_position()))
 
-## True when a click on this slot button moves an item rather than acting on
-## it: the carry in hand is placed here, or the stack under the pointer is
-## about to be picked up, equipped, unequipped, or Ctrl-dropped. This is the
-## grasping hand's promise, so it must match _on_inventory_slot_pressed.
-func _slot_click_moves_item(button: Button) -> bool:
+## What this slot button promises the pointer, in the cursor table's terms, or
+## "" for a slot a click would do nothing with. The hand moves the item - the
+## carry in hand is placed here, or the stack under the pointer is picked up,
+## equipped, unequipped or Ctrl-dropped; the finger uses it; the eye looks at
+## it. This is the promise, so it must match _on_inventory_slot_pressed.
+func _slot_cursor_target(button: Button) -> String:
 	var slot: int = inventory_slot_buttons.find(button)
 	if slot < 0:
 		var equipment_index: int = equipment_slot_buttons.find(button)
 		if equipment_index < 0:
-			return false
+			return ""
 		slot = 36 + equipment_index
 	if _carried_slot >= 0:
-		return true
+		return "item_grab"
 	if not AppState.inventory.has(slot):
-		return false
+		return ""
 	if slot < 36 and Input.is_key_pressed(KEY_CTRL):
-		return true
+		return "item_grab"
 	match _inventory_tool:
 		"grab":
-			return _carry_enabled()
+			return "item_grab" if _carry_enabled() else ""
 		"equip":
-			return slot < 36
+			return "item_grab" if slot < 36 else ""
 		"unequip":
-			return slot >= 36
-	return false
+			return "item_grab" if slot >= 36 else ""
+		"use":
+			# A stack the server will not let you use is only looked at, and
+			# the pointer should not promise more than the click delivers.
+			return "item_use" if _slot_click_uses_item(slot) else "item_inspect"
+		"inspect":
+			return "item_inspect"
+	return ""
+
+## True when the use tool would really spend the item in this slot: worn gear
+## is not used, and neither is anything the server did not mark usable or that
+## is still cooling down.
+func _slot_click_uses_item(slot: int) -> bool:
+	if slot < 0 or slot >= 36:
+		return false
+	var item_value: Variant = AppState.inventory.get(slot)
+	if not item_value is Dictionary:
+		return false
+	return (bool((item_value as Dictionary).get("inventory_usable", false))
+		and _inventory_cooldown_remaining(slot) <= 0)
 
 ## The world half of the pointer question, split from the hover gate so a test
 ## can ask it about any spot without owning the operating system's mouse.

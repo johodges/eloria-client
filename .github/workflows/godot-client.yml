@@ -85,6 +85,8 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_window_drag.gd
       - name: Window layering fixtures
         run: godot --headless --path godot-client --script res://tests/test_window_layering.gd
+      - name: Inventory pointer and double-click-to-wear fixtures
+        run: godot --headless --path godot-client --script res://tests/test_inventory_actions.gd
       - name: Spells window fixtures
         run: godot --headless --path godot-client --script res://tests/test_spells_window.gd
       - name: Emotes window fixtures
