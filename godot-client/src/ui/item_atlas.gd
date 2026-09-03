@@ -74,6 +74,12 @@ func icon_for(image_id: int) -> Texture2D:
 ## end up in `ItemList.set_item_icon` and `Button.icon`, which take a texture
 ## and nothing else. Cached per image id - the work is per artwork, not per
 ## slot, and a full inventory would otherwise redo it on every refresh.
+## The glyph the atlas set reserves for "there is no art for this". A summon
+## produces no item, so the window that lists summons asks for this by name
+## rather than inventing an icon of its own or drawing an empty square.
+func placeholder_icon() -> Texture2D:
+	return icon_for(_fallback_image_id)
+
 func worn_icon_for(image_id: int) -> Texture2D:
 	if _worn_icons.has(image_id):
 		return _worn_icons[image_id] as Texture2D

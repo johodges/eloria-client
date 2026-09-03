@@ -157,6 +157,11 @@ const CREATURE_ACTOR_KIND := 5
 ## the dot red. A summoned creature carries EL blue1 instead and is neither an
 ## invasion nor wildlife, so it keeps the ordinary actor dot.
 const INVASION_NAME_COLOUR := 14
+## EL blue1, the colour the server prefixes a summoned creature's name with.
+## Like the invasion red above, the name's colour is the only thing on the
+## wire that says what this creature is, and it is what tells a click on a
+## summon apart from a click on wildlife.
+const SUMMON_NAME_COLOUR := 4
 const SETTLED_YAW_EPSILON := 0.0005
 
 # Overhead health bar geometry, in world units, measured downwards from the
@@ -458,6 +463,17 @@ static func map_dot_colour(dto: Dictionary) -> Color:
 	# Only an uncoloured creature is wildlife. A summon is a creature the
 	# server coloured, and it stays on the ordinary dot.
 	return CREATURE_MAP_DOT_COLOUR if name_colour == 0 else MAP_DOT_COLOUR
+
+## Whether a spawn packet describes a summoned creature. Static and public for
+## the same reason `map_dot_colour` is: the world input and the tests should
+## ask one question rather than each re-deriving it from the colour byte.
+##
+## It says a summon, not *whose* summon: the packet carries no owner. The
+## server owns that answer and refuses a summon that is not yours, so a click
+## only has to get this far to be worth sending.
+static func is_summon(dto: Dictionary) -> bool:
+	return (int(dto.get("kind", 0)) == CREATURE_ACTOR_KIND
+		and int(dto.get("name_colour", 0)) == SUMMON_NAME_COLOUR)
 
 ## The nameplate. A guild tag arrives as part of the display name in the actor
 ## packet - "Alice ELO" - so a client that takes the whole string as a
