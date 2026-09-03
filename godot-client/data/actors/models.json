@@ -13,6 +13,10 @@
         { "scale": [0.707, 1.1171, 0.8429], "offset": [0.0, 0.0, -0.02198] },
         { "scale": [0.5738, 1.1077, 0.952], "offset": [0.0, 0.0, -0.02887] }
       ],
+      "hairBaseCap": {
+        "scale": [0.1192, 0.233, 0.21245],
+        "offset": [-0.00207, 0.05427, -0.03755]
+      },
       "hairStyles": [
         "res://assets/actors/native/hair/buzzed_female.glb",
         "res://assets/actors/native/hair/parted_female.glb",
@@ -55,6 +59,10 @@
         { "scale": [0.8549, 1.3911, 0.8716], "offset": [0.0, 0.0, -0.04619] },
         { "scale": [0.6938, 1.3762, 0.9778], "offset": [0.0, 0.0, -0.05325] }
       ],
+      "hairBaseCap": {
+        "scale": [0.1394, 0.2355, 0.21005],
+        "offset": [-0.00566, 0.04564, -0.00996]
+      },
       "hairStyles": [
         "res://assets/actors/native/hair/buzzed_male.glb",
         "res://assets/actors/native/hair/parted_male.glb",

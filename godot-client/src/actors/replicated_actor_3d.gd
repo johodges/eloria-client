@@ -454,6 +454,56 @@ func _add_hair_variant(style: int, color: Color) -> void:
 	attachment.add_child(native_hair)
 	for node_value: Node in native_hair.find_children("*", "MeshInstance3D", true, false):
 		_tint_mesh(node_value as MeshInstance3D, color)
+	_add_hair_base_cap(attachment, color)
+
+func _add_hair_base_cap(attachment: BoneAttachment3D, color: Color) -> void:
+	# Every shared hairstyle leaves some of the scalp uncovered by design
+	# -- a centre part, a thinned crown -- checked directly against
+	# votary (which mounts the same styles with no fit at all): the same
+	# gap shows there too, so it is the asset's own geometry, not
+	# something a scale/offset on the hair itself can close. What sits
+	# behind a gap on a body with sculpted hair-as-shell is that body's
+	# OWN hair colour; Luminous has no such shell to fall back to, only
+	# bare scalp, so the gap reads as a bald patch instead of a part.
+	# hairBaseCap is a plain hemisphere, tinted the same colour as the
+	# chosen style, that hides behind the hairstyle everywhere the
+	# hairstyle has coverage and only shows through where it does not --
+	# the same role add_scalp's dome fills for races whose sculpted hair
+	# provides one to shrink.
+	#
+	# Sized from the FITTED hair mesh's own measured world-space extent
+	# (dumped at runtime, per style, relative to the Head bone), not the
+	# bare skull: an earlier version targeted the skull directly and the
+	# cap floated visibly above the head, because hair -- being real
+	# geometry with its own thickness, and covering ears and a fringe the
+	# bare skull doesn't -- occupies a taller, wider, more forward volume
+	# than the skull it sits on. Even hair's own measured extent still
+	# undershoots the true gap at the BACK specifically (checked directly
+	# by rendering from behind): buzzed's own back edge is close to where
+	# votary's identical mesh already thins out, so the cap's rear reach
+	# is pushed well past that edge rather than matched to it. Calibrated
+	# once against the buzzed style (the tightest of the four) and reused
+	# for all styles on that gender -- being smaller than the other three
+	# styles' own coverage, it never pokes out past them either.
+	var cap_value: Variant = _model_config.get("hairBaseCap")
+	if cap_value is not Dictionary:
+		return
+	var cap_dict: Dictionary = cap_value as Dictionary
+	var scale: Array = cap_dict.get("scale", [1.0, 1.0, 1.0]) as Array
+	var offset: Array = cap_dict.get("offset", [0.0, 0.0, 0.0]) as Array
+	var cap_mesh: MeshInstance3D = MeshInstance3D.new()
+	var sphere: SphereMesh = SphereMesh.new()
+	sphere.radius = 1.0
+	sphere.height = 1.0
+	sphere.is_hemisphere = true
+	cap_mesh.mesh = sphere
+	cap_mesh.name = "HairBaseCap"
+	cap_mesh.material_override = StandardMaterial3D.new()
+	cap_mesh.transform = Transform3D(
+		Basis.from_scale(Vector3(scale[0], scale[1], scale[2])),
+		Vector3(offset[0], offset[1], offset[2]))
+	attachment.add_child(cap_mesh)
+	_tint_mesh(cap_mesh, color)
 
 func render_diagnostics() -> Dictionary:
 	var meshes: Array[Dictionary] = []
