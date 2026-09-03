@@ -99,7 +99,20 @@ func _run() -> void:
 		"the invadable monsters are listed")
 	await _capture("invasion-assistant-monsters.png",
 		"the monsters tab: the catalog beside a full ten-line stat block and"
-			+ " the add-to-group row")
+			+ " the add-to-group row, six of the nine still marked * for a"
+			+ " stand-in model")
+
+	# Most of the shipped roster is still on a stand-in model, so a designer
+	# building an invasion that has to look finished wants the short list.
+	_assistant.monster_updated_only.button_pressed = true
+	await _settle()
+	_expect(_assistant.monster_list.item_count == 3,
+		"the updated-models filter leaves only the reviewed creatures")
+	await _capture("invasion-assistant-monsters-updated.png",
+		"the same tab with Updated models only ticked: the six creatures"
+			+ " marked * are gone and three reviewed ones remain")
+	_assistant.monster_updated_only.button_pressed = false
+	await _settle()
 
 	# The corner grip: the same handle the inventory panel carries. The pair of
 	# captures below is the whole argument for scaling the window rather than
@@ -245,22 +258,28 @@ func _groups_state() -> Dictionary:
 
 func _monsters_state() -> Dictionary:
 	var monsters: Array = []
-	for entry: Array in [["ash_wyrm", "Ash Wyrm", "Formidable", 120, true],
-			["cinder_hound", "Cinder Hound", "Dangerous", 74, true],
-			["ember_shade", "Ember Shade", "Fearsome", 96, true],
-			["slag_crawler", "Slag Crawler", "Average", 38, false],
-			["moss_bear", "Moss Bear", "Dangerous", 66, false],
-			["moss_horn_ram", "Moss Horn Ram", "Average", 41, false],
-			["abyssal_armored_fish", "Abyssal Armored Fish", "Formidable", 118, false],
-			["amber_lantern_moth", "Amber Lantern Moth", "Harmless", 9, false],
-			["amberwood_great_owl", "Amberwood Great Owl", "Average", 45, false]]:
+	# The last column is the server's placeholder_model: only 57 of the 244
+	# shipped creatures carry "model: final", so a roster where two thirds are
+	# still on a stand-in is the honest case for the filter to work against.
+	for entry: Array in [["ash_wyrm", "Ash Wyrm", "Formidable", 120, true, false],
+			["cinder_hound", "Cinder Hound", "Dangerous", 74, true, false],
+			["ember_shade", "Ember Shade", "Fearsome", 96, true, true],
+			["slag_crawler", "Slag Crawler", "Average", 38, false, true],
+			["moss_bear", "Moss Bear", "Dangerous", 66, false, false],
+			["moss_horn_ram", "Moss Horn Ram", "Average", 41, false, true],
+			["abyssal_armored_fish", "Abyssal Armored Fish", "Formidable", 118, false, true],
+			["amber_lantern_moth", "Amber Lantern Moth", "Harmless", 9, false, true],
+			["amberwood_great_owl", "Amberwood Great Owl", "Average", 45, false, true]]:
 		var rating: int = entry[3]
-		monsters.append({"type": entry[0], "name": entry[1], "tier": entry[2],
+		var placeholder: bool = entry[5]
+		monsters.append({"type": entry[0],
+			"name": ("*" if placeholder else "") + str(entry[1]), "tier": entry[2],
 			"rating": rating, "combat_level": rating / 2, "level": rating / 12,
 			"health": rating * 3, "ether": rating, "attack": rating / 3,
 			"defense": rating / 4, "damage_min": rating / 20,
 			"damage_max": rating / 10, "armor_min": rating / 40,
-			"armor_max": rating / 24, "configured": entry[4]})
+			"armor_max": rating / 24, "configured": entry[4],
+			"placeholder_model": placeholder})
 	return {"kind": "monsters", "monsters": monsters}
 
 

@@ -68,6 +68,7 @@ var group_composition: ItemList
 var group_remove_quantity: SpinBox
 var group_remove_monster: Button
 var monster_filter: LineEdit
+var monster_updated_only: CheckBox
 var monster_list: ItemList
 var monster_detail: RichTextLabel
 var monster_quantity: SpinBox
@@ -585,6 +586,15 @@ func _build_monsters_tab() -> void:
 	monster_filter.placeholder_text = "Filter type, name, tier, or configured…"
 	monster_filter.text_changed.connect(func(_value: String) -> void: _rebuild_monsters())
 	list_column.add_child(monster_filter)
+	monster_updated_only = CheckBox.new()
+	monster_updated_only.text = "Updated models only"
+	monster_updated_only.tooltip_text = ("Hide creatures still wearing a stand-in "
+		+ "model - the ones this list marks with a leading *. A creature loses the "
+		+ "mark once the model it wears has been through review, so this is the "
+		+ "list of what an invasion will actually look finished in.")
+	monster_updated_only.toggled.connect(
+		func(_pressed: bool) -> void: _rebuild_monsters())
+	list_column.add_child(monster_updated_only)
 	monster_list = ItemList.new()
 	monster_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	monster_list.item_selected.connect(_on_monster_selected)
@@ -1001,11 +1011,16 @@ func _rebuild_monsters() -> void:
 		return
 	monster_list.clear()
 	var query := monster_filter.text.strip_edges().to_lower()
+	var updated_only := (monster_updated_only != null
+		and monster_updated_only.button_pressed)
 	for raw_monster: Variant in monsters_state.get("monsters", []):
 		var monster := raw_monster as Dictionary
-		var searchable := "%s %s %s %s" % [monster.get("type", ""),
+		if updated_only and has_placeholder_model(monster):
+			continue
+		var searchable := "%s %s %s %s %s" % [monster.get("type", ""),
 			monster.get("name", ""), monster.get("tier", ""),
-			"configured" if bool(monster.get("configured", false)) else "available"]
+			"configured" if bool(monster.get("configured", false)) else "available",
+			"placeholder model" if has_placeholder_model(monster) else "updated model"]
 		if not query.is_empty() and not query in searchable.to_lower():
 			continue
 		var configured := "★ " if bool(monster.get("configured", false)) else ""
@@ -1013,6 +1028,16 @@ func _rebuild_monsters() -> void:
 			configured, monster.get("name", "Monster"), monster.get("tier", "Unknown"),
 			monster.get("rating", 0)])
 		monster_list.set_item_metadata(item, monster)
+
+
+## Whether a creature is still wearing a stand-in model rather than one that
+## has been through review. The server states it outright and also marks the
+## name with a leading asterisk; the name is read as a fallback so the filter
+## still works against a server that sends only the mark.
+func has_placeholder_model(monster: Dictionary) -> bool:
+	if monster.has("placeholder_model"):
+		return bool(monster.get("placeholder_model", false))
+	return str(monster.get("name", "")).begins_with("*")
 
 
 func _on_monster_selected(index: int) -> void:
