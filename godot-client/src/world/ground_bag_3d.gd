@@ -26,55 +26,80 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter) -> void:
 	_build_visual()
 
 func set_surface_height(height: float) -> void:
-	# Half the visual's own height, so the sack rests on the ground rather
-	# than hovering over it or sinking into it.
-	global_position.y = height + 0.14
+	# Half the sack's own height, so it rests on the ground.
+	global_position.y = height + 0.123
 
+## Sized for the person who dropped it: the sack reads at 0.40 m across
+## beside a 1.87 m body, knee high, rather than the 0.72 m boulder it was.
+## Every part shares one scale so the shape is the authored one.
+##
+## The reference sack: a round-bellied bag of warm tan cloth, gathered into a
+## short neck, tied with a dark cord, a small puff of cloth above the knot.
+## The belly is a barely squashed sphere - the shape that reads as "full bag"
+## at a glance - and every part shares the one cloth material so the light
+## models the folds rather than a palette.
 func _build_visual() -> void:
 	if get_child_count() > 0:
 		return
-	var material: StandardMaterial3D = StandardMaterial3D.new()
-	material.albedo_color = Color(0.34, 0.19, 0.07, 1.0)
-	material.roughness = 0.9
-	# A dropped sack, not a boulder.  At the old 0.32 the bag stood three
-	# quarters of a metre across -- two hip widths, and 40 per cent of a
-	# character's height -- which read as scenery beside the person who
-	# dropped it.  This is knee high on a 1.87 m body and still drawn
-	# chunkier than life, the way the bags it descends from were, so it
-	# stays easy to see and to click at the gameplay camera's distance.
-	var bag_mesh: CapsuleMesh = CapsuleMesh.new()
-	bag_mesh.radius = 0.18
-	bag_mesh.height = 0.32
-	bag_mesh.radial_segments = 16
-	bag_mesh.rings = 8
-	bag_mesh.material = material
-	var visual: MeshInstance3D = MeshInstance3D.new()
-	visual.name = "LegacyBagFallback"
-	visual.mesh = bag_mesh
-	visual.scale = Vector3(1.15, 0.85, 0.85)
-	add_child(visual)
+	var cloth: StandardMaterial3D = StandardMaterial3D.new()
+	cloth.albedo_color = Color(0.8, 0.55, 0.32, 1.0)
+	cloth.roughness = 0.95
+	var body_mesh: SphereMesh = SphereMesh.new()
+	body_mesh.radius = 0.20
+	body_mesh.height = 0.40
+	body_mesh.radial_segments = 24
+	body_mesh.rings = 12
+	body_mesh.material = cloth
+	var body: MeshInstance3D = MeshInstance3D.new()
+	body.name = "LegacyBagFallback"
+	body.mesh = body_mesh
+	# Almost a full sphere: barely settled under its own weight, and sunk a
+	# touch into the ground so it sits rather than floats.
+	body.scale = Vector3(1.0, 0.9, 1.0)
+	body.position.y = 0.045
+	add_child(body)
 
-	var tie_material: StandardMaterial3D = StandardMaterial3D.new()
-	tie_material.albedo_color = Color(0.82, 0.58, 0.18, 1.0)
-	tie_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	var tie_mesh: CylinderMesh = CylinderMesh.new()
-	tie_mesh.top_radius = 0.062
-	tie_mesh.bottom_radius = 0.079
-	tie_mesh.height = 0.057
-	tie_mesh.material = tie_material
-	var tie: MeshInstance3D = MeshInstance3D.new()
-	tie.name = "BagTie"
-	tie.mesh = tie_mesh
-	tie.position.y = 0.17
-	add_child(tie)
+	var neck_mesh: CylinderMesh = CylinderMesh.new()
+	neck_mesh.bottom_radius = 0.09
+	neck_mesh.top_radius = 0.056
+	neck_mesh.height = 0.078
+	neck_mesh.material = cloth
+	var neck: MeshInstance3D = MeshInstance3D.new()
+	neck.name = "BagNeck"
+	neck.mesh = neck_mesh
+	neck.position.y = 0.218
+	add_child(neck)
+
+	var cord_material: StandardMaterial3D = StandardMaterial3D.new()
+	cord_material.albedo_color = Color(0.33, 0.19, 0.09, 1.0)
+	cord_material.roughness = 0.9
+	var cord_mesh: CylinderMesh = CylinderMesh.new()
+	cord_mesh.bottom_radius = 0.064
+	cord_mesh.top_radius = 0.064
+	cord_mesh.height = 0.025
+	cord_mesh.material = cord_material
+	var cord: MeshInstance3D = MeshInstance3D.new()
+	cord.name = "BagTie"
+	cord.mesh = cord_mesh
+	cord.position.y = 0.255
+	add_child(cord)
+
+	var puff_mesh: SphereMesh = SphereMesh.new()
+	puff_mesh.radius = 0.07
+	puff_mesh.height = 0.14
+	puff_mesh.material = cloth
+	var puff: MeshInstance3D = MeshInstance3D.new()
+	puff.name = "BagPuff"
+	puff.mesh = puff_mesh
+	puff.scale = Vector3(1.0, 0.65, 1.0)
+	puff.position.y = 0.277
+	add_child(puff)
 
 	var map_marker: MeshInstance3D = MapMarkerDisc.build(
 		"BagMapMarker", MAP_MARKER_RADIUS, MAP_MARKER_COLOUR)
 	map_marker.position.y = 4.0
 	add_child(map_marker)
 
-	# Deliberately roomier than the sack it picks: the shape is what a
-	# player clicks, and a smaller bag should not become a harder target.
 	var shape: CapsuleShape3D = CapsuleShape3D.new()
 	shape.radius = 0.32
 	shape.height = 0.62
