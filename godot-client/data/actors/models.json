@@ -7,6 +7,10 @@
       "animationMap": "res://data/animations/luminous.json",
       "culture": "luminous",
       "gender": "female",
+      "hairFit": {
+        "scale": [0.8609, 0.9908, 0.6918],
+        "offset": [-0.00057, 0.00234, -0.01174]
+      },
       "hairStyles": [
         "res://assets/actors/native/hair/buzzed_female.glb",
         "res://assets/actors/native/hair/parted_female.glb",
@@ -43,6 +47,10 @@
       "animationMap": "res://data/animations/luminous.json",
       "culture": "luminous",
       "gender": "male",
+      "hairFit": {
+        "scale": [0.7379, 0.9593, 0.8308],
+        "offset": [-0.00136, 0.01003, -0.05578]
+      },
       "hairStyles": [
         "res://assets/actors/native/hair/buzzed_male.glb",
         "res://assets/actors/native/hair/parted_male.glb",

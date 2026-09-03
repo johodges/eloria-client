@@ -404,11 +404,26 @@ func _add_hair_variant(style: int, color: Color) -> void:
 		(node_value as MeshInstance3D).visible = false
 	attachment.name = "AppearanceHair_%d" % style
 	native_hair.name = "NativeHair"
-	# No scale compensation here: a bone attachment inherits whatever rest
-	# scale its bone carries, and the head's size lives in its vertices
+	# No scale compensation by default: a bone attachment inherits whatever
+	# rest scale its bone carries, and the head's size lives in its vertices
 	# now, so a hairstyle mounted plainly is already the right size.  The
 	# version that scaled by the head bone squared the growth and pushed
 	# the style off the skull.
+	#
+	# hairFit is the opt-in exception, for a body whose head is a genuinely
+	# different shape from the one the shared hair styles were authored
+	# against (measured by comparing head-weighted vertex bounding boxes
+	# against the previous luminous_male/female): a per-axis scale and
+	# offset applied to the hair holder alone, so the plain-mount case
+	# above is untouched for every other race.
+	var fit: Variant = _model_config.get("hairFit")
+	if fit is Dictionary:
+		var fit_dict: Dictionary = fit as Dictionary
+		var scale: Array = fit_dict.get("scale", [1.0, 1.0, 1.0]) as Array
+		var offset: Array = fit_dict.get("offset", [0.0, 0.0, 0.0]) as Array
+		native_hair.transform = Transform3D(
+			Basis.from_scale(Vector3(scale[0], scale[1], scale[2])),
+			Vector3(offset[0], offset[1], offset[2]))
 	attachment.add_child(native_hair)
 	for node_value: Node in native_hair.find_children("*", "MeshInstance3D", true, false):
 		_tint_mesh(node_value as MeshInstance3D, color)
