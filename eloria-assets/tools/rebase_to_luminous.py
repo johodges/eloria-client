@@ -112,16 +112,28 @@ for _finger in ("index", "middle", "ring", "pinky", "thumb"):
         LIMB_AXES["%s_03_%s" % (_finger, _side)] = "%s_04_leaf_%s" % (_finger, _side)
 HEAD_BONE = "Head"
 
-# A source face whose sampled colour is at or below this on every
-# channel is treated as "never actually captured" rather than a real
-# dark colour -- checked directly: candidates near the collar came back
-# as near-uniform (23, 20, 18)-style triples, unlike any real skin tone
-# measured nearby, which were bright with a clear hue. Almost certainly
-# a surface the source body's own generation never saw (hidden under
-# the collar in its resting pose) and filled with a placeholder
-# instead of real data. A genuinely very dark-skinned race could in
-# principle trip this; revisit if one shows a similar hole.
-NO_DATA_MAX_CHANNEL = 35
+# A source face whose sampled colour's brightest channel falls below
+# this FRACTION of that race's own median skin brightness is treated as
+# "never actually captured" rather than a real dark colour -- checked
+# directly: candidates near the collar came back as near-uniform
+# (23, 20, 18)-style triples, unlike any real skin tone measured nearby.
+# Almost certainly a surface the source body's own generation never saw
+# (hidden under the collar in its resting pose) and filled with a
+# placeholder instead of real data.
+#
+# This was a FIXED brightness threshold at first (35) -- it promptly
+# broke on Stoneborn, whose real stone-grey skin has a median max
+# channel of only 73 (Orun and Greyhaven are both above 180), so a
+# meaningful slice of her genuinely dark skin was being discarded as
+# "no data" and falling back to Luminous's own pale tone instead.
+# Scaling by each race's own median (measured across every skin-class
+# face, not just a handful) keeps the same relative sensitivity
+# regardless of how dark or light that race's skin actually is; the
+# clip keeps it sane at either extreme (a race with almost no dark
+# faces at all, or one darker still than Stoneborn).
+NO_DATA_FRACTION_OF_MEDIAN = 0.22
+NO_DATA_MIN_THRESHOLD = 12
+NO_DATA_MAX_THRESHOLD = 60
 
 
 def read_material_1_texture(document, binary):
@@ -221,8 +233,8 @@ def build_correspondence(luminous_desc, luminous_dominant, source_desc, source_d
     """For each Luminous face, the index of its best-matching source
     face: same dominant joint, closest (t, angle) -- angle compared on
     the circle (wrap-around aware). `source_no_data` (see
-    NO_DATA_MAX_CHANNEL) excludes source faces with no real baked colour
-    from candidacy -- the neck is the main place this matters here: skin
+    NO_DATA_FRACTION_OF_MEDIAN) excludes source faces with no real baked
+    colour from candidacy -- the neck is the main place this matters here: skin
     just under the collar is hidden in the source body's own resting
     pose, so a handful of neck_01-dominant faces there have placeholder
     near-black texture instead of real data."""
@@ -244,6 +256,41 @@ def build_correspondence(luminous_desc, luminous_dominant, source_desc, source_d
         best = np.argmin(dist, axis=1)
         correspondence[lum_sel] = src_sel[best]
     return correspondence
+
+
+def fill_unmatched_from_nearest(correspondence, centroids):
+    """For a face with no match at all, borrow its nearest already-
+    matched neighbour's result (by plain 3D distance on Luminous's own
+    mesh) instead of falling back to Luminous's own pale default.
+
+    A row can end up with zero source candidates for reasons that have
+    nothing to do with a bad correspondence: checked directly on
+    Stoneborn Female, her own "thumb_01" has NO vertices at all for
+    which it is the dominant weight (her automatic skinning gave that
+    whole segment to a neighbouring bone instead) -- a real per-body
+    weight-painting difference, not a bug this tool can fix by adding
+    another named axis, since there is nothing on that axis to match
+    against. Every gap seen so far (this one, and a smaller one at
+    finger-tip "leaf" bones with no further bone to define an axis
+    against) is small and localized, so borrowing color from whatever
+    real match already exists right next to it reads as a seamless
+    continuation rather than the sharp two-tone patch a fall back to
+    Luminous's own skin produces. Faces that will be discarded anyway
+    (Head-dominant, stripped in strip_luminous_head) get filled too;
+    harmless, since their colour is never used."""
+    unmatched = np.flatnonzero(correspondence < 0)
+    matched = np.flatnonzero(correspondence >= 0)
+    if len(unmatched) == 0 or len(matched) == 0:
+        return correspondence
+    out = correspondence.copy()
+    matched_points = centroids[matched]
+    chunk = 2000
+    for start in range(0, len(unmatched), chunk):
+        block = unmatched[start:start + chunk]
+        dist = np.linalg.norm(centroids[block][:, None, :] - matched_points[None, :, :], axis=2)
+        nearest = matched[np.argmin(dist, axis=1)]
+        out[block] = correspondence[nearest]
+    return out
 
 
 def remap_joint_rows(source_names, target_names, joints_int):
@@ -443,10 +490,14 @@ def process(luminous_path: Path, source_path: Path, out_path: Path) -> str:
     sw, sh = src_texture.size
     src_uv_centroids = src_uv[src_faces].mean(axis=1)
     src_colors = sample_face_colors(src_uv_centroids, src_tex_arr, sw, sh)
-    src_no_data = src_colors.max(axis=1) < NO_DATA_MAX_CHANNEL
+    src_brightness = src_colors.max(axis=1)
+    no_data_threshold = np.clip(np.median(src_brightness) * NO_DATA_FRACTION_OF_MEDIAN,
+                                 NO_DATA_MIN_THRESHOLD, NO_DATA_MAX_THRESHOLD)
+    src_no_data = src_brightness < no_data_threshold
 
     correspondence = build_correspondence(lum_desc, lum_face_dominant, src_desc, src_face_dominant,
                                            src_no_data)
+    correspondence = fill_unmatched_from_nearest(correspondence, lum_centroids)
 
     lum_texture, lum_image_index, lum_material_index = read_material_1_texture(lum_doc, lum_bin)
     out_image = Image.new("RGB", lum_texture.size)
