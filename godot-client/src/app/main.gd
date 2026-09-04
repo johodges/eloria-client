@@ -464,6 +464,11 @@ var _selected_counter_category := ""
 #: than rebuilt with the rows.
 var _open_counters: Dictionary = {}
 var counter_tabs: HBoxContainer
+var stats_pools: HBoxContainer
+var stats_character: VBoxContainer
+var stats_skills: VBoxContainer
+var stats_overall: HBoxContainer
+var stats_perk_line: Label
 var counter_body: VBoxContainer
 var _right_mouse_down := false
 var _right_mouse_dragged := false
@@ -933,6 +938,7 @@ func _ready() -> void:
 	_build_perks_tab()
 	stats_close.pressed.connect(func() -> void: stats_panel.hide())
 	_build_counters_tab()
+	_build_statistics_tab()
 	session_reset.pressed.connect(_reset_session_tracking)
 	manufacturing_list.item_selected.connect(_on_manufacturing_selected)
 	manufacturing_filter.text_changed.connect(_on_manufacturing_filter_changed)
@@ -4828,78 +4834,275 @@ func _sync_stats() -> void:
 	_sync_hud_indicators()
 	_sync_knowledge_bar()
 	if stats.is_empty():
-		stats_text.text = "[center]Waiting for server statistics…[/center]"
+		_sync_statistics_document({})
 		_sync_session_experience()
 		_sync_counters()
 		return
-	# Each section is its own table with the values in their own cells. Space
-	# padding cannot line these up: the client ships one proportional font, so
-	# "%-14s" is fourteen spaces of varying width and every number lands
-	# wherever its label happened to end.
-	# Every section header is the same quiet green Eternal Lands paints its
-	# statistics headings in, so the window reads as one document.
-	# A pick point buys one attribute point or one nexus point. The "+" beside
-	# a line appears only while the server's own numbers allow it: a point to
-	# spend, and a base value below the ceiling the server enforces.
-	var pickpoints_left: int = _available_pickpoints()
-	var basic_lines: Array[String] = [_stat_heading(
-		"[color=#7fd87f][b]Attributes[/b][/color]")]
-	for row: Dictionary in _attribute_rows(stats):
-		var value: int = int(row.value)
-		basic_lines.append(_stat_row(str(row.label),
-			"%d/%d" % [value, value] + _spend_link("attribute", str(row.key),
-				pickpoints_left > 0 and value < int(row.maximum))))
-	var nexus_lines: Array[String] = [_stat_heading(
-		"[color=#7fd87f][b]Nexus[/b][/color]")]
-	for label_and_key: Array in [["Human", "human_nexus"], ["Animal", "animal_nexus"],
-			["Vegetal", "vegetal_nexus"], ["Inorganic", "inorganic_nexus"],
-			["Artificial", "artificial_nexus"], ["Magic", "magic_nexus"]]:
-		var nexus_key: String = str(label_and_key[1])
-		nexus_lines.append(_stat_row(str(label_and_key[0]),
-			_stat_pair(stats, nexus_key) + _spend_link("nexus", nexus_key,
-				pickpoints_left > 0 and int(stats.get(nexus_key + "_base",
-					stats.get(nexus_key, 0))) < NEXUS_MAXIMUM)))
-	nexus_lines.append(_stat_row("Pickpoints", _grouped(pickpoints_left), true))
-	nexus_lines.append(_stat_heading("[color=#7fd87f][b]Perks[/b][/color]", true))
-	if AppState.perks.is_empty():
-		nexus_lines.append(_stat_row("None", ""))
-	else:
-		for raw_perk: Variant in AppState.perks:
-			var perk: Dictionary = raw_perk as Dictionary
-			var suffix: String = " (from equipment)" if bool(
-				perk.get("from_gear", false)) else ""
-			nexus_lines.append(_stat_row(
-				"• %s%s" % [str(perk.get("name", "")), suffix], ""))
-	nexus_lines.append(_stat_row("[color=#9999ff]Material Points[/color]",
-		"[color=#9999ff]%d/%d[/color]" % [health, max_health], true))
-	nexus_lines.append(_stat_row("[color=#9999ff]Ethereal Points[/color]",
-		"[color=#9999ff]%d/%d[/color]" % [ether, max_ether]))
-	nexus_lines.append(_stat_row("[color=#9999ff]Action Points[/color]",
-		"[color=#9999ff]%d/%d[/color]" % [action, max_action]))
-	nexus_lines.append(_stat_row("Food Level", str(int(stats.get("food", 0)))))
-	nexus_lines.append_array(_research_rows(stats))
-	var skill_lines: Array[String] = [_stat_heading(
-		"[color=#7fd87f][b]Levels and Experience[/b][/color]", false, 3)]
-	for skill: String in EXPERIENCE_SKILLS:
-		var current_level: int = int(stats.get("overall_level", 0)) \
-			if skill == "overall" else int(stats.get(skill, 0))
-		var base_level: int = current_level if skill == "overall" else int(
-			stats.get(skill + "_base", current_level))
-		skill_lines.append("[cell]%s[/cell][cell]%s[/cell][cell]%s[/cell]" % [
-			skill.capitalize(),
-			"[right]%d/%d[/right]" % [current_level, base_level],
-			"[right]%s[/right]" % _experience_text(skill, stats)])
-	# Each section opens with a heading, so its inner table starts closed and
-	# the heading tag reopens it; the leading "[table=2]" here is the one the
-	# first heading closes. The skills column is given the larger share of the
-	# width because its rows carry two number pairs rather than one.
-	stats_text.text = ("[table=3][cell expand=2]%s[/table][/cell]"
-		+ "[cell expand=2]%s[/table][/cell][cell expand=3]%s[/table][/cell][/table]") % [
-			"[table=2]" + "".join(basic_lines),
-			"[table=2]" + "".join(nexus_lines),
-			"[table=3]" + "".join(skill_lines)]
+	_sync_statistics_document(stats)
 	_sync_session_experience()
 	_sync_counters()
+
+## How the skills are grouped, and in what order.
+##
+## Magic and Summoning sit under Combat because that is what they are used
+## for here, and Potion under Crafting because it is mixed at a bench. The
+## groups exist to make thirteen rows readable, not to mirror a taxonomy.
+const SKILL_GROUPS: Array[Array] = [
+	["Combat", ["attack", "defense", "ranging", "magic", "summoning"]],
+	["Crafting", ["manufacturing", "crafting", "engineering", "tailoring",
+		"potion", "alchemy"]],
+	["Gathering", ["harvesting"]],
+]
+
+## The Statistics tab. The scene still holds the text panel this replaced;
+## it is hidden rather than deleted, because a bar and a spend button are
+## controls and bbcode has neither.
+func _build_statistics_tab() -> void:
+	stats_text.hide()
+	var columns := HBoxContainer.new()
+	columns.name = "StatsColumns"
+	columns.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	columns.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	columns.add_theme_constant_override("separation", 16)
+	stats_text.get_parent().add_child(columns)
+
+	var left := VBoxContainer.new()
+	left.name = "Character"
+	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	left.size_flags_stretch_ratio = 2.0
+	columns.add_child(left)
+	left.add_child(_stats_heading("Character"))
+	stats_pools = HBoxContainer.new()
+	stats_pools.name = "Pools"
+	stats_pools.add_theme_constant_override("separation", 8)
+	left.add_child(stats_pools)
+	var left_scroll := ScrollContainer.new()
+	left_scroll.name = "CharacterScroll"
+	left_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	left_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	left.add_child(left_scroll)
+	stats_character = VBoxContainer.new()
+	stats_character.name = "CharacterBody"
+	stats_character.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	left_scroll.add_child(stats_character)
+	stats_perk_line = Label.new()
+	stats_perk_line.name = "PerkLine"
+	stats_perk_line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	left.add_child(stats_perk_line)
+
+	var right := VBoxContainer.new()
+	right.name = "Skills"
+	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	right.size_flags_stretch_ratio = 3.0
+	columns.add_child(right)
+	right.add_child(_stats_heading("Skills & Experience"))
+	var right_scroll := ScrollContainer.new()
+	right_scroll.name = "SkillScroll"
+	right_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	right_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	right.add_child(right_scroll)
+	stats_skills = VBoxContainer.new()
+	stats_skills.name = "SkillBody"
+	stats_skills.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	right_scroll.add_child(stats_skills)
+	stats_overall = HBoxContainer.new()
+	stats_overall.name = "Overall"
+	right.add_child(stats_overall)
+
+static func _stats_heading(text: String) -> Label:
+	var label := Label.new()
+	label.name = "Heading"
+	label.text = text
+	label.add_theme_color_override("font_color", EL_GUI_BRIGHT_COLOUR)
+	return label
+
+## The whole document, rebuilt from the statistics the server last sent.
+func _sync_statistics_document(stats: Dictionary) -> void:
+	if stats_character == null:
+		return
+	for host: Node in [stats_pools, stats_character, stats_skills, stats_overall]:
+		for child: Node in host.get_children():
+			host.remove_child(child)
+			child.queue_free()
+
+	var health: int = int(stats.get("health", 0))
+	var max_health: int = maxi(1, int(stats.get("max_health", 1)))
+	var ether: int = int(stats.get("ether", 0))
+	var max_ether: int = maxi(1, int(stats.get("max_ether", 1)))
+	var action: int = int(stats.get("action_points", 0))
+	var max_action: int = maxi(1, int(stats.get("max_action_points", 1)))
+	for pool: Array in [["Material", health, max_health],
+			["Ethereal", ether, max_ether], ["Action", action, max_action]]:
+		stats_pools.add_child(_stats_pool(str(pool[0]), int(pool[1]),
+			int(pool[2])))
+
+	# A pick point buys one attribute point or one nexus point. The control
+	# beside a line is live only while the server's own numbers allow it: a
+	# point to spend, and a value below the ceiling the server enforces.
+	var pickpoints: int = _available_pickpoints()
+	stats_character.add_child(_stats_heading("Attributes"))
+	for row: Dictionary in _attribute_rows(stats):
+		var value: int = int(row.value)
+		stats_character.add_child(_stats_spend_row(str(row.label), value,
+			value, "attribute", str(row.key),
+			pickpoints > 0 and value < int(row.maximum)))
+	stats_character.add_child(_stats_heading("Nexus"))
+	for pair: Array in [["Human", "human_nexus"], ["Animal", "animal_nexus"],
+			["Vegetal", "vegetal_nexus"], ["Inorganic", "inorganic_nexus"],
+			["Artificial", "artificial_nexus"], ["Magic", "magic_nexus"]]:
+		var key: String = str(pair[1])
+		var current: int = int(stats.get(key, 0))
+		var base: int = int(stats.get(key + "_base", current))
+		stats_character.add_child(_stats_spend_row(str(pair[0]), current, base,
+			"nexus", key, pickpoints > 0 and base < NEXUS_MAXIMUM))
+	stats_character.add_child(_stats_value_row("Pick points",
+		_grouped(pickpoints)))
+	stats_character.add_child(_stats_value_row("Food",
+		str(int(stats.get("food", 0)))))
+	for pair: Array in _research_lines(stats):
+		stats_character.add_child(_stats_value_row(str(pair[0]), str(pair[1])))
+
+	var names: Array[String] = []
+	for raw_perk: Variant in AppState.perks:
+		var perk: Dictionary = raw_perk as Dictionary
+		names.append(str(perk.get("name", "")))
+	stats_perk_line.text = "Perks:  %s" % (
+		"none yet" if names.is_empty() else "  •  ".join(names))
+
+	var head := HBoxContainer.new()
+	head.name = "Head"
+	head.add_child(_stats_cell("Skill", true))
+	head.add_child(_stats_cell("Level", false, HORIZONTAL_ALIGNMENT_RIGHT))
+	head.add_child(_stats_cell("Experience", false, HORIZONTAL_ALIGNMENT_RIGHT,
+		260))
+	stats_skills.add_child(head)
+	for group: Array in SKILL_GROUPS:
+		stats_skills.add_child(_stats_heading(str(group[0])))
+		for raw_skill: Variant in group[1] as Array:
+			stats_skills.add_child(_stats_skill_row(str(raw_skill), stats))
+	stats_overall.add_child(_stats_skill_row("overall", stats))
+
+static func _stats_pool(title: String, value: int, maximum: int) -> Control:
+	var box := VBoxContainer.new()
+	box.name = title
+	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var label := Label.new()
+	label.name = "Title"
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.text = title
+	box.add_child(label)
+	var amount := Label.new()
+	amount.name = "Value"
+	amount.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	amount.text = "%d / %d" % [value, maximum]
+	amount.add_theme_color_override("font_color", Color(0.6, 0.6, 1.0))
+	box.add_child(amount)
+	return box
+
+## One buyable line: what it is, where it stands, and the control that spends
+## a point on it. The control is always drawn - a row whose button vanished
+## when it could not be used would jump about as pick points come and go.
+func _stats_spend_row(label: String, current: int, base: int, kind: String,
+		key: String, affordable: bool) -> Control:
+	var row := HBoxContainer.new()
+	row.name = "Row%s" % key.replace(" ", "").validate_node_name()
+	row.add_child(_stats_cell(label, true))
+	row.add_child(_stats_cell("%d / %d" % [current, base], false,
+		HORIZONTAL_ALIGNMENT_RIGHT, 90))
+	var spend := Button.new()
+	spend.name = "Spend"
+	spend.custom_minimum_size = Vector2(30, 0)
+	spend.focus_mode = Control.FOCUS_NONE
+	spend.disabled = not affordable
+	spend.text = "+" if affordable else "−"
+	spend.tooltip_text = ("Spend a pick point on %s" % label if affordable
+		else "%s cannot be raised right now" % label)
+	if affordable:
+		spend.add_theme_color_override("font_color", Color(0.45, 0.85, 0.45))
+		spend.pressed.connect(_ask_to_spend.bind(kind, key))
+	row.add_child(spend)
+	return row
+
+func _stats_value_row(label: String, value: String) -> Control:
+	var row := HBoxContainer.new()
+	row.name = "Value"
+	row.add_child(_stats_cell(label, true))
+	row.add_child(_stats_cell(value, false, HORIZONTAL_ALIGNMENT_RIGHT, 90))
+	row.add_child(_stats_spacer(30))
+	return row
+
+## One skill: its level, how far through the level it is, and the totals.
+##
+## The bar measures progress inside the current level rather than towards the
+## lifetime figure beside it. Those are different questions and the level is
+## the one a player is actually working on - at high levels the lifetime
+## fraction barely moves, and a bar that never visibly filled would say
+## nothing at all.
+func _stats_skill_row(skill: String, stats: Dictionary) -> Control:
+	var level: int = int(stats.get("overall_level", 0)) if skill == "overall" \
+		else int(stats.get(skill, 0))
+	var base: int = level if skill == "overall" else int(
+		stats.get(skill + "_base", level))
+	var experience: int = int(stats.get(skill + "_exp", 0))
+	var next_experience: int = int(stats.get(skill + "_exp_next", 0))
+	var floor_experience: int = _experience_floor_for_level(base)
+	var span: int = maxi(1, next_experience - floor_experience)
+	var into: int = clampi(experience - floor_experience, 0, span)
+	var fraction: float = float(into) / float(span)
+
+	var row := HBoxContainer.new()
+	row.name = "Skill%s" % skill.capitalize()
+	row.add_child(_stats_cell(skill.capitalize(), true))
+	row.add_child(_stats_cell("%d / %d" % [level, base], false,
+		HORIZONTAL_ALIGNMENT_RIGHT, 90))
+	var meter := HBoxContainer.new()
+	meter.name = "Experience"
+	meter.custom_minimum_size = Vector2(260, 0)
+	var bar := ProgressBar.new()
+	bar.name = "Bar"
+	bar.custom_minimum_size = Vector2(70, 12)
+	bar.show_percentage = false
+	bar.max_value = 1.0
+	bar.value = fraction
+	bar.modulate = _experience_colour(fraction)
+	meter.add_child(bar)
+	var totals := Label.new()
+	totals.name = "Totals"
+	totals.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	totals.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	totals.text = "%s / %s" % [_grouped(experience), _grouped(next_experience)]
+	meter.add_child(totals)
+	row.add_child(meter)
+	return row
+
+## How far along reads as a colour as well as a length, so a glance at the
+## column finds the skill that is nearly there without reading any numbers.
+static func _experience_colour(fraction: float) -> Color:
+	if fraction >= 0.85:
+		return Color(0.55, 0.90, 0.50)      # nearly a level
+	if fraction >= 0.5:
+		return Color(0.85, 0.75, 0.35)      # past halfway
+	if fraction >= 0.2:
+		return Color(0.80, 0.55, 0.30)
+	return Color(0.65, 0.40, 0.32)          # only just started
+
+static func _stats_cell(text: String, grow: bool,
+		alignment: int = HORIZONTAL_ALIGNMENT_LEFT,
+		width: int = 120) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.horizontal_alignment = alignment
+	if grow:
+		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	else:
+		label.custom_minimum_size = Vector2(width, 0)
+	return label
+
+static func _stats_spacer(width: int) -> Control:
+	var spacer := Control.new()
+	spacer.custom_minimum_size = Vector2(width, 0)
+	return spacer
+
 
 ## One row of a statistics section: the label on the left and the value right
 ## aligned in its own cell, so every value in that section lines up whatever
@@ -5587,6 +5790,22 @@ func _counter_achievements(page: String) -> Control:
 ## What the server says is being read, as statistics-table rows. The title can
 ## be long, so it gets a row of its own rather than being squeezed into the
 ## value column beside the page count.
+## What is being read, as (label, value) pairs for the statistics column.
+## `_research_rows` says the same thing in bbcode for the places that still
+## draw text; both read the same three fields, and neither invents a number.
+func _research_lines(stats: Dictionary) -> Array[Array]:
+	var index: int = int(stats.get("researching", 1024))
+	var total: int = int(stats.get("research_total", 0))
+	if index >= 1024 or total <= 0:
+		return [["Researching", "nothing"]]
+	var completed: int = clampi(int(stats.get("research_completed", 0)), 0, total)
+	var title: String = (knowledge_catalog[index]
+		if index >= 0 and index < knowledge_catalog.size()
+		else "knowledge #%d" % index)
+	return [["Researching", "%d%%" % roundi(
+			100.0 * float(completed) / float(total))],
+		["  " + title, "%d/%d pages" % [completed, total]]]
+
 func _research_rows(stats: Dictionary) -> Array[String]:
 	var index: int = int(stats.get("researching", 1024))
 	var total: int = int(stats.get("research_total", 0))
