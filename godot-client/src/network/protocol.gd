@@ -84,6 +84,7 @@ enum ServerMessage {
 	# 216-219 are free. NOTE 248 above is REDEFINE_YOUR_COLORS in stock
 	# Eternal Lands, as 249-253 are YOU_DONT_EXIST and the log-in replies.
 	ELORIA_PERK_CATALOG = 215, ELORIA_ATTRIBUTE_STATE = 216,
+	ELORIA_COUNTER_LAYOUT = 217,
 	ADD_ACTOR_ANIMATION = 89,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
@@ -184,6 +185,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"achievements_window_v1",
 	"actor_footprints_v1",
 	"attribute_state_v1",
+	"counter_layout_v1",
 	"degraded_items_v1",
 	"experience64_v1",
 	"quest_archive_v1",
@@ -938,6 +940,8 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return decode_actor_footprints(payload)
 		ServerMessage.ELORIA_ATTRIBUTE_STATE:
 			return decode_attribute_state(payload)
+		ServerMessage.ELORIA_COUNTER_LAYOUT:
+			return decode_counter_layout(payload)
 		ServerMessage.ELORIA_PERK_CATALOG:
 			return decode_perk_catalog(payload)
 		ServerMessage.ELORIA_WORN_SLOTS:
@@ -1042,6 +1046,81 @@ static func decode_experience_state(payload: PackedByteArray) -> Dictionary:
 	if offset != payload.size():
 		return {"type": "invalid", "error": "experience_trailing"}
 	return {"type": "experience_state", "skills": skills}
+
+## Command 217. How the counters window is arranged, and what fills it.
+##
+## Three tables in one packet: which page each total belongs on, what a row
+## opens into, and the achievements with the rung each is working towards.
+## None of the arrangement is decided here - a client grouping seventeen
+## totals by a table of its own would be drawing last week's window the day
+## a counter moves.
+static func decode_counter_layout(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 3:
+		return {"type": "invalid", "error": "counter_layout_length"}
+	var category_count: int = int(payload[0])
+	var breakdown_count: int = int(payload[1])
+	var achievement_count: int = int(payload[2])
+	var offset: int = 3
+
+	var categories: Array[Dictionary] = []
+	for _index: int in range(category_count):
+		if offset >= payload.size():
+			return {"type": "invalid", "error": "counter_layout_category"}
+		var member_count: int = int(payload[offset])
+		offset += 1
+		var names: Dictionary = _nul_run(payload, offset, member_count + 1)
+		if names.is_empty():
+			return {"type": "invalid", "error": "counter_layout_members"}
+		offset = int(names.offset)
+		var values: Array = names.values
+		var members: Array[String] = []
+		for index: int in range(1, values.size()):
+			members.append(str(values[index]))
+		categories.append({"name": str(values[0]), "counters": members})
+
+	var breakdowns: Dictionary = {}
+	for _index: int in range(breakdown_count):
+		if offset >= payload.size():
+			return {"type": "invalid", "error": "counter_layout_breakdown"}
+		var row_count: int = int(payload[offset])
+		offset += 1
+		var owner: Dictionary = _nul_at(payload, offset)
+		if owner.is_empty():
+			return {"type": "invalid", "error": "counter_layout_owner"}
+		offset = int(owner.offset)
+		var rows: Array[Dictionary] = []
+		for _row: int in range(row_count):
+			if offset + 4 > payload.size():
+				return {"type": "invalid", "error": "counter_layout_row"}
+			var value: int = u32(payload, offset)
+			offset += 4
+			var label: Dictionary = _nul_at(payload, offset)
+			if label.is_empty():
+				return {"type": "invalid", "error": "counter_layout_label"}
+			offset = int(label.offset)
+			rows.append({"label": str(label.value), "value": value})
+		breakdowns[str(owner.value)] = rows
+
+	var achievements: Array[Dictionary] = []
+	for _index: int in range(achievement_count):
+		if offset + 9 > payload.size():
+			return {"type": "invalid", "error": "counter_layout_achievement"}
+		var progress: int = u32(payload, offset)
+		var target: int = u32(payload, offset + 4)
+		var done: bool = int(payload[offset + 8]) != 0
+		offset += 9
+		var text: Dictionary = _nul_run(payload, offset, 2)
+		if text.is_empty():
+			return {"type": "invalid", "error": "counter_layout_achievement_text"}
+		offset = int(text.offset)
+		var parts: Array = text.values
+		achievements.append({"title": str(parts[0]), "category": str(parts[1]),
+			"progress": progress, "target": max(1, target), "done": done})
+
+	if offset != payload.size():
+		return {"type": "invalid", "error": "counter_layout_trailing"}
+	return {"type": "counter_layout", "categories": categories,
+		"breakdowns": breakdowns, "achievements": achievements}
 
 ## Command 216. Every attribute a character can buy, and its ceiling.
 ##

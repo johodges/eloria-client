@@ -44,6 +44,8 @@ func _init() -> void:
 			EloriaProtocol.ServerMessage.ELORIA_ACTOR_FOOTPRINTS,
 		"attribute_state_v1":
 			EloriaProtocol.ServerMessage.ELORIA_ATTRIBUTE_STATE,
+		"counter_layout_v1":
+			EloriaProtocol.ServerMessage.ELORIA_COUNTER_LAYOUT,
 		"degraded_items_v1": EloriaProtocol.ServerMessage.ELORIA_DEGRADED_ITEMS,
 		"experience64_v1": EloriaProtocol.ServerMessage.ELORIA_EXPERIENCE_STATE,
 		"party_window_v1": EloriaProtocol.ServerMessage.ELORIA_PARTY_STATE,
@@ -93,6 +95,13 @@ func _init() -> void:
 		# client's own copy of the attribute list went stale once already.
 		EloriaProtocol.ServerMessage.ELORIA_ATTRIBUTE_STATE:
 			"0100040064006d6174746572004d617474657200",
+		# One page holding one total, that total's breakdown, and one
+		# achievement eight tenths of the way to its rung.
+		EloriaProtocol.ServerMessage.ELORIA_COUNTER_LAYOUT:
+			"01010101436f6d626174004b696c6c7300014b696c6c73000c000000"
+			+ "4c6f77206c6576656c206b696c6c7300080000000a000000004b696c"
+			+ "6c203130206c6f772d6c6576656c2063726561747572657300436f6d"
+			+ "62617400",
 		EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO: "5b0000004100",
 		EloriaProtocol.ServerMessage.ELORIA_SPELL_POWER: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE: "0000",

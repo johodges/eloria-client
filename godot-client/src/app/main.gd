@@ -459,6 +459,12 @@ var ground_bag_quantity_labels: Array[Label] = []
 var _ground_bag_dragging := false
 var _ground_bag_drag_offset := Vector2.ZERO
 var _selected_counter_category := ""
+#: Counters whose breakdown is open. A row opens on its own and stays open
+#: while the totals underneath it change, so this is remembered here rather
+#: than rebuilt with the rows.
+var _open_counters: Dictionary = {}
+var counter_tabs: HBoxContainer
+var counter_body: VBoxContainer
 var _right_mouse_down := false
 var _right_mouse_dragged := false
 var _interaction_mode := "walk"
@@ -926,7 +932,7 @@ func _ready() -> void:
 	stats_text.meta_clicked.connect(_on_stats_meta_clicked)
 	_build_perks_tab()
 	stats_close.pressed.connect(func() -> void: stats_panel.hide())
-	counter_categories.item_selected.connect(_on_counter_category_selected)
+	_build_counters_tab()
 	session_reset.pressed.connect(_reset_session_tracking)
 	manufacturing_list.item_selected.connect(_on_manufacturing_selected)
 	manufacturing_filter.text_changed.connect(_on_manufacturing_filter_changed)
@@ -3155,7 +3161,6 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_stats()
 			_sync_perk_catalog()
 		&"counters":
-			_sync_counter_categories()
 			_sync_counters()
 		&"stats":
 			_sync_stats()
@@ -5031,6 +5036,31 @@ func _on_purchase_confirmed() -> void:
 		push_warning("#spend failed: " + error_string(error))
 	_pending_purchase.clear()
 
+## The Counters tab. The scene still holds the list and the text panel this
+## replaced; both are hidden rather than deleted, because the scene is shared
+## and a node removed there is a merge conflict here.
+func _build_counters_tab() -> void:
+	counter_categories.hide()
+	counter_text.hide()
+	var column := VBoxContainer.new()
+	column.name = "CounterContent"
+	column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	column.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	counter_text.get_parent().add_child(column)
+	counter_tabs = HBoxContainer.new()
+	counter_tabs.name = "CounterTabs"
+	counter_tabs.alignment = BoxContainer.ALIGNMENT_CENTER
+	column.add_child(counter_tabs)
+	var scroll := ScrollContainer.new()
+	scroll.name = "CounterScroll"
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	column.add_child(scroll)
+	counter_body = VBoxContainer.new()
+	counter_body.name = "CounterBody"
+	counter_body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(counter_body)
+
 ## The Perks tab, built here rather than in the scene because the perk table
 ## is the server's and arrives on the wire; there is nothing to lay out until
 ## it does.
@@ -5354,83 +5384,200 @@ func _update_session_distance() -> void:
 		_session_distance += distance
 	_last_distance_tile = tile
 
-func _on_counter_category_selected(index: int) -> void:
-	if index >= 0 and index < counter_categories.item_count:
-		_selected_counter_category = counter_categories.get_item_text(index)
-		_sync_counters()
-
-## The category list is whatever the server sent, in the server's order. The
-## client used to keep its own 17-name constant and increment it when a request
-## was sent, so a rejected deposit or a failed mix still counted and seven of
-## the categories were never incremented at all.
-func _sync_counter_categories() -> void:
-	if counter_categories == null:
-		return
-	var names: Array[String] = AppState.activity_counter_order
-	var unchanged: bool = counter_categories.item_count == names.size()
-	if unchanged:
-		for index: int in range(names.size()):
-			if counter_categories.get_item_text(index) != names[index]:
-				unchanged = false
-				break
-	if unchanged:
-		return
-	counter_categories.clear()
-	for counter_name: String in names:
-		counter_categories.add_item(counter_name)
-	var selected: int = names.find(_selected_counter_category)
-	if selected < 0 and not names.is_empty():
-		selected = 0
-		_selected_counter_category = names[0]
-	if selected >= 0:
-		counter_categories.select(selected)
-
+## The counters window: six pages of totals, each row opening into what it is
+## made of, with that page's achievements underneath.
+##
+## Every part of the arrangement is the server's - which page a total sits on,
+## what a row opens into, and what an achievement is working towards. The
+## client used to show one total at a time out of a dropdown, and the nineteen
+## finer tallies were a second flat list that said nothing about the first.
 func _sync_counters() -> void:
-	if counter_text == null:
+	if counter_body == null:
 		return
-	if _selected_counter_category.is_empty():
-		counter_text.text = "[center]Waiting for server counters[/center]"
+	for child: Node in counter_body.get_children():
+		counter_body.remove_child(child)
+		child.queue_free()
+	_sync_counter_tabs()
+	var categories: Array = AppState.counter_layout.get("categories", []) as Array
+	if categories.is_empty():
+		var waiting := Label.new()
+		waiting.name = "CountersWaiting"
+		waiting.text = "Waiting for server counters"
+		counter_body.add_child(waiting)
 		return
-	var total: int = int(AppState.activity_counters.get(_selected_counter_category, 0))
-	var session_total: int = maxi(0, total - int(
-		_counter_session_baseline.get(_selected_counter_category, 0)))
-	counter_text.text = (("[table=3][cell][b]Name[/b][/cell]"
-		+ "[cell][right][b]This Session[/b][/right][/cell]"
-		+ "[cell][right][b]Total[/b][/right][/cell]"
-		+ "[cell]%s[/cell][cell][right]%d[/right][/cell]"
-		+ "[cell][right]%d[/right][/cell][/table]
+	var page: Dictionary = _counter_page(categories)
+	counter_body.add_child(_counter_table(page))
+	var achievements: Control = _counter_achievements(str(page.get("name", "")))
+	if achievements != null:
+		counter_body.add_child(achievements)
 
-"
-		+ "Totals are the server's confirmed events.
-Distance this session: %d tiles") % [
-		_selected_counter_category, session_total, total, _session_distance]
-		) + _achievement_section()
+## Which page is showing: the one chosen, or the first, so the window is never
+## blank while a valid arrangement is loaded.
+func _counter_page(categories: Array) -> Dictionary:
+	for raw: Variant in categories:
+		var page: Dictionary = raw as Dictionary
+		if str(page.get("name", "")) == _selected_counter_category:
+			return page
+	var first: Dictionary = categories[0] as Dictionary
+	_selected_counter_category = str(first.get("name", ""))
+	return first
 
-## The rest of what the server counts, under the activity totals rather than in
-## a second window. These were tracked all along and readable only as a chat
-## command that printed a dozen lines and scrolled away - the point of the
-## window is that a number worth keeping has somewhere to live.
-func _achievement_section() -> String:
-	var counters: Array = AppState.achievements_state.get("counters", []) as Array
-	var completed: Array = AppState.achievements_state.get("completed", []) as Array
-	if counters.is_empty() and completed.is_empty():
-		return ""
-	var lines: Array[String] = ["\n\n[b]Achievements[/b]\n"]
-	if not counters.is_empty():
-		var cells: Array[String] = []
-		for raw: Variant in counters:
-			var row: Dictionary = raw as Dictionary
-			# Zero is the honest answer for something never done, and hiding it
-			# would make the list look shorter the less the player has done.
-			cells.append("[cell]%s[/cell][cell][right]%d[/right][/cell]" % [
-				str(row.get("label", "")), int(row.get("value", 0))])
-		lines.append("[table=2]%s[/table]" % "".join(cells))
-	if not completed.is_empty():
-		var names: PackedStringArray = PackedStringArray()
-		for raw_name: Variant in completed:
-			names.append(str(raw_name))
-		lines.append("\n\nCompleted: %s" % ", ".join(names))
-	return "".join(lines)
+func _sync_counter_tabs() -> void:
+	if counter_tabs == null:
+		return
+	for child: Node in counter_tabs.get_children():
+		counter_tabs.remove_child(child)
+		child.queue_free()
+	for raw: Variant in AppState.counter_layout.get("categories", []) as Array:
+		var page_name: String = str((raw as Dictionary).get("name", ""))
+		var tab := Button.new()
+		tab.name = "Counters%s" % page_name.replace(" ", "").validate_node_name()
+		tab.text = page_name
+		tab.toggle_mode = true
+		tab.button_pressed = page_name == _selected_counter_category
+		tab.focus_mode = Control.FOCUS_NONE
+		tab.pressed.connect(_on_counter_page_chosen.bind(page_name))
+		counter_tabs.add_child(tab)
+
+func _on_counter_page_chosen(page_name: String) -> void:
+	if _selected_counter_category == page_name:
+		return
+	_selected_counter_category = page_name
+	_sync_counters()
+
+## One page of totals. Session is this client's own arithmetic against a
+## baseline taken at login; Global is the server's confirmed number.
+func _counter_table(page: Dictionary) -> Control:
+	var table := VBoxContainer.new()
+	table.name = "CounterTable"
+	var head := HBoxContainer.new()
+	head.name = "Head"
+	head.add_child(_counter_cell("", true))
+	head.add_child(_counter_cell("Session", false, HORIZONTAL_ALIGNMENT_RIGHT))
+	head.add_child(_counter_cell("Global", false, HORIZONTAL_ALIGNMENT_RIGHT))
+	head.add_child(_counter_spacer())
+	table.add_child(head)
+	var breakdowns: Dictionary = AppState.counter_layout.get(
+		"breakdowns", {}) as Dictionary
+	for raw: Variant in page.get("counters", []) as Array:
+		var counter: String = str(raw)
+		table.add_child(_counter_row(counter, breakdowns.has(counter)))
+		if _open_counters.has(counter) and breakdowns.has(counter):
+			for detail: Variant in breakdowns[counter] as Array:
+				table.add_child(_counter_detail(detail as Dictionary))
+	return table
+
+func _counter_row(counter: String, expandable: bool) -> Control:
+	var total: int = int(AppState.activity_counters.get(counter, 0))
+	var session: int = maxi(0, total - int(
+		_counter_session_baseline.get(counter, 0)))
+	var row := HBoxContainer.new()
+	row.name = "Counter%s" % counter.replace(" ", "").validate_node_name()
+	row.add_child(_counter_cell(counter, true))
+	row.add_child(_counter_cell(_grouped(session), false,
+		HORIZONTAL_ALIGNMENT_RIGHT))
+	row.add_child(_counter_cell(_grouped(total), false,
+		HORIZONTAL_ALIGNMENT_RIGHT))
+	if expandable:
+		var arrow := Button.new()
+		arrow.name = "Expand"
+		# The glyph turns rather than the label changing, so the control says
+		# which way it goes rather than what it is called.
+		arrow.text = "v" if _open_counters.has(counter) else ">"
+		arrow.custom_minimum_size = Vector2(36, 0)
+		arrow.focus_mode = Control.FOCUS_NONE
+		arrow.tooltip_text = "What %s is made of" % counter
+		arrow.pressed.connect(_on_counter_expanded.bind(counter))
+		row.add_child(arrow)
+	else:
+		# No arrow at all rather than one that opens nothing: an empty
+		# breakdown is worse than none, because it looks like a fault.
+		row.add_child(_counter_spacer())
+	return row
+
+func _counter_detail(detail: Dictionary) -> Control:
+	var row := HBoxContainer.new()
+	row.name = "Detail"
+	var label: Label = _counter_cell("    %s" % str(detail.get("label", "")), true)
+	label.modulate = Color(1, 1, 1, 0.7)
+	row.add_child(label)
+	# A breakdown carries the lifetime tally only. The server keeps no session
+	# figure for these, and inventing one here would be the client counting
+	# again - which is the mistake the totals themselves were built to end.
+	row.add_child(_counter_cell("", false, HORIZONTAL_ALIGNMENT_RIGHT))
+	var value: Label = _counter_cell(_grouped(int(detail.get("value", 0))),
+		false, HORIZONTAL_ALIGNMENT_RIGHT)
+	value.modulate = Color(1, 1, 1, 0.7)
+	row.add_child(value)
+	row.add_child(_counter_spacer())
+	return row
+
+func _on_counter_expanded(counter: String) -> void:
+	if _open_counters.has(counter):
+		_open_counters.erase(counter)
+	else:
+		_open_counters[counter] = true
+	_sync_counters()
+
+static func _counter_cell(text: String, grow: bool,
+		alignment: int = HORIZONTAL_ALIGNMENT_LEFT) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.horizontal_alignment = alignment
+	if grow:
+		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	else:
+		label.custom_minimum_size = Vector2(120, 0)
+	return label
+
+static func _counter_spacer() -> Control:
+	var spacer := Control.new()
+	spacer.custom_minimum_size = Vector2(36, 0)
+	return spacer
+
+## This page's achievements: what each is working towards, how far along, and
+## a tick when there is nothing left of it to do.
+func _counter_achievements(page: String) -> Control:
+	var rows: Array = AppState.counter_layout.get("achievements", []) as Array
+	var mine: Array[Dictionary] = []
+	for raw: Variant in rows:
+		var row: Dictionary = raw as Dictionary
+		if str(row.get("category", "")) == page:
+			mine.append(row)
+	if mine.is_empty():
+		return null
+	var box := VBoxContainer.new()
+	box.name = "Achievements"
+	var title := Label.new()
+	title.name = "Title"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.text = "%s Achievements" % page
+	box.add_child(title)
+	for row: Dictionary in mine:
+		var line := HBoxContainer.new()
+		line.name = "Achievement"
+		line.add_child(_counter_cell(str(row.get("title", "")), true))
+		var bar := ProgressBar.new()
+		bar.name = "Progress"
+		bar.custom_minimum_size = Vector2(220, 14)
+		bar.show_percentage = false
+		bar.max_value = maxf(1.0, float(row.get("target", 1)))
+		bar.value = float(row.get("progress", 0))
+		line.add_child(bar)
+		line.add_child(_counter_cell("%s / %s" % [
+			_grouped(int(row.get("progress", 0))),
+			_grouped(int(row.get("target", 1)))], false,
+			HORIZONTAL_ALIGNMENT_RIGHT))
+		var tick := Label.new()
+		tick.name = "Done"
+		tick.custom_minimum_size = Vector2(36, 0)
+		tick.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		# A tick only where the whole ladder is finished. A bar that filled
+		# and emptied into the next rung is progress, not completion.
+		tick.text = "✓" if bool(row.get("done", false)) else ""
+		line.add_child(tick)
+		box.add_child(line)
+	return box
 
 
 ## Reading progress. `researching` is the knowledge index the character has

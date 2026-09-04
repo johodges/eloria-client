@@ -239,6 +239,13 @@ var perk_catalog: Array[Dictionary] = []
 var attributes: Array[Dictionary] = []
 ## Lifetime activity totals keyed by the server's own category name, plus the
 ## order the server listed them in so the window needs no local table.
+## How the counters window is arranged, and what fills it: which page each
+## total belongs on, what a row opens into, and the achievements with the rung
+## each is working towards. All of it the server's - a client grouping
+## seventeen totals by a table of its own would be drawing last week's window
+## the day a counter moves.
+var counter_layout: Dictionary = {
+	"categories": [], "breakdowns": {}, "achievements": []}
 var activity_counters: Dictionary = {}
 var activity_counter_order: Array[String] = []
 ## Protocol diagnostics. Every undecoded packet and every decode failure used
@@ -331,6 +338,8 @@ func _on_connection_state_changed(value: String) -> void:
 		perks.clear()
 		perk_catalog.clear()
 		attributes.clear()
+		counter_layout = {
+			"categories": [], "breakdowns": {}, "achievements": []}
 		activity_counters.clear()
 		activity_counter_order.clear()
 		invasion_assistant = {"open": false}
@@ -1002,6 +1011,12 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			for raw_attribute: Variant in event.attributes:
 				attributes.append((raw_attribute as Dictionary).duplicate(true))
 			state_changed.emit(&"attributes")
+		"counter_layout":
+			counter_layout = {
+				"categories": event.get("categories", []),
+				"breakdowns": event.get("breakdowns", {}),
+				"achievements": event.get("achievements", [])}
+			state_changed.emit(&"counters")
 		"activity_counters":
 			if bool(event.full):
 				activity_counters.clear()
