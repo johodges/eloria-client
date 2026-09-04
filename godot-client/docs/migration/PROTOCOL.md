@@ -86,8 +86,12 @@ command 77 repeats `slot:u8 | maximum_seconds:u16le | remaining_seconds:u16le`.
 
 Actor equipment changes are server commands 52/53. Wear is
 `actor_id:u16le | part:u8 | visual_id:u8`; unwear omits the visual byte. Parts
-0–7 mean weapon, shield, cape, helmet, legs, body, boots, and neck. These part
-IDs are distinct from the eight generic inventory wear positions.
+0–7 mean right hand, left hand, cape, helmet, legs, body, boots, and neck. These
+part IDs are distinct from the eight generic inventory wear positions. Part 1
+carries a shield below visual 160 and a weapon held in the off hand at 160 and
+above, which is how a player with Two Handed Wielding is drawn holding two; the
+server sends what each part is drawing now rather than what each item is, so
+wearing the second weapon moves it to part 1 without disturbing the first.
 
 Spell casting sends `CAST_SPELL(39)` as `count:u8 | sigil_id:u8[count]`; the
 ordered sigil sequence, not the local spell ID, identifies the spell. The
