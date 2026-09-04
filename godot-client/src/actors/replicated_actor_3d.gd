@@ -408,11 +408,26 @@ func _add_hair_variant(style: int, color: Color) -> void:
 	for old_attachment: Node in _native_skeleton.get_children():
 		if old_attachment.name.begins_with("AppearanceHair_"):
 			old_attachment.queue_free()
+	# The chosen style replaces the sculpted hair, not sits on top of it:
+	# the split body carries that hair as its own surface, so it hides
+	# unconditionally here -- style 0 is bald outright (no native
+	# attachment either, see the early return below), and a race with no
+	# hairStyles at all (Ssarathi) has nothing to attach for ANY style,
+	# so it must default to hidden too rather than always showing its
+	# sculpted hair regardless of the style picked.
+	for node_value: Node in find_children("hair", "MeshInstance3D", true, false):
+		(node_value as MeshInstance3D).visible = false
+	if style == 0:
+		return
 	var styles_value: Variant = _model_config.get("hairStyles", [])
 	if styles_value is not Array or (styles_value as Array).is_empty():
 		return
 	var styles: Array = styles_value as Array
-	var path: String = str(styles[posmod(style, styles.size())])
+	# style is 1-4 here (0 is bald, handled above) -- shift down by one so
+	# style 1 is this race's own hairStyles[0], same order as before this
+	# bald option existed.
+	var style_index: int = posmod(style - 1, styles.size())
+	var path: String = str(styles[style_index])
 	var native_hair: Node3D = _equipment_instance(path)
 	if native_hair == null:
 		push_warning("Native hairstyle failed to load: " + path)
@@ -421,10 +436,6 @@ func _add_hair_variant(style: int, color: Color) -> void:
 	if attachment == null:
 		native_hair.queue_free()
 		return
-	# The chosen style replaces the sculpted hair, not sits on top of it:
-	# the split body carries that hair as its own surface, so it hides.
-	for node_value: Node in find_children("hair", "MeshInstance3D", true, false):
-		(node_value as MeshInstance3D).visible = false
 	attachment.name = "AppearanceHair_%d" % style
 	native_hair.name = "NativeHair"
 	# No scale compensation by default: a bone attachment inherits whatever
@@ -443,13 +454,13 @@ func _add_hair_variant(style: int, color: Color) -> void:
 	# hair that flows well past the skull), so the single scale this
 	# used to be either buried the tight styles inside the head or left
 	# the voluminous ones oversized -- there is no one number that fits
-	# both. Indexed the same way as hairStyles (posmod by style), so a
+	# both. Indexed the same way as hairStyles (by style_index), so a
 	# style with no matching entry -- every race but this one -- mounts
 	# plainly, same as before.
 	var fits_value: Variant = _model_config.get("hairFit")
 	if fits_value is Array and not (fits_value as Array).is_empty():
 		var fits: Array = fits_value as Array
-		var fit: Variant = fits[posmod(style, fits.size())]
+		var fit: Variant = fits[posmod(style_index, fits.size())]
 		if fit is Dictionary:
 			var fit_dict: Dictionary = fit as Dictionary
 			var scale: Array = fit_dict.get("scale", [1.0, 1.0, 1.0]) as Array

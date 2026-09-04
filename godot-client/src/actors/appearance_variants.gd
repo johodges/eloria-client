@@ -109,8 +109,10 @@ static func eye_color(index: int) -> Color:
 	]
 	return colors[posmod(index, colors.size())]
 
+## 0 means bald (see ReplicatedActor3D._add_hair_variant); 1-4 select the
+## race's own hairStyles[0..3], one bucket per entry.
 static func hair_style(index: int) -> int:
-	return posmod(index, 4)
+	return posmod(index, 5)
 
 static func head_style(index: int) -> int:
 	return posmod(index, 4)

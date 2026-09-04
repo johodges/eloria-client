@@ -461,6 +461,7 @@ def strip_luminous_bones(document, binary, lum_names, bone_names):
 # this margin could ever have fixed. Before concluding a specific
 # body's seam is still broken, always check its own unmodified render
 # from the same angle first.
+#
 NECK_SEAM_MARGIN = 0.03
 
 
@@ -474,37 +475,90 @@ def neck_axis_t(document, binary, skin_index, positions):
     return (positions - neck_pos) @ unit
 
 
-def head_boundary_anchor(document, binary, skin_index, positions, dominant, head_row):
+def head_boundary_anchor(positions, dominant, head_row, faces, t):
     """(anchor point, boundary_t): where a body's OWN head visually
-    BEGINS -- the mean 3D position of its Head-dominant faces closest
-    to the neck_01 boundary -- and the boundary_t threshold used to
-    find them (see NECK_SEAM_MARGIN's own callers).
+    connects to the rest of it -- the mean 3D position of the Head-
+    dominant vertices that sit on the actual mesh seam, i.e. share a
+    face with a vertex dominant on some OTHER bone -- and that same
+    set's mean position along the neck_01->Head axis (`t`, from
+    neck_axis_t) for NECK_SEAM_MARGIN's own callers.
 
     Originally the head graft aligned by the Head BONE's own rest
-    position instead of this. That fixed the dark gap at the seam
-    (see NECK_SEAM_MARGIN) but not two things a user found by rotating
-    to a side view afterward: heads still sat at visibly different
-    depths/angles per race, and races ended up with inconsistent neck
-    lengths. Checked directly: a rig's Head bone is placed whereever
-    that body's own rigging step decided a neck-bend pivot should be,
-    which is not reliably AT the visible jaw/chin edge -- two bodies
-    can have their Head bone in a similar place while their actual
-    heads sit at very different depths from it, or vice versa. The
-    boundary anchor is the visible landmark that actually determines
-    how long a neck reads as being and how far forward a head sits;
-    aligning bodies by it (rather than by an internal rigging pivot
-    that says nothing about visible geometry) keeps both consistent
-    across races by construction, since every race is aligned to the
-    SAME landmark on Luminous's own body."""
-    t = neck_axis_t(document, binary, skin_index, positions)
+    position, then by a percentile of Head-dominant vertices' position
+    along the neck axis, then by a percentile of their world height.
+    All three were coordinate-based measures over the WHOLE Head-
+    dominant vertex cloud, and all three broke on Ssarathi in turn: her
+    jaw tapers to a point well below, and (since it points mostly
+    forward) well behind, the actual seam. A taper contributes a
+    smoothly growing vertex count as height increases rather than a
+    sharp cutoff (checked directly: 9 of her Head-dominant vertices
+    sit below world Y=1.42, 94 below 1.45, 532 below 1.50), so ANY
+    percentile/threshold measure over that cloud lands somewhere on
+    the taper itself rather than at the seam -- a ~6cm gap, not a
+    small artifact, and the false fix (excluding far vertices by
+    perpendicular distance from the axis) just traded one wrong cutoff
+    for another, since her genuine under-jaw vertices sit almost as
+    far from the axis as the snout tip being excluded.
+
+    The seam is a topological fact, not a coordinate one, so measure
+    it that way instead: it is exactly the Head-dominant vertices that
+    are face-adjacent to a vertex dominant on some other bone, whatever
+    bone that happens to be (checked directly, Luminous's own seam
+    borders both neck_01 and spine_03 in different places) and however
+    the head's own downstream shape grows from there. This finds the
+    same tight, consistent ring on both a plain human head and a long-
+    snouted one -- ~1cm standard deviation in both height and radius,
+    checked directly on Luminous and Ssarathi alike -- because a snout
+    tapering below the seam never becomes part of the ring itself; only
+    its actual junction with the neck does."""
     is_head = dominant == head_row
     if not is_head.any():
-        return positions.mean(axis=0), t.max()
-    boundary_t = np.percentile(t[is_head], 2)
-    band = is_head & (t < boundary_t + 0.01)
-    if not band.any():
-        band = is_head
-    return positions[band].mean(axis=0), boundary_t
+        return positions.mean(axis=0), float(t.max())
+
+    face_is_head = is_head[faces]
+    mixed = face_is_head.any(axis=1) & (~face_is_head).any(axis=1)
+    boundary_verts = np.unique(faces[mixed][face_is_head[mixed]])
+    if len(boundary_verts) == 0:
+        boundary_verts = np.flatnonzero(is_head)
+
+    return positions[boundary_verts].mean(axis=0), float(t[boundary_verts].mean())
+
+
+def head_axis_direction(document, binary, skin_index):
+    """Unit vector from neck_01 to Head, in the body's own rest pose.
+
+    Used as the reference direction for correcting a grafted head's
+    ORIENTATION, not just its position, to Luminous's own convention.
+    Boundary-anchor alignment (translation only) fixed neck length and
+    depth, but a user checking multiple angles afterward still found
+    some heads tilted differently than Luminous's own (most visibly
+    Votary's, sitting tipped back) -- a rig's own neck_01->Head axis
+    direction is not guaranteed to point the same way relative to the
+    body's own upright orientation across independently-authored races,
+    same root cause as the position mismatch this axis's own two
+    ENDPOINTS already turned out to have."""
+    neck_pos = bone_rest_position(document, binary, skin_index, "neck_01")
+    head_pos = bone_rest_position(document, binary, skin_index, HEAD_BONE)
+    axis = head_pos - neck_pos
+    return axis / np.linalg.norm(axis)
+
+
+def minimal_rotation(a, b):
+    """Rotation matrix taking unit vector `a` to unit vector `b`
+    (Rodrigues) -- the same minimal-reorientation approach used
+    elsewhere this session (straighten_hands.py) for a similar
+    problem: fixing WHERE something points without introducing any
+    other twist. Deliberately does not control roll around the a->b
+    axis, since there is no reliable second landmark to anchor it to
+    that would not just be another version of the same bone-placement-
+    varies-per-race problem."""
+    v = np.cross(a, b)
+    c = float(np.dot(a, b))
+    s = np.linalg.norm(v)
+    if s < 1e-9:
+        return np.eye(3) if c > 0 else -np.eye(3) + 2 * np.outer(a, a)
+    vx = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
+    return np.eye(3) + vx + vx @ vx * ((1 - c) / (s * s))
 
 
 def strip_luminous_head(document, binary, lum_names):
@@ -530,12 +584,12 @@ def strip_luminous_head(document, binary, lum_names):
     skin_index = body_node["skin"]
     head_row = lum_names.index(HEAD_BONE)
 
+    faces = accessor_array(document, binary, body_prim["indices"]).reshape(-1, 3).astype(np.int64)
     is_head = dominant == head_row
     t = neck_axis_t(document, binary, skin_index, positions)
-    _, boundary_t = head_boundary_anchor(document, binary, skin_index, positions, dominant, head_row)
+    _, boundary_t = head_boundary_anchor(positions, dominant, head_row, faces, t)
     strip = is_head & (t > boundary_t + NECK_SEAM_MARGIN)
 
-    faces = accessor_array(document, binary, body_prim["indices"]).reshape(-1, 3).astype(np.int64)
     keep = ~strip[faces[:, 0]]
     new_faces = faces[keep].astype(np.uint32).reshape(-1)
     body_prim["indices"] = append_accessor(document, binary, new_faces, 5125, "SCALAR")
@@ -618,6 +672,7 @@ def graft_source_head(document, binary, lum_names, src_doc, src_bin):
     uvs = accessor_array(src_doc, src_bin, body_prim["attributes"]["TEXCOORD_0"])
     joints = accessor_array(src_doc, src_bin, body_prim["attributes"]["JOINTS_0"]).astype(np.int64)
     weights = accessor_array(src_doc, src_bin, body_prim["attributes"]["WEIGHTS_0"])
+    body_faces = accessor_array(src_doc, src_bin, body_prim["indices"]).reshape(-1, 3).astype(np.int64)
 
     src_skin_index = src_body_node["skin"]
     src_names = joint_names(src_doc, src_skin_index)
@@ -634,10 +689,21 @@ def graft_source_head(document, binary, lum_names, src_doc, src_bin):
     # stays self-consistent; the alignment offset below is then applied
     # uniformly to everything grabbed, margin band included, so the
     # whole grafted piece moves as one rigid unit.
+    #
+    # The margin candidate is required to be neck_01-dominant, not just
+    # "anything past this t value" -- checked directly on Ssarathi,
+    # whose boundary_t comes out negative (her snout drags it there,
+    # see head_boundary_anchor), an unqualified t-threshold is such a
+    # low bar that it swept in T-pose HAND vertices (X of 0.6-0.7m, not
+    # remotely neck material) as "margin", and rotating those around
+    # the head's own anchor is what actually produced a floating,
+    # disconnected head -- not the rotation or the anchor math, which
+    # were both fine.
     t = neck_axis_t(src_doc, src_bin, src_skin_index, positions)
-    src_anchor, boundary_t = head_boundary_anchor(
-        src_doc, src_bin, src_skin_index, positions, dominant, head_row)
-    grab = is_head | (t > boundary_t - NECK_SEAM_MARGIN)
+    src_anchor, boundary_t = head_boundary_anchor(positions, dominant, head_row, body_faces, t)
+    neck_row = src_names.index("neck_01")
+    is_neck = dominant == neck_row
+    grab = is_head | (is_neck & (t > boundary_t - NECK_SEAM_MARGIN))
 
     # Align by where each body's OWN head visually BEGINS, not by the
     # Head bone's own rest position -- see head_boundary_anchor for why
@@ -649,15 +715,65 @@ def graft_source_head(document, binary, lum_names, src_doc, src_bin):
     lum_positions = accessor_array(document, binary, lum_body_prim["attributes"]["POSITION"])
     lum_joints = accessor_array(document, binary, lum_body_prim["attributes"]["JOINTS_0"]).astype(np.int64)
     lum_weights = accessor_array(document, binary, lum_body_prim["attributes"]["WEIGHTS_0"])
+    lum_faces = accessor_array(document, binary, lum_body_prim["indices"]).reshape(-1, 3).astype(np.int64)
     lum_dominant = lum_joints[np.arange(len(lum_joints)), np.argmax(lum_weights, axis=1)]
     lum_head_row = lum_names.index(HEAD_BONE)
-    lum_anchor, _ = head_boundary_anchor(
-        document, binary, lum_body_node["skin"], lum_positions, lum_dominant, lum_head_row)
+    lum_t = neck_axis_t(document, binary, lum_body_node["skin"], lum_positions)
+    lum_anchor, _ = head_boundary_anchor(lum_positions, lum_dominant, lum_head_row, lum_faces, lum_t)
+
+    # Orientation correction (see head_axis_direction/minimal_rotation):
+    # rotate the grafted piece around its OWN anchor so its neck->Head
+    # axis points the same way Luminous's does, THEN move that anchor to
+    # Luminous's -- rotate first, or the translation target would itself
+    # be computed in the pre-rotation frame and land wrong.
+    src_axis = head_axis_direction(src_doc, src_bin, src_skin_index)
+    lum_axis = head_axis_direction(document, binary, lum_body_node["skin"])
+    rotation = minimal_rotation(src_axis, lum_axis)
+
+    # Blend rotation in across a band straddling the boundary on BOTH
+    # sides, instead of applying it uniformly to the whole grafted
+    # piece (or ramping it up to full strength exactly AT the
+    # boundary). checked directly on Ssarathi (14 degrees off
+    # Luminous's own axis, far more than any other race's 0-5): the
+    # first version of this blend ramped alpha 0->1 across only the
+    # OUTER (neck-side) margin band, reaching 1 -- full rotation --
+    # right at the boundary ring itself and staying there through the
+    # whole head. That still reopened the seam as a floating,
+    # disconnected head, and widening the outer margin band to buy
+    # more overlap did nothing for it (confirmed by direct
+    # measurement: welding both cut edges' own open-boundary loops and
+    # taking nearest-neighbour distance ring-to-ring, the gap at the
+    # throat stayed ~7cm whether the margin was 0.03 or 0.10, while a
+    # bigger margin newly opened a second, worse gap higher up where
+    # more of Luminous's own head was now retained). That ruled out
+    # "not enough overlap" -- the ring vertices are AT full rotation by
+    # construction regardless of margin size, and rotating a ~10cm-
+    # radius ring by 14 degrees around its own mean displaces parts of
+    # it several cm even though the mean itself does not move,
+    # unevenly by angular position (which is exactly a per-direction
+    # gap, not a uniform one). Extending the SAME taper to an equal-
+    # width band on the INNER (head) side too -- alpha 0 at the
+    # margin's outer edge, 1 only a further margin-width INSIDE the
+    # head, so the boundary ring itself sits mid-blend rather than
+    # fully rotated -- keeps the ring close to the translation-only
+    # position that closed the gap before rotation correction existed,
+    # while still fully rotating the head once you are deep enough
+    # inside it that a matching seam no longer matters. alpha blends
+    # the two RESULTING positions, not the rotation matrices
+    # themselves, which is not well-defined for a partial blend.
+    alpha = np.clip((t[grab] - (boundary_t - NECK_SEAM_MARGIN)) / (2.0 * NECK_SEAM_MARGIN), 0.0, 1.0)
+    translated_only = positions[grab] + (lum_anchor - src_anchor)
+    rotated_and_translated = lum_anchor + (positions[grab] - src_anchor) @ rotation.T
 
     positions = positions.copy()
-    positions[grab] += (lum_anchor - src_anchor)
+    positions[grab] = (translated_only * (1.0 - alpha[:, None])
+                        + rotated_and_translated * alpha[:, None])
+    # Normals need the same blend (direction only, no translation) or
+    # lighting kinks at the blend boundary instead of shading smoothly.
+    normals = normals.copy()
+    normals[grab] = normals[grab] * (1.0 - alpha[:, None]) + (normals[grab] @ rotation.T) * alpha[:, None]
+    normals[grab] /= np.maximum(np.linalg.norm(normals[grab], axis=1, keepdims=True), 1e-9)
 
-    body_faces = accessor_array(src_doc, src_bin, body_prim["indices"]).reshape(-1, 3).astype(np.int64)
     eyes_faces = accessor_array(src_doc, src_bin, eyes_prim["indices"]).reshape(-1, 3).astype(np.int64)
     head_faces = body_faces[grab[body_faces[:, 0]]]
 
