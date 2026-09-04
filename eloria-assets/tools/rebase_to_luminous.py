@@ -75,6 +75,7 @@ from split_race_surfaces import (  # noqa: E402
     RACES, accessor_array, append_accessor, append_view,
     bone_rest_position, read_glb, write_glb,
 )
+from thicken_limbs import SEGMENT_FAR_BONE, luminous_reference  # noqa: E402
 
 # Only these classes carry real per-race skin detail on Material_1 --
 # see the module docstring for why the rest (hair, wardrobe_*) must
@@ -453,7 +454,150 @@ def graft_source_head(document, binary, lum_names, src_doc, src_bin):
     armature_node["children"].append(node_index)
 
 
-def process(luminous_path: Path, source_path: Path, out_path: Path) -> str:
+# Ssarathi-only: how far a vertex dominant-weighted to a leg bone can sit
+# from that bone's own rest axis before it counts as tail rather than
+# leg flesh -- see tail_vertex_mask. Deliberately the SAME conservative
+# 1.5x fix_ssarathi_tail_weights.py verified (not an import of
+# thicken_limbs.MAX_SANE_RATIO -- that constant has since been loosened
+# to 3.0 for a different job, and would silently move this one too).
+#
+# Lowering this to catch more of the tail was tried and reverted: at
+# 1.0x the farthest "flagged" vertices turned out to be real foot
+# vertices (Y close to 0, dominant on calf_l) rather than more tail --
+# a foot is not a simple cylinder around the calf's own axis, so its
+# real, correct geometry already sits well outside a tight radius
+# around that axis, indistinguishable from genuine tail contamination
+# by this measure alone. At 0.5x the flagged fraction of thigh_l alone
+# reached 774/837 (92%), i.e. this stopped measuring "is this tail" at
+# all. Extraction with this conservative threshold only recovers the
+# tail's unambiguous outer portion, not its root -- a known, currently
+# unresolved gap; see the module docstring.
+TAIL_DISTANCE_RATIO = 1.5
+
+
+def tail_vertex_mask(document, binary, positions, dominant, skin_index, luminous_ref):
+    """True for every vertex dominant-weighted to a leg bone (thigh/calf)
+    but sitting further from that bone's own rest axis than a real leg
+    segment plausibly reaches. Ssarathi's tail has no bone of its own in
+    the canonical rig, so the auto-weighting step gave its vertices to
+    the nearest existing bone instead; this is the same technique
+    fix_ssarathi_tail_weights.py already verified identifies it (see
+    that file for the fuller derivation), reimplemented locally rather
+    than imported so this tool does not depend on a script meant to be
+    run standalone, and does not inherit its drifted MAX_SANE_RATIO."""
+    names = joint_names(document, skin_index)
+    mask = np.zeros(len(positions), dtype=bool)
+    for part in ("thigh", "calf"):
+        for side in ("l", "r"):
+            near = "%s_%s" % (part, side)
+            if near not in names:
+                continue
+            far = "%s_%s" % (SEGMENT_FAR_BONE[part], side)
+            a = bone_rest_position(document, binary, skin_index, near)
+            b = bone_rest_position(document, binary, skin_index, far)
+            unit = (b - a) / np.linalg.norm(b - a)
+            row = names.index(near)
+            sel = dominant == row
+            if not sel.any():
+                continue
+            v = positions[sel] - a
+            perp = np.linalg.norm(v - np.outer(v @ unit, unit), axis=1)
+            contaminated = perp > TAIL_DISTANCE_RATIO * luminous_ref[part]
+            idx = np.flatnonzero(sel)
+            mask[idx[contaminated]] = True
+    return mask
+
+
+def graft_source_tail(document, binary, lum_names, src_doc, src_bin, gender):
+    """Ssarathi-only: her tail rides on a leg bone's weight (see
+    tail_vertex_mask) since the canonical rig has no tail bone at all.
+    A no-op for every other race -- checked directly, none of their legs
+    trip this threshold (thicken_limbs.py already had to fix the ones
+    that used to). Grafted fully RIGID to Luminous's own "pelvis",
+    matching what the LIVE, already-shipped Ssarathi bodies do (their
+    own models.json note: "the tail is static, as it is in game").
+    fix_ssarathi_tail_weights.py feathers this same reweighting instead
+    of doing it rigidly, but that solves a DIFFERENT problem: keeping
+    the tail mesh-CONTINUOUS with the real leg flesh it used to sit
+    next to, so a hard weight cut there does not tear during animation.
+    Here the tail is a separate floating node, not stitched to
+    Luminous's own leg mesh at all, so there is no shared-mesh seam to
+    feather across.
+
+    KNOWN GAP, not yet solved: TAIL_DISTANCE_RATIO's conservative 1.5x
+    only recovers the tail's unambiguous outer portion, not its root --
+    checked directly, the resulting graft renders as a small stub near
+    the pelvis, not a complete tail. Loosening the threshold does not
+    fix this: at 1.0x the newly-caught "tail" vertices turned out to be
+    real foot geometry (a foot is not a cylinder around the calf's own
+    axis, so its correct shape already sits outside a tight radius of
+    it); at 0.5x, 92% of thigh_l's own vertices got flagged, i.e. the
+    measure had stopped meaning "tail" at all. Also discovered while
+    investigating: some of the tail's own vertices are dominant-
+    weighted to "pelvis" already (its root, being closest to the
+    pelvis, is not on a leg bone at all), which this function does not
+    look for -- a real avenue for a more complete fix, not yet
+    implemented. This needs either a smarter per-vertex signal (e.g.
+    distance from the body's own reference silhouette at that height,
+    rather than from one bone's own axis) or the mesh-connectivity
+    growth approach fix_ssarathi_tail_weights.py's own docstring
+    describes trying and only getting to work on the female body."""
+    _, src_body_node = find_node(src_doc, "body")
+    body_prim = src_doc["meshes"][src_body_node["mesh"]]["primitives"][0]
+    positions = accessor_array(src_doc, src_bin, body_prim["attributes"]["POSITION"])
+    normals = accessor_array(src_doc, src_bin, body_prim["attributes"]["NORMAL"])
+    uvs = accessor_array(src_doc, src_bin, body_prim["attributes"]["TEXCOORD_0"])
+    joints = accessor_array(src_doc, src_bin, body_prim["attributes"]["JOINTS_0"]).astype(np.int64)
+    weights = accessor_array(src_doc, src_bin, body_prim["attributes"]["WEIGHTS_0"])
+    src_skin_index = src_body_node["skin"]
+    dominant = joints[np.arange(len(joints)), np.argmax(weights, axis=1)]
+
+    mask = tail_vertex_mask(src_doc, src_bin, positions, dominant, src_skin_index,
+                             luminous_reference(gender))
+    if not mask.any():
+        return False
+
+    body_faces = accessor_array(src_doc, src_bin, body_prim["indices"]).reshape(-1, 3).astype(np.int64)
+    tail_faces = body_faces[mask[body_faces].all(axis=1)]
+    if len(tail_faces) == 0:
+        return False
+
+    pos_c, norm_c, uv_c, _, _, (tail_faces_c,) = compact_submesh(
+        positions, normals, uvs, joints, weights, [tail_faces])
+    vertex_count = len(pos_c)
+
+    lum_pelvis_row = lum_names.index("pelvis")
+    rigid_joints = np.zeros((vertex_count, 4), dtype=np.uint8)
+    rigid_joints[:, 0] = lum_pelvis_row
+    rigid_weights = np.zeros((vertex_count, 4), dtype=np.float32)
+    rigid_weights[:, 0] = 1.0
+
+    attrs = {
+        "POSITION": append_accessor(document, binary, pos_c.astype(np.float32), 5126, "VEC3"),
+        "NORMAL": append_accessor(document, binary, norm_c.astype(np.float32), 5126, "VEC3"),
+        "TEXCOORD_0": append_accessor(document, binary, uv_c.astype(np.float32), 5126, "VEC2"),
+        "JOINTS_0": append_accessor(document, binary, rigid_joints, 5121, "VEC4"),
+        "WEIGHTS_0": append_accessor(document, binary, rigid_weights, 5126, "VEC4"),
+    }
+    tail_idx_acc = append_accessor(
+        document, binary, tail_faces_c.astype(np.uint32).reshape(-1), 5125, "SCALAR")
+
+    material_index = embed_source_material(document, binary, src_doc, src_bin, body_prim["material"])
+
+    mesh_index = len(document["meshes"])
+    document["meshes"].append({"primitives": [
+        {"attributes": attrs, "indices": tail_idx_acc, "material": material_index},
+    ]})
+
+    _, lum_body_node = find_node(document, "body")
+    node_index = len(document["nodes"])
+    document["nodes"].append({"name": "tail_source", "mesh": mesh_index, "skin": lum_body_node["skin"]})
+    _, armature_node = find_node(document, "Armature")
+    armature_node["children"].append(node_index)
+    return True
+
+
+def process(luminous_path: Path, source_path: Path, out_path: Path, gender: str) -> str:
     lum_doc, lum_bin = read_glb(luminous_path)
     src_doc, src_bin = read_glb(source_path)
 
@@ -532,10 +676,13 @@ def process(luminous_path: Path, source_path: Path, out_path: Path) -> str:
 
     strip_luminous_head(document, binary, lum_names)
     graft_source_head(document, binary, lum_names, src_doc, src_bin)
+    grafted_tail = graft_source_tail(document, binary, lum_names, src_doc, src_bin, gender)
 
     write_glb(out_path, document, binary)
     return ("below-neck: matched %d/%d faces, %d used Luminous's own texture as fallback; "
-            "head+eyes grafted from the source unchanged" % (matched, len(lum_faces), unmatched))
+            "head+eyes grafted from the source unchanged%s" % (
+                matched, len(lum_faces), unmatched,
+                "; tail grafted (rigid to pelvis)" if grafted_tail else ""))
 
 
 def main() -> int:
@@ -551,7 +698,7 @@ def main() -> int:
     luminous_path = RACES / ("luminous_%s.glb" % args.gender)
     source_path = RACES / (args.source_race + ".glb")
     out_path = RACES / (args.out + ".glb")
-    print(process(luminous_path, source_path, out_path))
+    print(process(luminous_path, source_path, out_path, args.gender))
     return 0
 
 
