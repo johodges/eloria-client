@@ -4,9 +4,11 @@ extends CharacterBody3D
 @export var walk_presentation_speed := 6.0
 @export var run_presentation_speed := 9.0
 @export var turn_speed_radians := 12.0
-## The server's walking interval, so the very first step of a session is
-## paced correctly before any packet cadence has been observed. Every burst
-## after that keeps the cadence it last measured.
+## How long the server gives one *tile*, so the very first step of a session
+## is paced correctly before any packet cadence has been observed. Every burst
+## after that keeps the pace it last measured. Per tile rather than per step,
+## because a diagonal step crosses 1.41 tiles and is held for 1.41 times as
+## long: one pace covers both step shapes and any burst of them folded together.
 @export var initial_server_interval := 0.6
 @export var interval_smoothing := 0.5
 ## How much longer than the observed server cadence one step is allowed to
@@ -14,9 +16,10 @@ extends CharacterBody3D
 ## next one arrived, and the actor stopped and restarted on every tile.
 @export var arrival_margin := 1.25
 @export var minimum_segment_duration := 0.06
-## Long enough to hold a walking step - 0.6 s a tile plus the arrival
-## margin - so a walk is not driven faster than the server sends it.
-@export var maximum_segment_duration := 1.0
+## Long enough to hold the longest walking step - a diagonal, 0.6 s a tile
+## across 1.41 tiles, plus the arrival margin - so a walk is not driven faster
+## than the server sends it.
+@export var maximum_segment_duration := 1.1
 ## Kept walking for this long after a step lands before falling back to idle,
 ## again so a late packet does not flick the pose to idle and back.
 @export var movement_coast_seconds := 0.12
@@ -64,6 +67,8 @@ var _segment_start := Vector3.ZERO
 var _segment_elapsed := 0.0
 var _segment_duration := 0.0
 var _last_movement_update_msec := -1
+## Seconds the server spends on one tile, measured over whatever ground the
+## last update actually covered rather than assumed to be one step's worth.
 var _smoothed_server_interval := 0.6
 ## The direction the body is actually crossing the ground in, which is not the
 ## tile direction the server named. See `_rendered_target_yaw`.
@@ -842,6 +847,11 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 	# fallback and can leave them visibly embedded in sculpted terrain.
 	next_target.y = server_target.y
 	var target_changed: bool = server_target.distance_squared_to(next_target) > 0.000001
+	# Where the server had this actor before this update. The step it just took
+	# is that far, which is what the pace below is measured and spent against -
+	# not the distance from the rendered body, which trails by the arrival
+	# margin and would feed its own lag back into the pacing.
+	var previous_target: Vector3 = server_target
 	server_target = next_target
 	var actor_command: int = int(dto.get("command", -1))
 	# Which command the facing comes from, and which it does not. Everything
@@ -877,14 +887,23 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 		_travel_yaw_active = false
 	elif target_changed:
 		var now_msec: int = Time.get_ticks_msec()
+		# How much ground the server covered, in tiles. A diagonal step is 1.41
+		# of them and a folded burst several, so timing the update against it
+		# gives a pace per tile that every step shape agrees on. Timing it
+		# against the step count instead read a diagonal as a short interval
+		# and rendered it 41% faster than the straight step beside it, which is
+		# what walking and running at an uneven speed was.
+		var step_tiles: float = maxf(
+			previous_target.distance_to(server_target) / _metres_per_tile, 0.001)
 		if _last_movement_update_msec >= 0:
 			var observed_interval: float = float(
 				now_msec - _last_movement_update_msec) / 1000.0
-			if observed_interval <= maximum_segment_duration * 2.0:
-				observed_interval = clampf(observed_interval, 0.05,
+			if observed_interval <= maximum_segment_duration * 2.0 * step_tiles:
+				var observed_pace: float = clampf(
+					observed_interval / step_tiles, 0.05,
 					maximum_segment_duration)
 				_smoothed_server_interval = lerpf(_smoothed_server_interval,
-					observed_interval, interval_smoothing)
+					observed_pace, interval_smoothing)
 			# A long stationary pause is idle time, not a cadence. Folding it
 			# in would pace the next burst by how long the player stood still,
 			# and resetting to the constant lurched the first step of every
@@ -897,7 +916,7 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 		_movement_coast_remaining = 0.0
 		_segment_duration = presentation_segment_duration(
 			global_position.distance_to(server_target), _presentation_speed,
-			_smoothed_server_interval, arrival_margin,
+			_smoothed_server_interval * step_tiles, arrival_margin,
 			minimum_segment_duration, maximum_segment_duration)
 		_travel_yaw = travel_yaw(_segment_start, server_target, _target_yaw)
 		_travel_yaw_active = true
@@ -1791,6 +1810,15 @@ func set_surface_height(value: float) -> void:
 		global_position.y = value
 	_wake()
 
+## How long the body should take to cross `distance` metres of ground.
+##
+## `observed_interval` is how long the server spent on the step being shown -
+## its measured pace per tile times the tiles that step crosses - so a diagonal
+## and the straight step beside it are each given the time they were actually
+## taken in, and render at one speed. `margin` stretches that so the step
+## finishes a little after the next one is due rather than a little before,
+## which is what keeps the walk continuous; the body settles a steady
+## `margin - 1` of a step behind its own tile and no further.
 static func presentation_segment_duration(distance: float, nominal_speed: float,
 		observed_interval: float, margin: float, minimum_duration: float,
 		maximum_duration: float) -> float:
