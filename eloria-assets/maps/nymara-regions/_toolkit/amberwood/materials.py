@@ -368,3 +368,55 @@ def register_preview_materials(scene, sets: dict[str, T.TextureSet]) -> None:
             alpha_mode=spec.alpha_mode,
             alpha_cutoff=spec.alpha_cutoff,
             double_sided=spec.double_sided))
+
+
+# Terrain classes are drawn with alpha-tested copies of the ground materials, so
+# a class can be cut against its neighbour inside a cell rather than at the cell
+# corner. The copies share the originals' textures - only the alpha mode differs
+# - and they are separate entries so that a prop standing on packed earth is not
+# alpha-tested for the sake of the road.
+GROUND_SUFFIX = "_ground"
+
+
+def base_material(name: str) -> str:
+    """The pinned material an alpha-tested ground copy was made from.
+
+    A region pins the materials it embeds and checks that every material its
+    geometry references is on that list. A ground copy is not a new material -
+    it carries the pinned one's textures and differs only in alpha mode - so
+    the check has to look through the suffix or every region fails its own pin.
+    """
+    return name[:-len(GROUND_SUFFIX)] if name.endswith(GROUND_SUFFIX) else name
+
+
+def register_ground_materials(builder: "gltf.GltfBuilder",
+                              sets: dict[str, T.TextureSet],
+                              wanted: set[str]) -> None:
+    """Register an alpha-tested copy of each named ground material.
+
+    `wanted` is the set of material names the terrain meshes reference, which
+    already carry `GROUND_SUFFIX`; anything else in it is ignored.
+    """
+    by_name = {spec.name: spec for spec in SPECS}
+    for name in sorted(wanted):
+        if not name.endswith(GROUND_SUFFIX):
+            continue
+        spec = by_name[name[:-len(GROUND_SUFFIX)]]
+        texture_set = sets[spec.texture]
+        images = texture_set.images()
+        for image_name, blob in images.items():
+            builder.add_image(image_name, blob)
+        builder.add_material(gltf.Material(
+            name=name,
+            base_color=spec.base_color,
+            metallic=spec.metallic,
+            roughness=spec.roughness,
+            base_color_texture=f"{spec.texture}_basecolor",
+            orm_texture=f"{spec.texture}_orm",
+            normal_texture=(f"{spec.texture}_normal"
+                            if f"{spec.texture}_normal" in images else None),
+            normal_scale=spec.normal_scale,
+            emissive=spec.emissive,
+            alpha_mode="MASK",
+            alpha_cutoff=0.5,
+            double_sided=spec.double_sided))

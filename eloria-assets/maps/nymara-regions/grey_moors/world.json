@@ -224,11 +224,12 @@
         1,
         63
       ],
-      "zeroMeansBlocked": true
+      "zeroMeansBlocked": true,
+      "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 1171807,
-    "walkableFraction": 0.883,
-    "saturatedCells": 35770
+    "walkableCells": 1151914,
+    "walkableFraction": 0.868,
+    "saturatedCells": 9
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -2935,15 +2936,15 @@
   "performance": {
     "nodes": 7648,
     "meshes": 401,
-    "materials": 22,
+    "materials": 29,
     "images": 65,
     "textures": 65,
-    "accessors": 1604,
-    "bufferViews": 1669,
-    "uniqueTriangles": 348128,
-    "uniqueVertices": 297103,
-    "glbBytes": 22971316,
-    "instancedTriangles": 669748,
+    "accessors": 1611,
+    "bufferViews": 1676,
+    "uniqueTriangles": 379580,
+    "uniqueVertices": 309589,
+    "glbBytes": 24097856,
+    "instancedTriangles": 701200,
     "embeddedTextureBytes": 9157565,
     "textureMemoryBytesUncompressed": 60948480,
     "placements": 7343,
@@ -2951,12 +2952,23 @@
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 1171807,
-      "blockedCells": 155297,
-      "walkableFraction": 0.883,
+      "walkableCells": 1151914,
+      "blockedCells": 175190,
+      "walkableFraction": 0.868,
       "elevatedDecks": 11,
-      "saturatedCells": 35770,
-      "saturatedFraction": 0.0305,
+      "steepCells": 85745,
+      "reliefMetres": 21.49,
+      "heightEncoding": {
+        "origin": 0.2034,
+        "step": 0.346621,
+        "range": [
+          1,
+          63
+        ],
+        "zeroMeansBlocked": true
+      },
+      "saturatedCells": 9,
+      "saturatedFraction": 0.0,
       "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
       "columnOrder": "server-tile-x (column 0 is the -X western edge)"
     },
@@ -2967,16 +2979,17 @@
       "west-crypt-stair moved 1.5 m onto walkable ground",
       "east-crypt-stair moved 1.5 m onto walkable ground",
       "south-crypt-stair moved 1.5 m onto walkable ground",
+      "east-waygate moved 0.4 m onto walkable ground",
       "great-barrow-mouth moved 3.6 m onto walkable ground",
       "west-crypt-stair moved 1.5 m onto walkable ground",
       "east-crypt-stair moved 1.5 m onto walkable ground",
       "south-crypt-stair moved 1.5 m onto walkable ground"
     ],
     "lod2": {
-      "glbBytes": 12468340,
+      "glbBytes": 13594424,
       "nodes": 461,
-      "uniqueTriangles": 310318,
-      "instancedTriangles": 310318
+      "uniqueTriangles": 341770,
+      "instancedTriangles": 341770
     }
   },
   "sources": [

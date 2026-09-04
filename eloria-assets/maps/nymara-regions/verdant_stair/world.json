@@ -2990,10 +2990,11 @@
         1,
         63
       ],
-      "zeroMeansBlocked": true
+      "zeroMeansBlocked": true,
+      "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 975577,
-    "walkableFraction": 0.7351
+    "walkableCells": 955797,
+    "walkableFraction": 0.7202
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -6256,25 +6257,36 @@
   "performance": {
     "nodes": 17691,
     "meshes": 329,
-    "materials": 30,
+    "materials": 38,
     "images": 86,
     "textures": 86,
-    "accessors": 1316,
-    "bufferViews": 1402,
-    "uniqueTriangles": 525377,
-    "uniqueVertices": 385259,
-    "glbBytes": 26832716,
-    "instancedTriangles": 3531983,
+    "accessors": 1324,
+    "bufferViews": 1410,
+    "uniqueTriangles": 554741,
+    "uniqueVertices": 397237,
+    "glbBytes": 27996640,
+    "instancedTriangles": 3561347,
     "embeddedTextureBytes": 7601895,
     "placements": 10895,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 975577,
-      "blockedCells": 351527,
-      "walkableFraction": 0.7351,
+      "walkableCells": 955797,
+      "blockedCells": 371307,
+      "walkableFraction": 0.7202,
       "elevatedDecks": 77,
+      "steepCells": 146569,
+      "reliefMetres": 128.19,
+      "heightEncoding": {
+        "origin": -1.7175,
+        "step": 2.067598,
+        "range": [
+          1,
+          63
+        ],
+        "zeroMeansBlocked": true
+      },
       "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
       "columnOrder": "server-tile-x (column 0 is the -X western edge)"
     },
@@ -6296,14 +6308,14 @@
       "harvestable Lantern Cap: server tile [282, 99] is not standable on the built terrain; marker moved 6 m to [288, 99]",
       "interactive crafting_station: server tile [204, 186] is not standable on the built terrain; marker moved 6 m to [210, 186]"
     ],
-    "trianglesPerSquareMetre": 10.68,
+    "trianglesPerSquareMetre": 10.77,
     "lod2": {
-      "glbBytes": 16521552,
+      "glbBytes": 17685000,
       "nodes": 4092,
-      "uniqueTriangles": 461659,
-      "instancedTriangles": 1145317,
-      "sizeReductionPercent": 38.4,
-      "triangleReductionPercent": 67.6
+      "uniqueTriangles": 491023,
+      "instancedTriangles": 1174681,
+      "sizeReductionPercent": 36.8,
+      "triangleReductionPercent": 67.0
     }
   },
   "sources": [

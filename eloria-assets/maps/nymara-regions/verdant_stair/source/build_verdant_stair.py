@@ -49,6 +49,11 @@ import region as REG
 HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
 SEED = 20260829
+# Class islands smaller than this are given to whatever surrounds them. Six
+# two-metre cells is 24 m2 - smaller than any surface a player is meant to read
+# as its own thing, and larger than every crumb the thresholded noise and the
+# boundary dither leave behind.
+DESPECKLE_MIN_CELLS = 6
 
 # The materials Verdant Stair embeds, pinned. The shared table grows as other
 # regions add recipes to it, and without this every one of those would be
@@ -124,8 +129,10 @@ def build_region(seed: int = SEED, lod: str | None = None,
             POP.populate_ground_detail(build, seed)
     POP.build_water(build, seed)
 
+    terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
     build.terrain_meshes = terrain.build_meshes(
-        uv_scale=0.26, materials=REG.SURFACE_MATERIALS)
+        uv_scale=0.26, materials=REG.SURFACE_MATERIALS, blend_edges=True,
+        material_suffix=MAT.GROUND_SUFFIX)
     build.terrain_meshes["Backdrop_Distant"] = TER.backdrop(
         terrain, reach=240.0, cell=11.0, seed=seed + 909,
         material="verdant_limestone_cliff", sea_level=REG.SEA_LEVEL,
@@ -431,6 +438,10 @@ def export_glb(build: RegionBuild, sets, path: Path,
     builder = GLTF.GltfBuilder(
         generator="Eloria Verdant Stair builder (original procedural assets)")
     MAT.register_gltf_materials(builder, sets, only=MATERIALS)
+    MAT.register_ground_materials(
+        builder, sets,
+        {piece.material
+         for piece in build.terrain_meshes.values()})
 
     # An over-broad pin is completely silent: the package simply carries
     # textures nothing references. Say so, or it happens again.
@@ -446,13 +457,20 @@ def export_glb(build: RegionBuild, sets, path: Path,
         for part in parts:
             if part.triangle_count:
                 used_materials.add(part.material)
-    missing = sorted(used_materials - set(MATERIALS))
+    missing = sorted({MAT.base_material(name) for name in used_materials}
+                     - set(MATERIALS))
     if missing:
         raise SystemExit(
             "[materials] these are referenced by geometry but not pinned, so "
             "the GLB would point at materials it does not carry: "
             + ", ".join(missing))
-    unreferenced = sorted(set(MATERIALS) - used_materials)
+    # Read through the ground copies here too: a material the terrain
+    # now draws with an alpha-tested copy is still referenced, and
+    # calling it dead weight would invite trimming a pin the copy
+    # depends on.
+    unreferenced = sorted(set(MATERIALS)
+                          - {MAT.base_material(name)
+                             for name in used_materials})
     if warn_unreferenced and unreferenced:
         print(f"[materials] WARNING: {len(unreferenced)} pinned but unreferenced "
               f"in {path.name}: " + ", ".join(unreferenced))
@@ -561,6 +579,8 @@ def export_glb(build: RegionBuild, sets, path: Path,
 
 # --------------------------------------------------------------------------
 COLLISION_CELL = 0.5
+# EWCG version the grid is written at, and what the manifest advertises.
+COLLISION_FORMAT_VERSION = 2
 COLLISION_HEIGHT_STEP = 0.2
 COLLISION_HEIGHT_ORIGIN = -2.2
 # Levels an ELM height byte holds: the server masks it with 0x3F, so 1..63.
@@ -724,7 +744,8 @@ def build_collision(build: RegionBuild) -> tuple[bytes, int, int, dict]:
                         1, COLLISION_HEIGHT_LEVELS).astype(np.uint8)
     grid = np.where(walkable, quantised, 0).astype(np.uint8)
 
-    payload = struct.pack("<4sHHII", b"EWCG", 2, 0, width, height) + grid.tobytes()
+    payload = struct.pack("<4sHHII", b"EWCG", COLLISION_FORMAT_VERSION, 0,
+                          width, height) + grid.tobytes()
     # The un-quantised surface, kept for `snap_to_walkable`: a doorway attached
     # to a landmark stands on that landmark's own deck, and the manifest Y has
     # to be the surface the client's grounding ray will actually hit.
@@ -991,21 +1012,19 @@ def write_manifest(build: RegionBuild, stats: dict, collision_stats: dict,
         "collision": {
             "nodeNames": collision_nodes,
             "binary": "collision.bin",
-            "format": "EWCG-v1",
+            # Both of these describe the file `build_collision` just wrote,
+            # so both are taken from it rather than from the constants
+            # above, which stopped being true when the grid moved to v2
+            # and to an encoding sized from the region's own relief.
+            "format": "EWCG-v%d" % COLLISION_FORMAT_VERSION,
             "cellMetres": COLLISION_CELL,
             "width": collision_stats["width"],
             "height": collision_stats["height"],
-            "heightEncoding": {
-                "origin": COLLISION_HEIGHT_ORIGIN,
-                "step": COLLISION_HEIGHT_STEP,
-                "range": [1, 63],
-                "zeroMeansBlocked": True,
-                "note": (f"Heights above {clamp_at:.1f} m clamp to 63 because "
-                         "the legacy six-bit field cannot express this region's "
-                         "0-129 m relief; the grid is authoritative for "
-                         "walkability, and the Godot loader takes elevation "
-                         "from the rendered walk surfaces, not from this file."),
-            },
+            "heightEncoding": dict(
+                collision_stats["heightEncoding"],
+                note="The grid is authoritative for walkability. The "
+                     "Godot loader takes elevation from the rendered "
+                     "walk surfaces, not from this file."),
             "walkableCells": collision_stats["walkableCells"],
             "walkableFraction": collision_stats["walkableFraction"],
         },

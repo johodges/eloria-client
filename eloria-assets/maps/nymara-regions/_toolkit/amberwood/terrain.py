@@ -480,6 +480,80 @@ class Terrain:
         protect = np.isin(self.surface, sorted(UNDITHERED_SURFACES))
         self.surface = np.where(swap & ~protect, candidate, self.surface)
 
+
+    def despeckle_surfaces(self, min_cells: int = 6) -> int:
+        """Give every class island smaller than `min_cells` to its surroundings.
+
+        The class field is built by thresholding noise and then dithered at its
+        boundaries, and both leave crumbs: a handful of cells of snow marooned
+        in rock, a gap of turf in the middle of a road. At whole-quad ownership
+        those read as a stray square and were easy to miss. Cut inside the cell
+        they read as a deliberate blob, so they are worth clearing.
+
+        Only the drawn class moves. Height does not, and neither does anything
+        the walk grid is built from, so a package's collision is untouched.
+
+        Returns the number of islands cleared.
+        """
+        cleared = 0
+        while True:
+            labels, counts = self._label_surfaces()
+            small = [label for label, count in enumerate(counts)
+                     if 0 < count < min_cells]
+            if not small:
+                return cleared
+            moved = False
+            for label in small:
+                rows, columns = np.nonzero(labels == label)
+                if rows.size == 0:
+                    continue
+                own = self.surface[rows[0], columns[0]]
+                # Whatever holds the most of the island's border takes it.
+                border: dict[int, int] = {}
+                for row, column in zip(rows, columns):
+                    for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                        r, c = row + dr, column + dc
+                        if not (0 <= r < self.rows and 0 <= c < self.cols):
+                            continue
+                        neighbour = int(self.surface[r, c])
+                        if neighbour != own:
+                            border[neighbour] = border.get(neighbour, 0) + 1
+                if not border:
+                    continue
+                winner = max(sorted(border), key=lambda key: border[key])
+                self.surface[rows, columns] = winner
+                cleared += 1
+                moved = True
+            if not moved:
+                return cleared
+
+    def _label_surfaces(self) -> tuple[np.ndarray, list[int]]:
+        """Label four-connected runs of one class. Returns labels and sizes."""
+        labels = np.full((self.rows, self.cols), -1, dtype=np.int32)
+        counts: list[int] = []
+        for row in range(self.rows):
+            for column in range(self.cols):
+                if labels[row, column] >= 0:
+                    continue
+                own = self.surface[row, column]
+                label = len(counts)
+                stack = [(row, column)]
+                labels[row, column] = label
+                size = 0
+                while stack:
+                    y, x = stack.pop()
+                    size += 1
+                    for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                        ny, nx = y + dy, x + dx
+                        if not (0 <= ny < self.rows and 0 <= nx < self.cols):
+                            continue
+                        if labels[ny, nx] >= 0 or self.surface[ny, nx] != own:
+                            continue
+                        labels[ny, nx] = label
+                        stack.append((ny, nx))
+                counts.append(size)
+        return labels, counts
+
     # -- export -----------------------------------------------------------
     def build_meshes(self, uv_scale: float = 0.30,
                      name_prefix: str = "Terrain_",

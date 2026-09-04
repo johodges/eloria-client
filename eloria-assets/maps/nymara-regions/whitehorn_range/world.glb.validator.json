@@ -2,12 +2,25 @@
   "uri": "C:\\Users\\User\\Desktop\\eloria-project\\eloria-client\\eloria-assets\\maps\\nymara-regions\\whitehorn_range\\world.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-09-04T10:39:22.181891Z",
+  "validatedAt": "2026-09-04T12:08:22.553367Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
-    "numInfos": 0,
+    "numInfos": 2,
     "numHints": 0,
-    "messages": []
+    "messages": [
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/5"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/17"
+      }
+    ]
   }
 }

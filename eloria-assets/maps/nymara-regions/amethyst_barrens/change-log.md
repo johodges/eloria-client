@@ -111,3 +111,25 @@ Crownwater sessions running concurrently.
 `MAP_TILES_WIDE_BY_NAME` at 96 tiles with arrival (174, 174), and extends
 `tests/test_nymara_collision_contract.py`. `eloria/collision.py` needed no
 change: the ELM loader is size-agnostic.
+
+## The ground is cut inside the cell, not at its corners
+
+The heightfield is sampled every two metres and `build_meshes` gave each quad
+whole to the class of one corner, so a road could only ever turn on a cell
+boundary and read as a flight of two-metre steps.
+
+A class now takes every quad it touches and carries a per-vertex coverage in
+COLOR_0's alpha, drawn with an alpha-tested copy of its material, so each pixel
+goes to whichever class covers it. Where an operator knows its own edge -
+`grade_path` for a road, `plateau` for a rim - `Terrain.surface_strength` puts
+the cut on the real edge; elsewhere it falls half way between samples, which is
+still a diagonal rather than a staircase. `despeckle_surfaces` clears class
+islands under six cells first, because a crumb that read as a stray square at
+whole-quad ownership reads as a deliberate blob once it is cut smoothly.
+
+An alpha test is opaque, so it writes depth and sorts like any other ground.
+The classes overlap where they meet by design, and `check_zfighting.py` skips
+pairs that are both alpha-tested with vertex coverage.
+
+See `whitehorn_range/change-log.md` for the full account, including why the
+heightfield was not taken to one metre instead.

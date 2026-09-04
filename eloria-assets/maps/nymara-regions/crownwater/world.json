@@ -576,10 +576,11 @@
         1,
         63
       ],
-      "zeroMeansBlocked": true
+      "zeroMeansBlocked": true,
+      "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 337422,
-    "walkableFraction": 0.2543
+    "walkableCells": 332893,
+    "walkableFraction": 0.2508
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -2226,15 +2227,15 @@
   "performance": {
     "nodes": 1881,
     "meshes": 119,
-    "materials": 21,
+    "materials": 26,
     "images": 61,
     "textures": 61,
-    "accessors": 476,
-    "bufferViews": 537,
-    "uniqueTriangles": 586454,
-    "uniqueVertices": 347415,
-    "glbBytes": 24105044,
-    "instancedTriangles": 1271256,
+    "accessors": 481,
+    "bufferViews": 542,
+    "uniqueTriangles": 594466,
+    "uniqueVertices": 350262,
+    "glbBytes": 24711272,
+    "instancedTriangles": 1279268,
     "embeddedTextureBytes": 28549576,
     "textureMemoryBytesUncompressed": 250478592,
     "placements": 608,
@@ -2242,10 +2243,21 @@
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 337422,
-      "blockedCells": 989682,
-      "walkableFraction": 0.2543,
+      "walkableCells": 332893,
+      "blockedCells": 994211,
+      "walkableFraction": 0.2508,
       "elevatedDecks": 84,
+      "steepCells": 32859,
+      "reliefMetres": 18.14,
+      "heightEncoding": {
+        "origin": 0.0574,
+        "step": 0.292586,
+        "range": [
+          1,
+          63
+        ],
+        "zeroMeansBlocked": true
+      },
       "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
       "columnOrder": "server-tile-x (column 0 is the -X western edge)"
     },
@@ -2253,12 +2265,12 @@
       "48 islet lamp standards placed"
     ],
     "lod2": {
-      "glbBytes": 14102680,
+      "glbBytes": 14708492,
       "nodes": 1686,
-      "uniqueTriangles": 433302,
-      "instancedTriangles": 1107576,
-      "sizeReductionPercent": 41.5,
-      "triangleReductionPercent": 12.9
+      "uniqueTriangles": 441314,
+      "instancedTriangles": 1115588,
+      "sizeReductionPercent": 40.5,
+      "triangleReductionPercent": 12.8
     }
   },
   "sources": [

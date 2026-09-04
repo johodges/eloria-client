@@ -55,6 +55,11 @@ import region as REG
 HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
 SEED = 20260829
+# Class islands smaller than this are given to whatever surrounds them. Six
+# two-metre cells is 24 m2 - smaller than any surface a player is meant to read
+# as its own thing, and larger than every crumb the thresholded noise and the
+# boundary dither leave behind.
+DESPECKLE_MIN_CELLS = 6
 
 ASSET_VERSION = "1.0.0"
 SCHEMA_VERSION = "1.0.0"
@@ -100,7 +105,9 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
         POP.populate_props(build, seed)
     POP.populate_metadata(build, seed)
 
-    build.terrain_meshes = terrain.build_meshes(uv_scale=0.28)
+    terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
+    build.terrain_meshes = terrain.build_meshes(
+        uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX)
     # No landmass backdrop, for Crownwater's reason and one of Westhaven's own.
     # `terrain.backdrop` takes a single `open_side`, and Westhaven is open on
     # two - the sea closes both the south and the west - so any single choice
@@ -271,7 +278,7 @@ def export_glb(build: REG.RegionBuild, sets, path: Path,
         for piece in table.values():
             used.add(piece.material)
     pin = HK.MATERIALS if pin is None else pin
-    unpinned = sorted(used - pin)
+    unpinned = sorted({MAT.base_material(name) for name in used} - pin)
     if unpinned:
         raise SystemExit(
             "materials used but not in havenkit.MATERIALS: "
@@ -279,7 +286,12 @@ def export_glb(build: REG.RegionBuild, sets, path: Path,
     # The other direction is not an error but it is not free either: every
     # pinned material embeds its textures whether or not a mesh references it.
     # Amberwood's pin carries six such and pays 2.79 MB for them.
-    unused = sorted(pin - used)
+    # Read through the ground copies here too: a material the terrain
+    # now draws with an alpha-tested copy is still referenced, and
+    # calling it dead weight would invite trimming a pin the copy
+    # depends on.
+    unused = sorted(pin
+                    - {MAT.base_material(name) for name in used})
     if unused:
         print("[materials] WARNING pinned but unreferenced, costing bytes: "
               + ", ".join(unused))
@@ -289,6 +301,10 @@ def export_glb(build: REG.RegionBuild, sets, path: Path,
     # and burnt-country textures this region never references - and, worse, its
     # contents would change whenever another region appends to the shared table.
     MAT.register_gltf_materials(builder, sets, only=pin)
+    MAT.register_ground_materials(
+        builder, sets,
+        {piece.material
+         for piece in build.terrain_meshes.values()})
 
     # Tangents are intentionally omitted: Godot's glTF importer generates them
     # for normal-mapped materials, and shipping them would add sixteen bytes a
@@ -392,6 +408,8 @@ def export_glb(build: REG.RegionBuild, sets, path: Path,
 
 # --------------------------------------------------------------------------
 COLLISION_CELL = 0.5
+# EWCG version the grid is written at, and what the manifest advertises.
+COLLISION_FORMAT_VERSION = 2
 COLLISION_HEIGHT_STEP = 0.2
 COLLISION_HEIGHT_ORIGIN = -2.2
 # Levels an ELM height byte holds: the server masks it with 0x3F, so 1..63.
@@ -520,7 +538,8 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
     grid = np.where(walkable, quantised, 0).astype(np.uint8)
 
     build.deck_mask = deck_mask
-    payload = struct.pack("<4sHHII", b"EWCG", 2, 0, width, height) + grid.tobytes()
+    payload = struct.pack("<4sHHII", b"EWCG", COLLISION_FORMAT_VERSION, 0,
+                          width, height) + grid.tobytes()
     stats = {
         "width": width, "height": height, "cellMetres": COLLISION_CELL,
         "walkableCells": int(walkable.sum()),
@@ -835,21 +854,19 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
         "collision": {
             "nodeNames": collision_nodes,
             "binary": "collision.bin",
-            "format": "EWCG-v1",
+            # Both of these describe the file `build_collision` just wrote,
+            # so both are taken from it rather than from the constants
+            # above, which stopped being true when the grid moved to v2
+            # and to an encoding sized from the region's own relief.
+            "format": "EWCG-v%d" % COLLISION_FORMAT_VERSION,
             "cellMetres": COLLISION_CELL,
             "width": collision_stats["width"],
             "height": collision_stats["height"],
-            "heightEncoding": {
-                "origin": COLLISION_HEIGHT_ORIGIN,
-                "step": COLLISION_HEIGHT_STEP,
-                "range": [1, 63],
-                "zeroMeansBlocked": True,
-                "note": ("Heights above 10.4 m clamp to 63 because the legacy "
-                         "six-bit field cannot express Westhaven's relief; the "
-                         "grid is authoritative for walkability, and the Godot "
-                         "loader takes elevation from the rendered walk "
-                         "surfaces, not from this file."),
-            },
+            "heightEncoding": dict(
+                collision_stats["heightEncoding"],
+                note="The grid is authoritative for walkability. The "
+                     "Godot loader takes elevation from the rendered "
+                     "walk surfaces, not from this file."),
             "walkableCells": collision_stats["walkableCells"],
             "walkableFraction": collision_stats["walkableFraction"],
         },
@@ -1142,7 +1159,9 @@ def main() -> int:
                     for name, texture_set in sets.items()}
         lod_sets = HK.register(lod_sets)
         lod_build = build_region(args.seed, lod="far")
-        lod_build.terrain_meshes = lod_build.terrain.build_meshes(uv_scale=0.28)
+        lod_build.terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
+        lod_build.terrain_meshes = lod_build.terrain.build_meshes(
+            uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX)
         # The reduced package drops the ground-dressing pass, so it references
         # one material fewer than the main one. Pinning it to the full set
         # embedded a texture nothing pointed at - which is precisely the

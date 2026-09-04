@@ -356,11 +356,12 @@
         1,
         63
       ],
-      "zeroMeansBlocked": true
+      "zeroMeansBlocked": true,
+      "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 1078488,
-    "walkableFraction": 0.8127,
-    "saturatedCells": 106128
+    "walkableCells": 1054380,
+    "walkableFraction": 0.7945,
+    "saturatedCells": 5
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -2878,15 +2879,15 @@
   "performance": {
     "nodes": 942,
     "meshes": 229,
-    "materials": 13,
+    "materials": 19,
     "images": 39,
     "textures": 39,
-    "accessors": 916,
-    "bufferViews": 955,
-    "uniqueTriangles": 442048,
-    "uniqueVertices": 382228,
-    "glbBytes": 19505740,
-    "instancedTriangles": 599416,
+    "accessors": 922,
+    "bufferViews": 961,
+    "uniqueTriangles": 460150,
+    "uniqueVertices": 389341,
+    "glbBytes": 20326452,
+    "instancedTriangles": 617518,
     "embeddedTextureBytes": 4252666,
     "textureMemoryBytesUncompressed": 31457280,
     "placements": 490,
@@ -2894,12 +2895,23 @@
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 1078488,
-      "blockedCells": 248616,
-      "walkableFraction": 0.8127,
+      "walkableCells": 1054380,
+      "blockedCells": 272724,
+      "walkableFraction": 0.7945,
       "elevatedDecks": 18,
-      "saturatedCells": 106128,
-      "saturatedFraction": 0.0984,
+      "steepCells": 178184,
+      "reliefMetres": 58.49,
+      "heightEncoding": {
+        "origin": -0.5933,
+        "step": 0.943343,
+        "range": [
+          1,
+          63
+        ],
+        "zeroMeansBlocked": true
+      },
+      "saturatedCells": 5,
+      "saturatedFraction": 0.0,
       "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
       "columnOrder": "server-tile-x (column 0 is the -X western edge)"
     },
@@ -2914,10 +2926,10 @@
       "storm-barrow-stair moved 5.0 m onto walkable ground"
     ],
     "lod2": {
-      "glbBytes": 14843024,
+      "glbBytes": 15663520,
       "nodes": 306,
-      "uniqueTriangles": 411738,
-      "instancedTriangles": 417350
+      "uniqueTriangles": 429840,
+      "instancedTriangles": 435452
     }
   },
   "sources": [

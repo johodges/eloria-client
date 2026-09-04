@@ -2,12 +2,37 @@
   "uri": "C:\\Users\\User\\Desktop\\eloria-project\\eloria-client\\eloria-assets\\maps\\nymara-regions\\amethyst_barrens\\world.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-08-29T14:53:49.255227Z",
+  "validatedAt": "2026-09-04T11:59:13.501695Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
-    "numInfos": 0,
+    "numInfos": 4,
     "numHints": 0,
-    "messages": []
+    "messages": [
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/1"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/4"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/6"
+      }
+    ]
   }
 }

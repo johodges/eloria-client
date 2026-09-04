@@ -50,6 +50,11 @@ import region as REG
 HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
 SEED = 20260828
+# Class islands smaller than this are given to whatever surrounds them. Six
+# two-metre cells is 24 m2 - smaller than any surface a player is meant to read
+# as its own thing, and larger than every crumb the thresholded noise and the
+# boundary dither leave behind.
+DESPECKLE_MIN_CELLS = 6
 
 ASSET_VERSION = "1.0.0"
 SCHEMA_VERSION = "1.0.0"
@@ -86,7 +91,9 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
 
     POP.build_water(build)
 
-    build.terrain_meshes = terrain.build_meshes(uv_scale=0.28)
+    terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
+    build.terrain_meshes = terrain.build_meshes(
+        uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX)
     # The backdrop is the distant mountain ring. It comes out of the toolkit in
     # Amberwood's cliff rock, so it is retinted into this region's storm rock -
     # otherwise the horizon is grey while everything in front of it is violet.
@@ -257,6 +264,10 @@ def export_glb(build: REG.RegionBuild, sets, path: Path) -> tuple[GLTF.GltfBuild
     builder = GLTF.GltfBuilder(
         generator="Eloria Amethyst Barrens builder (original procedural assets)")
     MAT.register_gltf_materials(builder, sets, only=set(MATERIALS))
+    MAT.register_ground_materials(
+        builder, sets,
+        {piece.material
+         for piece in build.terrain_meshes.values()})
 
     # Tangents are intentionally omitted: Godot's glTF importer generates them
     # for normal-mapped materials, and shipping them would add sixteen bytes a
@@ -356,6 +367,8 @@ def export_glb(build: REG.RegionBuild, sets, path: Path) -> tuple[GLTF.GltfBuild
 
 # --------------------------------------------------------------------------
 COLLISION_CELL = 0.5
+# EWCG version the grid is written at, and what the manifest advertises.
+COLLISION_FORMAT_VERSION = 2
 COLLISION_HEIGHT_STEP = 0.2
 COLLISION_HEIGHT_ORIGIN = -2.2
 # Levels an ELM height byte holds: the server masks it with 0x3F, so 1..63.
@@ -474,7 +487,8 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
     grid = np.where(walkable, quantised, 0).astype(np.uint8)
     saturated = int(((grid == 63) & walkable).sum())
 
-    payload = struct.pack("<4sHHII", b"EWCG", 2, 0, width, height) + grid.tobytes()
+    payload = struct.pack("<4sHHII", b"EWCG", COLLISION_FORMAT_VERSION, 0,
+                          width, height) + grid.tobytes()
     stats = {
         "width": width, "height": height, "cellMetres": COLLISION_CELL,
         "walkableCells": int(walkable.sum()),
@@ -666,23 +680,19 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
         "collision": {
             "nodeNames": collision_nodes,
             "binary": "collision.bin",
-            "format": "EWCG-v1",
+            # Both of these describe the file `build_collision` just wrote,
+            # so both are taken from it rather than from the constants
+            # above, which stopped being true when the grid moved to v2
+            # and to an encoding sized from the region's own relief.
+            "format": "EWCG-v%d" % COLLISION_FORMAT_VERSION,
             "cellMetres": COLLISION_CELL,
             "width": collision_stats["width"],
             "height": collision_stats["height"],
-            "heightEncoding": {
-                "origin": COLLISION_HEIGHT_ORIGIN,
-                "step": COLLISION_HEIGHT_STEP,
-                "range": [1, 63],
-                "zeroMeansBlocked": True,
-                "note": ("The six-bit field spans -2.0 m to 10.4 m. The barrens "
-                         "basin is authored inside that band on purpose, so "
-                         f"only {collision_stats['saturatedFraction'] * 100:.1f}% "
-                         "of walkable cells saturate - those are the mountain "
-                         "flanks and the massif. Elsewhere the encoded height is "
-                         "the real surface height, and the server has genuine "
-                         "elevation rather than a flat plateau."),
-            },
+            "heightEncoding": dict(
+                collision_stats["heightEncoding"],
+                note="The grid is authoritative for walkability. The "
+                     "Godot loader takes elevation from the rendered "
+                     "walk surfaces, not from this file."),
             "walkableCells": collision_stats["walkableCells"],
             "walkableFraction": collision_stats["walkableFraction"],
             "saturatedCells": collision_stats["saturatedCells"],
@@ -864,7 +874,9 @@ def main() -> int:
         t0 = time.time()
         lod_sets = {name: texture_set.reduced() for name, texture_set in sets.items()}
         lod_build = build_region(args.seed, lod="far")
-        lod_build.terrain_meshes = lod_build.terrain.build_meshes(uv_scale=0.28)
+        lod_build.terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
+        lod_build.terrain_meshes = lod_build.terrain.build_meshes(
+            uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX)
         _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb")
         stats["lod2"] = {
             "glbBytes": lod_stats["glbBytes"],
