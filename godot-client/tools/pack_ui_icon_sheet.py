@@ -19,6 +19,30 @@ def cell_bounds(length: int, grid: int, index: int) -> tuple[int, int]:
     return round(index * length / grid), round((index + 1) * length / grid)
 
 
+def key_backdrop(source: Image.Image, low: int = 22,
+                 high: int = 55) -> Image.Image:
+    """Turn a flat dark backdrop into transparency.
+
+    A sheet of framed tiles is opaque to its edges and needs none of this. A
+    sheet of unframed symbols does: the symbols are meant to sit on whatever
+    panel draws them, and they arrive painted on a flat backing instead.
+
+    The cut is made on brightness, with a ramp rather than a threshold so the
+    drawn edges keep their shape. `low` and `high` bracket the gap between the
+    backing and the ink; measure the source before changing them, because a
+    ramp that starts too high eats the darker shading inside a symbol and
+    punches holes in it.
+    """
+    rgb = source.convert("RGB")
+    span = float(max(1, high - low))
+    alpha = rgb.convert("L").point(
+        lambda value: 0 if value <= low
+        else (255 if value >= high else int(round((value - low) / span * 255))))
+    keyed = rgb.convert("RGBA")
+    keyed.putalpha(alpha)
+    return keyed
+
+
 def spans(occupied: list[bool]) -> list[tuple[int, int]]:
     """The runs of True in `occupied`, as inclusive-exclusive bounds."""
     found: list[tuple[int, int]] = []
@@ -123,6 +147,11 @@ def main() -> None:
     parser.add_argument("--count", type=int, required=True)
     parser.add_argument("--canvas-size", type=int, default=256)
     parser.add_argument(
+        "--key-backdrop", action="store_true",
+        help="turn the source's flat dark backing into transparency, for a "
+             "sheet of unframed symbols meant to sit on whatever panel draws "
+             "them")
+    parser.add_argument(
         "--start-index", type=int, default=0,
         help="place the first icon at this cell rather than at the start, so "
              "a second sheet can be added to an atlas without redrawing the "
@@ -136,6 +165,8 @@ def main() -> None:
     args = parser.parse_args()
 
     source = Image.open(args.source).convert("RGBA")
+    if args.key_backdrop:
+        source = key_backdrop(source)
     # Adding to an atlas means starting from it. Starting from a blank canvas
     # would silently drop every icon already in it.
     base = None

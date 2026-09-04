@@ -5351,6 +5351,10 @@ func _sync_stats() -> void:
 ## deep wants something that sits inside a row instead.
 const STATS_SKILL_ICON := 20.0
 
+## How big a perk's emblem is drawn. The art is 32 and a perk row is two
+## lines deep, so it is drawn at its own size rather than scaled.
+const PERK_EMBLEM_SIZE := 32.0
+
 const SKILL_GROUPS: Array[Array] = [
 	["Combat", ["attack", "defense", "ranging", "magic", "summoning"]],
 	["Crafting", ["manufacturing", "crafting", "engineering", "tailoring",
@@ -5958,6 +5962,16 @@ func _perk_row(perk: Dictionary) -> Control:
 	row.name = "Row"
 	row.add_theme_constant_override("separation", 12)
 	frame.add_child(row)
+
+	# The emblem leads the row. A perk the server has added and nothing has
+	# been drawn for keeps the space, so the names stay in one column rather
+	# than one row starting further left than the rest.
+	var emblem := TextureRect.new()
+	emblem.name = "Emblem"
+	emblem.custom_minimum_size = Vector2(PERK_EMBLEM_SIZE, PERK_EMBLEM_SIZE)
+	emblem.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	emblem.texture = PerkIcons.icon_for(perk_name)
+	row.add_child(emblem)
 
 	var text := VBoxContainer.new()
 	text.name = "Text"
