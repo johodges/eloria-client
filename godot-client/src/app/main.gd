@@ -3012,38 +3012,24 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 				return
 		AppState.select_actor(picked_actor_id)
 		var selected_dto: Dictionary = AppState.actors.get(picked_actor_id, {})
-		if AppState.pending_spell_target == "actor":
-			var spell_touch_error: Error = Network.touch_actor(picked_actor_id)
-			if spell_touch_error != OK:
-				push_warning("TOUCH_PLAYER spell target failed: " + error_string(spell_touch_error))
-			return
-		if _interaction_mode == "attack" and _is_attackable_actor(
-				picked_actor_id, selected_dto):
-			if _movement_locked(event.ctrl_pressed):
-				return
-			_send_attack(picked_actor_id)
-			return
-		if _interaction_mode == "trade" and _is_tradeable_player(
-				picked_actor_id, selected_dto):
-			var trade_error: Error = Network.trade_with(picked_actor_id)
-			if trade_error != OK:
-				push_warning("TRADE_WITH failed: " + error_string(trade_error))
-			return
-		if event.alt_pressed and _is_attackable_actor(picked_actor_id, selected_dto):
-			if _movement_locked(event.ctrl_pressed):
-				return
-			_send_attack(picked_actor_id)
-			return
-		# NPCs and summons are the two actors a plain click talks to. The
-		# summon was missing: TOUCH_PLAYER on your own summon is how the
-		# server opens the behaviour popup, and gating this on the NPC kind
-		# alone left the whole six-mode behaviour system unreachable, with
-		# every summon stuck on the default "do not attack".
-		if int(selected_dto.get("kind", 0)) == 2 \
-				or ReplicatedActor3D.is_summon(selected_dto):
-			var touch_error: Error = Network.touch_actor(picked_actor_id)
-			if touch_error != OK:
-				push_warning("TOUCH_PLAYER failed: " + error_string(touch_error))
+		match _actor_click_action(picked_actor_id, selected_dto, event.alt_pressed):
+			"spell":
+				var spell_touch_error: Error = Network.touch_actor(picked_actor_id)
+				if spell_touch_error != OK:
+					push_warning("TOUCH_PLAYER spell target failed: "
+						+ error_string(spell_touch_error))
+			"attack":
+				if _movement_locked(event.ctrl_pressed):
+					return
+				_send_attack(picked_actor_id)
+			"trade":
+				var trade_error: Error = Network.trade_with(picked_actor_id)
+				if trade_error != OK:
+					push_warning("TRADE_WITH failed: " + error_string(trade_error))
+			"talk":
+				var touch_error: Error = Network.touch_actor(picked_actor_id)
+				if touch_error != OK:
+					push_warning("TOUCH_PLAYER failed: " + error_string(touch_error))
 		return
 	var picked_bag_id: int = _pick_ground_bag(viewport_position)
 	if picked_bag_id >= 0:
@@ -5129,9 +5115,15 @@ func _sync_perk_catalog() -> void:
 		# names with two words would otherwise be the awkward ones.
 		row.name = "Perk%s" % perk_name.replace(" ", "").validate_node_name()
 		perk_rows.add_child(row)
+		# A perk is bought in tiers, and the row is an offer: what it costs
+		# and what it says are the *next* tier's, so the button says which
+		# step it buys rather than implying the perk arrives whole.
+		var owned: int = int(perk.get("tier", 0))
+		var maximum: int = maxi(1, int(perk.get("max_tier", 1)))
 		var take := Button.new()
 		take.name = "Take"
-		take.text = "Take"
+		take.text = "Take" if maximum == 1 else (
+			"Tier %d" % mini(maximum, owned + 1))
 		take.disabled = not blocker.is_empty()
 		take.tooltip_text = blocker if not blocker.is_empty() else str(
 			perk.get("description", ""))
@@ -5145,7 +5137,9 @@ func _sync_perk_catalog() -> void:
 		label.name = "Detail"
 		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		label.text = "%s (%s)  -  %s%s" % [perk_name, price,
+		var held: String = ("" if maximum == 1 or owned == 0
+			else " [tier %d of %d]" % [owned, maximum])
+		label.text = "%s%s (%s)  -  %s%s" % [perk_name, held, price,
 			str(perk.get("description", "")),
 			"" if blocker.is_empty() else "  [%s]" % blocker]
 		row.add_child(label)
@@ -7950,6 +7944,48 @@ func _sync_selection() -> void:
 		if is_instance_valid(actor):
 			actor.set_selected(id == AppState.selected_actor_id)
 
+## What a left click on this actor does, in the terms the cursor table decides
+## in. Its own function because the pointer and the click have to agree, and
+## a test can now hold one against the other: MouseCursors.choose promised the
+## sword over every live creature, in walk mode as much as attack mode, while
+## the handler only ever attacked in attack mode or with Alt held. A plain
+## click merely selected - which is why, mid-fight, clicking another of the
+## creatures on you did nothing at all and the target could not be changed.
+##
+## A live creature is attacked by a plain click, the way the reference client
+## does it (UNDER_MOUSE_ANIMAL in check_cursor_change). Players are not: the
+## pointer offers them a look until attack mode or Alt says otherwise, and a
+## stray click in a crowd must not open a fight with one.
+func _actor_click_action(actor_id: int, dto: Dictionary,
+		alt_pressed: bool) -> String:
+	if dto.is_empty():
+		return "none"
+	# A spell waiting for an actor claims whoever is under the pointer, you
+	# included; every other action here is about somebody else.
+	if AppState.pending_spell_target == "actor":
+		return "spell"
+	if actor_id == AppState.local_actor_id:
+		return "none"
+	if _interaction_mode == "attack" and _is_attackable_actor(actor_id, dto):
+		return "attack"
+	if _interaction_mode == "trade" and _is_tradeable_player(actor_id, dto):
+		return "trade"
+	if alt_pressed and _is_attackable_actor(actor_id, dto):
+		return "attack"
+	# NPCs and summons are the two actors a plain click talks to. TOUCH_PLAYER
+	# on your own summon is how the server opens the behaviour popup, so it
+	# has to outrank the attack below - a summon is a creature kind.
+	if int(dto.get("kind", 0)) == 2 or ReplicatedActor3D.is_summon(dto):
+		return "talk"
+	if _is_creature_actor(dto) and _is_attackable_actor(actor_id, dto):
+		return "attack"
+	return "none"
+
+## The kinds the cursor table reads as a creature rather than a player, so
+## both halves of the promise draw the line in the same place.
+func _is_creature_actor(dto: Dictionary) -> bool:
+	return int(dto.get("kind", 0)) in [3, 5]
+
 func _is_attackable_actor(actor_id: int, dto: Dictionary) -> bool:
 	if actor_id < 0 or actor_id == AppState.local_actor_id or dto.is_empty():
 		return false
@@ -8477,7 +8513,9 @@ func _cursor_context_at(viewport_position: Vector2) -> Dictionary:
 			context["target"] = "self"
 		elif kind == 2:
 			context["target"] = "npc"
-		elif kind in [3, 5]:
+		elif ReplicatedActor3D.is_summon(dto):
+			context["target"] = "summon"
+		elif _is_creature_actor(dto):
 			context["target"] = "creature"
 		else:
 			# Players, and any kind this client cannot attack, trade with or

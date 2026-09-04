@@ -635,3 +635,19 @@ reported: the statistics window held its own copy of the attribute list.
 | The name is not the key | `magic_offense` renders as "Magic_Offense" or "Magic offense" depending on which string method is used, and neither is a name to show a player. | The label travels with the value. | Asserted on `Magic Offense` specifically. | IMPLEMENTED |
 | The ceiling is the server's | The client held `ATTRIBUTE_MAXIMUM = 48`; the server now enforces 100, so the "+" beside a maxed line would have kept offering a purchase the server refuses. | Each row carries its own maximum. The old constant survives only for the six-slot fallback. | The spend link is drawn against the row's maximum. | IMPLEMENTED |
 | An older server still works | A server that does not send the wide packet still sends six attributes in the legacy slots. | The fallback names those six - and they are correct for exactly the servers that reach it. | `LEGACY_ATTRIBUTES`, reached only when the wide packet has not arrived. | IMPLEMENTED |
+
+## Perks bought a tier at a time (Other-Life register 017, 018, 019, 020)
+
+A perk was one purchase. It is now up to three, and the catalogue row stopped
+being a description of the perk and became an offer: the price and the words
+belong to the tier this character would buy next.
+
+That is the whole reason the tier had to go on the wire. "3 pp" beside a perk
+the player already holds reads as a bug unless the window can say which step
+those three points buy, and the client cannot work that out from a price.
+
+| Feature | What was asked for | Eloria implementation | Test/evidence | Status |
+|---|---|---|---|---|
+| The row says which step it buys | The server prices the next tier, so a row against an owned perk shows a price the old window would have drawn as a second purchase of the same thing. | Two bytes per row - tiers owned, tiers there are - decoded into the catalogue entry. The button reads "Tier 2" instead of "Take", and the label carries "[tier 1 of 3]" for a perk part-bought. | `tests/test_perk_tiers.gd`. Decoding, a row cut at the tier bytes, a trailing byte, and the window's own source. | IMPLEMENTED |
+| An old client is not fed a new layout | The tier bytes sit between the price and the strings, so a v1 decoder would read a perk name out of the middle of a number. | The capability is `perk_catalog_v2`. The server still sends the flat layout to anything advertising v1, so the layout follows what the client asked for rather than what the server prefers. | The advertised set is asserted to hold v2 and not v1 - claiming both would be claiming to decode a layout this client no longer reads. | IMPLEMENTED |
+

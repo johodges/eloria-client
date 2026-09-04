@@ -845,6 +845,7 @@ func _run() -> void:
 	app_state_inventory.set("actors", {77: attackable_actor})
 	main.call("_sync_selection")
 	_expect(attack_button.disabled, "dead target disables the attack action")
+	_check_actor_click_actions(main)
 	var tradeable_actor: Dictionary = {
 		"actor_id": 88, "name": "Alice", "kind": 1, "health": 20,
 		"max_health": 20, "alive": true}
@@ -2779,6 +2780,61 @@ func _nul_bytes(value: String) -> PackedByteArray:
 	var bytes: PackedByteArray = value.to_utf8_buffer()
 	bytes.append(0)
 	return bytes
+
+## What a left click on an actor does, held against what the pointer over it
+## promised. They disagreed on the case this file exists to cover: the sword
+## was drawn over every live creature, and only attack mode or a held Alt
+## actually swung, so a player already fighting one creature could click
+## another of the crowd on them all day and nothing happened - no attack, no
+## refusal from the server, no way to change target.
+func _check_actor_click_actions(main: Control) -> void:
+	var previous_mode: String = str(main.get("_interaction_mode"))
+	var creature := {"actor_id": 77, "name": "Moss Bear", "kind": 3,
+		"health": 330, "max_health": 330, "alive": true}
+	var dead_creature := {"actor_id": 78, "name": "Moss Bear", "kind": 3,
+		"health": 0, "max_health": 330, "alive": false}
+	var player := {"actor_id": 88, "name": "Alice", "kind": 1, "health": 20,
+		"max_health": 20, "alive": true}
+	var npc := {"actor_id": 99, "name": "Tanner", "kind": 2, "health": 20,
+		"max_health": 20, "alive": true}
+	var summon := {"actor_id": 66, "name": "Bear", "kind": 5, "health": 40,
+		"max_health": 40, "alive": true,
+		"name_colour": ReplicatedActor3D.SUMMON_NAME_COLOUR}
+	main.set("_interaction_mode", "walk")
+	_expect(str(main.call("_actor_click_action", 77, creature, false)) == "attack",
+		"a plain click on a live creature attacks it, as the pointer promises")
+	_expect(str(main.call("_actor_click_action", 78, dead_creature, false)) == "none",
+		"a dead creature is scenery, and a click on it starts no fight")
+	_expect(str(main.call("_actor_click_action", 88, player, false)) == "none",
+		"a plain click on a player does not attack them")
+	_expect(str(main.call("_actor_click_action", 88, player, true)) == "attack",
+		"Alt is still what turns a click on a player into a blow")
+	_expect(str(main.call("_actor_click_action", 99, npc, false)) == "talk",
+		"a plain click greets an NPC")
+	_expect(str(main.call("_actor_click_action", 66, summon, false)) == "talk",
+		"a plain click orders your own summon rather than attacking it")
+	main.set("_interaction_mode", "attack")
+	_expect(str(main.call("_actor_click_action", 66, summon, false)) == "attack"
+		and str(main.call("_actor_click_action", 88, player, false)) == "attack",
+		"attack mode still reaches everything that can be attacked")
+	_expect(str(main.call("_actor_click_action", 99, npc, false)) == "talk",
+		"an NPC talks even in attack mode, the way the pointer says")
+	main.set("_interaction_mode", "walk")
+	# The promise and the delivery, side by side, for the same actor: the
+	# pointer may only draw the sword where the click sends ATTACK_SOMEONE.
+	for case: Array in [["creature", 77, creature], ["creature", 78, dead_creature],
+			["player", 88, player], ["npc", 99, npc], ["summon", 66, summon]]:
+		for alt: bool in [false, true]:
+			var dto: Dictionary = case[2] as Dictionary
+			var cursor: int = MouseCursors.choose({"over_world": true,
+				"target": str(case[0]), "mode": "walk", "alt": alt,
+				"alive": bool(dto.get("alive", true))})
+			var action: String = str(main.call(
+				"_actor_click_action", int(case[1]), dto, alt))
+			_expect((cursor == MouseCursors.ATTACK) == (action == "attack"),
+				"the %s pointer%s matches what the click does" % [
+					str(case[0]), " with Alt" if alt else ""])
+	main.set("_interaction_mode", previous_mode)
 
 func _expect(value: bool, label: String) -> void:
 	if value:

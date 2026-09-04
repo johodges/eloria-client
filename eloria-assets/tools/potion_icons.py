@@ -135,23 +135,23 @@ SHELF = [
            "vial_tall", 0.85, (36, 190, 148), motif="spark"),
     # -- attribute tonics: one round-bellied flask per attribute, told apart
     #    by the colour of what fills it.
-    Potion("Potion of Physique", "Potions", 1, {"cooldown": "10"},
+    Potion("Potion of Might", "Potions", 1, {"cooldown": "10"},
            "A maroon tonic that briefly hardens muscle and frame.",
            "flask_round", 0.82, (152, 38, 46)),
-    Potion("Potion of Coordination", "Potions", 1, {"cooldown": "10"},
+    Potion("Potion of Dexterity", "Potions", 1, {"cooldown": "10"},
            "An orange tonic that briefly quickens hand and eye.",
            "flask_round", 0.82, (228, 138, 34)),
-    Potion("Potion of Reasoning", "Potions", 1, {"cooldown": "10"},
+    Potion("Potion of Rationality", "Potions", 1, {"cooldown": "10"},
            "A clear azure tonic that briefly sharpens deliberate thought.",
            "flask_round", 0.82, (74, 158, 228)),
-    Potion("Potion of Will", "Potions", 1, {"cooldown": "10"},
-           "A violet tonic that briefly steels resolve.",
+    Potion("Potion of Ethereality", "Potions", 1, {"cooldown": "10"},
+           "A violet tonic that briefly widens the channel spellwork runs through.",
            "flask_round", 0.82, (142, 72, 202)),
-    Potion("Potion of Vitality", "Potions", 1, {"cooldown": "10"},
-           "A rose tonic that briefly deepens the body's reserves.",
+    Potion("Potion of Toughness", "Potions", 1, {"cooldown": "10"},
+           "A rose tonic that briefly thickens skin against a blow.",
            "flask_round", 0.82, (228, 92, 132)),
-    Potion("Potion of Wildness", "Potions", 1, {"cooldown": "10"},
-           "A forest-green tonic that briefly wakes the older instincts.",
+    Potion("Potion of Perception", "Potions", 1, {"cooldown": "10"},
+           "A forest-green tonic that briefly wakes the older senses.",
            "flask_round", 0.82, (62, 158, 72)),
     # -- practice draughts: tall slim bottles, one hue per craft.
     Potion("Potion of Attack", "Potions", 1, {"cooldown": "10"},
@@ -211,11 +211,48 @@ SHELF = [
     Potion("Empty Vial", "Misc", 1, {},
            "Clean glass, ready for whatever is brewed next.",
            "vial_small", 0.72, None),
+    # -- the six attributes the shelf had no draught for. Appended rather
+    #    than filed beside the other tonics, because a row inserted anywhere
+    #    but the end renumbers every potion below it.
+    Potion("Potion of Matter", "Potions", 1, {"cooldown": "10"},
+           "A slate tonic that briefly thickens what a body is made of.",
+           "flask_round", 0.82, (128, 132, 140)),
+    Potion("Potion of Carry", "Potions", 1, {"cooldown": "10"},
+           "An amber tonic that briefly makes a heavy pack sit lighter.",
+           "flask_round", 0.82, (196, 150, 60)),
+    Potion("Potion of Charm", "Potions", 1, {"cooldown": "10"},
+           "A blush tonic that briefly makes a stranger inclined to listen.",
+           "flask_round", 0.82, (232, 132, 176)),
+    Potion("Potion of Reaction", "Potions", 1, {"cooldown": "10"},
+           "A pale citrine tonic that briefly shortens the gap between "
+           "seeing and moving.",
+           "flask_round", 0.82, (224, 210, 92)),
+    Potion("Potion of Magic Offense", "Potions", 1, {"cooldown": "10"},
+           "A tonic the colour of a struck spark, for spells that are "
+           "meant to land.",
+           "flask_round", 0.82, (236, 96, 40), glow=True),
+    Potion("Potion of Magic Defense", "Potions", 1, {"cooldown": "10"},
+           "A tonic the colour of deep water, for spells that are meant "
+           "to hold.",
+           "flask_round", 0.82, (48, 128, 176), glow=True),
 ]
 
+#: Where the shelf stopped when the torso designs took the ids and icons
+#: directly after it -- items 1682-1745, icons 506-569. A row past that point
+#: continues after that tail rather than into it, which is also why this
+#: number is frozen: it is a fact about what was already handed out.
+SHELF_BEFORE_TORSO = 32
+#: The first id and icon after the torso designs' tail.
+CONTINUED_ITEM_ID = 1746
+CONTINUED_IMAGE_ID = 570
+
 for index, potion in enumerate(SHELF):
-    potion.item_id = FIRST_ITEM_ID + index
-    potion.image_id = FIRST_IMAGE_ID + index
+    if index < SHELF_BEFORE_TORSO:
+        potion.item_id = FIRST_ITEM_ID + index
+        potion.image_id = FIRST_IMAGE_ID + index
+    else:
+        potion.item_id = CONTINUED_ITEM_ID + index - SHELF_BEFORE_TORSO
+        potion.image_id = CONTINUED_IMAGE_ID + index - SHELF_BEFORE_TORSO
 
 
 def roster() -> list[Potion]:

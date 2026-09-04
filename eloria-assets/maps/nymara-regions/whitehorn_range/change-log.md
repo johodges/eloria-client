@@ -224,3 +224,32 @@ grounding layer, lands on the deck 832 times out of 832.
 `build_whitehorn` also advertised the walk grid as EWCG v1 with a 0.2 m height
 step while writing a v2 file with a 2.6 m one, so the manifest had to be
 corrected by hand after every build. It reports what it writes now.
+
+## The crossings now land on the road
+
+The span still did not meet the brown of the pilgrim road at either end. The
+landings were being looked for square across the cut, and the road does not
+cross the cut square: it comes down from the south-west and leaves to the
+north-east, so a span laid on the world axes lands beside the road at both ends
+however long it is made.
+
+`_road_landings` looks for the nearest ground on each side of the gorge that is
+classed PATH or PAVING and that the walk grid will accept, and the span is laid
+between those two points at whatever angle they ask for - 66 degrees at the
+lower crossing, 46 m between landings both of them on `Terrain_Trail`. The
+upper crossing keeps its square line: its approach is steep enough that
+`assign_surfaces` calls it rock, so there is no brown there to aim at, and it
+falls back to the shoulder search.
+
+Two details that cost a rebuild each. A landing is judged on the walk grid's
+half-metre lattice rather than the heightfield's two-metre one, because ground
+that reads at 0.79 across two metres can be past the climb limit inside one
+cell of it - which is how a landing was picked that the grid then refused. And
+a deck reaches 1.5 m past its landings rather than stopping on them: stopping
+exactly on the cell the search picked still left one cell of nothing between
+the deck and the road, and one cell is enough to make a crossing useless.
+
+Both decks now land within 0.08 m of the ground, on cells the grid marks
+walkable, and 894 rays cast every 0.1 m along the two decks through the
+client's own grounding layer all land on the deck.
+

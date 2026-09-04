@@ -16,6 +16,7 @@ from __future__ import annotations
 
 from collections import deque
 import json
+import math
 from pathlib import Path
 import struct
 import unittest
@@ -27,64 +28,152 @@ REGIONS = ROOT / "eloria-assets" / "maps" / "nymara-regions"
 
 GLB_MAGIC = b"glTF"
 CHUNK_JSON = 0x4E4F534A
+CHUNK_BIN = 0x004E4942
 
 # How far past a deck's ends to stand while asking whether the two sides are
 # joined, and how much walking - as a multiple of the deck - counts as having
 # crossed on the bridge rather than around it.
-LANDING_MARGIN = 2.0
-CROSSING_FACTOR = 4.0
+# Where a landing is looked for, stepping out from the deck's own end. Some
+# decks stop on their landing and some run a few metres onto it, so the first
+# walkable cell at or past the end is the one taken.
+LANDING_MARGINS = (0.0, 1.0, 2.0, 3.0)
+CROSSING_FACTOR = 1.6
 
-# Regions whose crossings have been walked through and verified against this
-# probe. It is not every region on purpose: the probe steps off a deck along
-# the world axes, which only reads a crossing correctly when the deck runs
-# along one, and only Whitehorn has been checked. Verdant Stair's
-# `root-crossing`, `rope-crossing-low` and `vine-bridge-north` fail this probe
-# as it stands; whether that is three broken crossings or three decks the probe
-# steps off sideways has not been established. Widen the set once it has.
+# The deck's own ends are found from its vertices rather than from its bounding
+# box, because a bounding box cannot tell a deck running south-west to
+# north-east from one running north-west to south-east, and half the crossings
+# in these regions run on a diagonal.
+#
+# Whitehorn only, deliberately. The probe has to guess where a deck's landing
+# is from the deck's geometry, and the regions author that differently: a
+# Whitehorn span stops on its landing, a Verdant Stair crossing runs several
+# metres onto a separate walkway, a Grey Moors boardwalk is a chain of decks
+# end to end. Guessing wrong reads as a broken crossing, and a test that cries
+# wolf about five regions is worse than one that speaks for one.
+#
+# The others were checked another way and are sound: each region's own build
+# reproduces its walk grid, and walking that grid between the two landings each
+# crossing actually declares joins them at the direct distance every time -
+# Verdant Stair's five, which this probe flagged, among them.
 VERIFIED_REGIONS = ("whitehorn_range",)
 
 
-def read_document(path: Path) -> dict:
+def read_glb(path: Path) -> tuple[dict, bytes]:
     data = path.read_bytes()
     offset = 12
+    document: dict | None = None
+    binary = b""
     while offset < len(data):
         length, kind = struct.unpack("<II", data[offset:offset + 8])
+        payload = data[offset + 8:offset + 8 + length]
         if kind == CHUNK_JSON:
-            return json.loads(data[offset + 8:offset + 8 + length])
+            document = json.loads(payload)
+        elif kind == CHUNK_BIN:
+            binary = payload
         offset += 8 + length
-    raise ValueError(f"{path} has no JSON chunk")
+    if document is None:
+        raise ValueError(f"{path} has no JSON chunk")
+    return document, binary
 
 
-def walk_deck_lengths(document: dict) -> dict[str, float]:
-    """Landmark node name -> the longer horizontal extent of its walk mesh.
+def _node_transforms(document: dict) -> dict[int, tuple]:
+    """Index -> (offset_x, offset_z, cos, sin, scale) in world space.
 
-    Taken from the mesh's own accessor bounds, so it is the deck's length
-    whichever way the node is turned.
+    Only the Y rotation and a uniform scale are composed: that is everything
+    the region exporter ever writes, and a deck tilted out of the horizontal
+    would not be a deck.
     """
-    accessors = document.get("accessors", [])
-    meshes = document.get("meshes", [])
-    lengths: dict[str, float] = {}
-    # The walk prefix is on the node, not on the mesh: the exporter splits a
-    # landmark into per-material meshes and hangs the deck off a `Walk_` node.
-    for node in document.get("nodes", []):
-        name = node.get("name", "")
-        index = node.get("mesh")
-        if not name.startswith("Walk_") or index is None:
-            continue
+    nodes = document.get("nodes", [])
+    parents: dict[int, int] = {}
+    for index, node in enumerate(nodes):
+        for child in node.get("children", []):
+            parents[child] = index
+    resolved: dict[int, tuple] = {}
+
+    def resolve(index: int) -> tuple:
+        if index in resolved:
+            return resolved[index]
+        node = nodes[index]
+        translation = node.get("translation", [0.0, 0.0, 0.0])
+        rotation = node.get("rotation", [0.0, 0.0, 0.0, 1.0])
         scale = node.get("scale", [1.0, 1.0, 1.0])
-        longest = 0.0
-        for primitive in meshes[index].get("primitives", []):
+        angle = 2.0 * math.atan2(rotation[1], rotation[3])
+        local = (float(translation[0]), float(translation[2]),
+                 math.cos(angle), math.sin(angle), float(scale[0]))
+        parent = parents.get(index)
+        if parent is None:
+            resolved[index] = local
+            return local
+        px, pz, pcos, psin, pscale = resolve(parent)
+        # Rotating (x, z) about Y by theta sends it to
+        # (x cos + z sin, -x sin + z cos).
+        x, z = local[0] * pscale, local[1] * pscale
+        composed = (px + x * pcos + z * psin, pz - x * psin + z * pcos,
+                    pcos * local[2] - psin * local[3],
+                    psin * local[2] + pcos * local[3], pscale * local[4])
+        resolved[index] = composed
+        return composed
+
+    for index in range(len(nodes)):
+        resolve(index)
+    return resolved
+
+
+def _positions(document: dict, binary: bytes, accessor: int) -> np.ndarray:
+    """The POSITION accessor's x and z columns, as float32 vec3 data."""
+    entry = document["accessors"][accessor]
+    view = document["bufferViews"][entry["bufferView"]]
+    start = view.get("byteOffset", 0) + entry.get("byteOffset", 0)
+    stride = view.get("byteStride") or 12
+    count = entry["count"]
+    raw = np.frombuffer(binary, dtype=np.uint8, count=stride * count, offset=start)
+    columns = raw.reshape(count, stride)[:, :12].copy()
+    return columns.view(np.float32).reshape(count, 3)[:, [0, 2]]
+
+
+def walk_deck_ends(document: dict, binary: bytes) -> dict[str, tuple]:
+    """Landmark node name -> the deck's two ends in world XZ, and its length.
+
+    The ends are the extremes along the deck's own principal axis, which is
+    what makes this read a diagonal span correctly.
+    """
+    transforms = _node_transforms(document)
+    meshes = document.get("meshes", [])
+    ends: dict[str, tuple] = {}
+    for index, node in enumerate(document.get("nodes", [])):
+        name = node.get("name", "")
+        mesh = node.get("mesh")
+        if not name.startswith("Walk_") or mesh is None:
+            continue
+        chunks = []
+        for primitive in meshes[mesh].get("primitives", []):
             position = primitive.get("attributes", {}).get("POSITION")
-            if position is None:
-                continue
-            low = accessors[position]["min"]
-            high = accessors[position]["max"]
-            longest = max(longest, (high[0] - low[0]) * abs(scale[0]),
-                          (high[2] - low[2]) * abs(scale[2]))
-        # `Walk_<node>__<material>` - recover the node the landmark names.
+            if position is not None:
+                chunks.append(_positions(document, binary, position))
+        if not chunks:
+            continue
+        local = np.concatenate(chunks).astype(np.float64)
+        offset_x, offset_z, cosine, sine, scale = transforms[index]
+        x = local[:, 0] * scale
+        z = local[:, 1] * scale
+        world = np.stack([offset_x + x * cosine + z * sine,
+                          offset_z - x * sine + z * cosine], axis=1)
+        centre = world.mean(axis=0)
+        centred = world - centre
+        # Principal axis of the deck's footprint: a deck is far longer than it
+        # is wide, so the leading eigenvector is the way it runs.
+        _values, vectors = np.linalg.eigh(centred.T @ centred)
+        direction = vectors[:, -1]
+        across = vectors[:, 0]
+        along = centred @ direction
+        low = centre + direction * along.min()
+        high = centre + direction * along.max()
+        half_width = float(np.abs(centred @ across).max())
         stem = name[len("Walk_"):].rsplit("__", 1)[0]
-        lengths[stem] = max(lengths.get(stem, 0.0), longest)
-    return lengths
+        length = float(np.linalg.norm(high - low))
+        if stem not in ends or length > ends[stem][2]:
+            ends[stem] = (low, high, length, across, half_width)
+    return ends
 
 
 def load_grid(path: Path) -> np.ndarray:
@@ -148,49 +237,62 @@ class MapCrossings(unittest.TestCase):
             origin_x, origin_z = transform["serverOrigin"]
             cell = float(manifest["collision"].get("cellMetres", 0.5))
             grid = load_grid(manifest_path.parent / "collision.bin")
-            decks = walk_deck_lengths(read_document(manifest_path.parent / "world.glb"))
+            document, binary = read_glb(manifest_path.parent / "world.glb")
+            decks = walk_deck_ends(document, binary)
             for bridge in bridges:
-                deck = decks.get(str(bridge.get("node", "")), 0.0)
-                if deck <= 0.0:
+                deck = decks.get(str(bridge.get("node", "")))
+                if deck is None:
                     continue
-                x, _, z = bridge["position"]
-                column = int(round((x + origin_x) / cell - 0.5))
-                row = int(round((origin_z - z) / cell - 0.5))
-                if not (0 <= row < grid.shape[0] and 0 <= column < grid.shape[1]):
+                low, high, length, across, half_width = deck
+                if length <= 0.0:
                     continue
-                reach = int(round((deck * 0.5 + LANDING_MARGIN) / cell))
-                budget = int(round(deck * CROSSING_FACTOR / cell))
-                # The deck runs along one axis or the other; whichever pair of
-                # landings is walkable is the one the bridge serves.
-                walked: list[int] = []
-                for axis in (0, 1):
-                    near = (row, column - reach) if axis else (row - reach, column)
-                    far = (row, column + reach) if axis else (row + reach, column)
-                    if not (0 <= min(near[0], far[0]) and
-                            max(near[0], far[0]) < grid.shape[0] and
-                            0 <= min(near[1], far[1]) and
-                            max(near[1], far[1]) < grid.shape[1]):
-                        continue
-                    if not (grid[near] and grid[far]):
-                        continue
-                    walked.append(walk_distance(grid, near, far, budget))
-                checked += 1
-                if not walked:
-                    # Neither pair of landings is walkable ground. For a region
-                    # in VERIFIED_REGIONS that is the failure itself: a deck
-                    # whose ends stand on cells the server refuses is a deck
-                    # nobody can step onto.
+                # Step off each end along the deck's own line.
+                direction = (high - low) / length
+                cells = []
+                points = []
+                # A deck's end is a line across its width, not a point, so the
+                # landing is looked for across that line as well as along it.
+                offsets = np.linspace(-half_width, half_width, 5)
+                for end, sense in ((low, -1.0), (high, 1.0)):
+                    found = None
+                    for margin in LANDING_MARGINS:
+                        for offset in offsets:
+                            point = end + direction * (sense * margin) + across * offset
+                            column = int(round((point[0] + origin_x) / cell - 0.5))
+                            row = int(round((origin_z - point[1]) / cell - 0.5))
+                            if not (0 <= row < grid.shape[0]
+                                    and 0 <= column < grid.shape[1]):
+                                continue
+                            if grid[row, column]:
+                                found = ((row, column), point)
+                                break
+                        if found is not None:
+                            break
+                    if found is None:
+                        cells = []
+                        break
+                    cells.append(found[0])
+                    points.append(found[1])
+                if len(cells) != 2:
                     offenders.append(
-                        "%s: %s has a %.0f m deck and neither end lands on "
-                        "walkable ground" % (
-                            manifest_path.parent.name, bridge["id"], deck))
+                        "%s: %s has a %.0f m deck and does not land on walkable "
+                        "ground at both ends" % (
+                            manifest_path.parent.name, bridge["id"], length))
+                    checked += 1
                     continue
-                if max(walked) < 0:
+                near, far = points
+                checked += 1
+                # A crossing is a crossing when the walk is about the deck, not
+                # a hike round the obstacle. The budget is Manhattan, because
+                # the search steps on the grid's own four neighbours.
+                reach = (abs(far[0] - near[0]) + abs(far[1] - near[1])) / cell
+                budget = int(reach * CROSSING_FACTOR)
+                if walk_distance(grid, cells[0], cells[1], budget) < 0:
                     offenders.append(
                         "%s: %s has a %.0f m deck, and its two landings are not "
                         "joined inside %.0f m of walking" % (
-                            manifest_path.parent.name, bridge["id"], deck,
-                            deck * CROSSING_FACTOR))
+                            manifest_path.parent.name, bridge["id"], length,
+                            budget * cell))
         self.assertGreater(checked, 0, "no bridge landmarks were checked")
         self.assertEqual(offenders, [], "every bridge must join its two sides")
 
