@@ -1764,11 +1764,30 @@ func set_selected(value: bool) -> void:
 		_selection_ring.visible = value
 		_level_selection_ring()
 
+## The height the ground was sampled at under the tile this actor is heading
+## for. Main takes the sample after `apply_server_state` has already opened the
+## step, so the value describes the far end of the step, not where the actor is
+## standing now.
+##
+## That is why a step in progress only moves the target. `_segment_start` holds
+## the height of the tile being left and `server_target` the one being entered,
+## so the interpolation already walks the actor up or down the ledge between
+## them. Writing the far tile's height straight onto the body as well put the
+## actor a whole ledge-height out of place for the frames between this call and
+## the next `_physics_process`, which recomputes the lerp and pulls it back:
+## on terraced ground - Whitehorn Range steps more than half a metre across 46%
+## of its adjacent tiles - every creature crossing a terrace popped and
+## returned, several times a second across a populated map.
+##
+## A standing actor still snaps. Nothing is interpolating it, so a correction
+## that never reached the body would leave it embedded in the ground it was
+## measured against.
 func set_surface_height(value: float) -> void:
 	if not _snap_pending and is_equal_approx(server_target.y, value):
 		return
 	server_target.y = value
-	if _snap_pending or absf(global_position.y - value) > 0.5:
+	var mid_step: bool = _segment_duration > 0.0
+	if _snap_pending or (not mid_step and absf(global_position.y - value) > 0.5):
 		global_position.y = value
 	_wake()
 

@@ -261,6 +261,38 @@ func _run() -> void:
 			CoordinateAdapter.new().direction_to_godot(Vector2i(1, 1))),
 		"a step off the ordered heading turns the actor onto the step")
 	actor_height_fixture.free()
+	# Main samples the ground under the tile a step is heading for, so the
+	# height arrives while the step is still being walked. Writing it onto the
+	# body as well as onto the target put the actor at the far tile's height
+	# until the next physics tick recomputed the interpolation and pulled it
+	# back - on terraced ground every creature crossing a terrace popped a
+	# whole ledge-height and returned, over and over.
+	var terrace_fixture: ReplicatedActor3D = ReplicatedActor3D.new()
+	root.add_child(terrace_fixture)
+	terrace_fixture.actor_id = 78
+	terrace_fixture.server_target = Vector3(2.0, 20.0, 3.0)
+	terrace_fixture.global_position = terrace_fixture.server_target
+	terrace_fixture.set("_snap_pending", false)
+	terrace_fixture.set("_segment_start", terrace_fixture.server_target)
+	terrace_fixture.apply_server_state({
+		"x": 3, "y": 3, "rotation": 0, "command": 22},
+		CoordinateAdapter.new(), false)
+	var step_duration: float = float(terrace_fixture.get("_segment_duration"))
+	_expect(step_duration > 0.0, "a movement packet opens an interpolated step")
+	terrace_fixture.set_surface_height(23.0)
+	_expect(is_equal_approx(terrace_fixture.server_target.y, 23.0)
+		and is_equal_approx(terrace_fixture.global_position.y, 20.0),
+		"a ledge sampled mid-step moves the step's target, not the body")
+	terrace_fixture.call("_physics_process", step_duration)
+	_expect(is_equal_approx(terrace_fixture.global_position.y, 23.0),
+		"the step still finishes on the height the ground was sampled at")
+	# Nothing is interpolating a standing actor, so a correction that never
+	# reached the body would leave it embedded in the ground it was measured
+	# against.
+	terrace_fixture.set_surface_height(26.0)
+	_expect(is_equal_approx(terrace_fixture.global_position.y, 26.0),
+		"a standing actor still snaps out of terrain")
+	terrace_fixture.free()
 	_check_travel_facing()
 	_check_map_dot()
 	var north_yaw: float = CoordinateAdapter.new().direction_to_godot(Vector2i(0, -1))
