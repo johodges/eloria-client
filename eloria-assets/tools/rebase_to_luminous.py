@@ -61,9 +61,23 @@ from PIL import Image, ImageDraw
 
 sys.path.insert(0, str(Path(__file__).parent))
 from split_race_surfaces import (  # noqa: E402
-    CLASSES, RACES, accessor_array, append_accessor, append_view,
+    RACES, accessor_array, append_accessor, append_view,
     bone_rest_position, read_glb, write_glb,
 )
+
+# Only these classes (see split_race_surfaces.CLASSES for the full set)
+# carry real per-race skin detail on Material_1 -- "hair"/"wardrobe_*"
+# render from a SEPARATE image via flat runtime tinting, and critically
+# their own UV coordinates were laid out for THAT image, not this one.
+# Checked directly: a "body" face on one bone can share a dominant joint
+# with a "wardrobe_shirt" face on the other body (e.g. both dominated by
+# neck_01 right at the collar), and correspondence only compares
+# dominant-bone position -- it does not know or care which class a face
+# belongs to. Including wardrobe let a handful of collar/cuff-adjacent
+# skin faces match a wardrobe face on the source side, then sample ITS
+# uv against Material_1 (the wrong image for that uv entirely),
+# producing small dark garbage patches right at every skin/cloth seam.
+SKIN_CLASSES = ("body", "eyes", "skin_accent")
 
 # (near, far) axis per bone used for limb/torso correspondence; the head
 # is handled separately below (see head_bbox_descriptor) since it has no
@@ -98,7 +112,7 @@ def body_faces_data(document, binary):
     """positions, uvs, indices(faces Nx3), skin_index for the shared
     body/eyes/... mesh (see split_race_surfaces's own module docstring:
     attributes are shared across every class primitive in this split)."""
-    nodes = [n for n in document["nodes"] if n.get("name") in CLASSES and "mesh" in n]
+    nodes = [n for n in document["nodes"] if n.get("name") in SKIN_CLASSES and "mesh" in n]
     prim = document["meshes"][nodes[0]["mesh"]]["primitives"][0]
     positions = accessor_array(document, binary, prim["attributes"]["POSITION"])
     uvs = accessor_array(document, binary, prim["attributes"]["TEXCOORD_0"])
@@ -153,15 +167,33 @@ def bone_descriptor(document, binary, skin_index, centroids, dominant, names):
     return descriptors
 
 
-def head_bbox_descriptor(document, binary, skin_index, centroids, dominant, head_row):
-    """Per-axis bounding-box-normalized (x, y, z) descriptor for
-    Head-dominant faces only -- NaN elsewhere. Each body's own head is
-    normalized into its own measured extent (center at 0, half-extent at
-    1 on each axis, relative to the Head bone's rest position) before
-    matching, which removes exactly the per-body size/proportion
-    difference that breaks a single axis+angle parametrization for a
-    shape as irregular as a head/face."""
-    descriptors = np.full((len(centroids), 3), np.nan)
+def face_normals(positions, faces):
+    """Unit outward-facing normal per face, in the mesh's own untransformed
+    space (deliberately NOT bbox-normalized like the position descriptor --
+    a normal is a direction, and anisotropically rescaling XYZ to fit a
+    box would distort it)."""
+    v0 = positions[faces[:, 0]]
+    v1 = positions[faces[:, 1]]
+    v2 = positions[faces[:, 2]]
+    n = np.cross(v1 - v0, v2 - v0)
+    length = np.maximum(np.linalg.norm(n, axis=1, keepdims=True), 1e-12)
+    return n / length
+
+
+def head_bbox_descriptor(document, binary, skin_index, centroids, normals, dominant, head_row):
+    """Per-axis bounding-box-normalized (x, y, z) position plus unit
+    normal (nx, ny, nz) descriptor for Head-dominant faces only -- NaN
+    elsewhere. Each body's own head is normalized into its own measured
+    extent (center at 0, half-extent at 1 on each axis, relative to the
+    Head bone's rest position) before matching, which removes exactly the
+    per-body size/proportion difference that breaks a single axis+angle
+    parametrization for a shape as irregular as a head/face. The normal
+    is carried alongside so matching can prefer a similarly-facing
+    source face -- position alone let a handful of jaw/chin-underside
+    faces (pointing down) match front-facing target faces that merely
+    happened to sit nearby in normalized space, producing small dark
+    mismatched patches at the jaw/neck boundary."""
+    descriptors = np.full((len(centroids), 6), np.nan)
     sel = dominant == head_row
     if not sel.any():
         return descriptors
@@ -171,18 +203,27 @@ def head_bbox_descriptor(document, binary, skin_index, centroids, dominant, head
     hi = rel.max(axis=0)
     center = (lo + hi) / 2.0
     half = np.maximum((hi - lo) / 2.0, 1e-6)
-    descriptors[sel] = (rel - center) / half
+    descriptors[sel, :3] = (rel - center) / half
+    descriptors[sel, 3:] = normals[sel]
     return descriptors
 
 
-def build_correspondence(luminous_desc, luminous_dominant, source_desc, source_dominant):
+def build_correspondence(luminous_desc, luminous_dominant, source_desc, source_dominant,
+                          source_no_data):
     """For each Luminous face, the index of its best-matching source
     face: same dominant joint, closest (t, angle) -- angle compared on
-    the circle (wrap-around aware)."""
+    the circle (wrap-around aware). `source_no_data` (see
+    NO_DATA_MAX_CHANNEL) excludes source faces with no real baked colour
+    from candidacy -- the neck is the main place this matters here: skin
+    just under the collar is hidden in the source body's own resting
+    pose, so a handful of neck_01-dominant faces there have the same
+    kind of placeholder-black texture as the jaw-bottom head faces this
+    was first built for."""
     correspondence = np.full(len(luminous_dominant), -1, dtype=np.int64)
     for row in np.unique(luminous_dominant):
         lum_sel = np.flatnonzero((luminous_dominant == row) & ~np.isnan(luminous_desc[:, 0]))
-        src_sel = np.flatnonzero((source_dominant == row) & ~np.isnan(source_desc[:, 0]))
+        src_sel = np.flatnonzero((source_dominant == row) & ~np.isnan(source_desc[:, 0])
+                                  & ~source_no_data)
         if len(lum_sel) == 0 or len(src_sel) == 0:
             continue
         lum_t = luminous_desc[lum_sel, 0][:, None]
@@ -198,20 +239,60 @@ def build_correspondence(luminous_desc, luminous_dominant, source_desc, source_d
     return correspondence
 
 
+# How strongly a mismatched facing direction penalizes an otherwise
+# close position match, in the head correspondence search -- see
+# build_head_correspondence. 0 = ignore facing entirely (the original
+# position-only approach); tuned by eye against the jaw/neck speckling
+# it was added to fix, not derived from anything more principled.
+HEAD_NORMAL_WEIGHT = 1.5
+
+# A source face whose sampled colour is at or below this on every
+# channel is treated as "never actually captured" rather than a real
+# dark colour -- checked directly (see the diagnostic that motivated
+# this: matched candidates near the jaw/neck came back as near-uniform
+# (23, 20, 18)-style triples, unlike any real skin/hair tone measured
+# nearby, which were bright with a clear hue). Almost certainly a
+# surface the source body's own generation never saw (hidden under the
+# chin/collar in whatever pose it was captured from) and filled with a
+# placeholder instead of real data. A genuinely very dark-skinned race
+# could in principle trip this; revisit if one shows a similar hole.
+NO_DATA_MAX_CHANNEL = 35
+
+
+def sample_face_colors(uv_centroids, texture_arr, tex_w, tex_h):
+    """RGB at each face's own UV centroid, for every face at once."""
+    px = np.clip(uv_centroids[:, 0] % 1.0, 0, 1) * (tex_w - 1)
+    py = np.clip(uv_centroids[:, 1] % 1.0, 0, 1) * (tex_h - 1)
+    return texture_arr[py.astype(np.int64), px.astype(np.int64)]
+
+
 def build_head_correspondence(luminous_desc, luminous_dominant, head_row_lum,
-                               source_desc, source_dominant, head_row_src):
+                               source_desc, source_dominant, head_row_src,
+                               source_no_data):
     """Nearest-neighbour match in per-body bounding-box-normalized
     (x, y, z) space, for Head-dominant faces only -- see
-    head_bbox_descriptor. Plain Euclidean distance, no wrap-around
-    (unlike the limb angle term, a normalized axis position has no
-    periodicity to account for)."""
+    head_bbox_descriptor. No wrap-around on the position term (unlike the
+    limb angle term, a normalized axis position has no periodicity to
+    account for). A facing-direction term is added on top: without it, a
+    handful of jaw/chin-underside faces on the source matched
+    similarly-positioned but front-facing target faces. `source_no_data`
+    (see NO_DATA_MAX_CHANNEL) excludes source faces with no real baked
+    colour from candidacy entirely -- both of those turned out to matter
+    for the dark mismatched patches this was built to fix: the normal
+    term alone did not move them, because the picked source face WAS
+    well-aligned in both position and facing, it just had no usable
+    texture at all."""
     correspondence = np.full(len(luminous_dominant), -1, dtype=np.int64)
     lum_sel = np.flatnonzero((luminous_dominant == head_row_lum) & ~np.isnan(luminous_desc[:, 0]))
-    src_sel = np.flatnonzero((source_dominant == head_row_src) & ~np.isnan(source_desc[:, 0]))
+    src_sel = np.flatnonzero((source_dominant == head_row_src) & ~np.isnan(source_desc[:, 0])
+                              & ~source_no_data)
     if len(lum_sel) == 0 or len(src_sel) == 0:
         return correspondence
-    diff = luminous_desc[lum_sel][:, None, :] - source_desc[src_sel][None, :, :]
+    diff = luminous_desc[lum_sel][:, None, :3] - source_desc[src_sel][None, :, :3]
     dist = np.sum(diff * diff, axis=2)
+    lum_n = luminous_desc[lum_sel][:, None, 3:]
+    src_n = source_desc[src_sel][None, :, 3:]
+    dist += HEAD_NORMAL_WEIGHT * (1.0 - np.sum(lum_n * src_n, axis=2))
     best = np.argmin(dist, axis=1)
     correspondence[lum_sel] = src_sel[best]
     return correspondence
@@ -230,7 +311,7 @@ def process(luminous_path: Path, source_path: Path, out_path: Path) -> str:
     src_names = [src_doc["nodes"][j].get("name", "") for j in src_skin_obj["joints"]]
 
     lum_prim0 = lum_doc["meshes"][
-        [n for n in lum_doc["nodes"] if n.get("name") in CLASSES and "mesh" in n][0]["mesh"]
+        [n for n in lum_doc["nodes"] if n.get("name") in SKIN_CLASSES and "mesh" in n][0]["mesh"]
     ]["primitives"][0]
     lum_joints = accessor_array(lum_doc, lum_bin, lum_prim0["attributes"]["JOINTS_0"]).astype(np.int64)
     lum_weights = accessor_array(lum_doc, lum_bin, lum_prim0["attributes"]["WEIGHTS_0"])
@@ -238,7 +319,7 @@ def process(luminous_path: Path, source_path: Path, out_path: Path) -> str:
     lum_face_dominant = lum_vertex_dominant[lum_faces[:, 0]]  # one vertex is enough per-face
 
     src_prim0 = src_doc["meshes"][
-        [n for n in src_doc["nodes"] if n.get("name") in CLASSES and "mesh" in n][0]["mesh"]
+        [n for n in src_doc["nodes"] if n.get("name") in SKIN_CLASSES and "mesh" in n][0]["mesh"]
     ]["primitives"][0]
     src_joints = accessor_array(src_doc, src_bin, src_prim0["attributes"]["JOINTS_0"]).astype(np.int64)
     src_weights = accessor_array(src_doc, src_bin, src_prim0["attributes"]["WEIGHTS_0"])
@@ -251,25 +332,30 @@ def process(luminous_path: Path, source_path: Path, out_path: Path) -> str:
     lum_desc = bone_descriptor(lum_doc, lum_bin, lum_skin, lum_centroids, lum_face_dominant, lum_names)
     src_desc = bone_descriptor(src_doc, src_bin, src_skin, src_centroids, src_face_dominant, src_names)
 
-    correspondence = build_correspondence(lum_desc, lum_face_dominant, src_desc, src_face_dominant)
-
-    if HEAD_BONE in lum_names and HEAD_BONE in src_names:
-        lum_head_row = lum_names.index(HEAD_BONE)
-        src_head_row = src_names.index(HEAD_BONE)
-        lum_head_desc = head_bbox_descriptor(
-            lum_doc, lum_bin, lum_skin, lum_centroids, lum_face_dominant, lum_head_row)
-        src_head_desc = head_bbox_descriptor(
-            src_doc, src_bin, src_skin, src_centroids, src_face_dominant, src_head_row)
-        head_correspondence = build_head_correspondence(
-            lum_head_desc, lum_face_dominant, lum_head_row,
-            src_head_desc, src_face_dominant, src_head_row)
-        head_sel = lum_face_dominant == lum_head_row
-        correspondence[head_sel] = head_correspondence[head_sel]
-
     src_texture, _, _ = read_material_1_texture(src_doc, src_bin)
     src_tex_arr = np.asarray(src_texture)
     sw, sh = src_texture.size
     src_uv_centroids = src_uv[src_faces].mean(axis=1)
+    src_colors = sample_face_colors(src_uv_centroids, src_tex_arr, sw, sh)
+    src_no_data = src_colors.max(axis=1) < NO_DATA_MAX_CHANNEL
+
+    correspondence = build_correspondence(lum_desc, lum_face_dominant, src_desc, src_face_dominant,
+                                           src_no_data)
+
+    if HEAD_BONE in lum_names and HEAD_BONE in src_names:
+        lum_head_row = lum_names.index(HEAD_BONE)
+        src_head_row = src_names.index(HEAD_BONE)
+        lum_normals = face_normals(lum_pos, lum_faces)
+        src_normals = face_normals(src_pos, src_faces)
+        lum_head_desc = head_bbox_descriptor(
+            lum_doc, lum_bin, lum_skin, lum_centroids, lum_normals, lum_face_dominant, lum_head_row)
+        src_head_desc = head_bbox_descriptor(
+            src_doc, src_bin, src_skin, src_centroids, src_normals, src_face_dominant, src_head_row)
+        head_correspondence = build_head_correspondence(
+            lum_head_desc, lum_face_dominant, lum_head_row,
+            src_head_desc, src_face_dominant, src_head_row, src_no_data)
+        head_sel = lum_face_dominant == lum_head_row
+        correspondence[head_sel] = head_correspondence[head_sel]
 
     lum_texture, lum_image_index, lum_material_index = read_material_1_texture(lum_doc, lum_bin)
     out_image = Image.new("RGB", lum_texture.size)
