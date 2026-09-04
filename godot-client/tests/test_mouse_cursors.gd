@@ -65,6 +65,14 @@ func _check_decision_table() -> void:
 		MouseCursors.WALK, "a dead creature walks")
 	_choice({"over_world": true, "target": "creature", "spell_target": "actor"},
 		MouseCursors.WAND, "a spell waiting for an actor claims the creature")
+	# A summon of your own is a creature kind whose click is an order, so the
+	# pointer offers to talk to it until a mode or Alt asks for the blow.
+	_choice({"over_world": true, "target": "summon"},
+		MouseCursors.TALK, "a summon is commanded, not attacked, by a plain click")
+	_choice({"over_world": true, "target": "summon", "mode": "attack"},
+		MouseCursors.ATTACK, "attack mode turns the pointer on your own summon")
+	_choice({"over_world": true, "target": "summon", "alt": true},
+		MouseCursors.ATTACK, "held Alt does the same")
 	# Players: the mode decides, Alt previews attack, default is a look.
 	_choice({"over_world": true, "target": "player"}, MouseCursors.EYE,
 		"a player reads as a look in walk mode")
