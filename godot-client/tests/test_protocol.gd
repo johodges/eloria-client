@@ -528,6 +528,17 @@ func _init() -> void:
 		20.0, 6.0, 0.25, 1.05, 0.06, 0.75)
 	_expect(is_equal_approx(capped_segment, 0.75),
 		"large corrections cannot interpolate indefinitely")
+	# A diagonal step is 1.41 tiles and the server holds it for 1.41 times as
+	# long, so it is shown over 1.41 times as long and crosses the ground at
+	# the same speed as the straight step beside it. Giving both the one
+	# interval is what made walking and running speed up and slow down along
+	# every path that zigzags between the two.
+	var straight_step := ReplicatedActor3D.presentation_segment_duration(
+		1.0, 6.0, 0.2, 1.25, 0.06, 1.1)
+	var diagonal_step := ReplicatedActor3D.presentation_segment_duration(
+		sqrt(2.0), 6.0, 0.2 * sqrt(2.0), 1.25, 0.06, 1.1)
+	_expect(is_equal_approx(1.0 / straight_step, sqrt(2.0) / diagonal_step),
+		"a diagonal step is shown at the same ground speed as a straight one")
 
 	var reduced_actor: Dictionary = ActorReducer.apply_command(actor, 21)
 	_expect(int(reduced_actor.get("x", -1)) == 11

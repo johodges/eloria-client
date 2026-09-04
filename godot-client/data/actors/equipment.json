@@ -4734,6 +4734,582 @@
       "skinRegion": "boots",
       "kind": "boots",
       "authoredFor": "luminous_male"
+    },
+    "1:160": {
+      "scene": "res://assets/actors/native/equipment/militia_arming_sword.glb",
+      "name": "Militia Arming Sword (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:161": {
+      "scene": "res://assets/actors/native/equipment/knightly_cavalry_sword.glb",
+      "name": "Knightly Cavalry Sword (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:162": {
+      "scene": "res://assets/actors/native/equipment/frontier_cutlass.glb",
+      "name": "Frontier Cutlass (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:163": {
+      "scene": "res://assets/actors/native/equipment/amberwood_leafblade.glb",
+      "name": "Amberwood Leafblade (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:164": {
+      "scene": "res://assets/actors/native/equipment/sunmane_steppe_saber.glb",
+      "name": "Sunmane Steppe Saber (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:165": {
+      "scene": "res://assets/actors/native/equipment/rondel_dagger.glb",
+      "name": "Rondel Dagger (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:166": {
+      "scene": "res://assets/actors/native/equipment/ring_guard_parrying_dagger.glb",
+      "name": "Ring Guard Parrying Dagger (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:167": {
+      "scene": "res://assets/actors/native/equipment/gladius.glb",
+      "name": "Gladius (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:168": {
+      "scene": "res://assets/actors/native/equipment/heavy_falchion.glb",
+      "name": "Heavy Falchion (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:169": {
+      "scene": "res://assets/actors/native/equipment/swept_hilt_rapier.glb",
+      "name": "Swept Hilt Rapier (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:170": {
+      "scene": "res://assets/actors/native/equipment/woodsmans_hatchet.glb",
+      "name": "Woodsman's Hatchet (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:171": {
+      "scene": "res://assets/actors/native/equipment/bearded_raider_axe.glb",
+      "name": "Bearded Raider Axe (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:172": {
+      "scene": "res://assets/actors/native/equipment/knightly_battle_axe.glb",
+      "name": "Knightly Battle Axe (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:173": {
+      "scene": "res://assets/actors/native/equipment/sunmane_crescent_axe.glb",
+      "name": "Sunmane Crescent Axe (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:174": {
+      "scene": "res://assets/actors/native/equipment/amberwood_tomahawk.glb",
+      "name": "Amberwood Tomahawk (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:175": {
+      "scene": "res://assets/actors/native/equipment/flanged_mace.glb",
+      "name": "Flanged Mace (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:176": {
+      "scene": "res://assets/actors/native/equipment/war_hammer.glb",
+      "name": "War Hammer (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:177": {
+      "scene": "res://assets/actors/native/equipment/chain_morningstar.glb",
+      "name": "Chain Morningstar (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:179": {
+      "scene": "res://assets/actors/native/equipment/arcane_crystal_cudgel.glb",
+      "name": "Arcane Crystal Cudgel (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:186": {
+      "scene": "res://assets/actors/native/equipment/throwing_knife_fan.glb",
+      "name": "Throwing Knife Fan (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:187": {
+      "scene": "res://assets/actors/native/equipment/engraved_war_chakram.glb",
+      "name": "Engraved War Chakram (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:188": {
+      "scene": "res://assets/actors/native/equipment/arcane_focus_wand.glb",
+      "name": "Arcane Focus Wand (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:189": {
+      "scene": "res://assets/actors/native/equipment/crescent_spellblade_sickle.glb",
+      "name": "Crescent Spellblade Sickle (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:208": {
+      "scene": "res://assets/actors/native/equipment/studded_frontier_club.glb",
+      "name": "Studded Frontier Club (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:220": {
+      "scene": "res://assets/actors/native/equipment/segmented_whip_sword.glb",
+      "name": "Segmented Whip Sword (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:221": {
+      "scene": "res://assets/actors/native/equipment/chain_sickle.glb",
+      "name": "Chain Sickle (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:222": {
+      "scene": "res://assets/actors/native/equipment/bladed_war_fans.glb",
+      "name": "Bladed War Fans (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:223": {
+      "scene": "res://assets/actors/native/equipment/lantern_flail.glb",
+      "name": "Lantern Flail (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:224": {
+      "scene": "res://assets/actors/native/equipment/serpent_coil_whip.glb",
+      "name": "Serpent Coil Whip (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:226": {
+      "scene": "res://assets/actors/native/equipment/circular_ringblade.glb",
+      "name": "Circular Ringblade (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:230": {
+      "scene": "res://assets/actors/native/equipment/rune_battle_gauntlet.glb",
+      "name": "Rune Battle Gauntlet (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
+    },
+    "1:237": {
+      "scene": "res://assets/actors/native/equipment/radiant_sun_disc_chakram.glb",
+      "name": "Radiant Sun Disc Chakram (off hand)",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_l",
+        "offset": [
+          0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          -62.67063,
+          171.14717,
+          19.99167
+        ]
+      }
     }
   },
   "aliases": {},

@@ -40,9 +40,20 @@ func _run() -> void:
 		"the actor builds without errors")
 	actor.apply_server_state(dto, adapter, true)
 
-	# The server's walking pace. The client assumes it until it has measured
-	# one, and its own default has to agree or the actor never catches up.
+	# The server's walking pace, per tile. The client assumes it until it has
+	# measured one, and its own default has to agree or the actor never catches
+	# up. A diagonal step crosses 1.41 tiles and the server holds it for 1.41
+	# paces, so each leg below is sent at the rate its own steps travel.
 	var cadence: float = actor.initial_server_interval
+	# What the body covers the ground at while it is crossing a step, on each
+	# leg. A diagonal step is 1.41 tiles sent 1.41 paces apart, so it has to
+	# render at the same metres per second as a straight one - handing every
+	# step shape the one interval is what made the walk speed up and slow down
+	# along a zigzagging path. A leg whose step has already finished when the
+	# next one is due reads as zero here, which is the same fault seen from the
+	# other end: the body arrives early and stands still until the server
+	# catches up with it.
+	var leg_speeds: Array[float] = []
 	# Command, server dx, dy. Each leg turns off the last one, so the first
 	# step of a leg is a real turn and the rest are straight.
 	for leg: Array in [[22, 1, 0], [21, 1, 1], [20, 0, 1], [27, -1, 1],
@@ -52,7 +63,8 @@ func _run() -> void:
 			dto["y"] = int(dto["y"]) + int(leg[2])
 			dto["command"] = int(leg[0])
 			actor.apply_server_state(dto, adapter)
-			await create_timer(cadence).timeout
+			await create_timer(cadence * Vector2(
+				float(leg[1]), float(leg[2])).length()).timeout
 		var want: float = adapter.direction_to_godot(
 			Vector2i(int(leg[1]), int(leg[2])))
 		var error_degrees: float = absf(rad_to_deg(
@@ -65,6 +77,17 @@ func _run() -> void:
 		_expect(actor.global_position.distance_to(actor.server_target) < 0.6,
 			"command %d leaves the actor within a tile of its own position (%.2f m)"
 				% [int(leg[0]), actor.global_position.distance_to(actor.server_target)])
+		var crossing_speed: float = 0.0
+		if actor._segment_duration > 0.0:
+			crossing_speed = (actor._segment_start.distance_to(
+				actor.server_target) / actor._segment_duration)
+		leg_speeds.append(crossing_speed)
+
+	var slowest: float = leg_speeds.min()
+	var fastest: float = leg_speeds.max()
+	_expect(fastest <= slowest * 1.05,
+		"all eight directions are walked at one speed (%.2f - %.2f m/s)"
+			% [slowest, fastest])
 
 	# A redirect mid-path - clicking a new spot while a path still runs - must turn
 	# the body to the new heading at once, since the facing is taken fresh from
