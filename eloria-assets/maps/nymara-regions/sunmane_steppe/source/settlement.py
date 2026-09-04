@@ -1015,34 +1015,39 @@ HERDS = (
 # Server-owned population: NPCs, harvestables and hostile spawns the server
 # profile must register. Recorded here so the server pull request has an exact
 # list rather than a description.
+# Positions here are the placements the package ships, which were nudged by
+# hand after the last build and never written back: ten of the fifteen posts
+# and eight of the resource sites sat a few metres from what this table said,
+# the two caravan masters symmetrically so. Rebuilding from the old values
+# would have walked them back onto the ground they were moved off.
 NPC_POSTS = (
-    ("khan-of-the-sunmane", "Orun khan", (0.0, -2.0), "quest"),
-    ("market-broker", "Seasonal market broker", (-8.5, 9.5), "trade"),
+    ("khan-of-the-sunmane", "Orun khan", (14.0, -21.0), "quest"),
+    ("market-broker", "Seasonal market broker", (-15.0, 22.0), "trade"),
     ("horse-master", "Camp horse master", (-30.0, -34.0), "trade"),
-    ("caravan-master-west", "West caravan master", (-42.0, 4.0), "travel"),
-    ("caravan-master-east", "East caravan master", (42.0, 4.0), "travel"),
+    ("caravan-master-west", "West caravan master", (-42.0, 9.0), "travel"),
+    ("caravan-master-east", "East caravan master", (42.0, 9.0), "travel"),
     ("shrine-keeper", "Banner shrine keeper", (-25.4, -33.8), "quest"),
     ("miller", "Steppe miller", (44.0, 33.0), "trade"),
-    ("well-keeper", "Crossroads well keeper", (0.0, 21.0), "service"),
-    ("barrow-warden", "Barrow warden", (0.0, -38.0), "quest"),
+    ("well-keeper", "Crossroads well keeper", (0.0, 28.0), "service"),
+    ("barrow-warden", "Barrow warden", (1.0, -33.0), "quest"),
     ("cove-factor", "Cove landing factor", (-53.0, 44.0), "trade"),
-    ("dune-well-keeper", "Dune well keeper", (4.0, -90.0), "service"),
-    ("salt-factor", "Salt-pan factor", (64.0, -98.0), "trade"),
+    ("dune-well-keeper", "Dune well keeper", (4.0, -88.0), "service"),
+    ("salt-factor", "Salt-pan factor", (65.0, -96.0), "trade"),
     ("wind-cave-watch", "Wind caves watch", (70.0, -112.0), "quest"),
-    ("amethyst-prospector", "Amethyst prospector", (122.0, -92.0), "trade"),
-    ("range-warden", "Whitehorn range warden", (98.0, -88.0), "quest"),
+    ("amethyst-prospector", "Amethyst prospector", (124.0, -96.0), "trade"),
+    ("range-warden", "Whitehorn range warden", (103.0, -83.0), "quest"),
 )
 
 HARVESTABLES = (
     ("sunmane-wheat", "Sunmane wheat", "crop", terrain.FIELDS),
     ("steppe-herbs", "Steppe herbs", "herb",
-     ((-50.0, -20.0, 8.0, 8.0), (62.0, -40.0, 8.0, 8.0), (-24.0, 58.0, 8.0, 8.0))),
+     ((-48.0, -20.0, 8.0, 8.0), (62.0, -40.0, 8.0, 8.0), (-24.0, 56.0, 8.0, 8.0))),
     ("shore-clay", "Shore clay", "mineral",
-     ((-54.0, 48.0, 6.0, 6.0), (-52.0, -46.0, 6.0, 6.0))),
+     ((-52.0, 47.0, 6.0, 6.0), (-52.0, -46.0, 6.0, 6.0))),
     ("mesa-flint", "Mesa flint", "mineral",
-     ((-20.0, -74.0, 7.0, 7.0), (60.0, -62.0, 7.0, 7.0))),
+     ((-6.0, -69.0, 7.0, 7.0), (67.0, -55.0, 7.0, 7.0))),
     ("amethyst-shard", "Amethyst shard", "mineral",
-     ((110.0, -96.0, 8.0, 8.0), (126.0, -70.0, 7.0, 7.0))),
+     ((118.0, -103.0, 8.0, 8.0), (119.0, -63.0, 7.0, 7.0))),
     ("pan-salt", "Pan salt", "mineral",
      ((6.0, -124.0, 9.0, 9.0), (62.0, -110.0, 7.0, 7.0))),
     ("dune-sage", "Dune sage", "herb",
@@ -1138,10 +1143,13 @@ CAVE_SITES = (
     # Set into the south face of the eastern butte, a few metres off the desert
     # road, so the entrance is inside the server's addressable tile band and a
     # player can actually walk to the portal.
+    # Destinations are map ids. They were Eternal Lands `.elm` paths until the
+    # C client was retired and the server started sending ids, and the manifest
+    # was being corrected by hand after every build because this table was not.
     ("wind_caves", 70.0, -117.0, 0.0, 5.6, 4.8, 7.0, True, False,
-     "maps/nymara/sunmane_wind_caves.elm", "Sunmane Wind Caves"),
+     "sunmane_wind_caves", "Sunmane Wind Caves"),
     ("crystal_hollow", 124.0, -96.0, -math.pi * 0.62, 5.0, 4.4, 6.4, False, True,
-     "maps/nymara/sunmane_crystal_hollow.elm", "Amethyst Crystal Hollow"),
+     "sunmane_crystal_hollow", "Amethyst Crystal Hollow"),
     ("drovers_shelter", -34.0, -126.0, math.pi * 0.15, 4.4, 3.8, 5.4, True, False,
      None, "Drovers' shelter"),
     ("east_adit", 132.0, -30.0, -math.pi * 0.5, 4.6, 4.0, 5.8, True, False,

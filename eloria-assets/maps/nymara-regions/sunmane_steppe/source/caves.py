@@ -95,8 +95,8 @@ class Passage:
 WIND_CAVES = {
     "id": "sunmane_wind_caves",
     "name": "Sunmane Wind Caves",
-    "mapPath": "maps/nymara/sunmane_wind_caves.elm",
-    "returnMap": "maps/nymara/sunmane_steppe.elm",
+    "mapPath": "sunmane_wind_caves",
+    "returnMap": "sunmane_steppe",
     "returnTile": [128, 175],
     "palette": "limestone",
     "chambers": [
@@ -120,8 +120,8 @@ WIND_CAVES = {
 CRYSTAL_HOLLOW = {
     "id": "sunmane_crystal_hollow",
     "name": "Amethyst Crystal Hollow",
-    "mapPath": "maps/nymara/sunmane_crystal_hollow.elm",
-    "returnMap": "maps/nymara/sunmane_steppe.elm",
+    "mapPath": "sunmane_crystal_hollow",
+    "returnMap": "sunmane_steppe",
     "returnTile": [182, 154],
     "palette": "amethyst",
     "chambers": [

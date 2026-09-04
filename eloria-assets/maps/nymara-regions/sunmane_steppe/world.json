@@ -3410,11 +3410,16 @@
   },
   "minimap": {
     "image": "minimap.webp",
+    "fullMapImage": "full-map.webp",
+    "previewImage": "minimap-preview.webp",
+    "projection": "orthographic-top-down",
+    "renderedFrom": "world.glb",
+    "generator": "godot-client/tests/integration/sunmane_minimap.gd, rendered through the client's own WorldLoader",
+    "northAxis": "-Z",
     "imageSize": [
       280,
       280
     ],
-    "pixelsPerMetre": 1.0,
     "worldMin": [
       -104.0,
       -176.0
@@ -3423,10 +3428,7 @@
       176.0,
       104.0
     ],
-    "northAxis": "-Z",
-    "orientation": "north-up",
-    "projection": "orthographic-top-down",
-    "renderedFrom": "world.glb",
+    "pixelsPerMetre": 1.0,
     "transform": {
       "pixelX": {
         "scale": 1.0,
@@ -3439,9 +3441,6 @@
       "formula": "pixel_x = world_x * scale + offset; pixel_y = world_z * scale + offset"
     },
     "note": "Every Eloria minimap is drawn at one pixel to the metre, so the image's pixel size is the map's size in metres.",
-    "generator": "godot-client/tests/integration/sunmane_minimap.gd, rendered through the client's own WorldLoader",
-    "fullMapImage": "full-map.webp",
-    "previewImage": "minimap-preview.webp",
     "file": "minimap.webp",
     "pixels": 280,
     "size": [
@@ -3453,7 +3452,8 @@
       36.0,
       -36.0
     ],
-    "northUp": true
+    "northUp": true,
+    "orientation": "north-up"
   },
   "ambientPopulation": {
     "note": "Scenery livestock instanced by the client's ambient population system. They carry no actor id and no collision, and are deliberately not baked into the world mesh.",
@@ -3843,7 +3843,7 @@
         "role": "quest",
         "position": [
           14.0,
-          9.93,
+          9.62,
           -21.0
         ],
         "serverTile": [
@@ -3858,7 +3858,7 @@
         "role": "trade",
         "position": [
           -15.0,
-          10.63,
+          9.87,
           22.0
         ],
         "serverTile": [
@@ -3888,7 +3888,7 @@
         "role": "travel",
         "position": [
           -42.0,
-          8.84,
+          8.73,
           9.0
         ],
         "serverTile": [
@@ -3903,7 +3903,7 @@
         "role": "travel",
         "position": [
           42.0,
-          13.01,
+          13.21,
           9.0
         ],
         "serverTile": [
@@ -3948,7 +3948,7 @@
         "role": "service",
         "position": [
           0.0,
-          12.18,
+          9.71,
           28.0
         ],
         "serverTile": [
@@ -3963,7 +3963,7 @@
         "role": "quest",
         "position": [
           1.0,
-          8.76,
+          8.13,
           -33.0
         ],
         "serverTile": [
@@ -3993,7 +3993,7 @@
         "role": "service",
         "position": [
           4.0,
-          13.96,
+          13.92,
           -88.0
         ],
         "serverTile": [
@@ -4008,7 +4008,7 @@
         "role": "trade",
         "position": [
           65.0,
-          13.22,
+          12.95,
           -96.0
         ],
         "serverTile": [
@@ -4038,7 +4038,7 @@
         "role": "trade",
         "position": [
           124.0,
-          25.0,
+          27.2,
           -96.0
         ],
         "serverTile": [
@@ -4053,7 +4053,7 @@
         "role": "quest",
         "position": [
           103.0,
-          16.44,
+          13.64,
           -83.0
         ],
         "serverTile": [
@@ -4089,8 +4089,8 @@
         "kind": "crop",
         "center": [
           -34.0,
-          10.08,
-          -51.0
+          8.76,
+          -46.0
         ],
         "extent": [
           13.0,
@@ -4098,7 +4098,7 @@
         ],
         "serverTile": [
           24,
-          109
+          104
         ],
         "harvestHook": "harvest.nymara.sunmane_steppe"
       },
@@ -4165,7 +4165,7 @@
         "kind": "herb",
         "center": [
           -48.0,
-          14.61,
+          13.66,
           -20.0
         ],
         "extent": [
@@ -4203,7 +4203,7 @@
         "kind": "herb",
         "center": [
           -24.0,
-          9.33,
+          9.34,
           56.0
         ],
         "extent": [
@@ -4222,7 +4222,7 @@
         "kind": "mineral",
         "center": [
           -52.0,
-          7.49,
+          7.34,
           47.0
         ],
         "extent": [
@@ -4279,7 +4279,7 @@
         "kind": "mineral",
         "center": [
           67.0,
-          15.21,
+          15.0,
           -55.0
         ],
         "extent": [
@@ -4298,7 +4298,7 @@
         "kind": "mineral",
         "center": [
           118.0,
-          21.49,
+          22.24,
           -103.0
         ],
         "extent": [
@@ -4648,6 +4648,6 @@
     "glbBytes": 19110888,
     "lod": 1,
     "textureScale": 1.0,
-    "buildSeconds": 23.8
+    "buildSeconds": 22.4
   }
 }
