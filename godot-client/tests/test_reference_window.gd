@@ -52,7 +52,6 @@ func _run() -> void:
 	# and a test that leaves a key moved breaks the next one.
 	var original: Array[InputEvent] = InputMap.action_get_events(
 		"toggle_inventory").duplicate()
-	var before: String = help.text
 	var settings: Control = main.get("settings_window") as Control
 	settings.call("begin_capture", "toggle_inventory")
 	var pressed := InputEventKey.new()
@@ -60,7 +59,7 @@ func _run() -> void:
 	pressed.physical_keycode = KEY_F7
 	main.call("_unhandled_input", pressed)
 	await process_frame
-	_expect(help.text != before and help.text.contains("F7"),
+	_expect(help.text.contains("F7  -  toggle inventory"),
 		"a rebound key shows up in the help without anyone editing it")
 
 	# Links: what the server said, once each, nothing invented.
@@ -91,9 +90,10 @@ func _run() -> void:
 	# The encyclopedia is real content, not an empty shell.
 	_expect(int(window.call("entry_count")) >= 5,
 		"the encyclopedia has entries: %d" % int(window.call("entry_count")))
-	var body: RichTextLabel = window.get_node(
-		"ReferenceWindow/ReferenceBody/ReferenceTabs/Encyclopedia/EntryBody"
-		) as RichTextLabel
+	# The document renderer sits inside the encyclopedia's middle pane now, so
+	# it is reached through the view rather than by a path off the window.
+	var body: RichTextLabel = (window.get("encyclopedia") as EncyclopediaView).get(
+		"entry_body") as RichTextLabel
 	_expect(not body.text.strip_edges().is_empty(),
 		"and shows one when the window opens")
 	window.call("_show_entry", 1)

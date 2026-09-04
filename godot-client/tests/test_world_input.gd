@@ -1046,6 +1046,16 @@ func _run() -> void:
 	_expect(manufacturing_tabs.get_child_count() == 8,
 		"a tab for All and one per mixing skill the profile serves: %d"
 			% manufacturing_tabs.get_child_count())
+	# A tab carries the same picture the encyclopedia shelves that skill
+	# under, so the two windows cannot end up naming it differently. "All" is
+	# not a skill and has none.
+	var tailoring_tab: Button = manufacturing_tabs.get_node_or_null(
+		"TabTailoring") as Button
+	_expect(tailoring_tab != null and tailoring_tab.icon != null
+		and tailoring_tab.icon == SubjectIcons.icon_for("tailoring"),
+		"a skill tab draws the shared subject icon for its skill")
+	_expect((manufacturing_tabs.get_node("TabAll") as Button).icon == null,
+		"All is not a skill, so it has no skill's picture")
 	main.set("manufacturing_skill", "tailoring")
 	main.call("_sync_manufacturing")
 	_expect(manufacturing_list.item_count == 3,

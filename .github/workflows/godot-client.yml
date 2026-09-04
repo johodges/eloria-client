@@ -37,6 +37,8 @@ jobs:
         run: python3 godot-client/tests/test_map_surface_materials.py -v
       - name: Validate map crossings
         run: python3 godot-client/tests/test_map_crossings.py -v
+      - name: Validate the shared subject icon atlas
+        run: python3 godot-client/tests/test_subject_icon_atlas.py -v
       - name: Simulate and time the cape cloth
         run: godot --headless --path godot-client --script res://tests/test_cape_cloth.gd
       - name: Validate creature rigs, skinning and animation

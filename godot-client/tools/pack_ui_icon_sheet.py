@@ -19,14 +19,69 @@ def cell_bounds(length: int, grid: int, index: int) -> tuple[int, int]:
     return round(index * length / grid), round((index + 1) * length / grid)
 
 
+def spans(occupied: list[bool]) -> list[tuple[int, int]]:
+    """The runs of True in `occupied`, as inclusive-exclusive bounds."""
+    found: list[tuple[int, int]] = []
+    start: int | None = None
+    for index, filled in enumerate(occupied):
+        if filled and start is None:
+            start = index
+        elif not filled and start is not None:
+            found.append((start, index))
+            start = None
+    if start is not None:
+        found.append((start, len(occupied)))
+    return found
+
+
+def detect_tiles(source: Image.Image,
+                 threshold: int = 28) -> list[tuple[int, int, int, int]]:
+    """Find the sheet's tiles rather than assuming they fill an even grid.
+
+    A generated contact sheet is only approximately ruled: the sheet these
+    were drawn from put its rows on a tighter pitch than its columns, so
+    slicing it into equal cells cut nine pixels off the top of the bottom row
+    and left a band of backing below it. Every icon in that row would have sat
+    low in its cell by a pixel once reduced, which is exactly the kind of
+    thing nobody sees until the whole set is in front of them.
+
+    The tiles are opaque and the backing between them is not, so the columns
+    and rows the tiles occupy can simply be read off. Tiles are returned in
+    reading order for however many rows and columns were found; a short final
+    row is fine, and the cells it does not reach are skipped.
+    """
+    pixels = source.convert("RGB").load()
+    width, height = source.size
+    lit_column = [False] * width
+    lit_row = [False] * height
+    for y in range(height):
+        for x in range(width):
+            red, green, blue = pixels[x, y]
+            if max(red, green, blue) > threshold:
+                lit_column[x] = True
+                lit_row[y] = True
+    columns, rows = spans(lit_column), spans(lit_row)
+    return [(left, top, right, bottom)
+            for top, bottom in rows for left, right in columns]
+
+
 def pack(source: Image.Image, source_grid: int, destination_grid: int,
-         cell_size: int, count: int, canvas_size: int) -> Image.Image:
+         cell_size: int, count: int, canvas_size: int,
+         detect: bool = False) -> Image.Image:
     atlas = Image.new("RGBA", (canvas_size, canvas_size), (0, 0, 0, 0))
+    tiles = detect_tiles(source) if detect else None
+    if tiles is not None and len(tiles) < count:
+        raise SystemExit("found %d tiles in the sheet, needed %d"
+                         % (len(tiles), count))
     for index in range(count):
-        source_row, source_column = divmod(index, source_grid)
-        left, right = cell_bounds(source.width, source_grid, source_column)
-        top, bottom = cell_bounds(source.height, source_grid, source_row)
-        icon = source.crop((left, top, right, bottom)).resize(
+        if tiles is not None:
+            box = tiles[index]
+        else:
+            source_row, source_column = divmod(index, source_grid)
+            left, right = cell_bounds(source.width, source_grid, source_column)
+            top, bottom = cell_bounds(source.height, source_grid, source_row)
+            box = (left, top, right, bottom)
+        icon = source.crop(box).resize(
             (cell_size, cell_size), Image.Resampling.LANCZOS)
         destination_row, destination_column = divmod(index, destination_grid)
         atlas.alpha_composite(icon, (destination_column * cell_size,
@@ -57,17 +112,24 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("source", type=Path)
     parser.add_argument("destination", type=Path)
-    parser.add_argument("--source-grid", type=int, required=True)
+    parser.add_argument("--source-grid", type=int, default=0,
+                        help="cells per side of the source sheet; ignored "
+                             "with --detect")
     parser.add_argument("--destination-grid", type=int, required=True)
     parser.add_argument("--cell-size", type=int, required=True)
     parser.add_argument("--count", type=int, required=True)
     parser.add_argument("--canvas-size", type=int, default=256)
+    parser.add_argument(
+        "--detect", action="store_true",
+        help="find the sheet's tiles instead of assuming an even grid, for a "
+             "generated sheet whose rows and columns are only approximately "
+             "ruled")
     parser.add_argument("--dds", type=Path)
     args = parser.parse_args()
 
     source = Image.open(args.source).convert("RGBA")
     atlas = pack(source, args.source_grid, args.destination_grid,
-                 args.cell_size, args.count, args.canvas_size)
+                 args.cell_size, args.count, args.canvas_size, args.detect)
     args.destination.parent.mkdir(parents=True, exist_ok=True)
     atlas.save(args.destination, optimize=True)
     if args.dds is not None:

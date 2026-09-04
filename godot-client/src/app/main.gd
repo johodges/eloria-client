@@ -4083,6 +4083,12 @@ func _manufacturing_tab(text: String, skill: String) -> Button:
 	tab.text = text
 	tab.toggle_mode = true
 	tab.button_pressed = manufacturing_skill == skill
+	# The same picture the encyclopedia shelves that skill under, so the two
+	# windows name it the same way. "All" is not a skill and has none.
+	var icon: Texture2D = SubjectIcons.icon_for(skill)
+	if icon != null:
+		tab.icon = icon
+		tab.add_theme_constant_override("h_separation", 6)
 	tab.pressed.connect(func() -> void:
 		manufacturing_skill = skill
 		_sync_manufacturing())

@@ -24,6 +24,12 @@ const PAGE_INDEX := "index"
 
 #: A glyph per category for the browse list. A category with none gets a dot,
 #: which is a plainer answer than an icon that means something else.
+## The glyphs below are what the shelf used to be labelled with, and four
+## pairs of them collided: crafting and manufacturing were both a hammer,
+## alchemy and potions both a still, skills and books both a ruled page, the
+## world and its maps both a disc. Half the shelf named two things at once.
+## They are kept as the fallback for a category `SubjectIcons` has nothing
+## drawn for, which is better than borrowing another category's picture.
 const CATEGORY_GLYPHS := {
 	"world": "\u25c9", "skills": "\u25a4", "combat": "\u2694",
 	"perks": "\u2606", "gathering": "\u2740", "commerce": "\u2696",
@@ -898,8 +904,14 @@ func _sync_browse() -> void:
 		var id: String = str(category.get("id", ""))
 		var row := Button.new()
 		row.name = "Browse%s" % _slug(id)
-		row.text = "%s  %s" % [CATEGORY_GLYPHS.get(id, "•"),
-			str(category.get("title", id))]
+		var icon: Texture2D = SubjectIcons.icon_for(id)
+		if icon != null:
+			row.icon = icon
+			row.text = str(category.get("title", id))
+			row.add_theme_constant_override("h_separation", 8)
+		else:
+			row.text = "%s  %s" % [CATEGORY_GLYPHS.get(id, "•"),
+				str(category.get("title", id))]
 		row.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		row.focus_mode = Control.FOCUS_NONE
 		row.toggle_mode = true
