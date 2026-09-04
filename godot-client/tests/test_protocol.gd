@@ -47,7 +47,7 @@ func _init() -> void:
 		"degraded_items_v1": EloriaProtocol.ServerMessage.ELORIA_DEGRADED_ITEMS,
 		"experience64_v1": EloriaProtocol.ServerMessage.ELORIA_EXPERIENCE_STATE,
 		"party_window_v1": EloriaProtocol.ServerMessage.ELORIA_PARTY_STATE,
-		"perk_catalog_v2": EloriaProtocol.ServerMessage.ELORIA_PERK_CATALOG,
+		"perk_catalog_v3": EloriaProtocol.ServerMessage.ELORIA_PERK_CATALOG,
 		"quest_archive_v1":
 			EloriaProtocol.ServerMessage.ELORIA_QUEST_ARCHIVE_STATE,
 		"player_info_v1": EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO,
@@ -78,9 +78,9 @@ func _init() -> void:
 		EloriaProtocol.ServerMessage.ELORIA_PARTY_STATE: "0000000000",
 		EloriaProtocol.ServerMessage.ELORIA_QUEST_ARCHIVE_STATE: "0000",
 		# One perk, priced, with no reason to refuse it: tier 1 of 3 owned,
-		# so what is priced is the second tier.
+		# so what is priced is the second tier, and it sits on the Combat tab.
 		EloriaProtocol.ServerMessage.ELORIA_PERK_CATALOG:
-			"01000500c8000000 0103 41004200 00".replace(" ", ""),
+			"0100030090010000010354616e6b00780000436f6d62617400",
 		# No degradation chains authored: a real answer, not a missing packet.
 		EloriaProtocol.ServerMessage.ELORIA_DEGRADED_ITEMS: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_ACHIEVEMENTS_STATE: "00000000",

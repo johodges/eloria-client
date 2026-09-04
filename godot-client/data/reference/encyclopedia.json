@@ -120,11 +120,11 @@
           "id": "perks-overview",
           "title": "How perks work",
           "summary": "Pick points, tiers, exclusions and gear",
-          "body": "A perk is bought with pick points, and most of them are bought more than once. There are 54 perks on the shelf and 32 of them come in tiers.\n\nPick points come from overall levels: one for each, spent on attributes, nexus or perks, and never spent twice. A tiered perk costs 3 pick points for its first tier, 6 for its second and 9 for its third, so owning one outright is 18.\n\nSome perks cannot be held together - Lucky Hitter and Lucky Dodger answer the same question from opposite sides, and so do Mirror and Life Stealing. The page for each perk says what it clashes with.\n\nWorn gear can carry a perk. A cape does not simply grant one: it adds a tier, which means it is worth the same to a player who has bought all three as to one who has bought none - and it is the only way to reach the tiers above the third.\n\nA removal stone takes back one tier and returns what that tier cost. At its highest tier a perk that says so can be switched off with the #perk command, which hands back the effect and not the pick points.\n\n#list_perks names everything you hold, the tier you are at, and what that tier does.",
+          "body": "A perk is bought with pick points, and most of them are bought more than once. There are 32 perks on the shelf and 32 of them come in tiers.\n\nPick points come from overall levels: one for each, spent on attributes, nexus or perks, and never spent twice. A tiered perk costs 3 pick points for its first tier, 6 for its second and 9 for its third, so owning one outright is 18.\n\nSome perks cannot be held together - Lucky Hitter and Lucky Dodger answer the same question from opposite sides, and so do Mirror and Life Stealing. The page for each perk says what it clashes with.\n\nWorn gear can carry a perk. A cape does not simply grant one: it adds a tier, which means it is worth the same to a player who has bought all three as to one who has bought none - and it is the only way to reach the tiers above the third.\n\nA removal stone takes back one tier and returns what that tier cost. At its highest tier a perk that says so can be switched off with the #perk command, which hands back the effect and not the pick points.\n\n#list_perks names everything you hold, the tier you are at, and what that tier does.",
           "facts": [
             [
               "Perks",
-              "54"
+              "32"
             ],
             [
               "Tiered",
@@ -301,26 +301,6 @@
           ]
         },
         {
-          "id": "perk-gelatine-bones",
-          "title": "Gelatine Bones",
-          "summary": "Fighting - Receive 5 additional damage whenever you are damaged.",
-          "body": "Receive 5 additional damage whenever you are damaged.\n\nIt is bought once, for returns 6 pick points and no gold.",
-          "facts": [
-            [
-              "Tiers",
-              "1"
-            ],
-            [
-              "Gold",
-              "no gold"
-            ],
-            [
-              "Taken back by",
-              "Gelatine Bones Removal"
-            ]
-          ]
-        },
-        {
           "id": "perk-giantslayer",
           "title": "Giantslayer",
           "summary": "Fighting - A fifth more damage against anything standing on four tiles or more.",
@@ -341,50 +321,6 @@
             [
               "Taken back by",
               "Giantslayer Removal"
-            ]
-          ]
-        },
-        {
-          "id": "perk-i-glow-in-the-dark",
-          "title": "I Glow in the Dark",
-          "summary": "Fighting - Combat hits cause 5 additional radiation damage.",
-          "body": "Combat hits cause 5 additional radiation damage.\n\nIt is bought once, for 7 pick points and 250 gold.",
-          "facts": [
-            [
-              "Tiers",
-              "1"
-            ],
-            [
-              "Gold",
-              "250 gold"
-            ],
-            [
-              "Taken back by",
-              "I Glow In The Dark Removal"
-            ]
-          ]
-        },
-        {
-          "id": "perk-i-cant-dance",
-          "title": "I can't dance",
-          "summary": "Fighting - Suffer an additional 15 defense penalty in multi-combat.",
-          "body": "Suffer an additional 15 defense penalty in multi-combat.\n\nIt is bought once, for returns 5 pick points and no gold.\n\nCannot be held with There is no Fork.",
-          "facts": [
-            [
-              "Tiers",
-              "1"
-            ],
-            [
-              "Gold",
-              "no gold"
-            ],
-            [
-              "Excludes",
-              "There is no Fork"
-            ],
-            [
-              "Taken back by",
-              "I Can'T Dance Removal"
             ]
           ]
         },
@@ -505,46 +441,6 @@
           ]
         },
         {
-          "id": "perk-monster-magnetism",
-          "title": "Monster Magnetism",
-          "summary": "Fighting - Most normal aggressive creatures will not attack you.",
-          "body": "Most normal aggressive creatures will not attack you.\n\nIt is bought once, for 5 pick points and 1,500 gold.\n\nWorn gear carries this perk, and adds a tier to it for anybody who has already bought one.\n\nCarried by: Monster Magnetism Cloak.\n\nAt its highest tier it can be switched off and on again with #perk monster magnetism.",
-          "facts": [
-            [
-              "Tiers",
-              "1"
-            ],
-            [
-              "Gold",
-              "1,500 gold"
-            ],
-            [
-              "Gear",
-              "Monster Magnetism Cloak"
-            ],
-            [
-              "Taken back by",
-              "Monster Magnetism Removal"
-            ]
-          ]
-        },
-        {
-          "id": "perk-self-destruct",
-          "title": "Self Destruct",
-          "summary": "Fighting - When you die in battle, your opponents receive 15-25 damage.",
-          "body": "When you die in battle, your opponents receive 15-25 damage.\n\nIt is bought once, for 5 pick points and 1,000 gold.",
-          "facts": [
-            [
-              "Tiers",
-              "1"
-            ],
-            [
-              "Gold",
-              "1,000 gold"
-            ]
-          ]
-        },
-        {
           "id": "perk-standard-bearer",
           "title": "Standard Bearer",
           "summary": "Fighting - Party members within eight tiles of you gain twelve armour.",
@@ -565,30 +461,6 @@
             [
               "Taken back by",
               "Standard Bearer Removal"
-            ]
-          ]
-        },
-        {
-          "id": "perk-there-is-no-fork",
-          "title": "There is no Fork",
-          "summary": "Fighting - No defense penalty while fighting multiple opponents.",
-          "body": "No defense penalty while fighting multiple opponents.\n\nIt is bought once, for 7 pick points and 250 gold.\n\nCannot be held with I can't dance.",
-          "facts": [
-            [
-              "Tiers",
-              "1"
-            ],
-            [
-              "Gold",
-              "250 gold"
-            ],
-            [
-              "Excludes",
-              "I can't dance"
-            ],
-            [
-              "Taken back by",
-              "There Is No Fork Removal"
             ]
           ]
         },
@@ -665,26 +537,6 @@
           ]
         },
         {
-          "id": "perk-ethereal-ranger",
-          "title": "Ethereal Ranger",
-          "summary": "Ranging - Thirty percent chance to retain fired ammunition.",
-          "body": "Thirty percent chance to retain fired ammunition.\n\nIt is bought once, for 5 pick points and 1,000 gold.",
-          "facts": [
-            [
-              "Tiers",
-              "1"
-            ],
-            [
-              "Gold",
-              "1,000 gold"
-            ],
-            [
-              "Taken back by",
-              "Ethereal Ranger Removal"
-            ]
-          ]
-        },
-        {
           "id": "perk-lucky-archer",
           "title": "Lucky Archer",
           "summary": "Ranging - Ten percent of your shots are guaranteed hits.",
@@ -705,46 +557,6 @@
             [
               "Taken back by",
               "Lucky Archer Removal"
-            ]
-          ]
-        },
-        {
-          "id": "perk-sharp-shooter",
-          "title": "Sharp Shooter",
-          "summary": "Ranging - Gain 25 percent additional perception while ranging.",
-          "body": "Gain 25 percent additional perception while ranging.\n\nIt is bought once, for 5 pick points and 150 gold.",
-          "facts": [
-            [
-              "Tiers",
-              "1"
-            ],
-            [
-              "Gold",
-              "150 gold"
-            ],
-            [
-              "Taken back by",
-              "Sharp Shooter Removal"
-            ]
-          ]
-        },
-        {
-          "id": "perk-wilhelm-hood",
-          "title": "Wilhelm Hood",
-          "summary": "Ranging - Gain 15 percent ranging experience and damage, plus accuracy.",
-          "body": "Gain 15 percent ranging experience and damage, plus accuracy.\n\nIt is bought once, for 5 pick points and 5,000 gold.",
-          "facts": [
-            [
-              "Tiers",
-              "1"
-            ],
-            [
-              "Gold",
-              "5,000 gold"
-            ],
-            [
-              "Taken back by",
-              "Whilhelm Hood Removal"
             ]
           ]
         },
@@ -825,26 +637,6 @@
           ]
         },
         {
-          "id": "perk-godless",
-          "title": "Godless",
-          "summary": "Magic and summoning - You cannot worship gods or use priest services.",
-          "body": "You cannot worship gods or use priest services.\n\nIt is bought once, for returns 8 pick points and no gold.",
-          "facts": [
-            [
-              "Tiers",
-              "1"
-            ],
-            [
-              "Gold",
-              "no gold"
-            ],
-            [
-              "Taken back by",
-              "Godless Removal"
-            ]
-          ]
-        },
-        {
           "id": "perk-lifebinder",
           "title": "Lifebinder",
           "summary": "Magic and summoning - What you summon has twice the health.",
@@ -889,26 +681,6 @@
             [
               "Taken back by",
               "Offensive Mage Removal"
-            ]
-          ]
-        },
-        {
-          "id": "perk-skeptic",
-          "title": "Skeptic",
-          "summary": "Magic and summoning - You are unaffected by astrology.",
-          "body": "You are unaffected by astrology.\n\nIt is bought once, for no pick points and 30,000 gold.",
-          "facts": [
-            [
-              "Tiers",
-              "1"
-            ],
-            [
-              "Gold",
-              "30,000 gold"
-            ],
-            [
-              "Taken back by",
-              "Skeptic Removal"
             ]
           ]
         },
@@ -1037,26 +809,6 @@
           ]
         },
         {
-          "id": "perk-collateral-damage",
-          "title": "Collateral Damage",
-          "summary": "Harvesting - Nearby area harvesting events can damage you.",
-          "body": "Nearby area harvesting events can damage you.\n\nIt is bought once, for returns 1 pick points and 10,000 gold.",
-          "facts": [
-            [
-              "Tiers",
-              "1"
-            ],
-            [
-              "Gold",
-              "10,000 gold"
-            ],
-            [
-              "Taken back by",
-              "Collateral Damage Removal"
-            ]
-          ]
-        },
-        {
           "id": "perk-gatherer",
           "title": "Gatherer",
           "summary": "Harvesting - One harvest in two yields a second item.",
@@ -1081,26 +833,6 @@
             [
               "Taken back by",
               "Gatherer Removal"
-            ]
-          ]
-        },
-        {
-          "id": "perk-harvester-of-sorrow",
-          "title": "Harvester of Sorrow",
-          "summary": "Harvesting - Teleport-nexus harvesting events send you to the Nordcarn PK arena.",
-          "body": "Teleport-nexus harvesting events send you to the Nordcarn PK arena.\n\nIt is bought once, for returns 5 pick points and 100,000 gold.",
-          "facts": [
-            [
-              "Tiers",
-              "1"
-            ],
-            [
-              "Gold",
-              "100,000 gold"
-            ],
-            [
-              "Taken back by",
-              "Harvester Of Sorrow Removal"
             ]
           ]
         },
@@ -1157,26 +889,6 @@
           ]
         },
         {
-          "id": "perk-careful-guy",
-          "title": "Careful Guy",
-          "summary": "Keeping going - Reduces each item's death-drop chance from 50 to 40 percent.",
-          "body": "Reduces each item's death-drop chance from 50 to 40 percent.\n\nIt is bought once, for 5 pick points and 200 gold.",
-          "facts": [
-            [
-              "Tiers",
-              "1"
-            ],
-            [
-              "Gold",
-              "200 gold"
-            ],
-            [
-              "Taken back by",
-              "Careful Guy Removal"
-            ]
-          ]
-        },
-        {
           "id": "perk-cooldown-reduction",
           "title": "Cooldown Reduction",
           "summary": "Keeping going - Just over a third sooner.",
@@ -1229,26 +941,6 @@
           ]
         },
         {
-          "id": "perk-i-eat-dead-people",
-          "title": "I Eat Dead People",
-          "summary": "Keeping going - Allows you to eat Bones for 10 food.",
-          "body": "Allows you to eat Bones for 10 food.\n\nIt is bought once, for 3 pick points and 10,000 gold.",
-          "facts": [
-            [
-              "Tiers",
-              "1"
-            ],
-            [
-              "Gold",
-              "10,000 gold"
-            ],
-            [
-              "Taken back by",
-              "I Eat Dead People Removal"
-            ]
-          ]
-        },
-        {
           "id": "perk-much-nomz-wow",
           "title": "Much Nomz wow",
           "summary": "Keeping going - You can hold eighty more food.",
@@ -1269,158 +961,6 @@
             [
               "Taken back by",
               "Much Nomz Wow Removal"
-            ]
-          ]
-        },
-        {
-          "id": "perk-power-hungry",
-          "title": "Power Hungry",
-          "summary": "Keeping going - Lose 3 food per minute instead of 1.",
-          "body": "Lose 3 food per minute instead of 1.\n\nIt is bought once, for returns 3 pick points and no gold.\n\nCannot be held with Power Saving.",
-          "facts": [
-            [
-              "Tiers",
-              "1"
-            ],
-            [
-              "Gold",
-              "no gold"
-            ],
-            [
-              "Excludes",
-              "Power Saving"
-            ],
-            [
-              "Taken back by",
-              "Power Hungry Removal"
-            ]
-          ]
-        },
-        {
-          "id": "perk-power-saving",
-          "title": "Power Saving",
-          "summary": "Keeping going - No normal food loss while health and ether are full and you are not researching.",
-          "body": "No normal food loss while health and ether are full and you are not researching.\n\nIt is bought once, for 3 pick points and 100 gold.\n\nWorn gear carries this perk, and adds a tier to it for anybody who has already bought one.\n\nCarried by: Powersaving Cloak.\n\nCannot be held with Power Hungry.",
-          "facts": [
-            [
-              "Tiers",
-              "1"
-            ],
-            [
-              "Gold",
-              "100 gold"
-            ],
-            [
-              "Gear",
-              "Powersaving Cloak"
-            ],
-            [
-              "Excludes",
-              "Power Hungry"
-            ],
-            [
-              "Taken back by",
-              "Powersaving Removal"
-            ]
-          ]
-        },
-        {
-          "id": "perk-antisocial",
-          "title": "Antisocial",
-          "summary": "Everything else - Most NPCs will not buy from or sell to you.",
-          "body": "Most NPCs will not buy from or sell to you.\n\nIt is bought once, for returns 10 pick points and 15,000 gold.",
-          "facts": [
-            [
-              "Tiers",
-              "1"
-            ],
-            [
-              "Gold",
-              "15,000 gold"
-            ],
-            [
-              "Taken back by",
-              "Antisocial Removal"
-            ]
-          ]
-        },
-        {
-          "id": "perk-hellspawn",
-          "title": "Hellspawn",
-          "summary": "Everything else - Map changes have a 20 percent chance to send you to the Underworld.",
-          "body": "Map changes have a 20 percent chance to send you to the Underworld.\n\nIt is bought once, for returns 10 pick points and 15,000 gold.",
-          "facts": [
-            [
-              "Tiers",
-              "1"
-            ],
-            [
-              "Gold",
-              "15,000 gold"
-            ],
-            [
-              "Taken back by",
-              "Hellspawn Removal"
-            ]
-          ]
-        },
-        {
-          "id": "perk-one",
-          "title": "One",
-          "summary": "Everything else - Ground engineering items can affect you on non-PK maps.",
-          "body": "Ground engineering items can affect you on non-PK maps.\n\nIt is bought once, for returns 6 pick points and 60,000 gold.",
-          "facts": [
-            [
-              "Tiers",
-              "1"
-            ],
-            [
-              "Gold",
-              "60,000 gold"
-            ],
-            [
-              "Taken back by",
-              "One Removal"
-            ]
-          ]
-        },
-        {
-          "id": "perk-scotty-died",
-          "title": "Scotty Died",
-          "summary": "Everything else - You cannot use the #beam me command.",
-          "body": "You cannot use the #beam me command.\n\nIt is bought once, for returns 3 pick points and no gold.",
-          "facts": [
-            [
-              "Tiers",
-              "1"
-            ],
-            [
-              "Gold",
-              "no gold"
-            ],
-            [
-              "Taken back by",
-              "Scotty Died Removal"
-            ]
-          ]
-        },
-        {
-          "id": "perk-underworlder",
-          "title": "Underworlder",
-          "summary": "Everything else - Allows teleport rings and spells from the Underworld.",
-          "body": "Allows teleport rings and spells from the Underworld.\n\nIt is bought once, for 2 pick points and 10,000 gold.",
-          "facts": [
-            [
-              "Tiers",
-              "1"
-            ],
-            [
-              "Gold",
-              "10,000 gold"
-            ],
-            [
-              "Taken back by",
-              "Underworlder Removal"
             ]
           ]
         }

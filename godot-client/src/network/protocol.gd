@@ -179,7 +179,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"merchant_window_v1",
 	"navigation_hud_v1",
 	"party_window_v1",
-	"perk_catalog_v2",
+	"perk_catalog_v3",
 	"player_info_v1",
 	"achievements_window_v1",
 	"actor_footprints_v1",
@@ -1824,14 +1824,19 @@ static func decode_perk_catalog(payload: PackedByteArray) -> Dictionary:
 		var owned: int = int(payload[offset])
 		var maximum: int = int(payload[offset + 1])
 		offset += 2
-		var text: Dictionary = _nul_run(payload, offset, 3)
+		# Four strings now: the fourth is which tab of the perk window this
+		# belongs on. Which the client is told rather than working out, for
+		# the same reason it is told the names - how the shelf is divided is
+		# the server's to say, and a table here would sort last week's shelf.
+		var text: Dictionary = _nul_run(payload, offset, 4)
 		if text.is_empty():
 			return {"type": "invalid", "error": "perk_catalog_entry_text"}
 		var values: Array = text.values
 		offset = int(text.offset)
 		perks.append({"name": values[0], "description": values[1],
 			"pickpoints": pickpoints, "gold": gold, "blocker": values[2],
-			"tier": owned, "max_tier": max(1, maximum)})
+			"tier": owned, "max_tier": max(1, maximum),
+			"category": values[3]})
 	if offset != payload.size():
 		return {"type": "invalid", "error": "perk_catalog_trailing"}
 	return {"type": "perk_catalog", "perks": perks}

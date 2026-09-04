@@ -126,6 +126,10 @@ var map_light_root: Node3D
 var perk_tab: MarginContainer
 var perk_summary: Label
 var perk_rows: VBoxContainer
+var perk_filters: HBoxContainer
+var perk_hint: Label
+#: Which tab of the perk window is showing. Empty is "All".
+var _perk_filter: String = ""
 var purchase_confirm: PanelContainer
 var purchase_prompt: Label
 ## What the confirmation dialog is currently asking about: the kind the
@@ -5040,15 +5044,30 @@ func _build_perks_tab() -> void:
 	perk_summary = Label.new()
 	perk_summary.name = "PerkSummary"
 	perk_summary.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	perk_summary.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	column.add_child(perk_summary)
+	# The tabs the shelf is divided into. "All" is first and always there;
+	# the rest are whatever the server said its perks belong to, so a
+	# category invented later needs no change here.
+	perk_filters = HBoxContainer.new()
+	perk_filters.name = "PerkFilters"
+	perk_filters.alignment = BoxContainer.ALIGNMENT_CENTER
+	column.add_child(perk_filters)
 	var scroll := ScrollContainer.new()
 	scroll.name = "PerkScroll"
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	column.add_child(scroll)
 	perk_rows = VBoxContainer.new()
 	perk_rows.name = "PerkRows"
 	perk_rows.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(perk_rows)
+	perk_hint = Label.new()
+	perk_hint.name = "PerkHint"
+	perk_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	perk_hint.text = "Select a perk to view its next tier."
+	perk_hint.modulate = Color(1, 1, 1, 0.55)
+	column.add_child(perk_hint)
 
 	# An in-HUD panel rather than a ConfirmationDialog: every other window
 	# this client draws is one of these, and a native dialog would be the
@@ -5098,51 +5117,169 @@ func _sync_perk_catalog() -> void:
 		perk_rows.remove_child(child)
 		child.queue_free()
 	perk_summary.text = "Pick points available: %d" % _available_pickpoints()
+	_sync_perk_filters()
 	if AppState.perk_catalog.is_empty():
 		var waiting := Label.new()
 		waiting.name = "PerksWaiting"
 		waiting.text = "The server has not listed the perks it offers."
 		perk_rows.add_child(waiting)
 		return
+	var shown: int = 0
 	for raw_perk: Variant in AppState.perk_catalog:
 		var perk: Dictionary = raw_perk as Dictionary
-		var perk_name: String = str(perk.get("name", ""))
-		var cost: int = int(perk.get("pickpoints", 0))
-		var gold: int = int(perk.get("gold", 0))
-		var blocker: String = str(perk.get("blocker", ""))
-		var row := HBoxContainer.new()
-		# Node names keep spaces, and a row is looked up by name; the perk
-		# names with two words would otherwise be the awkward ones.
-		row.name = "Perk%s" % perk_name.replace(" ", "").validate_node_name()
-		perk_rows.add_child(row)
-		# A perk is bought in tiers, and the row is an offer: what it costs
-		# and what it says are the *next* tier's, so the button says which
-		# step it buys rather than implying the perk arrives whole.
-		var owned: int = int(perk.get("tier", 0))
-		var maximum: int = maxi(1, int(perk.get("max_tier", 1)))
-		var take := Button.new()
-		take.name = "Take"
-		take.text = "Take" if maximum == 1 else (
-			"Tier %d" % mini(maximum, owned + 1))
+		if not _perk_filter.is_empty() and str(
+				perk.get("category", "")) != _perk_filter:
+			continue
+		perk_rows.add_child(_perk_row(perk))
+		shown += 1
+	if shown == 0:
+		var empty := Label.new()
+		empty.name = "PerksEmpty"
+		empty.text = "No perks in this category."
+		perk_rows.add_child(empty)
+
+## The tabs, rebuilt from whatever categories the server actually sent. A tab
+## for a category with nothing in it would be a promise the shelf cannot keep.
+func _sync_perk_filters() -> void:
+	if perk_filters == null:
+		return
+	for child: Node in perk_filters.get_children():
+		perk_filters.remove_child(child)
+		child.queue_free()
+	var categories: Array[String] = []
+	for raw_perk: Variant in AppState.perk_catalog:
+		var category: String = str((raw_perk as Dictionary).get("category", ""))
+		if not category.is_empty() and not categories.has(category):
+			categories.append(category)
+	if categories.is_empty():
+		return
+	categories.sort()
+	for name: String in ([""] + categories):
+		var tab := Button.new()
+		tab.name = "Filter%s" % ("All" if name.is_empty()
+			else name.replace(" ", "").validate_node_name())
+		tab.text = "All" if name.is_empty() else name
+		tab.toggle_mode = true
+		tab.button_pressed = name == _perk_filter
+		tab.focus_mode = Control.FOCUS_NONE
+		tab.pressed.connect(_on_perk_filter_chosen.bind(name))
+		perk_filters.add_child(tab)
+
+func _on_perk_filter_chosen(category: String) -> void:
+	if _perk_filter == category:
+		return
+	_perk_filter = category
+	_sync_perk_catalog()
+
+## One row: what it is, how far you have taken it, what the next step costs,
+## and the button that buys it. Every number here is the server's - the tier
+## it is at, the tier it stops at, the price of the step, and its own reason
+## for refusing one.
+func _perk_row(perk: Dictionary) -> Control:
+	var perk_name: String = str(perk.get("name", ""))
+	var owned: int = int(perk.get("tier", 0))
+	var maximum: int = maxi(1, int(perk.get("max_tier", 1)))
+	var blocker: String = str(perk.get("blocker", ""))
+	var maxed: bool = owned >= maximum
+
+	var frame := PanelContainer.new()
+	# Node names keep spaces, and a row is looked up by name; the perk names
+	# with two words would otherwise be the awkward ones.
+	frame.name = "Perk%s" % perk_name.replace(" ", "").validate_node_name()
+	if maxed or not blocker.is_empty():
+		# Dimmed rather than hidden: a perk you cannot take today is still
+		# one you are choosing against, and it has to stay readable.
+		frame.modulate = Color(1, 1, 1, 0.55)
+	var row := HBoxContainer.new()
+	row.name = "Row"
+	row.add_theme_constant_override("separation", 12)
+	frame.add_child(row)
+
+	var text := VBoxContainer.new()
+	text.name = "Text"
+	text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(text)
+	var title := Label.new()
+	title.name = "Name"
+	title.text = perk_name
+	text.add_child(title)
+	var detail := Label.new()
+	detail.name = "Detail"
+	detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	detail.text = str(perk.get("description", ""))
+	detail.modulate = Color(1, 1, 1, 0.75)
+	text.add_child(detail)
+
+	row.add_child(_perk_pips(owned, maximum))
+
+	var price := Label.new()
+	price.name = "Price"
+	price.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	price.custom_minimum_size = Vector2(140, 0)
+	price.text = "" if maxed else _perk_price(perk)
+	row.add_child(price)
+
+	var take := Button.new()
+	take.name = "Take"
+	take.custom_minimum_size = Vector2(110, 0)
+	if maxed:
+		# There is nothing left to sell, so the button stops being one.
+		take.text = "OWNED"
+		take.disabled = true
+		take.tooltip_text = "Every tier of %s is yours." % perk_name
+	else:
+		take.text = "TAKE"
 		take.disabled = not blocker.is_empty()
+		# The tooltip is the server's own refusal where there is one. This
+		# window decides nothing about who may have what.
 		take.tooltip_text = blocker if not blocker.is_empty() else str(
 			perk.get("description", ""))
 		take.pressed.connect(_ask_to_spend.bind("perk", perk_name))
-		row.add_child(take)
-		var price: String = ("%d pp" % cost if cost > 0
-			else "free" if cost == 0 else "+%d pp" % -cost)
-		if gold > 0:
-			price += ", %s gold" % _grouped(gold)
-		var label := Label.new()
-		label.name = "Detail"
-		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		var held: String = ("" if maximum == 1 or owned == 0
-			else " [tier %d of %d]" % [owned, maximum])
-		label.text = "%s%s (%s)  -  %s%s" % [perk_name, held, price,
-			str(perk.get("description", "")),
-			"" if blocker.is_empty() else "  [%s]" % blocker]
-		row.add_child(label)
+	row.add_child(take)
+	return frame
+
+## The tier strip: one box per tier, filled up to the tier owned, with the
+## count under it. Three boxes is the whole perk system at a glance, which a
+## sentence saying "tier 1 of 3" is not.
+func _perk_pips(owned: int, maximum: int) -> Control:
+	var column := VBoxContainer.new()
+	column.name = "Tiers"
+	column.custom_minimum_size = Vector2(84, 0)
+	var boxes := HBoxContainer.new()
+	boxes.name = "Pips"
+	boxes.alignment = BoxContainer.ALIGNMENT_CENTER
+	boxes.add_theme_constant_override("separation", 4)
+	column.add_child(boxes)
+	for index: int in range(maximum):
+		var pip := Panel.new()
+		pip.name = "Pip%d" % (index + 1)
+		pip.custom_minimum_size = Vector2(16, 16)
+		pip.modulate = (Color(0.85, 0.66, 0.34) if index < owned
+			else Color(1, 1, 1, 0.22))
+		boxes.add_child(pip)
+	var count := Label.new()
+	count.name = "Count"
+	count.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	count.text = "%d / %d" % [owned, maximum]
+	count.modulate = Color(1, 1, 1, 0.7)
+	column.add_child(count)
+	return column
+
+## What the next tier costs, in the shape the window shows it: "3 PP - 500 G".
+static func _perk_price(perk: Dictionary) -> String:
+	var cost: int = int(perk.get("pickpoints", 0))
+	var gold: int = int(perk.get("gold", 0))
+	var parts: Array[String] = []
+	if cost > 0:
+		parts.append("%d PP" % cost)
+	elif cost < 0:
+		# A perk that pays pick points out rather than in.
+		parts.append("+%d PP" % -cost)
+	else:
+		parts.append("free")
+	if gold > 0:
+		parts.append("%s G" % _grouped(gold))
+	return "  \u2022  ".join(parts)
 
 func _on_stats_tab_changed(tab: int) -> void:
 	if tab == 1:
