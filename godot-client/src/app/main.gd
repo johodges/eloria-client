@@ -4965,7 +4965,12 @@ func _sync_statistics_document(stats: Dictionary) -> void:
 	var names: Array[String] = []
 	for raw_perk: Variant in AppState.perks:
 		var perk: Dictionary = raw_perk as Dictionary
-		names.append(str(perk.get("name", "")))
+		# Where a perk came from is worth saying: one you are wearing goes
+		# when the cape does, and a player looking at this list should not
+		# have to work out which of these they actually own.
+		var suffix: String = " (from equipment)" if bool(
+			perk.get("from_gear", false)) else ""
+		names.append("%s%s" % [str(perk.get("name", "")), suffix])
 	stats_perk_line.text = "Perks:  %s" % (
 		"none yet" if names.is_empty() else "  •  ".join(names))
 

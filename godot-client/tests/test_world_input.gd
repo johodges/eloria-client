@@ -1629,12 +1629,15 @@ func _run() -> void:
 		and str((reduced_perks[0] as Dictionary).get("name", "")) == "Power Hungry"
 		and bool((reduced_perks[0] as Dictionary).get("from_gear", false)),
 		"a perk the client has never heard of is still reduced and flagged")
-	_expect(stats_text.text.contains("Power Hungry")
-		and stats_text.text.contains("from equipment"),
+	# The statistics tab is built from controls now, so the perks are a label
+	# of their own rather than a run of bbcode inside the document.
+	var perk_line: Label = main.get("stats_perk_line") as Label
+	_expect(perk_line != null and perk_line.text.contains("Power Hungry")
+		and perk_line.text.contains("from equipment"),
 		"the statistics window presents the server's perks, not a scraped list")
 	app_state_inventory.call("_on_packet", 234, PackedByteArray([0, 0]))
 	_expect((app_state_inventory.get("perks") as Array).is_empty()
-		and not stats_text.text.contains("Power Hungry"),
+		and not perk_line.text.contains("Power Hungry"),
 		"an empty perk packet clears the presented perks")
 
 	var counters_snapshot: PackedByteArray = PackedByteArray([1, 2, 4, 0, 0, 0])
@@ -1642,28 +1645,37 @@ func _run() -> void:
 	counters_snapshot.append_array(PackedByteArray([7, 0, 0, 0]))
 	counters_snapshot.append_array(_nul_bytes("Harvests"))
 	app_state_inventory.call("_on_packet", 235, counters_snapshot)
-	_expect(counter_categories.item_count == 2
-		and counter_categories.get_item_text(0) == "Kills"
-		and counter_categories.get_item_text(1) == "Harvests",
-		"the counter category list is built from the server snapshot in its order")
-	main.call("_on_counter_category_selected", 1)
-	_expect(counter_text.text.contains("Harvests") and counter_text.text.contains("7"),
-		"selecting a category presents the server total")
+	_expect(int(app_state_inventory.get("activity_counters").get("Kills", 0)) == 4
+		and int(app_state_inventory.get("activity_counters").get("Harvests", 0)) == 7,
+		"the totals are the server's snapshot, in the server's numbers")
+	# The pages the window shows come from the layout packet rather than from
+	# the totals: which page a counter sits on is a thing the server says, and
+	# a client grouping the snapshot itself would be guessing.
+	var layout: PackedByteArray = PackedByteArray([1, 0, 0, 1])
+	layout.append_array(_nul_bytes("Combat"))
+	layout.append_array(_nul_bytes("Kills"))
+	app_state_inventory.call("_on_packet", 217, layout)
+	var tabs: HBoxContainer = main.get("counter_tabs") as HBoxContainer
+	_expect(tabs != null and tabs.get_child_count() == 1
+		and (tabs.get_child(0) as Button).text == "Combat",
+		"the counter pages are built from the layout the server sent")
+	_expect(_counter_row_text(main, "Kills").contains("4"),
+		"the page presents the server total")
 	var counter_delta: PackedByteArray = PackedByteArray([0, 1, 9, 0, 0, 0])
 	counter_delta.append_array(_nul_bytes("Harvests"))
 	app_state_inventory.call("_on_packet", 235, counter_delta)
 	_expect(int((app_state_inventory.get("activity_counters") as Dictionary).get(
-		"Harvests", -1)) == 9 and counter_categories.item_count == 2,
-		"a delta updates one total without disturbing the category list")
+		"Harvests", -1)) == 9 and tabs.get_child_count() == 1,
+		"a delta updates one total without disturbing the pages")
 	main.call("_reset_session_tracking")
-	main.call("_on_counter_category_selected", 1)
-	_expect(counter_text.text.contains("9"),
+	var after_reset: PackedByteArray = PackedByteArray([0, 1, 11, 0, 0, 0])
+	after_reset.append_array(_nul_bytes("Kills"))
+	app_state_inventory.call("_on_packet", 235, after_reset)
+	# The session column is a difference against the server's total rather
+	# than a second count kept here, so a reset moves the baseline and the
+	# lifetime figure is untouched.
+	_expect(_counter_row_text(main, "Kills").contains("11"),
 		"resetting the session keeps the authoritative lifetime total")
-	var counter_after_reset: PackedByteArray = PackedByteArray([0, 1, 11, 0, 0, 0])
-	counter_after_reset.append_array(_nul_bytes("Harvests"))
-	app_state_inventory.call("_on_packet", 235, counter_after_reset)
-	_expect(counter_text.text.contains("11"),
-		"the session column is a difference against the server total, not a second count")
 	app_state_inventory.set("authenticated", previously_authenticated)
 
 	# Protocol diagnostics. Every undecoded packet and decode error used to be
@@ -1728,13 +1740,14 @@ func _run() -> void:
 	app_state_inventory.set("stats", {"health": 10, "max_health": 10,
 		"researching": 1024, "research_completed": 0, "research_total": 0})
 	main.call("_sync_stats")
-	_expect(stats_text.text.contains("Researching")
-		and stats_text.text.contains("nothing"),
+	_expect(_character_column_text(main).contains("Researching")
+		and _character_column_text(main).contains("nothing"),
 		"a character reading nothing says so instead of hiding the field")
 	app_state_inventory.set("stats", {"health": 10, "max_health": 10,
 		"researching": 0, "research_completed": 30, "research_total": 120})
 	main.call("_sync_stats")
-	_expect(stats_text.text.contains("30/120") and stats_text.text.contains("25%"),
+	var reading: String = _character_column_text(main)
+	_expect(reading.contains("30/120") and reading.contains("25%"),
 		"reading progress is presented from the authoritative research statistics")
 
 	var cooldown_slot: Button = (main.get("quick_slot_buttons") as Array)[0] as Button
@@ -2320,45 +2333,48 @@ func _run() -> void:
 	# is the server's word: the points come from the stats packet, the perks
 	# and their prices from the catalogue, and a perk it refuses carries the
 	# server's own refusal rather than a Take button. Both rows carry the two
-	# tier bytes the catalogue has sent since perk_catalog_v2 - held tier and
-	# tiers in all - so this is the layout the decoder accepts today.
+	# tier bytes the catalogue has sent since perk_catalog_v2 - held tier
+	# and tiers in all - and the category perk_catalog_v3 added, so this is
+	# the layout the decoder accepts today.
 	app_state_inventory.set("stats", {"physique": 4, "physique_base": 4,
 		"magic_nexus": 0, "magic_nexus_base": 0, "overall": 10,
 		"pickpoints_earned": 10, "pickpoints_spent": 0})
-	app_state_inventory.call("_on_packet", 215, ("02000500c80000000001457863617661746f72005477696365206173206d616e79206974656d732e0000fdff000000000001506f7765722048756e677279004c6f7365203320666f6f6420706572206d696e7574652e00596f7520616c726561647920686176652074686174207065726b2e00").hex_decode())
+	app_state_inventory.call("_on_packet", 215, ("02000500c80000000001457863617661746f72005477696365206173206d616e79206974656d732e00005574696c69747900fdff000000000001506f7765722048756e677279004c6f7365203320666f6f6420706572206d696e7574652e00596f7520616c726561647920686176652074686174207065726b2e00436f6d62617400").hex_decode())
 	await process_frame
 	var perk_rows: VBoxContainer = main.get("perk_rows") as VBoxContainer
+	# A row is a framed panel now rather than a bare box, and the filter tabs
+	# live above the list, so the count here is still one child per perk.
 	_expect(perk_rows != null and perk_rows.get_child_count() == 2,
 		"the perks tab lists every perk the server offers: %d"
 			% (perk_rows.get_child_count() if perk_rows != null else -1))
 	# Every row is looked up with get_node_or_null: a catalogue that failed to
 	# draw is one reported failure, not a crash that takes the rest of the run
 	# down with it.
-	var excavator: HBoxContainer = (perk_rows.get_node_or_null("PerkExcavator")
-		if perk_rows != null else null) as HBoxContainer
-	var excavator_take: Button = (excavator.get_node_or_null("Take")
-		if excavator != null else null) as Button
-	var excavator_detail: Label = (excavator.get_node_or_null("Detail")
-		if excavator != null else null) as Label
-	var excavator_text: String = (excavator_detail.text
-		if excavator_detail != null else "<no row>")
+	# A row is a framed panel holding one line: the name and what it does on
+	# the left, the tier boxes, the price, then the button. Every lookup is
+	# get_node_or_null, so a catalogue that failed to draw is one reported
+	# failure rather than a crash that takes the rest of the run with it.
+	var excavator_take: Button = _perk_part(perk_rows, "PerkExcavator",
+		"Take") as Button
+	var excavator_price: Label = _perk_part(perk_rows, "PerkExcavator",
+		"Price") as Label
+	var excavator_text: String = (excavator_price.text
+		if excavator_price != null else "<no row>")
 	_expect(excavator_take != null and not excavator_take.disabled,
 		"a perk the server does not refuse can be taken")
-	_expect(excavator_text.contains("5 pp") and excavator_text.contains("200"),
+	_expect(excavator_text.contains("5 PP") and excavator_text.contains("200"),
 		"a perk states what it costs in points and gold: " + excavator_text)
-	var hungry: HBoxContainer = (perk_rows.get_node_or_null("PerkPowerHungry")
-		if perk_rows != null else null) as HBoxContainer
-	var hungry_take: Button = (hungry.get_node_or_null("Take")
-		if hungry != null else null) as Button
-	var hungry_detail: Label = (hungry.get_node_or_null("Detail")
-		if hungry != null else null) as Label
+	var hungry_take: Button = _perk_part(perk_rows, "PerkPowerHungry",
+		"Take") as Button
+	var hungry_price: Label = _perk_part(perk_rows, "PerkPowerHungry",
+		"Price") as Label
 	_expect(hungry_take != null and hungry_take.disabled
 			and hungry_take.tooltip_text == "You already have that perk.",
 		"a refused perk is disabled and quotes the server: "
 			+ (hungry_take.tooltip_text if hungry_take != null else "<no row>"))
-	var hungry_text: String = (hungry_detail.text
-		if hungry_detail != null else "<no row>")
-	_expect(hungry_text.contains("+3 pp"),
+	var hungry_text: String = (hungry_price.text
+		if hungry_price != null else "<no row>")
+	_expect(hungry_text.contains("+3 PP"),
 		"a perk with a negative cost is shown as paying points out: "
 			+ hungry_text)
 	var perk_summary: Label = main.get("perk_summary") as Label
@@ -2369,22 +2385,22 @@ func _run() -> void:
 	# The "+" beside a line is offered only while the server's numbers allow
 	# it, and clicking one asks before anything is spent.
 	main.call("_sync_stats")
-	var stats_body: String = (main.get("stats_text") as RichTextLabel).text
-	_expect(stats_body.contains("spend:attribute:physique")
-			and stats_body.contains("spend:nexus:magic_nexus"),
+	# The control is a button on the row now rather than a link in a
+	# document, and it is always drawn - what changes is whether it is live.
+	_expect(_spend_live(main, "physique") and _spend_live(main, "magic_nexus"),
 		"an attribute and a nexus below their ceilings can be raised")
-	app_state_inventory.set("stats", {"physique": 4, "physique_base": 4,
+	app_state_inventory.set("stats", {"magic_nexus": 0, "magic_nexus_base": 0,
 		"overall": 10, "pickpoints_earned": 10, "pickpoints_spent": 10})
 	main.call("_sync_stats")
-	_expect(not (main.get("stats_text") as RichTextLabel).text.contains("spend:"),
+	_expect(not _spend_live(main, "physique")
+			and not _spend_live(main, "magic_nexus"),
 		"with nothing left to spend, nothing offers to spend it")
-	app_state_inventory.set("stats", {"physique": 48, "physique_base": 48,
+	app_state_inventory.set("stats", {"magic_nexus": 10, "magic_nexus_base": 10,
 		"overall": 10, "pickpoints_earned": 10, "pickpoints_spent": 0})
 	main.call("_sync_stats")
-	_expect(not (main.get("stats_text") as RichTextLabel).text.contains(
-			"spend:attribute:physique"),
-		"an attribute at the server's ceiling is not offered again")
-	main.call("_on_stats_meta_clicked", "spend:attribute:physique")
+	_expect(not _spend_live(main, "magic_nexus"),
+		"a nexus at the server's ceiling is not offered again")
+	main.call("_ask_to_spend", "attribute", "physique")
 	var confirm: PanelContainer = main.get("purchase_confirm") as PanelContainer
 	var prompt: Label = main.get("purchase_prompt") as Label
 	_expect(confirm.visible and prompt.text.contains("Physique"),
@@ -2792,6 +2808,64 @@ func _sized_bytes(value: String) -> PackedByteArray:
 	var sized: PackedByteArray = PackedByteArray([bytes.size()])
 	sized.append_array(bytes)
 	return sized
+
+## What one counter row of the rebuilt window reads, labels and numbers run
+## together. The row is built from controls now, so there is no document to
+## search - the text has to be gathered from the labels themselves.
+func _counter_row_text(main: Node, counter: String) -> String:
+	var body: VBoxContainer = main.get("counter_body") as VBoxContainer
+	if body == null:
+		return ""
+	var wanted: String = "Counter%s" % counter.replace(" ", "")
+	for table: Node in body.get_children():
+		for row: Node in table.get_children():
+			if row.name != wanted:
+				continue
+			var text: String = ""
+			for cell: Node in row.get_children():
+				if cell is Label:
+					text += " " + (cell as Label).text
+			return text
+	return ""
+
+## Everything the character column reads, labels and values run together.
+## It is built from controls now, so there is no document to search.
+func _character_column_text(main: Node) -> String:
+	var body: VBoxContainer = main.get("stats_character") as VBoxContainer
+	if body == null:
+		return ""
+	var text: String = ""
+	for row: Node in body.get_children():
+		if row is Label:
+			text += " " + (row as Label).text
+			continue
+		for cell: Node in row.get_children():
+			if cell is Label:
+				text += " " + (cell as Label).text
+	return text
+
+## One part of a perk row. The row is a framed panel holding a single line,
+## so the parts sit one level further in than they did.
+func _perk_part(rows: VBoxContainer, row_name: String, part: String) -> Node:
+	if rows == null:
+		return null
+	var frame: Node = rows.get_node_or_null(row_name)
+	if frame == null:
+		return null
+	return frame.get_node_or_null("Row/%s" % part)
+
+## Whether the control beside an attribute or nexus line is live. It is always
+## drawn - a button that vanished when it stopped being usable would make the
+## column jump about - so what is asked is whether it can be pressed.
+func _spend_live(main: Node, key: String) -> bool:
+	var body: VBoxContainer = main.get("stats_character") as VBoxContainer
+	if body == null:
+		return false
+	var row: Node = body.get_node_or_null("Row%s" % key)
+	if row == null:
+		return false
+	var button: Button = row.get_node_or_null("Spend") as Button
+	return button != null and not button.disabled
 
 func _nul_bytes(value: String) -> PackedByteArray:
 	var bytes: PackedByteArray = value.to_utf8_buffer()
