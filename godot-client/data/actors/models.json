@@ -4743,6 +4743,78 @@
         ],
         "neck": "neck_01"
       }
+    },
+    "mycelari_male_luminous": {
+      "scene": "res://assets/actors/native/races/mycelari_male_luminous.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "culture": "mycelari",
+      "gender": "male",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_male.glb",
+        "res://assets/actors/native/hair/parted_male.glb",
+        "res://assets/actors/native/hair/long_male.glb",
+        "res://assets/actors/native/hair/buns_male.glb"
+      ],
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1.0,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "mycelari_female_luminous": {
+      "scene": "res://assets/actors/native/races/mycelari_female_luminous.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "culture": "mycelari",
+      "gender": "female",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_female.glb",
+        "res://assets/actors/native/hair/parted_female.glb",
+        "res://assets/actors/native/hair/long_female.glb",
+        "res://assets/actors/native/hair/buns_female.glb"
+      ],
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1.0,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
     }
   },
   "actorTypes": {
@@ -5119,7 +5191,9 @@
     "91": "votary_male_luminous",
     "92": "votary_female_luminous",
     "93": "ssarathi_male_luminous",
-    "94": "ssarathi_female_luminous"
+    "94": "ssarathi_female_luminous",
+    "95": "mycelari_male_luminous",
+    "96": "mycelari_female_luminous"
   },
   "creationOptions": [
     {
@@ -5261,6 +5335,16 @@
       "actorType": 94,
       "model": "ssarathi_female_luminous",
       "label": "Ssarathi Female (Luminous body, no tail)"
+    },
+    {
+      "actorType": 95,
+      "model": "mycelari_male_luminous",
+      "label": "Mycelari Male (Luminous body)"
+    },
+    {
+      "actorType": 96,
+      "model": "mycelari_female_luminous",
+      "label": "Mycelari Female (Luminous body)"
     }
   ],
   "npcLooks": {
