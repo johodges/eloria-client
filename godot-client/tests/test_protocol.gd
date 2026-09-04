@@ -42,6 +42,8 @@ func _init() -> void:
 			EloriaProtocol.ServerMessage.ELORIA_ACHIEVEMENTS_STATE,
 		"actor_footprints_v1":
 			EloriaProtocol.ServerMessage.ELORIA_ACTOR_FOOTPRINTS,
+		"attribute_state_v1":
+			EloriaProtocol.ServerMessage.ELORIA_ATTRIBUTE_STATE,
 		"degraded_items_v1": EloriaProtocol.ServerMessage.ELORIA_DEGRADED_ITEMS,
 		"experience64_v1": EloriaProtocol.ServerMessage.ELORIA_EXPERIENCE_STATE,
 		"party_window_v1": EloriaProtocol.ServerMessage.ELORIA_PARTY_STATE,
@@ -85,6 +87,11 @@ func _init() -> void:
 		# No creature larger than one tile in this profile: a real
 		# answer, and the one an unchanged content pack still gives.
 		EloriaProtocol.ServerMessage.ELORIA_ACTOR_FOOTPRINTS: "0000",
+		# One attribute, at the starting value, with the ceiling the server
+		# enforces. The name travels with it: this packet exists because the
+		# client's own copy of the attribute list went stale once already.
+		EloriaProtocol.ServerMessage.ELORIA_ATTRIBUTE_STATE:
+			"0100040064006d6174746572004d617474657200",
 		EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO: "5b0000004100",
 		EloriaProtocol.ServerMessage.ELORIA_SPELL_POWER: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE: "0000",

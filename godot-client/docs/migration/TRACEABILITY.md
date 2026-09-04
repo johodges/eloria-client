@@ -618,3 +618,20 @@ change at all.
 | It has to keep happening | A variant rolled only at spawn would fix the world's famous creatures at startup - the named elk immortal, no other elk able to become one. | The roll runs on **respawn** too, from the base rather than from whatever the creature currently is. That needed `apply_creature_type`, which re-derives stats, body and name so an existing animal can become a different creature - including clearing the loadout health base that `equip_creature` records once, which would otherwise carry the old creature's health into the new one. | The respawn roll is driven until both outcomes appear; becoming the variant and dropping back are checked to move every derived stat, and the health base is pinned by its own case. | IMPLEMENTED |
 | They may not disagree about their body | A variant sharing an actor type but claiming a different size would be drawn standing on ground it does not hold - the exact mismatch the footprint work removed. | Refused at load: a variant may not differ from its base on `actor_type` or `footprint`. Scale may still differ, as long as it does not round to a different footprint. | A differing footprint raises with a message naming both sides. | IMPLEMENTED |
 | Better drops, not just more | "Each with a better drop table" was the half that makes one worth telling somebody about. | Five shipped across the range: Ninebranch (L6), Dustveil (L16), Broadhorn the Elder (L30), Hoarfrost (L40), Spectrum (L62). Each yields more of the common drop, the base's rare turned from remote into likely, and one item the ordinary version never gives. | The "one item the ordinary version never gives" rule is asserted, and it caught two of the five giving nothing new. | IMPLEMENTED |
+
+## Attributes are bought directly (Other-Life register 007, 009, 010)
+
+The six base attributes are gone on the server. A point used to buy half of
+each of two attributes; now it buys the attribute it was spent on. Carry left
+Might (009) and one magic number became two (010), so a healer and a battle
+mage are no longer the same build.
+
+That is a server change, but it broke this client in a way nothing would have
+reported: the statistics window held its own copy of the attribute list.
+
+| Feature | What was asked for | Eloria implementation | Test/evidence | Status |
+|---|---|---|---|---|
+| The window shows attributes that exist | The client listed six base attributes read from fixed slots of the stats packet, and derived nine more by averaging pairs of them. Every one of those names had been deleted server-side, and a positional packet cannot say so. | `ELORIA_ATTRIBUTE_STATE` (216), gated on `attribute_state_v1`, carries the whole set: key, label, value and ceiling for each. `AppState.attributes` holds it and the window draws from that, so which attributes exist is the server's to say. | `tests/test_attribute_state.gd`. Decoding, a truncated row and a trailing byte both refused, and a source check that no second copy of the list came back. | IMPLEMENTED |
+| The name is not the key | `magic_offense` renders as "Magic_Offense" or "Magic offense" depending on which string method is used, and neither is a name to show a player. | The label travels with the value. | Asserted on `Magic Offense` specifically. | IMPLEMENTED |
+| The ceiling is the server's | The client held `ATTRIBUTE_MAXIMUM = 48`; the server now enforces 100, so the "+" beside a maxed line would have kept offering a purchase the server refuses. | Each row carries its own maximum. The old constant survives only for the six-slot fallback. | The spend link is drawn against the row's maximum. | IMPLEMENTED |
+| An older server still works | A server that does not send the wide packet still sends six attributes in the legacy slots. | The fallback names those six - and they are correct for exactly the servers that reach it. | `LEGACY_ATTRIBUTES`, reached only when the wide packet has not arrived. | IMPLEMENTED |

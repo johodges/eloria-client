@@ -732,7 +732,13 @@ const SPELL_QUICK_SLOTS := 12
 ## The ceilings the server enforces on what a pick point can buy, so the "+"
 ## is not offered on a line that is already full. They are the server's, from
 ## `eloria/perks.py`; a purchase is still the server's to refuse.
+## Only for a server too old to send ELORIA_ATTRIBUTE_STATE, which is also the
+## only kind of server these six names still describe. A current one sends its
+## own ceiling with every attribute.
 const ATTRIBUTE_MAXIMUM := 48
+const LEGACY_ATTRIBUTES: Array[Array] = [["Physique", "physique"],
+	["Coordination", "coordination"], ["Reasoning", "reasoning"],
+	["Will", "will"], ["Instinct", "instinct"], ["Vitality", "vitality"]]
 const NEXUS_MAXIMUM := 10
 const INVENTORY_MIN_SCALE := 0.65
 const INVENTORY_MAX_SCALE := 1.75
@@ -3153,6 +3159,8 @@ func _on_state_changed(path: StringName) -> void:
 			_update_legacy_clock_and_compass()
 			_apply_day_night()
 			_sync_diagnostics()
+		&"attributes":
+			_sync_stats()
 		&"perks", &"perk_catalog":
 			_sync_stats()
 			_sync_perk_catalog()
@@ -4840,24 +4848,12 @@ func _sync_stats() -> void:
 	# spend, and a base value below the ceiling the server enforces.
 	var pickpoints_left: int = _available_pickpoints()
 	var basic_lines: Array[String] = [_stat_heading(
-		"[color=#7fd87f][b]Basic Attributes[/b][/color]")]
-	for label_and_key: Array in [["Physique", "physique"],
-			["Coordination", "coordination"], ["Reasoning", "reasoning"],
-			["Will", "will"], ["Instinct", "instinct"], ["Vitality", "vitality"]]:
-		var attribute: String = str(label_and_key[1])
-		basic_lines.append(_stat_row(str(label_and_key[0]),
-			_stat_pair(stats, attribute) + _spend_link("attribute", attribute,
-				pickpoints_left > 0 and int(stats.get(attribute + "_base",
-					stats.get(attribute, 0))) < ATTRIBUTE_MAXIMUM)))
-	basic_lines.append(_stat_heading(
-		"[color=#7fd87f][b]Cross Attributes[/b][/color]", true))
-	for cross: Array in [["Might", "physique", "coordination"],
-			["Matter", "physique", "will"], ["Toughness", "physique", "vitality"],
-			["Charm", "instinct", "vitality"], ["Reaction", "instinct", "coordination"],
-			["Perception", "instinct", "reasoning"], ["Rationality", "will", "reasoning"],
-			["Dexterity", "coordination", "reasoning"], ["Ethereality", "will", "vitality"]]:
-		basic_lines.append(_stat_row(str(cross[0]),
-			_cross_pair(stats, str(cross[1]), str(cross[2]))))
+		"[color=#7fd87f][b]Attributes[/b][/color]")]
+	for row: Dictionary in _attribute_rows(stats):
+		var value: int = int(row.value)
+		basic_lines.append(_stat_row(str(row.label),
+			"%d/%d" % [value, value] + _spend_link("attribute", str(row.key),
+				pickpoints_left > 0 and value < int(row.maximum))))
 	var nexus_lines: Array[String] = [_stat_heading(
 		"[color=#7fd87f][b]Nexus[/b][/color]")]
 	for label_and_key: Array in [["Human", "human_nexus"], ["Animal", "animal_nexus"],
@@ -4941,14 +4937,29 @@ static func _grouped(value: int) -> String:
 	grouped = digits + grouped
 	return ("-" + grouped) if value < 0 else grouped
 
+## The attributes to draw, newest source first.
+##
+## Every one of these is bought directly now, so there is no longer a split
+## between attributes and the cross attributes derived from them. Which ones
+## exist is the server's to say: it sends the names, the values and the
+## ceilings together, and this holds no list of its own to go stale. The
+## fallback reads the six fixed slots of the legacy stats packet, and its
+## names are right for exactly the servers that leave the wide packet unsent.
+func _attribute_rows(stats: Dictionary) -> Array[Dictionary]:
+	var rows: Array[Dictionary] = []
+	for raw_attribute: Variant in AppState.attributes:
+		rows.append(raw_attribute as Dictionary)
+	if not rows.is_empty():
+		return rows
+	for label_and_key: Array in LEGACY_ATTRIBUTES:
+		var key: String = str(label_and_key[1])
+		rows.append({"key": key, "label": str(label_and_key[0]),
+			"value": int(stats.get(key + "_base", stats.get(key, 0))),
+			"maximum": ATTRIBUTE_MAXIMUM})
+	return rows
+
 static func _stat_pair(stats: Dictionary, key: String) -> String:
 	return "%d/%d" % [int(stats.get(key, 0)), int(stats.get(key + "_base", stats.get(key, 0)))]
-
-static func _cross_pair(stats: Dictionary, first: String, second: String) -> String:
-	var current: int = (int(stats.get(first, 0)) + int(stats.get(second, 0))) / 2
-	var base: int = (int(stats.get(first + "_base", stats.get(first, 0)))
-		+ int(stats.get(second + "_base", stats.get(second, 0)))) / 2
-	return "%d/%d" % [current, base]
 
 ## The spend control drawn beside one buyable line, or nothing at all.
 ##

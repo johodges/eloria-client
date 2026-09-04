@@ -231,6 +231,12 @@ var perks: Array[Dictionary] = []
 ## perk table; this is the table, and it arrives again whenever a purchase
 ## could have changed what is still on offer.
 var perk_catalog: Array[Dictionary] = []
+## Every attribute a character can buy, in the server's order, with the value
+## and the ceiling for each. The legacy stats packet has six attribute slots
+## and there are twelve, so the window reads this instead of the packet - and
+## reads the names from it too, rather than holding a list that was already
+## wrong once.
+var attributes: Array[Dictionary] = []
 ## Lifetime activity totals keyed by the server's own category name, plus the
 ## order the server listed them in so the window needs no local table.
 var activity_counters: Dictionary = {}
@@ -324,6 +330,7 @@ func _on_connection_state_changed(value: String) -> void:
 		popup = _empty_popup_state()
 		perks.clear()
 		perk_catalog.clear()
+		attributes.clear()
 		activity_counters.clear()
 		activity_counter_order.clear()
 		invasion_assistant = {"open": false}
@@ -990,6 +997,11 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			for raw_perk: Variant in event.perks:
 				perk_catalog.append((raw_perk as Dictionary).duplicate(true))
 			state_changed.emit(&"perk_catalog")
+		"attribute_state":
+			attributes.clear()
+			for raw_attribute: Variant in event.attributes:
+				attributes.append((raw_attribute as Dictionary).duplicate(true))
+			state_changed.emit(&"attributes")
 		"activity_counters":
 			if bool(event.full):
 				activity_counters.clear()

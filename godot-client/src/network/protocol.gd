@@ -83,7 +83,7 @@ enum ServerMessage {
 	# extensions continue in the run below the stock commands instead.
 	# 216-219 are free. NOTE 248 above is REDEFINE_YOUR_COLORS in stock
 	# Eternal Lands, as 249-253 are YOU_DONT_EXIST and the log-in replies.
-	ELORIA_PERK_CATALOG = 215,
+	ELORIA_PERK_CATALOG = 215, ELORIA_ATTRIBUTE_STATE = 216,
 	ADD_ACTOR_ANIMATION = 89,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
@@ -183,6 +183,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"player_info_v1",
 	"achievements_window_v1",
 	"actor_footprints_v1",
+	"attribute_state_v1",
 	"degraded_items_v1",
 	"experience64_v1",
 	"quest_archive_v1",
@@ -935,6 +936,8 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return decode_inventory_names(payload)
 		ServerMessage.ELORIA_ACTOR_FOOTPRINTS:
 			return decode_actor_footprints(payload)
+		ServerMessage.ELORIA_ATTRIBUTE_STATE:
+			return decode_attribute_state(payload)
 		ServerMessage.ELORIA_PERK_CATALOG:
 			return decode_perk_catalog(payload)
 		ServerMessage.ELORIA_WORN_SLOTS:
@@ -1039,6 +1042,37 @@ static func decode_experience_state(payload: PackedByteArray) -> Dictionary:
 	if offset != payload.size():
 		return {"type": "invalid", "error": "experience_trailing"}
 	return {"type": "experience_state", "skills": skills}
+
+## Command 216. Every attribute a character can buy, and its ceiling.
+##
+## The legacy stats packet has room for six attributes at fixed offsets and
+## there are twelve, so it shows the first six and this carries the set. The
+## names travel with the values on purpose: which attributes exist is a design
+## decision that has already changed once - they used to be six base
+## attributes with these derived from them - and a client holding its own copy
+## of the list would be confidently wrong the next time it moves.
+static func decode_attribute_state(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 2:
+		return {"type": "invalid", "error": "attributes_length"}
+	var count: int = u16(payload)
+	var offset: int = 2
+	var rows: Array[Dictionary] = []
+	for _index: int in range(count):
+		if offset + 4 > payload.size():
+			return {"type": "invalid", "error": "attributes_values"}
+		var value: int = s16(payload, offset)
+		var maximum: int = s16(payload, offset + 2)
+		offset += 4
+		var names: Dictionary = _nul_run(payload, offset, 2)
+		if names.is_empty():
+			return {"type": "invalid", "error": "attributes_names"}
+		offset = int(names.offset)
+		var pair: Array = names.values
+		rows.append({"key": str(pair[0]), "label": str(pair[1]),
+			"value": value, "maximum": maximum})
+	if offset != payload.size():
+		return {"type": "invalid", "error": "attributes_trailing"}
+	return {"type": "attribute_state", "attributes": rows}
 
 ## Command 246. Which actor types stand on more than one tile.
 ##
