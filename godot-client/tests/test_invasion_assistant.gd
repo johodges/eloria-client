@@ -112,6 +112,48 @@ func _run() -> void:
 		"boss_name": "The Cinder Maw", "health_multiplier": 1.0,
 		"dynamic": true}]})
 	_expect(assistant.group_list.item_count == 1, "spawn groups populate")
+
+	# The served profile ships 600 invasion groups, which is eight times what
+	# one packet holds, so the server sends them a page at a time. A page is a
+	# whole message on its own; what the window must not do is show only the
+	# last one.
+	var _page := func(index: int, total: int, names: Array) -> Dictionary:
+		var entries: Array = []
+		for entry_name: String in names:
+			entries.append({
+				"name": entry_name, "description": "", "map_id": "ember",
+				"map_name": "Emberhaven", "minimum": 1, "maximum": 1,
+				"points": 1, "creatures": ["ash_wyrm"], "composition": [],
+				"locations": [], "strength": 1, "active": false, "alive": 0,
+				"boss": "", "boss_type": "", "boss_name": "",
+				"health_multiplier": 1.0, "dynamic": false})
+		return {"kind": "groups", "groups": entries,
+			"page": index, "pages": total}
+
+	assistant.apply_update(_page.call(0, 3, ["one", "two"]))
+	_expect(assistant.group_list.item_count == 1,
+		"a partial list does not replace the one on screen")
+	assistant.apply_update(_page.call(1, 3, ["three"]))
+	assistant.apply_update(_page.call(2, 3, ["four", "five"]))
+	_expect(assistant.group_list.item_count == 5,
+		"every page is kept, not just the last")
+	_expect(str(assistant.groups_state.get("groups")[0].get("name")) == "one",
+		"the first page survives to the end")
+
+	# And a server that sends the state whole, with no page fields, still
+	# replaces rather than appending forever.
+	assistant.apply_update({"kind": "groups", "groups": [{
+		"name": "ashfall", "description": "Ashfall Ridge", "map_id": "ember",
+		"map_name": "Emberhaven", "minimum": 4, "maximum": 8, "points": 1,
+		"creatures": ["ash_wyrm"], "composition": [{"type": "ash_wyrm",
+			"name": "Ash Wyrm", "quantity": 4}],
+		"locations": [{"x": 80, "y": 90, "quantity": 4}],
+		"strength": 120, "active": false, "alive": 0,
+		"boss": "The Cinder Maw", "boss_type": "ash_wyrm",
+		"boss_name": "The Cinder Maw", "health_multiplier": 1.0,
+		"dynamic": true}]})
+	_expect(assistant.group_list.item_count == 1,
+		"an unpaged state replaces the accumulated one")
 	assistant._on_group_selected(0)
 	_expect(not assistant.group_spawn.disabled, "defined group can be spawned")
 	_expect(not assistant.group_save.disabled, "dynamic group is editable")

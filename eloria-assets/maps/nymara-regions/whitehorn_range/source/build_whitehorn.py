@@ -61,6 +61,8 @@ MATERIALS = frozenset({
 })
 
 COLLISION_CELL = 0.5
+# EWCG version the grid is written at, and what the manifest advertises.
+COLLISION_FORMAT_VERSION = 2
 COLLISION_HEIGHT_STEP = 0.2
 COLLISION_HEIGHT_ORIGIN = -2.2
 # Levels an ELM height byte holds: the server masks it with 0x3F, so 1..63.
@@ -301,14 +303,51 @@ def build_collision(build: RegionBuild) -> tuple[bytes, int, int, dict]:
         px, py, pz = placement.position
         half_x = float(max(abs(low[0]), abs(high[0]))) * placement.scale
         half_z = float(max(abs(low[2]), abs(high[2]))) * placement.scale
-        deck_y = py + float(high[1]) * placement.scale
-        radius = max(min(half_x, half_z) * 0.85, 0.4)
-        footprint = np.hypot(gx - px, gz - pz) < radius
+        # The deck's own rectangle, in the deck's own frame. A disc of the
+        # smaller half-extent was the shape here before, which is right for a
+        # temple floor and ruinous for a bridge: a 34 x 1.9 m span collapsed to
+        # a 1.6 m puddle over the middle of the chasm, so the deck the client
+        # walks on had no server cells to walk on and neither bridge could be
+        # crossed. The frame matters as much as the shape - both spans are
+        # placed with a quarter turn, and a footprint that ignores
+        # `rotation_y` lies about which way a deck that is not square runs.
+        angle = float(placement.rotation_y)
+        cos_y = np.cos(angle)
+        sin_y = np.sin(angle)
+        offset_x = gx - px
+        offset_z = gz - pz
+        local_x = offset_x * cos_y - offset_z * sin_y
+        local_z = offset_x * sin_y + offset_z * cos_y
+        # The two axes are not treated alike, because their edges are not
+        # alike. A deck ends on the ground it lands on, so its run is grown by
+        # half a cell: held in instead, the last cell falls short of the first
+        # walkable one and the crossing is broken by a sliver of nothing. Its
+        # sides end over the drop, so those are held in by half a cell, and an
+        # actor standing on a deck cell is over planks the grounding ray can
+        # actually find.
+        margin = COLLISION_CELL * 0.5
+        run_x = half_x >= half_z
+        limit_x = half_x + margin if run_x else max(half_x - margin, COLLISION_CELL)
+        limit_z = max(half_z - margin, COLLISION_CELL) if run_x else half_z + margin
+        footprint = (np.abs(local_x) < limit_x) & (np.abs(local_z) < limit_z)
         if not footprint.any():
             continue
+        # A deck that lands at two heights is a ramp, and putting all of it at
+        # one height would leave a step at whichever end lost. `walk_ends`
+        # names what the two ends stand at; between them the walk grid runs
+        # straight, which is inside one height byte of the deck's own sag.
+        walk_ends = getattr(item, "walk_ends", None)
+        if walk_ends is None:
+            deck_y = py + float(high[1]) * placement.scale
+            deck_surface = np.full_like(gx, deck_y)
+        else:
+            along = np.clip((local_x + half_x) / max(half_x * 2.0, 1e-6), 0.0, 1.0)
+            deck_surface = py + (float(walk_ends[0]) + along *
+                                 (float(walk_ends[1]) - float(walk_ends[0]))
+                                 ) * placement.scale
         elevated += 1
         decks |= footprint
-        surface = np.where(footprint, deck_y, surface)
+        surface = np.where(footprint, deck_surface, surface)
         walkable = np.where(footprint, True, walkable)
 
     # Steepness has to be part of walkability, not of the height byte. That
@@ -334,7 +373,8 @@ def build_collision(build: RegionBuild) -> tuple[bytes, int, int, dict]:
                         1, COLLISION_HEIGHT_LEVELS).astype(np.uint8)
     grid = np.where(walkable, quantised, 0).astype(np.uint8)
 
-    payload = struct.pack("<4sHHII", b"EWCG", 2, 0, width, height) + grid.tobytes()
+    payload = struct.pack("<4sHHII", b"EWCG", COLLISION_FORMAT_VERSION, 0,
+                          width, height) + grid.tobytes()
     stats = {
         "width": width, "height": height, "cellMetres": COLLISION_CELL,
         "walkableCells": int(walkable.sum()),
@@ -549,21 +589,20 @@ def write_manifest(build: RegionBuild, stats: dict, collision_stats: dict,
         "collision": {
             "nodeNames": collision_nodes,
             "binary": "collision.bin",
-            "format": "EWCG-v1",
+            # Both of these describe the file `build_collision` just wrote, so
+            # both are taken from it. They used to be written from the constants
+            # above, which stopped being true when the grid moved to EWCG v2 and
+            # to an encoding sized from the region's own relief: the manifest
+            # then advertised a 0.2 m step for a file holding 2.6 m ones, and
+            # the correction had to be made by hand after every build.
+            "format": "EWCG-v%d" % COLLISION_FORMAT_VERSION,
             "cellMetres": COLLISION_CELL,
             "width": collision_stats["width"],
             "height": collision_stats["height"],
-            "heightEncoding": {
-                "origin": COLLISION_HEIGHT_ORIGIN,
-                "step": COLLISION_HEIGHT_STEP,
-                "range": [1, 63],
-                "zeroMeansBlocked": True,
-                "note": ("Heights above 10.4 m clamp to 63 because the legacy "
-                         "six-bit field cannot express Whitehorn's relief; the "
-                         "grid is authoritative for walkability, and the Godot "
-                         "loader takes elevation from the rendered walk "
-                         "surfaces, not from this file."),
-            },
+            "heightEncoding": dict(collision_stats["heightEncoding"], note=(
+                "The grid is authoritative for walkability. The Godot loader "
+                "takes elevation from the rendered walk surfaces, not from "
+                "this file.")),
             "walkableCells": collision_stats["walkableCells"],
             "walkableFraction": collision_stats["walkableFraction"],
         },
