@@ -4321,6 +4321,366 @@
         "body": "body",
         "neck": "neck"
       }
+    },
+    "orun_male_luminous": {
+      "scene": "res://assets/actors/native/races/orun_male_luminous.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "culture": "orun",
+      "gender": "male",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_male.glb",
+        "res://assets/actors/native/hair/parted_male.glb",
+        "res://assets/actors/native/hair/long_male.glb",
+        "res://assets/actors/native/hair/buns_male.glb"
+      ],
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1.0,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "orun_female_luminous": {
+      "scene": "res://assets/actors/native/races/orun_female_luminous.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "culture": "orun",
+      "gender": "female",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_female.glb",
+        "res://assets/actors/native/hair/parted_female.glb",
+        "res://assets/actors/native/hair/long_female.glb",
+        "res://assets/actors/native/hair/buns_female.glb"
+      ],
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1.0,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "greyhaven_male_luminous": {
+      "scene": "res://assets/actors/native/races/greyhaven_male_luminous.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "culture": "greyhaven",
+      "gender": "male",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_male.glb",
+        "res://assets/actors/native/hair/parted_male.glb",
+        "res://assets/actors/native/hair/long_male.glb",
+        "res://assets/actors/native/hair/buns_male.glb"
+      ],
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1.0,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "greyhaven_female_luminous": {
+      "scene": "res://assets/actors/native/races/greyhaven_female_luminous.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "culture": "greyhaven",
+      "gender": "female",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_female.glb",
+        "res://assets/actors/native/hair/parted_female.glb",
+        "res://assets/actors/native/hair/long_female.glb",
+        "res://assets/actors/native/hair/buns_female.glb"
+      ],
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1.0,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "glasswarden_male_luminous": {
+      "scene": "res://assets/actors/native/races/glasswarden_male_luminous.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "culture": "glasswarden",
+      "gender": "male",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_male.glb",
+        "res://assets/actors/native/hair/parted_male.glb",
+        "res://assets/actors/native/hair/long_male.glb",
+        "res://assets/actors/native/hair/buns_male.glb"
+      ],
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1.0,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "glasswarden_female_luminous": {
+      "scene": "res://assets/actors/native/races/glasswarden_female_luminous.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "culture": "glasswarden",
+      "gender": "female",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_female.glb",
+        "res://assets/actors/native/hair/parted_female.glb",
+        "res://assets/actors/native/hair/long_female.glb",
+        "res://assets/actors/native/hair/buns_female.glb"
+      ],
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1.0,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "stoneborn_male_luminous": {
+      "scene": "res://assets/actors/native/races/stoneborn_male_luminous.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "culture": "stoneborn",
+      "gender": "male",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_male.glb",
+        "res://assets/actors/native/hair/parted_male.glb",
+        "res://assets/actors/native/hair/long_male.glb",
+        "res://assets/actors/native/hair/buns_male.glb"
+      ],
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1.0,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "stoneborn_female_luminous": {
+      "scene": "res://assets/actors/native/races/stoneborn_female_luminous.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "culture": "stoneborn",
+      "gender": "female",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_female.glb",
+        "res://assets/actors/native/hair/parted_female.glb",
+        "res://assets/actors/native/hair/long_female.glb",
+        "res://assets/actors/native/hair/buns_female.glb"
+      ],
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1.0,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "votary_male_luminous": {
+      "scene": "res://assets/actors/native/races/votary_male_luminous.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "culture": "votary",
+      "gender": "male",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_male.glb",
+        "res://assets/actors/native/hair/parted_male.glb",
+        "res://assets/actors/native/hair/long_male.glb",
+        "res://assets/actors/native/hair/buns_male.glb"
+      ],
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1.0,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "votary_female_luminous": {
+      "scene": "res://assets/actors/native/races/votary_female_luminous.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "culture": "votary",
+      "gender": "female",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_female.glb",
+        "res://assets/actors/native/hair/parted_female.glb",
+        "res://assets/actors/native/hair/long_female.glb",
+        "res://assets/actors/native/hair/buns_female.glb"
+      ],
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1.0,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
     }
   },
   "actorTypes": {
@@ -4685,7 +5045,17 @@
     "608": "thornbark_wolf",
     "609": "thornwood_dryad_queen",
     "610": "tidal_crystal_lion",
-    "611": "whitehorn_ice_griffin"
+    "611": "whitehorn_ice_griffin",
+    "83": "orun_male_luminous",
+    "84": "orun_female_luminous",
+    "85": "greyhaven_male_luminous",
+    "86": "greyhaven_female_luminous",
+    "87": "glasswarden_male_luminous",
+    "88": "glasswarden_female_luminous",
+    "89": "stoneborn_male_luminous",
+    "90": "stoneborn_female_luminous",
+    "91": "votary_male_luminous",
+    "92": "votary_female_luminous"
   },
   "creationOptions": [
     {
@@ -4767,6 +5137,56 @@
       "actorType": 82,
       "model": "mycelari_male",
       "label": "Mycelari Male"
+    },
+    {
+      "actorType": 83,
+      "model": "orun_male_luminous",
+      "label": "Orun Male (Luminous body)"
+    },
+    {
+      "actorType": 84,
+      "model": "orun_female_luminous",
+      "label": "Orun Female (Luminous body)"
+    },
+    {
+      "actorType": 85,
+      "model": "greyhaven_male_luminous",
+      "label": "Greyhaven Male (Luminous body)"
+    },
+    {
+      "actorType": 86,
+      "model": "greyhaven_female_luminous",
+      "label": "Greyhaven Female (Luminous body)"
+    },
+    {
+      "actorType": 87,
+      "model": "glasswarden_male_luminous",
+      "label": "Glasswarden Male (Luminous body)"
+    },
+    {
+      "actorType": 88,
+      "model": "glasswarden_female_luminous",
+      "label": "Glasswarden Female (Luminous body)"
+    },
+    {
+      "actorType": 89,
+      "model": "stoneborn_male_luminous",
+      "label": "Stoneborn Male (Luminous body)"
+    },
+    {
+      "actorType": 90,
+      "model": "stoneborn_female_luminous",
+      "label": "Stoneborn Female (Luminous body)"
+    },
+    {
+      "actorType": 91,
+      "model": "votary_male_luminous",
+      "label": "Whitehorn Votary Male (Luminous body)"
+    },
+    {
+      "actorType": 92,
+      "model": "votary_female_luminous",
+      "label": "Whitehorn Votary Female (Luminous body)"
     }
   ],
   "npcLooks": {
