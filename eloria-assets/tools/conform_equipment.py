@@ -206,6 +206,47 @@ PROP_KIND = {
 }
 
 
+#: How much of a prop's length counts as "the part the hand closes on", as a
+#: fraction either side of the grip.  Wide enough that a thin haft still lands
+#: enough vertices to measure, narrow enough that a guard or an axe head does
+#: not reach into it.
+GRIP_BAND = .05
+
+#: Widened until the band holds at least this many vertices, so a haft that is
+#: an eight-sided tube of two rings is still measured rather than missed.
+GRIP_BAND_MINIMUM = 24
+
+#: And never past this, at which point the piece has no distinguishable grip
+#: and the whole thing is the best answer available.
+GRIP_BAND_LIMIT = .25
+
+
+def _grip_centre(points: np.ndarray, axis: int, spec: dict) -> float:
+    """Where the hand closes, across the prop, on one axis.
+
+    The socket holds a prop by its grip, so it is the grip that has to sit on
+    the socket -- not the middle of the piece.  For a sword the two are the
+    same and this changes nothing, but a sickle, a saber or a scythe carries a
+    curved head far out to one side, and centring the whole bounding box moves
+    the haft out from under the hand by as much as the head hangs out: the
+    reported symptom is a weapon riding beside the fist rather than in it.
+
+    Measured as the middle of the band's extent rather than its centre of
+    mass, which matters for a ring: a chakram's grip band is two arcs at
+    opposite edges, whose average vertex lies on either one of them but whose
+    extent is centred on the hole where the hand goes.
+    """
+    band = GRIP_BAND * spec["length"]
+    while True:
+        near = points[np.abs(points[:, 1]) <= band]
+        if len(near) >= GRIP_BAND_MINIMUM or band >= GRIP_BAND_LIMIT * spec["length"]:
+            break
+        band *= 1.6
+    if len(near) == 0:
+        near = points
+    return float(near[:, axis].max() + near[:, axis].min()) / 2.
+
+
 def seat_prop(surface: "Imported", kind: str, flip: bool = False) -> None:
     """Stand a generated prop up along +Y and put its grip on the socket.
 
@@ -223,6 +264,10 @@ def seat_prop(surface: "Imported", kind: str, flip: bool = False) -> None:
     ``flip`` turns the piece end for end, and the turn is baked into the mesh
     that is written rather than compensated for at the socket, so every prop
     that ships holds to one convention: business end at +Y, grip at the origin.
+
+    Across the other two axes a held prop is centred on its *grip* rather than
+    on its bounding box, which for a sword is the same thing and for a curved
+    head is not: see ``_grip_centre``.
 
     It is needed because the concept art does not hold to one.  Hafted weapons
     are drawn head up -- an axe, a spear, a maul, a halberd all arrive the
@@ -255,9 +300,14 @@ def seat_prop(surface: "Imported", kind: str, flip: bool = False) -> None:
 
     span = float(points[:, 1].max() - points[:, 1].min())
     points *= spec["length"] / max(span, 1e-9)
-    for axis in (0, 2):
-        points[:, axis] -= (points[:, axis].max() + points[:, axis].min()) / 2.
     points[:, 1] -= points[:, 1].min() + spec["below"] * spec["length"]
+    # A shield is strapped across its own middle and is centred on the socket
+    # by design, so it keeps the bounding box.  Anything held is held by its
+    # grip, and it is the grip that has to sit on the socket.
+    for axis in (0, 2):
+        points[:, axis] -= (
+            (points[:, axis].max() + points[:, axis].min()) / 2.
+            if spec["part"] == 1 else _grip_centre(points, axis, spec))
 
     surface.positions = points
     lengths = np.linalg.norm(normals, axis=1, keepdims=True)

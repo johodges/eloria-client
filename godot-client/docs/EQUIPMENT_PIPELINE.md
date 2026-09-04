@@ -38,6 +38,24 @@ anatomical fist frame (finger axis, grip axis, palm normal) taken from the rig
 itself, and hafts and bow risers are additionally solved in the reference idle
 pose, because that is the pose players spend their time looking at.
 
+A held prop stands along `+Y` with its business end up and **its grip on the
+origin**, which for an asymmetric piece is not the middle of its bounding box:
+a sickle, a saber or a scythe carries a curved head far out to one side, and
+centring the whole piece moves the haft that far out from under the hand. The
+grip is measured from the vertices near the socket
+(`conform_equipment._grip_centre`) and checked in
+`godot-client/tests/test_held_props.py`.
+
+### Both hands
+
+Part 1 is **the left hand**, not "the shield". Two Handed Wielding opened it to
+a second weapon, so a one-handed weapon carries a second visual — the same mesh
+again, from `hand_l`, solved against the same idle so both blades leave the
+fists pointing forward. Off-hand visuals are the weapon's own moved into a bank
+of their own (`import_generated_weapons.FIRST_OFFHAND_VISUAL`, 160) so the two
+ids can never drift apart; the shields sit below it and never reach it, which is
+what lets one byte on the wire mean either.
+
 ## Runtime contract
 
 `data/actors/equipment.json` is schema 3:

@@ -91,6 +91,21 @@ FIRST_IMAGE_ID = 374
 #: (weapon 113, shield 105) so restoring those models could not collide.
 FIRST_VISUAL = {0: 114, 1: 106}
 
+#: Part 1 is not "the shield" but "the left hand", and since Two Handed
+#: Wielding opened the second hand it holds a weapon as readily as a shield.
+#: A one-handed weapon therefore has a second visual, in a bank of its own
+#: above the shields, drawing the same mesh from ``hand_l``.  It is the
+#: weapon's own visual moved into that bank rather than a number allocated
+#: beside it, so the two can never drift apart and a weapon added later gets
+#: its off-hand id for free.  The top of the bank is 160 + 79 = 239, inside
+#: the single byte the enhanced-actor packet carries a part in.
+FIRST_OFFHAND_VISUAL = 160
+
+
+def offhand_visual(visual: int) -> int:
+    """The part-1 visual that draws part-0 ``visual`` in the left hand."""
+    return FIRST_OFFHAND_VISUAL + visual - FIRST_VISUAL[0]
+
 #: emu, damage low/high, accuracy, defense for the weapon classes; emu, armour
 #: low/high, defense, accuracy for the shields.  The scale is Eternal Lands'
 #: (damage in the single digits to the twenties, modifiers a few points either
@@ -428,8 +443,15 @@ def _euler_degrees(basis: np.ndarray) -> list[float]:
     return [round(float(x), 5), round(float(y), 5), round(float(z), 5)]
 
 
+#: The off-hand grip's key in what ``prop_sockets`` returns.  Not a part
+#: number: part 1 already means the shield's own socket, and these are two
+#: different ways of holding the same hand.
+OFFHAND = "offhand"
+
+
 def prop_sockets(rig, race: Path, library: Path, base: dict) -> dict:
-    """Per-part sockets that hold a weapon forward and a shield out."""
+    """Per-part sockets that hold a weapon forward, a shield out, and a second
+    weapon forward from the other fist."""
     idle = ea._idle_hand_bases(str(race), str(library), IDLE_CLIP)
     sockets = {}
 
@@ -446,6 +468,20 @@ def prop_sockets(rig, race: Path, library: Path, base: dict) -> dict:
     sockets[0] = {"bone": "hand_r",
                   "offset": list(base[0]["offset"]),
                   "rotationDegrees": _euler_degrees(blade)}
+
+    # The off hand holds a weapon exactly as the sword hand does: solved
+    # against the same idle, leaning the same 90 degrees so the blade leaves
+    # the fist forward, and rolled the same quarter turn so it is carried edge
+    # down.  Not a mirror of the right -- a mirrored blade would curve back
+    # across the body -- so the pair point the same way, which is how two are
+    # actually carried.  Only the bone and the hand's own idle rotation differ.
+    offhand = ea.upright_grip_basis(rig, "l", idle["l"], forward_lean=FORWARD_LEAN)
+    offhand = offhand @ np.array([[math.cos(roll), 0., math.sin(roll)],
+                                  [0., 1., 0.],
+                                  [-math.sin(roll), 0., math.cos(roll)]])
+    sockets[OFFHAND] = {"bone": "hand_l",
+                        "offset": list(base[1]["offset"]),
+                        "rotationDegrees": _euler_degrees(offhand)}
 
     # The shield's face is turned out from the body, which for the left hand is
     # the actor's own left, and its top stays up.
@@ -626,6 +662,13 @@ def main() -> int:
         if p.part == 1:
             entry["scale"] = SHIELD_SCALE
         registry["models"]["%d:%d" % (p.part, p.visual)] = entry
+        # The same mesh again, in the left hand, for the weapons a player may
+        # hold two of.  A two-handed weapon has no off-hand entry because
+        # nothing can be worn beside it.
+        if p.part == 0 and p.kind in ONE_HANDED:
+            registry["models"]["1:%d" % offhand_visual(p.visual)] = {
+                "scene": entry["scene"], "name": "%s (off hand)" % p.name,
+                "attach": "socket", "socket": sockets[OFFHAND]}
     REGISTRY.write_text(json.dumps(registry, indent=2) + "\n",
                         encoding="utf-8")
 

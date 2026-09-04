@@ -4,9 +4,11 @@ extends CharacterBody3D
 @export var walk_presentation_speed := 6.0
 @export var run_presentation_speed := 9.0
 @export var turn_speed_radians := 12.0
-## The server's walking interval, so the very first step of a session is
-## paced correctly before any packet cadence has been observed. Every burst
-## after that keeps the cadence it last measured.
+## How long the server gives one *tile*, so the very first step of a session
+## is paced correctly before any packet cadence has been observed. Every burst
+## after that keeps the pace it last measured. Per tile rather than per step,
+## because a diagonal step crosses 1.41 tiles and is held for 1.41 times as
+## long: one pace covers both step shapes and any burst of them folded together.
 @export var initial_server_interval := 0.6
 @export var interval_smoothing := 0.5
 ## How much longer than the observed server cadence one step is allowed to
@@ -14,9 +16,10 @@ extends CharacterBody3D
 ## next one arrived, and the actor stopped and restarted on every tile.
 @export var arrival_margin := 1.25
 @export var minimum_segment_duration := 0.06
-## Long enough to hold a walking step - 0.6 s a tile plus the arrival
-## margin - so a walk is not driven faster than the server sends it.
-@export var maximum_segment_duration := 1.0
+## Long enough to hold the longest walking step - a diagonal, 0.6 s a tile
+## across 1.41 tiles, plus the arrival margin - so a walk is not driven faster
+## than the server sends it.
+@export var maximum_segment_duration := 1.1
 ## Kept walking for this long after a step lands before falling back to idle,
 ## again so a late packet does not flick the pose to idle and back.
 @export var movement_coast_seconds := 0.12
@@ -64,6 +67,8 @@ var _segment_start := Vector3.ZERO
 var _segment_elapsed := 0.0
 var _segment_duration := 0.0
 var _last_movement_update_msec := -1
+## Seconds the server spends on one tile, measured over whatever ground the
+## last update actually covered rather than assumed to be one step's worth.
 var _smoothed_server_interval := 0.6
 ## The direction the body is actually crossing the ground in, which is not the
 ## tile direction the server named. See `_rendered_target_yaw`.
@@ -83,6 +88,11 @@ var _travel_yaw := 0.0
 var _hastened := false
 ## Part 2 in the equipment registry: the cape, and the only part with cloth.
 const CAPE_PART := 2
+## Part 5: the torso. The cape is draped over whatever is worn there, so the
+## two parts are not independent the way every other pair is.
+const BODY_PART := 5
+## How many cut capes are kept before the cache is dropped and rebuilt.
+const DRAPE_CACHE_LIMIT := 48
 ## The wardrobe meshes are shells fitted straight onto the skin they cover, so
 ## the body surface underneath pokes through them wherever the skeleton bends -
 ## which is what skin showing through the shirt is. Pushing each garment out a
@@ -842,6 +852,11 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 	# fallback and can leave them visibly embedded in sculpted terrain.
 	next_target.y = server_target.y
 	var target_changed: bool = server_target.distance_squared_to(next_target) > 0.000001
+	# Where the server had this actor before this update. The step it just took
+	# is that far, which is what the pace below is measured and spent against -
+	# not the distance from the rendered body, which trails by the arrival
+	# margin and would feed its own lag back into the pacing.
+	var previous_target: Vector3 = server_target
 	server_target = next_target
 	var actor_command: int = int(dto.get("command", -1))
 	# Which command the facing comes from, and which it does not. Everything
@@ -877,14 +892,23 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 		_travel_yaw_active = false
 	elif target_changed:
 		var now_msec: int = Time.get_ticks_msec()
+		# How much ground the server covered, in tiles. A diagonal step is 1.41
+		# of them and a folded burst several, so timing the update against it
+		# gives a pace per tile that every step shape agrees on. Timing it
+		# against the step count instead read a diagonal as a short interval
+		# and rendered it 41% faster than the straight step beside it, which is
+		# what walking and running at an uneven speed was.
+		var step_tiles: float = maxf(
+			previous_target.distance_to(server_target) / _metres_per_tile, 0.001)
 		if _last_movement_update_msec >= 0:
 			var observed_interval: float = float(
 				now_msec - _last_movement_update_msec) / 1000.0
-			if observed_interval <= maximum_segment_duration * 2.0:
-				observed_interval = clampf(observed_interval, 0.05,
+			if observed_interval <= maximum_segment_duration * 2.0 * step_tiles:
+				var observed_pace: float = clampf(
+					observed_interval / step_tiles, 0.05,
 					maximum_segment_duration)
 				_smoothed_server_interval = lerpf(_smoothed_server_interval,
-					observed_interval, interval_smoothing)
+					observed_pace, interval_smoothing)
 			# A long stationary pause is idle time, not a cadence. Folding it
 			# in would pace the next burst by how long the player stood still,
 			# and resetting to the constant lurched the first step of every
@@ -897,7 +921,7 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 		_movement_coast_remaining = 0.0
 		_segment_duration = presentation_segment_duration(
 			global_position.distance_to(server_target), _presentation_speed,
-			_smoothed_server_interval, arrival_margin,
+			_smoothed_server_interval * step_tiles, arrival_margin,
 			minimum_segment_duration, maximum_segment_duration)
 		_travel_yaw = travel_yaw(_segment_start, server_target, _target_yaw)
 		_travel_yaw_active = true
@@ -930,11 +954,22 @@ func _paced_travel_action(action: StringName) -> StringName:
 	return action
 
 func apply_equipment_visuals(visuals: Dictionary, fallback_parts: Array = []) -> void:
+	var torso_before: int = int(_equipment_visuals.get(BODY_PART, 0))
 	for raw_part: Variant in _equipment_visuals.keys():
 		var old_part: int = int(raw_part)
 		if not visuals.has(old_part) and not visuals.has(str(old_part)):
 			_clear_equipment_part(old_part)
+	# The torso goes on first. It is the one part another is cut against - the
+	# cape is draped over whatever armour is worn - so a cape built before it
+	# would be cut against the armour being taken off.
+	var order: Array = []
 	for raw_part: Variant in visuals:
+		if int(raw_part) == BODY_PART:
+			order.push_front(raw_part)
+		else:
+			order.append(raw_part)
+	var cape_rebuilt := false
+	for raw_part: Variant in order:
 		var part: int = int(raw_part)
 		var visual_id: int = int(visuals[raw_part])
 		var allow_fallback: bool = fallback_parts.has(part)
@@ -944,6 +979,18 @@ func apply_equipment_visuals(visuals: Dictionary, fallback_parts: Array = []) ->
 		_clear_equipment_part(part)
 		_equipment_visuals[part] = visual_id
 		_create_equipment_part(part, visual_id, allow_fallback)
+		cape_rebuilt = cape_rebuilt or part == CAPE_PART
+	# A cape kept from before still hangs on the armour it was cut against, so
+	# a change of chest piece re-cuts it even though the cape itself did not
+	# change. One rebuilt in the loop above was already cut against the new
+	# torso, which went on first.
+	if int(_equipment_visuals.get(BODY_PART, 0)) != torso_before and (
+			not cape_rebuilt) and _equipment_nodes.has(CAPE_PART):
+		var cape_visual: int = int(_equipment_visuals.get(CAPE_PART, 0))
+		_clear_equipment_part(CAPE_PART)
+		_equipment_visuals[CAPE_PART] = cape_visual
+		_create_equipment_part(CAPE_PART, cape_visual,
+			fallback_parts.has(CAPE_PART))
 	# Equipment adds and removes mesh instances, so the silhouette's clone set
 	# has to be built again against what the actor is now made of.
 	if _silhouette != null and _silhouette.is_enabled():
@@ -1034,6 +1081,46 @@ func _create_equipment_part(part: int, visual_id: int, allow_fallback: bool) -> 
 	if part == CAPE_PART:
 		_set_cape_cloth_active(not created.is_empty())
 
+## The scene of the torso piece this actor is wearing, or "" when the chest is
+## bare. A bare chest needs no drape: the capes were conformed against the bare
+## back offline and already clear it.
+func _worn_torso_scene() -> String:
+	var visual: int = int(_equipment_visuals.get(BODY_PART, 0))
+	if visual == 0:
+		return ""
+	var model: Dictionary = _equipment_model_config(BODY_PART, visual)
+	if str(model.get("attach", "socket")) != "skinned":
+		return ""
+	return str(model.get("scene", ""))
+
+## One cape surface, cut to clear the torso worn under it. The mesh itself
+## when nothing is worn there, or when nothing on it had to move.
+func _draped_over(torso_scene: String, cape_scene: String,
+		piece: Dictionary) -> Mesh:
+	var mesh: Mesh = piece.get("mesh") as Mesh
+	if torso_scene.is_empty() or mesh == null:
+		return mesh
+	var key: String = "%s|%s|%s" % [cape_scene, torso_scene,
+		str(piece.get("name", ""))]
+	var cached: Mesh = _draped_capes.get(key) as Mesh
+	if cached != null:
+		return cached
+	# A cut cape is a whole mesh, not a handful of matrices like a rebound
+	# skin, so this cache is capped where that one is not: twenty-nine capes
+	# against sixty-four torsos would be more geometry than the map it is
+	# drawn on. Dropping the lot is fine - it is rebuilt on the next wearer.
+	if _draped_capes.size() >= DRAPE_CACHE_LIMIT:
+		_draped_capes.clear()
+	var grid: PackedFloat32Array = _drape_envelopes.get(torso_scene,
+		PackedFloat32Array()) as PackedFloat32Array
+	if not _drape_envelopes.has(torso_scene):
+		grid = CapeDrape.envelope(_equipment_pieces(torso_scene))
+		_drape_envelopes[torso_scene] = grid
+	var draped: Mesh = CapeDrape.drape(mesh,
+		piece.get("bones", PackedStringArray()) as PackedStringArray, grid)
+	_draped_capes[key] = draped
+	return draped
+
 ## Cloth for the cape chains. A SkeletonModifier3D so the engine runs it once
 ## the animation has posed the skeleton - writing bone poses from _process
 ## would race the AnimationPlayer - and inactive, and therefore free, until a
@@ -1053,9 +1140,42 @@ func _attach_cape_cloth(skeleton: Skeleton3D) -> void:
 func _set_cape_cloth_active(enabled: bool) -> void:
 	if _cape_cloth == null:
 		return
+	if enabled:
+		_tell_cloth_what_is_worn()
 	if enabled and not _cape_cloth.active:
 		_cape_cloth.call("reset")
 	_cape_cloth.active = enabled
+
+## How far the worn torso reaches from each of the solver's capsules. The
+## solver knows the skeleton and nothing else; the equipment is only known
+## here, and the cape is the one garment whose shape depends on another.
+func _tell_cloth_what_is_worn() -> void:
+	if _cape_cloth == null or _native_skeleton == null:
+		return
+	var torso_scene: String = _worn_torso_scene()
+	var empty := PackedFloat32Array()
+	if torso_scene.is_empty():
+		_cape_cloth.call("set_torso_reach", empty, empty)
+		return
+	var key: String = "%s|%s" % [str(_model_config.get("scene", "")),
+		torso_scene]
+	var reach: Array = _torso_reaches.get(key, []) as Array
+	if reach.is_empty():
+		var pieces: Array = _equipment_pieces(torso_scene)
+		reach = [_axis_reach(pieces, "spine_01", "neck_01"),
+			_axis_reach(pieces, "pelvis", "spine_01")]
+		_torso_reaches[key] = reach
+	_cape_cloth.call("set_torso_reach", reach[0], reach[1])
+
+func _axis_reach(pieces: Array, from: String, to: String) -> PackedFloat32Array:
+	var head: int = _native_skeleton.find_bone(from)
+	var tail: int = _native_skeleton.find_bone(to)
+	if head < 0 or tail < 0:
+		return PackedFloat32Array()
+	return CapeDrape.axis_reach(pieces,
+		_native_skeleton.get_bone_global_rest(head).origin,
+		_native_skeleton.get_bone_global_rest(tail).origin,
+		CapeDrape.BARE_TRUNK_RADIUS)
 
 func _apply_equipment_hides(part: int, part_config: Dictionary,
 		model_config: Dictionary) -> void:
@@ -1240,6 +1360,9 @@ func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
 	# instead of rebuilt from 65 named binds for each actor that wears one.
 	var cache_key: String = "%s|%s" % [str(_model_config.get("scene", "")), scene_path]
 	var ground: Dictionary = _ground_drops(author_rig, skin_region)
+	# The cape is the one garment cut against another: its yoke is rigid, so
+	# only this can hold it outside the torso worn under it.
+	var worn: String = _worn_torso_scene() if part == CAPE_PART else ""
 	for piece_value: Variant in _equipment_pieces(scene_path):
 		var piece: Dictionary = piece_value as Dictionary
 		var surface_key: String = "%s|%s" % [cache_key, str(piece.get("name", ""))]
@@ -1255,7 +1378,7 @@ func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
 		var clone: MeshInstance3D = MeshInstance3D.new()
 		clone.name = "EquipmentSkin_%d_Visual_%d_%s" % [part, visual_id,
 			str(piece.get("name", "Mesh"))]
-		clone.mesh = piece.get("mesh") as Mesh
+		clone.mesh = _draped_over(worn, scene_path, piece)
 		clone.skin = rebound
 		_tint_surfaces(clone, tint)
 		_native_skeleton.add_child(clone)
@@ -1791,6 +1914,15 @@ func set_surface_height(value: float) -> void:
 		global_position.y = value
 	_wake()
 
+## How long the body should take to cross `distance` metres of ground.
+##
+## `observed_interval` is how long the server spent on the step being shown -
+## its measured pace per tile times the tiles that step crosses - so a diagonal
+## and the straight step beside it are each given the time they were actually
+## taken in, and render at one speed. `margin` stretches that so the step
+## finishes a little after the next one is due rather than a little before,
+## which is what keeps the walk continuous; the body settles a steady
+## `margin - 1` of a step behind its own tile and no further.
 static func presentation_segment_duration(distance: float, nominal_speed: float,
 		observed_interval: float, margin: float, minimum_duration: float,
 		maximum_duration: float) -> float:
@@ -1889,6 +2021,14 @@ func _load_native_scene(path: String) -> Array[String]:
 # of nodes alive with no owner to free them.
 static var _equipment_pieces_cache: Dictionary = {}
 static var _rebound_skins: Dictionary = {}
+## The worn torso's reach, and the cape surfaces cut to clear it. Both depend
+## only on the two scenes, so both are shared by every actor wearing the pair
+## rather than measured per actor: the envelope walks a few thousand vertices
+## and the drape rebuilds a surface, and a populated map would pay for it once
+## per wearer otherwise.
+static var _drape_envelopes: Dictionary = {}
+static var _draped_capes: Dictionary = {}
+static var _torso_reaches: Dictionary = {}
 
 static func _equipment_pieces(path: String) -> Array:
 	# One parse per scene per session. The generic tier means every actor now
