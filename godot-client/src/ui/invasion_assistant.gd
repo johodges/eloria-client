@@ -236,6 +236,27 @@ func configure_registry(value: Dictionary) -> void:
 	map_registry = value
 
 
+func _is_last_page(update: Dictionary) -> bool:
+	# A server that sends the state whole carries no page fields at all, so an
+	# absent "pages" means this single message is the whole thing.
+	var pages: int = int(update.get("pages", 1))
+	return int(update.get("page", 0)) >= pages - 1
+
+
+func _accumulate(previous: Dictionary, update: Dictionary, key: String) -> Dictionary:
+	# The group and monster lists outgrew one packet - 600 invasion groups
+	# against a 64KB ceiling - so the server sends them a page at a time. The
+	# first page replaces what was held; the rest append to it. Rebuilding on
+	# every page would make the list flicker through nine partial states and
+	# lose the player's selection each time.
+	var merged: Dictionary = update.duplicate(true)
+	if int(update.get("page", 0)) > 0:
+		var carried: Array = (previous.get(key, []) as Array).duplicate(true)
+		carried.append_array(merged.get(key, []) as Array)
+		merged[key] = carried
+	return merged
+
+
 func apply_update(update: Dictionary) -> void:
 	var kind := str(update.get("kind", ""))
 	match kind:
@@ -250,11 +271,13 @@ func apply_update(update: Dictionary) -> void:
 			selected_map_id = str(map.get("id", selected_map_id))
 			_show_map_state()
 		"groups":
-			groups_state = update.duplicate(true)
-			_rebuild_groups()
+			groups_state = _accumulate(groups_state, update, "groups")
+			if _is_last_page(update):
+				_rebuild_groups()
 		"monsters":
-			monsters_state = update.duplicate(true)
-			_rebuild_monsters()
+			monsters_state = _accumulate(monsters_state, update, "monsters")
+			if _is_last_page(update):
+				_rebuild_monsters()
 	if not visible:
 		_fit_to_viewport()
 		popup()
