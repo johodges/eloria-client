@@ -261,6 +261,38 @@ func _run() -> void:
 			CoordinateAdapter.new().direction_to_godot(Vector2i(1, 1))),
 		"a step off the ordered heading turns the actor onto the step")
 	actor_height_fixture.free()
+	# Main samples the ground under the tile a step is heading for, so the
+	# height arrives while the step is still being walked. Writing it onto the
+	# body as well as onto the target put the actor at the far tile's height
+	# until the next physics tick recomputed the interpolation and pulled it
+	# back - on terraced ground every creature crossing a terrace popped a
+	# whole ledge-height and returned, over and over.
+	var terrace_fixture: ReplicatedActor3D = ReplicatedActor3D.new()
+	root.add_child(terrace_fixture)
+	terrace_fixture.actor_id = 78
+	terrace_fixture.server_target = Vector3(2.0, 20.0, 3.0)
+	terrace_fixture.global_position = terrace_fixture.server_target
+	terrace_fixture.set("_snap_pending", false)
+	terrace_fixture.set("_segment_start", terrace_fixture.server_target)
+	terrace_fixture.apply_server_state({
+		"x": 3, "y": 3, "rotation": 0, "command": 22},
+		CoordinateAdapter.new(), false)
+	var step_duration: float = float(terrace_fixture.get("_segment_duration"))
+	_expect(step_duration > 0.0, "a movement packet opens an interpolated step")
+	terrace_fixture.set_surface_height(23.0)
+	_expect(is_equal_approx(terrace_fixture.server_target.y, 23.0)
+		and is_equal_approx(terrace_fixture.global_position.y, 20.0),
+		"a ledge sampled mid-step moves the step's target, not the body")
+	terrace_fixture.call("_physics_process", step_duration)
+	_expect(is_equal_approx(terrace_fixture.global_position.y, 23.0),
+		"the step still finishes on the height the ground was sampled at")
+	# Nothing is interpolating a standing actor, so a correction that never
+	# reached the body would leave it embedded in the ground it was measured
+	# against.
+	terrace_fixture.set_surface_height(26.0)
+	_expect(is_equal_approx(terrace_fixture.global_position.y, 26.0),
+		"a standing actor still snaps out of terrain")
+	terrace_fixture.free()
 	_check_travel_facing()
 	_check_map_dot()
 	var north_yaw: float = CoordinateAdapter.new().direction_to_godot(Vector2i(0, -1))
@@ -2287,35 +2319,52 @@ func _run() -> void:
 	# Pick points are spent from the statistics window. Everything it offers
 	# is the server's word: the points come from the stats packet, the perks
 	# and their prices from the catalogue, and a perk it refuses carries the
-	# server's own refusal rather than a Take button.
+	# server's own refusal rather than a Take button. Both rows carry the two
+	# tier bytes the catalogue has sent since perk_catalog_v2 - held tier and
+	# tiers in all - so this is the layout the decoder accepts today.
 	app_state_inventory.set("stats", {"physique": 4, "physique_base": 4,
 		"magic_nexus": 0, "magic_nexus_base": 0, "overall": 10,
 		"pickpoints_earned": 10, "pickpoints_spent": 0})
-	app_state_inventory.call("_on_packet", 215, ("02000500c8000000457863617661746f72005477696365206173206d616e79206974656d732e0000fdff00000000506f7765722048756e677279004c6f7365203320666f6f6420706572206d696e7574652e00596f7520616c726561647920686176652074686174207065726b2e00").hex_decode())
+	app_state_inventory.call("_on_packet", 215, ("02000500c80000000001457863617661746f72005477696365206173206d616e79206974656d732e0000fdff000000000001506f7765722048756e677279004c6f7365203320666f6f6420706572206d696e7574652e00596f7520616c726561647920686176652074686174207065726b2e00").hex_decode())
 	await process_frame
 	var perk_rows: VBoxContainer = main.get("perk_rows") as VBoxContainer
 	_expect(perk_rows != null and perk_rows.get_child_count() == 2,
 		"the perks tab lists every perk the server offers: %d"
 			% (perk_rows.get_child_count() if perk_rows != null else -1))
-	var excavator: HBoxContainer = perk_rows.get_node("PerkExcavator") as HBoxContainer
-	var excavator_take: Button = excavator.get_node("Take") as Button
-	var excavator_text: String = (excavator.get_node("Detail") as Label).text
-	_expect(not excavator_take.disabled,
+	# Every row is looked up with get_node_or_null: a catalogue that failed to
+	# draw is one reported failure, not a crash that takes the rest of the run
+	# down with it.
+	var excavator: HBoxContainer = (perk_rows.get_node_or_null("PerkExcavator")
+		if perk_rows != null else null) as HBoxContainer
+	var excavator_take: Button = (excavator.get_node_or_null("Take")
+		if excavator != null else null) as Button
+	var excavator_detail: Label = (excavator.get_node_or_null("Detail")
+		if excavator != null else null) as Label
+	var excavator_text: String = (excavator_detail.text
+		if excavator_detail != null else "<no row>")
+	_expect(excavator_take != null and not excavator_take.disabled,
 		"a perk the server does not refuse can be taken")
 	_expect(excavator_text.contains("5 pp") and excavator_text.contains("200"),
 		"a perk states what it costs in points and gold: " + excavator_text)
-	var hungry: HBoxContainer = perk_rows.get_node("PerkPowerHungry") as HBoxContainer
-	var hungry_take: Button = hungry.get_node("Take") as Button
-	_expect(hungry_take.disabled
+	var hungry: HBoxContainer = (perk_rows.get_node_or_null("PerkPowerHungry")
+		if perk_rows != null else null) as HBoxContainer
+	var hungry_take: Button = (hungry.get_node_or_null("Take")
+		if hungry != null else null) as Button
+	var hungry_detail: Label = (hungry.get_node_or_null("Detail")
+		if hungry != null else null) as Label
+	_expect(hungry_take != null and hungry_take.disabled
 			and hungry_take.tooltip_text == "You already have that perk.",
 		"a refused perk is disabled and quotes the server: "
-			+ hungry_take.tooltip_text)
-	_expect((hungry.get_node("Detail") as Label).text.contains("+3 pp"),
+			+ (hungry_take.tooltip_text if hungry_take != null else "<no row>"))
+	var hungry_text: String = (hungry_detail.text
+		if hungry_detail != null else "<no row>")
+	_expect(hungry_text.contains("+3 pp"),
 		"a perk with a negative cost is shown as paying points out: "
-			+ (hungry.get_node("Detail") as Label).text)
+			+ hungry_text)
 	var perk_summary: Label = main.get("perk_summary") as Label
-	_expect(perk_summary.text.contains("10"),
-		"the tab says how many pick points are unspent: " + perk_summary.text)
+	_expect(perk_summary != null and perk_summary.text.contains("10"),
+		"the tab says how many pick points are unspent: "
+			+ (perk_summary.text if perk_summary != null else "<no label>"))
 
 	# The "+" beside a line is offered only while the server's numbers allow
 	# it, and clicking one asks before anything is spent.

@@ -652,7 +652,7 @@
     }
   ],
   "provenance": {
-    "generator": "eloria-assets/tools/sunmane/caves.py",
+    "generator": "eloria-assets/maps/nymara-regions/sunmane_steppe/source/caves.py",
     "surfaceMap": "eloria-assets/maps/nymara-regions/sunmane_steppe",
     "writtenDescription": [
       "eloria-assets/qa/regions/sunmane-steppe/README.md",

@@ -13,8 +13,8 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
-ROOT = Path(__file__).resolve().parents[3]
-PACKAGE = ROOT / "eloria-assets" / "maps" / "nymara-regions" / "sunmane_steppe"
+ROOT = Path(__file__).resolve().parents[5]
+PACKAGE = Path(__file__).resolve().parents[1]
 REFERENCES = PACKAGE / "references"
 SHOTS = ROOT / "godot-client" / "test-artifacts" / "sunmane-steppe"
 OUTPUT = PACKAGE / "comparison"

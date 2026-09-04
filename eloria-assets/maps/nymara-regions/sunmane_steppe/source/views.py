@@ -18,7 +18,7 @@ sys.path.insert(0, str(HERE))
 
 import terrain                                          # noqa: E402
 
-PACKAGE = Path(__file__).resolve().parents[2] / "maps" / "nymara-regions" / "sunmane_steppe"
+PACKAGE = Path(__file__).resolve().parents[1]
 
 # Explicit camera framings, given as ground-relative eye and aim points so they
 # stay correct if the landform is resculpted:

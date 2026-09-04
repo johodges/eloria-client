@@ -2123,10 +2123,11 @@
         1,
         63
       ],
-      "zeroMeansBlocked": true
+      "zeroMeansBlocked": true,
+      "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 397902,
-    "walkableFraction": 0.2998,
+    "walkableCells": 395144,
+    "walkableFraction": 0.2977,
     "swimmable": {
       "rule": "a cell whose grid value is 0 and whose terrain height is below asset.seaLevel is water, not wall",
       "cells": 850386,
@@ -4884,15 +4885,15 @@
   "performance": {
     "nodes": 11731,
     "meshes": 570,
-    "materials": 22,
+    "materials": 29,
     "images": 58,
     "textures": 58,
-    "accessors": 2280,
-    "bufferViews": 2338,
-    "uniqueTriangles": 482271,
-    "uniqueVertices": 413565,
-    "glbBytes": 26363220,
-    "instancedTriangles": 2454025,
+    "accessors": 2287,
+    "bufferViews": 2345,
+    "uniqueTriangles": 499361,
+    "uniqueVertices": 418519,
+    "glbBytes": 27167388,
+    "instancedTriangles": 2471115,
     "embeddedTextureBytes": 30430804,
     "textureMemoryBytesUncompressed": 262275072,
     "placements": 6275,
@@ -4900,14 +4901,25 @@
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 397902,
+      "walkableCells": 395144,
       "swimmableCells": 850386,
       "swimmableFraction": 0.6408,
       "meanWaterDepth": 5.1,
       "maxWaterDepth": 24.56,
-      "blockedCells": 929202,
-      "walkableFraction": 0.2998,
+      "blockedCells": 931960,
+      "walkableFraction": 0.2977,
       "elevatedDecks": 198,
+      "steepCells": 23040,
+      "reliefMetres": 28.13,
+      "heightEncoding": {
+        "origin": -0.1037,
+        "step": 0.453757,
+        "range": [
+          1,
+          63
+        ],
+        "zeroMeansBlocked": true
+      },
       "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
       "columnOrder": "server-tile-x (column 0 is the -X western edge)"
     },
@@ -4932,12 +4944,12 @@
       "props: 31 moored boats, 113 deck gear"
     ],
     "lod2": {
-      "glbBytes": 18664372,
+      "glbBytes": 19466480,
       "nodes": 7317,
-      "uniqueTriangles": 447091,
-      "instancedTriangles": 1555545,
-      "sizeReductionPercent": 29.2,
-      "triangleReductionPercent": 36.6
+      "uniqueTriangles": 464181,
+      "instancedTriangles": 1572635,
+      "sizeReductionPercent": 28.3,
+      "triangleReductionPercent": 36.4
     }
   },
   "sources": [

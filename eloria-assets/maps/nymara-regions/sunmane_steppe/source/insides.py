@@ -52,11 +52,11 @@ sys.path.insert(0, str(HERE))
 
 import caves                                          # noqa: E402
 import settlement                                     # noqa: E402
-from build import Builder                             # noqa: E402
+from build_sunmane import Builder                             # noqa: E402
 import kit                                            # noqa: E402
 
-ASSET_ROOT = HERE.parents[1]
-MAP_ROOT = ASSET_ROOT / "maps" / "nymara-regions" / "interiors"
+ASSET_ROOT = HERE.parents[3]
+MAP_ROOT = HERE.parents[1] / "interiors"
 PACKAGE_ID = "sunmane_insides"
 PACKAGE_NAME = "Sunmane Insides"
 
@@ -459,7 +459,7 @@ def build_manifest(builder: Builder, sections: list, statistics: dict,
         "portals": portals,
         "performance": statistics,
         "provenance": {
-            "generator": "eloria-assets/tools/sunmane/insides.py",
+            "generator": "eloria-assets/maps/nymara-regions/sunmane_steppe/source/insides.py",
             "systems": [section["id"] for section in sections],
             "surfaceMap": "eloria-assets/maps/nymara-regions/sunmane_steppe",
             "note": ("Both systems are built from the same specs, clearance "

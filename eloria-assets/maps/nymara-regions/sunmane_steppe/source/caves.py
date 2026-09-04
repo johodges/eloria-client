@@ -20,7 +20,7 @@ and the cavern reads as one continuous rock surface. The floor carries the
 navigation prefix and the roof carries structural collision, which is what stops
 a player walking out through a wall.
 
-Run:  python3 eloria-assets/tools/sunmane/caves.py [--output DIR]
+Run:  python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/caves.py [--output DIR]
 """
 from __future__ import annotations
 
@@ -40,12 +40,12 @@ sys.path.insert(0, str(HERE))
 import kit                                           # noqa: E402
 import noise as noise_kit                            # noqa: E402
 import settlement                                    # noqa: E402
-from build import Builder                            # noqa: E402
+from build_sunmane import Builder                            # noqa: E402
 from glb import Geometry, compose                    # noqa: E402
 from shapes import UV_SCALE, oriented_quad, oriented_triangle  # noqa: E402
 
-ASSET_ROOT = HERE.parents[1]
-MAP_ROOT = ASSET_ROOT / "maps" / "nymara-regions" / "interiors"
+ASSET_ROOT = HERE.parents[3]
+MAP_ROOT = HERE.parents[1] / "interiors"
 
 CELL = 0.5                    # metres between field samples
 HALF_EXTENT = 30.0            # metres from the map centre to its edge
@@ -63,18 +63,6 @@ SERVER_ORIGIN = (30.0, 30.0)
 METRES_PER_TILE = 1.0
 SCHEMA_VERSION = "1.1.0"
 ASSET_VERSION = "1.0.0"
-
-
-def stable_seed(text: str) -> int:
-    """A seed derived from a name that is the same in every interpreter.
-
-    `hash()` on a str is salted per process, so seeding from it gave this
-    generator a different seed on every run and the two cave packages were
-    never reproducible - two builds of identical code produce different
-    GLBs. The production guide names this exact trap. CRC32 is stable across
-    runs, platforms and Python versions.
-    """
-    return zlib.crc32(text.encode("utf-8")) % 10_000
 
 
 # --------------------------------------------------------------------- specs
@@ -107,8 +95,8 @@ class Passage:
 WIND_CAVES = {
     "id": "sunmane_wind_caves",
     "name": "Sunmane Wind Caves",
-    "mapPath": "maps/nymara/sunmane_wind_caves.elm",
-    "returnMap": "maps/nymara/sunmane_steppe.elm",
+    "mapPath": "sunmane_wind_caves",
+    "returnMap": "sunmane_steppe",
     "returnTile": [128, 175],
     "palette": "limestone",
     "chambers": [
@@ -132,8 +120,8 @@ WIND_CAVES = {
 CRYSTAL_HOLLOW = {
     "id": "sunmane_crystal_hollow",
     "name": "Amethyst Crystal Hollow",
-    "mapPath": "maps/nymara/sunmane_crystal_hollow.elm",
-    "returnMap": "maps/nymara/sunmane_steppe.elm",
+    "mapPath": "sunmane_crystal_hollow",
+    "returnMap": "sunmane_steppe",
     "returnTile": [182, 154],
     "palette": "amethyst",
     "chambers": [
@@ -788,7 +776,7 @@ def build_manifest(shell: Shell, builder: Builder, statistics: dict) -> dict:
             "label": "Back out to the Sunmane Steppe",
         }],
         "provenance": {
-            "generator": "eloria-assets/tools/sunmane/caves.py",
+            "generator": "eloria-assets/maps/nymara-regions/sunmane_steppe/source/caves.py",
             "surfaceMap": "eloria-assets/maps/nymara-regions/sunmane_steppe",
             "writtenDescription": [
                 "eloria-assets/qa/regions/sunmane-steppe/README.md",

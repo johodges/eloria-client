@@ -131,7 +131,7 @@ uses, and the amethyst is the same crystal family as the badland.
 - well: 4
 - windmill: 6
 
-Asserted on every run by `tools/sunmane/validate_package.py`.
+Asserted on every run by `maps/nymara-regions/sunmane_steppe/source/validate_package.py`.
 
 ## Runtime population
 
@@ -146,7 +146,7 @@ Asserted on every run by `tools/sunmane/validate_package.py`.
 ## Evidence
 
 Every row above is evidenced by a capture in `comparison/` or by an assertion in
-`tools/sunmane/validate_package.py`:
+`maps/nymara-regions/sunmane_steppe/source/validate_package.py`:
 
 | Item group | Evidence |
 |---|---|

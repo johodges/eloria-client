@@ -98,7 +98,7 @@ def build(builder, landform: terrain.Landform, statistics: dict) -> dict:
                                        "max": [133.0, 58.0]},
         },
         "spawnPoints": spawn_points,
-        "collision": {"nodeNames": sorted(set(builder.collision_nodes))},
+        "collision": collision_block(builder),
         "navigation": {
             "surfaceNodePrefixes": ["Terrain_"],
             "walkableAreas": [terrain.CLASS_NAMES[c] for c in
@@ -201,7 +201,7 @@ def build(builder, landform: terrain.Landform, statistics: dict) -> dict:
         },
         **getattr(builder, "population", {}),
         "provenance": {
-            "generator": "eloria-assets/tools/sunmane/build.py",
+            "generator": "eloria-assets/maps/nymara-regions/sunmane_steppe/source/build_sunmane.py",
             "conceptArt": {
                 "aerial": "references/01-aerial-overview.png",
                 "detailBoard": "references/00-concept-detail-board.png"},
@@ -224,3 +224,31 @@ def _chunk_of(world_x: float, world_z: float) -> tuple[int, int]:
     last = terrain.CHUNKS - 1
     return (min(last, max(0, int((world_x - origin_x) / span))),
             min(last, max(0, int((world_z - origin_z) / span))))
+
+
+def collision_block(builder) -> dict:
+    """What the package says about its own walk grid.
+
+    Only the node names were published before, so anything wanting to read
+    `collision.bin` had to infer the world-to-cell mapping from
+    `coordinateTransform` and guess the row order. The client's own region
+    check gives up and skips the grid when `originMetres` is missing, which is
+    what it did here.
+    """
+    block = {"nodeNames": sorted(set(builder.collision_nodes)),
+             "binary": "collision.bin", "format": "EWCG-v2"}
+    grid = getattr(builder, "collision_stats", None)
+    if grid:
+        block.update({
+            "cellMetres": grid["cellMetres"],
+            "width": grid["cells"], "height": grid["cells"],
+            "originMetres": grid["originMetres"],
+            "heightEncoding": dict(grid["heightEncoding"], note=(
+                "The grid is authoritative for walkability. The Godot loader "
+                "takes elevation from the rendered walk surfaces, not from "
+                "this file.")),
+            "walkableCells": grid["walkableCells"],
+            "walkableFraction": grid["walkableFraction"],
+        })
+    return block
+

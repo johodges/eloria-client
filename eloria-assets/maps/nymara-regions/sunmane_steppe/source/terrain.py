@@ -35,6 +35,15 @@ SEA_LEVEL = 0.0
 BEACH_LEVEL = 0.9
 
 # Terrain classes, in the order the region description lists them.
+# How much of a road's falloff the cut is feathered over. One cell of a road
+# moves the falloff by roughly this much, so the cut lands between samples
+# rather than on one, and the road keeps a crisp rim.
+ROUTE_EDGE_FEATHER = 0.35
+# Class islands smaller than this are given to whatever surrounds them. Twelve
+# 1.4 m cells is about 24 m2, the same ground a six-cell island covers on the
+# two-metre regions - smaller than any surface a player reads as its own thing.
+DESPECKLE_MIN_CELLS = 12
+
 CLASS_CLEARING = 0           # packed earth inside the clan camps
 CLASS_STEPPE = 1             # open grazing steppe
 CLASS_ROAD = 2               # caravan roads and riding trails
@@ -95,6 +104,14 @@ class Landform:
     height: np.ndarray            # (n, n) elevation
     classes: np.ndarray           # (n, n) terrain class index
     water: np.ndarray             # (n, n) True where sea or pond covers ground
+    # How firmly a sample belongs to its own class, 0 at a class edge and 1
+    # well inside one. `terrain_mesh.build_chunks` turns this into the
+    # per-vertex coverage that lets a class boundary be cut where it really
+    # falls rather than at the nearest cell corner. The roads know where their
+    # own edge is and write it; everything else leaves it at 1, which puts the
+    # cut half way between samples and still reads as a diagonal rather than a
+    # staircase.
+    strength: np.ndarray = None
 
     def sample(self, world_x, world_z) -> np.ndarray:
         """Bilinear height lookup in world space."""
@@ -556,11 +573,86 @@ def build(seed: int = 20260827, pads=()) -> Landform:
         classes[np.hypot(gx - cx, gz - cz) < radius] = CLASS_CLEARING
     classes[trail_mask > 0.5] = CLASS_ROAD
     classes[road_mask > 0.45] = CLASS_ROAD
+    # A road is a ribbon around a polyline and its edge is wherever its falloff
+    # crosses the threshold above, so how far a sample sits from that crossing
+    # is how firmly it belongs to whichever side of the road it is on. Without
+    # this the ribbon could only turn on a cell corner, and a caravan road
+    # across open steppe read as a flight of 1.4 m steps.
+    strength = np.ones(height.shape)
+    for mask, level in ((trail_mask, 0.5), (road_mask, 0.45)):
+        edge = np.abs(mask - level) / ROUTE_EDGE_FEATHER
+        strength = np.where(mask > 0.0, np.minimum(strength, np.clip(edge, 0.0, 1.0)),
+                            strength)
     beach = (height > SEA_LEVEL - 0.5) & (height < BEACH_LEVEL + 1.4) & (into_sea > 0.03)
     classes[beach] = CLASS_SAND
     classes[height < SEA_LEVEL - 0.2] = CLASS_SAND
 
-    return Landform(x_axis, z_axis, height.astype("float32"), classes, water)
+    despeckle(classes, DESPECKLE_MIN_CELLS)
+    return Landform(x_axis, z_axis, height.astype("float32"), classes, water,
+                    strength)
+
+
+def despeckle(classes: np.ndarray, min_cells: int = 12) -> int:
+    """Give every class island smaller than `min_cells` to its surroundings.
+
+    The class field is thresholded noise, and thresholded noise leaves crumbs:
+    a handful of cells of rock marooned in steppe, a gap of sand in the middle
+    of a road. Owned whole-quad those read as a stray square and were easy to
+    miss. Cut inside the cell they read as a deliberate blob, so they are
+    cleared before the ground is meshed. Only the drawn class moves - height
+    does not, and neither does anything the walk grid is built from.
+
+    Returns the number of islands cleared.
+    """
+    rows, columns = classes.shape
+    cleared = 0
+    while True:
+        labels = np.full(classes.shape, -1, dtype="int32")
+        islands: list[list[tuple[int, int]]] = []
+        for row in range(rows):
+            for column in range(columns):
+                if labels[row, column] >= 0:
+                    continue
+                own = classes[row, column]
+                label = len(islands)
+                stack = [(row, column)]
+                labels[row, column] = label
+                cells = []
+                while stack:
+                    y, x = stack.pop()
+                    cells.append((y, x))
+                    for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                        ny, nx = y + dy, x + dx
+                        if not (0 <= ny < rows and 0 <= nx < columns):
+                            continue
+                        if labels[ny, nx] >= 0 or classes[ny, nx] != own:
+                            continue
+                        labels[ny, nx] = label
+                        stack.append((ny, nx))
+                islands.append(cells)
+        moved = False
+        for cells in islands:
+            if len(cells) >= min_cells:
+                continue
+            own = int(classes[cells[0]])
+            border: dict[int, int] = {}
+            for y, x in cells:
+                for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    ny, nx = y + dy, x + dx
+                    if not (0 <= ny < rows and 0 <= nx < columns):
+                        continue
+                    neighbour = int(classes[ny, nx])
+                    if neighbour != own:
+                        border[neighbour] = border.get(neighbour, 0) + 1
+            if not border:
+                continue
+            winner = max(sorted(border), key=lambda key: border[key])
+            for y, x in cells:
+                classes[y, x] = winner
+            cleared += 1
+            moved = True
+        if not moved:
+            return cleared
 
 
 def landform_index(axis, value: float) -> int:

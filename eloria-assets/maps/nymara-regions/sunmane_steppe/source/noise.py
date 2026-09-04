@@ -6,7 +6,21 @@ joins.
 """
 from __future__ import annotations
 
+import zlib
+
 import numpy as np
+
+
+def stable_seed(text: str, modulus: int = 10_000) -> int:
+    """A seed derived from a name that is the same in every interpreter.
+
+    `hash()` on a str is salted per process, so seeding from one gives a
+    different seed on every run and the package stops being reproducible - two
+    builds of identical code produce different files. The production guide
+    names this exact trap. CRC32 is stable across runs, platforms and Python
+    versions.
+    """
+    return zlib.crc32(text.encode("utf-8")) % modulus
 
 
 def _fade(t: np.ndarray) -> np.ndarray:

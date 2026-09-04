@@ -56,7 +56,7 @@ manifest and may not carry an interaction; `validate_package.py` asserts it.
 ## Landmark inventory
 
 The counts the written region description specifies are asserted by
-`tools/sunmane/validate_package.py`.
+`maps/nymara-regions/sunmane_steppe/source/validate_package.py`.
 
 | Landmark | Count |
 |---|---:|
@@ -87,19 +87,19 @@ Server-owned NPCs, harvestables and creature spawns are recorded under
 ## Rebuilding
 
 ```sh
-python3 eloria-assets/tools/sunmane/build.py                 # world.glb + world.json
-python3 eloria-assets/tools/sunmane/build.py --lod 2         # world-lod2.glb
-python3 eloria-assets/tools/sunmane/creatures.py             # steppe horses
-python3 eloria-assets/tools/sunmane/views.py                 # camera-views.json
-python3 eloria-assets/tools/sunmane/validate_package.py      # package checks
+python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/build_sunmane.py                 # world.glb + world.json
+python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/build_sunmane.py --lod 2         # world-lod2.glb
+python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/creatures.py             # steppe horses
+python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/views.py                 # camera-views.json
+python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/validate_package.py      # package checks
 
 godot --headless --path godot-client --script res://tests/integration/sunmane_grounding.gd
 xvfb-run -a godot --display-driver x11 --rendering-method gl_compatibility \
   --path godot-client --script res://tests/integration/sunmane_minimap.gd
 xvfb-run -a godot --display-driver x11 --rendering-method gl_compatibility \
   --path godot-client --script res://tests/integration/rendered_sunmane_steppe.gd
-python3 eloria-assets/tools/sunmane/caves.py                 # both cave interiors
-python3 eloria-assets/tools/sunmane/comparison.py            # comparison sheets
+python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/caves.py                 # both cave interiors
+python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/comparison.py            # comparison sheets
 ```
 
 The render and minimap passes need a real GL context, so they run under `xvfb`
@@ -109,3 +109,33 @@ and run headless.
 All geometry, textures and creature assets in this package are original Eloria
 project work under CC-BY-4.0. No third-party asset packs and no Eternal Lands
 assets were used, converted or traced.
+
+## The ground is cut inside the cell, not at its corners
+
+`terrain_mesh.build_chunks` gave each quad whole to the majority class of its
+four corners - "so a quad never straddles two materials" - which meant a class
+edge could only ever run along a cell boundary and a diagonal caravan road read
+as a flight of 1.4 m steps.
+
+Every class the quad touches now takes it, each copy carrying a per-vertex
+coverage in COLOR_0's alpha and drawn with an alpha-tested material, so each
+pixel goes to whichever class covers it. The roads know where their own edge is
+- `road_mask` and `trail_mask` are polyline falloffs and the class flips where
+they cross their threshold - so `Landform.strength` records how far each sample
+sits from that crossing and the cut lands on the real edge. Elsewhere the cut
+falls half way between samples, which is still a diagonal rather than a
+staircase. `terrain.despeckle` clears class islands under twelve cells first.
+
+An alpha test is opaque: it writes depth and sorts like any other ground.
+
+Two related repairs. The herd seeds were `abs(hash(identifier))`, and `hash()`
+on a str is salted per process, so every build produced a different
+`ambientPopulation` - the trap `caves.py` had already documented and fixed for
+itself. `noise.stable_seed` is now shared by both. And vertex colours are
+written as normalised bytes rather than floats, four bytes a vertex instead of
+sixteen.
+
+Costs 11,466 triangles (+5.0%) and 0.71 MB (+3.9%). `collision.bin` is
+byte-identical: heights and classes did not move, only the way they are drawn.
+
+See `whitehorn_range/change-log.md` for the full account of the technique.

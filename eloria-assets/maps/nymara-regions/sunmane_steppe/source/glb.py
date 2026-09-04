@@ -238,7 +238,7 @@ class GLBWriter:
         return len(self.doc["bufferViews"]) - 1
 
     def accessor(self, values: np.ndarray, gltf_type: str, *, target: int | None = None,
-                 bounds: bool = False) -> int:
+                 bounds: bool = False, normalized: bool = False) -> int:
         values = np.ascontiguousarray(values)
         component = COMPONENT_TYPES[values.dtype]
         # glTF requires accessor offsets aligned to the component size.
@@ -246,6 +246,8 @@ class GLBWriter:
                           alignment=max(4, values.dtype.itemsize))
         spec = {"bufferView": view, "componentType": component,
                 "count": int(values.shape[0]), "type": gltf_type}
+        if normalized:
+            spec["normalized"] = True
         if bounds:
             matrix = values.reshape(len(values), -1)
             spec["min"] = [float(v) for v in matrix.min(axis=0)]
@@ -333,7 +335,13 @@ class GLBWriter:
                     compute_tangents(positions, normals, uvs, indices), "VEC4",
                     target=ARRAY_BUFFER)
             if geometry.has_colors:
-                attributes["COLOR_0"] = self.accessor(colors, "VEC4", target=ARRAY_BUFFER)
+                # A normalized byte a channel, not a float. The ground's
+                # coverage only has to resolve an alpha test, 1/255 is finer
+                # than the cut can see, and floats cost twelve more bytes on
+                # every terrain vertex in the map.
+                packed = np.rint(np.clip(colors, 0.0, 1.0) * 255.0).astype("uint8")
+                attributes["COLOR_0"] = self.accessor(
+                    packed, "VEC4", target=ARRAY_BUFFER, normalized=True)
             index_values = (indices.astype("uint16") if len(positions) <= 65535
                             else indices.astype("uint32"))
             primitives.append({

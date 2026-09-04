@@ -55,7 +55,7 @@ catalogue (legacy Emberhaven set included).
 * the client asset pack shipped a third sixteen as `.2d` sprites and inventory
   icons, on item ids `1000+`, colliding with the equipment range recorded in
   `nymara_id_allocations.json` (`nymara_equipment: [1000, 1035]`).
-* `tools/sunmane/settlement.py`, which builds the highest-fidelity map in the
+* `maps/nymara-regions/sunmane_steppe/source/settlement.py`, which builds the highest-fidelity map in the
   project, declares a fourth set: *Sunmane wheat, Steppe herbs, Shore clay,
   Mesa flint*.
 

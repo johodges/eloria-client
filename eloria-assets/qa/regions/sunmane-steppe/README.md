@@ -23,10 +23,10 @@ arrival datum.
 ## Building and validating
 
 ```sh
-python3 eloria-assets/tools/sunmane/build.py
-python3 eloria-assets/tools/sunmane/build.py --lod 2
-python3 eloria-assets/tools/sunmane/creatures.py
-python3 eloria-assets/tools/sunmane/validate_package.py
+python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/build_sunmane.py
+python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/build_sunmane.py --lod 2
+python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/creatures.py
+python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/validate_package.py
 python3 eloria-assets/tools/check_provenance.py
 ```
 

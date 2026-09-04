@@ -991,9 +991,7 @@
       "Tree_pine_0864",
       "Tree_pine_0865",
       "Tree_pine_0866",
-      "Tree_pine_0867",
-      "Tree_pine_0868",
-      "Tree_pine_0869"
+      "Tree_pine_0867"
     ],
     "binary": "collision.bin",
     "format": "EWCG-v2",
@@ -1010,7 +1008,7 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 927803,
+    "walkableCells": 927830,
     "walkableFraction": 0.6991
   },
   "navigation": {
@@ -1892,25 +1890,25 @@
   },
   "lodGroups": [],
   "performance": {
-    "nodes": 4676,
+    "nodes": 4668,
     "meshes": 150,
-    "materials": 18,
+    "materials": 25,
     "images": 52,
     "textures": 52,
-    "accessors": 600,
-    "bufferViews": 652,
-    "uniqueTriangles": 237480,
-    "uniqueVertices": 145105,
-    "glbBytes": 12192568,
-    "instancedTriangles": 690848,
+    "accessors": 607,
+    "bufferViews": 659,
+    "uniqueTriangles": 262928,
+    "uniqueVertices": 155259,
+    "glbBytes": 13924288,
+    "instancedTriangles": 716424,
     "embeddedTextureBytes": 5435605,
-    "placements": 1926,
+    "placements": 1924,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 927803,
-      "blockedCells": 399301,
+      "walkableCells": 927830,
+      "blockedCells": 399274,
       "walkableFraction": 0.6991,
       "elevatedDecks": 3,
       "steepCells": 376667,
@@ -1927,7 +1925,7 @@
       "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
       "columnOrder": "server-tile-x (column 0 is the -X western edge)"
     },
-    "trianglesPerSquareMetre": 2.08
+    "trianglesPerSquareMetre": 2.16
   },
   "sources": {
     "concept": "eloria-assets/concepts/nymara-regions/whitehorn_range_region_concept.png",
@@ -1949,7 +1947,7 @@
     "rope_bridge_upper: deck at y=45.92 m, 44 m span, landing at (186, -121) and (186, -78). The deck owns its server cells; the gorge floor beneath it is not separately walkable.",
     "Roadside markers: 177 cairns, 17 waystones.",
     "Glacier: 77 seracs along the ice.",
-    "Vegetation: 870 conifers below the snow line.",
+    "Vegetation: 868 conifers below the snow line.",
     "Scatter: 759 rock clusters."
   ]
 }

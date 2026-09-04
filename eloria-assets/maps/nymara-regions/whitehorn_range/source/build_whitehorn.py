@@ -36,6 +36,10 @@ import validate_gltf                        # noqa: E402
 import region as REG                        # noqa: E402
 
 SEED = 20260828
+# Class islands smaller than this are given to whatever surrounds them. Six
+# two-metre cells is 24 m2 - smaller than any surface a player is meant to
+# read as its own thing, and larger than every crumb the noise leaves.
+DESPECKLE_MIN_CELLS = 6
 ASSET_VERSION = "1.0.0"
 SCHEMA_VERSION = "1.0.0"
 
@@ -52,6 +56,10 @@ SCHEMA_VERSION = "1.0.0"
 # This set is exactly the materials the build emits - verified against the
 # meshes it actually produces, not guessed. An unused name would embed a
 # texture nothing references; a missing one is a hard error at export.
+#
+# The ground's alpha-tested copies are not pinned separately: a copy
+# carries the pinned material's own textures and differs only in alpha
+# mode, so the pin is read through `MAT.base_material`.
 MATERIALS = frozenset({
     'snow_pack', 'glacier_ice', 'veined_marble', 'pale_ashlar',
     'blue_crystal', 'gilt_brass', 'alpine_turf',
@@ -78,10 +86,16 @@ def build_region(seed: int = SEED, lod: str | None = None) -> RegionBuild:
     terrain = REG.build_terrain(seed)
     REG.apply_built_ground(terrain, seed)
     REG.assign_surfaces(terrain, seed)
+    # Thresholded noise and a dithered boundary both leave crumbs - a few cells
+    # of snow marooned in rock, a gap of turf in the middle of a road. A stray
+    # square was easy to miss; cut inside the cell it reads as a deliberate
+    # blob, so the crumbs are cleared before the ground is built.
+    terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
 
     build = RegionBuild(terrain=terrain)
     build.terrain_meshes = terrain.build_meshes(
-        uv_scale=0.30, materials=REG.SURFACE_MATERIALS)
+        uv_scale=0.30, materials=REG.SURFACE_MATERIALS,
+        blend_edges=True, material_suffix=MAT.GROUND_SUFFIX)
 
     import populate
     populate.populate(build, seed, lod=lod)
@@ -124,6 +138,9 @@ def export_glb(build: RegionBuild, sets, path: Path) -> tuple[GLTF.GltfBuilder, 
     builder = GLTF.GltfBuilder(
         generator="Eloria Whitehorn Range builder (original procedural assets)")
     MAT.register_gltf_materials(builder, sets, only=MATERIALS)
+    MAT.register_ground_materials(
+        builder, sets,
+        {piece.material for piece in build.terrain_meshes.values()})
 
     # Tangents are intentionally omitted: Godot's glTF importer generates them
     # for normal-mapped materials, and shipping them costs sixteen bytes a

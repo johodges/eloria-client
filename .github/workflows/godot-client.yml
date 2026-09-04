@@ -102,7 +102,7 @@ jobs:
           godot --headless --path godot-client res://src/dev/model_validation.tscn --quit-after 12 2>&1 | tee model-scene.log
           ! grep -E "SCRIPT ERROR|Parse Error" model-scene.log
       - name: Sunmane Steppe package validation
-        run: python3 eloria-assets/tools/sunmane/validate_package.py
+        run: python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/validate_package.py
       - name: Asset provenance and no Eternal Lands content
         run: python3 eloria-assets/tools/check_provenance.py
       - name: Shared asset contracts
@@ -332,7 +332,7 @@ jobs:
           ! grep -E "SCRIPT ERROR|Parse Error|FAIL" "$ELORIA_ARTIFACT_DIR/performance.log"
           test -s "$ELORIA_ARTIFACT_DIR/performance.json"
       - name: Build concept comparison sheets
-        run: python3 eloria-assets/tools/sunmane/comparison.py
+        run: python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/comparison.py
       - name: Upload Sunmane Steppe rendered evidence
         if: always()
         uses: actions/upload-artifact@v4

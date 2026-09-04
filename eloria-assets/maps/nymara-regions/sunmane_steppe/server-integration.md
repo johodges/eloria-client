@@ -8,7 +8,7 @@ and is traversable with the server exactly as it is today.
 `eloria-server` was not reachable from the workspace this package was
 built in, so none of the records below could be committed there. They are
 generated from the committed manifests by
-`tools/sunmane/server_integration.py`, so the matching server pull
+`maps/nymara-regions/sunmane_steppe/source/server_integration.py`, so the matching server pull
 request is transcription rather than redesign.
 
 ## Hooks

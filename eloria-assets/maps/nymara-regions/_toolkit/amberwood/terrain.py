@@ -122,6 +122,12 @@ AUTHORED_SURFACES: set[int] = {
 
 # Surfaces whose border must stay crisp, so `dither_boundaries` leaves them
 # alone. Paving and the resonant roadway read as laid, not grown.
+# How much of a road's falloff the cut is feathered over, in `core` units. One
+# cell of a 5 m road moves `core` by about 0.4, so this is roughly a cell
+# either side of the edge: wide enough that the cut lands between samples
+# rather than on one, narrow enough that the road keeps a crisp rim.
+EDGE_FEATHER = 0.35
+
 UNDITHERED_SURFACES: set[int] = {PAVING, RESONANT_ROAD, CAUSEWAY, TERRACE_MOSS}
 
 
@@ -176,6 +182,14 @@ class Terrain:
         self.gx, self.gz = np.meshgrid(self.xs, self.zs)
         self.height = np.zeros((self.rows, self.cols))
         self.surface = np.full((self.rows, self.cols), FOREST, dtype=np.int32)
+        # How firmly a sample belongs to its own class, 0 at a class edge and 1
+        # well inside one. `build_meshes(blend_edges=True)` turns this into the
+        # per-vertex coverage that lets a class boundary be cut where it really
+        # falls rather than at the nearest cell corner. Operators that know
+        # where their own edge is - a graded road, a plateau - write it; the
+        # rest leave it at 1, which puts the cut half way between samples and
+        # still reads as a diagonal rather than a staircase.
+        self.surface_strength = np.ones((self.rows, self.cols))
         self.water_depth = np.zeros((self.rows, self.cols))
         self.tree_block = np.zeros((self.rows, self.cols), dtype=bool)
         self.wet = np.zeros((self.rows, self.cols))
@@ -251,8 +265,25 @@ class Terrain:
         self.height = self.height * (1.0 - blend) + target * blend
         mask = core > 0.32
         self.surface = np.where(mask, surface, self.surface)
+        # The road's own edge, in the units the mesh split will cut on. `core`
+        # falls off with distance from the centreline and the class changes
+        # where it crosses 0.32, so how far a sample sits from that crossing is
+        # how firmly it belongs to whichever side it is on.
+        self._write_strength(np.abs(core - 0.32) / EDGE_FEATHER, outer > 0.0)
         self.tree_block |= outer > 0.22
         return core
+
+
+    def _write_strength(self, strength: np.ndarray, where: np.ndarray) -> None:
+        """Record how firmly the marked samples belong to their class.
+
+        Written where an operator has a real edge to declare, and only when it
+        is more certain than whatever is already there - a road crossing a
+        courtyard should not soften the courtyard's own rim.
+        """
+        clamped = np.clip(strength, 0.0, 1.0)
+        self.surface_strength = np.where(
+            where, np.minimum(self.surface_strength, clamped), self.surface_strength)
 
     def _smoothed_along(self, points: np.ndarray, d: np.ndarray, t: np.ndarray) -> np.ndarray:
         """Sample existing height along the polyline and smooth it into a grade."""
@@ -282,6 +313,11 @@ class Terrain:
         if irregular > 0.0:
             d = d * (1.0 + irregular * (N.fbm(self.gx * 0.07, self.gz * 0.07,
                                               seed=seed) - 0.5) * 2.0)
+        # A yard's rim is a circle, and a circle cut to cell corners is a
+        # staircase; how far a sample sits from that circle is what lets the
+        # split put the cut on it.
+        self._write_strength(np.abs(d - radius) / max(self.cell, 1e-6),
+                             np.abs(d - radius) < self.cell * 2.0)
         blend = 1.0 - _smoothstep(radius - edge, radius + edge, d)
         self.height = self.height * (1.0 - blend) + height * blend
         if surface is not None:
@@ -444,15 +480,103 @@ class Terrain:
         protect = np.isin(self.surface, sorted(UNDITHERED_SURFACES))
         self.surface = np.where(swap & ~protect, candidate, self.surface)
 
+
+    def despeckle_surfaces(self, min_cells: int = 6) -> int:
+        """Give every class island smaller than `min_cells` to its surroundings.
+
+        The class field is built by thresholding noise and then dithered at its
+        boundaries, and both leave crumbs: a handful of cells of snow marooned
+        in rock, a gap of turf in the middle of a road. At whole-quad ownership
+        those read as a stray square and were easy to miss. Cut inside the cell
+        they read as a deliberate blob, so they are worth clearing.
+
+        Only the drawn class moves. Height does not, and neither does anything
+        the walk grid is built from, so a package's collision is untouched.
+
+        Returns the number of islands cleared.
+        """
+        cleared = 0
+        while True:
+            labels, counts = self._label_surfaces()
+            small = [label for label, count in enumerate(counts)
+                     if 0 < count < min_cells]
+            if not small:
+                return cleared
+            moved = False
+            for label in small:
+                rows, columns = np.nonzero(labels == label)
+                if rows.size == 0:
+                    continue
+                own = self.surface[rows[0], columns[0]]
+                # Whatever holds the most of the island's border takes it.
+                border: dict[int, int] = {}
+                for row, column in zip(rows, columns):
+                    for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                        r, c = row + dr, column + dc
+                        if not (0 <= r < self.rows and 0 <= c < self.cols):
+                            continue
+                        neighbour = int(self.surface[r, c])
+                        if neighbour != own:
+                            border[neighbour] = border.get(neighbour, 0) + 1
+                if not border:
+                    continue
+                winner = max(sorted(border), key=lambda key: border[key])
+                self.surface[rows, columns] = winner
+                cleared += 1
+                moved = True
+            if not moved:
+                return cleared
+
+    def _label_surfaces(self) -> tuple[np.ndarray, list[int]]:
+        """Label four-connected runs of one class. Returns labels and sizes."""
+        labels = np.full((self.rows, self.cols), -1, dtype=np.int32)
+        counts: list[int] = []
+        for row in range(self.rows):
+            for column in range(self.cols):
+                if labels[row, column] >= 0:
+                    continue
+                own = self.surface[row, column]
+                label = len(counts)
+                stack = [(row, column)]
+                labels[row, column] = label
+                size = 0
+                while stack:
+                    y, x = stack.pop()
+                    size += 1
+                    for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                        ny, nx = y + dy, x + dx
+                        if not (0 <= ny < self.rows and 0 <= nx < self.cols):
+                            continue
+                        if labels[ny, nx] >= 0 or self.surface[ny, nx] != own:
+                            continue
+                        labels[ny, nx] = label
+                        stack.append((ny, nx))
+                counts.append(size)
+        return labels, counts
+
     # -- export -----------------------------------------------------------
     def build_meshes(self, uv_scale: float = 0.30,
                      name_prefix: str = "Terrain_",
-                     materials: dict[int, str] | None = None) -> dict[str, M.Mesh]:
+                     materials: dict[int, str] | None = None,
+                     blend_edges: bool = False,
+                     material_suffix: str = "") -> dict[str, M.Mesh]:
         """One sub-mesh per surface class; shared vertices means no cracks.
 
         `materials` overrides the surface-class to material mapping for regions
         whose ground is not Amberwood's. A snow region's PATH is not a leaf
         path, and the class itself is what the terrain operators speak in.
+
+        `blend_edges` cuts the classes against each other inside the cell
+        instead of at its corners. A class then takes every quad it touches
+        rather than only the quads it owns, and carries a per-vertex coverage
+        in COLOR_0's alpha: 1 where the class holds, 0 where it does not, moved
+        off the half-way mark by `surface_strength` wherever an operator knew
+        where its own edge was. Drawn with an alpha-tested material, each pixel
+        goes to whichever class covers it, so a diagonal road reads as a
+        diagonal instead of a flight of two-metre steps. Coverage is
+        complementary across a two-class edge, so the pair neither overlap nor
+        leave a gap, and the cut is opaque - it writes depth and sorts like any
+        other ground. `material_suffix` names the alpha-tested variants.
         """
         table = dict(SURFACE_MATERIALS)
         if materials:
@@ -470,16 +594,57 @@ class Terrain:
             # class edge - and those duplicates z-fought with the sub-mesh that
             # legitimately owned them. Vertices stay shared, so there are still
             # no cracks between classes.
-            piece = M.heightfield(self.height, self.x0, self.z0, self.cell,
-                                  uv_scale=uv_scale,
-                                  material=table[surface_id],
-                                  cells=cells[:-1, :-1])
-            piece = _compact(piece)
+            material = table[surface_id] + material_suffix
+            if blend_edges:
+                # Every quad the class touches, not only the ones it owns.
+                touched = (cells[:-1, :-1] | cells[:-1, 1:]
+                           | cells[1:, :-1] | cells[1:, 1:])
+                piece = M.heightfield(self.height, self.x0, self.z0, self.cell,
+                                      uv_scale=uv_scale, material=material,
+                                      cells=touched)
+                piece = _compact(piece)
+                if piece.triangle_count == 0:
+                    continue
+                piece = _with_coverage(piece, self, cells)
+            else:
+                piece = M.heightfield(self.height, self.x0, self.z0, self.cell,
+                                      uv_scale=uv_scale, material=material,
+                                      cells=cells[:-1, :-1])
+                piece = _compact(piece)
             if piece.triangle_count == 0:
                 continue
             piece.recompute_normals(180.0)
             out[f"{name_prefix}{label}"] = piece
         return out
+
+
+def _with_coverage(mesh: M.Mesh, terrain: "Terrain",
+                   cells: np.ndarray) -> M.Mesh:
+    """Put this class's per-vertex coverage into the mesh's vertex colours.
+
+    Coverage is 0.5 at the class edge and runs to 1 inside the class and 0
+    outside it, so an alpha test at 0.5 cuts exactly on the edge. How fast it
+    runs is `surface_strength`: at 1 - no operator had anything to say - the
+    cut lands half way between two samples, which turns a corner staircase into
+    a diagonal. Where a road or a rim wrote its own distance the cut lands on
+    the real edge, and the road keeps its width between the samples.
+
+    Colours are white apart from the alpha: the material multiplies albedo by
+    them, and tinting the ground was not the point.
+    """
+    columns = np.clip(np.round(
+        (mesh.positions[:, 0] - terrain.x0) / terrain.cell).astype(int),
+        0, terrain.cols - 1)
+    rows = np.clip(np.round(
+        (mesh.positions[:, 2] - terrain.z0) / terrain.cell).astype(int),
+        0, terrain.rows - 1)
+    inside = cells[rows, columns]
+    strength = terrain.surface_strength[rows, columns]
+    coverage = np.where(inside, 0.5 + 0.5 * strength, 0.5 - 0.5 * strength)
+    colours = np.ones((mesh.vertex_count, 4), dtype=np.float64)
+    colours[:, 3] = coverage
+    return M.Mesh(mesh.positions, mesh.normals, mesh.uvs, colours,
+                  mesh.indices, mesh.material)
 
 
 def _compact(mesh: M.Mesh) -> M.Mesh:

@@ -1307,7 +1307,7 @@
     }
   },
   "provenance": {
-    "generator": "eloria-assets/tools/sunmane/insides.py",
+    "generator": "eloria-assets/maps/nymara-regions/sunmane_steppe/source/insides.py",
     "systems": [
       "sunmane_wind_caves",
       "sunmane_crystal_hollow"

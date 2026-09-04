@@ -12,7 +12,7 @@ map's own server grid at half a metre per cell, taken from `coordinateTransform`
 rather than written out again, byte 0 meaning blocked and anything else an
 elevation of `value * 0.2 - 2.2` metres.
 
-    python eloria-assets/tools/sunmane/collision.py [--out <collision.bin>]
+    python eloria-assets/maps/nymara-regions/sunmane_steppe/source/collision.py [--out <collision.bin>]
 
 Blocked is the union of three things: sea and beach, ground too steep to climb,
 and the footprint of every node the manifest declares collision on - the carts,
@@ -34,7 +34,7 @@ sys.path.insert(0, str(HERE))
 
 import terrain  # noqa: E402
 
-PACKAGE = HERE.parents[1] / "maps" / "nymara-regions" / "sunmane_steppe"
+PACKAGE = HERE.parent
 CELL_METRES = 0.5
 # The steppe's map is 32 ELM tiles of six cells, and its manifest puts the
 # origin at (58, 58) of that grid.
@@ -234,9 +234,21 @@ def build_grid(package: Path) -> tuple[bytes, dict]:
     header = struct.pack("<4sHHII", b"EWCG", 2, 0, size, size)
     stats = {
         "cells": size, "cellMetres": CELL_METRES,
+        "walkableCells": int(walkable.sum()),
         "walkableFraction": round(float(walkable.mean()), 4),
         "blockedByScenery": int(scenery.sum()),
         "collisionNodes": nodes,
+        # Where the grid starts, in world metres: the western edge of column 0
+        # and the northern edge of row 0, which is the pair every other region
+        # publishes and the client's own check indexes with -
+        # column = floor((x - x0) / cell), row = floor((z1 - z) / cell).
+        # Without it a reader has to infer the mapping from `serverOrigin` and
+        # guess whether the row order is inverted, and the client check skips
+        # the package rather than guess.
+        "originMetres": [round(-origin_x * metres_per_tile, 4),
+                         round(origin_y * metres_per_tile, 4)],
+        "heightEncoding": {"origin": HEIGHT_ORIGIN, "step": HEIGHT_STEP,
+                           "range": [1, 255], "zeroMeansBlocked": True},
     }
     return header + payload.tobytes(), stats
 

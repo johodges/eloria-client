@@ -30,7 +30,7 @@ emissive, and three of the largest banks are declared as light markers.
 
 ## How the cavern is built
 
-The shell is not a box with a ceiling on top. `tools/sunmane/caves.py` samples a
+The shell is not a box with a ceiling on top. `maps/nymara-regions/sunmane_steppe/source/caves.py` samples a
 clearance field around a network of chambers and passages; the roof height is
 driven by that field, so the roof comes down to meet the floor at the walls and
 the cavern reads as one continuous piece of rock. How quickly it comes down is
@@ -65,8 +65,8 @@ on no glTF light extension.
 ## Rebuilding
 
 ```sh
-python3 eloria-assets/tools/sunmane/caves.py                 # both interiors
-python3 eloria-assets/tools/sunmane/caves.py --system sunmane_wind_caves
+python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/caves.py                 # both interiors
+python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/caves.py --system sunmane_wind_caves
 
 godot --headless --path godot-client --script res://tests/integration/sunmane_caves.gd
 xvfb-run -a godot --path godot-client --rendering-driver opengl3 \

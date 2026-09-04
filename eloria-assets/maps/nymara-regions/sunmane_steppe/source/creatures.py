@@ -24,7 +24,7 @@ import numpy as np
 
 import sys as _sys
 from pathlib import Path as _Path
-_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))
+_sys.path.insert(0, str(_Path(__file__).resolve().parents[4] / "tools"))
 import creature_surfaces  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
@@ -35,7 +35,7 @@ from glb import GLBWriter, Geometry, compose            # noqa: E402
 from shapes import UV_SCALE, beam, frustum, sphere, box, add_quad   # noqa: E402
 import checks                                           # noqa: E402
 
-ASSET_ROOT = HERE.parents[1]
+ASSET_ROOT = HERE.parents[3]
 CLIENT_ROOT = ASSET_ROOT.parent / "godot-client"
 CREATURE_DIR = CLIENT_ROOT / "assets" / "actors" / "native" / "creatures"
 
