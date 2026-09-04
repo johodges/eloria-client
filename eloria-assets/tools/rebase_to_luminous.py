@@ -69,6 +69,7 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageDraw
+from scipy.spatial import cKDTree
 
 sys.path.insert(0, str(Path(__file__).parent))
 from split_race_surfaces import (  # noqa: E402
@@ -478,10 +479,12 @@ def neck_axis_t(document, binary, skin_index, positions):
 def head_boundary_anchor(positions, dominant, head_row, faces, t):
     """(anchor point, boundary_t): where a body's OWN head visually
     connects to the rest of it -- the mean 3D position of the Head-
-    dominant vertices that sit on the actual mesh seam, i.e. share a
-    face with a vertex dominant on some OTHER bone -- and that same
-    set's mean position along the neck_01->Head axis (`t`, from
-    neck_axis_t) for NECK_SEAM_MARGIN's own callers.
+    dominant vertices closest to some non-Head-dominant vertex -- and
+    that same set's mean position along the neck_01->Head axis (`t`,
+    from neck_axis_t) for NECK_SEAM_MARGIN's own callers. `faces` is
+    unused by the current implementation but kept in the signature: it
+    is what a face-adjacency version of this (tried and abandoned, see
+    below) needed, and every caller already has it on hand.
 
     Originally the head graft aligned by the Head BONE's own rest
     position, then by a percentile of Head-dominant vertices' position
@@ -500,26 +503,48 @@ def head_boundary_anchor(positions, dominant, head_row, faces, t):
     for another, since her genuine under-jaw vertices sit almost as
     far from the axis as the snout tip being excluded.
 
-    The seam is a topological fact, not a coordinate one, so measure
-    it that way instead: it is exactly the Head-dominant vertices that
-    are face-adjacent to a vertex dominant on some other bone, whatever
-    bone that happens to be (checked directly, Luminous's own seam
-    borders both neck_01 and spine_03 in different places) and however
-    the head's own downstream shape grows from there. This finds the
-    same tight, consistent ring on both a plain human head and a long-
-    snouted one -- ~1cm standard deviation in both height and radius,
-    checked directly on Luminous and Ssarathi alike -- because a snout
-    tapering below the seam never becomes part of the ring itself; only
-    its actual junction with the neck does."""
+    Tried next: treat the seam as a topological fact -- Head-dominant
+    vertices that share a FACE with a non-Head-dominant vertex.
+    Shipped once (see git history) and caused a much worse, wider
+    regression across nearly every OTHER race, not just Ssarathi.
+    Checked directly why: these bodies' Head and neck/torso geometry
+    are not one continuous, shared-vertex manifold at the seam at all
+    -- even after welding UV-seam vertex duplicates by position, the
+    nearest Head-dominant vertex to the nearest non-Head one sits a
+    genuine few millimetres away (measured 1.7-4mm across several
+    bodies), never zero. No two faces there ever share a vertex, so
+    "shares a face" found anywhere from a 150-vertex ring down to
+    completely EMPTY (Ssarathi Female) depending on how each body's
+    own tessellation happened to fall near the gap -- nothing to do
+    with anatomy -- and an empty ring silently fell back to the whole-
+    head mean this function exists to replace, misplacing the graft.
+
+    What actually distinguishes seam vertices, given the pieces are a
+    genuine (if tiny) gap apart rather than shared geometry: they are
+    the Head-dominant vertices CLOSEST to the non-Head side, not
+    vertices tied to it by exact topology. Nearest-neighbour distance
+    from every Head-dominant vertex to the closest non-Head-dominant
+    one splits cleanly in practice -- checked directly across all 14
+    bodies, the 5th percentile of that distance sits at 1-6cm while the
+    median sits at 11-15cm, a clear knee rather than a gradual slope --
+    so keeping the bottom 5% by that distance reliably captures the
+    seam's own local neighbourhood on every body tried, including
+    Ssarathi's tapering snout (whose jaw tip sits far from ANY non-Head
+    vertex, not just far along one axis, so it is naturally excluded
+    without needing to know anything about which direction it tapers
+    in) and every other body's own tessellation density."""
     is_head = dominant == head_row
     if not is_head.any():
         return positions.mean(axis=0), float(t.max())
 
-    face_is_head = is_head[faces]
-    mixed = face_is_head.any(axis=1) & (~face_is_head).any(axis=1)
-    boundary_verts = np.unique(faces[mixed][face_is_head[mixed]])
-    if len(boundary_verts) == 0:
+    other_positions = positions[~is_head]
+    if len(other_positions) == 0:
         boundary_verts = np.flatnonzero(is_head)
+    else:
+        head_idx = np.flatnonzero(is_head)
+        dist_to_other, _ = cKDTree(other_positions).query(positions[head_idx])
+        cutoff = np.percentile(dist_to_other, 5)
+        boundary_verts = head_idx[dist_to_other <= cutoff]
 
     return positions[boundary_verts].mean(axis=0), float(t[boundary_verts].mean())
 
