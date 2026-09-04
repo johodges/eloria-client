@@ -5129,9 +5129,15 @@ func _sync_perk_catalog() -> void:
 		# names with two words would otherwise be the awkward ones.
 		row.name = "Perk%s" % perk_name.replace(" ", "").validate_node_name()
 		perk_rows.add_child(row)
+		# A perk is bought in tiers, and the row is an offer: what it costs
+		# and what it says are the *next* tier's, so the button says which
+		# step it buys rather than implying the perk arrives whole.
+		var owned: int = int(perk.get("tier", 0))
+		var maximum: int = maxi(1, int(perk.get("max_tier", 1)))
 		var take := Button.new()
 		take.name = "Take"
-		take.text = "Take"
+		take.text = "Take" if maximum == 1 else (
+			"Tier %d" % mini(maximum, owned + 1))
 		take.disabled = not blocker.is_empty()
 		take.tooltip_text = blocker if not blocker.is_empty() else str(
 			perk.get("description", ""))
@@ -5145,7 +5151,9 @@ func _sync_perk_catalog() -> void:
 		label.name = "Detail"
 		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		label.text = "%s (%s)  -  %s%s" % [perk_name, price,
+		var held: String = ("" if maximum == 1 or owned == 0
+			else " [tier %d of %d]" % [owned, maximum])
+		label.text = "%s%s (%s)  -  %s%s" % [perk_name, held, price,
 			str(perk.get("description", "")),
 			"" if blocker.is_empty() else "  [%s]" % blocker]
 		row.add_child(label)
