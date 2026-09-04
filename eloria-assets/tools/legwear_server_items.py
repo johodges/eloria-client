@@ -137,14 +137,19 @@ def main() -> None:
                         help="the eloria-server checkout to reconcile")
     parser.add_argument("--write", action="store_true")
     args = parser.parse_args()
-    items_path = args.server / "config" / "items.txt"
+    # The served profile. This wrote into `config/items.txt` when it ran,
+    # which was the Eternal Lands table the fork was built from; that
+    # profile has since been retired and its items live here.
+    items_path = args.server / "config" / "eloria" / "items.txt"
     py_path = args.server / "eloria" / "items.py"
-    items_txt = items_path.read_text(encoding="utf-8", errors="replace")
-    new_blocks, overrides = blocks(items_txt)
     source = py_path.read_text(encoding="utf-8")
-    anchor = "EQUIPMENT_VISUAL_OVERRIDES: dict[str, tuple[int, int]] = {\n"
+    # Checked before the catalogue is opened, so a second run says what
+    # it means rather than failing on whichever file it was pointed at.
     if "The sixty-four rebuilt leg garments" in source:
         raise SystemExit("overrides already present; nothing to do")
+    items_txt = items_path.read_text(encoding="utf-8", errors="replace")
+    new_blocks, overrides = blocks(items_txt)
+    anchor = 'EQUIPMENT_VISUAL_OVERRIDES: dict[str, tuple[int, int]] = {\n'
     if not args.write:
         print(f"{len(overrides)} items, ids "
               f"{next_item_id(items_txt)}-{next_item_id(items_txt) + 63}")

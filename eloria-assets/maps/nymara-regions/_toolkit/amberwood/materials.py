@@ -81,8 +81,14 @@ SPECS: tuple[MaterialSpec, ...] = (
     # -- Mirrorhold. Appended, never inserted: a region pins the material set
     # it embeds by name, and reordering this tuple would rewrite its GLB.
     MaterialSpec("snow_pack", "snow_pack", roughness=0.74),
-    MaterialSpec("glacier_ice", "glacier_ice", roughness=0.30,
-                 base_color=(1.0, 1.0, 1.0, 0.94), alpha_mode="BLEND"),
+    # Solid ice, and opaque for it. This carries whole terrain classes -
+    # Mirrorhold's frozen lake, Whitehorn's glacier river - as well as the
+    # seracs and cascades standing on them. Blended, none of that wrote depth,
+    # each mesh sorted as one instance so a sheet drew over the props on it and
+    # over its own nearer folds, and the shadow map skipped it entirely. The 6%
+    # of translucency it used to carry never showed: ice a metre thick reads
+    # through its texture and its 0.30 roughness, not through alpha.
+    MaterialSpec("glacier_ice", "glacier_ice", roughness=0.30),
     MaterialSpec("blue_crystal", "blue_crystal", roughness=0.12,
                  emissive=(0.048, 0.152, 0.268)),
     MaterialSpec("veined_marble", "veined_marble", roughness=0.36),

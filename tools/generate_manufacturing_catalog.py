@@ -40,8 +40,8 @@ def main() -> int:
                         help="where to write the knowledge catalog; omitted"
                              " leaves it alone")
     parser.add_argument("--profile", default="eloria",
-                        help="content profile under config/; 'legacy' reads"
-                             " config/ itself (default: eloria)")
+                        help="content profile directory under config/"
+                             " (default: eloria, which is the only one)")
     args = parser.parse_args()
     server_root = args.server_root.resolve()
     sys.path.insert(0, str(server_root))
@@ -56,8 +56,7 @@ def main() -> int:
     )
     from eloria.recipes import load_recipes  # pylint: disable=import-outside-toplevel
 
-    profile_root = (server_root / "config" if args.profile == "legacy"
-                    else server_root / "config" / args.profile)
+    profile_root = server_root / "config" / args.profile
     if not profile_root.is_dir():
         parser.error(f"no such content profile: {profile_root}")
     recipe_path = profile_root / "recipes.txt"
