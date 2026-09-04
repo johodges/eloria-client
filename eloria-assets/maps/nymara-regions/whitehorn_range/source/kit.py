@@ -114,7 +114,8 @@ def waystone(height: float = 2.3, seed: int = 0) -> SW.MeshGroup:
 # the rope bridges - the one piece that carries a walk surface
 # --------------------------------------------------------------------------
 def rope_bridge(length: float = 22.0, width: float = 1.9, sag: float = 1.5,
-                seed: int = 0, deck_y: float = 0.0) -> SW.MeshGroup:
+                seed: int = 0, deck_y: float = 0.0,
+                rise: float = 0.0) -> SW.MeshGroup:
     """Rope-and-plank suspension span, built along +X, deck centred on y=0.
 
     Panel 3 is the reference: two heavy anchor posts a side, four cables, and
@@ -122,8 +123,17 @@ def rope_bridge(length: float = 22.0, width: float = 1.9, sag: float = 1.5,
     here - it builds in XY and extrudes along Z, so rotating it for a span
     shows the barrel end, which is the trap the production guide calls out.
 
+    `rise` lifts the +X end that much above the -X one, the deck running
+    straight between them under its own sag. A gorge cut across a mountainside
+    has one shoulder above the other almost everywhere along it, and a level
+    deck can only meet one of them: the other end either buries itself in the
+    bank or stops in mid-air over the drop. The ends carry their own abutments
+    and posts, so each one sits on its own ground.
+
     The deck planks are the only walk surface. The cables, posts and handrails
-    are structural, so an actor can never be grounded on a rope.
+    are structural, so an actor can never be grounded on a rope. `walk_ends`
+    records what the deck's two ends stand at, which is what the server walk
+    grid needs to put the deck on the map at the height it is drawn.
     """
     rng = _rng(seed)
     group = SW.MeshGroup()
@@ -132,22 +142,26 @@ def rope_bridge(length: float = 22.0, width: float = 1.9, sag: float = 1.5,
 
     def sag_at(t: float) -> float:
         # a catenary is overkill at this scale; a parabola reads identically
-        return deck_y - sag * (1.0 - (2.0 * t - 1.0) ** 2)
+        return (deck_y + rise * (t - 0.5)
+                - sag * (1.0 - (2.0 * t - 1.0) ** 2))
+
+    group.walk_ends = (sag_at(0.0), sag_at(1.0))
 
     # -- anchor posts and abutments, one pair each end ---------------------
     for end in (-1.0, 1.0):
         base_x = end * half
+        end_y = sag_at(0.0 if end < 0.0 else 1.0)
         abutment = M.box((1.7, 1.5, width + 1.5),
-                         center=(base_x + end * 0.55, deck_y - 0.75, 0.0),
+                         center=(base_x + end * 0.55, end_y - 0.75, 0.0),
                          uv_scale=1.1, material=RUBBLE)
         group.add(abutment)
         for side in (-1.0, 1.0):
             post = M.cylinder(0.20, 0.16, 2.5, segments=8, uv_scale=1.4,
                               material=TIMBER_DARK)
-            post.transform(M.translation(base_x, deck_y, side * (width * 0.5 + 0.16)))
+            post.transform(M.translation(base_x, end_y, side * (width * 0.5 + 0.16)))
             group.add(post)
             cap = M.box((0.34, 0.14, 0.34),
-                        center=(base_x, deck_y + 2.55,
+                        center=(base_x, end_y + 2.55,
                                 side * (width * 0.5 + 0.16)),
                         uv_scale=1.0, material=IRON)
             group.add(cap)
@@ -176,12 +190,19 @@ def rope_bridge(length: float = 22.0, width: float = 1.9, sag: float = 1.5,
                              uv_scale=1.4, material=ROPE))
 
     # -- the deck: individual planks, and the only walk surface ------------
+    # The planks overlap rather than sit apart. Spaced at 0.82 of their pitch
+    # they left an 0.2 m gap between each pair, and the client grounds an actor
+    # with a single ray straight down: a step that landed in a gap went through
+    # the deck and hit the gorge floor forty-odd metres below. A player crossing
+    # fell through roughly every sixth pace. The seams still read - the planks
+    # keep their own texture and the height jitter below - but the deck is now
+    # closed to a ray anywhere along it.
     planks = []
     for i in range(steps):
         t = (i + 0.5) / steps
         x = -half + length * t
         thickness = 0.075
-        plank = M.box((length / steps * 0.82, thickness, width),
+        plank = M.box((length / steps * 1.06, thickness, width),
                       center=(x, sag_at(t), 0.0),
                       uv_scale=1.2, material=TIMBER)
         # a little rotational scatter so the deck is not a perfect ribbon

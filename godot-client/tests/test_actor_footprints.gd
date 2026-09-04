@@ -340,12 +340,17 @@ func _ground_marker() -> void:
 	_expect(is_equal_approx(deep.x, wide.y) and is_equal_approx(deep.y, wide.x),
 		"the two axes are not transposed")
 
-	# It is an outline: a hollow frame, not a filled slab.
+	# It is an outline: a hollow frame, not a filled slab. Each side is cut
+	# into pieces short enough for GroundDrape to lay over the ground without
+	# the straight line between two draped corners diving through the hill in
+	# between, so the count is four sides of that many quads.
 	var mesh: ArrayMesh = ReplicatedActor3D.footprint_outline(4.0, 4.0)
 	var arrays: Array = mesh.surface_get_arrays(0)
 	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
-	_expect(vertices.size() == 24,
-		"four sides of two triangles: %d vertices" % vertices.size())
+	var pieces: int = ceili((4.0 - 2.0 * ReplicatedActor3D.RING_INSET)
+		/ ReplicatedActor3D.RING_SEGMENT_METRES)
+	_expect(vertices.size() == 4 * pieces * 6,
+		"four sides of %d quads: %d vertices" % [pieces, vertices.size()])
 	var interior := 0
 	for point: Vector3 in vertices:
 		if absf(point.x) < 1.5 and absf(point.z) < 1.5:

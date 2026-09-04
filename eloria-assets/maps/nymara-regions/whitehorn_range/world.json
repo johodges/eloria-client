@@ -1007,10 +1007,11 @@
         1,
         63
       ],
-      "zeroMeansBlocked": true
+      "zeroMeansBlocked": true,
+      "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 956142,
-    "walkableFraction": 0.7205
+    "walkableCells": 927803,
+    "walkableFraction": 0.6991
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -1118,9 +1119,9 @@
       "node": "Landmark_rope_bridge_00",
       "type": "bridge",
       "position": [
-        51.0,
-        16.86,
-        -75.0
+        50.25,
+        16.2,
+        -77.5
       ],
       "authority": "client-visual"
     },
@@ -1131,8 +1132,8 @@
       "type": "bridge",
       "position": [
         186.0,
-        32.6,
-        -99.0
+        45.92,
+        -99.25
       ],
       "authority": "client-visual"
     },
@@ -1898,20 +1899,31 @@
     "textures": 52,
     "accessors": 600,
     "bufferViews": 652,
-    "uniqueTriangles": 236108,
-    "uniqueVertices": 143781,
-    "glbBytes": 12141768,
-    "instancedTriangles": 689476,
+    "uniqueTriangles": 237480,
+    "uniqueVertices": 145105,
+    "glbBytes": 12192568,
+    "instancedTriangles": 690848,
     "embeddedTextureBytes": 5435605,
     "placements": 1926,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 956142,
-      "blockedCells": 370962,
-      "walkableFraction": 0.7205,
+      "walkableCells": 927803,
+      "blockedCells": 399301,
+      "walkableFraction": 0.6991,
       "elevatedDecks": 3,
+      "steepCells": 376667,
+      "reliefMetres": 161.42,
+      "heightEncoding": {
+        "origin": -6.1735,
+        "step": 2.603515,
+        "range": [
+          1,
+          63
+        ],
+        "zeroMeansBlocked": true
+      },
       "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
       "columnOrder": "server-tile-x (column 0 is the -X western edge)"
     },
@@ -1931,10 +1943,10 @@
   },
   "productionStatus": "production-geometry-materials-population",
   "knownLimitations": [
-    "rope_bridge: 34 m span, gorge floor -26.7 m, landings 17.2 m north / 15.8 m south, deck 16.9 m (44 m of air beneath).",
-    "rope_bridge: deck at y=16.86 m, 34 m span. The deck owns its server cells; the gorge floor beneath it is not separately walkable.",
-    "rope_bridge_upper: 30 m span, gorge floor -12.5 m, landings 32.0 m north / 32.4 m south, deck 32.6 m (45 m of air beneath).",
-    "rope_bridge_upper: deck at y=32.60 m, 30 m span. The deck owns its server cells; the gorge floor beneath it is not separately walkable.",
+    "rope_bridge: 46 m span measured landing to landing, gorge floor -20.9 m, landings 20.0 m north at (60, -98) / 12.2 m south at (41, -57), deck 16.2 m at its centre, rising +7.9 m to the north, turned 66 degrees (37 m of air beneath).",
+    "rope_bridge: deck at y=16.20 m, 46 m span, landing at (60, -98) and (41, -57). The deck owns its server cells; the gorge floor beneath it is not separately walkable.",
+    "rope_bridge_upper: 44 m span measured landing to landing, gorge floor -12.1 m, landings 49.4 m north at (186, -121) / 42.2 m south at (186, -78), deck 45.9 m at its centre, rising +7.2 m to the north, turned 90 degrees (58 m of air beneath).",
+    "rope_bridge_upper: deck at y=45.92 m, 44 m span, landing at (186, -121) and (186, -78). The deck owns its server cells; the gorge floor beneath it is not separately walkable.",
     "Roadside markers: 177 cairns, 17 waystones.",
     "Glacier: 77 seracs along the ice.",
     "Vegetation: 870 conifers below the snow line.",

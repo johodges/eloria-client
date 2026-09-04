@@ -176,3 +176,80 @@ roughness. `_toolkit/amberwood/materials.py` carries the change for any later
 rebuild; the shipped GLBs were edited in place by
 `eloria-assets/tools/make_glacier_ice_opaque.py`, which touches the material
 entry in the JSON chunk and nothing else.
+
+## Neither rope bridge could be crossed
+
+Reported from live play, of the lower bridge: it did not work as a crossing.
+
+Three things were wrong, and all three had to go for a player to get over the
+gorge.
+
+**The walk grid gave each deck a disc.** `build_collision` stamped an elevated
+walk surface as a circle of radius `min(half_x, half_z) * 0.85` about the
+placement, and ignored `rotation_y`. That shape is right for the temple's floor
+and ruinous for a span: a 34 x 1.9 m deck became 1.6 m of walkable cells over
+the middle of the chasm, 20 m from either bank and reachable from neither. The
+footprint is the deck's own rectangle now, in the deck's own frame, grown half a
+cell along its run so it meets the ground it lands on and held in half a cell
+across its width so an actor on a deck cell is over planks.
+
+**Both spans were too short, and landed inside the cut.** The span was the fixed
+34 m of a `SPANS` table and the deck sat at the mean of the ground at its two
+ends - ends which were themselves part-way down a 70-degree wall, 11 m below the
+first ground a walker can stand on. `_crossings` measures out from the anchor
+now to the first ground on each side gentle enough for the walk grid to accept,
+and builds the deck to that width: 42 m here, 40 m upper. The shoulder test is
+deliberately under `MAX_WALK_GRADIENT` rather than at it, because a landing on
+ground already at the climb limit leaves a step the grid rejects, which is a
+crossing one cell short of usable.
+
+**A level deck could not meet both shoulders.** The gorge is cut across a
+mountainside, so one side stands above the other almost everywhere along it -
+8.7 m apart at the lower crossing. `kit.rope_bridge` takes a `rise`, the deck
+running straight between its two ends under its own sag, and `build_collision`
+follows that slope instead of putting the whole deck at one height. The lower
+bridge climbs 10.6 m over 42 m to the north, the upper 6.2 m over 40 m; both
+land within 0.2 m of the ground at each end.
+
+While the ray was on the deck: the planks were spaced at 0.82 of their pitch,
+leaving an 0.2 m gap between each pair, and the client grounds an actor with a
+single ray straight down. A step landing in a gap went through the deck to the
+gorge floor forty metres below - about every sixth pace. The planks overlap now.
+
+Measured on the walk grid, bank to bank: 873 m round the end of the gorge
+before, 49 m across the bridge after. The upper crossing goes 878 m to 50 m.
+A ray cast every 0.1 m along both decks, through the client's own loader and
+grounding layer, lands on the deck 832 times out of 832.
+
+`build_whitehorn` also advertised the walk grid as EWCG v1 with a 0.2 m height
+step while writing a v2 file with a 2.6 m one, so the manifest had to be
+corrected by hand after every build. It reports what it writes now.
+
+## The crossings now land on the road
+
+The span still did not meet the brown of the pilgrim road at either end. The
+landings were being looked for square across the cut, and the road does not
+cross the cut square: it comes down from the south-west and leaves to the
+north-east, so a span laid on the world axes lands beside the road at both ends
+however long it is made.
+
+`_road_landings` looks for the nearest ground on each side of the gorge that is
+classed PATH or PAVING and that the walk grid will accept, and the span is laid
+between those two points at whatever angle they ask for - 66 degrees at the
+lower crossing, 46 m between landings both of them on `Terrain_Trail`. The
+upper crossing keeps its square line: its approach is steep enough that
+`assign_surfaces` calls it rock, so there is no brown there to aim at, and it
+falls back to the shoulder search.
+
+Two details that cost a rebuild each. A landing is judged on the walk grid's
+half-metre lattice rather than the heightfield's two-metre one, because ground
+that reads at 0.79 across two metres can be past the climb limit inside one
+cell of it - which is how a landing was picked that the grid then refused. And
+a deck reaches 1.5 m past its landings rather than stopping on them: stopping
+exactly on the cell the search picked still left one cell of nothing between
+the deck and the road, and one cell is enough to make a crossing useless.
+
+Both decks now land within 0.08 m of the ground, on cells the grid marks
+walkable, and 894 rays cast every 0.1 m along the two decks through the
+client's own grounding layer all land on the deck.
+

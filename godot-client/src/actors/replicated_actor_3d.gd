@@ -44,6 +44,13 @@ var _import_scale := 1.0
 ## every physics frame and a node path lookup per frame per actor is
 ## not what that should cost.
 var _selection_ring: MeshInstance3D = null
+## The marker as built, before the ground was laid under it. Draping reads
+## this every time, so a marker walked over a hill and back is shaped by the
+## ground it is on rather than by the ground it has crossed.
+var _selection_ring_flat: ArrayMesh = null
+## Where the marker was last draped, so walking re-drapes it and standing
+## still does not.
+var _selection_ring_draped_at := Vector3(NAN, NAN, NAN)
 ## Metres per tile on the map this actor is on, so the marker can be
 ## the size of the ground the server reserved rather than a guess.
 var _metres_per_tile := 1.0
@@ -193,6 +200,14 @@ const RING_THICKNESS := 0.09
 ## How far a single-tile outline is inset from its tile's edges, so a
 ## rabbit's marker does not read as a solid square of floor.
 const RING_INSET := 0.06
+## How far the actor has to move before its marker is laid over the ground
+## again. A step is a metre, so this re-drapes about twenty times across one,
+## which is finer than the ground itself is authored.
+const RING_REDRAPE_METRES := 0.05
+## The longest piece of one side of the outline. The marker is draped over the
+## ground it describes, and a piece has to be no longer than the ground stays
+## straight for; the terrain heightfields are authored in half-metre cells.
+const RING_SEGMENT_METRES := 0.5
 
 func configure(dto: Dictionary, adapter: CoordinateAdapter,
 		model_config: Dictionary, animation_config: Dictionary,
@@ -712,9 +727,11 @@ func _resize_selection() -> void:
 	if shape != null and shape.shape is CapsuleShape3D:
 		(shape.shape as CapsuleShape3D).radius = SELECTION_RADIUS * span
 	if _selection_ring != null:
-		_selection_ring.mesh = footprint_outline(
+		_selection_ring_flat = footprint_outline(
 			float(footprint.x) * _metres_per_tile,
 			float(footprint.y) * _metres_per_tile)
+		_selection_ring.mesh = _selection_ring_flat
+		_selection_ring_draped_at = Vector3(NAN, NAN, NAN)
 
 ## The ground an actor is standing on, drawn as the box the server
 ## actually reserved rather than as a circle around its middle.
@@ -738,6 +755,34 @@ func _resize_selection() -> void:
 func _level_selection_ring() -> void:
 	if _selection_ring != null and _selection_ring.visible:
 		_selection_ring.rotation.y = -rotation.y
+		_drape_selection_ring()
+
+## Lay the marker back onto the ground the actor is standing on now.
+##
+## The marker used to be one flat square a fixed five centimetres over the tile
+## centre's height. Regions rise more than that inside a single tile almost
+## everywhere, so its uphill side spent most of its time inside the hill, and
+## the part of it the depth buffer kept changed with every step - a bright box
+## under the player losing and regaining a quarter of itself, frame after
+## frame, for as long as they were running.
+func _drape_selection_ring() -> void:
+	if _selection_ring_flat == null or not is_inside_tree():
+		return
+	var here: Vector3 = global_position
+	if _selection_ring_draped_at.is_finite() and here.distance_to(
+			_selection_ring_draped_at) < RING_REDRAPE_METRES:
+		return
+	var draped: ArrayMesh = GroundDrape.drape(_selection_ring,
+		_selection_ring_flat)
+	if draped == null:
+		# No walk surface under the actor - a map still loading, or an actor
+		# the server placed off the mesh. The flat marker is what there is,
+		# and the next frame asks again rather than settling for it.
+		if _selection_ring.mesh != _selection_ring_flat:
+			_selection_ring.mesh = _selection_ring_flat
+		return
+	_selection_ring.mesh = draped
+	_selection_ring_draped_at = here
 
 static func footprint_outline(width_m: float, depth_m: float) -> ArrayMesh:
 	var half_x: float = maxf(0.1, width_m * 0.5 - RING_INSET)
@@ -756,10 +801,23 @@ static func footprint_outline(width_m: float, depth_m: float) -> ArrayMesh:
 	var normals := PackedVector3Array()
 	for side: int in range(4):
 		var next: int = (side + 1) % 4
-		for point: Vector3 in [outer[side], outer[next], inner[next],
-				outer[side], inner[next], inner[side]]:
-			vertices.append(point)
-			normals.append(Vector3.UP)
+		# A side is cut into lengths GroundDrape can follow the ground with. A
+		# corner-to-corner quad crosses several terrain cells on a big
+		# creature's marker, and a straight line drawn between two draped
+		# corners dives through whatever the ground does in between.
+		var steps: int = maxi(1, ceili(
+			outer[side].distance_to(outer[next]) / RING_SEGMENT_METRES))
+		for step: int in steps:
+			var from: float = float(step) / float(steps)
+			var to: float = float(step + 1) / float(steps)
+			var outer_from: Vector3 = outer[side].lerp(outer[next], from)
+			var outer_to: Vector3 = outer[side].lerp(outer[next], to)
+			var inner_from: Vector3 = inner[side].lerp(inner[next], from)
+			var inner_to: Vector3 = inner[side].lerp(inner[next], to)
+			for point: Vector3 in [outer_from, outer_to, inner_to,
+					outer_from, inner_to, inner_from]:
+				vertices.append(point)
+				normals.append(Vector3.UP)
 	var arrays: Array = []
 	arrays.resize(Mesh.ARRAY_MAX)
 	arrays[Mesh.ARRAY_VERTEX] = vertices

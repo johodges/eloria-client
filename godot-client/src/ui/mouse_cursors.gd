@@ -159,6 +159,13 @@ static func choose(context: Dictionary) -> int:
 			# An alive creature defaults to attack-on-click even in walk mode
 			# (UNDER_MOUSE_ANIMAL in the reference); a dead one is scenery.
 			return ATTACK if alive else WALK
+		"summon":
+			# Your own summon is a creature kind, but a plain click gives it
+			# an order rather than a blow - TOUCH_PLAYER opens its behaviour
+			# popup. Only a mode or a held Alt turns the pointer on it.
+			if (mode == "attack" or bool(context.get("alt", false))) and alive:
+				return ATTACK
+			return TALK
 		"player":
 			if mode == "trade" and alive:
 				return TRADE
