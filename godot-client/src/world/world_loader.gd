@@ -67,6 +67,7 @@ func load_world(manifest_path: String) -> void:
 	print_debug("world_load stage=scene_attached node=", world_root.get_path(),
 		" children=", world_root.get_child_count(), " transform=", world_root.transform)
 	_apply_anisotropic_filtering()
+	_apply_vertex_coverage()
 	_apply_collision_declarations()
 	_apply_rendered_walk_surfaces()
 	_apply_navigation_collision()
@@ -113,6 +114,40 @@ func _apply_anisotropic_filtering() -> void:
 			seen[material.get_instance_id()] = true
 			material.texture_filter = (
 				BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC)
+
+## A ground class is cut against its neighbour by an alpha test on the coverage
+## the map stores in COLOR_0's alpha, which is what lets a diagonal road read as
+## a diagonal instead of a flight of steps the width of a terrain cell. Godot's
+## glTF importer brings the colours in and sets the alpha mode, but leaves
+## `vertex_color_use_as_albedo` off, and without it the vertex alpha never
+## reaches the shader and every class draws over its whole quad.
+##
+## Only alpha-tested materials are touched, and only where the mesh carries
+## colours. Turning it on elsewhere would multiply albedo by a colour the mesh
+## does not have, and Godot substitutes white for a missing COLOR_0, so it is
+## harmless but pointless; restricting it keeps the flag where it means
+## something. The colours the ground carries are white apart from their alpha,
+## so albedo is unchanged.
+func _apply_vertex_coverage() -> int:
+	var applied := 0
+	var seen: Dictionary = {}
+	for node_value: Node in world_root.find_children("*", "MeshInstance3D", true, false):
+		var mesh: Mesh = (node_value as MeshInstance3D).mesh
+		if mesh == null:
+			continue
+		for surface: int in range(mesh.get_surface_count()):
+			if (mesh.surface_get_format(surface) & Mesh.ARRAY_FORMAT_COLOR) == 0:
+				continue
+			var material: BaseMaterial3D = mesh.surface_get_material(
+				surface) as BaseMaterial3D
+			if material == null or seen.has(material.get_instance_id()):
+				continue
+			if material.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR:
+				continue
+			seen[material.get_instance_id()] = true
+			material.vertex_color_use_as_albedo = true
+			applied += 1
+	return applied
 
 func unload_world() -> void:
 	if is_instance_valid(world_root):

@@ -52,10 +52,15 @@ SCHEMA_VERSION = "1.0.0"
 # This set is exactly the materials the build emits - verified against the
 # meshes it actually produces, not guessed. An unused name would embed a
 # texture nothing references; a missing one is a hard error at export.
+#
+# `packed_earth` and `alpine_turf` are not here: since the ground is cut with
+# alpha-tested copies, nothing but the terrain drew with those two, and the
+# copies carry their textures. The rest are still referenced by props and
+# structures as well as by the ground, so they stay.
 MATERIALS = frozenset({
     'snow_pack', 'glacier_ice', 'veined_marble', 'pale_ashlar',
-    'blue_crystal', 'gilt_brass', 'alpine_turf',
-    'cliff_rock', 'rubble_stone', 'packed_earth', 'ashlar',
+    'blue_crystal', 'gilt_brass',
+    'cliff_rock', 'rubble_stone', 'ashlar',
     'timber_grey', 'timber_dark', 'dark_iron', 'woven_cloth',
     'bark_dark', 'foliage_green', 'amber_resin',
 })
@@ -72,6 +77,43 @@ COLLISION_HEIGHT_LEVELS = 63
 MAX_WALK_GRADIENT = 1.0
 
 
+# Terrain classes are drawn with alpha-tested copies of the ground materials, so
+# a class can be cut against its neighbour inside a cell rather than at the cell
+# corner. The copies share the originals' textures - only the alpha mode differs
+# - and they are separate entries so that a prop standing on packed earth is not
+# alpha-tested for the sake of the road.
+GROUND_SUFFIX = "_ground"
+
+
+def _register_ground_materials(builder: GLTF.GltfBuilder, sets: dict,
+                               build: RegionBuild) -> None:
+    """Register an alpha-tested copy of every material the terrain draws with."""
+    wanted = {piece.material for piece in build.terrain_meshes.values()}
+    by_name = {spec.name: spec for spec in MAT.SPECS}
+    for name in sorted(wanted):
+        if not name.endswith(GROUND_SUFFIX):
+            continue
+        spec = by_name[name[:-len(GROUND_SUFFIX)]]
+        texture_set = sets[spec.texture]
+        images = texture_set.images()
+        for image_name, blob in images.items():
+            builder.add_image(image_name, blob)
+        builder.add_material(GLTF.Material(
+            name=name,
+            base_color=spec.base_color,
+            metallic=spec.metallic,
+            roughness=spec.roughness,
+            base_color_texture=f"{spec.texture}_basecolor",
+            orm_texture=f"{spec.texture}_orm",
+            normal_texture=(f"{spec.texture}_normal"
+                            if f"{spec.texture}_normal" in images else None),
+            normal_scale=spec.normal_scale,
+            emissive=spec.emissive,
+            alpha_mode="MASK",
+            alpha_cutoff=0.5,
+            double_sided=spec.double_sided))
+
+
 # --------------------------------------------------------------------------
 def build_region(seed: int = SEED, lod: str | None = None) -> RegionBuild:
     """Terrain, then population. Terrain must stand on its own first."""
@@ -81,7 +123,8 @@ def build_region(seed: int = SEED, lod: str | None = None) -> RegionBuild:
 
     build = RegionBuild(terrain=terrain)
     build.terrain_meshes = terrain.build_meshes(
-        uv_scale=0.30, materials=REG.SURFACE_MATERIALS)
+        uv_scale=0.30, materials=REG.SURFACE_MATERIALS,
+        blend_edges=True, material_suffix=GROUND_SUFFIX)
 
     import populate
     populate.populate(build, seed, lod=lod)
@@ -124,6 +167,7 @@ def export_glb(build: RegionBuild, sets, path: Path) -> tuple[GLTF.GltfBuilder, 
     builder = GLTF.GltfBuilder(
         generator="Eloria Whitehorn Range builder (original procedural assets)")
     MAT.register_gltf_materials(builder, sets, only=MATERIALS)
+    _register_ground_materials(builder, sets, build)
 
     # Tangents are intentionally omitted: Godot's glTF importer generates them
     # for normal-mapped materials, and shipping them costs sixteen bytes a

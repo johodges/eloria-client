@@ -1894,16 +1894,16 @@
   "performance": {
     "nodes": 4676,
     "meshes": 150,
-    "materials": 18,
+    "materials": 23,
     "images": 52,
     "textures": 52,
-    "accessors": 600,
-    "bufferViews": 652,
-    "uniqueTriangles": 237480,
-    "uniqueVertices": 145105,
-    "glbBytes": 12192568,
-    "instancedTriangles": 690848,
-    "embeddedTextureBytes": 5435605,
+    "accessors": 607,
+    "bufferViews": 659,
+    "uniqueTriangles": 264940,
+    "uniqueVertices": 156950,
+    "glbBytes": 14006180,
+    "instancedTriangles": 718308,
+    "embeddedTextureBytes": 4511755,
     "placements": 1926,
     "collision": {
       "width": 1152,
@@ -1927,7 +1927,7 @@
       "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
       "columnOrder": "server-tile-x (column 0 is the -X western edge)"
     },
-    "trianglesPerSquareMetre": 2.08
+    "trianglesPerSquareMetre": 2.17
   },
   "sources": {
     "concept": "eloria-assets/concepts/nymara-regions/whitehorn_range_region_concept.png",

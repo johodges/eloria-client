@@ -13,6 +13,7 @@ from dataclasses import dataclass, field
 import numpy as np
 
 COMPONENT_FLOAT = 5126
+COMPONENT_UBYTE = 5121
 COMPONENT_USHORT = 5123
 COMPONENT_UINT = 5125
 TARGET_ARRAY_BUFFER = 34962
@@ -99,8 +100,14 @@ class GltfBuilder:
 
     def _add_accessor(self, array: np.ndarray, kind: str, component: int,
                       target: int, normalized: bool = False) -> int:
-        dtype = {COMPONENT_FLOAT: np.float32, COMPONENT_USHORT: np.uint16,
-                 COMPONENT_UINT: np.uint32}[component]
+        dtype = {COMPONENT_FLOAT: np.float32, COMPONENT_UBYTE: np.uint8,
+                 COMPONENT_USHORT: np.uint16, COMPONENT_UINT: np.uint32}[component]
+        if normalized and dtype is not np.float32:
+            # glTF reads a normalized integer back as value / max, so the
+            # rounding has to happen here rather than in the caller.
+            scale = float(np.iinfo(dtype).max)
+            array = np.rint(np.clip(np.asarray(array, dtype=np.float64),
+                                    0.0, 1.0) * scale)
         data = np.ascontiguousarray(array, dtype=dtype)
         view = self._add_view(data.tobytes(), target)
         accessor = {
@@ -112,8 +119,8 @@ class GltfBuilder:
         if normalized:
             accessor["normalized"] = True
         if kind != "SCALAR":
-            accessor["min"] = [float(v) for v in np.asarray(array).min(axis=0)]
-            accessor["max"] = [float(v) for v in np.asarray(array).max(axis=0)]
+            accessor["min"] = [float(v) for v in data.min(axis=0)]
+            accessor["max"] = [float(v) for v in data.max(axis=0)]
         else:
             accessor["min"] = [int(np.asarray(array).min())]
             accessor["max"] = [int(np.asarray(array).max())]
@@ -195,8 +202,13 @@ class GltfBuilder:
             attributes["TANGENT"] = self._add_accessor(mesh.tangents(), "VEC4",
                                                        COMPONENT_FLOAT, TARGET_ARRAY_BUFFER)
         if mesh.colors is not None:
-            attributes["COLOR_0"] = self._add_accessor(np.clip(mesh.colors, 0.0, 1.0), "VEC4",
-                                                       COMPONENT_FLOAT, TARGET_ARRAY_BUFFER)
+            # A normalized byte a channel, not a float: the ground's coverage
+            # only has to resolve an alpha test, 1/255 is finer than the cut
+            # can see, and floats cost twelve more bytes on every terrain
+            # vertex in the map.
+            attributes["COLOR_0"] = self._add_accessor(
+                np.clip(mesh.colors, 0.0, 1.0), "VEC4", COMPONENT_UBYTE,
+                TARGET_ARRAY_BUFFER, normalized=True)
         component = COMPONENT_USHORT if mesh.vertex_count <= 65535 else COMPONENT_UINT
         indices = self._add_accessor(mesh.indices, "SCALAR", component,
                                      TARGET_ELEMENT_ARRAY_BUFFER)
