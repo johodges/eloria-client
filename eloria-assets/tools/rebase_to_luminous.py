@@ -1,57 +1,68 @@
 from __future__ import annotations
 
-"""Prototype: rebuild a race body from Luminous's own geometry/rig, with
-the race's own skin texture baked onto Luminous's UV layout.
+"""Rebuild a race body on Luminous's own geometry/rig BELOW THE NECK,
+keeping the source race's own head+eyes mesh and texture UNTOUCHED,
+grafted onto Luminous's neck.
 
 Root motive (see the session's own diagnosis): every non-Luminous body's
 limbs come from an INDEPENDENT Meshy 2D->3D reconstruction, so their
 thickness, and occasionally their pose and even their skin weighting,
 vary in ways no amount of post-hoc correction fully closes out. Building
-every race directly on Luminous's own already-correct body sidesteps
-that at the source: the skeleton was already proven identical, and now
-the SKIN (mesh + weights) is Luminous's own too, not a fresh
-reconstruction per race.
+every race's torso/arms/legs directly on Luminous's own already-correct
+body sidesteps that at the source: the skeleton was already proven
+identical, and now the SKIN (mesh + weights) below the neck is
+Luminous's own too, not a fresh reconstruction per race.
 
-The wardrobe materials (shirt/pants/boots) turned out not to need any
-of this: checked directly, they carry a flat baseColorFactor set at
-RUNTIME by AppearanceVariants, not a baked texture -- only "Material_1"
-(the body/eyes surface) has actual image data. So this only has to
-transplant the SKIN texture (face, hands, feet, any visible skin), not
-the whole body.
+The head is handled completely differently, and this was NOT the first
+design tried here. The first version baked the source race's own head
+texture onto LUMINOUS's head shape too, via the same kind of
+bone-relative correspondence used for limbs. That worked passably for
+the two male bodies checked (Orun, Greyhaven) -- both amount to a
+fairly flat skin tone plus a simple painted-on blindfold, which a
+per-face nearest-neighbour bake can place well enough. It broke badly
+on the female bodies: their faces carry far more identity (real
+eyes/brows/lips, and in Orun Female's case painted facial markings)
+than a coarse per-face correspondence can place coherently -- the
+result was scrambled, not just low-detail. Per the user's own call
+after seeing that failure, the head is no longer rebuilt at all: each
+race keeps its OWN head+eyes mesh and texture completely unchanged,
+grafted onto Luminous's neck. The known cost of this is a possible
+visible seam where the two meshes meet, if the source's own neck rim
+does not line up with Luminous's -- accepted as a smaller, more
+tractable problem than full head correspondence.
 
-Correspondence between Luminous's mesh and the source race's own mesh is
-by BONE-RELATIVE position, not raw 3D coordinates -- but a single
-parametrization does not fit every body part equally well, so this uses
-two different ones depending on what is dominant:
+The wardrobe materials (shirt/pants/boots) need no work of either kind:
+checked directly, they render from a SEPARATE image via flat runtime
+tinting (AppearanceVariants), not from Material_1 at all, and Luminous's
+own wardrobe geometry is kept as-is since the source body it used to
+belong to is being discarded below the neck anyway.
 
-- Limbs/torso/neck (anything with a natural long axis): (dominant bone,
-  fraction along the bone's own axis, angle around that axis) --
-  normalized so it does not care that the two bodies are different
-  sizes or slightly different proportions, only that a point on
-  Luminous's forearm at 40% along it and forward-facing corresponds to
-  whatever is at 40% along and forward-facing on the source body's own
-  forearm.
+Below-the-neck correspondence is by BONE-RELATIVE position, not raw 3D
+coordinates: (dominant bone, fraction along the bone's own axis, angle
+around that axis) -- normalized so it does not care that the two bodies
+are different sizes or slightly different proportions, only that a
+point on Luminous's forearm at 40% along it and forward-facing
+corresponds to whatever is at 40% along and forward-facing on the
+source body's own forearm. The output is PER-FACE (one flat colour per
+Luminous face, sampled from its corresponding source face's own
+texture), not a full per-pixel projection: this mesh is low-poly
+enough, and already flat-shaded per facet, that a per-pixel bake would
+not read as more detailed in practice.
 
-- The head is NOT just a thick cylinder, so the same axis+angle
-  treatment does not work for it -- checked directly, Luminous's and
-  Orun's own head-bone-relative bounding boxes do not overlay (Orun's
-  head sits measurably further forward relative to the Head bone than
-  Luminous's does: Z range [-0.171, 0.061] vs [-0.099, 0.148]), so
-  naive bone-relative position matching misaligns facial features
-  (confirmed by a first attempt: the face came back mostly as
-  Luminous's own fallback colour with stray artifacts). Instead, each
-  body's own head is normalized into its own measured bounding box
-  (centered at 0, +-1 half-extent per axis) before matching nearest
-  neighbour in that normalized space -- removing exactly the per-body
-  size/proportion difference that broke the axis+angle approach.
-
-The output is PER-FACE (one flat colour per Luminous face, sampled from
-its corresponding source face's own texture), not a full per-pixel
-projection: this mesh is low-poly enough, and already flat-shaded per
-facet, that a per-pixel bake would not read as more detailed in
-practice, and per-face is far simpler to get right.
+Only the true skin classes (body, eyes, skin_accent -- see
+split_race_surfaces.CLASSES for the full set, which also includes hair
+and the wardrobe surfaces) ever enter this correspondence. Checked
+directly: a "body" face and a "wardrobe_shirt" face can share the same
+dominant joint right at the collar, and correspondence only compares
+dominant-bone position -- it does not know or care which class a face
+belongs to. Including wardrobe let a handful of collar/cuff-adjacent
+skin faces match a wardrobe face on the source side, then sample ITS uv
+against Material_1 (the wrong image for that uv entirely, since
+wardrobe's own uv layout was built for its own separate texture),
+producing small dark garbage patches at every skin/cloth seam.
 """
 
+import copy
 import io
 import sys
 from pathlib import Path
@@ -65,23 +76,17 @@ from split_race_surfaces import (  # noqa: E402
     bone_rest_position, read_glb, write_glb,
 )
 
-# Only these classes (see split_race_surfaces.CLASSES for the full set)
-# carry real per-race skin detail on Material_1 -- "hair"/"wardrobe_*"
-# render from a SEPARATE image via flat runtime tinting, and critically
-# their own UV coordinates were laid out for THAT image, not this one.
-# Checked directly: a "body" face on one bone can share a dominant joint
-# with a "wardrobe_shirt" face on the other body (e.g. both dominated by
-# neck_01 right at the collar), and correspondence only compares
-# dominant-bone position -- it does not know or care which class a face
-# belongs to. Including wardrobe let a handful of collar/cuff-adjacent
-# skin faces match a wardrobe face on the source side, then sample ITS
-# uv against Material_1 (the wrong image for that uv entirely),
-# producing small dark garbage patches right at every skin/cloth seam.
+# Only these classes carry real per-race skin detail on Material_1 --
+# see the module docstring for why the rest (hair, wardrobe_*) must
+# stay out of this correspondence entirely.
 SKIN_CLASSES = ("body", "eyes", "skin_accent")
 
-# (near, far) axis per bone used for limb/torso correspondence; the head
-# is handled separately below (see head_bbox_descriptor) since it has no
-# single useful long axis.
+# (near, far) axis per bone used for below-neck correspondence. "Head"
+# deliberately has no entry: the source's own head is grafted wholesale
+# (see graft_source_head), never retextured, so a Head-dominant face
+# simply falls back to being unmatched here -- harmless, since those
+# faces get removed from Luminous's own mesh entirely regardless of
+# what colour they would have baked to.
 LIMB_AXES = {
     "upperarm_l": "lowerarm_l", "upperarm_r": "lowerarm_r",
     "lowerarm_l": "hand_l", "lowerarm_r": "hand_r",
@@ -92,7 +97,31 @@ LIMB_AXES = {
     "spine_01": "spine_02", "spine_02": "spine_03", "spine_03": "neck_01",
     "neck_01": "Head", "pelvis": "spine_01",
 }
+# Each finger is its own 4-bone chain (e.g. middle_01/02/03_l then a
+# "leaf" tip bone) -- checked directly, "hand_l"'s own weight only
+# dominates the palm and first knuckle or so; individual finger bones
+# take over dominance further out, and with no axis entry of their own
+# those faces fell back to Luminous's own pale skin, producing a
+# visible two-tone patch right at the fingertips (most visible on the
+# female bodies, whose thinner fingers give the fallback patch
+# proportionally more of the finger's surface).
+for _finger in ("index", "middle", "ring", "pinky", "thumb"):
+    for _side in ("l", "r"):
+        LIMB_AXES["%s_01_%s" % (_finger, _side)] = "%s_02_%s" % (_finger, _side)
+        LIMB_AXES["%s_02_%s" % (_finger, _side)] = "%s_03_%s" % (_finger, _side)
+        LIMB_AXES["%s_03_%s" % (_finger, _side)] = "%s_04_leaf_%s" % (_finger, _side)
 HEAD_BONE = "Head"
+
+# A source face whose sampled colour is at or below this on every
+# channel is treated as "never actually captured" rather than a real
+# dark colour -- checked directly: candidates near the collar came back
+# as near-uniform (23, 20, 18)-style triples, unlike any real skin tone
+# measured nearby, which were bright with a clear hue. Almost certainly
+# a surface the source body's own generation never saw (hidden under
+# the collar in its resting pose) and filled with a placeholder
+# instead of real data. A genuinely very dark-skinned race could in
+# principle trip this; revisit if one shows a similar hole.
+NO_DATA_MAX_CHANNEL = 35
 
 
 def read_material_1_texture(document, binary):
@@ -108,16 +137,28 @@ def read_material_1_texture(document, binary):
     raise RuntimeError("no Material_1 found")
 
 
+def find_node(document, name):
+    for i, n in enumerate(document["nodes"]):
+        if n.get("name") == name:
+            return i, n
+    raise KeyError(name)
+
+
+def joint_names(document, skin_index):
+    skin = document["skins"][skin_index]
+    return [document["nodes"][j].get("name", "") for j in skin["joints"]]
+
+
 def body_faces_data(document, binary):
     """positions, uvs, indices(faces Nx3), skin_index for the shared
-    body/eyes/... mesh (see split_race_surfaces's own module docstring:
+    skin mesh (see split_race_surfaces's own module docstring:
     attributes are shared across every class primitive in this split)."""
     nodes = [n for n in document["nodes"] if n.get("name") in SKIN_CLASSES and "mesh" in n]
     prim = document["meshes"][nodes[0]["mesh"]]["primitives"][0]
     positions = accessor_array(document, binary, prim["attributes"]["POSITION"])
     uvs = accessor_array(document, binary, prim["attributes"]["TEXCOORD_0"])
     skin_index = nodes[0]["skin"]
-    all_faces, all_uv_faces = [], []
+    all_faces = []
     for n in nodes:
         p = document["meshes"][n["mesh"]]["primitives"][0]
         idx = accessor_array(document, binary, p["indices"]).reshape(-1, 3).astype(np.int64)
@@ -131,8 +172,9 @@ def bone_descriptor(document, binary, skin_index, centroids, dominant, names):
     keyed by which joint row is dominant. `angle` is measured around the
     bone's own axis from a fixed reference direction (+Z projected
     perpendicular to the axis), so it means the same thing on any body
-    regardless of size. Head-dominant faces are left as NaN here -- see
-    head_bbox_descriptor, which handles them separately."""
+    regardless of size. Faces with no LIMB_AXES entry for their dominant
+    bone (Head chief among them) are left as NaN -- see the module
+    docstring for why Head is deliberately absent."""
     descriptors = np.full((len(centroids), 2), np.nan)
     for row in np.unique(dominant):
         name = names[row]
@@ -167,45 +209,11 @@ def bone_descriptor(document, binary, skin_index, centroids, dominant, names):
     return descriptors
 
 
-def face_normals(positions, faces):
-    """Unit outward-facing normal per face, in the mesh's own untransformed
-    space (deliberately NOT bbox-normalized like the position descriptor --
-    a normal is a direction, and anisotropically rescaling XYZ to fit a
-    box would distort it)."""
-    v0 = positions[faces[:, 0]]
-    v1 = positions[faces[:, 1]]
-    v2 = positions[faces[:, 2]]
-    n = np.cross(v1 - v0, v2 - v0)
-    length = np.maximum(np.linalg.norm(n, axis=1, keepdims=True), 1e-12)
-    return n / length
-
-
-def head_bbox_descriptor(document, binary, skin_index, centroids, normals, dominant, head_row):
-    """Per-axis bounding-box-normalized (x, y, z) position plus unit
-    normal (nx, ny, nz) descriptor for Head-dominant faces only -- NaN
-    elsewhere. Each body's own head is normalized into its own measured
-    extent (center at 0, half-extent at 1 on each axis, relative to the
-    Head bone's rest position) before matching, which removes exactly the
-    per-body size/proportion difference that breaks a single axis+angle
-    parametrization for a shape as irregular as a head/face. The normal
-    is carried alongside so matching can prefer a similarly-facing
-    source face -- position alone let a handful of jaw/chin-underside
-    faces (pointing down) match front-facing target faces that merely
-    happened to sit nearby in normalized space, producing small dark
-    mismatched patches at the jaw/neck boundary."""
-    descriptors = np.full((len(centroids), 6), np.nan)
-    sel = dominant == head_row
-    if not sel.any():
-        return descriptors
-    head_pos = bone_rest_position(document, binary, skin_index, HEAD_BONE)
-    rel = centroids[sel] - head_pos
-    lo = rel.min(axis=0)
-    hi = rel.max(axis=0)
-    center = (lo + hi) / 2.0
-    half = np.maximum((hi - lo) / 2.0, 1e-6)
-    descriptors[sel, :3] = (rel - center) / half
-    descriptors[sel, 3:] = normals[sel]
-    return descriptors
+def sample_face_colors(uv_centroids, texture_arr, tex_w, tex_h):
+    """RGB at each face's own UV centroid, for every face at once."""
+    px = np.clip(uv_centroids[:, 0] % 1.0, 0, 1) * (tex_w - 1)
+    py = np.clip(uv_centroids[:, 1] % 1.0, 0, 1) * (tex_h - 1)
+    return texture_arr[py.astype(np.int64), px.astype(np.int64)]
 
 
 def build_correspondence(luminous_desc, luminous_dominant, source_desc, source_dominant,
@@ -216,9 +224,8 @@ def build_correspondence(luminous_desc, luminous_dominant, source_desc, source_d
     NO_DATA_MAX_CHANNEL) excludes source faces with no real baked colour
     from candidacy -- the neck is the main place this matters here: skin
     just under the collar is hidden in the source body's own resting
-    pose, so a handful of neck_01-dominant faces there have the same
-    kind of placeholder-black texture as the jaw-bottom head faces this
-    was first built for."""
+    pose, so a handful of neck_01-dominant faces there have placeholder
+    near-black texture instead of real data."""
     correspondence = np.full(len(luminous_dominant), -1, dtype=np.int64)
     for row in np.unique(luminous_dominant):
         lum_sel = np.flatnonzero((luminous_dominant == row) & ~np.isnan(luminous_desc[:, 0]))
@@ -239,63 +246,164 @@ def build_correspondence(luminous_desc, luminous_dominant, source_desc, source_d
     return correspondence
 
 
-# How strongly a mismatched facing direction penalizes an otherwise
-# close position match, in the head correspondence search -- see
-# build_head_correspondence. 0 = ignore facing entirely (the original
-# position-only approach); tuned by eye against the jaw/neck speckling
-# it was added to fix, not derived from anything more principled.
-HEAD_NORMAL_WEIGHT = 1.5
-
-# A source face whose sampled colour is at or below this on every
-# channel is treated as "never actually captured" rather than a real
-# dark colour -- checked directly (see the diagnostic that motivated
-# this: matched candidates near the jaw/neck came back as near-uniform
-# (23, 20, 18)-style triples, unlike any real skin/hair tone measured
-# nearby, which were bright with a clear hue). Almost certainly a
-# surface the source body's own generation never saw (hidden under the
-# chin/collar in whatever pose it was captured from) and filled with a
-# placeholder instead of real data. A genuinely very dark-skinned race
-# could in principle trip this; revisit if one shows a similar hole.
-NO_DATA_MAX_CHANNEL = 35
+def remap_joint_rows(source_names, target_names, joints_int):
+    """JOINTS_0 values are ROW indices into a skin's own joints list, so
+    grafting onto a DIFFERENT skin (Luminous's) needs each row
+    translated by joint NAME, not assumed identical -- checked directly
+    for Orun Male, the row order already happens to match Luminous's
+    exactly, but nothing guarantees that for every race, and this is
+    cheap insurance against a silently mis-skinned graft if one differs."""
+    lookup = np.array([target_names.index(n) for n in source_names], dtype=np.int64)
+    return lookup[joints_int]
 
 
-def sample_face_colors(uv_centroids, texture_arr, tex_w, tex_h):
-    """RGB at each face's own UV centroid, for every face at once."""
-    px = np.clip(uv_centroids[:, 0] % 1.0, 0, 1) * (tex_w - 1)
-    py = np.clip(uv_centroids[:, 1] % 1.0, 0, 1) * (tex_h - 1)
-    return texture_arr[py.astype(np.int64), px.astype(np.int64)]
+def compact_submesh(positions, normals, uvs, joints, weights, faces_groups):
+    """Slice shared per-vertex arrays down to just the vertices used by
+    `faces_groups` (a list of Nx3 face arrays sharing the same vertex
+    buffer), remapping every group's faces into the resulting compact
+    0..K-1 range. Needed because the source's full body/eyes vertex
+    buffer covers the WHOLE body, not just the head being grafted."""
+    all_faces = np.concatenate(faces_groups, axis=0)
+    used = np.unique(all_faces)
+    remap = np.full(positions.shape[0], -1, dtype=np.int64)
+    remap[used] = np.arange(len(used))
+    remapped_groups = [remap[g] for g in faces_groups]
+    return (positions[used], normals[used], uvs[used], joints[used], weights[used],
+            remapped_groups)
 
 
-def build_head_correspondence(luminous_desc, luminous_dominant, head_row_lum,
-                               source_desc, source_dominant, head_row_src,
-                               source_no_data):
-    """Nearest-neighbour match in per-body bounding-box-normalized
-    (x, y, z) space, for Head-dominant faces only -- see
-    head_bbox_descriptor. No wrap-around on the position term (unlike the
-    limb angle term, a normalized axis position has no periodicity to
-    account for). A facing-direction term is added on top: without it, a
-    handful of jaw/chin-underside faces on the source matched
-    similarly-positioned but front-facing target faces. `source_no_data`
-    (see NO_DATA_MAX_CHANNEL) excludes source faces with no real baked
-    colour from candidacy entirely -- both of those turned out to matter
-    for the dark mismatched patches this was built to fix: the normal
-    term alone did not move them, because the picked source face WAS
-    well-aligned in both position and facing, it just had no usable
-    texture at all."""
-    correspondence = np.full(len(luminous_dominant), -1, dtype=np.int64)
-    lum_sel = np.flatnonzero((luminous_dominant == head_row_lum) & ~np.isnan(luminous_desc[:, 0]))
-    src_sel = np.flatnonzero((source_dominant == head_row_src) & ~np.isnan(source_desc[:, 0])
-                              & ~source_no_data)
-    if len(lum_sel) == 0 or len(src_sel) == 0:
-        return correspondence
-    diff = luminous_desc[lum_sel][:, None, :3] - source_desc[src_sel][None, :, :3]
-    dist = np.sum(diff * diff, axis=2)
-    lum_n = luminous_desc[lum_sel][:, None, 3:]
-    src_n = source_desc[src_sel][None, :, 3:]
-    dist += HEAD_NORMAL_WEIGHT * (1.0 - np.sum(lum_n * src_n, axis=2))
-    best = np.argmin(dist, axis=1)
-    correspondence[lum_sel] = src_sel[best]
-    return correspondence
+def embed_source_material(document, binary, src_doc, src_bin, src_material_index):
+    """Copy a source material into `document` as a new material, along
+    with a fresh, byte-identical copy of whatever image(s) its texture
+    slots reference -- the source's own head keeps its own REAL texture
+    untouched, not a bake, so this must preserve it exactly rather than
+    re-encoding through PIL. Material_1 in practice references the same
+    single image from two different texture slots (baseColorTexture AND
+    emissiveTexture, the latter giving the skin its shadeless-bright
+    look); image bytes are deduped by source image index so that does
+    not create two copies."""
+    image_cache, texture_cache = {}, {}
+
+    def remap(tex_info):
+        if tex_info is None:
+            return
+        old_tex_idx = tex_info["index"]
+        if old_tex_idx not in texture_cache:
+            src_texture = src_doc["textures"][old_tex_idx]
+            image_idx_src = src_texture["source"]
+            if image_idx_src not in image_cache:
+                image = src_doc["images"][image_idx_src]
+                view = src_doc["bufferViews"][image["bufferView"]]
+                start = 8 + view.get("byteOffset", 0)
+                raw_bytes = bytes(src_bin[start:start + view["byteLength"]])
+                new_view = append_view(document, binary, raw_bytes)
+                new_image_idx = len(document["images"])
+                document["images"].append(
+                    {"bufferView": new_view, "mimeType": image.get("mimeType", "image/png")})
+                image_cache[image_idx_src] = new_image_idx
+            new_texture = dict(src_texture)
+            new_texture["source"] = image_cache[image_idx_src]
+            texture_cache[old_tex_idx] = len(document["textures"])
+            document["textures"].append(new_texture)
+        tex_info["index"] = texture_cache[old_tex_idx]
+
+    new_material = copy.deepcopy(src_doc["materials"][src_material_index])
+    pbr = new_material.get("pbrMetallicRoughness", {})
+    remap(pbr.get("baseColorTexture"))
+    remap(pbr.get("metallicRoughnessTexture"))
+    remap(new_material.get("normalTexture"))
+    remap(new_material.get("occlusionTexture"))
+    remap(new_material.get("emissiveTexture"))
+    new_material_index = len(document["materials"])
+    document["materials"].append(new_material)
+    return new_material_index
+
+
+def strip_luminous_head(document, binary, lum_names):
+    """Remove Luminous's own Head-dominant faces from her "body" mesh
+    (everything else -- torso, arms, legs, hands, feet -- stays) and
+    make her "eyes" node render nothing. Both are about to be replaced
+    by the source race's own, so keeping them around would just double
+    up geometry inside the same UV/vertex space the graft occupies.
+
+    The eyes node is emptied in place (mesh/skin keys dropped) rather
+    than unlinked from Armature's children list -- checked directly,
+    Godot's glTF importer errors ("Unable to find node N") on a node
+    that is present in the document but no longer reachable from any
+    scene root, so an orphaned-but-still-listed node is not safe;
+    leaving it in the hierarchy as an inert empty transform is."""
+    body_idx, body_node = find_node(document, "body")
+    body_prim = document["meshes"][body_node["mesh"]]["primitives"][0]
+    positions = accessor_array(document, binary, body_prim["attributes"]["POSITION"])
+    joints = accessor_array(document, binary, body_prim["attributes"]["JOINTS_0"]).astype(np.int64)
+    weights = accessor_array(document, binary, body_prim["attributes"]["WEIGHTS_0"])
+    dominant = joints[np.arange(len(joints)), np.argmax(weights, axis=1)]
+    head_row = lum_names.index(HEAD_BONE)
+
+    faces = accessor_array(document, binary, body_prim["indices"]).reshape(-1, 3).astype(np.int64)
+    keep = dominant[faces[:, 0]] != head_row
+    new_faces = faces[keep].astype(np.uint32).reshape(-1)
+    body_prim["indices"] = append_accessor(document, binary, new_faces, 5125, "SCALAR")
+
+    _, eyes_node = find_node(document, "eyes")
+    eyes_node.pop("mesh", None)
+    eyes_node.pop("skin", None)
+
+
+def graft_source_head(document, binary, lum_names, src_doc, src_bin):
+    """Attach the source race's own head+eyes mesh (unchanged geometry
+    AND texture) as a new node on `document`, skinned onto Luminous's
+    own already-shared skeleton by joint NAME. See the module docstring
+    for why the head is grafted wholesale rather than retextured."""
+    _, src_body_node = find_node(src_doc, "body")
+    _, src_eyes_node = find_node(src_doc, "eyes")
+    body_prim = src_doc["meshes"][src_body_node["mesh"]]["primitives"][0]
+    eyes_prim = src_doc["meshes"][src_eyes_node["mesh"]]["primitives"][0]
+
+    positions = accessor_array(src_doc, src_bin, body_prim["attributes"]["POSITION"])
+    normals = accessor_array(src_doc, src_bin, body_prim["attributes"]["NORMAL"])
+    uvs = accessor_array(src_doc, src_bin, body_prim["attributes"]["TEXCOORD_0"])
+    joints = accessor_array(src_doc, src_bin, body_prim["attributes"]["JOINTS_0"]).astype(np.int64)
+    weights = accessor_array(src_doc, src_bin, body_prim["attributes"]["WEIGHTS_0"])
+
+    src_skin_index = src_body_node["skin"]
+    src_names = joint_names(src_doc, src_skin_index)
+    head_row = src_names.index(HEAD_BONE)
+    dominant = joints[np.arange(len(joints)), np.argmax(weights, axis=1)]
+
+    body_faces = accessor_array(src_doc, src_bin, body_prim["indices"]).reshape(-1, 3).astype(np.int64)
+    eyes_faces = accessor_array(src_doc, src_bin, eyes_prim["indices"]).reshape(-1, 3).astype(np.int64)
+    head_faces = body_faces[dominant[body_faces[:, 0]] == head_row]
+
+    pos_c, norm_c, uv_c, joints_c, weights_c, (head_faces_c, eyes_faces_c) = compact_submesh(
+        positions, normals, uvs, joints, weights, [head_faces, eyes_faces])
+    joints_remapped = remap_joint_rows(src_names, lum_names, joints_c)
+
+    attrs = {
+        "POSITION": append_accessor(document, binary, pos_c.astype(np.float32), 5126, "VEC3"),
+        "NORMAL": append_accessor(document, binary, norm_c.astype(np.float32), 5126, "VEC3"),
+        "TEXCOORD_0": append_accessor(document, binary, uv_c.astype(np.float32), 5126, "VEC2"),
+        "JOINTS_0": append_accessor(document, binary, joints_remapped.astype(np.uint8), 5121, "VEC4"),
+        "WEIGHTS_0": append_accessor(document, binary, weights_c.astype(np.float32), 5126, "VEC4"),
+    }
+    head_idx_acc = append_accessor(
+        document, binary, head_faces_c.astype(np.uint32).reshape(-1), 5125, "SCALAR")
+    eyes_idx_acc = append_accessor(
+        document, binary, eyes_faces_c.astype(np.uint32).reshape(-1), 5125, "SCALAR")
+
+    material_index = embed_source_material(document, binary, src_doc, src_bin, body_prim["material"])
+
+    mesh_index = len(document["meshes"])
+    document["meshes"].append({"primitives": [
+        {"attributes": attrs, "indices": head_idx_acc, "material": material_index},
+        {"attributes": attrs, "indices": eyes_idx_acc, "material": material_index},
+    ]})
+
+    _, lum_body_node = find_node(document, "body")
+    node_index = len(document["nodes"])
+    document["nodes"].append({"name": "head_source", "mesh": mesh_index, "skin": lum_body_node["skin"]})
+    _, armature_node = find_node(document, "Armature")
+    armature_node["children"].append(node_index)
 
 
 def process(luminous_path: Path, source_path: Path, out_path: Path) -> str:
@@ -305,10 +413,8 @@ def process(luminous_path: Path, source_path: Path, out_path: Path) -> str:
     lum_pos, lum_uv, lum_faces, lum_skin = body_faces_data(lum_doc, lum_bin)
     src_pos, src_uv, src_faces, src_skin = body_faces_data(src_doc, src_bin)
 
-    lum_skin_obj = lum_doc["skins"][lum_skin]
-    lum_names = [lum_doc["nodes"][j].get("name", "") for j in lum_skin_obj["joints"]]
-    src_skin_obj = src_doc["skins"][src_skin]
-    src_names = [src_doc["nodes"][j].get("name", "") for j in src_skin_obj["joints"]]
+    lum_names = joint_names(lum_doc, lum_skin)
+    src_names = joint_names(src_doc, src_skin)
 
     lum_prim0 = lum_doc["meshes"][
         [n for n in lum_doc["nodes"] if n.get("name") in SKIN_CLASSES and "mesh" in n][0]["mesh"]
@@ -342,21 +448,6 @@ def process(luminous_path: Path, source_path: Path, out_path: Path) -> str:
     correspondence = build_correspondence(lum_desc, lum_face_dominant, src_desc, src_face_dominant,
                                            src_no_data)
 
-    if HEAD_BONE in lum_names and HEAD_BONE in src_names:
-        lum_head_row = lum_names.index(HEAD_BONE)
-        src_head_row = src_names.index(HEAD_BONE)
-        lum_normals = face_normals(lum_pos, lum_faces)
-        src_normals = face_normals(src_pos, src_faces)
-        lum_head_desc = head_bbox_descriptor(
-            lum_doc, lum_bin, lum_skin, lum_centroids, lum_normals, lum_face_dominant, lum_head_row)
-        src_head_desc = head_bbox_descriptor(
-            src_doc, src_bin, src_skin, src_centroids, src_normals, src_face_dominant, src_head_row)
-        head_correspondence = build_head_correspondence(
-            lum_head_desc, lum_face_dominant, lum_head_row,
-            src_head_desc, src_face_dominant, src_head_row, src_no_data)
-        head_sel = lum_face_dominant == lum_head_row
-        correspondence[head_sel] = head_correspondence[head_sel]
-
     lum_texture, lum_image_index, lum_material_index = read_material_1_texture(lum_doc, lum_bin)
     out_image = Image.new("RGB", lum_texture.size)
     draw = ImageDraw.Draw(out_image)
@@ -387,15 +478,21 @@ def process(luminous_path: Path, source_path: Path, out_path: Path) -> str:
     view_index = append_view(document, binary, payload)
     document["images"][lum_image_index]["bufferView"] = view_index
     document["images"][lum_image_index].pop("uri", None)
+
+    strip_luminous_head(document, binary, lum_names)
+    graft_source_head(document, binary, lum_names, src_doc, src_bin)
+
     write_glb(out_path, document, binary)
-    return "matched %d/%d faces, %d used Luminous's own texture as fallback" % (
-        matched, len(lum_faces), unmatched)
+    return ("below-neck: matched %d/%d faces, %d used Luminous's own texture as fallback; "
+            "head+eyes grafted from the source unchanged" % (matched, len(lum_faces), unmatched))
 
 
 def main() -> int:
     import argparse
-    ap = argparse.ArgumentParser(description="rebuild a race body on Luminous's own geometry")
-    ap.add_argument("source_race", help="race glb stem to take the skin texture from")
+    ap = argparse.ArgumentParser(
+        description="rebuild a race body's torso/limbs on Luminous's own geometry, "
+                    "keeping the source's own head+eyes mesh unchanged")
+    ap.add_argument("source_race", help="race glb stem to take the skin/head from")
     ap.add_argument("--gender", required=True, choices=["male", "female"])
     ap.add_argument("--out", required=True, help="output glb stem")
     args = ap.parse_args()
