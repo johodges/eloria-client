@@ -367,12 +367,29 @@ def embed_source_material(document, binary, src_doc, src_bin, src_material_index
     return new_material_index
 
 
+def strip_luminous_bones(document, binary, lum_names, bone_names):
+    """Remove Luminous's own faces dominant on any of `bone_names` from
+    her "body" mesh -- shared by strip_luminous_head (Head) and the
+    Mycelari shoulder-mushroom graft (clavicle_l/r): both replace a
+    region of Luminous's own body wholesale with the source race's own,
+    so keeping her own version around would just double up geometry in
+    the same UV/vertex space the graft occupies."""
+    _, body_node = find_node(document, "body")
+    body_prim = document["meshes"][body_node["mesh"]]["primitives"][0]
+    joints = accessor_array(document, binary, body_prim["attributes"]["JOINTS_0"]).astype(np.int64)
+    weights = accessor_array(document, binary, body_prim["attributes"]["WEIGHTS_0"])
+    dominant = joints[np.arange(len(joints)), np.argmax(weights, axis=1)]
+    rows = {lum_names.index(b) for b in bone_names if b in lum_names}
+
+    faces = accessor_array(document, binary, body_prim["indices"]).reshape(-1, 3).astype(np.int64)
+    keep = ~np.isin(dominant[faces[:, 0]], list(rows))
+    new_faces = faces[keep].astype(np.uint32).reshape(-1)
+    body_prim["indices"] = append_accessor(document, binary, new_faces, 5125, "SCALAR")
+
+
 def strip_luminous_head(document, binary, lum_names):
-    """Remove Luminous's own Head-dominant faces from her "body" mesh
-    (everything else -- torso, arms, legs, hands, feet -- stays) and
-    make her "eyes" node render nothing. Both are about to be replaced
-    by the source race's own, so keeping them around would just double
-    up geometry inside the same UV/vertex space the graft occupies.
+    """strip_luminous_bones for Head, plus emptying Luminous's own
+    "eyes" node -- it is about to be replaced by the source's own.
 
     The eyes node is emptied in place (mesh/skin keys dropped) rather
     than unlinked from Armature's children list -- checked directly,
@@ -380,29 +397,71 @@ def strip_luminous_head(document, binary, lum_names):
     that is present in the document but no longer reachable from any
     scene root, so an orphaned-but-still-listed node is not safe;
     leaving it in the hierarchy as an inert empty transform is."""
-    body_idx, body_node = find_node(document, "body")
-    body_prim = document["meshes"][body_node["mesh"]]["primitives"][0]
-    positions = accessor_array(document, binary, body_prim["attributes"]["POSITION"])
-    joints = accessor_array(document, binary, body_prim["attributes"]["JOINTS_0"]).astype(np.int64)
-    weights = accessor_array(document, binary, body_prim["attributes"]["WEIGHTS_0"])
-    dominant = joints[np.arange(len(joints)), np.argmax(weights, axis=1)]
-    head_row = lum_names.index(HEAD_BONE)
-
-    faces = accessor_array(document, binary, body_prim["indices"]).reshape(-1, 3).astype(np.int64)
-    keep = dominant[faces[:, 0]] != head_row
-    new_faces = faces[keep].astype(np.uint32).reshape(-1)
-    body_prim["indices"] = append_accessor(document, binary, new_faces, 5125, "SCALAR")
-
+    strip_luminous_bones(document, binary, lum_names, [HEAD_BONE])
     _, eyes_node = find_node(document, "eyes")
     eyes_node.pop("mesh", None)
     eyes_node.pop("skin", None)
 
 
+def graft_source_bones(document, binary, lum_names, src_doc, src_bin, bone_names, node_name):
+    """Attach the source race's own "body" geometry dominant on any of
+    `bone_names` (unchanged geometry AND texture) as a new node,
+    skinned onto Luminous's own already-shared skeleton by joint NAME.
+    Shared by graft_source_head (Head) and the Mycelari shoulder-
+    mushroom graft (clavicle_l/r). See the module docstring for why a
+    whole region is grafted wholesale rather than retextured."""
+    _, src_body_node = find_node(src_doc, "body")
+    body_prim = src_doc["meshes"][src_body_node["mesh"]]["primitives"][0]
+
+    positions = accessor_array(src_doc, src_bin, body_prim["attributes"]["POSITION"])
+    normals = accessor_array(src_doc, src_bin, body_prim["attributes"]["NORMAL"])
+    uvs = accessor_array(src_doc, src_bin, body_prim["attributes"]["TEXCOORD_0"])
+    joints = accessor_array(src_doc, src_bin, body_prim["attributes"]["JOINTS_0"]).astype(np.int64)
+    weights = accessor_array(src_doc, src_bin, body_prim["attributes"]["WEIGHTS_0"])
+
+    src_skin_index = src_body_node["skin"]
+    src_names = joint_names(src_doc, src_skin_index)
+    rows = {src_names.index(b) for b in bone_names if b in src_names}
+    dominant = joints[np.arange(len(joints)), np.argmax(weights, axis=1)]
+
+    body_faces = accessor_array(src_doc, src_bin, body_prim["indices"]).reshape(-1, 3).astype(np.int64)
+    sel_faces = body_faces[np.isin(dominant[body_faces[:, 0]], list(rows))]
+    if len(sel_faces) == 0:
+        return False
+
+    pos_c, norm_c, uv_c, joints_c, weights_c, (faces_c,) = compact_submesh(
+        positions, normals, uvs, joints, weights, [sel_faces])
+    joints_remapped = remap_joint_rows(src_names, lum_names, joints_c)
+
+    attrs = {
+        "POSITION": append_accessor(document, binary, pos_c.astype(np.float32), 5126, "VEC3"),
+        "NORMAL": append_accessor(document, binary, norm_c.astype(np.float32), 5126, "VEC3"),
+        "TEXCOORD_0": append_accessor(document, binary, uv_c.astype(np.float32), 5126, "VEC2"),
+        "JOINTS_0": append_accessor(document, binary, joints_remapped.astype(np.uint8), 5121, "VEC4"),
+        "WEIGHTS_0": append_accessor(document, binary, weights_c.astype(np.float32), 5126, "VEC4"),
+    }
+    idx_acc = append_accessor(document, binary, faces_c.astype(np.uint32).reshape(-1), 5125, "SCALAR")
+
+    material_index = embed_source_material(document, binary, src_doc, src_bin, body_prim["material"])
+
+    mesh_index = len(document["meshes"])
+    document["meshes"].append({"primitives": [
+        {"attributes": attrs, "indices": idx_acc, "material": material_index},
+    ]})
+
+    _, lum_body_node = find_node(document, "body")
+    node_index = len(document["nodes"])
+    document["nodes"].append({"name": node_name, "mesh": mesh_index, "skin": lum_body_node["skin"]})
+    _, armature_node = find_node(document, "Armature")
+    armature_node["children"].append(node_index)
+    return True
+
+
 def graft_source_head(document, binary, lum_names, src_doc, src_bin):
-    """Attach the source race's own head+eyes mesh (unchanged geometry
-    AND texture) as a new node on `document`, skinned onto Luminous's
-    own already-shared skeleton by joint NAME. See the module docstring
-    for why the head is grafted wholesale rather than retextured."""
+    """graft_source_bones for Head, plus the source's own "eyes" node
+    (a separate mesh/class in the source, not just another dominant-
+    bone group within "body") -- both share one embedded copy of the
+    source's own Material_1 image."""
     _, src_body_node = find_node(src_doc, "body")
     _, src_eyes_node = find_node(src_doc, "eyes")
     body_prim = src_doc["meshes"][src_body_node["mesh"]]["primitives"][0]
@@ -452,6 +511,20 @@ def graft_source_head(document, binary, lum_names, src_doc, src_bin):
     document["nodes"].append({"name": "head_source", "mesh": mesh_index, "skin": lum_body_node["skin"]})
     _, armature_node = find_node(document, "Armature")
     armature_node["children"].append(node_index)
+
+
+# Mycelari-only: her two shoulder-mounted mushroom caps have no bone of
+# their own either, but unlike Ssarathi's tail this turned out not to
+# need one -- checked directly, they are simply dominant-weighted to
+# clavicle_l/r (2346/2181 vertices on the male body, vs. Luminous's own
+# 571/918 there), the same bones that already carry a modest amount of
+# ordinary shoulder skin on every body. Grafting the whole clavicle-
+# dominant region wholesale, the same way the head is grafted, brings
+# the mushrooms along automatically without needing to separate them
+# from that ordinary shoulder skin at all -- and replacing Luminous's
+# own shoulder skin with Mycelari's own there is exactly what should
+# happen anyway.
+SHOULDER_BONES = ("clavicle_l", "clavicle_r")
 
 
 # Ssarathi-only: how far a vertex dominant-weighted to a leg bone can sit
@@ -598,7 +671,7 @@ def graft_source_tail(document, binary, lum_names, src_doc, src_bin, gender):
 
 
 def process(luminous_path: Path, source_path: Path, out_path: Path, gender: str,
-            graft_tail: bool = False) -> str:
+            graft_tail: bool = False, graft_shoulders: bool = False) -> str:
     lum_doc, lum_bin = read_glb(luminous_path)
     src_doc, src_bin = read_glb(source_path)
 
@@ -683,12 +756,23 @@ def process(luminous_path: Path, source_path: Path, out_path: Path, gender: str,
     # docstring. Opt in with --graft-tail once/if that gets fixed.
     grafted_tail = graft_tail and graft_source_tail(
         document, binary, lum_names, src_doc, src_bin, gender)
+    # Off by default too, but for a different reason: this is a clean,
+    # working graft (see SHOULDER_BONES), just not something every race
+    # should get -- it replaces Luminous's own shoulder skin with the
+    # source's, which only makes sense for Mycelari's shoulder-mounted
+    # mushrooms. Opt in with --graft-shoulders.
+    grafted_shoulders = False
+    if graft_shoulders:
+        strip_luminous_bones(document, binary, lum_names, SHOULDER_BONES)
+        grafted_shoulders = graft_source_bones(document, binary, lum_names, src_doc, src_bin,
+                                                SHOULDER_BONES, "shoulders_source")
 
     write_glb(out_path, document, binary)
     return ("below-neck: matched %d/%d faces, %d used Luminous's own texture as fallback; "
-            "head+eyes grafted from the source unchanged%s" % (
+            "head+eyes grafted from the source unchanged%s%s" % (
                 matched, len(lum_faces), unmatched,
-                "; tail grafted (rigid to pelvis)" if grafted_tail else ""))
+                "; tail grafted (rigid to pelvis)" if grafted_tail else "",
+                "; shoulders grafted (mushroom caps)" if grafted_shoulders else ""))
 
 
 def main() -> int:
@@ -702,12 +786,16 @@ def main() -> int:
     ap.add_argument("--graft-tail", action="store_true",
                     help="Ssarathi only; known incomplete (see graft_source_tail), "
                          "off by default")
+    ap.add_argument("--graft-shoulders", action="store_true",
+                    help="Mycelari only, for her shoulder-mounted mushroom caps "
+                         "(see SHOULDER_BONES)")
     args = ap.parse_args()
 
     luminous_path = RACES / ("luminous_%s.glb" % args.gender)
     source_path = RACES / (args.source_race + ".glb")
     out_path = RACES / (args.out + ".glb")
-    print(process(luminous_path, source_path, out_path, args.gender, args.graft_tail))
+    print(process(luminous_path, source_path, out_path, args.gender,
+                  args.graft_tail, args.graft_shoulders))
     return 0
 
 
