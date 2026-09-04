@@ -363,31 +363,69 @@ def absorb_small_islands(faces: np.ndarray, positions: np.ndarray,
     return new_labels
 
 
-def head_bone_y(document, binary, skin_index: int) -> float:
-    """The Head joint's own rest-pose Y, in this mesh's coordinate space.
+def bone_rest_y(document, binary, skin_index: int, joint_name: str) -> float:
+    """A joint's own rest-pose Y, in this mesh's coordinate space.
 
     Every body on the common skeleton binds to the identical rig, so
-    this is the one anchor for "where the head is" that does not depend
+    this is an anchor for "where a body part is" that does not depend
     on THIS body's own sculpt -- unlike a fraction of the whole mesh's
-    Y span, which silently assumes nothing sits above the head. That
-    assumption holds for a bald human skull but not for a body whose
-    concept art gives it horns: measured on Whitehorn Votary, whose
-    horns are real geometry, the old "top 20% of total height" band
-    landed mostly ON the horns, which is what "eyes on the horn" turned
-    out to be -- not a colour bug at all, but the geometric zone that
-    feeds it being anchored to the wrong thing.
+    Y span, which silently assumes every body divides up the same way
+    top to bottom. That held for the bald, average-proportioned
+    Luminous pilot but breaks for a body whose concept art gives it
+    horns (a fraction-of-total-height band lands on the horns instead
+    of the head) or, measured directly on Ssarathi, legs whose own
+    thigh-to-calf bone is barely three quarters the length of every
+    other common-skeleton body's own -- the fixed 0.30-0.50 "pants"
+    band no longer lands anywhere near mid-thigh, so it samples
+    whatever else is at that height instead (see classify()'s pants
+    fallback).
     """
     skin = document["skins"][skin_index]
     joints_list = skin["joints"]
     names = [document["nodes"][j].get("name", "") for j in joints_list]
     ibms = accessor_array(document, binary, skin["inverseBindMatrices"])
-    head_row = names.index("Head")
-    ibm = np.asarray(ibms[head_row], dtype=np.float64).reshape(4, 4).T
+    row = names.index(joint_name)
+    ibm = np.asarray(ibms[row], dtype=np.float64).reshape(4, 4).T
     return float(np.linalg.inv(ibm)[1, 3])
 
 
+def bone_rest_position(document, binary, skin_index: int, joint_name: str) -> np.ndarray:
+    """A joint's full rest-pose position (see bone_rest_y for the same
+    thing in Y alone). Used where a Y band alone cannot tell a leg's own
+    geometry apart from something else that happens to pass through the
+    same height -- Ssarathi's tail runs alongside the upper leg for a
+    while rather than staying behind it, so any Y-only band at hip-to-
+    knee height samples a mix of both; distance to the thigh-to-calf
+    bone's own 3D axis (see classify()'s pants fallback) does not."""
+    skin = document["skins"][skin_index]
+    names = [document["nodes"][j].get("name", "") for j in skin["joints"]]
+    ibms = accessor_array(document, binary, skin["inverseBindMatrices"])
+    row = names.index(joint_name)
+    ibm = np.asarray(ibms[row], dtype=np.float64).reshape(4, 4).T
+    return np.linalg.inv(ibm)[:3, 3]
+
+
+def head_bone_y(document, binary, skin_index: int) -> float:
+    return bone_rest_y(document, binary, skin_index, "Head")
+
+
+#: (near joint, far joint) for every non-finger limb/torso/head segment,
+#: used to find geometry that belongs to none of them -- see classify()'s
+#: tail exclusion.
+BODY_SEGMENTS = (
+    ("pelvis", "spine_01"), ("spine_01", "spine_02"), ("spine_02", "spine_03"),
+    ("spine_03", "neck_01"), ("neck_01", "Head"),
+    ("spine_03", "clavicle_l"), ("clavicle_l", "upperarm_l"),
+    ("upperarm_l", "lowerarm_l"), ("lowerarm_l", "hand_l"), ("hand_l", "middle_02_l"),
+    ("spine_03", "clavicle_r"), ("clavicle_r", "upperarm_r"),
+    ("upperarm_r", "lowerarm_r"), ("lowerarm_r", "hand_r"), ("hand_r", "middle_02_r"),
+    ("pelvis", "thigh_l"), ("thigh_l", "calf_l"), ("calf_l", "foot_l"), ("foot_l", "ball_l"),
+    ("pelvis", "thigh_r"), ("thigh_r", "calf_r"), ("calf_r", "foot_r"), ("foot_r", "ball_r"),
+)
+
+
 def classify(positions, uvs, indices, texture: Image.Image,
-            head_anchor: float):
+            document, binary, skin_index: int):
     """Boots/pants/shirt/skin by nearest colour to a per-body sample of
     each; eyes by geometry.
 
@@ -459,6 +497,10 @@ def classify(positions, uvs, indices, texture: Image.Image,
     height, width = tex.shape[:2]
     faces = indices.reshape(-1, 3)
     centroids = positions[faces].mean(axis=1)
+    head_anchor = bone_rest_y(document, binary, skin_index, "Head")
+    leg_axes = [(bone_rest_position(document, binary, skin_index, "thigh_%s" % side),
+                bone_rest_position(document, binary, skin_index, "calf_%s" % side))
+               for side in ("l", "r")]
     uv = uvs[faces].mean(axis=1)
     px = np.clip((uv[:, 0] % 1.0) * (width - 1), 0, width - 1).astype(int)
     py = np.clip((uv[:, 1] % 1.0) * (height - 1), 0, height - 1).astype(int)
@@ -480,6 +522,48 @@ def classify(positions, uvs, indices, texture: Image.Image,
         "wardrobe_shirt": band_colour(0.63, 0.72),
         "body": band_colour(0.92, 0.98),
     }
+    # The 0.30-0.50 pants band assumes legs make up roughly the same share
+    # of total height on every body -- checked directly, Ssarathi's own
+    # thigh-to-calf bone is barely three quarters the length of every
+    # other common-skeleton body's, so that fraction no longer lands on
+    # mid-thigh at all; it samples whatever else is at that height
+    # instead (tail and hip skin, close enough to this body's own "body"
+    # reference that the ACTUAL pants fabric -- measured directly, a
+    # warm dark brown nothing like either reference -- voted for "shirt"
+    # rather than "pants"). A pants reference this close to skin is the
+    # signal that it sampled skin, not a low-contrast wardrobe on
+    # purpose: checked directly against all 16 bodies, the two Ssarathi
+    # ones are 0.10-0.13 apart here, every other body 0.29 or more.
+    #
+    # The fallback anchors to the thigh-to-calf bone's own 3D axis, not
+    # just its Y range: checked directly, a Y-band restricted to that
+    # same joint span still returned the contaminated colour, because
+    # Ssarathi's tail runs alongside the upper leg for a stretch rather
+    # than staying behind it -- same height, so a Y-only band cannot
+    # separate them. Distance to the bone's own axis can: restricted to
+    # within 0.12 m of it (comfortably past the leg's own measured
+    # girth, see thicken_limbs.py) and the middle 40% of the segment
+    # (clear of hip and knee creases), both legs agree on the same warm
+    # brown regardless of radius threshold tried between 0.08 and 0.15 m.
+    if (references["wardrobe_pants"] is not None and references["body"] is not None
+            and np.linalg.norm(references["wardrobe_pants"] - references["body"]) < 0.15):
+        thigh_samples = []
+        for thigh_pos, calf_pos in leg_axes:
+            axis = calf_pos - thigh_pos
+            axis_len = np.linalg.norm(axis)
+            if axis_len < 1e-6:
+                continue
+            unit = axis / axis_len
+            v = centroids - thigh_pos
+            t = v @ unit
+            perp = v - np.outer(t, unit)
+            radius = np.linalg.norm(perp, axis=1)
+            sel = (t >= 0.3 * axis_len) & (t <= 0.7 * axis_len) & (radius < 0.12)
+            if sel.any():
+                thigh_samples.append(rgb[sel])
+        if thigh_samples:
+            references["wardrobe_pants"] = np.median(
+                np.concatenate(thigh_samples, axis=0), axis=0)
     # The crown alone is not always a big enough sample of "skin": checked
     # directly on Whitehorn Votary, whose shirt and skin are both pale
     # (0.29 apart, versus 0.85 on Luminous), the hand -- reliably bare
@@ -693,6 +777,34 @@ def classify(positions, uvs, indices, texture: Image.Image,
                     colour_outliers, faces, positions, x >= 0)
                 labels[eye_faces] = "eyes"
 
+    # A tail is not clothing, but the colour vote has no way to know
+    # that: checked directly on Ssarathi, whichever of body/shirt/pants/
+    # boots its own shading happens to land nearest keeps changing face
+    # by face along its length (its base votes pants, most of its length
+    # votes body, the male's tail-tip and most of the female's tail vote
+    # boots) since none of the four references was ever sampled FROM a
+    # tail. What is true regardless of colour: nothing on any of the
+    # other 15 common-skeleton bodies sits more than 0.26 m from the
+    # nearest point on its own limb/torso/head bone chain, while
+    # Ssarathi's tail reaches 0.50-0.55 m -- it is not close to being
+    # part of any of them. A cutoff at 0.30 m sits in that gap and forces
+    # only genuinely orphaned geometry to "body": checked directly
+    # against all 16 bodies, it fires a little on two others (Mycelari
+    # Female, Whitehorn Votary Female) but only on faces the colour vote
+    # already called "body", so it changes nothing there.
+    min_dist = None
+    for near, far in BODY_SEGMENTS:
+        a = bone_rest_position(document, binary, skin_index, near)
+        b = bone_rest_position(document, binary, skin_index, far)
+        axis = b - a
+        axis_len = np.linalg.norm(axis)
+        unit = axis / axis_len
+        v = centroids - a
+        t = np.clip(v @ unit, -0.05, axis_len + 0.05)
+        dist = np.linalg.norm(centroids - (a + np.outer(t, unit)), axis=1)
+        min_dist = dist if min_dist is None else np.minimum(min_dist, dist)
+    labels[min_dist > 0.30] = "body"
+
     return faces, labels
 
 
@@ -734,8 +846,9 @@ def reclassify_surfaces(document, binary) -> str:
     view = document["bufferViews"][image["bufferView"]]
     start = 8 + view.get("byteOffset", 0)
     texture = Image.open(io.BytesIO(bytes(binary[start:start + view["byteLength"]])))
-    anchor = head_bone_y(document, binary, next(iter(by_name.values()))["skin"])
-    _, labels = classify(positions, uvs, all_faces.reshape(-1), texture, anchor)
+    skin_index = next(iter(by_name.values()))["skin"]
+    _, labels = classify(positions, uvs, all_faces.reshape(-1), texture,
+                         document, binary, skin_index)
 
     orphaned = set(np.unique(labels).tolist()) - set(by_name)
     # "eyes" is the one label expected to appear with no node yet: a body
@@ -992,13 +1105,13 @@ def add_scalp(document, binary) -> int:
 def split(path: Path, calibrate: bool) -> str:
     document, binary = read_glb(path)
     extras = document.setdefault("asset", {}).setdefault("extras", {})
-    if int(extras.get("eloriaSurfacesSplit", 0)) >= 31:
+    if int(extras.get("eloriaSurfacesSplit", 0)) >= 32:
         return "already split"
-    if int(extras.get("eloriaSurfacesSplit", 0)) in (15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30):
+    if int(extras.get("eloriaSurfacesSplit", 0)) in (15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31):
         report = reclassify_surfaces(document, binary)
-        extras["eloriaSurfacesSplit"] = 31
+        extras["eloriaSurfacesSplit"] = 32
         write_glb(path, document, binary)
-        return "%s -> v31" % report
+        return "%s -> v32" % report
     if int(extras.get("eloriaSurfacesSplit", 0)) == 14:
         count = resmooth_shared_surfaces(document, binary)
         extras["eloriaSurfacesSplit"] = 15
@@ -1040,8 +1153,8 @@ def split(path: Path, calibrate: bool) -> str:
     smoothed = smooth_normals(positions, indices.astype(np.int64))
     overwrite_accessor(document, binary, prim["attributes"]["NORMAL"], smoothed)
 
-    anchor = head_bone_y(document, binary, mesh_node["skin"])
-    faces, labels = classify(positions, uvs, indices, texture, anchor)
+    faces, labels = classify(positions, uvs, indices, texture,
+                             document, binary, mesh_node["skin"])
     counts = {c: int((labels == c).sum()) for c in CLASSES}
     if calibrate:
         return "faces per class: %s" % counts
@@ -1135,7 +1248,7 @@ def split(path: Path, calibrate: bool) -> str:
 
     del mesh_node["mesh"]
     add_scalp(document, binary)
-    extras["eloriaSurfacesSplit"] = 31
+    extras["eloriaSurfacesSplit"] = 32
     write_glb(path, document, binary)
     return "split: %s" % counts
 
