@@ -157,8 +157,55 @@ def _primary_landmarks(build: RegionBuild, seed: int) -> None:
                   "Frozen Cascade", node, fx, fz, "natural")
 
 
-# Span lengths, set from the measured width of the cut at each crossing.
-SPANS = {"rope_bridge": 34.0, "rope_bridge_upper": 30.0}
+
+def _shoulder(build: RegionBuild, x: float, z0: float,
+              direction: float) -> tuple[float, float]:
+    """First ground out from `z0` along `direction` that a walker can stand on.
+
+    Returns its z and its height. "Can stand on" is the walk grid's own test -
+    ground under `SHOULDER_SLOPE` - held for `SHOULDER_RUN` metres beyond, so a
+    ledge part-way down the gorge wall does not pass for a shoulder. Falling
+    off the end of the search returns the far limit, which the caller clamps.
+    """
+    t = build.terrain
+    gradient_z, gradient_x = np.gradient(t.height, t.cell)
+    slope = np.hypot(gradient_x, gradient_z)
+
+    def slope_at(sample_z: float) -> float:
+        column = int(np.clip((x - t.x0) / t.cell, 0, t.cols - 1))
+        row = int(np.clip((sample_z - t.z0) / t.cell, 0, t.rows - 1))
+        return float(slope[row, column])
+
+    step = 0.5
+    reached = z0 + direction * SHOULDER_REACH
+    z = z0
+    while abs(z - z0) < SHOULDER_REACH:
+        z += direction * step
+        run = np.arange(0.0, SHOULDER_RUN + step, step) * direction
+        if all(slope_at(z + offset) < SHOULDER_SLOPE for offset in run):
+            return z, _ground(build, x, z)
+    return reached, _ground(build, x, reached)
+
+# Shortest span worth building at a crossing, and the most the terrain is
+# allowed to ask for. The width actually used is measured off the cut; these
+# only stop a search that has run away up the mountainside from producing a
+# bridge that is absurd either way.
+SPAN_LIMITS = (24.0, 56.0)
+# How far out from the anchor a shoulder is looked for, and the ground slope
+# that counts as one. The slope has to match what `build_collision` accepts,
+# or the deck will land on cells the walk grid then refuses.
+SHOULDER_REACH = 60.0
+# Under `build_collision`'s MAX_WALK_GRADIENT of 1.0, not at it. A landing on
+# ground already at the climb limit puts a step between the deck's last cell
+# and the first cell of ground, and the walk grid rejects that cell - which
+# leaves the crossing one cell short of usable, which is no crossing at all.
+SHOULDER_SLOPE = 0.8
+# The run of ground beyond a shoulder that must also be gentle. Without it the
+# search stops on the first ledge in the gorge wall, which is how the deck
+# ended up set 11 m into the cut with its landings on a 70-degree face.
+SHOULDER_RUN = 4.0
+# Planks clear of the ground they land on.
+DECK_CLEARANCE = 0.10
 
 
 # -- 2. the gorge crossings -------------------------------------------------
@@ -176,27 +223,33 @@ def _crossings(build: RegionBuild, seed: int) -> None:
     for index, anchor in enumerate(("rope_bridge", "rope_bridge_upper")):
         bx, bz = REG.ANCHORS[anchor]
 
-        # The span is fixed, not derived. The gorge is a V cut into a
-        # mountainside, so the ground keeps climbing away from it and there is
-        # no height at which a "rim" can be detected: searching for one either
-        # stops inside the chasm (deck 29 m below the road, bridge invisible)
-        # or runs away up the slope (80 m span with ends 17 m apart in height).
-        # A span a little wider than the steep section, with the deck at the
-        # mean of its two landings, puts the deck across the cut and close to
-        # grade at both ends.
-        length = SPANS[anchor]
+        # The span is measured, not fixed. A fixed 34 m span put both landings
+        # inside the cut: the walk grid refuses a 70-degree face, so the deck
+        # was a walkway between two pieces of cliff and neither bridge could be
+        # crossed. What a crossing has to reach is the first ground on each
+        # side that a walker can stand on, so that is what is looked for, and
+        # the deck is built to whatever width that turns out to be.
+        north_z, north_rim = _shoulder(build, bx, bz, -1.0)
+        south_z, south_rim = _shoulder(build, bx, bz, 1.0)
+        length = float(np.clip(south_z - north_z, *SPAN_LIMITS))
         half = length * 0.5
-        floor = _ground(build, bx, bz)
-        north_rim = _ground(build, bx, bz - half)
-        south_rim = _ground(build, bx, bz + half)
-        deck_y = (north_rim + south_rim) * 0.5 + 0.40
+        centre_z = (north_z + south_z) * 0.5
+        floor = _ground(build, bx, centre_z)
+        # The two shoulders are rarely level - the gorge is cut across a
+        # mountainside - so the deck is a ramp between them rather than a level
+        # walkway that can only meet one. `kit.rope_bridge` builds along +X and
+        # the span is turned a quarter turn, which puts its +X end north.
+        deck_y = (north_rim + south_rim) * 0.5 + DECK_CLEARANCE
+        rise = north_rim - south_rim
         build.notes.append(
-            f"{anchor}: {length:.0f} m span, gorge floor {floor:.1f} m, "
-            f"landings {north_rim:.1f} m north / {south_rim:.1f} m south, "
-            f"deck {deck_y:.1f} m ({deck_y - floor:.0f} m of air beneath).")
+            f"{anchor}: {length:.0f} m span measured shoulder to shoulder, "
+            f"gorge floor {floor:.1f} m, landings {north_rim:.1f} m north / "
+            f"{south_rim:.1f} m south, deck {deck_y:.1f} m at its centre and "
+            f"rising {rise:+.1f} m to the north "
+            f"({deck_y - floor:.0f} m of air beneath).")
 
         span = kit.rope_bridge(length=length, width=1.9, sag=1.4,
-                               seed=seed + index, deck_y=0.0)
+                               seed=seed + index, deck_y=0.0, rise=rise)
         node = f"Landmark_rope_bridge_{index:02d}"
         # NOT walk_surface=True. The bridge is a MeshGroup that already
         # declares its deck through `add_walk`, and the exporter gives that
@@ -206,13 +259,15 @@ def _crossings(build: RegionBuild, seed: int) -> None:
         # all became walk surfaces, and an actor could be grounded on a
         # handrail. build_collision still registers the elevated deck, because
         # it tests the group's walk_bounds before it tests this flag.
-        _place(build, node, f"rope_bridge_{index:02d}", span, bx, bz,
+        _place(build, node, f"rope_bridge_{index:02d}", span, bx, centre_z,
                rotation_y=math.pi * 0.5, kind="landmark", collides=False,
                y=deck_y, landmark=f"whitehorn-rope-bridge-{index:02d}")
         _landmark(build, f"whitehorn-rope-bridge-{index:02d}",
-                  "Whitehorn Rope Bridge", node, bx, bz, "bridge", y=deck_y)
+                  "Whitehorn Rope Bridge", node, bx, centre_z, "bridge",
+                  y=deck_y)
         build.notes.append(
-            f"{anchor}: deck at y={deck_y:.2f} m, {length:.0f} m span. The "
+            f"{anchor}: deck at y={deck_y:.2f} m, {length:.0f} m span, "
+            f"landing on ground at z={north_z:.0f} and z={south_z:.0f}. The "
             "deck owns its server cells; the gorge floor beneath it is not "
             "separately walkable.")
 
