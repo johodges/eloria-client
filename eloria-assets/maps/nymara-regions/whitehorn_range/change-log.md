@@ -253,3 +253,43 @@ Both decks now land within 0.08 m of the ground, on cells the grid marks
 walkable, and 894 rays cast every 0.1 m along the two decks through the
 client's own grounding layer all land on the deck.
 
+
+## The ground is cut inside the cell, not at its corners
+
+The roads read as a flight of steps two metres wide. `build_meshes` gave each
+quad whole to the class of one corner, so a class edge could only ever run
+along cell boundaries, and the heightfield is sampled every two metres while
+the server walks the map on a one-metre grid.
+
+Raising the heightfield to one metre was measured and rejected: it multiplies
+terrain triangles by four (202k to 809k here), takes the package from 12.2 to
+30.2 MB and the map load from 0.8 s to 2.4 s, moves every height sample - so
+collision, grounding and every placed height with them - and still leaves a
+staircase, only a finer one. Frame time, measured through the client at three
+resolutions, does not change either way: the frame is spent submitting about
+1,200 mesh nodes, not on terrain vertices or terrain pixels.
+
+The ground is now cut inside the cell instead. A class takes every quad it
+touches and carries a per-vertex coverage in COLOR_0's alpha - 1 where the
+class holds, 0 where it does not - and draws with an alpha-tested copy of its
+material, so each pixel goes to whichever class covers it. Where an operator
+knows where its own edge is, `Terrain.surface_strength` records how far each
+sample sits from it and the cut lands on the real edge: `grade_path` writes the
+road's falloff, `plateau` its rim. Elsewhere the cut falls half way between two
+samples, which still turns a corner staircase into a diagonal.
+
+It is opaque - an alpha test writes depth and sorts like any other ground - so
+none of the transparency trouble the glacier had applies. The classes overlap
+by design where they meet, and `check_zfighting.py` now skips pairs that are
+both alpha-tested with vertex coverage, because the test hands each pixel to
+exactly one of them: the region's real coplanar overlap is 92.3 m2 across 30
+pairs either way.
+
+Costs 27,460 triangles (+11.6%) and 1.8 MB (+15%), with the vertex colours
+packed as normalised bytes rather than floats - four bytes a vertex instead of
+sixteen, which is finer than an alpha test can see. `collision.bin` is
+byte-identical: heights and classes did not move, only the way they are drawn.
+
+The client has to turn `vertex_color_use_as_albedo` on for these materials.
+Godot's glTF importer brings the colours in and sets the alpha mode but leaves
+that flag off, and without it the coverage never reaches the shader.

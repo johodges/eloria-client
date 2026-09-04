@@ -135,11 +135,16 @@ def gather_surfaces(document, binary):
                 if len(faces) == 0:
                     continue
                 world_position = position @ world[:3, :3].T + world[:3, 3]
+                material = primitive.get("material")
                 surfaces.append({
                     "node": node.get("name", f"node_{index}"),
                     "mesh": mesh.get("name", f"mesh_{node['mesh']}"),
                     "primitive": slot,
                     "triangles": world_position[faces],
+                    "cut": (material is not None
+                            and document["materials"][material].get("alphaMode")
+                            == "MASK"
+                            and "COLOR_0" in primitive.get("attributes", {})),
                 })
         for child in node.get("children", []):
             walk(child, world)
@@ -299,6 +304,13 @@ def analyse(path, *, tolerance, cell, min_area, downward, limit, drawn_only=True
                 if abs(offsets[a] - offsets[b]) >= tolerance:
                     continue
                 if owner[a] == owner[b] and a == b:
+                    continue
+                # Two alpha-tested surfaces carrying per-vertex coverage do not
+                # fight: they are the ground's own classes cut against each
+                # other inside the cell, and the test hands each pixel to
+                # exactly one of them. They overlap by design, and counting
+                # that overlap buries the pairs that do fight.
+                if surfaces[owner[a]].get("cut") and surfaces[owner[b]].get("cut"):
                     continue
                 pair = (a, b) if a < b else (b, a)
                 if pair in seen:
