@@ -257,6 +257,16 @@ def main() -> int:
         payload, grid_statistics = collision.build_grid(output)
         (output / "collision.bin").write_bytes(payload)
         statistics["collision"] = grid_statistics
+        # The grid is cut from the manifest - it needs the server origin and
+        # the collision node names - so the manifest cannot describe it until
+        # it exists. Rather than leave a reader to infer the world-to-cell
+        # mapping, the collision block is filled in and the manifest rewritten.
+        builder.collision_stats = grid_statistics
+        manifest["collision"] = build_collision_block(builder)
+        (output / (base + ".json")).write_text(
+            json.dumps(manifest, indent=2) + "\n")
+        (output / (base + "-statistics.json")).write_text(
+            json.dumps(statistics, indent=2) + "\n")
 
     print(json.dumps(statistics, indent=2))
     return 0
@@ -266,6 +276,11 @@ def build_manifest(builder: Builder, landform: terrain.Landform,
                    statistics: dict) -> dict:
     import manifest                                  # noqa: E402
     return manifest.build(builder, landform, statistics)
+
+
+def build_collision_block(builder: Builder) -> dict:
+    import manifest                                  # noqa: E402
+    return manifest.collision_block(builder)
 
 
 if __name__ == "__main__":

@@ -1039,7 +1039,14 @@ NPC_POSTS = (
 )
 
 HARVESTABLES = (
-    ("sunmane-wheat", "Sunmane wheat", "crop", terrain.FIELDS),
+    # The crop sites are the fields, except that the second one harvests from
+    # five metres south of its own centre. `terrain.FIELDS` also shapes the
+    # crop ground, so nudging the field to follow the harvestable would move
+    # the ground with it - and the field's centre is under a stack that the
+    # walk grid blocks, which is why it was moved off in the first place.
+    ("sunmane-wheat", "Sunmane wheat", "crop",
+     tuple((x, z - 5.0, w, d) if index == 1 else (x, z, w, d)
+           for index, (x, z, w, d) in enumerate(terrain.FIELDS))),
     ("steppe-herbs", "Steppe herbs", "herb",
      ((-48.0, -20.0, 8.0, 8.0), (62.0, -40.0, 8.0, 8.0), (-24.0, 56.0, 8.0, 8.0))),
     ("shore-clay", "Shore clay", "mineral",

@@ -234,9 +234,21 @@ def build_grid(package: Path) -> tuple[bytes, dict]:
     header = struct.pack("<4sHHII", b"EWCG", 2, 0, size, size)
     stats = {
         "cells": size, "cellMetres": CELL_METRES,
+        "walkableCells": int(walkable.sum()),
         "walkableFraction": round(float(walkable.mean()), 4),
         "blockedByScenery": int(scenery.sum()),
         "collisionNodes": nodes,
+        # Where the grid starts, in world metres: the western edge of column 0
+        # and the northern edge of row 0, which is the pair every other region
+        # publishes and the client's own check indexes with -
+        # column = floor((x - x0) / cell), row = floor((z1 - z) / cell).
+        # Without it a reader has to infer the mapping from `serverOrigin` and
+        # guess whether the row order is inverted, and the client check skips
+        # the package rather than guess.
+        "originMetres": [round(-origin_x * metres_per_tile, 4),
+                         round(origin_y * metres_per_tile, 4)],
+        "heightEncoding": {"origin": HEIGHT_ORIGIN, "step": HEIGHT_STEP,
+                           "range": [1, 255], "zeroMeansBlocked": True},
     }
     return header + payload.tobytes(), stats
 
