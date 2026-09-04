@@ -815,6 +815,36 @@ def classify(positions, uvs, indices, texture: Image.Image,
     # directly: 0.50-0.55 m at its own furthest point).
     labels[min_dist > 0.40] = "skin_accent"
 
+    # The open, laced collar every common-skeleton shirt shares exposes a
+    # triangle of chest skin -- but on every one of 12 bodies checked
+    # directly, a meaningful share of the "body" faces framing that
+    # triangle (30-84% of them) sit within a few millimetres of a
+    # "wardrobe_shirt" face, which two genuinely separate surfaces do
+    # not do; two nearly-coincident ones fighting for the same screen
+    # pixel do (confirmed visually: a jagged, dithered fleck of both
+    # colours at the notch on every body tinted and re-rendered, not a
+    # clean edge). Reclassifying only the ones actually THIS close closes
+    # the gap exactly where it is fighting -- both surfaces now render
+    # the same colour, so the dithering between them stops being visible
+    # -- without touching the genuinely separate, non-overlapping skin
+    # elsewhere near the collar (jaw and neck above it) that was never
+    # fighting anything. Restricted to near the centreline and above the
+    # torso specifically so this cannot reach the sleeve cuffs or waist
+    # hem, where skin sits close to a wardrobe surface for entirely
+    # unrelated, correct reasons (see the shirt-cuff anchor above).
+    collar_zone = ((np.abs(x) < 0.10) & (y < head_anchor)
+                   & (y > head_anchor - 0.40) & (labels == "body"))
+    shirt_positions = centroids[labels == "wardrobe_shirt"]
+    if collar_zone.any() and len(shirt_positions):
+        collar_indices = np.flatnonzero(collar_zone)
+        # Pairwise distance in chunks -- collar_indices x shirt_positions
+        # is at most a few thousand by a few thousand, comfortably small
+        # for a dense numpy broadcast, no need for a spatial index.
+        nearest = np.array([
+            np.linalg.norm(shirt_positions - centroids[i], axis=1).min()
+            for i in collar_indices])
+        labels[collar_indices[nearest < 0.010]] = "wardrobe_shirt"
+
     return faces, labels
 
 
@@ -1118,13 +1148,13 @@ def add_scalp(document, binary) -> int:
 def split(path: Path, calibrate: bool) -> str:
     document, binary = read_glb(path)
     extras = document.setdefault("asset", {}).setdefault("extras", {})
-    if int(extras.get("eloriaSurfacesSplit", 0)) >= 33:
+    if int(extras.get("eloriaSurfacesSplit", 0)) >= 34:
         return "already split"
-    if int(extras.get("eloriaSurfacesSplit", 0)) in (15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32):
+    if int(extras.get("eloriaSurfacesSplit", 0)) in (15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33):
         report = reclassify_surfaces(document, binary)
-        extras["eloriaSurfacesSplit"] = 33
+        extras["eloriaSurfacesSplit"] = 34
         write_glb(path, document, binary)
-        return "%s -> v33" % report
+        return "%s -> v34" % report
     if int(extras.get("eloriaSurfacesSplit", 0)) == 14:
         count = resmooth_shared_surfaces(document, binary)
         extras["eloriaSurfacesSplit"] = 15
@@ -1261,7 +1291,7 @@ def split(path: Path, calibrate: bool) -> str:
 
     del mesh_node["mesh"]
     add_scalp(document, binary)
-    extras["eloriaSurfacesSplit"] = 33
+    extras["eloriaSurfacesSplit"] = 34
     write_glb(path, document, binary)
     return "split: %s" % counts
 
