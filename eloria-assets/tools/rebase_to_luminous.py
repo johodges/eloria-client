@@ -597,7 +597,8 @@ def graft_source_tail(document, binary, lum_names, src_doc, src_bin, gender):
     return True
 
 
-def process(luminous_path: Path, source_path: Path, out_path: Path, gender: str) -> str:
+def process(luminous_path: Path, source_path: Path, out_path: Path, gender: str,
+            graft_tail: bool = False) -> str:
     lum_doc, lum_bin = read_glb(luminous_path)
     src_doc, src_bin = read_glb(source_path)
 
@@ -676,7 +677,12 @@ def process(luminous_path: Path, source_path: Path, out_path: Path, gender: str)
 
     strip_luminous_head(document, binary, lum_names)
     graft_source_head(document, binary, lum_names, src_doc, src_bin)
-    grafted_tail = graft_source_tail(document, binary, lum_names, src_doc, src_bin, gender)
+    # Off by default: only recovers the tail's unambiguous outer portion,
+    # not its root -- renders as a small stub or a disconnected floating
+    # fragment, not a complete tail. See graft_source_tail's own
+    # docstring. Opt in with --graft-tail once/if that gets fixed.
+    grafted_tail = graft_tail and graft_source_tail(
+        document, binary, lum_names, src_doc, src_bin, gender)
 
     write_glb(out_path, document, binary)
     return ("below-neck: matched %d/%d faces, %d used Luminous's own texture as fallback; "
@@ -693,12 +699,15 @@ def main() -> int:
     ap.add_argument("source_race", help="race glb stem to take the skin/head from")
     ap.add_argument("--gender", required=True, choices=["male", "female"])
     ap.add_argument("--out", required=True, help="output glb stem")
+    ap.add_argument("--graft-tail", action="store_true",
+                    help="Ssarathi only; known incomplete (see graft_source_tail), "
+                         "off by default")
     args = ap.parse_args()
 
     luminous_path = RACES / ("luminous_%s.glb" % args.gender)
     source_path = RACES / (args.source_race + ".glb")
     out_path = RACES / (args.out + ".glb")
-    print(process(luminous_path, source_path, out_path, args.gender))
+    print(process(luminous_path, source_path, out_path, args.gender, args.graft_tail))
     return 0
 
 

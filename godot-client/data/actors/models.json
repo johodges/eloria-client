@@ -4681,6 +4681,68 @@
         ],
         "neck": "neck_01"
       }
+    },
+    "ssarathi_male_luminous": {
+      "scene": "res://assets/actors/native/races/ssarathi_male_luminous.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "culture": "ssarathi",
+      "gender": "male",
+      "hairStyles": [],
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1.0,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "ssarathi_female_luminous": {
+      "scene": "res://assets/actors/native/races/ssarathi_female_luminous.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "culture": "ssarathi",
+      "gender": "female",
+      "hairStyles": [],
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1.0,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
     }
   },
   "actorTypes": {
@@ -5055,7 +5117,9 @@
     "89": "stoneborn_male_luminous",
     "90": "stoneborn_female_luminous",
     "91": "votary_male_luminous",
-    "92": "votary_female_luminous"
+    "92": "votary_female_luminous",
+    "93": "ssarathi_male_luminous",
+    "94": "ssarathi_female_luminous"
   },
   "creationOptions": [
     {
@@ -5187,6 +5251,16 @@
       "actorType": 92,
       "model": "votary_female_luminous",
       "label": "Whitehorn Votary Female (Luminous body)"
+    },
+    {
+      "actorType": 93,
+      "model": "ssarathi_male_luminous",
+      "label": "Ssarathi Male (Luminous body, no tail)"
+    },
+    {
+      "actorType": 94,
+      "model": "ssarathi_female_luminous",
+      "label": "Ssarathi Female (Luminous body, no tail)"
     }
   ],
   "npcLooks": {
