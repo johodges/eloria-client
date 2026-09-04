@@ -41,30 +41,39 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
 from split_race_surfaces import (  # noqa: E402
-    CLASSES, RACES, accessor_array, overwrite_accessor,
+    BODY_SEGMENTS, CLASSES, RACES, accessor_array, overwrite_accessor,
     resmooth_shared_surfaces, read_glb, write_glb,
 )
 
 TARGET_FRACTION = 0.80
 
-# Below this, at/above (own_radius / luminous_own_radius), a measurement is
-# treated as contaminated rather than a real thin limb, and left alone
-# (scale 1.0). Justified directly: Ssarathi's tail has no bone chain of its
-# own (the skeleton's only extra joints are a "cape_*" chain, unused by the
-# tail), so tail geometry falls back to whichever nearby bone the
-# auto-rigger weighted it to -- thigh_l/thigh_r -- and reads as a "thigh"
-# 2.4-4x Luminous's own, when the actual pants mesh underneath looks
-# ordinary in a render. A real thin-limb body never measures ABOVE
-# Luminous; only this kind of contamination does.
-MAX_SANE_RATIO = 1.5
+# A first version guarded against contamination by ratio-to-Luminous alone
+# (anything over 1.5x treated as suspect and left untouched) on the theory
+# that a real thin limb never measures ABOVE Luminous, only Ssarathi's
+# tail-on-the-thigh-bone contamination does. Checked directly, that is
+# false: Orun Female's own legs measure 1.6-1.8x Luminous Female's, for
+# real, and the ratio guard was silently protecting them from the
+# correction they needed instead of catching contamination. What actually
+# marks a vertex as contamination (tail, not leg) is the same test
+# classify() already uses to keep tail geometry out of "body" -- distance
+# from every recognised limb/torso/head bone segment, not just the one
+# whose dominant weight happens to claim it. A real leg surface sits near
+# its own bone regardless of how thick it is; only genuinely orphaned
+# geometry sits far from all of them.
+ORPHAN_DISTANCE = 0.30
 
-# A floor of 1.0, not something below it: the ask was for limbs that are
-# too THIN to grow toward Luminous, not for the ones already close to (or
-# past) her -- both Luminous bodies' own thighs measure close to their own
-# target already, and shrinking them to hit 80% on the nose would make a
-# fine segment worse to "fix" a problem it never had. 1.8 is just a cap
-# against a measurement fluke demanding an implausible blow-up.
-SCALE_CLAMP = (1.0, 1.8)
+# A final backstop, not the primary guard (see above): still catches an
+# outright measurement failure (e.g. a handful of stray vertices) without
+# relying on it to distinguish a thick leg from contamination.
+MAX_SANE_RATIO = 3.0
+
+# Both directions, not a 1.0 floor: the original ask was to thicken limbs
+# too thin to grow toward Luminous, but Orun Female's legs (measured
+# directly at 1.6-1.8x Luminous Female's own) and the left/right asymmetry
+# it produces need to come back DOWN toward the same target, not just stay
+# put because they were never going to shrink. 0.5-1.8 bounds either
+# direction against a measurement fluke demanding an implausible change.
+SCALE_CLAMP = (0.5, 1.8)
 
 # (near bone, far bone) per segment -- far bone only fixes the axis
 # direction/length; vertices are selected by dominant weight on the NEAR
@@ -105,6 +114,28 @@ def shared_attributes(document, binary):
     return pos_acc, joints_acc, weights_acc, skin_index
 
 
+def orphan_mask(document, binary, skin_index: int, positions) -> np.ndarray:
+    """True for a vertex further than ORPHAN_DISTANCE from every recognised
+    limb/torso/head bone segment -- see split_race_surfaces.classify()'s
+    own tail exclusion, which this mirrors exactly (same BODY_SEGMENTS,
+    same cutoff) because it is the same problem: geometry with no bone
+    chain of its own (Ssarathi's tail) falls back to whichever nearby
+    bone the auto-rigger happened to weight it to, and a real leg or arm
+    surface never sits this far from the bone it actually belongs to."""
+    min_dist = None
+    for near, far in BODY_SEGMENTS:
+        a = bone_rest_position(document, binary, skin_index, near)
+        b = bone_rest_position(document, binary, skin_index, far)
+        axis = b - a
+        axis_len = np.linalg.norm(axis)
+        unit = axis / axis_len
+        v = positions - a
+        t = np.clip(v @ unit, -0.05, axis_len + 0.05)
+        dist = np.linalg.norm(positions - (a + np.outer(t, unit)), axis=1)
+        min_dist = dist if min_dist is None else np.minimum(min_dist, dist)
+    return min_dist > ORPHAN_DISTANCE
+
+
 def segment_radius(positions, dominant, joint_index, a, b, margin=0.15):
     """Median perpendicular distance from `a`-to-`b`'s own axis, among
     vertices whose SINGLE largest skin weight is `joint_index`, restricted
@@ -133,6 +164,12 @@ def measure_body(document, binary) -> dict:
     joints = accessor_array(document, binary, joints_acc).astype(np.int64)
     weights = accessor_array(document, binary, weights_acc)
     dominant = joints[np.arange(len(joints)), np.argmax(weights, axis=1)]
+    # Orphaned geometry (a tail with no bone chain of its own) still has
+    # SOME dominant joint -- whichever nearby bone the auto-rigger
+    # defaulted it to -- so it has to be pulled out before that argmax
+    # result is trusted, not after.
+    dominant = np.where(orphan_mask(document, binary, skin_index, positions),
+                        -1, dominant)
     skin = document["skins"][skin_index]
     names = [document["nodes"][j].get("name", "") for j in skin["joints"]]
 
@@ -198,6 +235,13 @@ def displace(document, binary, scales: dict) -> np.ndarray:
     weights = accessor_array(document, binary, weights_acc)
     skin = document["skins"][skin_index]
     names = [document["nodes"][j].get("name", "") for j in skin["joints"]]
+    # A vertex this far from every recognised bone segment still carries
+    # real skin WEIGHT on whichever nearby bone it defaulted to (Ssarathi's
+    # tail on thigh_l/r) -- excluded from the measurement in measure_body,
+    # it needs excluding here too, or scaling that thigh would drag the
+    # tail along with it even though the tail was never part of what was
+    # measured as too thin or too thick.
+    not_orphan = ~orphan_mask(document, binary, skin_index, positions)
 
     total_displacement = np.zeros_like(positions)
     for (part, side), scale in scales.items():
@@ -216,6 +260,7 @@ def displace(document, binary, scales: dict) -> np.ndarray:
         # of the 4 joint slots happen to reference it (glTF does not
         # guarantee a fixed slot order).
         w = np.where(joints == joint_index, weights, 0.0).sum(axis=1)
+        w = np.where(not_orphan, w, 0.0)
         total_displacement += (perp * (scale - 1.0)) * w[:, None]
     return positions + total_displacement
 
