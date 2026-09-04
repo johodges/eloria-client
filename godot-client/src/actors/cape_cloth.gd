@@ -56,11 +56,21 @@ var _settled := false
 var _last_anchor := Vector3.ZERO
 var _torso := PackedInt32Array()
 var _lumbar := PackedInt32Array()
-## The trunk capsule is fatter than a leg, and fat enough to clear a worn
-## cuirass: measured, the armour's back plate stands about 0.196 behind the
-## spine where the bare back reaches 0.18, so the cape rides at 0.205 to stay
-## outside the plate rather than letting it poke through the cloth.
-const TORSO_RADIUS := 0.205
+## How far the worn torso reaches from each capsule's axis, sampled along it,
+## or empty for a bare chest. Measured once per armour by the wearer, which is
+## the only place the equipment is known.
+var _torso_reach := PackedFloat32Array()
+var _lumbar_reach := PackedFloat32Array()
+## The trunk capsule is fatter than a leg, and fat enough to clear a bare back,
+## which reaches 0.18 behind the spine.
+##
+## It is only a floor. One number cannot clear the torso ladder: the plainest
+## shirt stands 0.196 behind the spine and a plated back reaches 0.29, so a
+## capsule sized for either is wrong for the other, and sized for the first it
+## let every cuirass in the game through the cloth. The wearer's own reach is
+## measured off the armour actually worn and handed in through
+## `set_torso_reach`; this is what a bare chest falls back to.
+const TORSO_RADIUS := CapeDrape.BARE_TRUNK_RADIUS
 ## The spine bone's own local axis that points at the chest, found once at
 ## cache time against the rest hang. Multiplied by the bone's live basis each
 ## frame it gives a forward that follows the torso's lean and twist without
@@ -175,27 +185,44 @@ func _rest_joints(skeleton: Skeleton3D, to_world: Transform3D,
 	return joints
 
 
+## The reach the worn torso was measured to have, along each capsule. Empty
+## arrays mean a bare chest, which the constant already clears.
+func set_torso_reach(trunk: PackedFloat32Array,
+		lumbar: PackedFloat32Array) -> void:
+	_torso_reach = trunk
+	_lumbar_reach = lumbar
+
+
 func _push_out_of_legs(skeleton: Skeleton3D, to_world: Transform3D,
 		point: Vector3) -> Vector3:
 	if not _torso.is_empty():
 		point = _push_out_of_capsule(skeleton, to_world, point, _torso,
-			TORSO_RADIUS)
+			TORSO_RADIUS, _torso_reach)
 	if not _lumbar.is_empty():
 		point = _push_out_of_capsule(skeleton, to_world, point, _lumbar,
-			TORSO_RADIUS)
+			TORSO_RADIUS, _lumbar_reach)
 	for pair in _legs:
 		point = _push_out_of_capsule(skeleton, to_world, point, pair,
-			LEG_RADIUS)
+			LEG_RADIUS, PackedFloat32Array())
 	return point
 
 
 func _push_out_of_capsule(skeleton: Skeleton3D, to_world: Transform3D,
-		point: Vector3, pair: PackedInt32Array, radius: float) -> Vector3:
+		point: Vector3, pair: PackedInt32Array, radius: float,
+		reach: PackedFloat32Array) -> Vector3:
 	var a := to_world * skeleton.get_bone_global_pose(pair[0]).origin
 	var b := to_world * skeleton.get_bone_global_pose(pair[1]).origin
 	var axis := b - a
 	var span := axis.length_squared()
 	var travel := 0.0 if span < 1e-9 else clampf((point - a).dot(axis) / span, 0.0, 1.0)
+	# The reach is sampled along the axis, so how far down the capsule the
+	# point sits is exactly the index into it - which holds through a lean or
+	# a twist that a height in the rig's rest space would not.
+	if not reach.is_empty():
+		var at := travel * float(reach.size() - 1)
+		var low := int(at)
+		var high := mini(low + 1, reach.size() - 1)
+		radius = maxf(radius, lerpf(reach[low], reach[high], at - float(low)))
 	var near := a + axis * travel
 	var away := point - near
 	var gap := away.length()

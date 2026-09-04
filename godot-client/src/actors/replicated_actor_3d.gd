@@ -83,6 +83,11 @@ var _travel_yaw := 0.0
 var _hastened := false
 ## Part 2 in the equipment registry: the cape, and the only part with cloth.
 const CAPE_PART := 2
+## Part 5: the torso. The cape is draped over whatever is worn there, so the
+## two parts are not independent the way every other pair is.
+const BODY_PART := 5
+## How many cut capes are kept before the cache is dropped and rebuilt.
+const DRAPE_CACHE_LIMIT := 48
 ## The wardrobe meshes are shells fitted straight onto the skin they cover, so
 ## the body surface underneath pokes through them wherever the skeleton bends -
 ## which is what skin showing through the shirt is. Pushing each garment out a
@@ -930,11 +935,22 @@ func _paced_travel_action(action: StringName) -> StringName:
 	return action
 
 func apply_equipment_visuals(visuals: Dictionary, fallback_parts: Array = []) -> void:
+	var torso_before: int = int(_equipment_visuals.get(BODY_PART, 0))
 	for raw_part: Variant in _equipment_visuals.keys():
 		var old_part: int = int(raw_part)
 		if not visuals.has(old_part) and not visuals.has(str(old_part)):
 			_clear_equipment_part(old_part)
+	# The torso goes on first. It is the one part another is cut against - the
+	# cape is draped over whatever armour is worn - so a cape built before it
+	# would be cut against the armour being taken off.
+	var order: Array = []
 	for raw_part: Variant in visuals:
+		if int(raw_part) == BODY_PART:
+			order.push_front(raw_part)
+		else:
+			order.append(raw_part)
+	var cape_rebuilt := false
+	for raw_part: Variant in order:
 		var part: int = int(raw_part)
 		var visual_id: int = int(visuals[raw_part])
 		var allow_fallback: bool = fallback_parts.has(part)
@@ -944,6 +960,18 @@ func apply_equipment_visuals(visuals: Dictionary, fallback_parts: Array = []) ->
 		_clear_equipment_part(part)
 		_equipment_visuals[part] = visual_id
 		_create_equipment_part(part, visual_id, allow_fallback)
+		cape_rebuilt = cape_rebuilt or part == CAPE_PART
+	# A cape kept from before still hangs on the armour it was cut against, so
+	# a change of chest piece re-cuts it even though the cape itself did not
+	# change. One rebuilt in the loop above was already cut against the new
+	# torso, which went on first.
+	if int(_equipment_visuals.get(BODY_PART, 0)) != torso_before and (
+			not cape_rebuilt) and _equipment_nodes.has(CAPE_PART):
+		var cape_visual: int = int(_equipment_visuals.get(CAPE_PART, 0))
+		_clear_equipment_part(CAPE_PART)
+		_equipment_visuals[CAPE_PART] = cape_visual
+		_create_equipment_part(CAPE_PART, cape_visual,
+			fallback_parts.has(CAPE_PART))
 	# Equipment adds and removes mesh instances, so the silhouette's clone set
 	# has to be built again against what the actor is now made of.
 	if _silhouette != null and _silhouette.is_enabled():
@@ -1034,6 +1062,46 @@ func _create_equipment_part(part: int, visual_id: int, allow_fallback: bool) -> 
 	if part == CAPE_PART:
 		_set_cape_cloth_active(not created.is_empty())
 
+## The scene of the torso piece this actor is wearing, or "" when the chest is
+## bare. A bare chest needs no drape: the capes were conformed against the bare
+## back offline and already clear it.
+func _worn_torso_scene() -> String:
+	var visual: int = int(_equipment_visuals.get(BODY_PART, 0))
+	if visual == 0:
+		return ""
+	var model: Dictionary = _equipment_model_config(BODY_PART, visual)
+	if str(model.get("attach", "socket")) != "skinned":
+		return ""
+	return str(model.get("scene", ""))
+
+## One cape surface, cut to clear the torso worn under it. The mesh itself
+## when nothing is worn there, or when nothing on it had to move.
+func _draped_over(torso_scene: String, cape_scene: String,
+		piece: Dictionary) -> Mesh:
+	var mesh: Mesh = piece.get("mesh") as Mesh
+	if torso_scene.is_empty() or mesh == null:
+		return mesh
+	var key: String = "%s|%s|%s" % [cape_scene, torso_scene,
+		str(piece.get("name", ""))]
+	var cached: Mesh = _draped_capes.get(key) as Mesh
+	if cached != null:
+		return cached
+	# A cut cape is a whole mesh, not a handful of matrices like a rebound
+	# skin, so this cache is capped where that one is not: twenty-nine capes
+	# against sixty-four torsos would be more geometry than the map it is
+	# drawn on. Dropping the lot is fine - it is rebuilt on the next wearer.
+	if _draped_capes.size() >= DRAPE_CACHE_LIMIT:
+		_draped_capes.clear()
+	var grid: PackedFloat32Array = _drape_envelopes.get(torso_scene,
+		PackedFloat32Array()) as PackedFloat32Array
+	if not _drape_envelopes.has(torso_scene):
+		grid = CapeDrape.envelope(_equipment_pieces(torso_scene))
+		_drape_envelopes[torso_scene] = grid
+	var draped: Mesh = CapeDrape.drape(mesh,
+		piece.get("bones", PackedStringArray()) as PackedStringArray, grid)
+	_draped_capes[key] = draped
+	return draped
+
 ## Cloth for the cape chains. A SkeletonModifier3D so the engine runs it once
 ## the animation has posed the skeleton - writing bone poses from _process
 ## would race the AnimationPlayer - and inactive, and therefore free, until a
@@ -1053,9 +1121,42 @@ func _attach_cape_cloth(skeleton: Skeleton3D) -> void:
 func _set_cape_cloth_active(enabled: bool) -> void:
 	if _cape_cloth == null:
 		return
+	if enabled:
+		_tell_cloth_what_is_worn()
 	if enabled and not _cape_cloth.active:
 		_cape_cloth.call("reset")
 	_cape_cloth.active = enabled
+
+## How far the worn torso reaches from each of the solver's capsules. The
+## solver knows the skeleton and nothing else; the equipment is only known
+## here, and the cape is the one garment whose shape depends on another.
+func _tell_cloth_what_is_worn() -> void:
+	if _cape_cloth == null or _native_skeleton == null:
+		return
+	var torso_scene: String = _worn_torso_scene()
+	var empty := PackedFloat32Array()
+	if torso_scene.is_empty():
+		_cape_cloth.call("set_torso_reach", empty, empty)
+		return
+	var key: String = "%s|%s" % [str(_model_config.get("scene", "")),
+		torso_scene]
+	var reach: Array = _torso_reaches.get(key, []) as Array
+	if reach.is_empty():
+		var pieces: Array = _equipment_pieces(torso_scene)
+		reach = [_axis_reach(pieces, "spine_01", "neck_01"),
+			_axis_reach(pieces, "pelvis", "spine_01")]
+		_torso_reaches[key] = reach
+	_cape_cloth.call("set_torso_reach", reach[0], reach[1])
+
+func _axis_reach(pieces: Array, from: String, to: String) -> PackedFloat32Array:
+	var head: int = _native_skeleton.find_bone(from)
+	var tail: int = _native_skeleton.find_bone(to)
+	if head < 0 or tail < 0:
+		return PackedFloat32Array()
+	return CapeDrape.axis_reach(pieces,
+		_native_skeleton.get_bone_global_rest(head).origin,
+		_native_skeleton.get_bone_global_rest(tail).origin,
+		CapeDrape.BARE_TRUNK_RADIUS)
 
 func _apply_equipment_hides(part: int, part_config: Dictionary,
 		model_config: Dictionary) -> void:
@@ -1240,6 +1341,9 @@ func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
 	# instead of rebuilt from 65 named binds for each actor that wears one.
 	var cache_key: String = "%s|%s" % [str(_model_config.get("scene", "")), scene_path]
 	var ground: Dictionary = _ground_drops(author_rig, skin_region)
+	# The cape is the one garment cut against another: its yoke is rigid, so
+	# only this can hold it outside the torso worn under it.
+	var worn: String = _worn_torso_scene() if part == CAPE_PART else ""
 	for piece_value: Variant in _equipment_pieces(scene_path):
 		var piece: Dictionary = piece_value as Dictionary
 		var surface_key: String = "%s|%s" % [cache_key, str(piece.get("name", ""))]
@@ -1255,7 +1359,7 @@ func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
 		var clone: MeshInstance3D = MeshInstance3D.new()
 		clone.name = "EquipmentSkin_%d_Visual_%d_%s" % [part, visual_id,
 			str(piece.get("name", "Mesh"))]
-		clone.mesh = piece.get("mesh") as Mesh
+		clone.mesh = _draped_over(worn, scene_path, piece)
 		clone.skin = rebound
 		_tint_surfaces(clone, tint)
 		_native_skeleton.add_child(clone)
@@ -1889,6 +1993,14 @@ func _load_native_scene(path: String) -> Array[String]:
 # of nodes alive with no owner to free them.
 static var _equipment_pieces_cache: Dictionary = {}
 static var _rebound_skins: Dictionary = {}
+## The worn torso's reach, and the cape surfaces cut to clear it. Both depend
+## only on the two scenes, so both are shared by every actor wearing the pair
+## rather than measured per actor: the envelope walks a few thousand vertices
+## and the drape rebuilds a surface, and a populated map would pay for it once
+## per wearer otherwise.
+static var _drape_envelopes: Dictionary = {}
+static var _draped_capes: Dictionary = {}
+static var _torso_reaches: Dictionary = {}
 
 static func _equipment_pieces(path: String) -> Array:
 	# One parse per scene per session. The generic tier means every actor now
