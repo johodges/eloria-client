@@ -305,6 +305,49 @@ def remap_joint_rows(source_names, target_names, joints_int):
     return lookup[joints_int]
 
 
+def bone_alignment_offsets(lum_doc, lum_bin, lum_skin_index, src_doc, src_bin, src_skin_index,
+                            lum_names, src_names, bone_names):
+    """{src_row: 3-vector}, translating a source vertex dominant on that
+    bone so the bone's own rest position lines up with Luminous's own.
+
+    Checked directly after a user-reported bug (gaps visible up into
+    the head from underneath, on every race): every race's Head bone
+    sits at a measurably different rest position than Luminous's own
+    -- up to ~2cm vertically, ~4.8cm on Z for Ssarathi's snout, since
+    each race's own auto-rigging step placed its joints against ITS
+    OWN mesh proportions, not Luminous's. A straight graft (raw source
+    positions, no correction) assumed "same skeleton" meant "same
+    joint rest positions" -- it does not. Only rest-pose T-pose renders
+    were checked before shipping this, from the front; a gap this size
+    does not read as wrong from a single straight-on angle, only from
+    below or the side, which is exactly what went unchecked.
+
+    Per-bone rather than one global offset because a multi-bone graft's
+    two sides (e.g. clavicle_l/r for Mycelari's shoulders) do not
+    necessarily miss by the same amount."""
+    offsets = {}
+    for bone in bone_names:
+        if bone not in lum_names or bone not in src_names:
+            continue
+        lum_pos = bone_rest_position(lum_doc, lum_bin, lum_skin_index, bone)
+        src_pos = bone_rest_position(src_doc, src_bin, src_skin_index, bone)
+        offsets[src_names.index(bone)] = lum_pos - src_pos
+    return offsets
+
+
+def apply_bone_alignment(positions, dominant, offsets):
+    """Translate each vertex by its OWN dominant bone's offset (see
+    bone_alignment_offsets) -- not a single blanket shift, so e.g. a
+    multi-bone graft's two sides can each land correctly even if they
+    were not equally misaligned to begin with."""
+    if not offsets:
+        return positions
+    out = positions.copy()
+    for row, offset in offsets.items():
+        out[dominant == row] = out[dominant == row] + offset
+    return out
+
+
 def compact_submesh(positions, normals, uvs, joints, weights, faces_groups):
     """Slice shared per-vertex arrays down to just the vertices used by
     `faces_groups` (a list of Nx3 face arrays sharing the same vertex
@@ -387,9 +430,57 @@ def strip_luminous_bones(document, binary, lum_names, bone_names):
     body_prim["indices"] = append_accessor(document, binary, new_faces, 5125, "SCALAR")
 
 
+# How far past the natural Head/neck_01 boundary each side's cut
+# extends, along the neck_01->Head axis, so the two independently-
+# generated meshes overlap by a controlled margin instead of meeting at
+# two boundaries never guaranteed to coincide -- see neck_axis_t and
+# the module docstring's own note on this. Found via a user report
+# (gaps visible looking up into the head from underneath, on every
+# race) after the bone-position-alignment fix alone did not close it:
+# checked directly, the true cut line is not a clean ring at all -- it
+# is wherever each vertex's own argmax of 4 blended skin weights
+# happens to favour Head over neck_01, which is a genuinely jagged,
+# non-planar line unique to each body's own auto-rigging (Luminous's
+# own neck-stump rim and head-bottom rim, cut from the SAME originally-
+# continuous surface, measure the same radius on average -- but two
+# DIFFERENT bodies' own jagged boundaries have no reason to line up
+# with each other even after perfect position/scale alignment).
+#
+# 0.03 was chosen by direct visual comparison against a revealing
+# camera angle (low, looking up under the chin -- a straight-on T-pose
+# render does not show this at all, which is how it shipped unnoticed
+# the first time): it closed Orun Male's gap from an obvious dark hole
+# to essentially nothing, and doubling it to 0.06 bought nothing
+# further on him -- diminishing returns past this point, not a precise
+# optimum. Two other bodies that still looked bad even at 0.06
+# (Votary Male's jaw, Glasswarden Female's chin) turned out on
+# checking their OWN unmodified renders from the same angle to have
+# the identical dark patches already -- pre-existing texture/mesh
+# defects unrelated to this graft entirely (Votary's is a previously-
+# documented residual from earlier in this session), not something
+# this margin could ever have fixed. Before concluding a specific
+# body's seam is still broken, always check its own unmodified render
+# from the same angle first.
+NECK_SEAM_MARGIN = 0.03
+
+
+def neck_axis_t(document, binary, skin_index, positions):
+    """Position projected onto the neck_01->Head axis, in metres (0 at
+    neck_01, positive toward Head) -- used only to widen the head
+    graft's seam by NECK_SEAM_MARGIN, not for any correspondence work."""
+    neck_pos = bone_rest_position(document, binary, skin_index, "neck_01")
+    head_pos = bone_rest_position(document, binary, skin_index, HEAD_BONE)
+    unit = (head_pos - neck_pos) / np.linalg.norm(head_pos - neck_pos)
+    return (positions - neck_pos) @ unit
+
+
 def strip_luminous_head(document, binary, lum_names):
-    """strip_luminous_bones for Head, plus emptying Luminous's own
-    "eyes" node -- it is about to be replaced by the source's own.
+    """Like strip_luminous_bones for Head, except a thin band of
+    Head-dominant faces closest to the boundary is deliberately KEPT
+    (see NECK_SEAM_MARGIN) so Luminous's own remaining body overlaps
+    the grafted head rather than butting against it. Also empties
+    Luminous's own "eyes" node -- it is about to be replaced by the
+    source's own.
 
     The eyes node is emptied in place (mesh/skin keys dropped) rather
     than unlinked from Armature's children list -- checked directly,
@@ -397,7 +488,28 @@ def strip_luminous_head(document, binary, lum_names):
     that is present in the document but no longer reachable from any
     scene root, so an orphaned-but-still-listed node is not safe;
     leaving it in the hierarchy as an inert empty transform is."""
-    strip_luminous_bones(document, binary, lum_names, [HEAD_BONE])
+    _, body_node = find_node(document, "body")
+    body_prim = document["meshes"][body_node["mesh"]]["primitives"][0]
+    positions = accessor_array(document, binary, body_prim["attributes"]["POSITION"])
+    joints = accessor_array(document, binary, body_prim["attributes"]["JOINTS_0"]).astype(np.int64)
+    weights = accessor_array(document, binary, body_prim["attributes"]["WEIGHTS_0"])
+    dominant = joints[np.arange(len(joints)), np.argmax(weights, axis=1)]
+    skin_index = body_node["skin"]
+    head_row = lum_names.index(HEAD_BONE)
+
+    is_head = dominant == head_row
+    t = neck_axis_t(document, binary, skin_index, positions)
+    # Robust to a handful of stray low outliers in the jagged boundary --
+    # see the constant's own docstring -- a low percentile rather than
+    # the strict minimum.
+    boundary_t = np.percentile(t[is_head], 2) if is_head.any() else t.max()
+    strip = is_head & (t > boundary_t + NECK_SEAM_MARGIN)
+
+    faces = accessor_array(document, binary, body_prim["indices"]).reshape(-1, 3).astype(np.int64)
+    keep = ~strip[faces[:, 0]]
+    new_faces = faces[keep].astype(np.uint32).reshape(-1)
+    body_prim["indices"] = append_accessor(document, binary, new_faces, 5125, "SCALAR")
+
     _, eyes_node = find_node(document, "eyes")
     eyes_node.pop("mesh", None)
     eyes_node.pop("skin", None)
@@ -424,6 +536,11 @@ def graft_source_bones(document, binary, lum_names, src_doc, src_bin, bone_names
     rows = {src_names.index(b) for b in bone_names if b in src_names}
     dominant = joints[np.arange(len(joints)), np.argmax(weights, axis=1)]
 
+    _, lum_body_node = find_node(document, "body")
+    offsets = bone_alignment_offsets(document, binary, lum_body_node["skin"], src_doc, src_bin,
+                                      src_skin_index, lum_names, src_names, bone_names)
+    positions = apply_bone_alignment(positions, dominant, offsets)
+
     body_faces = accessor_array(src_doc, src_bin, body_prim["indices"]).reshape(-1, 3).astype(np.int64)
     sel_faces = body_faces[np.isin(dominant[body_faces[:, 0]], list(rows))]
     if len(sel_faces) == 0:
@@ -449,7 +566,6 @@ def graft_source_bones(document, binary, lum_names, src_doc, src_bin, bone_names
         {"attributes": attrs, "indices": idx_acc, "material": material_index},
     ]})
 
-    _, lum_body_node = find_node(document, "body")
     node_index = len(document["nodes"])
     document["nodes"].append({"name": node_name, "mesh": mesh_index, "skin": lum_body_node["skin"]})
     _, armature_node = find_node(document, "Armature")
@@ -477,10 +593,30 @@ def graft_source_head(document, binary, lum_names, src_doc, src_bin):
     src_names = joint_names(src_doc, src_skin_index)
     head_row = src_names.index(HEAD_BONE)
     dominant = joints[np.arange(len(joints)), np.argmax(weights, axis=1)]
+    is_head = dominant == head_row
+
+    # Grab a thin band below the natural Head/neck_01 boundary too, not
+    # just Head-dominant faces -- the mirror image of the margin
+    # strip_luminous_head leaves behind, so the two overlap instead of
+    # meeting at boundaries that were never guaranteed to coincide. See
+    # NECK_SEAM_MARGIN. Computed on the RAW (pre-alignment) positions,
+    # against the source's own (also raw) bone rest positions, so the
+    # comparison stays self-consistent; the alignment offset below is
+    # then applied uniformly to everything grabbed, margin band
+    # included, so the whole grafted piece moves as one rigid unit.
+    t = neck_axis_t(src_doc, src_bin, src_skin_index, positions)
+    boundary_t = np.percentile(t[is_head], 2) if is_head.any() else t.max()
+    grab = is_head | (t > boundary_t - NECK_SEAM_MARGIN)
+
+    _, lum_body_node = find_node(document, "body")
+    lum_head_pos = bone_rest_position(document, binary, lum_body_node["skin"], HEAD_BONE)
+    src_head_pos = bone_rest_position(src_doc, src_bin, src_skin_index, HEAD_BONE)
+    positions = positions.copy()
+    positions[grab] += (lum_head_pos - src_head_pos)
 
     body_faces = accessor_array(src_doc, src_bin, body_prim["indices"]).reshape(-1, 3).astype(np.int64)
     eyes_faces = accessor_array(src_doc, src_bin, eyes_prim["indices"]).reshape(-1, 3).astype(np.int64)
-    head_faces = body_faces[dominant[body_faces[:, 0]] == head_row]
+    head_faces = body_faces[grab[body_faces[:, 0]]]
 
     pos_c, norm_c, uv_c, joints_c, weights_c, (head_faces_c, eyes_faces_c) = compact_submesh(
         positions, normals, uvs, joints, weights, [head_faces, eyes_faces])
@@ -506,7 +642,6 @@ def graft_source_head(document, binary, lum_names, src_doc, src_bin):
         {"attributes": attrs, "indices": eyes_idx_acc, "material": material_index},
     ]})
 
-    _, lum_body_node = find_node(document, "body")
     node_index = len(document["nodes"])
     document["nodes"].append({"name": "head_source", "mesh": mesh_index, "skin": lum_body_node["skin"]})
     _, armature_node = find_node(document, "Armature")
@@ -630,6 +765,15 @@ def graft_source_tail(document, binary, lum_names, src_doc, src_bin, gender):
     if not mask.any():
         return False
 
+    # The whole tail ends up rigid to "pelvis" regardless of which leg
+    # bone it was originally dominant on (see below), so that is the
+    # one rest position that needs to line up -- see
+    # bone_alignment_offsets for why this matters at all.
+    _, lum_body_node = find_node(document, "body")
+    lum_pelvis = bone_rest_position(document, binary, lum_body_node["skin"], "pelvis")
+    src_pelvis = bone_rest_position(src_doc, src_bin, src_skin_index, "pelvis")
+    positions = positions + (lum_pelvis - src_pelvis)
+
     body_faces = accessor_array(src_doc, src_bin, body_prim["indices"]).reshape(-1, 3).astype(np.int64)
     tail_faces = body_faces[mask[body_faces].all(axis=1)]
     if len(tail_faces) == 0:
@@ -662,7 +806,6 @@ def graft_source_tail(document, binary, lum_names, src_doc, src_bin, gender):
         {"attributes": attrs, "indices": tail_idx_acc, "material": material_index},
     ]})
 
-    _, lum_body_node = find_node(document, "body")
     node_index = len(document["nodes"])
     document["nodes"].append({"name": "tail_source", "mesh": mesh_index, "skin": lum_body_node["skin"]})
     _, armature_node = find_node(document, "Armature")
