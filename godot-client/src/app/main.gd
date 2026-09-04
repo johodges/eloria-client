@@ -4084,8 +4084,9 @@ func _manufacturing_tab(text: String, skill: String) -> Button:
 	tab.toggle_mode = true
 	tab.button_pressed = manufacturing_skill == skill
 	# The same picture the encyclopedia shelves that skill under, so the two
-	# windows name it the same way. "All" is not a skill and has none.
-	var icon: Texture2D = SubjectIcons.icon_for(skill)
+	# windows name it the same way. The All tab is not a skill, and asks for
+	# the sheet's own picture for "everything".
+	var icon: Texture2D = SubjectIcons.icon_for("all" if skill.is_empty() else skill)
 	if icon != null:
 		tab.icon = icon
 		tab.add_theme_constant_override("h_separation", 6)
@@ -5345,6 +5346,11 @@ func _sync_stats() -> void:
 ## Magic and Summoning sit under Combat because that is what they are used
 ## for here, and Potion under Crafting because it is mixed at a bench. The
 ## groups exist to make thirteen rows readable, not to mirror a taxonomy.
+## How big a skill's icon is drawn in the statistics table. The art is 32,
+## which is the size the shelves and tab strips want; a table thirteen rows
+## deep wants something that sits inside a row instead.
+const STATS_SKILL_ICON := 20.0
+
 const SKILL_GROUPS: Array[Array] = [
 	["Combat", ["attack", "defense", "ranging", "magic", "summoning"]],
 	["Crafting", ["manufacturing", "crafting", "engineering", "tailoring",
@@ -5555,6 +5561,7 @@ func _stats_skill_row(skill: String, stats: Dictionary) -> Control:
 
 	var row := HBoxContainer.new()
 	row.name = "Skill%s" % skill.capitalize()
+	row.add_child(_stats_skill_icon(skill))
 	row.add_child(_stats_cell(skill.capitalize(), true))
 	row.add_child(_stats_cell("%d / %d" % [level, base], false,
 		HORIZONTAL_ALIGNMENT_RIGHT, 90))
@@ -5588,6 +5595,20 @@ static func _experience_colour(fraction: float) -> Color:
 	if fraction >= 0.2:
 		return Color(0.80, 0.55, 0.30)
 	return Color(0.65, 0.40, 0.32)          # only just started
+
+## The subject icon for a skill, drawn down to the height of a table row.
+##
+## Thirteen rows of art at its native size would be a column of pictures with
+## a table beside it; the list is read down the names, and the icon is there
+## to be recognised in passing. A skill with nothing drawn for it still gets
+## the spacer, so the names stay in one column.
+static func _stats_skill_icon(skill: String) -> Control:
+	var frame := TextureRect.new()
+	frame.name = "Icon"
+	frame.custom_minimum_size = Vector2(STATS_SKILL_ICON, STATS_SKILL_ICON)
+	frame.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	frame.texture = SubjectIcons.icon_for(skill)
+	return frame
 
 static func _stats_cell(text: String, grow: bool,
 		alignment: int = HORIZONTAL_ALIGNMENT_LEFT,
@@ -5898,6 +5919,13 @@ func _sync_perk_filters() -> void:
 		tab.toggle_mode = true
 		tab.button_pressed = name == _perk_filter
 		tab.focus_mode = Control.FOCUS_NONE
+		# The server names these categories, so a category it adds draws no
+		# picture rather than the wrong one.
+		var icon: Texture2D = SubjectIcons.icon_for(
+			"all" if name.is_empty() else name)
+		if icon != null:
+			tab.icon = icon
+			tab.add_theme_constant_override("h_separation", 6)
 		tab.pressed.connect(_on_perk_filter_chosen.bind(name))
 		perk_filters.add_child(tab)
 

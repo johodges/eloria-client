@@ -19,6 +19,8 @@ const INDICES := {
 	"commerce": 5, "alchemy": 6, "manufacturing": 7, "crafting": 8,
 	"engineering": 9, "potions": 10, "tailoring": 11, "summoning": 12,
 	"spells": 13, "books": 14, "maps": 15, "commands": 16,
+	"attack": 17, "defense": 18, "ranging": 19, "overall": 20,
+	"utility": 21, "all": 22,
 }
 
 ## The same subject under the name another part of the client happens to use.
@@ -32,6 +34,8 @@ const ALIASES := {
 	"trade": "commerce",
 	"book": "books",
 	"map": "maps",
+	"defence": "defense",
+	"everything": "all",
 }
 
 static var _sheet: Texture2D

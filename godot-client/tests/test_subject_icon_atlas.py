@@ -123,6 +123,19 @@ class SubjectCoverageTest(unittest.TestCase):
             with self.subTest(skill=skill):
                 self.assertTrue(self.resolves(skill))
 
+    def test_every_skill_the_statistics_table_lists_has_an_icon(self) -> None:
+        """The table names a skill per row. A skill added to a group without a
+        picture drawn for it leaves one row blank, which reads as a mistake
+        rather than as a gap."""
+        main = (CLIENT / "src" / "app" / "main.gd").read_text(encoding="utf-8")
+        block = main[main.index("const SKILL_GROUPS: Array[Array] = ["):]
+        block = block[:block.index(chr(10) + "]")]
+        for skill in re.findall(r'"([a-z]+)"', block):
+            if skill[0].isupper():
+                continue
+            with self.subTest(skill=skill):
+                self.assertTrue(self.resolves(skill))
+
     def test_an_alias_points_at_a_subject_that_exists(self) -> None:
         for alias, target in self.aliases.items():
             with self.subTest(alias=alias):

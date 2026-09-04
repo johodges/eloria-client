@@ -67,8 +67,10 @@ def detect_tiles(source: Image.Image,
 
 def pack(source: Image.Image, source_grid: int, destination_grid: int,
          cell_size: int, count: int, canvas_size: int,
-         detect: bool = False) -> Image.Image:
-    atlas = Image.new("RGBA", (canvas_size, canvas_size), (0, 0, 0, 0))
+         detect: bool = False, start_index: int = 0,
+         base: Image.Image | None = None) -> Image.Image:
+    atlas = base if base is not None else Image.new(
+        "RGBA", (canvas_size, canvas_size), (0, 0, 0, 0))
     tiles = detect_tiles(source) if detect else None
     if tiles is not None and len(tiles) < count:
         raise SystemExit("found %d tiles in the sheet, needed %d"
@@ -83,7 +85,8 @@ def pack(source: Image.Image, source_grid: int, destination_grid: int,
             box = (left, top, right, bottom)
         icon = source.crop(box).resize(
             (cell_size, cell_size), Image.Resampling.LANCZOS)
-        destination_row, destination_column = divmod(index, destination_grid)
+        destination_row, destination_column = divmod(start_index + index,
+                                                     destination_grid)
         atlas.alpha_composite(icon, (destination_column * cell_size,
                                       destination_row * cell_size))
     return atlas
@@ -120,6 +123,11 @@ def main() -> None:
     parser.add_argument("--count", type=int, required=True)
     parser.add_argument("--canvas-size", type=int, default=256)
     parser.add_argument(
+        "--start-index", type=int, default=0,
+        help="place the first icon at this cell rather than at the start, so "
+             "a second sheet can be added to an atlas without redrawing the "
+             "first; the existing atlas is read back and added to")
+    parser.add_argument(
         "--detect", action="store_true",
         help="find the sheet's tiles instead of assuming an even grid, for a "
              "generated sheet whose rows and columns are only approximately "
@@ -128,8 +136,14 @@ def main() -> None:
     args = parser.parse_args()
 
     source = Image.open(args.source).convert("RGBA")
+    # Adding to an atlas means starting from it. Starting from a blank canvas
+    # would silently drop every icon already in it.
+    base = None
+    if args.start_index and args.destination.exists():
+        base = Image.open(args.destination).convert("RGBA")
     atlas = pack(source, args.source_grid, args.destination_grid,
-                 args.cell_size, args.count, args.canvas_size, args.detect)
+                 args.cell_size, args.count, args.canvas_size, args.detect,
+                 args.start_index, base)
     args.destination.parent.mkdir(parents=True, exist_ok=True)
     atlas.save(args.destination, optimize=True)
     if args.dds is not None:
