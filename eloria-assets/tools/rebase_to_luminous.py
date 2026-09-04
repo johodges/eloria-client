@@ -474,6 +474,39 @@ def neck_axis_t(document, binary, skin_index, positions):
     return (positions - neck_pos) @ unit
 
 
+def head_boundary_anchor(document, binary, skin_index, positions, dominant, head_row):
+    """(anchor point, boundary_t): where a body's OWN head visually
+    BEGINS -- the mean 3D position of its Head-dominant faces closest
+    to the neck_01 boundary -- and the boundary_t threshold used to
+    find them (see NECK_SEAM_MARGIN's own callers).
+
+    Originally the head graft aligned by the Head BONE's own rest
+    position instead of this. That fixed the dark gap at the seam
+    (see NECK_SEAM_MARGIN) but not two things a user found by rotating
+    to a side view afterward: heads still sat at visibly different
+    depths/angles per race, and races ended up with inconsistent neck
+    lengths. Checked directly: a rig's Head bone is placed whereever
+    that body's own rigging step decided a neck-bend pivot should be,
+    which is not reliably AT the visible jaw/chin edge -- two bodies
+    can have their Head bone in a similar place while their actual
+    heads sit at very different depths from it, or vice versa. The
+    boundary anchor is the visible landmark that actually determines
+    how long a neck reads as being and how far forward a head sits;
+    aligning bodies by it (rather than by an internal rigging pivot
+    that says nothing about visible geometry) keeps both consistent
+    across races by construction, since every race is aligned to the
+    SAME landmark on Luminous's own body."""
+    t = neck_axis_t(document, binary, skin_index, positions)
+    is_head = dominant == head_row
+    if not is_head.any():
+        return positions.mean(axis=0), t.max()
+    boundary_t = np.percentile(t[is_head], 2)
+    band = is_head & (t < boundary_t + 0.01)
+    if not band.any():
+        band = is_head
+    return positions[band].mean(axis=0), boundary_t
+
+
 def strip_luminous_head(document, binary, lum_names):
     """Like strip_luminous_bones for Head, except a thin band of
     Head-dominant faces closest to the boundary is deliberately KEPT
@@ -499,10 +532,7 @@ def strip_luminous_head(document, binary, lum_names):
 
     is_head = dominant == head_row
     t = neck_axis_t(document, binary, skin_index, positions)
-    # Robust to a handful of stray low outliers in the jagged boundary --
-    # see the constant's own docstring -- a low percentile rather than
-    # the strict minimum.
-    boundary_t = np.percentile(t[is_head], 2) if is_head.any() else t.max()
+    _, boundary_t = head_boundary_anchor(document, binary, skin_index, positions, dominant, head_row)
     strip = is_head & (t > boundary_t + NECK_SEAM_MARGIN)
 
     faces = accessor_array(document, binary, body_prim["indices"]).reshape(-1, 3).astype(np.int64)
@@ -600,19 +630,32 @@ def graft_source_head(document, binary, lum_names, src_doc, src_bin):
     # strip_luminous_head leaves behind, so the two overlap instead of
     # meeting at boundaries that were never guaranteed to coincide. See
     # NECK_SEAM_MARGIN. Computed on the RAW (pre-alignment) positions,
-    # against the source's own (also raw) bone rest positions, so the
-    # comparison stays self-consistent; the alignment offset below is
-    # then applied uniformly to everything grabbed, margin band
-    # included, so the whole grafted piece moves as one rigid unit.
+    # against the source's own (also raw) boundary, so the comparison
+    # stays self-consistent; the alignment offset below is then applied
+    # uniformly to everything grabbed, margin band included, so the
+    # whole grafted piece moves as one rigid unit.
     t = neck_axis_t(src_doc, src_bin, src_skin_index, positions)
-    boundary_t = np.percentile(t[is_head], 2) if is_head.any() else t.max()
+    src_anchor, boundary_t = head_boundary_anchor(
+        src_doc, src_bin, src_skin_index, positions, dominant, head_row)
     grab = is_head | (t > boundary_t - NECK_SEAM_MARGIN)
 
+    # Align by where each body's OWN head visually BEGINS, not by the
+    # Head bone's own rest position -- see head_boundary_anchor for why
+    # bone position alone left heads sitting at inconsistent depths/
+    # angles and races with inconsistent neck lengths, found by a user
+    # checking a side view after the seam-gap fix.
     _, lum_body_node = find_node(document, "body")
-    lum_head_pos = bone_rest_position(document, binary, lum_body_node["skin"], HEAD_BONE)
-    src_head_pos = bone_rest_position(src_doc, src_bin, src_skin_index, HEAD_BONE)
+    lum_body_prim = document["meshes"][lum_body_node["mesh"]]["primitives"][0]
+    lum_positions = accessor_array(document, binary, lum_body_prim["attributes"]["POSITION"])
+    lum_joints = accessor_array(document, binary, lum_body_prim["attributes"]["JOINTS_0"]).astype(np.int64)
+    lum_weights = accessor_array(document, binary, lum_body_prim["attributes"]["WEIGHTS_0"])
+    lum_dominant = lum_joints[np.arange(len(lum_joints)), np.argmax(lum_weights, axis=1)]
+    lum_head_row = lum_names.index(HEAD_BONE)
+    lum_anchor, _ = head_boundary_anchor(
+        document, binary, lum_body_node["skin"], lum_positions, lum_dominant, lum_head_row)
+
     positions = positions.copy()
-    positions[grab] += (lum_head_pos - src_head_pos)
+    positions[grab] += (lum_anchor - src_anchor)
 
     body_faces = accessor_array(src_doc, src_bin, body_prim["indices"]).reshape(-1, 3).astype(np.int64)
     eyes_faces = accessor_array(src_doc, src_bin, eyes_prim["indices"]).reshape(-1, 3).astype(np.int64)
