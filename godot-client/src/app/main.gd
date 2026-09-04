@@ -361,6 +361,35 @@ var storage_type_filter := ""
 var storage_sort_mode := "name"
 var selected_manufacturing_recipe := -1
 var manufacturing_server_status := "Select a recipe."
+## More than anyone mixes in one sitting, and small enough that a typed digit
+## too many is caught here rather than by the server.
+const MANUFACTURING_MAX_QUANTITY := 1000
+## The manufacturing window. These are built rather than laid out in the
+## scene, because none of them has a fixed shape: there are as many skill tabs
+## as the served recipes mention skills, as many tool rows as the selected
+## recipe needs tools, and a queue has no rows at all until somebody fills it.
+var manufacturing_tabs: HBoxContainer
+var manufacturing_side: VBoxContainer
+var manufacturing_tool_rows: VBoxContainer
+var manufacturing_quantity: LineEdit
+var manufacturing_source: CheckButton
+var manufacturing_queue_rows: VBoxContainer
+var manufacturing_queue_start: Button
+var manufacturing_skill := ""
+## Queued batches, `{recipe, wanted, made}`, worked from the top. The queue
+## lives here rather than on the server because the server mixes one batch at
+## a time and says when each one ends; a second copy of the list over there
+## would be another thing to keep in step and would buy nothing. The cost is
+## that a queue does not survive logging out, which is the honest trade.
+var manufacturing_queue: Array[Dictionary] = []
+var manufacturing_queue_running := false
+var manufacturing_queue_index := 0
+## Batches asked for and not yet seen the end of, oldest first. Two can be
+## outstanding at once: Mix Now cuts a queued batch short, so that batch's end
+## and the start of the one replacing it are both in flight. Which one ended
+## is settled by the name of what was being made, because the inventory window
+## can start a mix too and its batch belongs to no queue entry.
+var _mix_pending: Array[Dictionary] = []
 var cooldown_display_second := -1
 var _chat_tab := "all"
 var _last_chat_activity_msec := 0
@@ -942,6 +971,7 @@ func _ready() -> void:
 	session_reset.pressed.connect(_reset_session_tracking)
 	manufacturing_list.item_selected.connect(_on_manufacturing_selected)
 	manufacturing_filter.text_changed.connect(_on_manufacturing_filter_changed)
+	_build_manufacturing_window()
 	banner_menu_enabled.toggled.connect(_on_banner_menu_enabled_toggled)
 	$GameView/ChatTabs/All.pressed.connect(_on_chat_tab_pressed.bind("all"))
 	$GameView/ChatTabs/History.pressed.connect(_on_chat_tab_pressed.bind("history"))
@@ -1687,37 +1717,144 @@ func _on_manufacturing_selected(index: int) -> void:
 func _on_manufacturing_filter_changed(_text: String) -> void:
 	_sync_manufacturing()
 
+## The scene connects its two mix buttons to these two names. What the buttons
+## say and do is set in `_build_manufacturing_window`; the node names and the
+## method names the scene points at are the scene's, and renaming them there
+## would be a merge conflict here for no gain.
 func _on_manufacturing_mix_one_pressed() -> void:
-	_send_manufacturing_request(1)
+	_mix_selected_now()
 
 func _on_manufacturing_mix_all_pressed() -> void:
-	_send_manufacturing_request(255)
+	_enqueue_selected()
 
 func _on_manufacturing_close_pressed() -> void:
 	manufacturing_panel.hide()
 
-func _send_manufacturing_request(wanted: int) -> void:
-	var availability: Dictionary = manufacturing_catalog.availability(
-		selected_manufacturing_recipe, AppState.inventory, AppState.known_knowledge,
-		AppState.stats, AppState.inventory_names)
-	var reasons: Array = availability.get("reasons", []) as Array
-	var selection: Array = availability.get("selection", []) as Array
-	if not reasons.is_empty() or selection.is_empty():
+## Straight to the server, ahead of anything queued. If the queue was working
+## an entry, that batch is cut short - no work is lost, because the server
+## reports how many came out - and the entry is asked for again, for what is
+## left of it, once this batch ends.
+func _mix_selected_now() -> void:
+	if selected_manufacturing_recipe < 0:
 		return
-	var typed_selection: Array[Dictionary] = []
-	for selection_value: Variant in selection:
-		if selection_value is Dictionary:
-			typed_selection.append(selection_value as Dictionary)
-	print_debug("manufacturing_input command=MANUFACTURE_THIS recipe_id=",
-		selected_manufacturing_recipe, " wanted=", wanted,
-		" ingredients=", typed_selection, " redacted_bytes=not_sensitive")
-	var error: Error = Network.manufacture(typed_selection, wanted)
-	if error == OK:
-		manufacturing_server_status = ("Mix-all request sent; awaiting the server."
-			if wanted == 255 else "Mix request sent; awaiting the server.")
-	else:
-		manufacturing_server_status = "MANUFACTURE_THIS failed: " + error_string(error)
+	_start_mix(selected_manufacturing_recipe, _manufacturing_quantity_value(), -1)
+
+func _enqueue_selected() -> void:
+	if selected_manufacturing_recipe < 0:
+		return
+	manufacturing_queue.append({"recipe": selected_manufacturing_recipe,
+		"wanted": _manufacturing_quantity_value(), "made": 0})
+	manufacturing_server_status = "Added to the queue."
+	_sync_manufacturing_queue()
 	_sync_manufacturing_detail()
+
+func _on_manufacturing_queue_remove_pressed(position: int) -> void:
+	if position < 0 or position >= manufacturing_queue.size():
+		return
+	manufacturing_queue.remove_at(position)
+	if manufacturing_queue_index > position:
+		manufacturing_queue_index -= 1
+	_sync_manufacturing_queue()
+
+func _on_manufacturing_queue_clear_pressed() -> void:
+	manufacturing_queue.clear()
+	manufacturing_queue_running = false
+	manufacturing_queue_index = 0
+	manufacturing_server_status = "Queue cleared."
+	_sync_manufacturing_queue()
+	_sync_manufacturing_detail()
+
+## Start working down the list, or stop. Stopping leaves the batch already
+## with the server to finish: it is one mix, and cancelling it would throw
+## away whatever it had made.
+func _on_manufacturing_queue_start_pressed() -> void:
+	if manufacturing_queue_running:
+		manufacturing_queue_running = false
+		manufacturing_server_status = "Queue stopped after this batch."
+		_sync_manufacturing_queue()
+		return
+	if manufacturing_queue.is_empty():
+		return
+	manufacturing_queue_running = true
+	manufacturing_queue_index = 0
+	_advance_manufacturing_queue()
+
+## Tools wear out, so the usual reason a familiar recipe stops working is a
+## broken hatchet rather than a missing plank - and the answer was to leave
+## the window, open storage, find the tool and come back to a window that is
+## already standing next to it.
+func _on_manufacturing_take_tool_pressed(tool_name: String) -> void:
+	var error: Error = Network.tool_request(tool_name)
+	manufacturing_server_status = ("Asked storage for a %s." % tool_name
+		if error == OK else "Tool request failed: " + error_string(error))
+	manufacturing_status.text = manufacturing_server_status
+
+## Ask for a batch, by recipe rather than by the inventory positions the
+## ingredients sit in. `MANUFACTURE_THIS` can only name positions, which makes
+## mixing out of storage unsayable in it: the materials are in no position.
+##
+## `position` is the queue entry the batch belongs to, or -1 for Mix Now.
+func _start_mix(recipe_index: int, wanted: int, position: int) -> void:
+	var definition: Dictionary = manufacturing_catalog.recipe(recipe_index)
+	if definition.is_empty():
+		return
+	var from_storage: bool = _manufacturing_from_storage()
+	var error: Error = Network.mix_request(recipe_index, wanted, from_storage)
+	if error != OK:
+		manufacturing_server_status = "Mix request failed: " + error_string(error)
+		manufacturing_status.text = manufacturing_server_status
+		return
+	_mix_pending.append({"output": str(definition.get("output", "")),
+		"entry": position})
+	manufacturing_server_status = "Making %d × %s from %s." % [wanted,
+		str(definition.get("output", "")),
+		"storage" if from_storage else "your pack"]
+	manufacturing_status.text = manufacturing_server_status
+
+## Send the batch the queue is on, or stop when the list runs out. One at a
+## time and from the top: that is what the server can do, and what a list
+## means. Nothing is sent while a batch is still outstanding.
+func _advance_manufacturing_queue() -> void:
+	while manufacturing_queue_running and _mix_pending.is_empty():
+		if manufacturing_queue_index >= manufacturing_queue.size():
+			manufacturing_queue_running = false
+			manufacturing_server_status = "Queue finished."
+			break
+		var entry: Dictionary = manufacturing_queue[manufacturing_queue_index]
+		var left: int = int(entry.get("wanted", 1)) - int(entry.get("made", 0))
+		if left <= 0:
+			manufacturing_queue_index += 1
+			continue
+		_start_mix(int(entry.get("recipe", -1)), left, manufacturing_queue_index)
+		break
+	_sync_manufacturing_queue()
+
+## A batch has ended - finished, out of materials, or taken over by Mix Now.
+## The server says how many came out, which is the only way to tell six
+## torches from two, and the reason the queue can move on without watching an
+## inventory that has simply stopped changing.
+func _on_mix_state_changed() -> void:
+	var state: Dictionary = AppState.mix_state
+	if not bool(state.get("running", false)) and not _mix_pending.is_empty():
+		var run: Dictionary = _mix_pending[0]
+		if str(state.get("output", "")) == str(run.get("output", "")):
+			_mix_pending.remove_at(0)
+			_settle_mix_run(run, int(state.get("made", 0)))
+	_sync_manufacturing()
+
+func _settle_mix_run(run: Dictionary, made: int) -> void:
+	var position: int = int(run.get("entry", -1))
+	if position >= 0 and position < manufacturing_queue.size():
+		var entry: Dictionary = manufacturing_queue[position]
+		entry["made"] = int(entry.get("made", 0)) + made
+		# A batch still outstanding means Mix Now cut this one short, so the
+		# entry keeps its place and is asked for again. Otherwise the batch
+		# ran to its end or ran out of materials, and asking again would only
+		# fail the same way.
+		if _mix_pending.is_empty() and manufacturing_queue_index == position:
+			manufacturing_queue_index = position + 1
+	if manufacturing_queue_running and _mix_pending.is_empty():
+		_advance_manufacturing_queue()
 
 func _on_knowledge_selected(index: int) -> void:
 	var knowledge_index: int = _list_metadata_int(knowledge_list, index)
@@ -1881,7 +2018,10 @@ func _on_inventory_mix_all_pressed() -> void:
 		manufacturing_panel.move_to_front()
 		manufacturing_status.text = "Select a recipe, then use Mix All."
 		return
-	_send_manufacturing_request(255)
+	# As many as the ingredients run to. The manufacturing window's own box is
+	# a batch size somebody chose for that window; this button has never asked
+	# for one and asking here would be a second place to keep it.
+	_start_mix(selected_manufacturing_recipe, MANUFACTURING_MAX_QUANTITY, -1)
 
 func _on_inventory_item_lists_pressed() -> void:
 	_sync_saved_item_lists()
@@ -3168,6 +3308,8 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_perk_catalog()
 		&"counters":
 			_sync_counters()
+		&"mix_state":
+			_on_mix_state_changed()
 		&"stats":
 			_sync_stats()
 			_sync_spells()
@@ -3763,21 +3905,202 @@ func _sync_knowledge() -> void:
 		knowledge_catalog[selected_index], status, selected_index,
 		server_text if not server_text.is_empty() else "Waiting for the server description…"]
 
+## The manufacturing window, built around the list and detail panes the scene
+## already holds. What is added here is everything with no fixed shape: a tab
+## per mixing skill, a row per tool, a quantity that can be typed or stepped,
+## and a queue.
+func _build_manufacturing_window() -> void:
+	var content: Node = manufacturing_filter.get_parent()
+	manufacturing_filter.placeholder_text = "Search by name, ingredient or tool"
+
+	manufacturing_tabs = HBoxContainer.new()
+	manufacturing_tabs.name = "ManufacturingTabs"
+	manufacturing_tabs.alignment = BoxContainer.ALIGNMENT_CENTER
+	content.add_child(manufacturing_tabs)
+	content.move_child(manufacturing_tabs, manufacturing_filter.get_index())
+
+	# The detail pane moves into a column of its own, so everything that acts
+	# on the selected recipe sits under the description of it.
+	manufacturing_side = VBoxContainer.new()
+	manufacturing_side.name = "ManufacturingSide"
+	manufacturing_side.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	manufacturing_side.add_theme_constant_override("separation", 6)
+	manufacturing_list.get_parent().add_child(manufacturing_side)
+	manufacturing_detail.get_parent().remove_child(manufacturing_detail)
+	manufacturing_side.add_child(manufacturing_detail)
+	manufacturing_detail.size_flags_vertical = Control.SIZE_EXPAND_FILL
+
+	manufacturing_tool_rows = VBoxContainer.new()
+	manufacturing_tool_rows.name = "ManufacturingTools"
+	manufacturing_side.add_child(manufacturing_tool_rows)
+	manufacturing_side.add_child(_manufacturing_quantity_row())
+
+	# The scene's two mix buttons become Mix Now and Add To Queue. Reused
+	# rather than hidden and replaced: the scene owns their names and the
+	# methods it connects them to, and a second pair of buttons beside two
+	# dead ones is worse than a pair whose node names have aged.
+	var actions := HBoxContainer.new()
+	actions.name = "ManufacturingActions"
+	manufacturing_source = CheckButton.new()
+	manufacturing_source.name = "Source"
+	manufacturing_source.text = "From storage"
+	manufacturing_source.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	manufacturing_source.toggled.connect(func(_pressed: bool) -> void:
+		_sync_manufacturing_detail())
+	actions.add_child(manufacturing_source)
+	for button: Button in [manufacturing_mix_one, manufacturing_mix_all]:
+		button.get_parent().remove_child(button)
+		actions.add_child(button)
+	manufacturing_mix_one.text = "MIX NOW"
+	manufacturing_mix_one.tooltip_text = "Start this batch now, ahead of the queue"
+	manufacturing_mix_all.text = "ADD TO QUEUE"
+	manufacturing_mix_all.tooltip_text = "Put this batch at the end of the queue"
+	manufacturing_side.add_child(actions)
+
+	var queue: Control = _manufacturing_queue_section()
+	content.add_child(queue)
+	content.move_child(queue, manufacturing_status.get_index())
+
+## How many to make. Typed or stepped: the box is the value and the buttons
+## only move it, so somebody who wants forty does not press one thirty-nine
+## times.
+func _manufacturing_quantity_row() -> Control:
+	var row := HBoxContainer.new()
+	row.name = "ManufacturingQuantity"
+	var label := Label.new()
+	label.name = "Label"
+	label.text = "Quantity"
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(label)
+	row.add_child(_manufacturing_step_button("−", -1))
+	manufacturing_quantity = LineEdit.new()
+	manufacturing_quantity.name = "Value"
+	manufacturing_quantity.text = "1"
+	manufacturing_quantity.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	manufacturing_quantity.custom_minimum_size = Vector2(64, 0)
+	manufacturing_quantity.tooltip_text = ("How many to make, 1 to %d"
+		% MANUFACTURING_MAX_QUANTITY)
+	manufacturing_quantity.text_changed.connect(_on_manufacturing_quantity_changed)
+	manufacturing_quantity.text_submitted.connect(func(_text: String) -> void:
+		_set_manufacturing_quantity(_manufacturing_quantity_value()))
+	manufacturing_quantity.focus_exited.connect(func() -> void:
+		_set_manufacturing_quantity(_manufacturing_quantity_value()))
+	row.add_child(manufacturing_quantity)
+	row.add_child(_manufacturing_step_button("+", 1))
+	return row
+
+func _manufacturing_step_button(text: String, step: int) -> Button:
+	var button := Button.new()
+	button.name = "Step%s" % ("Up" if step > 0 else "Down")
+	button.text = text
+	button.custom_minimum_size = Vector2(28, 0)
+	button.pressed.connect(func() -> void:
+		_set_manufacturing_quantity(_manufacturing_quantity_value() + step))
+	return button
+
+## Read back clamped, always. An empty box on the way to "12" is somebody
+## mid-thought rather than a zero, so it is left alone while it is being typed
+## in and only rewritten when something else moves the value.
+func _manufacturing_quantity_value() -> int:
+	if manufacturing_quantity == null:
+		return 1
+	return clampi(int(manufacturing_quantity.text.strip_edges()), 1,
+		MANUFACTURING_MAX_QUANTITY)
+
+func _set_manufacturing_quantity(value: int) -> void:
+	if manufacturing_quantity == null:
+		return
+	manufacturing_quantity.text = str(clampi(value, 1, MANUFACTURING_MAX_QUANTITY))
+	manufacturing_quantity.caret_column = manufacturing_quantity.text.length()
+
+func _on_manufacturing_quantity_changed(text: String) -> void:
+	var digits := ""
+	for character: String in text:
+		if character >= "0" and character <= "9":
+			digits += character
+	if digits != text:
+		manufacturing_quantity.text = digits
+		manufacturing_quantity.caret_column = digits.length()
+
+func _manufacturing_queue_section() -> Control:
+	var box := VBoxContainer.new()
+	box.name = "ManufacturingQueue"
+	var head := HBoxContainer.new()
+	head.name = "Head"
+	var title := Label.new()
+	title.name = "Title"
+	title.text = "PRODUCTION QUEUE"
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	head.add_child(title)
+	manufacturing_queue_start = Button.new()
+	manufacturing_queue_start.name = "Start"
+	manufacturing_queue_start.text = "START QUEUE"
+	manufacturing_queue_start.pressed.connect(_on_manufacturing_queue_start_pressed)
+	head.add_child(manufacturing_queue_start)
+	var clear := Button.new()
+	clear.name = "Clear"
+	clear.text = "Clear"
+	clear.pressed.connect(_on_manufacturing_queue_clear_pressed)
+	head.add_child(clear)
+	box.add_child(head)
+	manufacturing_queue_rows = VBoxContainer.new()
+	manufacturing_queue_rows.name = "Rows"
+	box.add_child(manufacturing_queue_rows)
+	return box
+
+## Whether a batch would be drawn from the storage box. The toggle alone is
+## not enough: walking away from storage has to stop meaning storage, and the
+## server is the only thing that knows how far away the keeper is.
+func _manufacturing_from_storage() -> bool:
+	return (manufacturing_source != null and manufacturing_source.button_pressed
+		and bool(AppState.mix_state.get("near_storage", false)))
+
+## A tab per mixing skill the served recipes actually mention, and an "All"
+## that is not a skill. Nothing local decides the list, so a profile that adds
+## a skill grows a tab without being told about it.
+func _manufacturing_skills() -> Array[String]:
+	var skills: Array[String] = []
+	for index: int in range(manufacturing_catalog.count()):
+		var skill: String = str(manufacturing_catalog.recipe(index).get("skill", ""))
+		if not skill.is_empty() and not skills.has(skill):
+			skills.append(skill)
+	skills.sort()
+	return skills
+
+func _sync_manufacturing_tabs() -> void:
+	if manufacturing_tabs == null:
+		return
+	for child: Node in manufacturing_tabs.get_children():
+		manufacturing_tabs.remove_child(child)
+		child.queue_free()
+	manufacturing_tabs.add_child(_manufacturing_tab("All", ""))
+	for skill: String in _manufacturing_skills():
+		manufacturing_tabs.add_child(_manufacturing_tab(skill.capitalize(), skill))
+
+func _manufacturing_tab(text: String, skill: String) -> Button:
+	var tab := Button.new()
+	tab.name = "Tab%s" % text.replace(" ", "").validate_node_name()
+	tab.text = text
+	tab.toggle_mode = true
+	tab.button_pressed = manufacturing_skill == skill
+	tab.pressed.connect(func() -> void:
+		manufacturing_skill = skill
+		_sync_manufacturing())
+	return tab
+
 func _sync_manufacturing() -> void:
 	if not manufacturing_panel.visible:
 		return
+	_sync_manufacturing_tabs()
 	manufacturing_list.clear()
 	var filter_text: String = manufacturing_filter.text.strip_edges().to_lower()
 	for recipe_index: int in range(manufacturing_catalog.count()):
 		var definition: Dictionary = manufacturing_catalog.recipe(recipe_index)
-		var searchable: String = (str(definition.get("output", "")) + " "
-			+ str(definition.get("skill", ""))).to_lower()
-		var ingredients_value: Variant = definition.get("ingredients", [])
-		if ingredients_value is Array:
-			for ingredient_value: Variant in ingredients_value as Array:
-				if ingredient_value is Dictionary:
-					searchable += " " + str((ingredient_value as Dictionary).get("name", "")).to_lower()
-		if not filter_text.is_empty() and not searchable.contains(filter_text):
+		if (not manufacturing_skill.is_empty()
+				and str(definition.get("skill", "")) != manufacturing_skill):
+			continue
+		if not filter_text.is_empty() and not _manufacturing_searchable(
+				definition).contains(filter_text):
 			continue
 		var availability: Dictionary = manufacturing_catalog.availability(recipe_index,
 			AppState.inventory, AppState.known_knowledge, AppState.stats,
@@ -3786,48 +4109,70 @@ func _sync_manufacturing() -> void:
 		var reason_lines: Array[String] = []
 		for reason_value: Variant in reasons:
 			reason_lines.append(str(reason_value))
-		var prefix: String = "[Ready]" if reasons.is_empty() else "[Blocked]"
 		var item_index: int = manufacturing_list.item_count
-		manufacturing_list.add_item("%s  %s — %s %d" % [prefix,
+		manufacturing_list.add_item("%s  %s — %s %d" % [
+			"[Ready]" if reasons.is_empty() else "[Blocked]",
 			str(definition.get("output", "Unknown")),
 			str(definition.get("skill", "skill")).capitalize(),
 			int(definition.get("level", 0))])
 		manufacturing_list.set_item_metadata(item_index, recipe_index)
 		manufacturing_list.set_item_tooltip(item_index,
-			"Ready for server validation" if reasons.is_empty() else "\n".join(reason_lines))
-		var output_icon: Texture2D = item_atlas.icon_for(int(definition.get("outputImageId", -1)))
+			"Ready for server validation" if reasons.is_empty()
+			else "\n".join(reason_lines))
+		var output_icon: Texture2D = item_atlas.icon_for(
+			int(definition.get("outputImageId", -1)))
 		if output_icon != null:
 			manufacturing_list.set_item_icon(item_index, output_icon)
 		if recipe_index == selected_manufacturing_recipe:
 			manufacturing_list.select(item_index)
 	_sync_manufacturing_detail()
+	_sync_manufacturing_queue()
+
+## What the search box matches against: the result, the skill, and everything
+## the recipe consumes or needs to hand. Searching for "hatchet" should find
+## what a hatchet is for, not only the hatchet.
+func _manufacturing_searchable(definition: Dictionary) -> String:
+	var text: String = "%s %s" % [str(definition.get("output", "")),
+		str(definition.get("skill", ""))]
+	for key: String in ["ingredients", "tools"]:
+		var listed: Variant = definition.get(key, [])
+		if listed is Array:
+			for value: Variant in listed as Array:
+				if value is Dictionary:
+					text += " " + str((value as Dictionary).get("name", ""))
+	return text.to_lower()
 
 func _sync_manufacturing_detail() -> void:
-	var definition: Dictionary = manufacturing_catalog.recipe(selected_manufacturing_recipe)
+	_sync_manufacturing_source()
+	var definition: Dictionary = manufacturing_catalog.recipe(
+		selected_manufacturing_recipe)
 	if definition.is_empty():
-		manufacturing_detail.text = "Select a server recipe to review exact ingredients."
+		manufacturing_detail.text = "Select a recipe to see what it takes."
 		manufacturing_status.text = manufacturing_server_status
+		_sync_manufacturing_tools([])
 		manufacturing_mix_one.disabled = true
 		manufacturing_mix_all.disabled = true
 		return
+	var from_storage: bool = _manufacturing_from_storage()
 	var lines: Array[String] = ["[b]%s[/b]" % str(definition.get("output", "Unknown")),
 		"%s level %d  •  %d experience  •  food %d  •  mana %d" % [
 			str(definition.get("skill", "skill")).capitalize(),
 			int(definition.get("level", 0)), int(definition.get("experience", 0)),
-			int(definition.get("food", 0)), int(definition.get("mana", 0))], "", "Ingredients:"]
+			int(definition.get("food", 0)), int(definition.get("mana", 0))],
+		"", "Ingredients:"]
 	var ingredients_value: Variant = definition.get("ingredients", [])
 	if ingredients_value is Array:
 		for ingredient_value: Variant in ingredients_value as Array:
-			if ingredient_value is Dictionary:
-				var ingredient: Dictionary = ingredient_value as Dictionary
-				lines.append("  • %s ×%d" % [str(ingredient.get("name", "Unknown")),
-					int(ingredient.get("quantity", 0))])
-	var tools_value: Variant = definition.get("tools", [])
-	if tools_value is Array and not (tools_value as Array).is_empty():
-		lines.append("Tools:")
-		for tool_value: Variant in tools_value as Array:
-			if tool_value is Dictionary:
-				lines.append("  • " + str((tool_value as Dictionary).get("name", "Unknown")))
+			if not ingredient_value is Dictionary:
+				continue
+			var ingredient: Dictionary = ingredient_value as Dictionary
+			var name: String = str(ingredient.get("name", "Unknown"))
+			var line: String = "  • %s ×%d" % [name,
+				int(ingredient.get("quantity", 0))]
+			var carried: int = _carried_count(name)
+			if not from_storage and carried >= 0:
+				line += "  (carrying %d)" % carried
+			lines.append(line)
 	var knowledge: String = str(definition.get("knowledge", ""))
 	if not knowledge.is_empty():
 		lines.append("Knowledge: " + knowledge)
@@ -3835,16 +4180,163 @@ func _sync_manufacturing_detail() -> void:
 		selected_manufacturing_recipe, AppState.inventory, AppState.known_knowledge,
 		AppState.stats, AppState.inventory_names)
 	var reasons: Array = availability.get("reasons", []) as Array
-	if reasons.is_empty():
-		lines.append("\nReady. The server remains authoritative for skill chance, special days, combat, capacity, and ingredient state.")
+	if from_storage:
+		# The client has never been sent the contents of the storage box, so
+		# it cannot say whether a mix will succeed; only the server can, and
+		# it says so plainly when it refuses.
+		lines.append("\nDrawing from storage, which this window cannot see. "
+			+ "The server refuses if the box is short.")
+	elif reasons.is_empty():
+		lines.append("\nReady. The server remains authoritative for skill chance, "
+			+ "special days, combat, capacity, and ingredient state.")
 	else:
 		lines.append("\nUnavailable:")
 		for reason_value: Variant in reasons:
 			lines.append("  • " + str(reason_value))
 	manufacturing_detail.text = "\n".join(lines)
 	manufacturing_status.text = manufacturing_server_status
-	manufacturing_mix_one.disabled = not reasons.is_empty()
-	manufacturing_mix_all.disabled = not reasons.is_empty()
+	_sync_manufacturing_tools(manufacturing_catalog.tool_state(
+		selected_manufacturing_recipe, AppState.inventory, AppState.inventory_names))
+	# Blocked by what the client can see is only a fair reason to refuse when
+	# the client can see the source. Mixing from storage is always offered and
+	# the server answers it.
+	manufacturing_mix_one.disabled = not from_storage and not reasons.is_empty()
+	manufacturing_mix_all.disabled = false
+
+## How many of an item are being carried, or -1 when the client cannot say.
+## Without the server's slot names an item is only recognisable by artwork,
+## which several items share, and a wrong count is worse than no count.
+func _carried_count(name: String) -> int:
+	if AppState.inventory_names.is_empty():
+		return -1
+	var total := 0
+	for slot_value: Variant in AppState.inventory:
+		var slot: int = int(slot_value)
+		if str(AppState.inventory_names.get(slot, "")) != name:
+			continue
+		var item_value: Variant = AppState.inventory.get(slot)
+		if item_value is Dictionary:
+			total += int((item_value as Dictionary).get("quantity", 0))
+	return total
+
+## The storage toggle is the server's to allow: whether a storage keeper is
+## close enough is a distance to an actor this client is never told the role
+## of, so the window waits to be told rather than guessing. Guessing would
+## grey the control out in the one place somebody wanted it.
+func _sync_manufacturing_source() -> void:
+	if manufacturing_source == null:
+		return
+	var near: bool = bool(AppState.mix_state.get("near_storage", false))
+	manufacturing_source.disabled = not near
+	if not near and manufacturing_source.button_pressed:
+		# Walking away from storage cannot leave the window pointed at a box
+		# it can no longer reach.
+		manufacturing_source.set_pressed_no_signal(false)
+	manufacturing_source.tooltip_text = ("Take the ingredients from your storage box"
+		if near else "Stand next to a storage keeper to mix from storage")
+
+## One row per tool, and a way to fix a missing one without leaving.
+##
+## A tool is held rather than consumed, so it is wanted in hand however the
+## ingredients are sourced - which is why the button is offered whenever
+## storage is in reach, not only when the window is mixing out of it.
+func _sync_manufacturing_tools(tools: Array[Dictionary]) -> void:
+	if manufacturing_tool_rows == null:
+		return
+	for child: Node in manufacturing_tool_rows.get_children():
+		manufacturing_tool_rows.remove_child(child)
+		child.queue_free()
+	if tools.is_empty():
+		return
+	var heading := Label.new()
+	heading.name = "Heading"
+	heading.text = "Tools"
+	manufacturing_tool_rows.add_child(heading)
+	var near: bool = bool(AppState.mix_state.get("near_storage", false))
+	for tool: Dictionary in tools:
+		var tool_name: String = str(tool.get("name", "tool"))
+		var held: bool = bool(tool.get("held", false))
+		var row := HBoxContainer.new()
+		row.name = "Tool%s" % tool_name.replace(" ", "").validate_node_name()
+		var label := Label.new()
+		label.name = "Name"
+		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		if held:
+			label.text = "%s — to hand" % tool_name
+		elif bool(tool.get("ambiguous", false)):
+			label.text = "%s — shares artwork; cannot tell" % tool_name
+		else:
+			label.text = "%s — missing" % tool_name
+			row.modulate = Color(1, 1, 1, 0.75)
+		row.add_child(label)
+		if not held:
+			var take := Button.new()
+			take.name = "Take"
+			take.text = "Take from storage"
+			take.disabled = not near
+			take.tooltip_text = ("Take one out of your storage box" if near
+				else "Stand next to a storage keeper to do this")
+			take.pressed.connect(_on_manufacturing_take_tool_pressed.bind(tool_name))
+			row.add_child(take)
+		manufacturing_tool_rows.add_child(row)
+
+func _sync_manufacturing_queue() -> void:
+	if manufacturing_queue_rows == null:
+		return
+	for child: Node in manufacturing_queue_rows.get_children():
+		manufacturing_queue_rows.remove_child(child)
+		child.queue_free()
+	manufacturing_queue_start.text = ("STOP QUEUE" if manufacturing_queue_running
+		else "START QUEUE")
+	manufacturing_queue_start.disabled = manufacturing_queue.is_empty()
+	if manufacturing_queue.is_empty():
+		var empty := Label.new()
+		empty.name = "Empty"
+		empty.text = "Nothing queued. Pick a recipe and add it."
+		manufacturing_queue_rows.add_child(empty)
+		return
+	for position: int in range(manufacturing_queue.size()):
+		manufacturing_queue_rows.add_child(_manufacturing_queue_row(position))
+
+## One queued batch. Only the entry the queue has reached is being worked; the
+## rest wait their turn, because the server mixes one batch at a time and a
+## list means the order it is written in.
+func _manufacturing_queue_row(position: int) -> Control:
+	var entry: Dictionary = manufacturing_queue[position]
+	var made: int = int(entry.get("made", 0))
+	var wanted: int = maxi(1, int(entry.get("wanted", 1)))
+	var working: bool = (manufacturing_queue_running
+		and position == manufacturing_queue_index)
+	var row := HBoxContainer.new()
+	row.name = "Queued%d" % position
+	if made >= wanted:
+		row.modulate = Color(1, 1, 1, 0.6)
+	var label := Label.new()
+	label.name = "Name"
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.text = "%d. %s ×%d" % [position + 1, str(manufacturing_catalog.recipe(
+		int(entry.get("recipe", -1))).get("output", "Unknown")), wanted]
+	row.add_child(label)
+	var bar := ProgressBar.new()
+	bar.name = "Progress"
+	bar.custom_minimum_size = Vector2(120, 0)
+	bar.max_value = wanted
+	bar.value = made
+	bar.tooltip_text = "%d of %d made" % [made, wanted]
+	row.add_child(bar)
+	var state := Label.new()
+	state.name = "State"
+	state.custom_minimum_size = Vector2(72, 0)
+	state.text = ("Working" if working else ("Done" if made >= wanted else "Waiting"))
+	row.add_child(state)
+	if not working:
+		var remove := Button.new()
+		remove.name = "Remove"
+		remove.text = "✕"
+		remove.tooltip_text = "Take this out of the queue"
+		remove.pressed.connect(_on_manufacturing_queue_remove_pressed.bind(position))
+		row.add_child(remove)
+	return row
 
 ## Anything the camera has to look through to see the player is blended towards
 ## glass. Indexed against the imported world rather than `world_root`, so actors,

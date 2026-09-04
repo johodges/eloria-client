@@ -1016,9 +1016,9 @@ func _run() -> void:
 	var manufacturing_list: ItemList = main.get_node(
 		"GameView/ManufacturingPanel/Content/Columns/ManufacturingList") as ItemList
 	var manufacturing_detail: RichTextLabel = main.get_node(
-		"GameView/ManufacturingPanel/Content/Columns/ManufacturingDetail") as RichTextLabel
+		"GameView/ManufacturingPanel/Content/Columns/ManufacturingSide/ManufacturingDetail") as RichTextLabel
 	var manufacturing_mix_one: Button = main.get_node(
-		"GameView/ManufacturingPanel/Content/Actions/ManufacturingMixOne") as Button
+		"GameView/ManufacturingPanel/Content/Columns/ManufacturingSide/ManufacturingActions/ManufacturingMixOne") as Button
 	_expect(manufacturing_panel.visible and manufacturing_list.item_count == 32
 		and root.get_visible_rect().encloses(manufacturing_panel.get_global_rect()),
 		"the served recipe catalog opens within the reference viewport: %d"
@@ -1038,6 +1038,102 @@ func _run() -> void:
 		and manufacturing_detail.text.contains("Missing Wood Plank ×1"),
 		"inventory reconciliation disables a recipe with explicit missing"
 			+ " ingredients: " + manufacturing_detail.text)
+	# The tabs are however many mixing skills the served recipes mention, plus
+	# an All that is not a skill. A local table here would be drawing last
+	# week's window the day a profile adds a skill.
+	var manufacturing_tabs: HBoxContainer = main.get_node(
+		"GameView/ManufacturingPanel/Content/ManufacturingTabs") as HBoxContainer
+	_expect(manufacturing_tabs.get_child_count() == 8,
+		"a tab for All and one per mixing skill the profile serves: %d"
+			% manufacturing_tabs.get_child_count())
+	main.set("manufacturing_skill", "tailoring")
+	main.call("_sync_manufacturing")
+	_expect(manufacturing_list.item_count == 3,
+		"a skill tab narrows the list to that skill: %d"
+			% manufacturing_list.item_count)
+	main.set("manufacturing_skill", "")
+	# Searching finds what a tool is for, not only the tool.
+	var manufacturing_filter: LineEdit = main.get("manufacturing_filter") as LineEdit
+	manufacturing_filter.text = "hatchet"
+	main.call("_sync_manufacturing")
+	_expect(manufacturing_list.item_count == 3,
+		"the search box matches tools as well as results and ingredients: %d"
+			% manufacturing_list.item_count)
+	manufacturing_filter.text = ""
+	main.call("_sync_manufacturing")
+
+	# The quantity box is typed into as well as stepped, so it holds digits
+	# and nothing else, and never leaves the range the server would refuse.
+	var manufacturing_quantity: LineEdit = main.get(
+		"manufacturing_quantity") as LineEdit
+	manufacturing_quantity.text = "12x"
+	main.call("_on_manufacturing_quantity_changed", "12x")
+	_expect(manufacturing_quantity.text == "12",
+		"the quantity box keeps the digits and drops the rest: "
+			+ manufacturing_quantity.text)
+	main.call("_set_manufacturing_quantity", 0)
+	_expect(manufacturing_quantity.text == "1",
+		"the quantity box will not go below one")
+	main.call("_set_manufacturing_quantity", 99999)
+	_expect(manufacturing_quantity.text == "1000",
+		"the quantity box stops at the cap: " + manufacturing_quantity.text)
+
+	# Mixing from storage, and fetching a worn-out tool out of it, are both the
+	# server's to allow: how far away a storage keeper is, is a distance to an
+	# actor this client is never told the role of.
+	var manufacturing_source: CheckButton = main.get(
+		"manufacturing_source") as CheckButton
+	var manufacturing_tools: VBoxContainer = main.get(
+		"manufacturing_tool_rows") as VBoxContainer
+	_expect(manufacturing_source.disabled,
+		"mixing from storage waits to be told storage is in reach")
+	_expect(manufacturing_tools.get_node_or_null("ToolHatchet/Take") != null,
+		"a missing tool offers to be fetched")
+	_expect((manufacturing_tools.get_node("ToolHatchet/Take") as Button).disabled,
+		"and the offer is refused away from storage")
+	app_state_inventory.set("mix_state", {"served": true, "near_storage": true,
+		"running": false, "remaining": 0, "made": 0, "output": ""})
+	main.call("_sync_manufacturing")
+	_expect(not manufacturing_source.disabled
+		and not (manufacturing_tools.get_node("ToolHatchet/Take") as Button).disabled,
+		"the server saying storage is near enables both")
+	manufacturing_source.button_pressed = true
+	app_state_inventory.set("mix_state", {"served": true, "near_storage": false,
+		"running": false, "remaining": 0, "made": 0, "output": ""})
+	main.call("_sync_manufacturing")
+	_expect(manufacturing_source.disabled and not manufacturing_source.button_pressed,
+		"walking away from storage stops the window pointing at a box it"
+			+ " can no longer reach")
+
+	# The queue is worked from the top, one batch at a time, and each batch is
+	# credited with what the server says came out of it.
+	main.set("selected_manufacturing_recipe", 0)
+	main.call("_set_manufacturing_quantity", 3)
+	main.call("_enqueue_selected")
+	main.call("_enqueue_selected")
+	main.set("manufacturing_queue_running", true)
+	main.set("manufacturing_queue_index", 0)
+	main.call("_settle_mix_run", {"output": "Torch", "entry": 0}, 3)
+	var manufacturing_queue: Array = main.get("manufacturing_queue") as Array
+	_expect(manufacturing_queue.size() == 2
+		and int((manufacturing_queue[0] as Dictionary).get("made", 0)) == 3
+		and int(main.get("manufacturing_queue_index")) == 1,
+		"a finished batch is credited to its entry and the queue moves on")
+	# Mix Now cuts a queued batch short. That is not the same as running out,
+	# so the entry keeps its place and is asked for again.
+	main.set("manufacturing_queue_index", 0)
+	(manufacturing_queue[0] as Dictionary)["made"] = 0
+	(main.get("_mix_pending") as Array).append({"output": "Torch", "entry": -1})
+	main.call("_settle_mix_run", {"output": "Torch", "entry": 0}, 1)
+	_expect(int(main.get("manufacturing_queue_index")) == 0
+		and int((manufacturing_queue[0] as Dictionary).get("made", 0)) == 1,
+		"a batch cut short by Mix Now keeps its place, crediting what it made")
+	(main.get("_mix_pending") as Array).clear()
+	main.call("_on_manufacturing_queue_clear_pressed")
+	_expect((main.get("manufacturing_queue") as Array).is_empty()
+		and not bool(main.get("manufacturing_queue_running")),
+		"clearing the queue stops it")
+
 	main.call("_on_manufacturing_close_pressed")
 	app_state_inventory.call("_on_packet", 28,
 		PackedByteArray([1, 10, 0, 20, 0, 7]))

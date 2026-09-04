@@ -86,6 +86,38 @@ func availability(index: int, inventory: Dictionary, known_knowledge: Array[int]
 			reasons.append("Need %d ethereal points" % mana)
 	return {"selection": selection, "reasons": reasons}
 
+## Each tool a recipe calls for, and whether it is to hand.
+##
+## `availability` folds a missing tool into a sentence among the other reasons
+## a recipe is blocked, which is enough to refuse a mix and not enough to offer
+## to fix it. A window that means to put a "take one from storage" button
+## beside a worn-out hatchet needs the tools one at a time.
+##
+## `held` is false when the tool is neither carried nor worn; `ambiguous` when
+## the client cannot honestly say, because the artwork is shared and no name
+## table has arrived to settle it. Those are different answers and a button
+## should only be offered for the first.
+func tool_state(index: int, inventory: Dictionary,
+		names: Dictionary = {}) -> Array[Dictionary]:
+	var states: Array[Dictionary] = []
+	var tools_value: Variant = recipe(index).get("tools", [])
+	if not tools_value is Array:
+		return states
+	for tool_value: Variant in tools_value as Array:
+		if not tool_value is Dictionary:
+			continue
+		var tool: Dictionary = tool_value as Dictionary
+		var slot: int = _inventory_slot_for(inventory, names,
+			str(tool.get("name", "tool")), int(tool.get("imageId", -1)), 1,
+			true, bool(tool.get("ambiguousImage", false)))
+		states.append({
+			"name": str(tool.get("name", "tool")),
+			"imageId": int(tool.get("imageId", -1)),
+			"held": slot >= 0,
+			"ambiguous": slot == AMBIGUOUS,
+		})
+	return states
+
 ## The slot holding enough of one item, by name where the server has named the
 ## slots and by artwork where it has not.
 func _inventory_slot_for(inventory: Dictionary, names: Dictionary, name: String,

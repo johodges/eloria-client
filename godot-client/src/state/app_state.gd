@@ -246,6 +246,11 @@ var attributes: Array[Dictionary] = []
 ## the day a counter moves.
 var counter_layout: Dictionary = {
 	"categories": [], "breakdowns": {}, "achievements": []}
+## The two things the manufacturing window cannot work out for itself: whether
+## storage is close enough to mix from, and how a run is going. `served` stays
+## false until the first state arrives, which is what tells the window it is
+## talking to a server that understands the request at all.
+var mix_state: Dictionary = _empty_mix_state()
 var activity_counters: Dictionary = {}
 var activity_counter_order: Array[String] = []
 ## Protocol diagnostics. Every undecoded packet and every decode failure used
@@ -340,10 +345,15 @@ func _on_connection_state_changed(value: String) -> void:
 		attributes.clear()
 		counter_layout = {
 			"categories": [], "breakdowns": {}, "achievements": []}
+		mix_state = _empty_mix_state()
 		activity_counters.clear()
 		activity_counter_order.clear()
 		invasion_assistant = {"open": false}
 	state_changed.emit(&"connection")
+
+func _empty_mix_state() -> Dictionary:
+	return {"served": false, "near_storage": false, "running": false,
+		"remaining": 0, "made": 0, "output": ""}
 
 func _on_packet(command: int, payload: PackedByteArray) -> void:
 	var event := EloriaProtocol.decode_server(command, payload)
@@ -1011,6 +1021,19 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			for raw_attribute: Variant in event.attributes:
 				attributes.append((raw_attribute as Dictionary).duplicate(true))
 			state_changed.emit(&"attributes")
+		"mix_state":
+			# A finished run keeps the name of what it was making and the
+			# count that came out; the queue reads both before deciding
+			# whether to send the next batch.
+			mix_state = {
+				"served": true,
+				"near_storage": bool(event.get("near_storage", false)),
+				"running": bool(event.get("running", false)),
+				"remaining": int(event.get("remaining", 0)),
+				"made": int(event.get("made", 0)),
+				"output": str(event.get("output", "")),
+			}
+			state_changed.emit(&"mix_state")
 		"counter_layout":
 			counter_layout = {
 				"categories": event.get("categories", []),

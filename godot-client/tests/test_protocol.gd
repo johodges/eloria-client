@@ -35,6 +35,7 @@ func _init() -> void:
 		"inventory_window_v1": EloriaProtocol.ServerMessage.ELORIA_INVENTORY_STATE,
 		"item_detail_v1": EloriaProtocol.ServerMessage.ELORIA_ITEM_DETAIL,
 		"mail_window_v1": EloriaProtocol.ServerMessage.ELORIA_MAIL_STATE,
+		"mix_window_v1": EloriaProtocol.ServerMessage.ELORIA_MIX_STATE,
 		"market_window_v1": EloriaProtocol.ServerMessage.ELORIA_MARKETPLACE_STATE,
 		"merchant_window_v1": EloriaProtocol.ServerMessage.ELORIA_MERCHANT_STATE,
 		"navigation_hud_v1": EloriaProtocol.ServerMessage.ELORIA_NAVIGATION_STATE,
@@ -70,6 +71,9 @@ func _init() -> void:
 		EloriaProtocol.ServerMessage.ELORIA_INVENTORY_NAMES:
 			"0100" + "02" + "44656572204869646500",
 		EloriaProtocol.ServerMessage.ELORIA_MAIL_STATE: "0000",
+		# A run of torches going: two made, three still to go, and
+		# storage close enough to draw from.
+		EloriaProtocol.ServerMessage.ELORIA_MIX_STATE: "010103000200546f72636800",
 		EloriaProtocol.ServerMessage.ELORIA_MARKETPLACE_STATE:
 			"00fa0000000300000000 00".replace(" ", ""),
 		EloriaProtocol.ServerMessage.ELORIA_MERCHANT_STATE:
@@ -134,6 +138,18 @@ func _init() -> void:
 		and EloriaProtocol.actor_command_direction(38) == Vector2i(0, 1)
 		and EloriaProtocol.actor_command_step(40) == Vector2i.ZERO,
 		"a turn command changes facing without moving the actor")
+	# Recipe 7, five of them, out of storage. A recipe rather than the
+	# inventory positions the ingredients sit in, which is what makes
+	# mixing from storage sayable at all.
+	_expect_bytes("mix request fixture", EloriaProtocol.mix_request(7, 5, true),
+		PackedByteArray([200, 6, 0, 7, 0, 5, 0, 1]))
+	_expect_bytes("mix request from inventory fixture",
+		EloriaProtocol.mix_request(0, 1, false),
+		PackedByteArray([200, 6, 0, 0, 0, 1, 0, 0]))
+	# A tool named rather than pointed at: the window never opens storage,
+	# so it never learns which slot the tool is in.
+	_expect_bytes("tool request fixture", EloriaProtocol.tool_request("Hammer"),
+		PackedByteArray([201, 8, 0, 72, 97, 109, 109, 101, 114, 0]))
 	_expect_bytes("chat fixture", EloriaProtocol.chat("Hello"),
 		PackedByteArray([0, 7, 0, 72, 101, 108, 108, 111, 0]))
 	_expect_bytes("active channel fixture", EloriaProtocol.set_active_channel(1),

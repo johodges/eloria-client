@@ -30,7 +30,10 @@ enum ClientMessage {
 	GET_STORAGE_CATEGORY = 44, DEPOSIT_ITEM = 45,
 	WITHDRAW_ITEM = 46, LOOK_AT_STORAGE_ITEM = 47, POPUP_REPLY = 50,
 	PING_RESPONSE = 60, SET_ACTIVE_CHANNEL = 61, LOG_IN = 140,
-	CREATE_CHAR = 141, GET_DATE = 230, GET_TIME = 231
+	CREATE_CHAR = 141, GET_DATE = 230, GET_TIME = 231,
+	# Eternal Lands spoke for everything below 200, so what this client asks
+	# for that Eternal Lands never had is numbered from there up.
+	ELORIA_MIX_REQUEST = 200, ELORIA_TOOL_REQUEST = 201
 }
 
 enum ServerMessage {
@@ -85,6 +88,7 @@ enum ServerMessage {
 	# Eternal Lands, as 249-253 are YOU_DONT_EXIST and the log-in replies.
 	ELORIA_PERK_CATALOG = 215, ELORIA_ATTRIBUTE_STATE = 216,
 	ELORIA_COUNTER_LAYOUT = 217,
+	ELORIA_MIX_STATE = 218,
 	ADD_ACTOR_ANIMATION = 89,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
@@ -176,6 +180,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"inventory_window_v1",
 	"item_detail_v1",
 	"mail_window_v1",
+	"mix_window_v1",
 	"market_window_v1",
 	"merchant_window_v1",
 	"navigation_hud_v1",
@@ -433,6 +438,28 @@ static func drop_inventory_item(slot: int, quantity: int) -> PackedByteArray:
 static func get_knowledge_info(index: int) -> PackedByteArray:
 	return encode(ClientMessage.GET_KNOWLEDGE_INFO,
 		PackedByteArray([index & 0xff, (index >> 8) & 0xff]))
+
+## Mix by recipe rather than by the inventory positions the ingredients sit
+## in. `MANUFACTURE_THIS` can only name positions, which makes mixing out of
+## storage unsayable in it: the materials are not in any inventory position.
+static func mix_request(recipe_index: int, wanted: int,
+		from_storage: bool) -> PackedByteArray:
+	var payload := PackedByteArray()
+	payload.resize(5)
+	payload.encode_u16(0, maxi(0, recipe_index))
+	payload.encode_u16(2, clampi(wanted, 1, 65535))
+	payload[4] = 1 if from_storage else 0
+	return encode(ClientMessage.ELORIA_MIX_REQUEST, payload)
+
+## Take one of a recipe's tools out of storage. Named rather than pointed at,
+## because the window knows a tool by name and never opens storage to learn
+## which slot it is in. Tools wear out, so this is the difference between
+## replacing a hatchet and leaving the window to go and find one.
+static func tool_request(name: String) -> PackedByteArray:
+	var payload := PackedByteArray()
+	payload.append_array(name.to_utf8_buffer())
+	payload.append(0)
+	return encode(ClientMessage.ELORIA_TOOL_REQUEST, payload)
 
 static func manufacture(ingredients: Array[Dictionary], wanted: int = 1) -> PackedByteArray:
 	# Legacy mix_handler(): count:u8, repeated slot:u8 + quantity:u16le,
@@ -942,6 +969,8 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return decode_attribute_state(payload)
 		ServerMessage.ELORIA_COUNTER_LAYOUT:
 			return decode_counter_layout(payload)
+		ServerMessage.ELORIA_MIX_STATE:
+			return decode_mix_state(payload)
 		ServerMessage.ELORIA_PERK_CATALOG:
 			return decode_perk_catalog(payload)
 		ServerMessage.ELORIA_WORN_SLOTS:
@@ -1054,6 +1083,35 @@ static func decode_experience_state(payload: PackedByteArray) -> Dictionary:
 ## None of the arrangement is decided here - a client grouping seventeen
 ## totals by a table of its own would be drawing last week's window the day
 ## a counter moves.
+## What the manufacturing window cannot work out for itself.
+##
+## Whether storage is close enough to mix from is a distance to an actor the
+## client is never told the role of, so the window would have to guess, and a
+## guess greys the control out in the one place a player wanted it.
+##
+## The rest describes a run. While one is going `running` is set and
+## `remaining` counts down; when it stops, one last state arrives with
+## `running` false, the name of what was being made, and how many actually
+## came out. That last part is what a queue moves on: "the run stopped" alone
+## cannot tell six torches from two, and a run that ends early for want of
+## materials ends silently as far as a watched inventory is concerned.
+static func decode_mix_state(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 7:
+		return {"type": "invalid", "error": "mix_state_length"}
+	var output := ""
+	for index: int in range(6, payload.size()):
+		if payload[index] == 0:
+			break
+		output += char(payload[index])
+	return {
+		"type": "mix_state",
+		"near_storage": payload[0] != 0,
+		"running": payload[1] != 0,
+		"remaining": payload.decode_u16(2),
+		"made": payload.decode_u16(4),
+		"output": output,
+	}
+
 static func decode_counter_layout(payload: PackedByteArray) -> Dictionary:
 	if payload.size() < 3:
 		return {"type": "invalid", "error": "counter_layout_length"}
