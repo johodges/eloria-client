@@ -21,6 +21,17 @@ const FACT_COLOUR := "#8fd0c8"
 
 ## A page the player can be looking at. Bookmarks are these, written down.
 const PAGE_INDEX := "index"
+
+#: A glyph per category for the browse list. A category with none gets a dot,
+#: which is a plainer answer than an icon that means something else.
+const CATEGORY_GLYPHS := {
+	"world": "\u25c9", "skills": "\u25a4", "combat": "\u2694",
+	"perks": "\u2606", "gathering": "\u2740", "commerce": "\u2696",
+	"crafting": "\u2692", "manufacturing": "\u2692", "engineering": "\u2699",
+	"tailoring": "\u2702", "alchemy": "\u2697", "potions": "\u2697",
+	"summoning": "\u2728", "spells": "\u2726", "books": "\u25a4",
+	"maps": "\u25c9", "commands": ">_",
+}
 ## How far Back can walk. Long enough for any real trail through the pages,
 ## short enough that a session cannot grow it without bound.
 const HISTORY_LIMIT := 64
@@ -36,6 +47,14 @@ var index_button: Button
 var search_row: HBoxContainer
 var search_edit: LineEdit
 var entry_body: RichTextLabel
+var bookmarks_button: Button
+var browse_list: VBoxContainer
+var entry_page: VBoxContainer
+var page_contents: VBoxContainer
+var related_list: VBoxContainer
+var content_scroll: ScrollContainer
+#: Section heading by title, so "On this page" can scroll to one.
+var _anchors: Dictionary = {}
 var status_line: Label
 var menu: PopupMenu
 
@@ -559,14 +578,29 @@ func _render() -> void:
 			_page["page"] = page_number
 			entry_body.text = _render_category(category, page_number, pages)
 		"entry":
-			entry_body.text = _render_entry(str(_page.get("category", "")),
+			_render_entry_page(str(_page.get("category", "")),
 				str(_page.get("id", "")))
 		"search":
 			entry_body.text = _render_search(str(_page.get("query", "")))
+		"bookmarks":
+			entry_body.text = _render_bookmarks()
 		_:
 			entry_body.text = _render_index()
-	entry_body.scroll_to_line(0)
+	# One of the two shows at a time: a page is built from controls, and the
+	# lists are a document the renderer already knows how to draw.
+	var built: bool = kind == "entry"
+	entry_page.visible = built
+	entry_body.visible = not built
+	if not built:
+		_clear(entry_page)
+		_clear(page_contents)
+		_clear(related_list)
+		_anchors.clear()
+	_sync_browse()
+	if content_scroll != null:
+		content_scroll.scroll_vertical = 0
 	back_button.disabled = _history.is_empty()
+	bookmarks_button.disabled = _bookmarks.is_empty()
 	index_button.disabled = kind == PAGE_INDEX
 	page_label.text = "Page %d/%d" % [page_number + 1, pages] if pages > 1 else ""
 	page_label.visible = pages > 1
@@ -644,6 +678,19 @@ func _render_entry(category_id: String, entry_id: String) -> String:
 		"Back To %s Index" % str(category.get("title", ""))))
 	return "\n".join(lines)
 
+## The pages that have been kept, as a page of their own so that Back works
+## out of it like anywhere else.
+func _render_bookmarks() -> String:
+	var lines: Array[String] = [_title_block("BOOKMARKS")]
+	if _bookmarks.is_empty():
+		lines.append("[color=%s]Nothing kept yet. Right-click a page to keep it.[/color]"
+			% NOTE_COLOUR)
+		return "\n".join(lines)
+	for raw: Variant in _bookmarks:
+		var mark: Dictionary = raw as Dictionary
+		lines.append(_link(str(mark.get("key", "")), str(mark.get("title", ""))))
+	return "\n".join(lines)
+
 func _render_search(query: String) -> String:
 	var lines: Array[String] = [_title_block("SEARCH")]
 	var found: Array[Dictionary] = matches(query)
@@ -686,69 +733,142 @@ static func _escape(text: String) -> String:
 
 # --- the window --------------------------------------------------------------
 
+## Three panes: what there is to read, what is being read, and where to go
+## from here.
+##
+## The window was one scrolling document with a row of navigation buttons over
+## it, which meant the only way to find anything was to walk the index and the
+## only way back was the Back button. The categories are always on screen now,
+## a page says what is on it, and a page says what it is next to.
+##
+## The document model underneath is unchanged - the same categories, the same
+## generated halves, the same search and the same bookmarks. What changed is
+## that an entry is built from controls rather than written as bbcode, because
+## a fact table with an icon in every row is a table and not a paragraph.
 func _build() -> void:
+	var shell := VBoxContainer.new()
+	shell.name = "Shell"
+	shell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	shell.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	add_child(shell)
+
 	navigation = HBoxContainer.new()
 	navigation.name = "EncyclopediaNavigation"
-	add_child(navigation)
-	back_button = _navigation_button("EncyclopediaBack", "Back",
+	shell.add_child(navigation)
+	search_row = navigation
+	search_edit = LineEdit.new()
+	search_edit.name = "EncyclopediaSearch"
+	search_edit.placeholder_text = "Search the encyclopedia…"
+	search_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	search_edit.text_submitted.connect(_on_search_submitted)
+	navigation.add_child(search_edit)
+	var search_button := Button.new()
+	search_button.name = "EncyclopediaSearchGo"
+	search_button.text = "Find"
+	search_button.focus_mode = Control.FOCUS_NONE
+	search_button.pressed.connect(_on_search_pressed)
+	navigation.add_child(search_button)
+	back_button = _navigation_button("EncyclopediaBack", "← Back",
 		"Back to the page before this one")
 	back_button.pressed.connect(go_back)
-	page_label = Label.new()
-	page_label.name = "EncyclopediaPage"
-	navigation.add_child(page_label)
-	var spacer := Control.new()
-	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	navigation.add_child(spacer)
+	index_button = _navigation_button("EncyclopediaIndex", "Index",
+		"Back to the list of categories")
+	index_button.pressed.connect(show_index)
+	bookmarks_button = _navigation_button("EncyclopediaBookmarks", "☆ Bookmarks",
+		"Pages you have kept")
+	bookmarks_button.pressed.connect(_on_bookmarks_pressed)
+	# Paging survives inside a category, which can hold a hundred recipes.
 	previous_button = _navigation_button("EncyclopediaPrevious", "<<<",
 		"The page before this one")
 	previous_button.pressed.connect(_on_previous_pressed)
 	next_button = _navigation_button("EncyclopediaNext", ">>>",
 		"The page after this one")
 	next_button.pressed.connect(_on_next_pressed)
-	index_button = _navigation_button("EncyclopediaIndex", "Index",
-		"Back to the list of categories")
-	index_button.pressed.connect(show_index)
+	page_label = Label.new()
+	page_label.name = "EncyclopediaPage"
+	navigation.add_child(page_label)
 
-	search_row = HBoxContainer.new()
-	search_row.name = "EncyclopediaSearchRow"
-	search_row.hide()
-	add_child(search_row)
-	search_edit = LineEdit.new()
-	search_edit.name = "EncyclopediaSearch"
-	search_edit.placeholder_text = "Search the encyclopedia"
-	search_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	search_edit.text_submitted.connect(_on_search_submitted)
-	search_row.add_child(search_edit)
-	var search_button := Button.new()
-	search_button.name = "EncyclopediaSearchGo"
-	search_button.text = "Find"
-	search_button.pressed.connect(_on_search_pressed)
-	search_row.add_child(search_button)
-	var hide_button := Button.new()
-	hide_button.name = "EncyclopediaSearchHide"
-	hide_button.text = "x"
-	hide_button.pressed.connect(search_row.hide)
-	search_row.add_child(hide_button)
+	var panes := HBoxContainer.new()
+	panes.name = "Panes"
+	panes.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	panes.add_theme_constant_override("separation", 12)
+	shell.add_child(panes)
 
+	# Left: everything there is to read, always on screen.
+	var browse_column := VBoxContainer.new()
+	browse_column.name = "Browse"
+	browse_column.custom_minimum_size = Vector2(190, 0)
+	panes.add_child(browse_column)
+	browse_column.add_child(_shell_heading("BROWSE"))
+	var browse_scroll := ScrollContainer.new()
+	browse_scroll.name = "BrowseScroll"
+	browse_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	browse_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	browse_column.add_child(browse_scroll)
+	browse_list = VBoxContainer.new()
+	browse_list.name = "BrowseList"
+	browse_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	browse_scroll.add_child(browse_list)
+
+	# Middle: either a built page or, for the lists, the document renderer
+	# that already knows how to draw them.
+	var middle := ScrollContainer.new()
+	middle.name = "Content"
+	middle.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	middle.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	middle.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	panes.add_child(middle)
+	content_scroll = middle
+	var middle_column := VBoxContainer.new()
+	middle_column.name = "ContentColumn"
+	middle_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	middle.add_child(middle_column)
+	entry_page = VBoxContainer.new()
+	entry_page.name = "EntryPage"
+	entry_page.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	middle_column.add_child(entry_page)
 	entry_body = RichTextLabel.new()
 	entry_body.name = "EntryBody"
 	entry_body.bbcode_enabled = true
-	entry_body.scroll_active = true
+	entry_body.fit_content = true
 	entry_body.selection_enabled = true
-	entry_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	entry_body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	entry_body.meta_clicked.connect(_on_meta_clicked)
 	entry_body.gui_input.connect(_on_body_gui_input)
-	add_child(entry_body)
+	middle_column.add_child(entry_body)
+
+	# Right: what is on this page, and what sits beside it.
+	var aside := VBoxContainer.new()
+	aside.name = "Aside"
+	aside.custom_minimum_size = Vector2(200, 0)
+	panes.add_child(aside)
+	aside.add_child(_shell_heading("ON THIS PAGE"))
+	page_contents = VBoxContainer.new()
+	page_contents.name = "OnThisPage"
+	aside.add_child(page_contents)
+	aside.add_child(_shell_heading("RELATED"))
+	related_list = VBoxContainer.new()
+	related_list.name = "Related"
+	aside.add_child(related_list)
 
 	status_line = Label.new()
 	status_line.name = "EncyclopediaStatus"
+	status_line.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	status_line.text = "Right-click for search and bookmark options"
-	add_child(status_line)
+	status_line.modulate = Color(1, 1, 1, 0.55)
+	shell.add_child(status_line)
 
 	menu = PopupMenu.new()
 	menu.name = "EncyclopediaMenu"
 	menu.id_pressed.connect(_on_menu_id_pressed)
 	add_child(menu)
+
+static func _shell_heading(text: String) -> Label:
+	var label := Label.new()
+	label.name = "Heading"
+	label.text = text
+	label.add_theme_color_override("font_color", Color(0.91, 0.71, 0.32))
+	return label
 
 func _navigation_button(node_name: String, label: String, tooltip: String) -> Button:
 	var button := Button.new()
@@ -758,6 +878,224 @@ func _navigation_button(node_name: String, label: String, tooltip: String) -> Bu
 	button.focus_mode = Control.FOCUS_NONE
 	navigation.add_child(button)
 	return button
+
+func _on_bookmarks_pressed() -> void:
+	# Bookmarks are a search over what has been kept, so they arrive as a page
+	# like any other and Back works out of them.
+	_navigate({"kind": "bookmarks"})
+
+## The category list, rebuilt whenever the document is. A category the
+## document does not have is not drawn, so an empty shelf shows as an empty
+## shelf rather than as a link that goes nowhere.
+func _sync_browse() -> void:
+	if browse_list == null:
+		return
+	for child: Node in browse_list.get_children():
+		browse_list.remove_child(child)
+		child.queue_free()
+	var here: String = str(_page.get("category", _page.get("id", "")))
+	for category: Dictionary in _categories:
+		var id: String = str(category.get("id", ""))
+		var row := Button.new()
+		row.name = "Browse%s" % _slug(id)
+		row.text = "%s  %s" % [CATEGORY_GLYPHS.get(id, "•"),
+			str(category.get("title", id))]
+		row.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		row.focus_mode = Control.FOCUS_NONE
+		row.toggle_mode = true
+		row.button_pressed = id == here
+		var count: int = (category.get("entries", []) as Array).size()
+		row.tooltip_text = ("%s - nothing written yet" % str(category.get("title", id))
+			if count == 0 else "%s - %d pages" % [str(category.get("title", id)), count])
+		row.disabled = count == 0
+		row.pressed.connect(open_category.bind(id, 0))
+		browse_list.add_child(row)
+
+## One page, built from controls: its title, where it sits, what it says, and
+## the sections it is made of.
+func _render_entry_page(category_id: String, entry_id: String) -> void:
+	var entry: Dictionary = _entry(category_id, entry_id)
+	var category: Dictionary = _category(category_id)
+	_clear(entry_page)
+	_clear(page_contents)
+	_clear(related_list)
+	_anchors.clear()
+	if entry.is_empty():
+		entry_page.add_child(_shell_note("That page is not in the encyclopedia."))
+		return
+
+	var title := Label.new()
+	title.name = "Title"
+	title.text = str(entry.get("title", ""))
+	title.add_theme_font_size_override("font_size", 24)
+	title.add_theme_color_override("font_color", Color(0.91, 0.71, 0.32))
+	entry_page.add_child(title)
+	entry_page.add_child(_breadcrumbs(category, entry))
+	var summary: String = str(entry.get("summary", ""))
+	if not summary.is_empty():
+		entry_page.add_child(_shell_note(summary))
+
+	for section: Dictionary in _entry_sections(entry):
+		var heading: Label = _shell_heading(str(section.get("title", "")).to_upper())
+		entry_page.add_child(heading)
+		_anchors[str(section.get("title", ""))] = heading
+		var kind: String = str(section.get("kind", "prose"))
+		if kind == "facts":
+			entry_page.add_child(_fact_table(section.get("rows", []) as Array))
+		else:
+			entry_page.add_child(_shell_body(str(section.get("text", ""))))
+		_add_anchor(str(section.get("title", "")))
+
+	for related: Dictionary in _related_to(category_id, entry):
+		var link := Button.new()
+		link.name = "Related%s" % _slug(str(related.get("id", "")))
+		link.text = str(related.get("title", ""))
+		link.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		link.focus_mode = Control.FOCUS_NONE
+		link.flat = true
+		link.pressed.connect(open_entry.bind(str(related.get("category", "")),
+			str(related.get("id", ""))))
+		related_list.add_child(link)
+
+func _add_anchor(title: String) -> void:
+	if title.is_empty():
+		return
+	var link := Button.new()
+	link.name = "Anchor%s" % _slug(title)
+	link.text = title
+	link.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	link.focus_mode = Control.FOCUS_NONE
+	link.flat = true
+	link.pressed.connect(_scroll_to_section.bind(title))
+	page_contents.add_child(link)
+
+func _scroll_to_section(title: String) -> void:
+	var target: Variant = _anchors.get(title)
+	if target is Control and content_scroll != null:
+		content_scroll.ensure_control_visible(target as Control)
+
+## Where this page sits, as the trail that leads to it.
+func _breadcrumbs(category: Dictionary, entry: Dictionary) -> Control:
+	var row := HBoxContainer.new()
+	row.name = "Breadcrumbs"
+	var root := Button.new()
+	root.name = "CrumbIndex"
+	root.text = "Encyclopedia"
+	root.flat = true
+	root.focus_mode = Control.FOCUS_NONE
+	root.pressed.connect(show_index)
+	row.add_child(root)
+	row.add_child(_shell_note("/"))
+	var here := Button.new()
+	here.name = "CrumbCategory"
+	here.text = str(category.get("title", ""))
+	here.flat = true
+	here.focus_mode = Control.FOCUS_NONE
+	here.pressed.connect(open_category.bind(str(category.get("id", "")), 0))
+	row.add_child(here)
+	return row
+
+## A section's rows, each a label and a value. The icon column is drawn and
+## left empty: the art for it does not exist yet, and a row that shifted
+## sideways the day it arrives would move every page at once.
+func _fact_table(rows: Array) -> Control:
+	var table := VBoxContainer.new()
+	table.name = "Facts"
+	table.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	for raw: Variant in rows:
+		var pair: Array = raw as Array
+		if pair.size() < 2:
+			continue
+		var line := HBoxContainer.new()
+		line.name = "Fact"
+		var icon := Control.new()
+		icon.name = "Icon"
+		icon.custom_minimum_size = Vector2(26, 0)
+		line.add_child(icon)
+		var label := Label.new()
+		label.name = "Label"
+		label.text = str(pair[0])
+		label.custom_minimum_size = Vector2(170, 0)
+		line.add_child(label)
+		var value := Label.new()
+		value.name = "Value"
+		value.text = str(pair[1])
+		value.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		value.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		line.add_child(value)
+		table.add_child(line)
+	return table
+
+static func _shell_body(text: String) -> Label:
+	var label := Label.new()
+	label.name = "Body"
+	label.text = text
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return label
+
+static func _shell_note(text: String) -> Label:
+	var label := _shell_body(text)
+	label.name = "Note"
+	label.modulate = Color(1, 1, 1, 0.72)
+	return label
+
+static func _clear(host: Node) -> void:
+	if host == null:
+		return
+	for child: Node in host.get_children():
+		host.remove_child(child)
+		child.queue_free()
+
+## The sections a page is made of.
+##
+## An entry may state them, which is how the generated pages carry a table of
+## tiers or of ingredients. One that does not is folded into two: what it says
+## and what is true of it, which is the shape every written page already has.
+func _entry_sections(entry: Dictionary) -> Array[Dictionary]:
+	var stated: Array = entry.get("sections", []) as Array
+	if not stated.is_empty():
+		var out: Array[Dictionary] = []
+		for raw: Variant in stated:
+			out.append(raw as Dictionary)
+		return out
+	var sections: Array[Dictionary] = []
+	var body: String = str(entry.get("body", ""))
+	if not body.is_empty():
+		sections.append({"title": "Overview", "kind": "prose", "text": body})
+	var facts: Array = entry.get("facts", []) as Array
+	if not facts.is_empty():
+		sections.append({"title": "At a glance", "kind": "facts", "rows": facts})
+	return sections
+
+## What sits beside this page: whatever it names, then its neighbours in the
+## same category. Named first because a page that says what it relates to
+## knows better than the order it happens to sit in.
+func _related_to(category_id: String, entry: Dictionary) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	var seen := {str(entry.get("id", "")): true}
+	for raw: Variant in entry.get("related", []) as Array:
+		var found: Dictionary = _find_anywhere(str(raw))
+		if not found.is_empty() and not seen.has(str(found.get("id", ""))):
+			seen[str(found.get("id", ""))] = true
+			out.append(found)
+	if out.size() >= 3:
+		return out
+	for sibling: Variant in _category(category_id).get("entries", []) as Array:
+		if out.size() >= 3:
+			break
+		var page: Dictionary = sibling as Dictionary
+		if seen.has(str(page.get("id", ""))):
+			continue
+		seen[str(page.get("id", ""))] = true
+		out.append(page)
+	return out
+
+func _find_anywhere(entry_id: String) -> Dictionary:
+	for page: Dictionary in _flat:
+		if str(page.get("id", "")) == entry_id:
+			return page
+	return {}
 
 func _on_previous_pressed() -> void:
 	if str(_page.get("kind", "")) == "category":

@@ -26,7 +26,9 @@ func _run() -> void:
 	var window: Control = main.get("reference_window") as Control
 	var panel: PanelContainer = window.get_node("ReferenceWindow") as PanelContainer
 	var view: EncyclopediaView = window.get("encyclopedia") as EncyclopediaView
-	var body: RichTextLabel = view.get_node("EntryBody") as RichTextLabel
+	# The document renderer sits in the middle pane now, so it is reached
+	# through the view rather than by a path off the root.
+	var body: RichTextLabel = view.get("entry_body") as RichTextLabel
 	var buttons: String = "GameView/Quickbar/QuickRows/Buttons/"
 	var icon: Button = main.get_node(buttons + "EncyclopediaButton") as Button
 	var walk: Button = main.get_node(buttons + "WalkButton") as Button
@@ -80,9 +82,12 @@ func _run() -> void:
 	var recipe_pages: Array[String] = []
 	for id: String in view.entry_ids_in("alchemy"):
 		view.open_entry("alchemy", id)
-		recipe_pages.append(body.get_parsed_text())
-		_expect(body.get_parsed_text().contains("Back To Alchemy Index"),
-			"%s offers the way back to its own index" % id)
+		recipe_pages.append(_page_text(view))
+		# A built page says where it sits rather than ending in a link back:
+		# the trail is at the top, and the category is on screen the whole
+		# time in the browse pane beside it.
+		_expect(_crumb_text(view).contains("Alchemy"),
+			"%s says which category it sits in" % id)
 	_expect(alchemy > 0 and recipe_pages.size() == alchemy,
 		"one page per alchemy recipe: %d pages for %d recipes"
 			% [recipe_pages.size(), alchemy])
@@ -90,11 +95,13 @@ func _run() -> void:
 		var recipe: Dictionary = catalogue.recipe(index)
 		if str(recipe.get("skill", "")) != "alchemy":
 			continue
+		# A fact is a label cell and a value cell now rather than one line of
+		# "label: value", so each half is looked for on its own.
 		var needles: Array[String] = [
 			str(recipe.get("output", "")),
-			"Recommended Alchemy level: %d" % int(recipe.get("level", 0)),
-			"Alchemy experience given: %d" % int(recipe.get("experience", 0)),
-			"Food subtracted: %d" % int(recipe.get("food", 0))]
+			"Recommended Alchemy level", str(int(recipe.get("level", 0))),
+			"Alchemy experience given", str(int(recipe.get("experience", 0))),
+			"Food subtracted", str(int(recipe.get("food", 0)))]
 		var ingredients: Variant = recipe.get("ingredients", [])
 		if ingredients is Array:
 			for raw: Variant in ingredients as Array:
@@ -122,16 +129,16 @@ func _run() -> void:
 		var made: String = str(recipe.get("output", ""))
 		view.open_page_key("entry:%s:%s" % [_category_for(
 			str(recipe.get("skill", ""))), _slug(made)])
-		_expect(body.text.contains("entry:books:%s" % _slug(book)),
-			"%s links to the book it needs" % made)
+		_expect(_page_text(view).contains(book),
+			"%s names the book it needs" % made)
 		view.open_entry("books", _slug(book))
-		_expect(body.get_parsed_text().contains(made),
+		_expect(_page_text(view).contains(made),
 			"and %s lists %s among what it opens" % [book, made])
 	else:
 		var books: Array[String] = _books(main)
 		if _expect(not books.is_empty(), "the client has a book list"):
 			view.open_entry("books", _slug(books[0]))
-			_expect(body.get_parsed_text().contains(
+			_expect(_page_text(view).contains(
 				"Nothing the client has a recipe for"),
 				"a book no recipe names says so rather than inventing one")
 
@@ -189,8 +196,10 @@ func _run() -> void:
 	# The right-click menu, which is what the status line points at.
 	_expect(view.status_line.text.contains("Right-click"),
 		"the window says where the search and the bookmarks are")
-	_expect(not view.search_row.visible,
-		"and the search field stays out of the way until it is asked for")
+	_expect(view.search_edit != null and view.search_edit.visible,
+		"and the search field is on screen rather than waiting to be summoned")
+	_expect(view.browse_list != null and view.browse_list.get_child_count() > 0,
+		"the categories are on screen the whole time, not only on the index")
 	view.call("_on_menu_id_pressed", 0)
 	_expect(view.search_row.visible, "the menu's search entry brings it up")
 	view.call("_on_search_submitted", "sigils")
@@ -290,6 +299,29 @@ static func _slug(text: String) -> String:
 static func _region(button: Button) -> Rect2:
 	var texture: AtlasTexture = button.icon as AtlasTexture
 	return texture.region if texture != null else Rect2()
+
+## Everything a built page reads, labels and values run together.
+func _page_text(view) -> String:
+	return _gather(view.get("entry_page") as Node)
+
+## The breadcrumb trail at the top of a built page.
+func _crumb_text(view) -> String:
+	var page: Node = view.get("entry_page") as Node
+	if page == null:
+		return ""
+	return _gather(page.get_node_or_null("Breadcrumbs"))
+
+func _gather(host: Node) -> String:
+	if host == null:
+		return ""
+	var text: String = ""
+	if host is Label:
+		text += " " + (host as Label).text
+	elif host is Button:
+		text += " " + (host as Button).text
+	for child: Node in host.get_children():
+		text += _gather(child)
+	return text
 
 static func _key(keycode: Key, with_control: bool) -> InputEventKey:
 	var event := InputEventKey.new()
