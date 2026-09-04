@@ -42,6 +42,10 @@ var server_tile: Vector2i = Vector2i.ZERO
 var label: String = ""
 var detail: String = ""
 var model_id: String = ""
+## The ring as built, before any ground was laid under it. Kept so an object
+## re-draped after a map's walk surface arrives is shaped by the ground it
+## stands on rather than by whatever it was draped over before.
+var _ring_flat: Mesh = null
 
 func configure(dto: Dictionary, adapter: CoordinateAdapter,
 		catalog: Dictionary = {}) -> void:
@@ -61,6 +65,7 @@ func is_harvestable() -> bool:
 
 func set_surface_height(height: float) -> void:
 	global_position.y = height + 0.05
+	_drape_ring()
 
 ## Marks the node the player is currently harvesting. The ring is hidden while
 ## an object is merely standing there, so this is the only thing that draws it
@@ -75,6 +80,23 @@ func set_active(active: bool) -> void:
 		return
 	material.albedo_color = ACTIVE_COLOUR if active else _marker_colour()
 	material.albedo_color.a = 0.75
+	_drape_ring()
+
+## Lay the ring over the ground it is drawn on.
+##
+## The ring is a flat circle a metre and a half across, and the ground under it
+## is not flat: on a region such as Whitehorn Range most of it disappeared into
+## the slope, leaving a crescent that grew and shrank as the camera moved past.
+## Draping it holds the whole circle the same height over the ground all the
+## way round, so what is drawn stays the ring the node is marked with.
+func _drape_ring() -> void:
+	var ring: MeshInstance3D = get_node_or_null("Ring") as MeshInstance3D
+	if not is_instance_valid(ring) or not ring.visible:
+		return
+	if _ring_flat == null:
+		_ring_flat = ring.mesh
+	var draped: ArrayMesh = GroundDrape.drape(ring, _ring_flat)
+	ring.mesh = _ring_flat if draped == null else draped
 
 func _marker_colour() -> Color:
 	return HARVEST_COLOUR if is_harvestable() else INTERACTIVE_COLOUR

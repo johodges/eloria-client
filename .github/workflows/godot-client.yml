@@ -85,6 +85,8 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_ranging_window.gd
       - name: Runtime cost fixtures
         run: godot --headless --path godot-client --script res://tests/test_runtime_performance.gd
+      - name: Ground marker draping fixtures
+        run: godot --headless --path godot-client --script res://tests/test_ground_drape.gd
       - name: Main scene smoke test
         run: |
           godot --headless --path godot-client --quit-after 3 2>&1 | tee main-scene.log
@@ -335,6 +337,35 @@ jobs:
         with:
           name: rendered-sunmane-steppe
           path: godot-client/test-artifacts/sunmane-steppe
+          if-no-files-found: error
+
+  rendered-ground-markers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: barichello/godot-ci:4.7.2
+    env:
+      ELORIA_ARTIFACT_DIR: ${{ github.workspace }}/godot-client/test-artifacts/ground-markers
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install virtual display and software rendering
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends             xvfb xauth libgl1-mesa-dri libfontconfig1 libxcursor1 libxinerama1             libxrandr2 libxi6 libxkbcommon0 libasound2t64 libpulse0 libudev1
+      - name: Import project
+        run: godot --headless --path godot-client --editor --quit
+      - name: Walk a selected actor across Whitehorn Range
+        run: |
+          mkdir -p "$ELORIA_ARTIFACT_DIR"
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_ground_markers.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/ground-markers.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|Unable to create DisplayServer|all display drivers failed|FAIL" "$ELORIA_ARTIFACT_DIR/ground-markers.log"
+          test -s "$ELORIA_ARTIFACT_DIR/marker_midwalk.png"
+      - name: Upload ground marker rendered evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rendered-ground-markers
+          path: godot-client/test-artifacts/ground-markers
           if-no-files-found: error
 
   rendered-server-session:
