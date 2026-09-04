@@ -379,12 +379,7 @@
       "animationMap": "res://data/animations/luminous.json",
       "culture": "ssarathi",
       "gender": "female",
-      "hairStyles": [
-        "res://assets/actors/native/hair/buzzed_female.glb",
-        "res://assets/actors/native/hair/parted_female.glb",
-        "res://assets/actors/native/hair/long_female.glb",
-        "res://assets/actors/native/hair/buns_female.glb"
-      ],
+      "hairStyles": [],
       "boneAliases": {
         "head": "Head"
       },
@@ -415,12 +410,7 @@
       "animationMap": "res://data/animations/luminous.json",
       "culture": "ssarathi",
       "gender": "male",
-      "hairStyles": [
-        "res://assets/actors/native/hair/buzzed_male.glb",
-        "res://assets/actors/native/hair/parted_male.glb",
-        "res://assets/actors/native/hair/long_male.glb",
-        "res://assets/actors/native/hair/buns_male.glb"
-      ],
+      "hairStyles": [],
       "boneAliases": {
         "head": "Head"
       },

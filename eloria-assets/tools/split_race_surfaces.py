@@ -36,7 +36,7 @@ RACES = (TOOLS.parent.parent / "godot-client" / "assets" / "actors"
          / "native" / "races")
 
 CLASSES = ("body", "eyes", "hair", "wardrobe_shirt", "wardrobe_pants",
-           "wardrobe_boots")
+           "wardrobe_boots", "skin_accent")
 EYE_COLOUR_OUTLIER_PERCENT = 8
 ISLAND_MAX_FACES = 100
 CLASS_COLOURS = {
@@ -804,6 +804,16 @@ def classify(positions, uvs, indices, texture: Image.Image,
         dist = np.linalg.norm(centroids - (a + np.outer(t, unit)), axis=1)
         min_dist = dist if min_dist is None else np.minimum(min_dist, dist)
     labels[min_dist > 0.30] = "body"
+    # A customisable "secondary skin" surface for whichever body actually
+    # has one: distinct from the generic 0.30 m safety net above so that
+    # the two other bodies which cross THAT cutoff by a little (Mycelari
+    # Female tops out at 0.351 m, Whitehorn Votary Female at 0.318 m) --
+    # already "body" before this ran, so unaffected by it -- do not get
+    # promoted to a whole new mesh node over a handful of stray faces.
+    # 0.40 m sits clear of both while Ssarathi's tail, the only body that
+    # actually reaches this, still clears it almost everywhere (measured
+    # directly: 0.50-0.55 m at its own furthest point).
+    labels[min_dist > 0.40] = "skin_accent"
 
     return faces, labels
 
@@ -860,28 +870,31 @@ def reclassify_surfaces(document, binary) -> str:
     # -- so build the missing node the same way the fresh-split path
     # would have, from "body"'s own primitive (attributes and material
     # are shared across every class in this split; see the module
-    # docstring), rather than treating it as an error.
-    if orphaned - {"eyes"}:
+    # docstring), rather than treating it as an error. "skin_accent" is
+    # the same situation for a body that never had a tail (or anything
+    # else classify()'s tail exclusion catches) at its original split.
+    ON_DEMAND_CLASSES = {"eyes", "skin_accent"}
+    if orphaned - ON_DEMAND_CLASSES:
         raise RuntimeError("reclassify_surfaces produced label(s) %s with "
                             "no matching node to hold them"
-                            % sorted(orphaned - {"eyes"}))
-    if "eyes" in orphaned:
+                            % sorted(orphaned - ON_DEMAND_CLASSES))
+    for name in orphaned & ON_DEMAND_CLASSES:
         body_node = by_name["body"]
         body_prim = document["meshes"][body_node["mesh"]]["primitives"][0]
         body_index = next(i for i, n in enumerate(document["nodes"])
                           if n is body_node)
         parent = next(i for i, n in enumerate(document["nodes"])
                       if body_index in n.get("children", []))
-        document["meshes"].append({"name": "eyes", "primitives": [{
+        document["meshes"].append({"name": name, "primitives": [{
             "attributes": dict(body_prim["attributes"]),
             "indices": body_prim["indices"],
             "material": body_prim.get("material", 0)}]})
-        document["nodes"].append({"name": "eyes",
+        document["nodes"].append({"name": name,
                                   "mesh": len(document["meshes"]) - 1,
                                   "skin": body_node["skin"]})
-        eyes_index = len(document["nodes"]) - 1
-        document["nodes"][parent]["children"].append(eyes_index)
-        by_name["eyes"] = document["nodes"][eyes_index]
+        new_index = len(document["nodes"]) - 1
+        document["nodes"][parent]["children"].append(new_index)
+        by_name[name] = document["nodes"][new_index]
 
     def repoint(node, faces):
         prim = document["meshes"][node["mesh"]]["primitives"][0]
@@ -1105,13 +1118,13 @@ def add_scalp(document, binary) -> int:
 def split(path: Path, calibrate: bool) -> str:
     document, binary = read_glb(path)
     extras = document.setdefault("asset", {}).setdefault("extras", {})
-    if int(extras.get("eloriaSurfacesSplit", 0)) >= 32:
+    if int(extras.get("eloriaSurfacesSplit", 0)) >= 33:
         return "already split"
-    if int(extras.get("eloriaSurfacesSplit", 0)) in (15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31):
+    if int(extras.get("eloriaSurfacesSplit", 0)) in (15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32):
         report = reclassify_surfaces(document, binary)
-        extras["eloriaSurfacesSplit"] = 32
+        extras["eloriaSurfacesSplit"] = 33
         write_glb(path, document, binary)
-        return "%s -> v32" % report
+        return "%s -> v33" % report
     if int(extras.get("eloriaSurfacesSplit", 0)) == 14:
         count = resmooth_shared_surfaces(document, binary)
         extras["eloriaSurfacesSplit"] = 15
@@ -1248,7 +1261,7 @@ def split(path: Path, calibrate: bool) -> str:
 
     del mesh_node["mesh"]
     add_scalp(document, binary)
-    extras["eloriaSurfacesSplit"] = 32
+    extras["eloriaSurfacesSplit"] = 33
     write_glb(path, document, binary)
     return "split: %s" % counts
 

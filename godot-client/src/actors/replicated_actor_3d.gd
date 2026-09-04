@@ -313,6 +313,12 @@ func apply_appearance_variants(appearance: Dictionary) -> void:
 			_tint_mesh(mesh_node, hair_tint)
 		elif mesh_name == "scalp":
 			_tint_mesh(mesh_node, skin_tint)
+		elif mesh_name == "skin_accent":
+			# A secondary skin-tone surface for a body with one (currently
+			# just Ssarathi's tail) -- reuses the hair-colour slot rather
+			# than adding a new appearance field, since a body with this
+			# surface has no real hair of its own for that slot to control.
+			_tint_mesh(mesh_node, hair_tint)
 		elif mesh_name == "wardrobe_shirt":
 			_set_mesh_color(mesh_node, AppearanceVariants.wardrobe_color(
 				culture, AppearanceVariants.PART_SHIRT, int(appearance.get("shirt", 0))))
