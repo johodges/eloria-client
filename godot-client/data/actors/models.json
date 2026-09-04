@@ -603,7 +603,7 @@
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
-        "forwardAxisCorrectionDegreesY": 0
+        "forwardAxisCorrectionDegreesY": 180
       },
       "attachments": {
         "head": "head",
@@ -2184,7 +2184,7 @@
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
-        "forwardAxisCorrectionDegreesY": 0
+        "forwardAxisCorrectionDegreesY": 180
       },
       "attachments": {
         "head": "head",
@@ -4319,6 +4319,176 @@
         "body": "body",
         "neck": "neck"
       }
+    },
+    "cobalt_ibex": {
+      "scene": "res://assets/actors/native/creatures/cobalt_ibex.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/cobalt_ibex.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "amethyst_stag_beetle": {
+      "scene": "res://assets/actors/native/creatures/amethyst_stag_beetle.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/amethyst_stag_beetle.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "emerald_canopy_dragon": {
+      "scene": "res://assets/actors/native/creatures/emerald_canopy_dragon.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/emerald_canopy_dragon.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "ice_snow_leopard": {
+      "scene": "res://assets/actors/native/creatures/ice_snow_leopard.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/ice_snow_leopard.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "whitehorn_ice_ram": {
+      "scene": "res://assets/actors/native/creatures/whitehorn_ice_ram.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/whitehorn_ice_ram.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "frosthorn_elk": {
+      "scene": "res://assets/actors/native/creatures/frosthorn_elk.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/frosthorn_elk.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "riverglass_otter": {
+      "scene": "res://assets/actors/native/creatures/riverglass_otter.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/riverglass_otter.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "moonshadow_lynx": {
+      "scene": "res://assets/actors/native/creatures/moonshadow_lynx.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/moonshadow_lynx.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "glacier_harpy": {
+      "scene": "res://assets/actors/native/creatures/glacier_harpy.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/glacier_harpy.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "spectral_forest_knight": {
+      "scene": "res://assets/actors/native/creatures/spectral_forest_knight.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/spectral_forest_knight.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
     }
   },
   "actorTypes": {
@@ -4683,7 +4853,17 @@
     "608": "thornbark_wolf",
     "609": "thornwood_dryad_queen",
     "610": "tidal_crystal_lion",
-    "611": "whitehorn_ice_griffin"
+    "611": "whitehorn_ice_griffin",
+    "612": "cobalt_ibex",
+    "613": "amethyst_stag_beetle",
+    "614": "emerald_canopy_dragon",
+    "615": "ice_snow_leopard",
+    "616": "whitehorn_ice_ram",
+    "617": "frosthorn_elk",
+    "618": "riverglass_otter",
+    "619": "moonshadow_lynx",
+    "620": "glacier_harpy",
+    "621": "spectral_forest_knight"
   },
   "creationOptions": [
     {
