@@ -26,7 +26,7 @@ unused `TEXCOORD_0` on the still pool's water surface, which has no texture.
 Full reports are committed beside each GLB as `*.glb.validator.json`.
 
 Independent structural verification, separate from the Khronos tool and from
-Godot, is in `tools/sunmane/validate_package.py`: it parses the GLB container
+Godot, is in `maps/nymara-regions/sunmane_steppe/source/validate_package.py`: it parses the GLB container
 and JSON chunk itself and checks self-containment, node-name uniqueness, that
 every declared collision and landmark node actually exists, the coordinate and
 minimap transforms, server-tile addressability, and the landmark counts the
@@ -190,7 +190,7 @@ hidden, the way a floor plan omits a ceiling.
 
 ## Geometry integrity
 
-`tools/sunmane/checks.py` runs inside the builder and fails the build on
+`maps/nymara-regions/sunmane_steppe/source/checks.py` runs inside the builder and fails the build on
 malformed geometry. Every emitted primitive is checked for triangles wound
 against their vertex normals, degenerate triangles, non-finite positions or
 UVs, and non-unit normals; closed kit solids are additionally checked for

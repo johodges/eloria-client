@@ -3469,7 +3469,7 @@
         ],
         "radius": 6.0,
         "animation": "Idle_A",
-        "seed": 77970,
+        "seed": 74190,
         "serverTile": [
           28,
           88
@@ -3486,7 +3486,7 @@
         ],
         "radius": 5.6,
         "animation": "Idle_A",
-        "seed": 19910,
+        "seed": 12857,
         "serverTile": [
           98,
           76
@@ -3503,7 +3503,7 @@
         ],
         "radius": 5.8,
         "animation": "Idle_A",
-        "seed": 58924,
+        "seed": 23468,
         "serverTile": [
           114,
           30
@@ -3520,7 +3520,7 @@
         ],
         "radius": 6.2,
         "animation": "Idle_A",
-        "seed": 75600,
+        "seed": 75438,
         "serverTile": [
           14,
           18
@@ -3537,7 +3537,7 @@
         ],
         "radius": 5.4,
         "animation": "Idle_A",
-        "seed": 35594,
+        "seed": 32661,
         "serverTile": [
           76,
           18
@@ -3554,7 +3554,7 @@
         ],
         "radius": 5.6,
         "animation": "Idle_A",
-        "seed": 43224,
+        "seed": 2595,
         "serverTile": [
           42,
           110
@@ -3571,7 +3571,7 @@
         ],
         "radius": 13.0,
         "animation": "Idle_A",
-        "seed": 59870,
+        "seed": 49824,
         "serverTile": [
           8,
           66
@@ -3588,7 +3588,7 @@
         ],
         "radius": 12.0,
         "animation": "Idle_A",
-        "seed": 15134,
+        "seed": 94632,
         "serverTile": [
           124,
           66
@@ -3605,7 +3605,7 @@
         ],
         "radius": 12.0,
         "animation": "Idle_A",
-        "seed": 83233,
+        "seed": 46592,
         "serverTile": [
           52,
           122
@@ -3622,7 +3622,7 @@
         ],
         "radius": 12.0,
         "animation": "Idle_A",
-        "seed": 89817,
+        "seed": 16374,
         "serverTile": [
           82,
           8
@@ -3639,7 +3639,7 @@
         ],
         "radius": 2.6,
         "animation": "Idle_A",
-        "seed": 73739,
+        "seed": 8626,
         "serverTile": [
           37,
           46
@@ -3656,7 +3656,7 @@
         ],
         "radius": 2.6,
         "animation": "Idle_A",
-        "seed": 6700,
+        "seed": 45277,
         "serverTile": [
           79,
           45
@@ -3673,7 +3673,7 @@
         ],
         "radius": 3.2,
         "animation": "Idle_A",
-        "seed": 42222,
+        "seed": 30941,
         "serverTile": [
           16,
           54
@@ -3690,7 +3690,7 @@
         ],
         "radius": 3.2,
         "animation": "Idle_A",
-        "seed": 95957,
+        "seed": 36896,
         "serverTile": [
           100,
           54
@@ -3707,7 +3707,7 @@
         ],
         "radius": 3.0,
         "animation": "Idle_A",
-        "seed": 43146,
+        "seed": 60343,
         "serverTile": [
           58,
           36
@@ -3724,7 +3724,7 @@
         ],
         "radius": 2.8,
         "animation": "Idle_A",
-        "seed": 37223,
+        "seed": 35736,
         "serverTile": [
           62,
           146
@@ -3741,7 +3741,7 @@
         ],
         "radius": 2.8,
         "animation": "Idle_A",
-        "seed": 91047,
+        "seed": 7216,
         "serverTile": [
           122,
           154
@@ -3758,7 +3758,7 @@
         ],
         "radius": 3.0,
         "animation": "Idle_A",
-        "seed": 2744,
+        "seed": 40447,
         "serverTile": [
           42,
           153
@@ -3775,7 +3775,7 @@
         ],
         "radius": 3.0,
         "animation": "Idle_A",
-        "seed": 95270,
+        "seed": 927,
         "serverTile": [
           104,
           157
@@ -3792,7 +3792,7 @@
         ],
         "radius": 3.0,
         "animation": "Idle_A",
-        "seed": 11998,
+        "seed": 90839,
         "serverTile": [
           144,
           137
@@ -3809,7 +3809,7 @@
         ],
         "radius": 11.0,
         "animation": "Idle_A",
-        "seed": 83165,
+        "seed": 14314,
         "serverTile": [
           88,
           136
@@ -3826,7 +3826,7 @@
         ],
         "radius": 11.0,
         "animation": "Idle_A",
-        "seed": 4091,
+        "seed": 24325,
         "serverTile": [
           162,
           118
@@ -4615,7 +4615,7 @@
     }
   },
   "provenance": {
-    "generator": "eloria-assets/tools/sunmane/build.py",
+    "generator": "eloria-assets/maps/nymara-regions/sunmane_steppe/source/build_sunmane.py",
     "conceptArt": {
       "aerial": "references/01-aerial-overview.png",
       "detailBoard": "references/00-concept-detail-board.png"
@@ -4629,25 +4629,25 @@
     "thirdPartyAssets": "none"
   },
   "statistics": {
-    "terrainTriangles": 80000,
+    "terrainTriangles": 91756,
     "terrainChunks": 100,
     "seaTriangles": 452,
     "pondTriangles": 1172,
     "kitAssets": 60,
     "kitUniqueTriangles": 46827,
-    "instances": 834,
-    "scatterTriangles": 87480,
+    "instances": 838,
+    "scatterTriangles": 87190,
     "landmarks": 102,
     "interactives": 70,
-    "nodes": 1041,
-    "meshes": 255,
+    "nodes": 1044,
+    "meshes": 254,
     "materials": 31,
     "textures": 30,
-    "accessors": 3235,
-    "uniqueMeshTriangles": 229363,
-    "glbBytes": 18407036,
+    "accessors": 3571,
+    "uniqueMeshTriangles": 240829,
+    "glbBytes": 19110888,
     "lod": 1,
     "textureScale": 1.0,
-    "buildSeconds": 27.1
+    "buildSeconds": 23.8
   }
 }

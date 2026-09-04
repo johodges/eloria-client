@@ -409,7 +409,7 @@ CREATURES = (
 )
 CREATURE_ACTOR_TYPE_OFFSET = 4
 
-# Scenery livestock authored by eloria-assets/tools/sunmane/creatures.py.  They
+# Scenery livestock authored by eloria-assets/maps/nymara-regions/sunmane_steppe/source/creatures.py.  They
 # are not built here, but this script owns models.json and the asset catalog, so
 # it has to re-register them or a plain rebuild silently unregisters the herds.
 # The wider concept-art roster occupies one contiguous block after every range
@@ -432,7 +432,7 @@ AMBIENT_NOTE = ("Scenery livestock instanced by the client's ambient population 
                 "system. They carry no server actor type: actor-type allocation "
                 "belongs to eloria-server, and these never arrive over the wire.")
 AMBIENT_SOURCE_NOTE = ("Authored to equine proportions on the shared creature rig "
-                       "by eloria-assets/tools/sunmane/creatures.py.")
+                       "by eloria-assets/maps/nymara-regions/sunmane_steppe/source/creatures.py.")
 
 import torso_designs
 from legwear_pieces import LEGWEAR_EQUIPMENT
@@ -3436,7 +3436,7 @@ def carry_forward_ambient(manifest_path: Path, models_path: Path,
                           manifest: dict, models: dict) -> None:
     """Preserve ambient scenery entries contributed by regional generators.
 
-    The Sunmane horses are authored by eloria-assets/tools/sunmane/creatures.py
+    The Sunmane horses are authored by eloria-assets/maps/nymara-regions/sunmane_steppe/source/creatures.py
     and merged into these two registries.  Rebuilding the actor library used to
     drop them silently, which left every herd on the steppe as a magenta
     fallback until someone noticed.  Carry them across instead of rewriting
@@ -3642,7 +3642,7 @@ def main() -> None:
         path = args.output / "creatures" / f"{slug}.glb"
         record = {"id": slug, "name": label, "archetype": archetype,
                   "path": catalogue_path(path, repo_root),
-                  "generator": "eloria-assets/tools/sunmane/creatures.py",
+                  "generator": "eloria-assets/maps/nymara-regions/sunmane_steppe/source/creatures.py",
                   "tacked": tacked, "region": "sunmane_steppe",
                   "note": AMBIENT_SOURCE_NOTE}
         if path.exists():

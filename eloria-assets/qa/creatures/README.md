@@ -42,7 +42,7 @@ never translates horizontally, because the client drives world position.
 
 ```
 python3 eloria-assets/tools/build_native_nymara_glbs.py
-python3 eloria-assets/tools/sunmane/creatures.py
+python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/creatures.py
 python3 eloria-assets/tools/validate_creature_glbs.py \
     --catalog godot-client/data/actors/native_asset_catalog.json \
     --models godot-client/data/actors/models.json \
@@ -578,7 +578,7 @@ ELORIA_CONCEPT_FIGURES=/path/to/figures \
     python3 eloria-assets/tools/concept_growth_tints.py --core
 ELORIA_CONCEPT_FIGURES=/path/to/figures \
     python3 eloria-assets/tools/concept_value_gains.py --table
-python3 eloria-assets/tools/sunmane/creatures.py
+python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/creatures.py
 python3 eloria-assets/tools/build_native_nymara_glbs.py
 ELORIA_CONCEPT_FIGURES=/path/to/figures \
     python3 eloria-assets/tools/concept_compare.py <slug...>

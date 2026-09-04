@@ -17,21 +17,21 @@
     },
     {
       "path": "maps/nymara-regions/sunmane_steppe/world.glb",
-      "source": "tools/sunmane/build.py",
+      "source": "maps/nymara-regions/sunmane_steppe/source/build_sunmane.py",
       "author": "Eloria project",
       "license": "CC-BY-4.0",
       "description": "Sunmane Steppe production region: sculpted terrain, coastline, encampment, kit architecture, props and vegetation, exported as self-contained glTF 2.0"
     },
     {
       "path": "maps/nymara-regions/sunmane_steppe/world-lod2.glb",
-      "source": "tools/sunmane/build.py --lod 2",
+      "source": "maps/nymara-regions/sunmane_steppe/source/build_sunmane.py --lod 2",
       "author": "Eloria project",
       "license": "CC-BY-4.0",
       "description": "Reduced Sunmane Steppe package: ground clutter and road dressing removed, textures at half resolution"
     },
     {
       "path": "maps/nymara-regions/sunmane_steppe/textures/*.png",
-      "source": "tools/sunmane/textures.py",
+      "source": "maps/nymara-regions/sunmane_steppe/source/textures.py",
       "author": "Eloria project",
       "license": "CC-BY-4.0",
       "description": "Original tileable PBR kit generated from periodic noise: canvas, timber, ground, stone, thatch, hide, leather, textile, metal and bone"
@@ -52,7 +52,7 @@
     },
     {
       "path": "maps/nymara-regions/sunmane_steppe/comparison/*.png",
-      "source": "tools/sunmane/comparison.py",
+      "source": "maps/nymara-regions/sunmane_steppe/source/comparison.py",
       "author": "Eloria project",
       "license": "CC-BY-4.0",
       "description": "Side-by-side sheets pairing each concept panel with the matching Godot client capture"
@@ -66,7 +66,7 @@
     },
     {
       "path": "../godot-client/assets/actors/native/creatures/sunmane_*.glb",
-      "source": "tools/sunmane/creatures.py",
+      "source": "maps/nymara-regions/sunmane_steppe/source/creatures.py",
       "author": "Eloria project",
       "license": "CC-BY-4.0",
       "description": "Original steppe horse, dun mare and tacked grey pony authored to equine proportions on the shared Eloria creature rig, with full-colour coat, mane, hoof and tack maps and matching normal maps"

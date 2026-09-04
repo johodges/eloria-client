@@ -12,7 +12,7 @@ map's own server grid at half a metre per cell, taken from `coordinateTransform`
 rather than written out again, byte 0 meaning blocked and anything else an
 elevation of `value * 0.2 - 2.2` metres.
 
-    python eloria-assets/tools/sunmane/collision.py [--out <collision.bin>]
+    python eloria-assets/maps/nymara-regions/sunmane_steppe/source/collision.py [--out <collision.bin>]
 
 Blocked is the union of three things: sea and beach, ground too steep to climb,
 and the footprint of every node the manifest declares collision on - the carts,
@@ -34,7 +34,7 @@ sys.path.insert(0, str(HERE))
 
 import terrain  # noqa: E402
 
-PACKAGE = HERE.parents[1] / "maps" / "nymara-regions" / "sunmane_steppe"
+PACKAGE = HERE.parent
 CELL_METRES = 0.5
 # The steppe's map is 32 ELM tiles of six cells, and its manifest puts the
 # origin at (58, 58) of that grid.

@@ -40,9 +40,31 @@ def _vertex_normals(height: np.ndarray) -> np.ndarray:
     return normals
 
 
+def _coverage(quad_classes, quad_strength, corner_index, terrain_class):
+    """Per-vertex alpha for one class over one quad.
+
+    0.5 at the class edge, running to 1 inside the class and 0 outside it, so
+    an alpha test at 0.5 cuts exactly on the edge. How fast it runs is the
+    landform's own strength: at 1 - nothing knew where the edge was - the cut
+    lands half way between two samples, which turns a corner staircase into a
+    diagonal. Where a road wrote its own distance the cut lands on the real
+    edge. White apart from the alpha: the material multiplies albedo by these,
+    and tinting the ground is not the point.
+    """
+    colors = []
+    for index in corner_index:
+        inside = int(quad_classes[index]) == terrain_class
+        strength = float(quad_strength[index])
+        alpha = 0.5 + 0.5 * strength if inside else 0.5 - 0.5 * strength
+        colors.append([1.0, 1.0, 1.0, alpha])
+    return colors
+
+
 def build_chunks(landform: Landform) -> list[dict]:
     """Return one entry per chunk: name, and per-class Geometry."""
     height = landform.height.astype("float64")
+    strength = (landform.strength if landform.strength is not None
+                else np.ones(landform.height.shape))
     normals = _vertex_normals(height)
     count = height.shape[0]
     span = (count - 1) // CHUNKS
@@ -55,17 +77,28 @@ def build_chunks(landform: Landform) -> list[dict]:
             x0, x1 = chunk_x * span, (chunk_x + 1) * span
             z0, z1 = chunk_z * span, (chunk_z + 1) * span
             by_class: dict[int, Geometry] = {}
-            # Classify each quad by the majority class of its four corners so a
-            # quad never straddles two materials.
             corner_classes = landform.classes[z0:z1 + 1, x0:x1 + 1]
+            corner_strength = strength[z0:z1 + 1, x0:x1 + 1]
             for local_z in range(z1 - z0):
                 for local_x in range(x1 - x0):
                     quad_classes = corner_classes[local_z:local_z + 2,
                                                   local_x:local_x + 2].ravel()
-                    values, counts = np.unique(quad_classes, return_counts=True)
-                    terrain_class = int(values[int(np.argmax(counts))])
-                    geometry = by_class.setdefault(terrain_class, Geometry())
+                    quad_strength = corner_strength[local_z:local_z + 2,
+                                                    local_x:local_x + 2].ravel()
+                    # Every class the quad touches takes it, not just the one
+                    # holding most of its corners. Each copy carries a
+                    # per-vertex coverage and is drawn with an alpha-tested
+                    # material, so the pixels go to whichever class covers
+                    # them and the boundary runs through the cell instead of
+                    # around it. Majority ownership could only ever turn a
+                    # road on a cell corner, which is what made a diagonal
+                    # track read as a flight of 1.4 m steps.
                     gx, gz = x0 + local_x, z0 + local_z
+                    # The corners in the order the quad is wound, so a
+                    # coverage entry lines up with the vertex it belongs to.
+                    corner_order = ((0, 0), (1, 0), (1, 1), (0, 1))
+                    corner_index = [offset_z * 2 + offset_x
+                                    for offset_z, offset_x in corner_order]
                     positions, vertex_normals, uvs = [], [], []
                     # Counter-clockwise seen from above, so the geometric normal
                     # points +Y. Clockwise here makes the terrain both invisible
@@ -124,22 +157,32 @@ def build_chunks(landform: Landform) -> list[dict]:
                                      -point[1] / scale] for point in positions]
                     else:
                         quad_uvs = uvs
-                    if agreement > 0.55:
-                        # The smoothed normal still describes this face, so the
-                        # quad keeps continuous shading with its neighbours.
-                        geometry.add(positions, vertex_normals, quad_uvs, indices)
-                        continue
-                    # A fold: the averaged normal has been dragged across the
-                    # break and now opposes the face it belongs to, which renders
-                    # the quad inside-out and lets the grounding ray through.
-                    # Facet it - as one facet, so the two halves of the quad are
-                    # not lit differently.
-                    for triangle, face in zip((indices[:3], indices[3:]), faces):
-                        if face is None:
+                    for terrain_class in sorted({int(v) for v in quad_classes}):
+                        geometry = by_class.setdefault(terrain_class, Geometry())
+                        colors = _coverage(quad_classes, quad_strength,
+                                           corner_index, terrain_class)
+                        if agreement > 0.55:
+                            # The smoothed normal still describes this face, so
+                            # the quad keeps continuous shading with its
+                            # neighbours.
+                            geometry.add(positions, vertex_normals, quad_uvs,
+                                         indices, colors)
                             continue
-                        normal = shared if float(np.dot(shared, face)) > 0.2 else face
-                        geometry.add([positions[i] for i in triangle], [normal] * 3,
-                                     [quad_uvs[i] for i in triangle], [0, 1, 2])
+                        # A fold: the averaged normal has been dragged across
+                        # the break and now opposes the face it belongs to,
+                        # which renders the quad inside-out and lets the
+                        # grounding ray through. Facet it - as one facet, so
+                        # the two halves of the quad are not lit differently.
+                        for triangle, face in zip((indices[:3], indices[3:]), faces):
+                            if face is None:
+                                continue
+                            normal = (shared if float(np.dot(shared, face)) > 0.2
+                                      else face)
+                            geometry.add([positions[i] for i in triangle],
+                                         [normal] * 3,
+                                         [quad_uvs[i] for i in triangle],
+                                         [0, 1, 2],
+                                         [colors[i] for i in triangle])
                     continue
             chunks.append({
                 "name": f"Terrain_Chunk_{chunk_x:02d}_{chunk_z:02d}",

@@ -8,7 +8,7 @@ Outputs, under `eloria-assets/maps/nymara-regions/sunmane_steppe/`:
     minimap.webp     rendered from the exported geometry
     textures/        the authored PBR kit, also embedded in the GLB
 
-Run from anywhere:  python3 eloria-assets/tools/sunmane/build.py
+Run from anywhere:  python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/build_sunmane.py
 """
 from __future__ import annotations
 
@@ -31,8 +31,10 @@ import textures as texture_kit                       # noqa: E402
 from glb import GLBWriter, Geometry, compose         # noqa: E402
 from shapes import UV_SCALE                          # noqa: E402
 
-ASSET_ROOT = HERE.parents[1]
-PACKAGE = ASSET_ROOT / "maps" / "nymara-regions" / "sunmane_steppe"
+ASSET_ROOT = HERE.parents[3]
+# The package this builds is the directory the source sits in, which is the
+# layout every other region uses.
+PACKAGE = HERE.parent
 
 GENERATOR = "Eloria Sunmane Steppe production builder 1.0"
 SCHEMA_VERSION = "1.1.0"
@@ -142,9 +144,16 @@ def build_terrain(builder: Builder, landform: terrain.Landform) -> dict:
         name = f"ground_{terrain.CLASS_NAMES[terrain_class]}"
         rocky = terrain_class in (terrain.CLASS_ROCK, terrain.CLASS_BADLAND,
                                   terrain.CLASS_MOUNTAIN)
+        # Alpha-tested, because a class is cut against its neighbour inside
+        # the cell rather than at the cell corner: each ground quad carries a
+        # per-vertex coverage in COLOR_0's alpha and the test hands every pixel
+        # to whichever class covers it. It is still opaque - an alpha test
+        # writes depth and sorts like any other ground - so nothing about the
+        # draw order changes.
         class_material[terrain_class] = builder.material(
             name, "stone" if rocky else "ground", base_color=tint,
-            roughness=0.88 if rocky else 0.94, normal_scale=0.9)
+            roughness=0.88 if rocky else 0.94, normal_scale=0.9,
+            alpha_mode="MASK")
 
     chunks = terrain_mesh.build_chunks(landform)
     triangles = 0

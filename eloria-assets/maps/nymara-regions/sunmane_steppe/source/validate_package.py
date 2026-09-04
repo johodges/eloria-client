@@ -8,7 +8,7 @@ specifies, coordinate and minimap transforms, collision and navigation
 declarations, and the absence of the placeholder artefacts the previous
 generator left behind.
 
-    python3 eloria-assets/tools/sunmane/validate_package.py
+    python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/validate_package.py
 """
 from __future__ import annotations
 
@@ -18,8 +18,8 @@ import struct
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[3]
-PACKAGE = ROOT / "eloria-assets" / "maps" / "nymara-regions" / "sunmane_steppe"
+ROOT = Path(__file__).resolve().parents[5]
+PACKAGE = Path(__file__).resolve().parents[1]
 SCHEMA = ROOT / "godot-client" / "schemas" / "world-manifest-1.schema.json"
 
 # Counts asserted by the written region description.

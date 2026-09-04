@@ -4,15 +4,15 @@
 The server-side records are transcribed from the packages rather than typed, so
 the document cannot drift from what the client actually ships.
 
-Run:  python3 eloria-assets/tools/sunmane/server_integration.py
+Run:  python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/server_integration.py
 """
 from __future__ import annotations
 
 import json
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2] / "maps" / "nymara-regions"
-PACKAGE = ROOT / "sunmane_steppe"
+ROOT = Path(__file__).resolve().parents[2]
+PACKAGE = Path(__file__).resolve().parents[1]
 # Sunmane's two cave systems used to be two packages and two served maps.
 # They now share one package and one map with unwalkable blackspace between
 # them, so this reads the combined manifest and describes its sections. The
@@ -47,7 +47,7 @@ def main() -> int:
     add("`eloria-server` was not reachable from the workspace this package was")
     add("built in, so none of the records below could be committed there. They are")
     add("generated from the committed manifests by")
-    add("`tools/sunmane/server_integration.py`, so the matching server pull")
+    add("`maps/nymara-regions/sunmane_steppe/source/server_integration.py`, so the matching server pull")
     add("request is transcription rather than redesign.\n")
 
     add("## Hooks\n")

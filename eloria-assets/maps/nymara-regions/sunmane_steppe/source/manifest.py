@@ -201,7 +201,7 @@ def build(builder, landform: terrain.Landform, statistics: dict) -> dict:
         },
         **getattr(builder, "population", {}),
         "provenance": {
-            "generator": "eloria-assets/tools/sunmane/build.py",
+            "generator": "eloria-assets/maps/nymara-regions/sunmane_steppe/source/build_sunmane.py",
             "conceptArt": {
                 "aerial": "references/01-aerial-overview.png",
                 "detailBoard": "references/00-concept-detail-board.png"},

@@ -19,6 +19,7 @@ import numpy as np
 import kit
 import terrain
 from glb import Geometry, compose
+from noise import stable_seed
 from shapes import UV_SCALE, beam, box, frustum, polygon_points, ribbon, sphere
 
 TAU = math.pi * 2.0
@@ -1072,7 +1073,7 @@ def population_records(layout: Layout) -> dict:
             "id": identifier, "model": model, "count": count,
             "center": [x, round(landform.height_at(x, z), 2), z],
             "radius": radius, "animation": animation,
-            "seed": abs(hash(identifier)) % 100000,
+            "seed": stable_seed(identifier, 100000),
             "serverTile": _server_tile(x, z)})
     npcs = []
     for identifier, label, (x, z), role in NPC_POSTS:
