@@ -158,6 +158,67 @@ def _primary_landmarks(build: RegionBuild, seed: int) -> None:
 
 
 
+def _road_landings(build: RegionBuild, anchor: tuple[float, float]) -> list | None:
+    """The nearest graded road end on each side of the gorge, or None.
+
+    A crossing exists to carry a road, so its landings belong on the road. The
+    approach descends the cut on a diagonal - it enters the lower crossing from
+    the south-west and leaves to the north-east - and a span laid square to the
+    world axes lands beside the road at both ends however long it is made.
+
+    Judged on the walk grid's own lattice, not the terrain's. The heightfield
+    is sampled every two metres and the walk grid every half metre, and ground
+    that reads at 0.79 across two metres can be past the climb limit inside one
+    cell of it. Measuring where the grid measures is what stops a landing being
+    picked that the grid then refuses.
+
+    Sides are taken across the gorge's own tangent, so this does not care which
+    way the cut runs. Returns None when either side has no road to land on,
+    which is the upper crossing: its approach is steep enough that
+    `assign_surfaces` calls it rock, and there is no brown to aim at.
+    """
+    t = build.terrain
+    span = SHOULDER_REACH
+    axis = np.arange(-span, span + LANDING_CELL, LANDING_CELL)
+    grid_x, grid_z = np.meshgrid(anchor[0] + axis, anchor[1] + axis)
+    ground = t.height_at(grid_x, grid_z)
+    rise_z, rise_x = np.gradient(ground, LANDING_CELL)
+    steep = np.hypot(rise_x, rise_z) > LANDING_GRADIENT
+    columns = np.clip(((grid_x - t.x0) / t.cell).astype(int), 0, t.cols - 1)
+    rows = np.clip(((grid_z - t.z0) / t.cell).astype(int), 0, t.rows - 1)
+    surface = t.surface[rows, columns]
+    # The steepness test is what rejects the ribbon `grade_path` left inside
+    # the gorge before the channel was re-cut: it is still classed as road, and
+    # it is a 70-degree face, so no walker will ever stand on it.
+    road = ((surface == TER.PATH) | (surface == TER.PAVING)) & ~steep
+    # One cell of road is not a landing; a deck end wants ground around it.
+    solid = road.copy()
+    solid[1:-1, 1:-1] &= (road[:-2, 1:-1] & road[2:, 1:-1]
+                          & road[1:-1, :-2] & road[1:-1, 2:])
+
+    points = np.asarray(REG.GORGE, dtype=float)
+    nearest = np.argsort(np.hypot(points[:, 0] - anchor[0],
+                                  points[:, 1] - anchor[1]))[:2]
+    tangent = points[nearest[1]] - points[nearest[0]]
+    tangent /= max(float(np.linalg.norm(tangent)), 1e-6)
+    across = np.array([-tangent[1], tangent[0]])
+
+    distance = np.hypot(grid_x - anchor[0], grid_z - anchor[1])
+    side = (grid_x - anchor[0]) * across[0] + (grid_z - anchor[1]) * across[1]
+    landings = []
+    for sense in (-1.0, 1.0):
+        # Clear of the cut itself, so a landing is on a bank and not on the
+        # graded ribbon the re-cut left hanging in it.
+        candidates = solid & (side * sense > 4.0) & (distance < span)
+        if not candidates.any():
+            return None
+        reach = np.where(candidates, distance, np.inf)
+        row, column = np.unravel_index(int(np.argmin(reach)), reach.shape)
+        landings.append((float(grid_x[row, column]), float(grid_z[row, column]),
+                         float(ground[row, column])))
+    return landings
+
+
 def _shoulder(build: RegionBuild, x: float, z0: float,
               direction: float) -> tuple[float, float]:
     """First ground out from `z0` along `direction` that a walker can stand on.
@@ -200,6 +261,16 @@ SHOULDER_REACH = 60.0
 # and the first cell of ground, and the walk grid rejects that cell - which
 # leaves the crossing one cell short of usable, which is no crossing at all.
 SHOULDER_SLOPE = 0.8
+# The walk grid's own cell and climb limit, which is what a landing is judged
+# against. Kept a little under `build_collision`'s MAX_WALK_GRADIENT so the
+# joint between a deck and its ground has somewhere to go.
+LANDING_CELL = 0.5
+LANDING_GRADIENT = 0.85
+# How far past its landings a deck reaches. A deck that stops exactly on the
+# cell the landing search picked can still miss the walk grid's own cell by a
+# fraction of one, and one cell of nothing between a deck and a road is a
+# crossing nobody can use. An abutment rests on the bank in any case.
+LANDING_OVERLAP = 1.5
 # The run of ground beyond a shoulder that must also be gentle. Without it the
 # search stops on the first ledge in the gorge wall, which is how the deck
 # ended up set 11 m into the cut with its landings on a 70-degree face.
@@ -229,12 +300,48 @@ def _crossings(build: RegionBuild, seed: int) -> None:
         # crossed. What a crossing has to reach is the first ground on each
         # side that a walker can stand on, so that is what is looked for, and
         # the deck is built to whatever width that turns out to be.
-        north_z, north_rim = _shoulder(build, bx, bz, -1.0)
-        south_z, south_rim = _shoulder(build, bx, bz, 1.0)
-        length = float(np.clip(south_z - north_z, *SPAN_LIMITS))
+        landings = _road_landings(build, (bx, bz))
+        if landings is None:
+            # No road to land on: fall back to the first ground each way that a
+            # walker can stand on, square across the cut.
+            north_z, north_rim = _shoulder(build, bx, bz, -1.0)
+            south_z, south_rim = _shoulder(build, bx, bz, 1.0)
+            landings = [(bx, north_z, north_rim), (bx, south_z, south_rim)]
+        # Whichever landing is further north takes the +X end, because that is
+        # the end `kit.rope_bridge` raises by `rise`.
+        landings.sort(key=lambda landing: landing[1])
+        (north_x, north_z, _rim), (south_x, south_z, _south_rim) = landings
+        # Reach past both landings onto the ground they stand on, and take the
+        # deck's end heights there rather than at the landings themselves, so
+        # the planks meet what they actually rest on.
+        axis = np.array([north_x - south_x, north_z - south_z], dtype=float)
+        axis /= max(float(np.linalg.norm(axis)), 1e-6)
+        north_x += axis[0] * LANDING_OVERLAP
+        north_z += axis[1] * LANDING_OVERLAP
+        south_x -= axis[0] * LANDING_OVERLAP
+        south_z -= axis[1] * LANDING_OVERLAP
+        north_rim = _ground(build, north_x, north_z)
+        south_rim = _ground(build, south_x, south_z)
+        reach = float(np.hypot(south_x - north_x, south_z - north_z))
+        if not SPAN_LIMITS[0] <= reach <= SPAN_LIMITS[1]:
+            # Never clip: a deck shorter than its landings ends in mid-air, and
+            # a silent clamp is how that would happen without anyone noticing.
+            north_z, north_rim = _shoulder(build, bx, bz, -1.0)
+            south_z, south_rim = _shoulder(build, bx, bz, 1.0)
+            north_x = south_x = bx
+            reach = south_z - north_z
+            build.notes.append(
+                f"{anchor}: no road pair within {SPAN_LIMITS[1]:.0f} m; "
+                "landed square across the cut instead.")
+        length = reach
         half = length * 0.5
+        centre_x = (north_x + south_x) * 0.5
         centre_z = (north_z + south_z) * 0.5
-        floor = _ground(build, bx, centre_z)
+        # The span points at its own landings rather than along an axis.
+        # `kit.rope_bridge` builds along +X, and rotating a node about Y by
+        # theta sends local +X to world (cos theta, 0, -sin theta).
+        heading = math.atan2(-(north_z - centre_z), north_x - centre_x)
+        floor = _ground(build, centre_x, centre_z)
         # The two shoulders are rarely level - the gorge is cut across a
         # mountainside - so the deck is a ramp between them rather than a level
         # walkway that can only meet one. `kit.rope_bridge` builds along +X and
@@ -242,10 +349,12 @@ def _crossings(build: RegionBuild, seed: int) -> None:
         deck_y = (north_rim + south_rim) * 0.5 + DECK_CLEARANCE
         rise = north_rim - south_rim
         build.notes.append(
-            f"{anchor}: {length:.0f} m span measured shoulder to shoulder, "
-            f"gorge floor {floor:.1f} m, landings {north_rim:.1f} m north / "
-            f"{south_rim:.1f} m south, deck {deck_y:.1f} m at its centre and "
-            f"rising {rise:+.1f} m to the north "
+            f"{anchor}: {length:.0f} m span measured landing to landing, "
+            f"gorge floor {floor:.1f} m, landings {north_rim:.1f} m north at "
+            f"({north_x:.0f}, {north_z:.0f}) / {south_rim:.1f} m south at "
+            f"({south_x:.0f}, {south_z:.0f}), deck {deck_y:.1f} m at its centre, "
+            f"rising {rise:+.1f} m to the north, turned "
+            f"{math.degrees(heading):.0f} degrees "
             f"({deck_y - floor:.0f} m of air beneath).")
 
         span = kit.rope_bridge(length=length, width=1.9, sag=1.4,
@@ -259,15 +368,16 @@ def _crossings(build: RegionBuild, seed: int) -> None:
         # all became walk surfaces, and an actor could be grounded on a
         # handrail. build_collision still registers the elevated deck, because
         # it tests the group's walk_bounds before it tests this flag.
-        _place(build, node, f"rope_bridge_{index:02d}", span, bx, centre_z,
-               rotation_y=math.pi * 0.5, kind="landmark", collides=False,
+        _place(build, node, f"rope_bridge_{index:02d}", span, centre_x, centre_z,
+               rotation_y=heading, kind="landmark", collides=False,
                y=deck_y, landmark=f"whitehorn-rope-bridge-{index:02d}")
         _landmark(build, f"whitehorn-rope-bridge-{index:02d}",
-                  "Whitehorn Rope Bridge", node, bx, centre_z, "bridge",
+                  "Whitehorn Rope Bridge", node, centre_x, centre_z, "bridge",
                   y=deck_y)
         build.notes.append(
             f"{anchor}: deck at y={deck_y:.2f} m, {length:.0f} m span, "
-            f"landing on ground at z={north_z:.0f} and z={south_z:.0f}. The "
+            f"landing at ({north_x:.0f}, {north_z:.0f}) and "
+            f"({south_x:.0f}, {south_z:.0f}). The "
             "deck owns its server cells; the gorge floor beneath it is not "
             "separately walkable.")
 
