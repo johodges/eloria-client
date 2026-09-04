@@ -38,14 +38,6 @@ const LEG_RADIUS := 0.115
 const MAX_STEP := 1.0 / 30.0
 ## Move further than this in one step and the actor was teleported, not walked.
 const TELEPORT := 1.5
-## The most a single cape point may travel in one step. A trail moves a hem a
-## few centimetres a frame; a spike is a point flung far past that, so capping
-## the step kills the spike and leaves the trail alone.
-const MAX_MOVE := 0.09
-## How far above its own animated rest a cape point may rise. A trailing cape
-## lags below its rest; a spike flings a corner well above it, so a small cap
-## cuts the spike without touching the trail or the high-sitting collar.
-const CAPE_RISE := 0.05
 ## Once the anchor is slower than this the wearer has stopped, and the cape
 ## should come back down briskly instead of drifting: gravity multiplies and
 ## the damping drops so the swing dies in a fraction of the travelling time.
@@ -255,16 +247,7 @@ func _process_modification_with_delta(delta: float) -> void:
 			previous = rest.duplicate()
 		for index in range(1, points.size()):
 			var current := points[index]
-			var candidate := current + (current - previous[index]) * damping + fall
-			# Cap how far a point may travel in one step. An attack lunges the
-			# anchor half a metre in a few frames, and the carried velocity flung
-			# a hem corner into a sharp spike above the shoulder; a per-step cap
-			# bleeds that off without stiffening the ordinary trail.
-			var move := candidate - current
-			var far := move.length()
-			if far > MAX_MOVE:
-				candidate = current + move * (MAX_MOVE / far)
-			points[index] = candidate
+			points[index] = current + (current - previous[index]) * damping + fall
 			previous[index] = current
 		for _pass in range(RELAX_PASSES):
 			for index in range(1, points.size()):
@@ -279,14 +262,13 @@ func _process_modification_with_delta(delta: float) -> void:
 					var ahead := points[index].dot(forward) - plane_at
 					if ahead > 0.0:
 						points[index] -= forward * ahead
-				# No point may rise far above where the animation alone would
-				# place it. A trailing cape lags below its rest; a spike is the
-				# simulation flinging a hem corner well above it, over the
-				# shoulder. Capping the rise against each point's own rest keeps
-				# the collar high where it belongs and only cuts the spike.
-				var ceiling := rest[index].y + CAPE_RISE
-				if points[index].y > ceiling:
-					points[index].y = ceiling
+				# A cape hangs from the spine, so it may stream up behind a
+				# runner but never above its own attachment -- a corner that
+				# crests the anchor is going over the shoulder, not trailing.
+				# The anchor clears even a hard run's lift by half a metre, so
+				# this frees the whole billow and only stops the spike.
+				if points[index].y > anchor_world.y:
+					points[index].y = anchor_world.y
 		_points[chain] = points
 		_previous[chain] = previous
 
