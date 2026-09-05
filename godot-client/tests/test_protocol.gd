@@ -1845,6 +1845,18 @@ func _init() -> void:
 		and int(interactive_object.kind) == EloriaProtocol.MAP_OBJECT_INTERACTIVE
 		and int(interactive_object.y) == 1424,
 		"an interactive carries its id and tile in the same list")
+	var exit_payload: PackedByteArray = PackedByteArray([1, 1, 0])
+	exit_payload.append_array(PackedByteArray([
+		0x60, 0xea, EloriaProtocol.MAP_OBJECT_EXIT, 0x2c, 0x01, 0x0e, 0x00]))
+	exit_payload.append_array(_nul_bytes("Grey Moors"))
+	exit_payload.append_array(_nul_bytes("The way to Grey Moors."))
+	var exit_objects: Dictionary = EloriaProtocol.decode_server(236, exit_payload)
+	var exit_object: Dictionary = (exit_objects.objects as Array)[0]
+	_expect(exit_objects.type == "map_objects" and int(exit_object.object_id) == 60000
+		and int(exit_object.kind) == EloriaProtocol.MAP_OBJECT_EXIT
+		and int(exit_object.x) == 300 and int(exit_object.y) == 14
+		and str(exit_object.label) == "Grey Moors",
+		"a map exit is a third kind in the same list, named for where it leads")
 	_expect(EloriaProtocol.decode_server(236, PackedByteArray([1, 1])).error
 			== "map_objects_length"
 		and EloriaProtocol.decode_server(236,

@@ -437,10 +437,15 @@ chunked because a busy map has thousands of harvest nodes: each frame is
 `first:u8 | count:u16le` followed by `count` entries of
 `object_id:u16le | kind:u8 | x:u16le | y:u16le | label NUL | detail NUL`. Only
 the frame with `first` set begins a new list; the rest continue it. Kind 1 is a
-harvest node and kind 2 is an interactive; any other kind is rejected. `label`
-is the resource name or the interactive's role, and `detail` is the harvesting
-level and tool requirement, or the interactive's text - so a requirement is
-stated rather than discovered by failing.
+harvest node, kind 2 is an interactive and kind 3 is a map exit; any other
+kind is rejected. `label` is the resource name, the interactive's role, or the
+exit's destination, and `detail` is the harvesting level and tool requirement,
+the interactive's text, or a sentence naming where the exit leads - so a
+requirement is stated rather than discovered by failing. An exit is a way off
+the map that nothing else marks - a march with no waygate, a door into an
+interior, the way out of one - derived by the server from its own portal
+tiles, one per doorway; it is not clickable, and both maps draw it as a red X
+named for its destination, beside the cyan P a waygate gets.
 
 `HARVEST(21)` carries `object_id:u16le` and is a toggle: sending it for the
 node already being harvested stops the run. `USE_MAP_OBJECT(16)` and

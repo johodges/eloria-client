@@ -2037,12 +2037,54 @@ func _run() -> void:
 		0x0e, 0x00, EloriaProtocol.MAP_OBJECT_INTERACTIVE, 0x00, 0x03, 0x90, 0x05]))
 	objects_payload.append_array(_nul_bytes("Storage"))
 	objects_payload.append_array(_nul_bytes("A wayfarer's cache."))
+	# Four entries: the count byte pair above says two, so it is rewritten.
+	objects_payload[1] = 4
+	objects_payload.append_array(PackedByteArray([
+		0x14, 0x00, EloriaProtocol.MAP_OBJECT_INTERACTIVE, 0x48, 0x01, 0x0e, 0x00]))
+	objects_payload.append_array(_nul_bytes("Portal"))
+	objects_payload.append_array(_nul_bytes("The waygate hums. Beyond it lies Grey Moors."))
+	objects_payload.append_array(PackedByteArray([
+		0x60, 0xea, EloriaProtocol.MAP_OBJECT_EXIT, 0xf6, 0x00, 0x2c, 0x02]))
+	objects_payload.append_array(_nul_bytes("Amberwood Estate"))
+	objects_payload.append_array(_nul_bytes("The way to Amberwood Estate."))
 	app_state_inventory.set("authenticated", true)
 	app_state_inventory.call("_on_packet", 236, objects_payload)
 	await process_frame
 	var object_nodes: Dictionary = main.get("map_object_nodes") as Dictionary
-	_expect(object_nodes.size() == 2,
-		"every server world object becomes a pick target in the scene")
+	_expect(object_nodes.size() == 4,
+		"every server world object becomes a node in the scene")
+	# The exits and the waygates: a way off the map is not clickable and has
+	# nothing standing on it, and both maps draw it as the legend's red X
+	# with its destination; a waygate is the cyan P, named from its own text.
+	var exit_node: MapObject3D = object_nodes.get(60000) as MapObject3D
+	var portal_node: MapObject3D = object_nodes.get(20) as MapObject3D
+	_expect(exit_node != null and exit_node.is_exit() and exit_node.get_child_count() == 0
+		and exit_node.destination() == "Amberwood Estate"
+		and exit_node.map_glyph() == MapObject3D.EXIT_GLYPH
+		and exit_node.map_dot_colour().is_equal_approx(MapObject3D.EXIT_COLOUR),
+		"a map exit stands for nothing, takes no click, and is the legend's red X")
+	_expect(portal_node != null and portal_node.is_portal()
+		and portal_node.get_node_or_null("PickShape") != null
+		and portal_node.get_node_or_null("MapMarker") == null
+		and portal_node.destination() == "Grey Moors"
+		and portal_node.map_glyph() == MapObject3D.PORTAL_GLYPH
+		and portal_node.map_dot_colour().is_equal_approx(MapObject3D.PORTAL_COLOUR),
+		"a waygate keeps its click target and is drawn as the legend's cyan P")
+	var minimap_marks: Array = main.call("_collect_minimap_marks")
+	var exit_marks: Array = minimap_marks.filter(
+		func(mark: Dictionary) -> bool: return mark.get("type") == &"exit")
+	var portal_marks: Array = minimap_marks.filter(
+		func(mark: Dictionary) -> bool: return mark.get("type") == &"portal")
+	_expect(exit_marks.size() == 1 and str((exit_marks[0] as Dictionary).get("glyph")) == "X"
+		and portal_marks.size() == 1
+		and str((portal_marks[0] as Dictionary).get("glyph")) == "P",
+		"the minimap marks an exit as X and a waygate as P, each on its own switch")
+	var full_map_overlay: Control = main.get("map_marker_overlay") as Control
+	_expect(full_map_overlay != null and int(full_map_overlay.call("waypoint_count")) == 2,
+		"the full map draws both glyphs with their destinations")
+	_expect((main.get("MINIMAP_MARKER_TYPES") as Array).has(&"exit")
+		and (main.get("MINIMAP_MARKER_TYPES") as Array).has(&"portal"),
+		"portals and exits are marker types a player can switch off")
 	var harvest_node: MapObject3D = object_nodes.get(496) as MapObject3D
 	var interactive_node: MapObject3D = object_nodes.get(14) as MapObject3D
 	_expect(harvest_node != null and harvest_node.is_harvestable()
@@ -2095,7 +2137,11 @@ func _run() -> void:
 		and map_legend.text.contains("[color=#%s]●[/color] Harvest node" % (
 			MapObject3D.HARVEST_COLOUR.to_html(false)))
 		and map_legend.text.contains("[color=#%s]●[/color] Interactive" % (
-			MapObject3D.INTERACTIVE_COLOUR.to_html(false))),
+			MapObject3D.INTERACTIVE_COLOUR.to_html(false)))
+		and map_legend.text.contains("[color=#%s]P[/color] Portal" % (
+			MapObject3D.PORTAL_COLOUR.to_html(false)))
+		and map_legend.text.contains("[color=#%s]X[/color] Map exit" % (
+			MapObject3D.EXIT_COLOUR.to_html(false))),
 		"every legend swatch is the colour the map actually draws")
 	_expect(harvest_node != null and harvest_node.server_tile == Vector2i(770, 481),
 		"the pick target sits on the tile the server named")

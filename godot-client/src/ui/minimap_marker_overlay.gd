@@ -37,6 +37,10 @@ const OUTLINE_COLOUR := Color(0.04, 0.04, 0.05, 0.9)
 ## Circles are drawn as polygons rather than with `draw_circle`, so the outline
 ## and the fill are the same shape at these radii.
 const CIRCLE_SEGMENTS := 16
+## A glyph mark - a portal's P, an exit's X - is drawn this many times the
+## dot radius tall, and no smaller than a letter can be read at.
+const GLYPH_SCALE := 2.8
+const GLYPH_MINIMUM_SIZE := 9
 
 var _camera: Camera3D
 var _viewport_size := Vector2i.ZERO
@@ -109,10 +113,27 @@ func _draw() -> void:
 		var point: Vector2 = point_value as Vector2
 		var colour: Color = mark.get("colour", Color.WHITE) as Color
 		var radius: float = mark_radius(mark)
-		if type == &"marker":
+		var glyph: String = str(mark.get("glyph", ""))
+		if not glyph.is_empty():
+			_draw_glyph(point, radius, colour, glyph)
+		elif type == &"marker":
 			_draw_pin(point, radius, colour)
 		else:
 			_draw_dot(point, radius, colour)
+
+## A letter rather than a shape, the way the legend writes it, outlined in
+## the same dark ring the dots carry so it reads on parkland and on roof.
+func _draw_glyph(point: Vector2, radius: float, colour: Color, glyph: String) -> void:
+	var font: Font = get_theme_default_font()
+	if font == null:
+		return
+	var size: int = maxi(GLYPH_MINIMUM_SIZE, roundi(radius * GLYPH_SCALE))
+	var extent: Vector2 = font.get_string_size(glyph, HORIZONTAL_ALIGNMENT_LEFT, -1, size)
+	var baseline := Vector2(point.x - extent.x * 0.5,
+		point.y + (font.get_ascent(size) - font.get_descent(size)) * 0.5)
+	draw_string_outline(font, baseline, glyph, HORIZONTAL_ALIGNMENT_LEFT, -1, size,
+		maxi(2, roundi(OUTLINE_WIDTH * 2.0)), OUTLINE_COLOUR)
+	draw_string(font, baseline, glyph, HORIZONTAL_ALIGNMENT_LEFT, -1, size, colour)
 
 func _draw_dot(point: Vector2, radius: float, colour: Color) -> void:
 	draw_colored_polygon(_circle(point, radius + OUTLINE_WIDTH), OUTLINE_COLOUR)

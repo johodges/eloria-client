@@ -15,10 +15,19 @@ extends Control
 const MARKER_COLOUR := Color(0.98, 0.78, 0.22)
 const MARKER_RADIUS := 10.0
 
+## How large a portal's P or an exit's X is drawn, in pixels: a glyph is read
+## rather than found, so it is bigger than a pin and its outline is heavy.
+const GLYPH_SIZE := 18
+const GLYPH_OUTLINE := 4
+
 var _camera: Camera3D
 var _adapter: CoordinateAdapter
 var _viewport_size := Vector2i.ZERO
 var _markers: Array[Dictionary] = []
+## The waygates and the ways off the map, each a world `position`, a `glyph`,
+## a `colour` and a `label` naming where it leads. `main.gd` hands them over
+## whenever the map's objects change.
+var _waypoints: Array[Dictionary] = []
 ## The player's own marks. Drawn in a different colour from the server's, so
 ## nobody mistakes their own annotation for something the world told them.
 var _player_marks: Array[Dictionary] = []
@@ -39,17 +48,55 @@ func set_player_marks(marks: Array[Dictionary]) -> void:
 	_player_marks = marks
 	queue_redraw()
 
+func set_waypoints(waypoints: Array[Dictionary]) -> void:
+	_waypoints = waypoints
+	queue_redraw()
+
+func waypoint_count() -> int:
+	return _waypoints.size()
+
 const PLAYER_MARK_COLOUR := Color(0.50, 0.83, 1.0)
 
 func _draw() -> void:
 	if not is_instance_valid(_camera) or _adapter == null:
 		return
-	if _markers.is_empty() and _player_marks.is_empty():
+	if _markers.is_empty() and _player_marks.is_empty() and _waypoints.is_empty():
 		return
 	var font: Font = get_theme_default_font()
 	var font_size: int = get_theme_default_font_size()
+	_draw_waypoints(font, font_size)
 	_draw_set(_markers, MARKER_COLOUR, font, font_size)
 	_draw_set(_player_marks, PLAYER_MARK_COLOUR, font, font_size)
+
+## The P of a waygate and the X of a way off the map, each with the name of
+## where it leads beside it. Drawn under the server's own markers, so a pin
+## placed on a doorway is still the pin.
+func _draw_waypoints(font: Font, font_size: int) -> void:
+	if font == null:
+		return
+	for waypoint: Dictionary in _waypoints:
+		var world: Vector3 = waypoint.get("position", Vector3.ZERO) as Vector3
+		if _camera.is_position_behind(world):
+			continue
+		var point_value: Variant = _texture_position(_camera.unproject_position(world))
+		if not point_value is Vector2:
+			continue
+		var point: Vector2 = point_value as Vector2
+		var glyph: String = str(waypoint.get("glyph", "X"))
+		var colour: Color = waypoint.get("colour", Color.WHITE) as Color
+		var extent: Vector2 = font.get_string_size(glyph, HORIZONTAL_ALIGNMENT_LEFT, -1,
+			GLYPH_SIZE)
+		var baseline := Vector2(point.x - extent.x * 0.5,
+			point.y + (font.get_ascent(GLYPH_SIZE) - font.get_descent(GLYPH_SIZE)) * 0.5)
+		draw_string_outline(font, baseline, glyph, HORIZONTAL_ALIGNMENT_LEFT, -1,
+			GLYPH_SIZE, GLYPH_OUTLINE, Color(0.04, 0.04, 0.05, 0.95))
+		draw_string(font, baseline, glyph, HORIZONTAL_ALIGNMENT_LEFT, -1, GLYPH_SIZE, colour)
+		var label: String = str(waypoint.get("label", ""))
+		if not label.is_empty():
+			var at := Vector2(point.x + extent.x * 0.5 + 4.0, point.y + 5.0)
+			draw_string_outline(font, at, label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size,
+				3, Color(0.04, 0.04, 0.05, 0.9))
+			draw_string(font, at, label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, colour)
 
 func _draw_set(marks: Array[Dictionary], colour: Color, font: Font,
 		font_size: int) -> void:

@@ -712,12 +712,14 @@ const MINIMAP_MARKER_SCALE_LABELS: Array[String] = [
 ## the settings-file keys, so a type added here is remembered without anything
 ## else being taught about it.
 const MINIMAP_MARKER_TYPES: Array[StringName] = [&"self", &"player", &"npc",
-	&"creature", &"invasion", &"harvest", &"interactive", &"bag", &"marker"]
+	&"creature", &"invasion", &"harvest", &"interactive", &"bag", &"portal",
+	&"exit", &"marker"]
 const MINIMAP_MARKER_TYPE_LABELS := {
 	&"self": "Your position", &"player": "Players", &"npc": "NPCs",
 	&"creature": "Creatures", &"invasion": "Invasion creatures",
 	&"harvest": "Harvest nodes", &"interactive": "Interactives",
-	&"bag": "Dropped bags", &"marker": "Map markers",
+	&"bag": "Dropped bags", &"portal": "Portals", &"exit": "Map exits",
+	&"marker": "Map markers",
 }
 ## The floor under the ambient light the two map cameras render with, so a
 ## minimap at midnight is still a map.
@@ -2506,6 +2508,7 @@ func _clear_world_presentation() -> void:
 			(raw_object_node as Node).queue_free()
 	map_object_nodes.clear()
 	_ungrounded_map_objects.clear()
+	map_marker_overlay.set_waypoints([])
 	if is_instance_valid(map_light_root):
 		map_light_root.queue_free()
 	map_light_root = null
@@ -5227,34 +5230,76 @@ func _collect_minimap_marks() -> Array[Dictionary]:
 		# under it says nothing and is never the one being looked for.
 		if actor_id == AppState.local_actor_id:
 			continue
-		var actor: ReplicatedActor3D = actor_nodes[raw_id] as ReplicatedActor3D
-		if actor == null or not is_instance_valid(actor):
+		# Validity before the cast: `as` on a freed node raises and aborts the
+		# whole collection, and an actor can be freed with its entry still here.
+		var actor_value: Variant = actor_nodes[raw_id]
+		if not is_instance_valid(actor_value):
+			continue
+		var actor: ReplicatedActor3D = actor_value as ReplicatedActor3D
+		if actor == null:
 			continue
 		var dto: Dictionary = AppState.actors.get(actor_id, {}) as Dictionary
 		marks.append({"position": actor.global_position,
 			"type": _minimap_actor_type(dto),
 			"colour": ReplicatedActor3D.map_dot_colour(dto)})
 	for raw_object: Variant in map_object_nodes.values():
-		var map_object: MapObject3D = raw_object as MapObject3D
-		if map_object == null or not is_instance_valid(map_object):
+		if not is_instance_valid(raw_object):
 			continue
-		marks.append({"position": map_object.global_position,
-			"type": (&"harvest" if map_object.is_harvestable() else &"interactive"),
-			"colour": map_object.map_dot_colour()})
+		var map_object: MapObject3D = raw_object as MapObject3D
+		if map_object == null:
+			continue
+		var mark: Dictionary = {"position": map_object.global_position,
+			"type": _minimap_object_type(map_object),
+			"colour": map_object.map_dot_colour()}
+		# A waygate and a way off the map are letters, as the legend has them.
+		var glyph: String = map_object.map_glyph()
+		if not glyph.is_empty():
+			mark["glyph"] = glyph
+		marks.append(mark)
 	for raw_bag: Variant in ground_bag_nodes.values():
+		if not is_instance_valid(raw_bag):
+			continue
 		var bag: GroundBag3D = raw_bag as GroundBag3D
-		if bag == null or not is_instance_valid(bag):
+		if bag == null:
 			continue
 		marks.append({"position": bag.global_position, "type": &"bag",
 			"colour": GroundBag3D.MAP_MARKER_COLOUR})
 	for raw_marker: Variant in map_marker_nodes.values():
+		if not is_instance_valid(raw_marker):
+			continue
 		var marker: MapMarker3D = raw_marker as MapMarker3D
-		if marker == null or not is_instance_valid(marker):
+		if marker == null:
 			continue
 		marks.append({"position": marker.global_position, "type": &"marker",
 			"colour": MapMarker3D.MARKER_COLOUR,
 			"radius": MinimapMarkerOverlayScript.PIN_RADIUS})
 	return marks
+
+## Which switch a world object's mark answers to.
+static func _minimap_object_type(map_object: MapObject3D) -> StringName:
+	if map_object.is_exit():
+		return &"exit"
+	if map_object.is_portal():
+		return &"portal"
+	return &"harvest" if map_object.is_harvestable() else &"interactive"
+
+## The waygates and the ways off this map, for the full map's overlay: it
+## draws them as their glyph with the destination's name beside it, which a
+## disc modelled in the world could never carry.
+func _collect_map_waypoints() -> Array[Dictionary]:
+	var waypoints: Array[Dictionary] = []
+	for raw_object: Variant in map_object_nodes.values():
+		if not is_instance_valid(raw_object):
+			continue
+		var map_object: MapObject3D = raw_object as MapObject3D
+		if map_object == null:
+			continue
+		var glyph: String = map_object.map_glyph()
+		if glyph.is_empty():
+			continue
+		waypoints.append({"position": map_object.global_position, "glyph": glyph,
+			"colour": map_object.map_dot_colour(), "label": map_object.destination()})
+	return waypoints
 
 ## Which switch an actor's dot answers to. What colour that dot is drawn in is
 ## decided by `ReplicatedActor3D` from the same two fields; this only decides
@@ -9484,6 +9529,8 @@ func _sync_map_objects() -> void:
 		world_root.add_child(map_object)
 		map_object_nodes[object_id] = map_object
 		_place_map_object_on_surface(map_object)
+	map_marker_overlay.set_waypoints(_collect_map_waypoints())
+	_request_map_redraw()
 	_sync_harvest_indicator()
 
 ## Draws the markers the server placed for the map the player is standing on.

@@ -8,7 +8,7 @@ the waystone home. The maps come from `_toolkit/gauntlets/` (designs, rooms,
 composer); the server side is written from the same designs by the server's
 `tools/author_gauntlets.py`.
 
-| route | region | keeper | bands (a/d) | boss |
+| route | region | keeper | rosters (authored a/d) | boss |
 |---|---|---|---|---|
 | The Resin Road | Amberwood | Old Pyke, at the charcoal camp | 8-30, 24-55 | the Boar King |
 | The Ice Stair | Whitehorn Range | Hesk Varne, at the mine | 10-35, 28-65 | the Rime Matriarch |
@@ -19,19 +19,37 @@ composer); the server side is written from the same designs by the server's
 | The Resonant Cut | Amethyst Barrens | Grinder Vell, at the geode cave | 5-30, 25-65 | the Songstone Tyrant |
 | The Bund Run | Manymouth Delta | Bund Warden Ilse, at the paddy watchtower | 8-30, 30-70 | the Bund Tyrant |
 
-The lower band of each road ends on a bigger, named one of an ordinary
-species (an inline boss); the upper band ends on a boss that is its own
+The lower roster of each road ends on a bigger, named one of an ordinary
+species (an inline boss); the upper roster ends on a boss that is its own
 creature (`boss: 1` in `creatures.txt`, a fight in `bosses.def`: it heals on
 the blow and calls its region up out of the ground in three stages).
 
 ## How a run works
 
 - **Starting.** The party leader talks to the keeper (NPC role `instance`).
-  The menu lists the keeper's roads and bands; everyone in the leader's
-  party standing within eight tiles goes in together, onto the first copy of
-  the map that no party holds (three copies per route, so three parties can
-  run the same road at once). Each member must be inside the band's a/d
-  bracket and off cooldown (`cooldown_hours`, per route). Solo is allowed.
+  The keeper asks how hard a road they want - five answers, from an easy
+  ride to an impossible challenge, each shown with the level it would set
+  the road to - and everyone in the leader's party standing within eight
+  tiles goes in together, onto the first copy of the map that no party
+  holds (three copies per route, so three parties can run the same road at
+  once). There is no level bracket: any party may start, off cooldown
+  (`cooldown_hours`, per route). Solo is allowed.
+- **The challenge.** The road is set from the strongest member's combat
+  level, the average of attack and defense. A fair fight is that level
+  exactly; an easy ride is three quarters of it, a hard road a fifth more,
+  a brutal road nearly half again, an impossible challenge four fifths
+  more, and the steps are held at least three levels apart so a low party
+  still has five real choices. Every creature the road lands is its species
+  scaled to that level - health, both combat levels and damage together,
+  bounded between a third and three times its own - and the experience it
+  gives follows. The route's two authored bands are rosters: the band whose
+  bracket holds the level is the one whose creatures and boss appear, so
+  the road changes flavour as a party grows.
+- **What it pays.** The harder the road, the more it drops. Creatures on a
+  hard or brutal road roll their tables twice when they fall, on an
+  impossible one three times; the cache at the end rolls once, once, twice,
+  twice and three times by step, with its rare lines half as likely on an
+  easy ride and up to three times as likely on an impossible challenge.
 - **Gates.** Every leg starts behind a barred way: a cut in the floor wider
   than two tiles with a gate prop across it. Using the gate (a `gate`
   interactive bound to a same-map portal) steps you through when the leg

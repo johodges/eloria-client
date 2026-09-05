@@ -31,6 +31,17 @@ const MAP_MARKER_RADIUS := 7.0
 const HARVEST_COLOUR := Color(0.42, 0.86, 0.44)
 const INTERACTIVE_COLOUR := Color(0.95, 0.62, 0.24)
 const ACTIVE_COLOUR := Color(1.0, 0.86, 0.36)
+## A waygate and a way off the map, the two the legend has always named and
+## neither map drew: the cyan P and the red X, in the legend's own colours.
+## Both are drawn as glyphs by the map overlays rather than as discs, so
+## they read as what they are at any zoom.
+const PORTAL_COLOUR := Color("58e1ff")
+const EXIT_COLOUR := Color("ff4747")
+const PORTAL_GLYPH := "P"
+const EXIT_GLYPH := "X"
+## The waygate texts the continent tool writes name where the gate leads in
+## these words; the label beside the P on the full map is that name.
+const PORTAL_DESTINATION_PHRASE := "Beyond it lies "
 ## The ring drawn under a node while the player is harvesting it, and under any
 ## object the registry could not place a model for.
 const RING_INNER_RADIUS := 0.62
@@ -62,6 +73,34 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 
 func is_harvestable() -> bool:
 	return kind == EloriaProtocol.MAP_OBJECT_HARVEST
+
+## A way off the map the server stated from its portal tiles. Nothing stands
+## on the tile and nothing is clicked; the tiles do the work when a player
+## walks onto them, and the maps draw the X.
+func is_exit() -> bool:
+	return kind == EloriaProtocol.MAP_OBJECT_EXIT
+
+## A waygate: the clickable object standing at a march.
+func is_portal() -> bool:
+	return not is_exit() and (label == "Portal" or model_id == "portal")
+
+## Where this leads, as far as the server said: an exit is named for its
+## destination, and a waygate's text names it in a fixed phrase. Empty when
+## neither applies.
+func destination() -> String:
+	if is_exit():
+		return label
+	if is_portal() and detail.contains(PORTAL_DESTINATION_PHRASE):
+		return detail.get_slice(PORTAL_DESTINATION_PHRASE, 1).trim_suffix(".").strip_edges()
+	return ""
+
+## The glyph the maps draw for this object, or "" for one drawn as a disc.
+func map_glyph() -> String:
+	if is_exit():
+		return EXIT_GLYPH
+	if is_portal():
+		return PORTAL_GLYPH
+	return ""
 
 func set_surface_height(height: float) -> void:
 	global_position.y = height + 0.05
@@ -99,6 +138,10 @@ func _drape_ring() -> void:
 	ring.mesh = _ring_flat if draped == null else draped
 
 func _marker_colour() -> Color:
+	if is_exit():
+		return EXIT_COLOUR
+	if is_portal():
+		return PORTAL_COLOUR
 	return HARVEST_COLOUR if is_harvestable() else INTERACTIVE_COLOUR
 
 ## The colour this object is marked in on either map. The full map draws the
@@ -134,10 +177,17 @@ func _catalog_entry(catalog: Dictionary) -> Dictionary:
 func _build_visual(catalog: Dictionary) -> void:
 	if get_child_count() > 0:
 		return
+	if is_exit():
+		# Nothing to stand on the tile and nothing to click: the march or the
+		# doorway is already there in the world art. The maps draw the X from
+		# this node's position; see `Main._collect_map_waypoints`.
+		return
 	var entry: Dictionary = _catalog_entry(catalog)
 	var height: float = _add_model(entry)
 	_add_ring()
-	_add_map_marker()
+	# A waygate is drawn on the maps as its glyph, not as a disc under it.
+	if not is_portal():
+		_add_map_marker()
 	_add_pick_shape(height)
 
 ## Returns the height of the model that was placed, or 0.0 for none.

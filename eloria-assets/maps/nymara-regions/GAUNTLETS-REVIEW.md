@@ -45,10 +45,10 @@ upgrade. Their drop tables are in `drops.txt`.
 | Gates that visibly open | the gate prop stands; using it steps you through the cut | a map-object state packet so the client hides the bars, or swaps the prop |
 | Checkpoints | death puts you outside; the party carries on without you | a `checkpoint` waystone every third leg that re-admits a dead participant while the run lives |
 | Leaderboards | best time per character in quest state | a per-route board in the leaderboard stats, and the keeper reading it out |
-| Hard mode | two bands per road | a third band per road with the upper roster, `frenzy` always on and a shorter clock |
+| Hard mode | superseded: the keeper's five-step challenge sets any road as far as 1.8x the party's level | a clock that shortens with the step |
 | Weekly featured road | every road is open every day | the special-days calendar naming one road with double tokens |
 | Ranged and magic legs | the ranges and null wells live in the secrets | an `area` on a leg (`no_magic` on the bridge, `cheap_magic` in the court) - the area kinds exist, the leg would declare one |
-| Party size scaling | wave size is fixed per band | multiply the variant's count by the party size over four |
+| Party size scaling | wave size is fixed per roster; the level follows the strongest member | multiply the variant's count by the party size over four |
 
 ## Things worth a look in play
 

@@ -1605,6 +1605,10 @@ static func decode_special_events(payload: PackedByteArray) -> Dictionary:
 ## wrote relative paths. Object identity is server state.
 const MAP_OBJECT_HARVEST := 1
 const MAP_OBJECT_INTERACTIVE := 2
+## A way off the map that nothing else marks - a march with no waygate, a
+## door into an interior, the way out of one. The server states it from its
+## portal tiles; it is not clickable, and the maps draw it.
+const MAP_OBJECT_EXIT := 3
 
 static func decode_map_objects(payload: PackedByteArray) -> Dictionary:
 	# A busy map has thousands of harvest nodes, which does not fit in one
@@ -1634,7 +1638,7 @@ static func decode_map_objects(payload: PackedByteArray) -> Dictionary:
 			return {"type": "invalid", "error": "map_object_detail"}
 		var detail: String = payload.slice(offset, detail_end).get_string_from_utf8()
 		offset = detail_end + 1
-		if kind not in [MAP_OBJECT_HARVEST, MAP_OBJECT_INTERACTIVE]:
+		if kind not in [MAP_OBJECT_HARVEST, MAP_OBJECT_INTERACTIVE, MAP_OBJECT_EXIT]:
 			return {"type": "invalid", "error": "map_object_kind"}
 		objects.append({"object_id": object_id, "kind": kind, "x": x, "y": y,
 			"label": label, "detail": detail})

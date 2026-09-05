@@ -36,6 +36,9 @@ and a beached boat where a ferry lands - and dresses the road with the
 region's own furniture: a waystation twenty metres back (a lamp, cairn,
 tuned shard, wind banner, bollard, stela, menhir or lantern snag, depending
 on whose road it is), a march stone naming the neighbour, and a signpost.
+On the client's maps a march shows as its waygate's cyan P; a crossing with
+no waygate - a door into an interior, the way out of one - shows as a red X
+the server states from its own portal tiles (`World.map_exit_entries`).
 
 Each march is a `transitions.Crossing` in the region's build script
 (`CROSSINGS = [...]`), with `prepare()` before the region populates (so its
