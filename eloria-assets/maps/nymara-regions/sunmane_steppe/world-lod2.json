@@ -90,7 +90,7 @@
       ],
       "position": [
         -52.0,
-        11.587,
+        11.621,
         -0.0
       ],
       "facing": [
@@ -130,7 +130,7 @@
       ],
       "position": [
         0.0,
-        8.387,
+        8.433,
         -42.0
       ],
       "facing": [
@@ -230,8 +230,12 @@
       "Landmark_sunmane_cave_wind_caves",
       "Landmark_sunmane_desert_station_00",
       "Landmark_sunmane_desert_station_01",
+      "Landmark_sunmane_filled_well",
       "Landmark_sunmane_great_hall",
       "Landmark_sunmane_landing_00",
+      "Landmark_sunmane_march_north-track",
+      "Landmark_sunmane_march_south-track",
+      "Landmark_sunmane_march_west-landing",
       "Landmark_sunmane_outpost_00",
       "Landmark_sunmane_outpost_01",
       "Landmark_sunmane_outpost_02",
@@ -283,7 +287,9 @@
       "Structure_Bridge_01",
       "Structure_Bridge_02",
       "Structure_Palisade"
-    ]
+    ],
+    "binary": "collision.bin",
+    "format": "EWCG-v2"
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -312,12 +318,12 @@
       "node": "Landmark_sunmane_great_hall",
       "position": [
         0.0,
-        9.14,
-        -13.0
+        9.15,
+        -12.0
       ],
       "serverTile": [
         58,
-        71
+        70
       ],
       "reachable": true,
       "rotationDegrees": 0.0
@@ -391,13 +397,13 @@
       "kind": "well",
       "node": "Landmark_sunmane_well_00",
       "position": [
-        0.0,
+        -7.5,
         9.6,
-        18.5
+        12.0
       ],
       "serverTile": [
-        58,
-        40
+        50,
+        46
       ],
       "reachable": true,
       "rotationDegrees": 11.5
@@ -440,7 +446,7 @@
       "node": "Gate_North",
       "position": [
         0.0,
-        6.56,
+        6.58,
         -25.0
       ],
       "serverTile": [
@@ -728,7 +734,7 @@
       "node": "Landmark_orun_banner_shrine_04",
       "position": [
         -24.0,
-        9.48,
+        9.53,
         -21.0
       ],
       "serverTile": [
@@ -744,7 +750,7 @@
       "node": "Landmark_orun_banner_shrine_05",
       "position": [
         25.0,
-        10.5,
+        10.63,
         -20.0
       ],
       "serverTile": [
@@ -792,7 +798,7 @@
       "node": "Landmark_sunmane_caravanserai_00",
       "position": [
         -42.0,
-        10.45,
+        10.44,
         0.0
       ],
       "serverTile": [
@@ -824,7 +830,7 @@
       "node": "Landmark_sunmane_caravanserai_02",
       "position": [
         0.0,
-        7.78,
+        7.82,
         -40.0
       ],
       "serverTile": [
@@ -840,7 +846,7 @@
       "node": "Landmark_sunmane_caravanserai_03",
       "position": [
         2.0,
-        11.45,
+        11.47,
         50.0
       ],
       "serverTile": [
@@ -995,6 +1001,22 @@
       "rotationDegrees": 97.4
     },
     {
+      "id": "Landmark_sunmane_filled_well",
+      "kind": "lore-site",
+      "node": "Landmark_sunmane_filled_well",
+      "position": [
+        -9.0,
+        11.41,
+        40.0
+      ],
+      "serverTile": [
+        49,
+        18
+      ],
+      "reachable": true,
+      "rotationDegrees": 40.1
+    },
+    {
       "id": "Landmark_sunmane_animal_pen_00",
       "kind": "animal-pen",
       "node": "Landmark_sunmane_animal_pen_00",
@@ -1096,7 +1118,7 @@
       "node": "Landmark_sunmane_burial_mound_00",
       "position": [
         0.0,
-        8.01,
+        8.05,
         -42.0
       ],
       "serverTile": [
@@ -1112,7 +1134,7 @@
       "node": "Landmark_sunmane_burial_mound_01",
       "position": [
         -11.0,
-        10.82,
+        10.83,
         -46.0
       ],
       "serverTile": [
@@ -1128,7 +1150,7 @@
       "node": "Landmark_sunmane_burial_mound_02",
       "position": [
         11.0,
-        10.84,
+        10.88,
         -47.0
       ],
       "serverTile": [
@@ -1144,7 +1166,7 @@
       "node": "Landmark_sunmane_burial_mound_03",
       "position": [
         -6.0,
-        9.48,
+        9.49,
         -54.0
       ],
       "serverTile": [
@@ -1160,7 +1182,7 @@
       "node": "Landmark_sunmane_burial_mound_04",
       "position": [
         7.0,
-        11.64,
+        11.66,
         -55.0
       ],
       "serverTile": [
@@ -1539,6 +1561,54 @@
       "rotationDegrees": -90.0
     },
     {
+      "id": "Landmark_sunmane_march_west-landing",
+      "kind": "transition",
+      "node": "Landmark_sunmane_march_west-landing",
+      "position": [
+        -52.0,
+        11.32,
+        0.0
+      ],
+      "serverTile": [
+        6,
+        58
+      ],
+      "reachable": true,
+      "rotationDegrees": 90.0
+    },
+    {
+      "id": "Landmark_sunmane_march_north-track",
+      "kind": "transition",
+      "node": "Landmark_sunmane_march_north-track",
+      "position": [
+        8.0,
+        16.65,
+        -126.0
+      ],
+      "serverTile": [
+        66,
+        184
+      ],
+      "reachable": true,
+      "rotationDegrees": 0.0
+    },
+    {
+      "id": "Landmark_sunmane_march_south-track",
+      "kind": "transition",
+      "node": "Landmark_sunmane_march_south-track",
+      "position": [
+        4.0,
+        11.26,
+        40.0
+      ],
+      "serverTile": [
+        62,
+        18
+      ],
+      "reachable": true,
+      "rotationDegrees": 0.0
+    },
+    {
       "id": "Landmark_sunmane_desert_station_00",
       "kind": "water-station",
       "node": "Landmark_sunmane_desert_station_00",
@@ -1656,7 +1726,7 @@
       "node": "Landmark_sunmane_waystone_05",
       "position": [
         12.0,
-        16.84,
+        16.81,
         -130.0
       ],
       "serverTile": [
@@ -1911,7 +1981,7 @@
       "node": "Structure_Bridge_01",
       "position": [
         -2.0,
-        9.0,
+        9.03,
         -37.0
       ],
       "serverTile": [
@@ -1944,12 +2014,12 @@
       "node": "Landmark_sunmane_great_hall",
       "position": [
         0.0,
-        10.14,
-        -13.0
+        10.15,
+        -12.0
       ],
       "serverTile": [
         58,
-        71
+        70
       ]
     },
     {
@@ -2018,13 +2088,13 @@
       "label": "Crossroads well",
       "node": "Landmark_sunmane_well_00",
       "position": [
-        0.0,
+        -7.5,
         10.6,
-        18.5
+        12.0
       ],
       "serverTile": [
-        58,
-        40
+        50,
+        46
       ]
     },
     {
@@ -2064,7 +2134,7 @@
       "node": "Gate_North",
       "position": [
         0.0,
-        7.56,
+        7.58,
         -25.0
       ],
       "serverTile": [
@@ -2334,7 +2404,7 @@
       "node": "Landmark_orun_banner_shrine_04",
       "position": [
         -24.0,
-        10.48,
+        10.53,
         -21.0
       ],
       "serverTile": [
@@ -2349,7 +2419,7 @@
       "node": "Landmark_orun_banner_shrine_05",
       "position": [
         25.0,
-        11.5,
+        11.63,
         -20.0
       ],
       "serverTile": [
@@ -2394,7 +2464,7 @@
       "node": "Landmark_sunmane_caravanserai_00",
       "position": [
         -42.0,
-        11.45,
+        11.44,
         0.0
       ],
       "serverTile": [
@@ -2424,7 +2494,7 @@
       "node": "Landmark_sunmane_caravanserai_02",
       "position": [
         0.0,
-        8.78,
+        8.82,
         -40.0
       ],
       "serverTile": [
@@ -2439,7 +2509,7 @@
       "node": "Landmark_sunmane_caravanserai_03",
       "position": [
         2.0,
-        12.45,
+        12.47,
         50.0
       ],
       "serverTile": [
@@ -2583,6 +2653,21 @@
       ]
     },
     {
+      "id": "fourth-well",
+      "kind": "landmark",
+      "label": "The fourth well, filled",
+      "node": "Landmark_sunmane_filled_well",
+      "position": [
+        -9.0,
+        12.41,
+        40.0
+      ],
+      "serverTile": [
+        49,
+        18
+      ]
+    },
+    {
       "id": "pen-00",
       "kind": "livestock",
       "label": "Horse paddock",
@@ -2673,13 +2758,13 @@
       ]
     },
     {
-      "id": "archive-entrance",
-      "kind": "portal",
-      "label": "Ssarathi Royal Archive",
+      "id": "barrow-00",
+      "kind": "landmark",
+      "label": "Orun barrow, the sealed passage",
       "node": "Landmark_sunmane_burial_mound_00",
       "position": [
         0.0,
-        9.01,
+        9.05,
         -42.0
       ],
       "serverTile": [
@@ -2694,7 +2779,7 @@
       "node": "Landmark_sunmane_burial_mound_01",
       "position": [
         -11.0,
-        11.82,
+        11.83,
         -46.0
       ],
       "serverTile": [
@@ -2709,7 +2794,7 @@
       "node": "Landmark_sunmane_burial_mound_02",
       "position": [
         11.0,
-        11.84,
+        11.88,
         -47.0
       ],
       "serverTile": [
@@ -2724,7 +2809,7 @@
       "node": "Landmark_sunmane_burial_mound_03",
       "position": [
         -6.0,
-        10.48,
+        10.49,
         -54.0
       ],
       "serverTile": [
@@ -2739,7 +2824,7 @@
       "node": "Landmark_sunmane_burial_mound_04",
       "position": [
         7.0,
-        12.64,
+        12.66,
         -55.0
       ],
       "serverTile": [
@@ -2841,7 +2926,7 @@
       "id": "cave-wind_caves",
       "kind": "portal",
       "label": "Sunmane Wind Caves",
-      "destinationMap": "maps/nymara/sunmane_wind_caves.elm",
+      "destinationMap": "sunmane_wind_caves",
       "destinationSpawn": "entrance-hall",
       "destinationTile": [
         30,
@@ -2862,7 +2947,7 @@
       "id": "cave-crystal_hollow",
       "kind": "portal",
       "label": "Amethyst Crystal Hollow",
-      "destinationMap": "maps/nymara/sunmane_crystal_hollow.elm",
+      "destinationMap": "sunmane_crystal_hollow",
       "destinationSpawn": "adit-mouth",
       "destinationTile": [
         30,
@@ -2907,6 +2992,54 @@
       "serverTile": [
         190,
         88
+      ]
+    },
+    {
+      "id": "west-landing",
+      "kind": "portal",
+      "label": "The causeway road to the Four Gates",
+      "destinationMap": "four_gates",
+      "node": "Landmark_sunmane_march_west-landing",
+      "position": [
+        -52.0,
+        12.32,
+        0.0
+      ],
+      "serverTile": [
+        6,
+        58
+      ]
+    },
+    {
+      "id": "north-track",
+      "kind": "portal",
+      "label": "The desert track into the Amethyst Barrens",
+      "destinationMap": "amethyst_barrens",
+      "node": "Landmark_sunmane_march_north-track",
+      "position": [
+        8.0,
+        17.65,
+        -126.0
+      ],
+      "serverTile": [
+        66,
+        184
+      ]
+    },
+    {
+      "id": "south-track",
+      "kind": "portal",
+      "label": "The shore road to the Verdant Stair",
+      "destinationMap": "verdant_stair",
+      "node": "Landmark_sunmane_march_south-track",
+      "position": [
+        4.0,
+        12.26,
+        40.0
+      ],
+      "serverTile": [
+        62,
+        18
       ]
     },
     {
@@ -3326,7 +3459,7 @@
         "node": "Light_Warm_barrowfield",
         "position": [
           0.0,
-          12.25,
+          12.3,
           -46.0
         ],
         "color": [
@@ -3360,7 +3493,7 @@
         "node": "Light_Transition_gate-north",
         "position": [
           0.0,
-          11.61,
+          11.63,
           -25.0
         ],
         "color": [
@@ -3426,7 +3559,7 @@
         ],
         "radius": 6.0,
         "animation": "Idle_A",
-        "seed": 1609,
+        "seed": 74190,
         "serverTile": [
           28,
           88
@@ -3443,7 +3576,7 @@
         ],
         "radius": 5.6,
         "animation": "Idle_A",
-        "seed": 68203,
+        "seed": 12857,
         "serverTile": [
           98,
           76
@@ -3460,7 +3593,7 @@
         ],
         "radius": 5.8,
         "animation": "Idle_A",
-        "seed": 41390,
+        "seed": 23468,
         "serverTile": [
           114,
           30
@@ -3477,7 +3610,7 @@
         ],
         "radius": 6.2,
         "animation": "Idle_A",
-        "seed": 17624,
+        "seed": 75438,
         "serverTile": [
           14,
           18
@@ -3494,7 +3627,7 @@
         ],
         "radius": 5.4,
         "animation": "Idle_A",
-        "seed": 42346,
+        "seed": 32661,
         "serverTile": [
           76,
           18
@@ -3511,7 +3644,7 @@
         ],
         "radius": 5.6,
         "animation": "Idle_A",
-        "seed": 67717,
+        "seed": 2595,
         "serverTile": [
           42,
           110
@@ -3528,7 +3661,7 @@
         ],
         "radius": 13.0,
         "animation": "Idle_A",
-        "seed": 42901,
+        "seed": 49824,
         "serverTile": [
           8,
           66
@@ -3545,7 +3678,7 @@
         ],
         "radius": 12.0,
         "animation": "Idle_A",
-        "seed": 58216,
+        "seed": 94632,
         "serverTile": [
           124,
           66
@@ -3562,7 +3695,7 @@
         ],
         "radius": 12.0,
         "animation": "Idle_A",
-        "seed": 78713,
+        "seed": 46592,
         "serverTile": [
           52,
           122
@@ -3579,7 +3712,7 @@
         ],
         "radius": 12.0,
         "animation": "Idle_A",
-        "seed": 40594,
+        "seed": 16374,
         "serverTile": [
           82,
           8
@@ -3596,7 +3729,7 @@
         ],
         "radius": 2.6,
         "animation": "Idle_A",
-        "seed": 82060,
+        "seed": 8626,
         "serverTile": [
           37,
           46
@@ -3613,7 +3746,7 @@
         ],
         "radius": 2.6,
         "animation": "Idle_A",
-        "seed": 46479,
+        "seed": 45277,
         "serverTile": [
           79,
           45
@@ -3630,7 +3763,7 @@
         ],
         "radius": 3.2,
         "animation": "Idle_A",
-        "seed": 2332,
+        "seed": 30941,
         "serverTile": [
           16,
           54
@@ -3647,7 +3780,7 @@
         ],
         "radius": 3.2,
         "animation": "Idle_A",
-        "seed": 92017,
+        "seed": 36896,
         "serverTile": [
           100,
           54
@@ -3664,7 +3797,7 @@
         ],
         "radius": 3.0,
         "animation": "Idle_A",
-        "seed": 94174,
+        "seed": 60343,
         "serverTile": [
           58,
           36
@@ -3681,7 +3814,7 @@
         ],
         "radius": 2.8,
         "animation": "Idle_A",
-        "seed": 37681,
+        "seed": 35736,
         "serverTile": [
           62,
           146
@@ -3698,7 +3831,7 @@
         ],
         "radius": 2.8,
         "animation": "Idle_A",
-        "seed": 10219,
+        "seed": 7216,
         "serverTile": [
           122,
           154
@@ -3715,7 +3848,7 @@
         ],
         "radius": 3.0,
         "animation": "Idle_A",
-        "seed": 27151,
+        "seed": 40447,
         "serverTile": [
           42,
           153
@@ -3732,7 +3865,7 @@
         ],
         "radius": 3.0,
         "animation": "Idle_A",
-        "seed": 16374,
+        "seed": 927,
         "serverTile": [
           104,
           157
@@ -3749,7 +3882,7 @@
         ],
         "radius": 3.0,
         "animation": "Idle_A",
-        "seed": 7422,
+        "seed": 90839,
         "serverTile": [
           144,
           137
@@ -3766,7 +3899,7 @@
         ],
         "radius": 11.0,
         "animation": "Idle_A",
-        "seed": 47652,
+        "seed": 14314,
         "serverTile": [
           88,
           136
@@ -3783,7 +3916,7 @@
         ],
         "radius": 11.0,
         "animation": "Idle_A",
-        "seed": 83439,
+        "seed": 24325,
         "serverTile": [
           162,
           118
@@ -3799,13 +3932,13 @@
         "label": "Orun khan",
         "role": "quest",
         "position": [
-          0.0,
-          9.6,
-          -2.0
+          14.0,
+          9.66,
+          -21.0
         ],
         "serverTile": [
-          58,
-          60
+          72,
+          79
         ],
         "spawnHook": "npcs.nymara.sunmane_steppe"
       },
@@ -3814,13 +3947,13 @@
         "label": "Seasonal market broker",
         "role": "trade",
         "position": [
-          -8.5,
-          9.6,
-          9.5
+          -15.0,
+          9.87,
+          22.0
         ],
         "serverTile": [
-          50,
-          48
+          43,
+          36
         ],
         "spawnHook": "npcs.nymara.sunmane_steppe"
       },
@@ -3845,12 +3978,12 @@
         "role": "travel",
         "position": [
           -42.0,
-          10.15,
-          4.0
+          8.73,
+          9.0
         ],
         "serverTile": [
           16,
-          54
+          49
         ],
         "spawnHook": "npcs.nymara.sunmane_steppe"
       },
@@ -3860,12 +3993,12 @@
         "role": "travel",
         "position": [
           42.0,
-          13.15,
-          4.0
+          13.21,
+          9.0
         ],
         "serverTile": [
           100,
-          54
+          49
         ],
         "spawnHook": "npcs.nymara.sunmane_steppe"
       },
@@ -3905,12 +4038,12 @@
         "role": "service",
         "position": [
           0.0,
-          9.6,
-          21.0
+          9.71,
+          28.0
         ],
         "serverTile": [
           58,
-          37
+          30
         ],
         "spawnHook": "npcs.nymara.sunmane_steppe"
       },
@@ -3919,13 +4052,13 @@
         "label": "Barrow warden",
         "role": "quest",
         "position": [
-          0.0,
-          8.22,
-          -38.0
+          1.0,
+          8.17,
+          -33.0
         ],
         "serverTile": [
-          58,
-          96
+          59,
+          91
         ],
         "spawnHook": "npcs.nymara.sunmane_steppe"
       },
@@ -3950,12 +4083,12 @@
         "role": "service",
         "position": [
           4.0,
-          13.66,
-          -90.0
+          13.92,
+          -88.0
         ],
         "serverTile": [
           62,
-          148
+          146
         ],
         "spawnHook": "npcs.nymara.sunmane_steppe"
       },
@@ -3964,13 +4097,13 @@
         "label": "Salt-pan factor",
         "role": "trade",
         "position": [
-          64.0,
-          12.51,
-          -98.0
+          65.0,
+          12.95,
+          -96.0
         ],
         "serverTile": [
-          122,
-          156
+          123,
+          154
         ],
         "spawnHook": "npcs.nymara.sunmane_steppe"
       },
@@ -3994,13 +4127,13 @@
         "label": "Amethyst prospector",
         "role": "trade",
         "position": [
-          122.0,
-          26.75,
-          -92.0
+          124.0,
+          27.2,
+          -96.0
         ],
         "serverTile": [
-          180,
-          150
+          182,
+          154
         ],
         "spawnHook": "npcs.nymara.sunmane_steppe"
       },
@@ -4009,13 +4142,13 @@
         "label": "Whitehorn range warden",
         "role": "quest",
         "position": [
-          98.0,
-          33.2,
-          -88.0
+          103.0,
+          13.64,
+          -83.0
         ],
         "serverTile": [
-          156,
-          146
+          161,
+          141
         ],
         "spawnHook": "npcs.nymara.sunmane_steppe"
       }
@@ -4046,8 +4179,8 @@
         "kind": "crop",
         "center": [
           -34.0,
-          8.76,
-          -46.0
+          9.27,
+          -51.0
         ],
         "extent": [
           13.0,
@@ -4055,7 +4188,7 @@
         ],
         "serverTile": [
           24,
-          104
+          109
         ],
         "harvestHook": "harvest.nymara.sunmane_steppe"
       },
@@ -4121,8 +4254,8 @@
         "label": "Steppe herbs",
         "kind": "herb",
         "center": [
-          -50.0,
-          12.83,
+          -48.0,
+          13.66,
           -20.0
         ],
         "extent": [
@@ -4130,7 +4263,7 @@
           8.0
         ],
         "serverTile": [
-          8,
+          10,
           78
         ],
         "harvestHook": "harvest.nymara.sunmane_steppe"
@@ -4160,8 +4293,8 @@
         "kind": "herb",
         "center": [
           -24.0,
-          9.22,
-          58.0
+          9.34,
+          56.0
         ],
         "extent": [
           8.0,
@@ -4169,7 +4302,7 @@
         ],
         "serverTile": [
           34,
-          0
+          2
         ],
         "harvestHook": "harvest.nymara.sunmane_steppe"
       },
@@ -4178,17 +4311,17 @@
         "label": "Shore clay",
         "kind": "mineral",
         "center": [
-          -54.0,
-          7.21,
-          48.0
+          -52.0,
+          7.34,
+          47.0
         ],
         "extent": [
           6.0,
           6.0
         ],
         "serverTile": [
-          4,
-          10
+          6,
+          11
         ],
         "harvestHook": "harvest.nymara.sunmane_steppe"
       },
@@ -4216,17 +4349,17 @@
         "label": "Mesa flint",
         "kind": "mineral",
         "center": [
-          -20.0,
-          24.0,
-          -74.0
+          -6.0,
+          14.6,
+          -69.0
         ],
         "extent": [
           7.0,
           7.0
         ],
         "serverTile": [
-          38,
-          132
+          52,
+          127
         ],
         "harvestHook": "harvest.nymara.sunmane_steppe"
       },
@@ -4235,17 +4368,17 @@
         "label": "Mesa flint",
         "kind": "mineral",
         "center": [
-          60.0,
-          21.45,
-          -62.0
+          67.0,
+          15.0,
+          -55.0
         ],
         "extent": [
           7.0,
           7.0
         ],
         "serverTile": [
-          118,
-          120
+          125,
+          113
         ],
         "harvestHook": "harvest.nymara.sunmane_steppe"
       },
@@ -4254,17 +4387,17 @@
         "label": "Amethyst shard",
         "kind": "mineral",
         "center": [
-          110.0,
-          35.62,
-          -96.0
+          118.0,
+          22.24,
+          -103.0
         ],
         "extent": [
           8.0,
           8.0
         ],
         "serverTile": [
-          168,
-          154
+          176,
+          161
         ],
         "harvestHook": "harvest.nymara.sunmane_steppe"
       },
@@ -4273,17 +4406,17 @@
         "label": "Amethyst shard",
         "kind": "mineral",
         "center": [
-          126.0,
-          24.96,
-          -70.0
+          119.0,
+          10.52,
+          -63.0
         ],
         "extent": [
           7.0,
           7.0
         ],
         "serverTile": [
-          184,
-          128
+          177,
+          121
         ],
         "harvestHook": "harvest.nymara.sunmane_steppe"
       },
@@ -4293,7 +4426,7 @@
         "kind": "mineral",
         "center": [
           6.0,
-          16.18,
+          16.95,
           -124.0
         ],
         "extent": [
@@ -4404,39 +4537,39 @@
     ],
     "creatures": [
       {
-        "model": "dire_wolf",
-        "area": "north mesa breaks",
+        "model": "golden_plains_horse",
+        "area": "northern pasture",
         "count": 3,
-        "radius": 10.0,
+        "radius": 12.0,
         "center": [
-          -30.0,
-          25.86,
-          -68.0
+          -52.0,
+          11.19,
+          -50.0
         ],
         "serverTile": [
-          28,
-          126
+          6,
+          108
         ],
         "spawnHook": "spawns.nymara.sunmane_steppe"
       },
       {
-        "model": "dire_wolf",
-        "area": "eastern breaks",
+        "model": "golden_bison",
+        "area": "open steppe",
         "count": 3,
-        "radius": 10.0,
+        "radius": 14.0,
         "center": [
-          74.0,
-          9.64,
-          -34.0
+          30.0,
+          11.02,
+          -50.0
         ],
         "serverTile": [
-          132,
-          92
+          88,
+          108
         ],
         "spawnHook": "spawns.nymara.sunmane_steppe"
       },
       {
-        "model": "wild_boar",
+        "model": "dunrunner",
         "area": "south-west scrub",
         "count": 4,
         "radius": 11.0,
@@ -4452,40 +4585,120 @@
         "spawnHook": "spawns.nymara.sunmane_steppe"
       },
       {
-        "model": "red_fox",
-        "area": "open steppe",
-        "count": 4,
-        "radius": 14.0,
-        "center": [
-          30.0,
-          11.02,
-          -50.0
-        ],
-        "serverTile": [
-          88,
-          108
-        ],
-        "spawnHook": "spawns.nymara.sunmane_steppe"
-      },
-      {
-        "model": "elk",
-        "area": "northern pasture",
-        "count": 4,
+        "model": "steppe_aurochs",
+        "area": "eastern pasture",
+        "count": 3,
         "radius": 12.0,
         "center": [
-          -52.0,
-          11.19,
-          -50.0
+          60.0,
+          11.33,
+          30.0
         ],
         "serverTile": [
-          6,
-          108
+          118,
+          28
         ],
         "spawnHook": "spawns.nymara.sunmane_steppe"
       },
       {
-        "model": "mountain_goat",
-        "area": "coastal cliffs",
+        "model": "red_fox",
+        "area": "dune margin scrub",
+        "count": 5,
+        "radius": 12.0,
+        "center": [
+          -24.0,
+          20.94,
+          -92.0
+        ],
+        "serverTile": [
+          34,
+          150
+        ],
+        "spawnHook": "spawns.nymara.sunmane_steppe"
+      },
+      {
+        "model": "dire_wolf",
+        "area": "north mesa breaks",
+        "count": 2,
+        "radius": 10.0,
+        "center": [
+          -30.0,
+          25.86,
+          -68.0
+        ],
+        "serverTile": [
+          28,
+          126
+        ],
+        "spawnHook": "spawns.nymara.sunmane_steppe"
+      },
+      {
+        "model": "dire_wolf",
+        "area": "wind cave approach",
+        "count": 2,
+        "radius": 11.0,
+        "center": [
+          56.0,
+          12.93,
+          -108.0
+        ],
+        "serverTile": [
+          114,
+          166
+        ],
+        "spawnHook": "spawns.nymara.sunmane_steppe"
+      },
+      {
+        "model": "sunmane_cat",
+        "area": "eastern breaks",
+        "count": 3,
+        "radius": 10.0,
+        "center": [
+          74.0,
+          9.64,
+          -34.0
+        ],
+        "serverTile": [
+          132,
+          92
+        ],
+        "spawnHook": "spawns.nymara.sunmane_steppe"
+      },
+      {
+        "model": "stormmane_lion",
+        "area": "amethyst badland",
+        "count": 2,
+        "radius": 12.0,
+        "center": [
+          114.0,
+          17.92,
+          -78.0
+        ],
+        "serverTile": [
+          172,
+          136
+        ],
+        "spawnHook": "spawns.nymara.sunmane_steppe"
+      },
+      {
+        "model": "plains_griffin",
+        "area": "Whitehorn foothills",
+        "count": 2,
+        "radius": 12.0,
+        "center": [
+          92.0,
+          18.87,
+          -120.0
+        ],
+        "serverTile": [
+          150,
+          178
+        ],
+        "spawnHook": "spawns.nymara.sunmane_steppe"
+      },
+      {
+        "model": "suncrest_heron",
+        "area": "coastal watering holes",
         "count": 3,
         "radius": 9.0,
         "center": [
@@ -4500,66 +4713,18 @@
         "spawnHook": "spawns.nymara.sunmane_steppe"
       },
       {
-        "model": "mountain_goat",
-        "area": "Whitehorn foothills",
-        "count": 3,
-        "radius": 12.0,
+        "model": "giant_mole",
+        "area": "crop ground",
+        "count": 1,
+        "radius": 8.0,
         "center": [
-          92.0,
-          18.87,
-          -120.0
+          34.0,
+          12.55,
+          30.0
         ],
         "serverTile": [
-          150,
-          178
-        ],
-        "spawnHook": "spawns.nymara.sunmane_steppe"
-      },
-      {
-        "model": "dire_wolf",
-        "area": "wind cave approach",
-        "count": 3,
-        "radius": 11.0,
-        "center": [
-          56.0,
-          12.93,
-          -108.0
-        ],
-        "serverTile": [
-          114,
-          166
-        ],
-        "spawnHook": "spawns.nymara.sunmane_steppe"
-      },
-      {
-        "model": "red_fox",
-        "area": "amethyst badland",
-        "count": 3,
-        "radius": 12.0,
-        "center": [
-          114.0,
-          17.92,
-          -78.0
-        ],
-        "serverTile": [
-          172,
-          136
-        ],
-        "spawnHook": "spawns.nymara.sunmane_steppe"
-      },
-      {
-        "model": "wild_boar",
-        "area": "dune margin scrub",
-        "count": 4,
-        "radius": 12.0,
-        "center": [
-          -24.0,
-          20.94,
-          -92.0
-        ],
-        "serverTile": [
-          34,
-          150
+          92,
+          28
         ],
         "spawnHook": "spawns.nymara.sunmane_steppe"
       }
@@ -4586,25 +4751,25 @@
     "thirdPartyAssets": "none"
   },
   "statistics": {
-    "terrainTriangles": 80000,
+    "terrainTriangles": 91756,
     "terrainChunks": 100,
     "seaTriangles": 452,
-    "pondTriangles": 1172,
-    "kitAssets": 51,
-    "kitUniqueTriangles": 45555,
-    "instances": 192,
+    "pondTriangles": 1174,
+    "kitAssets": 53,
+    "kitUniqueTriangles": 47679,
+    "instances": 196,
     "scatterTriangles": 0,
-    "landmarks": 102,
-    "interactives": 70,
-    "nodes": 312,
-    "meshes": 159,
+    "landmarks": 106,
+    "interactives": 74,
+    "nodes": 316,
+    "meshes": 161,
     "materials": 29,
     "textures": 30,
-    "accessors": 2822,
-    "uniqueMeshTriangles": 136047,
-    "glbBytes": 9169492,
+    "accessors": 3192,
+    "uniqueMeshTriangles": 150137,
+    "glbBytes": 10019292,
     "lod": 2,
     "textureScale": 0.5,
-    "buildSeconds": 9.8
+    "buildSeconds": 6.0
   }
 }

@@ -104,6 +104,12 @@ _DESIGN_ANCHORS: dict[str, tuple[float, float]] = {
     "east_camp": (110.0, -6.0),
     "overlook": (74.0, 9.0),
     "east_shrine": (118.0, -64.0),
+    # the three ways out of the range, each through a notch in its rim: the
+    # south march down to Mirrorhold, the west pass to the Amberwood beyond
+    # the ice cave, the east pass to the Barrens beyond the mine road
+    "south_march": (0.0, 51.0),
+    "west_pass": (-51.0, -12.0),
+    "east_pass": (125.0, -4.0),
 }
 
 ANCHORS: dict[str, tuple[float, float]] = {
@@ -150,6 +156,13 @@ ROUTES: dict[str, np.ndarray] = {
                                 _design("mine_yard")),
     "pine_track": _route(_design("south_gate"), (-16.0, 24.0),
                          _design("pine_shelf")),
+    # out of the range
+    "south_march_road": _route(_design("south_gate"), (-3.0, 36.0), (-1.0, 45.0),
+                               _design("south_march"), (0.0, 58.0)),
+    "west_pass_road": _route(_design("ice_cave"), (-45.0, -13.0),
+                             _design("west_pass"), (-58.0, -12.0)),
+    "east_pass_road": _route(_design("east_camp"), (117.0, -5.0),
+                             _design("east_pass"), (134.0, -4.0)),
 }
 
 # The gorge is a single cut across the map that the two rope bridges span.
@@ -231,6 +244,19 @@ def build_terrain(seed: int = 20260828) -> TER.Terrain:
     # sheltered, so the first thing a player sees is the climb ahead of them.
     t.add_dome(ANCHORS["arrival"], 44.0 * SCALE, -14.0, power=1.25)
     t.add_dome(ANCHORS["pine_shelf"], 26.0 * SCALE, -6.0, power=1.4)
+
+    # The notches. The rim walls are what make the range a bowl, and a bowl
+    # with no way out is a map a player cannot leave. Each of the three roads
+    # that leave has its pass cut level through the rim at the height of the
+    # ground it comes from - wide enough for the road and its shoulders, so
+    # the floor is walkable to the map edge and the wall still reads as a
+    # wall either side. (Bowl-shaped dome cuts here left craters whose slopes
+    # nothing could climb.)
+    for route_name in ("south_march_road", "west_pass_road", "east_pass_road"):
+        points = ROUTES[route_name][-3:]
+        floor = float(t.height_at(points[0][0], points[0][1]))
+        t.grade_path(points, 5.0 * SCALE, heights=[floor, floor - 1.0, floor - 3.0],
+                     shoulder=2.4, surface=TER.PATH, flatten=1.0)
 
     # The glacier trough: a broad U cut down the centre, which the ice fills.
     t.carve_channel(GLACIER, GLACIER_WIDTH * SCALE, 13.0, bank=3.4,

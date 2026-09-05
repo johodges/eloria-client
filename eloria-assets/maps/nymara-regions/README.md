@@ -13,6 +13,13 @@ This package covers all eighteen supplied maps beyond Four Gates. It contains 18
 
 The generated GLBs are production starters, not final art. Terrain, routes, water masks, arrival coordinates, material language, and landmark silhouettes are implemented. Hero landmark geometry, final foliage/prop density, lighting polish, and per-map performance LODs remain in progress.
 
+## The continent layer
+
+How the regions join up - the crossings graph, the marches at every edge, the
+lore sites the NPC threads point at, the small rooms on every insides map and
+the tools that write the server's portal table from all of it - is in
+`CONTINENT.md`.
+
 ## Rebuild and verify
 
 Each region builds itself, from its own `source/build_<region>.py` over the

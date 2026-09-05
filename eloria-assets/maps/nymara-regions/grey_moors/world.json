@@ -54,7 +54,7 @@
       0.0,
       0.0
     ],
-    "walkingHeight": 2.73,
+    "walkingHeight": 2.72,
     "invertServerY": true
   },
   "spawnPoints": [
@@ -62,7 +62,7 @@
       "id": "default",
       "position": [
         0.0,
-        2.78,
+        2.77,
         0.0
       ],
       "serverTile": [
@@ -77,7 +77,7 @@
       "id": "barrow-court",
       "position": [
         114.0,
-        4.04,
+        4.13,
         -234.0
       ],
       "serverTile": [
@@ -107,7 +107,7 @@
       "id": "great-barrow-mouth",
       "position": [
         116.75,
-        4.09,
+        4.18,
         -252.75
       ],
       "serverTile": [
@@ -166,6 +166,54 @@
       "surface": "MoorTrack",
       "grounded": true,
       "note": "return point from the Grey Moor barrows insides map"
+    },
+    {
+      "id": "fifth-chamber-mouth",
+      "position": [
+        380.75,
+        5.73,
+        -191.75
+      ],
+      "serverTile": [
+        555,
+        366
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "Causeway",
+      "grounded": true,
+      "note": "return point from the Grey Moor barrows insides map"
+    },
+    {
+      "id": "peat-croft-door",
+      "position": [
+        122.25,
+        3.5,
+        76.25
+      ],
+      "serverTile": [
+        296,
+        98
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "MoorTrack",
+      "grounded": true,
+      "note": "return point from the Grey Moor barrows insides map"
+    },
+    {
+      "id": "warm-stone-door",
+      "position": [
+        115.75,
+        4.18,
+        -223.75
+      ],
+      "serverTile": [
+        290,
+        398
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "Causeway",
+      "grounded": true,
+      "note": "return point from the Grey Moor barrows insides map"
     }
   ],
   "collision": {
@@ -210,7 +258,41 @@
       "Landmark_Tower_2",
       "Landmark_Tower_3",
       "Landmark_Tower_4",
-      "Landmark_Tower_5"
+      "Landmark_Tower_5",
+      "Lore_breached_barrows",
+      "March_east_waygate_Station",
+      "March_east_waygate_Stone",
+      "March_east_waygate_boat_010",
+      "March_east_waygate_boat_011",
+      "March_north_gate_Station",
+      "March_north_gate_Stone",
+      "March_north_gate_tree_000",
+      "March_north_gate_tree_001",
+      "March_north_gate_tree_002",
+      "March_north_gate_tree_003",
+      "March_north_gate_tree_004",
+      "March_north_gate_tree_005",
+      "March_north_gate_tree_006",
+      "March_north_gate_tree_007",
+      "March_north_gate_tree_008",
+      "March_north_gate_tree_009",
+      "March_north_gate_tree_010",
+      "March_north_gate_tree_011",
+      "March_south_gate_Station",
+      "March_south_gate_Stone",
+      "March_south_gate_boat_010",
+      "March_south_gate_fern_011",
+      "March_south_gate_fern_012",
+      "March_south_gate_fern_013",
+      "March_south_gate_fern_014",
+      "March_south_gate_fern_015",
+      "March_west_waygate_Station",
+      "March_west_waygate_Stone",
+      "March_west_waygate_cart_008",
+      "March_west_waygate_haven_rock_004",
+      "March_west_waygate_haven_rock_005",
+      "March_west_waygate_haven_rock_006",
+      "March_west_waygate_haven_rock_007"
     ],
     "binary": "collision.bin",
     "format": "EWCG-v2",
@@ -227,8 +309,8 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 1151914,
-    "walkableFraction": 0.868,
+    "walkableCells": 1149392,
+    "walkableFraction": 0.8661,
     "saturatedCells": 9
   },
   "navigation": {
@@ -267,7 +349,7 @@
       "type": "monument",
       "position": [
         114.0,
-        4.94,
+        5.03,
         -250.5
       ]
     },
@@ -278,7 +360,7 @@
       "type": "monument",
       "position": [
         114.0,
-        5.39,
+        5.48,
         -252.0
       ]
     },
@@ -289,7 +371,7 @@
       "type": "monument",
       "position": [
         25.77,
-        4.15,
+        4.1,
         -348.0
       ]
     },
@@ -399,7 +481,7 @@
       "type": "monument",
       "position": [
         6.0,
-        4.54,
+        4.55,
         -324.0
       ]
     },
@@ -432,7 +514,7 @@
       "type": "monument",
       "position": [
         156.0,
-        3.85,
+        3.92,
         54.0
       ]
     },
@@ -465,7 +547,7 @@
       "type": "shrine",
       "position": [
         114.0,
-        4.79,
+        4.88,
         -222.0
       ]
     },
@@ -575,7 +657,7 @@
       "type": "ruin",
       "position": [
         198.0,
-        8.04,
+        6.65,
         120.0
       ]
     },
@@ -597,7 +679,7 @@
       "type": "ruin",
       "position": [
         120.0,
-        4.67,
+        4.62,
         78.0
       ]
     },
@@ -619,7 +701,7 @@
       "type": "ruin",
       "position": [
         300.0,
-        3.07,
+        3.05,
         -18.0
       ]
     },
@@ -630,7 +712,7 @@
       "type": "ruin",
       "position": [
         -12.0,
-        3.67,
+        3.65,
         -360.0
       ]
     },
@@ -927,8 +1009,113 @@
       "type": "monument",
       "position": [
         114.0,
-        5.49,
+        5.58,
         -228.0
+      ]
+    },
+    {
+      "id": "breached-barrows",
+      "name": "The Breached Barrow",
+      "node": "Lore_breached_barrows",
+      "type": "lore-site",
+      "thread": "F",
+      "position": [
+        151.0,
+        3.85,
+        -242.0
+      ],
+      "note": "Eleven barrows were breached. This is the one the debt-reader walks you to, its return-field stakes still standing blank."
+    },
+    {
+      "id": "march-west-waygate",
+      "name": "The Haven Road March",
+      "node": "March_west_waygate_Stone",
+      "type": "transition",
+      "position": [
+        -150.0,
+        4.8,
+        5.3
+      ],
+      "note": "Where the Grey Moors gives way to Westhaven: greyhaven road furniture, a march stone, a waystation, and 9 pieces of the country beyond."
+    },
+    {
+      "id": "station-west-waygate",
+      "name": "Westhaven Road Station",
+      "node": "March_west_waygate_Station",
+      "type": "waystation",
+      "position": [
+        -134.0,
+        4.77,
+        11.5
+      ]
+    },
+    {
+      "id": "march-east-waygate",
+      "name": "The Moor Jetty",
+      "node": "March_east_waygate_Stone",
+      "type": "transition",
+      "position": [
+        378.0,
+        2.57,
+        -29.3
+      ],
+      "note": "Where the Grey Moors gives way to Crownwater: greyhaven road furniture, a march stone, a waystation, and 12 pieces of the country beyond."
+    },
+    {
+      "id": "station-east-waygate",
+      "name": "Crownwater Road Station",
+      "node": "March_east_waygate_Station",
+      "type": "waystation",
+      "position": [
+        362.0,
+        1.82,
+        -35.5
+      ]
+    },
+    {
+      "id": "march-north-gate",
+      "name": "The Amber March",
+      "node": "March_north_gate_Stone",
+      "type": "transition",
+      "position": [
+        -17.3,
+        2.49,
+        -378.0
+      ],
+      "note": "Where the Grey Moors gives way to the Amberwood: greyhaven road furniture, a march stone, a waystation, and 12 pieces of the country beyond."
+    },
+    {
+      "id": "station-north-gate",
+      "name": "Amberwood Road Station",
+      "node": "March_north_gate_Station",
+      "type": "waystation",
+      "position": [
+        -23.5,
+        2.43,
+        -362.0
+      ]
+    },
+    {
+      "id": "march-south-gate",
+      "name": "The Delta March",
+      "node": "March_south_gate_Stone",
+      "type": "transition",
+      "position": [
+        203.3,
+        4.49,
+        144.0
+      ],
+      "note": "Where the Grey Moors gives way to the Manymouth Delta: greyhaven road furniture, a march stone, a waystation, and 16 pieces of the country beyond."
+    },
+    {
+      "id": "station-south-gate",
+      "name": "Manymouth Delta Road Station",
+      "node": "March_south_gate_Station",
+      "type": "waystation",
+      "position": [
+        209.5,
+        4.57,
+        128.0
       ]
     }
   ],
@@ -939,7 +1126,7 @@
       "name": "Warden of the Great Barrow",
       "position": [
         114.0,
-        4.04,
+        4.13,
         -234.0
       ],
       "serverTile": [
@@ -1044,7 +1231,7 @@
       "name": "Lamp Tender",
       "position": [
         0.0,
-        2.78,
+        2.77,
         0.0
       ],
       "serverTile": [
@@ -1155,12 +1342,12 @@
       "id": "grey-peat-bank-000",
       "resource": "cut-peat",
       "position": [
-        200.0,
-        2.07,
+        192.0,
+        2.0,
         -85.0
       ],
       "serverTile": [
-        374,
+        366,
         259
       ],
       "authority": "server"
@@ -1169,12 +1356,12 @@
       "id": "grey-peat-bank-001",
       "resource": "cut-peat",
       "position": [
-        98.0,
-        2.11,
+        130.0,
+        2.96,
         57.0
       ],
       "serverTile": [
-        272,
+        304,
         117
       ],
       "authority": "server"
@@ -1183,12 +1370,12 @@
       "id": "grey-peat-bank-002",
       "resource": "cut-peat",
       "position": [
-        232.0,
-        1.98,
+        236.0,
+        1.77,
         -311.0
       ],
       "serverTile": [
-        406,
+        410,
         485
       ],
       "authority": "server"
@@ -1197,12 +1384,12 @@
       "id": "grey-peat-bank-003",
       "resource": "cut-peat",
       "position": [
-        298.0,
-        1.95,
+        354.0,
+        1.62,
         -29.0
       ],
       "serverTile": [
-        472,
+        528,
         203
       ],
       "authority": "server"
@@ -1211,13 +1398,13 @@
       "id": "grey-peat-bank-004",
       "resource": "cut-peat",
       "position": [
-        164.0,
-        3.42,
-        121.0
+        90.0,
+        4.01,
+        123.0
       ],
       "serverTile": [
-        338,
-        53
+        264,
+        51
       ],
       "authority": "server"
     },
@@ -1225,12 +1412,12 @@
       "id": "grey-peat-bank-005",
       "resource": "cut-peat",
       "position": [
-        152.0,
-        1.94,
+        172.0,
+        2.09,
         -91.0
       ],
       "serverTile": [
-        326,
+        346,
         265
       ],
       "authority": "server"
@@ -1239,12 +1426,12 @@
       "id": "grey-peat-bank-006",
       "resource": "cut-peat",
       "position": [
-        154.0,
-        2.36,
+        162.0,
+        3.73,
         71.0
       ],
       "serverTile": [
-        328,
+        336,
         103
       ],
       "authority": "server"
@@ -1253,12 +1440,12 @@
       "id": "grey-peat-bank-007",
       "resource": "cut-peat",
       "position": [
-        -20.0,
-        2.93,
+        88.0,
+        2.67,
         43.0
       ],
       "serverTile": [
-        154,
+        262,
         131
       ],
       "authority": "server"
@@ -1267,12 +1454,12 @@
       "id": "grey-peat-bank-008",
       "resource": "cut-peat",
       "position": [
-        -26.0,
-        2.5,
+        -66.0,
+        1.9,
         -63.0
       ],
       "serverTile": [
-        148,
+        108,
         237
       ],
       "authority": "server"
@@ -1281,12 +1468,12 @@
       "id": "grey-peat-bank-009",
       "resource": "cut-peat",
       "position": [
-        38.0,
-        2.13,
+        36.0,
+        2.08,
         -207.0
       ],
       "serverTile": [
-        212,
+        210,
         381
       ],
       "authority": "server"
@@ -1295,12 +1482,12 @@
       "id": "grey-peat-bank-010",
       "resource": "cut-peat",
       "position": [
-        -38.0,
-        2.69,
+        62.0,
+        3.68,
         63.0
       ],
       "serverTile": [
-        136,
+        236,
         111
       ],
       "authority": "server"
@@ -1323,13 +1510,13 @@
       "id": "grey-peat-bank-012",
       "resource": "cut-peat",
       "position": [
-        360.0,
-        1.63,
-        -283.0
+        22.0,
+        6.32,
+        -281.0
       ],
       "serverTile": [
-        534,
-        457
+        196,
+        455
       ],
       "authority": "server"
     },
@@ -1337,12 +1524,12 @@
       "id": "grey-peat-bank-013",
       "resource": "cut-peat",
       "position": [
-        146.0,
-        1.91,
+        202.0,
+        2.51,
         -97.0
       ],
       "serverTile": [
-        320,
+        376,
         271
       ],
       "authority": "server"
@@ -1351,12 +1538,12 @@
       "id": "grey-peat-bank-014",
       "resource": "cut-peat",
       "position": [
-        -108.0,
-        2.04,
+        -112.0,
+        2.01,
         -195.0
       ],
       "serverTile": [
-        66,
+        62,
         369
       ],
       "authority": "server"
@@ -1365,13 +1552,13 @@
       "id": "grey-peat-bank-015",
       "resource": "cut-peat",
       "position": [
-        114.0,
-        2.72,
-        29.0
+        78.0,
+        3.17,
+        31.0
       ],
       "serverTile": [
-        288,
-        145
+        252,
+        143
       ],
       "authority": "server"
     },
@@ -1379,12 +1566,12 @@
       "id": "grey-peat-bank-016",
       "resource": "cut-peat",
       "position": [
-        92.0,
-        3.39,
+        72.0,
+        1.88,
         -61.0
       ],
       "serverTile": [
-        266,
+        246,
         235
       ],
       "authority": "server"
@@ -1393,12 +1580,12 @@
       "id": "grey-peat-bank-017",
       "resource": "cut-peat",
       "position": [
-        -118.0,
-        1.92,
+        -104.0,
+        1.74,
         -185.0
       ],
       "serverTile": [
-        56,
+        70,
         359
       ],
       "authority": "server"
@@ -1407,12 +1594,12 @@
       "id": "grey-peat-bank-018",
       "resource": "cut-peat",
       "position": [
-        252.0,
-        1.89,
+        186.0,
+        2.31,
         -155.0
       ],
       "serverTile": [
-        426,
+        360,
         329
       ],
       "authority": "server"
@@ -1421,12 +1608,12 @@
       "id": "grey-peat-bank-019",
       "resource": "cut-peat",
       "position": [
-        -28.0,
-        2.44,
+        -58.0,
+        1.43,
         -59.0
       ],
       "serverTile": [
-        146,
+        116,
         233
       ],
       "authority": "server"
@@ -1435,12 +1622,12 @@
       "id": "grey-peat-bank-020",
       "resource": "cut-peat",
       "position": [
-        332.0,
-        1.82,
+        310.0,
+        2.32,
         -53.0
       ],
       "serverTile": [
-        506,
+        484,
         227
       ],
       "authority": "server"
@@ -1449,12 +1636,12 @@
       "id": "grey-peat-bank-021",
       "resource": "cut-peat",
       "position": [
-        -136.0,
-        4.03,
+        -124.0,
+        2.2,
         -179.0
       ],
       "serverTile": [
-        38,
+        50,
         353
       ],
       "authority": "server"
@@ -1463,12 +1650,12 @@
       "id": "grey-peat-bank-022",
       "resource": "cut-peat",
       "position": [
-        8.0,
-        2.59,
+        -16.0,
+        2.71,
         -79.0
       ],
       "serverTile": [
-        182,
+        158,
         253
       ],
       "authority": "server"
@@ -1491,12 +1678,12 @@
       "id": "grey-peat-bank-024",
       "resource": "cut-peat",
       "position": [
-        192.0,
-        1.69,
+        282.0,
+        1.61,
         -335.0
       ],
       "serverTile": [
-        366,
+        456,
         509
       ],
       "authority": "server"
@@ -1505,13 +1692,13 @@
       "id": "grey-peat-bank-025",
       "resource": "cut-peat",
       "position": [
-        -6.0,
-        2.6,
-        -233.0
+        324.0,
+        1.71,
+        -235.0
       ],
       "serverTile": [
-        168,
-        407
+        498,
+        409
       ],
       "authority": "server"
     },
@@ -1519,13 +1706,13 @@
       "id": "grey-peat-bank-026",
       "resource": "cut-peat",
       "position": [
-        -44.0,
-        2.74,
-        -37.0
+        310.0,
+        1.68,
+        -39.0
       ],
       "serverTile": [
-        130,
-        211
+        484,
+        213
       ],
       "authority": "server"
     },
@@ -1533,13 +1720,13 @@
       "id": "grey-peat-bank-027",
       "resource": "cut-peat",
       "position": [
-        300.0,
-        1.94,
-        -335.0
+        -76.0,
+        2.09,
+        -333.0
       ],
       "serverTile": [
-        474,
-        509
+        98,
+        507
       ],
       "authority": "server"
     },
@@ -1547,13 +1734,13 @@
       "id": "grey-peat-bank-028",
       "resource": "cut-peat",
       "position": [
-        312.0,
-        2.38,
-        11.0
+        184.0,
+        2.52,
+        13.0
       ],
       "serverTile": [
-        486,
-        163
+        358,
+        161
       ],
       "authority": "server"
     },
@@ -1561,12 +1748,12 @@
       "id": "grey-peat-bank-029",
       "resource": "cut-peat",
       "position": [
-        156.0,
-        2.0,
+        174.0,
+        2.07,
         -91.0
       ],
       "serverTile": [
-        330,
+        348,
         265
       ],
       "authority": "server"
@@ -1575,13 +1762,13 @@
       "id": "grey-peat-bank-030",
       "resource": "cut-peat",
       "position": [
-        -14.0,
-        2.6,
-        -217.0
+        154.0,
+        1.74,
+        -219.0
       ],
       "serverTile": [
-        160,
-        391
+        328,
+        393
       ],
       "authority": "server"
     },
@@ -1589,12 +1776,12 @@
       "id": "grey-peat-bank-031",
       "resource": "cut-peat",
       "position": [
-        368.0,
-        1.62,
+        290.0,
+        3.26,
         -239.0
       ],
       "serverTile": [
-        542,
+        464,
         413
       ],
       "authority": "server"
@@ -1603,13 +1790,13 @@
       "id": "grey-peat-bank-032",
       "resource": "cut-peat",
       "position": [
-        58.0,
-        3.29,
-        -17.0
+        18.0,
+        3.04,
+        -15.0
       ],
       "serverTile": [
-        232,
-        191
+        192,
+        189
       ],
       "authority": "server"
     },
@@ -1617,12 +1804,12 @@
       "id": "grey-peat-bank-033",
       "resource": "cut-peat",
       "position": [
-        278.0,
-        1.73,
+        294.0,
+        2.42,
         -115.0
       ],
       "serverTile": [
-        452,
+        468,
         289
       ],
       "authority": "server"
@@ -1631,12 +1818,12 @@
       "id": "grey-peat-bank-034",
       "resource": "cut-peat",
       "position": [
-        166.0,
-        1.88,
+        216.0,
+        1.62,
         -325.0
       ],
       "serverTile": [
-        340,
+        390,
         499
       ],
       "authority": "server"
@@ -1659,12 +1846,12 @@
       "id": "grey-peat-bank-036",
       "resource": "cut-peat",
       "position": [
-        78.0,
-        3.72,
+        80.0,
+        3.78,
         -27.0
       ],
       "serverTile": [
-        252,
+        254,
         201
       ],
       "authority": "server"
@@ -1673,12 +1860,12 @@
       "id": "grey-peat-bank-037",
       "resource": "cut-peat",
       "position": [
-        -114.0,
-        3.09,
+        -124.0,
+        3.25,
         -153.0
       ],
       "serverTile": [
-        60,
+        50,
         327
       ],
       "authority": "server"
@@ -1687,12 +1874,12 @@
       "id": "grey-peat-bank-038",
       "resource": "cut-peat",
       "position": [
-        22.0,
-        2.09,
+        10.0,
+        2.66,
         -73.0
       ],
       "serverTile": [
-        196,
+        184,
         247
       ],
       "authority": "server"
@@ -1701,12 +1888,12 @@
       "id": "grey-peat-bank-039",
       "resource": "cut-peat",
       "position": [
-        138.0,
-        1.85,
+        54.0,
+        2.72,
         -213.0
       ],
       "serverTile": [
-        312,
+        228,
         387
       ],
       "authority": "server"
@@ -1715,12 +1902,12 @@
       "id": "grey-peat-bank-040",
       "resource": "cut-peat",
       "position": [
-        80.0,
-        1.98,
+        42.0,
+        1.68,
         -85.0
       ],
       "serverTile": [
-        254,
+        216,
         259
       ],
       "authority": "server"
@@ -1729,12 +1916,12 @@
       "id": "grey-peat-bank-041",
       "resource": "cut-peat",
       "position": [
-        164.0,
-        2.43,
+        82.0,
+        2.9,
         -69.0
       ],
       "serverTile": [
-        338,
+        256,
         243
       ],
       "authority": "server"
@@ -1743,12 +1930,12 @@
       "id": "grey-peat-bank-042",
       "resource": "cut-peat",
       "position": [
-        92.0,
-        2.0,
+        88.0,
+        2.05,
         -375.0
       ],
       "serverTile": [
-        266,
+        262,
         549
       ],
       "authority": "server"
@@ -1757,12 +1944,12 @@
       "id": "grey-peat-bank-043",
       "resource": "cut-peat",
       "position": [
-        -56.0,
-        2.08,
+        66.0,
+        1.81,
         -349.0
       ],
       "serverTile": [
-        118,
+        240,
         523
       ],
       "authority": "server"
@@ -1785,13 +1972,13 @@
       "id": "grey-peat-bank-045",
       "resource": "cut-peat",
       "position": [
-        120.0,
-        2.98,
-        19.0
+        100.0,
+        3.17,
+        21.0
       ],
       "serverTile": [
-        294,
-        155
+        274,
+        153
       ],
       "authority": "server"
     },
@@ -1799,12 +1986,12 @@
       "id": "grey-peat-bank-046",
       "resource": "cut-peat",
       "position": [
-        132.0,
-        2.09,
+        142.0,
+        3.0,
         97.0
       ],
       "serverTile": [
-        306,
+        316,
         77
       ],
       "authority": "server"
@@ -1813,12 +2000,12 @@
       "id": "grey-peat-bank-047",
       "resource": "cut-peat",
       "position": [
-        2.0,
-        4.88,
+        352.0,
+        1.63,
         -279.0
       ],
       "serverTile": [
-        176,
+        526,
         453
       ],
       "authority": "server"
@@ -1827,12 +2014,12 @@
       "id": "grey-peat-bank-048",
       "resource": "cut-peat",
       "position": [
-        138.0,
-        1.87,
+        148.0,
+        3.24,
         83.0
       ],
       "serverTile": [
-        312,
+        322,
         91
       ],
       "authority": "server"
@@ -1841,12 +2028,12 @@
       "id": "grey-peat-bank-049",
       "resource": "cut-peat",
       "position": [
-        146.0,
-        2.08,
+        164.0,
+        1.97,
         -303.0
       ],
       "serverTile": [
-        320,
+        338,
         477
       ],
       "authority": "server"
@@ -1855,12 +2042,12 @@
       "id": "grey-peat-bank-050",
       "resource": "cut-peat",
       "position": [
-        -44.0,
-        1.65,
+        -34.0,
+        1.61,
         -89.0
       ],
       "serverTile": [
-        130,
+        140,
         263
       ],
       "authority": "server"
@@ -1869,12 +2056,12 @@
       "id": "grey-peat-bank-051",
       "resource": "cut-peat",
       "position": [
-        76.0,
-        2.59,
+        -24.0,
+        2.89,
         -45.0
       ],
       "serverTile": [
-        250,
+        150,
         219
       ],
       "authority": "server"
@@ -1883,12 +2070,12 @@
       "id": "grey-peat-bank-052",
       "resource": "cut-peat",
       "position": [
-        200.0,
-        1.83,
+        204.0,
+        1.65,
         -305.0
       ],
       "serverTile": [
-        374,
+        378,
         479
       ],
       "authority": "server"
@@ -1897,12 +2084,12 @@
       "id": "grey-peat-bank-053",
       "resource": "cut-peat",
       "position": [
-        14.0,
-        2.44,
+        -2.0,
+        2.59,
         -83.0
       ],
       "serverTile": [
-        188,
+        172,
         257
       ],
       "authority": "server"
@@ -1911,13 +2098,13 @@
       "id": "grey-peat-bank-054",
       "resource": "cut-peat",
       "position": [
-        140.0,
-        3.35,
-        45.0
+        -34.0,
+        2.86,
+        47.0
       ],
       "serverTile": [
-        314,
-        129
+        140,
+        127
       ],
       "authority": "server"
     },
@@ -1925,12 +2112,12 @@
       "id": "grey-peat-bank-055",
       "resource": "cut-peat",
       "position": [
-        -28.0,
-        2.09,
+        -30.0,
+        1.9,
         -87.0
       ],
       "serverTile": [
-        146,
+        144,
         261
       ],
       "authority": "server"
@@ -1939,12 +2126,12 @@
       "id": "grey-peat-bank-056",
       "resource": "cut-peat",
       "position": [
-        196.0,
-        1.91,
+        182.0,
+        1.86,
         -211.0
       ],
       "serverTile": [
-        370,
+        356,
         385
       ],
       "authority": "server"
@@ -1953,13 +2140,13 @@
       "id": "grey-peat-bank-057",
       "resource": "cut-peat",
       "position": [
-        20.0,
-        2.43,
-        19.0
+        4.0,
+        2.15,
+        21.0
       ],
       "serverTile": [
-        194,
-        155
+        178,
+        153
       ],
       "authority": "server"
     },
@@ -1967,12 +2154,12 @@
       "id": "grey-peat-bank-058",
       "resource": "cut-peat",
       "position": [
-        -20.0,
-        2.58,
+        -32.0,
+        1.83,
         -79.0
       ],
       "serverTile": [
-        154,
+        142,
         253
       ],
       "authority": "server"
@@ -1981,12 +2168,12 @@
       "id": "grey-peat-bank-059",
       "resource": "cut-peat",
       "position": [
-        168.0,
-        2.0,
+        214.0,
+        2.1,
         -301.0
       ],
       "serverTile": [
-        342,
+        388,
         475
       ],
       "authority": "server"
@@ -1995,12 +2182,12 @@
       "id": "grey-peat-bank-060",
       "resource": "cut-peat",
       "position": [
-        156.0,
-        3.4,
+        84.0,
+        3.01,
         -51.0
       ],
       "serverTile": [
-        330,
+        258,
         225
       ],
       "authority": "server"
@@ -2009,12 +2196,12 @@
       "id": "grey-peat-bank-061",
       "resource": "cut-peat",
       "position": [
-        -40.0,
-        2.6,
+        -8.0,
+        3.48,
         63.0
       ],
       "serverTile": [
-        134,
+        166,
         111
       ],
       "authority": "server"
@@ -2023,12 +2210,12 @@
       "id": "grey-peat-bank-062",
       "resource": "cut-peat",
       "position": [
-        78.0,
-        3.11,
+        108.0,
+        2.17,
         61.0
       ],
       "serverTile": [
-        252,
+        282,
         113
       ],
       "authority": "server"
@@ -2037,13 +2224,13 @@
       "id": "grey-peat-bank-063",
       "resource": "cut-peat",
       "position": [
-        202.0,
-        1.97,
-        11.0
+        92.0,
+        3.32,
+        13.0
       ],
       "serverTile": [
-        376,
-        163
+        266,
+        161
       ],
       "authority": "server"
     }
@@ -2051,35 +2238,69 @@
   "portals": [
     {
       "id": "west-waygate",
-      "name": "Sunmane Track",
+      "name": "Haven Road to Westhaven",
       "type": "map-transition",
       "position": [
         -156.0,
         5.0,
-        -0.0
+        0.0
       ],
       "serverTile": [
         18,
         174
       ],
-      "destinationMap": "sunmane_steppe",
+      "destinationMap": "westhaven",
       "radius": 3.5,
       "authority": "server"
     },
     {
       "id": "east-waygate",
-      "name": "Westhaven Road",
+      "name": "Moor Jetty: the Crownwater boat",
       "type": "map-transition",
       "position": [
-        156.0,
-        4.23,
-        -0.0
+        384.0,
+        7.79,
+        -24.0
       ],
       "serverTile": [
-        330,
-        174
+        558,
+        198
       ],
-      "destinationMap": "westhaven",
+      "destinationMap": "crownwater",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "north-gate",
+      "name": "North Track into the Amberwood",
+      "type": "map-transition",
+      "position": [
+        -12.0,
+        7.71,
+        -384.0
+      ],
+      "serverTile": [
+        162,
+        558
+      ],
+      "destinationMap": "amberwood",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "south-gate",
+      "name": "Drain Road down to the Delta",
+      "type": "map-transition",
+      "position": [
+        198.0,
+        7.63,
+        150.0
+      ],
+      "serverTile": [
+        372,
+        24
+      ],
+      "destinationMap": "manymouth_delta",
       "radius": 3.5,
       "authority": "server"
     },
@@ -2089,7 +2310,7 @@
       "type": "interior-entrance",
       "position": [
         116.75,
-        4.09,
+        4.18,
         -252.75
       ],
       "serverTile": [
@@ -2158,6 +2379,63 @@
       "destinationSpawn": "south-crypt-stair",
       "radius": 2.5,
       "authority": "server"
+    },
+    {
+      "id": "fifth-chamber-mouth",
+      "name": "The Fifth Chamber",
+      "type": "interior-entrance",
+      "position": [
+        380.75,
+        5.73,
+        -191.75
+      ],
+      "serverTile": [
+        555,
+        366
+      ],
+      "landmark": "grey-tower-3",
+      "destinationMap": "grey_moor_barrows",
+      "destinationSpawn": "fifth-chamber-mouth",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "peat-croft-door",
+      "name": "The Peat Cutter's Croft",
+      "type": "interior-entrance",
+      "position": [
+        122.25,
+        3.5,
+        76.25
+      ],
+      "serverTile": [
+        296,
+        98
+      ],
+      "landmark": "grey-croft-1",
+      "destinationMap": "grey_moor_barrows",
+      "destinationSpawn": "peat-croft-door",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "warm-stone-door",
+      "name": "The Warm Stone",
+      "type": "interior-entrance",
+      "position": [
+        115.75,
+        4.18,
+        -223.75
+      ],
+      "serverTile": [
+        290,
+        398
+      ],
+      "landmark": "grey-shrine-0",
+      "destinationMap": "grey_moor_barrows",
+      "destinationSpawn": "warm-stone-door",
+      "radius": 2.5,
+      "authority": "server"
     }
   ],
   "roads": [
@@ -2166,7 +2444,7 @@
       "waypoints": [
         [
           0.0,
-          2.73,
+          2.72,
           0.0
         ],
         [
@@ -2206,12 +2484,12 @@
         ],
         [
           114.0,
-          3.99,
+          4.08,
           -222.0
         ],
         [
           114.0,
-          3.99,
+          4.08,
           -234.0
         ],
         [
@@ -2226,7 +2504,7 @@
       "waypoints": [
         [
           0.0,
-          2.73,
+          2.72,
           0.0
         ],
         [
@@ -2306,7 +2584,7 @@
       "waypoints": [
         [
           114.0,
-          3.99,
+          4.08,
           -234.0
         ],
         [
@@ -2316,18 +2594,28 @@
         ],
         [
           6.0,
-          3.39,
+          3.4,
           -324.0
         ],
         [
           36.0,
-          3.94,
+          3.81,
           -348.0
         ],
         [
           -12.0,
-          2.45,
+          2.43,
           -360.0
+        ],
+        [
+          -12.0,
+          7.61,
+          -384.0
+        ],
+        [
+          -12.0,
+          13.82,
+          -402.0
         ]
       ]
     },
@@ -2376,28 +2664,63 @@
       "waypoints": [
         [
           0.0,
-          2.73,
+          2.72,
           0.0
         ],
         [
           30.0,
-          3.44,
+          3.36,
           48.0
         ],
         [
           120.0,
-          3.45,
+          3.4,
           78.0
         ],
         [
           156.0,
-          2.7,
+          2.77,
           54.0
         ],
         [
           198.0,
-          6.79,
+          5.4,
           120.0
+        ],
+        [
+          198.0,
+          7.53,
+          150.0
+        ],
+        [
+          198.0,
+          6.77,
+          174.0
+        ]
+      ]
+    },
+    {
+      "id": "jetty_track",
+      "waypoints": [
+        [
+          300.0,
+          1.83,
+          -18.0
+        ],
+        [
+          342.0,
+          1.07,
+          -24.0
+        ],
+        [
+          384.0,
+          7.69,
+          -24.0
+        ],
+        [
+          402.0,
+          12.98,
+          -24.0
         ]
       ]
     },
@@ -2446,7 +2769,7 @@
         ],
         [
           300.0,
-          1.85,
+          1.83,
           -18.0
         ],
         [
@@ -2496,7 +2819,7 @@
       "waypoints": [
         [
           114.0,
-          3.99,
+          4.08,
           -222.0
         ],
         [
@@ -2546,7 +2869,7 @@
         ],
         [
           156.0,
-          2.7,
+          2.77,
           54.0
         ]
       ]
@@ -2934,29 +3257,29 @@
     }
   ],
   "performance": {
-    "nodes": 7648,
-    "meshes": 401,
-    "materials": 29,
-    "images": 65,
-    "textures": 65,
-    "accessors": 1611,
-    "bufferViews": 1676,
-    "uniqueTriangles": 379580,
-    "uniqueVertices": 309589,
-    "glbBytes": 24097856,
-    "instancedTriangles": 701200,
-    "embeddedTextureBytes": 9157565,
-    "textureMemoryBytesUncompressed": 60948480,
-    "placements": 7343,
+    "nodes": 7740,
+    "meshes": 558,
+    "materials": 45,
+    "images": 103,
+    "textures": 103,
+    "accessors": 2242,
+    "bufferViews": 2345,
+    "uniqueTriangles": 426852,
+    "uniqueVertices": 356819,
+    "glbBytes": 30331796,
+    "instancedTriangles": 758100,
+    "embeddedTextureBytes": 13426550,
+    "textureMemoryBytesUncompressed": 104988672,
+    "placements": 7302,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 1151914,
-      "blockedCells": 175190,
-      "walkableFraction": 0.868,
-      "elevatedDecks": 11,
-      "steepCells": 85745,
+      "walkableCells": 1149392,
+      "blockedCells": 177712,
+      "walkableFraction": 0.8661,
+      "elevatedDecks": 12,
+      "steepCells": 85736,
       "reliefMetres": 21.49,
       "heightEncoding": {
         "origin": 0.2034,
@@ -2973,23 +3296,33 @@
       "columnOrder": "server-tile-x (column 0 is the -X western edge)"
     },
     "notes": [
-      "ground detail: 6048 scrub clumps, 778 erratics, 360 scattered standing stones",
+      "ground detail: 5914 scrub clumps, 762 erratics, 360 scattered standing stones",
+      "lore site breached-barrows (The Breached Barrow): relief 2.49 m, 36 m from the ask",
+      "march west-waygate: 10 road pieces, 9 of westhaven's growth",
+      "march east-waygate: 8 road pieces, 12 of crownwater's growth",
+      "march north-gate: 6 road pieces, 12 of amberwood's growth",
+      "march south-gate: 7 road pieces, 16 of manymouth_delta's growth",
       "coast-landing moved 10.5 m onto walkable ground",
       "great-barrow-mouth moved 3.6 m onto walkable ground",
       "west-crypt-stair moved 1.5 m onto walkable ground",
       "east-crypt-stair moved 1.5 m onto walkable ground",
       "south-crypt-stair moved 1.5 m onto walkable ground",
-      "east-waygate moved 0.4 m onto walkable ground",
+      "fifth-chamber-mouth moved 3.9 m onto walkable ground",
+      "peat-croft-door moved 2.9 m onto walkable ground",
+      "warm-stone-door moved 2.5 m onto walkable ground",
       "great-barrow-mouth moved 3.6 m onto walkable ground",
       "west-crypt-stair moved 1.5 m onto walkable ground",
       "east-crypt-stair moved 1.5 m onto walkable ground",
-      "south-crypt-stair moved 1.5 m onto walkable ground"
+      "south-crypt-stair moved 1.5 m onto walkable ground",
+      "fifth-chamber-mouth moved 3.9 m onto walkable ground",
+      "peat-croft-door moved 2.9 m onto walkable ground",
+      "warm-stone-door moved 2.5 m onto walkable ground"
     ],
     "lod2": {
-      "glbBytes": 13594424,
-      "nodes": 461,
-      "uniqueTriangles": 341770,
-      "instancedTriangles": 341770
+      "glbBytes": 16574420,
+      "nodes": 703,
+      "uniqueTriangles": 389042,
+      "instancedTriangles": 404922
     }
   },
   "sources": [

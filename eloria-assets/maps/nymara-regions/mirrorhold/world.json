@@ -19,7 +19,7 @@
     "bounds": {
       "min": [
         -504.0,
-        -11.0,
+        -11.1,
         -731.0
       ],
       "max": [
@@ -207,6 +207,50 @@
       "Landmark_upper-shrine",
       "Landmark_west-shrine",
       "Landmark_west_islet",
+      "Lore_ringing_quarry",
+      "March_east_road_Station",
+      "March_east_road_Stone",
+      "March_east_road_outcrop_000",
+      "March_east_road_outcrop_001",
+      "March_east_road_shard_009",
+      "March_east_road_shard_010",
+      "March_east_road_shard_011",
+      "March_east_road_shard_012",
+      "March_lake_quay_Station",
+      "March_lake_quay_Stone",
+      "March_north_pass_Station",
+      "March_north_pass_Stone",
+      "March_north_pass_snow_boulder_009",
+      "March_north_pass_snow_boulder_010",
+      "March_north_pass_snow_boulder_011",
+      "March_north_pass_snow_boulder_012",
+      "March_north_pass_snow_boulder_013",
+      "March_north_pass_snow_boulder_014",
+      "March_north_pass_tree_000",
+      "March_north_pass_tree_001",
+      "March_north_pass_tree_002",
+      "March_north_pass_tree_003",
+      "March_north_pass_tree_004",
+      "March_north_pass_tree_005",
+      "March_north_pass_tree_006",
+      "March_north_pass_tree_007",
+      "March_north_pass_tree_008",
+      "March_south_road_Station",
+      "March_south_road_Stone",
+      "March_west_gorge_Station",
+      "March_west_gorge_Stone",
+      "March_west_gorge_tree_000",
+      "March_west_gorge_tree_001",
+      "March_west_gorge_tree_002",
+      "March_west_gorge_tree_003",
+      "March_west_gorge_tree_004",
+      "March_west_gorge_tree_005",
+      "March_west_gorge_tree_006",
+      "March_west_gorge_tree_007",
+      "March_west_gorge_tree_008",
+      "March_west_gorge_tree_009",
+      "March_west_gorge_tree_010",
+      "March_west_gorge_tree_011",
       "Prop_Boat_0",
       "Prop_Boat_1",
       "Prop_Boat_2",
@@ -258,27 +302,27 @@
       "Prop_quarry-shelf_bollard_0",
       "Prop_quarry-shelf_bollard_1",
       "Prop_quarry-shelf_bollard_2",
-      "Tree_Spruce_341_Wood",
-      "Tree_Spruce_342_Wood",
-      "Tree_Spruce_350_Wood",
-      "Tree_Spruce_351_Wood",
-      "Tree_Spruce_352_Wood",
-      "Tree_Spruce_543_Wood",
-      "Tree_Spruce_544_Wood",
-      "Tree_Spruce_549_Wood",
-      "Tree_Spruce_550_Wood",
-      "Tree_Spruce_551_Wood",
-      "Tree_Spruce_552_Wood",
-      "Tree_Spruce_566_Wood",
-      "Tree_Spruce_567_Wood",
-      "Tree_Spruce_568_Wood",
-      "Tree_Spruce_569_Wood",
-      "Tree_Spruce_587_Wood",
-      "Tree_Spruce_588_Wood",
-      "Tree_Spruce_589_Wood",
-      "Tree_Spruce_590_Wood",
-      "Tree_Spruce_591_Wood",
-      "Tree_Spruce_609_Wood",
+      "Tree_Spruce_334_Wood",
+      "Tree_Spruce_335_Wood",
+      "Tree_Spruce_343_Wood",
+      "Tree_Spruce_344_Wood",
+      "Tree_Spruce_345_Wood",
+      "Tree_Spruce_532_Wood",
+      "Tree_Spruce_533_Wood",
+      "Tree_Spruce_538_Wood",
+      "Tree_Spruce_539_Wood",
+      "Tree_Spruce_540_Wood",
+      "Tree_Spruce_541_Wood",
+      "Tree_Spruce_555_Wood",
+      "Tree_Spruce_556_Wood",
+      "Tree_Spruce_557_Wood",
+      "Tree_Spruce_558_Wood",
+      "Tree_Spruce_576_Wood",
+      "Tree_Spruce_577_Wood",
+      "Tree_Spruce_578_Wood",
+      "Tree_Spruce_579_Wood",
+      "Tree_Spruce_580_Wood",
+      "Tree_Spruce_598_Wood",
       "Walk_Landmark_EastStair"
     ],
     "binary": "collision.bin",
@@ -296,8 +340,8 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 617232,
-    "walkableFraction": 0.4651
+    "walkableCells": 616653,
+    "walkableFraction": 0.4647
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -667,6 +711,134 @@
         -102.0,
         37.61,
         -54.0
+      ]
+    },
+    {
+      "id": "ringing-quarry",
+      "name": "The Ringing Face",
+      "node": "Lore_ringing_quarry",
+      "type": "lore-site",
+      "thread": "B",
+      "position": [
+        265.0,
+        80.8,
+        -176.0
+      ],
+      "note": "The quarry face that rings when it is struck, the blank half-drawn out of it, and the bell Foreman Hesk hung to test the note against."
+    },
+    {
+      "id": "march-north-pass",
+      "name": "The Whitehorn March",
+      "node": "March_north_pass_Stone",
+      "type": "transition",
+      "position": [
+        -97.3,
+        84.32,
+        -384.0
+      ],
+      "note": "Where Mirrorhold gives way to the Whitehorn Range: luminous road furniture, a march stone, a waystation, and 19 pieces of the country beyond."
+    },
+    {
+      "id": "station-north-pass",
+      "name": "Whitehorn Range Road Station",
+      "node": "March_north_pass_Station",
+      "type": "waystation",
+      "position": [
+        -103.5,
+        85.61,
+        -368.0
+      ]
+    },
+    {
+      "id": "march-south-road",
+      "name": "The Sanctuary Road March",
+      "node": "March_south_road_Stone",
+      "type": "transition",
+      "position": [
+        125.3,
+        -5.61,
+        162.0
+      ],
+      "note": "Where Mirrorhold gives way to Four Gates: luminous road furniture, a march stone, a waystation, and 0 pieces of the country beyond."
+    },
+    {
+      "id": "station-south-road",
+      "name": "Four Gates Road Station",
+      "node": "March_south_road_Station",
+      "type": "waystation",
+      "position": [
+        131.5,
+        -11.0,
+        146.0
+      ]
+    },
+    {
+      "id": "march-east-road",
+      "name": "The Barrens March",
+      "node": "March_east_road_Stone",
+      "type": "transition",
+      "position": [
+        66.7,
+        89.37,
+        -384.0
+      ],
+      "note": "Where Mirrorhold gives way to the Amethyst Barrens: luminous road furniture, a march stone, a waystation, and 13 pieces of the country beyond."
+    },
+    {
+      "id": "station-east-road",
+      "name": "Amethyst Barrens Road Station",
+      "node": "March_east_road_Station",
+      "type": "waystation",
+      "position": [
+        60.5,
+        97.39,
+        -368.0
+      ]
+    },
+    {
+      "id": "march-west-gorge",
+      "name": "The Amber March",
+      "node": "March_west_gorge_Stone",
+      "type": "transition",
+      "position": [
+        -150.0,
+        24.34,
+        17.3
+      ],
+      "note": "Where Mirrorhold gives way to the Amberwood: luminous road furniture, a march stone, a waystation, and 12 pieces of the country beyond."
+    },
+    {
+      "id": "station-west-gorge",
+      "name": "Amberwood Road Station",
+      "node": "March_west_gorge_Station",
+      "type": "waystation",
+      "position": [
+        -134.0,
+        25.38,
+        23.5
+      ]
+    },
+    {
+      "id": "march-lake-quay",
+      "name": "The Packet Quay",
+      "node": "March_lake_quay_Stone",
+      "type": "transition",
+      "position": [
+        203.3,
+        4.5,
+        -24.0
+      ],
+      "note": "Where Mirrorhold gives way to Crownwater: luminous road furniture, a march stone, a waystation, and 0 pieces of the country beyond."
+    },
+    {
+      "id": "station-lake-quay",
+      "name": "Crownwater Road Station",
+      "node": "March_lake_quay_Station",
+      "type": "waystation",
+      "position": [
+        209.5,
+        25.14,
+        -40.0
       ]
     }
   ],
@@ -1648,13 +1820,13 @@
       "name": "Whitehorn Pass",
       "type": "map-transition",
       "position": [
-        162.0,
-        205.22,
-        -384.0
+        -92.0,
+        85.1,
+        -390.0
       ],
       "serverTile": [
-        336,
-        558
+        82,
+        564
       ],
       "destinationMap": "whitehorn_range",
       "radius": 3.5,
@@ -1662,7 +1834,7 @@
     },
     {
       "id": "south-road",
-      "name": "Westhaven Road",
+      "name": "Sanctuary Road to Four Gates",
       "type": "map-transition",
       "position": [
         120.0,
@@ -1673,22 +1845,22 @@
         294,
         6
       ],
-      "destinationMap": "westhaven",
+      "destinationMap": "four_gates",
       "radius": 3.5,
       "authority": "server"
     },
     {
       "id": "east-road",
-      "name": "Amethyst Barrens Road",
+      "name": "Glasswarden Road",
       "type": "map-transition",
       "position": [
-        390.0,
-        49.35,
-        -60.0
+        72.0,
+        92.89,
+        -390.0
       ],
       "serverTile": [
-        564,
-        234
+        246,
+        564
       ],
       "destinationMap": "amethyst_barrens",
       "radius": 3.5,
@@ -1696,7 +1868,7 @@
     },
     {
       "id": "west-gorge",
-      "name": "Crownwater Gorge",
+      "name": "Gorge Road to the Amberwood",
       "type": "map-transition",
       "position": [
         -156.0,
@@ -1706,6 +1878,23 @@
       "serverTile": [
         18,
         162
+      ],
+      "destinationMap": "amberwood",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "lake-quay",
+      "name": "Crownwater Packet",
+      "type": "map-transition",
+      "position": [
+        198.0,
+        4.6,
+        -18.0
+      ],
+      "serverTile": [
+        372,
+        192
       ],
       "destinationMap": "crownwater",
       "radius": 3.5,
@@ -2013,7 +2202,7 @@
     "playable": {
       "min": [
         -174.0,
-        -11.0,
+        -11.1,
         -401.0
       ],
       "max": [
@@ -2025,7 +2214,7 @@
     "terrain": {
       "min": [
         -204.0,
-        -11.0,
+        -11.1,
         -431.0
       ],
       "max": [
@@ -2219,7 +2408,7 @@
     "northAxis": "-Z",
     "orientation": "north-up",
     "projection": "orthographic-top-down",
-    "renderedFrom": "world.glb",
+    "renderedFrom": "final geometry (offline rasteriser)",
     "transform": {
       "pixelX": {
         "scale": 1.0,
@@ -2272,29 +2461,29 @@
     }
   ],
   "performance": {
-    "nodes": 2308,
-    "meshes": 131,
-    "materials": 33,
-    "images": 73,
-    "textures": 73,
-    "accessors": 531,
-    "bufferViews": 604,
-    "uniqueTriangles": 317276,
-    "uniqueVertices": 190495,
-    "glbBytes": 16916580,
-    "instancedTriangles": 1263174,
-    "embeddedTextureBytes": 7810616,
-    "textureMemoryBytesUncompressed": 66846720,
-    "placements": 1874,
+    "nodes": 2451,
+    "meshes": 237,
+    "materials": 46,
+    "images": 100,
+    "textures": 100,
+    "accessors": 959,
+    "bufferViews": 1059,
+    "uniqueTriangles": 354106,
+    "uniqueVertices": 227962,
+    "glbBytes": 21548536,
+    "instancedTriangles": 1314918,
+    "embeddedTextureBytes": 10886785,
+    "textureMemoryBytesUncompressed": 95944704,
+    "placements": 1941,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 617232,
-      "blockedCells": 709872,
-      "walkableFraction": 0.4651,
-      "elevatedDecks": 23,
-      "steepCells": 529723,
+      "walkableCells": 616653,
+      "blockedCells": 710451,
+      "walkableFraction": 0.4647,
+      "elevatedDecks": 24,
+      "steepCells": 529539,
       "reliefMetres": 244.34,
       "heightEncoding": {
         "origin": -3.5908,
@@ -2311,15 +2500,21 @@
     "notes": [
       "road retaining walls: 2",
       "cliff waterfalls: 7",
-      "spruce instances: 855"
+      "spruce instances: 844",
+      "lore site ringing-quarry (The Ringing Face): no open ground within reach; placed where asked",
+      "march north-pass: 0 road pieces, 19 of whitehorn_range's growth",
+      "march south-road: 0 road pieces, 0 of four_gates's growth",
+      "march east-road: 0 road pieces, 13 of amethyst_barrens's growth",
+      "march west-gorge: 8 road pieces, 12 of amberwood's growth",
+      "march lake-quay: 0 road pieces, 0 of crownwater's growth"
     ],
     "lod2": {
-      "glbBytes": 9999612,
-      "nodes": 2236,
-      "uniqueTriangles": 289958,
-      "instancedTriangles": 906724,
-      "sizeReductionPercent": 40.9,
-      "triangleReductionPercent": 28.2
+      "glbBytes": 12381412,
+      "nodes": 2379,
+      "uniqueTriangles": 326788,
+      "instancedTriangles": 961284,
+      "sizeReductionPercent": 42.5,
+      "triangleReductionPercent": 26.9
     }
   },
   "sources": [

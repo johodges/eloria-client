@@ -166,6 +166,54 @@
       "surface": "CrystalField",
       "grounded": true,
       "note": "return point from the Amethyst Barrens insides map"
+    },
+    {
+      "id": "sour-cut-mouth",
+      "position": [
+        209.75,
+        6.52,
+        -246.75
+      ],
+      "serverTile": [
+        384,
+        421
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "StormRock",
+      "grounded": true,
+      "note": "return point from the Amethyst Barrens insides map"
+    },
+    {
+      "id": "measure-house-door",
+      "position": [
+        159.25,
+        5.22,
+        -74.25
+      ],
+      "serverTile": [
+        333,
+        248
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "CrystalField",
+      "grounded": true,
+      "note": "return point from the Amethyst Barrens insides map"
+    },
+    {
+      "id": "counting-house-door",
+      "position": [
+        258.0,
+        4.31,
+        -90.0
+      ],
+      "serverTile": [
+        432,
+        264
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "Barrens",
+      "grounded": true,
+      "note": "return point from the Amethyst Barrens insides map"
     }
   ],
   "collision": {
@@ -342,7 +390,48 @@
       "Landmark_StormRuin_5",
       "Landmark_Watchtower_0",
       "Landmark_Watchtower_1",
-      "Landmark_Watchtower_2"
+      "Landmark_Watchtower_2",
+      "Lore_eleven_measures",
+      "March_east_shore_Station",
+      "March_east_shore_Stone",
+      "March_east_shore_boat_010",
+      "March_east_shore_boat_011",
+      "March_north_pass_Station",
+      "March_north_pass_Stone",
+      "March_north_pass_snow_boulder_009",
+      "March_north_pass_snow_boulder_010",
+      "March_north_pass_snow_boulder_011",
+      "March_north_pass_snow_boulder_012",
+      "March_north_pass_snow_boulder_013",
+      "March_north_pass_snow_boulder_014",
+      "March_north_pass_tree_000",
+      "March_north_pass_tree_001",
+      "March_north_pass_tree_002",
+      "March_north_pass_tree_003",
+      "March_north_pass_tree_004",
+      "March_north_pass_tree_005",
+      "March_north_pass_tree_006",
+      "March_north_pass_tree_007",
+      "March_north_pass_tree_008",
+      "March_south_road_Station",
+      "March_south_road_Stone",
+      "March_south_road_steppe_rock_004",
+      "March_south_road_steppe_rock_005",
+      "March_south_road_steppe_rock_006",
+      "March_south_road_steppe_rock_007",
+      "March_south_road_steppe_rock_008",
+      "March_west_road_Station",
+      "March_west_road_Stone",
+      "March_west_road_tree_000",
+      "March_west_road_tree_001",
+      "March_west_road_tree_002",
+      "March_west_road_tree_003",
+      "March_west_road_tree_004",
+      "March_west_road_turf_rock_005",
+      "March_west_road_turf_rock_006",
+      "March_west_road_turf_rock_007",
+      "March_west_road_turf_rock_008",
+      "March_west_road_turf_rock_009"
     ],
     "binary": "collision.bin",
     "format": "EWCG-v2",
@@ -359,8 +448,8 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 1054380,
-    "walkableFraction": 0.7945,
+    "walkableCells": 1052458,
+    "walkableFraction": 0.793,
     "saturatedCells": 5
   },
   "navigation": {
@@ -906,6 +995,111 @@
         48.04,
         -330.0
       ]
+    },
+    {
+      "id": "eleven-measures",
+      "name": "The Eleven Measures",
+      "node": "Lore_eleven_measures",
+      "type": "lore-site",
+      "thread": "C",
+      "position": [
+        228.81,
+        4.54,
+        -197.21
+      ],
+      "note": "Eleven calibration stones in an arc, each with a brass collar and a shard cut to one length. A Glasswarden tunes against all eleven in a walk."
+    },
+    {
+      "id": "march-north-pass",
+      "name": "The Whitehorn March",
+      "node": "March_north_pass_Stone",
+      "type": "transition",
+      "position": [
+        24.7,
+        4.09,
+        -324.0
+      ],
+      "note": "Where the Amethyst Barrens gives way to the Whitehorn Range: glasswarden road furniture, a march stone, a waystation, and 19 pieces of the country beyond."
+    },
+    {
+      "id": "station-north-pass",
+      "name": "Whitehorn Range Road Station",
+      "node": "March_north_pass_Station",
+      "type": "waystation",
+      "position": [
+        18.5,
+        1.5,
+        -308.0
+      ]
+    },
+    {
+      "id": "march-west-road",
+      "name": "The Mirror Road March",
+      "node": "March_west_road_Stone",
+      "type": "transition",
+      "position": [
+        -150.0,
+        10.3,
+        -246.7
+      ],
+      "note": "Where the Amethyst Barrens gives way to Mirrorhold: glasswarden road furniture, a march stone, a waystation, and 10 pieces of the country beyond."
+    },
+    {
+      "id": "station-west-road",
+      "name": "Mirrorhold Road Station",
+      "node": "March_west_road_Station",
+      "type": "waystation",
+      "position": [
+        -134.0,
+        4.01,
+        -240.5
+      ]
+    },
+    {
+      "id": "march-south-road",
+      "name": "The Steppe March",
+      "node": "March_south_road_Stone",
+      "type": "transition",
+      "position": [
+        35.3,
+        15.99,
+        156.0
+      ],
+      "note": "Where the Amethyst Barrens gives way to the Sunmane Steppe: glasswarden road furniture, a march stone, a waystation, and 12 pieces of the country beyond."
+    },
+    {
+      "id": "station-south-road",
+      "name": "Sunmane Steppe Road Station",
+      "node": "March_south_road_Station",
+      "type": "waystation",
+      "position": [
+        41.5,
+        6.98,
+        140.0
+      ]
+    },
+    {
+      "id": "march-east-shore",
+      "name": "The East Landing",
+      "node": "March_east_shore_Stone",
+      "type": "transition",
+      "position": [
+        378.0,
+        26.07,
+        -17.3
+      ],
+      "note": "Where the Amethyst Barrens gives way to Crownwater: glasswarden road furniture, a march stone, a waystation, and 12 pieces of the country beyond."
+    },
+    {
+      "id": "station-east-shore",
+      "name": "Crownwater Road Station",
+      "node": "March_east_shore_Station",
+      "type": "waystation",
+      "position": [
+        362.0,
+        16.29,
+        -23.5
+      ]
     }
   ],
   "interactives": [
@@ -1204,13 +1398,13 @@
       "id": "amethyst-seam-000",
       "resource": "amethyst-shard",
       "position": [
-        306.0,
-        5.74,
-        79.0
+        302.0,
+        6.17,
+        83.0
       ],
       "serverTile": [
-        480,
-        95
+        476,
+        91
       ],
       "authority": "server"
     },
@@ -1218,12 +1412,12 @@
       "id": "amethyst-seam-001",
       "resource": "amethyst-shard",
       "position": [
-        150.0,
-        5.12,
+        186.0,
+        3.15,
         -65.0
       ],
       "serverTile": [
-        324,
+        360,
         239
       ],
       "authority": "server"
@@ -1232,13 +1426,13 @@
       "id": "amethyst-seam-002",
       "resource": "amethyst-shard",
       "position": [
-        32.0,
-        3.88,
-        -321.0
+        120.0,
+        15.24,
+        -281.0
       ],
       "serverTile": [
-        206,
-        495
+        294,
+        455
       ],
       "authority": "server"
     },
@@ -1246,13 +1440,13 @@
       "id": "amethyst-seam-003",
       "resource": "amethyst-shard",
       "position": [
-        128.0,
-        2.85,
-        -233.0
+        132.0,
+        2.5,
+        -193.0
       ],
       "serverTile": [
-        302,
-        407
+        306,
+        367
       ],
       "authority": "server"
     },
@@ -1261,12 +1455,12 @@
       "resource": "amethyst-shard",
       "position": [
         98.0,
-        7.71,
-        -365.0
+        6.62,
+        -367.0
       ],
       "serverTile": [
         272,
-        539
+        541
       ],
       "authority": "server"
     },
@@ -1274,13 +1468,13 @@
       "id": "amethyst-seam-005",
       "resource": "amethyst-shard",
       "position": [
-        146.0,
-        2.52,
-        -173.0
+        206.0,
+        4.64,
+        -167.0
       ],
       "serverTile": [
-        320,
-        347
+        380,
+        341
       ],
       "authority": "server"
     },
@@ -1288,12 +1482,12 @@
       "id": "amethyst-seam-006",
       "resource": "amethyst-shard",
       "position": [
-        106.0,
-        9.25,
+        102.0,
+        6.1,
         -369.0
       ],
       "serverTile": [
-        280,
+        276,
         543
       ],
       "authority": "server"
@@ -1302,13 +1496,13 @@
       "id": "amethyst-seam-007",
       "resource": "amethyst-shard",
       "position": [
-        318.0,
-        6.17,
-        103.0
+        320.0,
+        4.82,
+        105.0
       ],
       "serverTile": [
-        492,
-        71
+        494,
+        69
       ],
       "authority": "server"
     },
@@ -1316,13 +1510,13 @@
       "id": "amethyst-seam-008",
       "resource": "amethyst-shard",
       "position": [
-        126.0,
-        4.79,
-        -119.0
+        166.0,
+        2.28,
+        -115.0
       ],
       "serverTile": [
-        300,
-        293
+        340,
+        289
       ],
       "authority": "server"
     },
@@ -1330,13 +1524,13 @@
       "id": "amethyst-seam-009",
       "resource": "amethyst-shard",
       "position": [
-        312.0,
+        316.0,
         6.17,
-        85.0
+        87.0
       ],
       "serverTile": [
-        486,
-        89
+        490,
+        87
       ],
       "authority": "server"
     },
@@ -1344,13 +1538,13 @@
       "id": "amethyst-seam-010",
       "resource": "amethyst-shard",
       "position": [
-        146.0,
-        2.24,
-        -161.0
+        152.0,
+        2.68,
+        -157.0
       ],
       "serverTile": [
-        320,
-        335
+        326,
+        331
       ],
       "authority": "server"
     },
@@ -1358,12 +1552,12 @@
       "id": "amethyst-seam-011",
       "resource": "amethyst-shard",
       "position": [
-        142.0,
+        126.0,
         3.19,
         -41.0
       ],
       "serverTile": [
-        316,
+        300,
         215
       ],
       "authority": "server"
@@ -1372,13 +1566,13 @@
       "id": "amethyst-seam-012",
       "resource": "amethyst-shard",
       "position": [
-        196.0,
-        6.38,
-        -151.0
+        166.0,
+        4.19,
+        -143.0
       ],
       "serverTile": [
-        370,
-        325
+        340,
+        317
       ],
       "authority": "server"
     },
@@ -1386,13 +1580,13 @@
       "id": "amethyst-seam-013",
       "resource": "amethyst-shard",
       "position": [
-        134.0,
-        3.19,
-        -39.0
+        212.0,
+        2.57,
+        -41.0
       ],
       "serverTile": [
-        308,
-        213
+        386,
+        215
       ],
       "authority": "server"
     },
@@ -1400,13 +1594,13 @@
       "id": "amethyst-seam-014",
       "resource": "amethyst-shard",
       "position": [
-        120.0,
-        6.05,
-        -299.0
+        122.0,
+        12.38,
+        -275.0
       ],
       "serverTile": [
-        294,
-        473
+        296,
+        449
       ],
       "authority": "server"
     },
@@ -1414,13 +1608,13 @@
       "id": "amethyst-seam-015",
       "resource": "amethyst-shard",
       "position": [
-        316.0,
-        5.99,
-        -95.0
+        182.0,
+        2.08,
+        -89.0
       ],
       "serverTile": [
-        490,
-        269
+        356,
+        263
       ],
       "authority": "server"
     },
@@ -1428,13 +1622,13 @@
       "id": "amethyst-seam-016",
       "resource": "amethyst-shard",
       "position": [
-        116.0,
-        4.8,
-        -115.0
+        170.0,
+        2.2,
+        -111.0
       ],
       "serverTile": [
-        290,
-        289
+        344,
+        285
       ],
       "authority": "server"
     },
@@ -1442,13 +1636,13 @@
       "id": "amethyst-seam-017",
       "resource": "amethyst-shard",
       "position": [
-        208.0,
+        214.0,
         4.64,
-        -163.0
+        -159.0
       ],
       "serverTile": [
-        382,
-        337
+        388,
+        333
       ],
       "authority": "server"
     },
@@ -1456,13 +1650,13 @@
       "id": "amethyst-seam-018",
       "resource": "amethyst-shard",
       "position": [
-        214.0,
-        2.46,
-        -17.0
+        226.0,
+        1.92,
+        -3.0
       ],
       "serverTile": [
-        388,
-        191
+        400,
+        177
       ],
       "authority": "server"
     },
@@ -1470,13 +1664,13 @@
       "id": "amethyst-seam-019",
       "resource": "amethyst-shard",
       "position": [
-        246.0,
-        3.04,
-        27.0
+        256.0,
+        1.85,
+        33.0
       ],
       "serverTile": [
-        420,
-        147
+        430,
+        141
       ],
       "authority": "server"
     },
@@ -1484,172 +1678,18 @@
       "id": "amethyst-seam-020",
       "resource": "amethyst-shard",
       "position": [
-        320.0,
-        6.93,
+        326.0,
+        5.2,
         113.0
       ],
       "serverTile": [
-        494,
+        500,
         61
       ],
       "authority": "server"
     },
     {
       "id": "amethyst-seam-021",
-      "resource": "amethyst-shard",
-      "position": [
-        268.0,
-        2.91,
-        53.0
-      ],
-      "serverTile": [
-        442,
-        121
-      ],
-      "authority": "server"
-    },
-    {
-      "id": "amethyst-seam-022",
-      "resource": "amethyst-shard",
-      "position": [
-        194.0,
-        3.73,
-        -75.0
-      ],
-      "serverTile": [
-        368,
-        249
-      ],
-      "authority": "server"
-    },
-    {
-      "id": "amethyst-seam-023",
-      "resource": "amethyst-shard",
-      "position": [
-        332.0,
-        4.82,
-        111.0
-      ],
-      "serverTile": [
-        506,
-        63
-      ],
-      "authority": "server"
-    },
-    {
-      "id": "amethyst-seam-024",
-      "resource": "amethyst-shard",
-      "position": [
-        146.0,
-        3.19,
-        -51.0
-      ],
-      "serverTile": [
-        320,
-        225
-      ],
-      "authority": "server"
-    },
-    {
-      "id": "amethyst-seam-025",
-      "resource": "amethyst-shard",
-      "position": [
-        94.0,
-        1.2,
-        -395.0
-      ],
-      "serverTile": [
-        268,
-        569
-      ],
-      "authority": "server"
-    },
-    {
-      "id": "amethyst-seam-026",
-      "resource": "amethyst-shard",
-      "position": [
-        286.0,
-        2.17,
-        71.0
-      ],
-      "serverTile": [
-        460,
-        103
-      ],
-      "authority": "server"
-    },
-    {
-      "id": "amethyst-seam-027",
-      "resource": "amethyst-shard",
-      "position": [
-        26.0,
-        4.07,
-        -323.0
-      ],
-      "serverTile": [
-        200,
-        497
-      ],
-      "authority": "server"
-    },
-    {
-      "id": "amethyst-seam-028",
-      "resource": "amethyst-shard",
-      "position": [
-        148.0,
-        3.52,
-        -177.0
-      ],
-      "serverTile": [
-        322,
-        351
-      ],
-      "authority": "server"
-    },
-    {
-      "id": "amethyst-seam-029",
-      "resource": "amethyst-shard",
-      "position": [
-        126.0,
-        15.7,
-        -283.0
-      ],
-      "serverTile": [
-        300,
-        457
-      ],
-      "authority": "server"
-    },
-    {
-      "id": "amethyst-seam-030",
-      "resource": "amethyst-shard",
-      "position": [
-        148.0,
-        3.19,
-        -47.0
-      ],
-      "serverTile": [
-        322,
-        221
-      ],
-      "authority": "server"
-    },
-    {
-      "id": "amethyst-seam-031",
-      "resource": "amethyst-shard",
-      "position": [
-        114.0,
-        3.63,
-        -41.0
-      ],
-      "serverTile": [
-        288,
-        215
-      ],
-      "authority": "server"
-    },
-    {
-      "id": "amethyst-seam-032",
       "resource": "amethyst-shard",
       "position": [
         292.0,
@@ -1663,16 +1703,170 @@
       "authority": "server"
     },
     {
+      "id": "amethyst-seam-022",
+      "resource": "amethyst-shard",
+      "position": [
+        194.0,
+        3.31,
+        -73.0
+      ],
+      "serverTile": [
+        368,
+        247
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "amethyst-seam-023",
+      "resource": "amethyst-shard",
+      "position": [
+        336.0,
+        6.2,
+        111.0
+      ],
+      "serverTile": [
+        510,
+        63
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "amethyst-seam-024",
+      "resource": "amethyst-shard",
+      "position": [
+        194.0,
+        2.9,
+        -51.0
+      ],
+      "serverTile": [
+        368,
+        225
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "amethyst-seam-025",
+      "resource": "amethyst-shard",
+      "position": [
+        96.0,
+        1.32,
+        -379.0
+      ],
+      "serverTile": [
+        270,
+        553
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "amethyst-seam-026",
+      "resource": "amethyst-shard",
+      "position": [
+        298.0,
+        4.53,
+        75.0
+      ],
+      "serverTile": [
+        472,
+        99
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "amethyst-seam-027",
+      "resource": "amethyst-shard",
+      "position": [
+        122.0,
+        15.79,
+        -285.0
+      ],
+      "serverTile": [
+        296,
+        459
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "amethyst-seam-028",
+      "resource": "amethyst-shard",
+      "position": [
+        210.0,
+        4.64,
+        -169.0
+      ],
+      "serverTile": [
+        384,
+        343
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "amethyst-seam-029",
+      "resource": "amethyst-shard",
+      "position": [
+        138.0,
+        11.5,
+        -271.0
+      ],
+      "serverTile": [
+        312,
+        445
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "amethyst-seam-030",
+      "resource": "amethyst-shard",
+      "position": [
+        150.0,
+        3.19,
+        -47.0
+      ],
+      "serverTile": [
+        324,
+        221
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "amethyst-seam-031",
+      "resource": "amethyst-shard",
+      "position": [
+        200.0,
+        2.27,
+        -43.0
+      ],
+      "serverTile": [
+        374,
+        217
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "amethyst-seam-032",
+      "resource": "amethyst-shard",
+      "position": [
+        288.0,
+        3.63,
+        73.0
+      ],
+      "serverTile": [
+        462,
+        101
+      ],
+      "authority": "server"
+    },
+    {
       "id": "amethyst-seam-033",
       "resource": "amethyst-shard",
       "position": [
-        186.0,
-        1.84,
-        -77.0
+        188.0,
+        2.14,
+        -75.0
       ],
       "serverTile": [
-        360,
-        251
+        362,
+        249
       ],
       "authority": "server"
     },
@@ -1680,13 +1874,13 @@
       "id": "amethyst-seam-034",
       "resource": "amethyst-shard",
       "position": [
-        316.0,
+        320.0,
         6.17,
-        97.0
+        99.0
       ],
       "serverTile": [
-        490,
-        77
+        494,
+        75
       ],
       "authority": "server"
     },
@@ -1694,12 +1888,12 @@
       "id": "amethyst-seam-035",
       "resource": "amethyst-shard",
       "position": [
-        200.0,
-        2.79,
+        132.0,
+        3.19,
         -39.0
       ],
       "serverTile": [
-        374,
+        306,
         213
       ],
       "authority": "server"
@@ -1708,13 +1902,13 @@
       "id": "amethyst-seam-036",
       "resource": "amethyst-shard",
       "position": [
-        28.0,
-        4.2,
-        -335.0
+        104.0,
+        12.55,
+        -337.0
       ],
       "serverTile": [
-        202,
-        509
+        278,
+        511
       ],
       "authority": "server"
     },
@@ -1722,13 +1916,13 @@
       "id": "amethyst-seam-037",
       "resource": "amethyst-shard",
       "position": [
-        110.0,
-        15.89,
-        -337.0
+        104.0,
+        11.25,
+        -339.0
       ],
       "serverTile": [
-        284,
-        511
+        278,
+        513
       ],
       "authority": "server"
     },
@@ -1736,12 +1930,12 @@
       "id": "amethyst-seam-038",
       "resource": "amethyst-shard",
       "position": [
-        160.0,
-        5.12,
+        194.0,
+        1.83,
         -63.0
       ],
       "serverTile": [
-        334,
+        368,
         237
       ],
       "authority": "server"
@@ -1750,13 +1944,13 @@
       "id": "amethyst-seam-039",
       "resource": "amethyst-shard",
       "position": [
-        176.0,
-        6.49,
-        117.0
+        128.0,
+        9.87,
+        -269.0
       ],
       "serverTile": [
-        350,
-        57
+        302,
+        443
       ],
       "authority": "server"
     },
@@ -1764,13 +1958,13 @@
       "id": "amethyst-seam-040",
       "resource": "amethyst-shard",
       "position": [
-        134.0,
+        132.0,
         6.98,
-        -253.0
+        -243.0
       ],
       "serverTile": [
-        308,
-        427
+        306,
+        417
       ],
       "authority": "server"
     },
@@ -1778,13 +1972,13 @@
       "id": "amethyst-seam-041",
       "resource": "amethyst-shard",
       "position": [
-        192.0,
-        2.16,
-        -69.0
+        168.0,
+        5.12,
+        -67.0
       ],
       "serverTile": [
-        366,
-        243
+        342,
+        241
       ],
       "authority": "server"
     },
@@ -1792,13 +1986,13 @@
       "id": "amethyst-seam-042",
       "resource": "amethyst-shard",
       "position": [
-        156.0,
+        150.0,
         4.19,
-        -153.0
+        -145.0
       ],
       "serverTile": [
-        330,
-        327
+        324,
+        319
       ],
       "authority": "server"
     },
@@ -1806,13 +2000,13 @@
       "id": "amethyst-seam-043",
       "resource": "amethyst-shard",
       "position": [
-        208.0,
+        220.0,
         4.64,
-        -169.0
+        -165.0
       ],
       "serverTile": [
-        382,
-        343
+        394,
+        339
       ],
       "authority": "server"
     },
@@ -1821,12 +2015,12 @@
       "resource": "amethyst-shard",
       "position": [
         130.0,
-        13.05,
-        -281.0
+        10.35,
+        -269.0
       ],
       "serverTile": [
         304,
-        455
+        443
       ],
       "authority": "server"
     },
@@ -1834,13 +2028,13 @@
       "id": "amethyst-seam-045",
       "resource": "amethyst-shard",
       "position": [
-        240.0,
-        2.45,
-        5.0
+        236.0,
+        3.09,
+        15.0
       ],
       "serverTile": [
-        414,
-        169
+        410,
+        159
       ],
       "authority": "server"
     },
@@ -1848,13 +2042,13 @@
       "id": "amethyst-seam-046",
       "resource": "amethyst-shard",
       "position": [
-        326.0,
+        328.0,
         4.82,
-        103.0
+        105.0
       ],
       "serverTile": [
-        500,
-        71
+        502,
+        69
       ],
       "authority": "server"
     },
@@ -1862,13 +2056,13 @@
       "id": "amethyst-seam-047",
       "resource": "amethyst-shard",
       "position": [
-        294.0,
-        4.32,
-        77.0
+        308.0,
+        6.03,
+        79.0
       ],
       "serverTile": [
-        468,
-        97
+        482,
+        95
       ],
       "authority": "server"
     },
@@ -1876,13 +2070,13 @@
       "id": "amethyst-seam-048",
       "resource": "amethyst-shard",
       "position": [
-        300.0,
-        4.69,
-        81.0
+        296.0,
+        6.17,
+        85.0
       ],
       "serverTile": [
-        474,
-        93
+        470,
+        89
       ],
       "authority": "server"
     },
@@ -1890,13 +2084,13 @@
       "id": "amethyst-seam-049",
       "resource": "amethyst-shard",
       "position": [
-        106.0,
-        12.59,
-        -341.0
+        116.0,
+        17.28,
+        -345.0
       ],
       "serverTile": [
-        280,
-        515
+        290,
+        519
       ],
       "authority": "server"
     },
@@ -1904,12 +2098,12 @@
       "id": "amethyst-seam-050",
       "resource": "amethyst-shard",
       "position": [
-        94.0,
-        4.67,
+        100.0,
+        3.75,
         -371.0
       ],
       "serverTile": [
-        268,
+        274,
         545
       ],
       "authority": "server"
@@ -1918,13 +2112,13 @@
       "id": "amethyst-seam-051",
       "resource": "amethyst-shard",
       "position": [
-        104.0,
-        9.42,
-        -363.0
+        102.0,
+        9.27,
+        -365.0
       ],
       "serverTile": [
-        278,
-        537
+        276,
+        539
       ],
       "authority": "server"
     },
@@ -1932,12 +2126,12 @@
       "id": "amethyst-seam-052",
       "resource": "amethyst-shard",
       "position": [
-        318.0,
+        332.0,
         4.82,
         107.0
       ],
       "serverTile": [
-        492,
+        506,
         67
       ],
       "authority": "server"
@@ -1946,13 +2140,13 @@
       "id": "amethyst-seam-053",
       "resource": "amethyst-shard",
       "position": [
-        150.0,
-        4.52,
-        -121.0
+        170.0,
+        3.27,
+        -117.0
       ],
       "serverTile": [
-        324,
-        295
+        344,
+        291
       ],
       "authority": "server"
     },
@@ -1960,12 +2154,12 @@
       "id": "amethyst-seam-054",
       "resource": "amethyst-shard",
       "position": [
-        50.0,
-        6.69,
+        180.0,
+        6.66,
         115.0
       ],
       "serverTile": [
-        224,
+        354,
         59
       ],
       "authority": "server"
@@ -1974,13 +2168,13 @@
       "id": "amethyst-seam-055",
       "resource": "amethyst-shard",
       "position": [
-        240.0,
-        1.95,
-        11.0
+        242.0,
+        2.76,
+        19.0
       ],
       "serverTile": [
-        414,
-        163
+        416,
+        155
       ],
       "authority": "server"
     },
@@ -1988,13 +2182,13 @@
       "id": "amethyst-seam-056",
       "resource": "amethyst-shard",
       "position": [
-        120.0,
-        6.24,
-        -301.0
+        130.0,
+        11.76,
+        -277.0
       ],
       "serverTile": [
-        294,
-        475
+        304,
+        451
       ],
       "authority": "server"
     },
@@ -2002,12 +2196,12 @@
       "id": "amethyst-seam-057",
       "resource": "amethyst-shard",
       "position": [
-        92.0,
-        3.84,
+        98.0,
+        3.2,
         -373.0
       ],
       "serverTile": [
-        266,
+        272,
         547
       ],
       "authority": "server"
@@ -2016,13 +2210,13 @@
       "id": "amethyst-seam-058",
       "resource": "amethyst-shard",
       "position": [
-        100.0,
-        3.84,
-        -377.0
+        96.0,
+        2.29,
+        -375.0
       ],
       "serverTile": [
-        274,
-        551
+        270,
+        549
       ],
       "authority": "server"
     },
@@ -2030,12 +2224,12 @@
       "id": "amethyst-seam-059",
       "resource": "amethyst-shard",
       "position": [
-        200.0,
-        2.1,
+        198.0,
+        2.65,
         -45.0
       ],
       "serverTile": [
-        374,
+        372,
         219
       ],
       "authority": "server"
@@ -2044,12 +2238,12 @@
       "id": "amethyst-seam-060",
       "resource": "amethyst-shard",
       "position": [
-        100.0,
-        3.98,
+        104.0,
+        5.79,
         -373.0
       ],
       "serverTile": [
-        274,
+        278,
         547
       ],
       "authority": "server"
@@ -2058,13 +2252,13 @@
       "id": "amethyst-seam-061",
       "resource": "amethyst-shard",
       "position": [
-        154.0,
-        16.81,
-        -267.0
+        202.0,
+        16.13,
+        -257.0
       ],
       "serverTile": [
-        328,
-        441
+        376,
+        431
       ],
       "authority": "server"
     },
@@ -2072,13 +2266,13 @@
       "id": "amethyst-seam-062",
       "resource": "amethyst-shard",
       "position": [
-        270.0,
-        2.72,
-        39.0
+        266.0,
+        2.21,
+        47.0
       ],
       "serverTile": [
-        444,
-        135
+        440,
+        127
       ],
       "authority": "server"
     },
@@ -2086,13 +2280,13 @@
       "id": "amethyst-seam-063",
       "resource": "amethyst-shard",
       "position": [
-        158.0,
+        156.0,
         4.19,
-        -149.0
+        -141.0
       ],
       "serverTile": [
-        332,
-        323
+        330,
+        315
       ],
       "authority": "server"
     }
@@ -2100,18 +2294,18 @@
   "portals": [
     {
       "id": "west-road",
-      "name": "Amberwood Road",
+      "name": "Mirror Road to Mirrorhold",
       "type": "map-transition",
       "position": [
-        -153.75,
-        17.54,
-        -250.25
+        -154.25,
+        18.13,
+        -249.75
       ],
       "serverTile": [
         20,
         424
       ],
-      "destinationMap": "amberwood",
+      "destinationMap": "mirrorhold",
       "radius": 3.5,
       "authority": "server"
     },
@@ -2239,6 +2433,63 @@
       "landmark": "amethyst-storm-ruin-0",
       "destinationMap": "resonant_vault",
       "destinationSpawn": "storm-barrow-stair",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "sour-cut-mouth",
+      "name": "The Sour Cut",
+      "type": "interior-entrance",
+      "position": [
+        209.75,
+        6.52,
+        -246.75
+      ],
+      "serverTile": [
+        384,
+        421
+      ],
+      "landmark": "amethyst-geode-cave-3",
+      "destinationMap": "resonant_vault",
+      "destinationSpawn": "sour-cut-mouth",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "measure-house-door",
+      "name": "The Measure House",
+      "type": "interior-entrance",
+      "position": [
+        159.25,
+        5.22,
+        -74.25
+      ],
+      "serverTile": [
+        333,
+        248
+      ],
+      "landmark": "amethyst-storm-ruin-2",
+      "destinationMap": "resonant_vault",
+      "destinationSpawn": "measure-house-door",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "counting-house-door",
+      "name": "The Shard Counter's House",
+      "type": "interior-entrance",
+      "position": [
+        258.0,
+        4.06,
+        -90.0
+      ],
+      "serverTile": [
+        432,
+        264
+      ],
+      "landmark": "resonant-crystal-cluster-2",
+      "destinationMap": "resonant_vault",
+      "destinationSpawn": "counting-house-door",
       "radius": 2.5,
       "authority": "server"
     }
@@ -2877,28 +3128,28 @@
     }
   ],
   "performance": {
-    "nodes": 942,
-    "meshes": 229,
-    "materials": 19,
-    "images": 39,
-    "textures": 39,
-    "accessors": 922,
-    "bufferViews": 961,
-    "uniqueTriangles": 460150,
-    "uniqueVertices": 389341,
-    "glbBytes": 20326452,
-    "instancedTriangles": 617518,
-    "embeddedTextureBytes": 4252666,
-    "textureMemoryBytesUncompressed": 31457280,
-    "placements": 490,
+    "nodes": 1144,
+    "meshes": 364,
+    "materials": 35,
+    "images": 75,
+    "textures": 75,
+    "accessors": 1466,
+    "bufferViews": 1541,
+    "uniqueTriangles": 481982,
+    "uniqueVertices": 421837,
+    "glbBytes": 25794008,
+    "instancedTriangles": 650046,
+    "embeddedTextureBytes": 8370809,
+    "textureMemoryBytesUncompressed": 69992448,
+    "placements": 587,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 1054380,
-      "blockedCells": 272724,
-      "walkableFraction": 0.7945,
-      "elevatedDecks": 18,
+      "walkableCells": 1052458,
+      "blockedCells": 274646,
+      "walkableFraction": 0.793,
+      "elevatedDecks": 19,
       "steepCells": 178184,
       "reliefMetres": 58.49,
       "heightEncoding": {
@@ -2917,19 +3168,28 @@
     },
     "notes": [
       "crystal outcrops placed: 126",
-      "ground dressing: 101 rock clusters, 201 vein scatters",
+      "ground dressing: 100 rock clusters, 200 vein scatters",
+      "lore site eleven-measures (The Eleven Measures): relief 0.64 m, 12 m from the ask",
+      "march north-pass: 5 road pieces, 19 of whitehorn_range's growth",
+      "march west-road: 6 road pieces, 10 of mirrorhold's growth",
+      "march south-road: 7 road pieces, 12 of sunmane_steppe's growth",
+      "march east-shore: 1 road pieces, 12 of crownwater's growth",
       "massif-camp moved 2.5 m onto walkable ground",
       "geode-hollow-mouth moved 8.1 m onto walkable ground",
       "storm-barrow-stair moved 5.0 m onto walkable ground",
+      "sour-cut-mouth moved 7.8 m onto walkable ground",
+      "measure-house-door moved 3.6 m onto walkable ground",
       "west-road moved 2.9 m onto walkable ground",
       "geode-hollow-mouth moved 8.1 m onto walkable ground",
-      "storm-barrow-stair moved 5.0 m onto walkable ground"
+      "storm-barrow-stair moved 5.0 m onto walkable ground",
+      "sour-cut-mouth moved 7.8 m onto walkable ground",
+      "measure-house-door moved 3.6 m onto walkable ground"
     ],
     "lod2": {
-      "glbBytes": 15663520,
-      "nodes": 306,
-      "uniqueTriangles": 429840,
-      "instancedTriangles": 435452
+      "glbBytes": 17856880,
+      "nodes": 510,
+      "uniqueTriangles": 451672,
+      "instancedTriangles": 468776
     }
   },
   "sources": [

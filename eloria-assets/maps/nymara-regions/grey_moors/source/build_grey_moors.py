@@ -47,6 +47,8 @@ from amberwood import terrain as TER
 
 import populate as POP
 import region as REG
+import transitions as MARCH
+import loresites as LORE
 
 HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
@@ -59,6 +61,34 @@ DESPECKLE_MIN_CELLS = 6
 
 ASSET_VERSION = "1.0.0"
 SCHEMA_VERSION = "1.0.0"
+
+# The four crossings, as region-connections.json declares them: the west
+# waygate up to Westhaven, the jetty on the east shore where the Crownwater
+# boat calls, the north track into the Amberwood, and the south road down onto
+# the delta's bars. Autumn trees come down the north track, reeds and a
+# beached boat mark the jetty and the south road, upland grass climbs west.
+CROSSINGS = [
+    MARCH.Crossing("west-waygate", "westhaven", (-156.0, 0.0), (-174.0, 0.0),
+                   radius=44.0, name="The Haven Road March"),
+    MARCH.Crossing("east-waygate", "crownwater", REG.ANCHORS["east_jetty"],
+                   (REG.PLAY_MAX_X + 20.0, REG.ANCHORS["east_jetty"][1]),
+                   radius=30.0, ferry=True, name="The Moor Jetty"),
+    MARCH.Crossing("north-gate", "amberwood", REG.ANCHORS["north_gate"],
+                   (REG.ANCHORS["north_gate"][0], REG.PLAY_MIN_Z - 20.0),
+                   radius=48.0, name="The Amber March"),
+    MARCH.Crossing("south-gate", "manymouth_delta", REG.ANCHORS["south_gate"],
+                   (REG.ANCHORS["south_gate"][0], REG.PLAY_MAX_Z + 20.0),
+                   radius=42.0, name="The Delta March"),
+]
+
+# The places the region's people argue about (see loresites.py).
+SITES = [
+    LORE.Site("breached-barrows", "The Breached Barrow", "breached_barrow", (115.0, -242.0),
+              thread="F", clearing=13.0,
+              note="Eleven barrows were breached. This is the one the debt-reader walks you to, "
+                   "its return-field stakes still standing blank."),
+]
+MARCH_MATERIALS: dict = dict(getattr(REG, "SURFACE_MATERIALS", {}))
 
 # The materials this region embeds. Named explicitly rather than derived, so a
 # kit added by another region cannot silently enlarge this package.
@@ -73,7 +103,7 @@ MATERIALS: frozenset[str] = frozenset({
     "grey_bog_water", "water_sea", "grey_wisp", "grey_votive_flame",
     # small shared pieces the kit reuses rather than duplicating
     "dark_iron", "timber_grey", "lime_plaster", "charred_timber",
-})
+}) | MARCH.materials_for("grey_moors", CROSSINGS) | LORE.materials([s.piece for s in SITES])
 
 
 # --------------------------------------------------------------------------
@@ -95,6 +125,8 @@ def build_region(seed: int = SEED, lod: str | None = None,
     # and ground-dressing passes choose their sites by surface class, and if the
     # classes are still unpainted they scatter nothing at all.
     REG.assign_surfaces(terrain, seed)
+    MARCH.prepare(terrain, CROSSINGS)
+    LORE.prepare(terrain, SITES, sea_level=getattr(REG, "SEA_LEVEL", 0.0), keep=(TER.PEAT_BOG,))
 
     if not terrain_only:
         POP.populate_landmarks(build, seed, lod=lod)
@@ -105,9 +137,19 @@ def build_region(seed: int = SEED, lod: str | None = None,
 
     POP.build_water(build)
 
+    # The marches: the neighbours' country coming in along the roads out.
+    if not terrain_only:
+        MARCH.paint(terrain, CROSSINGS, MARCH_MATERIALS, seed, sea_level=REG.SEA_LEVEL,
+                    keep=(TER.PEAT_BOG,))
+        march = MARCH.dress(build, "grey_moors", CROSSINGS, seed, sea_level=REG.SEA_LEVEL)
+        LORE.dress(build, terrain, SITES, seed)
+        build.landmarks.extend(march.landmarks)
+        build.notes.extend(march.notes)
+
     terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
     build.terrain_meshes = terrain.build_meshes(
-        uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX)
+        uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
+        materials=MARCH_MATERIALS)
     # The backdrop is the distant mountain ring. It comes out of the toolkit in
     # Amberwood's cliff rock, so it is retinted into this region's storm rock -
     # otherwise the horizon is grey while everything in front of it is violet.
@@ -140,27 +182,23 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
             "surface": TER.SURFACE_NAMES[int(t.surface_at(x, z))],
             "grounded": True})
 
-    # Edge portals to neighbouring Nymara regions. Destination map ids follow the
-    # client registry; the server remains authoritative for the transition.
-    # Adjacency is NOT this package's to invent. The server's own
-    # `config/eloria/maps.txt` already declares Grey Moors' neighbours, and it
-    # gives exactly two: sunmane_steppe on the west edge and westhaven on the
-    # east. The server tiles below are that file's own waygate positions,
-    # rescaled from the 192-cell grid to this region's 576-cell one the same
-    # way Whitehorn Range's were - x3 about the arrival datum, which turns
-    # (6, 58) and (110, 58) into (18, 174) and (330, 174).
-    for portal_id, name, tile, destination in (
-            ("west-waygate", "Sunmane Track", (18, 174),
-             "maps/nymara/sunmane_steppe.elm"),
-            ("east-waygate", "Westhaven Road", (330, 174),
-             "maps/nymara/westhaven.elm")):
-        x = (tile[0] - REG.SERVER_ORIGIN[0]) * REG.METRES_PER_TILE
-        z = -(tile[1] - REG.SERVER_ORIGIN[1]) * REG.METRES_PER_TILE
+    # Edge portals to neighbouring Nymara regions, as region-connections.json
+    # declares them. The moor sits between Westhaven and the lake, with the
+    # Amberwood north of it and the delta south: the west waygate keeps the
+    # tile it always had, the east one moved out to the shore where a jetty
+    # can actually meet a boat, and the north and south gates are new.
+    for crossing, name, destination in (
+            (CROSSINGS[0], "Haven Road to Westhaven", "westhaven"),
+            (CROSSINGS[1], "Moor Jetty: the Crownwater boat", "crownwater"),
+            (CROSSINGS[2], "North Track into the Amberwood", "amberwood"),
+            (CROSSINGS[3], "Drain Road down to the Delta", "manymouth_delta")):
+        x, z = crossing.position
         y = float(t.height_at(x, z))
         build.portals.append({
-            "id": portal_id, "name": name, "type": "map-transition",
+            "id": crossing.id, "name": name, "type": "map-transition",
             "position": [round(float(x), 2), round(y + 0.1, 2), round(float(z), 2)],
-            "serverTile": [int(tile[0]), int(tile[1])],
+            "serverTile": [int(round(x + REG.SERVER_ORIGIN[0])),
+                           int(round(REG.SERVER_ORIGIN[1] - z))],
             "destinationMap": destination, "radius": 3.5,
             "authority": "server"})
 
@@ -174,7 +212,11 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
             ("great-barrow-mouth", "The Great Barrow", "grey-great-barrow"),
             ("west-crypt-stair", "The West Crypt", "grey-crypt-west"),
             ("east-crypt-stair", "The East Crypt", "grey-crypt-east"),
-            ("south-crypt-stair", "The Fen Crypt", "grey-crypt-south")):
+            ("south-crypt-stair", "The Fen Crypt", "grey-crypt-south"),
+            ("fifth-chamber-mouth", "The Fifth Chamber", "grey-tower-3"),
+            ("peat-croft-door", "The Peat Cutter's Croft", "grey-croft-1"),
+            ("warm-stone-door", "The Warm Stone", "grey-shrine-0"),
+):
         anchor = next((l for l in build.landmarks if l.get("id") == landmark_id), None)
         if anchor is None:
             continue
@@ -923,7 +965,8 @@ def main() -> int:
         lod_build = build_region(args.seed, lod="far")
         lod_build.terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
         lod_build.terrain_meshes = lod_build.terrain.build_meshes(
-            uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX)
+            uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
+            materials=MARCH_MATERIALS)
         _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb")
         stats["lod2"] = {
             "glbBytes": lod_stats["glbBytes"],

@@ -984,3 +984,45 @@ def combine(seed: int = 20260902) -> Interior:
         "unfolded rather than stacked for exactly that reason.",
     ]
     return combined
+
+
+# ---- small rooms (shared kit) ----
+# The shared cave / cottage / shrine kit brings three materials the four
+# harbour sections never needed.
+SR_MATERIALS = frozenset({"bark_dark", "cliff_rock", "pale_ashlar"})
+MATERIALS = MATERIALS | SR_MATERIALS
+from amberwood import smallrooms as SR
+
+
+def gullscar_farmhouse(seed: int = 20260905) -> Interior:
+    """The farmhouse at Gullscar: a hearth, a loft, and the season's stores."""
+    return SR.cottage("westhaven_gullscar_farmhouse", "The Gullscar Farmhouse", "upland-farm",
+                      [216.2, 38.2, -255.6], "gullscar-farmhouse-door",
+                      palette={"floor": TIMBER, "wall": PLASTER, "roof": TIMBER_DARK,
+                               "timber": TIMBER_DARK, "stone": RUBBLE, "cloth": CLOTH,
+                               "iron": IRON},
+                      seed=seed, trade="hearth")
+
+
+def haven_undercroft(seed: int = 20260906) -> Interior:
+    """Under the Haven Church: the league's own register, and the dead it keeps."""
+    return SR.shrine("westhaven_haven_undercroft", "The Haven Undercroft", "cathedral",
+                     [59.3, 41.0, -136.1], "haven-undercroft-door",
+                     palette={"floor": STONE, "wall": STONE, "ceil": STONE, "accent": CARVED,
+                              "metal": IRON, "earth": EARTH},
+                     seed=seed, style="lantern", crypt=True)
+
+
+def salvage_hole(seed: int = 20260907) -> Interior:
+    """The cave under the East Watch where salvage goes that the customs never see."""
+    return SR.cave("westhaven_salvage_hole", "The Salvage Hole", "east-watch",
+                   [319.9, 56.6, -156.2], "salvage-hole-mouth",
+                   palette={"floor": EARTH, "rock": "cliff_rock", "water": WATER,
+                            "bone": "pale_ashlar"},
+                   seed=seed, den="Bronze Tide Crab", pool=True)
+
+
+ALL.update({"gullscar_farmhouse": gullscar_farmhouse, "haven_undercroft": haven_undercroft,
+            "salvage_hole": salvage_hole})
+LAYOUT.update({"salvage_hole": (178.0, 6.0), "haven_undercroft": (178.0, 90.0),
+               "gullscar_farmhouse": (178.0, 140.0)})

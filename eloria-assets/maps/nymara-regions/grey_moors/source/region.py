@@ -168,6 +168,11 @@ _DESIGN_ANCHORS: dict[str, tuple[float, float]] = {
 
     # -- route furniture and the coast
     "moor_gate": (10.0, -12.0),
+    # the ways off the moor: north into the Amberwood, south down to the
+    # delta, and the jetty on the east shore where the Crownwater boat calls
+    "north_gate": (-4.0, -128.0),
+    "south_gate": (66.0, 50.0),
+    "east_jetty": (128.0, -8.0),
     "coast_head": (-34.0, 34.0),
     "coast_landing": (-18.0, 30.0),
     "bridge_south": (55.0, 1.0),
@@ -209,12 +214,16 @@ ROUTES: dict[str, np.ndarray] = {
                         _design("tower_east")),
     "north_track": _route(_design("great_barrow_court"), _design("shrine_north"),
                           _design("ring_north"), _design("barrow_north"),
-                          _design("croft_north")),
+                          _design("croft_north"), _design("north_gate"),
+                          (-4.0, -134.0)),
     "west_track": _route(_design("moor_gate"), (-12.0, -26.0), _design("croft_west"),
                          _design("ring_west"), _design("tower_west"),
                          (-42.0, -92.0), _design("tower_nw")),
     "south_road": _route(_design("arrival"), (10.0, 16.0), _design("croft_south"),
-                         _design("ring_south"), _design("tower_south")),
+                         _design("ring_south"), _design("tower_south"),
+                         _design("south_gate"), (66.0, 58.0)),
+    "jetty_track": _route(_design("croft_east"), (114.0, -8.0), _design("east_jetty"),
+                          (134.0, -8.0)),
     "peat_track": _route(_design("moor_gate"), _design("peat_west"),
                          (-30.0, -18.0), _design("croft_west")),
     "peat_east_track": _route(_design("croft_mid"), _design("peat_centre"),

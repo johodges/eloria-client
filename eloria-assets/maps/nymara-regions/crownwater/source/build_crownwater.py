@@ -45,6 +45,8 @@ from amberwood import terrain as TER
 import crownkit as CK
 import populate as POP
 import region as REG
+import transitions as MARCH
+import loresites as LORE
 
 HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
@@ -58,6 +60,42 @@ DESPECKLE_MIN_CELLS = 6
 ASSET_VERSION = "1.0.0"
 SCHEMA_VERSION = "1.0.0"
 
+# Crownwater is the lake's ferry hub: every quay is a boat, and the four outer
+# quays between them serve seven routes. A quay that serves two routes carries
+# a second portal tile a few metres along the dock, so the boat to Mirrorhold
+# and the boat to the Barrens leave from the same north quay without sharing a
+# tile. region-connections.json names the second tiles with a suffix.
+CROSSINGS = [
+    MARCH.Crossing("east-quay", "four_gates", REG.ANCHORS["outer_east"],
+                   (REG.PLAY_MAX_X + 20.0, REG.ANCHORS["outer_east"][1]),
+                   radius=28.0, name="The Causeway Quay"),
+    MARCH.Crossing("north-quay", "mirrorhold", REG.ANCHORS["outer_north"],
+                   (REG.ANCHORS["outer_north"][0], REG.PLAY_MIN_Z - 20.0),
+                   radius=28.0, ferry=True, name="The North Quay"),
+    MARCH.Crossing("west-quay", "westhaven", REG.ANCHORS["outer_west"],
+                   (REG.PLAY_MIN_X - 20.0, REG.ANCHORS["outer_west"][1]),
+                   radius=28.0, ferry=True, name="The West Quay"),
+    MARCH.Crossing("south-quay", "manymouth_delta", REG.ANCHORS["outer_south"],
+                   (REG.ANCHORS["outer_south"][0], REG.PLAY_MAX_Z + 20.0),
+                   radius=28.0, ferry=True, name="The South Quay"),
+]
+
+# The places the region's people argue about (see loresites.py).
+SITES = [
+    LORE.Site("court-grating", "The Open Grating", "drowned_grating", (122.0, -158.0),
+              thread="D", clearing=9.0,
+              note="The grating over the drowned court, found thrown back on its hinge. "
+                   "The diver's rope and weights are still on the kerb."),
+]
+# (quay portal id, second portal id, destination, name)
+SECOND_BERTHS = (
+    ("north-quay", "north-quay-east", "amethyst_barrens", "Barrens Packet"),
+    ("west-quay", "west-quay-south", "grey_moors", "Moor Jetty Packet"),
+    ("south-quay", "south-quay-east", "ssarathi_ruins", "Temple Boat"),
+)
+MARCH_MATERIALS: dict = dict(getattr(REG, "SURFACE_MATERIALS", {}))
+CK.MATERIALS = CK.MATERIALS | MARCH.materials_for("crownwater", CROSSINGS) | LORE.materials([s.piece for s in SITES])
+
 
 # --------------------------------------------------------------------------
 def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
@@ -68,6 +106,8 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     terrain = REG.build_terrain(seed)
     REG.apply_built_ground(terrain, seed)
     build = REG.RegionBuild(terrain=terrain)
+    MARCH.prepare(terrain, CROSSINGS)
+    LORE.prepare(terrain, SITES, sea_level=getattr(REG, "SEA_LEVEL", 0.0))
 
     POP.build_water(build, lod=lod)
     POP.populate_causeways(build, seed)
@@ -80,9 +120,17 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
         POP.populate_props(build, seed)
     POP.populate_metadata(build, seed)
 
+    # The marches: the neighbours' country coming in along the roads out.
+    MARCH.paint(terrain, CROSSINGS, MARCH_MATERIALS, seed, sea_level=REG.SEA_LEVEL)
+    march = MARCH.dress(build, "crownwater", CROSSINGS, seed, sea_level=REG.SEA_LEVEL)
+    LORE.dress(build, terrain, SITES, seed)
+    build.landmarks.extend(march.landmarks)
+    build.notes.extend(march.notes)
+
     terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
     build.terrain_meshes = terrain.build_meshes(
-        uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX)
+        uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
+        materials=MARCH_MATERIALS)
     # No landmass backdrop. Amberwood needs one because its mountain walls have
     # to stand in front of something; Crownwater's horizon is open water, and the
     # lagoon plane is already cut far outside the authored terrain to supply it.
@@ -116,23 +164,52 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
     # the client registry; the server remains authoritative for the transition.
     # Crownwater's are quays rather than roads - every land route out of an
     # archipelago is a boat.
+    quay_tiles: dict[str, tuple[float, float]] = {}
     for portal_id, name, anchor, destination in (
-            ("north-quay", "Mirrorhold Packet", "outer_north",
-             "maps/nymara/mirrorhold.elm"),
-            ("east-quay", "Amethyst Barrens Packet", "outer_east",
-             "maps/nymara/amethyst_barrens.elm"),
-            ("south-quay", "Westhaven Packet", "outer_south",
-             "maps/nymara/westhaven.elm"),
-            ("west-quay", "Amberwood Packet", "outer_west",
-             "maps/nymara/amberwood.elm")):
+            ("north-quay", "Mirrorhold Packet", "outer_north", "mirrorhold"),
+            ("east-quay", "Four Gates Causeway", "outer_east", "four_gates"),
+            ("south-quay", "Delta Packet", "outer_south", "manymouth_delta"),
+            ("west-quay", "Westhaven Packet", "outer_west", "westhaven")):
         x, z = REG.ANCHORS[anchor]
         y = float(t.height_at(x, z))
+        quay_tiles[portal_id] = (x, z)
         build.portals.append({
             "id": portal_id, "name": name, "type": "map-transition",
             "position": [round(x, 2), round(y + 0.1, 2), round(z, 2)],
             "serverTile": [int(round(x + REG.SERVER_ORIGIN[0])),
                            int(round(REG.SERVER_ORIGIN[1] - z))],
             "destinationMap": destination, "radius": 3.5,
+            "authority": "server"})
+    # The second berths: a few metres along the dock from the first, on ground
+    # the islet actually has. Tried in the four cardinal offsets and the first
+    # standable one wins, so a change to an islet's shape moves the berth
+    # rather than drowning it.
+    for quay_id, portal_id, destination, name in SECOND_BERTHS:
+        qx, qz = quay_tiles[quay_id]
+        site = None
+        # Walk out from the quay in widening rings until there is dry,
+        # unblocked ground: a quay is a dock over water, and the berth beside
+        # it stands wherever the islet's shore comes closest.
+        for radius in (4.0, 6.0, 8.0, 10.0, 12.0, 14.0, 16.0):
+            for step in range(16):
+                angle = math.tau * step / 16.0
+                x, z = qx + math.cos(angle) * radius, qz + math.sin(angle) * radius
+                if float(t.height_at(x, z)) > REG.SEA_LEVEL + 0.5 and not bool(t.blocked_at(x, z)):
+                    site = (round(x, 2), round(z, 2))
+                    break
+            if site is not None:
+                break
+        if site is None:
+            build.notes.append(f"no standable second berth beside {quay_id}; {portal_id} not placed")
+            continue
+        x, z = site
+        y = float(t.height_at(x, z))
+        build.portals.append({
+            "id": portal_id, "name": name, "type": "map-transition",
+            "position": [round(x, 2), round(y + 0.1, 2), round(z, 2)],
+            "serverTile": [int(round(x + REG.SERVER_ORIGIN[0])),
+                           int(round(REG.SERVER_ORIGIN[1] - z))],
+            "destinationMap": destination, "radius": 3.5, "berthOf": quay_id,
             "authority": "server"})
 
     # Interior entrances. Each sits on the landmark it belongs to, so the door a
@@ -145,15 +222,22 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
             # here, so the destination is one elm and the section is chosen by
             # the spawn id.
             ("basilica-undercroft", "The Drowned Crown", "crownwater-cathedral",
-             "maps/nymara/drowned_crown.elm", "basilica-undercroft"),
+             "drowned_crown", "basilica-undercroft"),
             ("campanile-door", "The Tide Campanile", "crownwater-campanile",
-             "maps/nymara/drowned_crown.elm", "campanile-door"),
+             "drowned_crown", "campanile-door"),
             ("cistern-stair", "The Tide Cistern",
              "crownwater-pavilion-pavilion_west",
-             "maps/nymara/drowned_crown.elm", "cistern-stair"),
+             "drowned_crown", "cistern-stair"),
             ("customs-door", "The Harbour Customs Hall",
              "crownwater-customs-hall",
-             "maps/nymara/drowned_crown.elm", "customs-door")):
+             "drowned_crown", "customs-door"),
+             ("eleventh-bell-door", "The Eleventh Bell",
+             "crownwater-pavilion-pavilion_northeast", "drowned_crown", "eleventh-bell-door"),
+            ("case-room-door", "The Case Room",
+             "crownwater-pavilion-pavilion_east", "drowned_crown", "case-room-door"),
+            ("grating-mouth", "The Grating",
+             "crownwater-pavilion-pavilion_south", "drowned_crown", "grating-mouth"),
+):
         anchor = next((l for l in build.landmarks if l.get("id") == landmark_id),
                       None)
         if anchor is None:
@@ -963,7 +1047,8 @@ def main() -> int:
         lod_build = build_region(args.seed, lod="far")
         lod_build.terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
         lod_build.terrain_meshes = lod_build.terrain.build_meshes(
-            uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX)
+            uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
+            materials=MARCH_MATERIALS)
         _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb")
         stats["lod2"] = {
             "glbBytes": lod_stats["glbBytes"],

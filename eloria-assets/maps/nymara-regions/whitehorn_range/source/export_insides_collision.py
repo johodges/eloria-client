@@ -19,6 +19,6 @@ if __name__ == "__main__":
     sys.exit(cli(description=__doc__.splitlines()[0],
                  package="whitehorn_insides",
                  out="whitehorn_glacier_temple",
-                 tiles=32,
+                 tiles=64,
                  downsample="stride",
                  arrivals=False))

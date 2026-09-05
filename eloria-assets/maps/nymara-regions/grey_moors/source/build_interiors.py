@@ -43,7 +43,7 @@ SEED = 20260902
 # still says "amberwood" sends every player out of the wrong map.
 PARENT_REGION_ID = "grey_moors"
 PARENT_REGION_NAME = "Grey Moors"
-PARENT_REGION_MAP = "maps/nymara/grey_moors.elm"
+PARENT_REGION_MAP = "grey_moors"
 CELL = 1.0                                            # collision cell, metres
 
 

@@ -252,3 +252,16 @@ own. That is a gameplay change and is flagged here rather than buried.
   does not decode. They are authored from the region's surface landmarks, its
   intact region board, and the asset pack's piece names.
 * **Names are placeholders**, as the region's are.
+
+## Small rooms
+
+Three more sections joined the `ssarathi_royal_archive` map from the shared
+`_toolkit/amberwood/smallrooms.py` kit, each with its own door on the Ssarathi Ruins
+map and its own arrival: a cave with a creature den, a cottage and a shrine.
+They sit in a column east of the set pieces with the usual void between.
+
+| section | name | kind | region door | what it is |
+|---|---|---|---|---|
+| `water_gate_undercut` | the water-gate undercut | cave | `water-gate-undercut-mouth` | a saltmarsh crocodile's den under the south gate |
+| `lineage_house` | the lineage house | cottage | `lineage-house-door` | a workshop at the serpent gate |
+| `tenth_mouth` | the Tenth Mouth | shrine | `tenth-mouth-door` | a water shrine off the lily court |

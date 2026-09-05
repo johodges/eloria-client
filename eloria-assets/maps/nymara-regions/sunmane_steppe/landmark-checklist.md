@@ -15,9 +15,10 @@ Authority order: written description > aerial composition > player-scale detail 
 | World span | 280 m x 280 m, centred on godot `(36, -36)` | derived |
 | Addressable band | godot X -58..133, Z -133..58 | server tiles are non-negative |
 | North axis | `-Z` | `world-manifest-1.schema.json` |
-| West walk portal | server `(6, 58)` -> godot `(-52, 0)` | Amethyst Barrens link |
-| East walk portal | server `(110, 58)` -> godot `(+52, 0)` | Amberwood link |
-| North interior entrance | server `(58, 100)` -> godot `(0, -42)` | Ssarathi Royal Archive link |
+| West crossing | server `(6, 58)` -> godot `(-52, 0)` | Four Gates link (causeway road) |
+| North crossing | server `(66, 184)` -> godot `(8, -126)` | Amethyst Barrens link (desert track) |
+| South crossing | server `(62, 18)` -> godot `(4, 40)` | Verdant Stair link (shore road) |
+| North barrow | server `(58, 100)` -> godot `(0, -42)` | sealed passage; the Archive is entered from the Ssarathi Ruins |
 
 ## Written-description inventory (exact counts asserted by regional QA)
 

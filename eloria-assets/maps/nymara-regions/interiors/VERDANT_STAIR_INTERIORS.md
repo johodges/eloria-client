@@ -204,3 +204,16 @@ so it is a criterion with teeth rather than a formality.
   surface landmarks and that board. Every place name here is the author's.
 - **The server has not served it.** The 19 affected tests pass; that is not the
   same as the map being loaded by a running server.
+
+## Small rooms
+
+Three more sections joined the `verdant_stair_insides` map from the shared
+`_toolkit/amberwood/smallrooms.py` kit, each with its own door on the Verdant Stair
+map and its own arrival: a cave with a creature den, a cottage and a shrine.
+They sit in a column east of the set pieces with the usual void between.
+
+| section | name | kind | region door | what it is |
+|---|---|---|---|---|
+| `anchor_hollow` | Anchor Hollow | cave | `anchor-hollow-mouth` | a moonshadow lynx's den behind the fern camp |
+| `physick_still` | the physick still | cottage | `physick-still-door` | the herbalist's still |
+| `nine_lost` | the Nine Lost | shrine | `nine-lost-door` | a water shrine by the south quay |

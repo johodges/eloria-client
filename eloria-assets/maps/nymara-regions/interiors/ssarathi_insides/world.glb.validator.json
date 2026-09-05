@@ -1,8 +1,8 @@
 {
-  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\eloria-client\\eloria-assets\\maps\\nymara-regions\\interiors\\ssarathi_insides\\world.glb",
+  "uri": "world.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-08-29T14:47:35.926718Z",
+  "validatedAt": "2026-09-05T08:30:29.545597Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,

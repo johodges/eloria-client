@@ -43,7 +43,7 @@ SEED = 20260901
 # still says "amberwood" sends every player out of the wrong map.
 PARENT_REGION_ID = "verdant_stair"
 PARENT_REGION_NAME = "Verdant Stair"
-PARENT_REGION_MAP = "maps/nymara/verdant_stair.elm"
+PARENT_REGION_MAP = "verdant_stair"
 CELL = 1.0                                            # collision cell, metres
 
 

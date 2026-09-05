@@ -1,5 +1,29 @@
 {
-  "schema": 1,
+  "schema": 2,
+  "note": "The continent of Nymara: a great lake ringed by eleven regions with Four Gates at its centre. Every exterior-to-exterior transition is declared once, here, as a pair of portal ids; each region's package carries the matching portal (position and server tile) under its own id, and tools/continent_portals.py joins the two into the server's portal table. Interior doors are the region packages' own.",
+  "layout": {
+    "ring_clockwise_from_north": [
+      "mirrorhold",
+      "amethyst_barrens",
+      "sunmane_steppe",
+      "verdant_stair",
+      "ssarathi_ruins",
+      "manymouth_delta",
+      "westhaven",
+      "grey_moors",
+      "amberwood"
+    ],
+    "beyond_the_ring": {
+      "whitehorn_range": "the mountain wall north of Mirrorhold, Amberwood and the Barrens"
+    },
+    "on_the_lake": {
+      "four_gates": "the island at the centre, four causeways",
+      "crownwater": "the western archipelago; every quay is a ferry"
+    },
+    "frontier": {
+      "sunmane_steppe": "the east gate opens on the unmapped east; nine watch-cairns, no road"
+    }
+  },
   "regions": [
     {
       "id": "mirrorhold",
@@ -251,250 +275,233 @@
   ],
   "connections": [
     {
-      "from": "mirrorhold",
-      "to": "crownwater",
-      "from_xy": [
-        110,
-        58
-      ],
-      "to_xy": [
-        6,
-        58
-      ],
-      "type": "walk"
-    },
-    {
-      "from": "crownwater",
-      "to": "four_gates",
-      "from_xy": [
-        110,
-        58
-      ],
-      "to_xy": [
-        6,
-        58
-      ],
-      "type": "walk"
-    },
-    {
-      "from": "four_gates",
-      "to": "whitehorn_range",
-      "from_xy": [
-        110,
-        58
-      ],
-      "to_xy": [
-        6,
-        58
-      ],
-      "type": "walk"
+      "from": "whitehorn_range",
+      "from_portal": "south-gate",
+      "to": "mirrorhold",
+      "to_portal": "north-pass",
+      "type": "walk",
+      "note": "the pilgrim road down from the Whitehorn Gate to the citadel's north pass"
     },
     {
       "from": "whitehorn_range",
+      "from_portal": "west-pass",
+      "to": "amberwood",
+      "to_portal": "north-pass",
+      "type": "walk",
+      "note": "the ice-cave pass west into the autumn woods"
+    },
+    {
+      "from": "whitehorn_range",
+      "from_portal": "east-pass",
       "to": "amethyst_barrens",
-      "from_xy": [
-        110,
-        58
-      ],
-      "to_xy": [
-        6,
-        58
-      ],
-      "type": "walk"
+      "to_portal": "north-pass",
+      "type": "walk",
+      "note": "the mine road east over the saddle into the barrens"
+    },
+    {
+      "from": "mirrorhold",
+      "from_portal": "south-road",
+      "to": "four_gates",
+      "to_portal": "north",
+      "type": "walk",
+      "note": "the shore road to the sanctuary stair on the north causeway"
+    },
+    {
+      "from": "mirrorhold",
+      "from_portal": "east-road",
+      "to": "amethyst_barrens",
+      "to_portal": "west-road",
+      "type": "walk",
+      "note": "the Glasswarden road along the lake's north shore"
+    },
+    {
+      "from": "mirrorhold",
+      "from_portal": "west-gorge",
+      "to": "amberwood",
+      "to_portal": "east-road",
+      "type": "walk",
+      "note": "the gorge road west into the burnt country"
+    },
+    {
+      "from": "mirrorhold",
+      "from_portal": "lake-quay",
+      "to": "crownwater",
+      "to_portal": "north-quay",
+      "type": "ferry",
+      "note": "the Crownwater packet from the citadel's harbour"
     },
     {
       "from": "amethyst_barrens",
+      "from_portal": "south-road",
       "to": "sunmane_steppe",
-      "from_xy": [
-        110,
-        58
-      ],
-      "to_xy": [
-        6,
-        58
-      ],
-      "type": "walk"
+      "to_portal": "north-track",
+      "type": "walk",
+      "note": "the Sunmane track down through the desert and the badlands"
+    },
+    {
+      "from": "amethyst_barrens",
+      "from_portal": "east-shore",
+      "to": "crownwater",
+      "to_portal": "north-quay-east",
+      "type": "ferry",
+      "note": "the Crownwater packet from the barrens' east landing"
     },
     {
       "from": "sunmane_steppe",
-      "to": "amberwood",
-      "from_xy": [
-        110,
-        58
-      ],
-      "to_xy": [
-        6,
-        58
-      ],
-      "type": "walk"
+      "from_portal": "west-landing",
+      "to": "four_gates",
+      "to_portal": "east",
+      "type": "causeway",
+      "note": "the east causeway of Four Gates lands on the steppe shore"
     },
     {
-      "from": "amberwood",
-      "to": "grey_moors",
-      "from_xy": [
-        110,
-        58
-      ],
-      "to_xy": [
-        6,
-        58
-      ],
-      "type": "walk"
-    },
-    {
-      "from": "grey_moors",
-      "to": "westhaven",
-      "from_xy": [
-        110,
-        58
-      ],
-      "to_xy": [
-        6,
-        58
-      ],
-      "type": "walk"
-    },
-    {
-      "from": "westhaven",
+      "from": "sunmane_steppe",
+      "from_portal": "south-track",
       "to": "verdant_stair",
-      "from_xy": [
-        110,
-        58
-      ],
-      "to_xy": [
-        6,
-        58
-      ],
-      "type": "walk"
+      "to_portal": "east-pass-gate",
+      "type": "walk",
+      "note": "the shore road south over the ridge into the jungle"
     },
     {
       "from": "verdant_stair",
+      "from_portal": "west-quay-gate",
       "to": "ssarathi_ruins",
-      "from_xy": [
-        110,
-        58
-      ],
-      "to_xy": [
-        6,
-        58
-      ],
-      "type": "walk"
+      "to_portal": "east-causeway",
+      "type": "walk",
+      "note": "the quay road west along the coast to the temple causeway"
     },
     {
       "from": "ssarathi_ruins",
+      "from_portal": "north-stair",
+      "to": "four_gates",
+      "to_portal": "south",
+      "type": "walk",
+      "note": "the south causeway of Four Gates lands at the temple stair"
+    },
+    {
+      "from": "ssarathi_ruins",
+      "from_portal": "west-causeway",
       "to": "manymouth_delta",
-      "from_xy": [
-        110,
-        58
-      ],
-      "to_xy": [
-        6,
-        58
-      ],
-      "type": "walk"
+      "to_portal": "east-landing",
+      "type": "walk",
+      "note": "the west causeway runs out onto the delta's east bar"
     },
     {
-      "from": "mirrorhold",
-      "to": "drowned_crown",
-      "from_xy": [
-        58,
-        100
-      ],
-      "to_xy": [
-        58,
-        10
-      ],
-      "type": "entrance"
+      "from": "ssarathi_ruins",
+      "from_portal": "south-gate",
+      "to": "crownwater",
+      "to_portal": "south-quay-east",
+      "type": "ferry",
+      "note": "the temple boat to the Crown court"
     },
     {
-      "from": "crownwater",
-      "to": "whitehorn_glacier_temple",
-      "from_xy": [
-        58,
-        100
-      ],
-      "to_xy": [
-        58,
-        10
-      ],
-      "type": "entrance"
+      "from": "manymouth_delta",
+      "from_portal": "north-landing",
+      "to": "crownwater",
+      "to_portal": "south-quay",
+      "type": "ferry",
+      "note": "the packet up the main channel to the lake"
+    },
+    {
+      "from": "manymouth_delta",
+      "from_portal": "west-landing",
+      "to": "grey_moors",
+      "to_portal": "south-gate",
+      "type": "walk",
+      "note": "the drain track up onto the moor"
+    },
+    {
+      "from": "manymouth_delta",
+      "from_portal": "south-landing",
+      "to": "westhaven",
+      "to_portal": "east-road",
+      "type": "walk",
+      "note": "the coast road west to the haven"
+    },
+    {
+      "from": "westhaven",
+      "from_portal": "north-road",
+      "to": "grey_moors",
+      "to_portal": "west-waygate",
+      "type": "walk",
+      "note": "the upland road onto the moor"
+    },
+    {
+      "from": "westhaven",
+      "from_portal": "crownwater-berth",
+      "to": "crownwater",
+      "to_portal": "west-quay",
+      "type": "ferry",
+      "note": "the Crownwater packet from the west quay"
+    },
+    {
+      "from": "westhaven",
+      "from_portal": "amber-berth",
+      "to": "amberwood",
+      "to_portal": "harbour-quay",
+      "type": "ferry",
+      "note": "the Greyhaven packet up the coast to the Amberwood harbour"
+    },
+    {
+      "from": "grey_moors",
+      "from_portal": "east-waygate",
+      "to": "crownwater",
+      "to_portal": "west-quay-south",
+      "type": "ferry",
+      "note": "the moor jetty's boat to the lake islands"
+    },
+    {
+      "from": "grey_moors",
+      "from_portal": "north-gate",
+      "to": "amberwood",
+      "to_portal": "south-road",
+      "type": "walk",
+      "note": "the north track off the moor into the woods"
     },
     {
       "from": "four_gates",
-      "to": "resonant_vault",
-      "from_xy": [
-        58,
-        100
-      ],
-      "to_xy": [
-        58,
-        10
-      ],
-      "type": "entrance"
-    },
-    {
-      "from": "whitehorn_range",
-      "to": "amberwood_estate",
-      "from_xy": [
-        58,
-        100
-      ],
-      "to_xy": [
-        58,
-        10
-      ],
-      "type": "entrance"
-    },
-    {
-      "from": "amethyst_barrens",
-      "to": "grey_moor_barrows",
-      "from_xy": [
-        58,
-        100
-      ],
-      "to_xy": [
-        58,
-        10
-      ],
-      "type": "entrance"
-    },
-    {
-      "from": "sunmane_steppe",
-      "to": "ssarathi_royal_archive",
-      "from_xy": [
-        58,
-        100
-      ],
-      "to_xy": [
-        58,
-        10
-      ],
-      "type": "entrance"
-    },
-    {
-      "from": "amberwood",
-      "to": "manymouth_flooded_labyrinth",
-      "from_xy": [
-        58,
-        100
-      ],
-      "to_xy": [
-        58,
-        10
-      ],
-      "type": "entrance"
+      "from_portal": "west",
+      "to": "crownwater",
+      "to_portal": "east-quay",
+      "type": "causeway",
+      "note": "the west causeway of Four Gates lands on the Crownwater islets"
     }
   ],
   "ferries": [
     {
       "from": "crownwater",
-      "to": "four_gates",
+      "to": "mirrorhold",
       "service": "crownwater_ferry"
     },
     {
-      "from": "manymouth_delta",
+      "from": "crownwater",
+      "to": "amethyst_barrens",
+      "service": "crownwater_ferry"
+    },
+    {
+      "from": "crownwater",
       "to": "westhaven",
-      "service": "delta_ferry"
+      "service": "crownwater_ferry"
+    },
+    {
+      "from": "crownwater",
+      "to": "grey_moors",
+      "service": "crownwater_ferry"
+    },
+    {
+      "from": "crownwater",
+      "to": "manymouth_delta",
+      "service": "crownwater_ferry"
+    },
+    {
+      "from": "crownwater",
+      "to": "ssarathi_ruins",
+      "service": "crownwater_ferry"
+    },
+    {
+      "from": "westhaven",
+      "to": "amberwood",
+      "service": "greyhaven_packet"
     }
   ]
 }

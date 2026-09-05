@@ -1,38 +1,54 @@
 {
-  "nodes": 1881,
-  "meshes": 119,
-  "materials": 21,
-  "images": 61,
-  "textures": 61,
-  "accessors": 476,
-  "bufferViews": 537,
-  "uniqueTriangles": 586454,
-  "uniqueVertices": 347415,
-  "glbBytes": 24105044,
-  "instancedTriangles": 1271256,
-  "embeddedTextureBytes": 28549576,
+  "nodes": 2014,
+  "meshes": 219,
+  "materials": 36,
+  "images": 86,
+  "textures": 86,
+  "accessors": 881,
+  "bufferViews": 967,
+  "uniqueTriangles": 625852,
+  "uniqueVertices": 381231,
+  "glbBytes": 29494788,
+  "instancedTriangles": 1312906,
+  "embeddedTextureBytes": 28749574,
   "textureMemoryBytesUncompressed": 250478592,
-  "placements": 608,
+  "placements": 677,
   "collision": {
     "width": 1152,
     "height": 1152,
     "cellMetres": 0.5,
-    "walkableCells": 337422,
-    "blockedCells": 989682,
-    "walkableFraction": 0.2543,
+    "walkableCells": 332505,
+    "blockedCells": 994599,
+    "walkableFraction": 0.2505,
     "elevatedDecks": 84,
+    "steepCells": 32859,
+    "reliefMetres": 18.14,
+    "heightEncoding": {
+      "origin": 0.0574,
+      "step": 0.292586,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true
+    },
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)"
   },
   "notes": [
-    "48 islet lamp standards placed"
+    "48 islet lamp standards placed",
+    "lore site court-grating (The Open Grating): no open ground within reach; placed where asked",
+    "march east-quay: 3 road pieces, 11 of four_gates's growth",
+    "march north-quay: 3 road pieces, 10 of mirrorhold's growth",
+    "march west-quay: 3 road pieces, 9 of westhaven's growth",
+    "march south-quay: 3 road pieces, 17 of manymouth_delta's growth"
   ],
   "lod2": {
-    "glbBytes": 14102680,
-    "nodes": 1686,
-    "uniqueTriangles": 433302,
-    "instancedTriangles": 1107576,
-    "sizeReductionPercent": 41.5,
-    "triangleReductionPercent": 12.9
+    "glbBytes": 16620312,
+    "nodes": 1819,
+    "uniqueTriangles": 472700,
+    "instancedTriangles": 1149226,
+    "sizeReductionPercent": 43.7,
+    "triangleReductionPercent": 12.5
   }
 }

@@ -1,20 +1,14 @@
 {
-  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\eloria-client\\eloria-assets\\maps\\nymara-regions\\amberwood\\world.glb",
+  "uri": "world.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-09-04T11:58:44.084655Z",
+  "validatedAt": "2026-09-05T08:06:14.462898Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
-    "numInfos": 4,
+    "numInfos": 5,
     "numHints": 0,
     "messages": [
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/19"
-      },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
@@ -32,6 +26,18 @@
         "message": "This object may be unused.",
         "severity": 2,
         "pointer": "/materials/22"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/34"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/35"
       }
     ]
   }

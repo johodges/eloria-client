@@ -1166,3 +1166,42 @@ def combine(seed: int = 20260901) -> Interior:
         "what keeps one section's lamps and cameras out of the next.",
     ]
     return combined
+
+
+# ---- small rooms (shared kit) ----
+from amberwood import smallrooms as SR
+
+
+def sour_cut(seed: int = 20260905) -> Interior:
+    """A geode split by the sour ground of thread C: the crystal grows wrong here."""
+    return SR.cave("amethyst_sour_cut", "The Sour Cut", "amethyst-geode-cave-3",
+                   [204.0, 11.2, -252.0], "sour-cut-mouth",
+                   palette={"floor": DUST, "rock": DARK_STONE, "crystal": CRYSTAL,
+                            "water": WATER, "bone": PALE_STONE},
+                   seed=seed, crystal=True, den="Crystal Cave Spider")
+
+
+def measure_house(seed: int = 20260906) -> Interior:
+    """Where the eleven measures are kept: a resonance cell under a storm ruin."""
+    return SR.shrine("amethyst_measure_house", "The Measure House", "amethyst-storm-ruin-2",
+                     [162.0, 4.9, -72.0], "measure-house-door",
+                     palette={"floor": VAULT_FLOOR, "wall": PALE_STONE, "ceil": DARK_STONE,
+                              "accent": BRASS, "crystal": CRYSTAL, "metal": BRASS},
+                     seed=seed, style="crystal")
+
+
+def counting_house(seed: int = 20260907) -> Interior:
+    """Bel Ammon's two columns: the only honest arithmetic in the Barrens."""
+    return SR.cottage("amethyst_counting_house", "The Shard Counter's House",
+                      "resonant-crystal-cluster-2", [258.0, 4.0, -90.0], "counting-house-door",
+                      palette={"floor": TIMBER, "wall": PALE_STONE, "roof": TIMBER_DARK,
+                               "timber": TIMBER_DARK, "stone": DARK_STONE, "cloth": BANNER,
+                               "iron": BRASS},
+                      seed=seed, trade="workshop")
+
+
+ALL.update({"sour_cut": sour_cut, "measure_house": measure_house,
+            "counting_house": counting_house})
+# a column east of the four set pieces, well clear of them
+LAYOUT.update({"sour_cut": (230.0, 6.0), "measure_house": (230.0, 90.0),
+               "counting_house": (230.0, 140.0)})

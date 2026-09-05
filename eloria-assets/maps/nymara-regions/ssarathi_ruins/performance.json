@@ -1,18 +1,18 @@
 {
-  "nodes": 8613,
-  "meshes": 407,
-  "materials": 24,
-  "images": 66,
-  "textures": 66,
-  "accessors": 1628,
-  "bufferViews": 1694,
-  "uniqueTriangles": 391215,
-  "uniqueVertices": 306147,
-  "glbBytes": 19361708,
-  "instancedTriangles": 2057001,
-  "embeddedTextureBytes": 28929731,
+  "nodes": 7392,
+  "meshes": 460,
+  "materials": 39,
+  "images": 95,
+  "textures": 95,
+  "accessors": 1845,
+  "bufferViews": 1940,
+  "uniqueTriangles": 423985,
+  "uniqueVertices": 324824,
+  "glbBytes": 23835584,
+  "instancedTriangles": 1818592,
+  "embeddedTextureBytes": 29150152,
   "textureMemoryBytesUncompressed": 269352960,
-  "placements": 3142,
+  "placements": 2769,
   "collision": {
     "width": 1152,
     "height": 1152,
@@ -21,20 +21,36 @@
       -174.0,
       174.0
     ],
-    "walkableCells": 562860,
-    "blockedCells": 764244,
-    "walkableFraction": 0.4241,
-    "elevatedDecks": 27,
+    "walkableCells": 538981,
+    "blockedCells": 788123,
+    "walkableFraction": 0.4061,
+    "elevatedDecks": 31,
+    "steepCells": 265295,
+    "reliefMetres": 56.86,
+    "heightEncoding": {
+      "origin": -1.4581,
+      "step": 0.917113,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true
+    },
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)"
   },
-  "notes": [],
+  "notes": [
+    "march north-stair: 0 road pieces, 2 of four_gates's growth",
+    "march east-causeway: 0 road pieces, 3 of verdant_stair's growth",
+    "march west-causeway: 0 road pieces, 16 of manymouth_delta's growth",
+    "march south-gate: 0 road pieces, 12 of crownwater's growth"
+  ],
   "lod2": {
-    "glbBytes": 12609840,
-    "nodes": 3489,
-    "uniqueTriangles": 337612,
-    "instancedTriangles": 900747,
-    "sizeReductionPercent": 34.9,
-    "triangleReductionPercent": 56.2
+    "glbBytes": 14480536,
+    "nodes": 3580,
+    "uniqueTriangles": 366914,
+    "instancedTriangles": 932668,
+    "sizeReductionPercent": 39.2,
+    "triangleReductionPercent": 48.7
   }
 }

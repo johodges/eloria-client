@@ -23,7 +23,7 @@
         30.12
       ],
       "max": [
-        261.55,
+        311.55,
         13.4,
         324.55
       ]
@@ -35,7 +35,7 @@
         30.45
       ],
       "max": [
-        261.55,
+        311.55,
         4.6,
         324.55
       ]
@@ -113,12 +113,45 @@
       "rotationDegrees": 0,
       "surface": "Walk",
       "section": "root_undercroft"
+    },
+    {
+      "id": "tenth-mouth-door",
+      "position": [
+        295.0,
+        0.05,
+        38.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "tenth_mouth"
+    },
+    {
+      "id": "water-gate-undercut-mouth",
+      "position": [
+        295.0,
+        0.05,
+        110.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "water_gate_undercut"
+    },
+    {
+      "id": "lineage-house-door",
+      "position": [
+        295.0,
+        0.05,
+        201.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "lineage_house"
     }
   ],
   "collision": {
     "binary": "collision.bin",
     "format": "EWCG-v1",
-    "width": 468,
+    "width": 570,
     "height": 594,
     "cellMetres": 0.5,
     "originMetres": [
@@ -135,21 +168,25 @@
       "zeroMeansBlocked": true,
       "note": "Step is fitted to this interior's own vertical range, so the six-bit field spans it without clamping. The Godot loader still takes elevation from the rendered Walk_ surfaces; this grid is authoritative only for walkability."
     },
-    "walkableCells": 54152,
-    "blockedCells": 223840,
-    "walkableFraction": 0.1948,
+    "walkableCells": 62300,
+    "blockedCells": 276280,
+    "walkableFraction": 0.184,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
       "Interior_ssarathi_insides",
+      "Roof_ssarathi_insides_ashlar",
       "Roof_ssarathi_insides_cliff_rock",
       "Roof_ssarathi_insides_rubble_stone",
       "Roof_ssarathi_insides_ssarathi_jade_ashlar",
+      "Roof_ssarathi_insides_timber_grey",
       "Build_ssarathi_insides_amber_resin",
       "Build_ssarathi_insides_ashlar",
       "Build_ssarathi_insides_bark_dark",
       "Build_ssarathi_insides_cliff_rock",
       "Build_ssarathi_insides_dark_iron",
+      "Build_ssarathi_insides_lime_plaster",
+      "Build_ssarathi_insides_pale_ashlar",
       "Build_ssarathi_insides_rubble_stone",
       "Build_ssarathi_insides_ssarathi_basin_water",
       "Build_ssarathi_insides_ssarathi_gilt",
@@ -158,14 +195,20 @@
       "Build_ssarathi_insides_ssarathi_serpent_stone",
       "Build_ssarathi_insides_ssarathi_silt",
       "Build_ssarathi_insides_ssarathi_vine",
-      "Build_ssarathi_insides_timber_grey"
+      "Build_ssarathi_insides_timber_dark",
+      "Build_ssarathi_insides_timber_grey",
+      "Build_ssarathi_insides_timber_warm",
+      "Build_ssarathi_insides_water_deep",
+      "Build_ssarathi_insides_woven_cloth"
     ]
   },
   "cutaway": {
     "hideNodes": [
+      "Roof_ssarathi_insides_ashlar",
       "Roof_ssarathi_insides_cliff_rock",
       "Roof_ssarathi_insides_rubble_stone",
-      "Roof_ssarathi_insides_ssarathi_jade_ashlar"
+      "Roof_ssarathi_insides_ssarathi_jade_ashlar",
+      "Roof_ssarathi_insides_timber_grey"
     ],
     "reason": "interior lids; the isometric rig frames the floor, not the roof"
   },
@@ -243,6 +286,51 @@
       "destinationSpawn": "undercroft-mouth",
       "radius": 2.5,
       "section": "root_undercroft",
+      "authority": "server"
+    },
+    {
+      "id": "exit-tenth-mouth-door",
+      "name": "Return to Ssarathi Ruins (The Tenth Mouth Shrine)",
+      "type": "map-transition",
+      "position": [
+        295.0,
+        0.05,
+        38.0
+      ],
+      "destinationMap": "ssarathi_ruins",
+      "destinationSpawn": "tenth-mouth-door",
+      "radius": 2.5,
+      "section": "tenth_mouth",
+      "authority": "server"
+    },
+    {
+      "id": "exit-water-gate-undercut-mouth",
+      "name": "Return to Ssarathi Ruins (The Water Gate Undercut)",
+      "type": "map-transition",
+      "position": [
+        295.0,
+        0.05,
+        110.0
+      ],
+      "destinationMap": "ssarathi_ruins",
+      "destinationSpawn": "water-gate-undercut-mouth",
+      "radius": 2.5,
+      "section": "water_gate_undercut",
+      "authority": "server"
+    },
+    {
+      "id": "exit-lineage-house-door",
+      "name": "Return to Ssarathi Ruins (The Lineage Reader's House)",
+      "type": "map-transition",
+      "position": [
+        295.0,
+        0.05,
+        201.0
+      ],
+      "destinationMap": "ssarathi_ruins",
+      "destinationSpawn": "lineage-house-door",
+      "radius": 2.5,
+      "section": "lineage_house",
       "authority": "server"
     }
   ],
@@ -396,6 +484,36 @@
         -2.2,
         301.0
       ]
+    },
+    {
+      "id": "tenth_mouth-ssarathi_tenth_mouth-sanctuary",
+      "name": "The Tenth Mouth Shrine",
+      "space": "tenth_mouth.nave",
+      "position": [
+        295.0,
+        0.4,
+        60.0
+      ]
+    },
+    {
+      "id": "water_gate_undercut-ssarathi_water_gate_undercut-chamber",
+      "name": "The Water Gate Undercut",
+      "space": "water_gate_undercut.chamber",
+      "position": [
+        295.0,
+        -4.0,
+        161.0
+      ]
+    },
+    {
+      "id": "lineage_house-ssarathi_lineage_house-hearth",
+      "name": "The Lineage Reader's House",
+      "space": "lineage_house.hall",
+      "position": [
+        295.0,
+        1.4,
+        201.0
+      ]
     }
   ],
   "interactives": [
@@ -448,7 +566,20 @@
       "section": "drowned_cistern"
     }
   ],
-  "npcMarkers": [],
+  "npcMarkers": [
+    {
+      "id": "ssarathi_water_gate_undercut-den",
+      "name": "Saltmarsh Crocodile",
+      "kind": "creature-zone",
+      "position": [
+        295.0,
+        -6.0,
+        161.0
+      ],
+      "radius": 12.0,
+      "section": "water_gate_undercut"
+    }
+  ],
   "harvestables": [],
   "environment": {
     "sky": {
@@ -1001,6 +1132,176 @@
         "range": 26.0,
         "energy": 7.0,
         "attenuation": 1.1
+      },
+      {
+        "id": "lantern-29",
+        "kind": "point",
+        "position": [
+          295.0,
+          2.78,
+          38.0
+        ],
+        "color": [
+          1.0,
+          0.7,
+          0.38
+        ],
+        "range": 26.0,
+        "energy": 7.0,
+        "attenuation": 1.1
+      },
+      {
+        "id": "lantern-30",
+        "kind": "point",
+        "position": [
+          290.0,
+          2.98,
+          54.0
+        ],
+        "color": [
+          1.0,
+          0.7,
+          0.38
+        ],
+        "range": 26.0,
+        "energy": 7.0,
+        "attenuation": 1.1
+      },
+      {
+        "id": "lantern-31",
+        "kind": "point",
+        "position": [
+          300.0,
+          2.98,
+          60.0
+        ],
+        "color": [
+          1.0,
+          0.7,
+          0.38
+        ],
+        "range": 26.0,
+        "energy": 7.0,
+        "attenuation": 1.1
+      },
+      {
+        "id": "lantern-32",
+        "kind": "point",
+        "position": [
+          295.0,
+          3.38,
+          67.0
+        ],
+        "color": [
+          1.0,
+          0.7,
+          0.38
+        ],
+        "range": 26.0,
+        "energy": 7.0,
+        "attenuation": 1.1
+      },
+      {
+        "id": "lantern-33",
+        "kind": "point",
+        "position": [
+          295.0,
+          2.58,
+          108.0
+        ],
+        "color": [
+          1.0,
+          0.7,
+          0.38
+        ],
+        "range": 26.0,
+        "energy": 7.0,
+        "attenuation": 1.1
+      },
+      {
+        "id": "lantern-34",
+        "kind": "point",
+        "position": [
+          295.0,
+          -0.82,
+          131.0
+        ],
+        "color": [
+          1.0,
+          0.7,
+          0.38
+        ],
+        "range": 26.0,
+        "energy": 7.0,
+        "attenuation": 1.1
+      },
+      {
+        "id": "lantern-35",
+        "kind": "point",
+        "position": [
+          287.0,
+          -2.42,
+          161.0
+        ],
+        "color": [
+          1.0,
+          0.7,
+          0.38
+        ],
+        "range": 26.0,
+        "energy": 7.0,
+        "attenuation": 1.1
+      },
+      {
+        "id": "lantern-36",
+        "kind": "point",
+        "position": [
+          303.0,
+          -2.42,
+          161.0
+        ],
+        "color": [
+          1.0,
+          0.7,
+          0.38
+        ],
+        "range": 26.0,
+        "energy": 7.0,
+        "attenuation": 1.1
+      },
+      {
+        "id": "lantern-37",
+        "kind": "point",
+        "position": [
+          295.0,
+          2.28,
+          201.0
+        ],
+        "color": [
+          1.0,
+          0.7,
+          0.38
+        ],
+        "range": 26.0,
+        "energy": 7.0,
+        "attenuation": 1.1
+      },
+      {
+        "id": "lantern-38",
+        "kind": "point",
+        "position": [
+          296.0,
+          1.98,
+          209.28
+        ],
+        "color": [
+          1.0,
+          0.7,
+          0.38
+        ],
+        "range": 26.0,
+        "energy": 7.0,
+        "attenuation": 1.1
       }
     ]
   },
@@ -1244,6 +1545,86 @@
       "z1": 301.4,
       "floor": -3.4,
       "height": 3.0
+    },
+    "tenth_mouth.porch": {
+      "x0": 291.0,
+      "z0": 34.0,
+      "x1": 299.0,
+      "z1": 42.0,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "tenth_mouth.nave": {
+      "x0": 287.0,
+      "z0": 50.0,
+      "x1": 303.0,
+      "z1": 70.0,
+      "floor": -1.2,
+      "height": 7.0
+    },
+    "tenth_mouth.aisle": {
+      "x0": 293.4,
+      "z0": 40.4,
+      "x1": 296.6,
+      "z1": 51.6,
+      "floor": -1.2,
+      "height": 3.6
+    },
+    "water_gate_undercut.mouth": {
+      "x0": 289.0,
+      "z0": 104.0,
+      "x1": 301.0,
+      "z1": 116.0,
+      "floor": 0.0,
+      "height": 5.4
+    },
+    "water_gate_undercut.throat": {
+      "x0": 290.0,
+      "z0": 126.0,
+      "x1": 300.0,
+      "z1": 136.0,
+      "floor": -3.6,
+      "height": 5.6
+    },
+    "water_gate_undercut.chamber": {
+      "x0": 279.0,
+      "z0": 146.0,
+      "x1": 311.0,
+      "z1": 176.0,
+      "floor": -6.0,
+      "height": 11.0
+    },
+    "water_gate_undercut.descent": {
+      "x0": 292.6,
+      "z0": 113.6,
+      "x1": 297.4,
+      "z1": 128.4,
+      "floor": -3.6,
+      "height": 4.4
+    },
+    "water_gate_undercut.gullet": {
+      "x0": 292.7,
+      "z0": 133.7,
+      "x1": 297.3,
+      "z1": 148.3,
+      "floor": -6.0,
+      "height": 4.4
+    },
+    "lineage_house.hall": {
+      "x0": 290.0,
+      "z0": 196.0,
+      "x1": 300.0,
+      "z1": 206.0,
+      "floor": 0.0,
+      "height": 3.4
+    },
+    "lineage_house.back": {
+      "x0": 292.0,
+      "z0": 206.55,
+      "x1": 300.0,
+      "z1": 212.0,
+      "floor": 0.0,
+      "height": 3.0
     }
   },
   "conceptArt": {
@@ -1274,30 +1655,42 @@
       "drowned_cistern.sluice",
       "root_undercroft.mouth",
       "root_undercroft.undercroft",
-      "root_undercroft.tomb_niche"
+      "root_undercroft.tomb_niche",
+      "tenth_mouth.the porch",
+      "tenth_mouth.the nave",
+      "tenth_mouth.the sanctuary",
+      "water_gate_undercut.cave mouth from within",
+      "water_gate_undercut.the descent",
+      "water_gate_undercut.the chamber",
+      "lineage_house.the hall and hearth",
+      "lineage_house.the workshop"
     ]
   },
   "performance": {
-    "nodes": 22,
-    "meshes": 21,
-    "materials": 16,
-    "images": 47,
-    "textures": 47,
-    "accessors": 105,
-    "bufferViews": 152,
-    "uniqueTriangles": 114358,
-    "uniqueVertices": 122187,
-    "glbBytes": 11001364,
+    "nodes": 33,
+    "meshes": 32,
+    "materials": 23,
+    "images": 67,
+    "textures": 67,
+    "accessors": 160,
+    "bufferViews": 227,
+    "uniqueTriangles": 124218,
+    "uniqueVertices": 133207,
+    "glbBytes": 14025416,
     "nodeNames": [
       "Interior_ssarathi_insides",
+      "Roof_ssarathi_insides_ashlar",
       "Roof_ssarathi_insides_cliff_rock",
       "Roof_ssarathi_insides_rubble_stone",
       "Roof_ssarathi_insides_ssarathi_jade_ashlar",
+      "Roof_ssarathi_insides_timber_grey",
       "Build_ssarathi_insides_amber_resin",
       "Build_ssarathi_insides_ashlar",
       "Build_ssarathi_insides_bark_dark",
       "Build_ssarathi_insides_cliff_rock",
       "Build_ssarathi_insides_dark_iron",
+      "Build_ssarathi_insides_lime_plaster",
+      "Build_ssarathi_insides_pale_ashlar",
       "Build_ssarathi_insides_rubble_stone",
       "Build_ssarathi_insides_ssarathi_basin_water",
       "Build_ssarathi_insides_ssarathi_gilt",
@@ -1306,11 +1699,18 @@
       "Build_ssarathi_insides_ssarathi_serpent_stone",
       "Build_ssarathi_insides_ssarathi_silt",
       "Build_ssarathi_insides_ssarathi_vine",
+      "Build_ssarathi_insides_timber_dark",
       "Build_ssarathi_insides_timber_grey",
+      "Build_ssarathi_insides_timber_warm",
+      "Build_ssarathi_insides_water_deep",
+      "Build_ssarathi_insides_woven_cloth",
+      "Walk_ashlar",
+      "Walk_packed_earth",
       "Walk_ssarathi_jade_paving",
       "Walk_ssarathi_jade_scale",
       "Walk_ssarathi_moss_stone",
-      "Walk_ssarathi_silt"
+      "Walk_ssarathi_silt",
+      "Walk_timber_warm"
     ]
   },
   "sources": [
@@ -1339,6 +1739,9 @@
   "notes": [
     "[royal_archive] Built from concept.json's written subject list and the authored asset pack's names: its own concept board does not decode at all.",
     "[serpent_hatchery] Authored from the asset pack's `ssarathi_hatchery_pool`, which is Ssarathi interior content outside the Archive's ten subjects. No concept art exists for it.",
+    "[tenth_mouth] Built from the shared small-room kit: a cut sanctuary in the water manner.",
+    "[water_gate_undercut] Built from the shared small-room kit: mouth, throat and chamber, dressed for the region above it.",
+    "[lineage_house] Built from the shared small-room kit: a hall with a hearth and a back room for its trade (workshop).",
     "Four insides on one map with blackspace between them, following amethyst_barrens_insides and crownwater_insides. Cells between sections are zero in collision.bin because no Walk_ surface covers them - the void is not drawn, it is simply the absence of floor."
   ],
   "productionStatus": "authored-geometry-materials-population",
@@ -1497,6 +1900,117 @@
         ]
       },
       "surfaceLandmark": "root-arch"
+    },
+    {
+      "id": "tenth_mouth",
+      "name": "The Tenth Mouth Shrine",
+      "class": "shrine",
+      "spawn": "tenth-mouth-door",
+      "entrance": "tenth_mouth.porch",
+      "offset": [
+        295.0,
+        38.0
+      ],
+      "arrival": [
+        295.0,
+        0.05,
+        38.0
+      ],
+      "bounds": {
+        "min": [
+          287.0,
+          34.0
+        ],
+        "max": [
+          303.0,
+          70.0
+        ]
+      },
+      "entranceBounds": {
+        "min": [
+          291.0,
+          34.0
+        ],
+        "max": [
+          299.0,
+          42.0
+        ]
+      },
+      "surfaceLandmark": "lily-court"
+    },
+    {
+      "id": "water_gate_undercut",
+      "name": "The Water Gate Undercut",
+      "class": "cave",
+      "spawn": "water-gate-undercut-mouth",
+      "entrance": "water_gate_undercut.mouth",
+      "offset": [
+        295.0,
+        110.0
+      ],
+      "arrival": [
+        295.0,
+        0.05,
+        110.0
+      ],
+      "bounds": {
+        "min": [
+          279.0,
+          104.0
+        ],
+        "max": [
+          311.0,
+          176.0
+        ]
+      },
+      "entranceBounds": {
+        "min": [
+          289.0,
+          104.0
+        ],
+        "max": [
+          301.0,
+          116.0
+        ]
+      },
+      "surfaceLandmark": "south-water-gate"
+    },
+    {
+      "id": "lineage_house",
+      "name": "The Lineage Reader's House",
+      "class": "dwelling",
+      "spawn": "lineage-house-door",
+      "entrance": "lineage_house.hall",
+      "offset": [
+        295.0,
+        200.0
+      ],
+      "arrival": [
+        295.0,
+        0.05,
+        201.0
+      ],
+      "bounds": {
+        "min": [
+          290.0,
+          196.0
+        ],
+        "max": [
+          300.0,
+          212.0
+        ]
+      },
+      "entranceBounds": {
+        "min": [
+          290.0,
+          196.0
+        ],
+        "max": [
+          300.0,
+          206.0
+        ]
+      },
+      "surfaceLandmark": "serpent-gate"
     }
   ]
 }

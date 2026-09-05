@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import struct
 import sys
 import time
@@ -34,6 +35,8 @@ from regionbuild import RegionBuild         # noqa: E402
 import validate_gltf                        # noqa: E402
 
 import region as REG                        # noqa: E402
+import transitions as MARCH                 # noqa: E402
+import loresites as LORE                    # noqa: E402
 
 SEED = 20260828
 # Class islands smaller than this are given to whatever surrounds them. Six
@@ -60,13 +63,38 @@ SCHEMA_VERSION = "1.0.0"
 # The ground's alpha-tested copies are not pinned separately: a copy
 # carries the pinned material's own textures and differs only in alpha
 # mode, so the pin is read through `MAT.base_material`.
+# The three crossings, as region-connections.json declares them: the south
+# march down to Mirrorhold, the west pass to the Amberwood, the east pass to
+# the Barrens. Turf and stone come up the south road, autumn trees stand in
+# the west pass, crystal dust blows through the east one.
+CROSSINGS = [
+    MARCH.Crossing("south-gate", "mirrorhold", REG.ANCHORS["south_march"],
+                   (REG.ANCHORS["south_march"][0], REG.PLAY_MAX_Z + 20.0),
+                   radius=46.0, name="The Mirrorhold March"),
+    MARCH.Crossing("west-pass", "amberwood", REG.ANCHORS["west_pass"],
+                   (REG.PLAY_MIN_X - 20.0, REG.ANCHORS["west_pass"][1]),
+                   radius=44.0, name="The Amber Pass"),
+    MARCH.Crossing("east-pass", "amethyst_barrens", REG.ANCHORS["east_pass"],
+                   (REG.PLAY_MAX_X + 20.0, REG.ANCHORS["east_pass"][1]),
+                   radius=44.0, name="The Barrens Pass"),
+]
+
+# The places the region's people argue about (see loresites.py).
+SITES = [
+    LORE.Site("snowline-stones", "The Snowline Stones", "snowline_stones", (198.0, -137.0),
+              thread="K", clearing=12.0,
+              note="Ten cut stones up the slope, each with a brass line where the snow stood the "
+                   "year it was set. The last three stand above the snow now."),
+]
+MARCH_MATERIALS: dict = dict(REG.SURFACE_MATERIALS)
+
 MATERIALS = frozenset({
     'snow_pack', 'glacier_ice', 'veined_marble', 'pale_ashlar',
     'blue_crystal', 'gilt_brass', 'alpine_turf',
     'cliff_rock', 'rubble_stone', 'packed_earth', 'ashlar',
     'timber_grey', 'timber_dark', 'dark_iron', 'woven_cloth',
     'bark_dark', 'foliage_green', 'amber_resin',
-})
+}) | MARCH.materials_for("whitehorn_range", CROSSINGS) | LORE.materials([s.piece for s in SITES])
 
 COLLISION_CELL = 0.5
 # EWCG version the grid is written at, and what the manifest advertises.
@@ -93,15 +121,74 @@ def build_region(seed: int = SEED, lod: str | None = None) -> RegionBuild:
     terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
 
     build = RegionBuild(terrain=terrain)
-    build.terrain_meshes = terrain.build_meshes(
-        uv_scale=0.30, materials=REG.SURFACE_MATERIALS,
-        blend_edges=True, material_suffix=MAT.GROUND_SUFFIX)
+    MARCH.prepare(terrain, CROSSINGS)
+    LORE.prepare(terrain, SITES, sea_level=getattr(REG, "SEA_LEVEL", 0.0), keep=(TER.ICE, TER.MARBLE))
 
     import populate
     populate.populate(build, seed, lod=lod)
 
+    # The marches: the neighbours' country coming in along the roads out.
+    MARCH.paint(terrain, CROSSINGS, MARCH_MATERIALS, seed, keep=(TER.ICE, TER.MARBLE))
+    march = MARCH.dress(build, "whitehorn_range", CROSSINGS, seed)
+    LORE.dress(build, terrain, SITES, seed)
+    build.landmarks.extend(march.landmarks)
+    build.notes.extend(march.notes)
+    terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
+    build.terrain_meshes = terrain.build_meshes(
+        uv_scale=0.30, materials=MARCH_MATERIALS,
+        blend_edges=True, material_suffix=MAT.GROUND_SUFFIX)
+
     _add_spawns(build)
+    _add_portals(build)
     return build
+
+
+def _add_portals(build: RegionBuild) -> None:
+    """The three ways out, and the four doors into the insides map."""
+    t = build.terrain
+
+    def tile(x: float, z: float) -> list[int]:
+        return [int(round(x + REG.SERVER_ORIGIN[0])), int(round(REG.SERVER_ORIGIN[1] - z))]
+
+    for crossing, name, destination in (
+            (CROSSINGS[0], "March down to Mirrorhold", "mirrorhold"),
+            (CROSSINGS[1], "Amber Pass", "amberwood"),
+            (CROSSINGS[2], "Barrens Pass", "amethyst_barrens")):
+        x, z = crossing.position
+        build.portals.append({
+            "id": crossing.id, "name": name, "type": "map-transition",
+            "position": [round(float(x), 2), round(float(t.height_at(x, z)) + 0.1, 2),
+                         round(float(z), 2)],
+            "serverTile": tile(x, z), "destinationMap": destination, "radius": 3.5,
+            "authority": "server"})
+
+    # The insides: every door targets the one composed map and differs only in
+    # where it arrives. The door stands on its landmark, so the entrance a
+    # player walks into is the building they were looking at.
+    for portal_id, name, landmark_id in (
+            ("whitehorn-glacier-temple-door", "Glacier Temple", "whitehorn-glacier-temple"),
+            ("whitehorn-mine-adit", "Whitehorn Mine", "whitehorn-mine"),
+            ("whitehorn-ice-cave-mouth", "Whitehorn Ice Cave", "whitehorn-ice-cave"),
+            ("whitehorn-barrow-door", "The Frost Barrow", "whitehorn-cairn-field-cairn_ridge"),
+            ("snowline-cell-door", "The Snowline Cell", "whitehorn-shrine-02"),
+            ("west-watch-cave-mouth", "The Cascade Cave", "whitehorn-cairn-field-west_watch"),
+            ("gate-store-door", "The Ration Sister's Store", "whitehorn-south-gate"),
+):
+        anchor = next((l for l in build.landmarks if l.get("id") == landmark_id), None)
+        if anchor is None:
+            continue
+        x, y, z = anchor["position"]
+        position = [round(float(x), 2), round(float(y) + 0.1, 2), round(float(z), 2)]
+        build.portals.append({
+            "id": portal_id, "name": name, "type": "interior-entrance",
+            "position": position, "serverTile": tile(x, z), "landmark": landmark_id,
+            "destinationMap": "whitehorn_glacier_temple", "destinationSpawn": portal_id,
+            "radius": 2.5, "authority": "server"})
+        build.spawns.append({
+            "id": portal_id, "name": name,
+            "position": [position[0], round(float(t.height_at(x, z)), 2), position[2]],
+            "rotationY": 0.0, "authority": "server",
+            "note": "return point from the Whitehorn insides map"})
 
 
 def _add_spawns(build: RegionBuild) -> None:
@@ -427,6 +514,8 @@ def render_minimap(build: RegionBuild, sets, path: Path, size: int = 0) -> dict:
     centre_z = (REG.PLAY_MIN_Z + REG.PLAY_MAX_Z) * 0.5
     extent = max(REG.PLAY_MAX_X - REG.PLAY_MIN_X,
                  REG.PLAY_MAX_Z - REG.PLAY_MIN_Z)
+    if size <= 0:
+        size = int(round(extent * MINIMAP_PIXELS_PER_METRE))
     altitude = 1100.0
     fov = 2.0 * math.degrees(math.atan((extent * 0.5) / altitude))
     # Cold, near-shadowless light: a snow region under the warm preset reads

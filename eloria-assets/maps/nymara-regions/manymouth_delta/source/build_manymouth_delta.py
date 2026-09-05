@@ -46,6 +46,8 @@ import deltakit as DK
 import stiltkit as SK  # noqa: F401  (registers the delta tree species)
 import populate as POP
 import region as REG
+import transitions as MARCH
+import loresites as LORE
 
 HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
@@ -58,6 +60,36 @@ DESPECKLE_MIN_CELLS = 6
 
 ASSET_VERSION = "1.0.0"
 SCHEMA_VERSION = "1.0.0"
+
+# The four landings, as region-connections.json declares them: the north
+# landing where the Crownwater packet comes down the main channel, the east
+# landing under the temple causeway, the west landing where the moor's drain
+# track comes down, and the south landing at the far bar where the coast road
+# from Westhaven arrives.
+CROSSINGS = [
+    MARCH.Crossing("north-landing", "crownwater", REG.ANCHORS["north_fishing"],
+                   (REG.ANCHORS["north_fishing"][0], REG.PLAY_MIN_Z - 20.0),
+                   radius=30.0, ferry=True, name="The Channel Landing"),
+    MARCH.Crossing("east-landing", "ssarathi_ruins", REG.ANCHORS["east_watch"],
+                   (REG.PLAY_MAX_X + 20.0, REG.ANCHORS["east_watch"][1]),
+                   radius=36.0, name="The Temple March"),
+    MARCH.Crossing("west-landing", "grey_moors", REG.ANCHORS["sea_landing"],
+                   (REG.PLAY_MIN_X - 20.0, REG.ANCHORS["sea_landing"][1]),
+                   radius=36.0, name="The Drain March"),
+    MARCH.Crossing("south-landing", "westhaven", REG.ANCHORS["far_bar"],
+                   (REG.ANCHORS["far_bar"][0] + 30.0, REG.ANCHORS["far_bar"][1] + 30.0),
+                   radius=32.0, name="The Coast Road March"),
+]
+
+# The places the region's people argue about (see loresites.py).
+SITES = [
+    LORE.Site("stelae-court", "The Stelae Court", "stelae_field", (330.0, -108.0),
+              thread="G", clearing=13.0,
+              note="The water lineage in the order the channels were claimed: two ranks with a "
+                   "reading path between them, and the tenth stone left blank."),
+]
+MARCH_MATERIALS: dict = dict(getattr(REG, "SURFACE_MATERIALS", {}))
+DK.MATERIALS = DK.MATERIALS | MARCH.materials_for("manymouth_delta", CROSSINGS) | LORE.materials([s.piece for s in SITES])
 
 
 def register_materials(sets):
@@ -115,6 +147,8 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     terrain = REG.build_terrain(seed)
     REG.apply_built_ground(terrain, seed)
     build = REG.RegionBuild(terrain=terrain)
+    MARCH.prepare(terrain, CROSSINGS)
+    LORE.prepare(terrain, SITES, sea_level=getattr(REG, "SEA_LEVEL", 0.0), keep=(TER.DELTA_SILT, TER.DELTA_PADDY))
 
     POP.build_water(build, lod=lod)
     # The walkway network resolves first and everything else reads its deck
@@ -133,9 +167,17 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
         POP.populate_props(build, seed, network)
     POP.populate_metadata(build, seed, network)
 
+    # The marches: the neighbours' country coming in along the roads out.
+    MARCH.paint(terrain, CROSSINGS, MARCH_MATERIALS, seed, sea_level=REG.SEA_LEVEL, keep=(TER.DELTA_SILT, TER.DELTA_PADDY))
+    march = MARCH.dress(build, "manymouth_delta", CROSSINGS, seed, sea_level=REG.SEA_LEVEL)
+    LORE.dress(build, terrain, SITES, seed)
+    build.landmarks.extend(march.landmarks)
+    build.notes.extend(march.notes)
+
     terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
     build.terrain_meshes = terrain.build_meshes(
-        uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX)
+        uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
+        materials=MARCH_MATERIALS)
     # No landmass backdrop. Amberwood needs one because its mountain walls have
     # to stand in front of something; the delta's horizon is open water on three
     # sides and its own jungle head on the fourth, and the water plane is
@@ -253,7 +295,14 @@ def _add_spawns_and_portals(build: REG.RegionBuild, network: dict) -> None:
             # geometry that already existed - this only admits that the arch on
             # the surface and the gate below are the same object.
             ("gate-descent", "The Manymouth Arch", "arch_stair",
-             math.radians(-140.0))):
+             math.radians(-140.0)),
+             ("paddy-sump-mouth", "The Paddy Watch Sump", "paddy_tower",
+             math.radians(90.0)),
+            ("bund-shrine-door", "The Bund Shrine", "south_shrine",
+             math.radians(0.0)),
+            ("bund-warden-door", "The Bund Warden's House", "paddy_hamlet",
+             math.radians(45.0)),
+):
         x, y, z = spawn_point(build, anchor)
         build.spawns.append({
             "id": door_id,
@@ -278,14 +327,14 @@ def _add_spawns_and_portals(build: REG.RegionBuild, network: dict) -> None:
     # Every land route out of a delta is a boat, so these are landings rather
     # than roads.
     for portal_id, name, anchor, destination in (
-            ("north-landing", "Verdant Stair Packet", "north_fishing",
-             "maps/nymara/verdant_stair.elm"),
-            ("east-landing", "Ssarathi Ruins Packet", "east_watch",
-             "maps/nymara/ssarathi_ruins.elm"),
-            ("south-landing", "Westhaven Packet", "far_bar",
-             "maps/nymara/westhaven.elm"),
-            ("west-landing", "Crownwater Packet", "sea_landing",
-             "maps/nymara/crownwater.elm")):
+            ("north-landing", "Crownwater Packet up the Channel", "north_fishing",
+             "crownwater"),
+            ("east-landing", "Temple Causeway to the Ssarathi Ruins", "east_watch",
+             "ssarathi_ruins"),
+            ("south-landing", "Coast Road to Westhaven", "far_bar",
+             "westhaven"),
+            ("west-landing", "Drain Track up to the Grey Moors", "sea_landing",
+             "grey_moors")):
         x, z = REG.ANCHORS[anchor]
         y = walk_surface_at(build, x, z)
         build.portals.append({
@@ -1169,7 +1218,8 @@ def main() -> int:
         lod_build = build_region(args.seed, lod="far")
         lod_build.terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
         lod_build.terrain_meshes = lod_build.terrain.build_meshes(
-            uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX)
+            uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
+            materials=MARCH_MATERIALS)
         _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb")
         stats["lod2"] = {
             "glbBytes": lod_stats["glbBytes"],

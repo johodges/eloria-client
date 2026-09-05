@@ -183,6 +183,56 @@
       "surface": "Paving",
       "grounded": true,
       "nudgedMetres": 3.14
+    },
+    {
+      "id": "gullscar-farmhouse-door",
+      "name": "Return from The Gullscar Farmhouse",
+      "position": [
+        212.75,
+        38.27,
+        -252.25
+      ],
+      "serverTile": [
+        387,
+        502
+      ],
+      "rotationDegrees": 180.0,
+      "surface": "Paving",
+      "grounded": true,
+      "nudgedMetres": 4.84
+    },
+    {
+      "id": "haven-undercroft-door",
+      "name": "Return from The Haven Undercroft",
+      "position": [
+        59.28,
+        41.05,
+        -136.08
+      ],
+      "serverTile": [
+        233,
+        386
+      ],
+      "rotationDegrees": 180.0,
+      "surface": "Paving",
+      "grounded": true
+    },
+    {
+      "id": "salvage-hole-mouth",
+      "name": "Return from The Salvage Hole",
+      "position": [
+        322.75,
+        56.67,
+        -156.75
+      ],
+      "serverTile": [
+        497,
+        407
+      ],
+      "rotationDegrees": 180.0,
+      "surface": "Paving",
+      "grounded": true,
+      "nudgedMetres": 2.88
     }
   ],
   "collision": {
@@ -600,6 +650,28 @@
       "Landmark_Warehouse_16",
       "Landmark_Yard_Shed_0",
       "Landmark_Yard_Shed_1",
+      "Lore_league_post_house",
+      "March_amber_berth_Station",
+      "March_amber_berth_Stone",
+      "March_crownwater_berth_Station",
+      "March_crownwater_berth_Stone",
+      "March_east_road_Station",
+      "March_east_road_Stone",
+      "March_east_road_boat_010",
+      "March_east_road_fern_011",
+      "March_east_road_fern_012",
+      "March_east_road_fern_013",
+      "March_east_road_fern_014",
+      "March_east_road_fern_015",
+      "March_north_road_Station",
+      "March_north_road_Stone",
+      "March_north_road_moor_stone_016",
+      "March_north_road_moor_stone_017",
+      "March_north_road_moor_stone_018",
+      "March_north_road_snag_000",
+      "March_north_road_snag_001",
+      "March_north_road_snag_002",
+      "March_north_road_snag_003",
       "Prop_Cistern_crown_terrace",
       "Prop_Cistern_lower_square",
       "Prop_Cistern_mid_street",
@@ -628,8 +700,8 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 699226,
-    "walkableFraction": 0.5269
+    "walkableCells": 698579,
+    "walkableFraction": 0.5264
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -1094,6 +1166,111 @@
       "serverTile": [
         494,
         406
+      ]
+    },
+    {
+      "id": "league-post-house",
+      "name": "The League Post-House",
+      "node": "Lore_league_post_house",
+      "type": "lore-site",
+      "thread": "E",
+      "position": [
+        -65.14,
+        17.15,
+        66.17
+      ],
+      "note": "Where the countersigns are checked. The returned post is stacked unopened by the door, the way the reeve says it came back."
+    },
+    {
+      "id": "march-north-road",
+      "name": "The Moor Road March",
+      "node": "March_north_road_Stone",
+      "type": "transition",
+      "position": [
+        272.86,
+        43.49,
+        -276.96
+      ],
+      "note": "Where Westhaven gives way to the Grey Moors: greyhaven road furniture, a march stone, a waystation, and 19 pieces of the country beyond."
+    },
+    {
+      "id": "station-north-road",
+      "name": "Grey Moors Road Station",
+      "node": "March_north_road_Station",
+      "type": "waystation",
+      "position": [
+        266.66,
+        59.97,
+        -260.96
+      ]
+    },
+    {
+      "id": "march-east-road",
+      "name": "The Coast Road March",
+      "node": "March_east_road_Stone",
+      "type": "transition",
+      "position": [
+        336.96,
+        22.58,
+        -72.26
+      ],
+      "note": "Where Westhaven gives way to the Manymouth Delta: greyhaven road furniture, a march stone, a waystation, and 16 pieces of the country beyond."
+    },
+    {
+      "id": "station-east-road",
+      "name": "Manymouth Delta Road Station",
+      "node": "March_east_road_Station",
+      "type": "waystation",
+      "position": [
+        320.96,
+        31.01,
+        -78.46
+      ]
+    },
+    {
+      "id": "march-crownwater-berth",
+      "name": "The Crownwater Berth",
+      "node": "March_crownwater_berth_Stone",
+      "type": "transition",
+      "position": [
+        -72.22,
+        3.4,
+        -18.24
+      ],
+      "note": "Where Westhaven gives way to Crownwater: greyhaven road furniture, a march stone, a waystation, and 0 pieces of the country beyond."
+    },
+    {
+      "id": "station-crownwater-berth",
+      "name": "Crownwater Road Station",
+      "node": "March_crownwater_berth_Station",
+      "type": "waystation",
+      "position": [
+        -66.02,
+        6.94,
+        -34.24
+      ]
+    },
+    {
+      "id": "march-amber-berth",
+      "name": "The Amber Berth",
+      "node": "March_amber_berth_Stone",
+      "type": "transition",
+      "position": [
+        91.94,
+        3.4,
+        19.2
+      ],
+      "note": "Where Westhaven gives way to the Amberwood: greyhaven road furniture, a march stone, a waystation, and 0 pieces of the country beyond."
+    },
+    {
+      "id": "station-amber-berth",
+      "name": "Amberwood Road Station",
+      "node": "March_amber_berth_Station",
+      "type": "waystation",
+      "position": [
+        98.14,
+        3.4,
+        3.2
       ]
     }
   ],
@@ -2141,7 +2318,7 @@
   "portals": [
     {
       "id": "north-road",
-      "name": "North Road to Amberwood",
+      "name": "Upland Road to the Grey Moors",
       "type": "map-transition",
       "transport": "road",
       "position": [
@@ -2153,13 +2330,13 @@
         452,
         533
       ],
-      "destinationMap": "amberwood",
+      "destinationMap": "grey_moors",
       "radius": 3.5,
       "authority": "server"
     },
     {
       "id": "east-road",
-      "name": "Coast Road to the Grey Moors",
+      "name": "Coast Road to the Manymouth Delta",
       "type": "map-transition",
       "transport": "road",
       "position": [
@@ -2171,7 +2348,7 @@
         515,
         323
       ],
-      "destinationMap": "grey_moors",
+      "destinationMap": "manymouth_delta",
       "radius": 3.5,
       "authority": "server",
       "nudgedMetres": 6.67
@@ -2195,8 +2372,8 @@
       "authority": "server"
     },
     {
-      "id": "mirrorhold-berth",
-      "name": "Mirrorhold Packet",
+      "id": "amber-berth",
+      "name": "Greyhaven Packet to the Amberwood",
       "type": "map-transition",
       "transport": "berth",
       "position": [
@@ -2208,7 +2385,7 @@
         261,
         226
       ],
-      "destinationMap": "mirrorhold",
+      "destinationMap": "amberwood",
       "radius": 3.5,
       "authority": "server",
       "nudgedMetres": 1.45
@@ -2290,6 +2467,65 @@
       "radius": 3.0,
       "authority": "server",
       "nudgedMetres": 3.14
+    },
+    {
+      "id": "gullscar-farmhouse-door",
+      "name": "The Gullscar Farmhouse",
+      "type": "map-transition",
+      "transport": "door",
+      "position": [
+        212.75,
+        38.32,
+        -252.25
+      ],
+      "serverTile": [
+        387,
+        502
+      ],
+      "destinationMap": "westhaven_insides",
+      "destinationSpawn": "gullscar-farmhouse-door",
+      "radius": 3.0,
+      "authority": "server",
+      "nudgedMetres": 4.84
+    },
+    {
+      "id": "haven-undercroft-door",
+      "name": "The Haven Undercroft",
+      "type": "map-transition",
+      "transport": "door",
+      "position": [
+        59.28,
+        41.1,
+        -136.08
+      ],
+      "serverTile": [
+        233,
+        386
+      ],
+      "destinationMap": "westhaven_insides",
+      "destinationSpawn": "haven-undercroft-door",
+      "radius": 3.0,
+      "authority": "server"
+    },
+    {
+      "id": "salvage-hole-mouth",
+      "name": "The Salvage Hole",
+      "type": "map-transition",
+      "transport": "door",
+      "position": [
+        322.75,
+        56.72,
+        -156.75
+      ],
+      "serverTile": [
+        497,
+        407
+      ],
+      "destinationMap": "westhaven_insides",
+      "destinationSpawn": "salvage-hole-mouth",
+      "radius": 3.0,
+      "authority": "server",
+      "nudgedMetres": 2.88
     }
   ],
   "roads": [
@@ -2859,7 +3095,7 @@
     "northAxis": "-Z",
     "orientation": "north-up",
     "projection": "orthographic-top-down",
-    "renderedFrom": "world.glb",
+    "renderedFrom": "final geometry (offline rasteriser)",
     "transform": {
       "pixelX": {
         "scale": 1.0,
@@ -2903,38 +3139,32 @@
           "suffix": "_low"
         }
       ]
-    },
-    {
-      "id": "package-lod2",
-      "glb": "world-lod2.glb",
-      "strategy": "reduced-package",
-      "notes": "Far-tier vegetation only, no ground clutter."
     }
   ],
   "performance": {
-    "nodes": 5250,
-    "meshes": 279,
-    "materials": 33,
-    "images": 74,
-    "textures": 74,
-    "accessors": 1122,
-    "bufferViews": 1196,
-    "uniqueTriangles": 491612,
-    "uniqueVertices": 366200,
-    "glbBytes": 24417136,
-    "instancedTriangles": 1192996,
-    "embeddedTextureBytes": 30504469,
+    "nodes": 5379,
+    "meshes": 365,
+    "materials": 45,
+    "images": 100,
+    "textures": 100,
+    "accessors": 1468,
+    "bufferViews": 1568,
+    "uniqueTriangles": 524070,
+    "uniqueVertices": 399253,
+    "glbBytes": 29555744,
+    "instancedTriangles": 1226982,
+    "embeddedTextureBytes": 30715754,
     "textureMemoryBytesUncompressed": 268566528,
-    "placements": 2653,
+    "placements": 2705,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 699226,
-      "blockedCells": 627878,
-      "walkableFraction": 0.5269,
+      "walkableCells": 698579,
+      "blockedCells": 628525,
+      "walkableFraction": 0.5264,
       "elevatedDecks": 29,
-      "steepCells": 261849,
+      "steepCells": 261856,
       "reliefMetres": 99.87,
       "heightEncoding": {
         "origin": -1.2603,
@@ -2957,11 +3187,19 @@
           "metres": 3.14
         },
         {
+          "id": "gullscar-farmhouse-door",
+          "metres": 4.84
+        },
+        {
+          "id": "salvage-hole-mouth",
+          "metres": 2.88
+        },
+        {
           "id": "east-road",
           "metres": 6.67
         },
         {
-          "id": "mirrorhold-berth",
+          "id": "amber-berth",
           "metres": 1.45
         },
         {
@@ -2971,6 +3209,14 @@
         {
           "id": "gullstone-door",
           "metres": 3.14
+        },
+        {
+          "id": "gullscar-farmhouse-door",
+          "metres": 4.84
+        },
+        {
+          "id": "salvage-hole-mouth",
+          "metres": 2.88
         }
       ]
     },
@@ -2979,17 +3225,14 @@
       "surf breakers placed: 7",
       "jetties placed: 8",
       "city houses placed: 385",
-      "trees placed: 257",
-      "ground dressing placed: 536"
-    ],
-    "lod2": {
-      "glbBytes": 15360796,
-      "nodes": 3888,
-      "uniqueTriangles": 405342,
-      "instancedTriangles": 1003938,
-      "sizeReductionPercent": 37.1,
-      "triangleReductionPercent": 15.8
-    }
+      "trees placed: 254",
+      "ground dressing placed: 535",
+      "lore site league-post-house (The League Post-House): relief 1.80 m, 36 m from the ask",
+      "march north-road: 7 road pieces, 19 of grey_moors's growth",
+      "march east-road: 4 road pieces, 16 of manymouth_delta's growth",
+      "march crownwater-berth: 0 road pieces, 0 of crownwater's growth",
+      "march amber-berth: 0 road pieces, 0 of amberwood's growth"
+    ]
   },
   "sources": [
     {

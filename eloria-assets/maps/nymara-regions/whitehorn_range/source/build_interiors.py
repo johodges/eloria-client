@@ -49,7 +49,7 @@ INTERIOR_ROOT = ROOT.parent / "interiors"
 SEED = 20260901
 PARENT_REGION_ID = "whitehorn_range"
 PARENT_REGION_NAME = "the Whitehorn Range"
-PARENT_REGION_MAP = "maps/nymara/whitehorn_range.elm"
+PARENT_REGION_MAP = "whitehorn_range"
 CELL = 1.0                                            # collision cell, metres
 
 

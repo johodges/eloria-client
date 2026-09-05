@@ -207,3 +207,16 @@ it needs its own.
 * **Lighting is judged by eye.** The sections are readable in client frames, but
   "dark enough to be atmospheric" versus "too dark to play" is not something
   these captures settle.
+
+## Small rooms
+
+Three more sections joined the `drowned_crown` map from the shared
+`_toolkit/amberwood/smallrooms.py` kit, each with its own door on the Crownwater
+map and its own arrival: a cave with a creature den, a cottage and a shrine.
+They sit in a column east of the set pieces with the usual void between.
+
+| section | name | kind | region door | what it is |
+|---|---|---|---|---|
+| `the_grating` | the Grating | cave | `grating-mouth` | an abyssal armoured fish's den under the open grating |
+| `case_room` | the case room | cottage | `case-room-door` | a chandlery |
+| `eleventh_bell` | the Eleventh Bell | shrine | `eleventh-bell-door` | a lantern shrine |

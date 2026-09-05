@@ -1,8 +1,8 @@
 {
-  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\eloria-client\\eloria-assets\\maps\\nymara-regions\\interiors\\verdant_stair_insides\\world.glb",
+  "uri": "world.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-08-29T14:42:14.018304Z",
+  "validatedAt": "2026-09-05T08:28:51.630768Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,

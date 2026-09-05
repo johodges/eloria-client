@@ -45,7 +45,7 @@ SEED = 20260830
 # still says "amberwood" sends every player out of the wrong map.
 PARENT_REGION_ID = "manymouth_delta"
 PARENT_REGION_NAME = "Manymouth Delta"
-PARENT_REGION_MAP = "maps/nymara/manymouth_delta.elm"
+PARENT_REGION_MAP = "manymouth_delta"
 CELL = 1.0                                            # collision cell, metres
 
 
@@ -342,7 +342,7 @@ def check_doors_match(interior: I.Interior, doc: dict) -> list[str]:
     if not region_manifest.is_file():
         return [f"cannot check doors: no {region_manifest}"]
     region = json.loads(region_manifest.read_text(encoding="utf-8"))
-    insides_map = "maps/nymara/manymouth_flooded_labyrinth.elm"
+    insides_map = "manymouth_flooded_labyrinth"
     doors = {p["destinationSpawn"]: p["id"] for p in region.get("portals", [])
              if p.get("destinationMap") == insides_map
              and p.get("destinationSpawn")}

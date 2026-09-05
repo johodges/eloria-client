@@ -63,7 +63,11 @@ MATERIALS = {
 
 CAMP_RADIUS = 25.0
 CAMP_SIDES = 14
-HALL_CENTER = (0.0, -13.0)
+# The hall stood at (0, -13) with a 23 m drum: its plinth ran through the
+# palisade and the north gate opened into its back wall, and the camp's
+# north half was sealed in the walk grid. Smaller, and a little further
+# from the gate, it leaves a lane round either side and a way out north.
+HALL_CENTER = (0.0, -12.0)
 
 
 @dataclass
@@ -129,7 +133,7 @@ def compose_layout(landform: terrain.Landform) -> Layout:
 
     # === central encampment: ceremonial crossroads and shared market ======
     layout.add("great_hall", "Landmark_sunmane_great_hall", HALL_CENTER[0],
-               HALL_CENTER[1], rotation=0.0, collide=True, footprint=14.0, sink=0.35,
+               HALL_CENTER[1], rotation=0.0, collide=True, footprint=9.6, sink=0.35,
                landmark="great-hall",
                interactive={"id": "great-hall-entrance", "kind": "entrance",
                             "label": "Hall of the Sunmane"})
@@ -146,7 +150,7 @@ def compose_layout(landform: terrain.Landform) -> Layout:
             (16.0, -15.0, -0.5), (-19.0, 6.0, 1.4), (19.0, 7.0, -1.3))):
         layout.add("camp_pavilion_%d" % (index % 2), "Encampment_Pavilion_%02d" % index,
                    x, z, rotation=spin, collide=True, footprint=3.4)
-    layout.add("steppe_well", "Landmark_sunmane_well_00", 0.0, 18.5, rotation=0.2,
+    layout.add("steppe_well", "Landmark_sunmane_well_00", -7.5, 12.0, rotation=0.2,
                collide=True, footprint=2.0, landmark="well",
                interactive={"id": "well-crossroads", "kind": "water",
                             "label": "Crossroads well"})
@@ -158,7 +162,7 @@ def compose_layout(landform: terrain.Landform) -> Layout:
         layout.add("fire_pit", "Encampment_FirePit_%02d" % index, x, z,
                    rotation=float(rng.random()) * TAU, footprint=1.2)
     for index, (x, z, spin) in enumerate(((-12.0, 12.0, 0.7), (12.5, 12.5, -0.6),
-                                          (0.0, 24.0, 1.55))):
+                                          (-11.0, 21.0, 1.55))):
         layout.add("cart", "Encampment_Cart_%02d" % index, x, z, rotation=spin,
                    collide=True, footprint=1.6)
     for index, (x, z, spin) in enumerate(((-21.0, 12.0, 0.3), (21.0, 13.0, -0.3))):
@@ -263,6 +267,12 @@ def compose_layout(landform: terrain.Landform) -> Layout:
                    rotation=spin, collide=True, footprint=2.0, landmark="well",
                    interactive={"id": "well-%02d" % (index + 1), "kind": "water",
                                 "label": "Steppe well"})
+    # The fourth well, filled in because the water hummed (thread H). The
+    # well-digger and the crossroads keeper both point at it.
+    layout.add("filled_well", "Landmark_sunmane_filled_well", -9.0, 40.0, rotation=0.7,
+               collide=True, footprint=2.4, landmark="lore-site",
+               interactive={"id": "fourth-well", "kind": "landmark",
+                            "label": "The fourth well, filled"})
     for index, (x, z, radius, gate) in enumerate((
             (-30.0, -30.0, 7.0, 3), (40.0, -18.0, 6.5, 7), (56.0, 28.0, 6.8, 1),
             (-44.0, 40.0, 7.2, 5), (18.0, 40.0, 6.4, 9), (-16.0, -52.0, 6.6, 2))):
@@ -279,10 +289,9 @@ def compose_layout(landform: terrain.Landform) -> Layout:
                    "Landmark_sunmane_burial_mound_%02d" % index, x, z,
                    rotation=math.pi if entrance else float(rng.random()) * TAU,
                    collide=True, footprint=5.4, sink=0.0, landmark="burial-mound",
-                   interactive=({"id": "archive-entrance", "kind": "portal",
-                                 "label": "Ssarathi Royal Archive"} if entrance else
-                                {"id": "barrow-%02d" % index, "kind": "landmark",
-                                 "label": "Orun barrow"}))
+                   interactive={"id": "barrow-%02d" % index, "kind": "landmark",
+                                "label": ("Orun barrow, the sealed passage" if entrance
+                                          else "Orun barrow")})
 
     # === remote outposts, stone circles, coast ============================
     for index, (x, z, spin) in enumerate((
@@ -329,7 +338,7 @@ def _asset_builders() -> dict:
         return build
 
     builders = {
-        "great_hall": kit.great_hall,
+        "great_hall": lambda: kit.great_hall(6.5),
         "palisade_gate": lambda: kit.palisade_gate(5.2, 4.4),
         "gate_tower": lambda: kit.gate_tower(7.2, 2.4),
         "watchtower": kit.watchtower,
@@ -343,6 +352,8 @@ def _asset_builders() -> dict:
         "hitching_post": prop(kit.hitching_post, (0.0, 0.0), 3.2),
         "burial_mound_entrance": lambda: kit.burial_mound(5.4, 2.5, True),
         "burial_mound_plain": lambda: kit.burial_mound(4.4, 2.0, False),
+        "filled_well": kit.filled_well,
+        "march_gate": kit.march_gate,
     }
     for index in range(3):
         builders["round_tent_%d" % index] = tent(index)
@@ -509,7 +520,7 @@ def _plaza(layout: Layout) -> Geometry:
             if distance > radius:
                 continue
             # Leave the hall podium and the gate thresholds clear.
-            if math.hypot(cx - HALL_CENTER[0], cz - HALL_CENTER[1]) < 13.4:
+            if math.hypot(cx - HALL_CENTER[0], cz - HALL_CENTER[1]) < 9.8:
                 continue
             corners, uvs = [], []
             for px, pz in ((x0, z0), (x0, z1), (x1, z1), (x1, z0)):
@@ -1064,16 +1075,22 @@ HARVESTABLES = (
 )
 
 CREATURE_SPAWNS = (
-    ("dire_wolf", "north mesa breaks", (-30.0, -68.0), 10.0, 3),
-    ("dire_wolf", "eastern breaks", (74.0, -34.0), 10.0, 3),
-    ("wild_boar", "south-west scrub", (-48.0, 50.0), 11.0, 4),
-    ("red_fox", "open steppe", (30.0, -50.0), 14.0, 4),
-    ("elk", "northern pasture", (-52.0, -50.0), 12.0, 4),
-    ("mountain_goat", "coastal cliffs", (-52.0, 12.0), 9.0, 3),
-    ("mountain_goat", "Whitehorn foothills", (92.0, -120.0), 12.0, 3),
-    ("dire_wolf", "wind cave approach", (56.0, -108.0), 11.0, 3),
-    ("red_fox", "amethyst badland", (114.0, -78.0), 12.0, 3),
-    ("wild_boar", "dune margin scrub", (-24.0, -92.0), 12.0, 4),
+    # Species keys are the server's, and every one draws a reviewed model in
+    # the client. The old placeholder herds (elk, wild boar, mountain goat) are
+    # gone: the steppe is horse and bison country, with the wolves and the
+    # lion that follow the herds and the griffins that watch from the mesas.
+    ("golden_plains_horse", "northern pasture", (-52.0, -50.0), 12.0, 3),
+    ("golden_bison", "open steppe", (30.0, -50.0), 14.0, 3),
+    ("dunrunner", "south-west scrub", (-48.0, 50.0), 11.0, 4),
+    ("steppe_aurochs", "eastern pasture", (60.0, 30.0), 12.0, 3),
+    ("red_fox", "dune margin scrub", (-24.0, -92.0), 12.0, 5),
+    ("dire_wolf", "north mesa breaks", (-30.0, -68.0), 10.0, 2),
+    ("dire_wolf", "wind cave approach", (56.0, -108.0), 11.0, 2),
+    ("sunmane_cat", "eastern breaks", (74.0, -34.0), 10.0, 3),
+    ("stormmane_lion", "amethyst badland", (114.0, -78.0), 12.0, 2),
+    ("plains_griffin", "Whitehorn foothills", (92.0, -120.0), 12.0, 2),
+    ("suncrest_heron", "coastal watering holes", (-52.0, 12.0), 9.0, 3),
+    ("giant_mole", "crop ground", (34.0, 30.0), 8.0, 1),
 )
 
 
@@ -1165,6 +1182,21 @@ CAVE_SITES = (
 
 DESERT_STATIONS = ((4.0, -92.0, 0.2), (64.0, -100.0, 2.6))
 
+# Where the steppe hands over to its neighbours (region-connections.json). The
+# west caravan road runs down to the Four Gates causeway, the desert track
+# climbs north into the Barrens, and the shore road goes south to the Verdant
+# Stair. Each gate stands inside the server's addressable band, astride the
+# road it ends; the crossing tile is the gap between its two stones.
+# id, x, z, rotation (stones flank the road), destination map, label
+CROSSING_SITES = (
+    ("west-landing", -52.0, 0.0, math.pi * 0.5, "four_gates",
+     "The causeway road to the Four Gates"),
+    ("north-track", 8.0, -126.0, 0.0, "amethyst_barrens",
+     "The desert track into the Amethyst Barrens"),
+    ("south-track", 4.0, 40.0, 0.0, "verdant_stair",
+     "The shore road to the Verdant Stair"),
+)
+
 WAYSTONE_SITES = ((2.0, -70.0, 0.4), (5.0, -104.0, 1.7), (30.0, -86.0, 3.0),
                   (56.0, -96.0, 5.1), (92.0, -106.0, 0.9), (12.0, -130.0, 2.2),
                   (120.0, -18.0, 4.4), (104.0, 0.0, 1.1))
@@ -1190,6 +1222,14 @@ def compose_expansion(layout: Layout, rng) -> None:
                                  CAVE_ARRIVALS[identifier][1])}
                             if destination else {})})
         placement.cave = identifier
+
+    # --- the marches: the three gates out of the steppe --------------------
+    for identifier, x, z, facing, destination, label in CROSSING_SITES:
+        layout.add("march_gate", "Landmark_sunmane_march_%s" % identifier, x, z,
+                   rotation=facing, collide=True, footprint=3.2, sink=0.1,
+                   landmark="transition",
+                   interactive={"id": identifier, "kind": "portal", "label": label,
+                                "destinationMap": destination})
 
     # --- desert water stations on the sand road ---------------------------
     for index, (x, z, spin) in enumerate(DESERT_STATIONS):

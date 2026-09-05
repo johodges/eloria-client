@@ -68,6 +68,10 @@ SECTIONS = [
     ("tide_cistern", "tide_cistern", 260.0, 60.0, "wellhouse"),
     ("customs_hall", "customs_hall", 250.0, 260.0, "ledger_hall"),
     ("tide_campanile", "tide_campanile", 60.0, 300.0, "shaft"),
+    # the small rooms, a column east of the set pieces
+    ("eleventh_bell", "eleventh_bell", 338.0, 60.0, "porch"),
+    ("case_room", "case_room", 338.0, 120.0, "hall"),
+    ("the_grating", "the_grating", 338.0, 180.0, "mouth"),
 ]
 
 SPAWN_FOR = {
@@ -75,6 +79,9 @@ SPAWN_FOR = {
     "tide_cistern": "cistern-stair",
     "customs_hall": "customs-door",
     "tide_campanile": "campanile-door",
+    "eleventh_bell": "eleventh-bell-door",
+    "case_room": "case-room-door",
+    "the_grating": "grating-mouth",
 }
 
 

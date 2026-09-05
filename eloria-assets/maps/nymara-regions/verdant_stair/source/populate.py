@@ -1088,7 +1088,7 @@ def populate_jungle(build: RegionBuild, seed: int, lod: str | None = None) -> No
 
     # Spacing is per area, not per region: the jungle thins as the map grows
     # rather than the same trees being spread thinner over it.
-    spacing = 8.6 if lod is None else 12.5
+    spacing = 9.6 if lod is None else 13.5
     cell = spacing
     x0, z0 = REG.PLAY_MIN_X, REG.PLAY_MIN_Z
     cols = int((REG.PLAY_MAX_X - x0) / cell)
@@ -1136,7 +1136,7 @@ def populate_jungle(build: RegionBuild, seed: int, lod: str | None = None) -> No
                 # Tight on purpose. The far tier is where the triangle count
                 # stops tracking the area, and a tree 30 m off a path is
                 # silhouette, not bark.
-                tier = "high" if near < 12.0 else ("mid" if near < 30.0 else "low")
+                tier = "high" if near < 10.0 else ("mid" if near < 26.0 else "low")
             keys = variants[(species, tier)]
             key = keys[int(rng.integers(0, len(keys)))]
             _place(build, f"Tree_{row:03d}_{col:03d}", key, x, z, height,
@@ -1146,7 +1146,7 @@ def populate_jungle(build: RegionBuild, seed: int, lod: str | None = None) -> No
             placed += 1
 
             # a fern or a palm in the gap beside roughly one tree in three
-            if lod is None and float(rng.uniform()) < 0.34:
+            if lod is None and float(rng.uniform()) < 0.28:
                 fx = x + float(rng.uniform(-cell * 0.5, cell * 0.5))
                 fz = z + float(rng.uniform(-cell * 0.5, cell * 0.5))
                 if _standable(t, fx, fz, 1.05) and not bool(t.blocked_at(fx, fz)):

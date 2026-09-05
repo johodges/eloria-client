@@ -23,7 +23,7 @@
         32.45
       ],
       "max": [
-        219.5,
+        268.55,
         23.13,
         380.55
       ]
@@ -35,7 +35,7 @@
         32.45
       ],
       "max": [
-        218.55,
+        268.55,
         4.2,
         380.55
       ]
@@ -128,12 +128,48 @@
       "rotationDegrees": 0.0,
       "surface": "Walk",
       "section": "temple_sanctum"
+    },
+    {
+      "id": "paddy-sump-mouth",
+      "name": "The Paddy Watch Sump",
+      "position": [
+        252.0,
+        0.05,
+        46.0
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "Walk",
+      "section": "paddy_sump"
+    },
+    {
+      "id": "bund-shrine-door",
+      "name": "The Bund Shrine",
+      "position": [
+        252.0,
+        0.05,
+        130.0
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "Walk",
+      "section": "bund_shrine"
+    },
+    {
+      "id": "bund-warden-door",
+      "name": "The Bund Warden's House",
+      "position": [
+        252.0,
+        0.05,
+        181.0
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "Walk",
+      "section": "bund_warden"
     }
   ],
   "collision": {
     "binary": "collision.bin",
     "format": "EWCG-v1",
-    "width": 366,
+    "width": 468,
     "height": 702,
     "cellMetres": 0.5,
     "originMetres": [
@@ -150,9 +186,9 @@
       "zeroMeansBlocked": true,
       "note": "Step is fitted to this interior's own vertical range, so the six-bit field spans it without clamping. The Godot loader still takes elevation from the rendered Walk_ surfaces; this grid is authoritative only for walkability."
     },
-    "walkableCells": 55028,
-    "blockedCells": 201904,
-    "walkableFraction": 0.2142,
+    "walkableCells": 63176,
+    "blockedCells": 265360,
+    "walkableFraction": 0.1923,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
@@ -160,6 +196,7 @@
       "Roof_manymouth_delta_insides_bark_dark",
       "Roof_manymouth_delta_insides_cliff_rock",
       "Roof_manymouth_delta_insides_manymouth_teak",
+      "Roof_manymouth_delta_insides_rubble_stone",
       "Roof_manymouth_delta_insides_thatch_reed",
       "Build_manymouth_delta_insides_amber_resin",
       "Build_manymouth_delta_insides_amethyst_verdigris",
@@ -176,10 +213,13 @@
       "Build_manymouth_delta_insides_manymouth_glyph_stone",
       "Build_manymouth_delta_insides_manymouth_silt",
       "Build_manymouth_delta_insides_manymouth_teak",
+      "Build_manymouth_delta_insides_pale_ashlar",
       "Build_manymouth_delta_insides_rubble_stone",
       "Build_manymouth_delta_insides_thatch_reed",
       "Build_manymouth_delta_insides_timber_dark",
+      "Build_manymouth_delta_insides_timber_grey",
       "Build_manymouth_delta_insides_timber_warm",
+      "Build_manymouth_delta_insides_water_deep",
       "Build_manymouth_delta_insides_woven_cloth"
     ]
   },
@@ -188,6 +228,7 @@
       "Roof_manymouth_delta_insides_bark_dark",
       "Roof_manymouth_delta_insides_cliff_rock",
       "Roof_manymouth_delta_insides_manymouth_teak",
+      "Roof_manymouth_delta_insides_rubble_stone",
       "Roof_manymouth_delta_insides_thatch_reed"
     ],
     "reason": "interior lids; the isometric rig frames the floor, not the roof"
@@ -281,6 +322,51 @@
       "destinationMap": "manymouth_delta",
       "destinationSpawn": "temple-sanctum-door",
       "section": "temple_sanctum",
+      "authority": "server"
+    },
+    {
+      "id": "exit-paddy-sump-mouth",
+      "name": "Return to Manymouth Delta",
+      "type": "map-transition",
+      "position": [
+        252.0,
+        0.05,
+        46.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "manymouth_delta",
+      "destinationSpawn": "paddy-sump-mouth",
+      "section": "paddy_sump",
+      "authority": "server"
+    },
+    {
+      "id": "exit-bund-shrine-door",
+      "name": "Return to Manymouth Delta",
+      "type": "map-transition",
+      "position": [
+        252.0,
+        0.05,
+        130.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "manymouth_delta",
+      "destinationSpawn": "bund-shrine-door",
+      "section": "bund_shrine",
+      "authority": "server"
+    },
+    {
+      "id": "exit-bund-warden-door",
+      "name": "Return to Manymouth Delta",
+      "type": "map-transition",
+      "position": [
+        252.0,
+        0.05,
+        181.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "manymouth_delta",
+      "destinationSpawn": "bund-warden-door",
+      "section": "bund_warden",
       "authority": "server"
     }
   ],
@@ -399,6 +485,76 @@
         "The oculus court is declared open to the sky, so the client keeps a hole in the roof and the region's weather falls into the pool.",
         "The only stone interior, and deliberately the only one with no timber in it at all - it is the counterweight to the warren."
       ]
+    },
+    {
+      "id": "paddy_sump",
+      "name": "The Paddy Watch Sump",
+      "class": "cave",
+      "offset": [
+        252.0,
+        0.0,
+        46.0
+      ],
+      "arrival": [
+        252.0,
+        0.05,
+        46.0
+      ],
+      "spaces": [
+        "paddy_sump.mouth",
+        "paddy_sump.throat",
+        "paddy_sump.chamber",
+        "paddy_sump.descent",
+        "paddy_sump.gullet"
+      ],
+      "notes": [
+        "Built from the shared small-room kit: mouth, throat and chamber, dressed for the region above it."
+      ]
+    },
+    {
+      "id": "bund_shrine",
+      "name": "The Bund Shrine",
+      "class": "shrine",
+      "offset": [
+        252.0,
+        0.0,
+        130.0
+      ],
+      "arrival": [
+        252.0,
+        0.05,
+        130.0
+      ],
+      "spaces": [
+        "bund_shrine.porch",
+        "bund_shrine.nave",
+        "bund_shrine.aisle"
+      ],
+      "notes": [
+        "Built from the shared small-room kit: a cut sanctuary in the water manner."
+      ]
+    },
+    {
+      "id": "bund_warden",
+      "name": "The Bund Warden's House",
+      "class": "dwelling",
+      "offset": [
+        252.0,
+        0.0,
+        180.0
+      ],
+      "arrival": [
+        252.0,
+        0.05,
+        181.0
+      ],
+      "spaces": [
+        "bund_warden.hall",
+        "bund_warden.back"
+      ],
+      "notes": [
+        "Built from the shared small-room kit: a hall with a hearth and a back room for its trade (hearth)."
+      ]
     }
   ],
   "landmarks": [
@@ -489,6 +645,39 @@
         366.0
       ],
       "section": "temple_sanctum"
+    },
+    {
+      "id": "manymouth_paddy_sump-chamber",
+      "name": "The Paddy Watch Sump",
+      "space": "paddy_sump.chamber",
+      "position": [
+        252.0,
+        -4.0,
+        97.0
+      ],
+      "section": "paddy_sump"
+    },
+    {
+      "id": "manymouth_bund_shrine-sanctuary",
+      "name": "The Bund Shrine",
+      "space": "bund_shrine.nave",
+      "position": [
+        252.0,
+        0.4,
+        152.0
+      ],
+      "section": "bund_shrine"
+    },
+    {
+      "id": "manymouth_bund_warden-hearth",
+      "name": "The Bund Warden's House",
+      "space": "bund_warden.hall",
+      "position": [
+        252.0,
+        1.4,
+        181.0
+      ],
+      "section": "bund_warden"
     }
   ],
   "interactives": [
@@ -685,6 +874,18 @@
       ],
       "authority": "server",
       "section": "temple_sanctum"
+    },
+    {
+      "id": "manymouth_paddy_sump-den",
+      "name": "Manymouth Crab",
+      "kind": "creature-zone",
+      "position": [
+        252.0,
+        -6.0,
+        97.0
+      ],
+      "radius": 12.0,
+      "section": "paddy_sump"
     }
   ],
   "harvestables": [
@@ -2624,6 +2825,166 @@
       "energy": 1.5
     },
     {
+      "id": "lantern-116",
+      "kind": "point",
+      "position": [
+        252.0,
+        2.58,
+        44.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-117",
+      "kind": "point",
+      "position": [
+        252.0,
+        -0.82,
+        67.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-118",
+      "kind": "point",
+      "position": [
+        244.0,
+        -2.42,
+        97.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-119",
+      "kind": "point",
+      "position": [
+        260.0,
+        -2.42,
+        97.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-120",
+      "kind": "point",
+      "position": [
+        252.0,
+        2.78,
+        130.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-121",
+      "kind": "point",
+      "position": [
+        247.0,
+        2.98,
+        146.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-122",
+      "kind": "point",
+      "position": [
+        257.0,
+        2.98,
+        152.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-123",
+      "kind": "point",
+      "position": [
+        252.0,
+        3.38,
+        159.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-124",
+      "kind": "point",
+      "position": [
+        252.0,
+        2.28,
+        181.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-125",
+      "kind": "point",
+      "position": [
+        253.0,
+        1.98,
+        189.28
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
       "id": "shaft-00",
       "kind": "point",
       "position": [
@@ -3130,6 +3491,86 @@
       "z1": 353.8,
       "floor": -8.0,
       "height": 3.4
+    },
+    "paddy_sump.mouth": {
+      "x0": 246.0,
+      "x1": 258.0,
+      "z0": 40.0,
+      "z1": 52.0,
+      "floor": 0.0,
+      "height": 5.4
+    },
+    "paddy_sump.throat": {
+      "x0": 247.0,
+      "x1": 257.0,
+      "z0": 62.0,
+      "z1": 72.0,
+      "floor": -3.6,
+      "height": 5.6
+    },
+    "paddy_sump.chamber": {
+      "x0": 236.0,
+      "x1": 268.0,
+      "z0": 82.0,
+      "z1": 112.0,
+      "floor": -6.0,
+      "height": 11.0
+    },
+    "paddy_sump.descent": {
+      "x0": 249.6,
+      "x1": 254.4,
+      "z0": 49.6,
+      "z1": 64.4,
+      "floor": -3.6,
+      "height": 4.4
+    },
+    "paddy_sump.gullet": {
+      "x0": 249.7,
+      "x1": 254.3,
+      "z0": 69.7,
+      "z1": 84.3,
+      "floor": -6.0,
+      "height": 4.4
+    },
+    "bund_shrine.porch": {
+      "x0": 248.0,
+      "x1": 256.0,
+      "z0": 126.0,
+      "z1": 134.0,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "bund_shrine.nave": {
+      "x0": 244.0,
+      "x1": 260.0,
+      "z0": 142.0,
+      "z1": 162.0,
+      "floor": -1.2,
+      "height": 7.0
+    },
+    "bund_shrine.aisle": {
+      "x0": 250.4,
+      "x1": 253.6,
+      "z0": 132.4,
+      "z1": 143.6,
+      "floor": -1.2,
+      "height": 3.6
+    },
+    "bund_warden.hall": {
+      "x0": 247.0,
+      "x1": 257.0,
+      "z0": 176.0,
+      "z1": 186.0,
+      "floor": 0.0,
+      "height": 3.4
+    },
+    "bund_warden.back": {
+      "x0": 249.0,
+      "x1": 257.0,
+      "z0": 186.55,
+      "z1": 192.0,
+      "floor": 0.0,
+      "height": 3.0
     }
   },
   "conceptArt": {
@@ -3160,25 +3601,34 @@
       "The Sanctum: the ambulatory around the core",
       "The Sanctum: the oculus court and its rain pool",
       "The Sanctum: the ring of stelae",
-      "The Sanctum: the founders' crypt"
+      "The Sanctum: the founders' crypt",
+      "The Paddy Watch Sump: cave mouth from within",
+      "The Paddy Watch Sump: the descent",
+      "The Paddy Watch Sump: the chamber",
+      "The Bund Shrine: the porch",
+      "The Bund Shrine: the nave",
+      "The Bund Shrine: the sanctuary",
+      "The Bund Warden's House: the hall and hearth",
+      "The Bund Warden's House: the hearth"
     ]
   },
   "performance": {
-    "nodes": 30,
-    "meshes": 29,
-    "materials": 21,
-    "images": 57,
-    "textures": 57,
-    "accessors": 145,
-    "bufferViews": 202,
-    "uniqueTriangles": 86370,
-    "uniqueVertices": 92532,
-    "glbBytes": 11706584,
+    "nodes": 37,
+    "meshes": 36,
+    "materials": 26,
+    "images": 72,
+    "textures": 72,
+    "accessors": 180,
+    "bufferViews": 252,
+    "uniqueTriangles": 96262,
+    "uniqueVertices": 103414,
+    "glbBytes": 13925836,
     "nodeNames": [
       "Interior_manymouth_delta_insides",
       "Roof_manymouth_delta_insides_bark_dark",
       "Roof_manymouth_delta_insides_cliff_rock",
       "Roof_manymouth_delta_insides_manymouth_teak",
+      "Roof_manymouth_delta_insides_rubble_stone",
       "Roof_manymouth_delta_insides_thatch_reed",
       "Build_manymouth_delta_insides_amber_resin",
       "Build_manymouth_delta_insides_amethyst_verdigris",
@@ -3195,16 +3645,22 @@
       "Build_manymouth_delta_insides_manymouth_glyph_stone",
       "Build_manymouth_delta_insides_manymouth_silt",
       "Build_manymouth_delta_insides_manymouth_teak",
+      "Build_manymouth_delta_insides_pale_ashlar",
       "Build_manymouth_delta_insides_rubble_stone",
       "Build_manymouth_delta_insides_thatch_reed",
       "Build_manymouth_delta_insides_timber_dark",
+      "Build_manymouth_delta_insides_timber_grey",
       "Build_manymouth_delta_insides_timber_warm",
+      "Build_manymouth_delta_insides_water_deep",
       "Build_manymouth_delta_insides_woven_cloth",
       "Walk_cliff_rock",
       "Walk_manymouth_bamboo",
       "Walk_manymouth_sandbar",
       "Walk_manymouth_silt",
-      "Walk_manymouth_teak"
+      "Walk_manymouth_teak",
+      "Walk_packed_earth",
+      "Walk_timber_dark",
+      "Walk_verdant_terrace_stone"
     ]
   },
   "sources": [

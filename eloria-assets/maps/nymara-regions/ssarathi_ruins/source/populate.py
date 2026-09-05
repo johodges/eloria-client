@@ -520,7 +520,7 @@ def populate_vegetation(build, seed: int = 0, lod: str | None = None) -> None:
     # wider spacing it read as scattered trees on bare ground rather than as
     # closed jungle. Most instances are far-tier, which is what keeps the
     # triangle count from tracking the coverage.
-    spacing = 8.5 if lod is None else 15.0
+    spacing = 9.3 if lod is None else 15.0
     xs = np.arange(t.x0 + 6.0, t.x0 + t.size_x - 6.0, spacing)
     zs = np.arange(t.z0 + 6.0, t.z0 + t.size_z - 6.0, spacing)
     axis_x, axis_z = REG.ANCHORS["causeway_mid"]

@@ -470,12 +470,15 @@
       },
       "status": "authored-geometry-materials-population",
       "interiorOf": "amethyst_barrens",
-      "insidesMap": true,
+      "insidesOf": "amethyst_barrens",
       "sections": [
         "resonant_vault",
         "geode_hollow",
         "shardworks",
-        "storm_barrow"
+        "storm_barrow",
+        "sour_cut",
+        "measure_house",
+        "counting_house"
       ],
       "requiresServerMap": {
         "tiles": 64,
@@ -489,7 +492,7 @@
         "metresPerTile": 1.0,
         "serverOrigin": [
           -6.0,
-          179.0
+          205.0
         ],
         "origin": [
           0.0,
@@ -500,13 +503,18 @@
         "invertServerY": true
       },
       "status": "authored-geometry-materials-population",
-      "parentRegion": "whitehorn_range",
+      "interiorOf": "whitehorn_range",
+      "insidesOf": "whitehorn_range",
       "sections": [
         "glacier_temple",
         "whitehorn_mine",
         "ice_cave",
-        "frost_barrow"
-      ]
+        "frost_barrow",
+        "snowline_cell",
+        "cascade_cave",
+        "gate_store"
+      ],
+      "parentRegion": "whitehorn_range"
     },
     "drowned_crown": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/crownwater_insides/world.json",
@@ -531,7 +539,10 @@
         "drowned_crown",
         "tide_cistern",
         "customs_hall",
-        "tide_campanile"
+        "tide_campanile",
+        "eleventh_bell",
+        "case_room",
+        "the_grating"
       ]
     },
     "mirrorhold_interiors": {
@@ -577,7 +588,10 @@
         "royal_archive",
         "serpent_hatchery",
         "drowned_cistern",
-        "root_undercroft"
+        "root_undercroft",
+        "tenth_mouth",
+        "water_gate_undercut",
+        "lineage_house"
       ],
       "requiresServerMap": {
         "tiles": 64,
@@ -599,6 +613,157 @@
     },
     "four-gates": {
       "alias": "four_gates"
+    },
+    "grey_moor_barrows": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/grey_moors_insides/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -33.0,
+          202.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "grey_moors",
+      "insidesOf": "grey_moors",
+      "sections": [
+        "great_barrow",
+        "root_crypt",
+        "bone_gallery",
+        "fen_crypt",
+        "fifth_chamber",
+        "peat_croft",
+        "warm_stone"
+      ]
+    },
+    "westhaven_insides": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/westhaven_insides/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -5.0,
+          265.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "westhaven",
+      "insidesOf": "westhaven",
+      "sections": [
+        "custom_house",
+        "bonded_vaults",
+        "lamp_rock_light",
+        "gullstone_cave"
+      ]
+    },
+    "verdant_stair_insides": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/verdant_stair_insides/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -13.0,
+          316.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "verdant_stair",
+      "insidesOf": "verdant_stair",
+      "sections": [
+        "temple_sanctum",
+        "cenote_deeps",
+        "banyan_hollow",
+        "stair_quarry",
+        "physick_still",
+        "anchor_hollow",
+        "nine_lost"
+      ]
+    },
+    "manymouth_flooded_labyrinth": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/manymouth_delta_insides/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -37.0,
+          383.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "manymouth_delta",
+      "insidesOf": "manymouth_delta",
+      "sections": [
+        "flooded_labyrinth",
+        "smugglers_warren",
+        "tide_hall",
+        "temple_sanctum",
+        "paddy_sump",
+        "bund_shrine",
+        "bund_warden"
+      ]
+    },
+    "amberwood_estate": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/amberwood_insides/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          192.0,
+          192.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "amberwood",
+      "insidesOf": "amberwood",
+      "sections": [
+        "AmberHall",
+        "CinderChapel",
+        "GateUndercroft",
+        "Motherroot"
+      ]
+    },
+    "grey_moors_insides": {
+      "alias": "grey_moor_barrows"
+    },
+    "manymouth_delta_insides": {
+      "alias": "manymouth_flooded_labyrinth"
+    },
+    "ssarathi_insides": {
+      "alias": "ssarathi_royal_archive"
+    },
+    "amberwood_insides": {
+      "alias": "amberwood_estate"
     }
   }
 }

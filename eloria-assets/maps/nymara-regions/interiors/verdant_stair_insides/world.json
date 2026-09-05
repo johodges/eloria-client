@@ -23,7 +23,7 @@
         18.92
       ],
       "max": [
-        284.55,
+        334.55,
         21.4,
         313.55
       ]
@@ -35,14 +35,14 @@
         20.45
       ],
       "max": [
-        284.55,
+        334.55,
         15.11,
         313.55
       ]
     },
     "interiorClass": "insides",
     "parentRegion": "verdant_stair",
-    "serverCells": 297
+    "serverCells": 324
   },
   "coordinateTransform": {
     "metresPerTile": 1.0,
@@ -116,12 +116,48 @@
       "rotationDegrees": 0,
       "surface": "Walk",
       "section": "stair_quarry"
+    },
+    {
+      "id": "physick-still-door",
+      "name": "Tessara's Still Room",
+      "position": [
+        318.0,
+        0.05,
+        175.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "physick_still"
+    },
+    {
+      "id": "anchor-hollow-mouth",
+      "name": "The Anchor Hollow",
+      "position": [
+        318.0,
+        0.05,
+        40.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "anchor_hollow"
+    },
+    {
+      "id": "nine-lost-door",
+      "name": "The Shrine of the Nine Lost",
+      "position": [
+        318.0,
+        0.05,
+        124.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "nine_lost"
     }
   ],
   "collision": {
     "binary": "collision.bin",
     "format": "EWCG-v1",
-    "width": 546,
+    "width": 648,
     "height": 594,
     "cellMetres": 0.5,
     "originMetres": [
@@ -138,9 +174,9 @@
       "zeroMeansBlocked": true,
       "note": "Step is fitted to this interior's own vertical range, so the six-bit field spans it without clamping. The Godot loader still takes elevation from the rendered Walk_ surfaces; this grid is authoritative only for walkability."
     },
-    "walkableCells": 60332,
-    "blockedCells": 263992,
-    "walkableFraction": 0.186,
+    "walkableCells": 68480,
+    "blockedCells": 316432,
+    "walkableFraction": 0.1779,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
@@ -151,12 +187,15 @@
       "Roof_verdant_stair_insides_verdant_jade",
       "Roof_verdant_stair_insides_verdant_limestone_cliff",
       "Roof_verdant_stair_insides_verdant_mossy_stone",
+      "Roof_verdant_stair_insides_verdant_terrace_stone",
+      "Build_verdant_stair_insides_amber_glass",
       "Build_verdant_stair_insides_amber_resin",
       "Build_verdant_stair_insides_ashlar",
       "Build_verdant_stair_insides_bark_dark",
       "Build_verdant_stair_insides_bark_pale",
       "Build_verdant_stair_insides_dark_iron",
       "Build_verdant_stair_insides_gilt_brass",
+      "Build_verdant_stair_insides_pale_ashlar",
       "Build_verdant_stair_insides_rubble_stone",
       "Build_verdant_stair_insides_thatch_reed",
       "Build_verdant_stair_insides_timber_dark",
@@ -171,6 +210,7 @@
       "Build_verdant_stair_insides_verdant_vine",
       "Build_verdant_stair_insides_verdant_wet_limestone",
       "Build_verdant_stair_insides_water_cenote",
+      "Build_verdant_stair_insides_water_deep",
       "Build_verdant_stair_insides_water_pool",
       "Build_verdant_stair_insides_water_stream",
       "Build_verdant_stair_insides_woven_cloth"
@@ -183,7 +223,8 @@
       "Roof_verdant_stair_insides_verdant_carved_jade",
       "Roof_verdant_stair_insides_verdant_jade",
       "Roof_verdant_stair_insides_verdant_limestone_cliff",
-      "Roof_verdant_stair_insides_verdant_mossy_stone"
+      "Roof_verdant_stair_insides_verdant_mossy_stone",
+      "Roof_verdant_stair_insides_verdant_terrace_stone"
     ],
     "reason": "interior lids; the isometric rig frames the floor, not the roof"
   },
@@ -261,6 +302,51 @@
       "destinationMap": "verdant_stair",
       "destinationSpawn": "stair-quarry-adit",
       "section": "stair_quarry",
+      "authority": "server"
+    },
+    {
+      "id": "exit-physick-still-door",
+      "name": "Return to Verdant Stair",
+      "type": "map-transition",
+      "position": [
+        318.0,
+        0.05,
+        175.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "verdant_stair",
+      "destinationSpawn": "physick-still-door",
+      "section": "physick_still",
+      "authority": "server"
+    },
+    {
+      "id": "exit-anchor-hollow-mouth",
+      "name": "Return to Verdant Stair",
+      "type": "map-transition",
+      "position": [
+        318.0,
+        0.05,
+        40.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "verdant_stair",
+      "destinationSpawn": "anchor-hollow-mouth",
+      "section": "anchor_hollow",
+      "authority": "server"
+    },
+    {
+      "id": "exit-nine-lost-door",
+      "name": "Return to Verdant Stair",
+      "type": "map-transition",
+      "position": [
+        318.0,
+        0.05,
+        124.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "verdant_stair",
+      "destinationSpawn": "nine-lost-door",
+      "section": "nine_lost",
       "authority": "server"
     }
   ],
@@ -377,6 +463,76 @@
       "notes": [
         "The face is a working one: blocks are still keyed into it with the wedge channels cut round them, rather than the room being a finished cavity.",
         "The sump is the only water in this section and it is not walkable; the shelf around it is."
+      ]
+    },
+    {
+      "id": "physick_still",
+      "name": "Tessara's Still Room",
+      "class": "dwelling",
+      "offset": [
+        318.0,
+        0.0,
+        174.0
+      ],
+      "arrival": [
+        318.0,
+        0.05,
+        175.0
+      ],
+      "spaces": [
+        "physick_still.hall",
+        "physick_still.back"
+      ],
+      "notes": [
+        "Built from the shared small-room kit: a hall with a hearth and a back room for its trade (still)."
+      ]
+    },
+    {
+      "id": "anchor_hollow",
+      "name": "The Anchor Hollow",
+      "class": "cave",
+      "offset": [
+        318.0,
+        0.0,
+        40.0
+      ],
+      "arrival": [
+        318.0,
+        0.05,
+        40.0
+      ],
+      "spaces": [
+        "anchor_hollow.mouth",
+        "anchor_hollow.throat",
+        "anchor_hollow.chamber",
+        "anchor_hollow.descent",
+        "anchor_hollow.gullet"
+      ],
+      "notes": [
+        "Built from the shared small-room kit: mouth, throat and chamber, dressed for the region above it."
+      ]
+    },
+    {
+      "id": "nine_lost",
+      "name": "The Shrine of the Nine Lost",
+      "class": "shrine",
+      "offset": [
+        318.0,
+        0.0,
+        124.0
+      ],
+      "arrival": [
+        318.0,
+        0.05,
+        124.0
+      ],
+      "spaces": [
+        "nine_lost.porch",
+        "nine_lost.nave",
+        "nine_lost.aisle"
+      ],
+      "notes": [
+        "Built from the shared small-room kit: a cut sanctuary in the water manner."
       ]
     }
   ],
@@ -523,6 +679,39 @@
         297.0
       ],
       "section": "stair_quarry"
+    },
+    {
+      "id": "verdant_physick_still-hearth",
+      "name": "Tessara's Still Room",
+      "space": "physick_still.hall",
+      "position": [
+        318.0,
+        1.4,
+        175.0
+      ],
+      "section": "physick_still"
+    },
+    {
+      "id": "verdant_anchor_hollow-chamber",
+      "name": "The Anchor Hollow",
+      "space": "anchor_hollow.chamber",
+      "position": [
+        318.0,
+        -4.0,
+        91.0
+      ],
+      "section": "anchor_hollow"
+    },
+    {
+      "id": "verdant_nine_lost-sanctuary",
+      "name": "The Shrine of the Nine Lost",
+      "space": "nine_lost.nave",
+      "position": [
+        318.0,
+        0.4,
+        146.0
+      ],
+      "section": "nine_lost"
     }
   ],
   "interactives": [
@@ -618,6 +807,18 @@
       ],
       "authority": "server",
       "section": "banyan_hollow"
+    },
+    {
+      "id": "verdant_anchor_hollow-den",
+      "name": "Moonshadow Lynx",
+      "kind": "creature-zone",
+      "position": [
+        318.0,
+        -6.0,
+        91.0
+      ],
+      "radius": 12.0,
+      "section": "anchor_hollow"
     }
   ],
   "harvestables": [
@@ -1394,6 +1595,166 @@
       ],
       "range": 9.0,
       "energy": 1.5
+    },
+    {
+      "id": "lantern-43",
+      "kind": "point",
+      "position": [
+        318.0,
+        2.28,
+        175.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-44",
+      "kind": "point",
+      "position": [
+        319.0,
+        1.98,
+        183.28
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-45",
+      "kind": "point",
+      "position": [
+        318.0,
+        2.58,
+        38.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-46",
+      "kind": "point",
+      "position": [
+        318.0,
+        -0.82,
+        61.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-47",
+      "kind": "point",
+      "position": [
+        310.0,
+        -2.42,
+        91.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-48",
+      "kind": "point",
+      "position": [
+        326.0,
+        -2.42,
+        91.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-49",
+      "kind": "point",
+      "position": [
+        318.0,
+        2.78,
+        124.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-50",
+      "kind": "point",
+      "position": [
+        313.0,
+        2.98,
+        140.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-51",
+      "kind": "point",
+      "position": [
+        323.0,
+        2.98,
+        146.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-52",
+      "kind": "point",
+      "position": [
+        318.0,
+        3.38,
+        153.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
     }
   ],
   "environment": {
@@ -1704,6 +2065,86 @@
       "z1": 283.3,
       "floor": -8.4,
       "height": 4.4
+    },
+    "physick_still.hall": {
+      "x0": 313.0,
+      "x1": 323.0,
+      "z0": 170.0,
+      "z1": 180.0,
+      "floor": 0.0,
+      "height": 3.4
+    },
+    "physick_still.back": {
+      "x0": 315.0,
+      "x1": 323.0,
+      "z0": 180.55,
+      "z1": 186.0,
+      "floor": 0.0,
+      "height": 3.0
+    },
+    "anchor_hollow.mouth": {
+      "x0": 312.0,
+      "x1": 324.0,
+      "z0": 34.0,
+      "z1": 46.0,
+      "floor": 0.0,
+      "height": 5.4
+    },
+    "anchor_hollow.throat": {
+      "x0": 313.0,
+      "x1": 323.0,
+      "z0": 56.0,
+      "z1": 66.0,
+      "floor": -3.6,
+      "height": 5.6
+    },
+    "anchor_hollow.chamber": {
+      "x0": 302.0,
+      "x1": 334.0,
+      "z0": 76.0,
+      "z1": 106.0,
+      "floor": -6.0,
+      "height": 11.0
+    },
+    "anchor_hollow.descent": {
+      "x0": 315.6,
+      "x1": 320.4,
+      "z0": 43.6,
+      "z1": 58.4,
+      "floor": -3.6,
+      "height": 4.4
+    },
+    "anchor_hollow.gullet": {
+      "x0": 315.7,
+      "x1": 320.3,
+      "z0": 63.7,
+      "z1": 78.3,
+      "floor": -6.0,
+      "height": 4.4
+    },
+    "nine_lost.porch": {
+      "x0": 314.0,
+      "x1": 322.0,
+      "z0": 120.0,
+      "z1": 128.0,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "nine_lost.nave": {
+      "x0": 310.0,
+      "x1": 326.0,
+      "z0": 136.0,
+      "z1": 156.0,
+      "floor": -1.2,
+      "height": 7.0
+    },
+    "nine_lost.aisle": {
+      "x0": 316.4,
+      "x1": 319.6,
+      "z0": 126.4,
+      "z1": 137.6,
+      "floor": -1.2,
+      "height": 3.6
     }
   },
   "conceptArt": {
@@ -1739,20 +2180,28 @@
       "The Stair Quarry: blocks keyed into the face",
       "The Stair Quarry: the sorting floor",
       "The Stair Quarry: the winze down",
-      "The Stair Quarry: the flooded sump"
+      "The Stair Quarry: the flooded sump",
+      "Tessara's Still Room: the hall and hearth",
+      "Tessara's Still Room: the still",
+      "The Anchor Hollow: cave mouth from within",
+      "The Anchor Hollow: the descent",
+      "The Anchor Hollow: the chamber",
+      "The Shrine of the Nine Lost: the porch",
+      "The Shrine of the Nine Lost: the nave",
+      "The Shrine of the Nine Lost: the sanctuary"
     ]
   },
   "performance": {
-    "nodes": 36,
-    "meshes": 35,
-    "materials": 25,
-    "images": 72,
-    "textures": 72,
-    "accessors": 175,
-    "bufferViews": 247,
-    "uniqueTriangles": 61673,
-    "uniqueVertices": 69599,
-    "glbBytes": 10430792,
+    "nodes": 40,
+    "meshes": 39,
+    "materials": 28,
+    "images": 78,
+    "textures": 78,
+    "accessors": 195,
+    "bufferViews": 273,
+    "uniqueTriangles": 72045,
+    "uniqueVertices": 80875,
+    "glbBytes": 11478332,
     "nodeNames": [
       "Interior_verdant_stair_insides",
       "Roof_verdant_stair_insides_bark_dark",
@@ -1761,12 +2210,15 @@
       "Roof_verdant_stair_insides_verdant_jade",
       "Roof_verdant_stair_insides_verdant_limestone_cliff",
       "Roof_verdant_stair_insides_verdant_mossy_stone",
+      "Roof_verdant_stair_insides_verdant_terrace_stone",
+      "Build_verdant_stair_insides_amber_glass",
       "Build_verdant_stair_insides_amber_resin",
       "Build_verdant_stair_insides_ashlar",
       "Build_verdant_stair_insides_bark_dark",
       "Build_verdant_stair_insides_bark_pale",
       "Build_verdant_stair_insides_dark_iron",
       "Build_verdant_stair_insides_gilt_brass",
+      "Build_verdant_stair_insides_pale_ashlar",
       "Build_verdant_stair_insides_rubble_stone",
       "Build_verdant_stair_insides_thatch_reed",
       "Build_verdant_stair_insides_timber_dark",
@@ -1781,6 +2233,7 @@
       "Build_verdant_stair_insides_verdant_vine",
       "Build_verdant_stair_insides_verdant_wet_limestone",
       "Build_verdant_stair_insides_water_cenote",
+      "Build_verdant_stair_insides_water_deep",
       "Build_verdant_stair_insides_water_pool",
       "Build_verdant_stair_insides_water_stream",
       "Build_verdant_stair_insides_woven_cloth",

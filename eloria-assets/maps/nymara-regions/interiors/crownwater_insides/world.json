@@ -23,7 +23,7 @@
         5.65
       ],
       "max": [
-        316.26,
+        354.55,
         27.17,
         339.4
       ]
@@ -35,14 +35,14 @@
         53.45
       ],
       "max": [
-        304.55,
+        354.55,
         26.0,
         334.55
       ]
     },
     "interiorClass": "insides",
     "parentRegion": "amberwood",
-    "serverCells": 300
+    "serverCells": 348
   },
   "coordinateTransform": {
     "metresPerTile": 1.0,
@@ -113,12 +113,45 @@
       "rotationDegrees": 0,
       "surface": "Walk",
       "section": "tide_campanile"
+    },
+    {
+      "id": "eleventh-bell-door",
+      "position": [
+        338.0,
+        0.05,
+        60.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "eleventh_bell"
+    },
+    {
+      "id": "case-room-door",
+      "position": [
+        338.0,
+        0.05,
+        121.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "case_room"
+    },
+    {
+      "id": "grating-mouth",
+      "position": [
+        338.0,
+        0.05,
+        180.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "the_grating"
     }
   ],
   "collision": {
     "binary": "collision.bin",
     "format": "EWCG-v1",
-    "width": 600,
+    "width": 696,
     "height": 570,
     "cellMetres": 0.5,
     "originMetres": [
@@ -135,9 +168,9 @@
       "zeroMeansBlocked": true,
       "note": "Step is fitted to this interior's own vertical range, so the six-bit field spans it without clamping. The Godot loader still takes elevation from the rendered Walk_ surfaces; this grid is authoritative only for walkability."
     },
-    "walkableCells": 38724,
-    "blockedCells": 303276,
-    "walkableFraction": 0.1132,
+    "walkableCells": 46872,
+    "blockedCells": 349848,
+    "walkableFraction": 0.1181,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
@@ -156,12 +189,14 @@
       "Build_crownwater_insides_crownwater_verdigris",
       "Build_crownwater_insides_dark_iron",
       "Build_crownwater_insides_lime_plaster",
+      "Build_crownwater_insides_pale_ashlar",
       "Build_crownwater_insides_rubble_stone",
       "Build_crownwater_insides_timber_dark",
       "Build_crownwater_insides_timber_grey",
       "Build_crownwater_insides_timber_warm",
       "Build_crownwater_insides_water_deep",
-      "Build_crownwater_insides_water_pool"
+      "Build_crownwater_insides_water_pool",
+      "Build_crownwater_insides_woven_cloth"
     ]
   },
   "cutaway": {
@@ -247,6 +282,51 @@
       "destinationSpawn": "default",
       "radius": 2.5,
       "section": "tide_campanile",
+      "authority": "server"
+    },
+    {
+      "id": "exit-eleventh-bell-door",
+      "name": "Return to Crownwater (The Eleventh Bell)",
+      "type": "map-transition",
+      "position": [
+        338.0,
+        0.05,
+        60.0
+      ],
+      "destinationMap": "crownwater",
+      "destinationSpawn": "default",
+      "radius": 2.5,
+      "section": "eleventh_bell",
+      "authority": "server"
+    },
+    {
+      "id": "exit-case-room-door",
+      "name": "Return to Crownwater (The Case Room)",
+      "type": "map-transition",
+      "position": [
+        338.0,
+        0.05,
+        121.0
+      ],
+      "destinationMap": "crownwater",
+      "destinationSpawn": "default",
+      "radius": 2.5,
+      "section": "case_room",
+      "authority": "server"
+    },
+    {
+      "id": "exit-grating-mouth",
+      "name": "Return to Crownwater (The Grating)",
+      "type": "map-transition",
+      "position": [
+        338.0,
+        0.05,
+        180.0
+      ],
+      "destinationMap": "crownwater",
+      "destinationSpawn": "default",
+      "radius": 2.5,
+      "section": "the_grating",
       "authority": "server"
     }
   ],
@@ -339,6 +419,36 @@
         60.0,
         22.0,
         300.0
+      ]
+    },
+    {
+      "id": "eleventh_bell-crownwater_eleventh_bell-sanctuary",
+      "name": "The Eleventh Bell",
+      "space": "eleventh_bell.nave",
+      "position": [
+        338.0,
+        0.4,
+        82.0
+      ]
+    },
+    {
+      "id": "case_room-crownwater_case_room-hearth",
+      "name": "The Case Room",
+      "space": "case_room.hall",
+      "position": [
+        338.0,
+        1.4,
+        121.0
+      ]
+    },
+    {
+      "id": "the_grating-crownwater_grating-chamber",
+      "name": "The Grating",
+      "space": "the_grating.chamber",
+      "position": [
+        338.0,
+        -4.0,
+        231.0
       ]
     }
   ],
@@ -440,6 +550,18 @@
       ],
       "authority": "server",
       "section": "customs_hall"
+    },
+    {
+      "id": "crownwater_grating-den",
+      "name": "Abyssal Armoured Fish",
+      "kind": "creature-zone",
+      "position": [
+        338.0,
+        -6.0,
+        231.0
+      ],
+      "radius": 12.0,
+      "section": "the_grating"
     }
   ],
   "harvestables": [
@@ -878,6 +1000,176 @@
         "range": 15.0,
         "energy": 3.4,
         "attenuation": 1.2
+      },
+      {
+        "id": "lantern-22",
+        "kind": "point",
+        "position": [
+          338.0,
+          2.78,
+          60.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-23",
+        "kind": "point",
+        "position": [
+          333.0,
+          2.98,
+          76.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-24",
+        "kind": "point",
+        "position": [
+          343.0,
+          2.98,
+          82.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-25",
+        "kind": "point",
+        "position": [
+          338.0,
+          3.38,
+          89.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-26",
+        "kind": "point",
+        "position": [
+          338.0,
+          2.28,
+          121.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-27",
+        "kind": "point",
+        "position": [
+          339.0,
+          1.98,
+          129.28
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-28",
+        "kind": "point",
+        "position": [
+          338.0,
+          2.58,
+          178.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-29",
+        "kind": "point",
+        "position": [
+          338.0,
+          -0.82,
+          201.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-30",
+        "kind": "point",
+        "position": [
+          330.0,
+          -2.42,
+          231.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-31",
+        "kind": "point",
+        "position": [
+          346.0,
+          -2.42,
+          231.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
       }
     ]
   },
@@ -1105,6 +1397,86 @@
       "z1": 305.0,
       "floor": 0.0,
       "height": 26.0
+    },
+    "eleventh_bell.porch": {
+      "x0": 334.0,
+      "z0": 56.0,
+      "x1": 342.0,
+      "z1": 64.0,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "eleventh_bell.nave": {
+      "x0": 330.0,
+      "z0": 72.0,
+      "x1": 346.0,
+      "z1": 92.0,
+      "floor": -1.2,
+      "height": 7.0
+    },
+    "eleventh_bell.aisle": {
+      "x0": 336.4,
+      "z0": 62.4,
+      "x1": 339.6,
+      "z1": 73.6,
+      "floor": -1.2,
+      "height": 3.6
+    },
+    "case_room.hall": {
+      "x0": 333.0,
+      "z0": 116.0,
+      "x1": 343.0,
+      "z1": 126.0,
+      "floor": 0.0,
+      "height": 3.4
+    },
+    "case_room.back": {
+      "x0": 335.0,
+      "z0": 126.55,
+      "x1": 343.0,
+      "z1": 132.0,
+      "floor": 0.0,
+      "height": 3.0
+    },
+    "the_grating.mouth": {
+      "x0": 332.0,
+      "z0": 174.0,
+      "x1": 344.0,
+      "z1": 186.0,
+      "floor": 0.0,
+      "height": 5.4
+    },
+    "the_grating.throat": {
+      "x0": 333.0,
+      "z0": 196.0,
+      "x1": 343.0,
+      "z1": 206.0,
+      "floor": -3.6,
+      "height": 5.6
+    },
+    "the_grating.chamber": {
+      "x0": 322.0,
+      "z0": 216.0,
+      "x1": 354.0,
+      "z1": 246.0,
+      "floor": -6.0,
+      "height": 11.0
+    },
+    "the_grating.descent": {
+      "x0": 335.6,
+      "z0": 183.6,
+      "x1": 340.4,
+      "z1": 198.4,
+      "floor": -3.6,
+      "height": 4.4
+    },
+    "the_grating.gullet": {
+      "x0": 335.7,
+      "z0": 203.7,
+      "x1": 340.3,
+      "z1": 218.3,
+      "floor": -6.0,
+      "height": 4.4
     }
   },
   "conceptArt": {
@@ -1136,20 +1508,28 @@
       "customs_hall.water_gate",
       "tide_campanile.shaft",
       "tide_campanile.shaft",
-      "tide_campanile.shaft"
+      "tide_campanile.shaft",
+      "eleventh_bell.the porch",
+      "eleventh_bell.the nave",
+      "eleventh_bell.the sanctuary",
+      "case_room.the hall and hearth",
+      "case_room.the chandlery",
+      "the_grating.cave mouth from within",
+      "the_grating.the descent",
+      "the_grating.the chamber"
     ]
   },
   "performance": {
-    "nodes": 27,
-    "meshes": 26,
-    "materials": 18,
-    "images": 50,
-    "textures": 50,
-    "accessors": 130,
-    "bufferViews": 180,
-    "uniqueTriangles": 75590,
-    "uniqueVertices": 75181,
-    "glbBytes": 9885780,
+    "nodes": 30,
+    "meshes": 29,
+    "materials": 21,
+    "images": 58,
+    "textures": 58,
+    "accessors": 145,
+    "bufferViews": 203,
+    "uniqueTriangles": 85708,
+    "uniqueVertices": 86321,
+    "glbBytes": 11437072,
     "nodeNames": [
       "Interior_crownwater_insides",
       "Roof_crownwater_insides_ashlar",
@@ -1166,16 +1546,19 @@
       "Build_crownwater_insides_crownwater_verdigris",
       "Build_crownwater_insides_dark_iron",
       "Build_crownwater_insides_lime_plaster",
+      "Build_crownwater_insides_pale_ashlar",
       "Build_crownwater_insides_rubble_stone",
       "Build_crownwater_insides_timber_dark",
       "Build_crownwater_insides_timber_grey",
       "Build_crownwater_insides_timber_warm",
       "Build_crownwater_insides_water_deep",
       "Build_crownwater_insides_water_pool",
+      "Build_crownwater_insides_woven_cloth",
       "Walk_cobble_paving",
       "Walk_crownwater_marble",
       "Walk_crownwater_mosaic",
       "Walk_crownwater_sand",
+      "Walk_packed_earth",
       "Walk_rubble_stone",
       "Walk_timber_warm"
     ]
@@ -1207,6 +1590,9 @@
     "[drowned_crown] Water level is held at y = -6.05 throughout; rooms step down beneath it rather than the water rising to meet them.",
     "[tide_campanile] Modelled as one 26 m shaft with flights and landings added as walk geometry, not as stacked chambers.",
     "[tide_campanile] The ringing floor and belfry gallery are annular. The client places an actor on the first surface a downward ray meets, so a full-footprint deck would ground every placement in the tower on the topmost floor. A player can still WALK the stair normally - only placement is single-layer - but no spawn or portal may sit beneath a deck.",
+    "[eleventh_bell] Built from the shared small-room kit: a cut sanctuary in the lantern manner.",
+    "[case_room] Built from the shared small-room kit: a hall with a hearth and a back room for its trade (chandlery).",
+    "[the_grating] Built from the shared small-room kit: mouth, throat and chamber, dressed for the region above it.",
     "Four insides on one map with blackspace between them, following amethyst_barrens_insides. Cells between sections are zero in collision.bin because no Walk_ surface covers them - the void is not drawn, it is simply the absence of floor."
   ],
   "productionStatus": "authored-geometry-materials-population",
@@ -1363,6 +1749,117 @@
         ]
       },
       "surfaceLandmark": "crownwater-campanile"
+    },
+    {
+      "id": "eleventh_bell",
+      "name": "The Eleventh Bell",
+      "class": "shrine",
+      "spawn": "eleventh-bell-door",
+      "entrance": "eleventh_bell.porch",
+      "offset": [
+        338.0,
+        60.0
+      ],
+      "arrival": [
+        338.0,
+        0.05,
+        60.0
+      ],
+      "bounds": {
+        "min": [
+          330.0,
+          56.0
+        ],
+        "max": [
+          346.0,
+          92.0
+        ]
+      },
+      "entranceBounds": {
+        "min": [
+          334.0,
+          56.0
+        ],
+        "max": [
+          342.0,
+          64.0
+        ]
+      },
+      "surfaceLandmark": "crownwater-pavilion-pavilion_northeast"
+    },
+    {
+      "id": "case_room",
+      "name": "The Case Room",
+      "class": "dwelling",
+      "spawn": "case-room-door",
+      "entrance": "case_room.hall",
+      "offset": [
+        338.0,
+        120.0
+      ],
+      "arrival": [
+        338.0,
+        0.05,
+        121.0
+      ],
+      "bounds": {
+        "min": [
+          333.0,
+          116.0
+        ],
+        "max": [
+          343.0,
+          132.0
+        ]
+      },
+      "entranceBounds": {
+        "min": [
+          333.0,
+          116.0
+        ],
+        "max": [
+          343.0,
+          126.0
+        ]
+      },
+      "surfaceLandmark": "crownwater-pavilion-pavilion_east"
+    },
+    {
+      "id": "the_grating",
+      "name": "The Grating",
+      "class": "cave",
+      "spawn": "grating-mouth",
+      "entrance": "the_grating.mouth",
+      "offset": [
+        338.0,
+        180.0
+      ],
+      "arrival": [
+        338.0,
+        0.05,
+        180.0
+      ],
+      "bounds": {
+        "min": [
+          322.0,
+          174.0
+        ],
+        "max": [
+          354.0,
+          246.0
+        ]
+      },
+      "entranceBounds": {
+        "min": [
+          332.0,
+          174.0
+        ],
+        "max": [
+          344.0,
+          186.0
+        ]
+      },
+      "surfaceLandmark": "crownwater-pavilion-pavilion_south"
     }
   ]
 }

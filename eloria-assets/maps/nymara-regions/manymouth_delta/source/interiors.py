@@ -1193,3 +1193,41 @@ def combine(seed: int = 20260830) -> Interior:
         "ring-arch that stands out of the whirlpool on the region map.",
     ]
     return combined
+
+
+# ---- small rooms (shared kit) ----
+from amberwood import smallrooms as SR
+
+
+def paddy_sump(seed: int = 20260905) -> Interior:
+    """The sump under the Paddy Watch, where the crabs come up the drain."""
+    return SR.cave("manymouth_paddy_sump", "The Paddy Watch Sump", "paddy-watchtower",
+                   [-12.0, 1.8, -276.0], "paddy-sump-mouth",
+                   palette={"floor": "packed_earth", "rock": ROCK, "water": "water_deep",
+                            "bone": "pale_ashlar"},
+                   seed=seed, den="Manymouth Crab", pool=True)
+
+
+def bund_shrine(seed: int = 20260906) -> Interior:
+    """The shrine the bund-cutting rite opens from."""
+    return SR.shrine("manymouth_bund_shrine", "The Bund Shrine", "south-shrine",
+                     [72.0, 1.1, 123.0], "bund-shrine-door",
+                     palette={"floor": "verdant_terrace_stone", "wall": RUBBLE, "ceil": RUBBLE,
+                              "accent": "verdant_carved_jade", "water": "water_deep",
+                              "metal": IRON},
+                     seed=seed, style="water")
+
+
+def bund_warden(seed: int = 20260907) -> Interior:
+    """Sentry Ossa-Kel's house at the paddy hamlet."""
+    return SR.cottage("manymouth_bund_warden", "The Bund Warden's House", "paddy-hamlet",
+                      [-40.0, 1.6, -300.0], "bund-warden-door",
+                      palette={"floor": TIMBER_DARK, "wall": "timber_grey", "roof": "thatch_reed",
+                               "timber": TIMBER_DARK, "stone": RUBBLE, "cloth": BANNER,
+                               "iron": IRON},
+                      seed=seed, trade="hearth")
+
+
+ALL.update({"paddy_sump": paddy_sump, "bund_shrine": bund_shrine, "bund_warden": bund_warden})
+LAYOUT.update({"paddy_sump": (192.0, 6.0), "bund_shrine": (192.0, 90.0),
+               "bund_warden": (192.0, 140.0)})

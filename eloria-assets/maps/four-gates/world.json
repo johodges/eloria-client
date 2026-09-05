@@ -639,40 +639,72 @@
       "position": [
         0.0,
         29.0,
-        664.0
+        357.0
       ],
-      "radius": 9.0,
-      "targetHook": "nymara.south"
+      "radius": 3.5,
+      "name": "South Gate: the causeway to the Ssarathi Ruins",
+      "type": "map-transition",
+      "serverTile": [
+        360,
+        3
+      ],
+      "destinationMap": "ssarathi_ruins",
+      "authority": "server",
+      "note": "The server's Four Gates map is the walled city, so the crossing is the gate passage itself; the rim road beyond the water is scenery."
     },
     {
       "id": "east",
       "position": [
-        664.0,
+        356.0,
         29.0,
         0.0
       ],
-      "radius": 9.0,
-      "targetHook": "nymara.east"
+      "radius": 3.5,
+      "name": "East Gate: the causeway to the Sunmane Steppe",
+      "type": "map-transition",
+      "serverTile": [
+        716,
+        360
+      ],
+      "destinationMap": "sunmane_steppe",
+      "authority": "server",
+      "note": "The server's Four Gates map is the walled city, so the crossing is the gate passage itself; the rim road beyond the water is scenery."
     },
     {
       "id": "west",
       "position": [
-        -664.0,
+        -357.0,
         29.0,
         0.0
       ],
-      "radius": 9.0,
-      "targetHook": "nymara.west"
+      "radius": 3.5,
+      "name": "West Gate: the causeway to Crownwater",
+      "type": "map-transition",
+      "serverTile": [
+        3,
+        360
+      ],
+      "destinationMap": "crownwater",
+      "authority": "server",
+      "note": "The server's Four Gates map is the walled city, so the crossing is the gate passage itself; the rim road beyond the water is scenery."
     },
     {
       "id": "north",
       "position": [
         0.0,
-        74.0,
-        -678.0
+        29.0,
+        -356.0
       ],
-      "radius": 9.0,
-      "targetHook": "nymara.sanctuary"
+      "radius": 3.5,
+      "name": "North Gate: the sanctuary stair to Mirrorhold",
+      "type": "map-transition",
+      "serverTile": [
+        360,
+        716
+      ],
+      "destinationMap": "mirrorhold",
+      "authority": "server",
+      "note": "The server's Four Gates map is the walled city, so the crossing is the gate passage itself; the rim road beyond the water is scenery."
     },
     {
       "id": "interior-four-gates-lantern-row",
@@ -770,13 +802,13 @@
       "id": "mirror-reed-01",
       "resource": "mirror-reed",
       "position": [
-        -68.84,
+        -37.0,
         31.15,
-        131.16
+        121.0
       ],
       "serverTile": [
-        291,
-        229
+        323,
+        239
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -802,61 +834,13 @@
       "id": "mirror-reed-03",
       "resource": "mirror-reed",
       "position": [
-        -37.0,
+        -69.0,
         31.15,
-        121.0
+        131.0
       ],
       "serverTile": [
-        323,
-        239
-      ],
-      "radius": 2.5,
-      "respawnSeconds": 90,
-      "authority": "server"
-    },
-    {
-      "id": "pale-quartz-01",
-      "resource": "pale-quartz",
-      "position": [
-        -52.09,
-        31.15,
-        -154.42
-      ],
-      "serverTile": [
-        308,
-        514
-      ],
-      "radius": 2.5,
-      "respawnSeconds": 90,
-      "authority": "server"
-    },
-    {
-      "id": "pale-quartz-02",
-      "resource": "pale-quartz",
-      "position": [
-        -31.63,
-        31.15,
-        -126.51
-      ],
-      "serverTile": [
-        328,
-        487
-      ],
-      "radius": 2.5,
-      "respawnSeconds": 90,
-      "authority": "server"
-    },
-    {
-      "id": "pale-quartz-03",
-      "resource": "pale-quartz",
-      "position": [
-        -11.16,
-        31.15,
-        -167.44
-      ],
-      "serverTile": [
-        349,
-        527
+        291,
+        229
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -866,9 +850,9 @@
       "id": "resonant-crystal-01",
       "resource": "resonant-crystal",
       "position": [
-        110.7,
+        111.0,
         31.15,
-        55.81
+        56.0
       ],
       "serverTile": [
         471,
@@ -882,9 +866,9 @@
       "id": "resonant-crystal-02",
       "resource": "resonant-crystal",
       "position": [
-        130.23,
+        130.0,
         31.15,
-        31.63
+        32.0
       ],
       "serverTile": [
         490,
@@ -895,48 +879,128 @@
       "authority": "server"
     },
     {
-      "id": "riverflax-01",
-      "resource": "riverflax",
+      "id": "stormglass-shard-01",
+      "resource": "stormglass-shard",
       "position": [
-        -48.37,
+        -113.0,
         31.15,
-        131.16
+        54.0
       ],
       "serverTile": [
-        312,
-        229
+        247,
+        306
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
       "authority": "server"
     },
     {
-      "id": "riverflax-02",
-      "resource": "riverflax",
+      "id": "stormglass-shard-02",
+      "resource": "stormglass-shard",
       "position": [
-        -3.72,
+        -97.0,
         31.15,
-        146.98
+        32.0
       ],
       "serverTile": [
-        356,
-        213
+        263,
+        328
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
       "authority": "server"
     },
     {
-      "id": "riverflax-03",
-      "resource": "riverflax",
+      "id": "sunmane-seed-01",
+      "resource": "sunmane-seed",
       "position": [
-        48.37,
+        43.0,
         31.15,
-        127.44
+        -117.0
       ],
       "serverTile": [
-        408,
-        233
+        403,
+        477
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "sunmane-seed-02",
+      "resource": "sunmane-seed",
+      "position": [
+        67.0,
+        31.15,
+        -138.0
+      ],
+      "serverTile": [
+        427,
+        498
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "sunmane-seed-03",
+      "resource": "sunmane-seed",
+      "position": [
+        19.0,
+        31.15,
+        -145.0
+      ],
+      "serverTile": [
+        379,
+        505
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "wayside-sage-01",
+      "resource": "wayside-sage",
+      "position": [
+        -11.0,
+        31.15,
+        112.0
+      ],
+      "serverTile": [
+        349,
+        248
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "wayside-sage-02",
+      "resource": "wayside-sage",
+      "position": [
+        15.0,
+        31.15,
+        104.0
+      ],
+      "serverTile": [
+        375,
+        256
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "wayside-sage-03",
+      "resource": "wayside-sage",
+      "position": [
+        -26.0,
+        31.15,
+        97.0
+      ],
+      "serverTile": [
+        334,
+        263
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -946,25 +1010,9 @@
       "id": "steppe-wheat-01",
       "resource": "steppe-wheat",
       "position": [
-        -27.0,
-        31.15,
-        78.0
-      ],
-      "serverTile": [
-        333,
-        282
-      ],
-      "radius": 2.5,
-      "respawnSeconds": 90,
-      "authority": "server"
-    },
-    {
-      "id": "steppe-wheat-02",
-      "resource": "steppe-wheat",
-      "position": [
         0.0,
         31.15,
-        78.14
+        78.0
       ],
       "serverTile": [
         360,
@@ -975,7 +1023,7 @@
       "authority": "server"
     },
     {
-      "id": "steppe-wheat-03",
+      "id": "steppe-wheat-02",
       "resource": "steppe-wheat",
       "position": [
         24.0,
@@ -991,31 +1039,143 @@
       "authority": "server"
     },
     {
-      "id": "stormglass-shard-01",
-      "resource": "stormglass-shard",
+      "id": "steppe-wheat-03",
+      "resource": "steppe-wheat",
       "position": [
-        -112.56,
+        -27.0,
         31.15,
-        53.95
+        78.0
       ],
       "serverTile": [
-        247,
-        306
+        333,
+        282
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
       "authority": "server"
     },
     {
-      "id": "stormglass-shard-02",
-      "resource": "stormglass-shard",
+      "id": "riverflax-01",
+      "resource": "riverflax",
       "position": [
-        -96.74,
+        -48.0,
         31.15,
-        31.63
+        131.0
       ],
       "serverTile": [
-        263,
+        312,
+        229
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "riverflax-02",
+      "resource": "riverflax",
+      "position": [
+        48.0,
+        31.15,
+        127.0
+      ],
+      "serverTile": [
+        408,
+        233
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "riverflax-03",
+      "resource": "riverflax",
+      "position": [
+        -4.0,
+        31.15,
+        147.0
+      ],
+      "serverTile": [
+        356,
+        213
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "pale-quartz-01",
+      "resource": "pale-quartz",
+      "position": [
+        -32.0,
+        31.15,
+        -127.0
+      ],
+      "serverTile": [
+        328,
+        487
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "pale-quartz-02",
+      "resource": "pale-quartz",
+      "position": [
+        -52.0,
+        31.15,
+        -154.0
+      ],
+      "serverTile": [
+        308,
+        514
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "pale-quartz-03",
+      "resource": "pale-quartz",
+      "position": [
+        -11.0,
+        31.15,
+        -167.0
+      ],
+      "serverTile": [
+        349,
+        527
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "mirror-reed-04",
+      "resource": "mirror-reed",
+      "position": [
+        -329.0,
+        31.15,
+        36.0
+      ],
+      "serverTile": [
+        31,
+        324
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "mirror-reed-05",
+      "resource": "mirror-reed",
+      "position": [
+        -318.0,
+        31.15,
+        32.0
+      ],
+      "serverTile": [
+        42,
         328
       ],
       "radius": 2.5,
@@ -1023,79 +1183,79 @@
       "authority": "server"
     },
     {
-      "id": "sunmane-seed-01",
-      "resource": "sunmane-seed",
+      "id": "mirror-reed-06",
+      "resource": "mirror-reed",
       "position": [
-        18.6,
+        -321.0,
         31.15,
-        -145.12
+        32.0
       ],
       "serverTile": [
-        379,
-        505
+        39,
+        328
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
       "authority": "server"
     },
     {
-      "id": "sunmane-seed-02",
-      "resource": "sunmane-seed",
+      "id": "riverflax-04",
+      "resource": "riverflax",
       "position": [
-        42.79,
+        -92.0,
         31.15,
-        -117.21
+        -38.0
       ],
       "serverTile": [
-        403,
-        477
+        268,
+        398
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
       "authority": "server"
     },
     {
-      "id": "sunmane-seed-03",
-      "resource": "sunmane-seed",
+      "id": "riverflax-05",
+      "resource": "riverflax",
       "position": [
-        66.98,
+        -88.0,
         31.15,
-        -137.67
+        -49.0
       ],
       "serverTile": [
-        427,
-        498
+        272,
+        409
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
       "authority": "server"
     },
     {
-      "id": "wayside-sage-01",
-      "resource": "wayside-sage",
+      "id": "riverflax-06",
+      "resource": "riverflax",
       "position": [
-        -26.05,
+        -91.0,
         31.15,
-        96.74
+        -49.0
       ],
       "serverTile": [
-        334,
-        263
+        269,
+        409
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
       "authority": "server"
     },
     {
-      "id": "wayside-sage-02",
-      "resource": "wayside-sage",
+      "id": "steppe-wheat-04",
+      "resource": "steppe-wheat",
       "position": [
-        -11.16,
+        294.0,
         31.15,
-        111.63
+        112.0
       ],
       "serverTile": [
-        349,
+        654,
         248
       ],
       "radius": 2.5,
@@ -1103,16 +1263,192 @@
       "authority": "server"
     },
     {
-      "id": "wayside-sage-03",
-      "resource": "wayside-sage",
+      "id": "steppe-wheat-05",
+      "resource": "steppe-wheat",
       "position": [
-        14.88,
+        288.0,
         31.15,
-        104.19
+        107.0
       ],
       "serverTile": [
-        375,
-        256
+        648,
+        253
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "steppe-wheat-06",
+      "resource": "steppe-wheat",
+      "position": [
+        294.0,
+        31.15,
+        102.0
+      ],
+      "serverTile": [
+        654,
+        258
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "wayside-sage-04",
+      "resource": "wayside-sage",
+      "position": [
+        224.0,
+        31.15,
+        93.0
+      ],
+      "serverTile": [
+        584,
+        267
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "wayside-sage-05",
+      "resource": "wayside-sage",
+      "position": [
+        233.0,
+        31.15,
+        101.0
+      ],
+      "serverTile": [
+        593,
+        259
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "wayside-sage-06",
+      "resource": "wayside-sage",
+      "position": [
+        225.0,
+        31.15,
+        102.0
+      ],
+      "serverTile": [
+        585,
+        258
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "pale-quartz-04",
+      "resource": "pale-quartz",
+      "position": [
+        84.0,
+        31.15,
+        303.0
+      ],
+      "serverTile": [
+        444,
+        57
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "pale-quartz-05",
+      "resource": "pale-quartz",
+      "position": [
+        76.0,
+        31.15,
+        309.0
+      ],
+      "serverTile": [
+        436,
+        51
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "pale-quartz-06",
+      "resource": "pale-quartz",
+      "position": [
+        72.0,
+        31.15,
+        300.0
+      ],
+      "serverTile": [
+        432,
+        60
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "resonant-crystal-03",
+      "resource": "resonant-crystal",
+      "position": [
+        50.0,
+        31.15,
+        156.0
+      ],
+      "serverTile": [
+        410,
+        204
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "resonant-crystal-04",
+      "resource": "resonant-crystal",
+      "position": [
+        54.0,
+        31.15,
+        159.0
+      ],
+      "serverTile": [
+        414,
+        201
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "sunmane-seed-04",
+      "resource": "sunmane-seed",
+      "position": [
+        -137.0,
+        31.15,
+        277.0
+      ],
+      "serverTile": [
+        223,
+        83
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "sunmane-seed-05",
+      "resource": "sunmane-seed",
+      "position": [
+        -150.0,
+        31.15,
+        277.0
+      ],
+      "serverTile": [
+        210,
+        83
       ],
       "radius": 2.5,
       "respawnSeconds": 90,

@@ -69,6 +69,10 @@ SECTIONS = [
     ("serpent_hatchery", "serpent_hatchery", 217.0, 46.0, "descent"),
     ("drowned_cistern", "drowned_cistern", 69.0, 258.0, "shaft_room"),
     ("root_undercroft", "root_undercroft", 213.0, 264.0, "mouth"),
+    # the small rooms, a column east of the set pieces
+    ("tenth_mouth", "tenth_mouth", 295.0, 38.0, "porch"),
+    ("water_gate_undercut", "water_gate_undercut", 295.0, 110.0, "mouth"),
+    ("lineage_house", "lineage_house", 295.0, 200.0, "hall"),
 ]
 
 SPAWN_FOR = {
@@ -76,6 +80,9 @@ SPAWN_FOR = {
     "serpent_hatchery": "hatchery-descent",
     "drowned_cistern": "cistern-shaft",
     "root_undercroft": "undercroft-mouth",
+    "tenth_mouth": "tenth-mouth-door",
+    "water_gate_undercut": "water-gate-undercut-mouth",
+    "lineage_house": "lineage-house-door",
 }
 
 

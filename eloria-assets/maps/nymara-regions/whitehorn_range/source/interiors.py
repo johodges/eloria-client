@@ -1249,3 +1249,43 @@ def _assert_gutters(footprints) -> None:
                     "sections %r and %r are only %.1f m apart; the layout needs "
                     "at least %.0f m of void between every pair"
                     % (a, b, max(gap_x, gap_z), MIN_GUTTER))
+
+
+# ---- small rooms (shared kit) ----
+from amberwood import smallrooms as SR
+from amberwood.interiors import Interior
+
+
+def snowline_cell(seed: int = 20260905) -> Interior:
+    """The cell the snowline is measured from, cut behind the east shrine."""
+    return SR.shrine("whitehorn_snowline_cell", "The Snowline Cell", "whitehorn-shrine-02",
+                     [354.0, 58.1, -192.0], "snowline-cell-door",
+                     palette={"floor": PAVING, "wall": ASHLAR, "ceil": MARBLE,
+                              "accent": SILVER, "earth": "packed_earth", "metal": BRASS},
+                     seed=seed, style="stone")
+
+
+def cascade_cave(seed: int = 20260906) -> Interior:
+    """A cave behind the west watch, where the meltwater comes through."""
+    return SR.cave("whitehorn_cascade_cave", "The Cascade Cave",
+                   "whitehorn-cairn-field-west_watch", [-132.0, 47.6, -132.0],
+                   "west-watch-cave-mouth",
+                   palette={"floor": "packed_earth", "rock": ROCK, "water": "water_deep",
+                            "bone": "pale_ashlar"},
+                   seed=seed, den="Glacier Crab", pool=True)
+
+
+def gate_store(seed: int = 20260907) -> Interior:
+    """The Ration Sister's store by the Whitehorn Gate."""
+    return SR.cottage("whitehorn_gate_store", "The Ration Sister's Store", "whitehorn-south-gate",
+                      [-12.0, 19.9, 84.0], "gate-store-door",
+                      palette={"floor": TIMBER, "wall": ASHLAR, "roof": TIMBER_DARK,
+                               "timber": TIMBER_DARK, "stone": RUBBLE, "cloth": CLOTH,
+                               "iron": IRON},
+                      seed=seed, trade="chandlery")
+
+
+ALL.update({"snowline_cell": snowline_cell, "cascade_cave": cascade_cave,
+            "gate_store": gate_store})
+LAYOUT.update({"cascade_cave": (200.0, 6.0), "snowline_cell": (200.0, 100.0),
+               "gate_store": (200.0, 170.0)})

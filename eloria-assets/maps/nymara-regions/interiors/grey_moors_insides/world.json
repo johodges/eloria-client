@@ -19,30 +19,30 @@
     "bounds": {
       "min": [
         35.45,
-        -4.6,
+        -7.53,
         35.45
       ],
       "max": [
-        168.8,
-        6.65,
+        225.55,
+        10.95,
         199.55
       ]
     },
     "playableBounds": {
       "min": [
         35.45,
-        -4.6,
+        -6.4,
         35.45
       ],
       "max": [
-        167.55,
+        225.55,
         0.0,
         199.55
       ]
     },
     "interiorClass": "insides",
     "parentRegion": "grey_moors",
-    "serverCells": 168
+    "serverCells": 195
   },
   "coordinateTransform": {
     "metresPerTile": 1.0,
@@ -116,12 +116,48 @@
       "rotationDegrees": 0,
       "surface": "Walk",
       "section": "fen_crypt"
+    },
+    {
+      "id": "fifth-chamber-mouth",
+      "name": "The Fifth Chamber",
+      "position": [
+        201.0,
+        0.05,
+        42.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "fifth_chamber"
+    },
+    {
+      "id": "peat-croft-door",
+      "name": "The Peat Cutter's Croft",
+      "position": [
+        201.0,
+        0.05,
+        177.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "peat_croft"
+    },
+    {
+      "id": "warm-stone-door",
+      "name": "The Warm Stone",
+      "position": [
+        201.0,
+        0.05,
+        126.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "warm_stone"
     }
   ],
   "collision": {
     "binary": "collision.bin",
     "format": "EWCG-v1",
-    "width": 270,
+    "width": 390,
     "height": 336,
     "cellMetres": 0.5,
     "originMetres": [
@@ -129,7 +165,7 @@
       202.0
     ],
     "heightEncoding": {
-      "origin": -4.3,
+      "origin": -6.1,
       "step": 0.1,
       "range": [
         1,
@@ -138,17 +174,20 @@
       "zeroMeansBlocked": true,
       "note": "Step is fitted to this interior's own vertical range, so the six-bit field spans it without clamping. The Godot loader still takes elevation from the rendered Walk_ surfaces; this grid is authoritative only for walkability."
     },
-    "walkableCells": 9972,
-    "blockedCells": 80748,
-    "walkableFraction": 0.1099,
+    "walkableCells": 18728,
+    "blockedCells": 112312,
+    "walkableFraction": 0.1429,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
       "Interior_grey_moors_insides",
       "Roof_grey_moors_insides_cliff_rock",
       "Roof_grey_moors_insides_grey_moor_granite",
+      "Roof_grey_moors_insides_grey_turf_roof",
       "Roof_grey_moors_insides_packed_earth",
       "Roof_grey_moors_insides_rubble_stone",
+      "Build_grey_moors_insides_amber_resin",
+      "Build_grey_moors_insides_bark_dark",
       "Build_grey_moors_insides_charred_timber",
       "Build_grey_moors_insides_cliff_rock",
       "Build_grey_moors_insides_dark_iron",
@@ -162,13 +201,16 @@
       "Build_grey_moors_insides_grey_votive_flame",
       "Build_grey_moors_insides_lime_plaster",
       "Build_grey_moors_insides_packed_earth",
-      "Build_grey_moors_insides_rubble_stone"
+      "Build_grey_moors_insides_rubble_stone",
+      "Build_grey_moors_insides_thatch_reed",
+      "Build_grey_moors_insides_woven_cloth"
     ]
   },
   "cutaway": {
     "hideNodes": [
       "Roof_grey_moors_insides_cliff_rock",
       "Roof_grey_moors_insides_grey_moor_granite",
+      "Roof_grey_moors_insides_grey_turf_roof",
       "Roof_grey_moors_insides_packed_earth",
       "Roof_grey_moors_insides_rubble_stone"
     ],
@@ -248,6 +290,51 @@
       "destinationMap": "grey_moors",
       "destinationSpawn": "south-crypt-stair",
       "section": "fen_crypt",
+      "authority": "server"
+    },
+    {
+      "id": "exit-fifth-chamber-mouth",
+      "name": "Return to Grey Moors",
+      "type": "map-transition",
+      "position": [
+        201.0,
+        0.05,
+        42.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "grey_moors",
+      "destinationSpawn": "fifth-chamber-mouth",
+      "section": "fifth_chamber",
+      "authority": "server"
+    },
+    {
+      "id": "exit-peat-croft-door",
+      "name": "Return to Grey Moors",
+      "type": "map-transition",
+      "position": [
+        201.0,
+        0.05,
+        177.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "grey_moors",
+      "destinationSpawn": "peat-croft-door",
+      "section": "peat_croft",
+      "authority": "server"
+    },
+    {
+      "id": "exit-warm-stone-door",
+      "name": "Return to Grey Moors",
+      "type": "map-transition",
+      "position": [
+        201.0,
+        0.05,
+        126.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "grey_moors",
+      "destinationSpawn": "warm-stone-door",
+      "section": "warm_stone",
       "authority": "server"
     }
   ],
@@ -346,6 +433,78 @@
       "notes": [
         "Shin-deep standing water over the ossuary floor, with a drystone shelf and a causeway a step up out of it. The floor is waded rather than blocked, because the toolkit's chamber floor is always a walk surface and a drowned-but-walkable floor would have been a lie.",
         "Bog water here is the region's own opaque `grey_bog_water`, not a transparent lake: peat stain kills the light that enters it."
+      ]
+    },
+    {
+      "id": "fifth_chamber",
+      "name": "The Fifth Chamber",
+      "class": "cave",
+      "offset": [
+        201.0,
+        0.0,
+        42.0
+      ],
+      "arrival": [
+        201.0,
+        0.05,
+        42.0
+      ],
+      "spaces": [
+        "fifth_chamber.mouth",
+        "fifth_chamber.throat",
+        "fifth_chamber.chamber",
+        "fifth_chamber.descent",
+        "fifth_chamber.gullet"
+      ],
+      "notes": [
+        "Built from the shared small-room kit: mouth, throat and chamber, dressed for the region above it."
+      ]
+    },
+    {
+      "id": "peat_croft",
+      "name": "The Peat Cutter's Croft",
+      "class": "dwelling",
+      "offset": [
+        201.0,
+        0.0,
+        176.0
+      ],
+      "arrival": [
+        201.0,
+        0.05,
+        177.0
+      ],
+      "spaces": [
+        "peat_croft.hall",
+        "peat_croft.back"
+      ],
+      "notes": [
+        "Built from the shared small-room kit: a hall with a hearth and a back room for its trade (hearth)."
+      ]
+    },
+    {
+      "id": "warm_stone",
+      "name": "The Warm Stone",
+      "class": "shrine",
+      "offset": [
+        201.0,
+        0.0,
+        126.0
+      ],
+      "arrival": [
+        201.0,
+        0.05,
+        126.0
+      ],
+      "spaces": [
+        "warm_stone.porch",
+        "warm_stone.nave",
+        "warm_stone.aisle",
+        "warm_stone.crypt",
+        "warm_stone.crypt-stair"
+      ],
+      "notes": [
+        "Built from the shared small-room kit: a cut sanctuary in the stone manner, with a crypt of niches below."
       ]
     }
   ],
@@ -448,6 +607,39 @@
         169.5
       ],
       "section": "fen_crypt"
+    },
+    {
+      "id": "grey_fifth_chamber-chamber",
+      "name": "The Fifth Chamber",
+      "space": "fifth_chamber.chamber",
+      "position": [
+        201.0,
+        -4.0,
+        93.0
+      ],
+      "section": "fifth_chamber"
+    },
+    {
+      "id": "grey_peat_croft-hearth",
+      "name": "The Peat Cutter's Croft",
+      "space": "peat_croft.hall",
+      "position": [
+        201.0,
+        1.4,
+        177.0
+      ],
+      "section": "peat_croft"
+    },
+    {
+      "id": "grey_warm_stone-sanctuary",
+      "name": "The Warm Stone",
+      "space": "warm_stone.nave",
+      "position": [
+        201.0,
+        0.4,
+        148.0
+      ],
+      "section": "warm_stone"
     }
   ],
   "interactives": [
@@ -476,7 +668,20 @@
       "section": "bone_gallery"
     }
   ],
-  "npcMarkers": [],
+  "npcMarkers": [
+    {
+      "id": "grey_fifth_chamber-den",
+      "name": "Moorland Dire Wolf",
+      "kind": "creature-zone",
+      "position": [
+        201.0,
+        -6.0,
+        93.0
+      ],
+      "radius": 12.0,
+      "section": "fifth_chamber"
+    }
+  ],
   "harvestables": [
     {
       "id": "grey-crypt-heartroot",
@@ -1141,6 +1346,182 @@
       ],
       "range": 9.0,
       "energy": 1.5
+    },
+    {
+      "id": "lantern-40",
+      "kind": "point",
+      "position": [
+        201.0,
+        2.58,
+        40.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-41",
+      "kind": "point",
+      "position": [
+        201.0,
+        -0.82,
+        63.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-42",
+      "kind": "point",
+      "position": [
+        193.0,
+        -2.42,
+        93.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-43",
+      "kind": "point",
+      "position": [
+        209.0,
+        -2.42,
+        93.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-44",
+      "kind": "point",
+      "position": [
+        201.0,
+        2.28,
+        177.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-45",
+      "kind": "point",
+      "position": [
+        202.0,
+        1.98,
+        185.28
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-46",
+      "kind": "point",
+      "position": [
+        201.0,
+        2.78,
+        126.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-47",
+      "kind": "point",
+      "position": [
+        196.0,
+        2.98,
+        142.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-48",
+      "kind": "point",
+      "position": [
+        206.0,
+        2.98,
+        148.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-49",
+      "kind": "point",
+      "position": [
+        201.0,
+        3.38,
+        155.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-50",
+      "kind": "point",
+      "position": [
+        219.0,
+        -1.42,
+        151.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
     }
   ],
   "environment": {
@@ -1290,6 +1671,102 @@
       "z1": 181.0,
       "floor": -3.6,
       "height": 7.2
+    },
+    "fifth_chamber.mouth": {
+      "x0": 195.0,
+      "x1": 207.0,
+      "z0": 36.0,
+      "z1": 48.0,
+      "floor": 0.0,
+      "height": 5.4
+    },
+    "fifth_chamber.throat": {
+      "x0": 196.0,
+      "x1": 206.0,
+      "z0": 58.0,
+      "z1": 68.0,
+      "floor": -3.6,
+      "height": 5.6
+    },
+    "fifth_chamber.chamber": {
+      "x0": 185.0,
+      "x1": 217.0,
+      "z0": 78.0,
+      "z1": 108.0,
+      "floor": -6.0,
+      "height": 11.0
+    },
+    "fifth_chamber.descent": {
+      "x0": 198.6,
+      "x1": 203.4,
+      "z0": 45.6,
+      "z1": 60.4,
+      "floor": -3.6,
+      "height": 4.4
+    },
+    "fifth_chamber.gullet": {
+      "x0": 198.7,
+      "x1": 203.3,
+      "z0": 65.7,
+      "z1": 80.3,
+      "floor": -6.0,
+      "height": 4.4
+    },
+    "peat_croft.hall": {
+      "x0": 196.0,
+      "x1": 206.0,
+      "z0": 172.0,
+      "z1": 182.0,
+      "floor": 0.0,
+      "height": 3.4
+    },
+    "peat_croft.back": {
+      "x0": 198.0,
+      "x1": 206.0,
+      "z0": 182.55,
+      "z1": 188.0,
+      "floor": 0.0,
+      "height": 3.0
+    },
+    "warm_stone.porch": {
+      "x0": 197.0,
+      "x1": 205.0,
+      "z0": 122.0,
+      "z1": 130.0,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "warm_stone.nave": {
+      "x0": 193.0,
+      "x1": 209.0,
+      "z0": 138.0,
+      "z1": 158.0,
+      "floor": -1.2,
+      "height": 7.0
+    },
+    "warm_stone.aisle": {
+      "x0": 199.4,
+      "x1": 202.6,
+      "z0": 128.4,
+      "z1": 139.6,
+      "floor": -1.2,
+      "height": 3.6
+    },
+    "warm_stone.crypt": {
+      "x0": 213.0,
+      "x1": 225.0,
+      "z0": 146.0,
+      "z1": 156.0,
+      "floor": -4.0,
+      "height": 4.0
+    },
+    "warm_stone.crypt-stair": {
+      "x0": 207.7,
+      "x1": 214.3,
+      "z0": 148.7,
+      "z1": 151.3,
+      "floor": -4.0,
+      "height": 3.2
     }
   },
   "conceptArt": {
@@ -1310,26 +1787,37 @@
       "The Bone Gallery: the burial gallery",
       "The Bone Gallery: the ritual altar",
       "The Bone Gallery: the stake passage",
-      "The Fen Crypt: the flooded ossuary"
+      "The Fen Crypt: the flooded ossuary",
+      "The Fifth Chamber: cave mouth from within",
+      "The Fifth Chamber: the descent",
+      "The Fifth Chamber: the chamber",
+      "The Peat Cutter's Croft: the hall and hearth",
+      "The Peat Cutter's Croft: the hearth",
+      "The Warm Stone: the porch",
+      "The Warm Stone: the nave",
+      "The Warm Stone: the sanctuary"
     ]
   },
   "performance": {
-    "nodes": 24,
-    "meshes": 23,
-    "materials": 15,
-    "images": 45,
-    "textures": 45,
-    "accessors": 115,
-    "bufferViews": 160,
-    "uniqueTriangles": 31810,
-    "uniqueVertices": 30980,
-    "glbBytes": 8952480,
+    "nodes": 30,
+    "meshes": 29,
+    "materials": 20,
+    "images": 59,
+    "textures": 59,
+    "accessors": 145,
+    "bufferViews": 204,
+    "uniqueTriangles": 41920,
+    "uniqueVertices": 42772,
+    "glbBytes": 10934832,
     "nodeNames": [
       "Interior_grey_moors_insides",
       "Roof_grey_moors_insides_cliff_rock",
       "Roof_grey_moors_insides_grey_moor_granite",
+      "Roof_grey_moors_insides_grey_turf_roof",
       "Roof_grey_moors_insides_packed_earth",
       "Roof_grey_moors_insides_rubble_stone",
+      "Build_grey_moors_insides_amber_resin",
+      "Build_grey_moors_insides_bark_dark",
       "Build_grey_moors_insides_charred_timber",
       "Build_grey_moors_insides_cliff_rock",
       "Build_grey_moors_insides_dark_iron",
@@ -1344,6 +1832,9 @@
       "Build_grey_moors_insides_lime_plaster",
       "Build_grey_moors_insides_packed_earth",
       "Build_grey_moors_insides_rubble_stone",
+      "Build_grey_moors_insides_thatch_reed",
+      "Build_grey_moors_insides_woven_cloth",
+      "Walk_grey_bog_timber",
       "Walk_grey_carved_stone",
       "Walk_grey_drystone",
       "Walk_grey_moor_granite",

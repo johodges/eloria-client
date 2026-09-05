@@ -126,3 +126,16 @@ walkable, and match the server's portal table.
   sections; the other three have no concept art and are authored from the
   region's board and its surface landmarks.
 - Place names are the author's throughout except The Resonant Vault.
+
+## Small rooms
+
+Three more sections joined the `resonant_vault` map from the shared
+`_toolkit/amberwood/smallrooms.py` kit, each with its own door on the Amethyst Barrens
+map and its own arrival: a cave with a creature den, a cottage and a shrine.
+They sit in a column east of the set pieces with the usual void between.
+
+| section | name | kind | region door | what it is |
+|---|---|---|---|---|
+| `sour_cut` | Sour Cut | cave | `sour-cut-mouth` | a crystal cave with a crystal cave spider's den |
+| `measure_house` | the Measure House | shrine | `measure-house-door` | a crystal shrine |
+| `counting_house` | the Counting House | cottage | `counting-house-door` | a workshop cottage |

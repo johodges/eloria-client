@@ -23,7 +23,7 @@
         30.45
       ],
       "max": [
-        249.55,
+        299.55,
         13.95,
         343.55
       ]
@@ -35,7 +35,7 @@
         30.45
       ],
       "max": [
-        249.55,
+        299.55,
         0.0,
         343.55
       ]
@@ -116,12 +116,48 @@
       "rotationDegrees": 0,
       "surface": "Walk",
       "section": "storm_barrow"
+    },
+    {
+      "id": "sour-cut-mouth",
+      "name": "The Sour Cut",
+      "position": [
+        283.0,
+        0.05,
+        45.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "sour_cut"
+    },
+    {
+      "id": "measure-house-door",
+      "name": "The Measure House",
+      "position": [
+        283.0,
+        0.05,
+        129.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "measure_house"
+    },
+    {
+      "id": "counting-house-door",
+      "name": "The Shard Counter's House",
+      "position": [
+        283.0,
+        0.05,
+        180.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "counting_house"
     }
   ],
   "collision": {
     "binary": "collision.bin",
     "format": "EWCG-v1",
-    "width": 444,
+    "width": 546,
     "height": 636,
     "cellMetres": 0.5,
     "originMetres": [
@@ -138,9 +174,9 @@
       "zeroMeansBlocked": true,
       "note": "Step is fitted to this interior's own vertical range, so the six-bit field spans it without clamping. The Godot loader still takes elevation from the rendered Walk_ surfaces; this grid is authoritative only for walkability."
     },
-    "walkableCells": 50912,
-    "blockedCells": 231472,
-    "walkableFraction": 0.1803,
+    "walkableCells": 59060,
+    "blockedCells": 288196,
+    "walkableFraction": 0.1701,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
@@ -157,6 +193,7 @@
       "Build_amethyst_barrens_insides_amethyst_pale_stone",
       "Build_amethyst_barrens_insides_amethyst_storm_rock",
       "Build_amethyst_barrens_insides_ashlar",
+      "Build_amethyst_barrens_insides_bark_dark",
       "Build_amethyst_barrens_insides_blue_crystal",
       "Build_amethyst_barrens_insides_dark_iron",
       "Build_amethyst_barrens_insides_pale_ashlar",
@@ -251,6 +288,51 @@
       "destinationMap": "amethyst_barrens",
       "destinationSpawn": "storm-barrow-stair",
       "section": "storm_barrow",
+      "authority": "server"
+    },
+    {
+      "id": "exit-sour-cut-mouth",
+      "name": "Return to Amethyst Barrens",
+      "type": "map-transition",
+      "position": [
+        283.0,
+        0.05,
+        45.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "amethyst_barrens",
+      "destinationSpawn": "sour-cut-mouth",
+      "section": "sour_cut",
+      "authority": "server"
+    },
+    {
+      "id": "exit-measure-house-door",
+      "name": "Return to Amethyst Barrens",
+      "type": "map-transition",
+      "position": [
+        283.0,
+        0.05,
+        129.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "amethyst_barrens",
+      "destinationSpawn": "measure-house-door",
+      "section": "measure_house",
+      "authority": "server"
+    },
+    {
+      "id": "exit-counting-house-door",
+      "name": "Return to Amethyst Barrens",
+      "type": "map-transition",
+      "position": [
+        283.0,
+        0.05,
+        180.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "amethyst_barrens",
+      "destinationSpawn": "counting-house-door",
+      "section": "counting_house",
       "authority": "server"
     }
   ],
@@ -372,6 +454,76 @@
       "notes": [
         "The strike well is the one space in these four interiors with no lid: it is open to the region's sky, and the storm is what is still using this room.",
         "Coarse rubble and unadorned ashlar only. Nothing here is Glasswarden work, and no brass appears until the Vault."
+      ]
+    },
+    {
+      "id": "sour_cut",
+      "name": "The Sour Cut",
+      "class": "cave",
+      "offset": [
+        283.0,
+        0.0,
+        45.0
+      ],
+      "arrival": [
+        283.0,
+        0.05,
+        45.0
+      ],
+      "spaces": [
+        "sour_cut.mouth",
+        "sour_cut.throat",
+        "sour_cut.chamber",
+        "sour_cut.descent",
+        "sour_cut.gullet"
+      ],
+      "notes": [
+        "Built from the shared small-room kit: mouth, throat and chamber, dressed for the region above it."
+      ]
+    },
+    {
+      "id": "measure_house",
+      "name": "The Measure House",
+      "class": "shrine",
+      "offset": [
+        283.0,
+        0.0,
+        129.0
+      ],
+      "arrival": [
+        283.0,
+        0.05,
+        129.0
+      ],
+      "spaces": [
+        "measure_house.porch",
+        "measure_house.nave",
+        "measure_house.aisle"
+      ],
+      "notes": [
+        "Built from the shared small-room kit: a cut sanctuary in the crystal manner."
+      ]
+    },
+    {
+      "id": "counting_house",
+      "name": "The Shard Counter's House",
+      "class": "dwelling",
+      "offset": [
+        283.0,
+        0.0,
+        179.0
+      ],
+      "arrival": [
+        283.0,
+        0.05,
+        180.0
+      ],
+      "spaces": [
+        "counting_house.hall",
+        "counting_house.back"
+      ],
+      "notes": [
+        "Built from the shared small-room kit: a hall with a hearth and a back room for its trade (workshop)."
       ]
     }
   ],
@@ -573,6 +725,39 @@
         329.0
       ],
       "section": "storm_barrow"
+    },
+    {
+      "id": "amethyst_sour_cut-chamber",
+      "name": "The Sour Cut",
+      "space": "sour_cut.chamber",
+      "position": [
+        283.0,
+        -4.0,
+        96.0
+      ],
+      "section": "sour_cut"
+    },
+    {
+      "id": "amethyst_measure_house-sanctuary",
+      "name": "The Measure House",
+      "space": "measure_house.nave",
+      "position": [
+        283.0,
+        0.4,
+        151.0
+      ],
+      "section": "measure_house"
+    },
+    {
+      "id": "amethyst_counting_house-hearth",
+      "name": "The Shard Counter's House",
+      "space": "counting_house.hall",
+      "position": [
+        283.0,
+        1.4,
+        180.0
+      ],
+      "section": "counting_house"
     }
   ],
   "interactives": [
@@ -761,6 +946,18 @@
       ],
       "radius": 16.0,
       "section": "storm_barrow"
+    },
+    {
+      "id": "amethyst_sour_cut-den",
+      "name": "Crystal Cave Spider",
+      "kind": "creature-zone",
+      "position": [
+        283.0,
+        -6.0,
+        96.0
+      ],
+      "radius": 12.0,
+      "section": "sour_cut"
     }
   ],
   "harvestables": [
@@ -2037,6 +2234,166 @@
       ],
       "range": 9.0,
       "energy": 1.5
+    },
+    {
+      "id": "lantern-67",
+      "kind": "point",
+      "position": [
+        283.0,
+        2.58,
+        43.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-68",
+      "kind": "point",
+      "position": [
+        283.0,
+        -0.82,
+        66.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-69",
+      "kind": "point",
+      "position": [
+        275.0,
+        -2.42,
+        96.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-70",
+      "kind": "point",
+      "position": [
+        291.0,
+        -2.42,
+        96.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-71",
+      "kind": "point",
+      "position": [
+        283.0,
+        2.78,
+        129.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-72",
+      "kind": "point",
+      "position": [
+        278.0,
+        2.98,
+        145.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-73",
+      "kind": "point",
+      "position": [
+        288.0,
+        2.98,
+        151.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-74",
+      "kind": "point",
+      "position": [
+        283.0,
+        3.38,
+        158.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-75",
+      "kind": "point",
+      "position": [
+        283.0,
+        2.28,
+        180.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-76",
+      "kind": "point",
+      "position": [
+        284.0,
+        1.98,
+        188.28
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
     }
   ],
   "environment": {
@@ -2386,6 +2743,86 @@
       "z1": 316.8,
       "floor": -8.4,
       "height": 3.4
+    },
+    "sour_cut.mouth": {
+      "x0": 277.0,
+      "x1": 289.0,
+      "z0": 39.0,
+      "z1": 51.0,
+      "floor": 0.0,
+      "height": 5.4
+    },
+    "sour_cut.throat": {
+      "x0": 278.0,
+      "x1": 288.0,
+      "z0": 61.0,
+      "z1": 71.0,
+      "floor": -3.6,
+      "height": 5.6
+    },
+    "sour_cut.chamber": {
+      "x0": 267.0,
+      "x1": 299.0,
+      "z0": 81.0,
+      "z1": 111.0,
+      "floor": -6.0,
+      "height": 11.0
+    },
+    "sour_cut.descent": {
+      "x0": 280.6,
+      "x1": 285.4,
+      "z0": 48.6,
+      "z1": 63.4,
+      "floor": -3.6,
+      "height": 4.4
+    },
+    "sour_cut.gullet": {
+      "x0": 280.7,
+      "x1": 285.3,
+      "z0": 68.7,
+      "z1": 83.3,
+      "floor": -6.0,
+      "height": 4.4
+    },
+    "measure_house.porch": {
+      "x0": 279.0,
+      "x1": 287.0,
+      "z0": 125.0,
+      "z1": 133.0,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "measure_house.nave": {
+      "x0": 275.0,
+      "x1": 291.0,
+      "z0": 141.0,
+      "z1": 161.0,
+      "floor": -1.2,
+      "height": 7.0
+    },
+    "measure_house.aisle": {
+      "x0": 281.4,
+      "x1": 284.6,
+      "z0": 131.4,
+      "z1": 142.6,
+      "floor": -1.2,
+      "height": 3.6
+    },
+    "counting_house.hall": {
+      "x0": 278.0,
+      "x1": 288.0,
+      "z0": 175.0,
+      "z1": 185.0,
+      "floor": 0.0,
+      "height": 3.4
+    },
+    "counting_house.back": {
+      "x0": 280.0,
+      "x1": 288.0,
+      "z0": 185.55,
+      "z1": 191.0,
+      "floor": 0.0,
+      "height": 3.0
     }
   },
   "conceptArt": {
@@ -2427,20 +2864,28 @@
       "The Storm Barrow: the fused floor",
       "The Storm Barrow: fulgurite on the walls",
       "The Storm Barrow: the sealed cella",
-      "The Storm Barrow: the crystal bier"
+      "The Storm Barrow: the crystal bier",
+      "The Sour Cut: cave mouth from within",
+      "The Sour Cut: the descent",
+      "The Sour Cut: the chamber",
+      "The Measure House: the porch",
+      "The Measure House: the nave",
+      "The Measure House: the sanctuary",
+      "The Shard Counter's House: the hall and hearth",
+      "The Shard Counter's House: the workshop"
     ]
   },
   "performance": {
-    "nodes": 27,
-    "meshes": 26,
-    "materials": 20,
-    "images": 60,
-    "textures": 60,
-    "accessors": 130,
-    "bufferViews": 190,
-    "uniqueTriangles": 128138,
-    "uniqueVertices": 166436,
-    "glbBytes": 15096464,
+    "nodes": 29,
+    "meshes": 28,
+    "materials": 21,
+    "images": 63,
+    "textures": 63,
+    "accessors": 140,
+    "bufferViews": 203,
+    "uniqueTriangles": 141048,
+    "uniqueVertices": 187788,
+    "glbBytes": 16663356,
     "nodeNames": [
       "Interior_amethyst_barrens_insides",
       "Roof_amethyst_barrens_insides_amethyst_storm_rock",
@@ -2455,6 +2900,7 @@
       "Build_amethyst_barrens_insides_amethyst_pale_stone",
       "Build_amethyst_barrens_insides_amethyst_storm_rock",
       "Build_amethyst_barrens_insides_ashlar",
+      "Build_amethyst_barrens_insides_bark_dark",
       "Build_amethyst_barrens_insides_blue_crystal",
       "Build_amethyst_barrens_insides_dark_iron",
       "Build_amethyst_barrens_insides_pale_ashlar",
@@ -2468,7 +2914,8 @@
       "Walk_amethyst_crystal_field",
       "Walk_amethyst_storm_rock",
       "Walk_amethyst_vault_floor",
-      "Walk_cobble_paving"
+      "Walk_cobble_paving",
+      "Walk_timber_warm"
     ]
   },
   "sources": [

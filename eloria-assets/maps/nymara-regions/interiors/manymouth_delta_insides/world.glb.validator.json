@@ -1,8 +1,8 @@
 {
-  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\eloria-client\\eloria-assets\\maps\\nymara-regions\\interiors\\manymouth_delta_insides\\world.glb",
+  "uri": "world.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-08-29T14:51:45.395476Z",
+  "validatedAt": "2026-09-05T08:29:29.078952Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,

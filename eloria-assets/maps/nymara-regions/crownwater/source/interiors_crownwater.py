@@ -750,3 +750,39 @@ ALL = {
     "tide_cistern": tide_cistern,
     "customs_hall": customs_hall,
 }
+
+
+# ---- small rooms (shared kit) ----
+from amberwood import smallrooms as SR
+
+
+def eleventh_bell(seed: int = 20260905) -> Interior:
+    """The bell that rang once too often: a register-shrine under the northeast pavilion."""
+    return SR.shrine("crownwater_eleventh_bell", "The Eleventh Bell",
+                     "crownwater-pavilion-pavilion_northeast", [228.6, 4.2, -228.6],
+                     "eleventh-bell-door",
+                     palette={"floor": PAVING, "wall": STONE, "ceil": STONE, "accent": CARVED,
+                              "metal": IRON},
+                     seed=seed, style="lantern")
+
+
+def case_room(seed: int = 20260906) -> Interior:
+    """Where the unclaimed case waits, under the east pavilion."""
+    return SR.cottage("crownwater_case_room", "The Case Room",
+                      "crownwater-pavilion-pavilion_east", [276.0, 4.0, -114.0], "case-room-door",
+                      palette={"floor": TIMBER, "wall": PLASTER, "roof": TIMBER_DARK,
+                               "timber": TIMBER_DARK, "stone": RUBBLE, "cloth": CANVAS,
+                               "iron": IRON},
+                      seed=seed, trade="chandlery")
+
+
+def the_grating(seed: int = 20260907) -> Interior:
+    """The grating that was open: the cut under the south pavilion the fish come up."""
+    return SR.cave("crownwater_grating", "The Grating", "crownwater-pavilion-pavilion_south",
+                   [114.0, 4.7, 48.0], "grating-mouth",
+                   palette={"floor": "packed_earth", "rock": RUBBLE, "water": WATER,
+                            "bone": "pale_ashlar"},
+                   seed=seed, den="Abyssal Armoured Fish", pool=True)
+
+
+ALL.update({"eleventh_bell": eleventh_bell, "case_room": case_room, "the_grating": the_grating})

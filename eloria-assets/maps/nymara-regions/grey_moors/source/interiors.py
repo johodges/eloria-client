@@ -695,3 +695,40 @@ def combine(seed: int = 20260902) -> Interior:
         "what keeps one section's candles and cameras out of the next.",
     ]
     return combined
+
+
+# ---- small rooms (shared kit) ----
+from amberwood import smallrooms as SR
+
+
+def fifth_chamber(seed: int = 20260905) -> Interior:
+    """The chamber the barrow count is one short by: a wolf den under a broken tower."""
+    return SR.cave("grey_fifth_chamber", "The Fifth Chamber", "grey-tower-3",
+                   [378.0, 5.6, -189.0], "fifth-chamber-mouth",
+                   palette={"floor": EARTH, "rock": ROCK, "water": WATER, "bone": BONE},
+                   seed=seed, den="Moorland Dire Wolf", pool=True)
+
+
+def peat_croft(seed: int = 20260906) -> Interior:
+    """A croft somebody still keeps, between the cuttings."""
+    return SR.cottage("grey_peat_croft", "The Peat Cutter's Croft", "grey-croft-1",
+                      [120.0, 4.7, 78.0], "peat-croft-door",
+                      palette={"floor": TIMBER, "wall": DRYSTONE, "roof": "grey_turf_roof",
+                               "timber": TIMBER, "stone": GRANITE, "cloth": "woven_cloth",
+                               "iron": IRON},
+                      seed=seed, trade="hearth")
+
+
+def warm_stone(seed: int = 20260907) -> Interior:
+    """The shrine whose stone is warm to the hand, and the niches under it."""
+    return SR.shrine("grey_warm_stone", "The Warm Stone", "grey-shrine-0",
+                     [114.0, 4.8, -222.0], "warm-stone-door",
+                     palette={"floor": GRANITE, "wall": DRYSTONE, "ceil": GRANITE,
+                              "accent": CARVED, "earth": EARTH, "metal": IRON},
+                     seed=seed, style="stone", crypt=True)
+
+
+ALL.update({"fifth_chamber": fifth_chamber, "peat_croft": peat_croft,
+            "warm_stone": warm_stone})
+LAYOUT.update({"fifth_chamber": (161.0, 6.0), "warm_stone": (161.0, 90.0),
+               "peat_croft": (161.0, 140.0)})

@@ -1809,3 +1809,82 @@ def cave_brazier(height: float = 1.05) -> Parts:
     sphere(coals, (0.0, height + 0.20, 0.0), 0.26, rings=4, sides=10,
            uv_scale=UV_SCALE["stone"], squash=0.45)
     return parts
+
+
+def _menhir(parts: Parts, offset_x: float, height: float, width: float, lean: float,
+            seed: int) -> None:
+    """One weathered menhir with an irregular taper, standing at `offset_x`."""
+    stone = parts.geometry(MENHIR)
+    rng = np.random.default_rng(seed)
+    levels = 5
+    previous = None
+    for index in range(levels + 1):
+        t = index / levels
+        radius = width * 0.5 * (1.0 - 0.42 * t) * (1.0 + 0.12 * float(rng.normal()))
+        y = height * t
+        offset = lean * height * t
+        if previous is not None:
+            frustum(stone, (offset_x + previous[2], previous[1], 0.0),
+                    (offset_x + offset, y, 0.0),
+                    previous[0], max(radius, 0.12), sides=7,
+                    uv_scale=UV_SCALE["stone"], cap_start=index == 1,
+                    cap_end=index == levels)
+        previous = (max(radius, 0.12), y, offset)
+    packing = parts.geometry(STONE_PALE)
+    for index in range(5):
+        angle = TAU * index / 5 + float(rng.random())
+        sphere(packing, (offset_x + math.cos(angle) * width * 0.75, 0.14,
+                         math.sin(angle) * width * 0.75), 0.28,
+               rings=5, sides=7, uv_scale=UV_SCALE["stone"], squash=0.6)
+
+
+def march_gate(seed: int = 0) -> Parts:
+    """Two menhirs flanking a road where the steppe hands over to a neighbour.
+
+    The gap between them is the crossing tile. The collision pass stamps
+    triangles rather than footprints, so the stones are solid and the road
+    between them stays open.
+    """
+    parts = Parts()
+    _menhir(parts, -2.6, 4.2, 1.15, 0.05, seed + 3)
+    _menhir(parts, 2.6, 3.7, 1.05, -0.04, seed + 8)
+    stone = parts.geometry(STONE_PALE)
+    for sign in (-1, 1):
+        box(stone, (sign * 2.6, 0.12, 1.3), (1.4, 0.24, 0.5), uv_scale=UV_SCALE["stone"])
+        box(stone, (sign * 2.6, 0.12, -1.3), (1.4, 0.24, 0.5), uv_scale=UV_SCALE["stone"])
+    banner(parts, (-2.6, 4.35, 0.0), 0.55, 1.3, facing=math.pi / 2)
+    return parts
+
+
+def filled_well() -> Parts:
+    """The fourth well, filled: a steppe well ring with the shaft packed with
+    dark rubble to the coping and a cairn built badly on purpose over it. The
+    well-digger says the water hummed (thread H, the sour ground)."""
+    parts = Parts()
+    stone = parts.geometry(STONE_PALE)
+    dark = parts.geometry(STONE_DARK)
+    radius = 1.15
+    revolve(stone, [(radius, 0.0), (radius + 0.07, 0.62), (radius + 0.13, 0.86),
+                    (radius + 0.05, 0.96)], (0, 0, 0), sides=16,
+            uv_scale=UV_SCALE["stone"], close_bottom=False)
+    revolve(stone, [(radius - 0.26, 0.0), (radius - 0.26, 0.92)], (0, 0, 0), sides=16,
+            uv_scale=UV_SCALE["stone"], close_bottom=True)
+    rng = np.random.default_rng(1140)
+    for index in range(14):
+        angle = float(rng.random()) * TAU
+        reach = float(rng.random()) * 0.7
+        sphere(dark, (math.cos(angle) * reach, 0.78 + float(rng.random()) * 0.35,
+                      math.sin(angle) * reach), 0.22 + float(rng.random()) * 0.16,
+               rings=5, sides=7, uv_scale=UV_SCALE["stone"], squash=0.7)
+    courses = 5
+    for index in range(courses):
+        t = index / courses
+        r = 0.72 * (1.0 - 0.5 * t)
+        y = 0.95 + 1.6 * t
+        prism(stone, polygon_points((0.28 * t, 0, 0.12 * t), r, 6, rotation=0.6 * index),
+              y, y + 1.6 / courses, uv_scale=UV_SCALE["stone"], cap_top=index == courses - 1)
+    for index in range(6):
+        angle = TAU * index / 6 + 0.4
+        sphere(stone, (math.cos(angle) * 2.6, 0.12, math.sin(angle) * 2.6), 0.26,
+               rings=5, sides=7, uv_scale=UV_SCALE["stone"], squash=0.55)
+    return parts

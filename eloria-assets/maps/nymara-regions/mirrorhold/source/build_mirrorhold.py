@@ -39,6 +39,8 @@ from amberwood import materials as MAT
 from amberwood import mesh as M
 import populate as POP
 import region as REG
+import transitions as MARCH
+import loresites as LORE
 from amberwood import render as RENDER
 from amberwood import terrain as TER
 
@@ -50,6 +52,43 @@ SEED = 20260828
 # as its own thing, and larger than every crumb the thresholded noise and the
 # boundary dither leave behind.
 DESPECKLE_MIN_CELLS = 6
+
+# The five crossings, as region-connections.json declares them: the Whitehorn
+# pass north, the shore road south to the sanctuary stair of Four Gates, the
+# Glasswarden road east, the gorge road west into the Amberwood, and the lake
+# quay where the Crownwater packet calls. Snow comes down the pass, the city's
+# paving runs out along the south road, crystal dust and autumn leaves blow in
+# along the east and west roads.
+CROSSINGS = [
+    # The range is a bowl: its east side is peaks with no way through, and the
+    # only ground that reaches the rim is on the north side, at two cols. The
+    # Whitehorn road leaves by the north-west col and the Barrens road by the
+    # north-east one; both stand on ground the city can walk to.
+    MARCH.Crossing("north-pass", "whitehorn_range", (-92.0, -390.0),
+                   (-92.0, -412.0), radius=50.0,
+                   name="The Whitehorn March"),
+    MARCH.Crossing("south-road", "four_gates", (40.0 * REG.SCALE, 56.0 * REG.SCALE),
+                   (40.0 * REG.SCALE, 66.0 * REG.SCALE), radius=40.0,
+                   name="The Sanctuary Road March"),
+    MARCH.Crossing("east-road", "amethyst_barrens", (72.0, -390.0),
+                   (72.0, -412.0), radius=46.0,
+                   name="The Barrens March"),
+    MARCH.Crossing("west-gorge", "amberwood", (-52.0 * REG.SCALE, 4.0 * REG.SCALE),
+                   (-62.0 * REG.SCALE, 4.0 * REG.SCALE), radius=46.0,
+                   name="The Amber March"),
+    MARCH.Crossing("lake-quay", "crownwater", REG.ANCHORS["harbour"],
+                   (REG.ANCHORS["harbour"][0], REG.ANCHORS["harbour"][1] + 30.0),
+                   radius=26.0, ferry=True, name="The Packet Quay"),
+]
+
+# The places the region's people argue about (see loresites.py).
+SITES = [
+    LORE.Site("ringing-quarry", "The Ringing Face", "ringing_quarry", (265.0, -176.0),
+              thread="B", clearing=14.0,
+              note="The quarry face that rings when it is struck, the blank half-drawn out of "
+                   "it, and the bell Foreman Hesk hung to test the note against."),
+]
+MARCH_MATERIALS: dict = dict(REG.SURFACE_MATERIALS)
 
 # The materials Mirrorhold embeds, pinned. The shared table grows as other
 # regions add recipes to it, and without this every one of those would be
@@ -68,7 +107,7 @@ MATERIALS = frozenset({
     # the braziers' coals: fire is warm even here
     'amber_resin',
     'water_lake', 'water_stream', 'water_pool',
-})
+}) | MARCH.materials_for("mirrorhold", CROSSINGS) | LORE.materials([s.piece for s in SITES])
 
 ASSET_VERSION = "1.0.0"
 SCHEMA_VERSION = "1.0.0"
@@ -82,6 +121,8 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     REG.apply_built_ground(terrain, seed)
     build = REG.RegionBuild(terrain=terrain)
 
+    MARCH.prepare(terrain, CROSSINGS)
+    LORE.prepare(terrain, SITES, sea_level=getattr(REG, "SEA_LEVEL", 0.0), keep=(TER.ICE, TER.MARBLE))
     POP.populate_citadel(build, seed)
     POP.populate_city(build, seed)
     POP.populate_lake(build, seed)
@@ -92,9 +133,17 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     POP.populate_interactives(build, seed)
     POP.build_water(build)
 
+    # The marches: the neighbours' country coming in along the roads out.
+    MARCH.paint(terrain, CROSSINGS, MARCH_MATERIALS, seed, sea_level=REG.SEA_LEVEL,
+                keep=(TER.ICE, TER.MARBLE))
+    march = MARCH.dress(build, "mirrorhold", CROSSINGS, seed, sea_level=REG.SEA_LEVEL)
+    LORE.dress(build, terrain, SITES, seed)
+    build.landmarks.extend(march.landmarks)
+    build.notes.extend(march.notes)
+
     terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
     build.terrain_meshes = terrain.build_meshes(
-        uv_scale=0.28, materials=REG.SURFACE_MATERIALS, blend_edges=True,
+        uv_scale=0.28, materials=MARCH_MATERIALS, blend_edges=True,
         material_suffix=MAT.GROUND_SUFFIX)
     build.terrain_meshes["Backdrop_Distant"] = TER.backdrop(
         terrain, reach=300.0, cell=11.0, seed=seed + 909,
@@ -122,17 +171,17 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
             "surface": TER.SURFACE_NAMES[int(t.surface_at(x, z))],
             "grounded": True})
 
-    # Edge portals to the neighbouring Nymara regions. Destination map ids
-    # follow the client registry; the server owns the actual transition.
+    # Edge portals to the neighbouring Nymara regions, on the crossings the
+    # marches dress - one table, so the portal and its march stone cannot
+    # drift apart. Destination map ids follow the client registry; the server
+    # owns the actual transition.
+    crossing_at = {crossing.id: crossing.position for crossing in CROSSINGS}
     for portal_id, name, (x, z), destination in (
-            ("north-pass", "Whitehorn Pass", (54.0 * REG.SCALE, -128.0 * REG.SCALE),
-             "maps/nymara/whitehorn_range.elm"),
-            ("south-road", "Westhaven Road", (40.0 * REG.SCALE, 56.0 * REG.SCALE),
-             "maps/nymara/westhaven.elm"),
-            ("east-road", "Amethyst Barrens Road", (130.0 * REG.SCALE, -20.0 * REG.SCALE),
-             "maps/nymara/amethyst_barrens.elm"),
-            ("west-gorge", "Crownwater Gorge", (-52.0 * REG.SCALE, 4.0 * REG.SCALE),
-             "maps/nymara/crownwater.elm")):
+            ("north-pass", "Whitehorn Pass", crossing_at["north-pass"], "whitehorn_range"),
+            ("south-road", "Sanctuary Road to Four Gates", crossing_at["south-road"], "four_gates"),
+            ("east-road", "Glasswarden Road", crossing_at["east-road"], "amethyst_barrens"),
+            ("west-gorge", "Gorge Road to the Amberwood", crossing_at["west-gorge"], "amberwood"),
+            ("lake-quay", "Crownwater Packet", crossing_at["lake-quay"], "crownwater")):
         y = float(t.height_at(x, z))
         build.portals.append({
             "id": portal_id, "name": name, "type": "map-transition",
@@ -151,11 +200,11 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
     # arrival points on it.
     for portal_id, name, landmark_id, destination, spawn in (
             ("lens-vault-stair", "The Lens Vault", "orrery",
-             "maps/nymara/mirrorhold_interiors.elm", "lens-vault-stair"),
+             "mirrorhold_interiors", "lens-vault-stair"),
             ("cistern-door", "The Mirror Cistern", "plaza",
-             "maps/nymara/mirrorhold_interiors.elm", "cistern-door"),
+             "mirrorhold_interiors", "cistern-door"),
             ("stair-cellars-door", "The Stair Cellars", "cliff-town",
-             "maps/nymara/mirrorhold_interiors.elm", "stair-cellars-door")):
+             "mirrorhold_interiors", "stair-cellars-door")):
         anchor = next((l for l in build.landmarks if l.get("id") == landmark_id), None)
         if anchor is None:
             continue
@@ -868,7 +917,8 @@ def main() -> int:
         lod_build = build_region(args.seed, lod="far")
         lod_build.terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
         lod_build.terrain_meshes = lod_build.terrain.build_meshes(
-            uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX)
+            uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
+            materials=MARCH_MATERIALS)
         _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb",
                                   warn_unreferenced=False)
         stats["lod2"] = {

@@ -1,12 +1,12 @@
 {
-  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\eloria-client\\eloria-assets\\maps\\nymara-regions\\crownwater\\world.glb",
+  "uri": "world.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-09-04T12:00:17.795266Z",
+  "validatedAt": "2026-09-05T08:40:48.607687Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
-    "numInfos": 5,
+    "numInfos": 6,
     "numHints": 0,
     "messages": [
       {
@@ -19,25 +19,31 @@
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/7"
+        "pointer": "/materials/13"
       },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/9"
+        "pointer": "/materials/14"
       },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/10"
+        "pointer": "/materials/15"
       },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/20"
+        "pointer": "/materials/22"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/30"
       }
     ]
   }

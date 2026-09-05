@@ -33,9 +33,18 @@ unchanged:
 | Arrival datum | `(58, 58)` |
 | Addressable tiles | 0..191 on both axes |
 | Addressable world band | X -58..133, Z -133..58 |
-| Walk portal west | `(6, 58)` from Amethyst Barrens `(110, 58)` |
-| Walk portal east | `(110, 58)` to Amberwood `(6, 58)` |
-| Interior entrance | `(58, 100)` to Ssarathi Royal Archive `(58, 10)` |
+| Crossing west | `(6, 58)` to the Four Gates (the causeway road); the gate is a pair of menhirs astride the road |
+| Crossing north | `(66, 184)` to the Amethyst Barrens (the desert track) |
+| Crossing south | `(62, 18)` to the Verdant Stair (the shore road) |
+| North barrow | `(58, 100)`, a sealed passage; the Ssarathi Royal Archive is entered from the Ssarathi Ruins |
+
+Three things in the walk grid used to seal the camp: gate lintels stamped onto
+the ground plane (`collision.py` now ignores geometry more than 2.1 m above a
+node's seat), the great hall's plinth running through the palisade so the
+north gate opened into its back wall (the hall is 13 m across now, at
+`(0, -12)`), and a cart parked in the south gate with the crossroads well on
+the road behind it (both moved). All four gates and all three crossings are
+reachable from the plaza on the server's folded grid.
 
 The region is wider than the addressable band on purpose. Everything
 outside it - the far spires, the summits, the open sea - is scenery a
@@ -75,9 +84,9 @@ a safe spawn. The positions the manifests name explicitly:
 | Spawn id | Server tile | Map | Note |
 |---|---|---|---|
 | arrival-datum | `(58, 58)` | sunmane_steppe | ceremonial crossroads at the shared market |
-| west-caravanserai | `(6, 58)` | sunmane_steppe | arrival from Amethyst Barrens |
-| east-caravanserai | `(110, 58)` | sunmane_steppe | departure toward Amberwood |
-| north-barrowfield | `(58, 100)` | sunmane_steppe | Ssarathi Royal Archive entrance approach |
+| west-caravanserai | `(6, 58)` | sunmane_steppe | arrival from the Four Gates causeway |
+| east-caravanserai | `(110, 58)` | sunmane_steppe | the east caravanserai; the east gate is the frontier and leads nowhere |
+| north-barrowfield | `(58, 100)` | sunmane_steppe | the barrow field; the passage barrow is sealed |
 | default | `(43, 27)` | sunmane_wind_caves | Arrival for the wind caves mouth, and the map default. |
 | wind-caves-mouth | `(43, 27)` | sunmane_wind_caves | Arrival for Sunmane Wind Caves. |
 | crystal-hollow-adit | `(169, 28)` | sunmane_wind_caves | Arrival for Amethyst Crystal Hollow. |

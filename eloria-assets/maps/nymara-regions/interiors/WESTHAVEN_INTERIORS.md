@@ -214,3 +214,16 @@ lit by lanterns - and legible. The other three sections keep the defaults.
   board covers the exterior; the four sections are authored from it and from the
   region's surface landmarks.
 - **Place names are the author's throughout.**
+
+## Small rooms
+
+Three more sections joined the `westhaven_insides` map from the shared
+`_toolkit/amberwood/smallrooms.py` kit, each with its own door on the Westhaven
+map and its own arrival: a cave with a creature den, a cottage and a shrine.
+They sit in a column east of the set pieces with the usual void between.
+
+| section | name | kind | region door | what it is |
+|---|---|---|---|---|
+| `salvage_hole` | the salvage hole | cave | `salvage-hole-mouth` | a bronze tide crab's den under the east watch |
+| `gullscar_farmhouse` | Gullscar farmhouse | cottage | `gullscar-farmhouse-door` | the upland farm's house |
+| `haven_undercroft` | the haven undercroft | shrine | `haven-undercroft-door` | a lantern shrine over a crypt |

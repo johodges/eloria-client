@@ -46,6 +46,8 @@ from amberwood import terrain as TER
 
 import populate as POP
 import region as REG
+import transitions as MARCH
+import loresites as LORE
 
 HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
@@ -59,6 +61,35 @@ DESPECKLE_MIN_CELLS = 6
 ASSET_VERSION = "1.0.0"
 SCHEMA_VERSION = "1.0.0"
 
+# The four crossings, as region-connections.json declares them: the Whitehorn
+# pass in the north, the Mirrorhold road along the lake's north shore to the
+# west, the Sunmane track south, and the east landing where the Crownwater
+# packet calls. Whitehorn's snow blows down the pass, the citadel's turf runs
+# in along the west road, steppe grass climbs the south track.
+CROSSINGS = [
+    MARCH.Crossing("north-pass", "whitehorn_range", REG.ANCHORS["shards_north"],
+                   (REG.ANCHORS["shards_north"][0], REG.PLAY_MIN_Z - 20.0),
+                   radius=50.0, name="The Whitehorn March"),
+    MARCH.Crossing("west-road", "mirrorhold", REG.ANCHORS["watchtower_west"],
+                   (REG.PLAY_MIN_X - 20.0, REG.ANCHORS["watchtower_west"][1]),
+                   radius=46.0, name="The Mirror Road March"),
+    MARCH.Crossing("south-road", "sunmane_steppe", REG.ANCHORS["road_end_south"],
+                   (REG.ANCHORS["road_end_south"][0], REG.PLAY_MAX_Z + 20.0),
+                   radius=48.0, name="The Steppe March"),
+    MARCH.Crossing("east-shore", "crownwater", REG.ANCHORS["road_end_east"],
+                   (REG.PLAY_MAX_X + 20.0, REG.ANCHORS["road_end_east"][1]),
+                   radius=32.0, ferry=True, name="The East Landing"),
+]
+
+# The places the region's people argue about (see loresites.py).
+SITES = [
+    LORE.Site("eleven-measures", "The Eleven Measures", "measure_stones", (218.0, -192.0),
+              thread="C", clearing=13.0,
+              note="Eleven calibration stones in an arc, each with a brass collar and a shard "
+                   "cut to one length. A Glasswarden tunes against all eleven in a walk."),
+]
+MARCH_MATERIALS: dict = dict(getattr(REG, "SURFACE_MATERIALS", {}))
+
 # The materials this region embeds. Named explicitly rather than derived, so a
 # kit added by another region cannot silently enlarge this package.
 MATERIALS: frozenset[str] = frozenset({
@@ -66,7 +97,7 @@ MATERIALS: frozenset[str] = frozenset({
     "amethyst_storm_rock", "amethyst_crystal", "amethyst_pale_stone",
     "amethyst_verdigris", "amethyst_brass", "amethyst_banner",
     "shore_shingle", "cobble_paving", "water_sea", "water_stream",
-})
+}) | MARCH.materials_for("amethyst_barrens", CROSSINGS) | LORE.materials([s.piece for s in SITES])
 
 
 # --------------------------------------------------------------------------
@@ -82,6 +113,8 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     # and ground-dressing passes choose their sites by surface class, and if the
     # classes are still unpainted they scatter nothing at all.
     REG.assign_surfaces(terrain, seed)
+    MARCH.prepare(terrain, CROSSINGS)
+    LORE.prepare(terrain, SITES, sea_level=getattr(REG, "SEA_LEVEL", 0.0))
 
     POP.populate_landmarks(build, seed, lod=lod)
     POP.populate_stations(build, seed, lod=lod)
@@ -91,9 +124,17 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
 
     POP.build_water(build)
 
+    # The marches: the neighbours' country coming in along the roads out.
+    MARCH.paint(terrain, CROSSINGS, MARCH_MATERIALS, seed, sea_level=REG.SEA_LEVEL)
+    march = MARCH.dress(build, "amethyst_barrens", CROSSINGS, seed, sea_level=REG.SEA_LEVEL)
+    LORE.dress(build, terrain, SITES, seed)
+    build.landmarks.extend(march.landmarks)
+    build.notes.extend(march.notes)
+
     terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
     build.terrain_meshes = terrain.build_meshes(
-        uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX)
+        uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
+        materials=MARCH_MATERIALS)
     # The backdrop is the distant mountain ring. It comes out of the toolkit in
     # Amberwood's cliff rock, so it is retinted into this region's storm rock -
     # otherwise the horizon is grey while everything in front of it is violet.
@@ -127,14 +168,14 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
     # Edge portals to neighbouring Nymara regions. Destination map ids follow the
     # client registry; the server remains authoritative for the transition.
     for portal_id, name, key, destination in (
-            ("west-road", "Amberwood Road", "watchtower_west",
-             "maps/nymara/amberwood.elm"),
+            ("west-road", "Mirror Road to Mirrorhold", "watchtower_west",
+             "mirrorhold"),
             ("north-pass", "Whitehorn Pass", "shards_north",
-             "maps/nymara/whitehorn_range.elm"),
+             "whitehorn_range"),
             ("east-shore", "Crownwater Landing", "road_end_east",
-             "maps/nymara/crownwater.elm"),
+             "crownwater"),
             ("south-road", "Sunmane Track", "road_end_south",
-             "maps/nymara/sunmane_steppe.elm")):
+             "sunmane_steppe")):
         x, z = REG.ANCHORS[key]
         y = float(t.height_at(x, z))
         build.portals.append({
@@ -154,7 +195,11 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
             ("resonant-vault-stair", "The Resonant Vault", "glasswarden-observatory"),
             ("geode-hollow-mouth", "The Geode Hollow", "amethyst-geode-cave-1"),
             ("shardworks-headframe", "The Shardworks", "resonant-crystal-cluster-0"),
-            ("storm-barrow-stair", "The Storm Barrow", "amethyst-storm-ruin-0")):
+            ("storm-barrow-stair", "The Storm Barrow", "amethyst-storm-ruin-0"),
+            ("sour-cut-mouth", "The Sour Cut", "amethyst-geode-cave-3"),
+            ("measure-house-door", "The Measure House", "amethyst-storm-ruin-2"),
+            ("counting-house-door", "The Shard Counter's House", "resonant-crystal-cluster-2"),
+):
         anchor = next((l for l in build.landmarks if l.get("id") == landmark_id), None)
         if anchor is None:
             continue
@@ -876,7 +921,8 @@ def main() -> int:
         lod_build = build_region(args.seed, lod="far")
         lod_build.terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
         lod_build.terrain_meshes = lod_build.terrain.build_meshes(
-            uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX)
+            uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
+            materials=MARCH_MATERIALS)
         _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb")
         stats["lod2"] = {
             "glbBytes": lod_stats["glbBytes"],

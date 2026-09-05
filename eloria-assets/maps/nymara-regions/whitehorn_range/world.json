@@ -91,6 +91,90 @@
       ],
       "rotationY": 0.0,
       "authority": "server"
+    },
+    {
+      "id": "whitehorn-glacier-temple-door",
+      "name": "Glacier Temple",
+      "position": [
+        102.0,
+        67.85,
+        -309.0
+      ],
+      "rotationY": 0.0,
+      "authority": "server",
+      "note": "return point from the Whitehorn insides map"
+    },
+    {
+      "id": "whitehorn-mine-adit",
+      "name": "Whitehorn Mine",
+      "position": [
+        288.0,
+        50.33,
+        -138.0
+      ],
+      "rotationY": 0.0,
+      "authority": "server",
+      "note": "return point from the Whitehorn insides map"
+    },
+    {
+      "id": "whitehorn-ice-cave-mouth",
+      "name": "Whitehorn Ice Cave",
+      "position": [
+        -114.0,
+        30.39,
+        -42.0
+      ],
+      "rotationY": 0.0,
+      "authority": "server",
+      "note": "return point from the Whitehorn insides map"
+    },
+    {
+      "id": "whitehorn-barrow-door",
+      "name": "The Frost Barrow",
+      "position": [
+        -87.0,
+        71.63,
+        -204.0
+      ],
+      "rotationY": 0.0,
+      "authority": "server",
+      "note": "return point from the Whitehorn insides map"
+    },
+    {
+      "id": "snowline-cell-door",
+      "name": "The Snowline Cell",
+      "position": [
+        354.0,
+        58.1,
+        -192.0
+      ],
+      "rotationY": 0.0,
+      "authority": "server",
+      "note": "return point from the Whitehorn insides map"
+    },
+    {
+      "id": "west-watch-cave-mouth",
+      "name": "The Cascade Cave",
+      "position": [
+        -132.0,
+        47.64,
+        -132.0
+      ],
+      "rotationY": 0.0,
+      "authority": "server",
+      "note": "return point from the Whitehorn insides map"
+    },
+    {
+      "id": "gate-store-door",
+      "name": "The Ration Sister's Store",
+      "position": [
+        -12.0,
+        19.66,
+        84.0
+      ],
+      "rotationY": 0.0,
+      "authority": "server",
+      "note": "return point from the Whitehorn insides map"
     }
   ],
   "collision": {
@@ -104,6 +188,40 @@
       "Landmark_shrine_01",
       "Landmark_shrine_02",
       "Landmark_south_gate",
+      "Lore_snowline_stones",
+      "March_east_pass_Station",
+      "March_east_pass_Stone",
+      "March_east_pass_outcrop_000",
+      "March_east_pass_outcrop_001",
+      "March_east_pass_outcrop_002",
+      "March_east_pass_outcrop_003",
+      "March_east_pass_shard_009",
+      "March_east_pass_shard_010",
+      "March_east_pass_shard_011",
+      "March_south_gate_Station",
+      "March_south_gate_Stone",
+      "March_south_gate_tree_000",
+      "March_south_gate_tree_001",
+      "March_south_gate_tree_002",
+      "March_south_gate_tree_003",
+      "March_south_gate_tree_004",
+      "March_south_gate_turf_rock_005",
+      "March_south_gate_turf_rock_006",
+      "March_south_gate_turf_rock_007",
+      "March_south_gate_turf_rock_008",
+      "March_south_gate_turf_rock_009",
+      "March_west_pass_Station",
+      "March_west_pass_Stone",
+      "March_west_pass_tree_000",
+      "March_west_pass_tree_001",
+      "March_west_pass_tree_002",
+      "March_west_pass_tree_003",
+      "March_west_pass_tree_004",
+      "March_west_pass_tree_005",
+      "March_west_pass_tree_006",
+      "March_west_pass_tree_007",
+      "March_west_pass_tree_008",
+      "March_west_pass_tree_009",
       "Prop_waystone_000",
       "Prop_waystone_001",
       "Prop_waystone_002",
@@ -968,30 +1086,7 @@
       "Tree_pine_0841",
       "Tree_pine_0842",
       "Tree_pine_0843",
-      "Tree_pine_0844",
-      "Tree_pine_0845",
-      "Tree_pine_0846",
-      "Tree_pine_0847",
-      "Tree_pine_0848",
-      "Tree_pine_0849",
-      "Tree_pine_0850",
-      "Tree_pine_0851",
-      "Tree_pine_0852",
-      "Tree_pine_0853",
-      "Tree_pine_0854",
-      "Tree_pine_0855",
-      "Tree_pine_0856",
-      "Tree_pine_0857",
-      "Tree_pine_0858",
-      "Tree_pine_0859",
-      "Tree_pine_0860",
-      "Tree_pine_0861",
-      "Tree_pine_0862",
-      "Tree_pine_0863",
-      "Tree_pine_0864",
-      "Tree_pine_0865",
-      "Tree_pine_0866",
-      "Tree_pine_0867"
+      "Tree_pine_0844"
     ],
     "binary": "collision.bin",
     "format": "EWCG-v2",
@@ -1008,8 +1103,8 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 927830,
-    "walkableFraction": 0.6991
+    "walkableCells": 929809,
+    "walkableFraction": 0.7006
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -1058,7 +1153,7 @@
       "type": "gate",
       "position": [
         -12.0,
-        19.85,
+        19.66,
         84.0
       ],
       "authority": "client-visual"
@@ -1082,7 +1177,7 @@
       "type": "cave",
       "position": [
         -114.0,
-        29.07,
+        30.39,
         -42.0
       ],
       "authority": "client-visual"
@@ -1174,7 +1269,7 @@
     {
       "id": "whitehorn-cairn-field-cairn_ridge",
       "name": "Whitehorn Cairns",
-      "node": "Prop_cairn_0138",
+      "node": "Prop_cairn_0150",
       "type": "cairn-field",
       "position": [
         -87.0,
@@ -1186,7 +1281,7 @@
     {
       "id": "whitehorn-cairn-field-lower_cairns",
       "name": "Whitehorn Cairns",
-      "node": "Prop_cairn_0160",
+      "node": "Prop_cairn_0172",
       "type": "cairn-field",
       "position": [
         18.0,
@@ -1198,7 +1293,7 @@
     {
       "id": "whitehorn-cairn-field-west_watch",
       "name": "Whitehorn Cairns",
-      "node": "Prop_cairn_0176",
+      "node": "Prop_cairn_0188",
       "type": "cairn-field",
       "position": [
         -132.0,
@@ -1206,6 +1301,88 @@
         -132.0
       ],
       "authority": "client-visual"
+    },
+    {
+      "id": "snowline-stones",
+      "name": "The Snowline Stones",
+      "node": "Lore_snowline_stones",
+      "type": "lore-site",
+      "thread": "K",
+      "position": [
+        183.04,
+        53.3,
+        -155.76
+      ],
+      "note": "Ten cut stones up the slope, each with a brass line where the snow stood the year it was set. The last three stand above the snow now."
+    },
+    {
+      "id": "march-south-gate",
+      "name": "The Mirrorhold March",
+      "node": "March_south_gate_Stone",
+      "type": "transition",
+      "position": [
+        5.3,
+        11.18,
+        147.0
+      ],
+      "note": "Where the Whitehorn Range gives way to Mirrorhold: votary road furniture, a march stone, a waystation, and 10 pieces of the country beyond."
+    },
+    {
+      "id": "station-south-gate",
+      "name": "Mirrorhold Road Station",
+      "node": "March_south_gate_Station",
+      "type": "waystation",
+      "position": [
+        11.5,
+        11.53,
+        131.0
+      ]
+    },
+    {
+      "id": "march-west-pass",
+      "name": "The Amber Pass",
+      "node": "March_west_pass_Stone",
+      "type": "transition",
+      "position": [
+        -147.0,
+        38.64,
+        -30.7
+      ],
+      "note": "Where the Whitehorn Range gives way to the Amberwood: votary road furniture, a march stone, a waystation, and 10 pieces of the country beyond."
+    },
+    {
+      "id": "station-west-pass",
+      "name": "Amberwood Road Station",
+      "node": "March_west_pass_Station",
+      "type": "waystation",
+      "position": [
+        -131.0,
+        37.61,
+        -24.5
+      ]
+    },
+    {
+      "id": "march-east-pass",
+      "name": "The Barrens Pass",
+      "node": "March_east_pass_Stone",
+      "type": "transition",
+      "position": [
+        369.0,
+        36.97,
+        -17.3
+      ],
+      "note": "Where the Whitehorn Range gives way to the Amethyst Barrens: votary road furniture, a march stone, a waystation, and 12 pieces of the country beyond."
+    },
+    {
+      "id": "station-east-pass",
+      "name": "Amethyst Barrens Road Station",
+      "node": "March_east_pass_Station",
+      "type": "waystation",
+      "position": [
+        353.0,
+        37.49,
+        -23.5
+      ]
     }
   ],
   "interactives": [
@@ -1250,7 +1427,7 @@
       "role": "guard",
       "position": [
         -12.0,
-        19.85,
+        19.66,
         84.0
       ],
       "authority": "server"
@@ -1305,7 +1482,7 @@
       "role": "guard",
       "position": [
         -114.0,
-        29.07,
+        30.39,
         -42.0
       ],
       "authority": "server"
@@ -1397,7 +1574,7 @@
       "resource": "ice",
       "position": [
         -108.74,
-        10.45,
+        10.46,
         -50.5
       ],
       "authority": "server"
@@ -1407,7 +1584,7 @@
       "resource": "ice",
       "position": [
         -117.55,
-        33.61,
+        33.71,
         -25.21
       ],
       "authority": "server"
@@ -1417,7 +1594,7 @@
       "resource": "ice",
       "position": [
         -117.63,
-        33.77,
+        33.87,
         -25.82
       ],
       "authority": "server"
@@ -1427,7 +1604,7 @@
       "resource": "ice",
       "position": [
         -112.65,
-        32.99,
+        33.02,
         -35.43
       ],
       "authority": "server"
@@ -1437,7 +1614,7 @@
       "resource": "ice",
       "position": [
         -131.4,
-        35.38,
+        36.98,
         -46.31
       ],
       "authority": "server"
@@ -1447,7 +1624,7 @@
       "resource": "ice",
       "position": [
         -131.54,
-        35.59,
+        37.19,
         -41.3
       ],
       "authority": "server"
@@ -1615,100 +1792,187 @@
   ],
   "portals": [
     {
+      "id": "south-gate",
+      "name": "March down to Mirrorhold",
+      "type": "map-transition",
+      "position": [
+        0.0,
+        10.16,
+        153.0
+      ],
+      "serverTile": [
+        174,
+        21
+      ],
+      "destinationMap": "mirrorhold",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "west-pass",
+      "name": "Amber Pass",
+      "type": "map-transition",
+      "position": [
+        -153.0,
+        36.43,
+        -36.0
+      ],
+      "serverTile": [
+        21,
+        210
+      ],
+      "destinationMap": "amberwood",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "east-pass",
+      "name": "Barrens Pass",
+      "type": "map-transition",
+      "position": [
+        375.0,
+        36.38,
+        -12.0
+      ],
+      "serverTile": [
+        549,
+        186
+      ],
+      "destinationMap": "amethyst_barrens",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
       "id": "whitehorn-glacier-temple-door",
       "name": "Glacier Temple",
-      "destination": "whitehorn_glacier_temple",
-      "destinationSpawn": "whitehorn-glacier-temple-door",
-      "serverTile": null,
+      "type": "interior-entrance",
       "position": [
         102.0,
-        70.45,
+        70.17,
         -309.0
       ],
+      "serverTile": [
+        276,
+        483
+      ],
+      "landmark": "whitehorn-glacier-temple",
+      "destinationMap": "whitehorn_glacier_temple",
+      "destinationSpawn": "whitehorn-glacier-temple-door",
+      "radius": 2.5,
       "authority": "server"
     },
     {
       "id": "whitehorn-mine-adit",
       "name": "Whitehorn Mine",
-      "destination": "whitehorn_glacier_temple",
-      "destinationSpawn": "whitehorn-mine-adit",
-      "serverTile": null,
+      "type": "interior-entrance",
       "position": [
         288.0,
-        51.73,
+        50.43,
         -138.0
       ],
+      "serverTile": [
+        462,
+        312
+      ],
+      "landmark": "whitehorn-mine",
+      "destinationMap": "whitehorn_glacier_temple",
+      "destinationSpawn": "whitehorn-mine-adit",
+      "radius": 2.5,
       "authority": "server"
     },
     {
       "id": "whitehorn-ice-cave-mouth",
       "name": "Whitehorn Ice Cave",
-      "destination": "whitehorn_glacier_temple",
-      "destinationSpawn": "whitehorn-ice-cave-mouth",
-      "serverTile": null,
+      "type": "interior-entrance",
       "position": [
         -114.0,
-        30.47,
+        30.49,
         -42.0
       ],
+      "serverTile": [
+        60,
+        216
+      ],
+      "landmark": "whitehorn-ice-cave",
+      "destinationMap": "whitehorn_glacier_temple",
+      "destinationSpawn": "whitehorn-ice-cave-mouth",
+      "radius": 2.5,
       "authority": "server"
     },
     {
       "id": "whitehorn-barrow-door",
       "name": "The Frost Barrow",
-      "destination": "whitehorn_glacier_temple",
-      "destinationSpawn": "whitehorn-barrow-door",
-      "serverTile": null,
+      "type": "interior-entrance",
       "position": [
         -87.0,
-        72.83,
+        71.73,
         -204.0
       ],
+      "serverTile": [
+        87,
+        378
+      ],
+      "landmark": "whitehorn-cairn-field-cairn_ridge",
+      "destinationMap": "whitehorn_glacier_temple",
+      "destinationSpawn": "whitehorn-barrow-door",
+      "radius": 2.5,
       "authority": "server"
     },
     {
-      "id": "whitehorn-south-road",
-      "name": "Road to Amberwood",
-      "destination": "amberwood",
-      "serverTile": [
-        174,
-        330
-      ],
+      "id": "snowline-cell-door",
+      "name": "The Snowline Cell",
+      "type": "interior-entrance",
       "position": [
-        0.0,
-        50.81,
-        -156.0
+        354.0,
+        58.2,
+        -192.0
       ],
+      "serverTile": [
+        528,
+        366
+      ],
+      "landmark": "whitehorn-shrine-02",
+      "destinationMap": "whitehorn_glacier_temple",
+      "destinationSpawn": "snowline-cell-door",
+      "radius": 2.5,
       "authority": "server"
     },
     {
-      "id": "whitehorn-east-pass",
-      "name": "Pass to the Amethyst Barrens",
-      "destination": "amethyst_barrens",
-      "serverTile": [
-        330,
-        174
-      ],
+      "id": "west-watch-cave-mouth",
+      "name": "The Cascade Cave",
+      "type": "interior-entrance",
       "position": [
-        156.0,
-        30.85,
-        0.0
+        -132.0,
+        47.74,
+        -132.0
       ],
+      "serverTile": [
+        42,
+        306
+      ],
+      "landmark": "whitehorn-cairn-field-west_watch",
+      "destinationMap": "whitehorn_glacier_temple",
+      "destinationSpawn": "west-watch-cave-mouth",
+      "radius": 2.5,
       "authority": "server"
     },
     {
-      "id": "whitehorn-west-road",
-      "name": "Road to the Four Gates",
-      "destination": "four_gates",
-      "serverTile": [
-        18,
-        174
-      ],
+      "id": "gate-store-door",
+      "name": "The Ration Sister's Store",
+      "type": "interior-entrance",
       "position": [
-        -156.0,
-        81.13,
-        0.0
+        -12.0,
+        19.76,
+        84.0
       ],
+      "serverTile": [
+        162,
+        90
+      ],
+      "landmark": "whitehorn-south-gate",
+      "destinationMap": "whitehorn_glacier_temple",
+      "destinationSpawn": "gate-store-door",
+      "radius": 2.5,
       "authority": "server"
     }
   ],
@@ -1862,7 +2126,7 @@
     "northAxis": "-Z",
     "orientation": "north-up",
     "projection": "orthographic-top-down",
-    "renderedFrom": "world.glb",
+    "renderedFrom": "final geometry (offline rasteriser)",
     "transform": {
       "pixelX": {
         "scale": 1.0,
@@ -1890,28 +2154,28 @@
   },
   "lodGroups": [],
   "performance": {
-    "nodes": 4668,
-    "meshes": 150,
-    "materials": 25,
-    "images": 52,
-    "textures": 52,
-    "accessors": 607,
-    "bufferViews": 659,
-    "uniqueTriangles": 262928,
-    "uniqueVertices": 155259,
-    "glbBytes": 13924288,
-    "instancedTriangles": 716424,
-    "embeddedTextureBytes": 5435605,
-    "placements": 1924,
+    "nodes": 4689,
+    "meshes": 231,
+    "materials": 38,
+    "images": 83,
+    "textures": 83,
+    "accessors": 934,
+    "bufferViews": 1017,
+    "uniqueTriangles": 289080,
+    "uniqueVertices": 186204,
+    "glbBytes": 18935968,
+    "instancedTriangles": 749940,
+    "embeddedTextureBytes": 9210597,
+    "placements": 1958,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 927830,
-      "blockedCells": 399274,
-      "walkableFraction": 0.6991,
-      "elevatedDecks": 3,
-      "steepCells": 376667,
+      "walkableCells": 929809,
+      "blockedCells": 397295,
+      "walkableFraction": 0.7006,
+      "elevatedDecks": 4,
+      "steepCells": 373970,
       "reliefMetres": 161.42,
       "heightEncoding": {
         "origin": -6.1735,
@@ -1925,7 +2189,7 @@
       "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
       "columnOrder": "server-tile-x (column 0 is the -X western edge)"
     },
-    "trianglesPerSquareMetre": 2.16
+    "trianglesPerSquareMetre": 2.26
   },
   "sources": {
     "concept": "eloria-assets/concepts/nymara-regions/whitehorn_range_region_concept.png",
@@ -1945,9 +2209,13 @@
     "rope_bridge: deck at y=16.20 m, 46 m span, landing at (60, -98) and (41, -57). The deck owns its server cells; the gorge floor beneath it is not separately walkable.",
     "rope_bridge_upper: 44 m span measured landing to landing, gorge floor -12.1 m, landings 49.4 m north at (186, -121) / 42.2 m south at (186, -78), deck 45.9 m at its centre, rising +7.2 m to the north, turned 90 degrees (58 m of air beneath).",
     "rope_bridge_upper: deck at y=45.92 m, 44 m span, landing at (186, -121) and (186, -78). The deck owns its server cells; the gorge floor beneath it is not separately walkable.",
-    "Roadside markers: 177 cairns, 17 waystones.",
+    "Roadside markers: 189 cairns, 17 waystones.",
     "Glacier: 77 seracs along the ice.",
-    "Vegetation: 868 conifers below the snow line.",
-    "Scatter: 759 rock clusters."
+    "Vegetation: 845 conifers below the snow line.",
+    "Scatter: 744 rock clusters.",
+    "lore site snowline-stones (The Snowline Stones): relief 2.24 m, 24 m from the ask",
+    "march south-gate: 0 road pieces, 10 of mirrorhold's growth",
+    "march west-pass: 2 road pieces, 10 of amberwood's growth",
+    "march east-pass: 1 road pieces, 12 of amethyst_barrens's growth"
   ]
 }

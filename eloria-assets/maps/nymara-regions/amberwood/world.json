@@ -307,7 +307,6 @@
       "FallenLog_0155",
       "FallenLog_0156",
       "FallenLog_0157",
-      "FallenLog_0158",
       "Grove_01_Wood",
       "Grove_02_Wood",
       "Grove_03_Wood",
@@ -408,6 +407,54 @@
       "LogPile_Large_coppice_05",
       "LogPile_Large_coppice_06",
       "LogPile_Large_coppice_07",
+      "Lore_deep_grove_scar",
+      "Lore_nine_watchers",
+      "Lore_root_tally",
+      "March_east_road_Station",
+      "March_east_road_Stone",
+      "March_east_road_tree_000",
+      "March_east_road_tree_001",
+      "March_east_road_tree_002",
+      "March_east_road_tree_003",
+      "March_east_road_tree_004",
+      "March_east_road_turf_rock_005",
+      "March_east_road_turf_rock_006",
+      "March_east_road_turf_rock_007",
+      "March_east_road_turf_rock_008",
+      "March_east_road_turf_rock_009",
+      "March_harbour_quay_Station",
+      "March_harbour_quay_Stone",
+      "March_harbour_quay_cart_008",
+      "March_harbour_quay_haven_rock_004",
+      "March_harbour_quay_haven_rock_005",
+      "March_harbour_quay_haven_rock_006",
+      "March_harbour_quay_haven_rock_007",
+      "March_north_pass_Station",
+      "March_north_pass_Stone",
+      "March_north_pass_snow_boulder_009",
+      "March_north_pass_snow_boulder_010",
+      "March_north_pass_snow_boulder_011",
+      "March_north_pass_snow_boulder_012",
+      "March_north_pass_snow_boulder_013",
+      "March_north_pass_snow_boulder_014",
+      "March_north_pass_tree_000",
+      "March_north_pass_tree_001",
+      "March_north_pass_tree_002",
+      "March_north_pass_tree_003",
+      "March_north_pass_tree_004",
+      "March_north_pass_tree_005",
+      "March_north_pass_tree_006",
+      "March_north_pass_tree_007",
+      "March_north_pass_tree_008",
+      "March_south_road_Station",
+      "March_south_road_Stone",
+      "March_south_road_moor_stone_016",
+      "March_south_road_moor_stone_017",
+      "March_south_road_moor_stone_018",
+      "March_south_road_snag_000",
+      "March_south_road_snag_001",
+      "March_south_road_snag_002",
+      "March_south_road_snag_003",
       "Prop_BurntCamp_0",
       "Prop_BurntCamp_1",
       "Prop_BurntCamp_2",
@@ -862,216 +909,165 @@
       "Stone_RuinFragment_C_cinder_field_12",
       "Stone_RuinFragment_C_cinder_field_13",
       "Stone_RuinFragment_C_cinder_field_14",
-      "Tree_0059_pale_birch_Wood",
-      "Tree_0102_pale_birch_Wood",
-      "Tree_0110_dark_pine_Wood",
-      "Tree_0111_gold_oak_Wood",
       "Tree_0113_amber_oak_Wood",
-      "Tree_0155_dark_holly_Wood",
-      "Tree_0156_dead_snag_Wood",
-      "Tree_0232_dark_holly_Wood",
-      "Tree_0233_dark_holly_Wood",
-      "Tree_0249_pale_birch_Wood",
-      "Tree_0283_dark_pine_Wood",
-      "Tree_0286_dark_pine_Wood",
-      "Tree_0307_gold_oak_Wood",
-      "Tree_0390_pale_birch_Wood",
-      "Tree_0393_amber_oak_Wood",
-      "Tree_0417_amber_oak_Wood",
-      "Tree_0418_dark_pine_Wood",
-      "Tree_0421_amber_oak_Wood",
-      "Tree_0422_pale_birch_Wood",
-      "Tree_0425_pale_birch_Wood",
-      "Tree_0447_dark_pine_Wood",
-      "Tree_0448_dark_pine_Wood",
-      "Tree_0472_dark_pine_Wood",
-      "Tree_0500_dark_pine_Wood",
-      "Tree_0516_understory_hazel_Wood",
-      "Tree_0526_dark_pine_Wood",
-      "Tree_0548_pale_birch_Wood",
-      "Tree_0556_gold_oak_Wood",
-      "Tree_0559_dark_pine_Wood",
-      "Tree_0561_dark_pine_Wood",
-      "Tree_0577_understory_hazel_Wood",
-      "Tree_0578_understory_hazel_Wood",
-      "Tree_0592_gold_oak_Wood",
-      "Tree_0612_gold_oak_Wood",
-      "Tree_0636_pale_birch_Wood",
-      "Tree_0651_amber_oak_Wood",
-      "Tree_0652_rust_maple_Wood",
-      "Tree_0663_pale_birch_Wood",
+      "Tree_0196_dark_holly_Wood",
+      "Tree_0238_dark_pine_Wood",
+      "Tree_0240_dark_pine_Wood",
+      "Tree_0259_gold_oak_Wood",
+      "Tree_0292_dark_pine_Wood",
+      "Tree_0342_pale_birch_Wood",
+      "Tree_0369_dark_pine_Wood",
+      "Tree_0370_dark_pine_Wood",
+      "Tree_0373_dark_pine_Wood",
+      "Tree_0397_dark_pine_Wood",
+      "Tree_0398_gold_oak_Wood",
+      "Tree_0400_dark_holly_Wood",
+      "Tree_0425_dark_pine_Wood",
+      "Tree_0430_dark_holly_Wood",
+      "Tree_0465_pale_birch_Wood",
+      "Tree_0494_dark_pine_Wood",
+      "Tree_0506_rust_maple_Wood",
+      "Tree_0516_dark_holly_Wood",
+      "Tree_0520_amber_oak_Wood",
+      "Tree_0530_dark_pine_Wood",
+      "Tree_0541_pale_birch_Wood",
+      "Tree_0580_dark_pine_Wood",
+      "Tree_0585_pale_birch_Wood",
+      "Tree_0587_gold_oak_Wood",
+      "Tree_0609_dead_snag_Wood",
+      "Tree_0633_gold_oak_Wood",
+      "Tree_0655_dark_holly_Wood",
+      "Tree_0681_pale_birch_Wood",
       "Tree_0682_gold_oak_Wood",
-      "Tree_0687_amber_oak_Wood",
-      "Tree_0691_dark_pine_Wood",
-      "Tree_0710_amber_oak_Wood",
-      "Tree_0757_dead_snag_Wood",
-      "Tree_0762_dark_pine_Wood",
-      "Tree_0763_gold_oak_Wood",
-      "Tree_0764_dark_pine_Wood",
-      "Tree_0769_pale_birch_Wood",
-      "Tree_0794_amber_oak_Wood",
-      "Tree_0808_gold_oak_Wood",
-      "Tree_0813_dark_pine_Wood",
-      "Tree_0835_gold_oak_Wood",
-      "Tree_0846_amber_oak_Wood",
-      "Tree_0847_dark_pine_Wood",
-      "Tree_0860_pale_birch_Wood",
-      "Tree_0871_pale_birch_Wood",
-      "Tree_0886_burnt_snag_Wood",
-      "Tree_0889_dark_pine_Wood",
-      "Tree_0903_amber_oak_Wood",
-      "Tree_0911_amber_oak_Wood",
-      "Tree_0912_gold_oak_Wood",
-      "Tree_0918_gold_oak_Wood",
-      "Tree_0927_amber_oak_Wood",
-      "Tree_0930_rust_maple_Wood",
-      "Tree_0931_gold_oak_Wood",
-      "Tree_0934_amber_oak_Wood",
-      "Tree_0935_amber_oak_Wood",
-      "Tree_0942_gold_oak_Wood",
-      "Tree_0943_amber_oak_Wood",
-      "Tree_0944_amber_oak_Wood",
-      "Tree_0949_understory_hazel_Wood",
-      "Tree_0954_gold_oak_Wood",
-      "Tree_0969_dead_snag_Wood",
-      "Tree_0990_amber_oak_Wood",
-      "Tree_0991_gold_oak_Wood",
-      "Tree_0992_amber_oak_Wood",
-      "Tree_0993_pale_birch_Wood",
-      "Tree_1016_amber_oak_Wood",
-      "Tree_1018_dark_holly_Wood",
-      "Tree_1025_amber_oak_Wood",
-      "Tree_1026_gold_oak_Wood",
-      "Tree_1043_dark_holly_Wood",
-      "Tree_1044_dark_holly_Wood",
-      "Tree_1045_rust_maple_Wood",
-      "Tree_1048_dark_pine_Wood",
-      "Tree_1049_dark_pine_Wood",
-      "Tree_1050_amber_oak_Wood",
-      "Tree_1072_rust_maple_Wood",
-      "Tree_1076_dark_holly_Wood",
-      "Tree_1095_dark_holly_Wood",
-      "Tree_1105_pale_birch_Wood",
-      "Tree_1139_amber_oak_Wood",
-      "Tree_1140_understory_hazel_Wood",
-      "Tree_1152_amber_oak_Wood",
-      "Tree_1167_dark_holly_Wood",
-      "Tree_1168_rust_maple_Wood",
+      "Tree_0684_dead_snag_Wood",
+      "Tree_0704_gold_oak_Wood",
+      "Tree_0705_amber_oak_Wood",
+      "Tree_0711_gold_oak_Wood",
+      "Tree_0724_dead_snag_Wood",
+      "Tree_0725_amber_oak_Wood",
+      "Tree_0760_amber_oak_Wood",
+      "Tree_0771_amber_oak_Wood",
+      "Tree_0772_dark_pine_Wood",
+      "Tree_0780_dark_pine_Wood",
+      "Tree_0784_amber_oak_Wood",
+      "Tree_0790_amber_oak_Wood",
+      "Tree_0793_gold_oak_Wood",
+      "Tree_0799_dead_snag_Wood",
+      "Tree_0805_pale_birch_Wood",
+      "Tree_0806_amber_oak_Wood",
+      "Tree_0808_amber_oak_Wood",
+      "Tree_0809_amber_oak_Wood",
+      "Tree_0812_gold_oak_Wood",
+      "Tree_0814_amber_oak_Wood",
+      "Tree_0820_gold_oak_Wood",
+      "Tree_0838_dark_pine_Wood",
+      "Tree_0847_amber_oak_Wood",
+      "Tree_0848_rust_maple_Wood",
+      "Tree_0852_rust_maple_Wood",
+      "Tree_0874_dark_holly_Wood",
+      "Tree_0875_rust_maple_Wood",
+      "Tree_0906_dark_pine_Wood",
+      "Tree_0927_rust_maple_Wood",
+      "Tree_0928_amber_oak_Wood",
+      "Tree_0945_rust_maple_Wood",
+      "Tree_0946_pale_birch_Wood",
+      "Tree_0968_amber_oak_Wood",
+      "Tree_0971_dead_snag_Wood",
+      "Tree_0975_understory_hazel_Wood",
+      "Tree_0990_rust_maple_Wood",
+      "Tree_0992_pale_birch_Wood",
+      "Tree_0999_dark_holly_Wood",
+      "Tree_1012_dark_holly_Wood",
+      "Tree_1014_rust_maple_Wood",
+      "Tree_1015_amber_oak_Wood",
+      "Tree_1016_understory_hazel_Wood",
+      "Tree_1041_rust_maple_Wood",
+      "Tree_1053_rust_maple_Wood",
+      "Tree_1066_amber_oak_Wood",
+      "Tree_1073_pale_birch_Wood",
+      "Tree_1088_amber_oak_Wood",
+      "Tree_1105_understory_hazel_Wood",
+      "Tree_1112_pale_birch_Wood",
+      "Tree_1113_understory_hazel_Wood",
+      "Tree_1126_amber_oak_Wood",
+      "Tree_1134_dark_holly_Wood",
+      "Tree_1145_amber_oak_Wood",
+      "Tree_1147_pale_birch_Wood",
+      "Tree_1156_pale_birch_Wood",
+      "Tree_1169_pale_birch_Wood",
       "Tree_1180_rust_maple_Wood",
-      "Tree_1192_amber_oak_Wood",
-      "Tree_1203_amber_oak_Wood",
-      "Tree_1204_amber_oak_Wood",
-      "Tree_1208_rust_maple_Wood",
-      "Tree_1231_gold_oak_Wood",
-      "Tree_1254_amber_oak_Wood",
-      "Tree_1257_rust_maple_Wood",
-      "Tree_1266_gold_oak_Wood",
-      "Tree_1270_rust_maple_Wood",
-      "Tree_1274_burnt_snag_Wood",
-      "Tree_1286_rust_maple_Wood",
-      "Tree_1296_amber_oak_Wood",
-      "Tree_1313_rust_maple_Wood",
-      "Tree_1314_gold_oak_Wood",
-      "Tree_1323_amber_oak_Wood",
-      "Tree_1325_amber_oak_Wood",
-      "Tree_1351_dark_holly_Wood",
-      "Tree_1372_understory_hazel_Wood",
-      "Tree_1374_rust_maple_Wood",
-      "Tree_1401_dark_holly_Wood",
-      "Tree_1414_pale_birch_Wood",
-      "Tree_1418_understory_hazel_Wood",
-      "Tree_1422_amber_oak_Wood",
+      "Tree_1184_pale_birch_Wood",
+      "Tree_1196_gold_oak_Wood",
+      "Tree_1207_dark_holly_Wood",
+      "Tree_1222_rust_maple_Wood",
+      "Tree_1223_understory_hazel_Wood",
+      "Tree_1224_pale_birch_Wood",
+      "Tree_1225_rust_maple_Wood",
+      "Tree_1243_rust_maple_Wood",
+      "Tree_1244_rust_maple_Wood",
+      "Tree_1245_amber_oak_Wood",
+      "Tree_1246_gold_oak_Wood",
+      "Tree_1255_gold_oak_Wood",
+      "Tree_1258_rust_maple_Wood",
+      "Tree_1282_rust_maple_Wood",
+      "Tree_1302_understory_hazel_Wood",
+      "Tree_1305_pale_birch_Wood",
+      "Tree_1310_rust_maple_Wood",
+      "Tree_1313_dark_holly_Wood",
+      "Tree_1315_rust_maple_Wood",
+      "Tree_1341_amber_oak_Wood",
+      "Tree_1343_dead_snag_Wood",
+      "Tree_1356_pale_birch_Wood",
+      "Tree_1380_rust_maple_Wood",
+      "Tree_1384_gold_oak_Wood",
+      "Tree_1388_amber_oak_Wood",
+      "Tree_1391_rust_maple_Wood",
+      "Tree_1419_pale_birch_Wood",
+      "Tree_1421_gold_oak_Wood",
       "Tree_1423_rust_maple_Wood",
-      "Tree_1427_dead_snag_Wood",
-      "Tree_1429_dark_holly_Wood",
-      "Tree_1440_dark_holly_Wood",
-      "Tree_1451_gold_oak_Wood",
-      "Tree_1454_rust_maple_Wood",
-      "Tree_1463_gold_oak_Wood",
-      "Tree_1474_rust_maple_Wood",
-      "Tree_1475_gold_oak_Wood",
+      "Tree_1425_amber_oak_Wood",
+      "Tree_1428_rust_maple_Wood",
+      "Tree_1435_dark_holly_Wood",
+      "Tree_1460_gold_oak_Wood",
       "Tree_1476_amber_oak_Wood",
-      "Tree_1490_amber_oak_Wood",
-      "Tree_1491_burnt_snag_Wood",
-      "Tree_1514_amber_oak_Wood",
-      "Tree_1542_dark_pine_Wood",
-      "Tree_1544_amber_oak_Wood",
-      "Tree_1566_gold_oak_Wood",
-      "Tree_1569_understory_hazel_Wood",
-      "Tree_1572_pale_birch_Wood",
-      "Tree_1573_rust_maple_Wood",
-      "Tree_1574_amber_oak_Wood",
-      "Tree_1582_rust_maple_Wood",
-      "Tree_1583_understory_hazel_Wood",
-      "Tree_1595_understory_hazel_Wood",
-      "Tree_1603_amber_oak_Wood",
-      "Tree_1628_dark_holly_Wood",
-      "Tree_1635_amber_oak_Wood",
-      "Tree_1636_rust_maple_Wood",
-      "Tree_1659_amber_oak_Wood",
-      "Tree_1668_pale_birch_Wood",
-      "Tree_1669_gold_oak_Wood",
-      "Tree_1677_understory_hazel_Wood",
-      "Tree_1695_rust_maple_Wood",
-      "Tree_1696_pale_birch_Wood",
-      "Tree_1708_amber_oak_Wood",
-      "Tree_1712_amber_oak_Wood",
-      "Tree_1714_gold_oak_Wood",
-      "Tree_1754_pale_birch_Wood",
-      "Tree_1784_pale_birch_Wood",
-      "Tree_1800_dead_snag_Wood",
-      "Tree_1801_dark_pine_Wood",
-      "Tree_1823_pale_birch_Wood",
-      "Tree_1832_rust_maple_Wood",
-      "Tree_1851_dark_pine_Wood",
-      "Tree_1868_amber_oak_Wood",
-      "Tree_1895_pale_birch_Wood",
-      "Tree_1917_amber_oak_Wood",
-      "Tree_1924_amber_oak_Wood",
-      "Tree_1940_dark_pine_Wood",
-      "Tree_1941_understory_hazel_Wood",
-      "Tree_1966_amber_oak_Wood",
-      "Tree_1968_amber_oak_Wood",
-      "Tree_1999_rust_maple_Wood",
-      "Tree_2000_rust_maple_Wood",
-      "Tree_2009_rust_maple_Wood",
-      "Tree_2038_rust_maple_Wood",
-      "Tree_2075_understory_hazel_Wood",
-      "Tree_2111_pale_birch_Wood",
-      "Tree_2148_amber_oak_Wood",
-      "Tree_2149_understory_hazel_Wood",
-      "Tree_2157_amber_oak_Wood",
-      "Tree_2166_amber_oak_Wood",
-      "Tree_2167_understory_hazel_Wood",
-      "Tree_2226_rust_maple_Wood",
-      "Tree_2228_gold_oak_Wood",
-      "Tree_2250_pale_birch_Wood",
-      "Tree_2255_amber_oak_Wood",
-      "Tree_2257_gold_oak_Wood",
-      "Tree_2295_amber_oak_Wood",
-      "Tree_2296_amber_oak_Wood",
-      "Tree_2297_pale_birch_Wood",
-      "Tree_2319_pale_birch_Wood",
-      "Tree_2320_pale_birch_Wood",
-      "Tree_2340_pale_birch_Wood",
-      "Tree_2379_pale_birch_Wood",
-      "Tree_2429_dark_pine_Wood",
-      "Tree_2433_amber_oak_Wood",
-      "Tree_2447_amber_oak_Wood",
-      "Tree_2455_rust_maple_Wood",
-      "Tree_2469_rust_maple_Wood",
-      "Tree_2470_gold_oak_Wood",
-      "Tree_2471_pale_birch_Wood",
-      "Tree_2482_pale_birch_Wood",
-      "Tree_2483_pale_birch_Wood",
-      "Tree_2484_rust_maple_Wood",
-      "Tree_2497_amber_oak_Wood",
-      "Tree_2510_amber_oak_Wood",
-      "Tree_2514_amber_oak_Wood",
-      "Tree_2569_amber_oak_Wood",
-      "Tree_2571_gold_oak_Wood",
-      "Tree_2617_amber_oak_Wood",
-      "Tree_2657_rust_maple_Wood"
+      "Tree_1516_rust_maple_Wood",
+      "Tree_1517_amber_oak_Wood",
+      "Tree_1527_gold_oak_Wood",
+      "Tree_1541_pale_birch_Wood",
+      "Tree_1563_rust_maple_Wood",
+      "Tree_1579_dark_pine_Wood",
+      "Tree_1606_understory_hazel_Wood",
+      "Tree_1617_dark_pine_Wood",
+      "Tree_1667_gold_oak_Wood",
+      "Tree_1773_amber_oak_Wood",
+      "Tree_1783_rust_maple_Wood",
+      "Tree_1785_amber_oak_Wood",
+      "Tree_1813_understory_hazel_Wood",
+      "Tree_1817_amber_oak_Wood",
+      "Tree_1840_rust_maple_Wood",
+      "Tree_1841_rust_maple_Wood",
+      "Tree_1847_gold_oak_Wood",
+      "Tree_1851_rust_maple_Wood",
+      "Tree_1875_rust_maple_Wood",
+      "Tree_1931_rust_maple_Wood",
+      "Tree_1934_dark_holly_Wood",
+      "Tree_1950_amber_oak_Wood",
+      "Tree_1951_dark_pine_Wood",
+      "Tree_1965_gold_oak_Wood",
+      "Tree_1967_amber_oak_Wood",
+      "Tree_1968_gold_oak_Wood",
+      "Tree_1989_pale_birch_Wood",
+      "Tree_1997_understory_hazel_Wood",
+      "Tree_1998_gold_oak_Wood",
+      "Tree_2030_amber_oak_Wood",
+      "Tree_2039_rust_maple_Wood",
+      "Tree_2041_amber_oak_Wood",
+      "Tree_2093_rust_maple_Wood",
+      "Tree_2094_pale_birch_Wood",
+      "Tree_2102_amber_oak_Wood",
+      "Tree_2179_pale_birch_Wood",
+      "Tree_2197_understory_hazel_Wood",
+      "Tree_2203_rust_maple_Wood"
     ],
     "binary": "collision.bin",
     "format": "EWCG-v2",
@@ -1088,8 +1084,8 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 914694,
-    "walkableFraction": 0.6892
+    "walkableCells": 913845,
+    "walkableFraction": 0.6886
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -1495,7 +1491,7 @@
       "type": "ruin",
       "position": [
         -90.0,
-        -4.15,
+        -4.17,
         -42.0
       ]
     },
@@ -1685,6 +1681,137 @@
         52.71,
         -372.0
       ]
+    },
+    {
+      "id": "nine-watchers",
+      "name": "The Nine Watchers",
+      "node": "Lore_nine_watchers",
+      "type": "lore-site",
+      "thread": "A",
+      "position": [
+        -80.0,
+        -9.18,
+        -52.0
+      ],
+      "note": "Nine stones with lantern niches cut in their east faces and a fire before the middle one that is never let out. Hermit Bode keeps it."
+    },
+    {
+      "id": "deep-grove-scar",
+      "name": "The Scarred Grove",
+      "node": "Lore_deep_grove_scar",
+      "type": "lore-site",
+      "thread": "A",
+      "position": [
+        -13.53,
+        42.71,
+        -311.63
+      ],
+      "note": "The deep grove, burnt to the heart in a ring, with one sapling in the char. The grove reader says the scar is older than the fire."
+    },
+    {
+      "id": "root-tally",
+      "name": "Root's Tally",
+      "node": "Lore_root_tally",
+      "type": "lore-site",
+      "thread": "I",
+      "position": [
+        -92.0,
+        -1.36,
+        84.0
+      ],
+      "note": "Tomas Root's counting bench on one side of the bee fence, the Mycelari daybook-stump on the other, and the same count cut into both."
+    },
+    {
+      "id": "march-north-pass",
+      "name": "The Whitehorn March",
+      "node": "March_north_pass_Stone",
+      "type": "transition",
+      "position": [
+        66.7,
+        56.85,
+        -378.0
+      ],
+      "note": "Where the Amberwood gives way to the Whitehorn Range: mycelari road furniture, a march stone, a waystation, and 19 pieces of the country beyond."
+    },
+    {
+      "id": "station-north-pass",
+      "name": "Whitehorn Range Road Station",
+      "node": "March_north_pass_Station",
+      "type": "waystation",
+      "position": [
+        60.5,
+        49.71,
+        -362.0
+      ]
+    },
+    {
+      "id": "march-east-road",
+      "name": "The Gorge March",
+      "node": "March_east_road_Stone",
+      "type": "transition",
+      "position": [
+        387.0,
+        41.14,
+        -71.3
+      ],
+      "note": "Where the Amberwood gives way to Mirrorhold: mycelari road furniture, a march stone, a waystation, and 10 pieces of the country beyond."
+    },
+    {
+      "id": "station-east-road",
+      "name": "Mirrorhold Road Station",
+      "node": "March_east_road_Station",
+      "type": "waystation",
+      "position": [
+        371.0,
+        40.54,
+        -77.5
+      ]
+    },
+    {
+      "id": "march-south-road",
+      "name": "The Moor March",
+      "node": "March_south_road_Stone",
+      "type": "transition",
+      "position": [
+        161.3,
+        12.55,
+        156.0
+      ],
+      "note": "Where the Amberwood gives way to the Grey Moors: mycelari road furniture, a march stone, a waystation, and 19 pieces of the country beyond."
+    },
+    {
+      "id": "station-south-road",
+      "name": "Grey Moors Road Station",
+      "node": "March_south_road_Station",
+      "type": "waystation",
+      "position": [
+        167.5,
+        14.87,
+        140.0
+      ]
+    },
+    {
+      "id": "march-harbour-quay",
+      "name": "The Packet Quay",
+      "node": "March_harbour_quay_Stone",
+      "type": "transition",
+      "position": [
+        -114.0,
+        1.76,
+        29.3
+      ],
+      "note": "Where the Amberwood gives way to Westhaven: mycelari road furniture, a march stone, a waystation, and 9 pieces of the country beyond."
+    },
+    {
+      "id": "station-harbour-quay",
+      "name": "Westhaven Road Station",
+      "node": "March_harbour_quay_Station",
+      "type": "waystation",
+      "position": [
+        -98.0,
+        2.52,
+        35.5
+      ]
     }
   ],
   "interactives": [
@@ -1803,13 +1930,13 @@
       "name": "Warden of the Amber Gate",
       "type": "npc",
       "position": [
-        179.0,
-        39.42,
-        -93.0
+        173.77,
+        37.12,
+        -99.01
       ],
       "serverTile": [
-        353,
-        267
+        348,
+        273
       ],
       "authority": "server"
     },
@@ -1908,13 +2035,13 @@
       "name": "Canopy Rigger",
       "type": "npc",
       "position": [
-        45.0,
-        45.23,
-        -193.0
+        68.43,
+        49.2,
+        -213.18
       ],
       "serverTile": [
-        219,
-        367
+        242,
+        387
       ],
       "authority": "server"
     },
@@ -1923,13 +2050,13 @@
       "name": "Keeper of the Hollow",
       "type": "npc",
       "position": [
-        -74.0,
-        29.94,
-        -268.0
+        -82.93,
+        25.09,
+        -258.86
       ],
       "serverTile": [
-        100,
-        442
+        91,
+        433
       ],
       "authority": "server"
     },
@@ -2224,13 +2351,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        60.0,
-        51.76,
-        -302.0
+        87.51,
+        56.04,
+        -253.83
       ],
       "serverTile": [
-        234,
-        476
+        262,
+        428
       ],
       "authority": "server"
     },
@@ -2239,13 +2366,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        65.0,
-        53.84,
-        -305.0
+        88.0,
+        59.45,
+        -280.94
       ],
       "serverTile": [
-        239,
-        479
+        262,
+        455
       ],
       "authority": "server"
     },
@@ -2254,13 +2381,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        30.0,
-        46.8,
-        -231.0
+        66.0,
+        50.31,
+        -263.02
       ],
       "serverTile": [
-        204,
-        405
+        240,
+        437
       ],
       "authority": "server"
     },
@@ -2269,13 +2396,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        37.0,
-        44.96,
-        -206.0
+        81.88,
+        53.47,
+        -248.97
       ],
       "serverTile": [
-        211,
-        380
+        256,
+        423
       ],
       "authority": "server"
     },
@@ -2284,13 +2411,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        32.0,
-        47.36,
-        -220.0
+        64.14,
+        48.02,
+        -249.71
       ],
       "serverTile": [
-        206,
-        394
+        238,
+        424
       ],
       "authority": "server"
     },
@@ -2299,13 +2426,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        62.0,
-        54.29,
-        -303.0
+        93.52,
+        59.45,
+        -268.42
       ],
       "serverTile": [
-        236,
-        477
+        268,
+        442
       ],
       "authority": "server"
     },
@@ -2314,13 +2441,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        41.0,
-        44.42,
-        -198.0
+        54.46,
+        50.34,
+        -211.35
       ],
       "serverTile": [
-        215,
-        372
+        228,
+        385
       ],
       "authority": "server"
     },
@@ -2329,13 +2456,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        44.0,
-        46.68,
-        -194.0
+        60.67,
+        49.86,
+        -211.81
       ],
       "serverTile": [
-        218,
-        368
+        235,
+        386
       ],
       "authority": "server"
     },
@@ -2344,13 +2471,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        54.0,
-        47.07,
-        -183.0
+        70.21,
+        44.56,
+        -200.41
       ],
       "serverTile": [
-        228,
-        357
+        244,
+        374
       ],
       "authority": "server"
     },
@@ -2359,13 +2486,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        42.0,
-        45.19,
-        -197.0
+        61.23,
+        50.66,
+        -216.72
       ],
       "serverTile": [
-        216,
-        371
+        235,
+        391
       ],
       "authority": "server"
     },
@@ -2374,13 +2501,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        215.0,
-        22.38,
-        114.0
+        217.16,
+        23.57,
+        110.62
       ],
       "serverTile": [
-        389,
-        60
+        391,
+        63
       ],
       "authority": "server"
     },
@@ -2389,13 +2516,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        211.0,
-        24.23,
-        103.0
+        208.39,
+        23.57,
+        106.28
       ],
       "serverTile": [
-        385,
-        71
+        382,
+        68
       ],
       "authority": "server"
     },
@@ -2404,13 +2531,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        208.0,
-        23.41,
-        95.0
+        210.87,
+        23.57,
+        96.32
       ],
       "serverTile": [
-        382,
-        79
+        385,
+        78
       ],
       "authority": "server"
     },
@@ -2419,13 +2546,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        208.0,
-        23.55,
-        94.0
+        209.03,
+        23.57,
+        96.05
       ],
       "serverTile": [
-        382,
-        80
+        383,
+        78
       ],
       "authority": "server"
     },
@@ -2434,13 +2561,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        214.0,
-        23.15,
-        100.0
+        213.89,
+        23.57,
+        97.57
       ],
       "serverTile": [
         388,
-        74
+        76
       ],
       "authority": "server"
     },
@@ -2449,13 +2576,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        -85.0,
-        42.68,
-        -272.0
+        -90.34,
+        14.45,
+        -263.87
       ],
       "serverTile": [
-        89,
-        446
+        84,
+        438
       ],
       "authority": "server"
     },
@@ -2464,13 +2591,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        -78.0,
-        31.87,
-        -269.0
+        -77.82,
+        31.79,
+        -264.75
       ],
       "serverTile": [
         96,
-        443
+        439
       ],
       "authority": "server"
     },
@@ -2479,13 +2606,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        -75.0,
-        36.7,
-        -246.0
+        -85.56,
+        11.22,
+        -251.77
       ],
       "serverTile": [
-        99,
-        420
+        88,
+        426
       ],
       "authority": "server"
     },
@@ -2539,13 +2666,13 @@
       "resource": "forest-fungus",
       "category": "reagent",
       "position": [
-        -2.0,
-        30.65,
-        -129.0
+        -0.6,
+        32.89,
+        -127.31
       ],
       "serverTile": [
-        172,
-        303
+        173,
+        301
       ],
       "authority": "server"
     },
@@ -2554,13 +2681,13 @@
       "resource": "forest-fungus",
       "category": "reagent",
       "position": [
-        -3.0,
-        30.71,
-        -138.0
+        -1.59,
+        32.15,
+        -141.21
       ],
       "serverTile": [
-        171,
-        312
+        172,
+        315
       ],
       "authority": "server"
     },
@@ -2705,7 +2832,7 @@
     },
     {
       "id": "south-road",
-      "name": "Westhaven Road",
+      "name": "Moor Road",
       "type": "map-transition",
       "position": [
         156.0,
@@ -2716,13 +2843,13 @@
         330,
         12
       ],
-      "destinationMap": "westhaven",
+      "destinationMap": "grey_moors",
       "radius": 3.5,
       "authority": "server"
     },
     {
       "id": "east-road",
-      "name": "Amethyst Barrens Road",
+      "name": "Gorge Road to Mirrorhold",
       "type": "map-transition",
       "position": [
         393.0,
@@ -2733,13 +2860,13 @@
         567,
         240
       ],
-      "destinationMap": "amethyst_barrens",
+      "destinationMap": "mirrorhold",
       "radius": 3.5,
       "authority": "server"
     },
     {
       "id": "harbour-quay",
-      "name": "Crownwater Packet",
+      "name": "Greyhaven Packet to Westhaven",
       "type": "map-transition",
       "position": [
         -120.0,
@@ -2750,7 +2877,7 @@
         54,
         150
       ],
-      "destinationMap": "crownwater",
+      "destinationMap": "westhaven",
       "radius": 3.5,
       "authority": "server"
     },
@@ -3592,7 +3719,7 @@
         ],
         [
           -90.0,
-          -4.15,
+          -4.17,
           -42.0
         ],
         [
@@ -3627,7 +3754,7 @@
         ],
         [
           -93.0,
-          -1.55,
+          -1.51,
           72.0
         ]
       ]
@@ -3874,7 +4001,7 @@
           ],
           [
             -72.0,
-            -14.0,
+            -12.6,
             -60.0
           ]
         ]
@@ -4094,7 +4221,7 @@
           ],
           [
             -93.0,
-            -1.55,
+            -1.51,
             72.0
           ]
         ]
@@ -4312,7 +4439,7 @@
     "northAxis": "-Z",
     "orientation": "north-up",
     "projection": "orthographic-top-down",
-    "renderedFrom": "world.glb",
+    "renderedFrom": "final geometry (offline rasteriser)",
     "transform": {
       "pixelX": {
         "scale": 1.0,
@@ -4365,29 +4492,29 @@
     }
   ],
   "performance": {
-    "nodes": 10069,
-    "meshes": 298,
-    "materials": 38,
-    "images": 86,
-    "textures": 86,
-    "accessors": 1199,
-    "bufferViews": 1285,
-    "uniqueTriangles": 545443,
-    "uniqueVertices": 424957,
-    "glbBytes": 29258632,
-    "instancedTriangles": 3060696,
-    "embeddedTextureBytes": 9232199,
-    "textureMemoryBytesUncompressed": 85721088,
-    "placements": 9383,
+    "nodes": 9390,
+    "meshes": 406,
+    "materials": 49,
+    "images": 108,
+    "textures": 108,
+    "accessors": 1635,
+    "bufferViews": 1743,
+    "uniqueTriangles": 586275,
+    "uniqueVertices": 461535,
+    "glbBytes": 33625772,
+    "instancedTriangles": 2795584,
+    "embeddedTextureBytes": 12250624,
+    "textureMemoryBytesUncompressed": 110886912,
+    "placements": 8633,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 914694,
-      "blockedCells": 412410,
-      "walkableFraction": 0.6892,
-      "elevatedDecks": 23,
-      "steepCells": 101339,
+      "walkableCells": 913845,
+      "blockedCells": 413259,
+      "walkableFraction": 0.6886,
+      "elevatedDecks": 24,
+      "steepCells": 101662,
       "reliefMetres": 108.56,
       "heightEncoding": {
         "origin": -1.4007,
@@ -4405,21 +4532,28 @@
       "settlement props: 276, lamps: 37",
       "ruin fragments: 80",
       "outland places: 51 landmarks total",
-      "forest instances: 2675",
-      "undergrowth instances: 2256",
-      "FallenLog instances: 158",
-      "Stump instances: 198",
-      "LeafDrift instances: 582",
-      "Mushrooms instances: 243",
-      "Rock instances: 249"
+      "forest instances: 2225",
+      "undergrowth instances: 2240",
+      "FallenLog instances: 157",
+      "Stump instances: 196",
+      "LeafDrift instances: 576",
+      "Mushrooms instances: 238",
+      "Rock instances: 249",
+      "lore site nine-watchers (The Nine Watchers): no open ground within reach; placed where asked",
+      "lore site deep-grove-scar (The Scarred Grove): relief 7.31 m, 36 m from the ask",
+      "lore site root-tally (Root's Tally): no open ground within reach; placed where asked",
+      "march north-pass: 0 road pieces, 19 of whitehorn_range's growth",
+      "march east-road: 3 road pieces, 10 of mirrorhold's growth",
+      "march south-road: 1 road pieces, 19 of grey_moors's growth",
+      "march harbour-quay: 2 road pieces, 9 of westhaven's growth"
     ],
     "lod2": {
-      "glbBytes": 19563700,
-      "nodes": 6385,
-      "uniqueTriangles": 488573,
-      "instancedTriangles": 2159502,
-      "sizeReductionPercent": 33.1,
-      "triangleReductionPercent": 29.4
+      "glbBytes": 21512904,
+      "nodes": 5725,
+      "uniqueTriangles": 528911,
+      "instancedTriangles": 1996928,
+      "sizeReductionPercent": 36.0,
+      "triangleReductionPercent": 28.6
     }
   },
   "sources": [

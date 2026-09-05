@@ -43,7 +43,7 @@ SEED = 20260901
 # still says "amberwood" sends every player out of the wrong map.
 PARENT_REGION_ID = "amethyst_barrens"
 PARENT_REGION_NAME = "Amethyst Barrens"
-PARENT_REGION_MAP = "maps/nymara/amethyst_barrens.elm"
+PARENT_REGION_MAP = "amethyst_barrens"
 CELL = 1.0                                            # collision cell, metres
 
 

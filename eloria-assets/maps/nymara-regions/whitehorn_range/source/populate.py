@@ -681,42 +681,9 @@ def _markers(build: RegionBuild, seed: int) -> None:
     def _from_tile(tile_x: int, tile_y: int) -> tuple[float, float]:
         return (tile_x - REG.SERVER_ORIGIN[0]) * REG.METRES_PER_TILE,                (REG.SERVER_ORIGIN[1] - tile_y) * REG.METRES_PER_TILE
 
-    # The four interior doors all lead to the same map. The region's insides
-    # share one ELM with unwalkable void between the sections, in the Eternal
-    # Lands manner, and the arrival differs by which door was used - so every
-    # one of these carries a distinct `destinationSpawn` that names a spawn
-    # point in interiors/whitehorn_insides/world.json.
-    INSIDES = "maps/nymara/whitehorn_glacier_temple.elm"
-    for ident, name, anchor, lift in (
-            ("whitehorn-glacier-temple-door", "Glacier Temple", "temple", 2.6),
-            ("whitehorn-mine-adit", "Whitehorn Mine", "mine", 1.4),
-            ("whitehorn-ice-cave-mouth", "Whitehorn Ice Cave", "ice_cave", 1.4),
-            ("whitehorn-barrow-door", "The Frost Barrow", "cairn_ridge", 1.2)):
-        ax, az = REG.ANCHORS[anchor]
-        build.portals.append({
-            "id": ident, "name": name, "destination": INSIDES,
-            "destinationSpawn": ident,
-            "serverTile": None,
-            "position": [round(ax, 2),
-                         round(_ground(build, ax, az) + lift, 2), round(az, 2)],
-            "authority": "server",
-        })
-
-    for ident, name, tile, destination in (
-            ("whitehorn-south-road", "Road to Amberwood",
-             (174, 330), "maps/nymara/amberwood.elm"),
-            ("whitehorn-east-pass", "Pass to the Amethyst Barrens",
-             (330, 174), "maps/nymara/amethyst_barrens.elm"),
-            ("whitehorn-west-road", "Road to the Four Gates",
-             (18, 174), "maps/nymara/four_gates.elm")):
-        ax, az = _from_tile(*tile)
-        build.portals.append({
-            "id": ident, "name": name, "destination": destination,
-            "serverTile": list(tile),
-            "position": [round(ax, 2),
-                         round(_ground(build, ax, az) + 1.0, 2), round(az, 2)],
-            "authority": "server",
-        })
+    # The portals - the three crossings and the seven doors into the insides
+    # map - are declared by build_whitehorn._add_portals(), from the same
+    # CROSSINGS and door table the marches and the insides build read.
 
     for ident, name, anchor in (
             ("whitehorn-temple-brazier", "Temple Brazier", "temple_forecourt"),

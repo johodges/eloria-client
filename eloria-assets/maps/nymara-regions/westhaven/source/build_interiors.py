@@ -44,8 +44,8 @@ SEED = 20260902
 # still says "amberwood" sends every player out of the wrong map.
 PARENT_REGION_ID = "westhaven"
 PARENT_REGION_NAME = "Westhaven"
-PARENT_REGION_MAP = "maps/nymara/westhaven.elm"
-INSIDES_MAP = "maps/nymara/westhaven_insides.elm"
+PARENT_REGION_MAP = "westhaven"
+INSIDES_MAP = "westhaven_insides"
 CELL = 1.0                                            # collision cell, metres
 
 

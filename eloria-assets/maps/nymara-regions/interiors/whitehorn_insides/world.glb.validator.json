@@ -1,8 +1,8 @@
 {
-  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\eloria-client\\eloria-assets\\maps\\nymara-regions\\interiors\\whitehorn_insides\\world.glb",
+  "uri": "world.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-08-29T14:42:22.071627Z",
+  "validatedAt": "2026-09-05T08:41:25.661841Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,

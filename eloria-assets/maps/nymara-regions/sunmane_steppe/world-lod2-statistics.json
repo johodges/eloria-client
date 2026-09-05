@@ -1,0 +1,22 @@
+{
+  "terrainTriangles": 91756,
+  "terrainChunks": 100,
+  "seaTriangles": 452,
+  "pondTriangles": 1174,
+  "kitAssets": 53,
+  "kitUniqueTriangles": 47679,
+  "instances": 196,
+  "scatterTriangles": 0,
+  "landmarks": 106,
+  "interactives": 74,
+  "nodes": 316,
+  "meshes": 161,
+  "materials": 29,
+  "textures": 30,
+  "accessors": 3192,
+  "uniqueMeshTriangles": 150137,
+  "glbBytes": 10019292,
+  "lod": 2,
+  "textureScale": 0.5,
+  "buildSeconds": 6.0
+}

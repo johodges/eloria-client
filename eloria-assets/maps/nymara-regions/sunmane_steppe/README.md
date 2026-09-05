@@ -43,11 +43,12 @@ and minimap load directly.
 | Addressable band | X -58..133, Z -133..58 (server tiles 0..191 on both axes) |
 | Elevation range | -20.5 m to 74.0 m |
 | North axis | `-Z` |
-| West walk portal | server `(6, 58)` |
-| East walk portal | server `(110, 58)` |
-| North interior entrance | server `(58, 100)` (Ssarathi Royal Archive) |
-| Wind Caves entrance | server `(128, 175)` -> `maps/nymara/sunmane_wind_caves.elm` |
-| Crystal Hollow entrance | server `(182, 154)` -> `maps/nymara/sunmane_crystal_hollow.elm` |
+| West crossing | server `(6, 58)`, the caravan road down to the Four Gates causeway |
+| North crossing | server `(66, 184)`, the desert track into the Amethyst Barrens |
+| South crossing | server `(62, 18)`, the shore road to the Verdant Stair |
+| North barrow | server `(58, 100)`, a sealed passage; the Ssarathi Royal Archive is entered from the Ssarathi Ruins |
+| Wind Caves entrance | server `(128, 175)` -> `sunmane_wind_caves` |
+| Crystal Hollow entrance | server `(182, 154)` -> `sunmane_wind_caves` (both cave systems share the map) |
 
 Everything outside the addressable band is scenery: the far spires, the summits
 and the open sea. Landmarks out there are marked `"reachable": false` in the

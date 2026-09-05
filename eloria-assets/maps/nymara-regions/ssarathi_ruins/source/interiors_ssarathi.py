@@ -800,3 +800,40 @@ ALL = {
     "drowned_cistern": drowned_cistern,
     "root_undercroft": root_undercroft,
 }
+
+
+# ---- small rooms (shared kit) ----
+from amberwood import smallrooms as SR
+
+
+def tenth_mouth(seed: int = 20260905) -> Interior:
+    """The shrine of the channel that no longer exists: the tenth mouth."""
+    return SR.shrine("ssarathi_tenth_mouth", "The Tenth Mouth Shrine", "lily-court",
+                     [-48.0, 2.0, -118.1], "tenth-mouth-door",
+                     palette={"floor": STONE, "wall": STONE, "ceil": STONE,
+                              "accent": "verdant_carved_jade", "water": "water_deep",
+                              "metal": IRON},
+                     seed=seed, style="water")
+
+
+def water_gate_undercut(seed: int = 20260906) -> Interior:
+    """Under the south water gate, where the crocodiles lie up."""
+    return SR.cave("ssarathi_water_gate_undercut", "The Water Gate Undercut",
+                   "south-water-gate", [60.0, 2.1, 48.0], "water-gate-undercut-mouth",
+                   palette={"floor": "packed_earth", "rock": ROCK, "water": "water_deep",
+                            "bone": "pale_ashlar"},
+                   seed=seed, den="Saltmarsh Crocodile", pool=True)
+
+
+def lineage_house(seed: int = 20260907) -> Interior:
+    """Lineage Reader Ssiran-Ta's house, by the Serpent Pair."""
+    return SR.cottage("ssarathi_lineage_house", "The Lineage Reader's House", "serpent-gate",
+                      [51.0, 1.9, -18.0], "lineage-house-door",
+                      palette={"floor": TIMBER_WARM, "wall": PLASTER, "roof": TIMBER,
+                               "timber": TIMBER, "stone": RUBBLE, "cloth": "woven_cloth",
+                               "iron": IRON},
+                      seed=seed, trade="workshop")
+
+
+ALL.update({"tenth_mouth": tenth_mouth, "water_gate_undercut": water_gate_undercut,
+            "lineage_house": lineage_house})

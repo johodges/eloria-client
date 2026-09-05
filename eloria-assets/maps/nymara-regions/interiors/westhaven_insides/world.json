@@ -23,7 +23,7 @@
         21.45
       ],
       "max": [
-        201.29,
+        242.55,
         26.2,
         262.55
       ]
@@ -35,7 +35,7 @@
         21.45
       ],
       "max": [
-        184.55,
+        242.55,
         18.4,
         262.55
       ]
@@ -116,12 +116,48 @@
       "rotationDegrees": 0,
       "surface": "Walk",
       "section": "gullstone_cave"
+    },
+    {
+      "id": "gullscar-farmhouse-door",
+      "name": "The Gullscar Farmhouse",
+      "position": [
+        218.0,
+        0.05,
+        171.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "gullscar_farmhouse"
+    },
+    {
+      "id": "haven-undercroft-door",
+      "name": "The Haven Undercroft",
+      "position": [
+        218.0,
+        0.05,
+        120.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "haven_undercroft"
+    },
+    {
+      "id": "salvage-hole-mouth",
+      "name": "The Salvage Hole",
+      "position": [
+        218.0,
+        0.05,
+        36.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "salvage_hole"
     }
   ],
   "collision": {
     "binary": "collision.bin",
     "format": "EWCG-v1",
-    "width": 360,
+    "width": 480,
     "height": 492,
     "cellMetres": 0.5,
     "originMetres": [
@@ -138,14 +174,15 @@
       "zeroMeansBlocked": true,
       "note": "Step is fitted to this interior's own vertical range, so the six-bit field spans it without clamping. The Godot loader still takes elevation from the rendered Walk_ surfaces; this grid is authoritative only for walkability."
     },
-    "walkableCells": 31732,
-    "blockedCells": 145388,
-    "walkableFraction": 0.1792,
+    "walkableCells": 40488,
+    "blockedCells": 195672,
+    "walkableFraction": 0.1714,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
       "Interior_westhaven_insides",
       "Roof_westhaven_insides_ashlar",
+      "Roof_westhaven_insides_cliff_rock",
       "Roof_westhaven_insides_dark_iron",
       "Roof_westhaven_insides_lime_plaster",
       "Roof_westhaven_insides_rubble_stone",
@@ -153,10 +190,13 @@
       "Roof_westhaven_insides_westhaven_sea_rock",
       "Build_westhaven_insides_amber_resin",
       "Build_westhaven_insides_ashlar",
+      "Build_westhaven_insides_bark_dark",
       "Build_westhaven_insides_canvas_awning",
       "Build_westhaven_insides_carved_wood",
+      "Build_westhaven_insides_cliff_rock",
       "Build_westhaven_insides_dark_iron",
       "Build_westhaven_insides_lime_plaster",
+      "Build_westhaven_insides_pale_ashlar",
       "Build_westhaven_insides_rubble_stone",
       "Build_westhaven_insides_thatch_reed",
       "Build_westhaven_insides_timber_dark",
@@ -172,6 +212,7 @@
   "cutaway": {
     "hideNodes": [
       "Roof_westhaven_insides_ashlar",
+      "Roof_westhaven_insides_cliff_rock",
       "Roof_westhaven_insides_dark_iron",
       "Roof_westhaven_insides_lime_plaster",
       "Roof_westhaven_insides_rubble_stone",
@@ -254,6 +295,51 @@
       "destinationMap": "westhaven",
       "destinationSpawn": "gullstone-cleft",
       "section": "gullstone_cave",
+      "authority": "server"
+    },
+    {
+      "id": "exit-gullscar-farmhouse-door",
+      "name": "Return to Westhaven",
+      "type": "map-transition",
+      "position": [
+        218.0,
+        0.05,
+        171.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "westhaven",
+      "destinationSpawn": "gullscar-farmhouse-door",
+      "section": "gullscar_farmhouse",
+      "authority": "server"
+    },
+    {
+      "id": "exit-haven-undercroft-door",
+      "name": "Return to Westhaven",
+      "type": "map-transition",
+      "position": [
+        218.0,
+        0.05,
+        120.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "westhaven",
+      "destinationSpawn": "haven-undercroft-door",
+      "section": "haven_undercroft",
+      "authority": "server"
+    },
+    {
+      "id": "exit-salvage-hole-mouth",
+      "name": "Return to Westhaven",
+      "type": "map-transition",
+      "position": [
+        218.0,
+        0.05,
+        36.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "westhaven",
+      "destinationSpawn": "salvage-hole-mouth",
+      "section": "salvage_hole",
       "authority": "server"
     }
   ],
@@ -403,6 +489,96 @@
         33.03,
         100.75
       ]
+    },
+    {
+      "id": "gullscar_farmhouse",
+      "name": "The Gullscar Farmhouse",
+      "class": "dwelling",
+      "offset": [
+        218.0,
+        0.0,
+        170.0
+      ],
+      "arrival": [
+        218.0,
+        0.05,
+        171.0
+      ],
+      "surfaceLandmark": "gullscar-farmhouse-door",
+      "spaces": [
+        "gullscar_farmhouse.hall",
+        "gullscar_farmhouse.back"
+      ],
+      "notes": [
+        "Built from the shared small-room kit: a hall with a hearth and a back room for its trade (hearth)."
+      ],
+      "surfacePosition": [
+        212.75,
+        38.32,
+        -252.25
+      ]
+    },
+    {
+      "id": "haven_undercroft",
+      "name": "The Haven Undercroft",
+      "class": "shrine",
+      "offset": [
+        218.0,
+        0.0,
+        120.0
+      ],
+      "arrival": [
+        218.0,
+        0.05,
+        120.0
+      ],
+      "surfaceLandmark": "haven-undercroft-door",
+      "spaces": [
+        "haven_undercroft.porch",
+        "haven_undercroft.nave",
+        "haven_undercroft.aisle",
+        "haven_undercroft.crypt",
+        "haven_undercroft.crypt-stair"
+      ],
+      "notes": [
+        "Built from the shared small-room kit: a cut sanctuary in the lantern manner, with a crypt of niches below."
+      ],
+      "surfacePosition": [
+        59.28,
+        41.1,
+        -136.08
+      ]
+    },
+    {
+      "id": "salvage_hole",
+      "name": "The Salvage Hole",
+      "class": "cave",
+      "offset": [
+        218.0,
+        0.0,
+        36.0
+      ],
+      "arrival": [
+        218.0,
+        0.05,
+        36.0
+      ],
+      "surfaceLandmark": "salvage-hole-mouth",
+      "spaces": [
+        "salvage_hole.mouth",
+        "salvage_hole.throat",
+        "salvage_hole.chamber",
+        "salvage_hole.descent",
+        "salvage_hole.gullet"
+      ],
+      "notes": [
+        "Built from the shared small-room kit: mouth, throat and chamber, dressed for the region above it."
+      ],
+      "surfacePosition": [
+        322.75,
+        56.72,
+        -156.75
+      ]
     }
   ],
   "landmarks": [
@@ -493,6 +669,39 @@
         252.0
       ],
       "section": "gullstone_cave"
+    },
+    {
+      "id": "westhaven_gullscar_farmhouse-hearth",
+      "name": "The Gullscar Farmhouse",
+      "space": "gullscar_farmhouse.hall",
+      "position": [
+        218.0,
+        1.4,
+        171.0
+      ],
+      "section": "gullscar_farmhouse"
+    },
+    {
+      "id": "westhaven_haven_undercroft-sanctuary",
+      "name": "The Haven Undercroft",
+      "space": "haven_undercroft.nave",
+      "position": [
+        218.0,
+        0.4,
+        142.0
+      ],
+      "section": "haven_undercroft"
+    },
+    {
+      "id": "westhaven_salvage_hole-chamber",
+      "name": "The Salvage Hole",
+      "space": "salvage_hole.chamber",
+      "position": [
+        218.0,
+        -4.0,
+        87.0
+      ],
+      "section": "salvage_hole"
     }
   ],
   "interactives": [
@@ -724,6 +933,19 @@
         250.0
       ],
       "section": "gullstone_cave",
+      "authority": "server"
+    },
+    {
+      "id": "westhaven_salvage_hole-den",
+      "name": "Bronze Tide Crab",
+      "kind": "creature-zone",
+      "position": [
+        218.0,
+        -6.0,
+        87.0
+      ],
+      "radius": 12.0,
+      "section": "salvage_hole",
       "authority": "server"
     }
   ],
@@ -1513,6 +1735,182 @@
       ],
       "range": 15.0,
       "energy": 1.6
+    },
+    {
+      "id": "lantern-40",
+      "kind": "point",
+      "position": [
+        218.0,
+        2.28,
+        171.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-41",
+      "kind": "point",
+      "position": [
+        219.0,
+        1.98,
+        179.28
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-42",
+      "kind": "point",
+      "position": [
+        218.0,
+        2.78,
+        120.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-43",
+      "kind": "point",
+      "position": [
+        213.0,
+        2.98,
+        136.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-44",
+      "kind": "point",
+      "position": [
+        223.0,
+        2.98,
+        142.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-45",
+      "kind": "point",
+      "position": [
+        218.0,
+        3.38,
+        149.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-46",
+      "kind": "point",
+      "position": [
+        236.0,
+        -1.42,
+        145.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-47",
+      "kind": "point",
+      "position": [
+        218.0,
+        2.58,
+        34.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-48",
+      "kind": "point",
+      "position": [
+        218.0,
+        -0.82,
+        57.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-49",
+      "kind": "point",
+      "position": [
+        210.0,
+        -2.42,
+        87.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-50",
+      "kind": "point",
+      "position": [
+        226.0,
+        -2.42,
+        87.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
     }
   ],
   "environment": {
@@ -1904,6 +2302,102 @@
       "z1": 248.0,
       "floor": -8.4,
       "height": 4.4
+    },
+    "gullscar_farmhouse.hall": {
+      "x0": 213.0,
+      "x1": 223.0,
+      "z0": 166.0,
+      "z1": 176.0,
+      "floor": 0.0,
+      "height": 3.4
+    },
+    "gullscar_farmhouse.back": {
+      "x0": 215.0,
+      "x1": 223.0,
+      "z0": 176.55,
+      "z1": 182.0,
+      "floor": 0.0,
+      "height": 3.0
+    },
+    "haven_undercroft.porch": {
+      "x0": 214.0,
+      "x1": 222.0,
+      "z0": 116.0,
+      "z1": 124.0,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "haven_undercroft.nave": {
+      "x0": 210.0,
+      "x1": 226.0,
+      "z0": 132.0,
+      "z1": 152.0,
+      "floor": -1.2,
+      "height": 7.0
+    },
+    "haven_undercroft.aisle": {
+      "x0": 216.4,
+      "x1": 219.6,
+      "z0": 122.4,
+      "z1": 133.6,
+      "floor": -1.2,
+      "height": 3.6
+    },
+    "haven_undercroft.crypt": {
+      "x0": 230.0,
+      "x1": 242.0,
+      "z0": 140.0,
+      "z1": 150.0,
+      "floor": -4.0,
+      "height": 4.0
+    },
+    "haven_undercroft.crypt-stair": {
+      "x0": 224.7,
+      "x1": 231.3,
+      "z0": 142.7,
+      "z1": 145.3,
+      "floor": -4.0,
+      "height": 3.2
+    },
+    "salvage_hole.mouth": {
+      "x0": 212.0,
+      "x1": 224.0,
+      "z0": 30.0,
+      "z1": 42.0,
+      "floor": 0.0,
+      "height": 5.4
+    },
+    "salvage_hole.throat": {
+      "x0": 213.0,
+      "x1": 223.0,
+      "z0": 52.0,
+      "z1": 62.0,
+      "floor": -3.6,
+      "height": 5.6
+    },
+    "salvage_hole.chamber": {
+      "x0": 202.0,
+      "x1": 234.0,
+      "z0": 72.0,
+      "z1": 102.0,
+      "floor": -6.0,
+      "height": 11.0
+    },
+    "salvage_hole.descent": {
+      "x0": 215.6,
+      "x1": 220.4,
+      "z0": 39.6,
+      "z1": 54.4,
+      "floor": -3.6,
+      "height": 4.4
+    },
+    "salvage_hole.gullet": {
+      "x0": 215.7,
+      "x1": 220.3,
+      "z0": 59.7,
+      "z1": 74.3,
+      "floor": -6.0,
+      "height": 4.4
     }
   },
   "conceptArt": {
@@ -1935,23 +2429,32 @@
       "The Gullstone Undertow: the main cavern and its tidal pool",
       "The Gullstone Undertow: shingle, a boat drawn up, a fire",
       "The Gullstone Undertow: what the Custom House never saw",
-      "The Gullstone Undertow: the shaft the sea breathes through"
+      "The Gullstone Undertow: the shaft the sea breathes through",
+      "The Gullscar Farmhouse: the hall and hearth",
+      "The Gullscar Farmhouse: the hearth",
+      "The Haven Undercroft: the porch",
+      "The Haven Undercroft: the nave",
+      "The Haven Undercroft: the sanctuary",
+      "The Salvage Hole: cave mouth from within",
+      "The Salvage Hole: the descent",
+      "The Salvage Hole: the chamber"
     ]
   },
   "performance": {
-    "nodes": 30,
-    "meshes": 29,
-    "materials": 19,
-    "images": 52,
-    "textures": 52,
-    "accessors": 145,
-    "bufferViews": 197,
-    "uniqueTriangles": 50028,
-    "uniqueVertices": 68646,
-    "glbBytes": 9670668,
+    "nodes": 34,
+    "meshes": 33,
+    "materials": 22,
+    "images": 61,
+    "textures": 61,
+    "accessors": 165,
+    "bufferViews": 226,
+    "uniqueTriangles": 60538,
+    "uniqueVertices": 80696,
+    "glbBytes": 11515656,
     "nodeNames": [
       "Interior_westhaven_insides",
       "Roof_westhaven_insides_ashlar",
+      "Roof_westhaven_insides_cliff_rock",
       "Roof_westhaven_insides_dark_iron",
       "Roof_westhaven_insides_lime_plaster",
       "Roof_westhaven_insides_rubble_stone",
@@ -1959,10 +2462,13 @@
       "Roof_westhaven_insides_westhaven_sea_rock",
       "Build_westhaven_insides_amber_resin",
       "Build_westhaven_insides_ashlar",
+      "Build_westhaven_insides_bark_dark",
       "Build_westhaven_insides_canvas_awning",
       "Build_westhaven_insides_carved_wood",
+      "Build_westhaven_insides_cliff_rock",
       "Build_westhaven_insides_dark_iron",
       "Build_westhaven_insides_lime_plaster",
+      "Build_westhaven_insides_pale_ashlar",
       "Build_westhaven_insides_rubble_stone",
       "Build_westhaven_insides_thatch_reed",
       "Build_westhaven_insides_timber_dark",

@@ -1,0 +1,43 @@
+{
+  "terrainTriangles": 91756,
+  "terrainChunks": 100,
+  "seaTriangles": 452,
+  "pondTriangles": 1174,
+  "kitAssets": 62,
+  "kitUniqueTriangles": 48951,
+  "instances": 842,
+  "scatterTriangles": 86748,
+  "landmarks": 106,
+  "interactives": 74,
+  "nodes": 1048,
+  "meshes": 256,
+  "materials": 31,
+  "textures": 30,
+  "accessors": 3601,
+  "uniqueMeshTriangles": 242721,
+  "glbBytes": 19201060,
+  "lod": 1,
+  "textureScale": 1.0,
+  "buildSeconds": 15.9,
+  "collision": {
+    "cells": 384,
+    "cellMetres": 0.5,
+    "walkableCells": 119672,
+    "walkableFraction": 0.8116,
+    "blockedByScenery": 14097,
+    "collisionNodes": 143,
+    "originMetres": [
+      -58.0,
+      58.0
+    ],
+    "heightEncoding": {
+      "origin": -2.2,
+      "step": 0.2,
+      "range": [
+        1,
+        255
+      ],
+      "zeroMeansBlocked": true
+    }
+  }
+}

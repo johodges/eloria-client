@@ -1,8 +1,8 @@
 {
-  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\eloria-client\\eloria-assets\\maps\\nymara-regions\\interiors\\grey_moors_insides\\world.glb",
+  "uri": "world.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-08-29T14:41:07.560182Z",
+  "validatedAt": "2026-09-05T08:28:06.028044Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,

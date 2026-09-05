@@ -148,3 +148,16 @@ re-running its captures is that region's change to make, not this one's.
   reading of the board.
 - **Place names are the author's throughout.** The authoritative written
   descriptions for Nymara were not available, as they were not for the region.
+
+## Small rooms
+
+Three more sections joined the `grey_moor_barrows` map from the shared
+`_toolkit/amberwood/smallrooms.py` kit, each with its own door on the Grey Moors
+map and its own arrival: a cave with a creature den, a cottage and a shrine.
+They sit in a column east of the set pieces with the usual void between.
+
+| section | name | kind | region door | what it is |
+|---|---|---|---|---|
+| `fifth_chamber` | the Fifth Chamber | cave | `fifth-chamber-mouth` | the false barrow, a moorland dire wolf's den |
+| `peat_croft` | the peat croft | cottage | `peat-croft-door` | a hearth cottage |
+| `warm_stone` | the Warm Stone | shrine | `warm-stone-door` | a stone shrine over a crypt |

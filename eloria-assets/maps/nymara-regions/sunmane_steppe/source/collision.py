@@ -122,6 +122,10 @@ def read_accessor(gltf: dict, buffer: bytes, index: int) -> np.ndarray:
     return raw[:, :dtype.itemsize * columns].copy().view(dtype).reshape(count, columns)
 
 
+# Geometry this far above a node's seat is overhead, not an obstacle.
+HEAD_ROOM = 2.1
+
+
 def blocked_by_scenery(package: Path, gx: np.ndarray, gz: np.ndarray,
                        cell: float) -> tuple[np.ndarray, int]:
     """Mark every cell the declared collision geometry actually covers.
@@ -158,6 +162,14 @@ def blocked_by_scenery(package: Path, gx: np.ndarray, gz: np.ndarray,
             else:
                 order = np.arange(len(placed))
             triangles = placed[order[:len(order) - len(order) % 3]].reshape(-1, 3, 3)
+            # Only what a walker can run into. A gate's lintel, a canopy, a
+            # tree's crown all cast a shadow on the ground plane, and stamping
+            # those sealed every palisade gate: the opening was open, and the
+            # beam above it was not.
+            base = float(world[1, 3])
+            triangles = triangles[triangles[:, :, 1].min(axis=1) < base + HEAD_ROOM]
+            if not len(triangles):
+                continue
             _stamp(mask, triangles, origin_x, origin_z, cell, rows, columns)
     return mask, nodes
 

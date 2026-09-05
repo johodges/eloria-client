@@ -994,3 +994,41 @@ def combine(seed: int = 20260901) -> Interior:
         "author's.",
     ]
     return combined
+
+
+# ---- small rooms (shared kit) ----
+from amberwood import smallrooms as SR
+
+
+def physick_still(seed: int = 20260905) -> Interior:
+    """Tessara's still room, behind the physick garden."""
+    return SR.cottage("verdant_physick_still", "Tessara's Still Room", "herbalist",
+                      [-24.0, 24.0, 0.0], "physick-still-door",
+                      palette={"floor": TIMBER, "wall": STONE, "roof": THATCH,
+                               "timber": TIMBER_DARK, "stone": STONE, "cloth": "woven_cloth",
+                               "iron": IRON},
+                      seed=seed, trade="still")
+
+
+def anchor_hollow(seed: int = 20260906) -> Interior:
+    """The hollow behind Fern Camp, where the stair's old anchor stone was moved to."""
+    return SR.cave("verdant_anchor_hollow", "The Anchor Hollow", "fern-camp",
+                   [-132.0, 46.0, -180.0], "anchor-hollow-mouth",
+                   palette={"floor": JUNGLE, "rock": CLIFF, "water": "water_deep",
+                            "bone": "pale_ashlar"},
+                   seed=seed, den="Moonshadow Lynx", pool=True)
+
+
+def nine_lost(seed: int = 20260907) -> Interior:
+    """A water shrine for the nine the stair lost, under the south quay pavilion."""
+    return SR.shrine("verdant_nine_lost", "The Shrine of the Nine Lost", "south-quay",
+                     [204.0, 46.0, 120.0], "nine-lost-door",
+                     palette={"floor": STONE, "wall": MOSSY, "ceil": STONE,
+                              "accent": CARVED_JADE, "water": "water_deep", "metal": GILT},
+                     seed=seed, style="water")
+
+
+ALL.update({"physick_still": physick_still, "anchor_hollow": anchor_hollow,
+            "nine_lost": nine_lost})
+LAYOUT.update({"anchor_hollow": (258.0, 6.0), "nine_lost": (258.0, 90.0),
+               "physick_still": (258.0, 140.0)})

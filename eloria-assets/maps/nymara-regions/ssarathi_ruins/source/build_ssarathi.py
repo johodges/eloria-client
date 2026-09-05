@@ -46,6 +46,7 @@ import ssaratharch as A  # noqa: F401  (kit pieces reach the build via populate)
 import ssarathikit as SK
 import populate as POP
 import region as REG
+import transitions as MARCH
 
 HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
@@ -58,6 +59,27 @@ DESPECKLE_MIN_CELLS = 6
 
 ASSET_VERSION = "1.0.0"
 SCHEMA_VERSION = "1.0.0"
+
+# The four ways out of the valley, as region-connections.json declares them:
+# the north stair up to the south causeway of Four Gates, the east causeway
+# to the Verdant Stair, the west causeway out onto the delta's bars, and the
+# south water gate where the Crown court's boat calls.
+CROSSINGS = [
+    MARCH.Crossing("north-stair", "four_gates", REG.ANCHORS["north_terrace"],
+                   (REG.ANCHORS["north_terrace"][0], REG.ANCHORS["north_terrace"][1] - 40.0),
+                   radius=40.0, name="The Causeway March"),
+    MARCH.Crossing("east-causeway", "verdant_stair", REG.ANCHORS["east_shrine"],
+                   (REG.PLAY_MAX_X + 20.0, REG.ANCHORS["east_shrine"][1]),
+                   radius=40.0, name="The Stair March"),
+    MARCH.Crossing("west-causeway", "manymouth_delta", REG.ANCHORS["west_shrine"],
+                   (REG.PLAY_MIN_X - 20.0, REG.ANCHORS["west_shrine"][1]),
+                   radius=40.0, name="The Delta March"),
+    MARCH.Crossing("south-gate", "crownwater", REG.ANCHORS["south_shrine"],
+                   (REG.ANCHORS["south_shrine"][0], REG.PLAY_MAX_Z + 20.0),
+                   radius=30.0, ferry=True, name="The Water Gate"),
+]
+MARCH_MATERIALS: dict = dict(getattr(REG, "SURFACE_MATERIALS", {}))
+SK.MATERIALS = SK.MATERIALS | MARCH.materials_for("ssarathi_ruins", CROSSINGS)
 
 
 # --------------------------------------------------------------------------
@@ -79,6 +101,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     terrain = REG.build_terrain(seed)
     REG.apply_built_ground(terrain, seed)
     build = REG.RegionBuild(terrain=terrain)
+    MARCH.prepare(terrain, CROSSINGS)
 
     POP.build_water(build, lod=lod)
     POP.populate_bridges(build, seed)
@@ -94,9 +117,16 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     POP.populate_interior_doors(build, seed)
     POP.populate_metadata(build, seed)
 
+    # The marches: the neighbours' country coming in along the roads out.
+    MARCH.paint(terrain, CROSSINGS, MARCH_MATERIALS, seed, sea_level=REG.SEA_LEVEL, keep=(REG.SILT, REG.JADE_PAVING, REG.MOSS_STONE))
+    march = MARCH.dress(build, "ssarathi_ruins", CROSSINGS, seed, sea_level=REG.SEA_LEVEL)
+    build.landmarks.extend(march.landmarks)
+    build.notes.extend(march.notes)
+
     terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
     build.terrain_meshes = terrain.build_meshes(
-        uv_scale=0.30, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX)
+        uv_scale=0.30, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
+        materials=MARCH_MATERIALS)
     # No backdrop. Amberwood needs one because its mountain walls have to stand
     # in front of something. Ssarathi is a closed basin: its own jungle-clad
     # valley walls rise above every sightline out of the bowl, so there is
@@ -192,14 +222,14 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
     # transition. Ssarathi's are the four outlying platforms at the ends of the
     # street network, where a causeway runs out toward the valley wall.
     for portal_id, name, anchor, destination in (
-            ("north-stair", "Verdant Stair Road", "north_terrace",
-             "maps/nymara/verdant_stair.elm"),
-            ("east-causeway", "Manymouth Delta Causeway", "east_shrine",
-             "maps/nymara/manymouth_delta.elm"),
-            ("west-causeway", "Grey Moors Track", "west_shrine",
-             "maps/nymara/grey_moors.elm"),
-            ("south-gate", "Westhaven Road", "south_shrine",
-             "maps/nymara/westhaven.elm")):
+            ("north-stair", "Stair to the Four Gates Causeway", "north_terrace",
+             "four_gates"),
+            ("east-causeway", "Causeway to the Verdant Stair", "east_shrine",
+             "verdant_stair"),
+            ("west-causeway", "Causeway to the Manymouth Delta", "west_shrine",
+             "manymouth_delta"),
+            ("south-gate", "Water Gate: the Crownwater boat", "south_shrine",
+             "crownwater")):
         x, z = REG.ANCHORS[anchor]
         y = float(t.height_at(x, z))
         build.portals.append({
@@ -557,7 +587,7 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
 
 
 # --------------------------------------------------------------------------
-INSIDES_MAP = "maps/nymara/ssarathi_royal_archive.elm"
+INSIDES_MAP = "ssarathi_royal_archive"
 
 # door id -> (display name, landmark it hangs on, the anchor to place it at)
 INTERIOR_DOORS = (
@@ -567,6 +597,10 @@ INTERIOR_DOORS = (
     ("cistern-shaft", "The Cistern Shaft", "cistern-shaft", "drowned_quarter"),
     ("undercroft-mouth", "The Undercroft Mouth", "undercroft-mouth",
      "root_arch"),
+    ("tenth-mouth-door", "The Tenth Mouth Shrine", "lily-court", "lily_court"),
+    ("water-gate-undercut-mouth", "The Water Gate Undercut", "south-water-gate",
+     "south_gate"),
+    ("lineage-house-door", "The Lineage Reader's House", "serpent-gate", "serpent_gate"),
 )
 
 
@@ -1170,7 +1204,8 @@ def main() -> int:
         lod_build = build_region(args.seed, lod="far")
         lod_build.terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
         lod_build.terrain_meshes = lod_build.terrain.build_meshes(
-            uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX)
+            uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
+            materials=MARCH_MATERIALS)
         _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb")
         stats["lod2"] = {
             "glbBytes": lod_stats["glbBytes"],

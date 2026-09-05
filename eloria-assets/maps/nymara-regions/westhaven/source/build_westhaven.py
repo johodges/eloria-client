@@ -51,6 +51,8 @@ from amberwood import terrain as TER
 import havenkit as HK
 import populate as POP
 import region as REG
+import transitions as MARCH
+import loresites as LORE
 
 HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
@@ -64,10 +66,40 @@ DESPECKLE_MIN_CELLS = 6
 ASSET_VERSION = "1.0.0"
 SCHEMA_VERSION = "1.0.0"
 
+# The four ways out of the haven, as region-connections.json declares them:
+# the upland road north onto the Grey Moors, the coast road east to the
+# delta's bars, and the two berths - the Crownwater packet from the west quay
+# and the Greyhaven packet up the coast to the Amberwood from the cargo pier.
+# Heather comes down the north road, reeds and delta ferns line the coast road.
+CROSSINGS = [
+    MARCH.Crossing("north-road", "grey_moors", REG.ANCHORS["upland_chapel"],
+                   (REG.ANCHORS["upland_chapel"][0], REG.PLAY_MIN_Z - 20.0),
+                   radius=46.0, name="The Moor Road March"),
+    MARCH.Crossing("east-road", "manymouth_delta", REG.ANCHORS["hill_estate"],
+                   (REG.PLAY_MAX_X + 20.0, REG.ANCHORS["hill_estate"][1]),
+                   radius=44.0, name="The Coast Road March"),
+    MARCH.Crossing("crownwater-berth", "crownwater", REG.ANCHORS["west_quay"],
+                   (REG.ANCHORS["west_quay"][0], REG.ANCHORS["west_quay"][1] + 30.0),
+                   radius=26.0, ferry=True, name="The Crownwater Berth"),
+    MARCH.Crossing("amber-berth", "amberwood", REG.ANCHORS["cargo_pier"],
+                   (REG.ANCHORS["cargo_pier"][0], REG.ANCHORS["cargo_pier"][1] + 30.0),
+                   radius=26.0, ferry=True, name="The Amber Berth"),
+]
+
+# The places the region's people argue about (see loresites.py).
+SITES = [
+    LORE.Site("league-post-house", "The League Post-House", "post_house", (-30.0, 74.0),
+              thread="E", clearing=9.0,
+              note="Where the countersigns are checked. The returned post is stacked unopened "
+                   "by the door, the way the reeve says it came back."),
+]
+MARCH_MATERIALS: dict = dict(getattr(REG, "SURFACE_MATERIALS", {}))
+HK.MATERIALS = HK.MATERIALS | MARCH.materials_for("westhaven", CROSSINGS) | LORE.materials([s.piece for s in SITES])
+
 # The combined insides map every door on this region opens onto. One map key
 # for all four interiors, per the Eternal Lands convention: see
 # `interiors/westhaven_insides/` and `source/interiors.py`.
-INSIDES_MAP = "maps/nymara/westhaven_insides.elm"
+INSIDES_MAP = "westhaven_insides"
 
 
 # --------------------------------------------------------------------------
@@ -91,6 +123,8 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     terrain = REG.build_terrain(seed)
     REG.apply_built_ground(terrain, seed)
     build = REG.RegionBuild(terrain=terrain)
+    MARCH.prepare(terrain, CROSSINGS)
+    LORE.prepare(terrain, SITES, sea_level=getattr(REG, "SEA_LEVEL", 0.0))
 
     POP.build_water(build, lod=lod)
     POP.populate_surf(build, seed, lod=lod)
@@ -105,9 +139,17 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
         POP.populate_props(build, seed)
     POP.populate_metadata(build, seed)
 
+    # The marches: the neighbours' country coming in along the roads out.
+    MARCH.paint(terrain, CROSSINGS, MARCH_MATERIALS, seed, sea_level=REG.SEA_LEVEL)
+    march = MARCH.dress(build, "westhaven", CROSSINGS, seed, sea_level=REG.SEA_LEVEL)
+    LORE.dress(build, terrain, SITES, seed)
+    build.landmarks.extend(march.landmarks)
+    build.notes.extend(march.notes)
+
     terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
     build.terrain_meshes = terrain.build_meshes(
-        uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX)
+        uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
+        materials=MARCH_MATERIALS)
     # No landmass backdrop, for Crownwater's reason and one of Westhaven's own.
     # `terrain.backdrop` takes a single `open_side`, and Westhaven is open on
     # two - the sea closes both the south and the west - so any single choice
@@ -151,14 +193,14 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
     # over the upland and two sailing berths on the quay - which is what a
     # harbour city's connections actually are.
     for portal_id, name, anchor, destination, kind in (
-            ("north-road", "North Road to Amberwood", "upland_chapel",
-             "maps/nymara/amberwood.elm", "road"),
-            ("east-road", "Coast Road to the Grey Moors", "hill_estate",
-             "maps/nymara/grey_moors.elm", "road"),
+            ("north-road", "Upland Road to the Grey Moors", "upland_chapel",
+             "grey_moors", "road"),
+            ("east-road", "Coast Road to the Manymouth Delta", "hill_estate",
+             "manymouth_delta", "road"),
             ("crownwater-berth", "Crownwater Packet", "west_quay",
-             "maps/nymara/crownwater.elm", "berth"),
-            ("mirrorhold-berth", "Mirrorhold Packet", "cargo_pier",
-             "maps/nymara/mirrorhold.elm", "berth")):
+             "crownwater", "berth"),
+            ("amber-berth", "Greyhaven Packet to the Amberwood", "cargo_pier",
+             "amberwood", "berth")):
         x, z = REG.ANCHORS[anchor]
         y = float(t.height_at(x, z))
         build.portals.append({
@@ -186,7 +228,14 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
             ("lamp-rock-door", "The Lamp Rock Light", "lighthouse_yard",
              "lamp-rock-foot", 315.0),
             ("gullstone-door", "The Gullstone Undertow", "gullstone_watch",
-             "gullstone-cleft", 0.0)):
+             "gullstone-cleft", 0.0),
+             ("gullscar-farmhouse-door", "The Gullscar Farmhouse", "upland_farm",
+             "gullscar-farmhouse-door", 180.0),
+            ("haven-undercroft-door", "The Haven Undercroft", "cathedral",
+             "haven-undercroft-door", 180.0),
+            ("salvage-hole-mouth", "The Salvage Hole", "east_watch",
+             "salvage-hole-mouth", 180.0),
+):
         x, z = REG.ANCHORS[anchor]
         y = float(t.height_at(x, z))
         build.portals.append({
@@ -1161,7 +1210,8 @@ def main() -> int:
         lod_build = build_region(args.seed, lod="far")
         lod_build.terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
         lod_build.terrain_meshes = lod_build.terrain.build_meshes(
-            uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX)
+            uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
+            materials=MARCH_MATERIALS)
         # The reduced package drops the ground-dressing pass, so it references
         # one material fewer than the main one. Pinning it to the full set
         # embedded a texture nothing pointed at - which is precisely the

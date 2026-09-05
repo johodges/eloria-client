@@ -45,6 +45,8 @@ from amberwood import terrain as TER
 
 import populate as POP
 import region as REG
+import transitions as MARCH
+import loresites as LORE
 
 HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
@@ -61,6 +63,28 @@ DESPECKLE_MIN_CELLS = 6
 # a different world.glb for a change that has nothing to do with this region.
 # Verified against the built GLB by `export_glb`, which warns on any pinned
 # material no mesh actually points at.
+# The two ways out of the stair, as region-connections.json declares them:
+# the west quay gate along the coast to the Ssarathi temple causeways, and
+# the east pass up over the ridge onto the Sunmane Steppe. Temple stelae line
+# the west road; steppe grass and wind-banners come down the east pass.
+CROSSINGS = [
+    MARCH.Crossing("west-quay-gate", "ssarathi_ruins", REG.ANCHORS["westgate"],
+                   (REG.PLAY_MIN_X - 20.0, REG.ANCHORS["westgate"][1]),
+                   radius=40.0, name="The Temple Road March"),
+    MARCH.Crossing("east-pass-gate", "sunmane_steppe", REG.ANCHORS["east_pass"],
+                   (REG.PLAY_MAX_X + 20.0, REG.ANCHORS["east_pass"][1]),
+                   radius=46.0, name="The Steppe Pass"),
+]
+
+# The places the region's people argue about (see loresites.py).
+SITES = [
+    LORE.Site("moved-anchor", "The Moved Anchor", "moved_anchor", (133.0, -50.0),
+              thread="J", clearing=11.0,
+              note="The stair's anchor stone on log rollers with the ropes still on it, and the "
+                   "socket it was levered out of a few metres upslope."),
+]
+MARCH_MATERIALS: dict = dict(REG.SURFACE_MATERIALS)
+
 MATERIALS = frozenset({
     # ground
     'verdant_jungle_floor', 'verdant_jungle_trail', 'verdant_terrace_stone',
@@ -80,7 +104,7 @@ MATERIALS = frozenset({
     # vegetation
     'bark_pale', 'bark_dark', 'foliage_green', 'verdant_frond', 'verdant_vine',
     'undergrowth',
-})
+}) | MARCH.materials_for("verdant_stair", CROSSINGS) | LORE.materials([s.piece for s in SITES])
 
 ASSET_VERSION = "1.0.0"
 SCHEMA_VERSION = "1.0.0"
@@ -88,7 +112,7 @@ SCHEMA_VERSION = "1.0.0"
 # The region's four insides live on one map with blackspace between them, so
 # every door targets the same map key and differs only in which arrival it asks
 # for. See `source/interiors.py` and `interiors/verdant_stair_insides/`.
-INTERIOR_MAP = "maps/nymara/verdant_stair_insides.elm"
+INTERIOR_MAP = "verdant_stair_insides"
 INTERIOR_DOORS = (
     # portal id, name, landmark it belongs to, anchor, arrival on the insides map
     ("temple-sanctum-door", "The Green Sanctum", "great-temple", "great_temple",
@@ -99,6 +123,12 @@ INTERIOR_DOORS = (
      "canopy_village", "banyan-hollow-arch"),
     ("stair-quarry-adit", "The Stair Quarry", "quarry", "quarry",
      "stair-quarry-adit"),
+    ("physick-still-door", "Tessara's Still Room", "herbalist", "herbalist",
+     "physick-still-door"),
+    ("anchor-hollow-mouth", "The Anchor Hollow", "fern-camp", "fern_camp",
+     "anchor-hollow-mouth"),
+    ("nine-lost-door", "The Shrine of the Nine Lost", "south-quay", "south_quay",
+     "nine-lost-door"),
 )
 
 
@@ -118,6 +148,8 @@ def build_region(seed: int = SEED, lod: str | None = None,
     build = RegionBuild(terrain=terrain)
 
     if stage != "terrain":
+        MARCH.prepare(terrain, CROSSINGS)
+        LORE.prepare(terrain, SITES, sea_level=getattr(REG, "SEA_LEVEL", 0.0), keep=(TER.SHORE, TER.WET_ROCK))
         POP.populate_stair(build, seed)
         POP.populate_landmarks(build, seed)
         POP.populate_crossings(build, seed)
@@ -128,10 +160,18 @@ def build_region(seed: int = SEED, lod: str | None = None,
             POP.populate_understory(build, seed)
             POP.populate_ground_detail(build, seed)
     POP.build_water(build, seed)
+    if stage != "terrain":
+        # The marches: the neighbours' country coming in along the roads out.
+        MARCH.paint(terrain, CROSSINGS, MARCH_MATERIALS, seed, sea_level=REG.SEA_LEVEL,
+                    keep=(TER.SHORE, TER.WET_ROCK))
+        march = MARCH.dress(build, "verdant_stair", CROSSINGS, seed, sea_level=REG.SEA_LEVEL)
+        LORE.dress(build, terrain, SITES, seed)
+        build.landmarks.extend(march.landmarks)
+        build.notes.extend(march.notes)
 
     terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
     build.terrain_meshes = terrain.build_meshes(
-        uv_scale=0.26, materials=REG.SURFACE_MATERIALS, blend_edges=True,
+        uv_scale=0.26, materials=MARCH_MATERIALS, blend_edges=True,
         material_suffix=MAT.GROUND_SUFFIX)
     build.terrain_meshes["Backdrop_Distant"] = TER.backdrop(
         terrain, reach=240.0, cell=11.0, seed=seed + 909,
@@ -246,10 +286,10 @@ def _add_spawns_and_portals(build: RegionBuild) -> None:
     # not have. The Westhaven crossing is a sea quay rather than a road, which
     # is the shape Crownwater's portals already take.
     for portal_id, name, anchor, destination in (
-            ("west-quay-gate", "Westhaven Packet", "westgate",
-             "maps/nymara/westhaven.elm"),
-            ("east-pass-gate", "Ssarathi Pass", "east_pass",
-             "maps/nymara/ssarathi_ruins.elm")):
+            ("west-quay-gate", "Temple Road to the Ssarathi Ruins", "westgate",
+             "ssarathi_ruins"),
+            ("east-pass-gate", "Steppe Pass to the Sunmane", "east_pass",
+             "sunmane_steppe")):
         x, z = REG.ANCHORS[anchor]
         y = float(t.height_at(x, z))
         build.portals.append({
