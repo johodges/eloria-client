@@ -10,11 +10,35 @@ extends CharacterBody3D
 ## because a diagonal step crosses 1.41 tiles and is held for 1.41 times as
 ## long: one pace covers both step shapes and any burst of them folded together.
 @export var initial_server_interval := 0.6
-@export var interval_smoothing := 0.5
-## How much longer than the observed server cadence one step is allowed to
-## take. At 1.05 any jitter in the packet stream finished the step before the
-## next one arrived, and the actor stopped and restarted on every tile.
+## How many recent per-tile intervals the pace is the median of. A median
+## reads through the two shapes packet timing takes on a real link - a step
+## held back by the network and the burst that follows it - where the old
+## half-weight blend chased both and retimed the next step off each one.
+const PACE_WINDOW := 12
+## How fast the jitter allowance forgets a late packet, per step. Holds come
+## in runs a second or two apart on a wireless link, so the allowance a hold
+## earns has to outlive the next one; at 0.98 it halves in about 35 steps.
+const JITTER_DECAY := 0.98
+## A step later than this is a player who stood still, not a network hold,
+## and earns the buffer nothing. Wireless holds run to a couple of hundred
+## milliseconds; a pause between two clicks starts at about half a second.
+const JITTER_PAUSE_SECONDS := 0.4
+## How much longer than the observed server cadence one step is scheduled to
+## take when nothing is late: the base of the playout buffer. At 1.05 any
+## jitter finished the step before the next one arrived and the actor stopped
+## and restarted on every tile; 1.25 covers a quarter of a step, which is
+## enough for a wired link and not for a wireless one - the jitter allowance
+## in `apply_server_state` adds what the link actually shows.
 @export var arrival_margin := 1.25
+## The most the body is held behind the newest tile to cover late packets, on
+## top of the arrival margin. Every step is scheduled no earlier than the
+## margin plus the worst lateness recently seen, so a jittery link buys itself
+## a longer buffer and a clean one keeps the margin alone. The holds a home
+## wireless link showed in a recording all sat under 350 ms.
+@export var maximum_buffer_seconds := 0.35
+## The most the body speeds up to trim a buffer that has grown past what the
+## link needs. Anything faster reads as the lurch this exists to remove.
+@export var catch_up_factor := 1.25
 @export var minimum_segment_duration := 0.06
 ## Long enough to hold the longest walking step - a diagonal, 0.6 s a tile
 ## across 1.41 tiles, plus the arrival margin - so a walk is not driven faster
@@ -70,6 +94,23 @@ var _last_movement_update_msec := -1
 ## Seconds the server spends on one tile, measured over whatever ground the
 ## last update actually covered rather than assumed to be one step's worth.
 var _smoothed_server_interval := 0.6
+## The per-tile intervals the pace is the median of; see PACE_WINDOW.
+var _interval_history := PackedFloat32Array()
+## Seconds the body is held behind the newest tile, beyond the arrival
+## margin, to cover the late packets this link has been showing.
+var _jitter_allowance := 0.0
+## When the step now being crossed is scheduled to finish, on the local clock
+## in seconds, or -1 with no schedule. The next step continues from here at
+## the same speed rather than restarting from wherever the body is, which is
+## what made an early packet a lurch and a late one a stop.
+var _schedule_due := -1.0
+## How many tiles the step before this one crossed. The server holds a step
+## for its own length *after* taking it - the gap before this packet is the
+## previous step's, not this one's - so that is the length the gap is measured
+## against. Dividing by the arriving step's length instead read a straight
+## step after a diagonal one as 41% late and the reverse as early, on every
+## path that zigzags between the two.
+var _previous_step_tiles := 1.0
 ## The direction the body is actually crossing the ground in, which is not the
 ## tile direction the server named. See `_rendered_target_yaw`.
 var _travel_yaw_active := false
@@ -892,11 +933,16 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 		_segment_duration = 0.0
 		_last_movement_update_msec = -1
 		_smoothed_server_interval = initial_server_interval
+		_interval_history.clear()
+		_jitter_allowance = 0.0
+		_schedule_due = -1.0
+		_previous_step_tiles = 1.0
 		_movement_coast_remaining = 0.0
 		_snap_pending = false
 		_travel_yaw_active = false
 	elif target_changed:
 		var now_msec: int = Time.get_ticks_msec()
+		var now: float = float(now_msec) / 1000.0
 		# How much ground the server covered, in tiles. A diagonal step is 1.41
 		# of them and a folded burst several, so timing the update against it
 		# gives a pace per tile that every step shape agrees on. Timing it
@@ -908,12 +954,28 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 		if _last_movement_update_msec >= 0:
 			var observed_interval: float = float(
 				now_msec - _last_movement_update_msec) / 1000.0
-			if observed_interval <= maximum_segment_duration * 2.0 * step_tiles:
-				var observed_pace: float = clampf(
-					observed_interval / step_tiles, 0.05,
-					maximum_segment_duration)
-				_smoothed_server_interval = lerpf(_smoothed_server_interval,
-					observed_pace, interval_smoothing)
+			# The gap before this packet is the hold the server gave the step
+			# before it, so it is measured per tile of that step.
+			var gap_tiles: float = maxf(_previous_step_tiles, 0.001)
+			if observed_interval <= maximum_segment_duration * 2.0 * gap_tiles:
+				_interval_history.append(clampf(
+					observed_interval / gap_tiles, 0.05, maximum_segment_duration))
+				if _interval_history.size() > PACE_WINDOW:
+					_interval_history = _interval_history.slice(
+						_interval_history.size() - PACE_WINDOW)
+				_smoothed_server_interval = median_of(
+					_interval_history, _smoothed_server_interval)
+				# How late this step was against the cadence, if it was. The
+				# allowance keeps the worst of it for a while, so the steps
+				# after a hold are scheduled far enough behind their packets
+				# that the next hold of the same size lands before the body
+				# needs the tile. A gap long enough to be a player pausing
+				# rather than the network holding a packet earns nothing.
+				var expected_gap: float = _smoothed_server_interval * gap_tiles
+				var lateness: float = observed_interval - expected_gap
+				_jitter_allowance = jitter_allowance(_jitter_allowance,
+					lateness if lateness <= minf(expected_gap, JITTER_PAUSE_SECONDS) else 0.0,
+					JITTER_DECAY, maximum_buffer_seconds)
 			# A long stationary pause is idle time, not a cadence. Folding it
 			# in would pace the next burst by how long the player stood still,
 			# and resetting to the constant lurched the first step of every
@@ -921,13 +983,28 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 			# instead: standing still is not what changes it - #run and #walk
 			# are, and the step after those corrects it.
 		_last_movement_update_msec = now_msec
+		_previous_step_tiles = step_tiles
 		_segment_start = global_position
 		_segment_elapsed = 0.0
 		_movement_coast_remaining = 0.0
-		_segment_duration = presentation_segment_duration(
-			global_position.distance_to(server_target), _presentation_speed,
-			_smoothed_server_interval * step_tiles, arrival_margin,
-			minimum_segment_duration, maximum_segment_duration)
+		# The server holds this step for its own length before the next one,
+		# so the schedule continues by that much: the body crosses the tile
+		# at one speed on the ground whatever shape the step is.
+		var cadence: float = _smoothed_server_interval * step_tiles
+		# When this step should finish: on the schedule the last one set, at
+		# the pace the server is sending, or later if the packet came too late
+		# for that. The body is given exactly that long to cross from wherever
+		# it is to the new tile, so a late packet costs nothing but a shorter
+		# buffer and an early one nothing but a longer one - neither changes
+		# the speed on the ground. Restarting each step from the body's
+		# position at the arrival margin, as this used to, made a late packet
+		# a stop and the early one behind it a sprint.
+		var due: float = scheduled_arrival(now, _schedule_due, cadence,
+			cadence * arrival_margin + _jitter_allowance, catch_up_factor)
+		_segment_duration = clampf(maxf(due - now,
+			global_position.distance_to(server_target) / maxf(_presentation_speed, 0.001)),
+			minimum_segment_duration, maximum_segment_duration + maximum_buffer_seconds)
+		_schedule_due = now + _segment_duration
 		_travel_yaw = travel_yaw(_segment_start, server_target, _target_yaw)
 		_travel_yaw_active = true
 	_wake()
@@ -1920,22 +1997,50 @@ func set_surface_height(value: float) -> void:
 		global_position.y = value
 	_wake()
 
-## How long the body should take to cross `distance` metres of ground.
+## The middle value of a set of per-tile intervals: the server's cadence as
+## measured, with a held-back packet and the burst behind it both read
+## through. `fallback` is returned for an empty set.
+static func median_of(values: PackedFloat32Array, fallback: float) -> float:
+	if values.is_empty():
+		return fallback
+	var ordered: PackedFloat32Array = values.duplicate()
+	ordered.sort()
+	var middle: int = ordered.size() / 2
+	if ordered.size() % 2 == 1:
+		return ordered[middle]
+	return (ordered[middle - 1] + ordered[middle]) * 0.5
+
+## The seconds of lateness the playout schedule keeps in hand, updated for one
+## more step. A late step raises it to its own lateness at once; every step
+## lets it decay by `decay`, so the allowance a hold earns outlives the next
+## hold rather than being gone by the time it lands. Never more than `maximum`.
+static func jitter_allowance(previous: float, lateness: float, decay: float,
+		maximum: float) -> float:
+	return clampf(maxf(lateness, previous * decay), 0.0, maximum)
+
+## When the step that has just arrived should finish, in the same seconds as
+## `now`. `last_due` is when the step before it was scheduled to finish, or
+## anything earlier than `now` with no schedule; `cadence` is how long the
+## server took over this step; `buffer` is how long after its arrival the
+## step may finish at the earliest - the arrival margin plus the jitter
+## allowance.
 ##
-## `observed_interval` is how long the server spent on the step being shown -
-## its measured pace per tile times the tiles that step crosses - so a diagonal
-## and the straight step beside it are each given the time they were actually
-## taken in, and render at one speed. `margin` stretches that so the step
-## finishes a little after the next one is due rather than a little before,
-## which is what keeps the walk continuous; the body settles a steady
-## `margin - 1` of a step behind its own tile and no further.
-static func presentation_segment_duration(distance: float, nominal_speed: float,
-		observed_interval: float, margin: float, minimum_duration: float,
-		maximum_duration: float) -> float:
-	var nominal_duration: float = distance / maxf(nominal_speed, 0.001)
-	var cadence_duration: float = observed_interval * margin
-	return clampf(maxf(nominal_duration, cadence_duration),
-		minimum_duration, maximum_duration)
+## On cadence the schedule simply continues, which is what keeps the speed on
+## the ground constant whether the packet came early or late. A step that
+## arrived too late for that is scheduled `buffer` after its arrival instead,
+## pushing the schedule out: the body slows for one step and the buffer is
+## restored. A schedule that has run ahead of what the buffer needs - a pace
+## estimate a shade long, or the burst behind a hold - is trimmed back toward
+## it at no more than `catch_up` times the pace, so the buffer settles on
+## what the link asks for rather than drifting longer a few milliseconds a
+## step; left to run half a step ahead, it did.
+static func scheduled_arrival(now: float, last_due: float, cadence: float,
+		buffer: float, catch_up: float) -> float:
+	var continued: float = last_due + cadence
+	var earliest: float = now + buffer
+	if continued <= earliest:
+		return earliest
+	return maxf(earliest, last_due + cadence / maxf(catch_up, 1.0))
 
 func _physics_process(delta: float) -> void:
 	if (_speech_bubble_expiry_msec > 0

@@ -537,33 +537,44 @@ func _init() -> void:
 		"re-clicking a tile restarts its cross instead of stacking another")
 	highlight_fixture.free()
 
-	var walk_segment := ReplicatedActor3D.presentation_segment_duration(
-		1.0, 6.0, 0.25, 1.05, 0.06, 0.75)
-	_expect(is_equal_approx(walk_segment, 0.2625),
-		"actor interpolation spans the 250 ms server cadence")
-	var fast_segment := ReplicatedActor3D.presentation_segment_duration(
-		1.0, 9.0, 0.125, 1.05, 0.06, 0.75)
-	_expect(is_equal_approx(fast_segment, 0.13125),
-		"actor interpolation adapts to double-speed cadence")
-	var catchup_segment := ReplicatedActor3D.presentation_segment_duration(
-		3.0, 6.0, 0.10, 1.05, 0.06, 0.75)
-	_expect(is_equal_approx(catchup_segment, 0.5),
-		"batched actor steps retain nominal catch-up speed")
-	var capped_segment := ReplicatedActor3D.presentation_segment_duration(
-		20.0, 6.0, 0.25, 1.05, 0.06, 0.75)
-	_expect(is_equal_approx(capped_segment, 0.75),
-		"large corrections cannot interpolate indefinitely")
+	# The playout schedule. A step that arrives on cadence continues the
+	# schedule the last one set, so the body's speed on the ground does not
+	# change with the packet's timing; one that arrives late pushes the
+	# schedule out rather than restarting the step from a standstill; one
+	# that arrives early is absorbed into a longer buffer, trimmed back at a
+	# bounded pace rather than lurched through.
+	var on_cadence := ReplicatedActor3D.scheduled_arrival(10.0, 10.05, 0.2, 0.25, 1.25)
+	_expect(is_equal_approx(on_cadence, 10.25),
+		"a step on cadence continues the schedule at one speed")
+	var late_step := ReplicatedActor3D.scheduled_arrival(10.15, 10.05, 0.2, 0.25, 1.25)
+	_expect(is_equal_approx(late_step, 10.4),
+		"a late step is scheduled its buffer after it arrived, not lurched to")
+	var early_burst := ReplicatedActor3D.scheduled_arrival(10.0, 10.25, 0.2, 0.25, 1.25)
+	_expect(is_equal_approx(early_burst, 10.41),
+		"a burst that runs the schedule ahead is trimmed no faster than the catch-up factor")
+	var slight_lead := ReplicatedActor3D.scheduled_arrival(10.0, 10.1, 0.2, 0.25, 1.25)
+	_expect(is_equal_approx(slight_lead, 10.26),
+		"a schedule a little ahead of the buffer is trimmed toward it, not left to drift")
+	var standing_start := ReplicatedActor3D.scheduled_arrival(10.0, -1.0, 0.2, 0.25, 1.25)
+	_expect(is_equal_approx(standing_start, 10.25),
+		"the first step from a standstill is given the arrival margin")
 	# A diagonal step is 1.41 tiles and the server holds it for 1.41 times as
-	# long, so it is shown over 1.41 times as long and crosses the ground at
-	# the same speed as the straight step beside it. Giving both the one
-	# interval is what made walking and running speed up and slow down along
-	# every path that zigzags between the two.
-	var straight_step := ReplicatedActor3D.presentation_segment_duration(
-		1.0, 6.0, 0.2, 1.25, 0.06, 1.1)
-	var diagonal_step := ReplicatedActor3D.presentation_segment_duration(
-		sqrt(2.0), 6.0, 0.2 * sqrt(2.0), 1.25, 0.06, 1.1)
-	_expect(is_equal_approx(1.0 / straight_step, sqrt(2.0) / diagonal_step),
+	# long; the cadence the schedule continues at is the pace per tile times
+	# the tiles crossed, so it is shown over 1.41 times as long and crosses
+	# the ground at the same speed as the straight step beside it.
+	var straight_due := ReplicatedActor3D.scheduled_arrival(10.0, 10.05, 0.2, 0.25, 1.25)
+	var diagonal_due := ReplicatedActor3D.scheduled_arrival(
+		10.0, 10.0 + 0.05 * sqrt(2.0), 0.2 * sqrt(2.0), 0.25 * sqrt(2.0), 1.25)
+	_expect(is_equal_approx(1.0 / (straight_due - 10.05), sqrt(2.0) / (diagonal_due - 10.0 - 0.05 * sqrt(2.0))),
 		"a diagonal step is shown at the same ground speed as a straight one")
+	_expect(is_equal_approx(ReplicatedActor3D.jitter_allowance(0.0, 0.15, 0.98, 0.35), 0.15)
+		and is_equal_approx(ReplicatedActor3D.jitter_allowance(0.15, -0.05, 0.98, 0.35), 0.147)
+		and is_equal_approx(ReplicatedActor3D.jitter_allowance(0.0, 0.9, 0.98, 0.35), 0.35),
+		"the jitter allowance rises to a late step at once, decays slowly and is capped")
+	_expect(is_equal_approx(ReplicatedActor3D.median_of(
+			PackedFloat32Array([0.2, 0.05, 0.35, 0.2, 0.21]), 0.6), 0.2)
+		and is_equal_approx(ReplicatedActor3D.median_of(PackedFloat32Array(), 0.6), 0.6),
+		"the pace is the median of recent steps, so a burst and a hold do not move it")
 
 	var reduced_actor: Dictionary = ActorReducer.apply_command(actor, 21)
 	_expect(int(reduced_actor.get("x", -1)) == 11

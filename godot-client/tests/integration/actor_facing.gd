@@ -13,6 +13,7 @@ extends SceneTree
 const STEPS := 6
 
 var _failures := 0
+var _jitter_steps_sent := 0
 
 func _init() -> void:
 	call_deferred("_run")
@@ -88,6 +89,49 @@ func _run() -> void:
 	_expect(fastest <= slowest * 1.05,
 		"all eight directions are walked at one speed (%.2f - %.2f m/s)"
 			% [slowest, fastest])
+
+	# Packets do not arrive on the server's cadence over a real link: the
+	# outbox held each step for up to an AI tick, and a wireless hop holds one
+	# back and then delivers the next on time behind it. The body used to
+	# tolerate a quarter of a step of that and then stop and restart, and every
+	# early packet after a late one was crossed at a sprint. Run east with
+	# every fourth step held 120 ms and the one behind it arriving on schedule;
+	# once the schedule has seen two holds, the body must neither stand still
+	# while steps are still coming nor lurch to catch up.
+	actor.apply_server_state({"actor_id": 7, "x": 0, "y": 0, "rotation": 0,
+		"command": 32}, adapter, true)
+	_jitter_steps_sent = 0
+	_send_jittered_run(actor, adapter)
+	var last_position: Vector3 = actor.global_position
+	var last_msec: int = Time.get_ticks_msec()
+	var stalled_msec := 0
+	var speeds: Array[float] = []
+	while _jitter_steps_sent < JITTER_STEPS:
+		await physics_frame
+		var now_msec: int = Time.get_ticks_msec()
+		var moved: float = actor.global_position.distance_to(last_position)
+		var elapsed: int = now_msec - last_msec
+		if _jitter_steps_sent >= 12 and _jitter_steps_sent < JITTER_STEPS and elapsed > 0:
+			if moved < 0.0005:
+				stalled_msec += elapsed
+			else:
+				speeds.append(moved * 1000.0 / float(elapsed))
+		last_position = actor.global_position
+		last_msec = now_msec
+	speeds.sort()
+	var median_speed: float = speeds[speeds.size() / 2] if not speeds.is_empty() else 0.0
+	var peak_speed: float = speeds[speeds.size() - 1] if not speeds.is_empty() else 0.0
+	_expect(stalled_msec <= 80,
+		"a jittery packet stream no longer stops the body between steps (stood %d ms)"
+			% stalled_msec)
+	_expect(median_speed > 0.0 and peak_speed <= median_speed * 1.6,
+		"a late packet is absorbed by the buffer rather than sprinted after (%.2f vs median %.2f m/s)"
+			% [peak_speed, median_speed])
+	_expect(actor.global_position.distance_to(actor.server_target) < 3.0,
+		"the buffer a jittery link earns stays within a few tiles (%.2f m)"
+			% actor.global_position.distance_to(actor.server_target))
+	for _drain: int in range(4):
+		await create_timer(cadence).timeout
 
 	# A redirect mid-path - clicking a new spot while a path still runs - must turn
 	# the body to the new heading at once, since the facing is taken fresh from
@@ -191,3 +235,23 @@ func _expect(value: bool, label: String) -> void:
 	if not value:
 		_failures += 1
 		push_error("FAIL: " + label)
+
+const JITTER_STEPS := 26
+
+## Running steps east at a 200 ms cadence, with every fourth step from the
+## seventh held back 120 ms and the step behind it arriving when it would have
+## anyway - the shape a wireless hold takes on the wire. Started without being
+## awaited, so the caller can watch the body while the steps land.
+func _send_jittered_run(actor: ReplicatedActor3D, adapter: CoordinateAdapter) -> void:
+	var x := 0
+	for step: int in range(JITTER_STEPS):
+		x += 1
+		actor.apply_server_state({"actor_id": 7, "x": x, "y": 0, "rotation": 0,
+			"command": 32}, adapter)
+		_jitter_steps_sent = step + 1
+		var wait := 0.2
+		if step >= 6 and step % 4 == 2:
+			wait = 0.32
+		elif step >= 6 and step % 4 == 3:
+			wait = 0.08
+		await create_timer(wait).timeout
