@@ -146,17 +146,63 @@ and a cart stood in the south gate with the crossroads well on the road
 behind it (both moved). The archive barrow is a barrow again: the Ssarathi
 Royal Archive is entered from the Ssarathi Ruins.
 
+## Secrets
+
+Every exterior map has a hidden layer: 13 to 16 secrets on a `<region>_secrets`
+map, 176 in all. `SECRETS.md` lists each one with its entrance, key and
+contents; `SECRETS-REVIEW.md` lists the harvestables and mechanics proposed
+for them but not built.
+
+- **Entrances** are features of the ground a player *uses*: a loose stone, a
+  hollow tree, a crack in the ice, a drain grate. They are `kind: secret`
+  records in the region manifest's `interactives`, placed beside their
+  landmark by `_toolkit/secretdoors.py` (Sunmane by its own kit, Four Gates by
+  `tools/four_gates_secret_doors.py`). On the server they are role `secret`
+  interactives: using one walks the player to its tile and fires an
+  object-bound portal that never fires from walking over the tile. A
+  `key:<Item>` target needs the item in the pack or worn, and does not use it
+  up. Nine secrets open from insides maps instead (`door_map` and
+  `door_space` in the design).
+- **Rooms** come from `_toolkit/secretrooms.py`: fourteen kinds (grotto,
+  garden, cache, vault, pen, school, spring, range, reliquary, nullwell,
+  focus, tunnel, waystone, eyrie) and the mouth at a tunnel's far end.
+  `_toolkit/secrets_build.py <region>` lays a region's secrets out on a
+  64-tile map with 20 m of void between them, one GLB node set per section,
+  and writes `server-collision/<region>_secrets.bin`. The designs are each
+  region's `source/secrets_design.py` (Four Gates: `_toolkit/designs/`).
+- **Blackout**: the manifest says `secret: true` and lists `sections` with
+  bounds; `godot-client/src/world/secret_sections.gd` shows only the section
+  the local player stands in. The minimap and the full map render the same
+  world, so they go dark with it. The Secret label draws no map marker.
+- **Areas**: four kinds join `fast_regeneration` and `fast_reading`:
+  `harvest_speed` divides the harvest interval, `experience` multiplies
+  gains, `cheap_magic` divides mana cost, `no_magic` refuses casting.
+- **Travel**: ten tunnels run under the borders (Amberwood to Grey Moors,
+  Westhaven to Amberwood, Mirrorhold to Whitehorn and Whitehorn to
+  Mirrorhold, Amethyst Barrens to Sunmane, Verdant Stair to Ssarathi,
+  Ssarathi to Manymouth, Manymouth to Grey Moors, Grey Moors to Westhaven,
+  Crownwater to Four Gates), each with harvest nodes along it, and every
+  region's waystone hub links to its neighbours' hubs and to Four Gates.
+- **Server side**: `eloria-assets/tools/secret_doors.py` reads the packages
+  (entrances numbered 500+, furniture 600+, nodes 700+);
+  `continent_portals.py` writes the entrance, exit and link portals inside
+  its marker block; `author_region_content.py secrets` writes the
+  interactives, spawns, nodes and special areas between the `Nymara secrets`
+  markers, and the other stages keep that block as they find it.
+
 ## Rebuilding and checking
 
 ```sh
 cd eloria-assets/maps/nymara-regions/<region>/source && python build_<region>.py
 cd eloria-assets/maps/nymara-regions/<region>/source && python build_interiors.py   # or build_insides.py
 cd eloria-assets/maps/nymara-regions/<region>/source && python export_insides_collision.py
+cd eloria-assets/maps/nymara-regions && python _toolkit/secrets_build.py <region>
 # server side
 python tools/sync_authored_collision.py --client <eloria-assets/maps>
 python tools/generate_nymara_maps.py <maps dir>
 python <eloria-assets>/tools/continent_portals.py --server . --maps <maps dir> --apply
 python tools/author_region_content.py all --maps <maps dir> --client <client repo> --apply
+#   (`all` includes the `secrets` stage; `secrets` alone rewrites only its block)
 python tools/relocate_map_content.py --maps <maps dir> --apply
 ```
 

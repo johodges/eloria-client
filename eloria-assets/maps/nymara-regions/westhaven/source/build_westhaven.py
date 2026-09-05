@@ -52,6 +52,8 @@ import havenkit as HK
 import populate as POP
 import region as REG
 import transitions as MARCH
+import secretdoors as SD
+import secrets_design as SEC
 import loresites as LORE
 
 HERE = Path(__file__).resolve().parent
@@ -94,7 +96,7 @@ SITES = [
                    "by the door, the way the reeve says it came back."),
 ]
 MARCH_MATERIALS: dict = dict(getattr(REG, "SURFACE_MATERIALS", {}))
-HK.MATERIALS = HK.MATERIALS | MARCH.materials_for("westhaven", CROSSINGS) | LORE.materials([s.piece for s in SITES])
+HK.MATERIALS = HK.MATERIALS | MARCH.materials_for("westhaven", CROSSINGS) | SD.materials(SEC) | LORE.materials([s.piece for s in SITES])
 
 # The combined insides map every door on this region opens onto. One map key
 # for all four interiors, per the Eternal Lands convention: see
@@ -143,6 +145,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     MARCH.paint(terrain, CROSSINGS, MARCH_MATERIALS, seed, sea_level=REG.SEA_LEVEL)
     march = MARCH.dress(build, "westhaven", CROSSINGS, seed, sea_level=REG.SEA_LEVEL)
     LORE.dress(build, terrain, SITES, seed)
+    SD.dress(build, terrain, SEC, seed, sea_level=getattr(REG, "SEA_LEVEL", 0.0), server_origin=REG.SERVER_ORIGIN)
     build.landmarks.extend(march.landmarks)
     build.notes.extend(march.notes)
 
@@ -1216,7 +1219,9 @@ def main() -> int:
         # one material fewer than the main one. Pinning it to the full set
         # embedded a texture nothing pointed at - which is precisely the
         # 2.79 MB mistake the guide records Amberwood making.
-        lod_pin = HK.MATERIALS - {"undergrowth"}
+        # the secret entrances stand in the far package too, and one of them
+        # is grown over with undergrowth
+        lod_pin = (HK.MATERIALS - {"undergrowth"}) | SD.materials(SEC)
         _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb",
                                   pin=lod_pin)
         stats["lod2"] = {

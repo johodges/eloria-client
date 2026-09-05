@@ -1,0 +1,3929 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "westhaven_secrets",
+    "name": "Westhaven Secrets",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        18.0,
+        -5.4,
+        18.0
+      ],
+      "max": [
+        327.1,
+        8.25,
+        188.9
+      ]
+    },
+    "playableBounds": {
+      "min": [
+        18.0,
+        -5.4,
+        18.0
+      ],
+      "max": [
+        327.1,
+        3.0,
+        188.9
+      ]
+    },
+    "interiorClass": "secrets",
+    "parentRegion": "westhaven",
+    "serverCells": 384
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      -16.0,
+      191.0
+    ],
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 0.0,
+    "invertServerY": true
+  },
+  "secret": true,
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "haven-wrack-hollow"
+    },
+    {
+      "id": "haven-wrack-hollow",
+      "position": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "haven-wrack-hollow"
+    },
+    {
+      "id": "haven-ropewalk-garden",
+      "position": [
+        245.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "haven-ropewalk-garden"
+    },
+    {
+      "id": "haven-bonded-cache",
+      "position": [
+        169.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "haven-bonded-cache"
+    },
+    {
+      "id": "haven-guild-vault",
+      "position": [
+        242.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "haven-guild-vault"
+    },
+    {
+      "id": "haven-mole-pit",
+      "position": [
+        316.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "haven-mole-pit"
+    },
+    {
+      "id": "haven-arcade-school",
+      "position": [
+        315.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "haven-arcade-school"
+    },
+    {
+      "id": "haven-lamp-spring",
+      "position": [
+        26.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "haven-lamp-spring"
+    },
+    {
+      "id": "haven-shipyard-butts",
+      "position": [
+        94.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "haven-shipyard-butts"
+    },
+    {
+      "id": "haven-cathedral-reliquary",
+      "position": [
+        97.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "haven-cathedral-reliquary"
+    },
+    {
+      "id": "haven-gate-well",
+      "position": [
+        99.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "haven-gate-well"
+    },
+    {
+      "id": "haven-spire-focus",
+      "position": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "haven-spire-focus"
+    },
+    {
+      "id": "haven-smuggle",
+      "position": [
+        21.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "haven-smuggle"
+    },
+    {
+      "id": "haven-smuggle-far",
+      "position": [
+        21.55,
+        -4.95,
+        84.55
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "haven-smuggle"
+    },
+    {
+      "id": "haven-waystone",
+      "position": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "haven-waystone"
+    },
+    {
+      "id": "haven-waystone-ring",
+      "position": [
+        170.04,
+        -4.0,
+        107.91
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "haven-waystone"
+    },
+    {
+      "id": "haven-waystone-ring",
+      "position": [
+        175.5,
+        -4.0,
+        109.68
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "haven-waystone"
+    },
+    {
+      "id": "haven-waystone-ring",
+      "position": [
+        175.5,
+        -4.0,
+        115.42
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "haven-waystone"
+    },
+    {
+      "id": "haven-waystone-ring",
+      "position": [
+        170.04,
+        -4.0,
+        117.19
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "haven-waystone"
+    },
+    {
+      "id": "haven-lighthouse-eyrie",
+      "position": [
+        312.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "haven-lighthouse-eyrie"
+    }
+  ],
+  "collision": {
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "width": 624,
+    "height": 348,
+    "cellMetres": 0.5,
+    "originMetres": [
+      16.0,
+      191.0
+    ],
+    "heightEncoding": {
+      "origin": -5.131,
+      "step": 0.1311,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true
+    },
+    "walkableCells": 21112,
+    "blockedCells": 196040,
+    "walkableFraction": 0.0972,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    "nodeNames": [
+      "Secrets_westhaven_secrets",
+      "Section_haven-wrack-hollow",
+      "Roof_haven-wrack-hollow_cliff_rock",
+      "Build_haven-wrack-hollow_amber_resin",
+      "Build_haven-wrack-hollow_cliff_rock",
+      "Build_haven-wrack-hollow_dark_iron",
+      "Build_haven-wrack-hollow_water_sea",
+      "Section_haven-ropewalk-garden",
+      "Roof_haven-ropewalk-garden_cliff_rock",
+      "Build_haven-ropewalk-garden_amber_resin",
+      "Build_haven-ropewalk-garden_ashlar",
+      "Build_haven-ropewalk-garden_bark_pale",
+      "Build_haven-ropewalk-garden_cliff_rock",
+      "Build_haven-ropewalk-garden_dark_iron",
+      "Build_haven-ropewalk-garden_foliage_green",
+      "Build_haven-ropewalk-garden_rubble_stone",
+      "Build_haven-ropewalk-garden_timber_warm",
+      "Build_haven-ropewalk-garden_water_pool",
+      "Section_haven-bonded-cache",
+      "Roof_haven-bonded-cache_cliff_rock",
+      "Roof_haven-bonded-cache_timber_grey",
+      "Build_haven-bonded-cache_amber_resin",
+      "Build_haven-bonded-cache_cliff_rock",
+      "Build_haven-bonded-cache_dark_iron",
+      "Build_haven-bonded-cache_rubble_stone",
+      "Build_haven-bonded-cache_timber_dark",
+      "Build_haven-bonded-cache_timber_grey",
+      "Build_haven-bonded-cache_timber_warm",
+      "Section_haven-guild-vault",
+      "Roof_haven-guild-vault_ashlar",
+      "Roof_haven-guild-vault_cliff_rock",
+      "Build_haven-guild-vault_amber_resin",
+      "Build_haven-guild-vault_ashlar",
+      "Build_haven-guild-vault_carved_wood",
+      "Build_haven-guild-vault_cliff_rock",
+      "Build_haven-guild-vault_dark_iron",
+      "Build_haven-guild-vault_timber_dark",
+      "Build_haven-guild-vault_timber_grey",
+      "Build_haven-guild-vault_timber_warm",
+      "Section_haven-mole-pit",
+      "Roof_haven-mole-pit_cliff_rock",
+      "Build_haven-mole-pit_amber_resin",
+      "Build_haven-mole-pit_cliff_rock",
+      "Build_haven-mole-pit_dark_iron",
+      "Build_haven-mole-pit_pale_ashlar",
+      "Build_haven-mole-pit_timber_grey",
+      "Section_haven-arcade-school",
+      "Roof_haven-arcade-school_cliff_rock",
+      "Roof_haven-arcade-school_timber_grey",
+      "Build_haven-arcade-school_amber_resin",
+      "Build_haven-arcade-school_carved_wood",
+      "Build_haven-arcade-school_cliff_rock",
+      "Build_haven-arcade-school_dark_iron",
+      "Build_haven-arcade-school_rubble_stone",
+      "Build_haven-arcade-school_timber_grey",
+      "Section_haven-lamp-spring",
+      "Roof_haven-lamp-spring_cliff_rock",
+      "Build_haven-lamp-spring_amber_resin",
+      "Build_haven-lamp-spring_ashlar",
+      "Build_haven-lamp-spring_cliff_rock",
+      "Build_haven-lamp-spring_dark_iron",
+      "Build_haven-lamp-spring_water_sea",
+      "Section_haven-shipyard-butts",
+      "Roof_haven-shipyard-butts_cliff_rock",
+      "Roof_haven-shipyard-butts_timber_grey",
+      "Build_haven-shipyard-butts_amber_resin",
+      "Build_haven-shipyard-butts_cliff_rock",
+      "Build_haven-shipyard-butts_dark_iron",
+      "Build_haven-shipyard-butts_rubble_stone",
+      "Build_haven-shipyard-butts_thatch_reed",
+      "Build_haven-shipyard-butts_timber_grey",
+      "Section_haven-cathedral-reliquary",
+      "Roof_haven-cathedral-reliquary_ashlar",
+      "Roof_haven-cathedral-reliquary_cliff_rock",
+      "Build_haven-cathedral-reliquary_amber_resin",
+      "Build_haven-cathedral-reliquary_ashlar",
+      "Build_haven-cathedral-reliquary_cliff_rock",
+      "Build_haven-cathedral-reliquary_dark_iron",
+      "Build_haven-cathedral-reliquary_gilt_brass",
+      "Section_haven-gate-well",
+      "Roof_haven-gate-well_cliff_rock",
+      "Build_haven-gate-well_amber_resin",
+      "Build_haven-gate-well_ashlar",
+      "Build_haven-gate-well_cliff_rock",
+      "Build_haven-gate-well_dark_iron",
+      "Section_haven-spire-focus",
+      "Roof_haven-spire-focus_ashlar",
+      "Roof_haven-spire-focus_cliff_rock",
+      "Build_haven-spire-focus_amber_resin",
+      "Build_haven-spire-focus_ashlar",
+      "Build_haven-spire-focus_blue_crystal",
+      "Build_haven-spire-focus_cliff_rock",
+      "Build_haven-spire-focus_dark_iron",
+      "Section_haven-smuggle",
+      "Roof_haven-smuggle_cliff_rock",
+      "Build_haven-smuggle_amber_resin",
+      "Build_haven-smuggle_cliff_rock",
+      "Build_haven-smuggle_dark_iron",
+      "Build_haven-smuggle_timber_grey",
+      "Section_haven-waystone",
+      "Roof_haven-waystone_ashlar",
+      "Roof_haven-waystone_cliff_rock",
+      "Build_haven-waystone_amber_resin",
+      "Build_haven-waystone_ashlar",
+      "Build_haven-waystone_cliff_rock",
+      "Build_haven-waystone_dark_iron",
+      "Build_haven-waystone_gilt_brass",
+      "Section_haven-lighthouse-eyrie",
+      "Roof_haven-lighthouse-eyrie_cliff_rock",
+      "Build_haven-lighthouse-eyrie_amber_resin",
+      "Build_haven-lighthouse-eyrie_bark_dark",
+      "Build_haven-lighthouse-eyrie_carved_wood",
+      "Build_haven-lighthouse-eyrie_cliff_rock",
+      "Build_haven-lighthouse-eyrie_dark_iron",
+      "Build_haven-lighthouse-eyrie_rubble_stone",
+      "Build_haven-lighthouse-eyrie_timber_warm",
+      "Build_haven-lighthouse-eyrie_water_pool"
+    ]
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Roof_haven-wrack-hollow_cliff_rock",
+      "Roof_haven-ropewalk-garden_cliff_rock",
+      "Roof_haven-bonded-cache_cliff_rock",
+      "Roof_haven-bonded-cache_timber_grey",
+      "Roof_haven-guild-vault_ashlar",
+      "Roof_haven-guild-vault_cliff_rock",
+      "Roof_haven-mole-pit_cliff_rock",
+      "Roof_haven-arcade-school_cliff_rock",
+      "Roof_haven-arcade-school_timber_grey",
+      "Roof_haven-lamp-spring_cliff_rock",
+      "Roof_haven-shipyard-butts_cliff_rock",
+      "Roof_haven-shipyard-butts_timber_grey",
+      "Roof_haven-cathedral-reliquary_ashlar",
+      "Roof_haven-cathedral-reliquary_cliff_rock",
+      "Roof_haven-gate-well_cliff_rock",
+      "Roof_haven-spire-focus_ashlar",
+      "Roof_haven-spire-focus_cliff_rock",
+      "Roof_haven-smuggle_cliff_rock",
+      "Roof_haven-waystone_ashlar",
+      "Roof_haven-waystone_cliff_rock",
+      "Roof_haven-lighthouse-eyrie_cliff_rock"
+    ],
+    "reason": "interior lids; the isometric rig frames the floor, not the roof"
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Walk_"
+    ],
+    "agentRadius": 0.4,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 45,
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    }
+  },
+  "portals": [
+    {
+      "id": "exit-haven-wrack-hollow",
+      "name": "Back up: The Wrack Hollow",
+      "type": "map-transition",
+      "position": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "westhaven",
+      "destinationSpawn": "secret-haven-wrack-hollow",
+      "section": "haven-wrack-hollow",
+      "authority": "server"
+    },
+    {
+      "id": "exit-haven-ropewalk-garden",
+      "name": "Back up: The Ropewalk Garden",
+      "type": "map-transition",
+      "position": [
+        245.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "westhaven",
+      "destinationSpawn": "secret-haven-ropewalk-garden",
+      "section": "haven-ropewalk-garden",
+      "authority": "server"
+    },
+    {
+      "id": "exit-haven-bonded-cache",
+      "name": "Back up: The Bonded Cache",
+      "type": "map-transition",
+      "position": [
+        169.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "westhaven_insides",
+      "destinationSpawn": "secret-haven-bonded-cache",
+      "section": "haven-bonded-cache",
+      "authority": "server"
+    },
+    {
+      "id": "exit-haven-guild-vault",
+      "name": "Back up: The Guild Vault",
+      "type": "map-transition",
+      "position": [
+        242.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "westhaven",
+      "destinationSpawn": "secret-haven-guild-vault",
+      "section": "haven-guild-vault",
+      "authority": "server"
+    },
+    {
+      "id": "exit-haven-mole-pit",
+      "name": "Back up: The Mole Pit",
+      "type": "map-transition",
+      "position": [
+        316.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "westhaven",
+      "destinationSpawn": "secret-haven-mole-pit",
+      "section": "haven-mole-pit",
+      "authority": "server"
+    },
+    {
+      "id": "exit-haven-arcade-school",
+      "name": "Back up: The Arcade School",
+      "type": "map-transition",
+      "position": [
+        315.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "westhaven",
+      "destinationSpawn": "secret-haven-arcade-school",
+      "section": "haven-arcade-school",
+      "authority": "server"
+    },
+    {
+      "id": "exit-haven-lamp-spring",
+      "name": "Back up: The Lamp Rock Spring",
+      "type": "map-transition",
+      "position": [
+        26.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "westhaven",
+      "destinationSpawn": "secret-haven-lamp-spring",
+      "section": "haven-lamp-spring",
+      "authority": "server"
+    },
+    {
+      "id": "exit-haven-shipyard-butts",
+      "name": "Back up: The Shipyard Butts",
+      "type": "map-transition",
+      "position": [
+        94.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "westhaven",
+      "destinationSpawn": "secret-haven-shipyard-butts",
+      "section": "haven-shipyard-butts",
+      "authority": "server"
+    },
+    {
+      "id": "exit-haven-cathedral-reliquary",
+      "name": "Back up: The Cathedral Reliquary",
+      "type": "map-transition",
+      "position": [
+        97.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "westhaven",
+      "destinationSpawn": "secret-haven-cathedral-reliquary",
+      "section": "haven-cathedral-reliquary",
+      "authority": "server"
+    },
+    {
+      "id": "exit-haven-gate-well",
+      "name": "Back up: The City Gate Well",
+      "type": "map-transition",
+      "position": [
+        99.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "westhaven",
+      "destinationSpawn": "secret-haven-gate-well",
+      "section": "haven-gate-well",
+      "authority": "server"
+    },
+    {
+      "id": "exit-haven-spire-focus",
+      "name": "Back up: The Spire Focus",
+      "type": "map-transition",
+      "position": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "westhaven",
+      "destinationSpawn": "secret-haven-spire-focus",
+      "section": "haven-spire-focus",
+      "authority": "server"
+    },
+    {
+      "id": "exit-haven-smuggle",
+      "name": "Back up: The Smugglers' Run",
+      "type": "map-transition",
+      "position": [
+        21.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "westhaven",
+      "destinationSpawn": "secret-haven-smuggle",
+      "section": "haven-smuggle",
+      "authority": "server"
+    },
+    {
+      "id": "link-haven-smuggle-secret-amber-smuggle-mouth",
+      "name": "Up into Amberwood",
+      "type": "map-transition",
+      "position": [
+        21.55,
+        -4.95,
+        84.55
+      ],
+      "radius": 2.5,
+      "destinationMap": "amberwood",
+      "destinationSpawn": "secret-amber-smuggle-mouth",
+      "section": "haven-smuggle",
+      "authority": "server"
+    },
+    {
+      "id": "exit-haven-waystone",
+      "name": "Back up: The Haven Waystone",
+      "type": "map-transition",
+      "position": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "westhaven",
+      "destinationSpawn": "secret-haven-waystone",
+      "section": "haven-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-haven-waystone-moor-waystone",
+      "name": "The Grey Moors",
+      "type": "map-transition",
+      "position": [
+        170.04,
+        -4.0,
+        107.91
+      ],
+      "radius": 2.5,
+      "destinationMap": "grey_moors_secrets",
+      "destinationSpawn": "moor-waystone",
+      "section": "haven-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-haven-waystone-delta-waystone",
+      "name": "The Manymouth Delta",
+      "type": "map-transition",
+      "position": [
+        175.5,
+        -4.0,
+        109.68
+      ],
+      "radius": 2.5,
+      "destinationMap": "manymouth_delta_secrets",
+      "destinationSpawn": "delta-waystone",
+      "section": "haven-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-haven-waystone-crown-waystone",
+      "name": "Crownwater",
+      "type": "map-transition",
+      "position": [
+        175.5,
+        -4.0,
+        115.42
+      ],
+      "radius": 2.5,
+      "destinationMap": "crownwater_secrets",
+      "destinationSpawn": "crown-waystone",
+      "section": "haven-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-haven-waystone-amber-waystone",
+      "name": "Amberwood",
+      "type": "map-transition",
+      "position": [
+        170.04,
+        -4.0,
+        117.19
+      ],
+      "radius": 2.5,
+      "destinationMap": "amberwood_secrets",
+      "destinationSpawn": "amber-waystone",
+      "section": "haven-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "exit-haven-lighthouse-eyrie",
+      "name": "Back up: The Lighthouse Eyrie",
+      "type": "map-transition",
+      "position": [
+        312.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "westhaven",
+      "destinationSpawn": "secret-haven-lighthouse-eyrie",
+      "section": "haven-lighthouse-eyrie",
+      "authority": "server"
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "haven-wrack-hollow-room",
+      "name": "The Wrack Hollow",
+      "space": "haven-wrack-hollow.landing",
+      "position": [
+        174.55,
+        1.6,
+        21.05
+      ],
+      "section": "haven-wrack-hollow"
+    },
+    {
+      "id": "haven-ropewalk-garden-room",
+      "name": "The Ropewalk Garden",
+      "space": "haven-ropewalk-garden.landing",
+      "position": [
+        245.55,
+        1.6,
+        21.05
+      ],
+      "section": "haven-ropewalk-garden"
+    },
+    {
+      "id": "haven-bonded-cache-room",
+      "name": "The Bonded Cache",
+      "space": "haven-bonded-cache.landing",
+      "position": [
+        169.55,
+        1.6,
+        165.05
+      ],
+      "section": "haven-bonded-cache"
+    },
+    {
+      "id": "haven-guild-vault-room",
+      "name": "The Guild Vault",
+      "space": "haven-guild-vault.landing",
+      "position": [
+        242.55,
+        1.6,
+        165.05
+      ],
+      "section": "haven-guild-vault"
+    },
+    {
+      "id": "haven-mole-pit-room",
+      "name": "The Mole Pit",
+      "space": "haven-mole-pit.landing",
+      "position": [
+        316.55,
+        1.6,
+        21.05
+      ],
+      "section": "haven-mole-pit"
+    },
+    {
+      "id": "haven-arcade-school-room",
+      "name": "The Arcade School",
+      "space": "haven-arcade-school.landing",
+      "position": [
+        315.55,
+        1.6,
+        93.05
+      ],
+      "section": "haven-arcade-school"
+    },
+    {
+      "id": "haven-lamp-spring-room",
+      "name": "The Lamp Rock Spring",
+      "space": "haven-lamp-spring.landing",
+      "position": [
+        26.55,
+        1.6,
+        165.05
+      ],
+      "section": "haven-lamp-spring"
+    },
+    {
+      "id": "haven-shipyard-butts-room",
+      "name": "The Shipyard Butts",
+      "space": "haven-shipyard-butts.landing",
+      "position": [
+        94.55,
+        1.6,
+        21.05
+      ],
+      "section": "haven-shipyard-butts"
+    },
+    {
+      "id": "haven-cathedral-reliquary-room",
+      "name": "The Cathedral Reliquary",
+      "space": "haven-cathedral-reliquary.landing",
+      "position": [
+        97.55,
+        1.6,
+        165.05
+      ],
+      "section": "haven-cathedral-reliquary"
+    },
+    {
+      "id": "haven-gate-well-room",
+      "name": "The City Gate Well",
+      "space": "haven-gate-well.landing",
+      "position": [
+        99.55,
+        1.6,
+        93.05
+      ],
+      "section": "haven-gate-well"
+    },
+    {
+      "id": "haven-spire-focus-room",
+      "name": "The Spire Focus",
+      "space": "haven-spire-focus.landing",
+      "position": [
+        242.55,
+        1.6,
+        93.05
+      ],
+      "section": "haven-spire-focus"
+    },
+    {
+      "id": "haven-smuggle-room",
+      "name": "The Smugglers' Run",
+      "space": "haven-smuggle.landing",
+      "position": [
+        21.55,
+        1.6,
+        21.05
+      ],
+      "section": "haven-smuggle"
+    },
+    {
+      "id": "haven-waystone-room",
+      "name": "The Haven Waystone",
+      "space": "haven-waystone.landing",
+      "position": [
+        171.55,
+        1.6,
+        93.05
+      ],
+      "section": "haven-waystone"
+    },
+    {
+      "id": "haven-lighthouse-eyrie-room",
+      "name": "The Lighthouse Eyrie",
+      "space": "haven-lighthouse-eyrie.landing",
+      "position": [
+        312.55,
+        1.6,
+        165.05
+      ],
+      "section": "haven-lighthouse-eyrie"
+    }
+  ],
+  "interactives": [
+    {
+      "id": "haven-ropewalk-garden-well",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Garden well",
+      "text": "Cold water from the garden well.",
+      "position": [
+        245.55,
+        -1.0,
+        42.55
+      ],
+      "section": "haven-ropewalk-garden",
+      "serverTile": [
+        230,
+        148
+      ]
+    },
+    {
+      "id": "haven-bonded-cache-cache",
+      "kind": "storage",
+      "target": "shared",
+      "label": "Cache",
+      "text": "A cache; it opens your shared storage.",
+      "position": [
+        169.55,
+        -2.5,
+        184.65
+      ],
+      "section": "haven-bonded-cache",
+      "serverTile": [
+        154,
+        6
+      ]
+    },
+    {
+      "id": "haven-bonded-cache-bench",
+      "kind": "crafting_station",
+      "target": "field",
+      "label": "Bench",
+      "text": "A bench for ordinary mixing and crafting.",
+      "position": [
+        165.35,
+        -2.1,
+        184.65
+      ],
+      "section": "haven-bonded-cache",
+      "serverTile": [
+        149,
+        6
+      ]
+    },
+    {
+      "id": "haven-guild-vault-strongbox",
+      "kind": "storage",
+      "target": "shared",
+      "label": "Cache",
+      "text": "A cache; it opens your shared storage.",
+      "position": [
+        242.55,
+        -4.5,
+        185.55
+      ],
+      "section": "haven-guild-vault",
+      "serverTile": [
+        227,
+        5
+      ]
+    },
+    {
+      "id": "haven-guild-vault-bench",
+      "kind": "crafting_station",
+      "target": "field",
+      "label": "Bench",
+      "text": "A bench for ordinary mixing and crafting.",
+      "position": [
+        246.95,
+        -4.1,
+        181.15
+      ],
+      "section": "haven-guild-vault",
+      "serverTile": [
+        231,
+        10
+      ]
+    },
+    {
+      "id": "haven-guild-vault-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "The house seal",
+      "text": "A countersign is checked against the seal-room book. What is made under the guild hall is entered twice, and counts twice.",
+      "position": [
+        242.55,
+        -4.0,
+        176.19
+      ],
+      "section": "haven-guild-vault",
+      "serverTile": [
+        227,
+        15
+      ]
+    },
+    {
+      "id": "haven-mole-pit-post",
+      "kind": "training",
+      "target": "combat",
+      "label": "Training post",
+      "text": "The post lists your recent combat results.",
+      "position": [
+        308.55,
+        -3.0,
+        50.05
+      ],
+      "section": "haven-mole-pit",
+      "serverTile": [
+        293,
+        141
+      ]
+    },
+    {
+      "id": "haven-arcade-school-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "Reading",
+      "text": "The arcade's under-room. Books read three times as fast.",
+      "position": [
+        308.35,
+        -1.0,
+        116.42
+      ],
+      "section": "haven-arcade-school",
+      "serverTile": [
+        292,
+        75
+      ]
+    },
+    {
+      "id": "haven-arcade-school-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "The post",
+      "text": "The post came back unopened. The reeve says that is the message.",
+      "position": [
+        315.55,
+        -1.0,
+        116.42
+      ],
+      "section": "haven-arcade-school",
+      "serverTile": [
+        300,
+        75
+      ]
+    },
+    {
+      "id": "haven-arcade-school-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "Ferries",
+      "text": "Westhaven's berths: one to Crownwater, one to Amberwood. The crossing is a boat, not a road.",
+      "position": [
+        322.75,
+        -1.0,
+        116.42
+      ],
+      "section": "haven-arcade-school",
+      "serverTile": [
+        307,
+        75
+      ]
+    },
+    {
+      "id": "haven-lamp-spring-spring",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Warm spring",
+      "text": "The spring is warm and mineral; it restores you.",
+      "position": [
+        26.55,
+        -2.0,
+        179.15
+      ],
+      "section": "haven-lamp-spring",
+      "serverTile": [
+        11,
+        12
+      ]
+    },
+    {
+      "id": "haven-shipyard-butts-butts",
+      "kind": "training",
+      "target": "combat",
+      "label": "Butts",
+      "text": "The butts list your recent combat results.",
+      "position": [
+        94.55,
+        -1.0,
+        34.55
+      ],
+      "section": "haven-shipyard-butts",
+      "serverTile": [
+        79,
+        156
+      ]
+    },
+    {
+      "id": "haven-cathedral-reliquary-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "The seal",
+      "text": "The false countersign was chalked. The chalk washed off. The seal did not.",
+      "position": [
+        91.6,
+        -4.0,
+        177.65
+      ],
+      "section": "haven-cathedral-reliquary",
+      "serverTile": [
+        76,
+        13
+      ]
+    },
+    {
+      "id": "haven-cathedral-reliquary-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "The escrow",
+      "text": "Someone probed the escrow with a returned letter. It was never opened, and it never needed to be.",
+      "position": [
+        103.5,
+        -4.0,
+        177.65
+      ],
+      "section": "haven-cathedral-reliquary",
+      "serverTile": [
+        88,
+        13
+      ]
+    },
+    {
+      "id": "haven-cathedral-reliquary-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "The wreck",
+      "text": "The wreck assessor's book lists a hull that never sailed.",
+      "position": [
+        91.6,
+        -4.0,
+        181.5
+      ],
+      "section": "haven-cathedral-reliquary",
+      "serverTile": [
+        76,
+        10
+      ]
+    },
+    {
+      "id": "haven-cathedral-reliquary-relic",
+      "kind": "scenery_effect",
+      "target": "relic",
+      "label": "The Cathedral Reliquary",
+      "text": "The cathedral's relic room, opened with a shell.",
+      "position": [
+        97.55,
+        -3.8,
+        186.05
+      ],
+      "section": "haven-cathedral-reliquary",
+      "serverTile": [
+        82,
+        5
+      ]
+    },
+    {
+      "id": "haven-gate-well-post",
+      "kind": "training",
+      "target": "combat",
+      "label": "Ward post",
+      "text": "Nothing casts within these stones. The post lists your recent combat results.",
+      "position": [
+        91.9,
+        -4.0,
+        104.9
+      ],
+      "section": "haven-gate-well",
+      "serverTile": [
+        76,
+        86
+      ]
+    },
+    {
+      "id": "haven-lighthouse-eyrie-water",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Cistern",
+      "text": "Rainwater from the cistern.",
+      "position": [
+        315.55,
+        4.0,
+        180.35
+      ],
+      "section": "haven-lighthouse-eyrie",
+      "serverTile": [
+        300,
+        11
+      ]
+    },
+    {
+      "id": "haven-lighthouse-eyrie-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "Breath",
+      "text": "Rest here and the breath comes back twice as fast.",
+      "position": [
+        308.95,
+        4.0,
+        184.25
+      ],
+      "section": "haven-lighthouse-eyrie",
+      "serverTile": [
+        293,
+        7
+      ]
+    },
+    {
+      "id": "haven-lighthouse-eyrie-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "Trade",
+      "text": "The customs house weighs what walks and what rolls. A third added to a wagon on an island that sells bread and rope is not rope.",
+      "position": [
+        311.15,
+        4.0,
+        184.25
+      ],
+      "section": "haven-lighthouse-eyrie",
+      "serverTile": [
+        295,
+        7
+      ]
+    }
+  ],
+  "npcMarkers": [],
+  "harvestables": [
+    {
+      "id": "haven-wrack-hollow-node-00",
+      "resource": "Tidewrack Kelp",
+      "position": [
+        177.79,
+        -4.0,
+        46.23
+      ],
+      "section": "haven-wrack-hollow",
+      "serverTile": [
+        162,
+        145
+      ]
+    },
+    {
+      "id": "haven-wrack-hollow-node-01",
+      "resource": "Tidewrack Kelp",
+      "position": [
+        168.24,
+        -4.0,
+        44.35
+      ],
+      "section": "haven-wrack-hollow",
+      "serverTile": [
+        152,
+        147
+      ]
+    },
+    {
+      "id": "haven-wrack-hollow-node-02",
+      "resource": "Tidewrack Kelp",
+      "position": [
+        179.56,
+        -4.0,
+        36.66
+      ],
+      "section": "haven-wrack-hollow",
+      "serverTile": [
+        164,
+        154
+      ]
+    },
+    {
+      "id": "haven-wrack-hollow-node-03",
+      "resource": "Tidewrack Kelp",
+      "position": [
+        175.54,
+        -4.0,
+        48.74
+      ],
+      "section": "haven-wrack-hollow",
+      "serverTile": [
+        160,
+        142
+      ]
+    },
+    {
+      "id": "haven-wrack-hollow-node-04",
+      "resource": "Tidewrack Kelp",
+      "position": [
+        168.27,
+        -4.0,
+        39.56
+      ],
+      "section": "haven-wrack-hollow",
+      "serverTile": [
+        152,
+        151
+      ]
+    },
+    {
+      "id": "haven-wrack-hollow-node-05",
+      "resource": "Shorebank Shell",
+      "position": [
+        178.62,
+        -4.0,
+        42.51
+      ],
+      "section": "haven-wrack-hollow",
+      "serverTile": [
+        163,
+        148
+      ]
+    },
+    {
+      "id": "haven-wrack-hollow-node-06",
+      "resource": "Shorebank Shell",
+      "position": [
+        171.49,
+        -4.0,
+        49.12
+      ],
+      "section": "haven-wrack-hollow",
+      "serverTile": [
+        155,
+        142
+      ]
+    },
+    {
+      "id": "haven-wrack-hollow-node-07",
+      "resource": "Shorebank Shell",
+      "position": [
+        171.92,
+        -4.0,
+        35.45
+      ],
+      "section": "haven-wrack-hollow",
+      "serverTile": [
+        156,
+        156
+      ]
+    },
+    {
+      "id": "haven-wrack-hollow-node-08",
+      "resource": "Shorebank Shell",
+      "position": [
+        179.33,
+        -4.0,
+        45.8
+      ],
+      "section": "haven-wrack-hollow",
+      "serverTile": [
+        163,
+        145
+      ]
+    },
+    {
+      "id": "haven-ropewalk-garden-node-00",
+      "resource": "Riverflax",
+      "position": [
+        237.96,
+        -1.5,
+        37.35
+      ],
+      "section": "haven-ropewalk-garden",
+      "serverTile": [
+        222,
+        154
+      ]
+    },
+    {
+      "id": "haven-ropewalk-garden-node-01",
+      "resource": "Riverflax",
+      "position": [
+        239.5,
+        -1.5,
+        37.35
+      ],
+      "section": "haven-ropewalk-garden",
+      "serverTile": [
+        224,
+        154
+      ]
+    },
+    {
+      "id": "haven-ropewalk-garden-node-02",
+      "resource": "Riverflax",
+      "position": [
+        241.04,
+        -1.5,
+        37.35
+      ],
+      "section": "haven-ropewalk-garden",
+      "serverTile": [
+        225,
+        154
+      ]
+    },
+    {
+      "id": "haven-ropewalk-garden-node-03",
+      "resource": "Riverflax",
+      "position": [
+        237.96,
+        -1.5,
+        38.95
+      ],
+      "section": "haven-ropewalk-garden",
+      "serverTile": [
+        222,
+        152
+      ]
+    },
+    {
+      "id": "haven-ropewalk-garden-node-04",
+      "resource": "Cotton",
+      "position": [
+        244.01,
+        -1.5,
+        37.35
+      ],
+      "section": "haven-ropewalk-garden",
+      "serverTile": [
+        228,
+        154
+      ]
+    },
+    {
+      "id": "haven-ropewalk-garden-node-05",
+      "resource": "Cotton",
+      "position": [
+        245.55,
+        -1.5,
+        37.35
+      ],
+      "section": "haven-ropewalk-garden",
+      "serverTile": [
+        230,
+        154
+      ]
+    },
+    {
+      "id": "haven-ropewalk-garden-node-06",
+      "resource": "Cotton",
+      "position": [
+        247.09,
+        -1.5,
+        37.35
+      ],
+      "section": "haven-ropewalk-garden",
+      "serverTile": [
+        231,
+        154
+      ]
+    },
+    {
+      "id": "haven-ropewalk-garden-node-07",
+      "resource": "Cotton",
+      "position": [
+        244.01,
+        -1.5,
+        38.95
+      ],
+      "section": "haven-ropewalk-garden",
+      "serverTile": [
+        228,
+        152
+      ]
+    },
+    {
+      "id": "haven-ropewalk-garden-node-08",
+      "resource": "Flax",
+      "position": [
+        250.06,
+        -1.5,
+        37.35
+      ],
+      "section": "haven-ropewalk-garden",
+      "serverTile": [
+        234,
+        154
+      ]
+    },
+    {
+      "id": "haven-ropewalk-garden-node-09",
+      "resource": "Flax",
+      "position": [
+        251.6,
+        -1.5,
+        37.35
+      ],
+      "section": "haven-ropewalk-garden",
+      "serverTile": [
+        236,
+        154
+      ]
+    },
+    {
+      "id": "haven-ropewalk-garden-node-10",
+      "resource": "Flax",
+      "position": [
+        253.14,
+        -1.5,
+        37.35
+      ],
+      "section": "haven-ropewalk-garden",
+      "serverTile": [
+        237,
+        154
+      ]
+    },
+    {
+      "id": "haven-ropewalk-garden-node-11",
+      "resource": "Verdigris Bloom",
+      "position": [
+        237.96,
+        -1.5,
+        46.15
+      ],
+      "section": "haven-ropewalk-garden",
+      "serverTile": [
+        222,
+        145
+      ]
+    },
+    {
+      "id": "haven-ropewalk-garden-node-12",
+      "resource": "Verdigris Bloom",
+      "position": [
+        239.5,
+        -1.5,
+        46.15
+      ],
+      "section": "haven-ropewalk-garden",
+      "serverTile": [
+        224,
+        145
+      ]
+    },
+    {
+      "id": "haven-ropewalk-garden-node-13",
+      "resource": "Verdigris Bloom",
+      "position": [
+        241.04,
+        -1.5,
+        46.15
+      ],
+      "section": "haven-ropewalk-garden",
+      "serverTile": [
+        225,
+        145
+      ]
+    },
+    {
+      "id": "haven-bonded-cache-node-00",
+      "resource": "Iron Ore",
+      "position": [
+        164.3,
+        -3.0,
+        177.3
+      ],
+      "section": "haven-bonded-cache",
+      "serverTile": [
+        148,
+        14
+      ]
+    },
+    {
+      "id": "haven-bonded-cache-node-01",
+      "resource": "Iron Ore",
+      "position": [
+        167.8,
+        -3.0,
+        177.3
+      ],
+      "section": "haven-bonded-cache",
+      "serverTile": [
+        152,
+        14
+      ]
+    },
+    {
+      "id": "haven-bonded-cache-node-02",
+      "resource": "Iron Ore",
+      "position": [
+        171.3,
+        -3.0,
+        177.3
+      ],
+      "section": "haven-bonded-cache",
+      "serverTile": [
+        155,
+        14
+      ]
+    },
+    {
+      "id": "haven-bonded-cache-node-03",
+      "resource": "Verdigris Bloom",
+      "position": [
+        174.8,
+        -3.0,
+        177.3
+      ],
+      "section": "haven-bonded-cache",
+      "serverTile": [
+        159,
+        14
+      ]
+    },
+    {
+      "id": "haven-bonded-cache-node-04",
+      "resource": "Verdigris Bloom",
+      "position": [
+        164.3,
+        -3.0,
+        179.1
+      ],
+      "section": "haven-bonded-cache",
+      "serverTile": [
+        148,
+        12
+      ]
+    },
+    {
+      "id": "haven-bonded-cache-node-05",
+      "resource": "Verdigris Bloom",
+      "position": [
+        167.8,
+        -3.0,
+        179.1
+      ],
+      "section": "haven-bonded-cache",
+      "serverTile": [
+        152,
+        12
+      ]
+    },
+    {
+      "id": "haven-smuggle-node-00",
+      "resource": "Shorebank Shell",
+      "position": [
+        23.05,
+        -5.0,
+        40.55
+      ],
+      "section": "haven-smuggle",
+      "serverTile": [
+        7,
+        150
+      ]
+    },
+    {
+      "id": "haven-smuggle-node-01",
+      "resource": "Shorebank Shell",
+      "position": [
+        20.05,
+        -5.0,
+        46.88
+      ],
+      "section": "haven-smuggle",
+      "serverTile": [
+        4,
+        144
+      ]
+    },
+    {
+      "id": "haven-smuggle-node-02",
+      "resource": "Shorebank Shell",
+      "position": [
+        23.05,
+        -5.0,
+        53.22
+      ],
+      "section": "haven-smuggle",
+      "serverTile": [
+        7,
+        138
+      ]
+    },
+    {
+      "id": "haven-smuggle-node-03",
+      "resource": "Tidewrack Kelp",
+      "position": [
+        20.05,
+        -5.0,
+        59.55
+      ],
+      "section": "haven-smuggle",
+      "serverTile": [
+        4,
+        131
+      ]
+    },
+    {
+      "id": "haven-smuggle-node-04",
+      "resource": "Tidewrack Kelp",
+      "position": [
+        23.05,
+        -5.0,
+        65.88
+      ],
+      "section": "haven-smuggle",
+      "serverTile": [
+        7,
+        125
+      ]
+    },
+    {
+      "id": "haven-smuggle-node-05",
+      "resource": "Tidewrack Kelp",
+      "position": [
+        20.05,
+        -5.0,
+        72.22
+      ],
+      "section": "haven-smuggle",
+      "serverTile": [
+        4,
+        119
+      ]
+    }
+  ],
+  "environment": {
+    "sky": "none",
+    "ambient": {
+      "colour": [
+        0.1,
+        0.1,
+        0.12
+      ],
+      "energy": 0.55
+    },
+    "fog": {
+      "enabled": true,
+      "colour": [
+        0.02,
+        0.02,
+        0.03
+      ],
+      "begin": 14.0,
+      "end": 48.0
+    },
+    "openToSky": [
+      "haven-ropewalk-garden.court",
+      "haven-lighthouse-eyrie.perch"
+    ],
+    "lights": [
+      {
+        "id": "lamp-000",
+        "kind": "point",
+        "position": [
+          174.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-001",
+        "kind": "point",
+        "position": [
+          168.55,
+          -0.62,
+          43.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-002",
+        "kind": "point",
+        "position": [
+          180.55,
+          -0.62,
+          43.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-003",
+        "kind": "point",
+        "position": [
+          245.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-004",
+        "kind": "point",
+        "position": [
+          169.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-005",
+        "kind": "point",
+        "position": [
+          169.55,
+          -0.22,
+          181.15
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-006",
+        "kind": "point",
+        "position": [
+          239.35,
+          -3.4,
+          176.75
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-007",
+        "kind": "point",
+        "position": [
+          245.75,
+          -3.4,
+          176.75
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-008",
+        "kind": "point",
+        "position": [
+          242.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-009",
+        "kind": "point",
+        "position": [
+          316.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-010",
+        "kind": "point",
+        "position": [
+          311.55,
+          -0.12,
+          41.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-011",
+        "kind": "point",
+        "position": [
+          321.55,
+          -0.12,
+          41.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-012",
+        "kind": "point",
+        "position": [
+          315.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-013",
+        "kind": "point",
+        "position": [
+          315.55,
+          1.18,
+          110.3
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-014",
+        "kind": "point",
+        "position": [
+          26.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-015",
+        "kind": "point",
+        "position": [
+          26.55,
+          0.58,
+          181.95
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-016",
+        "kind": "point",
+        "position": [
+          94.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-017",
+        "kind": "point",
+        "position": [
+          94.55,
+          0.98,
+          46.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-018",
+        "kind": "point",
+        "position": [
+          93.35,
+          -3.4,
+          185.35
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-019",
+        "kind": "point",
+        "position": [
+          101.75,
+          -3.4,
+          185.35
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-020",
+        "kind": "point",
+        "position": [
+          97.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-021",
+        "kind": "point",
+        "position": [
+          99.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-022",
+        "kind": "point",
+        "position": [
+          99.55,
+          -0.62,
+          112.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-023",
+        "kind": "point",
+        "position": [
+          245.94,
+          -1.4,
+          114.14
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-024",
+        "kind": "point",
+        "position": [
+          239.16,
+          -1.4,
+          114.14
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-025",
+        "kind": "point",
+        "position": [
+          239.16,
+          -1.4,
+          107.36
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-026",
+        "kind": "point",
+        "position": [
+          245.94,
+          -1.4,
+          107.36
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-027",
+        "kind": "point",
+        "position": [
+          242.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-028",
+        "kind": "point",
+        "position": [
+          21.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-029",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          43.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-030",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          57.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-031",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          71.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-032",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          85.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-033",
+        "kind": "point",
+        "position": [
+          171.55,
+          -2.4,
+          112.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-034",
+        "kind": "point",
+        "position": [
+          171.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-035",
+        "kind": "point",
+        "position": [
+          312.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      }
+    ]
+  },
+  "spaces": {
+    "haven-wrack-hollow.landing": {
+      "x0": 172.05,
+      "z0": 18.55,
+      "x1": 177.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "haven-wrack-hollow.way": {
+      "x0": 172.75,
+      "z0": 21.75,
+      "x1": 176.35,
+      "z1": 33.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "haven-wrack-hollow.hollow": {
+      "x0": 162.55,
+      "z0": 31.55,
+      "x1": 186.55,
+      "z1": 55.55,
+      "floor": -4.0,
+      "height": 8.0
+    },
+    "haven-ropewalk-garden.landing": {
+      "x0": 243.05,
+      "z0": 18.55,
+      "x1": 248.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "haven-ropewalk-garden.way": {
+      "x0": 243.75,
+      "z0": 21.75,
+      "x1": 247.35,
+      "z1": 33.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "haven-ropewalk-garden.court": {
+      "x0": 234.55,
+      "z0": 31.55,
+      "x1": 256.55,
+      "z1": 53.55,
+      "floor": -2.0,
+      "height": 6.0
+    },
+    "haven-bonded-cache.landing": {
+      "x0": 167.05,
+      "z0": 162.55,
+      "x1": 172.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "haven-bonded-cache.way": {
+      "x0": 167.75,
+      "z0": 165.75,
+      "x1": 171.35,
+      "z1": 177.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "haven-bonded-cache.cellar": {
+      "x0": 162.55,
+      "z0": 175.55,
+      "x1": 176.55,
+      "z1": 186.75,
+      "floor": -3.0,
+      "height": 4.4
+    },
+    "haven-guild-vault.landing": {
+      "x0": 240.05,
+      "z0": 162.55,
+      "x1": 245.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "haven-guild-vault.way": {
+      "x0": 240.75,
+      "z0": 165.75,
+      "x1": 244.35,
+      "z1": 177.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "haven-guild-vault.strongroom": {
+      "x0": 234.55,
+      "z0": 175.55,
+      "x1": 250.55,
+      "z1": 186.75,
+      "floor": -5.0,
+      "height": 5.0
+    },
+    "haven-mole-pit.landing": {
+      "x0": 314.05,
+      "z0": 18.55,
+      "x1": 319.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "haven-mole-pit.way": {
+      "x0": 314.75,
+      "z0": 21.75,
+      "x1": 318.35,
+      "z1": 33.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "haven-mole-pit.pit": {
+      "x0": 306.55,
+      "z0": 31.55,
+      "x1": 326.55,
+      "z1": 51.55,
+      "floor": -4.0,
+      "height": 7.0
+    },
+    "haven-arcade-school.landing": {
+      "x0": 313.05,
+      "z0": 90.55,
+      "x1": 318.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "haven-arcade-school.way": {
+      "x0": 313.75,
+      "z0": 93.75,
+      "x1": 317.35,
+      "z1": 105.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "haven-arcade-school.hall": {
+      "x0": 306.55,
+      "z0": 103.55,
+      "x1": 324.55,
+      "z1": 117.05,
+      "floor": -2.0,
+      "height": 5.2
+    },
+    "haven-lamp-spring.landing": {
+      "x0": 24.05,
+      "z0": 162.55,
+      "x1": 29.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "haven-lamp-spring.way": {
+      "x0": 24.75,
+      "z0": 165.75,
+      "x1": 28.35,
+      "z1": 177.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "haven-lamp-spring.bath": {
+      "x0": 18.55,
+      "z0": 175.55,
+      "x1": 34.55,
+      "z1": 188.35,
+      "floor": -3.0,
+      "height": 6.0
+    },
+    "haven-shipyard-butts.landing": {
+      "x0": 92.05,
+      "z0": 18.55,
+      "x1": 97.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "haven-shipyard-butts.way": {
+      "x0": 92.75,
+      "z0": 21.75,
+      "x1": 96.35,
+      "z1": 33.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "haven-shipyard-butts.gallery": {
+      "x0": 90.55,
+      "z0": 31.55,
+      "x1": 98.55,
+      "z1": 61.55,
+      "floor": -2.0,
+      "height": 5.0
+    },
+    "haven-cathedral-reliquary.landing": {
+      "x0": 95.05,
+      "z0": 162.55,
+      "x1": 100.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "haven-cathedral-reliquary.way": {
+      "x0": 95.75,
+      "z0": 165.75,
+      "x1": 99.35,
+      "z1": 177.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "haven-cathedral-reliquary.cella": {
+      "x0": 90.55,
+      "z0": 175.55,
+      "x1": 104.55,
+      "z1": 188.15,
+      "floor": -5.0,
+      "height": 6.0
+    },
+    "haven-gate-well.landing": {
+      "x0": 97.05,
+      "z0": 90.55,
+      "x1": 102.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "haven-gate-well.way": {
+      "x0": 97.75,
+      "z0": 93.75,
+      "x1": 101.35,
+      "z1": 105.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "haven-gate-well.well": {
+      "x0": 90.55,
+      "z0": 103.55,
+      "x1": 108.55,
+      "z1": 121.55,
+      "floor": -5.0,
+      "height": 8.0
+    },
+    "haven-spire-focus.landing": {
+      "x0": 240.05,
+      "z0": 90.55,
+      "x1": 245.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "haven-spire-focus.way": {
+      "x0": 240.75,
+      "z0": 93.75,
+      "x1": 244.35,
+      "z1": 105.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "haven-spire-focus.chamber": {
+      "x0": 234.55,
+      "z0": 103.55,
+      "x1": 250.55,
+      "z1": 117.95,
+      "floor": -3.0,
+      "height": 6.4
+    },
+    "haven-smuggle.landing": {
+      "x0": 19.05,
+      "z0": 18.55,
+      "x1": 24.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "haven-smuggle.way": {
+      "x0": 19.75,
+      "z0": 21.75,
+      "x1": 23.35,
+      "z1": 33.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "haven-smuggle.bore": {
+      "x0": 18.65,
+      "z0": 31.55,
+      "x1": 24.45,
+      "z1": 37.55,
+      "floor": -5.0,
+      "height": 4.0
+    },
+    "haven-smuggle.run": {
+      "x0": 19.45,
+      "z0": 35.45,
+      "x1": 23.65,
+      "z1": 83.65,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "haven-smuggle.far": {
+      "x0": 18.55,
+      "z0": 81.55,
+      "x1": 24.55,
+      "z1": 87.55,
+      "floor": -5.0,
+      "height": 4.2
+    },
+    "haven-waystone.landing": {
+      "x0": 169.05,
+      "z0": 90.55,
+      "x1": 174.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "haven-waystone.way": {
+      "x0": 169.75,
+      "z0": 93.75,
+      "x1": 173.35,
+      "z1": 105.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "haven-waystone.ring": {
+      "x0": 162.55,
+      "z0": 103.55,
+      "x1": 180.55,
+      "z1": 121.55,
+      "floor": -4.0,
+      "height": 7.0
+    },
+    "haven-lighthouse-eyrie.landing": {
+      "x0": 310.05,
+      "z0": 162.55,
+      "x1": 315.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "haven-lighthouse-eyrie.way": {
+      "x0": 310.75,
+      "z0": 165.75,
+      "x1": 314.35,
+      "z1": 177.35,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "haven-lighthouse-eyrie.perch": {
+      "x0": 306.55,
+      "z0": 175.55,
+      "x1": 318.55,
+      "z1": 185.15,
+      "floor": 3.0,
+      "height": 4.6
+    }
+  },
+  "sections": [
+    {
+      "id": "haven-wrack-hollow",
+      "name": "The Wrack Hollow",
+      "kind": "grotto",
+      "entranceMap": "westhaven",
+      "entranceProp": "tide_cave",
+      "key": "",
+      "label": "A cave mouth the tide leaves open for an hour a day.",
+      "offset": [
+        174.55,
+        21.05
+      ],
+      "arrival": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          17.55
+        ],
+        "max": [
+          187.55,
+          56.55
+        ]
+      },
+      "spaces": [
+        "haven-wrack-hollow.landing",
+        "haven-wrack-hollow.way",
+        "haven-wrack-hollow.hollow"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "A sea cave under the watch where the wrack piles and the shells are whole.",
+      "arrivalTile": [
+        159,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          134
+        ],
+        "max": [
+          172,
+          173
+        ]
+      }
+    },
+    {
+      "id": "haven-ropewalk-garden",
+      "name": "The Ropewalk Garden",
+      "kind": "garden",
+      "entranceMap": "westhaven",
+      "entranceProp": "cellar_hatch",
+      "key": "",
+      "label": "A cellar hatch under the leaves.",
+      "offset": [
+        245.55,
+        21.05
+      ],
+      "arrival": [
+        245.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          233.55,
+          17.55
+        ],
+        "max": [
+          257.55,
+          54.55
+        ]
+      },
+      "spaces": [
+        "haven-ropewalk-garden.landing",
+        "haven-ropewalk-garden.way",
+        "haven-ropewalk-garden.court"
+      ],
+      "areas": [
+        {
+          "kind": "harvest_speed",
+          "multiplier": 2,
+          "spaces": [
+            "haven-ropewalk-garden.court"
+          ],
+          "tiles": {
+            "min": [
+              219,
+              137
+            ],
+            "max": [
+              241,
+              159
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Flax and cotton in beds under the ropewalk, where the ropemakers grow their own.",
+      "arrivalTile": [
+        230,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          218,
+          136
+        ],
+        "max": [
+          242,
+          173
+        ]
+      }
+    },
+    {
+      "id": "haven-bonded-cache",
+      "name": "The Bonded Cache",
+      "kind": "cache",
+      "entranceMap": "westhaven_insides",
+      "entranceProp": "cellar_hatch",
+      "key": "",
+      "label": "A cellar hatch under the leaves.",
+      "offset": [
+        169.55,
+        165.05
+      ],
+      "arrival": [
+        169.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          161.55
+        ],
+        "max": [
+          177.55,
+          187.75
+        ]
+      },
+      "spaces": [
+        "haven-bonded-cache.landing",
+        "haven-bonded-cache.way",
+        "haven-bonded-cache.cellar"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "A warehouse cellar off the bonded vaults: chest, bench, and ore the customs never weighed.",
+      "arrivalTile": [
+        154,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          3
+        ],
+        "max": [
+          162,
+          29
+        ]
+      }
+    },
+    {
+      "id": "haven-guild-vault",
+      "name": "The Guild Vault",
+      "kind": "vault",
+      "entranceMap": "westhaven",
+      "entranceProp": "cracked_slab",
+      "key": "Storage Token",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        242.55,
+        165.05
+      ],
+      "arrival": [
+        242.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          233.55,
+          161.55
+        ],
+        "max": [
+          251.55,
+          187.75
+        ]
+      },
+      "spaces": [
+        "haven-guild-vault.landing",
+        "haven-guild-vault.way",
+        "haven-guild-vault.strongroom"
+      ],
+      "areas": [
+        {
+          "kind": "experience",
+          "multiplier": 2,
+          "spaces": [
+            "haven-guild-vault.strongroom"
+          ],
+          "tiles": {
+            "min": [
+              219,
+              4
+            ],
+            "max": [
+              235,
+              15
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "The guild's strongroom, opened with a stored account's token.",
+      "arrivalTile": [
+        227,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          218,
+          3
+        ],
+        "max": [
+          236,
+          29
+        ]
+      }
+    },
+    {
+      "id": "haven-mole-pit",
+      "name": "The Mole Pit",
+      "kind": "pen",
+      "entranceMap": "westhaven",
+      "entranceProp": "drain_grate",
+      "key": "",
+      "label": "An iron drain grate, its bolts drawn.",
+      "offset": [
+        316.55,
+        21.05
+      ],
+      "arrival": [
+        316.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          305.55,
+          17.55
+        ],
+        "max": [
+          327.55,
+          52.55
+        ]
+      },
+      "spaces": [
+        "haven-mole-pit.landing",
+        "haven-mole-pit.way",
+        "haven-mole-pit.pit"
+      ],
+      "areas": [],
+      "spawns": [
+        {
+          "creature": "brambleback_boar",
+          "count": 4,
+          "space": "haven-mole-pit.pit",
+          "tiles": {
+            "min": [
+              291,
+              139
+            ],
+            "max": [
+              311,
+              159
+            ]
+          }
+        },
+        {
+          "creature": "moss_horn_ram",
+          "count": 3,
+          "space": "haven-mole-pit.pit",
+          "tiles": {
+            "min": [
+              291,
+              139
+            ],
+            "max": [
+              311,
+              159
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "A casemate under the bastion where the militia pens boar and rams.",
+      "arrivalTile": [
+        301,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          290,
+          138
+        ],
+        "max": [
+          312,
+          173
+        ]
+      }
+    },
+    {
+      "id": "haven-arcade-school",
+      "name": "The Arcade School",
+      "kind": "school",
+      "entranceMap": "westhaven",
+      "entranceProp": "cracked_slab",
+      "key": "",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        315.55,
+        93.05
+      ],
+      "arrival": [
+        315.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          305.55,
+          89.55
+        ],
+        "max": [
+          325.55,
+          118.05
+        ]
+      },
+      "spaces": [
+        "haven-arcade-school.landing",
+        "haven-arcade-school.way",
+        "haven-arcade-school.hall"
+      ],
+      "areas": [
+        {
+          "kind": "fast_reading",
+          "multiplier": 3,
+          "spaces": [
+            "haven-arcade-school.hall"
+          ],
+          "tiles": {
+            "min": [
+              291,
+              74
+            ],
+            "max": [
+              309,
+              87
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Where the customs clerks learn their hands.",
+      "arrivalTile": [
+        300,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          290,
+          73
+        ],
+        "max": [
+          310,
+          101
+        ]
+      }
+    },
+    {
+      "id": "haven-lamp-spring",
+      "name": "The Lamp Rock Spring",
+      "kind": "spring",
+      "entranceMap": "westhaven",
+      "entranceProp": "loose_stone",
+      "key": "",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "offset": [
+        26.55,
+        165.05
+      ],
+      "arrival": [
+        26.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          17.55,
+          161.55
+        ],
+        "max": [
+          35.55,
+          189.35
+        ]
+      },
+      "spaces": [
+        "haven-lamp-spring.landing",
+        "haven-lamp-spring.way",
+        "haven-lamp-spring.bath"
+      ],
+      "areas": [
+        {
+          "kind": "fast_regeneration",
+          "multiplier": 3,
+          "spaces": [
+            "haven-lamp-spring.bath"
+          ],
+          "tiles": {
+            "min": [
+              3,
+              3
+            ],
+            "max": [
+              19,
+              15
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "A warm seep under the light's rock, reached from the landward foot of the mole; the keepers bathe there.",
+      "arrivalTile": [
+        11,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          2,
+          2
+        ],
+        "max": [
+          20,
+          29
+        ]
+      }
+    },
+    {
+      "id": "haven-shipyard-butts",
+      "name": "The Shipyard Butts",
+      "kind": "range",
+      "entranceMap": "westhaven",
+      "entranceProp": "cellar_hatch",
+      "key": "",
+      "label": "A cellar hatch under the leaves.",
+      "offset": [
+        94.55,
+        21.05
+      ],
+      "arrival": [
+        94.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          17.55
+        ],
+        "max": [
+          99.55,
+          62.55
+        ]
+      },
+      "spaces": [
+        "haven-shipyard-butts.landing",
+        "haven-shipyard-butts.way",
+        "haven-shipyard-butts.gallery"
+      ],
+      "areas": [
+        {
+          "kind": "experience",
+          "multiplier": 2,
+          "spaces": [
+            "haven-shipyard-butts.gallery"
+          ],
+          "tiles": {
+            "min": [
+              75,
+              129
+            ],
+            "max": [
+              83,
+              159
+            ]
+          }
+        }
+      ],
+      "spawns": [
+        {
+          "creature": "bronze_tide_crab",
+          "count": 3,
+          "space": "haven-shipyard-butts.gallery",
+          "tiles": {
+            "min": [
+              75,
+              129
+            ],
+            "max": [
+              83,
+              159
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "A long shed under the slips with butts and crabs at the far end.",
+      "arrivalTile": [
+        79,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          128
+        ],
+        "max": [
+          84,
+          173
+        ]
+      }
+    },
+    {
+      "id": "haven-cathedral-reliquary",
+      "name": "The Cathedral Reliquary",
+      "kind": "reliquary",
+      "entranceMap": "westhaven",
+      "entranceProp": "shrine_slab",
+      "key": "Shorebank Shell",
+      "label": "A shrine slab with fresh scratches where it has been slid aside.",
+      "offset": [
+        97.55,
+        165.05
+      ],
+      "arrival": [
+        97.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          161.55
+        ],
+        "max": [
+          105.55,
+          189.15
+        ]
+      },
+      "spaces": [
+        "haven-cathedral-reliquary.landing",
+        "haven-cathedral-reliquary.way",
+        "haven-cathedral-reliquary.cella"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "The cathedral's relic room, opened with a shell.",
+      "arrivalTile": [
+        82,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          2
+        ],
+        "max": [
+          90,
+          29
+        ]
+      }
+    },
+    {
+      "id": "haven-gate-well",
+      "name": "The City Gate Well",
+      "kind": "nullwell",
+      "entranceMap": "westhaven",
+      "entranceProp": "drain_grate",
+      "key": "",
+      "label": "An iron drain grate, its bolts drawn.",
+      "offset": [
+        99.55,
+        93.05
+      ],
+      "arrival": [
+        99.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          89.55
+        ],
+        "max": [
+          109.55,
+          122.55
+        ]
+      },
+      "spaces": [
+        "haven-gate-well.landing",
+        "haven-gate-well.way",
+        "haven-gate-well.well"
+      ],
+      "areas": [
+        {
+          "kind": "no_magic",
+          "multiplier": 2,
+          "spaces": [
+            "haven-gate-well.well"
+          ],
+          "tiles": {
+            "min": [
+              75,
+              69
+            ],
+            "max": [
+              93,
+              87
+            ]
+          }
+        }
+      ],
+      "spawns": [
+        {
+          "creature": "moss_horn_ram",
+          "count": 3,
+          "space": "haven-gate-well.well",
+          "tiles": {
+            "min": [
+              75,
+              69
+            ],
+            "max": [
+              93,
+              87
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "The gate's old cistern swallows spells; the rams penned there are honest work.",
+      "arrivalTile": [
+        84,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          68
+        ],
+        "max": [
+          94,
+          101
+        ]
+      }
+    },
+    {
+      "id": "haven-spire-focus",
+      "name": "The Spire Focus",
+      "kind": "focus",
+      "entranceMap": "westhaven",
+      "entranceProp": "cracked_slab",
+      "key": "Iron Rune",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        242.55,
+        93.05
+      ],
+      "arrival": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          233.55,
+          89.55
+        ],
+        "max": [
+          251.55,
+          118.95
+        ]
+      },
+      "spaces": [
+        "haven-spire-focus.landing",
+        "haven-spire-focus.way",
+        "haven-spire-focus.chamber"
+      ],
+      "areas": [
+        {
+          "kind": "cheap_magic",
+          "multiplier": 2,
+          "spaces": [
+            "haven-spire-focus.chamber"
+          ],
+          "tiles": {
+            "min": [
+              219,
+              73
+            ],
+            "max": [
+              235,
+              87
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Under the high spire the ether pools; spells cost half.",
+      "arrivalTile": [
+        227,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          218,
+          72
+        ],
+        "max": [
+          236,
+          101
+        ]
+      }
+    },
+    {
+      "id": "haven-smuggle",
+      "name": "The Smugglers' Run",
+      "kind": "tunnel",
+      "entranceMap": "westhaven",
+      "entranceProp": "tide_cave",
+      "key": "",
+      "label": "A cave mouth the tide leaves open for an hour a day.",
+      "offset": [
+        21.55,
+        21.05
+      ],
+      "arrival": [
+        21.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          17.55,
+          17.55
+        ],
+        "max": [
+          25.55,
+          88.55
+        ]
+      },
+      "spaces": [
+        "haven-smuggle.landing",
+        "haven-smuggle.way",
+        "haven-smuggle.bore",
+        "haven-smuggle.run",
+        "haven-smuggle.far"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [
+        {
+          "map": "amberwood",
+          "spawn": "secret-amber-smuggle-mouth",
+          "label": "Up into Amberwood",
+          "space": "haven-smuggle.far",
+          "position": [
+            21.55,
+            -4.95,
+            84.55
+          ],
+          "tile": [
+            6,
+            106
+          ]
+        }
+      ],
+      "note": "The smugglers' run under the strait, out by Amberwood's harbour.",
+      "arrivalTile": [
+        6,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          2,
+          102
+        ],
+        "max": [
+          10,
+          173
+        ]
+      }
+    },
+    {
+      "id": "haven-waystone",
+      "name": "The Haven Waystone",
+      "kind": "waystone",
+      "entranceMap": "westhaven",
+      "entranceProp": "cracked_slab",
+      "key": "Iron Rune",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        171.55,
+        93.05
+      ],
+      "arrival": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          89.55
+        ],
+        "max": [
+          181.55,
+          122.55
+        ]
+      },
+      "spaces": [
+        "haven-waystone.landing",
+        "haven-waystone.way",
+        "haven-waystone.ring"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [
+        {
+          "map": "grey_moors_secrets",
+          "spawn": "moor-waystone",
+          "label": "The Grey Moors",
+          "space": "haven-waystone.ring",
+          "position": [
+            170.04,
+            -4.0,
+            107.91
+          ],
+          "tile": [
+            154,
+            83
+          ]
+        },
+        {
+          "map": "manymouth_delta_secrets",
+          "spawn": "delta-waystone",
+          "label": "The Manymouth Delta",
+          "space": "haven-waystone.ring",
+          "position": [
+            175.5,
+            -4.0,
+            109.68
+          ],
+          "tile": [
+            160,
+            81
+          ]
+        },
+        {
+          "map": "crownwater_secrets",
+          "spawn": "crown-waystone",
+          "label": "Crownwater",
+          "space": "haven-waystone.ring",
+          "position": [
+            175.5,
+            -4.0,
+            115.42
+          ],
+          "tile": [
+            160,
+            76
+          ]
+        },
+        {
+          "map": "amberwood_secrets",
+          "spawn": "amber-waystone",
+          "label": "Amberwood",
+          "space": "haven-waystone.ring",
+          "position": [
+            170.04,
+            -4.0,
+            117.19
+          ],
+          "tile": [
+            154,
+            74
+          ]
+        }
+      ],
+      "note": "Four stones under the fish market. An iron rune wakes them.",
+      "arrivalTile": [
+        156,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          68
+        ],
+        "max": [
+          166,
+          101
+        ]
+      }
+    },
+    {
+      "id": "haven-lighthouse-eyrie",
+      "name": "The Lighthouse Eyrie",
+      "kind": "eyrie",
+      "entranceMap": "westhaven",
+      "entranceProp": "ivy_arch",
+      "key": "",
+      "label": "An arch so grown with vine it reads as hedge.",
+      "offset": [
+        312.55,
+        165.05
+      ],
+      "arrival": [
+        312.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          305.55,
+          161.55
+        ],
+        "max": [
+          319.55,
+          186.15
+        ]
+      },
+      "spaces": [
+        "haven-lighthouse-eyrie.landing",
+        "haven-lighthouse-eyrie.way",
+        "haven-lighthouse-eyrie.perch"
+      ],
+      "areas": [
+        {
+          "kind": "fast_regeneration",
+          "multiplier": 2,
+          "spaces": [
+            "haven-lighthouse-eyrie.perch"
+          ],
+          "tiles": {
+            "min": [
+              291,
+              6
+            ],
+            "max": [
+              303,
+              15
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "A pocket in the lighthouse footing over the sea.",
+      "arrivalTile": [
+        297,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          290,
+          5
+        ],
+        "max": [
+          304,
+          29
+        ]
+      }
+    }
+  ],
+  "secrets": {
+    "region": "westhaven",
+    "sections": [
+      "haven-wrack-hollow",
+      "haven-ropewalk-garden",
+      "haven-bonded-cache",
+      "haven-guild-vault",
+      "haven-mole-pit",
+      "haven-arcade-school",
+      "haven-lamp-spring",
+      "haven-shipyard-butts",
+      "haven-cathedral-reliquary",
+      "haven-gate-well",
+      "haven-spire-focus",
+      "haven-smuggle",
+      "haven-waystone",
+      "haven-lighthouse-eyrie"
+    ],
+    "note": "Each section is one secret. The client shows a player only the section they stand in; the server places the arrival, the areas, the spawns and the harvest nodes from this block."
+  },
+  "performance": {
+    "nodes": 140,
+    "meshes": 125,
+    "materials": 20,
+    "images": 59,
+    "textures": 59,
+    "accessors": 625,
+    "bufferViews": 684,
+    "uniqueTriangles": 27908,
+    "uniqueVertices": 38588,
+    "glbBytes": 8745048,
+    "nodeNames": [
+      "Secrets_westhaven_secrets",
+      "Section_haven-wrack-hollow",
+      "Roof_haven-wrack-hollow_cliff_rock",
+      "Build_haven-wrack-hollow_amber_resin",
+      "Build_haven-wrack-hollow_cliff_rock",
+      "Build_haven-wrack-hollow_dark_iron",
+      "Build_haven-wrack-hollow_water_sea",
+      "Walk_haven-wrack-hollow_cobble_paving",
+      "Section_haven-ropewalk-garden",
+      "Roof_haven-ropewalk-garden_cliff_rock",
+      "Build_haven-ropewalk-garden_amber_resin",
+      "Build_haven-ropewalk-garden_ashlar",
+      "Build_haven-ropewalk-garden_bark_pale",
+      "Build_haven-ropewalk-garden_cliff_rock",
+      "Build_haven-ropewalk-garden_dark_iron",
+      "Build_haven-ropewalk-garden_foliage_green",
+      "Build_haven-ropewalk-garden_rubble_stone",
+      "Build_haven-ropewalk-garden_timber_warm",
+      "Build_haven-ropewalk-garden_water_pool",
+      "Walk_haven-ropewalk-garden_cobble_paving",
+      "Walk_haven-ropewalk-garden_shore_shingle",
+      "Section_haven-bonded-cache",
+      "Roof_haven-bonded-cache_cliff_rock",
+      "Roof_haven-bonded-cache_timber_grey",
+      "Build_haven-bonded-cache_amber_resin",
+      "Build_haven-bonded-cache_cliff_rock",
+      "Build_haven-bonded-cache_dark_iron",
+      "Build_haven-bonded-cache_rubble_stone",
+      "Build_haven-bonded-cache_timber_dark",
+      "Build_haven-bonded-cache_timber_grey",
+      "Build_haven-bonded-cache_timber_warm",
+      "Walk_haven-bonded-cache_cobble_paving",
+      "Section_haven-guild-vault",
+      "Roof_haven-guild-vault_ashlar",
+      "Roof_haven-guild-vault_cliff_rock",
+      "Build_haven-guild-vault_amber_resin",
+      "Build_haven-guild-vault_ashlar",
+      "Build_haven-guild-vault_carved_wood",
+      "Build_haven-guild-vault_cliff_rock",
+      "Build_haven-guild-vault_dark_iron",
+      "Build_haven-guild-vault_timber_dark",
+      "Build_haven-guild-vault_timber_grey",
+      "Build_haven-guild-vault_timber_warm",
+      "Walk_haven-guild-vault_ashlar",
+      "Walk_haven-guild-vault_cobble_paving",
+      "Section_haven-mole-pit",
+      "Roof_haven-mole-pit_cliff_rock",
+      "Build_haven-mole-pit_amber_resin",
+      "Build_haven-mole-pit_cliff_rock",
+      "Build_haven-mole-pit_dark_iron",
+      "Build_haven-mole-pit_pale_ashlar",
+      "Build_haven-mole-pit_timber_grey",
+      "Walk_haven-mole-pit_cobble_paving",
+      "Section_haven-arcade-school",
+      "Roof_haven-arcade-school_cliff_rock",
+      "Roof_haven-arcade-school_timber_grey",
+      "Build_haven-arcade-school_amber_resin",
+      "Build_haven-arcade-school_carved_wood",
+      "Build_haven-arcade-school_cliff_rock",
+      "Build_haven-arcade-school_dark_iron",
+      "Build_haven-arcade-school_rubble_stone",
+      "Build_haven-arcade-school_timber_grey",
+      "Walk_haven-arcade-school_ashlar",
+      "Walk_haven-arcade-school_cobble_paving",
+      "Section_haven-lamp-spring",
+      "Roof_haven-lamp-spring_cliff_rock",
+      "Build_haven-lamp-spring_amber_resin",
+      "Build_haven-lamp-spring_ashlar",
+      "Build_haven-lamp-spring_cliff_rock",
+      "Build_haven-lamp-spring_dark_iron",
+      "Build_haven-lamp-spring_water_sea",
+      "Walk_haven-lamp-spring_ashlar",
+      "Walk_haven-lamp-spring_cobble_paving",
+      "Section_haven-shipyard-butts",
+      "Roof_haven-shipyard-butts_cliff_rock",
+      "Roof_haven-shipyard-butts_timber_grey",
+      "Build_haven-shipyard-butts_amber_resin",
+      "Build_haven-shipyard-butts_cliff_rock",
+      "Build_haven-shipyard-butts_dark_iron",
+      "Build_haven-shipyard-butts_rubble_stone",
+      "Build_haven-shipyard-butts_thatch_reed",
+      "Build_haven-shipyard-butts_timber_grey",
+      "Walk_haven-shipyard-butts_cobble_paving",
+      "Section_haven-cathedral-reliquary",
+      "Roof_haven-cathedral-reliquary_ashlar",
+      "Roof_haven-cathedral-reliquary_cliff_rock",
+      "Build_haven-cathedral-reliquary_amber_resin",
+      "Build_haven-cathedral-reliquary_ashlar",
+      "Build_haven-cathedral-reliquary_cliff_rock",
+      "Build_haven-cathedral-reliquary_dark_iron",
+      "Build_haven-cathedral-reliquary_gilt_brass",
+      "Walk_haven-cathedral-reliquary_ashlar",
+      "Walk_haven-cathedral-reliquary_cobble_paving",
+      "Section_haven-gate-well",
+      "Roof_haven-gate-well_cliff_rock",
+      "Build_haven-gate-well_amber_resin",
+      "Build_haven-gate-well_ashlar",
+      "Build_haven-gate-well_cliff_rock",
+      "Build_haven-gate-well_dark_iron",
+      "Walk_haven-gate-well_ashlar",
+      "Walk_haven-gate-well_cobble_paving",
+      "Section_haven-spire-focus",
+      "Roof_haven-spire-focus_ashlar",
+      "Roof_haven-spire-focus_cliff_rock",
+      "Build_haven-spire-focus_amber_resin",
+      "Build_haven-spire-focus_ashlar",
+      "Build_haven-spire-focus_blue_crystal",
+      "Build_haven-spire-focus_cliff_rock",
+      "Build_haven-spire-focus_dark_iron",
+      "Walk_haven-spire-focus_ashlar",
+      "Walk_haven-spire-focus_cobble_paving",
+      "Section_haven-smuggle",
+      "Roof_haven-smuggle_cliff_rock",
+      "Build_haven-smuggle_amber_resin",
+      "Build_haven-smuggle_cliff_rock",
+      "Build_haven-smuggle_dark_iron",
+      "Build_haven-smuggle_timber_grey",
+      "Walk_haven-smuggle_cobble_paving",
+      "Section_haven-waystone",
+      "Roof_haven-waystone_ashlar",
+      "Roof_haven-waystone_cliff_rock",
+      "Build_haven-waystone_amber_resin",
+      "Build_haven-waystone_ashlar",
+      "Build_haven-waystone_cliff_rock",
+      "Build_haven-waystone_dark_iron",
+      "Build_haven-waystone_gilt_brass",
+      "Walk_haven-waystone_ashlar",
+      "Walk_haven-waystone_cobble_paving",
+      "Section_haven-lighthouse-eyrie",
+      "Roof_haven-lighthouse-eyrie_cliff_rock",
+      "Build_haven-lighthouse-eyrie_amber_resin",
+      "Build_haven-lighthouse-eyrie_bark_dark",
+      "Build_haven-lighthouse-eyrie_carved_wood",
+      "Build_haven-lighthouse-eyrie_cliff_rock",
+      "Build_haven-lighthouse-eyrie_dark_iron",
+      "Build_haven-lighthouse-eyrie_rubble_stone",
+      "Build_haven-lighthouse-eyrie_timber_warm",
+      "Build_haven-lighthouse-eyrie_water_pool",
+      "Walk_haven-lighthouse-eyrie_ashlar",
+      "Walk_haven-lighthouse-eyrie_cobble_paving"
+    ]
+  },
+  "sources": [
+    {
+      "id": "generator",
+      "file": "_toolkit/secrets_build.py",
+      "role": "reproducible-build",
+      "design": "westhaven/source/secrets_design.py"
+    }
+  ],
+  "provenance": {
+    "geometry": "authored with the secret rooms kit over the shared toolkit",
+    "license": "CC-BY-4.0"
+  },
+  "productionStatus": "authored-geometry-materials-population",
+  "notes": [
+    "14 secrets of Westhaven Secrets on one map with void between them; which one a player gets is which feature of the ground above they used."
+  ]
+}

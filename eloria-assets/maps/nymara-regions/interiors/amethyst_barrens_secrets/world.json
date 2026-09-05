@@ -1,0 +1,3913 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "amethyst_barrens_secrets",
+    "name": "Amethyst Barrens Secrets",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        18.0,
+        -5.4,
+        18.0
+      ],
+      "max": [
+        327.1,
+        8.25,
+        188.9
+      ]
+    },
+    "playableBounds": {
+      "min": [
+        18.0,
+        -5.4,
+        18.0
+      ],
+      "max": [
+        327.1,
+        3.0,
+        188.9
+      ]
+    },
+    "interiorClass": "secrets",
+    "parentRegion": "amethyst_barrens",
+    "serverCells": 384
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      -16.0,
+      191.0
+    ],
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 0.0,
+    "invertServerY": true
+  },
+  "secret": true,
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "barrens-geode-hollow"
+    },
+    {
+      "id": "barrens-geode-hollow",
+      "position": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "barrens-geode-hollow"
+    },
+    {
+      "id": "barrens-shard-garden",
+      "position": [
+        245.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "barrens-shard-garden"
+    },
+    {
+      "id": "barrens-station-cache",
+      "position": [
+        169.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "barrens-station-cache"
+    },
+    {
+      "id": "barrens-observatory-vault",
+      "position": [
+        242.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "barrens-observatory-vault"
+    },
+    {
+      "id": "barrens-beetle-pit",
+      "position": [
+        316.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "barrens-beetle-pit"
+    },
+    {
+      "id": "barrens-tower-school",
+      "position": [
+        315.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "barrens-tower-school"
+    },
+    {
+      "id": "barrens-resonance-spring",
+      "position": [
+        26.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "barrens-resonance-spring"
+    },
+    {
+      "id": "barrens-bridge-butts",
+      "position": [
+        94.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "barrens-bridge-butts"
+    },
+    {
+      "id": "barrens-massif-reliquary",
+      "position": [
+        97.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "barrens-massif-reliquary"
+    },
+    {
+      "id": "barrens-storm-well",
+      "position": [
+        99.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "barrens-storm-well"
+    },
+    {
+      "id": "barrens-lens-focus",
+      "position": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "barrens-lens-focus"
+    },
+    {
+      "id": "barrens-sap",
+      "position": [
+        21.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "barrens-sap"
+    },
+    {
+      "id": "barrens-sap-far",
+      "position": [
+        21.55,
+        -4.95,
+        84.55
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "barrens-sap"
+    },
+    {
+      "id": "barrens-waystone",
+      "position": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "barrens-waystone"
+    },
+    {
+      "id": "barrens-waystone-ring",
+      "position": [
+        170.04,
+        -4.0,
+        107.91
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "barrens-waystone"
+    },
+    {
+      "id": "barrens-waystone-ring",
+      "position": [
+        175.5,
+        -4.0,
+        109.68
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "barrens-waystone"
+    },
+    {
+      "id": "barrens-waystone-ring",
+      "position": [
+        175.5,
+        -4.0,
+        115.42
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "barrens-waystone"
+    },
+    {
+      "id": "barrens-waystone-ring",
+      "position": [
+        170.04,
+        -4.0,
+        117.19
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "barrens-waystone"
+    },
+    {
+      "id": "barrens-cave-eyrie",
+      "position": [
+        312.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "barrens-cave-eyrie"
+    }
+  ],
+  "collision": {
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "width": 624,
+    "height": 348,
+    "cellMetres": 0.5,
+    "originMetres": [
+      16.0,
+      191.0
+    ],
+    "heightEncoding": {
+      "origin": -5.131,
+      "step": 0.1311,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true
+    },
+    "walkableCells": 21112,
+    "blockedCells": 196040,
+    "walkableFraction": 0.0972,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    "nodeNames": [
+      "Secrets_amethyst_barrens_secrets",
+      "Section_barrens-geode-hollow",
+      "Roof_barrens-geode-hollow_amethyst_storm_rock",
+      "Build_barrens-geode-hollow_amber_resin",
+      "Build_barrens-geode-hollow_amethyst_crystal",
+      "Build_barrens-geode-hollow_amethyst_storm_rock",
+      "Build_barrens-geode-hollow_dark_iron",
+      "Build_barrens-geode-hollow_water_pool",
+      "Section_barrens-shard-garden",
+      "Roof_barrens-shard-garden_amethyst_storm_rock",
+      "Build_barrens-shard-garden_amber_resin",
+      "Build_barrens-shard-garden_amethyst_crystal",
+      "Build_barrens-shard-garden_amethyst_pale_stone",
+      "Build_barrens-shard-garden_amethyst_storm_rock",
+      "Build_barrens-shard-garden_bark_pale",
+      "Build_barrens-shard-garden_dark_iron",
+      "Build_barrens-shard-garden_foliage_green",
+      "Build_barrens-shard-garden_rubble_stone",
+      "Build_barrens-shard-garden_timber_warm",
+      "Build_barrens-shard-garden_water_pool",
+      "Section_barrens-station-cache",
+      "Roof_barrens-station-cache_amethyst_storm_rock",
+      "Roof_barrens-station-cache_timber_dark",
+      "Build_barrens-station-cache_amber_resin",
+      "Build_barrens-station-cache_amethyst_crystal",
+      "Build_barrens-station-cache_amethyst_storm_rock",
+      "Build_barrens-station-cache_dark_iron",
+      "Build_barrens-station-cache_timber_dark",
+      "Build_barrens-station-cache_timber_warm",
+      "Section_barrens-observatory-vault",
+      "Roof_barrens-observatory-vault_amethyst_pale_stone",
+      "Roof_barrens-observatory-vault_amethyst_storm_rock",
+      "Build_barrens-observatory-vault_amber_resin",
+      "Build_barrens-observatory-vault_amethyst_pale_stone",
+      "Build_barrens-observatory-vault_amethyst_storm_rock",
+      "Build_barrens-observatory-vault_carved_wood",
+      "Build_barrens-observatory-vault_dark_iron",
+      "Build_barrens-observatory-vault_timber_dark",
+      "Build_barrens-observatory-vault_timber_warm",
+      "Section_barrens-beetle-pit",
+      "Roof_barrens-beetle-pit_amethyst_storm_rock",
+      "Build_barrens-beetle-pit_amber_resin",
+      "Build_barrens-beetle-pit_amethyst_storm_rock",
+      "Build_barrens-beetle-pit_dark_iron",
+      "Build_barrens-beetle-pit_pale_ashlar",
+      "Build_barrens-beetle-pit_timber_dark",
+      "Section_barrens-tower-school",
+      "Roof_barrens-tower-school_amethyst_storm_rock",
+      "Roof_barrens-tower-school_timber_dark",
+      "Build_barrens-tower-school_amber_resin",
+      "Build_barrens-tower-school_amethyst_storm_rock",
+      "Build_barrens-tower-school_carved_wood",
+      "Build_barrens-tower-school_dark_iron",
+      "Build_barrens-tower-school_timber_dark",
+      "Section_barrens-resonance-spring",
+      "Roof_barrens-resonance-spring_amethyst_storm_rock",
+      "Build_barrens-resonance-spring_amber_resin",
+      "Build_barrens-resonance-spring_amethyst_pale_stone",
+      "Build_barrens-resonance-spring_amethyst_storm_rock",
+      "Build_barrens-resonance-spring_dark_iron",
+      "Build_barrens-resonance-spring_water_pool",
+      "Section_barrens-bridge-butts",
+      "Roof_barrens-bridge-butts_amethyst_storm_rock",
+      "Roof_barrens-bridge-butts_timber_dark",
+      "Build_barrens-bridge-butts_amber_resin",
+      "Build_barrens-bridge-butts_amethyst_storm_rock",
+      "Build_barrens-bridge-butts_dark_iron",
+      "Build_barrens-bridge-butts_thatch_reed",
+      "Build_barrens-bridge-butts_timber_dark",
+      "Section_barrens-massif-reliquary",
+      "Roof_barrens-massif-reliquary_amethyst_pale_stone",
+      "Roof_barrens-massif-reliquary_amethyst_storm_rock",
+      "Build_barrens-massif-reliquary_amber_resin",
+      "Build_barrens-massif-reliquary_amethyst_pale_stone",
+      "Build_barrens-massif-reliquary_amethyst_storm_rock",
+      "Build_barrens-massif-reliquary_dark_iron",
+      "Build_barrens-massif-reliquary_gilt_brass",
+      "Section_barrens-storm-well",
+      "Roof_barrens-storm-well_amethyst_storm_rock",
+      "Build_barrens-storm-well_amber_resin",
+      "Build_barrens-storm-well_amethyst_pale_stone",
+      "Build_barrens-storm-well_amethyst_storm_rock",
+      "Build_barrens-storm-well_dark_iron",
+      "Section_barrens-lens-focus",
+      "Roof_barrens-lens-focus_amethyst_pale_stone",
+      "Roof_barrens-lens-focus_amethyst_storm_rock",
+      "Build_barrens-lens-focus_amber_resin",
+      "Build_barrens-lens-focus_amethyst_crystal",
+      "Build_barrens-lens-focus_amethyst_pale_stone",
+      "Build_barrens-lens-focus_amethyst_storm_rock",
+      "Build_barrens-lens-focus_dark_iron",
+      "Section_barrens-sap",
+      "Roof_barrens-sap_amethyst_storm_rock",
+      "Build_barrens-sap_amber_resin",
+      "Build_barrens-sap_amethyst_crystal",
+      "Build_barrens-sap_amethyst_storm_rock",
+      "Build_barrens-sap_dark_iron",
+      "Build_barrens-sap_timber_dark",
+      "Section_barrens-waystone",
+      "Roof_barrens-waystone_amethyst_pale_stone",
+      "Roof_barrens-waystone_amethyst_storm_rock",
+      "Build_barrens-waystone_amber_resin",
+      "Build_barrens-waystone_amethyst_pale_stone",
+      "Build_barrens-waystone_amethyst_storm_rock",
+      "Build_barrens-waystone_dark_iron",
+      "Build_barrens-waystone_gilt_brass",
+      "Section_barrens-cave-eyrie",
+      "Roof_barrens-cave-eyrie_amethyst_storm_rock",
+      "Build_barrens-cave-eyrie_amber_resin",
+      "Build_barrens-cave-eyrie_amethyst_storm_rock",
+      "Build_barrens-cave-eyrie_bark_dark",
+      "Build_barrens-cave-eyrie_carved_wood",
+      "Build_barrens-cave-eyrie_dark_iron",
+      "Build_barrens-cave-eyrie_rubble_stone",
+      "Build_barrens-cave-eyrie_timber_warm",
+      "Build_barrens-cave-eyrie_water_pool"
+    ]
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Roof_barrens-geode-hollow_amethyst_storm_rock",
+      "Roof_barrens-shard-garden_amethyst_storm_rock",
+      "Roof_barrens-station-cache_amethyst_storm_rock",
+      "Roof_barrens-station-cache_timber_dark",
+      "Roof_barrens-observatory-vault_amethyst_pale_stone",
+      "Roof_barrens-observatory-vault_amethyst_storm_rock",
+      "Roof_barrens-beetle-pit_amethyst_storm_rock",
+      "Roof_barrens-tower-school_amethyst_storm_rock",
+      "Roof_barrens-tower-school_timber_dark",
+      "Roof_barrens-resonance-spring_amethyst_storm_rock",
+      "Roof_barrens-bridge-butts_amethyst_storm_rock",
+      "Roof_barrens-bridge-butts_timber_dark",
+      "Roof_barrens-massif-reliquary_amethyst_pale_stone",
+      "Roof_barrens-massif-reliquary_amethyst_storm_rock",
+      "Roof_barrens-storm-well_amethyst_storm_rock",
+      "Roof_barrens-lens-focus_amethyst_pale_stone",
+      "Roof_barrens-lens-focus_amethyst_storm_rock",
+      "Roof_barrens-sap_amethyst_storm_rock",
+      "Roof_barrens-waystone_amethyst_pale_stone",
+      "Roof_barrens-waystone_amethyst_storm_rock",
+      "Roof_barrens-cave-eyrie_amethyst_storm_rock"
+    ],
+    "reason": "interior lids; the isometric rig frames the floor, not the roof"
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Walk_"
+    ],
+    "agentRadius": 0.4,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 45,
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    }
+  },
+  "portals": [
+    {
+      "id": "exit-barrens-geode-hollow",
+      "name": "Back up: The Geode Hollow",
+      "type": "map-transition",
+      "position": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "amethyst_barrens",
+      "destinationSpawn": "secret-barrens-geode-hollow",
+      "section": "barrens-geode-hollow",
+      "authority": "server"
+    },
+    {
+      "id": "exit-barrens-shard-garden",
+      "name": "Back up: The Shard Garden",
+      "type": "map-transition",
+      "position": [
+        245.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "amethyst_barrens",
+      "destinationSpawn": "secret-barrens-shard-garden",
+      "section": "barrens-shard-garden",
+      "authority": "server"
+    },
+    {
+      "id": "exit-barrens-station-cache",
+      "name": "Back up: The Field Station Cache",
+      "type": "map-transition",
+      "position": [
+        169.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "amethyst_barrens",
+      "destinationSpawn": "secret-barrens-station-cache",
+      "section": "barrens-station-cache",
+      "authority": "server"
+    },
+    {
+      "id": "exit-barrens-observatory-vault",
+      "name": "Back up: The Observatory Vault",
+      "type": "map-transition",
+      "position": [
+        242.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "amethyst_barrens",
+      "destinationSpawn": "secret-barrens-observatory-vault",
+      "section": "barrens-observatory-vault",
+      "authority": "server"
+    },
+    {
+      "id": "exit-barrens-beetle-pit",
+      "name": "Back up: The Beetle Pit",
+      "type": "map-transition",
+      "position": [
+        316.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "amethyst_barrens",
+      "destinationSpawn": "secret-barrens-beetle-pit",
+      "section": "barrens-beetle-pit",
+      "authority": "server"
+    },
+    {
+      "id": "exit-barrens-tower-school",
+      "name": "Back up: The Tower School",
+      "type": "map-transition",
+      "position": [
+        315.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "amethyst_barrens",
+      "destinationSpawn": "secret-barrens-tower-school",
+      "section": "barrens-tower-school",
+      "authority": "server"
+    },
+    {
+      "id": "exit-barrens-resonance-spring",
+      "name": "Back up: The Resonance Spring",
+      "type": "map-transition",
+      "position": [
+        26.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "amethyst_barrens",
+      "destinationSpawn": "secret-barrens-resonance-spring",
+      "section": "barrens-resonance-spring",
+      "authority": "server"
+    },
+    {
+      "id": "exit-barrens-bridge-butts",
+      "name": "Back up: The Bridge Butts",
+      "type": "map-transition",
+      "position": [
+        94.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "amethyst_barrens",
+      "destinationSpawn": "secret-barrens-bridge-butts",
+      "section": "barrens-bridge-butts",
+      "authority": "server"
+    },
+    {
+      "id": "exit-barrens-massif-reliquary",
+      "name": "Back up: The Massif Reliquary",
+      "type": "map-transition",
+      "position": [
+        97.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "amethyst_barrens",
+      "destinationSpawn": "secret-barrens-massif-reliquary",
+      "section": "barrens-massif-reliquary",
+      "authority": "server"
+    },
+    {
+      "id": "exit-barrens-storm-well",
+      "name": "Back up: The Storm Well",
+      "type": "map-transition",
+      "position": [
+        99.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "amethyst_barrens",
+      "destinationSpawn": "secret-barrens-storm-well",
+      "section": "barrens-storm-well",
+      "authority": "server"
+    },
+    {
+      "id": "exit-barrens-lens-focus",
+      "name": "Back up: The Shard Focus",
+      "type": "map-transition",
+      "position": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "resonant_vault",
+      "destinationSpawn": "secret-barrens-lens-focus",
+      "section": "barrens-lens-focus",
+      "authority": "server"
+    },
+    {
+      "id": "exit-barrens-sap",
+      "name": "Back up: The Sap",
+      "type": "map-transition",
+      "position": [
+        21.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "amethyst_barrens",
+      "destinationSpawn": "secret-barrens-sap",
+      "section": "barrens-sap",
+      "authority": "server"
+    },
+    {
+      "id": "link-barrens-sap-secret-steppe-sap-mouth",
+      "name": "Up onto the Sunmane Steppe",
+      "type": "map-transition",
+      "position": [
+        21.55,
+        -4.95,
+        84.55
+      ],
+      "radius": 2.5,
+      "destinationMap": "sunmane_steppe",
+      "destinationSpawn": "secret-steppe-sap-mouth",
+      "section": "barrens-sap",
+      "authority": "server"
+    },
+    {
+      "id": "exit-barrens-waystone",
+      "name": "Back up: The Barrens Waystone",
+      "type": "map-transition",
+      "position": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "amethyst_barrens",
+      "destinationSpawn": "secret-barrens-waystone",
+      "section": "barrens-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-barrens-waystone-horn-waystone",
+      "name": "The Whitehorn Range",
+      "type": "map-transition",
+      "position": [
+        170.04,
+        -4.0,
+        107.91
+      ],
+      "radius": 2.5,
+      "destinationMap": "whitehorn_range_secrets",
+      "destinationSpawn": "horn-waystone",
+      "section": "barrens-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-barrens-waystone-mirror-waystone",
+      "name": "Mirrorhold",
+      "type": "map-transition",
+      "position": [
+        175.5,
+        -4.0,
+        109.68
+      ],
+      "radius": 2.5,
+      "destinationMap": "mirrorhold_secrets",
+      "destinationSpawn": "mirror-waystone",
+      "section": "barrens-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-barrens-waystone-steppe-waystone",
+      "name": "The Sunmane Steppe",
+      "type": "map-transition",
+      "position": [
+        175.5,
+        -4.0,
+        115.42
+      ],
+      "radius": 2.5,
+      "destinationMap": "sunmane_steppe_secrets",
+      "destinationSpawn": "steppe-waystone",
+      "section": "barrens-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-barrens-waystone-crown-waystone",
+      "name": "Crownwater",
+      "type": "map-transition",
+      "position": [
+        170.04,
+        -4.0,
+        117.19
+      ],
+      "radius": 2.5,
+      "destinationMap": "crownwater_secrets",
+      "destinationSpawn": "crown-waystone",
+      "section": "barrens-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "exit-barrens-cave-eyrie",
+      "name": "Back up: The Geode Eyrie",
+      "type": "map-transition",
+      "position": [
+        312.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "amethyst_barrens",
+      "destinationSpawn": "secret-barrens-cave-eyrie",
+      "section": "barrens-cave-eyrie",
+      "authority": "server"
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "barrens-geode-hollow-room",
+      "name": "The Geode Hollow",
+      "space": "barrens-geode-hollow.landing",
+      "position": [
+        174.55,
+        1.6,
+        21.05
+      ],
+      "section": "barrens-geode-hollow"
+    },
+    {
+      "id": "barrens-shard-garden-room",
+      "name": "The Shard Garden",
+      "space": "barrens-shard-garden.landing",
+      "position": [
+        245.55,
+        1.6,
+        21.05
+      ],
+      "section": "barrens-shard-garden"
+    },
+    {
+      "id": "barrens-station-cache-room",
+      "name": "The Field Station Cache",
+      "space": "barrens-station-cache.landing",
+      "position": [
+        169.55,
+        1.6,
+        165.05
+      ],
+      "section": "barrens-station-cache"
+    },
+    {
+      "id": "barrens-observatory-vault-room",
+      "name": "The Observatory Vault",
+      "space": "barrens-observatory-vault.landing",
+      "position": [
+        242.55,
+        1.6,
+        165.05
+      ],
+      "section": "barrens-observatory-vault"
+    },
+    {
+      "id": "barrens-beetle-pit-room",
+      "name": "The Beetle Pit",
+      "space": "barrens-beetle-pit.landing",
+      "position": [
+        316.55,
+        1.6,
+        21.05
+      ],
+      "section": "barrens-beetle-pit"
+    },
+    {
+      "id": "barrens-tower-school-room",
+      "name": "The Tower School",
+      "space": "barrens-tower-school.landing",
+      "position": [
+        315.55,
+        1.6,
+        93.05
+      ],
+      "section": "barrens-tower-school"
+    },
+    {
+      "id": "barrens-resonance-spring-room",
+      "name": "The Resonance Spring",
+      "space": "barrens-resonance-spring.landing",
+      "position": [
+        26.55,
+        1.6,
+        165.05
+      ],
+      "section": "barrens-resonance-spring"
+    },
+    {
+      "id": "barrens-bridge-butts-room",
+      "name": "The Bridge Butts",
+      "space": "barrens-bridge-butts.landing",
+      "position": [
+        94.55,
+        1.6,
+        21.05
+      ],
+      "section": "barrens-bridge-butts"
+    },
+    {
+      "id": "barrens-massif-reliquary-room",
+      "name": "The Massif Reliquary",
+      "space": "barrens-massif-reliquary.landing",
+      "position": [
+        97.55,
+        1.6,
+        165.05
+      ],
+      "section": "barrens-massif-reliquary"
+    },
+    {
+      "id": "barrens-storm-well-room",
+      "name": "The Storm Well",
+      "space": "barrens-storm-well.landing",
+      "position": [
+        99.55,
+        1.6,
+        93.05
+      ],
+      "section": "barrens-storm-well"
+    },
+    {
+      "id": "barrens-lens-focus-room",
+      "name": "The Shard Focus",
+      "space": "barrens-lens-focus.landing",
+      "position": [
+        242.55,
+        1.6,
+        93.05
+      ],
+      "section": "barrens-lens-focus"
+    },
+    {
+      "id": "barrens-sap-room",
+      "name": "The Sap",
+      "space": "barrens-sap.landing",
+      "position": [
+        21.55,
+        1.6,
+        21.05
+      ],
+      "section": "barrens-sap"
+    },
+    {
+      "id": "barrens-waystone-room",
+      "name": "The Barrens Waystone",
+      "space": "barrens-waystone.landing",
+      "position": [
+        171.55,
+        1.6,
+        93.05
+      ],
+      "section": "barrens-waystone"
+    },
+    {
+      "id": "barrens-cave-eyrie-room",
+      "name": "The Geode Eyrie",
+      "space": "barrens-cave-eyrie.landing",
+      "position": [
+        312.55,
+        1.6,
+        165.05
+      ],
+      "section": "barrens-cave-eyrie"
+    }
+  ],
+  "interactives": [
+    {
+      "id": "barrens-shard-garden-well",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Garden well",
+      "text": "Cold water from the garden well.",
+      "position": [
+        245.55,
+        -1.0,
+        42.55
+      ],
+      "section": "barrens-shard-garden",
+      "serverTile": [
+        230,
+        148
+      ]
+    },
+    {
+      "id": "barrens-station-cache-cache",
+      "kind": "storage",
+      "target": "shared",
+      "label": "Cache",
+      "text": "A cache; it opens your shared storage.",
+      "position": [
+        169.55,
+        -2.5,
+        184.65
+      ],
+      "section": "barrens-station-cache",
+      "serverTile": [
+        154,
+        6
+      ]
+    },
+    {
+      "id": "barrens-station-cache-bench",
+      "kind": "crafting_station",
+      "target": "field",
+      "label": "Bench",
+      "text": "A bench for ordinary mixing and crafting.",
+      "position": [
+        165.35,
+        -2.1,
+        184.65
+      ],
+      "section": "barrens-station-cache",
+      "serverTile": [
+        149,
+        6
+      ]
+    },
+    {
+      "id": "barrens-observatory-vault-strongbox",
+      "kind": "storage",
+      "target": "shared",
+      "label": "Cache",
+      "text": "A cache; it opens your shared storage.",
+      "position": [
+        242.55,
+        -4.5,
+        185.55
+      ],
+      "section": "barrens-observatory-vault",
+      "serverTile": [
+        227,
+        5
+      ]
+    },
+    {
+      "id": "barrens-observatory-vault-bench",
+      "kind": "crafting_station",
+      "target": "field",
+      "label": "Bench",
+      "text": "A bench for ordinary mixing and crafting.",
+      "position": [
+        246.95,
+        -4.1,
+        181.15
+      ],
+      "section": "barrens-observatory-vault",
+      "serverTile": [
+        231,
+        10
+      ]
+    },
+    {
+      "id": "barrens-observatory-vault-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "The factor's signature",
+      "text": "The Barrens factor signs for a shard once. What is made under the observatory is checked against the eleven measures and counts double.",
+      "position": [
+        242.55,
+        -4.0,
+        176.19
+      ],
+      "section": "barrens-observatory-vault",
+      "serverTile": [
+        227,
+        15
+      ]
+    },
+    {
+      "id": "barrens-beetle-pit-post",
+      "kind": "training",
+      "target": "combat",
+      "label": "Training post",
+      "text": "The post lists your recent combat results.",
+      "position": [
+        308.55,
+        -3.0,
+        50.05
+      ],
+      "section": "barrens-beetle-pit",
+      "serverTile": [
+        293,
+        141
+      ]
+    },
+    {
+      "id": "barrens-tower-school-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "Reading",
+      "text": "The tower's under-room; the wardens taught here before the observatory. Books read three times as fast.",
+      "position": [
+        308.35,
+        -1.0,
+        116.42
+      ],
+      "section": "barrens-tower-school",
+      "serverTile": [
+        292,
+        75
+      ]
+    },
+    {
+      "id": "barrens-tower-school-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "Tuning",
+      "text": "A shard is tuned by walking it past all eleven measures. Eleven collars, eleven lengths, no shortcuts.",
+      "position": [
+        315.55,
+        -1.0,
+        116.42
+      ],
+      "section": "barrens-tower-school",
+      "serverTile": [
+        300,
+        75
+      ]
+    },
+    {
+      "id": "barrens-tower-school-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "The massif",
+      "text": "The massif hums on the day before a storm. Count the hum and you know the hour.",
+      "position": [
+        322.75,
+        -1.0,
+        116.42
+      ],
+      "section": "barrens-tower-school",
+      "serverTile": [
+        307,
+        75
+      ]
+    },
+    {
+      "id": "barrens-resonance-spring-spring",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Warm spring",
+      "text": "The spring is warm and mineral; it restores you.",
+      "position": [
+        26.55,
+        -2.0,
+        179.15
+      ],
+      "section": "barrens-resonance-spring",
+      "serverTile": [
+        11,
+        12
+      ]
+    },
+    {
+      "id": "barrens-bridge-butts-butts",
+      "kind": "training",
+      "target": "combat",
+      "label": "Butts",
+      "text": "The butts list your recent combat results.",
+      "position": [
+        94.55,
+        -1.0,
+        34.55
+      ],
+      "section": "barrens-bridge-butts",
+      "serverTile": [
+        79,
+        156
+      ]
+    },
+    {
+      "id": "barrens-massif-reliquary-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "The eleven measures",
+      "text": "The measures were cut from one crystal. The twelfth length was never set; the factor knows why.",
+      "position": [
+        91.6,
+        -4.0,
+        177.65
+      ],
+      "section": "barrens-massif-reliquary",
+      "serverTile": [
+        76,
+        13
+      ]
+    },
+    {
+      "id": "barrens-massif-reliquary-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "The storm ruins",
+      "text": "The ruins were not storm-broken. They were struck, once each, on the same night.",
+      "position": [
+        103.5,
+        -4.0,
+        177.65
+      ],
+      "section": "barrens-massif-reliquary",
+      "serverTile": [
+        88,
+        13
+      ]
+    },
+    {
+      "id": "barrens-massif-reliquary-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "The vault",
+      "text": "The Resonant Vault under the observatory was a mine before it was a vault.",
+      "position": [
+        91.6,
+        -4.0,
+        181.5
+      ],
+      "section": "barrens-massif-reliquary",
+      "serverTile": [
+        76,
+        10
+      ]
+    },
+    {
+      "id": "barrens-massif-reliquary-relic",
+      "kind": "scenery_effect",
+      "target": "relic",
+      "label": "The Massif Reliquary",
+      "text": "Sealed with a resonant crystal; the massif's own relic room.",
+      "position": [
+        97.55,
+        -3.8,
+        186.05
+      ],
+      "section": "barrens-massif-reliquary",
+      "serverTile": [
+        82,
+        5
+      ]
+    },
+    {
+      "id": "barrens-storm-well-post",
+      "kind": "training",
+      "target": "combat",
+      "label": "Ward post",
+      "text": "Nothing casts within these stones. The post lists your recent combat results.",
+      "position": [
+        91.9,
+        -4.0,
+        104.9
+      ],
+      "section": "barrens-storm-well",
+      "serverTile": [
+        76,
+        86
+      ]
+    },
+    {
+      "id": "barrens-cave-eyrie-water",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Cistern",
+      "text": "Rainwater from the cistern.",
+      "position": [
+        315.55,
+        4.0,
+        180.35
+      ],
+      "section": "barrens-cave-eyrie",
+      "serverTile": [
+        300,
+        11
+      ]
+    },
+    {
+      "id": "barrens-cave-eyrie-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "Breath",
+      "text": "Rest here and the breath comes back twice as fast.",
+      "position": [
+        308.95,
+        4.0,
+        184.25
+      ],
+      "section": "barrens-cave-eyrie",
+      "serverTile": [
+        293,
+        7
+      ]
+    },
+    {
+      "id": "barrens-cave-eyrie-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "Harvest",
+      "text": "A pickaxe in the pack or in the hand is the same to a seam. A seam above your level takes ten times as long, not twice.",
+      "position": [
+        311.15,
+        4.0,
+        184.25
+      ],
+      "section": "barrens-cave-eyrie",
+      "serverTile": [
+        295,
+        7
+      ]
+    }
+  ],
+  "npcMarkers": [],
+  "harvestables": [
+    {
+      "id": "barrens-geode-hollow-node-00",
+      "resource": "Resonant Crystal",
+      "position": [
+        177.79,
+        -4.0,
+        46.23
+      ],
+      "section": "barrens-geode-hollow",
+      "serverTile": [
+        162,
+        145
+      ]
+    },
+    {
+      "id": "barrens-geode-hollow-node-01",
+      "resource": "Resonant Crystal",
+      "position": [
+        168.24,
+        -4.0,
+        44.35
+      ],
+      "section": "barrens-geode-hollow",
+      "serverTile": [
+        152,
+        147
+      ]
+    },
+    {
+      "id": "barrens-geode-hollow-node-02",
+      "resource": "Resonant Crystal",
+      "position": [
+        179.56,
+        -4.0,
+        36.66
+      ],
+      "section": "barrens-geode-hollow",
+      "serverTile": [
+        164,
+        154
+      ]
+    },
+    {
+      "id": "barrens-geode-hollow-node-03",
+      "resource": "Resonant Crystal",
+      "position": [
+        175.54,
+        -4.0,
+        48.74
+      ],
+      "section": "barrens-geode-hollow",
+      "serverTile": [
+        160,
+        142
+      ]
+    },
+    {
+      "id": "barrens-geode-hollow-node-04",
+      "resource": "Voltaic Geode",
+      "position": [
+        168.27,
+        -4.0,
+        39.56
+      ],
+      "section": "barrens-geode-hollow",
+      "serverTile": [
+        152,
+        151
+      ]
+    },
+    {
+      "id": "barrens-geode-hollow-node-05",
+      "resource": "Voltaic Geode",
+      "position": [
+        178.62,
+        -4.0,
+        42.51
+      ],
+      "section": "barrens-geode-hollow",
+      "serverTile": [
+        163,
+        148
+      ]
+    },
+    {
+      "id": "barrens-geode-hollow-node-06",
+      "resource": "Voltaic Geode",
+      "position": [
+        171.49,
+        -4.0,
+        49.12
+      ],
+      "section": "barrens-geode-hollow",
+      "serverTile": [
+        155,
+        142
+      ]
+    },
+    {
+      "id": "barrens-geode-hollow-node-07",
+      "resource": "Pale Quartz",
+      "position": [
+        171.92,
+        -4.0,
+        35.45
+      ],
+      "section": "barrens-geode-hollow",
+      "serverTile": [
+        156,
+        156
+      ]
+    },
+    {
+      "id": "barrens-geode-hollow-node-08",
+      "resource": "Pale Quartz",
+      "position": [
+        179.33,
+        -4.0,
+        45.8
+      ],
+      "section": "barrens-geode-hollow",
+      "serverTile": [
+        163,
+        145
+      ]
+    },
+    {
+      "id": "barrens-geode-hollow-node-09",
+      "resource": "Pale Quartz",
+      "position": [
+        167.63,
+        -4.0,
+        46.29
+      ],
+      "section": "barrens-geode-hollow",
+      "serverTile": [
+        152,
+        145
+      ]
+    },
+    {
+      "id": "barrens-shard-garden-node-00",
+      "resource": "Stormglass Shard",
+      "position": [
+        237.96,
+        -1.5,
+        37.35
+      ],
+      "section": "barrens-shard-garden",
+      "serverTile": [
+        222,
+        154
+      ]
+    },
+    {
+      "id": "barrens-shard-garden-node-01",
+      "resource": "Stormglass Shard",
+      "position": [
+        239.5,
+        -1.5,
+        37.35
+      ],
+      "section": "barrens-shard-garden",
+      "serverTile": [
+        224,
+        154
+      ]
+    },
+    {
+      "id": "barrens-shard-garden-node-02",
+      "resource": "Stormglass Shard",
+      "position": [
+        241.04,
+        -1.5,
+        37.35
+      ],
+      "section": "barrens-shard-garden",
+      "serverTile": [
+        225,
+        154
+      ]
+    },
+    {
+      "id": "barrens-shard-garden-node-03",
+      "resource": "Stormglass Shard",
+      "position": [
+        237.96,
+        -1.5,
+        38.95
+      ],
+      "section": "barrens-shard-garden",
+      "serverTile": [
+        222,
+        152
+      ]
+    },
+    {
+      "id": "barrens-shard-garden-node-04",
+      "resource": "Sulfur",
+      "position": [
+        244.01,
+        -1.5,
+        37.35
+      ],
+      "section": "barrens-shard-garden",
+      "serverTile": [
+        228,
+        154
+      ]
+    },
+    {
+      "id": "barrens-shard-garden-node-05",
+      "resource": "Sulfur",
+      "position": [
+        245.55,
+        -1.5,
+        37.35
+      ],
+      "section": "barrens-shard-garden",
+      "serverTile": [
+        230,
+        154
+      ]
+    },
+    {
+      "id": "barrens-shard-garden-node-06",
+      "resource": "Sulfur",
+      "position": [
+        247.09,
+        -1.5,
+        37.35
+      ],
+      "section": "barrens-shard-garden",
+      "serverTile": [
+        231,
+        154
+      ]
+    },
+    {
+      "id": "barrens-shard-garden-node-07",
+      "resource": "Quartz",
+      "position": [
+        250.06,
+        -1.5,
+        37.35
+      ],
+      "section": "barrens-shard-garden",
+      "serverTile": [
+        234,
+        154
+      ]
+    },
+    {
+      "id": "barrens-shard-garden-node-08",
+      "resource": "Quartz",
+      "position": [
+        251.6,
+        -1.5,
+        37.35
+      ],
+      "section": "barrens-shard-garden",
+      "serverTile": [
+        236,
+        154
+      ]
+    },
+    {
+      "id": "barrens-shard-garden-node-09",
+      "resource": "Quartz",
+      "position": [
+        253.14,
+        -1.5,
+        37.35
+      ],
+      "section": "barrens-shard-garden",
+      "serverTile": [
+        237,
+        154
+      ]
+    },
+    {
+      "id": "barrens-shard-garden-node-10",
+      "resource": "Pale Quartz",
+      "position": [
+        237.96,
+        -1.5,
+        46.15
+      ],
+      "section": "barrens-shard-garden",
+      "serverTile": [
+        222,
+        145
+      ]
+    },
+    {
+      "id": "barrens-shard-garden-node-11",
+      "resource": "Pale Quartz",
+      "position": [
+        239.5,
+        -1.5,
+        46.15
+      ],
+      "section": "barrens-shard-garden",
+      "serverTile": [
+        224,
+        145
+      ]
+    },
+    {
+      "id": "barrens-shard-garden-node-12",
+      "resource": "Pale Quartz",
+      "position": [
+        241.04,
+        -1.5,
+        46.15
+      ],
+      "section": "barrens-shard-garden",
+      "serverTile": [
+        225,
+        145
+      ]
+    },
+    {
+      "id": "barrens-station-cache-node-00",
+      "resource": "Stormglass Shard",
+      "position": [
+        164.3,
+        -3.0,
+        177.3
+      ],
+      "section": "barrens-station-cache",
+      "serverTile": [
+        148,
+        14
+      ]
+    },
+    {
+      "id": "barrens-station-cache-node-01",
+      "resource": "Stormglass Shard",
+      "position": [
+        167.8,
+        -3.0,
+        177.3
+      ],
+      "section": "barrens-station-cache",
+      "serverTile": [
+        152,
+        14
+      ]
+    },
+    {
+      "id": "barrens-station-cache-node-02",
+      "resource": "Stormglass Shard",
+      "position": [
+        171.3,
+        -3.0,
+        177.3
+      ],
+      "section": "barrens-station-cache",
+      "serverTile": [
+        155,
+        14
+      ]
+    },
+    {
+      "id": "barrens-station-cache-node-03",
+      "resource": "Resonant Crystal",
+      "position": [
+        174.8,
+        -3.0,
+        177.3
+      ],
+      "section": "barrens-station-cache",
+      "serverTile": [
+        159,
+        14
+      ]
+    },
+    {
+      "id": "barrens-station-cache-node-04",
+      "resource": "Resonant Crystal",
+      "position": [
+        164.3,
+        -3.0,
+        179.1
+      ],
+      "section": "barrens-station-cache",
+      "serverTile": [
+        148,
+        12
+      ]
+    },
+    {
+      "id": "barrens-sap-node-00",
+      "resource": "Sulfur",
+      "position": [
+        23.05,
+        -5.0,
+        40.55
+      ],
+      "section": "barrens-sap",
+      "serverTile": [
+        7,
+        150
+      ]
+    },
+    {
+      "id": "barrens-sap-node-01",
+      "resource": "Sulfur",
+      "position": [
+        20.05,
+        -5.0,
+        46.88
+      ],
+      "section": "barrens-sap",
+      "serverTile": [
+        4,
+        144
+      ]
+    },
+    {
+      "id": "barrens-sap-node-02",
+      "resource": "Sulfur",
+      "position": [
+        23.05,
+        -5.0,
+        53.22
+      ],
+      "section": "barrens-sap",
+      "serverTile": [
+        7,
+        138
+      ]
+    },
+    {
+      "id": "barrens-sap-node-03",
+      "resource": "Sunstone Flint",
+      "position": [
+        20.05,
+        -5.0,
+        59.55
+      ],
+      "section": "barrens-sap",
+      "serverTile": [
+        4,
+        131
+      ]
+    },
+    {
+      "id": "barrens-sap-node-04",
+      "resource": "Sunstone Flint",
+      "position": [
+        23.05,
+        -5.0,
+        65.88
+      ],
+      "section": "barrens-sap",
+      "serverTile": [
+        7,
+        125
+      ]
+    },
+    {
+      "id": "barrens-sap-node-05",
+      "resource": "Sunstone Flint",
+      "position": [
+        20.05,
+        -5.0,
+        72.22
+      ],
+      "section": "barrens-sap",
+      "serverTile": [
+        4,
+        119
+      ]
+    }
+  ],
+  "environment": {
+    "sky": "none",
+    "ambient": {
+      "colour": [
+        0.1,
+        0.1,
+        0.12
+      ],
+      "energy": 0.55
+    },
+    "fog": {
+      "enabled": true,
+      "colour": [
+        0.02,
+        0.02,
+        0.03
+      ],
+      "begin": 14.0,
+      "end": 48.0
+    },
+    "openToSky": [
+      "barrens-shard-garden.court",
+      "barrens-cave-eyrie.perch"
+    ],
+    "lights": [
+      {
+        "id": "lamp-000",
+        "kind": "point",
+        "position": [
+          174.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-001",
+        "kind": "point",
+        "position": [
+          168.55,
+          -0.62,
+          43.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-002",
+        "kind": "point",
+        "position": [
+          180.55,
+          -0.62,
+          43.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-003",
+        "kind": "point",
+        "position": [
+          245.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-004",
+        "kind": "point",
+        "position": [
+          169.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-005",
+        "kind": "point",
+        "position": [
+          169.55,
+          -0.22,
+          181.15
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-006",
+        "kind": "point",
+        "position": [
+          239.35,
+          -3.4,
+          176.75
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-007",
+        "kind": "point",
+        "position": [
+          245.75,
+          -3.4,
+          176.75
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-008",
+        "kind": "point",
+        "position": [
+          242.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-009",
+        "kind": "point",
+        "position": [
+          316.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-010",
+        "kind": "point",
+        "position": [
+          311.55,
+          -0.12,
+          41.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-011",
+        "kind": "point",
+        "position": [
+          321.55,
+          -0.12,
+          41.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-012",
+        "kind": "point",
+        "position": [
+          315.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-013",
+        "kind": "point",
+        "position": [
+          315.55,
+          1.18,
+          110.3
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-014",
+        "kind": "point",
+        "position": [
+          26.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-015",
+        "kind": "point",
+        "position": [
+          26.55,
+          0.58,
+          181.95
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-016",
+        "kind": "point",
+        "position": [
+          94.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-017",
+        "kind": "point",
+        "position": [
+          94.55,
+          0.98,
+          46.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-018",
+        "kind": "point",
+        "position": [
+          93.35,
+          -3.4,
+          185.35
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-019",
+        "kind": "point",
+        "position": [
+          101.75,
+          -3.4,
+          185.35
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-020",
+        "kind": "point",
+        "position": [
+          97.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-021",
+        "kind": "point",
+        "position": [
+          99.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-022",
+        "kind": "point",
+        "position": [
+          99.55,
+          -0.62,
+          112.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-023",
+        "kind": "point",
+        "position": [
+          245.94,
+          -1.4,
+          114.14
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-024",
+        "kind": "point",
+        "position": [
+          239.16,
+          -1.4,
+          114.14
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-025",
+        "kind": "point",
+        "position": [
+          239.16,
+          -1.4,
+          107.36
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-026",
+        "kind": "point",
+        "position": [
+          245.94,
+          -1.4,
+          107.36
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-027",
+        "kind": "point",
+        "position": [
+          242.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-028",
+        "kind": "point",
+        "position": [
+          21.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-029",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          43.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-030",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          57.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-031",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          71.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-032",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          85.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-033",
+        "kind": "point",
+        "position": [
+          171.55,
+          -2.4,
+          112.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-034",
+        "kind": "point",
+        "position": [
+          171.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-035",
+        "kind": "point",
+        "position": [
+          312.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      }
+    ]
+  },
+  "spaces": {
+    "barrens-geode-hollow.landing": {
+      "x0": 172.05,
+      "z0": 18.55,
+      "x1": 177.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "barrens-geode-hollow.way": {
+      "x0": 172.75,
+      "z0": 21.75,
+      "x1": 176.35,
+      "z1": 33.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "barrens-geode-hollow.hollow": {
+      "x0": 162.55,
+      "z0": 31.55,
+      "x1": 186.55,
+      "z1": 55.55,
+      "floor": -4.0,
+      "height": 8.0
+    },
+    "barrens-shard-garden.landing": {
+      "x0": 243.05,
+      "z0": 18.55,
+      "x1": 248.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "barrens-shard-garden.way": {
+      "x0": 243.75,
+      "z0": 21.75,
+      "x1": 247.35,
+      "z1": 33.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "barrens-shard-garden.court": {
+      "x0": 234.55,
+      "z0": 31.55,
+      "x1": 256.55,
+      "z1": 53.55,
+      "floor": -2.0,
+      "height": 6.0
+    },
+    "barrens-station-cache.landing": {
+      "x0": 167.05,
+      "z0": 162.55,
+      "x1": 172.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "barrens-station-cache.way": {
+      "x0": 167.75,
+      "z0": 165.75,
+      "x1": 171.35,
+      "z1": 177.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "barrens-station-cache.cellar": {
+      "x0": 162.55,
+      "z0": 175.55,
+      "x1": 176.55,
+      "z1": 186.75,
+      "floor": -3.0,
+      "height": 4.4
+    },
+    "barrens-observatory-vault.landing": {
+      "x0": 240.05,
+      "z0": 162.55,
+      "x1": 245.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "barrens-observatory-vault.way": {
+      "x0": 240.75,
+      "z0": 165.75,
+      "x1": 244.35,
+      "z1": 177.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "barrens-observatory-vault.strongroom": {
+      "x0": 234.55,
+      "z0": 175.55,
+      "x1": 250.55,
+      "z1": 186.75,
+      "floor": -5.0,
+      "height": 5.0
+    },
+    "barrens-beetle-pit.landing": {
+      "x0": 314.05,
+      "z0": 18.55,
+      "x1": 319.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "barrens-beetle-pit.way": {
+      "x0": 314.75,
+      "z0": 21.75,
+      "x1": 318.35,
+      "z1": 33.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "barrens-beetle-pit.pit": {
+      "x0": 306.55,
+      "z0": 31.55,
+      "x1": 326.55,
+      "z1": 51.55,
+      "floor": -4.0,
+      "height": 7.0
+    },
+    "barrens-tower-school.landing": {
+      "x0": 313.05,
+      "z0": 90.55,
+      "x1": 318.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "barrens-tower-school.way": {
+      "x0": 313.75,
+      "z0": 93.75,
+      "x1": 317.35,
+      "z1": 105.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "barrens-tower-school.hall": {
+      "x0": 306.55,
+      "z0": 103.55,
+      "x1": 324.55,
+      "z1": 117.05,
+      "floor": -2.0,
+      "height": 5.2
+    },
+    "barrens-resonance-spring.landing": {
+      "x0": 24.05,
+      "z0": 162.55,
+      "x1": 29.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "barrens-resonance-spring.way": {
+      "x0": 24.75,
+      "z0": 165.75,
+      "x1": 28.35,
+      "z1": 177.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "barrens-resonance-spring.bath": {
+      "x0": 18.55,
+      "z0": 175.55,
+      "x1": 34.55,
+      "z1": 188.35,
+      "floor": -3.0,
+      "height": 6.0
+    },
+    "barrens-bridge-butts.landing": {
+      "x0": 92.05,
+      "z0": 18.55,
+      "x1": 97.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "barrens-bridge-butts.way": {
+      "x0": 92.75,
+      "z0": 21.75,
+      "x1": 96.35,
+      "z1": 33.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "barrens-bridge-butts.gallery": {
+      "x0": 90.55,
+      "z0": 31.55,
+      "x1": 98.55,
+      "z1": 61.55,
+      "floor": -2.0,
+      "height": 5.0
+    },
+    "barrens-massif-reliquary.landing": {
+      "x0": 95.05,
+      "z0": 162.55,
+      "x1": 100.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "barrens-massif-reliquary.way": {
+      "x0": 95.75,
+      "z0": 165.75,
+      "x1": 99.35,
+      "z1": 177.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "barrens-massif-reliquary.cella": {
+      "x0": 90.55,
+      "z0": 175.55,
+      "x1": 104.55,
+      "z1": 188.15,
+      "floor": -5.0,
+      "height": 6.0
+    },
+    "barrens-storm-well.landing": {
+      "x0": 97.05,
+      "z0": 90.55,
+      "x1": 102.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "barrens-storm-well.way": {
+      "x0": 97.75,
+      "z0": 93.75,
+      "x1": 101.35,
+      "z1": 105.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "barrens-storm-well.well": {
+      "x0": 90.55,
+      "z0": 103.55,
+      "x1": 108.55,
+      "z1": 121.55,
+      "floor": -5.0,
+      "height": 8.0
+    },
+    "barrens-lens-focus.landing": {
+      "x0": 240.05,
+      "z0": 90.55,
+      "x1": 245.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "barrens-lens-focus.way": {
+      "x0": 240.75,
+      "z0": 93.75,
+      "x1": 244.35,
+      "z1": 105.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "barrens-lens-focus.chamber": {
+      "x0": 234.55,
+      "z0": 103.55,
+      "x1": 250.55,
+      "z1": 117.95,
+      "floor": -3.0,
+      "height": 6.4
+    },
+    "barrens-sap.landing": {
+      "x0": 19.05,
+      "z0": 18.55,
+      "x1": 24.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "barrens-sap.way": {
+      "x0": 19.75,
+      "z0": 21.75,
+      "x1": 23.35,
+      "z1": 33.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "barrens-sap.bore": {
+      "x0": 18.65,
+      "z0": 31.55,
+      "x1": 24.45,
+      "z1": 37.55,
+      "floor": -5.0,
+      "height": 4.0
+    },
+    "barrens-sap.run": {
+      "x0": 19.45,
+      "z0": 35.45,
+      "x1": 23.65,
+      "z1": 83.65,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "barrens-sap.far": {
+      "x0": 18.55,
+      "z0": 81.55,
+      "x1": 24.55,
+      "z1": 87.55,
+      "floor": -5.0,
+      "height": 4.2
+    },
+    "barrens-waystone.landing": {
+      "x0": 169.05,
+      "z0": 90.55,
+      "x1": 174.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "barrens-waystone.way": {
+      "x0": 169.75,
+      "z0": 93.75,
+      "x1": 173.35,
+      "z1": 105.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "barrens-waystone.ring": {
+      "x0": 162.55,
+      "z0": 103.55,
+      "x1": 180.55,
+      "z1": 121.55,
+      "floor": -4.0,
+      "height": 7.0
+    },
+    "barrens-cave-eyrie.landing": {
+      "x0": 310.05,
+      "z0": 162.55,
+      "x1": 315.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "barrens-cave-eyrie.way": {
+      "x0": 310.75,
+      "z0": 165.75,
+      "x1": 314.35,
+      "z1": 177.35,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "barrens-cave-eyrie.perch": {
+      "x0": 306.55,
+      "z0": 175.55,
+      "x1": 318.55,
+      "z1": 185.15,
+      "floor": 3.0,
+      "height": 4.6
+    }
+  },
+  "sections": [
+    {
+      "id": "barrens-geode-hollow",
+      "name": "The Geode Hollow",
+      "kind": "grotto",
+      "entranceMap": "amethyst_barrens",
+      "entranceProp": "crystal_seam",
+      "key": "",
+      "label": "A seam of crystal that hums at a touch; the rock behind it is thin.",
+      "offset": [
+        174.55,
+        21.05
+      ],
+      "arrival": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          17.55
+        ],
+        "max": [
+          187.55,
+          56.55
+        ]
+      },
+      "spaces": [
+        "barrens-geode-hollow.landing",
+        "barrens-geode-hollow.way",
+        "barrens-geode-hollow.hollow"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "A geode the prospectors never finished: crystal on every wall and a pool of dust.",
+      "arrivalTile": [
+        159,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          134
+        ],
+        "max": [
+          172,
+          173
+        ]
+      }
+    },
+    {
+      "id": "barrens-shard-garden",
+      "name": "The Shard Garden",
+      "kind": "garden",
+      "entranceMap": "amethyst_barrens",
+      "entranceProp": "crystal_seam",
+      "key": "",
+      "label": "A seam of crystal that hums at a touch; the rock behind it is thin.",
+      "offset": [
+        245.55,
+        21.05
+      ],
+      "arrival": [
+        245.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          233.55,
+          17.55
+        ],
+        "max": [
+          257.55,
+          54.55
+        ]
+      },
+      "spaces": [
+        "barrens-shard-garden.landing",
+        "barrens-shard-garden.way",
+        "barrens-shard-garden.court"
+      ],
+      "areas": [
+        {
+          "kind": "harvest_speed",
+          "multiplier": 2,
+          "spaces": [
+            "barrens-shard-garden.court"
+          ],
+          "tiles": {
+            "min": [
+              219,
+              137
+            ],
+            "max": [
+              241,
+              159
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Shards grown in beds under a lid of storm rock, faster than the open field.",
+      "arrivalTile": [
+        230,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          218,
+          136
+        ],
+        "max": [
+          242,
+          173
+        ]
+      }
+    },
+    {
+      "id": "barrens-station-cache",
+      "name": "The Field Station Cache",
+      "kind": "cache",
+      "entranceMap": "amethyst_barrens",
+      "entranceProp": "cellar_hatch",
+      "key": "",
+      "label": "A cellar hatch under the leaves.",
+      "offset": [
+        169.55,
+        165.05
+      ],
+      "arrival": [
+        169.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          161.55
+        ],
+        "max": [
+          177.55,
+          187.75
+        ]
+      },
+      "spaces": [
+        "barrens-station-cache.landing",
+        "barrens-station-cache.way",
+        "barrens-station-cache.cellar"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "The station's cellar: a chest, a bench and the shards the wardens sort in private.",
+      "arrivalTile": [
+        154,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          3
+        ],
+        "max": [
+          162,
+          29
+        ]
+      }
+    },
+    {
+      "id": "barrens-observatory-vault",
+      "name": "The Observatory Vault",
+      "kind": "vault",
+      "entranceMap": "amethyst_barrens",
+      "entranceProp": "cracked_slab",
+      "key": "Storage Token",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        242.55,
+        165.05
+      ],
+      "arrival": [
+        242.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          233.55,
+          161.55
+        ],
+        "max": [
+          251.55,
+          187.75
+        ]
+      },
+      "spaces": [
+        "barrens-observatory-vault.landing",
+        "barrens-observatory-vault.way",
+        "barrens-observatory-vault.strongroom"
+      ],
+      "areas": [
+        {
+          "kind": "experience",
+          "multiplier": 2,
+          "spaces": [
+            "barrens-observatory-vault.strongroom"
+          ],
+          "tiles": {
+            "min": [
+              219,
+              4
+            ],
+            "max": [
+              235,
+              15
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "The wardens' strongroom under the observatory.",
+      "arrivalTile": [
+        227,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          218,
+          3
+        ],
+        "max": [
+          236,
+          29
+        ]
+      }
+    },
+    {
+      "id": "barrens-beetle-pit",
+      "name": "The Beetle Pit",
+      "kind": "pen",
+      "entranceMap": "amethyst_barrens",
+      "entranceProp": "loose_stone",
+      "key": "",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "offset": [
+        316.55,
+        21.05
+      ],
+      "arrival": [
+        316.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          305.55,
+          17.55
+        ],
+        "max": [
+          327.55,
+          52.55
+        ]
+      },
+      "spaces": [
+        "barrens-beetle-pit.landing",
+        "barrens-beetle-pit.way",
+        "barrens-beetle-pit.pit"
+      ],
+      "areas": [],
+      "spawns": [
+        {
+          "creature": "crystal_carapace_beetle",
+          "count": 4,
+          "space": "barrens-beetle-pit.pit",
+          "tiles": {
+            "min": [
+              291,
+              139
+            ],
+            "max": [
+              311,
+              159
+            ]
+          }
+        },
+        {
+          "creature": "crystal_mite",
+          "count": 4,
+          "space": "barrens-beetle-pit.pit",
+          "tiles": {
+            "min": [
+              291,
+              139
+            ],
+            "max": [
+              311,
+              159
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "A storm-ruin cellar the wardens stock with beetles for the young to break their shields on.",
+      "arrivalTile": [
+        301,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          290,
+          138
+        ],
+        "max": [
+          312,
+          173
+        ]
+      }
+    },
+    {
+      "id": "barrens-tower-school",
+      "name": "The Tower School",
+      "kind": "school",
+      "entranceMap": "amethyst_barrens",
+      "entranceProp": "cracked_slab",
+      "key": "",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        315.55,
+        93.05
+      ],
+      "arrival": [
+        315.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          305.55,
+          89.55
+        ],
+        "max": [
+          325.55,
+          118.05
+        ]
+      },
+      "spaces": [
+        "barrens-tower-school.landing",
+        "barrens-tower-school.way",
+        "barrens-tower-school.hall"
+      ],
+      "areas": [
+        {
+          "kind": "fast_reading",
+          "multiplier": 3,
+          "spaces": [
+            "barrens-tower-school.hall"
+          ],
+          "tiles": {
+            "min": [
+              291,
+              74
+            ],
+            "max": [
+              309,
+              87
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Where the wardens learn to read a resonance chart.",
+      "arrivalTile": [
+        300,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          290,
+          73
+        ],
+        "max": [
+          310,
+          101
+        ]
+      }
+    },
+    {
+      "id": "barrens-resonance-spring",
+      "name": "The Resonance Spring",
+      "kind": "spring",
+      "entranceMap": "amethyst_barrens",
+      "entranceProp": "crystal_seam",
+      "key": "",
+      "label": "A seam of crystal that hums at a touch; the rock behind it is thin.",
+      "offset": [
+        26.55,
+        165.05
+      ],
+      "arrival": [
+        26.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          17.55,
+          161.55
+        ],
+        "max": [
+          35.55,
+          189.35
+        ]
+      },
+      "spaces": [
+        "barrens-resonance-spring.landing",
+        "barrens-resonance-spring.way",
+        "barrens-resonance-spring.bath"
+      ],
+      "areas": [
+        {
+          "kind": "fast_regeneration",
+          "multiplier": 3,
+          "spaces": [
+            "barrens-resonance-spring.bath"
+          ],
+          "tiles": {
+            "min": [
+              3,
+              3
+            ],
+            "max": [
+              19,
+              15
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Under the ring the water hums, and wounds close to the hum.",
+      "arrivalTile": [
+        11,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          2,
+          2
+        ],
+        "max": [
+          20,
+          29
+        ]
+      }
+    },
+    {
+      "id": "barrens-bridge-butts",
+      "name": "The Bridge Butts",
+      "kind": "range",
+      "entranceMap": "amethyst_barrens",
+      "entranceProp": "cellar_hatch",
+      "key": "",
+      "label": "A cellar hatch under the leaves.",
+      "offset": [
+        94.55,
+        21.05
+      ],
+      "arrival": [
+        94.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          17.55
+        ],
+        "max": [
+          99.55,
+          62.55
+        ]
+      },
+      "spaces": [
+        "barrens-bridge-butts.landing",
+        "barrens-bridge-butts.way",
+        "barrens-bridge-butts.gallery"
+      ],
+      "areas": [
+        {
+          "kind": "experience",
+          "multiplier": 2,
+          "spaces": [
+            "barrens-bridge-butts.gallery"
+          ],
+          "tiles": {
+            "min": [
+              75,
+              129
+            ],
+            "max": [
+              83,
+              159
+            ]
+          }
+        }
+      ],
+      "spawns": [
+        {
+          "creature": "amethyst_scorpion",
+          "count": 3,
+          "space": "barrens-bridge-butts.gallery",
+          "tiles": {
+            "min": [
+              75,
+              129
+            ],
+            "max": [
+              83,
+              159
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "A gallery under the crystal bridge; scorpions at the far end for slow shots.",
+      "arrivalTile": [
+        79,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          128
+        ],
+        "max": [
+          84,
+          173
+        ]
+      }
+    },
+    {
+      "id": "barrens-massif-reliquary",
+      "name": "The Massif Reliquary",
+      "kind": "reliquary",
+      "entranceMap": "amethyst_barrens",
+      "entranceProp": "shrine_slab",
+      "key": "Resonant Crystal",
+      "label": "A shrine slab with fresh scratches where it has been slid aside.",
+      "offset": [
+        97.55,
+        165.05
+      ],
+      "arrival": [
+        97.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          161.55
+        ],
+        "max": [
+          105.55,
+          189.15
+        ]
+      },
+      "spaces": [
+        "barrens-massif-reliquary.landing",
+        "barrens-massif-reliquary.way",
+        "barrens-massif-reliquary.cella"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "Sealed with a resonant crystal; the massif's own relic room.",
+      "arrivalTile": [
+        82,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          2
+        ],
+        "max": [
+          90,
+          29
+        ]
+      }
+    },
+    {
+      "id": "barrens-storm-well",
+      "name": "The Storm Well",
+      "kind": "nullwell",
+      "entranceMap": "amethyst_barrens",
+      "entranceProp": "cracked_slab",
+      "key": "",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        99.55,
+        93.05
+      ],
+      "arrival": [
+        99.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          89.55
+        ],
+        "max": [
+          109.55,
+          122.55
+        ]
+      },
+      "spaces": [
+        "barrens-storm-well.landing",
+        "barrens-storm-well.way",
+        "barrens-storm-well.well"
+      ],
+      "areas": [
+        {
+          "kind": "no_magic",
+          "multiplier": 2,
+          "spaces": [
+            "barrens-storm-well.well"
+          ],
+          "tiles": {
+            "min": [
+              75,
+              69
+            ],
+            "max": [
+              93,
+              87
+            ]
+          }
+        }
+      ],
+      "spawns": [
+        {
+          "creature": "crystal_cave_spider",
+          "count": 3,
+          "space": "barrens-storm-well.well",
+          "tiles": {
+            "min": [
+              75,
+              69
+            ],
+            "max": [
+              93,
+              87
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "Storm rock swallows spells. The spiders penned here never learnt that.",
+      "arrivalTile": [
+        84,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          68
+        ],
+        "max": [
+          94,
+          101
+        ]
+      }
+    },
+    {
+      "id": "barrens-lens-focus",
+      "name": "The Shard Focus",
+      "kind": "focus",
+      "entranceMap": "resonant_vault",
+      "entranceProp": "crystal_seam",
+      "key": "Iron Rune",
+      "label": "A seam of crystal that hums at a touch; the rock behind it is thin.",
+      "offset": [
+        242.55,
+        93.05
+      ],
+      "arrival": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          233.55,
+          89.55
+        ],
+        "max": [
+          251.55,
+          118.95
+        ]
+      },
+      "spaces": [
+        "barrens-lens-focus.landing",
+        "barrens-lens-focus.way",
+        "barrens-lens-focus.chamber"
+      ],
+      "areas": [
+        {
+          "kind": "cheap_magic",
+          "multiplier": 2,
+          "spaces": [
+            "barrens-lens-focus.chamber"
+          ],
+          "tiles": {
+            "min": [
+              219,
+              73
+            ],
+            "max": [
+              235,
+              87
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Where the shards hang the ether pools; spells cost half.",
+      "arrivalTile": [
+        227,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          218,
+          72
+        ],
+        "max": [
+          236,
+          101
+        ]
+      }
+    },
+    {
+      "id": "barrens-sap",
+      "name": "The Sap",
+      "kind": "tunnel",
+      "entranceMap": "amethyst_barrens",
+      "entranceProp": "sand_sink",
+      "key": "",
+      "label": "A sink in the sand that never fills.",
+      "offset": [
+        21.55,
+        21.05
+      ],
+      "arrival": [
+        21.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          17.55,
+          17.55
+        ],
+        "max": [
+          25.55,
+          88.55
+        ]
+      },
+      "spaces": [
+        "barrens-sap.landing",
+        "barrens-sap.way",
+        "barrens-sap.bore",
+        "barrens-sap.run",
+        "barrens-sap.far"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [
+        {
+          "map": "sunmane_steppe",
+          "spawn": "secret-steppe-sap-mouth",
+          "label": "Up onto the Sunmane Steppe",
+          "space": "barrens-sap.far",
+          "position": [
+            21.55,
+            -4.95,
+            84.55
+          ],
+          "tile": [
+            6,
+            106
+          ]
+        }
+      ],
+      "note": "A sap the wardens drove south under the dust, out onto the steppe.",
+      "arrivalTile": [
+        6,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          2,
+          102
+        ],
+        "max": [
+          10,
+          173
+        ]
+      }
+    },
+    {
+      "id": "barrens-waystone",
+      "name": "The Barrens Waystone",
+      "kind": "waystone",
+      "entranceMap": "amethyst_barrens",
+      "entranceProp": "cracked_slab",
+      "key": "Iron Rune",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        171.55,
+        93.05
+      ],
+      "arrival": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          89.55
+        ],
+        "max": [
+          181.55,
+          122.55
+        ]
+      },
+      "spaces": [
+        "barrens-waystone.landing",
+        "barrens-waystone.way",
+        "barrens-waystone.ring"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [
+        {
+          "map": "whitehorn_range_secrets",
+          "spawn": "horn-waystone",
+          "label": "The Whitehorn Range",
+          "space": "barrens-waystone.ring",
+          "position": [
+            170.04,
+            -4.0,
+            107.91
+          ],
+          "tile": [
+            154,
+            83
+          ]
+        },
+        {
+          "map": "mirrorhold_secrets",
+          "spawn": "mirror-waystone",
+          "label": "Mirrorhold",
+          "space": "barrens-waystone.ring",
+          "position": [
+            175.5,
+            -4.0,
+            109.68
+          ],
+          "tile": [
+            160,
+            81
+          ]
+        },
+        {
+          "map": "sunmane_steppe_secrets",
+          "spawn": "steppe-waystone",
+          "label": "The Sunmane Steppe",
+          "space": "barrens-waystone.ring",
+          "position": [
+            175.5,
+            -4.0,
+            115.42
+          ],
+          "tile": [
+            160,
+            76
+          ]
+        },
+        {
+          "map": "crownwater_secrets",
+          "spawn": "crown-waystone",
+          "label": "Crownwater",
+          "space": "barrens-waystone.ring",
+          "position": [
+            170.04,
+            -4.0,
+            117.19
+          ],
+          "tile": [
+            154,
+            74
+          ]
+        }
+      ],
+      "note": "Four stones under the field station. An iron rune wakes them.",
+      "arrivalTile": [
+        156,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          68
+        ],
+        "max": [
+          166,
+          101
+        ]
+      }
+    },
+    {
+      "id": "barrens-cave-eyrie",
+      "name": "The Geode Eyrie",
+      "kind": "eyrie",
+      "entranceMap": "amethyst_barrens",
+      "entranceProp": "crystal_seam",
+      "key": "",
+      "label": "A seam of crystal that hums at a touch; the rock behind it is thin.",
+      "offset": [
+        312.55,
+        165.05
+      ],
+      "arrival": [
+        312.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          305.55,
+          161.55
+        ],
+        "max": [
+          319.55,
+          186.15
+        ]
+      },
+      "spaces": [
+        "barrens-cave-eyrie.landing",
+        "barrens-cave-eyrie.way",
+        "barrens-cave-eyrie.perch"
+      ],
+      "areas": [
+        {
+          "kind": "fast_regeneration",
+          "multiplier": 2,
+          "spaces": [
+            "barrens-cave-eyrie.perch"
+          ],
+          "tiles": {
+            "min": [
+              291,
+              6
+            ],
+            "max": [
+              303,
+              15
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "A crystal pocket over the cave mouth.",
+      "arrivalTile": [
+        297,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          290,
+          5
+        ],
+        "max": [
+          304,
+          29
+        ]
+      }
+    }
+  ],
+  "secrets": {
+    "region": "amethyst_barrens",
+    "sections": [
+      "barrens-geode-hollow",
+      "barrens-shard-garden",
+      "barrens-station-cache",
+      "barrens-observatory-vault",
+      "barrens-beetle-pit",
+      "barrens-tower-school",
+      "barrens-resonance-spring",
+      "barrens-bridge-butts",
+      "barrens-massif-reliquary",
+      "barrens-storm-well",
+      "barrens-lens-focus",
+      "barrens-sap",
+      "barrens-waystone",
+      "barrens-cave-eyrie"
+    ],
+    "note": "Each section is one secret. The client shows a player only the section they stand in; the server places the arrival, the areas, the spawns and the harvest nodes from this block."
+  },
+  "performance": {
+    "nodes": 139,
+    "meshes": 124,
+    "materials": 18,
+    "images": 53,
+    "textures": 53,
+    "accessors": 620,
+    "bufferViews": 673,
+    "uniqueTriangles": 27732,
+    "uniqueVertices": 38396,
+    "glbBytes": 7560280,
+    "nodeNames": [
+      "Secrets_amethyst_barrens_secrets",
+      "Section_barrens-geode-hollow",
+      "Roof_barrens-geode-hollow_amethyst_storm_rock",
+      "Build_barrens-geode-hollow_amber_resin",
+      "Build_barrens-geode-hollow_amethyst_crystal",
+      "Build_barrens-geode-hollow_amethyst_storm_rock",
+      "Build_barrens-geode-hollow_dark_iron",
+      "Build_barrens-geode-hollow_water_pool",
+      "Walk_barrens-geode-hollow_amethyst_vault_floor",
+      "Section_barrens-shard-garden",
+      "Roof_barrens-shard-garden_amethyst_storm_rock",
+      "Build_barrens-shard-garden_amber_resin",
+      "Build_barrens-shard-garden_amethyst_crystal",
+      "Build_barrens-shard-garden_amethyst_pale_stone",
+      "Build_barrens-shard-garden_amethyst_storm_rock",
+      "Build_barrens-shard-garden_bark_pale",
+      "Build_barrens-shard-garden_dark_iron",
+      "Build_barrens-shard-garden_foliage_green",
+      "Build_barrens-shard-garden_rubble_stone",
+      "Build_barrens-shard-garden_timber_warm",
+      "Build_barrens-shard-garden_water_pool",
+      "Walk_barrens-shard-garden_amethyst_barrens_dust",
+      "Walk_barrens-shard-garden_amethyst_vault_floor",
+      "Section_barrens-station-cache",
+      "Roof_barrens-station-cache_amethyst_storm_rock",
+      "Roof_barrens-station-cache_timber_dark",
+      "Build_barrens-station-cache_amber_resin",
+      "Build_barrens-station-cache_amethyst_crystal",
+      "Build_barrens-station-cache_amethyst_storm_rock",
+      "Build_barrens-station-cache_dark_iron",
+      "Build_barrens-station-cache_timber_dark",
+      "Build_barrens-station-cache_timber_warm",
+      "Walk_barrens-station-cache_amethyst_vault_floor",
+      "Section_barrens-observatory-vault",
+      "Roof_barrens-observatory-vault_amethyst_pale_stone",
+      "Roof_barrens-observatory-vault_amethyst_storm_rock",
+      "Build_barrens-observatory-vault_amber_resin",
+      "Build_barrens-observatory-vault_amethyst_pale_stone",
+      "Build_barrens-observatory-vault_amethyst_storm_rock",
+      "Build_barrens-observatory-vault_carved_wood",
+      "Build_barrens-observatory-vault_dark_iron",
+      "Build_barrens-observatory-vault_timber_dark",
+      "Build_barrens-observatory-vault_timber_warm",
+      "Walk_barrens-observatory-vault_amethyst_pale_stone",
+      "Walk_barrens-observatory-vault_amethyst_vault_floor",
+      "Section_barrens-beetle-pit",
+      "Roof_barrens-beetle-pit_amethyst_storm_rock",
+      "Build_barrens-beetle-pit_amber_resin",
+      "Build_barrens-beetle-pit_amethyst_storm_rock",
+      "Build_barrens-beetle-pit_dark_iron",
+      "Build_barrens-beetle-pit_pale_ashlar",
+      "Build_barrens-beetle-pit_timber_dark",
+      "Walk_barrens-beetle-pit_amethyst_vault_floor",
+      "Section_barrens-tower-school",
+      "Roof_barrens-tower-school_amethyst_storm_rock",
+      "Roof_barrens-tower-school_timber_dark",
+      "Build_barrens-tower-school_amber_resin",
+      "Build_barrens-tower-school_amethyst_storm_rock",
+      "Build_barrens-tower-school_carved_wood",
+      "Build_barrens-tower-school_dark_iron",
+      "Build_barrens-tower-school_timber_dark",
+      "Walk_barrens-tower-school_amethyst_pale_stone",
+      "Walk_barrens-tower-school_amethyst_vault_floor",
+      "Section_barrens-resonance-spring",
+      "Roof_barrens-resonance-spring_amethyst_storm_rock",
+      "Build_barrens-resonance-spring_amber_resin",
+      "Build_barrens-resonance-spring_amethyst_pale_stone",
+      "Build_barrens-resonance-spring_amethyst_storm_rock",
+      "Build_barrens-resonance-spring_dark_iron",
+      "Build_barrens-resonance-spring_water_pool",
+      "Walk_barrens-resonance-spring_amethyst_pale_stone",
+      "Walk_barrens-resonance-spring_amethyst_vault_floor",
+      "Section_barrens-bridge-butts",
+      "Roof_barrens-bridge-butts_amethyst_storm_rock",
+      "Roof_barrens-bridge-butts_timber_dark",
+      "Build_barrens-bridge-butts_amber_resin",
+      "Build_barrens-bridge-butts_amethyst_storm_rock",
+      "Build_barrens-bridge-butts_dark_iron",
+      "Build_barrens-bridge-butts_thatch_reed",
+      "Build_barrens-bridge-butts_timber_dark",
+      "Walk_barrens-bridge-butts_amethyst_vault_floor",
+      "Section_barrens-massif-reliquary",
+      "Roof_barrens-massif-reliquary_amethyst_pale_stone",
+      "Roof_barrens-massif-reliquary_amethyst_storm_rock",
+      "Build_barrens-massif-reliquary_amber_resin",
+      "Build_barrens-massif-reliquary_amethyst_pale_stone",
+      "Build_barrens-massif-reliquary_amethyst_storm_rock",
+      "Build_barrens-massif-reliquary_dark_iron",
+      "Build_barrens-massif-reliquary_gilt_brass",
+      "Walk_barrens-massif-reliquary_amethyst_pale_stone",
+      "Walk_barrens-massif-reliquary_amethyst_vault_floor",
+      "Section_barrens-storm-well",
+      "Roof_barrens-storm-well_amethyst_storm_rock",
+      "Build_barrens-storm-well_amber_resin",
+      "Build_barrens-storm-well_amethyst_pale_stone",
+      "Build_barrens-storm-well_amethyst_storm_rock",
+      "Build_barrens-storm-well_dark_iron",
+      "Walk_barrens-storm-well_amethyst_pale_stone",
+      "Walk_barrens-storm-well_amethyst_vault_floor",
+      "Section_barrens-lens-focus",
+      "Roof_barrens-lens-focus_amethyst_pale_stone",
+      "Roof_barrens-lens-focus_amethyst_storm_rock",
+      "Build_barrens-lens-focus_amber_resin",
+      "Build_barrens-lens-focus_amethyst_crystal",
+      "Build_barrens-lens-focus_amethyst_pale_stone",
+      "Build_barrens-lens-focus_amethyst_storm_rock",
+      "Build_barrens-lens-focus_dark_iron",
+      "Walk_barrens-lens-focus_amethyst_pale_stone",
+      "Walk_barrens-lens-focus_amethyst_vault_floor",
+      "Section_barrens-sap",
+      "Roof_barrens-sap_amethyst_storm_rock",
+      "Build_barrens-sap_amber_resin",
+      "Build_barrens-sap_amethyst_crystal",
+      "Build_barrens-sap_amethyst_storm_rock",
+      "Build_barrens-sap_dark_iron",
+      "Build_barrens-sap_timber_dark",
+      "Walk_barrens-sap_amethyst_vault_floor",
+      "Section_barrens-waystone",
+      "Roof_barrens-waystone_amethyst_pale_stone",
+      "Roof_barrens-waystone_amethyst_storm_rock",
+      "Build_barrens-waystone_amber_resin",
+      "Build_barrens-waystone_amethyst_pale_stone",
+      "Build_barrens-waystone_amethyst_storm_rock",
+      "Build_barrens-waystone_dark_iron",
+      "Build_barrens-waystone_gilt_brass",
+      "Walk_barrens-waystone_amethyst_pale_stone",
+      "Walk_barrens-waystone_amethyst_vault_floor",
+      "Section_barrens-cave-eyrie",
+      "Roof_barrens-cave-eyrie_amethyst_storm_rock",
+      "Build_barrens-cave-eyrie_amber_resin",
+      "Build_barrens-cave-eyrie_amethyst_storm_rock",
+      "Build_barrens-cave-eyrie_bark_dark",
+      "Build_barrens-cave-eyrie_carved_wood",
+      "Build_barrens-cave-eyrie_dark_iron",
+      "Build_barrens-cave-eyrie_rubble_stone",
+      "Build_barrens-cave-eyrie_timber_warm",
+      "Build_barrens-cave-eyrie_water_pool",
+      "Walk_barrens-cave-eyrie_amethyst_pale_stone",
+      "Walk_barrens-cave-eyrie_amethyst_vault_floor"
+    ]
+  },
+  "sources": [
+    {
+      "id": "generator",
+      "file": "_toolkit/secrets_build.py",
+      "role": "reproducible-build",
+      "design": "amethyst_barrens/source/secrets_design.py"
+    }
+  ],
+  "provenance": {
+    "geometry": "authored with the secret rooms kit over the shared toolkit",
+    "license": "CC-BY-4.0"
+  },
+  "productionStatus": "authored-geometry-materials-population",
+  "notes": [
+    "14 secrets of Amethyst Barrens Secrets on one map with void between them; which one a player gets is which feature of the ground above they used."
+  ]
+}

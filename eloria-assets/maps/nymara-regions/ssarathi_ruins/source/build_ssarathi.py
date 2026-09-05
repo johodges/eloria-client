@@ -47,6 +47,8 @@ import ssarathikit as SK
 import populate as POP
 import region as REG
 import transitions as MARCH
+import secretdoors as SD
+import secrets_design as SEC
 
 HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
@@ -79,7 +81,7 @@ CROSSINGS = [
                    radius=30.0, ferry=True, name="The Water Gate"),
 ]
 MARCH_MATERIALS: dict = dict(getattr(REG, "SURFACE_MATERIALS", {}))
-SK.MATERIALS = SK.MATERIALS | MARCH.materials_for("ssarathi_ruins", CROSSINGS)
+SK.MATERIALS = SK.MATERIALS | MARCH.materials_for("ssarathi_ruins", CROSSINGS) | SD.materials(SEC)
 
 
 # --------------------------------------------------------------------------
@@ -120,6 +122,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     # The marches: the neighbours' country coming in along the roads out.
     MARCH.paint(terrain, CROSSINGS, MARCH_MATERIALS, seed, sea_level=REG.SEA_LEVEL, keep=(REG.SILT, REG.JADE_PAVING, REG.MOSS_STONE))
     march = MARCH.dress(build, "ssarathi_ruins", CROSSINGS, seed, sea_level=REG.SEA_LEVEL)
+    SD.dress(build, terrain, SEC, seed, sea_level=getattr(REG, "SEA_LEVEL", 0.0), server_origin=REG.SERVER_ORIGIN)
     build.landmarks.extend(march.landmarks)
     build.notes.extend(march.notes)
 

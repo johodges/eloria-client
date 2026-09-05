@@ -2,7 +2,7 @@
   "uri": "world.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-09-05T08:15:45.088951Z",
+  "validatedAt": "2026-09-05T11:07:26.121447Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
@@ -37,31 +37,25 @@
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/14"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
         "pointer": "/materials/15"
       },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/21"
+        "pointer": "/materials/16"
       },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/27"
+        "pointer": "/materials/22"
       },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/28"
+        "pointer": "/materials/29"
       },
       {
         "code": "UNUSED_OBJECT",
@@ -73,7 +67,13 @@
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/31"
+        "pointer": "/materials/32"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/33"
       }
     ]
   }

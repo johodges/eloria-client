@@ -586,7 +586,20 @@
       "Prop_Stall_3",
       "Prop_Stall_4",
       "Prop_Stall_5",
-      "Prop_Stall_6"
+      "Prop_Stall_6",
+      "Secret_crown_campanile_eyrie",
+      "Secret_crown_campanile_vault",
+      "Secret_crown_cathedral_school",
+      "Secret_crown_cistern_well",
+      "Secret_crown_court_reliquary",
+      "Secret_crown_crab_pit",
+      "Secret_crown_drain",
+      "Secret_crown_kelp_garden",
+      "Secret_crown_lake_focus",
+      "Secret_crown_pavilion_butts",
+      "Secret_crown_pearl_hollow",
+      "Secret_crown_warm_spring",
+      "Secret_crown_waystone"
     ],
     "binary": "collision.bin",
     "format": "EWCG-v2",
@@ -603,8 +616,8 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 332505,
-    "walkableFraction": 0.2505
+    "walkableCells": 332259,
+    "walkableFraction": 0.2504
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -992,6 +1005,279 @@
         252
       ],
       "authority": "server"
+    },
+    {
+      "id": "secret-crown-pearl-hollow",
+      "kind": "secret",
+      "secret": "crown-pearl-hollow",
+      "name": "The Pearl Hollow",
+      "label": "A cave mouth the tide leaves open for an hour a day.",
+      "prop": "tide_cave",
+      "key": "",
+      "destinationMap": "crownwater_secrets",
+      "destinationSpawn": "crown-pearl-hollow",
+      "position": [
+        292.0,
+        3.99,
+        -106.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        466,
+        280
+      ]
+    },
+    {
+      "id": "secret-crown-kelp-garden",
+      "kind": "secret",
+      "secret": "crown-kelp-garden",
+      "name": "The Kelp Garden",
+      "label": "An iron drain grate, its bolts drawn.",
+      "prop": "drain_grate",
+      "key": "",
+      "destinationMap": "crownwater_secrets",
+      "destinationSpawn": "crown-kelp-garden",
+      "position": [
+        98.8,
+        4.69,
+        51.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        273,
+        123
+      ]
+    },
+    {
+      "id": "secret-crown-campanile-vault",
+      "kind": "secret",
+      "secret": "crown-campanile-vault",
+      "name": "The Campanile Vault",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Storage Token",
+      "destinationMap": "crownwater_secrets",
+      "destinationSpawn": "crown-campanile-vault",
+      "position": [
+        173.0,
+        14.33,
+        -142.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        347,
+        316
+      ]
+    },
+    {
+      "id": "secret-crown-crab-pit",
+      "kind": "secret",
+      "secret": "crown-crab-pit",
+      "name": "The Crab Pit",
+      "label": "A cave mouth the tide leaves open for an hour a day.",
+      "prop": "tide_cave",
+      "key": "",
+      "destinationMap": "crownwater_secrets",
+      "destinationSpawn": "crown-crab-pit",
+      "position": [
+        225.05,
+        4.25,
+        -212.76
+      ],
+      "authority": "server",
+      "serverTile": [
+        399,
+        387
+      ]
+    },
+    {
+      "id": "secret-crown-cathedral-school",
+      "kind": "secret",
+      "secret": "crown-cathedral-school",
+      "name": "The Cathedral School",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "",
+      "destinationMap": "crownwater_secrets",
+      "destinationSpawn": "crown-cathedral-school",
+      "position": [
+        88.0,
+        16.99,
+        -124.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        262,
+        298
+      ]
+    },
+    {
+      "id": "secret-crown-warm-spring",
+      "kind": "secret",
+      "secret": "crown-warm-spring",
+      "name": "The Crown Spring",
+      "label": "A cave mouth the tide leaves open for an hour a day.",
+      "prop": "tide_cave",
+      "key": "",
+      "destinationMap": "crownwater_secrets",
+      "destinationSpawn": "crown-warm-spring",
+      "position": [
+        -34.0,
+        4.81,
+        -122.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        140,
+        296
+      ]
+    },
+    {
+      "id": "secret-crown-pavilion-butts",
+      "kind": "secret",
+      "secret": "crown-pavilion-butts",
+      "name": "The Pavilion Butts",
+      "label": "An iron drain grate, its bolts drawn.",
+      "prop": "drain_grate",
+      "key": "",
+      "destinationMap": "crownwater_secrets",
+      "destinationSpawn": "crown-pavilion-butts",
+      "position": [
+        124.0,
+        4.27,
+        -265.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        298,
+        439
+      ]
+    },
+    {
+      "id": "secret-crown-court-reliquary",
+      "kind": "secret",
+      "secret": "crown-court-reliquary",
+      "name": "The Sunken Court Reliquary",
+      "label": "A shrine slab with fresh scratches where it has been slid aside.",
+      "prop": "shrine_slab",
+      "key": "Shorebank Shell",
+      "destinationMap": "crownwater_secrets",
+      "destinationSpawn": "crown-court-reliquary",
+      "position": [
+        34.0,
+        4.68,
+        -70.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        208,
+        244
+      ]
+    },
+    {
+      "id": "secret-crown-cistern-well",
+      "kind": "secret",
+      "secret": "crown-cistern-well",
+      "name": "The Cistern Well",
+      "label": "An iron drain grate, its bolts drawn.",
+      "prop": "drain_grate",
+      "key": "",
+      "destinationMap": "crownwater_secrets",
+      "destinationSpawn": "crown-cistern-well",
+      "position": [
+        -1.34,
+        4.5,
+        -19.95
+      ],
+      "authority": "server",
+      "serverTile": [
+        173,
+        194
+      ]
+    },
+    {
+      "id": "secret-crown-lake-focus",
+      "kind": "secret",
+      "secret": "crown-lake-focus",
+      "name": "The Lake Focus",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Iron Rune",
+      "destinationMap": "crownwater_secrets",
+      "destinationSpawn": "crown-lake-focus",
+      "position": [
+        239.15,
+        4.11,
+        10.05
+      ],
+      "authority": "server",
+      "serverTile": [
+        413,
+        164
+      ]
+    },
+    {
+      "id": "secret-crown-drain",
+      "kind": "secret",
+      "secret": "crown-drain",
+      "name": "The Crown Drain",
+      "label": "An iron drain grate, its bolts drawn.",
+      "prop": "drain_grate",
+      "key": "",
+      "destinationMap": "crownwater_secrets",
+      "destinationSpawn": "crown-drain",
+      "position": [
+        264.0,
+        3.99,
+        -124.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        438,
+        298
+      ]
+    },
+    {
+      "id": "secret-crown-waystone",
+      "kind": "secret",
+      "secret": "crown-waystone",
+      "name": "The Crown Waystone",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Iron Rune",
+      "destinationMap": "crownwater_secrets",
+      "destinationSpawn": "crown-waystone",
+      "position": [
+        2.95,
+        4.01,
+        -212.76
+      ],
+      "authority": "server",
+      "serverTile": [
+        177,
+        387
+      ]
+    },
+    {
+      "id": "secret-crown-campanile-eyrie",
+      "kind": "secret",
+      "secret": "crown-campanile-eyrie",
+      "name": "The Campanile Eyrie",
+      "label": "An arch so grown with vine it reads as hedge.",
+      "prop": "ivy_arch",
+      "key": "",
+      "destinationMap": "crownwater_secrets",
+      "destinationSpawn": "crown-campanile-eyrie",
+      "position": [
+        149.0,
+        16.76,
+        -158.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        323,
+        332
+      ]
     }
   ],
   "npcMarkers": [
@@ -2465,27 +2751,27 @@
     }
   ],
   "performance": {
-    "nodes": 2014,
-    "meshes": 219,
-    "materials": 36,
-    "images": 86,
-    "textures": 86,
-    "accessors": 881,
-    "bufferViews": 967,
-    "uniqueTriangles": 625852,
-    "uniqueVertices": 381231,
-    "glbBytes": 29494788,
-    "instancedTriangles": 1312906,
+    "nodes": 2048,
+    "meshes": 243,
+    "materials": 37,
+    "images": 89,
+    "textures": 89,
+    "accessors": 977,
+    "bufferViews": 1066,
+    "uniqueTriangles": 627040,
+    "uniqueVertices": 382623,
+    "glbBytes": 29583780,
+    "instancedTriangles": 1314094,
     "embeddedTextureBytes": 28749574,
     "textureMemoryBytesUncompressed": 250478592,
-    "placements": 677,
+    "placements": 690,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 332505,
-      "blockedCells": 994599,
-      "walkableFraction": 0.2505,
+      "walkableCells": 332259,
+      "blockedCells": 994845,
+      "walkableFraction": 0.2504,
       "elevatedDecks": 84,
       "steepCells": 32859,
       "reliefMetres": 18.14,
@@ -2510,11 +2796,11 @@
       "march south-quay: 3 road pieces, 17 of manymouth_delta's growth"
     ],
     "lod2": {
-      "glbBytes": 16620312,
-      "nodes": 1819,
-      "uniqueTriangles": 472700,
-      "instancedTriangles": 1149226,
-      "sizeReductionPercent": 43.7,
+      "glbBytes": 16708720,
+      "nodes": 1853,
+      "uniqueTriangles": 473888,
+      "instancedTriangles": 1150414,
+      "sizeReductionPercent": 43.5,
       "triangleReductionPercent": 12.5
     }
   },

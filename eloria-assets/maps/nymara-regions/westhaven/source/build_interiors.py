@@ -30,6 +30,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import preview
 import validate_gltf
+import secretdoors as SD
+import secrets_design as SEC
 from amberwood import gltf as GLTF, materials as MAT, mesh as M
 
 import havenkit as HK
@@ -359,6 +361,8 @@ def main() -> int:
             continue
         t0 = time.time()
         interior = builder_fn(SEED)
+        # a secret whose door is down here rather than on the region above
+        SD.dress_interior(interior, SEC, "westhaven_insides", SEED)
         # Take every surface anchor from the region manifest, so the entrance a
         # section claims is the door the region actually built.
         doors = surface_doors()

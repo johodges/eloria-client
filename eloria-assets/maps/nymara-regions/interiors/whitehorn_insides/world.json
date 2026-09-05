@@ -193,6 +193,8 @@
       "Build_whitehorn_insides_dark_iron",
       "Build_whitehorn_insides_gilt_brass",
       "Build_whitehorn_insides_glacier_ice",
+      "Build_whitehorn_insides_grey_votive_flame",
+      "Build_whitehorn_insides_lime_plaster",
       "Build_whitehorn_insides_pale_ashlar",
       "Build_whitehorn_insides_rubble_stone",
       "Build_whitehorn_insides_snow_pack",
@@ -908,6 +910,24 @@
         166.0
       ],
       "section": "frost_barrow"
+    },
+    {
+      "id": "secret-horn-mine-reliquary",
+      "kind": "secret",
+      "secret": "horn-mine-reliquary",
+      "name": "The Mine Reliquary",
+      "label": "A shrine slab with fresh scratches where it has been slid aside.",
+      "prop": "shrine_slab",
+      "key": "Glacier Salt",
+      "destinationMap": "whitehorn_range_secrets",
+      "destinationSpawn": "horn-mine-reliquary",
+      "position": [
+        174.0,
+        -2.4,
+        26.0
+      ],
+      "space": "whitehorn_mine.pump_room",
+      "authority": "server"
     }
   ],
   "npcMarkers": [
@@ -2535,16 +2555,16 @@
     ]
   },
   "performance": {
-    "nodes": 31,
-    "meshes": 30,
-    "materials": 19,
-    "images": 53,
-    "textures": 53,
-    "accessors": 150,
-    "bufferViews": 203,
-    "uniqueTriangles": 61215,
-    "uniqueVertices": 64266,
-    "glbBytes": 9061676,
+    "nodes": 33,
+    "meshes": 32,
+    "materials": 21,
+    "images": 59,
+    "textures": 59,
+    "accessors": 160,
+    "bufferViews": 219,
+    "uniqueTriangles": 61435,
+    "uniqueVertices": 64430,
+    "glbBytes": 9710472,
     "nodeNames": [
       "Interior_whitehorn_insides",
       "Roof_whitehorn_insides_cliff_rock",
@@ -2559,6 +2579,8 @@
       "Build_whitehorn_insides_dark_iron",
       "Build_whitehorn_insides_gilt_brass",
       "Build_whitehorn_insides_glacier_ice",
+      "Build_whitehorn_insides_grey_votive_flame",
+      "Build_whitehorn_insides_lime_plaster",
       "Build_whitehorn_insides_pale_ashlar",
       "Build_whitehorn_insides_rubble_stone",
       "Build_whitehorn_insides_snow_pack",

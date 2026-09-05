@@ -18,7 +18,9 @@ The generated GLBs are production starters, not final art. Terrain, routes, wate
 How the regions join up - the crossings graph, the marches at every edge, the
 lore sites the NPC threads point at, the small rooms on every insides map and
 the tools that write the server's portal table from all of it - is in
-`CONTINENT.md`.
+`CONTINENT.md`. The hidden layer under each map - the secrets, their
+entrances and what they hold - is in `SECRETS.md`; `SECRETS-REVIEW.md` lists
+what was proposed for them but not built.
 
 ## Rebuild and verify
 

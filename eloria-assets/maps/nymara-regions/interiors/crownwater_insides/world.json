@@ -524,6 +524,24 @@
       ],
       "authority": "server",
       "section": "tide_campanile"
+    },
+    {
+      "id": "secret-crown-customs-cache",
+      "kind": "secret",
+      "secret": "crown-customs-cache",
+      "name": "The Customs Cache",
+      "label": "An iron drain grate, its bolts drawn.",
+      "prop": "drain_grate",
+      "key": "",
+      "destinationMap": "crownwater_secrets",
+      "destinationSpawn": "crown-customs-cache",
+      "position": [
+        252.5,
+        -0.8,
+        295.5
+      ],
+      "space": "customs_hall.bonded_store",
+      "authority": "server"
     }
   ],
   "npcMarkers": [
@@ -1527,9 +1545,9 @@
     "textures": 58,
     "accessors": 145,
     "bufferViews": 203,
-    "uniqueTriangles": 85708,
-    "uniqueVertices": 86321,
-    "glbBytes": 11437072,
+    "uniqueTriangles": 85780,
+    "uniqueVertices": 86465,
+    "glbBytes": 11444416,
     "nodeNames": [
       "Interior_crownwater_insides",
       "Roof_crownwater_insides_ashlar",

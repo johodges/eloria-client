@@ -860,6 +860,24 @@
         329.0
       ],
       "section": "storm_barrow"
+    },
+    {
+      "id": "secret-barrens-lens-focus",
+      "kind": "secret",
+      "secret": "barrens-lens-focus",
+      "name": "The Shard Focus",
+      "label": "A seam of crystal that hums at a touch; the rock behind it is thin.",
+      "prop": "crystal_seam",
+      "key": "Iron Rune",
+      "destinationMap": "amethyst_barrens_secrets",
+      "destinationSpawn": "barrens-lens-focus",
+      "position": [
+        98.0,
+        -4.0,
+        115.0
+      ],
+      "space": "resonant_vault.lens",
+      "authority": "server"
     }
   ],
   "npcMarkers": [
@@ -2883,9 +2901,9 @@
     "textures": 63,
     "accessors": 140,
     "bufferViews": 203,
-    "uniqueTriangles": 141048,
-    "uniqueVertices": 187788,
-    "glbBytes": 16663356,
+    "uniqueTriangles": 141504,
+    "uniqueVertices": 189144,
+    "glbBytes": 16733844,
     "nodeNames": [
       "Interior_amethyst_barrens_insides",
       "Roof_amethyst_barrens_insides_amethyst_storm_rock",

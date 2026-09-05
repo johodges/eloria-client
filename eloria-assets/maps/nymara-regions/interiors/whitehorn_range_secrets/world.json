@@ -1,0 +1,3878 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "whitehorn_range_secrets",
+    "name": "Whitehorn Range Secrets",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        18.0,
+        -5.4,
+        18.0
+      ],
+      "max": [
+        327.1,
+        8.25,
+        188.9
+      ]
+    },
+    "playableBounds": {
+      "min": [
+        18.0,
+        -5.4,
+        18.0
+      ],
+      "max": [
+        327.1,
+        3.0,
+        188.9
+      ]
+    },
+    "interiorClass": "secrets",
+    "parentRegion": "whitehorn_range",
+    "serverCells": 384
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      -16.0,
+      191.0
+    ],
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 0.0,
+    "invertServerY": true
+  },
+  "secret": true,
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "horn-silver-hollow"
+    },
+    {
+      "id": "horn-silver-hollow",
+      "position": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "horn-silver-hollow"
+    },
+    {
+      "id": "horn-cairn-garden",
+      "position": [
+        245.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "horn-cairn-garden"
+    },
+    {
+      "id": "horn-gate-cache",
+      "position": [
+        169.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "horn-gate-cache"
+    },
+    {
+      "id": "horn-temple-vault",
+      "position": [
+        242.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "horn-temple-vault"
+    },
+    {
+      "id": "horn-ram-pit",
+      "position": [
+        316.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "horn-ram-pit"
+    },
+    {
+      "id": "horn-shrine-school",
+      "position": [
+        315.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "horn-shrine-school"
+    },
+    {
+      "id": "horn-cascade-spring",
+      "position": [
+        26.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "horn-cascade-spring"
+    },
+    {
+      "id": "horn-bridge-butts",
+      "position": [
+        94.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "horn-bridge-butts"
+    },
+    {
+      "id": "horn-mine-reliquary",
+      "position": [
+        97.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "horn-mine-reliquary"
+    },
+    {
+      "id": "horn-ice-well",
+      "position": [
+        99.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "horn-ice-well"
+    },
+    {
+      "id": "horn-cairn-focus",
+      "position": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "horn-cairn-focus"
+    },
+    {
+      "id": "horn-icebore",
+      "position": [
+        21.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "horn-icebore"
+    },
+    {
+      "id": "horn-icebore-far",
+      "position": [
+        21.55,
+        -4.95,
+        84.55
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "horn-icebore"
+    },
+    {
+      "id": "horn-waystone",
+      "position": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "horn-waystone"
+    },
+    {
+      "id": "horn-waystone-ring",
+      "position": [
+        171.55,
+        -4.0,
+        107.67
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "horn-waystone"
+    },
+    {
+      "id": "horn-waystone-ring",
+      "position": [
+        176.43,
+        -4.0,
+        112.55
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "horn-waystone"
+    },
+    {
+      "id": "horn-waystone-ring",
+      "position": [
+        171.55,
+        -4.0,
+        117.43
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "horn-waystone"
+    },
+    {
+      "id": "horn-temple-eyrie",
+      "position": [
+        312.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "horn-temple-eyrie"
+    }
+  ],
+  "collision": {
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "width": 624,
+    "height": 348,
+    "cellMetres": 0.5,
+    "originMetres": [
+      16.0,
+      191.0
+    ],
+    "heightEncoding": {
+      "origin": -5.131,
+      "step": 0.1311,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true
+    },
+    "walkableCells": 21112,
+    "blockedCells": 196040,
+    "walkableFraction": 0.0972,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    "nodeNames": [
+      "Secrets_whitehorn_range_secrets",
+      "Section_horn-silver-hollow",
+      "Roof_horn-silver-hollow_cliff_rock",
+      "Build_horn-silver-hollow_amber_resin",
+      "Build_horn-silver-hollow_cliff_rock",
+      "Build_horn-silver-hollow_dark_iron",
+      "Build_horn-silver-hollow_water_pool",
+      "Build_horn-silver-hollow_whitehorn_silver",
+      "Section_horn-cairn-garden",
+      "Roof_horn-cairn-garden_cliff_rock",
+      "Build_horn-cairn-garden_amber_resin",
+      "Build_horn-cairn-garden_bark_pale",
+      "Build_horn-cairn-garden_cliff_rock",
+      "Build_horn-cairn-garden_dark_iron",
+      "Build_horn-cairn-garden_foliage_green",
+      "Build_horn-cairn-garden_pale_ashlar",
+      "Build_horn-cairn-garden_rubble_stone",
+      "Build_horn-cairn-garden_timber_warm",
+      "Build_horn-cairn-garden_water_pool",
+      "Build_horn-cairn-garden_whitehorn_silver",
+      "Section_horn-gate-cache",
+      "Roof_horn-gate-cache_cliff_rock",
+      "Roof_horn-gate-cache_timber_dark",
+      "Build_horn-gate-cache_amber_resin",
+      "Build_horn-gate-cache_cliff_rock",
+      "Build_horn-gate-cache_dark_iron",
+      "Build_horn-gate-cache_timber_dark",
+      "Build_horn-gate-cache_timber_warm",
+      "Build_horn-gate-cache_whitehorn_silver",
+      "Section_horn-temple-vault",
+      "Roof_horn-temple-vault_cliff_rock",
+      "Roof_horn-temple-vault_pale_ashlar",
+      "Build_horn-temple-vault_amber_resin",
+      "Build_horn-temple-vault_carved_wood",
+      "Build_horn-temple-vault_cliff_rock",
+      "Build_horn-temple-vault_dark_iron",
+      "Build_horn-temple-vault_pale_ashlar",
+      "Build_horn-temple-vault_timber_dark",
+      "Build_horn-temple-vault_timber_warm",
+      "Section_horn-ram-pit",
+      "Roof_horn-ram-pit_cliff_rock",
+      "Build_horn-ram-pit_amber_resin",
+      "Build_horn-ram-pit_cliff_rock",
+      "Build_horn-ram-pit_dark_iron",
+      "Build_horn-ram-pit_pale_ashlar",
+      "Build_horn-ram-pit_timber_dark",
+      "Section_horn-shrine-school",
+      "Roof_horn-shrine-school_cliff_rock",
+      "Roof_horn-shrine-school_timber_dark",
+      "Build_horn-shrine-school_amber_resin",
+      "Build_horn-shrine-school_carved_wood",
+      "Build_horn-shrine-school_cliff_rock",
+      "Build_horn-shrine-school_dark_iron",
+      "Build_horn-shrine-school_timber_dark",
+      "Section_horn-cascade-spring",
+      "Roof_horn-cascade-spring_cliff_rock",
+      "Build_horn-cascade-spring_amber_resin",
+      "Build_horn-cascade-spring_cliff_rock",
+      "Build_horn-cascade-spring_dark_iron",
+      "Build_horn-cascade-spring_pale_ashlar",
+      "Build_horn-cascade-spring_water_pool",
+      "Section_horn-bridge-butts",
+      "Roof_horn-bridge-butts_cliff_rock",
+      "Roof_horn-bridge-butts_timber_dark",
+      "Build_horn-bridge-butts_amber_resin",
+      "Build_horn-bridge-butts_cliff_rock",
+      "Build_horn-bridge-butts_dark_iron",
+      "Build_horn-bridge-butts_thatch_reed",
+      "Build_horn-bridge-butts_timber_dark",
+      "Section_horn-mine-reliquary",
+      "Roof_horn-mine-reliquary_cliff_rock",
+      "Roof_horn-mine-reliquary_pale_ashlar",
+      "Build_horn-mine-reliquary_amber_resin",
+      "Build_horn-mine-reliquary_cliff_rock",
+      "Build_horn-mine-reliquary_dark_iron",
+      "Build_horn-mine-reliquary_gilt_brass",
+      "Build_horn-mine-reliquary_pale_ashlar",
+      "Section_horn-ice-well",
+      "Roof_horn-ice-well_cliff_rock",
+      "Build_horn-ice-well_amber_resin",
+      "Build_horn-ice-well_cliff_rock",
+      "Build_horn-ice-well_dark_iron",
+      "Build_horn-ice-well_pale_ashlar",
+      "Section_horn-cairn-focus",
+      "Roof_horn-cairn-focus_cliff_rock",
+      "Roof_horn-cairn-focus_pale_ashlar",
+      "Build_horn-cairn-focus_amber_resin",
+      "Build_horn-cairn-focus_cliff_rock",
+      "Build_horn-cairn-focus_dark_iron",
+      "Build_horn-cairn-focus_glacier_ice",
+      "Build_horn-cairn-focus_pale_ashlar",
+      "Section_horn-icebore",
+      "Roof_horn-icebore_cliff_rock",
+      "Build_horn-icebore_amber_resin",
+      "Build_horn-icebore_cliff_rock",
+      "Build_horn-icebore_dark_iron",
+      "Build_horn-icebore_timber_dark",
+      "Build_horn-icebore_whitehorn_silver",
+      "Section_horn-waystone",
+      "Roof_horn-waystone_cliff_rock",
+      "Roof_horn-waystone_pale_ashlar",
+      "Build_horn-waystone_amber_resin",
+      "Build_horn-waystone_cliff_rock",
+      "Build_horn-waystone_dark_iron",
+      "Build_horn-waystone_gilt_brass",
+      "Build_horn-waystone_pale_ashlar",
+      "Section_horn-temple-eyrie",
+      "Roof_horn-temple-eyrie_cliff_rock",
+      "Build_horn-temple-eyrie_amber_resin",
+      "Build_horn-temple-eyrie_bark_dark",
+      "Build_horn-temple-eyrie_carved_wood",
+      "Build_horn-temple-eyrie_cliff_rock",
+      "Build_horn-temple-eyrie_dark_iron",
+      "Build_horn-temple-eyrie_rubble_stone",
+      "Build_horn-temple-eyrie_timber_warm",
+      "Build_horn-temple-eyrie_water_pool"
+    ]
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Roof_horn-silver-hollow_cliff_rock",
+      "Roof_horn-cairn-garden_cliff_rock",
+      "Roof_horn-gate-cache_cliff_rock",
+      "Roof_horn-gate-cache_timber_dark",
+      "Roof_horn-temple-vault_cliff_rock",
+      "Roof_horn-temple-vault_pale_ashlar",
+      "Roof_horn-ram-pit_cliff_rock",
+      "Roof_horn-shrine-school_cliff_rock",
+      "Roof_horn-shrine-school_timber_dark",
+      "Roof_horn-cascade-spring_cliff_rock",
+      "Roof_horn-bridge-butts_cliff_rock",
+      "Roof_horn-bridge-butts_timber_dark",
+      "Roof_horn-mine-reliquary_cliff_rock",
+      "Roof_horn-mine-reliquary_pale_ashlar",
+      "Roof_horn-ice-well_cliff_rock",
+      "Roof_horn-cairn-focus_cliff_rock",
+      "Roof_horn-cairn-focus_pale_ashlar",
+      "Roof_horn-icebore_cliff_rock",
+      "Roof_horn-waystone_cliff_rock",
+      "Roof_horn-waystone_pale_ashlar",
+      "Roof_horn-temple-eyrie_cliff_rock"
+    ],
+    "reason": "interior lids; the isometric rig frames the floor, not the roof"
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Walk_"
+    ],
+    "agentRadius": 0.4,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 45,
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    }
+  },
+  "portals": [
+    {
+      "id": "exit-horn-silver-hollow",
+      "name": "Back up: The Silverleaf Hollow",
+      "type": "map-transition",
+      "position": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "whitehorn_range",
+      "destinationSpawn": "secret-horn-silver-hollow",
+      "section": "horn-silver-hollow",
+      "authority": "server"
+    },
+    {
+      "id": "exit-horn-cairn-garden",
+      "name": "Back up: The Cairn Garden",
+      "type": "map-transition",
+      "position": [
+        245.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "whitehorn_range",
+      "destinationSpawn": "secret-horn-cairn-garden",
+      "section": "horn-cairn-garden",
+      "authority": "server"
+    },
+    {
+      "id": "exit-horn-gate-cache",
+      "name": "Back up: The South Gate Cache",
+      "type": "map-transition",
+      "position": [
+        169.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "whitehorn_range",
+      "destinationSpawn": "secret-horn-gate-cache",
+      "section": "horn-gate-cache",
+      "authority": "server"
+    },
+    {
+      "id": "exit-horn-temple-vault",
+      "name": "Back up: The Glacier Temple Vault",
+      "type": "map-transition",
+      "position": [
+        242.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "whitehorn_range",
+      "destinationSpawn": "secret-horn-temple-vault",
+      "section": "horn-temple-vault",
+      "authority": "server"
+    },
+    {
+      "id": "exit-horn-ram-pit",
+      "name": "Back up: The Ram Pit",
+      "type": "map-transition",
+      "position": [
+        316.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "whitehorn_range",
+      "destinationSpawn": "secret-horn-ram-pit",
+      "section": "horn-ram-pit",
+      "authority": "server"
+    },
+    {
+      "id": "exit-horn-shrine-school",
+      "name": "Back up: The Snowline School",
+      "type": "map-transition",
+      "position": [
+        315.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "whitehorn_range",
+      "destinationSpawn": "secret-horn-shrine-school",
+      "section": "horn-shrine-school",
+      "authority": "server"
+    },
+    {
+      "id": "exit-horn-cascade-spring",
+      "name": "Back up: The Cascade Spring",
+      "type": "map-transition",
+      "position": [
+        26.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "whitehorn_range",
+      "destinationSpawn": "secret-horn-cascade-spring",
+      "section": "horn-cascade-spring",
+      "authority": "server"
+    },
+    {
+      "id": "exit-horn-bridge-butts",
+      "name": "Back up: The Rope Bridge Butts",
+      "type": "map-transition",
+      "position": [
+        94.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "whitehorn_range",
+      "destinationSpawn": "secret-horn-bridge-butts",
+      "section": "horn-bridge-butts",
+      "authority": "server"
+    },
+    {
+      "id": "exit-horn-mine-reliquary",
+      "name": "Back up: The Mine Reliquary",
+      "type": "map-transition",
+      "position": [
+        97.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "whitehorn_glacier_temple",
+      "destinationSpawn": "secret-horn-mine-reliquary",
+      "section": "horn-mine-reliquary",
+      "authority": "server"
+    },
+    {
+      "id": "exit-horn-ice-well",
+      "name": "Back up: The Ice Well",
+      "type": "map-transition",
+      "position": [
+        99.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "whitehorn_range",
+      "destinationSpawn": "secret-horn-ice-well",
+      "section": "horn-ice-well",
+      "authority": "server"
+    },
+    {
+      "id": "exit-horn-cairn-focus",
+      "name": "Back up: The Cairn Ridge Focus",
+      "type": "map-transition",
+      "position": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "whitehorn_range",
+      "destinationSpawn": "secret-horn-cairn-focus",
+      "section": "horn-cairn-focus",
+      "authority": "server"
+    },
+    {
+      "id": "exit-horn-icebore",
+      "name": "Back up: The Ice-Bore",
+      "type": "map-transition",
+      "position": [
+        21.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "whitehorn_range",
+      "destinationSpawn": "secret-horn-icebore",
+      "section": "horn-icebore",
+      "authority": "server"
+    },
+    {
+      "id": "link-horn-icebore-secret-mirror-icebore-mouth",
+      "name": "Down into Mirrorhold",
+      "type": "map-transition",
+      "position": [
+        21.55,
+        -4.95,
+        84.55
+      ],
+      "radius": 2.5,
+      "destinationMap": "mirrorhold",
+      "destinationSpawn": "secret-mirror-icebore-mouth",
+      "section": "horn-icebore",
+      "authority": "server"
+    },
+    {
+      "id": "exit-horn-waystone",
+      "name": "Back up: The Horn Waystone",
+      "type": "map-transition",
+      "position": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "whitehorn_range",
+      "destinationSpawn": "secret-horn-waystone",
+      "section": "horn-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-horn-waystone-mirror-waystone",
+      "name": "Mirrorhold",
+      "type": "map-transition",
+      "position": [
+        171.55,
+        -4.0,
+        107.67
+      ],
+      "radius": 2.5,
+      "destinationMap": "mirrorhold_secrets",
+      "destinationSpawn": "mirror-waystone",
+      "section": "horn-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-horn-waystone-amber-waystone",
+      "name": "Amberwood",
+      "type": "map-transition",
+      "position": [
+        176.43,
+        -4.0,
+        112.55
+      ],
+      "radius": 2.5,
+      "destinationMap": "amberwood_secrets",
+      "destinationSpawn": "amber-waystone",
+      "section": "horn-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-horn-waystone-barrens-waystone",
+      "name": "The Amethyst Barrens",
+      "type": "map-transition",
+      "position": [
+        171.55,
+        -4.0,
+        117.43
+      ],
+      "radius": 2.5,
+      "destinationMap": "amethyst_barrens_secrets",
+      "destinationSpawn": "barrens-waystone",
+      "section": "horn-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "exit-horn-temple-eyrie",
+      "name": "Back up: The Temple Eyrie",
+      "type": "map-transition",
+      "position": [
+        312.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "whitehorn_range",
+      "destinationSpawn": "secret-horn-temple-eyrie",
+      "section": "horn-temple-eyrie",
+      "authority": "server"
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "horn-silver-hollow-room",
+      "name": "The Silverleaf Hollow",
+      "space": "horn-silver-hollow.landing",
+      "position": [
+        174.55,
+        1.6,
+        21.05
+      ],
+      "section": "horn-silver-hollow"
+    },
+    {
+      "id": "horn-cairn-garden-room",
+      "name": "The Cairn Garden",
+      "space": "horn-cairn-garden.landing",
+      "position": [
+        245.55,
+        1.6,
+        21.05
+      ],
+      "section": "horn-cairn-garden"
+    },
+    {
+      "id": "horn-gate-cache-room",
+      "name": "The South Gate Cache",
+      "space": "horn-gate-cache.landing",
+      "position": [
+        169.55,
+        1.6,
+        165.05
+      ],
+      "section": "horn-gate-cache"
+    },
+    {
+      "id": "horn-temple-vault-room",
+      "name": "The Glacier Temple Vault",
+      "space": "horn-temple-vault.landing",
+      "position": [
+        242.55,
+        1.6,
+        165.05
+      ],
+      "section": "horn-temple-vault"
+    },
+    {
+      "id": "horn-ram-pit-room",
+      "name": "The Ram Pit",
+      "space": "horn-ram-pit.landing",
+      "position": [
+        316.55,
+        1.6,
+        21.05
+      ],
+      "section": "horn-ram-pit"
+    },
+    {
+      "id": "horn-shrine-school-room",
+      "name": "The Snowline School",
+      "space": "horn-shrine-school.landing",
+      "position": [
+        315.55,
+        1.6,
+        93.05
+      ],
+      "section": "horn-shrine-school"
+    },
+    {
+      "id": "horn-cascade-spring-room",
+      "name": "The Cascade Spring",
+      "space": "horn-cascade-spring.landing",
+      "position": [
+        26.55,
+        1.6,
+        165.05
+      ],
+      "section": "horn-cascade-spring"
+    },
+    {
+      "id": "horn-bridge-butts-room",
+      "name": "The Rope Bridge Butts",
+      "space": "horn-bridge-butts.landing",
+      "position": [
+        94.55,
+        1.6,
+        21.05
+      ],
+      "section": "horn-bridge-butts"
+    },
+    {
+      "id": "horn-mine-reliquary-room",
+      "name": "The Mine Reliquary",
+      "space": "horn-mine-reliquary.landing",
+      "position": [
+        97.55,
+        1.6,
+        165.05
+      ],
+      "section": "horn-mine-reliquary"
+    },
+    {
+      "id": "horn-ice-well-room",
+      "name": "The Ice Well",
+      "space": "horn-ice-well.landing",
+      "position": [
+        99.55,
+        1.6,
+        93.05
+      ],
+      "section": "horn-ice-well"
+    },
+    {
+      "id": "horn-cairn-focus-room",
+      "name": "The Cairn Ridge Focus",
+      "space": "horn-cairn-focus.landing",
+      "position": [
+        242.55,
+        1.6,
+        93.05
+      ],
+      "section": "horn-cairn-focus"
+    },
+    {
+      "id": "horn-icebore-room",
+      "name": "The Ice-Bore",
+      "space": "horn-icebore.landing",
+      "position": [
+        21.55,
+        1.6,
+        21.05
+      ],
+      "section": "horn-icebore"
+    },
+    {
+      "id": "horn-waystone-room",
+      "name": "The Horn Waystone",
+      "space": "horn-waystone.landing",
+      "position": [
+        171.55,
+        1.6,
+        93.05
+      ],
+      "section": "horn-waystone"
+    },
+    {
+      "id": "horn-temple-eyrie-room",
+      "name": "The Temple Eyrie",
+      "space": "horn-temple-eyrie.landing",
+      "position": [
+        312.55,
+        1.6,
+        165.05
+      ],
+      "section": "horn-temple-eyrie"
+    }
+  ],
+  "interactives": [
+    {
+      "id": "horn-cairn-garden-well",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Garden well",
+      "text": "Cold water from the garden well.",
+      "position": [
+        245.55,
+        -1.0,
+        42.55
+      ],
+      "section": "horn-cairn-garden",
+      "serverTile": [
+        230,
+        148
+      ]
+    },
+    {
+      "id": "horn-gate-cache-cache",
+      "kind": "storage",
+      "target": "shared",
+      "label": "Cache",
+      "text": "A cache; it opens your shared storage.",
+      "position": [
+        169.55,
+        -2.5,
+        184.65
+      ],
+      "section": "horn-gate-cache",
+      "serverTile": [
+        154,
+        6
+      ]
+    },
+    {
+      "id": "horn-gate-cache-bench",
+      "kind": "crafting_station",
+      "target": "field",
+      "label": "Bench",
+      "text": "A bench for ordinary mixing and crafting.",
+      "position": [
+        165.35,
+        -2.1,
+        184.65
+      ],
+      "section": "horn-gate-cache",
+      "serverTile": [
+        149,
+        6
+      ]
+    },
+    {
+      "id": "horn-temple-vault-strongbox",
+      "kind": "storage",
+      "target": "shared",
+      "label": "Cache",
+      "text": "A cache; it opens your shared storage.",
+      "position": [
+        242.55,
+        -4.5,
+        185.55
+      ],
+      "section": "horn-temple-vault",
+      "serverTile": [
+        227,
+        5
+      ]
+    },
+    {
+      "id": "horn-temple-vault-bench",
+      "kind": "crafting_station",
+      "target": "field",
+      "label": "Bench",
+      "text": "A bench for ordinary mixing and crafting.",
+      "position": [
+        246.95,
+        -4.1,
+        181.15
+      ],
+      "section": "horn-temple-vault",
+      "serverTile": [
+        231,
+        10
+      ]
+    },
+    {
+      "id": "horn-temple-vault-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "The snowline",
+      "text": "The snowline is read against stones the votaries set. What is made under the temple is measured before it is trusted, and counts double.",
+      "position": [
+        242.55,
+        -4.0,
+        176.19
+      ],
+      "section": "horn-temple-vault",
+      "serverTile": [
+        227,
+        15
+      ]
+    },
+    {
+      "id": "horn-ram-pit-post",
+      "kind": "training",
+      "target": "combat",
+      "label": "Training post",
+      "text": "The post lists your recent combat results.",
+      "position": [
+        308.55,
+        -3.0,
+        50.05
+      ],
+      "section": "horn-ram-pit",
+      "serverTile": [
+        293,
+        141
+      ]
+    },
+    {
+      "id": "horn-shrine-school-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "Reading",
+      "text": "The shrine's under-room. Books read three times as fast in the cold quiet.",
+      "position": [
+        308.35,
+        -1.0,
+        116.42
+      ],
+      "section": "horn-shrine-school",
+      "serverTile": [
+        292,
+        75
+      ]
+    },
+    {
+      "id": "horn-shrine-school-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "The snowline",
+      "text": "The snowline moved uphill nineteen days in one year. The cascade froze on the twentieth.",
+      "position": [
+        315.55,
+        -1.0,
+        116.42
+      ],
+      "section": "horn-shrine-school",
+      "serverTile": [
+        300,
+        75
+      ]
+    },
+    {
+      "id": "horn-shrine-school-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "Passes",
+      "text": "Three passes leave the range, each cut level through the rim. The floor is walkable to the edge; the walls are not.",
+      "position": [
+        322.75,
+        -1.0,
+        116.42
+      ],
+      "section": "horn-shrine-school",
+      "serverTile": [
+        307,
+        75
+      ]
+    },
+    {
+      "id": "horn-cascade-spring-spring",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Warm spring",
+      "text": "The spring is warm and mineral; it restores you.",
+      "position": [
+        26.55,
+        -2.0,
+        179.15
+      ],
+      "section": "horn-cascade-spring",
+      "serverTile": [
+        11,
+        12
+      ]
+    },
+    {
+      "id": "horn-bridge-butts-butts",
+      "kind": "training",
+      "target": "combat",
+      "label": "Butts",
+      "text": "The butts list your recent combat results.",
+      "position": [
+        94.55,
+        -1.0,
+        34.55
+      ],
+      "section": "horn-bridge-butts",
+      "serverTile": [
+        79,
+        156
+      ]
+    },
+    {
+      "id": "horn-mine-reliquary-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "Nineteen days",
+      "text": "The cascade watcher counted nineteen days of the snowline climbing. The aqueduct warden counted twenty.",
+      "position": [
+        91.6,
+        -4.0,
+        177.65
+      ],
+      "section": "horn-mine-reliquary",
+      "serverTile": [
+        76,
+        13
+      ]
+    },
+    {
+      "id": "horn-mine-reliquary-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "The mine",
+      "text": "The mine was sunk for silver and found ice. The ice was worth more.",
+      "position": [
+        103.5,
+        -4.0,
+        177.65
+      ],
+      "section": "horn-mine-reliquary",
+      "serverTile": [
+        88,
+        13
+      ]
+    },
+    {
+      "id": "horn-mine-reliquary-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "The temple",
+      "text": "The glacier temple's altar is a block of the glacier. It has not moved in a century; the glacier has.",
+      "position": [
+        91.6,
+        -4.0,
+        181.5
+      ],
+      "section": "horn-mine-reliquary",
+      "serverTile": [
+        76,
+        10
+      ]
+    },
+    {
+      "id": "horn-mine-reliquary-relic",
+      "kind": "scenery_effect",
+      "target": "relic",
+      "label": "The Mine Reliquary",
+      "text": "The miners' relic room, opened with glacier salt.",
+      "position": [
+        97.55,
+        -3.8,
+        186.05
+      ],
+      "section": "horn-mine-reliquary",
+      "serverTile": [
+        82,
+        5
+      ]
+    },
+    {
+      "id": "horn-ice-well-post",
+      "kind": "training",
+      "target": "combat",
+      "label": "Ward post",
+      "text": "Nothing casts within these stones. The post lists your recent combat results.",
+      "position": [
+        91.9,
+        -4.0,
+        104.9
+      ],
+      "section": "horn-ice-well",
+      "serverTile": [
+        76,
+        86
+      ]
+    },
+    {
+      "id": "horn-temple-eyrie-water",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Cistern",
+      "text": "Rainwater from the cistern.",
+      "position": [
+        315.55,
+        4.0,
+        180.35
+      ],
+      "section": "horn-temple-eyrie",
+      "serverTile": [
+        300,
+        11
+      ]
+    },
+    {
+      "id": "horn-temple-eyrie-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "Breath",
+      "text": "Rest here and the breath comes back twice as fast.",
+      "position": [
+        308.95,
+        4.0,
+        184.25
+      ],
+      "section": "horn-temple-eyrie",
+      "serverTile": [
+        293,
+        7
+      ]
+    },
+    {
+      "id": "horn-temple-eyrie-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "Cold",
+      "text": "Cold protection is a spell and a cape. The range takes a point of health an hour from anyone with neither.",
+      "position": [
+        311.15,
+        4.0,
+        184.25
+      ],
+      "section": "horn-temple-eyrie",
+      "serverTile": [
+        295,
+        7
+      ]
+    }
+  ],
+  "npcMarkers": [],
+  "harvestables": [
+    {
+      "id": "horn-silver-hollow-node-00",
+      "resource": "Whitehorn Silverleaf",
+      "position": [
+        177.79,
+        -4.0,
+        46.23
+      ],
+      "section": "horn-silver-hollow",
+      "serverTile": [
+        162,
+        145
+      ]
+    },
+    {
+      "id": "horn-silver-hollow-node-01",
+      "resource": "Whitehorn Silverleaf",
+      "position": [
+        168.24,
+        -4.0,
+        44.35
+      ],
+      "section": "horn-silver-hollow",
+      "serverTile": [
+        152,
+        147
+      ]
+    },
+    {
+      "id": "horn-silver-hollow-node-02",
+      "resource": "Whitehorn Silverleaf",
+      "position": [
+        179.56,
+        -4.0,
+        36.66
+      ],
+      "section": "horn-silver-hollow",
+      "serverTile": [
+        164,
+        154
+      ]
+    },
+    {
+      "id": "horn-silver-hollow-node-03",
+      "resource": "Whitehorn Silverleaf",
+      "position": [
+        175.54,
+        -4.0,
+        48.74
+      ],
+      "section": "horn-silver-hollow",
+      "serverTile": [
+        160,
+        142
+      ]
+    },
+    {
+      "id": "horn-silver-hollow-node-04",
+      "resource": "Whitehorn Silverleaf",
+      "position": [
+        168.27,
+        -4.0,
+        39.56
+      ],
+      "section": "horn-silver-hollow",
+      "serverTile": [
+        152,
+        151
+      ]
+    },
+    {
+      "id": "horn-silver-hollow-node-05",
+      "resource": "Glacier Salt",
+      "position": [
+        178.62,
+        -4.0,
+        42.51
+      ],
+      "section": "horn-silver-hollow",
+      "serverTile": [
+        163,
+        148
+      ]
+    },
+    {
+      "id": "horn-silver-hollow-node-06",
+      "resource": "Glacier Salt",
+      "position": [
+        171.49,
+        -4.0,
+        49.12
+      ],
+      "section": "horn-silver-hollow",
+      "serverTile": [
+        155,
+        142
+      ]
+    },
+    {
+      "id": "horn-silver-hollow-node-07",
+      "resource": "Glacier Salt",
+      "position": [
+        171.92,
+        -4.0,
+        35.45
+      ],
+      "section": "horn-silver-hollow",
+      "serverTile": [
+        156,
+        156
+      ]
+    },
+    {
+      "id": "horn-silver-hollow-node-08",
+      "resource": "Glacier Salt",
+      "position": [
+        179.33,
+        -4.0,
+        45.8
+      ],
+      "section": "horn-silver-hollow",
+      "serverTile": [
+        163,
+        145
+      ]
+    },
+    {
+      "id": "horn-cairn-garden-node-00",
+      "resource": "Frost Reed",
+      "position": [
+        237.96,
+        -1.5,
+        37.35
+      ],
+      "section": "horn-cairn-garden",
+      "serverTile": [
+        222,
+        154
+      ]
+    },
+    {
+      "id": "horn-cairn-garden-node-01",
+      "resource": "Frost Reed",
+      "position": [
+        239.5,
+        -1.5,
+        37.35
+      ],
+      "section": "horn-cairn-garden",
+      "serverTile": [
+        224,
+        154
+      ]
+    },
+    {
+      "id": "horn-cairn-garden-node-02",
+      "resource": "Frost Reed",
+      "position": [
+        241.04,
+        -1.5,
+        37.35
+      ],
+      "section": "horn-cairn-garden",
+      "serverTile": [
+        225,
+        154
+      ]
+    },
+    {
+      "id": "horn-cairn-garden-node-03",
+      "resource": "Frost Reed",
+      "position": [
+        237.96,
+        -1.5,
+        38.95
+      ],
+      "section": "horn-cairn-garden",
+      "serverTile": [
+        222,
+        152
+      ]
+    },
+    {
+      "id": "horn-cairn-garden-node-04",
+      "resource": "Copper Bloom",
+      "position": [
+        244.01,
+        -1.5,
+        37.35
+      ],
+      "section": "horn-cairn-garden",
+      "serverTile": [
+        228,
+        154
+      ]
+    },
+    {
+      "id": "horn-cairn-garden-node-05",
+      "resource": "Copper Bloom",
+      "position": [
+        245.55,
+        -1.5,
+        37.35
+      ],
+      "section": "horn-cairn-garden",
+      "serverTile": [
+        230,
+        154
+      ]
+    },
+    {
+      "id": "horn-cairn-garden-node-06",
+      "resource": "Copper Bloom",
+      "position": [
+        247.09,
+        -1.5,
+        37.35
+      ],
+      "section": "horn-cairn-garden",
+      "serverTile": [
+        231,
+        154
+      ]
+    },
+    {
+      "id": "horn-cairn-garden-node-07",
+      "resource": "Copper Bloom",
+      "position": [
+        244.01,
+        -1.5,
+        38.95
+      ],
+      "section": "horn-cairn-garden",
+      "serverTile": [
+        228,
+        152
+      ]
+    },
+    {
+      "id": "horn-cairn-garden-node-08",
+      "resource": "Slate",
+      "position": [
+        250.06,
+        -1.5,
+        37.35
+      ],
+      "section": "horn-cairn-garden",
+      "serverTile": [
+        234,
+        154
+      ]
+    },
+    {
+      "id": "horn-cairn-garden-node-09",
+      "resource": "Slate",
+      "position": [
+        251.6,
+        -1.5,
+        37.35
+      ],
+      "section": "horn-cairn-garden",
+      "serverTile": [
+        236,
+        154
+      ]
+    },
+    {
+      "id": "horn-cairn-garden-node-10",
+      "resource": "Slate",
+      "position": [
+        253.14,
+        -1.5,
+        37.35
+      ],
+      "section": "horn-cairn-garden",
+      "serverTile": [
+        237,
+        154
+      ]
+    },
+    {
+      "id": "horn-cairn-garden-node-11",
+      "resource": "Glacier Salt",
+      "position": [
+        237.96,
+        -1.5,
+        46.15
+      ],
+      "section": "horn-cairn-garden",
+      "serverTile": [
+        222,
+        145
+      ]
+    },
+    {
+      "id": "horn-cairn-garden-node-12",
+      "resource": "Glacier Salt",
+      "position": [
+        239.5,
+        -1.5,
+        46.15
+      ],
+      "section": "horn-cairn-garden",
+      "serverTile": [
+        224,
+        145
+      ]
+    },
+    {
+      "id": "horn-cairn-garden-node-13",
+      "resource": "Glacier Salt",
+      "position": [
+        241.04,
+        -1.5,
+        46.15
+      ],
+      "section": "horn-cairn-garden",
+      "serverTile": [
+        225,
+        145
+      ]
+    },
+    {
+      "id": "horn-gate-cache-node-00",
+      "resource": "Iron Ore",
+      "position": [
+        164.3,
+        -3.0,
+        177.3
+      ],
+      "section": "horn-gate-cache",
+      "serverTile": [
+        148,
+        14
+      ]
+    },
+    {
+      "id": "horn-gate-cache-node-01",
+      "resource": "Iron Ore",
+      "position": [
+        167.8,
+        -3.0,
+        177.3
+      ],
+      "section": "horn-gate-cache",
+      "serverTile": [
+        152,
+        14
+      ]
+    },
+    {
+      "id": "horn-gate-cache-node-02",
+      "resource": "Iron Ore",
+      "position": [
+        171.3,
+        -3.0,
+        177.3
+      ],
+      "section": "horn-gate-cache",
+      "serverTile": [
+        155,
+        14
+      ]
+    },
+    {
+      "id": "horn-gate-cache-node-03",
+      "resource": "Slate",
+      "position": [
+        174.8,
+        -3.0,
+        177.3
+      ],
+      "section": "horn-gate-cache",
+      "serverTile": [
+        159,
+        14
+      ]
+    },
+    {
+      "id": "horn-gate-cache-node-04",
+      "resource": "Slate",
+      "position": [
+        164.3,
+        -3.0,
+        179.1
+      ],
+      "section": "horn-gate-cache",
+      "serverTile": [
+        148,
+        12
+      ]
+    },
+    {
+      "id": "horn-gate-cache-node-05",
+      "resource": "Slate",
+      "position": [
+        167.8,
+        -3.0,
+        179.1
+      ],
+      "section": "horn-gate-cache",
+      "serverTile": [
+        152,
+        12
+      ]
+    },
+    {
+      "id": "horn-icebore-node-00",
+      "resource": "Glacier Salt",
+      "position": [
+        23.05,
+        -5.0,
+        40.55
+      ],
+      "section": "horn-icebore",
+      "serverTile": [
+        7,
+        150
+      ]
+    },
+    {
+      "id": "horn-icebore-node-01",
+      "resource": "Glacier Salt",
+      "position": [
+        20.05,
+        -5.0,
+        46.88
+      ],
+      "section": "horn-icebore",
+      "serverTile": [
+        4,
+        144
+      ]
+    },
+    {
+      "id": "horn-icebore-node-02",
+      "resource": "Glacier Salt",
+      "position": [
+        23.05,
+        -5.0,
+        53.22
+      ],
+      "section": "horn-icebore",
+      "serverTile": [
+        7,
+        138
+      ]
+    },
+    {
+      "id": "horn-icebore-node-03",
+      "resource": "Frost Reed",
+      "position": [
+        20.05,
+        -5.0,
+        59.55
+      ],
+      "section": "horn-icebore",
+      "serverTile": [
+        4,
+        131
+      ]
+    },
+    {
+      "id": "horn-icebore-node-04",
+      "resource": "Frost Reed",
+      "position": [
+        23.05,
+        -5.0,
+        65.88
+      ],
+      "section": "horn-icebore",
+      "serverTile": [
+        7,
+        125
+      ]
+    },
+    {
+      "id": "horn-icebore-node-05",
+      "resource": "Frost Reed",
+      "position": [
+        20.05,
+        -5.0,
+        72.22
+      ],
+      "section": "horn-icebore",
+      "serverTile": [
+        4,
+        119
+      ]
+    }
+  ],
+  "environment": {
+    "sky": "none",
+    "ambient": {
+      "colour": [
+        0.1,
+        0.1,
+        0.12
+      ],
+      "energy": 0.55
+    },
+    "fog": {
+      "enabled": true,
+      "colour": [
+        0.02,
+        0.02,
+        0.03
+      ],
+      "begin": 14.0,
+      "end": 48.0
+    },
+    "openToSky": [
+      "horn-cairn-garden.court",
+      "horn-temple-eyrie.perch"
+    ],
+    "lights": [
+      {
+        "id": "lamp-000",
+        "kind": "point",
+        "position": [
+          174.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-001",
+        "kind": "point",
+        "position": [
+          168.55,
+          -0.62,
+          43.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-002",
+        "kind": "point",
+        "position": [
+          180.55,
+          -0.62,
+          43.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-003",
+        "kind": "point",
+        "position": [
+          245.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-004",
+        "kind": "point",
+        "position": [
+          169.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-005",
+        "kind": "point",
+        "position": [
+          169.55,
+          -0.22,
+          181.15
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-006",
+        "kind": "point",
+        "position": [
+          239.35,
+          -3.4,
+          176.75
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-007",
+        "kind": "point",
+        "position": [
+          245.75,
+          -3.4,
+          176.75
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-008",
+        "kind": "point",
+        "position": [
+          242.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-009",
+        "kind": "point",
+        "position": [
+          316.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-010",
+        "kind": "point",
+        "position": [
+          311.55,
+          -0.12,
+          41.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-011",
+        "kind": "point",
+        "position": [
+          321.55,
+          -0.12,
+          41.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-012",
+        "kind": "point",
+        "position": [
+          315.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-013",
+        "kind": "point",
+        "position": [
+          315.55,
+          1.18,
+          110.3
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-014",
+        "kind": "point",
+        "position": [
+          26.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-015",
+        "kind": "point",
+        "position": [
+          26.55,
+          0.58,
+          181.95
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-016",
+        "kind": "point",
+        "position": [
+          94.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-017",
+        "kind": "point",
+        "position": [
+          94.55,
+          0.98,
+          46.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-018",
+        "kind": "point",
+        "position": [
+          93.35,
+          -3.4,
+          185.35
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-019",
+        "kind": "point",
+        "position": [
+          101.75,
+          -3.4,
+          185.35
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-020",
+        "kind": "point",
+        "position": [
+          97.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-021",
+        "kind": "point",
+        "position": [
+          99.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-022",
+        "kind": "point",
+        "position": [
+          99.55,
+          -0.62,
+          112.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-023",
+        "kind": "point",
+        "position": [
+          245.94,
+          -1.4,
+          114.14
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-024",
+        "kind": "point",
+        "position": [
+          239.16,
+          -1.4,
+          114.14
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-025",
+        "kind": "point",
+        "position": [
+          239.16,
+          -1.4,
+          107.36
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-026",
+        "kind": "point",
+        "position": [
+          245.94,
+          -1.4,
+          107.36
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-027",
+        "kind": "point",
+        "position": [
+          242.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-028",
+        "kind": "point",
+        "position": [
+          21.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-029",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          43.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-030",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          57.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-031",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          71.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-032",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          85.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-033",
+        "kind": "point",
+        "position": [
+          171.55,
+          -2.4,
+          112.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-034",
+        "kind": "point",
+        "position": [
+          171.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-035",
+        "kind": "point",
+        "position": [
+          312.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      }
+    ]
+  },
+  "spaces": {
+    "horn-silver-hollow.landing": {
+      "x0": 172.05,
+      "z0": 18.55,
+      "x1": 177.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "horn-silver-hollow.way": {
+      "x0": 172.75,
+      "z0": 21.75,
+      "x1": 176.35,
+      "z1": 33.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "horn-silver-hollow.hollow": {
+      "x0": 162.55,
+      "z0": 31.55,
+      "x1": 186.55,
+      "z1": 55.55,
+      "floor": -4.0,
+      "height": 8.0
+    },
+    "horn-cairn-garden.landing": {
+      "x0": 243.05,
+      "z0": 18.55,
+      "x1": 248.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "horn-cairn-garden.way": {
+      "x0": 243.75,
+      "z0": 21.75,
+      "x1": 247.35,
+      "z1": 33.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "horn-cairn-garden.court": {
+      "x0": 234.55,
+      "z0": 31.55,
+      "x1": 256.55,
+      "z1": 53.55,
+      "floor": -2.0,
+      "height": 6.0
+    },
+    "horn-gate-cache.landing": {
+      "x0": 167.05,
+      "z0": 162.55,
+      "x1": 172.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "horn-gate-cache.way": {
+      "x0": 167.75,
+      "z0": 165.75,
+      "x1": 171.35,
+      "z1": 177.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "horn-gate-cache.cellar": {
+      "x0": 162.55,
+      "z0": 175.55,
+      "x1": 176.55,
+      "z1": 186.75,
+      "floor": -3.0,
+      "height": 4.4
+    },
+    "horn-temple-vault.landing": {
+      "x0": 240.05,
+      "z0": 162.55,
+      "x1": 245.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "horn-temple-vault.way": {
+      "x0": 240.75,
+      "z0": 165.75,
+      "x1": 244.35,
+      "z1": 177.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "horn-temple-vault.strongroom": {
+      "x0": 234.55,
+      "z0": 175.55,
+      "x1": 250.55,
+      "z1": 186.75,
+      "floor": -5.0,
+      "height": 5.0
+    },
+    "horn-ram-pit.landing": {
+      "x0": 314.05,
+      "z0": 18.55,
+      "x1": 319.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "horn-ram-pit.way": {
+      "x0": 314.75,
+      "z0": 21.75,
+      "x1": 318.35,
+      "z1": 33.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "horn-ram-pit.pit": {
+      "x0": 306.55,
+      "z0": 31.55,
+      "x1": 326.55,
+      "z1": 51.55,
+      "floor": -4.0,
+      "height": 7.0
+    },
+    "horn-shrine-school.landing": {
+      "x0": 313.05,
+      "z0": 90.55,
+      "x1": 318.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "horn-shrine-school.way": {
+      "x0": 313.75,
+      "z0": 93.75,
+      "x1": 317.35,
+      "z1": 105.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "horn-shrine-school.hall": {
+      "x0": 306.55,
+      "z0": 103.55,
+      "x1": 324.55,
+      "z1": 117.05,
+      "floor": -2.0,
+      "height": 5.2
+    },
+    "horn-cascade-spring.landing": {
+      "x0": 24.05,
+      "z0": 162.55,
+      "x1": 29.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "horn-cascade-spring.way": {
+      "x0": 24.75,
+      "z0": 165.75,
+      "x1": 28.35,
+      "z1": 177.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "horn-cascade-spring.bath": {
+      "x0": 18.55,
+      "z0": 175.55,
+      "x1": 34.55,
+      "z1": 188.35,
+      "floor": -3.0,
+      "height": 6.0
+    },
+    "horn-bridge-butts.landing": {
+      "x0": 92.05,
+      "z0": 18.55,
+      "x1": 97.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "horn-bridge-butts.way": {
+      "x0": 92.75,
+      "z0": 21.75,
+      "x1": 96.35,
+      "z1": 33.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "horn-bridge-butts.gallery": {
+      "x0": 90.55,
+      "z0": 31.55,
+      "x1": 98.55,
+      "z1": 61.55,
+      "floor": -2.0,
+      "height": 5.0
+    },
+    "horn-mine-reliquary.landing": {
+      "x0": 95.05,
+      "z0": 162.55,
+      "x1": 100.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "horn-mine-reliquary.way": {
+      "x0": 95.75,
+      "z0": 165.75,
+      "x1": 99.35,
+      "z1": 177.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "horn-mine-reliquary.cella": {
+      "x0": 90.55,
+      "z0": 175.55,
+      "x1": 104.55,
+      "z1": 188.15,
+      "floor": -5.0,
+      "height": 6.0
+    },
+    "horn-ice-well.landing": {
+      "x0": 97.05,
+      "z0": 90.55,
+      "x1": 102.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "horn-ice-well.way": {
+      "x0": 97.75,
+      "z0": 93.75,
+      "x1": 101.35,
+      "z1": 105.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "horn-ice-well.well": {
+      "x0": 90.55,
+      "z0": 103.55,
+      "x1": 108.55,
+      "z1": 121.55,
+      "floor": -5.0,
+      "height": 8.0
+    },
+    "horn-cairn-focus.landing": {
+      "x0": 240.05,
+      "z0": 90.55,
+      "x1": 245.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "horn-cairn-focus.way": {
+      "x0": 240.75,
+      "z0": 93.75,
+      "x1": 244.35,
+      "z1": 105.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "horn-cairn-focus.chamber": {
+      "x0": 234.55,
+      "z0": 103.55,
+      "x1": 250.55,
+      "z1": 117.95,
+      "floor": -3.0,
+      "height": 6.4
+    },
+    "horn-icebore.landing": {
+      "x0": 19.05,
+      "z0": 18.55,
+      "x1": 24.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "horn-icebore.way": {
+      "x0": 19.75,
+      "z0": 21.75,
+      "x1": 23.35,
+      "z1": 33.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "horn-icebore.bore": {
+      "x0": 18.65,
+      "z0": 31.55,
+      "x1": 24.45,
+      "z1": 37.55,
+      "floor": -5.0,
+      "height": 4.0
+    },
+    "horn-icebore.run": {
+      "x0": 19.45,
+      "z0": 35.45,
+      "x1": 23.65,
+      "z1": 83.65,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "horn-icebore.far": {
+      "x0": 18.55,
+      "z0": 81.55,
+      "x1": 24.55,
+      "z1": 87.55,
+      "floor": -5.0,
+      "height": 4.2
+    },
+    "horn-waystone.landing": {
+      "x0": 169.05,
+      "z0": 90.55,
+      "x1": 174.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "horn-waystone.way": {
+      "x0": 169.75,
+      "z0": 93.75,
+      "x1": 173.35,
+      "z1": 105.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "horn-waystone.ring": {
+      "x0": 162.55,
+      "z0": 103.55,
+      "x1": 180.55,
+      "z1": 121.55,
+      "floor": -4.0,
+      "height": 7.0
+    },
+    "horn-temple-eyrie.landing": {
+      "x0": 310.05,
+      "z0": 162.55,
+      "x1": 315.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "horn-temple-eyrie.way": {
+      "x0": 310.75,
+      "z0": 165.75,
+      "x1": 314.35,
+      "z1": 177.35,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "horn-temple-eyrie.perch": {
+      "x0": 306.55,
+      "z0": 175.55,
+      "x1": 318.55,
+      "z1": 185.15,
+      "floor": 3.0,
+      "height": 4.6
+    }
+  },
+  "sections": [
+    {
+      "id": "horn-silver-hollow",
+      "name": "The Silverleaf Hollow",
+      "kind": "grotto",
+      "entranceMap": "whitehorn_range",
+      "entranceProp": "ice_crack",
+      "key": "",
+      "label": "A crack in the ice, wider than it looks, and warm air rising from it.",
+      "offset": [
+        174.55,
+        21.05
+      ],
+      "arrival": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          17.55
+        ],
+        "max": [
+          187.55,
+          56.55
+        ]
+      },
+      "spaces": [
+        "horn-silver-hollow.landing",
+        "horn-silver-hollow.way",
+        "horn-silver-hollow.hollow"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "A hollow behind the frozen cascade where the silverleaf grows out of the wind.",
+      "arrivalTile": [
+        159,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          134
+        ],
+        "max": [
+          172,
+          173
+        ]
+      }
+    },
+    {
+      "id": "horn-cairn-garden",
+      "name": "The Cairn Garden",
+      "kind": "garden",
+      "entranceMap": "whitehorn_range",
+      "entranceProp": "cairn",
+      "key": "",
+      "label": "A cairn built over nothing, or over something.",
+      "offset": [
+        245.55,
+        21.05
+      ],
+      "arrival": [
+        245.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          233.55,
+          17.55
+        ],
+        "max": [
+          257.55,
+          54.55
+        ]
+      },
+      "spaces": [
+        "horn-cairn-garden.landing",
+        "horn-cairn-garden.way",
+        "horn-cairn-garden.court"
+      ],
+      "areas": [
+        {
+          "kind": "harvest_speed",
+          "multiplier": 2,
+          "spaces": [
+            "horn-cairn-garden.court"
+          ],
+          "tiles": {
+            "min": [
+              219,
+              137
+            ],
+            "max": [
+              241,
+              159
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "A walled garden under the lower cairns, warmer than the field it hides in.",
+      "arrivalTile": [
+        230,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          218,
+          136
+        ],
+        "max": [
+          242,
+          173
+        ]
+      }
+    },
+    {
+      "id": "horn-gate-cache",
+      "name": "The South Gate Cache",
+      "kind": "cache",
+      "entranceMap": "whitehorn_range",
+      "entranceProp": "cellar_hatch",
+      "key": "",
+      "label": "A cellar hatch under the leaves.",
+      "offset": [
+        169.55,
+        165.05
+      ],
+      "arrival": [
+        169.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          161.55
+        ],
+        "max": [
+          177.55,
+          187.75
+        ]
+      },
+      "spaces": [
+        "horn-gate-cache.landing",
+        "horn-gate-cache.way",
+        "horn-gate-cache.cellar"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "The gate's cellar: chest, bench and the ore the gate-keepers trade on the side.",
+      "arrivalTile": [
+        154,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          3
+        ],
+        "max": [
+          162,
+          29
+        ]
+      }
+    },
+    {
+      "id": "horn-temple-vault",
+      "name": "The Glacier Temple Vault",
+      "kind": "vault",
+      "entranceMap": "whitehorn_range",
+      "entranceProp": "cracked_slab",
+      "key": "Storage Token",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        242.55,
+        165.05
+      ],
+      "arrival": [
+        242.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          233.55,
+          161.55
+        ],
+        "max": [
+          251.55,
+          187.75
+        ]
+      },
+      "spaces": [
+        "horn-temple-vault.landing",
+        "horn-temple-vault.way",
+        "horn-temple-vault.strongroom"
+      ],
+      "areas": [
+        {
+          "kind": "experience",
+          "multiplier": 2,
+          "spaces": [
+            "horn-temple-vault.strongroom"
+          ],
+          "tiles": {
+            "min": [
+              219,
+              4
+            ],
+            "max": [
+              235,
+              15
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "The votaries' strongroom under the temple.",
+      "arrivalTile": [
+        227,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          218,
+          3
+        ],
+        "max": [
+          236,
+          29
+        ]
+      }
+    },
+    {
+      "id": "horn-ram-pit",
+      "name": "The Ram Pit",
+      "kind": "pen",
+      "entranceMap": "whitehorn_range",
+      "entranceProp": "ice_crack",
+      "key": "",
+      "label": "A crack in the ice, wider than it looks, and warm air rising from it.",
+      "offset": [
+        316.55,
+        21.05
+      ],
+      "arrival": [
+        316.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          305.55,
+          17.55
+        ],
+        "max": [
+          327.55,
+          52.55
+        ]
+      },
+      "spaces": [
+        "horn-ram-pit.landing",
+        "horn-ram-pit.way",
+        "horn-ram-pit.pit"
+      ],
+      "areas": [],
+      "spawns": [
+        {
+          "creature": "glacier_ram",
+          "count": 4,
+          "space": "horn-ram-pit.pit",
+          "tiles": {
+            "min": [
+              291,
+              139
+            ],
+            "max": [
+              311,
+              159
+            ]
+          }
+        },
+        {
+          "creature": "whitehorn_yak",
+          "count": 3,
+          "space": "horn-ram-pit.pit",
+          "tiles": {
+            "min": [
+              291,
+              139
+            ],
+            "max": [
+              311,
+              159
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "A crevasse floor where the rangers pen rams for the young to learn horn on.",
+      "arrivalTile": [
+        301,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          290,
+          138
+        ],
+        "max": [
+          312,
+          173
+        ]
+      }
+    },
+    {
+      "id": "horn-shrine-school",
+      "name": "The Snowline School",
+      "kind": "school",
+      "entranceMap": "whitehorn_range",
+      "entranceProp": "cracked_slab",
+      "key": "",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        315.55,
+        93.05
+      ],
+      "arrival": [
+        315.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          305.55,
+          89.55
+        ],
+        "max": [
+          325.55,
+          118.05
+        ]
+      },
+      "spaces": [
+        "horn-shrine-school.landing",
+        "horn-shrine-school.way",
+        "horn-shrine-school.hall"
+      ],
+      "areas": [
+        {
+          "kind": "fast_reading",
+          "multiplier": 3,
+          "spaces": [
+            "horn-shrine-school.hall"
+          ],
+          "tiles": {
+            "min": [
+              291,
+              74
+            ],
+            "max": [
+              309,
+              87
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Where the snowline rangers learn the stones.",
+      "arrivalTile": [
+        300,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          290,
+          73
+        ],
+        "max": [
+          310,
+          101
+        ]
+      }
+    },
+    {
+      "id": "horn-cascade-spring",
+      "name": "The Cascade Spring",
+      "kind": "spring",
+      "entranceMap": "whitehorn_range",
+      "entranceProp": "ice_crack",
+      "key": "",
+      "label": "A crack in the ice, wider than it looks, and warm air rising from it.",
+      "offset": [
+        26.55,
+        165.05
+      ],
+      "arrival": [
+        26.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          17.55,
+          161.55
+        ],
+        "max": [
+          35.55,
+          189.35
+        ]
+      },
+      "spaces": [
+        "horn-cascade-spring.landing",
+        "horn-cascade-spring.way",
+        "horn-cascade-spring.bath"
+      ],
+      "areas": [
+        {
+          "kind": "fast_regeneration",
+          "multiplier": 3,
+          "spaces": [
+            "horn-cascade-spring.bath"
+          ],
+          "tiles": {
+            "min": [
+              3,
+              3
+            ],
+            "max": [
+              19,
+              15
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Behind the second cascade the rock is warm; the votaries call it the range's one kindness.",
+      "arrivalTile": [
+        11,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          2,
+          2
+        ],
+        "max": [
+          20,
+          29
+        ]
+      }
+    },
+    {
+      "id": "horn-bridge-butts",
+      "name": "The Rope Bridge Butts",
+      "kind": "range",
+      "entranceMap": "whitehorn_range",
+      "entranceProp": "cellar_hatch",
+      "key": "",
+      "label": "A cellar hatch under the leaves.",
+      "offset": [
+        94.55,
+        21.05
+      ],
+      "arrival": [
+        94.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          17.55
+        ],
+        "max": [
+          99.55,
+          62.55
+        ]
+      },
+      "spaces": [
+        "horn-bridge-butts.landing",
+        "horn-bridge-butts.way",
+        "horn-bridge-butts.gallery"
+      ],
+      "areas": [
+        {
+          "kind": "experience",
+          "multiplier": 2,
+          "spaces": [
+            "horn-bridge-butts.gallery"
+          ],
+          "tiles": {
+            "min": [
+              75,
+              129
+            ],
+            "max": [
+              83,
+              159
+            ]
+          }
+        }
+      ],
+      "spawns": [
+        {
+          "creature": "glacier_crab",
+          "count": 3,
+          "space": "horn-bridge-butts.gallery",
+          "tiles": {
+            "min": [
+              75,
+              129
+            ],
+            "max": [
+              83,
+              159
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "A gallery under the bridgehead with crabs at the far end.",
+      "arrivalTile": [
+        79,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          128
+        ],
+        "max": [
+          84,
+          173
+        ]
+      }
+    },
+    {
+      "id": "horn-mine-reliquary",
+      "name": "The Mine Reliquary",
+      "kind": "reliquary",
+      "entranceMap": "whitehorn_glacier_temple",
+      "entranceProp": "shrine_slab",
+      "key": "Glacier Salt",
+      "label": "A shrine slab with fresh scratches where it has been slid aside.",
+      "offset": [
+        97.55,
+        165.05
+      ],
+      "arrival": [
+        97.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          161.55
+        ],
+        "max": [
+          105.55,
+          189.15
+        ]
+      },
+      "spaces": [
+        "horn-mine-reliquary.landing",
+        "horn-mine-reliquary.way",
+        "horn-mine-reliquary.cella"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "The miners' relic room, opened with glacier salt.",
+      "arrivalTile": [
+        82,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          2
+        ],
+        "max": [
+          90,
+          29
+        ]
+      }
+    },
+    {
+      "id": "horn-ice-well",
+      "name": "The Ice Well",
+      "kind": "nullwell",
+      "entranceMap": "whitehorn_range",
+      "entranceProp": "ice_crack",
+      "key": "",
+      "label": "A crack in the ice, wider than it looks, and warm air rising from it.",
+      "offset": [
+        99.55,
+        93.05
+      ],
+      "arrival": [
+        99.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          89.55
+        ],
+        "max": [
+          109.55,
+          122.55
+        ]
+      },
+      "spaces": [
+        "horn-ice-well.landing",
+        "horn-ice-well.way",
+        "horn-ice-well.well"
+      ],
+      "areas": [
+        {
+          "kind": "no_magic",
+          "multiplier": 2,
+          "spaces": [
+            "horn-ice-well.well"
+          ],
+          "tiles": {
+            "min": [
+              75,
+              69
+            ],
+            "max": [
+              93,
+              87
+            ]
+          }
+        }
+      ],
+      "spawns": [
+        {
+          "creature": "thornhide_wolf",
+          "count": 3,
+          "space": "horn-ice-well.well",
+          "tiles": {
+            "min": [
+              75,
+              69
+            ],
+            "max": [
+              93,
+              87
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "Blue ice swallows every spell; the wolves penned here hunt without one.",
+      "arrivalTile": [
+        84,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          68
+        ],
+        "max": [
+          94,
+          101
+        ]
+      }
+    },
+    {
+      "id": "horn-cairn-focus",
+      "name": "The Cairn Ridge Focus",
+      "kind": "focus",
+      "entranceMap": "whitehorn_range",
+      "entranceProp": "cairn",
+      "key": "Iron Rune",
+      "label": "A cairn built over nothing, or over something.",
+      "offset": [
+        242.55,
+        93.05
+      ],
+      "arrival": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          233.55,
+          89.55
+        ],
+        "max": [
+          251.55,
+          118.95
+        ]
+      },
+      "spaces": [
+        "horn-cairn-focus.landing",
+        "horn-cairn-focus.way",
+        "horn-cairn-focus.chamber"
+      ],
+      "areas": [
+        {
+          "kind": "cheap_magic",
+          "multiplier": 2,
+          "spaces": [
+            "horn-cairn-focus.chamber"
+          ],
+          "tiles": {
+            "min": [
+              219,
+              73
+            ],
+            "max": [
+              235,
+              87
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Under the ridge cairns the ether pools; spells cost half.",
+      "arrivalTile": [
+        227,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          218,
+          72
+        ],
+        "max": [
+          236,
+          101
+        ]
+      }
+    },
+    {
+      "id": "horn-icebore",
+      "name": "The Ice-Bore",
+      "kind": "tunnel",
+      "entranceMap": "whitehorn_range",
+      "entranceProp": "ice_crack",
+      "key": "",
+      "label": "A crack in the ice, wider than it looks, and warm air rising from it.",
+      "offset": [
+        21.55,
+        21.05
+      ],
+      "arrival": [
+        21.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          17.55,
+          17.55
+        ],
+        "max": [
+          25.55,
+          88.55
+        ]
+      },
+      "spaces": [
+        "horn-icebore.landing",
+        "horn-icebore.way",
+        "horn-icebore.bore",
+        "horn-icebore.run",
+        "horn-icebore.far"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [
+        {
+          "map": "mirrorhold",
+          "spawn": "secret-mirror-icebore-mouth",
+          "label": "Down into Mirrorhold",
+          "space": "horn-icebore.far",
+          "position": [
+            21.55,
+            -4.95,
+            84.55
+          ],
+          "tile": [
+            6,
+            106
+          ]
+        }
+      ],
+      "note": "A bore the miners drove under the rim, out above Mirrorhold's north post.",
+      "arrivalTile": [
+        6,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          2,
+          102
+        ],
+        "max": [
+          10,
+          173
+        ]
+      }
+    },
+    {
+      "id": "horn-waystone",
+      "name": "The Horn Waystone",
+      "kind": "waystone",
+      "entranceMap": "whitehorn_range",
+      "entranceProp": "cairn",
+      "key": "Iron Rune",
+      "label": "A cairn built over nothing, or over something.",
+      "offset": [
+        171.55,
+        93.05
+      ],
+      "arrival": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          89.55
+        ],
+        "max": [
+          181.55,
+          122.55
+        ]
+      },
+      "spaces": [
+        "horn-waystone.landing",
+        "horn-waystone.way",
+        "horn-waystone.ring"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [
+        {
+          "map": "mirrorhold_secrets",
+          "spawn": "mirror-waystone",
+          "label": "Mirrorhold",
+          "space": "horn-waystone.ring",
+          "position": [
+            171.55,
+            -4.0,
+            107.67
+          ],
+          "tile": [
+            156,
+            83
+          ]
+        },
+        {
+          "map": "amberwood_secrets",
+          "spawn": "amber-waystone",
+          "label": "Amberwood",
+          "space": "horn-waystone.ring",
+          "position": [
+            176.43,
+            -4.0,
+            112.55
+          ],
+          "tile": [
+            160,
+            78
+          ]
+        },
+        {
+          "map": "amethyst_barrens_secrets",
+          "spawn": "barrens-waystone",
+          "label": "The Amethyst Barrens",
+          "space": "horn-waystone.ring",
+          "position": [
+            171.55,
+            -4.0,
+            117.43
+          ],
+          "tile": [
+            156,
+            74
+          ]
+        }
+      ],
+      "note": "Three stones under the west watch cairns. An iron rune wakes them.",
+      "arrivalTile": [
+        156,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          68
+        ],
+        "max": [
+          166,
+          101
+        ]
+      }
+    },
+    {
+      "id": "horn-temple-eyrie",
+      "name": "The Temple Eyrie",
+      "kind": "eyrie",
+      "entranceMap": "whitehorn_range",
+      "entranceProp": "ice_crack",
+      "key": "",
+      "label": "A crack in the ice, wider than it looks, and warm air rising from it.",
+      "offset": [
+        312.55,
+        165.05
+      ],
+      "arrival": [
+        312.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          305.55,
+          161.55
+        ],
+        "max": [
+          319.55,
+          186.15
+        ]
+      },
+      "spaces": [
+        "horn-temple-eyrie.landing",
+        "horn-temple-eyrie.way",
+        "horn-temple-eyrie.perch"
+      ],
+      "areas": [
+        {
+          "kind": "fast_regeneration",
+          "multiplier": 2,
+          "spaces": [
+            "horn-temple-eyrie.perch"
+          ],
+          "tiles": {
+            "min": [
+              291,
+              6
+            ],
+            "max": [
+              303,
+              15
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "A pocket in the temple's cliff over the glacier.",
+      "arrivalTile": [
+        297,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          290,
+          5
+        ],
+        "max": [
+          304,
+          29
+        ]
+      }
+    }
+  ],
+  "secrets": {
+    "region": "whitehorn_range",
+    "sections": [
+      "horn-silver-hollow",
+      "horn-cairn-garden",
+      "horn-gate-cache",
+      "horn-temple-vault",
+      "horn-ram-pit",
+      "horn-shrine-school",
+      "horn-cascade-spring",
+      "horn-bridge-butts",
+      "horn-mine-reliquary",
+      "horn-ice-well",
+      "horn-cairn-focus",
+      "horn-icebore",
+      "horn-waystone",
+      "horn-temple-eyrie"
+    ],
+    "note": "Each section is one secret. The client shows a player only the section they stand in; the server places the arrival, the areas, the spawns and the harvest nodes from this block."
+  },
+  "performance": {
+    "nodes": 131,
+    "meshes": 116,
+    "materials": 17,
+    "images": 50,
+    "textures": 50,
+    "accessors": 580,
+    "bufferViews": 630,
+    "uniqueTriangles": 27864,
+    "uniqueVertices": 38544,
+    "glbBytes": 7283756,
+    "nodeNames": [
+      "Secrets_whitehorn_range_secrets",
+      "Section_horn-silver-hollow",
+      "Roof_horn-silver-hollow_cliff_rock",
+      "Build_horn-silver-hollow_amber_resin",
+      "Build_horn-silver-hollow_cliff_rock",
+      "Build_horn-silver-hollow_dark_iron",
+      "Build_horn-silver-hollow_water_pool",
+      "Build_horn-silver-hollow_whitehorn_silver",
+      "Walk_horn-silver-hollow_pale_ashlar",
+      "Section_horn-cairn-garden",
+      "Roof_horn-cairn-garden_cliff_rock",
+      "Build_horn-cairn-garden_amber_resin",
+      "Build_horn-cairn-garden_bark_pale",
+      "Build_horn-cairn-garden_cliff_rock",
+      "Build_horn-cairn-garden_dark_iron",
+      "Build_horn-cairn-garden_foliage_green",
+      "Build_horn-cairn-garden_pale_ashlar",
+      "Build_horn-cairn-garden_rubble_stone",
+      "Build_horn-cairn-garden_timber_warm",
+      "Build_horn-cairn-garden_water_pool",
+      "Build_horn-cairn-garden_whitehorn_silver",
+      "Walk_horn-cairn-garden_pale_ashlar",
+      "Walk_horn-cairn-garden_snow_pack",
+      "Section_horn-gate-cache",
+      "Roof_horn-gate-cache_cliff_rock",
+      "Roof_horn-gate-cache_timber_dark",
+      "Build_horn-gate-cache_amber_resin",
+      "Build_horn-gate-cache_cliff_rock",
+      "Build_horn-gate-cache_dark_iron",
+      "Build_horn-gate-cache_timber_dark",
+      "Build_horn-gate-cache_timber_warm",
+      "Build_horn-gate-cache_whitehorn_silver",
+      "Walk_horn-gate-cache_pale_ashlar",
+      "Section_horn-temple-vault",
+      "Roof_horn-temple-vault_cliff_rock",
+      "Roof_horn-temple-vault_pale_ashlar",
+      "Build_horn-temple-vault_amber_resin",
+      "Build_horn-temple-vault_carved_wood",
+      "Build_horn-temple-vault_cliff_rock",
+      "Build_horn-temple-vault_dark_iron",
+      "Build_horn-temple-vault_pale_ashlar",
+      "Build_horn-temple-vault_timber_dark",
+      "Build_horn-temple-vault_timber_warm",
+      "Walk_horn-temple-vault_pale_ashlar",
+      "Section_horn-ram-pit",
+      "Roof_horn-ram-pit_cliff_rock",
+      "Build_horn-ram-pit_amber_resin",
+      "Build_horn-ram-pit_cliff_rock",
+      "Build_horn-ram-pit_dark_iron",
+      "Build_horn-ram-pit_pale_ashlar",
+      "Build_horn-ram-pit_timber_dark",
+      "Walk_horn-ram-pit_pale_ashlar",
+      "Section_horn-shrine-school",
+      "Roof_horn-shrine-school_cliff_rock",
+      "Roof_horn-shrine-school_timber_dark",
+      "Build_horn-shrine-school_amber_resin",
+      "Build_horn-shrine-school_carved_wood",
+      "Build_horn-shrine-school_cliff_rock",
+      "Build_horn-shrine-school_dark_iron",
+      "Build_horn-shrine-school_timber_dark",
+      "Walk_horn-shrine-school_pale_ashlar",
+      "Section_horn-cascade-spring",
+      "Roof_horn-cascade-spring_cliff_rock",
+      "Build_horn-cascade-spring_amber_resin",
+      "Build_horn-cascade-spring_cliff_rock",
+      "Build_horn-cascade-spring_dark_iron",
+      "Build_horn-cascade-spring_pale_ashlar",
+      "Build_horn-cascade-spring_water_pool",
+      "Walk_horn-cascade-spring_pale_ashlar",
+      "Section_horn-bridge-butts",
+      "Roof_horn-bridge-butts_cliff_rock",
+      "Roof_horn-bridge-butts_timber_dark",
+      "Build_horn-bridge-butts_amber_resin",
+      "Build_horn-bridge-butts_cliff_rock",
+      "Build_horn-bridge-butts_dark_iron",
+      "Build_horn-bridge-butts_thatch_reed",
+      "Build_horn-bridge-butts_timber_dark",
+      "Walk_horn-bridge-butts_pale_ashlar",
+      "Section_horn-mine-reliquary",
+      "Roof_horn-mine-reliquary_cliff_rock",
+      "Roof_horn-mine-reliquary_pale_ashlar",
+      "Build_horn-mine-reliquary_amber_resin",
+      "Build_horn-mine-reliquary_cliff_rock",
+      "Build_horn-mine-reliquary_dark_iron",
+      "Build_horn-mine-reliquary_gilt_brass",
+      "Build_horn-mine-reliquary_pale_ashlar",
+      "Walk_horn-mine-reliquary_pale_ashlar",
+      "Section_horn-ice-well",
+      "Roof_horn-ice-well_cliff_rock",
+      "Build_horn-ice-well_amber_resin",
+      "Build_horn-ice-well_cliff_rock",
+      "Build_horn-ice-well_dark_iron",
+      "Build_horn-ice-well_pale_ashlar",
+      "Walk_horn-ice-well_pale_ashlar",
+      "Section_horn-cairn-focus",
+      "Roof_horn-cairn-focus_cliff_rock",
+      "Roof_horn-cairn-focus_pale_ashlar",
+      "Build_horn-cairn-focus_amber_resin",
+      "Build_horn-cairn-focus_cliff_rock",
+      "Build_horn-cairn-focus_dark_iron",
+      "Build_horn-cairn-focus_glacier_ice",
+      "Build_horn-cairn-focus_pale_ashlar",
+      "Walk_horn-cairn-focus_pale_ashlar",
+      "Section_horn-icebore",
+      "Roof_horn-icebore_cliff_rock",
+      "Build_horn-icebore_amber_resin",
+      "Build_horn-icebore_cliff_rock",
+      "Build_horn-icebore_dark_iron",
+      "Build_horn-icebore_timber_dark",
+      "Build_horn-icebore_whitehorn_silver",
+      "Walk_horn-icebore_pale_ashlar",
+      "Section_horn-waystone",
+      "Roof_horn-waystone_cliff_rock",
+      "Roof_horn-waystone_pale_ashlar",
+      "Build_horn-waystone_amber_resin",
+      "Build_horn-waystone_cliff_rock",
+      "Build_horn-waystone_dark_iron",
+      "Build_horn-waystone_gilt_brass",
+      "Build_horn-waystone_pale_ashlar",
+      "Walk_horn-waystone_pale_ashlar",
+      "Section_horn-temple-eyrie",
+      "Roof_horn-temple-eyrie_cliff_rock",
+      "Build_horn-temple-eyrie_amber_resin",
+      "Build_horn-temple-eyrie_bark_dark",
+      "Build_horn-temple-eyrie_carved_wood",
+      "Build_horn-temple-eyrie_cliff_rock",
+      "Build_horn-temple-eyrie_dark_iron",
+      "Build_horn-temple-eyrie_rubble_stone",
+      "Build_horn-temple-eyrie_timber_warm",
+      "Build_horn-temple-eyrie_water_pool",
+      "Walk_horn-temple-eyrie_pale_ashlar"
+    ]
+  },
+  "sources": [
+    {
+      "id": "generator",
+      "file": "_toolkit/secrets_build.py",
+      "role": "reproducible-build",
+      "design": "whitehorn_range/source/secrets_design.py"
+    }
+  ],
+  "provenance": {
+    "geometry": "authored with the secret rooms kit over the shared toolkit",
+    "license": "CC-BY-4.0"
+  },
+  "productionStatus": "authored-geometry-materials-population",
+  "notes": [
+    "14 secrets of Whitehorn Range Secrets on one map with void between them; which one a player gets is which feature of the ground above they used."
+  ]
+}

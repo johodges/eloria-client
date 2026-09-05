@@ -43,6 +43,8 @@ REGIONS = ASSETS / "maps" / "nymara-regions"
 INTERIORS = REGIONS / "interiors"
 GRAPH = REGIONS / "region-connections.json"
 PACKAGES = {"four_gates": ASSETS / "maps" / "four-gates"}
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import secret_doors as SD  # noqa: E402
 
 # region -> (insides package directory, the map id the server serves it as)
 INSIDES = {
@@ -267,6 +269,91 @@ def interior_lines(portals, collisions, load, errors) -> tuple[list[str], int]:
     return lines, written
 
 
+def secret_lines(collisions, load, errors) -> tuple[list[str], int]:
+    """Entrances, exits and links of every `<region>_secrets` map.
+
+    An entrance is a portal bound to the object a player uses (the eighth
+    field is the object id), so it fires only for the player who used it; its
+    trigger is the first walkable tile beside the prop. A section's exit is
+    its arrival tile, back to that trigger. A stone or a tunnel end is a link
+    onto another secrets map's spawn, or back up beside a mouth on a region.
+    """
+    lines = ["# --- the secrets: use-to-enter doors bound to their objects ---",
+             "# `portal | map | object | x | y | dest | ax | ay`: a portal with an object",
+             "# id fires only for the player who used that object, so a secret stays",
+             "# secret from anyone walking over its tile. Written from the packages by",
+             "# eloria-assets/tools/secret_doors.py; the same tool numbers the objects",
+             "# the content tool declares in interactives.txt.", ""]
+    manifests = SD.secrets_manifests(ASSETS)
+    entrances = SD.entrances(ASSETS)
+    written = 0
+
+    def walkable(map_id):
+        if map_id not in collisions:
+            collisions[map_id] = load(map_id)
+        return collisions[map_id].walkable
+
+    triggers: dict[tuple[str, str], tuple[int, int]] = {}
+    for map_id, records in sorted(entrances.items()):
+        for entrance in records:
+            spot = SD.nearest_open(walkable(map_id), entrance.tile, 1, 3)
+            if spot is None:
+                errors.append(f"{map_id} secret {entrance.id}: no walkable tile beside {entrance.tile}")
+                continue
+            triggers[(map_id, entrance.id)] = spot
+
+    def arrival_for(target_map: str, spawn: str):
+        if target_map in manifests:
+            tile = SD.spawn_tile(manifests[target_map], spawn)
+            if tile is None:
+                return None
+            if not walkable(target_map)(*tile):
+                tile = SD.nearest_open(walkable(target_map), tile, 1, 2)
+            return tile
+        return triggers.get((target_map, spawn))
+
+    for map_id, records in sorted(entrances.items()):
+        lines.append(f"# {map_id}: {len(records)} entrances")
+        for entrance in records:
+            trigger = triggers.get((map_id, entrance.id))
+            if trigger is None:
+                continue
+            arrival = arrival_for(entrance.destination, entrance.spawn)
+            if arrival is None:
+                errors.append(f"{map_id} secret {entrance.id}: {entrance.destination} has no arrival {entrance.spawn!r}")
+                continue
+            lines.append(f"portal | {map_id} | {entrance.object_id} | {trigger[0]} | {trigger[1]} | "
+                         f"{entrance.destination} | {arrival[0]} | {arrival[1]}")
+            written += 1
+        lines.append("")
+    for secrets_map, manifest in sorted(manifests.items()):
+        lines.append(f"# {secrets_map}: exits and links")
+        for section in SD.sections(manifest):
+            back = triggers.get((section["entranceMap"], f"secret-{section['id']}"))
+            if back is None:
+                errors.append(f"{secrets_map} section {section['id']}: no entrance on {section['entranceMap']}")
+            else:
+                ax, ay = section["arrivalTile"]
+                lines.append(f"portal | {secrets_map} | {ax} | {ay} | {section['entranceMap']} | {back[0]} | {back[1]}")
+                written += 1
+            for exit_ in section.get("exits", []):
+                target = arrival_for(exit_["map"], exit_["spawn"])
+                if target is None:
+                    errors.append(f"{secrets_map} section {section['id']}: link to {exit_['map']}/{exit_['spawn']} has no arrival")
+                    continue
+                ex, ey = exit_["tile"]
+                if not walkable(secrets_map)(ex, ey):
+                    moved = SD.nearest_open(walkable(secrets_map), (ex, ey), 1, 2)
+                    if moved is None:
+                        errors.append(f"{secrets_map} section {section['id']}: link tile {ex, ey} is not walkable")
+                        continue
+                    ex, ey = moved
+                lines.append(f"portal | {secrets_map} | {ex} | {ey} | {exit_['map']} | {target[0]} | {target[1]}")
+                written += 1
+        lines.append("")
+    return lines, written
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--server", type=Path, required=True)
@@ -285,10 +372,12 @@ def main() -> int:
     lines = [BEGIN]
     outside, crossings = exterior_lines(graph, portals, collisions, load, errors)
     inside, doors = interior_lines(portals, collisions, load, errors)
-    lines += outside + inside + [END]
+    hidden, secrets = secret_lines(collisions, load, errors)
+    lines += outside + inside + hidden + [END]
     for error in errors:
         print("ERROR", error)
-    print(f"{crossings} crossing lines from {len(graph['connections'])} links, {doors} door lines")
+    print(f"{crossings} crossing lines from {len(graph['connections'])} links, {doors} door lines, "
+          f"{secrets} secret lines")
     if errors:
         return 1
     block = "\n".join(lines)

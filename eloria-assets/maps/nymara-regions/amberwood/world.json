@@ -887,6 +887,21 @@
       "Rock_0247",
       "Rock_0248",
       "Rock_0249",
+      "Secret_amber_arch_reliquary",
+      "Secret_amber_beekeepers_garden",
+      "Secret_amber_boar_run",
+      "Secret_amber_charcoal_cache",
+      "Secret_amber_grove_school",
+      "Secret_amber_kelp_eyrie",
+      "Secret_amber_lookout_butts",
+      "Secret_amber_moot_vault",
+      "Secret_amber_resin_hollow",
+      "Secret_amber_smuggle_mouth",
+      "Secret_amber_stone_ring_well",
+      "Secret_amber_undercut",
+      "Secret_amber_warm_spring",
+      "Secret_amber_wayshrine_focus",
+      "Secret_amber_waystone",
       "Stone_RuinFragment_B_ash_chapel_01",
       "Stone_RuinFragment_B_ash_chapel_02",
       "Stone_RuinFragment_B_ash_chapel_03",
@@ -1084,8 +1099,8 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 913845,
-    "walkableFraction": 0.6886
+    "walkableCells": 913538,
+    "walkableFraction": 0.6884
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -1921,6 +1936,321 @@
         348.0,
         29.67,
         132.0
+      ]
+    },
+    {
+      "id": "secret-amber-resin-hollow",
+      "kind": "secret",
+      "secret": "amber-resin-hollow",
+      "name": "The Resin Hollow",
+      "label": "A hollow tree. The dark inside it goes down, not in.",
+      "prop": "hollow_tree",
+      "key": "",
+      "destinationMap": "amberwood_secrets",
+      "destinationSpawn": "amber-resin-hollow",
+      "position": [
+        -69.0,
+        37.0,
+        -290.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        105,
+        464
+      ]
+    },
+    {
+      "id": "secret-amber-beekeepers-garden",
+      "kind": "secret",
+      "secret": "amber-beekeepers-garden",
+      "name": "The Beekeeper's Under-Garden",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "amberwood_secrets",
+      "destinationSpawn": "amber-beekeepers-garden",
+      "position": [
+        89.0,
+        15.59,
+        80.41
+      ],
+      "authority": "server",
+      "serverTile": [
+        263,
+        94
+      ]
+    },
+    {
+      "id": "secret-amber-charcoal-cache",
+      "kind": "secret",
+      "secret": "amber-charcoal-cache",
+      "name": "The Charcoal Burner's Cache",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "amberwood_secrets",
+      "destinationSpawn": "amber-charcoal-cache",
+      "position": [
+        268.0,
+        29.74,
+        30.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        442,
+        144
+      ]
+    },
+    {
+      "id": "secret-amber-moot-vault",
+      "kind": "secret",
+      "secret": "amber-moot-vault",
+      "name": "The Moot Vault",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Storage Token",
+      "destinationMap": "amberwood_secrets",
+      "destinationSpawn": "amber-moot-vault",
+      "position": [
+        -27.59,
+        36.43,
+        -169.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        146,
+        343
+      ]
+    },
+    {
+      "id": "secret-amber-boar-run",
+      "kind": "secret",
+      "secret": "amber-boar-run",
+      "name": "The Boar Run",
+      "label": "A knot of roots grown over a door frame.",
+      "prop": "root_door",
+      "key": "",
+      "destinationMap": "amberwood_secrets",
+      "destinationSpawn": "amber-boar-run",
+      "position": [
+        136.5,
+        48.08,
+        -334.62
+      ],
+      "authority": "server",
+      "serverTile": [
+        310,
+        509
+      ]
+    },
+    {
+      "id": "secret-amber-grove-school",
+      "kind": "secret",
+      "secret": "amber-grove-school",
+      "name": "The Grove Reader's School",
+      "label": "A hollow tree. The dark inside it goes down, not in.",
+      "prop": "hollow_tree",
+      "key": "",
+      "destinationMap": "amberwood_secrets",
+      "destinationSpawn": "amber-grove-school",
+      "position": [
+        -48.0,
+        35.3,
+        -292.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        126,
+        466
+      ]
+    },
+    {
+      "id": "secret-amber-warm-spring",
+      "kind": "secret",
+      "secret": "amber-warm-spring",
+      "name": "The Warm Spring",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "prop": "loose_stone",
+      "key": "",
+      "destinationMap": "amberwood_secrets",
+      "destinationSpawn": "amber-warm-spring",
+      "position": [
+        50.0,
+        48.73,
+        -343.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        224,
+        517
+      ]
+    },
+    {
+      "id": "secret-amber-lookout-butts",
+      "kind": "secret",
+      "secret": "amber-lookout-butts",
+      "name": "The Lookout Butts",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "amberwood_secrets",
+      "destinationSpawn": "amber-lookout-butts",
+      "position": [
+        144.0,
+        12.28,
+        141.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        318,
+        33
+      ]
+    },
+    {
+      "id": "secret-amber-arch-reliquary",
+      "kind": "secret",
+      "secret": "amber-arch-reliquary",
+      "name": "The Arch Reliquary",
+      "label": "A shrine slab with fresh scratches where it has been slid aside.",
+      "prop": "shrine_slab",
+      "key": "Amber Resin",
+      "destinationMap": "amberwood_secrets",
+      "destinationSpawn": "amber-arch-reliquary",
+      "position": [
+        192.19,
+        37.98,
+        -75.5
+      ],
+      "authority": "server",
+      "serverTile": [
+        366,
+        250
+      ]
+    },
+    {
+      "id": "secret-amber-stone-ring-well",
+      "kind": "secret",
+      "secret": "amber-stone-ring-well",
+      "name": "The Stone Ring Well",
+      "label": "A cairn built over nothing, or over something.",
+      "prop": "cairn",
+      "key": "",
+      "destinationMap": "amberwood_secrets",
+      "destinationSpawn": "amber-stone-ring-well",
+      "position": [
+        -69.0,
+        10.22,
+        -15.63
+      ],
+      "authority": "server",
+      "serverTile": [
+        105,
+        190
+      ]
+    },
+    {
+      "id": "secret-amber-wayshrine-focus",
+      "kind": "secret",
+      "secret": "amber-wayshrine-focus",
+      "name": "The Wayshrine Focus",
+      "label": "A shrine slab with fresh scratches where it has been slid aside.",
+      "prop": "shrine_slab",
+      "key": "Woven Charm",
+      "destinationMap": "amberwood_secrets",
+      "destinationSpawn": "amber-wayshrine-focus",
+      "position": [
+        123.0,
+        26.8,
+        -26.41
+      ],
+      "authority": "server",
+      "serverTile": [
+        297,
+        200
+      ]
+    },
+    {
+      "id": "secret-amber-undercut",
+      "kind": "secret",
+      "secret": "amber-undercut",
+      "name": "The Undercut",
+      "label": "A knot of roots grown over a door frame.",
+      "prop": "root_door",
+      "key": "",
+      "destinationMap": "amberwood_secrets",
+      "destinationSpawn": "amber-undercut",
+      "position": [
+        280.0,
+        56.53,
+        -270.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        454,
+        444
+      ]
+    },
+    {
+      "id": "secret-amber-waystone",
+      "kind": "secret",
+      "secret": "amber-waystone",
+      "name": "The Amber Waystone",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "prop": "loose_stone",
+      "key": "Iron Rune",
+      "destinationMap": "amberwood_secrets",
+      "destinationSpawn": "amber-waystone",
+      "position": [
+        -51.0,
+        1.43,
+        -119.2
+      ],
+      "authority": "server",
+      "serverTile": [
+        123,
+        293
+      ]
+    },
+    {
+      "id": "secret-amber-kelp-eyrie",
+      "kind": "secret",
+      "secret": "amber-kelp-eyrie",
+      "name": "The Kelp Landing Eyrie",
+      "label": "An arch so grown with vine it reads as hedge.",
+      "prop": "ivy_arch",
+      "key": "",
+      "destinationMap": "amberwood_secrets",
+      "destinationSpawn": "amber-kelp-eyrie",
+      "position": [
+        -87.5,
+        2.68,
+        45.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        86,
+        129
+      ]
+    },
+    {
+      "id": "secret-amber-smuggle-mouth",
+      "kind": "secret",
+      "secret": "amber-smuggle-mouth",
+      "name": "The Smugglers' Mouth",
+      "label": "A cave mouth the tide leaves open for an hour a day.",
+      "prop": "tide_cave",
+      "key": "",
+      "destinationMap": "westhaven_secrets",
+      "destinationSpawn": "haven-smuggle-far",
+      "position": [
+        -111.0,
+        2.63,
+        28.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        63,
+        146
       ]
     }
   ],
@@ -4492,27 +4822,27 @@
     }
   ],
   "performance": {
-    "nodes": 9390,
-    "meshes": 406,
-    "materials": 49,
-    "images": 108,
-    "textures": 108,
-    "accessors": 1635,
-    "bufferViews": 1743,
-    "uniqueTriangles": 586275,
-    "uniqueVertices": 461535,
-    "glbBytes": 33625772,
-    "instancedTriangles": 2795584,
-    "embeddedTextureBytes": 12250624,
-    "textureMemoryBytesUncompressed": 110886912,
-    "placements": 8633,
+    "nodes": 9429,
+    "meshes": 434,
+    "materials": 51,
+    "images": 114,
+    "textures": 114,
+    "accessors": 1747,
+    "bufferViews": 1861,
+    "uniqueTriangles": 589323,
+    "uniqueVertices": 464668,
+    "glbBytes": 34413056,
+    "instancedTriangles": 2798632,
+    "embeddedTextureBytes": 12886132,
+    "textureMemoryBytesUncompressed": 114229248,
+    "placements": 8648,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 913845,
-      "blockedCells": 413259,
-      "walkableFraction": 0.6886,
+      "walkableCells": 913538,
+      "blockedCells": 413566,
+      "walkableFraction": 0.6884,
       "elevatedDecks": 24,
       "steepCells": 101662,
       "reliefMetres": 108.56,
@@ -4548,12 +4878,12 @@
       "march harbour-quay: 2 road pieces, 9 of westhaven's growth"
     ],
     "lod2": {
-      "glbBytes": 21512904,
-      "nodes": 5725,
-      "uniqueTriangles": 528911,
-      "instancedTriangles": 1996928,
-      "sizeReductionPercent": 36.0,
-      "triangleReductionPercent": 28.6
+      "glbBytes": 21751728,
+      "nodes": 5764,
+      "uniqueTriangles": 531959,
+      "instancedTriangles": 1999976,
+      "sizeReductionPercent": 36.8,
+      "triangleReductionPercent": 28.5
     }
   },
   "sources": [

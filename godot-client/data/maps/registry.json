@@ -666,7 +666,10 @@
         "custom_house",
         "bonded_vaults",
         "lamp_rock_light",
-        "gullstone_cave"
+        "gullstone_cave",
+        "gullscar_farmhouse",
+        "haven_undercroft",
+        "salvage_hole"
       ]
     },
     "verdant_stair_insides": {
@@ -764,6 +767,448 @@
     },
     "amberwood_insides": {
       "alias": "amberwood_estate"
+    },
+    "amberwood_secrets": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/amberwood_secrets/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -16.0,
+          191.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "amberwood",
+      "insidesOf": "amberwood",
+      "sections": [
+        "amber-resin-hollow",
+        "amber-beekeepers-garden",
+        "amber-charcoal-cache",
+        "amber-moot-vault",
+        "amber-boar-run",
+        "amber-grove-school",
+        "amber-warm-spring",
+        "amber-lookout-butts",
+        "amber-arch-reliquary",
+        "amber-stone-ring-well",
+        "amber-wayshrine-focus",
+        "amber-undercut",
+        "amber-waystone",
+        "amber-kelp-eyrie"
+      ],
+      "secret": true
+    },
+    "mirrorhold_secrets": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/mirrorhold_secrets/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -16.0,
+          191.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "mirrorhold",
+      "insidesOf": "mirrorhold",
+      "sections": [
+        "mirror-reed-cut",
+        "mirror-lens-garden",
+        "mirror-canal-cache",
+        "mirror-orrery-vault",
+        "mirror-stair-pit",
+        "mirror-rose-school",
+        "mirror-basin-spring",
+        "mirror-watch-butts",
+        "mirror-citadel-reliquary",
+        "mirror-cistern-well",
+        "mirror-lens-focus",
+        "mirror-adit",
+        "mirror-waystone",
+        "mirror-overlook-eyrie"
+      ],
+      "secret": true
+    },
+    "amethyst_barrens_secrets": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/amethyst_barrens_secrets/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -16.0,
+          191.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "amethyst_barrens",
+      "insidesOf": "amethyst_barrens",
+      "sections": [
+        "barrens-geode-hollow",
+        "barrens-shard-garden",
+        "barrens-station-cache",
+        "barrens-observatory-vault",
+        "barrens-beetle-pit",
+        "barrens-tower-school",
+        "barrens-resonance-spring",
+        "barrens-bridge-butts",
+        "barrens-massif-reliquary",
+        "barrens-storm-well",
+        "barrens-lens-focus",
+        "barrens-sap",
+        "barrens-waystone",
+        "barrens-cave-eyrie"
+      ],
+      "secret": true
+    },
+    "crownwater_secrets": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/crownwater_secrets/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -16.0,
+          191.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "crownwater",
+      "insidesOf": "crownwater",
+      "sections": [
+        "crown-pearl-hollow",
+        "crown-kelp-garden",
+        "crown-customs-cache",
+        "crown-campanile-vault",
+        "crown-crab-pit",
+        "crown-cathedral-school",
+        "crown-warm-spring",
+        "crown-pavilion-butts",
+        "crown-court-reliquary",
+        "crown-cistern-well",
+        "crown-lake-focus",
+        "crown-drain",
+        "crown-waystone",
+        "crown-campanile-eyrie"
+      ],
+      "secret": true
+    },
+    "westhaven_secrets": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/westhaven_secrets/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -16.0,
+          191.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "westhaven",
+      "insidesOf": "westhaven",
+      "sections": [
+        "haven-wrack-hollow",
+        "haven-ropewalk-garden",
+        "haven-bonded-cache",
+        "haven-guild-vault",
+        "haven-mole-pit",
+        "haven-arcade-school",
+        "haven-lamp-spring",
+        "haven-shipyard-butts",
+        "haven-cathedral-reliquary",
+        "haven-gate-well",
+        "haven-spire-focus",
+        "haven-smuggle",
+        "haven-waystone",
+        "haven-lighthouse-eyrie"
+      ],
+      "secret": true
+    },
+    "grey_moors_secrets": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/grey_moors_secrets/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -16.0,
+          191.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "grey_moors",
+      "insidesOf": "grey_moors",
+      "sections": [
+        "moor-peat-hollow",
+        "moor-croft-garden",
+        "moor-boardwalk-cache",
+        "moor-court-vault",
+        "moor-hound-pit",
+        "moor-shrine-school",
+        "moor-hanged-spring",
+        "moor-ring-butts",
+        "moor-crypt-reliquary",
+        "moor-barrow-well",
+        "moor-wisp-focus",
+        "moor-peatcut",
+        "moor-waystone",
+        "moor-tower-eyrie"
+      ],
+      "secret": true
+    },
+    "manymouth_delta_secrets": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/manymouth_delta_secrets/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -16.0,
+          191.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "manymouth_delta",
+      "insidesOf": "manymouth_delta",
+      "sections": [
+        "delta-lotus-hollow",
+        "delta-paddy-garden",
+        "delta-market-cache",
+        "delta-moot-vault",
+        "delta-crab-pit",
+        "delta-study-school",
+        "delta-temple-spring",
+        "delta-watch-butts",
+        "delta-stelae-reliquary",
+        "delta-shrine-well",
+        "delta-arch-focus",
+        "delta-bund-run",
+        "delta-waystone",
+        "delta-banyan-eyrie"
+      ],
+      "secret": true
+    },
+    "verdant_stair_secrets": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/verdant_stair_secrets/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -16.0,
+          191.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "verdant_stair",
+      "insidesOf": "verdant_stair",
+      "sections": [
+        "stair-cenote-hollow",
+        "stair-hanging-garden",
+        "stair-provisioner-cache",
+        "stair-temple-vault",
+        "stair-quarry-pit",
+        "stair-house-school",
+        "stair-water-spring",
+        "stair-lookout-butts",
+        "stair-ridge-reliquary",
+        "stair-cenote-well",
+        "stair-sun-focus",
+        "stair-culvert",
+        "stair-waystone",
+        "stair-summit-eyrie"
+      ],
+      "secret": true
+    },
+    "whitehorn_range_secrets": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/whitehorn_range_secrets/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -16.0,
+          191.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "whitehorn_range",
+      "insidesOf": "whitehorn_range",
+      "sections": [
+        "horn-silver-hollow",
+        "horn-cairn-garden",
+        "horn-gate-cache",
+        "horn-temple-vault",
+        "horn-ram-pit",
+        "horn-shrine-school",
+        "horn-cascade-spring",
+        "horn-bridge-butts",
+        "horn-mine-reliquary",
+        "horn-ice-well",
+        "horn-cairn-focus",
+        "horn-icebore",
+        "horn-waystone",
+        "horn-temple-eyrie"
+      ],
+      "secret": true
+    },
+    "ssarathi_ruins_secrets": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/ssarathi_ruins_secrets/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -16.0,
+          191.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "ssarathi_ruins",
+      "insidesOf": "ssarathi_ruins",
+      "sections": [
+        "ruins-moss-hollow",
+        "ruins-lily-garden",
+        "ruins-gate-cache",
+        "ruins-vault-of-the-sun",
+        "ruins-hatchery-pit",
+        "ruins-plaza-school",
+        "ruins-falls-spring",
+        "ruins-shrine-butts",
+        "ruins-stela-reliquary",
+        "ruins-cistern-well",
+        "ruins-temple-focus",
+        "ruins-rootrun",
+        "ruins-waystone",
+        "ruins-shrine-eyrie"
+      ],
+      "secret": true
+    },
+    "sunmane_steppe_secrets": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/sunmane_steppe_secrets/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -16.0,
+          190.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "sunmane_steppe",
+      "insidesOf": "sunmane_steppe",
+      "sections": [
+        "steppe-seed-hollow",
+        "steppe-well-garden",
+        "steppe-mill-cache",
+        "steppe-hall-vault",
+        "steppe-fox-pit",
+        "steppe-caravan-school",
+        "steppe-spring",
+        "steppe-outpost-butts",
+        "steppe-barrow-reliquary",
+        "steppe-standing-well",
+        "steppe-banner-focus",
+        "steppe-waystone",
+        "steppe-dune-eyrie"
+      ],
+      "secret": true
+    },
+    "four_gates_secrets": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/four_gates_secrets/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -16.0,
+          190.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "four_gates",
+      "insidesOf": "four_gates",
+      "sections": [
+        "gates-sunleaf-hollow",
+        "gates-reedworks-garden",
+        "gates-lantern-cache",
+        "gates-deposit-vault",
+        "gates-otter-pit",
+        "gates-stormglass-school",
+        "gates-plaza-spring",
+        "gates-ferry-butts",
+        "gates-sanctuary-reliquary",
+        "gates-mirrorsmith-well",
+        "gates-civic-focus",
+        "gates-waystone",
+        "gates-wall-eyrie"
+      ],
+      "secret": true
     }
   }
 }

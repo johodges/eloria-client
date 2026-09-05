@@ -848,6 +848,24 @@
       ],
       "section": "gullstone_cave",
       "authority": "server"
+    },
+    {
+      "id": "secret-haven-bonded-cache",
+      "kind": "secret",
+      "secret": "haven-bonded-cache",
+      "name": "The Bonded Cache",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "westhaven_secrets",
+      "destinationSpawn": "haven-bonded-cache",
+      "position": [
+        152.0,
+        -3.0,
+        76.0
+      ],
+      "space": "bonded_vaults.bay_b",
+      "authority": "server"
     }
   ],
   "npcMarkers": [
@@ -2448,9 +2466,9 @@
     "textures": 61,
     "accessors": 165,
     "bufferViews": 226,
-    "uniqueTriangles": 60538,
-    "uniqueVertices": 80696,
-    "glbBytes": 11515656,
+    "uniqueTriangles": 60562,
+    "uniqueVertices": 80744,
+    "glbBytes": 11561060,
     "nodeNames": [
       "Interior_westhaven_insides",
       "Roof_westhaven_insides_ashlar",

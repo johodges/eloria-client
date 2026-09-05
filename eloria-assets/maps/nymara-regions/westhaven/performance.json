@@ -1,26 +1,37 @@
 {
-  "nodes": 5250,
-  "meshes": 279,
-  "materials": 27,
-  "images": 74,
-  "textures": 74,
-  "accessors": 1116,
-  "bufferViews": 1190,
-  "uniqueTriangles": 465714,
-  "uniqueVertices": 356459,
-  "glbBytes": 23429092,
-  "instancedTriangles": 1167098,
-  "embeddedTextureBytes": 30504469,
+  "nodes": 5416,
+  "meshes": 391,
+  "materials": 47,
+  "images": 106,
+  "textures": 106,
+  "accessors": 1572,
+  "bufferViews": 1678,
+  "uniqueTriangles": 525346,
+  "uniqueVertices": 400585,
+  "glbBytes": 30162596,
+  "instancedTriangles": 1228258,
+  "embeddedTextureBytes": 30715754,
   "textureMemoryBytesUncompressed": 268566528,
-  "placements": 2653,
+  "placements": 2719,
   "collision": {
     "width": 1152,
     "height": 1152,
     "cellMetres": 0.5,
-    "walkableCells": 742630,
-    "blockedCells": 584474,
-    "walkableFraction": 0.5596,
+    "walkableCells": 698364,
+    "blockedCells": 628740,
+    "walkableFraction": 0.5262,
     "elevatedDecks": 29,
+    "steepCells": 261856,
+    "reliefMetres": 99.87,
+    "heightEncoding": {
+      "origin": -1.2603,
+      "step": 1.610765,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true
+    },
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nudgedEntries": [
@@ -33,11 +44,19 @@
         "metres": 3.14
       },
       {
+        "id": "gullscar-farmhouse-door",
+        "metres": 4.84
+      },
+      {
+        "id": "salvage-hole-mouth",
+        "metres": 2.88
+      },
+      {
         "id": "east-road",
         "metres": 6.67
       },
       {
-        "id": "mirrorhold-berth",
+        "id": "amber-berth",
         "metres": 1.45
       },
       {
@@ -47,6 +66,14 @@
       {
         "id": "gullstone-door",
         "metres": 3.14
+      },
+      {
+        "id": "gullscar-farmhouse-door",
+        "metres": 4.84
+      },
+      {
+        "id": "salvage-hole-mouth",
+        "metres": 2.88
       }
     ]
   },
@@ -55,15 +82,20 @@
     "surf breakers placed: 7",
     "jetties placed: 8",
     "city houses placed: 385",
-    "trees placed: 257",
-    "ground dressing placed: 536"
+    "trees placed: 254",
+    "ground dressing placed: 535",
+    "lore site league-post-house (The League Post-House): relief 1.80 m, 36 m from the ask",
+    "march north-road: 7 road pieces, 19 of grey_moors's growth",
+    "march east-road: 4 road pieces, 16 of manymouth_delta's growth",
+    "march crownwater-berth: 0 road pieces, 0 of crownwater's growth",
+    "march amber-berth: 0 road pieces, 0 of amberwood's growth"
   ],
   "lod2": {
-    "glbBytes": 14373820,
-    "nodes": 3888,
-    "uniqueTriangles": 379444,
-    "instancedTriangles": 978040,
-    "sizeReductionPercent": 38.6,
-    "triangleReductionPercent": 16.2
+    "glbBytes": 17787544,
+    "nodes": 4055,
+    "uniqueTriangles": 439076,
+    "instancedTriangles": 1039220,
+    "sizeReductionPercent": 41.0,
+    "triangleReductionPercent": 15.4
   }
 }

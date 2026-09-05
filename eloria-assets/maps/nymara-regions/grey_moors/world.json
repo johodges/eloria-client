@@ -292,7 +292,22 @@
       "March_west_waygate_haven_rock_004",
       "March_west_waygate_haven_rock_005",
       "March_west_waygate_haven_rock_006",
-      "March_west_waygate_haven_rock_007"
+      "March_west_waygate_haven_rock_007",
+      "Secret_moor_barrow_well",
+      "Secret_moor_boardwalk_cache",
+      "Secret_moor_bund_mouth",
+      "Secret_moor_court_vault",
+      "Secret_moor_croft_garden",
+      "Secret_moor_hanged_spring",
+      "Secret_moor_hound_pit",
+      "Secret_moor_peat_hollow",
+      "Secret_moor_peatcut",
+      "Secret_moor_ring_butts",
+      "Secret_moor_shrine_school",
+      "Secret_moor_tower_eyrie",
+      "Secret_moor_undercut_mouth",
+      "Secret_moor_waystone",
+      "Secret_moor_wisp_focus"
     ],
     "binary": "collision.bin",
     "format": "EWCG-v2",
@@ -309,8 +324,8 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 1149392,
-    "walkableFraction": 0.8661,
+    "walkableCells": 1149182,
+    "walkableFraction": 0.8659,
     "saturatedCells": 9
   },
   "navigation": {
@@ -1119,7 +1134,323 @@
       ]
     }
   ],
-  "interactives": [],
+  "interactives": [
+    {
+      "id": "secret-moor-peat-hollow",
+      "kind": "secret",
+      "secret": "moor-peat-hollow",
+      "name": "The Peat Hollow",
+      "label": "A cairn built over nothing, or over something.",
+      "prop": "cairn",
+      "key": "",
+      "destinationMap": "grey_moors_secrets",
+      "destinationSpawn": "moor-peat-hollow",
+      "position": [
+        28.0,
+        2.85,
+        -196.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        202,
+        370
+      ]
+    },
+    {
+      "id": "secret-moor-croft-garden",
+      "kind": "secret",
+      "secret": "moor-croft-garden",
+      "name": "The Croft Garden",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "grey_moors_secrets",
+      "destinationSpawn": "moor-croft-garden",
+      "position": [
+        136.0,
+        1.96,
+        84.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        310,
+        90
+      ]
+    },
+    {
+      "id": "secret-moor-boardwalk-cache",
+      "kind": "secret",
+      "secret": "moor-boardwalk-cache",
+      "name": "The Boardwalk Cache",
+      "label": "A hide of cut reeds, and a plank floor under it where there should be mud.",
+      "prop": "reed_hide",
+      "key": "",
+      "destinationMap": "grey_moors_secrets",
+      "destinationSpawn": "moor-boardwalk-cache",
+      "position": [
+        95.0,
+        0.6,
+        -110.2
+      ],
+      "authority": "server",
+      "serverTile": [
+        269,
+        284
+      ]
+    },
+    {
+      "id": "secret-moor-court-vault",
+      "kind": "secret",
+      "secret": "moor-court-vault",
+      "name": "The Barrow Court Vault",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Storage Token",
+      "destinationMap": "grey_moors_secrets",
+      "destinationSpawn": "moor-court-vault",
+      "position": [
+        137.0,
+        4.53,
+        -246.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        311,
+        420
+      ]
+    },
+    {
+      "id": "secret-moor-hound-pit",
+      "kind": "secret",
+      "secret": "moor-hound-pit",
+      "name": "The Hound Pit",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "prop": "loose_stone",
+      "key": "",
+      "destinationMap": "grey_moors_secrets",
+      "destinationSpawn": "moor-hound-pit",
+      "position": [
+        212.0,
+        3.63,
+        138.39
+      ],
+      "authority": "server",
+      "serverTile": [
+        386,
+        36
+      ]
+    },
+    {
+      "id": "secret-moor-shrine-school",
+      "kind": "secret",
+      "secret": "moor-shrine-school",
+      "name": "The Moor Shrine School",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "",
+      "destinationMap": "grey_moors_secrets",
+      "destinationSpawn": "moor-shrine-school",
+      "position": [
+        72.39,
+        2.35,
+        -40.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        246,
+        214
+      ]
+    },
+    {
+      "id": "secret-moor-hanged-spring",
+      "kind": "secret",
+      "secret": "moor-hanged-spring",
+      "name": "The Hanged Oak Spring",
+      "label": "A hollow tree. The dark inside it goes down, not in.",
+      "prop": "hollow_tree",
+      "key": "",
+      "destinationMap": "grey_moors_secrets",
+      "destinationSpawn": "moor-hanged-spring",
+      "position": [
+        74.0,
+        1.75,
+        -162.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        248,
+        336
+      ]
+    },
+    {
+      "id": "secret-moor-ring-butts",
+      "kind": "secret",
+      "secret": "moor-ring-butts",
+      "name": "The Stone Ring Butts",
+      "label": "A cairn built over nothing, or over something.",
+      "prop": "cairn",
+      "key": "",
+      "destinationMap": "grey_moors_secrets",
+      "destinationSpawn": "moor-ring-butts",
+      "position": [
+        168.6,
+        3.53,
+        63.5
+      ],
+      "authority": "server",
+      "serverTile": [
+        343,
+        110
+      ]
+    },
+    {
+      "id": "secret-moor-barrow-well",
+      "kind": "secret",
+      "secret": "moor-barrow-well",
+      "name": "The Barrow Well",
+      "label": "A cairn built over nothing, or over something.",
+      "prop": "cairn",
+      "key": "",
+      "destinationMap": "grey_moors_secrets",
+      "destinationSpawn": "moor-barrow-well",
+      "position": [
+        249.58,
+        1.36,
+        -192.34
+      ],
+      "authority": "server",
+      "serverTile": [
+        424,
+        366
+      ]
+    },
+    {
+      "id": "secret-moor-wisp-focus",
+      "kind": "secret",
+      "secret": "moor-wisp-focus",
+      "name": "The Wisp Focus",
+      "label": "A cairn built over nothing, or over something.",
+      "prop": "cairn",
+      "key": "Woven Charm",
+      "destinationMap": "grey_moors_secrets",
+      "destinationSpawn": "moor-wisp-focus",
+      "position": [
+        284.0,
+        0.96,
+        -142.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        458,
+        316
+      ]
+    },
+    {
+      "id": "secret-moor-peatcut",
+      "kind": "secret",
+      "secret": "moor-peatcut",
+      "name": "The Peat-Cut",
+      "label": "A hide of cut reeds, and a plank floor under it where there should be mud.",
+      "prop": "reed_hide",
+      "key": "",
+      "destinationMap": "grey_moors_secrets",
+      "destinationSpawn": "moor-peatcut",
+      "position": [
+        266.0,
+        2.86,
+        -28.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        440,
+        202
+      ]
+    },
+    {
+      "id": "secret-moor-waystone",
+      "kind": "secret",
+      "secret": "moor-waystone",
+      "name": "The Moor Waystone",
+      "label": "A cairn built over nothing, or over something.",
+      "prop": "cairn",
+      "key": "Iron Rune",
+      "destinationMap": "grey_moors_secrets",
+      "destinationSpawn": "moor-waystone",
+      "position": [
+        89.2,
+        2.37,
+        -84.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        263,
+        258
+      ]
+    },
+    {
+      "id": "secret-moor-tower-eyrie",
+      "kind": "secret",
+      "secret": "moor-tower-eyrie",
+      "name": "The Tower Eyrie",
+      "label": "An arch so grown with vine it reads as hedge.",
+      "prop": "ivy_arch",
+      "key": "",
+      "destinationMap": "grey_moors_secrets",
+      "destinationSpawn": "moor-tower-eyrie",
+      "position": [
+        386.0,
+        7.11,
+        -181.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        560,
+        355
+      ]
+    },
+    {
+      "id": "secret-moor-undercut-mouth",
+      "kind": "secret",
+      "secret": "moor-undercut-mouth",
+      "name": "The Undercut Mouth",
+      "label": "A knot of roots grown over a door frame.",
+      "prop": "root_door",
+      "key": "",
+      "destinationMap": "amberwood_secrets",
+      "destinationSpawn": "amber-undercut-far",
+      "position": [
+        325.68,
+        1.98,
+        -295.16
+      ],
+      "authority": "server",
+      "serverTile": [
+        500,
+        469
+      ]
+    },
+    {
+      "id": "secret-moor-bund-mouth",
+      "kind": "secret",
+      "secret": "moor-bund-mouth",
+      "name": "The Bund-Run Mouth",
+      "label": "A hide of cut reeds, and a plank floor under it where there should be mud.",
+      "prop": "reed_hide",
+      "key": "",
+      "destinationMap": "manymouth_delta_secrets",
+      "destinationSpawn": "delta-bund-run-far",
+      "position": [
+        239.0,
+        1.0,
+        -49.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        413,
+        223
+      ]
+    }
+  ],
   "npcMarkers": [
     {
       "id": "barrow-warden",
@@ -3257,27 +3588,27 @@
     }
   ],
   "performance": {
-    "nodes": 7740,
-    "meshes": 558,
-    "materials": 45,
-    "images": 103,
-    "textures": 103,
-    "accessors": 2242,
-    "bufferViews": 2345,
-    "uniqueTriangles": 426852,
-    "uniqueVertices": 356819,
-    "glbBytes": 30331796,
-    "instancedTriangles": 758100,
-    "embeddedTextureBytes": 13426550,
-    "textureMemoryBytesUncompressed": 104988672,
-    "placements": 7302,
+    "nodes": 7773,
+    "meshes": 582,
+    "materials": 46,
+    "images": 106,
+    "textures": 106,
+    "accessors": 2338,
+    "bufferViews": 2444,
+    "uniqueTriangles": 429946,
+    "uniqueVertices": 361780,
+    "glbBytes": 30967964,
+    "instancedTriangles": 761194,
+    "embeddedTextureBytes": 13857036,
+    "textureMemoryBytesUncompressed": 108134400,
+    "placements": 7317,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 1149392,
-      "blockedCells": 177712,
-      "walkableFraction": 0.8661,
+      "walkableCells": 1149182,
+      "blockedCells": 177922,
+      "walkableFraction": 0.8659,
       "elevatedDecks": 12,
       "steepCells": 85736,
       "reliefMetres": 21.49,
@@ -3319,10 +3650,10 @@
       "warm-stone-door moved 2.5 m onto walkable ground"
     ],
     "lod2": {
-      "glbBytes": 16574420,
-      "nodes": 703,
-      "uniqueTriangles": 389042,
-      "instancedTriangles": 404922
+      "glbBytes": 16836816,
+      "nodes": 736,
+      "uniqueTriangles": 392136,
+      "instancedTriangles": 408016
     }
   },
   "sources": [

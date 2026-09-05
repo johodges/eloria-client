@@ -2,7 +2,7 @@
   "uri": "world.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-09-05T08:03:58.055068Z",
+  "validatedAt": "2026-09-05T11:11:10.337965Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
@@ -37,7 +37,7 @@
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/21"
+        "pointer": "/materials/22"
       }
     ]
   }

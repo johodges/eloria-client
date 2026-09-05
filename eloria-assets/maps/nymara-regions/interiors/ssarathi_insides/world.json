@@ -188,6 +188,7 @@
       "Build_ssarathi_insides_lime_plaster",
       "Build_ssarathi_insides_pale_ashlar",
       "Build_ssarathi_insides_rubble_stone",
+      "Build_ssarathi_insides_scorched_ground",
       "Build_ssarathi_insides_ssarathi_basin_water",
       "Build_ssarathi_insides_ssarathi_gilt",
       "Build_ssarathi_insides_ssarathi_jade_ashlar",
@@ -198,6 +199,7 @@
       "Build_ssarathi_insides_timber_dark",
       "Build_ssarathi_insides_timber_grey",
       "Build_ssarathi_insides_timber_warm",
+      "Build_ssarathi_insides_verdant_terrace_stone",
       "Build_ssarathi_insides_water_deep",
       "Build_ssarathi_insides_woven_cloth"
     ]
@@ -564,6 +566,24 @@
       ],
       "authority": "server",
       "section": "drowned_cistern"
+    },
+    {
+      "id": "secret-ruins-vault-of-the-sun",
+      "kind": "secret",
+      "secret": "ruins-vault-of-the-sun",
+      "name": "The Sun Vault Undercroft",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Storage Token",
+      "destinationMap": "ssarathi_ruins_secrets",
+      "destinationSpawn": "ruins-vault-of-the-sun",
+      "position": [
+        58.0,
+        0.35,
+        153.0
+      ],
+      "space": "royal_archive.central_archive",
+      "authority": "server"
     }
   ],
   "npcMarkers": [
@@ -1667,16 +1687,16 @@
     ]
   },
   "performance": {
-    "nodes": 33,
-    "meshes": 32,
-    "materials": 23,
-    "images": 67,
-    "textures": 67,
-    "accessors": 160,
-    "bufferViews": 227,
-    "uniqueTriangles": 124218,
-    "uniqueVertices": 133207,
-    "glbBytes": 14025416,
+    "nodes": 35,
+    "meshes": 34,
+    "materials": 25,
+    "images": 73,
+    "textures": 73,
+    "accessors": 170,
+    "bufferViews": 243,
+    "uniqueTriangles": 124242,
+    "uniqueVertices": 133255,
+    "glbBytes": 14719880,
     "nodeNames": [
       "Interior_ssarathi_insides",
       "Roof_ssarathi_insides_ashlar",
@@ -1692,6 +1712,7 @@
       "Build_ssarathi_insides_lime_plaster",
       "Build_ssarathi_insides_pale_ashlar",
       "Build_ssarathi_insides_rubble_stone",
+      "Build_ssarathi_insides_scorched_ground",
       "Build_ssarathi_insides_ssarathi_basin_water",
       "Build_ssarathi_insides_ssarathi_gilt",
       "Build_ssarathi_insides_ssarathi_jade_ashlar",
@@ -1702,6 +1723,7 @@
       "Build_ssarathi_insides_timber_dark",
       "Build_ssarathi_insides_timber_grey",
       "Build_ssarathi_insides_timber_warm",
+      "Build_ssarathi_insides_verdant_terrace_stone",
       "Build_ssarathi_insides_water_deep",
       "Build_ssarathi_insides_woven_cloth",
       "Walk_ashlar",

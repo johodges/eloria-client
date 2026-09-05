@@ -40,6 +40,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import preview
 import validate_gltf
+import secretdoors as SD
+import secrets_design as SEC
 from amberwood import gltf as GLTF, interiors as I, materials as MAT, mesh as M
 
 import interiors as IT
@@ -330,6 +332,8 @@ def main() -> int:
             continue
         t0 = time.time()
         interior = builder_fn(SEED)
+        # a secret whose door is down here rather than on the region above
+        SD.dress_interior(interior, SEC, "whitehorn_glacier_temple", SEED)
         out = INTERIOR_ROOT / interior.ident
         out.mkdir(parents=True, exist_ok=True)
         builder, stats = export_glb(interior, sets, out / "world.glb")

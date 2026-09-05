@@ -47,6 +47,8 @@ import stiltkit as SK  # noqa: F401  (registers the delta tree species)
 import populate as POP
 import region as REG
 import transitions as MARCH
+import secretdoors as SD
+import secrets_design as SEC
 import loresites as LORE
 
 HERE = Path(__file__).resolve().parent
@@ -89,7 +91,7 @@ SITES = [
                    "reading path between them, and the tenth stone left blank."),
 ]
 MARCH_MATERIALS: dict = dict(getattr(REG, "SURFACE_MATERIALS", {}))
-DK.MATERIALS = DK.MATERIALS | MARCH.materials_for("manymouth_delta", CROSSINGS) | LORE.materials([s.piece for s in SITES])
+DK.MATERIALS = DK.MATERIALS | MARCH.materials_for("manymouth_delta", CROSSINGS) | SD.materials(SEC) | LORE.materials([s.piece for s in SITES])
 
 
 def register_materials(sets):
@@ -171,6 +173,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     MARCH.paint(terrain, CROSSINGS, MARCH_MATERIALS, seed, sea_level=REG.SEA_LEVEL, keep=(TER.DELTA_SILT, TER.DELTA_PADDY))
     march = MARCH.dress(build, "manymouth_delta", CROSSINGS, seed, sea_level=REG.SEA_LEVEL)
     LORE.dress(build, terrain, SITES, seed)
+    SD.dress(build, terrain, SEC, seed, sea_level=getattr(REG, "SEA_LEVEL", 0.0), server_origin=REG.SERVER_ORIGIN)
     build.landmarks.extend(march.landmarks)
     build.notes.extend(march.notes)
 

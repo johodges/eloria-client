@@ -779,6 +779,24 @@
       "radius": 2.0,
       "authority": "server",
       "section": "stair_quarry"
+    },
+    {
+      "id": "secret-stair-provisioner-cache",
+      "kind": "secret",
+      "secret": "stair-provisioner-cache",
+      "name": "The Provisioner's Cache",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "verdant_stair_secrets",
+      "destinationSpawn": "stair-provisioner-cache",
+      "position": [
+        144.0,
+        -2.0,
+        257.0
+      ],
+      "space": "stair_quarry.sorting",
+      "authority": "server"
     }
   ],
   "npcMarkers": [
@@ -2199,9 +2217,9 @@
     "textures": 78,
     "accessors": 195,
     "bufferViews": 273,
-    "uniqueTriangles": 72045,
-    "uniqueVertices": 80875,
-    "glbBytes": 11478332,
+    "uniqueTriangles": 72069,
+    "uniqueVertices": 80923,
+    "glbBytes": 11480780,
     "nodeNames": [
       "Interior_verdant_stair_insides",
       "Roof_verdant_stair_insides_bark_dark",

@@ -666,6 +666,24 @@
       ],
       "authority": "server",
       "section": "bone_gallery"
+    },
+    {
+      "id": "secret-moor-crypt-reliquary",
+      "kind": "secret",
+      "secret": "moor-crypt-reliquary",
+      "name": "The West Crypt Reliquary",
+      "label": "A shrine slab with fresh scratches where it has been slid aside.",
+      "prop": "shrine_slab",
+      "key": "Bones",
+      "destinationMap": "grey_moors_secrets",
+      "destinationSpawn": "moor-crypt-reliquary",
+      "position": [
+        46.0,
+        -2.0,
+        173.5
+      ],
+      "space": "bone_gallery.gallery",
+      "authority": "server"
     }
   ],
   "npcMarkers": [
@@ -1806,9 +1824,9 @@
     "textures": 59,
     "accessors": 145,
     "bufferViews": 204,
-    "uniqueTriangles": 41920,
-    "uniqueVertices": 42772,
-    "glbBytes": 10934832,
+    "uniqueTriangles": 42140,
+    "uniqueVertices": 42936,
+    "glbBytes": 10944024,
     "nodeNames": [
       "Interior_grey_moors_insides",
       "Roof_grey_moors_insides_cliff_rock",

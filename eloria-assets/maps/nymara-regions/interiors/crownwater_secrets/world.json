@@ -1,0 +1,4032 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "crownwater_secrets",
+    "name": "Crownwater Secrets",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        18.0,
+        -5.4,
+        18.0
+      ],
+      "max": [
+        327.1,
+        8.25,
+        188.9
+      ]
+    },
+    "playableBounds": {
+      "min": [
+        18.0,
+        -5.4,
+        18.0
+      ],
+      "max": [
+        327.1,
+        3.0,
+        188.9
+      ]
+    },
+    "interiorClass": "secrets",
+    "parentRegion": "crownwater",
+    "serverCells": 384
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      -16.0,
+      191.0
+    ],
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 0.0,
+    "invertServerY": true
+  },
+  "secret": true,
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-pearl-hollow"
+    },
+    {
+      "id": "crown-pearl-hollow",
+      "position": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-pearl-hollow"
+    },
+    {
+      "id": "crown-kelp-garden",
+      "position": [
+        245.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-kelp-garden"
+    },
+    {
+      "id": "crown-customs-cache",
+      "position": [
+        169.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-customs-cache"
+    },
+    {
+      "id": "crown-campanile-vault",
+      "position": [
+        242.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-campanile-vault"
+    },
+    {
+      "id": "crown-crab-pit",
+      "position": [
+        316.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-crab-pit"
+    },
+    {
+      "id": "crown-cathedral-school",
+      "position": [
+        315.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-cathedral-school"
+    },
+    {
+      "id": "crown-warm-spring",
+      "position": [
+        26.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-warm-spring"
+    },
+    {
+      "id": "crown-pavilion-butts",
+      "position": [
+        94.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-pavilion-butts"
+    },
+    {
+      "id": "crown-court-reliquary",
+      "position": [
+        97.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-court-reliquary"
+    },
+    {
+      "id": "crown-cistern-well",
+      "position": [
+        99.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-cistern-well"
+    },
+    {
+      "id": "crown-lake-focus",
+      "position": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-lake-focus"
+    },
+    {
+      "id": "crown-drain",
+      "position": [
+        21.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-drain"
+    },
+    {
+      "id": "crown-drain-far",
+      "position": [
+        21.55,
+        -4.95,
+        84.55
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-drain"
+    },
+    {
+      "id": "crown-waystone",
+      "position": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-waystone"
+    },
+    {
+      "id": "crown-waystone-ring",
+      "position": [
+        168.1,
+        -4.0,
+        109.1
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-waystone"
+    },
+    {
+      "id": "crown-waystone-ring",
+      "position": [
+        171.55,
+        -4.0,
+        107.67
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-waystone"
+    },
+    {
+      "id": "crown-waystone-ring",
+      "position": [
+        175.0,
+        -4.0,
+        109.1
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-waystone"
+    },
+    {
+      "id": "crown-waystone-ring",
+      "position": [
+        176.43,
+        -4.0,
+        112.55
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-waystone"
+    },
+    {
+      "id": "crown-waystone-ring",
+      "position": [
+        175.0,
+        -4.0,
+        116.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-waystone"
+    },
+    {
+      "id": "crown-waystone-ring",
+      "position": [
+        171.55,
+        -4.0,
+        117.43
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-waystone"
+    },
+    {
+      "id": "crown-waystone-ring",
+      "position": [
+        168.1,
+        -4.0,
+        116.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-waystone"
+    },
+    {
+      "id": "crown-campanile-eyrie",
+      "position": [
+        312.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "crown-campanile-eyrie"
+    }
+  ],
+  "collision": {
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "width": 624,
+    "height": 348,
+    "cellMetres": 0.5,
+    "originMetres": [
+      16.0,
+      191.0
+    ],
+    "heightEncoding": {
+      "origin": -5.131,
+      "step": 0.1311,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true
+    },
+    "walkableCells": 21112,
+    "blockedCells": 196040,
+    "walkableFraction": 0.0972,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    "nodeNames": [
+      "Secrets_crownwater_secrets",
+      "Section_crown-pearl-hollow",
+      "Roof_crown-pearl-hollow_cliff_rock",
+      "Build_crown-pearl-hollow_amber_resin",
+      "Build_crown-pearl-hollow_blue_crystal",
+      "Build_crown-pearl-hollow_cliff_rock",
+      "Build_crown-pearl-hollow_dark_iron",
+      "Build_crown-pearl-hollow_water_lake",
+      "Section_crown-kelp-garden",
+      "Roof_crown-kelp-garden_cliff_rock",
+      "Build_crown-kelp-garden_amber_resin",
+      "Build_crown-kelp-garden_ashlar",
+      "Build_crown-kelp-garden_bark_pale",
+      "Build_crown-kelp-garden_blue_crystal",
+      "Build_crown-kelp-garden_cliff_rock",
+      "Build_crown-kelp-garden_dark_iron",
+      "Build_crown-kelp-garden_foliage_green",
+      "Build_crown-kelp-garden_rubble_stone",
+      "Build_crown-kelp-garden_timber_warm",
+      "Build_crown-kelp-garden_water_pool",
+      "Section_crown-customs-cache",
+      "Roof_crown-customs-cache_cliff_rock",
+      "Roof_crown-customs-cache_timber_grey",
+      "Build_crown-customs-cache_amber_resin",
+      "Build_crown-customs-cache_ashlar",
+      "Build_crown-customs-cache_blue_crystal",
+      "Build_crown-customs-cache_cliff_rock",
+      "Build_crown-customs-cache_dark_iron",
+      "Build_crown-customs-cache_timber_dark",
+      "Build_crown-customs-cache_timber_grey",
+      "Build_crown-customs-cache_timber_warm",
+      "Section_crown-campanile-vault",
+      "Roof_crown-campanile-vault_ashlar",
+      "Roof_crown-campanile-vault_cliff_rock",
+      "Build_crown-campanile-vault_amber_resin",
+      "Build_crown-campanile-vault_ashlar",
+      "Build_crown-campanile-vault_carved_wood",
+      "Build_crown-campanile-vault_cliff_rock",
+      "Build_crown-campanile-vault_dark_iron",
+      "Build_crown-campanile-vault_timber_dark",
+      "Build_crown-campanile-vault_timber_grey",
+      "Build_crown-campanile-vault_timber_warm",
+      "Section_crown-crab-pit",
+      "Roof_crown-crab-pit_cliff_rock",
+      "Build_crown-crab-pit_amber_resin",
+      "Build_crown-crab-pit_cliff_rock",
+      "Build_crown-crab-pit_dark_iron",
+      "Build_crown-crab-pit_pale_ashlar",
+      "Build_crown-crab-pit_timber_grey",
+      "Section_crown-cathedral-school",
+      "Roof_crown-cathedral-school_cliff_rock",
+      "Roof_crown-cathedral-school_timber_grey",
+      "Build_crown-cathedral-school_amber_resin",
+      "Build_crown-cathedral-school_ashlar",
+      "Build_crown-cathedral-school_carved_wood",
+      "Build_crown-cathedral-school_cliff_rock",
+      "Build_crown-cathedral-school_dark_iron",
+      "Build_crown-cathedral-school_timber_grey",
+      "Section_crown-warm-spring",
+      "Roof_crown-warm-spring_cliff_rock",
+      "Build_crown-warm-spring_amber_resin",
+      "Build_crown-warm-spring_ashlar",
+      "Build_crown-warm-spring_cliff_rock",
+      "Build_crown-warm-spring_dark_iron",
+      "Build_crown-warm-spring_water_lake",
+      "Section_crown-pavilion-butts",
+      "Roof_crown-pavilion-butts_cliff_rock",
+      "Roof_crown-pavilion-butts_timber_grey",
+      "Build_crown-pavilion-butts_amber_resin",
+      "Build_crown-pavilion-butts_ashlar",
+      "Build_crown-pavilion-butts_cliff_rock",
+      "Build_crown-pavilion-butts_dark_iron",
+      "Build_crown-pavilion-butts_thatch_reed",
+      "Build_crown-pavilion-butts_timber_grey",
+      "Section_crown-court-reliquary",
+      "Roof_crown-court-reliquary_ashlar",
+      "Roof_crown-court-reliquary_cliff_rock",
+      "Build_crown-court-reliquary_amber_resin",
+      "Build_crown-court-reliquary_ashlar",
+      "Build_crown-court-reliquary_cliff_rock",
+      "Build_crown-court-reliquary_dark_iron",
+      "Build_crown-court-reliquary_gilt_brass",
+      "Section_crown-cistern-well",
+      "Roof_crown-cistern-well_cliff_rock",
+      "Build_crown-cistern-well_amber_resin",
+      "Build_crown-cistern-well_ashlar",
+      "Build_crown-cistern-well_cliff_rock",
+      "Build_crown-cistern-well_dark_iron",
+      "Section_crown-lake-focus",
+      "Roof_crown-lake-focus_ashlar",
+      "Roof_crown-lake-focus_cliff_rock",
+      "Build_crown-lake-focus_amber_resin",
+      "Build_crown-lake-focus_ashlar",
+      "Build_crown-lake-focus_blue_crystal",
+      "Build_crown-lake-focus_cliff_rock",
+      "Build_crown-lake-focus_dark_iron",
+      "Section_crown-drain",
+      "Roof_crown-drain_cliff_rock",
+      "Build_crown-drain_amber_resin",
+      "Build_crown-drain_blue_crystal",
+      "Build_crown-drain_cliff_rock",
+      "Build_crown-drain_dark_iron",
+      "Build_crown-drain_timber_grey",
+      "Section_crown-waystone",
+      "Roof_crown-waystone_ashlar",
+      "Roof_crown-waystone_cliff_rock",
+      "Build_crown-waystone_amber_resin",
+      "Build_crown-waystone_ashlar",
+      "Build_crown-waystone_cliff_rock",
+      "Build_crown-waystone_dark_iron",
+      "Build_crown-waystone_gilt_brass",
+      "Section_crown-campanile-eyrie",
+      "Roof_crown-campanile-eyrie_cliff_rock",
+      "Build_crown-campanile-eyrie_amber_resin",
+      "Build_crown-campanile-eyrie_bark_dark",
+      "Build_crown-campanile-eyrie_carved_wood",
+      "Build_crown-campanile-eyrie_cliff_rock",
+      "Build_crown-campanile-eyrie_dark_iron",
+      "Build_crown-campanile-eyrie_rubble_stone",
+      "Build_crown-campanile-eyrie_timber_warm",
+      "Build_crown-campanile-eyrie_water_pool"
+    ]
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Roof_crown-pearl-hollow_cliff_rock",
+      "Roof_crown-kelp-garden_cliff_rock",
+      "Roof_crown-customs-cache_cliff_rock",
+      "Roof_crown-customs-cache_timber_grey",
+      "Roof_crown-campanile-vault_ashlar",
+      "Roof_crown-campanile-vault_cliff_rock",
+      "Roof_crown-crab-pit_cliff_rock",
+      "Roof_crown-cathedral-school_cliff_rock",
+      "Roof_crown-cathedral-school_timber_grey",
+      "Roof_crown-warm-spring_cliff_rock",
+      "Roof_crown-pavilion-butts_cliff_rock",
+      "Roof_crown-pavilion-butts_timber_grey",
+      "Roof_crown-court-reliquary_ashlar",
+      "Roof_crown-court-reliquary_cliff_rock",
+      "Roof_crown-cistern-well_cliff_rock",
+      "Roof_crown-lake-focus_ashlar",
+      "Roof_crown-lake-focus_cliff_rock",
+      "Roof_crown-drain_cliff_rock",
+      "Roof_crown-waystone_ashlar",
+      "Roof_crown-waystone_cliff_rock",
+      "Roof_crown-campanile-eyrie_cliff_rock"
+    ],
+    "reason": "interior lids; the isometric rig frames the floor, not the roof"
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Walk_"
+    ],
+    "agentRadius": 0.4,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 45,
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    }
+  },
+  "portals": [
+    {
+      "id": "exit-crown-pearl-hollow",
+      "name": "Back up: The Pearl Hollow",
+      "type": "map-transition",
+      "position": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "crownwater",
+      "destinationSpawn": "secret-crown-pearl-hollow",
+      "section": "crown-pearl-hollow",
+      "authority": "server"
+    },
+    {
+      "id": "exit-crown-kelp-garden",
+      "name": "Back up: The Kelp Garden",
+      "type": "map-transition",
+      "position": [
+        245.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "crownwater",
+      "destinationSpawn": "secret-crown-kelp-garden",
+      "section": "crown-kelp-garden",
+      "authority": "server"
+    },
+    {
+      "id": "exit-crown-customs-cache",
+      "name": "Back up: The Customs Cache",
+      "type": "map-transition",
+      "position": [
+        169.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "drowned_crown",
+      "destinationSpawn": "secret-crown-customs-cache",
+      "section": "crown-customs-cache",
+      "authority": "server"
+    },
+    {
+      "id": "exit-crown-campanile-vault",
+      "name": "Back up: The Campanile Vault",
+      "type": "map-transition",
+      "position": [
+        242.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "crownwater",
+      "destinationSpawn": "secret-crown-campanile-vault",
+      "section": "crown-campanile-vault",
+      "authority": "server"
+    },
+    {
+      "id": "exit-crown-crab-pit",
+      "name": "Back up: The Crab Pit",
+      "type": "map-transition",
+      "position": [
+        316.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "crownwater",
+      "destinationSpawn": "secret-crown-crab-pit",
+      "section": "crown-crab-pit",
+      "authority": "server"
+    },
+    {
+      "id": "exit-crown-cathedral-school",
+      "name": "Back up: The Cathedral School",
+      "type": "map-transition",
+      "position": [
+        315.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "crownwater",
+      "destinationSpawn": "secret-crown-cathedral-school",
+      "section": "crown-cathedral-school",
+      "authority": "server"
+    },
+    {
+      "id": "exit-crown-warm-spring",
+      "name": "Back up: The Crown Spring",
+      "type": "map-transition",
+      "position": [
+        26.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "crownwater",
+      "destinationSpawn": "secret-crown-warm-spring",
+      "section": "crown-warm-spring",
+      "authority": "server"
+    },
+    {
+      "id": "exit-crown-pavilion-butts",
+      "name": "Back up: The Pavilion Butts",
+      "type": "map-transition",
+      "position": [
+        94.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "crownwater",
+      "destinationSpawn": "secret-crown-pavilion-butts",
+      "section": "crown-pavilion-butts",
+      "authority": "server"
+    },
+    {
+      "id": "exit-crown-court-reliquary",
+      "name": "Back up: The Sunken Court Reliquary",
+      "type": "map-transition",
+      "position": [
+        97.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "crownwater",
+      "destinationSpawn": "secret-crown-court-reliquary",
+      "section": "crown-court-reliquary",
+      "authority": "server"
+    },
+    {
+      "id": "exit-crown-cistern-well",
+      "name": "Back up: The Cistern Well",
+      "type": "map-transition",
+      "position": [
+        99.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "crownwater",
+      "destinationSpawn": "secret-crown-cistern-well",
+      "section": "crown-cistern-well",
+      "authority": "server"
+    },
+    {
+      "id": "exit-crown-lake-focus",
+      "name": "Back up: The Lake Focus",
+      "type": "map-transition",
+      "position": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "crownwater",
+      "destinationSpawn": "secret-crown-lake-focus",
+      "section": "crown-lake-focus",
+      "authority": "server"
+    },
+    {
+      "id": "exit-crown-drain",
+      "name": "Back up: The Crown Drain",
+      "type": "map-transition",
+      "position": [
+        21.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "crownwater",
+      "destinationSpawn": "secret-crown-drain",
+      "section": "crown-drain",
+      "authority": "server"
+    },
+    {
+      "id": "link-crown-drain-secret-gates-drain-mouth",
+      "name": "Up into the Four Gates",
+      "type": "map-transition",
+      "position": [
+        21.55,
+        -4.95,
+        84.55
+      ],
+      "radius": 2.5,
+      "destinationMap": "four_gates",
+      "destinationSpawn": "secret-gates-drain-mouth",
+      "section": "crown-drain",
+      "authority": "server"
+    },
+    {
+      "id": "exit-crown-waystone",
+      "name": "Back up: The Crown Waystone",
+      "type": "map-transition",
+      "position": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "crownwater",
+      "destinationSpawn": "secret-crown-waystone",
+      "section": "crown-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-crown-waystone-mirror-waystone",
+      "name": "Mirrorhold",
+      "type": "map-transition",
+      "position": [
+        168.1,
+        -4.0,
+        109.1
+      ],
+      "radius": 2.5,
+      "destinationMap": "mirrorhold_secrets",
+      "destinationSpawn": "mirror-waystone",
+      "section": "crown-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-crown-waystone-gates-waystone",
+      "name": "The Four Gates",
+      "type": "map-transition",
+      "position": [
+        171.55,
+        -4.0,
+        107.67
+      ],
+      "radius": 2.5,
+      "destinationMap": "four_gates_secrets",
+      "destinationSpawn": "gates-waystone",
+      "section": "crown-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-crown-waystone-delta-waystone",
+      "name": "The Manymouth Delta",
+      "type": "map-transition",
+      "position": [
+        175.0,
+        -4.0,
+        109.1
+      ],
+      "radius": 2.5,
+      "destinationMap": "manymouth_delta_secrets",
+      "destinationSpawn": "delta-waystone",
+      "section": "crown-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-crown-waystone-haven-waystone",
+      "name": "Westhaven",
+      "type": "map-transition",
+      "position": [
+        176.43,
+        -4.0,
+        112.55
+      ],
+      "radius": 2.5,
+      "destinationMap": "westhaven_secrets",
+      "destinationSpawn": "haven-waystone",
+      "section": "crown-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-crown-waystone-barrens-waystone",
+      "name": "The Amethyst Barrens",
+      "type": "map-transition",
+      "position": [
+        175.0,
+        -4.0,
+        116.0
+      ],
+      "radius": 2.5,
+      "destinationMap": "amethyst_barrens_secrets",
+      "destinationSpawn": "barrens-waystone",
+      "section": "crown-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-crown-waystone-moor-waystone",
+      "name": "The Grey Moors",
+      "type": "map-transition",
+      "position": [
+        171.55,
+        -4.0,
+        117.43
+      ],
+      "radius": 2.5,
+      "destinationMap": "grey_moors_secrets",
+      "destinationSpawn": "moor-waystone",
+      "section": "crown-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-crown-waystone-ruins-waystone",
+      "name": "The Ssarathi Ruins",
+      "type": "map-transition",
+      "position": [
+        168.1,
+        -4.0,
+        116.0
+      ],
+      "radius": 2.5,
+      "destinationMap": "ssarathi_ruins_secrets",
+      "destinationSpawn": "ruins-waystone",
+      "section": "crown-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "exit-crown-campanile-eyrie",
+      "name": "Back up: The Campanile Eyrie",
+      "type": "map-transition",
+      "position": [
+        312.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "crownwater",
+      "destinationSpawn": "secret-crown-campanile-eyrie",
+      "section": "crown-campanile-eyrie",
+      "authority": "server"
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "crown-pearl-hollow-room",
+      "name": "The Pearl Hollow",
+      "space": "crown-pearl-hollow.landing",
+      "position": [
+        174.55,
+        1.6,
+        21.05
+      ],
+      "section": "crown-pearl-hollow"
+    },
+    {
+      "id": "crown-kelp-garden-room",
+      "name": "The Kelp Garden",
+      "space": "crown-kelp-garden.landing",
+      "position": [
+        245.55,
+        1.6,
+        21.05
+      ],
+      "section": "crown-kelp-garden"
+    },
+    {
+      "id": "crown-customs-cache-room",
+      "name": "The Customs Cache",
+      "space": "crown-customs-cache.landing",
+      "position": [
+        169.55,
+        1.6,
+        165.05
+      ],
+      "section": "crown-customs-cache"
+    },
+    {
+      "id": "crown-campanile-vault-room",
+      "name": "The Campanile Vault",
+      "space": "crown-campanile-vault.landing",
+      "position": [
+        242.55,
+        1.6,
+        165.05
+      ],
+      "section": "crown-campanile-vault"
+    },
+    {
+      "id": "crown-crab-pit-room",
+      "name": "The Crab Pit",
+      "space": "crown-crab-pit.landing",
+      "position": [
+        316.55,
+        1.6,
+        21.05
+      ],
+      "section": "crown-crab-pit"
+    },
+    {
+      "id": "crown-cathedral-school-room",
+      "name": "The Cathedral School",
+      "space": "crown-cathedral-school.landing",
+      "position": [
+        315.55,
+        1.6,
+        93.05
+      ],
+      "section": "crown-cathedral-school"
+    },
+    {
+      "id": "crown-warm-spring-room",
+      "name": "The Crown Spring",
+      "space": "crown-warm-spring.landing",
+      "position": [
+        26.55,
+        1.6,
+        165.05
+      ],
+      "section": "crown-warm-spring"
+    },
+    {
+      "id": "crown-pavilion-butts-room",
+      "name": "The Pavilion Butts",
+      "space": "crown-pavilion-butts.landing",
+      "position": [
+        94.55,
+        1.6,
+        21.05
+      ],
+      "section": "crown-pavilion-butts"
+    },
+    {
+      "id": "crown-court-reliquary-room",
+      "name": "The Sunken Court Reliquary",
+      "space": "crown-court-reliquary.landing",
+      "position": [
+        97.55,
+        1.6,
+        165.05
+      ],
+      "section": "crown-court-reliquary"
+    },
+    {
+      "id": "crown-cistern-well-room",
+      "name": "The Cistern Well",
+      "space": "crown-cistern-well.landing",
+      "position": [
+        99.55,
+        1.6,
+        93.05
+      ],
+      "section": "crown-cistern-well"
+    },
+    {
+      "id": "crown-lake-focus-room",
+      "name": "The Lake Focus",
+      "space": "crown-lake-focus.landing",
+      "position": [
+        242.55,
+        1.6,
+        93.05
+      ],
+      "section": "crown-lake-focus"
+    },
+    {
+      "id": "crown-drain-room",
+      "name": "The Crown Drain",
+      "space": "crown-drain.landing",
+      "position": [
+        21.55,
+        1.6,
+        21.05
+      ],
+      "section": "crown-drain"
+    },
+    {
+      "id": "crown-waystone-room",
+      "name": "The Crown Waystone",
+      "space": "crown-waystone.landing",
+      "position": [
+        171.55,
+        1.6,
+        93.05
+      ],
+      "section": "crown-waystone"
+    },
+    {
+      "id": "crown-campanile-eyrie-room",
+      "name": "The Campanile Eyrie",
+      "space": "crown-campanile-eyrie.landing",
+      "position": [
+        312.55,
+        1.6,
+        165.05
+      ],
+      "section": "crown-campanile-eyrie"
+    }
+  ],
+  "interactives": [
+    {
+      "id": "crown-kelp-garden-well",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Garden well",
+      "text": "Cold water from the garden well.",
+      "position": [
+        245.55,
+        -1.0,
+        42.55
+      ],
+      "section": "crown-kelp-garden",
+      "serverTile": [
+        230,
+        148
+      ]
+    },
+    {
+      "id": "crown-customs-cache-cache",
+      "kind": "storage",
+      "target": "shared",
+      "label": "Cache",
+      "text": "A cache; it opens your shared storage.",
+      "position": [
+        169.55,
+        -2.5,
+        184.65
+      ],
+      "section": "crown-customs-cache",
+      "serverTile": [
+        154,
+        6
+      ]
+    },
+    {
+      "id": "crown-customs-cache-bench",
+      "kind": "crafting_station",
+      "target": "field",
+      "label": "Bench",
+      "text": "A bench for ordinary mixing and crafting.",
+      "position": [
+        165.35,
+        -2.1,
+        184.65
+      ],
+      "section": "crown-customs-cache",
+      "serverTile": [
+        149,
+        6
+      ]
+    },
+    {
+      "id": "crown-campanile-vault-strongbox",
+      "kind": "storage",
+      "target": "shared",
+      "label": "Cache",
+      "text": "A cache; it opens your shared storage.",
+      "position": [
+        242.55,
+        -4.5,
+        185.55
+      ],
+      "section": "crown-campanile-vault",
+      "serverTile": [
+        227,
+        5
+      ]
+    },
+    {
+      "id": "crown-campanile-vault-bench",
+      "kind": "crafting_station",
+      "target": "field",
+      "label": "Bench",
+      "text": "A bench for ordinary mixing and crafting.",
+      "position": [
+        246.95,
+        -4.1,
+        181.15
+      ],
+      "section": "crown-campanile-vault",
+      "serverTile": [
+        231,
+        10
+      ]
+    },
+    {
+      "id": "crown-campanile-vault-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "The drowned court",
+      "text": "The court is swept. Someone sweeps it. What is made over it counts double, the sexton says, because the court is listening.",
+      "position": [
+        242.55,
+        -4.0,
+        176.19
+      ],
+      "section": "crown-campanile-vault",
+      "serverTile": [
+        227,
+        15
+      ]
+    },
+    {
+      "id": "crown-crab-pit-post",
+      "kind": "training",
+      "target": "combat",
+      "label": "Training post",
+      "text": "The post lists your recent combat results.",
+      "position": [
+        308.55,
+        -3.0,
+        50.05
+      ],
+      "section": "crown-crab-pit",
+      "serverTile": [
+        293,
+        141
+      ]
+    },
+    {
+      "id": "crown-cathedral-school-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "Reading",
+      "text": "The cathedral's under-room. Books read three times as fast under the stone.",
+      "position": [
+        308.35,
+        -1.0,
+        116.42
+      ],
+      "section": "crown-cathedral-school",
+      "serverTile": [
+        292,
+        75
+      ]
+    },
+    {
+      "id": "crown-cathedral-school-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "The grating",
+      "text": "The grating over the drowned court was found open. The diver says from below.",
+      "position": [
+        315.55,
+        -1.0,
+        116.42
+      ],
+      "section": "crown-cathedral-school",
+      "serverTile": [
+        300,
+        75
+      ]
+    },
+    {
+      "id": "crown-cathedral-school-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "Ferries",
+      "text": "Every quay serves a route; a second berth a few tiles along the dock serves the next. Read the stone before you step on the plank.",
+      "position": [
+        322.75,
+        -1.0,
+        116.42
+      ],
+      "section": "crown-cathedral-school",
+      "serverTile": [
+        307,
+        75
+      ]
+    },
+    {
+      "id": "crown-warm-spring-spring",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Warm spring",
+      "text": "The spring is warm and mineral; it restores you.",
+      "position": [
+        26.55,
+        -2.0,
+        179.15
+      ],
+      "section": "crown-warm-spring",
+      "serverTile": [
+        11,
+        12
+      ]
+    },
+    {
+      "id": "crown-pavilion-butts-butts",
+      "kind": "training",
+      "target": "combat",
+      "label": "Butts",
+      "text": "The butts list your recent combat results.",
+      "position": [
+        94.55,
+        -1.0,
+        34.55
+      ],
+      "section": "crown-pavilion-butts",
+      "serverTile": [
+        79,
+        156
+      ]
+    },
+    {
+      "id": "crown-court-reliquary-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "The crown",
+      "text": "The crown was drowned on purpose. The court was drowned by accident.",
+      "position": [
+        91.6,
+        -4.0,
+        177.65
+      ],
+      "section": "crown-court-reliquary",
+      "serverTile": [
+        76,
+        13
+      ]
+    },
+    {
+      "id": "crown-court-reliquary-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "The patina",
+      "text": "Deep patina takes a century. The patina on the grating hinge is a year old.",
+      "position": [
+        103.5,
+        -4.0,
+        177.65
+      ],
+      "section": "crown-court-reliquary",
+      "serverTile": [
+        88,
+        13
+      ]
+    },
+    {
+      "id": "crown-court-reliquary-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "The diver",
+      "text": "Teth-Sa dives the court every tenth day and comes up with nothing, on purpose.",
+      "position": [
+        91.6,
+        -4.0,
+        181.5
+      ],
+      "section": "crown-court-reliquary",
+      "serverTile": [
+        76,
+        10
+      ]
+    },
+    {
+      "id": "crown-court-reliquary-relic",
+      "kind": "scenery_effect",
+      "target": "relic",
+      "label": "The Sunken Court Reliquary",
+      "text": "The court's own relic room, opened with a shell from the shore.",
+      "position": [
+        97.55,
+        -3.8,
+        186.05
+      ],
+      "section": "crown-court-reliquary",
+      "serverTile": [
+        82,
+        5
+      ]
+    },
+    {
+      "id": "crown-cistern-well-post",
+      "kind": "training",
+      "target": "combat",
+      "label": "Ward post",
+      "text": "Nothing casts within these stones. The post lists your recent combat results.",
+      "position": [
+        91.9,
+        -4.0,
+        104.9
+      ],
+      "section": "crown-cistern-well",
+      "serverTile": [
+        76,
+        86
+      ]
+    },
+    {
+      "id": "crown-campanile-eyrie-water",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Cistern",
+      "text": "Rainwater from the cistern.",
+      "position": [
+        315.55,
+        4.0,
+        180.35
+      ],
+      "section": "crown-campanile-eyrie",
+      "serverTile": [
+        300,
+        11
+      ]
+    },
+    {
+      "id": "crown-campanile-eyrie-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "Breath",
+      "text": "Rest here and the breath comes back twice as fast.",
+      "position": [
+        308.95,
+        4.0,
+        184.25
+      ],
+      "section": "crown-campanile-eyrie",
+      "serverTile": [
+        293,
+        7
+      ]
+    },
+    {
+      "id": "crown-campanile-eyrie-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "Regeneration",
+      "text": "Sitting restores faster than standing; a spring restores faster than sitting.",
+      "position": [
+        311.15,
+        4.0,
+        184.25
+      ],
+      "section": "crown-campanile-eyrie",
+      "serverTile": [
+        295,
+        7
+      ]
+    }
+  ],
+  "npcMarkers": [],
+  "harvestables": [
+    {
+      "id": "crown-pearl-hollow-node-00",
+      "resource": "Crownwater Pearl",
+      "position": [
+        177.79,
+        -4.0,
+        46.23
+      ],
+      "section": "crown-pearl-hollow",
+      "serverTile": [
+        162,
+        145
+      ]
+    },
+    {
+      "id": "crown-pearl-hollow-node-01",
+      "resource": "Crownwater Pearl",
+      "position": [
+        168.24,
+        -4.0,
+        44.35
+      ],
+      "section": "crown-pearl-hollow",
+      "serverTile": [
+        152,
+        147
+      ]
+    },
+    {
+      "id": "crown-pearl-hollow-node-02",
+      "resource": "Crownwater Pearl",
+      "position": [
+        179.56,
+        -4.0,
+        36.66
+      ],
+      "section": "crown-pearl-hollow",
+      "serverTile": [
+        164,
+        154
+      ]
+    },
+    {
+      "id": "crown-pearl-hollow-node-03",
+      "resource": "Crownwater Pearl",
+      "position": [
+        175.54,
+        -4.0,
+        48.74
+      ],
+      "section": "crown-pearl-hollow",
+      "serverTile": [
+        160,
+        142
+      ]
+    },
+    {
+      "id": "crown-pearl-hollow-node-04",
+      "resource": "Shorebank Shell",
+      "position": [
+        168.27,
+        -4.0,
+        39.56
+      ],
+      "section": "crown-pearl-hollow",
+      "serverTile": [
+        152,
+        151
+      ]
+    },
+    {
+      "id": "crown-pearl-hollow-node-05",
+      "resource": "Shorebank Shell",
+      "position": [
+        178.62,
+        -4.0,
+        42.51
+      ],
+      "section": "crown-pearl-hollow",
+      "serverTile": [
+        163,
+        148
+      ]
+    },
+    {
+      "id": "crown-pearl-hollow-node-06",
+      "resource": "Shorebank Shell",
+      "position": [
+        171.49,
+        -4.0,
+        49.12
+      ],
+      "section": "crown-pearl-hollow",
+      "serverTile": [
+        155,
+        142
+      ]
+    },
+    {
+      "id": "crown-pearl-hollow-node-07",
+      "resource": "Shorebank Shell",
+      "position": [
+        171.92,
+        -4.0,
+        35.45
+      ],
+      "section": "crown-pearl-hollow",
+      "serverTile": [
+        156,
+        156
+      ]
+    },
+    {
+      "id": "crown-kelp-garden-node-00",
+      "resource": "Tidewrack Kelp",
+      "position": [
+        237.96,
+        -1.5,
+        37.35
+      ],
+      "section": "crown-kelp-garden",
+      "serverTile": [
+        222,
+        154
+      ]
+    },
+    {
+      "id": "crown-kelp-garden-node-01",
+      "resource": "Tidewrack Kelp",
+      "position": [
+        239.5,
+        -1.5,
+        37.35
+      ],
+      "section": "crown-kelp-garden",
+      "serverTile": [
+        224,
+        154
+      ]
+    },
+    {
+      "id": "crown-kelp-garden-node-02",
+      "resource": "Tidewrack Kelp",
+      "position": [
+        241.04,
+        -1.5,
+        37.35
+      ],
+      "section": "crown-kelp-garden",
+      "serverTile": [
+        225,
+        154
+      ]
+    },
+    {
+      "id": "crown-kelp-garden-node-03",
+      "resource": "Tidewrack Kelp",
+      "position": [
+        237.96,
+        -1.5,
+        38.95
+      ],
+      "section": "crown-kelp-garden",
+      "serverTile": [
+        222,
+        152
+      ]
+    },
+    {
+      "id": "crown-kelp-garden-node-04",
+      "resource": "Mirror Reed",
+      "position": [
+        244.01,
+        -1.5,
+        37.35
+      ],
+      "section": "crown-kelp-garden",
+      "serverTile": [
+        228,
+        154
+      ]
+    },
+    {
+      "id": "crown-kelp-garden-node-05",
+      "resource": "Mirror Reed",
+      "position": [
+        245.55,
+        -1.5,
+        37.35
+      ],
+      "section": "crown-kelp-garden",
+      "serverTile": [
+        230,
+        154
+      ]
+    },
+    {
+      "id": "crown-kelp-garden-node-06",
+      "resource": "Mirror Reed",
+      "position": [
+        247.09,
+        -1.5,
+        37.35
+      ],
+      "section": "crown-kelp-garden",
+      "serverTile": [
+        231,
+        154
+      ]
+    },
+    {
+      "id": "crown-kelp-garden-node-07",
+      "resource": "Mirror Reed",
+      "position": [
+        244.01,
+        -1.5,
+        38.95
+      ],
+      "section": "crown-kelp-garden",
+      "serverTile": [
+        228,
+        152
+      ]
+    },
+    {
+      "id": "crown-kelp-garden-node-08",
+      "resource": "Deep Lake Clay",
+      "position": [
+        250.06,
+        -1.5,
+        37.35
+      ],
+      "section": "crown-kelp-garden",
+      "serverTile": [
+        234,
+        154
+      ]
+    },
+    {
+      "id": "crown-kelp-garden-node-09",
+      "resource": "Deep Lake Clay",
+      "position": [
+        251.6,
+        -1.5,
+        37.35
+      ],
+      "section": "crown-kelp-garden",
+      "serverTile": [
+        236,
+        154
+      ]
+    },
+    {
+      "id": "crown-kelp-garden-node-10",
+      "resource": "Deep Lake Clay",
+      "position": [
+        253.14,
+        -1.5,
+        37.35
+      ],
+      "section": "crown-kelp-garden",
+      "serverTile": [
+        237,
+        154
+      ]
+    },
+    {
+      "id": "crown-kelp-garden-node-11",
+      "resource": "Shorebank Shell",
+      "position": [
+        237.96,
+        -1.5,
+        46.15
+      ],
+      "section": "crown-kelp-garden",
+      "serverTile": [
+        222,
+        145
+      ]
+    },
+    {
+      "id": "crown-kelp-garden-node-12",
+      "resource": "Shorebank Shell",
+      "position": [
+        239.5,
+        -1.5,
+        46.15
+      ],
+      "section": "crown-kelp-garden",
+      "serverTile": [
+        224,
+        145
+      ]
+    },
+    {
+      "id": "crown-kelp-garden-node-13",
+      "resource": "Shorebank Shell",
+      "position": [
+        241.04,
+        -1.5,
+        46.15
+      ],
+      "section": "crown-kelp-garden",
+      "serverTile": [
+        225,
+        145
+      ]
+    },
+    {
+      "id": "crown-customs-cache-node-00",
+      "resource": "Crownwater Pearl",
+      "position": [
+        164.3,
+        -3.0,
+        177.3
+      ],
+      "section": "crown-customs-cache",
+      "serverTile": [
+        148,
+        14
+      ]
+    },
+    {
+      "id": "crown-customs-cache-node-01",
+      "resource": "Crownwater Pearl",
+      "position": [
+        167.8,
+        -3.0,
+        177.3
+      ],
+      "section": "crown-customs-cache",
+      "serverTile": [
+        152,
+        14
+      ]
+    },
+    {
+      "id": "crown-customs-cache-node-02",
+      "resource": "Tidewrack Kelp",
+      "position": [
+        171.3,
+        -3.0,
+        177.3
+      ],
+      "section": "crown-customs-cache",
+      "serverTile": [
+        155,
+        14
+      ]
+    },
+    {
+      "id": "crown-customs-cache-node-03",
+      "resource": "Tidewrack Kelp",
+      "position": [
+        174.8,
+        -3.0,
+        177.3
+      ],
+      "section": "crown-customs-cache",
+      "serverTile": [
+        159,
+        14
+      ]
+    },
+    {
+      "id": "crown-customs-cache-node-04",
+      "resource": "Tidewrack Kelp",
+      "position": [
+        164.3,
+        -3.0,
+        179.1
+      ],
+      "section": "crown-customs-cache",
+      "serverTile": [
+        148,
+        12
+      ]
+    },
+    {
+      "id": "crown-drain-node-00",
+      "resource": "Deep Lake Clay",
+      "position": [
+        23.05,
+        -5.0,
+        40.55
+      ],
+      "section": "crown-drain",
+      "serverTile": [
+        7,
+        150
+      ]
+    },
+    {
+      "id": "crown-drain-node-01",
+      "resource": "Deep Lake Clay",
+      "position": [
+        20.05,
+        -5.0,
+        46.88
+      ],
+      "section": "crown-drain",
+      "serverTile": [
+        4,
+        144
+      ]
+    },
+    {
+      "id": "crown-drain-node-02",
+      "resource": "Deep Lake Clay",
+      "position": [
+        23.05,
+        -5.0,
+        53.22
+      ],
+      "section": "crown-drain",
+      "serverTile": [
+        7,
+        138
+      ]
+    },
+    {
+      "id": "crown-drain-node-03",
+      "resource": "Mirror Reed",
+      "position": [
+        20.05,
+        -5.0,
+        59.55
+      ],
+      "section": "crown-drain",
+      "serverTile": [
+        4,
+        131
+      ]
+    },
+    {
+      "id": "crown-drain-node-04",
+      "resource": "Mirror Reed",
+      "position": [
+        23.05,
+        -5.0,
+        65.88
+      ],
+      "section": "crown-drain",
+      "serverTile": [
+        7,
+        125
+      ]
+    },
+    {
+      "id": "crown-drain-node-05",
+      "resource": "Mirror Reed",
+      "position": [
+        20.05,
+        -5.0,
+        72.22
+      ],
+      "section": "crown-drain",
+      "serverTile": [
+        4,
+        119
+      ]
+    }
+  ],
+  "environment": {
+    "sky": "none",
+    "ambient": {
+      "colour": [
+        0.1,
+        0.1,
+        0.12
+      ],
+      "energy": 0.55
+    },
+    "fog": {
+      "enabled": true,
+      "colour": [
+        0.02,
+        0.02,
+        0.03
+      ],
+      "begin": 14.0,
+      "end": 48.0
+    },
+    "openToSky": [
+      "crown-kelp-garden.court",
+      "crown-campanile-eyrie.perch"
+    ],
+    "lights": [
+      {
+        "id": "lamp-000",
+        "kind": "point",
+        "position": [
+          174.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-001",
+        "kind": "point",
+        "position": [
+          168.55,
+          -0.62,
+          43.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-002",
+        "kind": "point",
+        "position": [
+          180.55,
+          -0.62,
+          43.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-003",
+        "kind": "point",
+        "position": [
+          245.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-004",
+        "kind": "point",
+        "position": [
+          169.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-005",
+        "kind": "point",
+        "position": [
+          169.55,
+          -0.22,
+          181.15
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-006",
+        "kind": "point",
+        "position": [
+          239.35,
+          -3.4,
+          176.75
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-007",
+        "kind": "point",
+        "position": [
+          245.75,
+          -3.4,
+          176.75
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-008",
+        "kind": "point",
+        "position": [
+          242.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-009",
+        "kind": "point",
+        "position": [
+          316.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-010",
+        "kind": "point",
+        "position": [
+          311.55,
+          -0.12,
+          41.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-011",
+        "kind": "point",
+        "position": [
+          321.55,
+          -0.12,
+          41.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-012",
+        "kind": "point",
+        "position": [
+          315.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-013",
+        "kind": "point",
+        "position": [
+          315.55,
+          1.18,
+          110.3
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-014",
+        "kind": "point",
+        "position": [
+          26.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-015",
+        "kind": "point",
+        "position": [
+          26.55,
+          0.58,
+          181.95
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-016",
+        "kind": "point",
+        "position": [
+          94.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-017",
+        "kind": "point",
+        "position": [
+          94.55,
+          0.98,
+          46.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-018",
+        "kind": "point",
+        "position": [
+          93.35,
+          -3.4,
+          185.35
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-019",
+        "kind": "point",
+        "position": [
+          101.75,
+          -3.4,
+          185.35
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-020",
+        "kind": "point",
+        "position": [
+          97.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-021",
+        "kind": "point",
+        "position": [
+          99.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-022",
+        "kind": "point",
+        "position": [
+          99.55,
+          -0.62,
+          112.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-023",
+        "kind": "point",
+        "position": [
+          245.94,
+          -1.4,
+          114.14
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-024",
+        "kind": "point",
+        "position": [
+          239.16,
+          -1.4,
+          114.14
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-025",
+        "kind": "point",
+        "position": [
+          239.16,
+          -1.4,
+          107.36
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-026",
+        "kind": "point",
+        "position": [
+          245.94,
+          -1.4,
+          107.36
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-027",
+        "kind": "point",
+        "position": [
+          242.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-028",
+        "kind": "point",
+        "position": [
+          21.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-029",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          43.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-030",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          57.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-031",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          71.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-032",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          85.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-033",
+        "kind": "point",
+        "position": [
+          171.55,
+          -2.4,
+          112.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-034",
+        "kind": "point",
+        "position": [
+          171.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-035",
+        "kind": "point",
+        "position": [
+          312.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      }
+    ]
+  },
+  "spaces": {
+    "crown-pearl-hollow.landing": {
+      "x0": 172.05,
+      "z0": 18.55,
+      "x1": 177.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "crown-pearl-hollow.way": {
+      "x0": 172.75,
+      "z0": 21.75,
+      "x1": 176.35,
+      "z1": 33.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "crown-pearl-hollow.hollow": {
+      "x0": 162.55,
+      "z0": 31.55,
+      "x1": 186.55,
+      "z1": 55.55,
+      "floor": -4.0,
+      "height": 8.0
+    },
+    "crown-kelp-garden.landing": {
+      "x0": 243.05,
+      "z0": 18.55,
+      "x1": 248.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "crown-kelp-garden.way": {
+      "x0": 243.75,
+      "z0": 21.75,
+      "x1": 247.35,
+      "z1": 33.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "crown-kelp-garden.court": {
+      "x0": 234.55,
+      "z0": 31.55,
+      "x1": 256.55,
+      "z1": 53.55,
+      "floor": -2.0,
+      "height": 6.0
+    },
+    "crown-customs-cache.landing": {
+      "x0": 167.05,
+      "z0": 162.55,
+      "x1": 172.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "crown-customs-cache.way": {
+      "x0": 167.75,
+      "z0": 165.75,
+      "x1": 171.35,
+      "z1": 177.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "crown-customs-cache.cellar": {
+      "x0": 162.55,
+      "z0": 175.55,
+      "x1": 176.55,
+      "z1": 186.75,
+      "floor": -3.0,
+      "height": 4.4
+    },
+    "crown-campanile-vault.landing": {
+      "x0": 240.05,
+      "z0": 162.55,
+      "x1": 245.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "crown-campanile-vault.way": {
+      "x0": 240.75,
+      "z0": 165.75,
+      "x1": 244.35,
+      "z1": 177.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "crown-campanile-vault.strongroom": {
+      "x0": 234.55,
+      "z0": 175.55,
+      "x1": 250.55,
+      "z1": 186.75,
+      "floor": -5.0,
+      "height": 5.0
+    },
+    "crown-crab-pit.landing": {
+      "x0": 314.05,
+      "z0": 18.55,
+      "x1": 319.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "crown-crab-pit.way": {
+      "x0": 314.75,
+      "z0": 21.75,
+      "x1": 318.35,
+      "z1": 33.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "crown-crab-pit.pit": {
+      "x0": 306.55,
+      "z0": 31.55,
+      "x1": 326.55,
+      "z1": 51.55,
+      "floor": -4.0,
+      "height": 7.0
+    },
+    "crown-cathedral-school.landing": {
+      "x0": 313.05,
+      "z0": 90.55,
+      "x1": 318.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "crown-cathedral-school.way": {
+      "x0": 313.75,
+      "z0": 93.75,
+      "x1": 317.35,
+      "z1": 105.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "crown-cathedral-school.hall": {
+      "x0": 306.55,
+      "z0": 103.55,
+      "x1": 324.55,
+      "z1": 117.05,
+      "floor": -2.0,
+      "height": 5.2
+    },
+    "crown-warm-spring.landing": {
+      "x0": 24.05,
+      "z0": 162.55,
+      "x1": 29.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "crown-warm-spring.way": {
+      "x0": 24.75,
+      "z0": 165.75,
+      "x1": 28.35,
+      "z1": 177.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "crown-warm-spring.bath": {
+      "x0": 18.55,
+      "z0": 175.55,
+      "x1": 34.55,
+      "z1": 188.35,
+      "floor": -3.0,
+      "height": 6.0
+    },
+    "crown-pavilion-butts.landing": {
+      "x0": 92.05,
+      "z0": 18.55,
+      "x1": 97.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "crown-pavilion-butts.way": {
+      "x0": 92.75,
+      "z0": 21.75,
+      "x1": 96.35,
+      "z1": 33.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "crown-pavilion-butts.gallery": {
+      "x0": 90.55,
+      "z0": 31.55,
+      "x1": 98.55,
+      "z1": 61.55,
+      "floor": -2.0,
+      "height": 5.0
+    },
+    "crown-court-reliquary.landing": {
+      "x0": 95.05,
+      "z0": 162.55,
+      "x1": 100.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "crown-court-reliquary.way": {
+      "x0": 95.75,
+      "z0": 165.75,
+      "x1": 99.35,
+      "z1": 177.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "crown-court-reliquary.cella": {
+      "x0": 90.55,
+      "z0": 175.55,
+      "x1": 104.55,
+      "z1": 188.15,
+      "floor": -5.0,
+      "height": 6.0
+    },
+    "crown-cistern-well.landing": {
+      "x0": 97.05,
+      "z0": 90.55,
+      "x1": 102.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "crown-cistern-well.way": {
+      "x0": 97.75,
+      "z0": 93.75,
+      "x1": 101.35,
+      "z1": 105.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "crown-cistern-well.well": {
+      "x0": 90.55,
+      "z0": 103.55,
+      "x1": 108.55,
+      "z1": 121.55,
+      "floor": -5.0,
+      "height": 8.0
+    },
+    "crown-lake-focus.landing": {
+      "x0": 240.05,
+      "z0": 90.55,
+      "x1": 245.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "crown-lake-focus.way": {
+      "x0": 240.75,
+      "z0": 93.75,
+      "x1": 244.35,
+      "z1": 105.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "crown-lake-focus.chamber": {
+      "x0": 234.55,
+      "z0": 103.55,
+      "x1": 250.55,
+      "z1": 117.95,
+      "floor": -3.0,
+      "height": 6.4
+    },
+    "crown-drain.landing": {
+      "x0": 19.05,
+      "z0": 18.55,
+      "x1": 24.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "crown-drain.way": {
+      "x0": 19.75,
+      "z0": 21.75,
+      "x1": 23.35,
+      "z1": 33.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "crown-drain.bore": {
+      "x0": 18.65,
+      "z0": 31.55,
+      "x1": 24.45,
+      "z1": 37.55,
+      "floor": -5.0,
+      "height": 4.0
+    },
+    "crown-drain.run": {
+      "x0": 19.45,
+      "z0": 35.45,
+      "x1": 23.65,
+      "z1": 83.65,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "crown-drain.far": {
+      "x0": 18.55,
+      "z0": 81.55,
+      "x1": 24.55,
+      "z1": 87.55,
+      "floor": -5.0,
+      "height": 4.2
+    },
+    "crown-waystone.landing": {
+      "x0": 169.05,
+      "z0": 90.55,
+      "x1": 174.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "crown-waystone.way": {
+      "x0": 169.75,
+      "z0": 93.75,
+      "x1": 173.35,
+      "z1": 105.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "crown-waystone.ring": {
+      "x0": 162.55,
+      "z0": 103.55,
+      "x1": 180.55,
+      "z1": 121.55,
+      "floor": -4.0,
+      "height": 7.0
+    },
+    "crown-campanile-eyrie.landing": {
+      "x0": 310.05,
+      "z0": 162.55,
+      "x1": 315.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "crown-campanile-eyrie.way": {
+      "x0": 310.75,
+      "z0": 165.75,
+      "x1": 314.35,
+      "z1": 177.35,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "crown-campanile-eyrie.perch": {
+      "x0": 306.55,
+      "z0": 175.55,
+      "x1": 318.55,
+      "z1": 185.15,
+      "floor": 3.0,
+      "height": 4.6
+    }
+  },
+  "sections": [
+    {
+      "id": "crown-pearl-hollow",
+      "name": "The Pearl Hollow",
+      "kind": "grotto",
+      "entranceMap": "crownwater",
+      "entranceProp": "tide_cave",
+      "key": "",
+      "label": "A cave mouth the tide leaves open for an hour a day.",
+      "offset": [
+        174.55,
+        21.05
+      ],
+      "arrival": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          17.55
+        ],
+        "max": [
+          187.55,
+          56.55
+        ]
+      },
+      "spaces": [
+        "crown-pearl-hollow.landing",
+        "crown-pearl-hollow.way",
+        "crown-pearl-hollow.hollow"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "A tide cave under the east pavilion where the pearl oysters bed.",
+      "arrivalTile": [
+        159,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          134
+        ],
+        "max": [
+          172,
+          173
+        ]
+      }
+    },
+    {
+      "id": "crown-kelp-garden",
+      "name": "The Kelp Garden",
+      "kind": "garden",
+      "entranceMap": "crownwater",
+      "entranceProp": "drain_grate",
+      "key": "",
+      "label": "An iron drain grate, its bolts drawn.",
+      "offset": [
+        245.55,
+        21.05
+      ],
+      "arrival": [
+        245.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          233.55,
+          17.55
+        ],
+        "max": [
+          257.55,
+          54.55
+        ]
+      },
+      "spaces": [
+        "crown-kelp-garden.landing",
+        "crown-kelp-garden.way",
+        "crown-kelp-garden.court"
+      ],
+      "areas": [
+        {
+          "kind": "harvest_speed",
+          "multiplier": 2,
+          "spaces": [
+            "crown-kelp-garden.court"
+          ],
+          "tiles": {
+            "min": [
+              219,
+              137
+            ],
+            "max": [
+              241,
+              159
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Kelp and reed in stone beds fed by the lake, out of the wind.",
+      "arrivalTile": [
+        230,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          218,
+          136
+        ],
+        "max": [
+          242,
+          173
+        ]
+      }
+    },
+    {
+      "id": "crown-customs-cache",
+      "name": "The Customs Cache",
+      "kind": "cache",
+      "entranceMap": "drowned_crown",
+      "entranceProp": "drain_grate",
+      "key": "",
+      "label": "An iron drain grate, its bolts drawn.",
+      "offset": [
+        169.55,
+        165.05
+      ],
+      "arrival": [
+        169.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          161.55
+        ],
+        "max": [
+          177.55,
+          187.75
+        ]
+      },
+      "spaces": [
+        "crown-customs-cache.landing",
+        "crown-customs-cache.way",
+        "crown-customs-cache.cellar"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "The customs officers' own cellar: a chest, a bench, and pearls not on any ledger.",
+      "arrivalTile": [
+        154,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          3
+        ],
+        "max": [
+          162,
+          29
+        ]
+      }
+    },
+    {
+      "id": "crown-campanile-vault",
+      "name": "The Campanile Vault",
+      "kind": "vault",
+      "entranceMap": "crownwater",
+      "entranceProp": "cracked_slab",
+      "key": "Storage Token",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        242.55,
+        165.05
+      ],
+      "arrival": [
+        242.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          233.55,
+          161.55
+        ],
+        "max": [
+          251.55,
+          187.75
+        ]
+      },
+      "spaces": [
+        "crown-campanile-vault.landing",
+        "crown-campanile-vault.way",
+        "crown-campanile-vault.strongroom"
+      ],
+      "areas": [
+        {
+          "kind": "experience",
+          "multiplier": 2,
+          "spaces": [
+            "crown-campanile-vault.strongroom"
+          ],
+          "tiles": {
+            "min": [
+              219,
+              4
+            ],
+            "max": [
+              235,
+              15
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Under the bell tower, the sexton's strongroom.",
+      "arrivalTile": [
+        227,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          218,
+          3
+        ],
+        "max": [
+          236,
+          29
+        ]
+      }
+    },
+    {
+      "id": "crown-crab-pit",
+      "name": "The Crab Pit",
+      "kind": "pen",
+      "entranceMap": "crownwater",
+      "entranceProp": "tide_cave",
+      "key": "",
+      "label": "A cave mouth the tide leaves open for an hour a day.",
+      "offset": [
+        316.55,
+        21.05
+      ],
+      "arrival": [
+        316.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          305.55,
+          17.55
+        ],
+        "max": [
+          327.55,
+          52.55
+        ]
+      },
+      "spaces": [
+        "crown-crab-pit.landing",
+        "crown-crab-pit.way",
+        "crown-crab-pit.pit"
+      ],
+      "areas": [],
+      "spawns": [
+        {
+          "creature": "bronze_tide_crab",
+          "count": 4,
+          "space": "crown-crab-pit.pit",
+          "tiles": {
+            "min": [
+              291,
+              139
+            ],
+            "max": [
+              311,
+              159
+            ]
+          }
+        },
+        {
+          "creature": "crystal_shore_crab",
+          "count": 3,
+          "space": "crown-crab-pit.pit",
+          "tiles": {
+            "min": [
+              291,
+              139
+            ],
+            "max": [
+              311,
+              159
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "A tide pit the fishers stock with crab for the young to learn armour on.",
+      "arrivalTile": [
+        301,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          290,
+          138
+        ],
+        "max": [
+          312,
+          173
+        ]
+      }
+    },
+    {
+      "id": "crown-cathedral-school",
+      "name": "The Cathedral School",
+      "kind": "school",
+      "entranceMap": "crownwater",
+      "entranceProp": "cracked_slab",
+      "key": "",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        315.55,
+        93.05
+      ],
+      "arrival": [
+        315.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          305.55,
+          89.55
+        ],
+        "max": [
+          325.55,
+          118.05
+        ]
+      },
+      "spaces": [
+        "crown-cathedral-school.landing",
+        "crown-cathedral-school.way",
+        "crown-cathedral-school.hall"
+      ],
+      "areas": [
+        {
+          "kind": "fast_reading",
+          "multiplier": 3,
+          "spaces": [
+            "crown-cathedral-school.hall"
+          ],
+          "tiles": {
+            "min": [
+              291,
+              74
+            ],
+            "max": [
+              309,
+              87
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Where the sexton teaches the choir their letters.",
+      "arrivalTile": [
+        300,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          290,
+          73
+        ],
+        "max": [
+          310,
+          101
+        ]
+      }
+    },
+    {
+      "id": "crown-warm-spring",
+      "name": "The Crown Spring",
+      "kind": "spring",
+      "entranceMap": "crownwater",
+      "entranceProp": "tide_cave",
+      "key": "",
+      "label": "A cave mouth the tide leaves open for an hour a day.",
+      "offset": [
+        26.55,
+        165.05
+      ],
+      "arrival": [
+        26.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          17.55,
+          161.55
+        ],
+        "max": [
+          35.55,
+          189.35
+        ]
+      },
+      "spaces": [
+        "crown-warm-spring.landing",
+        "crown-warm-spring.way",
+        "crown-warm-spring.bath"
+      ],
+      "areas": [
+        {
+          "kind": "fast_regeneration",
+          "multiplier": 3,
+          "spaces": [
+            "crown-warm-spring.bath"
+          ],
+          "tiles": {
+            "min": [
+              3,
+              3
+            ],
+            "max": [
+              19,
+              15
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "A warm feed under the west pavilion; the lake is cold everywhere else.",
+      "arrivalTile": [
+        11,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          2,
+          2
+        ],
+        "max": [
+          20,
+          29
+        ]
+      }
+    },
+    {
+      "id": "crown-pavilion-butts",
+      "name": "The Pavilion Butts",
+      "kind": "range",
+      "entranceMap": "crownwater",
+      "entranceProp": "drain_grate",
+      "key": "",
+      "label": "An iron drain grate, its bolts drawn.",
+      "offset": [
+        94.55,
+        21.05
+      ],
+      "arrival": [
+        94.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          17.55
+        ],
+        "max": [
+          99.55,
+          62.55
+        ]
+      },
+      "spaces": [
+        "crown-pavilion-butts.landing",
+        "crown-pavilion-butts.way",
+        "crown-pavilion-butts.gallery"
+      ],
+      "areas": [
+        {
+          "kind": "experience",
+          "multiplier": 2,
+          "spaces": [
+            "crown-pavilion-butts.gallery"
+          ],
+          "tiles": {
+            "min": [
+              75,
+              129
+            ],
+            "max": [
+              83,
+              159
+            ]
+          }
+        }
+      ],
+      "spawns": [
+        {
+          "creature": "river_otter",
+          "count": 3,
+          "space": "crown-pavilion-butts.gallery",
+          "tiles": {
+            "min": [
+              75,
+              129
+            ],
+            "max": [
+              83,
+              159
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "A long gallery under the north pavilion; otters at the far end, unbothered.",
+      "arrivalTile": [
+        79,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          128
+        ],
+        "max": [
+          84,
+          173
+        ]
+      }
+    },
+    {
+      "id": "crown-court-reliquary",
+      "name": "The Sunken Court Reliquary",
+      "kind": "reliquary",
+      "entranceMap": "crownwater",
+      "entranceProp": "shrine_slab",
+      "key": "Shorebank Shell",
+      "label": "A shrine slab with fresh scratches where it has been slid aside.",
+      "offset": [
+        97.55,
+        165.05
+      ],
+      "arrival": [
+        97.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          161.55
+        ],
+        "max": [
+          105.55,
+          189.15
+        ]
+      },
+      "spaces": [
+        "crown-court-reliquary.landing",
+        "crown-court-reliquary.way",
+        "crown-court-reliquary.cella"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "The court's own relic room, opened with a shell from the shore.",
+      "arrivalTile": [
+        82,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          2
+        ],
+        "max": [
+          90,
+          29
+        ]
+      }
+    },
+    {
+      "id": "crown-cistern-well",
+      "name": "The Cistern Well",
+      "kind": "nullwell",
+      "entranceMap": "crownwater",
+      "entranceProp": "drain_grate",
+      "key": "",
+      "label": "An iron drain grate, its bolts drawn.",
+      "offset": [
+        99.55,
+        93.05
+      ],
+      "arrival": [
+        99.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          89.55
+        ],
+        "max": [
+          109.55,
+          122.55
+        ]
+      },
+      "spaces": [
+        "crown-cistern-well.landing",
+        "crown-cistern-well.way",
+        "crown-cistern-well.well"
+      ],
+      "areas": [
+        {
+          "kind": "no_magic",
+          "multiplier": 2,
+          "spaces": [
+            "crown-cistern-well.well"
+          ],
+          "tiles": {
+            "min": [
+              75,
+              69
+            ],
+            "max": [
+              93,
+              87
+            ]
+          }
+        }
+      ],
+      "spawns": [
+        {
+          "creature": "bronze_diving_beetle",
+          "count": 4,
+          "space": "crown-cistern-well.well",
+          "tiles": {
+            "min": [
+              75,
+              69
+            ],
+            "max": [
+              93,
+              87
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "The cistern's stones drink every spell; the beetles do not mind.",
+      "arrivalTile": [
+        84,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          68
+        ],
+        "max": [
+          94,
+          101
+        ]
+      }
+    },
+    {
+      "id": "crown-lake-focus",
+      "name": "The Lake Focus",
+      "kind": "focus",
+      "entranceMap": "crownwater",
+      "entranceProp": "cracked_slab",
+      "key": "Iron Rune",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        242.55,
+        93.05
+      ],
+      "arrival": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          233.55,
+          89.55
+        ],
+        "max": [
+          251.55,
+          118.95
+        ]
+      },
+      "spaces": [
+        "crown-lake-focus.landing",
+        "crown-lake-focus.way",
+        "crown-lake-focus.chamber"
+      ],
+      "areas": [
+        {
+          "kind": "cheap_magic",
+          "multiplier": 2,
+          "spaces": [
+            "crown-lake-focus.chamber"
+          ],
+          "tiles": {
+            "min": [
+              219,
+              73
+            ],
+            "max": [
+              235,
+              87
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "A chamber under the islet where the lake's own ether pools.",
+      "arrivalTile": [
+        227,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          218,
+          72
+        ],
+        "max": [
+          236,
+          101
+        ]
+      }
+    },
+    {
+      "id": "crown-drain",
+      "name": "The Crown Drain",
+      "kind": "tunnel",
+      "entranceMap": "crownwater",
+      "entranceProp": "drain_grate",
+      "key": "",
+      "label": "An iron drain grate, its bolts drawn.",
+      "offset": [
+        21.55,
+        21.05
+      ],
+      "arrival": [
+        21.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          17.55,
+          17.55
+        ],
+        "max": [
+          25.55,
+          88.55
+        ]
+      },
+      "spaces": [
+        "crown-drain.landing",
+        "crown-drain.way",
+        "crown-drain.bore",
+        "crown-drain.run",
+        "crown-drain.far"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [
+        {
+          "map": "four_gates",
+          "spawn": "secret-gates-drain-mouth",
+          "label": "Up into the Four Gates",
+          "space": "crown-drain.far",
+          "position": [
+            21.55,
+            -4.95,
+            84.55
+          ],
+          "tile": [
+            6,
+            106
+          ]
+        }
+      ],
+      "note": "The old drain under the causeway, out under the city's west gate.",
+      "arrivalTile": [
+        6,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          2,
+          102
+        ],
+        "max": [
+          10,
+          173
+        ]
+      }
+    },
+    {
+      "id": "crown-waystone",
+      "name": "The Crown Waystone",
+      "kind": "waystone",
+      "entranceMap": "crownwater",
+      "entranceProp": "cracked_slab",
+      "key": "Iron Rune",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        171.55,
+        93.05
+      ],
+      "arrival": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          89.55
+        ],
+        "max": [
+          181.55,
+          122.55
+        ]
+      },
+      "spaces": [
+        "crown-waystone.landing",
+        "crown-waystone.way",
+        "crown-waystone.ring"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [
+        {
+          "map": "mirrorhold_secrets",
+          "spawn": "mirror-waystone",
+          "label": "Mirrorhold",
+          "space": "crown-waystone.ring",
+          "position": [
+            168.1,
+            -4.0,
+            109.1
+          ],
+          "tile": [
+            152,
+            82
+          ]
+        },
+        {
+          "map": "four_gates_secrets",
+          "spawn": "gates-waystone",
+          "label": "The Four Gates",
+          "space": "crown-waystone.ring",
+          "position": [
+            171.55,
+            -4.0,
+            107.67
+          ],
+          "tile": [
+            156,
+            83
+          ]
+        },
+        {
+          "map": "manymouth_delta_secrets",
+          "spawn": "delta-waystone",
+          "label": "The Manymouth Delta",
+          "space": "crown-waystone.ring",
+          "position": [
+            175.0,
+            -4.0,
+            109.1
+          ],
+          "tile": [
+            159,
+            82
+          ]
+        },
+        {
+          "map": "westhaven_secrets",
+          "spawn": "haven-waystone",
+          "label": "Westhaven",
+          "space": "crown-waystone.ring",
+          "position": [
+            176.43,
+            -4.0,
+            112.55
+          ],
+          "tile": [
+            160,
+            78
+          ]
+        },
+        {
+          "map": "amethyst_barrens_secrets",
+          "spawn": "barrens-waystone",
+          "label": "The Amethyst Barrens",
+          "space": "crown-waystone.ring",
+          "position": [
+            175.0,
+            -4.0,
+            116.0
+          ],
+          "tile": [
+            159,
+            75
+          ]
+        },
+        {
+          "map": "grey_moors_secrets",
+          "spawn": "moor-waystone",
+          "label": "The Grey Moors",
+          "space": "crown-waystone.ring",
+          "position": [
+            171.55,
+            -4.0,
+            117.43
+          ],
+          "tile": [
+            156,
+            74
+          ]
+        },
+        {
+          "map": "ssarathi_ruins_secrets",
+          "spawn": "ruins-waystone",
+          "label": "The Ssarathi Ruins",
+          "space": "crown-waystone.ring",
+          "position": [
+            168.1,
+            -4.0,
+            116.0
+          ],
+          "tile": [
+            152,
+            75
+          ]
+        }
+      ],
+      "note": "Seven stones for seven ferries. An iron rune wakes them.",
+      "arrivalTile": [
+        156,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          68
+        ],
+        "max": [
+          166,
+          101
+        ]
+      }
+    },
+    {
+      "id": "crown-campanile-eyrie",
+      "name": "The Campanile Eyrie",
+      "kind": "eyrie",
+      "entranceMap": "crownwater",
+      "entranceProp": "ivy_arch",
+      "key": "",
+      "label": "An arch so grown with vine it reads as hedge.",
+      "offset": [
+        312.55,
+        165.05
+      ],
+      "arrival": [
+        312.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          305.55,
+          161.55
+        ],
+        "max": [
+          319.55,
+          186.15
+        ]
+      },
+      "spaces": [
+        "crown-campanile-eyrie.landing",
+        "crown-campanile-eyrie.way",
+        "crown-campanile-eyrie.perch"
+      ],
+      "areas": [
+        {
+          "kind": "fast_regeneration",
+          "multiplier": 2,
+          "spaces": [
+            "crown-campanile-eyrie.perch"
+          ],
+          "tiles": {
+            "min": [
+              291,
+              6
+            ],
+            "max": [
+              303,
+              15
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "A pocket in the campanile's footing over the water.",
+      "arrivalTile": [
+        297,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          290,
+          5
+        ],
+        "max": [
+          304,
+          29
+        ]
+      }
+    }
+  ],
+  "secrets": {
+    "region": "crownwater",
+    "sections": [
+      "crown-pearl-hollow",
+      "crown-kelp-garden",
+      "crown-customs-cache",
+      "crown-campanile-vault",
+      "crown-crab-pit",
+      "crown-cathedral-school",
+      "crown-warm-spring",
+      "crown-pavilion-butts",
+      "crown-court-reliquary",
+      "crown-cistern-well",
+      "crown-lake-focus",
+      "crown-drain",
+      "crown-waystone",
+      "crown-campanile-eyrie"
+    ],
+    "note": "Each section is one secret. The client shows a player only the section they stand in; the server places the arrival, the areas, the spawns and the harvest nodes from this block."
+  },
+  "performance": {
+    "nodes": 144,
+    "meshes": 129,
+    "materials": 20,
+    "images": 59,
+    "textures": 59,
+    "accessors": 645,
+    "bufferViews": 704,
+    "uniqueTriangles": 27688,
+    "uniqueVertices": 38336,
+    "glbBytes": 8786028,
+    "nodeNames": [
+      "Secrets_crownwater_secrets",
+      "Section_crown-pearl-hollow",
+      "Roof_crown-pearl-hollow_cliff_rock",
+      "Build_crown-pearl-hollow_amber_resin",
+      "Build_crown-pearl-hollow_blue_crystal",
+      "Build_crown-pearl-hollow_cliff_rock",
+      "Build_crown-pearl-hollow_dark_iron",
+      "Build_crown-pearl-hollow_water_lake",
+      "Walk_crown-pearl-hollow_cobble_paving",
+      "Section_crown-kelp-garden",
+      "Roof_crown-kelp-garden_cliff_rock",
+      "Build_crown-kelp-garden_amber_resin",
+      "Build_crown-kelp-garden_ashlar",
+      "Build_crown-kelp-garden_bark_pale",
+      "Build_crown-kelp-garden_blue_crystal",
+      "Build_crown-kelp-garden_cliff_rock",
+      "Build_crown-kelp-garden_dark_iron",
+      "Build_crown-kelp-garden_foliage_green",
+      "Build_crown-kelp-garden_rubble_stone",
+      "Build_crown-kelp-garden_timber_warm",
+      "Build_crown-kelp-garden_water_pool",
+      "Walk_crown-kelp-garden_cobble_paving",
+      "Walk_crown-kelp-garden_shore_shingle",
+      "Section_crown-customs-cache",
+      "Roof_crown-customs-cache_cliff_rock",
+      "Roof_crown-customs-cache_timber_grey",
+      "Build_crown-customs-cache_amber_resin",
+      "Build_crown-customs-cache_ashlar",
+      "Build_crown-customs-cache_blue_crystal",
+      "Build_crown-customs-cache_cliff_rock",
+      "Build_crown-customs-cache_dark_iron",
+      "Build_crown-customs-cache_timber_dark",
+      "Build_crown-customs-cache_timber_grey",
+      "Build_crown-customs-cache_timber_warm",
+      "Walk_crown-customs-cache_cobble_paving",
+      "Section_crown-campanile-vault",
+      "Roof_crown-campanile-vault_ashlar",
+      "Roof_crown-campanile-vault_cliff_rock",
+      "Build_crown-campanile-vault_amber_resin",
+      "Build_crown-campanile-vault_ashlar",
+      "Build_crown-campanile-vault_carved_wood",
+      "Build_crown-campanile-vault_cliff_rock",
+      "Build_crown-campanile-vault_dark_iron",
+      "Build_crown-campanile-vault_timber_dark",
+      "Build_crown-campanile-vault_timber_grey",
+      "Build_crown-campanile-vault_timber_warm",
+      "Walk_crown-campanile-vault_ashlar",
+      "Walk_crown-campanile-vault_cobble_paving",
+      "Section_crown-crab-pit",
+      "Roof_crown-crab-pit_cliff_rock",
+      "Build_crown-crab-pit_amber_resin",
+      "Build_crown-crab-pit_cliff_rock",
+      "Build_crown-crab-pit_dark_iron",
+      "Build_crown-crab-pit_pale_ashlar",
+      "Build_crown-crab-pit_timber_grey",
+      "Walk_crown-crab-pit_cobble_paving",
+      "Section_crown-cathedral-school",
+      "Roof_crown-cathedral-school_cliff_rock",
+      "Roof_crown-cathedral-school_timber_grey",
+      "Build_crown-cathedral-school_amber_resin",
+      "Build_crown-cathedral-school_ashlar",
+      "Build_crown-cathedral-school_carved_wood",
+      "Build_crown-cathedral-school_cliff_rock",
+      "Build_crown-cathedral-school_dark_iron",
+      "Build_crown-cathedral-school_timber_grey",
+      "Walk_crown-cathedral-school_ashlar",
+      "Walk_crown-cathedral-school_cobble_paving",
+      "Section_crown-warm-spring",
+      "Roof_crown-warm-spring_cliff_rock",
+      "Build_crown-warm-spring_amber_resin",
+      "Build_crown-warm-spring_ashlar",
+      "Build_crown-warm-spring_cliff_rock",
+      "Build_crown-warm-spring_dark_iron",
+      "Build_crown-warm-spring_water_lake",
+      "Walk_crown-warm-spring_ashlar",
+      "Walk_crown-warm-spring_cobble_paving",
+      "Section_crown-pavilion-butts",
+      "Roof_crown-pavilion-butts_cliff_rock",
+      "Roof_crown-pavilion-butts_timber_grey",
+      "Build_crown-pavilion-butts_amber_resin",
+      "Build_crown-pavilion-butts_ashlar",
+      "Build_crown-pavilion-butts_cliff_rock",
+      "Build_crown-pavilion-butts_dark_iron",
+      "Build_crown-pavilion-butts_thatch_reed",
+      "Build_crown-pavilion-butts_timber_grey",
+      "Walk_crown-pavilion-butts_cobble_paving",
+      "Section_crown-court-reliquary",
+      "Roof_crown-court-reliquary_ashlar",
+      "Roof_crown-court-reliquary_cliff_rock",
+      "Build_crown-court-reliquary_amber_resin",
+      "Build_crown-court-reliquary_ashlar",
+      "Build_crown-court-reliquary_cliff_rock",
+      "Build_crown-court-reliquary_dark_iron",
+      "Build_crown-court-reliquary_gilt_brass",
+      "Walk_crown-court-reliquary_ashlar",
+      "Walk_crown-court-reliquary_cobble_paving",
+      "Section_crown-cistern-well",
+      "Roof_crown-cistern-well_cliff_rock",
+      "Build_crown-cistern-well_amber_resin",
+      "Build_crown-cistern-well_ashlar",
+      "Build_crown-cistern-well_cliff_rock",
+      "Build_crown-cistern-well_dark_iron",
+      "Walk_crown-cistern-well_ashlar",
+      "Walk_crown-cistern-well_cobble_paving",
+      "Section_crown-lake-focus",
+      "Roof_crown-lake-focus_ashlar",
+      "Roof_crown-lake-focus_cliff_rock",
+      "Build_crown-lake-focus_amber_resin",
+      "Build_crown-lake-focus_ashlar",
+      "Build_crown-lake-focus_blue_crystal",
+      "Build_crown-lake-focus_cliff_rock",
+      "Build_crown-lake-focus_dark_iron",
+      "Walk_crown-lake-focus_ashlar",
+      "Walk_crown-lake-focus_cobble_paving",
+      "Section_crown-drain",
+      "Roof_crown-drain_cliff_rock",
+      "Build_crown-drain_amber_resin",
+      "Build_crown-drain_blue_crystal",
+      "Build_crown-drain_cliff_rock",
+      "Build_crown-drain_dark_iron",
+      "Build_crown-drain_timber_grey",
+      "Walk_crown-drain_cobble_paving",
+      "Section_crown-waystone",
+      "Roof_crown-waystone_ashlar",
+      "Roof_crown-waystone_cliff_rock",
+      "Build_crown-waystone_amber_resin",
+      "Build_crown-waystone_ashlar",
+      "Build_crown-waystone_cliff_rock",
+      "Build_crown-waystone_dark_iron",
+      "Build_crown-waystone_gilt_brass",
+      "Walk_crown-waystone_ashlar",
+      "Walk_crown-waystone_cobble_paving",
+      "Section_crown-campanile-eyrie",
+      "Roof_crown-campanile-eyrie_cliff_rock",
+      "Build_crown-campanile-eyrie_amber_resin",
+      "Build_crown-campanile-eyrie_bark_dark",
+      "Build_crown-campanile-eyrie_carved_wood",
+      "Build_crown-campanile-eyrie_cliff_rock",
+      "Build_crown-campanile-eyrie_dark_iron",
+      "Build_crown-campanile-eyrie_rubble_stone",
+      "Build_crown-campanile-eyrie_timber_warm",
+      "Build_crown-campanile-eyrie_water_pool",
+      "Walk_crown-campanile-eyrie_ashlar",
+      "Walk_crown-campanile-eyrie_cobble_paving"
+    ]
+  },
+  "sources": [
+    {
+      "id": "generator",
+      "file": "_toolkit/secrets_build.py",
+      "role": "reproducible-build",
+      "design": "crownwater/source/secrets_design.py"
+    }
+  ],
+  "provenance": {
+    "geometry": "authored with the secret rooms kit over the shared toolkit",
+    "license": "CC-BY-4.0"
+  },
+  "productionStatus": "authored-geometry-materials-population",
+  "notes": [
+    "14 secrets of Crownwater Secrets on one map with void between them; which one a player gets is which feature of the ground above they used."
+  ]
+}

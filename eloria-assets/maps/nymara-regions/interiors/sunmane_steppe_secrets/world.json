@@ -1,0 +1,3528 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "sunmane_steppe_secrets",
+    "name": "Sunmane Steppe Secrets",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        18.0,
+        -5.4,
+        18.0
+      ],
+      "max": [
+        325.1,
+        8.25,
+        187.3
+      ]
+    },
+    "playableBounds": {
+      "min": [
+        18.0,
+        -5.4,
+        18.0
+      ],
+      "max": [
+        325.1,
+        3.0,
+        187.3
+      ]
+    },
+    "interiorClass": "secrets",
+    "parentRegion": "sunmane_steppe",
+    "serverCells": 384
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      -16.0,
+      190.0
+    ],
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 0.0,
+    "invertServerY": true
+  },
+  "secret": true,
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        102.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "steppe-seed-hollow"
+    },
+    {
+      "id": "steppe-seed-hollow",
+      "position": [
+        102.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "steppe-seed-hollow"
+    },
+    {
+      "id": "steppe-well-garden",
+      "position": [
+        173.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "steppe-well-garden"
+    },
+    {
+      "id": "steppe-mill-cache",
+      "position": [
+        25.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "steppe-mill-cache"
+    },
+    {
+      "id": "steppe-hall-vault",
+      "position": [
+        98.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "steppe-hall-vault"
+    },
+    {
+      "id": "steppe-fox-pit",
+      "position": [
+        244.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "steppe-fox-pit"
+    },
+    {
+      "id": "steppe-caravan-school",
+      "position": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "steppe-caravan-school"
+    },
+    {
+      "id": "steppe-spring",
+      "position": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "steppe-spring"
+    },
+    {
+      "id": "steppe-outpost-butts",
+      "position": [
+        22.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "steppe-outpost-butts"
+    },
+    {
+      "id": "steppe-barrow-reliquary",
+      "position": [
+        313.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "steppe-barrow-reliquary"
+    },
+    {
+      "id": "steppe-standing-well",
+      "position": [
+        315.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "steppe-standing-well"
+    },
+    {
+      "id": "steppe-banner-focus",
+      "position": [
+        98.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "steppe-banner-focus"
+    },
+    {
+      "id": "steppe-waystone",
+      "position": [
+        27.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "steppe-waystone"
+    },
+    {
+      "id": "steppe-waystone-ring",
+      "position": [
+        27.55,
+        -4.0,
+        107.67
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "steppe-waystone"
+    },
+    {
+      "id": "steppe-waystone-ring",
+      "position": [
+        32.43,
+        -4.0,
+        112.55
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "steppe-waystone"
+    },
+    {
+      "id": "steppe-waystone-ring",
+      "position": [
+        27.55,
+        -4.0,
+        117.43
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "steppe-waystone"
+    },
+    {
+      "id": "steppe-dune-eyrie",
+      "position": [
+        168.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "steppe-dune-eyrie"
+    }
+  ],
+  "collision": {
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "width": 624,
+    "height": 348,
+    "cellMetres": 0.5,
+    "originMetres": [
+      16.0,
+      190.0
+    ],
+    "heightEncoding": {
+      "origin": -5.131,
+      "step": 0.1311,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true
+    },
+    "walkableCells": 19776,
+    "blockedCells": 197376,
+    "walkableFraction": 0.0911,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    "nodeNames": [
+      "Secrets_sunmane_steppe_secrets",
+      "Section_steppe-seed-hollow",
+      "Roof_steppe-seed-hollow_cliff_rock",
+      "Build_steppe-seed-hollow_amber_resin",
+      "Build_steppe-seed-hollow_cliff_rock",
+      "Build_steppe-seed-hollow_dark_iron",
+      "Build_steppe-seed-hollow_water_pool",
+      "Section_steppe-well-garden",
+      "Roof_steppe-well-garden_cliff_rock",
+      "Build_steppe-well-garden_amber_resin",
+      "Build_steppe-well-garden_ashlar",
+      "Build_steppe-well-garden_bark_pale",
+      "Build_steppe-well-garden_cliff_rock",
+      "Build_steppe-well-garden_dark_iron",
+      "Build_steppe-well-garden_foliage_green",
+      "Build_steppe-well-garden_rubble_stone",
+      "Build_steppe-well-garden_timber_warm",
+      "Build_steppe-well-garden_water_pool",
+      "Section_steppe-mill-cache",
+      "Roof_steppe-mill-cache_cliff_rock",
+      "Roof_steppe-mill-cache_timber_warm",
+      "Build_steppe-mill-cache_amber_resin",
+      "Build_steppe-mill-cache_cliff_rock",
+      "Build_steppe-mill-cache_dark_iron",
+      "Build_steppe-mill-cache_rubble_stone",
+      "Build_steppe-mill-cache_timber_dark",
+      "Build_steppe-mill-cache_timber_warm",
+      "Section_steppe-hall-vault",
+      "Roof_steppe-hall-vault_ashlar",
+      "Roof_steppe-hall-vault_cliff_rock",
+      "Build_steppe-hall-vault_amber_resin",
+      "Build_steppe-hall-vault_ashlar",
+      "Build_steppe-hall-vault_carved_wood",
+      "Build_steppe-hall-vault_cliff_rock",
+      "Build_steppe-hall-vault_dark_iron",
+      "Build_steppe-hall-vault_timber_dark",
+      "Build_steppe-hall-vault_timber_warm",
+      "Section_steppe-fox-pit",
+      "Roof_steppe-fox-pit_cliff_rock",
+      "Build_steppe-fox-pit_amber_resin",
+      "Build_steppe-fox-pit_cliff_rock",
+      "Build_steppe-fox-pit_dark_iron",
+      "Build_steppe-fox-pit_pale_ashlar",
+      "Build_steppe-fox-pit_timber_warm",
+      "Section_steppe-caravan-school",
+      "Roof_steppe-caravan-school_cliff_rock",
+      "Roof_steppe-caravan-school_timber_warm",
+      "Build_steppe-caravan-school_amber_resin",
+      "Build_steppe-caravan-school_carved_wood",
+      "Build_steppe-caravan-school_cliff_rock",
+      "Build_steppe-caravan-school_dark_iron",
+      "Build_steppe-caravan-school_rubble_stone",
+      "Build_steppe-caravan-school_timber_warm",
+      "Section_steppe-spring",
+      "Roof_steppe-spring_cliff_rock",
+      "Build_steppe-spring_amber_resin",
+      "Build_steppe-spring_ashlar",
+      "Build_steppe-spring_cliff_rock",
+      "Build_steppe-spring_dark_iron",
+      "Build_steppe-spring_water_pool",
+      "Section_steppe-outpost-butts",
+      "Roof_steppe-outpost-butts_cliff_rock",
+      "Roof_steppe-outpost-butts_timber_warm",
+      "Build_steppe-outpost-butts_amber_resin",
+      "Build_steppe-outpost-butts_cliff_rock",
+      "Build_steppe-outpost-butts_dark_iron",
+      "Build_steppe-outpost-butts_rubble_stone",
+      "Build_steppe-outpost-butts_thatch_reed",
+      "Build_steppe-outpost-butts_timber_warm",
+      "Section_steppe-barrow-reliquary",
+      "Roof_steppe-barrow-reliquary_ashlar",
+      "Roof_steppe-barrow-reliquary_cliff_rock",
+      "Build_steppe-barrow-reliquary_amber_resin",
+      "Build_steppe-barrow-reliquary_ashlar",
+      "Build_steppe-barrow-reliquary_cliff_rock",
+      "Build_steppe-barrow-reliquary_dark_iron",
+      "Build_steppe-barrow-reliquary_gilt_brass",
+      "Section_steppe-standing-well",
+      "Roof_steppe-standing-well_cliff_rock",
+      "Build_steppe-standing-well_amber_resin",
+      "Build_steppe-standing-well_ashlar",
+      "Build_steppe-standing-well_cliff_rock",
+      "Build_steppe-standing-well_dark_iron",
+      "Section_steppe-banner-focus",
+      "Roof_steppe-banner-focus_ashlar",
+      "Roof_steppe-banner-focus_cliff_rock",
+      "Build_steppe-banner-focus_amber_resin",
+      "Build_steppe-banner-focus_amethyst_crystal",
+      "Build_steppe-banner-focus_ashlar",
+      "Build_steppe-banner-focus_cliff_rock",
+      "Build_steppe-banner-focus_dark_iron",
+      "Section_steppe-waystone",
+      "Roof_steppe-waystone_ashlar",
+      "Roof_steppe-waystone_cliff_rock",
+      "Build_steppe-waystone_amber_resin",
+      "Build_steppe-waystone_ashlar",
+      "Build_steppe-waystone_cliff_rock",
+      "Build_steppe-waystone_dark_iron",
+      "Build_steppe-waystone_gilt_brass",
+      "Section_steppe-dune-eyrie",
+      "Roof_steppe-dune-eyrie_cliff_rock",
+      "Build_steppe-dune-eyrie_amber_resin",
+      "Build_steppe-dune-eyrie_bark_dark",
+      "Build_steppe-dune-eyrie_carved_wood",
+      "Build_steppe-dune-eyrie_cliff_rock",
+      "Build_steppe-dune-eyrie_dark_iron",
+      "Build_steppe-dune-eyrie_rubble_stone",
+      "Build_steppe-dune-eyrie_timber_warm",
+      "Build_steppe-dune-eyrie_water_pool"
+    ]
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Roof_steppe-seed-hollow_cliff_rock",
+      "Roof_steppe-well-garden_cliff_rock",
+      "Roof_steppe-mill-cache_cliff_rock",
+      "Roof_steppe-mill-cache_timber_warm",
+      "Roof_steppe-hall-vault_ashlar",
+      "Roof_steppe-hall-vault_cliff_rock",
+      "Roof_steppe-fox-pit_cliff_rock",
+      "Roof_steppe-caravan-school_cliff_rock",
+      "Roof_steppe-caravan-school_timber_warm",
+      "Roof_steppe-spring_cliff_rock",
+      "Roof_steppe-outpost-butts_cliff_rock",
+      "Roof_steppe-outpost-butts_timber_warm",
+      "Roof_steppe-barrow-reliquary_ashlar",
+      "Roof_steppe-barrow-reliquary_cliff_rock",
+      "Roof_steppe-standing-well_cliff_rock",
+      "Roof_steppe-banner-focus_ashlar",
+      "Roof_steppe-banner-focus_cliff_rock",
+      "Roof_steppe-waystone_ashlar",
+      "Roof_steppe-waystone_cliff_rock",
+      "Roof_steppe-dune-eyrie_cliff_rock"
+    ],
+    "reason": "interior lids; the isometric rig frames the floor, not the roof"
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Walk_"
+    ],
+    "agentRadius": 0.4,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 45,
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    }
+  },
+  "portals": [
+    {
+      "id": "exit-steppe-seed-hollow",
+      "name": "Back up: The Seed Hollow",
+      "type": "map-transition",
+      "position": [
+        102.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "sunmane_steppe",
+      "destinationSpawn": "secret-steppe-seed-hollow",
+      "section": "steppe-seed-hollow",
+      "authority": "server"
+    },
+    {
+      "id": "exit-steppe-well-garden",
+      "name": "Back up: The Well Garden",
+      "type": "map-transition",
+      "position": [
+        173.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "sunmane_steppe",
+      "destinationSpawn": "secret-steppe-well-garden",
+      "section": "steppe-well-garden",
+      "authority": "server"
+    },
+    {
+      "id": "exit-steppe-mill-cache",
+      "name": "Back up: The Mill Cache",
+      "type": "map-transition",
+      "position": [
+        25.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "sunmane_steppe",
+      "destinationSpawn": "secret-steppe-mill-cache",
+      "section": "steppe-mill-cache",
+      "authority": "server"
+    },
+    {
+      "id": "exit-steppe-hall-vault",
+      "name": "Back up: The Hall Vault",
+      "type": "map-transition",
+      "position": [
+        98.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "sunmane_steppe",
+      "destinationSpawn": "secret-steppe-hall-vault",
+      "section": "steppe-hall-vault",
+      "authority": "server"
+    },
+    {
+      "id": "exit-steppe-fox-pit",
+      "name": "Back up: The Fox Pit",
+      "type": "map-transition",
+      "position": [
+        244.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "sunmane_steppe",
+      "destinationSpawn": "secret-steppe-fox-pit",
+      "section": "steppe-fox-pit",
+      "authority": "server"
+    },
+    {
+      "id": "exit-steppe-caravan-school",
+      "name": "Back up: The Caravanserai School",
+      "type": "map-transition",
+      "position": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "sunmane_steppe",
+      "destinationSpawn": "secret-steppe-caravan-school",
+      "section": "steppe-caravan-school",
+      "authority": "server"
+    },
+    {
+      "id": "exit-steppe-spring",
+      "name": "Back up: The Hidden Spring",
+      "type": "map-transition",
+      "position": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "sunmane_steppe",
+      "destinationSpawn": "secret-steppe-spring",
+      "section": "steppe-spring",
+      "authority": "server"
+    },
+    {
+      "id": "exit-steppe-outpost-butts",
+      "name": "Back up: The Outpost Butts",
+      "type": "map-transition",
+      "position": [
+        22.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "sunmane_steppe",
+      "destinationSpawn": "secret-steppe-outpost-butts",
+      "section": "steppe-outpost-butts",
+      "authority": "server"
+    },
+    {
+      "id": "exit-steppe-barrow-reliquary",
+      "name": "Back up: The Barrow Reliquary",
+      "type": "map-transition",
+      "position": [
+        313.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "sunmane_steppe",
+      "destinationSpawn": "secret-steppe-barrow-reliquary",
+      "section": "steppe-barrow-reliquary",
+      "authority": "server"
+    },
+    {
+      "id": "exit-steppe-standing-well",
+      "name": "Back up: The Standing Stone Well",
+      "type": "map-transition",
+      "position": [
+        315.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "sunmane_steppe",
+      "destinationSpawn": "secret-steppe-standing-well",
+      "section": "steppe-standing-well",
+      "authority": "server"
+    },
+    {
+      "id": "exit-steppe-banner-focus",
+      "name": "Back up: The Banner Focus",
+      "type": "map-transition",
+      "position": [
+        98.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "sunmane_steppe",
+      "destinationSpawn": "secret-steppe-banner-focus",
+      "section": "steppe-banner-focus",
+      "authority": "server"
+    },
+    {
+      "id": "exit-steppe-waystone",
+      "name": "Back up: The Steppe Waystone",
+      "type": "map-transition",
+      "position": [
+        27.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "sunmane_steppe",
+      "destinationSpawn": "secret-steppe-waystone",
+      "section": "steppe-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-steppe-waystone-gates-waystone",
+      "name": "The Four Gates",
+      "type": "map-transition",
+      "position": [
+        27.55,
+        -4.0,
+        107.67
+      ],
+      "radius": 2.5,
+      "destinationMap": "four_gates_secrets",
+      "destinationSpawn": "gates-waystone",
+      "section": "steppe-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-steppe-waystone-barrens-waystone",
+      "name": "The Amethyst Barrens",
+      "type": "map-transition",
+      "position": [
+        32.43,
+        -4.0,
+        112.55
+      ],
+      "radius": 2.5,
+      "destinationMap": "amethyst_barrens_secrets",
+      "destinationSpawn": "barrens-waystone",
+      "section": "steppe-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-steppe-waystone-stair-waystone",
+      "name": "The Verdant Stair",
+      "type": "map-transition",
+      "position": [
+        27.55,
+        -4.0,
+        117.43
+      ],
+      "radius": 2.5,
+      "destinationMap": "verdant_stair_secrets",
+      "destinationSpawn": "stair-waystone",
+      "section": "steppe-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "exit-steppe-dune-eyrie",
+      "name": "Back up: The Dune Eyrie",
+      "type": "map-transition",
+      "position": [
+        168.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "sunmane_steppe",
+      "destinationSpawn": "secret-steppe-dune-eyrie",
+      "section": "steppe-dune-eyrie",
+      "authority": "server"
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "steppe-seed-hollow-room",
+      "name": "The Seed Hollow",
+      "space": "steppe-seed-hollow.landing",
+      "position": [
+        102.55,
+        1.6,
+        21.05
+      ],
+      "section": "steppe-seed-hollow"
+    },
+    {
+      "id": "steppe-well-garden-room",
+      "name": "The Well Garden",
+      "space": "steppe-well-garden.landing",
+      "position": [
+        173.55,
+        1.6,
+        21.05
+      ],
+      "section": "steppe-well-garden"
+    },
+    {
+      "id": "steppe-mill-cache-room",
+      "name": "The Mill Cache",
+      "space": "steppe-mill-cache.landing",
+      "position": [
+        25.55,
+        1.6,
+        165.05
+      ],
+      "section": "steppe-mill-cache"
+    },
+    {
+      "id": "steppe-hall-vault-room",
+      "name": "The Hall Vault",
+      "space": "steppe-hall-vault.landing",
+      "position": [
+        98.55,
+        1.6,
+        165.05
+      ],
+      "section": "steppe-hall-vault"
+    },
+    {
+      "id": "steppe-fox-pit-room",
+      "name": "The Fox Pit",
+      "space": "steppe-fox-pit.landing",
+      "position": [
+        244.55,
+        1.6,
+        21.05
+      ],
+      "section": "steppe-fox-pit"
+    },
+    {
+      "id": "steppe-caravan-school-room",
+      "name": "The Caravanserai School",
+      "space": "steppe-caravan-school.landing",
+      "position": [
+        171.55,
+        1.6,
+        93.05
+      ],
+      "section": "steppe-caravan-school"
+    },
+    {
+      "id": "steppe-spring-room",
+      "name": "The Hidden Spring",
+      "space": "steppe-spring.landing",
+      "position": [
+        242.55,
+        1.6,
+        93.05
+      ],
+      "section": "steppe-spring"
+    },
+    {
+      "id": "steppe-outpost-butts-room",
+      "name": "The Outpost Butts",
+      "space": "steppe-outpost-butts.landing",
+      "position": [
+        22.55,
+        1.6,
+        21.05
+      ],
+      "section": "steppe-outpost-butts"
+    },
+    {
+      "id": "steppe-barrow-reliquary-room",
+      "name": "The Barrow Reliquary",
+      "space": "steppe-barrow-reliquary.landing",
+      "position": [
+        313.55,
+        1.6,
+        93.05
+      ],
+      "section": "steppe-barrow-reliquary"
+    },
+    {
+      "id": "steppe-standing-well-room",
+      "name": "The Standing Stone Well",
+      "space": "steppe-standing-well.landing",
+      "position": [
+        315.55,
+        1.6,
+        21.05
+      ],
+      "section": "steppe-standing-well"
+    },
+    {
+      "id": "steppe-banner-focus-room",
+      "name": "The Banner Focus",
+      "space": "steppe-banner-focus.landing",
+      "position": [
+        98.55,
+        1.6,
+        93.05
+      ],
+      "section": "steppe-banner-focus"
+    },
+    {
+      "id": "steppe-waystone-room",
+      "name": "The Steppe Waystone",
+      "space": "steppe-waystone.landing",
+      "position": [
+        27.55,
+        1.6,
+        93.05
+      ],
+      "section": "steppe-waystone"
+    },
+    {
+      "id": "steppe-dune-eyrie-room",
+      "name": "The Dune Eyrie",
+      "space": "steppe-dune-eyrie.landing",
+      "position": [
+        168.55,
+        1.6,
+        165.05
+      ],
+      "section": "steppe-dune-eyrie"
+    }
+  ],
+  "interactives": [
+    {
+      "id": "steppe-well-garden-well",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Garden well",
+      "text": "Cold water from the garden well.",
+      "position": [
+        173.55,
+        -1.0,
+        42.55
+      ],
+      "section": "steppe-well-garden",
+      "serverTile": [
+        158,
+        147
+      ]
+    },
+    {
+      "id": "steppe-mill-cache-cache",
+      "kind": "storage",
+      "target": "shared",
+      "label": "Cache",
+      "text": "A cache; it opens your shared storage.",
+      "position": [
+        25.55,
+        -2.5,
+        184.65
+      ],
+      "section": "steppe-mill-cache",
+      "serverTile": [
+        10,
+        5
+      ]
+    },
+    {
+      "id": "steppe-mill-cache-bench",
+      "kind": "crafting_station",
+      "target": "field",
+      "label": "Bench",
+      "text": "A bench for ordinary mixing and crafting.",
+      "position": [
+        21.35,
+        -2.1,
+        184.65
+      ],
+      "section": "steppe-mill-cache",
+      "serverTile": [
+        5,
+        5
+      ]
+    },
+    {
+      "id": "steppe-hall-vault-strongbox",
+      "kind": "storage",
+      "target": "shared",
+      "label": "Cache",
+      "text": "A cache; it opens your shared storage.",
+      "position": [
+        98.55,
+        -4.5,
+        185.55
+      ],
+      "section": "steppe-hall-vault",
+      "serverTile": [
+        83,
+        4
+      ]
+    },
+    {
+      "id": "steppe-hall-vault-bench",
+      "kind": "crafting_station",
+      "target": "field",
+      "label": "Bench",
+      "text": "A bench for ordinary mixing and crafting.",
+      "position": [
+        102.95,
+        -4.1,
+        181.15
+      ],
+      "section": "steppe-hall-vault",
+      "serverTile": [
+        87,
+        9
+      ]
+    },
+    {
+      "id": "steppe-hall-vault-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "The sour ground",
+      "text": "The fourth well hummed and was filled. What is made under the hall is made on sweet ground, and counts double.",
+      "position": [
+        98.55,
+        -4.0,
+        176.19
+      ],
+      "section": "steppe-hall-vault",
+      "serverTile": [
+        83,
+        14
+      ]
+    },
+    {
+      "id": "steppe-fox-pit-post",
+      "kind": "training",
+      "target": "combat",
+      "label": "Training post",
+      "text": "The post lists your recent combat results.",
+      "position": [
+        236.55,
+        -3.0,
+        50.05
+      ],
+      "section": "steppe-fox-pit",
+      "serverTile": [
+        221,
+        140
+      ]
+    },
+    {
+      "id": "steppe-caravan-school-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "Reading",
+      "text": "The caravanserai's under-room. Books read three times as fast off the road.",
+      "position": [
+        164.35,
+        -1.0,
+        116.42
+      ],
+      "section": "steppe-caravan-school",
+      "serverTile": [
+        148,
+        74
+      ]
+    },
+    {
+      "id": "steppe-caravan-school-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "The hum",
+      "text": "The well hummed, the crates hum, and the foals will not stand. The salt reader says it is the same hum.",
+      "position": [
+        171.55,
+        -1.0,
+        116.42
+      ],
+      "section": "steppe-caravan-school",
+      "serverTile": [
+        156,
+        74
+      ]
+    },
+    {
+      "id": "steppe-caravan-school-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "The frontier",
+      "text": "The east gate leads nowhere. The roads out are west, north and south.",
+      "position": [
+        178.75,
+        -1.0,
+        116.42
+      ],
+      "section": "steppe-caravan-school",
+      "serverTile": [
+        163,
+        74
+      ]
+    },
+    {
+      "id": "steppe-spring-spring",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Warm spring",
+      "text": "The spring is warm and mineral; it restores you.",
+      "position": [
+        242.55,
+        -2.0,
+        107.15
+      ],
+      "section": "steppe-spring",
+      "serverTile": [
+        227,
+        83
+      ]
+    },
+    {
+      "id": "steppe-outpost-butts-butts",
+      "kind": "training",
+      "target": "combat",
+      "label": "Butts",
+      "text": "The butts list your recent combat results.",
+      "position": [
+        22.55,
+        -1.0,
+        34.55
+      ],
+      "section": "steppe-outpost-butts",
+      "serverTile": [
+        7,
+        155
+      ]
+    },
+    {
+      "id": "steppe-barrow-reliquary-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "The hum",
+      "text": "The fourth well hummed because it was dug into something that answers.",
+      "position": [
+        307.6,
+        -4.0,
+        105.65
+      ],
+      "section": "steppe-barrow-reliquary",
+      "serverTile": [
+        292,
+        84
+      ]
+    },
+    {
+      "id": "steppe-barrow-reliquary-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "The foals",
+      "text": "Foals born the season the well hummed would not stand. The herd-mother moved the herd; the hum did not follow.",
+      "position": [
+        319.5,
+        -4.0,
+        105.65
+      ],
+      "section": "steppe-barrow-reliquary",
+      "serverTile": [
+        304,
+        84
+      ]
+    },
+    {
+      "id": "steppe-barrow-reliquary-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "The crates",
+      "text": "Shard crates hum on the road south and stop at the border. The shard-hauler has stopped asking why.",
+      "position": [
+        307.6,
+        -4.0,
+        109.5
+      ],
+      "section": "steppe-barrow-reliquary",
+      "serverTile": [
+        292,
+        80
+      ]
+    },
+    {
+      "id": "steppe-barrow-reliquary-relic",
+      "kind": "scenery_effect",
+      "target": "relic",
+      "label": "The Barrow Reliquary",
+      "text": "Under the barrow field, opened with bones as the Orun open a barrow.",
+      "position": [
+        313.55,
+        -3.8,
+        114.05
+      ],
+      "section": "steppe-barrow-reliquary",
+      "serverTile": [
+        298,
+        76
+      ]
+    },
+    {
+      "id": "steppe-standing-well-post",
+      "kind": "training",
+      "target": "combat",
+      "label": "Ward post",
+      "text": "Nothing casts within these stones. The post lists your recent combat results.",
+      "position": [
+        307.9,
+        -4.0,
+        32.9
+      ],
+      "section": "steppe-standing-well",
+      "serverTile": [
+        292,
+        157
+      ]
+    },
+    {
+      "id": "steppe-dune-eyrie-water",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Cistern",
+      "text": "Rainwater from the cistern.",
+      "position": [
+        171.55,
+        4.0,
+        180.35
+      ],
+      "section": "steppe-dune-eyrie",
+      "serverTile": [
+        156,
+        10
+      ]
+    },
+    {
+      "id": "steppe-dune-eyrie-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "Breath",
+      "text": "Rest here and the breath comes back twice as fast.",
+      "position": [
+        164.95,
+        4.0,
+        184.25
+      ],
+      "section": "steppe-dune-eyrie",
+      "serverTile": [
+        149,
+        6
+      ]
+    },
+    {
+      "id": "steppe-dune-eyrie-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "Water",
+      "text": "A desert station and a well restore food; each can be used again after five minutes.",
+      "position": [
+        167.15,
+        4.0,
+        184.25
+      ],
+      "section": "steppe-dune-eyrie",
+      "serverTile": [
+        151,
+        6
+      ]
+    }
+  ],
+  "npcMarkers": [],
+  "harvestables": [
+    {
+      "id": "steppe-seed-hollow-node-00",
+      "resource": "Sunmane Seed",
+      "position": [
+        105.79,
+        -4.0,
+        46.23
+      ],
+      "section": "steppe-seed-hollow",
+      "serverTile": [
+        90,
+        144
+      ]
+    },
+    {
+      "id": "steppe-seed-hollow-node-01",
+      "resource": "Sunmane Seed",
+      "position": [
+        96.24,
+        -4.0,
+        44.35
+      ],
+      "section": "steppe-seed-hollow",
+      "serverTile": [
+        80,
+        146
+      ]
+    },
+    {
+      "id": "steppe-seed-hollow-node-02",
+      "resource": "Sunmane Seed",
+      "position": [
+        107.56,
+        -4.0,
+        36.66
+      ],
+      "section": "steppe-seed-hollow",
+      "serverTile": [
+        92,
+        153
+      ]
+    },
+    {
+      "id": "steppe-seed-hollow-node-03",
+      "resource": "Sunmane Seed",
+      "position": [
+        103.54,
+        -4.0,
+        48.74
+      ],
+      "section": "steppe-seed-hollow",
+      "serverTile": [
+        88,
+        141
+      ]
+    },
+    {
+      "id": "steppe-seed-hollow-node-04",
+      "resource": "Sunmane Seed",
+      "position": [
+        96.27,
+        -4.0,
+        39.56
+      ],
+      "section": "steppe-seed-hollow",
+      "serverTile": [
+        80,
+        150
+      ]
+    },
+    {
+      "id": "steppe-seed-hollow-node-05",
+      "resource": "Steppe Wheat",
+      "position": [
+        106.62,
+        -4.0,
+        42.51
+      ],
+      "section": "steppe-seed-hollow",
+      "serverTile": [
+        91,
+        147
+      ]
+    },
+    {
+      "id": "steppe-seed-hollow-node-06",
+      "resource": "Steppe Wheat",
+      "position": [
+        99.49,
+        -4.0,
+        49.12
+      ],
+      "section": "steppe-seed-hollow",
+      "serverTile": [
+        83,
+        141
+      ]
+    },
+    {
+      "id": "steppe-seed-hollow-node-07",
+      "resource": "Steppe Wheat",
+      "position": [
+        99.92,
+        -4.0,
+        35.45
+      ],
+      "section": "steppe-seed-hollow",
+      "serverTile": [
+        84,
+        155
+      ]
+    },
+    {
+      "id": "steppe-seed-hollow-node-08",
+      "resource": "Steppe Wheat",
+      "position": [
+        107.33,
+        -4.0,
+        45.8
+      ],
+      "section": "steppe-seed-hollow",
+      "serverTile": [
+        91,
+        144
+      ]
+    },
+    {
+      "id": "steppe-well-garden-node-00",
+      "resource": "Wayside Sage",
+      "position": [
+        165.96,
+        -1.5,
+        37.35
+      ],
+      "section": "steppe-well-garden",
+      "serverTile": [
+        150,
+        153
+      ]
+    },
+    {
+      "id": "steppe-well-garden-node-01",
+      "resource": "Wayside Sage",
+      "position": [
+        167.5,
+        -1.5,
+        37.35
+      ],
+      "section": "steppe-well-garden",
+      "serverTile": [
+        152,
+        153
+      ]
+    },
+    {
+      "id": "steppe-well-garden-node-02",
+      "resource": "Wayside Sage",
+      "position": [
+        169.04,
+        -1.5,
+        37.35
+      ],
+      "section": "steppe-well-garden",
+      "serverTile": [
+        153,
+        153
+      ]
+    },
+    {
+      "id": "steppe-well-garden-node-03",
+      "resource": "Wayside Sage",
+      "position": [
+        165.96,
+        -1.5,
+        38.95
+      ],
+      "section": "steppe-well-garden",
+      "serverTile": [
+        150,
+        151
+      ]
+    },
+    {
+      "id": "steppe-well-garden-node-04",
+      "resource": "Flax",
+      "position": [
+        172.01,
+        -1.5,
+        37.35
+      ],
+      "section": "steppe-well-garden",
+      "serverTile": [
+        156,
+        153
+      ]
+    },
+    {
+      "id": "steppe-well-garden-node-05",
+      "resource": "Flax",
+      "position": [
+        173.55,
+        -1.5,
+        37.35
+      ],
+      "section": "steppe-well-garden",
+      "serverTile": [
+        158,
+        153
+      ]
+    },
+    {
+      "id": "steppe-well-garden-node-06",
+      "resource": "Flax",
+      "position": [
+        175.09,
+        -1.5,
+        37.35
+      ],
+      "section": "steppe-well-garden",
+      "serverTile": [
+        159,
+        153
+      ]
+    },
+    {
+      "id": "steppe-well-garden-node-07",
+      "resource": "Flax",
+      "position": [
+        172.01,
+        -1.5,
+        38.95
+      ],
+      "section": "steppe-well-garden",
+      "serverTile": [
+        156,
+        151
+      ]
+    },
+    {
+      "id": "steppe-well-garden-node-08",
+      "resource": "Steppe Wheat",
+      "position": [
+        178.06,
+        -1.5,
+        37.35
+      ],
+      "section": "steppe-well-garden",
+      "serverTile": [
+        162,
+        153
+      ]
+    },
+    {
+      "id": "steppe-well-garden-node-09",
+      "resource": "Steppe Wheat",
+      "position": [
+        179.6,
+        -1.5,
+        37.35
+      ],
+      "section": "steppe-well-garden",
+      "serverTile": [
+        164,
+        153
+      ]
+    },
+    {
+      "id": "steppe-well-garden-node-10",
+      "resource": "Steppe Wheat",
+      "position": [
+        181.14,
+        -1.5,
+        37.35
+      ],
+      "section": "steppe-well-garden",
+      "serverTile": [
+        165,
+        153
+      ]
+    },
+    {
+      "id": "steppe-well-garden-node-11",
+      "resource": "Sunmane Seed",
+      "position": [
+        165.96,
+        -1.5,
+        46.15
+      ],
+      "section": "steppe-well-garden",
+      "serverTile": [
+        150,
+        144
+      ]
+    },
+    {
+      "id": "steppe-well-garden-node-12",
+      "resource": "Sunmane Seed",
+      "position": [
+        167.5,
+        -1.5,
+        46.15
+      ],
+      "section": "steppe-well-garden",
+      "serverTile": [
+        152,
+        144
+      ]
+    },
+    {
+      "id": "steppe-well-garden-node-13",
+      "resource": "Sunmane Seed",
+      "position": [
+        169.04,
+        -1.5,
+        46.15
+      ],
+      "section": "steppe-well-garden",
+      "serverTile": [
+        153,
+        144
+      ]
+    },
+    {
+      "id": "steppe-mill-cache-node-00",
+      "resource": "Steppe Wheat",
+      "position": [
+        20.3,
+        -3.0,
+        177.3
+      ],
+      "section": "steppe-mill-cache",
+      "serverTile": [
+        4,
+        13
+      ]
+    },
+    {
+      "id": "steppe-mill-cache-node-01",
+      "resource": "Steppe Wheat",
+      "position": [
+        23.8,
+        -3.0,
+        177.3
+      ],
+      "section": "steppe-mill-cache",
+      "serverTile": [
+        8,
+        13
+      ]
+    },
+    {
+      "id": "steppe-mill-cache-node-02",
+      "resource": "Steppe Wheat",
+      "position": [
+        27.3,
+        -3.0,
+        177.3
+      ],
+      "section": "steppe-mill-cache",
+      "serverTile": [
+        11,
+        13
+      ]
+    },
+    {
+      "id": "steppe-mill-cache-node-03",
+      "resource": "Copper Bloom",
+      "position": [
+        30.8,
+        -3.0,
+        177.3
+      ],
+      "section": "steppe-mill-cache",
+      "serverTile": [
+        15,
+        13
+      ]
+    },
+    {
+      "id": "steppe-mill-cache-node-04",
+      "resource": "Copper Bloom",
+      "position": [
+        20.3,
+        -3.0,
+        179.1
+      ],
+      "section": "steppe-mill-cache",
+      "serverTile": [
+        4,
+        11
+      ]
+    },
+    {
+      "id": "steppe-mill-cache-node-05",
+      "resource": "Copper Bloom",
+      "position": [
+        23.8,
+        -3.0,
+        179.1
+      ],
+      "section": "steppe-mill-cache",
+      "serverTile": [
+        8,
+        11
+      ]
+    }
+  ],
+  "environment": {
+    "sky": "none",
+    "ambient": {
+      "colour": [
+        0.1,
+        0.1,
+        0.12
+      ],
+      "energy": 0.55
+    },
+    "fog": {
+      "enabled": true,
+      "colour": [
+        0.02,
+        0.02,
+        0.03
+      ],
+      "begin": 14.0,
+      "end": 48.0
+    },
+    "openToSky": [
+      "steppe-well-garden.court",
+      "steppe-dune-eyrie.perch"
+    ],
+    "lights": [
+      {
+        "id": "lamp-000",
+        "kind": "point",
+        "position": [
+          102.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-001",
+        "kind": "point",
+        "position": [
+          96.55,
+          -0.62,
+          43.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-002",
+        "kind": "point",
+        "position": [
+          108.55,
+          -0.62,
+          43.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-003",
+        "kind": "point",
+        "position": [
+          173.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-004",
+        "kind": "point",
+        "position": [
+          25.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-005",
+        "kind": "point",
+        "position": [
+          25.55,
+          -0.22,
+          181.15
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-006",
+        "kind": "point",
+        "position": [
+          95.35,
+          -3.4,
+          176.75
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-007",
+        "kind": "point",
+        "position": [
+          101.75,
+          -3.4,
+          176.75
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-008",
+        "kind": "point",
+        "position": [
+          98.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-009",
+        "kind": "point",
+        "position": [
+          244.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-010",
+        "kind": "point",
+        "position": [
+          239.55,
+          -0.12,
+          41.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-011",
+        "kind": "point",
+        "position": [
+          249.55,
+          -0.12,
+          41.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-012",
+        "kind": "point",
+        "position": [
+          171.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-013",
+        "kind": "point",
+        "position": [
+          171.55,
+          1.18,
+          110.3
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-014",
+        "kind": "point",
+        "position": [
+          242.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-015",
+        "kind": "point",
+        "position": [
+          242.55,
+          0.58,
+          109.95
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-016",
+        "kind": "point",
+        "position": [
+          22.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-017",
+        "kind": "point",
+        "position": [
+          22.55,
+          0.98,
+          46.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-018",
+        "kind": "point",
+        "position": [
+          309.35,
+          -3.4,
+          113.35
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-019",
+        "kind": "point",
+        "position": [
+          317.75,
+          -3.4,
+          113.35
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-020",
+        "kind": "point",
+        "position": [
+          313.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-021",
+        "kind": "point",
+        "position": [
+          315.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-022",
+        "kind": "point",
+        "position": [
+          315.55,
+          -0.62,
+          40.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-023",
+        "kind": "point",
+        "position": [
+          101.94,
+          -1.4,
+          114.14
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-024",
+        "kind": "point",
+        "position": [
+          95.16,
+          -1.4,
+          114.14
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-025",
+        "kind": "point",
+        "position": [
+          95.16,
+          -1.4,
+          107.36
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-026",
+        "kind": "point",
+        "position": [
+          101.94,
+          -1.4,
+          107.36
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-027",
+        "kind": "point",
+        "position": [
+          98.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-028",
+        "kind": "point",
+        "position": [
+          27.55,
+          -2.4,
+          112.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-029",
+        "kind": "point",
+        "position": [
+          27.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-030",
+        "kind": "point",
+        "position": [
+          168.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      }
+    ]
+  },
+  "spaces": {
+    "steppe-seed-hollow.landing": {
+      "x0": 100.05,
+      "z0": 18.55,
+      "x1": 105.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "steppe-seed-hollow.way": {
+      "x0": 100.75,
+      "z0": 21.75,
+      "x1": 104.35,
+      "z1": 33.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "steppe-seed-hollow.hollow": {
+      "x0": 90.55,
+      "z0": 31.55,
+      "x1": 114.55,
+      "z1": 55.55,
+      "floor": -4.0,
+      "height": 8.0
+    },
+    "steppe-well-garden.landing": {
+      "x0": 171.05,
+      "z0": 18.55,
+      "x1": 176.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "steppe-well-garden.way": {
+      "x0": 171.75,
+      "z0": 21.75,
+      "x1": 175.35,
+      "z1": 33.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "steppe-well-garden.court": {
+      "x0": 162.55,
+      "z0": 31.55,
+      "x1": 184.55,
+      "z1": 53.55,
+      "floor": -2.0,
+      "height": 6.0
+    },
+    "steppe-mill-cache.landing": {
+      "x0": 23.05,
+      "z0": 162.55,
+      "x1": 28.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "steppe-mill-cache.way": {
+      "x0": 23.75,
+      "z0": 165.75,
+      "x1": 27.35,
+      "z1": 177.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "steppe-mill-cache.cellar": {
+      "x0": 18.55,
+      "z0": 175.55,
+      "x1": 32.55,
+      "z1": 186.75,
+      "floor": -3.0,
+      "height": 4.4
+    },
+    "steppe-hall-vault.landing": {
+      "x0": 96.05,
+      "z0": 162.55,
+      "x1": 101.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "steppe-hall-vault.way": {
+      "x0": 96.75,
+      "z0": 165.75,
+      "x1": 100.35,
+      "z1": 177.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "steppe-hall-vault.strongroom": {
+      "x0": 90.55,
+      "z0": 175.55,
+      "x1": 106.55,
+      "z1": 186.75,
+      "floor": -5.0,
+      "height": 5.0
+    },
+    "steppe-fox-pit.landing": {
+      "x0": 242.05,
+      "z0": 18.55,
+      "x1": 247.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "steppe-fox-pit.way": {
+      "x0": 242.75,
+      "z0": 21.75,
+      "x1": 246.35,
+      "z1": 33.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "steppe-fox-pit.pit": {
+      "x0": 234.55,
+      "z0": 31.55,
+      "x1": 254.55,
+      "z1": 51.55,
+      "floor": -4.0,
+      "height": 7.0
+    },
+    "steppe-caravan-school.landing": {
+      "x0": 169.05,
+      "z0": 90.55,
+      "x1": 174.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "steppe-caravan-school.way": {
+      "x0": 169.75,
+      "z0": 93.75,
+      "x1": 173.35,
+      "z1": 105.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "steppe-caravan-school.hall": {
+      "x0": 162.55,
+      "z0": 103.55,
+      "x1": 180.55,
+      "z1": 117.05,
+      "floor": -2.0,
+      "height": 5.2
+    },
+    "steppe-spring.landing": {
+      "x0": 240.05,
+      "z0": 90.55,
+      "x1": 245.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "steppe-spring.way": {
+      "x0": 240.75,
+      "z0": 93.75,
+      "x1": 244.35,
+      "z1": 105.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "steppe-spring.bath": {
+      "x0": 234.55,
+      "z0": 103.55,
+      "x1": 250.55,
+      "z1": 116.35,
+      "floor": -3.0,
+      "height": 6.0
+    },
+    "steppe-outpost-butts.landing": {
+      "x0": 20.05,
+      "z0": 18.55,
+      "x1": 25.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "steppe-outpost-butts.way": {
+      "x0": 20.75,
+      "z0": 21.75,
+      "x1": 24.35,
+      "z1": 33.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "steppe-outpost-butts.gallery": {
+      "x0": 18.55,
+      "z0": 31.55,
+      "x1": 26.55,
+      "z1": 61.55,
+      "floor": -2.0,
+      "height": 5.0
+    },
+    "steppe-barrow-reliquary.landing": {
+      "x0": 311.05,
+      "z0": 90.55,
+      "x1": 316.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "steppe-barrow-reliquary.way": {
+      "x0": 311.75,
+      "z0": 93.75,
+      "x1": 315.35,
+      "z1": 105.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "steppe-barrow-reliquary.cella": {
+      "x0": 306.55,
+      "z0": 103.55,
+      "x1": 320.55,
+      "z1": 116.15,
+      "floor": -5.0,
+      "height": 6.0
+    },
+    "steppe-standing-well.landing": {
+      "x0": 313.05,
+      "z0": 18.55,
+      "x1": 318.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "steppe-standing-well.way": {
+      "x0": 313.75,
+      "z0": 21.75,
+      "x1": 317.35,
+      "z1": 33.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "steppe-standing-well.well": {
+      "x0": 306.55,
+      "z0": 31.55,
+      "x1": 324.55,
+      "z1": 49.55,
+      "floor": -5.0,
+      "height": 8.0
+    },
+    "steppe-banner-focus.landing": {
+      "x0": 96.05,
+      "z0": 90.55,
+      "x1": 101.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "steppe-banner-focus.way": {
+      "x0": 96.75,
+      "z0": 93.75,
+      "x1": 100.35,
+      "z1": 105.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "steppe-banner-focus.chamber": {
+      "x0": 90.55,
+      "z0": 103.55,
+      "x1": 106.55,
+      "z1": 117.95,
+      "floor": -3.0,
+      "height": 6.4
+    },
+    "steppe-waystone.landing": {
+      "x0": 25.05,
+      "z0": 90.55,
+      "x1": 30.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "steppe-waystone.way": {
+      "x0": 25.75,
+      "z0": 93.75,
+      "x1": 29.35,
+      "z1": 105.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "steppe-waystone.ring": {
+      "x0": 18.55,
+      "z0": 103.55,
+      "x1": 36.55,
+      "z1": 121.55,
+      "floor": -4.0,
+      "height": 7.0
+    },
+    "steppe-dune-eyrie.landing": {
+      "x0": 166.05,
+      "z0": 162.55,
+      "x1": 171.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "steppe-dune-eyrie.way": {
+      "x0": 166.75,
+      "z0": 165.75,
+      "x1": 170.35,
+      "z1": 177.35,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "steppe-dune-eyrie.perch": {
+      "x0": 162.55,
+      "z0": 175.55,
+      "x1": 174.55,
+      "z1": 185.15,
+      "floor": 3.0,
+      "height": 4.6
+    }
+  },
+  "sections": [
+    {
+      "id": "steppe-seed-hollow",
+      "name": "The Seed Hollow",
+      "kind": "grotto",
+      "entranceMap": "sunmane_steppe",
+      "entranceProp": "sand_sink",
+      "key": "",
+      "label": "A sink in the sand that never fills.",
+      "offset": [
+        102.55,
+        21.05
+      ],
+      "arrival": [
+        102.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          17.55
+        ],
+        "max": [
+          115.55,
+          56.55
+        ]
+      },
+      "spaces": [
+        "steppe-seed-hollow.landing",
+        "steppe-seed-hollow.way",
+        "steppe-seed-hollow.hollow"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "A sink in the grass where the seed-heads fall and nobody follows them.",
+      "arrivalTile": [
+        87,
+        169
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          133
+        ],
+        "max": [
+          100,
+          172
+        ]
+      }
+    },
+    {
+      "id": "steppe-well-garden",
+      "name": "The Well Garden",
+      "kind": "garden",
+      "entranceMap": "sunmane_steppe",
+      "entranceProp": "well_shaft",
+      "key": "",
+      "label": "A dry well. Handholds have been cut into its shaft.",
+      "offset": [
+        173.55,
+        21.05
+      ],
+      "arrival": [
+        173.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          17.55
+        ],
+        "max": [
+          185.55,
+          54.55
+        ]
+      },
+      "spaces": [
+        "steppe-well-garden.landing",
+        "steppe-well-garden.way",
+        "steppe-well-garden.court"
+      ],
+      "areas": [
+        {
+          "kind": "harvest_speed",
+          "multiplier": 2,
+          "spaces": [
+            "steppe-well-garden.court"
+          ],
+          "tiles": {
+            "min": [
+              147,
+              136
+            ],
+            "max": [
+              169,
+              158
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "A garden under the dry well where the herd-mothers grow what the horses do not eat.",
+      "arrivalTile": [
+        158,
+        169
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          135
+        ],
+        "max": [
+          170,
+          172
+        ]
+      }
+    },
+    {
+      "id": "steppe-mill-cache",
+      "name": "The Mill Cache",
+      "kind": "cache",
+      "entranceMap": "sunmane_steppe",
+      "entranceProp": "cellar_hatch",
+      "key": "",
+      "label": "A cellar hatch under the leaves.",
+      "offset": [
+        25.55,
+        165.05
+      ],
+      "arrival": [
+        25.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          17.55,
+          161.55
+        ],
+        "max": [
+          33.55,
+          187.75
+        ]
+      },
+      "spaces": [
+        "steppe-mill-cache.landing",
+        "steppe-mill-cache.way",
+        "steppe-mill-cache.cellar"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "The miller's cellar: a chest, a bench and grain not on the tally.",
+      "arrivalTile": [
+        10,
+        25
+      ],
+      "boundsTiles": {
+        "min": [
+          2,
+          2
+        ],
+        "max": [
+          18,
+          28
+        ]
+      }
+    },
+    {
+      "id": "steppe-hall-vault",
+      "name": "The Hall Vault",
+      "kind": "vault",
+      "entranceMap": "sunmane_steppe",
+      "entranceProp": "cracked_slab",
+      "key": "Storage Token",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        98.55,
+        165.05
+      ],
+      "arrival": [
+        98.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          161.55
+        ],
+        "max": [
+          107.55,
+          187.75
+        ]
+      },
+      "spaces": [
+        "steppe-hall-vault.landing",
+        "steppe-hall-vault.way",
+        "steppe-hall-vault.strongroom"
+      ],
+      "areas": [
+        {
+          "kind": "experience",
+          "multiplier": 2,
+          "spaces": [
+            "steppe-hall-vault.strongroom"
+          ],
+          "tiles": {
+            "min": [
+              75,
+              3
+            ],
+            "max": [
+              91,
+              14
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Under the hall, the khan's strongroom.",
+      "arrivalTile": [
+        83,
+        25
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          2
+        ],
+        "max": [
+          92,
+          28
+        ]
+      }
+    },
+    {
+      "id": "steppe-fox-pit",
+      "name": "The Fox Pit",
+      "kind": "pen",
+      "entranceMap": "sunmane_steppe",
+      "entranceProp": "loose_stone",
+      "key": "",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "offset": [
+        244.55,
+        21.05
+      ],
+      "arrival": [
+        244.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          233.55,
+          17.55
+        ],
+        "max": [
+          255.55,
+          52.55
+        ]
+      },
+      "spaces": [
+        "steppe-fox-pit.landing",
+        "steppe-fox-pit.way",
+        "steppe-fox-pit.pit"
+      ],
+      "areas": [],
+      "spawns": [
+        {
+          "creature": "red_fox",
+          "count": 4,
+          "space": "steppe-fox-pit.pit",
+          "tiles": {
+            "min": [
+              219,
+              138
+            ],
+            "max": [
+              239,
+              158
+            ]
+          }
+        },
+        {
+          "creature": "dunrunner",
+          "count": 3,
+          "space": "steppe-fox-pit.pit",
+          "tiles": {
+            "min": [
+              219,
+              138
+            ],
+            "max": [
+              239,
+              158
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "An outpost cellar where the riders pen foxes for the young to learn on.",
+      "arrivalTile": [
+        229,
+        169
+      ],
+      "boundsTiles": {
+        "min": [
+          218,
+          137
+        ],
+        "max": [
+          240,
+          172
+        ]
+      }
+    },
+    {
+      "id": "steppe-caravan-school",
+      "name": "The Caravanserai School",
+      "kind": "school",
+      "entranceMap": "sunmane_steppe",
+      "entranceProp": "cellar_hatch",
+      "key": "",
+      "label": "A cellar hatch under the leaves.",
+      "offset": [
+        171.55,
+        93.05
+      ],
+      "arrival": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          89.55
+        ],
+        "max": [
+          181.55,
+          118.05
+        ]
+      },
+      "spaces": [
+        "steppe-caravan-school.landing",
+        "steppe-caravan-school.way",
+        "steppe-caravan-school.hall"
+      ],
+      "areas": [
+        {
+          "kind": "fast_reading",
+          "multiplier": 3,
+          "spaces": [
+            "steppe-caravan-school.hall"
+          ],
+          "tiles": {
+            "min": [
+              147,
+              73
+            ],
+            "max": [
+              165,
+              86
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Where the caravan masters teach their drovers the roads.",
+      "arrivalTile": [
+        156,
+        97
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          72
+        ],
+        "max": [
+          166,
+          100
+        ]
+      }
+    },
+    {
+      "id": "steppe-spring",
+      "name": "The Hidden Spring",
+      "kind": "spring",
+      "entranceMap": "sunmane_steppe",
+      "entranceProp": "sand_sink",
+      "key": "",
+      "label": "A sink in the sand that never fills.",
+      "offset": [
+        242.55,
+        93.05
+      ],
+      "arrival": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          233.55,
+          89.55
+        ],
+        "max": [
+          251.55,
+          117.35
+        ]
+      },
+      "spaces": [
+        "steppe-spring.landing",
+        "steppe-spring.way",
+        "steppe-spring.bath"
+      ],
+      "areas": [
+        {
+          "kind": "fast_regeneration",
+          "multiplier": 3,
+          "spaces": [
+            "steppe-spring.bath"
+          ],
+          "tiles": {
+            "min": [
+              219,
+              74
+            ],
+            "max": [
+              235,
+              86
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "A warm spring under the south road; the only sweet water the well-digger will vouch for.",
+      "arrivalTile": [
+        227,
+        97
+      ],
+      "boundsTiles": {
+        "min": [
+          218,
+          73
+        ],
+        "max": [
+          236,
+          100
+        ]
+      }
+    },
+    {
+      "id": "steppe-outpost-butts",
+      "name": "The Outpost Butts",
+      "kind": "range",
+      "entranceMap": "sunmane_steppe",
+      "entranceProp": "cellar_hatch",
+      "key": "",
+      "label": "A cellar hatch under the leaves.",
+      "offset": [
+        22.55,
+        21.05
+      ],
+      "arrival": [
+        22.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          17.55,
+          17.55
+        ],
+        "max": [
+          27.55,
+          62.55
+        ]
+      },
+      "spaces": [
+        "steppe-outpost-butts.landing",
+        "steppe-outpost-butts.way",
+        "steppe-outpost-butts.gallery"
+      ],
+      "areas": [
+        {
+          "kind": "experience",
+          "multiplier": 2,
+          "spaces": [
+            "steppe-outpost-butts.gallery"
+          ],
+          "tiles": {
+            "min": [
+              3,
+              128
+            ],
+            "max": [
+              11,
+              158
+            ]
+          }
+        }
+      ],
+      "spawns": [
+        {
+          "creature": "dunrunner",
+          "count": 3,
+          "space": "steppe-outpost-butts.gallery",
+          "tiles": {
+            "min": [
+              3,
+              128
+            ],
+            "max": [
+              11,
+              158
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "A gallery under the west outpost with dunrunners at the far end.",
+      "arrivalTile": [
+        7,
+        169
+      ],
+      "boundsTiles": {
+        "min": [
+          2,
+          127
+        ],
+        "max": [
+          12,
+          172
+        ]
+      }
+    },
+    {
+      "id": "steppe-barrow-reliquary",
+      "name": "The Barrow Reliquary",
+      "kind": "reliquary",
+      "entranceMap": "sunmane_steppe",
+      "entranceProp": "shrine_slab",
+      "key": "Bones",
+      "label": "A shrine slab with fresh scratches where it has been slid aside.",
+      "offset": [
+        313.55,
+        93.05
+      ],
+      "arrival": [
+        313.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          305.55,
+          89.55
+        ],
+        "max": [
+          321.55,
+          117.15
+        ]
+      },
+      "spaces": [
+        "steppe-barrow-reliquary.landing",
+        "steppe-barrow-reliquary.way",
+        "steppe-barrow-reliquary.cella"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "Under the barrow field, opened with bones as the Orun open a barrow.",
+      "arrivalTile": [
+        298,
+        97
+      ],
+      "boundsTiles": {
+        "min": [
+          290,
+          73
+        ],
+        "max": [
+          306,
+          100
+        ]
+      }
+    },
+    {
+      "id": "steppe-standing-well",
+      "name": "The Standing Stone Well",
+      "kind": "nullwell",
+      "entranceMap": "sunmane_steppe",
+      "entranceProp": "loose_stone",
+      "key": "",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "offset": [
+        315.55,
+        21.05
+      ],
+      "arrival": [
+        315.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          305.55,
+          17.55
+        ],
+        "max": [
+          325.55,
+          50.55
+        ]
+      },
+      "spaces": [
+        "steppe-standing-well.landing",
+        "steppe-standing-well.way",
+        "steppe-standing-well.well"
+      ],
+      "areas": [
+        {
+          "kind": "no_magic",
+          "multiplier": 2,
+          "spaces": [
+            "steppe-standing-well.well"
+          ],
+          "tiles": {
+            "min": [
+              291,
+              140
+            ],
+            "max": [
+              309,
+              158
+            ]
+          }
+        }
+      ],
+      "spawns": [
+        {
+          "creature": "golden_plains_horse",
+          "count": 3,
+          "space": "steppe-standing-well.well",
+          "tiles": {
+            "min": [
+              291,
+              140
+            ],
+            "max": [
+              309,
+              158
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "Inside the stones nothing casts; the horses penned below are honest work.",
+      "arrivalTile": [
+        300,
+        169
+      ],
+      "boundsTiles": {
+        "min": [
+          290,
+          139
+        ],
+        "max": [
+          310,
+          172
+        ]
+      }
+    },
+    {
+      "id": "steppe-banner-focus",
+      "name": "The Banner Focus",
+      "kind": "focus",
+      "entranceMap": "sunmane_steppe",
+      "entranceProp": "cracked_slab",
+      "key": "Woven Charm",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        98.55,
+        93.05
+      ],
+      "arrival": [
+        98.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          89.55
+        ],
+        "max": [
+          107.55,
+          118.95
+        ]
+      },
+      "spaces": [
+        "steppe-banner-focus.landing",
+        "steppe-banner-focus.way",
+        "steppe-banner-focus.chamber"
+      ],
+      "areas": [
+        {
+          "kind": "cheap_magic",
+          "multiplier": 2,
+          "spaces": [
+            "steppe-banner-focus.chamber"
+          ],
+          "tiles": {
+            "min": [
+              75,
+              72
+            ],
+            "max": [
+              91,
+              86
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Under the banner shrines the ether pools; spells cost half.",
+      "arrivalTile": [
+        83,
+        97
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          71
+        ],
+        "max": [
+          92,
+          100
+        ]
+      }
+    },
+    {
+      "id": "steppe-waystone",
+      "name": "The Steppe Waystone",
+      "kind": "waystone",
+      "entranceMap": "sunmane_steppe",
+      "entranceProp": "loose_stone",
+      "key": "Iron Rune",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "offset": [
+        27.55,
+        93.05
+      ],
+      "arrival": [
+        27.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          17.55,
+          89.55
+        ],
+        "max": [
+          37.55,
+          122.55
+        ]
+      },
+      "spaces": [
+        "steppe-waystone.landing",
+        "steppe-waystone.way",
+        "steppe-waystone.ring"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [
+        {
+          "map": "four_gates_secrets",
+          "spawn": "gates-waystone",
+          "label": "The Four Gates",
+          "space": "steppe-waystone.ring",
+          "position": [
+            27.55,
+            -4.0,
+            107.67
+          ],
+          "tile": [
+            12,
+            82
+          ]
+        },
+        {
+          "map": "amethyst_barrens_secrets",
+          "spawn": "barrens-waystone",
+          "label": "The Amethyst Barrens",
+          "space": "steppe-waystone.ring",
+          "position": [
+            32.43,
+            -4.0,
+            112.55
+          ],
+          "tile": [
+            16,
+            77
+          ]
+        },
+        {
+          "map": "verdant_stair_secrets",
+          "spawn": "stair-waystone",
+          "label": "The Verdant Stair",
+          "space": "steppe-waystone.ring",
+          "position": [
+            27.55,
+            -4.0,
+            117.43
+          ],
+          "tile": [
+            12,
+            73
+          ]
+        }
+      ],
+      "note": "Three stones by the east caravanserai. An iron rune wakes them.",
+      "arrivalTile": [
+        12,
+        97
+      ],
+      "boundsTiles": {
+        "min": [
+          2,
+          67
+        ],
+        "max": [
+          22,
+          100
+        ]
+      }
+    },
+    {
+      "id": "steppe-dune-eyrie",
+      "name": "The Dune Eyrie",
+      "kind": "eyrie",
+      "entranceMap": "sunmane_steppe",
+      "entranceProp": "cairn",
+      "key": "",
+      "label": "A cairn built over nothing, or over something.",
+      "offset": [
+        168.55,
+        165.05
+      ],
+      "arrival": [
+        168.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          161.55
+        ],
+        "max": [
+          175.55,
+          186.15
+        ]
+      },
+      "spaces": [
+        "steppe-dune-eyrie.landing",
+        "steppe-dune-eyrie.way",
+        "steppe-dune-eyrie.perch"
+      ],
+      "areas": [
+        {
+          "kind": "fast_regeneration",
+          "multiplier": 2,
+          "spaces": [
+            "steppe-dune-eyrie.perch"
+          ],
+          "tiles": {
+            "min": [
+              147,
+              5
+            ],
+            "max": [
+              159,
+              14
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "A pocket under the desert road's first station.",
+      "arrivalTile": [
+        153,
+        25
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          4
+        ],
+        "max": [
+          160,
+          28
+        ]
+      }
+    }
+  ],
+  "secrets": {
+    "region": "sunmane_steppe",
+    "sections": [
+      "steppe-seed-hollow",
+      "steppe-well-garden",
+      "steppe-mill-cache",
+      "steppe-hall-vault",
+      "steppe-fox-pit",
+      "steppe-caravan-school",
+      "steppe-spring",
+      "steppe-outpost-butts",
+      "steppe-barrow-reliquary",
+      "steppe-standing-well",
+      "steppe-banner-focus",
+      "steppe-waystone",
+      "steppe-dune-eyrie"
+    ],
+    "note": "Each section is one secret. The client shows a player only the section they stand in; the server places the arrival, the areas, the spawns and the harvest nodes from this block."
+  },
+  "performance": {
+    "nodes": 131,
+    "meshes": 117,
+    "materials": 18,
+    "images": 53,
+    "textures": 53,
+    "accessors": 585,
+    "bufferViews": 638,
+    "uniqueTriangles": 24892,
+    "uniqueVertices": 34546,
+    "glbBytes": 7515812,
+    "nodeNames": [
+      "Secrets_sunmane_steppe_secrets",
+      "Section_steppe-seed-hollow",
+      "Roof_steppe-seed-hollow_cliff_rock",
+      "Build_steppe-seed-hollow_amber_resin",
+      "Build_steppe-seed-hollow_cliff_rock",
+      "Build_steppe-seed-hollow_dark_iron",
+      "Build_steppe-seed-hollow_water_pool",
+      "Walk_steppe-seed-hollow_packed_earth",
+      "Section_steppe-well-garden",
+      "Roof_steppe-well-garden_cliff_rock",
+      "Build_steppe-well-garden_amber_resin",
+      "Build_steppe-well-garden_ashlar",
+      "Build_steppe-well-garden_bark_pale",
+      "Build_steppe-well-garden_cliff_rock",
+      "Build_steppe-well-garden_dark_iron",
+      "Build_steppe-well-garden_foliage_green",
+      "Build_steppe-well-garden_rubble_stone",
+      "Build_steppe-well-garden_timber_warm",
+      "Build_steppe-well-garden_water_pool",
+      "Walk_steppe-well-garden_meadow_grass",
+      "Walk_steppe-well-garden_packed_earth",
+      "Section_steppe-mill-cache",
+      "Roof_steppe-mill-cache_cliff_rock",
+      "Roof_steppe-mill-cache_timber_warm",
+      "Build_steppe-mill-cache_amber_resin",
+      "Build_steppe-mill-cache_cliff_rock",
+      "Build_steppe-mill-cache_dark_iron",
+      "Build_steppe-mill-cache_rubble_stone",
+      "Build_steppe-mill-cache_timber_dark",
+      "Build_steppe-mill-cache_timber_warm",
+      "Walk_steppe-mill-cache_packed_earth",
+      "Section_steppe-hall-vault",
+      "Roof_steppe-hall-vault_ashlar",
+      "Roof_steppe-hall-vault_cliff_rock",
+      "Build_steppe-hall-vault_amber_resin",
+      "Build_steppe-hall-vault_ashlar",
+      "Build_steppe-hall-vault_carved_wood",
+      "Build_steppe-hall-vault_cliff_rock",
+      "Build_steppe-hall-vault_dark_iron",
+      "Build_steppe-hall-vault_timber_dark",
+      "Build_steppe-hall-vault_timber_warm",
+      "Walk_steppe-hall-vault_ashlar",
+      "Walk_steppe-hall-vault_packed_earth",
+      "Section_steppe-fox-pit",
+      "Roof_steppe-fox-pit_cliff_rock",
+      "Build_steppe-fox-pit_amber_resin",
+      "Build_steppe-fox-pit_cliff_rock",
+      "Build_steppe-fox-pit_dark_iron",
+      "Build_steppe-fox-pit_pale_ashlar",
+      "Build_steppe-fox-pit_timber_warm",
+      "Walk_steppe-fox-pit_packed_earth",
+      "Section_steppe-caravan-school",
+      "Roof_steppe-caravan-school_cliff_rock",
+      "Roof_steppe-caravan-school_timber_warm",
+      "Build_steppe-caravan-school_amber_resin",
+      "Build_steppe-caravan-school_carved_wood",
+      "Build_steppe-caravan-school_cliff_rock",
+      "Build_steppe-caravan-school_dark_iron",
+      "Build_steppe-caravan-school_rubble_stone",
+      "Build_steppe-caravan-school_timber_warm",
+      "Walk_steppe-caravan-school_ashlar",
+      "Walk_steppe-caravan-school_packed_earth",
+      "Section_steppe-spring",
+      "Roof_steppe-spring_cliff_rock",
+      "Build_steppe-spring_amber_resin",
+      "Build_steppe-spring_ashlar",
+      "Build_steppe-spring_cliff_rock",
+      "Build_steppe-spring_dark_iron",
+      "Build_steppe-spring_water_pool",
+      "Walk_steppe-spring_ashlar",
+      "Walk_steppe-spring_packed_earth",
+      "Section_steppe-outpost-butts",
+      "Roof_steppe-outpost-butts_cliff_rock",
+      "Roof_steppe-outpost-butts_timber_warm",
+      "Build_steppe-outpost-butts_amber_resin",
+      "Build_steppe-outpost-butts_cliff_rock",
+      "Build_steppe-outpost-butts_dark_iron",
+      "Build_steppe-outpost-butts_rubble_stone",
+      "Build_steppe-outpost-butts_thatch_reed",
+      "Build_steppe-outpost-butts_timber_warm",
+      "Walk_steppe-outpost-butts_packed_earth",
+      "Section_steppe-barrow-reliquary",
+      "Roof_steppe-barrow-reliquary_ashlar",
+      "Roof_steppe-barrow-reliquary_cliff_rock",
+      "Build_steppe-barrow-reliquary_amber_resin",
+      "Build_steppe-barrow-reliquary_ashlar",
+      "Build_steppe-barrow-reliquary_cliff_rock",
+      "Build_steppe-barrow-reliquary_dark_iron",
+      "Build_steppe-barrow-reliquary_gilt_brass",
+      "Walk_steppe-barrow-reliquary_ashlar",
+      "Walk_steppe-barrow-reliquary_packed_earth",
+      "Section_steppe-standing-well",
+      "Roof_steppe-standing-well_cliff_rock",
+      "Build_steppe-standing-well_amber_resin",
+      "Build_steppe-standing-well_ashlar",
+      "Build_steppe-standing-well_cliff_rock",
+      "Build_steppe-standing-well_dark_iron",
+      "Walk_steppe-standing-well_ashlar",
+      "Walk_steppe-standing-well_packed_earth",
+      "Section_steppe-banner-focus",
+      "Roof_steppe-banner-focus_ashlar",
+      "Roof_steppe-banner-focus_cliff_rock",
+      "Build_steppe-banner-focus_amber_resin",
+      "Build_steppe-banner-focus_amethyst_crystal",
+      "Build_steppe-banner-focus_ashlar",
+      "Build_steppe-banner-focus_cliff_rock",
+      "Build_steppe-banner-focus_dark_iron",
+      "Walk_steppe-banner-focus_ashlar",
+      "Walk_steppe-banner-focus_packed_earth",
+      "Section_steppe-waystone",
+      "Roof_steppe-waystone_ashlar",
+      "Roof_steppe-waystone_cliff_rock",
+      "Build_steppe-waystone_amber_resin",
+      "Build_steppe-waystone_ashlar",
+      "Build_steppe-waystone_cliff_rock",
+      "Build_steppe-waystone_dark_iron",
+      "Build_steppe-waystone_gilt_brass",
+      "Walk_steppe-waystone_ashlar",
+      "Walk_steppe-waystone_packed_earth",
+      "Section_steppe-dune-eyrie",
+      "Roof_steppe-dune-eyrie_cliff_rock",
+      "Build_steppe-dune-eyrie_amber_resin",
+      "Build_steppe-dune-eyrie_bark_dark",
+      "Build_steppe-dune-eyrie_carved_wood",
+      "Build_steppe-dune-eyrie_cliff_rock",
+      "Build_steppe-dune-eyrie_dark_iron",
+      "Build_steppe-dune-eyrie_rubble_stone",
+      "Build_steppe-dune-eyrie_timber_warm",
+      "Build_steppe-dune-eyrie_water_pool",
+      "Walk_steppe-dune-eyrie_ashlar",
+      "Walk_steppe-dune-eyrie_packed_earth"
+    ]
+  },
+  "sources": [
+    {
+      "id": "generator",
+      "file": "_toolkit/secrets_build.py",
+      "role": "reproducible-build",
+      "design": "sunmane_steppe/source/secrets_design.py"
+    }
+  ],
+  "provenance": {
+    "geometry": "authored with the secret rooms kit over the shared toolkit",
+    "license": "CC-BY-4.0"
+  },
+  "productionStatus": "authored-geometry-materials-population",
+  "notes": [
+    "13 secrets of Sunmane Steppe Secrets on one map with void between them; which one a player gets is which feature of the ground above they used."
+  ]
+}

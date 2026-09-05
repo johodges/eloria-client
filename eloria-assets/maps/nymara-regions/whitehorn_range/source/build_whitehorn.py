@@ -36,6 +36,8 @@ import validate_gltf                        # noqa: E402
 
 import region as REG                        # noqa: E402
 import transitions as MARCH                 # noqa: E402
+import secretdoors as SD                    # noqa: E402
+import secrets_design as SEC                # noqa: E402
 import loresites as LORE                    # noqa: E402
 
 SEED = 20260828
@@ -94,7 +96,7 @@ MATERIALS = frozenset({
     'cliff_rock', 'rubble_stone', 'packed_earth', 'ashlar',
     'timber_grey', 'timber_dark', 'dark_iron', 'woven_cloth',
     'bark_dark', 'foliage_green', 'amber_resin',
-}) | MARCH.materials_for("whitehorn_range", CROSSINGS) | LORE.materials([s.piece for s in SITES])
+}) | MARCH.materials_for("whitehorn_range", CROSSINGS) | SD.materials(SEC) | LORE.materials([s.piece for s in SITES])
 
 COLLISION_CELL = 0.5
 # EWCG version the grid is written at, and what the manifest advertises.
@@ -131,6 +133,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> RegionBuild:
     MARCH.paint(terrain, CROSSINGS, MARCH_MATERIALS, seed, keep=(TER.ICE, TER.MARBLE))
     march = MARCH.dress(build, "whitehorn_range", CROSSINGS, seed)
     LORE.dress(build, terrain, SITES, seed)
+    SD.dress(build, terrain, SEC, seed, sea_level=getattr(REG, "SEA_LEVEL", 0.0), server_origin=REG.SERVER_ORIGIN)
     build.landmarks.extend(march.landmarks)
     build.notes.extend(march.notes)
     terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)

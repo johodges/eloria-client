@@ -2,7 +2,7 @@
   "uri": "world-lod2.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-09-05T08:04:11.660581Z",
+  "validatedAt": "2026-09-05T11:11:27.083313Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
@@ -43,13 +43,13 @@
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/21"
+        "pointer": "/materials/22"
       },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/31"
+        "pointer": "/materials/32"
       }
     ]
   }

@@ -43,6 +43,8 @@ from amberwood import render as RENDER
 from amberwood import terrain as TER
 
 import transitions as MARCH
+import secretdoors as SD
+import secrets_design as SEC
 import loresites as LORE
 
 HERE = Path(__file__).resolve().parent
@@ -113,7 +115,7 @@ MATERIALS = frozenset({
     'dark_iron', 'woven_cloth', 'canvas_awning',
     'amber_resin', 'amber_glass',
     'water_sea', 'water_pool', 'water_stream',
-}) | MARCH.materials_for("amberwood", CROSSINGS) | LORE.materials([s.piece for s in SITES])
+}) | MARCH.materials_for("amberwood", CROSSINGS) | SD.materials(SEC) | LORE.materials([s.piece for s in SITES])
 
 ASSET_VERSION = "1.0.0"
 SCHEMA_VERSION = "1.0.0"
@@ -146,6 +148,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
                 override=(TER.SCORCHED,))
     march = MARCH.dress(build, "amberwood", CROSSINGS, seed, sea_level=REG.SEA_LEVEL)
     LORE.dress(build, terrain, SITES, seed)
+    SD.dress(build, terrain, SEC, seed, sea_level=getattr(REG, "SEA_LEVEL", 0.0), server_origin=REG.SERVER_ORIGIN)
     build.landmarks.extend(march.landmarks)
     build.notes.extend(march.notes)
 

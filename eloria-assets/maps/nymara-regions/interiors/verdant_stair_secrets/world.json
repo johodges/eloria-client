@@ -1,0 +1,3823 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "verdant_stair_secrets",
+    "name": "Verdant Stair Secrets",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        18.0,
+        -5.4,
+        18.0
+      ],
+      "max": [
+        327.1,
+        8.25,
+        188.9
+      ]
+    },
+    "playableBounds": {
+      "min": [
+        18.0,
+        -5.4,
+        18.0
+      ],
+      "max": [
+        327.1,
+        3.0,
+        188.9
+      ]
+    },
+    "interiorClass": "secrets",
+    "parentRegion": "verdant_stair",
+    "serverCells": 384
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      -16.0,
+      191.0
+    ],
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 0.0,
+    "invertServerY": true
+  },
+  "secret": true,
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "stair-cenote-hollow"
+    },
+    {
+      "id": "stair-cenote-hollow",
+      "position": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "stair-cenote-hollow"
+    },
+    {
+      "id": "stair-hanging-garden",
+      "position": [
+        245.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "stair-hanging-garden"
+    },
+    {
+      "id": "stair-provisioner-cache",
+      "position": [
+        169.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "stair-provisioner-cache"
+    },
+    {
+      "id": "stair-temple-vault",
+      "position": [
+        242.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "stair-temple-vault"
+    },
+    {
+      "id": "stair-quarry-pit",
+      "position": [
+        316.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "stair-quarry-pit"
+    },
+    {
+      "id": "stair-house-school",
+      "position": [
+        315.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "stair-house-school"
+    },
+    {
+      "id": "stair-water-spring",
+      "position": [
+        26.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "stair-water-spring"
+    },
+    {
+      "id": "stair-lookout-butts",
+      "position": [
+        94.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "stair-lookout-butts"
+    },
+    {
+      "id": "stair-ridge-reliquary",
+      "position": [
+        97.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "stair-ridge-reliquary"
+    },
+    {
+      "id": "stair-cenote-well",
+      "position": [
+        99.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "stair-cenote-well"
+    },
+    {
+      "id": "stair-sun-focus",
+      "position": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "stair-sun-focus"
+    },
+    {
+      "id": "stair-culvert",
+      "position": [
+        21.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "stair-culvert"
+    },
+    {
+      "id": "stair-culvert-far",
+      "position": [
+        21.55,
+        -4.95,
+        84.55
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "stair-culvert"
+    },
+    {
+      "id": "stair-waystone",
+      "position": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "stair-waystone"
+    },
+    {
+      "id": "stair-waystone-ring",
+      "position": [
+        173.99,
+        -4.0,
+        108.32
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "stair-waystone"
+    },
+    {
+      "id": "stair-waystone-ring",
+      "position": [
+        173.99,
+        -4.0,
+        116.78
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "stair-waystone"
+    },
+    {
+      "id": "stair-summit-eyrie",
+      "position": [
+        312.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "stair-summit-eyrie"
+    }
+  ],
+  "collision": {
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "width": 624,
+    "height": 348,
+    "cellMetres": 0.5,
+    "originMetres": [
+      16.0,
+      191.0
+    ],
+    "heightEncoding": {
+      "origin": -5.131,
+      "step": 0.1311,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true
+    },
+    "walkableCells": 21112,
+    "blockedCells": 196040,
+    "walkableFraction": 0.0972,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    "nodeNames": [
+      "Secrets_verdant_stair_secrets",
+      "Section_stair-cenote-hollow",
+      "Roof_stair-cenote-hollow_verdant_limestone_cliff",
+      "Build_stair-cenote-hollow_amber_resin",
+      "Build_stair-cenote-hollow_dark_iron",
+      "Build_stair-cenote-hollow_verdant_frond",
+      "Build_stair-cenote-hollow_verdant_limestone_cliff",
+      "Build_stair-cenote-hollow_water_cenote",
+      "Section_stair-hanging-garden",
+      "Roof_stair-hanging-garden_verdant_limestone_cliff",
+      "Build_stair-hanging-garden_amber_resin",
+      "Build_stair-hanging-garden_bark_pale",
+      "Build_stair-hanging-garden_dark_iron",
+      "Build_stair-hanging-garden_foliage_green",
+      "Build_stair-hanging-garden_rubble_stone",
+      "Build_stair-hanging-garden_timber_warm",
+      "Build_stair-hanging-garden_verdant_frond",
+      "Build_stair-hanging-garden_verdant_limestone_cliff",
+      "Build_stair-hanging-garden_verdant_terrace_stone",
+      "Build_stair-hanging-garden_water_pool",
+      "Section_stair-provisioner-cache",
+      "Roof_stair-provisioner-cache_timber_dark",
+      "Roof_stair-provisioner-cache_verdant_limestone_cliff",
+      "Build_stair-provisioner-cache_amber_resin",
+      "Build_stair-provisioner-cache_dark_iron",
+      "Build_stair-provisioner-cache_timber_dark",
+      "Build_stair-provisioner-cache_timber_warm",
+      "Build_stair-provisioner-cache_verdant_frond",
+      "Build_stair-provisioner-cache_verdant_limestone_cliff",
+      "Build_stair-provisioner-cache_verdant_wet_limestone",
+      "Section_stair-temple-vault",
+      "Roof_stair-temple-vault_verdant_limestone_cliff",
+      "Roof_stair-temple-vault_verdant_terrace_stone",
+      "Build_stair-temple-vault_amber_resin",
+      "Build_stair-temple-vault_carved_wood",
+      "Build_stair-temple-vault_dark_iron",
+      "Build_stair-temple-vault_timber_dark",
+      "Build_stair-temple-vault_timber_warm",
+      "Build_stair-temple-vault_verdant_limestone_cliff",
+      "Build_stair-temple-vault_verdant_terrace_stone",
+      "Section_stair-quarry-pit",
+      "Roof_stair-quarry-pit_verdant_limestone_cliff",
+      "Build_stair-quarry-pit_amber_resin",
+      "Build_stair-quarry-pit_dark_iron",
+      "Build_stair-quarry-pit_pale_ashlar",
+      "Build_stair-quarry-pit_timber_dark",
+      "Build_stair-quarry-pit_verdant_limestone_cliff",
+      "Section_stair-house-school",
+      "Roof_stair-house-school_timber_dark",
+      "Roof_stair-house-school_verdant_limestone_cliff",
+      "Build_stair-house-school_amber_resin",
+      "Build_stair-house-school_carved_wood",
+      "Build_stair-house-school_dark_iron",
+      "Build_stair-house-school_timber_dark",
+      "Build_stair-house-school_verdant_limestone_cliff",
+      "Build_stair-house-school_verdant_wet_limestone",
+      "Section_stair-water-spring",
+      "Roof_stair-water-spring_verdant_limestone_cliff",
+      "Build_stair-water-spring_amber_resin",
+      "Build_stair-water-spring_dark_iron",
+      "Build_stair-water-spring_verdant_limestone_cliff",
+      "Build_stair-water-spring_verdant_terrace_stone",
+      "Build_stair-water-spring_water_cenote",
+      "Section_stair-lookout-butts",
+      "Roof_stair-lookout-butts_timber_dark",
+      "Roof_stair-lookout-butts_verdant_limestone_cliff",
+      "Build_stair-lookout-butts_amber_resin",
+      "Build_stair-lookout-butts_dark_iron",
+      "Build_stair-lookout-butts_thatch_reed",
+      "Build_stair-lookout-butts_timber_dark",
+      "Build_stair-lookout-butts_verdant_limestone_cliff",
+      "Build_stair-lookout-butts_verdant_wet_limestone",
+      "Section_stair-ridge-reliquary",
+      "Roof_stair-ridge-reliquary_verdant_limestone_cliff",
+      "Roof_stair-ridge-reliquary_verdant_terrace_stone",
+      "Build_stair-ridge-reliquary_amber_resin",
+      "Build_stair-ridge-reliquary_dark_iron",
+      "Build_stair-ridge-reliquary_gilt_brass",
+      "Build_stair-ridge-reliquary_verdant_limestone_cliff",
+      "Build_stair-ridge-reliquary_verdant_terrace_stone",
+      "Section_stair-cenote-well",
+      "Roof_stair-cenote-well_verdant_limestone_cliff",
+      "Build_stair-cenote-well_amber_resin",
+      "Build_stair-cenote-well_dark_iron",
+      "Build_stair-cenote-well_verdant_limestone_cliff",
+      "Build_stair-cenote-well_verdant_terrace_stone",
+      "Section_stair-sun-focus",
+      "Roof_stair-sun-focus_verdant_limestone_cliff",
+      "Roof_stair-sun-focus_verdant_terrace_stone",
+      "Build_stair-sun-focus_amber_resin",
+      "Build_stair-sun-focus_dark_iron",
+      "Build_stair-sun-focus_verdant_jade",
+      "Build_stair-sun-focus_verdant_limestone_cliff",
+      "Build_stair-sun-focus_verdant_terrace_stone",
+      "Section_stair-culvert",
+      "Roof_stair-culvert_verdant_limestone_cliff",
+      "Build_stair-culvert_amber_resin",
+      "Build_stair-culvert_dark_iron",
+      "Build_stair-culvert_timber_dark",
+      "Build_stair-culvert_verdant_frond",
+      "Build_stair-culvert_verdant_limestone_cliff",
+      "Section_stair-waystone",
+      "Roof_stair-waystone_verdant_limestone_cliff",
+      "Roof_stair-waystone_verdant_terrace_stone",
+      "Build_stair-waystone_amber_resin",
+      "Build_stair-waystone_dark_iron",
+      "Build_stair-waystone_gilt_brass",
+      "Build_stair-waystone_verdant_limestone_cliff",
+      "Build_stair-waystone_verdant_terrace_stone",
+      "Section_stair-summit-eyrie",
+      "Roof_stair-summit-eyrie_verdant_limestone_cliff",
+      "Build_stair-summit-eyrie_amber_resin",
+      "Build_stair-summit-eyrie_bark_dark",
+      "Build_stair-summit-eyrie_carved_wood",
+      "Build_stair-summit-eyrie_dark_iron",
+      "Build_stair-summit-eyrie_rubble_stone",
+      "Build_stair-summit-eyrie_timber_warm",
+      "Build_stair-summit-eyrie_verdant_limestone_cliff",
+      "Build_stair-summit-eyrie_water_pool"
+    ]
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Roof_stair-cenote-hollow_verdant_limestone_cliff",
+      "Roof_stair-hanging-garden_verdant_limestone_cliff",
+      "Roof_stair-provisioner-cache_timber_dark",
+      "Roof_stair-provisioner-cache_verdant_limestone_cliff",
+      "Roof_stair-temple-vault_verdant_limestone_cliff",
+      "Roof_stair-temple-vault_verdant_terrace_stone",
+      "Roof_stair-quarry-pit_verdant_limestone_cliff",
+      "Roof_stair-house-school_timber_dark",
+      "Roof_stair-house-school_verdant_limestone_cliff",
+      "Roof_stair-water-spring_verdant_limestone_cliff",
+      "Roof_stair-lookout-butts_timber_dark",
+      "Roof_stair-lookout-butts_verdant_limestone_cliff",
+      "Roof_stair-ridge-reliquary_verdant_limestone_cliff",
+      "Roof_stair-ridge-reliquary_verdant_terrace_stone",
+      "Roof_stair-cenote-well_verdant_limestone_cliff",
+      "Roof_stair-sun-focus_verdant_limestone_cliff",
+      "Roof_stair-sun-focus_verdant_terrace_stone",
+      "Roof_stair-culvert_verdant_limestone_cliff",
+      "Roof_stair-waystone_verdant_limestone_cliff",
+      "Roof_stair-waystone_verdant_terrace_stone",
+      "Roof_stair-summit-eyrie_verdant_limestone_cliff"
+    ],
+    "reason": "interior lids; the isometric rig frames the floor, not the roof"
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Walk_"
+    ],
+    "agentRadius": 0.4,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 45,
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    }
+  },
+  "portals": [
+    {
+      "id": "exit-stair-cenote-hollow",
+      "name": "Back up: The Cenote Hollow",
+      "type": "map-transition",
+      "position": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "verdant_stair",
+      "destinationSpawn": "secret-stair-cenote-hollow",
+      "section": "stair-cenote-hollow",
+      "authority": "server"
+    },
+    {
+      "id": "exit-stair-hanging-garden",
+      "name": "Back up: The Under-Garden",
+      "type": "map-transition",
+      "position": [
+        245.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "verdant_stair",
+      "destinationSpawn": "secret-stair-hanging-garden",
+      "section": "stair-hanging-garden",
+      "authority": "server"
+    },
+    {
+      "id": "exit-stair-provisioner-cache",
+      "name": "Back up: The Provisioner's Cache",
+      "type": "map-transition",
+      "position": [
+        169.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "verdant_stair_insides",
+      "destinationSpawn": "secret-stair-provisioner-cache",
+      "section": "stair-provisioner-cache",
+      "authority": "server"
+    },
+    {
+      "id": "exit-stair-temple-vault",
+      "name": "Back up: The Great Temple Vault",
+      "type": "map-transition",
+      "position": [
+        242.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "verdant_stair",
+      "destinationSpawn": "secret-stair-temple-vault",
+      "section": "stair-temple-vault",
+      "authority": "server"
+    },
+    {
+      "id": "exit-stair-quarry-pit",
+      "name": "Back up: The Quarry Pit",
+      "type": "map-transition",
+      "position": [
+        316.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "verdant_stair",
+      "destinationSpawn": "secret-stair-quarry-pit",
+      "section": "stair-quarry-pit",
+      "authority": "server"
+    },
+    {
+      "id": "exit-stair-house-school",
+      "name": "Back up: The Stair-House School",
+      "type": "map-transition",
+      "position": [
+        315.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "verdant_stair",
+      "destinationSpawn": "secret-stair-house-school",
+      "section": "stair-house-school",
+      "authority": "server"
+    },
+    {
+      "id": "exit-stair-water-spring",
+      "name": "Back up: The Water Shrine Spring",
+      "type": "map-transition",
+      "position": [
+        26.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "verdant_stair",
+      "destinationSpawn": "secret-stair-water-spring",
+      "section": "stair-water-spring",
+      "authority": "server"
+    },
+    {
+      "id": "exit-stair-lookout-butts",
+      "name": "Back up: The East Lookout Butts",
+      "type": "map-transition",
+      "position": [
+        94.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "verdant_stair",
+      "destinationSpawn": "secret-stair-lookout-butts",
+      "section": "stair-lookout-butts",
+      "authority": "server"
+    },
+    {
+      "id": "exit-stair-ridge-reliquary",
+      "name": "Back up: The Ridge Shrine Reliquary",
+      "type": "map-transition",
+      "position": [
+        97.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "verdant_stair",
+      "destinationSpawn": "secret-stair-ridge-reliquary",
+      "section": "stair-ridge-reliquary",
+      "authority": "server"
+    },
+    {
+      "id": "exit-stair-cenote-well",
+      "name": "Back up: The Cenote Well",
+      "type": "map-transition",
+      "position": [
+        99.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "verdant_stair",
+      "destinationSpawn": "secret-stair-cenote-well",
+      "section": "stair-cenote-well",
+      "authority": "server"
+    },
+    {
+      "id": "exit-stair-sun-focus",
+      "name": "Back up: The Sun Pavilion Focus",
+      "type": "map-transition",
+      "position": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "verdant_stair",
+      "destinationSpawn": "secret-stair-sun-focus",
+      "section": "stair-sun-focus",
+      "authority": "server"
+    },
+    {
+      "id": "exit-stair-culvert",
+      "name": "Back up: The Culvert",
+      "type": "map-transition",
+      "position": [
+        21.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "verdant_stair",
+      "destinationSpawn": "secret-stair-culvert",
+      "section": "stair-culvert",
+      "authority": "server"
+    },
+    {
+      "id": "link-stair-culvert-secret-ruins-culvert-mouth",
+      "name": "Down into the Ssarathi Ruins",
+      "type": "map-transition",
+      "position": [
+        21.55,
+        -4.95,
+        84.55
+      ],
+      "radius": 2.5,
+      "destinationMap": "ssarathi_ruins",
+      "destinationSpawn": "secret-ruins-culvert-mouth",
+      "section": "stair-culvert",
+      "authority": "server"
+    },
+    {
+      "id": "exit-stair-waystone",
+      "name": "Back up: The Stair Waystone",
+      "type": "map-transition",
+      "position": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "verdant_stair",
+      "destinationSpawn": "secret-stair-waystone",
+      "section": "stair-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-stair-waystone-steppe-waystone",
+      "name": "The Sunmane Steppe",
+      "type": "map-transition",
+      "position": [
+        173.99,
+        -4.0,
+        108.32
+      ],
+      "radius": 2.5,
+      "destinationMap": "sunmane_steppe_secrets",
+      "destinationSpawn": "steppe-waystone",
+      "section": "stair-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-stair-waystone-ruins-waystone",
+      "name": "The Ssarathi Ruins",
+      "type": "map-transition",
+      "position": [
+        173.99,
+        -4.0,
+        116.78
+      ],
+      "radius": 2.5,
+      "destinationMap": "ssarathi_ruins_secrets",
+      "destinationSpawn": "ruins-waystone",
+      "section": "stair-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "exit-stair-summit-eyrie",
+      "name": "Back up: The Summit Eyrie",
+      "type": "map-transition",
+      "position": [
+        312.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "verdant_stair",
+      "destinationSpawn": "secret-stair-summit-eyrie",
+      "section": "stair-summit-eyrie",
+      "authority": "server"
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "stair-cenote-hollow-room",
+      "name": "The Cenote Hollow",
+      "space": "stair-cenote-hollow.landing",
+      "position": [
+        174.55,
+        1.6,
+        21.05
+      ],
+      "section": "stair-cenote-hollow"
+    },
+    {
+      "id": "stair-hanging-garden-room",
+      "name": "The Under-Garden",
+      "space": "stair-hanging-garden.landing",
+      "position": [
+        245.55,
+        1.6,
+        21.05
+      ],
+      "section": "stair-hanging-garden"
+    },
+    {
+      "id": "stair-provisioner-cache-room",
+      "name": "The Provisioner's Cache",
+      "space": "stair-provisioner-cache.landing",
+      "position": [
+        169.55,
+        1.6,
+        165.05
+      ],
+      "section": "stair-provisioner-cache"
+    },
+    {
+      "id": "stair-temple-vault-room",
+      "name": "The Great Temple Vault",
+      "space": "stair-temple-vault.landing",
+      "position": [
+        242.55,
+        1.6,
+        165.05
+      ],
+      "section": "stair-temple-vault"
+    },
+    {
+      "id": "stair-quarry-pit-room",
+      "name": "The Quarry Pit",
+      "space": "stair-quarry-pit.landing",
+      "position": [
+        316.55,
+        1.6,
+        21.05
+      ],
+      "section": "stair-quarry-pit"
+    },
+    {
+      "id": "stair-house-school-room",
+      "name": "The Stair-House School",
+      "space": "stair-house-school.landing",
+      "position": [
+        315.55,
+        1.6,
+        93.05
+      ],
+      "section": "stair-house-school"
+    },
+    {
+      "id": "stair-water-spring-room",
+      "name": "The Water Shrine Spring",
+      "space": "stair-water-spring.landing",
+      "position": [
+        26.55,
+        1.6,
+        165.05
+      ],
+      "section": "stair-water-spring"
+    },
+    {
+      "id": "stair-lookout-butts-room",
+      "name": "The East Lookout Butts",
+      "space": "stair-lookout-butts.landing",
+      "position": [
+        94.55,
+        1.6,
+        21.05
+      ],
+      "section": "stair-lookout-butts"
+    },
+    {
+      "id": "stair-ridge-reliquary-room",
+      "name": "The Ridge Shrine Reliquary",
+      "space": "stair-ridge-reliquary.landing",
+      "position": [
+        97.55,
+        1.6,
+        165.05
+      ],
+      "section": "stair-ridge-reliquary"
+    },
+    {
+      "id": "stair-cenote-well-room",
+      "name": "The Cenote Well",
+      "space": "stair-cenote-well.landing",
+      "position": [
+        99.55,
+        1.6,
+        93.05
+      ],
+      "section": "stair-cenote-well"
+    },
+    {
+      "id": "stair-sun-focus-room",
+      "name": "The Sun Pavilion Focus",
+      "space": "stair-sun-focus.landing",
+      "position": [
+        242.55,
+        1.6,
+        93.05
+      ],
+      "section": "stair-sun-focus"
+    },
+    {
+      "id": "stair-culvert-room",
+      "name": "The Culvert",
+      "space": "stair-culvert.landing",
+      "position": [
+        21.55,
+        1.6,
+        21.05
+      ],
+      "section": "stair-culvert"
+    },
+    {
+      "id": "stair-waystone-room",
+      "name": "The Stair Waystone",
+      "space": "stair-waystone.landing",
+      "position": [
+        171.55,
+        1.6,
+        93.05
+      ],
+      "section": "stair-waystone"
+    },
+    {
+      "id": "stair-summit-eyrie-room",
+      "name": "The Summit Eyrie",
+      "space": "stair-summit-eyrie.landing",
+      "position": [
+        312.55,
+        1.6,
+        165.05
+      ],
+      "section": "stair-summit-eyrie"
+    }
+  ],
+  "interactives": [
+    {
+      "id": "stair-hanging-garden-well",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Garden well",
+      "text": "Cold water from the garden well.",
+      "position": [
+        245.55,
+        -1.0,
+        42.55
+      ],
+      "section": "stair-hanging-garden",
+      "serverTile": [
+        230,
+        148
+      ]
+    },
+    {
+      "id": "stair-provisioner-cache-cache",
+      "kind": "storage",
+      "target": "shared",
+      "label": "Cache",
+      "text": "A cache; it opens your shared storage.",
+      "position": [
+        169.55,
+        -2.5,
+        184.65
+      ],
+      "section": "stair-provisioner-cache",
+      "serverTile": [
+        154,
+        6
+      ]
+    },
+    {
+      "id": "stair-provisioner-cache-bench",
+      "kind": "crafting_station",
+      "target": "field",
+      "label": "Bench",
+      "text": "A bench for ordinary mixing and crafting.",
+      "position": [
+        165.35,
+        -2.1,
+        184.65
+      ],
+      "section": "stair-provisioner-cache",
+      "serverTile": [
+        149,
+        6
+      ]
+    },
+    {
+      "id": "stair-temple-vault-strongbox",
+      "kind": "storage",
+      "target": "shared",
+      "label": "Cache",
+      "text": "A cache; it opens your shared storage.",
+      "position": [
+        242.55,
+        -4.5,
+        185.55
+      ],
+      "section": "stair-temple-vault",
+      "serverTile": [
+        227,
+        5
+      ]
+    },
+    {
+      "id": "stair-temple-vault-bench",
+      "kind": "crafting_station",
+      "target": "field",
+      "label": "Bench",
+      "text": "A bench for ordinary mixing and crafting.",
+      "position": [
+        246.95,
+        -4.1,
+        181.15
+      ],
+      "section": "stair-temple-vault",
+      "serverTile": [
+        231,
+        10
+      ]
+    },
+    {
+      "id": "stair-temple-vault-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "The stair's slope",
+      "text": "The anchor stone moved and the stair kept its slope. What is made under the temple is counted twice, once for the work and once for the climb.",
+      "position": [
+        242.55,
+        -4.0,
+        176.19
+      ],
+      "section": "stair-temple-vault",
+      "serverTile": [
+        227,
+        15
+      ]
+    },
+    {
+      "id": "stair-quarry-pit-post",
+      "kind": "training",
+      "target": "combat",
+      "label": "Training post",
+      "text": "The post lists your recent combat results.",
+      "position": [
+        308.55,
+        -3.0,
+        50.05
+      ],
+      "section": "stair-quarry-pit",
+      "serverTile": [
+        293,
+        141
+      ]
+    },
+    {
+      "id": "stair-house-school-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "Reading",
+      "text": "The stair-house's under-room. Books read three times as fast.",
+      "position": [
+        308.35,
+        -1.0,
+        116.42
+      ],
+      "section": "stair-house-school",
+      "serverTile": [
+        292,
+        75
+      ]
+    },
+    {
+      "id": "stair-house-school-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "The anchor",
+      "text": "The anchor stone was moved a few metres upslope. The rigger says the ropes were re-run the same night.",
+      "position": [
+        315.55,
+        -1.0,
+        116.42
+      ],
+      "section": "stair-house-school",
+      "serverTile": [
+        300,
+        75
+      ]
+    },
+    {
+      "id": "stair-house-school-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "The nine lost",
+      "text": "Nine were lost on the stair in one season, and the coal price doubled the next.",
+      "position": [
+        322.75,
+        -1.0,
+        116.42
+      ],
+      "section": "stair-house-school",
+      "serverTile": [
+        307,
+        75
+      ]
+    },
+    {
+      "id": "stair-water-spring-spring",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Warm spring",
+      "text": "The spring is warm and mineral; it restores you.",
+      "position": [
+        26.55,
+        -2.0,
+        179.15
+      ],
+      "section": "stair-water-spring",
+      "serverTile": [
+        11,
+        12
+      ]
+    },
+    {
+      "id": "stair-lookout-butts-butts",
+      "kind": "training",
+      "target": "combat",
+      "label": "Butts",
+      "text": "The butts list your recent combat results.",
+      "position": [
+        94.55,
+        -1.0,
+        34.55
+      ],
+      "section": "stair-lookout-butts",
+      "serverTile": [
+        79,
+        156
+      ]
+    },
+    {
+      "id": "stair-ridge-reliquary-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "The bulb bed",
+      "text": "The physick's bulb bed is where the venom bulbs are grown, not gathered. Nobody says so.",
+      "position": [
+        91.6,
+        -4.0,
+        177.65
+      ],
+      "section": "stair-ridge-reliquary",
+      "serverTile": [
+        76,
+        13
+      ]
+    },
+    {
+      "id": "stair-ridge-reliquary-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "The socket",
+      "text": "The anchor's empty socket still takes rain. The stair drains toward it.",
+      "position": [
+        103.5,
+        -4.0,
+        177.65
+      ],
+      "section": "stair-ridge-reliquary",
+      "serverTile": [
+        88,
+        13
+      ]
+    },
+    {
+      "id": "stair-ridge-reliquary-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "The summit",
+      "text": "The summit watch was built to watch the stair, not the sky.",
+      "position": [
+        91.6,
+        -4.0,
+        181.5
+      ],
+      "section": "stair-ridge-reliquary",
+      "serverTile": [
+        76,
+        10
+      ]
+    },
+    {
+      "id": "stair-ridge-reliquary-relic",
+      "kind": "scenery_effect",
+      "target": "relic",
+      "label": "The Ridge Shrine Reliquary",
+      "text": "Opened with a feather from the canopy.",
+      "position": [
+        97.55,
+        -3.8,
+        186.05
+      ],
+      "section": "stair-ridge-reliquary",
+      "serverTile": [
+        82,
+        5
+      ]
+    },
+    {
+      "id": "stair-cenote-well-post",
+      "kind": "training",
+      "target": "combat",
+      "label": "Ward post",
+      "text": "Nothing casts within these stones. The post lists your recent combat results.",
+      "position": [
+        91.9,
+        -4.0,
+        104.9
+      ],
+      "section": "stair-cenote-well",
+      "serverTile": [
+        76,
+        86
+      ]
+    },
+    {
+      "id": "stair-summit-eyrie-water",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Cistern",
+      "text": "Rainwater from the cistern.",
+      "position": [
+        315.55,
+        4.0,
+        180.35
+      ],
+      "section": "stair-summit-eyrie",
+      "serverTile": [
+        300,
+        11
+      ]
+    },
+    {
+      "id": "stair-summit-eyrie-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "Breath",
+      "text": "Rest here and the breath comes back twice as fast.",
+      "position": [
+        308.95,
+        4.0,
+        184.25
+      ],
+      "section": "stair-summit-eyrie",
+      "serverTile": [
+        293,
+        7
+      ]
+    },
+    {
+      "id": "stair-summit-eyrie-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "Climbing",
+      "text": "A rope crossing carries you where the walk grid says it does. If the deck is not walkable on the server you will not be let onto it.",
+      "position": [
+        311.15,
+        4.0,
+        184.25
+      ],
+      "section": "stair-summit-eyrie",
+      "serverTile": [
+        295,
+        7
+      ]
+    }
+  ],
+  "npcMarkers": [],
+  "harvestables": [
+    {
+      "id": "stair-cenote-hollow-node-00",
+      "resource": "Cenote Watercress",
+      "position": [
+        177.79,
+        -4.0,
+        46.23
+      ],
+      "section": "stair-cenote-hollow",
+      "serverTile": [
+        162,
+        145
+      ]
+    },
+    {
+      "id": "stair-cenote-hollow-node-01",
+      "resource": "Cenote Watercress",
+      "position": [
+        168.24,
+        -4.0,
+        44.35
+      ],
+      "section": "stair-cenote-hollow",
+      "serverTile": [
+        152,
+        147
+      ]
+    },
+    {
+      "id": "stair-cenote-hollow-node-02",
+      "resource": "Cenote Watercress",
+      "position": [
+        179.56,
+        -4.0,
+        36.66
+      ],
+      "section": "stair-cenote-hollow",
+      "serverTile": [
+        164,
+        154
+      ]
+    },
+    {
+      "id": "stair-cenote-hollow-node-03",
+      "resource": "Cenote Watercress",
+      "position": [
+        175.54,
+        -4.0,
+        48.74
+      ],
+      "section": "stair-cenote-hollow",
+      "serverTile": [
+        160,
+        142
+      ]
+    },
+    {
+      "id": "stair-cenote-hollow-node-04",
+      "resource": "Cenote Watercress",
+      "position": [
+        168.27,
+        -4.0,
+        39.56
+      ],
+      "section": "stair-cenote-hollow",
+      "serverTile": [
+        152,
+        151
+      ]
+    },
+    {
+      "id": "stair-cenote-hollow-node-05",
+      "resource": "Verdant Venom Bulb",
+      "position": [
+        178.62,
+        -4.0,
+        42.51
+      ],
+      "section": "stair-cenote-hollow",
+      "serverTile": [
+        163,
+        148
+      ]
+    },
+    {
+      "id": "stair-cenote-hollow-node-06",
+      "resource": "Verdant Venom Bulb",
+      "position": [
+        171.49,
+        -4.0,
+        49.12
+      ],
+      "section": "stair-cenote-hollow",
+      "serverTile": [
+        155,
+        142
+      ]
+    },
+    {
+      "id": "stair-cenote-hollow-node-07",
+      "resource": "Verdant Venom Bulb",
+      "position": [
+        171.92,
+        -4.0,
+        35.45
+      ],
+      "section": "stair-cenote-hollow",
+      "serverTile": [
+        156,
+        156
+      ]
+    },
+    {
+      "id": "stair-hanging-garden-node-00",
+      "resource": "Lavender",
+      "position": [
+        237.96,
+        -1.5,
+        37.35
+      ],
+      "section": "stair-hanging-garden",
+      "serverTile": [
+        222,
+        154
+      ]
+    },
+    {
+      "id": "stair-hanging-garden-node-01",
+      "resource": "Lavender",
+      "position": [
+        239.5,
+        -1.5,
+        37.35
+      ],
+      "section": "stair-hanging-garden",
+      "serverTile": [
+        224,
+        154
+      ]
+    },
+    {
+      "id": "stair-hanging-garden-node-02",
+      "resource": "Lavender",
+      "position": [
+        241.04,
+        -1.5,
+        37.35
+      ],
+      "section": "stair-hanging-garden",
+      "serverTile": [
+        225,
+        154
+      ]
+    },
+    {
+      "id": "stair-hanging-garden-node-03",
+      "resource": "Lavender",
+      "position": [
+        237.96,
+        -1.5,
+        38.95
+      ],
+      "section": "stair-hanging-garden",
+      "serverTile": [
+        222,
+        152
+      ]
+    },
+    {
+      "id": "stair-hanging-garden-node-04",
+      "resource": "Indigo Thistle",
+      "position": [
+        244.01,
+        -1.5,
+        37.35
+      ],
+      "section": "stair-hanging-garden",
+      "serverTile": [
+        228,
+        154
+      ]
+    },
+    {
+      "id": "stair-hanging-garden-node-05",
+      "resource": "Indigo Thistle",
+      "position": [
+        245.55,
+        -1.5,
+        37.35
+      ],
+      "section": "stair-hanging-garden",
+      "serverTile": [
+        230,
+        154
+      ]
+    },
+    {
+      "id": "stair-hanging-garden-node-06",
+      "resource": "Indigo Thistle",
+      "position": [
+        247.09,
+        -1.5,
+        37.35
+      ],
+      "section": "stair-hanging-garden",
+      "serverTile": [
+        231,
+        154
+      ]
+    },
+    {
+      "id": "stair-hanging-garden-node-07",
+      "resource": "Indigo Thistle",
+      "position": [
+        244.01,
+        -1.5,
+        38.95
+      ],
+      "section": "stair-hanging-garden",
+      "serverTile": [
+        228,
+        152
+      ]
+    },
+    {
+      "id": "stair-hanging-garden-node-08",
+      "resource": "Mangrove Sap",
+      "position": [
+        250.06,
+        -1.5,
+        37.35
+      ],
+      "section": "stair-hanging-garden",
+      "serverTile": [
+        234,
+        154
+      ]
+    },
+    {
+      "id": "stair-hanging-garden-node-09",
+      "resource": "Mangrove Sap",
+      "position": [
+        251.6,
+        -1.5,
+        37.35
+      ],
+      "section": "stair-hanging-garden",
+      "serverTile": [
+        236,
+        154
+      ]
+    },
+    {
+      "id": "stair-hanging-garden-node-10",
+      "resource": "Mangrove Sap",
+      "position": [
+        253.14,
+        -1.5,
+        37.35
+      ],
+      "section": "stair-hanging-garden",
+      "serverTile": [
+        237,
+        154
+      ]
+    },
+    {
+      "id": "stair-hanging-garden-node-11",
+      "resource": "Cenote Watercress",
+      "position": [
+        237.96,
+        -1.5,
+        46.15
+      ],
+      "section": "stair-hanging-garden",
+      "serverTile": [
+        222,
+        145
+      ]
+    },
+    {
+      "id": "stair-hanging-garden-node-12",
+      "resource": "Cenote Watercress",
+      "position": [
+        239.5,
+        -1.5,
+        46.15
+      ],
+      "section": "stair-hanging-garden",
+      "serverTile": [
+        224,
+        145
+      ]
+    },
+    {
+      "id": "stair-hanging-garden-node-13",
+      "resource": "Cenote Watercress",
+      "position": [
+        241.04,
+        -1.5,
+        46.15
+      ],
+      "section": "stair-hanging-garden",
+      "serverTile": [
+        225,
+        145
+      ]
+    },
+    {
+      "id": "stair-provisioner-cache-node-00",
+      "resource": "Verdant Venom Bulb",
+      "position": [
+        164.3,
+        -3.0,
+        177.3
+      ],
+      "section": "stair-provisioner-cache",
+      "serverTile": [
+        148,
+        14
+      ]
+    },
+    {
+      "id": "stair-provisioner-cache-node-01",
+      "resource": "Verdant Venom Bulb",
+      "position": [
+        167.8,
+        -3.0,
+        177.3
+      ],
+      "section": "stair-provisioner-cache",
+      "serverTile": [
+        152,
+        14
+      ]
+    },
+    {
+      "id": "stair-provisioner-cache-node-02",
+      "resource": "Lavender",
+      "position": [
+        171.3,
+        -3.0,
+        177.3
+      ],
+      "section": "stair-provisioner-cache",
+      "serverTile": [
+        155,
+        14
+      ]
+    },
+    {
+      "id": "stair-provisioner-cache-node-03",
+      "resource": "Lavender",
+      "position": [
+        174.8,
+        -3.0,
+        177.3
+      ],
+      "section": "stair-provisioner-cache",
+      "serverTile": [
+        159,
+        14
+      ]
+    },
+    {
+      "id": "stair-provisioner-cache-node-04",
+      "resource": "Lavender",
+      "position": [
+        164.3,
+        -3.0,
+        179.1
+      ],
+      "section": "stair-provisioner-cache",
+      "serverTile": [
+        148,
+        12
+      ]
+    },
+    {
+      "id": "stair-culvert-node-00",
+      "resource": "Cenote Watercress",
+      "position": [
+        23.05,
+        -5.0,
+        40.55
+      ],
+      "section": "stair-culvert",
+      "serverTile": [
+        7,
+        150
+      ]
+    },
+    {
+      "id": "stair-culvert-node-01",
+      "resource": "Cenote Watercress",
+      "position": [
+        20.05,
+        -5.0,
+        46.88
+      ],
+      "section": "stair-culvert",
+      "serverTile": [
+        4,
+        144
+      ]
+    },
+    {
+      "id": "stair-culvert-node-02",
+      "resource": "Cenote Watercress",
+      "position": [
+        23.05,
+        -5.0,
+        53.22
+      ],
+      "section": "stair-culvert",
+      "serverTile": [
+        7,
+        138
+      ]
+    },
+    {
+      "id": "stair-culvert-node-03",
+      "resource": "Ssarathi Scale Moss",
+      "position": [
+        20.05,
+        -5.0,
+        59.55
+      ],
+      "section": "stair-culvert",
+      "serverTile": [
+        4,
+        131
+      ]
+    },
+    {
+      "id": "stair-culvert-node-04",
+      "resource": "Ssarathi Scale Moss",
+      "position": [
+        23.05,
+        -5.0,
+        65.88
+      ],
+      "section": "stair-culvert",
+      "serverTile": [
+        7,
+        125
+      ]
+    },
+    {
+      "id": "stair-culvert-node-05",
+      "resource": "Ssarathi Scale Moss",
+      "position": [
+        20.05,
+        -5.0,
+        72.22
+      ],
+      "section": "stair-culvert",
+      "serverTile": [
+        4,
+        119
+      ]
+    }
+  ],
+  "environment": {
+    "sky": "none",
+    "ambient": {
+      "colour": [
+        0.1,
+        0.1,
+        0.12
+      ],
+      "energy": 0.55
+    },
+    "fog": {
+      "enabled": true,
+      "colour": [
+        0.02,
+        0.02,
+        0.03
+      ],
+      "begin": 14.0,
+      "end": 48.0
+    },
+    "openToSky": [
+      "stair-hanging-garden.court",
+      "stair-summit-eyrie.perch"
+    ],
+    "lights": [
+      {
+        "id": "lamp-000",
+        "kind": "point",
+        "position": [
+          174.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-001",
+        "kind": "point",
+        "position": [
+          168.55,
+          -0.62,
+          43.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-002",
+        "kind": "point",
+        "position": [
+          180.55,
+          -0.62,
+          43.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-003",
+        "kind": "point",
+        "position": [
+          245.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-004",
+        "kind": "point",
+        "position": [
+          169.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-005",
+        "kind": "point",
+        "position": [
+          169.55,
+          -0.22,
+          181.15
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-006",
+        "kind": "point",
+        "position": [
+          239.35,
+          -3.4,
+          176.75
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-007",
+        "kind": "point",
+        "position": [
+          245.75,
+          -3.4,
+          176.75
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-008",
+        "kind": "point",
+        "position": [
+          242.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-009",
+        "kind": "point",
+        "position": [
+          316.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-010",
+        "kind": "point",
+        "position": [
+          311.55,
+          -0.12,
+          41.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-011",
+        "kind": "point",
+        "position": [
+          321.55,
+          -0.12,
+          41.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-012",
+        "kind": "point",
+        "position": [
+          315.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-013",
+        "kind": "point",
+        "position": [
+          315.55,
+          1.18,
+          110.3
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-014",
+        "kind": "point",
+        "position": [
+          26.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-015",
+        "kind": "point",
+        "position": [
+          26.55,
+          0.58,
+          181.95
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-016",
+        "kind": "point",
+        "position": [
+          94.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-017",
+        "kind": "point",
+        "position": [
+          94.55,
+          0.98,
+          46.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-018",
+        "kind": "point",
+        "position": [
+          93.35,
+          -3.4,
+          185.35
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-019",
+        "kind": "point",
+        "position": [
+          101.75,
+          -3.4,
+          185.35
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-020",
+        "kind": "point",
+        "position": [
+          97.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-021",
+        "kind": "point",
+        "position": [
+          99.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-022",
+        "kind": "point",
+        "position": [
+          99.55,
+          -0.62,
+          112.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-023",
+        "kind": "point",
+        "position": [
+          245.94,
+          -1.4,
+          114.14
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-024",
+        "kind": "point",
+        "position": [
+          239.16,
+          -1.4,
+          114.14
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-025",
+        "kind": "point",
+        "position": [
+          239.16,
+          -1.4,
+          107.36
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-026",
+        "kind": "point",
+        "position": [
+          245.94,
+          -1.4,
+          107.36
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-027",
+        "kind": "point",
+        "position": [
+          242.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-028",
+        "kind": "point",
+        "position": [
+          21.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-029",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          43.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-030",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          57.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-031",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          71.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-032",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          85.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-033",
+        "kind": "point",
+        "position": [
+          171.55,
+          -2.4,
+          112.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-034",
+        "kind": "point",
+        "position": [
+          171.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-035",
+        "kind": "point",
+        "position": [
+          312.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      }
+    ]
+  },
+  "spaces": {
+    "stair-cenote-hollow.landing": {
+      "x0": 172.05,
+      "z0": 18.55,
+      "x1": 177.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "stair-cenote-hollow.way": {
+      "x0": 172.75,
+      "z0": 21.75,
+      "x1": 176.35,
+      "z1": 33.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "stair-cenote-hollow.hollow": {
+      "x0": 162.55,
+      "z0": 31.55,
+      "x1": 186.55,
+      "z1": 55.55,
+      "floor": -4.0,
+      "height": 8.0
+    },
+    "stair-hanging-garden.landing": {
+      "x0": 243.05,
+      "z0": 18.55,
+      "x1": 248.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "stair-hanging-garden.way": {
+      "x0": 243.75,
+      "z0": 21.75,
+      "x1": 247.35,
+      "z1": 33.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "stair-hanging-garden.court": {
+      "x0": 234.55,
+      "z0": 31.55,
+      "x1": 256.55,
+      "z1": 53.55,
+      "floor": -2.0,
+      "height": 6.0
+    },
+    "stair-provisioner-cache.landing": {
+      "x0": 167.05,
+      "z0": 162.55,
+      "x1": 172.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "stair-provisioner-cache.way": {
+      "x0": 167.75,
+      "z0": 165.75,
+      "x1": 171.35,
+      "z1": 177.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "stair-provisioner-cache.cellar": {
+      "x0": 162.55,
+      "z0": 175.55,
+      "x1": 176.55,
+      "z1": 186.75,
+      "floor": -3.0,
+      "height": 4.4
+    },
+    "stair-temple-vault.landing": {
+      "x0": 240.05,
+      "z0": 162.55,
+      "x1": 245.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "stair-temple-vault.way": {
+      "x0": 240.75,
+      "z0": 165.75,
+      "x1": 244.35,
+      "z1": 177.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "stair-temple-vault.strongroom": {
+      "x0": 234.55,
+      "z0": 175.55,
+      "x1": 250.55,
+      "z1": 186.75,
+      "floor": -5.0,
+      "height": 5.0
+    },
+    "stair-quarry-pit.landing": {
+      "x0": 314.05,
+      "z0": 18.55,
+      "x1": 319.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "stair-quarry-pit.way": {
+      "x0": 314.75,
+      "z0": 21.75,
+      "x1": 318.35,
+      "z1": 33.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "stair-quarry-pit.pit": {
+      "x0": 306.55,
+      "z0": 31.55,
+      "x1": 326.55,
+      "z1": 51.55,
+      "floor": -4.0,
+      "height": 7.0
+    },
+    "stair-house-school.landing": {
+      "x0": 313.05,
+      "z0": 90.55,
+      "x1": 318.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "stair-house-school.way": {
+      "x0": 313.75,
+      "z0": 93.75,
+      "x1": 317.35,
+      "z1": 105.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "stair-house-school.hall": {
+      "x0": 306.55,
+      "z0": 103.55,
+      "x1": 324.55,
+      "z1": 117.05,
+      "floor": -2.0,
+      "height": 5.2
+    },
+    "stair-water-spring.landing": {
+      "x0": 24.05,
+      "z0": 162.55,
+      "x1": 29.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "stair-water-spring.way": {
+      "x0": 24.75,
+      "z0": 165.75,
+      "x1": 28.35,
+      "z1": 177.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "stair-water-spring.bath": {
+      "x0": 18.55,
+      "z0": 175.55,
+      "x1": 34.55,
+      "z1": 188.35,
+      "floor": -3.0,
+      "height": 6.0
+    },
+    "stair-lookout-butts.landing": {
+      "x0": 92.05,
+      "z0": 18.55,
+      "x1": 97.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "stair-lookout-butts.way": {
+      "x0": 92.75,
+      "z0": 21.75,
+      "x1": 96.35,
+      "z1": 33.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "stair-lookout-butts.gallery": {
+      "x0": 90.55,
+      "z0": 31.55,
+      "x1": 98.55,
+      "z1": 61.55,
+      "floor": -2.0,
+      "height": 5.0
+    },
+    "stair-ridge-reliquary.landing": {
+      "x0": 95.05,
+      "z0": 162.55,
+      "x1": 100.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "stair-ridge-reliquary.way": {
+      "x0": 95.75,
+      "z0": 165.75,
+      "x1": 99.35,
+      "z1": 177.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "stair-ridge-reliquary.cella": {
+      "x0": 90.55,
+      "z0": 175.55,
+      "x1": 104.55,
+      "z1": 188.15,
+      "floor": -5.0,
+      "height": 6.0
+    },
+    "stair-cenote-well.landing": {
+      "x0": 97.05,
+      "z0": 90.55,
+      "x1": 102.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "stair-cenote-well.way": {
+      "x0": 97.75,
+      "z0": 93.75,
+      "x1": 101.35,
+      "z1": 105.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "stair-cenote-well.well": {
+      "x0": 90.55,
+      "z0": 103.55,
+      "x1": 108.55,
+      "z1": 121.55,
+      "floor": -5.0,
+      "height": 8.0
+    },
+    "stair-sun-focus.landing": {
+      "x0": 240.05,
+      "z0": 90.55,
+      "x1": 245.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "stair-sun-focus.way": {
+      "x0": 240.75,
+      "z0": 93.75,
+      "x1": 244.35,
+      "z1": 105.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "stair-sun-focus.chamber": {
+      "x0": 234.55,
+      "z0": 103.55,
+      "x1": 250.55,
+      "z1": 117.95,
+      "floor": -3.0,
+      "height": 6.4
+    },
+    "stair-culvert.landing": {
+      "x0": 19.05,
+      "z0": 18.55,
+      "x1": 24.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "stair-culvert.way": {
+      "x0": 19.75,
+      "z0": 21.75,
+      "x1": 23.35,
+      "z1": 33.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "stair-culvert.bore": {
+      "x0": 18.65,
+      "z0": 31.55,
+      "x1": 24.45,
+      "z1": 37.55,
+      "floor": -5.0,
+      "height": 4.0
+    },
+    "stair-culvert.run": {
+      "x0": 19.45,
+      "z0": 35.45,
+      "x1": 23.65,
+      "z1": 83.65,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "stair-culvert.far": {
+      "x0": 18.55,
+      "z0": 81.55,
+      "x1": 24.55,
+      "z1": 87.55,
+      "floor": -5.0,
+      "height": 4.2
+    },
+    "stair-waystone.landing": {
+      "x0": 169.05,
+      "z0": 90.55,
+      "x1": 174.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "stair-waystone.way": {
+      "x0": 169.75,
+      "z0": 93.75,
+      "x1": 173.35,
+      "z1": 105.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "stair-waystone.ring": {
+      "x0": 162.55,
+      "z0": 103.55,
+      "x1": 180.55,
+      "z1": 121.55,
+      "floor": -4.0,
+      "height": 7.0
+    },
+    "stair-summit-eyrie.landing": {
+      "x0": 310.05,
+      "z0": 162.55,
+      "x1": 315.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "stair-summit-eyrie.way": {
+      "x0": 310.75,
+      "z0": 165.75,
+      "x1": 314.35,
+      "z1": 177.35,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "stair-summit-eyrie.perch": {
+      "x0": 306.55,
+      "z0": 175.55,
+      "x1": 318.55,
+      "z1": 185.15,
+      "floor": 3.0,
+      "height": 4.6
+    }
+  },
+  "sections": [
+    {
+      "id": "stair-cenote-hollow",
+      "name": "The Cenote Hollow",
+      "kind": "grotto",
+      "entranceMap": "verdant_stair",
+      "entranceProp": "ivy_arch",
+      "key": "",
+      "label": "An arch so grown with vine it reads as hedge.",
+      "offset": [
+        174.55,
+        21.05
+      ],
+      "arrival": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          17.55
+        ],
+        "max": [
+          187.55,
+          56.55
+        ]
+      },
+      "spaces": [
+        "stair-cenote-hollow.landing",
+        "stair-cenote-hollow.way",
+        "stair-cenote-hollow.hollow"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "A side-hollow of the cenote where the cress grows thick and the bulbs are left alone.",
+      "arrivalTile": [
+        159,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          134
+        ],
+        "max": [
+          172,
+          173
+        ]
+      }
+    },
+    {
+      "id": "stair-hanging-garden",
+      "name": "The Under-Garden",
+      "kind": "garden",
+      "entranceMap": "verdant_stair",
+      "entranceProp": "ivy_arch",
+      "key": "",
+      "label": "An arch so grown with vine it reads as hedge.",
+      "offset": [
+        245.55,
+        21.05
+      ],
+      "arrival": [
+        245.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          233.55,
+          17.55
+        ],
+        "max": [
+          257.55,
+          54.55
+        ]
+      },
+      "spaces": [
+        "stair-hanging-garden.landing",
+        "stair-hanging-garden.way",
+        "stair-hanging-garden.court"
+      ],
+      "areas": [
+        {
+          "kind": "harvest_speed",
+          "multiplier": 2,
+          "spaces": [
+            "stair-hanging-garden.court"
+          ],
+          "tiles": {
+            "min": [
+              219,
+              137
+            ],
+            "max": [
+              241,
+              159
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "The hanging gardens' cellar terrace, where the gardeners grow what the tourists do not see.",
+      "arrivalTile": [
+        230,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          218,
+          136
+        ],
+        "max": [
+          242,
+          173
+        ]
+      }
+    },
+    {
+      "id": "stair-provisioner-cache",
+      "name": "The Provisioner's Cache",
+      "kind": "cache",
+      "entranceMap": "verdant_stair_insides",
+      "entranceProp": "cellar_hatch",
+      "key": "",
+      "label": "A cellar hatch under the leaves.",
+      "offset": [
+        169.55,
+        165.05
+      ],
+      "arrival": [
+        169.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          161.55
+        ],
+        "max": [
+          177.55,
+          187.75
+        ]
+      },
+      "spaces": [
+        "stair-provisioner-cache.landing",
+        "stair-provisioner-cache.way",
+        "stair-provisioner-cache.cellar"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "The provisioner's cellar: a chest, a bench and the bulbs off the books.",
+      "arrivalTile": [
+        154,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          3
+        ],
+        "max": [
+          162,
+          29
+        ]
+      }
+    },
+    {
+      "id": "stair-temple-vault",
+      "name": "The Great Temple Vault",
+      "kind": "vault",
+      "entranceMap": "verdant_stair",
+      "entranceProp": "cracked_slab",
+      "key": "Storage Token",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        242.55,
+        165.05
+      ],
+      "arrival": [
+        242.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          233.55,
+          161.55
+        ],
+        "max": [
+          251.55,
+          187.75
+        ]
+      },
+      "spaces": [
+        "stair-temple-vault.landing",
+        "stair-temple-vault.way",
+        "stair-temple-vault.strongroom"
+      ],
+      "areas": [
+        {
+          "kind": "experience",
+          "multiplier": 2,
+          "spaces": [
+            "stair-temple-vault.strongroom"
+          ],
+          "tiles": {
+            "min": [
+              219,
+              4
+            ],
+            "max": [
+              235,
+              15
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "The temple's strongroom, under the processional.",
+      "arrivalTile": [
+        227,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          218,
+          3
+        ],
+        "max": [
+          236,
+          29
+        ]
+      }
+    },
+    {
+      "id": "stair-quarry-pit",
+      "name": "The Quarry Pit",
+      "kind": "pen",
+      "entranceMap": "verdant_stair",
+      "entranceProp": "loose_stone",
+      "key": "",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "offset": [
+        316.55,
+        21.05
+      ],
+      "arrival": [
+        316.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          305.55,
+          17.55
+        ],
+        "max": [
+          327.55,
+          52.55
+        ]
+      },
+      "spaces": [
+        "stair-quarry-pit.landing",
+        "stair-quarry-pit.way",
+        "stair-quarry-pit.pit"
+      ],
+      "areas": [],
+      "spawns": [
+        {
+          "creature": "canopy_glider",
+          "count": 4,
+          "space": "stair-quarry-pit.pit",
+          "tiles": {
+            "min": [
+              291,
+              139
+            ],
+            "max": [
+              311,
+              159
+            ]
+          }
+        },
+        {
+          "creature": "leafwing_owl",
+          "count": 3,
+          "space": "stair-quarry-pit.pit",
+          "tiles": {
+            "min": [
+              291,
+              139
+            ],
+            "max": [
+              311,
+              159
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "A quarry cell the stair-house stocks with gliders for the young to learn the air on.",
+      "arrivalTile": [
+        301,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          290,
+          138
+        ],
+        "max": [
+          312,
+          173
+        ]
+      }
+    },
+    {
+      "id": "stair-house-school",
+      "name": "The Stair-House School",
+      "kind": "school",
+      "entranceMap": "verdant_stair",
+      "entranceProp": "cracked_slab",
+      "key": "",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        315.55,
+        93.05
+      ],
+      "arrival": [
+        315.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          305.55,
+          89.55
+        ],
+        "max": [
+          325.55,
+          118.05
+        ]
+      },
+      "spaces": [
+        "stair-house-school.landing",
+        "stair-house-school.way",
+        "stair-house-school.hall"
+      ],
+      "areas": [
+        {
+          "kind": "fast_reading",
+          "multiplier": 3,
+          "spaces": [
+            "stair-house-school.hall"
+          ],
+          "tiles": {
+            "min": [
+              291,
+              74
+            ],
+            "max": [
+              309,
+              87
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Where the stair wardens learn the stair.",
+      "arrivalTile": [
+        300,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          290,
+          73
+        ],
+        "max": [
+          310,
+          101
+        ]
+      }
+    },
+    {
+      "id": "stair-water-spring",
+      "name": "The Water Shrine Spring",
+      "kind": "spring",
+      "entranceMap": "verdant_stair",
+      "entranceProp": "loose_stone",
+      "key": "",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "offset": [
+        26.55,
+        165.05
+      ],
+      "arrival": [
+        26.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          17.55,
+          161.55
+        ],
+        "max": [
+          35.55,
+          189.35
+        ]
+      },
+      "spaces": [
+        "stair-water-spring.landing",
+        "stair-water-spring.way",
+        "stair-water-spring.bath"
+      ],
+      "areas": [
+        {
+          "kind": "fast_regeneration",
+          "multiplier": 3,
+          "spaces": [
+            "stair-water-spring.bath"
+          ],
+          "tiles": {
+            "min": [
+              3,
+              3
+            ],
+            "max": [
+              19,
+              15
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "The shrine's warm feed, in a chamber behind the basin.",
+      "arrivalTile": [
+        11,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          2,
+          2
+        ],
+        "max": [
+          20,
+          29
+        ]
+      }
+    },
+    {
+      "id": "stair-lookout-butts",
+      "name": "The East Lookout Butts",
+      "kind": "range",
+      "entranceMap": "verdant_stair",
+      "entranceProp": "cellar_hatch",
+      "key": "",
+      "label": "A cellar hatch under the leaves.",
+      "offset": [
+        94.55,
+        21.05
+      ],
+      "arrival": [
+        94.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          17.55
+        ],
+        "max": [
+          99.55,
+          62.55
+        ]
+      },
+      "spaces": [
+        "stair-lookout-butts.landing",
+        "stair-lookout-butts.way",
+        "stair-lookout-butts.gallery"
+      ],
+      "areas": [
+        {
+          "kind": "experience",
+          "multiplier": 2,
+          "spaces": [
+            "stair-lookout-butts.gallery"
+          ],
+          "tiles": {
+            "min": [
+              75,
+              129
+            ],
+            "max": [
+              83,
+              159
+            ]
+          }
+        }
+      ],
+      "spawns": [
+        {
+          "creature": "swamp_heron",
+          "count": 3,
+          "space": "stair-lookout-butts.gallery",
+          "tiles": {
+            "min": [
+              75,
+              129
+            ],
+            "max": [
+              83,
+              159
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "A gallery under the lookout with herons at the far end.",
+      "arrivalTile": [
+        79,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          128
+        ],
+        "max": [
+          84,
+          173
+        ]
+      }
+    },
+    {
+      "id": "stair-ridge-reliquary",
+      "name": "The Ridge Shrine Reliquary",
+      "kind": "reliquary",
+      "entranceMap": "verdant_stair",
+      "entranceProp": "shrine_slab",
+      "key": "Bright Feather",
+      "label": "A shrine slab with fresh scratches where it has been slid aside.",
+      "offset": [
+        97.55,
+        165.05
+      ],
+      "arrival": [
+        97.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          161.55
+        ],
+        "max": [
+          105.55,
+          189.15
+        ]
+      },
+      "spaces": [
+        "stair-ridge-reliquary.landing",
+        "stair-ridge-reliquary.way",
+        "stair-ridge-reliquary.cella"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "Opened with a feather from the canopy.",
+      "arrivalTile": [
+        82,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          2
+        ],
+        "max": [
+          90,
+          29
+        ]
+      }
+    },
+    {
+      "id": "stair-cenote-well",
+      "name": "The Cenote Well",
+      "kind": "nullwell",
+      "entranceMap": "verdant_stair",
+      "entranceProp": "loose_stone",
+      "key": "",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "offset": [
+        99.55,
+        93.05
+      ],
+      "arrival": [
+        99.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          89.55
+        ],
+        "max": [
+          109.55,
+          122.55
+        ]
+      },
+      "spaces": [
+        "stair-cenote-well.landing",
+        "stair-cenote-well.way",
+        "stair-cenote-well.well"
+      ],
+      "areas": [
+        {
+          "kind": "no_magic",
+          "multiplier": 2,
+          "spaces": [
+            "stair-cenote-well.well"
+          ],
+          "tiles": {
+            "min": [
+              75,
+              69
+            ],
+            "max": [
+              93,
+              87
+            ]
+          }
+        }
+      ],
+      "spawns": [
+        {
+          "creature": "moonshadow_lynx",
+          "count": 2,
+          "space": "stair-cenote-well.well",
+          "tiles": {
+            "min": [
+              75,
+              69
+            ],
+            "max": [
+              93,
+              87
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "Limestone drinks every spell here; the lynx penned below does not need one.",
+      "arrivalTile": [
+        84,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          68
+        ],
+        "max": [
+          94,
+          101
+        ]
+      }
+    },
+    {
+      "id": "stair-sun-focus",
+      "name": "The Sun Pavilion Focus",
+      "kind": "focus",
+      "entranceMap": "verdant_stair",
+      "entranceProp": "cracked_slab",
+      "key": "Iron Rune",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        242.55,
+        93.05
+      ],
+      "arrival": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          233.55,
+          89.55
+        ],
+        "max": [
+          251.55,
+          118.95
+        ]
+      },
+      "spaces": [
+        "stair-sun-focus.landing",
+        "stair-sun-focus.way",
+        "stair-sun-focus.chamber"
+      ],
+      "areas": [
+        {
+          "kind": "cheap_magic",
+          "multiplier": 2,
+          "spaces": [
+            "stair-sun-focus.chamber"
+          ],
+          "tiles": {
+            "min": [
+              219,
+              73
+            ],
+            "max": [
+              235,
+              87
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Under the sun pavilion the ether pools; spells cost half.",
+      "arrivalTile": [
+        227,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          218,
+          72
+        ],
+        "max": [
+          236,
+          101
+        ]
+      }
+    },
+    {
+      "id": "stair-culvert",
+      "name": "The Culvert",
+      "kind": "tunnel",
+      "entranceMap": "verdant_stair",
+      "entranceProp": "ivy_arch",
+      "key": "",
+      "label": "An arch so grown with vine it reads as hedge.",
+      "offset": [
+        21.55,
+        21.05
+      ],
+      "arrival": [
+        21.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          17.55,
+          17.55
+        ],
+        "max": [
+          25.55,
+          88.55
+        ]
+      },
+      "spaces": [
+        "stair-culvert.landing",
+        "stair-culvert.way",
+        "stair-culvert.bore",
+        "stair-culvert.run",
+        "stair-culvert.far"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [
+        {
+          "map": "ssarathi_ruins",
+          "spawn": "secret-ruins-culvert-mouth",
+          "label": "Down into the Ssarathi Ruins",
+          "space": "stair-culvert.far",
+          "position": [
+            21.55,
+            -4.95,
+            84.55
+          ],
+          "tile": [
+            6,
+            106
+          ]
+        }
+      ],
+      "note": "An aqueduct culvert under the border, out into the ruins.",
+      "arrivalTile": [
+        6,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          2,
+          102
+        ],
+        "max": [
+          10,
+          173
+        ]
+      }
+    },
+    {
+      "id": "stair-waystone",
+      "name": "The Stair Waystone",
+      "kind": "waystone",
+      "entranceMap": "verdant_stair",
+      "entranceProp": "cracked_slab",
+      "key": "Iron Rune",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        171.55,
+        93.05
+      ],
+      "arrival": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          89.55
+        ],
+        "max": [
+          181.55,
+          122.55
+        ]
+      },
+      "spaces": [
+        "stair-waystone.landing",
+        "stair-waystone.way",
+        "stair-waystone.ring"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [
+        {
+          "map": "sunmane_steppe_secrets",
+          "spawn": "steppe-waystone",
+          "label": "The Sunmane Steppe",
+          "space": "stair-waystone.ring",
+          "position": [
+            173.99,
+            -4.0,
+            108.32
+          ],
+          "tile": [
+            158,
+            83
+          ]
+        },
+        {
+          "map": "ssarathi_ruins_secrets",
+          "spawn": "ruins-waystone",
+          "label": "The Ssarathi Ruins",
+          "space": "stair-waystone.ring",
+          "position": [
+            173.99,
+            -4.0,
+            116.78
+          ],
+          "tile": [
+            158,
+            74
+          ]
+        }
+      ],
+      "note": "Two stones under the upper court. An iron rune wakes them.",
+      "arrivalTile": [
+        156,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          68
+        ],
+        "max": [
+          166,
+          101
+        ]
+      }
+    },
+    {
+      "id": "stair-summit-eyrie",
+      "name": "The Summit Eyrie",
+      "kind": "eyrie",
+      "entranceMap": "verdant_stair",
+      "entranceProp": "ivy_arch",
+      "key": "",
+      "label": "An arch so grown with vine it reads as hedge.",
+      "offset": [
+        312.55,
+        165.05
+      ],
+      "arrival": [
+        312.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          305.55,
+          161.55
+        ],
+        "max": [
+          319.55,
+          186.15
+        ]
+      },
+      "spaces": [
+        "stair-summit-eyrie.landing",
+        "stair-summit-eyrie.way",
+        "stair-summit-eyrie.perch"
+      ],
+      "areas": [
+        {
+          "kind": "fast_regeneration",
+          "multiplier": 2,
+          "spaces": [
+            "stair-summit-eyrie.perch"
+          ],
+          "tiles": {
+            "min": [
+              291,
+              6
+            ],
+            "max": [
+              303,
+              15
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "A pocket under the summit watch.",
+      "arrivalTile": [
+        297,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          290,
+          5
+        ],
+        "max": [
+          304,
+          29
+        ]
+      }
+    }
+  ],
+  "secrets": {
+    "region": "verdant_stair",
+    "sections": [
+      "stair-cenote-hollow",
+      "stair-hanging-garden",
+      "stair-provisioner-cache",
+      "stair-temple-vault",
+      "stair-quarry-pit",
+      "stair-house-school",
+      "stair-water-spring",
+      "stair-lookout-butts",
+      "stair-ridge-reliquary",
+      "stair-cenote-well",
+      "stair-sun-focus",
+      "stair-culvert",
+      "stair-waystone",
+      "stair-summit-eyrie"
+    ],
+    "note": "Each section is one secret. The client shows a player only the section they stand in; the server places the arrival, the areas, the spawns and the harvest nodes from this block."
+  },
+  "performance": {
+    "nodes": 142,
+    "meshes": 127,
+    "materials": 21,
+    "images": 61,
+    "textures": 61,
+    "accessors": 635,
+    "bufferViews": 696,
+    "uniqueTriangles": 27468,
+    "uniqueVertices": 38116,
+    "glbBytes": 7860264,
+    "nodeNames": [
+      "Secrets_verdant_stair_secrets",
+      "Section_stair-cenote-hollow",
+      "Roof_stair-cenote-hollow_verdant_limestone_cliff",
+      "Build_stair-cenote-hollow_amber_resin",
+      "Build_stair-cenote-hollow_dark_iron",
+      "Build_stair-cenote-hollow_verdant_frond",
+      "Build_stair-cenote-hollow_verdant_limestone_cliff",
+      "Build_stair-cenote-hollow_water_cenote",
+      "Walk_stair-cenote-hollow_verdant_jungle_floor",
+      "Section_stair-hanging-garden",
+      "Roof_stair-hanging-garden_verdant_limestone_cliff",
+      "Build_stair-hanging-garden_amber_resin",
+      "Build_stair-hanging-garden_bark_pale",
+      "Build_stair-hanging-garden_dark_iron",
+      "Build_stair-hanging-garden_foliage_green",
+      "Build_stair-hanging-garden_rubble_stone",
+      "Build_stair-hanging-garden_timber_warm",
+      "Build_stair-hanging-garden_verdant_frond",
+      "Build_stair-hanging-garden_verdant_limestone_cliff",
+      "Build_stair-hanging-garden_verdant_terrace_stone",
+      "Build_stair-hanging-garden_water_pool",
+      "Walk_stair-hanging-garden_verdant_fern_glade",
+      "Walk_stair-hanging-garden_verdant_jungle_floor",
+      "Section_stair-provisioner-cache",
+      "Roof_stair-provisioner-cache_timber_dark",
+      "Roof_stair-provisioner-cache_verdant_limestone_cliff",
+      "Build_stair-provisioner-cache_amber_resin",
+      "Build_stair-provisioner-cache_dark_iron",
+      "Build_stair-provisioner-cache_timber_dark",
+      "Build_stair-provisioner-cache_timber_warm",
+      "Build_stair-provisioner-cache_verdant_frond",
+      "Build_stair-provisioner-cache_verdant_limestone_cliff",
+      "Build_stair-provisioner-cache_verdant_wet_limestone",
+      "Walk_stair-provisioner-cache_verdant_jungle_floor",
+      "Section_stair-temple-vault",
+      "Roof_stair-temple-vault_verdant_limestone_cliff",
+      "Roof_stair-temple-vault_verdant_terrace_stone",
+      "Build_stair-temple-vault_amber_resin",
+      "Build_stair-temple-vault_carved_wood",
+      "Build_stair-temple-vault_dark_iron",
+      "Build_stair-temple-vault_timber_dark",
+      "Build_stair-temple-vault_timber_warm",
+      "Build_stair-temple-vault_verdant_limestone_cliff",
+      "Build_stair-temple-vault_verdant_terrace_stone",
+      "Walk_stair-temple-vault_verdant_jungle_floor",
+      "Walk_stair-temple-vault_verdant_terrace_stone",
+      "Section_stair-quarry-pit",
+      "Roof_stair-quarry-pit_verdant_limestone_cliff",
+      "Build_stair-quarry-pit_amber_resin",
+      "Build_stair-quarry-pit_dark_iron",
+      "Build_stair-quarry-pit_pale_ashlar",
+      "Build_stair-quarry-pit_timber_dark",
+      "Build_stair-quarry-pit_verdant_limestone_cliff",
+      "Walk_stair-quarry-pit_verdant_jungle_floor",
+      "Section_stair-house-school",
+      "Roof_stair-house-school_timber_dark",
+      "Roof_stair-house-school_verdant_limestone_cliff",
+      "Build_stair-house-school_amber_resin",
+      "Build_stair-house-school_carved_wood",
+      "Build_stair-house-school_dark_iron",
+      "Build_stair-house-school_timber_dark",
+      "Build_stair-house-school_verdant_limestone_cliff",
+      "Build_stair-house-school_verdant_wet_limestone",
+      "Walk_stair-house-school_verdant_jungle_floor",
+      "Walk_stair-house-school_verdant_terrace_stone",
+      "Section_stair-water-spring",
+      "Roof_stair-water-spring_verdant_limestone_cliff",
+      "Build_stair-water-spring_amber_resin",
+      "Build_stair-water-spring_dark_iron",
+      "Build_stair-water-spring_verdant_limestone_cliff",
+      "Build_stair-water-spring_verdant_terrace_stone",
+      "Build_stair-water-spring_water_cenote",
+      "Walk_stair-water-spring_verdant_jungle_floor",
+      "Walk_stair-water-spring_verdant_terrace_stone",
+      "Section_stair-lookout-butts",
+      "Roof_stair-lookout-butts_timber_dark",
+      "Roof_stair-lookout-butts_verdant_limestone_cliff",
+      "Build_stair-lookout-butts_amber_resin",
+      "Build_stair-lookout-butts_dark_iron",
+      "Build_stair-lookout-butts_thatch_reed",
+      "Build_stair-lookout-butts_timber_dark",
+      "Build_stair-lookout-butts_verdant_limestone_cliff",
+      "Build_stair-lookout-butts_verdant_wet_limestone",
+      "Walk_stair-lookout-butts_verdant_jungle_floor",
+      "Section_stair-ridge-reliquary",
+      "Roof_stair-ridge-reliquary_verdant_limestone_cliff",
+      "Roof_stair-ridge-reliquary_verdant_terrace_stone",
+      "Build_stair-ridge-reliquary_amber_resin",
+      "Build_stair-ridge-reliquary_dark_iron",
+      "Build_stair-ridge-reliquary_gilt_brass",
+      "Build_stair-ridge-reliquary_verdant_limestone_cliff",
+      "Build_stair-ridge-reliquary_verdant_terrace_stone",
+      "Walk_stair-ridge-reliquary_verdant_jungle_floor",
+      "Walk_stair-ridge-reliquary_verdant_terrace_stone",
+      "Section_stair-cenote-well",
+      "Roof_stair-cenote-well_verdant_limestone_cliff",
+      "Build_stair-cenote-well_amber_resin",
+      "Build_stair-cenote-well_dark_iron",
+      "Build_stair-cenote-well_verdant_limestone_cliff",
+      "Build_stair-cenote-well_verdant_terrace_stone",
+      "Walk_stair-cenote-well_verdant_jungle_floor",
+      "Walk_stair-cenote-well_verdant_terrace_stone",
+      "Section_stair-sun-focus",
+      "Roof_stair-sun-focus_verdant_limestone_cliff",
+      "Roof_stair-sun-focus_verdant_terrace_stone",
+      "Build_stair-sun-focus_amber_resin",
+      "Build_stair-sun-focus_dark_iron",
+      "Build_stair-sun-focus_verdant_jade",
+      "Build_stair-sun-focus_verdant_limestone_cliff",
+      "Build_stair-sun-focus_verdant_terrace_stone",
+      "Walk_stair-sun-focus_verdant_jungle_floor",
+      "Walk_stair-sun-focus_verdant_terrace_stone",
+      "Section_stair-culvert",
+      "Roof_stair-culvert_verdant_limestone_cliff",
+      "Build_stair-culvert_amber_resin",
+      "Build_stair-culvert_dark_iron",
+      "Build_stair-culvert_timber_dark",
+      "Build_stair-culvert_verdant_frond",
+      "Build_stair-culvert_verdant_limestone_cliff",
+      "Walk_stair-culvert_verdant_jungle_floor",
+      "Section_stair-waystone",
+      "Roof_stair-waystone_verdant_limestone_cliff",
+      "Roof_stair-waystone_verdant_terrace_stone",
+      "Build_stair-waystone_amber_resin",
+      "Build_stair-waystone_dark_iron",
+      "Build_stair-waystone_gilt_brass",
+      "Build_stair-waystone_verdant_limestone_cliff",
+      "Build_stair-waystone_verdant_terrace_stone",
+      "Walk_stair-waystone_verdant_jungle_floor",
+      "Walk_stair-waystone_verdant_terrace_stone",
+      "Section_stair-summit-eyrie",
+      "Roof_stair-summit-eyrie_verdant_limestone_cliff",
+      "Build_stair-summit-eyrie_amber_resin",
+      "Build_stair-summit-eyrie_bark_dark",
+      "Build_stair-summit-eyrie_carved_wood",
+      "Build_stair-summit-eyrie_dark_iron",
+      "Build_stair-summit-eyrie_rubble_stone",
+      "Build_stair-summit-eyrie_timber_warm",
+      "Build_stair-summit-eyrie_verdant_limestone_cliff",
+      "Build_stair-summit-eyrie_water_pool",
+      "Walk_stair-summit-eyrie_verdant_jungle_floor",
+      "Walk_stair-summit-eyrie_verdant_terrace_stone"
+    ]
+  },
+  "sources": [
+    {
+      "id": "generator",
+      "file": "_toolkit/secrets_build.py",
+      "role": "reproducible-build",
+      "design": "verdant_stair/source/secrets_design.py"
+    }
+  ],
+  "provenance": {
+    "geometry": "authored with the secret rooms kit over the shared toolkit",
+    "license": "CC-BY-4.0"
+  },
+  "productionStatus": "authored-geometry-materials-population",
+  "notes": [
+    "14 secrets of Verdant Stair Secrets on one map with void between them; which one a player gets is which feature of the ground above they used."
+  ]
+}

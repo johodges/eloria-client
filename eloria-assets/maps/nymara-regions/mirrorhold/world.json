@@ -302,6 +302,20 @@
       "Prop_quarry-shelf_bollard_0",
       "Prop_quarry-shelf_bollard_1",
       "Prop_quarry-shelf_bollard_2",
+      "Secret_mirror_adit",
+      "Secret_mirror_basin_spring",
+      "Secret_mirror_cistern_well",
+      "Secret_mirror_citadel_reliquary",
+      "Secret_mirror_icebore_mouth",
+      "Secret_mirror_lens_focus",
+      "Secret_mirror_lens_garden",
+      "Secret_mirror_orrery_vault",
+      "Secret_mirror_overlook_eyrie",
+      "Secret_mirror_reed_cut",
+      "Secret_mirror_rose_school",
+      "Secret_mirror_stair_pit",
+      "Secret_mirror_watch_butts",
+      "Secret_mirror_waystone",
       "Tree_Spruce_334_Wood",
       "Tree_Spruce_335_Wood",
       "Tree_Spruce_343_Wood",
@@ -340,8 +354,8 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 616653,
-    "walkableFraction": 0.4647
+    "walkableCells": 616526,
+    "walkableFraction": 0.4646
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -962,6 +976,300 @@
         228
       ],
       "authority": "server"
+    },
+    {
+      "id": "secret-mirror-reed-cut",
+      "kind": "secret",
+      "secret": "mirror-reed-cut",
+      "name": "The Reed Cut",
+      "label": "A hide of cut reeds, and a plank floor under it where there should be mud.",
+      "prop": "reed_hide",
+      "key": "",
+      "destinationMap": "mirrorhold_secrets",
+      "destinationSpawn": "mirror-reed-cut",
+      "position": [
+        119.5,
+        35.45,
+        -51.77
+      ],
+      "authority": "server",
+      "serverTile": [
+        294,
+        226
+      ]
+    },
+    {
+      "id": "secret-mirror-lens-garden",
+      "kind": "secret",
+      "secret": "mirror-lens-garden",
+      "name": "The Lens-Grinders' Garden",
+      "label": "An iron drain grate, its bolts drawn.",
+      "prop": "drain_grate",
+      "key": "",
+      "destinationMap": "mirrorhold_secrets",
+      "destinationSpawn": "mirror-lens-garden",
+      "position": [
+        216.0,
+        43.07,
+        -72.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        390,
+        246
+      ]
+    },
+    {
+      "id": "secret-mirror-orrery-vault",
+      "kind": "secret",
+      "secret": "mirror-orrery-vault",
+      "name": "The Orrery Vault",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Storage Token",
+      "destinationMap": "mirrorhold_secrets",
+      "destinationSpawn": "mirror-orrery-vault",
+      "position": [
+        191.0,
+        108.91,
+        -261.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        365,
+        435
+      ]
+    },
+    {
+      "id": "secret-mirror-stair-pit",
+      "kind": "secret",
+      "secret": "mirror-stair-pit",
+      "name": "The East Stair Pit",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "prop": "loose_stone",
+      "key": "",
+      "destinationMap": "mirrorhold_secrets",
+      "destinationSpawn": "mirror-stair-pit",
+      "position": [
+        258.39,
+        33.3,
+        -46.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        432,
+        220
+      ]
+    },
+    {
+      "id": "secret-mirror-rose-school",
+      "kind": "secret",
+      "secret": "mirror-rose-school",
+      "name": "The Rose Gallery School",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "",
+      "destinationMap": "mirrorhold_secrets",
+      "destinationSpawn": "mirror-rose-school",
+      "position": [
+        104.5,
+        99.08,
+        -207.17
+      ],
+      "authority": "server",
+      "serverTile": [
+        278,
+        381
+      ]
+    },
+    {
+      "id": "secret-mirror-basin-spring",
+      "kind": "secret",
+      "secret": "mirror-basin-spring",
+      "name": "The Basin Spring",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "prop": "loose_stone",
+      "key": "",
+      "destinationMap": "mirrorhold_secrets",
+      "destinationSpawn": "mirror-basin-spring",
+      "position": [
+        142.5,
+        80.7,
+        -138.4
+      ],
+      "authority": "server",
+      "serverTile": [
+        316,
+        312
+      ]
+    },
+    {
+      "id": "secret-mirror-watch-butts",
+      "kind": "secret",
+      "secret": "mirror-watch-butts",
+      "name": "The South Watch Butts",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "mirrorhold_secrets",
+      "destinationSpawn": "mirror-watch-butts",
+      "position": [
+        116.6,
+        11.0,
+        149.5
+      ],
+      "authority": "server",
+      "serverTile": [
+        291,
+        24
+      ]
+    },
+    {
+      "id": "secret-mirror-citadel-reliquary",
+      "kind": "secret",
+      "secret": "mirror-citadel-reliquary",
+      "name": "The Citadel Reliquary",
+      "label": "A shrine slab with fresh scratches where it has been slid aside.",
+      "prop": "shrine_slab",
+      "key": "Mirror Reed",
+      "destinationMap": "mirrorhold_secrets",
+      "destinationSpawn": "mirror-citadel-reliquary",
+      "position": [
+        236.0,
+        83.3,
+        -168.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        410,
+        342
+      ]
+    },
+    {
+      "id": "secret-mirror-cistern-well",
+      "kind": "secret",
+      "secret": "mirror-cistern-well",
+      "name": "The Cistern Well",
+      "label": "An iron drain grate, its bolts drawn.",
+      "prop": "drain_grate",
+      "key": "",
+      "destinationMap": "mirrorhold_secrets",
+      "destinationSpawn": "mirror-cistern-well",
+      "position": [
+        110.0,
+        36.66,
+        -50.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        284,
+        224
+      ]
+    },
+    {
+      "id": "secret-mirror-lens-focus",
+      "kind": "secret",
+      "secret": "mirror-lens-focus",
+      "name": "The Lens Focus",
+      "label": "A seam of crystal that hums at a touch; the rock behind it is thin.",
+      "prop": "crystal_seam",
+      "key": "Iron Rune",
+      "destinationMap": "mirrorhold_secrets",
+      "destinationSpawn": "mirror-lens-focus",
+      "position": [
+        104.6,
+        98.19,
+        -214.5
+      ],
+      "authority": "server",
+      "serverTile": [
+        279,
+        388
+      ]
+    },
+    {
+      "id": "secret-mirror-adit",
+      "kind": "secret",
+      "secret": "mirror-adit",
+      "name": "The Quarry Adit",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "prop": "loose_stone",
+      "key": "",
+      "destinationMap": "mirrorhold_secrets",
+      "destinationSpawn": "mirror-adit",
+      "position": [
+        251.5,
+        77.06,
+        -189.36
+      ],
+      "authority": "server",
+      "serverTile": [
+        426,
+        363
+      ]
+    },
+    {
+      "id": "secret-mirror-waystone",
+      "kind": "secret",
+      "secret": "mirror-waystone",
+      "name": "The Mirror Waystone",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Iron Rune",
+      "destinationMap": "mirrorhold_secrets",
+      "destinationSpawn": "mirror-waystone",
+      "position": [
+        123.2,
+        57.38,
+        -77.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        297,
+        251
+      ]
+    },
+    {
+      "id": "secret-mirror-overlook-eyrie",
+      "kind": "secret",
+      "secret": "mirror-overlook-eyrie",
+      "name": "The Overlook Eyrie",
+      "label": "An arch so grown with vine it reads as hedge.",
+      "prop": "ivy_arch",
+      "key": "",
+      "destinationMap": "mirrorhold_secrets",
+      "destinationSpawn": "mirror-overlook-eyrie",
+      "position": [
+        224.0,
+        54.83,
+        -102.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        398,
+        276
+      ]
+    },
+    {
+      "id": "secret-mirror-icebore-mouth",
+      "kind": "secret",
+      "secret": "mirror-icebore-mouth",
+      "name": "The Ice-Bore Mouth",
+      "label": "A crack in the ice, wider than it looks, and warm air rising from it.",
+      "prop": "ice_crack",
+      "key": "",
+      "destinationMap": "whitehorn_range_secrets",
+      "destinationSpawn": "horn-icebore-far",
+      "position": [
+        60.82,
+        64.86,
+        -176.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        235,
+        350
+      ]
     }
   ],
   "npcMarkers": [
@@ -2461,27 +2769,27 @@
     }
   ],
   "performance": {
-    "nodes": 2451,
-    "meshes": 237,
-    "materials": 46,
-    "images": 100,
-    "textures": 100,
-    "accessors": 959,
-    "bufferViews": 1059,
-    "uniqueTriangles": 354106,
-    "uniqueVertices": 227962,
-    "glbBytes": 21548536,
-    "instancedTriangles": 1314918,
-    "embeddedTextureBytes": 10886785,
-    "textureMemoryBytesUncompressed": 95944704,
-    "placements": 1941,
+    "nodes": 2488,
+    "meshes": 263,
+    "materials": 49,
+    "images": 109,
+    "textures": 109,
+    "accessors": 1063,
+    "bufferViews": 1172,
+    "uniqueTriangles": 356238,
+    "uniqueVertices": 230872,
+    "glbBytes": 22752296,
+    "instancedTriangles": 1317050,
+    "embeddedTextureBytes": 11952779,
+    "textureMemoryBytesUncompressed": 102432768,
+    "placements": 1955,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 616653,
-      "blockedCells": 710451,
-      "walkableFraction": 0.4647,
+      "walkableCells": 616526,
+      "blockedCells": 710578,
+      "walkableFraction": 0.4646,
       "elevatedDecks": 24,
       "steepCells": 529539,
       "reliefMetres": 244.34,
@@ -2509,11 +2817,11 @@
       "march lake-quay: 0 road pieces, 0 of crownwater's growth"
     ],
     "lod2": {
-      "glbBytes": 12381412,
-      "nodes": 2379,
-      "uniqueTriangles": 326788,
-      "instancedTriangles": 961284,
-      "sizeReductionPercent": 42.5,
+      "glbBytes": 12662852,
+      "nodes": 2416,
+      "uniqueTriangles": 328920,
+      "instancedTriangles": 963416,
+      "sizeReductionPercent": 44.3,
       "triangleReductionPercent": 26.9
     }
   },

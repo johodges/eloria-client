@@ -31,6 +31,7 @@ extends Control
 # Godot's global class-name cache -- that cache is a build artifact and is
 # stale in a working copy until the editor next scans the project.
 const InteriorCutawayScript := preload("res://src/world/interior_cutaway.gd")
+const SecretSectionsScript := preload("res://src/world/secret_sections.gd")
 const OccluderFadeScript := preload("res://src/world/occluder_fade.gd")
 const InvasionAssistantScript := preload("res://src/ui/invasion_assistant.gd")
 const ExtensionWindowsScript := preload("res://src/ui/extension_windows.gd")
@@ -47,6 +48,10 @@ const SettingsWindowScript := preload("res://src/ui/settings_window.gd")
 const ReferenceWindowScript := preload("res://src/ui/reference_window.gd")
 const ActiveBuffBarScript := preload("res://src/ui/active_buff_bar.gd")
 var interior_cutaway: RefCounted = InteriorCutawayScript.new()
+## On a secrets map, only the secret the player stands in is drawn; the rest
+## of the map (and so the minimap and full map, which render the same world)
+## stays black.
+var secret_sections: RefCounted = SecretSectionsScript.new()
 var occluder_fade: RefCounted = OccluderFadeScript.new()
 var invasion_assistant_window
 var extension_windows: Control
@@ -1058,6 +1063,7 @@ func _process(delta: float) -> void:
 		if weather_layer != null:
 			weather_layer.follow(camera_rig.global_position)
 		interior_cutaway.update(camera_rig.yaw_degrees)
+		_update_secret_sections()
 		_update_occluder_fade(delta)
 		_update_keyboard_movement()
 		_update_session_distance()
@@ -3459,6 +3465,7 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	map_title.text = _current_map_display_name.to_upper()
 	current_map_button.text = "Current: " + _current_map_display_name
 	_configure_interior_cutaway(manifest)
+	_configure_secret_sections(manifest)
 	_configure_occluder_fade(manifest)
 	_configure_full_map(manifest)
 	_request_map_redraw()
@@ -4365,6 +4372,27 @@ func _update_occluder_fade(delta: float) -> void:
 ## Interiors are closed boxes, so the isometric rig would render their ceiling
 ## and near wall. The manifest names the nodes to cut away; maps without a
 ## `cutaway` block (the city) are left exactly as loaded.
+## A secrets map declares `secret: true` and its sections; everything that is
+## not the player's section is hidden, which is what keeps the rest of the
+## map off the viewport, the minimap and the full map.
+func _configure_secret_sections(manifest: WorldManifest) -> void:
+	var count: int = secret_sections.call("configure", manifest, world_root)
+	if count > 0:
+		_update_secret_sections(true)
+
+
+func _update_secret_sections(force: bool = false) -> void:
+	if not bool(secret_sections.call("is_active")):
+		return
+	var local_actor_node: Node3D = actor_nodes.get(AppState.local_actor_id) as Node3D
+	if local_actor_node == null:
+		return
+	secret_sections.call("update", local_actor_node.global_position, force)
+	# whoever and whatever stands in another secret stays unseen
+	secret_sections.call("cull_dynamic", actor_nodes.values(), local_actor_node)
+	secret_sections.call("cull_dynamic", map_object_nodes.values())
+
+
 func _configure_interior_cutaway(manifest: WorldManifest) -> void:
 	var count: int = interior_cutaway.configure(manifest, world_root)
 	if count > 0:

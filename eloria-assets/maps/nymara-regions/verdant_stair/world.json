@@ -646,6 +646,19 @@
       "Ruin_stone_ring_06",
       "Ruin_stone_ring_07",
       "Ruin_stone_ring_08",
+      "Secret_stair_cenote_hollow",
+      "Secret_stair_cenote_well",
+      "Secret_stair_culvert",
+      "Secret_stair_hanging_garden",
+      "Secret_stair_house_school",
+      "Secret_stair_lookout_butts",
+      "Secret_stair_quarry_pit",
+      "Secret_stair_ridge_reliquary",
+      "Secret_stair_summit_eyrie",
+      "Secret_stair_sun_focus",
+      "Secret_stair_temple_vault",
+      "Secret_stair_water_spring",
+      "Secret_stair_waystone",
       "Tree_000_001",
       "Tree_000_002",
       "Tree_000_003",
@@ -2580,8 +2593,8 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 973953,
-    "walkableFraction": 0.7339
+    "walkableCells": 973835,
+    "walkableFraction": 0.7338
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -3331,6 +3344,279 @@
     }
   ],
   "interactives": [
+    {
+      "id": "secret-stair-cenote-hollow",
+      "kind": "secret",
+      "secret": "stair-cenote-hollow",
+      "name": "The Cenote Hollow",
+      "label": "An arch so grown with vine it reads as hedge.",
+      "prop": "ivy_arch",
+      "key": "",
+      "destinationMap": "verdant_stair_secrets",
+      "destinationSpawn": "stair-cenote-hollow",
+      "position": [
+        19.42,
+        44.86,
+        -66.51
+      ],
+      "authority": "server",
+      "serverTile": [
+        193,
+        241
+      ]
+    },
+    {
+      "id": "secret-stair-hanging-garden",
+      "kind": "secret",
+      "secret": "stair-hanging-garden",
+      "name": "The Under-Garden",
+      "label": "An arch so grown with vine it reads as hedge.",
+      "prop": "ivy_arch",
+      "key": "",
+      "destinationMap": "verdant_stair_secrets",
+      "destinationSpawn": "stair-hanging-garden",
+      "position": [
+        205.0,
+        71.03,
+        -19.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        379,
+        193
+      ]
+    },
+    {
+      "id": "secret-stair-temple-vault",
+      "kind": "secret",
+      "secret": "stair-temple-vault",
+      "name": "The Great Temple Vault",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Storage Token",
+      "destinationMap": "verdant_stair_secrets",
+      "destinationSpawn": "stair-temple-vault",
+      "position": [
+        239.0,
+        99.13,
+        -215.98
+      ],
+      "authority": "server",
+      "serverTile": [
+        413,
+        390
+      ]
+    },
+    {
+      "id": "secret-stair-quarry-pit",
+      "kind": "secret",
+      "secret": "stair-quarry-pit",
+      "name": "The Quarry Pit",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "prop": "loose_stone",
+      "key": "",
+      "destinationMap": "verdant_stair_secrets",
+      "destinationSpawn": "stair-quarry-pit",
+      "position": [
+        344.0,
+        127.12,
+        -157.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        518,
+        331
+      ]
+    },
+    {
+      "id": "secret-stair-house-school",
+      "kind": "secret",
+      "secret": "stair-house-school",
+      "name": "The Stair-House School",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "",
+      "destinationMap": "verdant_stair_secrets",
+      "destinationSpawn": "stair-house-school",
+      "position": [
+        30.79,
+        23.51,
+        -0.5
+      ],
+      "authority": "server",
+      "serverTile": [
+        205,
+        174
+      ]
+    },
+    {
+      "id": "secret-stair-water-spring",
+      "kind": "secret",
+      "secret": "stair-water-spring",
+      "name": "The Water Shrine Spring",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "prop": "loose_stone",
+      "key": "",
+      "destinationMap": "verdant_stair_secrets",
+      "destinationSpawn": "stair-water-spring",
+      "position": [
+        93.61,
+        72.31,
+        -136.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        268,
+        310
+      ]
+    },
+    {
+      "id": "secret-stair-lookout-butts",
+      "kind": "secret",
+      "secret": "stair-lookout-butts",
+      "name": "The East Lookout Butts",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "verdant_stair_secrets",
+      "destinationSpawn": "stair-lookout-butts",
+      "position": [
+        74.0,
+        46.86,
+        -91.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        248,
+        265
+      ]
+    },
+    {
+      "id": "secret-stair-ridge-reliquary",
+      "kind": "secret",
+      "secret": "stair-ridge-reliquary",
+      "name": "The Ridge Shrine Reliquary",
+      "label": "A shrine slab with fresh scratches where it has been slid aside.",
+      "prop": "shrine_slab",
+      "key": "Bright Feather",
+      "destinationMap": "verdant_stair_secrets",
+      "destinationSpawn": "stair-ridge-reliquary",
+      "position": [
+        332.39,
+        124.18,
+        -202.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        506,
+        376
+      ]
+    },
+    {
+      "id": "secret-stair-cenote-well",
+      "kind": "secret",
+      "secret": "stair-cenote-well",
+      "name": "The Cenote Well",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "prop": "loose_stone",
+      "key": "",
+      "destinationMap": "verdant_stair_secrets",
+      "destinationSpawn": "stair-cenote-well",
+      "position": [
+        -16.58,
+        40.87,
+        -124.29
+      ],
+      "authority": "server",
+      "serverTile": [
+        157,
+        298
+      ]
+    },
+    {
+      "id": "secret-stair-sun-focus",
+      "kind": "secret",
+      "secret": "stair-sun-focus",
+      "name": "The Sun Pavilion Focus",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Iron Rune",
+      "destinationMap": "verdant_stair_secrets",
+      "destinationSpawn": "stair-sun-focus",
+      "position": [
+        206.39,
+        99.06,
+        -244.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        380,
+        418
+      ]
+    },
+    {
+      "id": "secret-stair-culvert",
+      "kind": "secret",
+      "secret": "stair-culvert",
+      "name": "The Culvert",
+      "label": "An arch so grown with vine it reads as hedge.",
+      "prop": "ivy_arch",
+      "key": "",
+      "destinationMap": "verdant_stair_secrets",
+      "destinationSpawn": "stair-culvert",
+      "position": [
+        312.5,
+        124.76,
+        -265.4
+      ],
+      "authority": "server",
+      "serverTile": [
+        486,
+        439
+      ]
+    },
+    {
+      "id": "secret-stair-waystone",
+      "kind": "secret",
+      "secret": "stair-waystone",
+      "name": "The Stair Waystone",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Iron Rune",
+      "destinationMap": "verdant_stair_secrets",
+      "destinationSpawn": "stair-waystone",
+      "position": [
+        178.0,
+        72.45,
+        -76.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        352,
+        250
+      ]
+    },
+    {
+      "id": "secret-stair-summit-eyrie",
+      "kind": "secret",
+      "secret": "stair-summit-eyrie",
+      "name": "The Summit Eyrie",
+      "label": "An arch so grown with vine it reads as hedge.",
+      "prop": "ivy_arch",
+      "key": "",
+      "destinationMap": "verdant_stair_secrets",
+      "destinationSpawn": "stair-summit-eyrie",
+      "position": [
+        251.0,
+        123.51,
+        -310.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        425,
+        484
+      ]
+    },
     {
       "id": "portal-12",
       "type": "portal",
@@ -5958,26 +6244,26 @@
     }
   ],
   "performance": {
-    "nodes": 15471,
-    "meshes": 391,
-    "materials": 43,
-    "images": 97,
-    "textures": 97,
-    "accessors": 1574,
-    "bufferViews": 1671,
-    "uniqueTriangles": 561791,
-    "uniqueVertices": 404105,
-    "glbBytes": 29642680,
-    "instancedTriangles": 2805889,
-    "embeddedTextureBytes": 9154475,
-    "placements": 10164,
+    "nodes": 15505,
+    "meshes": 415,
+    "materials": 45,
+    "images": 103,
+    "textures": 103,
+    "accessors": 1670,
+    "bufferViews": 1773,
+    "uniqueTriangles": 563399,
+    "uniqueVertices": 405629,
+    "glbBytes": 30365684,
+    "instancedTriangles": 2807497,
+    "embeddedTextureBytes": 9789983,
+    "placements": 10177,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 973953,
-      "blockedCells": 353151,
-      "walkableFraction": 0.7339,
+      "walkableCells": 973835,
+      "blockedCells": 353269,
+      "walkableFraction": 0.7338,
       "elevatedDecks": 79,
       "steepCells": 146497,
       "reliefMetres": 128.19,
@@ -6016,11 +6302,11 @@
     ],
     "trianglesPerSquareMetre": 8.49,
     "lod2": {
-      "glbBytes": 18241504,
-      "nodes": 3699,
-      "uniqueTriangles": 498073,
-      "instancedTriangles": 1110689,
-      "sizeReductionPercent": 38.5,
+      "glbBytes": 18415888,
+      "nodes": 3733,
+      "uniqueTriangles": 499681,
+      "instancedTriangles": 1112297,
+      "sizeReductionPercent": 39.4,
       "triangleReductionPercent": 60.4
     }
   },

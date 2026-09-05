@@ -431,7 +431,20 @@
       "March_west_road_turf_rock_006",
       "March_west_road_turf_rock_007",
       "March_west_road_turf_rock_008",
-      "March_west_road_turf_rock_009"
+      "March_west_road_turf_rock_009",
+      "Secret_barrens_beetle_pit",
+      "Secret_barrens_bridge_butts",
+      "Secret_barrens_cave_eyrie",
+      "Secret_barrens_geode_hollow",
+      "Secret_barrens_massif_reliquary",
+      "Secret_barrens_observatory_vault",
+      "Secret_barrens_resonance_spring",
+      "Secret_barrens_sap",
+      "Secret_barrens_shard_garden",
+      "Secret_barrens_station_cache",
+      "Secret_barrens_storm_well",
+      "Secret_barrens_tower_school",
+      "Secret_barrens_waystone"
     ],
     "binary": "collision.bin",
     "format": "EWCG-v2",
@@ -448,8 +461,8 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 1052458,
-    "walkableFraction": 0.793,
+    "walkableCells": 1052325,
+    "walkableFraction": 0.7929,
     "saturatedCells": 5
   },
   "navigation": {
@@ -1174,6 +1187,279 @@
         102.0
       ],
       "authority": "server"
+    },
+    {
+      "id": "secret-barrens-geode-hollow",
+      "kind": "secret",
+      "secret": "barrens-geode-hollow",
+      "name": "The Geode Hollow",
+      "label": "A seam of crystal that hums at a touch; the rock behind it is thin.",
+      "prop": "crystal_seam",
+      "key": "",
+      "destinationMap": "amethyst_barrens_secrets",
+      "destinationSpawn": "barrens-geode-hollow",
+      "position": [
+        331.0,
+        6.36,
+        -96.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        505,
+        270
+      ]
+    },
+    {
+      "id": "secret-barrens-shard-garden",
+      "kind": "secret",
+      "secret": "barrens-shard-garden",
+      "name": "The Shard Garden",
+      "label": "A seam of crystal that hums at a touch; the rock behind it is thin.",
+      "prop": "crystal_seam",
+      "key": "",
+      "destinationMap": "amethyst_barrens_secrets",
+      "destinationSpawn": "barrens-shard-garden",
+      "position": [
+        157.2,
+        5.96,
+        101.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        331,
+        73
+      ]
+    },
+    {
+      "id": "secret-barrens-station-cache",
+      "kind": "secret",
+      "secret": "barrens-station-cache",
+      "name": "The Field Station Cache",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "amethyst_barrens_secrets",
+      "destinationSpawn": "barrens-station-cache",
+      "position": [
+        172.39,
+        5.97,
+        -132.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        346,
+        306
+      ]
+    },
+    {
+      "id": "secret-barrens-observatory-vault",
+      "kind": "secret",
+      "secret": "barrens-observatory-vault",
+      "name": "The Observatory Vault",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Storage Token",
+      "destinationMap": "amethyst_barrens_secrets",
+      "destinationSpawn": "barrens-observatory-vault",
+      "position": [
+        -49.0,
+        8.08,
+        -196.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        125,
+        370
+      ]
+    },
+    {
+      "id": "secret-barrens-beetle-pit",
+      "kind": "secret",
+      "secret": "barrens-beetle-pit",
+      "name": "The Beetle Pit",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "prop": "loose_stone",
+      "key": "",
+      "destinationMap": "amethyst_barrens_secrets",
+      "destinationSpawn": "barrens-beetle-pit",
+      "position": [
+        218.5,
+        4.66,
+        -186.99
+      ],
+      "authority": "server",
+      "serverTile": [
+        392,
+        361
+      ]
+    },
+    {
+      "id": "secret-barrens-tower-school",
+      "kind": "secret",
+      "secret": "barrens-tower-school",
+      "name": "The Tower School",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "",
+      "destinationMap": "amethyst_barrens_secrets",
+      "destinationSpawn": "barrens-tower-school",
+      "position": [
+        110.0,
+        7.9,
+        144.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        284,
+        30
+      ]
+    },
+    {
+      "id": "secret-barrens-resonance-spring",
+      "kind": "secret",
+      "secret": "barrens-resonance-spring",
+      "name": "The Resonance Spring",
+      "label": "A seam of crystal that hums at a touch; the rock behind it is thin.",
+      "prop": "crystal_seam",
+      "key": "",
+      "destinationMap": "amethyst_barrens_secrets",
+      "destinationSpawn": "barrens-resonance-spring",
+      "position": [
+        306.0,
+        8.79,
+        114.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        480,
+        60
+      ]
+    },
+    {
+      "id": "secret-barrens-bridge-butts",
+      "kind": "secret",
+      "secret": "barrens-bridge-butts",
+      "name": "The Bridge Butts",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "amethyst_barrens_secrets",
+      "destinationSpawn": "barrens-bridge-butts",
+      "position": [
+        277.0,
+        5.55,
+        32.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        451,
+        142
+      ]
+    },
+    {
+      "id": "secret-barrens-massif-reliquary",
+      "kind": "secret",
+      "secret": "barrens-massif-reliquary",
+      "name": "The Massif Reliquary",
+      "label": "A shrine slab with fresh scratches where it has been slid aside.",
+      "prop": "shrine_slab",
+      "key": "Resonant Crystal",
+      "destinationMap": "amethyst_barrens_secrets",
+      "destinationSpawn": "barrens-massif-reliquary",
+      "position": [
+        180.0,
+        48.39,
+        -320.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        354,
+        494
+      ]
+    },
+    {
+      "id": "secret-barrens-storm-well",
+      "kind": "secret",
+      "secret": "barrens-storm-well",
+      "name": "The Storm Well",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "",
+      "destinationMap": "amethyst_barrens_secrets",
+      "destinationSpawn": "barrens-storm-well",
+      "position": [
+        98.0,
+        6.6,
+        80.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        272,
+        94
+      ]
+    },
+    {
+      "id": "secret-barrens-sap",
+      "kind": "secret",
+      "secret": "barrens-sap",
+      "name": "The Sap",
+      "label": "A sink in the sand that never fills.",
+      "prop": "sand_sink",
+      "key": "",
+      "destinationMap": "amethyst_barrens_secrets",
+      "destinationSpawn": "barrens-sap",
+      "position": [
+        80.6,
+        6.73,
+        79.5
+      ],
+      "authority": "server",
+      "serverTile": [
+        255,
+        94
+      ]
+    },
+    {
+      "id": "secret-barrens-waystone",
+      "kind": "secret",
+      "secret": "barrens-waystone",
+      "name": "The Barrens Waystone",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Iron Rune",
+      "destinationMap": "amethyst_barrens_secrets",
+      "destinationSpawn": "barrens-waystone",
+      "position": [
+        68.0,
+        5.88,
+        56.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        242,
+        118
+      ]
+    },
+    {
+      "id": "secret-barrens-cave-eyrie",
+      "kind": "secret",
+      "secret": "barrens-cave-eyrie",
+      "name": "The Geode Eyrie",
+      "label": "A seam of crystal that hums at a touch; the rock behind it is thin.",
+      "prop": "crystal_seam",
+      "key": "",
+      "destinationMap": "amethyst_barrens_secrets",
+      "destinationSpawn": "barrens-cave-eyrie",
+      "position": [
+        60.6,
+        6.98,
+        106.5
+      ],
+      "authority": "server",
+      "serverTile": [
+        235,
+        68
+      ]
     }
   ],
   "npcMarkers": [
@@ -3128,27 +3414,27 @@
     }
   ],
   "performance": {
-    "nodes": 1144,
-    "meshes": 364,
-    "materials": 35,
-    "images": 75,
-    "textures": 75,
-    "accessors": 1466,
-    "bufferViews": 1541,
-    "uniqueTriangles": 481982,
-    "uniqueVertices": 421837,
-    "glbBytes": 25794008,
-    "instancedTriangles": 650046,
-    "embeddedTextureBytes": 8370809,
-    "textureMemoryBytesUncompressed": 69992448,
-    "placements": 587,
+    "nodes": 1182,
+    "meshes": 390,
+    "materials": 39,
+    "images": 87,
+    "textures": 87,
+    "accessors": 1570,
+    "bufferViews": 1657,
+    "uniqueTriangles": 484918,
+    "uniqueVertices": 428381,
+    "glbBytes": 27316096,
+    "instancedTriangles": 652982,
+    "embeddedTextureBytes": 9633001,
+    "textureMemoryBytesUncompressed": 77266944,
+    "placements": 600,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 1052458,
-      "blockedCells": 274646,
-      "walkableFraction": 0.793,
+      "walkableCells": 1052325,
+      "blockedCells": 274779,
+      "walkableFraction": 0.7929,
       "elevatedDecks": 19,
       "steepCells": 178184,
       "reliefMetres": 58.49,
@@ -3186,10 +3472,10 @@
       "measure-house-door moved 3.6 m onto walkable ground"
     ],
     "lod2": {
-      "glbBytes": 17856880,
-      "nodes": 510,
-      "uniqueTriangles": 451672,
-      "instancedTriangles": 468776
+      "glbBytes": 18322544,
+      "nodes": 548,
+      "uniqueTriangles": 454608,
+      "instancedTriangles": 471712
     }
   },
   "sources": [

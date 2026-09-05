@@ -182,6 +182,10 @@ func _add_ring() -> void:
 	add_child(ring)
 
 func _add_map_marker() -> void:
+	# A secret's entrance is found by looking, not by reading the map: it gets
+	# its pick ring and nothing on either map.
+	if label == "Secret":
+		return
 	# Sized for the map cameras, not the world: 0.6 metres was a third of a
 	# pixel on the full map.
 	var map_marker: MeshInstance3D = MapMarkerDisc.build(

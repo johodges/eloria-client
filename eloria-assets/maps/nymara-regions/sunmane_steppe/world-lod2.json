@@ -244,6 +244,20 @@
       "Landmark_sunmane_outpost_05",
       "Landmark_sunmane_outpost_06",
       "Landmark_sunmane_outpost_07",
+      "Landmark_sunmane_secret_steppe-banner-focus",
+      "Landmark_sunmane_secret_steppe-barrow-reliquary",
+      "Landmark_sunmane_secret_steppe-caravan-school",
+      "Landmark_sunmane_secret_steppe-dune-eyrie",
+      "Landmark_sunmane_secret_steppe-fox-pit",
+      "Landmark_sunmane_secret_steppe-hall-vault",
+      "Landmark_sunmane_secret_steppe-mill-cache",
+      "Landmark_sunmane_secret_steppe-outpost-butts",
+      "Landmark_sunmane_secret_steppe-sap-mouth",
+      "Landmark_sunmane_secret_steppe-seed-hollow",
+      "Landmark_sunmane_secret_steppe-spring",
+      "Landmark_sunmane_secret_steppe-standing-well",
+      "Landmark_sunmane_secret_steppe-waystone",
+      "Landmark_sunmane_secret_steppe-well-garden",
       "Landmark_sunmane_spire_00",
       "Landmark_sunmane_spire_01",
       "Landmark_sunmane_spire_02",
@@ -1607,6 +1621,230 @@
       ],
       "reachable": true,
       "rotationDegrees": 0.0
+    },
+    {
+      "id": "Landmark_sunmane_secret_steppe-seed-hollow",
+      "kind": "secret",
+      "node": "Landmark_sunmane_secret_steppe-seed-hollow",
+      "position": [
+        -46.0,
+        9.27,
+        -74.0
+      ],
+      "serverTile": [
+        12,
+        132
+      ],
+      "reachable": true,
+      "rotationDegrees": 0.0
+    },
+    {
+      "id": "Landmark_sunmane_secret_steppe-well-garden",
+      "kind": "secret",
+      "node": "Landmark_sunmane_secret_steppe-well-garden",
+      "position": [
+        -33.0,
+        11.12,
+        24.0
+      ],
+      "serverTile": [
+        25,
+        34
+      ],
+      "reachable": true,
+      "rotationDegrees": 108.9
+    },
+    {
+      "id": "Landmark_sunmane_secret_steppe-mill-cache",
+      "kind": "secret",
+      "node": "Landmark_sunmane_secret_steppe-mill-cache",
+      "position": [
+        44.0,
+        9.1,
+        44.0
+      ],
+      "serverTile": [
+        102,
+        14
+      ],
+      "reachable": true,
+      "rotationDegrees": 217.7
+    },
+    {
+      "id": "Landmark_sunmane_secret_steppe-hall-vault",
+      "kind": "secret",
+      "node": "Landmark_sunmane_secret_steppe-hall-vault",
+      "position": [
+        -12.0,
+        6.86,
+        -20.0
+      ],
+      "serverTile": [
+        46,
+        78
+      ],
+      "reachable": true,
+      "rotationDegrees": 326.6
+    },
+    {
+      "id": "Landmark_sunmane_secret_steppe-fox-pit",
+      "kind": "secret",
+      "node": "Landmark_sunmane_secret_steppe-fox-pit",
+      "position": [
+        64.0,
+        19.63,
+        -58.0
+      ],
+      "serverTile": [
+        122,
+        116
+      ],
+      "reachable": true,
+      "rotationDegrees": 75.4
+    },
+    {
+      "id": "Landmark_sunmane_secret_steppe-caravan-school",
+      "kind": "secret",
+      "node": "Landmark_sunmane_secret_steppe-caravan-school",
+      "position": [
+        -48.0,
+        10.15,
+        12.0
+      ],
+      "serverTile": [
+        10,
+        46
+      ],
+      "reachable": true,
+      "rotationDegrees": 184.3
+    },
+    {
+      "id": "Landmark_sunmane_secret_steppe-spring",
+      "kind": "secret",
+      "node": "Landmark_sunmane_secret_steppe-spring",
+      "position": [
+        20.0,
+        11.27,
+        52.0
+      ],
+      "serverTile": [
+        78,
+        6
+      ],
+      "reachable": true,
+      "rotationDegrees": 293.2
+    },
+    {
+      "id": "Landmark_sunmane_secret_steppe-outpost-butts",
+      "kind": "secret",
+      "node": "Landmark_sunmane_secret_steppe-outpost-butts",
+      "position": [
+        -54.0,
+        12.68,
+        -54.0
+      ],
+      "serverTile": [
+        4,
+        112
+      ],
+      "reachable": true,
+      "rotationDegrees": 42.0
+    },
+    {
+      "id": "Landmark_sunmane_secret_steppe-barrow-reliquary",
+      "kind": "secret",
+      "node": "Landmark_sunmane_secret_steppe-barrow-reliquary",
+      "position": [
+        -12.0,
+        6.58,
+        -60.0
+      ],
+      "serverTile": [
+        46,
+        118
+      ],
+      "reachable": true,
+      "rotationDegrees": 150.9
+    },
+    {
+      "id": "Landmark_sunmane_secret_steppe-standing-well",
+      "kind": "secret",
+      "node": "Landmark_sunmane_secret_steppe-standing-well",
+      "position": [
+        -44.0,
+        8.92,
+        -30.0
+      ],
+      "serverTile": [
+        14,
+        88
+      ],
+      "reachable": true,
+      "rotationDegrees": 259.8
+    },
+    {
+      "id": "Landmark_sunmane_secret_steppe-banner-focus",
+      "kind": "secret",
+      "node": "Landmark_sunmane_secret_steppe-banner-focus",
+      "position": [
+        30.0,
+        13.41,
+        40.0
+      ],
+      "serverTile": [
+        88,
+        18
+      ],
+      "reachable": true,
+      "rotationDegrees": 8.6
+    },
+    {
+      "id": "Landmark_sunmane_secret_steppe-waystone",
+      "kind": "secret",
+      "node": "Landmark_sunmane_secret_steppe-waystone",
+      "position": [
+        70.0,
+        13.41,
+        -20.0
+      ],
+      "serverTile": [
+        128,
+        78
+      ],
+      "reachable": true,
+      "rotationDegrees": 117.5
+    },
+    {
+      "id": "Landmark_sunmane_secret_steppe-dune-eyrie",
+      "kind": "secret",
+      "node": "Landmark_sunmane_secret_steppe-dune-eyrie",
+      "position": [
+        4.0,
+        14.18,
+        -100.0
+      ],
+      "serverTile": [
+        62,
+        158
+      ],
+      "reachable": true,
+      "rotationDegrees": 226.3
+    },
+    {
+      "id": "Landmark_sunmane_secret_steppe-sap-mouth",
+      "kind": "secret",
+      "node": "Landmark_sunmane_secret_steppe-sap-mouth",
+      "position": [
+        16.0,
+        13.08,
+        -118.0
+      ],
+      "serverTile": [
+        74,
+        176
+      ],
+      "reachable": true,
+      "rotationDegrees": 335.2
     },
     {
       "id": "Landmark_sunmane_desert_station_00",
@@ -3040,6 +3278,300 @@
       "serverTile": [
         62,
         18
+      ]
+    },
+    {
+      "id": "secret-steppe-seed-hollow",
+      "kind": "secret",
+      "secret": "steppe-seed-hollow",
+      "name": "The Seed Hollow",
+      "label": "A sink in the sand that never fills.",
+      "prop": "sand_sink",
+      "key": "",
+      "destinationMap": "sunmane_steppe_secrets",
+      "destinationSpawn": "steppe-seed-hollow",
+      "node": "Landmark_sunmane_secret_steppe-seed-hollow",
+      "position": [
+        -46.0,
+        10.27,
+        -74.0
+      ],
+      "serverTile": [
+        12,
+        132
+      ]
+    },
+    {
+      "id": "secret-steppe-well-garden",
+      "kind": "secret",
+      "secret": "steppe-well-garden",
+      "name": "The Well Garden",
+      "label": "A dry well. Handholds have been cut into its shaft.",
+      "prop": "well_shaft",
+      "key": "",
+      "destinationMap": "sunmane_steppe_secrets",
+      "destinationSpawn": "steppe-well-garden",
+      "node": "Landmark_sunmane_secret_steppe-well-garden",
+      "position": [
+        -33.0,
+        12.12,
+        24.0
+      ],
+      "serverTile": [
+        25,
+        34
+      ]
+    },
+    {
+      "id": "secret-steppe-mill-cache",
+      "kind": "secret",
+      "secret": "steppe-mill-cache",
+      "name": "The Mill Cache",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "sunmane_steppe_secrets",
+      "destinationSpawn": "steppe-mill-cache",
+      "node": "Landmark_sunmane_secret_steppe-mill-cache",
+      "position": [
+        44.0,
+        10.1,
+        44.0
+      ],
+      "serverTile": [
+        102,
+        14
+      ]
+    },
+    {
+      "id": "secret-steppe-hall-vault",
+      "kind": "secret",
+      "secret": "steppe-hall-vault",
+      "name": "The Hall Vault",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Storage Token",
+      "destinationMap": "sunmane_steppe_secrets",
+      "destinationSpawn": "steppe-hall-vault",
+      "node": "Landmark_sunmane_secret_steppe-hall-vault",
+      "position": [
+        -12.0,
+        7.86,
+        -20.0
+      ],
+      "serverTile": [
+        46,
+        78
+      ]
+    },
+    {
+      "id": "secret-steppe-fox-pit",
+      "kind": "secret",
+      "secret": "steppe-fox-pit",
+      "name": "The Fox Pit",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "prop": "loose_stone",
+      "key": "",
+      "destinationMap": "sunmane_steppe_secrets",
+      "destinationSpawn": "steppe-fox-pit",
+      "node": "Landmark_sunmane_secret_steppe-fox-pit",
+      "position": [
+        64.0,
+        20.63,
+        -58.0
+      ],
+      "serverTile": [
+        122,
+        116
+      ]
+    },
+    {
+      "id": "secret-steppe-caravan-school",
+      "kind": "secret",
+      "secret": "steppe-caravan-school",
+      "name": "The Caravanserai School",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "sunmane_steppe_secrets",
+      "destinationSpawn": "steppe-caravan-school",
+      "node": "Landmark_sunmane_secret_steppe-caravan-school",
+      "position": [
+        -48.0,
+        11.15,
+        12.0
+      ],
+      "serverTile": [
+        10,
+        46
+      ]
+    },
+    {
+      "id": "secret-steppe-spring",
+      "kind": "secret",
+      "secret": "steppe-spring",
+      "name": "The Hidden Spring",
+      "label": "A sink in the sand that never fills.",
+      "prop": "sand_sink",
+      "key": "",
+      "destinationMap": "sunmane_steppe_secrets",
+      "destinationSpawn": "steppe-spring",
+      "node": "Landmark_sunmane_secret_steppe-spring",
+      "position": [
+        20.0,
+        12.27,
+        52.0
+      ],
+      "serverTile": [
+        78,
+        6
+      ]
+    },
+    {
+      "id": "secret-steppe-outpost-butts",
+      "kind": "secret",
+      "secret": "steppe-outpost-butts",
+      "name": "The Outpost Butts",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "sunmane_steppe_secrets",
+      "destinationSpawn": "steppe-outpost-butts",
+      "node": "Landmark_sunmane_secret_steppe-outpost-butts",
+      "position": [
+        -54.0,
+        13.68,
+        -54.0
+      ],
+      "serverTile": [
+        4,
+        112
+      ]
+    },
+    {
+      "id": "secret-steppe-barrow-reliquary",
+      "kind": "secret",
+      "secret": "steppe-barrow-reliquary",
+      "name": "The Barrow Reliquary",
+      "label": "A shrine slab with fresh scratches where it has been slid aside.",
+      "prop": "shrine_slab",
+      "key": "Bones",
+      "destinationMap": "sunmane_steppe_secrets",
+      "destinationSpawn": "steppe-barrow-reliquary",
+      "node": "Landmark_sunmane_secret_steppe-barrow-reliquary",
+      "position": [
+        -12.0,
+        7.58,
+        -60.0
+      ],
+      "serverTile": [
+        46,
+        118
+      ]
+    },
+    {
+      "id": "secret-steppe-standing-well",
+      "kind": "secret",
+      "secret": "steppe-standing-well",
+      "name": "The Standing Stone Well",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "prop": "loose_stone",
+      "key": "",
+      "destinationMap": "sunmane_steppe_secrets",
+      "destinationSpawn": "steppe-standing-well",
+      "node": "Landmark_sunmane_secret_steppe-standing-well",
+      "position": [
+        -44.0,
+        9.92,
+        -30.0
+      ],
+      "serverTile": [
+        14,
+        88
+      ]
+    },
+    {
+      "id": "secret-steppe-banner-focus",
+      "kind": "secret",
+      "secret": "steppe-banner-focus",
+      "name": "The Banner Focus",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Woven Charm",
+      "destinationMap": "sunmane_steppe_secrets",
+      "destinationSpawn": "steppe-banner-focus",
+      "node": "Landmark_sunmane_secret_steppe-banner-focus",
+      "position": [
+        30.0,
+        14.41,
+        40.0
+      ],
+      "serverTile": [
+        88,
+        18
+      ]
+    },
+    {
+      "id": "secret-steppe-waystone",
+      "kind": "secret",
+      "secret": "steppe-waystone",
+      "name": "The Steppe Waystone",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "prop": "loose_stone",
+      "key": "Iron Rune",
+      "destinationMap": "sunmane_steppe_secrets",
+      "destinationSpawn": "steppe-waystone",
+      "node": "Landmark_sunmane_secret_steppe-waystone",
+      "position": [
+        70.0,
+        14.41,
+        -20.0
+      ],
+      "serverTile": [
+        128,
+        78
+      ]
+    },
+    {
+      "id": "secret-steppe-dune-eyrie",
+      "kind": "secret",
+      "secret": "steppe-dune-eyrie",
+      "name": "The Dune Eyrie",
+      "label": "A cairn built over nothing, or over something.",
+      "prop": "cairn",
+      "key": "",
+      "destinationMap": "sunmane_steppe_secrets",
+      "destinationSpawn": "steppe-dune-eyrie",
+      "node": "Landmark_sunmane_secret_steppe-dune-eyrie",
+      "position": [
+        4.0,
+        15.18,
+        -100.0
+      ],
+      "serverTile": [
+        62,
+        158
+      ]
+    },
+    {
+      "id": "secret-steppe-sap-mouth",
+      "kind": "secret",
+      "secret": "steppe-sap-mouth",
+      "name": "The Sap Mouth",
+      "label": "A sink in the sand that never fills.",
+      "prop": "sand_sink",
+      "key": "",
+      "destinationMap": "amethyst_barrens_secrets",
+      "destinationSpawn": "barrens-sap-far",
+      "node": "Landmark_sunmane_secret_steppe-sap-mouth",
+      "position": [
+        16.0,
+        14.08,
+        -118.0
+      ],
+      "serverTile": [
+        74,
+        176
       ]
     },
     {
@@ -4755,21 +5287,21 @@
     "terrainChunks": 100,
     "seaTriangles": 452,
     "pondTriangles": 1174,
-    "kitAssets": 53,
-    "kitUniqueTriangles": 47679,
-    "instances": 196,
+    "kitAssets": 55,
+    "kitUniqueTriangles": 48455,
+    "instances": 210,
     "scatterTriangles": 0,
-    "landmarks": 106,
-    "interactives": 74,
-    "nodes": 316,
-    "meshes": 161,
+    "landmarks": 120,
+    "interactives": 88,
+    "nodes": 330,
+    "meshes": 163,
     "materials": 29,
     "textures": 30,
-    "accessors": 3192,
-    "uniqueMeshTriangles": 150137,
-    "glbBytes": 10019292,
+    "accessors": 3212,
+    "uniqueMeshTriangles": 150913,
+    "glbBytes": 10079016,
     "lod": 2,
     "textureScale": 0.5,
-    "buildSeconds": 6.0
+    "buildSeconds": 5.7
   }
 }

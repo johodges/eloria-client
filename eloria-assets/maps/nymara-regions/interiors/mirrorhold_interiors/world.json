@@ -352,6 +352,24 @@
       "id": "water-gate-bars",
       "label": "Water Gate Bars",
       "space": "cellars_water_gate"
+    },
+    {
+      "id": "secret-mirror-canal-cache",
+      "kind": "secret",
+      "secret": "mirror-canal-cache",
+      "name": "The Canal Cache",
+      "label": "An iron drain grate, its bolts drawn.",
+      "prop": "drain_grate",
+      "key": "",
+      "destinationMap": "mirrorhold_secrets",
+      "destinationSpawn": "mirror-canal-cache",
+      "position": [
+        179.15,
+        0.0,
+        49.05
+      ],
+      "space": "cistern_pump_gallery",
+      "authority": "server"
     }
   ],
   "npcMarkers": [
@@ -1030,9 +1048,9 @@
     "textures": 53,
     "accessors": 130,
     "bufferViews": 183,
-    "uniqueTriangles": 25022,
-    "uniqueVertices": 31642,
-    "glbBytes": 6915308,
+    "uniqueTriangles": 25094,
+    "uniqueVertices": 31786,
+    "glbBytes": 6962776,
     "nodeNames": [
       "Interior_mirrorhold_interiors",
       "Roof_mirrorhold_interiors_cliff_rock",

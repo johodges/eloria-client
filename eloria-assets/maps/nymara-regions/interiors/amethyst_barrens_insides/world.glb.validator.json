@@ -2,7 +2,7 @@
   "uri": "world.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-09-05T08:27:41.267876Z",
+  "validatedAt": "2026-09-05T10:33:24.345520Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,

@@ -267,6 +267,20 @@
       "March_south_landing_haven_rock_007",
       "March_west_landing_Station",
       "March_west_landing_Stone",
+      "Secret_delta_arch_focus",
+      "Secret_delta_banyan_eyrie",
+      "Secret_delta_bund_run",
+      "Secret_delta_crab_pit",
+      "Secret_delta_lotus_hollow",
+      "Secret_delta_moot_vault",
+      "Secret_delta_paddy_garden",
+      "Secret_delta_rootrun_mouth",
+      "Secret_delta_shrine_well",
+      "Secret_delta_stelae_reliquary",
+      "Secret_delta_study_school",
+      "Secret_delta_temple_spring",
+      "Secret_delta_watch_butts",
+      "Secret_delta_waystone",
       "boat_yard_house_00",
       "boat_yard_house_01",
       "boat_yard_house_02",
@@ -2194,8 +2208,8 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 395549,
-    "walkableFraction": 0.2981,
+    "walkableCells": 395380,
+    "walkableFraction": 0.2979,
     "swimmable": {
       "rule": "a cell whose grid value is 0 and whose terrain height is below asset.seaLevel is water, not wall",
       "cells": 850098,
@@ -2597,6 +2611,300 @@
         -258.0
       ],
       "authority": "server"
+    },
+    {
+      "id": "secret-delta-lotus-hollow",
+      "kind": "secret",
+      "secret": "delta-lotus-hollow",
+      "name": "The Lotus Hollow",
+      "label": "A hide of cut reeds, and a plank floor under it where there should be mud.",
+      "prop": "reed_hide",
+      "key": "",
+      "destinationMap": "manymouth_delta_secrets",
+      "destinationSpawn": "delta-lotus-hollow",
+      "position": [
+        119.0,
+        1.55,
+        -180.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        293,
+        354
+      ]
+    },
+    {
+      "id": "secret-delta-paddy-garden",
+      "kind": "secret",
+      "secret": "delta-paddy-garden",
+      "name": "The Paddy Garden",
+      "label": "A hide of cut reeds, and a plank floor under it where there should be mud.",
+      "prop": "reed_hide",
+      "key": "",
+      "destinationMap": "manymouth_delta_secrets",
+      "destinationSpawn": "delta-paddy-garden",
+      "position": [
+        -11.0,
+        1.91,
+        -252.41
+      ],
+      "authority": "server",
+      "serverTile": [
+        163,
+        426
+      ]
+    },
+    {
+      "id": "secret-delta-moot-vault",
+      "kind": "secret",
+      "secret": "delta-moot-vault",
+      "name": "The Moot Vault",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Storage Token",
+      "destinationMap": "manymouth_delta_secrets",
+      "destinationSpawn": "delta-moot-vault",
+      "position": [
+        40.0,
+        1.26,
+        -59.5
+      ],
+      "authority": "server",
+      "serverTile": [
+        214,
+        234
+      ]
+    },
+    {
+      "id": "secret-delta-crab-pit",
+      "kind": "secret",
+      "secret": "delta-crab-pit",
+      "name": "The Crab Pit",
+      "label": "A hide of cut reeds, and a plank floor under it where there should be mud.",
+      "prop": "reed_hide",
+      "key": "",
+      "destinationMap": "manymouth_delta_secrets",
+      "destinationSpawn": "delta-crab-pit",
+      "position": [
+        164.0,
+        1.98,
+        26.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        338,
+        148
+      ]
+    },
+    {
+      "id": "secret-delta-study-school",
+      "kind": "secret",
+      "secret": "delta-study-school",
+      "name": "The Deck Study School",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "manymouth_delta_secrets",
+      "destinationSpawn": "delta-study-school",
+      "position": [
+        100.63,
+        1.2,
+        -72.67
+      ],
+      "authority": "server",
+      "serverTile": [
+        275,
+        247
+      ]
+    },
+    {
+      "id": "secret-delta-temple-spring",
+      "kind": "secret",
+      "secret": "delta-temple-spring",
+      "name": "The Green Temple Spring",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "prop": "loose_stone",
+      "key": "",
+      "destinationMap": "manymouth_delta_secrets",
+      "destinationSpawn": "delta-temple-spring",
+      "position": [
+        287.0,
+        13.48,
+        -301.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        461,
+        475
+      ]
+    },
+    {
+      "id": "secret-delta-watch-butts",
+      "kind": "secret",
+      "secret": "delta-watch-butts",
+      "name": "The East Watch Butts",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "manymouth_delta_secrets",
+      "destinationSpawn": "delta-watch-butts",
+      "position": [
+        355.0,
+        3.02,
+        -28.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        529,
+        202
+      ]
+    },
+    {
+      "id": "secret-delta-stelae-reliquary",
+      "kind": "secret",
+      "secret": "delta-stelae-reliquary",
+      "name": "The Stelae Reliquary",
+      "label": "A shrine slab with fresh scratches where it has been slid aside.",
+      "prop": "shrine_slab",
+      "key": "Shorebank Shell",
+      "destinationMap": "manymouth_delta_secrets",
+      "destinationSpawn": "delta-stelae-reliquary",
+      "position": [
+        279.0,
+        1.41,
+        -220.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        453,
+        394
+      ]
+    },
+    {
+      "id": "secret-delta-shrine-well",
+      "kind": "secret",
+      "secret": "delta-shrine-well",
+      "name": "The South Shrine Well",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "",
+      "destinationMap": "manymouth_delta_secrets",
+      "destinationSpawn": "delta-shrine-well",
+      "position": [
+        80.0,
+        1.8,
+        131.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        254,
+        43
+      ]
+    },
+    {
+      "id": "secret-delta-arch-focus",
+      "kind": "secret",
+      "secret": "delta-arch-focus",
+      "name": "The Great Arch Focus",
+      "label": "A hide of cut reeds, and a plank floor under it where there should be mud.",
+      "prop": "reed_hide",
+      "key": "Iron Rune",
+      "destinationMap": "manymouth_delta_secrets",
+      "destinationSpawn": "delta-arch-focus",
+      "position": [
+        169.0,
+        1.12,
+        -106.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        343,
+        280
+      ]
+    },
+    {
+      "id": "secret-delta-bund-run",
+      "kind": "secret",
+      "secret": "delta-bund-run",
+      "name": "The Bund-Run",
+      "label": "A hide of cut reeds, and a plank floor under it where there should be mud.",
+      "prop": "reed_hide",
+      "key": "",
+      "destinationMap": "manymouth_delta_secrets",
+      "destinationSpawn": "delta-bund-run",
+      "position": [
+        -22.0,
+        1.75,
+        -284.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        152,
+        458
+      ]
+    },
+    {
+      "id": "secret-delta-waystone",
+      "kind": "secret",
+      "secret": "delta-waystone",
+      "name": "The Delta Waystone",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Iron Rune",
+      "destinationMap": "manymouth_delta_secrets",
+      "destinationSpawn": "delta-waystone",
+      "position": [
+        214.0,
+        9.64,
+        -23.7
+      ],
+      "authority": "server",
+      "serverTile": [
+        388,
+        198
+      ]
+    },
+    {
+      "id": "secret-delta-banyan-eyrie",
+      "kind": "secret",
+      "secret": "delta-banyan-eyrie",
+      "name": "The Banyan Eyrie",
+      "label": "An arch so grown with vine it reads as hedge.",
+      "prop": "ivy_arch",
+      "key": "",
+      "destinationMap": "manymouth_delta_secrets",
+      "destinationSpawn": "delta-banyan-eyrie",
+      "position": [
+        42.0,
+        1.23,
+        -196.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        216,
+        370
+      ]
+    },
+    {
+      "id": "secret-delta-rootrun-mouth",
+      "kind": "secret",
+      "secret": "delta-rootrun-mouth",
+      "name": "The Root-Run Mouth",
+      "label": "A knot of roots grown over a door frame.",
+      "prop": "root_door",
+      "key": "",
+      "destinationMap": "ssarathi_ruins_secrets",
+      "destinationSpawn": "ruins-rootrun-far",
+      "position": [
+        64.0,
+        0.8,
+        -229.18
+      ],
+      "authority": "server",
+      "serverTile": [
+        238,
+        403
+      ]
     }
   ],
   "npcMarkers": [
@@ -5110,31 +5418,31 @@
     }
   ],
   "performance": {
-    "nodes": 11806,
-    "meshes": 638,
-    "materials": 45,
-    "images": 95,
-    "textures": 95,
-    "accessors": 2562,
-    "bufferViews": 2657,
-    "uniqueTriangles": 510317,
-    "uniqueVertices": 429185,
-    "glbBytes": 31990980,
-    "instancedTriangles": 2471117,
+    "nodes": 11847,
+    "meshes": 666,
+    "materials": 49,
+    "images": 107,
+    "textures": 107,
+    "accessors": 2674,
+    "bufferViews": 2781,
+    "uniqueTriangles": 511709,
+    "uniqueVertices": 430821,
+    "glbBytes": 33190208,
+    "instancedTriangles": 2472509,
     "embeddedTextureBytes": 30622051,
     "textureMemoryBytesUncompressed": 262275072,
-    "placements": 6305,
+    "placements": 6319,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 395549,
+      "walkableCells": 395380,
       "swimmableCells": 850098,
       "swimmableFraction": 0.6406,
       "meanWaterDepth": 5.1,
       "maxWaterDepth": 24.56,
-      "blockedCells": 931555,
-      "walkableFraction": 0.2981,
+      "blockedCells": 931724,
+      "walkableFraction": 0.2979,
       "elevatedDecks": 203,
       "steepCells": 23079,
       "reliefMetres": 40.96,
@@ -5176,11 +5484,11 @@
       "march south-landing: 3 road pieces, 9 of westhaven's growth"
     ],
     "lod2": {
-      "glbBytes": 20821344,
-      "nodes": 7396,
-      "uniqueTriangles": 475137,
-      "instancedTriangles": 1579253,
-      "sizeReductionPercent": 34.9,
+      "glbBytes": 21104640,
+      "nodes": 7437,
+      "uniqueTriangles": 476529,
+      "instancedTriangles": 1580645,
+      "sizeReductionPercent": 36.4,
       "triangleReductionPercent": 36.1
     }
   },

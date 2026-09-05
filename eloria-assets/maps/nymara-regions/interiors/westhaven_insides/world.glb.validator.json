@@ -1,8 +1,8 @@
 {
-  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-continent\\eloria-assets\\maps\\nymara-regions\\interiors\\westhaven_insides\\world.glb",
+  "uri": "world.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-09-05T08:34:02.734658Z",
+  "validatedAt": "2026-09-05T10:34:17.763492Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,

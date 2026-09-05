@@ -239,6 +239,20 @@
       "Prop_waystone_014",
       "Prop_waystone_015",
       "Prop_waystone_016",
+      "Secret_horn_adit_mouth",
+      "Secret_horn_bridge_butts",
+      "Secret_horn_cairn_focus",
+      "Secret_horn_cairn_garden",
+      "Secret_horn_cascade_spring",
+      "Secret_horn_gate_cache",
+      "Secret_horn_ice_well",
+      "Secret_horn_icebore",
+      "Secret_horn_ram_pit",
+      "Secret_horn_shrine_school",
+      "Secret_horn_silver_hollow",
+      "Secret_horn_temple_eyrie",
+      "Secret_horn_temple_vault",
+      "Secret_horn_waystone",
       "Structure_watch_00",
       "Structure_watch_01",
       "Structure_watch_02",
@@ -1103,8 +1117,8 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 929809,
-    "walkableFraction": 0.7006
+    "walkableCells": 929599,
+    "walkableFraction": 0.7005
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -1418,6 +1432,300 @@
         -120.0
       ],
       "authority": "server"
+    },
+    {
+      "id": "secret-horn-silver-hollow",
+      "kind": "secret",
+      "secret": "horn-silver-hollow",
+      "name": "The Silverleaf Hollow",
+      "label": "A crack in the ice, wider than it looks, and warm air rising from it.",
+      "prop": "ice_crack",
+      "key": "",
+      "destinationMap": "whitehorn_range_secrets",
+      "destinationSpawn": "horn-silver-hollow",
+      "position": [
+        91.0,
+        37.59,
+        -166.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        265,
+        340
+      ]
+    },
+    {
+      "id": "secret-horn-cairn-garden",
+      "kind": "secret",
+      "secret": "horn-cairn-garden",
+      "name": "The Cairn Garden",
+      "label": "A cairn built over nothing, or over something.",
+      "prop": "cairn",
+      "key": "",
+      "destinationMap": "whitehorn_range_secrets",
+      "destinationSpawn": "horn-cairn-garden",
+      "position": [
+        31.0,
+        20.71,
+        52.2
+      ],
+      "authority": "server",
+      "serverTile": [
+        205,
+        122
+      ]
+    },
+    {
+      "id": "secret-horn-gate-cache",
+      "kind": "secret",
+      "secret": "horn-gate-cache",
+      "name": "The South Gate Cache",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "whitehorn_range_secrets",
+      "destinationSpawn": "horn-gate-cache",
+      "position": [
+        10.0,
+        22.25,
+        76.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        184,
+        98
+      ]
+    },
+    {
+      "id": "secret-horn-temple-vault",
+      "kind": "secret",
+      "secret": "horn-temple-vault",
+      "name": "The Glacier Temple Vault",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Storage Token",
+      "destinationMap": "whitehorn_range_secrets",
+      "destinationSpawn": "horn-temple-vault",
+      "position": [
+        149.0,
+        78.12,
+        -301.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        323,
+        475
+      ]
+    },
+    {
+      "id": "secret-horn-ram-pit",
+      "kind": "secret",
+      "secret": "horn-ram-pit",
+      "name": "The Ram Pit",
+      "label": "A crack in the ice, wider than it looks, and warm air rising from it.",
+      "prop": "ice_crack",
+      "key": "",
+      "destinationMap": "whitehorn_range_secrets",
+      "destinationSpawn": "horn-ram-pit",
+      "position": [
+        203.5,
+        42.15,
+        -78.26
+      ],
+      "authority": "server",
+      "serverTile": [
+        378,
+        252
+      ]
+    },
+    {
+      "id": "secret-horn-shrine-school",
+      "kind": "secret",
+      "secret": "horn-shrine-school",
+      "name": "The Snowline School",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "",
+      "destinationMap": "whitehorn_range_secrets",
+      "destinationSpawn": "horn-shrine-school",
+      "position": [
+        339.5,
+        53.23,
+        -176.21
+      ],
+      "authority": "server",
+      "serverTile": [
+        514,
+        350
+      ]
+    },
+    {
+      "id": "secret-horn-cascade-spring",
+      "kind": "secret",
+      "secret": "horn-cascade-spring",
+      "name": "The Cascade Spring",
+      "label": "A crack in the ice, wider than it looks, and warm air rising from it.",
+      "prop": "ice_crack",
+      "key": "",
+      "destinationMap": "whitehorn_range_secrets",
+      "destinationSpawn": "horn-cascade-spring",
+      "position": [
+        122.0,
+        47.49,
+        -214.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        296,
+        388
+      ]
+    },
+    {
+      "id": "secret-horn-bridge-butts",
+      "kind": "secret",
+      "secret": "horn-bridge-butts",
+      "name": "The Rope Bridge Butts",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "whitehorn_range_secrets",
+      "destinationSpawn": "horn-bridge-butts",
+      "position": [
+        67.75,
+        20.82,
+        -56.51
+      ],
+      "authority": "server",
+      "serverTile": [
+        242,
+        231
+      ]
+    },
+    {
+      "id": "secret-horn-ice-well",
+      "kind": "secret",
+      "secret": "horn-ice-well",
+      "name": "The Ice Well",
+      "label": "A crack in the ice, wider than it looks, and warm air rising from it.",
+      "prop": "ice_crack",
+      "key": "",
+      "destinationMap": "whitehorn_range_secrets",
+      "destinationSpawn": "horn-ice-well",
+      "position": [
+        -92.0,
+        30.43,
+        -34.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        82,
+        208
+      ]
+    },
+    {
+      "id": "secret-horn-cairn-focus",
+      "kind": "secret",
+      "secret": "horn-cairn-focus",
+      "name": "The Cairn Ridge Focus",
+      "label": "A cairn built over nothing, or over something.",
+      "prop": "cairn",
+      "key": "Iron Rune",
+      "destinationMap": "whitehorn_range_secrets",
+      "destinationSpawn": "horn-cairn-focus",
+      "position": [
+        -77.0,
+        60.77,
+        -178.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        97,
+        352
+      ]
+    },
+    {
+      "id": "secret-horn-icebore",
+      "kind": "secret",
+      "secret": "horn-icebore",
+      "name": "The Ice-Bore",
+      "label": "A crack in the ice, wider than it looks, and warm air rising from it.",
+      "prop": "ice_crack",
+      "key": "",
+      "destinationMap": "whitehorn_range_secrets",
+      "destinationSpawn": "horn-icebore",
+      "position": [
+        49.0,
+        82.09,
+        -349.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        223,
+        523
+      ]
+    },
+    {
+      "id": "secret-horn-waystone",
+      "kind": "secret",
+      "secret": "horn-waystone",
+      "name": "The Horn Waystone",
+      "label": "A cairn built over nothing, or over something.",
+      "prop": "cairn",
+      "key": "Iron Rune",
+      "destinationMap": "whitehorn_range_secrets",
+      "destinationSpawn": "horn-waystone",
+      "position": [
+        -113.0,
+        46.76,
+        -124.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        61,
+        298
+      ]
+    },
+    {
+      "id": "secret-horn-temple-eyrie",
+      "kind": "secret",
+      "secret": "horn-temple-eyrie",
+      "name": "The Temple Eyrie",
+      "label": "A crack in the ice, wider than it looks, and warm air rising from it.",
+      "prop": "ice_crack",
+      "key": "",
+      "destinationMap": "whitehorn_range_secrets",
+      "destinationSpawn": "horn-temple-eyrie",
+      "position": [
+        55.0,
+        79.25,
+        -317.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        229,
+        491
+      ]
+    },
+    {
+      "id": "secret-horn-adit-mouth",
+      "kind": "secret",
+      "secret": "horn-adit-mouth",
+      "name": "The Adit Mouth",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "prop": "loose_stone",
+      "key": "",
+      "destinationMap": "mirrorhold_secrets",
+      "destinationSpawn": "mirror-adit-far",
+      "position": [
+        259.5,
+        53.95,
+        -156.58
+      ],
+      "authority": "server",
+      "serverTile": [
+        434,
+        331
+      ]
     }
   ],
   "npcMarkers": [
@@ -2154,26 +2462,26 @@
   },
   "lodGroups": [],
   "performance": {
-    "nodes": 4689,
-    "meshes": 231,
-    "materials": 38,
-    "images": 83,
-    "textures": 83,
-    "accessors": 934,
-    "bufferViews": 1017,
-    "uniqueTriangles": 289080,
-    "uniqueVertices": 186204,
-    "glbBytes": 18935968,
-    "instancedTriangles": 749940,
-    "embeddedTextureBytes": 9210597,
-    "placements": 1958,
+    "nodes": 4723,
+    "meshes": 255,
+    "materials": 39,
+    "images": 86,
+    "textures": 86,
+    "accessors": 1030,
+    "bufferViews": 1116,
+    "uniqueTriangles": 291176,
+    "uniqueVertices": 189124,
+    "glbBytes": 19501176,
+    "instancedTriangles": 752036,
+    "embeddedTextureBytes": 9641083,
+    "placements": 1972,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 929809,
-      "blockedCells": 397295,
-      "walkableFraction": 0.7006,
+      "walkableCells": 929599,
+      "blockedCells": 397505,
+      "walkableFraction": 0.7005,
       "elevatedDecks": 4,
       "steepCells": 373970,
       "reliefMetres": 161.42,
@@ -2189,7 +2497,7 @@
       "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
       "columnOrder": "server-tile-x (column 0 is the -X western edge)"
     },
-    "trianglesPerSquareMetre": 2.26
+    "trianglesPerSquareMetre": 2.27
   },
   "sources": {
     "concept": "eloria-assets/concepts/nymara-regions/whitehorn_range_region_concept.png",

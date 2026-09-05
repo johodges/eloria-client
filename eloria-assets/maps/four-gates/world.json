@@ -631,6 +631,314 @@
       "node": "Gate_South_Outer_Portcullis",
       "initialState": "open",
       "animation": "Gate_South_Outer_Portcullis_OpenClose"
+    },
+    {
+      "id": "secret-gates-sunleaf-hollow",
+      "kind": "secret",
+      "secret": "gates-sunleaf-hollow",
+      "name": "The Sunleaf Hollow",
+      "label": "An iron drain grate, its bolts drawn.",
+      "prop": "drain_grate",
+      "key": "",
+      "destinationMap": "four_gates_secrets",
+      "destinationSpawn": "gates-sunleaf-hollow",
+      "position": [
+        120.0,
+        31.15,
+        60.0
+      ],
+      "serverTile": [
+        480,
+        300
+      ],
+      "authority": "server",
+      "note": "declared by tools/four_gates_secret_doors.py from the secrets design"
+    },
+    {
+      "id": "secret-gates-reedworks-garden",
+      "kind": "secret",
+      "secret": "gates-reedworks-garden",
+      "name": "The Reedworks Garden",
+      "label": "An iron drain grate, its bolts drawn.",
+      "prop": "drain_grate",
+      "key": "",
+      "destinationMap": "four_gates_secrets",
+      "destinationSpawn": "gates-reedworks-garden",
+      "position": [
+        -140.0,
+        31.15,
+        90.0
+      ],
+      "serverTile": [
+        220,
+        270
+      ],
+      "authority": "server",
+      "note": "declared by tools/four_gates_secret_doors.py from the secrets design"
+    },
+    {
+      "id": "secret-gates-lantern-cache",
+      "kind": "secret",
+      "secret": "gates-lantern-cache",
+      "name": "The Lantern Row Cache",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "four_gates_secrets",
+      "destinationSpawn": "gates-lantern-cache",
+      "position": [
+        60.0,
+        31.15,
+        -120.0
+      ],
+      "serverTile": [
+        420,
+        480
+      ],
+      "authority": "server",
+      "note": "declared by tools/four_gates_secret_doors.py from the secrets design"
+    },
+    {
+      "id": "secret-gates-deposit-vault",
+      "kind": "secret",
+      "secret": "gates-deposit-vault",
+      "name": "The Deposit Vault",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Storage Token",
+      "destinationMap": "four_gates_secrets",
+      "destinationSpawn": "gates-deposit-vault",
+      "position": [
+        -60.0,
+        31.15,
+        -60.0
+      ],
+      "serverTile": [
+        300,
+        420
+      ],
+      "authority": "server",
+      "note": "declared by tools/four_gates_secret_doors.py from the secrets design"
+    },
+    {
+      "id": "secret-gates-otter-pit",
+      "kind": "secret",
+      "secret": "gates-otter-pit",
+      "name": "The Otter Pit",
+      "label": "An iron drain grate, its bolts drawn.",
+      "prop": "drain_grate",
+      "key": "",
+      "destinationMap": "four_gates_secrets",
+      "destinationSpawn": "gates-otter-pit",
+      "position": [
+        200.0,
+        31.15,
+        200.0
+      ],
+      "serverTile": [
+        560,
+        160
+      ],
+      "authority": "server",
+      "note": "declared by tools/four_gates_secret_doors.py from the secrets design"
+    },
+    {
+      "id": "secret-gates-stormglass-school",
+      "kind": "secret",
+      "secret": "gates-stormglass-school",
+      "name": "The Stormglass School",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "",
+      "destinationMap": "four_gates_secrets",
+      "destinationSpawn": "gates-stormglass-school",
+      "position": [
+        -200.0,
+        31.15,
+        -140.0
+      ],
+      "serverTile": [
+        160,
+        500
+      ],
+      "authority": "server",
+      "note": "declared by tools/four_gates_secret_doors.py from the secrets design"
+    },
+    {
+      "id": "secret-gates-plaza-spring",
+      "kind": "secret",
+      "secret": "gates-plaza-spring",
+      "name": "The Plaza Spring",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "",
+      "destinationMap": "four_gates_secrets",
+      "destinationSpawn": "gates-plaza-spring",
+      "position": [
+        30.0,
+        31.15,
+        30.0
+      ],
+      "serverTile": [
+        390,
+        330
+      ],
+      "authority": "server",
+      "note": "declared by tools/four_gates_secret_doors.py from the secrets design"
+    },
+    {
+      "id": "secret-gates-ferry-butts",
+      "kind": "secret",
+      "secret": "gates-ferry-butts",
+      "name": "The Ferryman's Butts",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "four_gates_secrets",
+      "destinationSpawn": "gates-ferry-butts",
+      "position": [
+        -250.0,
+        31.15,
+        40.0
+      ],
+      "serverTile": [
+        110,
+        320
+      ],
+      "authority": "server",
+      "note": "declared by tools/four_gates_secret_doors.py from the secrets design"
+    },
+    {
+      "id": "secret-gates-sanctuary-reliquary",
+      "kind": "secret",
+      "secret": "gates-sanctuary-reliquary",
+      "name": "The Sanctuary Reliquary",
+      "label": "A shrine slab with fresh scratches where it has been slid aside.",
+      "prop": "shrine_slab",
+      "key": "Iron Rune",
+      "destinationMap": "four_gates_secrets",
+      "destinationSpawn": "gates-sanctuary-reliquary",
+      "position": [
+        14.0,
+        31.15,
+        -318.0
+      ],
+      "serverTile": [
+        374,
+        678
+      ],
+      "authority": "server",
+      "note": "declared by tools/four_gates_secret_doors.py from the secrets design"
+    },
+    {
+      "id": "secret-gates-mirrorsmith-well",
+      "kind": "secret",
+      "secret": "gates-mirrorsmith-well",
+      "name": "The Mirrorsmith's Well",
+      "label": "An iron drain grate, its bolts drawn.",
+      "prop": "drain_grate",
+      "key": "",
+      "destinationMap": "four_gates_secrets",
+      "destinationSpawn": "gates-mirrorsmith-well",
+      "position": [
+        180.0,
+        31.15,
+        -60.0
+      ],
+      "serverTile": [
+        540,
+        420
+      ],
+      "authority": "server",
+      "note": "declared by tools/four_gates_secret_doors.py from the secrets design"
+    },
+    {
+      "id": "secret-gates-civic-focus",
+      "kind": "secret",
+      "secret": "gates-civic-focus",
+      "name": "The Civic Focus",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Iron Rune",
+      "destinationMap": "four_gates_secrets",
+      "destinationSpawn": "gates-civic-focus",
+      "position": [
+        -30.0,
+        31.15,
+        60.0
+      ],
+      "serverTile": [
+        330,
+        300
+      ],
+      "authority": "server",
+      "note": "declared by tools/four_gates_secret_doors.py from the secrets design"
+    },
+    {
+      "id": "secret-gates-waystone",
+      "kind": "secret",
+      "secret": "gates-waystone",
+      "name": "The Gates Waystone",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Iron Rune",
+      "destinationMap": "four_gates_secrets",
+      "destinationSpawn": "gates-waystone",
+      "position": [
+        0.0,
+        31.15,
+        120.0
+      ],
+      "serverTile": [
+        360,
+        240
+      ],
+      "authority": "server",
+      "note": "declared by tools/four_gates_secret_doors.py from the secrets design"
+    },
+    {
+      "id": "secret-gates-wall-eyrie",
+      "kind": "secret",
+      "secret": "gates-wall-eyrie",
+      "name": "The Wall Eyrie",
+      "label": "An arch so grown with vine it reads as hedge.",
+      "prop": "ivy_arch",
+      "key": "",
+      "destinationMap": "four_gates_secrets",
+      "destinationSpawn": "gates-wall-eyrie",
+      "position": [
+        300.0,
+        31.15,
+        -200.0
+      ],
+      "serverTile": [
+        660,
+        560
+      ],
+      "authority": "server",
+      "note": "declared by tools/four_gates_secret_doors.py from the secrets design"
+    },
+    {
+      "id": "secret-gates-drain-mouth",
+      "kind": "secret",
+      "secret": "gates-drain-mouth",
+      "name": "The Drain Mouth",
+      "label": "An iron drain grate, its bolts drawn.",
+      "prop": "drain_grate",
+      "key": "",
+      "destinationMap": "crownwater_secrets",
+      "destinationSpawn": "crown-drain-far",
+      "position": [
+        -300.0,
+        31.15,
+        30.0
+      ],
+      "serverTile": [
+        60,
+        330
+      ],
+      "authority": "server",
+      "note": "declared by tools/four_gates_secret_doors.py from the secrets design"
     }
   ],
   "portals": [

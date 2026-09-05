@@ -1,0 +1,3569 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "four_gates_secrets",
+    "name": "Four Gates Secrets",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        18.0,
+        -5.4,
+        18.0
+      ],
+      "max": [
+        325.1,
+        8.25,
+        187.3
+      ]
+    },
+    "playableBounds": {
+      "min": [
+        18.0,
+        -5.4,
+        18.0
+      ],
+      "max": [
+        325.1,
+        3.0,
+        187.3
+      ]
+    },
+    "interiorClass": "secrets",
+    "parentRegion": "four_gates",
+    "serverCells": 384
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      -16.0,
+      190.0
+    ],
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 0.0,
+    "invertServerY": true
+  },
+  "secret": true,
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        102.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "gates-sunleaf-hollow"
+    },
+    {
+      "id": "gates-sunleaf-hollow",
+      "position": [
+        102.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "gates-sunleaf-hollow"
+    },
+    {
+      "id": "gates-reedworks-garden",
+      "position": [
+        173.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "gates-reedworks-garden"
+    },
+    {
+      "id": "gates-lantern-cache",
+      "position": [
+        25.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "gates-lantern-cache"
+    },
+    {
+      "id": "gates-deposit-vault",
+      "position": [
+        98.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "gates-deposit-vault"
+    },
+    {
+      "id": "gates-otter-pit",
+      "position": [
+        244.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "gates-otter-pit"
+    },
+    {
+      "id": "gates-stormglass-school",
+      "position": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "gates-stormglass-school"
+    },
+    {
+      "id": "gates-plaza-spring",
+      "position": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "gates-plaza-spring"
+    },
+    {
+      "id": "gates-ferry-butts",
+      "position": [
+        22.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "gates-ferry-butts"
+    },
+    {
+      "id": "gates-sanctuary-reliquary",
+      "position": [
+        313.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "gates-sanctuary-reliquary"
+    },
+    {
+      "id": "gates-mirrorsmith-well",
+      "position": [
+        315.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "gates-mirrorsmith-well"
+    },
+    {
+      "id": "gates-civic-focus",
+      "position": [
+        98.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "gates-civic-focus"
+    },
+    {
+      "id": "gates-waystone",
+      "position": [
+        27.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "gates-waystone"
+    },
+    {
+      "id": "gates-waystone-ring",
+      "position": [
+        26.04,
+        -4.0,
+        107.91
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "gates-waystone"
+    },
+    {
+      "id": "gates-waystone-ring",
+      "position": [
+        31.5,
+        -4.0,
+        109.68
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "gates-waystone"
+    },
+    {
+      "id": "gates-waystone-ring",
+      "position": [
+        31.5,
+        -4.0,
+        115.42
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "gates-waystone"
+    },
+    {
+      "id": "gates-waystone-ring",
+      "position": [
+        26.04,
+        -4.0,
+        117.19
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "gates-waystone"
+    },
+    {
+      "id": "gates-wall-eyrie",
+      "position": [
+        168.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "gates-wall-eyrie"
+    }
+  ],
+  "collision": {
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "width": 624,
+    "height": 348,
+    "cellMetres": 0.5,
+    "originMetres": [
+      16.0,
+      190.0
+    ],
+    "heightEncoding": {
+      "origin": -5.131,
+      "step": 0.1311,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true
+    },
+    "walkableCells": 19776,
+    "blockedCells": 197376,
+    "walkableFraction": 0.0911,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    "nodeNames": [
+      "Secrets_four_gates_secrets",
+      "Section_gates-sunleaf-hollow",
+      "Roof_gates-sunleaf-hollow_cliff_rock",
+      "Build_gates-sunleaf-hollow_amber_resin",
+      "Build_gates-sunleaf-hollow_cliff_rock",
+      "Build_gates-sunleaf-hollow_dark_iron",
+      "Build_gates-sunleaf-hollow_water_lake",
+      "Section_gates-reedworks-garden",
+      "Roof_gates-reedworks-garden_cliff_rock",
+      "Build_gates-reedworks-garden_amber_resin",
+      "Build_gates-reedworks-garden_ashlar",
+      "Build_gates-reedworks-garden_bark_pale",
+      "Build_gates-reedworks-garden_cliff_rock",
+      "Build_gates-reedworks-garden_dark_iron",
+      "Build_gates-reedworks-garden_foliage_green",
+      "Build_gates-reedworks-garden_rubble_stone",
+      "Build_gates-reedworks-garden_timber_warm",
+      "Build_gates-reedworks-garden_water_pool",
+      "Section_gates-lantern-cache",
+      "Roof_gates-lantern-cache_cliff_rock",
+      "Roof_gates-lantern-cache_timber_dark",
+      "Build_gates-lantern-cache_amber_resin",
+      "Build_gates-lantern-cache_ashlar",
+      "Build_gates-lantern-cache_cliff_rock",
+      "Build_gates-lantern-cache_dark_iron",
+      "Build_gates-lantern-cache_timber_dark",
+      "Build_gates-lantern-cache_timber_warm",
+      "Section_gates-deposit-vault",
+      "Roof_gates-deposit-vault_ashlar",
+      "Roof_gates-deposit-vault_cliff_rock",
+      "Build_gates-deposit-vault_amber_resin",
+      "Build_gates-deposit-vault_ashlar",
+      "Build_gates-deposit-vault_carved_wood",
+      "Build_gates-deposit-vault_cliff_rock",
+      "Build_gates-deposit-vault_dark_iron",
+      "Build_gates-deposit-vault_timber_dark",
+      "Build_gates-deposit-vault_timber_warm",
+      "Section_gates-otter-pit",
+      "Roof_gates-otter-pit_cliff_rock",
+      "Build_gates-otter-pit_amber_resin",
+      "Build_gates-otter-pit_cliff_rock",
+      "Build_gates-otter-pit_dark_iron",
+      "Build_gates-otter-pit_pale_ashlar",
+      "Build_gates-otter-pit_timber_dark",
+      "Section_gates-stormglass-school",
+      "Roof_gates-stormglass-school_cliff_rock",
+      "Roof_gates-stormglass-school_timber_dark",
+      "Build_gates-stormglass-school_amber_resin",
+      "Build_gates-stormglass-school_ashlar",
+      "Build_gates-stormglass-school_carved_wood",
+      "Build_gates-stormglass-school_cliff_rock",
+      "Build_gates-stormglass-school_dark_iron",
+      "Build_gates-stormglass-school_timber_dark",
+      "Section_gates-plaza-spring",
+      "Roof_gates-plaza-spring_cliff_rock",
+      "Build_gates-plaza-spring_amber_resin",
+      "Build_gates-plaza-spring_ashlar",
+      "Build_gates-plaza-spring_cliff_rock",
+      "Build_gates-plaza-spring_dark_iron",
+      "Build_gates-plaza-spring_water_lake",
+      "Section_gates-ferry-butts",
+      "Roof_gates-ferry-butts_cliff_rock",
+      "Roof_gates-ferry-butts_timber_dark",
+      "Build_gates-ferry-butts_amber_resin",
+      "Build_gates-ferry-butts_ashlar",
+      "Build_gates-ferry-butts_cliff_rock",
+      "Build_gates-ferry-butts_dark_iron",
+      "Build_gates-ferry-butts_thatch_reed",
+      "Build_gates-ferry-butts_timber_dark",
+      "Section_gates-sanctuary-reliquary",
+      "Roof_gates-sanctuary-reliquary_ashlar",
+      "Roof_gates-sanctuary-reliquary_cliff_rock",
+      "Build_gates-sanctuary-reliquary_amber_resin",
+      "Build_gates-sanctuary-reliquary_ashlar",
+      "Build_gates-sanctuary-reliquary_cliff_rock",
+      "Build_gates-sanctuary-reliquary_dark_iron",
+      "Build_gates-sanctuary-reliquary_gilt_brass",
+      "Section_gates-mirrorsmith-well",
+      "Roof_gates-mirrorsmith-well_cliff_rock",
+      "Build_gates-mirrorsmith-well_amber_resin",
+      "Build_gates-mirrorsmith-well_ashlar",
+      "Build_gates-mirrorsmith-well_cliff_rock",
+      "Build_gates-mirrorsmith-well_dark_iron",
+      "Section_gates-civic-focus",
+      "Roof_gates-civic-focus_ashlar",
+      "Roof_gates-civic-focus_cliff_rock",
+      "Build_gates-civic-focus_amber_resin",
+      "Build_gates-civic-focus_ashlar",
+      "Build_gates-civic-focus_blue_crystal",
+      "Build_gates-civic-focus_cliff_rock",
+      "Build_gates-civic-focus_dark_iron",
+      "Section_gates-waystone",
+      "Roof_gates-waystone_ashlar",
+      "Roof_gates-waystone_cliff_rock",
+      "Build_gates-waystone_amber_resin",
+      "Build_gates-waystone_ashlar",
+      "Build_gates-waystone_cliff_rock",
+      "Build_gates-waystone_dark_iron",
+      "Build_gates-waystone_gilt_brass",
+      "Section_gates-wall-eyrie",
+      "Roof_gates-wall-eyrie_cliff_rock",
+      "Build_gates-wall-eyrie_amber_resin",
+      "Build_gates-wall-eyrie_bark_dark",
+      "Build_gates-wall-eyrie_carved_wood",
+      "Build_gates-wall-eyrie_cliff_rock",
+      "Build_gates-wall-eyrie_dark_iron",
+      "Build_gates-wall-eyrie_rubble_stone",
+      "Build_gates-wall-eyrie_timber_warm",
+      "Build_gates-wall-eyrie_water_pool"
+    ]
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Roof_gates-sunleaf-hollow_cliff_rock",
+      "Roof_gates-reedworks-garden_cliff_rock",
+      "Roof_gates-lantern-cache_cliff_rock",
+      "Roof_gates-lantern-cache_timber_dark",
+      "Roof_gates-deposit-vault_ashlar",
+      "Roof_gates-deposit-vault_cliff_rock",
+      "Roof_gates-otter-pit_cliff_rock",
+      "Roof_gates-stormglass-school_cliff_rock",
+      "Roof_gates-stormglass-school_timber_dark",
+      "Roof_gates-plaza-spring_cliff_rock",
+      "Roof_gates-ferry-butts_cliff_rock",
+      "Roof_gates-ferry-butts_timber_dark",
+      "Roof_gates-sanctuary-reliquary_ashlar",
+      "Roof_gates-sanctuary-reliquary_cliff_rock",
+      "Roof_gates-mirrorsmith-well_cliff_rock",
+      "Roof_gates-civic-focus_ashlar",
+      "Roof_gates-civic-focus_cliff_rock",
+      "Roof_gates-waystone_ashlar",
+      "Roof_gates-waystone_cliff_rock",
+      "Roof_gates-wall-eyrie_cliff_rock"
+    ],
+    "reason": "interior lids; the isometric rig frames the floor, not the roof"
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Walk_"
+    ],
+    "agentRadius": 0.4,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 45,
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    }
+  },
+  "portals": [
+    {
+      "id": "exit-gates-sunleaf-hollow",
+      "name": "Back up: The Sunleaf Hollow",
+      "type": "map-transition",
+      "position": [
+        102.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "four_gates",
+      "destinationSpawn": "secret-gates-sunleaf-hollow",
+      "section": "gates-sunleaf-hollow",
+      "authority": "server"
+    },
+    {
+      "id": "exit-gates-reedworks-garden",
+      "name": "Back up: The Reedworks Garden",
+      "type": "map-transition",
+      "position": [
+        173.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "four_gates",
+      "destinationSpawn": "secret-gates-reedworks-garden",
+      "section": "gates-reedworks-garden",
+      "authority": "server"
+    },
+    {
+      "id": "exit-gates-lantern-cache",
+      "name": "Back up: The Lantern Row Cache",
+      "type": "map-transition",
+      "position": [
+        25.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "four_gates",
+      "destinationSpawn": "secret-gates-lantern-cache",
+      "section": "gates-lantern-cache",
+      "authority": "server"
+    },
+    {
+      "id": "exit-gates-deposit-vault",
+      "name": "Back up: The Deposit Vault",
+      "type": "map-transition",
+      "position": [
+        98.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "four_gates",
+      "destinationSpawn": "secret-gates-deposit-vault",
+      "section": "gates-deposit-vault",
+      "authority": "server"
+    },
+    {
+      "id": "exit-gates-otter-pit",
+      "name": "Back up: The Otter Pit",
+      "type": "map-transition",
+      "position": [
+        244.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "four_gates",
+      "destinationSpawn": "secret-gates-otter-pit",
+      "section": "gates-otter-pit",
+      "authority": "server"
+    },
+    {
+      "id": "exit-gates-stormglass-school",
+      "name": "Back up: The Stormglass School",
+      "type": "map-transition",
+      "position": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "four_gates",
+      "destinationSpawn": "secret-gates-stormglass-school",
+      "section": "gates-stormglass-school",
+      "authority": "server"
+    },
+    {
+      "id": "exit-gates-plaza-spring",
+      "name": "Back up: The Plaza Spring",
+      "type": "map-transition",
+      "position": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "four_gates",
+      "destinationSpawn": "secret-gates-plaza-spring",
+      "section": "gates-plaza-spring",
+      "authority": "server"
+    },
+    {
+      "id": "exit-gates-ferry-butts",
+      "name": "Back up: The Ferryman's Butts",
+      "type": "map-transition",
+      "position": [
+        22.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "four_gates",
+      "destinationSpawn": "secret-gates-ferry-butts",
+      "section": "gates-ferry-butts",
+      "authority": "server"
+    },
+    {
+      "id": "exit-gates-sanctuary-reliquary",
+      "name": "Back up: The Sanctuary Reliquary",
+      "type": "map-transition",
+      "position": [
+        313.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "four_gates",
+      "destinationSpawn": "secret-gates-sanctuary-reliquary",
+      "section": "gates-sanctuary-reliquary",
+      "authority": "server"
+    },
+    {
+      "id": "exit-gates-mirrorsmith-well",
+      "name": "Back up: The Mirrorsmith's Well",
+      "type": "map-transition",
+      "position": [
+        315.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "four_gates",
+      "destinationSpawn": "secret-gates-mirrorsmith-well",
+      "section": "gates-mirrorsmith-well",
+      "authority": "server"
+    },
+    {
+      "id": "exit-gates-civic-focus",
+      "name": "Back up: The Civic Focus",
+      "type": "map-transition",
+      "position": [
+        98.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "four_gates",
+      "destinationSpawn": "secret-gates-civic-focus",
+      "section": "gates-civic-focus",
+      "authority": "server"
+    },
+    {
+      "id": "exit-gates-waystone",
+      "name": "Back up: The Gates Waystone",
+      "type": "map-transition",
+      "position": [
+        27.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "four_gates",
+      "destinationSpawn": "secret-gates-waystone",
+      "section": "gates-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-gates-waystone-mirror-waystone",
+      "name": "Mirrorhold",
+      "type": "map-transition",
+      "position": [
+        26.04,
+        -4.0,
+        107.91
+      ],
+      "radius": 2.5,
+      "destinationMap": "mirrorhold_secrets",
+      "destinationSpawn": "mirror-waystone",
+      "section": "gates-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-gates-waystone-steppe-waystone",
+      "name": "The Sunmane Steppe",
+      "type": "map-transition",
+      "position": [
+        31.5,
+        -4.0,
+        109.68
+      ],
+      "radius": 2.5,
+      "destinationMap": "sunmane_steppe_secrets",
+      "destinationSpawn": "steppe-waystone",
+      "section": "gates-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-gates-waystone-ruins-waystone",
+      "name": "The Ssarathi Ruins",
+      "type": "map-transition",
+      "position": [
+        31.5,
+        -4.0,
+        115.42
+      ],
+      "radius": 2.5,
+      "destinationMap": "ssarathi_ruins_secrets",
+      "destinationSpawn": "ruins-waystone",
+      "section": "gates-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-gates-waystone-crown-waystone",
+      "name": "Crownwater",
+      "type": "map-transition",
+      "position": [
+        26.04,
+        -4.0,
+        117.19
+      ],
+      "radius": 2.5,
+      "destinationMap": "crownwater_secrets",
+      "destinationSpawn": "crown-waystone",
+      "section": "gates-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "exit-gates-wall-eyrie",
+      "name": "Back up: The Wall Eyrie",
+      "type": "map-transition",
+      "position": [
+        168.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "four_gates",
+      "destinationSpawn": "secret-gates-wall-eyrie",
+      "section": "gates-wall-eyrie",
+      "authority": "server"
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "gates-sunleaf-hollow-room",
+      "name": "The Sunleaf Hollow",
+      "space": "gates-sunleaf-hollow.landing",
+      "position": [
+        102.55,
+        1.6,
+        21.05
+      ],
+      "section": "gates-sunleaf-hollow"
+    },
+    {
+      "id": "gates-reedworks-garden-room",
+      "name": "The Reedworks Garden",
+      "space": "gates-reedworks-garden.landing",
+      "position": [
+        173.55,
+        1.6,
+        21.05
+      ],
+      "section": "gates-reedworks-garden"
+    },
+    {
+      "id": "gates-lantern-cache-room",
+      "name": "The Lantern Row Cache",
+      "space": "gates-lantern-cache.landing",
+      "position": [
+        25.55,
+        1.6,
+        165.05
+      ],
+      "section": "gates-lantern-cache"
+    },
+    {
+      "id": "gates-deposit-vault-room",
+      "name": "The Deposit Vault",
+      "space": "gates-deposit-vault.landing",
+      "position": [
+        98.55,
+        1.6,
+        165.05
+      ],
+      "section": "gates-deposit-vault"
+    },
+    {
+      "id": "gates-otter-pit-room",
+      "name": "The Otter Pit",
+      "space": "gates-otter-pit.landing",
+      "position": [
+        244.55,
+        1.6,
+        21.05
+      ],
+      "section": "gates-otter-pit"
+    },
+    {
+      "id": "gates-stormglass-school-room",
+      "name": "The Stormglass School",
+      "space": "gates-stormglass-school.landing",
+      "position": [
+        171.55,
+        1.6,
+        93.05
+      ],
+      "section": "gates-stormglass-school"
+    },
+    {
+      "id": "gates-plaza-spring-room",
+      "name": "The Plaza Spring",
+      "space": "gates-plaza-spring.landing",
+      "position": [
+        242.55,
+        1.6,
+        93.05
+      ],
+      "section": "gates-plaza-spring"
+    },
+    {
+      "id": "gates-ferry-butts-room",
+      "name": "The Ferryman's Butts",
+      "space": "gates-ferry-butts.landing",
+      "position": [
+        22.55,
+        1.6,
+        21.05
+      ],
+      "section": "gates-ferry-butts"
+    },
+    {
+      "id": "gates-sanctuary-reliquary-room",
+      "name": "The Sanctuary Reliquary",
+      "space": "gates-sanctuary-reliquary.landing",
+      "position": [
+        313.55,
+        1.6,
+        93.05
+      ],
+      "section": "gates-sanctuary-reliquary"
+    },
+    {
+      "id": "gates-mirrorsmith-well-room",
+      "name": "The Mirrorsmith's Well",
+      "space": "gates-mirrorsmith-well.landing",
+      "position": [
+        315.55,
+        1.6,
+        21.05
+      ],
+      "section": "gates-mirrorsmith-well"
+    },
+    {
+      "id": "gates-civic-focus-room",
+      "name": "The Civic Focus",
+      "space": "gates-civic-focus.landing",
+      "position": [
+        98.55,
+        1.6,
+        93.05
+      ],
+      "section": "gates-civic-focus"
+    },
+    {
+      "id": "gates-waystone-room",
+      "name": "The Gates Waystone",
+      "space": "gates-waystone.landing",
+      "position": [
+        27.55,
+        1.6,
+        93.05
+      ],
+      "section": "gates-waystone"
+    },
+    {
+      "id": "gates-wall-eyrie-room",
+      "name": "The Wall Eyrie",
+      "space": "gates-wall-eyrie.landing",
+      "position": [
+        168.55,
+        1.6,
+        165.05
+      ],
+      "section": "gates-wall-eyrie"
+    }
+  ],
+  "interactives": [
+    {
+      "id": "gates-reedworks-garden-well",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Garden well",
+      "text": "Cold water from the garden well.",
+      "position": [
+        173.55,
+        -1.0,
+        42.55
+      ],
+      "section": "gates-reedworks-garden",
+      "serverTile": [
+        158,
+        147
+      ]
+    },
+    {
+      "id": "gates-lantern-cache-cache",
+      "kind": "storage",
+      "target": "shared",
+      "label": "Cache",
+      "text": "A cache; it opens your shared storage.",
+      "position": [
+        25.55,
+        -2.5,
+        184.65
+      ],
+      "section": "gates-lantern-cache",
+      "serverTile": [
+        10,
+        5
+      ]
+    },
+    {
+      "id": "gates-lantern-cache-bench",
+      "kind": "crafting_station",
+      "target": "field",
+      "label": "Bench",
+      "text": "A bench for ordinary mixing and crafting.",
+      "position": [
+        21.35,
+        -2.1,
+        184.65
+      ],
+      "section": "gates-lantern-cache",
+      "serverTile": [
+        5,
+        5
+      ]
+    },
+    {
+      "id": "gates-deposit-vault-strongbox",
+      "kind": "storage",
+      "target": "shared",
+      "label": "Cache",
+      "text": "A cache; it opens your shared storage.",
+      "position": [
+        98.55,
+        -4.5,
+        185.55
+      ],
+      "section": "gates-deposit-vault",
+      "serverTile": [
+        83,
+        4
+      ]
+    },
+    {
+      "id": "gates-deposit-vault-bench",
+      "kind": "crafting_station",
+      "target": "field",
+      "label": "Bench",
+      "text": "A bench for ordinary mixing and crafting.",
+      "position": [
+        102.95,
+        -4.1,
+        181.15
+      ],
+      "section": "gates-deposit-vault",
+      "serverTile": [
+        87,
+        9
+      ]
+    },
+    {
+      "id": "gates-deposit-vault-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "The four keys",
+      "text": "The deposit of the four keys keeps a copy of every account. What is made under it is entered twice and counts double.",
+      "position": [
+        98.55,
+        -4.0,
+        176.19
+      ],
+      "section": "gates-deposit-vault",
+      "serverTile": [
+        83,
+        14
+      ]
+    },
+    {
+      "id": "gates-otter-pit-post",
+      "kind": "training",
+      "target": "combat",
+      "label": "Training post",
+      "text": "The post lists your recent combat results.",
+      "position": [
+        236.55,
+        -3.0,
+        50.05
+      ],
+      "section": "gates-otter-pit",
+      "serverTile": [
+        221,
+        140
+      ]
+    },
+    {
+      "id": "gates-stormglass-school-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "Reading",
+      "text": "The stormglass house's under-room. Books read three times as fast.",
+      "position": [
+        164.35,
+        -1.0,
+        116.42
+      ],
+      "section": "gates-stormglass-school",
+      "serverTile": [
+        148,
+        74
+      ]
+    },
+    {
+      "id": "gates-stormglass-school-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "The city",
+      "text": "Four gates, four roads: north to Mirrorhold, east to the Sunmane Steppe, south to the Ssarathi Ruins, west across the causeway to Crownwater.",
+      "position": [
+        171.55,
+        -1.0,
+        116.42
+      ],
+      "section": "gates-stormglass-school",
+      "serverTile": [
+        156,
+        74
+      ]
+    },
+    {
+      "id": "gates-stormglass-school-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "The ledger",
+      "text": "Everything that walks through a gate is counted. Everything that rolls is weighed. Where the two disagree is where someone is standing.",
+      "position": [
+        178.75,
+        -1.0,
+        116.42
+      ],
+      "section": "gates-stormglass-school",
+      "serverTile": [
+        163,
+        74
+      ]
+    },
+    {
+      "id": "gates-plaza-spring-spring",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Warm spring",
+      "text": "The spring is warm and mineral; it restores you.",
+      "position": [
+        242.55,
+        -2.0,
+        107.15
+      ],
+      "section": "gates-plaza-spring",
+      "serverTile": [
+        227,
+        83
+      ]
+    },
+    {
+      "id": "gates-ferry-butts-butts",
+      "kind": "training",
+      "target": "combat",
+      "label": "Butts",
+      "text": "The butts list your recent combat results.",
+      "position": [
+        22.55,
+        -1.0,
+        34.55
+      ],
+      "section": "gates-ferry-butts",
+      "serverTile": [
+        7,
+        155
+      ]
+    },
+    {
+      "id": "gates-sanctuary-reliquary-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "The beacon",
+      "text": "The sanctuary beacon was lit for a ship that never came. It is still lit.",
+      "position": [
+        307.6,
+        -4.0,
+        105.65
+      ],
+      "section": "gates-sanctuary-reliquary",
+      "serverTile": [
+        292,
+        84
+      ]
+    },
+    {
+      "id": "gates-sanctuary-reliquary-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "The ninety candles",
+      "text": "Ninety candles were set for ninety names. One is still burning; nobody will say whose.",
+      "position": [
+        319.5,
+        -4.0,
+        105.65
+      ],
+      "section": "gates-sanctuary-reliquary",
+      "serverTile": [
+        304,
+        84
+      ]
+    },
+    {
+      "id": "gates-sanctuary-reliquary-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "The crossings",
+      "text": "Every road out of the city is a causeway or a stair, because the city is an island that decided not to be.",
+      "position": [
+        307.6,
+        -4.0,
+        109.5
+      ],
+      "section": "gates-sanctuary-reliquary",
+      "serverTile": [
+        292,
+        80
+      ]
+    },
+    {
+      "id": "gates-sanctuary-reliquary-relic",
+      "kind": "scenery_effect",
+      "target": "relic",
+      "label": "The Sanctuary Reliquary",
+      "text": "Under the northern sanctuary, opened with an iron rune.",
+      "position": [
+        313.55,
+        -3.8,
+        114.05
+      ],
+      "section": "gates-sanctuary-reliquary",
+      "serverTile": [
+        298,
+        76
+      ]
+    },
+    {
+      "id": "gates-mirrorsmith-well-post",
+      "kind": "training",
+      "target": "combat",
+      "label": "Ward post",
+      "text": "Nothing casts within these stones. The post lists your recent combat results.",
+      "position": [
+        307.9,
+        -4.0,
+        32.9
+      ],
+      "section": "gates-mirrorsmith-well",
+      "serverTile": [
+        292,
+        157
+      ]
+    },
+    {
+      "id": "gates-wall-eyrie-water",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Cistern",
+      "text": "Rainwater from the cistern.",
+      "position": [
+        171.55,
+        4.0,
+        180.35
+      ],
+      "section": "gates-wall-eyrie",
+      "serverTile": [
+        156,
+        10
+      ]
+    },
+    {
+      "id": "gates-wall-eyrie-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "Breath",
+      "text": "Rest here and the breath comes back twice as fast.",
+      "position": [
+        164.95,
+        4.0,
+        184.25
+      ],
+      "section": "gates-wall-eyrie",
+      "serverTile": [
+        149,
+        6
+      ]
+    },
+    {
+      "id": "gates-wall-eyrie-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "Storage",
+      "text": "The civic chest, every wayfarer's cache and every secret's chest open the same storage.",
+      "position": [
+        167.15,
+        4.0,
+        184.25
+      ],
+      "section": "gates-wall-eyrie",
+      "serverTile": [
+        151,
+        6
+      ]
+    }
+  ],
+  "npcMarkers": [],
+  "harvestables": [
+    {
+      "id": "gates-sunleaf-hollow-node-00",
+      "resource": "Sunleaf",
+      "position": [
+        105.79,
+        -4.0,
+        46.23
+      ],
+      "section": "gates-sunleaf-hollow",
+      "serverTile": [
+        90,
+        144
+      ]
+    },
+    {
+      "id": "gates-sunleaf-hollow-node-01",
+      "resource": "Sunleaf",
+      "position": [
+        96.24,
+        -4.0,
+        44.35
+      ],
+      "section": "gates-sunleaf-hollow",
+      "serverTile": [
+        80,
+        146
+      ]
+    },
+    {
+      "id": "gates-sunleaf-hollow-node-02",
+      "resource": "Sunleaf",
+      "position": [
+        107.56,
+        -4.0,
+        36.66
+      ],
+      "section": "gates-sunleaf-hollow",
+      "serverTile": [
+        92,
+        153
+      ]
+    },
+    {
+      "id": "gates-sunleaf-hollow-node-03",
+      "resource": "Sunleaf",
+      "position": [
+        103.54,
+        -4.0,
+        48.74
+      ],
+      "section": "gates-sunleaf-hollow",
+      "serverTile": [
+        88,
+        141
+      ]
+    },
+    {
+      "id": "gates-sunleaf-hollow-node-04",
+      "resource": "Sunleaf",
+      "position": [
+        96.27,
+        -4.0,
+        39.56
+      ],
+      "section": "gates-sunleaf-hollow",
+      "serverTile": [
+        80,
+        150
+      ]
+    },
+    {
+      "id": "gates-sunleaf-hollow-node-05",
+      "resource": "Lavender",
+      "position": [
+        106.62,
+        -4.0,
+        42.51
+      ],
+      "section": "gates-sunleaf-hollow",
+      "serverTile": [
+        91,
+        147
+      ]
+    },
+    {
+      "id": "gates-sunleaf-hollow-node-06",
+      "resource": "Lavender",
+      "position": [
+        99.49,
+        -4.0,
+        49.12
+      ],
+      "section": "gates-sunleaf-hollow",
+      "serverTile": [
+        83,
+        141
+      ]
+    },
+    {
+      "id": "gates-sunleaf-hollow-node-07",
+      "resource": "Lavender",
+      "position": [
+        99.92,
+        -4.0,
+        35.45
+      ],
+      "section": "gates-sunleaf-hollow",
+      "serverTile": [
+        84,
+        155
+      ]
+    },
+    {
+      "id": "gates-sunleaf-hollow-node-08",
+      "resource": "Lavender",
+      "position": [
+        107.33,
+        -4.0,
+        45.8
+      ],
+      "section": "gates-sunleaf-hollow",
+      "serverTile": [
+        91,
+        144
+      ]
+    },
+    {
+      "id": "gates-reedworks-garden-node-00",
+      "resource": "Flax",
+      "position": [
+        165.96,
+        -1.5,
+        37.35
+      ],
+      "section": "gates-reedworks-garden",
+      "serverTile": [
+        150,
+        153
+      ]
+    },
+    {
+      "id": "gates-reedworks-garden-node-01",
+      "resource": "Flax",
+      "position": [
+        167.5,
+        -1.5,
+        37.35
+      ],
+      "section": "gates-reedworks-garden",
+      "serverTile": [
+        152,
+        153
+      ]
+    },
+    {
+      "id": "gates-reedworks-garden-node-02",
+      "resource": "Flax",
+      "position": [
+        169.04,
+        -1.5,
+        37.35
+      ],
+      "section": "gates-reedworks-garden",
+      "serverTile": [
+        153,
+        153
+      ]
+    },
+    {
+      "id": "gates-reedworks-garden-node-03",
+      "resource": "Flax",
+      "position": [
+        165.96,
+        -1.5,
+        38.95
+      ],
+      "section": "gates-reedworks-garden",
+      "serverTile": [
+        150,
+        151
+      ]
+    },
+    {
+      "id": "gates-reedworks-garden-node-04",
+      "resource": "Cotton",
+      "position": [
+        172.01,
+        -1.5,
+        37.35
+      ],
+      "section": "gates-reedworks-garden",
+      "serverTile": [
+        156,
+        153
+      ]
+    },
+    {
+      "id": "gates-reedworks-garden-node-05",
+      "resource": "Cotton",
+      "position": [
+        173.55,
+        -1.5,
+        37.35
+      ],
+      "section": "gates-reedworks-garden",
+      "serverTile": [
+        158,
+        153
+      ]
+    },
+    {
+      "id": "gates-reedworks-garden-node-06",
+      "resource": "Cotton",
+      "position": [
+        175.09,
+        -1.5,
+        37.35
+      ],
+      "section": "gates-reedworks-garden",
+      "serverTile": [
+        159,
+        153
+      ]
+    },
+    {
+      "id": "gates-reedworks-garden-node-07",
+      "resource": "Cotton",
+      "position": [
+        172.01,
+        -1.5,
+        38.95
+      ],
+      "section": "gates-reedworks-garden",
+      "serverTile": [
+        156,
+        151
+      ]
+    },
+    {
+      "id": "gates-reedworks-garden-node-08",
+      "resource": "Wheat",
+      "position": [
+        178.06,
+        -1.5,
+        37.35
+      ],
+      "section": "gates-reedworks-garden",
+      "serverTile": [
+        162,
+        153
+      ]
+    },
+    {
+      "id": "gates-reedworks-garden-node-09",
+      "resource": "Wheat",
+      "position": [
+        179.6,
+        -1.5,
+        37.35
+      ],
+      "section": "gates-reedworks-garden",
+      "serverTile": [
+        164,
+        153
+      ]
+    },
+    {
+      "id": "gates-reedworks-garden-node-10",
+      "resource": "Wheat",
+      "position": [
+        181.14,
+        -1.5,
+        37.35
+      ],
+      "section": "gates-reedworks-garden",
+      "serverTile": [
+        165,
+        153
+      ]
+    },
+    {
+      "id": "gates-reedworks-garden-node-11",
+      "resource": "Sage",
+      "position": [
+        165.96,
+        -1.5,
+        46.15
+      ],
+      "section": "gates-reedworks-garden",
+      "serverTile": [
+        150,
+        144
+      ]
+    },
+    {
+      "id": "gates-reedworks-garden-node-12",
+      "resource": "Sage",
+      "position": [
+        167.5,
+        -1.5,
+        46.15
+      ],
+      "section": "gates-reedworks-garden",
+      "serverTile": [
+        152,
+        144
+      ]
+    },
+    {
+      "id": "gates-reedworks-garden-node-13",
+      "resource": "Sage",
+      "position": [
+        169.04,
+        -1.5,
+        46.15
+      ],
+      "section": "gates-reedworks-garden",
+      "serverTile": [
+        153,
+        144
+      ]
+    },
+    {
+      "id": "gates-lantern-cache-node-00",
+      "resource": "Rosemary",
+      "position": [
+        20.3,
+        -3.0,
+        177.3
+      ],
+      "section": "gates-lantern-cache",
+      "serverTile": [
+        4,
+        13
+      ]
+    },
+    {
+      "id": "gates-lantern-cache-node-01",
+      "resource": "Rosemary",
+      "position": [
+        23.8,
+        -3.0,
+        177.3
+      ],
+      "section": "gates-lantern-cache",
+      "serverTile": [
+        8,
+        13
+      ]
+    },
+    {
+      "id": "gates-lantern-cache-node-02",
+      "resource": "Rosemary",
+      "position": [
+        27.3,
+        -3.0,
+        177.3
+      ],
+      "section": "gates-lantern-cache",
+      "serverTile": [
+        11,
+        13
+      ]
+    },
+    {
+      "id": "gates-lantern-cache-node-03",
+      "resource": "Quartz",
+      "position": [
+        30.8,
+        -3.0,
+        177.3
+      ],
+      "section": "gates-lantern-cache",
+      "serverTile": [
+        15,
+        13
+      ]
+    },
+    {
+      "id": "gates-lantern-cache-node-04",
+      "resource": "Quartz",
+      "position": [
+        20.3,
+        -3.0,
+        179.1
+      ],
+      "section": "gates-lantern-cache",
+      "serverTile": [
+        4,
+        11
+      ]
+    },
+    {
+      "id": "gates-lantern-cache-node-05",
+      "resource": "Quartz",
+      "position": [
+        23.8,
+        -3.0,
+        179.1
+      ],
+      "section": "gates-lantern-cache",
+      "serverTile": [
+        8,
+        11
+      ]
+    }
+  ],
+  "environment": {
+    "sky": "none",
+    "ambient": {
+      "colour": [
+        0.1,
+        0.1,
+        0.12
+      ],
+      "energy": 0.55
+    },
+    "fog": {
+      "enabled": true,
+      "colour": [
+        0.02,
+        0.02,
+        0.03
+      ],
+      "begin": 14.0,
+      "end": 48.0
+    },
+    "openToSky": [
+      "gates-reedworks-garden.court",
+      "gates-wall-eyrie.perch"
+    ],
+    "lights": [
+      {
+        "id": "lamp-000",
+        "kind": "point",
+        "position": [
+          102.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-001",
+        "kind": "point",
+        "position": [
+          96.55,
+          -0.62,
+          43.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-002",
+        "kind": "point",
+        "position": [
+          108.55,
+          -0.62,
+          43.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-003",
+        "kind": "point",
+        "position": [
+          173.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-004",
+        "kind": "point",
+        "position": [
+          25.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-005",
+        "kind": "point",
+        "position": [
+          25.55,
+          -0.22,
+          181.15
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-006",
+        "kind": "point",
+        "position": [
+          95.35,
+          -3.4,
+          176.75
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-007",
+        "kind": "point",
+        "position": [
+          101.75,
+          -3.4,
+          176.75
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-008",
+        "kind": "point",
+        "position": [
+          98.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-009",
+        "kind": "point",
+        "position": [
+          244.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-010",
+        "kind": "point",
+        "position": [
+          239.55,
+          -0.12,
+          41.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-011",
+        "kind": "point",
+        "position": [
+          249.55,
+          -0.12,
+          41.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-012",
+        "kind": "point",
+        "position": [
+          171.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-013",
+        "kind": "point",
+        "position": [
+          171.55,
+          1.18,
+          110.3
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-014",
+        "kind": "point",
+        "position": [
+          242.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-015",
+        "kind": "point",
+        "position": [
+          242.55,
+          0.58,
+          109.95
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-016",
+        "kind": "point",
+        "position": [
+          22.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-017",
+        "kind": "point",
+        "position": [
+          22.55,
+          0.98,
+          46.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-018",
+        "kind": "point",
+        "position": [
+          309.35,
+          -3.4,
+          113.35
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-019",
+        "kind": "point",
+        "position": [
+          317.75,
+          -3.4,
+          113.35
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-020",
+        "kind": "point",
+        "position": [
+          313.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-021",
+        "kind": "point",
+        "position": [
+          315.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-022",
+        "kind": "point",
+        "position": [
+          315.55,
+          -0.62,
+          40.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-023",
+        "kind": "point",
+        "position": [
+          101.94,
+          -1.4,
+          114.14
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-024",
+        "kind": "point",
+        "position": [
+          95.16,
+          -1.4,
+          114.14
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-025",
+        "kind": "point",
+        "position": [
+          95.16,
+          -1.4,
+          107.36
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-026",
+        "kind": "point",
+        "position": [
+          101.94,
+          -1.4,
+          107.36
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-027",
+        "kind": "point",
+        "position": [
+          98.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-028",
+        "kind": "point",
+        "position": [
+          27.55,
+          -2.4,
+          112.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-029",
+        "kind": "point",
+        "position": [
+          27.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-030",
+        "kind": "point",
+        "position": [
+          168.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      }
+    ]
+  },
+  "spaces": {
+    "gates-sunleaf-hollow.landing": {
+      "x0": 100.05,
+      "z0": 18.55,
+      "x1": 105.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "gates-sunleaf-hollow.way": {
+      "x0": 100.75,
+      "z0": 21.75,
+      "x1": 104.35,
+      "z1": 33.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "gates-sunleaf-hollow.hollow": {
+      "x0": 90.55,
+      "z0": 31.55,
+      "x1": 114.55,
+      "z1": 55.55,
+      "floor": -4.0,
+      "height": 8.0
+    },
+    "gates-reedworks-garden.landing": {
+      "x0": 171.05,
+      "z0": 18.55,
+      "x1": 176.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "gates-reedworks-garden.way": {
+      "x0": 171.75,
+      "z0": 21.75,
+      "x1": 175.35,
+      "z1": 33.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "gates-reedworks-garden.court": {
+      "x0": 162.55,
+      "z0": 31.55,
+      "x1": 184.55,
+      "z1": 53.55,
+      "floor": -2.0,
+      "height": 6.0
+    },
+    "gates-lantern-cache.landing": {
+      "x0": 23.05,
+      "z0": 162.55,
+      "x1": 28.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "gates-lantern-cache.way": {
+      "x0": 23.75,
+      "z0": 165.75,
+      "x1": 27.35,
+      "z1": 177.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "gates-lantern-cache.cellar": {
+      "x0": 18.55,
+      "z0": 175.55,
+      "x1": 32.55,
+      "z1": 186.75,
+      "floor": -3.0,
+      "height": 4.4
+    },
+    "gates-deposit-vault.landing": {
+      "x0": 96.05,
+      "z0": 162.55,
+      "x1": 101.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "gates-deposit-vault.way": {
+      "x0": 96.75,
+      "z0": 165.75,
+      "x1": 100.35,
+      "z1": 177.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "gates-deposit-vault.strongroom": {
+      "x0": 90.55,
+      "z0": 175.55,
+      "x1": 106.55,
+      "z1": 186.75,
+      "floor": -5.0,
+      "height": 5.0
+    },
+    "gates-otter-pit.landing": {
+      "x0": 242.05,
+      "z0": 18.55,
+      "x1": 247.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "gates-otter-pit.way": {
+      "x0": 242.75,
+      "z0": 21.75,
+      "x1": 246.35,
+      "z1": 33.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "gates-otter-pit.pit": {
+      "x0": 234.55,
+      "z0": 31.55,
+      "x1": 254.55,
+      "z1": 51.55,
+      "floor": -4.0,
+      "height": 7.0
+    },
+    "gates-stormglass-school.landing": {
+      "x0": 169.05,
+      "z0": 90.55,
+      "x1": 174.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "gates-stormglass-school.way": {
+      "x0": 169.75,
+      "z0": 93.75,
+      "x1": 173.35,
+      "z1": 105.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "gates-stormglass-school.hall": {
+      "x0": 162.55,
+      "z0": 103.55,
+      "x1": 180.55,
+      "z1": 117.05,
+      "floor": -2.0,
+      "height": 5.2
+    },
+    "gates-plaza-spring.landing": {
+      "x0": 240.05,
+      "z0": 90.55,
+      "x1": 245.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "gates-plaza-spring.way": {
+      "x0": 240.75,
+      "z0": 93.75,
+      "x1": 244.35,
+      "z1": 105.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "gates-plaza-spring.bath": {
+      "x0": 234.55,
+      "z0": 103.55,
+      "x1": 250.55,
+      "z1": 116.35,
+      "floor": -3.0,
+      "height": 6.0
+    },
+    "gates-ferry-butts.landing": {
+      "x0": 20.05,
+      "z0": 18.55,
+      "x1": 25.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "gates-ferry-butts.way": {
+      "x0": 20.75,
+      "z0": 21.75,
+      "x1": 24.35,
+      "z1": 33.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "gates-ferry-butts.gallery": {
+      "x0": 18.55,
+      "z0": 31.55,
+      "x1": 26.55,
+      "z1": 61.55,
+      "floor": -2.0,
+      "height": 5.0
+    },
+    "gates-sanctuary-reliquary.landing": {
+      "x0": 311.05,
+      "z0": 90.55,
+      "x1": 316.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "gates-sanctuary-reliquary.way": {
+      "x0": 311.75,
+      "z0": 93.75,
+      "x1": 315.35,
+      "z1": 105.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "gates-sanctuary-reliquary.cella": {
+      "x0": 306.55,
+      "z0": 103.55,
+      "x1": 320.55,
+      "z1": 116.15,
+      "floor": -5.0,
+      "height": 6.0
+    },
+    "gates-mirrorsmith-well.landing": {
+      "x0": 313.05,
+      "z0": 18.55,
+      "x1": 318.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "gates-mirrorsmith-well.way": {
+      "x0": 313.75,
+      "z0": 21.75,
+      "x1": 317.35,
+      "z1": 33.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "gates-mirrorsmith-well.well": {
+      "x0": 306.55,
+      "z0": 31.55,
+      "x1": 324.55,
+      "z1": 49.55,
+      "floor": -5.0,
+      "height": 8.0
+    },
+    "gates-civic-focus.landing": {
+      "x0": 96.05,
+      "z0": 90.55,
+      "x1": 101.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "gates-civic-focus.way": {
+      "x0": 96.75,
+      "z0": 93.75,
+      "x1": 100.35,
+      "z1": 105.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "gates-civic-focus.chamber": {
+      "x0": 90.55,
+      "z0": 103.55,
+      "x1": 106.55,
+      "z1": 117.95,
+      "floor": -3.0,
+      "height": 6.4
+    },
+    "gates-waystone.landing": {
+      "x0": 25.05,
+      "z0": 90.55,
+      "x1": 30.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "gates-waystone.way": {
+      "x0": 25.75,
+      "z0": 93.75,
+      "x1": 29.35,
+      "z1": 105.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "gates-waystone.ring": {
+      "x0": 18.55,
+      "z0": 103.55,
+      "x1": 36.55,
+      "z1": 121.55,
+      "floor": -4.0,
+      "height": 7.0
+    },
+    "gates-wall-eyrie.landing": {
+      "x0": 166.05,
+      "z0": 162.55,
+      "x1": 171.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "gates-wall-eyrie.way": {
+      "x0": 166.75,
+      "z0": 165.75,
+      "x1": 170.35,
+      "z1": 177.35,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "gates-wall-eyrie.perch": {
+      "x0": 162.55,
+      "z0": 175.55,
+      "x1": 174.55,
+      "z1": 185.15,
+      "floor": 3.0,
+      "height": 4.6
+    }
+  },
+  "sections": [
+    {
+      "id": "gates-sunleaf-hollow",
+      "name": "The Sunleaf Hollow",
+      "kind": "grotto",
+      "entranceMap": "four_gates",
+      "entranceProp": "drain_grate",
+      "key": "",
+      "label": "An iron drain grate, its bolts drawn.",
+      "offset": [
+        102.55,
+        21.05
+      ],
+      "arrival": [
+        102.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          17.55
+        ],
+        "max": [
+          115.55,
+          56.55
+        ]
+      },
+      "spaces": [
+        "gates-sunleaf-hollow.landing",
+        "gates-sunleaf-hollow.way",
+        "gates-sunleaf-hollow.hollow"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "A dry cistern under the east quarter where sunleaf grows toward a grating.",
+      "arrivalTile": [
+        87,
+        169
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          133
+        ],
+        "max": [
+          100,
+          172
+        ]
+      }
+    },
+    {
+      "id": "gates-reedworks-garden",
+      "name": "The Reedworks Garden",
+      "kind": "garden",
+      "entranceMap": "four_gates",
+      "entranceProp": "drain_grate",
+      "key": "",
+      "label": "An iron drain grate, its bolts drawn.",
+      "offset": [
+        173.55,
+        21.05
+      ],
+      "arrival": [
+        173.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          17.55
+        ],
+        "max": [
+          185.55,
+          54.55
+        ]
+      },
+      "spaces": [
+        "gates-reedworks-garden.landing",
+        "gates-reedworks-garden.way",
+        "gates-reedworks-garden.court"
+      ],
+      "areas": [
+        {
+          "kind": "harvest_speed",
+          "multiplier": 2,
+          "spaces": [
+            "gates-reedworks-garden.court"
+          ],
+          "tiles": {
+            "min": [
+              147,
+              136
+            ],
+            "max": [
+              169,
+              158
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Beds under the reedworks where the weavers grow their own.",
+      "arrivalTile": [
+        158,
+        169
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          135
+        ],
+        "max": [
+          170,
+          172
+        ]
+      }
+    },
+    {
+      "id": "gates-lantern-cache",
+      "name": "The Lantern Row Cache",
+      "kind": "cache",
+      "entranceMap": "four_gates",
+      "entranceProp": "cellar_hatch",
+      "key": "",
+      "label": "A cellar hatch under the leaves.",
+      "offset": [
+        25.55,
+        165.05
+      ],
+      "arrival": [
+        25.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          17.55,
+          161.55
+        ],
+        "max": [
+          33.55,
+          187.75
+        ]
+      },
+      "spaces": [
+        "gates-lantern-cache.landing",
+        "gates-lantern-cache.way",
+        "gates-lantern-cache.cellar"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "A cellar off Lantern Row: chest, bench and the quartz the lamp-makers keep.",
+      "arrivalTile": [
+        10,
+        25
+      ],
+      "boundsTiles": {
+        "min": [
+          2,
+          2
+        ],
+        "max": [
+          18,
+          28
+        ]
+      }
+    },
+    {
+      "id": "gates-deposit-vault",
+      "name": "The Deposit Vault",
+      "kind": "vault",
+      "entranceMap": "four_gates",
+      "entranceProp": "cracked_slab",
+      "key": "Storage Token",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        98.55,
+        165.05
+      ],
+      "arrival": [
+        98.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          161.55
+        ],
+        "max": [
+          107.55,
+          187.75
+        ]
+      },
+      "spaces": [
+        "gates-deposit-vault.landing",
+        "gates-deposit-vault.way",
+        "gates-deposit-vault.strongroom"
+      ],
+      "areas": [
+        {
+          "kind": "experience",
+          "multiplier": 2,
+          "spaces": [
+            "gates-deposit-vault.strongroom"
+          ],
+          "tiles": {
+            "min": [
+              75,
+              3
+            ],
+            "max": [
+              91,
+              14
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "The bank's own strongroom, under the deposit of the four keys.",
+      "arrivalTile": [
+        83,
+        25
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          2
+        ],
+        "max": [
+          92,
+          28
+        ]
+      }
+    },
+    {
+      "id": "gates-otter-pit",
+      "name": "The Otter Pit",
+      "kind": "pen",
+      "entranceMap": "four_gates",
+      "entranceProp": "drain_grate",
+      "key": "",
+      "label": "An iron drain grate, its bolts drawn.",
+      "offset": [
+        244.55,
+        21.05
+      ],
+      "arrival": [
+        244.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          233.55,
+          17.55
+        ],
+        "max": [
+          255.55,
+          52.55
+        ]
+      },
+      "spaces": [
+        "gates-otter-pit.landing",
+        "gates-otter-pit.way",
+        "gates-otter-pit.pit"
+      ],
+      "areas": [],
+      "spawns": [
+        {
+          "creature": "riverglass_otter",
+          "count": 4,
+          "space": "gates-otter-pit.pit",
+          "tiles": {
+            "min": [
+              219,
+              138
+            ],
+            "max": [
+              239,
+              158
+            ]
+          }
+        },
+        {
+          "creature": "mirrorfin_otter",
+          "count": 3,
+          "space": "gates-otter-pit.pit",
+          "tiles": {
+            "min": [
+              219,
+              138
+            ],
+            "max": [
+              239,
+              158
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "A flooded cellar off the south-east quay where the watch trains against otters.",
+      "arrivalTile": [
+        229,
+        169
+      ],
+      "boundsTiles": {
+        "min": [
+          218,
+          137
+        ],
+        "max": [
+          240,
+          172
+        ]
+      }
+    },
+    {
+      "id": "gates-stormglass-school",
+      "name": "The Stormglass School",
+      "kind": "school",
+      "entranceMap": "four_gates",
+      "entranceProp": "cracked_slab",
+      "key": "",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        171.55,
+        93.05
+      ],
+      "arrival": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          89.55
+        ],
+        "max": [
+          181.55,
+          118.05
+        ]
+      },
+      "spaces": [
+        "gates-stormglass-school.landing",
+        "gates-stormglass-school.way",
+        "gates-stormglass-school.hall"
+      ],
+      "areas": [
+        {
+          "kind": "fast_reading",
+          "multiplier": 3,
+          "spaces": [
+            "gates-stormglass-school.hall"
+          ],
+          "tiles": {
+            "min": [
+              147,
+              73
+            ],
+            "max": [
+              165,
+              86
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Where the stormglass house teaches its apprentices.",
+      "arrivalTile": [
+        156,
+        97
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          72
+        ],
+        "max": [
+          166,
+          100
+        ]
+      }
+    },
+    {
+      "id": "gates-plaza-spring",
+      "name": "The Plaza Spring",
+      "kind": "spring",
+      "entranceMap": "four_gates",
+      "entranceProp": "cracked_slab",
+      "key": "",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        242.55,
+        93.05
+      ],
+      "arrival": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          233.55,
+          89.55
+        ],
+        "max": [
+          251.55,
+          117.35
+        ]
+      },
+      "spaces": [
+        "gates-plaza-spring.landing",
+        "gates-plaza-spring.way",
+        "gates-plaza-spring.bath"
+      ],
+      "areas": [
+        {
+          "kind": "fast_regeneration",
+          "multiplier": 3,
+          "spaces": [
+            "gates-plaza-spring.bath"
+          ],
+          "tiles": {
+            "min": [
+              219,
+              74
+            ],
+            "max": [
+              235,
+              86
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Under the plaza a warm spring the civic monument was built over.",
+      "arrivalTile": [
+        227,
+        97
+      ],
+      "boundsTiles": {
+        "min": [
+          218,
+          73
+        ],
+        "max": [
+          236,
+          100
+        ]
+      }
+    },
+    {
+      "id": "gates-ferry-butts",
+      "name": "The Ferryman's Butts",
+      "kind": "range",
+      "entranceMap": "four_gates",
+      "entranceProp": "cellar_hatch",
+      "key": "",
+      "label": "A cellar hatch under the leaves.",
+      "offset": [
+        22.55,
+        21.05
+      ],
+      "arrival": [
+        22.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          17.55,
+          17.55
+        ],
+        "max": [
+          27.55,
+          62.55
+        ]
+      },
+      "spaces": [
+        "gates-ferry-butts.landing",
+        "gates-ferry-butts.way",
+        "gates-ferry-butts.gallery"
+      ],
+      "areas": [
+        {
+          "kind": "experience",
+          "multiplier": 2,
+          "spaces": [
+            "gates-ferry-butts.gallery"
+          ],
+          "tiles": {
+            "min": [
+              3,
+              128
+            ],
+            "max": [
+              11,
+              158
+            ]
+          }
+        }
+      ],
+      "spawns": [
+        {
+          "creature": "reedhorn_stag",
+          "count": 3,
+          "space": "gates-ferry-butts.gallery",
+          "tiles": {
+            "min": [
+              3,
+              128
+            ],
+            "max": [
+              11,
+              158
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "A gallery under the ferryman's rest with stags at the far end.",
+      "arrivalTile": [
+        7,
+        169
+      ],
+      "boundsTiles": {
+        "min": [
+          2,
+          127
+        ],
+        "max": [
+          12,
+          172
+        ]
+      }
+    },
+    {
+      "id": "gates-sanctuary-reliquary",
+      "name": "The Sanctuary Reliquary",
+      "kind": "reliquary",
+      "entranceMap": "four_gates",
+      "entranceProp": "shrine_slab",
+      "key": "Iron Rune",
+      "label": "A shrine slab with fresh scratches where it has been slid aside.",
+      "offset": [
+        313.55,
+        93.05
+      ],
+      "arrival": [
+        313.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          305.55,
+          89.55
+        ],
+        "max": [
+          321.55,
+          117.15
+        ]
+      },
+      "spaces": [
+        "gates-sanctuary-reliquary.landing",
+        "gates-sanctuary-reliquary.way",
+        "gates-sanctuary-reliquary.cella"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "Under the northern sanctuary, opened with an iron rune.",
+      "arrivalTile": [
+        298,
+        97
+      ],
+      "boundsTiles": {
+        "min": [
+          290,
+          73
+        ],
+        "max": [
+          306,
+          100
+        ]
+      }
+    },
+    {
+      "id": "gates-mirrorsmith-well",
+      "name": "The Mirrorsmith's Well",
+      "kind": "nullwell",
+      "entranceMap": "four_gates",
+      "entranceProp": "drain_grate",
+      "key": "",
+      "label": "An iron drain grate, its bolts drawn.",
+      "offset": [
+        315.55,
+        21.05
+      ],
+      "arrival": [
+        315.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          305.55,
+          17.55
+        ],
+        "max": [
+          325.55,
+          50.55
+        ]
+      },
+      "spaces": [
+        "gates-mirrorsmith-well.landing",
+        "gates-mirrorsmith-well.way",
+        "gates-mirrorsmith-well.well"
+      ],
+      "areas": [
+        {
+          "kind": "no_magic",
+          "multiplier": 2,
+          "spaces": [
+            "gates-mirrorsmith-well.well"
+          ],
+          "tiles": {
+            "min": [
+              291,
+              140
+            ],
+            "max": [
+              309,
+              158
+            ]
+          }
+        }
+      ],
+      "spawns": [
+        {
+          "creature": "crown_antler_stag",
+          "count": 3,
+          "space": "gates-mirrorsmith-well.well",
+          "tiles": {
+            "min": [
+              291,
+              140
+            ],
+            "max": [
+              309,
+              158
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "The forge's cistern drinks every spell; the stags penned there are practice.",
+      "arrivalTile": [
+        300,
+        169
+      ],
+      "boundsTiles": {
+        "min": [
+          290,
+          139
+        ],
+        "max": [
+          310,
+          172
+        ]
+      }
+    },
+    {
+      "id": "gates-civic-focus",
+      "name": "The Civic Focus",
+      "kind": "focus",
+      "entranceMap": "four_gates",
+      "entranceProp": "cracked_slab",
+      "key": "Iron Rune",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        98.55,
+        93.05
+      ],
+      "arrival": [
+        98.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          89.55
+        ],
+        "max": [
+          107.55,
+          118.95
+        ]
+      },
+      "spaces": [
+        "gates-civic-focus.landing",
+        "gates-civic-focus.way",
+        "gates-civic-focus.chamber"
+      ],
+      "areas": [
+        {
+          "kind": "cheap_magic",
+          "multiplier": 2,
+          "spaces": [
+            "gates-civic-focus.chamber"
+          ],
+          "tiles": {
+            "min": [
+              75,
+              72
+            ],
+            "max": [
+              91,
+              86
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Under the civic monument the ether pools; spells cost half.",
+      "arrivalTile": [
+        83,
+        97
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          71
+        ],
+        "max": [
+          92,
+          100
+        ]
+      }
+    },
+    {
+      "id": "gates-waystone",
+      "name": "The Gates Waystone",
+      "kind": "waystone",
+      "entranceMap": "four_gates",
+      "entranceProp": "cracked_slab",
+      "key": "Iron Rune",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        27.55,
+        93.05
+      ],
+      "arrival": [
+        27.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          17.55,
+          89.55
+        ],
+        "max": [
+          37.55,
+          122.55
+        ]
+      },
+      "spaces": [
+        "gates-waystone.landing",
+        "gates-waystone.way",
+        "gates-waystone.ring"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [
+        {
+          "map": "mirrorhold_secrets",
+          "spawn": "mirror-waystone",
+          "label": "Mirrorhold",
+          "space": "gates-waystone.ring",
+          "position": [
+            26.04,
+            -4.0,
+            107.91
+          ],
+          "tile": [
+            10,
+            82
+          ]
+        },
+        {
+          "map": "sunmane_steppe_secrets",
+          "spawn": "steppe-waystone",
+          "label": "The Sunmane Steppe",
+          "space": "gates-waystone.ring",
+          "position": [
+            31.5,
+            -4.0,
+            109.68
+          ],
+          "tile": [
+            16,
+            80
+          ]
+        },
+        {
+          "map": "ssarathi_ruins_secrets",
+          "spawn": "ruins-waystone",
+          "label": "The Ssarathi Ruins",
+          "space": "gates-waystone.ring",
+          "position": [
+            31.5,
+            -4.0,
+            115.42
+          ],
+          "tile": [
+            16,
+            75
+          ]
+        },
+        {
+          "map": "crownwater_secrets",
+          "spawn": "crown-waystone",
+          "label": "Crownwater",
+          "space": "gates-waystone.ring",
+          "position": [
+            26.04,
+            -4.0,
+            117.19
+          ],
+          "tile": [
+            10,
+            73
+          ]
+        }
+      ],
+      "note": "Four stones under the south avenue. An iron rune wakes them.",
+      "arrivalTile": [
+        12,
+        97
+      ],
+      "boundsTiles": {
+        "min": [
+          2,
+          67
+        ],
+        "max": [
+          22,
+          100
+        ]
+      }
+    },
+    {
+      "id": "gates-wall-eyrie",
+      "name": "The Wall Eyrie",
+      "kind": "eyrie",
+      "entranceMap": "four_gates",
+      "entranceProp": "ivy_arch",
+      "key": "",
+      "label": "An arch so grown with vine it reads as hedge.",
+      "offset": [
+        168.55,
+        165.05
+      ],
+      "arrival": [
+        168.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          161.55
+        ],
+        "max": [
+          175.55,
+          186.15
+        ]
+      },
+      "spaces": [
+        "gates-wall-eyrie.landing",
+        "gates-wall-eyrie.way",
+        "gates-wall-eyrie.perch"
+      ],
+      "areas": [
+        {
+          "kind": "fast_regeneration",
+          "multiplier": 2,
+          "spaces": [
+            "gates-wall-eyrie.perch"
+          ],
+          "tiles": {
+            "min": [
+              147,
+              5
+            ],
+            "max": [
+              159,
+              14
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "A pocket in the east wall's footing.",
+      "arrivalTile": [
+        153,
+        25
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          4
+        ],
+        "max": [
+          160,
+          28
+        ]
+      }
+    }
+  ],
+  "secrets": {
+    "region": "four_gates",
+    "sections": [
+      "gates-sunleaf-hollow",
+      "gates-reedworks-garden",
+      "gates-lantern-cache",
+      "gates-deposit-vault",
+      "gates-otter-pit",
+      "gates-stormglass-school",
+      "gates-plaza-spring",
+      "gates-ferry-butts",
+      "gates-sanctuary-reliquary",
+      "gates-mirrorsmith-well",
+      "gates-civic-focus",
+      "gates-waystone",
+      "gates-wall-eyrie"
+    ],
+    "note": "Each section is one secret. The client shows a player only the section they stand in; the server places the arrival, the areas, the spawns and the harvest nodes from this block."
+  },
+  "performance": {
+    "nodes": 131,
+    "meshes": 117,
+    "materials": 19,
+    "images": 56,
+    "textures": 56,
+    "accessors": 585,
+    "bufferViews": 641,
+    "uniqueTriangles": 24936,
+    "uniqueVertices": 34590,
+    "glbBytes": 7868276,
+    "nodeNames": [
+      "Secrets_four_gates_secrets",
+      "Section_gates-sunleaf-hollow",
+      "Roof_gates-sunleaf-hollow_cliff_rock",
+      "Build_gates-sunleaf-hollow_amber_resin",
+      "Build_gates-sunleaf-hollow_cliff_rock",
+      "Build_gates-sunleaf-hollow_dark_iron",
+      "Build_gates-sunleaf-hollow_water_lake",
+      "Walk_gates-sunleaf-hollow_cobble_paving",
+      "Section_gates-reedworks-garden",
+      "Roof_gates-reedworks-garden_cliff_rock",
+      "Build_gates-reedworks-garden_amber_resin",
+      "Build_gates-reedworks-garden_ashlar",
+      "Build_gates-reedworks-garden_bark_pale",
+      "Build_gates-reedworks-garden_cliff_rock",
+      "Build_gates-reedworks-garden_dark_iron",
+      "Build_gates-reedworks-garden_foliage_green",
+      "Build_gates-reedworks-garden_rubble_stone",
+      "Build_gates-reedworks-garden_timber_warm",
+      "Build_gates-reedworks-garden_water_pool",
+      "Walk_gates-reedworks-garden_cobble_paving",
+      "Walk_gates-reedworks-garden_meadow_grass",
+      "Section_gates-lantern-cache",
+      "Roof_gates-lantern-cache_cliff_rock",
+      "Roof_gates-lantern-cache_timber_dark",
+      "Build_gates-lantern-cache_amber_resin",
+      "Build_gates-lantern-cache_ashlar",
+      "Build_gates-lantern-cache_cliff_rock",
+      "Build_gates-lantern-cache_dark_iron",
+      "Build_gates-lantern-cache_timber_dark",
+      "Build_gates-lantern-cache_timber_warm",
+      "Walk_gates-lantern-cache_cobble_paving",
+      "Section_gates-deposit-vault",
+      "Roof_gates-deposit-vault_ashlar",
+      "Roof_gates-deposit-vault_cliff_rock",
+      "Build_gates-deposit-vault_amber_resin",
+      "Build_gates-deposit-vault_ashlar",
+      "Build_gates-deposit-vault_carved_wood",
+      "Build_gates-deposit-vault_cliff_rock",
+      "Build_gates-deposit-vault_dark_iron",
+      "Build_gates-deposit-vault_timber_dark",
+      "Build_gates-deposit-vault_timber_warm",
+      "Walk_gates-deposit-vault_ashlar",
+      "Walk_gates-deposit-vault_cobble_paving",
+      "Section_gates-otter-pit",
+      "Roof_gates-otter-pit_cliff_rock",
+      "Build_gates-otter-pit_amber_resin",
+      "Build_gates-otter-pit_cliff_rock",
+      "Build_gates-otter-pit_dark_iron",
+      "Build_gates-otter-pit_pale_ashlar",
+      "Build_gates-otter-pit_timber_dark",
+      "Walk_gates-otter-pit_cobble_paving",
+      "Section_gates-stormglass-school",
+      "Roof_gates-stormglass-school_cliff_rock",
+      "Roof_gates-stormglass-school_timber_dark",
+      "Build_gates-stormglass-school_amber_resin",
+      "Build_gates-stormglass-school_ashlar",
+      "Build_gates-stormglass-school_carved_wood",
+      "Build_gates-stormglass-school_cliff_rock",
+      "Build_gates-stormglass-school_dark_iron",
+      "Build_gates-stormglass-school_timber_dark",
+      "Walk_gates-stormglass-school_ashlar",
+      "Walk_gates-stormglass-school_cobble_paving",
+      "Section_gates-plaza-spring",
+      "Roof_gates-plaza-spring_cliff_rock",
+      "Build_gates-plaza-spring_amber_resin",
+      "Build_gates-plaza-spring_ashlar",
+      "Build_gates-plaza-spring_cliff_rock",
+      "Build_gates-plaza-spring_dark_iron",
+      "Build_gates-plaza-spring_water_lake",
+      "Walk_gates-plaza-spring_ashlar",
+      "Walk_gates-plaza-spring_cobble_paving",
+      "Section_gates-ferry-butts",
+      "Roof_gates-ferry-butts_cliff_rock",
+      "Roof_gates-ferry-butts_timber_dark",
+      "Build_gates-ferry-butts_amber_resin",
+      "Build_gates-ferry-butts_ashlar",
+      "Build_gates-ferry-butts_cliff_rock",
+      "Build_gates-ferry-butts_dark_iron",
+      "Build_gates-ferry-butts_thatch_reed",
+      "Build_gates-ferry-butts_timber_dark",
+      "Walk_gates-ferry-butts_cobble_paving",
+      "Section_gates-sanctuary-reliquary",
+      "Roof_gates-sanctuary-reliquary_ashlar",
+      "Roof_gates-sanctuary-reliquary_cliff_rock",
+      "Build_gates-sanctuary-reliquary_amber_resin",
+      "Build_gates-sanctuary-reliquary_ashlar",
+      "Build_gates-sanctuary-reliquary_cliff_rock",
+      "Build_gates-sanctuary-reliquary_dark_iron",
+      "Build_gates-sanctuary-reliquary_gilt_brass",
+      "Walk_gates-sanctuary-reliquary_ashlar",
+      "Walk_gates-sanctuary-reliquary_cobble_paving",
+      "Section_gates-mirrorsmith-well",
+      "Roof_gates-mirrorsmith-well_cliff_rock",
+      "Build_gates-mirrorsmith-well_amber_resin",
+      "Build_gates-mirrorsmith-well_ashlar",
+      "Build_gates-mirrorsmith-well_cliff_rock",
+      "Build_gates-mirrorsmith-well_dark_iron",
+      "Walk_gates-mirrorsmith-well_ashlar",
+      "Walk_gates-mirrorsmith-well_cobble_paving",
+      "Section_gates-civic-focus",
+      "Roof_gates-civic-focus_ashlar",
+      "Roof_gates-civic-focus_cliff_rock",
+      "Build_gates-civic-focus_amber_resin",
+      "Build_gates-civic-focus_ashlar",
+      "Build_gates-civic-focus_blue_crystal",
+      "Build_gates-civic-focus_cliff_rock",
+      "Build_gates-civic-focus_dark_iron",
+      "Walk_gates-civic-focus_ashlar",
+      "Walk_gates-civic-focus_cobble_paving",
+      "Section_gates-waystone",
+      "Roof_gates-waystone_ashlar",
+      "Roof_gates-waystone_cliff_rock",
+      "Build_gates-waystone_amber_resin",
+      "Build_gates-waystone_ashlar",
+      "Build_gates-waystone_cliff_rock",
+      "Build_gates-waystone_dark_iron",
+      "Build_gates-waystone_gilt_brass",
+      "Walk_gates-waystone_ashlar",
+      "Walk_gates-waystone_cobble_paving",
+      "Section_gates-wall-eyrie",
+      "Roof_gates-wall-eyrie_cliff_rock",
+      "Build_gates-wall-eyrie_amber_resin",
+      "Build_gates-wall-eyrie_bark_dark",
+      "Build_gates-wall-eyrie_carved_wood",
+      "Build_gates-wall-eyrie_cliff_rock",
+      "Build_gates-wall-eyrie_dark_iron",
+      "Build_gates-wall-eyrie_rubble_stone",
+      "Build_gates-wall-eyrie_timber_warm",
+      "Build_gates-wall-eyrie_water_pool",
+      "Walk_gates-wall-eyrie_ashlar",
+      "Walk_gates-wall-eyrie_cobble_paving"
+    ]
+  },
+  "sources": [
+    {
+      "id": "generator",
+      "file": "_toolkit/secrets_build.py",
+      "role": "reproducible-build",
+      "design": "four_gates/source/secrets_design.py"
+    }
+  ],
+  "provenance": {
+    "geometry": "authored with the secret rooms kit over the shared toolkit",
+    "license": "CC-BY-4.0"
+  },
+  "productionStatus": "authored-geometry-materials-population",
+  "notes": [
+    "13 secrets of Four Gates Secrets on one map with void between them; which one a player gets is which feature of the ground above they used."
+  ]
+}

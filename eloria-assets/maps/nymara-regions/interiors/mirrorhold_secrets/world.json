@@ -1,0 +1,3952 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "mirrorhold_secrets",
+    "name": "Mirrorhold Secrets",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        18.0,
+        -5.4,
+        18.0
+      ],
+      "max": [
+        327.1,
+        8.25,
+        188.9
+      ]
+    },
+    "playableBounds": {
+      "min": [
+        18.0,
+        -5.4,
+        18.0
+      ],
+      "max": [
+        327.1,
+        3.0,
+        188.9
+      ]
+    },
+    "interiorClass": "secrets",
+    "parentRegion": "mirrorhold",
+    "serverCells": 384
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      -16.0,
+      191.0
+    ],
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 0.0,
+    "invertServerY": true
+  },
+  "secret": true,
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "mirror-reed-cut"
+    },
+    {
+      "id": "mirror-reed-cut",
+      "position": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "mirror-reed-cut"
+    },
+    {
+      "id": "mirror-lens-garden",
+      "position": [
+        245.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "mirror-lens-garden"
+    },
+    {
+      "id": "mirror-canal-cache",
+      "position": [
+        169.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "mirror-canal-cache"
+    },
+    {
+      "id": "mirror-orrery-vault",
+      "position": [
+        242.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "mirror-orrery-vault"
+    },
+    {
+      "id": "mirror-stair-pit",
+      "position": [
+        316.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "mirror-stair-pit"
+    },
+    {
+      "id": "mirror-rose-school",
+      "position": [
+        315.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "mirror-rose-school"
+    },
+    {
+      "id": "mirror-basin-spring",
+      "position": [
+        26.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "mirror-basin-spring"
+    },
+    {
+      "id": "mirror-watch-butts",
+      "position": [
+        94.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "mirror-watch-butts"
+    },
+    {
+      "id": "mirror-citadel-reliquary",
+      "position": [
+        97.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "mirror-citadel-reliquary"
+    },
+    {
+      "id": "mirror-cistern-well",
+      "position": [
+        99.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "mirror-cistern-well"
+    },
+    {
+      "id": "mirror-lens-focus",
+      "position": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "mirror-lens-focus"
+    },
+    {
+      "id": "mirror-adit",
+      "position": [
+        21.55,
+        0.05,
+        21.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "mirror-adit"
+    },
+    {
+      "id": "mirror-adit-far",
+      "position": [
+        21.55,
+        -4.95,
+        84.55
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "mirror-adit"
+    },
+    {
+      "id": "mirror-waystone",
+      "position": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "mirror-waystone"
+    },
+    {
+      "id": "mirror-waystone-ring",
+      "position": [
+        169.11,
+        -4.0,
+        108.32
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "mirror-waystone"
+    },
+    {
+      "id": "mirror-waystone-ring",
+      "position": [
+        173.99,
+        -4.0,
+        108.32
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "mirror-waystone"
+    },
+    {
+      "id": "mirror-waystone-ring",
+      "position": [
+        176.43,
+        -4.0,
+        112.55
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "mirror-waystone"
+    },
+    {
+      "id": "mirror-waystone-ring",
+      "position": [
+        173.99,
+        -4.0,
+        116.78
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "mirror-waystone"
+    },
+    {
+      "id": "mirror-waystone-ring",
+      "position": [
+        169.11,
+        -4.0,
+        116.78
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "mirror-waystone"
+    },
+    {
+      "id": "mirror-overlook-eyrie",
+      "position": [
+        312.55,
+        0.05,
+        165.05
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "mirror-overlook-eyrie"
+    }
+  ],
+  "collision": {
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "width": 624,
+    "height": 348,
+    "cellMetres": 0.5,
+    "originMetres": [
+      16.0,
+      191.0
+    ],
+    "heightEncoding": {
+      "origin": -5.131,
+      "step": 0.1311,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true
+    },
+    "walkableCells": 21112,
+    "blockedCells": 196040,
+    "walkableFraction": 0.0972,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    "nodeNames": [
+      "Secrets_mirrorhold_secrets",
+      "Section_mirror-reed-cut",
+      "Roof_mirror-reed-cut_cliff_rock",
+      "Build_mirror-reed-cut_amber_resin",
+      "Build_mirror-reed-cut_blue_crystal",
+      "Build_mirror-reed-cut_cliff_rock",
+      "Build_mirror-reed-cut_dark_iron",
+      "Build_mirror-reed-cut_water_lake",
+      "Section_mirror-lens-garden",
+      "Roof_mirror-lens-garden_cliff_rock",
+      "Build_mirror-lens-garden_amber_resin",
+      "Build_mirror-lens-garden_bark_pale",
+      "Build_mirror-lens-garden_blue_crystal",
+      "Build_mirror-lens-garden_cliff_rock",
+      "Build_mirror-lens-garden_dark_iron",
+      "Build_mirror-lens-garden_foliage_green",
+      "Build_mirror-lens-garden_pale_ashlar",
+      "Build_mirror-lens-garden_rubble_stone",
+      "Build_mirror-lens-garden_timber_warm",
+      "Build_mirror-lens-garden_water_pool",
+      "Section_mirror-canal-cache",
+      "Roof_mirror-canal-cache_cliff_rock",
+      "Roof_mirror-canal-cache_timber_dark",
+      "Build_mirror-canal-cache_amber_resin",
+      "Build_mirror-canal-cache_blue_crystal",
+      "Build_mirror-canal-cache_cliff_rock",
+      "Build_mirror-canal-cache_dark_iron",
+      "Build_mirror-canal-cache_timber_dark",
+      "Build_mirror-canal-cache_timber_warm",
+      "Build_mirror-canal-cache_veined_marble",
+      "Section_mirror-orrery-vault",
+      "Roof_mirror-orrery-vault_cliff_rock",
+      "Roof_mirror-orrery-vault_pale_ashlar",
+      "Build_mirror-orrery-vault_amber_resin",
+      "Build_mirror-orrery-vault_carved_wood",
+      "Build_mirror-orrery-vault_cliff_rock",
+      "Build_mirror-orrery-vault_dark_iron",
+      "Build_mirror-orrery-vault_pale_ashlar",
+      "Build_mirror-orrery-vault_timber_dark",
+      "Build_mirror-orrery-vault_timber_warm",
+      "Section_mirror-stair-pit",
+      "Roof_mirror-stair-pit_cliff_rock",
+      "Build_mirror-stair-pit_amber_resin",
+      "Build_mirror-stair-pit_cliff_rock",
+      "Build_mirror-stair-pit_dark_iron",
+      "Build_mirror-stair-pit_pale_ashlar",
+      "Build_mirror-stair-pit_timber_dark",
+      "Section_mirror-rose-school",
+      "Roof_mirror-rose-school_cliff_rock",
+      "Roof_mirror-rose-school_timber_dark",
+      "Build_mirror-rose-school_amber_resin",
+      "Build_mirror-rose-school_carved_wood",
+      "Build_mirror-rose-school_cliff_rock",
+      "Build_mirror-rose-school_dark_iron",
+      "Build_mirror-rose-school_timber_dark",
+      "Build_mirror-rose-school_veined_marble",
+      "Section_mirror-basin-spring",
+      "Roof_mirror-basin-spring_cliff_rock",
+      "Build_mirror-basin-spring_amber_resin",
+      "Build_mirror-basin-spring_cliff_rock",
+      "Build_mirror-basin-spring_dark_iron",
+      "Build_mirror-basin-spring_pale_ashlar",
+      "Build_mirror-basin-spring_water_lake",
+      "Section_mirror-watch-butts",
+      "Roof_mirror-watch-butts_cliff_rock",
+      "Roof_mirror-watch-butts_timber_dark",
+      "Build_mirror-watch-butts_amber_resin",
+      "Build_mirror-watch-butts_cliff_rock",
+      "Build_mirror-watch-butts_dark_iron",
+      "Build_mirror-watch-butts_thatch_reed",
+      "Build_mirror-watch-butts_timber_dark",
+      "Build_mirror-watch-butts_veined_marble",
+      "Section_mirror-citadel-reliquary",
+      "Roof_mirror-citadel-reliquary_cliff_rock",
+      "Roof_mirror-citadel-reliquary_pale_ashlar",
+      "Build_mirror-citadel-reliquary_amber_resin",
+      "Build_mirror-citadel-reliquary_cliff_rock",
+      "Build_mirror-citadel-reliquary_dark_iron",
+      "Build_mirror-citadel-reliquary_gilt_brass",
+      "Build_mirror-citadel-reliquary_pale_ashlar",
+      "Section_mirror-cistern-well",
+      "Roof_mirror-cistern-well_cliff_rock",
+      "Build_mirror-cistern-well_amber_resin",
+      "Build_mirror-cistern-well_cliff_rock",
+      "Build_mirror-cistern-well_dark_iron",
+      "Build_mirror-cistern-well_pale_ashlar",
+      "Section_mirror-lens-focus",
+      "Roof_mirror-lens-focus_cliff_rock",
+      "Roof_mirror-lens-focus_pale_ashlar",
+      "Build_mirror-lens-focus_amber_resin",
+      "Build_mirror-lens-focus_cliff_rock",
+      "Build_mirror-lens-focus_dark_iron",
+      "Build_mirror-lens-focus_mirror_glass",
+      "Build_mirror-lens-focus_pale_ashlar",
+      "Section_mirror-adit",
+      "Roof_mirror-adit_cliff_rock",
+      "Build_mirror-adit_amber_resin",
+      "Build_mirror-adit_blue_crystal",
+      "Build_mirror-adit_cliff_rock",
+      "Build_mirror-adit_dark_iron",
+      "Build_mirror-adit_timber_dark",
+      "Section_mirror-waystone",
+      "Roof_mirror-waystone_cliff_rock",
+      "Roof_mirror-waystone_pale_ashlar",
+      "Build_mirror-waystone_amber_resin",
+      "Build_mirror-waystone_cliff_rock",
+      "Build_mirror-waystone_dark_iron",
+      "Build_mirror-waystone_gilt_brass",
+      "Build_mirror-waystone_pale_ashlar",
+      "Section_mirror-overlook-eyrie",
+      "Roof_mirror-overlook-eyrie_cliff_rock",
+      "Build_mirror-overlook-eyrie_amber_resin",
+      "Build_mirror-overlook-eyrie_bark_dark",
+      "Build_mirror-overlook-eyrie_carved_wood",
+      "Build_mirror-overlook-eyrie_cliff_rock",
+      "Build_mirror-overlook-eyrie_dark_iron",
+      "Build_mirror-overlook-eyrie_rubble_stone",
+      "Build_mirror-overlook-eyrie_timber_warm",
+      "Build_mirror-overlook-eyrie_water_pool"
+    ]
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Roof_mirror-reed-cut_cliff_rock",
+      "Roof_mirror-lens-garden_cliff_rock",
+      "Roof_mirror-canal-cache_cliff_rock",
+      "Roof_mirror-canal-cache_timber_dark",
+      "Roof_mirror-orrery-vault_cliff_rock",
+      "Roof_mirror-orrery-vault_pale_ashlar",
+      "Roof_mirror-stair-pit_cliff_rock",
+      "Roof_mirror-rose-school_cliff_rock",
+      "Roof_mirror-rose-school_timber_dark",
+      "Roof_mirror-basin-spring_cliff_rock",
+      "Roof_mirror-watch-butts_cliff_rock",
+      "Roof_mirror-watch-butts_timber_dark",
+      "Roof_mirror-citadel-reliquary_cliff_rock",
+      "Roof_mirror-citadel-reliquary_pale_ashlar",
+      "Roof_mirror-cistern-well_cliff_rock",
+      "Roof_mirror-lens-focus_cliff_rock",
+      "Roof_mirror-lens-focus_pale_ashlar",
+      "Roof_mirror-adit_cliff_rock",
+      "Roof_mirror-waystone_cliff_rock",
+      "Roof_mirror-waystone_pale_ashlar",
+      "Roof_mirror-overlook-eyrie_cliff_rock"
+    ],
+    "reason": "interior lids; the isometric rig frames the floor, not the roof"
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Walk_"
+    ],
+    "agentRadius": 0.4,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 45,
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    }
+  },
+  "portals": [
+    {
+      "id": "exit-mirror-reed-cut",
+      "name": "Back up: The Reed Cut",
+      "type": "map-transition",
+      "position": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "mirrorhold",
+      "destinationSpawn": "secret-mirror-reed-cut",
+      "section": "mirror-reed-cut",
+      "authority": "server"
+    },
+    {
+      "id": "exit-mirror-lens-garden",
+      "name": "Back up: The Lens-Grinders' Garden",
+      "type": "map-transition",
+      "position": [
+        245.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "mirrorhold",
+      "destinationSpawn": "secret-mirror-lens-garden",
+      "section": "mirror-lens-garden",
+      "authority": "server"
+    },
+    {
+      "id": "exit-mirror-canal-cache",
+      "name": "Back up: The Canal Cache",
+      "type": "map-transition",
+      "position": [
+        169.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "mirrorhold_interiors",
+      "destinationSpawn": "secret-mirror-canal-cache",
+      "section": "mirror-canal-cache",
+      "authority": "server"
+    },
+    {
+      "id": "exit-mirror-orrery-vault",
+      "name": "Back up: The Orrery Vault",
+      "type": "map-transition",
+      "position": [
+        242.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "mirrorhold",
+      "destinationSpawn": "secret-mirror-orrery-vault",
+      "section": "mirror-orrery-vault",
+      "authority": "server"
+    },
+    {
+      "id": "exit-mirror-stair-pit",
+      "name": "Back up: The East Stair Pit",
+      "type": "map-transition",
+      "position": [
+        316.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "mirrorhold",
+      "destinationSpawn": "secret-mirror-stair-pit",
+      "section": "mirror-stair-pit",
+      "authority": "server"
+    },
+    {
+      "id": "exit-mirror-rose-school",
+      "name": "Back up: The Rose Gallery School",
+      "type": "map-transition",
+      "position": [
+        315.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "mirrorhold",
+      "destinationSpawn": "secret-mirror-rose-school",
+      "section": "mirror-rose-school",
+      "authority": "server"
+    },
+    {
+      "id": "exit-mirror-basin-spring",
+      "name": "Back up: The Basin Spring",
+      "type": "map-transition",
+      "position": [
+        26.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "mirrorhold",
+      "destinationSpawn": "secret-mirror-basin-spring",
+      "section": "mirror-basin-spring",
+      "authority": "server"
+    },
+    {
+      "id": "exit-mirror-watch-butts",
+      "name": "Back up: The South Watch Butts",
+      "type": "map-transition",
+      "position": [
+        94.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "mirrorhold",
+      "destinationSpawn": "secret-mirror-watch-butts",
+      "section": "mirror-watch-butts",
+      "authority": "server"
+    },
+    {
+      "id": "exit-mirror-citadel-reliquary",
+      "name": "Back up: The Citadel Reliquary",
+      "type": "map-transition",
+      "position": [
+        97.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "mirrorhold",
+      "destinationSpawn": "secret-mirror-citadel-reliquary",
+      "section": "mirror-citadel-reliquary",
+      "authority": "server"
+    },
+    {
+      "id": "exit-mirror-cistern-well",
+      "name": "Back up: The Cistern Well",
+      "type": "map-transition",
+      "position": [
+        99.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "mirrorhold",
+      "destinationSpawn": "secret-mirror-cistern-well",
+      "section": "mirror-cistern-well",
+      "authority": "server"
+    },
+    {
+      "id": "exit-mirror-lens-focus",
+      "name": "Back up: The Lens Focus",
+      "type": "map-transition",
+      "position": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "mirrorhold",
+      "destinationSpawn": "secret-mirror-lens-focus",
+      "section": "mirror-lens-focus",
+      "authority": "server"
+    },
+    {
+      "id": "exit-mirror-adit",
+      "name": "Back up: The Quarry Adit",
+      "type": "map-transition",
+      "position": [
+        21.55,
+        0.05,
+        21.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "mirrorhold",
+      "destinationSpawn": "secret-mirror-adit",
+      "section": "mirror-adit",
+      "authority": "server"
+    },
+    {
+      "id": "link-mirror-adit-secret-horn-adit-mouth",
+      "name": "Up into the Whitehorn Range",
+      "type": "map-transition",
+      "position": [
+        21.55,
+        -4.95,
+        84.55
+      ],
+      "radius": 2.5,
+      "destinationMap": "whitehorn_range",
+      "destinationSpawn": "secret-horn-adit-mouth",
+      "section": "mirror-adit",
+      "authority": "server"
+    },
+    {
+      "id": "exit-mirror-waystone",
+      "name": "Back up: The Mirror Waystone",
+      "type": "map-transition",
+      "position": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "mirrorhold",
+      "destinationSpawn": "secret-mirror-waystone",
+      "section": "mirror-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-mirror-waystone-horn-waystone",
+      "name": "The Whitehorn Range",
+      "type": "map-transition",
+      "position": [
+        169.11,
+        -4.0,
+        108.32
+      ],
+      "radius": 2.5,
+      "destinationMap": "whitehorn_range_secrets",
+      "destinationSpawn": "horn-waystone",
+      "section": "mirror-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-mirror-waystone-barrens-waystone",
+      "name": "The Amethyst Barrens",
+      "type": "map-transition",
+      "position": [
+        173.99,
+        -4.0,
+        108.32
+      ],
+      "radius": 2.5,
+      "destinationMap": "amethyst_barrens_secrets",
+      "destinationSpawn": "barrens-waystone",
+      "section": "mirror-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-mirror-waystone-amber-waystone",
+      "name": "Amberwood",
+      "type": "map-transition",
+      "position": [
+        176.43,
+        -4.0,
+        112.55
+      ],
+      "radius": 2.5,
+      "destinationMap": "amberwood_secrets",
+      "destinationSpawn": "amber-waystone",
+      "section": "mirror-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-mirror-waystone-gates-waystone",
+      "name": "The Four Gates",
+      "type": "map-transition",
+      "position": [
+        173.99,
+        -4.0,
+        116.78
+      ],
+      "radius": 2.5,
+      "destinationMap": "four_gates_secrets",
+      "destinationSpawn": "gates-waystone",
+      "section": "mirror-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "link-mirror-waystone-crown-waystone",
+      "name": "Crownwater",
+      "type": "map-transition",
+      "position": [
+        169.11,
+        -4.0,
+        116.78
+      ],
+      "radius": 2.5,
+      "destinationMap": "crownwater_secrets",
+      "destinationSpawn": "crown-waystone",
+      "section": "mirror-waystone",
+      "authority": "server"
+    },
+    {
+      "id": "exit-mirror-overlook-eyrie",
+      "name": "Back up: The Overlook Eyrie",
+      "type": "map-transition",
+      "position": [
+        312.55,
+        0.05,
+        165.05
+      ],
+      "radius": 2.5,
+      "destinationMap": "mirrorhold",
+      "destinationSpawn": "secret-mirror-overlook-eyrie",
+      "section": "mirror-overlook-eyrie",
+      "authority": "server"
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "mirror-reed-cut-room",
+      "name": "The Reed Cut",
+      "space": "mirror-reed-cut.landing",
+      "position": [
+        174.55,
+        1.6,
+        21.05
+      ],
+      "section": "mirror-reed-cut"
+    },
+    {
+      "id": "mirror-lens-garden-room",
+      "name": "The Lens-Grinders' Garden",
+      "space": "mirror-lens-garden.landing",
+      "position": [
+        245.55,
+        1.6,
+        21.05
+      ],
+      "section": "mirror-lens-garden"
+    },
+    {
+      "id": "mirror-canal-cache-room",
+      "name": "The Canal Cache",
+      "space": "mirror-canal-cache.landing",
+      "position": [
+        169.55,
+        1.6,
+        165.05
+      ],
+      "section": "mirror-canal-cache"
+    },
+    {
+      "id": "mirror-orrery-vault-room",
+      "name": "The Orrery Vault",
+      "space": "mirror-orrery-vault.landing",
+      "position": [
+        242.55,
+        1.6,
+        165.05
+      ],
+      "section": "mirror-orrery-vault"
+    },
+    {
+      "id": "mirror-stair-pit-room",
+      "name": "The East Stair Pit",
+      "space": "mirror-stair-pit.landing",
+      "position": [
+        316.55,
+        1.6,
+        21.05
+      ],
+      "section": "mirror-stair-pit"
+    },
+    {
+      "id": "mirror-rose-school-room",
+      "name": "The Rose Gallery School",
+      "space": "mirror-rose-school.landing",
+      "position": [
+        315.55,
+        1.6,
+        93.05
+      ],
+      "section": "mirror-rose-school"
+    },
+    {
+      "id": "mirror-basin-spring-room",
+      "name": "The Basin Spring",
+      "space": "mirror-basin-spring.landing",
+      "position": [
+        26.55,
+        1.6,
+        165.05
+      ],
+      "section": "mirror-basin-spring"
+    },
+    {
+      "id": "mirror-watch-butts-room",
+      "name": "The South Watch Butts",
+      "space": "mirror-watch-butts.landing",
+      "position": [
+        94.55,
+        1.6,
+        21.05
+      ],
+      "section": "mirror-watch-butts"
+    },
+    {
+      "id": "mirror-citadel-reliquary-room",
+      "name": "The Citadel Reliquary",
+      "space": "mirror-citadel-reliquary.landing",
+      "position": [
+        97.55,
+        1.6,
+        165.05
+      ],
+      "section": "mirror-citadel-reliquary"
+    },
+    {
+      "id": "mirror-cistern-well-room",
+      "name": "The Cistern Well",
+      "space": "mirror-cistern-well.landing",
+      "position": [
+        99.55,
+        1.6,
+        93.05
+      ],
+      "section": "mirror-cistern-well"
+    },
+    {
+      "id": "mirror-lens-focus-room",
+      "name": "The Lens Focus",
+      "space": "mirror-lens-focus.landing",
+      "position": [
+        242.55,
+        1.6,
+        93.05
+      ],
+      "section": "mirror-lens-focus"
+    },
+    {
+      "id": "mirror-adit-room",
+      "name": "The Quarry Adit",
+      "space": "mirror-adit.landing",
+      "position": [
+        21.55,
+        1.6,
+        21.05
+      ],
+      "section": "mirror-adit"
+    },
+    {
+      "id": "mirror-waystone-room",
+      "name": "The Mirror Waystone",
+      "space": "mirror-waystone.landing",
+      "position": [
+        171.55,
+        1.6,
+        93.05
+      ],
+      "section": "mirror-waystone"
+    },
+    {
+      "id": "mirror-overlook-eyrie-room",
+      "name": "The Overlook Eyrie",
+      "space": "mirror-overlook-eyrie.landing",
+      "position": [
+        312.55,
+        1.6,
+        165.05
+      ],
+      "section": "mirror-overlook-eyrie"
+    }
+  ],
+  "interactives": [
+    {
+      "id": "mirror-lens-garden-well",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Garden well",
+      "text": "Cold water from the garden well.",
+      "position": [
+        245.55,
+        -1.0,
+        42.55
+      ],
+      "section": "mirror-lens-garden",
+      "serverTile": [
+        230,
+        148
+      ]
+    },
+    {
+      "id": "mirror-canal-cache-cache",
+      "kind": "storage",
+      "target": "shared",
+      "label": "Cache",
+      "text": "A cache; it opens your shared storage.",
+      "position": [
+        169.55,
+        -2.5,
+        184.65
+      ],
+      "section": "mirror-canal-cache",
+      "serverTile": [
+        154,
+        6
+      ]
+    },
+    {
+      "id": "mirror-canal-cache-bench",
+      "kind": "crafting_station",
+      "target": "field",
+      "label": "Bench",
+      "text": "A bench for ordinary mixing and crafting.",
+      "position": [
+        165.35,
+        -2.1,
+        184.65
+      ],
+      "section": "mirror-canal-cache",
+      "serverTile": [
+        149,
+        6
+      ]
+    },
+    {
+      "id": "mirror-orrery-vault-strongbox",
+      "kind": "storage",
+      "target": "shared",
+      "label": "Cache",
+      "text": "A cache; it opens your shared storage.",
+      "position": [
+        242.55,
+        -4.5,
+        185.55
+      ],
+      "section": "mirror-orrery-vault",
+      "serverTile": [
+        227,
+        5
+      ]
+    },
+    {
+      "id": "mirror-orrery-vault-bench",
+      "kind": "crafting_station",
+      "target": "field",
+      "label": "Bench",
+      "text": "A bench for ordinary mixing and crafting.",
+      "position": [
+        246.95,
+        -4.1,
+        181.15
+      ],
+      "section": "mirror-orrery-vault",
+      "serverTile": [
+        231,
+        10
+      ]
+    },
+    {
+      "id": "mirror-orrery-vault-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "The eleven measures",
+      "text": "Eleven stones, eleven lengths. A shard tuned against all of them is a shard the Barrens factor will sign for.",
+      "position": [
+        242.55,
+        -4.0,
+        176.19
+      ],
+      "section": "mirror-orrery-vault",
+      "serverTile": [
+        227,
+        15
+      ]
+    },
+    {
+      "id": "mirror-stair-pit-post",
+      "kind": "training",
+      "target": "combat",
+      "label": "Training post",
+      "text": "The post lists your recent combat results.",
+      "position": [
+        308.55,
+        -3.0,
+        50.05
+      ],
+      "section": "mirror-stair-pit",
+      "serverTile": [
+        293,
+        141
+      ]
+    },
+    {
+      "id": "mirror-rose-school-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "Reading",
+      "text": "The gallery's under-room. Books read three times as fast in the quiet.",
+      "position": [
+        308.35,
+        -1.0,
+        116.42
+      ],
+      "section": "mirror-rose-school",
+      "serverTile": [
+        292,
+        75
+      ]
+    },
+    {
+      "id": "mirror-rose-school-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "The ringing stone",
+      "text": "The quarry face rings when it is struck and the blank rang clean. Foreman Hesk hung a bell to test it; he does not trust the note.",
+      "position": [
+        315.55,
+        -1.0,
+        116.42
+      ],
+      "section": "mirror-rose-school",
+      "serverTile": [
+        300,
+        75
+      ]
+    },
+    {
+      "id": "mirror-rose-school-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "Lenses",
+      "text": "A lens ground here is checked against the mirror basins before it leaves the city.",
+      "position": [
+        322.75,
+        -1.0,
+        116.42
+      ],
+      "section": "mirror-rose-school",
+      "serverTile": [
+        307,
+        75
+      ]
+    },
+    {
+      "id": "mirror-basin-spring-spring",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Warm spring",
+      "text": "The spring is warm and mineral; it restores you.",
+      "position": [
+        26.55,
+        -2.0,
+        179.15
+      ],
+      "section": "mirror-basin-spring",
+      "serverTile": [
+        11,
+        12
+      ]
+    },
+    {
+      "id": "mirror-watch-butts-butts",
+      "kind": "training",
+      "target": "combat",
+      "label": "Butts",
+      "text": "The butts list your recent combat results.",
+      "position": [
+        94.55,
+        -1.0,
+        34.55
+      ],
+      "section": "mirror-watch-butts",
+      "serverTile": [
+        79,
+        156
+      ]
+    },
+    {
+      "id": "mirror-citadel-reliquary-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "The citadel",
+      "text": "The citadel was the first lens: a city built to look at one thing.",
+      "position": [
+        91.6,
+        -4.0,
+        177.65
+      ],
+      "section": "mirror-citadel-reliquary",
+      "serverTile": [
+        76,
+        13
+      ]
+    },
+    {
+      "id": "mirror-citadel-reliquary-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "The quarry",
+      "text": "The ringing face is not marble. The blank drawn out of it rang because it was hollow.",
+      "position": [
+        103.5,
+        -4.0,
+        177.65
+      ],
+      "section": "mirror-citadel-reliquary",
+      "serverTile": [
+        88,
+        13
+      ]
+    },
+    {
+      "id": "mirror-citadel-reliquary-plaque-2",
+      "kind": "information",
+      "target": "lore",
+      "label": "The bowl",
+      "text": "The range is a bowl with no way out but the cols on its northern rim; the roads that leave, leave by them.",
+      "position": [
+        91.6,
+        -4.0,
+        181.5
+      ],
+      "section": "mirror-citadel-reliquary",
+      "serverTile": [
+        76,
+        10
+      ]
+    },
+    {
+      "id": "mirror-citadel-reliquary-relic",
+      "kind": "scenery_effect",
+      "target": "relic",
+      "label": "The Citadel Reliquary",
+      "text": "The shrine's own relic room, opened with a reed the basins grew.",
+      "position": [
+        97.55,
+        -3.8,
+        186.05
+      ],
+      "section": "mirror-citadel-reliquary",
+      "serverTile": [
+        82,
+        5
+      ]
+    },
+    {
+      "id": "mirror-cistern-well-post",
+      "kind": "training",
+      "target": "combat",
+      "label": "Ward post",
+      "text": "Nothing casts within these stones. The post lists your recent combat results.",
+      "position": [
+        91.9,
+        -4.0,
+        104.9
+      ],
+      "section": "mirror-cistern-well",
+      "serverTile": [
+        76,
+        86
+      ]
+    },
+    {
+      "id": "mirror-overlook-eyrie-water",
+      "kind": "water_source",
+      "target": "refreshment",
+      "label": "Cistern",
+      "text": "Rainwater from the cistern.",
+      "position": [
+        315.55,
+        4.0,
+        180.35
+      ],
+      "section": "mirror-overlook-eyrie",
+      "serverTile": [
+        300,
+        11
+      ]
+    },
+    {
+      "id": "mirror-overlook-eyrie-plaque-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "Breath",
+      "text": "Rest here and the breath comes back twice as fast.",
+      "position": [
+        308.95,
+        4.0,
+        184.25
+      ],
+      "section": "mirror-overlook-eyrie",
+      "serverTile": [
+        293,
+        7
+      ]
+    },
+    {
+      "id": "mirror-overlook-eyrie-plaque-1",
+      "kind": "information",
+      "target": "lore",
+      "label": "Crossings",
+      "text": "Every crossing to a neighbouring region has a waygate two tiles inside it, so you see the border before you step over it.",
+      "position": [
+        311.15,
+        4.0,
+        184.25
+      ],
+      "section": "mirror-overlook-eyrie",
+      "serverTile": [
+        295,
+        7
+      ]
+    }
+  ],
+  "npcMarkers": [],
+  "harvestables": [
+    {
+      "id": "mirror-reed-cut-node-00",
+      "resource": "Mirror Reed",
+      "position": [
+        177.79,
+        -4.0,
+        46.23
+      ],
+      "section": "mirror-reed-cut",
+      "serverTile": [
+        162,
+        145
+      ]
+    },
+    {
+      "id": "mirror-reed-cut-node-01",
+      "resource": "Mirror Reed",
+      "position": [
+        168.24,
+        -4.0,
+        44.35
+      ],
+      "section": "mirror-reed-cut",
+      "serverTile": [
+        152,
+        147
+      ]
+    },
+    {
+      "id": "mirror-reed-cut-node-02",
+      "resource": "Mirror Reed",
+      "position": [
+        179.56,
+        -4.0,
+        36.66
+      ],
+      "section": "mirror-reed-cut",
+      "serverTile": [
+        164,
+        154
+      ]
+    },
+    {
+      "id": "mirror-reed-cut-node-03",
+      "resource": "Mirror Reed",
+      "position": [
+        175.54,
+        -4.0,
+        48.74
+      ],
+      "section": "mirror-reed-cut",
+      "serverTile": [
+        160,
+        142
+      ]
+    },
+    {
+      "id": "mirror-reed-cut-node-04",
+      "resource": "Mirror Reed",
+      "position": [
+        168.27,
+        -4.0,
+        39.56
+      ],
+      "section": "mirror-reed-cut",
+      "serverTile": [
+        152,
+        151
+      ]
+    },
+    {
+      "id": "mirror-reed-cut-node-05",
+      "resource": "Deep Lake Clay",
+      "position": [
+        178.62,
+        -4.0,
+        42.51
+      ],
+      "section": "mirror-reed-cut",
+      "serverTile": [
+        163,
+        148
+      ]
+    },
+    {
+      "id": "mirror-reed-cut-node-06",
+      "resource": "Deep Lake Clay",
+      "position": [
+        171.49,
+        -4.0,
+        49.12
+      ],
+      "section": "mirror-reed-cut",
+      "serverTile": [
+        155,
+        142
+      ]
+    },
+    {
+      "id": "mirror-reed-cut-node-07",
+      "resource": "Deep Lake Clay",
+      "position": [
+        171.92,
+        -4.0,
+        35.45
+      ],
+      "section": "mirror-reed-cut",
+      "serverTile": [
+        156,
+        156
+      ]
+    },
+    {
+      "id": "mirror-reed-cut-node-08",
+      "resource": "Deep Lake Clay",
+      "position": [
+        179.33,
+        -4.0,
+        45.8
+      ],
+      "section": "mirror-reed-cut",
+      "serverTile": [
+        163,
+        145
+      ]
+    },
+    {
+      "id": "mirror-lens-garden-node-00",
+      "resource": "Pale Quartz",
+      "position": [
+        237.96,
+        -1.5,
+        37.35
+      ],
+      "section": "mirror-lens-garden",
+      "serverTile": [
+        222,
+        154
+      ]
+    },
+    {
+      "id": "mirror-lens-garden-node-01",
+      "resource": "Pale Quartz",
+      "position": [
+        239.5,
+        -1.5,
+        37.35
+      ],
+      "section": "mirror-lens-garden",
+      "serverTile": [
+        224,
+        154
+      ]
+    },
+    {
+      "id": "mirror-lens-garden-node-02",
+      "resource": "Pale Quartz",
+      "position": [
+        241.04,
+        -1.5,
+        37.35
+      ],
+      "section": "mirror-lens-garden",
+      "serverTile": [
+        225,
+        154
+      ]
+    },
+    {
+      "id": "mirror-lens-garden-node-03",
+      "resource": "Pale Quartz",
+      "position": [
+        237.96,
+        -1.5,
+        38.95
+      ],
+      "section": "mirror-lens-garden",
+      "serverTile": [
+        222,
+        152
+      ]
+    },
+    {
+      "id": "mirror-lens-garden-node-04",
+      "resource": "Quartz",
+      "position": [
+        244.01,
+        -1.5,
+        37.35
+      ],
+      "section": "mirror-lens-garden",
+      "serverTile": [
+        228,
+        154
+      ]
+    },
+    {
+      "id": "mirror-lens-garden-node-05",
+      "resource": "Quartz",
+      "position": [
+        245.55,
+        -1.5,
+        37.35
+      ],
+      "section": "mirror-lens-garden",
+      "serverTile": [
+        230,
+        154
+      ]
+    },
+    {
+      "id": "mirror-lens-garden-node-06",
+      "resource": "Quartz",
+      "position": [
+        247.09,
+        -1.5,
+        37.35
+      ],
+      "section": "mirror-lens-garden",
+      "serverTile": [
+        231,
+        154
+      ]
+    },
+    {
+      "id": "mirror-lens-garden-node-07",
+      "resource": "Quartz",
+      "position": [
+        244.01,
+        -1.5,
+        38.95
+      ],
+      "section": "mirror-lens-garden",
+      "serverTile": [
+        228,
+        152
+      ]
+    },
+    {
+      "id": "mirror-lens-garden-node-08",
+      "resource": "Moon Salt",
+      "position": [
+        250.06,
+        -1.5,
+        37.35
+      ],
+      "section": "mirror-lens-garden",
+      "serverTile": [
+        234,
+        154
+      ]
+    },
+    {
+      "id": "mirror-lens-garden-node-09",
+      "resource": "Moon Salt",
+      "position": [
+        251.6,
+        -1.5,
+        37.35
+      ],
+      "section": "mirror-lens-garden",
+      "serverTile": [
+        236,
+        154
+      ]
+    },
+    {
+      "id": "mirror-lens-garden-node-10",
+      "resource": "Moon Salt",
+      "position": [
+        253.14,
+        -1.5,
+        37.35
+      ],
+      "section": "mirror-lens-garden",
+      "serverTile": [
+        237,
+        154
+      ]
+    },
+    {
+      "id": "mirror-lens-garden-node-11",
+      "resource": "Stormglass",
+      "position": [
+        237.96,
+        -1.5,
+        46.15
+      ],
+      "section": "mirror-lens-garden",
+      "serverTile": [
+        222,
+        145
+      ]
+    },
+    {
+      "id": "mirror-lens-garden-node-12",
+      "resource": "Stormglass",
+      "position": [
+        239.5,
+        -1.5,
+        46.15
+      ],
+      "section": "mirror-lens-garden",
+      "serverTile": [
+        224,
+        145
+      ]
+    },
+    {
+      "id": "mirror-canal-cache-node-00",
+      "resource": "Deep Lake Clay",
+      "position": [
+        164.3,
+        -3.0,
+        177.3
+      ],
+      "section": "mirror-canal-cache",
+      "serverTile": [
+        148,
+        14
+      ]
+    },
+    {
+      "id": "mirror-canal-cache-node-01",
+      "resource": "Deep Lake Clay",
+      "position": [
+        167.8,
+        -3.0,
+        177.3
+      ],
+      "section": "mirror-canal-cache",
+      "serverTile": [
+        152,
+        14
+      ]
+    },
+    {
+      "id": "mirror-canal-cache-node-02",
+      "resource": "Deep Lake Clay",
+      "position": [
+        171.3,
+        -3.0,
+        177.3
+      ],
+      "section": "mirror-canal-cache",
+      "serverTile": [
+        155,
+        14
+      ]
+    },
+    {
+      "id": "mirror-canal-cache-node-03",
+      "resource": "Mirror Reed",
+      "position": [
+        174.8,
+        -3.0,
+        177.3
+      ],
+      "section": "mirror-canal-cache",
+      "serverTile": [
+        159,
+        14
+      ]
+    },
+    {
+      "id": "mirror-canal-cache-node-04",
+      "resource": "Mirror Reed",
+      "position": [
+        164.3,
+        -3.0,
+        179.1
+      ],
+      "section": "mirror-canal-cache",
+      "serverTile": [
+        148,
+        12
+      ]
+    },
+    {
+      "id": "mirror-canal-cache-node-05",
+      "resource": "Mirror Reed",
+      "position": [
+        167.8,
+        -3.0,
+        179.1
+      ],
+      "section": "mirror-canal-cache",
+      "serverTile": [
+        152,
+        12
+      ]
+    },
+    {
+      "id": "mirror-adit-node-00",
+      "resource": "Quartz",
+      "position": [
+        23.05,
+        -5.0,
+        40.55
+      ],
+      "section": "mirror-adit",
+      "serverTile": [
+        7,
+        150
+      ]
+    },
+    {
+      "id": "mirror-adit-node-01",
+      "resource": "Quartz",
+      "position": [
+        20.05,
+        -5.0,
+        46.88
+      ],
+      "section": "mirror-adit",
+      "serverTile": [
+        4,
+        144
+      ]
+    },
+    {
+      "id": "mirror-adit-node-02",
+      "resource": "Quartz",
+      "position": [
+        23.05,
+        -5.0,
+        53.22
+      ],
+      "section": "mirror-adit",
+      "serverTile": [
+        7,
+        138
+      ]
+    },
+    {
+      "id": "mirror-adit-node-03",
+      "resource": "Slate",
+      "position": [
+        20.05,
+        -5.0,
+        59.55
+      ],
+      "section": "mirror-adit",
+      "serverTile": [
+        4,
+        131
+      ]
+    },
+    {
+      "id": "mirror-adit-node-04",
+      "resource": "Slate",
+      "position": [
+        23.05,
+        -5.0,
+        65.88
+      ],
+      "section": "mirror-adit",
+      "serverTile": [
+        7,
+        125
+      ]
+    },
+    {
+      "id": "mirror-adit-node-05",
+      "resource": "Slate",
+      "position": [
+        20.05,
+        -5.0,
+        72.22
+      ],
+      "section": "mirror-adit",
+      "serverTile": [
+        4,
+        119
+      ]
+    }
+  ],
+  "environment": {
+    "sky": "none",
+    "ambient": {
+      "colour": [
+        0.1,
+        0.1,
+        0.12
+      ],
+      "energy": 0.55
+    },
+    "fog": {
+      "enabled": true,
+      "colour": [
+        0.02,
+        0.02,
+        0.03
+      ],
+      "begin": 14.0,
+      "end": 48.0
+    },
+    "openToSky": [
+      "mirror-lens-garden.court",
+      "mirror-overlook-eyrie.perch"
+    ],
+    "lights": [
+      {
+        "id": "lamp-000",
+        "kind": "point",
+        "position": [
+          174.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-001",
+        "kind": "point",
+        "position": [
+          168.55,
+          -0.62,
+          43.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-002",
+        "kind": "point",
+        "position": [
+          180.55,
+          -0.62,
+          43.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-003",
+        "kind": "point",
+        "position": [
+          245.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-004",
+        "kind": "point",
+        "position": [
+          169.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-005",
+        "kind": "point",
+        "position": [
+          169.55,
+          -0.22,
+          181.15
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-006",
+        "kind": "point",
+        "position": [
+          239.35,
+          -3.4,
+          176.75
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-007",
+        "kind": "point",
+        "position": [
+          245.75,
+          -3.4,
+          176.75
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-008",
+        "kind": "point",
+        "position": [
+          242.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-009",
+        "kind": "point",
+        "position": [
+          316.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-010",
+        "kind": "point",
+        "position": [
+          311.55,
+          -0.12,
+          41.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-011",
+        "kind": "point",
+        "position": [
+          321.55,
+          -0.12,
+          41.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-012",
+        "kind": "point",
+        "position": [
+          315.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-013",
+        "kind": "point",
+        "position": [
+          315.55,
+          1.18,
+          110.3
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-014",
+        "kind": "point",
+        "position": [
+          26.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-015",
+        "kind": "point",
+        "position": [
+          26.55,
+          0.58,
+          181.95
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-016",
+        "kind": "point",
+        "position": [
+          94.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-017",
+        "kind": "point",
+        "position": [
+          94.55,
+          0.98,
+          46.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-018",
+        "kind": "point",
+        "position": [
+          93.35,
+          -3.4,
+          185.35
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-019",
+        "kind": "point",
+        "position": [
+          101.75,
+          -3.4,
+          185.35
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-020",
+        "kind": "point",
+        "position": [
+          97.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-021",
+        "kind": "point",
+        "position": [
+          99.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-022",
+        "kind": "point",
+        "position": [
+          99.55,
+          -0.62,
+          112.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-023",
+        "kind": "point",
+        "position": [
+          245.94,
+          -1.4,
+          114.14
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-024",
+        "kind": "point",
+        "position": [
+          239.16,
+          -1.4,
+          114.14
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-025",
+        "kind": "point",
+        "position": [
+          239.16,
+          -1.4,
+          107.36
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-026",
+        "kind": "point",
+        "position": [
+          245.94,
+          -1.4,
+          107.36
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-027",
+        "kind": "point",
+        "position": [
+          242.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-028",
+        "kind": "point",
+        "position": [
+          21.55,
+          2.38,
+          21.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-029",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          43.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-030",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          57.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-031",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          71.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-032",
+        "kind": "point",
+        "position": [
+          21.55,
+          -2.42,
+          85.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-033",
+        "kind": "point",
+        "position": [
+          171.55,
+          -2.4,
+          112.55
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-034",
+        "kind": "point",
+        "position": [
+          171.55,
+          2.38,
+          93.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-035",
+        "kind": "point",
+        "position": [
+          312.55,
+          2.38,
+          165.05
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      }
+    ]
+  },
+  "spaces": {
+    "mirror-reed-cut.landing": {
+      "x0": 172.05,
+      "z0": 18.55,
+      "x1": 177.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "mirror-reed-cut.way": {
+      "x0": 172.75,
+      "z0": 21.75,
+      "x1": 176.35,
+      "z1": 33.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "mirror-reed-cut.hollow": {
+      "x0": 162.55,
+      "z0": 31.55,
+      "x1": 186.55,
+      "z1": 55.55,
+      "floor": -4.0,
+      "height": 8.0
+    },
+    "mirror-lens-garden.landing": {
+      "x0": 243.05,
+      "z0": 18.55,
+      "x1": 248.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "mirror-lens-garden.way": {
+      "x0": 243.75,
+      "z0": 21.75,
+      "x1": 247.35,
+      "z1": 33.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "mirror-lens-garden.court": {
+      "x0": 234.55,
+      "z0": 31.55,
+      "x1": 256.55,
+      "z1": 53.55,
+      "floor": -2.0,
+      "height": 6.0
+    },
+    "mirror-canal-cache.landing": {
+      "x0": 167.05,
+      "z0": 162.55,
+      "x1": 172.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "mirror-canal-cache.way": {
+      "x0": 167.75,
+      "z0": 165.75,
+      "x1": 171.35,
+      "z1": 177.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "mirror-canal-cache.cellar": {
+      "x0": 162.55,
+      "z0": 175.55,
+      "x1": 176.55,
+      "z1": 186.75,
+      "floor": -3.0,
+      "height": 4.4
+    },
+    "mirror-orrery-vault.landing": {
+      "x0": 240.05,
+      "z0": 162.55,
+      "x1": 245.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "mirror-orrery-vault.way": {
+      "x0": 240.75,
+      "z0": 165.75,
+      "x1": 244.35,
+      "z1": 177.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "mirror-orrery-vault.strongroom": {
+      "x0": 234.55,
+      "z0": 175.55,
+      "x1": 250.55,
+      "z1": 186.75,
+      "floor": -5.0,
+      "height": 5.0
+    },
+    "mirror-stair-pit.landing": {
+      "x0": 314.05,
+      "z0": 18.55,
+      "x1": 319.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "mirror-stair-pit.way": {
+      "x0": 314.75,
+      "z0": 21.75,
+      "x1": 318.35,
+      "z1": 33.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "mirror-stair-pit.pit": {
+      "x0": 306.55,
+      "z0": 31.55,
+      "x1": 326.55,
+      "z1": 51.55,
+      "floor": -4.0,
+      "height": 7.0
+    },
+    "mirror-rose-school.landing": {
+      "x0": 313.05,
+      "z0": 90.55,
+      "x1": 318.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "mirror-rose-school.way": {
+      "x0": 313.75,
+      "z0": 93.75,
+      "x1": 317.35,
+      "z1": 105.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "mirror-rose-school.hall": {
+      "x0": 306.55,
+      "z0": 103.55,
+      "x1": 324.55,
+      "z1": 117.05,
+      "floor": -2.0,
+      "height": 5.2
+    },
+    "mirror-basin-spring.landing": {
+      "x0": 24.05,
+      "z0": 162.55,
+      "x1": 29.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "mirror-basin-spring.way": {
+      "x0": 24.75,
+      "z0": 165.75,
+      "x1": 28.35,
+      "z1": 177.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "mirror-basin-spring.bath": {
+      "x0": 18.55,
+      "z0": 175.55,
+      "x1": 34.55,
+      "z1": 188.35,
+      "floor": -3.0,
+      "height": 6.0
+    },
+    "mirror-watch-butts.landing": {
+      "x0": 92.05,
+      "z0": 18.55,
+      "x1": 97.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "mirror-watch-butts.way": {
+      "x0": 92.75,
+      "z0": 21.75,
+      "x1": 96.35,
+      "z1": 33.35,
+      "floor": -2.0,
+      "height": 3.8
+    },
+    "mirror-watch-butts.gallery": {
+      "x0": 90.55,
+      "z0": 31.55,
+      "x1": 98.55,
+      "z1": 61.55,
+      "floor": -2.0,
+      "height": 5.0
+    },
+    "mirror-citadel-reliquary.landing": {
+      "x0": 95.05,
+      "z0": 162.55,
+      "x1": 100.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "mirror-citadel-reliquary.way": {
+      "x0": 95.75,
+      "z0": 165.75,
+      "x1": 99.35,
+      "z1": 177.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "mirror-citadel-reliquary.cella": {
+      "x0": 90.55,
+      "z0": 175.55,
+      "x1": 104.55,
+      "z1": 188.15,
+      "floor": -5.0,
+      "height": 6.0
+    },
+    "mirror-cistern-well.landing": {
+      "x0": 97.05,
+      "z0": 90.55,
+      "x1": 102.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "mirror-cistern-well.way": {
+      "x0": 97.75,
+      "z0": 93.75,
+      "x1": 101.35,
+      "z1": 105.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "mirror-cistern-well.well": {
+      "x0": 90.55,
+      "z0": 103.55,
+      "x1": 108.55,
+      "z1": 121.55,
+      "floor": -5.0,
+      "height": 8.0
+    },
+    "mirror-lens-focus.landing": {
+      "x0": 240.05,
+      "z0": 90.55,
+      "x1": 245.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "mirror-lens-focus.way": {
+      "x0": 240.75,
+      "z0": 93.75,
+      "x1": 244.35,
+      "z1": 105.35,
+      "floor": -3.0,
+      "height": 3.8
+    },
+    "mirror-lens-focus.chamber": {
+      "x0": 234.55,
+      "z0": 103.55,
+      "x1": 250.55,
+      "z1": 117.95,
+      "floor": -3.0,
+      "height": 6.4
+    },
+    "mirror-adit.landing": {
+      "x0": 19.05,
+      "z0": 18.55,
+      "x1": 24.05,
+      "z1": 23.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "mirror-adit.way": {
+      "x0": 19.75,
+      "z0": 21.75,
+      "x1": 23.35,
+      "z1": 33.35,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "mirror-adit.bore": {
+      "x0": 18.65,
+      "z0": 31.55,
+      "x1": 24.45,
+      "z1": 37.55,
+      "floor": -5.0,
+      "height": 4.0
+    },
+    "mirror-adit.run": {
+      "x0": 19.45,
+      "z0": 35.45,
+      "x1": 23.65,
+      "z1": 83.65,
+      "floor": -5.0,
+      "height": 3.8
+    },
+    "mirror-adit.far": {
+      "x0": 18.55,
+      "z0": 81.55,
+      "x1": 24.55,
+      "z1": 87.55,
+      "floor": -5.0,
+      "height": 4.2
+    },
+    "mirror-waystone.landing": {
+      "x0": 169.05,
+      "z0": 90.55,
+      "x1": 174.05,
+      "z1": 95.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "mirror-waystone.way": {
+      "x0": 169.75,
+      "z0": 93.75,
+      "x1": 173.35,
+      "z1": 105.35,
+      "floor": -4.0,
+      "height": 3.8
+    },
+    "mirror-waystone.ring": {
+      "x0": 162.55,
+      "z0": 103.55,
+      "x1": 180.55,
+      "z1": 121.55,
+      "floor": -4.0,
+      "height": 7.0
+    },
+    "mirror-overlook-eyrie.landing": {
+      "x0": 310.05,
+      "z0": 162.55,
+      "x1": 315.05,
+      "z1": 167.55,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "mirror-overlook-eyrie.way": {
+      "x0": 310.75,
+      "z0": 165.75,
+      "x1": 314.35,
+      "z1": 177.35,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "mirror-overlook-eyrie.perch": {
+      "x0": 306.55,
+      "z0": 175.55,
+      "x1": 318.55,
+      "z1": 185.15,
+      "floor": 3.0,
+      "height": 4.6
+    }
+  },
+  "sections": [
+    {
+      "id": "mirror-reed-cut",
+      "name": "The Reed Cut",
+      "kind": "grotto",
+      "entranceMap": "mirrorhold",
+      "entranceProp": "reed_hide",
+      "key": "",
+      "label": "A hide of cut reeds, and a plank floor under it where there should be mud.",
+      "offset": [
+        174.55,
+        21.05
+      ],
+      "arrival": [
+        174.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          17.55
+        ],
+        "max": [
+          187.55,
+          56.55
+        ]
+      },
+      "spaces": [
+        "mirror-reed-cut.landing",
+        "mirror-reed-cut.way",
+        "mirror-reed-cut.hollow"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "A cut in the lake bank where the reed grows out of the wind and the clay is clean.",
+      "arrivalTile": [
+        159,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          134
+        ],
+        "max": [
+          172,
+          173
+        ]
+      }
+    },
+    {
+      "id": "mirror-lens-garden",
+      "name": "The Lens-Grinders' Garden",
+      "kind": "garden",
+      "entranceMap": "mirrorhold",
+      "entranceProp": "drain_grate",
+      "key": "",
+      "label": "An iron drain grate, its bolts drawn.",
+      "offset": [
+        245.55,
+        21.05
+      ],
+      "arrival": [
+        245.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          233.55,
+          17.55
+        ],
+        "max": [
+          257.55,
+          54.55
+        ]
+      },
+      "spaces": [
+        "mirror-lens-garden.landing",
+        "mirror-lens-garden.way",
+        "mirror-lens-garden.court"
+      ],
+      "areas": [
+        {
+          "kind": "harvest_speed",
+          "multiplier": 2,
+          "spaces": [
+            "mirror-lens-garden.court"
+          ],
+          "tiles": {
+            "min": [
+              219,
+              137
+            ],
+            "max": [
+              241,
+              159
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Sand and salt the grinders keep to themselves, in beds under the works.",
+      "arrivalTile": [
+        230,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          218,
+          136
+        ],
+        "max": [
+          242,
+          173
+        ]
+      }
+    },
+    {
+      "id": "mirror-canal-cache",
+      "name": "The Canal Cache",
+      "kind": "cache",
+      "entranceMap": "mirrorhold_interiors",
+      "entranceProp": "drain_grate",
+      "key": "",
+      "label": "An iron drain grate, its bolts drawn.",
+      "offset": [
+        169.55,
+        165.05
+      ],
+      "arrival": [
+        169.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          161.55
+        ],
+        "max": [
+          177.55,
+          187.75
+        ]
+      },
+      "spaces": [
+        "mirror-canal-cache.landing",
+        "mirror-canal-cache.way",
+        "mirror-canal-cache.cellar"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "A dry sluice chamber with a chest, a bench and the clay the potters dig from it.",
+      "arrivalTile": [
+        154,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          3
+        ],
+        "max": [
+          162,
+          29
+        ]
+      }
+    },
+    {
+      "id": "mirror-orrery-vault",
+      "name": "The Orrery Vault",
+      "kind": "vault",
+      "entranceMap": "mirrorhold",
+      "entranceProp": "cracked_slab",
+      "key": "Storage Token",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        242.55,
+        165.05
+      ],
+      "arrival": [
+        242.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          233.55,
+          161.55
+        ],
+        "max": [
+          251.55,
+          187.75
+        ]
+      },
+      "spaces": [
+        "mirror-orrery-vault.landing",
+        "mirror-orrery-vault.way",
+        "mirror-orrery-vault.strongroom"
+      ],
+      "areas": [
+        {
+          "kind": "experience",
+          "multiplier": 2,
+          "spaces": [
+            "mirror-orrery-vault.strongroom"
+          ],
+          "tiles": {
+            "min": [
+              219,
+              4
+            ],
+            "max": [
+              235,
+              15
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Under the orrery, the keepers' strongroom: the same work counts double here.",
+      "arrivalTile": [
+        227,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          218,
+          3
+        ],
+        "max": [
+          236,
+          29
+        ]
+      }
+    },
+    {
+      "id": "mirror-stair-pit",
+      "name": "The East Stair Pit",
+      "kind": "pen",
+      "entranceMap": "mirrorhold",
+      "entranceProp": "loose_stone",
+      "key": "",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "offset": [
+        316.55,
+        21.05
+      ],
+      "arrival": [
+        316.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          305.55,
+          17.55
+        ],
+        "max": [
+          327.55,
+          52.55
+        ]
+      },
+      "spaces": [
+        "mirror-stair-pit.landing",
+        "mirror-stair-pit.way",
+        "mirror-stair-pit.pit"
+      ],
+      "areas": [],
+      "spawns": [
+        {
+          "creature": "frosthorn_elk",
+          "count": 3,
+          "space": "mirror-stair-pit.pit",
+          "tiles": {
+            "min": [
+              291,
+              139
+            ],
+            "max": [
+              311,
+              159
+            ]
+          }
+        },
+        {
+          "creature": "crown_antler_stag",
+          "count": 3,
+          "space": "mirror-stair-pit.pit",
+          "tiles": {
+            "min": [
+              291,
+              139
+            ],
+            "max": [
+              311,
+              159
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "A quarry pit the stair cut through, where the watch trains against penned elk.",
+      "arrivalTile": [
+        301,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          290,
+          138
+        ],
+        "max": [
+          312,
+          173
+        ]
+      }
+    },
+    {
+      "id": "mirror-rose-school",
+      "name": "The Rose Gallery School",
+      "kind": "school",
+      "entranceMap": "mirrorhold",
+      "entranceProp": "cracked_slab",
+      "key": "",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        315.55,
+        93.05
+      ],
+      "arrival": [
+        315.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          305.55,
+          89.55
+        ],
+        "max": [
+          325.55,
+          118.05
+        ]
+      },
+      "spaces": [
+        "mirror-rose-school.landing",
+        "mirror-rose-school.way",
+        "mirror-rose-school.hall"
+      ],
+      "areas": [
+        {
+          "kind": "fast_reading",
+          "multiplier": 3,
+          "spaces": [
+            "mirror-rose-school.hall"
+          ],
+          "tiles": {
+            "min": [
+              291,
+              74
+            ],
+            "max": [
+              309,
+              87
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Where the lens-masters teach the apprentices to read a chart before they grind.",
+      "arrivalTile": [
+        300,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          290,
+          73
+        ],
+        "max": [
+          310,
+          101
+        ]
+      }
+    },
+    {
+      "id": "mirror-basin-spring",
+      "name": "The Basin Spring",
+      "kind": "spring",
+      "entranceMap": "mirrorhold",
+      "entranceProp": "loose_stone",
+      "key": "",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "offset": [
+        26.55,
+        165.05
+      ],
+      "arrival": [
+        26.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          17.55,
+          161.55
+        ],
+        "max": [
+          35.55,
+          189.35
+        ]
+      },
+      "spaces": [
+        "mirror-basin-spring.landing",
+        "mirror-basin-spring.way",
+        "mirror-basin-spring.bath"
+      ],
+      "areas": [
+        {
+          "kind": "fast_regeneration",
+          "multiplier": 3,
+          "spaces": [
+            "mirror-basin-spring.bath"
+          ],
+          "tiles": {
+            "min": [
+              3,
+              3
+            ],
+            "max": [
+              19,
+              15
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "The warm feed of the mirror basins, in a chamber the masons left open.",
+      "arrivalTile": [
+        11,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          2,
+          2
+        ],
+        "max": [
+          20,
+          29
+        ]
+      }
+    },
+    {
+      "id": "mirror-watch-butts",
+      "name": "The South Watch Butts",
+      "kind": "range",
+      "entranceMap": "mirrorhold",
+      "entranceProp": "cellar_hatch",
+      "key": "",
+      "label": "A cellar hatch under the leaves.",
+      "offset": [
+        94.55,
+        21.05
+      ],
+      "arrival": [
+        94.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          17.55
+        ],
+        "max": [
+          99.55,
+          62.55
+        ]
+      },
+      "spaces": [
+        "mirror-watch-butts.landing",
+        "mirror-watch-butts.way",
+        "mirror-watch-butts.gallery"
+      ],
+      "areas": [
+        {
+          "kind": "experience",
+          "multiplier": 2,
+          "spaces": [
+            "mirror-watch-butts.gallery"
+          ],
+          "tiles": {
+            "min": [
+              75,
+              129
+            ],
+            "max": [
+              83,
+              159
+            ]
+          }
+        }
+      ],
+      "spawns": [
+        {
+          "creature": "reedhorn_stag",
+          "count": 3,
+          "space": "mirror-watch-butts.gallery",
+          "tiles": {
+            "min": [
+              75,
+              129
+            ],
+            "max": [
+              83,
+              159
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "The watch's gallery: straw butts and slow stags at the far end.",
+      "arrivalTile": [
+        79,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          128
+        ],
+        "max": [
+          84,
+          173
+        ]
+      }
+    },
+    {
+      "id": "mirror-citadel-reliquary",
+      "name": "The Citadel Reliquary",
+      "kind": "reliquary",
+      "entranceMap": "mirrorhold",
+      "entranceProp": "shrine_slab",
+      "key": "Mirror Reed",
+      "label": "A shrine slab with fresh scratches where it has been slid aside.",
+      "offset": [
+        97.55,
+        165.05
+      ],
+      "arrival": [
+        97.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          161.55
+        ],
+        "max": [
+          105.55,
+          189.15
+        ]
+      },
+      "spaces": [
+        "mirror-citadel-reliquary.landing",
+        "mirror-citadel-reliquary.way",
+        "mirror-citadel-reliquary.cella"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [],
+      "note": "The shrine's own relic room, opened with a reed the basins grew.",
+      "arrivalTile": [
+        82,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          2
+        ],
+        "max": [
+          90,
+          29
+        ]
+      }
+    },
+    {
+      "id": "mirror-cistern-well",
+      "name": "The Cistern Well",
+      "kind": "nullwell",
+      "entranceMap": "mirrorhold",
+      "entranceProp": "drain_grate",
+      "key": "",
+      "label": "An iron drain grate, its bolts drawn.",
+      "offset": [
+        99.55,
+        93.05
+      ],
+      "arrival": [
+        99.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          89.55,
+          89.55
+        ],
+        "max": [
+          109.55,
+          122.55
+        ]
+      },
+      "spaces": [
+        "mirror-cistern-well.landing",
+        "mirror-cistern-well.way",
+        "mirror-cistern-well.well"
+      ],
+      "areas": [
+        {
+          "kind": "no_magic",
+          "multiplier": 2,
+          "spaces": [
+            "mirror-cistern-well.well"
+          ],
+          "tiles": {
+            "min": [
+              75,
+              69
+            ],
+            "max": [
+              93,
+              87
+            ]
+          }
+        }
+      ],
+      "spawns": [
+        {
+          "creature": "riverglass_otter",
+          "count": 4,
+          "space": "mirror-cistern-well.well",
+          "tiles": {
+            "min": [
+              75,
+              69
+            ],
+            "max": [
+              93,
+              87
+            ]
+          }
+        }
+      ],
+      "exits": [],
+      "note": "The old cistern: its stones swallow every word of a spell.",
+      "arrivalTile": [
+        84,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          74,
+          68
+        ],
+        "max": [
+          94,
+          101
+        ]
+      }
+    },
+    {
+      "id": "mirror-lens-focus",
+      "name": "The Lens Focus",
+      "kind": "focus",
+      "entranceMap": "mirrorhold",
+      "entranceProp": "crystal_seam",
+      "key": "Iron Rune",
+      "label": "A seam of crystal that hums at a touch; the rock behind it is thin.",
+      "offset": [
+        242.55,
+        93.05
+      ],
+      "arrival": [
+        242.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          233.55,
+          89.55
+        ],
+        "max": [
+          251.55,
+          118.95
+        ]
+      },
+      "spaces": [
+        "mirror-lens-focus.landing",
+        "mirror-lens-focus.way",
+        "mirror-lens-focus.chamber"
+      ],
+      "areas": [
+        {
+          "kind": "cheap_magic",
+          "multiplier": 2,
+          "spaces": [
+            "mirror-lens-focus.chamber"
+          ],
+          "tiles": {
+            "min": [
+              219,
+              73
+            ],
+            "max": [
+              235,
+              87
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "Where the west lens tower gathers its light the ether comes cheap.",
+      "arrivalTile": [
+        227,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          218,
+          72
+        ],
+        "max": [
+          236,
+          101
+        ]
+      }
+    },
+    {
+      "id": "mirror-adit",
+      "name": "The Quarry Adit",
+      "kind": "tunnel",
+      "entranceMap": "mirrorhold",
+      "entranceProp": "loose_stone",
+      "key": "",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "offset": [
+        21.55,
+        21.05
+      ],
+      "arrival": [
+        21.55,
+        0.05,
+        21.05
+      ],
+      "bounds": {
+        "min": [
+          17.55,
+          17.55
+        ],
+        "max": [
+          25.55,
+          88.55
+        ]
+      },
+      "spaces": [
+        "mirror-adit.landing",
+        "mirror-adit.way",
+        "mirror-adit.bore",
+        "mirror-adit.run",
+        "mirror-adit.far"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [
+        {
+          "map": "whitehorn_range",
+          "spawn": "secret-horn-adit-mouth",
+          "label": "Up into the Whitehorn Range",
+          "space": "mirror-adit.far",
+          "position": [
+            21.55,
+            -4.95,
+            84.55
+          ],
+          "tile": [
+            6,
+            106
+          ]
+        }
+      ],
+      "note": "The quarrymen's adit under the rim, out onto the range.",
+      "arrivalTile": [
+        6,
+        170
+      ],
+      "boundsTiles": {
+        "min": [
+          2,
+          102
+        ],
+        "max": [
+          10,
+          173
+        ]
+      }
+    },
+    {
+      "id": "mirror-waystone",
+      "name": "The Mirror Waystone",
+      "kind": "waystone",
+      "entranceMap": "mirrorhold",
+      "entranceProp": "cracked_slab",
+      "key": "Iron Rune",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "offset": [
+        171.55,
+        93.05
+      ],
+      "arrival": [
+        171.55,
+        0.05,
+        93.05
+      ],
+      "bounds": {
+        "min": [
+          161.55,
+          89.55
+        ],
+        "max": [
+          181.55,
+          122.55
+        ]
+      },
+      "spaces": [
+        "mirror-waystone.landing",
+        "mirror-waystone.way",
+        "mirror-waystone.ring"
+      ],
+      "areas": [],
+      "spawns": [],
+      "exits": [
+        {
+          "map": "whitehorn_range_secrets",
+          "spawn": "horn-waystone",
+          "label": "The Whitehorn Range",
+          "space": "mirror-waystone.ring",
+          "position": [
+            169.11,
+            -4.0,
+            108.32
+          ],
+          "tile": [
+            153,
+            83
+          ]
+        },
+        {
+          "map": "amethyst_barrens_secrets",
+          "spawn": "barrens-waystone",
+          "label": "The Amethyst Barrens",
+          "space": "mirror-waystone.ring",
+          "position": [
+            173.99,
+            -4.0,
+            108.32
+          ],
+          "tile": [
+            158,
+            83
+          ]
+        },
+        {
+          "map": "amberwood_secrets",
+          "spawn": "amber-waystone",
+          "label": "Amberwood",
+          "space": "mirror-waystone.ring",
+          "position": [
+            176.43,
+            -4.0,
+            112.55
+          ],
+          "tile": [
+            160,
+            78
+          ]
+        },
+        {
+          "map": "four_gates_secrets",
+          "spawn": "gates-waystone",
+          "label": "The Four Gates",
+          "space": "mirror-waystone.ring",
+          "position": [
+            173.99,
+            -4.0,
+            116.78
+          ],
+          "tile": [
+            158,
+            74
+          ]
+        },
+        {
+          "map": "crownwater_secrets",
+          "spawn": "crown-waystone",
+          "label": "Crownwater",
+          "space": "mirror-waystone.ring",
+          "position": [
+            169.11,
+            -4.0,
+            116.78
+          ],
+          "tile": [
+            153,
+            74
+          ]
+        }
+      ],
+      "note": "Five stones under the plaza flags. An iron rune wakes them.",
+      "arrivalTile": [
+        156,
+        98
+      ],
+      "boundsTiles": {
+        "min": [
+          146,
+          68
+        ],
+        "max": [
+          166,
+          101
+        ]
+      }
+    },
+    {
+      "id": "mirror-overlook-eyrie",
+      "name": "The Overlook Eyrie",
+      "kind": "eyrie",
+      "entranceMap": "mirrorhold",
+      "entranceProp": "ivy_arch",
+      "key": "",
+      "label": "An arch so grown with vine it reads as hedge.",
+      "offset": [
+        312.55,
+        165.05
+      ],
+      "arrival": [
+        312.55,
+        0.05,
+        165.05
+      ],
+      "bounds": {
+        "min": [
+          305.55,
+          161.55
+        ],
+        "max": [
+          319.55,
+          186.15
+        ]
+      },
+      "spaces": [
+        "mirror-overlook-eyrie.landing",
+        "mirror-overlook-eyrie.way",
+        "mirror-overlook-eyrie.perch"
+      ],
+      "areas": [
+        {
+          "kind": "fast_regeneration",
+          "multiplier": 2,
+          "spaces": [
+            "mirror-overlook-eyrie.perch"
+          ],
+          "tiles": {
+            "min": [
+              291,
+              6
+            ],
+            "max": [
+              303,
+              15
+            ]
+          }
+        }
+      ],
+      "spawns": [],
+      "exits": [],
+      "note": "A pocket in the overlook cliff with a cistern and a view.",
+      "arrivalTile": [
+        297,
+        26
+      ],
+      "boundsTiles": {
+        "min": [
+          290,
+          5
+        ],
+        "max": [
+          304,
+          29
+        ]
+      }
+    }
+  ],
+  "secrets": {
+    "region": "mirrorhold",
+    "sections": [
+      "mirror-reed-cut",
+      "mirror-lens-garden",
+      "mirror-canal-cache",
+      "mirror-orrery-vault",
+      "mirror-stair-pit",
+      "mirror-rose-school",
+      "mirror-basin-spring",
+      "mirror-watch-butts",
+      "mirror-citadel-reliquary",
+      "mirror-cistern-well",
+      "mirror-lens-focus",
+      "mirror-adit",
+      "mirror-waystone",
+      "mirror-overlook-eyrie"
+    ],
+    "note": "Each section is one secret. The client shows a player only the section they stand in; the server places the arrival, the areas, the spawns and the harvest nodes from this block."
+  },
+  "performance": {
+    "nodes": 134,
+    "meshes": 119,
+    "materials": 19,
+    "images": 53,
+    "textures": 53,
+    "accessors": 595,
+    "bufferViews": 648,
+    "uniqueTriangles": 27776,
+    "uniqueVertices": 38440,
+    "glbBytes": 7531836,
+    "nodeNames": [
+      "Secrets_mirrorhold_secrets",
+      "Section_mirror-reed-cut",
+      "Roof_mirror-reed-cut_cliff_rock",
+      "Build_mirror-reed-cut_amber_resin",
+      "Build_mirror-reed-cut_blue_crystal",
+      "Build_mirror-reed-cut_cliff_rock",
+      "Build_mirror-reed-cut_dark_iron",
+      "Build_mirror-reed-cut_water_lake",
+      "Walk_mirror-reed-cut_pale_ashlar",
+      "Section_mirror-lens-garden",
+      "Roof_mirror-lens-garden_cliff_rock",
+      "Build_mirror-lens-garden_amber_resin",
+      "Build_mirror-lens-garden_bark_pale",
+      "Build_mirror-lens-garden_blue_crystal",
+      "Build_mirror-lens-garden_cliff_rock",
+      "Build_mirror-lens-garden_dark_iron",
+      "Build_mirror-lens-garden_foliage_green",
+      "Build_mirror-lens-garden_pale_ashlar",
+      "Build_mirror-lens-garden_rubble_stone",
+      "Build_mirror-lens-garden_timber_warm",
+      "Build_mirror-lens-garden_water_pool",
+      "Walk_mirror-lens-garden_alpine_turf",
+      "Walk_mirror-lens-garden_pale_ashlar",
+      "Section_mirror-canal-cache",
+      "Roof_mirror-canal-cache_cliff_rock",
+      "Roof_mirror-canal-cache_timber_dark",
+      "Build_mirror-canal-cache_amber_resin",
+      "Build_mirror-canal-cache_blue_crystal",
+      "Build_mirror-canal-cache_cliff_rock",
+      "Build_mirror-canal-cache_dark_iron",
+      "Build_mirror-canal-cache_timber_dark",
+      "Build_mirror-canal-cache_timber_warm",
+      "Build_mirror-canal-cache_veined_marble",
+      "Walk_mirror-canal-cache_pale_ashlar",
+      "Section_mirror-orrery-vault",
+      "Roof_mirror-orrery-vault_cliff_rock",
+      "Roof_mirror-orrery-vault_pale_ashlar",
+      "Build_mirror-orrery-vault_amber_resin",
+      "Build_mirror-orrery-vault_carved_wood",
+      "Build_mirror-orrery-vault_cliff_rock",
+      "Build_mirror-orrery-vault_dark_iron",
+      "Build_mirror-orrery-vault_pale_ashlar",
+      "Build_mirror-orrery-vault_timber_dark",
+      "Build_mirror-orrery-vault_timber_warm",
+      "Walk_mirror-orrery-vault_pale_ashlar",
+      "Section_mirror-stair-pit",
+      "Roof_mirror-stair-pit_cliff_rock",
+      "Build_mirror-stair-pit_amber_resin",
+      "Build_mirror-stair-pit_cliff_rock",
+      "Build_mirror-stair-pit_dark_iron",
+      "Build_mirror-stair-pit_pale_ashlar",
+      "Build_mirror-stair-pit_timber_dark",
+      "Walk_mirror-stair-pit_pale_ashlar",
+      "Section_mirror-rose-school",
+      "Roof_mirror-rose-school_cliff_rock",
+      "Roof_mirror-rose-school_timber_dark",
+      "Build_mirror-rose-school_amber_resin",
+      "Build_mirror-rose-school_carved_wood",
+      "Build_mirror-rose-school_cliff_rock",
+      "Build_mirror-rose-school_dark_iron",
+      "Build_mirror-rose-school_timber_dark",
+      "Build_mirror-rose-school_veined_marble",
+      "Walk_mirror-rose-school_pale_ashlar",
+      "Section_mirror-basin-spring",
+      "Roof_mirror-basin-spring_cliff_rock",
+      "Build_mirror-basin-spring_amber_resin",
+      "Build_mirror-basin-spring_cliff_rock",
+      "Build_mirror-basin-spring_dark_iron",
+      "Build_mirror-basin-spring_pale_ashlar",
+      "Build_mirror-basin-spring_water_lake",
+      "Walk_mirror-basin-spring_pale_ashlar",
+      "Section_mirror-watch-butts",
+      "Roof_mirror-watch-butts_cliff_rock",
+      "Roof_mirror-watch-butts_timber_dark",
+      "Build_mirror-watch-butts_amber_resin",
+      "Build_mirror-watch-butts_cliff_rock",
+      "Build_mirror-watch-butts_dark_iron",
+      "Build_mirror-watch-butts_thatch_reed",
+      "Build_mirror-watch-butts_timber_dark",
+      "Build_mirror-watch-butts_veined_marble",
+      "Walk_mirror-watch-butts_pale_ashlar",
+      "Section_mirror-citadel-reliquary",
+      "Roof_mirror-citadel-reliquary_cliff_rock",
+      "Roof_mirror-citadel-reliquary_pale_ashlar",
+      "Build_mirror-citadel-reliquary_amber_resin",
+      "Build_mirror-citadel-reliquary_cliff_rock",
+      "Build_mirror-citadel-reliquary_dark_iron",
+      "Build_mirror-citadel-reliquary_gilt_brass",
+      "Build_mirror-citadel-reliquary_pale_ashlar",
+      "Walk_mirror-citadel-reliquary_pale_ashlar",
+      "Section_mirror-cistern-well",
+      "Roof_mirror-cistern-well_cliff_rock",
+      "Build_mirror-cistern-well_amber_resin",
+      "Build_mirror-cistern-well_cliff_rock",
+      "Build_mirror-cistern-well_dark_iron",
+      "Build_mirror-cistern-well_pale_ashlar",
+      "Walk_mirror-cistern-well_pale_ashlar",
+      "Section_mirror-lens-focus",
+      "Roof_mirror-lens-focus_cliff_rock",
+      "Roof_mirror-lens-focus_pale_ashlar",
+      "Build_mirror-lens-focus_amber_resin",
+      "Build_mirror-lens-focus_cliff_rock",
+      "Build_mirror-lens-focus_dark_iron",
+      "Build_mirror-lens-focus_mirror_glass",
+      "Build_mirror-lens-focus_pale_ashlar",
+      "Walk_mirror-lens-focus_pale_ashlar",
+      "Section_mirror-adit",
+      "Roof_mirror-adit_cliff_rock",
+      "Build_mirror-adit_amber_resin",
+      "Build_mirror-adit_blue_crystal",
+      "Build_mirror-adit_cliff_rock",
+      "Build_mirror-adit_dark_iron",
+      "Build_mirror-adit_timber_dark",
+      "Walk_mirror-adit_pale_ashlar",
+      "Section_mirror-waystone",
+      "Roof_mirror-waystone_cliff_rock",
+      "Roof_mirror-waystone_pale_ashlar",
+      "Build_mirror-waystone_amber_resin",
+      "Build_mirror-waystone_cliff_rock",
+      "Build_mirror-waystone_dark_iron",
+      "Build_mirror-waystone_gilt_brass",
+      "Build_mirror-waystone_pale_ashlar",
+      "Walk_mirror-waystone_pale_ashlar",
+      "Section_mirror-overlook-eyrie",
+      "Roof_mirror-overlook-eyrie_cliff_rock",
+      "Build_mirror-overlook-eyrie_amber_resin",
+      "Build_mirror-overlook-eyrie_bark_dark",
+      "Build_mirror-overlook-eyrie_carved_wood",
+      "Build_mirror-overlook-eyrie_cliff_rock",
+      "Build_mirror-overlook-eyrie_dark_iron",
+      "Build_mirror-overlook-eyrie_rubble_stone",
+      "Build_mirror-overlook-eyrie_timber_warm",
+      "Build_mirror-overlook-eyrie_water_pool",
+      "Walk_mirror-overlook-eyrie_pale_ashlar"
+    ]
+  },
+  "sources": [
+    {
+      "id": "generator",
+      "file": "_toolkit/secrets_build.py",
+      "role": "reproducible-build",
+      "design": "mirrorhold/source/secrets_design.py"
+    }
+  ],
+  "provenance": {
+    "geometry": "authored with the secret rooms kit over the shared toolkit",
+    "license": "CC-BY-4.0"
+  },
+  "productionStatus": "authored-geometry-materials-population",
+  "notes": [
+    "14 secrets of Mirrorhold Secrets on one map with void between them; which one a player gets is which feature of the ground above they used."
+  ]
+}

@@ -683,7 +683,21 @@
       "Prop_Timber_Stack_04",
       "Prop_Timber_Stack_05",
       "Prop_Timber_Stack_07",
-      "Prop_Timber_Stack_08"
+      "Prop_Timber_Stack_08",
+      "Secret_haven_arcade_school",
+      "Secret_haven_cathedral_reliquary",
+      "Secret_haven_gate_well",
+      "Secret_haven_guild_vault",
+      "Secret_haven_lamp_spring",
+      "Secret_haven_lighthouse_eyrie",
+      "Secret_haven_mole_pit",
+      "Secret_haven_peatcut_mouth",
+      "Secret_haven_ropewalk_garden",
+      "Secret_haven_shipyard_butts",
+      "Secret_haven_smuggle",
+      "Secret_haven_spire_focus",
+      "Secret_haven_waystone",
+      "Secret_haven_wrack_hollow"
     ],
     "binary": "collision.bin",
     "format": "EWCG-v2",
@@ -700,8 +714,8 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 698579,
-    "walkableFraction": 0.5264
+    "walkableCells": 698364,
+    "walkableFraction": 0.5262
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -1424,6 +1438,300 @@
         535
       ],
       "authority": "server"
+    },
+    {
+      "id": "secret-haven-wrack-hollow",
+      "kind": "secret",
+      "secret": "haven-wrack-hollow",
+      "name": "The Wrack Hollow",
+      "label": "A cave mouth the tide leaves open for an hour a day.",
+      "prop": "tide_cave",
+      "key": "",
+      "destinationMap": "westhaven_secrets",
+      "destinationSpawn": "haven-wrack-hollow",
+      "position": [
+        -67.52,
+        34.92,
+        116.96
+      ],
+      "authority": "server",
+      "serverTile": [
+        106,
+        133
+      ]
+    },
+    {
+      "id": "secret-haven-ropewalk-garden",
+      "kind": "secret",
+      "secret": "haven-ropewalk-garden",
+      "name": "The Ropewalk Garden",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "westhaven_secrets",
+      "destinationSpawn": "haven-ropewalk-garden",
+      "position": [
+        213.44,
+        5.56,
+        -28.22
+      ],
+      "authority": "server",
+      "serverTile": [
+        387,
+        278
+      ]
+    },
+    {
+      "id": "secret-haven-guild-vault",
+      "kind": "secret",
+      "secret": "haven-guild-vault",
+      "name": "The Guild Vault",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Storage Token",
+      "destinationMap": "westhaven_secrets",
+      "destinationSpawn": "haven-guild-vault",
+      "position": [
+        93.23,
+        9.35,
+        -40.54
+      ],
+      "authority": "server",
+      "serverTile": [
+        267,
+        291
+      ]
+    },
+    {
+      "id": "secret-haven-mole-pit",
+      "kind": "secret",
+      "secret": "haven-mole-pit",
+      "name": "The Mole Pit",
+      "label": "An iron drain grate, its bolts drawn.",
+      "prop": "drain_grate",
+      "key": "",
+      "destinationMap": "westhaven_secrets",
+      "destinationSpawn": "haven-mole-pit",
+      "position": [
+        -49.36,
+        17.23,
+        64.72
+      ],
+      "authority": "server",
+      "serverTile": [
+        125,
+        185
+      ]
+    },
+    {
+      "id": "secret-haven-arcade-school",
+      "kind": "secret",
+      "secret": "haven-arcade-school",
+      "name": "The Arcade School",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "",
+      "destinationMap": "westhaven_secrets",
+      "destinationSpawn": "haven-arcade-school",
+      "position": [
+        3.86,
+        22.72,
+        -127.6
+      ],
+      "authority": "server",
+      "serverTile": [
+        178,
+        378
+      ]
+    },
+    {
+      "id": "secret-haven-lamp-spring",
+      "kind": "secret",
+      "secret": "haven-lamp-spring",
+      "name": "The Lamp Rock Spring",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "prop": "loose_stone",
+      "key": "",
+      "destinationMap": "westhaven_secrets",
+      "destinationSpawn": "haven-lamp-spring",
+      "position": [
+        -69.36,
+        16.99,
+        54.72
+      ],
+      "authority": "server",
+      "serverTile": [
+        105,
+        195
+      ]
+    },
+    {
+      "id": "secret-haven-shipyard-butts",
+      "kind": "secret",
+      "secret": "haven-shipyard-butts",
+      "name": "The Shipyard Butts",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "westhaven_secrets",
+      "destinationSpawn": "haven-shipyard-butts",
+      "position": [
+        226.48,
+        3.42,
+        -22.77
+      ],
+      "authority": "server",
+      "serverTile": [
+        400,
+        273
+      ]
+    },
+    {
+      "id": "secret-haven-cathedral-reliquary",
+      "kind": "secret",
+      "secret": "haven-cathedral-reliquary",
+      "name": "The Cathedral Reliquary",
+      "label": "A shrine slab with fresh scratches where it has been slid aside.",
+      "prop": "shrine_slab",
+      "key": "Shorebank Shell",
+      "destinationMap": "westhaven_secrets",
+      "destinationSpawn": "haven-cathedral-reliquary",
+      "position": [
+        82.27,
+        17.48,
+        -120.58
+      ],
+      "authority": "server",
+      "serverTile": [
+        256,
+        371
+      ]
+    },
+    {
+      "id": "secret-haven-gate-well",
+      "kind": "secret",
+      "secret": "haven-gate-well",
+      "name": "The City Gate Well",
+      "label": "An iron drain grate, its bolts drawn.",
+      "prop": "drain_grate",
+      "key": "",
+      "destinationMap": "westhaven_secrets",
+      "destinationSpawn": "haven-gate-well",
+      "position": [
+        -20.34,
+        9.5,
+        -56.98
+      ],
+      "authority": "server",
+      "serverTile": [
+        154,
+        307
+      ]
+    },
+    {
+      "id": "secret-haven-spire-focus",
+      "kind": "secret",
+      "secret": "haven-spire-focus",
+      "name": "The Spire Focus",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Iron Rune",
+      "destinationMap": "westhaven_secrets",
+      "destinationSpawn": "haven-spire-focus",
+      "position": [
+        139.4,
+        28.47,
+        -143.92
+      ],
+      "authority": "server",
+      "serverTile": [
+        313,
+        394
+      ]
+    },
+    {
+      "id": "secret-haven-smuggle",
+      "kind": "secret",
+      "secret": "haven-smuggle",
+      "name": "The Smugglers' Run",
+      "label": "A cave mouth the tide leaves open for an hour a day.",
+      "prop": "tide_cave",
+      "key": "",
+      "destinationMap": "westhaven_secrets",
+      "destinationSpawn": "haven-smuggle",
+      "position": [
+        49.12,
+        17.05,
+        129.52
+      ],
+      "authority": "server",
+      "serverTile": [
+        223,
+        120
+      ]
+    },
+    {
+      "id": "secret-haven-waystone",
+      "kind": "secret",
+      "secret": "haven-waystone",
+      "name": "The Haven Waystone",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Iron Rune",
+      "destinationMap": "westhaven_secrets",
+      "destinationSpawn": "haven-waystone",
+      "position": [
+        -21.52,
+        9.72,
+        -40.05
+      ],
+      "authority": "server",
+      "serverTile": [
+        152,
+        290
+      ]
+    },
+    {
+      "id": "secret-haven-lighthouse-eyrie",
+      "kind": "secret",
+      "secret": "haven-lighthouse-eyrie",
+      "name": "The Lighthouse Eyrie",
+      "label": "An arch so grown with vine it reads as hedge.",
+      "prop": "ivy_arch",
+      "key": "",
+      "destinationMap": "westhaven_secrets",
+      "destinationSpawn": "haven-lighthouse-eyrie",
+      "position": [
+        291.64,
+        22.98,
+        133.44
+      ],
+      "authority": "server",
+      "serverTile": [
+        466,
+        117
+      ]
+    },
+    {
+      "id": "secret-haven-peatcut-mouth",
+      "kind": "secret",
+      "secret": "haven-peatcut-mouth",
+      "name": "The Peat-Cut Mouth",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "grey_moors_secrets",
+      "destinationSpawn": "moor-peatcut-far",
+      "position": [
+        226.24,
+        45.26,
+        -241.6
+      ],
+      "authority": "server",
+      "serverTile": [
+        400,
+        492
+      ]
     }
   ],
   "npcMarkers": [
@@ -3139,30 +3447,36 @@
           "suffix": "_low"
         }
       ]
+    },
+    {
+      "id": "package-lod2",
+      "glb": "world-lod2.glb",
+      "strategy": "reduced-package",
+      "notes": "Far-tier vegetation only, no ground clutter."
     }
   ],
   "performance": {
-    "nodes": 5379,
-    "meshes": 365,
-    "materials": 45,
-    "images": 100,
-    "textures": 100,
-    "accessors": 1468,
-    "bufferViews": 1568,
-    "uniqueTriangles": 524070,
-    "uniqueVertices": 399253,
-    "glbBytes": 29555744,
-    "instancedTriangles": 1226982,
+    "nodes": 5416,
+    "meshes": 391,
+    "materials": 47,
+    "images": 106,
+    "textures": 106,
+    "accessors": 1572,
+    "bufferViews": 1678,
+    "uniqueTriangles": 525346,
+    "uniqueVertices": 400585,
+    "glbBytes": 30162596,
+    "instancedTriangles": 1228258,
     "embeddedTextureBytes": 30715754,
     "textureMemoryBytesUncompressed": 268566528,
-    "placements": 2705,
+    "placements": 2719,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 698579,
-      "blockedCells": 628525,
-      "walkableFraction": 0.5264,
+      "walkableCells": 698364,
+      "blockedCells": 628740,
+      "walkableFraction": 0.5262,
       "elevatedDecks": 29,
       "steepCells": 261856,
       "reliefMetres": 99.87,
@@ -3232,7 +3546,15 @@
       "march east-road: 4 road pieces, 16 of manymouth_delta's growth",
       "march crownwater-berth: 0 road pieces, 0 of crownwater's growth",
       "march amber-berth: 0 road pieces, 0 of amberwood's growth"
-    ]
+    ],
+    "lod2": {
+      "glbBytes": 17787544,
+      "nodes": 4055,
+      "uniqueTriangles": 439076,
+      "instancedTriangles": 1039220,
+      "sizeReductionPercent": 41.0,
+      "triangleReductionPercent": 15.4
+    }
   },
   "sources": [
     {

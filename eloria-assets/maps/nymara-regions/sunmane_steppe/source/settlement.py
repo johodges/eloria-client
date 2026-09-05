@@ -16,6 +16,13 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "_toolkit"))
+import secretrooms as SR  # noqa: E402
+import secrets_design as SECRETS  # noqa: E402
+
 import kit
 import terrain
 from glb import Geometry, compose
@@ -354,6 +361,7 @@ def _asset_builders() -> dict:
         "burial_mound_plain": lambda: kit.burial_mound(4.4, 2.0, False),
         "filled_well": kit.filled_well,
         "march_gate": kit.march_gate,
+        "secret_hatch": kit.secret_hatch,
     }
     for index in range(3):
         builders["round_tent_%d" % index] = tent(index)
@@ -1182,6 +1190,14 @@ CAVE_SITES = (
 
 DESERT_STATIONS = ((4.0, -92.0, 0.2), (64.0, -100.0, 2.6))
 
+# Which of the steppe's own assets stands for each kind of secret entrance.
+SECRET_ASSETS = {
+    "loose_stone": "standing_stone_2", "cairn": "desert_waystone_2",
+    "cellar_hatch": "secret_hatch", "cracked_slab": "secret_hatch",
+    "well_shaft": "steppe_well", "sand_sink": "cave_mouth_plain",
+    "shrine_slab": "banner_shrine_0",
+}
+
 # Where the steppe hands over to its neighbours (region-connections.json). The
 # west caravan road runs down to the Four Gates causeway, the desert track
 # climbs north into the Barrens, and the shore road goes south to the Verdant
@@ -1230,6 +1246,27 @@ def compose_expansion(layout: Layout, rng) -> None:
                    landmark="transition",
                    interactive={"id": identifier, "kind": "portal", "label": label,
                                 "destinationMap": destination})
+
+    # --- the secrets: the ways down the steppe keeps to itself --------------
+    # Each stands inside the server's addressable band and is one of the
+    # steppe's own assets; the interactive of kind `secret` is what the server
+    # turns into a use-to-enter portal (see _toolkit/secretrooms.py).
+    for index, secret in enumerate(SECRETS.SECRETS):
+        asset = SECRET_ASSETS.get(secret.entrance, "standing_stone_1")
+        x = float(secret.at[0]) + secret.offset[0]
+        z = float(secret.at[1]) + secret.offset[1]
+        if secret.kind == "mouth":
+            target_map, target_spawn = secret.links[0][0], secret.links[0][1]
+        else:
+            target_map, target_spawn = "sunmane_steppe_secrets", secret.id
+        layout.add(asset, "Landmark_sunmane_secret_%s" % secret.id, x, z,
+                   rotation=(index * 1.9) % TAU, collide=True, footprint=1.8, sink=0.15,
+                   landmark="secret",
+                   interactive={"id": "secret-%s" % secret.id, "kind": "secret",
+                                "secret": secret.id, "name": secret.name,
+                                "label": SR.label_for(secret), "prop": secret.entrance,
+                                "key": secret.key, "destinationMap": target_map,
+                                "destinationSpawn": target_spawn})
 
     # --- desert water stations on the sand road ---------------------------
     for index, (x, z, spin) in enumerate(DESERT_STATIONS):

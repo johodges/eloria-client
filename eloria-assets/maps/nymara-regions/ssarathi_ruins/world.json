@@ -372,6 +372,20 @@
       "Ruin_7",
       "Ruin_8",
       "Ruin_9",
+      "Secret_ruins_cistern_well",
+      "Secret_ruins_culvert_mouth",
+      "Secret_ruins_falls_spring",
+      "Secret_ruins_gate_cache",
+      "Secret_ruins_hatchery_pit",
+      "Secret_ruins_lily_garden",
+      "Secret_ruins_moss_hollow",
+      "Secret_ruins_plaza_school",
+      "Secret_ruins_rootrun",
+      "Secret_ruins_shrine_butts",
+      "Secret_ruins_shrine_eyrie",
+      "Secret_ruins_stela_reliquary",
+      "Secret_ruins_temple_focus",
+      "Secret_ruins_waystone",
       "SerpentColumn_0_-1",
       "SerpentColumn_0_1",
       "SerpentColumn_1_-1",
@@ -2279,8 +2293,8 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 538981,
-    "walkableFraction": 0.4061
+    "walkableCells": 538816,
+    "walkableFraction": 0.406
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -2949,6 +2963,300 @@
         162
       ],
       "authority": "server"
+    },
+    {
+      "id": "secret-ruins-moss-hollow",
+      "kind": "secret",
+      "secret": "ruins-moss-hollow",
+      "name": "The Scale-Moss Hollow",
+      "label": "A knot of roots grown over a door frame.",
+      "prop": "root_door",
+      "key": "",
+      "destinationMap": "ssarathi_ruins_secrets",
+      "destinationSpawn": "ruins-moss-hollow",
+      "position": [
+        244.0,
+        1.06,
+        125.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        418,
+        49
+      ]
+    },
+    {
+      "id": "secret-ruins-lily-garden",
+      "kind": "secret",
+      "secret": "ruins-lily-garden",
+      "name": "The Lily Court Garden",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "",
+      "destinationMap": "ssarathi_ruins_secrets",
+      "destinationSpawn": "ruins-lily-garden",
+      "position": [
+        -36.5,
+        2.05,
+        -112.68
+      ],
+      "authority": "server",
+      "serverTile": [
+        138,
+        287
+      ]
+    },
+    {
+      "id": "secret-ruins-gate-cache",
+      "kind": "secret",
+      "secret": "ruins-gate-cache",
+      "name": "The Serpent Gate Cache",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "ssarathi_ruins_secrets",
+      "destinationSpawn": "ruins-gate-cache",
+      "position": [
+        61.05,
+        1.95,
+        -10.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        235,
+        184
+      ]
+    },
+    {
+      "id": "secret-ruins-hatchery-pit",
+      "kind": "secret",
+      "secret": "ruins-hatchery-pit",
+      "name": "The Hatchery Pit",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "prop": "loose_stone",
+      "key": "",
+      "destinationMap": "ssarathi_ruins_secrets",
+      "destinationSpawn": "ruins-hatchery-pit",
+      "position": [
+        178.0,
+        2.25,
+        -108.4
+      ],
+      "authority": "server",
+      "serverTile": [
+        352,
+        282
+      ]
+    },
+    {
+      "id": "secret-ruins-plaza-school",
+      "kind": "secret",
+      "secret": "ruins-plaza-school",
+      "name": "The Ritual Plaza School",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "",
+      "destinationMap": "ssarathi_ruins_secrets",
+      "destinationSpawn": "ruins-plaza-school",
+      "position": [
+        183.2,
+        2.25,
+        -107.56
+      ],
+      "authority": "server",
+      "serverTile": [
+        357,
+        282
+      ]
+    },
+    {
+      "id": "secret-ruins-falls-spring",
+      "kind": "secret",
+      "secret": "ruins-falls-spring",
+      "name": "The East Falls Spring",
+      "label": "A loose stone in the rock; something moves behind it.",
+      "prop": "loose_stone",
+      "key": "",
+      "destinationMap": "ssarathi_ruins_secrets",
+      "destinationSpawn": "ruins-falls-spring",
+      "position": [
+        278.0,
+        1.32,
+        -320.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        452,
+        494
+      ]
+    },
+    {
+      "id": "secret-ruins-shrine-butts",
+      "kind": "secret",
+      "secret": "ruins-shrine-butts",
+      "name": "The West Shrine Butts",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "ssarathi_ruins_secrets",
+      "destinationSpawn": "ruins-shrine-butts",
+      "position": [
+        -128.0,
+        2.02,
+        -145.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        46,
+        319
+      ]
+    },
+    {
+      "id": "secret-ruins-stela-reliquary",
+      "kind": "secret",
+      "secret": "ruins-stela-reliquary",
+      "name": "The Sun Stela Reliquary",
+      "label": "A shrine slab with fresh scratches where it has been slid aside.",
+      "prop": "shrine_slab",
+      "key": "Sunstone Flint",
+      "destinationMap": "ssarathi_ruins_secrets",
+      "destinationSpawn": "ruins-stela-reliquary",
+      "position": [
+        196.0,
+        13.9,
+        -190.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        370,
+        364
+      ]
+    },
+    {
+      "id": "secret-ruins-cistern-well",
+      "kind": "secret",
+      "secret": "ruins-cistern-well",
+      "name": "The Cistern Well",
+      "label": "An iron drain grate, its bolts drawn.",
+      "prop": "drain_grate",
+      "key": "",
+      "destinationMap": "ssarathi_ruins_secrets",
+      "destinationSpawn": "ruins-cistern-well",
+      "position": [
+        -138.77,
+        4.25,
+        -25.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        35,
+        199
+      ]
+    },
+    {
+      "id": "secret-ruins-temple-focus",
+      "kind": "secret",
+      "secret": "ruins-temple-focus",
+      "name": "The Great Temple Focus",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Iron Rune",
+      "destinationMap": "ssarathi_ruins_secrets",
+      "destinationSpawn": "ruins-temple-focus",
+      "position": [
+        46.0,
+        21.0,
+        -256.0
+      ],
+      "authority": "server",
+      "serverTile": [
+        220,
+        430
+      ]
+    },
+    {
+      "id": "secret-ruins-rootrun",
+      "kind": "secret",
+      "secret": "ruins-rootrun",
+      "name": "The Root-Run",
+      "label": "A knot of roots grown over a door frame.",
+      "prop": "root_door",
+      "key": "",
+      "destinationMap": "ssarathi_ruins_secrets",
+      "destinationSpawn": "ruins-rootrun",
+      "position": [
+        209.0,
+        1.04,
+        122.37
+      ],
+      "authority": "server",
+      "serverTile": [
+        383,
+        52
+      ]
+    },
+    {
+      "id": "secret-ruins-waystone",
+      "kind": "secret",
+      "secret": "ruins-waystone",
+      "name": "The Ruins Waystone",
+      "label": "A cracked flagstone that rings hollow underfoot.",
+      "prop": "cracked_slab",
+      "key": "Iron Rune",
+      "destinationMap": "ssarathi_ruins_secrets",
+      "destinationSpawn": "ruins-waystone",
+      "position": [
+        76.0,
+        1.8,
+        -83.61
+      ],
+      "authority": "server",
+      "serverTile": [
+        250,
+        258
+      ]
+    },
+    {
+      "id": "secret-ruins-shrine-eyrie",
+      "kind": "secret",
+      "secret": "ruins-shrine-eyrie",
+      "name": "The East Shrine Eyrie",
+      "label": "An arch so grown with vine it reads as hedge.",
+      "prop": "ivy_arch",
+      "key": "",
+      "destinationMap": "ssarathi_ruins_secrets",
+      "destinationSpawn": "ruins-shrine-eyrie",
+      "position": [
+        333.38,
+        2.9,
+        -110.5
+      ],
+      "authority": "server",
+      "serverTile": [
+        507,
+        284
+      ]
+    },
+    {
+      "id": "secret-ruins-culvert-mouth",
+      "kind": "secret",
+      "secret": "ruins-culvert-mouth",
+      "name": "The Culvert Mouth",
+      "label": "An iron drain grate, its bolts drawn.",
+      "prop": "drain_grate",
+      "key": "",
+      "destinationMap": "verdant_stair_secrets",
+      "destinationSpawn": "stair-culvert-far",
+      "position": [
+        -29.0,
+        8.72,
+        -368.8
+      ],
+      "authority": "server",
+      "serverTile": [
+        145,
+        543
+      ]
     }
   ],
   "npcMarkers": [
@@ -4607,20 +4915,20 @@
     }
   ],
   "performance": {
-    "nodes": 7392,
-    "meshes": 460,
-    "materials": 39,
-    "images": 95,
-    "textures": 95,
-    "accessors": 1845,
-    "bufferViews": 1940,
-    "uniqueTriangles": 423985,
-    "uniqueVertices": 324824,
-    "glbBytes": 23835584,
-    "instancedTriangles": 1818592,
+    "nodes": 7431,
+    "meshes": 487,
+    "materials": 42,
+    "images": 104,
+    "textures": 104,
+    "accessors": 1953,
+    "bufferViews": 2057,
+    "uniqueTriangles": 426049,
+    "uniqueVertices": 326932,
+    "glbBytes": 24809384,
+    "instancedTriangles": 1820656,
     "embeddedTextureBytes": 29150152,
     "textureMemoryBytesUncompressed": 269352960,
-    "placements": 2769,
+    "placements": 2783,
     "collision": {
       "width": 1152,
       "height": 1152,
@@ -4629,9 +4937,9 @@
         -174.0,
         174.0
       ],
-      "walkableCells": 538981,
-      "blockedCells": 788123,
-      "walkableFraction": 0.4061,
+      "walkableCells": 538816,
+      "blockedCells": 788288,
+      "walkableFraction": 0.406,
       "elevatedDecks": 31,
       "steepCells": 265295,
       "reliefMetres": 56.86,
@@ -4654,11 +4962,11 @@
       "march south-gate: 0 road pieces, 12 of crownwater's growth"
     ],
     "lod2": {
-      "glbBytes": 14480536,
-      "nodes": 3580,
-      "uniqueTriangles": 366914,
-      "instancedTriangles": 932668,
-      "sizeReductionPercent": 39.2,
+      "glbBytes": 14723932,
+      "nodes": 3619,
+      "uniqueTriangles": 368978,
+      "instancedTriangles": 934732,
+      "sizeReductionPercent": 40.7,
       "triangleReductionPercent": 48.7
     }
   },

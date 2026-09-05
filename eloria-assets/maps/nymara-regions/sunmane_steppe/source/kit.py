@@ -1856,6 +1856,18 @@ def march_gate(seed: int = 0) -> Parts:
     return parts
 
 
+def secret_hatch() -> Parts:
+    """A timber hatch set flush in the ground, with an iron bar across it: the
+    way down a secret the steppe keeps under a floor."""
+    parts = Parts()
+    timber = parts.geometry(TIMBER_DARK)
+    box(timber, (0.0, 0.1, 0.0), (1.8, 0.2, 1.4), uv_scale=UV_SCALE["timber"], rotation_y=0.2)
+    for offset in (-0.45, 0.45):
+        box(timber, (0.0, 0.22, offset), (1.6, 0.06, 0.12), uv_scale=UV_SCALE["timber"], rotation_y=0.2)
+    box(parts.geometry(METAL), (0.5, 0.26, 0.0), (0.3, 0.06, 0.6), uv_scale=UV_SCALE["metal"])
+    return parts
+
+
 def filled_well() -> Parts:
     """The fourth well, filled: a steppe well ring with the shaft packed with
     dark rubble to the coping and a cairn built badly on purpose over it. The

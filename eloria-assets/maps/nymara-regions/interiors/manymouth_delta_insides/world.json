@@ -740,6 +740,24 @@
       ],
       "authority": "server",
       "section": "temple_sanctum"
+    },
+    {
+      "id": "secret-delta-market-cache",
+      "kind": "secret",
+      "secret": "delta-market-cache",
+      "name": "The Market Cache",
+      "label": "A cellar hatch under the leaves.",
+      "prop": "cellar_hatch",
+      "key": "",
+      "destinationMap": "manymouth_delta_secrets",
+      "destinationSpawn": "delta-market-cache",
+      "position": [
+        211.5,
+        -0.6,
+        128.5
+      ],
+      "space": "smugglers_warren.cache",
+      "authority": "server"
     }
   ],
   "npcMarkers": [
@@ -3620,9 +3638,9 @@
     "textures": 72,
     "accessors": 180,
     "bufferViews": 252,
-    "uniqueTriangles": 96262,
-    "uniqueVertices": 103414,
-    "glbBytes": 13925836,
+    "uniqueTriangles": 96286,
+    "uniqueVertices": 103462,
+    "glbBytes": 13928300,
     "nodeNames": [
       "Interior_manymouth_delta_insides",
       "Roof_manymouth_delta_insides_bark_dark",

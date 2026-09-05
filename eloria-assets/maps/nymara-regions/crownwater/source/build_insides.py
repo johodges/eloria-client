@@ -48,6 +48,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import preview
 import validate_gltf
+import secretdoors as SD
+import secrets_design as SEC
 from amberwood import mesh as M
 from amberwood.interiors import Interior
 
@@ -182,6 +184,7 @@ def main() -> int:
     t0 = time.time()
     sets = CK.register(preview.texture_sets())
     interior, sections = combine()
+    SD.dress_interior(interior, SEC, "drowned_crown", SEED)
 
     builder, stats = BI.export_glb(interior, sets, out / "world.glb")
     stats["nodeNames"] = [n["name"] for n in builder.to_json()["nodes"]]
