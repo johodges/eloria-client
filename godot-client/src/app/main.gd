@@ -531,6 +531,23 @@ var _preview_updates_enabled := true
 var _world_sync_queued := false
 var _actor_surface_samples: Dictionary = {}
 var _local_placement_logged := false
+## Set when `_sync_world` ran out of spawn budget with actors still to
+## build; the next frame picks them up.
+var _spawn_backlog := false
+## Decides which actors animate this frame, and how often; see AnimationGate.
+var animation_gate: AnimationGate = AnimationGate.new()
+var _animation_gate_refresh_msec := 0
+## The statistics window's built parts fall behind the stats packets while
+## it is hidden; they are rebuilt when it is next shown.
+var _stats_window_stale := true
+## The last chat line each log rendered, so a new line can be appended to
+## it rather than the log rebuilt. See `_append_chat_line`.
+var _chat_tail: Dictionary = {}
+var _console_tail: Dictionary = {}
+## Command 226's item descriptions by slot, rebuilt when the server sends a
+## new list rather than searched for every slot of every refresh.
+var _described_slots: Dictionary = {}
+var _described_source: Array = []
 var _hud_meter_order: Array[String] = ["mana", "food", "health", "load", "action", "experience"]
 var _hud_meter_visible: Dictionary = {
 	"mana": true, "food": true, "health": true,
@@ -772,6 +789,17 @@ const ACTION_CURSOR_REFRESH_MSEC := 100
 ## The sky only has to keep up with a six-hour day; twice a second is already
 ## finer than the eye can follow and costs a handful of property writes.
 const DAY_NIGHT_REFRESH_MSEC := 500
+## The animation gate re-reads which actors the camera can see ten times a
+## second: the camera and the actors both move smoothly, so that set changes
+## far more slowly than the frame rate does.
+const ANIMATION_GATE_REFRESH_MSEC := 100
+## How many actors `_sync_world` builds in one pass. A spawn is a couple of
+## milliseconds of model, skin and equipment work, so a pack of twenty
+## arriving together was one long frame; the rest follow on the next frames.
+const ACTOR_SPAWN_BUDGET := 4
+## The chat panel shows this many of the newest lines. The console shows the
+## whole buffer AppState keeps.
+const CHAT_PANEL_LINES := 100
 ## How many submitted lines the console remembers for its up/down history.
 const CONSOLE_HISTORY_LIMIT := 60
 ## The fork's spell quickbar. Twelve slots on Alt+1-0, Alt+- and Alt+=,
@@ -971,6 +999,7 @@ func _ready() -> void:
 	stats_text.meta_clicked.connect(_on_stats_meta_clicked)
 	_build_perks_tab()
 	stats_close.pressed.connect(func() -> void: stats_panel.hide())
+	stats_panel.visibility_changed.connect(_on_stats_panel_visibility_changed)
 	_build_counters_tab()
 	_build_statistics_tab()
 	session_reset.pressed.connect(_reset_session_tracking)
@@ -1053,10 +1082,14 @@ func _bind_shared_world() -> void:
 func _process(delta: float) -> void:
 	_update_preview_viewport()
 	_update_action_cursor()
+	if _spawn_backlog:
+		_spawn_backlog = false
+		_queue_world_sync()
 	if game_view.visible:
 		_update_carried_item()
 		_update_map_viewports()
 		_update_local_actor_follow()
+		_update_animation_gate(delta)
 		# Rain is everywhere, so only the box the player is standing in is
 		# drawn. Left at the world origin it fell a hundred metres away from
 		# whoever was watching it.
@@ -2477,6 +2510,7 @@ func _clear_world_presentation() -> void:
 		map_light_root.queue_free()
 	map_light_root = null
 	_actor_surface_samples.clear()
+	animation_gate.reset()
 	# The parsed model and animation caches are only worth holding for the
 	# session they were built in.
 	GlbSceneCache.clear()
@@ -2496,6 +2530,7 @@ func _clear_world_presentation() -> void:
 	_close_settings()
 	minimap_frame.hide()
 	chat_output.clear()
+	_chat_tail = {}
 	selected_target.text = "Target: none"
 
 func _input(event: InputEvent) -> void:
@@ -3291,8 +3326,7 @@ func _on_state_changed(path: StringName) -> void:
 		&"chat":
 			_capture_speech_bubble_from_chat()
 			_count_unseen_private_messages()
-			_sync_chat()
-			_sync_console()
+			_append_chat_line()
 			_reveal_chat_messages()
 		&"almanac":
 			_sync_hud_indicators()
@@ -3396,7 +3430,7 @@ func _flush_world_sync() -> void:
 	if not _world_sync_queued:
 		return
 	_world_sync_queued = false
-	_sync_world()
+	_sync_world(AppState.take_changed_actors())
 	_sync_selection()
 
 func _load_server_map() -> void:
@@ -3412,6 +3446,10 @@ func _load_server_map() -> void:
 	loaded_server_map = AppState.current_map
 	_actor_surface_samples.clear()
 	_local_placement_logged = false
+	animation_gate.reset()
+	# The shared animation library is parsed on a worker thread while the map
+	# itself loads, so the first actor to arrive finds it ready.
+	_prewarm_shared_animation_libraries()
 	_current_map_display_name = _friendly_map_name(AppState.current_map)
 	adapter = CoordinateAdapter.new(entry.get("coordinateTransform", {}))
 	# The overlay was handed the placeholder adapter _ready() builds before any
@@ -3592,7 +3630,12 @@ func _on_world_load_failed(errors: Array[String]) -> void:
 	fallback_ground.show()
 	map_label.text = "Map load failed: " + "; ".join(errors)
 
-func _sync_world() -> void:
+## Brings the actor nodes in line with AppState. Given `changed` - the ids
+## AppState has written since the last pass - only those actors are visited;
+## without it every actor is, which is what a map load and the fixtures need.
+## An actor with no node yet is built either way, at most ACTOR_SPAWN_BUDGET
+## of them per pass; the rest are picked up on the following frames.
+func _sync_world(changed: Variant = null) -> void:
 	map_label.text = "Map: " + (AppState.current_map if not AppState.current_map.is_empty() else "loading")
 	for id: Variant in actor_nodes.keys():
 		if AppState.actors.has(id):
@@ -3612,32 +3655,31 @@ func _sync_world() -> void:
 		# Otherwise a recycled actor id inherits the last health of whoever
 		# held it before, and the next update floats a change nobody took.
 		_actor_health_seen.erase(id)
-	for id in AppState.actors:
-		var dto: Dictionary = _presentation_dto(AppState.actors[id])
-		if actor_nodes.has(id):
-			var existing_actor: ReplicatedActor3D = actor_nodes[id] as ReplicatedActor3D
-			existing_actor.apply_server_state(dto, adapter)
-			# Before apply_vitals, which is what overwrites the old value.
-			_report_health_change(int(id), int(dto.get("health", 0)),
-				int(dto.get("max_health", 0)), existing_actor)
-			existing_actor.apply_vitals(int(dto.get("health", 0)),
-				int(dto.get("max_health", 0)))
-			existing_actor.set_nameplate_visible(_nameplate_visible_for(int(id)))
-			_place_actor_on_surface(existing_actor)
+	var spawned: int = 0
+	var visit: Array = (AppState.actors.keys() if changed == null
+		else (changed as Dictionary).keys())
+	for id: Variant in visit:
+		if not AppState.actors.has(id):
+			# Marked and gone again inside the same frame.
 			continue
-		var node := ReplicatedActor3D.new()
-		node.name = "Actor_%d" % id
-		world_root.add_child(node)
-		actor_nodes[id] = node
-		var model_id := _model_for_actor(dto)
-		var model_config: Dictionary = models.get(model_id, {}) as Dictionary
-		var errors := node.configure(dto, adapter, model_config,
-			_animation_for_model(model_config), equipment_config)
-		if not errors.is_empty():
-			push_warning("Actor %d: %s" % [id, "; ".join(errors)])
-		node.apply_server_state(dto, adapter, true)
-		node.set_nameplate_visible(_nameplate_visible_for(int(id)))
-		_place_actor_on_surface(node, true)
+		if actor_nodes.has(id):
+			_present_actor(id)
+		elif spawned < ACTOR_SPAWN_BUDGET or int(id) == AppState.local_actor_id:
+			_spawn_actor(id)
+			spawned += 1
+		else:
+			_spawn_backlog = true
+	# Anything still without a node - left from an earlier pass's budget, or
+	# never in the change set - is built too, within the same budget.
+	if changed != null and actor_nodes.size() < AppState.actors.size():
+		for id: Variant in AppState.actors:
+			if actor_nodes.has(id):
+				continue
+			if spawned >= ACTOR_SPAWN_BUDGET:
+				_spawn_backlog = true
+				break
+			_spawn_actor(id)
+			spawned += 1
 	actor_label.text = "Actors: %d" % AppState.actors.size()
 	if AppState.local_actor_id >= 0 and actor_nodes.has(AppState.local_actor_id):
 		_update_local_actor_follow()
@@ -3657,6 +3699,36 @@ func _sync_world() -> void:
 			_set_overhead_meter(overhead_health_row, current_health,
 				maximum_health, "health")
 			_layout_actor_resource_overlay()
+
+## Applies an actor's current AppState record to the node it already has.
+func _present_actor(id: Variant) -> void:
+	var dto: Dictionary = _presentation_dto(AppState.actors[id])
+	var existing_actor: ReplicatedActor3D = actor_nodes[id] as ReplicatedActor3D
+	existing_actor.apply_server_state(dto, adapter)
+	# Before apply_vitals, which is what overwrites the old value.
+	_report_health_change(int(id), int(dto.get("health", 0)),
+		int(dto.get("max_health", 0)), existing_actor)
+	existing_actor.apply_vitals(int(dto.get("health", 0)),
+		int(dto.get("max_health", 0)))
+	existing_actor.set_nameplate_visible(_nameplate_visible_for(int(id)))
+	_place_actor_on_surface(existing_actor)
+
+## Builds the node for an actor that has none yet.
+func _spawn_actor(id: Variant) -> void:
+	var dto: Dictionary = _presentation_dto(AppState.actors[id])
+	var node := ReplicatedActor3D.new()
+	node.name = "Actor_%d" % id
+	world_root.add_child(node)
+	actor_nodes[id] = node
+	var model_id := _model_for_actor(dto)
+	var model_config: Dictionary = models.get(model_id, {}) as Dictionary
+	var errors := node.configure(dto, adapter, model_config,
+		_animation_for_model(model_config), equipment_config)
+	if not errors.is_empty():
+		push_warning("Actor %d: %s" % [id, "; ".join(errors)])
+	node.apply_server_state(dto, adapter, true)
+	node.set_nameplate_visible(_nameplate_visible_for(int(id)))
+	_place_actor_on_surface(node, true)
 
 func _update_local_actor_follow() -> void:
 	if AppState.local_actor_id < 0:
@@ -4368,6 +4440,32 @@ func _update_occluder_fade(delta: float) -> void:
 	var target_value: Variant = actor_nodes.get(AppState.local_actor_id)
 	var target: Node3D = target_value as Node3D if target_value is Node3D else null
 	occluder_fade.update(delta, gameplay_camera, target)
+
+## Which actors animate this frame, and how often. Every actor's skeleton
+## used to be posed and every skinned mesh re-skinned every frame whether or
+## not the camera could see it, which was most of the frame on a populated
+## map. The half-rate players are stepped from here every frame; who is in
+## which tier is re-read on a slower clock. The local player is never gated:
+## the camera is looking at them by definition.
+func _update_animation_gate(delta: float) -> void:
+	animation_gate.advance(delta)
+	var now: int = Time.get_ticks_msec()
+	if now < _animation_gate_refresh_msec:
+		return
+	_animation_gate_refresh_msec = now + ANIMATION_GATE_REFRESH_MSEC
+	animation_gate.begin(gameplay_camera)
+	for raw_id: Variant in actor_nodes:
+		var actor_value: Variant = actor_nodes[raw_id]
+		if not is_instance_valid(actor_value):
+			continue
+		var actor: ReplicatedActor3D = actor_value as ReplicatedActor3D
+		if actor == null or not actor.is_inside_tree():
+			continue
+		var tier: AnimationGate.Tier = AnimationGate.Tier.FULL
+		if int(raw_id) != AppState.local_actor_id:
+			tier = animation_gate.classify(actor.global_position + Vector3.UP,
+				actor.view_radius())
+		actor.set_animation_tier(tier, animation_gate)
 
 ## Interiors are closed boxes, so the isometric rig would render their ceiling
 ## and near wall. The manifest names the nodes to cut away; maps without a
@@ -5266,21 +5364,60 @@ func _make_scene_windows_draggable() -> void:
 func _sync_chat() -> void:
 	chat_output.clear()
 	var first_line: int = (0 if _chat_tab == "history"
-		else maxi(0, AppState.chat_lines.size() - 100))
+		else maxi(0, AppState.chat_lines.size() - CHAT_PANEL_LINES))
 	for line_value: Variant in AppState.chat_lines.slice(first_line):
 		var line: Dictionary = line_value as Dictionary
-		var channel: int = int(line.get("channel", 0))
-		if not _chat_line_visible(channel):
-			continue
-		if not _chat_line_allowed(line):
-			continue
-		chat_output.append_text(_formatted_chat_line(line) + "\n")
+		if _chat_line_shown(line):
+			chat_output.append_text(_formatted_chat_line(line) + "\n")
 	chat_output.scroll_to_line(maxi(0, chat_output.get_line_count() - 1))
+	_chat_tail = _last_chat_line()
 
 func _sync_console() -> void:
 	console_output.clear()
 	for line_value: Variant in AppState.chat_lines:
 		console_output.append_text(_formatted_chat_line(line_value as Dictionary) + "\n")
+	_console_tail = _last_chat_line()
+
+func _last_chat_line() -> Dictionary:
+	if AppState.chat_lines.is_empty():
+		return {}
+	return AppState.chat_lines.back() as Dictionary
+
+func _chat_line_shown(line: Dictionary) -> bool:
+	return _chat_line_visible(int(line.get("channel", 0))) and _chat_line_allowed(line)
+
+## One line arrived. Both logs used to be cleared and rebuilt for it - the
+## panel's hundred lines and the console's thousand, most of eight
+## milliseconds a line once the buffer was full, several times a second in a
+## fight. The line is appended to each instead, and the oldest paragraph
+## dropped once the log is past its cap. A log whose last rendered line is
+## no longer the line before this one - a reconnect cleared the buffer, a
+## fixture replaced it - is rebuilt, which keeps the two paths from ever
+## disagreeing about what is shown.
+func _append_chat_line() -> void:
+	var lines: Array = AppState.chat_lines
+	var count: int = lines.size()
+	var line: Dictionary = lines.back() as Dictionary if count > 0 else {}
+	var previous: Dictionary = lines[count - 2] as Dictionary if count >= 2 else {}
+	if count >= 2 and is_same(previous, _chat_tail):
+		_chat_tail = line
+		if _chat_line_shown(line):
+			chat_output.append_text(_formatted_chat_line(line) + "\n")
+			var cap: int = (AppState.CHAT_LINE_LIMIT if _chat_tab == "history"
+				else CHAT_PANEL_LINES)
+			# The paragraph after the last newline is empty, hence the one over.
+			while chat_output.get_paragraph_count() > cap + 1:
+				chat_output.remove_paragraph(0, true)
+			chat_output.scroll_to_line(maxi(0, chat_output.get_line_count() - 1))
+	else:
+		_sync_chat()
+	if count >= 2 and is_same(previous, _console_tail):
+		_console_tail = line
+		console_output.append_text(_formatted_chat_line(line) + "\n")
+		while console_output.get_paragraph_count() > AppState.CHAT_LINE_LIMIT + 1:
+			console_output.remove_paragraph(0, true)
+	else:
+		_sync_console()
 
 ## The player's own ignore and filter lists. The line still arrived and is
 ## still in state - this only decides whether they are shown it - so nothing
@@ -5360,14 +5497,24 @@ func _sync_stats() -> void:
 	_sync_skill_rows(stats)
 	_sync_hud_indicators()
 	_sync_knowledge_bar()
-	if stats.is_empty():
-		_sync_statistics_document({})
-		_sync_session_experience()
-		_sync_counters()
+	_sync_stats_window(stats)
+
+## The statistics document, the counters page and the session table are
+## rebuilt from controls - milliseconds per call - and the packets that drive
+## them arrive with every health, food and experience tick. While the window
+## is hidden they only go stale; showing it rebuilds them.
+func _sync_stats_window(stats: Dictionary) -> void:
+	if not stats_panel.visible:
+		_stats_window_stale = true
 		return
+	_stats_window_stale = false
 	_sync_statistics_document(stats)
 	_sync_session_experience()
 	_sync_counters()
+
+func _on_stats_panel_visibility_changed() -> void:
+	if stats_panel.visible and _stats_window_stale:
+		_sync_stats_window(AppState.stats)
 
 ## How the skills are grouped, and in what order.
 ##
@@ -6169,6 +6316,9 @@ func _update_session_distance() -> void:
 ## finer tallies were a second flat list that said nothing about the first.
 func _sync_counters() -> void:
 	if counter_body == null:
+		return
+	if not stats_panel.visible:
+		_stats_window_stale = true
 		return
 	for child: Node in counter_body.get_children():
 		counter_body.remove_child(child)
@@ -8191,11 +8341,16 @@ func _named_icon(image_id: int, name: String) -> Texture2D:
 	return item_atlas.icon_for(image_id)
 
 func _inventory_description_for(slot: int) -> Dictionary:
-	for entry: Variant in AppState.inventory_state.get("items", []):
-		var described: Dictionary = entry as Dictionary
-		if int(described.get("slot", -1)) == slot:
-			return described
-	return {}
+	var items: Array = AppState.inventory_state.get("items", []) as Array
+	# The server replaces the list whole with each command 226, so the list's
+	# identity says whether the map built from it still holds.
+	if not is_same(items, _described_source):
+		_described_source = items
+		_described_slots.clear()
+		for entry: Variant in items:
+			if entry is Dictionary:
+				_described_slots[int((entry as Dictionary).get("slot", -1))] = entry
+	return _described_slots.get(slot, {}) as Dictionary
 
 ## Walk mode is Eternal Lands' move action, so a click there lifts the item
 ## onto the cursor instead of only selecting it. Every other mode keeps the
@@ -9931,6 +10086,24 @@ func _presentation_dto(dto: Dictionary) -> Dictionary:
 	result["footprint"] = AppState.footprint_for_actor_type(
 		int(dto.get("actor_type", -1)))
 	return result
+
+## Starts parsing every animation library that more than one model shares -
+## the universal race library today - on a worker thread. The parse is the
+## bulk of the first actor's spawn cost, and it was paid on the main thread
+## the moment that actor arrived, which is the moment the map finished
+## loading.
+func _prewarm_shared_animation_libraries() -> void:
+	var users: Dictionary = {}
+	for model_value: Variant in models.values():
+		if not model_value is Dictionary:
+			continue
+		var path: String = str((model_value as Dictionary).get("animationLibrary", ""))
+		if not path.is_empty():
+			users[path] = int(users.get(path, 0)) + 1
+	for path_value: Variant in users:
+		if int(users[path_value]) >= 2:
+			NativeAnimationImporter.prewarm(
+				ReplicatedActor3D._external_path(str(path_value)))
 
 func _animation_for_model(model_config: Dictionary) -> Dictionary:
 	var path := str(model_config.get("animationMap", "res://data/animations/luminous.json"))

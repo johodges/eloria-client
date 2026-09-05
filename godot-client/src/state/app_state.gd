@@ -60,6 +60,11 @@ var authenticated := false
 var local_actor_id := -1
 var current_map := ""
 var actors: Dictionary = {}
+## The ids of actors written since the presentation last read them. Every
+## site that writes `actors` records the id here and `take_changed_actors`
+## hands the set over, so a frame with one moving creature costs one actor's
+## worth of presentation work rather than the whole map's.
+var changed_actors: Dictionary = {}
 var inventory: Dictionary = {}
 ## Slot to the name the server calls what is in it, for the same positions
 ## `inventory` uses. Kept apart from the entries rather than merged into
@@ -140,6 +145,19 @@ var experience64: Dictionary = {}
 var actor_footprints: Dictionary = {}
 
 ## The footprint of an actor type, defaulting to a single tile.
+func mark_actor_changed(actor_id: int) -> void:
+	changed_actors[actor_id] = true
+
+func mark_all_actors_changed() -> void:
+	for actor_id: Variant in actors:
+		changed_actors[actor_id] = true
+
+## The changed set, emptied for the next frame.
+func take_changed_actors() -> Dictionary:
+	var taken: Dictionary = changed_actors
+	changed_actors = {}
+	return taken
+
 func footprint_for_actor_type(actor_type: int) -> Vector2i:
 	var size: Variant = actor_footprints.get(actor_type)
 	return size if size is Vector2i else Vector2i.ONE
@@ -193,11 +211,13 @@ var map_markers: Dictionary = {}
 ## something the server said. Channel 254 keeps it out of the channel tabs and
 ## marks it as local wherever chat is rendered.
 const LOCAL_CHAT_CHANNEL := 254
+## How many lines the chat buffer keeps; the console shows all of them.
+const CHAT_LINE_LIMIT := 1000
 
 func append_local_line(text: String) -> void:
 	chat_lines.append({"channel": LOCAL_CHAT_CHANNEL, "text": text,
 		"stamp": Time.get_time_string_from_system()})
-	if chat_lines.size() > 1000:
+	if chat_lines.size() > CHAT_LINE_LIMIT:
 		chat_lines.pop_front()
 	state_changed.emit(&"chat")
 
@@ -379,6 +399,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			character_creation_failed.emit(event.message)
 		"you_are":
 			local_actor_id = event.actor_id
+			mark_actor_changed(local_actor_id)
 			state_changed.emit(&"local_actor")
 		"clock_sync":
 			server_timestamp = int(event.server_timestamp)
@@ -418,6 +439,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			state_changed.emit(&"map")
 		"actor_spawn":
 			actors[event.actor_id] = event
+			mark_actor_changed(int(event.actor_id))
 			state_changed.emit(&"actors")
 		"remove_actor":
 			for removed_actor_value: Variant in event.actor_ids:
@@ -438,6 +460,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 					var actor_command: int = int(command_event.get("command", 0))
 					var actor: Dictionary = actors[actor_id]
 					actors[actor_id] = ActorReducer.apply_command(actor, actor_command)
+					mark_actor_changed(actor_id)
 			state_changed.emit(&"actors")
 		"actor_wear":
 			var wear_actor_id: int = int(event.actor_id)
@@ -451,6 +474,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 					wear_fallback_parts.append(int(event.part))
 				wear_actor["equipment_fallback_parts"] = wear_fallback_parts
 				actors[wear_actor_id] = wear_actor
+				mark_actor_changed(wear_actor_id)
 				state_changed.emit(&"actors")
 		"actor_unwear":
 			var unwear_actor_id: int = int(event.actor_id)
@@ -463,6 +487,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 				unwear_fallback_parts.erase(int(event.part))
 				unwear_actor["equipment_fallback_parts"] = unwear_fallback_parts
 				actors[unwear_actor_id] = unwear_actor
+				mark_actor_changed(unwear_actor_id)
 				state_changed.emit(&"actors")
 		"actor_damage":
 			_apply_actor_health_delta(int(event.actor_id), -int(event.amount))
@@ -476,6 +501,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 				health_actor["health"] = mini(int(health_actor.get("health", 0)),
 					int(event.max_health))
 				actors[health_actor_id] = health_actor
+				mark_actor_changed(health_actor_id)
 				state_changed.emit(&"actors")
 				if health_actor_id == local_actor_id:
 					stats["max_health"] = int(event.max_health)
@@ -705,6 +731,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 				shooter["aiming_at"] = (-1 if bool(event.fired)
 					else int(event.target_actor_id))
 				actors[shooter_id] = shooter
+				mark_actor_changed(shooter_id)
 				state_changed.emit(&"actors")
 			if bool(event.fired):
 				missile_fired.emit({"source_actor_id": shooter_id,
@@ -794,6 +821,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 					if bool(event.fired)
 					else Vector2i(int(event.x), int(event.y)))
 				actors[ground_shooter_id] = ground_shooter
+				mark_actor_changed(ground_shooter_id)
 				state_changed.emit(&"actors")
 			if bool(event.fired):
 				ground_missile_fired.emit({
@@ -815,6 +843,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 				var buffed: Dictionary = actors[buffed_id] as Dictionary
 				buffed["buffs"] = int(event.buffs)
 				actors[buffed_id] = buffed
+				mark_actor_changed(buffed_id)
 				state_changed.emit(&"actors")
 		"active_spell":
 			active_spells[int(event.buff_id)] = {
@@ -841,7 +870,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			chat_lines.append({"channel": event.channel, "text": event.text,
 				"colour": int(event.get("colour", 0)),
 				"stamp": Time.get_time_string_from_system()})
-			if chat_lines.size() > 1000:
+			if chat_lines.size() > CHAT_LINE_LIMIT:
 				chat_lines.pop_front()
 			state_changed.emit(&"chat")
 		"npc_info":
@@ -889,6 +918,8 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			state_changed.emit(&"experience_state")
 		"actor_footprints":
 			actor_footprints = event.footprints
+			# Every actor is drawn on the ground the table now says it holds.
+			mark_all_actors_changed()
 			state_changed.emit(&"actor_footprints")
 		"party":
 			party = {"in_party": bool(event.in_party),
@@ -1075,7 +1106,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 func append_local_message(text: String, channel: int = 255) -> void:
 	chat_lines.append({"channel": channel, "text": text, "colour": 0,
 		"stamp": Time.get_time_string_from_system()})
-	if chat_lines.size() > 1000:
+	if chat_lines.size() > CHAT_LINE_LIMIT:
 		chat_lines.pop_front()
 	state_changed.emit(&"chat")
 
@@ -1097,6 +1128,7 @@ func _apply_actor_health_delta(actor_id: int, amount: int) -> void:
 	actor["health"] = health
 	actor["alive"] = health > 0
 	actors[actor_id] = actor
+	mark_actor_changed(actor_id)
 	state_changed.emit(&"actors")
 	if actor_id == local_actor_id:
 		stats["health"] = health

@@ -2,7 +2,10 @@ class_name ActorReducer
 extends RefCounted
 
 static func apply_command(actor: Dictionary, actor_command: int) -> Dictionary:
-	var next: Dictionary = actor.duplicate(true)
+	# A shallow copy. Only top-level keys change here, and nothing writes into
+	# the nested appearance and equipment dictionaries in place - every writer
+	# replaces them - so sharing them is safe and skips a deep copy per command.
+	var next: Dictionary = actor.duplicate(false)
 	var step: Vector2i = EloriaProtocol.actor_command_step(actor_command)
 	next["x"] = int(next.get("x", 0)) + step.x
 	next["y"] = int(next.get("y", 0)) + step.y

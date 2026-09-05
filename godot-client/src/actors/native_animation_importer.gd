@@ -13,13 +13,20 @@ extends RefCounted
 ##   * only the clips the actor's action map can actually request are rebuilt,
 ##     which is 18 of the 162 for the current maps, and
 ##   * the finished AnimationLibrary is cached and shared by every actor using
-##     the same source file, skeleton path and bone aliases.
+##     the same source file, skeleton path and bone aliases, and the parsed
+##     source file itself is kept, so a second rig never re-parses it.
 ##
 ## Animation resources are immutable during playback, so one library backing
 ## many AnimationPlayers is safe; per-actor playback state (current clip,
 ## speed_scale, seek position) lives on the player, not the library.
 
 static var _libraries: Dictionary = {}
+## The parsed library scenes, one per source file, kept for the session. A
+## retarget used to parse the 11 MB file again for every rig it met and free
+## the result. The parse now happens once - on a worker thread when `prewarm`
+## had the chance - and every rig reads from it.
+static var _sources: Dictionary = {}
+static var _prewarming: Dictionary = {}
 
 static func import_library(owner: Node, source_path: String,
 		target_skeleton: Skeleton3D, bone_aliases := {},
@@ -54,9 +61,62 @@ static func import_library(owner: Node, source_path: String,
 	result.clips = cached.get("clips", PackedStringArray())
 	return result
 
-## Drops every cached library. Call when leaving a session.
+## Drops every cached library and parsed source. Call when leaving a session.
 static func clear() -> void:
 	_libraries.clear()
+	for path_value: Variant in _prewarming:
+		var parsed: Variant = (_prewarming[path_value] as Thread).wait_to_finish()
+		if parsed is Node:
+			(parsed as Node).free()
+	_prewarming.clear()
+	for scene_value: Variant in _sources.values():
+		if is_instance_valid(scene_value):
+			(scene_value as Node).free()
+	_sources.clear()
+
+## Parses `source_path` on a worker thread, so the first actor to need it
+## finds the scene ready instead of paying for the parse on the main thread
+## the moment it arrives. Nothing is parsed twice: a path already parsed, or
+## already parsing, is left alone.
+static func prewarm(source_path: String) -> void:
+	if source_path.is_empty() or _sources.has(source_path) or _prewarming.has(source_path):
+		return
+	var thread := Thread.new()
+	if thread.start(_parse_library.bind(source_path)) == OK:
+		_prewarming[source_path] = thread
+
+static func is_prewarming(source_path: String) -> bool:
+	return _prewarming.has(source_path)
+
+static func has_source(source_path: String) -> bool:
+	return is_instance_valid(_sources.get(source_path))
+
+## The parsed scene for `source_path`: the prewarm's result, waited for if it
+## is still running, or a parse on the spot. Owned here; callers must not
+## free it.
+static func _source_scene(source_path: String) -> Node:
+	var held: Variant = _sources.get(source_path)
+	if is_instance_valid(held):
+		return held as Node
+	var scene: Node = null
+	if _prewarming.has(source_path):
+		var thread: Thread = _prewarming[source_path] as Thread
+		_prewarming.erase(source_path)
+		scene = thread.wait_to_finish() as Node
+	if scene == null:
+		scene = _parse_library(source_path)
+	if scene != null:
+		_sources[source_path] = scene
+	return scene
+
+## The glTF parse itself. Safe off the main thread: it builds resources and
+## nodes that belong to no tree.
+static func _parse_library(path: String) -> Node:
+	var document := GLTFDocument.new()
+	var state := GLTFState.new()
+	if document.append_from_file(path, state) != OK:
+		return null
+	return document.generate_scene(state)
 
 static func _skeleton_signature(skeleton: Skeleton3D) -> String:
 	var names := PackedStringArray()
@@ -73,14 +133,13 @@ static func _build(source_path: String, skeleton_path: String,
 		looping_clips: PackedStringArray) -> Dictionary:
 	var built := {"library": null, "clips": PackedStringArray(),
 		"errors": PackedStringArray()}
-	var source_scene := _load_gltf(source_path)
+	var source_scene := _source_scene(source_path)
 	if source_scene == null:
 		built.errors.append("animation library load failed: " + source_path)
 		return built
 	var source_player := _find_player(source_scene)
 	if source_player == null:
 		built.errors.append("animation library has no AnimationPlayer")
-		source_scene.free()
 		return built
 	var library := AnimationLibrary.new()
 	# An empty request means "everything the file offers"; the actor path always
@@ -113,18 +172,10 @@ static func _build(source_path: String, skeleton_path: String,
 		if target.get_track_count() > 0:
 			library.add_animation(clip_name, target)
 			built.clips.append(String(clip_name))
-	source_scene.free()
 	built.library = library
 	if built.clips.is_empty():
 		built.errors.append("no animation tracks matched the target skeleton")
 	return built
-
-static func _load_gltf(path: String) -> Node:
-	var document := GLTFDocument.new()
-	var state := GLTFState.new()
-	if document.append_from_file(path, state) != OK:
-		return null
-	return document.generate_scene(state)
 
 static func _find_player(root: Node) -> AnimationPlayer:
 	if root is AnimationPlayer:

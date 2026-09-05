@@ -151,6 +151,11 @@ var _health_maximum := -1
 var _overhead_visible := true
 var _settled := false
 var _silhouette: OccludedSilhouette
+## Which of the animation gate's tiers this actor is in, and whether a cape
+## is worn: the cloth solver runs off the skeleton on its own clock, so a
+## paused body has to put it to sleep too and wake it with the body.
+var _animation_tier: int = AnimationGate.Tier.FULL
+var _cape_cloth_worn := false
 
 # Visual layer 2. The gameplay camera renders layers 1 and 2; the full-map
 # camera renders layers 1 and 3, and the minimap camera renders layer 1 alone.
@@ -1140,11 +1145,12 @@ func _attach_cape_cloth(skeleton: Skeleton3D) -> void:
 func _set_cape_cloth_active(enabled: bool) -> void:
 	if _cape_cloth == null:
 		return
+	_cape_cloth_worn = enabled
 	if enabled:
 		_tell_cloth_what_is_worn()
 	if enabled and not _cape_cloth.active:
 		_cape_cloth.call("reset")
-	_cape_cloth.active = enabled
+	_cape_cloth.active = enabled and _animation_tier != AnimationGate.Tier.PAUSED
 
 ## How far the worn torso reaches from each of the solver's capsules. The
 ## solver knows the skeleton and nothing else; the equipment is only known
@@ -2005,6 +2011,41 @@ func _wake() -> void:
 		return
 	_settled = false
 	set_physics_process(true)
+
+## How far this actor reaches from its foot point, for the gate's frustum
+## test: the body as drawn plus the banner over it, on the widest side of
+## the ground it holds.
+func view_radius() -> float:
+	return (NAMEPLATE_HEIGHT + 0.6) * maxf(server_scale, 0.01) \
+		* float(maxi(footprint.x, footprint.y))
+
+## Puts this actor's animation in one of the gate's tiers; see AnimationGate.
+##
+## A clip that does not loop - sitting down, standing up - is played out at
+## full rate whatever the tier asks. Paused, the actor would be left caught
+## mid-move and then seen finishing it when it came back into view.
+func set_animation_tier(tier: int, gate: AnimationGate) -> void:
+	if animation_player == null:
+		return
+	if tier != AnimationGate.Tier.FULL and _playing_one_shot():
+		tier = AnimationGate.Tier.FULL
+	if tier == _animation_tier:
+		return
+	_animation_tier = tier
+	gate.apply(animation_player, tier)
+	if _cape_cloth != null:
+		_cape_cloth.active = _cape_cloth_worn and tier != AnimationGate.Tier.PAUSED
+
+func animation_tier() -> int:
+	return _animation_tier
+
+func _playing_one_shot() -> bool:
+	if not animation_player.is_playing():
+		return false
+	var clip: String = animation_player.current_animation
+	if clip.is_empty() or not animation_player.has_animation(clip):
+		return false
+	return animation_player.get_animation(clip).loop_mode == Animation.LOOP_NONE
 
 func _load_native_scene(path: String) -> Array[String]:
 	if path.is_empty():

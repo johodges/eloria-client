@@ -16,6 +16,11 @@ var _atlas_paths: Array[String] = []
 var _textures: Dictionary = {}
 var _aliases: Dictionary = {}
 var _worn_icons: Dictionary = {}
+## One AtlasTexture per resolved image id. Building one is tens of
+## microseconds, and every inventory refresh asked for one per slot; the
+## textures are never written to, so one instance serves every slot and
+## every window that shows the same picture.
+var _icons: Dictionary = {}
 var _cell_size := Vector2(50.0, 50.0)
 var _columns := 5
 var _images_per_atlas := 25
@@ -27,6 +32,7 @@ func configure(config: Dictionary) -> void:
 	_textures.clear()
 	_aliases.clear()
 	_worn_icons.clear()
+	_icons.clear()
 	var cell_value: Variant = config.get("cellSize", [50, 50])
 	if cell_value is Array:
 		var values: Array = cell_value as Array
@@ -54,6 +60,9 @@ func icon_for(image_id: int) -> Texture2D:
 	var resolved_image_id: int = _resolved_image_id(image_id)
 	if resolved_image_id < 0:
 		return null
+	var cached: Variant = _icons.get(resolved_image_id)
+	if cached is AtlasTexture:
+		return cached as AtlasTexture
 	var atlas_index: int = floori(float(resolved_image_id) / float(_images_per_atlas))
 	if atlas_index < 0 or atlas_index >= _atlas_paths.size():
 		return null
@@ -67,6 +76,7 @@ func icon_for(image_id: int) -> Texture2D:
 		float(local_id % _columns) * _cell_size.x,
 		float(floori(float(local_id) / float(_columns))) * _cell_size.y,
 		_cell_size.x, _cell_size.y)
+	_icons[resolved_image_id] = atlas_texture
 	return atlas_texture
 
 ## The same item, drawn as worn: mirrored, with the orange mark. Baked into a

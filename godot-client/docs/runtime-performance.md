@@ -94,9 +94,83 @@ ends.
   debug builds but its arguments are always evaluated. It is now a one-shot per
   map load.
 
+## Second pass: animation, per-packet rebuilds, spawns
+
+Measured 2026-09-05 on develop, before and after, at 1280x720 on the GL
+Compatibility renderer with an RTX 5080 laptop GPU. Scene CPU is a headless
+run with the engine's idle sleep removed (`OS.low_processor_usage_mode_sleep_usec
+= 1`, otherwise every headless frame is padded to 6.9 ms); render CPU and GPU
+are the renderer's own timers (`RenderingServer.viewport_set_measure_render_time`
+and `viewport_get_measured_render_time_cpu/gpu`). Windowed wall-clock frame
+times are not usable for this work: the compositor throttles a background
+window to steps of the refresh rate, and `Performance.TIME_PROCESS` read from a
+SceneTree script is not meaningful either.
+
+| | before | after |
+| --- | --- | --- |
+| Sunmane herd, 111 animals, GPU per frame over the empty steppe | +1.8 ms | +0.3 ms |
+| 61 idle actors spread over 60x60 tiles, scene CPU per frame | 1.24 ms | 0.58 ms |
+| `_sync_stats` with the statistics window hidden | 9.4 ms | 0.6 ms |
+| One chat line arriving with a full 1000-line buffer | 7.7 ms | 0.15 ms |
+| Actor flush with 81 actors and nothing changed | 1.1 ms | 0.1 ms |
+| `ItemAtlas.icon_for` | 31 us | 2 us |
+| Twenty actors entering view | 48 ms in one frame | 13 ms a frame for five frames |
+| The first actor's animation-library parse | 330 ms on the main thread | a worker thread, during the map load |
+
+**The animation gate.** Skinning was the largest cost on a populated map: about
+5 ms a frame for sixty race actors on screen (77 bones, 9 skinned mesh
+instances and 26 700 vertices each, re-posed and re-skinned every frame), and
+every body was animated whether or not the camera could see it. `AnimationGate`
+(`src/world/animation_gate.gd`) classifies each animated body against the
+gameplay camera ten times a second: outside the frustum its AnimationPlayer is
+paused where it stands, beyond 45 m it is stepped every other frame by the time
+both frames covered, so it plays at the same speed with half the updates, and
+otherwise it is untouched. `Main._update_animation_gate()` drives the actors
+through `ReplicatedActor3D.set_animation_tier()`, which sleeps the cape cloth
+along with a paused body and never pauses a clip that does not loop, so an
+actor caught sitting down finishes the move; `AmbientPopulation` gates its own
+herd from `_process`. What is on screen and near the camera animates exactly as
+before; the local player is never gated.
+
+**A window that is not showing is not rebuilt.** The statistics document, the
+counters page and the session table are rebuilt from controls, and the
+partial-stat packets that drive them arrive with every health, food and
+experience tick. `_sync_stats_window()` now only marks them stale while the
+window is hidden; `stats_panel.visibility_changed` rebuilds them when it is
+shown. The meters, skill rows and indicators on the HUD are still refreshed by
+every packet.
+
+**Chat lines are appended.** `_append_chat_line()` appends the arriving line to
+the chat panel and the console and drops the oldest paragraph past the cap with
+`remove_paragraph(0, true)`, instead of clearing and re-appending a hundred and
+a thousand lines. A log whose last rendered line is no longer the line before
+the new one - a reconnect cleared the buffer, a fixture replaced it - is rebuilt
+in full, so the incremental and full paths cannot disagree.
+
+**Only the actors that changed are re-presented.** Every AppState site that
+writes `actors` records the id in `changed_actors`; the per-frame flush calls
+`_sync_world(AppState.take_changed_actors())` and visits those ids plus any
+actor that still has no node. `_sync_world()` with no argument is still the
+full pass a map load and the fixtures use. The command reducer copies the actor
+record shallowly; nothing writes into its nested dictionaries in place.
+
+**Spawns are budgeted and the library is prewarmed.** `_sync_world` builds at
+most `ACTOR_SPAWN_BUDGET` actors per pass and leaves the rest for the next frame
+(`_spawn_backlog`); the local player is always built at once.
+`NativeAnimationImporter.prewarm()` parses a shared library on a worker thread
+as the map starts loading, and the parsed source is kept for the session so a
+second rig never parses the 11 MB file again.
+
+**Item icons are shared.** `ItemAtlas.icon_for()` keeps one AtlasTexture per
+picture, and command 226's descriptions are indexed by slot once per list
+rather than searched for every slot of every refresh.
+
 ## Checking a change
 
 `tests/test_runtime_performance.gd` guards the viewport scheduling, the surface
-sample cache and the in-place packet decode.
+sample cache, the in-place packet decode, the shared icons, the actor change
+set, the hidden statistics window, the appended chat line, the prewarmed
+library and the spawn budget. `tests/test_animation_gate.gd` guards the gate's
+tiers and the one-shot exemption.
 `tests/integration/sunmane_performance.gd` writes frame timings, draw calls and
 primitive counts as JSON for a region package.

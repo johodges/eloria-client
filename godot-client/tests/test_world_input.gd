@@ -1724,7 +1724,9 @@ func _run() -> void:
 	var stats_text: RichTextLabel = main.get_node(
 		"GameView/StatsPanel/Content/StatsTabs/Statistics/StatsText") as RichTextLabel
 	# Drive the real signal path rather than calling the sync helpers directly,
-	# so a missing state_changed case would fail here.
+	# so a missing state_changed case would fail here. The window is built only
+	# while it is on screen, so it is opened the way a player would open it.
+	(main.get_node("GameView/StatsPanel") as Control).show()
 	var previously_authenticated: bool = bool(app_state_inventory.get("authenticated"))
 	app_state_inventory.set("authenticated", true)
 	app_state_inventory.set("stats", {"health": 10, "max_health": 10})
@@ -1785,6 +1787,7 @@ func _run() -> void:
 	_expect(_counter_row_text(main, "Kills").contains("11"),
 		"resetting the session keeps the authoritative lifetime total")
 	app_state_inventory.set("authenticated", previously_authenticated)
+	(main.get_node("GameView/StatsPanel") as Control).hide()
 
 	# Protocol diagnostics. Every undecoded packet and decode error used to be
 	# reduced into AppState and emitted with no listener at all, which is how
@@ -1845,6 +1848,7 @@ func _run() -> void:
 	await process_frame
 
 	# Decoded fields with a consumer: research progress and cooldown art.
+	(main.get_node("GameView/StatsPanel") as Control).show()
 	app_state_inventory.set("stats", {"health": 10, "max_health": 10,
 		"researching": 1024, "research_completed": 0, "research_total": 0})
 	main.call("_sync_stats")
@@ -1857,6 +1861,7 @@ func _run() -> void:
 	var reading: String = _character_column_text(main)
 	_expect(reading.contains("30/120") and reading.contains("25%"),
 		"reading progress is presented from the authoritative research statistics")
+	(main.get_node("GameView/StatsPanel") as Control).hide()
 
 	var cooldown_slot: Button = (main.get("quick_slot_buttons") as Array)[0] as Button
 	var cooldown_slot_two: Button = (main.get("quick_slot_buttons") as Array)[1] as Button
@@ -2492,6 +2497,7 @@ func _run() -> void:
 
 	# The "+" beside a line is offered only while the server's numbers allow
 	# it, and clicking one asks before anything is spent.
+	(main.get_node("GameView/StatsPanel") as Control).show()
 	main.call("_sync_stats")
 	# The control is a button on the row now rather than a link in a
 	# document, and it is always drawn - what changes is whether it is live.
@@ -2508,6 +2514,7 @@ func _run() -> void:
 	main.call("_sync_stats")
 	_expect(not _spend_live(main, "magic_nexus"),
 		"a nexus at the server's ceiling is not offered again")
+	(main.get_node("GameView/StatsPanel") as Control).hide()
 	main.call("_ask_to_spend", "attribute", "physique")
 	var confirm: PanelContainer = main.get("purchase_confirm") as PanelContainer
 	var prompt: Label = main.get("purchase_prompt") as Label

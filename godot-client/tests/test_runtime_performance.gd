@@ -2,7 +2,11 @@ extends SceneTree
 ## Guards the runtime-cost work: the map SubViewports must stay idle while their
 ## UI is hidden, the surface sampler must not re-query physics for an actor that
 ## has not moved, the animation importer must rebuild only the clips an actor
-## can play, and the glTF cache must parse a file once.
+## can play, and the glTF cache must parse a file once. Then the per-packet
+## work: item icons are shared, only the actors that changed are re-presented,
+## a hidden statistics window is not rebuilt, a chat line is appended rather
+## than the logs rebuilt, the animation library is parsed ahead of the first
+## actor, and a pack of actors is built over several frames.
 
 var failures := 0
 
@@ -134,6 +138,97 @@ func _run() -> void:
 		"the first packet of a burst decodes at offset zero")
 	_expect(second.status == "ok" and int(second.command) == 2,
 		"the second packet decodes in place at an offset")
+
+	# Item icons are built once per picture and shared, not rebuilt per slot
+	# per refresh.
+	var atlas: RefCounted = scene.get("item_atlas")
+	_expect(is_same(atlas.icon_for(3), atlas.icon_for(3)),
+		"an item icon is built once and shared")
+	_expect(not is_same(atlas.icon_for(3), atlas.icon_for(4)),
+		"different pictures get different icons")
+
+	# AppState names the actors it wrote, so a flush visits only those.
+	var app_state: Node = root.get_node("AppState")
+	app_state.set("authenticated", false)
+	app_state.set("actors", {
+		7: {"actor_id": 7, "x": 1, "y": 1, "rotation": 0, "actor_type": 1,
+			"kind": 1, "name": "Seven", "health": 5, "max_health": 9},
+		8: {"actor_id": 8, "x": 2, "y": 1, "rotation": 0, "actor_type": 1,
+			"kind": 1, "name": "Eight", "health": 5, "max_health": 9}})
+	app_state.call("take_changed_actors")
+	app_state.call("_on_packet", EloriaProtocol.ServerMessage.ADD_ACTOR_COMMAND,
+		PackedByteArray([7, 0, 20]))
+	var changed: Dictionary = app_state.call("take_changed_actors")
+	_expect(changed.has(7) and not changed.has(8),
+		"an actor that moved is in the change set and one that stood still is not")
+	_expect((app_state.call("take_changed_actors") as Dictionary).is_empty(),
+		"taking the change set empties it")
+	app_state.call("mark_all_actors_changed")
+	_expect((app_state.call("take_changed_actors") as Dictionary).size() == 2,
+		"the footprint table marks every actor")
+
+	# The statistics window is not rebuilt while it is hidden.
+	var stats_panel: Control = scene.get_node("%StatsPanel")
+	var perk_line: Label = scene.get("stats_perk_line")
+	stats_panel.hide()
+	perk_line.text = "untouched"
+	app_state.set("stats", {"health": 3, "max_health": 9})
+	scene.call("_sync_stats")
+	_expect(perk_line.text == "untouched",
+		"a stats packet leaves a hidden statistics window alone")
+	stats_panel.show()
+	_expect(perk_line.text.begins_with("Perks:"),
+		"showing the statistics window rebuilds it")
+	stats_panel.hide()
+
+	# A chat line is appended to the logs rather than rebuilding them, and the
+	# panel keeps to its cap.
+	var chat_output: RichTextLabel = scene.get_node("%ChatOutput")
+	var lines: Array = app_state.get("chat_lines")
+	lines.clear()
+	for index: int in range(3):
+		lines.append({"channel": 0, "text": "line %d" % index})
+	scene.call("_sync_chat")
+	var paragraphs: int = chat_output.get_paragraph_count()
+	app_state.set("authenticated", true)
+	app_state.call("append_local_message", "one more line", 0)
+	_expect(chat_output.get_paragraph_count() == paragraphs + 1
+		and chat_output.get_parsed_text().contains("one more line"),
+		"a new chat line is appended to the panel")
+	for index: int in range(120):
+		app_state.call("append_local_message", "filler %d" % index, 0)
+	_expect(chat_output.get_paragraph_count() == 101,
+		"the chat panel keeps its hundred newest lines")
+	_expect(chat_output.get_parsed_text().contains("filler 119")
+		and not chat_output.get_parsed_text().contains("one more line"),
+		"the oldest lines are the ones dropped")
+	app_state.set("authenticated", false)
+
+	# The shared animation library is parsed ahead of the first actor, and a
+	# pack of actors is built over several frames rather than in one.
+	var library: String = ProjectSettings.globalize_path(
+		"res://assets/actors/native/shared/Universal_Animation_Library.glb")
+	NativeAnimationImporter.prewarm(library)
+	_expect(NativeAnimationImporter.is_prewarming(library)
+		or NativeAnimationImporter.has_source(library),
+		"prewarming starts the library parse")
+	var pack: Dictionary = {}
+	for index: int in range(7):
+		pack[300 + index] = {"actor_id": 300 + index, "x": 3 + index, "y": 4,
+			"rotation": 0, "actor_type": 1, "kind": 1, "name": "Pack %d" % index,
+			"health": 5, "max_health": 9}
+	app_state.set("actors", pack)
+	scene.call("_sync_world")
+	var nodes: Dictionary = scene.get("actor_nodes")
+	_expect(nodes.size() == 4, "one pass builds at most the spawn budget of actors")
+	for unused: int in range(4):
+		await process_frame
+	_expect(nodes.size() == 7, "the rest of the pack follows on the next frames")
+	_expect(NativeAnimationImporter.has_source(library),
+		"the first actor used the prewarmed library")
+	app_state.set("actors", {})
+	scene.call("_sync_world")
+	NativeAnimationImporter.clear()
 
 	print("runtime performance tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	scene.queue_free()

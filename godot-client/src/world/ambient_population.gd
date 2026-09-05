@@ -14,9 +14,18 @@ extends Node3D
 
 const MODEL_CATALOG := "res://data/actors/models.json"
 const NAVIGATION_LAYER := 8
+## How often the herd is re-read against the camera; see AnimationGate.
+const GATE_REFRESH_SECONDS := 0.15
+## The sphere an animal is tested against the frustum with, before its own
+## scale: the largest of them is a horse, two and a half metres nose to tail.
+const VIEW_RADIUS := 3.0
 
 var _scenes: Dictionary = {}
 var _spawned: Array[Node3D] = []
+## Each animal with a clip playing, paired with the player playing it.
+var _animated: Array[Array] = []
+var _gate: AnimationGate = AnimationGate.new()
+var _gate_countdown := 0.0
 
 func populate(manifest: WorldManifest, space: PhysicsDirectSpaceState3D) -> int:
 	clear()
@@ -55,7 +64,9 @@ func populate(manifest: WorldManifest, space: PhysicsDirectSpaceState3D) -> int:
 			instance.scale = Vector3.ONE * scale * rng.randf_range(0.94, 1.06)
 			instance.rotation.y = rng.randf() * TAU
 			instance.global_position = _grounded(position, space)
-			_play(instance, animation, rng.randf() * 4.0)
+			var player: AnimationPlayer = _play(instance, animation, rng.randf() * 4.0)
+			if player != null:
+				_animated.append([instance, player])
 			_spawned.append(instance)
 			spawned += 1
 	return spawned
@@ -65,6 +76,31 @@ func clear() -> void:
 		if is_instance_valid(node):
 			node.queue_free()
 	_spawned.clear()
+	_gate.reset()
+	_animated.clear()
+
+## Scenery animals are the same skeleton and skinning work as an actor, and a
+## steppe declares a hundred of them, most of them behind the camera at any
+## moment. The gate pauses the ones the camera cannot see and halves the rest
+## beyond its near band; see AnimationGate. The half-rate players are stepped
+## every frame from here, the tiers re-read on a slower clock.
+func _process(delta: float) -> void:
+	if _animated.is_empty():
+		return
+	_gate.advance(delta)
+	_gate_countdown -= delta
+	if _gate_countdown > 0.0:
+		return
+	_gate_countdown = GATE_REFRESH_SECONDS
+	_gate.begin(get_viewport().get_camera_3d() if is_inside_tree() else null)
+	for pair: Array in _animated:
+		var animal_value: Variant = pair[0]
+		var player_value: Variant = pair[1]
+		if not is_instance_valid(animal_value) or not is_instance_valid(player_value):
+			continue
+		var animal: Node3D = animal_value as Node3D
+		_gate.apply(player_value as AnimationPlayer, _gate.classify(
+			animal.global_position + Vector3.UP, VIEW_RADIUS * maxf(animal.scale.y, 0.1)))
 
 func _grounded(position: Vector3, space: PhysicsDirectSpaceState3D) -> Vector3:
 	if space == null:
@@ -78,20 +114,23 @@ func _grounded(position: Vector3, space: PhysicsDirectSpaceState3D) -> Vector3:
 		return found as Vector3
 	return position
 
-func _play(instance: Node3D, animation: String, offset: float) -> void:
+## Starts the clip and returns the player it runs on, or null when the model
+## has nothing to play.
+func _play(instance: Node3D, animation: String, offset: float) -> AnimationPlayer:
 	var players := instance.find_children("*", "AnimationPlayer", true, false)
 	if players.is_empty():
-		return
+		return null
 	var player := players[0] as AnimationPlayer
 	if not player.has_animation(animation):
 		animation = "Idle_A"
 	if not player.has_animation(animation):
-		return
+		return null
 	var clip := player.get_animation(animation)
 	clip.loop_mode = Animation.LOOP_LINEAR
 	player.play(animation)
 	# Offset each animal so a herd does not breathe in lockstep.
 	player.seek(fmod(offset, maxf(clip.length, 0.1)), true)
+	return player
 
 func _load_catalog() -> Dictionary:
 	var file := FileAccess.open(MODEL_CATALOG, FileAccess.READ)

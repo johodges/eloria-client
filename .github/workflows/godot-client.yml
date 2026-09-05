@@ -93,6 +93,8 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_ranging_window.gd
       - name: Runtime cost fixtures
         run: godot --headless --path godot-client --script res://tests/test_runtime_performance.gd
+      - name: Animation gate fixtures
+        run: godot --headless --path godot-client --script res://tests/test_animation_gate.gd
       - name: Ground marker draping fixtures
         run: godot --headless --path godot-client --script res://tests/test_ground_drape.gd
       - name: Main scene smoke test
