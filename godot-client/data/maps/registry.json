@@ -1209,6 +1209,222 @@
         "gates-wall-eyrie"
       ],
       "secret": true
+    },
+    "amberwood_gauntlet": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/amberwood_gauntlet/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          26.0,
+          363.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "amberwood",
+      "insidesOf": "amberwood",
+      "gauntlet": true
+    },
+    "amberwood_gauntlet_2": {
+      "alias": "amberwood_gauntlet"
+    },
+    "amberwood_gauntlet_3": {
+      "alias": "amberwood_gauntlet"
+    },
+    "whitehorn_gauntlet": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/whitehorn_gauntlet/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          24.0,
+          363.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "whitehorn_range",
+      "insidesOf": "whitehorn_range",
+      "gauntlet": true
+    },
+    "whitehorn_gauntlet_2": {
+      "alias": "whitehorn_gauntlet"
+    },
+    "whitehorn_gauntlet_3": {
+      "alias": "whitehorn_gauntlet"
+    },
+    "ssarathi_gauntlet": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/ssarathi_gauntlet/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          15.0,
+          363.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "ssarathi_ruins",
+      "insidesOf": "ssarathi_ruins",
+      "gauntlet": true
+    },
+    "ssarathi_gauntlet_2": {
+      "alias": "ssarathi_gauntlet"
+    },
+    "ssarathi_gauntlet_3": {
+      "alias": "ssarathi_gauntlet"
+    },
+    "grey_moors_gauntlet": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/grey_moors_gauntlet/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          29.0,
+          363.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "grey_moors",
+      "insidesOf": "grey_moors",
+      "gauntlet": true
+    },
+    "grey_moors_gauntlet_2": {
+      "alias": "grey_moors_gauntlet"
+    },
+    "grey_moors_gauntlet_3": {
+      "alias": "grey_moors_gauntlet"
+    },
+    "crownwater_gauntlet": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/crownwater_gauntlet/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          15.0,
+          363.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "crownwater",
+      "insidesOf": "crownwater",
+      "gauntlet": true
+    },
+    "crownwater_gauntlet_2": {
+      "alias": "crownwater_gauntlet"
+    },
+    "crownwater_gauntlet_3": {
+      "alias": "crownwater_gauntlet"
+    },
+    "sunmane_gauntlet": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/sunmane_gauntlet/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          26.0,
+          363.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "sunmane_steppe",
+      "insidesOf": "sunmane_steppe",
+      "gauntlet": true
+    },
+    "sunmane_gauntlet_2": {
+      "alias": "sunmane_gauntlet"
+    },
+    "sunmane_gauntlet_3": {
+      "alias": "sunmane_gauntlet"
+    },
+    "amethyst_gauntlet": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/amethyst_gauntlet/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          21.0,
+          363.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "amethyst_barrens",
+      "insidesOf": "amethyst_barrens",
+      "gauntlet": true
+    },
+    "amethyst_gauntlet_2": {
+      "alias": "amethyst_gauntlet"
+    },
+    "amethyst_gauntlet_3": {
+      "alias": "amethyst_gauntlet"
+    },
+    "manymouth_gauntlet": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/manymouth_gauntlet/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          15.0,
+          363.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "manymouth_delta",
+      "insidesOf": "manymouth_delta",
+      "gauntlet": true
+    },
+    "manymouth_gauntlet_2": {
+      "alias": "manymouth_gauntlet"
+    },
+    "manymouth_gauntlet_3": {
+      "alias": "manymouth_gauntlet"
     }
   }
 }

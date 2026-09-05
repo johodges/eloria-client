@@ -21,6 +21,8 @@ the tools that write the server's portal table from all of it - is in
 `CONTINENT.md`. The hidden layer under each map - the secrets, their
 entrances and what they hold - is in `SECRETS.md`; `SECRETS-REVIEW.md` lists
 what was proposed for them but not built.
+The instanced routes a party runs from a keeper - the gauntlets - are in
+`GAUNTLETS.md`, with `GAUNTLETS-REVIEW.md` for what they could still gain.
 
 ## Rebuild and verify
 

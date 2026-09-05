@@ -1,0 +1,3463 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "grey_moors_gauntlet",
+    "name": "The Barrow Run",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        -26.55,
+        -3.4,
+        -0.55
+      ],
+      "max": [
+        13.55,
+        16.65,
+        360.55
+      ]
+    },
+    "playableBounds": {
+      "min": [
+        -26.55,
+        -0.6,
+        -0.55
+      ],
+      "max": [
+        13.55,
+        3.5,
+        360.55
+      ]
+    },
+    "interiorClass": "gauntlet",
+    "parentRegion": "grey_moors",
+    "serverCells": 384
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      29.0,
+      363.0
+    ],
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 0.0,
+    "invertServerY": true
+  },
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        0.0,
+        0.05,
+        7.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    },
+    {
+      "id": "vault",
+      "position": [
+        -10.0,
+        3.05,
+        354.0
+      ],
+      "rotationDegrees": 180,
+      "surface": "Walk"
+    }
+  ],
+  "collision": {
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "width": 90,
+    "height": 732,
+    "cellMetres": 0.5,
+    "originMetres": [
+      -29.0,
+      363.0
+    ],
+    "heightEncoding": {
+      "origin": -0.1,
+      "step": 0.1,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true
+    },
+    "walkableCells": 23416,
+    "blockedCells": 42464,
+    "walkableFraction": 0.3554,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    "nodeNames": [
+      "Secrets_grey_moors_gauntlet",
+      "Section_grey_moors_gauntlet",
+      "Roof_grey_moors_gauntlet_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_grey_carved_stone",
+      "Roof_grey_moors_gauntlet_grey_moor_granite",
+      "Build_grey_moors_gauntlet_amber_resin",
+      "Build_grey_moors_gauntlet_dark_iron",
+      "Build_grey_moors_gauntlet_grey_bog_timber",
+      "Build_grey_moors_gauntlet_grey_bog_water",
+      "Build_grey_moors_gauntlet_grey_carved_stone",
+      "Build_grey_moors_gauntlet_grey_drystone",
+      "Build_grey_moors_gauntlet_grey_moor_granite",
+      "Build_grey_moors_gauntlet_grey_votive_flame",
+      "Build_grey_moors_gauntlet_lime_plaster"
+    ]
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Roof_grey_moors_gauntlet_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_grey_carved_stone",
+      "Roof_grey_moors_gauntlet_grey_moor_granite"
+    ],
+    "reason": "interior lids; the isometric rig frames the floor, not the roof"
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Walk_"
+    ],
+    "agentRadius": 0.4,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 45,
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    }
+  },
+  "portals": [],
+  "landmarks": [
+    {
+      "id": "grey_moors_gauntlet-staging",
+      "name": "The Barrow Run",
+      "space": "staging",
+      "position": [
+        0.0,
+        1.6,
+        7.0
+      ]
+    }
+  ],
+  "interactives": [
+    {
+      "id": "plaque-staging-0",
+      "kind": "information",
+      "target": "lore",
+      "label": "Rules of the run",
+      "text": "One party at a time. The dead wake at the barrow field. Waystones count you out. The hall is the end of it.",
+      "position": [
+        -6.8,
+        1.0,
+        12.6
+      ],
+      "serverTile": [
+        22,
+        350
+      ],
+      "objectId": 861
+    },
+    {
+      "id": "exit-staging",
+      "kind": "waystone",
+      "target": "home",
+      "label": "Waystone",
+      "text": "The waystone home. Using it counts you out of the run.",
+      "position": [
+        5.8,
+        1.0,
+        11.0
+      ],
+      "serverTile": [
+        35,
+        352
+      ],
+      "objectId": 800
+    },
+    {
+      "id": "plaque-peat-cut",
+      "kind": "information",
+      "target": "lore",
+      "label": "The joined barrows",
+      "text": "Nine barrows and one road between them under the peat, dug so the families could visit their dead without crossing the moor at night.",
+      "position": [
+        -4.1,
+        1.0,
+        28.0
+      ],
+      "serverTile": [
+        25,
+        335
+      ],
+      "objectId": 862
+    },
+    {
+      "id": "cache",
+      "kind": "cache",
+      "target": "run",
+      "label": "Reward cache",
+      "text": "The run's cache. It opens once for each of you when the court is quiet.",
+      "position": [
+        -10.0,
+        3.6,
+        356.5
+      ],
+      "serverTile": [
+        19,
+        6
+      ],
+      "objectId": 798
+    },
+    {
+      "id": "exit-vault",
+      "kind": "waystone",
+      "target": "home",
+      "label": "Waystone",
+      "text": "The waystone home.",
+      "position": [
+        -5.0,
+        4.0,
+        351.0
+      ],
+      "serverTile": [
+        24,
+        12
+      ],
+      "objectId": 799
+    },
+    {
+      "id": "plaque-vault",
+      "kind": "information",
+      "target": "lore",
+      "label": "The court is quiet",
+      "text": "Whoever reads this walked the whole road. The cache is yours; the waystone is the way home.",
+      "position": [
+        -15.6,
+        4.0,
+        358.0
+      ],
+      "serverTile": [
+        13,
+        5
+      ],
+      "objectId": 863
+    }
+  ],
+  "npcMarkers": [],
+  "harvestables": [
+    {
+      "id": "peat-cut-bonus",
+      "resource": "Grave Moss",
+      "position": [
+        8.5,
+        0.0,
+        42.0
+      ],
+      "serverTile": [
+        38,
+        321
+      ]
+    }
+  ],
+  "environment": {
+    "sky": "none",
+    "ambient": {
+      "colour": [
+        0.1,
+        0.1,
+        0.12
+      ],
+      "energy": 0.5
+    },
+    "fog": {
+      "enabled": true,
+      "colour": [
+        0.02,
+        0.02,
+        0.03
+      ],
+      "begin": 16.0,
+      "end": 60.0
+    },
+    "openToSky": [],
+    "lights": [
+      {
+        "id": "lamp-000",
+        "kind": "point",
+        "position": [
+          -6.0,
+          0.98,
+          3.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-001",
+        "kind": "point",
+        "position": [
+          6.0,
+          0.98,
+          3.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-002",
+        "kind": "point",
+        "position": [
+          0.0,
+          3.38,
+          42.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-003",
+        "kind": "point",
+        "position": [
+          0.0,
+          4.38,
+          82.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-004",
+        "kind": "point",
+        "position": [
+          -6.2,
+          0.98,
+          111.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-005",
+        "kind": "point",
+        "position": [
+          -6.2,
+          0.98,
+          115.8
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-006",
+        "kind": "point",
+        "position": [
+          -6.2,
+          0.98,
+          120.6
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-007",
+        "kind": "point",
+        "position": [
+          -6.2,
+          0.98,
+          125.4
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-008",
+        "kind": "point",
+        "position": [
+          -6.2,
+          0.98,
+          130.2
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-009",
+        "kind": "point",
+        "position": [
+          -6.2,
+          0.98,
+          135.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-010",
+        "kind": "point",
+        "position": [
+          -4.0,
+          3.38,
+          162.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-011",
+        "kind": "point",
+        "position": [
+          -7.0,
+          3.38,
+          191.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-012",
+        "kind": "point",
+        "position": [
+          -18.0,
+          3.38,
+          220.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-013",
+        "kind": "point",
+        "position": [
+          4.0,
+          3.38,
+          220.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-014",
+        "kind": "point",
+        "position": [
+          -7.0,
+          3.38,
+          248.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-015",
+        "kind": "point",
+        "position": [
+          -7.0,
+          6.38,
+          289.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-016",
+        "kind": "point",
+        "position": [
+          2.47,
+          3.98,
+          330.45
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-017",
+        "kind": "point",
+        "position": [
+          -1.42,
+          3.98,
+          334.48
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-018",
+        "kind": "point",
+        "position": [
+          -6.95,
+          3.98,
+          336.71
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-019",
+        "kind": "point",
+        "position": [
+          -13.05,
+          3.98,
+          336.71
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-020",
+        "kind": "point",
+        "position": [
+          -18.58,
+          3.98,
+          334.48
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-021",
+        "kind": "point",
+        "position": [
+          -22.47,
+          3.98,
+          330.45
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-022",
+        "kind": "point",
+        "position": [
+          -15.0,
+          3.98,
+          351.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      }
+    ]
+  },
+  "spaces": {
+    "staging": {
+      "x0": -8.0,
+      "z0": 0.0,
+      "x1": 8.0,
+      "z1": 14.0,
+      "floor": 0.0,
+      "height": 5.2
+    },
+    "peat-cut-way-a": {
+      "x0": -1.8,
+      "z0": 12.2,
+      "x1": 1.8,
+      "z1": 20.4,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "peat-cut-way-b": {
+      "x0": -1.8,
+      "z0": 19.6,
+      "x1": 1.8,
+      "z1": 27.8,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "peat-cut": {
+      "x0": -5.5,
+      "z0": 26.0,
+      "x1": 5.5,
+      "z1": 58.0,
+      "floor": 0.0,
+      "height": 5.4
+    },
+    "peat-cut-alcove-0": {
+      "x0": 5.5,
+      "z0": 29.5,
+      "x1": 11.5,
+      "z1": 34.5,
+      "floor": 0.0,
+      "height": 4.0
+    },
+    "peat-cut-alcove-1": {
+      "x0": 5.5,
+      "z0": 39.5,
+      "x1": 11.5,
+      "z1": 44.5,
+      "floor": 0.0,
+      "height": 4.0
+    },
+    "peat-cut-alcove-2": {
+      "x0": 5.5,
+      "z0": 49.5,
+      "x1": 11.5,
+      "z1": 54.5,
+      "floor": 0.0,
+      "height": 4.0
+    },
+    "first-barrow-way-a": {
+      "x0": -1.8,
+      "z0": 56.2,
+      "x1": 1.8,
+      "z1": 64.4,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "first-barrow-way-b": {
+      "x0": -1.8,
+      "z0": 63.6,
+      "x1": 1.8,
+      "z1": 71.8,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "first-barrow": {
+      "x0": -13.0,
+      "z0": 70.0,
+      "x1": 13.0,
+      "z1": 94.0,
+      "floor": 0.0,
+      "height": 8.0
+    },
+    "bog-board-way-a": {
+      "x0": -5.8,
+      "z0": 92.2,
+      "x1": -2.2,
+      "z1": 100.4,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "bog-board-way-b": {
+      "x0": -5.8,
+      "z0": 99.6,
+      "x1": -2.2,
+      "z1": 107.8,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "bog-board-in": {
+      "x0": -7.0,
+      "z0": 106.0,
+      "x1": -1.0,
+      "z1": 109.0,
+      "floor": 0.0,
+      "height": 4.4
+    },
+    "bog-board-out": {
+      "x0": -7.0,
+      "z0": 137.0,
+      "x1": -1.0,
+      "z1": 140.0,
+      "floor": 0.0,
+      "height": 4.4
+    },
+    "bog-board": {
+      "x0": -13.0,
+      "z0": 109.0,
+      "x1": 5.0,
+      "z1": 137.0,
+      "floor": -3.0,
+      "height": 9.0
+    },
+    "fifth-chamber-way-a": {
+      "x0": -5.8,
+      "z0": 138.2,
+      "x1": -2.2,
+      "z1": 146.4,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "fifth-chamber-way-b": {
+      "x0": -5.8,
+      "z0": 145.6,
+      "x1": -2.2,
+      "z1": 153.8,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "fifth-chamber": {
+      "x0": -15.2,
+      "z0": 152.0,
+      "x1": 7.2,
+      "z1": 172.0,
+      "floor": 0.0,
+      "height": 5.6
+    },
+    "split-barrow-way-a": {
+      "x0": -8.8,
+      "z0": 170.2,
+      "x1": -5.2,
+      "z1": 178.4,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "split-barrow-way-b": {
+      "x0": -8.8,
+      "z0": 177.6,
+      "x1": -5.2,
+      "z1": 185.8,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "split-barrow-hub": {
+      "x0": -22.0,
+      "z0": 184.0,
+      "x1": 8.0,
+      "z1": 198.0,
+      "floor": 0.0,
+      "height": 5.6
+    },
+    "split-barrow-east-passage": {
+      "x0": -26.0,
+      "z0": 210.0,
+      "x1": -10.0,
+      "z1": 230.0,
+      "floor": 0.0,
+      "height": 6.0
+    },
+    "split-barrow-west-passage": {
+      "x0": -4.0,
+      "z0": 210.0,
+      "x1": 12.0,
+      "z1": 230.0,
+      "floor": 0.0,
+      "height": 6.0
+    },
+    "split-barrow-merge": {
+      "x0": -22.0,
+      "z0": 242.0,
+      "x1": 8.0,
+      "z1": 254.0,
+      "floor": 0.0,
+      "height": 5.6
+    },
+    "split-barrow-east-passage-out": {
+      "x0": -19.8,
+      "z0": 228.2,
+      "x1": -16.2,
+      "z1": 243.8,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "split-barrow-west-passage-out": {
+      "x0": 2.2,
+      "z0": 228.2,
+      "x1": 5.8,
+      "z1": 243.8,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "split-barrow-east-passage-way-a": {
+      "x0": -19.8,
+      "z0": 196.2,
+      "x1": -16.2,
+      "z1": 204.4,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "split-barrow-east-passage-way-b": {
+      "x0": -19.8,
+      "z0": 203.6,
+      "x1": -16.2,
+      "z1": 211.8,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "split-barrow-west-passage-way-a": {
+      "x0": 2.2,
+      "z0": 196.2,
+      "x1": 5.8,
+      "z1": 204.4,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "split-barrow-west-passage-way-b": {
+      "x0": 2.2,
+      "z0": 203.6,
+      "x1": 5.8,
+      "z1": 211.8,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "reeve-stair-way-a": {
+      "x0": -8.8,
+      "z0": 252.2,
+      "x1": -5.2,
+      "z1": 260.4,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "reeve-stair-way-b": {
+      "x0": -8.8,
+      "z0": 259.6,
+      "x1": -5.2,
+      "z1": 267.8,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "reeve-stair-climb": {
+      "x0": -8.8,
+      "z0": 264.2,
+      "x1": -5.2,
+      "z1": 281.8,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "reeve-stair": {
+      "x0": -18.4,
+      "z0": 280.0,
+      "x1": 4.4,
+      "z1": 298.0,
+      "floor": 3.0,
+      "height": 5.6
+    },
+    "reeve-hall-way-a": {
+      "x0": -11.8,
+      "z0": 296.2,
+      "x1": -8.2,
+      "z1": 304.4,
+      "floor": 3.0,
+      "height": 3.8
+    },
+    "reeve-hall-way-b": {
+      "x0": -11.8,
+      "z0": 303.6,
+      "x1": -8.2,
+      "z1": 311.8,
+      "floor": 3.0,
+      "height": 3.8
+    },
+    "reeve-hall": {
+      "x0": -26.0,
+      "z0": 310.0,
+      "x1": 6.0,
+      "z1": 340.0,
+      "floor": 3.0,
+      "height": 9.0
+    },
+    "vault-way": {
+      "x0": -11.8,
+      "z0": 338.2,
+      "x1": -8.2,
+      "z1": 349.8,
+      "floor": 3.0,
+      "height": 3.8
+    },
+    "vault": {
+      "x0": -17.0,
+      "z0": 348.0,
+      "x1": -3.0,
+      "z1": 360.0,
+      "floor": 3.0,
+      "height": 5.0
+    }
+  },
+  "gauntlet": {
+    "id": "grey_moors_gauntlet",
+    "region": "grey_moors",
+    "name": "The Barrow Run",
+    "short": "barrow",
+    "flavour": "Nine barrows joined under the peat by the people who dug them, so the dead could visit. They still do.",
+    "staging": {
+      "room": "staging",
+      "boundsTiles": {
+        "min": [
+          21,
+          349
+        ],
+        "max": [
+          37,
+          363
+        ]
+      },
+      "arrival": [
+        0.0,
+        0.05,
+        7.0
+      ],
+      "arrivalTile": [
+        29,
+        356
+      ],
+      "exit": {
+        "id": "exit-staging",
+        "kind": "waystone",
+        "target": "home",
+        "label": "Waystone",
+        "text": "The waystone home. Using it counts you out of the run.",
+        "position": [
+          5.8,
+          1.0,
+          11.0
+        ],
+        "serverTile": [
+          35,
+          352
+        ],
+        "objectId": 800
+      }
+    },
+    "legs": [
+      {
+        "id": "peat-cut",
+        "name": "The Peat Cut",
+        "kind": "gallery",
+        "advance": "cleared",
+        "trigger": "enter",
+        "pressure": 0.8,
+        "late": 0.0,
+        "gate": {
+          "id": "gate-peat-cut",
+          "kind": "slab",
+          "label": "A stone slab across the way. It slides when the way behind you is quiet.",
+          "position": [
+            0.0,
+            1.2,
+            20.0
+          ],
+          "before": [
+            0.0,
+            0.0,
+            17.0
+          ],
+          "beyond": [
+            0.0,
+            0.0,
+            23.1
+          ],
+          "tile": [
+            29,
+            346
+          ],
+          "beyondTile": [
+            29,
+            340
+          ],
+          "objectId": 801
+        },
+        "bonus": "node:Grave Moss",
+        "room": "peat-cut",
+        "bounds": [
+          -5.5,
+          26.0,
+          5.5,
+          58.0
+        ],
+        "spawns": [
+          [
+            -3.1,
+            0.0,
+            30.0
+          ],
+          [
+            0.1,
+            0.0,
+            30.0
+          ],
+          [
+            -3.1,
+            0.0,
+            33.2
+          ],
+          [
+            0.1,
+            0.0,
+            33.2
+          ],
+          [
+            -3.1,
+            0.0,
+            36.4
+          ],
+          [
+            0.1,
+            0.0,
+            36.4
+          ],
+          [
+            -3.1,
+            0.0,
+            39.6
+          ],
+          [
+            0.1,
+            0.0,
+            39.6
+          ],
+          [
+            -3.1,
+            0.0,
+            42.8
+          ],
+          [
+            0.1,
+            0.0,
+            42.8
+          ],
+          [
+            -3.1,
+            0.0,
+            46.0
+          ],
+          [
+            0.1,
+            0.0,
+            46.0
+          ],
+          [
+            -3.1,
+            0.0,
+            49.2
+          ],
+          [
+            0.1,
+            0.0,
+            49.2
+          ],
+          [
+            -3.1,
+            0.0,
+            52.4
+          ],
+          [
+            0.1,
+            0.0,
+            52.4
+          ]
+        ],
+        "boundsTiles": {
+          "min": [
+            24,
+            305
+          ],
+          "max": [
+            34,
+            337
+          ]
+        },
+        "spawnTiles": [
+          [
+            26,
+            333
+          ],
+          [
+            29,
+            333
+          ],
+          [
+            26,
+            330
+          ],
+          [
+            29,
+            330
+          ],
+          [
+            26,
+            327
+          ],
+          [
+            29,
+            327
+          ],
+          [
+            26,
+            323
+          ],
+          [
+            29,
+            323
+          ],
+          [
+            26,
+            320
+          ],
+          [
+            29,
+            320
+          ],
+          [
+            26,
+            317
+          ],
+          [
+            29,
+            317
+          ],
+          [
+            26,
+            314
+          ],
+          [
+            29,
+            314
+          ],
+          [
+            26,
+            311
+          ],
+          [
+            29,
+            311
+          ]
+        ]
+      },
+      {
+        "id": "first-barrow",
+        "name": "The First Barrow",
+        "kind": "cavern",
+        "advance": "cleared",
+        "trigger": "enter",
+        "pressure": 1.0,
+        "late": 0.2,
+        "gate": {
+          "id": "gate-first-barrow",
+          "kind": "slab",
+          "label": "A stone slab across the way. It slides when the way behind you is quiet.",
+          "position": [
+            0.0,
+            1.2,
+            64.0
+          ],
+          "before": [
+            0.0,
+            0.0,
+            61.0
+          ],
+          "beyond": [
+            0.0,
+            0.0,
+            67.1
+          ],
+          "tile": [
+            29,
+            302
+          ],
+          "beyondTile": [
+            29,
+            296
+          ],
+          "objectId": 802
+        },
+        "bonus": "",
+        "room": "first-barrow",
+        "bounds": [
+          -13.0,
+          70.0,
+          13.0,
+          94.0
+        ],
+        "spawns": [
+          [
+            -10.6,
+            0.0,
+            74.0
+          ],
+          [
+            -7.1,
+            0.0,
+            74.0
+          ],
+          [
+            -3.6,
+            0.0,
+            74.0
+          ],
+          [
+            -0.1,
+            0.0,
+            74.0
+          ],
+          [
+            3.4,
+            0.0,
+            74.0
+          ],
+          [
+            6.9,
+            0.0,
+            74.0
+          ],
+          [
+            10.4,
+            0.0,
+            74.0
+          ],
+          [
+            -10.6,
+            0.0,
+            77.5
+          ],
+          [
+            -7.1,
+            0.0,
+            77.5
+          ],
+          [
+            -3.6,
+            0.0,
+            77.5
+          ],
+          [
+            -0.1,
+            0.0,
+            77.5
+          ],
+          [
+            3.4,
+            0.0,
+            77.5
+          ],
+          [
+            6.9,
+            0.0,
+            77.5
+          ],
+          [
+            10.4,
+            0.0,
+            77.5
+          ],
+          [
+            -10.6,
+            0.0,
+            81.0
+          ],
+          [
+            -7.1,
+            0.0,
+            81.0
+          ],
+          [
+            -3.6,
+            0.0,
+            81.0
+          ],
+          [
+            -0.1,
+            0.0,
+            81.0
+          ],
+          [
+            3.4,
+            0.0,
+            81.0
+          ],
+          [
+            6.9,
+            0.0,
+            81.0
+          ],
+          [
+            10.4,
+            0.0,
+            81.0
+          ],
+          [
+            -10.6,
+            0.0,
+            84.5
+          ],
+          [
+            -7.1,
+            0.0,
+            84.5
+          ],
+          [
+            -3.6,
+            0.0,
+            84.5
+          ],
+          [
+            -0.1,
+            0.0,
+            84.5
+          ],
+          [
+            3.4,
+            0.0,
+            84.5
+          ],
+          [
+            6.9,
+            0.0,
+            84.5
+          ],
+          [
+            10.4,
+            0.0,
+            84.5
+          ],
+          [
+            -10.6,
+            0.0,
+            88.0
+          ],
+          [
+            -7.1,
+            0.0,
+            88.0
+          ],
+          [
+            -3.6,
+            0.0,
+            88.0
+          ],
+          [
+            -0.1,
+            0.0,
+            88.0
+          ],
+          [
+            3.4,
+            0.0,
+            88.0
+          ],
+          [
+            6.9,
+            0.0,
+            88.0
+          ],
+          [
+            10.4,
+            0.0,
+            88.0
+          ]
+        ],
+        "boundsTiles": {
+          "min": [
+            16,
+            269
+          ],
+          "max": [
+            42,
+            293
+          ]
+        },
+        "spawnTiles": [
+          [
+            18,
+            289
+          ],
+          [
+            22,
+            289
+          ],
+          [
+            25,
+            289
+          ],
+          [
+            29,
+            289
+          ],
+          [
+            32,
+            289
+          ],
+          [
+            36,
+            289
+          ],
+          [
+            39,
+            289
+          ],
+          [
+            18,
+            286
+          ],
+          [
+            22,
+            286
+          ],
+          [
+            25,
+            286
+          ],
+          [
+            29,
+            286
+          ],
+          [
+            32,
+            286
+          ],
+          [
+            36,
+            286
+          ],
+          [
+            39,
+            286
+          ],
+          [
+            18,
+            282
+          ],
+          [
+            22,
+            282
+          ],
+          [
+            25,
+            282
+          ],
+          [
+            29,
+            282
+          ],
+          [
+            32,
+            282
+          ],
+          [
+            36,
+            282
+          ],
+          [
+            39,
+            282
+          ],
+          [
+            18,
+            278
+          ],
+          [
+            22,
+            278
+          ],
+          [
+            25,
+            278
+          ],
+          [
+            29,
+            278
+          ],
+          [
+            32,
+            278
+          ],
+          [
+            36,
+            278
+          ],
+          [
+            39,
+            278
+          ],
+          [
+            18,
+            275
+          ],
+          [
+            22,
+            275
+          ],
+          [
+            25,
+            275
+          ],
+          [
+            29,
+            275
+          ],
+          [
+            32,
+            275
+          ],
+          [
+            36,
+            275
+          ],
+          [
+            39,
+            275
+          ]
+        ]
+      },
+      {
+        "id": "bog-board",
+        "name": "The Bog Board",
+        "kind": "bridge",
+        "advance": "time:150",
+        "trigger": "enter",
+        "pressure": 0.9,
+        "late": 0.3,
+        "gate": {
+          "id": "gate-bog-board",
+          "kind": "bars",
+          "label": "An iron bar gate. It opens when the way behind you is quiet.",
+          "position": [
+            -4.0,
+            1.2,
+            100.0
+          ],
+          "before": [
+            -4.0,
+            0.0,
+            97.0
+          ],
+          "beyond": [
+            -4.0,
+            0.0,
+            103.1
+          ],
+          "tile": [
+            25,
+            266
+          ],
+          "beyondTile": [
+            25,
+            260
+          ],
+          "objectId": 803
+        },
+        "bonus": "",
+        "room": "bog-board",
+        "bounds": [
+          -6.2,
+          109.0,
+          -1.7999999999999998,
+          137.0
+        ],
+        "spawns": [
+          [
+            -5.1,
+            0.0,
+            113.0
+          ],
+          [
+            -2.9,
+            0.0,
+            113.0
+          ],
+          [
+            -5.1,
+            0.0,
+            116.2
+          ],
+          [
+            -2.9,
+            0.0,
+            116.2
+          ],
+          [
+            -5.1,
+            0.0,
+            119.4
+          ],
+          [
+            -2.9,
+            0.0,
+            119.4
+          ],
+          [
+            -5.1,
+            0.0,
+            122.6
+          ],
+          [
+            -2.9,
+            0.0,
+            122.6
+          ],
+          [
+            -5.1,
+            0.0,
+            125.8
+          ],
+          [
+            -2.9,
+            0.0,
+            125.8
+          ],
+          [
+            -5.1,
+            0.0,
+            129.0
+          ],
+          [
+            -2.9,
+            0.0,
+            129.0
+          ],
+          [
+            -5.1,
+            0.0,
+            132.2
+          ],
+          [
+            -2.9,
+            0.0,
+            132.2
+          ]
+        ],
+        "boundsTiles": {
+          "min": [
+            23,
+            226
+          ],
+          "max": [
+            27,
+            254
+          ]
+        },
+        "spawnTiles": [
+          [
+            24,
+            250
+          ],
+          [
+            26,
+            250
+          ],
+          [
+            24,
+            247
+          ],
+          [
+            26,
+            247
+          ],
+          [
+            24,
+            244
+          ],
+          [
+            26,
+            244
+          ],
+          [
+            24,
+            240
+          ],
+          [
+            26,
+            240
+          ],
+          [
+            24,
+            237
+          ],
+          [
+            26,
+            237
+          ],
+          [
+            24,
+            234
+          ],
+          [
+            26,
+            234
+          ],
+          [
+            24,
+            231
+          ],
+          [
+            26,
+            231
+          ]
+        ]
+      },
+      {
+        "id": "fifth-chamber",
+        "name": "The Fifth Chamber",
+        "kind": "hall",
+        "advance": "cleared",
+        "trigger": "enter",
+        "pressure": 1.1,
+        "late": 0.5,
+        "gate": {
+          "id": "gate-fifth-chamber",
+          "kind": "slab",
+          "label": "A stone slab across the way. It slides when the way behind you is quiet.",
+          "position": [
+            -4.0,
+            1.2,
+            146.0
+          ],
+          "before": [
+            -4.0,
+            0.0,
+            143.0
+          ],
+          "beyond": [
+            -4.0,
+            0.0,
+            149.1
+          ],
+          "tile": [
+            25,
+            220
+          ],
+          "beyondTile": [
+            25,
+            214
+          ],
+          "objectId": 804
+        },
+        "bonus": "",
+        "room": "fifth-chamber",
+        "bounds": [
+          -15.2,
+          152.0,
+          7.199999999999999,
+          172.0
+        ],
+        "spawns": [
+          [
+            -12.8,
+            0.0,
+            156.0
+          ],
+          [
+            -9.8,
+            0.0,
+            156.0
+          ],
+          [
+            -6.8,
+            0.0,
+            156.0
+          ],
+          [
+            -3.8,
+            0.0,
+            156.0
+          ],
+          [
+            -0.8,
+            0.0,
+            156.0
+          ],
+          [
+            2.2,
+            0.0,
+            156.0
+          ],
+          [
+            -12.8,
+            0.0,
+            159.0
+          ],
+          [
+            -9.8,
+            0.0,
+            159.0
+          ],
+          [
+            -6.8,
+            0.0,
+            159.0
+          ],
+          [
+            -3.8,
+            0.0,
+            159.0
+          ],
+          [
+            -0.8,
+            0.0,
+            159.0
+          ],
+          [
+            2.2,
+            0.0,
+            159.0
+          ],
+          [
+            -12.8,
+            0.0,
+            162.0
+          ],
+          [
+            -9.8,
+            0.0,
+            162.0
+          ],
+          [
+            -6.8,
+            0.0,
+            162.0
+          ],
+          [
+            -3.8,
+            0.0,
+            162.0
+          ],
+          [
+            -0.8,
+            0.0,
+            162.0
+          ],
+          [
+            2.2,
+            0.0,
+            162.0
+          ],
+          [
+            -12.8,
+            0.0,
+            165.0
+          ],
+          [
+            -9.8,
+            0.0,
+            165.0
+          ],
+          [
+            -6.8,
+            0.0,
+            165.0
+          ],
+          [
+            -3.8,
+            0.0,
+            165.0
+          ],
+          [
+            -0.8,
+            0.0,
+            165.0
+          ],
+          [
+            2.2,
+            0.0,
+            165.0
+          ],
+          [
+            -12.8,
+            0.0,
+            168.0
+          ],
+          [
+            -9.8,
+            0.0,
+            168.0
+          ],
+          [
+            -6.8,
+            0.0,
+            168.0
+          ],
+          [
+            -3.8,
+            0.0,
+            168.0
+          ],
+          [
+            -0.8,
+            0.0,
+            168.0
+          ],
+          [
+            2.2,
+            0.0,
+            168.0
+          ]
+        ],
+        "boundsTiles": {
+          "min": [
+            14,
+            191
+          ],
+          "max": [
+            36,
+            211
+          ]
+        },
+        "spawnTiles": [
+          [
+            16,
+            207
+          ],
+          [
+            19,
+            207
+          ],
+          [
+            22,
+            207
+          ],
+          [
+            25,
+            207
+          ],
+          [
+            28,
+            207
+          ],
+          [
+            31,
+            207
+          ],
+          [
+            16,
+            204
+          ],
+          [
+            19,
+            204
+          ],
+          [
+            22,
+            204
+          ],
+          [
+            25,
+            204
+          ],
+          [
+            28,
+            204
+          ],
+          [
+            31,
+            204
+          ],
+          [
+            16,
+            201
+          ],
+          [
+            19,
+            201
+          ],
+          [
+            22,
+            201
+          ],
+          [
+            25,
+            201
+          ],
+          [
+            28,
+            201
+          ],
+          [
+            31,
+            201
+          ],
+          [
+            16,
+            198
+          ],
+          [
+            19,
+            198
+          ],
+          [
+            22,
+            198
+          ],
+          [
+            25,
+            198
+          ],
+          [
+            28,
+            198
+          ],
+          [
+            31,
+            198
+          ],
+          [
+            16,
+            195
+          ],
+          [
+            19,
+            195
+          ],
+          [
+            22,
+            195
+          ],
+          [
+            25,
+            195
+          ],
+          [
+            28,
+            195
+          ],
+          [
+            31,
+            195
+          ]
+        ]
+      },
+      {
+        "id": "split-barrow",
+        "name": "The Split Barrow",
+        "kind": "fork",
+        "advance": "cleared",
+        "trigger": "enter",
+        "pressure": 1.1,
+        "late": 0.6,
+        "gate": {
+          "id": "gate-split-barrow",
+          "kind": "slab",
+          "label": "A stone slab across the way. It slides when the way behind you is quiet.",
+          "position": [
+            -7.0,
+            1.2,
+            178.0
+          ],
+          "before": [
+            -7.0,
+            0.0,
+            175.0
+          ],
+          "beyond": [
+            -7.0,
+            0.0,
+            181.1
+          ],
+          "tile": [
+            22,
+            188
+          ],
+          "beyondTile": [
+            22,
+            182
+          ],
+          "objectId": 805
+        },
+        "bonus": "",
+        "room": "split-barrow-hub",
+        "bounds": [
+          -22.0,
+          184.0,
+          8.0,
+          198.0
+        ],
+        "spawns": [
+          [
+            -19.6,
+            0.0,
+            187.5
+          ],
+          [
+            -16.1,
+            0.0,
+            187.5
+          ],
+          [
+            -12.6,
+            0.0,
+            187.5
+          ],
+          [
+            -9.1,
+            0.0,
+            187.5
+          ],
+          [
+            -5.6,
+            0.0,
+            187.5
+          ],
+          [
+            -2.1,
+            0.0,
+            187.5
+          ],
+          [
+            1.4,
+            0.0,
+            187.5
+          ],
+          [
+            4.9,
+            0.0,
+            187.5
+          ],
+          [
+            -19.6,
+            0.0,
+            191.0
+          ],
+          [
+            -16.1,
+            0.0,
+            191.0
+          ],
+          [
+            -12.6,
+            0.0,
+            191.0
+          ],
+          [
+            -9.1,
+            0.0,
+            191.0
+          ],
+          [
+            -5.6,
+            0.0,
+            191.0
+          ],
+          [
+            -2.1,
+            0.0,
+            191.0
+          ],
+          [
+            1.4,
+            0.0,
+            191.0
+          ],
+          [
+            4.9,
+            0.0,
+            191.0
+          ],
+          [
+            -19.6,
+            0.0,
+            194.5
+          ],
+          [
+            -16.1,
+            0.0,
+            194.5
+          ],
+          [
+            -12.6,
+            0.0,
+            194.5
+          ],
+          [
+            -9.1,
+            0.0,
+            194.5
+          ],
+          [
+            -5.6,
+            0.0,
+            194.5
+          ],
+          [
+            -2.1,
+            0.0,
+            194.5
+          ],
+          [
+            1.4,
+            0.0,
+            194.5
+          ],
+          [
+            4.9,
+            0.0,
+            194.5
+          ]
+        ],
+        "branches": [
+          {
+            "id": "east-passage",
+            "name": "The East Passage",
+            "kind": "hall",
+            "room": "split-barrow-east-passage",
+            "bounds": [
+              -26.0,
+              210.0,
+              -10.0,
+              230.0
+            ],
+            "spawns": [
+              [
+                -23.6,
+                0.0,
+                214.0
+              ],
+              [
+                -20.6,
+                0.0,
+                214.0
+              ],
+              [
+                -17.6,
+                0.0,
+                214.0
+              ],
+              [
+                -14.6,
+                0.0,
+                214.0
+              ],
+              [
+                -23.6,
+                0.0,
+                217.0
+              ],
+              [
+                -20.6,
+                0.0,
+                217.0
+              ],
+              [
+                -17.6,
+                0.0,
+                217.0
+              ],
+              [
+                -14.6,
+                0.0,
+                217.0
+              ],
+              [
+                -23.6,
+                0.0,
+                220.0
+              ],
+              [
+                -20.6,
+                0.0,
+                220.0
+              ],
+              [
+                -17.6,
+                0.0,
+                220.0
+              ],
+              [
+                -14.6,
+                0.0,
+                220.0
+              ],
+              [
+                -23.6,
+                0.0,
+                223.0
+              ],
+              [
+                -20.6,
+                0.0,
+                223.0
+              ],
+              [
+                -17.6,
+                0.0,
+                223.0
+              ],
+              [
+                -14.6,
+                0.0,
+                223.0
+              ],
+              [
+                -23.6,
+                0.0,
+                226.0
+              ],
+              [
+                -20.6,
+                0.0,
+                226.0
+              ],
+              [
+                -17.6,
+                0.0,
+                226.0
+              ],
+              [
+                -14.6,
+                0.0,
+                226.0
+              ]
+            ],
+            "gate": {
+              "id": "gate-split-barrow-east-passage",
+              "kind": "slab",
+              "label": "A stone slab across the way. It slides when the way behind you is quiet.",
+              "position": [
+                -18.0,
+                1.2,
+                204.0
+              ],
+              "before": [
+                -18.0,
+                0.0,
+                201.0
+              ],
+              "beyond": [
+                -18.0,
+                0.0,
+                207.1
+              ],
+              "tile": [
+                11,
+                162
+              ],
+              "beyondTile": [
+                11,
+                156
+              ],
+              "objectId": 806
+            },
+            "boundsTiles": {
+              "min": [
+                3,
+                133
+              ],
+              "max": [
+                19,
+                153
+              ]
+            },
+            "spawnTiles": [
+              [
+                5,
+                149
+              ],
+              [
+                8,
+                149
+              ],
+              [
+                11,
+                149
+              ],
+              [
+                14,
+                149
+              ],
+              [
+                5,
+                146
+              ],
+              [
+                8,
+                146
+              ],
+              [
+                11,
+                146
+              ],
+              [
+                14,
+                146
+              ],
+              [
+                5,
+                143
+              ],
+              [
+                8,
+                143
+              ],
+              [
+                11,
+                143
+              ],
+              [
+                14,
+                143
+              ],
+              [
+                5,
+                140
+              ],
+              [
+                8,
+                140
+              ],
+              [
+                11,
+                140
+              ],
+              [
+                14,
+                140
+              ],
+              [
+                5,
+                137
+              ],
+              [
+                8,
+                137
+              ],
+              [
+                11,
+                137
+              ],
+              [
+                14,
+                137
+              ]
+            ]
+          },
+          {
+            "id": "west-passage",
+            "name": "The West Passage",
+            "kind": "cavern",
+            "room": "split-barrow-west-passage",
+            "bounds": [
+              -4.0,
+              210.0,
+              12.0,
+              230.0
+            ],
+            "spawns": [
+              [
+                -1.6,
+                0.0,
+                214.0
+              ],
+              [
+                1.4,
+                0.0,
+                214.0
+              ],
+              [
+                4.4,
+                0.0,
+                214.0
+              ],
+              [
+                7.4,
+                0.0,
+                214.0
+              ],
+              [
+                -1.6,
+                0.0,
+                217.0
+              ],
+              [
+                1.4,
+                0.0,
+                217.0
+              ],
+              [
+                4.4,
+                0.0,
+                217.0
+              ],
+              [
+                7.4,
+                0.0,
+                217.0
+              ],
+              [
+                -1.6,
+                0.0,
+                220.0
+              ],
+              [
+                1.4,
+                0.0,
+                220.0
+              ],
+              [
+                4.4,
+                0.0,
+                220.0
+              ],
+              [
+                7.4,
+                0.0,
+                220.0
+              ],
+              [
+                -1.6,
+                0.0,
+                223.0
+              ],
+              [
+                1.4,
+                0.0,
+                223.0
+              ],
+              [
+                4.4,
+                0.0,
+                223.0
+              ],
+              [
+                7.4,
+                0.0,
+                223.0
+              ],
+              [
+                -1.6,
+                0.0,
+                226.0
+              ],
+              [
+                1.4,
+                0.0,
+                226.0
+              ],
+              [
+                4.4,
+                0.0,
+                226.0
+              ],
+              [
+                7.4,
+                0.0,
+                226.0
+              ]
+            ],
+            "gate": {
+              "id": "gate-split-barrow-west-passage",
+              "kind": "slab",
+              "label": "A stone slab across the way. It slides when the way behind you is quiet.",
+              "position": [
+                4.0,
+                1.2,
+                204.0
+              ],
+              "before": [
+                4.0,
+                0.0,
+                201.0
+              ],
+              "beyond": [
+                4.0,
+                0.0,
+                207.1
+              ],
+              "tile": [
+                33,
+                162
+              ],
+              "beyondTile": [
+                33,
+                156
+              ],
+              "objectId": 807
+            },
+            "boundsTiles": {
+              "min": [
+                25,
+                133
+              ],
+              "max": [
+                41,
+                153
+              ]
+            },
+            "spawnTiles": [
+              [
+                27,
+                149
+              ],
+              [
+                30,
+                149
+              ],
+              [
+                33,
+                149
+              ],
+              [
+                36,
+                149
+              ],
+              [
+                27,
+                146
+              ],
+              [
+                30,
+                146
+              ],
+              [
+                33,
+                146
+              ],
+              [
+                36,
+                146
+              ],
+              [
+                27,
+                143
+              ],
+              [
+                30,
+                143
+              ],
+              [
+                33,
+                143
+              ],
+              [
+                36,
+                143
+              ],
+              [
+                27,
+                140
+              ],
+              [
+                30,
+                140
+              ],
+              [
+                33,
+                140
+              ],
+              [
+                36,
+                140
+              ],
+              [
+                27,
+                137
+              ],
+              [
+                30,
+                137
+              ],
+              [
+                33,
+                137
+              ],
+              [
+                36,
+                137
+              ]
+            ]
+          }
+        ],
+        "merge": {
+          "room": "split-barrow-merge",
+          "bounds": [
+            -22.0,
+            242.0,
+            8.0,
+            254.0
+          ],
+          "boundsTiles": {
+            "min": [
+              7,
+              109
+            ],
+            "max": [
+              37,
+              121
+            ]
+          }
+        },
+        "boundsTiles": {
+          "min": [
+            7,
+            165
+          ],
+          "max": [
+            37,
+            179
+          ]
+        },
+        "spawnTiles": [
+          [
+            9,
+            176
+          ],
+          [
+            13,
+            176
+          ],
+          [
+            16,
+            176
+          ],
+          [
+            20,
+            176
+          ],
+          [
+            23,
+            176
+          ],
+          [
+            27,
+            176
+          ],
+          [
+            30,
+            176
+          ],
+          [
+            34,
+            176
+          ],
+          [
+            9,
+            172
+          ],
+          [
+            13,
+            172
+          ],
+          [
+            16,
+            172
+          ],
+          [
+            20,
+            172
+          ],
+          [
+            23,
+            172
+          ],
+          [
+            27,
+            172
+          ],
+          [
+            30,
+            172
+          ],
+          [
+            34,
+            172
+          ],
+          [
+            9,
+            168
+          ],
+          [
+            13,
+            168
+          ],
+          [
+            16,
+            168
+          ],
+          [
+            20,
+            168
+          ],
+          [
+            23,
+            168
+          ],
+          [
+            27,
+            168
+          ],
+          [
+            30,
+            168
+          ],
+          [
+            34,
+            168
+          ]
+        ]
+      },
+      {
+        "id": "reeve-stair",
+        "name": "The Reeve's Stair",
+        "kind": "stair",
+        "advance": "cleared",
+        "trigger": "at_gate",
+        "pressure": 1.2,
+        "late": 0.85,
+        "gate": {
+          "id": "gate-reeve-stair",
+          "kind": "bars",
+          "label": "An iron bar gate. It opens when the way behind you is quiet.",
+          "position": [
+            -7.0,
+            1.2,
+            260.0
+          ],
+          "before": [
+            -7.0,
+            0.0,
+            257.0
+          ],
+          "beyond": [
+            -7.0,
+            0.0,
+            263.1
+          ],
+          "tile": [
+            22,
+            106
+          ],
+          "beyondTile": [
+            22,
+            100
+          ],
+          "objectId": 808
+        },
+        "bonus": "",
+        "room": "reeve-stair",
+        "bounds": [
+          -18.4,
+          280.0,
+          4.4,
+          298.0
+        ],
+        "spawns": [
+          [
+            -16.0,
+            3.0,
+            284.0
+          ],
+          [
+            -13.0,
+            3.0,
+            284.0
+          ],
+          [
+            -10.0,
+            3.0,
+            284.0
+          ],
+          [
+            -7.0,
+            3.0,
+            284.0
+          ],
+          [
+            -4.0,
+            3.0,
+            284.0
+          ],
+          [
+            -1.0,
+            3.0,
+            284.0
+          ],
+          [
+            -16.0,
+            3.0,
+            287.0
+          ],
+          [
+            -13.0,
+            3.0,
+            287.0
+          ],
+          [
+            -10.0,
+            3.0,
+            287.0
+          ],
+          [
+            -7.0,
+            3.0,
+            287.0
+          ],
+          [
+            -4.0,
+            3.0,
+            287.0
+          ],
+          [
+            -1.0,
+            3.0,
+            287.0
+          ],
+          [
+            -16.0,
+            3.0,
+            290.0
+          ],
+          [
+            -13.0,
+            3.0,
+            290.0
+          ],
+          [
+            -10.0,
+            3.0,
+            290.0
+          ],
+          [
+            -7.0,
+            3.0,
+            290.0
+          ],
+          [
+            -4.0,
+            3.0,
+            290.0
+          ],
+          [
+            -1.0,
+            3.0,
+            290.0
+          ],
+          [
+            -16.0,
+            3.0,
+            293.0
+          ],
+          [
+            -13.0,
+            3.0,
+            293.0
+          ],
+          [
+            -10.0,
+            3.0,
+            293.0
+          ],
+          [
+            -7.0,
+            3.0,
+            293.0
+          ],
+          [
+            -4.0,
+            3.0,
+            293.0
+          ],
+          [
+            -1.0,
+            3.0,
+            293.0
+          ]
+        ],
+        "boundsTiles": {
+          "min": [
+            11,
+            65
+          ],
+          "max": [
+            33,
+            83
+          ]
+        },
+        "spawnTiles": [
+          [
+            13,
+            79
+          ],
+          [
+            16,
+            79
+          ],
+          [
+            19,
+            79
+          ],
+          [
+            22,
+            79
+          ],
+          [
+            25,
+            79
+          ],
+          [
+            28,
+            79
+          ],
+          [
+            13,
+            76
+          ],
+          [
+            16,
+            76
+          ],
+          [
+            19,
+            76
+          ],
+          [
+            22,
+            76
+          ],
+          [
+            25,
+            76
+          ],
+          [
+            28,
+            76
+          ],
+          [
+            13,
+            73
+          ],
+          [
+            16,
+            73
+          ],
+          [
+            19,
+            73
+          ],
+          [
+            22,
+            73
+          ],
+          [
+            25,
+            73
+          ],
+          [
+            28,
+            73
+          ],
+          [
+            13,
+            70
+          ],
+          [
+            16,
+            70
+          ],
+          [
+            19,
+            70
+          ],
+          [
+            22,
+            70
+          ],
+          [
+            25,
+            70
+          ],
+          [
+            28,
+            70
+          ]
+        ]
+      },
+      {
+        "id": "reeve-hall",
+        "name": "The Reeve's Hall",
+        "kind": "court",
+        "advance": "cleared",
+        "trigger": "enter",
+        "pressure": 1.0,
+        "late": 1.0,
+        "gate": {
+          "id": "gate-reeve-hall",
+          "kind": "slab",
+          "label": "A stone slab across the way. It slides when the way behind you is quiet.",
+          "position": [
+            -10.0,
+            4.2,
+            304.0
+          ],
+          "before": [
+            -10.0,
+            3.0,
+            301.0
+          ],
+          "beyond": [
+            -10.0,
+            3.0,
+            307.1
+          ],
+          "tile": [
+            19,
+            62
+          ],
+          "beyondTile": [
+            19,
+            56
+          ],
+          "objectId": 809
+        },
+        "bonus": "",
+        "boss": [
+          -10.0,
+          3.5,
+          333.0
+        ],
+        "room": "reeve-hall",
+        "bounds": [
+          -26.0,
+          310.0,
+          6.0,
+          340.0
+        ],
+        "spawns": [
+          [
+            -3.0,
+            3.0,
+            325.0
+          ],
+          [
+            -5.05,
+            3.0,
+            329.24
+          ],
+          [
+            -10.0,
+            3.0,
+            331.0
+          ],
+          [
+            -14.95,
+            3.0,
+            329.24
+          ],
+          [
+            -17.0,
+            3.0,
+            325.0
+          ],
+          [
+            -14.95,
+            3.0,
+            320.76
+          ],
+          [
+            -10.0,
+            3.0,
+            319.0
+          ],
+          [
+            -5.05,
+            3.0,
+            320.76
+          ]
+        ],
+        "boundsTiles": {
+          "min": [
+            3,
+            23
+          ],
+          "max": [
+            35,
+            53
+          ]
+        },
+        "spawnTiles": [
+          [
+            26,
+            38
+          ],
+          [
+            24,
+            34
+          ],
+          [
+            19,
+            32
+          ],
+          [
+            14,
+            34
+          ],
+          [
+            12,
+            38
+          ],
+          [
+            14,
+            42
+          ],
+          [
+            19,
+            44
+          ],
+          [
+            24,
+            42
+          ]
+        ],
+        "bossTile": [
+          19,
+          30
+        ]
+      }
+    ],
+    "vault": {
+      "room": "vault",
+      "boundsTiles": {
+        "min": [
+          12,
+          3
+        ],
+        "max": [
+          26,
+          15
+        ]
+      },
+      "spot": [
+        -10.0,
+        3.05,
+        354.0
+      ],
+      "spotTile": [
+        19,
+        9
+      ],
+      "cache": {
+        "id": "cache",
+        "kind": "cache",
+        "target": "run",
+        "label": "Reward cache",
+        "text": "The run's cache. It opens once for each of you when the court is quiet.",
+        "position": [
+          -10.0,
+          3.6,
+          356.5
+        ],
+        "serverTile": [
+          19,
+          6
+        ],
+        "objectId": 798
+      },
+      "exit": {
+        "id": "exit-vault",
+        "kind": "waystone",
+        "target": "home",
+        "label": "Waystone",
+        "text": "The waystone home.",
+        "position": [
+          -5.0,
+          4.0,
+          351.0
+        ],
+        "serverTile": [
+          24,
+          12
+        ],
+        "objectId": 799
+      }
+    },
+    "keeper": {
+      "name": "Widow Carrow",
+      "at": "breached-barrows",
+      "offset": [
+        6.0,
+        2.0
+      ],
+      "actorType": 340
+    },
+    "maxPlayers": 6,
+    "bands": [
+      {
+        "id": "low",
+        "label": "The Barrow Run (8-30)",
+        "minAd": 8,
+        "maxAd": 30,
+        "timeLimit": 2400,
+        "cooldownHours": 6
+      },
+      {
+        "id": "mid",
+        "label": "The Barrow Run (25-60)",
+        "minAd": 25,
+        "maxAd": 60,
+        "timeLimit": 2700,
+        "cooldownHours": 6
+      }
+    ]
+  },
+  "performance": {
+    "nodes": 16,
+    "meshes": 14,
+    "materials": 10,
+    "images": 30,
+    "textures": 30,
+    "accessors": 70,
+    "bufferViews": 100,
+    "uniqueTriangles": 26514,
+    "uniqueVertices": 27334,
+    "glbBytes": 5001460,
+    "nodeNames": [
+      "Secrets_grey_moors_gauntlet",
+      "Section_grey_moors_gauntlet",
+      "Roof_grey_moors_gauntlet_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_grey_carved_stone",
+      "Roof_grey_moors_gauntlet_grey_moor_granite",
+      "Build_grey_moors_gauntlet_amber_resin",
+      "Build_grey_moors_gauntlet_dark_iron",
+      "Build_grey_moors_gauntlet_grey_bog_timber",
+      "Build_grey_moors_gauntlet_grey_bog_water",
+      "Build_grey_moors_gauntlet_grey_carved_stone",
+      "Build_grey_moors_gauntlet_grey_drystone",
+      "Build_grey_moors_gauntlet_grey_moor_granite",
+      "Build_grey_moors_gauntlet_grey_votive_flame",
+      "Build_grey_moors_gauntlet_lime_plaster",
+      "Walk_grey_moors_gauntlet_grey_carved_stone",
+      "Walk_grey_moors_gauntlet_grey_moor_track"
+    ]
+  },
+  "sources": [
+    {
+      "id": "generator",
+      "file": "_toolkit/gauntlets/build.py",
+      "role": "reproducible-build",
+      "design": "_toolkit/gauntlets/designs.py"
+    }
+  ],
+  "provenance": {
+    "geometry": "authored with the gauntlet rooms over the shared toolkit",
+    "license": "CC-BY-4.0"
+  },
+  "productionStatus": "authored-geometry-materials-population",
+  "notes": [
+    "The Barrow Run: a linear instanced route of 7 legs under grey_moors; the server runs it as an instance and opens each gate when the leg before it is quiet."
+  ]
+}
