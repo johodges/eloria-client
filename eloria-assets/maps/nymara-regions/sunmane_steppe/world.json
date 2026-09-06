@@ -312,7 +312,7 @@
       58.0
     ],
     "heightEncoding": {
-      "origin": 1.2811,
+      "origin": -2.2,
       "step": 0.2,
       "range": [
         1,
@@ -322,16 +322,7 @@
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
     "walkableCells": 119023,
-    "walkableFraction": 0.8072,
-    "refinedHeights": {
-      "levels": 255,
-      "step": 0.2,
-      "origin": 1.2811,
-      "previousStep": 0.2,
-      "cellsRestated": 51252,
-      "cellsFromGeometry": 118438,
-      "cellsKept": 585
-    }
+    "walkableFraction": 0.8072
   },
   "navigation": {
     "surfaceNodePrefixes": [

@@ -63,6 +63,15 @@ def refine(package: Path, write: bool) -> dict | None:
     if not ground_nodes:
         print(f"[heights] {package.name}: no {GROUND}* nodes; skipped")
         return None
+    # A package that declares no walk surfaces builds what a player stands on
+    # out of ordinary meshes, and this pass would only see the ground *under*
+    # them: Sunmane Steppe's bridges are plain geometry, and reading its
+    # heights off the terrain dropped every deck into the gully it spans. Its
+    # encoding is already the finest there is, so there was nothing to gain.
+    if not GLB.named(document, WALK):
+        print(f"[heights] {package.name}: no {WALK}* nodes, so its decks are not "
+              f"in the geometry this reads; skipped")
+        return None
     drawn, top = GLB.rasterise(GLB.triangles(document, body, ground_nodes),
                                shape[1], shape[0], origin[0], origin[1], cell)
     walked, walk_top = GLB.rasterise(GLB.triangles(document, body, GLB.named(document, WALK)),
