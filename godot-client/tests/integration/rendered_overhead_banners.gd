@@ -13,12 +13,12 @@ extends SceneTree
 ## against the camera's own projection, and the pictures are what show it
 ## reading as one size rather than merely measuring as one.
 ##
-## The second is who wears a bar. Every actor packet carries a health pair, so
-## the client can draw one over everything in sight, and used to - a field of
-## bars, none of which is the one being swung at. Now it is the creature the
-## player is fighting, and every other player whether or not there is a fight:
-## a person's condition is worth reading before you walk into it, a passing
-## rabbit's is not.
+## The second is who wears a bar. Every actor packet carries a health pair -
+## the server gives a shopkeeper 20 of 20 like everybody else - so the client
+## drew one over every trader and gate warden in a market, a row of bars that
+## never move and say nothing. Anything that can fight keeps its bar: another
+## player, and every creature. Scenery keeps a bare name unless you have
+## picked a fight with it.
 
 const SCREEN_SIZE := Vector2i(1280, 720)
 const TILE := 1.0
@@ -28,18 +28,21 @@ const CAMERA_PITCH := -60.0
 
 # Actor type, EL actor kind, name, and the tile it stands on - a line running
 # away from the camera, so one row of names spans the depths a crowded field
-# covers. Kind 5 is EL's PKABLE_COMPUTER_CONTROLLED, every creature; kind 1 is
-# HUMAN, another player standing in the row.
+# covers. Kind 5 is PKABLE_COMPUTER_CONTROLLED, every creature; kind 1 is
+# HUMAN, another player; kind 2 is NPC, the scenery a market is full of, and
+# the server hands it a health pair like everybody else.
 const SUBJECTS: Array = [
 	[416, 5, "Amberhart", Vector2i(0, 0)],
 	[568, 5, "Amber Lantern Moth", Vector2i(0, 8)],
 	[1, 1, "Ceridwen", Vector2i(0, 16)],
-	[469, 5, "Algae Alligator", Vector2i(0, 24)],
+	[246, 2, "Salina the Trader", Vector2i(0, 24)],
 	[464, 5, "Crownwater Wyvern", Vector2i(0, 32)],
 ]
-## Which of them the player is fighting, and which is the other player.
+## Which of them the player is fighting, which is the other player, and which
+## is the scenery that should carry nothing but its name.
 const TARGET_INDEX := 1
 const PLAYER_INDEX := 2
+const SCENERY_INDEX := 3
 
 var _artifacts := ""
 var _failures := 0
@@ -125,9 +128,9 @@ func _run() -> void:
 		actors[actors.size() - 1].global_position, 0.5)
 	await _frame(camera, focus, 26.0)
 	await _capture("overhead-banners.png",
-		"a row of actors at four depths at the camera's default zoom: every"
-			+ " name is the same size to read, and the bars belong to the"
-			+ " creature being fought and to the other player")
+		"a row of actors at the camera's default zoom: every name is the same"
+			+ " size to read, every creature and the other player carry a bar,"
+			+ " and the trader carries nothing but a name")
 
 	await _frame(camera, focus, 70.0)
 	await _capture("overhead-banners-zoomed-out.png",
@@ -219,18 +222,19 @@ func _check_matches_the_players_banner(main: Control, camera: Camera3D,
 		"the row spans depths a distance-scaled name would have varied over:"
 			+ " %.1f m to %.1f m" % [near_depth, far_depth])
 
-## Who carries a bar: the creature the player is fighting, and every other
-## player whether the player is fighting them or not. Nobody else, however
-## much health the server reports for them.
+## Who carries a bar: anything that can fight - another player and every
+## creature - and, of the scenery, only what the player has picked a fight
+## with. However much health the server reports for the rest of it.
 func _check_who_wears_a_bar(main: Control,
 		actors: Array[ReplicatedActor3D]) -> void:
 	for index: int in range(actors.size()):
 		var entry: Array = SUBJECTS[index] as Array
 		var subject: String = str(entry[2])
-		var barred: bool = index == TARGET_INDEX or index == PLAYER_INDEX
+		var barred: bool = index != SCENERY_INDEX
 		var reason: String = ("the player is fighting it" if index == TARGET_INDEX
 			else "another player" if index == PLAYER_INDEX
-			else "a creature the player is not fighting")
+			else "scenery the player is not fighting" if index == SCENERY_INDEX
+			else "a creature")
 		for piece: String in ["HealthBarBackground", "HealthBarFill",
 				"HealthNumbers"]:
 			var node: Node3D = actors[index].get_node_or_null(piece) as Node3D
@@ -241,26 +245,28 @@ func _check_who_wears_a_bar(main: Control,
 					"drawn" if barred else "not drawn"])
 		_expect((actors[index].get_node("Nameplate") as Node3D).visible,
 			"%s keeps its name either way" % subject)
-	# The rule itself, asked directly: a player carries one at any target id,
-	# and a creature only at the one it is.
+	# The rule itself, asked directly: a player and a creature carry a bar at
+	# any target id at all, and scenery only at the one it is.
 	var creature: Dictionary = {"kind": 5, "name_colour": 0}
 	var other_player: Dictionary = {"kind": 1, "name_colour": 0}
+	var scenery: Dictionary = {"kind": 2, "name_colour": 0}
 	_expect(bool(main.call("_overhead_health_for", 7, other_player, -1)),
 		"another player carries a bar with no fight open at all")
-	_expect(not bool(main.call("_overhead_health_for", 7, creature, -1)),
-		"a creature carries none with no fight open")
-	_expect(bool(main.call("_overhead_health_for", 7, creature, 7)),
-		"a creature carries one once the fight names it")
+	_expect(bool(main.call("_overhead_health_for", 7, creature, -1)),
+		"a creature carries one with no fight open")
+	_expect(not bool(main.call("_overhead_health_for", 7, scenery, -1)),
+		"a shopkeeper carries none, health pair or no health pair")
+	_expect(bool(main.call("_overhead_health_for", 7, scenery, 7)),
+		"a shopkeeper carries one once the fight names it")
 	# And the bar moves with the fight rather than being fixed at spawn.
-	actors[0].set_health_visible(true)
-	actors[TARGET_INDEX].set_health_visible(false)
-	_expect((actors[0].get_node("HealthBarBackground") as Node3D).visible,
-		"a creature the player turns on picks up the bar")
-	_expect(not (actors[TARGET_INDEX].get_node(
+	actors[SCENERY_INDEX].set_health_visible(true)
+	_expect((actors[SCENERY_INDEX].get_node(
 		"HealthBarBackground") as Node3D).visible,
-		"the creature the player leaves loses it again")
-	actors[0].set_health_visible(false)
-	actors[TARGET_INDEX].set_health_visible(true)
+		"scenery the player turns on picks up the bar")
+	actors[SCENERY_INDEX].set_health_visible(false)
+	_expect(not (actors[SCENERY_INDEX].get_node(
+		"HealthBarBackground") as Node3D).visible,
+		"and loses it again when the fight ends")
 
 func _frame(camera: Camera3D, focus: Vector3, distance: float) -> void:
 	var pitch: float = deg_to_rad(CAMERA_PITCH)

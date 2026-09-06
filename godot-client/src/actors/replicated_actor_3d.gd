@@ -626,9 +626,9 @@ func _add_nameplate(dto: Dictionary) -> void:
 	apply_vitals(int(dto.get("health", 0)), int(dto.get("max_health", 0)))
 
 ## The overhead health bar and its numbers. Not drawn for everyone: every
-## actor packet carries a health pair, but a bar over every creature and
-## shopkeeper in sight is a field of bars with the one that matters lost in
-## it. `set_health_visible` says who wears one.
+## actor packet carries a health pair, scenery included, and a full bar over
+## every shopkeeper in a market is a row of bars that never move. main.gd's
+## `_overhead_health_for` decides; `set_health_visible` is how it says so.
 ##
 ## All three pieces hang from the nameplate's height rather than from three
 ## world heights of their own, and their separation is spelled inside the

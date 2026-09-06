@@ -2967,19 +2967,21 @@ func _combat_target_actor_id() -> int:
 		return int(AppState.combat_state.get("target_id", -1))
 	return -1
 
-## Who wears a health bar over their head, and it is two questions rather than
-## one. A creature's condition is only worth the space while you are fighting
-## it: a bar over every creature and shopkeeper in sight is a field of bars
-## with the one being swung at lost among them. Another player's is worth it
-## whether or not you are fighting them - it is how a fight you are walking
-## into is read, and whether the person beside you is about to go down.
+## Who wears a health bar over their head. Anything that can fight does:
+## another player, whether or not you are fighting them, and any creature.
+## Scenery does not. The server gives a shopkeeper or a gate warden 20 of 20
+## health like everybody else (`NPCActor` in the server's world.py), so the
+## client used to hang a full bar over every trader in a market - a row of
+## bars that never move and say nothing. They keep a bare name, unless you
+## have actually picked a fight with one, which the combat packets say.
+##
+## The three answers are the minimap's own, so the map and the field agree
+## about which of them each actor is.
 func _overhead_health_for(actor_id: int, dto: Dictionary,
 		target_id: int) -> bool:
 	if actor_id == target_id:
 		return true
-	# The same three EL actor kinds the minimap calls players, so the map and
-	# the field agree about who is a person.
-	return _minimap_actor_type(dto) == &"player"
+	return _minimap_actor_type(dto) != &"npc"
 
 ## Hands every actor its answer to those questions.
 func _sync_overhead_health() -> void:
