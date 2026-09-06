@@ -789,6 +789,107 @@ class NativeGlbAssetsTest(unittest.TestCase):
                                  "the declared correction must be the one the "
                                  "body measures")
 
+    def test_rebuilding_the_registry_keeps_what_the_catalogue_holds(self) -> None:
+        """Rebuilding models.json must not revert what the file already says.
+
+        eloria-assets/tools/build_native_nymara_glbs.py writes this file from
+        its own tables, and those tables are neither the whole library nor the
+        last word on the bodies in it.  Run with --models it used to rewrite
+        every entry from scratch, which reverted five landed changes at once
+        and did it silently, because a generated file rewritten wholesale
+        looks exactly like the generator working:
+
+          * 69 creature sizes back to 1.  The GLBs are all exported normalised
+            to 1.7 m, so import.scale is the whole of what draws a fox smaller
+            than a boar, and losing it put the roster back to one height.
+          * 85 facings back to 0.  The creature rigs are two families authored
+            facing opposite ways, and a body turned the wrong way runs
+            backwards - a wolf attacking with the back of its head.
+          * 55 reviewed creatures and their 73 actor types deleted outright.
+          * 22 invasion actor types back to their pre-review stand-ins.
+          * 16 NPC looks deleted and 56 wardrobes refilled from a stale table,
+            which draws a placeholder blob on the bone.
+
+        The rule, taken from the equipment side: the tool authors the lines it
+        owns and keeps everything else the catalogue holds.  So a rebuild over
+        this file is a no-op, and that is what this asserts.
+        """
+        try:
+            import numpy  # noqa: F401
+            from PIL import Image  # noqa: F401
+        except ImportError:  # pragma: no cover - environment without them
+            self.skipTest("the actor library generator needs numpy and Pillow")
+        sys.path.insert(0, str(ROOT / "eloria-assets" / "tools"))
+        import build_native_nymara_glbs as generator
+
+        registry = CLIENT / "data/actors/models.json"
+        rebuilt = generator.build_model_registry()
+
+        # The generator's own output, before the rule is applied. Asserted so
+        # this test cannot pass by the tables happening to agree with the
+        # file: it is the revert, and every check below is what stops it.
+        self.assertNotEqual(self.models["models"], rebuilt["models"],
+                            "the generator's tables no longer differ from the "
+                            "catalogue, so this test is checking nothing")
+
+        generator.carry_forward_registry(registry, rebuilt)
+
+        for slug, entry in self.models["models"].items():
+            with self.subTest(model=slug):
+                self.assertIn(slug, rebuilt["models"],
+                              "a model the generator does not define is still "
+                              "a model the client has to draw")
+                for field in ("scale", "forwardAxisCorrectionDegreesY"):
+                    self.assertEqual(
+                        entry["import"][field],
+                        rebuilt["models"][slug]["import"][field],
+                        f"{field} is measured off this body, not known here")
+        for section in ("actorTypes", "npcLooks"):
+            self.assertEqual(self.models[section], rebuilt[section],
+                             f"{section} the catalogue holds must survive")
+
+        # Byte for byte, not just entry for entry: an entry carried to the end
+        # of the file instead of left where it sits reindents everything after
+        # it, and a diff nobody can read is how the reverts went unnoticed.
+        self.maxDiff = 2000
+        self.assertEqual(registry.read_text(encoding="utf-8"),
+                         json.dumps(rebuilt, indent=2) + "\n",
+                         "a rebuild over this catalogue must change nothing")
+
+    def test_reseeding_the_registry_still_keeps_models_it_cannot_define(self) -> None:
+        """--reseed discards tuning, never the library.
+
+        It is the way back after editing a seed the generator owns - a race's
+        ANATOMY stature - and it says how many entries it reverts, because a
+        silent revert is the thing the rule exists to stop. What it must not
+        do is take the reviewed creatures with it: the generator has no table
+        for them, so dropping them is not a revert to anything.
+        """
+        try:
+            import numpy  # noqa: F401
+            from PIL import Image  # noqa: F401
+        except ImportError:  # pragma: no cover - environment without them
+            self.skipTest("the actor library generator needs numpy and Pillow")
+        sys.path.insert(0, str(ROOT / "eloria-assets" / "tools"))
+        import build_native_nymara_glbs as generator
+
+        registry = CLIENT / "data/actors/models.json"
+        rebuilt = generator.build_model_registry()
+        undefined = set(self.models["models"]) - set(rebuilt["models"])
+        self.assertTrue(undefined, "the reviewed creatures are in this file")
+
+        generator.carry_forward_registry(registry, rebuilt, reseed=True)
+        self.assertLessEqual(undefined, set(rebuilt["models"]),
+                             "reseeding a value must not delete a body")
+        self.assertEqual(self.models["actorTypes"].keys(),
+                         rebuilt["actorTypes"].keys(),
+                         "nor the actor types that spawn one")
+        reseeded = [slug for slug in rebuilt["models"]
+                    if slug not in undefined
+                    and rebuilt["models"][slug]["import"]["scale"]
+                    != self.models["models"][slug]["import"]["scale"]]
+        self.assertTrue(reseeded, "and it does take the generator's numbers")
+
     def test_concept_npc_roster_uses_player_models_and_native_gear(self) -> None:
         self.assertEqual(62, len(self.models["npcLooks"]))
         for actor_type, look in self.models["npcLooks"].items():

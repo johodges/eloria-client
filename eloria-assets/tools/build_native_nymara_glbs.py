@@ -3314,9 +3314,12 @@ def build_model_registry() -> dict:
             "scene": f"res://assets/actors/native/creatures/{slug}.glb",
             "animationLibrary": f"res://assets/actors/native/creatures/{slug}.glb",
             "animationMap": "res://data/animations/creature.json",
-            # ``creature_anatomy`` builds the muzzle and jaw down -Z, so
-            # these rigs already face Godot's forward axis.  Correcting them
-            # again would turn every creature round and walk it backwards.
+            # A seed, not a statement about the body: `carry_forward_registry`
+            # keeps whatever the catalogue already says for scale and facing.
+            # It holds for a rig ``creature_anatomy`` built, which puts the
+            # muzzle and jaw down -Z already on Godot's forward axis, and not
+            # for the auto-rigged family, which is authored the other way and
+            # needs the half turn.  tools/creature_facing.py measures which.
             "import": {"scale": 1, "rotationDegreesX": 0,
                        "rotationDegreesY": 0, "rotationDegreesZ": 0,
                        "forwardAxisCorrectionDegreesY": 0},
@@ -3330,9 +3333,12 @@ def build_model_registry() -> dict:
             "scene": f"res://assets/actors/native/creatures/{slug}.glb",
             "animationLibrary": f"res://assets/actors/native/creatures/{slug}.glb",
             "animationMap": "res://data/animations/creature.json",
-            # ``creature_anatomy`` builds the muzzle and jaw down -Z, so
-            # these rigs already face Godot's forward axis.  Correcting them
-            # again would turn every creature round and walk it backwards.
+            # A seed, not a statement about the body: `carry_forward_registry`
+            # keeps whatever the catalogue already says for scale and facing.
+            # It holds for a rig ``creature_anatomy`` built, which puts the
+            # muzzle and jaw down -Z already on Godot's forward axis, and not
+            # for the auto-rigged family, which is authored the other way and
+            # needs the half turn.  tools/creature_facing.py measures which.
             "import": {"scale": 1, "rotationDegreesX": 0,
                        "rotationDegreesY": 0, "rotationDegreesZ": 0,
                        "forwardAxisCorrectionDegreesY": 0},
@@ -3345,9 +3351,12 @@ def build_model_registry() -> dict:
             "scene": f"res://assets/actors/native/creatures/{slug}.glb",
             "animationLibrary": f"res://assets/actors/native/creatures/{slug}.glb",
             "animationMap": "res://data/animations/creature.json",
-            # ``creature_anatomy`` builds the muzzle and jaw down -Z, so
-            # these rigs already face Godot's forward axis.  Correcting them
-            # again would turn every creature round and walk it backwards.
+            # A seed, not a statement about the body: `carry_forward_registry`
+            # keeps whatever the catalogue already says for scale and facing.
+            # It holds for a rig ``creature_anatomy`` built, which puts the
+            # muzzle and jaw down -Z already on Godot's forward axis, and not
+            # for the auto-rigged family, which is authored the other way and
+            # needs the half turn.  tools/creature_facing.py measures which.
             "import": {"scale": scale, "rotationDegreesX": 0,
                        "rotationDegreesY": 0, "rotationDegreesZ": 0,
                        "forwardAxisCorrectionDegreesY": 0},
@@ -3432,8 +3441,7 @@ def build_equipment_registry(rig: "equipment_authoring.Rig",
         foot_anchors=foot_anchors, footwear=footwear)
 
 
-def carry_forward_ambient(manifest_path: Path, models_path: Path,
-                          manifest: dict, models: dict) -> None:
+def carry_forward_ambient(manifest_path: Path, manifest: dict) -> None:
     """Preserve ambient scenery entries contributed by regional generators.
 
     The Sunmane horses are authored by eloria-assets/maps/nymara-regions/sunmane_steppe/source/creatures.py
@@ -3441,17 +3449,136 @@ def carry_forward_ambient(manifest_path: Path, models_path: Path,
     drop them silently, which left every herd on the steppe as a magenta
     fallback until someone noticed.  Carry them across instead of rewriting
     them away.
+
+    The models.json half of this now lives in `carry_forward_registry`, which
+    keeps every entry the generator did not author rather than only the
+    scenery ones.
     """
     if manifest_path.is_file():
         previous = json.loads(manifest_path.read_text(encoding="utf-8"))
         ambient = previous.get("ambientCreatures")
         if ambient:
             manifest["ambientCreatures"] = ambient
-    if models_path.is_file():
-        previous = json.loads(models_path.read_text(encoding="utf-8"))
-        for slug, entry in previous.get("models", {}).items():
-            if slug not in models["models"] and entry.get("serverActorType", 0) is None:
-                models["models"][slug] = entry
+
+
+#: The keys of a model entry this generator decides: where the scene and its
+#: clips live, and how the body is put together.  Everything else an entry
+#: holds is somebody else's measurement of the artwork and is carried across a
+#: rebuild rather than recomputed -- see `carry_forward_registry`.
+AUTHORED_MODEL_KEYS = ("scene", "animationLibrary", "animationMap",
+                       "attachments", "culture", "gender", "hairStyles",
+                       "boneAliases")
+
+#: The same split inside an entry's ``import`` block.  The rotations are the
+#: generator's and are flat zero for everything it builds; ``scale`` and
+#: ``forwardAxisCorrectionDegreesY`` are measurements of an individual body
+#: that the tables below cannot know.
+AUTHORED_IMPORT_KEYS = ("rotationDegreesX", "rotationDegreesY",
+                        "rotationDegreesZ")
+
+
+def keep_catalogued(previous: dict, fresh: dict) -> dict:
+    """One model entry: the generator's lines, and the catalogue's numbers."""
+    merged = {**fresh,
+              **{key: value for key, value in previous.items()
+                 if key != "import" and key not in AUTHORED_MODEL_KEYS}}
+    merged["import"] = {**fresh.get("import", {}),
+                        **{key: value
+                           for key, value in previous.get("import", {}).items()
+                           if key not in AUTHORED_IMPORT_KEYS}}
+    return merged
+
+
+def carry_forward_registry(models_path: Path, models: dict,
+                           reseed: bool = False) -> None:
+    """Seed a model once, and keep what the catalogue holds after that.
+
+    `build_model_registry` writes the whole of models.json from CREATURES,
+    creature_roster.ROSTER and AMBIENT_CREATURES.  Those tables say which
+    bodies exist and where their files are.  They do not say how big a body is
+    or which way it faces, and they have never been the whole library -- so
+    rebuilding the file from them alone reverted five landed changes at once,
+    every one of them silently, because a wholesale rewrite of a generated
+    file looks exactly like the generator doing its job:
+
+      * the sizes.  Every creature GLB is exported normalised to 1.7 m, and
+        `import.scale` is the whole of what draws a fox smaller than a boar.
+        A rebuild put 69 of them back to 1 and the roster back to one height.
+      * the facings.  The creature rigs are two families authored facing
+        opposite ways.  163 are built muzzle-first down -Z and need no turn,
+        which is all this generator knows how to say; the 57 that came from
+        the auto-rigger need the half turn, and without it a wolf attacks a
+        player with the back of its head.
+      * the reviewed models.  55 creatures and their 73 actor types were
+        brought into the catalogue as their rigs passed review, and the
+        generator has never heard of one of them.  A rebuild deleted them.
+      * the invasion mapping.  22 actor types were pointed at reviewed art in
+        place of their stand-ins; the table here still names the stand-ins.
+      * the NPC bodies and their wardrobes.  The Stoneborn and Mycelari looks
+        at 362-377 are not in `cultures` below, and the 56 emptied
+        `equipmentVisuals` were emptied on purpose -- a look still naming a
+        visual whose model has gone draws a placeholder blob on the bone.
+
+    So the rule is the one import_generated_equipment.py adopted for stats:
+    this tool authors the lines it owns and treats the rest of the file as
+    somebody's work.  A model, actor type or look the generator defines is
+    seeded on the run that first defines it and preserved on every run after;
+    one it has never heard of is carried across untouched.
+
+    The cost, and it is the whole cost: editing a number this generator seeds
+    no longer reaches a model already in the catalogue.  ANATOMY stature is
+    the one that bites -- a race's `import.scale` is rounded from there -- and
+    `--reseed` is the way back.  It says how many entries it is reverting,
+    because a silent revert is the thing this exists to stop.
+
+    A wrong seed on a genuinely new model is not silent either:
+    test_every_rig_declares_the_correction_its_facing_needs measures every
+    body in the file against the correction its entry declares.
+    """
+    if not models_path.is_file():
+        return
+    previous = json.loads(models_path.read_text(encoding="utf-8"))
+    kept = carried = reverted = 0
+
+    for section, merge in (("models", keep_catalogued),
+                           ("actorTypes", lambda held, _fresh: held),
+                           ("npcLooks", lambda held, _fresh: held)):
+        fresh = models[section]
+        # The catalogue's order first, then whatever this run adds to it.  A
+        # carried entry appended to the end instead of left where it sits
+        # reindents the file around it, and a diff nobody can read is how the
+        # reverts above went unnoticed in the first place.
+        merged = {}
+        for key, held in previous.get(section, {}).items():
+            if key not in fresh:
+                # Not in any table here: reviewed art, regional scenery,
+                # anything added to the catalogue by hand.  These tables are
+                # not the library, so an entry the generator cannot account
+                # for is not an entry to drop -- and `--reseed` does not drop
+                # it either.  Retiring one means editing models.json.
+                merged[key] = held
+                carried += 1
+                continue
+            wanted = merge(held, fresh[key])
+            if wanted == fresh[key]:
+                merged[key] = fresh[key]
+            elif reseed:
+                merged[key] = fresh[key]
+                reverted += 1
+            else:
+                merged[key] = wanted
+                kept += 1
+        merged.update({key: value for key, value in fresh.items()
+                       if key not in merged})
+        models[section] = merged
+
+    if reseed:
+        print(f"reseed: reverting {reverted} catalogued entries to generator "
+              f"defaults; {carried} entries the generator does not define are "
+              f"carried across regardless")
+    else:
+        print(f"registry: kept {kept} catalogued entries, "
+              f"carried {carried} the generator does not define")
 
 
 def write_json(path: Path, value: dict) -> None:
@@ -3494,6 +3621,13 @@ def main() -> None:
                         help="clip source used to solve weapon grips in the idle pose")
     parser.add_argument("--only",choices=("all","equipment","creatures"),default="all",
                         help="rebuild a single section instead of the whole library")
+    parser.add_argument("--reseed",action="store_true",
+                        help="take this generator's defaults for scale, facing "
+                             "and actor-type mapping over what models.json "
+                             "already holds, and say how many entries that "
+                             "reverts; the way back after editing a seed. "
+                             "Models the generator does not define are carried "
+                             "across either way")
     args=parser.parse_args()
     if args.only in ("equipment","creatures") and args.manifest.is_file():
         manifest=json.loads(args.manifest.read_text(encoding="utf-8"))
@@ -3663,9 +3797,10 @@ def main() -> None:
         validation={**previous,**validation}
     manifest["validation"]={"files":len(validation),"results":validation}
     models = build_model_registry()
-    carry_forward_ambient(args.manifest, args.models, manifest, models)
+    carry_forward_ambient(args.manifest, manifest)
     write_json(args.manifest, manifest)
     if args.only=="all":
+        carry_forward_registry(args.models, models, reseed=args.reseed)
         write_json(args.models, models)
     write_json(args.equipment_registry,
                build_equipment_registry(rig, idle_bases,
