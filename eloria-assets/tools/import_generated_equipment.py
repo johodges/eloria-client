@@ -630,7 +630,7 @@ def main() -> int:
                 span = next((value for slug, value in SHEET_SPAN.items()
                              if piece.slug.startswith(slug)), None)
                 info = ce.build(piece.source, target, rig, piece.kind,
-                                piece.name, race_path=race_path, span=span)
+                                piece.name, span=span)
             except Exception as exc:                    # noqa: BLE001
                 print("  FAILED %-32s %s" % (piece.slug, exc))
                 failed += 1

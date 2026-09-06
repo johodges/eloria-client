@@ -1345,7 +1345,7 @@ def _push_axis(points: np.ndarray, indices: np.ndarray, rig: ea.Rig,
 
 
 #: The few millimetres a sleeve must stand off the liner, on top of the lift
-#: the liner already has.  Read against ``LINER_LIFT`` at the call rather than
+#: the standoff already gives it.  Read at the call rather than
 #: folded into a constant here, because that one is defined further down with
 #: the rest of the liner and this file reads top to bottom.
 SLEEVE_MARGIN = 0.005
@@ -1483,7 +1483,7 @@ def _clear_sleeves(points: np.ndarray, rig: ea.Rig, sleeve: np.ndarray,
     closed sleeve once the seat stopped over-inflating one.
     """
     if clearance is None:
-        clearance = LINER_LIFT + SLEEVE_MARGIN
+        clearance = SKIN_STANDOFF + SLEEVE_MARGIN
     moved = np.array(points, dtype=np.float64)
     pushed = 0
     for side in ("l", "r"):
@@ -1603,402 +1603,19 @@ def textured_material(glb: ea.EquipmentGLB, name: str, png: bytes | None,
     return len(glb.doc["materials"]) - 1
 
 
-#: The liner's reach over the body, as world heights and a half-width: the
-#: hip line up to the base of the neck, and inboard of the mid-forearm.  The
-#: painted shirt lives entirely inside this band on every race body, so the
-#: liner needs no opinion about which texels are shirt -- every earlier
-#: attempt to classify the shirt by colour left a sliver of it bare at some
-#: boundary the classifier misread: the blacked-out armpit, the shaded seam
-#: rows of the collar, the last teal row under the hem.
-#: The top of it is a ceiling, not a target: the band is also clamped to the
-#: garment's own top, because liner drawn ABOVE the armour is liner nobody is
-#: wearing anything over.  At 1.70 it reaches the jaw, while a cuirass collar
-#: stops near 1.54, so a 20 cm ring of near-black stood above every torso piece
-#: and read as the armour stopping short of the shoulders.
-LINER_BAND = (0.90, 1.70)
-#: 0.85, not the mid-forearm: the painted body keeps a few teal texels on
-#: the back of the right hand, and an idle pose hangs that hand exactly where
-#: the armpit slit looks.  Lining the arm to the fingertips reads as gloves
-#: and closes the last of it.
-LINER_HALF_WIDTH = 0.66
-LINER_LIFT = 0.008
-LINER_COLOUR = (56, 47, 40)
-
-_LINER_CACHE: dict[tuple, tuple | None] = {}
-
-
-def shirt_liner(race_path: Path, top: float = LINER_BAND[1]):
-    """The clothed band of the body, lifted a few millimetres, to wear under
-    a torso piece.
-
-    The meshy race bodies paint their wardrobe into the body texture, so
-    there is no shirt mesh for the runtime to hide when armour goes on --
-    and a generated cuirass is an open design of straps and plates, so the
-    teal shirt shows through every gap in it.  No amount of fitting closes
-    that: the gaps are the design.  What a real wardrobe does is layer, so
-    each torso piece ships an underlayer: the body's own triangles from hip
-    to neck, offset out along their welded normals and carrying the body's
-    own skin weights.  It deforms exactly as the body does, in every pose,
-    on every rig the runtime refits to -- so whatever the armour leaves open
-    shows underpadding, never the shirt.
-
-    Returns (positions, normals, uvs, indices, joints, weights) in body
-    space, or None when the body offers nothing to line.
-    """
-    band_top = min(LINER_BAND[1], float(top))
-    key = (str(race_path), round(band_top, 4))
-    if key in _LINER_CACHE:
-        return _LINER_CACHE[key]
-    document, binary = ea.read_glb(race_path)
-    node = next((n for n in document.get("nodes", [])
-                 if "mesh" in n and "skin" in n), None)
-    if node is None:
-        _LINER_CACHE[key] = None
-        return None
-    primitive = document["meshes"][node["mesh"]]["primitives"][0]
-    attributes = primitive["attributes"]
-    positions = ea.accessor_array(document, binary, attributes["POSITION"]).astype(np.float64)
-    normals = ea.accessor_array(document, binary, attributes["NORMAL"]).astype(np.float64)
-    uvs = ea.accessor_array(document, binary, attributes["TEXCOORD_0"]).astype(np.float64)
-    joints = ea.accessor_array(document, binary, attributes["JOINTS_0"]).astype(np.int64)
-    weights = ea.accessor_array(document, binary, attributes["WEIGHTS_0"]).astype(np.float64)
-    # A split body spreads its faces over several surface primitives that
-    # all share this attribute set; the liner needs the whole hide-to-neck
-    # surface, so the triangles are the union of every primitive built on
-    # the same positions accessor.
-    triangle_sets = []
-    for other in document.get("nodes", []):
-        if "mesh" not in other or "skin" not in other:
-            continue
-        for prim_other in document["meshes"][other["mesh"]]["primitives"]:
-            if (prim_other["attributes"].get("POSITION")
-                    == attributes["POSITION"] and "indices" in prim_other):
-                triangle_sets.append(ea.accessor_array(
-                    document, binary,
-                    prim_other["indices"]).astype(np.int64).reshape(-1, 3))
-    triangles = np.vstack(triangle_sets)
-
-    # The face stays bare -- the eyes are teal too, and lining them would
-    # trade a shirt sliver for a masked face -- but the band runs high enough
-    # to swallow the back of the collar, whose last texels ride the
-    # trapezius at 1.56.
-    shirt = ((positions[:, 1] > LINER_BAND[0])
-             & (positions[:, 1] < band_top)
-             & (np.abs(positions[:, 0]) < LINER_HALF_WIDTH)
-             & ~((positions[:, 1] > 1.585) & (positions[:, 2] > 0.0)))
-    if int(shirt.sum()) < 40:
-        _LINER_CACHE[key] = None
-        return None
-    canon, edges, welded = _weld(positions, triangles)
-    chosen = np.zeros(welded, dtype=bool)
-    np.logical_or.at(chosen, canon, shirt)
-    picked = chosen[canon]
-    keep = picked[triangles].any(axis=1)
-    used = np.unique(triangles[keep])
-    remap = np.full(len(positions), -1, dtype=np.int64)
-    remap[used] = np.arange(len(used))
-    base_faces = remap[triangles[keep]].reshape(-1, 3)
-    base_positions = positions[used]
-    base_normals = normals[used]
-    base_uvs = uvs[used]
-    base_joints = joints[used].astype(np.int64)
-    base_weights = weights[used]
-    # Subdivision was tried here -- the sagitta argument says a flat liner
-    # facet can dip inside the arm's curve between vertices -- and measured
-    # worse than it reasoned: splitting edges means inventing blends for the
-    # midpoints, and a midpoint whose merged weights differ a hair from the
-    # skin's own interpolation drifts under pose everywhere, trading two
-    # stubborn pixels for fifty.  The band ships with the body's own
-    # vertices, nothing more.
-    positions_band = base_positions
-    normals_band = base_normals
-    uvs_band = base_uvs
-    joints_band = base_joints
-    weights_band = base_weights
-    faces_band = base_faces
-    # Lift along the welded normal, one direction per position: the band
-    # splits its vertices along texture seams, and lifting each copy along
-    # its own normal tears the liner open a millimetre at every seam.
-    band_canon, band_edges, band_welded = _weld(positions_band, faces_band)
-    pooled = np.zeros((band_welded, 3))
-    np.add.at(pooled, band_canon, normals_band)
-    pooled /= np.maximum(np.linalg.norm(pooled, axis=1, keepdims=True), 1e-9)
-    lift = pooled[band_canon]
-    liner_positions = positions_band + lift * LINER_LIFT
-    liner_normals = normals_band.copy()
-    liner_uvs = uvs_band.copy()
-    liner_faces = faces_band.copy()
-    liner_joints = joints_band.copy()
-    liner_weights = weights_band.copy()
-    # Close the rim.  A lifted shell is a tunnel over the body, and a grazing
-    # ray can enter its open mouth -- at a hem, a collar, an armhole -- and
-    # find the shirt on the tunnel floor.  Every boundary edge gets a skirt
-    # quad tucked back under the skin, so the shell has no mouth at all.
-    edge_pairs = np.sort(band_canon[faces_band[:, [0, 1, 1, 2, 2, 0]]
-                                    .reshape(-1, 2)], axis=1)
-    keys, counts = np.unique(edge_pairs, axis=0, return_counts=True)
-    open_edges = keys[counts == 1]
-    representative = np.full(band_welded, -1, dtype=np.int64)
-    order = np.arange(len(positions_band))
-    representative[band_canon[order[::-1]]] = order[::-1]
-    rim_faces: list[list[int]] = []
-    rim_of: dict[int, int] = {}
-    extra_positions: list[np.ndarray] = []
-    for edge in open_edges:
-        corners: list[int] = []
-        for canon_id in edge:
-            original = int(representative[canon_id])
-            if original < 0:
-                break
-            if canon_id not in rim_of:
-                rim_of[int(canon_id)] = (len(liner_positions)
-                                         + len(extra_positions))
-                extra_positions.append(
-                    positions_band[original] - lift[original] * 0.004)
-            corners.append(original)
-        if len(corners) < 2:
-            continue
-        top_a, top_b = corners
-        low_a, low_b = (rim_of[int(canon_id)] for canon_id in edge)
-        rim_faces.append([top_a, top_b, low_b])
-        rim_faces.append([top_a, low_b, low_a])
-    if rim_faces:
-        drop = np.array([representative[int(canon_id)] for canon_id in rim_of],
-                        dtype=np.int64)
-        liner_positions = np.vstack([liner_positions,
-                                     np.array(extra_positions)])
-        liner_normals = np.vstack([liner_normals, normals_band[drop]])
-        liner_uvs = np.vstack([liner_uvs, uvs_band[drop]])
-        liner_joints = np.vstack([liner_joints, joints_band[drop]])
-        liner_weights = np.vstack([liner_weights, weights_band[drop]])
-        liner_faces = np.vstack([liner_faces, np.array(rim_faces)])
-    # Under the padded shell, a coat of paint: a second copy of the band a
-    # bare two millimetres off the skin.  It is alpha-blended, so it draws
-    # after the opaque body and needs only to sit in front of it to win --
-    # but *dead* on the skin it shares the body's exact depth, and at a
-    # crease the depth-test tie is a per-pixel, per-frame coin flip that
-    # flickers a needle of shirt through.  Two millimetres clears the tie
-    # while staying far under the 8 mm shell, so a crease that folds the
-    # shell into the arm still meets paint before skin.
-    paint = (positions_band + lift * 0.002, normals_band.copy(),
-             uvs_band.copy(), faces_band.reshape(-1).copy(),
-             joints_band.copy(), weights_band.copy())
-    # Plug the crease pockets.  Linear blend skinning folds a lifted shell
-    # into the body wherever a joint closes -- the armpit once the idle
-    # drops the arm, the inner elbow once it bends -- and through the
-    # resulting slit a needle of shirt stays visible from exactly one
-    # angle.  No lift fixes a folding offset, so a small charcoal ellipsoid
-    # rides each pocket: weighted half to each side of the joint, it stays
-    # centred in the crease in every pose, and anything peering in meets it.
-    skin_joints = document["skins"][0]["joints"]
-    joint_names = [document["nodes"][j].get("name", "") for j in skin_joints]
-    matrices = ea.global_matrices(document)
-
-    def joint_at(name):
-        return (joint_names.index(name), matrices[
-            skin_joints[joint_names.index(name)]][:3, 3])
-
-    pockets = []
-    for side in ("l", "r"):
-        if ("upperarm_" + side not in joint_names
-                or "lowerarm_" + side not in joint_names
-                or "spine_02" not in joint_names):
-            continue
-        arm, shoulder = joint_at("upperarm_" + side)
-        forearm, elbow = joint_at("lowerarm_" + side)
-        spine, _ = joint_at("spine_02")
-        # A third crease guards the neck-shoulder junction: once the idle
-        # draws the clavicles forward, the liner folds along the top of the
-        # trapezius and a patch of shirt shows through from high frontal
-        # angles.
-        if ("clavicle_" + side in joint_names
-                and "spine_03" in joint_names):
-            clav, _ = joint_at("clavicle_" + side)
-            chest, _ = joint_at("spine_03")
-            inboard_trap = -1.0 if shoulder[0] > 0 else 1.0
-            # Placed by measurement, not eye: the failing pixels unproject to
-            # rest (+/-0.081, 1.566, -0.111), the rear lip of the junction.
-            pockets.append((shoulder + np.array([inboard_trap * 0.127,
-                                                 0.105, -0.01]),
-                            np.array([0.05, 0.045, 0.055]), clav, chest))
-        inboard = -0.02 if shoulder[0] > 0 else 0.02
-        # Tucked deeper than it once was: with the idle's arms hanging wider
-        # and the shoulders drawn forward, the rear armpit opens up and a
-        # generous ball shows behind the cap as a smooth grey bump.
-        pockets.append((shoulder + np.array([inboard * 3.0, -0.065, 0.005]),
-                        np.array([0.042, 0.055, 0.044]), arm, spine))
-        # Behind the joint, not on it: the surface a slit ray actually
-        # lands on is the triceps side of the elbow (measured by
-        # intersecting the failing pixel's ray with the posed body).
-        pockets.append((elbow + np.array([inboard * 0.5, -0.005, -0.028]),
-                        np.array([0.04, 0.045, 0.034]), arm, forearm))
-    for centre_at, radii, bone_a, bone_b in pockets:
-        rings, sectors = 5, 8
-        plug_positions = []
-        plug_normals = []
-        for ring in range(rings + 1):
-            polar = math.pi * ring / rings
-            for sector in range(sectors):
-                azimuth = 2 * math.pi * sector / sectors
-                direction = np.array([
-                    math.sin(polar) * math.cos(azimuth),
-                    math.cos(polar),
-                    math.sin(polar) * math.sin(azimuth)])
-                plug_positions.append(centre_at + direction * radii)
-                plug_normals.append(direction)
-        plug_faces = []
-        for ring in range(rings):
-            for sector in range(sectors):
-                a = ring * sectors + sector
-                b = ring * sectors + (sector + 1) % sectors
-                c = (ring + 1) * sectors + sector
-                d = (ring + 1) * sectors + (sector + 1) % sectors
-                plug_faces += [[a, b, c], [b, d, c]]
-        base_index = len(liner_positions)
-        count = len(plug_positions)
-        liner_positions = np.vstack([liner_positions, np.array(plug_positions)])
-        liner_normals = np.vstack([liner_normals, np.array(plug_normals)])
-        liner_uvs = np.vstack([liner_uvs, np.zeros((count, 2))])
-        plug_joint_row = np.zeros((count, liner_joints.shape[1]), dtype=liner_joints.dtype)
-        plug_weight_row = np.zeros((count, liner_weights.shape[1]))
-        plug_joint_row[:, 0] = bone_a
-        plug_joint_row[:, 1] = bone_b
-        plug_weight_row[:, 0] = 0.5
-        plug_weight_row[:, 1] = 0.5
-        liner_joints = np.vstack([liner_joints, plug_joint_row])
-        liner_weights = np.vstack([liner_weights, plug_weight_row])
-        liner_faces = np.vstack([liner_faces,
-                                 np.array(plug_faces) + base_index])
-    # Flatten whatever rose above the ceiling.  Faces are kept when ANY corner
-    # is in the band, so a triangle straddling the top carries its other two
-    # corners up with it -- 38 mm of them on this body, which is 38 mm of
-    # near-black standing above the armour's collar.  Pressing those corners
-    # down onto the ceiling closes the rim without dropping the face, which
-    # `all` would, and dropping it is what opens a gap at every other edge of
-    # the band.
-    liner_positions[:, 1] = np.minimum(liner_positions[:, 1], band_top)
-    paint = (np.array(paint[0]), *paint[1:])
-    paint[0][:, 1] = np.minimum(paint[0][:, 1], band_top)
-    liner = ((liner_positions, liner_normals, liner_uvs,
-              liner_faces.reshape(-1), liner_joints, liner_weights), paint)
-    _LINER_CACHE[key] = liner
-    return liner
-
-
-#: How far out from the liner an armour surface may be and still count as
-#: covering it.  Generous, because a pauldron standing well proud of the
-#: shoulder still hides everything under it; the test that matters is whether
-#: anything is there at all, not how close it is.
-COVER_REACH = 0.20
-#: And how far *inside* the liner to look.  Small: a chest plate seated a
-#: few millimetres under the liner is still the surface the player sees once
-#: the liner stops being drawn there, but a ray any longer than this crosses
-#: the body and finds the piece's own back plate.
-COVER_BEHIND = 0.03
-#: The cone each liner vertex has to find armour through, in degrees, and how
-#: many rays sample it.  Wide enough that a vertex a centimetre from the edge
-#: of a plate still sees sky through the gap and keeps its liner.
-COVER_CONE = 35.0
-COVER_RAYS = 5
-
-
-def _hit_within(origins: np.ndarray, directions: np.ndarray,
-                verts: np.ndarray, reach: float) -> np.ndarray:
-    """Whether each ray meets one of ``verts``' triangles within ``reach``."""
-    if not len(verts) or not len(origins):
-        return np.zeros(len(origins), dtype=bool)
-    a = verts[:, 0]
-    e1 = verts[:, 1] - a
-    e2 = verts[:, 2] - a
-    found = np.zeros(len(origins), dtype=bool)
-    for start in range(0, len(origins), 128):
-        stop = min(start + 128, len(origins))
-        origin = origins[start:stop]
-        direction = directions[start:stop]
-        pvec = np.cross(direction[:, None, :], e2[None, :, :])
-        det = np.einsum("rtj,tj->rt", pvec, e1)
-        live = np.abs(det) > 1e-12
-        inv = np.where(live, 1.0 / np.where(live, det, 1.0), 0.0)
-        tvec = origin[:, None, :] - a[None, :, :]
-        u = np.einsum("rtj,rtj->rt", tvec, pvec) * inv
-        qvec = np.cross(tvec, e1[None, :, :])
-        v = np.einsum("rtj,rj->rt", qvec, direction) * inv
-        t = np.einsum("rtj,tj->rt", qvec, e2) * inv
-        ok = (live & (u >= -1e-6) & (v >= -1e-6) & (u + v <= 1 + 1e-6)
-              & (t > 1e-5) & (t < reach))
-        found[start:stop] = ok.any(axis=1)
-    return found
-
-
-def _uncovered_liner(layer, armour: np.ndarray, faces: np.ndarray):
-    """Drop the liner's triangles wherever the armour already covers them.
-
-    The liner is an underlayer for the GAPS in an open design -- see
-    `shirt_liner`.  Where the armour is solid it has nothing to do, and being
-    drawn there is not free: it sits ``LINER_LIFT`` off the skin, so any
-    armour surface seated nearer than that to the body wins nothing and the
-    near-black liner is what the player sees.  On the phoenix cuirass that was
-    most of the chest and the whole collar -- the piece rendered as a black
-    panel with the emblem floating on it, and the armour was underneath the
-    whole time.
-
-    Letting the liner out to stay clear was the other option and is worse: it
-    would push the underlayer through every plate that is only a few
-    millimetres proud, which is most of them on a plate design.  So coverage
-    decides.  A liner vertex is covered when armour lies along its own outward
-    normal within `COVER_REACH`, or just behind it within `COVER_BEHIND`, and
-    a triangle is dropped only when all three of its vertices are covered.
-
-    Covered means covered from every angle, not just straight out: each vertex
-    fires a narrow cone of rays and every one of them has to land on armour.
-    That is what keeps a hem, an armhole or a strap gap lined -- a vertex
-    beside an opening has part of its cone escape through the opening and
-    keeps its liner.  Eroding on the liner's own topology was tried first and
-    is the wrong tool: the band carries about fifteen hundred vertices for a
-    whole torso, so one ring is several centimetres and it threw away two
-    thirds of a cull that was right.
-    """
-    positions, normals, uvs, indices, joints, weights = layer
-    triangles = np.asarray(indices, dtype=np.int64).reshape(-1, 3)
-    if not len(faces) or not len(triangles):
-        return layer, 0
-    verts = armour[faces]
-    unit = np.asarray(normals, dtype=np.float64)
-    unit = unit / np.maximum(np.linalg.norm(unit, axis=1, keepdims=True), 1e-9)
-    origin = np.asarray(positions, dtype=np.float64)
-    seed = np.where(np.abs(unit[:, 1:2]) < 0.8,
-                    np.array([0., 1., 0.]), np.array([0., 0., 1.]))
-    right = np.cross(unit, seed)
-    right /= np.maximum(np.linalg.norm(right, axis=1, keepdims=True), 1e-9)
-    forward = np.cross(unit, right)
-    covered = np.ones(len(origin), dtype=bool)
-    tilt = math.tan(math.radians(COVER_CONE))
-    for around in range(COVER_RAYS):
-        # Only the vertices still in the running are cast again: the first ray
-        # settles most of them, and re-casting the rest is the bulk of a build.
-        live = np.flatnonzero(covered)
-        if not len(live):
-            break
-        if around == 0:
-            direction = unit[live]
-        else:
-            angle = 2.0 * math.pi * (around - 1) / max(COVER_RAYS - 1, 1)
-            direction = unit[live] + tilt * (math.cos(angle) * right[live]
-                                             + math.sin(angle) * forward[live])
-            direction /= np.linalg.norm(direction, axis=1, keepdims=True)
-        covered[live] = (
-            _hit_within(origin[live], direction, verts, COVER_REACH)
-            | _hit_within(origin[live], -direction, verts, COVER_BEHIND))
-    keep = ~covered[triangles].all(axis=1)
-    dropped = int((~keep).sum())
-    if not dropped or not keep.any():
-        return layer, 0
-    kept = triangles[keep]
-    used = np.unique(kept)
-    remap = np.full(len(positions), -1, dtype=np.int64)
-    remap[used] = np.arange(len(used))
-    return (positions[used], normals[used], uvs[used],
-            remap[kept].reshape(-1), joints[used], weights[used]), dropped
+#: How far a hidden surface has to stand off the skin, in metres.
+#:
+#: This was the lift on a shirt liner -- an underlayer of the body's own
+#: triangles that every torso piece used to ship, because the meshy race
+#: bodies paint their wardrobe into the body texture and an open design of
+#: straps and plates showed the painted shirt through every gap in it.  The
+#: liner closed those gaps and cost the armour: drawn a few millimetres off
+#: the skin in a near-black, it won the depth test wherever a plate was seated
+#: nearer than that, and pieces read as a black tunic with ornament floating on
+#: it.  It is no longer drawn, so what is left of it is the number: how far off
+#: the body a surface has to sit before the two stop fighting for the same
+#: pixels at a grazing angle.
+SKIN_STANDOFF = 0.008
 
 
 def socket_origin(rig: ea.Rig, part: int) -> np.ndarray:
@@ -2642,7 +2259,7 @@ def _floor_backplate(points: np.ndarray, rig: ea.Rig, region: str,
         skin = body[(body[:, 1] >= lo) & (body[:, 1] < hi)]
         if len(skin) < 6:
             continue
-        limit = float(np.percentile(skin[:, 2], 2.0)) - (LINER_LIFT + 0.006)
+        limit = float(np.percentile(skin[:, 2], 2.0)) - (SKIN_STANDOFF + 0.006)
         band = (movable & (points[:, 1] >= lo) & (points[:, 1] < hi)
                 & (points[:, 2] < 0.0) & (np.abs(points[:, 0]) < 0.22))
         limits[band] = limit
@@ -3088,7 +2705,7 @@ def _slim_legs(points: np.ndarray, rig: ea.Rig, region: str,
 
 def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
           clearance: float = CLEARANCE, fit: str = "seat",
-          taper: bool = False, race_path: Path | None = None,
+          taper: bool = False,
           flip: bool = False, roll: bool = False,
           span: tuple[float, float] | None = None) -> dict:
     """Fit one generated mesh to the rig and write it as a skinned piece."""
@@ -3320,38 +2937,6 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
                                 rig, posed, joints, weights)
     primitives = [glb.primitive(positions, normals, uvs, indices, material,
                                 joints=joints, weights=weights)]
-    lined = False
-    if region == "torso" and race_path is not None:
-        # Clamped to the garment's own top: see LINER_BAND.
-        layers = shirt_liner(race_path, float(positions[:, 1].max()))
-        if layers is not None:
-            shell, paint = layers
-            # The liner backs the gaps, not the plate: see `_uncovered_liner`.
-            shell, culled = _uncovered_liner(shell, positions,
-                                             surface.indices.reshape(-1, 3))
-            paint, _ = _uncovered_liner(paint, positions,
-                                        surface.indices.reshape(-1, 3))
-            if posed:
-                posed[0]["linerCulled"] = culled
-            # Double sided: a lifted shell can fold at the armpit crease once
-            # a pose compresses it, and a culled backface there is a pinhole
-            # straight through to the shirt.
-            liner_material = textured_material(glb, "%s Liner" % label, None,
-                                               colour=LINER_COLOUR,
-                                               double_sided=True)
-            primitives.append(glb.primitive(
-                shell[0], shell[1], shell[2], shell[3], liner_material,
-                joints=shell[4], weights=shell[5], weight_floats=True))
-            # The paint coat ships alpha-blended so it draws after the body
-            # and wins their depth ties -- see shirt_liner.
-            paint_material = textured_material(glb, "%s Paint" % label, None,
-                                               colour=LINER_COLOUR,
-                                               double_sided=True)
-            glb.doc["materials"][paint_material]["alphaMode"] = "BLEND"
-            primitives.append(glb.primitive(
-                paint[0], paint[1], paint[2], paint[3], paint_material,
-                joints=paint[4], weights=paint[5], weight_floats=True))
-            lined = True
     glb.mesh(label, primitives, skin=0)
     glb.write(out)
 
@@ -3367,7 +2952,7 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
             "spanAfter": [round(float(v), 3) for v in span_after],
             "repose": [{key: value for key, value in step.items()
                         if key not in ("sleeve", "cap")}
-                       for step in posed], "liner": lined,
+                       for step in posed],
             "fit": fit, "grew": round(float(grown), 4),
             "pushedOut": pushed, "textured": png is not None,
             "bytes": out.stat().st_size}
@@ -3438,8 +3023,7 @@ def main() -> int:
         label = source.stem.replace("_", " ")[:48]
         try:
             info = build(source, target, rig, args.kind, label,
-                         args.clearance, args.fit, args.taper,
-                         race_path=race_path)
+                         args.clearance, args.fit, args.taper)
         except Exception as exc:
             print("  FAILED %-44s %s" % (source.stem[:44], exc))
             failed += 1
