@@ -146,6 +146,26 @@ const DRAPE_CACHE_LIMIT := 48
 ## shirt is given the most room, the waistband enough more than the shirt hem
 ## to read as a separate garment over it, and the boots enough to swallow the
 ## foot they are pulled over.
+## The shade an undershirt takes while torso armour is worn over it.
+##
+## A generated cuirass is an open design of straps and plates, so the shirt
+## underneath shows through it wherever the design is open.  Lit in its own
+## colour that reads as the character wearing their clothes over the armour;
+## darkened it reads as the padding a cuirass is buckled over, which is what
+## the piece is drawn to sit on.  This is the value the shipped underlayer used
+## before that layer was dropped -- the armour is better off covered by the
+## body's own shirt than by a mesh of its own that wins the depth test against
+## every plate seated within 8 mm of the skin.
+##
+## Races whose wardrobe is a MESH get this.  The rest paint their clothing into
+## the body texture and have no shirt to recolour: see `_refresh_wardrobe_cover`.
+const COVERED_SHIRT := Color8(56, 47, 40)
+
+## The wardrobe surfaces torso armour is worn over.  Pants and boots are not
+## here: their own slots cover them, and a cuirass has no business darkening a
+## character's legs.
+const SHIRT_SURFACES := ["wardrobe_shirt", "wardrobe_shirt_trim"]
+
 const WARDROBE_GROW := {
 	"wardrobe_shirt": 0.011, "wardrobe_shirt_trim": 0.013,
 	"wardrobe_pants": 0.009, "wardrobe_pants_seam": 0.016,
@@ -421,8 +441,13 @@ func apply_appearance_variants(appearance: Dictionary) -> void:
 		elif mesh_name == "scalp":
 			_tint_mesh(mesh_node, skin_tint)
 		elif mesh_name == "wardrobe_shirt":
-			_set_mesh_color(mesh_node, AppearanceVariants.wardrobe_color(
-				culture, AppearanceVariants.PART_SHIRT, int(appearance.get("shirt", 0))))
+			# Kept on the node so equipping and unequipping a cuirass can put
+			# the character's own colour back without the appearance dictionary.
+			var shirt_color: Color = AppearanceVariants.wardrobe_color(
+				culture, AppearanceVariants.PART_SHIRT,
+				int(appearance.get("shirt", 0)))
+			mesh_node.set_meta("wardrobe_color", shirt_color)
+			_set_mesh_color(mesh_node, shirt_color)
 		elif mesh_name == "wardrobe_pants":
 			_set_mesh_color(mesh_node, AppearanceVariants.wardrobe_color(
 				culture, AppearanceVariants.PART_PANTS, int(appearance.get("pants", 0))))
@@ -442,6 +467,7 @@ func apply_appearance_variants(appearance: Dictionary) -> void:
 	_add_hair_variant(AppearanceVariants.hair_style(
 		int(appearance.get("hair", 0))), hair_tint)
 	_refresh_body_surface_visibility()
+	_refresh_wardrobe_cover()
 
 func _set_appearance_visible(mesh_node: MeshInstance3D, visible_by_style: bool) -> void:
 	# Appearance owns whether a wardrobe surface exists at all; equipment only
@@ -1149,6 +1175,7 @@ func apply_equipment_visuals(visuals: Dictionary, fallback_parts: Array = []) ->
 		_equipment_visuals[CAPE_PART] = cape_visual
 		_create_equipment_part(CAPE_PART, cape_visual,
 			fallback_parts.has(CAPE_PART))
+	_refresh_wardrobe_cover()
 	# Equipment adds and removes mesh instances, so the silhouette's clone set
 	# has to be built again against what the actor is now made of.
 	if _silhouette != null and _silhouette.is_enabled():
@@ -1365,6 +1392,37 @@ func _release_equipment_hides(part: int) -> void:
 				_hidden_body_surfaces.erase(surface)
 	_equipment_hides.erase(part)
 	_refresh_body_surface_visibility()
+
+## Darkens the undershirt while a torso piece is worn, and puts the character's
+## own colour back when it comes off.
+##
+## Only the two luminous bodies own a shirt mesh.  The other fourteen races bake
+## their clothing into a single body texture, so there is nothing here to
+## recolour and the shirt they are painted wearing still shows through an open
+## cuirass; closing that needs the texture masked, not a material set.
+func _refresh_wardrobe_cover() -> void:
+	var native_model: Node3D = get_node_or_null("NativeModel") as Node3D
+	if native_model == null:
+		return
+	var covered: bool = int(_equipment_visuals.get(BODY_PART, 0)) != 0
+	for node_value: Node in native_model.find_children("*", "MeshInstance3D", true, false):
+		var mesh_node: MeshInstance3D = node_value as MeshInstance3D
+		if not SHIRT_SURFACES.has(mesh_node.name.to_lower()):
+			continue
+		if not mesh_node.has_meta("wardrobe_color"):
+			continue
+		var want: Color = (COVERED_SHIRT if covered
+			else mesh_node.get_meta("wardrobe_color") as Color)
+		# Set on the override the appearance pass already installed rather than
+		# through `_set_mesh_color`: that duplicates the material afresh, which
+		# would drop the `grow` WARDROBE_GROW put on it and sink the shirt back
+		# into the skin it was lifted off.
+		var material: StandardMaterial3D = (mesh_node.material_override
+			as StandardMaterial3D)
+		if material == null:
+			_set_mesh_color(mesh_node, want)
+			continue
+		material.albedo_color = want
 
 func _refresh_body_surface_visibility() -> void:
 	var native_model: Node3D = get_node_or_null("NativeModel") as Node3D
