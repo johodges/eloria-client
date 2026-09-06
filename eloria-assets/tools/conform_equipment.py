@@ -2109,7 +2109,8 @@ def _slim_to_body(points: np.ndarray, rig: ea.Rig, region: str,
 
 def _settle_floaters(points: np.ndarray, triangles: np.ndarray, rig: ea.Rig,
                      region: str, limit: float = 0.05,
-                     rest: float = 0.025) -> int:
+                     rest: float = 0.025,
+                     body: np.ndarray | None = None) -> int:
     """Bring ornaments that hover back onto the wearer.
 
     A concept sheet draws its mantles and sashes against the body it was
@@ -2120,8 +2121,17 @@ def _settle_floaters(points: np.ndarray, triangles: np.ndarray, rig: ea.Rig,
     straight toward the body until it rests ``rest`` from it, which keeps
     its shape and its place in the design while taking the float out.
     Large components are the garment itself and are never moved.
+
+    The body it settles onto has to be the body the garment can actually rest
+    on.  A torso region measures against ``TORSO_BONES``, which stop at the
+    clavicles, so a bracer worn correctly out on the forearm has nothing within
+    reach of it and reads as hanging in mid-air: it was being dragged 22 cm in
+    onto the chest, which is what collapsed the bicep and forearm plates of the
+    legendary hero cuirass into one lump on the upper arm.  Callers that dress
+    a limb pass the wider body their garment is skinned to.
     """
-    body = region_points(rig, region)
+    if body is None:
+        body = region_points(rig, region)
     inverse, edges, count = _weld(points, triangles)
     labels = _components(edges, count)[inverse]
     settled = 0
@@ -2576,7 +2586,9 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
         step0["bustFlattened"] = _flatten_bust(seated, rig, region, ~exempt)
         step0["backFloored"] = _floor_backplate(seated, rig, region, ~exempt)
         step0["floatersSettled"] = _settle_floaters(
-            seated, surface.indices.reshape(-1, 3), rig, region)
+            seated, surface.indices.reshape(-1, 3), rig, region,
+            body=rig._region(list(ea.GARMENT_SKIN[region])
+                             + REPOSE_SKIN.get(region, [])))
         # And the one pass that lets geometry OUT.  Everything above pulls the
         # piece in against the body; a sleeve seated inside the arm needs the
         # opposite, or the liner surfaces through it and the shoulder goes
