@@ -13,7 +13,8 @@ POSE = POSE == "1"
 WIDTH = int(WIDTH)
 DROP = [d for d in DROP.split(",") if d]
 LABELS = LABELS.split(",") if LABELS else []
-MODELS = argv[7:]
+WORN_POSE = argv[7]
+MODELS = argv[8:]
 
 #: Where the generated meshes hang their arms, measured off the phoenix
 #: cuirass and steady to a degree across the set: 11 degrees out from
@@ -42,6 +43,20 @@ def load(path):
     for stray in list(bpy.data.objects):
         if stray not in got and stray not in TRACKED:
             bpy.data.objects.remove(stray, do_unlink=True)
+    split_body = any(o.name.split('.')[0] == 'body' for o in got)
+    for obj in got:
+        if obj.type == "ARMATURE":
+            # An imported action otherwise leaves the wearer animated against
+            # equipment at rest, invalidating the true-scale comparison.
+            obj.animation_data_clear()
+            for bone in obj.pose.bones:
+                bone.matrix_basis = Matrix.Identity(4)
+            obj.data.pose_position = "REST"
+        if obj.type == "MESH" and (obj.name.split('.')[0] in
+                ('wardrobe_head_band', 'wardrobe_head_cap') or
+                (split_body and obj.name.split('.')[0] == 'char1')):
+            obj.hide_render = True
+    bpy.context.view_layer.update()
     TRACKED.extend(got)
     print("loaded %s -> %s" % (path.rsplit("\\")[-1].rsplit("/")[-1],
                                [o.name for o in got]))
@@ -105,6 +120,7 @@ def pose_arms(objs):
     arm = next((o for o in objs if o.type == "ARMATURE"), None)
     if arm is None:
         return
+    arm.data.pose_position = "POSE"
     bpy.context.view_layer.objects.active = arm
     bpy.ops.object.mode_set(mode="POSE")
     to_local = arm.matrix_world.inverted().to_3x3()
@@ -145,6 +161,7 @@ def place(objs, x_at, index):
     root.scale = (scale,) * 3
     root.location = (x_at - mid.x * scale, -mid.y * scale, -mid.z * scale)
     if YAW:
+        bpy.context.view_layer.update()
         pivot = (Matrix.Translation((x_at, 0, 0))
                  @ Matrix.Rotation(math.radians(YAW), 4, "Z")
                  @ Matrix.Translation((-x_at, 0, 0)))
@@ -214,6 +231,33 @@ def render_worn(path):
     span = COLUMN * (len(worn) - 1)
     for index, (_model, piece) in enumerate(worn):
         body = load(WORN)
+        if any(o.name.split('.')[0] == 'GeneratedArmorBacking' for o in piece):
+            # Match TorsoBodyCover's rest-space mask, only for new equipment
+            # that actually supplies its replacement backing.
+            import bmesh
+            for obj in body:
+                if obj.type != 'MESH':
+                    continue
+                bm = bmesh.new()
+                bm.from_mesh(obj.data)
+                removed = []
+                for face in bm.faces:
+                    c = sum((obj.matrix_world @ v.co for v in face.verts), Vector()) / len(face.verts)
+                    if .95 < c.z < 1.535 and abs(c.x) < .665:
+                        removed.append(face)
+                bmesh.ops.delete(bm, geom=removed, context='FACES')
+                bm.to_mesh(obj.data)
+                bm.free()
+        if WORN_POSE != 'rest':
+            for objects in (body, piece):
+                pose_arms(objects)
+                if WORN_POSE == 'bent':
+                    arm = next(o for o in objects if o.type == 'ARMATURE')
+                    for side in ('l', 'r'):
+                        bone = arm.pose.bones.get('lowerarm_' + side)
+                        if bone:
+                            bone.matrix_basis = Matrix.Rotation(math.radians(70), 4, 'X')
+            bpy.context.view_layer.update()
         drop_materials(piece)
         shift = index * COLUMN - span / 2.0
         for obj in body + piece:
@@ -226,8 +270,9 @@ def render_worn(path):
     camera = bpy.data.objects.new("cam", camera_data)
     bpy.context.collection.objects.link(camera)
     # Framed on the chest: the torso span is 1.02 to 1.54 in world metres.
-    camera.location = (0, -8, 1.28)
-    camera.rotation_euler = (math.radians(90), 0, 0)
+    yaw = math.radians(YAW)
+    camera.location = (8 * math.sin(yaw), -8 * math.cos(yaw), 1.28)
+    camera.rotation_euler = (Vector((0, 0, 1.28)) - camera.location).to_track_quat('-Z', 'Y').to_euler()
     bpy.context.scene.camera = camera
     for direction, energy in (((-0.5, -1.0, 0.6), 4.0), ((0.9, -0.6, 0.2), 2.0),
                               ((0.0, 1.0, 0.3), 1.5)):

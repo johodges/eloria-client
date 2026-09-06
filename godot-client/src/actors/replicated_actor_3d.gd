@@ -1393,20 +1393,28 @@ func _release_equipment_hides(part: int) -> void:
 	_equipment_hides.erase(part)
 	_refresh_body_surface_visibility()
 
-## Darkens the undershirt while a torso piece is worn, and puts the character's
-## own colour back when it comes off.
-##
-## Only the two luminous bodies own a shirt mesh.  The other fourteen races bake
-## their clothing into a single body texture, so there is nothing here to
-## recolour and the shirt they are painted wearing still shows through an open
-## cuirass; closing that needs the texture masked, not a material set.
+## Generated torsos replace the covered default clothing with their fitted
+## backing. Other torso equipment retains the existing undershirt tint.
 func _refresh_wardrobe_cover() -> void:
 	var native_model: Node3D = get_node_or_null("NativeModel") as Node3D
 	if native_model == null:
 		return
 	var covered: bool = int(_equipment_visuals.get(BODY_PART, 0)) != 0
+	var replaces_body := false
+	for piece: Node in _equipment_nodes.get(BODY_PART, []):
+		if is_instance_valid(piece) and piece.has_meta("replaces_torso_body"):
+			replaces_body = true
 	for node_value: Node in native_model.find_children("*", "MeshInstance3D", true, false):
 		var mesh_node: MeshInstance3D = node_value as MeshInstance3D
+		if mesh_node.has_meta("native_equipment"):
+			continue
+		var surface_name: String = mesh_node.name.to_lower()
+		var is_body_surface: bool = (surface_name in ["body", "char1", "mesh_node"]
+			or surface_name.begins_with("wardrobe_"))
+		if _native_skeleton != null and mesh_node.skin != null and is_body_surface:
+			TorsoBodyCover.apply(mesh_node, replaces_body,
+				_native_skeleton.global_transform.affine_inverse() * mesh_node.global_transform,
+				rig_fit_scale())
 		if not SHIRT_SURFACES.has(mesh_node.name.to_lower()):
 			continue
 		if not mesh_node.has_meta("wardrobe_color"):
@@ -1601,6 +1609,8 @@ func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
 		_native_skeleton.add_child(clone)
 		clone.skeleton = NodePath("..")
 		clone.set_meta("native_equipment", true)
+		if part == BODY_PART and str(piece.get("name", "")) == TorsoBodyCover.BACKING_NAME:
+			clone.set_meta("replaces_torso_body", true)
 		created.append(clone)
 	return created
 

@@ -2823,6 +2823,11 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
                            ", ".join(sorted(SOCKET_KIND)),
                            ", ".join(sorted(PROP_KIND))))
     region = ea.garment_region(kind)
+    if region == "torso":
+        # Torso designs are retargeted directly from the original GLB's pose.
+        # They must never pass through seat/repose and its compounded girth.
+        import torso_remap
+        return torso_remap.build(source, out, rig, kind, label)
     if region not in MEASURE:
         raise ValueError(f"no measuring rule for region {region!r}; "
                          f"known: {sorted(MEASURE)}")

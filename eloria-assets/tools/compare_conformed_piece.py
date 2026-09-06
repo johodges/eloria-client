@@ -67,6 +67,8 @@ def main() -> int:
                          "mesh can still read badly on a character, and that "
                          "is the picture the player sees")
     ap.add_argument("--labels", default="")
+    ap.add_argument("--worn-pose", choices=["rest", "source", "bent"], default="rest",
+                    help="pose both the character and equipment in the worn sheet")
     ap.add_argument("--width", type=int, default=760,
                     help="pixels per column")
     args = ap.parse_args()
@@ -81,7 +83,7 @@ def main() -> int:
                "--", str(args.out.resolve()), str(args.yaw),
                "1" if args.pose_arms else "0", str(args.width),
                ",".join(args.drop_material), args.labels,
-               str(args.worn.resolve()) if args.worn is not None else ""]
+               str(args.worn.resolve()) if args.worn is not None else "", args.worn_pose]
     command += [str(m.resolve()) for m in args.models]
     result = subprocess.run(command, capture_output=True, text=True)
     if result.returncode != 0 or not args.out.exists():
