@@ -123,6 +123,17 @@ CLEARANCE = 0.011
 #: onto one, and it is what keeps the shell clear of the skin once a limb bends.
 SLACK = 0.06
 
+#: Over what height a joined garment's inward shift is ramped out, in metres,
+#: measured down from the crotch.  Long enough that the seat is not sheared,
+#: short enough that the leg is on its limb by the time the thigh is clear of
+#: the hip shell.
+SEAT_RAMP = 0.25
+
+#: And how far out from the midline the same shift is faded in, in metres.
+#: Wide enough that the inseam is not sheared, narrow enough that the tube
+#: itself still travels: the thigh's inner wall sits about 40 mm off centre.
+SEAT_MIDLINE = 0.04
+
 #: Bounds on that draw-in.  A piece is never taken below three quarters -- past
 #: that the design is being restyled rather than fitted, and a pauldron that was
 #: drawn proud stops reading as one.  Letting out is capped nearer to 1: a piece
@@ -748,21 +759,49 @@ def seat(points: np.ndarray, rig: ea.Rig, region: str,
     # sticks out furthest, so on this legwear (knee pads, straps) it reads half
     # again too wide while the tube is barely clear of the thigh, and drawing it
     # in by that ratio pulls the trousers inside the leg.
-    # Put each half of a pair over the limb it is worn on.  Rigid, and only
-    # when the halves are separate solids: shifting half of a joined garment
-    # opens a hole at the crotch.
-    if MEASURE[region]["mode"] == "sides" and halves_are_separate(seated,
-                                                                 triangles):
+    # Put each half of a pair over the limb it is worn on.  Rigid where the
+    # halves are separate solids; ramped where they are one shell, which is
+    # what most of the generated legwear is.
+    #
+    # Skipping a joined garment entirely -- which is what this did -- leaves it
+    # standing exactly as far outboard as the note above measures, and a player
+    # sees it at once: equipping the legs bows the character's stance out where
+    # the bare body stood straight.  But the two legs of a trouser are only
+    # joined ABOVE the crotch, so a shift that has died to nothing by the time
+    # it reaches that line moves each leg onto its limb without opening the
+    # seat.  The hips keep the width they were drawn with, which is right --
+    # hips are wide -- and only the legs come in.
+    if MEASURE[region]["mode"] == "sides":
+        rigid = halves_are_separate(seated, triangles)
+        crotch = float(rig.origin(measure_bones(region, "l")[0])[1])
         for side in ("l", "r"):
             own = seated[:, 0] >= 0 if side == "l" else seated[:, 0] < 0
             if own.sum() < 8:
                 continue
             limb = rig._region(measure_bones(region, side))
-            half = seated[own]
+            # Measured from the part that is going to move: on a joined
+            # garment the seat and its belt sit far outboard of the leg and
+            # would drag the aim with them.
+            block = own if rigid else own & (seated[:, 1] < crotch)
+            if block.sum() < 8:
+                continue
+            half = seated[block]
+            # Two ramps, and the lateral one is what keeps the garment whole.
+            # Moving a side rigidly moves everything on it, so any triangle
+            # that reaches across the middle -- an inseam, a crotch plate --
+            # has its two ends dragged in opposite directions and is pulled
+            # apart: measured over the set, a rigid shift healed four pieces
+            # and tore thirteen.  Fading the shift out to nothing AT the
+            # midline instead means the two sides agree where they meet, so
+            # nothing is torn; the tube is drawn in from outside rather than
+            # slid across.
+            ramp = (np.ones(int(own.sum())) if rigid else
+                    np.clip((crotch - seated[own, 1]) / SEAT_RAMP, 0., 1.)
+                    * np.clip(np.abs(seated[own, 0]) / SEAT_MIDLINE, 0., 1.))
             for axis in (0, 2):
                 shift = ((limb[:, axis].max() + limb[:, axis].min()) / 2.
                          - (half[:, axis].max() + half[:, axis].min()) / 2.)
-                seated[own, axis] += shift
+                seated[own, axis] += shift * ramp
 
     # Per-height placement and girth.  Both off by default; see the note above
     # `lateral_profile` for why the measurement is not trustworthy yet.
@@ -1384,6 +1423,11 @@ def textured_material(glb: ea.EquipmentGLB, name: str, png: bytes | None,
 #: attempt to classify the shirt by colour left a sliver of it bare at some
 #: boundary the classifier misread: the blacked-out armpit, the shaded seam
 #: rows of the collar, the last teal row under the hem.
+#: The top of it is a ceiling, not a target: the band is also clamped to the
+#: garment's own top, because liner drawn ABOVE the armour is liner nobody is
+#: wearing anything over.  At 1.70 it reaches the jaw, while a cuirass collar
+#: stops near 1.54, so a 20 cm ring of near-black stood above every torso piece
+#: and read as the armour stopping short of the shoulders.
 LINER_BAND = (0.90, 1.70)
 #: 0.85, not the mid-forearm: the painted body keeps a few teal texels on
 #: the back of the right hand, and an idle pose hangs that hand exactly where
@@ -1393,10 +1437,10 @@ LINER_HALF_WIDTH = 0.66
 LINER_LIFT = 0.008
 LINER_COLOUR = (56, 47, 40)
 
-_LINER_CACHE: dict[str, tuple | None] = {}
+_LINER_CACHE: dict[tuple, tuple | None] = {}
 
 
-def shirt_liner(race_path: Path):
+def shirt_liner(race_path: Path, top: float = LINER_BAND[1]):
     """The clothed band of the body, lifted a few millimetres, to wear under
     a torso piece.
 
@@ -1414,7 +1458,8 @@ def shirt_liner(race_path: Path):
     Returns (positions, normals, uvs, indices, joints, weights) in body
     space, or None when the body offers nothing to line.
     """
-    key = str(race_path)
+    band_top = min(LINER_BAND[1], float(top))
+    key = (str(race_path), round(band_top, 4))
     if key in _LINER_CACHE:
         return _LINER_CACHE[key]
     document, binary = ea.read_glb(race_path)
@@ -1451,7 +1496,7 @@ def shirt_liner(race_path: Path):
     # to swallow the back of the collar, whose last texels ride the
     # trapezius at 1.56.
     shirt = ((positions[:, 1] > LINER_BAND[0])
-             & (positions[:, 1] < LINER_BAND[1])
+             & (positions[:, 1] < band_top)
              & (np.abs(positions[:, 0]) < LINER_HALF_WIDTH)
              & ~((positions[:, 1] > 1.585) & (positions[:, 2] > 0.0)))
     if int(shirt.sum()) < 40:
@@ -1637,6 +1682,16 @@ def shirt_liner(race_path: Path):
         liner_weights = np.vstack([liner_weights, plug_weight_row])
         liner_faces = np.vstack([liner_faces,
                                  np.array(plug_faces) + base_index])
+    # Flatten whatever rose above the ceiling.  Faces are kept when ANY corner
+    # is in the band, so a triangle straddling the top carries its other two
+    # corners up with it -- 38 mm of them on this body, which is 38 mm of
+    # near-black standing above the armour's collar.  Pressing those corners
+    # down onto the ceiling closes the rim without dropping the face, which
+    # `all` would, and dropping it is what opens a gap at every other edge of
+    # the band.
+    liner_positions[:, 1] = np.minimum(liner_positions[:, 1], band_top)
+    paint = (np.array(paint[0]), *paint[1:])
+    paint[0][:, 1] = np.minimum(paint[0][:, 1], band_top)
     liner = ((liner_positions, liner_normals, liner_uvs,
               liner_faces.reshape(-1), liner_joints, liner_weights), paint)
     _LINER_CACHE[key] = liner
@@ -2492,7 +2547,8 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
                                 joints=joints, weights=weights)]
     lined = False
     if region == "torso" and race_path is not None:
-        layers = shirt_liner(race_path)
+        # Clamped to the garment's own top: see LINER_BAND.
+        layers = shirt_liner(race_path, float(positions[:, 1].max()))
         if layers is not None:
             shell, paint = layers
             # Double sided: a lifted shell can fold at the armpit crease once
