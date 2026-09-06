@@ -877,6 +877,39 @@ def _frontal_turn(points: np.ndarray, pivot: np.ndarray,
     return turned
 
 
+def _keep_to_own_side(points: np.ndarray, pivot: np.ndarray, angle: float,
+                      turn: np.ndarray, step: float = math.radians(4.0),
+                      margin: float = 0.004) -> float:
+    """Back a limb's turn off until it stops swinging across the midline.
+
+    The pose is chosen from how well the garment encloses the limb axis, which
+    says nothing about where the far end of the limb ends up.  On an arm that
+    is harmless -- the shoulders are far enough apart, and a sleeve that falls
+    across the chest is a drape rather than a fault -- which is why only
+    ``legs`` asks for this.  On a leg it is not: the hip sits 114 mm off centre
+    and the hem a further 700 mm down, so every degree of turn walks the hem
+    12 mm inward and at 12 degrees it arrives on the other side of the body,
+    through the leg it is paired with.  The result is a sheet of triangles
+    stretched across the gap between the knees -- a garment that is inside out
+    about the midline, not merely mis-posed.
+
+    So the angle is reduced in the steps the search itself used until the limb
+    it turns stays on its own side.  A pose the search never considered is not
+    substituted; this only ever gives back one of its own candidates, and it
+    is a no-op for every piece whose chosen pose was already physical.
+    """
+    limb = turn > 0.5
+    if not limb.any() or abs(pivot[0]) < 1e-9:
+        return angle
+    side = math.copysign(1.0, pivot[0])
+    while abs(angle) > 1e-9:
+        moved = _frontal_turn(points[limb], pivot, -angle)
+        if (moved[:, 0] * side >= -margin).all():
+            return angle
+        angle -= math.copysign(min(step, abs(angle)), angle)
+    return 0.0
+
+
 def _limb_bones(rig: ea.Rig, root: str) -> set[str]:
     """The chain that rides a pivot: the bone and everything below it."""
     names = {root}
@@ -1149,6 +1182,9 @@ def repose(points: np.ndarray, normals: np.ndarray, rig: ea.Rig, region: str,
                 turn[indexed] = 0.0
                 caps[indexed] = True
         turn = turn[canon]
+        if region == "legs":
+            chosen = _keep_to_own_side(out, start, chosen, turn)
+            report["poseDeg"] = round(math.degrees(chosen), 1)
         out = _frontal_turn(out, start, -chosen * turn)
         turned = _frontal_turn(turned, np.zeros(3), -chosen * turn)
         report["applied"] = True
@@ -1194,6 +1230,45 @@ def _push_axis(points: np.ndarray, indices: np.ndarray, rig: ea.Rig,
             moved[index] = points[index] + radial / distance * (want - distance)
             pushed += 1
     return pushed
+
+
+#: The few millimetres a sleeve must stand off the liner, on top of the lift
+#: the liner already has.  Read against ``LINER_LIFT`` at the call rather than
+#: folded into a constant here, because that one is defined further down with
+#: the rest of the liner and this file reads top to bottom.
+SLEEVE_MARGIN = 0.005
+
+
+def _clear_sleeves(points: np.ndarray, rig: ea.Rig, sleeve: np.ndarray,
+                   clearance: float | None = None) -> tuple[np.ndarray, int]:
+    """Let a sleeve out until it clears the liner over the arm it covers.
+
+    Everything else the torso branch does draws the piece IN, and it exempts
+    the sleeves on the reasoning that a sleeve is fitted to its limb already.
+    Seated geometry is not.  ``seat`` sizes girth from the design's own
+    proportions, so a figure drawn with slimmer arms than the rig has puts its
+    sleeve *inside* the arm -- 25 mm inside it on the legendary hero cuirass,
+    where the liner then stands 34 mm proud of the armour across the top of the
+    shoulder and the piece reads as a black band between pauldron and elbow.
+    The armour was there the whole time; it was underneath.
+
+    So the sleeve is let out about its own arm's axis, the way the limb
+    garments are cleared, and outward only: a sleeve already clear of the liner
+    keeps exactly the shape the design gave it.
+    """
+    if clearance is None:
+        clearance = LINER_LIFT + SLEEVE_MARGIN
+    moved = np.array(points, dtype=np.float64)
+    pushed = 0
+    for side in ("l", "r"):
+        mine = points[:, 0] >= 0 if side == "l" else points[:, 0] < 0
+        own = np.flatnonzero(sleeve & mine)
+        pushed += _push_axis(points, own, rig,
+                             rig.origin("upperarm_%s" % side),
+                             rig.origin("hand_%s" % side),
+                             ["upperarm_%s" % side, "lowerarm_%s" % side,
+                              "hand_%s" % side], clearance, moved)
+    return moved, pushed
 
 
 def grow_clear(points: np.ndarray, triangles: np.ndarray, rig: ea.Rig,
@@ -2368,6 +2443,11 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
         step0["backFloored"] = _floor_backplate(seated, rig, region, ~exempt)
         step0["floatersSettled"] = _settle_floaters(
             seated, surface.indices.reshape(-1, 3), rig, region)
+        # And the one pass that lets geometry OUT.  Everything above pulls the
+        # piece in against the body; a sleeve seated inside the arm needs the
+        # opposite, or the liner surfaces through it and the shoulder goes
+        # black.
+        seated, step0["sleevesCleared"] = _clear_sleeves(seated, rig, exempt)
     elif region in ("legs", "boots"):
         # Legwear is chunky for the same reason: sized to the design's own
         # girth, it stands proud of the leg.  With the leg's own skin hidden
