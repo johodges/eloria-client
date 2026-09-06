@@ -2952,6 +2952,31 @@ func _nameplate_visible_for(actor_id: int) -> bool:
 		return false
 	return _banner_option("show_names")
 
+## Which actor the player is actually fighting. A health pair rides on every
+## actor packet, so the client could draw a bar over everything in sight - but
+## a field of bars says nothing, and the one that has to be readable at a
+## glance is the target's. A ranged shot lined up on someone counts as
+## fighting them, and takes precedence the same way the target readout does.
+func _combat_target_actor_id() -> int:
+	var local_actor: Dictionary = AppState.actors.get(
+		AppState.local_actor_id, {}) as Dictionary
+	var aiming_at: int = int(local_actor.get("aiming_at", -1))
+	if aiming_at >= 0:
+		return aiming_at
+	if bool(AppState.combat_state.get("active", false)):
+		return int(AppState.combat_state.get("target_id", -1))
+	return -1
+
+## Hands every actor its answer to the question above.
+func _sync_overhead_health() -> void:
+	var target_id: int = _combat_target_actor_id()
+	for id: Variant in actor_nodes:
+		var node_value: Variant = actor_nodes[id]
+		if node_value is ReplicatedActor3D and is_instance_valid(
+				node_value as ReplicatedActor3D):
+			(node_value as ReplicatedActor3D).set_combat_target(
+				int(id) == target_id)
+
 ## Eternal Lands makes every bar as long as the widest number string beside it
 ## so the rows line up, then sizes the banner to whatever is left switched on.
 ## Godot keeps a container at whatever size it was last given, so the explicit
@@ -3395,6 +3420,10 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_spells()
 		&"selection":
 			_sync_selection()
+		&"combat_state":
+			# Which actor wears the overhead bar changes with the fight, not
+			# with the actor packets, so it is re-read here as well.
+			_sync_overhead_health()
 		&"npc_dialogue":
 			_sync_dialogue()
 		&"popup":
@@ -3702,6 +3731,7 @@ func _sync_world(changed: Variant = null) -> void:
 			_set_overhead_meter(overhead_health_row, current_health,
 				maximum_health, "health")
 			_layout_actor_resource_overlay()
+	_sync_overhead_health()
 
 ## Applies an actor's current AppState record to the node it already has.
 func _present_actor(id: Variant) -> void:

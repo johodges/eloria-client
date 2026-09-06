@@ -190,6 +190,9 @@ var _health_label: Label3D
 var _health_current := -1
 var _health_maximum := -1
 var _overhead_visible := true
+## Whether the player is fighting this actor. The overhead bar is drawn for
+## nobody else.
+var _combat_target := false
 var _settled := false
 var _silhouette: OccludedSilhouette
 ## Which of the animation gate's tiers this actor is in, and whether a cape
@@ -236,14 +239,48 @@ const INVASION_NAME_COLOUR := 14
 const SUMMON_NAME_COLOUR := 4
 const SETTLED_YAW_EPSILON := 0.0005
 
-# Overhead health bar geometry, in world units, measured downwards from the
-# nameplate so the name, the bar and the numbers read as one block.
+## How high above the actor's feet the overhead block hangs. The one world
+## measurement left in it: everything inside the block is laid out in the
+## pixels of the 2D layer instead.
 const NAMEPLATE_HEIGHT := 2.15
-const HEALTH_BAR_HEIGHT := 2.0
-const HEALTH_LABEL_HEIGHT := 1.85
-const HEALTH_BAR_WIDTH := 0.9
-const HEALTH_BAR_THICKNESS := 0.085
-const HEALTH_BAR_BORDER := 0.02
+
+## The player's own name and health are a 2D panel projected over their head
+## (`_update_actor_resource_overlay` in main.gd), so they are the same size to
+## read wherever the player stands and however far the camera is pulled back.
+## Everybody else's were a Label3D and a pair of quads, which shrank with
+## distance and with every notch of the zoom until a name across the field was
+## a smudge. A name is text, not scenery. So the block is drawn at a fixed
+## screen size, in the same pixels - and at the same sizes - as the banner it
+## is now a copy of: 12 for the name and 11 for the numbers, over a 56 by 7
+## bar, all of it outlined 4, which is what main.tscn gives ActorResourceOverlay.
+##
+## `fixed_size` is what holds the size: it scales a billboard by its own view
+## depth, which cancels the perspective divide, so a local unit covers
+## `render_height / (2 * tan(fov / 2))` device pixels at any depth at all. A
+## pixel of the 2D layer covers `render_height / 720` of them - the content
+## scale the layer is drawn through, from the design height in project.godot.
+## The render height cancels between the two, which is why one number serves
+## every window size: `2 * tan(25 degrees) / 720`, the camera's field being 50
+## degrees. `rendered_overhead_banners.gd` recomputes it from the camera and
+## from the banner rather than taking it on trust.
+const OVERHEAD_PIXEL := 0.0012953
+const NAMEPLATE_FONT_SIZE := 12
+const HEALTH_NUMBER_FONT_SIZE := 11
+const SPEECH_BUBBLE_FONT_SIZE := 11
+const OVERHEAD_OUTLINE_SIZE := 4
+
+# The rest of the block, in those same pixels, measured downwards from the
+# name so the name, the bar and the numbers read as one thing. The bar is the
+# banner's health bar; the drops are its rows, a line apart.
+const HEALTH_BAR_WIDTH := 56.0
+const HEALTH_BAR_THICKNESS := 7.0
+const HEALTH_BAR_BORDER := 2.0
+const HEALTH_BAR_DROP := 16.0
+const HEALTH_LABEL_DROP := 32.0
+## The speech bubble sits above the name instead, and wraps well short of the
+## screen it is now measured against.
+const SPEECH_BUBBLE_RISE := 20.0
+const SPEECH_BUBBLE_WIDTH := 220.0
 
 ## Click target and selection ring for an actor standing on one tile.
 ## Both are scaled by the widest side of the footprint: a giant that can
@@ -577,8 +614,10 @@ func _add_nameplate(dto: Dictionary) -> void:
 	label.position.y = NAMEPLATE_HEIGHT
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.no_depth_test = true
-	label.font_size = 28
-	label.outline_size = 6
+	label.fixed_size = true
+	label.pixel_size = OVERHEAD_PIXEL
+	label.font_size = NAMEPLATE_FONT_SIZE
+	label.outline_size = OVERHEAD_OUTLINE_SIZE
 	label.modulate = EloriaProtocol.el_text_colour(int(dto.get("name_colour", 0)))
 	label.layers = GAMEPLAY_ONLY_VISUAL_LAYER
 	add_child(label)
@@ -586,40 +625,54 @@ func _add_nameplate(dto: Dictionary) -> void:
 	_add_health_bar()
 	apply_vitals(int(dto.get("health", 0)), int(dto.get("max_health", 0)))
 
-## The overhead health bar and its numbers. Every actor packet already carries
-## the pair, so a creature's condition is knowable without selecting it: the
-## combat HUD only ever describes the one target the player is fighting.
+## The overhead health bar and its numbers. Only ever drawn for the one actor
+## the player is currently fighting: every actor packet carries a health pair,
+## but a bar over every creature and shopkeeper in sight is a field of bars,
+## and the one that matters is lost in it. `set_combat_target` says which.
+##
+## All three pieces hang from the nameplate's height rather than from three
+## world heights of their own, and their separation is spelled inside the
+## block, so that the fixed-size scaling keeps the name, the bar and the
+## numbers the same distance apart on screen as they are wide.
 func _add_health_bar() -> void:
 	var background: MeshInstance3D = MeshInstance3D.new()
 	background.name = "HealthBarBackground"
 	var background_quad: QuadMesh = QuadMesh.new()
 	background_quad.size = Vector2(HEALTH_BAR_WIDTH + HEALTH_BAR_BORDER,
-		HEALTH_BAR_THICKNESS + HEALTH_BAR_BORDER)
+		HEALTH_BAR_THICKNESS + HEALTH_BAR_BORDER) * OVERHEAD_PIXEL
+	background_quad.center_offset = Vector3(
+		0.0, -HEALTH_BAR_DROP * OVERHEAD_PIXEL, 0.0)
 	background_quad.material = _overhead_material(Color(0.05, 0.04, 0.03, 0.78), 1)
 	background.mesh = background_quad
-	background.position.y = HEALTH_BAR_HEIGHT
+	background.position.y = NAMEPLATE_HEIGHT
 	background.layers = GAMEPLAY_ONLY_VISUAL_LAYER
 	add_child(background)
 	_health_bar_background = background
 	var fill: MeshInstance3D = MeshInstance3D.new()
 	fill.name = "HealthBarFill"
 	var fill_quad: QuadMesh = QuadMesh.new()
-	fill_quad.size = Vector2(HEALTH_BAR_WIDTH, HEALTH_BAR_THICKNESS)
+	fill_quad.size = Vector2(HEALTH_BAR_WIDTH, HEALTH_BAR_THICKNESS) * OVERHEAD_PIXEL
+	fill_quad.center_offset = Vector3(
+		0.0, -HEALTH_BAR_DROP * OVERHEAD_PIXEL, 0.0)
 	fill_quad.material = _overhead_material(Color(0.24, 0.78, 0.29, 1.0), 2)
 	fill.mesh = fill_quad
-	fill.position.y = HEALTH_BAR_HEIGHT
+	fill.position.y = NAMEPLATE_HEIGHT
 	fill.layers = GAMEPLAY_ONLY_VISUAL_LAYER
 	add_child(fill)
 	_health_bar_fill = fill
 	var numbers: Label3D = Label3D.new()
 	numbers.name = "HealthNumbers"
-	numbers.position.y = HEALTH_LABEL_HEIGHT
+	numbers.position.y = NAMEPLATE_HEIGHT
+	# Label3D lays its offset out in the same pixels, so the drop is the drop.
+	numbers.offset = Vector2(0.0, -HEALTH_LABEL_DROP)
 	numbers.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	numbers.no_depth_test = true
+	numbers.fixed_size = true
+	numbers.pixel_size = OVERHEAD_PIXEL
 	numbers.render_priority = 3
 	numbers.outline_render_priority = 2
-	numbers.font_size = 24
-	numbers.outline_size = 6
+	numbers.font_size = HEALTH_NUMBER_FONT_SIZE
+	numbers.outline_size = OVERHEAD_OUTLINE_SIZE
 	numbers.layers = GAMEPLAY_ONLY_VISUAL_LAYER
 	add_child(numbers)
 	_health_label = numbers
@@ -639,6 +692,8 @@ func _overhead_material(colour: Color, priority: int) -> StandardMaterial3D:
 	material.no_depth_test = true
 	material.disable_receive_shadows = true
 	material.render_priority = priority
+	# Same fixed screen size as the two labels the bar sits between.
+	material.fixed_size = true
 	return material
 
 ## Redraws the bar for a health pair the server sent. An actor the server gives
@@ -653,31 +708,49 @@ func apply_vitals(current: int, maximum: int) -> void:
 			or not is_instance_valid(_health_label):
 		return
 	if maximum <= 0:
-		_health_bar_background.visible = false
-		_health_bar_fill.visible = false
-		_health_label.visible = false
+		_refresh_overhead_health()
 		return
 	var clamped: int = clampi(current, 0, maximum)
 	var ratio: float = float(clamped) / float(maximum)
-	_health_bar_background.visible = _overhead_visible
-	_health_label.visible = _overhead_visible
 	_health_label.text = "%d/%d" % [clamped, maximum]
 	var fill_quad: QuadMesh = _health_bar_fill.mesh as QuadMesh
-	if clamped <= 0:
-		_health_bar_fill.visible = false
-	else:
-		_health_bar_fill.visible = _overhead_visible
+	if clamped > 0:
 		var width: float = HEALTH_BAR_WIDTH * ratio
-		fill_quad.size = Vector2(width, HEALTH_BAR_THICKNESS)
+		fill_quad.size = Vector2(width, HEALTH_BAR_THICKNESS) * OVERHEAD_PIXEL
 		# A QuadMesh is centred on its origin, so a shrinking bar would drain
 		# from both ends. The offset pins the left edge instead, and it is a
 		# mesh offset rather than a node position because the billboard shader
 		# discards the node basis and would leave the nudge pointing at the
-		# world axis the camera happened to start on.
+		# world axis the camera happened to start on. It carries the bar's
+		# drop below the name for the same reason.
 		fill_quad.center_offset = Vector3(
-			-(HEALTH_BAR_WIDTH - width) * 0.5, 0.0, 0.0)
+			-(HEALTH_BAR_WIDTH - width) * 0.5 * OVERHEAD_PIXEL,
+			-HEALTH_BAR_DROP * OVERHEAD_PIXEL, 0.0)
 		var material: StandardMaterial3D = fill_quad.material as StandardMaterial3D
 		material.albedo_color = _health_colour(ratio)
+	_refresh_overhead_health()
+
+## Whether this actor is the one the player is currently fighting. The overhead
+## bar and its numbers are drawn for that actor alone; see `_add_health_bar`.
+func set_combat_target(active: bool) -> void:
+	if active == _combat_target:
+		return
+	_combat_target = active
+	_refresh_overhead_health()
+
+## The bar, its backing and its numbers all appear together, and only when the
+## nameplate is showing at all, the server has given this actor a maximum, and
+## the player is fighting it. The fill has the one extra condition: a corpse at
+## zero health keeps its empty frame rather than a sliver of colour.
+func _refresh_overhead_health() -> void:
+	var showing: bool = (_overhead_visible and _combat_target
+		and _health_maximum > 0)
+	if is_instance_valid(_health_bar_background):
+		_health_bar_background.visible = showing
+	if is_instance_valid(_health_bar_fill):
+		_health_bar_fill.visible = showing and _health_current > 0
+	if is_instance_valid(_health_label):
+		_health_label.visible = showing
 
 static func _health_colour(ratio: float) -> Color:
 	if ratio > 0.6:
@@ -690,13 +763,7 @@ func set_nameplate_visible(enabled: bool) -> void:
 	_overhead_visible = enabled
 	if is_instance_valid(_nameplate):
 		_nameplate.visible = enabled
-	var has_health: bool = _health_maximum > 0
-	if is_instance_valid(_health_bar_background):
-		_health_bar_background.visible = enabled and has_health
-	if is_instance_valid(_health_bar_fill):
-		_health_bar_fill.visible = enabled and has_health and _health_current > 0
-	if is_instance_valid(_health_label):
-		_health_label.visible = enabled and has_health
+	_refresh_overhead_health()
 
 ## Eternal Lands repeats local chat over the speaker's head while "Show Speech
 ## Bubbles" is on (text.c check_chat_text_to_overtext), sitting above the
@@ -705,12 +772,17 @@ func show_speech_bubble(speech: String, duration_msec: int) -> void:
 	if not is_instance_valid(_speech_bubble):
 		var label: Label3D = Label3D.new()
 		label.name = "SpeechBubble"
-		label.position.y = 2.62
+		label.position.y = NAMEPLATE_HEIGHT
+		label.offset = Vector2(0.0, SPEECH_BUBBLE_RISE)
 		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 		label.no_depth_test = true
-		label.font_size = 24
-		label.outline_size = 8
-		label.width = 760.0
+		# Fixed on screen like the name it sits above, or the two would drift
+		# into one another as the camera zoomed.
+		label.fixed_size = true
+		label.pixel_size = OVERHEAD_PIXEL
+		label.font_size = SPEECH_BUBBLE_FONT_SIZE
+		label.outline_size = OVERHEAD_OUTLINE_SIZE
+		label.width = SPEECH_BUBBLE_WIDTH
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		label.modulate = Color(0.86, 1.0, 0.86, 1.0)
 		label.layers = GAMEPLAY_ONLY_VISUAL_LAYER
@@ -752,16 +824,14 @@ func _apply_model_scale() -> void:
 
 ## Keep the overhead furniture above the model as it grows.
 func _lift_overhead(factor: float) -> void:
-	var heights := {
-		"Nameplate": NAMEPLATE_HEIGHT,
-		"HealthBarBackground": HEALTH_BAR_HEIGHT,
-		"HealthBarFill": HEALTH_BAR_HEIGHT,
-		"HealthNumbers": HEALTH_LABEL_HEIGHT,
-	}
-	for node_name: Variant in heights:
-		var node := get_node_or_null(str(node_name)) as Node3D
+	# One height for the lot: the bar, the numbers and the bubble sit above or
+	# below the name inside the block rather than at world heights of their
+	# own, so the gaps between them hold their size along with the text.
+	for node_name: String in ["Nameplate", "HealthBarBackground",
+			"HealthBarFill", "HealthNumbers", "SpeechBubble"]:
+		var node := get_node_or_null(node_name) as Node3D
 		if node != null:
-			node.position.y = float(heights[node_name]) * factor
+			node.position.y = NAMEPLATE_HEIGHT * factor
 
 ## Restate how much ground this actor stands on, resizing what depends on
 ## it. Separate from `configure` because the footprint table is a login

@@ -349,6 +349,36 @@ jobs:
           path: godot-client/test-artifacts/sunmane-steppe
           if-no-files-found: error
 
+  rendered-overhead-banners:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: barichello/godot-ci:4.7.2
+    env:
+      ELORIA_ARTIFACT_DIR: ${{ github.workspace }}/godot-client/test-artifacts/overhead-banners
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install virtual display and software rendering
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends             xvfb xauth libgl1-mesa-dri libfontconfig1 libxcursor1 libxinerama1             libxrandr2 libxi6 libxkbcommon0 libasound2t64 libpulse0 libudev1
+      - name: Import project
+        run: godot --headless --path godot-client --editor --quit
+      - name: Read four names across the field, and one health bar
+        run: |
+          mkdir -p "$ELORIA_ARTIFACT_DIR"
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_overhead_banners.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/overhead-banners.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|Unable to create DisplayServer|all display drivers failed|FAIL" "$ELORIA_ARTIFACT_DIR/overhead-banners.log"
+          test -s "$ELORIA_ARTIFACT_DIR/overhead-banners.png"
+          test -s "$ELORIA_ARTIFACT_DIR/overhead-banners-zoomed-out.png"
+      - name: Upload overhead banner rendered evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rendered-overhead-banners
+          path: godot-client/test-artifacts/overhead-banners
+          if-no-files-found: error
+
   rendered-ground-markers:
     runs-on: ubuntu-latest
     timeout-minutes: 15
