@@ -2092,6 +2092,111 @@ def _slim_to_body(points: np.ndarray, rig: ea.Rig, region: str,
     return out
 
 
+def _fit_trunk_profile(points: np.ndarray, triangles: np.ndarray, rig: ea.Rig,
+                       movable: np.ndarray, clearance: float) -> dict:
+    """Fit the trunk's lining by height, preserving solid walls and ornaments.
+
+    A ray from the cavity meets the lining first even when it crosses an even
+    number of walls.  Parity tests material enclosure, not whether a hollow
+    garment surrounds a wearer; it cannot validate this measurement.  Nor can
+    a percentile of the whole point cloud: sleeves, straps and lames enlarge
+    the apparent width while the actual chest shell remains inside the body.
+
+    Width answers to both inner side walls.  Depth lets the front and back
+    out independently, so a shallow back cannot pull a clear front backwards.
+    Each band receives one positive affine transform; its inner and outer
+    walls travel together.  Short shells follow their centre rigidly instead
+    of being sheared by a profile defined over a much taller trunk.  Missing
+    bands interpolate only through the chest; the hem and collar retain
+    their seating, and the repose's sleeves and caps are exempt throughout.
+    """
+    body = region_points(rig, "torso")
+    heights = np.linspace(1.10, 1.44, 18) * rig.fit_scale
+    factors = np.full(len(heights), np.nan)
+    depth_factors = np.full(len(heights), np.nan)
+    depth_shifts = np.full(len(heights), np.nan)
+    faces = points[triangles[movable[triangles].all(axis=1)]]
+    for row, height in enumerate(heights):
+        skin = body[np.abs(body[:, 1] - height) < .025 * rig.fit_scale]
+        if len(skin) < 6:
+            continue
+        centre_z = float((skin[:, 2].min() + skin[:, 2].max()) / 2)
+        origin = np.array([0., height, centre_z])
+        front, _ = cast(origin, np.array([0., 0., 1.]), faces)
+        back, _ = cast(origin, np.array([0., 0., -1.]), faces)
+        if np.isfinite(front + back) and min(front, back) > .04 * rig.fit_scale:
+            # Let both faces out independently.  Recentring a band on its
+            # backplate must never pay for that move by burying its front.
+            want_front = max(float(np.percentile(skin[:, 2], 98)) + clearance,
+                             centre_z + front) + .008 * rig.fit_scale
+            want_back = min(float(np.percentile(skin[:, 2], 2)) - clearance,
+                            centre_z - back)
+            depth_factors[row] = np.clip(
+                (want_front - want_back) / (front + back), 1., 2.)
+            depth_shifts[row] = ((want_front + want_back) / 2
+                                - (centre_z + (front - back) / 2)
+                                * depth_factors[row])
+        lining = []
+        for sign in (-1., 1.):
+            distance, _ = cast(origin, np.array([sign, 0., 0.]), faces)
+            # A tab crossing the cavity is not a torso side wall.  Reject
+            # that band instead of saturating the profile on the tab.
+            if np.isfinite(distance) and distance > .06 * rig.fit_scale:
+                lining.append(distance)
+        if len(lining) != 2:
+            continue
+        want = float(np.percentile(np.abs(skin[:, 0]), 98)) + clearance
+        factors[row] = np.clip(want / min(lining), .85, 1.8)
+    good = np.isfinite(factors)
+    if not good.any():
+        return {"bands": 0}
+    factors = np.interp(heights, heights[good], factors[good])
+    for _ in range(2):
+        factors = np.convolve(np.pad(factors, 1, mode="edge"),
+                              [.25, .5, .25], mode="valid")
+    for column, default in ((depth_factors, 1.), (depth_shifts, 0.)):
+        valid = np.isfinite(column)
+        column[:] = (np.interp(heights, heights[valid], column[valid])
+                     if valid.any() else default)
+        for _ in range(2):
+            column[:] = np.convolve(np.pad(column, 1, mode="edge"),
+                                    [.25, .5, .25], mode="valid")
+    # The neck opening has its own size.  Do not extrapolate shoulder width
+    # up into the collar, or the collar becomes a second pair of shoulders.
+    heights = np.r_[ea.TORSO_HEM * rig.fit_scale, heights, 1.50 * rig.fit_scale]
+    factors = np.r_[1., factors, 1.]
+    depth_factors = np.r_[1., depth_factors, 1.]
+    depth_shifts = np.r_[0., depth_shifts, 0.]
+    canon, edges, count = _weld(points, triangles)
+    labels = _components(edges, count)[canon]
+    before = points.copy()
+    short_shells = 0
+    for label in np.unique(labels[movable]):
+        member = labels == label
+        if not movable[member].all():
+            continue
+        block = before[member]
+        if np.ptp(block[:, 1]) <= WHOLE_SHELL * rig.fit_scale:
+            short_shells += 1
+            centre = block.mean(axis=0)
+            factor = np.interp(centre[1], heights, factors)
+            points[member, 0] += centre[0] * (factor - 1.)
+            points[member, 2] += (
+                centre[2] * (np.interp(centre[1], heights, depth_factors) - 1.)
+                + np.interp(centre[1], heights, depth_shifts))
+        else:
+            points[member, 0] *= np.interp(block[:, 1], heights, factors)
+            points[member, 2] = (
+                block[:, 2] * np.interp(block[:, 1], heights, depth_factors)
+                + np.interp(block[:, 1], heights, depth_shifts))
+    return {"bands": int(good.sum()), "shortShells": short_shells,
+            "heights": np.round(heights, 3).tolist(),
+            "widthFactors": np.round(factors, 3).tolist(),
+            "depthFactors": np.round(depth_factors, 3).tolist(),
+            "depthShifts": np.round(depth_shifts, 3).tolist(),
+            "maxMove": round(float(np.abs(points - before).max()), 4)}
+
+
 def _raise_sunken_front(points: np.ndarray, rig: ea.Rig, region: str,
                         movable: np.ndarray, target_clear: float,
                         triangles: np.ndarray | None = None,
@@ -2858,16 +2963,11 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
             seated, surface.indices.reshape(-1, 3), rig, posed)
         step0["sleeveRingsCentred"] = _centre_sleeves(
             seated, surface.indices.reshape(-1, 3), rig, posed)
-        # Slim the trunk onto the body.  The seat sizes girth from the design's
-        # own depth-to-height ratio, and these are chunky plate designs, so the
-        # chest shell stood 4-5 cm proud and read barrel-chested.  With the
-        # body's covered region hidden under the liner there is nothing to
-        # clear, so the trunk is drawn in toward the body's own vertical axis
-        # until it hugs -- per height band, shrink-only, floored so a genuine
-        # pauldron or breastplate relief is thinned rather than flattened, and
-        # never past the body plus clearance so the shirt cannot surface.
-        # Sleeves and caps are exempt: they are fitted to the limb already, and
-        # a sleeve pulled to the torso axis collapses onto the arm.
+        # The seat's single girth is provisional.  Fit the trunk against its
+        # lining now that the repose has identified the limbs.  This replaces
+        # the shrink-only point-cloud fit and the front/back vertex clamps:
+        # those narrowed the chest by its ornaments and flattened solid walls.
+        # Sleeves and caps already fit their limbs, so they remain exempt.
         exempt = np.zeros(len(seated), dtype=bool)
         for step in posed:
             if step.get("applied"):
@@ -2875,15 +2975,8 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
                                      dtype=bool)
                 exempt |= np.asarray(step.get("cap", np.zeros(len(seated))),
                                      dtype=bool)
-        seated = _slim_to_body(seated, rig, region, ~exempt,
-                               clearance + 0.008)
-        step0 = posed[0] if posed else {}
-        step0["frontRaised"] = _raise_sunken_front(
-            seated, rig, region, ~exempt, clearance,
-            surface.indices.reshape(-1, 3))
-        step0["bustFlattened"] = _flatten_bust(seated, rig, region, ~exempt)
-        step0["backFloored"] = _floor_backplate(
-            seated, rig, region, ~exempt, surface.indices.reshape(-1, 3))
+        step0["trunkProfile"] = _fit_trunk_profile(
+            seated, triangles, rig, ~exempt, clearance)
         step0["floatersSettled"] = _settle_floaters(
             seated, surface.indices.reshape(-1, 3), rig, region,
             body=rig._region(list(ea.GARMENT_SKIN[region])
