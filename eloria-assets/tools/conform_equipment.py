@@ -691,6 +691,36 @@ def halves_are_separate(points: np.ndarray, triangles: np.ndarray) -> bool:
     return spanning == 0
 
 
+def nearer_limb(points: np.ndarray, rig: ea.Rig, region: str) -> np.ndarray:
+    """Which limb of a pair each vertex belongs to.  True is the left one.
+
+    Splitting a two-tube garment at x = 0 is right for most of it and wrong
+    exactly where it matters.  At the knee the tubes are at their closest, so
+    the inner wall of one leg crosses the midline and is counted as part of the
+    other; the seat then shifts a leg that is partly its neighbour, and the slim
+    measures the width of one.  Both come out different for the two legs of a
+    design whose own halves match, and a player sees one thigh thicker than the
+    other.  Distance to the limb's own axis has no seam down the middle for
+    geometry to fall through.
+    """
+    spec = MEASURE.get(region, {})
+    if spec.get("mode") != "sides":
+        return points[:, 0] >= 0
+    reach = []
+    for side in ("l", "r"):
+        start = rig.origin(spec["axis"][0] % side)
+        end = rig.origin(spec["axis"][1] % side)
+        axis = end - start
+        length = float(np.linalg.norm(axis))
+        if length < 1e-6:
+            return points[:, 0] >= 0
+        axis = axis / length
+        offset = points - start
+        along = np.clip(offset @ axis, 0.0, length)[:, None]
+        reach.append(np.linalg.norm(offset - along * axis, axis=1))
+    return reach[0] <= reach[1]
+
+
 def seat(points: np.ndarray, rig: ea.Rig, region: str,
          triangles: np.ndarray | None = None,
          taper: bool = False,
@@ -780,8 +810,9 @@ def seat(points: np.ndarray, rig: ea.Rig, region: str,
     if MEASURE[region]["mode"] == "sides":
         rigid = halves_are_separate(seated, triangles)
         crotch = float(rig.origin(measure_bones(region, "l")[0])[1])
+        left = nearer_limb(seated, rig, region)
         for side in ("l", "r"):
-            own = seated[:, 0] >= 0 if side == "l" else seated[:, 0] < 0
+            own = left if side == "l" else ~left
             if own.sum() < 8:
                 continue
             limb = rig._region(measure_bones(region, side))
@@ -2366,9 +2397,10 @@ def _slim_legs(points: np.ndarray, rig: ea.Rig, region: str,
     hip_line = min(float(rig.origin("thigh_l")[1]),
                    float(rig.origin("thigh_r")[1])) - 0.01
     movable = movable & (points[:, 1] < hip_line)
+    left = nearer_limb(points, rig, region)
     for side in ("l", "r"):
         limb = rig._region(measure_bones(region, side))
-        own = ((points[:, 0] >= 0) if side == "l" else (points[:, 0] < 0)) & movable
+        own = (left if side == "l" else ~left) & movable
         if int(own.sum()) < 12 or len(limb) < 12:
             continue
         centre = np.array([float(np.median(limb[:, 0])),
