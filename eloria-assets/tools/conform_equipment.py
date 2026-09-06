@@ -2010,6 +2010,132 @@ def socket_origin(rig: ea.Rig, part: int) -> np.ndarray:
     return origin + offset
 
 
+#: How far a sleeve's own axis may be turned onto its bone's, in degrees.  A
+#: fit that claims more than this has latched onto a fin rather than the tube.
+SLEEVE_TILT = 40.0
+
+
+def _sleeve_bone(shell: np.ndarray, rig: ea.Rig, side: str):
+    """Which arm segment a sleeve component is worn on.
+
+    By where its vertices ARE, not by where its centroid is.  A bracer running
+    from just above the elbow to the wrist has its centroid nearer the upper
+    arm's line than the forearm's -- the upper segment stops at the elbow, so
+    the whole bracer is measured against that one point -- and both sleeve
+    passes then straightened it against the wrong bone.  Every vertex votes for
+    the segment it is nearest and the majority wins, which puts the legendary
+    hero's vambrace on the forearm where 87 per cent of it lives.
+    """
+    scores = {}
+    for name, (top, bottom) in (("upper", ("upperarm", "lowerarm")),
+                                ("fore", ("lowerarm", "hand"))):
+        try:
+            a = rig.origin("%s_%s" % (top, side))
+            b = rig.origin("%s_%s" % (bottom, side))
+        except (KeyError, ValueError):
+            continue
+        span = b - a
+        along = np.clip((shell - a) @ span / max(float(span @ span), 1e-12),
+                        0.0, 1.0)
+        scores[name] = (np.linalg.norm(shell - (a + np.outer(along, span)),
+                                       axis=1), a, b)
+    if len(scores) < 2:
+        return None
+    nearer = scores["upper"][0] < scores["fore"][0]
+    name = "upper" if float(nearer.mean()) >= 0.5 else "fore"
+    return (name, scores[name][1], scores[name][2])
+
+
+def _tube_axis(shell: np.ndarray, seed: np.ndarray, bands: int = 5):
+    """The line a sleeve's rings are strung on, and its middle.
+
+    Fitted through the median of each band rather than by taking the whole
+    cloud's principal axis: a sleeve carries fins, lames and a flared cuff, and
+    a principal axis follows whichever of those is longest.  A ring's median
+    centre does not care how far its fin sticks out.
+    """
+    centre = np.median(shell, axis=0)
+    along = (shell - centre) @ seed
+    low, high = float(along.min()), float(along.max())
+    if high - low < 1e-6:
+        return seed, centre
+    rings = []
+    for band in range(bands):
+        lo = low + (high - low) * band / bands
+        hi = low + (high - low) * (band + 1) / bands
+        here = (along >= lo) & (along <= hi)
+        if int(here.sum()) >= 4:
+            rings.append(np.median(shell[here], axis=0))
+    if len(rings) < 3:
+        return seed, centre
+    rings = np.asarray(rings)
+    middle = rings.mean(axis=0)
+    axis = np.linalg.svd(rings - middle, full_matrices=False)[2][0]
+    if float(axis @ seed) < 0.0:
+        axis = -axis
+    return axis, middle
+
+
+def _true_sleeve_axes(points: np.ndarray, triangles: np.ndarray,
+                      rig: ea.Rig, steps: list[dict]) -> int:
+    """Turn each sleeve so its own axis lies along the bone it is worn on.
+
+    `_align_arm_sleeves` rotates a sleeve group about the joint until its
+    CENTROID sits on the bone line.  That fixes a sleeve hanging off at the
+    concept's elbow angle and does nothing at all for one already centred but
+    lying across the bone.  The legendary hero's vambrace is the second kind:
+    centred within 9 mm and tilted 29 degrees, so its rings drift from 16 mm
+    off the forearm at the elbow to 45 mm at the wrist and it reads as a bell
+    flaring off the arm.  `_clear_sleeves` then makes it worse -- the tilt puts
+    the near wall inside the arm, and a band scaled up to free that wall takes
+    the far wall out with it.
+
+    So each wrapping component is turned about its own middle until its tube
+    axis matches the bone's.  Rigid, so nothing can invert; the translation
+    that remains is `_centre_sleeves`' job.
+    """
+    inverse, edges, count = _weld(points, triangles)
+    labels = _components(edges, count)[inverse]
+    turned = 0
+    for step in steps:
+        if not step.get("applied") or "sleeve" not in step:
+            continue
+        side = step["limb"].rsplit("_", 1)[-1]
+        sleeve = np.asarray(step["sleeve"], dtype=bool)
+        for label in np.unique(labels[sleeve]):
+            members = labels == label
+            if int((members & sleeve).sum()) * 2 < int(members.sum()):
+                continue
+            shell = points[members]
+            found = _sleeve_bone(shell, rig, side)
+            if found is None:
+                continue
+            _name, pivot, tip = found
+            bone = tip - pivot
+            bone = bone / max(np.linalg.norm(bone), 1e-9)
+            axis, middle = _tube_axis(shell, bone)
+            half = float(np.percentile(np.abs((shell - middle) @ bone), 95.0))
+            if not _wraps_axis(shell - (middle - bone * half), np.zeros(3),
+                               bone, 2.0 * half + 0.05):
+                continue
+            cross = np.cross(axis, bone)
+            norm = float(np.linalg.norm(cross))
+            angle = math.degrees(math.acos(
+                float(np.clip(np.dot(axis, bone), -1.0, 1.0))))
+            if norm < 1e-6 or angle < 4.0 or angle > SLEEVE_TILT:
+                continue
+            cross = cross / norm
+            cos = math.cos(math.radians(angle))
+            sin = math.sin(math.radians(angle))
+            skew = np.array([[0, -cross[2], cross[1]],
+                             [cross[2], 0, -cross[0]],
+                             [-cross[1], cross[0], 0]])
+            turn = np.eye(3) + sin * skew + (1 - cos) * (skew @ skew)
+            points[members] = (points[members] - middle) @ turn.T + middle
+            turned += 1
+    return turned
+
+
 def _align_arm_sleeves(points: np.ndarray, triangles: np.ndarray,
                        rig: ea.Rig, steps: list[dict]) -> int:
     """Rigidly turn each arm-sleeve group onto its own bone line.
@@ -2045,10 +2171,10 @@ def _align_arm_sleeves(points: np.ndarray, triangles: np.ndarray,
             if int((members & sleeve).sum()) * 2 < int(members.sum()):
                 continue
             centre = np.median(points[members], axis=0)
-            gap_upper = _segment_gap(centre, shoulder, elbow)
-            gap_fore = _segment_gap(centre, elbow, wrist)
-            pivot, tip = ((shoulder, elbow) if gap_upper <= gap_fore
-                          else (elbow, wrist))
+            found = _sleeve_bone(points[members], rig, side)
+            if found is None:
+                continue
+            which, pivot, tip = found
             # Only ring-like components are worn ON the arm and belong in
             # the alignment: a shoulder mantle or drape classified as
             # sleeve must keep its authored hang -- rotated onto the bone
@@ -2061,7 +2187,7 @@ def _align_arm_sleeves(points: np.ndarray, triangles: np.ndarray,
             if not _wraps_axis(points[members] - (centre - axis * half),
                                np.zeros(3), axis, 2.0 * half + 0.05):
                 continue
-            groups["upper" if gap_upper <= gap_fore else "fore"].append(members)
+            groups[which].append(members)
         for name, pivot, tip in (("upper", shoulder, elbow),
                                  ("fore", elbow, wrist)):
             if not groups[name]:
@@ -2138,16 +2264,14 @@ def _centre_sleeves(points: np.ndarray, triangles: np.ndarray, rig: ea.Rig,
             if int((members & sleeve).sum()) * 2 < int(members.sum()):
                 continue
             centre = np.median(points[members], axis=0)
-            nearest = None
-            for a, b in segments:
-                span = b - a
-                t = float(np.clip(np.dot(centre - a, span)
-                                  / max(np.dot(span, span), 1e-12), 0.0, 1.0))
-                on = a + t * span
-                gap = float(np.linalg.norm(centre - on))
-                if nearest is None or gap < nearest[0]:
-                    nearest = (gap, on, a, span)
-            gap, on, a, span = nearest
+            found = _sleeve_bone(points[members], rig, side)
+            if found is None:
+                continue
+            _name, a, b = found
+            span = b - a
+            t = float(np.clip(np.dot(centre - a, span)
+                              / max(np.dot(span, span), 1e-12), 0.0, 1.0))
+            on = a + t * span
             axis = span / max(np.linalg.norm(span), 1e-9)
             # Ring-ness is judged about the component's OWN centre, not the
             # limb line: the very displacement being corrected can put the
@@ -2619,6 +2743,103 @@ def _push_waist_out(points: np.ndarray, waist: np.ndarray, rig: ea.Rig,
     return moved
 
 
+def _make_winding_coherent(surface) -> int:
+    """Turn the odd triangle that is wound against the rest of its shell.
+
+    A shell's facets have to agree about which side is out, and the generated
+    meshes do not always agree: the legendary hero cuirass's collar has 8 of
+    its 34 front facets wound inwards, and a backface-culled facet is a hole --
+    the player looks through the collar wall into the inside of the piece and
+    it reads as an open funnel rather than a standing collar.  Every proportion
+    of that collar measures faithful to the design, which is why this took a
+    while to find: the geometry was right and a quarter of it was invisible.
+
+    Orientation is propagated across shared edges, which decides the winding of
+    every facet in a shell relative to its neighbours.  Which way round that
+    goes is then settled by area: the sense most of the shell already has, so
+    only the minority ever moves.  A whole shell wound inwards is the other
+    problem and `_unwind_inverted_shells` has the measurement for it.
+
+    Vertex normals follow the winding only where a vertex's triangles ALL
+    turned; one on the seam between a turned facet and a kept one has no answer
+    that suits both, and a shading seam there is worth less than a hole.
+    """
+    points = surface.positions
+    triangles = surface.indices.reshape(-1, 3)
+    if len(triangles) < 2:
+        return 0
+    canon, _edges, _count = _weld(points, triangles)
+    keyed = canon[triangles]
+    # Every directed edge, in the order its own triangle walks it.
+    starts = keyed[:, [0, 1, 2]].reshape(-1)
+    ends = keyed[:, [1, 2, 0]].reshape(-1)
+    owner = np.repeat(np.arange(len(triangles)), 3)
+    low = np.minimum(starts, ends)
+    high = np.maximum(starts, ends)
+    forward = starts < ends
+    order = np.lexsort((forward, high, low))
+    low, high, forward, owner = (low[order], high[order], forward[order],
+                                 owner[order])
+    same = (low[1:] == low[:-1]) & (high[1:] == high[:-1])
+    pairs = np.flatnonzero(same)
+    if not len(pairs):
+        return 0
+    left, right = owner[pairs], owner[pairs + 1]
+    # Two triangles agree when they walk their shared edge in OPPOSITE
+    # directions; walking it the same way means one of them is inside out.
+    agree = forward[pairs] != forward[pairs + 1]
+
+    flip = np.zeros(len(triangles), dtype=bool)
+    seen = np.zeros(len(triangles), dtype=bool)
+    order_of = np.argsort(left, kind="stable")
+    left_sorted = left[order_of]
+    first = np.searchsorted(left_sorted, np.arange(len(triangles)), "left")
+    last = np.searchsorted(left_sorted, np.arange(len(triangles)), "right")
+    back_of = np.argsort(right, kind="stable")
+    right_sorted = right[back_of]
+    first_r = np.searchsorted(right_sorted, np.arange(len(triangles)), "left")
+    last_r = np.searchsorted(right_sorted, np.arange(len(triangles)), "right")
+
+    corner = points[triangles]
+    area = 0.5 * np.linalg.norm(np.cross(corner[:, 1] - corner[:, 0],
+                                         corner[:, 2] - corner[:, 0]), axis=1)
+    turned = 0
+    for seed in range(len(triangles)):
+        if seen[seed]:
+            continue
+        seen[seed] = True
+        stack = [seed]
+        shell = [seed]
+        while stack:
+            here = stack.pop()
+            for table, other, lo, hi in ((order_of, right, first, last),
+                                         (back_of, left, first_r, last_r)):
+                for slot in table[lo[here]:hi[here]]:
+                    there = int(other[slot])
+                    if seen[there]:
+                        continue
+                    seen[there] = True
+                    flip[there] = flip[here] ^ (not bool(agree[slot]))
+                    shell.append(there)
+                    stack.append(there)
+        shell = np.asarray(shell)
+        turning = flip[shell]
+        if float(area[shell][turning].sum()) > float(area[shell][~turning].sum()):
+            flip[shell] = ~turning
+        turned += int(flip[shell].sum())
+    if not flip.any():
+        return 0
+    faces = triangles.copy()
+    faces[flip] = faces[flip][:, [0, 2, 1]]
+    kept = np.zeros(len(points), dtype=bool)
+    np.logical_or.at(kept, triangles[~flip].reshape(-1), True)
+    moved = np.zeros(len(points), dtype=bool)
+    np.logical_or.at(moved, triangles[flip].reshape(-1), True)
+    surface.normals[moved & ~kept] = -surface.normals[moved & ~kept]
+    surface.indices = faces.reshape(-1)
+    return turned
+
+
 def _unwind_inverted_shells(surface) -> int:
     """Turn any closed shell that is wound inside out the right way round.
 
@@ -3016,6 +3237,8 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
         step0 = posed[0] if posed else {}
         step0["sleeveGroupsAligned"] = _align_arm_sleeves(
             seated, surface.indices.reshape(-1, 3), rig, posed)
+        step0["sleeveAxesTrued"] = _true_sleeve_axes(
+            seated, surface.indices.reshape(-1, 3), rig, posed)
         step0["sleeveRingsCentred"] = _centre_sleeves(
             seated, surface.indices.reshape(-1, 3), rig, posed)
         # Slim the trunk onto the body.  The seat sizes girth from the design's
@@ -3081,6 +3304,7 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
         fitted, grown, pushed = seated, 1.0, 0
     surface.positions = fitted
     shards = _drop_orphan_shards(surface, steps=posed)
+    coherent = _make_winding_coherent(surface)
     unwound = _unwind_inverted_shells(surface)
 
     glb = ea.EquipmentGLB(generator="Eloria conform_equipment")
@@ -3135,7 +3359,7 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
     span_after = (fitted.max(axis=0) - fitted.min(axis=0))
     return {"source": source.name, "out": out.name, "kind": kind,
             "region": region, "vertices": int(len(positions)),
-            "unwound": unwound,
+            "unwound": unwound, "rewound": coherent,
             "triangles": int(len(indices) // 3),
             "joints": len(rig.joint_names),
             "scale": round(float(span_after[1] / max(span_before[1], 1e-9)), 4),
