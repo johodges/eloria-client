@@ -13,6 +13,10 @@ own.  A wearable is not one record but four, joined only by the item's name --
   the server item   dev-server/config/eloria/items.txt, an [item] block
   the server visual dev-server/eloria/items.py, EQUIPMENT_VISUAL_OVERRIDES
 
+What this tool does NOT decide is what a piece is worth.  It seeds a stat the
+first time it defines a piece and preserves it on every run after, so a
+balance pass done in the spreadsheet survives a rename or a new sheet.
+
 -- and a set added to one side and not the other is either armour that draws
 nothing or geometry nobody can wear.  All four are written here so they cannot
 drift apart.
@@ -70,12 +74,20 @@ FIRST_ITEM_ID = 1274
 LATER_ITEM_ID = 1752
 LATER_IMAGE_ID = 576
 
-#: What a piece is worth is decided by three things: its finish (the material
-#: family -- emu and the armour base), its slot (a cuirass stops more than a
-#: boot), and its sheet's tier (militia kit up to legendary regalia).  The
-#: numbers stay on the Eternal Lands scale the old flat ladder used -- single
-#: digits per piece, a worn set in the twenties -- the tiers spread the sheets
-#: across that scale instead of stacking them all on one rung.
+#: What a piece is worth ON THE RUN THAT FIRST DEFINES IT is decided by three
+#: things: its finish (the material family -- emu and the armour base), its
+#: slot (a cuirass stops more than a boot), and its sheet's tier (militia kit
+#: up to legendary regalia).  The numbers stay on the Eternal Lands scale the
+#: old flat ladder used -- single digits per piece, a worn set in the twenties
+#: -- the tiers spread the sheets across that scale instead of stacking them
+#: all on one rung.
+#:
+#: After that first run this is a seed and not an authority: the stat belongs
+#: to whoever balances it, through dev-server/tools/import_equipment_csv.py,
+#: and `served_stats` carries what the catalogue holds across a rewrite.  So
+#: editing a tier here moves a sheet that has never been served and nothing
+#: else; `--reseed` is how a changed tier reaches pieces already served, and
+#: it discards that balancing by design.
 FINISH_EMU = {"cloth": 4, "leather": 8, "mail": 14, "plate": 18}
 
 #: (armour low, armour high, defense) for a TORSO piece of the finish at
@@ -481,24 +493,70 @@ def _block(rows, first_item: int, first_image: int) -> list[Piece]:
     return pieces
 
 
-def item_block(piece: Piece) -> str:
-    emu, (low, high), defense, extras = finish_stats(
-        piece.finish, piece.part, piece.tier, piece.theme)
+#: The lines of an [item] block this tool decides. Everything else in a block
+#: -- emu, armor, defense, any other stat -- is a number somebody balances,
+#: and is carried across a rewrite rather than recomputed. See `served_stats`.
+AUTHORED_KEYS = ("name", "item_id", "image_id", "flags", "category",
+                 "description", "equip_type")
+
+
+def served_stats(items_text: str) -> dict[int, list[str]]:
+    """The stat lines each item_id already has in the catalogue.
+
+    `finish_stats` decides what a piece is worth the FIRST time it is defined.
+    After that the number belongs to whoever balances it -- through
+    dev-server/tools/import_equipment_csv.py, which writes these same lines --
+    so a rewrite re-emits what it finds instead of computing over the top of
+    it. Without this, running the tool for any other reason (a rename, a new
+    sheet) silently reverts every balance pass, and the diff looks exactly
+    like the rewrite doing its job.
+
+    The consequence, and it is the whole cost of this: editing a tier in
+    SHEETS no longer moves a piece that is already served. `--reseed` is the
+    way back, and it says what it is discarding.
+    """
+    stats: dict[int, list[str]] = {}
+    for chunk in items_text.split("[item]")[1:]:
+        block = chunk.split("[/item]", 1)[0]
+        fields, kept = {}, []
+        for line in block.splitlines():
+            key, separator, value = line.partition(":")
+            if not separator:
+                continue
+            key = key.strip()
+            fields[key] = value.strip()
+            if key not in AUTHORED_KEYS:
+                kept.append(line.strip())
+        if "item_id" in fields:
+            stats[int(fields["item_id"])] = kept
+    return stats
+
+
+def item_block(piece: Piece, served: dict[int, list[str]] | None = None) -> str:
     slot = {3: "head", 4: "legs", 5: "body", 6: "feet"}[piece.part]
+    kept = (served or {}).get(piece.item_id)
+    if kept is None:
+        # The first time this piece is defined, and only then: seed it from
+        # its finish, slot and tier. Every later run keeps what it finds.
+        emu, (low, high), defense, extras = finish_stats(
+            piece.finish, piece.part, piece.tier, piece.theme)
+        kept = ["emu: %d" % emu, "armor: %d/%d" % (low, high)]
+        if defense:
+            kept.append("defense: %d" % defense)
+        kept.extend("%s: %d" % (key, value) for key, value in extras if value)
+    # emu sits above the authored middle of a block and the stats below it,
+    # which is the order every existing entry is written in.
+    weight = [line for line in kept if line.startswith("emu:")]
     lines = ["", "[item]",
              "name: %s" % piece.name,
              "item_id: %d" % piece.item_id,
-             "image_id: %d" % piece.image_id,
-             "emu: %d" % emu,
-             "flags: 2",
-             "category: Armor",
-             "description: Generated from the %s concept sheet."
-             % piece.source.stem.split("__")[0].replace("_", " ").strip(),
-             "equip_type: %s" % slot,
-             "armor: %d/%d" % (low, high)]
-    if defense:
-        lines.append("defense: %d" % defense)
-    lines.extend("%s: %d" % (key, value) for key, value in extras if value)
+             "image_id: %d" % piece.image_id]
+    lines.extend(weight)
+    lines.extend(["flags: 2", "category: Armor",
+                  "description: Generated from the %s concept sheet."
+                  % piece.source.stem.split("__")[0].replace("_", " ").strip(),
+                  "equip_type: %s" % slot])
+    lines.extend(line for line in kept if not line.startswith("emu:"))
     lines.append("[/item]")
     return "\n".join(lines)
 
@@ -523,6 +581,12 @@ def main() -> int:
                     help="dev-server checkout to write the item definitions "
                          "into (a worktree, say); default the sibling one")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--reseed", action="store_true",
+                    help="recompute every stat from finish, slot and tier "
+                         "instead of keeping what the catalogue has. This "
+                         "discards balancing done through "
+                         "import_equipment_csv.py, so it is never what a "
+                         "rename or a new sheet wants")
     ap.add_argument("--skip-build", action="store_true",
                     help="rewrite the definitions without rebuilding meshes")
     ap.add_argument("--meshes-only", action="store_true",
@@ -623,7 +687,12 @@ def main() -> int:
                         encoding="utf-8")
 
     items = items_path.read_text(encoding="utf-8")
-    body = "\n".join(item_block(piece) for piece in everyone).lstrip("\n")
+    served = {} if args.reseed else served_stats(items)
+    if args.reseed:
+        print("--reseed: %d piece(s) go back to their computed stats, "
+              "discarding any balancing done in the catalogue" % len(everyone))
+    body = "\n".join(item_block(piece, served)
+                    for piece in everyone).lstrip("\n")
     items_path.write_text(fence(items, OPEN_ITEMS, CLOSE_ITEMS, body),
                           encoding="utf-8")
 
