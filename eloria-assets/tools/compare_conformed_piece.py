@@ -60,6 +60,12 @@ def main() -> int:
     ap.add_argument("--no-pose-arms", dest="pose_arms", action="store_false")
     ap.add_argument("--drop-material", action="append", default=[],
                     help="hide materials whose name ends with this")
+    ap.add_argument("--worn", type=Path, default=None, metavar="RACE.GLB",
+                    help="also write <out>_worn.png: every skinned model drawn "
+                         "on this race body at true scale, framed on the "
+                         "torso.  A fit that reads well beside the generated "
+                         "mesh can still read badly on a character, and that "
+                         "is the picture the player sees")
     ap.add_argument("--labels", default="")
     ap.add_argument("--width", type=int, default=760,
                     help="pixels per column")
@@ -69,10 +75,13 @@ def main() -> int:
         if not model.exists():
             raise SystemExit("no such model: %s" % model)
     args.out.parent.mkdir(parents=True, exist_ok=True)
+    if args.worn is not None and not args.worn.exists():
+        raise SystemExit("no such race body: %s" % args.worn)
     command = [str(find_blender()), "--background", "--python", str(SCRIPT),
                "--", str(args.out.resolve()), str(args.yaw),
                "1" if args.pose_arms else "0", str(args.width),
-               ",".join(args.drop_material), args.labels]
+               ",".join(args.drop_material), args.labels,
+               str(args.worn.resolve()) if args.worn is not None else ""]
     command += [str(m.resolve()) for m in args.models]
     result = subprocess.run(command, capture_output=True, text=True)
     if result.returncode != 0 or not args.out.exists():

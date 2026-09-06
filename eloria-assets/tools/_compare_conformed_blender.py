@@ -7,12 +7,13 @@ from mathutils import Matrix, Vector
 
 argv = sys.argv[sys.argv.index("--") + 1:]
 OUT, YAW, POSE, WIDTH, DROP, LABELS = argv[:6]
+WORN = argv[6] if len(argv) > 6 and argv[6] else ""
 YAW = float(YAW)
 POSE = POSE == "1"
 WIDTH = int(WIDTH)
 DROP = [d for d in DROP.split(",") if d]
 LABELS = LABELS.split(",") if LABELS else []
-MODELS = argv[6:]
+MODELS = argv[7:]
 
 #: Where the generated meshes hang their arms, measured off the phoenix
 #: cuirass and steady to a degree across the set: 11 degrees out from
@@ -182,6 +183,74 @@ world.use_nodes = True
 world.node_tree.nodes["Background"].inputs[0].default_value = (.07, .08, .09, 1)
 world.node_tree.nodes["Background"].inputs[1].default_value = 0.6
 
+def render_worn(path):
+    """Draw every skinned model on the race body, at true scale.
+
+    A separate picture rather than another column, because the two answer
+    different questions and cannot share a camera: the comparison above
+    normalises each model to one height so shapes can be read against each
+    other, and this one must not normalise anything at all -- whether a piece
+    is the right SIZE for a character is most of what is being asked.
+    """
+    for obj in list(bpy.data.objects):
+        bpy.data.objects.remove(obj, do_unlink=True)
+    TRACKED.clear()
+    # Only the models that can be worn.  A raw generated mesh has no skeleton
+    # and no place on a body; it belongs in the comparison above, not here.
+    worn = []
+    for model in MODELS:
+        piece = load(model)
+        if any(o.type == "ARMATURE" for o in piece):
+            worn.append((model, piece))
+        else:
+            for obj in piece:
+                bpy.data.objects.remove(obj, do_unlink=True)
+            for obj in list(TRACKED):
+                if obj not in bpy.data.objects.values():
+                    TRACKED.remove(obj)
+    if not worn:
+        print("  nothing skinned to wear")
+        return
+    span = COLUMN * (len(worn) - 1)
+    for index, (_model, piece) in enumerate(worn):
+        body = load(WORN)
+        drop_materials(piece)
+        shift = index * COLUMN - span / 2.0
+        for obj in body + piece:
+            if obj.parent is None:
+                obj.location = (obj.location.x + shift, obj.location.y,
+                                obj.location.z)
+    camera_data = bpy.data.cameras.new("cam")
+    camera_data.type = "ORTHO"
+    camera_data.ortho_scale = COLUMN * len(worn)
+    camera = bpy.data.objects.new("cam", camera_data)
+    bpy.context.collection.objects.link(camera)
+    # Framed on the chest: the torso span is 1.02 to 1.54 in world metres.
+    camera.location = (0, -8, 1.28)
+    camera.rotation_euler = (math.radians(90), 0, 0)
+    bpy.context.scene.camera = camera
+    for direction, energy in (((-0.5, -1.0, 0.6), 4.0), ((0.9, -0.6, 0.2), 2.0),
+                              ((0.0, 1.0, 0.3), 1.5)):
+        data = bpy.data.lights.new("l", "SUN")
+        data.energy = energy
+        lamp = bpy.data.objects.new("l", data)
+        bpy.context.collection.objects.link(lamp)
+        lamp.rotation_euler = Vector(direction).to_track_quat("-Z", "Y").to_euler()
+    world = bpy.data.worlds.new("w2")
+    bpy.context.scene.world = world
+    world.use_nodes = True
+    world.node_tree.nodes["Background"].inputs[0].default_value = (.07, .08, .09, 1)
+    world.node_tree.nodes["Background"].inputs[1].default_value = 0.6
+    scene = bpy.context.scene
+    scene.render.resolution_x = WIDTH * len(worn)
+    scene.render.resolution_y = int(WIDTH * 1.25)
+    stem = OUT.rsplit(".", 1)
+    scene.render.filepath = (stem[0] + "_worn." + stem[1]) if len(stem) == 2 \
+        else OUT + "_worn.png"
+    bpy.ops.render.render(write_still=True)
+    print("  wrote %s" % scene.render.filepath)
+
+
 scene = bpy.context.scene
 for engine in ("BLENDER_EEVEE_NEXT", "BLENDER_EEVEE", "CYCLES"):
     try:
@@ -194,3 +263,5 @@ scene.render.resolution_y = int(WIDTH * 1.25)
 scene.render.filepath = OUT
 bpy.ops.render.render(write_still=True)
 print("  rendered %d column(s)" % len(loaded))
+if WORN:
+    render_worn(WORN)
