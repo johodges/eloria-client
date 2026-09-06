@@ -247,7 +247,8 @@ def _grip_centre(points: np.ndarray, axis: int, spec: dict) -> float:
     return float(near[:, axis].max() + near[:, axis].min()) / 2.
 
 
-def seat_prop(surface: "Imported", kind: str, flip: bool = False) -> None:
+def seat_prop(surface: "Imported", kind: str, flip: bool = False,
+              roll: bool = False) -> None:
     """Stand a generated prop up along +Y and put its grip on the socket.
 
     A generated weapon arrives in whatever frame the drawing implied, boxed
@@ -264,6 +265,14 @@ def seat_prop(surface: "Imported", kind: str, flip: bool = False) -> None:
     ``flip`` turns the piece end for end, and the turn is baked into the mesh
     that is written rather than compensated for at the socket, so every prop
     that ships holds to one convention: business end at +Y, grip at the origin.
+
+    ``roll`` turns it a half turn about that same long axis, which is the one
+    thing end-for-end cannot fix: a curved head faces the way it was drawn, and
+    the drawing settles which side of the haft the edge falls on.  It is a
+    rotation rather than the mirror ``flip`` performs, so an asymmetric hilt
+    keeps its handedness.  Baked into the mesh for the same reason as the flip
+    -- the socket is shared by every prop in a hand, so nothing that is true of
+    one piece belongs there.
 
     Across the other two axes a held prop is centred on its *grip* rather than
     on its bounding box, which for a sword is the same thing and for a curved
@@ -297,6 +306,9 @@ def seat_prop(surface: "Imported", kind: str, flip: bool = False) -> None:
     if bool(flip) != bool(spec.get("flip", False)):
         points[:, 1] *= -1.
         normals[:, 1] *= -1.
+    if roll:
+        points[:, ::2] *= -1.
+        normals[:, ::2] *= -1.
 
     span = float(points[:, 1].max() - points[:, 1].min())
     points *= spec["length"] / max(span, 1e-9)
@@ -1801,14 +1813,14 @@ def seat_socket(points: np.ndarray, rig: ea.Rig, kind: str) -> np.ndarray:
 
 
 def build_socket(source: Path, out: Path, rig: ea.Rig, kind: str,
-                 label: str, flip: bool = False) -> dict:
+                 label: str, flip: bool = False, roll: bool = False) -> dict:
     """Size and place one socket piece, and write it unskinned."""
     surface, png = read_source(source)
     before = surface.positions.copy()
     if kind in PROP_KIND:
         # A weapon or shield is sized from its own class rather than from the
         # body: it hangs off a hand and owes nothing to the wearer's build.
-        seat_prop(surface, kind, flip)
+        seat_prop(surface, kind, flip, roll)
     else:
         surface.positions = seat_socket(surface.positions, rig, kind)
     # Socket pieces carry concept-sheet debris too, and the runtime-size
@@ -2227,10 +2239,10 @@ def _slim_legs(points: np.ndarray, rig: ea.Rig, region: str,
 def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
           clearance: float = CLEARANCE, fit: str = "seat",
           taper: bool = False, race_path: Path | None = None,
-          flip: bool = False) -> dict:
+          flip: bool = False, roll: bool = False) -> dict:
     """Fit one generated mesh to the rig and write it as a skinned piece."""
     if kind in SOCKET_KIND or kind in PROP_KIND:
-        return build_socket(source, out, rig, kind, label, flip)
+        return build_socket(source, out, rig, kind, label, flip, roll)
     if kind not in ea.GARMENT_KINDS:
         raise ValueError(
             "%s is none of a garment kind (%s), a socket kind (%s) or a prop "
