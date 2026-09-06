@@ -116,17 +116,25 @@ def populate_causeways(build, seed: int = 0) -> None:
         span = math.hypot(dx, dz)
         px, pz = (sx + ex) * 0.5, (sz + ez) * 0.5
 
-        deck = REG.causeway_deck_level(t, name)
-        # rounded up, never down: a deck a class short of its span ends over
-        # water, and the landing overlap absorbs the extra.
-        klass = max(1, int(math.ceil(span / 12.0)))
-        length = klass * 12.0
-        key = f"Causeway_{klass}"
-        if key not in made:
+        near, far = REG.causeway_deck_ends(t, name)
+        deck = (near + far) * 0.5
+        # The deck slopes from one landing to the other, so the class only has
+        # to be near the span rather than over it: rounded to the nearest, the
+        # deck lands within half a class of the shore instead of running up to
+        # a whole one onto the island.
+        klass = max(1, int(round(span / REG.CAUSEWAY_CLASS)))
+        length = klass * REG.CAUSEWAY_CLASS
+        # A sheared span cannot be shared between two slopes, so the rise is
+        # rounded to the metre and the bridgehead takes what that leaves. At a
+        # quarter of a metre every crossing was its own masonry and the package
+        # grew by ten megabytes.
+        rise = round(far - near)
+        key = f"Causeway_{klass}" if rise == 0.0 else f"Causeway_{klass}_{rise:+.0f}"
+        if key not in build.meshes:
             arches = max(2, min(6, int(length // 16)))
             build.meshes[key] = CA.causeway(length, deck_height=6.0,
                                             width=5.4, arches=arches,
-                                            seed=seed + klass)
+                                            seed=seed + klass, rise=rise)
             made[klass] = key
         _add(build, f"Causeway_{name}", key, build.meshes[key],
              (px, deck - 6.0, pz), _heading(dx, dz),

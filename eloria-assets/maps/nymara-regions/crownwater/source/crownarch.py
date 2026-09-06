@@ -225,7 +225,7 @@ def cathedral(seed: int = 0, scale: float = 1.0) -> SW.MeshGroup:
 
 
 def causeway(length: float, deck_height: float, width: float = 5.0,
-             arches: int = 3, seed: int = 0) -> SW.MeshGroup:
+             arches: int = 3, seed: int = 0, rise: float = 0.0) -> SW.MeshGroup:
     """A stone causeway spanning open water between two islands.
 
     Built on the toolkit's `high_bridge`, which already solves the hard part: the
@@ -233,6 +233,12 @@ def causeway(length: float, deck_height: float, width: float = 5.0,
     openings are real voids in real masonry rather than floating arch rings.
     Crownwater adds the marble balustrade and the mosaic deck that make it read
     as a civic causeway rather than a country bridge.
+
+    `rise` is how much higher the far end stands than the near one. The span is
+    built level and then sheared, which lifts the deck, the parapets and the
+    arch crowns along its length and leaves every pier standing upright - which
+    is how a sloping viaduct is built and how one looks. A causeway with no
+    rise is untouched, so the flat ones are the meshes they always were.
 
     The deck is the only registered walk surface, so the grounding ray lands on
     it and never on a parapet or an arch crown.
@@ -247,6 +253,10 @@ def causeway(length: float, deck_height: float, width: float = 5.0,
     out.add_walk(M.box((length, 0.22, width - 0.9),
                        center=(0.0, deck_height + 0.08, 0.0),
                        uv_scale=0.5, material=MOSAIC))
+    if abs(rise) > 1e-6 and length > 1e-6:
+        shear = np.eye(4)
+        shear[1, 0] = rise / length      # y += (rise / length) * x
+        out = out.transformed(shear)
     return out
 
 

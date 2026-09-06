@@ -312,7 +312,7 @@
       58.0
     ],
     "heightEncoding": {
-      "origin": 1.3542,
+      "origin": 1.2811,
       "step": 0.2,
       "range": [
         1,
@@ -326,9 +326,9 @@
     "refinedHeights": {
       "levels": 255,
       "step": 0.2,
-      "origin": 1.3542,
+      "origin": 1.2811,
       "previousStep": 0.2,
-      "cellsRestated": 119019,
+      "cellsRestated": 51252,
       "cellsFromGeometry": 118438,
       "cellsKept": 585
     }

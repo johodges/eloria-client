@@ -452,8 +452,8 @@
     "width": 1152,
     "height": 1152,
     "heightEncoding": {
-      "origin": -0.2633,
-      "step": 0.233009,
+      "origin": -1.2004,
+      "step": 0.23577,
       "range": [
         1,
         255
@@ -510,18 +510,18 @@
       "cellsCovered": 11032,
       "cellsWidened": 576,
       "cellsOpened": 478,
-      "cellsRaised": 5109,
+      "cellsRaised": 7914,
       "cellsDrowned": 0,
       "cellsInsideLandmarks": 0
     },
     "refinedHeights": {
       "levels": 255,
-      "step": 0.233009,
-      "origin": -0.2633,
-      "previousStep": 0.943343,
-      "cellsRestated": 1052167,
-      "cellsFromGeometry": 1052056,
-      "cellsKept": 115
+      "step": 0.23577,
+      "origin": -1.2004,
+      "previousStep": 0.233009,
+      "cellsRestated": 1024699,
+      "cellsFromGeometry": 1052312,
+      "cellsKept": 122
     }
   },
   "navigation": {

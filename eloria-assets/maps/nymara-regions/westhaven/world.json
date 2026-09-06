@@ -705,8 +705,8 @@
     "width": 1152,
     "height": 1152,
     "heightEncoding": {
-      "origin": -10.2676,
-      "step": 0.436329,
+      "origin": -16.0551,
+      "step": 0.456066,
       "range": [
         1,
         255
@@ -781,12 +781,12 @@
     },
     "refinedHeights": {
       "levels": 255,
-      "step": 0.436329,
-      "origin": -10.2676,
-      "previousStep": 1.610765,
-      "cellsRestated": 697854,
-      "cellsFromGeometry": 697490,
-      "cellsKept": 409
+      "step": 0.456066,
+      "origin": -16.0551,
+      "previousStep": 0.436329,
+      "cellsRestated": 697543,
+      "cellsFromGeometry": 698266,
+      "cellsKept": 489
     }
   },
   "navigation": {

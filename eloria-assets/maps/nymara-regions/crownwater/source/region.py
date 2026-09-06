@@ -253,13 +253,28 @@ CAUSEWAY_CLEARANCE = 3.4
 # uses, so a span ends where the apron begins.
 CAUSEWAY_SHORE = SEA_LEVEL + 0.4
 # How far a deck runs back onto each landing, so it sits *on* the ground rather
-# than beside it.
-CAUSEWAY_OVERLAP = 4.0
+# than beside it. Short: at four metres, with the span rounded up to its length
+# class on top, the decks ran ten metres up onto the paving and read as roads
+# with a bridge in the middle rather than as bridges.
+CAUSEWAY_OVERLAP = 1.6
+# The span is built in lengths of this, so a handful of meshes cover all
+# twenty-two crossings - which matters more than it looks: a sloping deck
+# cannot be shared between two slopes, so every length and slope the set uses
+# is another bridge's worth of masonry in the package.  Rounded to the nearest
+# rather than up, which is what keeps a deck off the island: rounding up put
+# half a class of deck on each shore.
+CAUSEWAY_CLASS = 8.0
+# The steepest a deck is built. A stone bridge takes up a metre or two between
+# two islands over its own length and still reads as architecture; past this it
+# reads as a ramp, so the deck goes level at the higher landing instead and the
+# lower bridgehead takes the difference.
+CAUSEWAY_GRADE = 0.09
 # How far inboard of a landing the bridgehead is graded, and the width of that
-# ramp. Long enough that the drop from the deck to the island's own level is a
-# walk rather than a step: the biggest is about four metres, which over this
-# length is a gradient of a third.
-CAUSEWAY_RAMP = 14.0
+# ramp. A deck that slopes meets each shore at that shore's own height, so this
+# only has to carry the last of the difference - the clearance a deck keeps
+# over the water where a landing is lower than that - rather than the whole
+# drop between two islands.
+CAUSEWAY_RAMP = 8.0
 CAUSEWAY_RAMP_WIDTH = 3.2
 # Water this wide, crossed in a straight line, ends an island. Anything shorter
 # is a puddle in the shore, not the lagoon, and a span that stopped at one would
@@ -317,22 +332,69 @@ def causeway_span(t, name: str):
             (a[0] + unit[0] * end, a[1] + unit[1] * end))
 
 
-def causeway_deck_level(t, name: str) -> float:
-    """The level a causeway deck runs at, in metres.
+def _causeway_landfall(span, index: int) -> tuple[float, float]:
+    """The point a causeway's bridgehead runs to, inboard of one of its ends."""
+    here = span[index]
+    other = span[1 - index]
+    dx, dz = here[0] - other[0], here[1] - other[1]
+    length = math.hypot(dx, dz) or 1.0
+    return (here[0] + dx / length * CAUSEWAY_RAMP,
+            here[1] + dz / length * CAUSEWAY_RAMP)
 
-    A causeway is flat and level from landing to landing - it is masonry, not a
-    graded road - so a single height describes the whole span. Taken from the
-    higher of the two *landings* so the deck never runs below the ground it
-    meets, and floored at a fixed clearance so it always reads as bridging
-    water. Reading the two island *centres* instead, as this did until
-    2026-09-06, gave every spoke the height of the crown isle's acropolis and
-    left it a flat slab thirteen metres above both the shores it joined.
+
+_DECK_ENDS: dict[str, tuple[float, float]] = {}
+"""Each causeway's two deck levels, worked out once per build.
+
+`apply_built_ground` grades a bridgehead at each landing *to* the deck level,
+and `populate_causeways` runs after it, so asking a second time reads the
+ground the first answer just levelled and every span comes back flat. The
+first answer is the true one: it is the ground as the region sculpted it.
+"""
+
+
+def causeway_deck_ends(t, name: str) -> tuple[float, float]:
+    """The level the deck stands at over each of its two landings, in metres.
+
+    A causeway meets each island at that island's own level and takes the
+    difference up in its own length, the way a bridge over a river does. Each
+    end is floored at a fixed clearance so the span always reads as bridging
+    water. Where the two differ by more than the deck may slope the span goes
+    level at the higher of them and the lower bridgehead takes the rest.
+
+    Reading the two island *centres* instead, as this did until 2026-09-06,
+    gave every spoke the height of the crown isle's acropolis and left it a
+    flat slab thirteen metres above both the shores it joined.
     """
+    if name in _DECK_ENDS:
+        return _DECK_ENDS[name]
     span = causeway_span(t, name)
     if span is None:
-        return SEA_LEVEL + CAUSEWAY_CLEARANCE
-    ends = [float(t.height_at(point[0], point[1])) for point in span]
-    return max(max(ends), SEA_LEVEL + CAUSEWAY_CLEARANCE)
+        level = SEA_LEVEL + CAUSEWAY_CLEARANCE
+        out = (level, level)
+    else:
+        # Each end stands at the level of the ground its bridgehead runs to,
+        # not at the waterline it lands on: a shoreline is at sea level by
+        # definition, so measuring there gave every deck the same clearance
+        # over the water and no causeway ever sloped. A pavilion four metres
+        # up and one three metres up should be joined by a deck that takes up
+        # the metre between them, which is what a bridge is for.
+        ends = [max(float(t.height_at(*_causeway_landfall(span, index))),
+                    SEA_LEVEL + CAUSEWAY_CLEARANCE)
+                for index in (0, 1)]
+        length = math.hypot(span[1][0] - span[0][0], span[1][1] - span[0][1])
+        if length > 1e-6 and abs(ends[1] - ends[0]) / length > CAUSEWAY_GRADE:
+            level = max(ends)
+            out = (level, level)
+        else:
+            out = (ends[0], ends[1])
+    _DECK_ENDS[name] = out
+    return out
+
+
+def causeway_deck_level(t, name: str) -> float:
+    """The middle of a causeway's deck, which is where its mesh is placed."""
+    ends = causeway_deck_ends(t, name)
+    return (ends[0] + ends[1]) * 0.5
 
 
 ISLANDS: dict[str, tuple[float, float, float]] = {}
@@ -482,9 +544,9 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260828) -> None:
         span = causeway_span(t, name)
         if span is None:
             continue
-        deck = causeway_deck_level(t, name)
+        levels = causeway_deck_ends(t, name)
         a_name, b_name = CAUSEWAY_ENDS[name]
-        for landing, island in zip(span, (a_name, b_name)):
+        for deck, landing, island in zip(levels, span, (a_name, b_name)):
             centre = ISLAND_GEOM[island]["centre"]
             inboard = (centre[0] - landing[0], centre[1] - landing[1])
             reach = math.hypot(inboard[0], inboard[1])

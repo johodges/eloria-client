@@ -155,7 +155,6 @@ def rasterise(tri: np.ndarray, width: int, height: int, x0: float, z1: float,
     cx1 = np.clip(np.floor((tri[:, :, 0].max(axis=1) - x0) / cell), 0, width - 1).astype(int)
     cz0 = np.clip(np.floor((z1 - tri[:, :, 2].max(axis=1)) / cell), 0, height - 1).astype(int)
     cz1 = np.clip(np.floor((z1 - tri[:, :, 2].min(axis=1)) / cell), 0, height - 1).astype(int)
-    peak = tri[:, :, 1].max(axis=1)
     for i in range(len(tri)):
         xs = np.arange(cx0[i], cx1[i] + 1)
         zs = np.arange(cz0[i], cz1[i] + 1)
@@ -171,9 +170,14 @@ def rasterise(tri: np.ndarray, width: int, height: int, x0: float, z1: float,
         inside = (w0 >= 0.0) & (w1 >= 0.0) & (w0 + w1 <= 1.0)
         if not inside.any():
             continue
+        # The height *at* the cell, not the triangle's highest corner. A deck is
+        # two triangles the length of the span, so taking the corner recorded a
+        # sloping causeway as flat at its top end and put a four-metre step at
+        # the bottom of it.
+        surface = w0 * a[1] + w1 * b[1] + (1.0 - w0 - w1) * c[1]
         covered[cz0[i]:cz1[i] + 1, cx0[i]:cx1[i] + 1] |= inside
         window = top[cz0[i]:cz1[i] + 1, cx0[i]:cx1[i] + 1]
-        np.copyto(window, peak[i], where=inside & (window < peak[i]))
+        np.copyto(window, surface, where=inside & (window < surface))
     return covered, top
 
 
