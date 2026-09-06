@@ -768,6 +768,18 @@ def seat(points: np.ndarray, rig: ea.Rig, region: str,
     # what put the trousers around the legs in the first place.  Vertical
     # against horizontal keeps the plan view of the design intact -- the piece
     # is made longer or shorter, never skewed.
+    #
+    # This factor is measured for the TRUNK, and the trunk is the only part of
+    # a torso piece it is right for.  Seating a cuirass isotropically was tried
+    # -- the arithmetic is seductive, since this design's span across its
+    # hanging arms lands within a millimetre of the body's own -- and it fails
+    # on the part that matters: the generated trunk is drawn slender, 60 per
+    # cent of the body's width at the chest, and worn at its drawn proportions
+    # the body stands outside its own breastplate.  At the region ratio the
+    # trunk measures 0.89-0.97 of the body, which is what a garment should.
+    # What the ratio is wrong for is the sleeves and pauldrons, which are not
+    # fitted to a trunk; `_unsquash_limbs` gives it back to them once the
+    # repose has said which vertices those are.
     if girth is None:
         girth = scale
         if span is not None:
@@ -1339,6 +1351,118 @@ def _push_axis(points: np.ndarray, indices: np.ndarray, rig: ea.Rig,
 SLEEVE_MARGIN = 0.005
 
 
+def _let_out_axis(points: np.ndarray, indices: np.ndarray, rig: ea.Rig,
+                  axis_start: np.ndarray, axis_end: np.ndarray,
+                  bones: list[str], clearance: float, moved: np.ndarray,
+                  rows: int = 8, sectors: int = 8,
+                  most: float = 1.35) -> int:
+    """Scale one group of vertices out about a limb axis, band by band.
+
+    Outward only, and a band at a time rather than a vertex at a time.  A
+    sleeve is a closed shell: pushing every vertex that sits inside the body
+    out to the body's own radius drives the shell's INNER wall out to meet its
+    outer one, and the sleeve renders as a scatter of loose slabs with its
+    lining showing.  That is the same failure `_slim_to_body` describes in the
+    other direction, and it has the same answer -- scale the whole band, so
+    both walls travel together and the shell stays a shell.
+
+    Each band asks, per angular sector, how far its nearest surface is from
+    the axis against how far the body's surface is, and the band is scaled by
+    the largest factor any sector needs.  Sectors the sleeve has no surface in
+    are its openings and say nothing.
+    """
+    axis = axis_end - axis_start
+    length = float(np.linalg.norm(axis))
+    if length < 1e-6 or not len(indices):
+        return 0
+    axis = axis / length
+    reference = (np.array([0., 1., 0.]) if abs(axis[1]) < .8
+                 else np.array([0., 0., 1.]))
+    right = np.cross(axis, reference)
+    right /= np.linalg.norm(right)
+    forward = np.cross(right, axis)
+
+    offset = points[indices] - axis_start
+    along = offset @ axis
+    radial = offset - np.outer(along, axis)
+    distance = np.linalg.norm(radial, axis=1)
+    angle = np.arctan2(radial @ forward, radial @ right)
+    fraction = np.clip(along / length, 0.0, 1.0)
+
+    factors = np.ones(rows)
+    for row in range(rows):
+        lo, hi = row / rows, (row + 1) / rows
+        band = (fraction >= lo) & (fraction < hi) & (distance > 1e-6)
+        if int(band.sum()) < 4:
+            factors[row] = np.nan
+            continue
+        middle = (lo + hi) / 2.0
+        need = 1.0
+        for sector in range(sectors):
+            low = -np.pi + 2 * np.pi * sector / sectors
+            high = -np.pi + 2 * np.pi * (sector + 1) / sectors
+            here = band & (angle >= low) & (angle < high)
+            if int(here.sum()) < 2:
+                continue
+            inner = float(np.percentile(distance[here], 12.0))
+            radius = rig.surface_radius(axis_start, axis_end, middle,
+                                        (low + high) / 2.0, bones=bones,
+                                        slab=.05, default=.0)
+            if radius > 0.0 and inner > 1e-6:
+                need = max(need, (radius + clearance) / inner)
+        factors[row] = float(np.clip(need, 1.0, most))
+
+    good = ~np.isnan(factors)
+    if not good.any():
+        return 0
+    centres = (np.arange(rows) + 0.5) / rows
+    factors = np.interp(centres, centres[good], factors[good])
+    for _ in range(2):
+        factors = np.convolve(np.pad(factors, 1, mode="edge"),
+                              [1 / 3.0, 1 / 3.0, 1 / 3.0], mode="valid")
+    scale = np.interp(fraction, centres, factors)
+    grew = scale > 1.0005
+    if not grew.any():
+        return 0
+    moved[indices] = (axis_start + np.outer(along, axis)
+                      + radial * scale[:, None])
+    return int(grew.sum())
+
+
+def _unsquash_limb(points: np.ndarray, indices: np.ndarray,
+                   axis_start: np.ndarray, axis_end: np.ndarray,
+                   factor: float) -> int:
+    """Take the trunk's girth correction back off one sleeve.
+
+    `seat` scales height and girth by different numbers, and the girth number
+    is measured for the trunk: a generated cuirass is drawn slender and has to
+    be let out to go round a body.  A sleeve was never the thing being fitted.
+    It arrives drawn hanging, so its LENGTH runs down the height axis and its
+    cross-section across the girth axes -- and letting the girth out by half
+    again, with the height untouched, leaves a tube half again too fat for its
+    length.  That is the squashed, flat-slabbed upper arm: not the repose, not
+    the clearance passes, just the trunk's correction charged to the wrong
+    part of the piece.
+
+    So the sleeve's cross-section is scaled back about its own arm's axis,
+    which is the one direction that leaves its length, its place on the limb
+    and its drape alone.  Anything this takes inside the arm `_clear_sleeves`
+    puts back, measured against the body rather than guessed.
+    """
+    if not len(indices) or not 0.05 < factor < 0.999:
+        return 0
+    axis = axis_end - axis_start
+    length = float(np.linalg.norm(axis))
+    if length < 1e-6:
+        return 0
+    axis = axis / length
+    offset = points[indices] - axis_start
+    along = offset @ axis
+    radial = offset - np.outer(along, axis)
+    points[indices] = (axis_start + np.outer(along, axis) + radial * factor)
+    return int(len(indices))
+
+
 def _clear_sleeves(points: np.ndarray, rig: ea.Rig, sleeve: np.ndarray,
                    clearance: float | None = None) -> tuple[np.ndarray, int]:
     """Let a sleeve out until it clears the liner over the arm it covers.
@@ -1354,7 +1478,9 @@ def _clear_sleeves(points: np.ndarray, rig: ea.Rig, sleeve: np.ndarray,
 
     So the sleeve is let out about its own arm's axis, the way the limb
     garments are cleared, and outward only: a sleeve already clear of the liner
-    keeps exactly the shape the design gave it.
+    keeps exactly the shape the design gave it.  Band at a time, never vertex
+    at a time -- see `_let_out_axis` for what the per-vertex version did to a
+    closed sleeve once the seat stopped over-inflating one.
     """
     if clearance is None:
         clearance = LINER_LIFT + SLEEVE_MARGIN
@@ -1363,11 +1489,11 @@ def _clear_sleeves(points: np.ndarray, rig: ea.Rig, sleeve: np.ndarray,
     for side in ("l", "r"):
         mine = points[:, 0] >= 0 if side == "l" else points[:, 0] < 0
         own = np.flatnonzero(sleeve & mine)
-        pushed += _push_axis(points, own, rig,
-                             rig.origin("upperarm_%s" % side),
-                             rig.origin("hand_%s" % side),
-                             ["upperarm_%s" % side, "lowerarm_%s" % side,
-                              "hand_%s" % side], clearance, moved)
+        pushed += _let_out_axis(points, own, rig,
+                                rig.origin("upperarm_%s" % side),
+                                rig.origin("hand_%s" % side),
+                                ["upperarm_%s" % side, "lowerarm_%s" % side,
+                                 "hand_%s" % side], clearance, moved)
     return moved, pushed
 
 
@@ -1759,6 +1885,122 @@ def shirt_liner(race_path: Path, top: float = LINER_BAND[1]):
     return liner
 
 
+#: How far out from the liner an armour surface may be and still count as
+#: covering it.  Generous, because a pauldron standing well proud of the
+#: shoulder still hides everything under it; the test that matters is whether
+#: anything is there at all, not how close it is.
+COVER_REACH = 0.20
+#: And how far *inside* the liner to look.  Small: a chest plate seated a
+#: few millimetres under the liner is still the surface the player sees once
+#: the liner stops being drawn there, but a ray any longer than this crosses
+#: the body and finds the piece's own back plate.
+COVER_BEHIND = 0.03
+#: The cone each liner vertex has to find armour through, in degrees, and how
+#: many rays sample it.  Wide enough that a vertex a centimetre from the edge
+#: of a plate still sees sky through the gap and keeps its liner.
+COVER_CONE = 35.0
+COVER_RAYS = 5
+
+
+def _hit_within(origins: np.ndarray, directions: np.ndarray,
+                verts: np.ndarray, reach: float) -> np.ndarray:
+    """Whether each ray meets one of ``verts``' triangles within ``reach``."""
+    if not len(verts) or not len(origins):
+        return np.zeros(len(origins), dtype=bool)
+    a = verts[:, 0]
+    e1 = verts[:, 1] - a
+    e2 = verts[:, 2] - a
+    found = np.zeros(len(origins), dtype=bool)
+    for start in range(0, len(origins), 128):
+        stop = min(start + 128, len(origins))
+        origin = origins[start:stop]
+        direction = directions[start:stop]
+        pvec = np.cross(direction[:, None, :], e2[None, :, :])
+        det = np.einsum("rtj,tj->rt", pvec, e1)
+        live = np.abs(det) > 1e-12
+        inv = np.where(live, 1.0 / np.where(live, det, 1.0), 0.0)
+        tvec = origin[:, None, :] - a[None, :, :]
+        u = np.einsum("rtj,rtj->rt", tvec, pvec) * inv
+        qvec = np.cross(tvec, e1[None, :, :])
+        v = np.einsum("rtj,rj->rt", qvec, direction) * inv
+        t = np.einsum("rtj,tj->rt", qvec, e2) * inv
+        ok = (live & (u >= -1e-6) & (v >= -1e-6) & (u + v <= 1 + 1e-6)
+              & (t > 1e-5) & (t < reach))
+        found[start:stop] = ok.any(axis=1)
+    return found
+
+
+def _uncovered_liner(layer, armour: np.ndarray, faces: np.ndarray):
+    """Drop the liner's triangles wherever the armour already covers them.
+
+    The liner is an underlayer for the GAPS in an open design -- see
+    `shirt_liner`.  Where the armour is solid it has nothing to do, and being
+    drawn there is not free: it sits ``LINER_LIFT`` off the skin, so any
+    armour surface seated nearer than that to the body wins nothing and the
+    near-black liner is what the player sees.  On the phoenix cuirass that was
+    most of the chest and the whole collar -- the piece rendered as a black
+    panel with the emblem floating on it, and the armour was underneath the
+    whole time.
+
+    Letting the liner out to stay clear was the other option and is worse: it
+    would push the underlayer through every plate that is only a few
+    millimetres proud, which is most of them on a plate design.  So coverage
+    decides.  A liner vertex is covered when armour lies along its own outward
+    normal within `COVER_REACH`, or just behind it within `COVER_BEHIND`, and
+    a triangle is dropped only when all three of its vertices are covered.
+
+    Covered means covered from every angle, not just straight out: each vertex
+    fires a narrow cone of rays and every one of them has to land on armour.
+    That is what keeps a hem, an armhole or a strap gap lined -- a vertex
+    beside an opening has part of its cone escape through the opening and
+    keeps its liner.  Eroding on the liner's own topology was tried first and
+    is the wrong tool: the band carries about fifteen hundred vertices for a
+    whole torso, so one ring is several centimetres and it threw away two
+    thirds of a cull that was right.
+    """
+    positions, normals, uvs, indices, joints, weights = layer
+    triangles = np.asarray(indices, dtype=np.int64).reshape(-1, 3)
+    if not len(faces) or not len(triangles):
+        return layer, 0
+    verts = armour[faces]
+    unit = np.asarray(normals, dtype=np.float64)
+    unit = unit / np.maximum(np.linalg.norm(unit, axis=1, keepdims=True), 1e-9)
+    origin = np.asarray(positions, dtype=np.float64)
+    seed = np.where(np.abs(unit[:, 1:2]) < 0.8,
+                    np.array([0., 1., 0.]), np.array([0., 0., 1.]))
+    right = np.cross(unit, seed)
+    right /= np.maximum(np.linalg.norm(right, axis=1, keepdims=True), 1e-9)
+    forward = np.cross(unit, right)
+    covered = np.ones(len(origin), dtype=bool)
+    tilt = math.tan(math.radians(COVER_CONE))
+    for around in range(COVER_RAYS):
+        # Only the vertices still in the running are cast again: the first ray
+        # settles most of them, and re-casting the rest is the bulk of a build.
+        live = np.flatnonzero(covered)
+        if not len(live):
+            break
+        if around == 0:
+            direction = unit[live]
+        else:
+            angle = 2.0 * math.pi * (around - 1) / max(COVER_RAYS - 1, 1)
+            direction = unit[live] + tilt * (math.cos(angle) * right[live]
+                                             + math.sin(angle) * forward[live])
+            direction /= np.linalg.norm(direction, axis=1, keepdims=True)
+        covered[live] = (
+            _hit_within(origin[live], direction, verts, COVER_REACH)
+            | _hit_within(origin[live], -direction, verts, COVER_BEHIND))
+    keep = ~covered[triangles].all(axis=1)
+    dropped = int((~keep).sum())
+    if not dropped or not keep.any():
+        return layer, 0
+    kept = triangles[keep]
+    used = np.unique(kept)
+    remap = np.full(len(positions), -1, dtype=np.int64)
+    remap[used] = np.arange(len(used))
+    return (positions[used], normals[used], uvs[used],
+            remap[kept].reshape(-1), joints[used], weights[used]), dropped
+
+
 def socket_origin(rig: ea.Rig, part: int) -> np.ndarray:
     """Where the runtime will hang this part, in world space."""
     socket = ea.build_sockets(rig).get(part)
@@ -2109,6 +2351,74 @@ def _slim_to_body(points: np.ndarray, rig: ea.Rig, region: str,
     return out
 
 
+def _raise_sunken_front(points: np.ndarray, rig: ea.Rig, region: str,
+                        movable: np.ndarray, target_clear: float,
+                        triangles: np.ndarray | None = None,
+                        rows: int = 12, most: float = 0.04) -> int:
+    """Slide each height band of the trunk forward until its front clears.
+
+    `_slim_to_body` measures one half-extent per axis about a fixed centre, so
+    on the depth axis it cannot tell a breastplate from a backplate: whichever
+    reaches further sets the number, and a piece whose front is sunk while its
+    back stands proud reads as correctly sized.  That is what the yoke of a
+    generated cuirass does.  Seated, the phoenix cuirass sits 13-17 mm too far
+    BACK across the shoulders -- its breastplate 9 mm inside the pecs while its
+    backplate stands 17 mm off the shoulder blades -- and since the liner is
+    lifted 8 mm off the skin, the underlayer wins the depth test across the
+    whole upper chest.  The armour was there; the player saw a black yoke.
+
+    Front only, and forward only.  Fitting both faces at once was tried and is
+    wrong: several bands of a generated cuirass are shallower at the BACK than
+    the body is, so a two-faced fit drags the whole band backwards to deepen a
+    backplate and sinks a chest that was already clear.  The back has its own
+    pass -- `_floor_backplate` runs next and clamps anything this leaves inside
+    the liner -- so this one only ever answers the question it can measure.
+    """
+    body = region_points(rig, region)
+    low, high = float(body[:, 1].min()), float(body[:, 1].max())
+    shifts = np.zeros(rows)
+    centres = low + (high - low) * (np.arange(rows) + 0.5) / rows
+    moved = 0
+    for row in range(rows):
+        lo = low + (high - low) * row / rows
+        hi = low + (high - low) * (row + 1) / rows
+        skin = body[(body[:, 1] >= lo) & (body[:, 1] < hi)]
+        here = (points[:, 1] >= lo) & (points[:, 1] < hi) & movable
+        if len(skin) < 6 or int(here.sum()) < 6:
+            continue
+        want = float(np.percentile(skin[:, 2], 92.0)) + target_clear
+        have = float(np.percentile(points[here][:, 2], 92.0))
+        shifts[row] = float(np.clip(want - have, 0.0, most))
+        if shifts[row] > 1e-4:
+            moved += int(here.sum())
+    if not (shifts > 1e-4).any():
+        return 0
+    # Ramped between bands: a step in depth from one band to the next would
+    # tear the shell along a horizontal line.
+    for _ in range(2):
+        shifts = np.convolve(np.pad(shifts, 1, mode="edge"),
+                             [1 / 3.0, 1 / 3.0, 1 / 3.0], mode="valid")
+    move = np.zeros(len(points))
+    move[movable] = np.interp(points[movable, 1], centres, shifts)
+    # The ramp belongs to the trunk shell, which is tall enough to follow it.
+    # A shell SHORTER than one band has no ramp to follow, and giving it one
+    # shears it: these designs stud the plate with rivets a few millimetres
+    # thick, and a 7 mm shell told to move 10 mm more at its top than at its
+    # bottom turns inside out and renders as a hole.  Each of those travels on
+    # one number, read at its own height.
+    if triangles is not None and len(triangles):
+        canon, edges, welded = _weld(points, triangles)
+        labels = _components(edges, welded)[canon]
+        for label in np.unique(labels[movable]):
+            member = labels == label
+            here = points[member, 1]
+            if float(here.max() - here.min()) > WHOLE_SHELL:
+                continue
+            move[member] = np.interp(float(here.mean()), centres, shifts)
+    points[:, 2] += np.where(movable, move, 0.0)
+    return moved
+
+
 def _settle_floaters(points: np.ndarray, triangles: np.ndarray, rig: ea.Rig,
                      region: str, limit: float = 0.05,
                      rest: float = 0.025,
@@ -2159,20 +2469,50 @@ def _settle_floaters(points: np.ndarray, triangles: np.ndarray, rig: ea.Rig,
     return settled
 
 
+#: A shell shorter than this travels whole rather than following a per-height
+#: ramp or clamp, in metres, measured on the shell's own height.  Two bands:
+#: the trunk shell of a torso piece runs the garment's whole span, 0.42 m on
+#: the phoenix cuirass and never near this, while the studs and plaques on it
+#: run to 0.10.  Moving a shell whole is always safe -- it cannot flatten or
+#: shear anything -- so the line is drawn well clear of the ornaments rather
+#: than finely between them; the only cost of catching one too many is that a
+#: shell with relief travels by its deepest recess instead of filling it.
+#: The passes that move the trunk in depth reason
+#: about a tall shell with relief on it -- a ramp it can follow, a recess that
+#: can be filled while its outer wall holds the shape.  These designs also stud
+#: that plate with rivets and bosses a centimetre across, and every such pass
+#: destroys one: a ramp shears it, a clamp flattens it, a clamp that catches
+#: only half of it turns it inside out.  Shorter than a band means there is no
+#: ramp to follow and no outer wall to hold, so it moves as a body.
+WHOLE_SHELL = 0.16
+
+
 def _floor_backplate(points: np.ndarray, rig: ea.Rig, region: str,
-                     movable: np.ndarray) -> int:
+                     movable: np.ndarray,
+                     triangles: np.ndarray | None = None) -> int:
     """Keep the back panel outside the liner, band by band.
 
-    The banded slim scales each band by its proudest plates, so a back
-    with deep relief -- raised bosses over recessed panels -- lands its
-    recesses INSIDE the 8 mm liner, and the wearer shows a patchwork of
-    armour and underpadding from behind.  Any back-half vertex that ends
-    up nearer the body than the liner line is pushed straight back out to
-    it; inner shell walls get carried along, which only thickens hidden
-    geometry.
+    The banded slim scales each band by its proudest plates, so a back with
+    deep relief -- raised bosses over recessed panels -- lands its recesses
+    INSIDE the 8 mm liner, and the wearer shows a patchwork of armour and
+    underpadding from behind.  Any back-half vertex nearer the body than the
+    liner line is pushed straight back out to it; inner shell walls get carried
+    along, which only thickens hidden geometry.
+
+    Except when there is no outer wall to stay put.  A small hollow ornament
+    lying wholly inside the line has every one of its vertices clamped to the
+    same z and collapses to a flat sheet -- a closed shell enclosing zero
+    volume, which `TorsoShellTest` reads as wound inside out and the renderer
+    draws as a transparent hole.  Such a shell is moved back whole instead, by
+    the least its deepest vertex needs, which is the same reason
+    `_clear_sleeves` scales a band rather than a vertex.  Shells that straddle
+    the line keep the clamp: their outer wall holds the shape while the recess
+    is filled, and that is what the clamp is for.
     """
     body = region_points(rig, region)
     floored = 0
+    limits = np.zeros(len(points))
+    inside = np.zeros(len(points), dtype=bool)
     for lo, hi in ((0.92, 1.00), (1.00, 1.12), (1.12, 1.24), (1.24, 1.36),
                    (1.36, 1.48), (1.48, 1.58)):
         skin = body[(body[:, 1] >= lo) & (body[:, 1] < hi)]
@@ -2180,11 +2520,34 @@ def _floor_backplate(points: np.ndarray, rig: ea.Rig, region: str,
             continue
         limit = float(np.percentile(skin[:, 2], 2.0)) - (LINER_LIFT + 0.006)
         band = (movable & (points[:, 1] >= lo) & (points[:, 1] < hi)
-                & (points[:, 2] < 0.0) & (points[:, 2] > limit)
-                & (np.abs(points[:, 0]) < 0.22))
-        if band.any():
-            points[band, 2] = limit
-            floored += int(band.sum())
+                & (points[:, 2] < 0.0) & (np.abs(points[:, 0]) < 0.22))
+        limits[band] = limit
+        inside |= band & (points[:, 2] > limit)
+    if not inside.any():
+        return 0
+    whole = np.zeros(len(points), dtype=bool)
+    if triangles is not None and len(triangles):
+        canon, edges, welded = _weld(points, triangles)
+        labels = _components(edges, welded)[canon]
+        for label in np.unique(labels[inside]):
+            member = labels == label
+            here = points[member, 1]
+            # Short shells only.  A tall one keeps the clamp even when nothing
+            # of it is behind the line yet: it has relief to fill and an outer
+            # wall to hold the shape, and moving it as a body is not a subtler
+            # version of that -- the trunk shell qualified on one build and the
+            # whole breastplate went 200 mm back, behind the wearer's chest.
+            if float(here.max() - here.min()) > WHOLE_SHELL:
+                continue
+            offset = float(np.min(limits[member & inside]
+                                  - points[member & inside, 2]))
+            points[member, 2] += offset
+            whole |= member
+            floored += int(member.sum())
+    clamp = inside & ~whole
+    if clamp.any():
+        points[clamp, 2] = limits[clamp]
+        floored += int(clamp.sum())
     return floored
 
 
@@ -2254,6 +2617,52 @@ def _push_waist_out(points: np.ndarray, waist: np.ndarray, rig: ea.Rig,
             points[vertex] = point + outward * (distance + clearance)
             moved += 1
     return moved
+
+
+def _unwind_inverted_shells(surface) -> int:
+    """Turn any closed shell that is wound inside out the right way round.
+
+    The generated meshes stud their plate with rivets, bosses and buckles, and
+    a good number of those arrive from the generator with their faces wound
+    inwards -- 138 of them across the torso set, none bigger than 65 vertices.
+    A closed shell wound inwards has its near wall backface-culled, so the
+    player sees straight through the ornament to the armour behind it, and
+    `TorsoShellTest` reads it as the piece enclosing nothing.
+
+    It went unnoticed because the passes that move the trunk in depth used to
+    flatten these shells to nothing, which reads as neither wound nor unwound.
+    Now that a short shell travels whole the source's own winding survives to
+    the file, so it has to be right.  Signed volume says which way round a
+    closed shell is; open shells are left alone, because the sign means nothing
+    for them.
+    """
+    points = surface.positions
+    triangles = surface.indices.reshape(-1, 3)
+    if not len(triangles):
+        return 0
+    canon, edges, welded = _weld(points, triangles)
+    labels = _components(edges, welded)[canon]
+    turned = 0
+    for label in np.unique(labels):
+        member = labels == label
+        mine = member[triangles].all(axis=1)
+        faces = triangles[mine]
+        if len(faces) < 4:
+            continue
+        pairs = np.sort(canon[faces[:, [0, 1, 1, 2, 2, 0]]].reshape(-1, 2),
+                        axis=1)
+        _, counts = np.unique(pairs, axis=0, return_counts=True)
+        if not bool((counts == 2).all()):
+            continue
+        a, b, c = points[faces[:, 0]], points[faces[:, 1]], points[faces[:, 2]]
+        volume = float(np.einsum("ij,ij->i", a, np.cross(b, c)).sum() / 6.0)
+        if volume >= 0.0:
+            continue
+        triangles[mine] = faces[:, [0, 2, 1]]
+        surface.normals[member] = -surface.normals[member]
+        turned += 1
+    surface.indices = triangles.reshape(-1)
+    return turned
 
 
 def _drop_orphan_shards(surface, max_verts: int = 60,
@@ -2492,6 +2901,9 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
     # idempotent -- its girth-to-height ratio compounds -- and a second pass
     # over the boots flattened the pair into a half-metre disc.
     seated = seat(surface.positions, rig, region, triangles, taper, span)
+    # Kept because the second seat overwrites them, and it is the FIRST pass
+    # whose girth-over-height the sleeves have to be given back.
+    seated_factors = LAST_SEAT_FACTORS
     tall_before = float(seated[:, 1].max() - seated[:, 1].min())
     seated, surface.normals, posed = repose(
         seated, surface.normals, rig, region, triangles)
@@ -2555,6 +2967,13 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
             # keep their thickness.
             sleeve = np.asarray(step["sleeve"], dtype=bool)
             hand = rig.origin("hand_" + pivot_name[-1])
+            # Before anything is measured along the arm: the sleeve is still
+            # carrying the trunk's girth correction, and every pass below
+            # reads a tube that is half again too fat for its length.
+            raised, widened = seated_factors
+            step["unsquashed"] = _unsquash_limb(
+                seated, np.flatnonzero(sleeve), shoulder, hand,
+                raised / max(widened, 1e-9))
             allowed = float(np.linalg.norm(hand - shoulder)) + 0.01
             if sleeve.any():
                 travel = (seated[sleeve] - shoulder) @ arm_axis
@@ -2573,6 +2992,18 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
             # slides up and inboard along that slope.
             cap = np.asarray(step["cap"], dtype=bool)
             if cap.any():
+                # A pauldron is no more the trunk than a sleeve is, and it is
+                # squashed the same way: drawn square on the phoenix cuirass at
+                # 0.97 wide per tall, it seats at 1.44 -- so the wings that
+                # should sweep UP beside the collar lie flat and stand out from
+                # the shoulder like shelves.  Same correction as the sleeve,
+                # about the upright through the joint the cap is worn on, which
+                # leaves its height and its drape alone.
+                raised, widened = seated_factors
+                step["capUnsquashed"] = _unsquash_limb(
+                    seated, np.flatnonzero(cap), shoulder,
+                    shoulder + np.array([0., 1., 0.]),
+                    raised / max(widened, 1e-9))
                 inboard = -1.0 if shoulder[0] > 0 else 1.0
                 # Grown about its own centroid first: the authored caps are
                 # cut to the concept's narrow silhouette and leave the round
@@ -2607,8 +3038,12 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
         seated = _slim_to_body(seated, rig, region, ~exempt,
                                clearance + 0.008)
         step0 = posed[0] if posed else {}
+        step0["frontRaised"] = _raise_sunken_front(
+            seated, rig, region, ~exempt, clearance,
+            surface.indices.reshape(-1, 3))
         step0["bustFlattened"] = _flatten_bust(seated, rig, region, ~exempt)
-        step0["backFloored"] = _floor_backplate(seated, rig, region, ~exempt)
+        step0["backFloored"] = _floor_backplate(
+            seated, rig, region, ~exempt, surface.indices.reshape(-1, 3))
         step0["floatersSettled"] = _settle_floaters(
             seated, surface.indices.reshape(-1, 3), rig, region,
             body=rig._region(list(ea.GARMENT_SKIN[region])
@@ -2646,6 +3081,7 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
         fitted, grown, pushed = seated, 1.0, 0
     surface.positions = fitted
     shards = _drop_orphan_shards(surface, steps=posed)
+    unwound = _unwind_inverted_shells(surface)
 
     glb = ea.EquipmentGLB(generator="Eloria conform_equipment")
     material = textured_material(glb, f"{label} Base", png)
@@ -2666,6 +3102,13 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
         layers = shirt_liner(race_path, float(positions[:, 1].max()))
         if layers is not None:
             shell, paint = layers
+            # The liner backs the gaps, not the plate: see `_uncovered_liner`.
+            shell, culled = _uncovered_liner(shell, positions,
+                                             surface.indices.reshape(-1, 3))
+            paint, _ = _uncovered_liner(paint, positions,
+                                        surface.indices.reshape(-1, 3))
+            if posed:
+                posed[0]["linerCulled"] = culled
             # Double sided: a lifted shell can fold at the armpit crease once
             # a pose compresses it, and a culled backface there is a pinhole
             # straight through to the shirt.
@@ -2692,6 +3135,7 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
     span_after = (fitted.max(axis=0) - fitted.min(axis=0))
     return {"source": source.name, "out": out.name, "kind": kind,
             "region": region, "vertices": int(len(positions)),
+            "unwound": unwound,
             "triangles": int(len(indices) // 3),
             "joints": len(rig.joint_names),
             "scale": round(float(span_after[1] / max(span_before[1], 1e-9)), 4),

@@ -1,0 +1,90 @@
+#!/usr/bin/env python3
+"""Render a conformed equipment GLB beside the mesh it was generated from.
+
+`render_native_glb_lit.py` frames each model to its own bounding box, which is
+the wrong thing here twice over: a conformed piece binds in a T-pose while the
+generated mesh hangs its arms down, so the two are framed at different scales
+and compared in different poses.  What is left in such a picture is the pose,
+not the fit.
+
+This drives Blender instead.  The conformed piece's arms are swung down to the
+angle measured off the generated mesh, both models are normalised to the same
+height, and they are drawn into one frame with the same camera -- so what is
+left in the picture is the difference the conform made.
+
+    python3 eloria-assets/tools/compare_conformed_piece.py \
+        --out qa/phoenix.png \
+        godot-client/assets/actors/native/equipment/legendary_hero_cuirass_01.glb \
+        ../generate_models/meshy-armor-individual-glb/Eight...c01.glb.orig
+
+Pass `--yaw 90` for the side view, and `--drop-material Liner` to hide the
+underlayer and see the armour on its own.
+"""
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+import subprocess
+import shutil
+import sys
+
+BLENDER_CANDIDATES = [
+    Path(r"C:\Program Files\Blender Foundation\Blender 5.2\blender.exe"),
+    Path(r"C:\Program Files\Blender Foundation\Blender 4.2\blender.exe"),
+]
+
+SCRIPT = Path(__file__).with_name("_compare_conformed_blender.py")
+
+
+def find_blender() -> Path:
+    for candidate in BLENDER_CANDIDATES:
+        if candidate.exists():
+            return candidate
+    found = shutil.which("blender")
+    if found:
+        return Path(found)
+    base = Path(r"C:\Program Files\Blender Foundation")
+    if base.is_dir():
+        for exe in sorted(base.glob("*/blender.exe"), reverse=True):
+            return exe
+    raise SystemExit("could not find blender.exe")
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("models", nargs="+", type=Path)
+    ap.add_argument("--out", required=True, type=Path)
+    ap.add_argument("--yaw", type=float, default=0.0)
+    ap.add_argument("--pose-arms", action="store_true", default=True,
+                    help="swing skinned arms down to the generated angle")
+    ap.add_argument("--no-pose-arms", dest="pose_arms", action="store_false")
+    ap.add_argument("--drop-material", action="append", default=[],
+                    help="hide materials whose name ends with this")
+    ap.add_argument("--labels", default="")
+    ap.add_argument("--width", type=int, default=760,
+                    help="pixels per column")
+    args = ap.parse_args()
+
+    for model in args.models:
+        if not model.exists():
+            raise SystemExit("no such model: %s" % model)
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    command = [str(find_blender()), "--background", "--python", str(SCRIPT),
+               "--", str(args.out.resolve()), str(args.yaw),
+               "1" if args.pose_arms else "0", str(args.width),
+               ",".join(args.drop_material), args.labels]
+    command += [str(m.resolve()) for m in args.models]
+    result = subprocess.run(command, capture_output=True, text=True)
+    if result.returncode != 0 or not args.out.exists():
+        sys.stderr.write(result.stdout[-4000:])
+        sys.stderr.write(result.stderr[-4000:])
+        raise SystemExit("blender failed")
+    for line in result.stdout.splitlines():
+        if line.startswith(("  ", "loaded")):
+            print(line)
+    print("wrote %s" % args.out)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
