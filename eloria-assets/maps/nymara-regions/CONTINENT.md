@@ -199,6 +199,7 @@ for them but not built.
 cd eloria-assets/maps/nymara-regions/<region>/source && python build_<region>.py
 cd eloria-assets/maps/nymara-regions/<region>/source && python build_interiors.py   # or build_insides.py
 cd eloria-assets/maps/nymara-regions/<region>/source && python export_insides_collision.py
+cd eloria-assets/maps/nymara-regions && python _toolkit/refine_walk_heights.py <region>
 cd eloria-assets/maps/nymara-regions && python _toolkit/open_walk_surfaces.py <region>
 cd eloria-assets/maps/nymara-regions && python _toolkit/stamp_solid_landmarks.py <region>
 cd eloria-assets/maps/nymara-regions && python _toolkit/secrets_build.py <region>
@@ -215,9 +216,21 @@ The region builds validate their glTF and report every lore site's resolved
 ground in `buildNotes`; the portal tool fails rather than write a crossing
 whose trigger a player cannot stand on.
 
-Two passes correct the finished package, because a region's walk grid is
+Three passes correct the finished package, because a region's walk grid is
 derived from its height field rather than from its geometry, and each of the
 ten regions carries its own copy of that derivation.
+
+`refine_walk_heights.py` restates the height byte. The builders fit that byte's
+step to the whole map's relief over 63 levels, which on a map with real
+topography is enormous - Mirrorhold's was 3.94 m a code, Whitehorn's 2.60,
+Amberwood's 1.75 - and the server allows a walker two stages between tiles,
+1.6 m at the coarsest. One code of difference was already an unclimbable
+cliff, so an ordinary hillside became a staircase of them and Amberwood came
+apart into 84 pieces, Mirrorhold into 301. Nothing about the format required
+it: the cell byte holds 255 levels and Sunmane Steppe already used them, which
+is why the steppe was one piece. The pass leaves the walkable mask exactly as
+the build decided it and replaces only the heights, read off the `Terrain_*`
+and `Walk_*` geometry and re-encoded over the full range.
 
 `open_walk_surfaces.py` opens the ground the region actually draws. The build
 re-opens its decks by guessing each one's footprint from placement bounds;

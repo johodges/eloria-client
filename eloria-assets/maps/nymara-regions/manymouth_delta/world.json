@@ -2199,17 +2199,17 @@
     "width": 1152,
     "height": 1152,
     "heightEncoding": {
-      "origin": -13.1427,
-      "step": 0.660725,
+      "origin": -13.5366,
+      "step": 0.2,
       "range": [
         1,
-        63
+        255
       ],
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 398169,
-    "walkableFraction": 0.3,
+    "walkableCells": 401409,
+    "walkableFraction": 0.3025,
     "swimmable": {
       "rule": "a cell whose grid value is 0 and whose terrain height is below asset.seaLevel is water, not wall",
       "cells": 850098,
@@ -2220,10 +2220,20 @@
     "openedWalkSurfaces": {
       "prefix": "Walk_",
       "cellsCovered": 33782,
-      "cellsOpened": 2789,
-      "cellsRaised": 17666,
+      "cellsWidened": 5083,
+      "cellsOpened": 3240,
+      "cellsRaised": 18624,
       "cellsDrowned": 240,
       "cellsInsideLandmarks": 0
+    },
+    "refinedHeights": {
+      "levels": 255,
+      "step": 0.2,
+      "origin": -13.5366,
+      "previousStep": 0.660725,
+      "cellsRestated": 398164,
+      "cellsFromGeometry": 398124,
+      "cellsKept": 45
     }
   },
   "navigation": {
