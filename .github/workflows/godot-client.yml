@@ -364,7 +364,7 @@ jobs:
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends             xvfb xauth libgl1-mesa-dri libfontconfig1 libxcursor1 libxinerama1             libxrandr2 libxi6 libxkbcommon0 libasound2t64 libpulse0 libudev1
       - name: Import project
         run: godot --headless --path godot-client --editor --quit
-      - name: Read four names across the field, and one health bar
+      - name: Read a row of names across the field, and who wears a bar
         run: |
           mkdir -p "$ELORIA_ARTIFACT_DIR"
           xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_overhead_banners.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/overhead-banners.log"

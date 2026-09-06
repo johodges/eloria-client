@@ -2967,15 +2967,31 @@ func _combat_target_actor_id() -> int:
 		return int(AppState.combat_state.get("target_id", -1))
 	return -1
 
-## Hands every actor its answer to the question above.
+## Who wears a health bar over their head, and it is two questions rather than
+## one. A creature's condition is only worth the space while you are fighting
+## it: a bar over every creature and shopkeeper in sight is a field of bars
+## with the one being swung at lost among them. Another player's is worth it
+## whether or not you are fighting them - it is how a fight you are walking
+## into is read, and whether the person beside you is about to go down.
+func _overhead_health_for(actor_id: int, dto: Dictionary,
+		target_id: int) -> bool:
+	if actor_id == target_id:
+		return true
+	# The same three EL actor kinds the minimap calls players, so the map and
+	# the field agree about who is a person.
+	return _minimap_actor_type(dto) == &"player"
+
+## Hands every actor its answer to those questions.
 func _sync_overhead_health() -> void:
 	var target_id: int = _combat_target_actor_id()
 	for id: Variant in actor_nodes:
 		var node_value: Variant = actor_nodes[id]
-		if node_value is ReplicatedActor3D and is_instance_valid(
+		if not (node_value is ReplicatedActor3D) or not is_instance_valid(
 				node_value as ReplicatedActor3D):
-			(node_value as ReplicatedActor3D).set_combat_target(
-				int(id) == target_id)
+			continue
+		(node_value as ReplicatedActor3D).set_health_visible(
+			_overhead_health_for(int(id),
+				AppState.actors.get(id, {}) as Dictionary, target_id))
 
 ## Eternal Lands makes every bar as long as the widest number string beside it
 ## so the rows line up, then sizes the banner to whatever is left switched on.

@@ -190,9 +190,9 @@ var _health_label: Label3D
 var _health_current := -1
 var _health_maximum := -1
 var _overhead_visible := true
-## Whether the player is fighting this actor. The overhead bar is drawn for
-## nobody else.
-var _combat_target := false
+## Whether this actor's health is drawn over its head. main.gd's
+## `_overhead_health_for` is what decides it.
+var _health_shown := false
 var _settled := false
 var _silhouette: OccludedSilhouette
 ## Which of the animation gate's tiers this actor is in, and whether a cape
@@ -625,10 +625,10 @@ func _add_nameplate(dto: Dictionary) -> void:
 	_add_health_bar()
 	apply_vitals(int(dto.get("health", 0)), int(dto.get("max_health", 0)))
 
-## The overhead health bar and its numbers. Only ever drawn for the one actor
-## the player is currently fighting: every actor packet carries a health pair,
-## but a bar over every creature and shopkeeper in sight is a field of bars,
-## and the one that matters is lost in it. `set_combat_target` says which.
+## The overhead health bar and its numbers. Not drawn for everyone: every
+## actor packet carries a health pair, but a bar over every creature and
+## shopkeeper in sight is a field of bars with the one that matters lost in
+## it. `set_health_visible` says who wears one.
 ##
 ## All three pieces hang from the nameplate's height rather than from three
 ## world heights of their own, and their separation is spelled inside the
@@ -730,20 +730,21 @@ func apply_vitals(current: int, maximum: int) -> void:
 		material.albedo_color = _health_colour(ratio)
 	_refresh_overhead_health()
 
-## Whether this actor is the one the player is currently fighting. The overhead
-## bar and its numbers are drawn for that actor alone; see `_add_health_bar`.
-func set_combat_target(active: bool) -> void:
-	if active == _combat_target:
+## Whether this actor's condition is worth the space over its head - which is
+## main.gd's question, not this node's. See `_add_health_bar`.
+func set_health_visible(enabled: bool) -> void:
+	if enabled == _health_shown:
 		return
-	_combat_target = active
+	_health_shown = enabled
 	_refresh_overhead_health()
 
 ## The bar, its backing and its numbers all appear together, and only when the
 ## nameplate is showing at all, the server has given this actor a maximum, and
-## the player is fighting it. The fill has the one extra condition: a corpse at
-## zero health keeps its empty frame rather than a sliver of colour.
+## this actor is one of the ones that wears a bar. The fill has the one extra
+## condition: a corpse at zero health keeps its empty frame rather than a
+## sliver of colour.
 func _refresh_overhead_health() -> void:
-	var showing: bool = (_overhead_visible and _combat_target
+	var showing: bool = (_overhead_visible and _health_shown
 		and _health_maximum > 0)
 	if is_instance_valid(_health_bar_background):
 		_health_bar_background.visible = showing

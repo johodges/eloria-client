@@ -13,10 +13,12 @@ extends SceneTree
 ## against the camera's own projection, and the pictures are what show it
 ## reading as one size rather than merely measuring as one.
 ##
-## The second is that the bar and the numbers belong to the fight. Every actor
-## packet carries a health pair, so the client can draw a bar over everything
-## in sight, and used to - a field of bars, none of which is the one being
-## swung at. Only the player's current target wears one now.
+## The second is who wears a bar. Every actor packet carries a health pair, so
+## the client can draw one over everything in sight, and used to - a field of
+## bars, none of which is the one being swung at. Now it is the creature the
+## player is fighting, and every other player whether or not there is a fight:
+## a person's condition is worth reading before you walk into it, a passing
+## rabbit's is not.
 
 const SCREEN_SIZE := Vector2i(1280, 720)
 const TILE := 1.0
@@ -24,16 +26,20 @@ const TILE := 1.0
 const CAMERA_FOV := 50.0
 const CAMERA_PITCH := -60.0
 
-# Actor type, name, and the tile it stands on - a line running away from the
-# camera, so one row of names spans the depths a crowded field covers.
+# Actor type, EL actor kind, name, and the tile it stands on - a line running
+# away from the camera, so one row of names spans the depths a crowded field
+# covers. Kind 5 is EL's PKABLE_COMPUTER_CONTROLLED, every creature; kind 1 is
+# HUMAN, another player standing in the row.
 const SUBJECTS: Array = [
-	[416, "Amberhart", Vector2i(0, 0)],
-	[568, "Amber Lantern Moth", Vector2i(0, 9)],
-	[469, "Algae Alligator", Vector2i(0, 18)],
-	[464, "Crownwater Wyvern", Vector2i(0, 27)],
+	[416, 5, "Amberhart", Vector2i(0, 0)],
+	[568, 5, "Amber Lantern Moth", Vector2i(0, 8)],
+	[1, 1, "Ceridwen", Vector2i(0, 16)],
+	[469, 5, "Algae Alligator", Vector2i(0, 24)],
+	[464, 5, "Crownwater Wyvern", Vector2i(0, 32)],
 ]
-## Which of the four the player is fighting.
+## Which of them the player is fighting, and which is the other player.
 const TARGET_INDEX := 1
+const PLAYER_INDEX := 2
 
 var _artifacts := ""
 var _failures := 0
@@ -78,10 +84,11 @@ func _run() -> void:
 	var actors: Array[ReplicatedActor3D] = []
 	for index: int in range(SUBJECTS.size()):
 		var entry: Array = SUBJECTS[index] as Array
-		var tile: Vector2i = entry[2] as Vector2i
+		var tile: Vector2i = entry[3] as Vector2i
 		var dto: Dictionary = main.call("_presentation_dto", {
 			"actor_id": 100 + index, "x": tile.x, "y": tile.y, "rotation": 0,
-			"actor_type": int(entry[0]), "kind": 5, "name": str(entry[1]),
+			"actor_type": int(entry[0]), "kind": int(entry[1]),
+			"name": str(entry[2]),
 			"health": 62, "max_health": 100, "frame": 0, "scale": 1.0,
 			"appearance": {}}) as Dictionary
 		var model_id: String = str(main.call("_model_for_actor", dto))
@@ -91,20 +98,26 @@ func _run() -> void:
 		var errors: Array[String] = actor.configure(dto, _adapter, model_config,
 			main.call("_animation_for_model", model_config) as Dictionary,
 			equipment_config)
-		_expect(errors.is_empty(), "%s builds: %s" % [entry[1], errors])
+		_expect(errors.is_empty(), "%s builds: %s" % [entry[2], errors])
 		actor.apply_server_state(dto, _adapter, true)
 		actor.set_nameplate_visible(true)
 		actors.append(actor)
 
-	# The bar follows the fight, and nothing else does.
+	# Who wears a bar is main.gd's rule, asked here rather than restated: the
+	# fixture drives it through `_overhead_health_for` with the same target id
+	# the combat packets would have named.
 	for index: int in range(actors.size()):
-		actors[index].set_combat_target(index == TARGET_INDEX)
+		var entry: Array = SUBJECTS[index] as Array
+		actors[index].set_health_visible(bool(main.call(
+			"_overhead_health_for", 100 + index,
+			{"kind": int(entry[1]), "name_colour": 0},
+			100 + TARGET_INDEX)))
 	for _settle: int in range(16):
 		await process_frame
 
 	_check_block_hangs_together(actors)
 	_check_matches_the_players_banner(main, camera, actors)
-	_check_only_the_target_is_barred(actors)
+	_check_who_wears_a_bar(main, actors)
 
 	# The middle of the line, framed the way the rig frames the player: the
 	# first actor is about where you stand and the last is across the field.
@@ -112,14 +125,14 @@ func _run() -> void:
 		actors[actors.size() - 1].global_position, 0.5)
 	await _frame(camera, focus, 26.0)
 	await _capture("overhead-banners.png",
-		"four creatures at four depths at the camera's default zoom: every"
-			+ " name is the same size to read, and only the one the player is"
-			+ " fighting carries a bar and numbers")
+		"a row of actors at four depths at the camera's default zoom: every"
+			+ " name is the same size to read, and the bars belong to the"
+			+ " creature being fought and to the other player")
 
 	await _frame(camera, focus, 70.0)
 	await _capture("overhead-banners-zoomed-out.png",
-		"the same row with the camera pulled back to 70 m: the creatures"
-			+ " shrink and the names do not")
+		"the same row with the camera pulled back to 70 m: the actors shrink"
+			+ " and the names do not")
 
 	main.queue_free()
 	await process_frame
@@ -189,7 +202,7 @@ func _check_matches_the_players_banner(main: Control, camera: Camera3D,
 	var far_label: Label3D = actors[actors.size() - 1].get_node(
 		"Nameplate") as Label3D
 	for index: int in range(actors.size()):
-		var subject: String = str((SUBJECTS[index] as Array)[1])
+		var subject: String = str((SUBJECTS[index] as Array)[2])
 		var label: Label3D = actors[index].get_node_or_null(
 			"Nameplate") as Label3D
 		if not _expect(label != null, "%s carries a nameplate" % subject):
@@ -206,32 +219,48 @@ func _check_matches_the_players_banner(main: Control, camera: Camera3D,
 		"the row spans depths a distance-scaled name would have varied over:"
 			+ " %.1f m to %.1f m" % [near_depth, far_depth])
 
-func _check_only_the_target_is_barred(
+## Who carries a bar: the creature the player is fighting, and every other
+## player whether the player is fighting them or not. Nobody else, however
+## much health the server reports for them.
+func _check_who_wears_a_bar(main: Control,
 		actors: Array[ReplicatedActor3D]) -> void:
 	for index: int in range(actors.size()):
-		var fighting: bool = index == TARGET_INDEX
-		var subject: String = str((SUBJECTS[index] as Array)[1])
+		var entry: Array = SUBJECTS[index] as Array
+		var subject: String = str(entry[2])
+		var barred: bool = index == TARGET_INDEX or index == PLAYER_INDEX
+		var reason: String = ("the player is fighting it" if index == TARGET_INDEX
+			else "another player" if index == PLAYER_INDEX
+			else "a creature the player is not fighting")
 		for piece: String in ["HealthBarBackground", "HealthBarFill",
 				"HealthNumbers"]:
 			var node: Node3D = actors[index].get_node_or_null(piece) as Node3D
 			if not _expect(node != null, "the actor carries a %s" % piece):
 				continue
-			_expect(node.visible == fighting,
-				"%s's %s is %s" % [subject, piece,
-					"drawn while the player fights it" if fighting
-					else "not drawn - the player is not fighting it"])
+			_expect(node.visible == barred,
+				"%s is %s, so its %s is %s" % [subject, reason, piece,
+					"drawn" if barred else "not drawn"])
 		_expect((actors[index].get_node("Nameplate") as Node3D).visible,
 			"%s keeps its name either way" % subject)
-	# And it moves with the fight rather than being fixed at spawn.
-	actors[0].set_combat_target(true)
-	actors[TARGET_INDEX].set_combat_target(false)
+	# The rule itself, asked directly: a player carries one at any target id,
+	# and a creature only at the one it is.
+	var creature: Dictionary = {"kind": 5, "name_colour": 0}
+	var other_player: Dictionary = {"kind": 1, "name_colour": 0}
+	_expect(bool(main.call("_overhead_health_for", 7, other_player, -1)),
+		"another player carries a bar with no fight open at all")
+	_expect(not bool(main.call("_overhead_health_for", 7, creature, -1)),
+		"a creature carries none with no fight open")
+	_expect(bool(main.call("_overhead_health_for", 7, creature, 7)),
+		"a creature carries one once the fight names it")
+	# And the bar moves with the fight rather than being fixed at spawn.
+	actors[0].set_health_visible(true)
+	actors[TARGET_INDEX].set_health_visible(false)
 	_expect((actors[0].get_node("HealthBarBackground") as Node3D).visible,
 		"a creature the player turns on picks up the bar")
 	_expect(not (actors[TARGET_INDEX].get_node(
 		"HealthBarBackground") as Node3D).visible,
 		"the creature the player leaves loses it again")
-	actors[0].set_combat_target(false)
-	actors[TARGET_INDEX].set_combat_target(true)
+	actors[0].set_health_visible(false)
+	actors[TARGET_INDEX].set_health_visible(true)
 
 func _frame(camera: Camera3D, focus: Vector3, distance: float) -> void:
 	var pitch: float = deg_to_rad(CAMERA_PITCH)
