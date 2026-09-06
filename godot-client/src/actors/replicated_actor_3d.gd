@@ -193,6 +193,11 @@ var _overhead_visible := true
 ## Whether this actor's health is drawn over its head. main.gd's
 ## `_overhead_health_for` is what decides it.
 var _health_shown := false
+## Whether this actor is close enough to be drawn at all, and what was visible
+## when it stopped being so - restored exactly, so coming back into range does
+## not light up a selection ring nobody selected or a bar that was switched off.
+var _drawn := true
+var _hidden_by_range: Array[Node3D] = []
 var _settled := false
 var _silhouette: OccludedSilhouette
 ## Which of the animation gate's tiers this actor is in, and whether a cape
@@ -2194,6 +2199,42 @@ func _wake() -> void:
 func view_radius() -> float:
 	return (NAMEPLATE_HEIGHT + 0.6) * maxf(server_scale, 0.01) \
 		* float(maxi(footprint.x, footprint.y))
+
+## The child carrying this actor's mark on the full map, and the one thing left
+## drawn when the actor itself is too far away to be worth drawing. A dot on a
+## map is how a player finds someone across the water; their name floating over
+## the water is not.
+const MAP_DOT_NODE := &"MapDot"
+
+
+## Whether this actor is near enough to draw. Out of range its body, its
+## nameplate and its bars are hidden and only its map dot is left, so it still
+## marks the maps while a viewport it is a speck in is left clear.
+func set_drawn(enabled: bool) -> void:
+	if enabled:
+		if _drawn:
+			return
+		_drawn = true
+		for node: Node3D in _hidden_by_range:
+			if is_instance_valid(node):
+				node.visible = true
+		_hidden_by_range.clear()
+		return
+	# Swept on every call rather than only on the way out. An actor out of range
+	# still takes packets: it can change what it is wearing, or lose the model it
+	# was drawn with, and the child that arrives to say so arrives visible.
+	_drawn = false
+	for child: Node in get_children():
+		var node := child as Node3D
+		if node == null or node.name == MAP_DOT_NODE or not node.visible:
+			continue
+		node.visible = false
+		_hidden_by_range.append(node)
+
+
+func is_drawn() -> bool:
+	return _drawn
+
 
 ## Puts this actor's animation in one of the gate's tiers; see AnimationGate.
 ##

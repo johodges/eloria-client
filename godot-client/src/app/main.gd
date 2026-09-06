@@ -795,6 +795,14 @@ const DAY_NIGHT_REFRESH_MSEC := 500
 ## second: the camera and the actors both move smoothly, so that set changes
 ## far more slowly than the frame rate does.
 const ANIMATION_GATE_REFRESH_MSEC := 100
+## How far from the player another actor is still drawn in the world. Past
+## this its body and its name come off the viewport and only its map dot is
+## left, so it still marks the minimap and the full map. The isometric rig
+## frames about fifty metres at its default zoom, so this is comfortably past
+## what the camera shows. What prompted it was Crownwater, where the lagoon is
+## open enough to read the names of everyone on a pavilion a hundred and sixty
+## metres away, stacked over the water in front of the player.
+const ACTOR_DRAW_DISTANCE_METRES := 80.0
 ## How many actors `_sync_world` builds in one pass. A spawn is a couple of
 ## milliseconds of model, skin and equipment work, so a pack of twenty
 ## arriving together was one long frame; the rest follow on the next frames.
@@ -4503,6 +4511,11 @@ func _update_animation_gate(delta: float) -> void:
 		return
 	_animation_gate_refresh_msec = now + ANIMATION_GATE_REFRESH_MSEC
 	animation_gate.begin(gameplay_camera)
+	# Where "far away" is measured from: the player, not the camera, so that
+	# swinging or zooming the rig does not make bodies come and go around them.
+	var local_value: Variant = actor_nodes.get(AppState.local_actor_id)
+	var local_node: Node3D = local_value as Node3D if is_instance_valid(local_value) else null
+	var here: Vector3 = local_node.global_position if local_node != null else Vector3.ZERO
 	for raw_id: Variant in actor_nodes:
 		var actor_value: Variant = actor_nodes[raw_id]
 		if not is_instance_valid(actor_value):
@@ -4511,9 +4524,13 @@ func _update_animation_gate(delta: float) -> void:
 		if actor == null or not actor.is_inside_tree():
 			continue
 		var tier: AnimationGate.Tier = AnimationGate.Tier.FULL
-		if int(raw_id) != AppState.local_actor_id:
+		if int(raw_id) == AppState.local_actor_id:
+			actor.set_drawn(true)
+		else:
 			tier = animation_gate.classify(actor.global_position + Vector3.UP,
 				actor.view_radius())
+			actor.set_drawn(local_node == null
+				or here.distance_to(actor.global_position) <= ACTOR_DRAW_DISTANCE_METRES)
 		actor.set_animation_tier(tier, animation_gate)
 
 ## Interiors are closed boxes, so the isometric rig would render their ceiling
