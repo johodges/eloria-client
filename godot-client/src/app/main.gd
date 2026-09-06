@@ -328,6 +328,12 @@ var creation_options: Array = []
 var animation_config: Dictionary = {}
 var animation_configs: Dictionary = {}
 var map_registry: Dictionary = {}
+## The models that stand on the server's world objects, by resource and by
+## role; see `map_object_3d.gd`. Loaded once here because every object placed
+## has to be handed it - an object given no registry falls back to a ring on
+## the ground, which is what the whole harvestable layer did while this was
+## never loaded at all.
+var world_object_models: Dictionary = {}
 var cartography: Dictionary = {}
 var cartography_regions: Array = []
 var equipment_config: Dictionary = {}
@@ -846,6 +852,7 @@ func _ready() -> void:
 	animation_config = _json("res://data/animations/luminous.json")
 	animation_configs["res://data/animations/luminous.json"] = animation_config
 	map_registry = _json("res://data/maps/registry.json").get("maps", {})
+	world_object_models = _json("res://data/world/objects.json")
 	# The nine Eloria extension windows live in their own script: main.gd is
 	# already long enough that nine more windows would make it unreadable, and
 	# they share one seam - the fork's extension protocol.
@@ -9590,7 +9597,7 @@ func _sync_map_objects() -> void:
 		if map_object_nodes.has(object_id):
 			continue
 		var map_object := MapObject3D.new()
-		map_object.configure(dto_value as Dictionary, adapter)
+		map_object.configure(dto_value as Dictionary, adapter, world_object_models)
 		world_root.add_child(map_object)
 		map_object_nodes[object_id] = map_object
 		_place_map_object_on_surface(map_object)

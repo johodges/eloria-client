@@ -58,8 +58,11 @@ var model_id: String = ""
 ## stands on rather than by whatever it was draped over before.
 var _ring_flat: Mesh = null
 
+## `catalog` is `data/world/objects.json`, whole. It has no default: this took
+## a release standing every node in the world on a bare ring because the one
+## caller left the argument off and an empty registry is a legal one.
 func configure(dto: Dictionary, adapter: CoordinateAdapter,
-		catalog: Dictionary = {}) -> void:
+		catalog: Dictionary) -> void:
 	object_id = int(dto.get("object_id", -1))
 	kind = int(dto.get("kind", 0))
 	server_tile = Vector2i(int(dto.get("x", 0)), int(dto.get("y", 0)))
