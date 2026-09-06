@@ -705,17 +705,17 @@
     "width": 1152,
     "height": 1152,
     "heightEncoding": {
-      "origin": -1.2603,
-      "step": 1.610765,
+      "origin": -10.2676,
+      "step": 0.436329,
       "range": [
         1,
-        63
+        255
       ],
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 697899,
-    "walkableFraction": 0.5259,
+    "walkableCells": 698755,
+    "walkableFraction": 0.5265,
     "stampedLandmarks": [
       {
         "id": "campanile",
@@ -773,10 +773,20 @@
     "openedWalkSurfaces": {
       "prefix": "Walk_",
       "cellsCovered": 14299,
+      "cellsWidened": 1169,
       "cellsOpened": 856,
-      "cellsRaised": 7045,
+      "cellsRaised": 10095,
       "cellsDrowned": 0,
       "cellsInsideLandmarks": 0
+    },
+    "refinedHeights": {
+      "levels": 255,
+      "step": 0.436329,
+      "origin": -10.2676,
+      "previousStep": 1.610765,
+      "cellsRestated": 697854,
+      "cellsFromGeometry": 697490,
+      "cellsKept": 409
     }
   },
   "navigation": {

@@ -1,31 +1,31 @@
 {
-  "nodes": 2048,
-  "meshes": 243,
+  "nodes": 2052,
+  "meshes": 257,
   "materials": 37,
   "images": 89,
   "textures": 89,
-  "accessors": 977,
-  "bufferViews": 1066,
-  "uniqueTriangles": 627040,
-  "uniqueVertices": 382623,
-  "glbBytes": 29583780,
-  "instancedTriangles": 1314094,
-  "embeddedTextureBytes": 28749574,
+  "accessors": 1033,
+  "bufferViews": 1122,
+  "uniqueTriangles": 693328,
+  "uniqueVertices": 434157,
+  "glbBytes": 31585424,
+  "instancedTriangles": 1409914,
+  "embeddedTextureBytes": 28549576,
   "textureMemoryBytesUncompressed": 250478592,
-  "placements": 690,
+  "placements": 691,
   "collision": {
     "width": 1152,
     "height": 1152,
     "cellMetres": 0.5,
-    "walkableCells": 332259,
-    "blockedCells": 994845,
-    "walkableFraction": 0.2504,
-    "elevatedDecks": 84,
-    "steepCells": 32859,
+    "walkableCells": 332629,
+    "blockedCells": 994475,
+    "walkableFraction": 0.2506,
+    "elevatedDecks": 85,
+    "steepCells": 33370,
     "reliefMetres": 18.14,
     "heightEncoding": {
-      "origin": 0.0574,
-      "step": 0.292586,
+      "origin": 0.0575,
+      "step": 0.292585,
       "range": [
         1,
         63
@@ -44,11 +44,11 @@
     "march south-quay: 3 road pieces, 17 of manymouth_delta's growth"
   ],
   "lod2": {
-    "glbBytes": 16708720,
-    "nodes": 1853,
-    "uniqueTriangles": 473888,
-    "instancedTriangles": 1150414,
-    "sizeReductionPercent": 43.5,
-    "triangleReductionPercent": 12.5
+    "glbBytes": 18773416,
+    "nodes": 1857,
+    "uniqueTriangles": 540198,
+    "instancedTriangles": 1246256,
+    "sizeReductionPercent": 40.6,
+    "triangleReductionPercent": 11.6
   }
 }

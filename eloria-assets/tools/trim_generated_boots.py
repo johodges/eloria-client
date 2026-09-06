@@ -26,24 +26,27 @@ sheets are therefore named below after looking at them, which is the same
 bargain ``import_generated_equipment.SHEETS`` makes -- what a piece *is* is
 authored, and only its geometry is measured.
 
-**Where the cut lands** is measured, per design, because the eight sabatons are
-different heights.  Walking up the forward profile from the floor, the toe's
-reach falls away and settles at the shin's own minimum: that settling point is
-the ankle, and it lands between 11% and 19% of each mesh's height.  Cutting
-there leaves the piece ending at the ankle, where ``conform_equipment`` will
-stretch it across ``SPAN["legs"]`` (0.184..1.088) instead of across a span that
-was measuring to the toe -- so the trim also un-squashes the leg armour proper.
+The ankle is still measured, per design, and reported: walking up the forward
+profile from the floor, the toe's reach falls away and settles at the shin's own
+minimum, between 11% and 19% of each mesh's height.  It is the evidence that a
+foot is there at all.  It is no longer where the cut goes -- see below.
 
 The cut is left open, like every other edge in this set: these are generated
-shells with hundreds of boundary edges already, and the hem sits inside the
-boot's own span (a boot reaches up to 0.320) where nothing can see it.
+shells with hundreds of boundary edges already, and the two new edges meet each
+other exactly, so whichever piece is missing the other's edge is a hem.
 
 **The feet are kept, not thrown away.**  They are the only armoured boots in
 the set drawn to match one specific pair of legs, so each one is written out as
 its own generated source under the boot sheet named in ``BOOTED_SHEETS``, and
 picked up from there by ``import_generated_equipment`` like any other sheet.
-The boot is cut higher than the legs are -- at ``BOOT_SHARE``, not at the ankle
--- because a boot in this set has a shaft: see the note on that constant.
+
+**One cut, at ``BOOT_SHARE``, serves both.**  Everything above it is legwear and
+everything below it is the boot, so no detail is on both and none is lost.  The
+legs are therefore hemmed at the boot's rim rather than at the ankle, and a
+player wearing no boots shows bare shin below it -- which is the trade, and the
+one our user asked for, because the alternative is the sabaton's cuff riding
+the leg armour and being worn twice over when the boots go on.  The legs are
+seated against that hem too: see ``SHEET_SPAN`` in the importer.
 
 Only ``<piece>.glb`` is rewritten.  ``<piece>.glb.orig`` is the raw generator
 export and stays as it is -- it is what marks a source as preprocessed for
@@ -237,13 +240,21 @@ def trim(source: Path, *, dry_run: bool) -> str:
     piece, png = ce.read_source(source)
     points, normals, uvs = piece.positions, piece.normals, piece.uvs
     triangles = piece.indices.reshape(-1, 3)
-    cut, reach = ankle_of(points, triangles)
     low, high = float(points[:, 1].min()), float(points[:, 1].max())
+    # The SAME line the boot is cut at, not the ankle.  Cutting the legs at the
+    # ankle and the boot at the boot line leaves the band between them on both
+    # pieces, and that band is the sabaton's own cuff -- so the leg armour kept
+    # a set of boot plates around its hem, and a player wearing the boots wore
+    # them twice over.  One line divides the design once: everything above it
+    # is legwear, everything below is the boot, and the detail that comes off
+    # one is exactly the detail that goes onto the other.
+    cut = low + BOOT_SHARE * (high - low)
+    _, reach = ankle_of(points, triangles)
 
     kept = clip(points, normals, uvs, triangles, cut, above=True)
-    told = ("%-14s ankle at %5.1f%% of height, toe reached %.3f past the shin, "
+    told = ("%-14s cut at %5.1f%% of height, toe reached %.3f past the shin, "
             "%d -> %d triangles"
-            % (source.stem.split("__")[-1], 100 * (cut - low) / (high - low),
+            % (source.stem.split("__")[-1], 100 * BOOT_SHARE,
                reach, len(triangles), len(kept[3])))
     if dry_run:
         return told

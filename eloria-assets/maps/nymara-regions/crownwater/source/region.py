@@ -249,18 +249,89 @@ def _approach_route(gap_degrees: float, entry) -> np.ndarray:
 # Clearance from sea level to the underside of a causeway deck. Boats pass under
 # these in the concept, so the deck cannot simply skim the water.
 CAUSEWAY_CLEARANCE = 3.4
+# The waterline a landing is measured against - the same bar the landing apron
+# uses, so a span ends where the apron begins.
+CAUSEWAY_SHORE = SEA_LEVEL + 0.4
+# How far a deck runs back onto each landing, so it sits *on* the ground rather
+# than beside it.
+CAUSEWAY_OVERLAP = 4.0
+# How far inboard of a landing the bridgehead is graded, and the width of that
+# ramp. Long enough that the drop from the deck to the island's own level is a
+# walk rather than a step: the biggest is about four metres, which over this
+# length is a gradient of a third.
+CAUSEWAY_RAMP = 14.0
+CAUSEWAY_RAMP_WIDTH = 3.2
+# Water this wide, crossed in a straight line, ends an island. Anything shorter
+# is a puddle in the shore, not the lagoon, and a span that stopped at one would
+# land in the shallows.
+CAUSEWAY_CHANNEL = 5.0
 
 
-def causeway_deck_level(t, points) -> float:
+def _shore_along(t, origin, direction, limit: float) -> float:
+    """How far from `origin` the island's ground reaches before the water.
+
+    Walks out along the route and returns the last point standing above the
+    waterline before the first real stretch of water. The island's nominal
+    radius will not do: it is the radius of the island's *core*, and the
+    sculpted ground has fallen to the lagoon well inside it - by up to ten
+    metres, which is how eight causeways came to end offshore.
+    """
+    shore = 0.0
+    wet = 0.0
+    step = 1.0
+    distance = 0.0
+    while distance <= limit:
+        height = float(t.height_at(origin[0] + direction[0] * distance,
+                                   origin[1] + direction[1] * distance))
+        if height > CAUSEWAY_SHORE:
+            shore = distance
+            wet = 0.0
+        else:
+            wet += step
+            if wet >= CAUSEWAY_CHANNEL and shore > 0.0:
+                break
+        distance += step
+    return shore
+
+
+def causeway_span(t, name: str):
+    """(the two ends of a causeway's built span), in world metres, or None.
+
+    A route runs island centre to island centre; the span only crosses the open
+    water between them, from one shoreline to the other with a short overlap
+    onto each landing.
+    """
+    a_name, b_name = CAUSEWAY_ENDS[name]
+    a = ISLAND_GEOM[a_name]["centre"]
+    b = ISLAND_GEOM[b_name]["centre"]
+    delta = (b[0] - a[0], b[1] - a[1])
+    length = math.hypot(delta[0], delta[1])
+    if length < 1e-6:
+        return None
+    unit = (delta[0] / length, delta[1] / length)
+    start = max(0.0, _shore_along(t, a, unit, length) - CAUSEWAY_OVERLAP)
+    end = min(length, length - _shore_along(t, b, (-unit[0], -unit[1]), length) + CAUSEWAY_OVERLAP)
+    if end - start < 8.0:
+        return None                       # the islands already touch
+    return ((a[0] + unit[0] * start, a[1] + unit[1] * start),
+            (a[0] + unit[0] * end, a[1] + unit[1] * end))
+
+
+def causeway_deck_level(t, name: str) -> float:
     """The level a causeway deck runs at, in metres.
 
-    A causeway is flat and level from island to island - it is masonry, not a
+    A causeway is flat and level from landing to landing - it is masonry, not a
     graded road - so a single height describes the whole span. Taken from the
-    higher of the two landings so the deck never runs below the ground it meets,
-    and floored at a fixed clearance so it always reads as bridging water.
+    higher of the two *landings* so the deck never runs below the ground it
+    meets, and floored at a fixed clearance so it always reads as bridging
+    water. Reading the two island *centres* instead, as this did until
+    2026-09-06, gave every spoke the height of the crown isle's acropolis and
+    left it a flat slab thirteen metres above both the shores it joined.
     """
-    ends = [float(t.height_at(points[0][0], points[0][1])),
-            float(t.height_at(points[-1][0], points[-1][1]))]
+    span = causeway_span(t, name)
+    if span is None:
+        return SEA_LEVEL + CAUSEWAY_CLEARANCE
+    ends = [float(t.height_at(point[0], point[1])) for point in span]
     return max(max(ends), SEA_LEVEL + CAUSEWAY_CLEARANCE)
 
 
@@ -399,18 +470,42 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260828) -> None:
     # length is wrong twice over - it drags the lagoon floor up into a ridge, and
     # on the island end it pulls the quay down toward the water it crosses. An
     # earlier version did exactly that and put the harbour quay 2.5 m under.
-    # The terrain gets a short level apron at each end and nothing in between.
+    # The terrain gets a bridgehead at each end and nothing in between.
+    #
+    # The bridgehead is a ramp, not a terrace. A deck stands at the higher of
+    # its two landings and the lower island meets it several metres down, so a
+    # flat apron at the deck's level would leave a wall round it and one at the
+    # ground's level would leave a step off the deck. Grading from the deck at
+    # the landing to the island's own ground a little inboard gives a walker a
+    # way on and off, which is the whole point of a bridge.
     for name, points in CAUSEWAYS.items():
-        for end in (points[0], points[-1]):
-            level = float(t.height_at(end[0], end[1]))
-            if level <= SEA_LEVEL + 0.4:
-                continue          # a landing on open water is a pier, not ground
-            t.terrace((float(end[0]), float(end[1])), 3.4 * LOCAL, level,
-                      surface=TER.PAVING)
+        span = causeway_span(t, name)
+        if span is None:
+            continue
+        deck = causeway_deck_level(t, name)
+        a_name, b_name = CAUSEWAY_ENDS[name]
+        for landing, island in zip(span, (a_name, b_name)):
+            centre = ISLAND_GEOM[island]["centre"]
+            inboard = (centre[0] - landing[0], centre[1] - landing[1])
+            reach = math.hypot(inboard[0], inboard[1])
+            if reach < 1e-6:
+                continue
+            inboard = (inboard[0] / reach, inboard[1] / reach)
+            head = (landing[0] + inboard[0] * CAUSEWAY_RAMP,
+                    landing[1] + inboard[1] * CAUSEWAY_RAMP)
+            ground = float(t.height_at(head[0], head[1]))
+            # the ramp starts a little out over the water so the deck's own end
+            # rests on it rather than on the slope behind it
+            foot = (landing[0] - inboard[0] * CAUSEWAY_OVERLAP * 0.5,
+                    landing[1] - inboard[1] * CAUSEWAY_OVERLAP * 0.5)
+            t.grade_path([foot, landing, head], CAUSEWAY_RAMP_WIDTH,
+                         heights=[deck, deck, max(ground, SEA_LEVEL + 0.6)],
+                         surface=TER.PAVING)
         # keep vegetation and props out from under the span without touching height
         for step in np.linspace(0.0, 1.0, 24):
-            point = points[0] + (points[-1] - points[0]) * step
-            t.mark_blocked_disc((float(point[0]), float(point[1])), 3.2 * LOCAL)
+            point = (span[0][0] + (span[1][0] - span[0][0]) * step,
+                     span[0][1] + (span[1][1] - span[0][1]) * step)
+            t.mark_blocked_disc(point, 3.2 * LOCAL)
 
     crown_y = float(t.height_at(*ANCHORS["crown_isle"]))
 

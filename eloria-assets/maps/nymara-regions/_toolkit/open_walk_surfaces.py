@@ -44,7 +44,10 @@ WATER = "Water_"
 # How far under the water a surface may sit and still be a floor. A jetty deck
 # is flush with the water it stands in; the drowned court is metres below it.
 WADE = 0.25
-LEVELS = 63
+## How many levels the cell byte carries, as the package declares. 255 is what
+## the format holds; a package still on the old 63 keeps its own until
+## `refine_walk_heights.py` restates it.
+DEFAULT_LEVELS = 255
 MINIMUM_STEP = 0.2
 
 
@@ -60,17 +63,65 @@ def encode(heights: np.ndarray, encoding: dict) -> tuple[np.ndarray, dict]:
     walkable = ~np.isnan(heights)
     if not walkable.any():
         return np.zeros(heights.shape, dtype=np.uint8), encoding
+    levels = int((encoding.get("range") or [1, DEFAULT_LEVELS])[1])
     origin, step = float(encoding["origin"]), float(encoding["step"])
     codes = np.where(walkable, np.round((heights - origin) / step), 0)
-    if codes[walkable].min() >= 1 and codes[walkable].max() <= LEVELS:
+    if codes[walkable].min() >= 1 and codes[walkable].max() <= levels:
         return np.where(walkable, codes, 0).astype(np.uint8), encoding
     low = float(np.nanmin(heights))
     relief = float(np.nanmax(heights)) - low
-    step = max(MINIMUM_STEP, relief / (LEVELS - 1))
+    step = max(MINIMUM_STEP, relief / (levels - 1))
     origin = low - step
-    codes = np.clip(np.round((heights - origin) / step), 1, LEVELS)
+    codes = np.clip(np.round((heights - origin) / step), 1, levels)
     return (np.where(walkable, codes, 0).astype(np.uint8),
             dict(encoding, origin=round(origin, 4), step=round(step, 6)))
+
+
+## A tile the server folds is blocked if any cell under it is, which protects a
+## wall thinner than a tile and erases a deck thinner than one. Half a tile's
+## worth of deck is a deck, so the rest of that tile is opened to the same
+## height and the walkway survives the fold.
+TILE_CELLS = 2
+TILE_SHARE = 2
+
+
+def fill_tiles(usable: np.ndarray, top: np.ndarray, shut: np.ndarray):
+    """Open the whole of any server tile a walk surface already half covers.
+
+    Manymouth Delta is stilt walkways over open water and its walkways are
+    about two metres wide, so the conservative fold thinned them to nothing and
+    took half the map's content with them. The tile a walkway runs along is one
+    the client lets a player stand on for its whole width, so this opens it.
+
+    The blocks are the ones the server folds: tile t takes cells 2t-1 and 2t on
+    each axis, which is the square metre the client draws the tile at.
+    """
+    rows, columns = usable.shape
+    padded = np.zeros((rows + 1, columns + 1), dtype=bool)
+    padded[1:, 1:] = usable
+    heights = np.full((rows + 1, columns + 1), -np.inf)
+    heights[1:, 1:] = np.where(usable, top, -np.inf)
+    closed = np.zeros((rows + 1, columns + 1), dtype=bool)
+    closed[1:, 1:] = shut
+    tiles_y = (rows + 1) // TILE_CELLS
+    tiles_x = (columns + 1) // TILE_CELLS
+    block = padded[:tiles_y * TILE_CELLS, :tiles_x * TILE_CELLS].reshape(
+        tiles_y, TILE_CELLS, tiles_x, TILE_CELLS)
+    tall = heights[:tiles_y * TILE_CELLS, :tiles_x * TILE_CELLS].reshape(
+        tiles_y, TILE_CELLS, tiles_x, TILE_CELLS)
+    barred = closed[:tiles_y * TILE_CELLS, :tiles_x * TILE_CELLS].reshape(
+        tiles_y, TILE_CELLS, tiles_x, TILE_CELLS)
+    enough = (block.sum(axis=(1, 3)) >= TILE_SHARE) & ~barred.any(axis=(1, 3))
+    deck = tall.max(axis=(1, 3))
+    grown = np.repeat(np.repeat(enough, TILE_CELLS, axis=0), TILE_CELLS, axis=1)
+    grown_top = np.repeat(np.repeat(deck, TILE_CELLS, axis=0), TILE_CELLS, axis=1)
+    out = padded.copy()
+    out_top = heights.copy()
+    out[:grown.shape[0], :grown.shape[1]] |= grown
+    np.copyto(out_top[:grown.shape[0], :grown.shape[1]], grown_top,
+              where=grown & (out_top[:grown.shape[0], :grown.shape[1]] < grown_top))
+    widened = int(out[1:, 1:].sum() - usable.sum())
+    return out[1:, 1:], np.where(out[1:, 1:], out_top[1:, 1:], top), widened
 
 
 def stamped(manifest: dict, shape, origin, cell: float) -> np.ndarray:
@@ -109,6 +160,7 @@ def open_package(package: Path, write: bool) -> dict | None:
     drowned = covered & wet & (top < water_top - WADE)
     shut = stamped(manifest, grid.shape, origin, cell)
     usable = covered & ~drowned & ~shut
+    usable, top, widened = fill_tiles(usable, top, shut)
 
     heights = decode(grid, encoding)
     blocked = np.isnan(heights)
@@ -117,7 +169,7 @@ def open_package(package: Path, write: bool) -> dict | None:
     heights = np.where(usable & (blocked | (top > heights)), top, heights)
     codes, new_encoding = encode(heights, encoding)
 
-    record = {"prefix": WALK, "cellsCovered": int(covered.sum()),
+    record = {"prefix": WALK, "cellsCovered": int(covered.sum()), "cellsWidened": widened,
               "cellsOpened": int(opened.sum()), "cellsRaised": int(raised.sum()),
               "cellsDrowned": int(drowned.sum()), "cellsInsideLandmarks": int((covered & shut).sum())}
     print(f"[open] {package.name}: {record['cellsCovered']} cells carry a walk surface; "

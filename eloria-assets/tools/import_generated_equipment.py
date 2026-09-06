@@ -252,6 +252,18 @@ LATER_SHEETS = [
 ]
 
 
+#: Sheets whose meshes were deliberately cut short of the region they belong to,
+#: and the span they should be seated against instead.  `conform_equipment`
+#: sizes a piece to the region's own span, which is right for a design drawn
+#: over the whole of it; a leg piece that `trim_generated_boots` hemmed at the
+#: boot's rim covers the waist down to 0.320 and no further, and seated against
+#: the region it would simply be stretched back over the ankle it was cut away
+#: from, putting its knee where the calf goes and undoing the trim.
+SHEET_SPAN = {
+    "legendary_leg_armor": (0.320, ce.SPAN["legs"][1]),
+}
+
+
 class Piece:
     __slots__ = ("source", "slug", "name", "kind", "part", "visual", "finish",
                  "item_id", "image_id", "tier", "theme")
@@ -386,8 +398,10 @@ def main() -> int:
         for piece in pieces:
             target = EQUIPMENT / ("%s.glb" % piece.slug)
             try:
+                span = next((value for slug, value in SHEET_SPAN.items()
+                             if piece.slug.startswith(slug)), None)
                 info = ce.build(piece.source, target, rig, piece.kind,
-                                piece.name, race_path=race_path)
+                                piece.name, race_path=race_path, span=span)
             except Exception as exc:                    # noqa: BLE001
                 print("  FAILED %-32s %s" % (piece.slug, exc))
                 failed += 1

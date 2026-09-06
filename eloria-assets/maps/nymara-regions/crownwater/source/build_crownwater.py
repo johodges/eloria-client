@@ -871,7 +871,7 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
         # deck, not from the lagoon floor the span crosses.
         "roads": [{"id": name, "type": "causeway",
                    "waypoints": [[round(float(p[0]), 1),
-                                  round(REG.causeway_deck_level(t, points), 2),
+                                  round(REG.causeway_deck_level(t, name), 2),
                                   round(float(p[1]), 1)] for p in points]}
                   for name, points in REG.CAUSEWAYS.items()],
         "water": {

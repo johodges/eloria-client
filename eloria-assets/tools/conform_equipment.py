@@ -123,6 +123,17 @@ CLEARANCE = 0.011
 #: onto one, and it is what keeps the shell clear of the skin once a limb bends.
 SLACK = 0.06
 
+#: Over what height a joined garment's inward shift is ramped out, in metres,
+#: measured down from the crotch.  Long enough that the seat is not sheared,
+#: short enough that the leg is on its limb by the time the thigh is clear of
+#: the hip shell.
+SEAT_RAMP = 0.25
+
+#: And how far out from the midline the same shift is faded in, in metres.
+#: Wide enough that the inseam is not sheared, narrow enough that the tube
+#: itself still travels: the thigh's inner wall sits about 40 mm off centre.
+SEAT_MIDLINE = 0.04
+
 #: Bounds on that draw-in.  A piece is never taken below three quarters -- past
 #: that the design is being restyled rather than fitted, and a pauldron that was
 #: drawn proud stops reading as one.  Letting out is capped nearer to 1: a piece
@@ -682,7 +693,8 @@ def halves_are_separate(points: np.ndarray, triangles: np.ndarray) -> bool:
 
 def seat(points: np.ndarray, rig: ea.Rig, region: str,
          triangles: np.ndarray | None = None,
-         taper: bool = False) -> np.ndarray:
+         taper: bool = False,
+         span: tuple[float, float] | None = None) -> np.ndarray:
     """Uniform scale and translate so the piece occupies the garment's span.
 
     Sized to where the garment goes, not to the whole region it is weighted
@@ -691,7 +703,12 @@ def seat(points: np.ndarray, rig: ea.Rig, region: str,
     again too tall and worn as a dress.
     """
     body = region_points(rig, region)
-    span = SPAN.get(region)
+    # A caller may name the span itself.  The region's own is right for a piece
+    # drawn over the whole of it, and wrong for one that was deliberately cut
+    # short: a trouser trimmed at the boot line covers the waist to the boot's
+    # rim, and seated against the region it would be stretched back down over
+    # the ankle it was cut away from, putting its knee where the calf goes.
+    span = span if span is not None else SPAN.get(region)
     # Every garment is anchored to the span the authored set uses, because
     # where a piece ends is load-bearing on both axes.  On the limbs the legs
     # region runs down through the foot bones, and a trouser stretched to fill
@@ -748,21 +765,49 @@ def seat(points: np.ndarray, rig: ea.Rig, region: str,
     # sticks out furthest, so on this legwear (knee pads, straps) it reads half
     # again too wide while the tube is barely clear of the thigh, and drawing it
     # in by that ratio pulls the trousers inside the leg.
-    # Put each half of a pair over the limb it is worn on.  Rigid, and only
-    # when the halves are separate solids: shifting half of a joined garment
-    # opens a hole at the crotch.
-    if MEASURE[region]["mode"] == "sides" and halves_are_separate(seated,
-                                                                 triangles):
+    # Put each half of a pair over the limb it is worn on.  Rigid where the
+    # halves are separate solids; ramped where they are one shell, which is
+    # what most of the generated legwear is.
+    #
+    # Skipping a joined garment entirely -- which is what this did -- leaves it
+    # standing exactly as far outboard as the note above measures, and a player
+    # sees it at once: equipping the legs bows the character's stance out where
+    # the bare body stood straight.  But the two legs of a trouser are only
+    # joined ABOVE the crotch, so a shift that has died to nothing by the time
+    # it reaches that line moves each leg onto its limb without opening the
+    # seat.  The hips keep the width they were drawn with, which is right --
+    # hips are wide -- and only the legs come in.
+    if MEASURE[region]["mode"] == "sides":
+        rigid = halves_are_separate(seated, triangles)
+        crotch = float(rig.origin(measure_bones(region, "l")[0])[1])
         for side in ("l", "r"):
             own = seated[:, 0] >= 0 if side == "l" else seated[:, 0] < 0
             if own.sum() < 8:
                 continue
             limb = rig._region(measure_bones(region, side))
-            half = seated[own]
+            # Measured from the part that is going to move: on a joined
+            # garment the seat and its belt sit far outboard of the leg and
+            # would drag the aim with them.
+            block = own if rigid else own & (seated[:, 1] < crotch)
+            if block.sum() < 8:
+                continue
+            half = seated[block]
+            # Two ramps, and the lateral one is what keeps the garment whole.
+            # Moving a side rigidly moves everything on it, so any triangle
+            # that reaches across the middle -- an inseam, a crotch plate --
+            # has its two ends dragged in opposite directions and is pulled
+            # apart: measured over the set, a rigid shift healed four pieces
+            # and tore thirteen.  Fading the shift out to nothing AT the
+            # midline instead means the two sides agree where they meet, so
+            # nothing is torn; the tube is drawn in from outside rather than
+            # slid across.
+            ramp = (np.ones(int(own.sum())) if rigid else
+                    np.clip((crotch - seated[own, 1]) / SEAT_RAMP, 0., 1.)
+                    * np.clip(np.abs(seated[own, 0]) / SEAT_MIDLINE, 0., 1.))
             for axis in (0, 2):
                 shift = ((limb[:, axis].max() + limb[:, axis].min()) / 2.
                          - (half[:, axis].max() + half[:, axis].min()) / 2.)
-                seated[own, axis] += shift
+                seated[own, axis] += shift * ramp
 
     # Per-height placement and girth.  Both off by default; see the note above
     # `lateral_profile` for why the measurement is not trustworthy yet.
@@ -827,6 +872,12 @@ REPOSE = {
     "torso": (("upperarm_l", 88), ("upperarm_r", 88)),
     "legs": (("thigh_l", 25), ("thigh_r", 25)),
 }
+
+#: How far from its joint a shell may reach and still be a cap rather than a
+#: sleeve, in metres.  A pauldron covers the shoulder crest and stops; a sleeve
+#: goes down the arm.  On the legendary hero cuirass the caps end 0.17 m out and
+#: the sleeves reach 0.36 and 0.49, so the line is not finely balanced.
+CAP_REACH = 0.22
 
 #: Bones a torso garment may weight beyond the region's own set.  The region
 #: stops at the upper arms because a lofted piece never reaches further, but a
@@ -1172,13 +1223,29 @@ def repose(points: np.ndarray, normals: np.ndarray, rig: ea.Rig, region: str,
             centroid = out[verts_of].mean(axis=0)
             above = float(centroid[1] - start[1])
             outboard = abs(float(centroid[0])) - abs(float(start[0]))
+            # How much limb the shell covers at all.  Radius from the joint,
+            # because the repose turns ABOUT that joint, so this is the one
+            # measure of a shell that the pose it arrived in cannot change.
+            span_of = float(np.linalg.norm(out[verts_of] - start,
+                                           axis=1).max())
+            crest = float(out[verts_of][:, 1].max()) - float(start[1])
             # And it must DRAPE, not encircle: a long armoured sleeve's
             # upper section also sits above the joint in an A-pose, but it
             # wraps the authored arm axis where a pauldron shell does not
             # -- demoting it to cap left the legendary hero's upper
             # sleeves standing off the shoulders at the concept's angle.
             wraps = _wraps_axis(out[verts_of], start, posed_axis, reach)
-            if above > 0.01 and outboard < 0.10 and not wraps:
+            # A pauldron drapes OVER the crest and down the outside of it, so
+            # its body hangs level with the joint or a little below -- the
+            # legendary hero's sits 16 mm under it.  Asking for the centroid to
+            # be above the joint therefore misses the very shells this rule
+            # exists to hold, and they ride down the arm with the sleeve.  What
+            # separates them is not height but reach: a cap covers the joint and
+            # stops, a sleeve carries on down the limb.  Measured on this piece
+            # the caps end 0.17 m from the joint and the sleeves run to 0.36 and
+            # 0.49, so there is a wide gap to put the line in.
+            capped = span_of < CAP_REACH and crest > 0.01
+            if capped or (above > 0.01 and outboard < 0.10 and not wraps):
                 turn[indexed] = 0.0
                 caps[indexed] = True
         turn = turn[canon]
@@ -1384,6 +1451,11 @@ def textured_material(glb: ea.EquipmentGLB, name: str, png: bytes | None,
 #: attempt to classify the shirt by colour left a sliver of it bare at some
 #: boundary the classifier misread: the blacked-out armpit, the shaded seam
 #: rows of the collar, the last teal row under the hem.
+#: The top of it is a ceiling, not a target: the band is also clamped to the
+#: garment's own top, because liner drawn ABOVE the armour is liner nobody is
+#: wearing anything over.  At 1.70 it reaches the jaw, while a cuirass collar
+#: stops near 1.54, so a 20 cm ring of near-black stood above every torso piece
+#: and read as the armour stopping short of the shoulders.
 LINER_BAND = (0.90, 1.70)
 #: 0.85, not the mid-forearm: the painted body keeps a few teal texels on
 #: the back of the right hand, and an idle pose hangs that hand exactly where
@@ -1393,10 +1465,10 @@ LINER_HALF_WIDTH = 0.66
 LINER_LIFT = 0.008
 LINER_COLOUR = (56, 47, 40)
 
-_LINER_CACHE: dict[str, tuple | None] = {}
+_LINER_CACHE: dict[tuple, tuple | None] = {}
 
 
-def shirt_liner(race_path: Path):
+def shirt_liner(race_path: Path, top: float = LINER_BAND[1]):
     """The clothed band of the body, lifted a few millimetres, to wear under
     a torso piece.
 
@@ -1414,7 +1486,8 @@ def shirt_liner(race_path: Path):
     Returns (positions, normals, uvs, indices, joints, weights) in body
     space, or None when the body offers nothing to line.
     """
-    key = str(race_path)
+    band_top = min(LINER_BAND[1], float(top))
+    key = (str(race_path), round(band_top, 4))
     if key in _LINER_CACHE:
         return _LINER_CACHE[key]
     document, binary = ea.read_glb(race_path)
@@ -1451,7 +1524,7 @@ def shirt_liner(race_path: Path):
     # to swallow the back of the collar, whose last texels ride the
     # trapezius at 1.56.
     shirt = ((positions[:, 1] > LINER_BAND[0])
-             & (positions[:, 1] < LINER_BAND[1])
+             & (positions[:, 1] < band_top)
              & (np.abs(positions[:, 0]) < LINER_HALF_WIDTH)
              & ~((positions[:, 1] > 1.585) & (positions[:, 2] > 0.0)))
     if int(shirt.sum()) < 40:
@@ -1637,6 +1710,16 @@ def shirt_liner(race_path: Path):
         liner_weights = np.vstack([liner_weights, plug_weight_row])
         liner_faces = np.vstack([liner_faces,
                                  np.array(plug_faces) + base_index])
+    # Flatten whatever rose above the ceiling.  Faces are kept when ANY corner
+    # is in the band, so a triangle straddling the top carries its other two
+    # corners up with it -- 38 mm of them on this body, which is 38 mm of
+    # near-black standing above the armour's collar.  Pressing those corners
+    # down onto the ceiling closes the rim without dropping the face, which
+    # `all` would, and dropping it is what opens a gap at every other edge of
+    # the band.
+    liner_positions[:, 1] = np.minimum(liner_positions[:, 1], band_top)
+    paint = (np.array(paint[0]), *paint[1:])
+    paint[0][:, 1] = np.minimum(paint[0][:, 1], band_top)
     liner = ((liner_positions, liner_normals, liner_uvs,
               liner_faces.reshape(-1), liner_joints, liner_weights), paint)
     _LINER_CACHE[key] = liner
@@ -2311,10 +2394,12 @@ def _slim_legs(points: np.ndarray, rig: ea.Rig, region: str,
     return out
 
 
+
 def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
           clearance: float = CLEARANCE, fit: str = "seat",
           taper: bool = False, race_path: Path | None = None,
-          flip: bool = False, roll: bool = False) -> dict:
+          flip: bool = False, roll: bool = False,
+          span: tuple[float, float] | None = None) -> dict:
     """Fit one generated mesh to the rig and write it as a skinned piece."""
     if kind in SOCKET_KIND or kind in PROP_KIND:
         return build_socket(source, out, rig, kind, label, flip, roll)
@@ -2345,11 +2430,11 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
     # counts.)  A piece with no pose to correct is seated once: seat() is not
     # idempotent -- its girth-to-height ratio compounds -- and a second pass
     # over the boots flattened the pair into a half-metre disc.
-    seated = seat(surface.positions, rig, region, triangles, taper)
+    seated = seat(surface.positions, rig, region, triangles, taper, span)
     seated, surface.normals, posed = repose(
         seated, surface.normals, rig, region, triangles)
     if any(step.get("applied") for step in posed):
-        seated = seat(seated, rig, region, triangles, taper)
+        seated = seat(seated, rig, region, triangles, taper, span)
     if region == "torso":
         # Equalise the axes, hung from the collar.  The seat scales height to
         # the authored span but girth to the body region, and the height's
@@ -2492,7 +2577,8 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
                                 joints=joints, weights=weights)]
     lined = False
     if region == "torso" and race_path is not None:
-        layers = shirt_liner(race_path)
+        # Clamped to the garment's own top: see LINER_BAND.
+        layers = shirt_liner(race_path, float(positions[:, 1].max()))
         if layers is not None:
             shell, paint = layers
             # Double sided: a lifted shell can fold at the armpit crease once
