@@ -724,7 +724,8 @@ def nearer_limb(points: np.ndarray, rig: ea.Rig, region: str) -> np.ndarray:
 def seat(points: np.ndarray, rig: ea.Rig, region: str,
          triangles: np.ndarray | None = None,
          taper: bool = False,
-         span: tuple[float, float] | None = None) -> np.ndarray:
+         span: tuple[float, float] | None = None,
+         girth: float | None = None) -> np.ndarray:
     """Uniform scale and translate so the piece occupies the garment's span.
 
     Sized to where the garment goes, not to the whole region it is weighted
@@ -767,10 +768,11 @@ def seat(points: np.ndarray, rig: ea.Rig, region: str,
     # what put the trousers around the legs in the first place.  Vertical
     # against horizontal keeps the plan view of the design intact -- the piece
     # is made longer or shorter, never skewed.
-    girth = scale
-    if span is not None:
-        body_span = float(body[:, 1].max()) - float(body[:, 1].min())
-        girth = body_span / max(float(extent[1]), 1e-9)
+    if girth is None:
+        girth = scale
+        if span is not None:
+            body_span = float(body[:, 1].max()) - float(body[:, 1].min())
+            girth = body_span / max(float(extent[1]), 1e-9)
     global LAST_SEAT_FACTORS
     LAST_SEAT_FACTORS = (scale, girth)
 
@@ -2490,10 +2492,32 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
     # idempotent -- its girth-to-height ratio compounds -- and a second pass
     # over the boots flattened the pair into a half-metre disc.
     seated = seat(surface.positions, rig, region, triangles, taper, span)
+    tall_before = float(seated[:, 1].max() - seated[:, 1].min())
     seated, surface.normals, posed = repose(
         seated, surface.normals, rig, region, triangles)
     if any(step.get("applied") for step in posed):
-        seated = seat(seated, rig, region, triangles, taper, span)
+        # The second seat is here to give back the girth the droop denied the
+        # first: a sleeve hanging at the concept's angle is part of the height
+        # the first pass divided by, so a piece drawn arms-down comes out too
+        # narrow, and once the sleeves lie along the arm the measurement is
+        # honest and the piece can be widened to match.
+        #
+        # What it must not do is re-derive girth from scratch.  `seat` is not
+        # idempotent -- body-height over mesh-height says something only while
+        # the mesh is still normalised, and after the first pass it is not.  Run
+        # twice on the legendary hero cuirass it reported a height scale of
+        # 1.000 and a girth of 1.489: it widened the piece by half again for a
+        # droop that had cost it nothing, because the tasset skirt hangs lower
+        # than the hands do and the repose never changed the height at all.
+        # That is the pauldron reaching a third of the way down the arm.
+        #
+        # So the second pass is handed the correction rather than left to
+        # invent one: the height the repose actually recovered, which is 1.0
+        # when it recovered none.
+        recovered = tall_before / max(
+            float(seated[:, 1].max() - seated[:, 1].min()), 1e-9)
+        seated = seat(seated, rig, region, triangles, taper, span,
+                      girth=recovered)
     if region == "torso":
         # Equalise the axes, hung from the collar.  The seat scales height to
         # the authored span but girth to the body region, and the height's
