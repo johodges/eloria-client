@@ -616,8 +616,8 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 331325,
-    "walkableFraction": 0.2497,
+    "walkableCells": 335550,
+    "walkableFraction": 0.2528,
     "stampedLandmarks": [
       {
         "id": "crownwater-campanile",
@@ -645,7 +645,15 @@
         "marginMetres": 0.5,
         "cellsBlocked": 0
       }
-    ]
+    ],
+    "openedWalkSurfaces": {
+      "prefix": "Walk_",
+      "cellsCovered": 46180,
+      "cellsOpened": 4225,
+      "cellsRaised": 23851,
+      "cellsDrowned": 0,
+      "cellsInsideLandmarks": 0
+    }
   },
   "navigation": {
     "surfaceNodePrefixes": [

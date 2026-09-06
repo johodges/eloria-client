@@ -461,8 +461,8 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 1051693,
-    "walkableFraction": 0.7925,
+    "walkableCells": 1052171,
+    "walkableFraction": 0.7928,
     "saturatedCells": 5,
     "stampedLandmarks": [
       {
@@ -504,7 +504,15 @@
         "marginMetres": 0.5,
         "cellsBlocked": 0
       }
-    ]
+    ],
+    "openedWalkSurfaces": {
+      "prefix": "Walk_",
+      "cellsCovered": 11032,
+      "cellsOpened": 478,
+      "cellsRaised": 5109,
+      "cellsDrowned": 0,
+      "cellsInsideLandmarks": 0
+    }
   },
   "navigation": {
     "surfaceNodePrefixes": [

@@ -2208,14 +2208,22 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 395380,
-    "walkableFraction": 0.2979,
+    "walkableCells": 398169,
+    "walkableFraction": 0.3,
     "swimmable": {
       "rule": "a cell whose grid value is 0 and whose terrain height is below asset.seaLevel is water, not wall",
       "cells": 850098,
       "fraction": 0.6406,
       "meanDepthMetres": 5.1,
       "maxDepthMetres": 24.56
+    },
+    "openedWalkSurfaces": {
+      "prefix": "Walk_",
+      "cellsCovered": 33782,
+      "cellsOpened": 2789,
+      "cellsRaised": 17666,
+      "cellsDrowned": 240,
+      "cellsInsideLandmarks": 0
     }
   },
   "navigation": {
