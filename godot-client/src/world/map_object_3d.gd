@@ -57,6 +57,9 @@ var model_id: String = ""
 ## re-draped after a map's walk surface arrives is shaped by the ground it
 ## stands on rather than by whatever it was draped over before.
 var _ring_flat: Mesh = null
+## True when the registry hands this object's art to the map package rather
+## than standing a model on it; see `interactives.mapAuthored`.
+var _map_authored: bool = false
 
 ## `catalog` is `data/world/objects.json`, whole. It has no default: this took
 ## a release standing every node in the world on a bare ring because the one
@@ -187,7 +190,13 @@ func _build_visual(catalog: Dictionary) -> void:
 		return
 	var entry: Dictionary = _catalog_entry(catalog)
 	var height: float = _add_model(entry)
-	_add_ring()
+	_map_authored = (catalog.get("interactives", {}) as Dictionary).get(
+		"mapAuthored", {}).has(label)
+	# A role the region package authors is already standing in the world art:
+	# a secret's door is a `Secret_*` node in the region mesh, on the tile the
+	# server states. A ring under one duplicates the door and advertises it.
+	if not _map_authored:
+		_add_ring()
 	# A waygate is drawn on the maps as its glyph, not as a disc under it.
 	if not is_portal():
 		_add_map_marker()
@@ -235,9 +244,9 @@ func _add_ring() -> void:
 	add_child(ring)
 
 func _add_map_marker() -> void:
-	# A secret's entrance is found by looking, not by reading the map: it gets
-	# its pick ring and nothing on either map.
-	if label == "Secret":
+	# An entrance the map package draws is found by looking, not by reading
+	# the map: it gets its pick shape and nothing on either map.
+	if _map_authored:
 		return
 	# Sized for the map cameras, not the world: 0.6 metres was a third of a
 	# pixel on the full map.

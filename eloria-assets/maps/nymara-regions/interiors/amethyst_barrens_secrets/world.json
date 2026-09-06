@@ -1251,7 +1251,7 @@
   "harvestables": [
     {
       "id": "barrens-geode-hollow-node-00",
-      "resource": "Resonant Crystal",
+      "resource": "Crystal",
       "position": [
         177.79,
         -4.0,
@@ -1265,7 +1265,7 @@
     },
     {
       "id": "barrens-geode-hollow-node-01",
-      "resource": "Resonant Crystal",
+      "resource": "Crystal",
       "position": [
         168.24,
         -4.0,
@@ -1279,7 +1279,7 @@
     },
     {
       "id": "barrens-geode-hollow-node-02",
-      "resource": "Resonant Crystal",
+      "resource": "Crystal",
       "position": [
         179.56,
         -4.0,
@@ -1293,7 +1293,7 @@
     },
     {
       "id": "barrens-geode-hollow-node-03",
-      "resource": "Resonant Crystal",
+      "resource": "Crystal",
       "position": [
         175.54,
         -4.0,
@@ -1307,7 +1307,7 @@
     },
     {
       "id": "barrens-geode-hollow-node-04",
-      "resource": "Voltaic Geode",
+      "resource": "Geode",
       "position": [
         168.27,
         -4.0,
@@ -1321,7 +1321,7 @@
     },
     {
       "id": "barrens-geode-hollow-node-05",
-      "resource": "Voltaic Geode",
+      "resource": "Geode",
       "position": [
         178.62,
         -4.0,
@@ -1335,7 +1335,7 @@
     },
     {
       "id": "barrens-geode-hollow-node-06",
-      "resource": "Voltaic Geode",
+      "resource": "Geode",
       "position": [
         171.49,
         -4.0,
@@ -1349,7 +1349,7 @@
     },
     {
       "id": "barrens-geode-hollow-node-07",
-      "resource": "Pale Quartz",
+      "resource": "Quartz",
       "position": [
         171.92,
         -4.0,
@@ -1363,7 +1363,7 @@
     },
     {
       "id": "barrens-geode-hollow-node-08",
-      "resource": "Pale Quartz",
+      "resource": "Quartz",
       "position": [
         179.33,
         -4.0,
@@ -1377,7 +1377,7 @@
     },
     {
       "id": "barrens-geode-hollow-node-09",
-      "resource": "Pale Quartz",
+      "resource": "Quartz",
       "position": [
         167.63,
         -4.0,
@@ -1391,7 +1391,7 @@
     },
     {
       "id": "barrens-shard-garden-node-00",
-      "resource": "Stormglass Shard",
+      "resource": "Stormglass",
       "position": [
         237.96,
         -1.5,
@@ -1405,7 +1405,7 @@
     },
     {
       "id": "barrens-shard-garden-node-01",
-      "resource": "Stormglass Shard",
+      "resource": "Stormglass",
       "position": [
         239.5,
         -1.5,
@@ -1419,7 +1419,7 @@
     },
     {
       "id": "barrens-shard-garden-node-02",
-      "resource": "Stormglass Shard",
+      "resource": "Stormglass",
       "position": [
         241.04,
         -1.5,
@@ -1433,7 +1433,7 @@
     },
     {
       "id": "barrens-shard-garden-node-03",
-      "resource": "Stormglass Shard",
+      "resource": "Stormglass",
       "position": [
         237.96,
         -1.5,
@@ -1489,7 +1489,7 @@
     },
     {
       "id": "barrens-shard-garden-node-07",
-      "resource": "Quartz",
+      "resource": "Clear Quartz",
       "position": [
         250.06,
         -1.5,
@@ -1503,7 +1503,7 @@
     },
     {
       "id": "barrens-shard-garden-node-08",
-      "resource": "Quartz",
+      "resource": "Clear Quartz",
       "position": [
         251.6,
         -1.5,
@@ -1517,7 +1517,7 @@
     },
     {
       "id": "barrens-shard-garden-node-09",
-      "resource": "Quartz",
+      "resource": "Clear Quartz",
       "position": [
         253.14,
         -1.5,
@@ -1531,7 +1531,7 @@
     },
     {
       "id": "barrens-shard-garden-node-10",
-      "resource": "Pale Quartz",
+      "resource": "Quartz",
       "position": [
         237.96,
         -1.5,
@@ -1545,7 +1545,7 @@
     },
     {
       "id": "barrens-shard-garden-node-11",
-      "resource": "Pale Quartz",
+      "resource": "Quartz",
       "position": [
         239.5,
         -1.5,
@@ -1559,7 +1559,7 @@
     },
     {
       "id": "barrens-shard-garden-node-12",
-      "resource": "Pale Quartz",
+      "resource": "Quartz",
       "position": [
         241.04,
         -1.5,
@@ -1573,7 +1573,7 @@
     },
     {
       "id": "barrens-station-cache-node-00",
-      "resource": "Stormglass Shard",
+      "resource": "Stormglass",
       "position": [
         164.3,
         -3.0,
@@ -1587,7 +1587,7 @@
     },
     {
       "id": "barrens-station-cache-node-01",
-      "resource": "Stormglass Shard",
+      "resource": "Stormglass",
       "position": [
         167.8,
         -3.0,
@@ -1601,7 +1601,7 @@
     },
     {
       "id": "barrens-station-cache-node-02",
-      "resource": "Stormglass Shard",
+      "resource": "Stormglass",
       "position": [
         171.3,
         -3.0,
@@ -1615,7 +1615,7 @@
     },
     {
       "id": "barrens-station-cache-node-03",
-      "resource": "Resonant Crystal",
+      "resource": "Crystal",
       "position": [
         174.8,
         -3.0,
@@ -1629,7 +1629,7 @@
     },
     {
       "id": "barrens-station-cache-node-04",
-      "resource": "Resonant Crystal",
+      "resource": "Crystal",
       "position": [
         164.3,
         -3.0,
@@ -1685,7 +1685,7 @@
     },
     {
       "id": "barrens-sap-node-03",
-      "resource": "Sunstone Flint",
+      "resource": "Flint",
       "position": [
         20.05,
         -5.0,
@@ -1699,7 +1699,7 @@
     },
     {
       "id": "barrens-sap-node-04",
-      "resource": "Sunstone Flint",
+      "resource": "Flint",
       "position": [
         23.05,
         -5.0,
@@ -1713,7 +1713,7 @@
     },
     {
       "id": "barrens-sap-node-05",
-      "resource": "Sunstone Flint",
+      "resource": "Flint",
       "position": [
         20.05,
         -5.0,
@@ -3271,7 +3271,7 @@
       "kind": "reliquary",
       "entranceMap": "amethyst_barrens",
       "entranceProp": "shrine_slab",
-      "key": "Resonant Crystal",
+      "key": "Crystal",
       "label": "A shrine slab with fresh scratches where it has been slid aside.",
       "offset": [
         97.55,

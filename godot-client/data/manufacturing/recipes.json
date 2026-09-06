@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "sources": {
     "profile": "eloria",
-    "recipesSha256": "40a97a18529b7976a7ab40b4233aee2000368ed5ce5aca6bb048ba922dc70247",
-    "itemsSha256": "83e7b98270009dc58bfb6dd5fac37d1bb9e423819781b22dfac4f2abb020cf3b",
+    "recipesSha256": "85ce314d65c4f52497ca5c48a286d11e8357242cd644ee91f048922fcf4b5774",
+    "itemsSha256": "9203f769080cd1b7d2c7494d6f83cdec62df7cab3a85e99a4c2246f4bbdba22c",
     "booksSha256": "dbaf97061c7578ece676a3d6ff122d25af0bb69a01d4c4bcec9b16653df00329"
   },
   "recipes": [
@@ -258,7 +258,7 @@
         {
           "name": "Quartz",
           "quantity": 1,
-          "imageId": 27,
+          "imageId": 113,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -377,7 +377,7 @@
           "imageAliases": []
         },
         {
-          "name": "Copper Bloom",
+          "name": "Copper",
           "quantity": 1,
           "imageId": 22,
           "ambiguousImage": false,
@@ -408,13 +408,13 @@
       "knowledgeIndex": -1,
       "ingredients": [
         {
-          "name": "Grave Moss",
+          "name": "Moss",
           "quantity": 2,
           "imageId": 94,
           "ambiguousImage": true,
           "imageAliases": [
-            "Grave Moss",
-            "Ssarathi Scale Moss"
+            "Moss",
+            "Lichen"
           ]
         },
         {
@@ -458,7 +458,7 @@
         {
           "name": "Quartz",
           "quantity": 3,
-          "imageId": 27,
+          "imageId": 113,
           "ambiguousImage": false,
           "imageAliases": []
         },
@@ -469,7 +469,7 @@
           "ambiguousImage": true,
           "imageAliases": [
             "Slate",
-            "Deep Lake Clay"
+            "Clay"
           ]
         }
       ],
@@ -510,7 +510,7 @@
           "ambiguousImage": true,
           "imageAliases": [
             "Slate",
-            "Deep Lake Clay"
+            "Clay"
           ]
         }
       ],
@@ -585,7 +585,7 @@
         {
           "name": "Stormglass",
           "quantity": 2,
-          "imageId": 73,
+          "imageId": 95,
           "ambiguousImage": false,
           "imageAliases": []
         },
@@ -748,7 +748,7 @@
         {
           "name": "Stormglass",
           "quantity": 4,
-          "imageId": 73,
+          "imageId": 95,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -897,7 +897,7 @@
         {
           "name": "Stormglass",
           "quantity": 1,
-          "imageId": 73,
+          "imageId": 95,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -926,14 +926,14 @@
       "knowledgeIndex": -1,
       "ingredients": [
         {
-          "name": "Glacier Salt",
+          "name": "Salt",
           "quantity": 2,
           "imageId": 90,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Voltaic Geode",
+          "name": "Geode",
           "quantity": 1,
           "imageId": 98,
           "ambiguousImage": false,
@@ -964,20 +964,20 @@
       "knowledgeIndex": -1,
       "ingredients": [
         {
-          "name": "Resonant Crystal",
+          "name": "Crystal",
           "quantity": 2,
           "imageId": 93,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Deep Lake Clay",
+          "name": "Clay",
           "quantity": 1,
           "imageId": 87,
           "ambiguousImage": true,
           "imageAliases": [
             "Slate",
-            "Deep Lake Clay"
+            "Clay"
           ]
         }
       ],
@@ -1005,14 +1005,14 @@
       "knowledgeIndex": -1,
       "ingredients": [
         {
-          "name": "Mirror Reed",
+          "name": "Reed",
           "quantity": 2,
           "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Sunmane Seed",
+          "name": "Seed",
           "quantity": 1,
           "imageId": 96,
           "ambiguousImage": false,
@@ -1050,14 +1050,14 @@
       "knowledgeIndex": -1,
       "ingredients": [
         {
-          "name": "Whitehorn Silverleaf",
+          "name": "Silverleaf",
           "quantity": 2,
           "imageId": 99,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Glacier Salt",
+          "name": "Salt",
           "quantity": 1,
           "imageId": 90,
           "ambiguousImage": false,
@@ -1088,20 +1088,20 @@
       "knowledgeIndex": -1,
       "ingredients": [
         {
-          "name": "Delta Lotus",
+          "name": "Lotus",
           "quantity": 2,
           "imageId": 88,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Ssarathi Scale Moss",
+          "name": "Lichen",
           "quantity": 1,
           "imageId": 94,
           "ambiguousImage": true,
           "imageAliases": [
-            "Grave Moss",
-            "Ssarathi Scale Moss"
+            "Moss",
+            "Lichen"
           ]
         }
       ],
@@ -1129,21 +1129,21 @@
       "knowledgeIndex": -1,
       "ingredients": [
         {
-          "name": "Ghost Orchid",
+          "name": "Orchid",
           "quantity": 2,
           "imageId": 89,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Moor Peat",
+          "name": "Peat",
           "quantity": 1,
           "imageId": 92,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Amber Resin",
+          "name": "Resin",
           "quantity": 1,
           "imageId": 100,
           "ambiguousImage": false,
@@ -1174,21 +1174,21 @@
       "knowledgeIndex": -1,
       "ingredients": [
         {
-          "name": "Mangrove Sap",
+          "name": "Sap",
           "quantity": 1,
           "imageId": 91,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Verdant Venom Bulb",
+          "name": "Venom Bulb",
           "quantity": 1,
           "imageId": 97,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Delta Lotus",
+          "name": "Lotus",
           "quantity": 1,
           "imageId": 88,
           "ambiguousImage": false,
@@ -1219,21 +1219,21 @@
       "knowledgeIndex": -1,
       "ingredients": [
         {
-          "name": "Stormglass Shard",
+          "name": "Stormglass",
           "quantity": 2,
           "imageId": 95,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Resonant Crystal",
+          "name": "Crystal",
           "quantity": 1,
           "imageId": 93,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Voltaic Geode",
+          "name": "Geode",
           "quantity": 1,
           "imageId": 98,
           "ambiguousImage": false,
@@ -1278,7 +1278,7 @@
           "imageAliases": []
         },
         {
-          "name": "Mirror Reed",
+          "name": "Reed",
           "quantity": 2,
           "imageId": 85,
           "ambiguousImage": false,
@@ -1328,13 +1328,13 @@
           ]
         },
         {
-          "name": "Wayside Sage",
+          "name": "Sage",
           "quantity": 2,
           "imageId": 101,
           "ambiguousImage": true,
           "imageAliases": [
             "Rosemary",
-            "Wayside Sage"
+            "Sage"
           ]
         },
         {
@@ -1368,14 +1368,14 @@
           "imageAliases": []
         },
         {
-          "name": "Pale Quartz",
+          "name": "Quartz",
           "quantity": 2,
           "imageId": 113,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Stormglass Shard",
+          "name": "Stormglass",
           "quantity": 1,
           "imageId": 95,
           "ambiguousImage": false,

@@ -2784,7 +2784,7 @@
       "name": "The Stelae Reliquary",
       "label": "A shrine slab with fresh scratches where it has been slid aside.",
       "prop": "shrine_slab",
-      "key": "Shorebank Shell",
+      "key": "Shell",
       "destinationMap": "manymouth_delta_secrets",
       "destinationSpawn": "delta-stelae-reliquary",
       "position": [

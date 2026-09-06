@@ -1250,7 +1250,7 @@
   "harvestables": [
     {
       "id": "amber-resin-hollow-node-00",
-      "resource": "Amber Resin",
+      "resource": "Resin",
       "position": [
         177.79,
         -4.0,
@@ -1264,7 +1264,7 @@
     },
     {
       "id": "amber-resin-hollow-node-01",
-      "resource": "Amber Resin",
+      "resource": "Resin",
       "position": [
         168.24,
         -4.0,
@@ -1278,7 +1278,7 @@
     },
     {
       "id": "amber-resin-hollow-node-02",
-      "resource": "Amber Resin",
+      "resource": "Resin",
       "position": [
         179.56,
         -4.0,
@@ -1292,7 +1292,7 @@
     },
     {
       "id": "amber-resin-hollow-node-03",
-      "resource": "Amber Resin",
+      "resource": "Resin",
       "position": [
         175.54,
         -4.0,
@@ -1306,7 +1306,7 @@
     },
     {
       "id": "amber-resin-hollow-node-04",
-      "resource": "Amber Resin",
+      "resource": "Resin",
       "position": [
         168.27,
         -4.0,
@@ -1320,7 +1320,7 @@
     },
     {
       "id": "amber-resin-hollow-node-05",
-      "resource": "Lantern Cap",
+      "resource": "Toadstool",
       "position": [
         178.62,
         -4.0,
@@ -1334,7 +1334,7 @@
     },
     {
       "id": "amber-resin-hollow-node-06",
-      "resource": "Lantern Cap",
+      "resource": "Toadstool",
       "position": [
         171.49,
         -4.0,
@@ -1348,7 +1348,7 @@
     },
     {
       "id": "amber-resin-hollow-node-07",
-      "resource": "Lantern Cap",
+      "resource": "Toadstool",
       "position": [
         171.92,
         -4.0,
@@ -1362,7 +1362,7 @@
     },
     {
       "id": "amber-resin-hollow-node-08",
-      "resource": "Lantern Cap",
+      "resource": "Toadstool",
       "position": [
         179.33,
         -4.0,
@@ -1376,7 +1376,7 @@
     },
     {
       "id": "amber-beekeepers-garden-node-00",
-      "resource": "Sage",
+      "resource": "Garden Sage",
       "position": [
         237.96,
         -1.5,
@@ -1390,7 +1390,7 @@
     },
     {
       "id": "amber-beekeepers-garden-node-01",
-      "resource": "Sage",
+      "resource": "Garden Sage",
       "position": [
         239.5,
         -1.5,
@@ -1404,7 +1404,7 @@
     },
     {
       "id": "amber-beekeepers-garden-node-02",
-      "resource": "Sage",
+      "resource": "Garden Sage",
       "position": [
         241.04,
         -1.5,
@@ -1418,7 +1418,7 @@
     },
     {
       "id": "amber-beekeepers-garden-node-03",
-      "resource": "Sage",
+      "resource": "Garden Sage",
       "position": [
         237.96,
         -1.5,
@@ -1530,7 +1530,7 @@
     },
     {
       "id": "amber-beekeepers-garden-node-11",
-      "resource": "Wayside Sage",
+      "resource": "Sage",
       "position": [
         237.96,
         -1.5,
@@ -1544,7 +1544,7 @@
     },
     {
       "id": "amber-beekeepers-garden-node-12",
-      "resource": "Wayside Sage",
+      "resource": "Sage",
       "position": [
         239.5,
         -1.5,
@@ -1558,7 +1558,7 @@
     },
     {
       "id": "amber-beekeepers-garden-node-13",
-      "resource": "Wayside Sage",
+      "resource": "Sage",
       "position": [
         241.04,
         -1.5,
@@ -1572,7 +1572,7 @@
     },
     {
       "id": "amber-charcoal-cache-node-00",
-      "resource": "Emberseam Coal",
+      "resource": "Coal",
       "position": [
         164.3,
         -3.0,
@@ -1586,7 +1586,7 @@
     },
     {
       "id": "amber-charcoal-cache-node-01",
-      "resource": "Emberseam Coal",
+      "resource": "Coal",
       "position": [
         167.8,
         -3.0,
@@ -1600,7 +1600,7 @@
     },
     {
       "id": "amber-charcoal-cache-node-02",
-      "resource": "Emberseam Coal",
+      "resource": "Coal",
       "position": [
         171.3,
         -3.0,
@@ -1614,7 +1614,7 @@
     },
     {
       "id": "amber-charcoal-cache-node-03",
-      "resource": "Emberseam Coal",
+      "resource": "Coal",
       "position": [
         174.8,
         -3.0,
@@ -1628,7 +1628,7 @@
     },
     {
       "id": "amber-charcoal-cache-node-04",
-      "resource": "Barrow Bramble",
+      "resource": "Bramble",
       "position": [
         164.3,
         -3.0,
@@ -1642,7 +1642,7 @@
     },
     {
       "id": "amber-charcoal-cache-node-05",
-      "resource": "Barrow Bramble",
+      "resource": "Bramble",
       "position": [
         167.8,
         -3.0,
@@ -1656,7 +1656,7 @@
     },
     {
       "id": "amber-charcoal-cache-node-06",
-      "resource": "Barrow Bramble",
+      "resource": "Bramble",
       "position": [
         171.3,
         -3.0,
@@ -1670,7 +1670,7 @@
     },
     {
       "id": "amber-undercut-node-00",
-      "resource": "Emberseam Coal",
+      "resource": "Coal",
       "position": [
         23.05,
         -5.0,
@@ -1684,7 +1684,7 @@
     },
     {
       "id": "amber-undercut-node-01",
-      "resource": "Emberseam Coal",
+      "resource": "Coal",
       "position": [
         20.05,
         -5.0,
@@ -1698,7 +1698,7 @@
     },
     {
       "id": "amber-undercut-node-02",
-      "resource": "Emberseam Coal",
+      "resource": "Coal",
       "position": [
         23.05,
         -5.0,
@@ -1712,7 +1712,7 @@
     },
     {
       "id": "amber-undercut-node-03",
-      "resource": "Grave Moss",
+      "resource": "Moss",
       "position": [
         20.05,
         -5.0,
@@ -1726,7 +1726,7 @@
     },
     {
       "id": "amber-undercut-node-04",
-      "resource": "Grave Moss",
+      "resource": "Moss",
       "position": [
         23.05,
         -5.0,
@@ -1740,7 +1740,7 @@
     },
     {
       "id": "amber-undercut-node-05",
-      "resource": "Grave Moss",
+      "resource": "Moss",
       "position": [
         20.05,
         -5.0,
@@ -3298,7 +3298,7 @@
       "kind": "reliquary",
       "entranceMap": "amberwood",
       "entranceProp": "shrine_slab",
-      "key": "Amber Resin",
+      "key": "Resin",
       "label": "A shrine slab with fresh scratches where it has been slid aside.",
       "offset": [
         97.55,

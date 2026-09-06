@@ -262,7 +262,7 @@
   "harvestables": [
     {
       "id": "peat-cut-bonus",
-      "resource": "Grave Moss",
+      "resource": "Moss",
       "position": [
         8.5,
         0.0,
@@ -1086,7 +1086,7 @@
           ],
           "objectId": 801
         },
-        "bonus": "node:Grave Moss",
+        "bonus": "node:Moss",
         "room": "peat-cut",
         "bounds": [
           -5.5,

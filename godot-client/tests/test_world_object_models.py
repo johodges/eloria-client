@@ -26,16 +26,24 @@ from pathlib import Path
 
 CLIENT = Path(__file__).resolve().parents[1]
 REGISTRY = CLIENT / "data/world/objects.json"
-SERVER_ROOT = CLIENT.parents[1] / "eloria-server"
+# The server repository beside this one. The main checkouts are `eloria-client`
+# and `eloria-server`, but a feature is usually worked in a pair of worktrees
+# named `<something>` and `<something>-server`, and this test was silently
+# reading the main checkout from whatever branch it happened to be on - so a
+# rename made in the pair looked like a client that had lost its models.
+NEIGHBOURS = CLIENT.parents[1]
+SERVER_CANDIDATES = (NEIGHBOURS / (CLIENT.parents[0].name + "-server"),
+                     NEIGHBOURS / "eloria-server")
 # The interactive roles the server can state. `map_object_entries` sends
 # `role.replace("_", " ").title()`, so this is the label as well as the role.
 ROLE_LABEL = re.compile(r"^[a-z_]+$")
 
 
 def server_root() -> Path | None:
-    return (SERVER_ROOT
-            if (SERVER_ROOT / "config/eloria/harvesting.txt").is_file()
-            else None)
+    for candidate in SERVER_CANDIDATES:
+        if (candidate / "config/eloria/harvesting.txt").is_file():
+            return candidate
+    return None
 
 
 def glb_triangle_count(path: Path) -> int:
@@ -130,9 +138,29 @@ class WorldObjectModelTest(unittest.TestCase):
             self.assertRegex(role, ROLE_LABEL)
             roles.add(role.replace("_", " ").title())
         self.assertTrue(roles)
+        # A role is answered either by a prop in this registry or by the map
+        # package: the secrets are authored into the region mesh as `Secret_*`
+        # nodes on the tile the server states, so the client stands nothing on
+        # one and draws no ring under it.
+        authored = self.interactives.get("mapAuthored", {})
         for label in sorted(roles):
             with self.subTest(role=label):
-                self.assertIn(label, self.interactives["roles"])
+                self.assertIn(label, set(self.interactives["roles"]) | set(authored))
+
+    def test_a_map_authored_role_has_no_prop_of_its_own(self) -> None:
+        """The two ways of answering a role are exclusive.
+
+        A role in both would draw the client's prop on top of the map's, which
+        is the failure this whole registry exists to stop.
+        """
+        authored = self.interactives.get("mapAuthored", {})
+        self.assertTrue(authored, "at least the secrets are map-authored")
+        self.assertFalse(set(authored) & set(self.interactives["roles"]))
+        for label, role in authored.items():
+            with self.subTest(role=label):
+                self.assertRegex(role, ROLE_LABEL)
+                self.assertEqual(role.replace("_", " ").title(), label)
+                self.assertNotIn(role, self.interactives["models"])
 
 
 if __name__ == "__main__":

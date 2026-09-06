@@ -16,14 +16,14 @@ PROP_PALETTE = {"rock": "cliff_rock", "bark": "bark_oak", "stone": "ashlar", "ti
 
 SECRETS = [
     Secret("steppe-seed-hollow", "The Seed Hollow", "grotto", "sand_sink", (-46.0, -74.0),
-           resources=(("Sunmane Seed", 5), ("Steppe Wheat", 4)),
+           resources=(("Seed", 5), ("Wheat", 4)),
            note="A sink in the grass where the seed-heads fall and nobody follows them."),
     Secret("steppe-well-garden", "The Well Garden", "garden", "well_shaft", (-33.0, 24.0),
-           resources=(("Wayside Sage", 4), ("Flax", 4), ("Steppe Wheat", 3), ("Sunmane Seed", 3)),
+           resources=(("Sage", 4), ("Flax", 4), ("Wheat", 3), ("Seed", 3)),
            area=("harvest_speed", 2),
            note="A garden under the dry well where the herd-mothers grow what the horses do not eat."),
     Secret("steppe-mill-cache", "The Mill Cache", "cache", "cellar_hatch", (44.0, 44.0),
-           resources=(("Steppe Wheat", 3), ("Copper Bloom", 3)),
+           resources=(("Wheat", 3), ("Copper", 3)),
            note="The miller's cellar: a chest, a bench and grain not on the tally."),
     Secret("steppe-hall-vault", "The Hall Vault", "vault", "cracked_slab", (-12.0, -20.0), key="Storage Token",
            texts=(("The sour ground", "The fourth well hummed and was filled. What is made under the hall is made on sweet ground, and counts double."),),

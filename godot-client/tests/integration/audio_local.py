@@ -109,7 +109,7 @@ async def probe(port: int) -> None:
         check("the teleport did not itself make a sound",
               not sounds(moved), str(sounds(moved)))
 
-        # The four_gates Mirror Reed node at 686, 510.
+        # The four_gates Reed node at 686, 510.
         writer.write(packet(HARVEST, struct.pack("<H", 496)))
         await writer.drain()
         mine = await drain(reader, 2.5)

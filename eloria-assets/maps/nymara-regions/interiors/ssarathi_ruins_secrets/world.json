@@ -1254,7 +1254,7 @@
   "harvestables": [
     {
       "id": "ruins-moss-hollow-node-00",
-      "resource": "Ssarathi Scale Moss",
+      "resource": "Lichen",
       "position": [
         177.79,
         -4.0,
@@ -1268,7 +1268,7 @@
     },
     {
       "id": "ruins-moss-hollow-node-01",
-      "resource": "Ssarathi Scale Moss",
+      "resource": "Lichen",
       "position": [
         168.24,
         -4.0,
@@ -1282,7 +1282,7 @@
     },
     {
       "id": "ruins-moss-hollow-node-02",
-      "resource": "Ssarathi Scale Moss",
+      "resource": "Lichen",
       "position": [
         179.56,
         -4.0,
@@ -1296,7 +1296,7 @@
     },
     {
       "id": "ruins-moss-hollow-node-03",
-      "resource": "Ssarathi Scale Moss",
+      "resource": "Lichen",
       "position": [
         175.54,
         -4.0,
@@ -1310,7 +1310,7 @@
     },
     {
       "id": "ruins-moss-hollow-node-04",
-      "resource": "Ssarathi Scale Moss",
+      "resource": "Lichen",
       "position": [
         168.27,
         -4.0,
@@ -1324,7 +1324,7 @@
     },
     {
       "id": "ruins-moss-hollow-node-05",
-      "resource": "Grave Moss",
+      "resource": "Moss",
       "position": [
         178.62,
         -4.0,
@@ -1338,7 +1338,7 @@
     },
     {
       "id": "ruins-moss-hollow-node-06",
-      "resource": "Grave Moss",
+      "resource": "Moss",
       "position": [
         171.49,
         -4.0,
@@ -1352,7 +1352,7 @@
     },
     {
       "id": "ruins-moss-hollow-node-07",
-      "resource": "Grave Moss",
+      "resource": "Moss",
       "position": [
         171.92,
         -4.0,
@@ -1366,7 +1366,7 @@
     },
     {
       "id": "ruins-lily-garden-node-00",
-      "resource": "Delta Lotus",
+      "resource": "Lotus",
       "position": [
         237.96,
         -1.5,
@@ -1380,7 +1380,7 @@
     },
     {
       "id": "ruins-lily-garden-node-01",
-      "resource": "Delta Lotus",
+      "resource": "Lotus",
       "position": [
         239.5,
         -1.5,
@@ -1394,7 +1394,7 @@
     },
     {
       "id": "ruins-lily-garden-node-02",
-      "resource": "Delta Lotus",
+      "resource": "Lotus",
       "position": [
         241.04,
         -1.5,
@@ -1408,7 +1408,7 @@
     },
     {
       "id": "ruins-lily-garden-node-03",
-      "resource": "Delta Lotus",
+      "resource": "Lotus",
       "position": [
         237.96,
         -1.5,
@@ -1422,7 +1422,7 @@
     },
     {
       "id": "ruins-lily-garden-node-04",
-      "resource": "Cenote Watercress",
+      "resource": "Watercress",
       "position": [
         244.01,
         -1.5,
@@ -1436,7 +1436,7 @@
     },
     {
       "id": "ruins-lily-garden-node-05",
-      "resource": "Cenote Watercress",
+      "resource": "Watercress",
       "position": [
         245.55,
         -1.5,
@@ -1450,7 +1450,7 @@
     },
     {
       "id": "ruins-lily-garden-node-06",
-      "resource": "Cenote Watercress",
+      "resource": "Watercress",
       "position": [
         247.09,
         -1.5,
@@ -1464,7 +1464,7 @@
     },
     {
       "id": "ruins-lily-garden-node-07",
-      "resource": "Cenote Watercress",
+      "resource": "Watercress",
       "position": [
         244.01,
         -1.5,
@@ -1478,7 +1478,7 @@
     },
     {
       "id": "ruins-lily-garden-node-08",
-      "resource": "Sunstone Flint",
+      "resource": "Flint",
       "position": [
         250.06,
         -1.5,
@@ -1492,7 +1492,7 @@
     },
     {
       "id": "ruins-lily-garden-node-09",
-      "resource": "Sunstone Flint",
+      "resource": "Flint",
       "position": [
         251.6,
         -1.5,
@@ -1506,7 +1506,7 @@
     },
     {
       "id": "ruins-lily-garden-node-10",
-      "resource": "Sunstone Flint",
+      "resource": "Flint",
       "position": [
         253.14,
         -1.5,
@@ -1520,7 +1520,7 @@
     },
     {
       "id": "ruins-lily-garden-node-11",
-      "resource": "Ssarathi Scale Moss",
+      "resource": "Lichen",
       "position": [
         237.96,
         -1.5,
@@ -1534,7 +1534,7 @@
     },
     {
       "id": "ruins-lily-garden-node-12",
-      "resource": "Ssarathi Scale Moss",
+      "resource": "Lichen",
       "position": [
         239.5,
         -1.5,
@@ -1548,7 +1548,7 @@
     },
     {
       "id": "ruins-lily-garden-node-13",
-      "resource": "Ssarathi Scale Moss",
+      "resource": "Lichen",
       "position": [
         241.04,
         -1.5,
@@ -1562,7 +1562,7 @@
     },
     {
       "id": "ruins-gate-cache-node-00",
-      "resource": "Sunstone Flint",
+      "resource": "Flint",
       "position": [
         164.3,
         -3.0,
@@ -1576,7 +1576,7 @@
     },
     {
       "id": "ruins-gate-cache-node-01",
-      "resource": "Sunstone Flint",
+      "resource": "Flint",
       "position": [
         167.8,
         -3.0,
@@ -1590,7 +1590,7 @@
     },
     {
       "id": "ruins-gate-cache-node-02",
-      "resource": "Sunstone Flint",
+      "resource": "Flint",
       "position": [
         171.3,
         -3.0,
@@ -1604,7 +1604,7 @@
     },
     {
       "id": "ruins-gate-cache-node-03",
-      "resource": "Grave Moss",
+      "resource": "Moss",
       "position": [
         174.8,
         -3.0,
@@ -1618,7 +1618,7 @@
     },
     {
       "id": "ruins-gate-cache-node-04",
-      "resource": "Grave Moss",
+      "resource": "Moss",
       "position": [
         164.3,
         -3.0,
@@ -1632,7 +1632,7 @@
     },
     {
       "id": "ruins-gate-cache-node-05",
-      "resource": "Grave Moss",
+      "resource": "Moss",
       "position": [
         167.8,
         -3.0,
@@ -1646,7 +1646,7 @@
     },
     {
       "id": "ruins-rootrun-node-00",
-      "resource": "Ssarathi Scale Moss",
+      "resource": "Lichen",
       "position": [
         23.05,
         -5.0,
@@ -1660,7 +1660,7 @@
     },
     {
       "id": "ruins-rootrun-node-01",
-      "resource": "Ssarathi Scale Moss",
+      "resource": "Lichen",
       "position": [
         20.05,
         -5.0,
@@ -1674,7 +1674,7 @@
     },
     {
       "id": "ruins-rootrun-node-02",
-      "resource": "Ssarathi Scale Moss",
+      "resource": "Lichen",
       "position": [
         23.05,
         -5.0,
@@ -1688,7 +1688,7 @@
     },
     {
       "id": "ruins-rootrun-node-03",
-      "resource": "Mangrove Sap",
+      "resource": "Sap",
       "position": [
         20.05,
         -5.0,
@@ -1702,7 +1702,7 @@
     },
     {
       "id": "ruins-rootrun-node-04",
-      "resource": "Mangrove Sap",
+      "resource": "Sap",
       "position": [
         23.05,
         -5.0,
@@ -1716,7 +1716,7 @@
     },
     {
       "id": "ruins-rootrun-node-05",
-      "resource": "Mangrove Sap",
+      "resource": "Sap",
       "position": [
         20.05,
         -5.0,
@@ -3274,7 +3274,7 @@
       "kind": "reliquary",
       "entranceMap": "ssarathi_ruins",
       "entranceProp": "shrine_slab",
-      "key": "Sunstone Flint",
+      "key": "Flint",
       "label": "A shrine slab with fresh scratches where it has been slid aside.",
       "offset": [
         97.55,

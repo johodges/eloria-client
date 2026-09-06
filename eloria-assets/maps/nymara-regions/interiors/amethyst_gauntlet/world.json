@@ -258,7 +258,7 @@
   "harvestables": [
     {
       "id": "shard-gallery-bonus",
-      "resource": "Resonant Crystal",
+      "resource": "Crystal",
       "position": [
         -4.5,
         0.0,
@@ -1400,7 +1400,7 @@
           ],
           "objectId": 802
         },
-        "bonus": "node:Resonant Crystal",
+        "bonus": "node:Crystal",
         "room": "shard-gallery",
         "bounds": [
           -1.5,

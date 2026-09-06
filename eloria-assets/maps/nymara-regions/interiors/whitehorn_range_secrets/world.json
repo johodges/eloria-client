@@ -1225,7 +1225,7 @@
   "harvestables": [
     {
       "id": "horn-silver-hollow-node-00",
-      "resource": "Whitehorn Silverleaf",
+      "resource": "Silverleaf",
       "position": [
         177.79,
         -4.0,
@@ -1239,7 +1239,7 @@
     },
     {
       "id": "horn-silver-hollow-node-01",
-      "resource": "Whitehorn Silverleaf",
+      "resource": "Silverleaf",
       "position": [
         168.24,
         -4.0,
@@ -1253,7 +1253,7 @@
     },
     {
       "id": "horn-silver-hollow-node-02",
-      "resource": "Whitehorn Silverleaf",
+      "resource": "Silverleaf",
       "position": [
         179.56,
         -4.0,
@@ -1267,7 +1267,7 @@
     },
     {
       "id": "horn-silver-hollow-node-03",
-      "resource": "Whitehorn Silverleaf",
+      "resource": "Silverleaf",
       "position": [
         175.54,
         -4.0,
@@ -1281,7 +1281,7 @@
     },
     {
       "id": "horn-silver-hollow-node-04",
-      "resource": "Whitehorn Silverleaf",
+      "resource": "Silverleaf",
       "position": [
         168.27,
         -4.0,
@@ -1295,7 +1295,7 @@
     },
     {
       "id": "horn-silver-hollow-node-05",
-      "resource": "Glacier Salt",
+      "resource": "Salt",
       "position": [
         178.62,
         -4.0,
@@ -1309,7 +1309,7 @@
     },
     {
       "id": "horn-silver-hollow-node-06",
-      "resource": "Glacier Salt",
+      "resource": "Salt",
       "position": [
         171.49,
         -4.0,
@@ -1323,7 +1323,7 @@
     },
     {
       "id": "horn-silver-hollow-node-07",
-      "resource": "Glacier Salt",
+      "resource": "Salt",
       "position": [
         171.92,
         -4.0,
@@ -1337,7 +1337,7 @@
     },
     {
       "id": "horn-silver-hollow-node-08",
-      "resource": "Glacier Salt",
+      "resource": "Salt",
       "position": [
         179.33,
         -4.0,
@@ -1407,7 +1407,7 @@
     },
     {
       "id": "horn-cairn-garden-node-04",
-      "resource": "Copper Bloom",
+      "resource": "Copper",
       "position": [
         244.01,
         -1.5,
@@ -1421,7 +1421,7 @@
     },
     {
       "id": "horn-cairn-garden-node-05",
-      "resource": "Copper Bloom",
+      "resource": "Copper",
       "position": [
         245.55,
         -1.5,
@@ -1435,7 +1435,7 @@
     },
     {
       "id": "horn-cairn-garden-node-06",
-      "resource": "Copper Bloom",
+      "resource": "Copper",
       "position": [
         247.09,
         -1.5,
@@ -1449,7 +1449,7 @@
     },
     {
       "id": "horn-cairn-garden-node-07",
-      "resource": "Copper Bloom",
+      "resource": "Copper",
       "position": [
         244.01,
         -1.5,
@@ -1505,7 +1505,7 @@
     },
     {
       "id": "horn-cairn-garden-node-11",
-      "resource": "Glacier Salt",
+      "resource": "Salt",
       "position": [
         237.96,
         -1.5,
@@ -1519,7 +1519,7 @@
     },
     {
       "id": "horn-cairn-garden-node-12",
-      "resource": "Glacier Salt",
+      "resource": "Salt",
       "position": [
         239.5,
         -1.5,
@@ -1533,7 +1533,7 @@
     },
     {
       "id": "horn-cairn-garden-node-13",
-      "resource": "Glacier Salt",
+      "resource": "Salt",
       "position": [
         241.04,
         -1.5,
@@ -1631,7 +1631,7 @@
     },
     {
       "id": "horn-icebore-node-00",
-      "resource": "Glacier Salt",
+      "resource": "Salt",
       "position": [
         23.05,
         -5.0,
@@ -1645,7 +1645,7 @@
     },
     {
       "id": "horn-icebore-node-01",
-      "resource": "Glacier Salt",
+      "resource": "Salt",
       "position": [
         20.05,
         -5.0,
@@ -1659,7 +1659,7 @@
     },
     {
       "id": "horn-icebore-node-02",
-      "resource": "Glacier Salt",
+      "resource": "Salt",
       "position": [
         23.05,
         -5.0,
@@ -3259,7 +3259,7 @@
       "kind": "reliquary",
       "entranceMap": "whitehorn_glacier_temple",
       "entranceProp": "shrine_slab",
-      "key": "Glacier Salt",
+      "key": "Salt",
       "label": "A shrine slab with fresh scratches where it has been slid aside.",
       "offset": [
         97.55,

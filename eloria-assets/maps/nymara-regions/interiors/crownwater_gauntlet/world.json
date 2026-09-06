@@ -258,7 +258,7 @@
   "harvestables": [
     {
       "id": "long-arcade-bonus",
-      "resource": "Tidewrack Kelp",
+      "resource": "Kelp",
       "position": [
         -1.5,
         0.0,
@@ -1945,7 +1945,7 @@
           ],
           "objectId": 804
         },
-        "bonus": "node:Tidewrack Kelp",
+        "bonus": "node:Kelp",
         "room": "long-arcade",
         "bounds": [
           1.5,

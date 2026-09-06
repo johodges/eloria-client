@@ -261,7 +261,7 @@
   "harvestables": [
     {
       "id": "long-wash-bonus",
-      "resource": "Sunmane Seed",
+      "resource": "Seed",
       "position": [
         -12.5,
         3.0,
@@ -2959,7 +2959,7 @@
           ],
           "objectId": 808
         },
-        "bonus": "node:Sunmane Seed",
+        "bonus": "node:Seed",
         "room": "long-wash",
         "bounds": [
           -9.5,

@@ -762,7 +762,7 @@
     },
     {
       "id": "grey-peat-working-0",
-      "name": "Grey Moor Peat Cutting",
+      "name": "Grey Peat Cutting",
       "node": "Landmark_PeatCutting_0",
       "type": "worksite",
       "position": [
@@ -773,7 +773,7 @@
     },
     {
       "id": "grey-peat-working-1",
-      "name": "Grey Moor Peat Cutting",
+      "name": "Grey Peat Cutting",
       "node": "Landmark_PeatCutting_1",
       "type": "worksite",
       "position": [
@@ -784,7 +784,7 @@
     },
     {
       "id": "grey-peat-working-2",
-      "name": "Grey Moor Peat Cutting",
+      "name": "Grey Peat Cutting",
       "node": "Landmark_PeatCutting_2",
       "type": "worksite",
       "position": [
@@ -795,7 +795,7 @@
     },
     {
       "id": "grey-peat-working-3",
-      "name": "Grey Moor Peat Cutting",
+      "name": "Grey Peat Cutting",
       "node": "Landmark_PeatCutting_3",
       "type": "worksite",
       "position": [

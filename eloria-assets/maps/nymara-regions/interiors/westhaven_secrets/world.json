@@ -1252,7 +1252,7 @@
   "harvestables": [
     {
       "id": "haven-wrack-hollow-node-00",
-      "resource": "Tidewrack Kelp",
+      "resource": "Kelp",
       "position": [
         177.79,
         -4.0,
@@ -1266,7 +1266,7 @@
     },
     {
       "id": "haven-wrack-hollow-node-01",
-      "resource": "Tidewrack Kelp",
+      "resource": "Kelp",
       "position": [
         168.24,
         -4.0,
@@ -1280,7 +1280,7 @@
     },
     {
       "id": "haven-wrack-hollow-node-02",
-      "resource": "Tidewrack Kelp",
+      "resource": "Kelp",
       "position": [
         179.56,
         -4.0,
@@ -1294,7 +1294,7 @@
     },
     {
       "id": "haven-wrack-hollow-node-03",
-      "resource": "Tidewrack Kelp",
+      "resource": "Kelp",
       "position": [
         175.54,
         -4.0,
@@ -1308,7 +1308,7 @@
     },
     {
       "id": "haven-wrack-hollow-node-04",
-      "resource": "Tidewrack Kelp",
+      "resource": "Kelp",
       "position": [
         168.27,
         -4.0,
@@ -1322,7 +1322,7 @@
     },
     {
       "id": "haven-wrack-hollow-node-05",
-      "resource": "Shorebank Shell",
+      "resource": "Shell",
       "position": [
         178.62,
         -4.0,
@@ -1336,7 +1336,7 @@
     },
     {
       "id": "haven-wrack-hollow-node-06",
-      "resource": "Shorebank Shell",
+      "resource": "Shell",
       "position": [
         171.49,
         -4.0,
@@ -1350,7 +1350,7 @@
     },
     {
       "id": "haven-wrack-hollow-node-07",
-      "resource": "Shorebank Shell",
+      "resource": "Shell",
       "position": [
         171.92,
         -4.0,
@@ -1364,7 +1364,7 @@
     },
     {
       "id": "haven-wrack-hollow-node-08",
-      "resource": "Shorebank Shell",
+      "resource": "Shell",
       "position": [
         179.33,
         -4.0,
@@ -1532,7 +1532,7 @@
     },
     {
       "id": "haven-ropewalk-garden-node-11",
-      "resource": "Verdigris Bloom",
+      "resource": "Verdigris",
       "position": [
         237.96,
         -1.5,
@@ -1546,7 +1546,7 @@
     },
     {
       "id": "haven-ropewalk-garden-node-12",
-      "resource": "Verdigris Bloom",
+      "resource": "Verdigris",
       "position": [
         239.5,
         -1.5,
@@ -1560,7 +1560,7 @@
     },
     {
       "id": "haven-ropewalk-garden-node-13",
-      "resource": "Verdigris Bloom",
+      "resource": "Verdigris",
       "position": [
         241.04,
         -1.5,
@@ -1616,7 +1616,7 @@
     },
     {
       "id": "haven-bonded-cache-node-03",
-      "resource": "Verdigris Bloom",
+      "resource": "Verdigris",
       "position": [
         174.8,
         -3.0,
@@ -1630,7 +1630,7 @@
     },
     {
       "id": "haven-bonded-cache-node-04",
-      "resource": "Verdigris Bloom",
+      "resource": "Verdigris",
       "position": [
         164.3,
         -3.0,
@@ -1644,7 +1644,7 @@
     },
     {
       "id": "haven-bonded-cache-node-05",
-      "resource": "Verdigris Bloom",
+      "resource": "Verdigris",
       "position": [
         167.8,
         -3.0,
@@ -1658,7 +1658,7 @@
     },
     {
       "id": "haven-smuggle-node-00",
-      "resource": "Shorebank Shell",
+      "resource": "Shell",
       "position": [
         23.05,
         -5.0,
@@ -1672,7 +1672,7 @@
     },
     {
       "id": "haven-smuggle-node-01",
-      "resource": "Shorebank Shell",
+      "resource": "Shell",
       "position": [
         20.05,
         -5.0,
@@ -1686,7 +1686,7 @@
     },
     {
       "id": "haven-smuggle-node-02",
-      "resource": "Shorebank Shell",
+      "resource": "Shell",
       "position": [
         23.05,
         -5.0,
@@ -1700,7 +1700,7 @@
     },
     {
       "id": "haven-smuggle-node-03",
-      "resource": "Tidewrack Kelp",
+      "resource": "Kelp",
       "position": [
         20.05,
         -5.0,
@@ -1714,7 +1714,7 @@
     },
     {
       "id": "haven-smuggle-node-04",
-      "resource": "Tidewrack Kelp",
+      "resource": "Kelp",
       "position": [
         23.05,
         -5.0,
@@ -1728,7 +1728,7 @@
     },
     {
       "id": "haven-smuggle-node-05",
-      "resource": "Tidewrack Kelp",
+      "resource": "Kelp",
       "position": [
         20.05,
         -5.0,
@@ -3286,7 +3286,7 @@
       "kind": "reliquary",
       "entranceMap": "westhaven",
       "entranceProp": "shrine_slab",
-      "key": "Shorebank Shell",
+      "key": "Shell",
       "label": "A shrine slab with fresh scratches where it has been slid aside.",
       "offset": [
         97.55,

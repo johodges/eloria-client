@@ -2031,7 +2031,7 @@ func _run() -> void:
 	var objects_payload: PackedByteArray = PackedByteArray([1, 2, 0])
 	objects_payload.append_array(PackedByteArray([
 		0xf0, 0x01, EloriaProtocol.MAP_OBJECT_HARVEST, 0x02, 0x03, 0xe1, 0x01]))
-	objects_payload.append_array(_nul_bytes("Mirror Reed"))
+	objects_payload.append_array(_nul_bytes("Reed"))
 	objects_payload.append_array(_nul_bytes("Harvesting level 0"))
 	objects_payload.append_array(PackedByteArray([
 		0x0e, 0x00, EloriaProtocol.MAP_OBJECT_INTERACTIVE, 0x00, 0x03, 0x90, 0x05]))
@@ -2148,10 +2148,10 @@ func _run() -> void:
 
 	# The harvest indicator follows the authoritative state, not a chat phrase.
 	var started: PackedByteArray = PackedByteArray([1, 0xf0, 0x01])
-	started.append_array(_nul_bytes("Mirror Reed"))
+	started.append_array(_nul_bytes("Reed"))
 	app_state_inventory.call("_on_packet", 237, started)
 	await process_frame
-	_expect(harvest_banner.visible and harvest_banner.text.contains("Mirror Reed"),
+	_expect(harvest_banner.visible and harvest_banner.text.contains("Reed"),
 		"the harvesting indicator names the resource the server reported")
 	_expect(harvest_ring != null and harvest_ring.visible
 		and (harvest_ring.material_override as StandardMaterial3D

@@ -1334,7 +1334,7 @@
   "harvestables": [
     {
       "id": "crown-pearl-hollow-node-00",
-      "resource": "Crownwater Pearl",
+      "resource": "Pearl",
       "position": [
         177.79,
         -4.0,
@@ -1348,7 +1348,7 @@
     },
     {
       "id": "crown-pearl-hollow-node-01",
-      "resource": "Crownwater Pearl",
+      "resource": "Pearl",
       "position": [
         168.24,
         -4.0,
@@ -1362,7 +1362,7 @@
     },
     {
       "id": "crown-pearl-hollow-node-02",
-      "resource": "Crownwater Pearl",
+      "resource": "Pearl",
       "position": [
         179.56,
         -4.0,
@@ -1376,7 +1376,7 @@
     },
     {
       "id": "crown-pearl-hollow-node-03",
-      "resource": "Crownwater Pearl",
+      "resource": "Pearl",
       "position": [
         175.54,
         -4.0,
@@ -1390,7 +1390,7 @@
     },
     {
       "id": "crown-pearl-hollow-node-04",
-      "resource": "Shorebank Shell",
+      "resource": "Shell",
       "position": [
         168.27,
         -4.0,
@@ -1404,7 +1404,7 @@
     },
     {
       "id": "crown-pearl-hollow-node-05",
-      "resource": "Shorebank Shell",
+      "resource": "Shell",
       "position": [
         178.62,
         -4.0,
@@ -1418,7 +1418,7 @@
     },
     {
       "id": "crown-pearl-hollow-node-06",
-      "resource": "Shorebank Shell",
+      "resource": "Shell",
       "position": [
         171.49,
         -4.0,
@@ -1432,7 +1432,7 @@
     },
     {
       "id": "crown-pearl-hollow-node-07",
-      "resource": "Shorebank Shell",
+      "resource": "Shell",
       "position": [
         171.92,
         -4.0,
@@ -1446,7 +1446,7 @@
     },
     {
       "id": "crown-kelp-garden-node-00",
-      "resource": "Tidewrack Kelp",
+      "resource": "Kelp",
       "position": [
         237.96,
         -1.5,
@@ -1460,7 +1460,7 @@
     },
     {
       "id": "crown-kelp-garden-node-01",
-      "resource": "Tidewrack Kelp",
+      "resource": "Kelp",
       "position": [
         239.5,
         -1.5,
@@ -1474,7 +1474,7 @@
     },
     {
       "id": "crown-kelp-garden-node-02",
-      "resource": "Tidewrack Kelp",
+      "resource": "Kelp",
       "position": [
         241.04,
         -1.5,
@@ -1488,7 +1488,7 @@
     },
     {
       "id": "crown-kelp-garden-node-03",
-      "resource": "Tidewrack Kelp",
+      "resource": "Kelp",
       "position": [
         237.96,
         -1.5,
@@ -1502,7 +1502,7 @@
     },
     {
       "id": "crown-kelp-garden-node-04",
-      "resource": "Mirror Reed",
+      "resource": "Reed",
       "position": [
         244.01,
         -1.5,
@@ -1516,7 +1516,7 @@
     },
     {
       "id": "crown-kelp-garden-node-05",
-      "resource": "Mirror Reed",
+      "resource": "Reed",
       "position": [
         245.55,
         -1.5,
@@ -1530,7 +1530,7 @@
     },
     {
       "id": "crown-kelp-garden-node-06",
-      "resource": "Mirror Reed",
+      "resource": "Reed",
       "position": [
         247.09,
         -1.5,
@@ -1544,7 +1544,7 @@
     },
     {
       "id": "crown-kelp-garden-node-07",
-      "resource": "Mirror Reed",
+      "resource": "Reed",
       "position": [
         244.01,
         -1.5,
@@ -1558,7 +1558,7 @@
     },
     {
       "id": "crown-kelp-garden-node-08",
-      "resource": "Deep Lake Clay",
+      "resource": "Clay",
       "position": [
         250.06,
         -1.5,
@@ -1572,7 +1572,7 @@
     },
     {
       "id": "crown-kelp-garden-node-09",
-      "resource": "Deep Lake Clay",
+      "resource": "Clay",
       "position": [
         251.6,
         -1.5,
@@ -1586,7 +1586,7 @@
     },
     {
       "id": "crown-kelp-garden-node-10",
-      "resource": "Deep Lake Clay",
+      "resource": "Clay",
       "position": [
         253.14,
         -1.5,
@@ -1600,7 +1600,7 @@
     },
     {
       "id": "crown-kelp-garden-node-11",
-      "resource": "Shorebank Shell",
+      "resource": "Shell",
       "position": [
         237.96,
         -1.5,
@@ -1614,7 +1614,7 @@
     },
     {
       "id": "crown-kelp-garden-node-12",
-      "resource": "Shorebank Shell",
+      "resource": "Shell",
       "position": [
         239.5,
         -1.5,
@@ -1628,7 +1628,7 @@
     },
     {
       "id": "crown-kelp-garden-node-13",
-      "resource": "Shorebank Shell",
+      "resource": "Shell",
       "position": [
         241.04,
         -1.5,
@@ -1642,7 +1642,7 @@
     },
     {
       "id": "crown-customs-cache-node-00",
-      "resource": "Crownwater Pearl",
+      "resource": "Pearl",
       "position": [
         164.3,
         -3.0,
@@ -1656,7 +1656,7 @@
     },
     {
       "id": "crown-customs-cache-node-01",
-      "resource": "Crownwater Pearl",
+      "resource": "Pearl",
       "position": [
         167.8,
         -3.0,
@@ -1670,7 +1670,7 @@
     },
     {
       "id": "crown-customs-cache-node-02",
-      "resource": "Tidewrack Kelp",
+      "resource": "Kelp",
       "position": [
         171.3,
         -3.0,
@@ -1684,7 +1684,7 @@
     },
     {
       "id": "crown-customs-cache-node-03",
-      "resource": "Tidewrack Kelp",
+      "resource": "Kelp",
       "position": [
         174.8,
         -3.0,
@@ -1698,7 +1698,7 @@
     },
     {
       "id": "crown-customs-cache-node-04",
-      "resource": "Tidewrack Kelp",
+      "resource": "Kelp",
       "position": [
         164.3,
         -3.0,
@@ -1712,7 +1712,7 @@
     },
     {
       "id": "crown-drain-node-00",
-      "resource": "Deep Lake Clay",
+      "resource": "Clay",
       "position": [
         23.05,
         -5.0,
@@ -1726,7 +1726,7 @@
     },
     {
       "id": "crown-drain-node-01",
-      "resource": "Deep Lake Clay",
+      "resource": "Clay",
       "position": [
         20.05,
         -5.0,
@@ -1740,7 +1740,7 @@
     },
     {
       "id": "crown-drain-node-02",
-      "resource": "Deep Lake Clay",
+      "resource": "Clay",
       "position": [
         23.05,
         -5.0,
@@ -1754,7 +1754,7 @@
     },
     {
       "id": "crown-drain-node-03",
-      "resource": "Mirror Reed",
+      "resource": "Reed",
       "position": [
         20.05,
         -5.0,
@@ -1768,7 +1768,7 @@
     },
     {
       "id": "crown-drain-node-04",
-      "resource": "Mirror Reed",
+      "resource": "Reed",
       "position": [
         23.05,
         -5.0,
@@ -1782,7 +1782,7 @@
     },
     {
       "id": "crown-drain-node-05",
-      "resource": "Mirror Reed",
+      "resource": "Reed",
       "position": [
         20.05,
         -5.0,
@@ -3340,7 +3340,7 @@
       "kind": "reliquary",
       "entranceMap": "crownwater",
       "entranceProp": "shrine_slab",
-      "key": "Shorebank Shell",
+      "key": "Shell",
       "label": "A shrine slab with fresh scratches where it has been slid aside.",
       "offset": [
         97.55,

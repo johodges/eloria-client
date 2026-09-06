@@ -54,7 +54,7 @@ func _run() -> void:
 
 	# The server grants the skill, the nexus and every reagent, and names the
 	# slots. All three light - including the stag, whose Deer Hide shares its
-	# picture with four other pelts and whose Wayside Sage shares one with
+	# picture with four other pelts and whose Sage shares one with
 	# Rosemary. Before the slot names it was refused outright, because a
 	# client told only an image id cannot say which pelt it is holding.
 	_stats({"summoning": 30, "animal_nexus": 2, "food": 40, "ether": 60})

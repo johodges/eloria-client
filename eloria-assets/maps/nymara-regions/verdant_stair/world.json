@@ -4043,7 +4043,7 @@
   "harvestables": [
     {
       "id": "delta-lotus-01",
-      "resource": "Delta Lotus",
+      "resource": "Lotus",
       "category": "reagent",
       "serverNode": 45,
       "position": [
@@ -4060,7 +4060,7 @@
     },
     {
       "id": "delta-lotus-02",
-      "resource": "Delta Lotus",
+      "resource": "Lotus",
       "category": "reagent",
       "serverNode": 46,
       "position": [
@@ -4077,7 +4077,7 @@
     },
     {
       "id": "ghost-orchid-03",
-      "resource": "Ghost Orchid",
+      "resource": "Orchid",
       "category": "reagent",
       "serverNode": 47,
       "position": [
@@ -4094,7 +4094,7 @@
     },
     {
       "id": "ghost-orchid-04",
-      "resource": "Ghost Orchid",
+      "resource": "Orchid",
       "category": "reagent",
       "serverNode": 48,
       "position": [
@@ -4111,7 +4111,7 @@
     },
     {
       "id": "ssarathi-scale-moss-05",
-      "resource": "Ssarathi Scale Moss",
+      "resource": "Lichen",
       "category": "reagent",
       "serverNode": 49,
       "position": [
@@ -4128,7 +4128,7 @@
     },
     {
       "id": "ssarathi-scale-moss-06",
-      "resource": "Ssarathi Scale Moss",
+      "resource": "Lichen",
       "category": "reagent",
       "serverNode": 50,
       "position": [
@@ -4145,7 +4145,7 @@
     },
     {
       "id": "verdant-venom-bulb-07",
-      "resource": "Verdant Venom Bulb",
+      "resource": "Venom Bulb",
       "category": "reagent",
       "serverNode": 51,
       "position": [
@@ -4162,7 +4162,7 @@
     },
     {
       "id": "verdant-venom-bulb-08",
-      "resource": "Verdant Venom Bulb",
+      "resource": "Venom Bulb",
       "category": "reagent",
       "serverNode": 52,
       "position": [
@@ -4179,7 +4179,7 @@
     },
     {
       "id": "wayside-sage-09",
-      "resource": "Wayside Sage",
+      "resource": "Sage",
       "category": "reagent",
       "serverNode": 53,
       "position": [
@@ -4196,7 +4196,7 @@
     },
     {
       "id": "wayside-sage-10",
-      "resource": "Wayside Sage",
+      "resource": "Sage",
       "category": "reagent",
       "serverNode": 54,
       "position": [
@@ -4213,7 +4213,7 @@
     },
     {
       "id": "wayside-sage-11",
-      "resource": "Wayside Sage",
+      "resource": "Sage",
       "category": "reagent",
       "serverNode": 55,
       "position": [
@@ -4281,7 +4281,7 @@
     },
     {
       "id": "lantern-cap-15",
-      "resource": "Lantern Cap",
+      "resource": "Toadstool",
       "category": "reagent",
       "serverNode": 59,
       "position": [
@@ -4298,7 +4298,7 @@
     },
     {
       "id": "lantern-cap-16",
-      "resource": "Lantern Cap",
+      "resource": "Toadstool",
       "category": "reagent",
       "serverNode": 60,
       "position": [
@@ -4315,7 +4315,7 @@
     },
     {
       "id": "pale-quartz-17",
-      "resource": "Pale Quartz",
+      "resource": "Quartz",
       "category": "mineral",
       "serverNode": 61,
       "position": [
@@ -4332,7 +4332,7 @@
     },
     {
       "id": "pale-quartz-18",
-      "resource": "Pale Quartz",
+      "resource": "Quartz",
       "category": "mineral",
       "serverNode": 62,
       "position": [
@@ -4349,7 +4349,7 @@
     },
     {
       "id": "pale-quartz-19",
-      "resource": "Pale Quartz",
+      "resource": "Quartz",
       "category": "mineral",
       "serverNode": 63,
       "position": [
@@ -4366,7 +4366,7 @@
     },
     {
       "id": "cenote-watercress-20",
-      "resource": "Cenote Watercress",
+      "resource": "Watercress",
       "category": "reagent",
       "serverNode": 64,
       "position": [
@@ -4383,7 +4383,7 @@
     },
     {
       "id": "cenote-watercress-21",
-      "resource": "Cenote Watercress",
+      "resource": "Watercress",
       "category": "reagent",
       "serverNode": 65,
       "position": [
@@ -4400,7 +4400,7 @@
     },
     {
       "id": "cenote-watercress-22",
-      "resource": "Cenote Watercress",
+      "resource": "Watercress",
       "category": "reagent",
       "serverNode": 66,
       "position": [
@@ -6309,13 +6309,13 @@
       "creature emerald_basilisk: server tile [72, 72] is not standable on the built terrain; marker moved 44 m to [72, 116]",
       "creature leaf_mantis: server tile [108, 72] is not standable on the built terrain; marker moved 20 m to [128, 72]",
       "creature verdant_naiad: server tile [72, 108] is not standable on the built terrain; marker moved 12 m to [77, 119]",
-      "harvestable Ssarathi Scale Moss: server tile [303, 210] is not standable on the built terrain; marker moved 12 m to [315, 210]",
-      "harvestable Ssarathi Scale Moss: server tile [258, 183] is not standable on the built terrain; marker moved 6 m to [264, 181]",
-      "harvestable Wayside Sage: server tile [42, 267] is not standable on the built terrain; marker moved 6 m to [48, 265]",
-      "harvestable Wayside Sage: server tile [57, 126] is not standable on the built terrain; marker moved 6 m to [63, 126]",
+      "harvestable Lichen: server tile [303, 210] is not standable on the built terrain; marker moved 12 m to [315, 210]",
+      "harvestable Lichen: server tile [258, 183] is not standable on the built terrain; marker moved 6 m to [264, 181]",
+      "harvestable Sage: server tile [42, 267] is not standable on the built terrain; marker moved 6 m to [48, 265]",
+      "harvestable Sage: server tile [57, 126] is not standable on the built terrain; marker moved 6 m to [63, 126]",
       "harvestable Hearthroot: server tile [96, 39] is not standable on the built terrain; marker moved 44 m to [127, 70]",
-      "harvestable Lantern Cap: server tile [255, 210] is not standable on the built terrain; marker moved 6 m to [261, 210]",
-      "harvestable Lantern Cap: server tile [282, 99] is not standable on the built terrain; marker moved 6 m to [288, 99]",
+      "harvestable Toadstool: server tile [255, 210] is not standable on the built terrain; marker moved 6 m to [261, 210]",
+      "harvestable Toadstool: server tile [282, 99] is not standable on the built terrain; marker moved 6 m to [288, 99]",
       "interactive crafting_station: server tile [204, 186] is not standable on the built terrain; marker moved 6 m to [210, 186]"
     ],
     "trianglesPerSquareMetre": 8.49,
@@ -6372,13 +6372,13 @@
     "creature emerald_basilisk: server tile [72, 72] is not standable on the built terrain; marker moved 44 m to [72, 116]",
     "creature leaf_mantis: server tile [108, 72] is not standable on the built terrain; marker moved 20 m to [128, 72]",
     "creature verdant_naiad: server tile [72, 108] is not standable on the built terrain; marker moved 12 m to [77, 119]",
-    "harvestable Ssarathi Scale Moss: server tile [303, 210] is not standable on the built terrain; marker moved 12 m to [315, 210]",
-    "harvestable Ssarathi Scale Moss: server tile [258, 183] is not standable on the built terrain; marker moved 6 m to [264, 181]",
-    "harvestable Wayside Sage: server tile [42, 267] is not standable on the built terrain; marker moved 6 m to [48, 265]",
-    "harvestable Wayside Sage: server tile [57, 126] is not standable on the built terrain; marker moved 6 m to [63, 126]",
+    "harvestable Lichen: server tile [303, 210] is not standable on the built terrain; marker moved 12 m to [315, 210]",
+    "harvestable Lichen: server tile [258, 183] is not standable on the built terrain; marker moved 6 m to [264, 181]",
+    "harvestable Sage: server tile [42, 267] is not standable on the built terrain; marker moved 6 m to [48, 265]",
+    "harvestable Sage: server tile [57, 126] is not standable on the built terrain; marker moved 6 m to [63, 126]",
     "harvestable Hearthroot: server tile [96, 39] is not standable on the built terrain; marker moved 44 m to [127, 70]",
-    "harvestable Lantern Cap: server tile [255, 210] is not standable on the built terrain; marker moved 6 m to [261, 210]",
-    "harvestable Lantern Cap: server tile [282, 99] is not standable on the built terrain; marker moved 6 m to [288, 99]",
+    "harvestable Toadstool: server tile [255, 210] is not standable on the built terrain; marker moved 6 m to [261, 210]",
+    "harvestable Toadstool: server tile [282, 99] is not standable on the built terrain; marker moved 6 m to [288, 99]",
     "interactive crafting_station: server tile [204, 186] is not standable on the built terrain; marker moved 6 m to [210, 186]"
   ]
 }

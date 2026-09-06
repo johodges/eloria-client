@@ -1252,7 +1252,7 @@
   "harvestables": [
     {
       "id": "delta-lotus-hollow-node-00",
-      "resource": "Delta Lotus",
+      "resource": "Lotus",
       "position": [
         177.79,
         -4.0,
@@ -1266,7 +1266,7 @@
     },
     {
       "id": "delta-lotus-hollow-node-01",
-      "resource": "Delta Lotus",
+      "resource": "Lotus",
       "position": [
         168.24,
         -4.0,
@@ -1280,7 +1280,7 @@
     },
     {
       "id": "delta-lotus-hollow-node-02",
-      "resource": "Delta Lotus",
+      "resource": "Lotus",
       "position": [
         179.56,
         -4.0,
@@ -1294,7 +1294,7 @@
     },
     {
       "id": "delta-lotus-hollow-node-03",
-      "resource": "Delta Lotus",
+      "resource": "Lotus",
       "position": [
         175.54,
         -4.0,
@@ -1308,7 +1308,7 @@
     },
     {
       "id": "delta-lotus-hollow-node-04",
-      "resource": "Delta Lotus",
+      "resource": "Lotus",
       "position": [
         168.27,
         -4.0,
@@ -1322,7 +1322,7 @@
     },
     {
       "id": "delta-lotus-hollow-node-05",
-      "resource": "Mangrove Sap",
+      "resource": "Sap",
       "position": [
         178.62,
         -4.0,
@@ -1336,7 +1336,7 @@
     },
     {
       "id": "delta-lotus-hollow-node-06",
-      "resource": "Mangrove Sap",
+      "resource": "Sap",
       "position": [
         171.49,
         -4.0,
@@ -1350,7 +1350,7 @@
     },
     {
       "id": "delta-lotus-hollow-node-07",
-      "resource": "Mangrove Sap",
+      "resource": "Sap",
       "position": [
         171.92,
         -4.0,
@@ -1364,7 +1364,7 @@
     },
     {
       "id": "delta-lotus-hollow-node-08",
-      "resource": "Mangrove Sap",
+      "resource": "Sap",
       "position": [
         179.33,
         -4.0,
@@ -1434,7 +1434,7 @@
     },
     {
       "id": "delta-paddy-garden-node-04",
-      "resource": "Indigo Thistle",
+      "resource": "Thistle",
       "position": [
         244.01,
         -1.5,
@@ -1448,7 +1448,7 @@
     },
     {
       "id": "delta-paddy-garden-node-05",
-      "resource": "Indigo Thistle",
+      "resource": "Thistle",
       "position": [
         245.55,
         -1.5,
@@ -1462,7 +1462,7 @@
     },
     {
       "id": "delta-paddy-garden-node-06",
-      "resource": "Indigo Thistle",
+      "resource": "Thistle",
       "position": [
         247.09,
         -1.5,
@@ -1476,7 +1476,7 @@
     },
     {
       "id": "delta-paddy-garden-node-07",
-      "resource": "Indigo Thistle",
+      "resource": "Thistle",
       "position": [
         244.01,
         -1.5,
@@ -1490,7 +1490,7 @@
     },
     {
       "id": "delta-paddy-garden-node-08",
-      "resource": "Delta Lotus",
+      "resource": "Lotus",
       "position": [
         250.06,
         -1.5,
@@ -1504,7 +1504,7 @@
     },
     {
       "id": "delta-paddy-garden-node-09",
-      "resource": "Delta Lotus",
+      "resource": "Lotus",
       "position": [
         251.6,
         -1.5,
@@ -1518,7 +1518,7 @@
     },
     {
       "id": "delta-paddy-garden-node-10",
-      "resource": "Delta Lotus",
+      "resource": "Lotus",
       "position": [
         253.14,
         -1.5,
@@ -1532,7 +1532,7 @@
     },
     {
       "id": "delta-paddy-garden-node-11",
-      "resource": "Tidewrack Kelp",
+      "resource": "Kelp",
       "position": [
         237.96,
         -1.5,
@@ -1546,7 +1546,7 @@
     },
     {
       "id": "delta-paddy-garden-node-12",
-      "resource": "Tidewrack Kelp",
+      "resource": "Kelp",
       "position": [
         239.5,
         -1.5,
@@ -1560,7 +1560,7 @@
     },
     {
       "id": "delta-paddy-garden-node-13",
-      "resource": "Tidewrack Kelp",
+      "resource": "Kelp",
       "position": [
         241.04,
         -1.5,
@@ -1574,7 +1574,7 @@
     },
     {
       "id": "delta-market-cache-node-00",
-      "resource": "Mangrove Sap",
+      "resource": "Sap",
       "position": [
         164.3,
         -3.0,
@@ -1588,7 +1588,7 @@
     },
     {
       "id": "delta-market-cache-node-01",
-      "resource": "Mangrove Sap",
+      "resource": "Sap",
       "position": [
         167.8,
         -3.0,
@@ -1602,7 +1602,7 @@
     },
     {
       "id": "delta-market-cache-node-02",
-      "resource": "Mangrove Sap",
+      "resource": "Sap",
       "position": [
         171.3,
         -3.0,
@@ -1616,7 +1616,7 @@
     },
     {
       "id": "delta-market-cache-node-03",
-      "resource": "Indigo Thistle",
+      "resource": "Thistle",
       "position": [
         174.8,
         -3.0,
@@ -1630,7 +1630,7 @@
     },
     {
       "id": "delta-market-cache-node-04",
-      "resource": "Indigo Thistle",
+      "resource": "Thistle",
       "position": [
         164.3,
         -3.0,
@@ -1644,7 +1644,7 @@
     },
     {
       "id": "delta-market-cache-node-05",
-      "resource": "Indigo Thistle",
+      "resource": "Thistle",
       "position": [
         167.8,
         -3.0,
@@ -1700,7 +1700,7 @@
     },
     {
       "id": "delta-bund-run-node-03",
-      "resource": "Moor Peat",
+      "resource": "Peat",
       "position": [
         20.05,
         -5.0,
@@ -1714,7 +1714,7 @@
     },
     {
       "id": "delta-bund-run-node-04",
-      "resource": "Moor Peat",
+      "resource": "Peat",
       "position": [
         23.05,
         -5.0,
@@ -1728,7 +1728,7 @@
     },
     {
       "id": "delta-bund-run-node-05",
-      "resource": "Moor Peat",
+      "resource": "Peat",
       "position": [
         20.05,
         -5.0,
@@ -3286,7 +3286,7 @@
       "kind": "reliquary",
       "entranceMap": "manymouth_delta",
       "entranceProp": "shrine_slab",
-      "key": "Shorebank Shell",
+      "key": "Shell",
       "label": "A shrine slab with fresh scratches where it has been slid aside.",
       "offset": [
         97.55,

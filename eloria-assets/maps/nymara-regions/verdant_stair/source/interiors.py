@@ -515,7 +515,7 @@ def cenote_deeps(seed: int = 20260902) -> Interior:
     it.landmark("the-drowned-hall", "The Drowned Hall", "drowned", 2.4)
     it.landmark("the-root-hall", "The Root Hall", "roothall", 3.0)
     it.harvestables = [
-        {"id": f"cenote-watercress-{index:02d}", "resource": "Cenote Watercress",
+        {"id": f"cenote-watercress-{index:02d}", "resource": "Watercress",
          "category": "reagent",
          "position": [round(float(rng.uniform(-8, 8)), 2), 0.0,
                       round(float(rng.uniform(-8, 8)), 2)],
@@ -826,7 +826,7 @@ def stair_quarry(seed: int = 20260904) -> Interior:
          "authority": "server"},
     ]
     it.harvestables = [
-        {"id": f"pale-quartz-{index:02d}", "resource": "Pale Quartz",
+        {"id": f"pale-quartz-{index:02d}", "resource": "Quartz",
          "category": "mineral",
          "position": [round(cx + float(rng.uniform(-15, 15)), 2), -2.0,
                       round(cz + float(rng.uniform(-13, 13)), 2)],

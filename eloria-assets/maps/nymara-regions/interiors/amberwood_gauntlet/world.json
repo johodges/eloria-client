@@ -260,7 +260,7 @@
   "harvestables": [
     {
       "id": "lantern-walk-bonus",
-      "resource": "Lantern Cap",
+      "resource": "Toadstool",
       "position": [
         -12.5,
         3.0,
@@ -2954,7 +2954,7 @@
           ],
           "objectId": 808
         },
-        "bonus": "node:Lantern Cap",
+        "bonus": "node:Toadstool",
         "room": "lantern-walk",
         "bounds": [
           -9.5,

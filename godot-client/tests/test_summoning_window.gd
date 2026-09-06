@@ -122,7 +122,7 @@ func _run() -> void:
 	_expect(not otter.disabled and is_equal_approx(otter.modulate.a, 1.0),
 		"a summon the client can see no obstacle to is lit and clickable")
 	_expect(otter_note.text.contains("Bones x1")
-		and otter_note.text.contains("Mirror Reed x2"),
+		and otter_note.text.contains("Reed x2"),
 		"and lists what it will spend: " + otter_note.text)
 
 	# The nexus is the requirement the manufacture window never asked about,
@@ -162,7 +162,7 @@ func _run() -> void:
 		% [str(slots), str(quantities), str(wanted_slots), str(wanted_quantities)])
 
 	# The stag's Deer Hide shares its picture with four other pelts and its
-	# Wayside Sage with Rosemary. Before the server named the slots there was
+	# Sage with Rosemary. Before the server named the slots there was
 	# no honest way to pick either, and the window refused. With the names it
 	# is an ordinary summon.
 	var stag: Button = rows.get_node("SummonRow%d" % listed[1]) as Button

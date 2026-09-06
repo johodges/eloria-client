@@ -1665,7 +1665,7 @@
       "name": "The Cathedral Reliquary",
       "label": "A shrine slab with fresh scratches where it has been slid aside.",
       "prop": "shrine_slab",
-      "key": "Shorebank Shell",
+      "key": "Shell",
       "destinationMap": "westhaven_secrets",
       "destinationSpawn": "haven-cathedral-reliquary",
       "position": [

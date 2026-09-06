@@ -265,6 +265,58 @@ def brazier(v, i):
                 lean=(np.cos(angle) * 0.10, np.sin(angle) * 0.10))
 
 
+def standing_stone(v, i):
+    """A waystone: a cairn footing under a rough stone with a carved band."""
+    H.bed(v, i, 0.80, 0.06)
+    for stone in range(5):
+        angle = 1.2566 * stone + 0.7
+        H.prism(v, i, 0.06, 0.26 + 0.07 * (stone % 3), 0.21, 0.15, 5,
+                (0.50 * np.cos(angle), 0.50 * np.sin(angle)), H.UV_BED)
+    H.prism(v, i, 0.06, 1.04, 0.44, 0.38, 5, uv=H.UV_BED)
+    H.prism(v, i, 1.18, 2.06, 0.36, 0.24, 5, uv=H.UV_BED, lean=(0.05, 0.03))
+    H.cap(v, i, 2.06, 0.24, 5, (0.05, 0.03), H.UV_BED)
+    # The band the road home is cut into, which is the whole point of a
+    # waystone and the one part of it a player looks at.
+    H.prism(v, i, 1.04, 1.18, 0.46, 0.46, 5, uv=H.UV_BLOOM)
+
+
+def strongbox(v, i):
+    """A run's cache: an iron-strapped stone coffer on a flagged plinth."""
+    H.bed(v, i, 0.74, 0.05)
+    _box(v, i, (0.0, 0.0, 0.12), (1.36, 0.92, 0.14), H.UV_BED)
+    _box(v, i, (0.0, 0.0, 0.48), (1.16, 0.74, 0.58), H.UV_BED)
+    _box(v, i, (0.0, 0.0, 0.80), (1.22, 0.80, 0.10), H.UV_STALK)
+    for strap in (-0.36, 0.36):
+        _box(v, i, (strap, 0.0, 0.48), (0.10, 0.78, 0.62), H.UV_STALK)
+    # The lock plate: a cache opens once for each of the party, so it reads as
+    # something counted rather than something forced.
+    _box(v, i, (0.0, -0.39, 0.52), (0.26, 0.08, 0.26), H.UV_BLOOM)
+    _box(v, i, (0.0, -0.42, 0.52), (0.10, 0.05, 0.10), H.UV_BED)
+
+
+def barred_gate(v, i):
+    """A gauntlet gate: a ring of heavy bars under a banded lintel.
+
+    The six flavours the server states - roots, a portcullis, a jade door, a
+    stone slab, a wall of ice, an iron bar gate - are one role on the wire, so
+    they are one prop, and the shape has to say "shut" rather than say which.
+
+    It is a ring rather than a wall because `MapObject3D` yaws every prop by
+    its object id: the server sends a tile and no facing, so a barrier built
+    across one axis would stand at a random angle to the corridor it closes.
+    A ring closes the tile from every approach and reads the same at any yaw.
+    """
+    H.bed(v, i, 0.96, 0.06)
+    H.prism(v, i, 0.06, 0.22, 0.92, 0.86, 12, uv=H.UV_BED)
+    for bar in range(12):
+        angle = 0.5236 * bar
+        H.prism(v, i, 0.20, 2.32, 0.09, 0.07, 4,
+                (0.80 * np.cos(angle), 0.80 * np.sin(angle)), H.UV_STALK)
+    H.prism(v, i, 2.20, 2.44, 0.90, 0.90, 12, uv=H.UV_BLOOM)
+    H.prism(v, i, 2.44, 2.62, 0.90, 0.72, 12, uv=H.UV_BED)
+    H.cap(v, i, 2.62, 0.72, 12, uv=H.UV_BED)
+
+
 # role, label the server derives from it, prop, (base, accent, bloom), foliage
 INTERACTIVES = (
     ("portal", "Portal", obelisk,
@@ -281,7 +333,20 @@ INTERACTIVES = (
      ((104, 88, 56), (170, 148, 92), (188, 78, 62)), False),
     ("scenery_effect", "Scenery Effect", brazier,
      ((70, 72, 80), (118, 122, 132), (108, 178, 232)), False),
+    ("waystone", "Waystone", standing_stone,
+     ((88, 88, 94), (140, 142, 148), (198, 204, 210)), False),
+    ("cache", "Cache", strongbox,
+     ((66, 68, 72), (112, 114, 120), (166, 138, 78)), False),
+    ("gate", "Gate", barred_gate,
+     ((58, 56, 60), (102, 100, 108), (132, 112, 76)), False),
 )
+
+# Roles whose object is already standing in the world: the region packages
+# author a secret's door - the hollow tree, the cellar hatch, the cracked slab
+# - as `Secret_*` nodes in the region mesh, at the tile the server states. The
+# client places nothing on those and draws no ring under them, because a ring
+# on a hollow tree is both a duplicate and a sign saying "secret here".
+MAP_AUTHORED = {"Secret": "secret"}
 
 
 def build_interactives(client_root: Path, scratch: Path) -> dict:
@@ -294,7 +359,7 @@ def build_interactives(client_root: Path, scratch: Path) -> dict:
         models[role] = {"scene": f"res://{CLIENT_INTERACTIVE_DIR}/{role}.glb",
                         "label": label, **stats}
         roles[label] = role
-    return {"models": models, "roles": roles}
+    return {"models": models, "roles": roles, "mapAuthored": MAP_AUTHORED}
 
 
 # ---------------------------------------------------------------------------

@@ -1154,7 +1154,7 @@
   "harvestables": [
     {
       "id": "steppe-seed-hollow-node-00",
-      "resource": "Sunmane Seed",
+      "resource": "Seed",
       "position": [
         105.79,
         -4.0,
@@ -1168,7 +1168,7 @@
     },
     {
       "id": "steppe-seed-hollow-node-01",
-      "resource": "Sunmane Seed",
+      "resource": "Seed",
       "position": [
         96.24,
         -4.0,
@@ -1182,7 +1182,7 @@
     },
     {
       "id": "steppe-seed-hollow-node-02",
-      "resource": "Sunmane Seed",
+      "resource": "Seed",
       "position": [
         107.56,
         -4.0,
@@ -1196,7 +1196,7 @@
     },
     {
       "id": "steppe-seed-hollow-node-03",
-      "resource": "Sunmane Seed",
+      "resource": "Seed",
       "position": [
         103.54,
         -4.0,
@@ -1210,7 +1210,7 @@
     },
     {
       "id": "steppe-seed-hollow-node-04",
-      "resource": "Sunmane Seed",
+      "resource": "Seed",
       "position": [
         96.27,
         -4.0,
@@ -1224,7 +1224,7 @@
     },
     {
       "id": "steppe-seed-hollow-node-05",
-      "resource": "Steppe Wheat",
+      "resource": "Wheat",
       "position": [
         106.62,
         -4.0,
@@ -1238,7 +1238,7 @@
     },
     {
       "id": "steppe-seed-hollow-node-06",
-      "resource": "Steppe Wheat",
+      "resource": "Wheat",
       "position": [
         99.49,
         -4.0,
@@ -1252,7 +1252,7 @@
     },
     {
       "id": "steppe-seed-hollow-node-07",
-      "resource": "Steppe Wheat",
+      "resource": "Wheat",
       "position": [
         99.92,
         -4.0,
@@ -1266,7 +1266,7 @@
     },
     {
       "id": "steppe-seed-hollow-node-08",
-      "resource": "Steppe Wheat",
+      "resource": "Wheat",
       "position": [
         107.33,
         -4.0,
@@ -1280,7 +1280,7 @@
     },
     {
       "id": "steppe-well-garden-node-00",
-      "resource": "Wayside Sage",
+      "resource": "Sage",
       "position": [
         165.96,
         -1.5,
@@ -1294,7 +1294,7 @@
     },
     {
       "id": "steppe-well-garden-node-01",
-      "resource": "Wayside Sage",
+      "resource": "Sage",
       "position": [
         167.5,
         -1.5,
@@ -1308,7 +1308,7 @@
     },
     {
       "id": "steppe-well-garden-node-02",
-      "resource": "Wayside Sage",
+      "resource": "Sage",
       "position": [
         169.04,
         -1.5,
@@ -1322,7 +1322,7 @@
     },
     {
       "id": "steppe-well-garden-node-03",
-      "resource": "Wayside Sage",
+      "resource": "Sage",
       "position": [
         165.96,
         -1.5,
@@ -1392,7 +1392,7 @@
     },
     {
       "id": "steppe-well-garden-node-08",
-      "resource": "Steppe Wheat",
+      "resource": "Wheat",
       "position": [
         178.06,
         -1.5,
@@ -1406,7 +1406,7 @@
     },
     {
       "id": "steppe-well-garden-node-09",
-      "resource": "Steppe Wheat",
+      "resource": "Wheat",
       "position": [
         179.6,
         -1.5,
@@ -1420,7 +1420,7 @@
     },
     {
       "id": "steppe-well-garden-node-10",
-      "resource": "Steppe Wheat",
+      "resource": "Wheat",
       "position": [
         181.14,
         -1.5,
@@ -1434,7 +1434,7 @@
     },
     {
       "id": "steppe-well-garden-node-11",
-      "resource": "Sunmane Seed",
+      "resource": "Seed",
       "position": [
         165.96,
         -1.5,
@@ -1448,7 +1448,7 @@
     },
     {
       "id": "steppe-well-garden-node-12",
-      "resource": "Sunmane Seed",
+      "resource": "Seed",
       "position": [
         167.5,
         -1.5,
@@ -1462,7 +1462,7 @@
     },
     {
       "id": "steppe-well-garden-node-13",
-      "resource": "Sunmane Seed",
+      "resource": "Seed",
       "position": [
         169.04,
         -1.5,
@@ -1476,7 +1476,7 @@
     },
     {
       "id": "steppe-mill-cache-node-00",
-      "resource": "Steppe Wheat",
+      "resource": "Wheat",
       "position": [
         20.3,
         -3.0,
@@ -1490,7 +1490,7 @@
     },
     {
       "id": "steppe-mill-cache-node-01",
-      "resource": "Steppe Wheat",
+      "resource": "Wheat",
       "position": [
         23.8,
         -3.0,
@@ -1504,7 +1504,7 @@
     },
     {
       "id": "steppe-mill-cache-node-02",
-      "resource": "Steppe Wheat",
+      "resource": "Wheat",
       "position": [
         27.3,
         -3.0,
@@ -1518,7 +1518,7 @@
     },
     {
       "id": "steppe-mill-cache-node-03",
-      "resource": "Copper Bloom",
+      "resource": "Copper",
       "position": [
         30.8,
         -3.0,
@@ -1532,7 +1532,7 @@
     },
     {
       "id": "steppe-mill-cache-node-04",
-      "resource": "Copper Bloom",
+      "resource": "Copper",
       "position": [
         20.3,
         -3.0,
@@ -1546,7 +1546,7 @@
     },
     {
       "id": "steppe-mill-cache-node-05",
-      "resource": "Copper Bloom",
+      "resource": "Copper",
       "position": [
         23.8,
         -3.0,

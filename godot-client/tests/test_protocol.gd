@@ -1834,7 +1834,7 @@ func _init() -> void:
 	var map_objects_payload: PackedByteArray = PackedByteArray([1, 2, 0])
 	map_objects_payload.append_array(PackedByteArray([
 		0xf0, 0x01, EloriaProtocol.MAP_OBJECT_HARVEST, 0x02, 0x03, 0xe1, 0x01]))
-	map_objects_payload.append_array(_nul_bytes("Mirror Reed"))
+	map_objects_payload.append_array(_nul_bytes("Reed"))
 	map_objects_payload.append_array(_nul_bytes("Harvesting level 0"))
 	map_objects_payload.append_array(PackedByteArray([
 		0x0e, 0x00, EloriaProtocol.MAP_OBJECT_INTERACTIVE, 0x00, 0x03, 0x90, 0x05]))
@@ -1849,7 +1849,7 @@ func _init() -> void:
 	_expect(int(harvest_object.object_id) == 496
 		and int(harvest_object.kind) == EloriaProtocol.MAP_OBJECT_HARVEST
 		and int(harvest_object.x) == 770 and int(harvest_object.y) == 481
-		and str(harvest_object.label) == "Mirror Reed"
+		and str(harvest_object.label) == "Reed"
 		and str(harvest_object.detail) == "Harvesting level 0",
 		"a harvest node carries its id, tile, resource name and requirement")
 	_expect(int(interactive_object.object_id) == 14
@@ -1878,11 +1878,11 @@ func _init() -> void:
 			== "invalid",
 		"short, unknown-kind and truncated map-object lists are rejected")
 	var harvest_started: PackedByteArray = PackedByteArray([1, 0xf0, 0x01])
-	harvest_started.append_array(_nul_bytes("Mirror Reed"))
+	harvest_started.append_array(_nul_bytes("Reed"))
 	var harvest_state: Dictionary = EloriaProtocol.decode_server(237, harvest_started)
 	_expect(harvest_state.type == "harvest_state" and bool(harvest_state.active)
 		and int(harvest_state.object_id) == 496
-		and str(harvest_state.resource) == "Mirror Reed",
+		and str(harvest_state.resource) == "Reed",
 		"the harvest state names the node and resource rather than a chat phrase")
 	var harvest_stopped: Dictionary = EloriaProtocol.decode_server(237,
 		PackedByteArray([0, 0, 0, 0]))

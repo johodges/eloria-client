@@ -4,7 +4,7 @@
     "models": {
       "mirror_reed": {
         "scene": "res://assets/world/harvestables/mirror_reed.glb",
-        "label": "Mirror Reed",
+        "label": "Reed",
         "kind": "fibre",
         "tier": "common",
         "vertices": 464,
@@ -14,7 +14,7 @@
       },
       "crownwater_pearl": {
         "scene": "res://assets/world/harvestables/crownwater_pearl.glb",
-        "label": "Crownwater Pearl",
+        "label": "Pearl",
         "kind": "aquatic",
         "tier": "rare",
         "vertices": 524,
@@ -24,7 +24,7 @@
       },
       "deep_lake_clay": {
         "scene": "res://assets/world/harvestables/deep_lake_clay.glb",
-        "label": "Deep Lake Clay",
+        "label": "Clay",
         "kind": "mineral",
         "tier": "common",
         "vertices": 544,
@@ -34,7 +34,7 @@
       },
       "delta_lotus": {
         "scene": "res://assets/world/harvestables/delta_lotus.glb",
-        "label": "Delta Lotus",
+        "label": "Lotus",
         "kind": "flora",
         "tier": "uncommon",
         "vertices": 320,
@@ -44,7 +44,7 @@
       },
       "ghost_orchid": {
         "scene": "res://assets/world/harvestables/ghost_orchid.glb",
-        "label": "Ghost Orchid",
+        "label": "Orchid",
         "kind": "flora",
         "tier": "rare",
         "vertices": 320,
@@ -54,7 +54,7 @@
       },
       "glacier_salt": {
         "scene": "res://assets/world/harvestables/glacier_salt.glb",
-        "label": "Glacier Salt",
+        "label": "Salt",
         "kind": "mineral",
         "tier": "common",
         "vertices": 344,
@@ -64,7 +64,7 @@
       },
       "mangrove_sap": {
         "scene": "res://assets/world/harvestables/mangrove_sap.glb",
-        "label": "Mangrove Sap",
+        "label": "Sap",
         "kind": "resin",
         "tier": "uncommon",
         "vertices": 340,
@@ -74,7 +74,7 @@
       },
       "moor_peat": {
         "scene": "res://assets/world/harvestables/moor_peat.glb",
-        "label": "Moor Peat",
+        "label": "Peat",
         "kind": "fuel",
         "tier": "common",
         "vertices": 344,
@@ -84,7 +84,7 @@
       },
       "resonant_crystal": {
         "scene": "res://assets/world/harvestables/resonant_crystal.glb",
-        "label": "Resonant Crystal",
+        "label": "Crystal",
         "kind": "crystal",
         "tier": "rare",
         "vertices": 400,
@@ -94,7 +94,7 @@
       },
       "ssarathi_scale_moss": {
         "scene": "res://assets/world/harvestables/ssarathi_scale_moss.glb",
-        "label": "Ssarathi Scale Moss",
+        "label": "Lichen",
         "kind": "flora",
         "tier": "uncommon",
         "vertices": 240,
@@ -104,7 +104,7 @@
       },
       "stormglass_shard": {
         "scene": "res://assets/world/harvestables/stormglass_shard.glb",
-        "label": "Stormglass Shard",
+        "label": "Stormglass",
         "kind": "crystal",
         "tier": "uncommon",
         "vertices": 352,
@@ -114,7 +114,7 @@
       },
       "sunmane_seed": {
         "scene": "res://assets/world/harvestables/sunmane_seed.glb",
-        "label": "Sunmane Seed",
+        "label": "Seed",
         "kind": "crop",
         "tier": "common",
         "vertices": 500,
@@ -124,7 +124,7 @@
       },
       "verdant_venom_bulb": {
         "scene": "res://assets/world/harvestables/verdant_venom_bulb.glb",
-        "label": "Verdant Venom Bulb",
+        "label": "Venom Bulb",
         "kind": "flora",
         "tier": "rare",
         "vertices": 508,
@@ -134,7 +134,7 @@
       },
       "voltaic_geode": {
         "scene": "res://assets/world/harvestables/voltaic_geode.glb",
-        "label": "Voltaic Geode",
+        "label": "Geode",
         "kind": "crystal",
         "tier": "rare",
         "vertices": 416,
@@ -144,7 +144,7 @@
       },
       "whitehorn_silverleaf": {
         "scene": "res://assets/world/harvestables/whitehorn_silverleaf.glb",
-        "label": "Whitehorn Silverleaf",
+        "label": "Silverleaf",
         "kind": "herb",
         "tier": "uncommon",
         "vertices": 252,
@@ -154,7 +154,7 @@
       },
       "amber_resin": {
         "scene": "res://assets/world/harvestables/amber_resin.glb",
-        "label": "Amber Resin",
+        "label": "Resin",
         "kind": "resin",
         "tier": "uncommon",
         "vertices": 380,
@@ -164,7 +164,7 @@
       },
       "wayside_sage": {
         "scene": "res://assets/world/harvestables/wayside_sage.glb",
-        "label": "Wayside Sage",
+        "label": "Sage",
         "kind": "herb",
         "tier": "common",
         "vertices": 244,
@@ -174,7 +174,7 @@
       },
       "steppe_wheat": {
         "scene": "res://assets/world/harvestables/steppe_wheat.glb",
-        "label": "Steppe Wheat",
+        "label": "Wheat",
         "kind": "crop",
         "tier": "common",
         "vertices": 536,
@@ -214,7 +214,7 @@
       },
       "barrow_bramble": {
         "scene": "res://assets/world/harvestables/barrow_bramble.glb",
-        "label": "Barrow Bramble",
+        "label": "Bramble",
         "kind": "flora",
         "tier": "common",
         "vertices": 576,
@@ -224,7 +224,7 @@
       },
       "lantern_cap": {
         "scene": "res://assets/world/harvestables/lantern_cap.glb",
-        "label": "Lantern Cap",
+        "label": "Toadstool",
         "kind": "fungus",
         "tier": "uncommon",
         "vertices": 784,
@@ -234,7 +234,7 @@
       },
       "tidewrack_kelp": {
         "scene": "res://assets/world/harvestables/tidewrack_kelp.glb",
-        "label": "Tidewrack Kelp",
+        "label": "Kelp",
         "kind": "aquatic",
         "tier": "common",
         "vertices": 244,
@@ -244,7 +244,7 @@
       },
       "shorebank_shell": {
         "scene": "res://assets/world/harvestables/shorebank_shell.glb",
-        "label": "Shorebank Shell",
+        "label": "Shell",
         "kind": "mineral",
         "tier": "common",
         "vertices": 608,
@@ -254,7 +254,7 @@
       },
       "verdigris_bloom": {
         "scene": "res://assets/world/harvestables/verdigris_bloom.glb",
-        "label": "Verdigris Bloom",
+        "label": "Verdigris",
         "kind": "mineral",
         "tier": "uncommon",
         "vertices": 432,
@@ -264,7 +264,7 @@
       },
       "bogiron_nodule": {
         "scene": "res://assets/world/harvestables/bogiron_nodule.glb",
-        "label": "Bog Iron Nodule",
+        "label": "Bog Iron",
         "kind": "mineral",
         "tier": "common",
         "vertices": 496,
@@ -274,7 +274,7 @@
       },
       "emberseam_coal": {
         "scene": "res://assets/world/harvestables/emberseam_coal.glb",
-        "label": "Emberseam Coal",
+        "label": "Coal",
         "kind": "fuel",
         "tier": "common",
         "vertices": 408,
@@ -284,7 +284,7 @@
       },
       "pale_quartz": {
         "scene": "res://assets/world/harvestables/pale_quartz.glb",
-        "label": "Pale Quartz",
+        "label": "Quartz",
         "kind": "crystal",
         "tier": "common",
         "vertices": 304,
@@ -294,7 +294,7 @@
       },
       "sunstone_flint": {
         "scene": "res://assets/world/harvestables/sunstone_flint.glb",
-        "label": "Sunstone Flint",
+        "label": "Flint",
         "kind": "mineral",
         "tier": "common",
         "vertices": 448,
@@ -304,7 +304,7 @@
       },
       "indigo_thistle": {
         "scene": "res://assets/world/harvestables/indigo_thistle.glb",
-        "label": "Indigo Thistle",
+        "label": "Thistle",
         "kind": "herb",
         "tier": "uncommon",
         "vertices": 252,
@@ -314,7 +314,7 @@
       },
       "cenote_watercress": {
         "scene": "res://assets/world/harvestables/cenote_watercress.glb",
-        "label": "Cenote Watercress",
+        "label": "Watercress",
         "kind": "flora",
         "tier": "common",
         "vertices": 232,
@@ -344,7 +344,7 @@
       },
       "copper_bloom": {
         "scene": "res://assets/world/harvestables/copper_bloom.glb",
-        "label": "Copper Bloom",
+        "label": "Copper",
         "kind": "flora",
         "tier": "common",
         "vertices": 272,
@@ -374,7 +374,7 @@
       },
       "wheat": {
         "scene": "res://assets/world/harvestables/wheat.glb",
-        "label": "Wheat",
+        "label": "Winter Wheat",
         "kind": "grain",
         "tier": "common",
         "vertices": 492,
@@ -414,7 +414,7 @@
       },
       "sage": {
         "scene": "res://assets/world/harvestables/sage.glb",
-        "label": "Sage",
+        "label": "Garden Sage",
         "kind": "herb",
         "tier": "common",
         "vertices": 208,
@@ -444,7 +444,7 @@
       },
       "grave_moss": {
         "scene": "res://assets/world/harvestables/grave_moss.glb",
-        "label": "Grave Moss",
+        "label": "Moss",
         "kind": "moss",
         "tier": "uncommon",
         "vertices": 240,
@@ -484,7 +484,7 @@
       },
       "stormglass": {
         "scene": "res://assets/world/harvestables/stormglass.glb",
-        "label": "Stormglass",
+        "label": "Storm Crystal",
         "kind": "crystal",
         "tier": "uncommon",
         "vertices": 352,
@@ -504,7 +504,7 @@
       },
       "quartz": {
         "scene": "res://assets/world/harvestables/quartz.glb",
-        "label": "Quartz",
+        "label": "Clear Quartz",
         "kind": "crystal",
         "tier": "common",
         "vertices": 352,
@@ -524,57 +524,57 @@
       }
     },
     "resources": {
-      "Mirror Reed": "mirror_reed",
-      "Crownwater Pearl": "crownwater_pearl",
-      "Deep Lake Clay": "deep_lake_clay",
-      "Delta Lotus": "delta_lotus",
-      "Ghost Orchid": "ghost_orchid",
-      "Glacier Salt": "glacier_salt",
-      "Mangrove Sap": "mangrove_sap",
-      "Moor Peat": "moor_peat",
-      "Resonant Crystal": "resonant_crystal",
-      "Ssarathi Scale Moss": "ssarathi_scale_moss",
-      "Stormglass Shard": "stormglass_shard",
-      "Sunmane Seed": "sunmane_seed",
-      "Verdant Venom Bulb": "verdant_venom_bulb",
-      "Voltaic Geode": "voltaic_geode",
-      "Whitehorn Silverleaf": "whitehorn_silverleaf",
-      "Amber Resin": "amber_resin",
-      "Wayside Sage": "wayside_sage",
-      "Steppe Wheat": "steppe_wheat",
+      "Reed": "mirror_reed",
+      "Pearl": "crownwater_pearl",
+      "Clay": "deep_lake_clay",
+      "Lotus": "delta_lotus",
+      "Orchid": "ghost_orchid",
+      "Salt": "glacier_salt",
+      "Sap": "mangrove_sap",
+      "Peat": "moor_peat",
+      "Crystal": "resonant_crystal",
+      "Lichen": "ssarathi_scale_moss",
+      "Stormglass": "stormglass_shard",
+      "Seed": "sunmane_seed",
+      "Venom Bulb": "verdant_venom_bulb",
+      "Geode": "voltaic_geode",
+      "Silverleaf": "whitehorn_silverleaf",
+      "Resin": "amber_resin",
+      "Sage": "wayside_sage",
+      "Wheat": "steppe_wheat",
       "Riverflax": "riverflax",
       "Moorcotton": "moorcotton",
       "Hearthroot": "hearthroot",
-      "Barrow Bramble": "barrow_bramble",
-      "Lantern Cap": "lantern_cap",
-      "Tidewrack Kelp": "tidewrack_kelp",
-      "Shorebank Shell": "shorebank_shell",
-      "Verdigris Bloom": "verdigris_bloom",
-      "Bog Iron Nodule": "bogiron_nodule",
-      "Emberseam Coal": "emberseam_coal",
-      "Pale Quartz": "pale_quartz",
-      "Sunstone Flint": "sunstone_flint",
-      "Indigo Thistle": "indigo_thistle",
-      "Cenote Watercress": "cenote_watercress",
+      "Bramble": "barrow_bramble",
+      "Toadstool": "lantern_cap",
+      "Kelp": "tidewrack_kelp",
+      "Shell": "shorebank_shell",
+      "Verdigris": "verdigris_bloom",
+      "Bog Iron": "bogiron_nodule",
+      "Coal": "emberseam_coal",
+      "Quartz": "pale_quartz",
+      "Flint": "sunstone_flint",
+      "Thistle": "indigo_thistle",
+      "Watercress": "cenote_watercress",
       "Sunleaf": "sunleaf",
       "Frost Reed": "frost_reed",
-      "Copper Bloom": "copper_bloom",
+      "Copper": "copper_bloom",
       "Ember Crystal": "ember_crystal",
       "Slate": "slate_outcrop",
-      "Wheat": "wheat",
+      "Winter Wheat": "wheat",
       "Cotton": "cotton",
       "Lavender": "lavender",
       "Flax": "flax",
-      "Sage": "sage",
+      "Garden Sage": "sage",
       "Rosemary": "rosemary",
       "Mushroom": "mushroom",
-      "Grave Moss": "grave_moss",
+      "Moss": "grave_moss",
       "Blueberries": "blueberries",
       "Deep Coal": "coal",
       "Iron Ore": "iron_ore",
-      "Stormglass": "stormglass",
+      "Storm Crystal": "stormglass",
       "Moon Salt": "moon_salt",
-      "Quartz": "quartz",
+      "Clear Quartz": "quartz",
       "Sulfur": "sulfur"
     }
   },
@@ -635,6 +635,30 @@
         "triangles": 152,
         "alphaTested": false,
         "height": 2.02
+      },
+      "waystone": {
+        "scene": "res://assets/world/interactives/waystone.glb",
+        "label": "Waystone",
+        "vertices": 244,
+        "triangles": 122,
+        "alphaTested": false,
+        "height": 2.06
+      },
+      "cache": {
+        "scene": "res://assets/world/interactives/cache.glb",
+        "label": "Cache",
+        "vertices": 232,
+        "triangles": 116,
+        "alphaTested": false,
+        "height": 0.85
+      },
+      "gate": {
+        "scene": "res://assets/world/interactives/gate.glb",
+        "label": "Gate",
+        "vertices": 448,
+        "triangles": 224,
+        "alphaTested": false,
+        "height": 2.62
       }
     },
     "roles": {
@@ -644,7 +668,13 @@
       "Crafting Station": "crafting_station",
       "Water Source": "water_source",
       "Training": "training",
-      "Scenery Effect": "scenery_effect"
+      "Scenery Effect": "scenery_effect",
+      "Waystone": "waystone",
+      "Cache": "cache",
+      "Gate": "gate"
+    },
+    "mapAuthored": {
+      "Secret": "secret"
     }
   }
 }

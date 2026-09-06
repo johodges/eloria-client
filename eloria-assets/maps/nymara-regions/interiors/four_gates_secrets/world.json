@@ -1418,7 +1418,7 @@
     },
     {
       "id": "gates-reedworks-garden-node-08",
-      "resource": "Wheat",
+      "resource": "Winter Wheat",
       "position": [
         178.06,
         -1.5,
@@ -1432,7 +1432,7 @@
     },
     {
       "id": "gates-reedworks-garden-node-09",
-      "resource": "Wheat",
+      "resource": "Winter Wheat",
       "position": [
         179.6,
         -1.5,
@@ -1446,7 +1446,7 @@
     },
     {
       "id": "gates-reedworks-garden-node-10",
-      "resource": "Wheat",
+      "resource": "Winter Wheat",
       "position": [
         181.14,
         -1.5,
@@ -1460,7 +1460,7 @@
     },
     {
       "id": "gates-reedworks-garden-node-11",
-      "resource": "Sage",
+      "resource": "Garden Sage",
       "position": [
         165.96,
         -1.5,
@@ -1474,7 +1474,7 @@
     },
     {
       "id": "gates-reedworks-garden-node-12",
-      "resource": "Sage",
+      "resource": "Garden Sage",
       "position": [
         167.5,
         -1.5,
@@ -1488,7 +1488,7 @@
     },
     {
       "id": "gates-reedworks-garden-node-13",
-      "resource": "Sage",
+      "resource": "Garden Sage",
       "position": [
         169.04,
         -1.5,
@@ -1544,7 +1544,7 @@
     },
     {
       "id": "gates-lantern-cache-node-03",
-      "resource": "Quartz",
+      "resource": "Clear Quartz",
       "position": [
         30.8,
         -3.0,
@@ -1558,7 +1558,7 @@
     },
     {
       "id": "gates-lantern-cache-node-04",
-      "resource": "Quartz",
+      "resource": "Clear Quartz",
       "position": [
         20.3,
         -3.0,
@@ -1572,7 +1572,7 @@
     },
     {
       "id": "gates-lantern-cache-node-05",
-      "resource": "Quartz",
+      "resource": "Clear Quartz",
       "position": [
         23.8,
         -3.0,

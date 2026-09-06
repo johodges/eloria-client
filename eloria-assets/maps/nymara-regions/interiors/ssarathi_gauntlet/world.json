@@ -261,7 +261,7 @@
   "harvestables": [
     {
       "id": "serpent-gallery-bonus",
-      "resource": "Ssarathi Scale Moss",
+      "resource": "Lichen",
       "position": [
         -1.5,
         0.0,
@@ -1940,7 +1940,7 @@
           ],
           "objectId": 804
         },
-        "bonus": "node:Ssarathi Scale Moss",
+        "bonus": "node:Lichen",
         "room": "serpent-gallery",
         "bounds": [
           1.5,

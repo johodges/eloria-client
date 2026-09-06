@@ -839,7 +839,7 @@
     },
     {
       "id": "resonant-crystal-cluster-0",
-      "name": "Resonant Crystal Cluster",
+      "name": "Crystal Cluster",
       "node": "Landmark_ResonantCluster_0",
       "type": "diggings",
       "position": [
@@ -850,7 +850,7 @@
     },
     {
       "id": "resonant-crystal-cluster-1",
-      "name": "Resonant Crystal Cluster",
+      "name": "Crystal Cluster",
       "node": "Landmark_ResonantCluster_1",
       "type": "diggings",
       "position": [
@@ -861,7 +861,7 @@
     },
     {
       "id": "resonant-crystal-cluster-2",
-      "name": "Resonant Crystal Cluster",
+      "name": "Crystal Cluster",
       "node": "Landmark_ResonantCluster_2",
       "type": "diggings",
       "position": [
@@ -872,7 +872,7 @@
     },
     {
       "id": "resonant-crystal-cluster-3",
-      "name": "Resonant Crystal Cluster",
+      "name": "Crystal Cluster",
       "node": "Landmark_ResonantCluster_3",
       "type": "diggings",
       "position": [
@@ -883,7 +883,7 @@
     },
     {
       "id": "resonant-crystal-cluster-4",
-      "name": "Resonant Crystal Cluster",
+      "name": "Crystal Cluster",
       "node": "Landmark_ResonantCluster_4",
       "type": "diggings",
       "position": [
@@ -894,7 +894,7 @@
     },
     {
       "id": "resonant-crystal-cluster-5",
-      "name": "Resonant Crystal Cluster",
+      "name": "Crystal Cluster",
       "node": "Landmark_ResonantCluster_5",
       "type": "diggings",
       "position": [
@@ -905,7 +905,7 @@
     },
     {
       "id": "resonant-crystal-cluster-6",
-      "name": "Resonant Crystal Cluster",
+      "name": "Crystal Cluster",
       "node": "Landmark_ResonantCluster_6",
       "type": "diggings",
       "position": [
@@ -916,7 +916,7 @@
     },
     {
       "id": "resonant-crystal-cluster-7",
-      "name": "Resonant Crystal Cluster",
+      "name": "Crystal Cluster",
       "node": "Landmark_ResonantCluster_7",
       "type": "diggings",
       "position": [
@@ -927,7 +927,7 @@
     },
     {
       "id": "resonant-crystal-cluster-8",
-      "name": "Resonant Crystal Cluster",
+      "name": "Crystal Cluster",
       "node": "Landmark_ResonantCluster_8",
       "type": "diggings",
       "position": [
@@ -938,7 +938,7 @@
     },
     {
       "id": "resonant-crystal-cluster-9",
-      "name": "Resonant Crystal Cluster",
+      "name": "Crystal Cluster",
       "node": "Landmark_ResonantCluster_9",
       "type": "diggings",
       "position": [
@@ -1422,7 +1422,7 @@
       "name": "The Massif Reliquary",
       "label": "A shrine slab with fresh scratches where it has been slid aside.",
       "prop": "shrine_slab",
-      "key": "Resonant Crystal",
+      "key": "Crystal",
       "destinationMap": "amethyst_barrens_secrets",
       "destinationSpawn": "barrens-massif-reliquary",
       "position": [

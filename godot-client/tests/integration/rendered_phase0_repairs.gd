@@ -204,7 +204,7 @@ func _render_harvest_targets() -> void:
 	payload.append_array(_nul("Sunleaf"))
 	payload.append_array(_nul("Harvesting level 0"))
 	payload.append_array(PackedByteArray([0xf1, 0x01, 1, 0x05, 0x03, 0xe4, 0x01]))
-	payload.append_array(_nul("Mirror Reed"))
+	payload.append_array(_nul("Reed"))
 	payload.append_array(_nul("Harvesting level 4"))
 	payload.append_array(PackedByteArray([0x0e, 0x00, 2, 0x00, 0x03, 0xdf, 0x01]))
 	payload.append_array(_nul("Storage"))
