@@ -877,6 +877,39 @@ def _frontal_turn(points: np.ndarray, pivot: np.ndarray,
     return turned
 
 
+def _keep_to_own_side(points: np.ndarray, pivot: np.ndarray, angle: float,
+                      turn: np.ndarray, step: float = math.radians(4.0),
+                      margin: float = 0.004) -> float:
+    """Back a limb's turn off until it stops swinging across the midline.
+
+    The pose is chosen from how well the garment encloses the limb axis, which
+    says nothing about where the far end of the limb ends up.  On an arm that
+    is harmless -- the shoulders are far enough apart, and a sleeve that falls
+    across the chest is a drape rather than a fault -- which is why only
+    ``legs`` asks for this.  On a leg it is not: the hip sits 114 mm off centre
+    and the hem a further 700 mm down, so every degree of turn walks the hem
+    12 mm inward and at 12 degrees it arrives on the other side of the body,
+    through the leg it is paired with.  The result is a sheet of triangles
+    stretched across the gap between the knees -- a garment that is inside out
+    about the midline, not merely mis-posed.
+
+    So the angle is reduced in the steps the search itself used until the limb
+    it turns stays on its own side.  A pose the search never considered is not
+    substituted; this only ever gives back one of its own candidates, and it
+    is a no-op for every piece whose chosen pose was already physical.
+    """
+    limb = turn > 0.5
+    if not limb.any() or abs(pivot[0]) < 1e-9:
+        return angle
+    side = math.copysign(1.0, pivot[0])
+    while abs(angle) > 1e-9:
+        moved = _frontal_turn(points[limb], pivot, -angle)
+        if (moved[:, 0] * side >= -margin).all():
+            return angle
+        angle -= math.copysign(min(step, abs(angle)), angle)
+    return 0.0
+
+
 def _limb_bones(rig: ea.Rig, root: str) -> set[str]:
     """The chain that rides a pivot: the bone and everything below it."""
     names = {root}
@@ -1149,6 +1182,9 @@ def repose(points: np.ndarray, normals: np.ndarray, rig: ea.Rig, region: str,
                 turn[indexed] = 0.0
                 caps[indexed] = True
         turn = turn[canon]
+        if region == "legs":
+            chosen = _keep_to_own_side(out, start, chosen, turn)
+            report["poseDeg"] = round(math.degrees(chosen), 1)
         out = _frontal_turn(out, start, -chosen * turn)
         turned = _frontal_turn(turned, np.zeros(3), -chosen * turn)
         report["applied"] = True
