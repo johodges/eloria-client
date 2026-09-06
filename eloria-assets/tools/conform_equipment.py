@@ -873,6 +873,12 @@ REPOSE = {
     "legs": (("thigh_l", 25), ("thigh_r", 25)),
 }
 
+#: How far from its joint a shell may reach and still be a cap rather than a
+#: sleeve, in metres.  A pauldron covers the shoulder crest and stops; a sleeve
+#: goes down the arm.  On the legendary hero cuirass the caps end 0.17 m out and
+#: the sleeves reach 0.36 and 0.49, so the line is not finely balanced.
+CAP_REACH = 0.22
+
 #: Bones a torso garment may weight beyond the region's own set.  The region
 #: stops at the upper arms because a lofted piece never reaches further, but a
 #: generated jacket ships full sleeves; once those lie along the arm they need
@@ -1217,13 +1223,29 @@ def repose(points: np.ndarray, normals: np.ndarray, rig: ea.Rig, region: str,
             centroid = out[verts_of].mean(axis=0)
             above = float(centroid[1] - start[1])
             outboard = abs(float(centroid[0])) - abs(float(start[0]))
+            # How much limb the shell covers at all.  Radius from the joint,
+            # because the repose turns ABOUT that joint, so this is the one
+            # measure of a shell that the pose it arrived in cannot change.
+            span_of = float(np.linalg.norm(out[verts_of] - start,
+                                           axis=1).max())
+            crest = float(out[verts_of][:, 1].max()) - float(start[1])
             # And it must DRAPE, not encircle: a long armoured sleeve's
             # upper section also sits above the joint in an A-pose, but it
             # wraps the authored arm axis where a pauldron shell does not
             # -- demoting it to cap left the legendary hero's upper
             # sleeves standing off the shoulders at the concept's angle.
             wraps = _wraps_axis(out[verts_of], start, posed_axis, reach)
-            if above > 0.01 and outboard < 0.10 and not wraps:
+            # A pauldron drapes OVER the crest and down the outside of it, so
+            # its body hangs level with the joint or a little below -- the
+            # legendary hero's sits 16 mm under it.  Asking for the centroid to
+            # be above the joint therefore misses the very shells this rule
+            # exists to hold, and they ride down the arm with the sleeve.  What
+            # separates them is not height but reach: a cap covers the joint and
+            # stops, a sleeve carries on down the limb.  Measured on this piece
+            # the caps end 0.17 m from the joint and the sleeves run to 0.36 and
+            # 0.49, so there is a wide gap to put the line in.
+            capped = span_of < CAP_REACH and crest > 0.01
+            if capped or (above > 0.01 and outboard < 0.10 and not wraps):
                 turn[indexed] = 0.0
                 caps[indexed] = True
         turn = turn[canon]
@@ -2370,6 +2392,7 @@ def _slim_legs(points: np.ndarray, rig: ea.Rig, region: str,
                                 grow=True)
         _push_waist_out(out, waist, rig, 0.006)
     return out
+
 
 
 def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
