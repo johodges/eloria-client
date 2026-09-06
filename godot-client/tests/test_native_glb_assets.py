@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import struct
 import sys
+import tempfile
 import unittest
 
 
@@ -855,6 +856,50 @@ class NativeGlbAssetsTest(unittest.TestCase):
         self.assertEqual(registry.read_text(encoding="utf-8"),
                          json.dumps(rebuilt, indent=2) + "\n",
                          "a rebuild over this catalogue must change nothing")
+
+    def test_a_model_the_catalogue_has_never_held_is_seeded(self) -> None:
+        """The other half of the rule: a new body still gets its defaults.
+
+        Preserving what the catalogue holds is only correct if a body the
+        catalogue does not hold is still written. Every model in this file is
+        already in it, so nothing exercises that path against the shipped
+        registry - which is exactly how a merge that quietly dropped new
+        models would ship. Run it against a catalogue with one entry removed
+        instead, and the entry must come back at the generator's seed.
+        """
+        try:
+            import numpy  # noqa: F401
+            from PIL import Image  # noqa: F401
+        except ImportError:  # pragma: no cover - environment without them
+            self.skipTest("the actor library generator needs numpy and Pillow")
+        sys.path.insert(0, str(ROOT / "eloria-assets" / "tools"))
+        import build_native_nymara_glbs as generator
+
+        seeded = "dire_wolf"
+        self.assertIn(seeded, self.models["models"], "a creature this builds")
+        thinned = json.loads(json.dumps(self.models))
+        del thinned["models"][seeded]
+        del thinned["actorTypes"][str(409)]
+
+        with tempfile.TemporaryDirectory() as directory:
+            catalogue = Path(directory) / "models.json"
+            catalogue.write_text(json.dumps(thinned, indent=2) + "\n",
+                                 encoding="utf-8")
+            rebuilt = generator.build_model_registry()
+            generator.carry_forward_registry(catalogue, rebuilt)
+
+        self.assertEqual(rebuilt["models"][seeded]["import"]["scale"], 1,
+                         "a body the catalogue has never held is seeded at 1")
+        self.assertEqual(
+            rebuilt["models"][seeded]["import"]["forwardAxisCorrectionDegreesY"],
+            0, "and at the generator's facing, which the facing test checks")
+        self.assertEqual("dire_wolf", rebuilt["actorTypes"]["409"],
+                         "an actor type it has never held is written too")
+        # Seeding one entry must not disturb the entries either side of it.
+        for slug in ("amethyst_scorpion", "abyssal_armored_fish"):
+            with self.subTest(model=slug):
+                self.assertEqual(self.models["models"][slug],
+                                 rebuilt["models"][slug])
 
     def test_reseeding_the_registry_still_keeps_models_it_cannot_define(self) -> None:
         """--reseed discards tuning, never the library.
