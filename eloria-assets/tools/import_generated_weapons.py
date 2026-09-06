@@ -550,7 +550,34 @@ def design_tier(stem: str) -> int:
     return TIERS.get(stem, DEFAULT_TIER)
 
 
-def item_block(piece: Piece) -> str:
+def item_block(piece: Piece, served: dict[int, list[str]] | None = None) -> str:
+    """One [item] block. `served` is the catalogue's own stat lines, kept.
+
+    The tables below decide what a weapon is worth the FIRST time it is
+    defined and never again -- balancing lives in the catalogue, written
+    through dev-server/tools/import_equipment_csv.py, and a rewrite of this
+    fence carries it across. Without that, running this tool for any other
+    reason silently reverts a balance pass, and the diff looks exactly like
+    the rewrite doing its job. `--reseed` is the deliberate way back.
+    """
+    kept = (served or {}).get(piece.item_id)
+    if kept is not None:
+        weight = [line for line in kept if line.startswith("emu:")]
+        category = "Armor" if piece.kind in SHIELD_STATS else "Weapons"
+        slot = ("left_hand" if piece.kind in SHIELD_STATS
+                else "right_hand" if piece.kind in ONE_HANDED else "both_hands")
+        return "\n".join([
+            "", "[item]",
+            "name: %s" % piece.name,
+            "item_id: %d" % piece.item_id,
+            "image_id: %d" % piece.image_id,
+            *weight,
+            "flags: 2",
+            "category: %s" % category,
+            "description: Generated from the %s concept art." % piece.name.lower(),
+            "equip_type: %s" % slot,
+            *[line for line in kept if not line.startswith("emu:")],
+            "[/item]"])
     stem = piece.source.stem
     tier = design_tier(stem)
     shield = piece.kind in SHIELD_STATS
@@ -603,6 +630,11 @@ def main() -> int:
                     help="only pieces whose slug or kind contains this")
     ap.add_argument("--server", type=Path, default=SERVER)
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--reseed", action="store_true",
+                    help="recompute every stat from its class and tier "
+                         "instead of keeping what the catalogue has. This "
+                         "discards balancing done through "
+                         "import_equipment_csv.py")
     ap.add_argument("--skip-build", action="store_true")
     args = ap.parse_args()
 
@@ -687,7 +719,13 @@ def main() -> int:
                         encoding="utf-8")
 
     items = args.server / "config/eloria/items.txt"
-    body = "\n".join(item_block(p) for p in everything).lstrip("\n")
+    served = {} if args.reseed else armour.served_stats(
+        items.read_text(encoding="utf-8"))
+    if args.reseed:
+        print("--reseed: %d piece(s) go back to their computed stats, "
+              "discarding any balancing done in the catalogue" % len(everything))
+    body = "\n".join(item_block(p, served)
+                    for p in everything).lstrip("\n")
     items.write_text(
         armour.fence(items.read_text(encoding="utf-8"), OPEN_ITEMS,
                      CLOSE_ITEMS, body), encoding="utf-8")
