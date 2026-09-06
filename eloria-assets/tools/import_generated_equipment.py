@@ -55,6 +55,21 @@ CLOSE_PY = "    # --- end generated armour set ---"
 #: nothing here is inside a range that test pins.
 FIRST_ITEM_ID = 1274
 
+#: Where a sheet appended *after* that block is numbered from.  The thirty-two
+#: sheets above fill 1274-1529 and images 118-373 exactly, and the weapon set
+#: opens on the next id of both -- so a thirty-third sheet carrying on the
+#: count would hand out ids the weapons already own, silently, in a table
+#: nothing cross-checks.  The generated sets between them leave no room either:
+#: their image ids are packed solid to 575.  So later sheets are numbered from
+#: above all four, the weapons ending at 1629/473 and the painted potion shelf
+#: at 1751/575.
+#:
+#: Pushing the other three sets up by eight instead was the obvious-looking
+#: alternative and is not one: an item id is what a character's inventory
+#: stores, so moving one rewrites what players already own.
+LATER_ITEM_ID = 1752
+LATER_IMAGE_ID = 576
+
 #: What a piece is worth is decided by three things: its finish (the material
 #: family -- emu and the armour base), its slot (a cuirass stops more than a
 #: boot), and its sheet's tier (militia kit up to legendary regalia).  The
@@ -213,6 +228,29 @@ SHEETS = [
      "leather_adventurer_boots", "boots", 6, 232, "leather", 2, ""),
 ]
 
+#: Sheets added after the block above was closed.  Same row shape, numbered
+#: from ``LATER_ITEM_ID``/``LATER_IMAGE_ID`` -- see the note on those for why
+#: they cannot simply carry on the count.
+LATER_SHEETS = [
+    # The feet the legendary leg armour was generated wearing, split off by
+    # `trim_generated_boots.py` rather than thrown away: they are the only
+    # armoured boots in the set drawn to match one specific pair of legs.  They
+    # take the parent sheet's plate finish, tier and theme because they were
+    # drawn as part of it.
+    #
+    # Part 6 has no high ground left -- 192-255 is the six boot sheets plus the
+    # two greaves sets that moved into it -- so this takes the gap the server
+    # leaves between its authored culture boots, which end at 106, and its next
+    # block at 128.  Checked the way part 4's block was, because the client
+    # registry alone is not enough: walking `equipment_visual` over the whole
+    # item table emits nothing under 192, no `6:` key in the registry is under
+    # 192, and the two paths that answer for a byte nobody equipped -- the
+    # `visuals.get(6, look["boots"])` appearance fallback and the derived feet
+    # visuals -- reach 14.  107-114 is clear on all four, and leaves 115-127.
+    ("Eight_legendary_fantasy_sabatons", "Legendary Sabatons",
+     "legendary_sabatons", "boots", 6, 107, "plate", 5, "legendary"),
+]
+
 
 class Piece:
     __slots__ = ("source", "slug", "name", "kind", "part", "visual", "finish",
@@ -229,8 +267,18 @@ class Piece:
 def roster() -> list[Piece]:
     """Every generated piece, in a fixed order so ids never move."""
     pieces: list[Piece] = []
-    item_id = FIRST_ITEM_ID
-    for stem, label, slug, kind, part, first_visual, finish, tier, theme in SHEETS:
+    for rows, first_item, first_image in (
+            (SHEETS, FIRST_ITEM_ID, FIRST_IMAGE_ID),
+            (LATER_SHEETS, LATER_ITEM_ID, LATER_IMAGE_ID)):
+        pieces.extend(_block(rows, first_item, first_image))
+    return pieces
+
+
+def _block(rows, first_item: int, first_image: int) -> list[Piece]:
+    """One run of sheets, numbered from its own pair of bases."""
+    pieces: list[Piece] = []
+    item_id = first_item
+    for stem, label, slug, kind, part, first_visual, finish, tier, theme in rows:
         sources = sorted(GENERATED.glob(stem + "__*.glb"))
         # Only sources that have been through the preprocessing pass (which
         # leaves the raw meshy export beside them as ``.glb.orig``): a raw
@@ -251,7 +299,7 @@ def roster() -> list[Piece]:
                 source, "%s_%02d" % (slug, index + 1),
                 "%s %s" % (label, ROMAN[index]), kind, part,
                 first_visual + index, finish, item_id,
-                FIRST_IMAGE_ID + (item_id - FIRST_ITEM_ID), tier, theme))
+                first_image + (item_id - first_item), tier, theme))
             item_id += 1
     return pieces
 

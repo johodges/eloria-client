@@ -2,7 +2,7 @@
   "version": 1,
   "source": {
     "profile": "eloria",
-    "itemsSha256": "b1bc3c685be154024a979ec8f4e9794e38b7f03b62954034e236fa04c3691d92",
+    "itemsSha256": "d5a671d82bfa9026fabd5a9c2f284c0fda83ab60a757ade470b74971b6f7a5e9",
     "booksSha256": "dbaf97061c7578ece676a3d6ff122d25af0bb69a01d4c4bcec9b16653df00329",
     "algorithm": "server load_books insertion order, excluding repeatable books"
   },

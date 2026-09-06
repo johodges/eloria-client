@@ -5310,6 +5310,70 @@
           19.99167
         ]
       }
+    },
+    "6:107": {
+      "scene": "res://assets/actors/native/equipment/legendary_sabatons_01.glb",
+      "name": "Legendary Sabatons I",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:108": {
+      "scene": "res://assets/actors/native/equipment/legendary_sabatons_02.glb",
+      "name": "Legendary Sabatons II",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:109": {
+      "scene": "res://assets/actors/native/equipment/legendary_sabatons_03.glb",
+      "name": "Legendary Sabatons III",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:110": {
+      "scene": "res://assets/actors/native/equipment/legendary_sabatons_04.glb",
+      "name": "Legendary Sabatons IV",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:111": {
+      "scene": "res://assets/actors/native/equipment/legendary_sabatons_05.glb",
+      "name": "Legendary Sabatons V",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:112": {
+      "scene": "res://assets/actors/native/equipment/legendary_sabatons_06.glb",
+      "name": "Legendary Sabatons VI",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:113": {
+      "scene": "res://assets/actors/native/equipment/legendary_sabatons_07.glb",
+      "name": "Legendary Sabatons VII",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:114": {
+      "scene": "res://assets/actors/native/equipment/legendary_sabatons_08.glb",
+      "name": "Legendary Sabatons VIII",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
     }
   },
   "aliases": {},
