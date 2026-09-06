@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "sources": {
     "profile": "eloria",
-    "recipesSha256": "0f7a8480f44b5d4c235b5829c329ec51b3554cd654b5d1368d55b722037acff5",
-    "itemsSha256": "d5a671d82bfa9026fabd5a9c2f284c0fda83ab60a757ade470b74971b6f7a5e9",
+    "recipesSha256": "40a97a18529b7976a7ab40b4233aee2000368ed5ce5aca6bb048ba922dc70247",
+    "itemsSha256": "83e7b98270009dc58bfb6dd5fac37d1bb9e423819781b22dfac4f2abb020cf3b",
     "booksSha256": "dbaf97061c7578ece676a3d6ff122d25af0bb69a01d4c4bcec9b16653df00329"
   },
   "recipes": [
@@ -162,7 +162,7 @@
     {
       "id": 4,
       "skill": "tailoring",
-      "output": "Eloria Frontier Shirt I",
+      "output": "Homespun Shirt",
       "outputImageId": 270,
       "level": 4,
       "animalNexus": 0,
@@ -200,7 +200,7 @@
     {
       "id": 5,
       "skill": "manufacturing",
-      "output": "Leather Ranger Torso I",
+      "output": "Bonehook Jerkin",
       "outputImageId": 262,
       "level": 10,
       "animalNexus": 0,

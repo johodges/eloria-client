@@ -7,8 +7,8 @@ Legs and feet are separate slots, so a leg piece owns the body from the waist
 to the ankle and nothing below it.  One of the eight generated leg sheets
 disagrees: every design on ``Eight_legendary_fantasy_leg_armor_designs`` was
 drawn -- and generated -- as a full harness ending in an armoured boot, so
-``Legendary Leg Armor I``..``VIII`` each ship a pair of sabatons that a player
-wearing boots would be wearing twice.
+its eight leg pieces (``Phoenix Legguards`` through ``Lion Legguards``) each
+ship a pair of sabatons that a player wearing boots would be wearing twice.
 
 **Which sheets, and how that was settled.**  A foot is the one part of a leg
 piece that reaches *forward* past the shin above it, so the side silhouette

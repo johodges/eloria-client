@@ -188,7 +188,7 @@
   "models": {
     "5:184": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_cuirass_01.glb",
-      "name": "Amberwood Woodland Cuirass I",
+      "name": "Bark Jerkin",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -196,7 +196,7 @@
     },
     "5:185": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_cuirass_02.glb",
-      "name": "Amberwood Woodland Cuirass II",
+      "name": "Mossbound Coat",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -204,7 +204,7 @@
     },
     "5:186": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_cuirass_03.glb",
-      "name": "Amberwood Woodland Cuirass III",
+      "name": "Rootwrap Tunic",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -212,7 +212,7 @@
     },
     "5:187": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_cuirass_04.glb",
-      "name": "Amberwood Woodland Cuirass IV",
+      "name": "Leafscale Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -220,7 +220,7 @@
     },
     "5:188": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_cuirass_05.glb",
-      "name": "Amberwood Woodland Cuirass V",
+      "name": "Heartwood Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -228,7 +228,7 @@
     },
     "5:189": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_cuirass_06.glb",
-      "name": "Amberwood Woodland Cuirass VI",
+      "name": "Furtrim Coat",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -236,7 +236,7 @@
     },
     "5:190": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_cuirass_07.glb",
-      "name": "Amberwood Woodland Cuirass VII",
+      "name": "Amberglass Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -244,7 +244,7 @@
     },
     "5:191": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_cuirass_08.glb",
-      "name": "Amberwood Woodland Cuirass VIII",
+      "name": "Ivory Vine Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -252,7 +252,7 @@
     },
     "4:171": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_legguards_01.glb",
-      "name": "Amberwood Woodland Legguards I",
+      "name": "Bark Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -260,7 +260,7 @@
     },
     "4:172": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_legguards_02.glb",
-      "name": "Amberwood Woodland Legguards II",
+      "name": "Mossbound Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -268,7 +268,7 @@
     },
     "4:173": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_legguards_03.glb",
-      "name": "Amberwood Woodland Legguards III",
+      "name": "Rootwrap Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -276,7 +276,7 @@
     },
     "4:174": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_legguards_04.glb",
-      "name": "Amberwood Woodland Legguards IV",
+      "name": "Leafscale Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -284,7 +284,7 @@
     },
     "4:175": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_legguards_05.glb",
-      "name": "Amberwood Woodland Legguards V",
+      "name": "Heartwood Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -292,7 +292,7 @@
     },
     "4:176": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_legguards_06.glb",
-      "name": "Amberwood Woodland Legguards VI",
+      "name": "Furtrim Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -300,7 +300,7 @@
     },
     "4:177": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_legguards_07.glb",
-      "name": "Amberwood Woodland Legguards VII",
+      "name": "Amberglass Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -308,7 +308,7 @@
     },
     "4:178": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_legguards_08.glb",
-      "name": "Amberwood Woodland Legguards VIII",
+      "name": "Ivory Vine Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -316,7 +316,7 @@
     },
     "6:192": {
       "scene": "res://assets/actors/native/equipment/arcane_fantasy_boots_01.glb",
-      "name": "Arcane Fantasy Boots I",
+      "name": "Warded Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -324,7 +324,7 @@
     },
     "6:193": {
       "scene": "res://assets/actors/native/equipment/arcane_fantasy_boots_02.glb",
-      "name": "Arcane Fantasy Boots II",
+      "name": "Glowline Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -332,7 +332,7 @@
     },
     "6:194": {
       "scene": "res://assets/actors/native/equipment/arcane_fantasy_boots_03.glb",
-      "name": "Arcane Fantasy Boots III",
+      "name": "Palesteel Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -340,7 +340,7 @@
     },
     "6:195": {
       "scene": "res://assets/actors/native/equipment/arcane_fantasy_boots_04.glb",
-      "name": "Arcane Fantasy Boots IV",
+      "name": "Starglass Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -348,7 +348,7 @@
     },
     "6:196": {
       "scene": "res://assets/actors/native/equipment/arcane_fantasy_boots_05.glb",
-      "name": "Arcane Fantasy Boots V",
+      "name": "Twilight Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -356,7 +356,7 @@
     },
     "6:197": {
       "scene": "res://assets/actors/native/equipment/arcane_fantasy_boots_06.glb",
-      "name": "Arcane Fantasy Boots VI",
+      "name": "Seawrap Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -364,7 +364,7 @@
     },
     "6:198": {
       "scene": "res://assets/actors/native/equipment/arcane_fantasy_boots_07.glb",
-      "name": "Arcane Fantasy Boots VII",
+      "name": "Acolyte Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -372,7 +372,7 @@
     },
     "6:199": {
       "scene": "res://assets/actors/native/equipment/arcane_fantasy_boots_08.glb",
-      "name": "Arcane Fantasy Boots VIII",
+      "name": "Crystalward Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -380,7 +380,7 @@
     },
     "3:109": {
       "scene": "res://assets/actors/native/equipment/arcane_ethereal_circlet_01.glb",
-      "name": "Arcane Ethereal Circlet I",
+      "name": "Warded Turban",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -389,7 +389,7 @@
     },
     "3:110": {
       "scene": "res://assets/actors/native/equipment/arcane_ethereal_circlet_02.glb",
-      "name": "Arcane Ethereal Circlet II",
+      "name": "Glowline Hood",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -398,7 +398,7 @@
     },
     "3:111": {
       "scene": "res://assets/actors/native/equipment/arcane_ethereal_circlet_03.glb",
-      "name": "Arcane Ethereal Circlet III",
+      "name": "Palesteel Circlet",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -407,7 +407,7 @@
     },
     "3:112": {
       "scene": "res://assets/actors/native/equipment/arcane_ethereal_circlet_04.glb",
-      "name": "Arcane Ethereal Circlet IV",
+      "name": "Starglass Circlet",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -416,7 +416,7 @@
     },
     "3:113": {
       "scene": "res://assets/actors/native/equipment/arcane_ethereal_circlet_05.glb",
-      "name": "Arcane Ethereal Circlet V",
+      "name": "Twilight Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -425,7 +425,7 @@
     },
     "3:114": {
       "scene": "res://assets/actors/native/equipment/arcane_ethereal_circlet_06.glb",
-      "name": "Arcane Ethereal Circlet VI",
+      "name": "Seawrap Veil",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -434,7 +434,7 @@
     },
     "3:115": {
       "scene": "res://assets/actors/native/equipment/arcane_ethereal_circlet_07.glb",
-      "name": "Arcane Ethereal Circlet VII",
+      "name": "Acolyte Hood",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -443,7 +443,7 @@
     },
     "3:116": {
       "scene": "res://assets/actors/native/equipment/arcane_ethereal_circlet_08.glb",
-      "name": "Arcane Ethereal Circlet VIII",
+      "name": "Crystalward Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -452,7 +452,7 @@
     },
     "3:117": {
       "scene": "res://assets/actors/native/equipment/amberwood_forest_helm_01.glb",
-      "name": "Amberwood Forest Helm I",
+      "name": "Bark Hood",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -461,7 +461,7 @@
     },
     "3:118": {
       "scene": "res://assets/actors/native/equipment/amberwood_forest_helm_02.glb",
-      "name": "Amberwood Forest Helm II",
+      "name": "Mossbound Cap",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -470,7 +470,7 @@
     },
     "3:119": {
       "scene": "res://assets/actors/native/equipment/amberwood_forest_helm_03.glb",
-      "name": "Amberwood Forest Helm III",
+      "name": "Rootwrap Circlet",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -479,7 +479,7 @@
     },
     "3:120": {
       "scene": "res://assets/actors/native/equipment/amberwood_forest_helm_04.glb",
-      "name": "Amberwood Forest Helm IV",
+      "name": "Leafscale Hood",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -488,7 +488,7 @@
     },
     "3:121": {
       "scene": "res://assets/actors/native/equipment/amberwood_forest_helm_05.glb",
-      "name": "Amberwood Forest Helm V",
+      "name": "Heartwood Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -497,7 +497,7 @@
     },
     "3:122": {
       "scene": "res://assets/actors/native/equipment/amberwood_forest_helm_06.glb",
-      "name": "Amberwood Forest Helm VI",
+      "name": "Antler Hood",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -506,7 +506,7 @@
     },
     "3:123": {
       "scene": "res://assets/actors/native/equipment/amberwood_forest_helm_07.glb",
-      "name": "Amberwood Forest Helm VII",
+      "name": "Amberglass Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -515,7 +515,7 @@
     },
     "3:124": {
       "scene": "res://assets/actors/native/equipment/amberwood_forest_helm_08.glb",
-      "name": "Amberwood Forest Helm VIII",
+      "name": "Ivory Vine Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -524,7 +524,7 @@
     },
     "6:200": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_boots_01.glb",
-      "name": "Amberwood Woodland Boots I",
+      "name": "Bark Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -532,7 +532,7 @@
     },
     "6:201": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_boots_02.glb",
-      "name": "Amberwood Woodland Boots II",
+      "name": "Mossbound Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -540,7 +540,7 @@
     },
     "6:202": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_boots_03.glb",
-      "name": "Amberwood Woodland Boots III",
+      "name": "Rootwrap Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -548,7 +548,7 @@
     },
     "6:203": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_boots_04.glb",
-      "name": "Amberwood Woodland Boots IV",
+      "name": "Leafscale Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -556,7 +556,7 @@
     },
     "6:204": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_boots_05.glb",
-      "name": "Amberwood Woodland Boots V",
+      "name": "Heartwood Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -564,7 +564,7 @@
     },
     "6:205": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_boots_06.glb",
-      "name": "Amberwood Woodland Boots VI",
+      "name": "Furtrim Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -572,7 +572,7 @@
     },
     "6:206": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_boots_07.glb",
-      "name": "Amberwood Woodland Boots VII",
+      "name": "Amberglass Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -580,7 +580,7 @@
     },
     "6:207": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_boots_08.glb",
-      "name": "Amberwood Woodland Boots VIII",
+      "name": "Ivory Vine Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -588,7 +588,7 @@
     },
     "4:179": {
       "scene": "res://assets/actors/native/equipment/arcane_leg_armor_01.glb",
-      "name": "Arcane Leg Armor I",
+      "name": "Warded Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -596,7 +596,7 @@
     },
     "4:180": {
       "scene": "res://assets/actors/native/equipment/arcane_leg_armor_02.glb",
-      "name": "Arcane Leg Armor II",
+      "name": "Glowline Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -604,7 +604,7 @@
     },
     "4:181": {
       "scene": "res://assets/actors/native/equipment/arcane_leg_armor_03.glb",
-      "name": "Arcane Leg Armor III",
+      "name": "Palesteel Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -612,7 +612,7 @@
     },
     "4:182": {
       "scene": "res://assets/actors/native/equipment/arcane_leg_armor_04.glb",
-      "name": "Arcane Leg Armor IV",
+      "name": "Starglass Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -620,7 +620,7 @@
     },
     "4:183": {
       "scene": "res://assets/actors/native/equipment/arcane_leg_armor_05.glb",
-      "name": "Arcane Leg Armor V",
+      "name": "Twilight Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -628,7 +628,7 @@
     },
     "4:184": {
       "scene": "res://assets/actors/native/equipment/arcane_leg_armor_06.glb",
-      "name": "Arcane Leg Armor VI",
+      "name": "Seawrap Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -636,7 +636,7 @@
     },
     "4:185": {
       "scene": "res://assets/actors/native/equipment/arcane_leg_armor_07.glb",
-      "name": "Arcane Leg Armor VII",
+      "name": "Acolyte Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -644,7 +644,7 @@
     },
     "4:186": {
       "scene": "res://assets/actors/native/equipment/arcane_leg_armor_08.glb",
-      "name": "Arcane Leg Armor VIII",
+      "name": "Crystalward Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -652,7 +652,7 @@
     },
     "4:187": {
       "scene": "res://assets/actors/native/equipment/ceremonial_knight_greaves_01.glb",
-      "name": "Ceremonial Knight Greaves I",
+      "name": "Herald Cuisses",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -660,7 +660,7 @@
     },
     "4:188": {
       "scene": "res://assets/actors/native/equipment/ceremonial_knight_greaves_02.glb",
-      "name": "Ceremonial Knight Greaves II",
+      "name": "Fleur Cuisses",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -668,7 +668,7 @@
     },
     "4:189": {
       "scene": "res://assets/actors/native/equipment/ceremonial_knight_greaves_03.glb",
-      "name": "Ceremonial Knight Greaves III",
+      "name": "Crimson Cuisses",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -676,7 +676,7 @@
     },
     "4:190": {
       "scene": "res://assets/actors/native/equipment/ceremonial_knight_greaves_04.glb",
-      "name": "Ceremonial Knight Greaves IV",
+      "name": "Ivory Cuisses",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -684,7 +684,7 @@
     },
     "4:191": {
       "scene": "res://assets/actors/native/equipment/ceremonial_knight_greaves_05.glb",
-      "name": "Ceremonial Knight Greaves V",
+      "name": "Lion Cuisses",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -692,7 +692,7 @@
     },
     "4:192": {
       "scene": "res://assets/actors/native/equipment/ceremonial_knight_greaves_06.glb",
-      "name": "Ceremonial Knight Greaves VI",
+      "name": "Silver Cuisses",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -700,7 +700,7 @@
     },
     "4:193": {
       "scene": "res://assets/actors/native/equipment/ceremonial_knight_greaves_07.glb",
-      "name": "Ceremonial Knight Greaves VII",
+      "name": "Rosette Cuisses",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -708,7 +708,7 @@
     },
     "4:194": {
       "scene": "res://assets/actors/native/equipment/ceremonial_knight_greaves_08.glb",
-      "name": "Ceremonial Knight Greaves VIII",
+      "name": "Blackened Cuisses",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -716,7 +716,7 @@
     },
     "3:125": {
       "scene": "res://assets/actors/native/equipment/legendary_eloria_helm_01.glb",
-      "name": "Legendary Eloria Helm I",
+      "name": "Phoenix Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -725,7 +725,7 @@
     },
     "3:126": {
       "scene": "res://assets/actors/native/equipment/legendary_eloria_helm_02.glb",
-      "name": "Legendary Eloria Helm II",
+      "name": "Glacier Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -734,7 +734,7 @@
     },
     "3:127": {
       "scene": "res://assets/actors/native/equipment/legendary_eloria_helm_03.glb",
-      "name": "Legendary Eloria Helm III",
+      "name": "Nightstorm Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -743,7 +743,7 @@
     },
     "3:128": {
       "scene": "res://assets/actors/native/equipment/legendary_eloria_helm_04.glb",
-      "name": "Legendary Eloria Helm IV",
+      "name": "Dragonbone Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -752,7 +752,7 @@
     },
     "3:129": {
       "scene": "res://assets/actors/native/equipment/legendary_eloria_helm_05.glb",
-      "name": "Legendary Eloria Helm V",
+      "name": "Sunburst Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -761,7 +761,7 @@
     },
     "3:130": {
       "scene": "res://assets/actors/native/equipment/legendary_eloria_helm_06.glb",
-      "name": "Legendary Eloria Helm VI",
+      "name": "Amethyst Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -770,7 +770,7 @@
     },
     "3:131": {
       "scene": "res://assets/actors/native/equipment/legendary_eloria_helm_07.glb",
-      "name": "Legendary Eloria Helm VII",
+      "name": "Knotwork Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -779,7 +779,7 @@
     },
     "3:132": {
       "scene": "res://assets/actors/native/equipment/legendary_eloria_helm_08.glb",
-      "name": "Legendary Eloria Helm VIII",
+      "name": "Lion Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -788,7 +788,7 @@
     },
     "3:133": {
       "scene": "res://assets/actors/native/equipment/militia_helmet_01.glb",
-      "name": "Militia Helmet I",
+      "name": "Padded Coif",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -797,7 +797,7 @@
     },
     "3:134": {
       "scene": "res://assets/actors/native/equipment/militia_helmet_02.glb",
-      "name": "Militia Helmet II",
+      "name": "Leather Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -806,7 +806,7 @@
     },
     "3:135": {
       "scene": "res://assets/actors/native/equipment/militia_helmet_03.glb",
-      "name": "Militia Helmet III",
+      "name": "Kettle Hat",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -815,7 +815,7 @@
     },
     "3:136": {
       "scene": "res://assets/actors/native/equipment/militia_helmet_04.glb",
-      "name": "Militia Helmet IV",
+      "name": "Spangenhelm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -824,7 +824,7 @@
     },
     "3:137": {
       "scene": "res://assets/actors/native/equipment/militia_helmet_05.glb",
-      "name": "Militia Helmet V",
+      "name": "Mail Coif",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -833,7 +833,7 @@
     },
     "3:138": {
       "scene": "res://assets/actors/native/equipment/militia_helmet_06.glb",
-      "name": "Militia Helmet VI",
+      "name": "Cheekguard Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -842,7 +842,7 @@
     },
     "3:139": {
       "scene": "res://assets/actors/native/equipment/militia_helmet_07.glb",
-      "name": "Militia Helmet VII",
+      "name": "Brass Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -851,7 +851,7 @@
     },
     "3:140": {
       "scene": "res://assets/actors/native/equipment/militia_helmet_08.glb",
-      "name": "Militia Helmet VIII",
+      "name": "Crimson Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -860,7 +860,7 @@
     },
     "3:141": {
       "scene": "res://assets/actors/native/equipment/knightly_headgear_01.glb",
-      "name": "Knightly Headgear I",
+      "name": "Gilt Bascinet",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -869,7 +869,7 @@
     },
     "3:142": {
       "scene": "res://assets/actors/native/equipment/knightly_headgear_02.glb",
-      "name": "Knightly Headgear II",
+      "name": "Visored Bascinet",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -878,7 +878,7 @@
     },
     "3:143": {
       "scene": "res://assets/actors/native/equipment/knightly_headgear_03.glb",
-      "name": "Knightly Headgear III",
+      "name": "Great Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -887,7 +887,7 @@
     },
     "3:144": {
       "scene": "res://assets/actors/native/equipment/knightly_headgear_04.glb",
-      "name": "Knightly Headgear IV",
+      "name": "Knight Sallet",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -896,7 +896,7 @@
     },
     "3:145": {
       "scene": "res://assets/actors/native/equipment/knightly_headgear_05.glb",
-      "name": "Knightly Headgear V",
+      "name": "Winged Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -905,7 +905,7 @@
     },
     "3:146": {
       "scene": "res://assets/actors/native/equipment/knightly_headgear_06.glb",
-      "name": "Knightly Headgear VI",
+      "name": "Crowned Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -914,7 +914,7 @@
     },
     "3:147": {
       "scene": "res://assets/actors/native/equipment/knightly_headgear_07.glb",
-      "name": "Knightly Headgear VII",
+      "name": "Crested Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -923,7 +923,7 @@
     },
     "3:148": {
       "scene": "res://assets/actors/native/equipment/knightly_headgear_08.glb",
-      "name": "Knightly Headgear VIII",
+      "name": "Masked Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -932,7 +932,7 @@
     },
     "3:149": {
       "scene": "res://assets/actors/native/equipment/frontier_hat_01.glb",
-      "name": "Frontier Hat I",
+      "name": "Wool Cap",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -941,7 +941,7 @@
     },
     "3:150": {
       "scene": "res://assets/actors/native/equipment/frontier_hat_02.glb",
-      "name": "Frontier Hat II",
+      "name": "Drover Hat",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -950,7 +950,7 @@
     },
     "3:151": {
       "scene": "res://assets/actors/native/equipment/frontier_hat_03.glb",
-      "name": "Frontier Hat III",
+      "name": "Patched Sunhat",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -959,7 +959,7 @@
     },
     "3:152": {
       "scene": "res://assets/actors/native/equipment/frontier_hat_04.glb",
-      "name": "Frontier Hat IV",
+      "name": "Earflap Cap",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -968,7 +968,7 @@
     },
     "3:153": {
       "scene": "res://assets/actors/native/equipment/frontier_hat_05.glb",
-      "name": "Frontier Hat V",
+      "name": "Linen Kerchief",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -977,7 +977,7 @@
     },
     "3:154": {
       "scene": "res://assets/actors/native/equipment/frontier_hat_06.glb",
-      "name": "Frontier Hat VI",
+      "name": "Felt Hat",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -986,7 +986,7 @@
     },
     "3:155": {
       "scene": "res://assets/actors/native/equipment/frontier_hat_07.glb",
-      "name": "Frontier Hat VII",
+      "name": "Field Hood",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -995,7 +995,7 @@
     },
     "3:156": {
       "scene": "res://assets/actors/native/equipment/frontier_hat_08.glb",
-      "name": "Frontier Hat VIII",
+      "name": "Fur Cap",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -1004,7 +1004,7 @@
     },
     "3:157": {
       "scene": "res://assets/actors/native/equipment/adventurer_headwear_01.glb",
-      "name": "Adventurer Headwear I",
+      "name": "Fang Hood",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -1013,7 +1013,7 @@
     },
     "3:158": {
       "scene": "res://assets/actors/native/equipment/adventurer_headwear_02.glb",
-      "name": "Adventurer Headwear II",
+      "name": "Feathered Cap",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -1022,7 +1022,7 @@
     },
     "3:159": {
       "scene": "res://assets/actors/native/equipment/adventurer_headwear_03.glb",
-      "name": "Adventurer Headwear III",
+      "name": "Buckled Hood",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -1031,7 +1031,7 @@
     },
     "3:160": {
       "scene": "res://assets/actors/native/equipment/adventurer_headwear_04.glb",
-      "name": "Adventurer Headwear IV",
+      "name": "Plumed Hat",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -1040,7 +1040,7 @@
     },
     "3:161": {
       "scene": "res://assets/actors/native/equipment/adventurer_headwear_05.glb",
-      "name": "Adventurer Headwear V",
+      "name": "Charm Hood",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -1049,7 +1049,7 @@
     },
     "3:162": {
       "scene": "res://assets/actors/native/equipment/adventurer_headwear_06.glb",
-      "name": "Adventurer Headwear VI",
+      "name": "Studded Cap",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -1058,7 +1058,7 @@
     },
     "3:163": {
       "scene": "res://assets/actors/native/equipment/adventurer_headwear_07.glb",
-      "name": "Adventurer Headwear VII",
+      "name": "Banded Cap",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -1067,7 +1067,7 @@
     },
     "3:164": {
       "scene": "res://assets/actors/native/equipment/adventurer_headwear_08.glb",
-      "name": "Adventurer Headwear VIII",
+      "name": "Fur Hood",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -1076,7 +1076,7 @@
     },
     "3:165": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_headgear_01.glb",
-      "name": "Sunmane Steppe Headgear I",
+      "name": "Riding Hat",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -1085,7 +1085,7 @@
     },
     "3:166": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_headgear_02.glb",
-      "name": "Sunmane Steppe Headgear II",
+      "name": "Steppe Headcloth",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -1094,7 +1094,7 @@
     },
     "3:167": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_headgear_03.glb",
-      "name": "Sunmane Steppe Headgear III",
+      "name": "Rider Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -1103,7 +1103,7 @@
     },
     "3:168": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_headgear_04.glb",
-      "name": "Sunmane Steppe Headgear IV",
+      "name": "Steppe Turban",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -1112,7 +1112,7 @@
     },
     "3:169": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_headgear_05.glb",
-      "name": "Sunmane Steppe Headgear V",
+      "name": "Sundisc Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -1121,7 +1121,7 @@
     },
     "3:170": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_headgear_06.glb",
-      "name": "Sunmane Steppe Headgear VI",
+      "name": "Sun Headband",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -1130,7 +1130,7 @@
     },
     "3:171": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_headgear_07.glb",
-      "name": "Sunmane Steppe Headgear VII",
+      "name": "Scarf Hood",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -1139,7 +1139,7 @@
     },
     "3:172": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_headgear_08.glb",
-      "name": "Sunmane Steppe Headgear VIII",
+      "name": "Redplume Helm",
       "attach": "socket",
       "hides": [
         "wardrobe_head_band",
@@ -1148,7 +1148,7 @@
     },
     "5:192": {
       "scene": "res://assets/actors/native/equipment/legendary_hero_cuirass_01.glb",
-      "name": "Legendary Hero Cuirass I",
+      "name": "Phoenix Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1156,7 +1156,7 @@
     },
     "5:193": {
       "scene": "res://assets/actors/native/equipment/legendary_hero_cuirass_02.glb",
-      "name": "Legendary Hero Cuirass II",
+      "name": "Glacier Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1164,7 +1164,7 @@
     },
     "5:194": {
       "scene": "res://assets/actors/native/equipment/legendary_hero_cuirass_03.glb",
-      "name": "Legendary Hero Cuirass III",
+      "name": "Nightstorm Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1172,7 +1172,7 @@
     },
     "5:195": {
       "scene": "res://assets/actors/native/equipment/legendary_hero_cuirass_04.glb",
-      "name": "Legendary Hero Cuirass IV",
+      "name": "Dragonbone Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1180,7 +1180,7 @@
     },
     "5:196": {
       "scene": "res://assets/actors/native/equipment/legendary_hero_cuirass_05.glb",
-      "name": "Legendary Hero Cuirass V",
+      "name": "Sunburst Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1188,7 +1188,7 @@
     },
     "5:197": {
       "scene": "res://assets/actors/native/equipment/legendary_hero_cuirass_06.glb",
-      "name": "Legendary Hero Cuirass VI",
+      "name": "Amethyst Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1196,7 +1196,7 @@
     },
     "5:198": {
       "scene": "res://assets/actors/native/equipment/legendary_hero_cuirass_07.glb",
-      "name": "Legendary Hero Cuirass VII",
+      "name": "Knotwork Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1204,7 +1204,7 @@
     },
     "5:199": {
       "scene": "res://assets/actors/native/equipment/legendary_hero_cuirass_08.glb",
-      "name": "Legendary Hero Cuirass VIII",
+      "name": "Lion Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1212,7 +1212,7 @@
     },
     "5:200": {
       "scene": "res://assets/actors/native/equipment/knightly_torso_armor_01.glb",
-      "name": "Knightly Torso Armor I",
+      "name": "Fluted Breastplate",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1220,7 +1220,7 @@
     },
     "5:201": {
       "scene": "res://assets/actors/native/equipment/knightly_torso_armor_02.glb",
-      "name": "Knightly Torso Armor II",
+      "name": "Polished Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1228,7 +1228,7 @@
     },
     "5:202": {
       "scene": "res://assets/actors/native/equipment/knightly_torso_armor_03.glb",
-      "name": "Knightly Torso Armor III",
+      "name": "Gilded Vine Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1236,7 +1236,7 @@
     },
     "5:203": {
       "scene": "res://assets/actors/native/equipment/knightly_torso_armor_04.glb",
-      "name": "Knightly Torso Armor IV",
+      "name": "Scalework Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1244,7 +1244,7 @@
     },
     "5:204": {
       "scene": "res://assets/actors/native/equipment/knightly_torso_armor_05.glb",
-      "name": "Knightly Torso Armor V",
+      "name": "Rosette Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1252,7 +1252,7 @@
     },
     "5:205": {
       "scene": "res://assets/actors/native/equipment/knightly_torso_armor_06.glb",
-      "name": "Knightly Torso Armor VI",
+      "name": "Tasset Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1260,7 +1260,7 @@
     },
     "5:206": {
       "scene": "res://assets/actors/native/equipment/knightly_torso_armor_07.glb",
-      "name": "Knightly Torso Armor VII",
+      "name": "Mantled Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1268,7 +1268,7 @@
     },
     "5:207": {
       "scene": "res://assets/actors/native/equipment/knightly_torso_armor_08.glb",
-      "name": "Knightly Torso Armor VIII",
+      "name": "Blackened Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1276,7 +1276,7 @@
     },
     "5:208": {
       "scene": "res://assets/actors/native/equipment/militia_torso_armor_01.glb",
-      "name": "Militia Torso Armor I",
+      "name": "Arming Gambeson",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1284,7 +1284,7 @@
     },
     "5:209": {
       "scene": "res://assets/actors/native/equipment/militia_torso_armor_02.glb",
-      "name": "Militia Torso Armor II",
+      "name": "Studded Jack",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1292,7 +1292,7 @@
     },
     "5:210": {
       "scene": "res://assets/actors/native/equipment/militia_torso_armor_03.glb",
-      "name": "Militia Torso Armor III",
+      "name": "Splinted Vest",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1300,7 +1300,7 @@
     },
     "5:211": {
       "scene": "res://assets/actors/native/equipment/militia_torso_armor_04.glb",
-      "name": "Militia Torso Armor IV",
+      "name": "Mail Shirt",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1308,7 +1308,7 @@
     },
     "5:212": {
       "scene": "res://assets/actors/native/equipment/militia_torso_armor_05.glb",
-      "name": "Militia Torso Armor V",
+      "name": "Riveted Lamellar",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1316,7 +1316,7 @@
     },
     "5:213": {
       "scene": "res://assets/actors/native/equipment/militia_torso_armor_06.glb",
-      "name": "Militia Torso Armor VI",
+      "name": "Plain Breastplate",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1324,7 +1324,7 @@
     },
     "5:214": {
       "scene": "res://assets/actors/native/equipment/militia_torso_armor_07.glb",
-      "name": "Militia Torso Armor VII",
+      "name": "Brass Breastplate",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1332,7 +1332,7 @@
     },
     "5:215": {
       "scene": "res://assets/actors/native/equipment/militia_torso_armor_08.glb",
-      "name": "Militia Torso Armor VIII",
+      "name": "Crimson Guard Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1340,7 +1340,7 @@
     },
     "5:216": {
       "scene": "res://assets/actors/native/equipment/eloria_arcane_armor_01.glb",
-      "name": "Eloria Arcane Armor I",
+      "name": "Warded Tabard",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1348,7 +1348,7 @@
     },
     "5:217": {
       "scene": "res://assets/actors/native/equipment/eloria_arcane_armor_02.glb",
-      "name": "Eloria Arcane Armor II",
+      "name": "Glowline Coat",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1356,7 +1356,7 @@
     },
     "5:218": {
       "scene": "res://assets/actors/native/equipment/eloria_arcane_armor_03.glb",
-      "name": "Eloria Arcane Armor III",
+      "name": "Palesteel Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1364,7 +1364,7 @@
     },
     "5:219": {
       "scene": "res://assets/actors/native/equipment/eloria_arcane_armor_04.glb",
-      "name": "Eloria Arcane Armor IV",
+      "name": "Starglass Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1372,7 +1372,7 @@
     },
     "5:220": {
       "scene": "res://assets/actors/native/equipment/eloria_arcane_armor_05.glb",
-      "name": "Eloria Arcane Armor V",
+      "name": "Twilight Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1380,7 +1380,7 @@
     },
     "5:221": {
       "scene": "res://assets/actors/native/equipment/eloria_arcane_armor_06.glb",
-      "name": "Eloria Arcane Armor VI",
+      "name": "Seawrap Robe",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1388,7 +1388,7 @@
     },
     "5:222": {
       "scene": "res://assets/actors/native/equipment/eloria_arcane_armor_07.glb",
-      "name": "Eloria Arcane Armor VII",
+      "name": "Acolyte Tunic",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1396,7 +1396,7 @@
     },
     "5:223": {
       "scene": "res://assets/actors/native/equipment/eloria_arcane_armor_08.glb",
-      "name": "Eloria Arcane Armor VIII",
+      "name": "Crystalward Plate",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1404,7 +1404,7 @@
     },
     "5:224": {
       "scene": "res://assets/actors/native/equipment/leather_ranger_torso_01.glb",
-      "name": "Leather Ranger Torso I",
+      "name": "Bonehook Jerkin",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1412,7 +1412,7 @@
     },
     "5:225": {
       "scene": "res://assets/actors/native/equipment/leather_ranger_torso_02.glb",
-      "name": "Leather Ranger Torso II",
+      "name": "Scout Vest",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1420,7 +1420,7 @@
     },
     "5:226": {
       "scene": "res://assets/actors/native/equipment/leather_ranger_torso_03.glb",
-      "name": "Leather Ranger Torso III",
+      "name": "Sashed Jerkin",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1428,7 +1428,7 @@
     },
     "5:227": {
       "scene": "res://assets/actors/native/equipment/leather_ranger_torso_04.glb",
-      "name": "Leather Ranger Torso IV",
+      "name": "Brassbuckle Coat",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1436,7 +1436,7 @@
     },
     "5:228": {
       "scene": "res://assets/actors/native/equipment/leather_ranger_torso_05.glb",
-      "name": "Leather Ranger Torso V",
+      "name": "Mossfringe Jerkin",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1444,7 +1444,7 @@
     },
     "5:229": {
       "scene": "res://assets/actors/native/equipment/leather_ranger_torso_06.glb",
-      "name": "Leather Ranger Torso VI",
+      "name": "Ropecoil Jerkin",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1452,7 +1452,7 @@
     },
     "5:230": {
       "scene": "res://assets/actors/native/equipment/leather_ranger_torso_07.glb",
-      "name": "Leather Ranger Torso VII",
+      "name": "Riveted Jerkin",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1460,7 +1460,7 @@
     },
     "5:231": {
       "scene": "res://assets/actors/native/equipment/leather_ranger_torso_08.glb",
-      "name": "Leather Ranger Torso VIII",
+      "name": "Trapper Coat",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "cuirass",
@@ -1468,7 +1468,7 @@
     },
     "5:232": {
       "scene": "res://assets/actors/native/equipment/eloria_frontier_shirt_01.glb",
-      "name": "Eloria Frontier Shirt I",
+      "name": "Homespun Shirt",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "shirt",
@@ -1476,7 +1476,7 @@
     },
     "5:233": {
       "scene": "res://assets/actors/native/equipment/eloria_frontier_shirt_02.glb",
-      "name": "Eloria Frontier Shirt II",
+      "name": "Redtrim Tunic",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "shirt",
@@ -1484,7 +1484,7 @@
     },
     "5:234": {
       "scene": "res://assets/actors/native/equipment/eloria_frontier_shirt_03.glb",
-      "name": "Eloria Frontier Shirt III",
+      "name": "Patched Workshirt",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "shirt",
@@ -1492,7 +1492,7 @@
     },
     "5:235": {
       "scene": "res://assets/actors/native/equipment/eloria_frontier_shirt_04.glb",
-      "name": "Eloria Frontier Shirt IV",
+      "name": "Whipstitch Shirt",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "shirt",
@@ -1500,7 +1500,7 @@
     },
     "5:236": {
       "scene": "res://assets/actors/native/equipment/eloria_frontier_shirt_05.glb",
-      "name": "Eloria Frontier Shirt V",
+      "name": "Sashwrap Shirt",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "shirt",
@@ -1508,7 +1508,7 @@
     },
     "5:237": {
       "scene": "res://assets/actors/native/equipment/eloria_frontier_shirt_06.glb",
-      "name": "Eloria Frontier Shirt VI",
+      "name": "Laced Field Tunic",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "shirt",
@@ -1516,7 +1516,7 @@
     },
     "5:238": {
       "scene": "res://assets/actors/native/equipment/eloria_frontier_shirt_07.glb",
-      "name": "Eloria Frontier Shirt VII",
+      "name": "Tattered Blue Shirt",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "shirt",
@@ -1524,7 +1524,7 @@
     },
     "5:239": {
       "scene": "res://assets/actors/native/equipment/eloria_frontier_shirt_08.glb",
-      "name": "Eloria Frontier Shirt VIII",
+      "name": "Woollen Tunic",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "shirt",
@@ -1532,7 +1532,7 @@
     },
     "5:240": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_shirt_01.glb",
-      "name": "Sunmane Steppe Shirt I",
+      "name": "Tasselled Tunic",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "shirt",
@@ -1540,7 +1540,7 @@
     },
     "5:241": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_shirt_02.glb",
-      "name": "Sunmane Steppe Shirt II",
+      "name": "Fringed Kaftan",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "shirt",
@@ -1548,7 +1548,7 @@
     },
     "5:242": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_shirt_03.glb",
-      "name": "Sunmane Steppe Shirt III",
+      "name": "Rider Vest",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "shirt",
@@ -1556,7 +1556,7 @@
     },
     "5:243": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_shirt_04.glb",
-      "name": "Sunmane Steppe Shirt IV",
+      "name": "Bone Clasp Coat",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "shirt",
@@ -1564,7 +1564,7 @@
     },
     "5:244": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_shirt_05.glb",
-      "name": "Sunmane Steppe Shirt V",
+      "name": "Sundisc Cuirass",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "shirt",
@@ -1572,7 +1572,7 @@
     },
     "5:245": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_shirt_06.glb",
-      "name": "Sunmane Steppe Shirt VI",
+      "name": "Red Sash Wrap",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "shirt",
@@ -1580,7 +1580,7 @@
     },
     "5:246": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_shirt_07.glb",
-      "name": "Sunmane Steppe Shirt VII",
+      "name": "Riding Jacket",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "shirt",
@@ -1588,7 +1588,7 @@
     },
     "5:247": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_shirt_08.glb",
-      "name": "Sunmane Steppe Shirt VIII",
+      "name": "Boneplate Coat",
       "attach": "skinned",
       "skinRegion": "torso",
       "kind": "shirt",
@@ -1596,7 +1596,7 @@
     },
     "4:195": {
       "scene": "res://assets/actors/native/equipment/legendary_leg_armor_01.glb",
-      "name": "Legendary Leg Armor I",
+      "name": "Phoenix Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1604,7 +1604,7 @@
     },
     "4:196": {
       "scene": "res://assets/actors/native/equipment/legendary_leg_armor_02.glb",
-      "name": "Legendary Leg Armor II",
+      "name": "Glacier Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1612,7 +1612,7 @@
     },
     "4:197": {
       "scene": "res://assets/actors/native/equipment/legendary_leg_armor_03.glb",
-      "name": "Legendary Leg Armor III",
+      "name": "Nightstorm Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1620,7 +1620,7 @@
     },
     "4:198": {
       "scene": "res://assets/actors/native/equipment/legendary_leg_armor_04.glb",
-      "name": "Legendary Leg Armor IV",
+      "name": "Dragonbone Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1628,7 +1628,7 @@
     },
     "4:199": {
       "scene": "res://assets/actors/native/equipment/legendary_leg_armor_05.glb",
-      "name": "Legendary Leg Armor V",
+      "name": "Sunburst Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1636,7 +1636,7 @@
     },
     "4:200": {
       "scene": "res://assets/actors/native/equipment/legendary_leg_armor_06.glb",
-      "name": "Legendary Leg Armor VI",
+      "name": "Amethyst Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1644,7 +1644,7 @@
     },
     "4:201": {
       "scene": "res://assets/actors/native/equipment/legendary_leg_armor_07.glb",
-      "name": "Legendary Leg Armor VII",
+      "name": "Knotwork Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1652,7 +1652,7 @@
     },
     "4:202": {
       "scene": "res://assets/actors/native/equipment/legendary_leg_armor_08.glb",
-      "name": "Legendary Leg Armor VIII",
+      "name": "Lion Legguards",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1660,7 +1660,7 @@
     },
     "4:219": {
       "scene": "res://assets/actors/native/equipment/militia_leg_armor_01.glb",
-      "name": "Militia Leg Armor I",
+      "name": "Arming Chausses",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1668,7 +1668,7 @@
     },
     "4:220": {
       "scene": "res://assets/actors/native/equipment/militia_leg_armor_02.glb",
-      "name": "Militia Leg Armor II",
+      "name": "Leather Kneecops",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1676,7 +1676,7 @@
     },
     "4:221": {
       "scene": "res://assets/actors/native/equipment/militia_leg_armor_03.glb",
-      "name": "Militia Leg Armor III",
+      "name": "Splinted Chausses",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1684,7 +1684,7 @@
     },
     "4:222": {
       "scene": "res://assets/actors/native/equipment/militia_leg_armor_04.glb",
-      "name": "Militia Leg Armor IV",
+      "name": "Mail Leggings",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1692,7 +1692,7 @@
     },
     "4:223": {
       "scene": "res://assets/actors/native/equipment/militia_leg_armor_05.glb",
-      "name": "Militia Leg Armor V",
+      "name": "Riveted Tassets",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1700,7 +1700,7 @@
     },
     "4:224": {
       "scene": "res://assets/actors/native/equipment/militia_leg_armor_06.glb",
-      "name": "Militia Leg Armor VI",
+      "name": "Steel Kneecops",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1708,7 +1708,7 @@
     },
     "4:225": {
       "scene": "res://assets/actors/native/equipment/militia_leg_armor_07.glb",
-      "name": "Militia Leg Armor VII",
+      "name": "Brass Chausses",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1716,7 +1716,7 @@
     },
     "4:226": {
       "scene": "res://assets/actors/native/equipment/militia_leg_armor_08.glb",
-      "name": "Militia Leg Armor VIII",
+      "name": "Crimson Guard Chausses",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1724,7 +1724,7 @@
     },
     "4:227": {
       "scene": "res://assets/actors/native/equipment/rugged_ranger_legwear_01.glb",
-      "name": "Rugged Ranger Legwear I",
+      "name": "Pouchbelt Breeches",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1732,7 +1732,7 @@
     },
     "4:228": {
       "scene": "res://assets/actors/native/equipment/rugged_ranger_legwear_02.glb",
-      "name": "Rugged Ranger Legwear II",
+      "name": "Fangbelt Breeches",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1740,7 +1740,7 @@
     },
     "4:229": {
       "scene": "res://assets/actors/native/equipment/rugged_ranger_legwear_03.glb",
-      "name": "Rugged Ranger Legwear III",
+      "name": "Strapwrap Breeches",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1748,7 +1748,7 @@
     },
     "4:230": {
       "scene": "res://assets/actors/native/equipment/rugged_ranger_legwear_04.glb",
-      "name": "Rugged Ranger Legwear IV",
+      "name": "Sidelace Breeches",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1756,7 +1756,7 @@
     },
     "4:231": {
       "scene": "res://assets/actors/native/equipment/rugged_ranger_legwear_05.glb",
-      "name": "Rugged Ranger Legwear V",
+      "name": "Bonecharm Breeches",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1764,7 +1764,7 @@
     },
     "4:232": {
       "scene": "res://assets/actors/native/equipment/rugged_ranger_legwear_06.glb",
-      "name": "Rugged Ranger Legwear VI",
+      "name": "Ringcoil Breeches",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1772,7 +1772,7 @@
     },
     "4:233": {
       "scene": "res://assets/actors/native/equipment/rugged_ranger_legwear_07.glb",
-      "name": "Rugged Ranger Legwear VII",
+      "name": "Studded Chaps",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1780,7 +1780,7 @@
     },
     "4:234": {
       "scene": "res://assets/actors/native/equipment/rugged_ranger_legwear_08.glb",
-      "name": "Rugged Ranger Legwear VIII",
+      "name": "Furwrap Breeches",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1788,7 +1788,7 @@
     },
     "4:235": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_legwear_01.glb",
-      "name": "Sunmane Steppe Legwear I",
+      "name": "Rider Breeches",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1796,7 +1796,7 @@
     },
     "4:236": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_legwear_02.glb",
-      "name": "Sunmane Steppe Legwear II",
+      "name": "Wrapskirt Trousers",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1804,7 +1804,7 @@
     },
     "4:237": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_legwear_03.glb",
-      "name": "Sunmane Steppe Legwear III",
+      "name": "Steppe Chaps",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1812,7 +1812,7 @@
     },
     "4:238": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_legwear_04.glb",
-      "name": "Sunmane Steppe Legwear IV",
+      "name": "Bonepeg Trousers",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1820,7 +1820,7 @@
     },
     "4:239": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_legwear_05.glb",
-      "name": "Sunmane Steppe Legwear V",
+      "name": "Bronze Tassets",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1828,7 +1828,7 @@
     },
     "4:240": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_legwear_06.glb",
-      "name": "Sunmane Steppe Legwear VI",
+      "name": "Sashcord Trousers",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1836,7 +1836,7 @@
     },
     "4:241": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_legwear_07.glb",
-      "name": "Sunmane Steppe Legwear VII",
+      "name": "Corded Trousers",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1844,7 +1844,7 @@
     },
     "4:242": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_legwear_08.glb",
-      "name": "Sunmane Steppe Legwear VIII",
+      "name": "Sunplate Tassets",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "legs",
@@ -1852,7 +1852,7 @@
     },
     "4:243": {
       "scene": "res://assets/actors/native/equipment/humble_frontier_pants_01.glb",
-      "name": "Humble Frontier Pants I",
+      "name": "Patched Trousers",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "pants",
@@ -1860,7 +1860,7 @@
     },
     "4:244": {
       "scene": "res://assets/actors/native/equipment/humble_frontier_pants_02.glb",
-      "name": "Humble Frontier Pants II",
+      "name": "Work Trousers",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "pants",
@@ -1868,7 +1868,7 @@
     },
     "4:245": {
       "scene": "res://assets/actors/native/equipment/humble_frontier_pants_03.glb",
-      "name": "Humble Frontier Pants III",
+      "name": "Ragged Trousers",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "pants",
@@ -1876,7 +1876,7 @@
     },
     "4:246": {
       "scene": "res://assets/actors/native/equipment/humble_frontier_pants_04.glb",
-      "name": "Humble Frontier Pants IV",
+      "name": "Redtrim Trousers",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "pants",
@@ -1884,7 +1884,7 @@
     },
     "4:247": {
       "scene": "res://assets/actors/native/equipment/humble_frontier_pants_05.glb",
-      "name": "Humble Frontier Pants V",
+      "name": "Sashed Breeches",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "pants",
@@ -1892,7 +1892,7 @@
     },
     "4:248": {
       "scene": "res://assets/actors/native/equipment/humble_frontier_pants_06.glb",
-      "name": "Humble Frontier Pants VI",
+      "name": "Kneepad Trousers",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "pants",
@@ -1900,7 +1900,7 @@
     },
     "4:249": {
       "scene": "res://assets/actors/native/equipment/humble_frontier_pants_07.glb",
-      "name": "Humble Frontier Pants VII",
+      "name": "Faded Trousers",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "pants",
@@ -1908,7 +1908,7 @@
     },
     "4:250": {
       "scene": "res://assets/actors/native/equipment/humble_frontier_pants_08.glb",
-      "name": "Humble Frontier Pants VIII",
+      "name": "Woollen Breeches",
       "attach": "skinned",
       "skinRegion": "legs",
       "kind": "pants",
@@ -1916,7 +1916,7 @@
     },
     "6:208": {
       "scene": "res://assets/actors/native/equipment/legendary_eloria_boots_01.glb",
-      "name": "Legendary Eloria Boots I",
+      "name": "Phoenix Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -1924,7 +1924,7 @@
     },
     "6:209": {
       "scene": "res://assets/actors/native/equipment/legendary_eloria_boots_02.glb",
-      "name": "Legendary Eloria Boots II",
+      "name": "Glacier Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -1932,7 +1932,7 @@
     },
     "6:210": {
       "scene": "res://assets/actors/native/equipment/legendary_eloria_boots_03.glb",
-      "name": "Legendary Eloria Boots III",
+      "name": "Nightstorm Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -1940,7 +1940,7 @@
     },
     "6:211": {
       "scene": "res://assets/actors/native/equipment/legendary_eloria_boots_04.glb",
-      "name": "Legendary Eloria Boots IV",
+      "name": "Dragonbone Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -1948,7 +1948,7 @@
     },
     "6:212": {
       "scene": "res://assets/actors/native/equipment/legendary_eloria_boots_05.glb",
-      "name": "Legendary Eloria Boots V",
+      "name": "Sunburst Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -1956,7 +1956,7 @@
     },
     "6:213": {
       "scene": "res://assets/actors/native/equipment/legendary_eloria_boots_06.glb",
-      "name": "Legendary Eloria Boots VI",
+      "name": "Amethyst Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -1964,7 +1964,7 @@
     },
     "6:214": {
       "scene": "res://assets/actors/native/equipment/legendary_eloria_boots_07.glb",
-      "name": "Legendary Eloria Boots VII",
+      "name": "Knotwork Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -1972,7 +1972,7 @@
     },
     "6:215": {
       "scene": "res://assets/actors/native/equipment/legendary_eloria_boots_08.glb",
-      "name": "Legendary Eloria Boots VIII",
+      "name": "Lion Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -1980,7 +1980,7 @@
     },
     "6:216": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_boots_01.glb",
-      "name": "Sunmane Steppe Boots I",
+      "name": "Tasselled Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -1988,7 +1988,7 @@
     },
     "6:217": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_boots_02.glb",
-      "name": "Sunmane Steppe Boots II",
+      "name": "Steppe Wrap Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -1996,7 +1996,7 @@
     },
     "6:218": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_boots_03.glb",
-      "name": "Sunmane Steppe Boots III",
+      "name": "Bronze Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -2004,7 +2004,7 @@
     },
     "6:219": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_boots_04.glb",
-      "name": "Sunmane Steppe Boots IV",
+      "name": "Bonepeg Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -2012,7 +2012,7 @@
     },
     "6:220": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_boots_05.glb",
-      "name": "Sunmane Steppe Boots V",
+      "name": "Sunplate Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -2020,7 +2020,7 @@
     },
     "6:221": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_boots_06.glb",
-      "name": "Sunmane Steppe Boots VI",
+      "name": "Sashed Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -2028,7 +2028,7 @@
     },
     "6:222": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_boots_07.glb",
-      "name": "Sunmane Steppe Boots VII",
+      "name": "Corded Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -2036,7 +2036,7 @@
     },
     "6:223": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_boots_08.glb",
-      "name": "Sunmane Steppe Boots VIII",
+      "name": "Ivory Riding Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -2044,7 +2044,7 @@
     },
     "6:224": {
       "scene": "res://assets/actors/native/equipment/frontier_boots_01.glb",
-      "name": "Frontier Boots I",
+      "name": "Ankle Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -2052,7 +2052,7 @@
     },
     "6:225": {
       "scene": "res://assets/actors/native/equipment/frontier_boots_02.glb",
-      "name": "Frontier Boots II",
+      "name": "Slouch Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -2060,7 +2060,7 @@
     },
     "6:226": {
       "scene": "res://assets/actors/native/equipment/frontier_boots_03.glb",
-      "name": "Frontier Boots III",
+      "name": "Laced Fieldboots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -2068,7 +2068,7 @@
     },
     "6:227": {
       "scene": "res://assets/actors/native/equipment/frontier_boots_04.glb",
-      "name": "Frontier Boots IV",
+      "name": "Corded Moccasins",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -2076,7 +2076,7 @@
     },
     "6:228": {
       "scene": "res://assets/actors/native/equipment/frontier_boots_05.glb",
-      "name": "Frontier Boots V",
+      "name": "Riding Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -2084,7 +2084,7 @@
     },
     "6:229": {
       "scene": "res://assets/actors/native/equipment/frontier_boots_06.glb",
-      "name": "Frontier Boots VI",
+      "name": "Fleece Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -2092,7 +2092,7 @@
     },
     "6:230": {
       "scene": "res://assets/actors/native/equipment/frontier_boots_07.glb",
-      "name": "Frontier Boots VII",
+      "name": "Canvas Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -2100,7 +2100,7 @@
     },
     "6:231": {
       "scene": "res://assets/actors/native/equipment/frontier_boots_08.glb",
-      "name": "Frontier Boots VIII",
+      "name": "Cuffed Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -2108,7 +2108,7 @@
     },
     "6:232": {
       "scene": "res://assets/actors/native/equipment/leather_adventurer_boots_01.glb",
-      "name": "Leather Adventurer Boots I",
+      "name": "Charmcord Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -2116,7 +2116,7 @@
     },
     "6:233": {
       "scene": "res://assets/actors/native/equipment/leather_adventurer_boots_02.glb",
-      "name": "Leather Adventurer Boots II",
+      "name": "Furcuff Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -2124,7 +2124,7 @@
     },
     "6:234": {
       "scene": "res://assets/actors/native/equipment/leather_adventurer_boots_03.glb",
-      "name": "Leather Adventurer Boots III",
+      "name": "Buckled Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -2132,7 +2132,7 @@
     },
     "6:235": {
       "scene": "res://assets/actors/native/equipment/leather_adventurer_boots_04.glb",
-      "name": "Leather Adventurer Boots IV",
+      "name": "Beaded Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -2140,7 +2140,7 @@
     },
     "6:236": {
       "scene": "res://assets/actors/native/equipment/leather_adventurer_boots_05.glb",
-      "name": "Leather Adventurer Boots V",
+      "name": "Redlace Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -2148,7 +2148,7 @@
     },
     "6:237": {
       "scene": "res://assets/actors/native/equipment/leather_adventurer_boots_06.glb",
-      "name": "Leather Adventurer Boots VI",
+      "name": "Runewrap Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -2156,7 +2156,7 @@
     },
     "6:238": {
       "scene": "res://assets/actors/native/equipment/leather_adventurer_boots_07.glb",
-      "name": "Leather Adventurer Boots VII",
+      "name": "Guard Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -2164,7 +2164,7 @@
     },
     "6:239": {
       "scene": "res://assets/actors/native/equipment/leather_adventurer_boots_08.glb",
-      "name": "Leather Adventurer Boots VIII",
+      "name": "Strapped Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -4609,7 +4609,7 @@
     },
     "6:240": {
       "scene": "res://assets/actors/native/equipment/knightly_greaves_01.glb",
-      "name": "Knightly Greaves I",
+      "name": "Fluted Sabatons",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -4617,7 +4617,7 @@
     },
     "6:241": {
       "scene": "res://assets/actors/native/equipment/knightly_greaves_02.glb",
-      "name": "Knightly Greaves II",
+      "name": "Palmette Greaves",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -4625,7 +4625,7 @@
     },
     "6:242": {
       "scene": "res://assets/actors/native/equipment/knightly_greaves_03.glb",
-      "name": "Knightly Greaves III",
+      "name": "Tracery Greaves",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -4633,7 +4633,7 @@
     },
     "6:243": {
       "scene": "res://assets/actors/native/equipment/knightly_greaves_04.glb",
-      "name": "Knightly Greaves IV",
+      "name": "Cathedral Greaves",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -4641,7 +4641,7 @@
     },
     "6:244": {
       "scene": "res://assets/actors/native/equipment/knightly_greaves_05.glb",
-      "name": "Knightly Greaves V",
+      "name": "Cross Greaves",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -4649,7 +4649,7 @@
     },
     "6:245": {
       "scene": "res://assets/actors/native/equipment/knightly_greaves_06.glb",
-      "name": "Knightly Greaves VI",
+      "name": "Star Greaves",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -4657,7 +4657,7 @@
     },
     "6:246": {
       "scene": "res://assets/actors/native/equipment/knightly_greaves_07.glb",
-      "name": "Knightly Greaves VII",
+      "name": "Crimson Greaves",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -4665,7 +4665,7 @@
     },
     "6:247": {
       "scene": "res://assets/actors/native/equipment/knightly_greaves_08.glb",
-      "name": "Knightly Greaves VIII",
+      "name": "Blackened Sabatons",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -4673,7 +4673,7 @@
     },
     "6:248": {
       "scene": "res://assets/actors/native/equipment/militia_greaves_01.glb",
-      "name": "Militia Greaves I",
+      "name": "Shinplate Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -4681,7 +4681,7 @@
     },
     "6:249": {
       "scene": "res://assets/actors/native/equipment/militia_greaves_02.glb",
-      "name": "Militia Greaves II",
+      "name": "Banded Warboots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -4689,7 +4689,7 @@
     },
     "6:250": {
       "scene": "res://assets/actors/native/equipment/militia_greaves_03.glb",
-      "name": "Militia Greaves III",
+      "name": "Steel Greaves",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -4697,7 +4697,7 @@
     },
     "6:251": {
       "scene": "res://assets/actors/native/equipment/militia_greaves_04.glb",
-      "name": "Militia Greaves IV",
+      "name": "Toecap Boots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -4705,7 +4705,7 @@
     },
     "6:252": {
       "scene": "res://assets/actors/native/equipment/militia_greaves_05.glb",
-      "name": "Militia Greaves V",
+      "name": "Brass Greaves",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -4713,7 +4713,7 @@
     },
     "6:253": {
       "scene": "res://assets/actors/native/equipment/militia_greaves_06.glb",
-      "name": "Militia Greaves VI",
+      "name": "Splinted Greaves",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -4721,7 +4721,7 @@
     },
     "6:254": {
       "scene": "res://assets/actors/native/equipment/militia_greaves_07.glb",
-      "name": "Militia Greaves VII",
+      "name": "Crimson Warboots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -4729,7 +4729,7 @@
     },
     "6:255": {
       "scene": "res://assets/actors/native/equipment/militia_greaves_08.glb",
-      "name": "Militia Greaves VIII",
+      "name": "Furtop Warboots",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -5313,7 +5313,7 @@
     },
     "6:107": {
       "scene": "res://assets/actors/native/equipment/legendary_sabatons_01.glb",
-      "name": "Legendary Sabatons I",
+      "name": "Phoenix Sabatons",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -5321,7 +5321,7 @@
     },
     "6:108": {
       "scene": "res://assets/actors/native/equipment/legendary_sabatons_02.glb",
-      "name": "Legendary Sabatons II",
+      "name": "Glacier Sabatons",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -5329,7 +5329,7 @@
     },
     "6:109": {
       "scene": "res://assets/actors/native/equipment/legendary_sabatons_03.glb",
-      "name": "Legendary Sabatons III",
+      "name": "Nightstorm Sabatons",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -5337,7 +5337,7 @@
     },
     "6:110": {
       "scene": "res://assets/actors/native/equipment/legendary_sabatons_04.glb",
-      "name": "Legendary Sabatons IV",
+      "name": "Dragonbone Sabatons",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -5345,7 +5345,7 @@
     },
     "6:111": {
       "scene": "res://assets/actors/native/equipment/legendary_sabatons_05.glb",
-      "name": "Legendary Sabatons V",
+      "name": "Sunburst Sabatons",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -5353,7 +5353,7 @@
     },
     "6:112": {
       "scene": "res://assets/actors/native/equipment/legendary_sabatons_06.glb",
-      "name": "Legendary Sabatons VI",
+      "name": "Amethyst Sabatons",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -5361,7 +5361,7 @@
     },
     "6:113": {
       "scene": "res://assets/actors/native/equipment/legendary_sabatons_07.glb",
-      "name": "Legendary Sabatons VII",
+      "name": "Knotwork Sabatons",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",
@@ -5369,7 +5369,7 @@
     },
     "6:114": {
       "scene": "res://assets/actors/native/equipment/legendary_sabatons_08.glb",
-      "name": "Legendary Sabatons VIII",
+      "name": "Lion Sabatons",
       "attach": "skinned",
       "skinRegion": "boots",
       "kind": "boots",

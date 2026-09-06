@@ -131,6 +131,171 @@ FIRST_IMAGE_ID = 118
 
 ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"]
 
+#: What each piece is called, keyed by the slug of its sheet and given in the
+#: sheet's own column order.  A sheet's eight designs are eight different
+#: garments, not eight grades of one, so each is named for what it is drawn as
+#: rather than numbered off its sheet: an item's name is what a player has to
+#: recognise it by in a trade window or a drop list, and eight rows reading
+#: "Militia Helmet I" through "VIII" say nothing about which one is the kettle
+#: hat.  Where four sheets were drawn as one wardrobe -- the amberwood, arcane
+#: and legendary sets each cover head, torso, legs and feet -- column N is the
+#: same design in four slots and the names say so, so a matched outfit is
+#: nameable ("Phoenix" head to foot).
+#:
+#: A sheet with no row here falls back to the numerals.  Renaming a piece is
+#: not free: the name is what joins an item's four records, so re-run this tool
+#: afterwards (--skip-build is enough) to move the registry entry, the server
+#: item and the visual override together, and grep the server's tests for any
+#: name they pin.
+NAMES = {
+    # --- Amberwood woodland: eight forest designs, one outfit per column ---
+    "amberwood_woodland_cuirass": [
+        "Bark Jerkin", "Mossbound Coat", "Rootwrap Tunic", "Leafscale Cuirass",
+        "Heartwood Cuirass", "Furtrim Coat", "Amberglass Cuirass",
+        "Ivory Vine Cuirass"],
+    "amberwood_woodland_legguards": [
+        "Bark Legguards", "Mossbound Legguards", "Rootwrap Legguards",
+        "Leafscale Legguards", "Heartwood Legguards", "Furtrim Legguards",
+        "Amberglass Legguards", "Ivory Vine Legguards"],
+    "amberwood_forest_helm": [
+        "Bark Hood", "Mossbound Cap", "Rootwrap Circlet", "Leafscale Hood",
+        "Heartwood Helm", "Antler Hood", "Amberglass Helm", "Ivory Vine Helm"],
+    "amberwood_woodland_boots": [
+        "Bark Boots", "Mossbound Boots", "Rootwrap Boots", "Leafscale Boots",
+        "Heartwood Boots", "Furtrim Boots", "Amberglass Boots",
+        "Ivory Vine Boots"],
+
+    # --- Arcane: the same eight castings across four slots ---
+    "eloria_arcane_armor": [
+        "Warded Tabard", "Glowline Coat", "Palesteel Cuirass",
+        "Starglass Cuirass", "Twilight Cuirass", "Seawrap Robe",
+        "Acolyte Tunic", "Crystalward Plate"],
+    "arcane_leg_armor": [
+        "Warded Legguards", "Glowline Legguards", "Palesteel Legguards",
+        "Starglass Legguards", "Twilight Legguards", "Seawrap Legguards",
+        "Acolyte Legguards", "Crystalward Legguards"],
+    "arcane_ethereal_circlet": [
+        "Warded Turban", "Glowline Hood", "Palesteel Circlet",
+        "Starglass Circlet", "Twilight Helm", "Seawrap Veil", "Acolyte Hood",
+        "Crystalward Helm"],
+    "arcane_fantasy_boots": [
+        "Warded Boots", "Glowline Boots", "Palesteel Boots", "Starglass Boots",
+        "Twilight Boots", "Seawrap Boots", "Acolyte Boots",
+        "Crystalward Boots"],
+
+    # --- Legendary: eight named regalia, head to foot ---
+    "legendary_hero_cuirass": [
+        "Phoenix Cuirass", "Glacier Cuirass", "Nightstorm Cuirass",
+        "Dragonbone Cuirass", "Sunburst Cuirass", "Amethyst Cuirass",
+        "Knotwork Cuirass", "Lion Cuirass"],
+    "legendary_leg_armor": [
+        "Phoenix Legguards", "Glacier Legguards", "Nightstorm Legguards",
+        "Dragonbone Legguards", "Sunburst Legguards", "Amethyst Legguards",
+        "Knotwork Legguards", "Lion Legguards"],
+    "legendary_eloria_helm": [
+        "Phoenix Helm", "Glacier Helm", "Nightstorm Helm", "Dragonbone Helm",
+        "Sunburst Helm", "Amethyst Helm", "Knotwork Helm", "Lion Helm"],
+    "legendary_eloria_boots": [
+        "Phoenix Boots", "Glacier Boots", "Nightstorm Boots",
+        "Dragonbone Boots", "Sunburst Boots", "Amethyst Boots",
+        "Knotwork Boots", "Lion Boots"],
+    # Trimmed off the legendary leg armour, so they keep its column order.
+    "legendary_sabatons": [
+        "Phoenix Sabatons", "Glacier Sabatons", "Nightstorm Sabatons",
+        "Dragonbone Sabatons", "Sunburst Sabatons", "Amethyst Sabatons",
+        "Knotwork Sabatons", "Lion Sabatons"],
+
+    # --- Knightly: refined plate and mail ---
+    "knightly_torso_armor": [
+        "Fluted Breastplate", "Polished Cuirass", "Gilded Vine Cuirass",
+        "Scalework Cuirass", "Rosette Cuirass", "Tasset Cuirass",
+        "Mantled Cuirass", "Blackened Cuirass"],
+    "ceremonial_knight_greaves": [
+        "Herald Cuisses", "Fleur Cuisses", "Crimson Cuisses", "Ivory Cuisses",
+        "Lion Cuisses", "Silver Cuisses", "Rosette Cuisses",
+        "Blackened Cuisses"],
+    "knightly_headgear": [
+        "Gilt Bascinet", "Visored Bascinet", "Great Helm", "Knight Sallet",
+        "Winged Helm", "Crowned Helm", "Crested Helm", "Masked Helm"],
+    "knightly_greaves": [
+        "Fluted Sabatons", "Palmette Greaves", "Tracery Greaves",
+        "Cathedral Greaves", "Cross Greaves", "Star Greaves",
+        "Crimson Greaves", "Blackened Sabatons"],
+
+    # --- Militia: the drilled kit, cheapest first ---
+    "militia_torso_armor": [
+        "Arming Gambeson", "Studded Jack", "Splinted Vest",
+        "Mail Shirt", "Riveted Lamellar", "Plain Breastplate",
+        "Brass Breastplate", "Crimson Guard Cuirass"],
+    "militia_leg_armor": [
+        "Arming Chausses", "Leather Kneecops", "Splinted Chausses",
+        "Mail Leggings", "Riveted Tassets", "Steel Kneecops",
+        "Brass Chausses", "Crimson Guard Chausses"],
+    "militia_helmet": [
+        "Padded Coif", "Leather Helm", "Kettle Hat", "Spangenhelm",
+        "Mail Coif", "Cheekguard Helm", "Brass Helm", "Crimson Helm"],
+    "militia_greaves": [
+        "Shinplate Boots", "Banded Warboots", "Steel Greaves", "Toecap Boots",
+        "Brass Greaves", "Splinted Greaves", "Crimson Warboots",
+        "Furtop Warboots"],
+
+    # --- Ranger and adventurer leathers ---
+    "leather_ranger_torso": [
+        "Bonehook Jerkin", "Scout Vest", "Sashed Jerkin", "Brassbuckle Coat",
+        "Mossfringe Jerkin", "Ropecoil Jerkin", "Riveted Jerkin",
+        "Trapper Coat"],
+    "rugged_ranger_legwear": [
+        "Pouchbelt Breeches", "Fangbelt Breeches", "Strapwrap Breeches",
+        "Sidelace Breeches", "Bonecharm Breeches", "Ringcoil Breeches",
+        "Studded Chaps", "Furwrap Breeches"],
+    "adventurer_headwear": [
+        "Fang Hood", "Feathered Cap", "Buckled Hood", "Plumed Hat",
+        "Charm Hood", "Studded Cap", "Banded Cap", "Fur Hood"],
+    "leather_adventurer_boots": [
+        "Charmcord Boots", "Furcuff Boots", "Buckled Boots", "Beaded Boots",
+        "Redlace Boots", "Runewrap Boots", "Guard Boots", "Strapped Boots"],
+
+    # --- Frontier homespun ---
+    "eloria_frontier_shirt": [
+        "Homespun Shirt", "Redtrim Tunic", "Patched Workshirt", "Whipstitch Shirt",
+        "Sashwrap Shirt", "Laced Field Tunic", "Tattered Blue Shirt",
+        "Woollen Tunic"],
+    "humble_frontier_pants": [
+        "Patched Trousers", "Work Trousers", "Ragged Trousers",
+        "Redtrim Trousers", "Sashed Breeches", "Kneepad Trousers",
+        "Faded Trousers", "Woollen Breeches"],
+    "frontier_hat": [
+        "Wool Cap", "Drover Hat", "Patched Sunhat", "Earflap Cap",
+        "Linen Kerchief", "Felt Hat", "Field Hood", "Fur Cap"],
+    "frontier_boots": [
+        "Ankle Boots", "Slouch Boots", "Laced Fieldboots", "Corded Moccasins",
+        "Riding Boots", "Fleece Boots", "Canvas Boots", "Cuffed Boots"],
+
+    # --- Sunmane steppe ---
+    "sunmane_steppe_shirt": [
+        "Tasselled Tunic", "Fringed Kaftan", "Rider Vest", "Bone Clasp Coat",
+        "Sundisc Cuirass", "Red Sash Wrap", "Riding Jacket", "Boneplate Coat"],
+    "sunmane_steppe_legwear": [
+        "Rider Breeches", "Wrapskirt Trousers", "Steppe Chaps",
+        "Bonepeg Trousers", "Bronze Tassets", "Sashcord Trousers",
+        "Corded Trousers", "Sunplate Tassets"],
+    "sunmane_steppe_headgear": [
+        "Riding Hat", "Steppe Headcloth", "Rider Helm", "Steppe Turban",
+        "Sundisc Helm", "Sun Headband", "Scarf Hood", "Redplume Helm"],
+    "sunmane_steppe_boots": [
+        "Tasselled Boots", "Steppe Wrap Boots", "Bronze Boots",
+        "Bonepeg Boots", "Sunplate Boots", "Sashed Boots", "Corded Boots",
+        "Ivory Riding Boots"],
+}
+
+
+def piece_name(slug: str, index: int, label: str) -> str:
+    """What one design is called, or the numbered fallback if it has no name."""
+    names = NAMES.get(slug, ())
+    if index < len(names):
+        return names[index]
+    return "%s %s" % (label, ROMAN[index])
+
 #: One row per concept sheet: the stem it generated under, what the pieces are,
 #: where their visual ids begin, the finish, and the sheet's tier and theme.
 #: The ranges start above every id the registry already uses (helmet 108,
@@ -158,8 +323,8 @@ SHEETS = [
     # would renumber every piece below it and break the names the server
     # already ships.  Ceremonial above is the one sheet that was cut mid-way by
     # a --limit, and it simply grows from four pieces to eight -- the four it
-    # has keep their numerals and visuals because the sources sort before the
-    # new ones.
+    # has keep their names and visuals because the sources sort before the new
+    # ones, and NAMES is read by the same column index.
     #
     # Visual ranges continue above what each part already uses (helmet 124,
     # legs 190, body 191, boots 207) and stay inside a byte, which is all
@@ -309,7 +474,7 @@ def _block(rows, first_item: int, first_image: int) -> list[Piece]:
                 continue
             pieces.append(Piece(
                 source, "%s_%02d" % (slug, index + 1),
-                "%s %s" % (label, ROMAN[index]), kind, part,
+                piece_name(slug, index, label), kind, part,
                 first_visual + index, finish, item_id,
                 first_image + (item_id - first_item), tier, theme))
             item_id += 1
