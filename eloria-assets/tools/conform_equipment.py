@@ -693,7 +693,8 @@ def halves_are_separate(points: np.ndarray, triangles: np.ndarray) -> bool:
 
 def seat(points: np.ndarray, rig: ea.Rig, region: str,
          triangles: np.ndarray | None = None,
-         taper: bool = False) -> np.ndarray:
+         taper: bool = False,
+         span: tuple[float, float] | None = None) -> np.ndarray:
     """Uniform scale and translate so the piece occupies the garment's span.
 
     Sized to where the garment goes, not to the whole region it is weighted
@@ -702,7 +703,12 @@ def seat(points: np.ndarray, rig: ea.Rig, region: str,
     again too tall and worn as a dress.
     """
     body = region_points(rig, region)
-    span = SPAN.get(region)
+    # A caller may name the span itself.  The region's own is right for a piece
+    # drawn over the whole of it, and wrong for one that was deliberately cut
+    # short: a trouser trimmed at the boot line covers the waist to the boot's
+    # rim, and seated against the region it would be stretched back down over
+    # the ankle it was cut away from, putting its knee where the calf goes.
+    span = span if span is not None else SPAN.get(region)
     # Every garment is anchored to the span the authored set uses, because
     # where a piece ends is load-bearing on both axes.  On the limbs the legs
     # region runs down through the foot bones, and a trouser stretched to fill
@@ -2369,7 +2375,8 @@ def _slim_legs(points: np.ndarray, rig: ea.Rig, region: str,
 def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
           clearance: float = CLEARANCE, fit: str = "seat",
           taper: bool = False, race_path: Path | None = None,
-          flip: bool = False, roll: bool = False) -> dict:
+          flip: bool = False, roll: bool = False,
+          span: tuple[float, float] | None = None) -> dict:
     """Fit one generated mesh to the rig and write it as a skinned piece."""
     if kind in SOCKET_KIND or kind in PROP_KIND:
         return build_socket(source, out, rig, kind, label, flip, roll)
@@ -2400,11 +2407,11 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
     # counts.)  A piece with no pose to correct is seated once: seat() is not
     # idempotent -- its girth-to-height ratio compounds -- and a second pass
     # over the boots flattened the pair into a half-metre disc.
-    seated = seat(surface.positions, rig, region, triangles, taper)
+    seated = seat(surface.positions, rig, region, triangles, taper, span)
     seated, surface.normals, posed = repose(
         seated, surface.normals, rig, region, triangles)
     if any(step.get("applied") for step in posed):
-        seated = seat(seated, rig, region, triangles, taper)
+        seated = seat(seated, rig, region, triangles, taper, span)
     if region == "torso":
         # Equalise the axes, hung from the collar.  The seat scales height to
         # the authored span but girth to the body region, and the height's
