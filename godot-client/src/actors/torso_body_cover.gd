@@ -1,7 +1,7 @@
 class_name TorsoBodyCover
 extends RefCounted
-## The generated torso supplies its own fitted backing. Remove the default
-## shirt beneath it, including shirts painted into a single race body mesh.
+## Generated clothing supplies its own fitted backing. Remove the default
+## clothing beneath it, including clothing painted into one race body mesh.
 ## Work on a copy of the index buffers: UVs, skinning, materials and the original
 ## mesh remain intact, and unequipping restores the exact original resource.
 
@@ -12,11 +12,16 @@ const WRIST := 0.665
 
 static var _cache: Dictionary = {}
 
-static func covers(point: Vector3) -> bool:
-	return point.y > LOW and point.y < HIGH and absf(point.x) < WRIST
+static func covers(point: Vector3, regions: Array = []) -> bool:
+	if regions.is_empty():
+		return point.y > LOW and point.y < HIGH and absf(point.x) < WRIST
+	for region: Vector3 in regions:
+		if point.y > region.x and point.y < region.y and absf(point.x) < region.z:
+			return true
+	return false
 
 static func apply(instance: MeshInstance3D, enabled: bool,
-		to_rig: Transform3D, fit: float) -> void:
+		to_rig: Transform3D, fit: float, regions: Array = []) -> void:
 	if not instance.has_meta("uncovered_body_mesh"):
 		if not enabled or instance.mesh == null:
 			return
@@ -25,12 +30,12 @@ static func apply(instance: MeshInstance3D, enabled: bool,
 	if not enabled:
 		instance.mesh = original
 		return
-	var key := "%s|%s|%s" % [original.get_instance_id(), to_rig, fit]
+	var key := "%s|%s|%s|%s" % [original.get_instance_id(), to_rig, fit, regions]
 	if not _cache.has(key):
-		_cache[key] = cut(original, to_rig, fit)
+		_cache[key] = cut(original, to_rig, fit, regions)
 	instance.mesh = _cache[key] as Mesh
 
-static func cut(original: Mesh, to_rig: Transform3D, fit: float) -> ArrayMesh:
+static func cut(original: Mesh, to_rig: Transform3D, fit: float, regions: Array = []) -> ArrayMesh:
 	var result := ArrayMesh.new()
 	for blend: int in range(original.get_blend_shape_count()):
 		result.add_blend_shape(original.get_blend_shape_name(blend))
@@ -47,7 +52,7 @@ static func cut(original: Mesh, to_rig: Transform3D, fit: float) -> ArrayMesh:
 		for index: int in range(0, source.size(), 3):
 			var center := (vertices[source[index]] + vertices[source[index + 1]]
 				+ vertices[source[index + 2]]) / 3.0
-			if not covers((to_rig * center) / fit):
+			if not covers((to_rig * center) / fit, regions):
 				kept.append_array(source.slice(index, index + 3))
 		# Preserve surface numbering and its material overrides even when a
 		# whole wardrobe surface is covered. A zero-area triangle draws nothing.

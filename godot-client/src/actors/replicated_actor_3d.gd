@@ -1373,6 +1373,13 @@ func _apply_equipment_hides(part: int, part_config: Dictionary,
 	if names_value is Array:
 		for raw_name: Variant in names_value:
 			names.append(str(raw_name).to_lower())
+	if part == 3 and not str(model_config.get("scene", "")).is_empty():
+		for piece: Dictionary in _equipment_pieces(str(model_config.get("scene", ""))):
+			if bool(piece.get("covers_hair", false)):
+				if not names.has("hair"):
+					names.append("hair")
+				if not names.has("scalp"):
+					names.append("scalp")
 	if names.is_empty():
 		return
 	_equipment_hides[part] = names
@@ -1393,17 +1400,34 @@ func _release_equipment_hides(part: int) -> void:
 	_equipment_hides.erase(part)
 	_refresh_body_surface_visibility()
 
-## Generated torsos replace the covered default clothing with their fitted
-## backing. Other torso equipment retains the existing undershirt tint.
+## Generated torsos, trousers and boots replace their covered default clothing
+## with fitted backing. Other torso equipment retains the undershirt tint.
 func _refresh_wardrobe_cover() -> void:
 	var native_model: Node3D = get_node_or_null("NativeModel") as Node3D
 	if native_model == null:
 		return
 	var covered: bool = int(_equipment_visuals.get(BODY_PART, 0)) != 0
-	var replaces_body := false
-	for piece: Node in _equipment_nodes.get(BODY_PART, []):
-		if is_instance_valid(piece) and piece.has_meta("replaces_torso_body"):
-			replaces_body = true
+	var cover_regions: Array = []
+	var fitted_legs := false
+	var fitted_boots := false
+	for part: int in [BODY_PART, 4, 6]:
+		for piece: Node in _equipment_nodes.get(part, []):
+			if not is_instance_valid(piece):
+				continue
+			if piece.has_meta("replaces_torso_body"):
+				cover_regions.append(Vector3(TorsoBodyCover.LOW, TorsoBodyCover.HIGH, TorsoBodyCover.WRIST))
+			elif piece.has_meta("generated_body_cover"):
+				cover_regions.append(piece.get_meta("generated_body_cover"))
+				if part == 4:
+					fitted_legs = true
+				if part == 6:
+					fitted_boots = true
+	for piece: Node in _equipment_nodes.get(6, []):
+		if is_instance_valid(piece) and piece.has_meta("boot_backing_with_legs"):
+			(piece as MeshInstance3D).visible = bool(piece.get_meta("boot_backing_with_legs")) == fitted_legs
+	for piece: Node in _equipment_nodes.get(4, []):
+		if is_instance_valid(piece) and piece.has_meta("leg_backing_with_boots"):
+			(piece as MeshInstance3D).visible = bool(piece.get_meta("leg_backing_with_boots")) == fitted_boots
 	for node_value: Node in native_model.find_children("*", "MeshInstance3D", true, false):
 		var mesh_node: MeshInstance3D = node_value as MeshInstance3D
 		if mesh_node.has_meta("native_equipment"):
@@ -1412,9 +1436,9 @@ func _refresh_wardrobe_cover() -> void:
 		var is_body_surface: bool = (surface_name in ["body", "char1", "mesh_node"]
 			or surface_name.begins_with("wardrobe_"))
 		if _native_skeleton != null and mesh_node.skin != null and is_body_surface:
-			TorsoBodyCover.apply(mesh_node, replaces_body,
+			TorsoBodyCover.apply(mesh_node, not cover_regions.is_empty(),
 				_native_skeleton.global_transform.affine_inverse() * mesh_node.global_transform,
-				rig_fit_scale())
+				rig_fit_scale(), cover_regions)
 		if not SHIRT_SURFACES.has(mesh_node.name.to_lower()):
 			continue
 		if not mesh_node.has_meta("wardrobe_color"):
@@ -1439,6 +1463,11 @@ func _refresh_body_surface_visibility() -> void:
 	for node_value: Node in native_model.find_children("*", "MeshInstance3D", true, false):
 		var mesh_node: MeshInstance3D = node_value as MeshInstance3D
 		var surface: String = mesh_node.name.to_lower()
+		if surface in ["hair", "scalp"]:
+			if not mesh_node.has_meta("uncovered_head_visible"):
+				mesh_node.set_meta("uncovered_head_visible", mesh_node.visible)
+			mesh_node.visible = bool(mesh_node.get_meta("uncovered_head_visible")) and not _hidden_body_surfaces.has(surface)
+			continue
 		if not surface.begins_with("wardrobe_"):
 			continue
 		if _hidden_body_surfaces.has(surface):
@@ -1611,6 +1640,14 @@ func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
 		clone.set_meta("native_equipment", true)
 		if part == BODY_PART and str(piece.get("name", "")) == TorsoBodyCover.BACKING_NAME:
 			clone.set_meta("replaces_torso_body", true)
+		if (part == 4 and str(piece.get("name", "")) == "GeneratedLegBacking") or (part == 6 and str(piece.get("name", "")) == "GeneratedBootBacking"):
+			var cover: Array = piece.get("body_cover", []) as Array
+			if cover.size() == 3:
+				clone.set_meta("generated_body_cover", _vector3(cover, Vector3.ZERO))
+		if part == 6 and str(piece.get("name", "")).begins_with("GeneratedBootBacking"):
+			clone.set_meta("boot_backing_with_legs", str(piece.get("name", "")) == "GeneratedBootBackingWithLegs")
+		if part == 4 and str(piece.get("name", "")).begins_with("GeneratedLegBacking"):
+			clone.set_meta("leg_backing_with_boots", str(piece.get("name", "")) == "GeneratedLegBackingWithBoots")
 		created.append(clone)
 	return created
 
@@ -2366,6 +2403,11 @@ static func _equipment_pieces(path: String) -> Array:
 	var document: GLTFDocument = GLTFDocument.new()
 	var state: GLTFState = GLTFState.new()
 	if document.append_from_file(_external_path(path), state) == OK:
+		var body_covers: Dictionary = {}
+		var hair_covers: Dictionary = {}
+		for mesh_data: Dictionary in state.json.get("meshes", []):
+			body_covers[str(mesh_data.get("name", ""))] = mesh_data.get("extras", {}).get("bodyCover", [])
+			hair_covers[str(mesh_data.get("name", ""))] = mesh_data.get("extras", {}).get("coversHair", false)
 		var generated: Node = document.generate_scene(state)
 		var root: Node3D = generated as Node3D
 		if root != null:
@@ -2380,6 +2422,8 @@ static func _equipment_pieces(path: String) -> Array:
 				pieces.append({
 					"mesh": mesh_node.mesh,
 					"name": str(mesh_node.name),
+					"body_cover": body_covers.get(str(mesh_node.name), []),
+					"covers_hair": hair_covers.get(str(mesh_node.name), false),
 					"transform": _relative_transform(mesh_node, root),
 					"bones": _skin_bone_names(mesh_node.skin, skeleton),
 					"binds": _skin_bind_poses(mesh_node.skin),

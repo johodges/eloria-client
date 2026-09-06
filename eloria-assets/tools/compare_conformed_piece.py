@@ -69,6 +69,12 @@ def main() -> int:
     ap.add_argument("--labels", default="")
     ap.add_argument("--worn-pose", choices=["rest", "source", "bent"], default="rest",
                     help="pose both the character and equipment in the worn sheet")
+    ap.add_argument("--worn-region", choices=["torso", "legs", "boots", "head"], default="torso",
+                    help="frame the worn region; head also attaches the first static model to its socket")
+    ap.add_argument("--ensemble", action="store_true",
+                    help="assemble fitted pieces into one complete set, including socket headwear")
+    ap.add_argument("--save-blend", action="store_true",
+                    help="save editable Blender scenes beside the comparison and worn renders")
     ap.add_argument("--width", type=int, default=760,
                     help="pixels per column")
     args = ap.parse_args()
@@ -79,11 +85,14 @@ def main() -> int:
     args.out.parent.mkdir(parents=True, exist_ok=True)
     if args.worn is not None and not args.worn.exists():
         raise SystemExit("no such race body: %s" % args.worn)
+    if args.ensemble and args.worn is None:
+        raise SystemExit("--ensemble needs --worn to resolve the head socket")
     command = [str(find_blender()), "--background", "--python", str(SCRIPT),
                "--", str(args.out.resolve()), str(args.yaw),
                "1" if args.pose_arms else "0", str(args.width),
                ",".join(args.drop_material), args.labels,
-               str(args.worn.resolve()) if args.worn is not None else "", args.worn_pose]
+               str(args.worn.resolve()) if args.worn is not None else "", args.worn_pose,
+               args.worn_region, '1' if args.ensemble else '0', '1' if args.save_blend else '0']
     command += [str(m.resolve()) for m in args.models]
     result = subprocess.run(command, capture_output=True, text=True)
     if result.returncode != 0 or not args.out.exists():

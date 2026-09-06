@@ -389,6 +389,9 @@ def backing_colour(surface, texture):
     brightness = colours.mean(axis=1)
     lo, hi = np.percentile(brightness, [20, 55])
     cloth = colours[(brightness >= lo) & (brightness <= hi)]
+    if not len(cloth):
+        # With only two atlas samples both percentiles can lie between them.
+        cloth = colours[np.argsort(brightness)[:max(1, len(colours) // 2)]]
     return ea.srgb_to_linear(np.median(cloth, axis=0)) + [1.]
 
 

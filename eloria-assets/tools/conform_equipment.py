@@ -2814,7 +2814,10 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
           flip: bool = False, roll: bool = False,
           span: tuple[float, float] | None = None) -> dict:
     """Fit one generated mesh to the rig and write it as a skinned piece."""
-    if kind in SOCKET_KIND or kind in PROP_KIND:
+    if kind in SOCKET_KIND or (kind in ea.GARMENT_KINDS and ea.garment_region(kind) in ('legs', 'boots')):
+        import limb_head_remap
+        return limb_head_remap.build(source, out, rig, kind, label, span)
+    if kind in PROP_KIND:
         return build_socket(source, out, rig, kind, label, flip, roll)
     if kind not in ea.GARMENT_KINDS:
         raise ValueError(
