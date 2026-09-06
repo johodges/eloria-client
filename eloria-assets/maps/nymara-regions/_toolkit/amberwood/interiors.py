@@ -59,10 +59,13 @@ EYE = 1.7
 
 # ---------------------------------------------------------------- shell parts
 
-def _wall_run(x0, z0, x1, z1, base, height, material, *, door=None, thickness=WALL_T):
-    """One wall, with a doorway cut as real jambs and a lintel when asked.
+def _wall_run(x0, z0, x1, z1, base, height, material, *, door=None, doors=(), thickness=WALL_T):
+    """One wall, with its doorways cut as real jambs and lintels when asked.
 
-    `door` is (centre_along_run, width, head_height) in metres from the start.
+    `door` is (centre_along_run, width, head_height) in metres from the start;
+    `doors` is any number of them. A wall can carry several: a fork's hub has a
+    way out to each branch on one side, and a gallery's three alcoves open off
+    one wall.
     """
     out = S.MeshGroup()
     length = math.hypot(x1 - x0, z1 - z0)
@@ -82,20 +85,23 @@ def _wall_run(x0, z0, x1, z1, base, height, material, *, door=None, thickness=WA
                       uv_scale=0.5, material=material)
         out.add(piece)
 
-    if door is None:
+    openings = sorted(list(doors) + ([door] if door is not None else []))
+    if not openings:
         slab(0.0, length, base, base + height)
     else:
-        centre, width, head = door
-        left, right = max(0.0, centre - width * 0.5), min(length, centre + width * 0.5)
-        # The doorway is a hole with sides and a soffit, not a gap: the two
+        # Each doorway is a hole with sides and a soffit, not a gap: the
         # flanking slabs end on the jamb lines and the head slab's underside is
         # the soffit, and because `slab` builds closed boxes those three faces
         # already exist. Adding separate 20 mm reveal boxes straddling the same
         # planes - which this did - gave every doorway in every interior a pair
         # of same-facing surfaces 10 mm apart, and they z-fought.
-        slab(0.0, left, base, base + height)
-        slab(right, length, base, base + height)
-        slab(left, right, base + head, base + height)
+        cursor = 0.0
+        for centre, width, head in openings:
+            left, right = max(0.0, centre - width * 0.5), min(length, centre + width * 0.5)
+            slab(cursor, left, base, base + height)
+            slab(left, right, base + head, base + height)
+            cursor = max(cursor, right)
+        slab(cursor, length, base, base + height)
     out.rotate_y(angle)
     out.translate((x0 + x1) * 0.5, 0.0, (z0 + z1) * 0.5)
     return out
@@ -124,12 +130,13 @@ def chamber(x0, z0, x1, z1, floor_y, height, *, floor_mat, wall_mat, ceil_mat,
     travel = {"north": lambda c: c - (x0 - o), "south": lambda c: (x1 + o) - c,
               "east": lambda c: (z1 + o) - c, "west": lambda c: c - (z0 - o)}
     for side, ((ax, az), (bx, bz)) in runs.items():
-        door = None
-        for entry in doors:
-            if entry[0] == side:
-                door = (travel[side](entry[1]), entry[2],
-                        entry[3] if len(entry) > 3 else 2.6)
-        out.add(_wall_run(ax, az, bx, bz, floor_y, height, wall_mat, door=door))
+        # Every door named for the side is cut. Keeping only the last one - as
+        # this did until 2026-09-06 - left a fork hub's second way and two of a
+        # gallery's three alcoves behind solid wall, which nothing stopped a
+        # player walking through until the walk grid learned to block walls.
+        openings = [(travel[side](entry[1]), entry[2], entry[3] if len(entry) > 3 else 2.6)
+                    for entry in doors if entry[0] == side]
+        out.add(_wall_run(ax, az, bx, bz, floor_y, height, wall_mat, doors=openings))
     top = floor_y + height
     # The lid goes in the overhead bucket, never `add`: the isometric rig looks
     # down at these maps, so the client hides overhead nodes and the player sees

@@ -91,17 +91,17 @@
       363.0
     ],
     "heightEncoding": {
-      "origin": -0.1,
-      "step": 0.1,
+      "origin": -0.2,
+      "step": 0.2,
       "range": [
         1,
         63
       ],
       "zeroMeansBlocked": true
     },
-    "walkableCells": 23248,
-    "blockedCells": 38240,
-    "walkableFraction": 0.3781,
+    "walkableCells": 18170,
+    "blockedCells": 43318,
+    "walkableFraction": 0.2955,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
@@ -1282,10 +1282,6 @@
             330
           ],
           [
-            10,
-            330
-          ],
-          [
             13,
             330
           ],
@@ -1324,14 +1320,6 @@
           [
             22,
             327
-          ],
-          [
-            7,
-            324
-          ],
-          [
-            10,
-            324
           ],
           [
             13,
@@ -1799,10 +1787,6 @@
             255
           ],
           [
-            11,
-            255
-          ],
-          [
             14,
             255
           ],
@@ -1875,14 +1859,6 @@
             248
           ],
           [
-            28,
-            248
-          ],
-          [
-            7,
-            244
-          ],
-          [
             11,
             244
           ],
@@ -1908,10 +1884,6 @@
           ],
           [
             7,
-            241
-          ],
-          [
-            11,
             241
           ],
           [
@@ -2113,10 +2085,6 @@
           [
             22,
             206
-          ],
-          [
-            19,
-            203
           ],
           [
             22,
@@ -2697,19 +2665,11 @@
             },
             "spawnTiles": [
               [
-                27,
-                149
-              ],
-              [
                 30,
                 149
               ],
               [
                 33,
-                149
-              ],
-              [
-                36,
                 149
               ],
               [
@@ -2759,10 +2719,6 @@
               [
                 36,
                 140
-              ],
-              [
-                27,
-                137
               ],
               [
                 30,
@@ -2810,10 +2766,6 @@
         },
         "spawnTiles": [
           [
-            9,
-            176
-          ],
-          [
             13,
             176
           ],
@@ -2840,10 +2792,6 @@
           [
             34,
             176
-          ],
-          [
-            9,
-            172
           ],
           [
             13,
@@ -3388,7 +3336,7 @@
         6.0,
         3.0
       ],
-      "actorType": 340
+      "actorType": 307
     },
     "maxPlayers": 6,
     "bands": [
@@ -3418,9 +3366,9 @@
     "textures": 24,
     "accessors": 55,
     "bufferViews": 79,
-    "uniqueTriangles": 19774,
-    "uniqueVertices": 27042,
-    "glbBytes": 3827812,
+    "uniqueTriangles": 19870,
+    "uniqueVertices": 27234,
+    "glbBytes": 3823768,
     "nodeNames": [
       "Secrets_crownwater_gauntlet",
       "Section_crownwater_gauntlet",

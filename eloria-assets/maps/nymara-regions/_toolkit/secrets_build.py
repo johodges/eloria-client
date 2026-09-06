@@ -47,6 +47,7 @@ TILES = 64                 # server tiles; 384 m
 CELL = 72.0                # layout slot, metres
 GUTTER = 20.0              # least void between two sections
 COLLISION_CELL = 0.5
+SERVER_STEP = 0.2            # the elevation step the server reads its walk grids in
 MAP_SPAN = TILES * 6.0
 
 
@@ -141,8 +142,14 @@ def export_glb(sections: list[tuple[str, S.MeshGroup]], sets, path: Path, packag
     return stats
 
 
-def build_collision(group: S.MeshGroup):
-    """The half-metre walk grid of the whole map (EWCG v1), as the insides do."""
+def build_collision(group: S.MeshGroup, keep_open=()):
+    """The half-metre walk grid of the whole map (EWCG v1), as the insides do.
+
+    `keep_open` is the positions of the things a player uses or harvests - a
+    waystone, a cache, a node, a plaque. The tile each stands on stays
+    walkable through the obstacle pass, because the server's content contract
+    holds every such coordinate walkable and the sync tool opens them anyway;
+    a body standing in a chest is the price, as it is everywhere else."""
     lo, hi = group.walk_bounds()
     x0 = math.floor(float(lo[0])) - 2
     z1 = math.ceil(float(hi[2])) + 2
@@ -186,9 +193,63 @@ def build_collision(group: S.MeshGroup):
             walkable[cz0[i]:cz1[i] + 1, cx0[i]:cx1[i] + 1] |= inside
             heights = tops[cz0[i]:cz1[i] + 1, cx0[i]:cx1[i] + 1]
             np.copyto(heights, peak[i], where=inside & (np.isnan(heights) | (heights < peak[i])))
+    # What stands on a floor and is not a floor - a pillar, a boulder, a
+    # crate, a wall's own face - blocks the cells it stands over or within
+    # `reach` of, through the band a body occupies above the walk surface
+    # there. The grid used to know only where floor was, so a creature could
+    # stand in a pillar and a wave could land inside a boulder. Faces above
+    # head height (a vault, a lintel) and below the floor (a pit's water) are
+    # not in the band and block nothing.
+    band_low, band_high, reach = 0.15, 1.9, 0.3
+    obstacle = np.zeros((height, width), dtype=bool)
+    for piece in group.parts:
+        tri = piece.positions[piece.indices].reshape(-1, 3, 3)
+        if len(tri) == 0:
+            continue
+        cx0 = np.clip(np.floor((tri[:, :, 0].min(axis=1) - reach - x0) / COLLISION_CELL), 0, width - 1).astype(int)
+        cx1 = np.clip(np.floor((tri[:, :, 0].max(axis=1) + reach - x0) / COLLISION_CELL), 0, width - 1).astype(int)
+        cz0 = np.clip(np.floor((z1 - tri[:, :, 2].max(axis=1) - reach) / COLLISION_CELL), 0, height - 1).astype(int)
+        cz1 = np.clip(np.floor((z1 - tri[:, :, 2].min(axis=1) + reach) / COLLISION_CELL), 0, height - 1).astype(int)
+        y_low = tri[:, :, 1].min(axis=1)
+        y_high = tri[:, :, 1].max(axis=1)
+        for i in range(len(tri)):
+            zs = np.arange(cz0[i], cz1[i] + 1)
+            xs = np.arange(cx0[i], cx1[i] + 1)
+            if zs.size == 0 or xs.size == 0:
+                continue
+            local = tops[cz0[i]:cz1[i] + 1, cx0[i]:cx1[i] + 1]
+            band = ~np.isnan(local) & (y_low[i] <= local + band_high) & (y_high[i] >= local + band_low)
+            if not band.any():
+                continue
+            gx, gz = np.meshgrid(x0 + (xs + 0.5) * COLLISION_CELL, z1 - (zs + 0.5) * COLLISION_CELL)
+            a, b, c = tri[i, 0], tri[i, 1], tri[i, 2]
+            near = np.zeros(gx.shape, dtype=bool)
+            for p, q in ((a, b), (b, c), (c, a)):
+                dx, dz = q[0] - p[0], q[2] - p[2]
+                length = dx * dx + dz * dz
+                t = np.clip(((gx - p[0]) * dx + (gz - p[2]) * dz) / length, 0.0, 1.0) if length > 1e-12 else 0.0
+                near |= np.hypot(gx - (p[0] + t * dx), gz - (p[2] + t * dz)) <= reach
+            d = ((b[2] - c[2]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[2] - c[2]))
+            if abs(d) > 1e-12:
+                w0 = ((b[2] - c[2]) * (gx - c[0]) + (c[0] - b[0]) * (gz - c[2])) / d
+                w1 = ((c[2] - a[2]) * (gx - c[0]) + (a[0] - c[0]) * (gz - c[2])) / d
+                near |= (w0 >= 0.0) & (w1 >= 0.0) & (w0 + w1 <= 1.0)
+            obstacle[cz0[i]:cz1[i] + 1, cx0[i]:cx1[i] + 1] |= band & near
+    walkable &= ~obstacle
+    for position in keep_open:
+        tx, tz = int(round(position[0] - x0)), int(round(z1 - position[2]))
+        rows, cols = slice(max(2 * tz - 1, 0), 2 * tz + 1), slice(max(2 * tx - 1, 0), 2 * tx + 1)
+        walkable[rows, cols] |= ~np.isnan(tops[rows, cols])
     surfaces = tops[~np.isnan(tops)]
     low, high = (float(surfaces.min()), float(surfaces.max())) if surfaces.size else (0.0, 0.0)
-    step = max(0.1, (high - low) / 61.0)
+    # The server walks in 0.2 m steps and allows two of them between tiles.
+    # A grid encoded in some other step is re-quantised to that on the way to
+    # the server, and two roundings can turn a 0.375 m riser into three of
+    # its steps: the Ice Stair's, fitted at 0.1066 m, came out 0.43 m and shut.
+    # So the server's own step is used whenever the relief fits in it, and a
+    # fitted one only when it does not (the six-bit byte holds 61 steps).
+    span = high - low
+    step = SERVER_STEP if span <= SERVER_STEP * 61.0 else max(0.1, span / 61.0)
     origin = low - step
     codes = np.clip(np.round((tops - origin) / step), 1, 63)
     grid = np.where(walkable & ~np.isnan(tops), codes, 0).astype(np.uint8)

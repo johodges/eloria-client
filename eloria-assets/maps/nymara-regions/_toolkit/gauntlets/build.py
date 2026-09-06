@@ -125,6 +125,27 @@ def compose(theme: D.Theme, seed: int):
     return it, legs_out, staging, {"key": "vault", "bounds": vault_built.bounds}
 
 
+def prune_spawns(path: Path, grid) -> int:
+    """Drop the spawn tiles the server's walk grid does not carry - under a
+    boulder, against a pillar, in a wall's thickness - so a wave lands on the
+    floor of its room. Returns how many went."""
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    dropped = 0
+
+    def kept(tiles):
+        nonlocal dropped
+        out = [tile for tile in tiles if grid[tile[1], tile[0]]]
+        dropped += len(tiles) - len(out)
+        return out
+
+    for leg in doc["gauntlet"]["legs"]:
+        leg["spawnTiles"] = kept(leg["spawnTiles"])
+        for branch in leg.get("branches", []):
+            branch["spawnTiles"] = kept(branch["spawnTiles"])
+    path.write_text(json.dumps(doc, indent=2) + "\n", encoding="utf-8")
+    return dropped
+
+
 def write_manifest(theme: D.Theme, it: Interior, legs, staging, vault, stats, collision_stats, path: Path):
     lo, hi = it.group.bounds()
     walk_lo, walk_hi = it.group.walk_bounds()
@@ -242,13 +263,21 @@ def main() -> int:
     sets = preview.texture_sets()
     it, legs, staging, vault = compose(theme, args.seed)
     stats = SB.export_glb([(theme.id, it.group)], sets, out / "world.glb", theme.id)
-    payload, collision_stats = SB.build_collision(it.group)
+    payload, collision_stats = SB.build_collision(
+        it.group, keep_open=[entry["position"] for entry in it.interactives + it.harvestables if "position" in entry])
     (out / "collision.bin").write_bytes(payload)
     doc = write_manifest(theme, it, legs, staging, vault, stats, collision_stats, out / "world.json")
     report = validate_gltf.validate(str(out / "world.glb"))
     (out / "world.glb.validator.json").write_text(json.dumps(report.to_dict(), indent=2) + "\n", encoding="utf-8")
     errors = report.to_dict()["issues"]["numErrors"]
-    grid = EXPORT.export(out, ROOT / "server-collision" / f"{theme.id}.bin", TILES, "stride")
+    # The server reads this grid: each tile the block of half-metre cells round
+    # its centre (blocked if any is), heights in the server's 0.2 m steps. The
+    # stride export it replaced let a tile reach half a metre into the wall
+    # beside it and, passing the package's 0.1 m codes through, doubled every
+    # riser so no stair could be climbed.
+    grid = EXPORT.export(out, ROOT / "server-collision" / f"{theme.id}.bin", TILES, "footprint",
+                         heights="server")
+    dropped = prune_spawns(out / "world.json", grid)
     blocked = []
     g = doc["gauntlet"]
     checks = [("arrival", g["staging"]["arrivalTile"]), ("vault", g["vault"]["spotTile"])]

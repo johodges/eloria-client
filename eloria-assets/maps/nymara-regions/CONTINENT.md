@@ -199,6 +199,7 @@ for them but not built.
 cd eloria-assets/maps/nymara-regions/<region>/source && python build_<region>.py
 cd eloria-assets/maps/nymara-regions/<region>/source && python build_interiors.py   # or build_insides.py
 cd eloria-assets/maps/nymara-regions/<region>/source && python export_insides_collision.py
+cd eloria-assets/maps/nymara-regions && python _toolkit/stamp_solid_landmarks.py <region>
 cd eloria-assets/maps/nymara-regions && python _toolkit/secrets_build.py <region>
 # server side
 python tools/sync_authored_collision.py --client <eloria-assets/maps>
@@ -212,3 +213,13 @@ python tools/relocate_map_content.py --maps <maps dir> --apply
 The region builds validate their glTF and report every lore site's resolved
 ground in `buildNotes`; the portal tool fails rather than write a crossing
 whose trigger a player cannot stand on.
+
+`stamp_solid_landmarks.py` runs after a region build because the build
+blocks a placed structure with a circle inscribed in its bounds, which
+leaves the ends of a long hall and the corners of a tower walkable: the
+customs hall on Crownwater was 41% walkable inside its walls and Westhaven's
+campanile entirely so, and NPCs posted at their doors stood inside them.
+The stamp blocks the ground box of every `building` and `tower` landmark,
+measured from the GLB, and records what it did under
+`collision.stampedLandmarks`. The server's `check_npc_placement.py` and
+`relocate_map_content.py` then move whatever the box closed over.

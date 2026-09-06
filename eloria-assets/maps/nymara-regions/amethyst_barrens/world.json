@@ -461,9 +461,50 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 1052325,
-    "walkableFraction": 0.7929,
-    "saturatedCells": 5
+    "walkableCells": 1051693,
+    "walkableFraction": 0.7925,
+    "saturatedCells": 5,
+    "stampedLandmarks": [
+      {
+        "id": "glasswarden-tower-0",
+        "node": "Landmark_Watchtower_0",
+        "type": "tower",
+        "box": [
+          -160.21,
+          -256.21,
+          -151.79,
+          -247.79
+        ],
+        "marginMetres": 0.5,
+        "cellsBlocked": 0
+      },
+      {
+        "id": "glasswarden-tower-1",
+        "node": "Landmark_Watchtower_1",
+        "type": "tower",
+        "box": [
+          355.28,
+          -52.72,
+          364.72,
+          -43.28
+        ],
+        "marginMetres": 0.5,
+        "cellsBlocked": 0
+      },
+      {
+        "id": "glasswarden-tower-2",
+        "node": "Landmark_Watchtower_2",
+        "type": "tower",
+        "box": [
+          96.85,
+          132.85,
+          107.15,
+          143.15
+        ],
+        "marginMetres": 0.5,
+        "cellsBlocked": 0
+      }
+    ]
   },
   "navigation": {
     "surfaceNodePrefixes": [

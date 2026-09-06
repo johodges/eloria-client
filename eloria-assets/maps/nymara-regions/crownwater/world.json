@@ -616,8 +616,36 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 332259,
-    "walkableFraction": 0.2504
+    "walkableCells": 331325,
+    "walkableFraction": 0.2497,
+    "stampedLandmarks": [
+      {
+        "id": "crownwater-campanile",
+        "node": "Landmark_Campanile",
+        "type": "tower",
+        "box": [
+          159.48,
+          -152.52,
+          164.52,
+          -147.48
+        ],
+        "marginMetres": 0.5,
+        "cellsBlocked": 0
+      },
+      {
+        "id": "crownwater-customs-hall",
+        "node": "Landmark_CustomsHouse",
+        "type": "building",
+        "box": [
+          13.15,
+          -13.45,
+          30.15,
+          8.55
+        ],
+        "marginMetres": 0.5,
+        "cellsBlocked": 0
+      }
+    ]
   },
   "navigation": {
     "surfaceNodePrefixes": [

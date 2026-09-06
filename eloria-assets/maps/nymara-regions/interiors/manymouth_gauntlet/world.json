@@ -91,17 +91,17 @@
       363.0
     ],
     "heightEncoding": {
-      "origin": -0.1,
-      "step": 0.1,
+      "origin": -0.2,
+      "step": 0.2,
       "range": [
         1,
         63
       ],
       "zeroMeansBlocked": true
     },
-    "walkableCells": 23248,
-    "blockedCells": 38240,
-    "walkableFraction": 0.3781,
+    "walkableCells": 18188,
+    "blockedCells": 43300,
+    "walkableFraction": 0.2958,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
@@ -1285,10 +1285,6 @@
             330
           ],
           [
-            10,
-            330
-          ],
-          [
             13,
             330
           ],
@@ -1327,14 +1323,6 @@
           [
             22,
             327
-          ],
-          [
-            7,
-            324
-          ],
-          [
-            10,
-            324
           ],
           [
             13,
@@ -1802,10 +1790,6 @@
             255
           ],
           [
-            11,
-            255
-          ],
-          [
             14,
             255
           ],
@@ -1878,14 +1862,6 @@
             248
           ],
           [
-            28,
-            248
-          ],
-          [
-            7,
-            244
-          ],
-          [
             11,
             244
           ],
@@ -1911,10 +1887,6 @@
           ],
           [
             7,
-            241
-          ],
-          [
-            11,
             241
           ],
           [
@@ -2116,10 +2088,6 @@
           [
             22,
             206
-          ],
-          [
-            19,
-            203
           ],
           [
             22,
@@ -2497,14 +2465,6 @@
                 146
               ],
               [
-                5,
-                143
-              ],
-              [
-                8,
-                143
-              ],
-              [
                 11,
                 143
               ],
@@ -2700,10 +2660,6 @@
             },
             "spawnTiles": [
               [
-                27,
-                149
-              ],
-              [
                 30,
                 149
               ],
@@ -2813,10 +2769,6 @@
         },
         "spawnTiles": [
           [
-            9,
-            176
-          ],
-          [
             13,
             176
           ],
@@ -2843,10 +2795,6 @@
           [
             34,
             176
-          ],
-          [
-            9,
-            172
           ],
           [
             13,
@@ -3391,7 +3339,7 @@
         6.0,
         3.0
       ],
-      "actorType": 340
+      "actorType": 352
     },
     "maxPlayers": 6,
     "bands": [
@@ -3421,9 +3369,9 @@
     "textures": 27,
     "accessors": 65,
     "bufferViews": 92,
-    "uniqueTriangles": 15978,
-    "uniqueVertices": 21046,
-    "glbBytes": 4205752,
+    "uniqueTriangles": 16074,
+    "uniqueVertices": 21238,
+    "glbBytes": 4200932,
     "nodeNames": [
       "Secrets_manymouth_gauntlet",
       "Section_manymouth_gauntlet",

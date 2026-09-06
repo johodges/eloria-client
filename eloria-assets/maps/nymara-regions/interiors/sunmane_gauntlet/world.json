@@ -91,17 +91,17 @@
       363.0
     ],
     "heightEncoding": {
-      "origin": -0.1,
-      "step": 0.1,
+      "origin": -0.2,
+      "step": 0.2,
       "range": [
         1,
         63
       ],
       "zeroMeansBlocked": true
     },
-    "walkableCells": 23172,
-    "blockedCells": 42708,
-    "walkableFraction": 0.3517,
+    "walkableCells": 17976,
+    "blockedCells": 47904,
+    "walkableFraction": 0.2729,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
@@ -1257,10 +1257,6 @@
         },
         "spawnTiles": [
           [
-            18,
-            333
-          ],
-          [
             21,
             333
           ],
@@ -1282,10 +1278,6 @@
           ],
           [
             18,
-            330
-          ],
-          [
-            21,
             330
           ],
           [
@@ -1330,10 +1322,6 @@
           ],
           [
             18,
-            324
-          ],
-          [
-            21,
             324
           ],
           [
@@ -1612,14 +1600,6 @@
         },
         "spawnTiles": [
           [
-            18,
-            301
-          ],
-          [
-            22,
-            301
-          ],
-          [
             25,
             301
           ],
@@ -1632,16 +1612,8 @@
             301
           ],
           [
-            36,
-            301
-          ],
-          [
             39,
             301
-          ],
-          [
-            18,
-            298
           ],
           [
             22,
@@ -1666,10 +1638,6 @@
           [
             39,
             298
-          ],
-          [
-            18,
-            294
           ],
           [
             22,
@@ -1718,14 +1686,6 @@
           [
             36,
             290
-          ],
-          [
-            39,
-            290
-          ],
-          [
-            18,
-            287
           ],
           [
             22,
@@ -2117,10 +2077,6 @@
           ]
         },
         "spawnTiles": [
-          [
-            16,
-            205
-          ],
           [
             19,
             205
@@ -2569,14 +2525,6 @@
                 146
               ],
               [
-                5,
-                143
-              ],
-              [
-                8,
-                143
-              ],
-              [
                 11,
                 143
               ],
@@ -2599,10 +2547,6 @@
               [
                 14,
                 140
-              ],
-              [
-                5,
-                137
               ],
               [
                 8,
@@ -2915,10 +2859,6 @@
           [
             34,
             176
-          ],
-          [
-            9,
-            172
           ],
           [
             13,
@@ -3391,7 +3331,7 @@
         6.0,
         4.0
       ],
-      "actorType": 340
+      "actorType": 333
     },
     "maxPlayers": 6,
     "bands": [
@@ -3421,9 +3361,9 @@
     "textures": 26,
     "accessors": 65,
     "bufferViews": 91,
-    "uniqueTriangles": 17214,
-    "uniqueVertices": 20878,
-    "glbBytes": 3976912,
+    "uniqueTriangles": 17310,
+    "uniqueVertices": 21070,
+    "glbBytes": 3972428,
     "nodeNames": [
       "Secrets_sunmane_gauntlet",
       "Section_sunmane_gauntlet",

@@ -114,3 +114,19 @@ python tools/generate_nymara_maps.py <maps dir>
 A design change (`_toolkit/gauntlets/designs.py`) is a rebuild of that
 route's package followed by the authoring tool; the waves are regenerated
 deterministically from the roster, so nothing else has to be edited.
+
+The package build writes the grid the server walks on
+(`server-collision/<route>.bin`) itself, and three things about it were
+learned the hard way. Its heights are in the server's 0.2 m step (a grid
+fitted to its own relief at 0.1 m read as twice as steep on the server, and
+every stair was a step it refused). Each tile is the block of half-metre
+cells *round* its centre, blocked if any of them is - the client draws a
+tile centred on an integer metre - so a creature's tile stops short of a
+wall instead of reaching half a metre into it. And what stands on a floor
+blocks it: pillars, boulders, crates and the walls' own faces, through the
+band a body occupies, with the tiles under waystones, the cache, nodes and
+plaques kept walkable because the server's content contract holds them so.
+Spawn tiles the grid does not carry are dropped from the manifest, so no
+wave lands in a boulder. `tests/test_gauntlet_packages.py` walks every
+route on that grid, gate to gate, and the server's `tests/test_gauntlets.py`
+walks the vendored copy.

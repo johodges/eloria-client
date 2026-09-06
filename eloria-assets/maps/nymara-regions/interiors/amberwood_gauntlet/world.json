@@ -91,17 +91,17 @@
       363.0
     ],
     "heightEncoding": {
-      "origin": -0.1,
-      "step": 0.1,
+      "origin": -0.2,
+      "step": 0.2,
       "range": [
         1,
         63
       ],
       "zeroMeansBlocked": true
     },
-    "walkableCells": 23172,
-    "blockedCells": 42708,
-    "walkableFraction": 0.3517,
+    "walkableCells": 17931,
+    "blockedCells": 47949,
+    "walkableFraction": 0.2722,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
@@ -1256,10 +1256,6 @@
         },
         "spawnTiles": [
           [
-            18,
-            333
-          ],
-          [
             21,
             333
           ],
@@ -1281,10 +1277,6 @@
           ],
           [
             18,
-            330
-          ],
-          [
-            21,
             330
           ],
           [
@@ -1329,10 +1321,6 @@
           ],
           [
             18,
-            324
-          ],
-          [
-            21,
             324
           ],
           [
@@ -1615,10 +1603,6 @@
             301
           ],
           [
-            22,
-            301
-          ],
-          [
             25,
             301
           ],
@@ -1631,16 +1615,8 @@
             301
           ],
           [
-            36,
-            301
-          ],
-          [
             39,
             301
-          ],
-          [
-            18,
-            298
           ],
           [
             22,
@@ -1665,10 +1641,6 @@
           [
             39,
             298
-          ],
-          [
-            18,
-            294
           ],
           [
             22,
@@ -1719,10 +1691,6 @@
             290
           ],
           [
-            39,
-            290
-          ],
-          [
             18,
             287
           ],
@@ -1744,10 +1712,6 @@
           ],
           [
             36,
-            287
-          ],
-          [
-            39,
             287
           ]
         ]
@@ -2141,10 +2105,6 @@
             205
           ],
           [
-            16,
-            202
-          ],
-          [
             19,
             202
           ],
@@ -2536,10 +2496,6 @@
             },
             "spawnTiles": [
               [
-                5,
-                149
-              ],
-              [
                 8,
                 149
               ],
@@ -2568,24 +2524,12 @@
                 146
               ],
               [
-                5,
-                143
-              ],
-              [
-                8,
-                143
-              ],
-              [
                 11,
                 143
               ],
               [
                 14,
                 143
-              ],
-              [
-                5,
-                140
               ],
               [
                 8,
@@ -2884,10 +2828,6 @@
         },
         "spawnTiles": [
           [
-            9,
-            176
-          ],
-          [
             13,
             176
           ],
@@ -2914,10 +2854,6 @@
           [
             34,
             176
-          ],
-          [
-            9,
-            172
           ],
           [
             13,
@@ -3176,10 +3112,6 @@
             74
           ],
           [
-            19,
-            71
-          ],
-          [
             22,
             71
           ]
@@ -3420,9 +3352,9 @@
     "textures": 24,
     "accessors": 60,
     "bufferViews": 84,
-    "uniqueTriangles": 25918,
-    "uniqueVertices": 31358,
-    "glbBytes": 4005924,
+    "uniqueTriangles": 26014,
+    "uniqueVertices": 31550,
+    "glbBytes": 3996200,
     "nodeNames": [
       "Secrets_amberwood_gauntlet",
       "Section_amberwood_gauntlet",

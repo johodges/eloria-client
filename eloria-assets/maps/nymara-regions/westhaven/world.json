@@ -714,8 +714,62 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 698364,
-    "walkableFraction": 0.5262
+    "walkableCells": 697043,
+    "walkableFraction": 0.5252,
+    "stampedLandmarks": [
+      {
+        "id": "campanile",
+        "node": "Landmark_Campanile",
+        "type": "tower",
+        "box": [
+          -11.64,
+          -211.32,
+          -5.16,
+          -204.84
+        ],
+        "marginMetres": 0.5,
+        "cellsBlocked": 0
+      },
+      {
+        "id": "high-spire",
+        "node": "Landmark_High_Spire",
+        "type": "tower",
+        "box": [
+          122.92,
+          -157.4,
+          133.88,
+          -146.44
+        ],
+        "marginMetres": 0.5,
+        "cellsBlocked": 0
+      },
+      {
+        "id": "gullstone-watch",
+        "node": "Landmark_Gullstone_Watch",
+        "type": "tower",
+        "box": [
+          -82.58,
+          97.9,
+          -72.46,
+          108.02
+        ],
+        "marginMetres": 0.5,
+        "cellsBlocked": 0
+      },
+      {
+        "id": "east-watch",
+        "node": "Landmark_East_Watch",
+        "type": "tower",
+        "box": [
+          315.28,
+          -160.88,
+          324.56,
+          -151.6
+        ],
+        "marginMetres": 0.5,
+        "cellsBlocked": 0
+      }
+    ]
   },
   "navigation": {
     "surfaceNodePrefixes": [

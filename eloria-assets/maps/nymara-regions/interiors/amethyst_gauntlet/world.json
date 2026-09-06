@@ -91,17 +91,17 @@
       363.0
     ],
     "heightEncoding": {
-      "origin": -0.1,
-      "step": 0.1,
+      "origin": -0.2,
+      "step": 0.2,
       "range": [
         1,
         63
       ],
       "zeroMeansBlocked": true
     },
-    "walkableCells": 23316,
-    "blockedCells": 38172,
-    "walkableFraction": 0.3792,
+    "walkableCells": 18109,
+    "blockedCells": 43379,
+    "walkableFraction": 0.2945,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
@@ -1254,15 +1254,7 @@
         },
         "spawnTiles": [
           [
-            11,
-            333
-          ],
-          [
             14,
-            333
-          ],
-          [
-            18,
             333
           ],
           [
@@ -1300,10 +1292,6 @@
           [
             28,
             330
-          ],
-          [
-            11,
-            326
           ],
           [
             14,
@@ -1528,10 +1516,6 @@
           [
             25,
             294
-          ],
-          [
-            22,
-            291
           ],
           [
             25,
@@ -1998,14 +1982,6 @@
             207
           ],
           [
-            16,
-            204
-          ],
-          [
-            19,
-            204
-          ],
-          [
             22,
             204
           ],
@@ -2015,10 +1991,6 @@
           ],
           [
             28,
-            204
-          ],
-          [
-            31,
             204
           ],
           [
@@ -2050,10 +2022,6 @@
             198
           ],
           [
-            19,
-            198
-          ],
-          [
             22,
             198
           ],
@@ -2063,10 +2031,6 @@
           ],
           [
             28,
-            198
-          ],
-          [
-            31,
             198
           ],
           [
@@ -2417,10 +2381,6 @@
             },
             "spawnTiles": [
               [
-                5,
-                149
-              ],
-              [
                 8,
                 149
               ],
@@ -2433,10 +2393,6 @@
                 149
               ],
               [
-                5,
-                146
-              ],
-              [
                 8,
                 146
               ],
@@ -2447,14 +2403,6 @@
               [
                 14,
                 146
-              ],
-              [
-                5,
-                143
-              ],
-              [
-                8,
-                143
               ],
               [
                 11,
@@ -2765,10 +2713,6 @@
         },
         "spawnTiles": [
           [
-            9,
-            176
-          ],
-          [
             13,
             176
           ],
@@ -2795,10 +2739,6 @@
           [
             34,
             176
-          ],
-          [
-            9,
-            172
           ],
           [
             13,
@@ -3085,14 +3025,6 @@
             79
           ],
           [
-            31,
-            79
-          ],
-          [
-            13,
-            76
-          ],
-          [
             16,
             76
           ],
@@ -3139,14 +3071,6 @@
           [
             28,
             73
-          ],
-          [
-            31,
-            73
-          ],
-          [
-            13,
-            70
           ],
           [
             16,
@@ -3379,7 +3303,7 @@
         5.0,
         3.0
       ],
-      "actorType": 340
+      "actorType": 326
     },
     "maxPlayers": 6,
     "bands": [
@@ -3409,9 +3333,9 @@
     "textures": 24,
     "accessors": 55,
     "bufferViews": 79,
-    "uniqueTriangles": 23646,
-    "uniqueVertices": 49594,
-    "glbBytes": 4408576,
+    "uniqueTriangles": 23742,
+    "uniqueVertices": 49786,
+    "glbBytes": 4400720,
     "nodeNames": [
       "Secrets_amethyst_gauntlet",
       "Section_amethyst_gauntlet",

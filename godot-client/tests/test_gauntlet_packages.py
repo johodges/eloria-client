@@ -7,6 +7,7 @@ the tile a player stands on and the tile beyond its cut, and the registry has
 to know the map and its copies or the client cannot place anyone on them.
 """
 import json
+import struct
 import unittest
 from pathlib import Path
 
@@ -16,6 +17,42 @@ REGISTRY = ROOT / "godot-client" / "data" / "maps" / "registry.json"
 THEMES = ("amberwood_gauntlet", "whitehorn_gauntlet", "ssarathi_gauntlet", "grey_moors_gauntlet",
           "crownwater_gauntlet", "sunmane_gauntlet", "amethyst_gauntlet", "manymouth_gauntlet")
 TILES = 384
+WALK = ROOT / "eloria-assets" / "maps" / "nymara-regions" / "server-collision"
+CLIMB = 2          # the server's max_walk_height_change, in its 0.2 m steps
+STEPS = ((0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1))
+
+
+def read_walk_grid(path):
+    """The EWCG grid the server reads, as rows of height codes (0 = blocked)."""
+    raw = path.read_bytes()
+    magic, version, _, width, height = struct.unpack_from("<4sHHII", raw, 0)
+    assert magic == b"EWCG", path
+    return [raw[16 + row * width:16 + (row + 1) * width] for row in range(height)]
+
+
+def flood(grid, start):
+    """Every tile the server lets a walker reach from `start`: both tiles walkable, no more
+    than CLIMB codes apart, and a diagonal only where both of its straight steps are."""
+    height, width = len(grid), len(grid[0])
+
+    def step(x, y, dx, dy):
+        nx, ny = x + dx, y + dy
+        if not (0 <= nx < width and 0 <= ny < height) or not grid[y][x] or not grid[ny][nx]:
+            return False
+        return abs(grid[ny][nx] - grid[y][x]) <= CLIMB
+
+    seen = {start}
+    queue = [start]
+    while queue:
+        x, y = queue.pop()
+        for dx, dy in STEPS:
+            if (x + dx, y + dy) in seen or not step(x, y, dx, dy):
+                continue
+            if dx and dy and not (step(x, y, dx, 0) and step(x, y, 0, dy)):
+                continue
+            seen.add((x + dx, y + dy))
+            queue.append((x + dx, y + dy))
+    return seen
 
 
 class GauntletPackages(unittest.TestCase):
@@ -73,6 +110,34 @@ class GauntletPackages(unittest.TestCase):
             start_y = g["staging"]["arrivalTile"][1]
             end_y = g["vault"]["spotTile"][1]
             self.assertGreater(abs(start_y - end_y), 300, theme)
+
+    def test_the_server_grid_walks_every_leg_and_carries_every_spawn(self):
+        """The walk grid the server reads climbs each stair, crosses each room to the next gate
+        and holds every spawn tile, so no gate stands behind a step the server refuses and no
+        wave lands in a wall. Every stair was shut and every wall walkable until 2026-09-06."""
+        for theme in THEMES:
+            grid = read_walk_grid(WALK / f"{theme}.bin")
+            g = self.manifest(theme)["gauntlet"]
+            legs = g["legs"]
+            checks = [(tuple(g["staging"]["arrivalTile"]), tuple(legs[0]["gate"]["tile"]))]
+            for index, leg in enumerate(legs):
+                beyond = tuple(leg["gate"]["beyondTile"])
+                after = (tuple(legs[index + 1]["gate"]["tile"]) if index + 1 < len(legs)
+                         else tuple(g["vault"]["spotTile"]))
+                if leg.get("branches"):
+                    for branch in leg["branches"]:
+                        checks.append((beyond, tuple(branch["gate"]["tile"])))
+                        checks.append((tuple(branch["gate"]["beyondTile"]), after))
+                else:
+                    checks.append((beyond, after))
+                if "bossTile" in leg:
+                    checks.append((beyond, tuple(leg["bossTile"])))
+                for room in (leg, *leg.get("branches", [])):
+                    self.assertGreaterEqual(len(room["spawnTiles"]), 8, (theme, room["id"]))
+                    for x, y in room["spawnTiles"]:
+                        self.assertTrue(grid[y][x], (theme, room["id"], (x, y)))
+            for start, goal in checks:
+                self.assertIn(goal, flood(grid, start), (theme, start, goal))
 
 
 if __name__ == "__main__":
