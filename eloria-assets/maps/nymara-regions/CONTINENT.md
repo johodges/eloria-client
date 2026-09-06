@@ -199,6 +199,7 @@ for them but not built.
 cd eloria-assets/maps/nymara-regions/<region>/source && python build_<region>.py
 cd eloria-assets/maps/nymara-regions/<region>/source && python build_interiors.py   # or build_insides.py
 cd eloria-assets/maps/nymara-regions/<region>/source && python export_insides_collision.py
+cd eloria-assets/maps/nymara-regions && python _toolkit/open_walk_surfaces.py <region>
 cd eloria-assets/maps/nymara-regions && python _toolkit/stamp_solid_landmarks.py <region>
 cd eloria-assets/maps/nymara-regions && python _toolkit/secrets_build.py <region>
 # server side
@@ -214,12 +215,29 @@ The region builds validate their glTF and report every lore site's resolved
 ground in `buildNotes`; the portal tool fails rather than write a crossing
 whose trigger a player cannot stand on.
 
-`stamp_solid_landmarks.py` runs after a region build because the build
-blocks a placed structure with a circle inscribed in its bounds, which
-leaves the ends of a long hall and the corners of a tower walkable: the
+Two passes correct the finished package, because a region's walk grid is
+derived from its height field rather than from its geometry, and each of the
+ten regions carries its own copy of that derivation.
+
+`open_walk_surfaces.py` opens the ground the region actually draws. The build
+re-opens its decks by guessing each one's footprint from placement bounds;
+four of the ten fold a deck as a rotated rectangle and six still use the
+circle inscribed in its bounds, which covers 2.3 m of a 40 m causeway.
+Mirrorhold's marble causeway was blocked over its whole length bar a disc in
+the middle, and Crownwater's harbour quays lost their ends and edges. The
+pass rasterises every `Walk_*` node onto the package grid and opens each cell
+at the height of the surface itself, leaving alone anything drawn under a
+`Water_*` body (the drowned court is scenery) or inside a landmark box.
+
+`stamp_solid_landmarks.py` runs after it, and after a region build, because
+the build blocks a placed structure with a circle inscribed in its bounds,
+which leaves the ends of a long hall and the corners of a tower walkable: the
 customs hall on Crownwater was 41% walkable inside its walls and Westhaven's
 campanile entirely so, and NPCs posted at their doors stood inside them.
 The stamp blocks the ground box of every `building` and `tower` landmark,
 measured from the GLB, and records what it did under
 `collision.stampedLandmarks`. The server's `check_npc_placement.py` and
-`relocate_map_content.py` then move whatever the box closed over.
+`relocate_map_content.py` then move whatever either pass closed over.
+
+Both read the package with `_toolkit/glb_reader.py` and are idempotent, and
+`godot-client/tests/test_walk_surfaces.py` holds every region to the first.
