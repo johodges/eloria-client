@@ -2356,9 +2356,26 @@ def _harden_plates(points: np.ndarray, triangles: np.ndarray, rig: ea.Rig,
             continue
         snap_to = None
         for side, mask in cap_side.items():
-            if int((members & mask).sum()) * 2 >= total:
-                snap_to = rig.joint_names.index("clavicle_" + side)
+            if int((members & mask).sum()) * 2 < total:
+                continue
+            # A cap binds to the clavicle so it keeps capping the shoulder when
+            # the idle drops the arm.  That is only right while it IS a cap.
+            # The reach test that named it one was applied to the pose the
+            # piece arrived in, and the passes since then stretch a piece to
+            # the span the region asks for -- so a shell that covered the joint
+            # and stopped can finish reaching past the elbow.  Pinned to the
+            # clavicle at that length it cannot follow the arm at all: it hangs
+            # at its bind position while the arm leaves, which reads as the
+            # pauldron standing too far out and the sleeve under it ending up
+            # in the armpit.  Past `CAP_REACH` it keeps the per-vertex blend
+            # instead, so its shoulder end rides the shoulder and its outer end
+            # rides the arm, which is what a long spaulder does.
+            here = points[members]
+            joint = rig.origin("upperarm_" + side)
+            if float(np.linalg.norm(here - joint, axis=1).max()) > CAP_REACH:
                 break
+            snap_to = rig.joint_names.index("clavicle_" + side)
+            break
         if snap_to is None and int((members & sleeve).sum()) * 2 >= total:
             mass: dict[int, float] = {}
             for slot in range(joints.shape[1]):
