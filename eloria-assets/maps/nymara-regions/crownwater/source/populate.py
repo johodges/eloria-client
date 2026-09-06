@@ -103,32 +103,24 @@ def populate_causeways(build, seed: int = 0) -> None:
     t = build.terrain
     made: dict[int, str] = {}
 
-    for name, points in REG.CAUSEWAYS.items():
-        a_name, b_name = REG.CAUSEWAY_ENDS[name]
-        a = REG.ISLAND_GEOM[a_name]
-        b = REG.ISLAND_GEOM[b_name]
-        ax, az = a["centre"]
-        bx, bz = b["centre"]
-        dx, dz = bx - ax, bz - az
-        centre_distance = math.hypot(dx, dz)
-        if centre_distance < 1e-6:
-            continue
-        ux, uz = dx / centre_distance, dz / centre_distance
-        # span only the open water between the two island edges, with a little
-        # overlap at each end so the deck sits *on* the landing, not beside it
-        start = a["radius"] - 3.0
-        end = centre_distance - b["radius"] + 3.0
-        span = end - start
-        if span < 8.0:
+    for name in REG.CAUSEWAYS:
+        # Shore to shore, taken from the sculpted terrain. The island radius the
+        # span used to be cut to is the radius of the island's *core*, and the
+        # ground has fallen to the lagoon well inside it, so every deck stopped
+        # short of the ground it was meant to reach.
+        ends = REG.causeway_span(t, name)
+        if ends is None:
             continue                      # islands already touch; no bridge needed
-        mid_t = (start + end) * 0.5
-        px, pz = ax + ux * mid_t, az + uz * mid_t
+        (sx, sz), (ex, ez) = ends
+        dx, dz = ex - sx, ez - sz
+        span = math.hypot(dx, dz)
+        px, pz = (sx + ex) * 0.5, (sz + ez) * 0.5
 
-        deck = REG.causeway_deck_level(t, points)
-        klass = int(round(span / 12.0))
+        deck = REG.causeway_deck_level(t, name)
+        # rounded up, never down: a deck a class short of its span ends over
+        # water, and the landing overlap absorbs the extra.
+        klass = max(1, int(math.ceil(span / 12.0)))
         length = klass * 12.0
-        if length < 12.0:
-            continue
         key = f"Causeway_{klass}"
         if key not in made:
             arches = max(2, min(6, int(length // 16)))

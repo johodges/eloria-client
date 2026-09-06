@@ -115,8 +115,23 @@
       "Foliage_Palm_crown_isle_104",
       "Foliage_Palm_crown_isle_105",
       "Foliage_Palm_crown_isle_106",
+      "Foliage_Palm_crown_isle_107",
+      "Foliage_Palm_crown_isle_108",
+      "Foliage_Palm_crown_isle_109",
       "Foliage_Palm_crown_isle_11",
+      "Foliage_Palm_crown_isle_110",
+      "Foliage_Palm_crown_isle_111",
+      "Foliage_Palm_crown_isle_112",
+      "Foliage_Palm_crown_isle_113",
+      "Foliage_Palm_crown_isle_114",
+      "Foliage_Palm_crown_isle_115",
+      "Foliage_Palm_crown_isle_116",
+      "Foliage_Palm_crown_isle_117",
+      "Foliage_Palm_crown_isle_118",
+      "Foliage_Palm_crown_isle_119",
       "Foliage_Palm_crown_isle_12",
+      "Foliage_Palm_crown_isle_120",
+      "Foliage_Palm_crown_isle_121",
       "Foliage_Palm_crown_isle_13",
       "Foliage_Palm_crown_isle_14",
       "Foliage_Palm_crown_isle_15",
@@ -212,19 +227,16 @@
       "Foliage_Palm_crown_isle_97",
       "Foliage_Palm_crown_isle_98",
       "Foliage_Palm_crown_isle_99",
-      "Foliage_Palm_harbour_isle_156",
-      "Foliage_Palm_harbour_isle_157",
-      "Foliage_Palm_harbour_isle_158",
-      "Foliage_Palm_harbour_isle_159",
-      "Foliage_Palm_harbour_isle_160",
-      "Foliage_Palm_harbour_isle_161",
-      "Foliage_Palm_harbour_isle_162",
-      "Foliage_Palm_harbour_isle_163",
-      "Foliage_Palm_harbour_isle_164",
-      "Foliage_Palm_harbour_isle_165",
-      "Foliage_Palm_harbour_isle_166",
-      "Foliage_Palm_outer_east_237",
-      "Foliage_Palm_outer_east_238",
+      "Foliage_Palm_harbour_isle_168",
+      "Foliage_Palm_harbour_isle_169",
+      "Foliage_Palm_harbour_isle_170",
+      "Foliage_Palm_harbour_isle_171",
+      "Foliage_Palm_harbour_isle_172",
+      "Foliage_Palm_harbour_isle_173",
+      "Foliage_Palm_harbour_isle_174",
+      "Foliage_Palm_harbour_isle_175",
+      "Foliage_Palm_harbour_isle_176",
+      "Foliage_Palm_harbour_isle_177",
       "Foliage_Palm_outer_east_239",
       "Foliage_Palm_outer_east_240",
       "Foliage_Palm_outer_east_241",
@@ -233,6 +245,8 @@
       "Foliage_Palm_outer_east_244",
       "Foliage_Palm_outer_east_245",
       "Foliage_Palm_outer_east_246",
+      "Foliage_Palm_outer_east_247",
+      "Foliage_Palm_outer_east_248",
       "Foliage_Palm_outer_north_321",
       "Foliage_Palm_outer_north_322",
       "Foliage_Palm_outer_north_323",
@@ -286,8 +300,6 @@
       "Foliage_Palm_outer_northwest_318",
       "Foliage_Palm_outer_northwest_319",
       "Foliage_Palm_outer_northwest_320",
-      "Foliage_Palm_outer_south_262",
-      "Foliage_Palm_outer_south_263",
       "Foliage_Palm_outer_south_264",
       "Foliage_Palm_outer_south_265",
       "Foliage_Palm_outer_south_266",
@@ -300,8 +312,7 @@
       "Foliage_Palm_outer_south_273",
       "Foliage_Palm_outer_south_274",
       "Foliage_Palm_outer_south_275",
-      "Foliage_Palm_outer_southeast_247",
-      "Foliage_Palm_outer_southeast_248",
+      "Foliage_Palm_outer_south_276",
       "Foliage_Palm_outer_southeast_249",
       "Foliage_Palm_outer_southeast_250",
       "Foliage_Palm_outer_southeast_251",
@@ -315,7 +326,8 @@
       "Foliage_Palm_outer_southeast_259",
       "Foliage_Palm_outer_southeast_260",
       "Foliage_Palm_outer_southeast_261",
-      "Foliage_Palm_outer_southwest_276",
+      "Foliage_Palm_outer_southeast_262",
+      "Foliage_Palm_outer_southeast_263",
       "Foliage_Palm_outer_southwest_277",
       "Foliage_Palm_outer_southwest_278",
       "Foliage_Palm_outer_southwest_279",
@@ -341,25 +353,19 @@
       "Foliage_Palm_outer_west_299",
       "Foliage_Palm_outer_west_300",
       "Foliage_Palm_outer_west_301",
-      "Foliage_Palm_pavilion_east_107",
-      "Foliage_Palm_pavilion_east_108",
-      "Foliage_Palm_pavilion_east_109",
-      "Foliage_Palm_pavilion_east_110",
-      "Foliage_Palm_pavilion_east_111",
-      "Foliage_Palm_pavilion_east_112",
-      "Foliage_Palm_pavilion_east_113",
-      "Foliage_Palm_pavilion_east_114",
-      "Foliage_Palm_pavilion_east_115",
-      "Foliage_Palm_pavilion_east_116",
-      "Foliage_Palm_pavilion_east_117",
-      "Foliage_Palm_pavilion_east_118",
-      "Foliage_Palm_pavilion_east_119",
-      "Foliage_Palm_pavilion_north_203",
-      "Foliage_Palm_pavilion_north_204",
-      "Foliage_Palm_pavilion_north_205",
-      "Foliage_Palm_pavilion_north_206",
-      "Foliage_Palm_pavilion_north_207",
-      "Foliage_Palm_pavilion_north_208",
+      "Foliage_Palm_pavilion_east_122",
+      "Foliage_Palm_pavilion_east_123",
+      "Foliage_Palm_pavilion_east_124",
+      "Foliage_Palm_pavilion_east_125",
+      "Foliage_Palm_pavilion_east_126",
+      "Foliage_Palm_pavilion_east_127",
+      "Foliage_Palm_pavilion_east_128",
+      "Foliage_Palm_pavilion_east_129",
+      "Foliage_Palm_pavilion_east_130",
+      "Foliage_Palm_pavilion_east_131",
+      "Foliage_Palm_pavilion_east_132",
+      "Foliage_Palm_pavilion_east_133",
+      "Foliage_Palm_pavilion_east_134",
       "Foliage_Palm_pavilion_north_209",
       "Foliage_Palm_pavilion_north_210",
       "Foliage_Palm_pavilion_north_211",
@@ -373,10 +379,10 @@
       "Foliage_Palm_pavilion_north_219",
       "Foliage_Palm_pavilion_north_220",
       "Foliage_Palm_pavilion_north_221",
-      "Foliage_Palm_pavilion_northeast_222",
-      "Foliage_Palm_pavilion_northeast_223",
-      "Foliage_Palm_pavilion_northeast_224",
-      "Foliage_Palm_pavilion_northeast_225",
+      "Foliage_Palm_pavilion_north_222",
+      "Foliage_Palm_pavilion_north_223",
+      "Foliage_Palm_pavilion_north_224",
+      "Foliage_Palm_pavilion_north_225",
       "Foliage_Palm_pavilion_northeast_226",
       "Foliage_Palm_pavilion_northeast_227",
       "Foliage_Palm_pavilion_northeast_228",
@@ -388,14 +394,8 @@
       "Foliage_Palm_pavilion_northeast_234",
       "Foliage_Palm_pavilion_northeast_235",
       "Foliage_Palm_pavilion_northeast_236",
-      "Foliage_Palm_pavilion_northwest_187",
-      "Foliage_Palm_pavilion_northwest_188",
-      "Foliage_Palm_pavilion_northwest_189",
-      "Foliage_Palm_pavilion_northwest_190",
-      "Foliage_Palm_pavilion_northwest_191",
-      "Foliage_Palm_pavilion_northwest_192",
-      "Foliage_Palm_pavilion_northwest_193",
-      "Foliage_Palm_pavilion_northwest_194",
+      "Foliage_Palm_pavilion_northeast_237",
+      "Foliage_Palm_pavilion_northeast_238",
       "Foliage_Palm_pavilion_northwest_195",
       "Foliage_Palm_pavilion_northwest_196",
       "Foliage_Palm_pavilion_northwest_197",
@@ -404,53 +404,45 @@
       "Foliage_Palm_pavilion_northwest_200",
       "Foliage_Palm_pavilion_northwest_201",
       "Foliage_Palm_pavilion_northwest_202",
-      "Foliage_Palm_pavilion_south_134",
-      "Foliage_Palm_pavilion_south_135",
-      "Foliage_Palm_pavilion_south_136",
-      "Foliage_Palm_pavilion_south_137",
-      "Foliage_Palm_pavilion_south_138",
-      "Foliage_Palm_pavilion_south_139",
-      "Foliage_Palm_pavilion_south_140",
-      "Foliage_Palm_pavilion_south_141",
-      "Foliage_Palm_pavilion_south_142",
-      "Foliage_Palm_pavilion_south_143",
-      "Foliage_Palm_pavilion_south_144",
-      "Foliage_Palm_pavilion_south_145",
-      "Foliage_Palm_pavilion_south_146",
-      "Foliage_Palm_pavilion_south_147",
-      "Foliage_Palm_pavilion_south_148",
-      "Foliage_Palm_pavilion_south_149",
+      "Foliage_Palm_pavilion_northwest_203",
+      "Foliage_Palm_pavilion_northwest_204",
+      "Foliage_Palm_pavilion_northwest_205",
+      "Foliage_Palm_pavilion_northwest_206",
+      "Foliage_Palm_pavilion_northwest_207",
+      "Foliage_Palm_pavilion_northwest_208",
       "Foliage_Palm_pavilion_south_150",
       "Foliage_Palm_pavilion_south_151",
       "Foliage_Palm_pavilion_south_152",
       "Foliage_Palm_pavilion_south_153",
       "Foliage_Palm_pavilion_south_154",
       "Foliage_Palm_pavilion_south_155",
-      "Foliage_Palm_pavilion_southeast_120",
-      "Foliage_Palm_pavilion_southeast_121",
-      "Foliage_Palm_pavilion_southeast_122",
-      "Foliage_Palm_pavilion_southeast_123",
-      "Foliage_Palm_pavilion_southeast_124",
-      "Foliage_Palm_pavilion_southeast_125",
-      "Foliage_Palm_pavilion_southeast_126",
-      "Foliage_Palm_pavilion_southeast_127",
-      "Foliage_Palm_pavilion_southeast_128",
-      "Foliage_Palm_pavilion_southeast_129",
-      "Foliage_Palm_pavilion_southeast_130",
-      "Foliage_Palm_pavilion_southeast_131",
-      "Foliage_Palm_pavilion_southeast_132",
-      "Foliage_Palm_pavilion_southeast_133",
-      "Foliage_Palm_pavilion_west_167",
-      "Foliage_Palm_pavilion_west_168",
-      "Foliage_Palm_pavilion_west_169",
-      "Foliage_Palm_pavilion_west_170",
-      "Foliage_Palm_pavilion_west_171",
-      "Foliage_Palm_pavilion_west_172",
-      "Foliage_Palm_pavilion_west_173",
-      "Foliage_Palm_pavilion_west_174",
-      "Foliage_Palm_pavilion_west_175",
-      "Foliage_Palm_pavilion_west_176",
-      "Foliage_Palm_pavilion_west_177",
+      "Foliage_Palm_pavilion_south_156",
+      "Foliage_Palm_pavilion_south_157",
+      "Foliage_Palm_pavilion_south_158",
+      "Foliage_Palm_pavilion_south_159",
+      "Foliage_Palm_pavilion_south_160",
+      "Foliage_Palm_pavilion_south_161",
+      "Foliage_Palm_pavilion_south_162",
+      "Foliage_Palm_pavilion_south_163",
+      "Foliage_Palm_pavilion_south_164",
+      "Foliage_Palm_pavilion_south_165",
+      "Foliage_Palm_pavilion_south_166",
+      "Foliage_Palm_pavilion_south_167",
+      "Foliage_Palm_pavilion_southeast_135",
+      "Foliage_Palm_pavilion_southeast_136",
+      "Foliage_Palm_pavilion_southeast_137",
+      "Foliage_Palm_pavilion_southeast_138",
+      "Foliage_Palm_pavilion_southeast_139",
+      "Foliage_Palm_pavilion_southeast_140",
+      "Foliage_Palm_pavilion_southeast_141",
+      "Foliage_Palm_pavilion_southeast_142",
+      "Foliage_Palm_pavilion_southeast_143",
+      "Foliage_Palm_pavilion_southeast_144",
+      "Foliage_Palm_pavilion_southeast_145",
+      "Foliage_Palm_pavilion_southeast_146",
+      "Foliage_Palm_pavilion_southeast_147",
+      "Foliage_Palm_pavilion_southeast_148",
+      "Foliage_Palm_pavilion_southeast_149",
       "Foliage_Palm_pavilion_west_178",
       "Foliage_Palm_pavilion_west_179",
       "Foliage_Palm_pavilion_west_180",
@@ -460,6 +452,14 @@
       "Foliage_Palm_pavilion_west_184",
       "Foliage_Palm_pavilion_west_185",
       "Foliage_Palm_pavilion_west_186",
+      "Foliage_Palm_pavilion_west_187",
+      "Foliage_Palm_pavilion_west_188",
+      "Foliage_Palm_pavilion_west_189",
+      "Foliage_Palm_pavilion_west_190",
+      "Foliage_Palm_pavilion_west_191",
+      "Foliage_Palm_pavilion_west_192",
+      "Foliage_Palm_pavilion_west_193",
+      "Foliage_Palm_pavilion_west_194",
       "Landmark_Campanile",
       "Landmark_Cathedral",
       "Landmark_CustomsHouse",
@@ -607,8 +607,8 @@
     "width": 1152,
     "height": 1152,
     "heightEncoding": {
-      "origin": 0.0574,
-      "step": 0.292586,
+      "origin": 0.0575,
+      "step": 0.292585,
       "range": [
         1,
         63
@@ -616,8 +616,16 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 335550,
-    "walkableFraction": 0.2528,
+    "walkableCells": 335665,
+    "walkableFraction": 0.2529,
+    "openedWalkSurfaces": {
+      "prefix": "Walk_",
+      "cellsCovered": 50447,
+      "cellsOpened": 3970,
+      "cellsRaised": 37342,
+      "cellsDrowned": 0,
+      "cellsInsideLandmarks": 0
+    },
     "stampedLandmarks": [
       {
         "id": "crownwater-campanile",
@@ -630,7 +638,7 @@
           -147.48
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 0
+        "cellsBlocked": 92
       },
       {
         "id": "crownwater-customs-hall",
@@ -643,17 +651,9 @@
           8.55
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 0
+        "cellsBlocked": 842
       }
-    ],
-    "openedWalkSurfaces": {
-      "prefix": "Walk_",
-      "cellsCovered": 46180,
-      "cellsOpened": 4225,
-      "cellsRaised": 23851,
-      "cellsDrowned": 0,
-      "cellsInsideLandmarks": 0
-    }
+    ]
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -880,7 +880,7 @@
       "type": "transition",
       "position": [
         351.9,
-        3.72,
+        3.6,
         -18.27
       ],
       "note": "Where Crownwater gives way to Four Gates: greyhaven road furniture, a march stone, a waystation, and 11 pieces of the country beyond."
@@ -903,7 +903,7 @@
       "type": "transition",
       "position": [
         209.73,
-        3.37,
+        3.47,
         -351.9
       ],
       "note": "Where Crownwater gives way to Mirrorhold: greyhaven road furniture, a march stone, a waystation, and 10 pieces of the country beyond."
@@ -926,7 +926,7 @@
       "type": "transition",
       "position": [
         -123.9,
-        2.76,
+        2.96,
         -209.73
       ],
       "note": "Where Crownwater gives way to Westhaven: greyhaven road furniture, a march stone, a waystation, and 9 pieces of the country beyond."
@@ -949,7 +949,7 @@
       "type": "transition",
       "position": [
         18.27,
-        3.71,
+        3.74,
         123.9
       ],
       "note": "Where Crownwater gives way to the Manymouth Delta: greyhaven road furniture, a march stone, a waystation, and 17 pieces of the country beyond."
@@ -1053,14 +1053,14 @@
       "destinationMap": "crownwater_secrets",
       "destinationSpawn": "crown-pearl-hollow",
       "position": [
-        292.0,
+        288.6,
         3.99,
-        -106.0
+        -107.5
       ],
       "authority": "server",
       "serverTile": [
-        466,
-        280
+        463,
+        282
       ]
     },
     {
@@ -1074,14 +1074,14 @@
       "destinationMap": "crownwater_secrets",
       "destinationSpawn": "crown-kelp-garden",
       "position": [
-        98.8,
+        104.0,
         4.69,
-        51.0
+        57.0
       ],
       "authority": "server",
       "serverTile": [
-        273,
-        123
+        278,
+        117
       ]
     },
     {
@@ -1137,14 +1137,14 @@
       "destinationMap": "crownwater_secrets",
       "destinationSpawn": "crown-cathedral-school",
       "position": [
-        88.0,
+        89.61,
         16.99,
-        -124.0
+        -118.0
       ],
       "authority": "server",
       "serverTile": [
-        262,
-        298
+        264,
+        292
       ]
     },
     {
@@ -1181,12 +1181,12 @@
       "position": [
         124.0,
         4.27,
-        -265.0
+        -262.0
       ],
       "authority": "server",
       "serverTile": [
         298,
-        439
+        436
       ]
     },
     {
@@ -1221,14 +1221,14 @@
       "destinationMap": "crownwater_secrets",
       "destinationSpawn": "crown-cistern-well",
       "position": [
-        -1.34,
+        -15.35,
         4.5,
-        -19.95
+        -12.45
       ],
       "authority": "server",
       "serverTile": [
-        173,
-        194
+        159,
+        186
       ]
     },
     {
@@ -1305,13 +1305,13 @@
       "destinationMap": "crownwater_secrets",
       "destinationSpawn": "crown-campanile-eyrie",
       "position": [
-        149.0,
-        16.76,
+        152.0,
+        16.51,
         -158.0
       ],
       "authority": "server",
       "serverTile": [
-        323,
+        326,
         332
       ]
     }
@@ -1428,7 +1428,7 @@
       "type": "npc",
       "position": [
         120.03,
-        5.75,
+        5.6,
         -36.97
       ],
       "serverTile": [
@@ -1644,7 +1644,7 @@
       "resource": "reed",
       "position": [
         90.27,
-        4.68,
+        3.96,
         36.77
       ],
       "serverTile": [
@@ -1888,7 +1888,7 @@
       "type": "map-transition",
       "position": [
         357.9,
-        3.9,
+        3.87,
         -12.97
       ],
       "serverTile": [
@@ -1939,7 +1939,7 @@
       "type": "map-transition",
       "position": [
         223.03,
-        3.89,
+        3.88,
         -357.9
       ],
       "serverTile": [
@@ -2128,12 +2128,12 @@
       "waypoints": [
         [
           114.0,
-          16.99,
+          3.85,
           -114.0
         ],
         [
           276.0,
-          16.99,
+          3.85,
           -114.0
         ]
       ]
@@ -2144,12 +2144,12 @@
       "waypoints": [
         [
           114.0,
-          16.99,
+          3.4,
           -114.0
         ],
         [
           228.6,
-          16.99,
+          3.4,
           0.6
         ]
       ]
@@ -2160,12 +2160,12 @@
       "waypoints": [
         [
           114.0,
-          16.99,
+          5.6,
           -114.0
         ],
         [
           114.0,
-          16.99,
+          5.6,
           48.0
         ]
       ]
@@ -2176,12 +2176,12 @@
       "waypoints": [
         [
           114.0,
-          16.99,
+          4.58,
           -114.0
         ],
         [
           -0.6,
-          16.99,
+          4.58,
           0.6
         ]
       ]
@@ -2192,12 +2192,12 @@
       "waypoints": [
         [
           114.0,
-          16.99,
+          3.95,
           -114.0
         ],
         [
           -48.0,
-          16.99,
+          3.95,
           -114.0
         ]
       ]
@@ -2208,12 +2208,12 @@
       "waypoints": [
         [
           114.0,
-          16.99,
+          5.99,
           -114.0
         ],
         [
           -0.6,
-          16.99,
+          5.99,
           -228.6
         ]
       ]
@@ -2224,12 +2224,12 @@
       "waypoints": [
         [
           114.0,
-          16.99,
+          6.01,
           -114.0
         ],
         [
           114.0,
-          16.99,
+          6.01,
           -276.0
         ]
       ]
@@ -2240,12 +2240,12 @@
       "waypoints": [
         [
           114.0,
-          16.99,
+          3.85,
           -114.0
         ],
         [
           228.6,
-          16.99,
+          3.85,
           -228.6
         ]
       ]
@@ -2256,12 +2256,12 @@
       "waypoints": [
         [
           276.0,
-          4.11,
+          3.4,
           -114.0
         ],
         [
           228.6,
-          4.11,
+          3.4,
           0.6
         ]
       ]
@@ -2272,12 +2272,12 @@
       "waypoints": [
         [
           228.6,
-          4.69,
+          3.4,
           0.6
         ],
         [
           114.0,
-          4.69,
+          3.4,
           48.0
         ]
       ]
@@ -2288,12 +2288,12 @@
       "waypoints": [
         [
           114.0,
-          4.69,
+          4.5,
           48.0
         ],
         [
           -0.6,
-          4.69,
+          4.5,
           0.6
         ]
       ]
@@ -2304,12 +2304,12 @@
       "waypoints": [
         [
           -0.6,
-          4.81,
+          4.06,
           0.6
         ],
         [
           -48.0,
-          4.81,
+          4.06,
           -114.0
         ]
       ]
@@ -2320,12 +2320,12 @@
       "waypoints": [
         [
           -48.0,
-          4.81,
+          3.4,
           -114.0
         ],
         [
           -0.6,
-          4.81,
+          3.4,
           -228.6
         ]
       ]
@@ -2336,12 +2336,12 @@
       "waypoints": [
         [
           -0.6,
-          4.27,
+          3.4,
           -228.6
         ],
         [
           114.0,
-          4.27,
+          3.4,
           -276.0
         ]
       ]
@@ -2352,12 +2352,12 @@
       "waypoints": [
         [
           114.0,
-          4.27,
+          3.4,
           -276.0
         ],
         [
           228.6,
-          4.27,
+          3.4,
           -228.6
         ]
       ]
@@ -2368,12 +2368,12 @@
       "waypoints": [
         [
           228.6,
-          4.25,
+          3.4,
           -228.6
         ],
         [
           276.0,
-          4.25,
+          3.4,
           -114.0
         ]
       ]
@@ -2384,12 +2384,12 @@
       "waypoints": [
         [
           276.0,
-          3.99,
+          3.4,
           -114.0
         ],
         [
           357.9,
-          3.99,
+          3.4,
           -13.0
         ]
       ]
@@ -2400,12 +2400,12 @@
       "waypoints": [
         [
           228.6,
-          4.11,
+          3.4,
           0.6
         ],
         [
           215.0,
-          4.11,
+          3.4,
           129.9
         ]
       ]
@@ -2416,12 +2416,12 @@
       "waypoints": [
         [
           114.0,
-          4.69,
+          3.4,
           48.0
         ],
         [
           13.0,
-          4.69,
+          3.4,
           129.9
         ]
       ]
@@ -2432,12 +2432,12 @@
       "waypoints": [
         [
           -48.0,
-          4.81,
+          3.4,
           -114.0
         ],
         [
           -129.9,
-          4.81,
+          3.4,
           -215.0
         ]
       ]
@@ -2448,12 +2448,12 @@
       "waypoints": [
         [
           -0.6,
-          4.01,
+          3.4,
           -228.6
         ],
         [
           13.0,
-          4.01,
+          3.4,
           -357.9
         ]
       ]
@@ -2464,12 +2464,12 @@
       "waypoints": [
         [
           114.0,
-          4.27,
+          3.4,
           -276.0
         ],
         [
           215.0,
-          4.27,
+          3.4,
           -357.9
         ]
       ]
@@ -2480,12 +2480,12 @@
       "waypoints": [
         [
           -0.6,
-          4.5,
+          3.4,
           0.6
         ],
         [
           -129.9,
-          4.5,
+          3.4,
           -13.0
         ]
       ]
@@ -2496,12 +2496,12 @@
       "waypoints": [
         [
           228.6,
-          4.25,
+          3.4,
           -228.6
         ],
         [
           357.9,
-          4.25,
+          3.4,
           -215.0
         ]
       ]
@@ -2787,33 +2787,33 @@
     }
   ],
   "performance": {
-    "nodes": 2048,
-    "meshes": 243,
+    "nodes": 2052,
+    "meshes": 257,
     "materials": 37,
     "images": 89,
     "textures": 89,
-    "accessors": 977,
-    "bufferViews": 1066,
-    "uniqueTriangles": 627040,
-    "uniqueVertices": 382623,
-    "glbBytes": 29583780,
-    "instancedTriangles": 1314094,
-    "embeddedTextureBytes": 28749574,
+    "accessors": 1033,
+    "bufferViews": 1122,
+    "uniqueTriangles": 693328,
+    "uniqueVertices": 434157,
+    "glbBytes": 31585424,
+    "instancedTriangles": 1409914,
+    "embeddedTextureBytes": 28549576,
     "textureMemoryBytesUncompressed": 250478592,
-    "placements": 690,
+    "placements": 691,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 332259,
-      "blockedCells": 994845,
-      "walkableFraction": 0.2504,
-      "elevatedDecks": 84,
-      "steepCells": 32859,
+      "walkableCells": 332629,
+      "blockedCells": 994475,
+      "walkableFraction": 0.2506,
+      "elevatedDecks": 85,
+      "steepCells": 33370,
       "reliefMetres": 18.14,
       "heightEncoding": {
-        "origin": 0.0574,
-        "step": 0.292586,
+        "origin": 0.0575,
+        "step": 0.292585,
         "range": [
           1,
           63
@@ -2832,12 +2832,12 @@
       "march south-quay: 3 road pieces, 17 of manymouth_delta's growth"
     ],
     "lod2": {
-      "glbBytes": 16708720,
-      "nodes": 1853,
-      "uniqueTriangles": 473888,
-      "instancedTriangles": 1150414,
-      "sizeReductionPercent": 43.5,
-      "triangleReductionPercent": 12.5
+      "glbBytes": 18773416,
+      "nodes": 1857,
+      "uniqueTriangles": 540198,
+      "instancedTriangles": 1246256,
+      "sizeReductionPercent": 40.6,
+      "triangleReductionPercent": 11.6
     }
   },
   "sources": [
