@@ -4489,6 +4489,652 @@
         "body": "body",
         "neck": "neck"
       }
+    },
+    "jadefeather_raptor": {
+      "scene": "res://assets/actors/native/creatures/jadefeather_raptor.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/jadefeather_raptor.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.058824,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "glowhorn_sheep": {
+      "scene": "res://assets/actors/native/creatures/glowhorn_sheep.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/glowhorn_sheep.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 0.588235,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "mire_goblin": {
+      "scene": "res://assets/actors/native/creatures/mire_goblin.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/mire_goblin.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 0.705882,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "highland_orc": {
+      "scene": "res://assets/actors/native/creatures/highland_orc.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/highland_orc.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.117647,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "crag_ogre": {
+      "scene": "res://assets/actors/native/creatures/crag_ogre.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/crag_ogre.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.470588,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "glacier_troll": {
+      "scene": "res://assets/actors/native/creatures/glacier_troll.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/glacier_troll.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.764706,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "verdant_cyclops": {
+      "scene": "res://assets/actors/native/creatures/verdant_cyclops.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/verdant_cyclops.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.882353,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "russet_faun": {
+      "scene": "res://assets/actors/native/creatures/russet_faun.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/russet_faun.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 0.941176,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "coal_kobold": {
+      "scene": "res://assets/actors/native/creatures/coal_kobold.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/coal_kobold.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 0.647059,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "river_lizardfolk": {
+      "scene": "res://assets/actors/native/creatures/river_lizardfolk.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/river_lizardfolk.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.058824,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "ironhorn_minotaur": {
+      "scene": "res://assets/actors/native/creatures/ironhorn_minotaur.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/ironhorn_minotaur.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.411765,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "viridian_basilisk": {
+      "scene": "res://assets/actors/native/creatures/viridian_basilisk.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/viridian_basilisk.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 0.705882,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "storm_chimera": {
+      "scene": "res://assets/actors/native/creatures/storm_chimera.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/storm_chimera.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.176471,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "moonlit_unicorn": {
+      "scene": "res://assets/actors/native/creatures/moonlit_unicorn.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/moonlit_unicorn.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.058824,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "shadow_warg": {
+      "scene": "res://assets/actors/native/creatures/shadow_warg.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/shadow_warg.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 0.823529,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "snow_yeti": {
+      "scene": "res://assets/actors/native/creatures/snow_yeti.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/snow_yeti.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.529412,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "moss_bugbear": {
+      "scene": "res://assets/actors/native/creatures/moss_bugbear.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/moss_bugbear.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.235294,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "sporefolk": {
+      "scene": "res://assets/actors/native/creatures/sporefolk.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/sporefolk.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 0.764706,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "owlbear": {
+      "scene": "res://assets/actors/native/creatures/owlbear.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/owlbear.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.352941,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "river_capybara": {
+      "scene": "res://assets/actors/native/creatures/river_capybara.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/river_capybara.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 0.352941,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "azure_axolotl": {
+      "scene": "res://assets/actors/native/creatures/azure_axolotl.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/azure_axolotl.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 0.294118,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "dusk_camel": {
+      "scene": "res://assets/actors/native/creatures/dusk_camel.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/dusk_camel.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.176471,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "ice_wolverine": {
+      "scene": "res://assets/actors/native/creatures/ice_wolverine.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/ice_wolverine.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 0.411765,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "nightweave_spider": {
+      "scene": "res://assets/actors/native/creatures/nightweave_spider.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/nightweave_spider.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 0.705882,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "amethyst_stone_golem": {
+      "scene": "res://assets/actors/native/creatures/amethyst_stone_golem.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/amethyst_stone_golem.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.529412,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "arcane_core_colossus": {
+      "scene": "res://assets/actors/native/creatures/arcane_core_colossus.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/arcane_core_colossus.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 2,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "arcane_crystal_automaton": {
+      "scene": "res://assets/actors/native/creatures/arcane_crystal_automaton.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/arcane_crystal_automaton.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.294118,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "black_iron_death_knight": {
+      "scene": "res://assets/actors/native/creatures/black_iron_death_knight.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/black_iron_death_knight.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.117647,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "autumn_bark_treant": {
+      "scene": "res://assets/actors/native/creatures/autumn_bark_treant.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/autumn_bark_treant.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.882353,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "elderwood_dryad_queen": {
+      "scene": "res://assets/actors/native/creatures/elderwood_dryad_queen.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/elderwood_dryad_queen.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.529412,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "frost_stone_golem": {
+      "scene": "res://assets/actors/native/creatures/frost_stone_golem.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/frost_stone_golem.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.529412,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "glacier_titan": {
+      "scene": "res://assets/actors/native/creatures/glacier_titan.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/glacier_titan.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 2.117647,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "heartwood_treant": {
+      "scene": "res://assets/actors/native/creatures/heartwood_treant.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/heartwood_treant.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 2,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "moss_stone_troll": {
+      "scene": "res://assets/actors/native/creatures/moss_stone_troll.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/moss_stone_troll.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.647059,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "river_stone_golem": {
+      "scene": "res://assets/actors/native/creatures/river_stone_golem.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/river_stone_golem.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.470588,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "rune_stone_golem": {
+      "scene": "res://assets/actors/native/creatures/rune_stone_golem.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/rune_stone_golem.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.529412,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "sunken_stone_colossus": {
+      "scene": "res://assets/actors/native/creatures/sunken_stone_colossus.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/sunken_stone_colossus.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.882353,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "verdant_treant": {
+      "scene": "res://assets/actors/native/creatures/verdant_treant.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/verdant_treant.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.764706,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
     }
   },
   "actorTypes": {
@@ -4863,7 +5509,45 @@
     "618": "riverglass_otter",
     "619": "moonshadow_lynx",
     "620": "glacier_harpy",
-    "621": "spectral_forest_knight"
+    "621": "spectral_forest_knight",
+    "622": "jadefeather_raptor",
+    "623": "glowhorn_sheep",
+    "624": "mire_goblin",
+    "625": "highland_orc",
+    "626": "crag_ogre",
+    "627": "glacier_troll",
+    "628": "verdant_cyclops",
+    "629": "russet_faun",
+    "630": "coal_kobold",
+    "631": "river_lizardfolk",
+    "632": "ironhorn_minotaur",
+    "633": "viridian_basilisk",
+    "634": "storm_chimera",
+    "635": "moonlit_unicorn",
+    "636": "shadow_warg",
+    "637": "snow_yeti",
+    "638": "moss_bugbear",
+    "639": "sporefolk",
+    "640": "owlbear",
+    "641": "river_capybara",
+    "642": "azure_axolotl",
+    "643": "dusk_camel",
+    "644": "ice_wolverine",
+    "645": "nightweave_spider",
+    "646": "amethyst_stone_golem",
+    "647": "arcane_core_colossus",
+    "648": "arcane_crystal_automaton",
+    "649": "black_iron_death_knight",
+    "650": "autumn_bark_treant",
+    "651": "elderwood_dryad_queen",
+    "652": "frost_stone_golem",
+    "653": "glacier_titan",
+    "654": "heartwood_treant",
+    "655": "moss_stone_troll",
+    "656": "river_stone_golem",
+    "657": "rune_stone_golem",
+    "658": "sunken_stone_colossus",
+    "659": "verdant_treant"
   },
   "creationOptions": [
     {
