@@ -56,11 +56,20 @@ the blow and calls its region up out of the ground in three stages).
   behind it is quiet; before that it tells you so. The first gate opens as
   the run begins.
 - **Waves.** A leg's wave lands when the first participant steps into its
-  room (`trigger: enter`), or the moment its gate opens (`at_gate`). Three
-  variants exist per leg per band, generated from the band's roster; one is
-  picked per run. `advance: cleared` opens the next gate when everything is
-  dead; `time:N` opens it N seconds after the wave lands whether or not it
-  is dead, which is what the bridges do - you can run them.
+  room (`trigger: enter`), or the moment its gate opens (`at_gate`). Every
+  wave is one kind of creature, in a shape the room calls for: a *pack* (so
+  many of one kind), a *swarm* (half as many again of a smaller kind, each
+  at four fifths of the road's level), *heavies* (a few of a bigger kind,
+  each a quarter over it), an *escort* (a pack with one of the next kind up
+  at its head, a quarter over the road's level) or, on the bridges, a
+  *pair* (two kinds in equal number). Each leg has one wave per shape its
+  kind takes, each of a different kind, generated from the band's roster
+  round the slice the leg's `late` names; the run picks one per leg, never
+  one whose kind the last room had, so the road changes creature and
+  number at every gate. `advance: cleared` opens the next gate when
+  everything is dead; `time:N` opens it N seconds after the wave lands
+  whether or not it is dead, which is what the bridges do - you can run
+  them.
 - **The fork.** Both branch gates open when the hub is quiet. The first
   branch gate a participant uses is the party's choice; the other seals.
   The gate after the fork opens when the chosen branch is quiet.

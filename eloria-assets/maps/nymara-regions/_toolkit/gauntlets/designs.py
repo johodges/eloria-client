@@ -24,8 +24,14 @@ full when the party comes through).
 
 A band is one difficulty of the same route: an a/d bracket, a roster to
 draw waves from, a boss. Waves are generated per leg from the roster by the
-server tool (three variants each, one picked at random per run), so the same
-road is never quite the same run twice; `pressure` on a leg scales how many.
+server tool: every wave is one kind of creature - a pack of badgers, a
+swarm of mites, three bears - drawn from round the slice of the roster the
+leg's `late` names, in one of the shapes below (WAVE_SHAPES) that the leg's
+kind calls for (KIND_SHAPES, or the leg's own `shapes`). Each leg gets one
+wave per shape, all of a different kind, and no shape's wave has the kind
+the same shape had in the leg before, so a run that picks one wave per leg
+(never the kind the last room had) meets a different creature, in a
+different number, at every gate. `pressure` on a leg scales how many.
 """
 from __future__ import annotations
 
@@ -45,6 +51,38 @@ class Leg:
     plaque: tuple = ()             # (title, text)
     branches: tuple = ()           # fork only: two (id, name, kind) ways
     late: float = 0.0              # 0..1: how far up the roster this leg draws
+    shapes: tuple = ()             # WAVE_SHAPES names, one wave each; empty = the kind's (KIND_SHAPES)
+
+
+# How a wave is drawn: (how many of the kind, against the band's size and
+# the leg's pressure; the level each stands at, against the road's; what
+# else is in the room). Every wave is one kind. A swarm is more of a smaller
+# kind, each a little under the road's level; heavies are a few of a bigger
+# kind, each over it; an escort is a pack with one of the next kind up at
+# its head, standing over the road's level; a pair is two kinds in equal
+# number, the shape a bridge takes so that something comes at the heads and
+# something at the knees.
+WAVE_SHAPES: dict[str, tuple[float, float, str]] = {
+    "pack": (1.0, 1.0, ""),
+    "swarm": (1.5, 0.8, ""),
+    "heavies": (0.6, 1.25, ""),
+    "escort": (0.85, 1.0, "leader"),
+    "pair": (1.0, 1.0, "half"),
+}
+# The shapes a kind of room takes when its leg names none: one wave of each.
+KIND_SHAPES: dict[str, tuple[str, ...]] = {
+    "hall": ("pack", "escort", "heavies"),
+    "cavern": ("swarm", "pack", "escort"),
+    "bridge": ("pack", "pair", "swarm"),
+    "stair": ("heavies", "pack", "escort"),
+    "gallery": ("swarm", "escort", "pack"),
+    "fork": ("pack", "heavies", "swarm"),
+}
+# How far off the leg's slice of the roster a shape draws its kind: a swarm
+# from the smaller kinds below it, heavies from the bigger kinds above.
+SHAPE_REACH: dict[str, float] = {"swarm": -1.0, "heavies": 1.0}
+# The level a wave's leader stands at, against the road's.
+LEADER_LEVEL = 1.25
 
 
 @dataclass(frozen=True)
