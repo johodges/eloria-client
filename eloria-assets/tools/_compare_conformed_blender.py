@@ -52,11 +52,20 @@ def drop_materials(objs):
     if not DROP:
         return
     import bmesh
+    import re
+
+    # Blender suffixes a duplicate material name on import -- the second model
+    # in the frame carries "... Liner.001" -- so matching the raw name drops
+    # the layer from the first column only, and the comparison silently shows
+    # one piece bare beside another still wearing its underlayer.
+    def bare(name):
+        return re.sub(r"\.\d{3}$", "", name)
+
     for obj in objs:
         if obj.type != "MESH":
             continue
         hide = {i for i, slot in enumerate(obj.material_slots)
-                if slot.material and any(slot.material.name.endswith(d)
+                if slot.material and any(bare(slot.material.name).endswith(d)
                                          for d in DROP)}
         if not hide:
             continue
