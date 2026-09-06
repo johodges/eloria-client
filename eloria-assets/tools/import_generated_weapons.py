@@ -21,11 +21,11 @@ the body -- a sword is as long as a sword whoever swings it -- so each class
 carries its own length, taken off the authored props in
 ``conform_equipment.PROP_KIND``.
 
-``flip`` is per item and is the one thing that cannot be derived.  Nothing in
-a mesh says which end is the tip: a guard is the widest part of a sword and
-sits low, an axe head is the widest part of an axe and sits high.  It is set
-by looking at a render, the way lowpoly_rigged/models.json sets a donor's
-facing.
+``flip`` and ``roll`` are per item and are the two things that cannot be
+derived.  Nothing in a mesh says which end is the tip: a guard is the widest
+part of a sword and sits low, an axe head is the widest part of an axe and sits
+high.  Nothing says which way a curved head hooks either.  Both are set by
+looking at a render, the way lowpoly_rigged/models.json sets a donor's facing.
 
   python import_generated_weapons.py             build and write
   python import_generated_weapons.py --dry-run
@@ -396,7 +396,20 @@ DESIGNS = [
 #: greatswords come out blade down like every other blade, except this one.
 #: Each line is settled by looking at a render.
 FLIP_EXCEPTIONS = {
+    # Arrives crescent up, where the blades arrive point down: turning it with
+    # its class buried the grip and stood the crescent on the floor, so the
+    # fist closed on the flat of the blade with the haft out behind it.
+    "030_crescent_spellblade_sickle",
     "097_void_glass_greatblade",
+}
+
+#: Pieces that sit in the hand the right way up but face the wrong way about
+#: their own haft.  End-for-end cannot reach this: a crescent is drawn hooking
+#: one way, and which way that is decides whether the edge falls above the fist
+#: or below it.  Settled by looking at a render, like the flip.
+ROLL_EXCEPTIONS = {
+    # Rides edge up otherwise, where a sickle is carried hooking down.
+    "030_crescent_spellblade_sickle",
 }
 
 #: How a prop is laid into the hand, as a socket this set overrides the shared
@@ -501,13 +514,14 @@ def prop_sockets(rig, race: Path, library: Path, base: dict) -> dict:
 
 class Piece:
     __slots__ = ("source", "slug", "name", "kind", "part", "visual", "item_id",
-                 "image_id", "flip")
+                 "image_id", "flip", "roll")
 
     def __init__(self, source, slug, name, kind, part, visual, item_id,
-                 image_id, flip):
+                 image_id, flip, roll):
         self.source, self.slug, self.name, self.kind = source, slug, name, kind
         self.part, self.visual = part, visual
         self.item_id, self.image_id, self.flip = item_id, image_id, flip
+        self.roll = roll
 
 
 def roster() -> list[Piece]:
@@ -527,7 +541,7 @@ def roster() -> list[Piece]:
         pieces.append(Piece(
             source, stem[4:], label, kind, part, nxt[part],
             FIRST_ITEM_ID + index, FIRST_IMAGE_ID + index,
-            stem in FLIP_EXCEPTIONS))
+            stem in FLIP_EXCEPTIONS, stem in ROLL_EXCEPTIONS))
         nxt[part] += 1
     return pieces
 
@@ -641,7 +655,7 @@ def main() -> int:
         for p in pieces:
             try:
                 info = ce.build(p.source, EQUIPMENT / ("%s.glb" % p.slug), rig,
-                                p.kind, p.name, flip=p.flip)
+                                p.kind, p.name, flip=p.flip, roll=p.roll)
             except Exception as exc:                      # noqa: BLE001
                 print("  FAILED %-30s %s" % (p.slug, exc))
                 failed += 1
