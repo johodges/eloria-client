@@ -1232,6 +1232,45 @@ def _push_axis(points: np.ndarray, indices: np.ndarray, rig: ea.Rig,
     return pushed
 
 
+#: The few millimetres a sleeve must stand off the liner, on top of the lift
+#: the liner already has.  Read against ``LINER_LIFT`` at the call rather than
+#: folded into a constant here, because that one is defined further down with
+#: the rest of the liner and this file reads top to bottom.
+SLEEVE_MARGIN = 0.005
+
+
+def _clear_sleeves(points: np.ndarray, rig: ea.Rig, sleeve: np.ndarray,
+                   clearance: float | None = None) -> tuple[np.ndarray, int]:
+    """Let a sleeve out until it clears the liner over the arm it covers.
+
+    Everything else the torso branch does draws the piece IN, and it exempts
+    the sleeves on the reasoning that a sleeve is fitted to its limb already.
+    Seated geometry is not.  ``seat`` sizes girth from the design's own
+    proportions, so a figure drawn with slimmer arms than the rig has puts its
+    sleeve *inside* the arm -- 25 mm inside it on the legendary hero cuirass,
+    where the liner then stands 34 mm proud of the armour across the top of the
+    shoulder and the piece reads as a black band between pauldron and elbow.
+    The armour was there the whole time; it was underneath.
+
+    So the sleeve is let out about its own arm's axis, the way the limb
+    garments are cleared, and outward only: a sleeve already clear of the liner
+    keeps exactly the shape the design gave it.
+    """
+    if clearance is None:
+        clearance = LINER_LIFT + SLEEVE_MARGIN
+    moved = np.array(points, dtype=np.float64)
+    pushed = 0
+    for side in ("l", "r"):
+        mine = points[:, 0] >= 0 if side == "l" else points[:, 0] < 0
+        own = np.flatnonzero(sleeve & mine)
+        pushed += _push_axis(points, own, rig,
+                             rig.origin("upperarm_%s" % side),
+                             rig.origin("hand_%s" % side),
+                             ["upperarm_%s" % side, "lowerarm_%s" % side,
+                              "hand_%s" % side], clearance, moved)
+    return moved, pushed
+
+
 def grow_clear(points: np.ndarray, triangles: np.ndarray, rig: ea.Rig,
                region: str, clearance: float = CLEARANCE,
                limit: float = 1.35) -> tuple[np.ndarray, float]:
@@ -2404,6 +2443,11 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
         step0["backFloored"] = _floor_backplate(seated, rig, region, ~exempt)
         step0["floatersSettled"] = _settle_floaters(
             seated, surface.indices.reshape(-1, 3), rig, region)
+        # And the one pass that lets geometry OUT.  Everything above pulls the
+        # piece in against the body; a sleeve seated inside the arm needs the
+        # opposite, or the liner surfaces through it and the shoulder goes
+        # black.
+        seated, step0["sleevesCleared"] = _clear_sleeves(seated, rig, exempt)
     elif region in ("legs", "boots"):
         # Legwear is chunky for the same reason: sized to the design's own
         # girth, it stands proud of the leg.  With the leg's own skin hidden
