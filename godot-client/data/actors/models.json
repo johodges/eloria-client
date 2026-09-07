@@ -910,7 +910,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/red_fox.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 0.294118,
+        "scale": 0.176471,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -1080,7 +1080,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/thunder_ram.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.129,
+        "scale": 0.588327,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -1624,7 +1624,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/crimson_duelist.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.088235,
+        "scale": 1.058823,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -3630,7 +3630,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/moss_bear.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.176471,
+        "scale": 1.058824,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -3681,7 +3681,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/drowned_lich_king.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.352941,
+        "scale": 1.368037,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -4551,7 +4551,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/emerald_canopy_dragon.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.909004,
+        "scale": 2.545339,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -4687,7 +4687,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/jadefeather_raptor.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.058824,
+        "scale": 1.081594,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -4704,7 +4704,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/glowhorn_sheep.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 0.588235,
+        "scale": 0.577267,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -4721,7 +4721,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/mire_goblin.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 0.705882,
+        "scale": 0.676024,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -4738,7 +4738,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/highland_orc.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.117647,
+        "scale": 1.148661,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -4755,7 +4755,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/crag_ogre.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.470588,
+        "scale": 1.500011,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -4789,7 +4789,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/verdant_cyclops.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.882353,
+        "scale": 1.895565,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -4806,7 +4806,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/russet_faun.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 0.941176,
+        "scale": 0.806393,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -4823,7 +4823,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/coal_kobold.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 0.647059,
+        "scale": 0.626003,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -4840,7 +4840,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/river_lizardfolk.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.058824,
+        "scale": 1.031322,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -4857,7 +4857,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/ironhorn_minotaur.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.411765,
+        "scale": 1.616084,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -4874,7 +4874,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/viridian_basilisk.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 0.705882,
+        "scale": 0.686433,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -4891,7 +4891,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/storm_chimera.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.176471,
+        "scale": 1.203991,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -4908,7 +4908,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/moonlit_unicorn.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.058824,
+        "scale": 1.032999,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -4925,7 +4925,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/shadow_warg.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 0.823529,
+        "scale": 0.805689,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -4942,7 +4942,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/snow_yeti.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.529412,
+        "scale": 1.549893,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -4959,7 +4959,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/moss_bugbear.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.235294,
+        "scale": 1.209943,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -4976,7 +4976,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/sporefolk.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 0.764706,
+        "scale": 0.751412,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -4993,7 +4993,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/owlbear.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.352941,
+        "scale": 1.374707,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5027,7 +5027,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/azure_axolotl.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 0.294118,
+        "scale": 0.163702,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5044,7 +5044,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/dusk_camel.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.176471,
+        "scale": 1.152838,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5061,7 +5061,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/ice_wolverine.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 0.411765,
+        "scale": 0.401442,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5078,7 +5078,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/nightweave_spider.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 0.705882,
+        "scale": 0.293873,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5095,7 +5095,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/amethyst_stone_golem.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.529412,
+        "scale": 2.352942,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5112,7 +5112,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/arcane_core_colossus.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 2,
+        "scale": 2.313476,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5129,7 +5129,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/arcane_crystal_automaton.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.294118,
+        "scale": 1.058824,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5163,7 +5163,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/autumn_bark_treant.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.882353,
+        "scale": 1.764706,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5197,7 +5197,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/frost_stone_golem.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.529412,
+        "scale": 2.352942,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5214,7 +5214,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/glacier_titan.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 2.117647,
+        "scale": 2.352941,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5248,7 +5248,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/moss_stone_troll.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.647059,
+        "scale": 1.618163,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5265,7 +5265,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/river_stone_golem.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.470588,
+        "scale": 2.352941,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5282,7 +5282,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/rune_stone_golem.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.529412,
+        "scale": 2.352942,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5299,7 +5299,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/sunken_stone_colossus.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.882353,
+        "scale": 2.352941,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5333,7 +5333,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/giant_praying_mantis.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.294118,
+        "scale": 0.470588,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5350,7 +5350,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/tidal_claw_construct.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.058824,
+        "scale": 0.470588,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5537,7 +5537,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/obsidian_bear.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.294,
+        "scale": 1.058727,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5571,7 +5571,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/giant_badger.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 0.471,
+        "scale": 0.470412,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5639,7 +5639,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/cave_salamander.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 0.412,
+        "scale": 0.411412,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5656,7 +5656,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/sapphire_peafowl.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 0.647,
+        "scale": 0.705818,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5673,7 +5673,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/gloom_wyvern.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.412,
+        "scale": 1.765,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5707,7 +5707,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/barnacle_ogre.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1.471,
+        "scale": 1.529228,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
@@ -5724,7 +5724,7 @@
       "animationLibrary": "res://assets/actors/native/creatures/ember_leaf_spirit.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 0.824,
+        "scale": 0.823412,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
