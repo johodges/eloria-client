@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "sources": {
     "profile": "eloria",
-    "recipesSha256": "a1598d8edfeeaac01f8c04089312a0121427a8c41230d9c4d6e9b21b9264042e",
-    "itemsSha256": "9d1b69efd7c9d78c44182e7ac7a0815d9187d87bfabb6b72f81db10789de6c9c",
+    "recipesSha256": "325ce4f59c714cc67869a26b6e3f59f4eec90e7fdfc597b6af246fca343cd87d",
+    "itemsSha256": "4ca27e50fd5490d4be3bb74413bdc577c5098e98dba2b8393ded2db4f06b6cdf",
     "booksSha256": "dbaf97061c7578ece676a3d6ff122d25af0bb69a01d4c4bcec9b16653df00329"
   },
   "recipes": [
@@ -5038,7 +5038,7 @@
       "food": 4,
       "mana": 0,
       "knowledge": "Fine Tailoring",
-      "knowledgeIndex": 6,
+      "knowledgeIndex": 5,
       "ingredients": [
         {
           "name": "Cloth Roll",
@@ -11826,7 +11826,7 @@
       "food": 4,
       "mana": 0,
       "knowledge": "Fine Tailoring",
-      "knowledgeIndex": 6,
+      "knowledgeIndex": 5,
       "ingredients": [
         {
           "name": "Leather",
@@ -11897,7 +11897,7 @@
       "food": 4,
       "mana": 0,
       "knowledge": "Fine Tailoring",
-      "knowledgeIndex": 6,
+      "knowledgeIndex": 5,
       "ingredients": [
         {
           "name": "Leather",
@@ -11968,7 +11968,7 @@
       "food": 4,
       "mana": 0,
       "knowledge": "Fine Tailoring",
-      "knowledgeIndex": 6,
+      "knowledgeIndex": 5,
       "ingredients": [
         {
           "name": "Leather",
@@ -31651,8 +31651,8 @@
       "experience": 404,
       "food": 5,
       "mana": 8,
-      "knowledge": "Fine Jewellery",
-      "knowledgeIndex": 5,
+      "knowledge": "Focus Cutting",
+      "knowledgeIndex": 6,
       "ingredients": [
         {
           "name": "Wood Plank",
@@ -31713,8 +31713,8 @@
       "experience": 408,
       "food": 5,
       "mana": 8,
-      "knowledge": "Fine Jewellery",
-      "knowledgeIndex": 5,
+      "knowledge": "Focus Cutting",
+      "knowledgeIndex": 6,
       "ingredients": [
         {
           "name": "Wood Plank",
@@ -31775,8 +31775,8 @@
       "experience": 408,
       "food": 5,
       "mana": 8,
-      "knowledge": "Fine Jewellery",
-      "knowledgeIndex": 5,
+      "knowledge": "Focus Cutting",
+      "knowledgeIndex": 6,
       "ingredients": [
         {
           "name": "Wood Plank",
@@ -31837,8 +31837,8 @@
       "experience": 408,
       "food": 5,
       "mana": 8,
-      "knowledge": "Fine Jewellery",
-      "knowledgeIndex": 5,
+      "knowledge": "Focus Cutting",
+      "knowledgeIndex": 6,
       "ingredients": [
         {
           "name": "Wood Plank",

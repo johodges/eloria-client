@@ -2,7 +2,7 @@
   "version": 1,
   "source": {
     "profile": "eloria",
-    "itemsSha256": "9d1b69efd7c9d78c44182e7ac7a0815d9187d87bfabb6b72f81db10789de6c9c",
+    "itemsSha256": "4ca27e50fd5490d4be3bb74413bdc577c5098e98dba2b8393ded2db4f06b6cdf",
     "booksSha256": "dbaf97061c7578ece676a3d6ff122d25af0bb69a01d4c4bcec9b16653df00329",
     "algorithm": "server load_books insertion order, excluding repeatable books"
   },
@@ -12,8 +12,8 @@
     "Clockwork",
     "Cured Leatherwork",
     "Fine Brewing",
-    "Fine Jewellery",
     "Fine Tailoring",
+    "Focus Cutting",
     "Gem Setting",
     "Iron Working",
     "Master Armoury",
