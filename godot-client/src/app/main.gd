@@ -10176,7 +10176,12 @@ func _model_for_actor(dto: Dictionary) -> String:
 	return "luminous_female" if actor_type_value == 0 else "luminous_male"
 
 func _presentation_dto(dto: Dictionary) -> Dictionary:
-	var result: Dictionary = dto.duplicate(true)
+	# A shallow copy. Two top-level keys are replaced below and nothing that
+	# reads the result ever writes into its nested dictionaries - the same
+	# reasoning ActorReducer.apply_command records - so a deep copy of every
+	# actor record on every packet bought nothing. It cost about a fifth of a
+	# millisecond a frame with a hundred actors moving at once.
+	var result: Dictionary = dto.duplicate(false)
 	# Creation bytes (skin, hair, shirt, pants, boots, head, eyes) select skinned
 	# surfaces already authored into each actor GLB, so they are deliberately
 	# never reinterpreted as rigid BoneAttachment3D equipment and contribute

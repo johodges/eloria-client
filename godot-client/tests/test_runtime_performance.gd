@@ -230,6 +230,27 @@ func _run() -> void:
 	scene.call("_sync_world")
 	NativeAnimationImporter.clear()
 
+	# The presentation record is copied shallowly: two keys are replaced and
+	# nothing that reads it writes into what is left.
+	var record: Dictionary = {"actor_id": 11, "x": 4, "y": 5, "rotation": 0,
+		"actor_type": 1, "kind": 1, "name": "Shallow", "health": 5,
+		"max_health": 9, "appearance": {"hair": 2},
+		"equipment_fallback_parts": [3]}
+	var presented: Dictionary = scene.call("_presentation_dto", record)
+	_expect(not is_same(presented, record),
+		"the presentation record is a copy, so its own keys do not reach AppState")
+	_expect(is_same(presented["appearance"], record["appearance"])
+		and is_same(presented["equipment_fallback_parts"],
+			record["equipment_fallback_parts"]),
+		"what it does not replace is shared rather than copied a level at a time")
+	_expect(not is_same(presented["equipment_visuals"],
+		record.get("equipment_visuals")),
+		"the wardrobe it does build is its own")
+
+	# An actor packet restates the whole wardrobe. Asking for what is already
+	# worn does nothing, and the first pass always runs in full.
+	await _check_wardrobe_repeat()
+
 	# A region names the same mesh on hundreds of nodes. The trimesh shape only
 	# depends on the mesh, so it is built once per mesh per load and shared by
 	# every body standing on it, and the import is walked once for every pass
@@ -240,6 +261,43 @@ func _run() -> void:
 	scene.queue_free()
 	await process_frame
 	quit(failures)
+
+func _check_wardrobe_repeat() -> void:
+	var actor := ReplicatedActor3D.new()
+	root.add_child(actor)
+	var model := Node3D.new()
+	model.name = "NativeModel"
+	actor.add_child(model)
+	# The one surface the cover pass writes to on every run: a wardrobe shirt
+	# with a colour of its own and an override to put it on.
+	var shirt := MeshInstance3D.new()
+	shirt.name = "wardrobe_shirt"
+	shirt.mesh = BoxMesh.new()
+	shirt.set_meta("wardrobe_color", Color.SEA_GREEN)
+	var material := StandardMaterial3D.new()
+	shirt.material_override = material
+	model.add_child(shirt)
+	await process_frame
+
+	actor.apply_equipment_visuals({}, [])
+	_expect(material.albedo_color == Color.SEA_GREEN,
+		"the first wardrobe pass runs in full however little it changes")
+	material.albedo_color = Color.MAGENTA
+	actor.apply_equipment_visuals({}, [])
+	_expect(material.albedo_color == Color.MAGENTA,
+		"asking again for the clothes already worn does nothing")
+	_expect(not actor.call("_equipment_matches", {5: 208}, []),
+		"a wardrobe that differs is not mistaken for the one worn")
+	# The part loop's own second condition: a part the server offers a fallback
+	# for is rebuilt while it has no nodes, so the pass may not be skipped.
+	actor.set("_equipment_visuals", {5: 208})
+	actor.set("_equipment_nodes", {})
+	_expect(actor.call("_equipment_matches", {5: 208}, []),
+		"the same visual on the same part is a match")
+	_expect(not actor.call("_equipment_matches", {5: 208}, [5]),
+		"a part offered a fallback with nothing built for it is not")
+	actor.queue_free()
+	await process_frame
 
 func _check_world_loader() -> void:
 	var loader := WorldLoader.new()
