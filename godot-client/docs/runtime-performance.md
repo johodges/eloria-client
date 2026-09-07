@@ -165,12 +165,213 @@ second rig never parses the 11 MB file again.
 picture, and command 226's descriptions are indexed by slot once per list
 rather than searched for every slot of every refresh.
 
+## Third pass: map load, memory, a hundred creatures, a packet burst
+
+Measured 2026-09-07 on `roadmap/clientperf` at 1280x720 on the GL Compatibility
+renderer with an RTX 5080 laptop GPU, by
+`tests/integration/client_benchmarks.gd`. Four things the first two passes
+never put a number on.
+
+**How to run it, and why in two goes.**
+
+```
+# scene CPU
+Godot --headless --path . --script res://tests/integration/client_benchmarks.gd
+# GPU, draw calls and memory
+Godot --audio-driver Dummy --rendering-method gl_compatibility --path . \
+      --script res://tests/integration/client_benchmarks.gd
+```
+
+Headless, with `OS.low_processor_usage_mode_sleep_usec = 1` and
+`Engine.max_fps = 0`, wall time per frame is the scene tree's own CPU cost:
+without that the engine pads every headless frame to 6.9 ms because no window
+can draw. Windowed, the renderer's own timers
+(`viewport_set_measure_render_time` on the root viewport and on the 3D
+SubViewport) are the only frame numbers worth having - a windowed run's wall
+clock is the compositor's refresh steps - and `RENDERING_INFO_TEXTURE_MEM_USED`
+and friends read zero under the headless dummy driver, so texture, buffer and
+video memory only mean anything there. `ELORIA_BENCH_SECTIONS` picks the
+sections; `ELORIA_BENCH_MAP_REPEATS` takes the median of several loads.
+
+**This machine is shared** with about a dozen other agent sessions, so a single
+load's wall time varies by a tenth either way and the load column below is a
+median of three. The memory columns do not vary and are the ones to read.
+
+### Map load and what a region holds
+
+Median of three loads per region, windowed. `WorldLoader.load_world` only: the
+manifest, the glTF parse, the mip chains, `generate_scene`, the collision and
+walk-surface bodies and the static batching. Resident is
+`OS.get_static_memory_usage()` while the region is up.
+
+| region | load ms before | after | resident MB before | after | texture MB |
+| --- | --- | --- | --- | --- | --- |
+| four_gates | 1031 | 1037 | 65.9 | 64.4 | 79.7 |
+| mirrorhold | 1428 | 1377 | 110.3 | 98.0 | 69.3 |
+| crownwater | 1125 | 1420 | 83.9 | 82.5 | 51.9 |
+| whitehorn_range | 1125 | 1206 | 103.2 | 101.5 | 54.2 |
+| amethyst_barrens | 1137 | 997 | 85.0 | 83.4 | 53.4 |
+| sunmane_steppe | 695 | 525 | 72.5 | 57.0 | 13.9 |
+| amberwood | 5049 | 3941 | 272.6 | 177.4 | 75.3 |
+| grey_moors | 3074 | 3080 | 129.1 | 127.2 | 73.5 |
+| westhaven | 1416 | 1371 | 112.9 | 111.0 | 65.6 |
+| verdant_stair | 4729 | 4366 | 149.0 | 142.8 | 66.3 |
+| ssarathi_ruins | 1245 | 1238 | 102.4 | 101.9 | 61.9 |
+| manymouth_delta | 2388 | 2104 | 134.2 | 133.3 | 63.1 |
+| **twelve regions** | **24 442** | **22 661** | **1 421** | **1 280** | |
+
+Where a region's load went before this pass, phase by phase, taken by walking
+the loader's own steps against a fresh import (windowed, milliseconds):
+
+| | four_gates | sunmane | amberwood | verdant_stair |
+| --- | --- | --- | --- | --- |
+| glTF parse | 320 | 134 | 550 | 405 |
+| mip chains | 230 | 66 | 137 | 272 |
+| `generate_scene` | 88 | 73 | 2 593 | 3 003 |
+| declared collision | 6 | 124 | 638 | 22 |
+| walk surfaces | 231 | 109 | 377 | 528 |
+| the three material and index walks | 7 | 3 | 25 | 48 |
+| static batching | 18 | 18 | 45 | 63 |
+
+`generate_scene` is Godot's own glTF scene builder and is the whole of the two
+worst regions: Amberwood imports 9 106 mesh nodes and Verdant Stair 12 243, and
+the cost is worse than linear in them - Four Gates builds 3 028 in 88 ms. That
+is not addressable from here; the collision and the walks are, and were.
+
+**Nothing leaks between maps.** Unloading a region gives back everything it
+took, to within a rounding error, on nine of the twelve; the other three
+(Four Gates +9.9 MB, Amberwood +10.1 MB, Verdant Stair +5.6 MB) are one-time
+high-water marks in the allocator rather than a per-load leak, which is what
+the revisit says: after the whole tour, loading Four Gates a second time costs
+what it cost the first time and gives all of it back (-0.14 MB). Across the
+whole tour the process keeps 26.8 MB of resident memory, 0.67 MB of texture
+memory and no buffer memory, before and after this pass alike.
+
+### A hundred creatures
+
+A hundred creatures of ten species spread over sixty tiles square on Four
+Gates, at the import scales the resized roster now uses, with the local player
+standing in the middle of them - which is what puts the gameplay camera in the
+crowd. The gate classifies them 51 full, 1 half, 48 paused. Scene CPU is
+headless with the idle sleep removed; the render numbers are the 3D
+SubViewport's own timers, windowed. "Walking" is every one of the hundred
+taking a step in the same frame - a resync or a very dense fight, not an
+ordinary second, since the server paces a step at a time per actor.
+
+| | before | after |
+| --- | --- | --- |
+| Empty map, scene CPU per frame | 0.05 ms | 0.06 ms |
+| A hundred idle, scene CPU per frame | 0.96, 0.91 ms | 0.94, 0.98 ms |
+| A hundred walking, scene CPU per frame | 8.44, 9.44 ms | 6.64, 7.65 ms |
+| of which re-presenting the actors | 5.38, 6.03 ms | 3.61, 4.13 ms |
+| Building the pack of a hundred | 1.09, 1.14 s | 1.11, 1.21 s |
+| World GPU per frame, empty / crowd | 0.35 / 4.24 ms | 0.42 / 4.21 ms |
+| Draw calls, empty / crowd | 122 / 570 | 122 / 570 |
+| Texture memory, empty / crowd | 110 / 320 MB | 110 / 320 MB |
+
+Two numbers there are worth keeping in mind and neither moved, because neither
+should have: the crowd is 4.2 ms of GPU a frame, and it is 210 MB of texture
+memory. The 210 MB is ten species, not a hundred bodies - the eleventh actor of
+a species costs 4 KB of texture memory, so `GlbSceneCache` is sharing what it
+hands out - and two humanoid rigs in that ten carry a 2048x2048 base colour and
+a 2048x2048 normal each, which is 64 MB of the total on its own. Actor textures
+are uncompressed and have no mip chain; the map's do.
+
+### A burst of packets
+
+Five hundred packets in one buffer - 300 actor-move packets of eight actors
+each, 100 partial stats, 100 chat lines - drained with
+`EloriaProtocol.try_decode` at an offset and reduced through `AppState`.
+Headless, median of three runs.
+
+| | before | after |
+| --- | --- | --- |
+| Decoding the whole burst | 0.50 ms | 0.53 ms |
+| Decoding and reducing it | 15.2 ms | 12.5 ms |
+| of which the actor moves (2 400 commands) | 8.85 ms | 9.08 ms |
+| of which the partial stats | 3.09 ms | 1.03 ms |
+| of which the chat | 1.62 ms | 1.52 ms |
+| Per packet | 30.4 us | 25.1 us |
+
+Decoding is a fortieth of the cost; the reducer is the rest.
+
+### What this pass changed
+
+**A region's collision is built once per mesh.** A region names the same
+handful of meshes over and over - Amberwood declares collision on 862 nodes
+that between them reference 91 meshes - and `WorldLoader` built a fresh trimesh
+shape for every node, walking the same geometry triangle by triangle and giving
+it its own BVH in the physics server each time. Shapes are now built once per
+mesh per load and shared by every body standing on one, which is how an
+instanced scene has always worked: the faces are in the mesh's own space and
+the placement lives on the body's parent. The table is per load. Amberwood
+lost 95 MB of resident memory and 1.1 s of its load; Sunmane 15 MB and 0.17 s.
+
+**The import is walked once.** Four `find_children` over as many as fifteen
+thousand nodes, plus a name index, became one traversal shared by every pass,
+and the two material passes share one loop over it.
+
+**An actor that has not changed its clothes is not redressed.** Every actor
+packet restates the whole wardrobe and almost none of them change it.
+`apply_equipment_visuals` reconciled the request part by part, skipped every
+part that agreed, and then walked the model's meshes again in
+`_refresh_wardrobe_cover`. A request that matches in full now returns at once;
+the first pass always runs, so nothing an actor is built with is skipped. That
+was 0.64 ms of a frame with a hundred actors in it.
+
+**The presentation record is copied shallowly.** `_presentation_dto` replaces
+two top-level keys and nothing that reads the result writes into what is left,
+which is the reasoning `ActorReducer.apply_command` already records.
+
+**A stat's name is read out of a table, not built with one.** `stat_key()`
+built a ninety-entry dictionary, looked one name up in it and threw it away,
+several times per partial-stat packet - and one of those arrives with every
+health, food and experience tick. `decode_stats` did the same with its three
+slot tables and rebuilt its six-name resource list once per resource to search
+it for the index the loop already had. All constants now. A chat line is
+sliced out of its payload once and read twice instead of being copied for each
+reading.
+
+### What to try next
+
+* **`generate_scene` is the map load.** Two and a half to three seconds of
+  Amberwood's and Verdant Stair's four are Godot building nine to twelve
+  thousand mesh nodes, and the client cannot make that faster - but it could
+  stop blocking on it. The animation library is already parsed on a worker
+  thread (`NativeAnimationImporter.prewarm`); a glTF map parse builds nodes
+  that belong to no tree in exactly the same way, so `load_world` could become
+  a thread plus the existing `load_completed` signal, and the client would stay
+  responsive through a four-second load instead of freezing. Every fixture
+  already waits for `world_root` rather than assuming it is there.
+* **Actor textures are 210 MB for ten species**, uncompressed and unmipped,
+  against 14-80 MB for a whole region. Mip chains would cost another third and
+  stop distant creatures shimmering; VRAM compression would cut it to a
+  quarter. Both change what is on screen, so both want a decision rather than a
+  patch.
+* **The actor-move reducer is 9 ms of a five-hundred-packet burst** and did not
+  move here. `ActorReducer.apply_command` copies the whole actor record per
+  command and `decode_server` builds a dictionary per command inside it: 2 400
+  of each for that burst.
+* **Re-presenting a walking crowd is still 4 ms a frame** for a hundred actors.
+  What is left is spread thin: about a quarter of it is the surface ray under
+  each actor that moved, and most of the rest is `apply_server_state`'s pacing
+  arithmetic, which is a hundred lines of GDScript run per actor per packet.
+* **A hundred creatures are 570 draw calls and 4.2 ms of GPU.** The static
+  batching that took a region from 9 237 draw calls to 335 does not apply to
+  skinned bodies; whether it can be made to is the next rendering question.
+
 ## Checking a change
 
 `tests/test_runtime_performance.gd` guards the viewport scheduling, the surface
 sample cache, the in-place packet decode, the shared icons, the actor change
 set, the hidden statistics window, the appended chat line, the prewarmed
-library and the spawn budget. `tests/test_animation_gate.gd` guards the gate's
-tiers and the one-shot exemption.
+library and the spawn budget; and from the third pass, the shared trimesh
+shapes and single import walk, the skipped wardrobe pass, the shallow
+presentation record and the decoders' constant tables.
+`tests/test_animation_gate.gd` guards the gate's tiers and the one-shot
+exemption. `tests/integration/client_benchmarks.gd` is the third pass's
+instrument and re-runs any of its four sections on demand.
 `tests/integration/sunmane_performance.gd` writes frame timings, draw calls and
 primitive counts as JSON for a region package.
+`tests/integration/sunmane_grounding.gd` and `sunmane_caves.gd` are what say
+the shared collision shapes still hold a player up and in.
