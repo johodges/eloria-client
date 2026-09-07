@@ -124,3 +124,71 @@ Two rules this toolkit now enforces rather than leaving to the author:
 Every build is seeded and reproduces its artefacts byte-for-byte. Name-derived
 seeds must use `noise.stable_hash()`, never the built-in `hash()`, which is
 salted per interpreter run and silently makes builds irreproducible.
+## Surveyed roads and tidal crossings
+
+`amberwood.routecraft.grade_road` cuts a bed of explicit full width into the
+heightfield and blends only the shoulders back to the slope. Heights belong to
+the actual polyline stations, including unequal segment lengths. It is opt-in:
+existing trail recipes and surface allocations are unchanged.
+
+`graded_causeway` builds a continuous mitred walking skin through 3D stations,
+with parapets outside the deck and piers below the slab. Landings must be
+authored just below its ends; run the three collision corrections afterwards.
+`crop_rows` supplies seeded planted grain using an existing material.
+
+A package may declare `contentLayout`: `services` gives role and world
+position, `wildlife` and `harvest` map labels to [x, z, radius] habitat
+discs, and `roadClearance` keeps wildlife away from its road waypoints.
+The server content generator converts these through the package transform.
+Authored habitats never fall back to a random tile elsewhere in the zone.
+
+The server collision sync, continent portal writer and content author accept
+--region <map> for a focused rebuild. Portal writes update both ends of links.
+Content writes preserve other maps and the original/generated node boundary;
+generated clusters are outputs, not input obstacles or the next starting ID.
+
+
+routecraft.annular_walk supplies an upward-facing promenade around a basin;
+its winding is checked because grounding uses face orientation, not shading
+normals. routecraft.vault_entry supplies a small covered cellar entrance with
+its front on +Z and no duplicate ground plane. Grade the threshold in the
+region and place its trigger outside the building.
+
+A transitions.Crossing may provide station_position=(x, z) when the usual
+automatic setback would land in water or on a cliff. Both vegetation
+reservation and final dressing use that position. A capture view with mode
+deck (or deck! with FIXED_VIEWS) samples the emitted Walk_ triangles even when
+the region does not export camera-views.json.
+
+
+routecraft.stair_flight emits one tread skin with risers and side faces,
+without nested boxes that leave internal coplanar faces. junglecraft.grand_stair
+accepts an optional surveyed length; junglecraft.stair_profile returns the
+matching flight and landing stations for grading its bed. Keep that bed below
+the walking skin and keep undergrowth off it even when its surface is rock.
+The optional entrance_steps on junglecraft.terrace_house meets its ground-floor
+plinth. Place a door trigger outside the wall, never at the roof-covered centre.
+
+
+navigation.crossings may declare an id and two world-space endpoints for
+each complete bridge or stair. The server records those standing points in
+row/column order for the crossing contract test. Prefer surveyed bank
+landings to endpoints guessed by a flood around a landmark. For a deck that
+ends over water, routecraft.crossing_endpoints insets its standing points
+from the geometric ends so half-open raster edges do not masquerade as doors.
+
+
+clear_walk_corridors removes encroaching dressing after placement using
+per-kind clearance widths, preserving the random draws made by the original
+population pass. Use it for hanging vines and canopy over bridges, where
+reserving only terrain cells at the two banks does not clear the view.
+
+A package declaring surveyed crossings uses its corrected authored fold
+directly on the server. The legacy landmark-centred bridge ramp is retained
+for older packages; applying that ramp to a surveyed sloping deck would pull
+the deck back toward neighbouring cliff heights and break the crossing.
+
+The client manifest's sun.direction follows the direction light travels
+(negative Y for daylight). Offline preview Lighting.sun_direction points
+toward the sun instead. Negate the vector when translating between them;
+review the result with --environment=manifest.

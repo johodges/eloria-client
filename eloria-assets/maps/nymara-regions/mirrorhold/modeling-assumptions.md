@@ -98,3 +98,26 @@ reasonably want to overrule the build.
     from an intact copy supplied in conversation, which could not be written to
     disk. The comparison sheet therefore compares against the truncated board,
     whose bottom row does not decode. See `validation-report.md`.
+
+
+## 2026-09-07: Sanctuary approach and cellar addresses
+
+The isolated Four Gates crossing is on the southern shore. Both northern
+passes were already connected in the native grid. The new Sanctuary bridge
+crosses the lake through the colonnaded island, keeping the citadel above the
+player's forward view. Its northern arm meets the quay road; the shorter east
+and west arms are fishing piers with skiffs and crates.
+
+The Lens Vault threshold is below and west of the orrery platform, the cistern
+threshold is beside the fountain court, and the Stair Cellars open at the foot
+of the town. Their previous positions were display-landmark centres, including
+the middle of the fountain and the armillary mount. Each now has a visible
+stone entrance, an apron and an approach drawn by the region.
+
+The information point, bank, crafting station and trainer share the south
+side of the fountain court. These services remain server-authored world
+objects, with positions constrained by the package's contentLayout.
+
+These changes reuse the existing pale masonry, marble, slate and carved wood.
+The common routecraft module supplies continuous decks, annular walking floors
+and cellar entrances. No surface classes or external assets were added.

@@ -1,27 +1,27 @@
 {
-  "nodes": 5416,
-  "meshes": 391,
+  "nodes": 3935,
+  "meshes": 416,
   "materials": 47,
   "images": 106,
   "textures": 106,
-  "accessors": 1572,
-  "bufferViews": 1678,
-  "uniqueTriangles": 525346,
-  "uniqueVertices": 400585,
-  "glbBytes": 30162596,
-  "instancedTriangles": 1228258,
-  "embeddedTextureBytes": 30715754,
+  "accessors": 1672,
+  "bufferViews": 1778,
+  "uniqueTriangles": 521884,
+  "uniqueVertices": 397267,
+  "glbBytes": 29861016,
+  "instancedTriangles": 994606,
+  "embeddedTextureBytes": 30504469,
   "textureMemoryBytesUncompressed": 268566528,
-  "placements": 2719,
+  "placements": 2435,
   "collision": {
     "width": 1152,
     "height": 1152,
     "cellMetres": 0.5,
-    "walkableCells": 698364,
-    "blockedCells": 628740,
-    "walkableFraction": 0.5262,
-    "elevatedDecks": 29,
-    "steepCells": 261856,
+    "walkableCells": 772912,
+    "blockedCells": 554192,
+    "walkableFraction": 0.5824,
+    "elevatedDecks": 31,
+    "steepCells": 222513,
     "reliefMetres": 99.87,
     "heightEncoding": {
       "origin": -1.2603,
@@ -44,18 +44,6 @@
         "metres": 3.14
       },
       {
-        "id": "gullscar-farmhouse-door",
-        "metres": 4.84
-      },
-      {
-        "id": "salvage-hole-mouth",
-        "metres": 2.88
-      },
-      {
-        "id": "east-road",
-        "metres": 6.67
-      },
-      {
         "id": "amber-berth",
         "metres": 1.45
       },
@@ -66,36 +54,29 @@
       {
         "id": "gullstone-door",
         "metres": 3.14
-      },
-      {
-        "id": "gullscar-farmhouse-door",
-        "metres": 4.84
-      },
-      {
-        "id": "salvage-hole-mouth",
-        "metres": 2.88
       }
     ]
   },
   "notes": [
-    "surf cards placed: 720",
+    "surf cards placed: 691",
     "surf breakers placed: 7",
     "jetties placed: 8",
-    "city houses placed: 385",
-    "trees placed: 254",
-    "ground dressing placed: 535",
+    "city houses placed: 144",
+    "Surveyed cart loop, two tidal crossings, enclosed Gullscar fields.",
+    "trees placed: 253",
+    "ground dressing placed: 518",
     "lore site league-post-house (The League Post-House): relief 1.80 m, 36 m from the ask",
-    "march north-road: 7 road pieces, 19 of grey_moors's growth",
-    "march east-road: 4 road pieces, 16 of manymouth_delta's growth",
+    "march north-road: 8 road pieces, 19 of grey_moors's growth",
+    "march east-road: 9 road pieces, 16 of manymouth_delta's growth",
     "march crownwater-berth: 0 road pieces, 0 of crownwater's growth",
     "march amber-berth: 0 road pieces, 0 of amberwood's growth"
   ],
   "lod2": {
-    "glbBytes": 17787544,
-    "nodes": 4055,
-    "uniqueTriangles": 439076,
-    "instancedTriangles": 1039220,
-    "sizeReductionPercent": 41.0,
-    "triangleReductionPercent": 15.4
+    "glbBytes": 17570124,
+    "nodes": 2651,
+    "uniqueTriangles": 435690,
+    "instancedTriangles": 812822,
+    "sizeReductionPercent": 41.2,
+    "triangleReductionPercent": 18.3
   }
 }

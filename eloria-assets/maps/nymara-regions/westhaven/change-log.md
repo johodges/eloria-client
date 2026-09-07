@@ -221,3 +221,31 @@ pairs that are both alpha-tested with vertex coverage.
 
 See `whitehorn_range/change-log.md` for the full account, including why the
 heightfield was not taken to one metre instead.
+## September 2026: a port with roads that reach its hinterland
+
+The quay, civic skyline and upland were individually legible but the circulation
+between them was not. Added a cart climb along the eastern shoulder, a link
+between the crown and north gate, lanes to the farm and watch, and a descent
+from the coast road to the bay. The farm and estate roads now skirt their
+buildings. Two raised, sloping crossings carry the existing shore track over
+the yard gully and the Lamp Rock saddle. Roads use surveyed station heights and
+a full-width bed, so hard terrace aprons cannot leave their ends stranded.
+
+Gullscar now has enclosed planted strips downhill of its house and a water
+store above them. Existing storage, crafting and information roles gather on
+the main quay, joined by combat practice. The server reads habitat and field
+discs from the package: common wildlife stays near the farm and bay, hounds
+occupy the outer upland, and the cart routes stay clear. This keeps the
+landscape and content generator working from the same layout.
+
+Town plots now reject overlapping roof envelopes and leave small gaps between
+houses. Window fronts project clear of the timber frame to remove their
+near-coplanar shimmer. All new pieces use the existing procedural palette;
+surveyed roads, mitred causeways and grain rows are shared toolkit recipes.
+
+The server's isolated-step correction also had a defect: adjusting one outlier
+clipped every high tile to 63 before stage selection. It now changes only the
+outlier. A regression test preserves an otherwise continuous high plateau,
+so a flat server grid can no longer conceal this class of broken approach.
+
+Validation and remaining limitations are recorded in `layout-review.md`.

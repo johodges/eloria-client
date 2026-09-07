@@ -19,7 +19,7 @@
     "bounds": {
       "min": [
         -504.0,
-        -11.1,
+        -12.0,
         -731.0
       ],
       "max": [
@@ -54,7 +54,7 @@
       0.0,
       0.0
     ],
-    "walkingHeight": 42.63,
+    "walkingHeight": 42.52,
     "invertServerY": true
   },
   "spawnPoints": [
@@ -62,7 +62,7 @@
       "id": "default",
       "position": [
         0.0,
-        42.68,
+        42.57,
         0.0
       ],
       "serverTile": [
@@ -77,7 +77,7 @@
       "id": "harbour",
       "position": [
         198.0,
-        4.55,
+        4.31,
         -18.0
       ],
       "serverTile": [
@@ -131,6 +131,9 @@
       "Building_CliffHouse_7",
       "Building_CliffHouse_8",
       "Building_CliffHouse_9",
+      "Building_VaultEntry_cistern-door",
+      "Building_VaultEntry_lens-vault-stair",
+      "Building_VaultEntry_stair-cellars-door",
       "Building_east-bench_0",
       "Building_east-bench_1",
       "Building_east-bench_2",
@@ -159,10 +162,6 @@
       "Landmark_Basin_0",
       "Landmark_Basin_1",
       "Landmark_Basin_2",
-      "Landmark_Causeway_0",
-      "Landmark_Causeway_1",
-      "Landmark_Causeway_2",
-      "Landmark_Causeway_3",
       "Landmark_Channel_0",
       "Landmark_Channel_1",
       "Landmark_Channel_2",
@@ -178,6 +177,10 @@
       "Landmark_GateWall",
       "Landmark_GateWing_-1",
       "Landmark_GateWing_1",
+      "Landmark_LakeLink_City",
+      "Landmark_LakeLink_EastPier",
+      "Landmark_LakeLink_Sanctuary",
+      "Landmark_LakeLink_WestPier",
       "Landmark_Orrery",
       "Landmark_OrreryDrum",
       "Landmark_Overlook",
@@ -281,6 +284,10 @@
       "Prop_OverlookRail_0",
       "Prop_OverlookRail_1",
       "Prop_OverlookRail_2",
+      "Prop_PierCrate_0",
+      "Prop_PierCrate_1",
+      "Prop_PierSkiff_0",
+      "Prop_PierSkiff_1",
       "Prop_PlazaLamp_0",
       "Prop_PlazaLamp_1",
       "Prop_PlazaLamp_2",
@@ -354,28 +361,90 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 622877,
-    "walkableFraction": 0.4694,
-    "openedWalkSurfaces": {
-      "prefix": "Walk_",
-      "cellsCovered": 21434,
-      "cellsWidened": 1294,
-      "cellsOpened": 5882,
-      "cellsRaised": 12666,
-      "cellsDrowned": 0,
-      "cellsInsideLandmarks": 0
-    },
+    "walkableCells": 626682,
+    "walkableFraction": 0.4722,
     "refinedHeights": {
       "levels": 255,
       "step": 0.962388,
       "origin": -0.6718,
-      "previousStep": 0.964743,
-      "cellsRestated": 197320,
-      "cellsFromGeometry": 622731,
-      "cellsKept": 146
+      "previousStep": 3.940913,
+      "cellsRestated": 624168,
+      "cellsFromGeometry": 625367,
+      "cellsKept": 67
+    },
+    "openedWalkSurfaces": {
+      "prefix": "Walk_",
+      "cellsCovered": 29498,
+      "cellsWidened": 1498,
+      "cellsOpened": 1248,
+      "cellsRaised": 11498,
+      "cellsDrowned": 0,
+      "cellsInsideLandmarks": 0
     }
   },
   "navigation": {
+    "crossings": [
+      {
+        "id": "Sanctuary",
+        "endpoints": [
+          [
+            156.0,
+            3.736290322580645,
+            82.3
+          ],
+          [
+            121.17130321416454,
+            6.019707169432739,
+            157.06295742866837
+          ]
+        ]
+      },
+      {
+        "id": "City",
+        "endpoints": [
+          [
+            156.0,
+            3.7,
+            37.7
+          ],
+          [
+            156.0,
+            3.7,
+            -14.5
+          ]
+        ]
+      },
+      {
+        "id": "WestPier",
+        "endpoints": [
+          [
+            133.7,
+            3.7,
+            60.0
+          ],
+          [
+            96.0,
+            3.7,
+            60.0
+          ]
+        ]
+      },
+      {
+        "id": "EastPier",
+        "endpoints": [
+          [
+            178.3,
+            3.7,
+            60.0
+          ],
+          [
+            216.0,
+            3.7,
+            60.0
+          ]
+        ]
+      }
+    ],
     "surfaceNodePrefixes": [
       "Terrain_",
       "Walk_"
@@ -402,6 +471,43 @@
       "Every terrain sub-mesh is named Terrain_<class>; every built walkable surface is named Walk_<...>. The client turns both into the navigation collision layer the grounding ray tests.",
       "Bridges and canopy platforms are walk surfaces, so a downward grounding ray under one resolves onto the deck above; the terrain beneath them is water or ravine and is not walkable."
     ]
+  },
+  "contentLayout": {
+    "services": [
+      {
+        "role": "information",
+        "position": [
+          122,
+          58,
+          -77
+        ]
+      },
+      {
+        "role": "storage",
+        "position": [
+          128,
+          58,
+          -76
+        ]
+      },
+      {
+        "role": "crafting_station",
+        "position": [
+          134,
+          58,
+          -76
+        ]
+      },
+      {
+        "role": "training",
+        "position": [
+          140,
+          58,
+          -75
+        ]
+      }
+    ],
+    "roadClearance": 5.0
   },
   "landmarks": [
     {
@@ -788,7 +894,7 @@
       "type": "transition",
       "position": [
         125.3,
-        -5.61,
+        5.49,
         162.0
       ],
       "note": "Where Mirrorhold gives way to Four Gates: luminous road furniture, a march stone, a waystation, and 0 pieces of the country beyond."
@@ -799,9 +905,9 @@
       "node": "March_south_road_Station",
       "type": "waystation",
       "position": [
-        131.5,
-        -11.0,
-        146.0
+        111.0,
+        5.99,
+        163.0
       ]
     },
     {
@@ -857,7 +963,7 @@
       "type": "transition",
       "position": [
         203.3,
-        4.5,
+        4.38,
         -24.0
       ],
       "note": "Where Mirrorhold gives way to Crownwater: luminous road furniture, a march stone, a waystation, and 0 pieces of the country beyond."
@@ -1133,7 +1239,7 @@
       "destinationSpawn": "mirror-watch-butts",
       "position": [
         116.6,
-        11.0,
+        7.44,
         149.5
       ],
       "authority": "server",
@@ -1237,13 +1343,13 @@
       "destinationMap": "mirrorhold_secrets",
       "destinationSpawn": "mirror-waystone",
       "position": [
-        123.2,
-        57.38,
+        118.0,
+        58.0,
         -77.0
       ],
       "authority": "server",
       "serverTile": [
-        297,
+        292,
         251
       ]
     },
@@ -1371,7 +1477,7 @@
       "label": "Harbour Master",
       "position": [
         198.0,
-        4.55,
+        4.31,
         -18.0
       ],
       "serverTile": [
@@ -1401,7 +1507,7 @@
       "label": "Cliff-town Factor",
       "position": [
         -24.0,
-        17.07,
+        17.05,
         -54.0
       ],
       "serverTile": [
@@ -1446,7 +1552,7 @@
       "label": "Shore Trader",
       "position": [
         -18.0,
-        8.08,
+        14.8,
         -24.0
       ],
       "serverTile": [
@@ -1461,7 +1567,7 @@
       "label": "South Watchman",
       "position": [
         108.0,
-        11.05,
+        8.39,
         156.0
       ],
       "serverTile": [
@@ -1605,7 +1711,7 @@
       "label": "Lens Quartz",
       "position": [
         -68.72,
-        67.6,
+        51.22,
         -37.93
       ],
       "serverTile": [
@@ -2164,7 +2270,7 @@
       "type": "map-transition",
       "position": [
         120.0,
-        5.67,
+        5.74,
         168.0
       ],
       "serverTile": [
@@ -2215,7 +2321,7 @@
       "type": "map-transition",
       "position": [
         198.0,
-        4.6,
+        4.36,
         -18.0
       ],
       "serverTile": [
@@ -2231,13 +2337,13 @@
       "name": "The Lens Vault",
       "type": "interior-entrance",
       "position": [
-        162.0,
-        134.45,
-        -267.0
+        137.0,
+        112.1,
+        -252.0
       ],
       "serverTile": [
-        336,
-        441
+        311,
+        426
       ],
       "landmark": "orrery",
       "destinationMap": "mirrorhold_interiors",
@@ -2250,13 +2356,13 @@
       "name": "The Mirror Cistern",
       "type": "interior-entrance",
       "position": [
-        132.0,
+        151.0,
         58.1,
-        -90.0
+        -80.0
       ],
       "serverTile": [
-        306,
-        264
+        325,
+        254
       ],
       "landmark": "plaza",
       "destinationMap": "mirrorhold_interiors",
@@ -2269,13 +2375,13 @@
       "name": "The Stair Cellars",
       "type": "interior-entrance",
       "position": [
-        -24.0,
+        -49.0,
         17.1,
-        -54.0
+        -47.0
       ],
       "serverTile": [
-        150,
-        228
+        125,
+        221
       ],
       "landmark": "cliff-town",
       "destinationMap": "mirrorhold_interiors",
@@ -2290,7 +2396,7 @@
       "waypoints": [
         [
           0.0,
-          42.63,
+          42.52,
           0.0
         ],
         [
@@ -2345,7 +2451,7 @@
         ],
         [
           0.0,
-          42.63,
+          42.52,
           0.0
         ],
         [
@@ -2360,7 +2466,7 @@
         ],
         [
           198.0,
-          4.5,
+          4.26,
           -18.0
         ]
       ]
@@ -2370,7 +2476,7 @@
       "waypoints": [
         [
           -24.0,
-          17.02,
+          17.0,
           -54.0
         ],
         [
@@ -2395,7 +2501,7 @@
       "waypoints": [
         [
           198.0,
-          4.5,
+          4.26,
           -18.0
         ],
         [
@@ -2427,6 +2533,146 @@
           216.0,
           64.0,
           -126.0
+        ]
+      ]
+    },
+    {
+      "id": "lake-sanctuary",
+      "waypoints": [
+        [
+          156,
+          3.7,
+          80.8
+        ],
+        [
+          156,
+          4.6,
+          118
+        ],
+        [
+          145,
+          5.2,
+          138
+        ],
+        [
+          120,
+          6.06,
+          158
+        ]
+      ]
+    },
+    {
+      "id": "lake-city",
+      "waypoints": [
+        [
+          156,
+          3.7,
+          39.2
+        ],
+        [
+          156,
+          3.7,
+          4
+        ],
+        [
+          156,
+          3.7,
+          -16
+        ]
+      ]
+    },
+    {
+      "id": "lake-westpier",
+      "waypoints": [
+        [
+          135.2,
+          3.7,
+          60
+        ],
+        [
+          94.5,
+          3.7,
+          60
+        ]
+      ]
+    },
+    {
+      "id": "lake-eastpier",
+      "waypoints": [
+        [
+          176.8,
+          3.7,
+          60
+        ],
+        [
+          217.5,
+          3.7,
+          60
+        ]
+      ]
+    },
+    {
+      "id": "cellar-lane",
+      "waypoints": [
+        [
+          0,
+          42.52,
+          0
+        ],
+        [
+          -14,
+          33.98,
+          -6
+        ],
+        [
+          -32,
+          24.02,
+          -18
+        ],
+        [
+          -48,
+          17.11,
+          -32
+        ],
+        [
+          -49,
+          17.0,
+          -47
+        ]
+      ]
+    },
+    {
+      "id": "quay-approach",
+      "waypoints": [
+        [
+          156,
+          3.53,
+          -16
+        ],
+        [
+          168,
+          4.49,
+          -20
+        ],
+        [
+          182,
+          4.26,
+          -18
+        ]
+      ]
+    },
+    {
+      "id": "sanctuary-approach",
+      "waypoints": [
+        [
+          120,
+          5.64,
+          168
+        ],
+        [
+          120,
+          5.98,
+          158
         ]
       ]
     }
@@ -2528,7 +2774,7 @@
     "playable": {
       "min": [
         -174.0,
-        -11.1,
+        -12.0,
         -401.0
       ],
       "max": [
@@ -2540,7 +2786,7 @@
     "terrain": {
       "min": [
         -204.0,
-        -11.1,
+        -12.0,
         -431.0
       ],
       "max": [
@@ -2787,29 +3033,29 @@
     }
   ],
   "performance": {
-    "nodes": 2488,
-    "meshes": 263,
+    "nodes": 2500,
+    "meshes": 272,
     "materials": 49,
     "images": 109,
     "textures": 109,
-    "accessors": 1063,
-    "bufferViews": 1172,
-    "uniqueTriangles": 356238,
-    "uniqueVertices": 230872,
-    "glbBytes": 22752296,
-    "instancedTriangles": 1317050,
-    "embeddedTextureBytes": 11952779,
+    "accessors": 1099,
+    "bufferViews": 1208,
+    "uniqueTriangles": 344262,
+    "uniqueVertices": 224086,
+    "glbBytes": 22389308,
+    "instancedTriangles": 1270602,
+    "embeddedTextureBytes": 11868308,
     "textureMemoryBytesUncompressed": 102432768,
-    "placements": 1955,
+    "placements": 1962,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 616526,
-      "blockedCells": 710578,
-      "walkableFraction": 0.4646,
+      "walkableCells": 625434,
+      "blockedCells": 701670,
+      "walkableFraction": 0.4713,
       "elevatedDecks": 24,
-      "steepCells": 529539,
+      "steepCells": 527389,
       "reliefMetres": 244.34,
       "heightEncoding": {
         "origin": -3.5908,
@@ -2835,12 +3081,12 @@
       "march lake-quay: 0 road pieces, 0 of crownwater's growth"
     ],
     "lod2": {
-      "glbBytes": 12662852,
-      "nodes": 2416,
-      "uniqueTriangles": 328920,
-      "instancedTriangles": 963416,
-      "sizeReductionPercent": 44.3,
-      "triangleReductionPercent": 26.9
+      "glbBytes": 12378288,
+      "nodes": 2428,
+      "uniqueTriangles": 316944,
+      "instancedTriangles": 916968,
+      "sizeReductionPercent": 44.7,
+      "triangleReductionPercent": 27.8
     }
   },
   "sources": [

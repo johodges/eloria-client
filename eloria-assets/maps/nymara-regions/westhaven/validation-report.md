@@ -1,3 +1,6 @@
+Current checkpoint: [2026-09-07 layout review](layout-review.md). The earlier
+counts and camera comments below describe the previous build.
+
 # Westhaven: validation report
 
 What was checked, what passed, and — the part that matters — what these checks

@@ -111,7 +111,8 @@ def terrace_wall(length: float, height: float, seed: int = 0,
 def grand_stair(width: float = 9.0, height: float = 22.0, seed: int = 0,
                 landings: int = 2, material: str = STONE,
                 balustrade_material: str = MOSSY,
-                shrine_material: str = CARVED_JADE) -> MeshGroup:
+                shrine_material: str = CARVED_JADE,
+                length: float | None = None) -> MeshGroup:
     """The monumental flight of board panel 2.
 
     A broad stair climbing +Z from y = 0, broken by landings, with battered
@@ -127,6 +128,11 @@ def grand_stair(width: float = 9.0, height: float = 22.0, seed: int = 0,
     flights = landings + 1
     per_flight = max(4, int(round(height / rise / flights)))
     landing_depth = width * 0.55
+    if length is not None:
+        rise = height / (per_flight * flights)
+        run = (length - landings * landing_depth) / (per_flight * flights)
+        if run < 0.28:
+            raise ValueError("surveyed stair is too short for safe treads")
 
     stone_parts: list[M.Mesh] = []
     walk_parts: list[M.Mesh] = []
@@ -134,7 +140,11 @@ def grand_stair(width: float = 9.0, height: float = 22.0, seed: int = 0,
     y = 0.0
     for index in range(flights):
         steps = per_flight
-        flight = M.stairs(width, rise, run, steps, uv_scale=1.3, material=material)
+        if length is None:
+            flight = M.stairs(width, rise, run, steps, uv_scale=1.3, material=material)
+        else:
+            from . import routecraft as RC
+            flight = RC.stair_flight(width, steps * rise, steps * run, steps, material)
         walk_parts.append(flight.copy().translate(0.0, y, z))
         flight_run = steps * run
         # cheek walls carrying the balustrade, one either side
@@ -164,17 +174,18 @@ def grand_stair(width: float = 9.0, height: float = 22.0, seed: int = 0,
             # block: a fourteen-metre blank slab is what filled half the first
             # capture pass, and it is the single largest surface a player sees
             # standing at the foot of the stair.
-            support = max(y - 0.5, 0.4)
-            courses = max(2, int(support / 0.95))
-            course_height = support / courses
-            for course in range(courses):
-                inset = 0.16 * (1.0 - course / courses)
-                stone_parts.append(M.box(
-                    (width + 1.0 + inset * 2.0, course_height * 0.97,
-                     landing_depth + 0.4 + inset * 2.0),
-                    center=(0.0, course * course_height + course_height * 0.5,
-                            z + landing_depth * 0.5),
-                    uv_scale=0.30, material=balustrade_material))
+            if length is None:
+                support = max(y - 0.5, 0.4)
+                courses = max(2, int(support / 0.95))
+                course_height = support / courses
+                for course in range(courses):
+                    inset = 0.16 * (1.0 - course / courses)
+                    stone_parts.append(M.box(
+                        (width + 1.0 + inset * 2.0, course_height * 0.97,
+                         landing_depth + 0.4 + inset * 2.0),
+                        center=(0.0, course * course_height + course_height * 0.5,
+                                z + landing_depth * 0.5),
+                        uv_scale=0.30, material=balustrade_material))
             z += landing_depth
 
     result = group(_weather(M.merge(stone_parts, balustrade_material), 0.010, seed))
@@ -881,7 +892,7 @@ def banyan_roots(radius: float = 3.2, count: int = 9, height: float = 5.5,
 def terrace_house(seed: int = 0, width: float = 6.4, depth: float = 5.2,
                   storeys: int = 2, material: str = STONE,
                   upper: str = TIMBER, roof_material: str = JADE,
-                  trim: str = GILT) -> MeshGroup:
+                  trim: str = GILT, entrance_steps: bool = False) -> MeshGroup:
     """A town house for a terrace city: stone below, timber above, tiered roof.
 
     Amberwood's `forest_lodge` and `manor` are steep-shingled temperate timber
@@ -905,6 +916,10 @@ def terrace_house(seed: int = 0, width: float = 6.4, depth: float = 5.2,
     parts.append(plinth)
     walk.append(M.box((width + 0.9, 0.10, depth + 0.9),
                       center=(0.0, 0.45, 0.0), uv_scale=0.9, material=MOSSY))
+    if entrance_steps:
+        from . import routecraft as RC
+        walk.append(RC.stair_flight(2.2, 0.50, 1.8, 3, MOSSY)
+                    .translate(0, 0, -half_z - 0.45 - 1.8))
     ground_height = 2.6
     for sign in (-1.0, 1.0):
         parts.append(M.box((width, ground_height, 0.36),
@@ -978,3 +993,22 @@ def terrace_house(seed: int = 0, width: float = 6.4, depth: float = 5.2,
                    M.merge(trim_parts, trim))
     result.add_walk(M.merge(walk, MOSSY))
     return result
+
+
+def stair_profile(width, height, length, landings=2):
+    """Local (distance, height) stations, including the flat rest landings."""
+    flights = landings + 1
+    landing_depth = width * 0.55
+    flight_run = (length - landings * landing_depth) / flights
+    if min(width, height, flight_run) <= 0:
+        raise ValueError("stair needs positive flights and landing room")
+    stations = [(0.0, 0.0)]
+    distance = 0.0
+    for index in range(flights):
+        distance += flight_run
+        y = height * (index + 1) / flights
+        stations.append((distance, y))
+        if index < landings:
+            distance += landing_depth
+            stations.append((distance, y))
+    return np.asarray(stations)

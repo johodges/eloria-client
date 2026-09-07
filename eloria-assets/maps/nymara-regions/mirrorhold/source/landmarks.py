@@ -173,8 +173,8 @@ def colonnade_ring(radius: float = 13.0, columns: int = 20,
                      [radius + 1.9, -0.4], [radius + 1.7, 0.0],
                      [0.0, 0.0]], 44, uv_scale=0.7, material=ASHLAR))
     # the deck a player walks on
-    deck = M.lathe([[radius + 1.7, 0.0], [radius + 1.7, 0.16],
-                    [radius * 0.42, 0.16]], 40, uv_scale=0.6, material=MARBLE)
+    from amberwood import routecraft as RC
+    deck = RC.annular_walk(radius + 1.7, radius * 0.42, material=MARBLE)
     out.add_walk(deck)
     # inner basin rim and its water
     out.add(M.lathe([[radius * 0.42, 0.16], [radius * 0.42, 0.62],
@@ -183,6 +183,8 @@ def colonnade_ring(radius: float = 13.0, columns: int = 20,
     out.add(M.lathe([[radius * 0.30, 0.30], [0.0, 0.30]], 32,
                     uv_scale=1.0, material="water_pool"))
     for index in range(columns):
+        if index % (columns // 4) == 0:
+            continue  # a clear opening at each causeway
         angle = math.pi * 2.0 * index / columns
         shaft = STONE.column(column_height, 0.34, 12, MARBLE)
         out.add(shaft.translate(math.cos(angle) * radius, 0.16,

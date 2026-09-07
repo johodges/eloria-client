@@ -84,3 +84,17 @@ Things visible in the concept that are **not** in the map, and why:
 - **Smoke, gulls, spray, banners in wind.** Declared in
   `environment.presentation` as zones and flags for whoever writes those
   systems; no particle geometry ships.
+## Circulation additions, September 2026
+
+| Feature | World x, z | Purpose |
+| --- | --- | --- |
+| cart climb | (49, 6) to (228, -136) | quay to upland loop, with the watch spire above the climb |
+| crown link / upland gate | (64, -215) to (138, -205) | framed landward approach and a clear route back to the harbour |
+| Gullscar fields | (212, -224), (240, -234) | enclosed growing strips below the farmhouse and cistern |
+| Yard Bridge | (232, 5) to (284, 29) | carries the coast track over the shipyard gully |
+| Lamp Causeway | (377, 22) to (371, 85) | raised route over the tidal saddle to the lighthouse |
+| harbour service court | (22…48, -2…8) | information, storage, crafting and combat practice |
+
+Views 21–25 document the cart approach, fields, tidal crossing, yard bridge and
+service court at walking height. Their cameras are pinned; deck heights are
+sampled from triangles rather than the top of each crossing's bounding box.

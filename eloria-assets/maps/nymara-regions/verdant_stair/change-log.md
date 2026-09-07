@@ -1,5 +1,33 @@
 # Verdant Stair change log
 
+## 2026-09-07 — Surveyed terrace ascent
+
+Six fitted stair flights now join full lower and upper landings, with rest
+landings cut into their terrain beds. Contour roads join the flights through
+the quay, lower town, middle court, shrine, temple and quarry shelves. The
+western Temple Road trigger retains its original location and height.
+
+A new cenote landing meets the spiral stair; the sanctum and Physick doors
+move from building centres to visible thresholds. The market court groups
+services beside the arrival and clears overlapping houses and stalls from
+the approach. Roads publish their actual routes for wildlife exclusions.
+The shared routecraft and junglecraft recipes retain the existing stone,
+jade, gilt and timber materials.
+
+Five gorge bridges now meet both of their own banks, including the lower
+rope crossing's unequal elevations and an upstream western crossing. Wide
+boarding ledges and a final foliage clearance preserve the view along their
+decks. The cenote landing stands eight centimetres above the first spiral
+tread to avoid a coplanar joint.
+
+The manifest sun and golden-hour vectors now follow light travel, matching
+the runtime binder. Their former upward direction lit the map from below;
+the package's own GL Compatibility captures exposed the error.
+
+See [layout-review.md](layout-review.md) for measured connectivity, visual
+review and checks.
+
+
 What changed from the `terrain-landmark-material-pass` placeholder to this
 package, and the mistakes worth recording so the next region does not repeat
 them.

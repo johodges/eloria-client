@@ -28,6 +28,7 @@ from amberwood import architecture as A
 from amberwood import mesh as M
 from amberwood import noise as N
 from amberwood import props as P
+from amberwood import routecraft as RC
 from amberwood import stonework as SW
 from amberwood import terrain as TER
 from amberwood import trees as TR
@@ -585,6 +586,7 @@ def populate_city(build, seed: int = 0) -> None:
     gradient_z, gradient_x = np.gradient(t.height, t.cell)
     slope_grid = np.hypot(gradient_x, gradient_z)
 
+    plots = []
     placed = 0
     step = 9.0
     u0, u1 = 0.28, 5.45
@@ -617,9 +619,19 @@ def populate_city(build, seed: int = 0) -> None:
             # all face downhill, and that alignment is most of what makes the
             # roofscape read as a town rather than as scattered sheds.
             facing = math.atan2(-gradient_x[cz, cx], -gradient_z[cz, cx])
+            angle = facing + (_rand(seed, key + "r") - 0.5) * 0.28
+            low, high = build.meshes[f"Town_House_{variant}"].bounds()
+            half_x = max(abs(low[0]), abs(high[0]))
+            half_z = max(abs(low[2]), abs(high[2]))
+            c, sn = abs(math.cos(angle)), abs(math.sin(angle))
+            ex, ez = c * half_x + sn * half_z, sn * half_x + c * half_z
+            plot = (x-ex-0.5, x+ex+0.5, z-ez-0.5, z+ez+0.5)
+            if any(plot[0] < b and plot[1] > a and plot[2] < d and plot[3] > c
+                   for a, b, c, d in plots):
+                continue
+            plots.append(plot)
             _place(build, f"House_{iu:02d}_{iv:02d}", f"Town_House_{variant}",
-                   x, z, y=y, rotation=facing + (_rand(seed, key + "r") - 0.5) * 0.28,
-                   kind="building")
+                   x, z, y=y, rotation=angle, kind="building")
             placed += 1
     build.notes.append(f"city houses placed: {placed}")
 
@@ -820,7 +832,7 @@ def populate_upland(build, seed: int = 0) -> None:
     _landmark(build, "upland-chapel", "The Wayside Chapel", "temple", node,
               cx, cz, _ground(build, cx, cz))
 
-    build.add_mesh("Farmstead", A.manor(seed=seed + 511, width=13.0, depth=9.0))
+    build.add_mesh("Farmstead", A.manor(seed=seed + 511, width=13.0, depth=9.0, storeys=1))
     fx, fz = REG.ANCHORS["upland_farm"]
     node = _place(build, "Landmark_Upland_Farm", "Farmstead", fx, fz,
                   rotation=0.4, kind="building").node
@@ -847,7 +859,7 @@ def populate_upland(build, seed: int = 0) -> None:
                                           seed=seed + 541, style="split"))
     build.add_mesh("Signpost", P.signpost(seed=seed + 545, arms=3))
     sx, sz = REG.ANCHORS["crossroads"]
-    _place(build, "Prop_Signpost", "Signpost", sx, sz, kind="prop")
+    _place(build, "Prop_Signpost", "Signpost", sx - 6.0, sz + 5.0, kind="prop")
     for name in ("north_road", "east_road"):
         points = REG.ROADS[name]
         total = 0.0
@@ -869,8 +881,61 @@ def populate_upland(build, seed: int = 0) -> None:
                 if y < REG.SEA_LEVEL + 1.5:
                     continue
                 _place(build, f"Prop_Fence_{name}_{i:02d}_{side}", "Field_Fence",
-                       x, z, y=y, rotation=-angle, collides=False, kind="prop")
+                       x, z, y=y, rotation=angle, collides=False, kind="prop")
 
+
+def populate_routes(build, seed=0):
+    """Cart road furniture, tide crossings and the farm's working ground."""
+    for ident, (stations, width) in REG.SHORE_CROSSINGS.items():
+        x, y, z = stations[0]
+        local = [(px - x, py - y, pz - z) for px, py, pz in stations]
+        key = "Route_" + ident.replace("-", "_")
+        build.add_mesh(key, RC.graded_causeway(local, width=width, foot=-10.0-y,
+                                               stone=HK.SEA_ROCK, paving=HK.SETT))
+        node = _place(build, "Landmark_" + key, key, x, z, y=y,
+                      collides=False, kind="landmark").node
+        _landmark(build, ident, "The Yard Bridge" if ident == "yard-bridge"
+                  else "The Lamp Causeway", "bridge", node, x, z, y)
+
+    # The gateway frames the harbour skyline on the return from the fields.
+    gate = HA.gate_arch(span=8.0, height=14.0, seed=seed + 610)
+    # This lintel is scenery above a road, not a second road over the gate.
+    gate.parts.extend(gate.walk_parts)
+    gate.walk_parts.clear()
+    build.add_mesh("Cart_Gate", gate)
+    x, z = REG.ANCHORS["north_gate"]
+    node = _place(build, "Landmark_Cart_Gate", "Cart_Gate", x, z, y=48.0,
+                  rotation=0.54, collides=False, kind="landmark").node
+    _landmark(build, "cart-gate", "The Upland Gate", "gate", node, x, z, 48.0)
+
+    build.add_mesh("Farm_Grain", RC.crop_rows(seed=seed + 620))
+    build.add_mesh("Farm_Herbs", RC.crop_rows(seed=seed + 621, material=HK.TURF,
+                                            height_range=(0.26, 0.42)))
+    build.add_mesh("Farm_Wall", M.box((18.0, 0.75, 0.5),
+                                      center=(0, 0.375, 0), material=HK.SEA_ROCK))
+    for i, (x, z, y) in enumerate(REG.FARM_FIELDS):
+        # Each strip follows its own small terrace, with a clear opening
+        # towards the lane and the water store above it.
+        _place(build, f"Farm_Crops_{i}", "Farm_Grain" if i == 0 else "Farm_Herbs", x, z, y=y+0.10,
+               collides=False, kind="foliage")
+        for side in (-1, 1):
+            _place(build, f"Farm_Wall_{i}_{side}", "Farm_Wall", x, z+side*6.5,
+                   collides=False, kind="prop")
+        node = _place(build, f"Farm_End_{i}", "Farm_Wall", x+9.5, z,
+                      rotation=math.pi/2, collides=False, kind="prop").node
+        _landmark(build, f"farm-field-{i}", "Gullscar Fields", "field",
+                  node, x, z, y)
+    x,z = REG.ANCHORS["upland_farm"]
+    node = _place(build, "Farm_Water_Store", "Cistern_Head", x+12, z+1,
+                  collides=True, kind="prop").node
+    _landmark(build, "farm-water-store", "The Farm Cistern", "water",
+              node,x+12,z+1,_ground(build,x+12,z+1))
+    build.add_mesh("Road_Cart", P.cart(seed=seed+630))
+    for i, (x,z) in enumerate(((169,-56),(233,-248))):
+        _place(build, f"Road_Cart_{i}", "Road_Cart", x,z,rotation=0.4,kind="prop")
+        _place(build, f"Road_Lamp_{i}", "Lamp_Post",x+3,z,collides=False,kind="prop")
+    # A sign is beside the junction, not planted in its centre.
+    build.notes.append("Surveyed cart loop, two tidal crossings, enclosed Gullscar fields.")
 
 # -------------------------------------------------------------- vegetation
 def populate_vegetation(build, seed: int = 0, lod: str | None = None) -> None:
@@ -1011,6 +1076,9 @@ def populate_props(build, seed: int = 0) -> None:
         p = _polyline_point(front, lengths, s)
         x = p[0] + (_rand(seed, f"pq{i}x") - 0.5) * 14.0
         z = p[1] + 1.5 + (_rand(seed, f"pq{i}z")) * 7.0
+        # The harbour service court is a clear gathering place.
+        if 15 < x < 60 and -9 < z < 18:
+            continue
         y = _ground(build, x, z)
         if abs(y - quay_y) > 1.4:
             continue

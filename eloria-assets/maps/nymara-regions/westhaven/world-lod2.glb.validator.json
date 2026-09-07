@@ -1,12 +1,12 @@
 {
-  "uri": "world-lod2.glb",
+  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-continent\\eloria-assets\\maps\\nymara-regions\\westhaven\\world-lod2.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-09-05T11:07:40.975927Z",
+  "validatedAt": "2026-09-07T13:03:04.474986Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
-    "numInfos": 11,
+    "numInfos": 10,
     "numHints": 0,
     "messages": [
       {
@@ -56,12 +56,6 @@
         "message": "This object may be unused.",
         "severity": 2,
         "pointer": "/materials/29"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/30"
       },
       {
         "code": "UNUSED_OBJECT",

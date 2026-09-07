@@ -12,6 +12,7 @@ import numpy as np
 
 from amberwood import architecture as ARCH
 from amberwood import mesh as M
+from amberwood import routecraft as RC
 from amberwood import noise as N
 from amberwood import props as PROPS
 from amberwood import stonework as STONE
@@ -347,6 +348,14 @@ def populate_city(build: RegionBuild, seed: int = 20260828) -> None:
                   "Building_CliffHouse_0", "settlement",
                   (tx, LEVEL["lower_town"], tz))
 
+    # Readable thresholds lead into the cellar map. The building's front is
+    # two metres behind its trigger, leaving room for a group to gather.
+    build.add_mesh("Mirrorhold_VaultEntry", RC.vault_entry())
+    for name, (x, y, z) in REG.VAULT_ENTRIES.items():
+        build.place(Placement("Building_VaultEntry_" + name, "Mirrorhold_VaultEntry",
+                              (x, y, z), 0, 1, collides=True, kind="building"))
+        t.mark_blocked_disc((x, z), 7)
+
     # -- the east stair ----------------------------------------------------
     ex, ez = ANCHORS["east_stair"]
     build.add_mesh("Mirrorhold_Stair", M.stairs(7.0 * LOCAL, 0.19, 0.34, 34,
@@ -378,19 +387,18 @@ def populate_lake(build: RegionBuild, seed: int = 20260828) -> None:
                   "monument", (rx, ring_level, rz))
     t.mark_blocked_disc((rx, rz), 20.0 * LOCAL)
 
-    # -- radial causeways --------------------------------------------------
-    # Each deck owns its server cells: the water beneath is not separately
-    # walkable, which is the 2-D grid rule the guide sets out.
-    build.add_mesh("Mirrorhold_Causeway", L.causeway(34.0 * LOCAL, 5.0, 1.4,
-                                                     seed=seed + 63))
-    for index, angle in enumerate((0.0, math.pi * 0.5, math.pi,
-                                   math.pi * 1.5)):
-        reach = 24.0 * LOCAL
-        cx = rx + math.cos(angle) * reach
-        cz = rz + math.sin(angle) * reach
-        build.place(Placement(f"Landmark_Causeway_{index}", "Mirrorhold_Causeway",
-                              (cx, ring_level, cz), angle, 1.0,
-                              collides=True, kind="landmark"))
+    # A continuous promenade meets both shores. Its deck stands 4 cm above
+    # the ring's marble at the joins, so their overlapping lips cannot shimmer.
+    for name, stations in REG.LAKE_LINKS.items():
+        asset = "Mirrorhold_LakeLink_" + name
+        points = np.asarray(stations, dtype=float)
+        centre = (points.min(axis=0) + points.max(axis=0)) * 0.5
+        centre[1] = 0
+        build.add_mesh(asset, RC.graded_causeway(
+            points - centre, width=6.5, foot=-12.0, stone=ASHLAR_MAT,
+            paving=MARBLE_MAT, parapet=0.8))
+        build.place(Placement("Landmark_LakeLink_" + name, asset, tuple(centre),
+                              0, 1, collides=True, kind="landmark"))
 
     # -- the harbour -------------------------------------------------------
     hx, hz = ANCHORS["harbour"]
@@ -415,6 +423,13 @@ def populate_lake(build: RegionBuild, seed: int = 20260828) -> None:
                               (dx + 5.0, LAKE + 0.1, dz + 6.0),
                               float(rng.uniform(-0.4, 0.4)), 1.0,
                               collides=True, kind="prop"))
+
+    build.add_mesh("Mirrorhold_FishCrate", PROPS.crate(0.72, seed + 68))
+    for index, x in enumerate((96.5, 215.5)):
+        build.place(Placement(f"Prop_PierCrate_{index}", "Mirrorhold_FishCrate",
+                              (x, 3.72, 57.7), 0.2, 1, collides=True, kind="prop"))
+        build.place(Placement(f"Prop_PierSkiff_{index}", "Mirrorhold_Boat",
+                              (x, LAKE + 0.1, 66), 0, 1, collides=True, kind="prop"))
 
     # -- the south watch ---------------------------------------------------
     sx, sz = ANCHORS["south_watch"]

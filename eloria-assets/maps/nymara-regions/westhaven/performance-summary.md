@@ -1,3 +1,6 @@
+Current checkpoint: [2026-09-07 layout review](layout-review.md). The earlier
+counts and camera comments below describe the previous build.
+
 # Westhaven: performance summary
 
 Numbers counted from the package, not measured in a frame. See "What is not

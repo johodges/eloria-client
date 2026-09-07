@@ -10,7 +10,7 @@
     ],
     "target": [
       90.0,
-      97.4,
+      97.34,
       -120.0
     ],
     "fieldOfViewDegrees": 52,
@@ -38,30 +38,30 @@
     "panel": 2,
     "file": "02-grand-stair.webp",
     "eye": [
-      -19.2,
-      33.8,
-      11.1
+      -39.3,
+      27.24,
+      -32.7
     ],
     "target": [
-      9.0,
-      56.0,
-      -45.0
+      -14.4,
+      38.71,
+      -57.6
     ],
-    "fieldOfViewDegrees": 50,
-    "lighting": "day"
+    "fieldOfViewDegrees": 60,
+    "lighting": "deck"
   },
   {
     "id": "03-cenote",
     "panel": 3,
     "file": "03-cenote.webp",
     "eye": [
-      12.46,
-      88.36,
-      -50.97
+      -20.01,
+      64.65,
+      -41.92
     ],
     "target": [
       -18.0,
-      28.25,
+      30.02,
       -102.0
     ],
     "fieldOfViewDegrees": 62,
@@ -72,13 +72,13 @@
     "panel": 4,
     "file": "04-root-bridge.webp",
     "eye": [
-      88.27,
-      51.59,
-      -24.07
+      82.94,
+      53.16,
+      -20.04
     ],
     "target": [
       90.0,
-      33.1,
+      32.97,
       -54.0
     ],
     "fieldOfViewDegrees": 56,
@@ -89,9 +89,9 @@
     "panel": 5,
     "file": "05-rope-bridge.webp",
     "eye": [
-      188.23,
-      51.01,
-      47.97
+      186.03,
+      51.4,
+      49.8
     ],
     "target": [
       201.0,
@@ -106,9 +106,9 @@
     "panel": 6,
     "file": "06-canopy-village.webp",
     "eye": [
-      -24.54,
-      58.24,
-      -110.7
+      -22.61,
+      60.64,
+      -106.16
     ],
     "target": [
       -66.0,
@@ -123,9 +123,9 @@
     "panel": 7,
     "file": "07-water-shrine.webp",
     "eye": [
-      101.52,
-      74.0,
-      -137.52
+      96.0,
+      77.44,
+      -132.0
     ],
     "target": [
       114.0,
@@ -140,9 +140,9 @@
     "panel": 8,
     "file": "08-jungle-trail.webp",
     "eye": [
-      -18.36,
-      60.87,
-      -98.57
+      -7.81,
+      60.75,
+      -86.0
     ],
     "target": [
       -93.0,
@@ -157,13 +157,13 @@
     "panel": 9,
     "file": "09-terrace-overview.webp",
     "eye": [
-      -64.05,
-      66.86,
-      64.53
+      -88.98,
+      67.0,
+      38.56
     ],
     "target": [
       102.0,
-      90.64,
+      90.0,
       -132.0
     ],
     "fieldOfViewDegrees": 52,
@@ -174,9 +174,9 @@
     "panel": 10,
     "file": "10-relief-study.webp",
     "eye": [
-      -7.0,
-      28.82,
-      17.51
+      3.57,
+      25.3,
+      -7.99
     ],
     "target": [
       0.0,
@@ -192,7 +192,7 @@
     "file": "11-great-temple.webp",
     "eye": [
       144.0,
-      102.4,
+      104.9,
       -186.0
     ],
     "target": [
@@ -208,9 +208,9 @@
     "panel": null,
     "file": "12-temple-court.webp",
     "eye": [
-      102.03,
-      100.84,
-      -191.38
+      141.9,
+      108.4,
+      -183.42
     ],
     "target": [
       180.0,
@@ -225,9 +225,9 @@
     "panel": null,
     "file": "13-west-quay.webp",
     "eye": [
-      -118.05,
+      -123.26,
       13.02,
-      61.73
+      26.11
     ],
     "target": [
       -87.0,
@@ -242,9 +242,9 @@
     "panel": null,
     "file": "14-waygate.webp",
     "eye": [
-      -10.82,
-      31.71,
-      38.06
+      -21.0,
+      33.14,
+      18.0
     ],
     "target": [
       0.0,
@@ -259,9 +259,9 @@
     "panel": null,
     "file": "15-lower-town.webp",
     "eye": [
-      -14.88,
-      36.88,
-      -37.79
+      -28.63,
+      41.0,
+      -16.28
     ],
     "target": [
       6.0,
@@ -276,9 +276,9 @@
     "panel": null,
     "file": "16-aqueduct.webp",
     "eye": [
-      -13.68,
-      92.46,
-      -312.11
+      -15.59,
+      88.36,
+      -311.55
     ],
     "target": [
       -57.0,
@@ -293,9 +293,9 @@
     "panel": null,
     "file": "17-upper-court.webp",
     "eye": [
-      145.32,
-      85.94,
-      -42.59
+      108.93,
+      89.89,
+      -72.06
     ],
     "target": [
       156.0,
@@ -310,9 +310,9 @@
     "panel": null,
     "file": "18-east-pass.webp",
     "eye": [
-      340.42,
-      143.17,
-      -185.41
+      342.83,
+      103.27,
+      -76.06
     ],
     "target": [
       390.0,
@@ -327,9 +327,9 @@
     "panel": null,
     "file": "19-hanging-gardens.webp",
     "eye": [
-      157.05,
-      52.65,
-      16.1
+      119.99,
+      46.77,
+      5.43
     ],
     "target": [
       183.0,
@@ -344,9 +344,9 @@
     "panel": null,
     "file": "20-old-terrace.webp",
     "eye": [
-      73.07,
-      88.23,
-      -186.27
+      75.46,
+      88.26,
+      -188.08
     ],
     "target": [
       36.0,
@@ -361,9 +361,9 @@
     "panel": null,
     "file": "21-fern-hollow.webp",
     "eye": [
-      -153.46,
-      25.28,
-      -129.99
+      -151.21,
+      25.21,
+      -130.43
     ],
     "target": [
       -93.0,
@@ -378,9 +378,9 @@
     "panel": null,
     "file": "22-north-glade.webp",
     "eye": [
-      -4.96,
-      74.29,
-      -186.53
+      -38.79,
+      78.5,
+      -236.79
     ],
     "target": [
       -54.0,
@@ -395,9 +395,9 @@
     "panel": null,
     "file": "23-lotus-pools.webp",
     "eye": [
-      56.72,
-      40.89,
-      70.41
+      49.76,
+      41.26,
+      64.71
     ],
     "target": [
       99.0,
@@ -412,9 +412,9 @@
     "panel": null,
     "file": "24-mangrove-strand.webp",
     "eye": [
-      -60.75,
-      16.2,
-      148.83
+      -53.28,
+      15.92,
+      158.74
     ],
     "target": [
       0.0,
@@ -429,9 +429,9 @@
     "panel": null,
     "file": "25-cloud-terrace.webp",
     "eye": [
-      123.55,
-      141.68,
-      -313.88
+      164.4,
+      127.66,
+      -330.12
     ],
     "target": [
       210.0,
@@ -446,9 +446,9 @@
     "panel": null,
     "file": "26-deep-jungle.webp",
     "eye": [
-      22.96,
-      110.89,
-      -261.02
+      51.38,
+      116.59,
+      -257.05
     ],
     "target": [
       6.0,
@@ -463,9 +463,9 @@
     "panel": null,
     "file": "27-stone-ring.webp",
     "eye": [
-      -68.32,
-      87.03,
-      -278.04
+      -69.53,
+      79.36,
+      -270.79
     ],
     "target": [
       -102.0,
@@ -480,9 +480,9 @@
     "panel": null,
     "file": "28-ridge-shrine.webp",
     "eye": [
-      224.81,
-      101.7,
-      -181.06
+      279.48,
+      101.72,
+      -124.31
     ],
     "target": [
       312.0,
@@ -497,9 +497,9 @@
     "panel": null,
     "file": "29-sun-pavilion.webp",
     "eye": [
-      150.26,
-      111.18,
-      -235.4
+      143.65,
+      105.73,
+      -183.95
     ],
     "target": [
       186.0,
@@ -514,13 +514,13 @@
     "panel": null,
     "file": "30-east-lookout.webp",
     "eye": [
-      38.74,
-      48.68,
-      -42.12
+      -44.25,
+      46.67,
+      -33.67
     ],
     "target": [
       51.0,
-      49.0,
+      55.7,
       -99.0
     ],
     "fieldOfViewDegrees": 56,
@@ -531,9 +531,9 @@
     "panel": null,
     "file": "40-spawn-grounding.webp",
     "eye": [
-      -11.27,
-      32.0,
-      37.64
+      -21.6,
+      35.97,
+      24.0
     ],
     "target": [
       0.0,
@@ -549,12 +549,12 @@
     "file": "41-stair-head.webp",
     "eye": [
       -12.0,
-      52.31,
+      53.61,
       -66.0
     ],
     "target": [
       9.0,
-      47.6,
+      43.61,
       -45.0
     ],
     "fieldOfViewDegrees": 58,
@@ -565,13 +565,13 @@
     "panel": null,
     "file": "42-riser-face.webp",
     "eye": [
-      6.75,
-      34.15,
-      -3.51
+      130.3,
+      75.95,
+      -35.54
     ],
     "target": [
       9.0,
-      40.0,
+      36.01,
       -45.0
     ],
     "fieldOfViewDegrees": 56,
@@ -582,9 +582,9 @@
     "panel": null,
     "file": "43-quay-climb.webp",
     "eye": [
-      -63.0,
-      14.02,
-      54.0
+      -74.91,
+      22.4,
+      45.09
     ],
     "target": [
       -45.0,
@@ -616,9 +616,9 @@
     "panel": null,
     "file": "51-golden-temple.webp",
     "eye": [
-      141.82,
-      101.9,
-      -183.82
+      138.0,
+      109.4,
+      -185.4
     ],
     "target": [
       210.0,
@@ -633,9 +633,9 @@
     "panel": null,
     "file": "52-golden-lagoon.webp",
     "eye": [
-      -18.89,
-      47.66,
-      97.46
+      -62.46,
+      30.82,
+      112.06
     ],
     "target": [
       -156.0,
@@ -644,5 +644,175 @@
     ],
     "fieldOfViewDegrees": 52,
     "lighting": "golden"
+  },
+  {
+    "id": "53-temple-road-arrival",
+    "panel": null,
+    "file": "53-temple-road-arrival.webp",
+    "eye": [
+      -168.0,
+      2.1,
+      0.0
+    ],
+    "target": [
+      -141.9,
+      7.58,
+      0.0
+    ],
+    "fieldOfViewDegrees": 60,
+    "lighting": "day"
+  },
+  {
+    "id": "54-middle-landing",
+    "panel": null,
+    "file": "54-middle-landing.webp",
+    "eye": [
+      9.9,
+      47.7,
+      -81.9
+    ],
+    "target": [
+      39.0,
+      47.84,
+      -87.0
+    ],
+    "fieldOfViewDegrees": 60,
+    "lighting": "day"
+  },
+  {
+    "id": "55-shrine-ascent",
+    "panel": null,
+    "file": "55-shrine-ascent.webp",
+    "eye": [
+      44.1,
+      50.75,
+      -92.1
+    ],
+    "target": [
+      81.0,
+      68.65,
+      -129.0
+    ],
+    "fieldOfViewDegrees": 60,
+    "lighting": "deck"
+  },
+  {
+    "id": "56-temple-procession",
+    "panel": null,
+    "file": "56-temple-procession.webp",
+    "eye": [
+      165.9,
+      76.22,
+      -117.9
+    ],
+    "target": [
+      201.9,
+      93.55,
+      -153.9
+    ],
+    "fieldOfViewDegrees": 60,
+    "lighting": "deck"
+  },
+  {
+    "id": "57-quarry-road",
+    "panel": null,
+    "file": "57-quarry-road.webp",
+    "eye": [
+      339.9,
+      121.84,
+      -186.0
+    ],
+    "target": [
+      354.0,
+      126.0,
+      -174.0
+    ],
+    "fieldOfViewDegrees": 60,
+    "lighting": "day"
+  },
+  {
+    "id": "58-market-court",
+    "panel": null,
+    "file": "58-market-court.webp",
+    "eye": [
+      6.99,
+      25.7,
+      18.0
+    ],
+    "target": [
+      12.9,
+      27.0,
+      -12.9
+    ],
+    "fieldOfViewDegrees": 65,
+    "lighting": "day"
+  },
+  {
+    "id": "59-cenote-landing",
+    "panel": null,
+    "file": "59-cenote-landing.webp",
+    "eye": [
+      6.0,
+      47.89,
+      -87.0
+    ],
+    "target": [
+      -6.3,
+      47.11,
+      -102.0
+    ],
+    "fieldOfViewDegrees": 65,
+    "lighting": "deck"
+  },
+  {
+    "id": "60-sanctum-entry",
+    "panel": null,
+    "file": "60-sanctum-entry.webp",
+    "eye": [
+      227.1,
+      101.7,
+      -177.0
+    ],
+    "target": [
+      217.35,
+      102.0,
+      -193.47
+    ],
+    "fieldOfViewDegrees": 65,
+    "lighting": "day"
+  },
+  {
+    "id": "61-western-ravine",
+    "panel": null,
+    "file": "61-western-ravine.webp",
+    "eye": [
+      -137.25,
+      44.36,
+      -218.25
+    ],
+    "target": [
+      -159.75,
+      41.22,
+      -213.75
+    ],
+    "fieldOfViewDegrees": 65,
+    "lighting": "deck"
+  },
+  {
+    "id": "62-middle-rope-descent",
+    "panel": null,
+    "file": "62-middle-rope-descent.webp",
+    "eye": [
+      135.25,
+      72.22,
+      -37.25
+    ],
+    "target": [
+      131.25,
+      55.68,
+      -19.25
+    ],
+    "fieldOfViewDegrees": 65,
+    "lighting": "deck"
   }
 ]

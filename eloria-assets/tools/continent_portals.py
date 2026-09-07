@@ -176,13 +176,15 @@ def inward_direction(tile, cells: int) -> tuple[int, int]:
     return 0, (1 if y < centre else -1)
 
 
-def exterior_lines(graph, portals, collisions, load, errors) -> tuple[list[str], int]:
+def exterior_lines(graph, portals, collisions, load, errors, selected=None) -> tuple[list[str], int]:
     lines = ["# One line per direction of every link in region-connections.json. The",
              "# trigger is the package's portal tile; the arrival is the first tile a",
              "# player can stand on, two or more tiles in from the far portal, so a",
              "# crossing never lands anyone back on the tile that sent them.", ""]
     written = 0
     for link in graph["connections"]:
+        if selected and selected not in (link["from"], link["to"]):
+            continue
         pairs = ((link["from"], link["from_portal"], link["to"], link["to_portal"]),
                  (link["to"], link["to_portal"], link["from"], link["from_portal"]))
         lines.append(f"# {link['from']} <-> {link['to']} ({link['type']}): {link.get('note', '')}")
@@ -213,7 +215,7 @@ def exterior_lines(graph, portals, collisions, load, errors) -> tuple[list[str],
     return lines, written
 
 
-def interior_lines(portals, collisions, load, errors) -> tuple[list[str], int]:
+def interior_lines(portals, collisions, load, errors, selected=None) -> tuple[list[str], int]:
     lines = ["# --- the doors: one pair per door a region declares into its insides map ---",
              "# The region's door tile lands on the insides arrival the door names, and",
              "# that arrival tile - where the insides package puts its return portal -",
@@ -222,6 +224,8 @@ def interior_lines(portals, collisions, load, errors) -> tuple[list[str], int]:
              "# used.", ""]
     written = 0
     for region, (package, map_id) in INSIDES.items():
+        if selected and region != selected:
+            continue
         if region not in portals:
             portals[region] = load_portals(region)
             collisions[region] = load(region)
@@ -359,6 +363,8 @@ def main() -> int:
     parser.add_argument("--server", type=Path, required=True)
     parser.add_argument("--maps", type=Path, required=True)
     parser.add_argument("--apply", action="store_true")
+    parser.add_argument("--region", choices=sorted(INSIDES),
+                        help="rebuild this region and both ends of its links only")
     args = parser.parse_args()
 
     graph = json.loads(GRAPH.read_text(encoding="utf-8"))
@@ -370,8 +376,8 @@ def main() -> int:
         return load_collision(args.server, args.maps, map_id)
 
     lines = [BEGIN]
-    outside, crossings = exterior_lines(graph, portals, collisions, load, errors)
-    inside, doors = interior_lines(portals, collisions, load, errors)
+    outside, crossings = exterior_lines(graph, portals, collisions, load, errors, args.region)
+    inside, doors = interior_lines(portals, collisions, load, errors, args.region)
     hidden, secrets = secret_lines(collisions, load, errors)
     lines += outside + inside + hidden + [END]
     for error in errors:
@@ -389,6 +395,23 @@ def main() -> int:
         new_text = head + block + tail
     else:
         new_text = text.rstrip("\n") + "\n\n" + block + "\n"
+    if args.region:
+        chosen = {args.region, args.region + "_secrets"}
+        inside_map = INSIDES[args.region][1]
+        chosen.add(inside_map)
+        def belongs(line):
+            fields = [part.strip() for part in line.split("|")]
+            if not fields or fields[0] != "portal":
+                return False
+            return (len(fields) == 7 and bool({fields[1], fields[4]} & chosen)
+                    or len(fields) == 8 and bool({fields[1], fields[5]} & chosen))
+        # Keep the rest of the continent's authored block byte-for-byte in
+        # meaning. Every incoming/outgoing selected link is replaced together.
+        old_block = text[text.index(BEGIN):text.index(END)]
+        kept = [line for line in old_block.splitlines() if not belongs(line)]
+        selected_lines = [line for line in lines if belongs(line)]
+        block = "\n".join(kept + selected_lines + [END])
+        new_text = text[:text.index(BEGIN)] + block + text[text.index(END) + len(END):]
     if args.apply:
         maps_txt.write_text(new_text, encoding="utf-8", newline="\n")
         print(f"wrote {maps_txt}")

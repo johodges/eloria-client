@@ -602,7 +602,7 @@ def town_house(width: float = 6.0, depth: float = 7.5, storeys: int = 3,
         for i in range(max(int(w / 2.2), 1)):
             x = -w * 0.5 + (i + 0.5) * (w / max(int(w / 2.2), 1))
             out.add(A.window(width=0.82, height=1.1, material=TIMBER_GREY)
-                    .transformed(M.translation(x, y + 0.85, -d * 0.5 - 0.08)))
+                    .transformed(M.translation(x, y + 0.85, -d * 0.5 - 0.30)))
     top = storeys * storey_h
     over = 0.34 * (storeys - 1) if jetty else 0.0
     out.add(M.gable_roof(width + over, depth + over * 0.5, 2.4, overhang=0.46,
@@ -701,18 +701,20 @@ def gate_arch(span: float = 11.0, height: float = 17.0, depth: float = 5.0,
     out.add_walk(M.box((span + pier_w * 2.0 + 0.6, 0.5, depth + 0.6),
                        center=(0.0, height + 0.25, 0.0), uv_scale=0.5,
                        material=SETT))
+    # Seat the turrets within the deck slab; their bottom caps must not
+    # share the spandrel top plane, even where the overlap is concealed.
     if towers:
         for side in (-1, 1):
             x = side * (span * 0.5 + pier_w * 0.5)
             out.add(M.cylinder(2.4, 2.15, 7.5, segments=14, uv_scale=0.34,
                                material=STONE).transformed(
-                M.translation(x, height, 0.0)))
+                M.translation(x, height + 0.2, 0.0)))
             out.add(M.cylinder(2.55, 2.55, 0.5, segments=14, uv_scale=0.6,
                                material=STONE).transformed(
-                M.translation(x, height + 7.5, 0.0)))
+                M.translation(x, height + 7.7, 0.0)))
             out.add(M.cylinder(2.3, 0.0, 3.6, segments=14, uv_scale=0.5,
                                material=ROOF).transformed(
-                M.translation(x, height + 8.0, 0.0)))
+                M.translation(x, height + 8.2, 0.0)))
     return out
 
 

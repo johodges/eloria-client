@@ -182,26 +182,26 @@ _STAIR_ANCHORS: dict[str, tuple[float, float]] = {
     "lower_gardens": (0.0, 12.0),
     "lower_gate": (-9.0, -12.0),
     "south_landing": (-2.0, 24.0),
-    "stair_foot": (3.0, -4.0),
+    "stair_foot": (-2.0, -12.0),
     "south_grove": (-4.0, 40.0),
     "lotus_pools": (-1.0, 34.0),
     "west_ravine": (-10.0, -30.0),
     # -- middle terrace: cenote, canopy village, the gorge crossings
-    "stair_head": (9.0, -6.0),
+    "stair_head": (14.0, -12.0),
     "cenote": (14.0, -20.0),
     "cenote_court": (16.0, -14.0),
     "canopy_village": (10.0, -32.0),
     "village_landing": (12.0, -24.0),
     "middle_market": (20.0, -4.0),
     "root_crossing": (24.0, 6.0),
-    "east_lookout": (25.0, -8.0),
+    "east_lookout": (25.0, 20.0),
     "fern_hollow": (11.0, -44.0),
     "fern_camp": (8.0, -52.0),
     "rope_crossing_low": (26.0, 18.0),
     "south_watch": (18.0, 40.0),
     "south_quay": (14.0, 54.0),
     "east_grove": (24.0, 44.0),
-    "ravine_bridge": (7.0, -60.0),
+    "ravine_bridge": (10.5, -61.5),
     # -- upper terrace: the water shrine, the aqueduct, the old terraces
     "water_shrine": (44.0, -6.0),
     "shrine_pool": (42.0, -12.0),
@@ -357,7 +357,6 @@ ROUTES: dict[str, np.ndarray] = {
                          _design("south_grove")),
     # the Grand Stair: lower to middle, the region's central climb
     "grand_stair": _route(_design("lower_plaza"), _design("stair_foot"),
-                          _via(4.5, -5.0), _via(5.5, -6.5), _via(6.5, -6.0),
                           _design("stair_head")),
     "middle_ring": _route(_design("canopy_village"), _design("village_landing"),
                           _design("stair_head"), _design("cenote_court"),
@@ -384,7 +383,7 @@ ROUTES: dict[str, np.ndarray] = {
     "temple_ring": _route(_design("temple_falls"), _design("temple_court"),
                           _design("priest_walk"), _design("high_camp"),
                           _design("sun_pavilion")),
-    # temple to summit, and out east to Ssarathi Ruins
+    # temple to summit, and out east to Sunmane Steppe
     "summit_climb": _route(_design("high_camp"), _via(80.5, 14.0),
                            _via(81.5, 20.0), _via(82.5, 16.0),
                            _design("kiln_yard"), _design("ridge_shrine")),
@@ -433,8 +432,8 @@ STREAMS: dict[str, np.ndarray] = {
     "shrine_rill": _route(_design("sun_pavilion"), _design("water_shrine"),
                           _design("shrine_pool"), _via(29.5, -16.0),
                           _via(20.0, -18.0), _design("cenote")),
-    "cenote_outfall": _route(_design("cenote"), _via(9.0, -14.0),
-                             _via(4.0, -8.0), _design("stair_foot"),
+    "cenote_outfall": _route(_design("cenote"), _via(9.0, -20.0),
+                             _via(4.0, -22.0), _via(-3.0, -20.0),
                              _design("lower_pools"), _via(-11.5, 2.0),
                              _via(-20.0, -2.0), _design("boat_landing"),
                              _design("lagoon_mouth")),
@@ -812,3 +811,107 @@ SURFACE_MATERIALS: dict[int, str] = {
     TER.TERRACE_MOSS: "verdant_mossy_stone",
     TER.WET_ROCK: "verdant_wet_limestone",
 }
+
+
+# Surveyed foot/head pairs in world metres, with exact walking heights.
+# Each spans the whole riser; no flight starts halfway up its cliff.
+STAIR_RUNS = {
+    "quay-climb": ((-166, 0.44, 0), (-138, 7.04, 0), 6.0),
+    "lower-climb": ((-60, 7.04, 60), (-15, 24.04, 15), 7.0),
+    "grand-stair": ((-42, 24.04, -30), (6, 46.04, -78), 9.5),
+    "shrine-climb": ((39, 46.04, -87), (90, 72.04, -138), 7.5),
+    "temple-climb": ((162, 72.04, -114), (216, 100.04, -168), 8.5),
+    "summit-climb": ((291, 100.04, -147), (345, 124.04, -201), 7.0),
+}
+ACCESS_LANES = {
+    "temple-road": ([(-168, 0), (-166, 0)], [0.4, 0.4], 6),
+    "quay-contour": ([(-138, 0), (-112, 19), (-87, 39), (-60, 60)], [7]*4, 7),
+    "quay-arrival": ([(-15, 15), (-12, 8), (-8, 4)], [24]*3, 6),
+    "stair-court": ([(0, -14), (-24, -22), (-42, -30)], [24]*3, 7),
+    "physick-lane": ([(-24, -22), (-24, -12), (-22.8, -8)], [24]*3, 4),
+    "market-court": ([(7, 9), (29, 12)], [24]*2, 9),
+    "sanctum-lane": ([(216, -168), (227, -177), (219, -189)], [100]*3, 6),
+    "middle-procession": ([(6, -78), (22, -89), (39, -87)], [46]*3, 7),
+    "upper-procession": ([(90, -138), (124, -122), (162, -114)], [72]*3, 7),
+    "temple-forecourt": ([(216, -168), (194, -168), (170, -179), (180, -192)],
+                         [100, 100, 98.2, 98.2], 7),
+    "high-procession": ([(216, -168), (256, -154), (279, -141), (291, -147)], [100]*4, 7),
+    "quarry-road": ([(345, -201), (335, -180), (338, -163), (370, -159), (390, -150)],
+                    [124]*5, 8),
+}
+
+
+def access_distance(x, z):
+    distance = float("inf")
+    for foot, head, width in STAIR_RUNS.values():
+        d, _ = TER._polyline_distance(np.asarray(x), np.asarray(z),
+                                     np.asarray([[foot[0], foot[2]], [head[0], head[2]]]))
+        distance = min(distance, float(d) - width / 2)
+    for points, heights, width in ACCESS_LANES.values():
+        d, _ = TER._polyline_distance(np.asarray(x), np.asarray(z), np.asarray(points))
+        distance = min(distance, float(d) - width / 2)
+    return distance
+
+
+def prepare_access(t):
+    from amberwood import routecraft as RC
+    t.plateau((17, 12), 21, 24, edge=8, surface=TER.PAVING)
+    t.plateau((330, -174), 9, 124, edge=8, surface=TER.PAVING)
+    # Roads follow the shelves. No access lane crosses a carved bridge gorge.
+    for points, heights, width in ACCESS_LANES.values():
+        RC.grade_road(t, points, heights, width=width, shoulder=8,
+                      surface=TER.PAVING, clearance=10)
+    from amberwood import junglecraft as JC
+    for foot, head, width in STAIR_RUNS.values():
+        a, b = np.asarray(foot), np.asarray(head)
+        delta = b[[0, 2]] - a[[0, 2]]
+        length = float(np.linalg.norm(delta))
+        rise = float(b[1] - a[1])
+        profile = JC.stair_profile(width, rise, length, 1 if rise < 20 else 2)
+        points = a[[0, 2]] + profile[:, :1] * delta / length
+        clearance = np.full(len(profile), 0.30)
+        clearance[0] = clearance[-1] = 0.04
+        heights = a[1] + profile[:, 1] - clearance
+        RC.grade_road(t, points, heights, width=width + 2, shoulder=8,
+                      surface=TER.ROCK, clearance=12)
+    t.plateau((-23, -8), 4.5, 24, edge=3, surface=TER.PAVING)
+    d, _ = TER._polyline_distance(t.gx, t.gz, np.asarray(CENOTE_APPROACH)[:, [0, 2]])
+    t.tree_block |= d < 7
+    t.water_depth = np.clip(SEA_LEVEL - t.height, 0, None)
+
+# Doors are at their visible thresholds. The cenote interior begins at the
+# head of its descent, not in the water at the centre of the shaft.
+DOOR_POSITIONS = {
+    "temple-sanctum-door": (217.35, -193.47),
+    "cenote-deeps-stair": (-6.3, -102.0),
+    "physick-still-door": (-21.24, -7.32),
+}
+# An 8 cm threshold clears the spiral's first tread; their tops must not share a plane.
+CENOTE_APPROACH = [(6, 46.19, -87), (2, 46.19, -92), (-6.3, 46.19, -102)]
+CONTENT_LAYOUT = {
+    "services": [
+        {"role": "information", "position": [9, 24, 10]},
+        {"role": "storage", "position": [16, 24, 11]},
+        {"role": "crafting_station", "position": [23, 24, 12]},
+        {"role": "training", "position": [29, 24, 12]},
+    ],
+    "roadClearance": 6.0,
+    "wildlife": {
+        "canopy_glider": [[55, -25, 32], [-55, -50, 25]],
+        "leafwing_owl": [[60, -170, 35], [155, -240, 30]],
+        "sapling_sprite": [[60, -25, 30]],
+        "thornwood_dryad_queen": [[240, 25, 28]],
+        "emerald_canopy_dragon": [[245, -285, 32], [325, -250, 25]],
+        "swamp_heron": [[-110, 85, 23], [-35, 36, 22]],
+        "moonshadow_lynx": [[130, -220, 25]],
+    },
+}
+
+
+def access_waypoints(t):
+    roads = [{"id": name, "waypoints": [[x, y, z] for (x, z), y in zip(points, heights)]}
+             for name, (points, heights, width) in ACCESS_LANES.items()]
+    roads.extend({"id": name, "waypoints": [list(foot), list(head)]}
+                 for name, (foot, head, width) in STAIR_RUNS.items())
+    roads.append({"id": "cenote-landing", "waypoints": CENOTE_APPROACH})
+    return roads

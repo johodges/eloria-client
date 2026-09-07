@@ -303,17 +303,17 @@
       191.0
     ],
     "heightEncoding": {
-      "origin": -5.131,
-      "step": 0.1311,
+      "origin": -5.2,
+      "step": 0.2,
       "range": [
         1,
         63
       ],
       "zeroMeansBlocked": true
     },
-    "walkableCells": 21112,
-    "blockedCells": 196040,
-    "walkableFraction": 0.0972,
+    "walkableCells": 14046,
+    "blockedCells": 203106,
+    "walkableFraction": 0.0647,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
@@ -3795,7 +3795,7 @@
     "bufferViews": 648,
     "uniqueTriangles": 27776,
     "uniqueVertices": 38440,
-    "glbBytes": 7531836,
+    "glbBytes": 7494544,
     "nodeNames": [
       "Secrets_mirrorhold_secrets",
       "Section_mirror-reed-cut",

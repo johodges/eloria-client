@@ -135,6 +135,18 @@ VIEWS = [
     ("20-upland-road", None, (72.0, -84.0), 2.0, (92.7, -94.3), 12.0, 52,
      (1280, 820), 48, "day"),
 
+    # Eye-level evidence for the new circulation and working fields.
+    ("21-cart-ascent", None, (53.7, -15.7), 1.7, (62.0, -24.0), 2.0, 58,
+     (1280, 820), 55, "day"),
+    ("22-gullscar-fields", None, (66.5, -74.7), 1.7, (72.0, -84.0), 3.0, 58,
+     (1280, 820), 48, "day"),
+    ("23-lamp-approach", None, (130.0, 12.0), 1.7, (126.8, 26.0), 2.0, 58,
+     (1280, 820), 58, "deck"),
+    ("24-yard-crossing", None, (79.0, 2.4), 1.7, (91.0, 7.3), 2.0, 58,
+     (1280, 820), 42, "deck"),
+    ("25-harbour-court", None, (20.0, 4.0), 1.7, (9.3, 0.0), 2.0, 58,
+     (1280, 820), 40, "day"),
+
     # --- golden hour ----------------------------------------------------
     ("40-golden-harbour", None, (20.0, 30.0), 1.2, (20.0, -20.0), 18.0, 50,
      (1400, 840), 80, "golden"),
@@ -164,3 +176,6 @@ PANELS = {
     10: ("10-chandlery-macro",
          "Dockside still-life: copper-bound crate, coiled rope, chain, fish"),
 }
+
+FIXED_VIEWS = {"21-cart-ascent", "22-gullscar-fields", "23-lamp-approach",
+               "24-yard-crossing", "25-harbour-court"}

@@ -46,7 +46,18 @@ def scene_from_build(build, sets=None, include_kinds=None):
     """Fill a preview Scene from a RegionBuild (same materials as the GLB)."""
     from amberwood import mesh as M
     scene = new_scene(sets)
+    # The GLB uses alpha-tested ground copies. Without their names here the
+    # preview silently assigns material zero (timber) to every terrain class.
+    from dataclasses import replace
+    by_name = {material.name: material for material in scene.materials}
     for name, piece in build.terrain_meshes.items():
+        if piece.material not in by_name:
+            base = by_name.get(MAT.base_material(piece.material))
+            if base is None:
+                raise ValueError(f"no preview material for {piece.material}")
+            alias = replace(base, name=piece.material, alpha_mode="MASK")
+            scene.add_material(alias)
+            by_name[piece.material] = alias
         scene.add_mesh(piece)
     for name, piece in build.water_meshes.items():
         scene.add_mesh(piece)

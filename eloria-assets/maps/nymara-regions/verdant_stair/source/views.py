@@ -153,6 +153,42 @@ VIEWS = [
      (1400, 840), 80, "golden"),
 ]
 
+
+# Grounded verification views follow the designed processional route.
+VIEWS = [
+    (name, panel, (-13.1, -10.9), 1.7, (-4.8, -19.2), 1.7,
+     60, (1400, 900), 70, "deck!")
+    if name == "02-grand-stair" else (name, panel, eye, eh, target, th, fov, size, radius, mode)
+    for name, panel, eye, eh, target, th, fov, size, radius, mode in VIEWS
+]
+VIEWS += [
+    ("53-temple-road-arrival", None, (-56, 0), 1.7, (-47.3, 0), 1.7,
+     60, (1400, 900), 55, "day!"),
+    ("54-middle-landing", None, (3.3, -27.3), 1.7, (13, -29), 1.7,
+     60, (1400, 900), 55, "day!"),
+    ("55-shrine-ascent", None, (14.7, -30.7), 1.7, (27, -43), 1.7,
+     60, (1400, 900), 65, "deck!"),
+    ("56-temple-procession", None, (55.3, -39.3), 1.7, (67.3, -51.3), 1.7,
+     60, (1400, 900), 70, "deck!"),
+    ("57-quarry-road", None, (113.3, -62), 1.7, (118, -58), 2.0,
+     60, (1400, 900), 45, "day!"),
+]
+VIEWS += [
+    ("58-market-court", None, (2.33, 6), 1.7, (4.3, -4.3), 3,
+     65, (1400, 900), 45, "day!"),
+    ("59-cenote-landing", None, (2, -29), 1.7, (-2.1, -34), 1,
+     65, (1400, 900), 40, "deck!"),
+    ("60-sanctum-entry", None, (75.7, -59), 1.7, (72.45, -64.49), 2,
+     65, (1400, 900), 45, "day!"),
+]
+VIEWS += [
+    ("61-western-ravine", None, (-45.75, -72.75), 1.7, (-53.25, -71.25), 1,
+     65, (1400, 900), 45, "deck!"),
+    ("62-middle-rope-descent", None, (45.0833, -12.4167), 1.7, (43.75, -6.4167), 1,
+     65, (1400, 900), 45, "deck!"),
+]
+FIXED_VIEWS = {view[0] for view in VIEWS if view[-1].endswith("!")}
+
 PANELS = {
     1: ("01-lagoon-landing", "Turquoise lagoon at the cliff foot, boat and landing"),
     2: ("02-grand-stair", "The monumental balustraded stair between terraces"),

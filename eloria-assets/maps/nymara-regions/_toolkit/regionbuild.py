@@ -39,6 +39,7 @@ class RegionBuild:
     harvestables: list[dict] = field(default_factory=list)
     portals: list[dict] = field(default_factory=list)
     spawns: list[dict] = field(default_factory=list)
+    crossings: list[dict] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)
     renames: dict[str, str] = field(default_factory=dict)
 

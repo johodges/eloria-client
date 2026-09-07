@@ -53,6 +53,7 @@ import numpy as np
 
 from amberwood import noise as N
 from amberwood import terrain as TER
+from amberwood import routecraft as RC
 
 # `Placement` and `RegionBuild` are the toolkit's shared build containers, not
 # anything Amberwood-specific, and every region needs them. Re-exported here so
@@ -303,6 +304,9 @@ _ANCHOR_CELLS: dict[str, tuple[float, float]] = {
     # gallery - which is a walk surface 28 m up - and the client's grounding ray
     # snaps the actor onto the gallery instead of the rock.
     "lighthouse_yard": (6.52, 6.18),
+    "farm_door": (5.42, 1.10),
+    "estate_door": (7.00, 3.68),
+    "watch_door": (6.86, 2.49),
 }
 
 ANCHORS: dict[str, tuple[float, float]] = {
@@ -352,7 +356,7 @@ CROWN_CLIMB_HEIGHTS = [LEVEL["citadel"] - 2.0, LEVEL["citadel"] + 4.0,
 
 # Out of the north gate and into the open country. This is the road the painting
 # shows switchbacking up the hillside on the right.
-NORTH_ROAD = _route_cells((4.34, 1.66), (4.62, 1.18), (5.14, 0.86), (5.42, 0.96),
+NORTH_ROAD = _route_cells((4.34, 1.66), (4.62, 1.18), (5.14, 1.12), (5.42, 1.20),
                           (5.94, 0.72), (6.28, 0.58), (6.90, 0.44))
 NORTH_ROAD_HEIGHTS = [LEVEL["crown"] - 4.0, LEVEL["upland"] + 12.0,
                       LEVEL["upland"] + 6.0, LEVEL["upland"] + 4.0,
@@ -360,7 +364,7 @@ NORTH_ROAD_HEIGHTS = [LEVEL["crown"] - 4.0, LEVEL["upland"] + 12.0,
                       LEVEL["upland"] + 16.0]
 
 EAST_ROAD = _route_cells((4.34, 1.66), (5.02, 2.06), (5.58, 2.62), (6.20, 2.98),
-                         (6.86, 3.28), (7.18, 3.58), (7.44, 4.10))
+                         (6.86, 3.28), (7.00, 3.78), (7.44, 4.10))
 EAST_ROAD_HEIGHTS = [LEVEL["crown"] - 4.0, LEVEL["upland"] + 6.0,
                      LEVEL["upland"] + 2.0, LEVEL["upland"] - 2.0,
                      LEVEL["upland"] - 6.0, LEVEL["upland"] - 9.0, 7.0]
@@ -369,7 +373,7 @@ EAST_ROAD_HEIGHTS = [LEVEL["crown"] - 4.0, LEVEL["upland"] + 6.0,
 BAY_TRACK = _route_cells((5.64, 4.58), (6.06, 4.78), (6.58, 5.00), (7.06, 4.92),
                          (7.48, 4.72), (7.86, 4.92), (7.72, 5.62), (6.90, 6.02),
                          (6.62, 6.18))
-BAY_TRACK_HEIGHTS = [LEVEL["quay"], 5.0, 2.6, 2.6, 5.0, 3.4, 2.2,
+BAY_TRACK_HEIGHTS = [LEVEL["quay"], 5.0, 2.6, 2.6, 5.0, 4.3, 2.5,
                      LEVEL["lamp_rock"] - 11.0, LEVEL["lamp_rock"] - 6.0]
 
 ROADS: dict[str, np.ndarray] = {
@@ -405,6 +409,38 @@ ROAD_SURFACE: dict[str, int] = {
     "crown_climb": TER.PAVING, "north_road": TER.PATH,
     "east_road": TER.PATH, "bay_track": TER.PATH,
 }
+
+# Surveyed service roads. The upper route closes the missing link between
+# the civic terrace and the north gate; the cart climb makes a loop from the
+# quay through the farmland instead of ending at the back of the city.
+ROADS.update({
+    "cart_climb": _route_cells((3.10, 4.59), (3.75, 4.15), (4.62, 3.90),
+                               (5.10, 3.40), (5.52, 2.92), (5.58, 2.62)),
+    "crown_link": _route_cells((3.30, 1.52), (3.90, 1.34), (4.34, 1.66)),
+    "farm_lane": _route_cells((5.42, 1.20), (5.42, 1.10)),
+    "watch_lane": _route_cells((5.58, 2.62), (6.28, 2.62),
+                               (6.68, 2.52), (6.86, 2.49)),
+    "coast_descent": _route_cells((7.44, 4.10), (7.25, 4.40), (7.48, 4.72)),
+})
+ROAD_HEIGHTS.update({
+    "cart_climb": [3.4, 9.5, 13.0, 23.0, 32.0, 36.0],
+    "crown_link": [52.0, 51.0, 48.0], "farm_lane": [38.0, 38.0],
+    "watch_lane": [36.0, 44.0, 52.0, 56.5],
+    "coast_descent": [7.0, 6.0, 5.0],
+})
+for _name in ("cart_climb", "crown_link", "farm_lane", "watch_lane", "coast_descent"):
+    ROAD_WIDTH[_name] = 2.4
+    ROAD_SURFACE[_name] = TER.PAVING if _name in ("cart_climb", "crown_link") else TER.PATH
+
+# Two short raised crossings follow the existing shore route. The first spans
+# the shipyard gully; the second keeps the lamp road above the tidal saddle.
+SHORE_CROSSINGS = {
+    "yard-bridge": ([(232.1, 3.58, 5.0), (262.3, 5.18, 19.4), (284.0, 2.78, 28.6)], 6.0),
+    "lamp-causeway": ([(377.0, 4.80, 21.6), (391.9, 4.48, 29.5),
+                       (381.8, 2.68, 79.9), (371.0, 4.75, 85.2)], 5.5),
+}
+# Small enclosed strips below the farmhouse, served by the well and the lane.
+FARM_FIELDS = [(212.0, -224.0, 35.0), (240.0, -234.0, 36.0)]
 
 # The mole: a built breakwater, so it is a route with a deck, not a road graded
 # into the ground. The terrain only needs to know where it runs so it can hold
@@ -678,6 +714,11 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260829) -> None:
     LEVEL or read from the sculpted ground, which is what keeps a square from
     hovering when the terrain noise changes.
     """
+    # Gullscar occupies a broad sheltered bowl, not isolated flat cuts in
+    # broken rock. Its pasture descends gently towards the port road.
+    t.plateau((242.0, -222.0), 65.0, 40.0, edge=48.0,
+              surface=TER.MEADOW, irregular=0.0)
+
     # 1. the roads. Graded before the squares so a square can overwrite a road
     #    where the two meet, rather than a road cutting a gutter through a
     #    finished plaza.
@@ -739,8 +780,10 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260829) -> None:
     for name, radius in (("upland_chapel", 7.0), ("upland_farm", 9.0),
                          ("hill_estate", 11.0), ("east_watch", 6.0),
                          ("crossroads", 8.0)):
-        level = float(t.height_at(*ANCHORS[name]))
-        t.terrace(ANCHORS[name], radius * LOCAL, level, surface=TER.PAVING)
+        level = 38.0 if name == "upland_farm" else float(t.height_at(*ANCHORS[name]))
+        t.plateau(ANCHORS[name], radius * LOCAL, level, edge=12.0,
+                  surface=TER.PAVING, irregular=0.0)
+        t.rect_terrace(ANCHORS[name], radius, radius, level, surface=TER.PAVING)
 
     # 7. the beach at the head of the east bay, and the two rock crowns.
     t.terrace(ANCHORS["east_bay_beach"], 16.0 * LOCAL, 1.9, surface=TER.SHORE)
@@ -752,6 +795,25 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260829) -> None:
     t.terrace(ANCHORS["lighthouse"], 9.5 * LOCAL,
               max(float(t.height_at(*ANCHORS["lighthouse"])), 12.0),
               surface=TER.PAVING)
+
+    # A surveyed bed has full width, exact station heights and smooth shoulders.
+    # Keep the original civic squares; the new routes meet them at their level.
+    for name in ("north_road", "east_road", "bay_track", "cart_climb",
+                 "crown_link", "farm_lane", "watch_lane", "coast_descent"):
+        RC.grade_road(t, ROADS[name], ROAD_HEIGHTS[name],
+                      width=ROAD_WIDTH[name] * SCALE, shoulder=16.0,
+                      surface=ROAD_SURFACE[name])
+    for x, z, y in FARM_FIELDS:
+        t.plateau((x, z), 15.0, y, edge=6.0, surface=TER.MEADOW, irregular=0.0)
+        t.rect_terrace((x, z), 9.0, 6.0, y, surface=TER.PATH)
+        t.tree_block |= np.hypot(t.gx - x, t.gz - z) < 17.0
+
+    # Rejoin the yard and tide decks on broad, slightly lower stone landings.
+    for stations, width in SHORE_CROSSINGS.values():
+        for x, y, z in (stations[0], stations[-1]):
+            t.plateau((x, z), width * 0.75, y - 0.18, edge=5.0,
+                      surface=TER.PAVING, irregular=0.0)
+            t.tree_block |= np.hypot(t.gx - x, t.gz - z) < width + 3.0
 
     t.assign_surface_by_rule(sea_level=SEA_LEVEL)
 
@@ -814,3 +876,33 @@ WATER_MARGIN = 240.0
 Westhaven's world is open to the south and west, so the water has to reach a
 horizon rather than stop at the map border. Amberwood's sea does the same.
 """
+
+
+# Shared server authoring reads this spatial brief. All coordinates are world
+# metres; services use the same court a player sees in the authored package.
+CONTENT_LAYOUT = {
+    "services": [
+        {"role": "information", "position": [22.0, 3.4, 0.0]},
+        {"role": "storage", "position": [34.0, 3.4, -2.0]},
+        {"role": "crafting_station", "position": [45.0, 3.4, 0.0]},
+        {"role": "training", "position": [48.0, 3.4, 8.0]},
+    ],
+    "wildlife": {
+        "rootback_boar": [[263, -209, 26], [262, -164, 20]],
+        "moss_horn_ram": [[240, -221, 22], [276, -245, 23]],
+        "bronze_tide_crab": [[316, 25, 16], [347, 37, 16]],
+        "coralcrest_heron": [[316, 25, 16]],
+        "brambleback_boar": [[-45, 141, 30]],
+        "moor_wisp_hound": [[337, -227, 26], [70, -284, 26]],
+    },
+    "harvest": {
+        "Wheat": [[212, -224, 7]],
+        "Sage": [[240, -234, 7]],
+        "Moorcotton": [[262, -227, 16]],
+        "Kelp": [[338, 31, 14], [365, 22, 12]],
+        "Shell": [[310, 30, 14], [365, 20, 14]],
+        "Salt": [[287, 23, 13]],
+        "Clay": [[284, 5, 14]],
+    },
+    "roadClearance": 6,
+}

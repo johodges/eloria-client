@@ -72,6 +72,20 @@ VIEWS = [
      50, (1400, 840), 60, "golden"),
 ]
 
+VIEWS += [
+    ("21-sanctuary-arrival", None, (40, 55), 1.7, (51, 42), 2.0,
+     60, (1400, 900), 80, "day!"),
+    ("22-lake-promenade", None, (52, 33), 1.7, (52, 26), 1.8,
+     60, (1400, 900), 80, "deck!"),
+    ("23-cellar-lane", None, (-14, -13.8), 1.7, (-16.3, -17), 1.5,
+     58, (1200, 850), 24, "day!"),
+    ("24-lens-vault-entry", None, (45.7, -81.3), 1.7, (45.7, -85.3), 1.5,
+     58, (1200, 850), 24, "day!"),
+    ("25-cistern-court", None, (47.7, -23.8), 1.7, (50.3, -28), 1.5,
+     60, (1200, 850), 26, "day!"),
+]
+FIXED_VIEWS = {view[0] for view in VIEWS if view[-1].endswith("!")}
+
 PANELS = {
     1: ("01-great-causeway", "Grand causeway rising to the monumental gate"),
     2: ("02-canal-district", "Canal and waterfall district on the south face"),

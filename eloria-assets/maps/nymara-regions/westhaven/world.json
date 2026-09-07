@@ -92,7 +92,7 @@
       "id": "crown-terrace",
       "position": [
         63.6,
-        52.05,
+        52.04,
         -215.28
       ],
       "serverTile": [
@@ -107,7 +107,7 @@
       "id": "lighthouse",
       "position": [
         295.44,
-        18.0,
+        18.04,
         120.24
       ],
       "serverTile": [
@@ -156,7 +156,7 @@
       "name": "Return from The Lamp Rock Light",
       "position": [
         295.44,
-        18.0,
+        18.04,
         120.24
       ],
       "serverTile": [
@@ -188,18 +188,17 @@
       "id": "gullscar-farmhouse-door",
       "name": "Return from The Gullscar Farmhouse",
       "position": [
-        212.75,
-        38.27,
-        -252.25
+        216.24,
+        38.05,
+        -245.52
       ],
       "serverTile": [
-        387,
-        502
+        390,
+        496
       ],
       "rotationDegrees": 180.0,
-      "surface": "Paving",
-      "grounded": true,
-      "nudgedMetres": 4.84
+      "surface": "Trail",
+      "grounded": true
     },
     {
       "id": "haven-undercroft-door",
@@ -221,405 +220,164 @@
       "id": "salvage-hole-mouth",
       "name": "Return from The Salvage Hole",
       "position": [
-        322.75,
-        56.67,
-        -156.75
+        319.92,
+        56.52,
+        -145.44
       ],
       "serverTile": [
-        497,
-        407
+        494,
+        395
       ],
       "rotationDegrees": 180.0,
-      "surface": "Paving",
-      "grounded": true,
-      "nudgedMetres": 2.88
+      "surface": "Trail",
+      "grounded": true
     }
   ],
   "collision": {
     "nodeNames": [
+      "Farm_Water_Store",
       "House_01_15",
-      "House_01_16",
-      "House_02_15",
       "House_02_17",
       "House_03_12",
-      "House_03_13",
       "House_03_15",
-      "House_03_16",
       "House_03_17",
-      "House_03_18",
       "House_03_19",
-      "House_03_20",
       "House_03_21",
       "House_04_10",
-      "House_04_12",
       "House_04_13",
-      "House_04_15",
-      "House_04_16",
-      "House_04_17",
       "House_04_18",
-      "House_04_19",
       "House_05_09",
-      "House_05_10",
-      "House_05_11",
-      "House_05_12",
       "House_05_15",
-      "House_05_16",
-      "House_05_17",
-      "House_05_18",
       "House_05_20",
-      "House_06_09",
       "House_06_10",
-      "House_06_11",
       "House_06_12",
-      "House_06_13",
       "House_06_15",
-      "House_06_16",
       "House_06_17",
-      "House_06_18",
       "House_06_19",
       "House_07_07",
-      "House_07_10",
       "House_07_11",
       "House_07_12",
-      "House_07_15",
-      "House_07_16",
-      "House_07_17",
-      "House_07_18",
-      "House_07_19",
       "House_07_20",
-      "House_08_06",
-      "House_08_07",
       "House_08_09",
-      "House_08_10",
-      "House_08_11",
-      "House_08_12",
-      "House_08_13",
       "House_08_15",
-      "House_08_16",
       "House_08_17",
-      "House_08_18",
       "House_08_20",
       "House_09_05",
-      "House_09_06",
       "House_09_07",
       "House_09_10",
       "House_09_12",
-      "House_09_13",
       "House_09_16",
-      "House_09_17",
       "House_09_18",
-      "House_09_20",
-      "House_09_21",
       "House_09_22",
-      "House_10_04",
-      "House_10_05",
       "House_10_07",
       "House_10_09",
-      "House_10_10",
-      "House_10_11",
-      "House_10_12",
       "House_10_13",
-      "House_10_15",
-      "House_10_16",
-      "House_10_17",
-      "House_10_18",
       "House_10_20",
-      "House_10_21",
-      "House_10_22",
       "House_11_04",
-      "House_11_05",
-      "House_11_06",
-      "House_11_07",
       "House_11_09",
       "House_11_10",
-      "House_11_11",
       "House_11_14",
-      "House_11_15",
       "House_11_16",
       "House_11_17",
-      "House_11_18",
-      "House_11_19",
       "House_11_20",
       "House_11_21",
-      "House_11_22",
       "House_12_03",
       "House_12_04",
-      "House_12_05",
-      "House_12_09",
-      "House_12_10",
-      "House_12_11",
       "House_12_12",
-      "House_12_13",
-      "House_12_16",
-      "House_12_17",
-      "House_12_18",
-      "House_12_19",
-      "House_12_20",
-      "House_12_21",
       "House_12_22",
-      "House_13_03",
-      "House_13_04",
-      "House_13_05",
       "House_13_06",
       "House_13_09",
-      "House_13_10",
-      "House_13_11",
       "House_13_12",
-      "House_13_13",
       "House_13_15",
       "House_13_17",
       "House_13_18",
       "House_13_20",
-      "House_13_21",
-      "House_13_22",
       "House_13_23",
       "House_14_02",
-      "House_14_03",
-      "House_14_05",
-      "House_14_06",
-      "House_14_07",
-      "House_14_09",
-      "House_14_10",
       "House_14_11",
-      "House_14_12",
-      "House_14_13",
       "House_14_15",
-      "House_14_16",
-      "House_14_17",
-      "House_14_18",
-      "House_14_19",
-      "House_14_21",
-      "House_14_23",
       "House_15_07",
       "House_15_09",
-      "House_15_10",
-      "House_15_11",
-      "House_15_12",
       "House_15_13",
       "House_15_17",
       "House_15_23",
       "House_16_01",
-      "House_16_02",
-      "House_16_09",
       "House_16_15",
-      "House_16_16",
-      "House_16_17",
       "House_17_01",
-      "House_17_02",
       "House_17_09",
       "House_17_15",
-      "House_17_16",
       "House_18_02",
-      "House_18_16",
       "House_18_17",
-      "House_19_01",
-      "House_19_02",
       "House_20_01",
-      "House_20_02",
-      "House_21_01",
-      "House_21_02",
       "House_21_22",
       "House_22_01",
       "House_22_09",
       "House_22_21",
-      "House_22_22",
       "House_22_24",
       "House_23_01",
-      "House_23_09",
       "House_23_10",
       "House_23_16",
       "House_23_21",
-      "House_23_22",
-      "House_23_23",
-      "House_24_01",
-      "House_24_09",
-      "House_24_10",
-      "House_24_16",
       "House_24_17",
-      "House_24_18",
-      "House_24_20",
       "House_24_21",
-      "House_24_22",
       "House_25_01",
+      "House_25_02",
       "House_25_09",
-      "House_25_10",
       "House_25_11",
       "House_25_15",
-      "House_25_16",
-      "House_25_17",
-      "House_25_18",
       "House_25_19",
-      "House_25_20",
-      "House_25_21",
       "House_26_00",
-      "House_26_01",
-      "House_26_04",
-      "House_26_05",
-      "House_26_09",
-      "House_26_10",
       "House_26_11",
-      "House_26_12",
-      "House_26_14",
-      "House_26_15",
-      "House_26_16",
       "House_26_17",
       "House_26_18",
-      "House_26_19",
       "House_26_20",
-      "House_26_21",
       "House_26_22",
       "House_27_00",
-      "House_27_01",
-      "House_27_02",
-      "House_27_03",
-      "House_27_04",
       "House_27_05",
-      "House_27_06",
       "House_27_09",
-      "House_27_10",
-      "House_27_11",
       "House_27_12",
       "House_27_14",
-      "House_27_15",
       "House_27_16",
-      "House_27_17",
       "House_27_18",
-      "House_27_20",
-      "House_27_21",
       "House_27_22",
-      "House_28_00",
-      "House_28_01",
-      "House_28_04",
-      "House_28_05",
-      "House_28_06",
       "House_28_07",
-      "House_28_09",
-      "House_28_10",
-      "House_28_11",
-      "House_28_12",
       "House_28_15",
-      "House_28_16",
-      "House_28_17",
       "House_28_18",
-      "House_28_19",
-      "House_28_21",
-      "House_28_23",
-      "House_28_24",
       "House_29_01",
-      "House_29_05",
-      "House_29_06",
       "House_29_07",
       "House_29_09",
       "House_29_11",
       "House_29_12",
       "House_29_14",
-      "House_29_15",
       "House_29_16",
-      "House_29_17",
-      "House_29_18",
       "House_29_19",
-      "House_29_20",
       "House_29_21",
-      "House_29_22",
       "House_29_23",
-      "House_29_24",
-      "House_30_01",
-      "House_30_04",
-      "House_30_05",
-      "House_30_06",
       "House_30_08",
-      "House_30_09",
-      "House_30_14",
-      "House_30_15",
-      "House_30_16",
       "House_30_17",
-      "House_30_20",
-      "House_30_21",
-      "House_30_22",
-      "House_30_23",
-      "House_30_24",
-      "House_31_03",
       "House_31_12",
       "House_31_14",
-      "House_31_15",
       "House_31_16",
       "House_31_17",
       "House_31_20",
       "House_31_21",
-      "House_31_22",
-      "House_31_23",
-      "House_31_24",
       "House_32_09",
-      "House_32_10",
       "House_32_11",
-      "House_32_12",
-      "House_32_13",
-      "House_32_15",
       "House_32_16",
-      "House_32_17",
-      "House_32_18",
-      "House_32_19",
-      "House_32_20",
-      "House_32_21",
-      "House_32_22",
-      "House_32_23",
-      "House_33_09",
-      "House_33_10",
-      "House_33_11",
-      "House_33_12",
       "House_33_13",
-      "House_33_15",
-      "House_33_16",
       "House_33_17",
-      "House_33_18",
       "House_33_20",
       "House_33_21",
-      "House_33_22",
-      "House_33_23",
-      "House_34_09",
       "House_34_10",
-      "House_34_11",
-      "House_34_12",
       "House_34_15",
-      "House_34_16",
-      "House_34_18",
-      "House_34_20",
-      "House_34_21",
-      "House_34_22",
-      "House_34_23",
-      "House_35_11",
       "House_35_12",
-      "House_35_13",
-      "House_35_15",
-      "House_35_16",
       "House_35_17",
       "House_35_18",
-      "House_35_20",
-      "House_35_21",
-      "House_35_22",
-      "House_35_23",
-      "House_36_13",
       "House_36_15",
       "House_36_16",
-      "House_36_18",
-      "House_36_20",
-      "House_36_21",
-      "House_36_22",
-      "House_36_23",
-      "House_37_16",
-      "House_37_20",
-      "House_37_21",
-      "House_37_22",
       "House_37_23",
-      "House_38_18",
-      "House_38_19",
-      "House_38_20",
-      "House_38_21",
-      "House_39_20",
       "House_39_21",
-      "House_39_22",
       "House_39_23",
-      "House_39_24",
       "House_40_23",
       "House_40_24",
       "Landmark_Custom_House",
@@ -684,6 +442,8 @@
       "Prop_Timber_Stack_05",
       "Prop_Timber_Stack_07",
       "Prop_Timber_Stack_08",
+      "Road_Cart_0",
+      "Road_Cart_1",
       "Secret_haven_arcade_school",
       "Secret_haven_cathedral_reliquary",
       "Secret_haven_gate_well",
@@ -705,8 +465,8 @@
     "width": 1152,
     "height": 1152,
     "heightEncoding": {
-      "origin": -16.0551,
-      "step": 0.456066,
+      "origin": -17.0703,
+      "step": 0.460048,
       "range": [
         1,
         255
@@ -714,8 +474,26 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 698755,
-    "walkableFraction": 0.5265,
+    "walkableCells": 773316,
+    "walkableFraction": 0.5827,
+    "refinedHeights": {
+      "levels": 255,
+      "step": 0.460048,
+      "origin": -17.0703,
+      "previousStep": 1.610765,
+      "cellsRestated": 772867,
+      "cellsFromGeometry": 770093,
+      "cellsKept": 2819
+    },
+    "openedWalkSurfaces": {
+      "prefix": "Walk_",
+      "cellsCovered": 17433,
+      "cellsWidened": 1387,
+      "cellsOpened": 1729,
+      "cellsRaised": 12234,
+      "cellsDrowned": 0,
+      "cellsInsideLandmarks": 0
+    },
     "stampedLandmarks": [
       {
         "id": "campanile",
@@ -728,7 +506,7 @@
           -204.84
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 0
+        "cellsBlocked": 225
       },
       {
         "id": "high-spire",
@@ -741,7 +519,7 @@
           -146.44
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 0
+        "cellsBlocked": 429
       },
       {
         "id": "gullstone-watch",
@@ -754,7 +532,7 @@
           108.02
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 0
+        "cellsBlocked": 358
       },
       {
         "id": "east-watch",
@@ -767,29 +545,43 @@
           -151.6
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 0
+        "cellsBlocked": 313
       }
-    ],
-    "openedWalkSurfaces": {
-      "prefix": "Walk_",
-      "cellsCovered": 14299,
-      "cellsWidened": 1169,
-      "cellsOpened": 856,
-      "cellsRaised": 10095,
-      "cellsDrowned": 0,
-      "cellsInsideLandmarks": 0
-    },
-    "refinedHeights": {
-      "levels": 255,
-      "step": 0.456066,
-      "origin": -16.0551,
-      "previousStep": 0.436329,
-      "cellsRestated": 697543,
-      "cellsFromGeometry": 698266,
-      "cellsKept": 489
-    }
+    ]
   },
   "navigation": {
+    "crossings": [
+      {
+        "id": "yard-bridge",
+        "endpoints": [
+          [
+            233.4539591162762,
+            3.6517329333126467,
+            5.645596399813818
+          ],
+          [
+            282.6189886927173,
+            2.932738577763983,
+            28.0145021185714
+          ]
+        ]
+      },
+      {
+        "id": "lamp-causeway",
+        "endpoints": [
+          [
+            378.3252489274776,
+            4.771538278067594,
+            22.30264876020626
+          ],
+          [
+            372.3465910805343,
+            4.491903376230926,
+            84.53917289566373
+          ]
+        ]
+      }
+    ],
     "surfaceNodePrefixes": [
       "Terrain_",
       "Walk_"
@@ -886,7 +678,7 @@
       "node": "Landmark_Warehouse_12",
       "position": [
         109.81,
-        3.4,
+        5.39,
         -15.49
       ],
       "serverTile": [
@@ -1156,7 +948,7 @@
       "node": "Landmark_Great_Lighthouse",
       "position": [
         302.64,
-        45.95,
+        45.92,
         120.24
       ],
       "serverTile": [
@@ -1201,7 +993,7 @@
       "node": "Landmark_Upland_Chapel",
       "position": [
         278.16,
-        43.49,
+        44.01,
         -282.96
       ],
       "serverTile": [
@@ -1216,7 +1008,7 @@
       "node": "Landmark_Upland_Farm",
       "position": [
         216.24,
-        38.22,
+        38.16,
         -255.6
       ],
       "serverTile": [
@@ -1231,7 +1023,7 @@
       "node": "Landmark_Hill_Estate",
       "position": [
         342.96,
-        22.58,
+        44.76,
         -66.96
       ],
       "serverTile": [
@@ -1246,12 +1038,102 @@
       "node": "Landmark_East_Watch",
       "position": [
         319.92,
-        56.62,
+        56.29,
         -156.24
       ],
       "serverTile": [
         494,
         406
+      ]
+    },
+    {
+      "id": "yard-bridge",
+      "name": "The Yard Bridge",
+      "type": "bridge",
+      "node": "Landmark_Route_yard_bridge",
+      "position": [
+        232.1,
+        3.58,
+        5.0
+      ],
+      "serverTile": [
+        406,
+        245
+      ]
+    },
+    {
+      "id": "lamp-causeway",
+      "name": "The Lamp Causeway",
+      "type": "bridge",
+      "node": "Landmark_Route_lamp_causeway",
+      "position": [
+        377.0,
+        4.8,
+        21.6
+      ],
+      "serverTile": [
+        551,
+        228
+      ]
+    },
+    {
+      "id": "cart-gate",
+      "name": "The Upland Gate",
+      "type": "gate",
+      "node": "Landmark_Cart_Gate",
+      "position": [
+        138.48,
+        48.0,
+        -205.2
+      ],
+      "serverTile": [
+        312,
+        455
+      ]
+    },
+    {
+      "id": "farm-field-0",
+      "name": "Gullscar Fields",
+      "type": "field",
+      "node": "Farm_End_0",
+      "position": [
+        212.0,
+        35.0,
+        -224.0
+      ],
+      "serverTile": [
+        386,
+        474
+      ]
+    },
+    {
+      "id": "farm-field-1",
+      "name": "Gullscar Fields",
+      "type": "field",
+      "node": "Farm_End_1",
+      "position": [
+        240.0,
+        36.0,
+        -234.0
+      ],
+      "serverTile": [
+        414,
+        484
+      ]
+    },
+    {
+      "id": "farm-water-store",
+      "name": "The Farm Cistern",
+      "type": "water",
+      "node": "Farm_Water_Store",
+      "position": [
+        228.24,
+        39.25,
+        -254.6
+      ],
+      "serverTile": [
+        402,
+        505
       ]
     },
     {
@@ -1274,7 +1156,7 @@
       "type": "transition",
       "position": [
         272.86,
-        43.49,
+        43.46,
         -276.96
       ],
       "note": "Where Westhaven gives way to the Grey Moors: greyhaven road furniture, a march stone, a waystation, and 19 pieces of the country beyond."
@@ -1286,7 +1168,7 @@
       "type": "waystation",
       "position": [
         266.66,
-        59.97,
+        44.05,
         -260.96
       ]
     },
@@ -1296,9 +1178,9 @@
       "node": "March_east_road_Stone",
       "type": "transition",
       "position": [
-        336.96,
-        22.58,
-        -72.26
+        324.0,
+        26.1,
+        -65.06
       ],
       "note": "Where Westhaven gives way to the Manymouth Delta: greyhaven road furniture, a march stone, a waystation, and 16 pieces of the country beyond."
     },
@@ -1308,9 +1190,9 @@
       "node": "March_east_road_Station",
       "type": "waystation",
       "position": [
-        320.96,
-        31.01,
-        -78.46
+        308.0,
+        29.58,
+        -71.26
       ]
     },
     {
@@ -1472,7 +1354,7 @@
       "type": "container",
       "position": [
         296.52,
-        17.95,
+        17.99,
         123.04
       ],
       "serverTile": [
@@ -1502,7 +1384,7 @@
       "type": "shrine",
       "position": [
         279.41,
-        43.49,
+        44.22,
         -285.12
       ],
       "serverTile": [
@@ -1565,7 +1447,7 @@
       "destinationSpawn": "haven-guild-vault",
       "position": [
         93.23,
-        9.35,
+        9.41,
         -40.54
       ],
       "authority": "server",
@@ -1775,7 +1657,7 @@
       "destinationSpawn": "haven-lighthouse-eyrie",
       "position": [
         291.64,
-        22.98,
+        22.66,
         133.44
       ],
       "authority": "server",
@@ -1795,14 +1677,14 @@
       "destinationMap": "grey_moors_secrets",
       "destinationSpawn": "moor-peatcut-far",
       "position": [
-        226.24,
-        45.26,
-        -241.6
+        209.74,
+        44.18,
+        -276.18
       ],
       "authority": "server",
       "serverTile": [
-        400,
-        492
+        384,
+        526
       ]
     }
   ],
@@ -1903,7 +1785,7 @@
       "type": "npc",
       "position": [
         216.47,
-        2.76,
+        2.82,
         11.06
       ],
       "serverTile": [
@@ -2053,7 +1935,7 @@
       "type": "npc",
       "position": [
         306.61,
-        17.95,
+        17.2,
         119.73
       ],
       "serverTile": [
@@ -2083,7 +1965,7 @@
       "type": "npc",
       "position": [
         209.24,
-        38.22,
+        38.18,
         -255.83
       ],
       "serverTile": [
@@ -2098,7 +1980,7 @@
       "type": "npc",
       "position": [
         279.78,
-        43.49,
+        44.1,
         -279.3
       ],
       "serverTile": [
@@ -2115,7 +1997,7 @@
       "type": "shellfish",
       "position": [
         304.29,
-        1.9,
+        2.59,
         30.0
       ],
       "serverTile": [
@@ -2130,7 +2012,7 @@
       "type": "shellfish",
       "position": [
         298.25,
-        1.9,
+        2.58,
         23.88
       ],
       "serverTile": [
@@ -2145,7 +2027,7 @@
       "type": "shellfish",
       "position": [
         315.51,
-        1.9,
+        2.57,
         37.91
       ],
       "serverTile": [
@@ -2160,7 +2042,7 @@
       "type": "shellfish",
       "position": [
         306.93,
-        1.9,
+        2.32,
         44.72
       ],
       "serverTile": [
@@ -2175,7 +2057,7 @@
       "type": "shellfish",
       "position": [
         302.39,
-        -16.58,
+        -16.11,
         53.44
       ],
       "serverTile": [
@@ -2190,7 +2072,7 @@
       "type": "shellfish",
       "position": [
         233.9,
-        -15.22,
+        -9.13,
         20.93
       ],
       "serverTile": [
@@ -2205,7 +2087,7 @@
       "type": "shellfish",
       "position": [
         241.75,
-        -12.26,
+        -1.49,
         20.57
       ],
       "serverTile": [
@@ -2220,7 +2102,7 @@
       "type": "shellfish",
       "position": [
         243.85,
-        3.92,
+        4.05,
         11.79
       ],
       "serverTile": [
@@ -2235,7 +2117,7 @@
       "type": "shellfish",
       "position": [
         242.2,
-        1.62,
+        3.99,
         13.67
       ],
       "serverTile": [
@@ -2265,7 +2147,7 @@
       "type": "plant",
       "position": [
         346.53,
-        -16.59,
+        -11.19,
         39.33
       ],
       "serverTile": [
@@ -2295,7 +2177,7 @@
       "type": "plant",
       "position": [
         331.68,
-        -16.15,
+        -13.03,
         45.72
       ],
       "serverTile": [
@@ -2325,7 +2207,7 @@
       "type": "plant",
       "position": [
         339.32,
-        -15.87,
+        -12.04,
         43.6
       ],
       "serverTile": [
@@ -2340,7 +2222,7 @@
       "type": "mineral",
       "position": [
         279.17,
-        20.91,
+        11.07,
         15.01
       ],
       "serverTile": [
@@ -2355,7 +2237,7 @@
       "type": "mineral",
       "position": [
         287.1,
-        22.13,
+        14.85,
         16.11
       ],
       "serverTile": [
@@ -2370,7 +2252,7 @@
       "type": "mineral",
       "position": [
         257.81,
-        16.63,
+        6.27,
         9.45
       ],
       "serverTile": [
@@ -2385,7 +2267,7 @@
       "type": "mineral",
       "position": [
         273.25,
-        4.61,
+        4.28,
         24.87
       ],
       "serverTile": [
@@ -2703,7 +2585,7 @@
       "transport": "road",
       "position": [
         278.16,
-        43.59,
+        44.11,
         -282.96
       ],
       "serverTile": [
@@ -2720,18 +2602,17 @@
       "type": "map-transition",
       "transport": "road",
       "position": [
-        340.75,
-        22.68,
-        -73.25
+        330.0,
+        25.66,
+        -59.76
       ],
       "serverTile": [
-        515,
-        323
+        504,
+        310
       ],
       "destinationMap": "manymouth_delta",
       "radius": 3.5,
-      "authority": "server",
-      "nudgedMetres": 6.67
+      "authority": "server"
     },
     {
       "id": "crownwater-berth",
@@ -2816,7 +2697,7 @@
       "transport": "door",
       "position": [
         295.44,
-        18.05,
+        18.09,
         120.24
       ],
       "serverTile": [
@@ -2854,19 +2735,18 @@
       "type": "map-transition",
       "transport": "door",
       "position": [
-        212.75,
-        38.32,
-        -252.25
+        216.24,
+        38.1,
+        -245.52
       ],
       "serverTile": [
-        387,
-        502
+        390,
+        496
       ],
       "destinationMap": "westhaven_insides",
       "destinationSpawn": "gullscar-farmhouse-door",
       "radius": 3.0,
-      "authority": "server",
-      "nudgedMetres": 4.84
+      "authority": "server"
     },
     {
       "id": "haven-undercroft-door",
@@ -2893,21 +2773,182 @@
       "type": "map-transition",
       "transport": "door",
       "position": [
-        322.75,
-        56.72,
-        -156.75
+        319.92,
+        56.57,
+        -145.44
       ],
       "serverTile": [
-        497,
-        407
+        494,
+        395
       ],
       "destinationMap": "westhaven_insides",
       "destinationSpawn": "salvage-hole-mouth",
       "radius": 3.0,
-      "authority": "server",
-      "nudgedMetres": 2.88
+      "authority": "server"
     }
   ],
+  "contentLayout": {
+    "services": [
+      {
+        "role": "information",
+        "position": [
+          22.0,
+          3.4,
+          0.0
+        ]
+      },
+      {
+        "role": "storage",
+        "position": [
+          34.0,
+          3.4,
+          -2.0
+        ]
+      },
+      {
+        "role": "crafting_station",
+        "position": [
+          45.0,
+          3.4,
+          0.0
+        ]
+      },
+      {
+        "role": "training",
+        "position": [
+          48.0,
+          3.4,
+          8.0
+        ]
+      }
+    ],
+    "wildlife": {
+      "rootback_boar": [
+        [
+          263,
+          -209,
+          26
+        ],
+        [
+          262,
+          -164,
+          20
+        ]
+      ],
+      "moss_horn_ram": [
+        [
+          240,
+          -221,
+          22
+        ],
+        [
+          276,
+          -245,
+          23
+        ]
+      ],
+      "bronze_tide_crab": [
+        [
+          316,
+          25,
+          16
+        ],
+        [
+          347,
+          37,
+          16
+        ]
+      ],
+      "coralcrest_heron": [
+        [
+          316,
+          25,
+          16
+        ]
+      ],
+      "brambleback_boar": [
+        [
+          -45,
+          141,
+          30
+        ]
+      ],
+      "moor_wisp_hound": [
+        [
+          337,
+          -227,
+          26
+        ],
+        [
+          70,
+          -284,
+          26
+        ]
+      ]
+    },
+    "harvest": {
+      "Wheat": [
+        [
+          212,
+          -224,
+          7
+        ]
+      ],
+      "Sage": [
+        [
+          240,
+          -234,
+          7
+        ]
+      ],
+      "Moorcotton": [
+        [
+          262,
+          -227,
+          16
+        ]
+      ],
+      "Kelp": [
+        [
+          338,
+          31,
+          14
+        ],
+        [
+          365,
+          22,
+          12
+        ]
+      ],
+      "Shell": [
+        [
+          310,
+          30,
+          14
+        ],
+        [
+          365,
+          20,
+          14
+        ]
+      ],
+      "Salt": [
+        [
+          287,
+          23,
+          13
+        ]
+      ],
+      "Clay": [
+        [
+          284,
+          5,
+          14
+        ]
+      ]
+    },
+    "roadClearance": 6
+  },
   "roads": [
     {
       "id": "quayside",
@@ -3034,7 +3075,7 @@
         ],
         [
           63.6,
-          52.0,
+          51.99,
           -215.3
         ]
       ]
@@ -3046,37 +3087,37 @@
       "waypoints": [
         [
           138.5,
-          47.95,
+          48.02,
           -205.2
         ],
         [
           158.6,
-          45.42,
+          45.95,
           -239.8
         ],
         [
           196.1,
-          39.4,
-          -262.8
+          39.98,
+          -244.1
         ],
         [
           216.2,
-          38.22,
-          -255.6
+          36.48,
+          -238.3
         ],
         [
           253.7,
-          42.03,
+          42.0,
           -272.9
         ],
         [
           278.2,
-          43.49,
+          44.01,
           -283.0
         ],
         [
           322.8,
-          49.92,
+          49.94,
           -293.0
         ]
       ]
@@ -3088,37 +3129,37 @@
       "waypoints": [
         [
           138.5,
-          47.95,
+          48.02,
           -205.2
         ],
         [
           187.4,
-          39.32,
+          40.03,
           -176.4
         ],
         [
           227.8,
-          34.62,
+          36.03,
           -136.1
         ],
         [
           272.4,
-          30.36,
+          32.0,
           -110.2
         ],
         [
           319.9,
-          26.54,
+          27.99,
           -88.6
         ],
         [
-          343.0,
-          22.58,
-          -67.0
+          330.0,
+          24.93,
+          -52.6
         ],
         [
           361.7,
-          7.14,
+          6.99,
           -29.5
         ]
       ]
@@ -3135,43 +3176,168 @@
         ],
         [
           262.3,
-          4.77,
+          4.97,
           19.4
         ],
         [
           299.8,
-          1.9,
+          2.61,
           35.3
         ],
         [
           334.3,
-          2.6,
+          2.62,
           29.5
         ],
         [
           364.6,
-          4.13,
+          5.01,
           15.1
         ],
         [
           391.9,
-          4.31,
+          4.29,
           29.5
         ],
         [
           381.8,
-          2.52,
+          2.56,
           79.9
         ],
         [
           322.8,
-          15.04,
+          13.02,
           108.7
         ],
         [
           302.6,
-          17.95,
+          17.92,
           120.2
+        ]
+      ]
+    },
+    {
+      "id": "cart_climb",
+      "type": "street",
+      "widthMetres": 7.2,
+      "waypoints": [
+        [
+          49.2,
+          3.44,
+          5.8
+        ],
+        [
+          96.0,
+          9.48,
+          -25.9
+        ],
+        [
+          158.6,
+          13.06,
+          -43.9
+        ],
+        [
+          193.2,
+          23.0,
+          -79.9
+        ],
+        [
+          223.4,
+          31.98,
+          -114.5
+        ],
+        [
+          227.8,
+          36.03,
+          -136.1
+        ]
+      ]
+    },
+    {
+      "id": "crown_link",
+      "type": "street",
+      "widthMetres": 7.2,
+      "waypoints": [
+        [
+          63.6,
+          51.99,
+          -215.3
+        ],
+        [
+          106.8,
+          50.98,
+          -228.2
+        ],
+        [
+          138.5,
+          48.02,
+          -205.2
+        ]
+      ]
+    },
+    {
+      "id": "farm_lane",
+      "type": "track",
+      "widthMetres": 7.2,
+      "waypoints": [
+        [
+          216.2,
+          36.48,
+          -238.3
+        ],
+        [
+          216.2,
+          38.0,
+          -245.5
+        ]
+      ]
+    },
+    {
+      "id": "watch_lane",
+      "type": "track",
+      "widthMetres": 7.2,
+      "waypoints": [
+        [
+          227.8,
+          36.03,
+          -136.1
+        ],
+        [
+          278.2,
+          44.02,
+          -136.1
+        ],
+        [
+          307.0,
+          52.04,
+          -143.3
+        ],
+        [
+          319.9,
+          56.47,
+          -145.4
+        ]
+      ]
+    },
+    {
+      "id": "coast_descent",
+      "type": "track",
+      "widthMetres": 7.2,
+      "waypoints": [
+        [
+          361.7,
+          6.99,
+          -29.5
+        ],
+        [
+          348.0,
+          6.0,
+          -7.9
+        ],
+        [
+          364.6,
+          5.01,
+          15.1
         ]
       ]
     }
@@ -3528,29 +3694,29 @@
     }
   ],
   "performance": {
-    "nodes": 5416,
-    "meshes": 391,
+    "nodes": 3935,
+    "meshes": 416,
     "materials": 47,
     "images": 106,
     "textures": 106,
-    "accessors": 1572,
-    "bufferViews": 1678,
-    "uniqueTriangles": 525346,
-    "uniqueVertices": 400585,
-    "glbBytes": 30162596,
-    "instancedTriangles": 1228258,
-    "embeddedTextureBytes": 30715754,
+    "accessors": 1672,
+    "bufferViews": 1778,
+    "uniqueTriangles": 521884,
+    "uniqueVertices": 397267,
+    "glbBytes": 29861016,
+    "instancedTriangles": 994606,
+    "embeddedTextureBytes": 30504469,
     "textureMemoryBytesUncompressed": 268566528,
-    "placements": 2719,
+    "placements": 2435,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 698364,
-      "blockedCells": 628740,
-      "walkableFraction": 0.5262,
-      "elevatedDecks": 29,
-      "steepCells": 261856,
+      "walkableCells": 772912,
+      "blockedCells": 554192,
+      "walkableFraction": 0.5824,
+      "elevatedDecks": 31,
+      "steepCells": 222513,
       "reliefMetres": 99.87,
       "heightEncoding": {
         "origin": -1.2603,
@@ -3573,18 +3739,6 @@
           "metres": 3.14
         },
         {
-          "id": "gullscar-farmhouse-door",
-          "metres": 4.84
-        },
-        {
-          "id": "salvage-hole-mouth",
-          "metres": 2.88
-        },
-        {
-          "id": "east-road",
-          "metres": 6.67
-        },
-        {
           "id": "amber-berth",
           "metres": 1.45
         },
@@ -3595,37 +3749,30 @@
         {
           "id": "gullstone-door",
           "metres": 3.14
-        },
-        {
-          "id": "gullscar-farmhouse-door",
-          "metres": 4.84
-        },
-        {
-          "id": "salvage-hole-mouth",
-          "metres": 2.88
         }
       ]
     },
     "notes": [
-      "surf cards placed: 720",
+      "surf cards placed: 691",
       "surf breakers placed: 7",
       "jetties placed: 8",
-      "city houses placed: 385",
-      "trees placed: 254",
-      "ground dressing placed: 535",
+      "city houses placed: 144",
+      "Surveyed cart loop, two tidal crossings, enclosed Gullscar fields.",
+      "trees placed: 253",
+      "ground dressing placed: 518",
       "lore site league-post-house (The League Post-House): relief 1.80 m, 36 m from the ask",
-      "march north-road: 7 road pieces, 19 of grey_moors's growth",
-      "march east-road: 4 road pieces, 16 of manymouth_delta's growth",
+      "march north-road: 8 road pieces, 19 of grey_moors's growth",
+      "march east-road: 9 road pieces, 16 of manymouth_delta's growth",
       "march crownwater-berth: 0 road pieces, 0 of crownwater's growth",
       "march amber-berth: 0 road pieces, 0 of amberwood's growth"
     ],
     "lod2": {
-      "glbBytes": 17787544,
-      "nodes": 4055,
-      "uniqueTriangles": 439076,
-      "instancedTriangles": 1039220,
-      "sizeReductionPercent": 41.0,
-      "triangleReductionPercent": 15.4
+      "glbBytes": 17570124,
+      "nodes": 2651,
+      "uniqueTriangles": 435690,
+      "instancedTriangles": 812822,
+      "sizeReductionPercent": 41.2,
+      "triangleReductionPercent": 18.3
     }
   },
   "sources": [
@@ -3665,8 +3812,8 @@
   },
   "knownLimitations": [
     "Place names are invented. No authoritative written description of Westhaven was available, so every name in this package - Gullstone, Lamp Rock, the Mariners' Guild, Gullscar Farm - is a placeholder chosen to fit the concept art, not lore.",
-    "The server ELM cannot express water as blocked. generate_nymara_maps.py's validator rejects any exterior map containing a zero height, and zero is what blocked means, so the server map carries Westhaven's elevation only and collision.bin remains authoritative for walkability. This is true of every region, not new here.",
-    "collision.bin height bytes saturate at 63, which is 10.4 m. Westhaven's terraces run to 52 m and its ridge to 88, so every walkable cell above 10.4 m encodes as 63. The client takes elevation from the rendered walk surfaces, not from this file, and verify_runtime exempts saturated cells from its cross-check.",
+    "Water and solid footprints are blocked in both authored and server grids. Run refine_walk_heights, open_walk_surfaces and stamp_solid_landmarks after building; their order is part of the collision contract.",
+    "The corrected half-metre grid records its own height origin and step. The server selects a stage large enough to retain the region's full relief; the client grounds actors on rendered walk surfaces.",
     "The city's terrace risers are deliberately not walkable. Every terrace is reachable along the graded ramp streets, but a player cannot climb a retaining wall, and the 202 grounding discontinuities verify_runtime reports are those risers, the sea cliffs and the map's north and east rim.",
     "Gullstone island has no bridge or ferry geometry. Its tiles are grounded and walkable but form an isolated component reachable only by boat, which the client does not yet model."
   ]

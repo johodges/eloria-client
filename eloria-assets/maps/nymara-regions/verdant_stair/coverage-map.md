@@ -13,13 +13,13 @@ Status key: **built** — modelled, placed, grounded and verified in the package
 | Terrace | Height | What is on it |
 | --- | ---: | --- |
 | seabed | −13 m | the lagoon, its inlet and sea stacks |
-| strand | 0.4 m | beach, boat landing, mangrove bight, the Westhaven quay |
+| strand | 0.4 m | beach, boat landing, mangrove bight, the Ssarathi Temple Road |
 | quay | 7 m | west quay, quay market, plunge pool below the first fall |
 | lower | 24 m | the arrival town: waygate, plaza, Tessara, Orru Moss, gardens, foot of the Grand Stair |
 | middle | 46 m | the cenote, the canopy village, the market, the root and rope crossings |
 | upper | 72 m | the water shrine, the aqueduct, the hanging gardens, the reclaimed terrace |
 | temple | 100 m | the Green Temple, its court, the processional stair, the sun pavilion |
-| summit | 124 m | ridge shrine, cloud terrace, the quarry, the Ssarathi pass |
+| summit | 124 m | ridge shrine, cloud terrace, the quarry, the Sunmane Steppe Pass |
 
 ## Checklist
 
@@ -44,7 +44,7 @@ Status key: **built** — modelled, placed, grounded and verified in the package
 | 17 | Colonnades and balustraded terrace edges | built | 24 courts | `Arcade_*`, `Rail_*` |
 | 18 | Outlying camps and works | built | eight | fern camp, high camp, kiln yard, north pass, strand camp, south watch, north watch, quarry |
 | 19 | Ruined and reclaimed terraces | built | five sites | `Ruin_*` at the reclaimed terrace, standing ring, north watch, deep jungle, marchstone |
-| 20 | Two map transitions matching the server's own | built | (−168, 0.5, 0) and (390, 124, −150) | `portals[]`; Westhaven quay west, Ssarathi pass east |
+| 20 | Two map transitions matching the server's own | built | (−168, 0.5, 0) and (390, 124, −150) | `portals[]`; Ssarathi Temple Road west, Sunmane Steppe Pass east |
 | 21 | Natural boundaries preventing access to unfinished voids | built | all four sides | lagoon closes the south-west, 46 m cliff rim on the north and east, partial rim west and south where the ground is landward |
 | 22 | Server population placed at the server's own tiles | built | 60 markers | NPCs, creature groups, harvestables and interactives from `config/eloria/*.txt`; 11 moved to standable ground, listed in `buildNotes` |
 

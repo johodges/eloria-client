@@ -92,11 +92,10 @@ reasonably want to overrule the build.
     names them.
 
 11. **Two portals, because the server has two.** `config/eloria/maps.txt` gives
-    Verdant Stair exactly two neighbours, Westhaven west and Ssarathi Ruins
-    east, and no transition is shipped that the server does not have. The
-    Westhaven crossing is a sea quay on the strand rather than a road, which is
-    the shape Crownwater's portals already take. Both endpoints are taken from
-    the built `world.json` rather than scaled by hand, as Crownwater's were.
+    Verdant Stair has two exterior neighbours in CONTINENT.md: Ssarathi
+    Ruins at the western Temple Road and Sunmane Steppe at the eastern pass.
+    The western trigger stands on the strand; a fitted stair climbs to the
+    quay road, then the lower town. The eastern pass follows the quarry shelf.
 
 12. **Jade is a cut stone, not verdigris and not metal.** `metallic` stays at
     zero. The Amethyst Barrens notes record what a metallic surface does in a

@@ -43,6 +43,7 @@ import validate_gltf
 from amberwood import gltf as GLTF
 from amberwood import materials as MAT
 from amberwood import mesh as M
+from amberwood import routecraft as RC
 from amberwood import noise as N
 from amberwood import render as RENDER
 
@@ -77,8 +78,8 @@ CROSSINGS = [
     MARCH.Crossing("north-road", "grey_moors", REG.ANCHORS["upland_chapel"],
                    (REG.ANCHORS["upland_chapel"][0], REG.PLAY_MIN_Z - 20.0),
                    radius=46.0, name="The Moor Road March"),
-    MARCH.Crossing("east-road", "manymouth_delta", REG.ANCHORS["hill_estate"],
-                   (REG.PLAY_MAX_X + 20.0, REG.ANCHORS["hill_estate"][1]),
+    MARCH.Crossing("east-road", "manymouth_delta", REG.ANCHORS["estate_door"],
+                   (REG.PLAY_MAX_X + 20.0, REG.ANCHORS["estate_door"][1]),
                    radius=44.0, name="The Coast Road March"),
     MARCH.Crossing("crownwater-berth", "crownwater", REG.ANCHORS["west_quay"],
                    (REG.ANCHORS["west_quay"][0], REG.ANCHORS["west_quay"][1] + 30.0),
@@ -136,6 +137,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     POP.populate_city(build, seed)
     POP.populate_lighthouses(build, seed)
     POP.populate_upland(build, seed)
+    POP.populate_routes(build, seed)
     POP.populate_vegetation(build, seed, lod=lod)
     if lod is None:
         POP.populate_props(build, seed)
@@ -198,7 +200,7 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
     for portal_id, name, anchor, destination, kind in (
             ("north-road", "Upland Road to the Grey Moors", "upland_chapel",
              "grey_moors", "road"),
-            ("east-road", "Coast Road to the Manymouth Delta", "hill_estate",
+            ("east-road", "Coast Road to the Manymouth Delta", "estate_door",
              "manymouth_delta", "road"),
             ("crownwater-berth", "Crownwater Packet", "west_quay",
              "crownwater", "berth"),
@@ -232,11 +234,11 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
              "lamp-rock-foot", 315.0),
             ("gullstone-door", "The Gullstone Undertow", "gullstone_watch",
              "gullstone-cleft", 0.0),
-             ("gullscar-farmhouse-door", "The Gullscar Farmhouse", "upland_farm",
+             ("gullscar-farmhouse-door", "The Gullscar Farmhouse", "farm_door",
              "gullscar-farmhouse-door", 180.0),
             ("haven-undercroft-door", "The Haven Undercroft", "cathedral",
              "haven-undercroft-door", 180.0),
-            ("salvage-hole-mouth", "The Salvage Hole", "east_watch",
+            ("salvage-hole-mouth", "The Salvage Hole", "watch_door",
              "salvage-hole-mouth", 180.0),
 ):
         x, z = REG.ANCHORS[anchor]
@@ -771,26 +773,6 @@ def write_camera_views(build: REG.RegionBuild, path: Path) -> dict:
                       placement.position[1] + float(low[1]) * placement.scale,
                       placement.position[1] + float(high[1]) * placement.scale))
 
-    # Walk-deck boxes, for cameras that stand on a causeway rather than on ground.
-    decks = []
-    for placement in build.placements:
-        item = build.meshes[placement.mesh]
-        bounds = getattr(item, "walk_bounds", lambda: None)()
-        if bounds is None:
-            continue
-        low, high = bounds
-        angle = float(placement.rotation_y or 0.0)
-        cosine, sine = math.cos(angle), math.sin(angle)
-        corners = []
-        for lx in (low[0], high[0]):
-            for lz in (low[2], high[2]):
-                corners.append((cosine * lx + sine * lz, -sine * lx + cosine * lz))
-        xs = [c[0] * placement.scale + placement.position[0] for c in corners]
-        zs = [c[1] * placement.scale + placement.position[2] for c in corners]
-        decks.append((min(xs), max(xs), min(zs), max(zs),
-                      placement.position[1] + float(low[1]) * placement.scale,
-                      placement.position[1] + float(high[1]) * placement.scale))
-
     def clear_eye(x, y, z):
         """Lift a camera that sits inside, or directly under, solid geometry."""
         for x0, x1, z0, z1, y0, y1 in boxes:
@@ -800,11 +782,24 @@ def write_camera_views(build: REG.RegionBuild, path: Path) -> dict:
                 y = y1 + 2.4
         return y
 
+    # Sloping decks cannot be sampled from their bounding-box maximum.
+    from verify_runtime import VerticalRayIndex
+    walk_triangles = []
+    for placement in build.placements:
+        matrix = (M.translation(*placement.position) @ M.rotation_y(placement.rotation_y)
+                  @ M.scaling(placement.scale))
+        for piece in getattr(build.meshes[placement.mesh], "walk_parts", []):
+            transformed = piece.transformed(matrix)
+            walk_triangles.append(transformed.positions[transformed.indices.reshape(-1, 3)])
+    deck_index = VerticalRayIndex(np.concatenate(walk_triangles), cell=4.0)
+
     entries = []
     for (name, panel, eye_xz, eye_h, target_xz, target_h, fov, _size,
          _radius, mode) in VIEWTABLE.VIEWS:
         ex, ez = eye_xz[0] * REG.SCALE, eye_xz[1] * REG.SCALE
         tx, tz = target_xz[0] * REG.SCALE, target_xz[1] * REG.SCALE
+        if eye_h > 40.0:
+            eye_h *= REG.SCALE
         ey = float(t.height_at(ex, ez)) + eye_h
         ty = float(t.height_at(tx, tz)) + target_h
         # a camera below the waterline sees nothing but the water plane's
@@ -817,10 +812,7 @@ def write_camera_views(build: REG.RegionBuild, path: Path) -> dict:
             # sometimes an island shelf at -1.3, and the same declared height
             # therefore lands 1.7 m above the deck in one place and 7 m above it
             # in another. Two attempts at panel 4 failed exactly that way.
-            deck = None
-            for x0, x1, z0, z1, y0, y1 in decks:
-                if x0 <= ex <= x1 and z0 <= ez <= z1:
-                    deck = y1 if deck is None else max(deck, y1)
+            deck = deck_index.top_hit(ex, ez)
             if deck is None:
                 raise SystemExit(
                     f"view {name!r} is mode 'deck' but no walk deck covers "
@@ -830,14 +822,12 @@ def write_camera_views(build: REG.RegionBuild, path: Path) -> dict:
             # span stays level. Measured against the ground it drifts: the
             # terrain under the far end of a causeway is not the terrain under
             # the near end, and the aim tilts by the difference.
-            target_deck = None
-            for x0, x1, z0, z1, y0, y1 in decks:
-                if x0 <= tx <= x1 and z0 <= tz <= z1:
-                    target_deck = y1 if target_deck is None else max(target_deck, y1)
+            target_deck = deck_index.top_hit(tx, tz)
             ty = (target_deck if target_deck is not None else deck) + target_h
         elif mode != "submerged":
             ey = max(ey, REG.SEA_LEVEL + 0.6)
-            ey = clear_eye(ex, ey, ez)
+            if name not in getattr(VIEWTABLE, "FIXED_VIEWS", set()):
+                ey = clear_eye(ex, ey, ez)
         entries.append({
             "id": name,
             "panel": panel if isinstance(panel, int) else None,
@@ -923,6 +913,8 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             "walkableFraction": collision_stats["walkableFraction"],
         },
         "navigation": {
+            "crossings": [{"id": name, "endpoints": RC.crossing_endpoints(points)}
+                          for name, (points, width) in REG.SHORE_CROSSINGS.items()],
             "surfaceNodePrefixes": surface_prefixes,
             "walkableAreas": ["paving", "quays", "pier-decks", "mole-deck",
                               "shore", "salt-turf", "ramp-streets", "stairs"],
@@ -956,6 +948,7 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
         # Westhaven's routes are graded into the ground, so a waypoint's height
         # is the terrain's, read back from the terrain that was actually built
         # rather than from the height table that asked for it.
+        "contentLayout": REG.CONTENT_LAYOUT,
         "roads": [{"id": name,
                    "type": "quay" if name == "quayside" else (
                        "track" if REG.ROAD_SURFACE[name] == TER.PATH else "street"),
@@ -1109,17 +1102,12 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             "Westhaven was available, so every name in this package - "
             "Gullstone, Lamp Rock, the Mariners' Guild, Gullscar Farm - is a "
             "placeholder chosen to fit the concept art, not lore.",
-            "The server ELM cannot express water as blocked. "
-            "generate_nymara_maps.py's validator rejects any exterior map "
-            "containing a zero height, and zero is what blocked means, so the "
-            "server map carries Westhaven's elevation only and collision.bin "
-            "remains authoritative for walkability. This is true of every "
-            "region, not new here.",
-            "collision.bin height bytes saturate at 63, which is 10.4 m. "
-            "Westhaven's terraces run to 52 m and its ridge to 88, so every "
-            "walkable cell above 10.4 m encodes as 63. The client takes "
-            "elevation from the rendered walk surfaces, not from this file, "
-            "and verify_runtime exempts saturated cells from its cross-check.",
+            "Water and solid footprints are blocked in both authored and server grids. "
+            "Run refine_walk_heights, open_walk_surfaces and stamp_solid_landmarks "
+            "after building; their order is part of the collision contract.",
+            "The corrected half-metre grid records its own height origin and step. "
+            "The server selects a stage large enough to retain the region's full relief; "
+            "the client grounds actors on rendered walk surfaces.",
             "The city's terrace risers are deliberately not walkable. Every "
             "terrace is reachable along the graded ramp streets, but a player "
             "cannot climb a retaining wall, and the 202 grounding "

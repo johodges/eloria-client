@@ -72,3 +72,20 @@ Stated rather than left to be found:
 - **No interiors.** The two interior entrances point at map ids the client
   registry already carries; the interior packages themselves are not part of
   this work.
+
+
+## 2026-09-07 access coverage
+
+The Sanctuary Road now joins the city through the ring and North Quay.
+All five exterior crossings and all three cellar thresholds must be reachable
+from the default arrival in both the client grid and the server export.
+Views 21 and 22 cover the shore join and the bridge-to-ring join at player
+height; views 23-25 cover the three visible cellar entrances.
+
+The plaza's southern apron groups the information point, storage, crafting
+and training services. The cellar lane descends from the western arrival,
+turns below the houses, and ends in a court with room to gather.
+
+The wider cliff town, mountain silhouette and quarry access remain candidates
+for further layout work. This pass does not claim that their existing hard
+terraces or every remote resource have been redesigned.

@@ -168,3 +168,25 @@ pairs that are both alpha-tested with vertex coverage.
 
 See `whitehorn_range/change-log.md` for the full account, including why the
 heightfield was not taken to one metre instead.
+
+
+## 2026-09-07: connected lake approach and civic thresholds
+
+Replaced the four raised, short radial causeways with continuous marble decks
+at the promenade's level. The southern arm bends to the Sanctuary Road and
+its watch apron; the northern arm reaches the quay road. Side piers now have
+fishing boats and crates. Cardinal gaps in the colonnade keep approaches clear.
+
+Moved all three interior triggers from scenery centres to authored entrance
+buildings. Cut a broader lower-town court and graded the cellar lane from the
+arrival's surveyed height. Grouped the civic services beside the fountain.
+
+Corrected the ring walking surface's downward triangle winding and rasterised
+actual deck triangles in the region's initial collision build. The prescribed
+height refinement, walk-surface opening and solid-landmark passes still follow
+the build. Added a shared optional waystation position so the southern march
+station can use the shore apron instead of its old underwater setback.
+
+The shared preview tool now resolves deck cameras from the emitted walk
+triangles for regions without a camera manifest. New recipes retain the
+existing material palette. See layout-review.md for captures and validation.

@@ -1,5 +1,8 @@
 # Verdant Stair validation report
 
+Current layout measurements are in [the 2026-09-07 review](layout-review.md).
+The measurements below record the earlier production pass.
+
 What was measured, how, and — at the end — what was **not** verified. A clean
 validator report covers structure, not whether the map looks right; the two
 sections are kept apart on purpose.

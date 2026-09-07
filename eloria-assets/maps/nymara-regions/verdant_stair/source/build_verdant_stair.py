@@ -40,6 +40,7 @@ from regionbuild import Placement, RegionBuild
 from amberwood import gltf as GLTF
 from amberwood import materials as MAT
 from amberwood import mesh as M
+from amberwood import routecraft as RC
 from amberwood import render as RENDER
 from amberwood import terrain as TER
 
@@ -152,6 +153,7 @@ def build_region(seed: int = SEED, lod: str | None = None,
     if stage != "terrain":
         MARCH.prepare(terrain, CROSSINGS)
         LORE.prepare(terrain, SITES, sea_level=getattr(REG, "SEA_LEVEL", 0.0), keep=(TER.SHORE, TER.WET_ROCK))
+        REG.prepare_access(terrain)
         POP.populate_stair(build, seed)
         POP.populate_landmarks(build, seed)
         POP.populate_crossings(build, seed)
@@ -200,6 +202,10 @@ def build_region(seed: int = SEED, lod: str | None = None,
             piece.project_uv_triplanar(0.09 if name.startswith("Backdrop")
                                        else 0.26)
     build.resolve_names()
+    bridge_ids = {row[0] for row in REG.CROSSINGS}
+    RC.clear_walk_corridors(build,
+        [crossing["endpoints"] for crossing in build.crossings if crossing["id"] in bridge_ids],
+        {"tree": 18, "fern": 10, "undergrowth": 5, "vine": 9, "rock": 4})
     _add_spawns_and_portals(build)
     _add_population_markers(build, seed)
     print(f"[region] built in {time.time() - t0:.1f}s "
@@ -283,11 +289,8 @@ def _add_spawns_and_portals(build: RegionBuild) -> None:
             "surface": TER.SURFACE_NAMES[int(t.surface_at(x, z))],
             "grounded": True})
 
-    # Edge portals. The server's own maps.txt gives Verdant Stair exactly two
-    # neighbours - Westhaven to the west and Ssarathi Ruins to the east - so
-    # those are the two shipped; no transition is invented that the server does
-    # not have. The Westhaven crossing is a sea quay rather than a road, which
-    # is the shape Crownwater's portals already take.
+    # CONTINENT.md: the coastal Temple Road enters from Ssarathi, and
+    # the quarry shelf leaves through Steppe Pass to Sunmane.
     for portal_id, name, anchor, destination in (
             ("west-quay-gate", "Temple Road to the Ssarathi Ruins", "westgate",
              "ssarathi_ruins"),
@@ -302,15 +305,10 @@ def _add_spawns_and_portals(build: RegionBuild) -> None:
             "destinationMap": destination, "radius": 3.5,
             "authority": "server"})
 
-    # The four doors into the insides map. All four target the same
-    # `destinationMap` and differ only in `destinationSpawn`, because the four
-    # interiors share one map with blackspace between them in the Eternal Lands
-    # convention. Each door also gets a return spawn of the same name here, so
-    # the trip back out of the insides lands where the player went in and both
-    # directions resolve.
+    # Seven visible entrances share the insides map, with paired returns.
     for portal_id, name, landmark_id, anchor, spawn_id in INTERIOR_DOORS:
-        x, z = REG.ANCHORS[anchor]
-        y = float(t.height_at(x, z))
+        x, z = REG.DOOR_POSITIONS.get(portal_id, REG.ANCHORS[anchor])
+        y = _walk_surface_at(build, x, z)
         build.portals.append({
             "id": portal_id, "name": name, "type": "interior-entrance",
             "position": [round(x, 2), round(y + 0.1, 2), round(z, 2)],
@@ -1072,6 +1070,7 @@ def write_manifest(build: RegionBuild, stats: dict, collision_stats: dict,
             "walkableFraction": collision_stats["walkableFraction"],
         },
         "navigation": {
+            "crossings": build.crossings,
             "surfaceNodePrefixes": ["Terrain_", "Walk_"],
             "walkableAreas": ["jungle-floor", "trails", "terrace-paving",
                               "mossy-terraces", "strand", "fern-glade",
@@ -1100,11 +1099,12 @@ def write_manifest(build: RegionBuild, stats: dict, collision_stats: dict,
         "npcMarkers": build.npc_markers,
         "harvestables": build.harvestables,
         "portals": build.portals,
+        "contentLayout": REG.CONTENT_LAYOUT,
         "roads": [{"id": name,
                    "waypoints": [[round(float(p[0]), 1),
                                   round(float(t.height_at(p[0], p[1])), 2),
                                   round(float(p[1]), 1)] for p in points]}
-                  for name, points in REG.ROUTES.items()],
+                  for name, points in REG.ROUTES.items()] + REG.access_waypoints(t),
         "water": {
             "seaLevel": REG.SEA_LEVEL,
             "serverCells": REG.SERVER_CELLS,
@@ -1131,7 +1131,8 @@ def write_manifest(build: RegionBuild, stats: dict, collision_stats: dict,
         "environment": {
             "sky": {"type": "gradient", "zenith": [0.30, 0.52, 0.66],
                     "horizon": [0.72, 0.78, 0.72]},
-            "sun": {"direction": [-0.38, 0.62, 0.68],
+            # Engine vectors follow light travel; preview vectors point toward the sun.
+            "sun": {"direction": [0.38, -0.62, -0.68],
                     "color": [1.16, 1.08, 0.86], "energy": 1.20},
             "ambient": {"skyColor": [0.34, 0.48, 0.46],
                         "groundColor": [0.06, 0.10, 0.05], "energy": 0.55},
@@ -1143,7 +1144,7 @@ def write_manifest(build: RegionBuild, stats: dict, collision_stats: dict,
             "exposure": 2.0,
             "fog": {"enabled": True, "color": [0.62, 0.72, 0.68],
                     "density": 0.0016, "heightFalloff": 0.0022},
-            "goldenHour": {"sun": {"direction": [-0.80, 0.24, 0.55],
+            "goldenHour": {"sun": {"direction": [0.80, -0.24, -0.55],
                                    "color": [1.48, 1.06, 0.66]},
                            "fog": {"color": [0.74, 0.66, 0.52], "density": 0.0030}},
             "presentation": {

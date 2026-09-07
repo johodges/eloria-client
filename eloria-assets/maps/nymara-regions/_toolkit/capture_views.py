@@ -116,6 +116,10 @@ if _golden_overrides:
 # "vars() argument must have __dict__ attribute" after a full texture and
 # region build. The overrides are already folded into DAY and GOLDEN above;
 # these entries only need to agree with them.
+REGION_LIGHTING = dict(getattr(_REGION_VIEWS, "REGION_LIGHTING", {}))
+FIXED_VIEWS = set(getattr(_REGION_VIEWS, "FIXED_VIEWS", set()))
+# The resolved table is loaded once in main, after command-line selection.
+
 for _mode, _base in (("day", DAY), ("golden", GOLDEN)):
     _value = REGION_LIGHTING.get(_mode)
     if isinstance(_value, dict):
@@ -286,6 +290,14 @@ def main() -> int:
     # space the region plan uses, so it scales with the region.
     scale = REG.SCALE
 
+    deck_index = None
+    if any(view[-1].rstrip("!") == "deck" for view in VIEWS):
+        import glb_reader as GLB
+        from verify_runtime import VerticalRayIndex
+        document, body = GLB.load(PACKAGE / "world.glb")
+        deck_index = VerticalRayIndex(
+            GLB.triangles(document, body, GLB.named(document, "Walk_")), cell=4.0)
+
     index = []
     for (name, panel, eye_xz, eye_h, target_xz, target_h, fov, size,
          radius, mode) in VIEWS:
@@ -342,6 +354,14 @@ def main() -> int:
                 placed_eye = find_clear(eye_xz)
             eye = ground(placed_eye, eye_h)
             target = ground(target_xz, target_h)
+        if mode == "deck" and not resolved:
+            deck = deck_index.top_hit(eye_xz[0], eye_xz[1])
+            if deck is None:
+                raise ValueError(f"{name}: no walk surface beneath deck camera")
+            target_deck = deck_index.top_hit(target_xz[0], target_xz[1])
+            eye = (eye_xz[0], deck + eye_h, eye_xz[1])
+            target = (target_xz[0], (target_deck if target_deck is not None else deck)
+                      + target_h, target_xz[1])
         if abs(eye[0] - target[0]) < 0.05 and abs(eye[2] - target[2]) < 0.05:
             target = (target[0] + 0.4, target[1], target[2] + 0.4)
         # A region may pin a framing it has verified by listing its id in

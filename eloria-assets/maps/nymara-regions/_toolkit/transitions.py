@@ -176,6 +176,7 @@ class Crossing:
     ferry: bool = False
     name: str = ""
     ground_class: int | None = None
+    station_position: tuple[float, float] | None = None
 
     def direction(self) -> tuple[float, float]:
         dx = self.toward[0] - self.position[0]
@@ -286,7 +287,9 @@ def _open(t: TER.Terrain, x: float, z: float, sea_level: float) -> bool:
 
 
 def _station_site(crossing: Crossing) -> tuple[float, float]:
-    """Off the road, on the region side of the portal, twenty metres back."""
+    """An authored shore apron, or the usual setback on an open land road."""
+    if crossing.station_position is not None:
+        return crossing.station_position
     dirx, dirz = crossing.direction()
     # perpendicular, to the right when walking out
     side = (dirz, -dirx)

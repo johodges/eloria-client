@@ -453,3 +453,78 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260828) -> None:
     # nothing grows on built ground or on ice
     t.tree_block |= np.isin(t.surface, (TER.PAVING, TER.MARBLE, TER.ICE,
                                         TER.SHORE, TER.ROCK))
+
+
+# The Sanctuary Road approaches across the lake. The side arms are fishing
+# piers; the north and south arms join real shore aprons.
+LAKE_LINKS = {
+    "Sanctuary": [(156, 3.70, 80.8), (156, 4.6, 118),
+                   (145, 5.2, 138), (120, 6.06, 158)],
+    "City": [(156, 3.70, 39.2), (156, 3.70, 4), (156, 3.70, -16)],
+    "WestPier": [(135.2, 3.70, 60), (94.5, 3.70, 60)],
+    "EastPier": [(176.8, 3.70, 60), (217.5, 3.70, 60)],
+}
+# Thresholds sit outside the visible entrance buildings, below the orrery
+# platform, beside the plaza and at the foot of Stair Town respectively.
+VAULT_ENTRIES = {
+    "lens-vault-stair": (137, 112, -256),
+    "cistern-door": (151, 58, -84),
+    "stair-cellars-door": (-49, 17, -51),
+}
+CONTENT_LAYOUT = {
+    "services": [
+        {"role": "information", "position": [122, 58, -77]},
+        {"role": "storage", "position": [128, 58, -76]},
+        {"role": "crafting_station", "position": [134, 58, -76]},
+        {"role": "training", "position": [140, 58, -75]},
+    ],
+    "roadClearance": 5.0,
+}
+
+
+def prepare_access(t):
+    """Surveyed roads meet the lake decks and the three cellar thresholds."""
+    from amberwood import routecraft as RC
+    t.plateau((120, 158), 10, 6.0, edge=7, surface=TER.PAVING)
+    t.plateau((111, 163), 7, 6.0, edge=4, surface=TER.PAVING)
+    t.rect_terrace((111, 163), 4, 4, 6.0, surface=TER.PAVING)
+    t.plateau((156, -16), 8, 3.52, edge=8, surface=TER.PAVING)
+    RC.grade_road(t, [(120, 168), (120, 158)], [5.57, 6.0],
+                  width=7, shoulder=8, surface=TER.PAVING)
+    RC.grade_road(t, [(156, -16), (168, -20), (182, -18)],
+                  [3.52, 4.5, 4.5], width=7, shoulder=7, surface=TER.PAVING)
+    # The quay's masonry cap sits above the shore, never on its plane.
+    t.rect_terrace((198, -18), 23.5, 5.5, 4.26, surface=TER.PAVING)
+    RC.grade_road(t, [(120, 163), (114, 163)], [6.0, 6.0],
+                  width=4, shoulder=3, surface=TER.PAVING)
+    # A broad court at the foot of Stair Town replaces the pinched cut.
+    t.plateau((-40, -40), 25, 17, edge=10, surface=TER.PAVING)
+    for x, y, z in VAULT_ENTRIES.values():
+        t.plateau((x, z + 1), 5, y, edge=4, surface=TER.PAVING)
+        t.rect_terrace((x, z + 1), 4, 5, y, surface=TER.PAVING)
+    RC.grade_road(t, [(137, -252), (140, -247), (145, -247)],
+                  [112, 112, 112], width=5, shoulder=3, surface=TER.PAVING)
+    # Services share the clear south side of the fountain court.
+    RC.grade_road(t, [(119, -76), (142, -76)], [58, 58],
+                  width=7, shoulder=3, surface=TER.MARBLE)
+    # The road descends from the actual arrival elevation, then turns
+    # below the houses. Apply it after the aprons so none can raise a hump.
+    arrival = float(t.height_at(0, 0))
+    RC.grade_road(t, [(0, 0), (-14, -6), (-32, -18), (-48, -32), (-49, -47)],
+                  [arrival, 34, 24, 17, 17], width=7, shoulder=12, surface=TER.PAVING)
+    t.tree_block |= np.isin(t.surface, (TER.PAVING, TER.MARBLE))
+    t.water_depth = np.clip(LAKE_LEVEL - t.height, 0.0, None)
+
+
+def access_waypoints(t):
+    """Publish built approaches so server wildlife stays clear of them."""
+    roads = [{"id": "lake-" + name.lower(), "waypoints": stations}
+             for name, stations in LAKE_LINKS.items()]
+    for name, points in {
+        "cellar-lane": [(0, 0), (-14, -6), (-32, -18), (-48, -32), (-49, -47)],
+        "quay-approach": [(156, -16), (168, -20), (182, -18)],
+        "sanctuary-approach": [(120, 168), (120, 158)],
+    }.items():
+        roads.append({"id": name, "waypoints": [
+            [x, round(float(t.height_at(x, z)), 2), z] for x, z in points]})
+    return roads

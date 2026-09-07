@@ -3,7 +3,7 @@
     "engine": "4.7.2-stable (official)",
     "eye": [
       114.0,
-      608.89,
+      610.57,
       -35.7
     ],
     "fieldOfViewDegrees": 52.0,
@@ -11,29 +11,29 @@
     "id": "00-aerial-overview",
     "lighting": "day",
     "panel": "aerial",
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       114.0,
-      9.0,
+      10.58,
       -36.0
     ]
   },
   {
     "engine": "4.7.2-stable (official)",
     "eye": [
-      -71.81,
-      5.12,
-      -26.93
+      -72.99,
+      14.1,
+      10.36
     ],
     "fieldOfViewDegrees": 52.0,
     "file": "01-harbour-gate.webp",
     "id": "01-harbour-gate",
     "lighting": "day",
     "panel": 1.0,
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       -102.0,
@@ -53,12 +53,12 @@
     "id": "02-lighthouse",
     "lighting": "day",
     "panel": 2.0,
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       302.7,
-      33.95,
+      33.91,
       120.3
     ]
   },
@@ -74,8 +74,8 @@
     "id": "03-quay-street",
     "lighting": "day",
     "panel": 3.0,
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       -8.4,
@@ -87,16 +87,16 @@
     "engine": "4.7.2-stable (official)",
     "eye": [
       63.6,
-      18.1,
-      -2.4
+      14.8,
+      15.0
     ],
     "fieldOfViewDegrees": 54.0,
     "file": "04-cargo-pier.webp",
     "id": "04-cargo-pier",
     "lighting": "day",
     "panel": 4.0,
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       86.7,
@@ -107,17 +107,17 @@
   {
     "engine": "4.7.2-stable (official)",
     "eye": [
-      100.21,
-      18.1,
-      -2.39
+      117.6,
+      6.6,
+      15.0
     ],
     "fieldOfViewDegrees": 52.0,
     "file": "05-harbour-crane.webp",
     "id": "05-harbour-crane",
     "lighting": "day",
     "panel": 5.0,
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       138.6,
@@ -128,38 +128,38 @@
   {
     "engine": "4.7.2-stable (official)",
     "eye": [
-      146.04,
-      19.4,
-      -0.35
+      174.0,
+      15.4,
+      1.5
     ],
     "fieldOfViewDegrees": 42.0,
     "file": "06-shipyard.webp",
     "id": "06-shipyard",
     "lighting": "day",
     "panel": 6.0,
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       214.5,
-      6.93,
+      6.94,
       14.4
     ]
   },
   {
     "engine": "4.7.2-stable (official)",
     "eye": [
-      -5.49,
-      17.2,
-      -6.6
+      -6.49,
+      11.45,
+      -12.0
     ],
     "fieldOfViewDegrees": 56.0,
     "file": "07-fish-market.webp",
     "id": "07-fish-market",
     "lighting": "day",
     "panel": 7.0,
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       -5.49,
@@ -170,21 +170,21 @@
   {
     "engine": "4.7.2-stable (official)",
     "eye": [
-      -108.02,
-      18.9,
-      -13.56
+      -93.0,
+      8.4,
+      10.8
     ],
     "fieldOfViewDegrees": 54.0,
     "file": "08-mole-bastion.webp",
     "id": "08-mole-bastion",
     "lighting": "deck",
     "panel": 8.0,
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       -57.3,
-      -3.01,
+      12.85,
       37.2
     ]
   },
@@ -200,8 +200,8 @@
     "id": "09-crown-terrace",
     "lighting": "day",
     "panel": 9.0,
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       79.5,
@@ -221,8 +221,8 @@
     "id": "10-chandlery-macro",
     "lighting": "day",
     "panel": 10.0,
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       118.2,
@@ -233,17 +233,17 @@
   {
     "engine": "4.7.2-stable (official)",
     "eye": [
-      3.82,
-      14.7,
-      -3.82
+      0.0,
+      20.2,
+      0.0
     ],
     "fieldOfViewDegrees": 58.0,
     "file": "11-spawn-grounding.webp",
     "id": "11-spawn-grounding",
     "lighting": "day",
     "panel": null,
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       18.0,
@@ -254,17 +254,17 @@
   {
     "engine": "4.7.2-stable (official)",
     "eye": [
-      -79.47,
-      20.01,
-      1.64
+      -73.0,
+      20.19,
+      22.15
     ],
     "fieldOfViewDegrees": 54.0,
     "file": "12-quayside-run.webp",
     "id": "12-quayside-run",
     "lighting": "day",
     "panel": null,
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       156.0,
@@ -275,17 +275,17 @@
   {
     "engine": "4.7.2-stable (official)",
     "eye": [
-      16.57,
-      48.53,
-      -149.13
+      -21.0,
+      48.31,
+      -153.57
     ],
     "fieldOfViewDegrees": 55.0,
     "file": "13-city-gate.webp",
     "id": "13-city-gate",
     "lighting": "day",
     "panel": null,
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       -21.0,
@@ -296,17 +296,17 @@
   {
     "engine": "4.7.2-stable (official)",
     "eye": [
-      -4.99,
-      39.2,
-      -147.93
+      0.0,
+      41.28,
+      -150.0
     ],
     "fieldOfViewDegrees": 54.0,
     "file": "14-arcade.webp",
     "id": "14-arcade",
     "lighting": "day",
     "panel": null,
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       14.7,
@@ -326,8 +326,8 @@
     "id": "15-cathedral-front",
     "lighting": "day",
     "panel": null,
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       59.4,
@@ -338,8 +338,8 @@
   {
     "engine": "4.7.2-stable (official)",
     "eye": [
-      -11.4,
-      42.79,
+      -24.0,
+      42.7,
       -198.0
     ],
     "fieldOfViewDegrees": 55.0,
@@ -347,8 +347,8 @@
     "id": "16-campanile-base",
     "lighting": "day",
     "panel": null,
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       -8.4,
@@ -360,16 +360,16 @@
     "engine": "4.7.2-stable (official)",
     "eye": [
       69.0,
-      18.44,
-      118.89
+      18.24,
+      119.53
     ],
     "fieldOfViewDegrees": 50.0,
     "file": "17-harbour-from-water.webp",
     "id": "17-harbour-from-water",
     "lighting": "day",
     "panel": null,
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       60.0,
@@ -381,7 +381,7 @@
     "engine": "4.7.2-stable (official)",
     "eye": [
       -95.78,
-      47.54,
+      51.54,
       96.9
     ],
     "fieldOfViewDegrees": 50.0,
@@ -389,8 +389,8 @@
     "id": "18-gullstone",
     "lighting": "day",
     "panel": null,
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       -40.2,
@@ -401,42 +401,42 @@
   {
     "engine": "4.7.2-stable (official)",
     "eye": [
-      243.31,
-      12.9,
-      49.62
+      257.07,
+      21.26,
+      32.95
     ],
     "fieldOfViewDegrees": 52.0,
     "file": "19-east-bay.webp",
     "id": "19-east-bay",
     "lighting": "day",
     "panel": null,
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       310.2,
-      3.9,
+      4.6,
       29.4
     ]
   },
   {
     "engine": "4.7.2-stable (official)",
     "eye": [
-      210.55,
-      59.0,
-      -252.24
+      216.0,
+      61.64,
+      -252.0
     ],
     "fieldOfViewDegrees": 52.0,
     "file": "20-upland-road.webp",
     "id": "20-upland-road",
     "lighting": "day",
     "panel": null,
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       278.1,
-      55.49,
+      56.0,
       -282.9
     ]
   },
@@ -444,16 +444,16 @@
     "engine": "4.7.2-stable (official)",
     "eye": [
       69.0,
-      18.44,
-      118.89
+      18.24,
+      119.53
     ],
     "fieldOfViewDegrees": 50.0,
     "file": "40-golden-harbour.webp",
     "id": "40-golden-harbour",
     "lighting": "golden",
     "panel": null,
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       60.0,
@@ -465,7 +465,7 @@
     "engine": "4.7.2-stable (official)",
     "eye": [
       114.0,
-      608.89,
+      610.57,
       -35.7
     ],
     "fieldOfViewDegrees": 52.0,
@@ -473,13 +473,118 @@
     "id": "41-golden-aerial",
     "lighting": "golden",
     "panel": null,
-    "renderingDriver": "vulkan",
-    "renderingMethod": "forward_plus",
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
     "source": "godot",
     "target": [
       114.0,
-      9.0,
+      10.58,
       -36.0
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      161.1,
+      15.5,
+      -47.1
+    ],
+    "fieldOfViewDegrees": 58.0,
+    "file": "21-cart-ascent.webp",
+    "id": "21-cart-ascent",
+    "lighting": "day",
+    "panel": null,
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
+    "source": "godot",
+    "target": [
+      186.0,
+      22.86,
+      -72.0
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      199.5,
+      37.54,
+      -224.1
+    ],
+    "fieldOfViewDegrees": 58.0,
+    "file": "22-gullscar-fields.webp",
+    "id": "22-gullscar-fields",
+    "lighting": "day",
+    "panel": null,
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
+    "source": "godot",
+    "target": [
+      216.0,
+      41.05,
+      -252.0
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      390.0,
+      5.97,
+      36.0
+    ],
+    "fieldOfViewDegrees": 58.0,
+    "file": "23-lamp-approach.webp",
+    "id": "23-lamp-approach",
+    "lighting": "deck",
+    "panel": null,
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
+    "source": "godot",
+    "target": [
+      380.4,
+      4.71,
+      78.0
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      237.0,
+      5.54,
+      7.2
+    ],
+    "fieldOfViewDegrees": 58.0,
+    "file": "24-yard-crossing.webp",
+    "id": "24-yard-crossing",
+    "lighting": "deck",
+    "panel": null,
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
+    "source": "godot",
+    "target": [
+      273.0,
+      6.08,
+      21.9
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      60.0,
+      4.79,
+      12.0
+    ],
+    "fieldOfViewDegrees": 58.0,
+    "file": "25-harbour-court.webp",
+    "id": "25-harbour-court",
+    "lighting": "day",
+    "panel": null,
+    "renderingDriver": "opengl3",
+    "renderingMethod": "gl_compatibility",
+    "source": "godot",
+    "target": [
+      27.9,
+      5.4,
+      0.0
     ]
   }
 ]

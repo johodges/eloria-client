@@ -6,12 +6,12 @@
       "panel": null,
       "position": [
         114.0,
-        208.89,
+        610.57,
         -35.7
       ],
       "target": [
         114.0,
-        9.0,
+        10.58,
         -36.0
       ],
       "fov": 52.0,
@@ -45,7 +45,7 @@
       ],
       "target": [
         302.7,
-        33.95,
+        33.91,
         120.3
       ],
       "fov": 46.0,
@@ -113,7 +113,7 @@
       ],
       "target": [
         214.5,
-        6.93,
+        6.94,
         14.4
       ],
       "fov": 42.0,
@@ -147,7 +147,7 @@
       ],
       "target": [
         -57.3,
-        12.93,
+        12.85,
         37.2
       ],
       "fov": 54.0,
@@ -227,7 +227,7 @@
       "panel": null,
       "position": [
         -21.0,
-        56.38,
+        43.37,
         -210.0
       ],
       "target": [
@@ -278,7 +278,7 @@
       "panel": null,
       "position": [
         -24.0,
-        59.12,
+        42.7,
         -198.0
       ],
       "target": [
@@ -329,12 +329,12 @@
       "panel": null,
       "position": [
         258.0,
-        0.64,
+        8.26,
         24.0
       ],
       "target": [
         310.2,
-        3.9,
+        4.6,
         29.4
       ],
       "fov": 52.0,
@@ -346,17 +346,102 @@
       "panel": null,
       "position": [
         216.0,
-        58.8,
+        52.64,
         -252.0
       ],
       "target": [
         278.1,
-        55.49,
+        56.0,
         -282.9
       ],
       "fov": 52.0,
       "golden": false,
       "note": "20 upland road"
+    },
+    {
+      "id": "21-cart-ascent",
+      "panel": null,
+      "position": [
+        161.1,
+        15.5,
+        -47.1
+      ],
+      "target": [
+        186.0,
+        22.86,
+        -72.0
+      ],
+      "fov": 58.0,
+      "golden": false,
+      "note": "21 cart ascent"
+    },
+    {
+      "id": "22-gullscar-fields",
+      "panel": null,
+      "position": [
+        199.5,
+        37.54,
+        -224.1
+      ],
+      "target": [
+        216.0,
+        41.05,
+        -252.0
+      ],
+      "fov": 58.0,
+      "golden": false,
+      "note": "22 gullscar fields"
+    },
+    {
+      "id": "23-lamp-approach",
+      "panel": null,
+      "position": [
+        390.0,
+        5.97,
+        36.0
+      ],
+      "target": [
+        380.4,
+        4.71,
+        78.0
+      ],
+      "fov": 58.0,
+      "golden": false,
+      "note": "23 lamp approach"
+    },
+    {
+      "id": "24-yard-crossing",
+      "panel": null,
+      "position": [
+        237.0,
+        5.54,
+        7.2
+      ],
+      "target": [
+        273.0,
+        6.08,
+        21.9
+      ],
+      "fov": 58.0,
+      "golden": false,
+      "note": "24 yard crossing"
+    },
+    {
+      "id": "25-harbour-court",
+      "panel": null,
+      "position": [
+        60.0,
+        4.79,
+        12.0
+      ],
+      "target": [
+        27.9,
+        5.4,
+        0.0
+      ],
+      "fov": 58.0,
+      "golden": false,
+      "note": "25 harbour court"
     },
     {
       "id": "40-golden-harbour",
@@ -380,12 +465,12 @@
       "panel": null,
       "position": [
         114.0,
-        208.89,
+        610.57,
         -35.7
       ],
       "target": [
         114.0,
-        9.0,
+        10.58,
         -36.0
       ],
       "fov": 52.0,

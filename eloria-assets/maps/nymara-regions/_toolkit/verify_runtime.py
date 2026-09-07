@@ -326,8 +326,8 @@ def main() -> int:
     # -- 8. the collision grid must agree with the rendered surface --
     payload = collision_payload
     magic, version, flags, width, height = struct.unpack("<4sHHII", payload[:16])
-    if magic != b"EWCG" or version != 1:
-        fail("COLLISION_BINARY_HEADER", "collision.bin is not EWCG version 1")
+    if magic != b"EWCG" or version not in (1, 2):
+        fail("COLLISION_BINARY_HEADER", "collision.bin is not EWCG version 1 or 2")
     elif len(payload) != 16 + width * height:
         fail("COLLISION_BINARY_SIZE", "collision.bin payload size does not match")
     elif width % 6 or height % 6:

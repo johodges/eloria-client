@@ -270,17 +270,17 @@
       191.0
     ],
     "heightEncoding": {
-      "origin": -5.131,
-      "step": 0.1311,
+      "origin": -5.2,
+      "step": 0.2,
       "range": [
         1,
         63
       ],
       "zeroMeansBlocked": true
     },
-    "walkableCells": 21112,
-    "blockedCells": 196040,
-    "walkableFraction": 0.0972,
+    "walkableCells": 14085,
+    "blockedCells": 203067,
+    "walkableFraction": 0.0649,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
@@ -3658,7 +3658,7 @@
     "bufferViews": 696,
     "uniqueTriangles": 27468,
     "uniqueVertices": 38116,
-    "glbBytes": 7860264,
+    "glbBytes": 7808384,
     "nodeNames": [
       "Secrets_verdant_stair_secrets",
       "Section_stair-cenote-hollow",

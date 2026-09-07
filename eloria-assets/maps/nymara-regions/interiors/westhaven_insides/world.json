@@ -450,7 +450,7 @@
       ],
       "surfacePosition": [
         295.44,
-        18.05,
+        18.08,
         120.24
       ]
     },
@@ -513,9 +513,9 @@
         "Built from the shared small-room kit: a hall with a hearth and a back room for its trade (hearth)."
       ],
       "surfacePosition": [
-        212.75,
-        38.32,
-        -252.25
+        216.24,
+        38.1,
+        -245.52
       ]
     },
     {
@@ -575,9 +575,9 @@
         "Built from the shared small-room kit: mouth, throat and chamber, dressed for the region above it."
       ],
       "surfacePosition": [
-        322.75,
-        56.72,
-        -156.75
+        319.92,
+        56.57,
+        -145.44
       ]
     }
   ],
@@ -2466,9 +2466,9 @@
     "textures": 61,
     "accessors": 165,
     "bufferViews": 226,
-    "uniqueTriangles": 60562,
-    "uniqueVertices": 80744,
-    "glbBytes": 11561060,
+    "uniqueTriangles": 60586,
+    "uniqueVertices": 80792,
+    "glbBytes": 11520552,
     "nodeNames": [
       "Interior_westhaven_insides",
       "Roof_westhaven_insides_ashlar",

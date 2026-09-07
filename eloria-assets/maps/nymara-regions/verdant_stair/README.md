@@ -99,13 +99,13 @@ shelf a place stands on. See `modeling-assumptions.md`.
 | Terrace | Height | What is on it |
 | --- | ---: | --- |
 | seabed | −13 m | the lagoon and its inlet |
-| strand | 0.4 m | beach, boat landing, the Westhaven quay |
+| strand | 0.4 m | beach, boat landing, the Ssarathi Temple Road |
 | quay | 7 m | west quay and market |
 | lower | 24 m | the arrival town, the waygate, the foot of the Grand Stair |
 | middle | 46 m | the cenote, the canopy village, the gorge crossings |
 | upper | 72 m | the water shrine, the aqueduct, the hanging gardens |
 | temple | 100 m | the Green Temple and its court |
-| summit | 124 m | the ridge, the quarry, the Ssarathi pass |
+| summit | 124 m | the ridge, the quarry, the Sunmane Steppe Pass |
 
 **This needs a matching server map.** `../server-collision/verdant_stair.bin` is
 regenerated here at 96 × 96 tiles (576 × 576 height cells) with real elevation

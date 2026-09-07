@@ -37,6 +37,7 @@ import validate_gltf
 from amberwood import gltf as GLTF
 from amberwood import materials as MAT
 from amberwood import mesh as M
+from amberwood import routecraft as RC
 import populate as POP
 import region as REG
 import transitions as MARCH
@@ -71,7 +72,7 @@ CROSSINGS = [
                    name="The Whitehorn March"),
     MARCH.Crossing("south-road", "four_gates", (40.0 * REG.SCALE, 56.0 * REG.SCALE),
                    (40.0 * REG.SCALE, 66.0 * REG.SCALE), radius=40.0,
-                   name="The Sanctuary Road March"),
+                   name="The Sanctuary Road March", station_position=(111.0, 163.0)),
     MARCH.Crossing("east-road", "amethyst_barrens", (72.0, -390.0),
                    (72.0, -412.0), radius=46.0,
                    name="The Barrens March"),
@@ -125,6 +126,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
 
     MARCH.prepare(terrain, CROSSINGS)
     LORE.prepare(terrain, SITES, sea_level=getattr(REG, "SEA_LEVEL", 0.0), keep=(TER.ICE, TER.MARBLE))
+    REG.prepare_access(terrain)
     POP.populate_citadel(build, seed)
     POP.populate_city(build, seed)
     POP.populate_lake(build, seed)
@@ -211,7 +213,8 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
         anchor = next((l for l in build.landmarks if l.get("id") == landmark_id), None)
         if anchor is None:
             continue
-        x, y, z = anchor["position"]
+        x, y, z = REG.VAULT_ENTRIES[portal_id]
+        z += 4.0
         build.portals.append({
             "id": portal_id, "name": name, "type": "interior-entrance",
             "position": [round(float(x), 2), round(float(y) + 0.1, 2), round(float(z), 2)],
@@ -512,30 +515,29 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
     # on the highest walk surface below the ray, so a two-level column cannot be
     # expressed on a flat server grid. Bridges, decks and platforms therefore
     # take the cell, and the ground under them is not separately walkable.
+    # Rasterise the walking triangles, including station heights and bends.
+    # A bounds disc on a long bridge can open lakebed metres away from it.
+    import glb_reader as GLB
+    triangles = []
     elevated = 0
     for placement in build.placements:
         item = build.meshes[placement.mesh]
-        walk_bounds = getattr(item, "walk_bounds", lambda: None)()
-        if walk_bounds is None and not placement.walk_surface:
+        parts = list(getattr(item, "walk_parts", []))
+        if placement.walk_surface and not parts:
+            parts = [item] if isinstance(item, M.Mesh) else list(item.parts)
+        if not parts:
             continue
-        if walk_bounds is None:
-            low, high = item.bounds()
-        else:
-            low, high = walk_bounds
-        px, py, pz = placement.position
-        half_x = float(max(abs(low[0]), abs(high[0]))) * placement.scale
-        half_z = float(max(abs(low[2]), abs(high[2]))) * placement.scale
-        deck_y = py + float(high[1]) * placement.scale
-        radius = max(min(half_x, half_z) * 0.85, 0.4)
-        footprint = np.hypot(gx - px, gz - pz) < radius
-        if not footprint.any():
-            continue
-        if deck_y > ground.max() + 200.0:
-            continue
+        matrix = (M.translation(*placement.position) @ M.rotation_y(placement.rotation_y)
+                  @ M.scaling(placement.scale))
+        for part in parts:
+            mesh = part.transformed(matrix)
+            triangles.append(mesh.positions[mesh.indices.reshape(-1, 3)])
         elevated += 1
-        decks |= footprint
-        surface = np.where(footprint, deck_y, surface)
-        walkable = np.where(footprint, True, walkable)
+    if triangles:
+        decks, deck_y = GLB.rasterise(np.concatenate(triangles), width, height,
+                                     REG.PLAY_MIN_X, REG.SERVER_ORIGIN[1], COLLISION_CELL)
+        surface = np.where(decks, deck_y, surface)
+        walkable |= decks
 
     # Steepness has to be part of walkability, not of the height byte. That
     # byte holds 63 steps, and a region with 253 m of relief cannot be encoded
@@ -711,6 +713,8 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             "walkableFraction": collision_stats["walkableFraction"],
         },
         "navigation": {
+            "crossings": [{"id": name, "endpoints": RC.crossing_endpoints(points)}
+                          for name, points in REG.LAKE_LINKS.items()],
             "surfaceNodePrefixes": surface_prefixes,
             "walkableAreas": ["forest-floor", "trails", "paving", "shore", "meadow",
                               "bridges", "canopy-platforms", "docks", "stairs"],
@@ -727,6 +731,7 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
                 "terrain beneath them is water or ravine and is not walkable.",
             ],
         },
+        "contentLayout": REG.CONTENT_LAYOUT,
         "landmarks": build.landmarks,
         "interactives": build.interactives,
         "npcMarkers": build.npc_markers,
@@ -736,7 +741,7 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
                    "waypoints": [[round(float(p[0]), 1),
                                   round(float(t.height_at(p[0], p[1])), 2),
                                   round(float(p[1]), 1)] for p in points]}
-                  for name, points in REG.ROUTES.items()],
+                  for name, points in REG.ROUTES.items()] + REG.access_waypoints(t),
         "water": {
             "seaLevel": REG.SEA_LEVEL,
             "serverCells": REG.SERVER_CELLS,

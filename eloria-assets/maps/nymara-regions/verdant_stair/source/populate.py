@@ -331,8 +331,17 @@ def _standable(t, x: float, z: float, max_slope: float = 0.95) -> bool:
 def _place(build: RegionBuild, node: str, mesh: str, x: float, z: float,
            y: float | None = None, rotation: float = 0.0, scale: float = 1.0,
            kind: str = "prop", collides: bool = False,
-           landmark: str | None = None) -> Placement:
+           landmark: str | None = None) -> Placement | None:
     t = build.terrain
+    if (kind in ("undergrowth", "vine") or node.startswith("Ground_")) and REG.access_distance(x, z) < 5:
+        return None
+    if node.startswith(("Rail_", "Arcade_", "Wall_")) and REG.access_distance(x, z) < 7.0:
+        return None
+    if node.startswith("Rail_Cenote_"):
+        d, _ = TER._polyline_distance(np.asarray(x), np.asarray(z),
+                                      np.asarray(REG.CENOTE_APPROACH)[:, [0, 2]])
+        if float(d) < 4:
+            return None
     if y is None:
         y = _ground(t, x, z)
     return build.place(Placement(node=node, mesh=mesh,
@@ -352,6 +361,11 @@ def _landmark(build: RegionBuild, identifier: str, name: str, node: str,
     packages stay comparable. This was `kind` and nothing read it.
     """
     t = build.terrain
+    if node.startswith("Rail_Cenote_"):
+        d, _ = TER._polyline_distance(np.asarray(x), np.asarray(z),
+                                      np.asarray(REG.CENOTE_APPROACH)[:, [0, 2]])
+        if float(d) < 4:
+            return None
     if y is None:
         y = _ground(t, x, z)
     entry = {
@@ -385,6 +399,11 @@ def _scatter(t, centre, radius: float, count: int, rng, *,
             z = centre[1] + math.sin(angle) * r
             if not _standable(t, x, z, max_slope):
                 continue
+            if REG.access_distance(x, z) < 5.0:
+                continue
+            if not avoid_blocked and any(math.hypot(x - px, z - pz) < radius
+                    for px, pz, radius in [(-18, -6, 10), (15, -3, 10), (13, -13, 14)]):
+                continue
             if avoid_blocked and bool(t.blocked_at(x, z)):
                 continue
             if surfaces is not None and int(t.surface_at(x, z)) not in surfaces:
@@ -407,51 +426,21 @@ def populate_stair(build: RegionBuild, seed: int) -> None:
     t = build.terrain
     rng = N.Rng(seed + 11)
 
-    # -- the Grand Stair, board panel 2 -----------------------------------
-    foot = REG.ANCHORS["stair_foot"]
-    head = REG.ANCHORS["stair_head"]
-    rise = REG.terrace_level("middle") - REG.terrace_level("lower")
-    _add_mesh(build, "GrandStair", JC.grand_stair(width=9.5, height=rise,
-                                                seed=seed + 3, landings=2))
-    # the flight climbs +Z from its own origin, so it is rotated to face up the
-    # stair diagonal and placed at the foot, not at the midpoint
-    yaw = math.atan2(head[0] - foot[0], head[1] - foot[1])
-    _place(build, "Landmark_GrandStair", "GrandStair", foot[0], foot[1],
-           y=REG.terrace_level("lower") - 0.2, rotation=yaw, kind="stair",
-           collides=False, landmark="grand-stair")
-    _landmark(build, "grand-stair", "The Grand Stair", "Landmark_GrandStair",
-              foot[0], foot[1], type="monument", note="board panel 2")
-
-    # -- the lesser climbs on the other risers ----------------------------
-    for name, low, high, width in (
-            ("quay-climb", "strand", "quay", 6.0),
-            ("lower-climb", "quay", "lower", 7.0),
-            ("shrine-climb", "middle", "upper", 7.5),
-            ("temple-climb", "upper", "temple", 8.5),
-            ("summit-climb", "temple", "summit", 7.0)):
-        route = {"quay-climb": "quay_climb", "lower-climb": "lower_climb",
-                 "shrine-climb": "shrine_climb", "temple-climb": "temple_way",
-                 "summit-climb": "summit_climb"}[name]
-        points = REG.ROUTES[route]
-        # the riser is where the route's own `s` crosses the gap
-        mid_s = (REG.terrace_span(low)[1] + REG.terrace_span(high)[0]) * 0.5
-        s_values = REG.stair_axis(points[:, 0], points[:, 1])
-        index = int(np.argmin(np.abs(np.asarray(s_values) - mid_s)))
-        index = min(max(index, 0), len(points) - 2)
-        here = points[index]
-        nxt = points[min(index + 1, len(points) - 1)]
-        rise = REG.terrace_level(high) - REG.terrace_level(low)
-        key = f"Stair_{name.replace('-', '_')}"
+    # Flights fit surveyed landings and use the same jade, mossy stone and
+    # shrine posts as the original monumental stair kit.
+    for name, (foot, head, width) in REG.STAIR_RUNS.items():
+        key = "GrandStair" if name == "grand-stair" else "Stair_" + name.replace("-", "_")
+        rise = head[1] - foot[1]
+        length = math.hypot(head[0] - foot[0], head[2] - foot[2])
         _add_mesh(build, key, JC.grand_stair(
-            width=width, height=rise, seed=seed + N.stable_hash(name) % 97,
-            landings=1 if rise < 20.0 else 2))
-        yaw = math.atan2(nxt[0] - here[0], nxt[1] - here[1])
-        _place(build, f"Landmark_{key}", key, float(here[0]), float(here[1]),
-               y=REG.terrace_level(low) - 0.2, rotation=yaw, kind="stair")
-        # grounded on the graded route, not on the terrace below it: the
-        # climb is cut into the riser, so the terrace level is metres under it
-        _landmark(build, name, f"{high.title()} Stair", f"Landmark_{key}",
-                  float(here[0]), float(here[1]), type="monument")
+            width=width, height=rise, length=length,
+            seed=seed + N.stable_hash(name) % 97, landings=1 if rise < 20 else 2))
+        yaw = math.atan2(head[0] - foot[0], head[2] - foot[2])
+        node = "Landmark_" + key
+        _place(build, node, key, foot[0], foot[2], y=foot[1], rotation=yaw,
+               kind="stair", collides=False, landmark=name)
+        _landmark(build, name, name.replace("-", " ").title(), node,
+                  foot[0], foot[2], foot[1], type="monument")
 
     # -- retaining walls along the downhill edge of the built courts -------
     # One wall variant per length band, instanced: a unique mesh per court
@@ -514,6 +503,8 @@ def populate_landmarks(build: RegionBuild, seed: int) -> None:
         temple.add(wing.translate(sign * 15.0, -1.4, -9.0))
     # a colonnaded screen across the front
     for index in range(11):
+        if index == 5:
+            continue  # processional opening through the temple screen
         offset = -18.0 + index * 3.6
         temple.add(SW.column(6.2, 0.46, 12, JC.JADE)
                    .translate(offset, 0.0, 13.5))
@@ -522,6 +513,9 @@ def populate_landmarks(build: RegionBuild, seed: int) -> None:
     for index in range(5):
         temple.add(JC.relief_panel(2.4, 1.4, seed=seed + index)
                    .translate(-9.6 + index * 4.8, 3.4, 14.7))
+    from amberwood import routecraft as RC
+    temple.add_walk(RC.stair_flight(4.0, 0.78, 2.8, 4, JC.MOSSY)
+                    .rotate_y(math.pi).translate(0, 0, 12.4))
     _add_mesh(build, "GreatTemple", temple)
     _place(build, "Landmark_GreatTemple", "GreatTemple", x, z, y=level,
            rotation=math.pi * 0.25, kind="landmark", collides=True,
@@ -570,6 +564,13 @@ def populate_landmarks(build: RegionBuild, seed: int) -> None:
     mz = z + (court[1] - z) / max(reach, 1e-6) * 15.0
     _landmark(build, "cenote", "The Green Cenote", "Landmark_CenoteStair",
               mx, mz, type="landing", note="board panel 3")
+    points = np.asarray(REG.CENOTE_APPROACH)
+    origin = points[0].copy()
+    _add_mesh(build, "CenoteLanding", RC.graded_causeway(
+        points - origin, width=3.4, stone=JC.JADE, paving=JC.MOSSY,
+        foot=-18))
+    _place(build, "Bridge_CenoteLanding", "CenoteLanding",
+           origin[0], origin[2], y=origin[1], kind="bridge")
     # a broken balustrade round the rim, so the drop is announced
     _add_mesh(build, "CenoteRail", SW.balustrade(6.0, 1.05, JC.MOSSY))
     for index in range(14):
@@ -708,6 +709,10 @@ def populate_crossings(build: RegionBuild, seed: int) -> None:
     from amberwood import treecraft as TC
     t = build.terrain
 
+    for name, (foot, head, width) in REG.STAIR_RUNS.items():
+        build.crossings.append({"id": name, "endpoints": [list(foot), list(head)]})
+    build.crossings.append({"id": "cenote-landing",
+                            "endpoints": [REG.CENOTE_APPROACH[0], REG.CENOTE_APPROACH[-1]]})
     for anchor, gorge, style, deck_above in REG.CROSSINGS:
         centre = REG.ANCHORS[anchor]
         points = REG.RAVINES[gorge]
@@ -735,21 +740,27 @@ def populate_crossings(build: RegionBuild, seed: int) -> None:
                 break
         start = centre + across * (span + 3.0)
         end = centre - across * (span + 3.0)
-        deck_y = max(_ground(t, start[0], start[1]),
-                     _ground(t, end[0], end[1])) + 0.4
+        # A western gorge touches the map edge; its boarding ledge must
+        # remain inside the playable boundary.
+        for bank in (start, end):
+            bank[0] = np.clip(bank[0], REG.PLAY_MIN_X + 10, REG.PLAY_MAX_X - 10)
+            bank[1] = np.clip(bank[1], REG.PLAY_MIN_Z + 10, REG.PLAY_MAX_Z - 10)
+        start_y = _ground(t, start[0], start[1]) + 0.4
+        end_y = _ground(t, end[0], end[1]) + 0.4
+        deck_y = (start_y + end_y) * 0.5
 
         key = f"Crossing_{_camel(anchor)}"
         if style == "root":
             piece = JC.root_bridge(
-                (start[0], deck_y, start[1]), (end[0], deck_y, end[1]),
-                seed=seed + N.stable_hash(anchor) % 97, width=2.4, sag=1.1,
+                (start[0], start_y, start[1]), (end[0], end_y, end[1]),
+                seed=seed + N.stable_hash(anchor) % 97, width=3.4, sag=1.1,
                 roots=6)
             note = "board panel 4"
             label = "The Root Crossing"
         else:
             piece = TC.suspension_walkway(
-                (start[0], deck_y, start[1]), (end[0], deck_y, end[1]),
-                sag=min(2.2, span * 0.09), width=1.7,
+                (start[0], start_y, start[1]), (end[0], end_y, end[1]),
+                sag=min(2.2, span * 0.09), width=3.0,
                 seed=seed + N.stable_hash(anchor) % 89, rope_material=JC.ROPE)
             note = "board panel 5"
             label = "Rope Crossing"
@@ -762,16 +773,23 @@ def populate_crossings(build: RegionBuild, seed: int) -> None:
                   float(centre[0]), float(centre[1]), deck_y, type="bridge",
                   note=note)
 
-        # a post-and-plank approach on each bank so the span lands on something
-        for side_index, (bank, inward) in enumerate(
-                ((start, -across), (end, across))):
-            approach_end = bank + inward * 6.0
+        build.crossings.append({"id": anchor, "endpoints": [
+            [float(p[0]), float(y), float(p[1])]
+            for p, y in ((start + across * 6, start_y), (end - across * 6, end_y))]})
+        # Wide bank aprons carry the end posts; boarding walks extend onto
+        # the banks rather than duplicating the first six metres of deck.
+        for side_index, (bank, inward, bank_y) in enumerate(
+                ((start, -across, start_y), (end, across, end_y))):
+            approach_end = bank - inward * 6.0
+            court = bank - inward * 3.0
+            t.plateau(tuple(court), 5.5, bank_y - 0.16, edge=6, surface=TER.PAVING)
+            t.tree_block |= (t.gx - court[0])**2 + (t.gz - court[1])**2 < 10**2
             walk = JC.plank_walkway(
-                (bank[0], deck_y, bank[1]),
+                (bank[0], bank_y, bank[1]),
                 (approach_end[0],
-                 max(deck_y, _ground(t, approach_end[0], approach_end[1]) + 0.3),
+                 _ground(t, approach_end[0], approach_end[1]) + 0.16,
                  approach_end[1]),
-                seed=seed + side_index, width=2.0, rails=True,
+                seed=seed + side_index, width=3.4, rails=True,
                 ground=lambda px, pz: _ground(t, px, pz))
             _add_mesh(build, f"{key}_Approach{side_index}", walk)
             _place(build, f"Walkway_{_camel(anchor)}_{side_index}",
@@ -852,7 +870,8 @@ def populate_settlements(build: RegionBuild, seed: int) -> None:
     _add_mesh(build, "TownHouse_0", JC.terrace_house(seed=seed + 181, width=7.0,
                                                      depth=5.6, storeys=2))
     _add_mesh(build, "TownHouse_1", JC.terrace_house(seed=seed + 183, width=5.8,
-                                                     depth=5.0, storeys=1))
+                                                     depth=5.0, storeys=1,
+                                                     entrance_steps=True))
     _add_mesh(build, "TownHouse_2", JC.terrace_house(seed=seed + 184, width=6.4,
                                                      depth=6.0, storeys=2))
     _add_mesh(build, "TownHall", JC.pagoda(radius=6.0, tiers=3, height=8.4,
@@ -882,11 +901,9 @@ def populate_settlements(build: RegionBuild, seed: int) -> None:
            kind="prop", collides=True)
     _place(build, "Landmark_Statue", "Statue", x + 2.0, z + 9.0, y=town_level,
            rotation=math.pi * 0.25, kind="landmark", collides=True)
-    for index in range(6):
-        angle = math.pi * 2.0 * index / 6
+    for index, (px, pz) in enumerate(((8, 20), (15, 21), (22, 22))):
         _place(build, f"Stall_Lower_{index:02d}", "MarketStall",
-               x + math.cos(angle) * 12.0, z + math.sin(angle) * 12.0,
-               y=town_level, rotation=-angle, kind="prop")
+               px, pz, y=town_level, rotation=math.pi, kind="prop")
 
     # the two NPC premises named in the server's own npcs.txt
     for anchor, node, label, identifier in (

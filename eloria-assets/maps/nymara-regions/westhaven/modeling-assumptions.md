@@ -187,3 +187,31 @@ markers.
 
 The region's own name, "Westhaven", comes from the registry key and is not
 invented.
+## September 2026 circulation and working-ground pass
+
+The city still occupies the concept's terraced headland, with the campanile,
+spire and brass dome retaining their skyline. A cart climb now connects the
+working waterfront to the upland crossroads. Its switchbacks follow the east
+shoulder; a second connection joins the crown terrace to the north gate, making
+a loop instead of a road that ends behind the city.
+
+The farm road passes south of the farmhouse, and the coast road passes west
+of the Factor's House. Their doors face a lane rather than a carriageway through
+the building. Gullscar's enclosed strips sit below its house, with a cistern
+above them. This remains a rainwater-fed coastal farm: no river has been
+invented where the concept shows none.
+
+The existing shore route crosses the shipyard gully on the Yard Bridge and
+the Lamp Rock tidal saddle on a raised causeway. These are authored walking
+surfaces with masonry piers, sloping decks and broad landings. Gullstone remains
+the separate island described above.
+
+The server service court uses the main quay's geometry: information, shared
+storage, crafting and combat practice form one short circuit, with the Amber
+berth nearby. Habitat discs put grazers around the farm, crabs and herons by the
+east bay, and hounds in the outer upland. Roads are excluded from wildlife
+placement. This is geographic placement of the existing species, not a change
+to their combat statistics.
+
+New recipes live in shared `amberwood.routecraft`; existing Westhaven timber,
+stone, grain and paving materials carry them. No surface classes were added.

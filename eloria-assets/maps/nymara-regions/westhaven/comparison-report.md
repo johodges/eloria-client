@@ -1,3 +1,6 @@
+Current checkpoint: [2026-09-07 layout review](layout-review.md). The earlier
+counts and camera comments below describe the previous build.
+
 # Westhaven: comparison report
 
 The build against the concept art, panel by panel. An honest reading, not a
