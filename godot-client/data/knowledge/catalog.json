@@ -2,11 +2,26 @@
   "version": 1,
   "source": {
     "profile": "eloria",
-    "itemsSha256": "9203f769080cd1b7d2c7494d6f83cdec62df7cab3a85e99a4c2246f4bbdba22c",
+    "itemsSha256": "4ca27e50fd5490d4be3bb74413bdc577c5098e98dba2b8393ded2db4f06b6cdf",
     "booksSha256": "dbaf97061c7578ece676a3d6ff122d25af0bb69a01d4c4bcec9b16653df00329",
     "algorithm": "server load_books insertion order, excluding repeatable books"
   },
   "entries": [
-    "Beginnings"
+    "Beginnings",
+    "Bowyery",
+    "Clockwork",
+    "Cured Leatherwork",
+    "Fine Brewing",
+    "Fine Tailoring",
+    "Focus Cutting",
+    "Gem Setting",
+    "Iron Working",
+    "Master Armoury",
+    "Master Engineering",
+    "Master Potions",
+    "Steel Smelting",
+    "Steel Working",
+    "Stormglass Refining",
+    "Ward Brewing"
   ]
 }

@@ -1116,15 +1116,18 @@ func _init() -> void:
 			knowledge_entry_count = knowledge_entries.size()
 			# The catalog is compiled from the profile the server actually
 			# runs, not from the unmodified Eternal Lands data the fork was
-			# built on. That profile has one book; the legacy one has 385, and
-			# shipping those listed knowledge the server has never heard of.
+			# built on. That profile has sixteen books - the starting reader
+			# and the fifteen the crafting ladder gates its tier-3 and better
+			# recipes behind; the legacy one has 385, and shipping those listed
+			# knowledge the server has never heard of.
 			var knowledge_source: Dictionary = (knowledge_catalog_value
 				as Dictionary).get("source", {}) as Dictionary
 			_expect(str(knowledge_source.get("profile", "")) == "eloria",
 				"knowledge catalog names the profile it was compiled from: "
 					+ str(knowledge_source.get("profile", "")))
-			_expect(knowledge_entries.size() == 1
-				and str(knowledge_entries[0]) == "Beginnings",
+			_expect(knowledge_entries.size() == 16
+				and str(knowledge_entries[0]) == "Beginnings"
+				and knowledge_entries.has("Iron Working"),
 				"knowledge catalog matches the served profile's own books: %s"
 					% str(knowledge_entries))
 	var manufacturing_catalog_file: FileAccess = FileAccess.open(
@@ -1145,8 +1148,11 @@ func _init() -> void:
 			# stale along with every fixture below. What the catalog was built
 			# from is now asserted where both halves are visible - the
 			# server's client_content_manifest.json and its content-sync test.
+			# 532: the thirty-two hand-authored recipes, which stay first in
+			# the file and so stay first here, and the five hundred the
+			# crafting ladder generates below them.
 			_expect(str(sources.get("profile", "")) == "eloria"
-				and manufacturing_recipes.size() == 32
+				and manufacturing_recipes.size() == 532
 				and str((manufacturing_recipes[0] as Dictionary).get("output", "")) == "Torch",
 				"manufacturing catalog matches the served profile's own recipes")
 			# Both catalogs come out of one generator run, so an index into the
