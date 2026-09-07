@@ -1,5 +1,13 @@
 # Canonical T-pose race bodies
 
+This document records the approved canonical source build at commit
+`90d206e8ed765f4d03b0667490f402e0e59cf885`. The subsequent user-approved
+[shared-body equipment build](../../qa/canonical-equipment-refit.md) reuses its
+Luminous male/female bodies below the neck and retains the individual race heads
+and Ssarathi tails. Its geometry and neck-join reports supersede the physique
+inventory here. The skeleton, animation and source-preservation evidence below
+remain the reference for that later build.
+
 This build keeps each race's own Meshy T-pose derivative, fits it to the shared
 animation library's actual `Rest_Pose`, and partitions its triangles into the
 client's appearance surfaces. It does not use the abandoned Luminous head graft.

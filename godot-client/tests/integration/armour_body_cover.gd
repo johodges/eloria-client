@@ -19,7 +19,7 @@ func verify_body(actor: ReplicatedActor3D, active: Dictionary, label: String) ->
 	var backing_parts: Array = []
 	for part: int in active:
 		for piece: Node in actor._equipment_nodes.get(part, []):
-			if piece.has_meta("replaces_torso_body"):
+			if piece.has_meta("replaces_torso_body") and not piece.has_meta("generated_body_cover"):
 				regions.append(Vector3(.95, 1.535, .665))
 				backing_parts.append(part)
 			if piece.has_meta("generated_body_cover"):
@@ -76,10 +76,25 @@ func verify_body(actor: ReplicatedActor3D, active: Dictionary, label: String) ->
 			var indices: PackedInt32Array = before[Mesh.ARRAY_INDEX]
 			for i: int in range(0, indices.size(), 3):
 				var center := transform * ((vertices[indices[i]] + vertices[indices[i + 1]] + vertices[indices[i + 2]]) / 3.0)
+				var body_center := center
 				center /= actor.rig_fit_scale()
 				var covered := false
 				for region: Vector3 in regions:
 					covered = covered or (center.y > region.x and center.y < region.y and absf(center.x) < region.z)
+				# A torso replaces the complete default collar, including its
+				# few tips above the chest band's upper bound.
+				if active.has(5) and instance.name.to_lower() == "wardrobe_shirt":
+					covered = covered or (center.y > 1.40 and center.y < 1.65 and absf(center.x) < .20)
+				if protected_face(instance, before, indices, i):
+					covered = false
+				if actor.rig_name().begins_with("ssarathi_") and TorsoBodyCover.is_tail(center):
+					covered = false
+				# Independent anatomical sentinel: the posterior tail core must
+				# survive every outfit/removal order, regardless of band metadata.
+				if actor.rig_name().begins_with("ssarathi_") and center.z < -.35 and center.y < .90:
+					expect(not covered, label + " preserves the posterior tail core")
+				if instance.name.to_lower() == "body" and body_center.y > 1.425 and absf(body_center.x) < .09:
+					expect(not covered, label + " preserves the chin and throat inside an open collar")
 				if covered:
 					removed += 1
 				else:
@@ -159,3 +174,25 @@ func run() -> void:
 	expect(races == 16, "all sixteen races exercised")
 	print("ARMOUR COVER: %d races, %d transitions, %d checks, %d failures" % [races, transitions, checks, failures])
 	quit(1 if failures else 0)
+
+func protected_face(instance: MeshInstance3D, arrays: Array, ids: PackedInt32Array, start: int) -> bool:
+	if instance.name.to_lower() not in ["body", "char1", "mesh_node"] or instance.skin == null:
+		return false
+	var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
+	var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
+	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	var stride: int = bones.size()/vertices.size()
+	var total := 0.0
+	for corner: int in range(3):
+		for slot: int in range(stride):
+			var offset := ids[start+corner]*stride+slot
+			var bone_name := instance.skin.get_bind_name(bones[offset])
+			if bone_name.is_empty():
+				var skeleton := instance.get_node(instance.skeleton) as Skeleton3D
+				bone_name = skeleton.get_bone_name(instance.skin.get_bind_bone(bones[offset]))
+			if bone_name in [&"Head", &"neck_01"]:
+				total += weights[offset]
+	var center := (vertices[ids[start]]+vertices[ids[start+1]]+vertices[ids[start+2]])/3.
+	var skeleton := instance.get_node(instance.skeleton) as Skeleton3D
+	center = skeleton.global_transform.affine_inverse()*instance.global_transform*center
+	return total > 1.5 or (center.y > 1.40 and absf(center.x) < .11)

@@ -286,6 +286,11 @@ def components(points: np.ndarray, triangles: np.ndarray) -> list[Shell]:
         closed = bool((counts % 2 == 0).all())
         middle = local_points.mean(axis=0)
         local = local_points - middle
+        # Double-sided flat decoration can have paired boundary edges while
+        # enclosing no space. It is a sheet, not an inside-out volume. Keep
+        # true (including inverted or very thin) 3D shells in the winding test.
+        if closed and np.linalg.matrix_rank(local) < 3:
+            closed = False
         volume = float(np.einsum(
             "ij,ij->i", local[local_faces[:, 0]],
             np.cross(local[local_faces[:, 1]], local[local_faces[:, 2]])).sum() / 6.0)

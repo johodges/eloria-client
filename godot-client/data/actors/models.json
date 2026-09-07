@@ -47,7 +47,8 @@
           0,
           -0.015
         ]
-      }
+      },
+      "bodyTemplate": "luminous_female"
     },
     "luminous_male": {
       "scene": "res://assets/actors/native/races/luminous_male.glb",
@@ -95,7 +96,8 @@
           0.0,
           -0.004545673539429337
         ]
-      }
+      },
+      "bodyTemplate": "luminous_male"
     },
     "votary_female": {
       "scene": "res://assets/actors/native/races/votary_female.glb",
@@ -143,7 +145,8 @@
           0.0,
           0.0015907394043558959
         ]
-      }
+      },
+      "bodyTemplate": "luminous_female"
     },
     "votary_male": {
       "scene": "res://assets/actors/native/races/votary_male.glb",
@@ -191,7 +194,8 @@
           0.0,
           -0.0300913763841533
         ]
-      }
+      },
+      "bodyTemplate": "luminous_male"
     },
     "glasswarden_female": {
       "scene": "res://assets/actors/native/races/glasswarden_female.glb",
@@ -239,7 +243,8 @@
           0.0,
           0.015994106646235462
         ]
-      }
+      },
+      "bodyTemplate": "luminous_female"
     },
     "glasswarden_male": {
       "scene": "res://assets/actors/native/races/glasswarden_male.glb",
@@ -287,7 +292,8 @@
           0.0,
           -0.01721558240353025
         ]
-      }
+      },
+      "bodyTemplate": "luminous_male"
     },
     "orun_female": {
       "scene": "res://assets/actors/native/races/orun_female.glb",
@@ -335,7 +341,8 @@
           0.0,
           -0.0177809107240395
         ]
-      }
+      },
+      "bodyTemplate": "luminous_female"
     },
     "orun_male": {
       "scene": "res://assets/actors/native/races/orun_male.glb",
@@ -383,7 +390,8 @@
           0.0,
           -0.010742990500601483
         ]
-      }
+      },
+      "bodyTemplate": "luminous_male"
     },
     "greyhaven_female": {
       "scene": "res://assets/actors/native/races/greyhaven_female.glb",
@@ -431,7 +439,8 @@
           0.0,
           -0.014483927201339779
         ]
-      }
+      },
+      "bodyTemplate": "luminous_female"
     },
     "greyhaven_male": {
       "scene": "res://assets/actors/native/races/greyhaven_male.glb",
@@ -479,7 +488,8 @@
           0.0,
           -0.011202448700661267
         ]
-      }
+      },
+      "bodyTemplate": "luminous_male"
     },
     "ssarathi_female": {
       "scene": "res://assets/actors/native/races/ssarathi_female.glb",
@@ -527,7 +537,8 @@
           0.0,
           0.03997821255152469
         ]
-      }
+      },
+      "bodyTemplate": "luminous_female"
     },
     "ssarathi_male": {
       "scene": "res://assets/actors/native/races/ssarathi_male.glb",
@@ -575,7 +586,8 @@
           0.0,
           0.024284862062932497
         ]
-      }
+      },
+      "bodyTemplate": "luminous_male"
     },
     "stoneborn_female": {
       "scene": "res://assets/actors/native/races/stoneborn_female.glb",
@@ -623,7 +635,8 @@
           0.0,
           -0.05282490636663574
         ]
-      }
+      },
+      "bodyTemplate": "luminous_female"
     },
     "stoneborn_male": {
       "scene": "res://assets/actors/native/races/stoneborn_male.glb",
@@ -671,7 +684,8 @@
           0.0,
           -0.048181251353466806
         ]
-      }
+      },
+      "bodyTemplate": "luminous_male"
     },
     "mycelari_female": {
       "scene": "res://assets/actors/native/races/mycelari_female.glb",
@@ -719,7 +733,8 @@
           0.0,
           -0.013499628691491263
         ]
-      }
+      },
+      "bodyTemplate": "luminous_female"
     },
     "mycelari_male": {
       "scene": "res://assets/actors/native/races/mycelari_male.glb",
@@ -767,7 +782,8 @@
           0.0,
           -0.006476956776826641
         ]
-      }
+      },
+      "bodyTemplate": "luminous_male"
     },
     "emberfox": {
       "scene": "res://assets/actors/native/creatures/emberfox.glb",

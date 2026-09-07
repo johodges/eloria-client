@@ -1,5 +1,11 @@
 # Source-pose torso conversion
 
+> Historical report for the previous body generation. The 16 current bodies
+> now share the canonical Rest_Pose and split wardrobe surfaces; references
+> below to 14 fused bodies and older fit measurements are obsolete. See
+> [the canonical-body equipment refit](canonical-equipment-refit.md) for the
+> current authoring, runtime units and validation.
+
 The 64 generated torso pieces now enter `torso_remap.build` directly from
 `conform_equipment.build`. They read the `.glb.orig` sibling when it exists.
 The previous seat/repose/unsquash correction chain does not run for torsos.

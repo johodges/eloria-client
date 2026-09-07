@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
 """The registry contract that lets one garment fit sixteen different bodies.
 
-Garments are authored on one reference rig and worn by every race.  Two
-mechanisms make that work, and both live in ``data/actors/equipment.json``:
+Generated garments have original-art male/female body fits and retained-head variants. Their
+shared skeleton needs no runtime girth or rest-height correction. The registry
+also retains a legacy fit profile for existing procedural garments and props.
 
-* ``bodyGirth`` - how far each race's body stands off each bone.  The runtime
-  divides the wearer's numbers by the numbers of the rig a piece was authored
-  on and lets the garment out by the difference, which is what allows the
-  authored mesh to be cut close instead of sized for the broadest race.
-* ``fitGroups`` and per-model ``variants`` - the escape hatch for a build that
-  cannot be reached by resizing at all, such as a digitigrade leg.  Those races
-  wear a copy of the piece authored on their own rig.
+* ``bodyGirth`` and ``footAnchor`` describe current weighted body geometry.
+* ``fitGroups`` select the shared male/female garment or the individual head
+  variant. ``bodyTemplates`` prevent repeating a fit on identical body geometry.
+* ``fitProfiles.legacy`` preserves the old measurements and scale for items
+  outside the source-equipment rebuild.
 
 A break in either one is silent in the editor and obvious on a player, so the
 shape of the data is checked here rather than discovered in a screenshot.
@@ -18,12 +17,17 @@ shape of the data is checked here rather than discovered in a screenshot.
 from __future__ import annotations
 
 import json
+import os
+import sys
+from functools import lru_cache
 from pathlib import Path
 import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 CLIENT = ROOT / "godot-client"
-EQUIPMENT = CLIENT / "data" / "actors" / "equipment.json"
+EQUIPMENT = Path(os.environ.get("ELORIA_EQUIPMENT_REGISTRY", CLIENT / "data" / "actors" / "equipment.json"))
+sys.path.insert(0, str(ROOT / "eloria-assets/tools"))
+import equipment_authoring as ea
 RACES = CLIENT / "assets" / "actors" / "native" / "races"
 
 # Bones a garment can be bound to.  Every race has to be measured around all of
@@ -36,7 +40,7 @@ REQUIRED_GIRTH_BONES = {
 
 
 def scene_path(res_path: str) -> Path:
-    return CLIENT / res_path.removeprefix("res://")
+    return CLIENT / res_path.removeprefix("res://") if res_path.startswith("res://") else Path(res_path)
 
 
 class EquipmentFitTest(unittest.TestCase):
@@ -59,9 +63,29 @@ class EquipmentFitTest(unittest.TestCase):
                 self.assertGreater(float(radius), 0.0,
                                    f"{race}/{bone} measures no body at all")
 
+    def test_generated_variants_use_two_bodies_and_individual_heads(self) -> None:
+        import import_generated_equipment as batch
+        templates = self.registry.get("bodyTemplates", {})
+        self.assertEqual(set(self.races), set(templates))
+        self.assertEqual({"luminous_male", "luminous_female"}, set(templates.values()))
+        scenes = set()
+        for piece in batch.roster():
+            model = self.models[f"{piece.part}:{piece.visual}"]
+            for race in self.races:
+                resolved = dict(model)
+                for group in self._named(self.groups[race]):
+                    if group in model.get("variants", {}):
+                        resolved.update(model["variants"][group])
+                        break
+                expected = race if piece.part == 3 else templates[race]
+                self.assertEqual(expected, resolved["authoredFor"], f"{race} {piece.slug}")
+                scenes.add(resolved["scene"])
+        self.assertEqual(1424, len(scenes))
+
     def test_measurements_are_plausible(self) -> None:
-        # A ratio outside this range is a measurement bug, not a body: the
-        # runtime clamps at 2.0, so anything near it would silently lose fit.
+        # These sixteen approved bodies lie within this measured range.
+        # A much larger value usually means a foot region included the tail
+        # or an unweighted toe fell back to sampling the entire body.
         reference = self.girth.get("luminous_male", {})
         self.assertTrue(reference, "the reference rig is unmeasured")
         for race in self.races:
@@ -172,17 +196,19 @@ class GarmentWindingTest(unittest.TestCase):
         seen = 0
         for path in sorted(set(self._scenes())):
             self.assertTrue(path.is_file(), f"{path} missing")
-            volume = 0.0
+            closed_volume = 0.0
             for points, triangles in _mesh_primitives(path):
-                middle = points.mean(axis=0)
-                local = points - middle
-                volume += float(np.einsum(
-                    "ij,ij->i", local[triangles[:, 0]],
-                    np.cross(local[triangles[:, 1]],
-                             local[triangles[:, 2]])).sum() / 6.0)
+                for shell in _shells(points, triangles):
+                    if not shell.closed:
+                        continue
+                    # Signed volume diagnoses orientation only for closed
+                    # surfaces. An original open coat can have a negative
+                    # origin-dependent integral while its lining faces out.
+                    self.assertGreaterEqual(shell.volume, -1e-10,
+                        f"{path.name} has an inverted closed shell ({shell.volume:g} m3)")
+                    closed_volume += max(0., shell.volume)
             seen += 1
-            self.assertGreater(volume, 0.0,
-                               f"{path.name} is wound inside out")
+            self.assertGreater(closed_volume, 1e-9, f"{path.name} has no closed garment volume")
         self.assertGreater(seen, 10, "no closed garments were checked")
 
 
@@ -230,53 +256,52 @@ class FootgearGroundTest(unittest.TestCase):
             import numpy as np
         except ImportError:  # pragma: no cover - numpy is a build requirement
             self.skipTest("numpy is required to read garment geometry")
-        soles: dict[str, float] = {}
         seen = 0
-        for path, rig in sorted(set(self._footgear())):
+        for path, author in sorted(set(self._footgear())):
             self.assertTrue(path.is_file(), f"{path} missing")
-            self.assertTrue(rig, f"{path.name} does not name the rig it fits")
-            body = RACES / f"{rig}.glb"
-            self.assertTrue(body.is_file(), f"{body} missing")
-            if rig not in soles:
-                lowest = min(points[:, 1].min()
-                             for points, _ in _mesh_primitives(body))
-                soles[rig] = float(lowest)
-            boot = np.concatenate([points for points, _ in _mesh_primitives(path)])
-            sink = soles[rig] - float(boot[:, 1].min())
-            self.assertLessEqual(
-                sink, self.MAX_SINK,
-                f"{path.name} reaches {sink * 1000:.1f} mm below the sole of "
-                f"{rig}, which puts it through the floor the actor stands on")
+            rig = _body_rig(author)
+            doc, binary = ea.read_glb(path)
+            names = [doc["nodes"][i]["name"] for i in doc["skins"][0]["joints"]]
+            floors = {side: [] for side in ("l", "r")}
+            art_floors = {side: [] for side in ("l", "r")}
+            for mesh_index, mesh in enumerate(doc["meshes"]):
+                for primitive in mesh["primitives"]:
+                    attrs = primitive["attributes"]
+                    points = ea.accessor_array(doc, binary, attrs["POSITION"])
+                    joints = ea.accessor_array(doc, binary, attrs["JOINTS_0"])
+                    weights = ea.accessor_array(doc, binary, attrs["WEIGHTS_0"]).astype(float)
+                    used = np.unique(ea.accessor_array(doc, binary, primitive["indices"]))
+                    for side in ("l", "r"):
+                        chain = [i for i, name in enumerate(names) if name.endswith("_" + side)]
+                        own = (weights[used] * np.isin(joints[used], chain)).sum(axis=1) > weights[used].sum(axis=1) * .5
+                        if not own.any():
+                            continue
+                        floor = float(points[used[own], 1].min())
+                        floors[side].append(floor)
+                        if mesh_index == 0:
+                            art_floors[side].append(floor)
+            for side in ("l", "r"):
+                self.assertTrue(art_floors[side], f"{path}: no {side} source foot")
+                sole = ea.weighted_sole(rig, side)
+                sink = sole - min(floors[side])
+                self.assertLessEqual(sink, self.MAX_SINK,
+                    f"{path} {side} reaches {sink*1000:.1f} mm below the weighted {author} sole")
+                floating = min(art_floors[side]) - sole
+                self.assertLessEqual(floating, .008,
+                    f"{path} {side} floats {floating*1000:.1f} mm above the weighted {author} sole")
             seen += 1
         self.assertGreater(seen, 10, "no footgear was checked")
 
 
 class LegwearSeamTest(unittest.TestCase):
-    """A leg garment closes at three seams and leaves the boot the fourth.
+    """Check source-art hems separately from the clothing transition lining.
 
-    The pattern is ``FootgearGroundTest``'s: settle by measurement the half of
-    the question a number can settle, and leave topology to the tool that
-    builds it.  What a number settles here is where the garment's two horizontal
-    edges are, because both are contracts with something else.
-
-    The hem is a contract with the footwear brief.  The datum both briefs are
-    cut against puts the boot cuff's top edge at world Y 0.320 on
-    ``luminous_male`` and requires at least 80 mm of overlap below the highest
-    trouser hem, so a hem that creeps down is a trouser that stops tucking in
-    and a hem that creeps up is a strip of bare shin above the boot.  Neither is
-    visible in the editor and both are obvious on a player.
-
-    The waist is a contract with the torso garment, which spans Y 1.022-1.550.
-    The trousers have to reach up into that band far enough to overlap it, and -
-    since our user's ruling is that the legs carry the belt - the waistband has
-    to be the outermost thing at that height rather than hidden under a shirt.
+    The old 166 mm lower bound described a procedural shin tube, not these
+    full-length source designs. Bark's artwork already ended at 100 mm; its
+    reported 49.6 mm "hem" was a backing triangle crossing the body-cover band.
+    Check ground clearance, the canonical waist and matched boot overlap.
     """
 
-    #: World Y on the reference rig.  Soft trousers tuck deeper than plate.
-    HEM = {"pants": (.130, .160), "legs": (.166, .196), "kilt": (.130, .160)}
-    #: The lowest the top of a leg garment may sit.  The torso hem is at 1.022.
-    MIN_WAIST_TOP = 1.060
-    #: Structural shells: the closed hip shell and the two closed leg tubes.
     STRUCTURAL_SHELLS = 3
 
     @classmethod
@@ -284,101 +309,133 @@ class LegwearSeamTest(unittest.TestCase):
         cls.registry = json.loads(EQUIPMENT.read_text())
 
     def _legwear(self):
-        """Every leg garment authored on the reference rig."""
         for key, model in self.registry["models"].items():
             if not key.startswith("4:") or model.get("attach") != "skinned":
                 continue
-            if str(model.get("authoredFor", "")) != "luminous_male":
-                continue
-            yield key, scene_path(str(model["scene"])), str(model.get("kind", ""))
+            for variant in [model, *(model.get("variants") or {}).values()]:
+                yield key, scene_path(str(variant["scene"])), str(model.get("kind", "")), str(variant["authoredFor"])
 
     def test_hems_and_waists_meet_the_seams_they_are_cut_against(self) -> None:
-        try:
-            import numpy as np
-        except ImportError:  # pragma: no cover - numpy is a build requirement
-            self.skipTest("numpy is required to read garment geometry")
         seen = 0
-        for key, path, kind in sorted(set(self._legwear())):
+        for key, path, kind, author in sorted(set(self._legwear())):
             self.assertTrue(path.is_file(), f"{path} missing")
-            points = np.concatenate([p for p, _ in _mesh_primitives(path)])
+            points = _art_points(path)
             low, high = float(points[:, 1].min()), float(points[:, 1].max())
-            bounds = self.HEM.get(kind)
-            if bounds is None:
-                continue
-            self.assertGreaterEqual(
-                low, bounds[0],
-                f"{key} ({kind}) hems at Y {low:.4f}, below {bounds[0]:.3f} - "
-                f"it hangs past the boot it is meant to tuck into")
-            self.assertLessEqual(
-                low, bounds[1],
-                f"{key} ({kind}) hems at Y {low:.4f}, above {bounds[1]:.3f} - "
-                f"that is bare shin between the trouser and the boot cuff")
-            self.assertGreaterEqual(
-                high, self.MIN_WAIST_TOP,
-                f"{key} tops out at Y {high:.4f}; the shirt hem is at 1.022 and "
-                f"the waistband has to overlap it, not meet it")
+            rig = _body_rig(author)
+            # Full-length legwear clears the actual feet. A tail minimum and a
+            # copied backing triangle cannot define the visible garment hem.
+            sole = max(ea.weighted_sole(rig, side) for side in ("l", "r"))
+            self.assertGreaterEqual(low, sole + .020,
+                f"{key} {path}: source hem at {low:.4f} intrudes into the foot")
+            self.assertLessEqual(low, rig.origin("calf_l")[1] - .020,
+                f"{key} {path}: source hem ends above the shin")
+            self.assertGreaterEqual(high, rig.origin("spine_01")[1],
+                f"{key} {path}: waistband does not reach the canonical waist")
             seen += 1
         self.assertGreater(seen, 50, "no leg garments were checked")
 
-    def test_the_shell_and_both_leg_tubes_are_closed(self) -> None:
-        """The seat is closed by a closed shell or it is not closed at all.
+    def test_matched_source_sets_overlap_the_boot_cuffs(self) -> None:
+        pairs = {"amberwood_woodland_legguards": "amberwood_woodland_boots",
+                 "arcane_leg_armor": "arcane_fantasy_boots",
+                 "legendary_leg_armor": "legendary_sabatons"}
+        by_slug = {scene_path(model["scene"]).stem: model for model in self.registry["models"].values()}
+        seen = 0
+        for prefix, boot_prefix in pairs.items():
+            for index in range(1, 9):
+                legs = by_slug[f"{prefix}_{index:02d}"]
+                boots = by_slug[f"{boot_prefix}_{index:02d}"]
+                for group in [None, *(legs.get("variants") or {})]:
+                    leg = legs if group is None else legs["variants"][group]
+                    boot = boots if group is None else boots["variants"][group]
+                    hem = _art_points(scene_path(leg["scene"]))[:, 1].min()
+                    cuff = _art_points(scene_path(boot["scene"]))[:, 1].max()
+                    self.assertLessEqual(hem, cuff + .008,
+                        f"{prefix}_{index:02d} {group}: {1000*(hem-cuff):.1f} mm gap above matching boot")
+                    seen += 1
+        self.assertGreaterEqual(seen, 24)
 
-        An open tube encloses nothing.  The shell this replaces was capped at
-        the top only, so it answered for no part of the body and coverage over
-        the seat rested entirely on two leg tubes that never meet across the
-        middle - which is precisely the bare band across the backside.  Three
-        closed components is the shape that fixes it, and it is worth asserting
-        because capping is one keyword and losing it is silent.
+    def test_the_shell_and_both_leg_tubes_are_closed(self) -> None:
+        """Require enclosed hip and leg coverage in both lining combinations.
+
+        Source-derived linings connect the hip and both legs in one solid;
+        older procedural trousers use three overlapping closed solids.
         """
         try:
             import numpy as np
         except ImportError:  # pragma: no cover - numpy is a build requirement
             self.skipTest("numpy is required to read garment geometry")
         seen = 0
-        for key, path, _kind in sorted(set(self._legwear())):
-            closed = _closed_component_count(path)
-            self.assertGreaterEqual(
-                closed, self.STRUCTURAL_SHELLS,
-                f"{key} has {closed} closed shells, fewer than the hip shell "
-                f"and two leg tubes the garment is built from")
+        for key, path, _kind, _author in sorted(set(self._legwear())):
+            document, binary = ea.read_glb(path)
+            linings = [mesh for mesh in document['meshes']
+                       if mesh.get('name', '').startswith('GeneratedLegBacking')]
+            if linings:
+                self.assertEqual({m['name'] for m in linings},
+                    {'GeneratedLegBacking', 'GeneratedLegBackingWithBoots'})
+                # Source-derived trousers form a connected hip and two leg
+                # tubes in one closed lining. Count anatomy, not the three
+                # separate solids used by the old procedural construction.
+                for mesh in linings:
+                    spanning = False
+                    for primitive in mesh['primitives']:
+                        points = ea.accessor_array(document,binary,primitive['attributes']['POSITION'])
+                        faces = ea.accessor_array(document,binary,primitive['indices']).reshape(-1,3)
+                        for shell in _shells(points,faces):
+                            if shell.closed and shell.volume > 1e-8:
+                                lo,hi=shell.points.min(axis=0),shell.points.max(axis=0)
+                                spanning |= bool(lo[0]<-.04 and hi[0]>.04 and lo[1]<.55 and hi[1]>.95)
+                    self.assertTrue(spanning, f"{key}/{mesh['name']} lacks a closed hip and both legs")
+            else:
+                closed = _closed_component_count(path)
+                self.assertGreaterEqual(closed, self.STRUCTURAL_SHELLS,
+                    f"{key} lacks the hip shell and two tubes of its procedural construction")
             seen += 1
-        self.assertGreater(seen, 50, "no leg garments were checked")
+        self.assertGreater(seen, 50, "no legwear shells were checked")
+
+
+@lru_cache(maxsize=16)
+def _body_rig(author):
+    return ea.load_rig(RACES / f"{author}.glb", ea.BODY_SURFACES)
+
+
+def _art_points(path):
+    import numpy as np
+    document, binary = ea.read_glb(path)
+    return np.concatenate([ea.accessor_array(document, binary, primitive["attributes"]["POSITION"])[
+        np.unique(ea.accessor_array(document, binary, primitive["indices"]))]
+        for primitive in document["meshes"][0]["primitives"]])
+
+
+def _shells(points, triangles):
+    """Connected shell topology, efficiently welding UV-split source art."""
+    import numpy as np
+    from scipy.sparse import coo_matrix
+    from scipy.sparse.csgraph import connected_components
+    from garment_coverage import Shell
+    _, welded = np.unique(np.round(points, 5), axis=0, return_inverse=True)
+    faces = welded[triangles]
+    edges=np.vstack([faces[:,[0,1]],faces[:,[1,2]],faces[:,[2,0]]])
+    graph=coo_matrix((np.ones(len(edges)),(edges[:,0],edges[:,1])),
+                    shape=(int(welded.max())+1,)*2).tocsr()
+    _, labels=connected_components(graph,directed=False)
+    groups=labels[faces[:,0]]
+    result=[]
+    for group in np.unique(groups):
+        selected=triangles[groups==group]
+        used,inverse=np.unique(selected,return_inverse=True)
+        p=points[used].astype(float);f=inverse.reshape(-1,3)
+        wf=welded[selected]
+        ee=np.sort(np.vstack([wf[:,[0,1]],wf[:,[1,2]],wf[:,[2,0]]]),axis=1)
+        _, counts=np.unique(ee,axis=0,return_counts=True)
+        closed=bool((counts%2==0).all())
+        q=p-p.mean(axis=0)
+        volume=float(np.einsum('ij,ij->i',q[f[:,0]],np.cross(q[f[:,1]],q[f[:,2]])).sum()/6.)
+        result.append(Shell(p,f,closed,volume))
+    return result
 
 
 def _closed_component_count(path: Path) -> int:
-    """How many watertight pieces a mesh is made of, welded by position."""
-    import numpy as np
-
-    total = 0
-    for points, triangles in _mesh_primitives(path):
-        keys = np.round(points, 5)
-        _, index = np.unique(keys, axis=0, return_inverse=True)
-        welded = index[triangles]
-        parent = np.arange(welded.max() + 1)
-
-        def find(node: int) -> int:
-            while parent[node] != node:
-                parent[node] = parent[parent[node]]
-                node = parent[node]
-            return node
-
-        for a, b, c in welded:
-            for x, y in ((a, b), (b, c)):
-                ra, rb = find(int(x)), find(int(y))
-                if ra != rb:
-                    parent[ra] = rb
-        groups: dict[int, list] = {}
-        for triangle in welded:
-            groups.setdefault(find(int(triangle[0])), []).append(triangle)
-        for faces in groups.values():
-            edges: dict[tuple, int] = {}
-            for a, b, c in faces:
-                for x, y in ((a, b), (b, c), (c, a)):
-                    edges[(min(x, y), max(x, y))] = edges.get(
-                        (min(x, y), max(x, y)), 0) + 1
-            if all(count == 2 for count in edges.values()):
-                total += 1
-    return total
+    return sum(shell.closed for p,f in _mesh_primitives(path) for shell in _shells(p,f))
 
 
 def _mesh_primitives(path: Path):

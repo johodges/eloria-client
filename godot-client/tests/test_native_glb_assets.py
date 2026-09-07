@@ -183,9 +183,18 @@ class NativeGlbAssetsTest(unittest.TestCase):
                 self.assertEqual("retargeted", entry["anatomy"])
                 # The selected Meshy derivatives target roughly 20k triangles;
                 # UV seam duplicates can exceed the old shared-body vertex budget.
-                self.assertLess(entry["vertices"], 30_000)
+                self.assertLess(entry["vertices"], 40_000)
                 self.assertGreater(entry["triangles"], 18_000)
-                self.assertLess(entry["triangles"], 25_000)
+                # A full retained Ssarathi tail is additional to the common
+                # roughly-20k body/head. Count that actual surface separately.
+                document = glb_document(ROOT / entry["path"])
+                tail = sum(document["accessors"][p["indices"]]["count"] // 3
+                           for m in document["meshes"] for p in m["primitives"]
+                           if p.get("extras", {}).get("sourceRole") == "race_tail")
+                self.assertEqual(tail, entry.get("retainedTailTriangles", 0))
+                self.assertEqual(tail > 0, model_id.startswith("ssarathi_"))
+                self.assertLess(tail, 9_000)
+                self.assertLess(entry["triangles"] - tail, 25_000)
                 document = glb_document(ROOT / entry["path"])
                 joints = document["skins"][0]["joints"]
                 self.assertEqual(entry["joints"], len(joints))
@@ -249,27 +258,47 @@ class NativeGlbAssetsTest(unittest.TestCase):
                     self.assertLess(abs(min(sole)), .025)
         self.assertLess(max(heights) - min(heights), 1e-5)
 
-    def test_races_have_distinct_bodies(self) -> None:
-        """Eight races must not ship as one silhouette in eight colours."""
-        catalog = self.catalog["races"]
-        for gender in ("female", "male"):
-            with self.subTest(gender=gender):
-                signatures = {
-                    model_id: (entry["legChainScale"], entry["stature"],
-                               entry["vertices"])
-                    for model_id, entry in catalog.items()
-                    if model_id.rsplit("_", 1)[1] == gender}
-                self.assertEqual(8, len(signatures))
-                self.assertGreaterEqual(
-                    len(set(signatures.values())), 8,
-                    "every race body differs from every other")
-        # Stature reaches the client through the model registry, because the
-        # rig itself has to keep the reference hip height.
-        for model_id, entry in catalog.items():
-            with self.subTest(model=model_id):
-                self.assertAlmostEqual(
-                    entry["stature"],
-                    self.models["models"][model_id]["import"]["scale"], places=4)
+    def test_races_share_two_body_shapes_and_retain_distinct_heads(self) -> None:
+        """Compare actual below-neck triangles and weights, excluding tails."""
+        from collections import Counter
+        import numpy as np
+        sys.path.insert(0, str(ROOT / "eloria-assets/tools"))
+        import equipment_authoring as ea
+        from verify_shared_player_bodies import primitives, signatures, GEOMETRY_FIELDS
+        expected = {}
+        heads = set()
+        for gender in ("male", "female"):
+            path = ROOT / self.catalog["races"]["luminous_" + gender]["path"]
+            d, binary = ea.read_glb(path)
+            rig = ea.load_rig(path, ea.BODY_SURFACES)
+            origin = rig.origin("neck_01")
+            axis = rig.origin("Head") - origin
+            axis /= np.linalg.norm(axis)
+            def geometry(document, blob, lower):
+                result = Counter()
+                for name, role, attrs, faces in primitives(document, blob):
+                    if name not in ea.BODY_SURFACES or role in ("race_tail", "neck_join"):
+                        continue
+                    height = (attrs["POSITION"] - origin) @ axis
+                    selected = (height[faces] < .075 - 1e-6).all(1) if lower else (height[faces] > .110 + 1e-6).all(1)
+                    result.update(signatures(attrs, faces[selected], GEOMETRY_FIELDS))
+                return result
+            expected[gender] = geometry(d, binary, True)
+            self.assertGreater(sum(expected[gender].values()), 10_000)
+            for slug, entry in self.catalog["races"].items():
+                if not slug.endswith("_" + gender):
+                    continue
+                with self.subTest(model=slug):
+                    self.assertEqual("luminous_" + gender, entry["bodyTemplate"])
+                    self.assertEqual(entry["bodyTemplate"], self.models["models"][slug]["bodyTemplate"])
+                    document, blob = ea.read_glb(ROOT / entry["path"])
+                    self.assertEqual(expected[gender], geometry(document, blob, True))
+                    heads.add(tuple(sorted(geometry(document, blob, False).items())))
+                    # Approved stature scales the whole actor and its equipment;
+                    # shared authoring geometry does not require equal race heights.
+                    self.assertAlmostEqual(entry["stature"], self.models["models"][slug]["import"]["scale"])
+        self.assertNotEqual(expected["male"], expected["female"])
+        self.assertEqual(16, len(heads), "each race/sex keeps its own head geometry")
 
     def test_race_rigs_keep_the_shared_animation_contract(self) -> None:
         """Name-only retargeting requires the actual library Rest_Pose."""
@@ -322,28 +351,31 @@ class NativeGlbAssetsTest(unittest.TestCase):
                     self.assertIn("baseColorTexture", material["pbrMetallicRoughness"])
                     self.assertGreater(material["pbrMetallicRoughness"]["roughnessFactor"], 0.5)
 
-    def test_human_cultures_are_not_one_physique(self) -> None:
-        """The human cultures retain ten distinct source bodies."""
+    def test_human_cultures_retain_distinct_head_sources(self) -> None:
+        """The shared bodies retain heads from ten distinct human source models."""
         human = {"luminous", "votary", "glasswarden", "orun", "greyhaven"}
         sources = [entry["sourceSHA256"] for slug, entry in self.catalog["races"].items() if slug.rsplit("_", 1)[0] in human]
         self.assertEqual(10, len(sources))
         self.assertEqual(10, len(set(sources)))
 
-    def test_slim_base_body_is_a_reproportioning_not_a_scale(self) -> None:
-        """Measure actual source physiques rather than stale equipment tables."""
-        for gender in ("female", "male"):
-            proportions = []
-            for culture in ("luminous", "glasswarden"):
-                document, binary = glb_chunks(ROOT / self.catalog["races"][f"{culture}_{gender}"]["path"])
-                mesh = next(m for m in document["meshes"] if m["name"].lower() == "body")
-                rows = accessor_rows(document, binary, mesh["primitives"][0]["attributes"]["POSITION"])
-                widths = []
-                for bottom in (1.06, 1.25):
-                    band = sorted(abs(x) for x, y, z in rows if bottom < y < bottom + 0.08)
-                    self.assertTrue(band)
-                    widths.append(band[int((len(band) - 1) * .9)])
-                proportions.append(widths[1] / widths[0])
-            self.assertNotAlmostEqual(proportions[0], proportions[1], places=2)
+    def test_shared_necks_have_matching_shading_and_skinning(self) -> None:
+        import numpy as np
+        sys.path.insert(0, str(ROOT / "eloria-assets/tools"))
+        import equipment_authoring as ea
+        from verify_shared_player_bodies import primitives, neck_join_checks
+        for slug, entry in self.catalog["races"].items():
+            path = ROOT / entry["path"]
+            d, b = ea.read_glb(path)
+            with self.subTest(model=slug):
+                self.assertIn("neckBase", d["asset"]["extras"]["sharedBodyShape"])
+                edges, a = neck_join_checks(list(primitives(d, b)))
+                self.assertGreater(edges["geometricEdges"], 30)
+                self.assertEqual(0, edges["unmatchedEdges"])
+                self.assertEqual(0, a["unmatchedCopies"])
+                self.assertGreater(a["boundaryCopies"], 30)
+                self.assertLess(a["maxPositionDeltaM"], 1e-6)
+                self.assertLess(a["maxNormalDelta"], 2e-6)
+                self.assertLess(a["maxWeightL1Delta"], 2e-6)
 
     def test_slim_base_body_keeps_the_reference_ground_plane(self) -> None:
         """The slim body scales across the bones, never along them.

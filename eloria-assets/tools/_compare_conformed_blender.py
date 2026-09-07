@@ -1,4 +1,15 @@
 """In-Blender half of `compare_conformed_piece.py`.  Not run directly."""
+import os
+# Blender can reset the inherited Windows affinity during startup. Apply the
+# requested common CPU mask again before importing or rendering task geometry.
+if os.name == 'nt':
+    import ctypes
+    kernel = ctypes.WinDLL('kernel32', use_last_error=True)
+    kernel.GetCurrentProcess.restype = ctypes.c_void_p
+    kernel.SetProcessAffinityMask.argtypes = [ctypes.c_void_p, ctypes.c_size_t]
+    cores = min(8, max(1, int(os.environ.get('ELORIA_RENDER_CORES', '8'))))
+    if not kernel.SetProcessAffinityMask(kernel.GetCurrentProcess(), (1 << cores) - 1):
+        raise ctypes.WinError(ctypes.get_last_error())
 import bpy
 import math
 import sys
@@ -20,7 +31,8 @@ WORN_POSE = argv[7]
 WORN_REGION = argv[8]
 ENSEMBLE = argv[9] == '1'
 SAVE_BLEND = argv[10] == '1'
-MODELS = argv[11:]
+REGISTRY = argv[11]
+MODELS = argv[12:]
 
 #: Where the generated meshes hang their arms, measured off the phoenix
 #: cuirass and steady to a degree across the set: 11 degrees out from
@@ -67,6 +79,27 @@ def load(path):
     print("loaded %s -> %s" % (path.rsplit("\\")[-1].rsplit("/")[-1],
                                [o.name for o in got]))
     return got
+
+
+def remember_corner_normals(mesh, bm):
+    # BMesh topology edits discard imported custom normals unless explicitly
+    # restored. Keep their original loop IDs as a corner-domain attribute.
+    normals = [tuple(n.vector) for n in mesh.corner_normals]
+    layer = bm.loops.layers.int.new('qa_original_loop')
+    bm.faces.ensure_lookup_table()
+    for face, polygon in zip(bm.faces, mesh.polygons):
+        for loop, index in zip(face.loops, polygon.loop_indices):
+            loop[layer] = index
+    return normals
+
+
+def restore_corner_normals(mesh, normals):
+    layer = mesh.attributes.get('qa_original_loop')
+    if layer is None or layer.domain != 'CORNER':
+        raise ValueError('Lost imported corner normal mapping')
+    values = [normals[item.value] for item in layer.data]
+    mesh.normals_split_custom_set(values)
+    mesh.attributes.remove(layer)
 
 
 def drop_materials(objs):
@@ -175,9 +208,24 @@ def place(objs, x_at, index):
     bpy.context.view_layer.update()
 
 
-def helmet_socket(objects, rig_objects):
-    registry = json.loads((Path(WORN).parents[4] / 'data/actors/equipment.json').read_text())
-    socket = registry['sockets']['3']
+def equipment_config(model_path):
+    registry_path = Path(REGISTRY) if REGISTRY else Path(WORN).parents[4] / 'data/actors/equipment.json'
+    registry = json.loads(registry_path.read_text())
+    name, race = Path(model_path).name, Path(WORN).stem
+    for base in registry['models'].values():
+        if Path(base.get('scene', '')).name != name:
+            continue
+        for variant in base.get('variants', {}).values():
+            if variant.get('authoredFor') == race:
+                return registry, dict(base, **variant)
+        return registry, base
+    report = Path(model_path).with_suffix('.fit.json')
+    return registry, json.loads(report.read_text()).get('variant', {}) if report.exists() else {}
+
+
+def helmet_socket(objects, rig_objects, model_path):
+    registry, config = equipment_config(model_path)
+    socket = config.get('socket', registry['sockets']['3'])
     arm = next(o for o in rig_objects if o.type == 'ARMATURE')
     head = arm.matrix_world @ arm.data.bones[socket['bone']].matrix_local.translation
     offset = socket.get('offset', [0, 0, 0])
@@ -185,6 +233,21 @@ def helmet_socket(objects, rig_objects):
     for obj in objects:
         if obj.parent is None:
             obj.location += position
+
+
+def is_tail(p):
+    # Same canonical anatomical classifier as TorsoBodyCover. Convert Blender
+    # world to the client's X-right/Y-up/Z-forward coordinates before calling.
+    if p.y >= .9367 or (p.x <= .13 and p.z >= -.11):
+        return False
+    distance = float('inf')
+    for sign in (-1., 1.):
+        chain = [Vector((.089*sign,.9321,.0014)),Vector((.09109*sign,.52587,.01922)),
+                 Vector((.089*sign,.09796,-.04823)),Vector((.089*sign,.0152,.1132)),Vector((.089*sign,.0152,.2632))]
+        for a,b in zip(chain,chain[1:]):
+            axis=b-a; t=max(0., min(1., (p-a).dot(axis)/axis.length_squared))
+            distance=min(distance,(p-a-axis*t).length)
+    return distance > .115
 
 
 def model_meshes(path):
@@ -206,9 +269,9 @@ def choose_boot_backing(objects):
 loaded = [load(path) for path in MODELS]
 if ENSEMBLE:
     skeleton = next(group for group in loaded if any(o.type=='ARMATURE' for o in group))
-    for group in loaded:
+    for model_path, group in zip(MODELS, loaded):
         if not any(o.type=='ARMATURE' for o in group):
-            helmet_socket(group,skeleton)
+            helmet_socket(group,skeleton,model_path)
         if POSE:
             pose_arms(group)
     loaded = [[o for group in loaded for o in group]]
@@ -274,9 +337,9 @@ def render_worn(path):
         return
     if ENSEMBLE:
         skeleton = next(group for _,group in worn if any(o.type=='ARMATURE' for o in group))
-        for _,group in worn:
+        for model_path,group in worn:
             if not any(o.type=='ARMATURE' for o in group):
-                helmet_socket(group,skeleton)
+                helmet_socket(group,skeleton,model_path)
             if WORN_POSE != 'rest':
                 pose_arms(group)
         worn = [(MODELS[0],[o for _,group in worn for o in group])]
@@ -290,16 +353,9 @@ def render_worn(path):
                 if obj.name.split('.')[0].lower() in ('hair','scalp'):
                     obj.hide_render = True
         if WORN_REGION == 'head' and not ENSEMBLE:
-            registry = json.loads((Path(WORN).parents[4] / 'data/actors/equipment.json').read_text())
-            socket = registry['sockets']['3']
-            arm = next(o for o in body if o.type == 'ARMATURE')
-            head = arm.matrix_world @ arm.data.bones[socket['bone']].matrix_local.translation
-            offset = socket.get('offset', [0, 0, 0])
-            position = head + Vector((offset[0], -offset[2], offset[1]))
-            for obj in piece:
-                if obj.parent is None:
-                    obj.location += position
-            hides = registry['parts']['3'].get('hides', [])
+            registry, config = equipment_config(_model)
+            helmet_socket(piece, body, _model)
+            hides = config.get('hides', registry['parts']['3'].get('hides', []))
             for obj in body:
                 if obj.name.split('.')[0].lower() in [n.lower() for n in hides]:
                     obj.hide_render = True
@@ -310,24 +366,32 @@ def render_worn(path):
             # that actually supplies its replacement backing.
             import bmesh
             regions = []
-            for backing in backings:
-                if backing.name.split('.')[0] == 'GeneratedArmorBacking':
-                    regions.append((.95,1.535,.665))
-                else:
-                    meshes = []
-                    for model_path in (MODELS if ENSEMBLE else [_model]):
-                        meshes.extend(model_meshes(model_path))
-                    mesh = next(m for m in meshes if m['name']==backing.name.split('.')[0])
-                    regions.append(mesh['extras']['bodyCover'])
+            for model_path in (MODELS if ENSEMBLE else [_model]):
+                for mesh in model_meshes(model_path):
+                    region = mesh.get('extras', {}).get('bodyCover')
+                    if region:
+                        regions.append(region)
             for obj in body:
-                if obj.type != 'MESH':
+                name = obj.name.split('.')[0].lower()
+                if obj.type != 'MESH' or not (name in ('body','char1','mesh_node') or name.startswith('wardrobe_')):
                     continue
+                protect = {g.index for g in obj.vertex_groups if g.name in ('Head','neck_01')} if name in ('body','char1','mesh_node') else set()
+                head_weight = [sum(g.weight for g in v.groups if g.group in protect) for v in obj.data.vertices]
                 bm = bmesh.new()
                 bm.from_mesh(obj.data)
                 removed = []
+                bm.verts.ensure_lookup_table()
                 for face in bm.faces:
+                    if sum(head_weight[v.index] for v in face.verts)/len(face.verts) > .5:
+                        continue
                     c = sum((obj.matrix_world @ v.co for v in face.verts), Vector()) / len(face.verts)
-                    if any(lo < c.z < hi and abs(c.x) < width for lo,hi,width in regions):
+                    if protect and c.z > 1.40 and abs(c.x) < .11:
+                        continue
+                    if Path(WORN).stem.startswith('ssarathi_') and is_tail(Vector((c.x,c.z,-c.y))):
+                        continue
+                    collar = (name == 'wardrobe_shirt' and 1.40 < c.z < 1.65 and abs(c.x) < .20
+                              and any(lo < 1.30 < hi for lo,hi,width in regions))
+                    if collar or any(lo < c.z < hi and abs(c.x) < width for lo,hi,width in regions):
                         removed.append(face)
                 bmesh.ops.delete(bm, geom=removed, context='FACES')
                 bm.to_mesh(obj.data)
