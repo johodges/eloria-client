@@ -139,6 +139,43 @@ func _run() -> void:
 	_expect(second.status == "ok" and int(second.command) == 2,
 		"the second packet decodes in place at an offset")
 
+	# The decoders' lookup tables are constants of the class, not literals
+	# inside the functions that read them. A partial-stat packet arrives with
+	# every health, food and experience tick and every stat in one asks for its
+	# name, so a table built inside `stat_key` was built again per stat.
+	_expect(EloriaProtocol.STAT_SLOT_KEYS.size() > 80
+		and str(EloriaProtocol.STAT_SLOT_KEYS[42]) == "health",
+		"the partial-stat slot names are a shared constant")
+	_expect(EloriaProtocol.stat_key(42) == "health"
+		and EloriaProtocol.stat_key(999) == "slot_999",
+		"stat_key answers out of that table and still names an unknown slot")
+	_expect(EloriaProtocol.STATS_ATTRIBUTE_NAMES.size() == 12
+		and EloriaProtocol.STATS_SKILL_LEVEL_SLOTS.size() == 13
+		and EloriaProtocol.STATS_EXPERIENCE_SLOTS.size() == 13
+		and EloriaProtocol.STATS_RESOURCE_NAMES.size() == 6,
+		"the full statistics packet's slot tables are constants too")
+	var stat_burst := PackedByteArray()
+	for slot: int in [42, 43, 46]:
+		stat_burst.append(slot)
+		stat_burst.append_array(PackedByteArray([7, 0, 0, 0]))
+	var decoded_stats: Dictionary = EloriaProtocol.decode_server(
+		EloriaProtocol.ServerMessage.SEND_PARTIAL_STAT, stat_burst)
+	_expect(decoded_stats.type == "partial_stats"
+		and int((decoded_stats.values as Dictionary)["health"]) == 7
+		and int((decoded_stats.values as Dictionary)["max_health"]) == 7
+		and int((decoded_stats.values as Dictionary)["food"]) == 7,
+		"a partial-stat packet still names every stat it carries")
+
+	# A chat line is copied once and read twice, not copied for each reading.
+	var chat_payload := PackedByteArray([3, 127 + 4])
+	chat_payload.append_array("Hello".to_utf8_buffer())
+	chat_payload.append(0)
+	var decoded_chat: Dictionary = EloriaProtocol.decode_server(
+		EloriaProtocol.ServerMessage.RAW_TEXT, chat_payload)
+	_expect(decoded_chat.type == "chat" and int(decoded_chat.channel) == 3
+		and str(decoded_chat.text) == "Hello" and int(decoded_chat.colour) == 4,
+		"the colour and the text of a chat line both come off one copy of it")
+
 	# Item icons are built once per picture and shared, not rebuilt per slot
 	# per refresh.
 	var atlas: RefCounted = scene.get("item_atlas")

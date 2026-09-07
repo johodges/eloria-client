@@ -918,9 +918,13 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 		ServerMessage.RAW_TEXT:
 			if payload.is_empty():
 				return {"type": "invalid", "error": "chat_length"}
+			# One copy of the line, read twice. The payload was sliced once to
+			# strip the colour markers out of it and again to read the first of
+			# them, so every chat line was copied twice to be read once.
+			var chat_bytes: PackedByteArray = payload.slice(1)
 			return {"type": "chat", "channel": int(payload[0]),
-				"text": legacy_colored_string(payload.slice(1)),
-				"colour": leading_text_colour(payload.slice(1))}
+				"text": legacy_colored_string(chat_bytes),
+				"colour": leading_text_colour(chat_bytes)}
 		ServerMessage.SEND_NPC_INFO:
 			# The trailing byte is the legacy portrait index. Eloria has no
 			# portrait art and cannot convert the Eternal Lands set, so the
@@ -2119,42 +2123,50 @@ static func decode_storage_state(payload: PackedByteArray) -> Dictionary:
 		return {"type": "invalid", "error": "storage_state_trailing"}
 	return {"type": "storage_state", "category_id": int(payload[0]), "rows": rows}
 
+## Where the full statistics packet keeps each thing, in its own word offsets.
+## Constants for the same reason `STAT_SLOT_KEYS` is one: they never change,
+## and building them inside the decoder built them again for every packet - the
+## resource list was rebuilt once per resource, to be searched for the index
+## the loop already had.
+const STATS_ATTRIBUTE_NAMES := [
+	"physique", "coordination", "reasoning", "will", "instinct", "vitality",
+	"human_nexus", "animal_nexus", "vegetal_nexus", "inorganic_nexus",
+	"artificial_nexus", "magic_nexus"]
+const STATS_SKILL_LEVEL_SLOTS := {
+	"manufacturing": 24, "harvesting": 26, "alchemy": 28, "overall": 30,
+	"attack": 32, "defense": 34, "magic": 36, "potion": 38,
+	"summoning": 83, "crafting": 89, "engineering": 95,
+	"tailoring": 101, "ranging": 107}
+const STATS_EXPERIENCE_SLOTS := {
+	"manufacturing": 49, "harvesting": 53, "alchemy": 57,
+	"overall": 61, "attack": 65, "defense": 69, "magic": 73,
+	"potion": 77, "summoning": 85, "crafting": 91,
+	"engineering": 97, "tailoring": 103, "ranging": 109}
+const STATS_RESOURCE_NAMES := [
+	"carried", "capacity", "health", "max_health", "ether", "max_ether"]
+
 static func decode_stats(payload: PackedByteArray) -> Dictionary:
 	if payload.size() < 230:
 		return {"type": "invalid", "error": "stats_length"}
 	var values: Dictionary = {}
-	var attribute_names: Array[String] = [
-		"physique", "coordination", "reasoning", "will", "instinct", "vitality",
-		"human_nexus", "animal_nexus", "vegetal_nexus", "inorganic_nexus",
-		"artificial_nexus", "magic_nexus"]
-	for index: int in range(attribute_names.size()):
-		var key: String = attribute_names[index]
+	for index: int in range(STATS_ATTRIBUTE_NAMES.size()):
+		var key: String = str(STATS_ATTRIBUTE_NAMES[index])
 		values[key] = s16(payload, index * 4)
 		values[key + "_base"] = s16(payload, index * 4 + 2)
-	var skill_level_slots: Dictionary = {
-		"manufacturing": 24, "harvesting": 26, "alchemy": 28, "overall": 30,
-		"attack": 32, "defense": 34, "magic": 36, "potion": 38,
-		"summoning": 83, "crafting": 89, "engineering": 95,
-		"tailoring": 101, "ranging": 107}
-	for skill_name: String in skill_level_slots:
-		var level_slot: int = int(skill_level_slots[skill_name])
+	for skill_name: String in STATS_SKILL_LEVEL_SLOTS:
+		var level_slot: int = int(STATS_SKILL_LEVEL_SLOTS[skill_name])
 		values[skill_name] = s16(payload, level_slot * 2)
 		values[skill_name + "_base"] = s16(payload, (level_slot + 1) * 2)
 	# Eloria sends spent pickpoints in the current half of the legacy overall
 	# pair and the actual overall level in the base half.
 	values["overall_level"] = values["overall_base"]
-	var experience_slots: Dictionary = {
-		"manufacturing": 49, "harvesting": 53, "alchemy": 57,
-		"overall": 61, "attack": 65, "defense": 69, "magic": 73,
-		"potion": 77, "summoning": 85, "crafting": 91,
-		"engineering": 97, "tailoring": 103, "ranging": 109}
-	for skill_name: String in experience_slots:
-		var experience_slot: int = int(experience_slots[skill_name])
+	for skill_name: String in STATS_EXPERIENCE_SLOTS:
+		var experience_slot: int = int(STATS_EXPERIENCE_SLOTS[skill_name])
 		values[skill_name + "_exp"] = u32(payload, experience_slot * 2)
 		values[skill_name + "_exp_next"] = u32(payload, (experience_slot + 2) * 2)
-	for resource: String in ["carried", "capacity", "health", "max_health", "ether", "max_ether"]:
-		var resource_index: int = ["carried", "capacity", "health", "max_health", "ether", "max_ether"].find(resource)
-		values[resource] = s16(payload, (40 + resource_index) * 2)
+	for resource_index: int in range(STATS_RESOURCE_NAMES.size()):
+		values[str(STATS_RESOURCE_NAMES[resource_index])] = s16(
+			payload, (40 + resource_index) * 2)
 	values["food"] = s16(payload, 46 * 2)
 	values["research_completed"] = s16(payload, 47 * 2)
 	values["researching"] = s16(payload, 81 * 2)
@@ -2230,38 +2242,48 @@ static func decode_item_cooldowns(payload: PackedByteArray) -> Dictionary:
 ## identifiers and are a different namespace from the word offsets in the full
 ## statistics packet: research is 47/65/66 here and 47/81/82 there, and the
 ## server writes both from the same character fields.
+## Which stat each slot of a partial-stat packet carries.
+##
+## A constant, not a table built inside `stat_key`. Every health, food, mana
+## and experience tick arrives as a partial-stat packet and every stat in one
+## asked for this name, so a ninety-entry dictionary was allocated, filled and
+## thrown away several times per packet: 41 microseconds a packet, which is
+## most of what a partial stat cost to decode at all.
+const STAT_SLOT_KEYS := {
+	0: "physique", 1: "physique_base", 2: "coordination",
+	3: "coordination_base", 4: "reasoning", 5: "reasoning_base",
+	6: "will", 7: "will_base", 8: "instinct", 9: "instinct_base",
+	10: "vitality", 11: "vitality_base", 12: "human_nexus",
+	13: "human_nexus_base", 14: "animal_nexus", 15: "animal_nexus_base",
+	16: "vegetal_nexus", 17: "vegetal_nexus_base", 18: "inorganic_nexus",
+	19: "inorganic_nexus_base", 20: "artificial_nexus",
+	21: "artificial_nexus_base", 22: "magic_nexus", 23: "magic_nexus_base",
+	24: "manufacturing", 25: "manufacturing_base", 26: "harvesting",
+	27: "harvesting_base", 28: "alchemy", 29: "alchemy_base",
+	30: "overall", 31: "overall_base", 32: "defense", 33: "defense_base",
+	34: "attack", 35: "attack_base", 36: "magic", 37: "magic_base",
+	38: "potion", 39: "potion_base", 40: "carried", 41: "capacity",
+	42: "health", 43: "max_health", 44: "ether", 45: "max_ether",
+	46: "food", 47: "researching", 49: "manufacturing_exp",
+	50: "manufacturing_exp_next", 51: "harvesting_exp",
+	52: "harvesting_exp_next", 53: "alchemy_exp", 54: "alchemy_exp_next",
+	55: "overall_exp", 56: "overall_exp_next", 57: "defense_exp",
+	58: "defense_exp_next", 59: "attack_exp", 60: "attack_exp_next",
+	61: "magic_exp", 62: "magic_exp_next", 63: "potion_exp",
+	64: "potion_exp_next", 65: "research_completed", 66: "research_total",
+	67: "summoning_exp", 68: "summoning_exp_next", 69: "summoning",
+	70: "summoning_base", 71: "crafting_exp", 72: "crafting_exp_next",
+	73: "crafting", 74: "crafting_base", 75: "engineering_exp",
+	76: "engineering_exp_next", 77: "engineering", 78: "engineering_base",
+	79: "ranging_exp", 80: "ranging_exp_next", 81: "ranging",
+	82: "ranging_base", 83: "tailoring_exp", 84: "tailoring_exp_next",
+	85: "tailoring", 86: "tailoring_base", 87: "action_points",
+	88: "max_action_points", 113: "action_points", 114: "max_action_points"}
+
 static func stat_key(slot: int) -> String:
-	var keys: Dictionary = {
-		0: "physique", 1: "physique_base", 2: "coordination",
-		3: "coordination_base", 4: "reasoning", 5: "reasoning_base",
-		6: "will", 7: "will_base", 8: "instinct", 9: "instinct_base",
-		10: "vitality", 11: "vitality_base", 12: "human_nexus",
-		13: "human_nexus_base", 14: "animal_nexus", 15: "animal_nexus_base",
-		16: "vegetal_nexus", 17: "vegetal_nexus_base", 18: "inorganic_nexus",
-		19: "inorganic_nexus_base", 20: "artificial_nexus",
-		21: "artificial_nexus_base", 22: "magic_nexus", 23: "magic_nexus_base",
-		24: "manufacturing", 25: "manufacturing_base", 26: "harvesting",
-		27: "harvesting_base", 28: "alchemy", 29: "alchemy_base",
-		30: "overall", 31: "overall_base", 32: "defense", 33: "defense_base",
-		34: "attack", 35: "attack_base", 36: "magic", 37: "magic_base",
-		38: "potion", 39: "potion_base", 40: "carried", 41: "capacity",
-		42: "health", 43: "max_health", 44: "ether", 45: "max_ether",
-		46: "food", 47: "researching", 49: "manufacturing_exp",
-		50: "manufacturing_exp_next", 51: "harvesting_exp",
-		52: "harvesting_exp_next", 53: "alchemy_exp", 54: "alchemy_exp_next",
-		55: "overall_exp", 56: "overall_exp_next", 57: "defense_exp",
-		58: "defense_exp_next", 59: "attack_exp", 60: "attack_exp_next",
-		61: "magic_exp", 62: "magic_exp_next", 63: "potion_exp",
-		64: "potion_exp_next", 65: "research_completed", 66: "research_total",
-		67: "summoning_exp", 68: "summoning_exp_next", 69: "summoning",
-		70: "summoning_base", 71: "crafting_exp", 72: "crafting_exp_next",
-		73: "crafting", 74: "crafting_base", 75: "engineering_exp",
-		76: "engineering_exp_next", 77: "engineering", 78: "engineering_base",
-		79: "ranging_exp", 80: "ranging_exp_next", 81: "ranging",
-		82: "ranging_base", 83: "tailoring_exp", 84: "tailoring_exp_next",
-		85: "tailoring", 86: "tailoring_base", 87: "action_points",
-		88: "max_action_points", 113: "action_points", 114: "max_action_points"}
-	return str(keys.get(slot, "slot_%d" % slot))
+	if STAT_SLOT_KEYS.has(slot):
+		return str(STAT_SLOT_KEYS[slot])
+	return "slot_%d" % slot
 
 ## How the actor packets encode a model scale: an unsigned 16-bit field
 ## holding the base-two logarithm of the scale in 1/2048ths of an octave,
