@@ -171,3 +171,27 @@ pairs that are both alpha-tested with vertex coverage.
 
 See `whitehorn_range/change-log.md` for the full account, including why the
 heightfield was not taken to one metre instead.
+
+
+## September 2026 — peat road, barrow approach and cove ferry
+
+The arrival lacked a through road from Westhaven, and the boardwalks often
+crossed the direction of the paths instead of the water on those paths.
+Surveyed timber and stone spans now join their banks, while a low turf-roof
+refuge groups existing services beside the western peat workings. Named
+residents occupy their workplaces and existing species are placed in habitat
+rings, retaining their counts, roles and dialogue.
+
+The coastal shrine was below the sea and the ferry marker stood on a dry
+eastern ridge. The shrine and headland moved above the cove, and the ferry now
+uses a real jetty with the same stable portal id. The Great Barrow gained a
+clearer stone crown, a south-facing entrance and an ascent around its shoulder.
+The court footprint was reduced after player-height views revealed that it
+cut an abrupt shelf into the mound.
+
+The shared civic kit gained a continuous sloping plank walk and a low roadside
+shelter. Moor doorway recipes can preserve their recessed dark material.
+The distant backdrop now clips out of the playable ground; its old coarse
+surface was visible through the moor. The manifest daylight direction and
+offline deck lighting were corrected. No surface class or imported asset was
+introduced. Validation and final captures are recorded in layout-review.md.

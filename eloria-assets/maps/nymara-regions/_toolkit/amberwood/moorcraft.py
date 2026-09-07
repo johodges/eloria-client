@@ -309,7 +309,7 @@ def _lintelled_doorway(width: float, height: float, depth: float, seed: int,
 
 
 def barrow_portal(width: float = 1.5, height: float = 2.1, seed: int = 0,
-                  revetment: float = 5.2) -> MeshGroup:
+                  revetment: float = 5.2, preserve_materials: bool = False) -> MeshGroup:
     """The entrance of panel 2: a stone doorway in a drystone revetted mound.
 
     The mound itself is terrain (see the module docstring). This is the face
@@ -355,7 +355,12 @@ def barrow_portal(width: float = 1.5, height: float = 2.1, seed: int = 0,
     door_parts, glow_at = _lintelled_doorway(width, height, 0.9, seed + 11)
     parts.extend(door_parts)
     # kerb stones: the ring of upright slabs around a barrow's foot
-    out = group(_weather(M.merge(parts, DRYSTONE), 0.012, seed))
+    if preserve_materials:
+        out=group(*[_weather(M.merge([p for p in parts if p.material==material],material),
+                             0.012,seed)
+                    for material in dict.fromkeys(p.material for p in parts)])
+    else:
+        out = group(_weather(M.merge(parts, DRYSTONE), 0.012, seed))
     for index in range(6):
         angle = math.pi * (-0.46 + 0.92 * index / 5.0)
         kerb = menhir(0.62 + rng.uniform() * 0.36, seed + 200 + index)
@@ -369,7 +374,8 @@ def barrow_portal(width: float = 1.5, height: float = 2.1, seed: int = 0,
     return out
 
 
-def crypt_entrance(seed: int = 0, width: float = 1.6, height: float = 2.4) -> MeshGroup:
+def crypt_entrance(seed: int = 0, width: float = 1.6, height: float = 2.4,
+                   preserve_materials: bool = False) -> MeshGroup:
     """Panel 5: a runed doorway with steps going down and warm light behind.
 
     The jambs carry the carved stone recipe, and there is a real flight of
@@ -398,7 +404,12 @@ def crypt_entrance(seed: int = 0, width: float = 1.6, height: float = 2.4) -> Me
         cheek = M.box((0.26, 0.9, 1.5), uv_scale=0.9, material=DRYSTONE)
         cheek.translate(side * (width * 0.62 + 0.13), -0.34, 0.86)
         parts.append(cheek)
-    out = group(_weather(M.merge(parts, CARVED), 0.008, seed))
+    if preserve_materials:
+        out=group(*[_weather(M.merge([p for p in parts if p.material==material],material),
+                             0.008,seed)
+                    for material in dict.fromkeys(p.material for p in parts)])
+    else:
+        out = group(_weather(M.merge(parts, CARVED), 0.008, seed))
     glow = M.icosphere(0.36, 1, material=FLAME)
     glow.translate(*glow_at)
     out.add(glow)

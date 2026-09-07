@@ -92,3 +92,65 @@ def pitched_canopy(width, depth, eave, ridge, roof, lining="timber_dark", thickn
             out.add(M.quad([top[i],lower[i],lower[j],top[j]],
                            uv_scale=0.7,material=roof))
     return out
+
+
+def sloped_boardwalk(length, near, far, width=2.8, foot=-2.0,
+                     timber="timber_grey", rope="timber_grey"):
+    """A continuous plank walk along +Z, surveyed at both shore ends.
+
+    Plank tops meet at their edges without gaps or overlapping boxes. Posts
+    and ropes stand outside the walking width. The region supplies the bed.
+    """
+    if length <= 0 or width <= 0:
+        raise ValueError("boardwalk dimensions must be positive")
+    out = SW.MeshGroup()
+    count = max(2, math.ceil(length / 0.34))
+    for i in range(count):
+        a,b = i*length/count,(i+1)*length/count
+        ya,yb = near+(far-near)*a/length,near+(far-near)*b/length
+        out.add_walk(M.quad([(-width/2,ya,a),(-width/2,yb,b),
+                             (width/2,yb,b),(width/2,ya,a)],
+                            uv_scale=1.0,material=timber))
+    for side in (-1,1):
+        x = side*width/2
+        face=[(x,near,0),(x,far,length),(x,far-0.12,length),(x,near-0.12,0)]
+        out.add(M.quad(face if side < 0 else face[::-1],material=timber))
+    out.add(M.quad([(-width/2,near-0.12,0),(width/2,near-0.12,0),
+                    (width/2,far-0.12,length),(-width/2,far-0.12,length)],
+                   material=timber))
+    posts=max(2,math.ceil(length/3.0))
+    for i in range(posts+1):
+        z=i*length/posts;y=near+(far-near)*z/length
+        out.add(M.box((width+0.55,0.14,0.22),
+                      center=(0,y-0.19,z),material=timber))
+    for side in (-1,1):
+        x=side*(width/2+0.16)
+        for i in range(posts+1):
+            z=i*length/posts; y=near+(far-near)*z/length
+            out.add(M.cylinder(0.10,0.09,y+0.95-foot,6,material=timber)
+                    .translate(x,foot,z))
+        for i in range(posts):
+            a,b=i*length/posts,(i+1)*length/posts
+            path=[]
+            for u in np.linspace(0,1,7):
+                z=a+(b-a)*u
+                y=near+(far-near)*z/length+0.86-0.13*math.sin(math.pi*u)
+                path.append([x,y,z])
+            out.add(M.tube(np.asarray(path),[0.035]*len(path),segments=5,material=rope))
+    return out
+
+
+def roadside_shelter(width=12.0,depth=5.0,stone="rubble_stone",
+                      timber="timber_grey",roof="slate_roof"):
+    """Low working shelter open on +Z, with a lined roof and wind walls."""
+    out=SW.MeshGroup()
+    out.add(M.box((width,2.55,0.48),center=(0,1.275,-depth/2),material=stone))
+    for side in (-1,1):
+        out.add(M.box((0.48,2.55,depth-0.54),
+                      center=(side*(width/2-0.24),1.275,0.03),material=stone))
+        out.add(M.box((0.24,2.65,0.24),
+                      center=(side*(width/2-0.8),1.325,depth/2-0.4),material=timber))
+    out.add(M.box((width-1.0,0.20,0.22),
+                  center=(0,2.55,depth/2-0.4),material=timber))
+    out.add(pitched_canopy(width+1,depth+1,2.75,3.65,roof,timber))
+    return out

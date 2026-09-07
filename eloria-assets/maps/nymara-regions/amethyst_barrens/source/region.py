@@ -132,11 +132,11 @@ _DESIGN_ANCHORS: dict[str, tuple[float, float]] = {
     "cluster_deep": (78.0, 12.0),
 
     # -- Glasswarden field stations (panel 8): road-side, tented
-    "station_gate": (-8.0, -28.0),
+    "station_gate": (-8.0, -8.0),
     "station_river": (52.0, -48.0),
     "station_east": (98.0, -6.0),
     "station_south": (26.0, 14.0),
-    "station_massif": (44.0, -84.0),
+    "station_massif": (57.0, -79.0),
     "station_coast": (108.0, 34.0),
 
     # -- levitating shard fields (panel 5): the storm set-pieces
@@ -155,9 +155,10 @@ _DESIGN_ANCHORS: dict[str, tuple[float, float]] = {
     "watchtower_south": (34.0, 46.0),
     "stone_ring": (102.0, 32.0),
     "cliff_overlook": (88.0, -88.0),
-    "road_end_east": (128.0, -4.0),
+    "road_end_east": (116.6666667, 39.3333333),
     "road_end_south": (10.0, 54.0),
     "arrival": (0.0, 0.0),
+    "mirror_gate": (-47.0,-81.0),
 }
 
 ANCHORS: dict[str, tuple[float, float]] = {
@@ -181,46 +182,30 @@ def _design(name: str) -> tuple[float, float]:
 # The aerial shows a web, not a tree: roads meet at the observatory gate, at the
 # basin diggings and at the eastern ruins. These are the resonant roadways of
 # panel 3 - laid stone with crystal grown into the joints.
-ROUTES: dict[str, np.ndarray] = {
-    "arrival_road": _route((0.0, 24.0), _design("arrival"), (-6.0, -14.0),
-                           _design("station_gate"), _design("observatory_gate")),
-    "observatory_approach": _route(_design("observatory_gate"),
-                                   _design("observatory_court"),
-                                   (-26.0, -58.0), _design("observatory")),
-    "massif_road": _route(_design("observatory_gate"), (4.0, -44.0),
-                          _design("cluster_north"), _design("station_massif"),
-                          _design("massif_foot"), _design("crystal_massif")),
-    "basin_road": _route(_design("arrival"), (18.0, -6.0), _design("cluster_court"),
-                         _design("ruin_basin"), _design("station_river"),
-                         _design("ruin_colonnade")),
-    "east_road": _route(_design("ruin_colonnade"), _design("ruin_east_arch"),
-                        _design("cluster_east"), _design("station_east"),
-                        _design("road_end_east")),
-    "south_road": _route(_design("arrival"), (6.0, 18.0), _design("station_south"),
-                         _design("ruin_south"), _design("cluster_south"),
-                         _design("road_end_south")),
-    "coast_road": _route(_design("cluster_south"), _design("stone_ring"),
-                         _design("station_coast")),
-    "west_road": _route(_design("station_gate"), _design("cluster_west"),
-                        _design("ruin_west"), (-48.0, -20.0),
-                        _design("watchtower_west")),
-    "overlook_track": _route(_design("cluster_massif"), (76.0, -78.0),
-                             _design("cliff_overlook")),
-    "north_track": _route(_design("cluster_north"), _design("ruin_north"),
-                          (14.0, -108.0), _design("shards_north")),
+ROUTES = {
+ "arrival_road":_route((0,24),(0,0),(0,-12),(-8,-16),(-16,-24),(-18,-36)),
+ "observatory_approach":_route((-18,-36),(-24,-48),(-26,-55),(-26,-61.9)),
+ "massif_road":_route((-18,-36),(4,-44),(24,-67),(34,-78),(39,-87),(51,-87),(55,-83),(57,-79)),
+ "basin_road":_route((0,0),(18,-6),(36,-9),(44,-21),(49,-32),(63,-32),(68,-46),(69,-51)),
+ "survey_road":_route((24,-67),(35,-63),(42,-57),(56,-57),(62,-56),(69,-51),(88,-55),(96,-47),(91,-36),(84,-30)),
+ "east_road":_route((84,-30),(82,-18),(79,-8),(89,-1),(103,-2),(115,-8),(120,-9)),
+ "river_road":_route((44,-21),(52,-20),(59,-12),(65,-8),(79,-8)),
+ "south_road":_route((0,0),(15,11),(24,15),(30,16),(42,24),(48,34),(31,44),(10,54)),
+ "coast_road":_route((79,-8),(84,5),(88,12),(102,12),(109,24),(108,29),(111,33),(116.6666667,39.3333333)),
+ "west_road":_route((-16,-24),(-24,-24),(-34,-30),(-42,-38),(-44,-58),(-44,-71),(-47,-81)),
+ "north_track":_route((34,-78),(27,-81),(23,-86),(16,-97),(10,-104),(10,-110)),
+ "overlook_track":_route((57,-79),(67,-75),(76,-78),(88,-88)),
+ "massif_foot_track":_route((57,-79),(63,-88),(57,-96)),
+ "annexe_track":_route((-24,-48),(-34,-53),(-43,-58)),
 }
-
-# Crystal bridges: seven, as the QA brief and the landmark table both record.
-# Each is a route that crosses a watercourse or a gully, and the deck is built
-# as geometry rather than graded into the ground.
-BRIDGE_ROUTES: dict[str, np.ndarray] = {
-    "bridge_massif": _route((44.0, -86.0), (52.0, -82.0)),
-    "bridge_basin": _route((48.0, -30.0), (58.0, -22.0)),
-    "bridge_river_north": _route((40.0, -62.0), (50.0, -56.0)),
-    "bridge_river_south": _route((68.0, -20.0), (78.0, -12.0)),
-    "bridge_east": _route((90.0, 4.0), (100.0, 12.0)),
-    "bridge_gully_west": _route((-34.0, -30.0), (-26.0, -24.0)),
-    "bridge_gully_north": _route((16.0, -92.0), (26.0, -88.0)),
+BRIDGE_ROUTES = {
+ "bridge_massif":_route((39,-87),(51,-87)),
+ "bridge_basin":_route((49,-32),(63,-32)),
+ "bridge_river_north":_route((42,-57),(56,-57)),
+ "bridge_river_south":_route((65,-8),(79,-8)),
+ "bridge_east":_route((88,12),(102,12)),
+ "bridge_gully_west":_route((-34,-30),(-24,-24)),
+ "bridge_gully_north":_route((16,-97),(23,-86)),
 }
 
 # One river out of the northern mountains to the south-eastern sea, plus a
@@ -233,7 +218,7 @@ STREAMS: dict[str, np.ndarray] = {
                              (126.0, 54.0)),
     "mountain_beck": _route((-48.0, -128.0), (-38.0, -110.0), (-24.0, -96.0),
                             (-6.0, -84.0), (10.0, -76.0), (26.0, -74.0),
-                            (38.0, -80.0)),
+                            (44.67, -80.0)),
 }
 
 # Dry gullies the bridges cross where there is no water.

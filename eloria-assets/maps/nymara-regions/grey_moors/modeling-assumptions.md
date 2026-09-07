@@ -143,3 +143,32 @@ other. The frames in `references/client-captures/` are therefore correct
 geometry and materials under *standard comparison light*, not under this
 region's authored weather. Judge silhouette, scale, placement and material from
 them; judge mood from the offline captures and from the manifest.
+
+
+## September 2026 layout revision — current assumptions
+
+This section supersedes the historical adjacency, height and capture notes
+above. CONTINENT.md and region-connections.json are the authoritative graph:
+Westhaven, Crownwater, Amberwood and Manymouth Delta are the four neighbours.
+The historical east-waygate id is retained for the ferry, now placed on a real
+jetty in the south-west cove rather than on the eastern ridge.
+
+The surviving crofts remain ruins. One low, open working refuge near the
+arrival supplies dry service ground for the peat road; it uses the existing
+drystone, bog timber and turf-roof palette. A holding pen, fuel stack and lit
+road posts explain why the shopkeeper, chandler, smith and drover gather here.
+The client draws the actual services from server records.
+
+The Great Barrow keeps a taller terrain mound and a stone crown. A side track
+climbs its shoulder, leaving the lower entrance aligned with the avenue.
+The old hard court has been reduced so it no longer cuts a broad flat shelf
+through the mound. The coastal shrine and beacon stand above the actual shore.
+
+Wet crossings follow the routes and survey both bank heights. Pools retain
+their pre-road water levels, walking skins have shallow rebates beneath them,
+and the distant backdrop is clipped out of the playable terrain. The three
+collision corrections encode full precision after each raw build.
+
+The manifest sun now points downward. Offline views use the moor's overcast
+preset, including deck cameras; Godot review frames use --environment=manifest.
+No material class was allocated and no imported asset was used.

@@ -28,7 +28,7 @@ from amberwood import render as RENDER
 # own: a weak high key, very strong cloud ambient, soft shadows, and saturation
 # pulled below 1 so the heather and the votive flames are the only colour in
 # the frame.
-LIGHTING = {
+REGION_LIGHTING = {
     # Overcast is not the same as bright. The first pass had a white lid and
     # heavy haze, which washed the whole region out to a foggy beach: at 1.7 m
     # nothing 60 m away had any tone left. The key stays weak and the shadows
@@ -72,13 +72,13 @@ VIEWS = [
     ("01-raised-causeway", 1, (4.0, -6.0), 1.7, (20.0, -26.0), 1.8, 52,
      (1180, 760), 48, "day"),
     # 2: turf barrow - the mound face and its lintelled doorway
-    ("02-turf-barrow", 2, (38.8, -80.6), 1.7, (38.0, -83.5), 2.2, 50,
+    ("02-turf-barrow", 2, (38.8,-77.0), 1.7, (38.0,-80.3), 2.2, 50,
      (1180, 900), 46, "day"),
     # 3: standing stones - inside the central ring, altar in frame
     ("03-standing-stones", 3, (30.9, -30.7), 1.7, (28.0, -33.0), 1.9, 54,
      (1180, 780), 40, "day"),
     # 4: bog boardwalk - standing at the near end of a span, looking across
-    ("04-bog-boardwalk", 4, (4.4, -17.6), 1.7, (14.0, -8.0), 1.5, 52,
+    ("04-bog-boardwalk", 4, (9.3, -13.3), 1.7, (25.0, -27.0), 1.5, 52,
      (1180, 760), 36, "day"),
     # 5: crypt threshold - square on to a runed doorway with the light in it
     ("05-crypt-threshold", 5, (34.6, 8.4), 1.7, (34.0, 6.0), 1.9, 46,
@@ -124,11 +124,21 @@ VIEWS = [
     # -- grounding proofs: eye at 1.7 m, the height an actor stands at ------
     ("30-spawn-grounding", None, (-4.0, 4.0), 1.7, (6.0, -8.0), 1.7, 58,
      (1180, 760), 40, "day"),
-    ("31-boardwalk-deck", None, (30.0, 14.0), 1.7, (38.0, 18.0), 1.7, 58,
+    ("31-boardwalk-deck", None, (21.3,16.1), 1.7, (43.7,20.9), 1.7, 58,
      (1180, 760), 34, "day"),
     ("32-bridge-deck", None, (48.0, -4.0), 1.7, (60.0, 4.0), 1.7, 58,
      (1180, 760), 34, "day"),
 
+    ("21-road-refuge", None, (-3,5), 1.7, (-5.3,-3.6), 1.5, 58,
+     (1280,820), 50, "day!"),
+    ("22-refuge-barrow-view", None, (-1,1), 1.7, (38,-91), 4.0, 54,
+     (1280,820), 180, "day!"),
+    ("23-cove-jetty", None, (-20,24.5), 1.7, (-20,29), 1.7, 54,
+     (1280,820), 55, "day!"),
+    ("24-coast-beacon", None, (-32,16), 1.7, (-31,20), 1.7, 54,
+     (1280,820), 60, "day!"),
+    ("25-barrow-crown", None, (42,-83), 1.7, (38,-91), 3.3, 54,
+     (1280,820), 65, "day!"),
     # -- the rare break in the cloud ---------------------------------------
     ("40-golden-barrow", None, (38.0, -60.0), 3.0, (38.0, -91.0), 8.0, 52,
      (1400, 800), 150, "golden"),
@@ -152,3 +162,11 @@ PANELS = {
     9: ("09-coastal-panorama", "The moor running out to the south-west sea"),
     10: ("10-material-study", "Material study: peat, wet stone, timber, heather"),
 }
+
+
+FIXED_VIEWS={"21-road-refuge","22-refuge-barrow-view","23-cove-jetty",
+             "24-coast-beacon","25-barrow-crown","04-bog-boardwalk","31-boardwalk-deck"}
+VIEWS=[(*v[:-1],"deck!" if v[0] in {"04-bog-boardwalk","31-boardwalk-deck","23-cove-jetty"} else v[-1])
+       for v in VIEWS]
+
+REGION_LIGHTING["deck"]=REGION_LIGHTING["day"]

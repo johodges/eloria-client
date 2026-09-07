@@ -46,6 +46,9 @@ from amberwood import terrain as TER
 
 import populate as POP
 import region as REG
+import layout as PLAN
+from amberwood import routecraft as RC
+import copy
 import transitions as MARCH
 import secretdoors as SD
 import secrets_design as SEC
@@ -72,14 +75,14 @@ CROSSINGS = [
     MARCH.Crossing("north-pass", "whitehorn_range", REG.ANCHORS["shards_north"],
                    (REG.ANCHORS["shards_north"][0], REG.PLAY_MIN_Z - 20.0),
                    radius=50.0, name="The Whitehorn March"),
-    MARCH.Crossing("west-road", "mirrorhold", REG.ANCHORS["watchtower_west"],
-                   (REG.PLAY_MIN_X - 20.0, REG.ANCHORS["watchtower_west"][1]),
+    MARCH.Crossing("west-road", "mirrorhold", REG.ANCHORS["mirror_gate"],
+                   (REG.PLAY_MIN_X - 20.0, REG.ANCHORS["mirror_gate"][1]),
                    radius=46.0, name="The Mirror Road March"),
     MARCH.Crossing("south-road", "sunmane_steppe", REG.ANCHORS["road_end_south"],
                    (REG.ANCHORS["road_end_south"][0], REG.PLAY_MAX_Z + 20.0),
                    radius=48.0, name="The Steppe March"),
     MARCH.Crossing("east-shore", "crownwater", REG.ANCHORS["road_end_east"],
-                   (REG.PLAY_MAX_X + 20.0, REG.ANCHORS["road_end_east"][1]),
+                   (400.0,160.0), station_position=(325.0,87.0),
                    radius=32.0, ferry=True, name="The East Landing"),
 ]
 
@@ -98,7 +101,7 @@ MATERIALS: frozenset[str] = frozenset({
     "amethyst_barrens_dust", "amethyst_crystal_field", "amethyst_resonant_road",
     "amethyst_storm_rock", "amethyst_crystal", "amethyst_pale_stone",
     "amethyst_verdigris", "amethyst_brass", "amethyst_banner",
-    "shore_shingle", "cobble_paving", "water_sea", "water_stream",
+    "shore_shingle", "cobble_paving", "water_sea", "water_stream", "timber_grey",
 }) | MARCH.materials_for("amethyst_barrens", CROSSINGS) | SD.materials(SEC) | LORE.materials([s.piece for s in SITES])
 
 
@@ -108,6 +111,10 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     t0 = time.time()
     terrain = REG.build_terrain(seed)
     REG.close_world(terrain)
+    for course in REG.STREAMS.values():
+        RC.incise_channel(terrain,course,width=7.0,shoulder=7.0,floor=-0.6)
+    terrain._water_bed=copy.copy(terrain)
+    terrain._water_bed.height=terrain.height.copy()
     REG.apply_built_ground(terrain, seed)
     build = REG.RegionBuild(terrain=terrain)
 
@@ -118,7 +125,9 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     MARCH.prepare(terrain, CROSSINGS)
     LORE.prepare(terrain, SITES, sea_level=getattr(REG, "SEA_LEVEL", 0.0))
 
+    PLAN.prepare(terrain)
     POP.populate_landmarks(build, seed, lod=lod)
+    PLAN.dress(build,seed)
     POP.populate_stations(build, seed, lod=lod)
     POP.populate_crystal(build, seed, lod=lod)
     if lod is None:
@@ -134,6 +143,8 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     build.landmarks.extend(march.landmarks)
     build.notes.extend(march.notes)
 
+    RC.clear_walk_corridors(build,[[[x,0,z] for x,z in p] for p in REG.ROUTES.values()],
+                            {"crystal":4.8,"shards":4.5,"rock":4.2,"scrub":3.8,"prop":2.5})
     terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
     build.terrain_meshes = terrain.build_meshes(
         uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
@@ -141,7 +152,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     # The backdrop is the distant mountain ring. It comes out of the toolkit in
     # Amberwood's cliff rock, so it is retinted into this region's storm rock -
     # otherwise the horizon is grey while everything in front of it is violet.
-    backdrop = TER.backdrop(terrain, reach=240.0, cell=11.0, seed=seed + 909)
+    backdrop = TER.backdrop(terrain, reach=240.0, cell=11.0, seed=seed + 909, open_side="east", clip_interior=True)
     backdrop.material = "amethyst_storm_rock"
     build.terrain_meshes["Backdrop_Distant"] = backdrop
     build.resolve_names()
@@ -171,7 +182,7 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
     # Edge portals to neighbouring Nymara regions. Destination map ids follow the
     # client registry; the server remains authoritative for the transition.
     for portal_id, name, key, destination in (
-            ("west-road", "Mirror Road to Mirrorhold", "watchtower_west",
+            ("west-road", "Mirror Road to Mirrorhold", "mirror_gate",
              "mirrorhold"),
             ("north-pass", "Whitehorn Pass", "shards_north",
              "whitehorn_range"),
@@ -207,6 +218,10 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
         if anchor is None:
             continue
         x, y, z = anchor["position"]
+        x,z=PLAN.DOORS[portal_id]
+        y=float(t.height_at(x,z))
+        if portal_id=="resonant-vault-stair":
+            y=float(t.height_at(*REG.ANCHORS["observatory"]))+2.5
         position = [round(float(x), 2), round(float(y) + 0.1, 2), round(float(z), 2)]
         tile = [int(round(x + REG.SERVER_ORIGIN[0])),
                 int(round(REG.SERVER_ORIGIN[1] - z))]
@@ -218,8 +233,7 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
             "authority": "server"})
         build.spawns.append({
             "id": portal_id,
-            "position": [position[0], round(float(t.height_at(x, z)) + 0.05, 2),
-                         position[2]],
+            "position": [position[0], round(y + 0.05, 2), position[2]],
             "serverTile": tile,
             "rotationDegrees": 0.0,
             "surface": TER.SURFACE_NAMES[int(t.surface_at(x, z))],
@@ -461,7 +475,8 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
         footprint = float(max(abs(low[0]), abs(high[0]), abs(low[2]), abs(high[2]))) \
             * placement.scale
         factor = 0.30 if placement.kind in ("crystal", "shards") else 0.62
-        radius = min(max(footprint * factor, 0.40), 11.0)
+        radius = float((placement.extras or {}).get("solidRadius",
+                      min(max(footprint * factor, 0.40), 11.0)))
         px, _, pz = placement.position
         blockers |= (np.hypot(gx - px, gz - pz) < radius)
     walkable &= ~blockers
@@ -510,6 +525,8 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
         decks |= footprint
         surface = np.where(footprint, deck_y, surface)
         walkable = np.where(footprint, True, walkable)
+
+    walkable &= ~blockers
 
     # Steepness has to be part of walkability, not of the height byte. That
     # byte holds 63 steps, and a region with 253 m of relief cannot be encoded
@@ -745,7 +762,9 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             "walkableFraction": collision_stats["walkableFraction"],
             "saturatedCells": collision_stats["saturatedCells"],
         },
+        "contentLayout": PLAN.CONTENT_LAYOUT,
         "navigation": {
+            "crossings": build.crossings,
             "surfaceNodePrefixes": ["Terrain_", "Walk_"],
             "walkableAreas": ["barrens", "resonant-roads", "paving", "shore",
                               "crystal-fields", "bridges", "stairs"],
@@ -790,14 +809,14 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             # bruised sun, and the crystal supplying most of the colour.
             "sky": {"type": "gradient", "zenith": [0.10, 0.09, 0.16],
                     "horizon": [0.34, 0.30, 0.38]},
-            "sun": {"direction": [-0.38, 0.42, 0.82],
+            "sun": {"direction": [0.38, -0.42, -0.82],
                     "color": [0.96, 0.88, 1.02], "energy": 0.82},
             "ambient": {"skyColor": [0.20, 0.17, 0.30],
                         "groundColor": [0.10, 0.08, 0.06], "energy": 0.34},
             "saturation": 1.24,
             "fog": {"enabled": True, "color": [0.30, 0.27, 0.36],
                     "density": 0.0011, "heightFalloff": 0.0026},
-            "goldenHour": {"sun": {"direction": [-0.86, 0.16, 0.48],
+            "goldenHour": {"sun": {"direction": [0.86, -0.16, -0.48],
                                    "color": [1.35, 0.86, 0.72]},
                            "fog": {"color": [0.52, 0.40, 0.44], "density": 0.0026}},
             "presentation": {

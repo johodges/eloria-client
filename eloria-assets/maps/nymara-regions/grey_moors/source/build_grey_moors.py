@@ -45,6 +45,8 @@ from amberwood import materials as MAT
 from amberwood import mesh as M
 from amberwood import terrain as TER
 
+import layout as LAY
+from amberwood import routecraft as RC
 import populate as POP
 import region as REG
 import transitions as MARCH
@@ -73,8 +75,8 @@ CROSSINGS = [
     MARCH.Crossing("west-waygate", "westhaven", (-156.0, 0.0), (-174.0, 0.0),
                    radius=44.0, name="The Haven Road March"),
     MARCH.Crossing("east-waygate", "crownwater", REG.ANCHORS["east_jetty"],
-                   (REG.PLAY_MAX_X + 20.0, REG.ANCHORS["east_jetty"][1]),
-                   radius=30.0, ferry=True, name="The Moor Jetty"),
+                   (-60.0,112.0), station_position=(-55.0,62.0),
+                   radius=30.0, ferry=True, name="The Moor Cove Jetty"),
     MARCH.Crossing("north-gate", "amberwood", REG.ANCHORS["north_gate"],
                    (REG.ANCHORS["north_gate"][0], REG.PLAY_MIN_Z - 20.0),
                    radius=48.0, name="The Amber March"),
@@ -85,7 +87,7 @@ CROSSINGS = [
 
 # The places the region's people argue about (see loresites.py).
 SITES = [
-    LORE.Site("breached-barrows", "The Breached Barrow", "breached_barrow", (115.0, -242.0),
+    LORE.Site("breached-barrows", "The Breached Barrow", "breached_barrow", (170.0, -210.0),
               thread="F", clearing=13.0,
               note="Eleven barrows were breached. This is the one the debt-reader walks you to, "
                    "its return-field stakes still standing blank."),
@@ -130,10 +132,13 @@ def build_region(seed: int = SEED, lod: str | None = None,
     MARCH.prepare(terrain, CROSSINGS)
     LORE.prepare(terrain, SITES, sea_level=getattr(REG, "SEA_LEVEL", 0.0), keep=(TER.PEAT_BOG,))
 
+    LAY.prepare(terrain)
+
     if not terrain_only:
         POP.populate_landmarks(build, seed, lod=lod)
         POP.populate_routes(build, seed, lod=lod)
         POP.populate_bog(build, seed, lod=lod)
+        LAY.dress_refuge(build,seed)
         if lod is None:
             POP.populate_ground_detail(build, seed)
 
@@ -149,6 +154,9 @@ def build_region(seed: int = SEED, lod: str | None = None,
         build.landmarks.extend(march.landmarks)
         build.notes.extend(march.notes)
 
+    if not terrain_only:
+        corridors=[[[float(x),0,float(z)] for x,z in points] for points in REG.ROUTES.values()]
+        RC.clear_walk_corridors(build,corridors,{"scatter":4.5,"stone":4.0,"tree":5.0})
     terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
     build.terrain_meshes = terrain.build_meshes(
         uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
@@ -159,7 +167,7 @@ def build_region(seed: int = SEED, lod: str | None = None,
     # The backdrop is the distant higher moor closing the horizon. It comes out
     # of the toolkit in Amberwood's cliff rock, which is already the grey this
     # region wants, so unlike Amethyst it is not retinted.
-    backdrop = TER.backdrop(terrain, reach=240.0, cell=11.0, seed=seed + 909)
+    backdrop = TER.backdrop(terrain, reach=240.0, cell=11.0, seed=seed + 909, clip_interior=True)
     build.terrain_meshes["Backdrop_Distant"] = backdrop
     build.resolve_names()
     _add_spawns_and_portals(build)
@@ -197,6 +205,9 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
             (CROSSINGS[3], "Drain Road down to the Delta", "manymouth_delta")):
         x, z = crossing.position
         y = float(t.height_at(x, z))
+        if crossing.id=="east-waygate":
+            a,b=t._moor_spans["ferry_jetty"][0];near,far=t._moor_spans["ferry_jetty"][1]
+            y=near+(far-near)*(z-a[1])/(b[1]-a[1])
         build.portals.append({
             "id": crossing.id, "name": name, "type": "map-transition",
             "position": [round(float(x), 2), round(y + 0.1, 2), round(float(z), 2)],
@@ -224,6 +235,8 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
         if anchor is None:
             continue
         x, y, z = anchor["position"]
+        if portal_id in LAY.DOORS:
+            x,z=LAY.DOORS[portal_id];y=float(t.height_at(x,z))
         position = [round(float(x), 2), round(float(y) + 0.1, 2), round(float(z), 2)]
         tile = [int(round(x + REG.SERVER_ORIGIN[0])),
                 int(round(REG.SERVER_ORIGIN[1] - z))]
@@ -482,6 +495,14 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
             continue
         item = build.meshes[placement.mesh]
         low, high = item.bounds()
+        if (placement.extras or {}).get("solidBox"):
+            px,_,pz=placement.position
+            c,s=math.cos(placement.rotation_y),math.sin(placement.rotation_y)
+            lx=(gx-px)*c-(gz-pz)*s
+            lz=(gx-px)*s+(gz-pz)*c
+            blockers|=((lx>=low[0]*placement.scale-0.25)&(lx<=high[0]*placement.scale+0.25)
+                       &(lz>=low[2]*placement.scale-0.25)&(lz<=high[2]*placement.scale+0.25))
+            continue
         footprint = float(max(abs(low[0]), abs(high[0]), abs(low[2]), abs(high[2]))) \
             * placement.scale
         factor = 0.30 if placement.kind in ("stone", "scatter") else 0.62
@@ -769,7 +790,10 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             "walkableFraction": collision_stats["walkableFraction"],
             "saturatedCells": collision_stats["saturatedCells"],
         },
+        "contentLayout": LAY.CONTENT_LAYOUT,
         "navigation": {
+            "crossings":[{"id":c["id"],"endpoints":RC.crossing_endpoints(c["endpoints"])}
+                         for c in build.crossings],
             "surfaceNodePrefixes": ["Terrain_", "Walk_"],
             "walkableAreas": ["heather-moor", "causeways", "trails",
                               "barrow-turf", "peat-bog", "shore",
@@ -821,7 +845,7 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             # the painting does not have and makes the moor read as a desert.
             "sky": {"type": "gradient", "zenith": [0.20, 0.22, 0.26],
                     "horizon": [0.44, 0.46, 0.47]},
-            "sun": {"direction": [-0.30, 0.34, 0.62],
+            "sun": {"direction": [0.30, -0.34, -0.62],
                     "color": [0.86, 0.88, 0.94], "energy": 0.44},
             "ambient": {"skyColor": [0.32, 0.34, 0.36],
                         "groundColor": [0.09, 0.09, 0.08], "energy": 0.46},
@@ -834,7 +858,7 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             # the offline captures use, in `source/views.py`.
             "fog": {"enabled": True, "color": [0.42, 0.45, 0.46],
                     "density": 0.00115, "heightFalloff": 0.0042},
-            "goldenHour": {"sun": {"direction": [-0.88, 0.14, 0.44],
+            "goldenHour": {"sun": {"direction": [0.88, -0.14, -0.44],
                                    "color": [1.18, 0.92, 0.74]},
                            "fog": {"color": [0.54, 0.46, 0.40], "density": 0.0012}},
             "presentation": {

@@ -1,10 +1,22 @@
-# Amethyst Barrens — concept comparison
+# September 2026 update
+
+Current layout measurements, visual review and limitations are in
+[layout-review.md](layout-review.md). The current comparison sheets use the
+35 frames in references/godot-captures with the manifest environment.
+Validator JSON and verification-report.json describe the current package.
+
+The original report below is historical. Its counts, camera descriptions and
+grades are superseded by the current review and performance summary.
+
+---
+
+# Amethyst Barrens â€” concept comparison
 
 Sheets are in `references/comparisons/`:
 
-- `aerial-comparison.webp` — the aerial concept against the build
-- `panel-comparison.webp` — all ten detail-board panels, concept beside build
-- `landmark-contact-sheet.webp` — the twenty supporting views
+- `aerial-comparison.webp` â€” the aerial concept against the build
+- `panel-comparison.webp` â€” all ten detail-board panels, concept beside build
+- `landmark-contact-sheet.webp` â€” the twenty supporting views
 
 Two capture sets exist and they are **not** the same thing:
 
@@ -22,7 +34,7 @@ the assessment below is based on.
 **Composition (aerial).** The road web across the basin, the Glasswarden
 Observatory on its terrace in the north-west, the crystal massif in the
 north-centre, the mountain ring closing north and west, and sea in the
-north-east and south-east corners with a dry headland between them — all of it
+north-east and south-east corners with a dry headland between them â€” all of it
 is where the painting puts it.
 
 **Panel 2, the Observatory.** The strongest match. Domed hall on a walkable
@@ -36,14 +48,14 @@ around it, over open barrens. Reads correctly at player scale.
 pole, crystal pushing up through the floor.
 
 **Panel 11 / the massif.** Large faceted spires on a rock hill. The faceting
-matters: crystal is flat planes meeting at hard edges, and the first version —
-smooth lofted rings — read as violet carrots.
+matters: crystal is flat planes meeting at hard edges, and the first version â€”
+smooth lofted rings â€” read as violet carrots.
 
 **Landmark inventory.** Exactly the counts the QA brief and the placeholder
 `world.json` specify: 1 observatory, 7 crystal bridges, 4 geode caves, 8
 levitating-shard fields, 6 storm ruins, 10 resonant clusters, 6 field stations.
 
-## What does not match — the honest list
+## What does not match â€” the honest list
 
 1. **Density.** This is the biggest gap. The concept is crowded: dozens of
    slender spires, ruin compounds, tents and small structures fill the plain
@@ -62,7 +74,7 @@ levitating-shard fields, 6 storm ruins, 10 resonant clusters, 6 field stations.
    `07-resonant-digging`.
 
 3. **The ground is two colours.** Ochre dust and pale violet crystal, meeting at
-   a boundary. The concept's ground has far more tonal variety — scorched
+   a boundary. The concept's ground has far more tonal variety â€” scorched
    patches, gravel, wet rock, shadow.
 
 4. **Verdigris still darkens.** Spire caps and bridge lamp cones read as dark

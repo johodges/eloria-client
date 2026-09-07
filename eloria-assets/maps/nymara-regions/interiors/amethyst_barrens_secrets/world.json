@@ -292,17 +292,17 @@
       191.0
     ],
     "heightEncoding": {
-      "origin": -5.131,
-      "step": 0.1311,
+      "origin": -5.2,
+      "step": 0.2,
       "range": [
         1,
         63
       ],
       "zeroMeansBlocked": true
     },
-    "walkableCells": 21112,
-    "blockedCells": 196040,
-    "walkableFraction": 0.0972,
+    "walkableCells": 14060,
+    "blockedCells": 203092,
+    "walkableFraction": 0.0647,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
@@ -3751,7 +3751,7 @@
     "bufferViews": 673,
     "uniqueTriangles": 27732,
     "uniqueVertices": 38396,
-    "glbBytes": 7560280,
+    "glbBytes": 7523096,
     "nodeNames": [
       "Secrets_amethyst_barrens_secrets",
       "Section_barrens-geode-hollow",

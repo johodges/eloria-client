@@ -17,7 +17,7 @@ from amberwood import render as RENDER
 # is Amberwood's warm afternoon sun, which turns a bruised violet basin into a
 # pleasant summer field, so the region supplies its own: a cold, low, blue-white
 # key with heavy cloud ambient and the crystal doing most of the colouring.
-LIGHTING = {
+REGION_LIGHTING = {
     "day": RENDER.Lighting(sun_direction=(-0.38, 0.42, 0.82),
                            sun_color=(0.92, 0.86, 1.06),
                            sky_color=(0.20, 0.17, 0.30),
@@ -65,7 +65,7 @@ VIEWS = [
      (1180, 800), 34, "day"),
     ("07-resonant-digging", 7, (38.0, -8.0), 3.2, (46.0, -14.0), 2.0, 55,
      (1180, 820), 30, "day"),
-    ("08-field-station", 8, (-14.0, -22.0), 2.2, (-8.0, -28.0), 1.6, 52,
+    ("08-field-station", 8, (-12.0, -4.0), 1.7, (-8.0, -8.0), 1.6, 52,
      (1180, 820), 26, "day"),
     ("09-cliff-overlook", 9, (80.0, -80.0), 6.0, (40.0, -50.0), 4.0, 50,
      (1400, 800), 150, "day"),
@@ -100,9 +100,9 @@ VIEWS = [
      (1280, 780), 50, "day"),
     ("30-spawn-grounding", None, (-8.0, 8.0), 1.7, (2.0, -2.0), 1.6, 58,
      (1180, 780), 30, "day"),
-    ("31-bridge-deck", None, (44.0, -88.0), 2.0, (52.0, -82.0), 2.0, 58,
+    ("31-bridge-deck", None, (40.0, -87.0), 1.7, (50.0, -87.0), 1.7, 58,
      (1180, 780), 30, "day"),
-    ("32-observatory-deck", None, (-26.0, -58.0), 4.4, (-26.0, -68.0), 12.0, 56,
+    ("32-observatory-deck", None, (-23.0, -65.2), 1.7, (-26.0, -65.9), 1.7, 56,
      (1180, 820), 32, "day"),
 
     # -- storm-light variants ----------------------------------------------
@@ -127,3 +127,18 @@ PANELS = {
     9: ("09-cliff-overlook", "Overlook across the barrens toward the massif"),
     10: ("10-material-study", "Material study: amethyst, brass, pale stone, dust"),
 }
+
+
+VIEWS.extend([
+ ("24-assay-yard",None,(0,3),1.7,(3.7,-7.7),2.0,58,(1280,820),55,"day!"),
+ ("25-packet-jetty",None,(111.6667,33.7451),1.7,(116.0,38.5882),1.7,58,(1280,820),60,"deck!"),
+ ("26-survey-bridge",None,(42.7,-57),1.7,(55,-57),1.7,56,(1280,820),80,"deck!"),
+ ("27-observatory-stair",None,(-26,-60.3),1.7,(-26,-68),7.0,54,(1280,820),80,"day!"),
+ ("28-massif-camp",None,(53.6667,-76.6667),1.7,(57,-83),4.0,68,(1280,820),140,"day!"),
+])
+FIXED_VIEWS={"24-assay-yard","25-packet-jetty","26-survey-bridge","27-observatory-stair","28-massif-camp"}
+REGION_LIGHTING["deck"]=REGION_LIGHTING["day"]
+
+
+FIXED_VIEWS.update({"08-field-station","31-bridge-deck","32-observatory-deck"})
+VIEWS=[(*v[:-1],"deck!" if v[0] in {"31-bridge-deck","32-observatory-deck"} else v[-1]) for v in VIEWS]

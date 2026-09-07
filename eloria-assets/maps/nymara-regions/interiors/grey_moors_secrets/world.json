@@ -292,17 +292,17 @@
       191.0
     ],
     "heightEncoding": {
-      "origin": -5.131,
-      "step": 0.1311,
+      "origin": -5.2,
+      "step": 0.2,
       "range": [
         1,
         63
       ],
       "zeroMeansBlocked": true
     },
-    "walkableCells": 21112,
-    "blockedCells": 196040,
-    "walkableFraction": 0.0972,
+    "walkableCells": 14057,
+    "blockedCells": 203095,
+    "walkableFraction": 0.0647,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
@@ -3770,7 +3770,7 @@
     "bufferViews": 710,
     "uniqueTriangles": 27908,
     "uniqueVertices": 38588,
-    "glbBytes": 9008208,
+    "glbBytes": 8970700,
     "nodeNames": [
       "Secrets_grey_moors_secrets",
       "Section_moor-peat-hollow",

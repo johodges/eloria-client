@@ -1,4 +1,17 @@
-# Grey Moors — validation report
+# September 2026 validation
+
+Current measurements and review are in [layout-review.md](layout-review.md).
+The current comparison sheets use the 32 Godot frames in
+references/godot-captures, rendered with --environment=manifest. Offline
+captures use the same camera index. Earlier client-captures remain historical.
+
+The report below records the original pass. Its counts, lighting description
+and grades are historical; they are superseded by the current layout review,
+performance summary, GLB validator outputs and verification-report.json.
+
+---
+
+# Grey Moors â€” validation report
 
 Every number here came from a tool run against the shipped package, not from
 inspection. Where something was **not** checked, it says so; a clean validator
@@ -34,7 +47,7 @@ python3 ../_toolkit/verify_runtime.py --report verification-report.json
 ```
 
 **0 errors. 0 grounding misses across every one of the 331,776 server tiles.**
-Not a sample — the verifier casts a ray at every tile of the 576 x 576 grid, and
+Not a sample â€” the verifier casts a ray at every tile of the 576 x 576 grid, and
 every one of them lands on a walk surface. No character on this map can fall
 back to `walkingHeight`.
 
@@ -49,7 +62,7 @@ began after that.
 GROUNDING_DISCONTINUITY: 361 adjacent tile pairs differ by more than 6 m
 ```
 
-All of them are on the closing rim at the very edge of the playable grid — the
+All of them are on the closing rim at the very edge of the playable grid â€” the
 largest are at server tile row/column 575, which is the last tile before the
 margin. That rim is a scarp cut deliberately steeper than the collision slope
 limit so it is scenery rather than reachable ground. This is the "expected at
@@ -71,15 +84,15 @@ Three findings from earlier runs were real defects and were fixed, not excused:
 | --- | --- |
 | format | `EWCG` v1 |
 | dimensions | 1152 x 1152 half-metre cells |
-| dimensions ÷ 6 | 192 x 192 — positive multiples of six, as required |
+| dimensions Ã· 6 | 192 x 192 â€” positive multiples of six, as required |
 | walkable | 1,171,807 cells (88.3%) |
 | blocked | 155,297 cells |
 | saturated | 35,770 cells (3.05% of walkable) |
 | elevated decks | 11 |
 | row order | server-tile-Y; row 0 is the +Z southern edge |
-| column order | server-tile-X; column 0 is the −X western edge |
+| column order | server-tile-X; column 0 is the âˆ’X western edge |
 
-Row order is the trap the production guide warns about — writing rows the other
+Row order is the trap the production guide warns about â€” writing rows the other
 way silently mirrors every walkability decision. `verify_runtime.py`'s
 cell-to-surface cross-check is what catches it, and it passes: the encoded
 heights agree with the rendered walk surface everywhere it sampled.
@@ -107,13 +120,13 @@ tower, a croft roof or the top of a menhir.
 ## Server-side agreement
 
 The regenerated `server-collision/grey_moors.bin` is 341,112 bytes, 96 x 96 tiles,
-576 x 576 height cells, 88.3% walkable — byte-identical in size and shape to
+576 x 576 height cells, 88.3% walkable â€” byte-identical in size and shape to
 Amethyst Barrens' and Crownwater's, which is what the server's collision
 contract test asserts.
 
 On `eloria-server`, branch `feature/grey-moors-96-server-map`: the four Nymara
 and content modules pass (14 passed). The wider suite reports **81 failures with
-the change and 81 with it stashed** — none introduced, none fixed.
+the change and 81 with it stashed** â€” none introduced, none fixed.
 
 ## What was NOT verified
 
@@ -132,7 +145,7 @@ Stated plainly, because the clean reports above do not cover any of it:
   `performance-summary.md` are counted from the package, not measured as a
   frame rate. Nothing streams and nothing switches LOD yet; `world-lod2.glb`
   exists but nothing selects it.
-- **Every place name.** All of them are placeholders — see
+- **Every place name.** All of them are placeholders â€” see
   `modeling-assumptions.md`.
 - **The interior map.** `maps/nymara/grey_moor_barrows.elm` is what the four
   doors target. It is not built by this package and was not built here.

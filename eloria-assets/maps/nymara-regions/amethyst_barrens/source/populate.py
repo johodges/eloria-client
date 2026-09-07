@@ -77,132 +77,7 @@ KIT_TO_REGION = {
 
 
 # --------------------------------------------------------------------------
-def observatory(seed: int = 0) -> SW.MeshGroup:
-    """The Glasswarden Observatory, panel 2.
-
-    A domed hall on a walkable podium, ringed by balustrades and pinnacles, with
-    the great brass armillary sphere standing on the dome. The podium deck is a
-    walk surface; everything else is structure, so the grounding ray cannot put
-    an actor on the roof.
-    """
-    rng = N.Rng(seed)
-    out = SW.MeshGroup()
-
-    half_x, half_z = 13.0, 10.5
-    podium_h = 2.6
-
-    # -- podium, and the deck a player can stand on
-    body = M.box((half_x * 2, podium_h, half_z * 2),
-                 center=(0.0, podium_h * 0.5, 0.0), uv_scale=0.5, material=STONE)
-    out.add(body)
-    deck = M.box((half_x * 2 - 0.4, 0.30, half_z * 2 - 0.4),
-                 center=(0.0, podium_h + 0.15, 0.0), uv_scale=0.5, material=STONE)
-    out.add_walk(deck)
-
-    # Steps down the south face, outside the podium so they do not climb into it.
-    # `mesh.stairs` takes rise PER STEP, not total: passing the podium height
-    # here built a 23 m slab standing in front of the dome, which the offline
-    # preview hid and the first real client frame showed immediately.
-    step_count = 8
-    steps = M.stairs(7.0, (podium_h + 0.3) / step_count, 0.42, step_count,
-                     uv_scale=0.6, material=STONE)
-    out.add_walk(steps.translate(0.0, 0.0, half_z))
-
-    # -- balustrade around the deck
-    for sign in (-1.0, 1.0):
-        rail = SW.balustrade(half_x * 2 - 1.2, 1.05, material=STONE)
-        out.add(rail.translate(0.0, podium_h + 0.30, sign * (half_z - 0.6)))
-        side = SW.balustrade(half_z * 2 - 1.2, 1.05, material=STONE)
-        side.rotate_y(math.pi * 0.5)
-        out.add(side.translate(sign * (half_x - 0.6), podium_h + 0.30, 0.0))
-
-    # -- the drum and dome
-    drum_r, drum_h = 6.4, 7.2
-    drum = M.cylinder(drum_r, drum_r * 0.96, drum_h, 20, uv_scale=0.6, material=STONE)
-    out.add(drum.translate(0.0, podium_h + 0.3, 0.0))
-    # a moulded cornice
-    cornice = M.cylinder(drum_r * 1.10, drum_r * 1.02, 0.55, 20, uv_scale=0.6,
-                         material=STONE)
-    out.add(cornice.translate(0.0, podium_h + drum_h + 0.05, 0.0))
-
-    dome_profile = [(drum_r * 0.99, 0.0)]
-    for index in range(1, 13):
-        t = index / 12.0
-        dome_profile.append((drum_r * math.cos(t * math.pi * 0.5) * 0.99,
-                             drum_r * 0.86 * math.sin(t * math.pi * 0.5)))
-    dome = M.lathe(dome_profile, segments=22, material=ROOF)
-    out.add(dome.translate(0.0, podium_h + drum_h + 0.55, 0.0))
-
-    # tall arched windows around the drum, cut as recessed panels
-    for index in range(10):
-        angle = 2.0 * math.pi * index / 10.0
-        panel = M.box((1.5, 3.4, 0.4), center=(0.0, 0.0, 0.0), uv_scale=0.7,
-                      material=ROOF)
-        panel.rotate_y(angle)
-        out.add(panel.translate(math.sin(angle) * drum_r * 0.99,
-                                podium_h + 3.1,
-                                math.cos(angle) * drum_r * 0.99))
-
-    # -- corner pinnacles with verdigris caps
-    for sx in (-1.0, 1.0):
-        for sz in (-1.0, 1.0):
-            x, z = sx * (half_x - 1.5), sz * (half_z - 1.5)
-            shaft = M.cylinder(0.85, 0.62, 8.5, 10, uv_scale=0.7, material=STONE)
-            out.add(shaft.translate(x, podium_h + 0.3, z))
-            cap = M.cylinder(0.86, 0.02, 3.2, 10, uv_scale=0.7, material=ROOF)
-            out.add(cap.translate(x, podium_h + 8.8, z))
-            lamp = M.icosphere(0.34, subdivisions=1, material=CRYSTAL)
-            out.add(lamp.translate(x, podium_h + 12.2, z))
-
-    # -- the armillary sphere on the dome, panel 2's silhouette
-    sphere_y = podium_h + drum_h + 0.55 + drum_r * 0.86
-    out.add(armillary(radius=4.3, seed=seed + 7).translate(0.0, sphere_y + 4.4, 0.0))
-
-    # a brass mounting yoke
-    for sign in (-1.0, 1.0):
-        leg = M.cylinder(0.30, 0.24, 4.6, 8, uv_scale=0.6, material=BRASS)
-        leg.rotate_z(sign * 0.16)
-        out.add(leg.translate(sign * 1.5, sphere_y, 0.0))
-
-    return out
-
-
-def armillary(radius: float = 4.0, seed: int = 0) -> M.Mesh:
-    """The brass orrery: three great rings, a globe and a pointer arm."""
-    parts = []
-    segments = 40
-
-    def ring(tilt_x: float, tilt_z: float, r: float, thickness: float) -> M.Mesh:
-        angles = np.linspace(0.0, 2.0 * math.pi, segments + 1)
-        path = np.stack([np.cos(angles) * r,
-                         np.zeros_like(angles),
-                         np.sin(angles) * r], axis=-1)
-        piece = M.tube(path, np.full(len(path), thickness), segments=7,
-                       material=BRASS)
-        piece.rotate_x(tilt_x)
-        piece.rotate_z(tilt_z)
-        return piece
-
-    parts.append(ring(0.0, 0.0, radius, radius * 0.052))
-    parts.append(ring(math.pi * 0.5, 0.0, radius * 0.94, radius * 0.046))
-    parts.append(ring(math.pi * 0.5, math.pi * 0.5, radius * 0.88, radius * 0.042))
-    parts.append(ring(0.42, 0.0, radius * 0.72, radius * 0.038))
-
-    globe = M.icosphere(radius * 0.42, subdivisions=2, material=CRYSTAL)
-    parts.append(globe)
-
-    # the long pointer arm that the lightning strikes in the concept
-    arm = M.cylinder(radius * 0.045, radius * 0.018, radius * 2.5, 8,
-                     uv_scale=0.6, material=BRASS)
-    arm.rotate_z(math.pi * 0.5)
-    arm.rotate_y(0.6)
-    parts.append(arm.translate(0.0, radius * 0.15, 0.0))
-
-    # polar axis
-    axis = M.cylinder(radius * 0.05, radius * 0.05, radius * 2.35, 8,
-                      uv_scale=0.6, material=BRASS)
-    parts.append(axis.translate(0.0, -radius * 1.18, 0.0))
-    return M.merge(parts, material=BRASS)
+from amberwood.observatorycraft import observatory, armillary
 
 
 def crystal_bridge(length: float = 26.0, deck_height: float = 7.5,
@@ -284,9 +159,8 @@ def field_station(seed: int = 0) -> SW.MeshGroup:
         for sz in (-1.0, 1.0):
             post = M.cylinder(0.13, 0.11, 3.1, 8, uv_scale=0.7, material=BRASS)
             out.add(post.translate(sx * half, 0.0, sz * half))
-    canopy = M.gable_roof(half * 2.3, half * 2.3, 1.15, overhang=0.45,
-                          material=CLOTH)
-    out.add(canopy.translate(0.0, 3.1, 0.0))
+    from amberwood import civiccraft as CIV
+    out.add(CIV.pitched_canopy(7.1,7.1,3.1,4.25,CLOTH,STONE))
 
     bench = PROPS.workbench(length=2.6, seed=seed + 3)
     _remap(bench, KIT_TO_REGION)
@@ -407,42 +281,16 @@ def populate_landmarks(build: REG.RegionBuild, seed: int, lod: str | None = None
     # every solid child inherit the prefix - dome, brass and all - and the
     # grounding ray then puts actors on the roof and on the armillary sphere.
     build.place(Placement("Landmark_GlasswardenObservatory", "Observatory",
-                          (x, y, z), _face(A["observatory"], A["observatory_court"]),
+                          (x, y, z), 0.0,
                           1.0, collides=True, kind="landmark",
-                          landmark="glasswarden-observatory"))
-    t.mark_blocked_disc(A["observatory"], 18.0 * L)
+                          landmark="glasswarden-observatory",extras={"solidRadius":6.5}))
+    t.mark_blocked_disc(A["observatory"], 6.5)
     # the marker sits on the podium deck, which is where a player stands
     landmark("glasswarden-observatory", "The Glasswarden Observatory",
              "Landmark_GlasswardenObservatory", "civic", (x, y + 2.95, z))
 
-    # -- seven crystal bridges ---------------------------------------------
-    for index, (name, points) in enumerate(REG.BRIDGE_ROUTES.items()):
-        start, end = points[0], points[-1]
-        centre = ((start[0] + end[0]) * 0.5, (start[1] + end[1]) * 0.5)
-        length = float(np.hypot(end[0] - start[0], end[1] - start[1])) + 12.0
-        # The deck is set from the BANKS, not the channel floor. Measuring it at
-        # the centre gave `ground - ground + 6.5`, a constant, which put every
-        # deck 0.2 m above the terrain with its arches buried - a bridge lying on
-        # the ground rather than spanning anything. The banks are what the
-        # roadway has to meet.
-        bank = max(float(t.height_at(*start)), float(t.height_at(*end)))
-        channel = float(t.height_at(*centre))
-        deck = 6.5
-        deck_world = bank + 0.30
-        key = f"CrystalBridge_{index}"
-        build.add_mesh(key, crystal_bridge(length=length, deck_height=deck,
-                                           seed=seed + 200 + index))
-        rotation = math.atan2(end[0] - start[0], end[1] - start[1])
-        position = (float(centre[0]), deck_world - deck, float(centre[1]))
-        # walk_surface is left off for the same reason as the observatory: the
-        # bridge group already marks its own deck, and setting it here would
-        # make the piers and parapets walkable too.
-        build.place(Placement(f"Landmark_CrystalBridge_{index}", key, position,
-                              rotation, 1.0, collides=False, kind="landmark",
-                              landmark=f"amethyst-crystal-bridge-{index}"))
-        deck_position = (position[0], deck_world, position[2])
-        landmark(f"amethyst-crystal-bridge-{index}", "Amethyst Crystal Bridge",
-                 f"Landmark_CrystalBridge_{index}", "bridge", deck_position)
+    import layout as PLAN
+    PLAN.dress_crossings(build,seed)
 
     # -- four geode caves ---------------------------------------------------
     for index, key in enumerate(("geode_north", "geode_east", "geode_south",
@@ -745,10 +593,10 @@ def _river_ribbon(t: TER.Terrain, points: np.ndarray, width: float,
     xs = np.interp(distances, cumulative, points[:, 0])
     zs = np.interp(distances, cumulative, points[:, 1])
 
-    bed = t.height_at(xs, zs)
+    bed = t._water_bed.height_at(xs,zs) if hasattr(t,"_water_bed") else t.height_at(xs,zs)
     # monotonic downstream: a river does not run uphill, and the eroded bed can
     # wobble by a few centimetres either way
-    surface = np.minimum.accumulate(bed) - drop
+    surface = np.minimum.accumulate(bed) + 0.45
 
     tangent_x = np.gradient(xs)
     tangent_z = np.gradient(zs)

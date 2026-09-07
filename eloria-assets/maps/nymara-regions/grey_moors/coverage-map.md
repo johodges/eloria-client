@@ -129,3 +129,24 @@ Every name is a placeholder — see `modeling-assumptions.md`.
 - Nothing in the north-west quarter between `tower_west` and `barrow_north` but
   moor, bog and scattered stones — it is the emptiest part of the map, and the
   painting is emptier there too.
+
+
+## September 2026 circulation overlay
+
+The west arrival now connects to the Haven departure through the peat road.
+The refuge at world (-16,-11) groups information, storage, crafting and training,
+with the dry pony pen to its west. Peat workings occupy the first gathering
+loop; lower-risk wildlife stays around the southern and western worked moor.
+Hounds occupy the middle bogs and barrow approaches, while spectral knights,
+constructs and other high-risk species occupy the northern burial grounds.
+
+The eight boardwalks and three stone crossings follow surveyed shore stations;
+a twelfth span carries the Crownwater ferry into the south-west cove. The
+original eleven exterior/inside departures remain, and the ferry retains the
+stable east-waygate id. The coast shrine is now at (-93,60), the headland at
+(-105,60), the dry landing at (-60,72) and the jetty runs to (-60,89).
+
+The Great Barrow's crown is at (114,-273), with a south-facing door near
+(114,-241) and a side ascent around the east shoulder. Source/layout.py holds
+the settlement, crossing surveys and named NPC posts; source/region.py holds
+the path polylines. The older tables above describe the previous composition.

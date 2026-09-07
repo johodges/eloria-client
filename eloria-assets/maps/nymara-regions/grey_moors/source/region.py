@@ -117,8 +117,8 @@ _DESIGN_ANCHORS: dict[str, tuple[float, float]] = {
     "barrow_far_east": (104.0, -92.0),
 
     # -- eight standing-stone groups (panel 3)
-    "ring_court": (38.0, -84.0),
-    "ring_centre": (28.0, -33.0),
+    "ring_court": (38.0, -91.0),
+    "ring_centre": (28.0, -30.0),
     "ring_north": (2.0, -108.0),
     "ring_east": (88.0, -50.0),
     "ring_west": (-34.0, -50.0),
@@ -142,9 +142,9 @@ _DESIGN_ANCHORS: dict[str, tuple[float, float]] = {
 
     # -- five ritual shrines (the altar slabs, panel 3)
     "shrine_great": (38.0, -74.0),
-    "shrine_bog": (18.0, -18.0),
+    "shrine_bog": (25.0, -15.0),
     "shrine_east": (92.0, -34.0),
-    "shrine_coast": (-30.0, 27.0),
+    "shrine_coast": (-31.0, 20.0),
     "shrine_north": (16.0, -104.0),
 
     # -- broken towers: the skyline markers all round the edge of the aerial
@@ -167,14 +167,14 @@ _DESIGN_ANCHORS: dict[str, tuple[float, float]] = {
     "thorn_east": (74.0, -30.0),
 
     # -- route furniture and the coast
-    "moor_gate": (10.0, -12.0),
+    "moor_gate": (8.0, -10.0),
     # the ways off the moor: north into the Amberwood, south down to the
     # delta, and the jetty on the east shore where the Crownwater boat calls
     "north_gate": (-4.0, -128.0),
     "south_gate": (66.0, 50.0),
-    "east_jetty": (128.0, -8.0),
-    "coast_head": (-34.0, 34.0),
-    "coast_landing": (-18.0, 30.0),
+    "east_jetty": (-20.0, 29.0),
+    "coast_head": (-35.0, 20.0),
+    "coast_landing": (-20.0, 24.0),
     "bridge_south": (55.0, 1.0),
     "arrival": (0.0, 0.0),
 }
@@ -196,69 +196,49 @@ def _design(name: str) -> tuple[float, float]:
     return _DESIGN_ANCHORS[name]
 
 
-# ------------------------------------------------------------- routes
-# The aerial shows a web of pale tracks, not a road system: they meet at the
-# moor gate, at the central ring and below the barrow ridge. The main ones are
-# laid causeway (panel 1); the rest are worn moor.
-ROUTES: dict[str, np.ndarray] = {
-    "arrival_causeway": _route(_design("arrival"), (4.0, -6.0), _design("moor_gate"),
-                               (18.0, -22.0), _design("ring_centre")),
-    "barrow_causeway": _route(_design("ring_centre"), (32.0, -48.0),
-                              _design("shrine_great"), _design("great_barrow_court"),
-                              _design("great_barrow")),
-    "coast_road": _route(_design("arrival"), (-8.0, 8.0), _design("ring_coast"),
-                         _design("croft_coast"), _design("coast_landing"),
-                         _design("shrine_coast"), _design("coast_head")),
-    "east_road": _route(_design("ring_centre"), (46.0, -30.0), _design("croft_mid"),
-                        (72.0, -26.0), _design("ring_east"), _design("crypt_east"),
-                        _design("tower_east")),
-    "north_track": _route(_design("great_barrow_court"), _design("shrine_north"),
-                          _design("ring_north"), _design("barrow_north"),
-                          _design("croft_north"), _design("north_gate"),
-                          (-4.0, -134.0)),
-    "west_track": _route(_design("moor_gate"), (-12.0, -26.0), _design("croft_west"),
-                         _design("ring_west"), _design("tower_west"),
-                         (-42.0, -92.0), _design("tower_nw")),
-    "south_road": _route(_design("arrival"), (10.0, 16.0), _design("croft_south"),
-                         _design("ring_south"), _design("tower_south"),
-                         _design("south_gate"), (66.0, 58.0)),
-    "jetty_track": _route(_design("croft_east"), (114.0, -8.0), _design("east_jetty"),
-                          (134.0, -8.0)),
-    "peat_track": _route(_design("moor_gate"), _design("peat_west"),
-                         (-30.0, -18.0), _design("croft_west")),
-    "peat_east_track": _route(_design("croft_mid"), _design("peat_centre"),
-                              _design("peat_east"), _design("croft_east"),
-                              _design("ring_far_east")),
-    "ridge_track": _route(_design("great_barrow"), _design("barrow_ridge_east"),
-                          _design("barrow_east"), (92.0, -80.0),
-                          _design("barrow_far_east"), _design("tower_north_east")),
-    "west_barrow_track": _route(_design("shrine_great"), _design("barrow_ridge_west"),
-                                _design("barrow_west"), _design("crypt_west")),
-    "bog_track": _route(_design("ring_centre"), _design("shrine_bog"),
-                        _design("crypt_south"), _design("bridge_south"),
-                        (66.0, 12.0), _design("ring_south")),
+# Surveyed paths and their actual wet crossings. Points remain in design
+# space so the original landmark composition is easy to compare with the board.
+ROUTES = {
+    "crown_ascent": _route((40,-78),(48,-79),(54,-86),(51,-94),(45,-98),(41,-94)),
+    "haven_road": _route((-52,0),(-43,0),(-33,-2),(-22,-1),(-11,0),(0,0)),
+    "arrival_causeway": _route((0,0),(3,-4),(8,-10),(9,-13),(25,-27),(28,-30)),
+    "barrow_causeway": _route((28,-30),(30,-34),(33,-51),(33,-60),(38,-69),
+                              (38,-74),(38,-80),(38,-82)),
+    "coast_road": _route((0,0),(-8,8),(-14,10),(-22,13),(-25,17),(-14,25),(-20,24)),
+    "coast_beacon": _route((-22,13),(-30,17),(-31,20),(-35,20)),
+    "east_road": _route((28,-30),(46,-30),(57,-20),(58,-10),(79,-26),
+                        (86,-38),(86,-48),(96,-64),(124,-61)),
+    "north_track": _route((38,-80),(27,-83),(16,-94),(16,-104),(2,-108),
+                          (-4,-115),(-8,-120),(-4,-128),(-4,-134)),
+    "west_track": _route((8,-10),(-7,-27),(-30,-23),(-37,-22),(-36,-42),
+                         (-34,-50),(-45,-59),(-42,-92),(-36,-119)),
+    "south_road": _route((0,0),(10,16),(21,16),(44,21),(44,26),(52,18),
+                         (63,34),(63,41),(66,50),(66,58)),
+    "jetty_track": _route((-14,25),(-20,24),(-20,29)),
+    "peat_track": _route((-22,-1),(-23,-6),(-23,-15),(-37,-22)),
+    "peat_east_track": _route((58,-10),(51,-5),(80,-9),(94,-5),(97,0),(102,-2),
+                              (114,-24)),
+    "ridge_track": _route((38,-88),(51,-88),(66,-81),(78,-73),(92,-80),
+                          (104,-92),(96,-122)),
+    "west_barrow_track": _route((38,-80),(27,-83),(16,-94),(-15,-79),(-30,-82)),
+    "bog_track": _route((28,-30),(29,-16),(34,4),(50,-2),(60,4),(66,12),(52,18)),
+    "north_peat_track": _route((-15,-79),(1,-69),(13,-82),(27,-83)),
+    "east_barrow_track": _route((33,-60),(48,-53),(62,-66),(78,-73)),
 }
-
-# Eight boardwalks, as the QA brief and the aerial both have it. Each is a
-# short crossing of a bog basin, written as the two ends of the span; the deck
-# is built as geometry and is the only walkable thing over the water.
-BOARDWALK_ROUTES: dict[str, np.ndarray] = {
-    "boardwalk_gate": _route((6.0, -16.0), (14.0, -8.0)),
-    "boardwalk_centre": _route((24.0, -40.0), (32.0, -34.0)),
-    "boardwalk_bog": _route((14.0, -22.0), (22.0, -16.0)),
-    "boardwalk_west": _route((-22.0, -30.0), (-14.0, -24.0)),
-    "boardwalk_north": _route((4.0, -78.0), (10.0, -70.0)),
-    "boardwalk_east": _route((66.0, -22.0), (74.0, -16.0)),
-    "boardwalk_south": _route((30.0, 12.0), (38.0, 18.0)),
-    "boardwalk_coast": _route((-20.0, 20.0), (-12.0, 26.0)),
+BOARDWALK_ROUTES = {
+    "boardwalk_gate": _route((9,-13),(25,-27)),
+    "boardwalk_centre": _route((30,-34),(33,-51)),
+    "boardwalk_bog": _route((48,-53),(62,-66)),
+    "boardwalk_west": _route((-7,-27),(-30,-23)),
+    "boardwalk_north": _route((1,-69),(13,-82)),
+    "boardwalk_east": _route((58,-10),(79,-26)),
+    "boardwalk_south": _route((21,16),(44,21)),
+    "boardwalk_coast": _route((-25,17),(-14,25)),
 }
-
-# Where a causeway meets standing water it gets a piered stone crossing rather
-# than a timber one.
-BRIDGE_ROUTES: dict[str, np.ndarray] = {
-    "bridge_black_drain": _route((50.0, -2.0), (60.0, 4.0)),
-    "bridge_moor_gate": _route((2.0, -4.0), (8.0, 0.0)),
-    "bridge_east": _route((88.0, -12.0), (96.0, -6.0)),
+BRIDGE_ROUTES = {
+    "bridge_black_drain": _route((50,-2),(60,4)),
+    "bridge_moor_gate": _route((3,-4),(8,-10)),
+    "bridge_east": _route((80,-9),(94,-5)),
 }
 
 # Sluggish drains rather than rivers: this moor sheds its water slowly, south
@@ -383,12 +363,14 @@ def build_terrain(seed: int = 20260829) -> TER.Terrain:
 
     t.erode(iterations=12, strength=0.22)
     t.smooth(iterations=3, weight=0.40)
+    t._moor_pool_levels = [float(t.height_at(cx*SCALE,cz*SCALE))+depth*0.42
+                           for (cx,cz),radius,depth in BOG_BASINS]
     return t
 
 
 # (anchor, design radius, height) for every mound raised into the terrain.
 BARROW_MOUNDS: tuple[tuple[str, float, float], ...] = (
-    ("great_barrow", 24.0, 6.0),
+    ("great_barrow", 24.0, 12.0),
     ("barrow_north", 11.0, 3.4),
     ("barrow_east", 12.0, 3.8),
     ("barrow_west", 11.0, 3.5),
@@ -429,11 +411,11 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260829) -> None:
     # The Great Barrow's crown: a flat court on top of the mound, which is what
     # the aerial's crowned hill is.
     crown_y = float(t.height_at(*ANCHORS["great_barrow"]))
-    t.terrace(ANCHORS["great_barrow"], 11.0 * LOCAL, crown_y,
-              surface=TER.BARROW_TURF)
+    t.plateau(ANCHORS["great_barrow"], 37.0, crown_y, edge=21.0,
+              surface=TER.BARROW_TURF, irregular=0.0)
     court_y = float(t.height_at(*ANCHORS["great_barrow_court"]))
-    t.terrace(ANCHORS["great_barrow_court"], 13.0 * LOCAL, court_y,
-              surface=TER.CAUSEWAY)
+    t.plateau(ANCHORS["great_barrow_court"], 8.0, court_y, edge=4.0,
+              surface=TER.CAUSEWAY, irregular=0.0)
 
     # The lesser barrows keep their turf but get a level top to stand on.
     for name, radius, _height in BARROW_MOUNDS[1:]:

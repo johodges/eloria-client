@@ -133,3 +133,29 @@ pairs that are both alpha-tested with vertex coverage.
 
 See `whitehorn_range/change-log.md` for the full account, including why the
 heightfield was not taken to one metre instead.
+
+## September 2026 — Glasswarden survey district
+
+The bridges stood near crossings without forming a coherent road network.
+Seven spans now use exact bank surveys, with shared arcaded geometry, cart
+widths, end lanterns and graded approaches. Roads skirt the worked clusters and
+stations. A purple-roof assay exchange groups the existing services by arrival;
+named residents work at their stations, diggings and freight landing.
+
+The Crownwater ferry moved from the eastern inland ridge to a real jetty in the
+south-east inlet. The Mirrorhold trigger moved outside its tower. The
+observatory recipe moved into the shared toolkit; its stair now climbs toward
+the podium through an opening in the balustrade, and the vault is entered
+through a framed door in the lower drum. Walking strips surround its closed
+interior instead of making the entire floor walkable.
+
+The river previously lay below its bed. A shared incision pass makes a
+continuous downstream channel; the water is above the frozen bed, and the
+tributary joins the main river. Roads are graded afterwards. The distant
+backdrop clips out of the playable terrain and opens east. The manifest sun
+direction and the region's offline lighting hook were corrected.
+
+Player-height captures prompted removal of duplicate podium faces and internal
+drum caps. A cramped crab habitat was moved onto reachable coastal ground to
+retain both original spawns. No imported assets or surface-class changes were
+needed. Current measurements and remaining limitations are in layout-review.md.

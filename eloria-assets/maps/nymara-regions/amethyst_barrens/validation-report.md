@@ -1,4 +1,16 @@
-# Amethyst Barrens — validation report
+# September 2026 update
+
+Current layout measurements, visual review and limitations are in
+[layout-review.md](layout-review.md). The current comparison sheets use the
+35 frames in references/godot-captures with the manifest environment.
+Validator JSON and verification-report.json describe the current package.
+
+The original report below is historical. Its counts, camera descriptions and
+grades are superseded by the current review and performance summary.
+
+---
+
+# Amethyst Barrens â€” validation report
 
 All figures below are from the committed artefacts. Reproduce with:
 
@@ -8,7 +20,7 @@ cd .. && PYTHONPATH=../_toolkit python ../_toolkit/validate_gltf.py world.glb
 PYTHONPATH=../_toolkit python ../_toolkit/verify_runtime.py --report verification-report.json
 ```
 
-## glTF validation — `validate_gltf.py`
+## glTF validation â€” `validate_gltf.py`
 
 ```
 errors=0 warnings=0 infos=0
@@ -19,7 +31,7 @@ external images. 13 materials and 39 embedded images, 4.25 MB of texture
 bytes - the shared table holds 56 materials, and the build pins the subset this
 region uses.
 
-## Runtime contract — `verify_runtime.py`
+## Runtime contract â€” `verify_runtime.py`
 
 ```
 [nav]        24 walk-surface nodes, 205,564 triangles
@@ -29,7 +41,7 @@ region uses.
 ```
 
 **0 grounding misses across every server tile.** The ray is cast at all
-576 × 576 tiles, not only reachable ones, so this covers the seabed and the
+576 Ã— 576 tiles, not only reachable ones, so this covers the seabed and the
 mountain interiors as well as the playable basin.
 
 ### The one warning
@@ -56,14 +68,14 @@ These appeared during the build and were treated as defects:
 | Warning | Count | Cause | Fix |
 | --- | --- | --- | --- |
 | `LANDMARK_BELOW_SURFACE` | 17 | `walk_surface=True` on `MeshGroup` placements renamed the container to `Walk_`, so every solid child inherited the prefix and the observatory dome and armillary sphere became walk surfaces | dropped the flag; the groups already mark their own decks with `add_walk` |
-| `COLLISION_SURFACE_MISMATCH` | 7 → 0 | bridge decks were placed by a no-op expression (`ground - ground + 6.5`), so every deck sat 0.2 m above the terrain with its arches buried | deck height is now set from the **banks** the roadway meets, and the collision footprint is a rotated rectangle rather than a circle |
+| `COLLISION_SURFACE_MISMATCH` | 7 â†’ 0 | bridge decks were placed by a no-op expression (`ground - ground + 6.5`), so every deck sat 0.2 m above the terrain with its arches buried | deck height is now set from the **banks** the roadway meets, and the collision footprint is a rotated rectangle rather than a circle |
 
-Walk-surface node count fell from 86 to 24 as a result — the correct number is
+Walk-surface node count fell from 86 to 24 as a result â€” the correct number is
 the terrain classes plus the real decks.
 
 ## Collision binary
 
-- `EWCG` version 1, 1152 × 1152 at 0.5 m — both dimensions are positive
+- `EWCG` version 1, 1152 Ã— 1152 at 0.5 m â€” both dimensions are positive
   multiples of six.
 - 81.3% walkable.
 - Height encoding `origin -2.2, step 0.2, range [1, 63]`, zero means blocked.
@@ -73,8 +85,8 @@ the terrain classes plus the real decks.
 
 ## Server-side ELM
 
-`../server-collision/amethyst_barrens.bin`, 341,112 bytes, 96 × 96 tiles,
-576 × 576 height cells, 81.3% walkable. Loaded through **eloria-server's own**
+`../server-collision/amethyst_barrens.bin`, 341,112 bytes, 96 Ã— 96 tiles,
+576 Ã— 576 height cells, 81.3% walkable. Loaded through **eloria-server's own**
 `eloria.collision.load_elm_collision`:
 
 ```
@@ -100,7 +112,7 @@ DIFFERS    world.glb.validator.json
 ```
 
 The validator report differs only in the two fields that describe the run
-itself — the absolute `uri` of the file it validated and `validatedAt`. No
+itself â€” the absolute `uri` of the file it validated and `validatedAt`. No
 build output differs.
 
 ## What this report does not cover

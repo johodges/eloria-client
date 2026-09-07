@@ -254,3 +254,30 @@ measured from the GLB, and records what it did under
 
 Both read the package with `_toolkit/glb_reader.py` and are idempotent, and
 `godot-client/tests/test_walk_surfaces.py` holds every region to the first.
+
+
+## Grey Moors circulation pass — September 2026
+
+The stable east-waygate id still links to Crownwater, but its visible ferry
+now lands at the actual south-west cove. The earlier eastern marker stood
+on the dry rim. The coastal jetty and its march are connected to the refuge
+by the coast road; no edge in region-connections.json changes. The Haven road,
+Amber track and Delta road retain their existing departure points.
+
+A small turf-roof refuge serves the western peat road. The Great Barrow's
+stone crown stands on the mound, reached by a side ascent; its entrance
+faces the ceremonial approach. Twelve surveyed wet crossings supply the
+corrected authored collision fold, including the cove jetty.
+
+## Amethyst Barrens circulation pass — September 2026
+
+The four continent links keep their stable ids and destinations. The Mirrorhold
+trigger stands beside its watchtower instead of inside it. The Crownwater
+packet now uses the south-east inlet, with a sloping jetty and an inland cargo
+station. The backdrop opens east over the sea, retaining mountains to the west.
+
+Seven surveyed crystal bridges carry the road network across its actual rivers
+and gullies. The arrival has a Glasswarden assay exchange and grouped services;
+the observatory stair reaches an open podium and a framed Resonant Vault door.
+The basin river is incised downstream before the roads are graded, and its
+western tributary now meets the main course. No graph edge is added or removed.

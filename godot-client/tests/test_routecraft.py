@@ -109,3 +109,46 @@ def test_arcaded_causeway_meets_unrounded_shores_with_one_walk_skin():
         expected = 3.43+(x+37.25/2)/37.25*(6.18-3.43)
         assert abs(ray.top_hit(x,0)-expected) < 1e-5
     assert len(bridge.walk_parts) == 1
+
+
+def test_sloped_plank_walk_has_no_grounding_holes_at_its_seams():
+    from amberwood import civiccraft
+    from verify_runtime import VerticalRayIndex
+    length,near,far,width=53.27,2.37,4.19,3.0
+    bridge=civiccraft.sloped_boardwalk(length,near,far,width=width)
+    triangles=np.concatenate([p.positions[p.indices.reshape(-1,3)]
+                              for p in bridge.walk_parts])
+    normal=np.cross(triangles[:,1]-triangles[:,0],triangles[:,2]-triangles[:,0])
+    assert np.all(normal[:,1]>0)
+    assert abs(normal[:,1].sum()/2-length*width)<1e-4
+    ray=VerticalRayIndex(triangles,cell=2)
+    # Both seams and plank middles must hit exactly the surveyed grade.
+    for z in np.linspace(0,length,len(bridge.walk_parts)*2+1)[1:-1]:
+        for x in (-1.35,0,1.35):
+            assert abs(ray.top_hit(x,z)-(near+(far-near)*z/length))<1e-5
+
+
+def test_observatory_stair_reaches_an_open_podium_without_opening_the_drum():
+    from amberwood import observatorycraft
+    from verify_runtime import VerticalRayIndex
+    piece=observatorycraft.observatory()
+    triangles=np.concatenate([p.positions[p.indices.reshape(-1,3)] for p in piece.walk_parts])
+    ray=VerticalRayIndex(triangles,cell=2)
+    assert ray.top_hit(0,0) is None
+    assert abs(ray.top_hit(0,9)-2.9)<1e-5
+    heights=[ray.top_hit(0,z) for z in np.linspace(18.1,10.4,29)]
+    assert all(h is not None for h in heights)
+    assert all(-1e-5<=b-a<=0.22 for a,b in zip(heights,heights[1:]))
+    assert abs(heights[-1]-2.9)<1e-5
+
+
+def test_channel_removes_a_downstream_rise_without_raising_its_banks():
+    from amberwood import terrain as TER
+    t=TER.Terrain(-2,-2,24,8,1)
+    t.height=9-0.1*t.gx+3*np.exp(-((t.gx-12)/3)**2)
+    before=t.height.copy()
+    RC.incise_channel(t,[(0,0),(20,0)],width=3,shoulder=2)
+    assert np.all(t.height<=before+1e-10)
+    bed=t.height_at(np.arange(1,20),np.zeros(19))
+    assert np.max(np.diff(bed))<1e-6
+    assert t.height_at(12,0)<before[2,14]-2

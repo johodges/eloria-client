@@ -115,3 +115,26 @@ Crownwater.
 the repository's 1.5 M visible-triangle desktop guideline, and it is also a fair
 description of a gap: this region is sparser than the concept's density
 warrants. See `comparison-report.md`.
+
+## September 2026 layout decisions
+
+The Glasswarden exchange occupies the sheltered side of the arrival, before
+the open basin routes divide. Its low roof preserves views of both the
+observatory and the Amethyst Massif. It supplies the existing services through
+server content, with no duplicate baked service objects.
+
+Work camps and extraction remain distinct: the through roads bypass cranes,
+specimens and tents, with short approaches into each workplace. Stronger
+creatures occupy the northern massif and ruins; easier wildlife occupies
+worked southern and western ground. Levels and rewards were not retuned.
+
+The packet landing belongs in the actual south-east cove, not on the dry east
+ridge. Its east-shore id still names the same Crownwater connection. West-road
+connects to Mirrorhold as the authoritative continent graph specifies; the old
+coverage note naming Amberwood is superseded.
+
+The old six-bit and saturation notes above describe the original build.
+The shipped package uses the documented refine/open/stamp correction sequence.
+The new bank survey is frozen before grading and stored per terrain instance;
+near and far builds do not share mutable survey state. Water levels come from
+the incised channel before any road or bridge construction.

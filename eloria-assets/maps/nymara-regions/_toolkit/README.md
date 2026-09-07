@@ -212,3 +212,29 @@ The content writer resolves those posts before reserving habitat and service
 space, retaining each NPC's role and dialogue. Wildlife species absent from the
 writer's catalogue retain their existing records unless the package supplies
 an explicit habitat; an older catalogue must not erase newer creature work.
+
+
+sloped_boardwalk supplies contiguous plank tops at exact surveyed shore levels,
+with driven posts, transverse bearers and rope rails outside the walking width.
+roadside_shelter supplies an open low refuge with three wind walls and a lined
+roof; the author must give each wall its actual solid footprint while keeping
+the service floor open. Both recipes accept existing region materials.
+
+The moorcraft barrow_portal and crypt_entrance recipes can opt into
+preserve_materials to retain their dark recessed slab and carved jambs instead
+of combining every face into one masonry material. Existing callers retain
+their prior outputs. Terrain.backdrop's clip_interior option prevents the
+distant landscape from covering the authored playable ground.
+
+## Survey districts and river beds
+
+amberwood.observatorycraft carries the parameterised observatory and armillary
+recipes. The podium has four walking strips around a closed drum, a continuous
+stair and an opening in its front balustrade. Its lower drum has an actual
+doorway; internal cylinder caps and the podium's duplicate top are omitted.
+
+routecraft.incise_channel cuts a downstream bed without raising surrounding
+ground, preserving surface classes for the region's later painting pass.
+Build water from that frozen bed before roads or bridge rebates can alter it.
+Keep the water surface above the channel floor. Set Terrain.backdrop's
+open_side to the actual sea side; the default west belongs to Amberwood.

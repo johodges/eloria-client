@@ -28,6 +28,7 @@ from amberwood import noise as N
 from amberwood import terrain as TER
 
 import region as REG
+import layout as LAY
 from region import Placement
 
 L = REG.LOCAL
@@ -87,17 +88,17 @@ def populate_landmarks(build: REG.RegionBuild, seed: int,
     # here is the portal cut into the mound's downhill face, the stone court
     # on the crown, and the votive lights.
     gx, gz = A["great_barrow"]
-    facing = _downhill(t, gx, gz, step=14.0)
+    facing = 0.0
     # stand the portal part-way down the flank, not at the crown
     px = gx + math.sin(facing) * 15.0 * L
-    pz = gz + math.cos(facing) * 15.0 * L
+    pz = gz + 32.0
     build.add_mesh("GreatBarrowPortal",
-                   MC.barrow_portal(2.0, 2.6, seed=seed + 1, revetment=7.5))
+                   MC.barrow_portal(2.0, 2.6, seed=seed + 1, revetment=7.5, preserve_materials=True))
     x, y, z = _ground(t, px, pz, sink=0.25)
     build.place(Placement("Landmark_GreatBarrow", "GreatBarrowPortal",
                           (x, y, z), facing, 1.0, collides=True,
                           kind="landmark", landmark="grey-great-barrow"))
-    t.mark_blocked_disc((px, pz), 5.0 * L)
+    t.mark_blocked_disc((px, pz), 1.8)
     _landmark(build, "grey-great-barrow", "The Great Barrow",
               "Landmark_GreatBarrow", "monument", (x, y + 1.2, z))
 
@@ -122,7 +123,7 @@ def populate_landmarks(build: REG.RegionBuild, seed: int,
         pz = bz + math.cos(facing) * radius * L * 0.62
         mesh_key = f"BarrowPortal_{index}"
         build.add_mesh(mesh_key, MC.barrow_portal(1.5, 2.1, seed=seed + 11 + index,
-                                                  revetment=5.2))
+                                                  revetment=5.2, preserve_materials=True))
         x, y, z = _ground(t, px, pz, sink=0.20)
         build.place(Placement(f"Landmark_Barrow_{index}", mesh_key, (x, y, z),
                               facing, 1.0, collides=True, kind="landmark",
@@ -137,7 +138,7 @@ def populate_landmarks(build: REG.RegionBuild, seed: int,
         kx, kz = A[key]
         facing = _downhill(t, kx, kz, step=8.0)
         mesh_key = f"CryptEntrance_{index}"
-        build.add_mesh(mesh_key, MC.crypt_entrance(seed=seed + 31 + index))
+        build.add_mesh(mesh_key, MC.crypt_entrance(seed=seed + 31 + index, preserve_materials=True))
         x, y, z = _ground(t, kx, kz, sink=0.15)
         build.place(Placement(f"Landmark_Crypt_{index}", mesh_key, (x, y, z),
                               facing, 1.0, collides=True, kind="landmark",
@@ -306,54 +307,7 @@ def populate_routes(build: REG.RegionBuild, seed: int,
     t = build.terrain
     A = REG.ANCHORS
 
-    # -- eight boardwalks (panel 4) ----------------------------------------
-    for index, (name, points) in enumerate(REG.BOARDWALK_ROUTES.items()):
-        start, end = points[0], points[-1]
-        centre = ((start[0] + end[0]) * 0.5, (start[1] + end[1]) * 0.5)
-        length = float(np.hypot(end[0] - start[0], end[1] - start[1]))
-        # The deck is set from the BANKS, not from the hollow it crosses:
-        # measuring at the centre puts the deck on the pool floor with its
-        # posts buried, which is a boardwalk lying in the water.
-        bank = max(float(t.height_at(*start)), float(t.height_at(*end)))
-        deck = 0.62
-        mesh_key = f"Boardwalk_{index}"
-        build.add_mesh(mesh_key, MC.boardwalk(length=length, width=1.9,
-                                              deck_height=deck,
-                                              seed=seed + 301 + index))
-        rotation = math.atan2(end[0] - start[0], end[1] - start[1])
-        # the mesh is centred on its own origin, so it is placed at the middle
-        # of the span - which is also what the collision pass's deck-footprint
-        # claim assumes
-        position = (float(centre[0]), bank + 0.10, float(centre[1]))
-        # walk_surface is left off deliberately: the group already marks its own
-        # deck with `add_walk`, and setting it on the placement would rename the
-        # CONTAINER, making the posts and handrails walkable too.
-        build.place(Placement(f"Landmark_Boardwalk_{index}", mesh_key, position,
-                              rotation, 1.0, collides=False, kind="landmark",
-                              landmark=f"grey-boardwalk-{index}"))
-        _landmark(build, f"grey-boardwalk-{index}", "Grey Moor Boardwalk",
-                  f"Landmark_Boardwalk_{index}", "bridge",
-                  (float(centre[0]), bank + 0.10 + deck, float(centre[1])))
-
-    # -- three causeway bridges --------------------------------------------
-    for index, (name, points) in enumerate(REG.BRIDGE_ROUTES.items()):
-        start, end = points[0], points[-1]
-        centre = ((start[0] + end[0]) * 0.5, (start[1] + end[1]) * 0.5)
-        length = float(np.hypot(end[0] - start[0], end[1] - start[1])) + 4.0
-        bank = max(float(t.height_at(*start)), float(t.height_at(*end)))
-        deck = 0.95
-        mesh_key = f"CausewayBridge_{index}"
-        build.add_mesh(mesh_key, MC.causeway_bridge(length=length, width=2.8,
-                                                    deck_height=deck,
-                                                    seed=seed + 331 + index))
-        rotation = math.atan2(end[0] - start[0], end[1] - start[1])
-        position = (float(centre[0]), bank + 0.08, float(centre[1]))
-        build.place(Placement(f"Landmark_CausewayBridge_{index}", mesh_key,
-                              position, rotation, 1.0, collides=False,
-                              kind="landmark", landmark=f"grey-causeway-bridge-{index}"))
-        _landmark(build, f"grey-causeway-bridge-{index}", "Grey Moor Causeway Bridge",
-                  f"Landmark_CausewayBridge_{index}", "bridge",
-                  (position[0], bank + 0.08 + deck, position[2]))
+    LAY.dress_crossings(build,seed)
 
     # -- the stone avenue up to the Great Barrow ---------------------------
     court = A["great_barrow_court"]
@@ -431,11 +385,10 @@ def populate_bog(build: REG.RegionBuild, seed: int,
 
     for index, ((cx, cz), radius, depth) in enumerate(REG.BOG_BASINS):
         wx, wz = cx * REG.SCALE, cz * REG.SCALE
-        floor = float(t.height_at(wx, wz))
-        if floor < REG.SEA_LEVEL + 0.2:
+        level = t._moor_pool_levels[index]
+        if level < REG.SEA_LEVEL + 0.4:
             continue
         # the pool fills the lower part of the hollow, not the whole of it
-        level = floor + depth * 0.42
         pool_radius = radius * REG.SCALE * 0.62
         key = f"BogPool_{index}"
         build.add_mesh(key, MC.bog_pool_skin(radius=pool_radius,

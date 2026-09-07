@@ -214,3 +214,24 @@ def clear_walk_corridors(build, corridors, clearances):
     build.placements[:] = kept
     build.notes.append(f"walk corridors: {removed} encroaching dressing placements removed")
     return removed
+
+
+def incise_channel(terrain, points, width=7.0, shoulder=7.0, floor=-0.6):
+    """Cut a downstream river bed without raising any surrounding ground.
+
+    Dense stations follow the cumulative minimum of the natural bed. Surface
+    classes are preserved for the region to paint after its water and roads.
+    """
+    points=np.asarray(points,dtype=float)
+    lengths=np.linalg.norm(np.diff(points,axis=0),axis=1)
+    distance=np.r_[0,np.cumsum(lengths)]
+    stations=np.linspace(0,distance[-1],max(2,int(distance[-1]/2)+1))
+    line=np.column_stack([np.interp(stations,distance,points[:,i]) for i in (0,1)])
+    heights=np.maximum(floor,np.minimum.accumulate(terrain.height_at(line[:,0],line[:,1])))
+    original=terrain.height.copy()
+    classes=terrain.surface.copy()
+    grade_road(terrain,line,heights,width=width,shoulder=shoulder,
+               surface=int(classes.flat[0]),clearance=width/2)
+    terrain.height=np.minimum(original,terrain.height)
+    terrain.surface=classes
+    return line,heights
