@@ -353,9 +353,10 @@ reading.
   command and `decode_server` builds a dictionary per command inside it: 2 400
   of each for that burst.
 * **Re-presenting a walking crowd is still 4 ms a frame** for a hundred actors.
-  What is left is spread thin: about a quarter of it is the surface ray under
-  each actor that moved, and most of the rest is `apply_server_state`'s pacing
-  arithmetic, which is a hundred lines of GDScript run per actor per packet.
+  What is left is spread thin: about a third of it is the surface ray under
+  each actor that moved (1.26 ms for a hundred), and most of the rest is
+  `apply_server_state`'s pacing arithmetic, which is a hundred lines of
+  GDScript run per actor per packet.
 * **A hundred creatures are 570 draw calls and 4.2 ms of GPU.** The static
   batching that took a region from 9 237 draw calls to 335 does not apply to
   skinned bodies; whether it can be made to is the next rendering question.
