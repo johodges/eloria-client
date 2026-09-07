@@ -72,6 +72,11 @@ toggle_notepad={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keyc
 toggle_options={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":79,"ctrl_pressed":true)] }
 toggle_mail={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":76,"ctrl_pressed":true)] }
 toggle_party={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":80,"ctrl_pressed":true)] }
+; Eternal Lands has no guild window and so no legacy key for one. Ctrl+G is
+; the quest journal's, so this takes Ctrl+R - R for roster, and one of the few
+; Ctrl letters both unbound here and not the modified form of a bare binding,
+; which Godot's inexact matching would otherwise let the bare one claim.
+toggle_guild={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":82,"ctrl_pressed":true)] }
 recenter_viewport={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":32)] }
 move_north={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":87)] }
 move_south={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":83)] }

@@ -10,6 +10,20 @@ const FRAME_COMBAT_IDLE := 15
 const ACTOR_BUFF_DOUBLE_SPEED := 1024
 const MAX_PAYLOAD := 65532
 
+## The guild packet's permissions field: what the server says this reader may
+## do. They live here, with the packet they arrive in, and the rank each power
+## starts at is deliberately not here at all - the server keeps that, and the
+## window asks these bits instead of comparing a number.
+const GUILD_CAN_CHAT := 1 << 0
+const GUILD_CAN_ROSTER := 1 << 1
+const GUILD_CAN_INTERGUILD := 1 << 2
+const GUILD_CAN_TEXT := 1 << 3
+const GUILD_CAN_ACCEPT := 1 << 4
+const GUILD_CAN_ALLY := 1 << 5
+const GUILD_CAN_RANK := 1 << 6
+const GUILD_CAN_OWN := 1 << 7
+const GUILD_CAN_LEAVE := 1 << 8
+
 enum ClientMessage {
 	RAW_TEXT = 0, MOVE_TO = 1, SEND_PM = 2, GET_PLAYER_INFO = 5, RUN_TO = 6,
 	SIT_DOWN = 7, SEND_ME_MY_ACTORS = 8, SEND_OPENING_SCREEN = 9, SEND_VERSION = 10,
@@ -89,6 +103,7 @@ enum ServerMessage {
 	ELORIA_PERK_CATALOG = 215, ELORIA_ATTRIBUTE_STATE = 216,
 	ELORIA_COUNTER_LAYOUT = 217,
 	ELORIA_MIX_STATE = 218,
+	ELORIA_GUILD_STATE = 213,
 	ADD_ACTOR_ANIMATION = 89,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
@@ -193,6 +208,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"counter_layout_v1",
 	"degraded_items_v1",
 	"experience64_v1",
+	"guild_window_v1",
 	"quest_archive_v1",
 	"quest_journal_v1",
 	"spell_power_v1",
@@ -953,6 +969,8 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return {"type": "remove_map_marker", "marker_id": u16(payload)}
 		ServerMessage.ELORIA_PARTY_STATE:
 			return decode_party(payload)
+		ServerMessage.ELORIA_GUILD_STATE:
+			return decode_guild(payload)
 		ServerMessage.ELORIA_QUEST_ARCHIVE_STATE:
 			return decode_quest_archive(payload)
 		ServerMessage.ELORIA_DEGRADED_ITEMS:
@@ -1380,6 +1398,150 @@ static func decode_party(payload: PackedByteArray) -> Dictionary:
 		return {"type": "invalid", "error": "party_trailing"}
 	return {"type": "party", "in_party": in_party, "members": members,
 		"invited_by": str(invite.value), "invite_seconds": u16(payload, offset)}
+
+## Command 213. The whole of a guild, as it looks to the one person reading it.
+##
+## Guilds were in the server long before anything drew them: the roster was a
+## column of chat that scrolled away, and `#join_guild` wanted a long name the
+## client had no way to learn. Everything here is the server's answer, down to
+## what this reader is allowed to do - the window offers a button because the
+## permissions field says so, never because it worked a rank out for itself.
+##
+## No guild is a state rather than a missing packet: `in_guild` false still
+## carries the price of founding one, the guilds this player has applied to,
+## and the directory they would pick from.
+static func decode_guild(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 11:
+		return {"type": "invalid", "error": "guild_length"}
+	var flags: int = int(payload[1])
+	var state: Dictionary = {
+		"type": "guild", "version": int(payload[0]),
+		"in_guild": (flags & 1) != 0, "rank": int(payload[2]),
+		"permissions": u16(payload, 3), "create_cost": u32(payload, 5),
+		"create_level": int(payload[9]), "join_level": int(payload[10])}
+	var text: Dictionary = _nul_run(payload, 11, 7)
+	if text.is_empty():
+		return {"type": "invalid", "error": "guild_text"}
+	var fields: Array = text.values as Array
+	var field_names: Array[String] = ["tag", "name", "owner", "motd",
+		"description", "join_info", "url"]
+	for index: int in range(field_names.size()):
+		state[field_names[index]] = fields[index]
+	var offset: int = int(text.offset)
+
+	# The seven counted sections, in the order the server writes them. Each one
+	# is read whole before the next begins, so a section that runs off the end
+	# refuses the frame instead of reading the next section's bytes as its own.
+	var section: Dictionary = _guild_section(payload, offset, 2, 1, 0)
+	if section.is_empty():
+		return {"type": "invalid", "error": "guild_members"}
+	var members: Array[Dictionary] = []
+	for raw: Variant in section.rows as Array:
+		var row: Dictionary = raw as Dictionary
+		var member_flags: int = int((row.head as PackedByteArray)[1])
+		members.append({
+			"rank": int((row.head as PackedByteArray)[0]),
+			"online": (member_flags & 1) != 0,
+			"is_self": (member_flags & 2) != 0,
+			"owner": (member_flags & 4) != 0,
+			"name": str((row.text as Array)[0])})
+	state["members"] = members
+	offset = int(section.offset)
+
+	section = _guild_section(payload, offset, 0, 1, 0)
+	if section.is_empty():
+		return {"type": "invalid", "error": "guild_applicants"}
+	state["applicants"] = _guild_names(section)
+	offset = int(section.offset)
+
+	section = _guild_section(payload, offset, 0, 2, 0)
+	if section.is_empty():
+		return {"type": "invalid", "error": "guild_allies"}
+	var allies: Array[Dictionary] = []
+	for raw: Variant in section.rows as Array:
+		var row: Array = (raw as Dictionary).text as Array
+		allies.append({"tag": str(row[0]), "name": str(row[1])})
+	state["allies"] = allies
+	offset = int(section.offset)
+
+	section = _guild_section(payload, offset, 1, 1, 0)
+	if section.is_empty():
+		return {"type": "invalid", "error": "guild_colours"}
+	var colours: Array[Dictionary] = []
+	for raw: Variant in section.rows as Array:
+		var row: Dictionary = raw as Dictionary
+		colours.append({"colour": int((row.head as PackedByteArray)[0]),
+			"tag": str((row.text as Array)[0])})
+	state["colours"] = colours
+	offset = int(section.offset)
+
+	section = _guild_section(payload, offset, 0, 1, 0)
+	if section.is_empty():
+		return {"type": "invalid", "error": "guild_pending"}
+	state["pending"] = _guild_names(section)
+	offset = int(section.offset)
+
+	section = _guild_section(payload, offset, 0, 2, 2)
+	if section.is_empty():
+		return {"type": "invalid", "error": "guild_directory"}
+	var directory: Array[Dictionary] = []
+	for raw: Variant in section.rows as Array:
+		var row: Dictionary = raw as Dictionary
+		var names: Array = row.text as Array
+		directory.append({"tag": str(names[0]), "name": str(names[1]),
+			"members": u16(row.tail as PackedByteArray)})
+	state["directory"] = directory
+	offset = int(section.offset)
+
+	section = _guild_section(payload, offset, 1, 1, 0)
+	if section.is_empty():
+		return {"type": "invalid", "error": "guild_palette"}
+	var palette: Array[Dictionary] = []
+	for raw: Variant in section.rows as Array:
+		var row: Dictionary = raw as Dictionary
+		palette.append({"colour": int((row.head as PackedByteArray)[0]),
+			"name": str((row.text as Array)[0])})
+	state["palette"] = palette
+	offset = int(section.offset)
+
+	if offset != payload.size():
+		return {"type": "invalid", "error": "guild_trailing"}
+	return state
+
+## One u16-counted section of the guild packet: `lead` raw bytes, then
+## `strings` NUL-terminated strings, then `trail` raw bytes, per row. The raw
+## runs come back unread so the caller names their fields; an empty dictionary
+## means the payload ended inside the section.
+static func _guild_section(payload: PackedByteArray, offset: int, lead: int,
+		strings: int, trail: int) -> Dictionary:
+	if offset + 2 > payload.size():
+		return {}
+	var count: int = u16(payload, offset)
+	offset += 2
+	var rows: Array[Dictionary] = []
+	for _index: int in range(count):
+		if offset + lead > payload.size():
+			return {}
+		var head: PackedByteArray = payload.slice(offset, offset + lead)
+		offset += lead
+		var text: Dictionary = _nul_run(payload, offset, strings)
+		if text.is_empty():
+			return {}
+		offset = int(text.offset)
+		if offset + trail > payload.size():
+			return {}
+		rows.append({"head": head, "text": text.values,
+			"tail": payload.slice(offset, offset + trail)})
+		offset += trail
+	return {"rows": rows, "offset": offset}
+
+## The first string of every row in a section, which is all three of the
+## packet's name lists carry.
+static func _guild_names(section: Dictionary) -> Array[String]:
+	var names: Array[String] = []
+	for raw: Variant in section.rows as Array:
+		names.append(str(((raw as Dictionary).text as Array)[0]))
+	return names
 
 ## Command 222. The Nymara Exchange: the player's gold, how many items are
 ## waiting in escrow, and the listings on offer.

@@ -171,12 +171,33 @@ func is_degraded_item(name: String) -> bool:
 
 func is_worn_slot(slot: int) -> bool:
 	return slot >= 0 and slot < 64 and (worn_slots_mask & (1 << slot)) != 0
+
+## True when the server said this player may do the thing named by `bit`. The
+## window asks this rather than comparing ranks, so a threshold that moves on
+## the server moves here with it.
+func guild_may(bit: int) -> bool:
+	return (int(guild.get("permissions", 0)) & bit) != 0
 ## The party, exactly as the server last stated it. `in_party` false with an
 ## `invited_by` name is a real state - somebody has been asked to join and has
 ## not answered - so the two are held together rather than as separate flags
 ## that could disagree.
 var party: Dictionary = {"in_party": false, "members": [],
 	"invited_by": "", "invite_seconds": 0}
+## The chat channel `#gm` arrives on. Eternal Lands' CHAT_GM, which nothing in
+## this client had a tab for until the guild window gave it one. The
+## permissions bits that go with the guild packet are on `EloriaProtocol`,
+## beside the packet they arrive in.
+const GUILD_CHAT_CHANNEL := 2
+
+## The player's guild, exactly as the server last stated it. `in_guild` false
+## is a real state and not an empty one: it still carries what founding a
+## guild costs and the directory of guilds to apply to, which is everything
+## the window needs to be useful to somebody who has none.
+var guild: Dictionary = {"in_guild": false, "rank": 0, "permissions": 0,
+	"create_cost": 0, "create_level": 0, "join_level": 0, "tag": "", "name": "",
+	"owner": "", "motd": "", "description": "", "join_info": "", "url": "",
+	"members": [], "applicants": [], "allies": [], "colours": [],
+	"pending": [], "directory": [], "palette": []}
 var item_detail: Dictionary = {"open": false}
 var inventory_state: Dictionary = {"gold": 0, "carried": 0, "capacity": 0,
 	"items": []}
@@ -338,6 +359,9 @@ func _on_connection_state_changed(value: String) -> void:
 		# Cleared on logout, not on a map change: a party outlives walking
 		# through a portal, and the server re-states it at login either way.
 		party = _empty_party_state()
+		# Cleared with the party and for the same reason: a guild belongs to
+		# the character who was logged in, and the server restates it at login.
+		guild = _empty_guild_state()
 		item_detail = {"open": false}
 		almanac = {}
 		fires = {}
@@ -927,6 +951,13 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 				"invited_by": str(event.invited_by),
 				"invite_seconds": int(event.invite_seconds)}
 			state_changed.emit(&"party")
+		"guild":
+			# Taken whole rather than merged: the packet is a complete
+			# statement, so a field it no longer carries has stopped being
+			# true rather than kept its last value.
+			guild = (event as Dictionary).duplicate(true)
+			guild.erase("type")
+			state_changed.emit(&"guild")
 		"marketplace":
 			marketplace = {"open": true, "gold": int(event.gold),
 				"returned_items": int(event.returned_items),
@@ -1200,6 +1231,13 @@ func _empty_player_info() -> Dictionary:
 func _empty_party_state() -> Dictionary:
 	return {"in_party": false, "members": [], "invited_by": "",
 		"invite_seconds": 0}
+
+func _empty_guild_state() -> Dictionary:
+	return {"in_guild": false, "rank": 0, "permissions": 0, "create_cost": 0,
+		"create_level": 0, "join_level": 0, "tag": "", "name": "", "owner": "",
+		"motd": "", "description": "", "join_info": "", "url": "",
+		"members": [], "applicants": [], "allies": [], "colours": [],
+		"pending": [], "directory": [], "palette": []}
 
 func _empty_marketplace_state() -> Dictionary:
 	return {"open": false, "gold": 0, "returned_items": 0, "listings": []}
