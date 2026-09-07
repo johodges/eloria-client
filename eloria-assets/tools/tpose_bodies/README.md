@@ -139,11 +139,19 @@ that armor's silhouette. Generic equipment can intersect retained horns/crystals
 or mushrooms. Ssarathi male has p99 upper-leg edge extension around 30–31 mm in
 Jog/Run_Female; its maximum is below 64 mm and rendered cycles show no open tear.
 Other reviewed bodies stay below the 20 mm p99 warning. Small source texture
-boundaries at collars remain visible. The equipment suite has three preexisting
-failures (unused fit groups, legwear hems, and closed-shell assumptions). A fourth
-check now exposes an older boot's 13 mm offset below the newly grounded body,
-requiring equipment refitting. These are recorded rather than hidden by an
-offline-only pass; the equipment suite is not claimed to be green.
+boundaries at collars remain visible. On the original build base, the equipment
+suite had three preexisting failures (unused fit groups, legwear hems, and
+closed-shell assumptions), plus an older boot's 13 mm offset below the newly
+grounded body. After integrating develop at `e34d3b50a`, its newer equipment
+passes the closed-shell check; three equipment checks still fail: unused fit
+groups, legwear hems, and boot clearance (26.2 mm below the luminous male sole).
+Equipment still requires refitting. The 15 body/native-binding checks and the
+Godot animation-looping test pass on the integrated code. The upstream torso
+cover/equip/unequip test passes on all 16 races; combined armour coverage passes
+528 transitions and 20,228 checks. Fresh Luminous female and Ssarathi female
+Godot captures cover walking, tints/headwear, fitted hair and native equipment.
+These limits are recorded rather than hidden by an offline-only pass; the
+equipment suite is not claimed to be green.
 
 ## Reproduce in this checkout
 

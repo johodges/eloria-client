@@ -2814,7 +2814,10 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
           flip: bool = False, roll: bool = False,
           span: tuple[float, float] | None = None) -> dict:
     """Fit one generated mesh to the rig and write it as a skinned piece."""
-    if kind in SOCKET_KIND or kind in PROP_KIND:
+    if kind in SOCKET_KIND or (kind in ea.GARMENT_KINDS and ea.garment_region(kind) in ('legs', 'boots')):
+        import limb_head_remap
+        return limb_head_remap.build(source, out, rig, kind, label, span)
+    if kind in PROP_KIND:
         return build_socket(source, out, rig, kind, label, flip, roll)
     if kind not in ea.GARMENT_KINDS:
         raise ValueError(
@@ -2823,6 +2826,11 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
                            ", ".join(sorted(SOCKET_KIND)),
                            ", ".join(sorted(PROP_KIND))))
     region = ea.garment_region(kind)
+    if region == "torso":
+        # Torso designs are retargeted directly from the original GLB's pose.
+        # They must never pass through seat/repose and its compounded girth.
+        import torso_remap
+        return torso_remap.build(source, out, rig, kind, label)
     if region not in MEASURE:
         raise ValueError(f"no measuring rule for region {region!r}; "
                          f"known: {sorted(MEASURE)}")
