@@ -24,7 +24,7 @@ func _run() -> void:
 			"trade_panel", "storage_panel", "ground_bag_panel",
 			"manufacturing_panel", "item_lists_panel", "console_panel",
 			"reading_panel", "popup_panel", "settings_panel", "actor_hud_menu",
-			"spells_window", "emotes_window", "ranging_window",
+			"spells_window", "emotes_window", "ranging_window", "guild_window",
 			"settings_window", "reference_window", "player_info_panel",
 			"sigil_window"]:
 		var window: Control = main.get(member) as Control

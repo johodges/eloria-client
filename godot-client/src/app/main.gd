@@ -44,6 +44,7 @@ const SpellsWindowScript := preload("res://src/ui/spells_window.gd")
 const SummoningWindowScript := preload("res://src/ui/summoning_window.gd")
 const EmotesWindowScript := preload("res://src/ui/emotes_window.gd")
 const RangingWindowScript := preload("res://src/ui/ranging_window.gd")
+const GuildWindowScript := preload("res://src/ui/guild_window.gd")
 const SettingsWindowScript := preload("res://src/ui/settings_window.gd")
 const ReferenceWindowScript := preload("res://src/ui/reference_window.gd")
 const ActiveBuffBarScript := preload("res://src/ui/active_buff_bar.gd")
@@ -296,6 +297,7 @@ var spells_window: Control
 var summoning_window: Control
 var emotes_window: Control
 var ranging_window: Control
+var guild_window: Control
 var settings_window: Control
 var reference_window: Control
 ## Client-side presentation switches. None of them changes what the server
@@ -891,6 +893,9 @@ func _ready() -> void:
 	emotes_window.call("configure", _perform_emote)
 	ranging_window = RangingWindowScript.new()
 	game_view.add_child(ranging_window)
+	guild_window = GuildWindowScript.new()
+	game_view.add_child(guild_window)
+	guild_window.call("configure", Network.send_chat)
 	settings_window = SettingsWindowScript.new()
 	game_view.add_child(settings_window)
 	settings_window.setting_changed.connect(_on_client_setting_changed)
@@ -1026,6 +1031,7 @@ func _ready() -> void:
 	banner_menu_enabled.toggled.connect(_on_banner_menu_enabled_toggled)
 	$GameView/ChatTabs/All.pressed.connect(_on_chat_tab_pressed.bind("all"))
 	$GameView/ChatTabs/History.pressed.connect(_on_chat_tab_pressed.bind("history"))
+	$GameView/ChatTabs/Guild.pressed.connect(_on_chat_tab_pressed.bind("guild"))
 	$GameView/ChatTabs/Options.pressed.connect(_on_options_pressed)
 	_build_hud_layout_menu()
 	_load_hud_layout()
@@ -2701,7 +2707,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		["toggle_notepad", _on_info_button_pressed],
 		["toggle_options", _on_options_pressed],
 		["toggle_mail", func() -> void: extension_windows.call("toggle_mail")],
-		["toggle_party", func() -> void: extension_windows.call("toggle_party")]]
+		["toggle_party", func() -> void: extension_windows.call("toggle_party")],
+		["toggle_guild", func() -> void: guild_window.call("toggle")]]
 	for action_and_handler: Array in window_actions:
 		if event.is_action_pressed(str(action_and_handler[0])):
 			(action_and_handler[1] as Callable).call()
@@ -2738,6 +2745,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			emotes_window.call("close")
 		elif ranging_window != null and bool(ranging_window.call("is_open")):
 			ranging_window.call("close")
+		elif guild_window != null and bool(guild_window.call("is_open")):
+			guild_window.call("close")
 		elif sigil_window != null and sigil_window.is_open():
 			sigil_window.close()
 		elif settings_window != null and settings_window.is_open():
@@ -3037,6 +3046,7 @@ func _on_chat_tab_pressed(tab: String) -> void:
 	_chat_tab = tab
 	$GameView/ChatTabs/All.button_pressed = tab == "all"
 	$GameView/ChatTabs/History.button_pressed = tab == "history"
+	$GameView/ChatTabs/Guild.button_pressed = tab == "guild"
 	$GameView/ChatTabs/Options.button_pressed = false
 	for channel_index: int in range(3):
 		var channel_button: Button = get_node(
@@ -5445,8 +5455,8 @@ func _configure_window_layers() -> void:
 	# default 0 slides underneath the local player's name and bars, which
 	# follow the player around the middle of the screen.
 	for window_layer: Control in [spells_window, summoning_window, emotes_window,
-			ranging_window, settings_window, reference_window, player_info_panel,
-			sigil_window]:
+			ranging_window, guild_window, settings_window, reference_window,
+			player_info_panel, sigil_window]:
 		if window_layer != null:
 			window_layer.z_index = 26
 	_make_scene_windows_draggable()
@@ -5547,6 +5557,10 @@ func _chat_line_allowed(line: Dictionary) -> bool:
 	return console_commands.allows(speaker, text)
 
 func _chat_line_visible(channel: int) -> bool:
+	# `#gm` arrives on the legacy CHAT_GM channel and used to be findable only
+	# by reading past everything else in View All.
+	if _chat_tab == "guild":
+		return channel == AppState.GUILD_CHAT_CHANNEL
 	if not _chat_tab.begins_with("channel:"):
 		return true
 	var slot: int = int(_chat_tab.trim_prefix("channel:"))
@@ -5557,6 +5571,7 @@ func _formatted_chat_line(line: Dictionary) -> String:
 	var prefix: String = ""
 	match channel:
 		1: prefix = "[PM] "
+		AppState.GUILD_CHAT_CHANNEL: prefix = "[Guild] "
 		3, 255: prefix = "[System] "
 		AppState.LOCAL_CHAT_CHANNEL: prefix = "[Client] "
 		5, 6, 7:
