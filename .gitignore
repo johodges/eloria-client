@@ -43,3 +43,14 @@ godot-client/Godot_v*.exe
 
 # Generated beside strings.csv by the CSV translation importer.
 godot-client/**/*.translation
+
+# T-pose pipeline snapshots, intermediate models and render evidence.
+/tpose-body-build/
+# Textures extracted by Godot while importing self-contained body GLBs.
+godot-client/assets/actors/native/races/*_texture_0.png
+godot-client/assets/actors/native/races/*_wardrobe_grey.png
+godot-client/assets/actors/native/races/*_base_color.jpg
+godot-client/assets/actors/native/races/*_metallic_roughness.jpg
+godot-client/assets/actors/native/races/*_normal.jpg
+godot-client/assets/actors/native/races/*_[0-9].png
+godot-client/assets/actors/native/equipment/*_[0-9].png

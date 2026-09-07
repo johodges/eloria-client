@@ -2,12 +2,12 @@
   "schemaVersion": 1,
   "fallbackAction": "idle",
   "strideMetresPerSecond": {
-    "walk": 0.652,
-    "run": 2.666
+    "walk": 0.767,
+    "run": 2.759
   },
   "facingOffsets": {
-    "walk": 23.3,
-    "run": 23.2
+    "walk": 0.0,
+    "run": 0.0
   },
   "loopingClips": [
     "Dance_Simple",

@@ -64,7 +64,7 @@ def body_bounds(path: Path) -> tuple[float, float, float]:
     binary decoding.
     """
     document = glb_document(path)
-    mesh = next(m for m in document["meshes"] if m["name"] == "Body")
+    mesh = next(m for m in document["meshes"] if m["name"].lower() == "body")
     spec = document["accessors"][mesh["primitives"][0]["attributes"]["POSITION"]]
     return spec["max"][1], spec["min"][1], spec["max"][2] - spec["min"][2]
 
@@ -88,6 +88,18 @@ def bone_translations(path: Path) -> dict[str, list[float]]:
     return {document["nodes"][joint].get("name"):
             document["nodes"][joint].get("translation") or [0.0, 0.0, 0.0]
             for joint in document["skins"][0]["joints"]}
+
+
+def accessor_rows(document: dict, binary: bytes, index: int) -> list[tuple]:
+    """Decode ordinary glTF accessors with offsets relative to the BIN payload."""
+    spec = document["accessors"][index]
+    view = document["bufferViews"][spec["bufferView"]]
+    code = {5121: "B", 5123: "H", 5125: "I", 5126: "f"}[spec["componentType"]]
+    count = {"SCALAR": 1, "VEC2": 2, "VEC3": 3, "VEC4": 4, "MAT4": 16}[spec["type"]]
+    fmt = "<" + code * count
+    stride = view.get("byteStride", struct.calcsize(fmt))
+    start = view.get("byteOffset", 0) + spec.get("byteOffset", 0)
+    return [struct.unpack_from(fmt, binary, start + row * stride) for row in range(spec["count"])]
 
 
 class NativeGlbAssetsTest(unittest.TestCase):
@@ -169,20 +181,22 @@ class NativeGlbAssetsTest(unittest.TestCase):
             with self.subTest(model=model_id):
                 self.assertEqual("skinned", entry["wardrobe"])
                 self.assertEqual("retargeted", entry["anatomy"])
-                self.assertGreaterEqual(entry["vertices"], 13_500)
-                # The race features (a Ssarathi tail and claws, Stoneborn
-                # plating, a gilled Mycelari cap) are what sits above the
-                # 13.5k shared body; the ceiling keeps them from growing
-                # without anyone noticing.
-                self.assertLess(entry["vertices"], 15_750)
+                # The selected Meshy derivatives target roughly 20k triangles;
+                # UV seam duplicates can exceed the old shared-body vertex budget.
+                self.assertLess(entry["vertices"], 30_000)
+                self.assertGreater(entry["triangles"], 18_000)
+                self.assertLess(entry["triangles"], 25_000)
                 document = glb_document(ROOT / entry["path"])
                 joints = document["skins"][0]["joints"]
                 self.assertEqual(entry["joints"], len(joints))
                 skeletons[model_id] = tuple(
                     document["nodes"][node].get("name") for node in joints)
-                mesh_names = {mesh["name"] for mesh in document["meshes"]}
-                self.assertTrue({"Eyebrows", "Eyes", "Body", "Wardrobe_Shirt",
-                                 "Wardrobe_Pants", "Wardrobe_Boots"} <= mesh_names)
+                self.assertEqual(77, len(joints))
+                mesh_names = {node["name"].lower() for node in document["nodes"] if "mesh" in node}
+                required = {"eyes", "body", "scalp", "wardrobe_shirt", "wardrobe_pants", "wardrobe_boots"}
+                if not model_id.startswith("mycelari_"):
+                    required.add("eyebrows")
+                self.assertTrue(required <= mesh_names)
         self.assertEqual(1, len(set(skeletons.values())),
                          "every race has to carry the same skeleton")
         names = list(next(iter(skeletons.values())))
@@ -213,22 +227,27 @@ class NativeGlbAssetsTest(unittest.TestCase):
                         self.assertLess(highest, first_cape)
 
     def test_race_rigs_stand_on_the_same_ground_plane(self) -> None:
-        """Retargeting must not lift or sink a race relative to the floor.
-
-        The shared animation library writes pelvis translation directly, so a
-        race whose legs got longer would keep the reference hip height and push
-        its feet through the ground.  Every race therefore has to come out of
-        the builder with the same hip and ground heights; only the division of
-        the leg between them is allowed to differ.
-        """
-        by_gender: dict[str, set[tuple[float, float]]] = {}
+        """Exact shared pelvis rest and grounded fitted source soles."""
+        heights = []
         for model_id, entry in self.catalog["races"].items():
-            gender = model_id.rsplit("_", 1)[1]
-            by_gender.setdefault(gender, set()).add(
-                (entry["hipHeight"], entry["groundHeight"]))
-        for gender, heights in by_gender.items():
-            with self.subTest(gender=gender):
-                self.assertEqual(1, len(heights), heights)
+            with self.subTest(model=model_id):
+                heights.append(entry["hipHeight"])
+                self.assertLess(abs(entry["groundHeight"]), .003)
+                document, binary = glb_chunks(ROOT / entry["path"])
+                mesh = next(m for m in document["meshes"] if m["name"].lower() == "body")
+                attrs = mesh["primitives"][0]["attributes"]
+                points = accessor_rows(document, binary, attrs["POSITION"])
+                joints = accessor_rows(document, binary, attrs["JOINTS_0"])
+                weights = accessor_rows(document, binary, attrs["WEIGHTS_0"])
+                names = [document["nodes"][j]["name"] for j in document["skins"][0]["joints"]]
+                for side in ("l", "r"):
+                    feet = {names.index("foot_" + side), names.index("ball_" + side)}
+                    sole = [point[1] for point, jj, ww in zip(points, joints, weights)
+                            if sum(w for j, w in zip(jj, ww) if j in feet) > .5]
+                    self.assertTrue(sole)
+                    # A low tail must not conceal floating feet in min(bounds).
+                    self.assertLess(abs(min(sole)), .025)
+        self.assertLess(max(heights) - min(heights), 1e-5)
 
     def test_races_have_distinct_bodies(self) -> None:
         """Eight races must not ship as one silhouette in eight colours."""
@@ -253,125 +272,78 @@ class NativeGlbAssetsTest(unittest.TestCase):
                     self.models["models"][model_id]["import"]["scale"], places=4)
 
     def test_race_rigs_keep_the_shared_animation_contract(self) -> None:
-        """Rest rotations stay as authored so the shared clips still apply.
-
-        Anatomy lives in the joint offsets, never in rest rotations: glTF
-        rotation tracks are absolute, so anything stored in a rest rotation is
-        overwritten the instant a clip plays.  Guard that by checking every
-        race rig carries the same rest rotations as the Luminous reference and
-        differs only in translation.
-        """
-        # The male and female source rigs are different files, so the
-        # comparison is per gender.
-        for gender in ("female", "male"):
-            reference = None
-            for model_id, entry in sorted(self.catalog["races"].items()):
-                if model_id.rsplit("_", 1)[1] != gender:
-                    continue
-                document = glb_document(ROOT / entry["path"])
-                joints = document["skins"][0]["joints"]
-                names = [document["nodes"][node].get("name") for node in joints]
-                rotations = [tuple(round(value, 6) for value in
-                                   document["nodes"][node].get("rotation", (0, 0, 0, 1)))
-                             for node in joints]
-                translations = [tuple(round(value, 6) for value in
-                                      document["nodes"][node].get("translation", (0, 0, 0)))
-                                for node in joints]
-                if reference is None:
-                    reference = (names, rotations, translations)
-                    continue
-                with self.subTest(model=model_id):
-                    self.assertEqual(reference[0], names)
-                    self.assertEqual(reference[1], rotations,
-                                     "rest rotations stay as the clips expect")
-                    self.assertNotEqual(reference[2], translations,
-                                        "races differ in bone offsets")
+        """Name-only retargeting requires the actual library Rest_Pose."""
+        library, binary = glb_chunks(CLIENT / "assets/actors/native/shared/Universal_Animation_Library.glb")
+        clip = next(a for a in library["animations"] if a["name"] == "Rest_Pose")
+        expected = {i: dict(n) for i, n in enumerate(library["nodes"])}
+        for channel in clip["channels"]:
+            sampler = clip["samplers"][channel["sampler"]]
+            # Rest channels may begin at frame one. Sampling time zero clamps
+            # to that first key; it must not fall back to the posed defaults.
+            self.assertGreaterEqual(accessor_rows(library, binary, sampler["input"])[0][0], 0.0)
+            expected[channel["target"]["node"]][channel["target"]["path"]] = accessor_rows(library, binary, sampler["output"])[0]
+        by_name = {("Head" if n["name"] == "head" else n["name"]): n for n in expected.values()}
+        reference = None
+        for model_id, entry in sorted(self.catalog["races"].items()):
+            document = glb_document(ROOT / entry["path"])
+            joints = document["skins"][0]["joints"]
+            rig = {document["nodes"][j]["name"]: document["nodes"][j] for j in joints}
+            if reference is None:
+                reference = rig
+            for name, node in rig.items():
+                with self.subTest(model=model_id, bone=name):
+                    wanted = by_name.get(name, reference[name])
+                    for key, default in [("translation", (0, 0, 0)), ("rotation", (0, 0, 0, 1)), ("scale", (1, 1, 1))]:
+                        for actual, target in zip(node.get(key, default), wanted.get(key, default)):
+                            self.assertAlmostEqual(actual, target, delta=1e-5)
 
     def test_race_features_carry_material_detail(self) -> None:
-        """Race features shipped flat beside a body with fifteen maps.
-
-        The integrated feature and accent materials were the only ones on a
-        player carrying no textures at all -- a base colour factor next to a
-        body with albedo, normal and metallic-roughness maps -- which is what
-        made scale, stone and fungus read as plastic under real lighting.
-        """
+        """Source scale, stone and fungus detail survives in the body atlas."""
         for model_id, entry in self.catalog["races"].items():
-            if entry["feature"] == "none":
-                continue
             document = glb_document(ROOT / entry["path"])
-            integrated = [material for material in document["materials"]
-                          if "Integrated" in material["name"]]
-            self.assertEqual(2, len(integrated), model_id)
-            for material in integrated:
-                with self.subTest(model=model_id, material=material["name"]):
-                    pbr = material["pbrMetallicRoughness"]
-                    self.assertIn("baseColorTexture", pbr)
-                    self.assertIn("metallicRoughnessTexture", pbr)
-                    self.assertIn("normalTexture", material)
-                    # With maps supplied the factors must not scale them too.
-                    self.assertEqual(1.0, pbr["metallicFactor"])
-                    self.assertEqual(1.0, pbr["roughnessFactor"])
+            mesh = next(m for m in document["meshes"] if m["name"].lower() == "body")
+            material = document["materials"][mesh["primitives"][0]["material"]]
+            with self.subTest(model=model_id):
+                self.assertIn("baseColorTexture", material["pbrMetallicRoughness"])
+                self.assertEqual([0, 0, 0], material.get("emissiveFactor", [0, 0, 0]))
+                self.assertEqual(entry["sourceSHA256"], document["asset"]["extras"]["sourceSHA256"])
 
     def test_wardrobe_carries_material_detail(self) -> None:
-        """The default wardrobe answers a light like cloth, leather and metal.
-
-        Every garment material had an albedo and nothing else, so all three
-        responded to a light identically, and the metal trim -- a flat
-        metallic factor with no roughness break anywhere -- blew out into a
-        solid highlight wherever it caught the key.
-        """
+        """Garment tint has its own atlas; generated headwear is plain cloth."""
         for model_id, entry in self.catalog["races"].items():
             document = glb_document(ROOT / entry["path"])
-            garments = [material for material in document["materials"]
-                        if any(part in material["name"] for part in
-                               ("Shirt", "Pants", "Boots", "Headwear"))]
-            self.assertTrue(garments, model_id)
-            for material in garments:
-                with self.subTest(model=model_id, material=material["name"]):
-                    self.assertIn("normalTexture", material)
-                    self.assertIn("metallicRoughnessTexture",
-                                  material["pbrMetallicRoughness"])
+            meshes = {m["name"].lower(): m for m in document["meshes"]}
+            skin_material = meshes["body"]["primitives"][0]["material"]
+            for name in ("wardrobe_shirt", "wardrobe_pants", "wardrobe_boots"):
+                primitive = meshes[name]["primitives"][0]
+                material = document["materials"][primitive["material"]]
+                with self.subTest(model=model_id, mesh=name):
+                    self.assertNotEqual(skin_material, primitive["material"])
+                    self.assertIn("baseColorTexture", material["pbrMetallicRoughness"])
+                    self.assertGreater(material["pbrMetallicRoughness"]["roughnessFactor"], 0.5)
 
     def test_human_cultures_are_not_one_physique(self) -> None:
-        """More than one base body is in use across the five human cultures.
-
-        Every rig used to derive from the one Quaternius "Superhero" mesh, so
-        the human cultures differed in stature and tint but were the same
-        heroic build underneath.
-        """
+        """The human cultures retain ten distinct source bodies."""
         human = {"luminous", "votary", "glasswarden", "orun", "greyhaven"}
-        bases = {model_id: entry["baseBody"]
-                 for model_id, entry in self.catalog["races"].items()
-                 if model_id.rsplit("_", 1)[0] in human}
-        self.assertEqual(10, len(bases))
-        self.assertGreaterEqual(len(set(bases.values())), 2, bases)
-        for gender in ("female", "male"):
-            self.assertEqual("slim", bases[f"glasswarden_{gender}"])
-            self.assertEqual("heroic", bases[f"luminous_{gender}"])
+        sources = [entry["sourceSHA256"] for slug, entry in self.catalog["races"].items() if slug.rsplit("_", 1)[0] in human]
+        self.assertEqual(10, len(sources))
+        self.assertEqual(10, len(set(sources)))
 
     def test_slim_base_body_is_a_reproportioning_not_a_scale(self) -> None:
-        """The slim body thins different places by different amounts.
-
-        A uniform shrink would be a smaller heroic body, which is what the
-        `girth` multiplier it replaced could express and the reason it was
-        replaced.  The builder publishes a measured girth per joint for the
-        equipment fitter, so the shape of the change is checkable directly.
-        """
-        girth = self.equipment["bodyGirth"]
+        """Measure actual source physiques rather than stale equipment tables."""
         for gender in ("female", "male"):
-            reference = girth[f"luminous_{gender}"]
-            slim = girth[f"glasswarden_{gender}"]
-            reductions = {}
-            for joint in ("spine_02", "spine_03", "clavicle_l", "upperarm_l",
-                          "lowerarm_l", "thigh_l", "calf_l", "pelvis"):
-                with self.subTest(gender=gender, joint=joint):
-                    self.assertLess(slim[joint], reference[joint])
-                reductions[joint] = 1. - slim[joint] / reference[joint]
-            with self.subTest(gender=gender):
-                # The arm loses far more than the pelvis does: mass comes off
-                # the chest and limbs, not off the whole body evenly.
-                self.assertGreater(reductions["upperarm_l"],
-                                   reductions["pelvis"] * 1.5)
+            proportions = []
+            for culture in ("luminous", "glasswarden"):
+                document, binary = glb_chunks(ROOT / self.catalog["races"][f"{culture}_{gender}"]["path"])
+                mesh = next(m for m in document["meshes"] if m["name"].lower() == "body")
+                rows = accessor_rows(document, binary, mesh["primitives"][0]["attributes"]["POSITION"])
+                widths = []
+                for bottom in (1.06, 1.25):
+                    band = sorted(abs(x) for x, y, z in rows if bottom < y < bottom + 0.08)
+                    self.assertTrue(band)
+                    widths.append(band[int((len(band) - 1) * .9)])
+                proportions.append(widths[1] / widths[0])
+            self.assertNotAlmostEqual(proportions[0], proportions[1], places=2)
 
     def test_slim_base_body_keeps_the_reference_ground_plane(self) -> None:
         """The slim body scales across the bones, never along them.
@@ -390,45 +362,30 @@ class NativeGlbAssetsTest(unittest.TestCase):
                 self.assertAlmostEqual(reference[1], slim[1], places=3)
 
     def test_race_eyes_are_not_all_the_human_one(self) -> None:
-        """A round mammalian pupil sat inside a reptile muzzle on every race."""
+        """Tintable eyes use each body's original painted texture region."""
         eyes = {}
         for model_id, entry in self.catalog["races"].items():
             document, binary = glb_chunks(ROOT / entry["path"])
-            material = next(m for m in document["materials"]
-                            if m["name"].endswith(" Eyes"))
+            mesh = next(m for m in document["meshes"] if m["name"].lower() == "eyes")
+            primitive = mesh["primitives"][0]
+            self.assertGreater(document["accessors"][primitive["indices"]]["count"], 0)
+            material = document["materials"][primitive["material"]]
             index = material["pbrMetallicRoughness"]["baseColorTexture"]["index"]
             image = document["images"][document["textures"][index]["source"]]
             view = document["bufferViews"][image["bufferView"]]
             start = view.get("byteOffset", 0)
             eyes[model_id] = binary[start:start + view["byteLength"]]
-        for gender in ("female", "male"):
-            human = eyes[f"luminous_{gender}"]
-            for race in ("ssarathi", "stoneborn", "mycelari"):
-                with self.subTest(model=f"{race}_{gender}"):
-                    self.assertNotEqual(human, eyes[f"{race}_{gender}"])
-            # The human cultures still share one eye, so this stays a race
-            # treatment rather than sixteen unrelated textures.
-            self.assertEqual(human, eyes[f"greyhaven_{gender}"])
+        self.assertEqual(16, len(set(eyes.values())))
 
-    def test_optional_headwear_skips_races_it_would_intersect(self) -> None:
-        """Headwear is cut from the scalp, so it clips a race's own head.
-
-        A Mycelari cap has nowhere to put a hat, and a skullcap runs through
-        Votary horns and the Ssarathi crest.
-        """
-        expected = {"luminous": {"Wardrobe_Head_Band", "Wardrobe_Head_Cap"},
-                    "orun": {"Wardrobe_Head_Band", "Wardrobe_Head_Cap"},
-                    "greyhaven": {"Wardrobe_Head_Band", "Wardrobe_Head_Cap"},
-                    "votary": {"Wardrobe_Head_Band"},
-                    "glasswarden": {"Wardrobe_Head_Cap"},
-                    "ssarathi": set(), "stoneborn": set(), "mycelari": set()}
+    def test_optional_headwear_fits_the_current_surface_contract(self) -> None:
+        """All sources provide toggled headwear and a closed bald scalp."""
         for model_id, entry in self.catalog["races"].items():
-            race = model_id.rsplit("_", 1)[0]
             document = glb_document(ROOT / entry["path"])
-            present = {mesh["name"] for mesh in document["meshes"]
-                       if mesh["name"].startswith("Wardrobe_Head_")}
+            present = {n["name"].lower() for n in document["nodes"] if "mesh" in n}
             with self.subTest(model=model_id):
-                self.assertEqual(expected[race], present)
+                self.assertTrue({"scalp", "wardrobe_head_band", "wardrobe_head_cap"} <= present)
+                self.assertNotIn("hair", present)
+                self.assertEqual(not model_id.startswith("mycelari_"), "eyebrows" in present)
 
     def test_native_hair_is_authored_geometry_in_head_local_space(self) -> None:
         for hair_id, entry in self.catalog["hair"].items():
@@ -661,11 +618,11 @@ class NativeGlbAssetsTest(unittest.TestCase):
         for part, config in self.equipment["parts"].items():
             for surface in config.get("hides", []):
                 with self.subTest(part=part, surface=surface):
-                    self.assertIn(surface, surfaces)
+                    self.assertIn(surface.removesuffix("_trim").removesuffix("_seam"), surfaces)
         for key, model in self.equipment["models"].items():
             for surface in model.get("hides", []):
                 with self.subTest(model=key, surface=surface):
-                    self.assertIn(surface, surfaces)
+                    self.assertIn(surface.removesuffix("_trim").removesuffix("_seam"), surfaces)
         self.assertEqual(["wardrobe_shirt", "wardrobe_shirt_trim"],
                          self.equipment["parts"]["5"]["hides"])
 

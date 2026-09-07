@@ -543,11 +543,11 @@ func _add_hair_variant(style: int, color: Color) -> void:
 		(node_value as MeshInstance3D).visible = false
 	attachment.name = "AppearanceHair_%d" % style
 	native_hair.name = "NativeHair"
-	# No scale compensation here: a bone attachment inherits whatever rest
-	# scale its bone carries, and the head's size lives in its vertices
-	# now, so a hairstyle mounted plainly is already the right size.  The
-	# version that scaled by the head bone squared the growth and pushed
-	# the style off the skull.
+	# Skull proportions are baked into each body. Fit shared hairstyles in
+	# Head-local space without changing the skeleton or its inverse binds.
+	var hair_fit: Dictionary = _model_config.get("hairFit", {}) as Dictionary
+	native_hair.scale = _vector3(hair_fit.get("scale", []), Vector3.ONE)
+	native_hair.position = _vector3(hair_fit.get("offset", []), Vector3.ZERO)
 	attachment.add_child(native_hair)
 	for node_value: Node in native_hair.find_children("*", "MeshInstance3D", true, false):
 		_tint_mesh(node_value as MeshInstance3D, color)
