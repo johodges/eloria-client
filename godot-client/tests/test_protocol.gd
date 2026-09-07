@@ -41,6 +41,9 @@ func _init() -> void:
 		"navigation_hud_v1": EloriaProtocol.ServerMessage.ELORIA_NAVIGATION_STATE,
 		"achievements_window_v1":
 			EloriaProtocol.ServerMessage.ELORIA_ACHIEVEMENTS_STATE,
+		"achievements_catalog_v1":
+			EloriaProtocol.ServerMessage.ELORIA_ACHIEVEMENTS_CATALOG,
+		"actor_titles_v1": EloriaProtocol.ServerMessage.ELORIA_ACTOR_TITLES,
 		"actor_footprints_v1":
 			EloriaProtocol.ServerMessage.ELORIA_ACTOR_FOOTPRINTS,
 		"attribute_state_v1":
@@ -97,6 +100,18 @@ func _init() -> void:
 		# No degradation chains authored: a real answer, not a missing packet.
 		EloriaProtocol.ServerMessage.ELORIA_DEGRADED_ITEMS: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_ACHIEVEMENTS_STATE: "00000000",
+		# Two of the catalogue, wearing the title the second one grants: one
+		# finished, one four hundredths of the way along. Taken from the
+		# server's own builder in eloria/protocol.py.
+		EloriaProtocol.ServerMessage.ELORIA_ACHIEVEMENTS_CATALOG:
+			"7468652043756c6c657200020001000000010000000166697273745f626c"
+			+ "6f6f6400466972737420426c6f6f6400436f6d626174004b696c6c20736f"
+			+ "6d657468696e672e000004000000640000000063756c6c65720043756c6c"
+			+ "6572206f66207468652057696c647300436f6d62617400412068756e6472"
+			+ "65642063726561747572657320646f776e2e007468652043756c6c657200",
+		# One player on the map, wearing one title.
+		EloriaProtocol.ServerMessage.ELORIA_ACTOR_TITLES:
+			"01005b007468652043756c6c657200",
 		EloriaProtocol.ServerMessage.ELORIA_EXPERIENCE_STATE: "0000",
 		# No creature larger than one tile in this profile: a real
 		# answer, and the one an unchanged content pack still gives.
@@ -1455,6 +1470,59 @@ func _init() -> void:
 		_hex("010000004100")).get("error", "")) == "achievements_counter_value",
 		"a counter whose value was cut off is refused rather than read as zero")
 
+	# Command 219, the authored catalogue: what there is to be proud of, how
+	# far along each one is, and the title it grants. A separate packet from
+	# 244 above, which carries the older counters-and-names model that the
+	# Counters tab still reads.
+	var catalogue: Dictionary = EloriaProtocol.decode_server(219, _hex(
+		"7468652043756c6c657200020001000000010000000166697273745f626c6f6f6400"
+		+ "466972737420426c6f6f6400436f6d626174004b696c6c20736f6d657468696e67"
+		+ "2e000004000000640000000063756c6c65720043756c6c6572206f662074686520"
+		+ "57696c647300436f6d62617400412068756e647265642063726561747572657320"
+		+ "646f776e2e007468652043756c6c657200"))
+	_expect(catalogue.type == "achievements_catalog"
+		and str(catalogue.worn_title) == "the Culler"
+		and (catalogue.entries as Array).size() == 2,
+		"the catalogue packet carries the worn title and every entry")
+	var earned: Dictionary = (catalogue.entries as Array)[0]
+	_expect(str(earned.key) == "first_blood" and str(earned.name) == "First Blood"
+		and str(earned.category) == "Combat" and bool(earned.done)
+		and int(earned.progress) == 1 and int(earned.target) == 1,
+		"a finished entry carries its key, name, category and its bar")
+	var pending: Dictionary = (catalogue.entries as Array)[1]
+	_expect(not bool(pending.done) and int(pending.progress) == 4
+		and int(pending.target) == 100 and str(pending.title) == "the Culler"
+		and str(pending.description).begins_with("A hundred"),
+		"an unfinished entry carries its progress, its title and its blurb")
+	var empty_catalogue: Dictionary = EloriaProtocol.decode_server(219,
+		_hex("000000"))
+	_expect(empty_catalogue.type == "achievements_catalog"
+		and (empty_catalogue.entries as Array).is_empty(),
+		"a world with no achievements is answered rather than left silent")
+	for broken_catalogue: String in ["00", "000100", "0001000100000001000000"]:
+		_expect(EloriaProtocol.decode_server(219,
+				_hex(broken_catalogue)).type == "invalid",
+			"a malformed catalogue payload is rejected (%s)" % broken_catalogue)
+
+	# Command 211, who on this map is calling themselves what. Its own packet
+	# because the display name already packs a colour byte, a name and a guild
+	# tag into one string this client unpicks by hand.
+	var worn_titles: Dictionary = EloriaProtocol.decode_server(211,
+		_hex("02005b007468652043756c6c657200" + "5c00" + "00"))
+	_expect(worn_titles.type == "actor_titles"
+		and (worn_titles.titles as Array).size() == 2,
+		"the titles packet carries a row per player on the map")
+	var first_title: Dictionary = (worn_titles.titles as Array)[0]
+	_expect(int(first_title.actor_id) == 91
+		and str(first_title.title) == "the Culler",
+		"a title row names the actor wearing it")
+	_expect(str(((worn_titles.titles as Array)[1] as Dictionary).title) == "",
+		"an empty title is a real row: it is how somebody takes theirs off")
+	for broken_titles: String in ["00", "0100", "01005b0041"]:
+		_expect(EloriaProtocol.decode_server(211,
+				_hex(broken_titles)).type == "invalid",
+			"a malformed titles payload is rejected (%s)" % broken_titles)
+
 	# Commands 242 and 243, the two halves of the worn-item answer. They exist
 	# separately because the two wires carry different identity: a window that
 	# knows an item's name can look it up, and the inventory grid, which knows
@@ -1881,8 +1949,21 @@ func _init() -> void:
 	_expect(bare.type == "player_info"
 		and (bare.achievements as Array).is_empty(),
 		"a player with nothing earned decodes to an empty list, not a failure")
+	_expect(str(bare.get("title", "?")) == "",
+		"a server that sends no title is not a failure; the field is absent")
+	# The worn title, appended after the achievements. A server without titles
+	# sends the frame above unchanged, which is the whole reason it is a
+	# trailing field rather than one slotted into the middle.
+	var titled: Dictionary = EloriaProtocol.decode_server(228, _hex(
+		"5b0001004100466972737420426c6f6f64007468652043756c6c657200"))
+	_expect(titled.type == "player_info"
+		and str(titled.title) == "the Culler"
+		and (titled.achievements as Array) == ["First Blood"],
+		"the player-info reply carries the title they are wearing")
+	# The last of these is an empty title followed by a byte that is nothing:
+	# one trailing NUL is now a player wearing no title, which is a real answer.
 	for malformed: Array in [[228, "5b0001"], [228, "5b000200416c69636500"],
-			[228, "5b000000416c6963650000"]]:
+			[228, "5b000000416c696365000000"]]:
 		_expect(EloriaProtocol.decode_server(int(malformed[0]),
 				_hex(str(malformed[1]))).type == "invalid",
 			"a malformed player-info payload is rejected (%s)" % str(malformed[1]))

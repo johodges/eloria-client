@@ -30,7 +30,7 @@ const BINDABLE := {
 		"toggle_spells", "toggle_summoning", "toggle_manufacture",
 		"toggle_emotes", "toggle_quest_journal", "toggle_buddy", "toggle_stats",
 		"toggle_ranging", "toggle_help", "toggle_notepad", "toggle_options",
-		"toggle_mail", "toggle_guild"],
+		"toggle_mail", "toggle_guild", "toggle_achievements"],
 	"Actions": ["attack_selected", "combat_target", "summon_behavior",
 		"toggle_sit", "cancel", "connect", "disconnect"],
 	"Items": ["quick_item_1", "quick_item_2", "quick_item_3", "quick_item_4",

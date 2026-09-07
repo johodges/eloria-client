@@ -77,6 +77,7 @@ toggle_party={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycod
 ; Ctrl letters both unbound here and not the modified form of a bare binding,
 ; which Godot's inexact matching would otherwise let the bare one claim.
 toggle_guild={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":82,"ctrl_pressed":true)] }
+toggle_achievements={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":89,"ctrl_pressed":true)] }
 recenter_viewport={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":32)] }
 move_north={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":87)] }
 move_south={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":83)] }

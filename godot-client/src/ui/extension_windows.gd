@@ -81,6 +81,15 @@ var party_invite_row: HBoxContainer
 var party_invite_label: Label
 var party_status: Label
 var party_leave_button: Button
+var achievements_panel: PanelContainer
+var achievements_header: Label
+var achievements_tabs: HBoxContainer
+var achievements_rows: VBoxContainer
+var achievements_title_picker: OptionButton
+var achievements_status: Label
+## Which category is showing. The player's choice about their own window; the
+## pages themselves are the server's, one per category in the catalogue.
+var _achievements_page := ""
 
 # The quantity ladder the server offers for a shop trade, and the response ids
 # that drive one. These are the legacy dialogue response ids; a client with
@@ -147,13 +156,17 @@ func toggle_quest_journal() -> void:
 func toggle_mail() -> void:
 	_toggle(mail_panel)
 
+func toggle_achievements() -> void:
+	_sync_achievements()
+	_toggle(achievements_panel)
+
 ## Cancel order: the windows the server opened come first, because they are the
 ## ones the player did not choose to have on screen.
 func _cascade() -> Array[PanelContainer]:
 	# The tracked-quest readout is deliberately absent: it is a HUD element the
 	# player pinned, not a window covering the screen, so cancel leaves it be.
 	return [merchant_panel, market_panel, detail_panel, mail_panel,
-		quest_panel, party_panel]
+		quest_panel, party_panel, achievements_panel]
 
 func _toggle(panel: PanelContainer) -> void:
 	if panel.visible:
@@ -185,6 +198,8 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_marketplace()
 		&"party":
 			_sync_party()
+		&"achievements_catalog":
+			_sync_achievements()
 		&"connection":
 			if AppState.connection_state == "disconnected":
 				# A dropped session is not a fight that just ended: nothing
@@ -203,6 +218,7 @@ func sync_all() -> void:
 	_sync_merchant()
 	_sync_marketplace()
 	_sync_party()
+	_sync_achievements()
 
 # --- navigation --------------------------------------------------------------
 
@@ -730,6 +746,125 @@ func _party_row(member: Dictionary) -> Control:
 	row.add_child(ether)
 	return row
 
+## The catalogue, one category at a time, with a bar on every line.
+##
+## Everything drawn came off the wire, including which pages exist: a category
+## the server's catalogue gains appears here without this file changing.
+func _sync_achievements() -> void:
+	var entries: Array = AppState.achievements_catalog.get("entries", []) as Array
+	var done := 0
+	var pages: Array[String] = []
+	for raw: Variant in entries:
+		var entry: Dictionary = raw as Dictionary
+		if bool(entry.get("done", false)):
+			done += 1
+		var page: String = str(entry.get("category", ""))
+		if not pages.has(page):
+			pages.append(page)
+	achievements_header.text = ("%d of %d earned" % [done, entries.size()]
+		if not entries.is_empty() else "No achievements yet")
+	if not pages.has(_achievements_page):
+		_achievements_page = pages[0] if not pages.is_empty() else ""
+	_sync_achievement_tabs(pages)
+	_sync_achievement_titles(entries)
+	for child: Node in achievements_rows.get_children():
+		achievements_rows.remove_child(child)
+		child.queue_free()
+	for raw: Variant in entries:
+		var entry: Dictionary = raw as Dictionary
+		if str(entry.get("category", "")) == _achievements_page:
+			achievements_rows.add_child(_achievement_row(entry))
+
+func _sync_achievement_tabs(pages: Array[String]) -> void:
+	for child: Node in achievements_tabs.get_children():
+		achievements_tabs.remove_child(child)
+		child.queue_free()
+	for page: String in pages:
+		var button := Button.new()
+		button.name = "Page" + page
+		button.text = page
+		button.toggle_mode = true
+		button.button_pressed = page == _achievements_page
+		button.pressed.connect(_on_achievements_page_chosen.bind(page))
+		achievements_tabs.add_child(button)
+
+func _on_achievements_page_chosen(page: String) -> void:
+	_achievements_page = page
+	_sync_achievements()
+
+## The picker offers exactly the titles this character has earned, because the
+## server refuses any other and a menu of things it would refuse is worse than
+## a short menu.
+func _sync_achievement_titles(entries: Array) -> void:
+	var worn: String = str(AppState.achievements_catalog.get("worn_title", ""))
+	achievements_title_picker.clear()
+	achievements_title_picker.add_item("(none)")
+	achievements_title_picker.set_item_metadata(0, "none")
+	var chosen := 0
+	for raw: Variant in entries:
+		var entry: Dictionary = raw as Dictionary
+		var title: String = str(entry.get("title", ""))
+		if title.is_empty() or not bool(entry.get("done", false)):
+			continue
+		achievements_title_picker.add_item(title)
+		var index: int = achievements_title_picker.item_count - 1
+		achievements_title_picker.set_item_metadata(index, title)
+		if title == worn:
+			chosen = index
+	achievements_title_picker.select(chosen)
+	achievements_title_picker.disabled = achievements_title_picker.item_count <= 1
+
+func _on_achievement_title_chosen(index: int) -> void:
+	var wanted: String = str(achievements_title_picker.get_item_metadata(index))
+	var error: Error = Network.send_chat("#title " + wanted)
+	achievements_status.text = ("Sent to the server; the window updates when it answers."
+		if error == OK else "Title request failed: " + error_string(error))
+
+func _achievement_row(entry: Dictionary) -> Control:
+	var row := VBoxContainer.new()
+	row.name = "Achievement" + str(entry.get("key", ""))
+	var header := HBoxContainer.new()
+	header.name = "Header"
+	row.add_child(header)
+	var name_label := Label.new()
+	name_label.name = "Name"
+	name_label.text = str(entry.get("name", ""))
+	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	header.add_child(name_label)
+	var progress: int = int(entry.get("progress", 0))
+	var target: int = maxi(1, int(entry.get("target", 1)))
+	var count := Label.new()
+	count.name = "Count"
+	count.text = "%d / %d" % [progress, target]
+	header.add_child(count)
+	var tick := Label.new()
+	tick.name = "Done"
+	tick.custom_minimum_size = Vector2(24, 0)
+	tick.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	tick.text = "*" if bool(entry.get("done", false)) else ""
+	header.add_child(tick)
+	var bar := _bar("Progress", Color(0.42, 0.62, 0.35))
+	bar.custom_minimum_size = Vector2(0.0, 9.0)
+	bar.max_value = float(target)
+	bar.value = float(mini(progress, target))
+	row.add_child(bar)
+	var blurb := Label.new()
+	blurb.name = "Description"
+	blurb.text = str(entry.get("description", ""))
+	blurb.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	# An unearned row is the catalogue a player browses rather than a failure,
+	# so it stays legible; the tick and the full bar mark the earned ones.
+	blurb.modulate = Color(1.0, 1.0, 1.0, 0.7)
+	row.add_child(blurb)
+	var granted: String = str(entry.get("title", ""))
+	if not granted.is_empty():
+		var reward := Label.new()
+		reward.name = "Grants"
+		reward.text = "   grants the title \"%s\"" % granted
+		reward.modulate = Color(0.85, 0.78, 0.45, 1.0)
+		row.add_child(reward)
+	return row
+
 func _on_party_accept() -> void:
 	_send_party_command("#party accept")
 
@@ -1012,6 +1147,45 @@ func _build() -> void:
 	party_status.name = "PartyStatus"
 	party_body.add_child(party_status)
 	party_panel.hide()
+
+	# The achievement catalogue. Server-stated end to end: the pages are
+	# whatever categories the catalogue file has in it, and so are the names,
+	# the descriptions, the thresholds and the titles. Nothing here is a table
+	# of this client's own, so nothing here can go stale when one moves.
+	achievements_panel = _window("Achievements", "Achievements")
+	var achievements_body: VBoxContainer = _window_body(achievements_panel)
+	achievements_header = Label.new()
+	achievements_header.name = "AchievementsHeader"
+	achievements_body.add_child(achievements_header)
+	var achievements_title_row := HBoxContainer.new()
+	achievements_title_row.name = "TitleRow"
+	achievements_body.add_child(achievements_title_row)
+	var achievements_title_label := Label.new()
+	achievements_title_label.name = "TitleLabel"
+	achievements_title_label.text = "Title:"
+	achievements_title_row.add_child(achievements_title_label)
+	achievements_title_picker = OptionButton.new()
+	achievements_title_picker.name = "TitlePicker"
+	achievements_title_picker.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	achievements_title_picker.item_selected.connect(_on_achievement_title_chosen)
+	achievements_title_row.add_child(achievements_title_picker)
+	achievements_tabs = HBoxContainer.new()
+	achievements_tabs.name = "AchievementsTabs"
+	achievements_tabs.alignment = BoxContainer.ALIGNMENT_CENTER
+	achievements_body.add_child(achievements_tabs)
+	var achievements_scroll := ScrollContainer.new()
+	achievements_scroll.name = "AchievementsScroll"
+	achievements_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	achievements_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	achievements_body.add_child(achievements_scroll)
+	achievements_rows = VBoxContainer.new()
+	achievements_rows.name = "AchievementsBody"
+	achievements_rows.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	achievements_scroll.add_child(achievements_rows)
+	achievements_status = Label.new()
+	achievements_status.name = "AchievementsStatus"
+	achievements_body.add_child(achievements_status)
+	achievements_panel.hide()
 
 func _bar(bar_name: String, colour: Color) -> ProgressBar:
 	var bar := ProgressBar.new()

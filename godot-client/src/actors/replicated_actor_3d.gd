@@ -202,6 +202,7 @@ var _equipment_nodes: Dictionary = {}
 var _equipment_hides: Dictionary = {}
 var _hidden_body_surfaces: Dictionary = {}
 var _nameplate: Label3D
+var _title_line: Label3D
 var _speech_bubble: Label3D
 var _speech_bubble_expiry_msec := 0
 var _health_bar_background: MeshInstance3D
@@ -306,6 +307,12 @@ const HEALTH_LABEL_DROP := 32.0
 ## screen it is now measured against.
 const SPEECH_BUBBLE_RISE := 20.0
 const SPEECH_BUBBLE_WIDTH := 220.0
+## The worn title, a line above the name in the same pixels as the rest of the
+## block. Above rather than below because below is where the health bar and
+## its numbers already are, and smaller than the name because a title is what
+## somebody calls themselves, not what they are called.
+const TITLE_RISE := 12.0
+const TITLE_FONT_SIZE := 10
 
 ## Click target and selection ring for an actor standing on one tile.
 ## Both are scaled by the widest side of the footprint: a giant that can
@@ -795,7 +802,47 @@ func set_nameplate_visible(enabled: bool) -> void:
 	_overhead_visible = enabled
 	if is_instance_valid(_nameplate):
 		_nameplate.visible = enabled
+	if is_instance_valid(_title_line):
+		_title_line.visible = enabled and not _title_line.text.is_empty()
 	_refresh_overhead_health()
+
+## The title a player chose from the achievements that grant one, drawn as its
+## own line above the name.
+##
+## A label of its own rather than more text in the nameplate: the name carries
+## the server's colour - a demigod's is green, a summon's light blue - and a
+## Label3D tints as one piece, so a title sharing it would read as part of the
+## name. It is built on first use, so the overwhelming majority of actors,
+## which wear none, cost nothing for it.
+func set_title(title: String) -> void:
+	if title.is_empty():
+		if is_instance_valid(_title_line):
+			_title_line.text = ""
+			_title_line.hide()
+		return
+	if not is_instance_valid(_title_line):
+		var label: Label3D = Label3D.new()
+		label.name = "TitleLine"
+		# The name's height, not the constant: a scaled actor has had the whole
+		# overhead block lifted, and a label built afterwards would otherwise
+		# hang at the unscaled height on its own.
+		label.position.y = (_nameplate.position.y
+			if is_instance_valid(_nameplate) else NAMEPLATE_HEIGHT)
+		label.offset = Vector2(0.0, TITLE_RISE)
+		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		label.no_depth_test = true
+		# Fixed on screen like the name it sits over, or the two would drift
+		# apart as the camera zoomed.
+		label.fixed_size = true
+		label.pixel_size = OVERHEAD_PIXEL
+		label.font_size = TITLE_FONT_SIZE
+		label.outline_size = OVERHEAD_OUTLINE_SIZE
+		label.modulate = Color(0.85, 0.78, 0.45, 1.0)
+		label.layers = GAMEPLAY_ONLY_VISUAL_LAYER
+		add_child(label)
+		_title_line = label
+	_title_line.text = title
+	_title_line.visible = _overhead_visible
 
 ## Eternal Lands repeats local chat over the speaker's head while "Show Speech
 ## Bubbles" is on (text.c check_chat_text_to_overtext), sitting above the
@@ -859,7 +906,7 @@ func _lift_overhead(factor: float) -> void:
 	# One height for the lot: the bar, the numbers and the bubble sit above or
 	# below the name inside the block rather than at world heights of their
 	# own, so the gaps between them hold their size along with the text.
-	for node_name: String in ["Nameplate", "HealthBarBackground",
+	for node_name: String in ["Nameplate", "TitleLine", "HealthBarBackground",
 			"HealthBarFill", "HealthNumbers", "SpeechBubble"]:
 		var node := get_node_or_null(node_name) as Node3D
 		if node != null:
