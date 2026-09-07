@@ -392,6 +392,11 @@ CREATURES = (
     (215, "frost_tiger", "Frost Tiger", "cat", (94, 148, 205), (32, 74, 158), 1.14),
     (216, "giant_crocodile", "Giant Crocodile", "crocodile", (97, 88, 47), (224, 202, 159), 1.55),
     (217, "fire_salamander", "Fire Salamander", "lizard", (184, 69, 33), (245, 153, 48), 1.02),
+    # ART OVERRIDDEN: creatures/thunder_ram.glb is no longer what this line
+    # builds. It carries hand-animated Meshy art accepted in review, at a
+    # scale of 1.129 and a facing correction of 180 in models.json. This
+    # line still describes the procedural ram, so a run with --only all or
+    # --only creatures WILL write the old blocky body back over it.
     (218, "thunder_ram", "Thunder Ram", "ram", (102, 99, 94), (91, 160, 188), 1.24),
     (219, "giant_rat", "Giant Rat", "rat", (105, 85, 70), (179, 138, 92), .84),
     (220, "raccoon", "Raccoon", "fox", (93, 94, 90), (45, 48, 54), .72),

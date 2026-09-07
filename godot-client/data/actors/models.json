@@ -1080,11 +1080,11 @@
       "animationLibrary": "res://assets/actors/native/creatures/thunder_ram.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1,
+        "scale": 1.129,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
-        "forwardAxisCorrectionDegreesY": 0
+        "forwardAxisCorrectionDegreesY": 180
       },
       "attachments": {
         "head": "head",
@@ -5531,6 +5531,210 @@
         "body": "body",
         "neck": "neck"
       }
+    },
+    "obsidian_bear": {
+      "scene": "res://assets/actors/native/creatures/obsidian_bear.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/obsidian_bear.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.294,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "skystripe_antelope": {
+      "scene": "res://assets/actors/native/creatures/skystripe_antelope.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/skystripe_antelope.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 0.882,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "giant_badger": {
+      "scene": "res://assets/actors/native/creatures/giant_badger.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/giant_badger.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 0.471,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "crystalback_tortoise": {
+      "scene": "res://assets/actors/native/creatures/crystalback_tortoise.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/crystalback_tortoise.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 0.588,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "azure_hyena": {
+      "scene": "res://assets/actors/native/creatures/azure_hyena.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/azure_hyena.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 0.647,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "ashen_wolf": {
+      "scene": "res://assets/actors/native/creatures/ashen_wolf.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/ashen_wolf.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 0.706,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "cave_salamander": {
+      "scene": "res://assets/actors/native/creatures/cave_salamander.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/cave_salamander.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 0.412,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "sapphire_peafowl": {
+      "scene": "res://assets/actors/native/creatures/sapphire_peafowl.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/sapphire_peafowl.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 0.647,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 270
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "gloom_wyvern": {
+      "scene": "res://assets/actors/native/creatures/gloom_wyvern.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/gloom_wyvern.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.412,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "mire_kelpie": {
+      "scene": "res://assets/actors/native/creatures/mire_kelpie.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/mire_kelpie.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.059,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 270
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "barnacle_ogre": {
+      "scene": "res://assets/actors/native/creatures/barnacle_ogre.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/barnacle_ogre.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.471,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "ember_leaf_spirit": {
+      "scene": "res://assets/actors/native/creatures/ember_leaf_spirit.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/ember_leaf_spirit.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 0.824,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
     }
   },
   "actorTypes": {
@@ -5956,7 +6160,19 @@
     "669": "spectral_forest_duelist",
     "670": "spectral_moors_knight",
     "671": "drowned_lich_king",
-    "672": "moss_bearded_giant"
+    "672": "moss_bearded_giant",
+    "673": "obsidian_bear",
+    "674": "skystripe_antelope",
+    "675": "giant_badger",
+    "676": "crystalback_tortoise",
+    "677": "azure_hyena",
+    "678": "ashen_wolf",
+    "679": "cave_salamander",
+    "680": "sapphire_peafowl",
+    "681": "gloom_wyvern",
+    "682": "mire_kelpie",
+    "683": "barnacle_ogre",
+    "684": "ember_leaf_spirit"
   },
   "creationOptions": [
     {

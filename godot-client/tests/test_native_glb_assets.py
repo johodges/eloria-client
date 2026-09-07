@@ -724,7 +724,43 @@ class NativeGlbAssetsTest(unittest.TestCase):
             # single spine bone. Turned by eye from a front render, where 180
             # is the view with the claws and eyestalks in it.
             "crystal_shore_crab": 180,
+            # A hovering flame on a Bone_NNN rig: every landmark it has
+            # weighs under the threshold and they disagree by 180 degrees,
+            # so the measurement is noise rather than a bearing. Set from
+            # textured orthographic renders down both Z axes - the pale
+            # front faces -Z and the dark back faces +Z, so it needs no
+            # turn, and its narrow profiles rule out the quarter turns.
+            "ember_leaf_spirit": 0,
         }
+        # Hand-authored rigs keep the Bone_NNN naming Meshy gave them, so
+        # creature_facing finds no landmark on any of them and measures
+        # None. The landmarks are there; only the names are missing, and
+        # the animation pipeline's own classifier labels them from
+        # geometry. These are that classifier's landmarks put through this
+        # tool's yaw maths unchanged - same pairs, same weighting, same
+        # rounding - a route that reproduced creature_facing exactly on ten
+        # of ten models the tool can read for itself. Not eyeballed:
+        # measured, by the only reading of these rigs available.
+        set_by_classifier = {
+            "obsidian_bear": 180,
+            "skystripe_antelope": 180,
+            "giant_badger": 180,
+            "crystalback_tortoise": 180,
+            "azure_hyena": 180,
+            # the procedural ram this replaced faced the other way, so its
+            # entry carried 0 until the art changed under it
+            "thunder_ram": 180,
+            "ashen_wolf": 180,
+            "cave_salamander": 180,
+            "gloom_wyvern": 180,
+            "barnacle_ogre": 180,
+            # these two carry a constant facing correction in the
+            # animation itself, which the delivery notes call out
+            "sapphire_peafowl": 270,
+            "mire_kelpie": 270,
+        }
+        declared = dict(set_by_eye)
+        declared.update(set_by_classifier)
         for model_id, entry in self.models["models"].items():
             scene = entry["scene"].removeprefix("res://")
             with self.subTest(model=model_id):
@@ -739,10 +775,10 @@ class NativeGlbAssetsTest(unittest.TestCase):
                     continue
                 measured = creature_facing.correction(CLIENT / scene)
                 if measured is None:
-                    self.assertIn(model_id, set_by_eye,
+                    self.assertIn(model_id, declared,
                                   "a body no landmark speaks for needs a person "
                                   "to look at a render of it")
-                    measured = set_by_eye[model_id]
+                    measured = declared[model_id]
                 self.assertEqual(measured, correction,
                                  "the declared correction must be the one the "
                                  "body measures")
