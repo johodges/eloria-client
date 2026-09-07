@@ -2701,7 +2701,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		["toggle_notepad", _on_info_button_pressed],
 		["toggle_options", _on_options_pressed],
 		["toggle_mail", func() -> void: extension_windows.call("toggle_mail")],
-		["toggle_party", func() -> void: extension_windows.call("toggle_party")]]
+		["toggle_party", func() -> void: extension_windows.call("toggle_party")],
+		["toggle_achievements",
+			func() -> void: extension_windows.call("toggle_achievements")]]
 	for action_and_handler: Array in window_actions:
 		if event.is_action_pressed(str(action_and_handler[0])):
 			(action_and_handler[1] as Callable).call()
@@ -3427,6 +3429,8 @@ func _on_state_changed(path: StringName) -> void:
 				_sync_ground_bag()
 		&"achievements_state":
 			_sync_counters()
+		&"actor_titles":
+			_sync_actor_titles()
 		&"experience_state":
 			_sync_stats()
 		&"worn_slots", &"degraded_items":
@@ -3794,7 +3798,21 @@ func _spawn_actor(id: Variant) -> void:
 		push_warning("Actor %d: %s" % [id, "; ".join(errors)])
 	node.apply_server_state(dto, adapter, true)
 	node.set_nameplate_visible(_nameplate_visible_for(int(id)))
+	node.set_title(str(AppState.actor_titles.get(int(id), "")))
 	_place_actor_on_surface(node, true)
+
+## Push the worn titles onto the actors wearing them.
+##
+## The title arrives on its own packet rather than in the actor's display
+## name, which packs a colour byte, the name and the guild tag into one string
+## that the decoder already unpicks by hand. So it is applied here, and on
+## spawn, for whoever is on screen when it lands.
+func _sync_actor_titles() -> void:
+	for id: Variant in actor_nodes:
+		var node_value: Variant = actor_nodes[id]
+		if node_value is ReplicatedActor3D and is_instance_valid(node_value as ReplicatedActor3D):
+			(node_value as ReplicatedActor3D).set_title(
+				str(AppState.actor_titles.get(int(id), "")))
 
 func _update_local_actor_follow() -> void:
 	if AppState.local_actor_id < 0:

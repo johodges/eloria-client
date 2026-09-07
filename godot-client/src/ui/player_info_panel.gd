@@ -43,6 +43,12 @@ func _sync() -> void:
 		panel.hide()
 		return
 	var name_text: String = str(AppState.player_info.get("name", ""))
+	# The title they chose, after the name, the way it reads in prose:
+	# "Ilyon, Keeper of Secrets". Only when the server sent one - an older one
+	# sends the frame it always did and this field is simply absent.
+	var worn: String = str(AppState.player_info.get("title", ""))
+	if not worn.is_empty():
+		name_text = "%s, %s" % [name_text, worn]
 	title.text = name_text if not name_text.is_empty() else "Player"
 	var achievements: Array = AppState.player_info.get("achievements", [])
 	var lines: Array[String] = []
