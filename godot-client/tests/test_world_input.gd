@@ -965,10 +965,12 @@ func _run() -> void:
 	main.call("_on_knowledge_button_pressed")
 	var knowledge_list: ItemList = main.get_node(
 		"GameView/StatsPanel/Content/StatsTabs/Knowledge/KnowledgeContent/Columns/KnowledgeList") as ItemList
-	# The catalog is compiled from the profile this server runs, which has one
-	# book. It used to be compiled from the unmodified Eternal Lands data the
-	# fork was built on, and listed 385 the server has never heard of.
-	_expect(knowledge_panel.visible and knowledge_list.item_count == 1
+	# The catalog is compiled from the profile this server runs: sixteen books,
+	# the one it started with and the fifteen the crafting ladder gates its
+	# higher tiers behind. It used to be compiled from the unmodified Eternal
+	# Lands data the fork was built on, and listed 385 the server has never
+	# heard of.
+	_expect(knowledge_panel.visible and knowledge_list.item_count == 16
 		and (main.get_node("GameView/StatsPanel/Content/StatsTabs") as TabContainer).current_tab == 1
 		and root.get_visible_rect().encloses(knowledge_panel.get_global_rect()),
 		"knowledge tab opens the served catalog within the statistics frame: %d"
@@ -1019,7 +1021,9 @@ func _run() -> void:
 		"GameView/ManufacturingPanel/Content/Columns/ManufacturingSide/ManufacturingDetail") as RichTextLabel
 	var manufacturing_mix_one: Button = main.get_node(
 		"GameView/ManufacturingPanel/Content/Columns/ManufacturingSide/ManufacturingActions/ManufacturingMixOne") as Button
-	_expect(manufacturing_panel.visible and manufacturing_list.item_count == 32
+	# 532 recipes: the 32 hand-authored ones and the 500 the crafting ladder
+	# generates for every wearable, the potion shelf and the base materials.
+	_expect(manufacturing_panel.visible and manufacturing_list.item_count == 532
 		and root.get_visible_rect().encloses(manufacturing_panel.get_global_rect()),
 		"the served recipe catalog opens within the reference viewport: %d"
 			% manufacturing_list.item_count)
@@ -1060,7 +1064,7 @@ func _run() -> void:
 		"the All tab draws the sheet's own picture for everything")
 	main.set("manufacturing_skill", "tailoring")
 	main.call("_sync_manufacturing")
-	_expect(manufacturing_list.item_count == 3,
+	_expect(manufacturing_list.item_count == 190,
 		"a skill tab narrows the list to that skill: %d"
 			% manufacturing_list.item_count)
 	main.set("manufacturing_skill", "")
@@ -1068,7 +1072,7 @@ func _run() -> void:
 	var manufacturing_filter: LineEdit = main.get("manufacturing_filter") as LineEdit
 	manufacturing_filter.text = "hatchet"
 	main.call("_sync_manufacturing")
-	_expect(manufacturing_list.item_count == 3,
+	_expect(manufacturing_list.item_count == 24,
 		"the search box matches tools as well as results and ingredients: %d"
 			% manufacturing_list.item_count)
 	manufacturing_filter.text = ""
