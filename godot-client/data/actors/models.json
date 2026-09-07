@@ -1624,11 +1624,11 @@
       "animationLibrary": "res://assets/actors/native/creatures/crimson_duelist.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1,
+        "scale": 1.088235,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
-        "forwardAxisCorrectionDegreesY": 0
+        "forwardAxisCorrectionDegreesY": 180
       },
       "attachments": {
         "head": "head",
@@ -3681,11 +3681,11 @@
       "animationLibrary": "res://assets/actors/native/creatures/drowned_lich_king.glb",
       "animationMap": "res://data/animations/creature.json",
       "import": {
-        "scale": 1,
+        "scale": 1.352941,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0,
-        "forwardAxisCorrectionDegreesY": 0
+        "forwardAxisCorrectionDegreesY": 180
       },
       "attachments": {
         "head": "head",
@@ -5327,6 +5327,193 @@
         "body": "body",
         "neck": "neck"
       }
+    },
+    "giant_praying_mantis": {
+      "scene": "res://assets/actors/native/creatures/giant_praying_mantis.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/giant_praying_mantis.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.294118,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "tidal_claw_construct": {
+      "scene": "res://assets/actors/native/creatures/tidal_claw_construct.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/tidal_claw_construct.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.058824,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "void_tentacle_construct": {
+      "scene": "res://assets/actors/native/creatures/void_tentacle_construct.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/void_tentacle_construct.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.411765,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "crownwater_temple_guard": {
+      "scene": "res://assets/actors/native/creatures/crownwater_temple_guard.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/crownwater_temple_guard.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.176471,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "drowned_pirate": {
+      "scene": "res://assets/actors/native/creatures/drowned_pirate.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/drowned_pirate.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.058824,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "frost_wraith_queen": {
+      "scene": "res://assets/actors/native/creatures/frost_wraith_queen.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/frost_wraith_queen.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.294118,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "glacier_paladin": {
+      "scene": "res://assets/actors/native/creatures/glacier_paladin.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/glacier_paladin.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.235294,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "moors_spectral_knight": {
+      "scene": "res://assets/actors/native/creatures/moors_spectral_knight.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/moors_spectral_knight.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.117647,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "reed_mask_hunter": {
+      "scene": "res://assets/actors/native/creatures/reed_mask_hunter.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/reed_mask_hunter.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.117647,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "spectral_forest_duelist": {
+      "scene": "res://assets/actors/native/creatures/spectral_forest_duelist.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/spectral_forest_duelist.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.058824,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "spectral_moors_knight": {
+      "scene": "res://assets/actors/native/creatures/spectral_moors_knight.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/spectral_moors_knight.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.117647,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
     }
   },
   "actorTypes": {
@@ -5739,7 +5926,19 @@
     "656": "river_stone_golem",
     "657": "rune_stone_golem",
     "658": "sunken_stone_colossus",
-    "659": "verdant_treant"
+    "659": "verdant_treant",
+    "660": "giant_praying_mantis",
+    "661": "tidal_claw_construct",
+    "662": "void_tentacle_construct",
+    "663": "crownwater_temple_guard",
+    "664": "drowned_pirate",
+    "665": "frost_wraith_queen",
+    "666": "glacier_paladin",
+    "667": "moors_spectral_knight",
+    "668": "reed_mask_hunter",
+    "669": "spectral_forest_duelist",
+    "670": "spectral_moors_knight",
+    "671": "drowned_lich_king"
   },
   "creationOptions": [
     {
