@@ -1,5 +1,31 @@
 # Crownwater change log
 
+## 2026-09-07: the harbour and the surveyed archipelago
+
+The harbour now works as a settlement: a sheltered bank and field workbench,
+an information point and training post, stalls arranged around the court,
+and the customs warehouse beside a cart ramp. Named local people stand at
+their work rather than at scattered legacy coordinates. Inner gardens and
+shores carry the easier gathering and wildlife; the outer branches hold the
+serpents, constructs and temple guards. Existing creature counts are retained.
+
+The Crown Basilica faces its plaza. Its portico has an open centre between
+six columns, a fitted stair, and a visible front door. The undercroft has its
+own covered side entrance, and the campanile and customs doors stand outside
+their building footprints. Four ferry waystations have dry island sites.
+
+Twenty-four stone causeways use exact shore lengths and elevations. The
+survey is frozen before grading and belongs to the terrain instance; the old
+rounded spans and shared height cache could leave steps or gaps at the shore.
+The new shared civic recipes also remove the duplicate walking decks and
+overlapping arch boxes. Bridgeheads are recessed beneath the deck and quay
+caps finish clear of the terrain plane.
+
+The full results, limitations and reproducible build sequence are recorded
+in [layout-review.md](layout-review.md). Earlier entries below describe the
+previous geometry and camera harness.
+
+
 ## From placeholder to production
 
 The starting package was `terrain-landmark-material-pass` and carried the

@@ -31,6 +31,7 @@ import numpy as np
 
 from amberwood import noise as N
 from amberwood import terrain as TER
+from amberwood import routecraft as RC
 
 # `Placement` and `RegionBuild` are the toolkit's shared build containers, not
 # anything Amberwood-specific, and every region needs them. Re-exported here so
@@ -168,6 +169,8 @@ ANCHORS: dict[str, tuple[float, float]] = {
     name: (x * SCALE, z * SCALE) for name, (x, z) in _DESIGN_ANCHORS.items()
 }
 
+ANCHORS["customs_house"] = (23.0, 8.0)
+
 SPAWN = ANCHORS["harbour_isle"]
 SPAWN_PLAZA = ANCHORS["crown_plaza"]
 SPAWN_GARDEN = ANCHORS["garden_isle"]
@@ -257,13 +260,6 @@ CAUSEWAY_SHORE = SEA_LEVEL + 0.4
 # class on top, the decks ran ten metres up onto the paving and read as roads
 # with a bridge in the middle rather than as bridges.
 CAUSEWAY_OVERLAP = 1.6
-# The span is built in lengths of this, so a handful of meshes cover all
-# twenty-two crossings - which matters more than it looks: a sloping deck
-# cannot be shared between two slopes, so every length and slope the set uses
-# is another bridge's worth of masonry in the package.  Rounded to the nearest
-# rather than up, which is what keeps a deck off the island: rounding up put
-# half a class of deck on each shore.
-CAUSEWAY_CLASS = 8.0
 # The steepest a deck is built. A stone bridge takes up a metre or two between
 # two islands over its own length and still reads as architecture; past this it
 # reads as a ramp, so the deck goes level at the higher landing instead and the
@@ -275,7 +271,6 @@ CAUSEWAY_GRADE = 0.09
 # over the water where a landing is lower than that - rather than the whole
 # drop between two islands.
 CAUSEWAY_RAMP = 8.0
-CAUSEWAY_RAMP_WIDTH = 3.2
 # Water this wide, crossed in a straight line, ends an island. Anything shorter
 # is a puddle in the shore, not the lagoon, and a span that stopped at one would
 # land in the shallows.
@@ -316,6 +311,8 @@ def causeway_span(t, name: str):
     water between them, from one shoreline to the other with a short overlap
     onto each landing.
     """
+    if hasattr(t, "_crown_spans") and name in t._crown_spans:
+        return t._crown_spans[name]
     a_name, b_name = CAUSEWAY_ENDS[name]
     a = ISLAND_GEOM[a_name]["centre"]
     b = ISLAND_GEOM[b_name]["centre"]
@@ -342,16 +339,6 @@ def _causeway_landfall(span, index: int) -> tuple[float, float]:
             here[1] + dz / length * CAUSEWAY_RAMP)
 
 
-_DECK_ENDS: dict[str, tuple[float, float]] = {}
-"""Each causeway's two deck levels, worked out once per build.
-
-`apply_built_ground` grades a bridgehead at each landing *to* the deck level,
-and `populate_causeways` runs after it, so asking a second time reads the
-ground the first answer just levelled and every span comes back flat. The
-first answer is the true one: it is the ground as the region sculpted it.
-"""
-
-
 def causeway_deck_ends(t, name: str) -> tuple[float, float]:
     """The level the deck stands at over each of its two landings, in metres.
 
@@ -365,8 +352,8 @@ def causeway_deck_ends(t, name: str) -> tuple[float, float]:
     gave every spoke the height of the crown isle's acropolis and left it a
     flat slab thirteen metres above both the shores it joined.
     """
-    if name in _DECK_ENDS:
-        return _DECK_ENDS[name]
+    if name in t._crown_deck_ends:
+        return t._crown_deck_ends[name]
     span = causeway_span(t, name)
     if span is None:
         level = SEA_LEVEL + CAUSEWAY_CLEARANCE
@@ -387,7 +374,7 @@ def causeway_deck_ends(t, name: str) -> tuple[float, float]:
             out = (level, level)
         else:
             out = (ends[0], ends[1])
-    _DECK_ENDS[name] = out
+    t._crown_deck_ends[name] = out
     return out
 
 
@@ -540,8 +527,12 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260828) -> None:
     # ground's level would leave a step off the deck. Grading from the deck at
     # the landing to the island's own ground a little inboard gives a walker a
     # way on and off, which is the whole point of a bridge.
+    t._crown_deck_ends = {}
+    t._crown_spans = {name: causeway_span(t, name) for name in CAUSEWAYS}
+    for name in CAUSEWAYS:
+        causeway_deck_ends(t, name)
     for name, points in CAUSEWAYS.items():
-        span = causeway_span(t, name)
+        span = t._crown_spans[name]
         if span is None:
             continue
         levels = causeway_deck_ends(t, name)
@@ -560,9 +551,9 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260828) -> None:
             # rests on it rather than on the slope behind it
             foot = (landing[0] - inboard[0] * CAUSEWAY_OVERLAP * 0.5,
                     landing[1] - inboard[1] * CAUSEWAY_OVERLAP * 0.5)
-            t.grade_path([foot, landing, head], CAUSEWAY_RAMP_WIDTH,
-                         heights=[deck, deck, max(ground, SEA_LEVEL + 0.6)],
-                         surface=TER.PAVING)
+            RC.grade_road(t,[foot,landing,head],
+                          [deck,deck,max(ground,SEA_LEVEL+0.6)],
+                          width=5.4,shoulder=3.0,surface=TER.PAVING,clearance=2)
         # keep vegetation and props out from under the span without touching height
         for step in np.linspace(0.0, 1.0, 24):
             point = (span[0][0] + (span[1][0] - span[0][0]) * step,
@@ -623,5 +614,116 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260828) -> None:
     t.rect_terrace(ANCHORS["sunken_court"], 9.0 * LOCAL, 9.0 * LOCAL,
                    SUNKEN_COURT_LEVEL, 0.0, TER.PAVING)
 
+    apply_civic_plan(t)
     t.assign_surface_by_rule(sea_level=SEA_LEVEL)
     t.dither_boundaries(seed=seed + 99, amount=0.5)
+
+# Player-scale civic plan, in world metres. The harbour is safe ground; the
+# garden and inner shores teach gathering before the exposed outer islands.
+CIVIC_PATHS = {
+    "harbour-court": [(-25,10),(-14,3),(0,0),(12,-12),(26,-26)],
+    "quay-apron": [(0,0),(5,-18),(14,-22),(30,-22)],
+    "customs-race": [(0,0),(7,8),(12,8)],
+    "basilica-procession": [(62,-62),(86,-82),(114,-96),(114,-108)],
+    "undercroft-turn": [(114,-96),(136,-101),(139,-109)],
+    "bell-court": [(139,-109),(154,-128),(162,-141),(162,-146)],
+}
+DOORS = {
+    "basilica-undercroft": (139.0,-109.0),
+    "campanile-door": (162.0,-146.0),
+    "customs-door": (10.0,8.0),
+}
+CONTENT_LAYOUT = {
+    "services": [
+        {"role":"information","position":[-5,4.5,-2]},
+        {"role":"storage","position":[-10,4.5,9]},
+        {"role":"crafting_station","position":[-20,4.5,9]},
+        {"role":"training","position":[-20,4.5,-4]},
+    ],
+    "npcs": {
+        "Maelis":[-3,4.5,4], "Daro Pell":[-25,4.5,4],
+        "Basilica Sexton Oren Vale":[122,18,-107],
+        "Campanile Ringer Iska":[165,17,-144],
+        "Customs Officer Hallon Brace":[5,4.5,12],
+        "Salvage Mistress Gero Lund":[31,4.5,-17],
+        "Sunken Court Diver Teth-Sa":[-37,4.8,-96],
+        "Pavilion Cook Mirren Sallow":[-23,4.5,19],
+        "Lamp Ferrier Ottick Rue":[3,4.5,-28],
+        "Net-Mender Calla Fisk":[-11,4.5,-22],
+        "Pearl Diver Ansil Quen":[266,4,-103],
+        "Chartsman Devrin Aisle":[270,4,-125],
+        "Drowned-Court Claimant Sesh-Va":[135,17,-103],
+        "Tollmaster Quent":[15,4.5,-3],
+    },
+    "roadClearance": 4.0,
+    "wildlife": {
+        "mirrorfin_otter":[[-56,-98,22]], "river_otter":[[-18,-211,19]],
+        "coralcrest_heron":[[92,58,20]], "bronze_tide_crab":[[246,9,22]],
+        "crystal_shore_crab":[[291,-98,19]], "bronze_diving_beetle":[[97,-259,19]],
+        "luminous_manta_ray":[[-139,-4,24]], "abyssal_armored_fish":[[14,-365,20]],
+        "tidecoil_serpent":[[23,-366,20]], "tidal_crystal_lion":[[361,-207,19]],
+        "riverglass_otter":[[-22,-235,16]],
+        "river_lizardfolk":[[246,9,22]], "river_capybara":[[-60,-104,24]],
+        "azure_axolotl":[[95,63,23]], "river_stone_golem":[[276,-137,23]],
+        "sunken_stone_colossus":[[6,-358,23]],
+        "tidal_claw_construct":[[-137,-14,24]],
+        "crownwater_temple_guard":[[355,-213,24]],
+    },
+    "harvest": {
+        "Reed":[[-57,-98,19],[100,62,17]], "Kelp":[[252,14,18]],
+        "Shell":[[287,-97,18]], "Watercress":[[-61,-123,17]],
+        "Pearl":[[340,-200,20]], "Salt":[[22,-363,19]],
+    },
+}
+
+
+def apply_civic_plan(t):
+    level = float(t.height_at(*SPAWN))
+    t.rect_terrace((-15,6), 17, 13, level, 0, TER.PAVING)
+    t.rect_terrace((23,8), 12, 10, level, 0, TER.PAVING)
+    for name, points in CIVIC_PATHS.items():
+        if name == "basilica-procession":
+            points = [t._crown_spans["spoke_harbour_isle"][0],*points]
+        heights = [float(t.height_at(*p)) for p in points]
+        if name in ("harbour-court","quay-apron","customs-race"):
+            heights = [max(level-0.3,h) for h in heights]
+        RC.grade_road(t,points,heights,width=5.5,shoulder=3.5,
+                      surface=TER.PAVING,clearance=2)
+    for x,z in DOORS.values():
+        t.terrace((x,z),4.5,float(t.height_at(x,z)),surface=TER.PAVING)
+    for name,span in t._crown_spans.items():
+        if span is None:
+            continue
+        for island,landing in zip(CAUSEWAY_ENDS[name],span):
+            if island == "crown_isle":
+                continue
+            centre = ISLAND_GEOM[island]["centre"]
+            dx,dz = centre[0]-landing[0],centre[1]-landing[1]
+            distance = math.hypot(dx,dz)
+            head = (landing[0]+dx/distance*CAUSEWAY_RAMP,
+                    landing[1]+dz/distance*CAUSEWAY_RAMP)
+            # Stop at the pavilion's low podium, leaving its floor untouched.
+            stop = (centre[0]-dx/distance*8,centre[1]-dz/distance*8)
+            if math.hypot(stop[0]-head[0],stop[1]-head[1]) > 2:
+                RC.grade_road(t,[head,stop],
+                              [float(t.height_at(*head)),float(t.height_at(*stop))],
+                              width=4.5,shoulder=2.5,surface=TER.PAVING,clearance=2)
+    # The undercroft is entered beside the basilica, never through its solid
+    # centre. The two-metre porch lies entirely on this little landing.
+    t.rect_terrace((139,-110),4,4,float(t.height_at(139,-109)),0,TER.PAVING)
+
+    # Stone decks sit in shallow rebates at their landings. This only lowers
+    # existing land under the exact span; it never raises the lagoon bed.
+    # A level bridgehead must not occupy the walking deck's own plane.
+    for name,span in t._crown_spans.items():
+        if span is None:
+            continue
+        (ax,az),(bx,bz) = span
+        dx,dz = bx-ax,bz-az
+        length = math.hypot(dx,dz)
+        along = ((t.gx-ax)*dx+(t.gz-az)*dz)/(length*length)
+        across = np.abs((t.gx-ax)*dz-(t.gz-az)*dx)/length
+        near,far = t._crown_deck_ends[name]
+        seat = near+(far-near)*along-0.16
+        mask = (along >= 0)&(along <= 1)&(across <= 3.1)
+        t.height = np.where(mask,np.minimum(t.height,seat),t.height)

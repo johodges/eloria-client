@@ -16,7 +16,7 @@ be decoded, the concept half says so, in writing, with the panel's description
 taken from `views.py`. Every claim on these sheets is one the files support.
 
 The build halves are **real Godot client frames** captured by
-`godot-client/tests/integration/rendered_crownwater.gd`, not offline previews.
+`_toolkit/godot_capture.gd --environment=manifest`, not offline previews.
 That is stated on every sheet, because it is the one thing about these captures
 a reader would otherwise have to take on trust.
 """
@@ -37,7 +37,7 @@ sys.path.insert(0, str(HERE))
 
 import views as VIEWTABLE  # noqa: E402
 
-CAPTURES = PACKAGE / "references" / "captures"
+CAPTURES = PACKAGE / "references" / "godot-captures"
 BOARD = PACKAGE / "references" / "00-concept-detail-board.png"
 AERIAL = PACKAGE / "references" / "01-concept-aerial-overview.png"
 OUT = PACKAGE / "references" / "comparisons"

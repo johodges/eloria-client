@@ -23,6 +23,8 @@ import numpy as np
 
 from amberwood import mesh as M
 from amberwood import stonework as SW
+from amberwood import routecraft as RC
+from amberwood import architecture as ARCH
 
 from crownkit import GILT, IRON, MARBLE, MOSAIC, STONE, VERDIGRIS
 
@@ -203,8 +205,8 @@ def cathedral(seed: int = 0, scale: float = 1.0) -> SW.MeshGroup:
     portico_z = body_d * 0.5 + 3.2 * s
     out.add(M.merge([
         SW.column(7.6 * s, radius=0.62 * s, material=MARBLE).transformed(
-            M.translation(x * 4.4 * s, 0.0, portico_z))
-        for x in (-2.0, -1.0, 0.0, 1.0, 2.0)], MARBLE))
+            M.translation(x * 4.2 * s, 0.0, portico_z))
+        for x in (-2.5,-1.5,-0.5,0.5,1.5,2.5)], MARBLE))
     out.add(M.box((body_w * 1.02, 1.10 * s, 7.0 * s),
                   center=(0.0, 8.2 * s, portico_z - 0.6 * s),
                   uv_scale=0.4, material=MARBLE))
@@ -214,13 +216,10 @@ def cathedral(seed: int = 0, scale: float = 1.0) -> SW.MeshGroup:
     out.add_walk(M.box((body_w * 1.02, 0.40 * s, 7.4 * s),
                        center=(0.0, 0.20 * s, portico_z - 0.6 * s),
                        uv_scale=0.5, material=MOSAIC))
-    steps = 5
-    for k in range(steps):
-        width = body_w * (1.04 + k * 0.06)
-        y = 0.20 * s - (k + 1) * (0.40 * s / steps)
-        z = portico_z + 2.6 * s + k * 0.9 * s
-        out.add_walk(M.box((width, 0.40 * s / steps + 0.06, 0.95 * s),
-                           center=(0.0, y, z), uv_scale=0.5, material=MARBLE))
+    out.add_walk(RC.stair_flight(body_w*1.02,0.4*s,3.6*s,4,material=MARBLE)
+                 .rotate_y(math.pi).translate(0,0,portico_z+6.7*s))
+    out.add(ARCH.door(3.0*s,5.0*s,material="timber_dark")
+            .translate(0,0.4*s,body_d*0.5+0.08*s))
     return out
 
 
@@ -267,11 +266,11 @@ def quay_edge(length: float, height: float = 1.5, seed: int = 0) -> SW.MeshGroup
     and 10 are all this edge at three different distances.
     """
     out = SW.MeshGroup()
-    out.add(M.box((length, height, 1.6), center=(0.0, height * 0.5, 0.0),
+    out.add(M.box((length, height-0.08, 1.6), center=(0.0, (height-0.08) * 0.5, 0.0),
                   uv_scale=0.6, material=STONE))
-    out.add(M.box((length, 0.26, 2.1), center=(0.0, height + 0.13, 0.0),
+    out.add(M.box((length, 0.34, 2.1), center=(0.0, height + 0.09, 0.0),
                   uv_scale=0.6, material=MARBLE))
-    out.add_walk(M.box((length, 0.18, 3.4),
+    out.add_walk(M.box((length-0.08, 0.18, 3.4),
                        center=(0.0, height + 0.22, -1.6),
                        uv_scale=0.5, material=MOSAIC))
     return out

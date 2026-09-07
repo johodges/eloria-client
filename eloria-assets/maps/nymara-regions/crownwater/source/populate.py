@@ -7,8 +7,8 @@ contract before any of this was written.
 
 Two rules run through the whole file:
 
-* **Instance, do not duplicate.** Every causeway of a given length class is one
-  mesh placed many times, and the pavilions are one mesh per size. A causeway is
+* **Instance repeated pieces.** Pavilions share one mesh per size; surveyed
+  bridges retain their exact shore lengths and slopes. A causeway is
   ~26,000 triangles; authoring twenty-two of them uniquely would cost more than
   the rest of the region put together.
 * **Walk surfaces are registered, never assumed.** Only decks, podiums, quay
@@ -23,6 +23,9 @@ import numpy as np
 
 from amberwood import mesh as M
 from amberwood import noise as N
+from amberwood import civiccraft as CIVIC
+from amberwood import routecraft as RC
+from amberwood import architecture as ARCH
 from amberwood import stonework as SW
 from amberwood import terrain as TER
 
@@ -95,13 +98,11 @@ def build_water(build, lod: str | None = None) -> None:
 def populate_causeways(build, seed: int = 0) -> None:
     """Stone causeways stitching the archipelago together.
 
-    Each route runs island centre to island centre; the span itself only covers
-    the open water between their edges. Lengths are quantised into a handful of
-    classes so a small number of unique meshes can be instanced across all
-    twenty-two crossings.
+    Each route runs island centre to island centre. Its shared civic recipe
+    spans the surveyed shore points exactly; each of the twenty-four bridges
+    owns its slope so neither landing inherits a length-class rounding error.
     """
     t = build.terrain
-    made: dict[int, str] = {}
 
     for name in REG.CAUSEWAYS:
         # Shore to shore, taken from the sculpted terrain. The island radius the
@@ -117,28 +118,15 @@ def populate_causeways(build, seed: int = 0) -> None:
         px, pz = (sx + ex) * 0.5, (sz + ez) * 0.5
 
         near, far = REG.causeway_deck_ends(t, name)
-        deck = (near + far) * 0.5
-        # The deck slopes from one landing to the other, so the class only has
-        # to be near the span rather than over it: rounded to the nearest, the
-        # deck lands within half a class of the shore instead of running up to
-        # a whole one onto the island.
-        klass = max(1, int(round(span / REG.CAUSEWAY_CLASS)))
-        length = klass * REG.CAUSEWAY_CLASS
-        # A sheared span cannot be shared between two slopes, so the rise is
-        # rounded to the metre and the bridgehead takes what that leaves. At a
-        # quarter of a metre every crossing was its own masonry and the package
-        # grew by ten megabytes.
-        rise = round(far - near)
-        key = f"Causeway_{klass}" if rise == 0.0 else f"Causeway_{klass}_{rise:+.0f}"
-        if key not in build.meshes:
-            arches = max(2, min(6, int(length // 16)))
-            build.meshes[key] = CA.causeway(length, deck_height=6.0,
-                                            width=5.4, arches=arches,
-                                            seed=seed + klass, rise=rise)
-            made[klass] = key
-        _add(build, f"Causeway_{name}", key, build.meshes[key],
-             (px, deck - 6.0, pz), _heading(dx, dz),
-             kind="landmark", collides=False)
+        key = f"SurveyedCauseway_{name}"
+        build.meshes[key] = CIVIC.arcaded_causeway(
+            span,near,far,width=5.4,arches=max(2,min(6,int(span//16))),
+            stone=CA.STONE,paving=CA.MOSAIC,trim=CA.MARBLE)
+        _add(build,f"Causeway_{name}",key,build.meshes[key],
+             (px,0,pz),_heading(dx,dz),kind="landmark",collides=False)
+        build.crossings.append({"id":name,"endpoints":
+                                [[sx,near,sz],[ex,far,ez]]})
+
 
 
 # ------------------------------------------------------------- crown isle
@@ -149,7 +137,7 @@ def populate_crown_isle(build, seed: int = 0) -> None:
     cy = float(t.height_at(cx, cz))
 
     _add(build, "Landmark_Cathedral", "Cathedral", CA.cathedral(seed=seed),
-         (cx, cy, cz), math.pi, kind="landmark", collides=True,
+         (cx, cy, cz), 0.0, kind="landmark", collides=True,
          landmark="crownwater-cathedral")
     build.landmarks.append({
         "id": "crownwater-cathedral", "name": "The Crown Basilica",
@@ -157,7 +145,7 @@ def populate_crown_isle(build, seed: int = 0) -> None:
         "position": [round(cx, 2), round(cy, 2), round(cz, 2)],
         "serverTile": [int(round(cx + REG.SERVER_ORIGIN[0])),
                        int(round(REG.SERVER_ORIGIN[1] - cz))],
-        "note": "placeholder name - see modeling-assumptions.md"})
+        "note": "Authored civic landmark; thresholds are surveyed separately."})
 
     bx, bz = REG.ANCHORS["crown_campanile"]
     by = float(t.height_at(bx, bz))
@@ -170,7 +158,7 @@ def populate_crown_isle(build, seed: int = 0) -> None:
         "position": [round(bx, 2), round(by, 2), round(bz, 2)],
         "serverTile": [int(round(bx + REG.SERVER_ORIGIN[0])),
                        int(round(REG.SERVER_ORIGIN[1] - bz))],
-        "note": "placeholder name - see modeling-assumptions.md"})
+        "note": "Authored civic landmark; thresholds are surveyed separately."})
 
     # the compass-rose mosaic of panel 3, laid as inlaid geometry in the plaza
     px, pz = REG.ANCHORS["crown_plaza"]
@@ -222,7 +210,7 @@ def populate_pavilions(build, seed: int = 0) -> None:
             "position": [round(cx, 2), round(cy, 2), round(cz, 2)],
             "serverTile": [int(round(cx + REG.SERVER_ORIGIN[0])),
                            int(round(REG.SERVER_ORIGIN[1] - cz))],
-            "note": "placeholder name - see modeling-assumptions.md"})
+            "note": "Authored civic landmark; thresholds are surveyed separately."})
         _ring_quay(build, name, seed + i)
 
     for i, name in enumerate(REG._OUTER_NAMES):
@@ -319,7 +307,7 @@ def populate_harbour(build, seed: int = 0) -> None:
     hx2, hz2 = REG.ANCHORS["customs_house"]
     hy2 = float(t.height_at(hx2, hz2))
     _add(build, "Landmark_CustomsHouse", "CustomsHouse",
-         CA.customs_house(seed=seed), (hx2, hy2, hz2), math.pi,
+         CA.customs_house(seed=seed), (hx2, hy2, hz2), -math.pi/2,
          kind="landmark", collides=True, landmark="crownwater-customs-hall")
     build.landmarks.append({
         "id": "crownwater-customs-hall", "name": "The Harbour Customs Hall",
@@ -327,19 +315,35 @@ def populate_harbour(build, seed: int = 0) -> None:
         "position": [round(hx2, 2), round(hy2, 2), round(hz2, 2)],
         "serverTile": [int(round(hx2 + REG.SERVER_ORIGIN[0])),
                        int(round(REG.SERVER_ORIGIN[1] - hz2))],
-        "note": "placeholder name - see modeling-assumptions.md"})
+        "note": "Authored civic landmark; thresholds are surveyed separately."})
 
-    mx, mz = REG.ANCHORS["harbour_market"]
-    my = float(t.height_at(mx, mz))
-    rng = N.Rng(seed + 71)
-    for k in range(7):
-        angle = 2.0 * math.pi * k / 7
-        sx = mx + math.cos(angle) * 7.5
-        sz = mz + math.sin(angle) * 7.5
-        _add(build, f"Prop_Stall_{k}", f"Stall_{k % 3}",
-             _market_stall(seed + k),
-             (sx, float(t.height_at(sx, sz)), sz),
-             float(rng.uniform(0, math.tau)), kind="prop", collides=True)
+    # A roof over the bank and field workbench, with a generous open front.
+    _add(build,"Harbour_ServiceRoof","ServiceRoof",
+         CIVIC.market_shelter(stone=CA.MARBLE,roof=CA.VERDIGRIS),
+         (-15,float(t.height_at(-15,9)),11),kind="landmark")
+    for k,(sx,sz,yaw) in enumerate([
+            (-27,-4,0),(-27,2,0),(-27,8,0),(-27,14,0),
+            (-9,20,math.pi),(-16,20,math.pi),(-23,20,math.pi)]):
+        _add(build,f"Prop_Stall_{k}",f"Stall_{k%3}",_market_stall(seed+k),
+             (sx,float(t.height_at(sx,sz)),sz),yaw,kind="prop",collides=True)
+    # Cargo carts climb to the warehouse's raised sill on a visible ramp.
+    base = float(t.height_at(10,8))
+    ramp = RC.graded_causeway([(0,0,0),(5,hy2+1.4-base,0)],width=5,
+                              thickness=0.4,parapet=0.15,foot=-0.8,
+                              stone=CA.STONE,paving=CA.MOSAIC)
+    _add(build,"Walk_CustomsCargoRamp","CustomsCargoRamp",ramp,
+         (7,base,8),kind="landmark")
+    x,z = REG.DOORS["basilica-undercroft"]
+    porch = RC.vault_entry(stone=CA.MARBLE,roof=CA.VERDIGRIS,wood="timber_dark")
+    porch.parts = porch.parts[:-2]  # replace the two thin roof skins with a lined lid
+    porch.add(CIVIC.pitched_canopy(5.3,4.3,3.46,4.4,CA.VERDIGRIS))
+    _add(build,"Landmark_UndercroftPorch","UndercroftPorch",
+         porch,
+         (x,float(t.height_at(x,z)),z-2),kind="landmark")
+    x,z = REG.DOORS["campanile-door"]
+    _add(build,"Prop_CampanileDoor","CampanileDoor",
+         ARCH.door(1.5,2.5,material="timber_dark"),
+         (x,float(t.height_at(x,z)),z-1.75),kind="prop")
 
 
 def _market_stall(seed: int) -> SW.MeshGroup:
@@ -381,7 +385,7 @@ def populate_sunken_court(build, seed: int = 0) -> None:
         "serverTile": [int(round(cx + REG.SERVER_ORIGIN[0])),
                        int(round(REG.SERVER_ORIGIN[1] - cz))],
         "submerged": True,
-        "note": "placeholder name - see modeling-assumptions.md"})
+        "note": "Authored civic landmark; thresholds are surveyed separately."})
 
     rng = N.Rng(seed + 91)
     for k in range(9):

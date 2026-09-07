@@ -192,3 +192,23 @@ The client manifest's sun.direction follows the direction light travels
 (negative Y for daylight). Offline preview Lighting.sun_direction points
 toward the sun instead. Negate the vector when translating between them;
 review the result with --environment=manifest.
+
+
+Civic waterfront recipes live in amberwood/civiccraft.py. arcaded_causeway
+takes exact near/far deck heights and one span length; its arches share edges,
+its slab has one walking skin, and its balustrades stand outside that skin.
+market_shelter and pitched_canopy keep a lined roof visible from below without
+a second coplanar skin. Material names are parameters, so regions can use their
+own pinned stone, paving, timber and roofing without allocating new classes.
+
+Freeze a causeway's shore survey before grading its bridgeheads. Store that
+survey on the terrain instance, never in a process-global cache: the near/far
+builds and a later seed must not inherit a previous terrain's landings.
+Where a flat terrain landing overlaps the span, recess the bed beneath the
+deck instead of drawing both tops in one plane. Do not raise the water bed.
+
+contentLayout.npcs maps existing server NPC names to world-space posts.
+The content writer resolves those posts before reserving habitat and service
+space, retaining each NPC's role and dialogue. Wildlife species absent from the
+writer's catalogue retain their existing records unless the package supplies
+an explicit habitat; an older catalogue must not erase newer creature work.

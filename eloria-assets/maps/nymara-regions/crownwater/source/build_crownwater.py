@@ -41,6 +41,7 @@ from amberwood import noise as N
 from amberwood import render as RENDER
 
 from amberwood import terrain as TER
+from amberwood import routecraft as RC
 
 import crownkit as CK
 import populate as POP
@@ -49,6 +50,8 @@ import transitions as MARCH
 import secretdoors as SD
 import secrets_design as SEC
 import loresites as LORE
+
+register_materials = CK.register
 
 HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
@@ -70,16 +73,16 @@ SCHEMA_VERSION = "1.0.0"
 CROSSINGS = [
     MARCH.Crossing("east-quay", "four_gates", REG.ANCHORS["outer_east"],
                    (REG.PLAY_MAX_X + 20.0, REG.ANCHORS["outer_east"][1]),
-                   radius=28.0, name="The Causeway Quay"),
+                   radius=28.0, name="The Causeway Quay", station_position=(366, -3)),
     MARCH.Crossing("north-quay", "mirrorhold", REG.ANCHORS["outer_north"],
                    (REG.ANCHORS["outer_north"][0], REG.PLAY_MIN_Z - 20.0),
-                   radius=28.0, ferry=True, name="The North Quay"),
+                   radius=28.0, ferry=True, name="The North Quay", station_position=(225, -352)),
     MARCH.Crossing("west-quay", "westhaven", REG.ANCHORS["outer_west"],
                    (REG.PLAY_MIN_X - 20.0, REG.ANCHORS["outer_west"][1]),
-                   radius=28.0, ferry=True, name="The West Quay"),
+                   radius=28.0, ferry=True, name="The West Quay", station_position=(-132, -225)),
     MARCH.Crossing("south-quay", "manymouth_delta", REG.ANCHORS["outer_south"],
                    (REG.ANCHORS["outer_south"][0], REG.PLAY_MAX_Z + 20.0),
-                   radius=28.0, ferry=True, name="The South Quay"),
+                   radius=28.0, ferry=True, name="The South Quay", station_position=(3, 133)),
 ]
 
 # The places the region's people argue about (see loresites.py).
@@ -130,6 +133,9 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     build.landmarks.extend(march.landmarks)
     build.notes.extend(march.notes)
 
+    RC.clear_walk_corridors(build, [[[x,0,z] for x,z in points]
+                             for points in REG.CIVIC_PATHS.values()],
+                            {"tree":4.5,"foliage":3.0})
     terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
     build.terrain_meshes = terrain.build_meshes(
         uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
@@ -246,6 +252,11 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
         if anchor is None:
             continue
         x, y, z = anchor["position"]
+        if portal_id in REG.DOORS:
+            x,z = REG.DOORS[portal_id]
+            y = float(t.height_at(x,z))
+            if portal_id == "customs-door":
+                y = float(t.height_at(7,8)) + (x-7)/5 * (float(t.height_at(23,8))+1.4-float(t.height_at(7,8)))
         build.portals.append({
             "id": portal_id, "name": name, "type": "interior-entrance",
             "position": [round(float(x), 2), round(float(y) + 0.1, 2),
@@ -716,9 +727,15 @@ def write_camera_views(build: REG.RegionBuild, path: Path) -> dict:
                 y = y1 + 2.4
         return y
 
+    import glb_reader as GLB
+    from verify_runtime import VerticalRayIndex
+    doc,body = GLB.load(path.parent / "world.glb")
+    deck_index = VerticalRayIndex(GLB.triangles(doc,body,GLB.named(doc,"Walk_")),cell=4)
     entries = []
     for (name, panel, eye_xz, eye_h, target_xz, target_h, fov, _size,
          _radius, mode) in VIEWTABLE.VIEWS:
+        fixed = mode.endswith("!")
+        mode = mode.rstrip("!")
         ex, ez = eye_xz[0] * REG.SCALE, eye_xz[1] * REG.SCALE
         tx, tz = target_xz[0] * REG.SCALE, target_xz[1] * REG.SCALE
         ey = float(t.height_at(ex, ez)) + eye_h
@@ -733,27 +750,16 @@ def write_camera_views(build: REG.RegionBuild, path: Path) -> dict:
             # sometimes an island shelf at -1.3, and the same declared height
             # therefore lands 1.7 m above the deck in one place and 7 m above it
             # in another. Two attempts at panel 4 failed exactly that way.
-            deck = None
-            for x0, x1, z0, z1, y0, y1 in decks:
-                if x0 <= ex <= x1 and z0 <= ez <= z1:
-                    deck = y1 if deck is None else max(deck, y1)
+            deck = deck_index.top_hit(ex,ez)
+            target_deck = deck_index.top_hit(tx,tz)
             if deck is None:
-                raise SystemExit(
-                    f"view {name!r} is mode 'deck' but no walk deck covers "
-                    f"({ex:.1f}, {ez:.1f})")
+                raise ValueError(f"{name}: no walking surface under deck camera")
             ey = deck + eye_h
-            # The target is snapped to the deck too, so a level look along the
-            # span stays level. Measured against the ground it drifts: the
-            # terrain under the far end of a causeway is not the terrain under
-            # the near end, and the aim tilts by the difference.
-            target_deck = None
-            for x0, x1, z0, z1, y0, y1 in decks:
-                if x0 <= tx <= x1 and z0 <= tz <= z1:
-                    target_deck = y1 if target_deck is None else max(target_deck, y1)
-            ty = (target_deck if target_deck is not None else deck) + target_h
+            ty = (deck if target_deck is None else target_deck) + target_h
         elif mode != "submerged":
             ey = max(ey, REG.SEA_LEVEL + 0.6)
-            ey = clear_eye(ex, ey, ez)
+            if not fixed:
+                ey = clear_eye(ex, ey, ez)
         entries.append({
             "id": name,
             "panel": panel if isinstance(panel, int) else None,
@@ -838,7 +844,10 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             "walkableCells": collision_stats["walkableCells"],
             "walkableFraction": collision_stats["walkableFraction"],
         },
+        "contentLayout": REG.CONTENT_LAYOUT,
         "navigation": {
+            "crossings": [{"id":c["id"],"endpoints":RC.crossing_endpoints(c["endpoints"])}
+                          for c in build.crossings],
             "surfaceNodePrefixes": surface_prefixes,
             "walkableAreas": ["paving", "shore", "meadow", "causeways", "quays",
                               "stairs", "pavilion-decks"],
@@ -873,7 +882,9 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
                    "waypoints": [[round(float(p[0]), 1),
                                   round(REG.causeway_deck_level(t, name), 2),
                                   round(float(p[1]), 1)] for p in points]}
-                  for name, points in REG.CAUSEWAYS.items()],
+                  for name, points in REG.CAUSEWAYS.items()] + [
+                      {"id":name,"type":"promenade","waypoints":[[x,round(float(t.height_at(x,z)),2),z] for x,z in points]}
+                      for name,points in REG.CIVIC_PATHS.items()],
         "water": {
             "seaLevel": REG.SEA_LEVEL,
             "serverCells": REG.SERVER_CELLS,

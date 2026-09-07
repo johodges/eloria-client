@@ -104,6 +104,22 @@ VIEWS = [
      (1400, 900), 190, "golden"),
 ]
 
+VIEWS += [
+    ("21-service-court",None,(0,3),1.7,(-5,3),2.1,62,(1280,850),28,"day!"),
+    ("22-customs-ramp",None,(1.3,2.7),1.7,(8,2.7),2.7,60,(1280,850),28,"day!"),
+    ("23-undercroft-approach",None,(45,-31),1.7,(46.33,-37),1.5,58,(1280,850),28,"day!"),
+    ("24-bridge-landing",None,(12,-12),1.7,(19,-19),1.7,58,(1280,850),55,"deck!"),
+    ("25-basilica-procession",None,(38,-31),1.7,(38,-40),9.0,58,(1280,850),50,"day!"),
+]
+FIXED_VIEWS = {v[0] for v in VIEWS if v[-1].endswith("!")}
+DAY_LIGHTING = {
+    "sun_direction": (0.30,0.84,-0.45), "sun_color": (1.12,1.05,0.95),
+    "sky_color": (0.52,0.68,0.78), "ambient_strength": 0.52,
+    "fog_color": (0.62,0.80,0.86), "fog_density": 0.00035,
+    "fog_height_falloff": 0.0022, "saturation": 1.34,
+}
+REGION_LIGHTING = {"day":DAY_LIGHTING,"deck":DAY_LIGHTING}
+
 PANELS = {
     1: ("01-crown-approach",
         "The domed palace complex seen across open water from a barge"),

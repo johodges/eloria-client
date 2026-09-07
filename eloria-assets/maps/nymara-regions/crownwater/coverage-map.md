@@ -1,5 +1,11 @@
 # Crownwater coverage map
 
+The 2026-09-07 layout pass supersedes older statements about shared causeway
+length classes, landmark-centred door triggers and random harbour services.
+See [layout-review.md](layout-review.md) for the current surveyed routes,
+service court, habitat rings, captures and measurements.
+
+
 Every authored place, what is built there, and how it is reached. Positions are
 Godot metres; server tiles are `(x + 174, 174 - z)`.
 

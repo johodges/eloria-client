@@ -92,3 +92,20 @@ def test_crossing_standing_points_are_inside_the_rendered_deck():
         assert abs(ray.top_hit(x, z) - y) < 0.05  # triangulated mitres vary by centimetres
     assert ends[0][0] > 0.5  # a short first segment does not clamp the inset
     assert ends[1][2] < 12
+
+
+def test_arcaded_causeway_meets_unrounded_shores_with_one_walk_skin():
+    from amberwood import civiccraft
+    from verify_runtime import VerticalRayIndex
+    bridge = civiccraft.arcaded_causeway(37.25, 3.43, 6.18, arches=3)
+    triangles = np.concatenate([
+        p.positions[p.indices.reshape(-1,3)] for p in bridge.walk_parts])
+    normal = np.cross(triangles[:,1]-triangles[:,0],
+                      triangles[:,2]-triangles[:,0])
+    assert np.all(normal[:,1] > 0)
+    assert abs(normal[:,1].sum()/2 - 37.25*5.4) < 1e-4
+    ray = VerticalRayIndex(triangles,cell=2)
+    for x in (-18.62,0,18.62):
+        expected = 3.43+(x+37.25/2)/37.25*(6.18-3.43)
+        assert abs(ray.top_hit(x,0)-expected) < 1e-5
+    assert len(bridge.walk_parts) == 1

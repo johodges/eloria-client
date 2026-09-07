@@ -1,5 +1,11 @@
 # Crownwater modelling assumptions
 
+The 2026-09-07 layout pass supersedes older statements about shared causeway
+length classes, landmark-centred door triggers and random harbour services.
+See [layout-review.md](layout-review.md) for the current surveyed routes,
+service court, habitat rings, captures and measurements.
+
+
 Decisions taken where the brief, the concept art and the existing runtime did
 not fully determine the answer. Each is a place a reviewer may reasonably want
 to overrule the build.

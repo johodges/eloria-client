@@ -1,5 +1,13 @@
 # Crownwater performance summary
 
+Current layout pass: full package 33.47 MB and
+931,510 instanced triangles; reduced package
+20.66 MB and 767,978
+instanced triangles. Surveyed arches replace overlapping length-class masonry.
+See [layout-review.md](layout-review.md) for current validation and comparison
+against the previous package; historical measurements below predate this pass.
+
+
 Measured from the shipped package, not estimated.
 
 | Metric | `world.glb` | `world-lod2.glb` |
