@@ -90,9 +90,9 @@ enum ServerMessage {
 	ELORIA_COUNTER_LAYOUT = 217,
 	ELORIA_MIX_STATE = 218,
 	ELORIA_ACHIEVEMENTS_CATALOG = 219,
-	# The worn titles of everyone on a map. Down here with the rest of the
-	# overflow rather than beside 244: the run from 219 upwards is full, and
-	# this was the next free number below the stock commands.
+	# The worn titles of everyone on a map. Down here in the low run the
+	# extensions overflowed into rather than beside 244, because 219 was the
+	# last free number of the 215-219 block and this run continues downwards.
 	ELORIA_ACTOR_TITLES = 211,
 	ADD_ACTOR_ANIMATION = 89,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
