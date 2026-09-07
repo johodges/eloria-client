@@ -28,6 +28,12 @@ var manifest: WorldManifest
 var coordinate_adapter: CoordinateAdapter
 var world_root: Node3D
 
+## Trimesh shapes built during the load in progress, keyed by the mesh they
+## were built from, so a mesh a region places hundreds of times is walked once.
+## Cleared when the load finishes; the shapes themselves stay alive under the
+## bodies that hold them.
+var _collision_shapes: Dictionary = {}
+
 func load_world(manifest_path: String) -> void:
 	unload_world()
 	print_debug("world_load stage=manifest_open path=", manifest_path)
@@ -66,15 +72,36 @@ func load_world(manifest_path: String) -> void:
 	add_child(world_root)
 	print_debug("world_load stage=scene_attached node=", world_root.get_path(),
 		" children=", world_root.get_child_count(), " transform=", world_root.transform)
-	_apply_anisotropic_filtering()
-	_apply_vertex_coverage()
-	_apply_collision_declarations()
-	_apply_rendered_walk_surfaces()
+	# One walk of the import, not five. A region imports up to fifteen thousand
+	# nodes and every pass below wanted either the mesh instances or a node by
+	# name; each of them used to ask the scene tree for its own copy of the
+	# list. The passes see exactly the nodes they saw before: the bodies the
+	# collision passes add are not MeshInstance3D, so nothing they add belongs
+	# in this list, and the batching pass took its list before it created any
+	# batch.
+	var index: Dictionary = _index_import()
+	var mesh_instances: Array = index["meshInstances"] as Array
+	_apply_material_passes(mesh_instances)
+	_apply_collision_declarations(index["byName"] as Dictionary)
+	_apply_rendered_walk_surfaces(mesh_instances)
 	_apply_navigation_collision()
 	# Must run last: it skips anything that carries collision, so the collision
 	# passes above decide what stays an individually culled MeshInstance3D.
-	_batch_static_instances()
+	_batch_static_instances(mesh_instances)
+	_collision_shapes.clear()
 	load_completed.emit(manifest)
+
+## The import's mesh instances, and the first node of each name. Both lists the
+## load passes need, taken in a single traversal.
+func _index_import() -> Dictionary:
+	var mesh_instances: Array = []
+	var by_name: Dictionary = {}
+	for node: Node in world_root.find_children("*", "", true, false):
+		if not by_name.has(node.name):
+			by_name[node.name] = node
+		if node is MeshInstance3D:
+			mesh_instances.append(node)
+	return {"meshInstances": mesh_instances, "byName": by_name}
 
 ## GLTFDocument builds its textures at runtime with no mip chain, so every
 ## roof and every stretch of ground aliased against the pixel grid and swam as
@@ -97,54 +124,54 @@ func _build_texture_mipmaps(state: GLTFState) -> int:
 		rebuilt += 1
 	return rebuilt
 
-## A mip chain on its own blurs ground seen at a grazing angle, which is most
-## of an isometric view. Anisotropic sampling is what keeps the far end of a
-## road readable rather than smeared.
-func _apply_anisotropic_filtering() -> void:
-	var seen: Dictionary = {}
-	for node_value: Node in world_root.find_children("*", "MeshInstance3D", true, false):
-		var mesh: Mesh = (node_value as MeshInstance3D).mesh
-		if mesh == null:
-			continue
-		for surface: int in range(mesh.get_surface_count()):
-			var material: BaseMaterial3D = mesh.surface_get_material(
-				surface) as BaseMaterial3D
-			if material == null or seen.has(material.get_instance_id()):
-				continue
-			seen[material.get_instance_id()] = true
-			material.texture_filter = (
-				BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC)
-
-## A ground class is cut against its neighbour by an alpha test on the coverage
-## the map stores in COLOR_0's alpha, which is what lets a diagonal road read as
-## a diagonal instead of a flight of steps the width of a terrain cell. Godot's
-## glTF importer brings the colours in and sets the alpha mode, but leaves
-## `vertex_color_use_as_albedo` off, and without it the vertex alpha never
-## reaches the shader and every class draws over its whole quad.
+## The two material passes a freshly imported map needs, over one list of its
+## mesh instances. Each is described below; a material is touched once by
+## either, whichever instance reaches it first.
 ##
-## Only alpha-tested materials are touched, and only where the mesh carries
-## colours. Turning it on elsewhere would multiply albedo by a colour the mesh
-## does not have, and Godot substitutes white for a missing COLOR_0, so it is
-## harmless but pointless; restricting it keeps the flag where it means
-## something. The colours the ground carries are white apart from their alpha,
-## so albedo is unchanged.
-func _apply_vertex_coverage() -> int:
+## Anisotropic sampling: a mip chain on its own blurs ground seen at a grazing
+## angle, which is most of an isometric view. Anisotropic sampling is what
+## keeps the far end of a road readable rather than smeared.
+##
+## Vertex coverage: a ground class is cut against its neighbour by an alpha
+## test on the coverage the map stores in COLOR_0's alpha, which is what lets a
+## diagonal road read as a diagonal instead of a flight of steps the width of a
+## terrain cell. Godot's glTF importer brings the colours in and sets the alpha
+## mode, but leaves `vertex_color_use_as_albedo` off, and without it the vertex
+## alpha never reaches the shader and every class draws over its whole quad.
+##
+## Only alpha-tested materials get the coverage flag, and only where the mesh
+## carries colours. Turning it on elsewhere would multiply albedo by a colour
+## the mesh does not have, and Godot substitutes white for a missing COLOR_0,
+## so it is harmless but pointless; restricting it keeps the flag where it
+## means something. The colours the ground carries are white apart from their
+## alpha, so albedo is unchanged.
+##
+## Returns how many materials the coverage flag reached.
+func _apply_material_passes(mesh_instances: Array) -> int:
 	var applied := 0
-	var seen: Dictionary = {}
-	for node_value: Node in world_root.find_children("*", "MeshInstance3D", true, false):
+	var filtered: Dictionary = {}
+	var covered: Dictionary = {}
+	for node_value: Variant in mesh_instances:
 		var mesh: Mesh = (node_value as MeshInstance3D).mesh
 		if mesh == null:
 			continue
 		for surface: int in range(mesh.get_surface_count()):
-			if (mesh.surface_get_format(surface) & Mesh.ARRAY_FORMAT_COLOR) == 0:
-				continue
 			var material: BaseMaterial3D = mesh.surface_get_material(
 				surface) as BaseMaterial3D
-			if material == null or seen.has(material.get_instance_id()):
+			if material == null:
+				continue
+			var id: int = material.get_instance_id()
+			if not filtered.has(id):
+				filtered[id] = true
+				material.texture_filter = (
+					BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC)
+			if covered.has(id):
+				continue
+			if (mesh.surface_get_format(surface) & Mesh.ARRAY_FORMAT_COLOR) == 0:
 				continue
 			if material.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR:
 				continue
-			seen[material.get_instance_id()] = true
+			covered[id] = true
 			material.vertex_color_use_as_albedo = true
 			applied += 1
 	return applied
@@ -153,10 +180,11 @@ func unload_world() -> void:
 	if is_instance_valid(world_root):
 		world_root.queue_free()
 	world_root = null
+	_collision_shapes.clear()
 	manifest = null
 	coordinate_adapter = null
 
-func _apply_collision_declarations() -> void:
+func _apply_collision_declarations(by_name: Dictionary) -> void:
 	var collision: Dictionary = manifest.data.get("collision", {})
 	var declared: Array = collision.get("nodeNames", [])
 	if declared.is_empty():
@@ -168,11 +196,8 @@ func _apply_collision_declarations() -> void:
 	# CollisionShape3D is not a VisualInstance3D, so hiding the node it hangs off
 	# costs nothing in physics.
 	var proxies: bool = bool(collision.get("nodesAreProxies", false))
-	# One walk of a 1700-node import instead of one walk per declared name.
-	var by_name: Dictionary = {}
-	for node_value: Node in world_root.find_children("*", "", true, false):
-		if not by_name.has(node_value.name):
-			by_name[node_value.name] = node_value
+	# `by_name` is the index taken by the single walk in load_world: one walk of
+	# a 15 000-node import instead of one walk per declared name.
 	for node_name in declared:
 		var node: Node = by_name.get(str(node_name)) as Node
 		if node is MeshInstance3D:
@@ -232,7 +257,7 @@ func _apply_navigation_collision() -> void:
 		return
 	world_root.add_child(body)
 
-func _batch_static_instances() -> void:
+func _batch_static_instances(mesh_instances: Array) -> void:
 	var rendering_value: Variant = manifest.data.get("rendering", {})
 	var rendering: Dictionary = rendering_value as Dictionary if rendering_value is Dictionary else {}
 	if not bool(rendering.get("batchStaticInstances", true)):
@@ -242,7 +267,7 @@ func _batch_static_instances() -> void:
 	var cell_size: float = maxf(1.0, float(rendering.get("batchCellMetres",
 		BATCH_CELL_METRES)))
 	var groups: Dictionary = {}
-	for node_value: Node in world_root.find_children("*", "MeshInstance3D", true, false):
+	for node_value: Variant in mesh_instances:
 		var mesh_instance: MeshInstance3D = node_value as MeshInstance3D
 		if not _is_batchable(mesh_instance):
 			continue
@@ -323,13 +348,13 @@ func _create_batch(members: Array, index: int) -> void:
 		member.set_meta(BATCH_META, batch)
 		member.set_meta(BATCH_INDEX_META, member_index)
 
-func _apply_rendered_walk_surfaces() -> void:
+func _apply_rendered_walk_surfaces(mesh_instances: Array) -> void:
 	var navigation: Dictionary = manifest.data.get("navigation", {})
 	var prefixes_value: Variant = navigation.get("surfaceNodePrefixes", [])
 	if not prefixes_value is Array:
 		return
 	var prefixes: Array = prefixes_value as Array
-	for node_value: Node in world_root.find_children("*", "MeshInstance3D", true, false):
+	for node_value: Variant in mesh_instances:
 		var mesh_instance: MeshInstance3D = node_value as MeshInstance3D
 		var node_name: String = mesh_instance.name
 		var matches_surface: bool = false
@@ -349,6 +374,29 @@ func _create_static_collision(mesh_instance: MeshInstance3D,
 	body.name = mesh_instance.name + suffix
 	body.collision_layer = layer
 	var shape := CollisionShape3D.new()
-	shape.shape = mesh_instance.mesh.create_trimesh_shape()
+	shape.shape = _trimesh_shape(mesh_instance.mesh)
 	body.add_child(shape)
 	mesh_instance.add_child(body)
+
+## The trimesh shape for `mesh`, built once per mesh per load.
+##
+## A region names the same handful of meshes over and over: Amberwood declares
+## collision on 862 nodes that between them reference 91 meshes, and the walk
+## surfaces of a region repeat too. `create_trimesh_shape()` walks every
+## triangle and the physics server builds a BVH per shape, so building one per
+## node paid for the same geometry ten times over - 638 ms of Amberwood's load
+## and 528 ms of Verdant Stair's.
+##
+## Sharing is exact rather than approximate: the faces are in the mesh's own
+## space and the placement lives on the CollisionShape3D's parent, which is
+## what lets one shape stand under many bodies, and is how an instanced scene
+## has always worked. The table is per load, so a map change does not hold the
+## last map's geometry.
+func _trimesh_shape(mesh: Mesh) -> ConcavePolygonShape3D:
+	var key: int = mesh.get_instance_id()
+	var cached: ConcavePolygonShape3D = _collision_shapes.get(key) as ConcavePolygonShape3D
+	if cached != null:
+		return cached
+	var built: ConcavePolygonShape3D = mesh.create_trimesh_shape()
+	_collision_shapes[key] = built
+	return built

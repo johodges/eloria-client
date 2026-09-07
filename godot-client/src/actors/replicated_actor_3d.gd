@@ -199,6 +199,9 @@ var _model_config: Dictionary = {}
 var _equipment_config: Dictionary = {}
 var _equipment_visuals: Dictionary = {}
 var _equipment_nodes: Dictionary = {}
+## Whether this actor has been dressed once. Until it has, every wardrobe
+## request is applied in full, however little it appears to change.
+var _equipment_applied: bool = false
 var _equipment_hides: Dictionary = {}
 var _hidden_body_surfaces: Dictionary = {}
 var _nameplate: Label3D
@@ -1185,6 +1188,16 @@ func _paced_travel_action(action: StringName) -> StringName:
 	return action
 
 func apply_equipment_visuals(visuals: Dictionary, fallback_parts: Array = []) -> void:
+	# Every actor packet restates the whole wardrobe, and almost none of them
+	# change it: a crowd walking past asked for the clothes it was already
+	# wearing on every step. Everything below reconciles what is worn against
+	# what was asked for and skips each part that already agrees, so a request
+	# that matches in full does nothing but walk the model's meshes again in
+	# `_refresh_wardrobe_cover`, which reads only state this function writes.
+	# The first pass always runs, so nothing an actor is built with is skipped.
+	if _equipment_applied and _equipment_matches(visuals, fallback_parts):
+		return
+	_equipment_applied = true
 	var torso_before: int = int(_equipment_visuals.get(BODY_PART, 0))
 	for raw_part: Variant in _equipment_visuals.keys():
 		var old_part: int = int(raw_part)
@@ -1227,6 +1240,21 @@ func apply_equipment_visuals(visuals: Dictionary, fallback_parts: Array = []) ->
 	# has to be built again against what the actor is now made of.
 	if _silhouette != null and _silhouette.is_enabled():
 		_silhouette.rebuild()
+
+## Whether `visuals` asks for exactly what is already worn. The part loop's own
+## skip condition, taken over the whole request: the same visual id for every
+## part, no part left over on either side, and a part the server offered a
+## fallback for already carrying its nodes.
+func _equipment_matches(visuals: Dictionary, fallback_parts: Array) -> bool:
+	if visuals.size() != _equipment_visuals.size():
+		return false
+	for raw_part: Variant in visuals:
+		var part: int = int(raw_part)
+		if int(_equipment_visuals.get(part, -1)) != int(visuals[raw_part]):
+			return false
+		if fallback_parts.has(part) and not _equipment_nodes.has(part):
+			return false
+	return true
 
 func equipment_diagnostics() -> Dictionary:
 	# Modified 2026-08-28 for Eloria Client: garments are now skinned to this

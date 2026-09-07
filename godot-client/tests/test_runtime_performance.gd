@@ -139,6 +139,43 @@ func _run() -> void:
 	_expect(second.status == "ok" and int(second.command) == 2,
 		"the second packet decodes in place at an offset")
 
+	# The decoders' lookup tables are constants of the class, not literals
+	# inside the functions that read them. A partial-stat packet arrives with
+	# every health, food and experience tick and every stat in one asks for its
+	# name, so a table built inside `stat_key` was built again per stat.
+	_expect(EloriaProtocol.STAT_SLOT_KEYS.size() > 80
+		and str(EloriaProtocol.STAT_SLOT_KEYS[42]) == "health",
+		"the partial-stat slot names are a shared constant")
+	_expect(EloriaProtocol.stat_key(42) == "health"
+		and EloriaProtocol.stat_key(999) == "slot_999",
+		"stat_key answers out of that table and still names an unknown slot")
+	_expect(EloriaProtocol.STATS_ATTRIBUTE_NAMES.size() == 12
+		and EloriaProtocol.STATS_SKILL_LEVEL_SLOTS.size() == 13
+		and EloriaProtocol.STATS_EXPERIENCE_SLOTS.size() == 13
+		and EloriaProtocol.STATS_RESOURCE_NAMES.size() == 6,
+		"the full statistics packet's slot tables are constants too")
+	var stat_burst := PackedByteArray()
+	for slot: int in [42, 43, 46]:
+		stat_burst.append(slot)
+		stat_burst.append_array(PackedByteArray([7, 0, 0, 0]))
+	var decoded_stats: Dictionary = EloriaProtocol.decode_server(
+		EloriaProtocol.ServerMessage.SEND_PARTIAL_STAT, stat_burst)
+	_expect(decoded_stats.type == "partial_stats"
+		and int((decoded_stats.values as Dictionary)["health"]) == 7
+		and int((decoded_stats.values as Dictionary)["max_health"]) == 7
+		and int((decoded_stats.values as Dictionary)["food"]) == 7,
+		"a partial-stat packet still names every stat it carries")
+
+	# A chat line is copied once and read twice, not copied for each reading.
+	var chat_payload := PackedByteArray([3, 127 + 4])
+	chat_payload.append_array("Hello".to_utf8_buffer())
+	chat_payload.append(0)
+	var decoded_chat: Dictionary = EloriaProtocol.decode_server(
+		EloriaProtocol.ServerMessage.RAW_TEXT, chat_payload)
+	_expect(decoded_chat.type == "chat" and int(decoded_chat.channel) == 3
+		and str(decoded_chat.text) == "Hello" and int(decoded_chat.colour) == 4,
+		"the colour and the text of a chat line both come off one copy of it")
+
 	# Item icons are built once per picture and shared, not rebuilt per slot
 	# per refresh.
 	var atlas: RefCounted = scene.get("item_atlas")
@@ -230,10 +267,151 @@ func _run() -> void:
 	scene.call("_sync_world")
 	NativeAnimationImporter.clear()
 
+	# The presentation record is copied shallowly: two keys are replaced and
+	# nothing that reads it writes into what is left.
+	var record: Dictionary = {"actor_id": 11, "x": 4, "y": 5, "rotation": 0,
+		"actor_type": 1, "kind": 1, "name": "Shallow", "health": 5,
+		"max_health": 9, "appearance": {"hair": 2},
+		"equipment_fallback_parts": [3]}
+	var presented: Dictionary = scene.call("_presentation_dto", record)
+	_expect(not is_same(presented, record),
+		"the presentation record is a copy, so its own keys do not reach AppState")
+	_expect(is_same(presented["appearance"], record["appearance"])
+		and is_same(presented["equipment_fallback_parts"],
+			record["equipment_fallback_parts"]),
+		"what it does not replace is shared rather than copied a level at a time")
+	_expect(not is_same(presented["equipment_visuals"],
+		record.get("equipment_visuals")),
+		"the wardrobe it does build is its own")
+
+	# An actor packet restates the whole wardrobe. Asking for what is already
+	# worn does nothing, and the first pass always runs in full.
+	await _check_wardrobe_repeat()
+
+	# A region names the same mesh on hundreds of nodes. The trimesh shape only
+	# depends on the mesh, so it is built once per mesh per load and shared by
+	# every body standing on it, and the import is walked once for every pass
+	# that wanted a list of it.
+	await _check_world_loader()
+
 	print("runtime performance tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	scene.queue_free()
 	await process_frame
 	quit(failures)
+
+func _check_wardrobe_repeat() -> void:
+	var actor := ReplicatedActor3D.new()
+	root.add_child(actor)
+	var model := Node3D.new()
+	model.name = "NativeModel"
+	actor.add_child(model)
+	# The one surface the cover pass writes to on every run: a wardrobe shirt
+	# with a colour of its own and an override to put it on.
+	var shirt := MeshInstance3D.new()
+	shirt.name = "wardrobe_shirt"
+	shirt.mesh = BoxMesh.new()
+	shirt.set_meta("wardrobe_color", Color.SEA_GREEN)
+	var material := StandardMaterial3D.new()
+	shirt.material_override = material
+	model.add_child(shirt)
+	await process_frame
+
+	actor.apply_equipment_visuals({}, [])
+	_expect(material.albedo_color == Color.SEA_GREEN,
+		"the first wardrobe pass runs in full however little it changes")
+	material.albedo_color = Color.MAGENTA
+	actor.apply_equipment_visuals({}, [])
+	_expect(material.albedo_color == Color.MAGENTA,
+		"asking again for the clothes already worn does nothing")
+	_expect(not actor.call("_equipment_matches", {5: 208}, []),
+		"a wardrobe that differs is not mistaken for the one worn")
+	# The part loop's own second condition: a part the server offers a fallback
+	# for is rebuilt while it has no nodes, so the pass may not be skipped.
+	actor.set("_equipment_visuals", {5: 208})
+	actor.set("_equipment_nodes", {})
+	_expect(actor.call("_equipment_matches", {5: 208}, []),
+		"the same visual on the same part is a match")
+	_expect(not actor.call("_equipment_matches", {5: 208}, [5]),
+		"a part offered a fallback with nothing built for it is not")
+	actor.queue_free()
+	await process_frame
+
+func _check_world_loader() -> void:
+	var loader := WorldLoader.new()
+	root.add_child(loader)
+	var world := Node3D.new()
+	world.name = "ImportedWorld_probe"
+	loader.add_child(world)
+	loader.world_root = world
+	var manifest := WorldManifest.new()
+	manifest.data = {
+		"schemaVersion": "1.0",
+		"asset": {"id": "loader_probe", "glb": "world.glb", "units": "meters",
+			"coordinateSystem": {"upAxis": "Y"}, "bounds": {}},
+		"collision": {"nodeNames": ["Wall_1", "Wall_2", "Wall_3", "Gate_1"]},
+		"navigation": {"surfaceNodePrefixes": ["Terrain_"]}}
+	loader.manifest = manifest
+
+	# Three walls off one mesh, a gate off another, two terrain tiles off a
+	# third: nine bodies' worth of declarations over three meshes.
+	var wall_mesh := BoxMesh.new()
+	var gate_mesh := BoxMesh.new()
+	var terrain_mesh := PlaneMesh.new()
+	for entry: Array in [["Wall_1", wall_mesh], ["Wall_2", wall_mesh],
+			["Wall_3", wall_mesh], ["Gate_1", gate_mesh],
+			["Terrain_A", terrain_mesh], ["Terrain_B", terrain_mesh]]:
+		var instance := MeshInstance3D.new()
+		instance.name = str(entry[0])
+		instance.mesh = entry[1] as Mesh
+		world.add_child(instance)
+	await process_frame
+
+	var index: Dictionary = loader.call("_index_import")
+	var listed: Array = index["meshInstances"] as Array
+	_expect(listed.size() == 6,
+		"one walk of the import lists every mesh instance exactly once")
+	_expect((index["byName"] as Dictionary).size() == 6
+		and (index["byName"] as Dictionary).has("Gate_1"),
+		"the same walk indexes the nodes the collision declarations name")
+
+	loader.call("_apply_collision_declarations", index["byName"])
+	loader.call("_apply_rendered_walk_surfaces", listed)
+	var shapes: Dictionary = {}
+	for instance_value: Variant in listed:
+		var instance: MeshInstance3D = instance_value as MeshInstance3D
+		var body: StaticBody3D = null
+		for child: Node in instance.get_children():
+			if child is StaticBody3D:
+				body = child as StaticBody3D
+		if not _returns(body != null, str(instance.name) + " got its collision body"):
+			continue
+		var collision: CollisionShape3D = body.get_child(0) as CollisionShape3D
+		shapes[instance.name] = collision.shape
+
+	_expect(is_same(shapes.get("Wall_1"), shapes.get("Wall_2"))
+		and is_same(shapes.get("Wall_1"), shapes.get("Wall_3")),
+		"three nodes off one mesh share one trimesh shape instead of three")
+	_expect(is_same(shapes.get("Terrain_A"), shapes.get("Terrain_B")),
+		"two walk surfaces off one mesh share one shape too")
+	_expect(not is_same(shapes.get("Wall_1"), shapes.get("Gate_1"))
+		and not is_same(shapes.get("Wall_1"), shapes.get("Terrain_A")),
+		"a different mesh gets its own shape")
+	var shared: ConcavePolygonShape3D = shapes.get("Wall_1") as ConcavePolygonShape3D
+	_expect(shared != null
+		and shared.get_faces() == wall_mesh.create_trimesh_shape().get_faces(),
+		"the shared shape holds the faces the mesh's own trimesh shape does")
+
+	# The table is per load: a second map must not be handed the last one's
+	# geometry.
+	loader.unload_world()
+	_expect((loader.get("_collision_shapes") as Dictionary).is_empty(),
+		"unloading drops the shapes built for the map that just left")
+	loader.queue_free()
+	await process_frame
+
+func _returns(value: bool, label: String) -> bool:
+	_expect(value, label)
+	return value
 
 func _expect(value: bool, label: String) -> void:
 	if value:
