@@ -20,8 +20,8 @@ func _run() -> void:
 	var app_state: Node = root.get_node("/root/AppState")
 	var catalog := SpellCatalog.new()
 	catalog.configure(_json("res://data/spells/catalog.json"))
-	_expect(catalog.spell_ids().size() == 10,
-		"the real catalog carries the ten Eloria spells: %d"
+	_expect(catalog.spell_ids().size() == 22,
+		"the real catalog carries the twenty-two Eloria spells: %d"
 		% catalog.spell_ids().size())
 	var window: Control = (load("res://src/ui/spells_window.gd")
 		as GDScript).new() as Control
@@ -41,7 +41,7 @@ func _run() -> void:
 		and rect.end.y <= 720.0,
 		"it fits 1280x720 clear of the resource rail: %s" % rect)
 
-	# All ten spells appear, each exactly once, across the four groups.
+	# Every spell appears, each exactly once, across the four groups.
 	var body := "SpellsWindow/SpellsBody/"
 	var listed: Array[int] = []
 	for group: String in ["Health", "General", "Attack", "Defense"]:
@@ -49,8 +49,8 @@ func _run() -> void:
 			body + "%sSpellsRow" % group) as HFlowContainer
 		for child: Node in row.get_children():
 			listed.append(int(str(child.name).trim_prefix("SpellButton")))
-	_expect(listed.size() == 10,
-		"all ten spells are on the window: %d" % listed.size())
+	_expect(listed.size() == 22,
+		"all twenty-two spells are on the window: %d" % listed.size())
 	for spell_id: int in catalog.spell_ids():
 		_expect(listed.has(spell_id), "spell %d is listed" % spell_id)
 
@@ -63,6 +63,18 @@ func _run() -> void:
 		"Stoneward is a defense spell")
 	_expect(str(window.call("group_of", 5)) == "General",
 		"Blinkstep, an effect no group names, is a general spell")
+	_expect(str(window.call("group_of", 21)) == "Health",
+		"Hearthcircle, the party heal, is a health spell")
+	_expect(str(window.call("group_of", 20)) == "Attack",
+		"Ruinfall, which is a Harm on everything nearby, is an attack spell")
+	_expect(str(window.call("group_of", 11)) == "Defense",
+		"Null Mantle is a defense spell")
+	# Swiftwend, Duskveil, Glassgaze and Thriceward name effects the window's
+	# own table does not, so they fall to General. Eternal Lands keeps haste,
+	# invisibility and true sight there too; the elemental ward belongs under
+	# Defense and needs a row in EFFECT_GROUPS to get there.
+	_expect(str(window.call("group_of", 17)) == "General",
+		"Swiftwend is a general spell")
 	var heal_button: Button = window.get_node(
 		body + "HealthSpellsRow/SpellButton0") as Button
 	_expect(heal_button != null, "Embermend's button sits in the health row")
@@ -74,7 +86,8 @@ func _run() -> void:
 	var health_names: Array[String] = []
 	for child: Node in window.get_node(body + "HealthSpellsRow").get_children():
 		health_names.append(str(child.name))
-	_expect(health_names == ["SpellButton0", "SpellButton1", "SpellButton7"],
+	_expect(health_names == ["SpellButton0", "SpellButton1", "SpellButton21",
+			"SpellButton7", "SpellButton12"],
 		"health spells are ordered by required level: %s" % str(health_names))
 
 	# With nothing owned, nothing is castable: dimmed, not hidden, and still
@@ -112,7 +125,7 @@ func _run() -> void:
 	var blocked_reagents: Label = window.get_node(
 		body + "SpellDetails/SpellReagents") as Label
 	_expect(blocked_reagents.text
-			== "Reagents: !Stormglass x1, !Frost Reed x1, !Portal Shard x1",
+			== "Reagents: !Storm Crystal x1, !Frost Reed x1, !Portal Shard x1",
 		"reagents nothing carries are named and marked: "
 			+ blocked_reagents.text)
 	_expect(not cast.disabled, "selecting a spell enables Cast")

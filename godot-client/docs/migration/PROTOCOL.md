@@ -103,6 +103,17 @@ for an actor selected through `TOUCH_PLAYER(28)`, and 5 asks for a location
 submitted through the normal movement packet. `GET_ACTIVE_SPELL(44)` carries
 `buff_id:u8 | duration_seconds:u8`.
 
+The book is twenty-two spells now, ids 0-21, which is what the twelve-slot
+quickbar and the spell window were built for; `data/spells/catalog.json`
+mirrors `dev-server config/eloria/spells.xml` and the server test
+`tests/test_spellbook.py` fails if the two disagree on any id, name, level,
+mana, icon, sigil sequence or reagent. Seven of the twelve ask for an actor
+(status 4) and none of the new ones asks for a location. Four of the new
+spells - Swiftwend, Duskveil, Glassgaze and Thriceward - name effects that
+`spells_window.gd`'s `EFFECT_GROUPS` does not, so they draw under General.
+Eternal Lands also keeps haste, invisibility and true sight there;
+`element_ward` belongs under Defense and wants a row in that table.
+
 Melee targeting sends `ATTACK_SOMEONE(40)` as `actor_id:u32le`. The server may
 approach the target before broadcasting actor command 18 (enter combat), 46
 (primary attack), and 19 (leave combat); command 3 is death. Actor damage and
@@ -337,9 +348,13 @@ and the client was never told. A two-second sweep now sends
 The buff id namespace is the server's; the names are not on the wire. The
 client's spell catalog carries a name and an icon per buff id, the same way it
 already carries spell names and sigil art. Ids this server sets: 0 shield, 1
-magic protection, 3 invisibility, 17/23 cold protection, 18/24 heat
-protection, 19/25 radiation protection, 22 true sight - the duplicate pairs
-are the potion and the spell routes to the same protection.
+magic protection, 3 invisibility, 7 haste, 11 magic immunity, 17/23 cold
+protection, 18/24 heat protection, 19/25 radiation protection, 22 true sight -
+the duplicate pairs are the potion and the spell routes to the same
+protection. Seven and eleven were in the server's duration table with no spell
+to set them until Swiftwend and Null Mantle; a hasted player also carries the
+`BUFF_DOUBLE_SPEED` bit in `SEND_BUFFS(78)`, which is what makes the client
+choose its running frames.
 
 `SEND_BUFFS(78)` is `actor_id:u16 | buffs:u32`, the visible effects on one
 actor. The only bit this server sets is 1024, doubled movement speed, and it
