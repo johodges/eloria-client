@@ -57,8 +57,9 @@ func _run() -> void:
 		and rect.end.y <= 720.0,
 		"it fits 1280x720 clear of the resource rail: %s" % rect)
 
-	# Only the summons, and every one of them. The catalog holds thirty-two
-	# recipes across seven skills; the window is not another manufacture list.
+	# Only the summons, and every one of them. The catalog holds five hundred
+	# and thirty-two recipes across seven skills; the window is not another
+	# manufacture list.
 	var listed: Array[int] = window.call("summon_recipes") as Array[int]
 	var names: Array[String] = []
 	for index: int in listed:
