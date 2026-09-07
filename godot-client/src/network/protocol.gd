@@ -89,6 +89,11 @@ enum ServerMessage {
 	ELORIA_PERK_CATALOG = 215, ELORIA_ATTRIBUTE_STATE = 216,
 	ELORIA_COUNTER_LAYOUT = 217,
 	ELORIA_MIX_STATE = 218,
+	ELORIA_ACHIEVEMENTS_CATALOG = 219,
+	# The worn titles of everyone on a map. Down here with the rest of the
+	# overflow rather than beside 244: the run from 219 upwards is full, and
+	# this was the next free number below the stock commands.
+	ELORIA_ACTOR_TITLES = 211,
 	ADD_ACTOR_ANIMATION = 89,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
@@ -188,6 +193,8 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"perk_catalog_v3",
 	"player_info_v1",
 	"achievements_window_v1",
+	"achievements_catalog_v1",
+	"actor_titles_v1",
 	"actor_footprints_v1",
 	"attribute_state_v1",
 	"counter_layout_v1",
@@ -959,6 +966,10 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return decode_degraded_items(payload)
 		ServerMessage.ELORIA_ACHIEVEMENTS_STATE:
 			return decode_achievements_state(payload)
+		ServerMessage.ELORIA_ACHIEVEMENTS_CATALOG:
+			return decode_achievements_catalog(payload)
+		ServerMessage.ELORIA_ACTOR_TITLES:
+			return decode_actor_titles(payload)
 		ServerMessage.ELORIA_EXPERIENCE_STATE:
 			return decode_experience_state(payload)
 		ServerMessage.ELORIA_INVENTORY_NAMES:
@@ -1267,6 +1278,79 @@ static func decode_achievements_state(payload: PackedByteArray) -> Dictionary:
 		return {"type": "invalid", "error": "achievements_trailing"}
 	return {"type": "achievements_state", "counters": counters,
 		"completed": completed}
+
+## Command 219. The whole achievement catalogue, with this character's
+## progress on it and the title they are wearing.
+##
+## Everything the window draws travels here, descriptions included, for the
+## same reason the perk catalogue and the counter layout carry theirs: the
+## catalogue is written in a server config file precisely so that a threshold
+## can move, and a client holding its own copy would be drawing last week's
+## list the day one did.
+##
+## `ELORIA_ACHIEVEMENTS_STATE(244)` still arrives and still feeds the Counters
+## tab. It is a different, older model - labelled counters plus finished names
+## - and this sits beside it rather than replacing it.
+static func decode_achievements_catalog(payload: PackedByteArray) -> Dictionary:
+	var worn: Dictionary = _nul_at(payload, 0)
+	if worn.is_empty():
+		return {"type": "invalid", "error": "achievements_catalog_title"}
+	var offset: int = int(worn.offset)
+	if offset + 2 > payload.size():
+		return {"type": "invalid", "error": "achievements_catalog_length"}
+	var count: int = u16(payload, offset)
+	offset += 2
+	var entries: Array[Dictionary] = []
+	for _index: int in range(count):
+		if offset + 9 > payload.size():
+			return {"type": "invalid", "error": "achievements_catalog_entry"}
+		var progress: int = u32(payload, offset)
+		var threshold: int = u32(payload, offset + 4)
+		var done: bool = int(payload[offset + 8]) != 0
+		offset += 9
+		var text: Dictionary = _nul_run(payload, offset, 5)
+		if text.is_empty():
+			return {"type": "invalid", "error": "achievements_catalog_text"}
+		offset = int(text.offset)
+		var parts: Array = text.values
+		entries.append({"key": str(parts[0]), "name": str(parts[1]),
+			"category": str(parts[2]), "description": str(parts[3]),
+			"title": str(parts[4]), "progress": progress,
+			"target": maxi(1, threshold), "done": done})
+	if offset != payload.size():
+		return {"type": "invalid", "error": "achievements_catalog_trailing"}
+	return {"type": "achievements_catalog", "worn_title": str(worn.value),
+		"entries": entries}
+
+## Command 211. What each player on this map is calling themselves.
+##
+## A packet of its own rather than a field on the actor: the stock display
+## name carries a colour byte, the name and the guild tag in one string, and
+## the decoder above unpicks all three by hand. A fourth field there would
+## have broken that for every server that does not send one.
+##
+## One frame carries a whole map on arrival and one row when somebody changes
+## theirs, so there is one code path. An empty title is a real row - it is how
+## somebody who took theirs off stops wearing it on everyone's screen.
+static func decode_actor_titles(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 2:
+		return {"type": "invalid", "error": "actor_titles_length"}
+	var count: int = u16(payload)
+	var offset: int = 2
+	var titles: Array[Dictionary] = []
+	for _index: int in range(count):
+		if offset + 2 > payload.size():
+			return {"type": "invalid", "error": "actor_titles_entry"}
+		var actor_id: int = u16(payload, offset)
+		offset += 2
+		var field: Dictionary = _nul_at(payload, offset)
+		if field.is_empty():
+			return {"type": "invalid", "error": "actor_titles_text"}
+		offset = int(field.offset)
+		titles.append({"actor_id": actor_id, "title": str(field.value)})
+	if offset != payload.size():
+		return {"type": "invalid", "error": "actor_titles_trailing"}
+	return {"type": "actor_titles", "titles": titles}
 
 ## Command 242. Which item names exist only because something wore out.
 ##
@@ -1817,14 +1901,25 @@ static func decode_player_info(payload: PackedByteArray) -> Dictionary:
 	var fields: Dictionary = _nul_run(payload, 4, count + 1)
 	if fields.is_empty():
 		return {"type": "invalid", "error": "player_info_text"}
-	if int(fields.offset) != payload.size():
+	var offset: int = int(fields.offset)
+	# The worn title, when there is one. Appended rather than slotted in, so
+	# a server that predates titles sends the frame this always read and the
+	# field simply is not there - which is why its absence is not an error.
+	var title: String = ""
+	if offset < payload.size():
+		var worn: Dictionary = _nul_at(payload, offset)
+		if worn.is_empty():
+			return {"type": "invalid", "error": "player_info_title"}
+		title = str(worn.value)
+		offset = int(worn.offset)
+	if offset != payload.size():
 		return {"type": "invalid", "error": "player_info_trailing"}
 	var values: Array = fields.values as Array
 	var achievements: Array[String] = []
 	for index: int in range(count):
 		achievements.append(str(values[index + 1]))
 	return {"type": "player_info", "actor_id": u16(payload),
-		"name": str(values[0]), "achievements": achievements}
+		"name": str(values[0]), "achievements": achievements, "title": title}
 
 ## Command 90. One map marker the server placed: a waypoint, a quest target or
 ## a tutorial pointer. The map arrives as the server's own file reference, which

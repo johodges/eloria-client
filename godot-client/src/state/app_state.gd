@@ -129,6 +129,15 @@ var worn_slots_mask: int = 0
 ## Everything countable this character has done: the achievement tallies and
 ## the achievements themselves, which used to exist only as a chat dump.
 var achievements_state: Dictionary = {"counters": [], "completed": []}
+## The authored achievement catalogue and this character's progress on it, as
+## {worn_title, entries}. Every entry carries its own name, description,
+## category, progress and threshold: the catalogue is a server config file, so
+## a client copy of it would go stale the first time a threshold moved.
+var achievements_catalog: Dictionary = {"worn_title": "", "entries": []}
+## What each player on this map is calling themselves, {actor_id: title}. Kept
+## apart from the actor's display name, which carries a colour byte, the name
+## and the guild tag in one string that every client unpicks by hand.
+var actor_titles: Dictionary = {}
 ## True lifetime experience per skill, keyed by skill name, and what it has
 ## bought past the level ceiling. Held separately from `stats` because the
 ## legacy stats packet carries the same numbers through a 32-bit window and
@@ -331,6 +340,8 @@ func _on_connection_state_changed(value: String) -> void:
 		degraded_item_names.clear()
 		worn_slots_mask = 0
 		achievements_state = {"counters": [], "completed": []}
+		achievements_catalog = {"worn_title": "", "entries": []}
+		actor_titles.clear()
 		experience64.clear()
 		# Per profile rather than per character, but a different server may
 		# size its creatures differently, so it is cleared with the rest.
@@ -910,6 +921,22 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			achievements_state = {"counters": event.counters,
 				"completed": event.completed}
 			state_changed.emit(&"achievements_state")
+		"achievements_catalog":
+			achievements_catalog = {"worn_title": str(event.worn_title),
+				"entries": (event.entries as Array).duplicate()}
+			state_changed.emit(&"achievements_catalog")
+		"actor_titles":
+			# An empty title is a real row: it is how somebody who took theirs
+			# off stops wearing it here too.
+			for raw_title: Variant in event.titles as Array:
+				var row: Dictionary = raw_title as Dictionary
+				var actor_id: int = int(row.get("actor_id", 0))
+				var worn: String = str(row.get("title", ""))
+				if worn.is_empty():
+					actor_titles.erase(actor_id)
+				else:
+					actor_titles[actor_id] = worn
+			state_changed.emit(&"actor_titles")
 		"experience_state":
 			experience64.clear()
 			for raw_skill: Variant in event.skills:
@@ -1002,6 +1029,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 		"player_info":
 			player_info = {"open": true, "actor_id": int(event.actor_id),
 				"name": str(event.name),
+				"title": str(event.get("title", "")),
 				"achievements": (event.achievements as Array).duplicate()}
 			state_changed.emit(&"player_info")
 		"map_marker":
@@ -1195,7 +1223,8 @@ func close_player_info() -> void:
 	state_changed.emit(&"player_info")
 
 func _empty_player_info() -> Dictionary:
-	return {"open": false, "actor_id": -1, "name": "", "achievements": []}
+	return {"open": false, "actor_id": -1, "name": "", "title": "",
+		"achievements": []}
 
 func _empty_party_state() -> Dictionary:
 	return {"in_party": false, "members": [], "invited_by": "",
