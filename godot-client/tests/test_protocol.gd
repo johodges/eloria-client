@@ -49,6 +49,7 @@ func _init() -> void:
 			EloriaProtocol.ServerMessage.ELORIA_COUNTER_LAYOUT,
 		"degraded_items_v1": EloriaProtocol.ServerMessage.ELORIA_DEGRADED_ITEMS,
 		"experience64_v1": EloriaProtocol.ServerMessage.ELORIA_EXPERIENCE_STATE,
+		"guild_window_v1": EloriaProtocol.ServerMessage.ELORIA_GUILD_STATE,
 		"party_window_v1": EloriaProtocol.ServerMessage.ELORIA_PARTY_STATE,
 		"perk_catalog_v3": EloriaProtocol.ServerMessage.ELORIA_PERK_CATALOG,
 		"quest_archive_v1":
@@ -82,6 +83,12 @@ func _init() -> void:
 			"000000000000000000",
 		# No party, no invitation: the shortest frame the server ever sends.
 		EloriaProtocol.ServerMessage.ELORIA_PARTY_STATE: "0000000000",
+		# No guild: the header, seven empty strings and seven empty
+		# sections. A real state, and the one the window draws a founding
+		# form from rather than waiting for a packet that never comes.
+		EloriaProtocol.ServerMessage.ELORIA_GUILD_STATE:
+			"01000000000000000000000000000000"
+			+ "00000000000000000000000000000000",
 		EloriaProtocol.ServerMessage.ELORIA_QUEST_ARCHIVE_STATE: "0000",
 		# One perk, priced, with no reason to refuse it: tier 1 of 3 owned,
 		# so what is priced is the second tier, and it sits on the Combat tab.
@@ -1538,6 +1545,83 @@ func _init() -> void:
 		"a party frame with trailing bytes is refused")
 	_expect(EloriaProtocol.CLIENT_CAPABILITIES.has("party_window_v1"),
 		"the client advertises the party window it can now draw")
+
+	# Command 213, the guild window. Seven strings and seven counted sections
+	# after an eleven-byte header, which is the shape a decoder gets wrong
+	# quietly: a section read at the wrong offset produces plausible rubbish
+	# rather than an error. Every fixture here is the server encoder's output.
+	var guild: Dictionary = EloriaProtocol.decode_server(213, _hex(
+		"010114ff00307500002714454c4f00456c6f7269612056616e6775617264004b656c"
+		+ "6c616e004d7573746572206174206475736b2e00412074657374696e67206775696c"
+		+ "640041736b20616e206f6666696365720068747470733a2f2f6578616d706c652e74"
+		+ "65737400020014074b656c6c616e0005004d6172656e000100546f6d610001005249"
+		+ "5600526976616c204775696c64000100125249560000000200454c4f00456c6f7269"
+		+ "612056616e677561726400020052495600526976616c204775696c64000100020000"
+		+ "72656400126461726b5f626c756500"))
+	_expect(guild.type == "guild" and bool(guild.in_guild)
+		and str(guild.tag) == "ELO" and str(guild.name) == "Eloria Vanguard"
+		and str(guild.owner) == "Kellan" and str(guild.motd) == "Muster at dusk."
+		and str(guild.url) == "https://example.test",
+		"the guild state carries the guild whole, motd and all")
+	_expect(int(guild.rank) == 20
+		and (int(guild.permissions) & EloriaProtocol.GUILD_CAN_OWN) != 0
+		and (int(guild.permissions) & EloriaProtocol.GUILD_CAN_LEAVE) == 0,
+		"the reader is told their rank and exactly what it lets them do")
+	_expect((guild.members as Array).size() == 2,
+		"both members arrive")
+	var guild_leader: Dictionary = (guild.members as Array)[0]
+	var guild_absent: Dictionary = (guild.members as Array)[1]
+	_expect(str(guild_leader.name) == "Kellan" and int(guild_leader.rank) == 20
+		and bool(guild_leader.online) and bool(guild_leader.is_self)
+		and bool(guild_leader.owner),
+		"the owner's row is marked as the owner and as the reader's own")
+	_expect(str(guild_absent.name) == "Maren" and not bool(guild_absent.online)
+		and not bool(guild_absent.owner),
+		"an offline member keeps a row and says so")
+	_expect((guild.applicants as Array) == ["Toma"]
+		and str(((guild.allies as Array)[0] as Dictionary).tag) == "RIV"
+		and int(((guild.colours as Array)[0] as Dictionary).colour) == 18,
+		"the applicant queue, the allies and the chosen colours all arrive")
+	var guild_directory: Dictionary = (guild.directory as Array)[0]
+	_expect(str(guild_directory.name) == "Eloria Vanguard"
+		and int(guild_directory.members) == 2,
+		"the directory carries the long name #join_guild wants, and a count")
+	_expect(str(((guild.palette as Array)[1] as Dictionary).name) == "dark_blue"
+		and int(((guild.palette as Array)[1] as Dictionary).colour) == 18,
+		"the colour words #set_guild_color accepts travel with the state")
+
+	# No guild is a state and not an omission: it still carries the price of
+	# founding one and the directory to apply from.
+	var guildless: Dictionary = EloriaProtocol.decode_server(213, _hex(
+		"01000000003075000027140000000000000000000000000000000100456c6f726961"
+		+ "2056616e6775617264000100454c4f00456c6f7269612056616e6775617264000200"
+		+ "02000072656400126461726b5f626c756500"))
+	_expect(guildless.type == "guild" and not bool(guildless.in_guild)
+		and int(guildless.create_cost) == 30000
+		and int(guildless.create_level) == 39 and int(guildless.join_level) == 20
+		and (guildless.pending as Array) == ["Eloria Vanguard"]
+		and (guildless.directory as Array).size() == 1,
+		"a player in no guild is told the price, the queue and the directory")
+	_expect(str(EloriaProtocol.decode_server(213, _hex("0100")).get("error", ""))
+		== "guild_length",
+		"a guild frame too short to hold its own header is refused")
+	_expect(str(EloriaProtocol.decode_server(213,
+		_hex("010000000000000000000000000000000000000000000000000000000000000000"))
+			.get("error", "")) == "guild_trailing",
+		"a guild frame with trailing bytes is refused")
+	_expect(str(EloriaProtocol.decode_server(213,
+		_hex("0100000000000000000000000000000000000200"))
+			.get("error", "")) == "guild_members",
+		"a guild frame promising more members than it carries is refused")
+	_expect(str(EloriaProtocol.decode_server(213,
+		_hex("010000000000000000000000000000000000"))
+			.get("error", "")) == "guild_members",
+		"a guild frame that ends before its first section is refused")
+	_expect(str(EloriaProtocol.decode_server(213,
+		_hex("010000000000000000000000000000")).get("error", "")) == "guild_text",
+		"a guild frame that runs out inside its seven strings is refused")
+	_expect(EloriaProtocol.CLIENT_CAPABILITIES.has("guild_window_v1"),
+		"the client advertises the guild window it can now draw")
 
 	var marketplace: Dictionary = EloriaProtocol.decode_server(222, _hex(
 		"00fa000000030000000100070000000c0000002300000058020000140053756e6c65"
