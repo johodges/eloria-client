@@ -230,10 +230,93 @@ func _run() -> void:
 	scene.call("_sync_world")
 	NativeAnimationImporter.clear()
 
+	# A region names the same mesh on hundreds of nodes. The trimesh shape only
+	# depends on the mesh, so it is built once per mesh per load and shared by
+	# every body standing on it, and the import is walked once for every pass
+	# that wanted a list of it.
+	await _check_world_loader()
+
 	print("runtime performance tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	scene.queue_free()
 	await process_frame
 	quit(failures)
+
+func _check_world_loader() -> void:
+	var loader := WorldLoader.new()
+	root.add_child(loader)
+	var world := Node3D.new()
+	world.name = "ImportedWorld_probe"
+	loader.add_child(world)
+	loader.world_root = world
+	var manifest := WorldManifest.new()
+	manifest.data = {
+		"schemaVersion": "1.0",
+		"asset": {"id": "loader_probe", "glb": "world.glb", "units": "meters",
+			"coordinateSystem": {"upAxis": "Y"}, "bounds": {}},
+		"collision": {"nodeNames": ["Wall_1", "Wall_2", "Wall_3", "Gate_1"]},
+		"navigation": {"surfaceNodePrefixes": ["Terrain_"]}}
+	loader.manifest = manifest
+
+	# Three walls off one mesh, a gate off another, two terrain tiles off a
+	# third: nine bodies' worth of declarations over three meshes.
+	var wall_mesh := BoxMesh.new()
+	var gate_mesh := BoxMesh.new()
+	var terrain_mesh := PlaneMesh.new()
+	for entry: Array in [["Wall_1", wall_mesh], ["Wall_2", wall_mesh],
+			["Wall_3", wall_mesh], ["Gate_1", gate_mesh],
+			["Terrain_A", terrain_mesh], ["Terrain_B", terrain_mesh]]:
+		var instance := MeshInstance3D.new()
+		instance.name = str(entry[0])
+		instance.mesh = entry[1] as Mesh
+		world.add_child(instance)
+	await process_frame
+
+	var index: Dictionary = loader.call("_index_import")
+	var listed: Array = index["meshInstances"] as Array
+	_expect(listed.size() == 6,
+		"one walk of the import lists every mesh instance exactly once")
+	_expect((index["byName"] as Dictionary).size() == 6
+		and (index["byName"] as Dictionary).has("Gate_1"),
+		"the same walk indexes the nodes the collision declarations name")
+
+	loader.call("_apply_collision_declarations", index["byName"])
+	loader.call("_apply_rendered_walk_surfaces", listed)
+	var shapes: Dictionary = {}
+	for instance_value: Variant in listed:
+		var instance: MeshInstance3D = instance_value as MeshInstance3D
+		var body: StaticBody3D = null
+		for child: Node in instance.get_children():
+			if child is StaticBody3D:
+				body = child as StaticBody3D
+		if not _returns(body != null, str(instance.name) + " got its collision body"):
+			continue
+		var collision: CollisionShape3D = body.get_child(0) as CollisionShape3D
+		shapes[instance.name] = collision.shape
+
+	_expect(is_same(shapes.get("Wall_1"), shapes.get("Wall_2"))
+		and is_same(shapes.get("Wall_1"), shapes.get("Wall_3")),
+		"three nodes off one mesh share one trimesh shape instead of three")
+	_expect(is_same(shapes.get("Terrain_A"), shapes.get("Terrain_B")),
+		"two walk surfaces off one mesh share one shape too")
+	_expect(not is_same(shapes.get("Wall_1"), shapes.get("Gate_1"))
+		and not is_same(shapes.get("Wall_1"), shapes.get("Terrain_A")),
+		"a different mesh gets its own shape")
+	var shared: ConcavePolygonShape3D = shapes.get("Wall_1") as ConcavePolygonShape3D
+	_expect(shared != null
+		and shared.get_faces() == wall_mesh.create_trimesh_shape().get_faces(),
+		"the shared shape holds the faces the mesh's own trimesh shape does")
+
+	# The table is per load: a second map must not be handed the last one's
+	# geometry.
+	loader.unload_world()
+	_expect((loader.get("_collision_shapes") as Dictionary).is_empty(),
+		"unloading drops the shapes built for the map that just left")
+	loader.queue_free()
+	await process_frame
+
+func _returns(value: bool, label: String) -> bool:
+	_expect(value, label)
+	return value
 
 func _expect(value: bool, label: String) -> void:
 	if value:
