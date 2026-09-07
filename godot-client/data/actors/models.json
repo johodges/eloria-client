@@ -5514,6 +5514,23 @@
         "body": "body",
         "neck": "neck"
       }
+    },
+    "moss_bearded_giant": {
+      "scene": "res://assets/actors/native/creatures/moss_bearded_giant.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/moss_bearded_giant.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.647059,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
     }
   },
   "actorTypes": {
@@ -5938,7 +5955,8 @@
     "668": "reed_mask_hunter",
     "669": "spectral_forest_duelist",
     "670": "spectral_moors_knight",
-    "671": "drowned_lich_king"
+    "671": "drowned_lich_king",
+    "672": "moss_bearded_giant"
   },
   "creationOptions": [
     {
