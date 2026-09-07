@@ -37,6 +37,7 @@ const EFFECT_GROUPS := {
 	"heat_protection": "Defense",
 	"cold_protection": "Defense",
 	"radiation_protection": "Defense",
+	"element_ward": "Defense",
 }
 
 ## EL dims what you cannot cast rather than hiding it, so it can still be
