@@ -272,3 +272,17 @@ terrain triangles as well as the narrower half-metre walk grid.
 Use the actual Walk_ triangles for sloping routes and point grounding.
 A bounding box's maximum Y is not a height sample. Keep closed rooms out of
 the walking bucket even when their surrounding veranda is walkable.
+
+## Mountain routes
+
+amberwood.mountaincraft supplies suspension_bridge, temple_pinnacle and
+ore_sledge using caller-supplied material names. The suspension deck is a
+contiguous profiled walking skin; plank edges meet without overlapping boxes.
+Only its deck enters add_walk. The lantern coping and spire surfaces are
+separated vertically, and the ore sledge is structural scenery.
+
+Freeze bridge bank surveys before grading their approaches, and store them
+as region data. Searching the nearest road pixels after grading another yard
+can pick both landings on one bank. Declare the complete surveyed endpoints
+under navigation.crossings, keep the bed below the sagging deck, and check
+player-height views as well as the server crossing tests.

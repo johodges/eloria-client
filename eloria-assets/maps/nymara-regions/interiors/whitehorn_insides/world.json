@@ -2562,9 +2562,9 @@
     "textures": 59,
     "accessors": 160,
     "bufferViews": 219,
-    "uniqueTriangles": 61435,
-    "uniqueVertices": 64430,
-    "glbBytes": 9710472,
+    "uniqueTriangles": 61387,
+    "uniqueVertices": 64334,
+    "glbBytes": 9669252,
     "nodeNames": [
       "Interior_whitehorn_insides",
       "Roof_whitehorn_insides_cliff_rock",

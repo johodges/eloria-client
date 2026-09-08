@@ -117,7 +117,7 @@ ANCHORS: dict[str, tuple[float, float]] = {
 }
 
 SPAWN_DESIGN = (0.0, 0.0)
-SPAWN = (0.0, 0.0)
+SPAWN = (-12.0, 69.0)
 SPAWN_TEMPLE = (34.0 * SCALE, -88.0 * SCALE)
 SPAWN_MINE = (89.0 * SCALE, -38.0 * SCALE)
 
@@ -140,13 +140,14 @@ ROUTES: dict[str, np.ndarray] = {
                             _design("lower_cairns"), (9.0, 4.0),
                             _design("arrival"), (4.0, -8.0),
                             (12.0, -16.0), _design("rope_bridge")),
-    "temple_road": _route(_design("rope_bridge"), (20.0, -34.0), (24.0, -44.0),
-                          _design("frozen_falls"), (30.0, -68.0),
-                          _design("temple_stair"), _design("temple_forecourt"),
-                          _design("temple")),
-    "mine_road": _route(_design("arrival"), (26.0, -4.0), _design("overlook"),
-                        (88.0, -4.0), _design("east_camp"),
-                        (104.0, -22.0), _design("mine_yard"), _design("mine")),
+    "temple_road": _route(_design("rope_bridge"), (20,-34.33), (22.67,-43.67),
+                          (19,-51), (18.33,-59.67), (24,-66), (30,-71),
+                          (34,-80), (27.33,-84.67), (38.67,-89.67),
+                          (29.33,-94.67), (34,-99.67), _design("temple")),
+    "mine_road": _route(_design("arrival"), (26,-4), (42,6), (58.67,10),
+                        _design("overlook"), (88,-4), _design("east_camp"),
+                        (116.67,-19.67), (118.67,-29.33), (115.33,-36.33),
+                        (106,-41), _design("mine_yard"), _design("mine")),
     "cave_road": _route(_design("lower_cairns"), (-10.0, 10.0),
                         (-24.0, 2.0), _design("ice_cave")),
     "ridge_path": _route(_design("ice_cave"), (-36.0, -34.0),
@@ -296,8 +297,7 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260828) -> None:
     # their own centre, so the buildings sit on the mountain rather than
     # floating at an absolute Y that the next terrain change invalidates.
     for name, half_x, half_z, surface in (
-            ("temple", 26.0, 20.0, TER.MARBLE),
-            ("temple_forecourt", 24.0, 18.0, TER.PAVING)):
+            ("temple", 16.0, 11.0, TER.MARBLE),):
         centre = ANCHORS[name]
         t.rect_terrace(centre, half_x * LOCAL, half_z * LOCAL,
                        float(t.height_at(*centre)), 0.0, surface)

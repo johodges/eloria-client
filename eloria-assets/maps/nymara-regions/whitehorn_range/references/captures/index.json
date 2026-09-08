@@ -21,13 +21,13 @@
     "panel": 1,
     "file": "01-approach-road.webp",
     "eye": [
-      15.0,
-      31.42,
-      55.2
+      12.02,
+      31.17,
+      52.21
     ],
     "target": [
       6.0,
-      23.85,
+      23.78,
       -3.0
     ],
     "fieldOfViewDegrees": 58,
@@ -38,13 +38,13 @@
     "panel": 2,
     "file": "02-glacier-temple.webp",
     "eye": [
-      97.01,
-      61.06,
-      -284.07
+      104.07,
+      67.17,
+      -286.99
     ],
     "target": [
       102.0,
-      76.35,
+      76.34,
       -304.5
     ],
     "fieldOfViewDegrees": 52,
@@ -55,16 +55,16 @@
     "panel": 3,
     "file": "03-rope-bridge.webp",
     "eye": [
-      93.0,
-      10.1,
-      -72.0
+      41.01,
+      19.9,
+      -51.99
     ],
     "target": [
-      51.0,
-      17.33,
-      -75.0
+      60.99,
+      24.08,
+      -104.01
     ],
-    "fieldOfViewDegrees": 54,
+    "fieldOfViewDegrees": 58,
     "lighting": "day"
   },
   {
@@ -72,16 +72,16 @@
     "panel": 4,
     "file": "04-gate-shrine.webp",
     "eye": [
-      -33.0,
-      22.69,
-      114.0
+      -20.01,
+      22.48,
+      90.99
     ],
     "target": [
       -33.0,
-      23.7,
-      100.5
+      23.2,
+      99.0
     ],
-    "fieldOfViewDegrees": 54,
+    "fieldOfViewDegrees": 60,
     "lighting": "day"
   },
   {
@@ -89,9 +89,9 @@
     "panel": 5,
     "file": "05-cairn-ridge.webp",
     "eye": [
-      -73.85,
-      75.31,
-      -186.23
+      -71.18,
+      79.91,
+      -185.18
     ],
     "target": [
       -87.0,
@@ -112,7 +112,7 @@
     ],
     "target": [
       -114.0,
-      32.07,
+      33.39,
       -42.0
     ],
     "fieldOfViewDegrees": 56,
@@ -123,9 +123,9 @@
     "panel": 7,
     "file": "07-mine-portal.webp",
     "eye": [
-      277.5,
-      53.83,
-      -127.5
+      282.49,
+      52.29,
+      -125.43
     ],
     "target": [
       288.0,
@@ -140,13 +140,13 @@
     "panel": 8,
     "file": "08-frozen-cascade.webp",
     "eye": [
-      73.01,
-      36.41,
-      -147.93
+      81.0,
+      38.71,
+      -150.0
     ],
     "target": [
       78.0,
-      41.62,
+      41.01,
       -172.5
     ],
     "fieldOfViewDegrees": 56,
@@ -157,9 +157,9 @@
     "panel": 9,
     "file": "09-high-overlook.webp",
     "eye": [
-      198.4,
-      52.54,
-      49.11
+      190.79,
+      52.61,
+      51.35
     ],
     "target": [
       102.0,
@@ -174,26 +174,26 @@
     "panel": 10,
     "file": "10-material-study.webp",
     "eye": [
-      27.44,
-      40.43,
-      -55.39
+      45.0,
+      19.26,
+      -64.0
     ],
     "target": [
-      51.0,
-      -24.43,
-      -75.6
+      46.2,
+      18.79,
+      -67.0
     ],
-    "fieldOfViewDegrees": 38,
-    "lighting": "day"
+    "fieldOfViewDegrees": 54,
+    "lighting": "deck"
   },
   {
     "id": "11-spawn-grounding",
     "panel": null,
     "file": "11-spawn-grounding.webp",
     "eye": [
-      -3.94,
-      34.12,
-      38.24
+      -11.17,
+      33.95,
+      29.86
     ],
     "target": [
       18.0,
@@ -208,9 +208,9 @@
     "panel": null,
     "file": "12-gorge-edge.webp",
     "eye": [
-      123.79,
-      68.57,
-      -63.24
+      128.16,
+      86.67,
+      -6.69
     ],
     "target": [
       30.0,
@@ -225,9 +225,9 @@
     "panel": null,
     "file": "13-upper-bridge.webp",
     "eye": [
-      186.0,
-      54.58,
-      -66.0
+      188.12,
+      54.49,
+      -63.88
     ],
     "target": [
       186.0,
@@ -242,13 +242,13 @@
     "panel": null,
     "file": "14-temple-forecourt.webp",
     "eye": [
-      75.0,
-      62.01,
-      -228.1
+      102.0,
+      62.89,
+      -234.0
     ],
     "target": [
       102.0,
-      58.06,
+      65.41,
       -276.0
     ],
     "fieldOfViewDegrees": 56,
@@ -259,13 +259,13 @@
     "panel": null,
     "file": "15-glacier-snout.webp",
     "eye": [
-      48.0,
-      35.46,
-      48.0
+      49.15,
+      30.44,
+      50.77
     ],
     "target": [
       54.0,
-      16.1,
+      20.43,
       -12.0
     ],
     "fieldOfViewDegrees": 55,
@@ -276,9 +276,9 @@
     "panel": null,
     "file": "16-glacier-head.webp",
     "eye": [
-      107.4,
-      73.06,
-      -276.0
+      112.15,
+      80.38,
+      -278.94
     ],
     "target": [
       102.0,
@@ -293,13 +293,13 @@
     "panel": null,
     "file": "17-mine-yard.webp",
     "eye": [
-      330.0,
-      51.25,
-      -42.0
+      371.32,
+      68.78,
+      -38.65
     ],
     "target": [
       276.0,
-      53.19,
+      53.26,
       -120.0
     ],
     "fieldOfViewDegrees": 54,
@@ -311,12 +311,12 @@
     "file": "18-south-gate.webp",
     "eye": [
       -12.0,
-      31.23,
+      30.95,
       120.0
     ],
     "target": [
       -12.0,
-      23.83,
+      23.66,
       81.0
     ],
     "fieldOfViewDegrees": 55,
@@ -327,9 +327,9 @@
     "panel": null,
     "file": "19-pine-shelf.webp",
     "eye": [
-      -45.82,
-      35.76,
-      81.82
+      -44.07,
+      36.22,
+      82.99
     ],
     "target": [
       -81.0,
@@ -345,7 +345,7 @@
     "file": "20-north-shrine.webp",
     "eye": [
       48.0,
-      92.21,
+      89.62,
       -333.0
     ],
     "target": [
@@ -361,9 +361,9 @@
     "panel": null,
     "file": "21-west-watch.webp",
     "eye": [
-      -108.0,
-      57.66,
-      -108.0
+      -105.23,
+      57.68,
+      -106.85
     ],
     "target": [
       -132.0,
@@ -378,13 +378,13 @@
     "panel": null,
     "file": "22-east-camp.webp",
     "eye": [
-      297.0,
-      51.12,
-      -6.0
+      292.85,
+      51.43,
+      -8.77
     ],
     "target": [
       330.0,
-      39.32,
+      39.45,
       -21.0
     ],
     "fieldOfViewDegrees": 55,
@@ -395,9 +395,9 @@
     "panel": null,
     "file": "23-snow-line.webp",
     "eye": [
-      138.54,
-      60.73,
-      -55.63
+      129.81,
+      55.3,
+      -53.45
     ],
     "target": [
       132.0,
@@ -408,13 +408,98 @@
     "lighting": "day"
   },
   {
+    "id": "24-gate-refuge",
+    "panel": null,
+    "file": "24-gate-refuge.webp",
+    "eye": [
+      -23.77,
+      21.97,
+      82.15
+    ],
+    "target": [
+      -21.0,
+      21.46,
+      60.0
+    ],
+    "fieldOfViewDegrees": 65,
+    "lighting": "day"
+  },
+  {
+    "id": "25-hauliers-yard",
+    "panel": null,
+    "file": "25-hauliers-yard.webp",
+    "eye": [
+      269.18,
+      52.09,
+      -129.82
+    ],
+    "target": [
+      267.0,
+      52.26,
+      -108.0
+    ],
+    "fieldOfViewDegrees": 65,
+    "lighting": "day"
+  },
+  {
+    "id": "26-temple-switchback",
+    "panel": null,
+    "file": "26-temple-switchback.webp",
+    "eye": [
+      102.99,
+      50.43,
+      -242.01
+    ],
+    "target": [
+      102.0,
+      87.85,
+      -303.0
+    ],
+    "fieldOfViewDegrees": 65,
+    "lighting": "day"
+  },
+  {
+    "id": "27-eastern-saddle",
+    "panel": null,
+    "file": "27-eastern-saddle.webp",
+    "eye": [
+      354.0,
+      42.77,
+      -78.0
+    ],
+    "target": [
+      345.99,
+      47.85,
+      -108.0
+    ],
+    "fieldOfViewDegrees": 65,
+    "lighting": "day"
+  },
+  {
+    "id": "28-watch-cave",
+    "panel": null,
+    "file": "28-watch-cave.webp",
+    "eye": [
+      -122.01,
+      49.25,
+      -123.0
+    ],
+    "target": [
+      -122.01,
+      49.53,
+      -141.0
+    ],
+    "fieldOfViewDegrees": 58,
+    "lighting": "day"
+  },
+  {
     "id": "40-golden-temple",
     "panel": null,
     "file": "40-golden-temple.webp",
     "eye": [
-      102.0,
-      54.79,
-      -228.0
+      87.01,
+      65.71,
+      -227.28
     ],
     "target": [
       102.0,
@@ -429,13 +514,13 @@
     "panel": null,
     "file": "41-golden-glacier.webp",
     "eye": [
-      30.44,
-      23.58,
-      1.88
+      22.29,
+      23.83,
+      -1.94
     ],
     "target": [
       90.0,
-      53.3,
+      52.65,
       -186.0
     ],
     "fieldOfViewDegrees": 50,

@@ -97,3 +97,18 @@ to overrule the build.
     recessed dark volume rather than an actual cave. Whitehorn has no interior
     package in this build; `whitehorn_glacier_temple.elm` exists as a separate
     interior and the temple portal points at it.
+
+## September 2026 circulation decisions
+
+The gate refuge now owns arrival at world (-12, 69), server (162, 105).
+Services and four existing NPCs share its court. Eight low weather shelters
+use the existing snow, pale masonry and timber recipes; the mine bench and
+5.5 m road support haulage around the gorge head. The temple ascent follows
+seventeen documented road/approach polylines and two surveyed rope crossings.
+The main temple remains the navigation landmark and gains three snowy pinnacles.
+
+New reusable geometry belongs to amberwood/mountaincraft.py: suspension_bridge,
+temple_pinnacle and ore_sledge. Whitehorn's kit.rope_bridge is now only a palette
+wrapper. The original regional cave recipe is reused at the western watch.
+No surface classes are allocated. See layout-review.md for verification and
+the remaining visual limitations; earlier geometry counts above are historical.

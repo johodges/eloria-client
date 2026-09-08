@@ -311,3 +311,18 @@ The Green Temple faces its southwest approach. The Great Arch descent is on
 the ring's platform; the Green Temple Spring secret is clear of the temple.
 No continent graph edge changes. See manymouth_delta/layout-review.md for
 measured reachability, remaining visual warnings and reviewed captures.
+
+## Whitehorn Range circulation pass - September 2026
+
+The three continent links retain their stable ids and destinations. Arrival
+now belongs to the gate refuge at server (162, 105). The Ration House, repair
+shelter and grouped services provision the climb. Eight weather refuges mark
+the route; the mine haul road takes the eastern gorge head, while pilgrims
+skirt the cascades and climb the temple shelf in switchbacks.
+
+Two surveyed suspension bridges declare their actual banks under
+navigation.crossings. Their profiles no longer depend on searching nearby
+terrain after a road or yard cut. The western watch's Cascade Cave has a
+visible mouth and approach, and the temple return point uses the podium.
+No graph edge changes. See whitehorn_range/layout-review.md for measured
+access, retained content counts, repeat-build evidence and visual limitations.

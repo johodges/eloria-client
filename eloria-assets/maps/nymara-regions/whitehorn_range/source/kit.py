@@ -8,12 +8,10 @@ alpine glacier region needs and no other region had: cairns, a rope-and-plank
 suspension bridge, a timbered mine portal, an ice-cave mouth and a frozen
 cascade.
 
-These are kept region-local rather than pushed into `_toolkit/` on purpose:
-four region builds are appending to the shared kits concurrently, and adding a
-sixth set of names into that while it is in flux would create exactly the merge
-conflict the production guide warns about. `cairn`, `rope_bridge`,
-`mine_portal` and `waystone` are generic enough to promote to the toolkit once
-that settles; that is recorded in modeling-assumptions.md.
+The suspension bridge has been promoted to amberwood.mountaincraft;
+rope_bridge below supplies Whitehorn's palette. The older region-specific
+cairn, shrine, cave and cascade assemblies remain here. New reusable route
+equipment belongs in the shared toolkit.
 
 Walk surfaces: only the bridge deck and the temple stairs are registered with
 `MeshGroup.add_walk`. Everything else is structural, so the client's downward
@@ -113,103 +111,11 @@ def waystone(height: float = 2.3, seed: int = 0) -> SW.MeshGroup:
 # --------------------------------------------------------------------------
 # the rope bridges - the one piece that carries a walk surface
 # --------------------------------------------------------------------------
-def rope_bridge(length: float = 22.0, width: float = 1.9, sag: float = 1.5,
-                seed: int = 0, deck_y: float = 0.0,
-                rise: float = 0.0) -> SW.MeshGroup:
-    """Rope-and-plank suspension span, built along +X, deck centred on y=0.
-
-    Panel 3 is the reference: two heavy anchor posts a side, four cables, and
-    a plank deck that sags in the middle. `mesh.arch` is deliberately not used
-    here - it builds in XY and extrudes along Z, so rotating it for a span
-    shows the barrel end, which is the trap the production guide calls out.
-
-    `rise` lifts the +X end that much above the -X one, the deck running
-    straight between them under its own sag. A gorge cut across a mountainside
-    has one shoulder above the other almost everywhere along it, and a level
-    deck can only meet one of them: the other end either buries itself in the
-    bank or stops in mid-air over the drop. The ends carry their own abutments
-    and posts, so each one sits on its own ground.
-
-    The deck planks are the only walk surface. The cables, posts and handrails
-    are structural, so an actor can never be grounded on a rope. `walk_ends`
-    records what the deck's two ends stand at, which is what the server walk
-    grid needs to put the deck on the map at the height it is drawn.
-    """
-    rng = _rng(seed)
-    group = SW.MeshGroup()
-    half = length * 0.5
-    steps = max(12, int(length / 1.1))
-
-    def sag_at(t: float) -> float:
-        # a catenary is overkill at this scale; a parabola reads identically
-        return (deck_y + rise * (t - 0.5)
-                - sag * (1.0 - (2.0 * t - 1.0) ** 2))
-
-    group.walk_ends = (sag_at(0.0), sag_at(1.0))
-
-    # -- anchor posts and abutments, one pair each end ---------------------
-    for end in (-1.0, 1.0):
-        base_x = end * half
-        end_y = sag_at(0.0 if end < 0.0 else 1.0)
-        abutment = M.box((1.7, 1.5, width + 1.5),
-                         center=(base_x + end * 0.55, end_y - 0.75, 0.0),
-                         uv_scale=1.1, material=RUBBLE)
-        group.add(abutment)
-        for side in (-1.0, 1.0):
-            post = M.cylinder(0.20, 0.16, 2.5, segments=8, uv_scale=1.4,
-                              material=TIMBER_DARK)
-            post.transform(M.translation(base_x, end_y, side * (width * 0.5 + 0.16)))
-            group.add(post)
-            cap = M.box((0.34, 0.14, 0.34),
-                        center=(base_x, end_y + 2.55,
-                                side * (width * 0.5 + 0.16)),
-                        uv_scale=1.0, material=IRON)
-            group.add(cap)
-
-    # -- cables: two decking cables carrying the planks, two handrails -----
-    for side in (-1.0, 1.0):
-        z = side * (width * 0.5 + 0.16)
-        deck_path = np.array([[(-half + length * (i / steps)),
-                               sag_at(i / steps) - 0.09, z]
-                              for i in range(steps + 1)])
-        group.add(M.tube(deck_path, [0.045] * (steps + 1), segments=5,
-                         uv_scale=2.0, material=ROPE))
-        rail_path = np.array([[(-half + length * (i / steps)),
-                               sag_at(i / steps) + 1.02 - 0.35 *
-                               (1.0 - (2.0 * (i / steps) - 1.0) ** 2), z]
-                              for i in range(steps + 1)])
-        group.add(M.tube(rail_path, [0.038] * (steps + 1), segments=5,
-                         uv_scale=2.0, material=ROPE))
-        # vertical hangers tying rail to deck
-        for i in range(1, steps, 2):
-            t = i / steps
-            top = sag_at(t) + 1.02 - 0.35 * (1.0 - (2.0 * t - 1.0) ** 2)
-            hanger = np.array([[-half + length * t, top, z],
-                               [-half + length * t, sag_at(t) - 0.05, z]])
-            group.add(M.tube(hanger, [0.016, 0.016], segments=4,
-                             uv_scale=1.4, material=ROPE))
-
-    # -- the deck: individual planks, and the only walk surface ------------
-    # The planks overlap rather than sit apart. Spaced at 0.82 of their pitch
-    # they left an 0.2 m gap between each pair, and the client grounds an actor
-    # with a single ray straight down: a step that landed in a gap went through
-    # the deck and hit the gorge floor forty-odd metres below. A player crossing
-    # fell through roughly every sixth pace. The seams still read - the planks
-    # keep their own texture and the height jitter below - but the deck is now
-    # closed to a ray anywhere along it.
-    planks = []
-    for i in range(steps):
-        t = (i + 0.5) / steps
-        x = -half + length * t
-        thickness = 0.075
-        plank = M.box((length / steps * 1.06, thickness, width),
-                      center=(x, sag_at(t), 0.0),
-                      uv_scale=1.2, material=TIMBER)
-        # a little rotational scatter so the deck is not a perfect ribbon
-        plank.transform(M.translation(0.0, 0.012 * rng.standard_normal(), 0.0))
-        planks.append(plank)
-    group.add_walk(M.merge(planks, material=TIMBER))
-    return group
+def rope_bridge(length=22.0, width=1.9, sag=1.5, seed=0, deck_y=0.0, rise=0.0):
+    """Whitehorn palette for the shared continuous suspension bridge."""
+    from amberwood.mountaincraft import suspension_bridge
+    return suspension_bridge(length,width,sag,seed,deck_y,rise,
+            stone=RUBBLE,timber=TIMBER,posts=TIMBER_DARK,rope=ROPE,iron=IRON)
 
 
 # --------------------------------------------------------------------------
@@ -513,7 +419,7 @@ def glacier_temple(seed: int = 0, width: float = 20.0,
                          uv_scale=1.4, material=MARBLE))
     inlay = M.cylinder(4.4, 4.4, 0.05, segments=32, uv_scale=2.2,
                        material=BRASS)
-    inlay.transform(M.translation(0.0, podium_h + 0.13, 1.2))
+    inlay.transform(M.translation(0.0, podium_h + 0.20, 1.2))
     group.add(inlay)
 
     # -- the facade --------------------------------------------------------

@@ -19,7 +19,7 @@
     "bounds": {
       "min": [
         -204.0,
-        -37.75,
+        -37.74,
         -431.0
       ],
       "max": [
@@ -31,7 +31,7 @@
     "playableBounds": {
       "min": [
         -174.0,
-        -37.75,
+        -37.74,
         -401.0
       ],
       "max": [
@@ -55,7 +55,7 @@
       0.0,
       0.0
     ],
-    "walkingHeight": 17.59,
+    "walkingHeight": 19.75,
     "invertServerY": true
   },
   "spawnPoints": [
@@ -63,9 +63,9 @@
       "id": "whitehorn-arrival",
       "name": "Whitehorn Arrival",
       "position": [
-        0.0,
-        17.59,
-        0.0
+        -12.0,
+        19.75,
+        69.0
       ],
       "rotationY": 0.0,
       "authority": "server"
@@ -75,7 +75,7 @@
       "name": "Glacier Temple Forecourt",
       "position": [
         102.0,
-        54.06,
+        56.49,
         -264.0
       ],
       "rotationY": 0.0,
@@ -86,7 +86,7 @@
       "name": "Mine Yard",
       "position": [
         267.0,
-        49.66,
+        50.26,
         -114.0
       ],
       "rotationY": 0.0,
@@ -97,7 +97,7 @@
       "name": "Glacier Temple",
       "position": [
         102.0,
-        67.85,
+        70.04,
         -309.0
       ],
       "rotationY": 0.0,
@@ -145,7 +145,7 @@
       "name": "The Snowline Cell",
       "position": [
         354.0,
-        58.1,
+        58.05,
         -192.0
       ],
       "rotationY": 0.0,
@@ -156,9 +156,9 @@
       "id": "west-watch-cave-mouth",
       "name": "The Cascade Cave",
       "position": [
-        -132.0,
+        -122.0,
         47.64,
-        -132.0
+        -136.0
       ],
       "rotationY": 0.0,
       "authority": "server",
@@ -168,9 +168,9 @@
       "id": "gate-store-door",
       "name": "The Ration Sister's Store",
       "position": [
-        -12.0,
+        -28.0,
         19.66,
-        84.0
+        65.5
       ],
       "rotationY": 0.0,
       "authority": "server",
@@ -179,6 +179,7 @@
   ],
   "collision": {
     "nodeNames": [
+      "Landmark_WatchCave",
       "Landmark_frozen_cascade_00",
       "Landmark_frozen_cascade_01",
       "Landmark_glacier_temple",
@@ -197,7 +198,6 @@
       "March_east_pass_outcrop_003",
       "March_east_pass_shard_009",
       "March_east_pass_shard_010",
-      "March_east_pass_shard_011",
       "March_south_gate_Station",
       "March_south_gate_Stone",
       "March_south_gate_tree_000",
@@ -552,7 +552,6 @@
       "Tree_pine_0293",
       "Tree_pine_0294",
       "Tree_pine_0295",
-      "Tree_pine_0296",
       "Tree_pine_0297",
       "Tree_pine_0298",
       "Tree_pine_0299",
@@ -616,7 +615,6 @@
       "Tree_pine_0357",
       "Tree_pine_0358",
       "Tree_pine_0359",
-      "Tree_pine_0360",
       "Tree_pine_0361",
       "Tree_pine_0362",
       "Tree_pine_0363",
@@ -1080,27 +1078,7 @@
       "Tree_pine_0821",
       "Tree_pine_0822",
       "Tree_pine_0823",
-      "Tree_pine_0824",
-      "Tree_pine_0825",
-      "Tree_pine_0826",
-      "Tree_pine_0827",
-      "Tree_pine_0828",
-      "Tree_pine_0829",
-      "Tree_pine_0830",
-      "Tree_pine_0831",
-      "Tree_pine_0832",
-      "Tree_pine_0833",
-      "Tree_pine_0834",
-      "Tree_pine_0835",
-      "Tree_pine_0836",
-      "Tree_pine_0837",
-      "Tree_pine_0838",
-      "Tree_pine_0839",
-      "Tree_pine_0840",
-      "Tree_pine_0841",
-      "Tree_pine_0842",
-      "Tree_pine_0843",
-      "Tree_pine_0844"
+      "Tree_pine_0824"
     ],
     "binary": "collision.bin",
     "format": "EWCG-v2",
@@ -1108,8 +1086,8 @@
     "width": 1152,
     "height": 1152,
     "heightEncoding": {
-      "origin": -23.7592,
-      "step": 0.712488,
+      "origin": -4.9236,
+      "step": 0.638623,
       "range": [
         1,
         255
@@ -1117,28 +1095,60 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 930123,
-    "walkableFraction": 0.7009,
-    "openedWalkSurfaces": {
-      "prefix": "Walk_",
-      "cellsCovered": 2244,
-      "cellsWidened": 421,
-      "cellsOpened": 272,
-      "cellsRaised": 1945,
-      "cellsDrowned": 0,
-      "cellsInsideLandmarks": 0
-    },
+    "walkableCells": 929582,
+    "walkableFraction": 0.7005,
     "refinedHeights": {
       "levels": 255,
-      "step": 0.712488,
-      "origin": -23.7592,
-      "previousStep": 0.625496,
-      "cellsRestated": 929923,
-      "cellsFromGeometry": 929678,
-      "cellsKept": 445
+      "step": 0.638623,
+      "origin": -4.9236,
+      "previousStep": 2.608629,
+      "cellsRestated": 929183,
+      "cellsFromGeometry": 929015,
+      "cellsKept": 171
+    },
+    "openedWalkSurfaces": {
+      "prefix": "Walk_",
+      "cellsCovered": 2476,
+      "cellsWidened": 490,
+      "cellsOpened": 396,
+      "cellsRaised": 2084,
+      "cellsDrowned": 0,
+      "cellsInsideLandmarks": 0
     }
   },
   "navigation": {
+    "crossings": [
+      {
+        "id": "rope_bridge",
+        "endpoints": [
+          [
+            41.0,
+            18.0,
+            -54.0
+          ],
+          [
+            61.0,
+            22.3,
+            -104.0
+          ]
+        ]
+      },
+      {
+        "id": "rope_bridge_upper",
+        "endpoints": [
+          [
+            186.0,
+            42.2,
+            -75.0
+          ],
+          [
+            186.0,
+            49.4,
+            -126.0
+          ]
+        ]
+      }
+    ],
     "surfaceNodePrefixes": [
       "Terrain_",
       "Walk_"
@@ -1173,7 +1183,7 @@
       "type": "temple",
       "position": [
         102.0,
-        70.07,
+        70.04,
         -309.0
       ],
       "authority": "client-visual"
@@ -1221,7 +1231,7 @@
       "type": "natural",
       "position": [
         78.0,
-        33.7,
+        33.33,
         -174.0
       ],
       "authority": "client-visual"
@@ -1244,11 +1254,10 @@
       "node": "Landmark_rope_bridge_00",
       "type": "bridge",
       "position": [
-        50.25,
-        16.2,
-        -77.5
-      ],
-      "authority": "client-visual"
+        51.0,
+        18.75,
+        -79.0
+      ]
     },
     {
       "id": "whitehorn-rope-bridge-01",
@@ -1257,10 +1266,9 @@
       "type": "bridge",
       "position": [
         186.0,
-        45.92,
-        -99.25
-      ],
-      "authority": "client-visual"
+        44.4,
+        -100.5
+      ]
     },
     {
       "id": "whitehorn-shrine-00",
@@ -1293,7 +1301,7 @@
       "type": "shrine",
       "position": [
         354.0,
-        58.1,
+        58.05,
         -192.0
       ],
       "authority": "client-visual"
@@ -1301,7 +1309,7 @@
     {
       "id": "whitehorn-cairn-field-cairn_ridge",
       "name": "Whitehorn Cairns",
-      "node": "Prop_cairn_0150",
+      "node": "Prop_cairn_0160",
       "type": "cairn-field",
       "position": [
         -87.0,
@@ -1313,7 +1321,7 @@
     {
       "id": "whitehorn-cairn-field-lower_cairns",
       "name": "Whitehorn Cairns",
-      "node": "Prop_cairn_0172",
+      "node": "Prop_cairn_0182",
       "type": "cairn-field",
       "position": [
         18.0,
@@ -1325,7 +1333,7 @@
     {
       "id": "whitehorn-cairn-field-west_watch",
       "name": "Whitehorn Cairns",
-      "node": "Prop_cairn_0188",
+      "node": "Prop_cairn_0198",
       "type": "cairn-field",
       "position": [
         -132.0,
@@ -1333,6 +1341,105 @@
         -132.0
       ],
       "authority": "client-visual"
+    },
+    {
+      "id": "whitehorn-watch-cave",
+      "name": "The Cascade Cave",
+      "node": "Landmark_WatchCave",
+      "type": "cave",
+      "position": [
+        -122,
+        47.64,
+        -136
+      ]
+    },
+    {
+      "id": "whitehorn-gatestore",
+      "name": "The Ration House",
+      "node": "Landmark_GateStore",
+      "type": "shelter",
+      "position": [
+        -28,
+        19.66,
+        61
+      ]
+    },
+    {
+      "id": "whitehorn-gateworkshop",
+      "name": "Gate Repair Shelter",
+      "node": "Landmark_GateWorkshop",
+      "type": "shelter",
+      "position": [
+        6,
+        19.66,
+        61
+      ]
+    },
+    {
+      "id": "whitehorn-lowercamp",
+      "name": "LowerCamp",
+      "node": "Landmark_LowerCamp",
+      "type": "shelter",
+      "position": [
+        72,
+        25.8,
+        60
+      ]
+    },
+    {
+      "id": "whitehorn-bridgewatch",
+      "name": "BridgeWatch",
+      "node": "Landmark_BridgeWatch",
+      "type": "shelter",
+      "position": [
+        90,
+        31.99,
+        -46
+      ]
+    },
+    {
+      "id": "whitehorn-highoverlook",
+      "name": "HighOverlook",
+      "node": "Landmark_HighOverlook",
+      "type": "shelter",
+      "position": [
+        224,
+        35.54,
+        39
+      ]
+    },
+    {
+      "id": "whitehorn-eastcamp",
+      "name": "EastCamp",
+      "node": "Landmark_EastCamp",
+      "type": "shelter",
+      "position": [
+        333,
+        37.35,
+        -5
+      ]
+    },
+    {
+      "id": "whitehorn-mineyard",
+      "name": "The Hauliers' Yard",
+      "node": "Landmark_MineYard",
+      "type": "shelter",
+      "position": [
+        266,
+        50.26,
+        -107
+      ]
+    },
+    {
+      "id": "whitehorn-templerest",
+      "name": "Last Pilgrim Rest",
+      "node": "Landmark_TempleRest",
+      "type": "shelter",
+      "position": [
+        78,
+        52,
+        -250
+      ]
     },
     {
       "id": "snowline-stones",
@@ -1403,7 +1510,7 @@
         36.97,
         -17.3
       ],
-      "note": "Where the Whitehorn Range gives way to the Amethyst Barrens: votary road furniture, a march stone, a waystation, and 12 pieces of the country beyond."
+      "note": "Where the Whitehorn Range gives way to the Amethyst Barrens: votary road furniture, a march stone, a waystation, and 11 pieces of the country beyond."
     },
     {
       "id": "station-east-pass",
@@ -1412,7 +1519,7 @@
       "type": "waystation",
       "position": [
         353.0,
-        37.49,
+        37.48,
         -23.5
       ]
     }
@@ -1424,7 +1531,7 @@
       "type": "use",
       "position": [
         102.0,
-        54.06,
+        61.03,
         -273.0
       ],
       "authority": "server"
@@ -1446,7 +1553,7 @@
       "type": "use",
       "position": [
         267.0,
-        50.26,
+        50.3,
         -120.0
       ],
       "authority": "server"
@@ -1462,13 +1569,13 @@
       "destinationMap": "whitehorn_range_secrets",
       "destinationSpawn": "horn-silver-hollow",
       "position": [
-        91.0,
-        37.59,
+        88.0,
+        35.78,
         -166.0
       ],
       "authority": "server",
       "serverTile": [
-        265,
+        262,
         340
       ]
     },
@@ -1483,14 +1590,14 @@
       "destinationMap": "whitehorn_range_secrets",
       "destinationSpawn": "horn-cairn-garden",
       "position": [
-        31.0,
-        20.71,
-        52.2
+        32.5,
+        21.71,
+        54.79
       ],
       "authority": "server",
       "serverTile": [
-        205,
-        122
+        206,
+        119
       ]
     },
     {
@@ -1504,14 +1611,14 @@
       "destinationMap": "whitehorn_range_secrets",
       "destinationSpawn": "horn-gate-cache",
       "position": [
-        10.0,
-        22.25,
-        76.0
+        -2.0,
+        19.42,
+        82.0
       ],
       "authority": "server",
       "serverTile": [
-        184,
-        98
+        172,
+        92
       ]
     },
     {
@@ -1525,14 +1632,14 @@
       "destinationMap": "whitehorn_range_secrets",
       "destinationSpawn": "horn-temple-vault",
       "position": [
-        149.0,
-        78.12,
-        -301.0
+        122.0,
+        67.84,
+        -302.0
       ],
       "authority": "server",
       "serverTile": [
-        323,
-        475
+        296,
+        476
       ]
     },
     {
@@ -1546,14 +1653,14 @@
       "destinationMap": "whitehorn_range_secrets",
       "destinationSpawn": "horn-ram-pit",
       "position": [
-        203.5,
-        42.15,
-        -78.26
+        193.0,
+        43.05,
+        -70.0
       ],
       "authority": "server",
       "serverTile": [
-        378,
-        252
+        367,
+        244
       ]
     },
     {
@@ -1567,14 +1674,14 @@
       "destinationMap": "whitehorn_range_secrets",
       "destinationSpawn": "horn-shrine-school",
       "position": [
-        339.5,
-        53.23,
-        -176.21
+        336.21,
+        52.67,
+        -179.5
       ],
       "authority": "server",
       "serverTile": [
-        514,
-        350
+        510,
+        354
       ]
     },
     {
@@ -1588,13 +1695,13 @@
       "destinationMap": "whitehorn_range_secrets",
       "destinationSpawn": "horn-cascade-spring",
       "position": [
-        122.0,
-        47.49,
+        128.0,
+        51.98,
         -214.0
       ],
       "authority": "server",
       "serverTile": [
-        296,
+        302,
         388
       ]
     },
@@ -1609,14 +1716,14 @@
       "destinationMap": "whitehorn_range_secrets",
       "destinationSpawn": "horn-bridge-butts",
       "position": [
-        67.75,
-        20.82,
-        -56.51
+        49.2,
+        17.86,
+        -48.0
       ],
       "authority": "server",
       "serverTile": [
-        242,
-        231
+        223,
+        222
       ]
     },
     {
@@ -1651,14 +1758,14 @@
       "destinationMap": "whitehorn_range_secrets",
       "destinationSpawn": "horn-cairn-focus",
       "position": [
-        -77.0,
-        60.77,
-        -178.0
+        -78.5,
+        67.04,
+        -193.4
       ],
       "authority": "server",
       "serverTile": [
-        97,
-        352
+        96,
+        367
       ]
     },
     {
@@ -1714,14 +1821,14 @@
       "destinationMap": "whitehorn_range_secrets",
       "destinationSpawn": "horn-temple-eyrie",
       "position": [
-        55.0,
-        79.25,
-        -317.0
+        84.0,
+        67.82,
+        -314.0
       ],
       "authority": "server",
       "serverTile": [
-        229,
-        491
+        258,
+        488
       ]
     },
     {
@@ -1735,14 +1842,14 @@
       "destinationMap": "mirrorhold_secrets",
       "destinationSpawn": "mirror-adit-far",
       "position": [
-        259.5,
-        53.95,
-        -156.58
+        276.0,
+        50.29,
+        -128.0
       ],
       "authority": "server",
       "serverTile": [
-        434,
-        331
+        450,
+        302
       ]
     }
   ],
@@ -1764,7 +1871,7 @@
       "role": "civilian",
       "position": [
         102.0,
-        54.06,
+        61.03,
         -273.0
       ],
       "authority": "server"
@@ -1786,7 +1893,7 @@
       "role": "civilian",
       "position": [
         267.0,
-        50.26,
+        50.3,
         -120.0
       ],
       "authority": "server"
@@ -1820,7 +1927,7 @@
       "resource": "ore",
       "position": [
         260.19,
-        50.32,
+        50.47,
         -126.79
       ],
       "authority": "server"
@@ -1830,7 +1937,7 @@
       "resource": "ore",
       "position": [
         263.65,
-        49.29,
+        50.26,
         -112.58
       ],
       "authority": "server"
@@ -1840,7 +1947,7 @@
       "resource": "ore",
       "position": [
         260.99,
-        50.33,
+        50.28,
         -131.5
       ],
       "authority": "server"
@@ -1850,7 +1957,7 @@
       "resource": "ore",
       "position": [
         280.32,
-        49.68,
+        50.86,
         -110.6
       ],
       "authority": "server"
@@ -1860,7 +1967,7 @@
       "resource": "ore",
       "position": [
         255.69,
-        48.61,
+        50.26,
         -110.73
       ],
       "authority": "server"
@@ -1870,7 +1977,7 @@
       "resource": "ore",
       "position": [
         266.61,
-        49.35,
+        50.26,
         -112.22
       ],
       "authority": "server"
@@ -1880,7 +1987,7 @@
       "resource": "ore",
       "position": [
         275.17,
-        50.33,
+        50.3,
         -133.12
       ],
       "authority": "server"
@@ -1890,7 +1997,7 @@
       "resource": "ore",
       "position": [
         259.58,
-        49.91,
+        50.77,
         -119.37
       ],
       "authority": "server"
@@ -2010,7 +2117,7 @@
       "resource": "ice",
       "position": [
         78.39,
-        34.49,
+        34.02,
         -181.35
       ],
       "authority": "server"
@@ -2020,7 +2127,7 @@
       "resource": "ice",
       "position": [
         81.9,
-        34.23,
+        34.31,
         -163.08
       ],
       "authority": "server"
@@ -2030,7 +2137,7 @@
       "resource": "ice",
       "position": [
         81.2,
-        34.01,
+        34.11,
         -162.24
       ],
       "authority": "server"
@@ -2040,7 +2147,7 @@
       "resource": "ice",
       "position": [
         72.67,
-        34.36,
+        34.46,
         -173.73
       ],
       "authority": "server"
@@ -2174,7 +2281,7 @@
       "type": "interior-entrance",
       "position": [
         102.0,
-        70.17,
+        70.14,
         -309.0
       ],
       "serverTile": [
@@ -2250,7 +2357,7 @@
       "type": "interior-entrance",
       "position": [
         354.0,
-        58.2,
+        58.15,
         -192.0
       ],
       "serverTile": [
@@ -2268,13 +2375,13 @@
       "name": "The Cascade Cave",
       "type": "interior-entrance",
       "position": [
-        -132.0,
+        -122.0,
         47.74,
-        -132.0
+        -136.0
       ],
       "serverTile": [
-        42,
-        306
+        52,
+        310
       ],
       "landmark": "whitehorn-cairn-field-west_watch",
       "destinationMap": "whitehorn_glacier_temple",
@@ -2287,13 +2394,13 @@
       "name": "The Ration Sister's Store",
       "type": "interior-entrance",
       "position": [
-        -12.0,
+        -28.0,
         19.76,
-        84.0
+        65.5
       ],
       "serverTile": [
-        162,
-        90
+        146,
+        108
       ],
       "landmark": "whitehorn-south-gate",
       "destinationMap": "whitehorn_glacier_temple",
@@ -2302,7 +2409,1158 @@
       "authority": "server"
     }
   ],
-  "roads": [],
+  "roads": [
+    {
+      "id": "gate_court",
+      "width": 17,
+      "points": [
+        [
+          -35.0,
+          19.66,
+          70.0
+        ],
+        [
+          11.0,
+          19.66,
+          70.0
+        ]
+      ]
+    },
+    {
+      "id": "gate_approach",
+      "width": 5.5,
+      "points": [
+        [
+          -12.0,
+          19.66,
+          89.0
+        ],
+        [
+          -12.0,
+          19.66,
+          75.0
+        ],
+        [
+          -6.0,
+          20.0,
+          54.0
+        ],
+        [
+          18.0,
+          18.66,
+          39.0
+        ]
+      ]
+    },
+    {
+      "id": "supply_link",
+      "width": 4.2,
+      "points": [
+        [
+          18.0,
+          18.66,
+          39.0
+        ],
+        [
+          45.0,
+          22.0,
+          54.0
+        ],
+        [
+          72.0,
+          25.8,
+          66.0
+        ]
+      ]
+    },
+    {
+      "id": "mine_haul",
+      "width": 5.5,
+      "points": [
+        [
+          0.0,
+          17.59,
+          0.0
+        ],
+        [
+          78.0,
+          19.9,
+          -12.0
+        ],
+        [
+          126.0,
+          25.0,
+          18.0
+        ],
+        [
+          176.0,
+          30.0,
+          30.0
+        ],
+        [
+          222.0,
+          35.54,
+          27.0
+        ],
+        [
+          264.0,
+          35.3,
+          -12.0
+        ],
+        [
+          330.0,
+          37.35,
+          -18.0
+        ],
+        [
+          350.0,
+          39.0,
+          -59.0
+        ],
+        [
+          356.0,
+          42.0,
+          -88.0
+        ],
+        [
+          346.0,
+          46.0,
+          -109.0
+        ],
+        [
+          318.0,
+          50.1,
+          -123.0
+        ],
+        [
+          282.0,
+          50.26,
+          -119.0
+        ],
+        [
+          267.0,
+          50.26,
+          -120.0
+        ],
+        [
+          288.0,
+          50.33,
+          -138.0
+        ]
+      ]
+    },
+    {
+      "id": "bridge_watch_link",
+      "width": 3.4,
+      "points": [
+        [
+          126.0,
+          25.0,
+          18.0
+        ],
+        [
+          112.0,
+          28.0,
+          -8.0
+        ],
+        [
+          100.0,
+          31.0,
+          -30.0
+        ],
+        [
+          90.0,
+          31.99,
+          -46.0
+        ]
+      ]
+    },
+    {
+      "id": "pilgrim_ascent",
+      "width": 5.0,
+      "points": [
+        [
+          60.0,
+          22.3,
+          -103.0
+        ],
+        [
+          68.0,
+          30.2,
+          -131.0
+        ],
+        [
+          57.0,
+          32.5,
+          -153.0
+        ],
+        [
+          55.0,
+          34.0,
+          -179.0
+        ],
+        [
+          72.0,
+          38.0,
+          -198.0
+        ],
+        [
+          90.0,
+          42.0,
+          -213.0
+        ],
+        [
+          102.0,
+          48.49,
+          -240.0
+        ],
+        [
+          82.0,
+          53.0,
+          -254.0
+        ],
+        [
+          116.0,
+          58.8,
+          -269.0
+        ],
+        [
+          88.0,
+          64.1,
+          -284.0
+        ],
+        [
+          102.0,
+          67.85,
+          -299.0
+        ]
+      ]
+    },
+    {
+      "id": "temple_vault_walk",
+      "width": 3.0,
+      "points": [
+        [
+          102.0,
+          67.85,
+          -299.0
+        ],
+        [
+          119.0,
+          67.85,
+          -292.0
+        ],
+        [
+          127.0,
+          67.85,
+          -302.0
+        ],
+        [
+          121.0,
+          67.85,
+          -319.0
+        ]
+      ]
+    },
+    {
+      "id": "temple_eyrie_walk",
+      "width": 3.0,
+      "points": [
+        [
+          102.0,
+          67.85,
+          -299.0
+        ],
+        [
+          85.0,
+          67.85,
+          -291.0
+        ],
+        [
+          77.0,
+          67.85,
+          -306.0
+        ],
+        [
+          79.0,
+          67.85,
+          -320.0
+        ]
+      ]
+    },
+    {
+      "id": "north_shrine_path",
+      "width": 3.0,
+      "points": [
+        [
+          88.0,
+          64.1,
+          -284.0
+        ],
+        [
+          63.0,
+          66.0,
+          -299.0
+        ],
+        [
+          46.0,
+          70.0,
+          -327.0
+        ],
+        [
+          27.0,
+          76.76,
+          -348.0
+        ],
+        [
+          27.0,
+          76.76,
+          -357.0
+        ]
+      ]
+    },
+    {
+      "id": "east_shrine_path",
+      "width": 3.4,
+      "points": [
+        [
+          318.0,
+          50.1,
+          -123.0
+        ],
+        [
+          336.0,
+          52.0,
+          -145.0
+        ],
+        [
+          342.0,
+          55.0,
+          -169.0
+        ],
+        [
+          354.0,
+          58.1,
+          -192.0
+        ]
+      ]
+    },
+    {
+      "id": "watch_cave_approach",
+      "width": 4.0,
+      "points": [
+        [
+          -123.0,
+          47.3,
+          -119.0
+        ],
+        [
+          -122.0,
+          47.64,
+          -128.0
+        ],
+        [
+          -122.0,
+          47.64,
+          -137.0
+        ]
+      ]
+    },
+    {
+      "id": "snowline_path",
+      "width": 3.0,
+      "points": [
+        [
+          216.0,
+          55.8,
+          -120.0
+        ],
+        [
+          204.0,
+          55.3,
+          -133.0
+        ],
+        [
+          198.0,
+          55.0,
+          -137.0
+        ]
+      ]
+    },
+    {
+      "id": "upper_bridge_south",
+      "width": 3.5,
+      "points": [
+        [
+          90.0,
+          31.99,
+          -46.0
+        ],
+        [
+          132.0,
+          35.0,
+          -61.0
+        ],
+        [
+          163.0,
+          39.0,
+          -62.0
+        ],
+        [
+          186.0,
+          42.2,
+          -75.0
+        ]
+      ]
+    },
+    {
+      "id": "upper_bridge_north",
+      "width": 3.5,
+      "points": [
+        [
+          186.0,
+          49.4,
+          -126.0
+        ],
+        [
+          208.0,
+          55.0,
+          -133.0
+        ],
+        [
+          230.0,
+          53.0,
+          -127.0
+        ],
+        [
+          267.0,
+          50.26,
+          -120.0
+        ]
+      ]
+    },
+    {
+      "id": "lower_bridge_south",
+      "width": 4.0,
+      "points": [
+        [
+          30.0,
+          20.0,
+          -39.0
+        ],
+        [
+          36.0,
+          20.0,
+          -44.0
+        ],
+        [
+          41.0,
+          18.0,
+          -54.0
+        ]
+      ]
+    },
+    {
+      "id": "upper_cascade_path",
+      "width": 3.0,
+      "points": [
+        [
+          90.0,
+          42.0,
+          -213.0
+        ],
+        [
+          107.0,
+          49.0,
+          -223.0
+        ],
+        [
+          120.0,
+          51.0,
+          -215.0
+        ]
+      ]
+    },
+    {
+      "id": "lower_cascade_path",
+      "width": 3.0,
+      "points": [
+        [
+          55.0,
+          34.0,
+          -179.0
+        ],
+        [
+          65.0,
+          34.0,
+          -186.0
+        ],
+        [
+          87.0,
+          34.0,
+          -181.0
+        ]
+      ]
+    }
+  ],
+  "contentLayout": {
+    "services": [
+      {
+        "role": "information",
+        "position": [
+          -13,
+          19.66,
+          74
+        ]
+      },
+      {
+        "role": "storage",
+        "position": [
+          -30,
+          19.66,
+          66
+        ]
+      },
+      {
+        "role": "crafting_station",
+        "position": [
+          4,
+          19.66,
+          65
+        ]
+      },
+      {
+        "role": "training",
+        "position": [
+          5,
+          19.66,
+          76
+        ]
+      }
+    ],
+    "npcs": {
+      "Sister Arel": [
+        -22,
+        19.66,
+        68
+      ],
+      "Korrin": [
+        -29,
+        19.66,
+        64.5
+      ],
+      "Brother Kell Ivorwind": [
+        -17,
+        19.66,
+        79
+      ],
+      "Ration Sister Petch": [
+        -33,
+        19.66,
+        64.5
+      ],
+      "Ordinal Thrun": [
+        109,
+        67.85,
+        -297
+      ],
+      "Mine Captain Sarra Dolt": [
+        270,
+        50.26,
+        -111
+      ],
+      "Hesk Varne": [
+        277,
+        50.26,
+        -118
+      ],
+      "Ice-Cave Sounder Vesk": [
+        -108,
+        30.39,
+        -37
+      ],
+      "Cascade Watcher Ilun": [
+        63,
+        34,
+        -183
+      ],
+      "Rope-Bridge Keeper Adhe": [
+        87,
+        31.99,
+        -51
+      ],
+      "Shrine Sister Onwe": [
+        27,
+        76.76,
+        -349
+      ],
+      "Cairn-Reader Marrow Doun": [
+        -82,
+        71.63,
+        -198
+      ],
+      "Snowline Ranger Kestrel Vane": [
+        204,
+        55,
+        -134
+      ],
+      "Silverleaf Picker Doun Ashe": [
+        349,
+        58,
+        -184
+      ]
+    },
+    "roadClearance": 5.0,
+    "harvest": {
+      "Salt": [
+        [
+          119,
+          -168,
+          25
+        ],
+        [
+          151,
+          -246,
+          22
+        ]
+      ],
+      "Peat": [
+        [
+          -71,
+          55,
+          22
+        ],
+        [
+          91,
+          87,
+          20
+        ]
+      ],
+      "Crystal": [
+        [
+          277,
+          -147,
+          23
+        ],
+        [
+          -106,
+          -49,
+          20
+        ]
+      ],
+      "Stormglass": [
+        [
+          321,
+          -175,
+          22
+        ],
+        [
+          142,
+          -291,
+          22
+        ]
+      ],
+      "Silverleaf": [
+        [
+          69,
+          -181,
+          18
+        ],
+        [
+          340,
+          -189,
+          22
+        ],
+        [
+          -96,
+          -215,
+          24
+        ]
+      ],
+      "Coal": [
+        [
+          284,
+          -152,
+          23
+        ],
+        [
+          311,
+          -142,
+          23
+        ]
+      ],
+      "Quartz": [
+        [
+          302,
+          -182,
+          28
+        ],
+        [
+          -94,
+          -150,
+          25
+        ]
+      ],
+      "Flint": [
+        [
+          250,
+          -141,
+          25
+        ],
+        [
+          -121,
+          -180,
+          24
+        ]
+      ],
+      "Verdigris": [
+        [
+          344,
+          -185,
+          21
+        ],
+        [
+          202,
+          -148,
+          21
+        ]
+      ],
+      "Bramble": [
+        [
+          -79,
+          43,
+          24
+        ],
+        [
+          78,
+          83,
+          23
+        ]
+      ],
+      "Toadstool": [
+        [
+          -86,
+          15,
+          24
+        ],
+        [
+          234,
+          55,
+          22
+        ]
+      ]
+    },
+    "wildlife": {
+      "whitehorn_yak": [
+        [
+          93,
+          78,
+          26
+        ],
+        [
+          -82,
+          25,
+          25
+        ],
+        [
+          230,
+          54,
+          25
+        ]
+      ],
+      "frosthorn_elk": [
+        [
+          93,
+          78,
+          26
+        ],
+        [
+          -82,
+          25,
+          25
+        ],
+        [
+          230,
+          54,
+          25
+        ]
+      ],
+      "thunder_ram": [
+        [
+          93,
+          78,
+          26
+        ],
+        [
+          -82,
+          25,
+          25
+        ],
+        [
+          230,
+          54,
+          25
+        ]
+      ],
+      "glacier_ram": [
+        [
+          -82,
+          -161,
+          28
+        ],
+        [
+          113,
+          -167,
+          25
+        ],
+        [
+          290,
+          -178,
+          30
+        ]
+      ],
+      "whitehorn_ice_ram": [
+        [
+          -82,
+          -161,
+          28
+        ],
+        [
+          113,
+          -167,
+          25
+        ],
+        [
+          290,
+          -178,
+          30
+        ]
+      ],
+      "cobalt_ibex": [
+        [
+          -82,
+          -161,
+          28
+        ],
+        [
+          113,
+          -167,
+          25
+        ],
+        [
+          290,
+          -178,
+          30
+        ]
+      ],
+      "glacier_crab": [
+        [
+          -82,
+          -161,
+          28
+        ],
+        [
+          113,
+          -167,
+          25
+        ],
+        [
+          290,
+          -178,
+          30
+        ]
+      ],
+      "ice_snow_leopard": [
+        [
+          -98,
+          -224,
+          31
+        ],
+        [
+          301,
+          -223,
+          30
+        ],
+        [
+          158,
+          -186,
+          27
+        ]
+      ],
+      "rimeclaw": [
+        [
+          -98,
+          -224,
+          31
+        ],
+        [
+          301,
+          -223,
+          30
+        ],
+        [
+          158,
+          -186,
+          27
+        ]
+      ],
+      "thornhide_wolf": [
+        [
+          -98,
+          -224,
+          31
+        ],
+        [
+          301,
+          -223,
+          30
+        ],
+        [
+          158,
+          -186,
+          27
+        ]
+      ],
+      "moonshadow_lynx": [
+        [
+          -98,
+          -224,
+          31
+        ],
+        [
+          301,
+          -223,
+          30
+        ],
+        [
+          158,
+          -186,
+          27
+        ]
+      ],
+      "ice_wolverine": [
+        [
+          -98,
+          -224,
+          31
+        ],
+        [
+          301,
+          -223,
+          30
+        ],
+        [
+          158,
+          -186,
+          27
+        ]
+      ],
+      "crystal_cave_spider": [
+        [
+          -98,
+          -224,
+          31
+        ],
+        [
+          301,
+          -223,
+          30
+        ],
+        [
+          158,
+          -186,
+          27
+        ]
+      ],
+      "iceback_ursid": [
+        [
+          -79,
+          -278,
+          33
+        ],
+        [
+          287,
+          -261,
+          33
+        ],
+        [
+          161,
+          -268,
+          27
+        ]
+      ],
+      "crystal_polar_bear": [
+        [
+          -79,
+          -278,
+          33
+        ],
+        [
+          287,
+          -261,
+          33
+        ],
+        [
+          161,
+          -268,
+          27
+        ]
+      ],
+      "obsidian_bear": [
+        [
+          -79,
+          -278,
+          33
+        ],
+        [
+          287,
+          -261,
+          33
+        ],
+        [
+          161,
+          -268,
+          27
+        ]
+      ],
+      "glacier_troll": [
+        [
+          -79,
+          -278,
+          33
+        ],
+        [
+          287,
+          -261,
+          33
+        ],
+        [
+          161,
+          -268,
+          27
+        ]
+      ],
+      "snow_yeti": [
+        [
+          -79,
+          -278,
+          33
+        ],
+        [
+          287,
+          -261,
+          33
+        ],
+        [
+          161,
+          -268,
+          27
+        ]
+      ],
+      "glacier_harpy": [
+        [
+          -67,
+          -335,
+          32
+        ],
+        [
+          170,
+          -343,
+          32
+        ],
+        [
+          284,
+          -325,
+          35
+        ]
+      ],
+      "whitehorn_ice_griffin": [
+        [
+          -67,
+          -335,
+          32
+        ],
+        [
+          170,
+          -343,
+          32
+        ],
+        [
+          284,
+          -325,
+          35
+        ]
+      ],
+      "frost_stone_golem": [
+        [
+          -67,
+          -335,
+          32
+        ],
+        [
+          170,
+          -343,
+          32
+        ],
+        [
+          284,
+          -325,
+          35
+        ]
+      ],
+      "glacier_titan": [
+        [
+          -67,
+          -335,
+          32
+        ],
+        [
+          170,
+          -343,
+          32
+        ],
+        [
+          284,
+          -325,
+          35
+        ]
+      ],
+      "frost_wraith_queen": [
+        [
+          -67,
+          -335,
+          32
+        ],
+        [
+          170,
+          -343,
+          32
+        ],
+        [
+          284,
+          -325,
+          35
+        ]
+      ],
+      "glacier_paladin": [
+        [
+          -67,
+          -335,
+          32
+        ],
+        [
+          170,
+          -343,
+          32
+        ],
+        [
+          284,
+          -325,
+          35
+        ]
+      ]
+    }
+  },
   "water": [],
   "environment": {
     "biome": "alpine-glacial",
@@ -2480,32 +3738,32 @@
   },
   "lodGroups": [],
   "performance": {
-    "nodes": 4723,
-    "meshes": 255,
+    "nodes": 4704,
+    "meshes": 337,
     "materials": 39,
     "images": 86,
     "textures": 86,
-    "accessors": 1030,
-    "bufferViews": 1116,
-    "uniqueTriangles": 291176,
-    "uniqueVertices": 189124,
-    "glbBytes": 19501176,
-    "instancedTriangles": 752036,
-    "embeddedTextureBytes": 9641083,
-    "placements": 1972,
+    "accessors": 1358,
+    "bufferViews": 1444,
+    "uniqueTriangles": 302146,
+    "uniqueVertices": 198979,
+    "glbBytes": 19889316,
+    "instancedTriangles": 744858,
+    "embeddedTextureBytes": 9578382,
+    "placements": 1941,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 929599,
-      "blockedCells": 397505,
-      "walkableFraction": 0.7005,
+      "walkableCells": 929186,
+      "blockedCells": 397918,
+      "walkableFraction": 0.7002,
       "elevatedDecks": 4,
-      "steepCells": 373970,
-      "reliefMetres": 161.42,
+      "steepCells": 374189,
+      "reliefMetres": 161.73,
       "heightEncoding": {
-        "origin": -6.1735,
-        "step": 2.603515,
+        "origin": -6.4957,
+        "step": 2.608629,
         "range": [
           1,
           63
@@ -2515,7 +3773,7 @@
       "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
       "columnOrder": "server-tile-x (column 0 is the -X western edge)"
     },
-    "trianglesPerSquareMetre": 2.27
+    "trianglesPerSquareMetre": 2.25
   },
   "sources": {
     "concept": "eloria-assets/concepts/nymara-regions/whitehorn_range_region_concept.png",
@@ -2531,17 +3789,16 @@
   },
   "productionStatus": "production-geometry-materials-population",
   "knownLimitations": [
-    "rope_bridge: 46 m span measured landing to landing, gorge floor -20.9 m, landings 20.0 m north at (60, -98) / 12.2 m south at (41, -57), deck 16.2 m at its centre, rising +7.9 m to the north, turned 66 degrees (37 m of air beneath).",
-    "rope_bridge: deck at y=16.20 m, 46 m span, landing at (60, -98) and (41, -57). The deck owns its server cells; the gorge floor beneath it is not separately walkable.",
-    "rope_bridge_upper: 44 m span measured landing to landing, gorge floor -12.1 m, landings 49.4 m north at (186, -121) / 42.2 m south at (186, -78), deck 45.9 m at its centre, rising +7.2 m to the north, turned 90 degrees (58 m of air beneath).",
-    "rope_bridge_upper: deck at y=45.92 m, 44 m span, landing at (186, -121) and (186, -78). The deck owns its server cells; the gorge floor beneath it is not separately walkable.",
-    "Roadside markers: 189 cairns, 17 waystones.",
+    "Two surveyed suspension decks meet their actual banks, with continuous profiled planks.",
+    "Roadside markers: 199 cairns, 17 waystones.",
     "Glacier: 77 seracs along the ice.",
-    "Vegetation: 845 conifers below the snow line.",
-    "Scatter: 744 rock clusters.",
+    "Vegetation: 825 conifers below the snow line.",
+    "Scatter: 701 rock clusters.",
+    "walk corridors: 12 encroaching dressing placements removed",
+    "Gate ration house and repair shelter, eight weather refuges, eastern cart saddle and switchback temple ascent.",
     "lore site snowline-stones (The Snowline Stones): relief 2.24 m, 24 m from the ask",
     "march south-gate: 0 road pieces, 10 of mirrorhold's growth",
     "march west-pass: 2 road pieces, 10 of amberwood's growth",
-    "march east-pass: 1 road pieces, 12 of amethyst_barrens's growth"
+    "march east-pass: 1 road pieces, 11 of amethyst_barrens's growth"
   ]
 }
