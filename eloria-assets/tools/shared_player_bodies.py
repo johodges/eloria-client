@@ -408,6 +408,50 @@ def neck_bridge(lower, upper, origin, axis, material, reference):
     return {'a':attrs,'f':{('body',material):ff},'lowerIds':li,'upperIds':ui},lr,ur
 
 
+def extend_neck_skin(group, pixels, points, origin, axis):
+    """Stretch clean source neck texels once; never reflect lips or collars.
+
+    A coarse source triangle can cross the painted collar even when its centre
+    is skin. Sample within its UVs, then reject non-skin texels individually.
+    Missing skin behind a source's high collar borrows the nearest actual neck
+    samples around the circumference instead of stretching black cloth.
+    """
+    side=np.cross(axis,[1.,0.,0.])
+    if '_neck_skin_samples' not in group:
+        attrs=group['a'];faces=group['f'][('body',body_material(group))]
+        corners=attrs['POSITION'][faces]-origin
+        travel=corners@axis;centre=corners.mean(1)
+        radial=centre-(centre@axis)[:,None]*axis
+        radius=np.linalg.norm(radial,axis=1)
+        face_rgb=sample_image(pixels,attrs['TEXCOORD_0'][faces].mean(1))
+        head_band=(travel.mean(1)>UPPER_CUT+.025)&(travel.mean(1)<UPPER_CUT+.105)&(radius<.14)
+        reference=np.median(face_rgb[head_band],axis=0)
+        normals=attrs['NORMAL'][faces].mean(1)
+        selected=(travel.max(1)>.025)&(travel.min(1)<UPPER_CUT)&(radius<.12)&((radial*normals).sum(1)>0)
+        faces=faces[selected]
+        bary=np.array([[1-u-v,u,v] for u in np.linspace(0,1,19)
+                       for v in np.linspace(0,1,19) if u+v<=1+1e-8])
+        positions=np.einsum('ki,nic->nkc',bary,attrs['POSITION'][faces]).reshape(-1,3)-origin
+        uv=np.einsum('ki,nic->nkc',bary,attrs['TEXCOORD_0'][faces]).reshape(-1,2)
+        rgb=sample_image(pixels,uv)
+        height=positions@axis
+        clean=(height>.025)&(height<UPPER_CUT)&(np.linalg.norm(rgb-reference,axis=1)<.20)
+        if clean.sum()<32:raise ValueError('Insufficient clean source neck texels')
+        chart=np.column_stack([np.arctan2(positions@side,positions[:,0])*.05,height])[clean]
+        _,unique=np.unique(np.round(chart,6),axis=0,return_index=True)
+        chart=chart[unique];rgb=rgb[clean][unique]
+        copies=np.concatenate([chart+[-2*np.pi*.05,0],chart,chart+[2*np.pi*.05,0]])
+        group['_neck_skin_samples']=(cKDTree(copies),np.tile(rgb,(3,1)))
+    tree,rgb=group['_neck_skin_samples']
+    rel=points-origin
+    height=.030+np.clip(((rel@axis)+.160)/(UPPER_CUT+.160),0,1)*.075
+    query=np.column_stack([np.arctan2(rel@side,rel[:,0])*.05,height])
+    distance,nearest=tree.query(query,k=4)
+    weight=1/np.maximum(distance,1e-8)**2
+    weight/=weight.sum(1)[:,None]
+    return np.einsum('ni,nic->nc',weight,rgb[nearest])
+
+
 def project_neck_texture(group, pixels, points, origin, axis, extend=False):
     """Sample neck skin in angular/axial coordinates, independent of radius.
 
@@ -415,6 +459,8 @@ def project_neck_texture(group, pixels, points, origin, axis, extend=False):
     in girth, creating vertical texture streaks. Cylindrical projection follows
     each triangle's actual UV interpolation without assuming equal neck radii.
     """
+    if extend:
+        return extend_neck_skin(group,pixels,points,origin,axis)
     faces = group['f'][('body', body_material(group))]
     attrs=group['a'];corners=attrs['POSITION'][faces]-origin
     travel=corners@axis;centre=corners.mean(1)
@@ -429,9 +475,6 @@ def project_neck_texture(group, pixels, points, origin, axis, extend=False):
     copies=np.concatenate([chart+[-2*np.pi*.05,0],chart,chart+[2*np.pi*.05,0]])
     face_map=np.tile(np.arange(len(faces)),3)
     rel=points-origin;pt=rel@axis
-    if extend:
-        distance=np.abs(pt-UPPER_CUT)
-        pt=UPPER_CUT+.035-np.abs((distance+.035)%.070-.035)
     query=np.column_stack([np.arctan2(rel@side,rel[:,0])*.05,pt])
     _,nearest=cKDTree(copies.mean(1)).query(query,k=min(32,len(copies)))
     if nearest.ndim==1:nearest=nearest[:,None]

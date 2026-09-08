@@ -1,0 +1,226 @@
+{
+  "glasswarden_female": {
+    "modelSHA256": "86c3a45067975a936c58c1372b1289ebb63d6a668ba51f3e6a46c7a2079b05ec",
+    "sourceMaterial": 0,
+    "size": [
+      2048,
+      2048
+    ],
+    "pixelsPerChannel": [
+      1188,
+      1188,
+      656
+    ],
+    "maskSHA256": "8c3d52d7043080ca6dc750fbf12ce14783f558309983147f05c67a7154862d52"
+  },
+  "glasswarden_male": {
+    "modelSHA256": "72c8b0c783331c22148f15072da80a9fb2c139e9bb97cbbb61a6586bfb5b7837",
+    "sourceMaterial": 0,
+    "size": [
+      2048,
+      2048
+    ],
+    "pixelsPerChannel": [
+      492,
+      492,
+      448
+    ],
+    "maskSHA256": "a3a19cdf3721b612180911ca820c9456f9bf5d7da32cdb82db70f74356665696"
+  },
+  "greyhaven_female": {
+    "modelSHA256": "351223f5366438679c85b694d67dd1bdb63971b5391179a8c5ab18348786aa7d",
+    "sourceMaterial": 0,
+    "size": [
+      2048,
+      2048
+    ],
+    "pixelsPerChannel": [
+      1695,
+      1237,
+      2558
+    ],
+    "maskSHA256": "a391ea2adf74df33117cf5cccefedb85a9b5de967cacb890b787085536ebf3b6"
+  },
+  "greyhaven_male": {
+    "modelSHA256": "942ed19892aaa36ae48f039d12e7634c1333d3668d6d4108ec6843800d1df4e8",
+    "sourceMaterial": 0,
+    "size": [
+      2048,
+      2048
+    ],
+    "pixelsPerChannel": [
+      800,
+      642,
+      1226
+    ],
+    "maskSHA256": "d59ddaace34fba0c335223bbbd8812070f7f125278368468d3fdad87ebe33ba9"
+  },
+  "luminous_female": {
+    "modelSHA256": "69b0612bfeb86732d8e2b96a759a19c8ebeaaef94d0975fb45c6a54bf516a0ac",
+    "sourceMaterial": 0,
+    "size": [
+      2048,
+      2048
+    ],
+    "pixelsPerChannel": [
+      3225,
+      2319,
+      2393
+    ],
+    "maskSHA256": "f785dfe5bb3beb57862e7b2db182504d5d692003ed45343bc030537902c84a6f"
+  },
+  "luminous_male": {
+    "modelSHA256": "6fdeaf01749bb37d38854a9692adc2df5d03dc06e67e0355e9cb12e28b3910ba",
+    "sourceMaterial": 0,
+    "size": [
+      2048,
+      2048
+    ],
+    "pixelsPerChannel": [
+      1030,
+      636,
+      931
+    ],
+    "maskSHA256": "61560fcb2ae916ec0fb09248f3e14fee21dcf1bc7cadb97a14f2e0b736cc8296"
+  },
+  "mycelari_female": {
+    "modelSHA256": "8f913c71fd059ad7c9568d98d4fe174617c2114f08124a87a540a7255e462d05",
+    "sourceMaterial": 0,
+    "size": [
+      2048,
+      2048
+    ],
+    "pixelsPerChannel": [
+      2323,
+      1842,
+      649
+    ],
+    "maskSHA256": "a2bdc87d86f185d375f27a1950ef9f42cffb51a80a81c901ac056f759067cb6a"
+  },
+  "mycelari_male": {
+    "modelSHA256": "d5ccfe8a2bf544e9cc9d0ced5504db26fef631e7cdb16819e07c888450017c4d",
+    "sourceMaterial": 0,
+    "size": [
+      2048,
+      2048
+    ],
+    "pixelsPerChannel": [
+      2548,
+      2215,
+      3264
+    ],
+    "maskSHA256": "afd02e56b09f9f2172a162386d5d1223d8023159a83b5ddee8f229aa80ee9f49"
+  },
+  "orun_female": {
+    "modelSHA256": "94b486694d9b252e1208c7eb1e1e52715da49c839a2cfe99d5fbd15eac4c8aaa",
+    "sourceMaterial": 0,
+    "size": [
+      2048,
+      2048
+    ],
+    "pixelsPerChannel": [
+      2186,
+      1330,
+      393
+    ],
+    "maskSHA256": "349d95e9182f71ebada7cb5bc48b17df87ed0e100d92f7a52c01c29adb56501f"
+  },
+  "orun_male": {
+    "modelSHA256": "ab4b2a179f800681fbd5f2cab7a68aa11c9acda26b65a3d5db4dbdd0fdd09421",
+    "sourceMaterial": 0,
+    "size": [
+      2048,
+      2048
+    ],
+    "pixelsPerChannel": [
+      826,
+      564,
+      2076
+    ],
+    "maskSHA256": "e1b86f5e4d1c8207b0798bcf013c1191a6f69baf5e206bb5b438f3c13035a281"
+  },
+  "ssarathi_female": {
+    "modelSHA256": "4352b0b8ccfa05c21691ab7f6101fc14f25cf54510077d08247e038a9b6063b3",
+    "sourceMaterial": 0,
+    "size": [
+      2048,
+      2048
+    ],
+    "pixelsPerChannel": [
+      1773,
+      1773,
+      0
+    ],
+    "maskSHA256": "dfa5eedba9cbd6d393b0eac0e81e38461fa9a62f0311baa63a27b88ebb0403b1"
+  },
+  "ssarathi_male": {
+    "modelSHA256": "e9933d9c78bc6987c1afd6b390f86223b99f37e536c742228579f62a7e1d72f6",
+    "sourceMaterial": 0,
+    "size": [
+      2048,
+      2048
+    ],
+    "pixelsPerChannel": [
+      1919,
+      1919,
+      0
+    ],
+    "maskSHA256": "2aa4b658f95904d9da5fd7f77dadb85997d36687d457416101e55b54236cf89e"
+  },
+  "stoneborn_female": {
+    "modelSHA256": "575a27a51d70ce9a12ebfa293838369975aae5774c5389d52d8867bd602a7ba9",
+    "sourceMaterial": 0,
+    "size": [
+      2048,
+      2048
+    ],
+    "pixelsPerChannel": [
+      703,
+      599,
+      0
+    ],
+    "maskSHA256": "d389da2aff500d3a9f74ec325fbe9bde6353ecd10b3b89f41838436b8eff7af2"
+  },
+  "stoneborn_male": {
+    "modelSHA256": "4ac3ef5d3d84d13486df92a618193822659a7241844cbe443bb5e43ca18986c5",
+    "sourceMaterial": 0,
+    "size": [
+      2048,
+      2048
+    ],
+    "pixelsPerChannel": [
+      821,
+      821,
+      0
+    ],
+    "maskSHA256": "9e977e34e6626519026bea9ad0f42f67b9d27382d69866702e87613beebeec82"
+  },
+  "votary_female": {
+    "modelSHA256": "ba0d95aaeea96cefb3d47921bfe8731fe60fe3b544606cffa7b1139a8a7afbbb",
+    "sourceMaterial": 0,
+    "size": [
+      2048,
+      2048
+    ],
+    "pixelsPerChannel": [
+      2625,
+      1594,
+      1928
+    ],
+    "maskSHA256": "2ba36a7169d8878c4307b3a0deadc85fe76ba9fbded8473f7d39027b9df817d4"
+  },
+  "votary_male": {
+    "modelSHA256": "7b35f0c2a2f7f27b6476a9c1bce02cdd7f4b9c12ac2f0de963b06e1f24b6aa98",
+    "sourceMaterial": 0,
+    "size": [
+      2048,
+      2048
+    ],
+    "pixelsPerChannel": [
+      906,
+      805,
+      829
+    ],
+    "maskSHA256": "9576953ceeb98be01b1c05b58e01c0a238170c91414b7bcb7b037aec4b636a92"
+  }
+}

@@ -194,6 +194,7 @@ var _facing_offset_elapsed := 0.0
 var _cape_cloth: SkeletonModifier3D = null
 var _attachment_bones: Dictionary = {}
 var _model_config: Dictionary = {}
+var _face_material: ShaderMaterial
 var _equipment_config: Dictionary = {}
 var _equipment_visuals: Dictionary = {}
 var _equipment_nodes: Dictionary = {}
@@ -382,6 +383,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	_add_map_dot(dto)
 	resolver = AnimationResolver.new(animation_config)
 	_model_config = model_config.duplicate(true)
+	_face_material = null
 	_attachment_bones = (model_config.get("attachments", {}) as Dictionary).duplicate(true)
 	_equipment_config = (equipment_config as Dictionary).duplicate(true)
 	var source_path := _external_path(str(model_config.get("scene", "")))
@@ -478,6 +480,7 @@ func apply_appearance_variants(appearance: Dictionary) -> void:
 			var baked: Array = _model_config.get("wardrobeBakedGrow", []) as Array
 			if not baked.has(mesh_name):
 				_grow_mesh(mesh_node, float(WARDROBE_GROW[mesh_name]))
+	_apply_face_appearance(native_model, skin_tint, eye_tint, hair_tint)
 	_add_hair_variant(AppearanceVariants.hair_style(
 		int(appearance.get("hair", 0))), hair_tint)
 	_refresh_body_surface_visibility()
@@ -493,6 +496,42 @@ func _set_appearance_visible(mesh_node: MeshInstance3D, visible_by_style: bool) 
 	else:
 		mesh_node.set_meta("appearance_hidden", true)
 	mesh_node.visible = visible_by_style
+
+func _apply_face_appearance(native_model: Node3D, skin: Color, eyes: Color, hair: Color) -> void:
+	var spec: Dictionary = _model_config.get("faceAppearance", {}) as Dictionary
+	if spec.is_empty():
+		return
+	var body := native_model.find_child("body", true, false) as MeshInstance3D
+	if body == null or body.mesh == null:
+		return
+	var surface := int(spec["sourceSurface"])
+	var original := body.mesh.surface_get_material(surface) as StandardMaterial3D
+	if original == null:
+		return
+	if _face_material == null:
+		_face_material = ShaderMaterial.new()
+		_face_material.shader = preload("res://src/actors/face_appearance.gdshader")
+		_face_material.set_shader_parameter("base_texture", original.albedo_texture)
+		_face_material.set_shader_parameter("region_texture", load(str(spec["mask"])))
+		_face_material.set_shader_parameter("base_color", original.albedo_color)
+		_face_material.set_shader_parameter("roughness", original.roughness)
+		_face_material.set_shader_parameter("use_normal", original.normal_enabled)
+		_face_material.set_shader_parameter("normal_texture", original.normal_texture)
+		_face_material.set_shader_parameter("normal_scale", original.normal_scale)
+	_face_material.set_shader_parameter("skin_tint", skin)
+	_face_material.set_shader_parameter("eye_tint", eyes)
+	_face_material.set_shader_parameter("hair_tint", hair)
+	body.set_surface_override_material(surface, _face_material)
+	if spec.has("neckTexture"):
+		var neck := body.get_surface_override_material(int(spec["neckSurface"])) as StandardMaterial3D
+		if neck != null:
+			neck.albedo_texture = load(str(spec["neckTexture"])) as Texture2D
+	# The old partitions contain eyelid/ear/brow skin as well as eye pixels.
+	# Restore their original atlas and use the same UV mask on every partition.
+	for mesh_name: String in ["eyes", "eyebrows", "scalp"]:
+		var mesh := native_model.find_child(mesh_name, true, false) as MeshInstance3D
+		if mesh != null:
+			mesh.material_override = _face_material
 
 func _tint_mesh(mesh_node: MeshInstance3D, tint: Color,
 		emissive: bool = false) -> void:
@@ -514,7 +553,7 @@ func _tint_mesh(mesh_node: MeshInstance3D, tint: Color,
 				tinted.emission = tint * 0.28
 			mesh_node.set_surface_override_material(surface, tinted)
 		return
-	var source: Material = mesh_node.get_active_material(0)
+	var source: Material = mesh_node.mesh.surface_get_material(0)
 	if source is not StandardMaterial3D:
 		return
 	var material: StandardMaterial3D = (source as StandardMaterial3D).duplicate()

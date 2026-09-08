@@ -41,7 +41,13 @@
       "hairSkinned": true,
       "wardrobeBakedGrow": [
         "wardrobe_shirt"
-      ]
+      ],
+      "faceAppearance": {
+        "sourceSurface": 1,
+        "mask": "res://assets/actors/native/face_masks/luminous_female.png",
+        "neckSurface": 2,
+        "neckTexture": "res://assets/actors/native/neck_textures/luminous_female.png"
+      }
     },
     "luminous_male": {
       "scene": "res://assets/actors/native/races/luminous_male.glb",
@@ -83,7 +89,13 @@
       "hairSkinned": true,
       "wardrobeBakedGrow": [
         "wardrobe_shirt"
-      ]
+      ],
+      "faceAppearance": {
+        "sourceSurface": 1,
+        "mask": "res://assets/actors/native/face_masks/luminous_male.png",
+        "neckSurface": 2,
+        "neckTexture": "res://assets/actors/native/neck_textures/luminous_male.png"
+      }
     },
     "votary_female": {
       "scene": "res://assets/actors/native/races/votary_female.glb",
@@ -125,7 +137,13 @@
       "hairSkinned": true,
       "wardrobeBakedGrow": [
         "wardrobe_shirt"
-      ]
+      ],
+      "faceAppearance": {
+        "sourceSurface": 1,
+        "mask": "res://assets/actors/native/face_masks/votary_female.png",
+        "neckSurface": 2,
+        "neckTexture": "res://assets/actors/native/neck_textures/votary_female.png"
+      }
     },
     "votary_male": {
       "scene": "res://assets/actors/native/races/votary_male.glb",
@@ -167,7 +185,13 @@
       "hairSkinned": true,
       "wardrobeBakedGrow": [
         "wardrobe_shirt"
-      ]
+      ],
+      "faceAppearance": {
+        "sourceSurface": 1,
+        "mask": "res://assets/actors/native/face_masks/votary_male.png",
+        "neckSurface": 2,
+        "neckTexture": "res://assets/actors/native/neck_textures/votary_male.png"
+      }
     },
     "glasswarden_female": {
       "scene": "res://assets/actors/native/races/glasswarden_female.glb",
@@ -209,7 +233,13 @@
       "hairSkinned": true,
       "wardrobeBakedGrow": [
         "wardrobe_shirt"
-      ]
+      ],
+      "faceAppearance": {
+        "sourceSurface": 1,
+        "mask": "res://assets/actors/native/face_masks/glasswarden_female.png",
+        "neckSurface": 2,
+        "neckTexture": "res://assets/actors/native/neck_textures/glasswarden_female.png"
+      }
     },
     "glasswarden_male": {
       "scene": "res://assets/actors/native/races/glasswarden_male.glb",
@@ -251,7 +281,13 @@
       "hairSkinned": true,
       "wardrobeBakedGrow": [
         "wardrobe_shirt"
-      ]
+      ],
+      "faceAppearance": {
+        "sourceSurface": 1,
+        "mask": "res://assets/actors/native/face_masks/glasswarden_male.png",
+        "neckSurface": 2,
+        "neckTexture": "res://assets/actors/native/neck_textures/glasswarden_male.png"
+      }
     },
     "orun_female": {
       "scene": "res://assets/actors/native/races/orun_female.glb",
@@ -293,7 +329,13 @@
       "hairSkinned": true,
       "wardrobeBakedGrow": [
         "wardrobe_shirt"
-      ]
+      ],
+      "faceAppearance": {
+        "sourceSurface": 1,
+        "mask": "res://assets/actors/native/face_masks/orun_female.png",
+        "neckSurface": 2,
+        "neckTexture": "res://assets/actors/native/neck_textures/orun_female.png"
+      }
     },
     "orun_male": {
       "scene": "res://assets/actors/native/races/orun_male.glb",
@@ -335,7 +377,13 @@
       "hairSkinned": true,
       "wardrobeBakedGrow": [
         "wardrobe_shirt"
-      ]
+      ],
+      "faceAppearance": {
+        "sourceSurface": 1,
+        "mask": "res://assets/actors/native/face_masks/orun_male.png",
+        "neckSurface": 2,
+        "neckTexture": "res://assets/actors/native/neck_textures/orun_male.png"
+      }
     },
     "greyhaven_female": {
       "scene": "res://assets/actors/native/races/greyhaven_female.glb",
@@ -377,7 +425,13 @@
       "hairSkinned": true,
       "wardrobeBakedGrow": [
         "wardrobe_shirt"
-      ]
+      ],
+      "faceAppearance": {
+        "sourceSurface": 1,
+        "mask": "res://assets/actors/native/face_masks/greyhaven_female.png",
+        "neckSurface": 2,
+        "neckTexture": "res://assets/actors/native/neck_textures/greyhaven_female.png"
+      }
     },
     "greyhaven_male": {
       "scene": "res://assets/actors/native/races/greyhaven_male.glb",
@@ -419,7 +473,13 @@
       "hairSkinned": true,
       "wardrobeBakedGrow": [
         "wardrobe_shirt"
-      ]
+      ],
+      "faceAppearance": {
+        "sourceSurface": 1,
+        "mask": "res://assets/actors/native/face_masks/greyhaven_male.png",
+        "neckSurface": 2,
+        "neckTexture": "res://assets/actors/native/neck_textures/greyhaven_male.png"
+      }
     },
     "ssarathi_female": {
       "scene": "res://assets/actors/native/races/ssarathi_female.glb",
@@ -461,7 +521,13 @@
       "hairSkinned": true,
       "wardrobeBakedGrow": [
         "wardrobe_shirt"
-      ]
+      ],
+      "faceAppearance": {
+        "sourceSurface": 1,
+        "mask": "res://assets/actors/native/face_masks/ssarathi_female.png",
+        "neckSurface": 2,
+        "neckTexture": "res://assets/actors/native/neck_textures/ssarathi_female.png"
+      }
     },
     "ssarathi_male": {
       "scene": "res://assets/actors/native/races/ssarathi_male.glb",
@@ -503,7 +569,13 @@
       "hairSkinned": true,
       "wardrobeBakedGrow": [
         "wardrobe_shirt"
-      ]
+      ],
+      "faceAppearance": {
+        "sourceSurface": 1,
+        "mask": "res://assets/actors/native/face_masks/ssarathi_male.png",
+        "neckSurface": 2,
+        "neckTexture": "res://assets/actors/native/neck_textures/ssarathi_male.png"
+      }
     },
     "stoneborn_female": {
       "scene": "res://assets/actors/native/races/stoneborn_female.glb",
@@ -545,7 +617,13 @@
       "hairSkinned": true,
       "wardrobeBakedGrow": [
         "wardrobe_shirt"
-      ]
+      ],
+      "faceAppearance": {
+        "sourceSurface": 1,
+        "mask": "res://assets/actors/native/face_masks/stoneborn_female.png",
+        "neckSurface": 2,
+        "neckTexture": "res://assets/actors/native/neck_textures/stoneborn_female.png"
+      }
     },
     "stoneborn_male": {
       "scene": "res://assets/actors/native/races/stoneborn_male.glb",
@@ -587,7 +665,13 @@
       "hairSkinned": true,
       "wardrobeBakedGrow": [
         "wardrobe_shirt"
-      ]
+      ],
+      "faceAppearance": {
+        "sourceSurface": 1,
+        "mask": "res://assets/actors/native/face_masks/stoneborn_male.png",
+        "neckSurface": 2,
+        "neckTexture": "res://assets/actors/native/neck_textures/stoneborn_male.png"
+      }
     },
     "mycelari_female": {
       "scene": "res://assets/actors/native/races/mycelari_female.glb",
@@ -629,7 +713,13 @@
       "hairSkinned": true,
       "wardrobeBakedGrow": [
         "wardrobe_shirt"
-      ]
+      ],
+      "faceAppearance": {
+        "sourceSurface": 1,
+        "mask": "res://assets/actors/native/face_masks/mycelari_female.png",
+        "neckSurface": 2,
+        "neckTexture": "res://assets/actors/native/neck_textures/mycelari_female.png"
+      }
     },
     "mycelari_male": {
       "scene": "res://assets/actors/native/races/mycelari_male.glb",
@@ -671,7 +761,13 @@
       "hairSkinned": true,
       "wardrobeBakedGrow": [
         "wardrobe_shirt"
-      ]
+      ],
+      "faceAppearance": {
+        "sourceSurface": 1,
+        "mask": "res://assets/actors/native/face_masks/mycelari_male.png",
+        "neckSurface": 2,
+        "neckTexture": "res://assets/actors/native/neck_textures/mycelari_male.png"
+      }
     },
     "emberfox": {
       "scene": "res://assets/actors/native/creatures/emberfox.glb",
