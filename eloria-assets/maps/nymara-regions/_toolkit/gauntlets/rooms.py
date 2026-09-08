@@ -27,7 +27,7 @@ from amberwood import props as P
 from amberwood import stonework as S
 from amberwood import trees as TREES
 from amberwood.interiors import Interior
-from amberwood.smallrooms import _link
+from amberwood.smallrooms import _link as _boxed_link
 from secretrooms import _brazier, _node, _plaque
 
 WAY_WIDTH = 3.6          # passage width
@@ -35,11 +35,23 @@ WAY_HEIGHT = 3.8
 DOOR = (3.6, 3.0)        # width, head
 
 
+def _link(it, ident, a, b, width, y0, y1, height, *, canyon=False, **kw):
+    if not canyon:
+        return _boxed_link(it, ident, a, b, width, y0, y1, height, **kw)
+    from amberwood import canyoncraft as C
+    it.group.add(C.cut_passage(a,b,width,y0,y1,max(height,4.8),
+                               floor=kw["floor"],rock=kw["wall"],seed=kw["seed"]))
+    it.spaces[ident] = {"x0":min(a[0],b[0])-width/2,"z0":min(a[1],b[1])-width/2,
+                        "x1":max(a[0],b[0])+width/2,"z1":max(a[1],b[1])+width/2,
+                        "floor":min(y0,y1),"height":height}
+    it.passages[ident] = {"a":a,"b":b,"y0":y0,"y1":y1,"width":width,"height":height}
+
+
 # ---------------------------------------------------------------- dressing
 def dress(it: Interior, kit: str, pal: dict, x0, z0, x1, z1, floor_y, seed: int, count: int = 6):
     """Scatter the region's growth along the walls of a room, never in the
     middle where the fight is and never in the door lanes."""
-    if kit in ("forest_haul", "ice_mine", "temple_procession", "barrow_visitation", "drowned_customs"):
+    if kit in ("forest_haul", "ice_mine", "temple_procession", "barrow_visitation", "drowned_customs", "canyon_wash"):
         return  # themed layouts author useful bays instead of scattered growth
     rng = np.random.default_rng(seed)
     width, depth = x1 - x0, z1 - z0
@@ -147,7 +159,7 @@ def hall(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float, fl
     x_out = x_in + (3.0 if seed % 2 else -3.0)
     _room_(it, key, x_in - w, z0, x_in + w, z0 + d, floor, 5.6, pal, doors=_doors(x_in, x_out), ceiling="vault",
            vault_rise=2.6)
-    for px in (x_in - w * 0.5, x_in + w * 0.5):
+    for px in (() if kit == "canyon_wash" else (x_in - w * 0.5, x_in + w * 0.5)):
         for pz in (z0 + d * 0.33, z0 + d * 0.66):
             it.group.add(M.cylinder(0.5, 0.5, 5.6, 10, uv_scale=1.0, material=pal["stone"]).translate(px, floor, pz))
     dress(it, kit, pal, x_in - w, z0, x_in + w, z0 + d, floor, seed)
@@ -164,7 +176,7 @@ def cavern(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float, 
     _room_(it, key, x_in - w, z0, x_in + w, z0 + d, floor, 8.0, pal, doors=_doors(x_in, x_out), ceiling="vault",
            vault_rise=3.8, walls=pal["rock"], ceil=pal["rock"])
     rng = np.random.default_rng(seed)
-    for index in range(0 if kit in ("temple_procession", "barrow_visitation", "drowned_customs") else 7):
+    for index in range(0 if kit in ("temple_procession", "barrow_visitation", "drowned_customs", "canyon_wash") else 7):
         angle = float(rng.uniform(0, math.tau))
         radial = float(rng.uniform(0.7, 0.92))
         it.group.add(P.boulder(radius=float(rng.uniform(0.6, 1.4)), seed=seed + index, material=pal["rock"])
@@ -196,7 +208,11 @@ def bridge(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float, 
     _room_(it, key, x_in - wide, z0 + landing, x_in + wide, z0 + d - landing, floor - 3.0, 9.0, pal,
            doors=[("south", x_in, DOOR[0], 5.6), ("north", x_in, DOOR[0], 5.6)], ceiling="vault",
            vault_rise=3.0, walls=pal["rock"], ceil=pal["rock"], floor=pal["water"], walk=False)
-    if deck == "arcaded":
+    if deck == "rock_spine":
+        from amberwood import canyoncraft as C
+        it.group.add(C.ridge_spine(d - 2 * landing + .08, half * 2, 3, pal["rock"])
+                     .translate(x_in, floor - 3, z0 + landing - .04))
+    elif deck == "arcaded":
         from amberwood import civiccraft as C
         it.group.add(C.arcaded_causeway(d - 2 * landing + .08, floor, floor,
                                         width=half * 2, arches=3, foot=floor - 3.2,
@@ -217,7 +233,7 @@ def bridge(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float, 
     else:
         it.group.add_walk(M.box((half * 2, 0.6, d - 2 * landing + 0.6), center=(x_in, floor - 0.3, z0 + d * .5),
                                 uv_scale=.5, material=pal["stone"]))
-    for k in range(0 if deck in ("piles", "arcaded") else 6):
+    for k in range(0 if deck in ("piles", "arcaded", "rock_spine") else 6):
         pz = z0 + 5.0 + k * (d - 10.0) / 5.0
         for sx in (-half, half):
             height = 2.8 if deck == "rope" else 1.1
@@ -242,7 +258,7 @@ def stair(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float, f
     rise = 3.0
     run = 14.0
     _link(it, f"{key}-climb", (x_in, z0), (x_in, z0 + run), WAY_WIDTH, floor, floor + rise, WAY_HEIGHT,
-          floor=pal["stone"], wall=pal["rock"], ceil=pal["rock"], steps=8, seed=seed)
+          floor=pal["stone"], wall=pal["rock"], ceil=pal["rock"], steps=8, seed=seed, canyon=pal.get("open_canyon", False))
     top = floor + rise
     w = 9.0 + 2.0 * pressure
     d = 18.0
@@ -280,7 +296,7 @@ def gallery(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float,
             _node(it, f"{key}-bonus", bonus[5:], cx, floor, az, seed + 40, pal["node"])
         elif k == 1 and bonus == "cache":
             _brazier(it, cx, floor, az, seed + 41)
-        elif kit not in ("barrow_visitation", "drowned_customs"):
+        elif kit not in ("barrow_visitation", "drowned_customs", "canyon_wash"):
             it.group.add(P.crate(size=0.7, seed=seed + k, material=pal["timber"]).translate(cx, floor, az))
     dress(it, kit, pal, x_in - w, z0, x_in + w, z0 + d, floor, seed, count=4)
     it.lamps.append([round(x_in, 2), round(floor + 4.0, 2), round(z0 + d * 0.5, 2)])
@@ -320,13 +336,13 @@ def fork(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float, fl
                walls=pal["rock"] if bkind == "cavern" else None, ceil=pal["rock"] if bkind == "cavern" else None)
         if bkind == "cavern":
             rng = np.random.default_rng(seed + (1 if sign > 0 else 2))
-            for index in range(0 if kit in ("temple_procession", "barrow_visitation", "drowned_customs") else 4):
+            for index in range(0 if kit in ("temple_procession", "barrow_visitation", "drowned_customs", "canyon_wash") else 4):
                 it.group.add(P.boulder(radius=float(rng.uniform(0.6, 1.2)), seed=seed + index + sign * 9,
                                        material=pal["rock"])
                              .translate(bx + sign * float(rng.uniform(2.0, branch_w - 1.5)), floor,
                                         z_room + float(rng.uniform(3.0, branch_d - 3.0))))
         else:
-            for px in (bx - branch_w * 0.5, bx + branch_w * 0.5):
+            for px in (() if kit == "canyon_wash" else (bx - branch_w * 0.5, bx + branch_w * 0.5)):
                 it.group.add(M.cylinder(0.45, 0.45, 6.0, 10, uv_scale=1.0, material=pal["stone"])
                              .translate(px, floor, z_room + branch_d * 0.5))
         dress(it, kit, pal, bx - branch_w, z_room, bx + branch_w, z_room + branch_d, floor, seed + sign, count=4)
@@ -343,7 +359,7 @@ def fork(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float, fl
     for branch in info["branches"]:
         bx = branch["x"]
         _link(it, f"{key}-{branch['id']}-out", (bx, z_room + branch_d), (bx, z_merge), WAY_WIDTH, floor, floor,
-              WAY_HEIGHT, floor=pal["floor"], wall=pal["wall"], ceil=pal["ceil"], steps=0, seed=seed)
+              WAY_HEIGHT, floor=pal["floor"], wall=pal["wall"], ceil=pal["ceil"], steps=0, seed=seed, canyon=pal.get("open_canyon", False))
     it.lamps.append([round(x_in, 2), round(floor + 4.0, 2), round(z_merge + merge_d * 0.5, 2)])
     info["merge"] = {"key": f"{key}-merge", "bounds": (x_in - merge_w, z_merge, x_in + merge_w, z_merge + merge_d)}
     built = Built(f"{key}-merge", z_merge + merge_d, x_out, floor, [], info["merge"]["bounds"])
@@ -421,9 +437,9 @@ def barred_way(it: Interior, key: str, pal: dict, kind: str, a, b, floor_a: floa
     # grid can find a walkable path across it
     half = 1.4
     _link(it, f"{key}-way-a", (x, za), (x, mid - half), WAY_WIDTH, floor_a, floor_a, WAY_HEIGHT,
-          floor=pal["floor"], wall=pal["wall"], ceil=pal["ceil"], steps=0, seed=seed)
+          floor=pal["floor"], wall=pal["wall"], ceil=pal["ceil"], steps=0, seed=seed, canyon=pal.get("open_canyon", False))
     _link(it, f"{key}-way-b", (x, mid + half), (x, zb), WAY_WIDTH, floor_a, floor_b, WAY_HEIGHT,
-          floor=pal["floor"], wall=pal["wall"], ceil=pal["ceil"], steps=0, seed=seed)
+          floor=pal["floor"], wall=pal["wall"], ceil=pal["ceil"], steps=0, seed=seed, canyon=pal.get("open_canyon", False))
     w = WAY_WIDTH
     y = floor_a
     # the sill and the walls either side of it, so the cut is sealed but not walkable
@@ -467,13 +483,21 @@ def barred_way(it: Interior, key: str, pal: dict, kind: str, a, b, floor_a: floa
 def plain_way(it: Interior, key: str, pal: dict, a, b, floor_a: float, floor_b: float, seed: int, steps: int = 0):
     (x, za), (_, zb) = a, b
     _link(it, f"{key}-way", (x, za), (x, zb), WAY_WIDTH, floor_a, floor_b, WAY_HEIGHT,
-          floor=pal["floor"], wall=pal["wall"], ceil=pal["ceil"], steps=steps, seed=seed)
+          floor=pal["floor"], wall=pal["wall"], ceil=pal["ceil"], steps=steps, seed=seed, canyon=pal.get("open_canyon", False))
 
 
 # ---------------------------------------------------------------- room
 def _room_(it: Interior, key: str, x0, z0, x1, z1, floor_y, height, pal, *, doors=(), ceiling="flat",
            vault_rise=2.2, walls=None, ceil=None, floor=None, walk=True):
     floor = floor or pal.get("room_floors", {}).get(key)
+    if pal.get("open_canyon"):
+        from amberwood import canyoncraft as C, noise as N
+        it.group.add(C.enclosure(x0,z0,x1,z1,floor_y,max(5.4,height),doors,
+                                 floor or pal["floor"],pal["rock"],walk=walk,
+                                 seed=pal["layout_seed"]+N.stable_hash(key)%10000))
+        it.spaces[key] = {"x0":x0,"z0":z0,"x1":x1,"z1":z1,"floor":floor_y,"height":height}
+        return
+
     if walk:
         it.space(key, x0, z0, x1, z1, floor_y, height,
                  floor_mat=floor or pal["floor"], wall_mat=walls or pal["wall"],

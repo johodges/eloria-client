@@ -173,3 +173,16 @@ and behind climbable stone thresholds. Published bands, roster, rules,
 rewards and keeper returns are preserved. The package's README,
 assumptions, coverage, comparison and validation live under
 interiors/crownwater_gauntlet.
+
+
+## Red Canyon layout pass
+
+The Red Canyon now follows an open sandstone herd wash. Undercut ledges
+shelter the Horse Cave and Shade Fork; a surviving rock rib crosses the
+dry ravine; the Sun Fork stays exposed; and the split rock crown marks
+the final court beyond the Long Wash. The three-metre climb uses short
+surveyed ramp strips so the geometry-derived grid remains gradual.
+Shorter links remove thirty-six metres of travel. Published rosters,
+rules, rewards and keeper returns are preserved. The package's README,
+assumptions, coverage, comparison and validation live under
+interiors/sunmane_gauntlet.

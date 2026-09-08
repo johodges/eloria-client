@@ -459,7 +459,19 @@ _theme(Theme(
 
 _theme(Theme(
     region="sunmane_steppe", id="sunmane_gauntlet", name="The Red Canyon", short="canyon",
-    palette=SUNMANE, props={"kit": "canyon"},
+    palette=dict(SUNMANE, floor="sunmane_wash_sand", wall="sunmane_red_sandstone",
+                 ceil="sunmane_red_sandstone", rock="sunmane_red_sandstone",
+                 stone="sunmane_red_sandstone", water="sunmane_wash_sand", cloth="woven_cloth"),
+    props={"kit":"canyon_wash", "wayLength":8.0, "openCanyon":True,
+           "materialSet":"sunmane_canyon", "clipCoplanar":True, "localBatches":True,
+           "rearDaisStep":True, "bridgeDeck":"rock_spine",
+           "environment":{
+               "sky":{"topColor":[.27,.43,.58],"horizonColor":[.74,.70,.56],
+                      "groundBottomColor":[.25,.19,.13],"groundHorizonColor":[.63,.49,.31]},
+               "sun":{"enabled":True,"direction":[.52,-.8,.28],"color":[1,.94,.85],"energy":1.15},
+               "ambient":{"color":[.65,.65,.63],"energy":.7,"skyContribution":.3},
+               "fog":{"enabled":True,"color":[.65,.51,.35],"density":.0014},
+               "tonemap":{"mode":"filmic","exposure":1.0,"white":4.0}}},
     flavour="A dry wash that cuts through the red rock east of the camp. The herds shelter in it and "
             "the things that eat the herds follow them in.",
     legs=(

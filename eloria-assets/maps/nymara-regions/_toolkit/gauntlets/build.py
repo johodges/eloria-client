@@ -47,6 +47,8 @@ def compose(theme: D.Theme, seed: int):
     pal.setdefault("bark", "bark_dark")
     pal["room_floors"] = theme.props.get("roomFloors", {})
     pal["flood_rooms"] = theme.props.get("floodRooms", ())
+    pal["open_canyon"] = theme.props.get("openCanyon", False)
+    pal["layout_seed"] = seed
     kit = theme.props.get("kit", "forest")
     way = float(theme.props.get("wayLength", WAY))
     it = Interior(theme.id, theme.name, "gauntlet", "", [0.0, 0.0, 0.0], "default")
@@ -135,6 +137,9 @@ def compose(theme: D.Theme, seed: int):
     elif kit == "drowned_customs":
         from gauntlets import drowned_customs
         drowned_customs.dress(it, pal, seed)
+    elif kit == "canyon_wash":
+        from gauntlets import red_canyon
+        red_canyon.dress(it, pal, seed)
     lamps, placed = hanging_lamps(it.lamps, seed=seed)
     it.group.add(lamps)
     it.lamps = placed
@@ -263,7 +268,7 @@ def write_manifest(theme: D.Theme, it: Interior, legs, staging, vault, stats, co
         "interactives": it.interactives,
         "npcMarkers": [],
         "harvestables": it.harvestables,
-        "environment": dict(it.environment, openToSky=[],
+        "environment": dict(it.environment, openToSky=list(it.spaces) if theme.props.get("openCanyon") else [],
                             lights=[{"id": f"lamp-{i:03d}", "kind": "point", "position": p,
                                      "color": [1.0, 0.66, 0.32], "range": 14.0, "energy": 3.2,
                                      "attenuation": 1.2} for i, p in enumerate(it.lamps)] + getattr(it, "accent_lights", [])),
@@ -298,6 +303,9 @@ def main() -> int:
     if theme.props.get("materialSet") == "crownwater":
         from amberwood import crownmaterials
         crownmaterials.register(sets)
+    if theme.props.get("materialSet") == "sunmane_canyon":
+        from amberwood import canyoncraft
+        canyoncraft.register(sets)
     it, legs, staging, vault = compose(theme, args.seed)
     sections = [(theme.id, it.group)]
     if theme.props.get("localBatches", theme.props.get("kit") == "forest_haul"):

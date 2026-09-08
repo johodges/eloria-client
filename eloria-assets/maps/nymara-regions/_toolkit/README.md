@@ -434,3 +434,18 @@ those meshes only when stamping solid obstacles; it creates no ground and
 does not change gate cuts or wall collision. Drowned Arcades flood rooms
 have actual stone thresholds to retain the water and use clipped water
 patches around raised basins to avoid overlapping transparent skins.
+
+
+Open sandstone cuts and their palette live in amberwood/canyoncraft.py.
+enclosure supplies real floor and eroded banks with full-height door mouths;
+cut_passage follows two surveyed endpoints and elevations; ridge_spine has
+one continuous walking top and flared structural banks. butte, shelter and
+dry_tuft provide wind-cut remnants, undercut ledges and sparse bedding.
+The palette appends two material names and no terrain surface classes.
+
+A sloping walk triangle must be short enough for the collision export's
+conservative peak-height sampling. Canyon ramps split at 0.4-metre intervals
+so their three-metre climb remains a gradual sequence of server heights.
+Keep both ends on their surveyed floor levels. Open-bank profiles return
+to flat ends at joins; passage banks omit end caps buried in adjoining
+banks or gates so those surfaces cannot nearly share a plane.
