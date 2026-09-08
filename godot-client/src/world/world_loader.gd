@@ -28,6 +28,15 @@ var manifest: WorldManifest
 var coordinate_adapter: CoordinateAdapter
 var world_root: Node3D
 
+## Microseconds the last load spent in each of its steps, in the order they
+## ran, plus `total`. A map load is a handful of long steps over a package the
+## client did not author, and which of them a region is paying for is not
+## guessable from the outside: Four Gates builds three thousand mesh nodes in
+## 88 ms and Amberwood nine thousand in 2.6 s. Reading the clock a dozen times
+## costs nothing against a load measured in seconds, so the loader always says
+## where it went and `tests/integration/map_load_phases.gd` only has to read it.
+var load_phases: Dictionary = {}
+
 ## Trimesh shapes built during the load in progress, keyed by the mesh they
 ## were built from, so a mesh a region places hundreds of times is walked once.
 ## Cleared when the load finishes; the shapes themselves stay alive under the
@@ -36,6 +45,9 @@ var _collision_shapes: Dictionary = {}
 
 func load_world(manifest_path: String) -> void:
 	unload_world()
+	var began: int = Time.get_ticks_usec()
+	var mark: int = began
+	load_phases = {}
 	print_debug("world_load stage=manifest_open path=", manifest_path)
 	load_started.emit(manifest_path)
 	manifest = WorldManifest.load_file(manifest_path)
@@ -47,6 +59,7 @@ func load_world(manifest_path: String) -> void:
 	print_debug("world_load stage=manifest_valid asset=", manifest.asset_id(),
 		" glb_path=", resolved_glb_path)
 	coordinate_adapter = manifest.coordinate_adapter()
+	mark = _phase(&"manifest", mark)
 	var document: GLTFDocument = GLTFDocument.new()
 	var state: GLTFState = GLTFState.new()
 	var error: Error = document.append_from_file(resolved_glb_path, state)
@@ -56,8 +69,10 @@ func load_world(manifest_path: String) -> void:
 		load_failed.emit(["glb_import_failed: " + error_string(error), resolved_glb_path])
 		return
 	print_debug("world_load stage=glb_imported path=", resolved_glb_path)
+	mark = _phase(&"parse", mark)
 	var mipped: int = _build_texture_mipmaps(state)
 	print_debug("world_load stage=texture_mipmaps rebuilt=", mipped)
+	mark = _phase(&"mipmaps", mark)
 	var generated: Node = document.generate_scene(state)
 	if generated == null:
 		push_error("world_load stage=scene_generate error=null_scene path=%s" % resolved_glb_path)
@@ -68,10 +83,12 @@ func load_world(manifest_path: String) -> void:
 		push_error("world_load stage=scene_generate error=root_not_node3d path=%s" % resolved_glb_path)
 		load_failed.emit(["glb_scene_root_not_node3d"])
 		return
+	mark = _phase(&"generateScene", mark)
 	world_root.name = "ImportedWorld_" + manifest.asset_id()
 	add_child(world_root)
 	print_debug("world_load stage=scene_attached node=", world_root.get_path(),
 		" children=", world_root.get_child_count(), " transform=", world_root.transform)
+	mark = _phase(&"attach", mark)
 	# One walk of the import, not five. A region imports up to fifteen thousand
 	# nodes and every pass below wanted either the mesh instances or a node by
 	# name; each of them used to ask the scene tree for its own copy of the
@@ -81,15 +98,29 @@ func load_world(manifest_path: String) -> void:
 	# batch.
 	var index: Dictionary = _index_import()
 	var mesh_instances: Array = index["meshInstances"] as Array
+	mark = _phase(&"index", mark)
 	_apply_material_passes(mesh_instances)
+	mark = _phase(&"materials", mark)
 	_apply_collision_declarations(index["byName"] as Dictionary)
+	mark = _phase(&"collision", mark)
 	_apply_rendered_walk_surfaces(mesh_instances)
+	mark = _phase(&"walkSurfaces", mark)
 	_apply_navigation_collision()
+	mark = _phase(&"navigation", mark)
 	# Must run last: it skips anything that carries collision, so the collision
 	# passes above decide what stays an individually culled MeshInstance3D.
 	_batch_static_instances(mesh_instances)
 	_collision_shapes.clear()
+	mark = _phase(&"batching", mark)
+	load_phases[&"total"] = mark - began
 	load_completed.emit(manifest)
+
+## Records the microseconds since `started` under `name` and returns the clock
+## reading that closed it, which is the next phase's start.
+func _phase(name: StringName, started: int) -> int:
+	var now: int = Time.get_ticks_usec()
+	load_phases[name] = now - started
+	return now
 
 ## The import's mesh instances, and the first node of each name. Both lists the
 ## load passes need, taken in a single traversal.
