@@ -223,7 +223,9 @@ def run(workspace,client_root):
     models_path.write_text(json.dumps(models,indent=2)+'\n');masks_path.write_text(json.dumps(masks,indent=2)+'\n');necks_path.write_text(json.dumps(necks,indent=2)+'\n')
     equipment_path.write_text(json.dumps(equipment, indent=2)+'\n')
     catalog_path.write_text(json.dumps(catalog, indent=2)+'\n')
-    (workspace/'work-output/luminous-install/integration.json').write_text(json.dumps(report,indent=2)+'\n')
+    report_dir = workspace/'work-output/luminous-install'
+    report_dir.mkdir(parents=True, exist_ok=True)
+    (report_dir/'integration.json').write_text(json.dumps(report,indent=2)+'\n')
 
 
 if __name__=='__main__':
