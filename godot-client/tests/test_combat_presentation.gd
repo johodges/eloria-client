@@ -24,6 +24,14 @@ func run() -> void:
 		check(errors.is_empty(), "%s: %s" % [option.model, errors])
 		check(actor.combat_presentation != null, "player rig has combat presentation")
 		actor.set_physics_process(false)
+		for effect_id: int in [2, 84, 83, 85, 0, 86, 10, 79, 19, 18, 75]:
+			actor.set_spell_variant(effect_id)
+			var action := SpellPresentation.action_for_effect(effect_id)
+			actor.play_action(action, true)
+			check(str(actor.animation_player.current_animation).begins_with("spell_variants/"), "spell has a generated rig animation")
+			actor.animation_player.advance(0.45)
+			check(actor.spell_release_origin().is_finite(), "generated spell hand pose is finite")
+		actor.set_spell_variant(3)
 		for action: StringName in [&"cast_aggressive", &"cast_defensive", &"heal", &"attack_primary", &"attack_secondary", &"ranged_attack"]:
 			actor.play_action(action, true)
 			actor.animation_player.advance(0.001)

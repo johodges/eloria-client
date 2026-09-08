@@ -5,7 +5,13 @@ extends RefCounted
 const EFFECT_ACTIONS := {0: &"cast_aggressive", 1: &"heal", 2: &"cast_aggressive",
 	3: &"cast_defensive", 4: &"heal", 5: &"cast_aggressive",
 	6: &"cast_defensive", 9: &"heal", 10: &"cast_aggressive", 12: &"heal",
-	72: &"cast_defensive", 73: &"cast_aggressive", 74: &"cast_defensive"}
+	72: &"cast_defensive", 73: &"cast_aggressive", 74: &"cast_defensive", 75: &"cast_defensive", 76: &"cast_defensive",
+	77: &"cast_defensive", 78: &"cast_defensive", 79: &"heal", 80: &"cast_defensive",
+	81: &"cast_defensive", 82: &"cast_defensive", 83: &"cast_aggressive",
+	84: &"cast_aggressive", 85: &"cast_aggressive", 86: &"cast_aggressive",
+	87: &"cast_aggressive", 88: &"cast_aggressive", 89: &"cast_aggressive",
+	90: &"cast_aggressive", 91: &"cast_aggressive", 92: &"cast_defensive",
+	18: &"cast_defensive", 19: &"cast_defensive"}
 static var _spells: Dictionary = {}
 
 ## Mirrors magic.MIN/MAX_SPELL_POWER. Scale geometry around its attachment,
@@ -39,8 +45,8 @@ static func action_for_spell(spell_id: int) -> StringName:
 		for spell: Dictionary in catalog.get("spells", []):
 			_spells[int(spell.id)] = str(spell.get("effect", ""))
 	var effect: String = _spells.get(spell_id, "")
-	if effect in ["heal", "remote_heal", "restoration", "heal_summoned", "group_heal"]:
+	if effect in ["heal", "regeneration", "dispel", "remote_heal", "restoration", "heal_summoned", "group_heal"]:
 		return &"heal"
-	if effect in ["harm", "poison", "life_drain", "mana_drain", "smite_summoned"]:
+	if effect in ["harm", "heat_bolt", "cold_bolt", "radiation_bolt", "poison", "life_drain", "mana_drain", "disrupt", "cripple", "expose_heat", "expose_cold", "expose_magic", "expose_radiation"]:
 		return &"cast_aggressive"
 	return &"cast_defensive"

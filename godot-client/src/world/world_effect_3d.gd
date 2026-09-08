@@ -22,9 +22,9 @@ const SpellFlight = preload("res://src/world/spell_flight_3d.gd")
 
 ## The effect classes the server actually uses, by the palette they draw in.
 ## Everything else is neutral rather than guessed at.
-const HARM_EFFECTS: Array[int] = [0, 2, 5, 10, 17, 73]
-const BLESSING_EFFECTS: Array[int] = [1, 4, 9, 12, 14]
-const WARD_EFFECTS: Array[int] = [3, 6, 72, 74]
+const HARM_EFFECTS: Array[int] = [0, 2, 5, 10, 17, 73, 83, 84, 85, 86, 87, 88, 89, 90, 91]
+const BLESSING_EFFECTS: Array[int] = [1, 4, 9, 12, 14, 79, 19]
+const WARD_EFFECTS: Array[int] = [3, 6, 72, 74, 75, 76, 77, 78, 80, 81, 82, 18, 92]
 
 var effect_id: int = -1
 var power_level := 1
@@ -83,9 +83,9 @@ func configure(effect: int, origin: Vector3, target: Variant = null, power := 1)
 		var from := Vector3.UP
 		var to := _impact + Vector3.UP
 		# Effect 10 is mana stolen from the target, returning to the caster.
-		flight.configure(effect_id, palette, to if effect_id == 10 else from,
-			from if effect_id == 10 else to, power_level)
-		if effect_id == 10:
+		flight.configure(effect_id, palette, to if effect_id in [10, 86] else from,
+			from if effect_id in [10, 86] else to, power_level)
+		if effect_id in [10, 86]:
 			_impact = Vector3.ZERO
 		_ring.hide()
 		_burst.emitting = false
@@ -110,18 +110,18 @@ func bind_actors(source: Node3D, target_actor: Node3D) -> void:
 	_update_anchors()
 
 func _update_anchors() -> void:
-	var from: Vector3 = flight.destination if effect_id == 10 else flight.start
-	var to: Vector3 = flight.start if effect_id == 10 else flight.destination
+	var from: Vector3 = flight.destination if effect_id in [10, 86] else flight.start
+	var to: Vector3 = flight.start if effect_id in [10, 86] else flight.destination
 	var source: Node3D = _source_actor.get_ref() as Node3D if _source_actor != null else null
 	var receiver: Node3D = _target_actor.get_ref() as Node3D if _target_actor != null else null
-	if is_instance_valid(source) and (not _launched or effect_id == 10):
+	if is_instance_valid(source) and (not _launched or effect_id in [10, 86]):
 		from = to_local(source.spell_release_origin() if source is ReplicatedActor3D
 			else source.global_position + Vector3.UP)
-	if is_instance_valid(receiver) and (not _launched or effect_id != 10):
+	if is_instance_valid(receiver) and (not _launched or effect_id not in [10, 86]):
 		to = to_local(receiver.spell_target_position() if receiver is ReplicatedActor3D
 			else receiver.global_position + Vector3.UP)
-	flight.set_endpoints(to if effect_id == 10 else from, from if effect_id == 10 else to)
-	var impact_actor := source if effect_id == 10 else receiver
+	flight.set_endpoints(to if effect_id in [10, 86] else from, from if effect_id in [10, 86] else to)
+	var impact_actor := source if effect_id in [10, 86] else receiver
 	if is_instance_valid(impact_actor):
 		_impact = to_local(impact_actor.global_position)
 	_ring.position = _impact + Vector3.UP * 0.055
@@ -198,9 +198,17 @@ func _add_burst(palette: Color) -> void:
 	_burst.emitting = false
 
 func _palette() -> Color:
+	var colors := {75: Color("a18bff"), 76: Color("ff9a42"), 77: Color("8ce5ff"),
+		78: Color("d5fa65"), 79: Color("fff0b5"), 80: Color("ccbaff"),
+		81: Color("e8c878"), 82: Color("b6dcff"), 83: Color("a67dff"),
+		84: Color("76dbff"), 85: Color("d5f54b"), 86: Color("ec467d"),
+		87: Color("b777ad"), 88: Color("9b69d4"), 89: Color("ed7544"),
+		90: Color("68b4ce"), 91: Color("a6b951"), 92: Color("f1dfba"),
+		18: Color("6bcddb"), 19: Color("ffd370")}
+	if colors.has(effect_id): return colors[effect_id]
 	if effect_id in [0, 73]:
 		return Color(0.64, 0.88, 0.20)
-	if effect_id == 10:
+	if effect_id in [10, 86]:
 		return Color(0.70, 0.42, 1.0)
 	if effect_id in HARM_EFFECTS:
 		return Color(1.0, 0.42, 0.18)
@@ -225,7 +233,8 @@ func _process(delta: float) -> void:
 	var progress: float = clampf(impact_time / LIFETIME_SECONDS, 0.0, 1.0)
 	if is_instance_valid(_ring):
 		var scale_factor: float = 0.55 + (1.0-pow(1.0-progress, 3.0)) * 0.6
-		_ring.scale = Vector3(scale_factor, 1.0, scale_factor)
+		var footprint := area_radius / (RING_RADIUS * SpellPresentation.power_radius(power_level)) if area_radius > 0.0 else 1.0
+		_ring.scale = Vector3(scale_factor*footprint, 1.0, scale_factor*footprint)
 	if _material != null:
 		_material.albedo_color.a = (1.0 - progress) * 0.65 * SpellPresentation.power_intensity(power_level)
 	_draw_details(progress)
@@ -271,4 +280,73 @@ func _draw_details(progress: float) -> void:
 		var flash := 1.0 - smoothstep(0.0, 0.22, progress)
 		CombatEffectMesh.spark(_details, contact, 0.22 * flash * size,
 			Color(1.0, 0.91, 0.70, flash * 0.85))
+	_draw_spell_identity(progress, color, size, radius)
 	_details.surface_end()
+
+var area_radius := 0.0
+var area_scope := ""
+
+func configure_area(radius: float, scope: String) -> void:
+	area_radius = radius
+	area_scope = scope
+	_burst.amount = SpellPresentation.power_count(24, power_level)
+	var process := _burst.process_material as ParticleProcessMaterial
+	process.emission_sphere_radius = radius
+	_ring.scale = Vector3(radius / RING_RADIUS, 1, radius / RING_RADIUS)
+
+func _draw_spell_identity(progress: float, color: Color, size: float, radius: float) -> void:
+	var centre := _impact + Vector3.UP * 0.08
+	if area_radius > 0.0:
+		for wave: int in 3:
+			var phase := clampf(progress * 1.6 - wave * 0.13, 0.0, 1.0)
+			var tint := Color(color, sin(phase * PI) * 0.55)
+			CombatEffectMesh.arc(_details, centre, area_radius * phase, 0.025 * size, tint, wave, TAU)
+		return
+	if effect_id in [84, 77]:
+		for i: int in 6:
+			var ray := Vector3(cos(i*TAU/6), 0.18, sin(i*TAU/6))
+			CombatEffectMesh.line(_details, centre, centre + ray * radius * (0.3+progress), 0.026*size, color)
+	elif effect_id in [85, 78]:
+		for i: int in 3:
+			CombatEffectMesh.arc(_details, centre + Vector3.UP*0.8, radius*0.6,
+				0.014*size, color, elapsed+i, TAU, Basis(Vector3.RIGHT, i*PI/3))
+	elif effect_id == 19:
+		for i: int in SpellPresentation.power_count(10, power_level):
+			var phase := fposmod(progress + i*0.073, 1.0)
+			var angle := i*2.399 + progress*2.0
+			var coin := centre + Vector3(cos(angle)*(1.0-phase)*0.5, phase*1.5, sin(angle)*(1.0-phase)*0.5)
+			CombatEffectMesh.arc(_details, coin, 0.055*size, 0.019*size, color, 0, TAU, Basis(Vector3.RIGHT, PI/2))
+	elif effect_id == 18:
+		for i: int in 5:
+			CombatEffectMesh.arc(_details, centre+Vector3.UP*(i*0.35+progress*0.5),
+				(0.7-progress*0.3)*radius, 0.016*size, color, elapsed*3+i, TAU*0.7)
+	elif effect_id == 79:
+		for i: int in 8:
+			var ray := Vector3(cos(i*TAU/8), 0.4, sin(i*TAU/8))
+			CombatEffectMesh.spark(_details, centre+ray*progress*radius, 0.06*size*(1-progress), color)
+	elif effect_id == 74:
+		for i: int in 3:
+			var tint: Color = [Color("ff9a42"),Color("8ce5ff"),Color("d5fa65")][i]
+			tint.a = color.a
+			CombatEffectMesh.arc(_details, centre+Vector3.UP*(0.4+i*0.4), radius*0.65, 0.028*size, tint, elapsed+i*TAU/3, TAU*0.6)
+
+	elif effect_id == 76:
+		for i: int in SpellPresentation.power_count(12, power_level):
+			var phase := fposmod(elapsed*0.85+i*0.13, 1.0)
+			var angle := i*2.399
+			var flame := centre+Vector3(cos(angle)*0.5*radius,phase*1.7,sin(angle)*0.5*radius)
+			CombatEffectMesh.line(_details, flame, flame+Vector3.UP*0.14, 0.025*size, Color(color, color.a*(1-phase)))
+	elif effect_id in [75, 80]:
+		for i: int in (6 if effect_id == 80 else 4):
+			CombatEffectMesh.arc(_details, centre+Vector3.UP*0.85, radius*0.6,
+				0.012*size, color, elapsed+i, TAU*0.85, Basis(Vector3.RIGHT, i*PI/6))
+	elif effect_id == 81:
+		var aim := centre+Vector3.UP
+		for i: int in 4:
+			var ray := Vector3(cos(i*PI/2), sin(i*PI/2), 0)
+			CombatEffectMesh.line(_details, aim+ray*0.3*radius, aim+ray*0.55*radius, 0.025*size, color, Vector3.FORWARD)
+	elif effect_id == 82:
+		for i: int in 4:
+			var tint: Color = [Color("ff9a42"),Color("8ce5ff"),Color("a18bff"),Color("d5fa65")][i]
+			tint.a = color.a
+			CombatEffectMesh.arc(_details, centre+Vector3.UP*(0.5+i*0.2), radius*0.5, 0.025*size, tint, elapsed*2+i*PI/2, PI/2)

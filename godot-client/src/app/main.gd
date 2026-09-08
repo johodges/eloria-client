@@ -317,6 +317,7 @@ var _day_night_refresh_msec := 0
 ## The power the next cast asks for. Presentational: the server states what
 ## each effect may reach and refuses anything it will not allow.
 var requested_spell_power := 1
+var magic_selection: Control
 var player_info_panel: Control
 var active_buff_bar: Control
 ## Server map objects whose tile has no navigation surface beneath it on the
@@ -922,6 +923,12 @@ func _ready() -> void:
 	item_atlas.configure(_json("res://data/items/atlases.json"))
 	spell_catalog.configure(_json("res://data/spells/catalog.json"))
 	spells_window.call("configure", spell_catalog, _cast_spell_by_id)
+	magic_selection = preload("res://src/ui/magic_selection.gd").new()
+	magic_selection.catalog = spell_catalog
+	add_child(magic_selection)
+	magic_selection.status_changed.connect(func(message: String) -> void: spell_status.text = message)
+	AppState.magic_state_received.connect(_on_magic_state)
+
 	manufacturing_catalog.configure(_json("res://data/manufacturing/recipes.json"))
 	summoning_window.call("configure", manufacturing_catalog, item_atlas,
 		_summon_by_ingredients, _request_summon_behavior)
@@ -3265,6 +3272,10 @@ static func _texture_to_viewport_position(local_position: Vector2,
 	return _control_to_viewport_position(local_position, control_size, target_size)
 
 func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector2) -> void:
+	if not Network.magic_pending.is_empty() and Network.magic_scope in ["burst", "location"]:
+		var tile: Variant = _map_target_tile(gameplay_camera, viewport_position)
+		if tile is Vector2i: Network.move_to(tile)
+		return
 	if _carried_slot >= 0:
 		_drop_carry()
 		return
@@ -7269,6 +7280,7 @@ func _on_special_effect_requested(effect: Dictionary) -> void:
 	var action := SpellPresentation.action_for_effect(int(effect.get("effect", -1)))
 	if is_instance_valid(source) and not action.is_empty():
 		source.set_combat_effects_enabled(_effects_enabled)
+		source.set_spell_variant(int(effect.get("effect", -1)))
 		source.play_action(action)
 	var origin_value: Variant = _actor_effect_position(int(effect.get("actor_id", -1)))
 	if not origin_value is Vector3:
@@ -7298,6 +7310,8 @@ func _on_actor_animation_requested(animation: Dictionary) -> void:
 	if str(animation.get("action", "")) == "cast_exit" and (node as ReplicatedActor3D).current_action not in [&"cast_channel", &"cast_channel_enter"]:
 		return
 	(node as ReplicatedActor3D).set_combat_effects_enabled(_effects_enabled)
+	if animation.has("visual_effect"):
+		(node as ReplicatedActor3D).set_spell_variant(int(animation.visual_effect))
 	(node as ReplicatedActor3D).play_action(
 		StringName(str(animation.get("action", ""))))
 	if animation.has("power") and (node as ReplicatedActor3D).combat_presentation != null:
@@ -8228,22 +8242,23 @@ func _reference_tab_open(tab: int) -> bool:
 ## Casts one catalogued spell: the spells window's seam onto the network. The
 ## same checks the quickbar makes, because it is the same cast.
 func _cast_spell_by_id(spell_id: int) -> void:
-	var reasons: Array[String] = spell_catalog.unavailable_reasons(
-		spell_id, AppState.owned_sigils, AppState.stats, AppState.inventory)
-	if not reasons.is_empty() or not AppState.pending_spell_target.is_empty():
+	var reasons := spell_catalog.unavailable_reasons(spell_id, AppState.owned_sigils, AppState.stats, AppState.inventory)
+	if not reasons.is_empty():
+		spell_status.text = reasons[0]
 		return
-	var definition: Dictionary = spell_catalog.spell(spell_id)
-	var sigils_value: Variant = definition.get("sigils", [])
-	if not sigils_value is Array:
-		return
-	var sigils: Array[int] = []
-	for raw_sigil: Variant in sigils_value:
-		sigils.append(int(raw_sigil))
-	var error: Error = Network.cast_spell(sigils, _cast_power_for(spell_id))
-	if error != OK:
-		push_warning("CAST_SPELL failed: " + error_string(error))
-	else:
-		spell_status.text = "Casting %s…" % str(definition.get("name", "spell"))
+	magic_selection.begin(spell_id, _cast_power_for(spell_id))
+
+func _on_magic_state(data: Dictionary) -> void:
+	if data.get("kind") != "burst" or not _effects_enabled: return
+	var effect := WorldEffect3D.new()
+	world_root.add_child(effect)
+	var origin: Vector3 = adapter.tile_center(int(data.x), int(data.y))
+	var sampled: Variant = _navigation_ray_position(origin + Vector3(0, 200, 0), Vector3.DOWN)
+	if sampled is Vector3: origin.y = sampled.y
+	effect.configure(int(data.effect), origin, null, int(data.power))
+	effect.configure_area(float(data.get("radius", 4.0)) * adapter.metres_per_tile, str(data.get("scope", "burst")))
+	world_effects.append(effect)
+	world_effects = world_effects.filter(func(node: Variant) -> bool: return is_instance_valid(node))
 
 ## The emote picker's seam onto the network: the same packet `#emote <name>`
 ## already sends. The server stays the judge of what the name means.
@@ -8292,25 +8307,8 @@ func _spell_result_text(result: Dictionary) -> String:
 		_: return "Spell response received"
 
 func _cast_spell_slot(slot: int) -> void:
-	if slot < 0 or slot >= spell_catalog.default_quick_slots.size():
-		return
-	var spell_id: int = spell_catalog.default_quick_slots[slot]
-	var reasons: Array[String] = spell_catalog.unavailable_reasons(
-		spell_id, AppState.owned_sigils, AppState.stats, AppState.inventory)
-	if not reasons.is_empty() or not AppState.pending_spell_target.is_empty():
-		return
-	var definition: Dictionary = spell_catalog.spell(spell_id)
-	var sigils_value: Variant = definition.get("sigils", [])
-	if not sigils_value is Array:
-		return
-	var sigils: Array[int] = []
-	for raw_sigil: Variant in sigils_value:
-		sigils.append(int(raw_sigil))
-	var error: Error = Network.cast_spell(sigils, _cast_power_for(spell_id))
-	if error != OK:
-		push_warning("CAST_SPELL failed: " + error_string(error))
-	else:
-		spell_status.text = "Casting %s…" % str(definition.get("name", "spell"))
+	if slot >= 0 and slot < spell_catalog.default_quick_slots.size():
+		_cast_spell_by_id(spell_catalog.default_quick_slots[slot])
 
 ## Draws each item cooldown as a proportional drain over its slot, in both
 ## the quick bar and the inventory grid. `maximum_msec` came off the wire in

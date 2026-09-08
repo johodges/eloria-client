@@ -19,7 +19,7 @@ func make_effect(id: int, from: Vector3, to: Variant) -> WorldEffect3D:
 
 func run() -> void:
 	check_power_scaling()
-	for id: int in [0, 1, 2, 10, 73, 999]:
+	for id: int in [0, 1, 2, 10, 73, 83, 84, 85, 86, 999]:
 		for destination: Vector3 in [Vector3(5, 0, 0), Vector3(0, 5, 0), Vector3(0.1, 0, 0), Vector3(70, -5, 20)]:
 			var effect := make_effect(id, Vector3.ZERO, destination)
 			check(effect.flight != null, "targeted spell has a flight")
@@ -29,8 +29,8 @@ func run() -> void:
 			check(not (effect.get_node("EffectBurst") as GPUParticles3D).emitting, "particles wait for contact")
 			var flight := effect.flight
 			check(flight.duration >= 0.22 and flight.duration <= 0.62, "near and distant flights have bounded durations")
-			var start: Vector3 = destination + Vector3.UP if id == 10 else Vector3.UP
-			var end: Vector3 = Vector3.UP if id == 10 else destination + Vector3.UP
+			var start: Vector3 = destination + Vector3.UP if id in [10, 86] else Vector3.UP
+			var end: Vector3 = Vector3.UP if id in [10, 86] else destination + Vector3.UP
 			check(flight.point_at(0.0).is_equal_approx(start) and flight.point_at(1.0).is_equal_approx(end),
 				"every strand starts and lands exactly at the correct actor, including reverse drain")
 			for step: int in 11:

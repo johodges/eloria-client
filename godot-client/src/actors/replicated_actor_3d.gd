@@ -2820,3 +2820,17 @@ func _native_visual_bounds(model: Node3D) -> AABB:
 
 static func _external_path(path: String) -> String:
 	return ProjectSettings.globalize_path(path) if path.begins_with("res://") else path
+
+var _spell_variants: Dictionary = {}
+var _spell_base_clips: Dictionary = {}
+
+func set_spell_variant(effect: int) -> void:
+	if animation_player == null or resolver == null: return
+	if _spell_variants.is_empty():
+		for action: String in ["cast_aggressive", "cast_defensive", "heal"]:
+			_spell_base_clips[action] = resolver.clip_for_action(action)
+		_spell_variants = SpellAnimationLibrary.install(animation_player, resolver)
+	var action := str(SpellPresentation.action_for_effect(effect))
+	if effect in [3, 6, 72, 74, 76, 77, 78, 80, 81, 82, 92]: effect = 75
+	if _spell_base_clips.has(action):
+		resolver.action_to_clip[action] = _spell_variants.get(effect, _spell_base_clips[action])

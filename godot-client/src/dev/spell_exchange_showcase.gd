@@ -1,11 +1,12 @@
 extends Control
 ## Offline review of the production effects, with deterministic frame stepping.
 const PANELS := [
-	["CINDER LANCE", "Focused core · ember wake · contact burst", 2],
-	["VENOM THREAD", "Winding trail · drifting venom", 0],
-	["FARWEAVE MEND", "Arcing wisps · rising restoration", 1],
-	["MINDWELL DRAW", "Energy flows from target back to caster", 10]]
+	["FIRE BOLT", "Focused core · ember wake · contact burst", 2],
+	["POISON TARGET", "Winding trail · drifting venom", 0],
+	["HEAL TARGET", "Arcing wisps · rising restoration", 1],
+	["ETHER DRAIN TARGET", "Energy flows from target back to caster", 10]]
 @export var power_comparison := false
+@export var family_page := 0
 var panels: Array = PANELS
 var power_levels: Array[int] = [1, 1, 1, 1]
 var actors: Array[ReplicatedActor3D] = []
@@ -15,11 +16,17 @@ var clock := 0.0
 var paused := false
 
 func _ready() -> void:
+	if family_page > 0:
+		panels = [["MAGIC BOLT", "Focused violet helix", 83], ["FROST BOLT", "Icy trail and six-point impact", 84],
+			["RADIATION BOLT", "Orbiting energy strands", 85], ["LIFE DRAIN TARGET", "Crimson energy returns to caster", 86]] if family_page == 1 else [
+			["ELEMENTAL WARD", "Heat, cold and radiation arcs", 74], ["DISPEL", "Purifying outward sparks", 79],
+			["TRANSMUTE", "Gathering light becomes rising coins", 19], ["RECALL", "Stacked portal rings", 18]]
+		power_levels = [3,3,3,3]
 	if power_comparison:
 		power_levels = [1, 5, 8, 10]
 		panels = []
 		for power: int in power_levels:
-			panels.append(["CINDER LANCE  /  POWER %d" % power,
+			panels.append(["FIRE BOLT  /  POWER %d" % power,
 				"Same cast and distance · power tier %d / 10" % power, 2])
 	var background := ColorRect.new()
 	background.color = Color("101c25")
@@ -129,6 +136,7 @@ func restart() -> void:
 	for i: int in panels.size():
 		var caster := actors[i * 2]
 		var target := actors[i * 2 + 1]
+		caster.set_spell_variant(int(panels[i][2]))
 		caster.play_action(SpellPresentation.action_for_effect(panels[i][2]), true)
 		target.play_action(&"combat_idle", true)
 		for actor: ReplicatedActor3D in [caster, target]:
@@ -139,7 +147,7 @@ func restart() -> void:
 			actor._advance_facing_offset(1.0)
 		var effect := WorldEffect3D.new()
 		stages[i].add_child(effect)
-		effect.configure(panels[i][2], caster.global_position, target.global_position, power_levels[i])
+		effect.configure(panels[i][2], caster.global_position, null if family_page == 2 else target.global_position, power_levels[i])
 		effect.bind_actors(caster, target)
 		effect.set_process(false)
 		effects.append(effect)

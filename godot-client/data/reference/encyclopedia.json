@@ -2532,20 +2532,38 @@
       "id": "spells",
       "title": "Magic",
       "summary": "Sigils, spells and the effects they leave",
-      "intro": "A spell is a combination of sigils, and the server decides whether you may cast it.",
+      "intro": "Choose a spell family, targeting mode and Power 1\u201310. Higher power replaces separate greater spells.",
       "generate": "spells",
       "entries": [
         {
           "id": "magic",
-          "title": "Sigils and spells",
-          "summary": "How a spell is put together",
-          "body": "A spell is a combination of sigils. You must own every sigil a spell names before it can be cast; the Sigils window lists what you own and what each remaining spell still needs.\n\nPower scales a spell's effect and its cost. The server states the power you have chosen and the highest your Magic level and nexus allow, and refuses anything above it."
+          "title": "Casting and power",
+          "summary": "One effect, ten power levels",
+          "body": "Own every listed sigil, carry the reagents and choose a power your Magic level and nexus support. Higher power increases healing, damage, protection or duration and costs more ether and reagents. Heal and Poison have no separate Greater versions. The spell window can be searched and filtered by targeting mode."
         },
         {
-          "id": "effects",
-          "title": "Effects on you",
-          "summary": "The strip of icons and what it means",
-          "body": "Protective spells and some draughts leave an effect that lasts a while. The strip on the left shows each one with the time the server said it has left.\n\nWhen an effect ends the server says so. The strip does not guess."
+          "id": "spell-targets",
+          "title": "Self, Target, Allies and Burst",
+          "summary": "Choose who receives a spell",
+          "body": "A base name such as Heal affects you. Target selects one actor within 15 tiles; Bolt also means one target. Allies affects you and party or guild members within four tiles. Burst selects a location within 15 tiles and affects eligible actors within four tiles of it. Hostile spells respect party, guild and PK restrictions. Escape cancels target selection without spending resources."
+        },
+        {
+          "id": "wards-and-damage",
+          "title": "Damage, wards and Dispel",
+          "summary": "Match protection to the damage type",
+          "body": "Magic Bolt deals magic damage; Fire Bolt heat; Frost Bolt cold; Radiation Bolt radiation. Each has a Burst form and a matching ward. Elemental Ward combines heat, cold and radiation protection. Shield improves physical protection. Dispel removes poison, cripple, resistance reductions and drained stats. Magic Immunity temporarily blocks hostile spells."
+        },
+        {
+          "id": "transmute",
+          "title": "Transmute",
+          "summary": "Selected inventory items become gold",
+          "body": "Choose an inventory item and quantity. Review the required power and exact gold return before casting. Common items need Power 1, Uncommon 3, Rare 5, Epic 7 and Legendary 9. Their gold multipliers are 1, 2, 4, 8 and 16 times the item base transmutation value. Only the selected quantity is consumed. Gold Coins and quest items cannot be transmuted."
+        },
+        {
+          "id": "recall-portals",
+          "title": "Recall and portal destinations",
+          "summary": "Higher power opens destination selection",
+          "body": "Recall at Power 1\u20134 returns you to Four Gates. At Power 5\u201310 choose a map with a portal entrance and the entrance where you will arrive. Maps with several entrances list each location. Blink remains a short teleport to a walkable place within 15 tiles."
         }
       ]
     },

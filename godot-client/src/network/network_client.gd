@@ -4,6 +4,20 @@ extends Node
 signal connection_state_changed(state: String)
 signal packet_received(command: int, payload: PackedByteArray)
 signal protocol_error(message: String)
+signal magic_selection_completed
+var magic_pending: Dictionary = {}
+var magic_scope := ""
+
+func magic_request(data: Dictionary) -> Error:
+	return send_frame(EloriaProtocol.encode(202, JSON.stringify(data).to_utf8_buffer()))
+
+func _finish_magic_selection(selection: Dictionary) -> Error:
+	var request := magic_pending.duplicate()
+	request.merge(selection, true)
+	magic_pending.clear()
+	magic_selection_completed.emit()
+	return magic_request(request)
+
 
 const PROTOCOL_MAJOR := 10
 const PROTOCOL_MINOR := 31
@@ -161,6 +175,8 @@ func login(username: String, password: String) -> Error:
 	return send_frame(EloriaProtocol.login(username, password), true)
 
 func move_to(tile: Vector2i, run := false) -> Error:
+	if not magic_pending.is_empty() and magic_scope in ["burst", "location"]:
+		return _finish_magic_selection({"x": tile.x, "y": tile.y})
 	return send_frame(EloriaProtocol.move_to(tile.x, tile.y, run))
 
 func set_sitting(sitting: bool) -> Error:
@@ -191,6 +207,8 @@ func send_private_message(text: String) -> Error:
 	return send_frame(EloriaProtocol.private_message(text))
 
 func touch_actor(actor_id: int) -> Error:
+	if not magic_pending.is_empty() and magic_scope == "target":
+		return _finish_magic_selection({"target_id": actor_id})
 	return send_frame(EloriaProtocol.touch_actor(actor_id))
 
 func respond_to_npc(actor_id: int, response_id: int) -> Error:

@@ -91,6 +91,7 @@ enum ServerMessage {
 	ELORIA_MAIL_STATE = 229, ELORIA_NAVIGATION_STATE = 230,
 	ELORIA_SPECIAL_EVENT_STATE = 232, ELORIA_PLAYER_INFO = 228,
 	ELORIA_SPELL_POWER = 231,
+	ELORIA_MAGIC_STATE = 212,
 	ELORIA_ALMANAC_STATE = 238, ELORIA_STORAGE_STATE = 239,
 	ELORIA_PARTY_STATE = 240, ELORIA_QUEST_ARCHIVE_STATE = 241,
 	ELORIA_DEGRADED_ITEMS = 242, ELORIA_WORN_SLOTS = 243,
@@ -223,6 +224,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"quest_archive_v1",
 	"quest_journal_v1",
 	"spell_power_v1",
+	"magic_book_v2",
 	"spell_visuals_v1",
 	"special_events_v1",
 	"storage_window_v1",
@@ -978,6 +980,11 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return {"type": "npc_close"}
 		ServerMessage.DISPLAY_POPUP:
 			return decode_popup(payload)
+		ServerMessage.ELORIA_MAGIC_STATE:
+			var magic: Variant = JSON.parse_string(payload.get_string_from_utf8())
+			if magic is Dictionary:
+				return {"type": "magic_state", "data": magic}
+			return {"type": "invalid", "error": "magic_state_json"}
 		ServerMessage.ELORIA_SPELL_POWER:
 			return decode_spell_power(payload)
 		ServerMessage.ELORIA_ALMANAC_STATE:

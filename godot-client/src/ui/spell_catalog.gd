@@ -3,6 +3,7 @@ extends RefCounted
 
 var default_quick_slots: Array[int] = []
 var _spells: Dictionary = {}
+var _aliases: Dictionary = {}
 ## Buff ids are a separate namespace from spell ids: the server reports an
 ## active effect by buff id, and several spells and potions share one.
 var _buffs: Dictionary = {}
@@ -17,6 +18,7 @@ var _cell_size := Vector2(64.0, 64.0)
 func configure(config: Dictionary) -> void:
 	default_quick_slots.clear()
 	_spells.clear()
+	_aliases = config.get("spellAliases", {})
 	_buffs.clear()
 	_sigils.clear()
 	_atlas_texture = null
@@ -82,7 +84,7 @@ func spell_ids() -> Array[int]:
 	return ids
 
 func spell(spell_id: int) -> Dictionary:
-	var value: Variant = _spells.get(spell_id)
+	var value: Variant = _spells.get(int(_aliases.get(str(spell_id), spell_id)))
 	return value as Dictionary if value is Dictionary else {}
 
 func icon_for(spell_id: int) -> Texture2D:

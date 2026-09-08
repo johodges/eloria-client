@@ -16,7 +16,7 @@ extends Control
 ## The script declares no `class_name`: a global class is parsed before the
 ## autoload singletons are registered, and this reads `AppState` directly.
 
-const PANEL_SIZE := Vector2(470.0, 460.0)
+const PANEL_SIZE := Vector2(560.0, 600.0)
 ## Nothing may cover the fixed resource rail down the right-hand edge.
 const RESERVED_RIGHT_RAIL := 96.0
 
@@ -26,7 +26,10 @@ const GROUP_ORDER: Array[String] = ["Health", "General", "Attack", "Defense"]
 ## name - Blinkstep and any other spell with no effect at all - is a General
 ## spell.
 const EFFECT_GROUPS := {
-	"heal": "Health",
+	"heal": "Health", "regeneration": "Health", "dispel": "Health",
+	"heat_bolt": "Attack", "cold_bolt": "Attack", "radiation_bolt": "Attack",
+	"disrupt": "Attack", "cripple": "Attack", "expose_magic": "Attack",
+	"expose_heat": "Attack", "expose_cold": "Attack", "expose_radiation": "Attack",
 	"poison": "Attack",
 	"harm": "Attack",
 	"life_drain": "Attack",
@@ -67,6 +70,8 @@ var _buttons: Dictionary = {}
 ## catalog last computed it from the server's state. Empty means castable
 ## as far as the client can see.
 var _reasons: Dictionary = {}
+var search: LineEdit
+var scope_filter: OptionButton
 
 func _ready() -> void:
 	name = "SpellsLayer"
@@ -153,7 +158,7 @@ func _refresh_details() -> void:
 		name_label.text = "%s (%s)" % [title, str(reasons[0])]
 		name_label.add_theme_color_override("font_color", BLOCKED_COLOR)
 	description_label.text = str(definition.get("description", ""))
-	numbers_label.text = "Level %d   Mana %d" % [
+	numbers_label.text = "Magic %d   Base ether %d" % [
 		int(definition.get("level", 0)), int(definition.get("mana", 0))]
 	sigils_label.text = _sigils_line(definition)
 	reagents_label.text = _reagents_line(definition)
@@ -258,14 +263,32 @@ func _build() -> void:
 	close_button.pressed.connect(close)
 	header.add_child(close_button)
 
+	search = LineEdit.new()
+	search.name = "SpellSearch"
+	search.placeholder_text = "Search spells, effects or damage types"
+	column.add_child(search)
+	scope_filter = OptionButton.new()
+	for option: String in ["All targets", "Self", "Target", "Allies", "Burst", "Utility"]:
+		scope_filter.add_item(option)
+	column.add_child(scope_filter)
+	search.text_changed.connect(func(_text: String) -> void: _filter_spells())
+	scope_filter.item_selected.connect(func(_index: int) -> void: _filter_spells())
+	var scroll := ScrollContainer.new()
+	scroll.name = "SpellScroll"
+	scroll.custom_minimum_size.y = 230
+	column.add_child(scroll)
+	var groups := VBoxContainer.new()
+	groups.name = "SpellGroups"
+	groups.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(groups)
 	for group: String in GROUP_ORDER:
 		var label := Label.new()
 		label.name = "%sSpellsLabel" % group
 		label.text = "%s Spells" % group
-		column.add_child(label)
+		groups.add_child(label)
 		var row := HFlowContainer.new()
 		row.name = "%sSpellsRow" % group
-		column.add_child(row)
+		groups.add_child(row)
 		_rows[group] = row
 
 	var details := VBoxContainer.new()
@@ -299,3 +322,22 @@ func _build() -> void:
 	cast_button.size_flags_horizontal = Control.SIZE_SHRINK_END
 	cast_button.pressed.connect(_on_cast_pressed)
 	column.add_child(cast_button)
+
+func _filter_spells() -> void:
+	if catalog == null: return
+	var scopes := ["", "self", "target", "allies", "burst", "utility"]
+	var selected := str(scopes[scope_filter.selected])
+	for spell_id: int in catalog.spell_ids():
+		var spell := catalog.spell(spell_id)
+		var scope := str(spell.get("scope", "self"))
+		var scope_matches := selected.is_empty() or scope == selected or (selected == "utility" and scope in ["inventory", "destination", "location"])
+		var haystack := "%s %s %s" % [spell.name, spell.get("effect", ""), spell.get("damage_type", "")]
+		(_buttons[spell_id] as Button).visible = scope_matches and (search.text.is_empty() or haystack.to_lower().contains(search.text.to_lower()))
+
+	for group: String in GROUP_ORDER:
+		var row: HFlowContainer = _rows[group]
+		var any_visible := false
+		for button: Control in row.get_children():
+			any_visible = any_visible or button.visible
+		row.visible = any_visible
+		row.get_parent().get_node("%sSpellsLabel" % group).visible = any_visible

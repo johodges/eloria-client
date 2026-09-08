@@ -20,8 +20,8 @@ func _run() -> void:
 	var app_state: Node = root.get_node("/root/AppState")
 	var catalog := SpellCatalog.new()
 	catalog.configure(_json("res://data/spells/catalog.json"))
-	_expect(catalog.spell_ids().size() == 22,
-		"the real catalog carries the twenty-two Eloria spells: %d"
+	_expect(catalog.spell_ids().size() == 86,
+		"the real catalog carries the eighty-six Eloria spells: %d"
 		% catalog.spell_ids().size())
 	var window: Control = (load("res://src/ui/spells_window.gd")
 		as GDScript).new() as Control
@@ -46,23 +46,23 @@ func _run() -> void:
 	var listed: Array[int] = []
 	for group: String in ["Health", "General", "Attack", "Defense"]:
 		var row: HFlowContainer = window.get_node(
-			body + "%sSpellsRow" % group) as HFlowContainer
+			body + "SpellScroll/SpellGroups/%sSpellsRow" % group) as HFlowContainer
 		for child: Node in row.get_children():
 			listed.append(int(str(child.name).trim_prefix("SpellButton")))
-	_expect(listed.size() == 22,
-		"all twenty-two spells are on the window: %d" % listed.size())
+	_expect(listed.size() == 86,
+		"all eighty-six spells are on the window: %d" % listed.size())
 	for spell_id: int in catalog.spell_ids():
 		_expect(listed.has(spell_id), "spell %d is listed" % spell_id)
 
 	# The documented grouping, spot-checked by effect.
 	_expect(str(window.call("group_of", 0)) == "Health",
-		"Embermend is a health spell")
+		"Heal is a health spell")
 	_expect(str(window.call("group_of", 6)) == "Attack",
-		"Cinder Lance is an attack spell")
+		"Magic Bolt is an attack spell")
 	_expect(str(window.call("group_of", 3)) == "Defense",
 		"Stoneward is a defense spell")
 	_expect(str(window.call("group_of", 5)) == "General",
-		"Blinkstep, an effect no group names, is a general spell")
+		"Blink, an effect no group names, is a general spell")
 	_expect(str(window.call("group_of", 21)) == "Health",
 		"Hearthcircle, the party heal, is a health spell")
 	_expect(str(window.call("group_of", 20)) == "Attack",
@@ -76,19 +76,21 @@ func _run() -> void:
 	_expect(str(window.call("group_of", 17)) == "General",
 		"Swiftwend is a general spell")
 	var heal_button: Button = window.get_node(
-		body + "HealthSpellsRow/SpellButton0") as Button
-	_expect(heal_button != null, "Embermend's button sits in the health row")
-	_expect(heal_button.tooltip_text == "Embermend",
+		body + "SpellScroll/SpellGroups/HealthSpellsRow/SpellButton0") as Button
+	_expect(heal_button != null, "Heal's button sits in the health row")
+	_expect(heal_button.tooltip_text == "Heal",
 		"a spell button says which spell it is: " + heal_button.tooltip_text)
 	_expect(heal_button.icon is Texture2D,
 		"and carries its sigil-atlas icon")
 	# Within a group the spells stand in order of the level each asks for.
 	var health_names: Array[String] = []
-	for child: Node in window.get_node(body + "HealthSpellsRow").get_children():
+	for child: Node in window.get_node(body + "SpellScroll/SpellGroups/HealthSpellsRow").get_children():
 		health_names.append(str(child.name))
-	_expect(health_names == ["SpellButton0", "SpellButton1", "SpellButton21",
-			"SpellButton7", "SpellButton12"],
-		"health spells are ordered by required level: %s" % str(health_names))
+	var last_level := -1
+	for node_name: String in health_names:
+		var level := int(catalog.spell(int(node_name.trim_prefix("SpellButton"))).get("level", 0))
+		_expect(level >= last_level, "health spells are ordered by level")
+		last_level = level
 
 	# With nothing owned, nothing is castable: dimmed, not hidden, and still
 	# there to inspect.
@@ -104,14 +106,14 @@ func _run() -> void:
 	_expect(int(window.get("selected_spell_id")) == -1,
 		"and no spell starts selected")
 	var blinkstep: Button = window.get_node(
-		body + "GeneralSpellsRow/SpellButton5") as Button
+		body + "SpellScroll/SpellGroups/GeneralSpellsRow/SpellButton5") as Button
 	blinkstep.pressed.emit()
 	await process_frame
 	_expect(int(window.get("selected_spell_id")) == 5,
 		"clicking a spell selects it")
 	var name_label: Label = window.get_node(
 		body + "SpellDetails/SpellName") as Label
-	_expect(name_label.text == "Blinkstep (Missing sigils: 1, 3, 4)",
+	_expect(name_label.text == "Blink (Missing sigils: 1, 3, 4)",
 		"the blocked name carries the first blocking reason: " + name_label.text)
 	_expect(name_label.get_theme_color("font_color")
 			== (window.get("BLOCKED_COLOR") as Color),
@@ -133,7 +135,7 @@ func _run() -> void:
 	_expect(cast_ids == [5],
 		"Cast asks with the selected id: %s" % str(cast_ids))
 
-	# The server grants what Embermend needs; the window follows AppState.
+	# The server grants what Heal needs; the window follows AppState.
 	var owned: Array = app_state.get("owned_sigils") as Array
 	owned.append(0)
 	owned.append(7)
@@ -150,7 +152,7 @@ func _run() -> void:
 		"a castable spell is drawn at full strength: %f" % heal_button.modulate.a)
 	heal_button.pressed.emit()
 	await process_frame
-	_expect(name_label.text == "Embermend",
+	_expect(name_label.text == "Heal",
 		"a castable name carries no reason: " + name_label.text)
 	_expect(name_label.get_theme_color("font_color")
 			== (window.get("CASTABLE_COLOR") as Color),
@@ -161,7 +163,7 @@ func _run() -> void:
 		"the description line is filled")
 	var numbers: Label = window.get_node(
 		body + "SpellDetails/SpellNumbers") as Label
-	_expect(numbers.text == "Level 0   Mana 5",
+	_expect(numbers.text == "Magic 0   Base ether 5",
 		"the level and mana are stated: " + numbers.text)
 	_expect(sigils_label.text.begins_with("Sigils: ")
 			and not sigils_label.text.contains("!"),

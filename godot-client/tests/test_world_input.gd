@@ -1517,7 +1517,7 @@ func _run() -> void:
 	for quick_index: int in range(1, 9):
 		_expect(InputMap.has_action("quick_item_%d" % quick_index),
 			"item quick slot %d has a centralized input action" % quick_index)
-	# What the first quick slot holds is Embermend, and the fixture states
+	# What the first quick slot holds is Heal, and the fixture states
 	# everything it asks for: its two sigils, its mana, and its three
 	# reagents by the image id the inventory packet reports for each.
 	var ready_sigils: Array[int] = [0, 7]
@@ -1534,7 +1534,7 @@ func _run() -> void:
 	_expect(not first_spell_slot.disabled,
 		"owned castable spell is enabled; tooltip=" + first_spell_slot.tooltip_text)
 	_expect(first_spell_slot.icon != null, "owned castable spell has its legacy icon")
-	_expect(first_spell_slot.tooltip_text.contains("Embermend"),
+	_expect(first_spell_slot.tooltip_text.contains("Heal"),
 		"owned castable spell tooltip names the spell: "
 			+ first_spell_slot.tooltip_text)
 	# One reagent short and the same slot goes dark, naming what is missing.
@@ -2243,9 +2243,9 @@ func _run() -> void:
 		as ParticleProcessMaterial)
 	var blessing_material: ParticleProcessMaterial = (
 		blessing_burst.process_material as ParticleProcessMaterial)
-	_expect(harm_material.gravity.y > 0.0 and blessing_material.gravity.y < 0.0,
+	_expect(harm_material.gravity.y < 0.0 and blessing_material.gravity.y > 0.0,
 		"the two classes move differently rather than sharing one burst")
-	_expect(not harm_material.color.is_equal_approx(blessing_material.color),
+	_expect(not harm_material.color_ramp.gradient.get_color(0).is_equal_approx(blessing_material.color_ramp.gradient.get_color(0)),
 		"and they are told apart by colour")
 	# An actor the client has never been told about has no position.
 	var known_effects: int = (main.get("world_effects") as Array).size()

@@ -69,8 +69,8 @@ server damage and spell outcomes are unchanged.
 
 Effect 2 uses an ember core and a focused wake, effect 0 uses winding venom,
 effect 1 uses arcing healing wisps, and effect 10 returns braided mana energy
-from the target to the caster. The server shares effect 2 between harm and life
-drain, so the client preserves a shared force presentation for that id. Self
+from the target to the caster. The new spellbook gives Magic Bolt (83), Frost Bolt (84), Radiation Bolt (85)
+and Life Drain (86) distinct trails; life drain returns from target to caster. Self
 casts and events without a second actor keep their local effects.
 
 Endpoints use weak actor references and retain their last valid positions if an
@@ -103,13 +103,39 @@ The `spell_visuals_v1` capability adds the actual cast power to spell results an
 world effects. The server sends each observer one version of the event; older
 clients receive the original packet. Legacy events received by the new client
 use P1. Both client and server changes must be installed for live power-aware
-effects. The server preserves the paid power when a targeted cast is pending,
+effects. The client preserves the selected power while targeting; the server validates
+and spends it only after resolving the target,
 even if preferences change before target selection. Command/hotkey casts use
 the same presentation path, including self, target and ally delivery.
 
 Run `res://src/dev/spell_power_showcase.tscn` for a P1/P5/P8/P10 comparison.
 Set `ELORIA_COMPARE_SPELL_POWER=1` when running the rendered spell exchange test
 to capture that comparison instead of the four spell families.
+
+## Spell families and utility casting
+
+`SpellAnimationLibrary` generates eleven casting variants from each player rig's
+own aggressive, defensive and healing clips. Arm, forearm and hand rotations
+shape the gestures while preserving grounded feet and the existing release
+and recovery timing. The runtime installs these clips once per actor.
+
+Individual wards use distinct magic shells, heat wisps, frost rays and radiation
+orbits. Elemental Ward combines three colored arcs. Dispel sends cleansing
+sparks outward; Transmute raises golden coin rings; Recall forms a layered
+portal. Area spells add expanding waves at the selected ground location.
+Power increases detail and intensity without changing the selected area.
+
+The 86 spell variants use one shared catalogue. The spellbook filters by name,
+effect, damage type and scope. `magic_selection.gd` captures the chosen power
+and routes actor, area, inventory and portal selections through request 202.
+Server state 212 supplies inventory conversion quotes, portal choices and area
+pulses. Inventory casts include durable instance identity where applicable.
+The encyclopedia generates its spell entries from this same catalogue.
+
+Set `ELORIA_SPELL_FAMILY_PAGE=1` when rendering spell exchanges for the four new
+combat trails, or `2` for Elemental Ward, Dispel, Transmute and Recall. The UI
+integration test `tests/test_magic_book_ui.gd` exercises production packet
+handling, power capture, utility choices, search filters and area effects.
 
 ## Verification
 

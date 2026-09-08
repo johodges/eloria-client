@@ -7,6 +7,7 @@ func run() -> void:
 	root.size = Vector2i(1440, 960)
 	var path := "res://src/dev/spell_power_showcase.tscn" if OS.get_environment("ELORIA_COMPARE_SPELL_POWER") == "1" else "res://src/dev/spell_exchange_showcase.tscn"
 	var showcase := (load(path) as PackedScene).instantiate()
+	showcase.family_page = int(OS.get_environment("ELORIA_SPELL_FAMILY_PAGE"))
 	root.add_child(showcase)
 	showcase.set_process(false)
 	var output := OS.get_environment("ELORIA_ARTIFACT_DIR")

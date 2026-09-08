@@ -439,7 +439,12 @@ func _spell_entries(category_id: String) -> Array[Dictionary]:
 		facts.append(["Magic level", str(int(spell.get("level", 0)))])
 		var effect: String = str(spell.get("effect", ""))
 		if not effect.is_empty():
-			facts.append(["Effect the server names", effect])
+			facts.append(["Targeting", str(spell.get("scope", "self")).capitalize()])
+			facts.append(["Power", "1–10; increases strength, duration and reagent costs"])
+			var damage_type := str(spell.get("damage_type", ""))
+			if not damage_type.is_empty(): facts.append(["Damage type", damage_type.capitalize()])
+			if spell.get("scope") == "allies": facts.append(["Recipients", "You and party or guild members within four tiles"])
+			if spell.get("scope") == "burst": facts.append(["Area", "Four-tile radius; select a location within 15 tiles"])
 		var reagents: String = _reagent_lines(spell.get("reagents", []))
 		facts.append(["Reagents", reagents if not reagents.is_empty() else "None"])
 		var body: String = ("%s\n\nYou must own every sigil listed before this"

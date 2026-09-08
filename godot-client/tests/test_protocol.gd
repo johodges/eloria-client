@@ -1352,7 +1352,7 @@ func _init() -> void:
 			var embermend_sigils: Array = embermend.get("sigils", []) as Array
 			_expect(embermend_sigils.size() == 2 and int(embermend_sigils[0]) == 0
 				and int(embermend_sigils[1]) == 7,
-				"Embermend uses the server's ordered sigil sequence")
+				"Heal uses the server's ordered sigil sequence")
 			var embermend_icon: Texture2D = spell_catalog.icon_for(0)
 			_expect(embermend_icon is AtlasTexture
 				and embermend_icon.get_size() == Vector2(64, 64),
@@ -1363,7 +1363,7 @@ func _init() -> void:
 					1: {"image_id": 16, "quantity": 1},
 					2: {"image_id": 67, "quantity": 1}})
 			_expect(ready_reasons.is_empty(),
-				"owned Embermend requirements are locally ready")
+				"owned Heal requirements are locally ready")
 			var blocked_reasons: Array[String] = spell_catalog.unavailable_reasons(0,
 				[0], {"magic": 0, "ether": 4}, {})
 			_expect(blocked_reasons.size() == 5,

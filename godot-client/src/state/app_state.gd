@@ -77,6 +77,7 @@ var inventory_cooldowns: Dictionary = {}
 var owned_sigils: Array[int] = []
 var active_spells: Dictionary = {}
 var last_spell_result: Dictionary = {}
+signal magic_state_received(data: Dictionary)
 var pending_spell_target := ""
 var stats: Dictionary = {}
 var game_minute := 0
@@ -782,6 +783,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			if event.has("power"):
 				last_spell_result["power"] = int(event.power)
 				presentation["power"] = int(event.power)
+			if event.has("visual_effect"): presentation["visual_effect"] = int(event.visual_effect)
 			actor_animation_requested.emit(presentation)
 			state_changed.emit(&"spells")
 		"missile":
@@ -1090,6 +1092,8 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			for raw_line: Variant in event.lines:
 				special_events.append(str(raw_line))
 			state_changed.emit(&"special_events")
+		"magic_state":
+			magic_state_received.emit(event.data)
 		"spell_power":
 			spell_power.clear()
 			for raw_effect: Variant in event.effects:

@@ -65,9 +65,15 @@ func point_at(progress: float, strand := 0) -> Vector3:
 	var offset := _up * envelope * arc
 	if effect_id in [0, 73]:
 		offset += _side * sin(p * TAU * 1.7 + strand * 2.1) * envelope * 0.19 * spread
+	elif effect_id == 84:
+		offset += _side * sin(p * TAU * 3.0) * envelope * 0.05
+	elif effect_id == 85:
+		offset += (_side * cos(p*TAU*4+strand*PI) + _up*sin(p*TAU*4+strand*PI))*envelope*0.15
+	elif effect_id == 83:
+		offset += _side * sin(p*TAU*5+strand*PI)*envelope*0.09
 	elif effect_id == 1:
 		offset += (_up * envelope * 0.18 + _side * sin(p * TAU + strand * PI) * envelope * 0.16) * spread
-	elif effect_id == 10:
+	elif effect_id in [10, 86]:
 		offset += (_side * cos(p * TAU * 2.0 + strand * 2.1)
 			+ _up * sin(p * TAU * 2.0 + strand * 2.1)) * envelope * 0.16 * spread
 	else:
@@ -87,7 +93,7 @@ func draw_at(time: float) -> void:
 	var magnitude := SpellPresentation.power_scale(power_level)
 	if time >= 0.0:
 		_mesh.surface_begin(Mesh.PRIMITIVE_TRIANGLES, _ribbon_material)
-		for strand: int in (3 if effect_id == 10 else 2):
+		for strand: int in (3 if effect_id in [10, 86] else 2):
 			# Each strand has its own finite tail; no stationary link spans the actors.
 			var head := clampf((time - strand * 0.035) / duration, 0.0, 1.0)
 			var tail := maxf(0.0, head - minf(0.58, 1.7 / maxf(0.1, start.distance_to(destination))))
@@ -103,7 +109,7 @@ func draw_at(time: float) -> void:
 	var head_position := point_at(p)
 	var size := (0.25 if effect_id == 2 else 0.19) * magnitude
 	if time < 0.0:
-		head_position = destination if effect_id == 10 else start
+		head_position = destination if effect_id in [10, 86] else start
 		size *= 0.60 + 0.15 * sin(time * 24.0)
 	_glow(head_position, size * 1.8, Color(tint, fade * 0.55), right, up)
 	_glow(head_position, size, Color(tint, fade), right, up)
