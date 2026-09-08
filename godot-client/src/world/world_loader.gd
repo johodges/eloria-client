@@ -57,20 +57,28 @@ const GROUP_NAME_PREFIX := "WorldGroup_"
 
 # How many frames after a load the cache is packed and written.
 #
-# Not zero, and not "deferred": the point of the cache is that the first visit
-# is no slower than it was, and packing a fifteen-thousand-node tree costs
-# 80-350 ms. Deferring by a frame would put that inside the frame that draws
-# the region for the first time, which is exactly the frame the player is
-# waiting on. Three frames is after the map transition has covered the change
-# and before the player has done anything.
+# Not zero, and not "deferred": writing an entry costs 350-1050 ms on the frame
+# it lands on, and deferring by one frame would put that inside the frame that
+# draws the region for the first time - exactly the frame the player is waiting
+# on. Three frames puts it in the arrival instead, where the transition is
+# still resolving and the wait is already expected, and it is paid once per
+# region for the life of an install. See `_write_cache` for why none of it can
+# go on a worker thread.
 const CACHE_WRITE_DELAY_FRAMES := 3
-# Compression on the cache file, and it is not a close call in either
-# direction. Measured on Four Gates: compressed is 32.9 MB and reads in 285 ms,
-# uncompressed is 87.8 MB and reads in 136 ms. So the choice is 150 ms a warm
-# load against 55 MB a region - 660 MB across the twelve, on top of the 395 MB
-# the compressed set already costs. A gigabyte of cache to save an eighth of a
-# second is not a bargain anyone would take, and the save side, which is 8x
-# slower compressed, is on a worker thread and costs the player nothing.
+# Compression on the cache file: a slower write for a third of the disk.
+#
+# Measured on Four Gates, packing once and saving both ways: compressed is
+# 32.9 MB, saves in 600 ms and reads in 285; uncompressed is 87.8 MB, saves in
+# 74 ms and reads in 136. Across the twelve regions that is 383 MB against
+# 1.02 GB, and across all 53 packages a player could visit, roughly 1.2 GB
+# against 3.2 GB.
+#
+# Compressed, because disk is the resource the player did not agree to spend
+# and there is no eviction policy to spend it against; the write it pays for is
+# one hitch per region per install, and the read it costs is 150 ms on a load
+# that is still 40% faster than building the region. Flip this if that trade
+# ever reads the other way - nothing else has to change, because an entry
+# written either way is read by the same call.
 const CACHE_COMPRESS := true
 
 signal load_started(manifest_path: String)
@@ -223,7 +231,6 @@ var _cache_write_countdown := 0
 var _cache_nodes: Array[Node] = []
 var _cache_visible := PackedByteArray()
 var _cache_overrides: Dictionary = {}
-var _save_thread: Thread = null
 
 ## Reads the region back from the cache, if there is an entry for exactly this
 ## package and this format version. Returns true when the world is in the tree
@@ -351,13 +358,29 @@ func _process(_delta: float) -> void:
 	set_process(false)
 	_write_cache()
 
-## Packs the region and hands it to a worker thread to write.
+## Packs the region and writes it, three frames after the load.
 ##
-## The pack is on the main thread because it reads the scene tree, and it is
-## the reason for the three-frame delay: it costs 80-350 ms and the frame that
-## first draws a region is the one the player is waiting on. The save is the
-## larger half and touches nothing but the PackedScene, so it goes to a thread
-## and costs the main thread nothing.
+## Both halves are on the main thread, and the second half is not by choice.
+##
+## The pack has to be: it reads the scene tree. The save was on a worker
+## `Thread` first, because it is the larger half and appears to touch nothing
+## but the `PackedScene` - and it worked, until the client was asked to quit
+## while one was in flight. `ResourceSaver.save` of a scene full of imported
+## `ArrayMesh`es reaches the rendering server to get their surface arrays back,
+## and off the main thread that is a synchronous request the main thread has to
+## serve. At shutdown the main thread stops serving, the worker never returns,
+## and `wait_to_finish()` waits for it forever: a client that will not close.
+## Measured, not deduced - `Godot --script` on a probe that loads a region and
+## quits five frames later hangs every time, with the worker stopped inside
+## `ResourceSaver.save`.
+##
+## So it is done here, and it is a real cost: 350-1050 ms on the frame it lands
+## on, once per region for the life of an install. Three frames after
+## `load_completed` is chosen to put it inside the arrival - the player is
+## already waiting, the transition is still resolving - rather than under their
+## feet a minute later. `CACHE_COMPRESS` is the dial if that is the wrong
+## trade: uncompressed saves in about an eighth of the time and takes 2.7x the
+## disk.
 func _write_cache() -> void:
 	if not is_instance_valid(world_root) or cache_file.is_empty():
 		_release_snapshot()
@@ -379,22 +402,15 @@ func _write_cache() -> void:
 		push_warning("map cache: pack failed for %s (%s)" % [
 			cache_file, error_string(error)])
 		return
-	_reap_save_thread(true)
-	_save_thread = Thread.new()
-	var map_id: String = manifest.asset_id() if manifest != null else ""
-	if _save_thread.start(_save_on_worker.bind(packed, cache_file, map_id)) != OK:
-		# No thread to be had: write it here rather than not at all.
-		_save_thread = null
-		_save_on_worker(packed, cache_file, map_id)
+	_save_entry(packed, cache_file,
+		manifest.asset_id() if manifest != null else "")
 
-## Writes the packed region, on the worker thread. Nothing here touches the
-## scene tree: the PackedScene holds its own reference to every mesh, material
-## and image in it, so a map change while this runs cannot pull them away.
+## Writes the packed region.
 ##
 ## The file lands under a temporary name and is renamed into place, so a write
-## that is interrupted - the player quits, the disk fills - leaves no half a
-## region for the next launch to read as a whole one.
-func _save_on_worker(packed: PackedScene, path: String, map_id: String) -> void:
+## that does not finish - the disk fills, the process is killed - leaves no
+## half a region for the next launch to read as a whole one.
+func _save_entry(packed: PackedScene, path: String, map_id: String) -> void:
 	var began: int = Time.get_ticks_usec()
 	var staging: String = MapSceneCache.staging_path(path)
 	var flags: int = ResourceSaver.FLAG_COMPRESS if CACHE_COMPRESS else 0
@@ -410,6 +426,7 @@ func _save_on_worker(packed: PackedScene, path: String, map_id: String) -> void:
 		DirAccess.remove_absolute(staging)
 		return
 	var pruned: int = MapSceneCache.prune(map_id, path)
+	load_phases[&"cacheSave"] = Time.get_ticks_usec() - began
 	print("world_load stage=cache_written file=", path, " milliseconds=",
 		(Time.get_ticks_usec() - began) / 1000, " stale_removed=", pruned)
 
@@ -452,16 +469,6 @@ func _undo_pristine(undo: Array) -> void:
 		else:
 			(node as MeshInstance3D).set_surface_override_material(
 				int(entry[1]), entry[2] as Material)
-
-## Joins a finished save thread, or waits for a running one when `force`.
-func _reap_save_thread(force: bool) -> void:
-	if _save_thread == null:
-		return
-	if not force and _save_thread.is_alive():
-		return
-	if _save_thread.is_started():
-		_save_thread.wait_to_finish()
-	_save_thread = null
 
 ## Records the microseconds since `started` under `name` and returns the clock
 ## reading that closed it, which is the next phase's start.
@@ -639,13 +646,11 @@ func _apply_material_passes(mesh_instances: Array) -> int:
 
 func unload_world() -> void:
 	# A map change while a cache write is still queued drops the write: the
-	# tree it would pack is about to be freed. A write already handed to the
-	# worker thread is left to finish, because the PackedScene it holds is its
-	# own reference and no longer depends on the tree.
+	# tree it would pack is about to be freed, and the region will be built
+	# again the next time it is entered, which is the state it was in before.
 	_cache_write_countdown = 0
 	set_process(false)
 	_release_snapshot()
-	_reap_save_thread(false)
 	if is_instance_valid(world_root):
 		world_root.queue_free()
 	world_root = null
@@ -656,9 +661,6 @@ func unload_world() -> void:
 	_collision_shapes.clear()
 	manifest = null
 	coordinate_adapter = null
-
-func _exit_tree() -> void:
-	_reap_save_thread(true)
 
 func _apply_collision_declarations(by_name: Dictionary) -> void:
 	var collision: Dictionary = manifest.data.get("collision", {})
