@@ -19,6 +19,12 @@ extends RefCounted
 
 const DEFAULT_SUN_ROTATION := Vector3(-55.0, -30.0, 0.0)
 const DEFAULT_SUN_ENERGY := 1.15
+## Depth towards the sun beyond each camera-fitted shadow cascade. Godot's
+## 20 m default clips the top of Four Gates' 68 m monument as the camera
+## orbits, shortening its shadow even with the light and geometry fixed.
+## Cover tall casters outside the view, including the low daytime sun, without
+## increasing the maximum shadow distance from the camera.
+const SUN_SHADOW_CASTER_DEPTH := 256.0
 
 ## Point lights spawned from a manifest are tagged so the next map can clear
 ## them without touching lights that belong to the scene.
@@ -28,6 +34,8 @@ static func apply(manifest: WorldManifest, world_environment: WorldEnvironment,
 		sun: DirectionalLight3D, light_parent: Node = null) -> bool:
 	if manifest == null or world_environment == null:
 		return false
+	if sun != null:
+		sun.directional_shadow_pancake_size = SUN_SHADOW_CASTER_DEPTH
 	var raw: Variant = manifest.data.get("environment")
 	if raw is not Dictionary:
 		_restore_defaults(sun)
