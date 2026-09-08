@@ -457,25 +457,65 @@ change, because an entry written either way is read by the same call.
 
 ### What it draws
 
-`tests/integration/map_cache_render.gd` is the eight-camera probe, and it had
-to be recalibrated before it could say anything. **Byte-identity between two
-loads is not achievable and never was**: two loads of the same package through
-the same code, in the same process, move 60-90 pixels of 518 400 in every view,
-because each load builds its own meshes and materials, the renderer sorts
-opaque draws by the RIDs those got, and a coplanar depth tie falls to whichever
-sorted first. It is the same phenomenon as the 245 pixels the regrouping moved.
+`tests/integration/map_cache_render.gd` is the eight-camera probe, and it took
+two corrections before it said anything true.
 
-So the probe measures its own floor first - it photographs the region twice the
-slow way before it photographs it once from the cache - and asserts the cache
-does not stand out against it. On Four Gates: **522 pixels of 4 147 200 moved
-between built and cached, against 558 between two builds.** The cached region
-is closer to a fresh load than a fresh load is to itself.
+**Byte-identity between two loads is not achievable and never was.** Two loads
+of the same package, through the same code, in the same process, move pixels:
+each load builds its own meshes and materials, the renderer sorts opaque draws
+by the RIDs those got, and where two surfaces meet the camera at the same depth
+the tie falls to whichever sorted first. It is the same phenomenon as the 245
+pixels the regrouping moved. So the probe measures its own floor on every run,
+photographing the region twice the slow way before once from the cache.
 
-That is a weaker statement than "identical", so it is not the load-bearing one.
-The structural comparison in `test_map_cache.gd` is: it is exact, it is
-deterministic, and the failures worth catching here - a baked-in fade, a wall
-left hidden, a batch link that resolved to nothing - are tens of thousands of
-pixels, not tens.
+**And the first time a region is drawn in a process is not like the times
+after.** The probe's first reference was a first load, and it is not a
+reference: Amberwood's first eight views differ from its second eight by 22 000
+pixels and its second from its third by 613, because the renderer is still
+building pipelines and settling textures on the way through the first one. The
+probe now throws the first set away.
+
+With both corrected, and taken in one run over the three regions:
+
+| region | two builds | built vs cached |
+| --- | ---: | ---: |
+| four_gates | 564 | **528** |
+| verdant_stair | 4 110 | **1 132** |
+| amberwood | 24 303 | **30 621** |
+
+Of 4 147 200 pixels across eight views. Two of the three move *less* between a
+build and the cache than between two builds.
+
+Amberwood is the interesting one, and a separate probe took it apart. Its
+residue is real, it is small, and it is perfectly repeatable:
+
+* two loads **from the cache** are byte-identical to each other - zero pixels;
+* two warm builds, back to back, are 613 pixels apart;
+* a cached load against a warm build is **6 700-6 900 pixels, 1.6 per mille**,
+  the same number twice;
+* and the region's own build-to-build variation over a longer session, with
+  other regions loaded in between, is 24 303.
+
+So the cache's own contribution to the picture is a sixth of the variation the
+region already has between two builds of itself, and it is scattered
+single-pixel and pair-pixel differences inside dense alpha-scissored foliage,
+mean channel delta 16 of 255. Everything structural was checked and is
+identical: 11 658 nodes, 9 106 mesh instances, 429 meshes, 321 batches with
+byte-identical multimesh buffers and AABBs, 897 collision bodies, 35 walk
+surfaces, 3 019 hidden meshes, 3 019 resolved batch links, 46 materials with
+the same filters, transparency modes, cull modes and alpha-scissor thresholds,
+and 41 albedo textures all with their mip chains.
+
+That leaves resource-allocation order as the only candidate, which is the
+regrouping's finding again: there is no right answer to a depth tie, only which
+surface got there first.
+
+This is the weaker of the two guarantees and is deliberately not the
+load-bearing one. The structural comparison in `test_map_cache.gd` is: it is
+exact and deterministic, and it is what catches a baked-in fade or a wall left
+hidden. The probe's budget is 5 per mille or three times the run's own floor,
+whichever is larger, because what it exists to catch - three thousand batched
+props that failed to relink - is percent-scale.
 
 ### The settings row
 
@@ -525,7 +565,7 @@ where it says estimated.
 | --- | --- | --- | --- | --- |
 | **Regroup wide sibling lists** (landed) | 15.9 s of 28.1 s across twelve; 6.7 s off Verdant Stair | ~40 lines in `WorldLoader`, 158 ms and 700 nodes across twelve | low - the tree is deeper by one level | 245 pixels of 7.4 million, all coplanar ties inside foliage |
 | **Parse and build on a worker thread** | hides 400-610 ms of a 500-1 400 ms load; total unchanged | a thread, a deferred attach, and a decision about what the client shows meanwhile | medium - `GLTFDocument` off-thread is unsupported territory, though it worked in every probe | nothing, if the loading screen already covers the freeze |
-| **Cache the built region as a PackedScene** (landed) | 41% of every visit after the first | first visit +58 to +147 ms, the package hash, plus a 293-1 321 ms write three frames later; 383 MB for the twelve; an invalidation contract | medium-high - a cached tree can drift from what the loader would build | nothing measurable: 522 pixels of 4.1 million against a 558-pixel floor between two builds |
+| **Cache the built region as a PackedScene** (landed) | 41% of every visit after the first | first visit +58 to +147 ms, the package hash, plus a 293-1 321 ms write three frames later; 383 MB for the twelve; an invalidation contract | medium-high - a cached tree can drift from what the loader would build | 1.6 per mille on the worst region, a sixth of the variation it has between two builds of itself |
 | **Cheaper walk-surface collision** | up to 4.8 s across twelve, the largest item left | unknown; the shapes are two thirds of it and they are the grounding contract | high - this is what holds the player up | nothing, if the shapes are the same |
 | **Fewer nodes at build time** | little: Sunmane's own LOD2 package has 318 mesh instances against 1 050 and loads in 380 ms against 459 | a toolkit change and a regeneration of every package | low | LOD2 is a different, coarser map; a MultiMesh bake would not be |
 | **Compressed textures at build time** | ~180 ms a region headless (150-175 ms of PNG decode, ~30 ms of mip building), 400-480 ms windowed, where the mip pass is also an upload | `KHR_texture_basisu` in the toolkit, and a decision about quality | low | **yes** - compression artefacts, and the mip chain would come from the package rather than from the loader |
