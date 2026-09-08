@@ -25,7 +25,7 @@
       "max": [
         441.67,
         132.58,
-        207.88
+        207.8
       ]
     },
     "playableBounds": {
@@ -136,12 +136,12 @@
     {
       "id": "cistern-shaft",
       "position": [
-        -102.0,
-        -0.65,
+        -97.0,
+        2.05,
         -60.0
       ],
       "serverTile": [
-        72,
+        77,
         234
       ],
       "rotationDegrees": 180.0,
@@ -181,13 +181,13 @@
     {
       "id": "water-gate-undercut-mouth",
       "position": [
-        66.25,
+        60.0,
         2.15,
-        42.25
+        48.0
       ],
       "serverTile": [
-        240,
-        132
+        234,
+        126
       ],
       "rotationDegrees": 180.0,
       "surface": "JadePaving",
@@ -236,8 +236,7 @@
       "March_north_stair_Stone",
       "March_south_gate_Station",
       "March_south_gate_Stone",
-      "March_south_gate_boat_010",
-      "March_south_gate_boat_011",
+      "March_south_gate_boat_004",
       "March_west_causeway_Station",
       "March_west_causeway_Stone",
       "March_west_causeway_boat_010",
@@ -249,7 +248,6 @@
       "MarketShrine",
       "MarketStall_0",
       "MarketStall_1",
-      "MarketStall_10",
       "MarketStall_2",
       "MarketStall_3",
       "MarketStall_4",
@@ -265,27 +263,31 @@
       "Obelisk_street_north_0",
       "Obelisk_street_north_139",
       "Obelisk_street_north_209",
+      "QuayCargo_0",
+      "QuayCargo_1",
+      "QuayCargo_2",
+      "QuayCargo_4",
       "RootArch",
       "RuinTower_1",
       "RuinTower_11",
       "RuinTower_12",
       "RuinTower_15",
       "RuinTower_16",
-      "RuinTower_22",
-      "RuinTower_25",
-      "RuinTower_29",
+      "RuinTower_19",
+      "RuinTower_23",
       "RuinTower_3",
-      "RuinTower_31",
-      "RuinTower_33",
-      "RuinTower_40",
+      "RuinTower_30",
+      "RuinTower_32",
+      "RuinTower_34",
       "RuinTower_41",
       "RuinTower_42",
       "RuinTower_43",
       "RuinTower_44",
-      "RuinTower_46",
-      "RuinTower_49",
-      "RuinTower_51",
-      "RuinTower_54",
+      "RuinTower_45",
+      "RuinTower_47",
+      "RuinTower_50",
+      "RuinTower_52",
+      "RuinTower_55",
       "RuinTower_8",
       "RuinTree_10",
       "RuinTree_11",
@@ -293,28 +295,26 @@
       "RuinTree_14",
       "RuinTree_15",
       "RuinTree_16",
-      "RuinTree_18",
-      "RuinTree_19",
       "RuinTree_20",
-      "RuinTree_24",
       "RuinTree_25",
       "RuinTree_26",
-      "RuinTree_28",
+      "RuinTree_27",
+      "RuinTree_29",
       "RuinTree_3",
-      "RuinTree_33",
       "RuinTree_34",
-      "RuinTree_36",
-      "RuinTree_38",
+      "RuinTree_35",
+      "RuinTree_37",
       "RuinTree_39",
-      "RuinTree_41",
+      "RuinTree_40",
       "RuinTree_42",
-      "RuinTree_44",
-      "RuinTree_47",
+      "RuinTree_43",
+      "RuinTree_45",
       "RuinTree_48",
+      "RuinTree_49",
       "RuinTree_5",
-      "RuinTree_50",
-      "RuinTree_52",
-      "RuinTree_54",
+      "RuinTree_51",
+      "RuinTree_53",
+      "RuinTree_55",
       "RuinTree_6",
       "RuinTree_8",
       "Ruin_0",
@@ -327,7 +327,6 @@
       "Ruin_15",
       "Ruin_16",
       "Ruin_17",
-      "Ruin_18",
       "Ruin_19",
       "Ruin_2",
       "Ruin_20",
@@ -368,6 +367,7 @@
       "Ruin_52",
       "Ruin_53",
       "Ruin_54",
+      "Ruin_55",
       "Ruin_6",
       "Ruin_7",
       "Ruin_8",
@@ -385,7 +385,6 @@
       "Secret_ruins_shrine_eyrie",
       "Secret_ruins_stela_reliquary",
       "Secret_ruins_temple_focus",
-      "Secret_ruins_waystone",
       "SerpentColumn_0_-1",
       "SerpentColumn_0_1",
       "SerpentColumn_1_-1",
@@ -410,7 +409,6 @@
       "Temple_VaultPortal",
       "TerraceRelic_0",
       "TerraceRelic_1",
-      "TerraceRelic_2",
       "Tree_0",
       "Tree_1",
       "Tree_10",
@@ -2284,8 +2282,8 @@
     "width": 1152,
     "height": 1152,
     "heightEncoding": {
-      "origin": -4.8398,
-      "step": 0.239843,
+      "origin": -1.5739,
+      "step": 0.227035,
       "range": [
         1,
         255
@@ -2293,28 +2291,240 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 540340,
-    "walkableFraction": 0.4072,
-    "openedWalkSurfaces": {
-      "prefix": "Walk_",
-      "cellsCovered": 20817,
-      "cellsWidened": 1399,
-      "cellsOpened": 879,
-      "cellsRaised": 7449,
-      "cellsDrowned": 75,
-      "cellsInsideLandmarks": 0
-    },
+    "walkableCells": 542590,
+    "walkableFraction": 0.4089,
     "refinedHeights": {
       "levels": 255,
-      "step": 0.239843,
-      "origin": -4.8398,
-      "previousStep": 0.226919,
-      "cellsRestated": 536224,
-      "cellsFromGeometry": 539593,
-      "cellsKept": 747
+      "step": 0.227035,
+      "origin": -1.5739,
+      "previousStep": 0.917113,
+      "cellsRestated": 540710,
+      "cellsFromGeometry": 540038,
+      "cellsKept": 695
+    },
+    "openedWalkSurfaces": {
+      "prefix": "Walk_",
+      "cellsCovered": 20739,
+      "cellsWidened": 1529,
+      "cellsOpened": 1857,
+      "cellsRaised": 7350,
+      "cellsDrowned": 75,
+      "cellsInsideLandmarks": 0
     }
   },
   "navigation": {
+    "crossings": [
+      {
+        "id": "great_causeway__channel_main",
+        "endpoints": [
+          [
+            60.0,
+            2.0336363636363637,
+            -81.5
+          ],
+          [
+            60.0,
+            2.4063636363636367,
+            -122.5
+          ]
+        ]
+      },
+      {
+        "id": "great_causeway__channel_south",
+        "endpoints": [
+          [
+            60.0,
+            2.0302272727272728,
+            102.5
+          ],
+          [
+            60.0,
+            2.3097727272727275,
+            61.5
+          ]
+        ]
+      },
+      {
+        "id": "spur_stela__channel_main",
+        "endpoints": [
+          [
+            177.979027071356,
+            2.5676471243709242,
+            -115.83221657084806
+          ],
+          [
+            183.06445118951356,
+            5.23666852384285,
+            -156.51560951610844
+          ]
+        ]
+      },
+      {
+        "id": "street_courts__channel_main",
+        "endpoints": [
+          [
+            -0.8870183396172737,
+            2.02,
+            -86.76759174270987
+          ],
+          [
+            40.07069180900502,
+            2.02,
+            -84.90587764504522
+          ]
+        ]
+      },
+      {
+        "id": "street_far_e__channel_east",
+        "endpoints": [
+          [
+            249.0409532911933,
+            2.0200000000000005,
+            -54.59180934176134
+          ],
+          [
+            289.244760994521,
+            2.02,
+            -46.5510478010958
+          ]
+        ]
+      },
+      {
+        "id": "east_dock_0",
+        "endpoints": [
+          [
+            265.5,
+            1.4515909090909092,
+            -25.0
+          ],
+          [
+            284.5,
+            1.2184090909090908,
+            -25.0
+          ]
+        ]
+      },
+      {
+        "id": "east_dock_1",
+        "endpoints": [
+          [
+            265.5,
+            1.4515909090909092,
+            -18.0
+          ],
+          [
+            284.5,
+            1.2184090909090908,
+            -18.0
+          ]
+        ]
+      },
+      {
+        "id": "east_dock_2",
+        "endpoints": [
+          [
+            265.5,
+            1.4515909090909092,
+            -11.0
+          ],
+          [
+            284.5,
+            1.2184090909090908,
+            -11.0
+          ]
+        ]
+      },
+      {
+        "id": "west_dock_0",
+        "endpoints": [
+          [
+            -76.5,
+            1.4446875,
+            39.0
+          ],
+          [
+            -63.5,
+            1.2253125,
+            39.0
+          ]
+        ]
+      },
+      {
+        "id": "west_dock_1",
+        "endpoints": [
+          [
+            -76.5,
+            1.4446875,
+            44.0
+          ],
+          [
+            -63.5,
+            1.2253125,
+            44.0
+          ]
+        ]
+      },
+      {
+        "id": "west_dock_2",
+        "endpoints": [
+          [
+            -76.5,
+            1.4446875,
+            49.0
+          ],
+          [
+            -63.5,
+            1.2253125,
+            49.0
+          ]
+        ]
+      },
+      {
+        "id": "south_dock_0",
+        "endpoints": [
+          [
+            8.0,
+            1.4544230769230768,
+            121.5
+          ],
+          [
+            8.0,
+            1.215576923076923,
+            98.5
+          ]
+        ]
+      },
+      {
+        "id": "south_dock_1",
+        "endpoints": [
+          [
+            30.0,
+            1.4544230769230768,
+            121.5
+          ],
+          [
+            30.0,
+            1.215576923076923,
+            98.5
+          ]
+        ]
+      },
+      {
+        "id": "cistern_walk",
+        "endpoints": [
+          [
+            -39.5,
+            2.2435344827586206,
+            -60.0
+          ],
+          [
+            -94.5,
+            2.0064655172413794,
+            -60.0
+          ]
+        ]
+      }
+    ],
     "surfaceNodePrefixes": [
       "Terrain_",
       "Walk_"
@@ -2344,21 +2554,26 @@
   },
   "landmarks": [
     {
+      "id": "arrival-exchange",
+      "name": "Archive Supply Quay",
+      "node": "QuayShelter_0",
+      "type": "market",
+      "position": [
+        0,
+        1.45,
+        -3
+      ]
+    },
+    {
       "id": "channel-bridge",
       "name": "The Coil Bridge",
       "node": "Bridge_great_causeway__channel_main",
       "type": "bridge",
       "position": [
         60.0,
-        1.8,
+        2.22,
         -102.0
-      ],
-      "serverTile": [
-        234,
-        276
-      ],
-      "surface": "Silt",
-      "note": "placeholder name - see modeling-assumptions.md"
+      ]
     },
     {
       "id": "cistern-shaft",
@@ -2367,7 +2582,7 @@
       "type": "entrance",
       "position": [
         -102.0,
-        -0.7,
+        2.0,
         -60.0
       ],
       "serverTile": [
@@ -2526,11 +2741,11 @@
       "node": "March_south_gate_Stone",
       "type": "transition",
       "position": [
-        -18.7,
-        1.8,
-        132.0
+        2.7,
+        -1.01,
+        105.0
       ],
-      "note": "Where the Ssarathi Ruins gives way to Crownwater: ssarathi road furniture, a march stone, a waystation, and 12 pieces of the country beyond."
+      "note": "Where the Ssarathi Ruins gives way to Crownwater: ssarathi road furniture, a march stone, a waystation, and 5 pieces of the country beyond."
     },
     {
       "id": "march-south-gate",
@@ -2538,15 +2753,15 @@
       "node": "March_south_gate_Stone",
       "type": "structure",
       "position": [
-        -18.7,
-        1.75,
-        132.0
+        2.7,
+        -1.06,
+        105.0
       ],
       "serverTile": [
-        155,
-        42
+        177,
+        69
       ],
-      "surface": "JadePaving",
+      "surface": "Silt",
       "note": "placeholder name - see modeling-assumptions.md"
     },
     {
@@ -2742,9 +2957,9 @@
       "node": "March_south_gate_Station",
       "type": "waystation",
       "position": [
-        -12.5,
-        0.11,
-        116.0
+        8.0,
+        1.25,
+        132.0
       ]
     },
     {
@@ -2753,15 +2968,15 @@
       "node": "March_south_gate_Station",
       "type": "structure",
       "position": [
-        -12.5,
-        0.03,
-        116.0
+        8.0,
+        1.17,
+        132.0
       ],
       "serverTile": [
-        162,
-        58
+        182,
+        42
       ],
-      "surface": "JungleFloor",
+      "surface": "MossStone",
       "note": "placeholder name - see modeling-assumptions.md"
     },
     {
@@ -3035,13 +3250,13 @@
       "destinationMap": "ssarathi_ruins_secrets",
       "destinationSpawn": "ruins-gate-cache",
       "position": [
-        61.05,
-        1.95,
+        97.05,
+        0.68,
         -10.0
       ],
       "authority": "server",
       "serverTile": [
-        235,
+        271,
         184
       ]
     },
@@ -3182,14 +3397,14 @@
       "destinationMap": "ssarathi_ruins_secrets",
       "destinationSpawn": "ruins-temple-focus",
       "position": [
-        46.0,
-        21.0,
-        -256.0
+        44.0,
+        13.0,
+        -198.5
       ],
       "authority": "server",
       "serverTile": [
-        220,
-        430
+        218,
+        372
       ]
     },
     {
@@ -3662,7 +3877,7 @@
       "resource": "reed",
       "position": [
         229.95,
-        -1.21,
+        -1.17,
         23.24
       ],
       "serverTile": [
@@ -3928,7 +4143,7 @@
       "resource": "reed",
       "position": [
         214.29,
-        2.16,
+        1.9,
         16.89
       ],
       "serverTile": [
@@ -3938,6 +4153,303 @@
       "authority": "server"
     }
   ],
+  "contentLayout": {
+    "services": [
+      {
+        "role": "information",
+        "position": [
+          0,
+          1.45,
+          6
+        ]
+      },
+      {
+        "role": "storage",
+        "position": [
+          -9,
+          1.45,
+          -3
+        ]
+      },
+      {
+        "role": "crafting_station",
+        "position": [
+          9,
+          1.45,
+          -3
+        ]
+      },
+      {
+        "role": "training",
+        "position": [
+          12,
+          1.45,
+          7
+        ]
+      }
+    ],
+    "roadClearance": 3.0,
+    "npcs": {
+      "Archivist Sesh": [
+        -8,
+        1.45,
+        5
+      ],
+      "Vess Scale": [
+        -11,
+        1.45,
+        -7
+      ],
+      "Sun-Vault Warden Hass-Ile": [
+        49,
+        13,
+        -199
+      ],
+      "Lineage Reader Ssiran-Ta": [
+        69,
+        2,
+        -22
+      ],
+      "Hatchery Keeper Nuu-Sesh": [
+        176,
+        2,
+        -116
+      ],
+      "Cistern Sounder Vek-Ora": [
+        -98,
+        2,
+        -63
+      ],
+      "Stela Copyist Ilhu-Ren": [
+        194,
+        14,
+        -198
+      ],
+      "Water-Gate Marshal Set-Kaal": [
+        8,
+        1.25,
+        132
+      ],
+      "Lily Court Steward Aa-Nesh": [
+        -34,
+        2,
+        -58
+      ],
+      "Marchstone Priest Osu-Val": [
+        294,
+        1.8,
+        -125
+      ],
+      "Undercroft Digger Rell Marrow": [
+        215,
+        3,
+        78
+      ],
+      "Falls Measurer Ith-Anu": [
+        280,
+        4,
+        -317
+      ],
+      "Coil Bridge Toll-Taker Ude-Sar": [
+        70,
+        1.8,
+        -75
+      ],
+      "Ssethis the Doorkeeper": [
+        73,
+        2,
+        49
+      ]
+    },
+    "wildlife": {
+      "canopy_glider": [
+        [
+          221,
+          69,
+          28
+        ],
+        [
+          307,
+          -119,
+          26
+        ]
+      ],
+      "swamp_heron": [
+        [
+          -45,
+          -60,
+          22
+        ],
+        [
+          181,
+          -39,
+          24
+        ]
+      ],
+      "delta_mud_crab": [
+        [
+          -62,
+          40,
+          24
+        ],
+        [
+          240,
+          -12,
+          24
+        ]
+      ],
+      "scalevine_stalker": [
+        [
+          231,
+          68,
+          26
+        ],
+        [
+          -129,
+          -160,
+          26
+        ]
+      ],
+      "saltmarsh_crocodile": [
+        [
+          281,
+          -61,
+          24
+        ],
+        [
+          -102,
+          -91,
+          28
+        ]
+      ],
+      "sunscale_basilisk": [
+        [
+          187,
+          -189,
+          26
+        ],
+        [
+          124,
+          -268,
+          26
+        ]
+      ],
+      "rune_stone_golem": [
+        [
+          -66,
+          -220,
+          28
+        ],
+        [
+          135,
+          -279,
+          28
+        ]
+      ],
+      "void_tentacle_construct": [
+        [
+          -113,
+          -173,
+          27
+        ],
+        [
+          97,
+          -273,
+          28
+        ]
+      ],
+      "gloom_wyvern": [
+        [
+          -9,
+          -259,
+          50
+        ],
+        [
+          -131,
+          -293,
+          35
+        ],
+        [
+          101,
+          -257,
+          37
+        ]
+      ],
+      "emerald_canopy_dragon": [
+        [
+          -7,
+          -257,
+          45
+        ],
+        [
+          112,
+          -278,
+          40
+        ],
+        [
+          360,
+          -91,
+          38
+        ]
+      ]
+    },
+    "harvest": {
+      "Lichen": [
+        [
+          -45,
+          -62,
+          22
+        ],
+        [
+          183,
+          -42,
+          23
+        ]
+      ],
+      "Lotus": [
+        [
+          172,
+          -49,
+          20
+        ]
+      ],
+      "Watercress": [
+        [
+          -39,
+          -62,
+          22
+        ]
+      ],
+      "Venom Bulb": [
+        [
+          223,
+          74,
+          24
+        ]
+      ],
+      "Toadstool": [
+        [
+          307,
+          -132,
+          25
+        ]
+      ],
+      "Geode": [
+        [
+          189,
+          -197,
+          24
+        ]
+      ],
+      "Flint": [
+        [
+          -105,
+          -158,
+          22
+        ]
+      ]
+    }
+  },
   "portals": [
     {
       "id": "north-stair",
@@ -3995,13 +4507,13 @@
       "name": "Water Gate: the Crownwater boat",
       "type": "map-transition",
       "position": [
-        -24.0,
-        1.9,
-        138.0
+        8.0,
+        1.3,
+        99.0
       ],
       "serverTile": [
-        150,
-        36
+        182,
+        75
       ],
       "destinationMap": "crownwater",
       "radius": 3.5,
@@ -4050,12 +4562,12 @@
       "name": "The Cistern Shaft",
       "type": "interior-entrance",
       "position": [
-        -102.0,
-        -0.6,
+        -97.0,
+        2.1,
         -60.0
       ],
       "serverTile": [
-        72,
+        77,
         234
       ],
       "landmark": "cistern-shaft",
@@ -4107,13 +4619,13 @@
       "name": "The Water Gate Undercut",
       "type": "interior-entrance",
       "position": [
-        66.25,
+        60.0,
         2.2,
-        42.25
+        48.0
       ],
       "serverTile": [
-        240,
-        132
+        234,
+        126
       ],
       "landmark": "south-water-gate",
       "destinationMap": "ssarathi_royal_archive",
@@ -4189,7 +4701,7 @@
         ],
         [
           60.0,
-          1.8,
+          1.82,
           -84.0
         ],
         [
@@ -4356,14 +4868,14 @@
           132.0
         ],
         [
-          36.0,
+          18.0,
           1.8,
           114.0
         ],
         [
           60.0,
-          2.1,
-          48.0
+          1.81,
+          108.0
         ]
       ]
     },
@@ -4478,13 +4990,13 @@
       "waypoints": [
         [
           60.0,
-          2.1,
-          48.0
+          1.81,
+          108.0
         ],
         [
           12.0,
           1.8,
-          120.0
+          132.0
         ],
         [
           -24.0,
@@ -4567,28 +5079,6 @@
           60.0,
           0.0,
           82.0
-        ]
-      },
-      {
-        "id": "spur_south_dock__channel_south",
-        "street": "spur_south_dock",
-        "channel": "channel_south",
-        "deck": 1.8,
-        "centre": [
-          47.3,
-          0.0,
-          82.8
-        ]
-      },
-      {
-        "id": "spur_south_shrine__channel_south",
-        "street": "spur_south_shrine",
-        "channel": "channel_south",
-        "deck": 1.8,
-        "centre": [
-          36.3,
-          0.0,
-          83.6
         ]
       },
       {
@@ -4933,20 +5423,20 @@
     }
   ],
   "performance": {
-    "nodes": 7431,
-    "meshes": 487,
+    "nodes": 7352,
+    "meshes": 499,
     "materials": 42,
     "images": 104,
     "textures": 104,
-    "accessors": 1953,
-    "bufferViews": 2057,
-    "uniqueTriangles": 426049,
-    "uniqueVertices": 326932,
-    "glbBytes": 24809384,
-    "instancedTriangles": 1820656,
-    "embeddedTextureBytes": 29150152,
+    "accessors": 2001,
+    "bufferViews": 2105,
+    "uniqueTriangles": 481289,
+    "uniqueVertices": 363367,
+    "glbBytes": 26215864,
+    "instancedTriangles": 1847337,
+    "embeddedTextureBytes": 28929731,
     "textureMemoryBytesUncompressed": 269352960,
-    "placements": 2783,
+    "placements": 2755,
     "collision": {
       "width": 1152,
       "height": 1152,
@@ -4955,11 +5445,11 @@
         -174.0,
         174.0
       ],
-      "walkableCells": 538816,
-      "blockedCells": 788288,
-      "walkableFraction": 0.406,
-      "elevatedDecks": 31,
-      "steepCells": 265295,
+      "walkableCells": 540733,
+      "blockedCells": 786371,
+      "walkableFraction": 0.4075,
+      "elevatedDecks": 30,
+      "steepCells": 266266,
       "reliefMetres": 56.86,
       "heightEncoding": {
         "origin": -1.4581,
@@ -4974,18 +5464,21 @@
       "columnOrder": "server-tile-x (column 0 is the -X western edge)"
     },
     "notes": [
+      "Archive supply quay, aligned market rows, five surveyed channel bridges and eight working jetties.",
       "march north-stair: 0 road pieces, 2 of four_gates's growth",
       "march east-causeway: 0 road pieces, 3 of verdant_stair's growth",
       "march west-causeway: 0 road pieces, 16 of manymouth_delta's growth",
-      "march south-gate: 0 road pieces, 12 of crownwater's growth"
+      "march south-gate: 0 road pieces, 5 of crownwater's growth",
+      "walk corridors: 18 encroaching dressing placements removed",
+      "Cleared quay, market and jetty conflicts: Kerb_street_market_268_-1, Kerb_street_market_268_1, Kerb_street_market_289_-1, Kerb_street_market_289_1, Kerb_spur_arrival_0_-1, Kerb_spur_arrival_0_1, Kerb_spur_arrival_16_-1, Kerb_spur_arrival_16_1, Kerb_spur_arrival_32_-1, Kerb_spur_arrival_32_1, Kerb_spur_east_dock_41_-1, Kerb_spur_east_dock_41_1, Kerb_spur_east_dock_61_-1, Kerb_spur_east_dock_61_1, Kerb_spur_root_arch_0_-1, Kerb_spur_root_arch_0_1, Kerb_spur_root_arch_16_-1, Kerb_spur_root_arch_16_1, Kerb_spur_root_arch_32_-1, Ruin_18, Rubble_spur_arrival_0"
     ],
     "lod2": {
-      "glbBytes": 14723932,
-      "nodes": 3619,
-      "uniqueTriangles": 368978,
-      "instancedTriangles": 934732,
-      "sizeReductionPercent": 40.7,
-      "triangleReductionPercent": 48.7
+      "glbBytes": 16473376,
+      "nodes": 3534,
+      "uniqueTriangles": 431630,
+      "instancedTriangles": 978596,
+      "sizeReductionPercent": 37.2,
+      "triangleReductionPercent": 47.0
     }
   },
   "sources": [

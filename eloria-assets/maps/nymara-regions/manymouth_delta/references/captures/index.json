@@ -21,9 +21,9 @@
     "panel": 1,
     "file": "01-mangrove-channel.webp",
     "eye": [
-      -50.06,
+      -44.66,
       19.64,
-      -90.79
+      -97.99
     ],
     "target": [
       -138.0,
@@ -38,13 +38,13 @@
     "panel": 2,
     "file": "02-tide-hall.webp",
     "eye": [
-      54.0,
-      6.99,
-      -33.0
+      38.0,
+      3.9,
+      -45.0
     ],
     "target": [
       30.0,
-      11.41,
+      6.8,
       -61.5
     ],
     "fieldOfViewDegrees": 50,
@@ -56,12 +56,12 @@
     "file": "03-walkway-junction.webp",
     "eye": [
       54.0,
-      12.29,
+      6.7,
       -33.0
     ],
     "target": [
       36.0,
-      2.99,
+      3.4,
       -48.0
     ],
     "fieldOfViewDegrees": 52,
@@ -72,14 +72,14 @@
     "panel": 4,
     "file": "04-long-market.webp",
     "eye": [
-      16.8,
-      16.49,
-      -33.6
+      19.6,
+      3.9,
+      -29.2
     ],
     "target": [
-      10.2,
-      3.31,
-      -20.4
+      7.4,
+      3.8,
+      -24.8
     ],
     "fieldOfViewDegrees": 56,
     "lighting": "deck"
@@ -89,14 +89,14 @@
     "panel": 5,
     "file": "05-root-landing.webp",
     "eye": [
-      88.5,
-      7.45,
-      -176.01
+      86.0,
+      4.1,
+      -177.0
     ],
     "target": [
-      69.99,
-      8.25,
-      -188.01
+      70.0,
+      7.0,
+      -188.0
     ],
     "fieldOfViewDegrees": 58,
     "lighting": "deck"
@@ -106,14 +106,14 @@
     "panel": 6,
     "file": "06-floating-market.webp",
     "eye": [
-      -36.0,
-      4.71,
-      -9.0
+      -26.0,
+      5.5,
+      -8.0
     ],
     "target": [
-      -46.5,
-      1.31,
-      -16.5
+      -46.0,
+      1.0,
+      -10.0
     ],
     "fieldOfViewDegrees": 56,
     "lighting": "deck"
@@ -123,14 +123,14 @@
     "panel": 7,
     "file": "07-paddy-causeway.webp",
     "eye": [
-      -48.0,
-      14.75,
-      -258.0
+      -44.0,
+      4.1,
+      -261.0
     ],
     "target": [
-      -12.0,
-      5.75,
-      -276.0
+      -4.0,
+      6.0,
+      -271.0
     ],
     "fieldOfViewDegrees": 54,
     "lighting": "day"
@@ -140,13 +140,13 @@
     "panel": 8,
     "file": "08-labyrinth-mouth.webp",
     "eye": [
-      231.0,
-      15.07,
-      -1.5
+      234.16,
+      12.07,
+      -9.93
     ],
     "target": [
       207.0,
-      13.23,
+      12.67,
       -10.5
     ],
     "fieldOfViewDegrees": 52,
@@ -157,13 +157,13 @@
     "panel": 9,
     "file": "09-long-look.webp",
     "eye": [
-      147.55,
-      25.21,
-      80.49
+      173.28,
+      22.85,
+      72.31
     ],
     "target": [
       114.0,
-      7.71,
+      6.55,
       -114.0
     ],
     "fieldOfViewDegrees": 52,
@@ -175,13 +175,13 @@
     "file": "10-deck-macro.webp",
     "eye": [
       108.9,
-      4.16,
-      -110.82
+      1.5,
+      -110.4
     ],
     "target": [
-      110.61,
-      1.99,
-      -111.9
+      110.5,
+      0.83,
+      -111.8
     ],
     "fieldOfViewDegrees": 36,
     "lighting": "deck"
@@ -191,13 +191,13 @@
     "panel": null,
     "file": "11-great-arch.webp",
     "eye": [
-      72.0,
-      15.11,
-      -78.0
+      65.0,
+      4.3,
+      -46.0
     ],
     "target": [
       114.0,
-      7.45,
+      10.0,
       -114.0
     ],
     "fieldOfViewDegrees": 50,
@@ -208,13 +208,13 @@
     "panel": null,
     "file": "12-arch-platform.webp",
     "eye": [
-      114.0,
-      12.41,
+      112.0,
+      2.25,
       -114.0
     ],
     "target": [
       81.0,
-      4.2,
+      3.0,
       -93.0
     ],
     "fieldOfViewDegrees": 55,
@@ -225,13 +225,13 @@
     "panel": null,
     "file": "13-green-temple.webp",
     "eye": [
-      242.03,
-      22.96,
-      -286.06
+      258.0,
+      7.0,
+      -269.0
     ],
     "target": [
       297.0,
-      28.82,
+      23.0,
       -309.0
     ],
     "fieldOfViewDegrees": 50,
@@ -242,13 +242,13 @@
     "panel": null,
     "file": "14-temple-stair.webp",
     "eye": [
-      276.0,
-      26.37,
-      -309.0
+      277.0,
+      16.6,
+      -289.0
     ],
     "target": [
       297.0,
-      24.82,
+      24.0,
       -309.0
     ],
     "fieldOfViewDegrees": 54,
@@ -259,13 +259,13 @@
     "panel": null,
     "file": "15-town-from-water.webp",
     "eye": [
-      52.21,
+      85.19,
       14.39,
-      6.37
+      -24.25
     ],
     "target": [
       33.0,
-      5.28,
+      5.8,
       -54.0
     ],
     "fieldOfViewDegrees": 52,
@@ -282,7 +282,7 @@
     ],
     "target": [
       228.0,
-      4.63,
+      4.43,
       -228.0
     ],
     "fieldOfViewDegrees": 54,
@@ -310,9 +310,9 @@
     "panel": null,
     "file": "18-sea-reach.webp",
     "eye": [
-      -92.26,
-      37.17,
-      -241.65
+      -84.78,
+      27.83,
+      -246.79
     ],
     "target": [
       -156.0,
@@ -327,13 +327,13 @@
     "panel": null,
     "file": "19-east-hamlet.webp",
     "eye": [
-      349.96,
-      17.94,
-      -185.95
+      322.28,
+      15.95,
+      -192.58
     ],
     "target": [
       363.0,
-      6.54,
+      6.74,
       -36.0
     ],
     "fieldOfViewDegrees": 54,
@@ -345,12 +345,12 @@
     "file": "20-spawn-grounding.webp",
     "eye": [
       36.0,
-      9.49,
+      7.4,
       -48.0
     ],
     "target": [
       54.0,
-      3.79,
+      4.2,
       -33.0
     ],
     "fieldOfViewDegrees": 58,
@@ -362,12 +362,12 @@
     "file": "21-boat-yard.webp",
     "eye": [
       19.94,
-      16.08,
+      16.12,
       70.25
     ],
     "target": [
       -129.0,
-      4.71,
+      4.75,
       39.0
     ],
     "fieldOfViewDegrees": 55,
@@ -379,12 +379,12 @@
     "file": "22-upper-paddy.webp",
     "eye": [
       30.0,
-      9.25,
+      9.65,
       -312.0
     ],
     "target": [
       48.0,
-      3.3,
+      3.35,
       -330.0
     ],
     "fieldOfViewDegrees": 52,
@@ -395,9 +395,9 @@
     "panel": null,
     "file": "23-water-level.webp",
     "eye": [
-      60.4,
-      13.6,
-      -73.11
+      57.5,
+      12.94,
+      -67.9
     ],
     "target": [
       114.0,
@@ -430,7 +430,7 @@
     "file": "41-golden-arch.webp",
     "eye": [
       72.0,
-      15.11,
+      13.87,
       -78.0
     ],
     "target": [
@@ -446,13 +446,13 @@
     "panel": null,
     "file": "42-golden-town.webp",
     "eye": [
-      52.21,
+      85.19,
       14.39,
-      6.37
+      -24.25
     ],
     "target": [
       33.0,
-      5.28,
+      5.8,
       -54.0
     ],
     "fieldOfViewDegrees": 52,

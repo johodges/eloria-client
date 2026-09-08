@@ -293,3 +293,23 @@ byte-identical: heights and classes did not move, only the way they are drawn.
 The client has to turn `vertex_color_use_as_albedo` on for these materials.
 Godot's glTF importer brings the colours in and sets the alpha mode but leaves
 that flag off, and without it the coverage never reaches the shader.
+
+## September 2026 — provisioned gate and mountain circulation
+
+The previous camps were crates on broad empty pads, and the mine road crossed
+the gorge without a cart crossing. The gate now gathers services around
+weather shelters; the mine has a worked bench and an eastern haul road.
+Seventeen road/approach polylines, eight shelters, a visible Cascade Cave
+entrance and the temple switchbacks give the journey deliberate stops.
+
+The rope bridges now use fixed bank surveys and the shared mountaincraft
+recipe. Continuous profiled plank skins remove overlapping plank boxes.
+Temple pinnacles reinforce the destination silhouette, its brass inlay is
+separated from the floor, and its return spawn stands on the podium. Secret
+sites, NPC posts and wildlife/resource geography follow the intended routes.
+
+The full server suite passes 1,767 tests. Client failures remain the same
+86 as the rebased baseline, with 169 passing tests. All actual content is
+reachable from arrival, counts are retained, runtime grounding has no misses,
+and the four exterior package files reproduce byte-for-byte. Geometry cost,
+remaining overlap warnings and reviewed captures are recorded in layout-review.md.

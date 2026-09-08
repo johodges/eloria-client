@@ -1,3 +1,17 @@
+# Current circulation package - 8 September 2026
+
+The current full GLB is 29,783,880 bytes with 2,307,227 instanced triangles;
+the reduced GLB is 17,783,748 bytes with 1,431,989 instanced triangles.
+The package retains 49 materials and an estimated 262,275,072 bytes of
+uncompressed texture storage. Full-build warnings identify four unused Grey
+Moors texture pins; the reduced build also leaves woven_cloth unused.
+
+These are package totals, not measured frame times. The 27 reviewed Godot
+captures use GL Compatibility and the package's own environment. See
+layout-review.md and performance.json for the current evidence.
+
+The older notes below describe the first package and are retained as history.
+
 # Manymouth Delta performance summary
 
 Machine-written measurements live in `performance.json`; this file is the human
@@ -25,15 +39,15 @@ texture.
 The repository's stated desktop guideline is 1.5 M visible triangles and 512 MiB
 of texture, from `four-gates-city/performance-summary.md`.
 
-| Region | Extent | Instanced tris | Triangles / m² |
+| Region | Extent | Instanced tris | Triangles / mÂ² |
 | --- | --- | --- | --- |
-| Four Gates | — | 4,538 | — |
+| Four Gates | â€” | 4,538 | â€” |
 | Mirrorhold | 576 m | 1,246,632 | 3.8 |
 | **Manymouth Delta** | **576 m** | **2,458,407** | **7.4** |
 | Amberwood | 576 m | 3,123,378 | 9.4 |
 
 Manymouth sits between the two existing 576 m regions, closer to Amberwood than
-to Mirrorhold, at **1.6× the triangle guideline** and well inside the texture
+to Mirrorhold, at **1.6Ã— the triangle guideline** and well inside the texture
 one. That is the expected place for it: it is a vegetated region like Amberwood
 rather than a stone one like Mirrorhold, but two thirds of its area is water and
 carries no vegetation at all, so the tree count is spread over a third of the
@@ -75,7 +89,7 @@ Raising the low-tier share by ten points would take roughly 6% off the total.
 
 Nothing streams and nothing switches LOD at runtime: `world-lod2.glb` exists but
 the Godot loader does not select between the two packages. The figures above are
-whole-package totals, not what is on screen — the client draws the entire region
+whole-package totals, not what is on screen â€” the client draws the entire region
 at once. In the in-engine check the loader batched the scene into **95 static
 batches over 3,673 instances**, which is the number that actually matters for
 draw calls and is the one to watch if this region is ever profiled properly.
@@ -91,4 +105,4 @@ The reduced build warns that `timber_dark`, `timber_warm`, `undergrowth` and
 package; they fall out only when the reduced build drops ground clutter and
 props. They therefore cost the LOD2 package about 1.4 MB of embedded texture for
 nothing. Fixing it means a second, narrower material pin for the reduced build.
-The full package's pin is exact — zero unreferenced materials.
+The full package's pin is exact â€” zero unreferenced materials.

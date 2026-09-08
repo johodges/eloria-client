@@ -83,6 +83,13 @@ var _selection_ring_draped_at := Vector3(NAN, NAN, NAN)
 var _metres_per_tile := 1.0
 var resolver: AnimationResolver
 var animation_player: AnimationPlayer
+var combat_presentation: CombatPresentation3D
+var _in_combat := false
+var _ranged_aiming := false
+var _last_command_sequence := -1
+var _swing_index := 0
+var _trail_weapon_mesh: MeshInstance3D
+var _trail_weapon_tip := Vector3.ZERO
 var current_action: StringName = &"idle"
 var _snap_pending := true
 var _target_yaw := 0.0
@@ -134,18 +141,6 @@ const CAPE_PART := 2
 const BODY_PART := 5
 ## How many cut capes are kept before the cache is dropped and rebuilt.
 const DRAPE_CACHE_LIMIT := 48
-## The wardrobe meshes are shells fitted straight onto the skin they cover, so
-## the body surface underneath pokes through them wherever the skeleton bends -
-## which is what skin showing through the shirt is. Pushing each garment out a
-## few millimetres along its own normals puts the skin behind it for good
-## without changing the silhouette. Trims and seams grow slightly more so they
-## stay on top of the garment they edge.
-## Four millimetres closed the flat panels but not the shoulders, where the
-## deltoid swings furthest from the shell it was fitted to, nor the waist,
-## where the shirt hem and the pants waistband meet over the same skin. The
-## shirt is given the most room, the waistband enough more than the shirt hem
-## to read as a separate garment over it, and the boots enough to swallow the
-## foot they are pulled over.
 ## The shade an undershirt takes while torso armour is worn over it.
 ##
 ## A generated cuirass is an open design of straps and plates, so the shirt
@@ -166,6 +161,9 @@ const COVERED_SHIRT := Color8(56, 47, 40)
 ## character's legs.
 const SHIRT_SURFACES := ["wardrobe_shirt", "wardrobe_shirt_trim"]
 
+## Clearance for wardrobe assets that still need a material offset. Fitted
+## shirts bake a continuous offset across UV/facet seams; growing those again
+## would pull adjacent faces apart. Their model lists them in wardrobeBakedGrow.
 const WARDROBE_GROW := {
 	"wardrobe_shirt": 0.011, "wardrobe_shirt_trim": 0.013,
 	"wardrobe_pants": 0.009, "wardrobe_pants_seam": 0.016,
@@ -422,6 +420,10 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 					animation_player.animation_finished.connect(_on_animation_finished)
 				errors.append_array(resolver.validate(imported.clips))
 				play_action(&"idle")
+				if resolver.action_to_clip.has("cast_channel"):
+					combat_presentation = CombatPresentation3D.new()
+					add_child(combat_presentation)
+					combat_presentation.configure(self)
 	apply_equipment_visuals(dto.get("equipment_visuals", {}) as Dictionary,
 		dto.get("equipment_fallback_parts", []) as Array)
 	return errors
@@ -473,7 +475,9 @@ func apply_appearance_variants(appearance: Dictionary) -> void:
 			_set_mesh_color(mesh_node, AppearanceVariants.wardrobe_color(
 				culture, AppearanceVariants.PART_HEAD, int(appearance.get("head", 0))))
 		if WARDROBE_GROW.has(mesh_name):
-			_grow_mesh(mesh_node, float(WARDROBE_GROW[mesh_name]))
+			var baked: Array = _model_config.get("wardrobeBakedGrow", []) as Array
+			if not baked.has(mesh_name):
+				_grow_mesh(mesh_node, float(WARDROBE_GROW[mesh_name]))
 	_add_hair_variant(AppearanceVariants.hair_style(
 		int(appearance.get("hair", 0))), hair_tint)
 	_refresh_body_surface_visibility()
@@ -570,12 +574,39 @@ func _grow_mesh(mesh_node: MeshInstance3D, amount: float) -> void:
 func _add_hair_variant(style: int, color: Color) -> void:
 	for old_attachment: Node in _native_skeleton.get_children():
 		if old_attachment.name.begins_with("AppearanceHair_"):
+			_native_skeleton.remove_child(old_attachment)
 			old_attachment.queue_free()
+	# Zero is bald for every colour cycle. Also hide any legacy sculpted hair;
+	# appearance metadata keeps helmet removal from revealing it again.
+	for node_value: Node in find_children("hair", "MeshInstance3D", true, false):
+		var mesh := node_value as MeshInstance3D
+		mesh.set_meta("uncovered_head_visible", false)
+		mesh.hide()
+	if style == 0:
+		return
 	var styles_value: Variant = _model_config.get("hairStyles", [])
 	if styles_value is not Array or (styles_value as Array).is_empty():
 		return
 	var styles: Array = styles_value as Array
 	var path: String = str(styles[posmod(style, styles.size())])
+	if bool(_model_config.get("hairSkinned", false)):
+		var holder := Node3D.new()
+		holder.name = "AppearanceHair_%d" % style
+		_native_skeleton.add_child(holder)
+		for piece: Dictionary in _equipment_pieces(path):
+			var skin := _rebound_skin(piece.get("bones", PackedStringArray()) as PackedStringArray,
+				piece.get("binds", [] as Array[Transform3D]) as Array[Transform3D], Transform3D.IDENTITY)
+			if skin == null:
+				push_warning("Fitted hairstyle has an incompatible skeleton: " + path)
+				continue
+			var mesh := MeshInstance3D.new()
+			mesh.name = str(piece.get("name", "NativeHair"))
+			mesh.mesh = piece.get("mesh") as Mesh
+			mesh.skin = skin
+			holder.add_child(mesh)
+			mesh.skeleton = NodePath("../..")
+			_tint_mesh(mesh, color)
+		return
 	var native_hair: Node3D = _equipment_instance(path)
 	if native_hair == null:
 		push_warning("Native hairstyle failed to load: " + path)
@@ -584,10 +615,6 @@ func _add_hair_variant(style: int, color: Color) -> void:
 	if attachment == null:
 		native_hair.queue_free()
 		return
-	# The chosen style replaces the sculpted hair, not sits on top of it:
-	# the split body carries that hair as its own surface, so it hides.
-	for node_value: Node in find_children("hair", "MeshInstance3D", true, false):
-		(node_value as MeshInstance3D).visible = false
 	attachment.name = "AppearanceHair_%d" % style
 	native_hair.name = "NativeHair"
 	# Skull proportions are baked into each body. Fit shared hairstyles in
@@ -1094,6 +1121,10 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 	var previous_target: Vector3 = server_target
 	server_target = next_target
 	var actor_command: int = int(dto.get("command", -1))
+	_in_combat = bool(dto.get("in_combat", _in_combat))
+	var command_sequence := int(dto.get("command_sequence", -1))
+	var fresh_command := command_sequence != _last_command_sequence
+	_last_command_sequence = command_sequence
 	# Which command the facing comes from, and which it does not. Everything
 	# arriving in one socket read is reduced to a single state and rendered
 	# once, so the last command of a frame is rarely the one that named a
@@ -1198,9 +1229,26 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 		_travel_yaw_active = true
 	_wake()
 	if dto.has("command") and resolver != null:
-		play_action(_movement_aware_action(
-			_paced_travel_action(resolver.action_for_command(actor_command)),
-			target_changed))
+		var action := _movement_aware_action(
+			_paced_travel_action(resolver.action_for_command(actor_command, _in_combat)), target_changed)
+		# Health/equipment/aim updates restate the last command. They must not
+		# interrupt a cast or restart a swing. A new command or movement may.
+		var transient := current_action in [&"cast", &"cast_channel_enter", &"cast_channel",
+			&"cast_aggressive", &"cast_defensive", &"heal", &"cast_exit", &"ranged_draw",
+			&"ranged_hold", &"ranged_attack", &"attack_primary", &"attack_secondary", &"pain"]
+		var stale_strike := command_sequence >= 0 and not fresh_command and action in [&"attack_primary", &"pain"]
+		if not stale_strike and (fresh_command or target_changed or not transient or action == &"death"):
+			if action == &"attack_primary" and fresh_command and resolver.action_to_clip.has("attack_secondary"):
+				action = &"attack_primary" if _swing_index % 2 == 0 else &"attack_secondary"
+				_swing_index += 1
+			play_action(action, fresh_command and action in [&"attack_primary", &"attack_secondary", &"pain"])
+	var aiming: bool = int(dto.get("aiming_at", -1)) >= 0 or dto.get("aiming_at_tile", Vector2i(-1, -1)) != Vector2i(-1, -1)
+	if aiming != _ranged_aiming and current_action != &"death":
+		_ranged_aiming = aiming
+		if aiming:
+			play_action(&"ranged_draw")
+		elif current_action in [&"ranged_draw", &"ranged_hold"]:
+			play_action(&"combat_idle" if _in_combat else &"idle")
 	apply_equipment_visuals(dto.get("equipment_visuals", {}) as Dictionary,
 		dto.get("equipment_fallback_parts", []) as Array)
 
@@ -1273,6 +1321,12 @@ func apply_equipment_visuals(visuals: Dictionary, fallback_parts: Array = []) ->
 		_create_equipment_part(CAPE_PART, cape_visual,
 			fallback_parts.has(CAPE_PART))
 	_refresh_wardrobe_cover()
+	if combat_presentation != null:
+		var weapon := _equipment_model_config(0, int(_equipment_visuals.get(0, 0)))
+		var bow_path := str(weapon.get("rangedAnimationScene", ""))
+		if str(weapon.get("attach", "")) == "ranged_bow":
+			bow_path = str(weapon.get("scene", ""))
+		combat_presentation.set_equipped_bow(bow_path)
 	# Equipment adds and removes mesh instances, so the silhouette's clone set
 	# has to be built again against what the actor is now made of.
 	if _silhouette != null and _silhouette.is_enabled():
@@ -1319,6 +1373,8 @@ func equipment_diagnostics() -> Dictionary:
 		"socket": socket_count, "rigFitScale": rig_fit_scale()}
 
 func _clear_equipment_part(part: int) -> void:
+	if part == 0:
+		_trail_weapon_mesh = null
 	var nodes_value: Variant = _equipment_nodes.get(part, [])
 	if nodes_value is Array:
 		for node_value: Variant in nodes_value:
@@ -1354,6 +1410,9 @@ func _create_equipment_part(part: int, visual_id: int, allow_fallback: bool) -> 
 	if visual_id == 0 and bool(part_config.get("bareWhenEmpty", false)):
 		return
 	var model_config: Dictionary = _equipment_model_config(part, visual_id)
+	if str(model_config.get("attach", "")) == "ranged_bow" and combat_presentation != null:
+		# The presentation follows both hands; ordinary equipment follows one socket.
+		return
 	var created: Array[Node] = []
 	if not model_config.is_empty():
 		var scene_path: String = str(model_config.get("scene", ""))
@@ -2140,17 +2199,28 @@ func _equipment_fallback_mesh(shape: String) -> MeshInstance3D:
 	instance.material_override = material
 	return instance
 
-func play_action(action: StringName) -> void:
+func play_action(action: StringName, restart := false) -> void:
 	if animation_player == null or resolver == null:
+		return
+	if not resolver.action_to_clip.has(String(action)):
+		return
+	if current_action == &"death" and action != &"death":
 		return
 	var clip := resolver.clip_for_action(action)
 	if clip.is_empty() or not animation_player.has_animation(clip):
 		return
 	animation_player.speed_scale = _playback_speed_for(action)
-	if current_action == action and animation_player.is_playing():
+	if current_action == action and animation_player.is_playing() and not restart:
 		return
 	current_action = action
-	animation_player.play(clip, action_blend_seconds)
+	var blend := action_blend_seconds
+	if action in [&"ranged_attack", &"pain", &"death"]:
+		blend = 0.045
+	elif action in [&"attack_primary", &"attack_secondary", &"cast_aggressive"]:
+		blend = 0.09
+	if restart:
+		animation_player.stop(true)
+	animation_player.play(clip, blend)
 	# Retarget the facing correction to this action and ease to it over the same
 	# crossfade the clips blend across, so the body's turn tracks the pose change
 	# rather than snapping ahead of or behind it.
@@ -2190,6 +2260,60 @@ func _on_animation_finished(_animation_name: StringName) -> void:
 		play_action(&"seated_idle")
 	elif current_action == &"stand":
 		play_action(&"idle")
+	elif current_action == &"ranged_draw":
+		play_action(&"ranged_hold")
+	elif current_action == &"cast_channel_enter":
+		play_action(&"cast_channel")
+	elif current_action in [&"cast", &"cast_aggressive", &"cast_defensive", &"heal",
+		&"cast_exit", &"attack_primary", &"attack_secondary", &"defend", &"ranged_attack", &"pain"]:
+		play_action(&"combat_idle" if _in_combat else &"idle")
+
+func set_hand_props_visible(enabled: bool) -> void:
+	for part: int in [0, 1]:
+		for prop: Node in _equipment_nodes.get(part, []):
+			if is_instance_valid(prop) and prop is Node3D:
+				# Native bow variants are replaced by the string-driven bow in the left hand.
+				var weapon := _equipment_model_config(0, int(_equipment_visuals.get(0, 0)))
+				(prop as Node3D).visible = enabled and not (part == 0 and weapon.has("rangedAnimationScene"))
+
+func ranged_release_origin() -> Vector3:
+	if combat_presentation != null and combat_presentation.bow != null and combat_presentation.bow.visible:
+		return combat_presentation.bow.nock_position()
+	return global_position + Vector3.UP * 1.1
+
+func set_combat_effects_enabled(enabled: bool) -> void:
+	if combat_presentation != null:
+		combat_presentation.effects_enabled = enabled
+		combat_presentation.update_pose()
+
+func weapon_trail_tip() -> Variant:
+	if is_instance_valid(_trail_weapon_mesh):
+		return _trail_weapon_mesh.global_transform * _trail_weapon_tip
+	# Find the end of the longest visible weapon mesh once per equipment swap.
+	# This follows the actual blade instead of assuming a wrist-axis direction.
+	var longest := 0.0
+	for prop: Node in _equipment_nodes.get(0, []):
+		if not is_instance_valid(prop):
+			continue
+		for mesh_node: MeshInstance3D in prop.find_children("*", "MeshInstance3D", true, false):
+			if mesh_node.mesh == null:
+				continue
+			var bounds := mesh_node.mesh.get_aabb()
+			var axis := bounds.size.max_axis_index()
+			var length := bounds.size[axis] * mesh_node.global_basis.get_scale()[axis]
+			if length <= longest:
+				continue
+			var a := bounds.get_center()
+			var b := a
+			a[axis] = bounds.position[axis]
+			b[axis] = bounds.end[axis]
+			var wrist := (prop as Node3D).global_position
+			_trail_weapon_tip = a if (mesh_node.global_transform*a).distance_squared_to(wrist) > (mesh_node.global_transform*b).distance_squared_to(wrist) else b
+			_trail_weapon_mesh = mesh_node
+			longest = length
+	if is_instance_valid(_trail_weapon_mesh):
+		return _trail_weapon_mesh.global_transform * _trail_weapon_tip
+	return null
 
 ## Shows one 45 degree step immediately while the server's answer to
 ## TURN_LEFT/TURN_RIGHT is in flight. This is prediction, not authority: the

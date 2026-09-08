@@ -149,3 +149,29 @@ pairs that are both alpha-tested with vertex coverage.
 
 See `whitehorn_range/change-log.md` for the full account, including why the
 heightfield was not taken to one metre instead.
+
+## September 2026 — a working drowned city
+
+The arrival now has two supply shelters and grouped service posts, while the
+eastern market has facing stall rows and an open aisle. Kerbs no longer cut
+across those working courts. Southern roads converge on one Water Gate crossing
+instead of three overlapping bridges. Five surveyed stone spans meet the
+shore, and eight sloping jetties with three punts make the waterfront usable.
+
+Lily Court now leads along a 58 m walk to a pile-supported cistern sounding
+stage. The Crownwater ferry stands on its berth, and the Great Temple Focus
+secret stands on the Sun Vault forecourt. These replace inaccessible or
+misleading authored positions without adding a continent connection. Existing
+NPC identities and all 26 creature spawns remain; danger increases toward the
+northern terraces and rim.
+
+The shared civic kit gains an open-shaft sounding stage. The camera writer
+uses emitted walk triangles for deck views. This pass adds 1.41 MB and 26,681
+instanced triangles to the full GLB. All five core outputs reproduce exactly;
+thirty offline and thirty manifest-lit Godot views were refreshed and reviewed.
+Current proof, warnings and full-suite results are in layout-review.md.
+
+The final player-height review also turned the Water Gate across the causeway.
+Separate pylon footprints leave its opening clear; the original quarter-turn
+and whole-gate circular blocker obstructed the approach. Its camera now
+stands on the rendered deck instead of the channel bed.

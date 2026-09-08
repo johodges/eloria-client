@@ -45,6 +45,8 @@ from amberwood import terrain as TER
 import deltakit as DK
 import stiltkit as SK  # noqa: F401  (registers the delta tree species)
 import populate as POP
+import layout as LAY
+import glb_reader as GLB
 import region as REG
 import transitions as MARCH
 import secretdoors as SD
@@ -106,38 +108,26 @@ def register_materials(sets):
 
 
 # --------------------------------------------------------------------------
-def walk_surface_at(build: REG.RegionBuild, x: float, z: float) -> float:
-    """The height the client's grounding ray would return at (x, z).
+def walk_triangles(build):
+    if hasattr(build, "_walk_triangles"):
+        return build._walk_triangles
+    out=[]
+    for p in build.placements:
+        item=build.meshes[p.mesh]
+        parts=getattr(item,"walk_parts",[]) or ([item] if p.walk_surface else [])
+        c,s=math.cos(p.rotation_y or 0),math.sin(p.rotation_y or 0)
+        rotation=np.array([[c,0,s],[0,1,0],[-s,0,c]])
+        for part in parts:
+            world=part.positions@rotation.T*p.scale+np.asarray(p.position)
+            out.append(world[part.indices].reshape(-1,3,3))
+    build._walk_triangles=np.concatenate(out) if out else np.zeros((0,3,3))
+    return build._walk_triangles
 
-    Reproduces `Main._place_actor_on_surface` the same way `build_collision`
-    does: the highest walk-deck top whose footprint covers the point, falling
-    back to the terrain. Spawns, portals and interactives all have to agree with
-    this or `verify_runtime` reports a height mismatch - and it is not something
-    a build can guess, because in this region a point is very often covered by
-    two or three overlapping decks at different levels (a walkway, the quay it
-    joins, and the veranda of the house on the corner).
-    """
-    best = float(build.terrain.height_at(x, z))
-    for placement in build.placements:
-        item = build.meshes[placement.mesh]
-        walk_bounds = getattr(item, "walk_bounds", lambda: None)()
-        if walk_bounds is None:
-            if not placement.walk_surface:
-                continue
-            low, high = item.bounds()
-        else:
-            low, high = walk_bounds
-        px, py, pz = placement.position
-        angle = float(placement.rotation_y or 0.0)
-        cosine, sine = math.cos(angle), math.sin(angle)
-        local_x = cosine * (x - px) - sine * (z - pz)
-        local_z = sine * (x - px) + cosine * (z - pz)
-        x0, x1 = float(low[0]) * placement.scale, float(high[0]) * placement.scale
-        z0, z1 = float(low[2]) * placement.scale, float(high[2]) * placement.scale
-        if not (x0 <= local_x <= x1 and z0 <= local_z <= z1):
-            continue
-        best = max(best, py + float(high[1]) * placement.scale)
-    return best
+def walk_surface_at(build, x, z):
+    tri=walk_triangles(build)
+    mask=(tri[:,:,0].min(1)<=x)&(tri[:,:,0].max(1)>=x)&(tri[:,:,2].min(1)<=z)&(tri[:,:,2].max(1)>=z)
+    covered,top=GLB.rasterise(tri[mask],1,1,x-.0005,z+.0005,.001)
+    return max(float(build.terrain.height_at(x,z)),float(top[0,0]))
 
 
 # --------------------------------------------------------------------------
@@ -152,10 +142,10 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     MARCH.prepare(terrain, CROSSINGS)
     LORE.prepare(terrain, SITES, sea_level=getattr(REG, "SEA_LEVEL", 0.0), keep=(TER.DELTA_SILT, TER.DELTA_PADDY))
 
-    POP.build_water(build, lod=lod)
     # The walkway network resolves first and everything else reads its deck
     # levels out of the result. See the note at the top of populate.py.
-    network = POP.walkway_network(build, seed)
+    network = LAY.walkway_network(build, seed)
+    POP.build_water(build, lod=lod)
     POP.populate_arch(build, seed, network)
     POP.populate_cave(build, seed, network)
     POP.populate_temple(build, seed, network)
@@ -167,6 +157,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     POP.populate_vegetation(build, seed, network, lod=lod)
     if lod is None:
         POP.populate_props(build, seed, network)
+    LAY.finish(build, seed, network)
     POP.populate_metadata(build, seed, network)
 
     # The marches: the neighbours' country coming in along the roads out.
@@ -192,61 +183,10 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     return build
 
 
-def spawn_point(build: REG.RegionBuild, anchor: str,
-                reach: float = 52.0) -> tuple[float, float, float]:
-    """A point near `anchor` that is solid ground with nothing decked over it.
-
-    Spawning on a walkway is tempting and wrong. `walk_surface_at` tests a
-    deck's bounding rectangle, but `plank_floor` lays real planks with real gaps
-    between them and a run ends exactly on its endpoint, so a point the
-    rectangle claims is often a point the client's ray falls straight through -
-    and the spawn is then declared on a deck the client cannot find. The
-    rectangle test is only trustworthy in the negative direction: if no
-    rectangle covers a point, no deck triangle does either.
-
-    So this searches outward for a point that is (a) covered by no deck at all,
-    (b) dry ground with freeboard, and (c) locally flat, and grounds the spawn
-    on the terrain there. Deterministic: a fixed spiral, first good hit wins.
-    """
-    t = build.terrain
-    ax, az = REG.ANCHORS[anchor]
-    gradient_z, gradient_x = np.gradient(t.height, t.cell)
-    slope_grid = np.hypot(gradient_x, gradient_z)
-
-    def slope_at(x, z):
-        cx = int(np.clip((x - t.x0) / t.cell, 0, t.cols - 1))
-        cz = int(np.clip((z - t.z0) / t.cell, 0, t.rows - 1))
-        return float(slope_grid[cz, cx])
-
-    best = None
-    for ring in range(0, 26):
-        radius = 2.0 + ring * 2.0
-        if radius > reach:
-            break
-        for step in range(16):
-            angle = math.pi * 2.0 * step / 16.0 + ring * 0.19
-            x = ax + math.cos(angle) * radius
-            z = az + math.sin(angle) * radius
-            ground = float(t.height_at(x, z))
-            if ground < REG.SEA_LEVEL + 0.55:
-                continue
-            if slope_at(x, z) > 0.45:
-                continue
-            if walk_surface_at(build, x, z) > ground + 1e-6:
-                continue          # something is decked over it
-            neighbours = [float(t.height_at(x + dx, z + dz))
-                          for dx, dz in ((1.2, 0), (-1.2, 0), (0, 1.2),
-                                         (0, -1.2), (0.85, 0.85), (-0.85, 0.85),
-                                         (0.85, -0.85), (-0.85, -0.85))]
-            spread = max(neighbours) - min(neighbours)
-            if best is None or spread < best[0]:
-                best = (spread, x, ground, z)
-            if spread < 0.32:
-                return x, ground, z
-    if best is None:
-        ground = float(t.height_at(ax, az))
-        return ax, ground, az
-    return best[1], best[2], best[3]
+def spawn_point(build, anchor, reach=52.0):
+    """The authored, continuous landing at this destination."""
+    x,_,z=LAY.standing(build,anchor)
+    return x,walk_surface_at(build,x,z),z
 
 
 def _add_spawns_and_portals(build: REG.RegionBuild, network: dict) -> None:
@@ -268,8 +208,7 @@ def _add_spawns_and_portals(build: REG.RegionBuild, network: dict) -> None:
             "rotationDegrees": round(math.degrees(facing), 1),
             "surface": TER.SURFACE_NAMES[int(t.surface_at(x, z))],
             "grounded": True,
-            "note": ("grounded on the bar itself, clear of every walkway deck; "
-                     "the network is a few metres away"),
+            "note": ("grounded on the surveyed landing at the town and route junctions"),
         })
 
     # --- the four doors into the insides map ---------------------------
@@ -297,7 +236,7 @@ def _add_spawns_and_portals(build: REG.RegionBuild, network: dict) -> None:
             # through it lands under it. Both ends of that transition are
             # geometry that already existed - this only admits that the arch on
             # the surface and the gate below are the same object.
-            ("gate-descent", "The Manymouth Arch", "arch_stair",
+            ("gate-descent", "The Manymouth Arch", "great_arch",
              math.radians(-140.0)),
              ("paddy-sump-mouth", "The Paddy Watch Sump", "paddy_tower",
              math.radians(90.0)),
@@ -338,7 +277,7 @@ def _add_spawns_and_portals(build: REG.RegionBuild, network: dict) -> None:
              "westhaven"),
             ("west-landing", "Drain Track up to the Grey Moors", "sea_landing",
              "grey_moors")):
-        x, z = REG.ANCHORS[anchor]
+        x, z = network["points"][anchor]
         y = walk_surface_at(build, x, z)
         build.portals.append({
             "id": portal_id, "name": name, "type": "map-transition",
@@ -565,45 +504,19 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
     # on the highest walk surface below the ray, so a two-level column cannot be
     # expressed on a flat server grid. Bridges, decks and platforms therefore
     # take the cell, and the ground under them is not separately walkable.
-    elevated = 0
-    for placement in build.placements:
-        item = build.meshes[placement.mesh]
-        walk_bounds = getattr(item, "walk_bounds", lambda: None)()
-        if walk_bounds is None and not placement.walk_surface:
-            continue
-        if walk_bounds is None:
-            low, high = item.bounds()
-        else:
-            low, high = walk_bounds
-        px, py, pz = placement.position
-        # The deck's real extent, not a symmetric half-extent about its origin.
-        # A quay apron sits entirely to one side of its placement point, so
-        # mirroring it claimed walkable ground on the water side where there is
-        # no deck at all - the ray found the lagoon floor 13 m below.
-        x0, x1 = float(low[0]) * placement.scale, float(high[0]) * placement.scale
-        z0, z1 = float(low[2]) * placement.scale, float(high[2]) * placement.scale
-        inset_x = (x1 - x0) * 0.03
-        inset_z = (z1 - z0) * 0.03
-        deck_y = py + float(high[1]) * placement.scale
-        # An oriented rectangle, not a disc. Amberwood's decks were roughly
-        # square, so a circle inscribed in the bounds covered them; Crownwater's
-        # causeways are 48 m x 5.4 m, and the inscribed circle covers 2.3 m of
-        # a 48 m deck. Everything outside it kept the lagoon floor's height and
-        # showed up as collision-versus-surface disagreement along every span.
-        angle = float(placement.rotation_y or 0.0)
-        c, sn = math.cos(angle), math.sin(angle)
-        local_x = c * (gx - px) - sn * (gz - pz)
-        local_z = sn * (gx - px) + c * (gz - pz)
-        footprint = ((local_x >= x0 + inset_x) & (local_x <= x1 - inset_x)
-                     & (local_z >= z0 + inset_z) & (local_z <= z1 - inset_z))
-        if not footprint.any():
-            continue
-        if deck_y > ground.max() + 200.0:
-            continue
-        elevated += 1
-        decks |= footprint
-        surface = np.where(footprint, deck_y, surface)
-        walkable = np.where(footprint, True, walkable)
+    decks,top=GLB.rasterise(walk_triangles(build),width,height,
+                           REG.PLAY_MIN_X,REG.SERVER_ORIGIN[1],COLLISION_CELL)
+    surface=np.where(decks,np.maximum(ground,top),ground)
+    walkable |= decks
+    elevated=sum(bool(getattr(build.meshes[p.mesh],"walk_parts",[])) for p in build.placements)
+    # Closed houses remain solid, including where their verandas are Walk_.
+    for p in build.placements:
+        if p.kind!="building" or not p.collides:continue
+        px,_,pz=p.position;c,sn=math.cos(p.rotation_y),math.sin(p.rotation_y)
+        lx=c*(gx-px)-sn*(gz-pz);lz=sn*(gx-px)+c*(gz-pz)
+        shut=(abs(lx)<2.45)&(abs(lz)<2.15)
+        walkable &= ~shut
+        decks &= ~shut
 
     # Steepness has to be part of walkability, not of the height byte. That
     # byte holds 63 steps, and a region with 253 m of relief cannot be encoded
@@ -806,27 +719,14 @@ def write_camera_views(build: REG.RegionBuild, path: Path) -> dict:
             # sometimes an island shelf at -1.3, and the same declared height
             # therefore lands 1.7 m above the deck in one place and 7 m above it
             # in another. Two attempts at panel 4 failed exactly that way.
-            deck = None
-            for x0, x1, z0, z1, y0, y1 in decks:
-                if x0 <= ex <= x1 and z0 <= ez <= z1:
-                    deck = y1 if deck is None else max(deck, y1)
-            if deck is None:
-                raise SystemExit(
-                    f"view {name!r} is mode 'deck' but no walk deck covers "
-                    f"({ex:.1f}, {ez:.1f})")
-            ey = deck + eye_h
-            # The target is snapped to the deck too, so a level look along the
-            # span stays level. Measured against the ground it drifts: the
-            # terrain under the far end of a causeway is not the terrain under
-            # the near end, and the aim tilts by the difference.
-            target_deck = None
-            for x0, x1, z0, z1, y0, y1 in decks:
-                if x0 <= tx <= x1 and z0 <= tz <= z1:
-                    target_deck = y1 if target_deck is None else max(target_deck, y1)
-            ty = (target_deck if target_deck is not None else deck) + target_h
+            ey=walk_surface_at(build,ex,ez)+eye_h
+            ty=walk_surface_at(build,tx,tz)+target_h
         elif mode != "submerged":
             ey = max(ey, REG.SEA_LEVEL + 0.6)
             ey = clear_eye(ex, ey, ez)
+        fixed=getattr(VIEWTABLE,"WORLD_VIEWS",{}).get(name)
+        if fixed:
+            (ex,ey,ez),(tx,ty,tz)=fixed
         entries.append({
             "id": name,
             "panel": panel if isinstance(panel, int) else None,
@@ -924,6 +824,8 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             },
         },
         "navigation": {
+            "crossings": [{"id":a+"--"+b,"endpoints":LAY.RC.crossing_endpoints(stations.tolist())}
+                      for a,b,stations,_ in network["surveys"]],
             "surfaceNodePrefixes": surface_prefixes,
             "walkableAreas": ["bars", "sandbars", "walkways", "quays",
                               "landings", "stairs", "temple-stair",
@@ -963,18 +865,10 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
         # This region has no roads in the Amberwood sense at all. Its routes
         # are plank walkways on piles over open water, so a waypoint's height
         # comes from the deck, never from the channel floor it crosses.
-        "roads": [{"id": f"{a}--{b}", "type": "walkway",
-                   "surface": ("bamboo-causeway"
-                               if (a, b) in POP.BAMBOO_ROUTES
-                               or (b, a) in POP.BAMBOO_ROUTES else "plank"),
-                   "waypoints": [
-                       [round(float(REG.ANCHORS[a][0]), 1),
-                        round(network["levels"].get(a, 0.0), 2),
-                        round(float(REG.ANCHORS[a][1]), 1)],
-                       [round(float(REG.ANCHORS[b][0]), 1),
-                        round(network["levels"].get(b, 0.0), 2),
-                        round(float(REG.ANCHORS[b][1]), 1)]]}
-                  for a, b in POP.ROUTES],
+        "contentLayout": LAY.CONTENT_LAYOUT,
+        "roads": [{"id":a+"--"+b,"type":"walkway","surface":"plank",
+                   "waypoints":np.round(stations,3).tolist()}
+                  for a,b,stations,_ in network["surveys"]],
         "water": {
             "seaLevel": REG.SEA_LEVEL,
             "serverCells": REG.SERVER_CELLS,

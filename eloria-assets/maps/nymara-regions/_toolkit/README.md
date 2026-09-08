@@ -238,3 +238,51 @@ ground, preserving surface classes for the region's later painting pass.
 Build water from that frozen bed before roads or bridge rebates can alter it.
 Keep the water surface above the channel floor. Set Terrain.backdrop's
 open_side to the actual sea side; the default west belongs to Amberwood.
+
+## Cistern work floors and precinct secrets
+
+amberwood.civiccraft.sounding_stage supplies a pile-supported work floor with
+an open circular shaft, coping and sounding windlass. The east edge accepts a
+flush boardwalk. The floor is one annular walking skin; the coping is scenery
+and needs its own solid footprint. Use region materials, without reallocating
+surface classes, and keep the deck above the surveyed water bed.
+
+Secret.prefer_near is opt-in and defaults to False. It tries nearby ground,
+including paving reserved against trees, before extending the search farther
+away. The actual colliding structure footprints still constrain every attempt.
+Use it for a deliberately selected forecourt; it does not override water,
+terrain suitability or structure clearance. Default secret placement is unchanged.
+
+
+## Joined timber waterfronts
+
+amberwood.waterfront provides deck_panel, junction, piled_route and lateen_rig.
+deck_panel partitions one slab into contiguous plank tops. piled_route uses
+surveyed 3D stations, mitred bends and optional end sections cut to an existing
+quay edge. junction fills between the entrance chords with one walking skin.
+A route and a landing share an edge, never an overlapping patch of deck.
+Piles descend to a supplied bed sampler; the rails stand outside the floor.
+
+A rectangular landing port must end on one side of its rectangle. Joining two
+points on different sides cuts across the corner and overlaps the quay. Clamp
+the entrance centre along one face and let the approach meet that full edge.
+Recess enough terrain samples beneath a deck to account for the two-metre
+terrain triangles as well as the narrower half-metre walk grid.
+
+Use the actual Walk_ triangles for sloping routes and point grounding.
+A bounding box's maximum Y is not a height sample. Keep closed rooms out of
+the walking bucket even when their surrounding veranda is walkable.
+
+## Mountain routes
+
+amberwood.mountaincraft supplies suspension_bridge, temple_pinnacle and
+ore_sledge using caller-supplied material names. The suspension deck is a
+contiguous profiled walking skin; plank edges meet without overlapping boxes.
+Only its deck enters add_walk. The lantern coping and spire surfaces are
+separated vertically, and the ore sledge is structural scenery.
+
+Freeze bridge bank surveys before grading their approaches, and store them
+as region data. Searching the nearest road pixels after grading another yard
+can pick both landings on one bank. Declare the complete surveyed endpoints
+under navigation.crossings, keep the bed below the sagging deck, and check
+player-height views as well as the server crossing tests.

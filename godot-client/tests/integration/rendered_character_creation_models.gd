@@ -44,13 +44,13 @@ func _run() -> void:
 	var preview: SubViewport = main.get_node(
 		"CreationPanel/Columns/CharacterPreview/Viewport") as SubViewport
 	var spin_names: Array[String] = ["CreateSkin", "CreateHair", "CreateEyes",
-		"CreateHead"]
-	# The wardrobe picker is deprecated: creation must not offer a starter
-	# shirt, pants or boots over a body that wears its clothing in its texture.
-	for gone: String in ["CreateShirt", "CreatePants", "CreateBoots"]:
+		"CreateHead", "CreateShirt", "CreatePants", "CreateBoots"]
+	# The shared bodies expose native wardrobe dye surfaces. Exercise their
+	# existing controls alongside the hair choices, including the bald default.
+	for garment: String in ["CreateShirt", "CreatePants", "CreateBoots"]:
 		_expect(main.get_node_or_null(
-			"CreationPanel/Columns/Form/AppearanceGrid/" + gone) == null,
-			"creation no longer offers " + gone)
+			"CreationPanel/Columns/Form/AppearanceGrid/" + garment) is SpinBox,
+			"creation offers native wardrobe dye " + garment)
 	for spin_name: String in spin_names:
 		(main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + spin_name) as SpinBox).value = 0
 
@@ -75,7 +75,7 @@ func _run() -> void:
 			await process_frame
 		await _capture_preview(preview, "appearance-variant-%d.png" % style)
 		_validate_actor(main.get("preview_actor") as ReplicatedActor3D,
-			"appearance variant %d" % style)
+			"appearance variant %d" % style, style)
 
 	if not _structure_only:
 		RenderingServer.force_draw(false)
@@ -121,7 +121,7 @@ func _capture_preview(viewport: SubViewport, file_name: String) -> void:
 	_expect(image.save_png(_artifact_directory.path_join(file_name)) == OK,
 		"saved " + file_name)
 
-func _validate_actor(actor: ReplicatedActor3D, label: String) -> void:
+func _validate_actor(actor: ReplicatedActor3D, label: String, hair_style := 0) -> void:
 	_expect(actor != null, label + " preview actor exists")
 	if actor == null:
 		return
@@ -162,7 +162,8 @@ func _validate_actor(actor: ReplicatedActor3D, label: String) -> void:
 	# is that a body rendered at all, not that it rendered in four pieces.
 	_expect(body_meshes >= 1, label + " renders a skinned body")
 	_expect(mesh_names.any(func(name: String) -> bool:
-		return name.begins_with("NativeHair_")), label + " uses native hairstyle mesh")
+		return name.begins_with("NativeHair_")) == (hair_style != 0),
+		label + " renders the chosen hair or bald style")
 	_expect(maximum_extent < 2.1,
 		label + " contains no oversized placeholder geometry")
 	_results.append({"label": label, "meshes": mesh_names,

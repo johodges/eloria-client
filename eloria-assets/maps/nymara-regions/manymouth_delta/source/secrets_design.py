@@ -32,7 +32,7 @@ SECRETS = [
                   ("The lineage", "The tenth stela is blank. The scribe says the tenth channel was never claimed; the hermit says it was claimed twice."),
                   ("Silt", "The delta's centre is open water. The walkways are the roads; step off one and you swim.")),
            note="Where the stelae court's scribes learn the order of the channels."),
-    Secret("delta-temple-spring", "The Green Temple Spring", "spring", "loose_stone", "green-temple", (-10.0, 8.0),
+    Secret("delta-temple-spring", "The Green Temple Spring", "spring", "loose_stone", (276.0, -287.0), prefer_near=True,
            note="A warm feed under the temple; the silt around it never sets."),
     Secret("delta-watch-butts", "The East Watch Butts", "range", "cellar_hatch", "east-watch", (-8.0, 8.0),
            creatures=(("swamp_heron", 3),),

@@ -256,7 +256,7 @@ Both read the package with `_toolkit/glb_reader.py` and are idempotent, and
 `godot-client/tests/test_walk_surfaces.py` holds every region to the first.
 
 
-## Grey Moors circulation pass — September 2026
+## Grey Moors circulation pass â€” September 2026
 
 The stable east-waygate id still links to Crownwater, but its visible ferry
 now lands at the actual south-west cove. The earlier eastern marker stood
@@ -269,7 +269,7 @@ stone crown stands on the mound, reached by a side ascent; its entrance
 faces the ceremonial approach. Twelve surveyed wet crossings supply the
 corrected authored collision fold, including the cove jetty.
 
-## Amethyst Barrens circulation pass — September 2026
+## Amethyst Barrens circulation pass â€” September 2026
 
 The four continent links keep their stable ids and destinations. The Mirrorhold
 trigger stands beside its watchtower instead of inside it. The Crownwater
@@ -281,3 +281,48 @@ and gullies. The arrival has a Glasswarden assay exchange and grouped services;
 the observatory stair reaches an open podium and a framed Resonant Vault door.
 The basin river is incised downstream before the roads are graded, and its
 western tributary now meets the main course. No graph edge is added or removed.
+
+## Ssarathi Ruins circulation pass â€” September 2026
+
+The four continent links retain their ids and destinations. The Crownwater boat
+uses the western southern jetty at world (8, 99), with its cargo station on the
+dry Water Gate quay. Five surveyed stone bridges, eight jetties and the cistern
+walk declare their complete spans for the server collision contract.
+
+Lily Court connects to the formerly drowned cistern shaft by a pile-supported
+walk and sounding stage. The arrival has grouped archive supply services and
+the eastern market has facing stall rows. The Great Temple Focus secret uses
+the reachable Sun Vault forecourt, with its original key and contents.
+Ssarathi's canonical archive rebuild is source/build_insides.py, followed by
+export_insides_collision.py and the documented exterior correction sequence.
+See ssarathi_ruins/layout-review.md for measured access and visual review.
+
+## Manymouth Delta circulation pass - September 2026
+
+The four exterior links retain their stable ids and destinations. Arrival now
+stands in the stilt-town service court, at server tile (210, 222). Thirty-one
+surveyed timber routes and shared landing levels connect the inhabited bars,
+with shore branches and an approach to the lore Stelae Court. Their endpoints
+are declared under navigation.crossings for the authored collision contract.
+
+The market has facing stall rows, an open aisle and aligned moorings. Houses
+face their connected porches, and the quay has a procedural lateen packet.
+The Green Temple faces its southwest approach. The Great Arch descent is on
+the ring's platform; the Green Temple Spring secret is clear of the temple.
+No continent graph edge changes. See manymouth_delta/layout-review.md for
+measured reachability, remaining visual warnings and reviewed captures.
+
+## Whitehorn Range circulation pass - September 2026
+
+The three continent links retain their stable ids and destinations. Arrival
+now belongs to the gate refuge at server (162, 105). The Ration House, repair
+shelter and grouped services provision the climb. Eight weather refuges mark
+the route; the mine haul road takes the eastern gorge head, while pilgrims
+skirt the cascades and climb the temple shelf in switchbacks.
+
+Two surveyed suspension bridges declare their actual banks under
+navigation.crossings. Their profiles no longer depend on searching nearby
+terrain after a road or yard cut. The western watch's Cascade Cave has a
+visible mouth and approach, and the temple return point uses the podium.
+No graph edge changes. See whitehorn_range/layout-review.md for measured
+access, retained content counts, repeat-build evidence and visual limitations.

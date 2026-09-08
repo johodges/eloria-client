@@ -43,6 +43,7 @@ import numpy as np
 from amberwood import architecture as A
 from amberwood import mesh as M
 from amberwood import props as P
+from amberwood import waterfront as WF
 from amberwood import stonework as SW
 from amberwood import trees as TR
 from amberwood.noise import Rng
@@ -162,8 +163,7 @@ def _deck_slab(half_x: float, half_z: float, y: float, seed: int,
     """Plank decking. Thin, because you see its edge from every boat."""
     if planks <= 0:
         planks = max(3, int(half_z * 2.4))
-    return A.plank_floor(half_x, half_z, y, thickness=0.11, planks=planks,
-                         material=TEAK, gap=0.025, seed=seed)
+    return WF.deck_panel(half_x, half_z, y, material=TEAK)
 
 
 def stilt_deck(half_x: float, half_z: float, drop: float = 3.2, seed: int = 0,
@@ -190,7 +190,7 @@ def stilt_deck(half_x: float, half_z: float, drop: float = 3.2, seed: int = 0,
     for i in range(count + 1):
         x = -half_x + (2.0 * half_x) * i / max(count, 1)
         joists.append(M.box((0.13, 0.19, half_z * 2.0),
-                            center=(x, -0.20, 0.0), uv_scale=1.1,
+                            center=(x, -0.27, 0.0), uv_scale=1.1,
                             material=TEAK))
     joists.append(M.box((half_x * 2.0, 0.16, 0.15), center=(0.0, -0.36, half_z),
                         uv_scale=1.1, material=TEAK))
@@ -373,7 +373,7 @@ def _hip_thatch(width: float, depth: float, rise: float,
     soffit = M.quad([(-hw, 0.0, hd), (hw, 0.0, hd),
                      (hw, 0.0, -hd), (-hw, 0.0, -hd)],
                     uv_scale=0.5, material=THATCH)
-    return M.merge([shell, cap, soffit], THATCH)
+    return M.merge([shell, cap, soffit.translate(0,-.10,0)], THATCH)
 
 
 def stilt_house(width: float = 4.6, depth: float = 4.0, drop: float = 3.4,
@@ -395,6 +395,18 @@ def stilt_house(width: float = 4.6, depth: float = 4.0, drop: float = 3.4,
     deck_half_z = depth * 0.5 + (0.30 if veranda else 0.18)
     platform = stilt_deck(deck_half_x, deck_half_z, drop, seed + 3,
                           rails="none", ladder=True, pile_spacing=2.4)
+    # Keep the closed room out of the navigation bucket. The four veranda
+    # strips and its inner floor partition the old rectangle without overlap.
+    platform.walk_parts=[]
+    inner_x,inner_z=width/2+.15,depth/2+.12
+    platform.add(WF.deck_panel(inner_x,inner_z,material=TEAK))
+    for sign in (-1,1):
+        hx=(deck_half_x-inner_x)/2
+        platform.add_walk(WF.deck_panel(hx,deck_half_z,material=TEAK)
+                          .translate(sign*(inner_x+hx),0,0))
+        hz=(deck_half_z-inner_z)/2
+        platform.add_walk(WF.deck_panel(inner_x,hz,material=TEAK)
+                          .translate(0,0,sign*(inner_z+hz)))
     out.add(platform)
 
     # walls: framed timber with woven bamboo infill
@@ -476,7 +488,7 @@ def pagoda_hall(seed: int = 0, base: float = 7.2, tiers: int = 3) -> MeshGroup:
 
     half = base * 0.5
     platform = stilt_deck(half + 1.3, half + 1.3, drop, seed + 2,
-                          rails="all", ladder=True, pile_spacing=2.2)
+                          rails="none", ladder=False, pile_spacing=2.2)
     out.add(platform)
 
     y = 0.0
@@ -489,12 +501,12 @@ def pagoda_hall(seed: int = 0, base: float = 7.2, tiers: int = 3) -> MeshGroup:
             for sz in (-step, 0.0, step):
                 if sx == 0.0 and sz == 0.0:
                     continue
-                posts.append(A.post(sx, y, sz, gallery_h, 0.17, TEAK))
+                posts.append(A.post(sx, sz, y, gallery_h, 0.17, TEAK))
         out.add(M.merge(posts, TEAK))
 
         # the gallery balustrade, carved
         rails = []
-        for sign, yaw in ((1.0, 0.0), (-1.0, math.pi)):
+        for sign, yaw in ((-1.0, math.pi),) if tier == 0 else ((1.0, 0.0), (-1.0, math.pi)):
             piece = A.railing(width * 0.98, 0.88, posts=7, material=CARVED,
                               carved=CARVED)
             piece.rotate_y(yaw)
@@ -519,7 +531,7 @@ def pagoda_hall(seed: int = 0, base: float = 7.2, tiers: int = 3) -> MeshGroup:
             floor = A.plank_floor(width * 0.44, width * 0.44, y + 0.10,
                                   thickness=0.13, planks=7, material=TEAK,
                                   gap=0.02, seed=seed + 51)
-            out.add_walk(floor)
+            out.add(floor)
             y += 0.24
         width *= 0.74
 
@@ -576,6 +588,9 @@ def market_hall(seed: int = 0, span: float = 9.0, length: float = 14.0,
     canopy = M.loft(sections, closed_rings=False, cap_ends=False,
                     uv_scale=0.42, material=CLOTH)
     out.add(canopy)
+    lining=canopy.copy().translate(0,-.045,0).flip_winding()
+    lining.normals *= -1
+    out.add(lining)
     return out
 
 
@@ -811,7 +826,7 @@ def awning_boat(seed: int = 0, length: float = 6.0) -> MeshGroup:
     posts = []
     for sx in (-length * 0.16, length * 0.16):
         for sz in (-length * 0.055, length * 0.055):
-            posts.append(A.post(sx, length * 0.085 * 0.3, sz, 1.55, 0.06, BAMBOO))
+            posts.append(A.post(sx, sz, length * 0.085 * 0.3, 1.55, 0.06, BAMBOO))
     out.add(M.merge(posts, BAMBOO))
     awning = M.box((length * 0.44, 0.07, length * 0.20),
                    center=(0.0, length * 0.085 * 0.3 + 1.58, 0.0),

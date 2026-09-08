@@ -46,6 +46,8 @@ import ssaratharch as A  # noqa: F401  (kit pieces reach the build via populate)
 import ssarathikit as SK
 import populate as POP
 import region as REG
+import layout as PLAN
+from amberwood import routecraft as RC
 import transitions as MARCH
 import secretdoors as SD
 import secrets_design as SEC
@@ -76,9 +78,10 @@ CROSSINGS = [
     MARCH.Crossing("west-causeway", "manymouth_delta", REG.ANCHORS["west_shrine"],
                    (REG.PLAY_MIN_X - 20.0, REG.ANCHORS["west_shrine"][1]),
                    radius=40.0, name="The Delta March"),
-    MARCH.Crossing("south-gate", "crownwater", REG.ANCHORS["south_shrine"],
-                   (REG.ANCHORS["south_shrine"][0], REG.PLAY_MAX_Z + 20.0),
-                   radius=30.0, ferry=True, name="The Water Gate"),
+    MARCH.Crossing("south-gate", "crownwater", PLAN.FERRY,
+                   (PLAN.FERRY[0],PLAN.FERRY[1]-40.0),
+                   radius=30.0,ferry=True,name="The Water Gate",
+                   station_position=PLAN.FERRY_STATION),
 ]
 MARCH_MATERIALS: dict = dict(getattr(REG, "SURFACE_MATERIALS", {}))
 SK.MATERIALS = SK.MATERIALS | MARCH.materials_for("ssarathi_ruins", CROSSINGS) | SD.materials(SEC)
@@ -104,6 +107,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     REG.apply_built_ground(terrain, seed)
     build = REG.RegionBuild(terrain=terrain)
     MARCH.prepare(terrain, CROSSINGS)
+    PLAN.prepare(terrain)
 
     POP.build_water(build, lod=lod)
     POP.populate_bridges(build, seed)
@@ -118,6 +122,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
         POP.populate_props(build, seed)
     POP.populate_interior_doors(build, seed)
     POP.populate_metadata(build, seed)
+    PLAN.dress(build,seed)
 
     # The marches: the neighbours' country coming in along the roads out.
     MARCH.paint(terrain, CROSSINGS, MARCH_MATERIALS, seed, sea_level=REG.SEA_LEVEL, keep=(REG.SILT, REG.JADE_PAVING, REG.MOSS_STONE))
@@ -126,6 +131,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     build.landmarks.extend(march.landmarks)
     build.notes.extend(march.notes)
 
+    PLAN.clear_routes(build)
     terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
     build.terrain_meshes = terrain.build_meshes(
         uv_scale=0.30, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
@@ -233,8 +239,8 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
              "manymouth_delta"),
             ("south-gate", "Water Gate: the Crownwater boat", "south_shrine",
              "crownwater")):
-        x, z = REG.ANCHORS[anchor]
-        y = float(t.height_at(x, z))
+        x,z = PLAN.FERRY if portal_id=="south-gate" else REG.ANCHORS[anchor]
+        y = 1.2 if portal_id=="south-gate" else float(t.height_at(x,z))
         build.portals.append({
             "id": portal_id, "name": name, "type": "map-transition",
             "position": [round(x, 2), round(y + 0.1, 2), round(z, 2)],
@@ -479,6 +485,7 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
     walkable = (ground > REG.WATER_LEVEL + 0.20) & (slope < 1.05)
     # solid structures block their footprint
     blockers = np.zeros_like(walkable)
+    explicit_blockers = np.zeros_like(walkable)
     for placement in build.placements:
         if not placement.collides:
             continue
@@ -488,9 +495,20 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
         footprint = float(max(abs(low[0]), abs(high[0]), abs(low[2]), abs(high[2]))) \
             * placement.scale
         factor = 0.16 if placement.kind in ("tree", "foliage") else 0.62
-        radius = min(max(footprint * factor, 0.40), 11.0)
-        px, _, pz = placement.position
-        blockers |= (np.hypot(gx - px, gz - pz) < radius)
+        extra=placement.extras or {}
+        radius=float(extra.get("solidRadius",min(max(footprint*factor,0.40),11.0)))
+        px,_,pz=placement.position
+        if "solidRects" in extra:
+            c,s=math.cos(placement.rotation_y),math.sin(placement.rotation_y)
+            lx=(c*(gx-px)-s*(gz-pz))/placement.scale
+            lz=(s*(gx-px)+c*(gz-pz))/placement.scale
+            mask=np.zeros_like(walkable)
+            for x0,z0,x1,z1 in extra["solidRects"]:
+                mask |= (lx>=x0)&(lx<=x1)&(lz>=z0)&(lz<=z1)
+        else:
+            mask=np.hypot(gx-px,gz-pz)<radius
+        blockers |= mask
+        if "solidRadius" in extra or "solidRects" in extra:explicit_blockers |= mask
     walkable &= ~blockers
 
     surface = ground.copy()
@@ -551,6 +569,7 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
     # walked on, so it keeps its footprint and its own edges do the stopping.
     steep_ground = too_steep & ~decks
     walkable &= ~steep_ground
+    walkable &= ~explicit_blockers
 
     # The map's own relief, at the finest step that fits the byte. Clipping to
     # 63 at 0.2 m held 12.4 m and flattened everything above it into one value.
@@ -659,8 +678,9 @@ def _add_interior_doors(build: REG.RegionBuild, payload: bytes,
             z = z - REG.COURTS["ritual_plaza"]["radius"] * 0.80
         elif anchor == "root_arch":
             x, z = x - 14.0, z + 12.0
-        x, z, moved = _nearest_walkable(payload, width, height, x, z)
-        y = float(t.height_at(x, z))
+        if door_id=="cistern-shaft":x,z=PLAN.CISTERN_DOOR
+        x,z,moved=_nearest_walkable(payload,width,height,x,z)
+        y=2.0 if door_id=="cistern-shaft" else float(t.height_at(x,z))
         if moved > 0.05:
             print(f"[door] {door_id} moved {moved:.1f} m onto walkable ground")
         elif moved < 0.0:
@@ -782,25 +802,12 @@ def write_camera_views(build: REG.RegionBuild, path: Path) -> dict:
                       placement.position[1] + float(low[1]) * placement.scale,
                       placement.position[1] + float(high[1]) * placement.scale))
 
-    # Walk-deck boxes, for cameras that stand on a causeway rather than on ground.
-    decks = []
-    for placement in build.placements:
-        item = build.meshes[placement.mesh]
-        bounds = getattr(item, "walk_bounds", lambda: None)()
-        if bounds is None:
-            continue
-        low, high = bounds
-        angle = float(placement.rotation_y or 0.0)
-        cosine, sine = math.cos(angle), math.sin(angle)
-        corners = []
-        for lx in (low[0], high[0]):
-            for lz in (low[2], high[2]):
-                corners.append((cosine * lx + sine * lz, -sine * lx + cosine * lz))
-        xs = [c[0] * placement.scale + placement.position[0] for c in corners]
-        zs = [c[1] * placement.scale + placement.position[2] for c in corners]
-        decks.append((min(xs), max(xs), min(zs), max(zs),
-                      placement.position[1] + float(low[1]) * placement.scale,
-                      placement.position[1] + float(high[1]) * placement.scale))
+    # Use emitted walk triangles, so a sloping jetty and an open shaft
+    # cannot be mistaken for the top of their enclosing bounding box.
+    import glb_reader as GLB
+    from verify_runtime import VerticalRayIndex
+    document,body=GLB.load(path.parent/"world.glb")
+    deck_index=VerticalRayIndex(GLB.triangles(document,body,GLB.named(document,"Walk_")),cell=4)
 
     def clear_eye(x, y, z):
         """Lift a camera that sits inside, or directly under, solid geometry."""
@@ -820,35 +827,15 @@ def write_camera_views(build: REG.RegionBuild, path: Path) -> dict:
         ty = float(t.height_at(tx, tz)) + target_h
         # a camera below the waterline sees nothing but the water plane's
         # underside; lift any eye that the terrain put under the basin
-        if mode == "deck":
-            # Stand on a causeway deck the way the client grounds an actor:
-            # snap to the highest walk surface under the eye, then add eye
-            # height. A ground-relative height cannot express this - the ground
-            # under a causeway is sometimes the channel floor and
-            # sometimes an island shelf at -1.3, and the same declared height
-            # therefore lands 1.7 m above the deck in one place and 7 m above it
-            # in another. Two attempts at panel 4 failed exactly that way.
-            deck = None
-            for x0, x1, z0, z1, y0, y1 in decks:
-                if x0 <= ex <= x1 and z0 <= ez <= z1:
-                    deck = y1 if deck is None else max(deck, y1)
-            if deck is None:
-                raise SystemExit(
-                    f"view {name!r} is mode 'deck' but no walk deck covers "
-                    f"({ex:.1f}, {ez:.1f})")
-            ey = deck + eye_h
-            # The target is snapped to the deck too, so a level look along the
-            # span stays level. Measured against the ground it drifts: the
-            # terrain under the far end of a causeway is not the terrain under
-            # the near end, and the aim tilts by the difference.
-            target_deck = None
-            for x0, x1, z0, z1, y0, y1 in decks:
-                if x0 <= tx <= x1 and z0 <= tz <= z1:
-                    target_deck = y1 if target_deck is None else max(target_deck, y1)
-            ty = (target_deck if target_deck is not None else deck) + target_h
-        elif mode != "submerged":
-            ey = max(ey, REG.WATER_LEVEL + 0.6)
-            ey = clear_eye(ex, ey, ez)
+        if mode.rstrip("!")=="deck":
+            deck=deck_index.top_hit(ex,ez)
+            if deck is None:raise ValueError(f"No walk surface for camera {name}: {ex},{ez}")
+            target_deck=deck_index.top_hit(tx,tz)
+            ey=deck+eye_h
+            ty=(target_deck if target_deck is not None else deck)+target_h
+        elif mode!="submerged":
+            ey=max(ey,REG.WATER_LEVEL+0.6)
+            if name not in VIEWTABLE.FIXED_VIEWS:ey=clear_eye(ex,ey,ez)
         entries.append({
             "id": name,
             "panel": panel if isinstance(panel, int) else None,
@@ -935,6 +922,7 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             "walkableFraction": collision_stats["walkableFraction"],
         },
         "navigation": {
+            "crossings":build.crossings,
             "surfaceNodePrefixes": surface_prefixes,
             "walkableAreas": ["jade-paving", "moss-stone", "jungle-floor",
                               "causeways", "bridge-decks", "docks", "stairs",
@@ -965,6 +953,7 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
         "interactives": build.interactives,
         "npcMarkers": build.npc_markers,
         "harvestables": build.harvestables,
+        "contentLayout":PLAN.CONTENT_LAYOUT,
         "portals": build.portals,
         # Ssarathi's routes are stone embankments carrying paved surface,
         # not graded earth roads, so they are typed as causeways. Waypoint

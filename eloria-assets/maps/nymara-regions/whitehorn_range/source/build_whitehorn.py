@@ -35,6 +35,7 @@ from regionbuild import RegionBuild         # noqa: E402
 import validate_gltf                        # noqa: E402
 
 import region as REG                        # noqa: E402
+import layout as LAYOUT
 import transitions as MARCH                 # noqa: E402
 import secretdoors as SD                    # noqa: E402
 import secrets_design as SEC                # noqa: E402
@@ -95,7 +96,7 @@ MATERIALS = frozenset({
     'blue_crystal', 'gilt_brass', 'alpine_turf',
     'cliff_rock', 'rubble_stone', 'packed_earth', 'ashlar',
     'timber_grey', 'timber_dark', 'dark_iron', 'woven_cloth',
-    'bark_dark', 'foliage_green', 'amber_resin',
+    'bark_dark', 'foliage_green', 'amber_resin', 'carved_wood',
 }) | MARCH.materials_for("whitehorn_range", CROSSINGS) | SD.materials(SEC) | LORE.materials([s.piece for s in SITES])
 
 COLLISION_CELL = 0.5
@@ -126,8 +127,15 @@ def build_region(seed: int = SEED, lod: str | None = None) -> RegionBuild:
     MARCH.prepare(terrain, CROSSINGS)
     LORE.prepare(terrain, SITES, sea_level=getattr(REG, "SEA_LEVEL", 0.0), keep=(TER.ICE, TER.MARBLE))
 
+    LAYOUT.prepare(terrain)
     import populate
     populate.populate(build, seed, lod=lod)
+    from amberwood.routecraft import clear_walk_corridors
+    clear_walk_corridors(build,
+        [[[x,y,z] for (x,z),y in zip(points,heights)]
+         for points,heights,width in LAYOUT.ROADS.values()],
+        {"rock":4.2,"tree":4.6})
+    LAYOUT.dress(build, seed+809)
 
     # The marches: the neighbours' country coming in along the roads out.
     MARCH.paint(terrain, CROSSINGS, MARCH_MATERIALS, seed, keep=(TER.ICE, TER.MARBLE))
@@ -181,6 +189,10 @@ def _add_portals(build: RegionBuild) -> None:
         if anchor is None:
             continue
         x, y, z = anchor["position"]
+        if portal_id == "gate-store-door":
+            x,y,z = -28.0,19.66,65.5
+        elif portal_id == "west-watch-cave-mouth":
+            x,y,z = -122.0,47.64,-136.0
         position = [round(float(x), 2), round(float(y) + 0.1, 2), round(float(z), 2)]
         build.portals.append({
             "id": portal_id, "name": name, "type": "interior-entrance",
@@ -189,7 +201,7 @@ def _add_portals(build: RegionBuild) -> None:
             "radius": 2.5, "authority": "server"})
         build.spawns.append({
             "id": portal_id, "name": name,
-            "position": [position[0], round(float(t.height_at(x, z)), 2), position[2]],
+            "position": [position[0], round(float(y), 2), position[2]],
             "rotationY": 0.0, "authority": "server",
             "note": "return point from the Whitehorn insides map"})
 
@@ -392,6 +404,7 @@ def build_collision(build: RegionBuild) -> tuple[bytes, int, int, dict]:
         radius = min(max(footprint * factor, 0.40), 11.0)
         px, _, pz = placement.position
         blockers |= (np.hypot(gx - px, gz - pz) < radius)
+    LAYOUT.block_walls(blockers,gx,gz)
     walkable &= ~blockers
 
     surface = ground.copy()
@@ -716,6 +729,7 @@ def write_manifest(build: RegionBuild, stats: dict, collision_stats: dict,
             "walkableFraction": collision_stats["walkableFraction"],
         },
         "navigation": {
+            "crossings": build.crossings,
             "surfaceNodePrefixes": ["Terrain_", "Walk_"],
             "walkableAreas": ["snow", "ice", "rock", "trails", "paving",
                               "marble", "alpine-turf", "bridges", "stairs"],
@@ -736,7 +750,8 @@ def write_manifest(build: RegionBuild, stats: dict, collision_stats: dict,
         "npcMarkers": build.npc_markers,
         "harvestables": build.harvestables,
         "portals": build.portals,
-        "roads": [],
+        "roads": LAYOUT.roads(t),
+        "contentLayout": LAYOUT.CONTENT_LAYOUT,
         "water": [],
         "environment": _environment(),
         "minimap": minimap,

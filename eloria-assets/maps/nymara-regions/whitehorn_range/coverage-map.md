@@ -81,3 +81,17 @@ stair, and the temple forecourt deck. Everything else built is structural.
   and none of the ten panels is a dwelling, so none was authored.
 - The eastern third of the map is thinner than the west: the mine, its yard and
   the east camp carry it, where the west has the cave, ridge and cairn fields.
+
+## September 2026 layout coverage
+
+The south gate now has the Ration House, repair shelter and grouped services.
+Lower Camp, Bridge Watch, High Overlook, East Camp, Mine Yard and Last Pilgrim
+Rest have weather protection, fuel or route markers. The eastern haul road
+takes the gorge head; the temple road skirts the cascades and climbs in
+switchbacks. Both rope crossings have explicit bank surveys and continuous
+decks. The western watch's Cascade Cave has an authored mouth and approach.
+
+All 24 departures, 14 NPCs, 59 creature spawns, 55 harvest nodes and 21
+interactives are reachable from the gate arrival. The seven formerly isolated
+secret entrances now have reachable sites. references/layout-audit contains
+the Godot contact sheets; layout-review.md records the final measurements.

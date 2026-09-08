@@ -256,3 +256,25 @@ pairs that are both alpha-tested with vertex coverage.
 
 See `whitehorn_range/change-log.md` for the full account, including why the
 heightfield was not taken to one metre instead.
+
+
+## September 8, 2026: surveyed waterfront and working districts
+
+The delta's separate flat boardwalks disagreed at their shared anchors and
+often stopped behind a rail or across a floor gap. The new shared waterfront
+recipes give each landing one height, cut routes to its actual edge, and use
+one continuous walking skin. Shore ramps alter existing dry bars; channel
+beds are recessed beneath decks. The native collision now samples triangles.
+
+Arrival moves into the stilt-town service court. Houses face connected
+porches and leave room between their roofs; six market stalls form two rows
+around an open aisle. The hall's gallery posts use the correct height and
+depth arguments. The market roof has a separate inner lining. The quay gains
+a lateen packet built from shared procedural geometry. A branch reaches the
+lore court, the temple faces its approach, and the arch descent is under the
+ring itself. Existing content is assigned to working and dangerous districts.
+
+The cost is a wider timber network and explicit landing surveys in the region
+source. No surface classes or third-party assets were introduced. Build and
+verification evidence, known remaining legacy warnings and comparison frames
+are recorded in layout-review.md.

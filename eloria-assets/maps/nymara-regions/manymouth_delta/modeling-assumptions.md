@@ -117,3 +117,20 @@ reasonably want to overrule the build.
 
 18. **The reduced package is a second GLB, not a runtime LOD switch**, as in
     every other region. Nothing in the current Godot loader selects between them.
+
+
+## September 8 layout revision
+
+The earlier numbered notes describe the first package. The current layout is
+defined by source/layout.py and layout-review.md. One surveyed level belongs
+to each landing; roads slope between those levels. The default arrival is
+the stilt-town service court, server tile (210, 222). The hall, market and
+quay own their rectangular floors; connectors stop at their edges.
+
+Houses face their porch connections and have separate solid interior floors.
+The market has two stall rows, a central aisle and orderly boat moorings. A
+procedural lateen packet identifies the quay. The Green Temple faces its
+southwest approach, and the Great Arch descent is on its actual platform.
+Difficulty follows the occupied town, working paddies and fishing reaches,
+then the remote groves, ruined courts and temple. The server contentLayout
+is authoritative for the existing named NPCs, services and habitats.

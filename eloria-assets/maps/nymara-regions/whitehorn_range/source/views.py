@@ -28,11 +28,11 @@ VIEWS = [
     ("02-glacier-temple", 2, (34.0, -94.0), 7.0, (34.0, -101.5), 8.5, 52,
      (1180, 900), 10, "day"),
     # 3: the rope bridge over the gorge
-    ("03-rope-bridge", 3, (31.0, -24.0), 7.0, (17.0, -25.0), 44.0, 54,
-     (1180, 780), 7, "day"),
+    ("03-rope-bridge", 3, (13.67,-17.33), 1.8, (20.33,-34.67), 2.0, 58,
+     (1180,780), 20, "day!"),
     # 4: the statue shrine in its arched alcove
-    ("04-gate-shrine", 4, (-11.0, 38.0), 2.0, (-11.0, 33.5), 3.0, 54,
-     (1080, 920), 7, "day"),
+    ("04-gate-shrine", 4, (-6.67,30.33), 1.8, (-11,33), 2.5, 60,
+     (1080,920), 7, "day!"),
     # 5: the cairn field on the western ridge
     ("05-cairn-ridge", 5, (-25.0, -63.0), 1.8, (-29.0, -68.0), 1.4, 58,
      (1180, 780), 9, "day"),
@@ -49,8 +49,8 @@ VIEWS = [
     ("09-high-overlook", 9, (74.0, 12.0), 4.0, (34.0, -60.0), 30.0, 50,
      (1400, 800), 120, "day"),
     # 10: a material study - rope, brass, ice and dressed stone together
-    ("10-material-study", 10, (17.0, -22.6), 1.1, (17.0, -25.2), 0.8, 38,
-     (1080, 880), 5, "day"),
+    ("10-material-study", 10, (15,-21.333), 1.3, (15.4,-22.333), 0.75, 54,
+     (1080,880), 5, "deck!"),
 
     # -- views that exist to check the build, not to match a panel -------
     ("11-spawn-grounding", None, (-6.0, 8.0), 1.7, (6.0, -6.0), 1.6, 58,
@@ -80,6 +80,16 @@ VIEWS = [
     ("23-snow-line", None, (52.0, -20.0), 4.0, (44.0, -52.0), 14.0, 54,
      (1280, 780), 50, "day"),
 
+    ("24-gate-refuge", None, (-7,27), 1.8, (-7,20), 1.8, 65,
+     (1280,820), 7, "day"),
+    ("25-hauliers-yard", None, (91,-42), 1.8, (89,-36), 2.0, 65,
+     (1280,820), 7, "day"),
+    ("26-temple-switchback", None, (33.33,-80.67), 1.8, (34,-101), 20, 65,
+     (1280,820), 9, "day"),
+    ("27-eastern-saddle", None, (118,-26), 1.8, (115.33,-36), 2.0, 65,
+     (1280,820), 9, "day"),
+    ("28-watch-cave", None, (-40.67,-41), 1.8, (-40.67,-47), 2.0, 58,
+     (1280,820), 10, "day!"),
     # -- late light, to check the ice and brass read in warm light -------
     ("40-golden-temple", None, (34.0, -76.0), 5.0, (34.0, -101.0), 10.0, 50,
      (1400, 820), 44, "golden"),
@@ -139,3 +149,5 @@ GOLDEN_LIGHTING = {
     "sky_zenith": (0.22, 0.30, 0.52),
     "sky_horizon": (0.88, 0.72, 0.56),
 }
+
+FIXED_VIEWS = {"04-gate-shrine","10-material-study","03-rope-bridge","24-gate-refuge","25-hauliers-yard","26-temple-switchback","27-eastern-saddle","28-watch-cave"}

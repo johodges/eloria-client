@@ -111,3 +111,21 @@ document.
 * **Creature and NPC markers are evenly scattered around their anchors**, not
   placed to a designed encounter layout. They are positions for the server to
   use or ignore.
+
+
+## September 8 coverage update
+
+This supersedes the portal, settlement and sailing-craft counts above.
+The region has four connected exterior landings and eight doors into the
+shared flooded-labyrinth interior map. All are surveyed from the town arrival.
+Thirty-one routes include shore spurs and a branch to the lore Stelae Court.
+The town service floor groups information, storage, crafting and training;
+the quay points toward the Great Arch and its descent.
+
+The shared waterfront recipes supply continuous floors, cut landing joins and
+a lateen rig. Houses have road-facing porches; the market aisle and its boat
+rows are deliberate. Existing server NPC identities, dialogue, wildlife
+populations and resource labels are preserved. The open sea remains scenery;
+the pass does not turn the entire water footprint into traversable land.
+See layout-review.md and references/layout-audit for measured results and
+current views. The original captures and notes are no longer the layout spec.

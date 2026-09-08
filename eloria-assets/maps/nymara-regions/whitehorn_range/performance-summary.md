@@ -2,32 +2,32 @@
 
 ```json
 {
-  "nodes": 4723,
-  "meshes": 255,
+  "nodes": 4704,
+  "meshes": 337,
   "materials": 39,
   "images": 86,
   "textures": 86,
-  "accessors": 1030,
-  "bufferViews": 1116,
-  "uniqueTriangles": 291176,
-  "uniqueVertices": 189124,
-  "glbBytes": 19501176,
-  "instancedTriangles": 752036,
-  "embeddedTextureBytes": 9641083,
-  "placements": 1972,
+  "accessors": 1358,
+  "bufferViews": 1444,
+  "uniqueTriangles": 302146,
+  "uniqueVertices": 198979,
+  "glbBytes": 19889316,
+  "instancedTriangles": 744858,
+  "embeddedTextureBytes": 9578382,
+  "placements": 1941,
   "collision": {
     "width": 1152,
     "height": 1152,
     "cellMetres": 0.5,
-    "walkableCells": 929599,
-    "blockedCells": 397505,
-    "walkableFraction": 0.7005,
+    "walkableCells": 929186,
+    "blockedCells": 397918,
+    "walkableFraction": 0.7002,
     "elevatedDecks": 4,
-    "steepCells": 373970,
-    "reliefMetres": 161.42,
+    "steepCells": 374189,
+    "reliefMetres": 161.73,
     "heightEncoding": {
-      "origin": -6.1735,
-      "step": 2.603515,
+      "origin": -6.4957,
+      "step": 2.608629,
       "range": [
         1,
         63
@@ -37,6 +37,6 @@
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)"
   },
-  "trianglesPerSquareMetre": 2.27
+  "trianglesPerSquareMetre": 2.25
 }
 ```

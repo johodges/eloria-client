@@ -281,17 +281,17 @@
       191.0
     ],
     "heightEncoding": {
-      "origin": -5.131,
-      "step": 0.1311,
+      "origin": -5.2,
+      "step": 0.2,
       "range": [
         1,
         63
       ],
       "zeroMeansBlocked": true
     },
-    "walkableCells": 21112,
-    "blockedCells": 196040,
-    "walkableFraction": 0.0972,
+    "walkableCells": 14070,
+    "blockedCells": 203082,
+    "walkableFraction": 0.0648,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
@@ -3724,7 +3724,7 @@
     "bufferViews": 630,
     "uniqueTriangles": 27864,
     "uniqueVertices": 38544,
-    "glbBytes": 7283756,
+    "glbBytes": 7248012,
     "nodeNames": [
       "Secrets_whitehorn_range_secrets",
       "Section_horn-silver-hollow",

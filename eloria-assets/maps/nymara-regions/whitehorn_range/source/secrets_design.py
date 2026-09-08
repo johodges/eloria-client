@@ -64,3 +64,16 @@ SECRETS = [
            links=(("mirrorhold_secrets", "mirror-adit-far", "Down the quarry adit to Mirrorhold"),),
            note="Where Mirrorhold's quarry adit comes up in the range."),
 ]
+
+# Route-side sites keep their authored approaches; never search to a far ridge.
+for secret in SECRETS:
+    if not secret.door_map:
+        secret.prefer_near = True
+    if secret.id == "horn-bridge-butts":
+        secret.at,secret.offset=(44.0,-51.0),(0.0,0.0)
+    elif secret.id == "horn-ram-pit":
+        secret.at,secret.offset=(190.0,-70.0),(0.0,0.0)
+    elif secret.id == "horn-temple-vault":
+        secret.at,secret.offset=(125.0,-302.0),(0.0,0.0)
+    elif secret.id == "horn-temple-eyrie":
+        secret.at,secret.offset=(78.0,-314.0),(0.0,0.0)

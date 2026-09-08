@@ -59,9 +59,6 @@ func run() -> void:
 		config["animationLibrary"] = args["library"]
 	if args.has("hair-fit"):
 		config["hairFit"] = JSON.parse_string(FileAccess.get_file_as_string(args["hair-fit"]))
-	if args.has("style"):
-		var styles: Array = config.get("hairStyles", []) as Array
-		config["hairStyles"] = [styles[int(args["style"])]]
 	if args.get("hair", "yes") == "no":
 		config["hairStyles"] = []
 	var animation: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/animations/luminous.json"))
@@ -71,6 +68,7 @@ func run() -> void:
 		appearance = {"skin": 3, "eyes": 4, "hair": 5, "shirt": 4, "pants": 5, "boots": 6, "head": int(args.get("head", "0"))}
 	else:
 		appearance["head"] = int(args.get("head", "0"))
+	appearance["hair"] = int(args.get("style", str(appearance["hair"])))
 	actor = ReplicatedActor3D.new()
 	stage.add_child(actor)
 	var errors := actor.configure({"actor_id": 9010, "x": 0, "y": 0, "rotation": 0, "kind": 1, "name": "", "appearance": appearance, "equipment_visuals": {}}, CoordinateAdapter.new({"walkingHeight": 0.0}), config, animation, equipment)
