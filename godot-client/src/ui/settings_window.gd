@@ -19,6 +19,11 @@ const PANEL_SIZE := Vector2(560.0, 430.0)
 ## Nothing may cover the fixed resource rail down the right-hand edge.
 const RESERVED_RIGHT_RAIL := 96.0
 
+## Preloaded rather than reached by its global class name, for the same reason
+## this script declares none: the global class cache is a build artifact, and
+## this window is built before anything has forced it to be up to date.
+const MapCache := preload("res://src/world/map_scene_cache.gd")
+
 ## The actions a player may rebind, grouped the way they are used. Actions the
 ## client does not own - text editing inside a LineEdit, for instance - are not
 ## offered, because rebinding them would break the box they are typed in.
@@ -48,6 +53,8 @@ var panel: PanelContainer
 var tabs: TabContainer
 var binding_rows: Dictionary = {}
 var capture_label: Label
+## What the map cache is costing on disk, refreshed when the window opens.
+var map_cache_size: Label
 
 ## The action waiting for a key. While this is set the window swallows every
 ## key press, so a rebind cannot fire the action it is rebinding.
@@ -67,6 +74,7 @@ func toggle() -> void:
 	if panel.visible:
 		panel.move_to_front()
 		_refresh_bindings()
+		_refresh_map_cache()
 	else:
 		capturing = ""
 
@@ -276,6 +284,59 @@ func _build_graphics() -> void:
 	# The combat box can also be dismissed from its own right-click menu, so
 	# this is the way back once a player has done that.
 	_add_toggle(page, "combat_hud", tr("ELORIA_SETTINGS_COMBAT_HUD"), true)
+	_add_map_cache_row(page)
+
+## The map cache: a switch, what it is costing, and a way to be rid of it.
+##
+## It earns a row of its own rather than a plain toggle because it is the only
+## setting in this window that spends the player's disk - 30-40 MB a region,
+## about 400 MB if they walk the whole world - and a switch that quietly does
+## that with no way to see it or undo it would be the wrong shape. The size is
+## read when the window opens rather than every frame; it changes only when a
+## region is visited for the first time.
+##
+## The row also carries the answer to "the server says my map is not the one it
+## expects", which is the only thing the server's map digest is for. It cannot
+## affect the cache - that is keyed on the package this machine actually has -
+## so it has nowhere else to be seen.
+func _add_map_cache_row(page: VBoxContainer) -> void:
+	var row := HBoxContainer.new()
+	row.name = "MapCacheRow"
+	page.add_child(row)
+	var toggle := CheckBox.new()
+	toggle.name = "map_cache"
+	toggle.text = tr("ELORIA_SETTINGS_MAP_CACHE")
+	toggle.button_pressed = MapCache.is_enabled()
+	toggle.toggled.connect(func(pressed: bool) -> void:
+		MapCache.set_enabled(pressed)
+		_refresh_map_cache()
+		setting_changed.emit(page.name, "map_cache", pressed))
+	row.add_child(toggle)
+	map_cache_size = Label.new()
+	map_cache_size.name = "MapCacheSize"
+	map_cache_size.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	map_cache_size.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	row.add_child(map_cache_size)
+	var clear := Button.new()
+	clear.name = "map_cache_clear"
+	clear.text = tr("ELORIA_SETTINGS_MAP_CACHE_CLEAR")
+	clear.pressed.connect(func() -> void:
+		var removed: int = MapCache.clear_disk()
+		_refresh_map_cache()
+		setting_changed.emit(page.name, "map_cache_clear", removed))
+	row.add_child(clear)
+	_refresh_map_cache()
+
+## What the row says: the size on disk, and whatever the server's digest had to
+## say about this install.
+func _refresh_map_cache() -> void:
+	if map_cache_size == null:
+		return
+	var text: String = MapCache.describe_size(MapCache.total_bytes())
+	var digests: String = MapCache.digest_summary()
+	if not digests.is_empty():
+		text += " - " + digests
+	map_cache_size.text = text
 
 func _build_camera() -> void:
 	var page := VBoxContainer.new()

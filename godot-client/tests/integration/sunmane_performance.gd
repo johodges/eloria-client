@@ -13,6 +13,10 @@ func _init() -> void:
 	call_deferred("_run_all")
 
 func _run_all() -> void:
+	# The load column here is what building the region costs. A cache entry
+	# left by an earlier run would turn it into what reading one back costs,
+	# which is a different number in a column that does not say so.
+	OS.set_environment(MapSceneCache.DISABLE_ENVIRONMENT, "1")
 	var artifacts := OS.get_environment("ELORIA_ARTIFACT_DIR")
 	if artifacts.is_empty():
 		artifacts = ProjectSettings.globalize_path("res://test-artifacts/sunmane-steppe")

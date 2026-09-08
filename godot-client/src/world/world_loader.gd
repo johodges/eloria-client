@@ -19,6 +19,18 @@ const BATCH_CELL_METRES := 180.0
 # has to reach the slot to lift one instance back out while it fades.
 const BATCH_META := "static_batch"
 const BATCH_INDEX_META := "static_batch_index"
+# The same link written as a path from the imported root, which is the half of
+# it that survives being packed into a scene.
+#
+# Node metadata is stored in a PackedScene, but a Node is not a Resource, and a
+# Variant holding one is dropped on the way out - not nulled, dropped: after a
+# round trip the key is not in `get_meta_list()` at all. A cached region whose
+# batched props had only the object link would leave OccluderFade unable to
+# find the MultiMesh drawing them, so it would fade a node that is not drawing
+# and the prop in front of the player would stay solid. A NodePath is a
+# built-in type and survives, so both are written and `_resolve_batch_links()`
+# turns the path back into the object after a cache load.
+const BATCH_PATH_META := "static_batch_path"
 
 # The widest sibling list a package may hand Godot's scene builder.
 #
@@ -43,6 +55,24 @@ const MAX_SIBLINGS := 512
 # index the collision declarations are resolved through unambiguous.
 const GROUP_NAME_PREFIX := "WorldGroup_"
 
+# How many frames after a load the cache is packed and written.
+#
+# Not zero, and not "deferred": the point of the cache is that the first visit
+# is no slower than it was, and packing a fifteen-thousand-node tree costs
+# 80-350 ms. Deferring by a frame would put that inside the frame that draws
+# the region for the first time, which is exactly the frame the player is
+# waiting on. Three frames is after the map transition has covered the change
+# and before the player has done anything.
+const CACHE_WRITE_DELAY_FRAMES := 3
+# Compression on the cache file, and it is not a close call in either
+# direction. Measured on Four Gates: compressed is 32.9 MB and reads in 285 ms,
+# uncompressed is 87.8 MB and reads in 136 ms. So the choice is 150 ms a warm
+# load against 55 MB a region - 660 MB across the twelve, on top of the 395 MB
+# the compressed set already costs. A gigabyte of cache to save an eighth of a
+# second is not a bargain anyone would take, and the save side, which is 8x
+# slower compressed, is on a worker thread and costs the player nothing.
+const CACHE_COMPRESS := true
+
 signal load_started(manifest_path: String)
 signal load_completed(manifest: WorldManifest)
 signal load_failed(errors: Array[String])
@@ -50,6 +80,25 @@ signal load_failed(errors: Array[String])
 var manifest: WorldManifest
 var coordinate_adapter: CoordinateAdapter
 var world_root: Node3D
+
+## True when the region in the tree was read back from the map cache rather
+## than parsed out of its package. Read by the benchmarks and by the tests that
+## prove a second visit hits.
+var loaded_from_cache := false
+
+## What the last load did about the cache, one of `&"disabled"`, `&"miss"`,
+## `&"hit"`, `&"unreadable"` or `&"no_digest"`. A miss is the normal state of a
+## first visit; `&"unreadable"` means a file was there and did not load, which
+## is the only one of the five worth looking into.
+var cache_status: StringName = &"disabled"
+
+## The file the last load read or would write. Empty when the package could not
+## be hashed or the cache is off.
+var cache_file := ""
+
+## The package digest of the region in the tree - the same value the server
+## sends in ELORIA_MAP_DIGEST, and the thing the cache key is derived from.
+var package_digest := ""
 
 ## Microseconds the last load spent in each of its steps, in the order they
 ## ran, plus `total`. A map load is a handful of long steps over a package the
@@ -83,6 +132,19 @@ func load_world(manifest_path: String) -> void:
 		" glb_path=", resolved_glb_path)
 	coordinate_adapter = manifest.coordinate_adapter()
 	mark = _phase(&"manifest", mark)
+
+	# The package's own bytes, which are both the cache key and the value the
+	# server's ELORIA_MAP_DIGEST is checked against. 56-91 ms on an 18-33 MB
+	# region, which is the price of the whole contract: an entry that does not
+	# match the package on disk is never read, so a client update rebuilds
+	# itself with nothing to remember.
+	package_digest = MapSceneCache.package_digest(manifest_path, resolved_glb_path)
+	MapSceneCache.note_local_digest(manifest.asset_id(), package_digest)
+	cache_file = MapSceneCache.cache_path(manifest.asset_id(), package_digest)
+	mark = _phase(&"digest", mark)
+	if _load_from_cache(mark, began):
+		return
+
 	var document: GLTFDocument = GLTFDocument.new()
 	var state: GLTFState = GLTFState.new()
 	var error: Error = document.append_from_file(resolved_glb_path, state)
@@ -139,8 +201,267 @@ func load_world(manifest_path: String) -> void:
 	_batch_static_instances(mesh_instances)
 	_collision_shapes.clear()
 	mark = _phase(&"batching", mark)
+	# What the loader produced, before anything else in the client has been
+	# handed it. See `_snapshot_for_cache`.
+	if cache_status == &"miss":
+		_snapshot_for_cache()
+	mark = _phase(&"cacheSnapshot", mark)
 	load_phases[&"total"] = mark - began
 	load_completed.emit(manifest)
+	if cache_status == &"miss":
+		_cache_write_countdown = CACHE_WRITE_DELAY_FRAMES
+		set_process(true)
+
+# --------------------------------------------------------------------------
+# The map cache
+# --------------------------------------------------------------------------
+
+## Frames left before the queued cache write runs, or 0 for none.
+var _cache_write_countdown := 0
+## The tree the loader itself produced, and the parts of it a consumer is
+## allowed to change afterwards. See `_snapshot_for_cache`.
+var _cache_nodes: Array[Node] = []
+var _cache_visible := PackedByteArray()
+var _cache_overrides: Dictionary = {}
+var _save_thread: Thread = null
+
+## Reads the region back from the cache, if there is an entry for exactly this
+## package and this format version. Returns true when the world is in the tree
+## and `load_completed` has been emitted, which is the caller's signal to stop.
+##
+## Every failure here falls through to the ordinary load. A cache is an
+## optimisation; a client that cannot read one still has the package.
+func _load_from_cache(mark: int, began: int) -> bool:
+	if not MapSceneCache.is_enabled():
+		cache_status = &"disabled"
+		return false
+	if cache_file.is_empty():
+		# The package could not be hashed, so it cannot be keyed either.
+		cache_status = &"no_digest"
+		return false
+	if not FileAccess.file_exists(cache_file):
+		cache_status = &"miss"
+		return false
+	# IGNORE_DEEP so a second load in one session builds its own meshes and
+	# materials rather than handing back the ones the last load is still
+	# holding. That is what a fresh load does, and the point of the cache is to
+	# be indistinguishable from one.
+	var packed: PackedScene = ResourceLoader.load(
+		cache_file, "PackedScene", ResourceLoader.CACHE_MODE_IGNORE_DEEP) as PackedScene
+	mark = _phase(&"cacheRead", mark)
+	if packed == null:
+		push_warning("map cache: %s did not load; rebuilding" % cache_file)
+		DirAccess.remove_absolute(cache_file)
+		cache_status = &"unreadable"
+		return false
+	var restored: Node3D = packed.instantiate() as Node3D
+	if restored == null:
+		push_warning("map cache: %s is not a Node3D; rebuilding" % cache_file)
+		DirAccess.remove_absolute(cache_file)
+		cache_status = &"unreadable"
+		return false
+	world_root = restored
+	world_root.name = "ImportedWorld_" + manifest.asset_id()
+	add_child(world_root)
+	mark = _phase(&"cacheInstantiate", mark)
+	var relinked: int = _resolve_batch_links()
+	mark = _phase(&"cacheLinks", mark)
+	loaded_from_cache = true
+	cache_status = &"hit"
+	print_debug("world_load stage=cache_hit file=", cache_file,
+		" batches_relinked=", relinked)
+	load_phases[&"total"] = mark - began
+	load_completed.emit(manifest)
+	return true
+
+## Turns every batch link back from a path into the MultiMeshInstance3D it
+## names, and returns how many it resolved.
+##
+## Runs after a cache load, where the object half of the link did not survive
+## the round trip. Harmless on a freshly parsed tree, where it re-resolves the
+## links to the same nodes they already point at.
+func _resolve_batch_links() -> int:
+	var resolved := 0
+	for node: Node in world_root.find_children("*", "MeshInstance3D", true, false):
+		if not node.has_meta(BATCH_PATH_META):
+			continue
+		var path: NodePath = node.get_meta(BATCH_PATH_META) as NodePath
+		var batch: MultiMeshInstance3D = world_root.get_node_or_null(
+			path) as MultiMeshInstance3D
+		if batch == null:
+			# The batch it names is gone, so the mesh is drawing itself again.
+			node.remove_meta(BATCH_PATH_META)
+			if node.has_meta(BATCH_META):
+				node.remove_meta(BATCH_META)
+			node.visible = true
+			push_warning("map cache: batch %s missing for %s" % [path, node.name])
+			continue
+		node.set_meta(BATCH_META, batch)
+		resolved += 1
+	return resolved
+
+## What the loader produced, taken while the tree is still only the loader's.
+##
+## The cache has to hold the region as the loader built it, and by the time the
+## write runs the rest of the client has had the tree for three frames: the
+## interior cutaway may have hidden a wall the camera is looking through, the
+## secret sections may have hidden a section, and the occluder fade may have
+## swapped a translucent material onto whatever is between the camera and the
+## player. Baking any of those in would make the cached region quietly
+## different from a fresh one - a rock that is permanently glass.
+##
+## So the two things a consumer can change are recorded here, while nothing but
+## the loader has touched the tree, and put back for the length of the pack.
+## Nodes a consumer *adds* need no handling: `PackedScene.pack` only stores
+## nodes owned by the packed root, the owners are set from this list, and
+## anything not in it is left out for free.
+func _snapshot_for_cache() -> void:
+	_cache_nodes = world_root.find_children("*", "", true, false)
+	var count: int = _cache_nodes.size()
+	_cache_visible.resize(count)
+	_cache_overrides.clear()
+	for index: int in count:
+		var node: Node = _cache_nodes[index]
+		var spatial: Node3D = node as Node3D
+		_cache_visible[index] = 1 if spatial == null or spatial.visible else 0
+		var mesh_instance: MeshInstance3D = node as MeshInstance3D
+		if mesh_instance == null:
+			continue
+		var overrides: Array[Material] = []
+		var any := false
+		for surface: int in mesh_instance.get_surface_override_material_count():
+			var material: Material = mesh_instance.get_surface_override_material(surface)
+			overrides.append(material)
+			any = any or material != null
+		if any:
+			_cache_overrides[index] = overrides
+
+func _release_snapshot() -> void:
+	_cache_nodes.clear()
+	_cache_visible.resize(0)
+	_cache_overrides.clear()
+
+func _process(_delta: float) -> void:
+	if _cache_write_countdown <= 0:
+		set_process(false)
+		return
+	_cache_write_countdown -= 1
+	if _cache_write_countdown > 0:
+		return
+	set_process(false)
+	_write_cache()
+
+## Packs the region and hands it to a worker thread to write.
+##
+## The pack is on the main thread because it reads the scene tree, and it is
+## the reason for the three-frame delay: it costs 80-350 ms and the frame that
+## first draws a region is the one the player is waiting on. The save is the
+## larger half and touches nothing but the PackedScene, so it goes to a thread
+## and costs the main thread nothing.
+func _write_cache() -> void:
+	if not is_instance_valid(world_root) or cache_file.is_empty():
+		_release_snapshot()
+		return
+	if not MapSceneCache.ensure_directory():
+		_release_snapshot()
+		return
+	var began: int = Time.get_ticks_usec()
+	var undo: Array = _restore_pristine()
+	for node: Node in _cache_nodes:
+		if is_instance_valid(node):
+			node.owner = world_root
+	var packed := PackedScene.new()
+	var error: Error = packed.pack(world_root)
+	_undo_pristine(undo)
+	load_phases[&"cachePack"] = Time.get_ticks_usec() - began
+	_release_snapshot()
+	if error != OK:
+		push_warning("map cache: pack failed for %s (%s)" % [
+			cache_file, error_string(error)])
+		return
+	_reap_save_thread(true)
+	_save_thread = Thread.new()
+	var map_id: String = manifest.asset_id() if manifest != null else ""
+	if _save_thread.start(_save_on_worker.bind(packed, cache_file, map_id)) != OK:
+		# No thread to be had: write it here rather than not at all.
+		_save_thread = null
+		_save_on_worker(packed, cache_file, map_id)
+
+## Writes the packed region, on the worker thread. Nothing here touches the
+## scene tree: the PackedScene holds its own reference to every mesh, material
+## and image in it, so a map change while this runs cannot pull them away.
+##
+## The file lands under a temporary name and is renamed into place, so a write
+## that is interrupted - the player quits, the disk fills - leaves no half a
+## region for the next launch to read as a whole one.
+func _save_on_worker(packed: PackedScene, path: String, map_id: String) -> void:
+	var began: int = Time.get_ticks_usec()
+	var staging: String = MapSceneCache.staging_path(path)
+	var flags: int = ResourceSaver.FLAG_COMPRESS if CACHE_COMPRESS else 0
+	var error: Error = ResourceSaver.save(packed, staging, flags)
+	if error != OK:
+		push_warning("map cache: save failed for %s (%s)" % [path, error_string(error)])
+		DirAccess.remove_absolute(staging)
+		return
+	DirAccess.remove_absolute(path)
+	error = DirAccess.rename_absolute(staging, path)
+	if error != OK:
+		push_warning("map cache: could not place %s (%s)" % [path, error_string(error)])
+		DirAccess.remove_absolute(staging)
+		return
+	var pruned: int = MapSceneCache.prune(map_id, path)
+	print("world_load stage=cache_written file=", path, " milliseconds=",
+		(Time.get_ticks_usec() - began) / 1000, " stale_removed=", pruned)
+
+## Puts back what the loader left, and returns what to undo afterwards.
+func _restore_pristine() -> Array:
+	var undo: Array = []
+	for index: int in _cache_nodes.size():
+		var node: Node = _cache_nodes[index]
+		if not is_instance_valid(node):
+			continue
+		var spatial: Node3D = node as Node3D
+		if spatial != null:
+			var wanted: bool = _cache_visible[index] == 1
+			if spatial.visible != wanted:
+				undo.append([spatial, "visible", spatial.visible])
+				spatial.visible = wanted
+		var mesh_instance: MeshInstance3D = node as MeshInstance3D
+		if mesh_instance == null:
+			continue
+		var wanted_overrides: Variant = _cache_overrides.get(index)
+		for surface: int in mesh_instance.get_surface_override_material_count():
+			var current: Material = mesh_instance.get_surface_override_material(surface)
+			var pristine: Material = null
+			if wanted_overrides is Array and surface < (wanted_overrides as Array).size():
+				pristine = (wanted_overrides as Array)[surface] as Material
+			if current == pristine:
+				continue
+			undo.append([mesh_instance, surface, current])
+			mesh_instance.set_surface_override_material(surface, pristine)
+	return undo
+
+func _undo_pristine(undo: Array) -> void:
+	for entry_value: Variant in undo:
+		var entry: Array = entry_value as Array
+		var node: Node = entry[0] as Node
+		if not is_instance_valid(node):
+			continue
+		if entry[1] is String:
+			(node as Node3D).visible = bool(entry[2])
+		else:
+			(node as MeshInstance3D).set_surface_override_material(
+				int(entry[1]), entry[2] as Material)
+
+## Joins a finished save thread, or waits for a running one when `force`.
+func _reap_save_thread(force: bool) -> void:
+	if _save_thread == null:
+		return
+	if not force and _save_thread.is_alive():
+		return
+	if _save_thread.is_started():
+		_save_thread.wait_to_finish()
+	_save_thread = null
 
 ## Records the microseconds since `started` under `name` and returns the clock
 ## reading that closed it, which is the next phase's start.
@@ -317,12 +638,27 @@ func _apply_material_passes(mesh_instances: Array) -> int:
 	return applied
 
 func unload_world() -> void:
+	# A map change while a cache write is still queued drops the write: the
+	# tree it would pack is about to be freed. A write already handed to the
+	# worker thread is left to finish, because the PackedScene it holds is its
+	# own reference and no longer depends on the tree.
+	_cache_write_countdown = 0
+	set_process(false)
+	_release_snapshot()
+	_reap_save_thread(false)
 	if is_instance_valid(world_root):
 		world_root.queue_free()
 	world_root = null
+	loaded_from_cache = false
+	cache_status = &"disabled"
+	cache_file = ""
+	package_digest = ""
 	_collision_shapes.clear()
 	manifest = null
 	coordinate_adapter = null
+
+func _exit_tree() -> void:
+	_reap_save_thread(true)
 
 func _apply_collision_declarations(by_name: Dictionary) -> void:
 	var collision: Dictionary = manifest.data.get("collision", {})
@@ -478,6 +814,10 @@ func _create_batch(members: Array, index: int) -> void:
 	batch.gi_mode = reference.gi_mode
 	world_root.add_child(batch)
 	batch.global_transform = Transform3D.IDENTITY
+	# Taken after add_child, which is what settles the name: a package that
+	# already carries a node called StaticBatch_0_Rock would have had this one
+	# renamed, and a path written before that would point at the wrong node.
+	var batch_path: NodePath = world_root.get_path_to(batch)
 	for member_index: int in members.size():
 		var member: MeshInstance3D = members[member_index] as MeshInstance3D
 		multimesh.set_instance_transform(member_index, member.global_transform)
@@ -485,6 +825,7 @@ func _create_batch(members: Array, index: int) -> void:
 		# declarations and tooling keep resolving; it simply stops drawing.
 		member.visible = false
 		member.set_meta(BATCH_META, batch)
+		member.set_meta(BATCH_PATH_META, batch_path)
 		member.set_meta(BATCH_INDEX_META, member_index)
 
 func _apply_rendered_walk_surfaces(mesh_instances: Array) -> void:
