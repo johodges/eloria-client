@@ -50,15 +50,13 @@ to overrule the build.
    the *buildings and their plazas*; the ground between them is green. Paving is
    therefore applied only by the terraces, where something is actually built.
 
-7. **Crownwater's six material recipes are registered at build time, not added
-   to the shared table.** `crownkit.register()` appends to `materials.SPECS` in
-   memory before either registrar reads it, and nothing in `_toolkit/` is
-   modified. This is a deliberate deviation from the production guide, taken
-   because three other sessions were appending to that same file concurrently;
-   three independent appends to one `SPECS` tuple is the silent-corruption case
-   the file's own comment warns about. Every name is `crownwater_`-prefixed.
-   Promoting the module into `_toolkit/` later is a copy-paste, not a rewrite.
-   See the header of `source/crownkit.py`.
+7. **Crownwater's six material recipes are shared and registered at build
+   time.** They live in `_toolkit/amberwood/crownmaterials.py`; the region's
+   `crownkit` module is a compatibility entry point. `register()` appends
+   missing specs in memory before either registrar reads them, preserving
+   existing names and IDs. All eighteen texture arrays were compared at
+   their default full sizes during the 2026-09-08 promotion and are identical.
+   The exterior and Drowned Arcades now use one source for this palette.
 
 8. **The package pins its material set by name.** `only=crownkit.MATERIALS`
    keeps the eleven forest and burnt-country materials Crownwater never

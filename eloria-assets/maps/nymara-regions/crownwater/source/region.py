@@ -70,11 +70,9 @@ TERRAIN_SIZE_Z = (PLAY_MAX_Z - PLAY_MIN_Z) + MARGIN * 2.0
 SEA_LEVEL = 0.0
 TERRAIN_CELL = 2.0
 
-# Crownwater's built ground is mosaic-paved marble, not Amberwood's cobble. The
-# surface-class table is shared, so the region repoints its own entry rather
-# than editing the toolkit - the same build-time extension `crownkit.register`
-# uses for materials, and for the same reason: three sessions are appending to
-# those files right now.
+# Crownwater's built ground uses its mosaic and sand palette. Bind the shared
+# paving and shore classes for this build; material recipes are registered by
+# amberwood.crownmaterials through the crownkit compatibility entry point.
 TER.SURFACE_MATERIALS[TER.PAVING] = "crownwater_mosaic"
 TER.SURFACE_MATERIALS[TER.SHORE] = "crownwater_sand"
 

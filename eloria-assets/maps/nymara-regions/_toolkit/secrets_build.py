@@ -142,7 +142,7 @@ def export_glb(sections: list[tuple[str, S.MeshGroup]], sets, path: Path, packag
     return stats
 
 
-def build_collision(group: S.MeshGroup, keep_open=()):
+def build_collision(group: S.MeshGroup, keep_open=(), *, non_blocking_materials=()):
     """The half-metre walk grid of the whole map (EWCG v1), as the insides do.
 
     `keep_open` is the positions of the things a player uses or harvests - a
@@ -203,6 +203,10 @@ def build_collision(group: S.MeshGroup, keep_open=()):
     band_low, band_high, reach = 0.15, 1.9, 0.3
     obstacle = np.zeros((height, width), dtype=bool)
     for piece in group.parts:
+        # Explicit liquid scenery can cover a real walk floor without becoming
+        # a solid obstacle. It cannot create ground or reopen a gate cut.
+        if piece.material in non_blocking_materials:
+            continue
         tri = piece.positions[piece.indices].reshape(-1, 3, 3)
         if len(tri) == 0:
             continue

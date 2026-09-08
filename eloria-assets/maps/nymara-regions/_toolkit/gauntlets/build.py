@@ -46,6 +46,7 @@ def compose(theme: D.Theme, seed: int):
     pal = dict(theme.palette)
     pal.setdefault("bark", "bark_dark")
     pal["room_floors"] = theme.props.get("roomFloors", {})
+    pal["flood_rooms"] = theme.props.get("floodRooms", ())
     kit = theme.props.get("kit", "forest")
     way = float(theme.props.get("wayLength", WAY))
     it = Interior(theme.id, theme.name, "gauntlet", "", [0.0, 0.0, 0.0], "default")
@@ -131,6 +132,9 @@ def compose(theme: D.Theme, seed: int):
     elif kit == "barrow_visitation":
         from gauntlets import barrow_visitation
         barrow_visitation.dress(it, pal, seed)
+    elif kit == "drowned_customs":
+        from gauntlets import drowned_customs
+        drowned_customs.dress(it, pal, seed)
     lamps, placed = hanging_lamps(it.lamps, seed=seed)
     it.group.add(lamps)
     it.lamps = placed
@@ -291,6 +295,9 @@ def main() -> int:
     out.mkdir(parents=True, exist_ok=True)
     t0 = time.time()
     sets = preview.texture_sets()
+    if theme.props.get("materialSet") == "crownwater":
+        from amberwood import crownmaterials
+        crownmaterials.register(sets)
     it, legs, staging, vault = compose(theme, args.seed)
     sections = [(theme.id, it.group)]
     if theme.props.get("localBatches", theme.props.get("kit") == "forest_haul"):
@@ -298,7 +305,8 @@ def main() -> int:
         sections = local_sections(it.group, theme.id)
     stats = SB.export_glb(sections, sets, out / "world.glb", theme.id)
     payload, collision_stats = SB.build_collision(
-        it.group, keep_open=[entry["position"] for entry in it.interactives + it.harvestables if "position" in entry])
+        it.group, keep_open=[entry["position"] for entry in it.interactives + it.harvestables if "position" in entry],
+        non_blocking_materials=theme.props.get("nonBlockingMaterials", ()))
     (out / "collision.bin").write_bytes(payload)
     doc = write_manifest(theme, it, legs, staging, vault, stats, collision_stats, out / "world.json")
     report = validate_gltf.validate(str(out / "world.glb"))

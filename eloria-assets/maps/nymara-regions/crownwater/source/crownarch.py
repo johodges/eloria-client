@@ -4,11 +4,9 @@ The shape language read off the concept: pale marble walls, verdigris copper
 domes, gold finials, round-headed arcades, and every island meeting the water
 through a built stone edge rather than a beach.
 
-Companion to `crownkit.py`, which supplies the four materials these pieces are
-made of. Both belong in `_toolkit/` eventually - see the note at the top of
-`crownkit.py` for why they are not there yet - and both are written against the
-toolkit's own primitives only, so promoting them is a move rather than a
-rewrite.
+Companion to `crownkit.py`, the compatibility entry point for the shared
+`amberwood.crownmaterials` palette. This region's landmark compositions
+use the toolkit's own primitives and reusable civic recipes.
 
 Walk surfaces are registered deliberately and sparingly, via
 `MeshGroup.add_walk`: pavilion podiums, the cathedral portico and its stair,

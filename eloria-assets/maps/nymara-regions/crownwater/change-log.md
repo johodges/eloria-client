@@ -1,5 +1,19 @@
 # Crownwater change log
 
+## 2026-09-08: share the Crownwater palette with the Drowned Arcades
+
+Promoted the six material recipes from source/crownkit.py into the shared
+_toolkit/amberwood/crownmaterials.py. The old module re-exports the same
+public interface for the exterior and its insides. All eighteen generated
+base-colour, ORM and normal arrays match the former implementation at
+their default full sizes, and material specs and names are unchanged.
+Existing registration remains append-only and idempotent.
+
+This supersedes the original private-material exception recorded below.
+The exterior binaries were not rebuilt. The Drowned Arcades uses this
+shared palette with new reusable arcade, bell, sluice and cargo recipes;
+its layout and validation are documented under interiors/crownwater_gauntlet.
+
 ## 2026-09-07: the harbour and the surveyed archipelago
 
 The harbour now works as a settlement: a sheltered bank and field workbench,

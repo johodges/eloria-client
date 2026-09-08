@@ -39,7 +39,7 @@ DOOR = (3.6, 3.0)        # width, head
 def dress(it: Interior, kit: str, pal: dict, x0, z0, x1, z1, floor_y, seed: int, count: int = 6):
     """Scatter the region's growth along the walls of a room, never in the
     middle where the fight is and never in the door lanes."""
-    if kit in ("forest_haul", "ice_mine", "temple_procession", "barrow_visitation"):
+    if kit in ("forest_haul", "ice_mine", "temple_procession", "barrow_visitation", "drowned_customs"):
         return  # themed layouts author useful bays instead of scattered growth
     rng = np.random.default_rng(seed)
     width, depth = x1 - x0, z1 - z0
@@ -164,7 +164,7 @@ def cavern(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float, 
     _room_(it, key, x_in - w, z0, x_in + w, z0 + d, floor, 8.0, pal, doors=_doors(x_in, x_out), ceiling="vault",
            vault_rise=3.8, walls=pal["rock"], ceil=pal["rock"])
     rng = np.random.default_rng(seed)
-    for index in range(0 if kit in ("temple_procession", "barrow_visitation") else 7):
+    for index in range(0 if kit in ("temple_procession", "barrow_visitation", "drowned_customs") else 7):
         angle = float(rng.uniform(0, math.tau))
         radial = float(rng.uniform(0.7, 0.92))
         it.group.add(P.boulder(radius=float(rng.uniform(0.6, 1.4)), seed=seed + index, material=pal["rock"])
@@ -196,7 +196,13 @@ def bridge(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float, 
     _room_(it, key, x_in - wide, z0 + landing, x_in + wide, z0 + d - landing, floor - 3.0, 9.0, pal,
            doors=[("south", x_in, DOOR[0], 5.6), ("north", x_in, DOOR[0], 5.6)], ceiling="vault",
            vault_rise=3.0, walls=pal["rock"], ceil=pal["rock"], floor=pal["water"], walk=False)
-    if deck == "piles":
+    if deck == "arcaded":
+        from amberwood import civiccraft as C
+        it.group.add(C.arcaded_causeway(d - 2 * landing + .08, floor, floor,
+                                        width=half * 2, arches=3, foot=floor - 3.2,
+                                        stone=pal["stone"], paving=pal["floor"], trim=pal["stone"])
+                     .rotate_y(-math.pi / 2).translate(x_in, 0, z0 + d * .5))
+    elif deck == "piles":
         from amberwood import barrowcraft as B
         it.group.add(B.pile_walkway(length=d - 2 * landing + .08, width=half * 2,
                                     deck_height=3.0, seed=seed, timber=pal["timber"])
@@ -211,7 +217,7 @@ def bridge(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float, 
     else:
         it.group.add_walk(M.box((half * 2, 0.6, d - 2 * landing + 0.6), center=(x_in, floor - 0.3, z0 + d * .5),
                                 uv_scale=.5, material=pal["stone"]))
-    for k in range(0 if deck == "piles" else 6):
+    for k in range(0 if deck in ("piles", "arcaded") else 6):
         pz = z0 + 5.0 + k * (d - 10.0) / 5.0
         for sx in (-half, half):
             height = 2.8 if deck == "rope" else 1.1
@@ -274,7 +280,7 @@ def gallery(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float,
             _node(it, f"{key}-bonus", bonus[5:], cx, floor, az, seed + 40, pal["node"])
         elif k == 1 and bonus == "cache":
             _brazier(it, cx, floor, az, seed + 41)
-        elif kit != "barrow_visitation":
+        elif kit not in ("barrow_visitation", "drowned_customs"):
             it.group.add(P.crate(size=0.7, seed=seed + k, material=pal["timber"]).translate(cx, floor, az))
     dress(it, kit, pal, x_in - w, z0, x_in + w, z0 + d, floor, seed, count=4)
     it.lamps.append([round(x_in, 2), round(floor + 4.0, 2), round(z0 + d * 0.5, 2)])
@@ -314,7 +320,7 @@ def fork(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float, fl
                walls=pal["rock"] if bkind == "cavern" else None, ceil=pal["rock"] if bkind == "cavern" else None)
         if bkind == "cavern":
             rng = np.random.default_rng(seed + (1 if sign > 0 else 2))
-            for index in range(0 if kit in ("temple_procession", "barrow_visitation") else 4):
+            for index in range(0 if kit in ("temple_procession", "barrow_visitation", "drowned_customs") else 4):
                 it.group.add(P.boulder(radius=float(rng.uniform(0.6, 1.2)), seed=seed + index + sign * 9,
                                        material=pal["rock"])
                              .translate(bx + sign * float(rng.uniform(2.0, branch_w - 1.5)), floor,
@@ -472,6 +478,15 @@ def _room_(it: Interior, key: str, x0, z0, x1, z1, floor_y, height, pal, *, door
         it.space(key, x0, z0, x1, z1, floor_y, height,
                  floor_mat=floor or pal["floor"], wall_mat=walls or pal["wall"],
                  ceil_mat=ceil or pal["ceil"], doors=list(doors), ceiling=ceiling, vault_rise=vault_rise)
+        if key in pal.get("flood_rooms", ()):
+            # A real low weir retains each shallow flooded chamber. Two server
+            # height steps carry the threshold, with no collision-only opening.
+            for side, along, width, head in doors:
+                vertical = side in ("east", "west")
+                x = (x1 if side == "east" else x0) if vertical else along
+                z = along if vertical else (z1 if side == "north" else z0)
+                it.group.add_walk(M.box((.8 if vertical else width, .4, width if vertical else .8),
+                                        center=(x, floor_y + .2, z), material=pal["stone"]))
         return
     # a pit room: walls and lid from the kit, and a floor that is not a walk surface
     group = I.chamber(x0, z0, x1, z1, floor_y, height, floor_mat=floor or pal["floor"],

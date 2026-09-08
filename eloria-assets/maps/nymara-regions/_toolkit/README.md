@@ -414,3 +414,23 @@ family burial road. Its bridgeDeck="piles" selects the supported crossing.
 Generic scatter and alcove crates are replaced only for this kit. Other
 gauntlets retain their existing build behaviour. See
 interiors/grey_moors_gauntlet for captures, layout notes and validation.
+
+
+Civic waterworks recipes live in amberwood/arcadecraft.py. arcade_frame
+provides piers and a continuous arch with a clear route underneath;
+hanging_bell has a hollow shell, lip and clapper; sluice_lift supplies
+guides, a screw drive, handwheel and optional outfall; cargo_bay raises
+stores above a shallow flooded lane. Materials are caller parameters.
+
+Crownwater's six palette recipes live in amberwood/crownmaterials.py.
+register() appends missing material specs without changing existing IDs
+and provides the matching texture sets. crownwater/source/crownkit.py
+re-exports this interface for existing build scripts. The promotion
+preserves all eighteen texture arrays at their original full sizes.
+
+The optional non_blocking_materials argument to secrets_build.build_collision
+is for explicitly declared liquid scenery over real walk surfaces. It skips
+those meshes only when stamping solid obstacles; it creates no ground and
+does not change gate cuts or wall collision. Drowned Arcades flood rooms
+have actual stone thresholds to retain the water and use clipped water
+patches around raised basins to avoid overlapping transparent skins.

@@ -160,3 +160,16 @@ Shorter connecting passages remove thirty-six metres of empty travel.
 Published bands, roster, rules, rewards and keeper returns are preserved.
 The package's README, assumptions, coverage, comparison and validation live
 under interiors/grey_moors_gauntlet.
+
+
+## Drowned Arcades layout pass
+
+The Drowned Arcades now follows Crownwater's flooded customs road: raised
+bonded stores, marble arcades, a supported stone crossing, cistern screw
+lifts and outfalls, an intact valve aisle and a silted branch, then the
+great bell above the reward doorway. Shorter connecting passages remove
+thirty-six metres of empty travel. Shallow water sits above actual floors
+and behind climbable stone thresholds. Published bands, roster, rules,
+rewards and keeper returns are preserved. The package's README,
+assumptions, coverage, comparison and validation live under
+interiors/crownwater_gauntlet.

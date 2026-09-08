@@ -399,7 +399,20 @@ _theme(Theme(
 
 _theme(Theme(
     region="crownwater", id="crownwater_gauntlet", name="The Drowned Arcades", short="arcades",
-    palette=CROWNWATER, props={"kit": "drowned"},
+    palette=dict(CROWNWATER, floor="crownwater_mosaic", stone="crownwater_marble",
+                 ceil="crownwater_marble", water="crownwater_lagoon", timber="timber_warm"),
+    props={"kit": "drowned_customs", "wayLength": 8.0, "materialSet": "crownwater",
+           "clipCoplanar": True, "localBatches": True, "rearDaisStep": True,
+           "bridgeDeck": "arcaded", "nonBlockingMaterials": ("crownwater_lagoon",),
+           "floodRooms": ("customs-arcade", "cistern", "long-arcade", "long-arcade-alcove-1",
+                          "two-sluices-hub", "two-sluices-north-sluice",
+                          "two-sluices-south-sluice", "two-sluices-merge"),
+           "roomFloors": {"two-sluices-south-sluice": "crownwater_sand"},
+           "environment": {
+               "sky": "none", "backgroundColor": [.025, .045, .05], "sun": {"enabled": False},
+               "ambient": {"color": [.45, .57, .59], "energy": 1.15},
+               "fog": {"enabled": True, "color": [.045, .075, .08], "density": .003},
+               "tonemap": {"mode": "filmic", "exposure": 1.2, "white": 3.5}}},
     flavour="The customs arcades of the old city, flooded to the knee since the crown went under, and "
             "full of what came up with the water.",
     legs=(
