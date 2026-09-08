@@ -223,6 +223,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"quest_archive_v1",
 	"quest_journal_v1",
 	"spell_power_v1",
+	"spell_visuals_v1",
 	"special_events_v1",
 	"storage_window_v1",
 ]
@@ -717,10 +718,16 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			# invites two sources of truth for the same fact.
 			return {"type": "sigils", "owned": owned_sigils}
 		ServerMessage.SPELL_CAST:
-			if payload.size() < 2 or int(payload[0]) < 1 or int(payload[0]) > 6:
+			if payload.size() not in [2, 4] or int(payload[0]) < 1 or int(payload[0]) > 6:
 				return {"type": "invalid", "error": "spell_result_length"}
-			return {"type": "spell_result", "status": int(payload[0]),
+			var result := {"type": "spell_result", "status": int(payload[0]),
 				"spell_id": int(payload[1])}
+			if payload.size() == 4:
+				if int(payload[2]) < 1 or int(payload[2]) > 10:
+					return {"type": "invalid", "error": "spell_result_power"}
+				result["power"] = int(payload[2])
+				result["visual_effect"] = int(payload[3])
+			return result
 		ServerMessage.MISSILE_AIM_A_AT_B, ServerMessage.MISSILE_FIRE_A_TO_B:
 			# Both carry the same pair: who is shooting and what at. The
 			# server sends an aim before every shot and a fire when it looses,
@@ -880,13 +887,16 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 				"source_actor_id": u16(payload),
 				"x": u16(payload, 2), "y": u16(payload, 4)}
 		ServerMessage.SEND_SPECIAL_EFFECT:
-			# Three or five bytes: the effect, the actor it happened to, and a
-			# second actor when the effect travelled between two.
-			if payload.size() != 3 and payload.size() != 5:
+			# spell_visuals_v1 appends the resolved power byte to either legacy shape.
+			if payload.size() not in [3, 4, 5, 6]:
 				return {"type": "invalid", "error": "special_effect_length"}
+			var power := int(payload[-1]) if payload.size() in [4, 6] else 1
+			if power < 1 or power > 10:
+				return {"type": "invalid", "error": "special_effect_power"}
 			return {"type": "special_effect", "effect": int(payload[0]),
 				"actor_id": u16(payload, 1),
-				"target_id": u16(payload, 3) if payload.size() == 5 else -1}
+				"target_id": u16(payload, 3) if payload.size() >= 5 else -1,
+				"power": power}
 		ServerMessage.SEND_BUFFS:
 			if payload.size() != 6:
 				return {"type": "invalid", "error": "actor_buffs_length"}

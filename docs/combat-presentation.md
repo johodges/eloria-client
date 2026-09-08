@@ -56,15 +56,72 @@ server's current effect mapping. Effects are world-depth-tested, cast no shadows
 and respect Graphics → particles; bow geometry remains visible when effects are
 disabled. No additional textures or third-party assets are required.
 
+### Caster-to-target spell exchanges
+
+Targeted magic uses a moving luminous core and short, tapered trails instead of
+the former straight cylinder spanning both actors. A soft procedural shader
+provides radial cores and feathered ribbon edges in the Compatibility renderer.
+Flights gather at the posed hands, release with the casting gesture, follow the
+target's chest, then trigger the contact flash, particles and ground runes on
+arrival. Flight lasts 0.22–0.62 seconds by distance; the trail dissolves over
+0.24 seconds and the impact fades over 1.1 seconds. This is presentation timing;
+server damage and spell outcomes are unchanged.
+
+Effect 2 uses an ember core and a focused wake, effect 0 uses winding venom,
+effect 1 uses arcing healing wisps, and effect 10 returns braided mana energy
+from the target to the caster. The server shares effect 2 between harm and life
+drain, so the client preserves a shared force presentation for that id. Self
+casts and events without a second actor keep their local effects.
+
+Endpoints use weak actor references and retain their last valid positions if an
+actor disappears. Once released, a trail does not drag behind a moving caster.
+Flight geometry is analytic and bounded (28 segments per strand), so its shape
+does not depend on frame rate or accumulate an unbounded particle history.
+
+Run `godot --path godot-client res://src/dev/spell_exchange_showcase.tscn` to
+review all four exchanges on player rigs. Space pauses and R restarts.
+`tests/integration/rendered_spell_exchanges.gd` captures gathering, flight,
+contact and dissolution. Set `ELORIA_RECORD_SPELLS=1` to also capture 30 fps
+frames for a movie; `ELORIA_ARTIFACT_DIR` chooses the output directory.
+
+### Power tiers
+
+Visual intensity follows the **invested spell power (P1–P10)** from the magic
+system, including its existing Magic skill and nexus gates. It does not infer a
+remote caster's investment from the local power selector or damage numbers.
+P1 retains the base appearance. P1–P5 rise to the former maximum: 1.9× core
+size, 1.63× rune radius, 2.08× particles and 1.27× color intensity. P6–P10
+follow a steeper curve, reaching 4.2× core/trail/hand-spark size, 2.2× rune
+radius, 4.5× particles (144 impact particles maximum) and 2.7× color intensity.
+P10 more than doubles the former maximum's core size, brightness and particle
+count. Spatial spread grows more slowly to keep the effect concentrated.
+Actor size, skeletal animation speed, flight trajectory and arrival timing stay
+constant. Power is retained when channel entry becomes its sustained loop and
+reset for a different action.
+
+The `spell_visuals_v1` capability adds the actual cast power to spell results and
+world effects. The server sends each observer one version of the event; older
+clients receive the original packet. Legacy events received by the new client
+use P1. Both client and server changes must be installed for live power-aware
+effects. The server preserves the paid power when a targeted cast is pending,
+even if preferences change before target selection. Command/hotkey casts use
+the same presentation path, including self, target and ally delivery.
+
+Run `res://src/dev/spell_power_showcase.tscn` for a P1/P5/P8/P10 comparison.
+Set `ELORIA_COMPARE_SPELL_POWER=1` when running the rendered spell exchange test
+to capture that comparison instead of the four spell families.
+
 ## Verification
 
 ```sh
 godot --headless --path godot-client --script res://tests/test_combat_presentation.gd
+godot --headless --path godot-client --script res://tests/test_spell_flights.gd
 godot --headless --path godot-client --script res://tests/test_animation_looping.gd
 godot --headless --path godot-client --script res://tests/test_animation_gate.gd
 python godot-client/tests/test_held_props.py -v
 godot --path godot-client --rendering-method gl_compatibility --script res://tests/integration/rendered_combat_showcase.gd
 godot --path godot-client --rendering-method gl_compatibility --script res://tests/integration/rendered_world_effects.gd
+godot --path godot-client --rendering-method gl_compatibility --script res://tests/integration/rendered_spell_exchanges.gd
 ```
 
 The combat test exercises all 16 creation rigs, transition recovery, interruption,
@@ -78,3 +135,11 @@ Local validation also found an existing failure in `test_protocol.gd`: its
 locomotion assertion requires walk/run facing offsets above 15 degrees while
 the existing checked-in map sets both to zero. This change preserves those
 locomotion settings.
+
+Power verification covers tier growth, bounded particle counts, unchanged
+trajectories/timing, channel transitions, actual power in the production packet
+path, and legacy decoding. Server checks in `tests/test_spell_visuals.py` cover
+mixed-capability observers, self/ally casts, rejected casts and a preference
+change during target selection. The focused server power/visual tests pass;
+the broader existing protocol suite has unrelated equipment-catalog and
+incomplete inventory/trade/food fixtures.

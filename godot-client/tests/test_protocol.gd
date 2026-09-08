@@ -61,9 +61,11 @@ func _init() -> void:
 		"player_info_v1": EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO,
 		"quest_journal_v1": EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE,
 		"spell_power_v1": EloriaProtocol.ServerMessage.ELORIA_SPELL_POWER,
+		"spell_visuals_v1": EloriaProtocol.ServerMessage.SEND_SPECIAL_EFFECT,
 		"special_events_v1": EloriaProtocol.ServerMessage.ELORIA_SPECIAL_EVENT_STATE,
 		"storage_window_v1": EloriaProtocol.ServerMessage.ELORIA_STORAGE_STATE}
 	var capability_probes: Dictionary = {
+		EloriaProtocol.ServerMessage.SEND_SPECIAL_EFFECT: "025b004d0005",
 		EloriaProtocol.ServerMessage.ELORIA_COMBAT_STATE:
 			"016600120014001e002c00050052656564686f726e205374616700",
 		EloriaProtocol.ServerMessage.ELORIA_INVENTORY_STATE:

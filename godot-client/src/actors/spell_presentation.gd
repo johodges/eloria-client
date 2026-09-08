@@ -8,6 +8,28 @@ const EFFECT_ACTIONS := {0: &"cast_aggressive", 1: &"heal", 2: &"cast_aggressive
 	72: &"cast_defensive", 73: &"cast_aggressive", 74: &"cast_defensive"}
 static var _spells: Dictionary = {}
 
+## Mirrors magic.MIN/MAX_SPELL_POWER. Scale geometry around its attachment,
+## never the actor, projectile endpoints, animation clock or damage radius.
+static func power_scale(power: int) -> float:
+	return _power_curve(power, 1.9, 4.2)
+
+static func power_radius(power: int) -> float:
+	return _power_curve(power, 1.63, 2.2)
+
+static func power_count(base: int, power: int) -> int:
+	return roundi(base * _power_curve(power, 2.08, 4.5))
+
+static func power_intensity(power: int) -> float:
+	return _power_curve(power, 1.27, 2.7)
+
+static func _power_curve(power: int, midpoint: float, maximum: float) -> float:
+	var tier := clampi(power, 1, 10)
+	# P5 reaches the former maximum. Mastery tiers then build more steeply;
+	# P10 more than doubles its core size, brightness and particle population.
+	if tier <= 5:
+		return lerpf(1.0, midpoint, float(tier - 1) / 4.0)
+	return lerpf(midpoint, maximum, pow(float(tier - 5) / 5.0, 1.3))
+
 static func action_for_effect(effect: int) -> StringName:
 	return EFFECT_ACTIONS.get(effect, &"")
 

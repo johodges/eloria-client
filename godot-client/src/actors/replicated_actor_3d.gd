@@ -2320,6 +2320,27 @@ func ranged_release_origin() -> Vector3:
 		return combat_presentation.bow.nock_position()
 	return global_position + Vector3.UP * 1.1
 
+func spell_release_origin() -> Vector3:
+	var skeleton := get_skeleton()
+	if skeleton != null:
+		var left := skeleton.find_bone("hand_l")
+		var right := skeleton.find_bone("hand_r")
+		if left >= 0 and right >= 0:
+			var left_hand := skeleton.global_transform * skeleton.get_bone_global_pose(left).origin
+			var right_hand := skeleton.global_transform * skeleton.get_bone_global_pose(right).origin
+			if current_action == &"heal":
+				return left_hand if left_hand.y > right_hand.y else right_hand
+			return (left_hand + right_hand) * 0.5
+	return global_position + Vector3.UP * 1.1
+
+func spell_target_position() -> Vector3:
+	var skeleton := get_skeleton()
+	if skeleton != null:
+		var chest := skeleton.find_bone("spine_03")
+		if chest >= 0:
+			return skeleton.global_transform * skeleton.get_bone_global_pose(chest).origin
+	return global_position + Vector3.UP * 1.0
+
 func set_combat_effects_enabled(enabled: bool) -> void:
 	if combat_presentation != null:
 		combat_presentation.effects_enabled = enabled

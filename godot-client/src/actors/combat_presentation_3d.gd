@@ -13,6 +13,20 @@ var _last_time := -1.0
 var _hand_l := -1
 var _hand_r := -1
 var _equipped_bow := false
+var _spell_color := Color.TRANSPARENT
+var _spell_action: StringName
+var spell_power := 1
+var _power_action: StringName
+
+func set_spell_palette(color: Color, power := 1) -> void:
+	_spell_color = color
+	_spell_action = actor.current_action
+	set_spell_power(power)
+
+func set_spell_power(power: int) -> void:
+	spell_power = clampi(power, 1, 10)
+	_power_action = actor.current_action
+	update_pose()
 
 func configure(owner_actor: ReplicatedActor3D) -> void:
 	actor = owner_actor
@@ -48,9 +62,18 @@ func update_pose() -> void:
 	if not is_instance_valid(actor) or _hand_l < 0 or _hand_r < 0:
 		return
 	var action := actor.current_action
+	if action != _power_action:
+		if not (action == &"cast_channel" and _power_action == &"cast_channel_enter"):
+			spell_power = 1
+		_power_action = action
+	if action not in [&"cast", &"cast_channel_enter", &"cast_channel", &"cast_aggressive", &"cast_defensive", &"heal"]:
+		spell_power = 1
+	var brightness := SpellPresentation.power_intensity(spell_power)
+	_material.albedo_color = Color(1.0, 1.0, 1.0, brightness)
 	var has_cue := action in [&"cast", &"cast_channel_enter", &"cast_channel", &"cast_aggressive",
 		&"cast_defensive", &"heal", &"attack_primary", &"attack_secondary", &"ranged_draw", &"ranged_hold", &"ranged_attack"]
 	if not has_cue and not _equipped_bow:
+		_spell_color = Color.TRANSPARENT
 		if action != _last_action:
 			_mesh.clear_surfaces()
 			_trail.clear()
@@ -111,35 +134,41 @@ func update_pose() -> void:
 		color = Color(0.34, 0.92, 0.62, fade)
 	elif action in [&"cast", &"cast_aggressive"]:
 		color = Color(1.0, 0.43, 0.16, fade)
+	if casting and action == _spell_action and _spell_color.a > 0.0:
+		color = Color(_spell_color, fade)
 	if casting:
+		var size := SpellPresentation.power_scale(spell_power)
+		var radius := SpellPresentation.power_radius(spell_power)
 		for hand: Vector3 in [l, r]:
-			CombatEffectMesh.arc(_mesh, hand, 0.105 + sin(time*7.0)*0.012, 0.012, color,
+			CombatEffectMesh.arc(_mesh, hand, (0.105 + sin(time*7.0)*0.012) * radius, 0.012 * size, color,
 				time*2.0, TAU*0.8)
-			CombatEffectMesh.spark(_mesh, hand, 0.07, Color(0.86, 0.95, 1.0, fade*0.8))
-			for i: int in 6:
-				var angle := float(i)*TAU/6.0 + time*3.0
-				var point := hand + Vector3(cos(angle), sin(angle*1.5)*0.65, sin(angle))*0.19
-				CombatEffectMesh.spark(_mesh, point, 0.025, color)
+			CombatEffectMesh.spark(_mesh, hand, 0.07 * size, Color(0.86, 0.95, 1.0, fade*0.8))
+			var count := SpellPresentation.power_count(6, spell_power)
+			for i: int in count:
+				var angle := float(i)*TAU/count + time*3.0
+				var point := hand + Vector3(cos(angle), sin(angle*1.5)*0.65, sin(angle))*0.19*radius
+				CombatEffectMesh.spark(_mesh, point, 0.025 * size, color)
 		if action == &"cast_defensive":
 			var centre := (l+r)*0.5 + Vector3(0, 0, -0.16)
 			var shield_basis := Basis(Vector3.RIGHT, PI*0.5)
-			for radius: float in [0.34, 0.43, 0.46]:
-				CombatEffectMesh.arc(_mesh, centre, radius * smoothstep(0.0, 0.22, time),
-					0.014, color, time*0.3, TAU, shield_basis)
+			for ring_radius: float in [0.34, 0.43, 0.46]:
+				CombatEffectMesh.arc(_mesh, centre, ring_radius * radius * smoothstep(0.0, 0.22, time),
+					0.014 * size, color, time*0.3, TAU, shield_basis)
 			for i: int in 6:
 				var a := i*TAU/6.0 + PI/6.0
 				var b := (i+1)*TAU/6.0 + PI/6.0
-				CombatEffectMesh.line(_mesh, centre+Vector3(cos(a),sin(a),0)*0.30,
-					centre+Vector3(cos(b),sin(b),0)*0.30, 0.018, color, Vector3.FORWARD)
+				CombatEffectMesh.line(_mesh, centre+Vector3(cos(a),sin(a),0)*0.30*radius,
+					centre+Vector3(cos(b),sin(b),0)*0.30*radius, 0.018*size, color, Vector3.FORWARD)
 		elif action == &"heal" or action == &"cast_channel":
-			CombatEffectMesh.arc(_mesh, Vector3(0, 0.045, 0), 0.43, 0.013, color, -time, TAU*0.88)
-			for i: int in 18:
-				var phase := fposmod(time*0.55 + float(i)/18.0, 1.0)
+			CombatEffectMesh.arc(_mesh, Vector3(0, 0.045, 0), 0.43*radius, 0.013*size, color, -time, TAU*0.88)
+			var count := SpellPresentation.power_count(18, spell_power)
+			for i: int in count:
+				var phase := fposmod(time*0.55 + float(i)/count, 1.0)
 				var angle := float(i)*2.4 + time*1.7
 				var c := color
 				c.a *= sin(phase*PI)*0.75
-				CombatEffectMesh.spark(_mesh, Vector3(cos(angle)*0.42, phase*1.65,
-					sin(angle)*0.42), 0.035, c)
+				CombatEffectMesh.spark(_mesh, Vector3(cos(angle)*0.42*radius, phase*1.65,
+					sin(angle)*0.42*radius), 0.035*size, c)
 	if melee:
 		for i: int in range(1, _trail.size()):
 			var weight := float(i)/_trail.size()

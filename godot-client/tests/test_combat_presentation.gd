@@ -27,6 +27,10 @@ func run() -> void:
 		for action: StringName in [&"cast_aggressive", &"cast_defensive", &"heal", &"attack_primary", &"attack_secondary", &"ranged_attack"]:
 			actor.play_action(action, true)
 			actor.animation_player.advance(0.001)
+			check(actor.spell_release_origin().is_finite() and actor.spell_release_origin().y > actor.global_position.y,
+				"spell release follows posed hands: " + str(option.model))
+			check(actor.spell_target_position().is_finite() and actor.spell_target_position().y > actor.global_position.y,
+				"spell target follows the rig chest: " + str(option.model))
 			var duration := actor.animation_player.current_animation_length
 			check(duration > 0.1, "action has a real clip: " + action)
 			actor.animation_player.advance(duration + 0.1)
@@ -55,14 +59,18 @@ func run() -> void:
 		actor.combat_presentation.update_pose()
 		check(not bow.arrow.visible, "arrow leaves hand on release")
 		actor.play_action(&"cast_channel_enter")
+		actor.combat_presentation.set_spell_power(10)
 		actor.animation_player.advance(0.6)
 		check(actor.current_action == &"cast_channel", "channel entry becomes a sustained loop")
+		check(actor.combat_presentation.spell_power == 10, "channel loop retains invested power")
 		actor.animation_player.advance(3.0)
 		check(actor.animation_player.is_playing(), "channel remains animated")
 		dto["command"] = 7
 		dto["command_sequence"] = 1
 		actor.apply_server_state(dto, adapter)
 		actor.play_action(&"heal")
+		actor.combat_presentation.update_pose()
+		check(actor.combat_presentation.spell_power == 1, "a new cast cannot inherit old visual power")
 		actor.apply_server_state(dto, adapter)
 		check(actor.current_action == &"heal", "unrelated state refresh does not interrupt healing")
 		dto = ActorReducer.apply_command(dto, 46)

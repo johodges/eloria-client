@@ -774,7 +774,15 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 				_:
 					pending_spell_target = ""
 					spell_action = SpellPresentation.action_for_spell(int(event.spell_id)) if int(event.status) == 1 else &"cast_exit"
-			actor_animation_requested.emit({"actor_id": local_actor_id, "action": spell_action})
+			if int(event.status) == 1 and int(event.get("visual_effect", 255)) != 255:
+				var resolved_action := SpellPresentation.action_for_effect(int(event.visual_effect))
+				if not resolved_action.is_empty():
+					spell_action = resolved_action
+			var presentation := {"actor_id": local_actor_id, "action": spell_action}
+			if event.has("power"):
+				last_spell_result["power"] = int(event.power)
+				presentation["power"] = int(event.power)
+			actor_animation_requested.emit(presentation)
 			state_changed.emit(&"spells")
 		"missile":
 			# Aiming is state - the shooter is still drawing - and it lives on
@@ -892,7 +900,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 		"special_effect":
 			special_effect_requested.emit({"effect": int(event.effect),
 				"actor_id": int(event.actor_id),
-				"target_id": int(event.target_id)})
+				"target_id": int(event.target_id), "power": int(event.get("power", 1))})
 		"actor_buffs":
 			# Which visible effects an actor is under, stated per actor. Kept on
 			# the actor rather than in a table of its own, so it disappears with

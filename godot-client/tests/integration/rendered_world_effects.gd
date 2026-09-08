@@ -79,13 +79,20 @@ func _run() -> void:
 		"effect 17 at the actor the server named: a harvest interrupted")
 
 	# Effect 2, which the server sends with a second actor: it travelled.
-	app_state.call("_on_packet", 79, PackedByteArray([2, 0x5b, 0, 0x4d, 0]))
-	for _settle: int in range(2):
-		await process_frame
+	app_state.call("_on_packet", 79, PackedByteArray([2, 0x5b, 0, 0x4d, 0, 6]))
 	var effects: Array = main.get("world_effects") as Array
 	var travelled: WorldEffect3D = effects[effects.size() - 1] as WorldEffect3D
-	_expect(travelled.get_node_or_null("EffectBeam") != null,
-		"an effect the server said travelled draws its path")
+	travelled.set_process(false)
+	_expect(travelled.power_level == 6 and travelled.flight.power_level == 6,
+		"server-stated power survives the full packet to effect path")
+	var caster := (main.get("actor_nodes") as Dictionary).get(91) as ReplicatedActor3D
+	_expect(caster.combat_presentation.spell_power == 6,
+		"caster hand effects use the same power as the projectile")
+	_expect(travelled.flight != null and travelled.get_node_or_null("EffectBeam") == null,
+		"a targeted effect draws a moving spell rather than a solid bar")
+	travelled._process(travelled.release_delay + float(travelled.flight.duration) * 0.5)
+	_expect(not travelled.impact_started,
+		"the real special-effect packet waits for arrival before target impact")
 	# `emitting` is a one-shot trigger that clears as soon as the burst is
 	# dispatched, so what is asserted is the burst itself, not the flag.
 	var burst: GPUParticles3D = travelled.get_node_or_null(
@@ -97,6 +104,16 @@ func _run() -> void:
 	camera.look_at(Vector3(4.0, 1.0, -4.0), Vector3.UP)
 	await _capture("world-effect-between-actors.png",
 		"effect 2 from one actor to another, because the server named both")
+	travelled._process(float(travelled.flight.duration) * 0.5 + 0.02)
+	_expect(travelled.impact_started, "the spell makes contact after traveling")
+	await _capture("world-effect-spell-impact.png", "contact follows the spell flight")
+	# The production graphics preference suppresses creation of flight geometry.
+	var effects_before: int = (main.get("world_effects") as Array).size()
+	main.set("_effects_enabled", false)
+	app_state.call("_on_packet", 79, PackedByteArray([2, 0x5b, 0, 0x4d, 0]))
+	_expect((main.get("world_effects") as Array).size() == effects_before,
+		"particles disabled suppresses the entire targeted spell effect")
+	main.set("_effects_enabled", true)
 
 	# A real arrow, from the server's own aim-then-fire pair. The effects
 	# already on screen are cleared first - they fade on real time, and a

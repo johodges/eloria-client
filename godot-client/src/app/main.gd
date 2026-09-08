@@ -7279,7 +7279,9 @@ func _on_special_effect_requested(effect: Dictionary) -> void:
 	var world_effect := WorldEffect3D.new()
 	world_root.add_child(world_effect)
 	world_effect.configure(int(effect.get("effect", -1)),
-		origin_value as Vector3, target_value)
+		origin_value as Vector3, target_value, int(effect.get("power", 1)))
+	world_effect.bind_actors(source,
+		actor_nodes.get(int(effect.get("target_id", -1))) as Node3D)
 	world_effects.append(world_effect)
 	world_effects = world_effects.filter(func(node: Variant) -> bool:
 		return is_instance_valid(node))
@@ -7298,6 +7300,8 @@ func _on_actor_animation_requested(animation: Dictionary) -> void:
 	(node as ReplicatedActor3D).set_combat_effects_enabled(_effects_enabled)
 	(node as ReplicatedActor3D).play_action(
 		StringName(str(animation.get("action", ""))))
+	if animation.has("power") and (node as ReplicatedActor3D).combat_presentation != null:
+		(node as ReplicatedActor3D).combat_presentation.set_spell_power(int(animation.power))
 
 func _actor_effect_position(actor_id: int) -> Variant:
 	if actor_id < 0:
