@@ -14,9 +14,12 @@ extends SceneTree
 ##
 ##   fileRead      - the glb off disk into a buffer, which is the floor under
 ##                   the parse and says how much of it is I/O;
-##   parseNoImages - the same parse with `HANDLE_BINARY_DISCARD_TEXTURES`, so
-##                   the difference against the real parse is what decoding the
-##                   embedded PNGs costs;
+##   parseNoImages - the same parse with `HANDLE_BINARY_DISCARD_TEXTURES`. It
+##                   is within noise of the real parse, which is the finding:
+##                   the flag drops the textures after Godot has decoded them,
+##                   so it does not measure what decoding costs. Decoding the
+##                   region's PNGs by hand is 150-175 ms of a 330-470 ms parse;
+##                   `HANDLE_BINARY_DISCARD_TEXTURES` saves none of it;
 ##   firstFrame    - the first frame drawn with the region in the tree, which
 ##                   is where texture upload and the initial cull land.
 ##
@@ -45,8 +48,9 @@ const REGISTRY := "res://data/maps/registry.json"
 
 ## The loader's own phase names, in the order it runs them.
 const PHASES: Array[StringName] = [
-	&"manifest", &"parse", &"mipmaps", &"generateScene", &"attach", &"index",
-	&"materials", &"collision", &"walkSurfaces", &"navigation", &"batching",
+	&"manifest", &"parse", &"mipmaps", &"regroup", &"generateScene", &"attach",
+	&"index", &"materials", &"collision", &"walkSurfaces", &"navigation",
+	&"batching",
 ]
 
 const SETTLE_FRAMES := 12

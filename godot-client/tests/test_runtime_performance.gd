@@ -294,6 +294,12 @@ func _run() -> void:
 	# that wanted a list of it.
 	await _check_world_loader()
 
+	# Godot's scene builder checks every name it adds against the children the
+	# parent already holds, so a package that hangs eight thousand nodes off one
+	# node is quadratic to build. Over-wide sibling lists are bucketed under
+	# empty groups before the scene is generated.
+	_check_sibling_regrouping()
+
 	print("runtime performance tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	scene.queue_free()
 	await process_frame
@@ -408,6 +414,103 @@ func _check_world_loader() -> void:
 		"unloading drops the shapes built for the map that just left")
 	loader.queue_free()
 	await process_frame
+
+## The regrouping pass on a synthetic glTF state: one parent holding more
+## children than the loader will hand to Godot, one narrow parent beside it and
+## a wide list of scene roots. What must survive is every node, its transform,
+## its order and its place under the same ancestor - only the depth may change.
+func _check_sibling_regrouping() -> void:
+	var loader := WorldLoader.new()
+	var manifest := WorldManifest.new()
+	manifest.data = {"asset": {"id": "regroup_probe"}}
+	loader.manifest = manifest
+
+	var wide: int = WorldLoader.MAX_SIBLINGS * 3
+	var nodes: Array[GLTFNode] = []
+	var trunk := GLTFNode.new()
+	trunk.set_name("Trunk")
+	nodes.append(trunk)
+	var branch := GLTFNode.new()
+	branch.set_name("Branch")
+	branch.parent = 0
+	nodes.append(branch)
+	var trunk_children := PackedInt32Array([1])
+	var expected_order: PackedStringArray = PackedStringArray(["Branch"])
+	for index: int in range(wide):
+		var leaf := GLTFNode.new()
+		leaf.set_name("Leaf_%d" % index)
+		leaf.position = Vector3(float(index), 0.0, 0.0)
+		leaf.parent = 0
+		nodes.append(leaf)
+		trunk_children.append(nodes.size() - 1)
+		expected_order.append(leaf.get_name())
+	trunk.set_children(trunk_children)
+	# A second root beside the trunk, so the root list is exercised too.
+	var roots := PackedInt32Array([0])
+	for index: int in range(wide):
+		var loose := GLTFNode.new()
+		loose.set_name("Loose_%d" % index)
+		nodes.append(loose)
+		roots.append(nodes.size() - 1)
+
+	var state := GLTFState.new()
+	state.set_nodes(nodes)
+	state.root_nodes = roots
+	var added: int = loader.call("_regroup_wide_siblings", state)
+	_expect(added > 0, "a package wider than the limit is regrouped")
+
+	var regrouped: Array = state.get_nodes()
+	_expect(regrouped.size() == nodes.size() + added,
+		"regrouping adds groups and removes nothing")
+	# No sibling list anywhere - the roots included - may still be over-wide.
+	var widest: int = state.root_nodes.size()
+	for node_value: Variant in regrouped:
+		widest = maxi(widest, (node_value as GLTFNode).get_children().size())
+	_expect(widest <= WorldLoader.MAX_SIBLINGS,
+		"no sibling list is left wider than the limit (widest %d)" % widest)
+
+	# Every leaf still hangs under the trunk, in the order the package gave, and
+	# the groups between them are empty transforms.
+	var order: PackedStringArray = PackedStringArray()
+	var groups := 0
+	for node_value: Variant in regrouped:
+		var node: GLTFNode = node_value as GLTFNode
+		if not node.get_name().begins_with(WorldLoader.GROUP_NAME_PREFIX):
+			continue
+		groups += 1
+		_expect(node.position.is_zero_approx() and node.scale.is_equal_approx(Vector3.ONE)
+			and node.mesh < 0,
+			"a grouping node carries no geometry and no transform")
+	for group_value: int in _groups_under(regrouped, 0):
+		for leaf_index: int in (regrouped[group_value] as GLTFNode).get_children():
+			order.append((regrouped[leaf_index] as GLTFNode).get_name())
+			_expect((regrouped[leaf_index] as GLTFNode).parent == group_value,
+				"a bucketed child names the group it was moved under")
+	_expect(groups == added, "every group the pass reports is in the state")
+	_expect(order == expected_order,
+		"the trunk's children are the same nodes in the same order")
+
+	# A map may turn it off, and a package with a rig is left alone whatever it
+	# says, because Godot places a Skeleton3D from where its joints sit.
+	manifest.data["rendering"] = {"regroupWideSiblings": false}
+	var untouched := GLTFState.new()
+	untouched.set_nodes(nodes.duplicate())
+	untouched.root_nodes = roots
+	_expect(int(loader.call("_regroup_wide_siblings", untouched)) == 0,
+		"a map that switches regrouping off keeps the tree the package built")
+	manifest.data.erase("rendering")
+	var rigged := GLTFState.new()
+	rigged.set_nodes(nodes.duplicate())
+	rigged.root_nodes = roots
+	rigged.set_skins([GLTFSkin.new()])
+	_expect(int(loader.call("_regroup_wide_siblings", rigged)) == 0,
+		"a package carrying a skin is left exactly as it was authored")
+	loader.free()
+
+## The grouping nodes whose parent is `parent`, in the order the parent lists
+## them, which is the order the package's children were bucketed in.
+func _groups_under(nodes: Array, parent: int) -> PackedInt32Array:
+	return (nodes[parent] as GLTFNode).get_children()
 
 func _returns(value: bool, label: String) -> bool:
 	_expect(value, label)

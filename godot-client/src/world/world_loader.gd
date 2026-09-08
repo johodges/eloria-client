@@ -20,6 +20,29 @@ const BATCH_CELL_METRES := 180.0
 const BATCH_META := "static_batch"
 const BATCH_INDEX_META := "static_batch_index"
 
+# The widest sibling list a package may hand Godot's scene builder.
+#
+# `GLTFDocument.generate_scene()` adds every node with a readable name, and
+# that path checks the proposed name against the children the parent already
+# holds, so it is quadratic in the width of a sibling list. The regions are
+# built wide - Amberwood hangs 7 935 nodes off one parent, Verdant Stair 9 449
+# - and that is where their load went: 3.9 s and 4.2 s of scene building
+# against Four Gates' 117 ms for 1 276 siblings. Bucketing an over-wide list
+# under empty grouping nodes before the scene is generated takes those two to
+# 209 ms and 180 ms and costs about 9 ms.
+#
+# The groups carry an identity transform and no geometry, so every mesh keeps
+# the world placement, name, mesh and visibility it had; only its depth in the
+# tree changes, and every pass in this file and every consumer of the loaded
+# world reaches nodes by a recursive search or by name. A list at or under
+# this width is left exactly as the package built it: a thousand siblings cost
+# a millisecond, and an untouched tree is the one the package author sees.
+const MAX_SIBLINGS := 512
+# Grouping nodes are named after the parent they were split out of. No node in
+# any shipped package starts with this prefix, which is what keeps the name
+# index the collision declarations are resolved through unambiguous.
+const GROUP_NAME_PREFIX := "WorldGroup_"
+
 signal load_started(manifest_path: String)
 signal load_completed(manifest: WorldManifest)
 signal load_failed(errors: Array[String])
@@ -73,6 +96,10 @@ func load_world(manifest_path: String) -> void:
 	var mipped: int = _build_texture_mipmaps(state)
 	print_debug("world_load stage=texture_mipmaps rebuilt=", mipped)
 	mark = _phase(&"mipmaps", mark)
+	var groups: int = _regroup_wide_siblings(state)
+	if groups > 0:
+		print_debug("world_load stage=regroup groups=", groups)
+	mark = _phase(&"regroup", mark)
 	var generated: Node = document.generate_scene(state)
 	if generated == null:
 		push_error("world_load stage=scene_generate error=null_scene path=%s" % resolved_glb_path)
@@ -121,6 +148,88 @@ func _phase(name: StringName, started: int) -> int:
 	var now: int = Time.get_ticks_usec()
 	load_phases[name] = now - started
 	return now
+
+## Splits every sibling list wider than `MAX_SIBLINGS` under empty grouping
+## nodes, so Godot's scene builder never pays its quadratic name check on one.
+## Returns how many groups were added. See MAX_SIBLINGS for what this is worth.
+##
+## Runs on the parsed glTF rather than on the built tree, because the cost is
+## in the building: by the time there are nodes to reparent it has been paid.
+##
+## Packages that carry a skin or a skeleton are left alone. Godot decides where
+## a Skeleton3D goes from the joints' place among their siblings, and a rig is
+## small enough that it would never be split anyway; skipping the whole package
+## is a cheaper promise to keep than a rule about which lists may be split.
+func _regroup_wide_siblings(state: GLTFState) -> int:
+	var rendering: Dictionary = _rendering_settings()
+	if not bool(rendering.get("regroupWideSiblings", true)):
+		return 0
+	if not state.get_skins().is_empty() or not state.get_skeletons().is_empty():
+		return 0
+	var limit: int = maxi(16, int(rendering.get("maxSiblings", MAX_SIBLINGS)))
+	var nodes: Array = state.get_nodes()
+	# Only the nodes the package brought: the groups appended below are built
+	# narrow, so revisiting them would find nothing to do.
+	var parsed: int = nodes.size()
+	var added := 0
+	# The scene root Godot generates is a parent too, and a package whose nodes
+	# are all roots - Sunmane Steppe's thousand props are - hangs every one of
+	# them off it.
+	var roots: PackedInt32Array = state.root_nodes
+	if roots.size() > limit:
+		var root_groups: PackedInt32Array = _bucket_siblings(nodes, roots, -1)
+		state.root_nodes = root_groups
+		added += root_groups.size()
+	for index: int in range(parsed):
+		var node: GLTFNode = nodes[index] as GLTFNode
+		if node == null:
+			continue
+		var children: PackedInt32Array = node.get_children()
+		if children.size() <= limit:
+			continue
+		var groups: PackedInt32Array = _bucket_siblings(nodes, children, index)
+		node.set_children(groups)
+		added += groups.size()
+	if added > 0:
+		state.set_nodes(nodes)
+	return added
+
+## Splits `children` into buckets of about sqrt(n), appends a grouping node per
+## bucket to `nodes`, and returns the indices of those groups.
+##
+## sqrt is where the two costs meet: smaller buckets leave the groups
+## themselves a wide sibling list, larger ones leave the buckets wide, and the
+## builder pays the same quadratic on either. 7 935 children become 90 groups
+## of 90.
+func _bucket_siblings(nodes: Array, children: PackedInt32Array,
+		parent: int) -> PackedInt32Array:
+	var bucket: int = maxi(1, int(ceil(sqrt(float(children.size())))))
+	var groups := PackedInt32Array()
+	var cursor := 0
+	while cursor < children.size():
+		var group := GLTFNode.new()
+		group.set_name("%s%d_%d" % [GROUP_NAME_PREFIX, parent + 1, groups.size()])
+		group.parent = parent
+		var slice := PackedInt32Array()
+		var stop: int = mini(cursor + bucket, children.size())
+		while cursor < stop:
+			slice.append(children[cursor])
+			cursor += 1
+		group.set_children(slice)
+		nodes.append(group)
+		var group_index: int = nodes.size() - 1
+		for child_index: int in slice:
+			(nodes[child_index] as GLTFNode).parent = group_index
+		groups.append(group_index)
+	return groups
+
+## The map's `rendering` block, or an empty one. Both the batching and the
+## regrouping are per-map switches a package can turn off.
+func _rendering_settings() -> Dictionary:
+	if manifest == null:
+		return {}
+	var value: Variant = manifest.data.get("rendering", {})
+	return value as Dictionary if value is Dictionary else {}
 
 ## The import's mesh instances, and the first node of each name. Both lists the
 ## load passes need, taken in a single traversal.
@@ -289,8 +398,7 @@ func _apply_navigation_collision() -> void:
 	world_root.add_child(body)
 
 func _batch_static_instances(mesh_instances: Array) -> void:
-	var rendering_value: Variant = manifest.data.get("rendering", {})
-	var rendering: Dictionary = rendering_value as Dictionary if rendering_value is Dictionary else {}
+	var rendering: Dictionary = _rendering_settings()
 	if not bool(rendering.get("batchStaticInstances", true)):
 		return
 	var minimum: int = maxi(2, int(rendering.get("batchMinimumInstances",
