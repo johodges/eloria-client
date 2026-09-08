@@ -12,6 +12,12 @@ extends SceneTree
 ## extra probes are taken here because the loader cannot take them without
 ## doing the work twice:
 ##
+## Every region is measured three ways, because since the map cache landed
+## there are three different numbers a person could mean by "what does a load
+## cost": building it from the package, the first visit with the cache on
+## (which is a build plus the package hash, the entry being written three
+## frames later and off the load), and every visit after that.
+##
 ##   fileRead      - the glb off disk into a buffer, which is the floor under
 ##                   the parse and says how much of it is I/O;
 ##   parseNoImages - the same parse with `HANDLE_BINARY_DISCARD_TEXTURES`. It
@@ -46,11 +52,15 @@ const REGIONS: Array[String] = [
 
 const REGISTRY := "res://data/maps/registry.json"
 
-## The loader's own phase names, in the order it runs them.
+## The loader's own phase names, in the order it runs them. `digest` and
+## `cacheSnapshot` bracket the build; `cacheRead`, `cacheInstantiate` and
+## `cacheLinks` are the whole of a warm load, and `cachePack` is charged to the
+## frame three after it rather than to the load.
 const PHASES: Array[StringName] = [
-	&"manifest", &"parse", &"mipmaps", &"regroup", &"generateScene", &"attach",
-	&"index", &"materials", &"collision", &"walkSurfaces", &"navigation",
-	&"batching",
+	&"manifest", &"digest", &"parse", &"mipmaps", &"regroup", &"generateScene",
+	&"attach", &"index", &"materials", &"collision", &"walkSurfaces",
+	&"navigation", &"batching", &"cacheSnapshot",
+	&"cacheRead", &"cacheInstantiate", &"cacheLinks",
 ]
 
 const SETTLE_FRAMES := 12
@@ -157,44 +167,59 @@ func _measure_region(loader: WorldLoader, registry: Dictionary, region: String,
 
 	var probes: Dictionary = _probe_glb(glb_path)
 
-	# Every phase of every repeat, so the median is taken per phase over the
-	# same loads rather than assembled from different ones.
-	var samples: Array = []
-	var shape: Dictionary = {}
-	var first_frames := PackedFloat64Array()
-	for pass_index: int in range(repeats):
-		loader.load_world(manifest_path)
-		var deadline: int = Time.get_ticks_msec() + 180000
-		while loader.world_root == null and Time.get_ticks_msec() < deadline:
-			await process_frame
-		if not _expect(loader.world_root != null, region + " loads"):
-			return {"id": region, "error": "load_failed"}
-		var frame_started: int = Time.get_ticks_usec()
-		await process_frame
-		first_frames.append(float(Time.get_ticks_usec() - frame_started) / 1000.0)
-		samples.append(loader.load_phases.duplicate())
-		if shape.is_empty():
-			shape = _shape(loader.world_root)
-		await _settle(SETTLE_FRAMES)
-		loader.unload_world()
-		await _settle(4)
+	# Three questions, not one: what building the region costs, what the first
+	# visit costs with the cache on (a build plus the hash, since the entry is
+	# written three frames later and off the load), and what every visit after
+	# that costs.
+	OS.set_environment(MapSceneCache.DISABLE_ENVIRONMENT, "1")
+	var built: Dictionary = await _repeat(loader, manifest_path, region, repeats)
+	if built.has("error"):
+		return {"id": region, "error": built["error"]}
 
+	OS.set_environment(MapSceneCache.DISABLE_ENVIRONMENT, "")
+	MapSceneCache.forget_setting()
+	MapSceneCache.clear_disk()
+	var first: Dictionary = await _repeat(loader, manifest_path, region, 1)
+	if first.has("error"):
+		return {"id": region, "error": first["error"]}
+	# The write is deferred and then handed to a worker thread, so the entry is
+	# not on disk when the load returns.
+	var written: String = str(first.get("cacheFile", ""))
+	var deadline: int = Time.get_ticks_msec() + 120000
+	while not FileAccess.file_exists(written) and Time.get_ticks_msec() < deadline:
+		await process_frame
+	var cache_bytes: int = _file_size(written)
+	var pack_ms: float = float(int(
+		(first["samples"] as Array)[0].get(&"cachePack", 0))) / 1000.0
+	var save_ms: float = float(int(
+		(first["samples"] as Array)[0].get(&"cacheSave", 0))) / 1000.0
+	var warm: Dictionary = await _repeat(loader, manifest_path, region, repeats)
+	var warm_hits: int = int(warm.get("hits", 0))
+	_expect(warm_hits == repeats,
+		"%s: every warm load hit the cache (%d of %d)" % [
+			region, warm_hits, repeats])
+
+	var shape: Dictionary = built["shape"] as Dictionary
 	var result: Dictionary = {
 		"id": region,
 		"asset": manifest.asset_id(),
 		"glbMegabytes": snappedf(float(probes["glbBytes"]) / 1048576.0, 0.01),
-		"samples": samples,
-		"firstFrameMilliseconds": snappedf(_median(first_frames), 0.1),
+		"samples": built["samples"],
+		"warmSamples": warm["samples"],
+		"firstFrameMilliseconds": snappedf(
+			_median(built["firstFrames"] as PackedFloat64Array), 0.1),
+		"cacheMegabytes": snappedf(float(cache_bytes) / 1048576.0, 0.01),
+		"cachePackMilliseconds": snappedf(pack_ms, 0.1),
+		"cacheSaveMilliseconds": snappedf(save_ms, 0.1),
+		"firstVisitMilliseconds": snappedf(float(int(
+			(first["samples"] as Array)[0].get(&"total", 0))) / 1000.0, 0.1),
 	}
 	result.merge(probes)
 	result.merge(shape)
-	var medians: Dictionary = {}
-	for phase: StringName in PHASES + [&"total"] as Array:
-		var values := PackedFloat64Array()
-		for sample_value: Variant in samples:
-			values.append(float((sample_value as Dictionary).get(phase, 0)) / 1000.0)
-		medians[phase] = snappedf(_median(values), 0.1)
+	var medians: Dictionary = _medians(built["samples"] as Array)
+	var warm_medians: Dictionary = _medians(warm["samples"] as Array)
 	result["medianMilliseconds"] = medians
+	result["warmMedianMilliseconds"] = warm_medians
 
 	print("%-18s %8.1f %8.1f %8.1f %8.1f %8.1f %8.1f %8.1f %8.1f %8.1f" % [
 		region, medians[&"total"], medians[&"parse"], medians[&"mipmaps"],
@@ -207,7 +232,69 @@ func _measure_region(loader: WorldLoader, registry: Dictionary, region: String,
 		shape.get("widestParent", 0), probes["images"],
 		float(probes["imageBytes"]) / 1048576.0,
 		probes["fileReadMilliseconds"], probes["parseNoImagesMilliseconds"]])
+	print("    cache: build %.0f  first visit %.0f  write %.0f (pack %.0f + save %.0f, three frames after the load)  warm %.0f = hash %.0f + read %.0f + build %.0f + relink %.0f   %.1f MB on disk" % [
+		medians[&"total"], result["firstVisitMilliseconds"],
+		float(result["cachePackMilliseconds"]) + float(result["cacheSaveMilliseconds"]),
+		result["cachePackMilliseconds"], result["cacheSaveMilliseconds"],
+		warm_medians[&"total"],
+		warm_medians[&"digest"], warm_medians[&"cacheRead"],
+		warm_medians[&"cacheInstantiate"], warm_medians[&"cacheLinks"],
+		result["cacheMegabytes"]])
 	return result
+
+## `repeats` loads of one region, and everything worth keeping from them.
+func _repeat(loader: WorldLoader, manifest_path: String, region: String,
+		repeats: int) -> Dictionary:
+	var samples: Array = []
+	var first_frames := PackedFloat64Array()
+	var shape: Dictionary = {}
+	var hits: int = 0
+	var cache_file: String = ""
+	for pass_index: int in range(repeats):
+		loader.load_world(manifest_path)
+		var deadline: int = Time.get_ticks_msec() + 180000
+		while loader.world_root == null and Time.get_ticks_msec() < deadline:
+			await process_frame
+		if not _expect(loader.world_root != null, region + " loads"):
+			return {"error": "load_failed"}
+		if loader.loaded_from_cache:
+			hits += 1
+		var frame_started: int = Time.get_ticks_usec()
+		await process_frame
+		first_frames.append(float(Time.get_ticks_usec() - frame_started) / 1000.0)
+		samples.append(loader.load_phases.duplicate())
+		if shape.is_empty():
+			shape = _shape(loader.world_root)
+		# Long enough for the deferred pack, which is what puts `cachePack`
+		# into the phases of the sample above - it is written back into the
+		# dictionary this duplicated, so read it from the loader afterwards.
+		await _settle(SETTLE_FRAMES)
+		for phase: StringName in [&"cachePack", &"cacheSave"]:
+			(samples[samples.size() - 1] as Dictionary)[phase] = \
+				loader.load_phases.get(phase, 0)
+		# Taken before the unload, which clears it.
+		cache_file = loader.cache_file
+		loader.unload_world()
+		await _settle(4)
+	return {"samples": samples, "firstFrames": first_frames, "shape": shape,
+		"hits": hits, "cacheFile": cache_file}
+
+func _medians(samples: Array) -> Dictionary:
+	var medians: Dictionary = {}
+	for phase: StringName in PHASES + [&"total"] as Array:
+		var values := PackedFloat64Array()
+		for sample_value: Variant in samples:
+			values.append(float((sample_value as Dictionary).get(phase, 0)) / 1000.0)
+		medians[phase] = snappedf(_median(values), 0.1)
+	return medians
+
+func _file_size(path: String) -> int:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return 0
+	var size: int = file.get_length()
+	file.close()
+	return size
 
 ## The three probes the loader cannot take without doing its work twice: the
 ## file off disk, the same parse with the embedded textures discarded, and how
