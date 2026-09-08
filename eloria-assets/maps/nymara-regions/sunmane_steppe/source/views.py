@@ -30,15 +30,31 @@ PLACED = [
      "seasonal market with the great hall behind"),
     ("p05-caravanserai-gate", (-6.0, 40.0, 4.4), (-1.0, 25.5, 3.6), 48.0,
      "fortified gate bay and palisade from the road"),
-    ("p07-well-and-pens", (-28.5, 25.5, 2.4), (-33.0, 30.0, 1.3), 46.0,
+    ("p07-well-and-pens", (-25.0, 32.0, 3.1), (-33.0, 24.0, 1.4), 54.0,
      "well, trough and horse paddocks"),
-    ("p10-market-props", (8.6, 12.4, 1.7), (8.6, 8.6, 1.0), 40.0,
+    ("p10-market-props", (3.0, 14.8, 2.1), (8.6, 8.6, 1.4), 54.0,
      "player-scale market goods and prop language"),
     ("p02-round-tent-camp", (-25.0, -35.0, 4.0), (-33.5, -44.5, 2.2), 48.0,
      "Orun round-tent camp"),
     ("great-hall", (0.0, 26.0, 12.0), (0.0, -12.0, 7.0), 50.0,
      "the monumental central hall over the crossroads"),
 ]
+
+PLACED.extend([
+ ("salt-pan",(-5,-118,6),(-21,-122,0),60,"salt pan below the dune road"),
+ ("desert-camp",(-10,-126,4),(-19,-113,2),58,"drovers camp on the sheltered floor beside the salt road"),
+ ("cave-mouth-wind",(68,-109,3),(70,-117,2.7),58,"Wind Caves mouth from the graded watch approach"),
+ ("review-west-arrival",(-51,0,1.7),(-24,0,4.5),60,"ford and west gate from the Four Gates approach"),
+ ("review-pasture-bridge",(-42,-28,1.7),(-26,-28,1.7),58,"bridge deck and the pasture approach"),
+ ("review-cove-bridge",(-43,25,1.7),(-55,25,1.7),58,"sloping drovers bridge over the beck"),
+ ("review-north-gate",(0,-29,1.7),(0,-20,4),60,"north approach with the hall as a landmark"),
+ ("review-north-road",(18,-51,1.7),(8,-28,6),58,"barrows beside the road instead of underneath it"),
+ ("review-service-court",(0,18,2.0),(0,5,2.0),66,"bank and craft awnings grouped in the market"),
+ ("review-west-inn",(-45,1,1.7),(-45,13,2.0),62,"inn gate and horse court beside the road"),
+ ("review-water-pasture",(35,42,1.7),(37,50,1.0),56,"waterhole below the grain fields"),
+ ("review-dune-road",(8,-112,1.7),(8,-126,2.3),58,"menhirs frame the northern crossing"),
+ ("review-overview",(105,85,125),(5,-20,0),56,"surveyed settlement and pasture layout"),
+])
 
 # id, target landmark id (or explicit target), pitch, yaw, distance, fov, note
 VIEWS = [
@@ -74,7 +90,7 @@ VIEWS = [
     ("mesa-north", (-20.0, 14.0, -66.0), -14.0, 355.0, 46.0, 55.0,
      "flat-topped mesas along the north"),
     ("burial-field", "Landmark_sunmane_burial_mound_00", -19.0, 175.0, 26.0, 50.0,
-     "barrow field and archive entrance"),
+     "barrow field and sealed passage"),
     ("animal-pens", "Landmark_sunmane_animal_pen_00", -20.0, 220.0, 26.0, 52.0,
      "horse paddocks and grazing ground"),
     ("outpost-ridge", "Landmark_sunmane_outpost_02", -17.0, 230.0, 26.0, 50.0,
@@ -106,7 +122,7 @@ VIEWS = [
     ("waystone-road", "Landmark_sunmane_waystone_02", -13.0, 150.0, 18.0, 48.0,
      "waystones marking the sand road"),
     ("east-pass", (124.0, 12.0, -22.0), -13.0, 250.0, 40.0, 54.0,
-     "the eastern pass out of the steppe toward Amberwood"),
+     "the eastern frontier; no exterior map link"),
 ]
 
 # Panels 8 and 9 are painted at golden hour, so those two are captured under the
@@ -171,6 +187,13 @@ def main() -> int:
     views.sort(key=lambda entry: entry["id"])
     destination = Path(sys.argv[1]) if len(sys.argv) > 1 else PACKAGE / "camera-views.json"
     destination.write_text(json.dumps({"schemaVersion": 1, "views": views}, indent=2) + "\n")
+    index=[{"id":v["id"],"eye":v["position"],"target":v["target"],
+            "fieldOfViewDegrees":v["fov"],"lighting":"day",
+            "panel":int(v["id"][1:3]) if v["id"].startswith("p") and v["id"][1:3].isdigit()
+                    else ("aerial" if v["id"]=="aerial-overview" else None)} for v in views]
+    target=PACKAGE/"references/captures/index.json"
+    target.parent.mkdir(parents=True,exist_ok=True)
+    target.write_text(json.dumps(index,indent=2)+"\n")
     print("wrote %d views to %s" % (len(views), destination))
     return 0
 

@@ -138,3 +138,23 @@ Recorded so a reviewer can tell a deliberate choice from an oversight.
   phases. Movement belongs to the server-driven actor path.
 - Human inhabitants are not placed by the client. The concept art's crowds are
   server-owned NPCs, listed in `runtimePopulation.npcs`.
+
+## September 2026 circulation and content
+
+The coordinate datum (58, 58) remains the world origin; it is not the current
+server arrival, which is (79, 37). source/layout.py owns explicit route
+stations, bridge banks, building courts, grain plots and content habitats.
+The beck has a surveyed downhill water line. All three bridges use the shared
+sloped_boardwalk recipe and only their decks enter the walking bucket.
+Waterholes use clipped shared watercraft geometry rather than square cells.
+
+The collision build must use the same building pads as the render. Structural
+triangles stored in world space are compared with the terrain beneath them,
+not their node's translation, so palisades remain solid. Geometry supplies
+the standing surface; the three correction passes restore its usable grid.
+
+Client resource markers retain their stable IDs and use short display names;
+the existing global server identity Iron Ore is retained. A region rebuild
+reapplies server-owned tile posts from source/server-content.json against the
+actual LOD's walk triangles. Build timings stay in standalone statistics and
+are omitted from world.json so the package is reproducible.

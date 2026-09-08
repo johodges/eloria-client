@@ -344,3 +344,19 @@ The older region.py and populate.py remain in the toolkit's documented
 legacy Amberwood location. Shared mill and water recipes live in
 amberwood.woodlandcraft; the existing timber and stone palette is retained.
 The four continent crossings and interior/secret identities are preserved.
+
+## Sunmane Steppe circulation pass - September 2026
+
+Sunmane keeps its three continent links and actual arrival at server (79, 37).
+The market groups services in the south court, while roads use the four
+palisade gates and the northern route bends around the hall and barrows.
+Three surveyed timber spans cross a descending western beck. Grain plots,
+pens and side-court inns serve those routes; the salt road has water stations
+and a camp on its sheltered floor.
+
+Sunmane retains its legacy builder but uses shared routecraft, civiccraft,
+woodlandcraft and watercraft recipes through source/layout.py. The native
+collision samples the rendered building pads; water opens only beneath a
+declared Walk_ deck. All 19 departures and all NPC, wildlife, resource and
+interactive rows are connected to the primary arrival. No graph edge changes.
+See sunmane_steppe/layout-review.md for evidence and remaining visual limits.

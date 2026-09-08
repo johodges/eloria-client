@@ -306,7 +306,9 @@ def great_hall(radius: float = 11.5) -> Parts:
         # Drum between tiers so the stack has real thickness.
         if tier < len(tiers) - 1:
             next_radius = tiers[tier + 1][0]
-            frustum(timber, (0, peak - 0.35, 0), (0, tiers[tier + 1][1], 0),
+            lower = (wall_top - 0.42 + (peak - wall_top + 0.42)
+                     * (1 - next_radius * 1.02 / (tier_radius + 1.15)) - 0.08)
+            frustum(timber, (0, lower, 0), (0, tiers[tier + 1][1], 0),
                     next_radius * 1.02, next_radius, sides=tier_sides,
                     uv_scale=UV_SCALE["timber"], cap_start=False, cap_end=False)
         for index in range(tier_sides // 2):

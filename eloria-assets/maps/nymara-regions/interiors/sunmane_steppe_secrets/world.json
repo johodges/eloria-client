@@ -259,17 +259,17 @@
       190.0
     ],
     "heightEncoding": {
-      "origin": -5.131,
-      "step": 0.1311,
+      "origin": -5.2,
+      "step": 0.2,
       "range": [
         1,
         63
       ],
       "zeroMeansBlocked": true
     },
-    "walkableCells": 19776,
-    "blockedCells": 197376,
-    "walkableFraction": 0.0911,
+    "walkableCells": 13010,
+    "blockedCells": 204142,
+    "walkableFraction": 0.0599,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
@@ -3374,7 +3374,7 @@
     "bufferViews": 638,
     "uniqueTriangles": 24892,
     "uniqueVertices": 34546,
-    "glbBytes": 7515812,
+    "glbBytes": 7478888,
     "nodeNames": [
       "Secrets_sunmane_steppe_secrets",
       "Section_steppe-seed-hollow",

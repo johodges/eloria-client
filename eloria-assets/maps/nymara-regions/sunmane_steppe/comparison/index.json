@@ -4,7 +4,7 @@
     "detailBoard": "references/00-concept-detail-board.png",
     "aerial": "references/01-aerial-overview.png"
   },
-  "captureSource": "godot-client/tests/integration/rendered_sunmane_steppe.gd, Godot 4.7.2, gl_compatibility renderer",
+  "captureSource": "_toolkit/godot_capture.gd, Godot 4.7.2, GL Compatibility, --environment=manifest; references/godot-captures/index.json",
   "sheets": [
     {
       "panel": 1,
@@ -50,9 +50,9 @@
     },
     {
       "panel": 8,
-      "subject": "Standing stones at golden hour",
-      "capture": "golden-p08-standing-stones",
-      "sheet": "comparison/panel-08-golden-p08-standing-stones.webp"
+      "subject": "Standing stones",
+      "capture": "p08-standing-stones",
+      "sheet": "comparison/panel-08-p08-standing-stones.webp"
     },
     {
       "panel": 9,
@@ -77,12 +77,6 @@
       "subject": "Additional landmarks",
       "capture": "contact-sheet",
       "sheet": "comparison/additional-landmarks.webp"
-    },
-    {
-      "panel": null,
-      "subject": "Cave interiors",
-      "capture": "cave-interiors",
-      "sheet": "comparison/cave-interiors.webp"
     }
   ],
   "missing": []

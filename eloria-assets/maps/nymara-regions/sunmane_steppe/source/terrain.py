@@ -1,6 +1,6 @@
 """Sunmane Steppe terrain: heightfield, coastline, mesas and terrain classes.
 
-The region is a 208 m square centred on the server arrival datum (58, 58),
+The region is a 280 m square offset around the server arrival datum (58, 58),
 which the client's coordinate adapter maps to Godot (0, 0) at one metre per
 tile.  North is -Z.
 
@@ -17,6 +17,10 @@ from dataclasses import dataclass
 import numpy as np
 
 from noise import fbm, normalise
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "_toolkit"))
+import layout as DESIGN
 
 # The world is a square, but it is not centred on the arrival datum. Server
 # tiles are non-negative, so with the datum at (58, 58) the addressable band
@@ -148,21 +152,8 @@ class Landform:
 CAMP_CENTER = (0.0, 0.0)
 CAMP_RADIUS = 30.0
 
-ROADS = {
-    "west_caravan": [(0, 0), (-16, -2), (-32, -1), (-52, 0), (-70, 2), (-84, 6)],
-    "east_caravan": [(0, 0), (18, 1), (34, 0), (52, 0), (72, -3), (90, -6)],
-    "north_barrow": [(0, 0), (-2, -16), (-1, -30), (0, -42), (2, -58), (4, -74)],
-    "south_shore": [(0, 0), (3, 16), (4, 32), (2, 50), (-4, 66), (-14, 80)],
-    "northwest_pasture": [(0, 0), (-14, -12), (-28, -24), (-40, -36), (-50, -46)],
-    "southeast_mill": [(0, 0), (14, 13), (28, 26), (42, 38), (54, 48)],
-    "northeast_watch": [(0, 0), (16, -12), (32, -24), (46, -34), (58, -44)],
-    "southwest_cove": [(0, 0), (-14, 12), (-30, 24), (-46, 36), (-62, 46), (-74, 54)],
-}
-
-# Crop and pasture blocks: (centre x, centre z, half extent x, half extent z).
-FIELDS = ((34.0, 30.0, 15.0, 11.0), (-34.0, -46.0, 13.0, 10.0),
-          (52.0, 44.0, 12.0, 9.0), (-52.0, 22.0, 11.0, 9.0),
-          (22.0, -58.0, 12.0, 9.0))
+ROADS = DESIGN.ROADS
+FIELDS = DESIGN.FIELDS
 
 # Wind-carved badland spires, placed as instanced rock. Terrain only raises a
 # low plinth under each one.
@@ -178,23 +169,7 @@ ROAD_WIDTH = 5.0
 TRAIL_WIDTH = 2.6
 
 # Secondary riding trails linking outlying sites to the road network.
-TRAILS = {
-    "mill_ridge": [(44, 40), (58, 30), (68, 18), (72, 4)],
-    "well_loop": [(-32, -1), (-38, 14), (-34, 30), (-20, 38), (-4, 40)],
-    "pen_loop": [(34, 0), (44, -12), (52, -22), (62, -26)],
-    "stone_circle": [(-28, -24), (-40, -20), (-50, -14), (-58, -8)],
-    "dock_spur": [(-62, 46), (-70, 40), (-78, 36)],
-    "east_camp": [(52, 0), (62, 10), (70, 22)],
-    "north_camp": [(-1, -30), (-14, -36), (-26, -44)],
-    # Into the desert and the badlands beyond it.
-    "desert_road": [(2, -58), (4, -74), (0, -92), (6, -110), (14, -126)],
-    "salt_pan_spur": [(6, -110), (-14, -118), (-28, -128)],
-    "badland_track": [(14, -126), (44, -122), (74, -112), (96, -104)],
-    "dune_crossing": [(4, -74), (34, -84), (58, -96), (76, -100)],
-    "mountain_approach": [(14, -126), (10, -142), (2, -152)],
-    "east_pass": [(70, 22), (96, 8), (118, -12), (128, -34)],
-    "spire_walk": [(96, -104), (114, -98), (128, -92)],
-}
+TRAILS = DESIGN.TRAILS
 
 
 def _polyline_distance(px: np.ndarray, pz: np.ndarray, path) -> np.ndarray:
@@ -469,22 +444,13 @@ def build(seed: int = 20260827, pads=()) -> Landform:
         height = height * (1.0 - blended) + target * blended
 
     # --- stream chain and waterholes ------------------------------------
-    stream = [(-10, -74), (-8, -58), (-2, -44), (4, -32), (-6, -24), (-22, -14),
-              (-34, 2), (-44, 16), (-56, 28), (-66, 42), (-74, 54)]
-    stream_distance = _polyline_distance(fx, fz, stream)
-    channel = _falloff(stream_distance, 1.2, 6.0) * (1.0 - into_sea)
-    height -= 2.8 * channel
-    ponds = ((-8.5, -58.0, 7.0, ((3, 0.26), (5, 0.14)), 1.4),
-             (3.0, -30.5, 5.8, ((2, 0.30), (6, 0.12)), 3.2),
-             (-58.0, 30.0, 6.4, ((3, 0.24), (7, 0.10)), 5.0),
-             (-46.0, 40.0, 7.6, ((2, 0.28), (5, 0.15)), 0.6),
-             (48.0, -30.0, 5.4, ((3, 0.22), (6, 0.13)), 2.4),
-             (36.0, 52.0, 6.0, ((2, 0.26), (7, 0.11)), 4.1))
+    # Water is cut from frozen downhill surveys by DESIGN.sculpt.
     pond_mask = np.zeros_like(height)
+    ponds = [(x,z,r,((3,0.1),),1.0) for x,z,r,_ in DESIGN.POOLS]
     for px, pz, radius, lobes, phase in ponds:
         normalised = _blob_distance(fx, fz, px, pz, radius, lobes, phase, 0.0)
         bowl = _falloff(normalised, 0.3, 1.0)
-        height -= 3.2 * bowl
+        # Pool beds share the surveyed water level, rather than a warped centre.
         pond_mask = np.maximum(pond_mask, bowl)
 
     # --- roads and trails cut a graded corridor -------------------------
@@ -511,6 +477,8 @@ def build(seed: int = 20260827, pads=()) -> Landform:
                  * _falloff(np.abs(fz - cz), half_z - 3.0, half_z))
         field_mask = np.maximum(field_mask, block)
         height = height * (1.0 - block * 0.65) + smoothed * (block * 0.65)
+
+    height = DESIGN.sculpt(gx,gz,height,np.zeros(height.shape,dtype="int8"),CELL)
 
     # --- slope limiter -----------------------------------------------------
     # Cap the step between neighbouring cells. Beyond roughly 62 degrees a quad

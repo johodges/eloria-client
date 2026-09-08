@@ -363,7 +363,7 @@ def main() -> int:
     parser.add_argument("--server", type=Path, required=True)
     parser.add_argument("--maps", type=Path, required=True)
     parser.add_argument("--apply", action="store_true")
-    parser.add_argument("--region", choices=sorted(INSIDES),
+    parser.add_argument("--region", choices=sorted(set(INSIDES) | {"sunmane_steppe"}),
                         help="rebuild this region and both ends of its links only")
     args = parser.parse_args()
 
@@ -397,8 +397,10 @@ def main() -> int:
         new_text = text.rstrip("\n") + "\n\n" + block + "\n"
     if args.region:
         chosen = {args.region, args.region + "_secrets"}
-        inside_map = INSIDES[args.region][1]
-        chosen.add(inside_map)
+        if args.region in INSIDES:
+            chosen.add(INSIDES[args.region][1])
+        # Sunmane's two cave links live in the profile's legacy block above
+        # BEGIN. This scope rebuilds its exterior marches and secret entrances.
         def belongs(line):
             fields = [part.strip() for part in line.split("|")]
             if not fields or fields[0] != "portal":

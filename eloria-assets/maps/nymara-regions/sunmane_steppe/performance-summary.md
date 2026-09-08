@@ -1,26 +1,30 @@
 # Sunmane Steppe performance summary
 
-## Package cost
+## Current package cost - September 2026
 
 | Measure | LOD1 | LOD2 |
 |---|---:|---:|
-| GLB bytes | 18,407,036 | 9,169,492 |
-| Unique mesh triangles | 229,363 | 136,047 |
-| Meshes | 255 | 159 |
-| Nodes | 1,041 | 312 |
+| GLB bytes | 19,249,384 | 10,171,192 |
+| Unique mesh triangles | 244,565 | 152,687 |
+| Meshes | 262 | 167 |
+| Nodes | 958 | 334 |
 | Materials | 31 | 29 |
 | Embedded textures | 30 | 30 |
-| Terrain triangles | 80,000 | 80,000 |
-| Kit unique triangles | 46,827 | 45,555 |
-| Kit instances | 834 | 192 |
-| Ground-cover triangles | 87,480 | 0 |
-| Landmarks / interactives | 102 / 70 | 102 / 70 |
+| Terrain triangles | 91,600 | 91,600 |
+| Kit unique triangles | 49,727 | 48,455 |
+| Kit instances | 748 | 210 |
+| Ground-cover triangles | 84,866 | 0 |
 
-LOD2 is 50% smaller on disk and carries 70% fewer nodes while keeping the terrain, the architecture and the whole landmark inventory. It drops the ground clutter, the roadside dressing and half the texture resolution.
+These totals describe the current layout. Both levels retain 120 landmarks,
+88 authored geometry interactives and 30 embedded textures. LOD2 removes ground
+clutter and uses half-resolution textures. The standalone world-statistics
+files contain build-time collision counts before the three correction passes;
+layout-review.md records the final corrected grid.
 
-The embedded texture payload is 4.00 MiB of PNG at LOD1 across the ten tileable material families this package actually uses. `textures/` carries all twelve authored families as editable source; `cavern` and `hide` are used by the cave interiors and the ambient horses respectively and are embedded in those packages, not this one. ORM and normal maps are stored at half the base-colour resolution because both carry lower-frequency information than the albedo they accompany, and tangents are emitted only for the primitives whose material actually has a normal map - which is why the Khronos validator reports zero warnings for both packages.
+## Historical client measurements - before the current layout
 
-## Measured in the running client
+The measurements below predate the September 2026 circulation pass. They are
+retained for reference and do not benchmark the rebuilt package.
 
 Godot 4.7.2, `gl_compatibility` renderer, 1280x720, adapter `llvmpipe (LLVM 20.1.2, 256 bits)`.
 
@@ -59,7 +63,7 @@ Renderer-reported GPU memory at the default gameplay camera, LOD1: texture 22.64
 
 Each interior is about a fifth of the surface package on disk and an order of magnitude cheaper in geometry: a cave is a small volume with no terrain grid, no vegetation and no distant scenery, and its shell is two surfaces over roughly 3,000 open cells rather than a 201 x 201 heightfield.
 
-## Against the repository's reference budget
+## Historical budget comparison
 
 `maps/four-gates-city/performance-summary.md` documents a desktop LOD1 budget of 1.5M visible triangles and 512 MiB of texture memory, and 350k triangles and 192 MiB on mobile.
 
@@ -71,6 +75,6 @@ Each interior is about a fifth of the surface package on disk and an order of ma
 | Peak primitives in frame | 725,655 | 471,071 |
 | Texture memory | 22.64 MiB | 12.23 MiB |
 
-Both sit well inside the documented desktop budget; LOD2 sits inside the mobile one. Sunmane carries far more unique geometry than Four Gates because its terrain is a sculpted 280 m heightfield with real ground cover rather than a terraced plateau, and because its architecture is authored rather than assembled from scaled primitives.
+These historical frame counts sit inside the documented desktop budget. LOD2's peak of 471,071 primitives exceeds the cited 350,000 mobile triangle target; primitive counts and triangles are not a direct frame-time measurement. Sunmane carries far more unique geometry than Four Gates because its terrain is a sculpted 280 m heightfield with real ground cover rather than a terraced plateau, and because its architecture is authored rather than assembled from scaled primitives.
 
 Draw calls remain the honest weak point: 2,807 at the default gameplay camera against 2,160 for LOD2, up from the pre-expansion figures because the desert, badland and mountain ground added several hundred more instanced props. That is the cost of instancing authored props as plain glTF nodes, which is what the current loader consumes. Batching the small props into per-chunk meshes would trade duplicated triangles for roughly 600 fewer draw calls; it is deliberately not done here because the loader has no multi-mesh path and triangles are the budget the repository documents, but it is the first thing to try if a low-end target proves draw-call bound.

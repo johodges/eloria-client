@@ -23,14 +23,14 @@
     {
       "id": "animal-pens",
       "target": [
-        -30.0,
-        11.99,
-        -30.0
+        -39,
+        13.3,
+        -59
       ],
       "position": [
-        -45.7,
-        20.88,
-        -48.72
+        -54.7,
+        22.19,
+        -77.72
       ],
       "fov": 52.0,
       "pitchDegrees": -20.0,
@@ -43,12 +43,12 @@
       "id": "badland-crystal",
       "target": [
         124.0,
-        29.15,
+        25.89,
         -96.0
       ],
       "position": [
         134.76,
-        33.72,
+        30.46,
         -114.64
       ],
       "fov": 48.0,
@@ -81,32 +81,32 @@
       "id": "burial-field",
       "target": [
         0.0,
-        10.41,
+        12.57,
         -42.0
       ],
       "position": [
         2.14,
-        18.87,
+        21.03,
         -66.49
       ],
       "fov": 50.0,
       "pitchDegrees": -19.0,
       "yawDegrees": 175.0,
       "distance": 26.0,
-      "note": "barrow field and archive entrance",
+      "note": "barrow field and sealed passage",
       "golden": false
     },
     {
       "id": "caravanserai-west",
       "target": [
-        -42.0,
-        12.85,
-        0.0
+        -45,
+        11.05,
+        14
       ],
       "position": [
-        -13.74,
-        22.62,
-        -2.47
+        -16.74,
+        20.82,
+        11.53
       ],
       "fov": 52.0,
       "pitchDegrees": -19.0,
@@ -117,33 +117,31 @@
     },
     {
       "id": "cave-mouth-wind",
-      "target": [
-        70.0,
-        20.04,
-        -117.0
-      ],
       "position": [
-        70.0,
-        23.51,
-        -136.7
+        68,
+        19.19,
+        -109
       ],
-      "fov": 46.0,
-      "pitchDegrees": -10.0,
-      "yawDegrees": 180.0,
-      "distance": 20.0,
-      "note": "the Wind Caves mouth off the desert road",
+      "target": [
+        70,
+        19.88,
+        -117
+      ],
+      "fov": 58,
+      "framing": "placed",
+      "note": "Wind Caves mouth from the graded watch approach",
       "golden": false
     },
     {
       "id": "coast-southwest",
       "target": [
         -55.0,
-        9.12,
+        8.57,
         46.0
       ],
       "position": [
         -30.55,
-        21.48,
+        20.93,
         75.14
       ],
       "fov": 55.0,
@@ -155,21 +153,19 @@
     },
     {
       "id": "desert-camp",
-      "target": [
-        -16.0,
-        13.0,
-        -100.0
-      ],
       "position": [
-        -5.33,
-        18.32,
-        -118.49
+        -10,
+        18.97,
+        -126
       ],
-      "fov": 50.0,
-      "pitchDegrees": -14.0,
-      "yawDegrees": 150.0,
-      "distance": 22.0,
-      "note": "a drovers' camp between the dune trains",
+      "target": [
+        -19,
+        14.61,
+        -113
+      ],
+      "fov": 58,
+      "framing": "placed",
+      "note": "drovers camp on the sheltered floor beside the salt road",
       "golden": false
     },
     {
@@ -194,14 +190,14 @@
     {
       "id": "desert-water-station",
       "target": [
-        64.0,
-        14.63,
-        -100.0
+        56,
+        14.25,
+        -103
       ],
       "position": [
-        82.31,
-        20.69,
-        -110.57
+        74.31,
+        20.31,
+        -113.57
       ],
       "fov": 50.0,
       "pitchDegrees": -16.0,
@@ -226,7 +222,7 @@
       "pitchDegrees": -13.0,
       "yawDegrees": 250.0,
       "distance": 40.0,
-      "note": "the eastern pass out of the steppe toward Amberwood",
+      "note": "the eastern frontier; no exterior map link",
       "golden": false
     },
     {
@@ -271,12 +267,12 @@
       "id": "gate-north",
       "target": [
         0.0,
-        8.96,
+        11.81,
         -25.0
       ],
       "position": [
         0.0,
-        16.38,
+        19.23,
         -47.83
       ],
       "fov": 50.0,
@@ -290,7 +286,7 @@
       "id": "great-hall",
       "position": [
         0.0,
-        21.64,
+        21.59,
         26.0
       ],
       "target": [
@@ -345,12 +341,12 @@
       "id": "mountain-outpost",
       "target": [
         98.0,
-        37.46,
+        33.09,
         -92.0
       ],
       "position": [
         88.09,
-        45.22,
+        40.85,
         -119.23
       ],
       "fov": 52.0,
@@ -383,7 +379,7 @@
       "id": "p01-caravan-road",
       "position": [
         26.0,
-        17.65,
+        17.64,
         46.0
       ],
       "target": [
@@ -400,12 +396,12 @@
       "id": "p02-round-tent-camp",
       "position": [
         -25.0,
-        13.81,
+        13.53,
         -35.0
       ],
       "target": [
         -33.5,
-        10.95,
+        9.97,
         -44.5
       ],
       "fov": 48.0,
@@ -434,12 +430,12 @@
       "id": "p04-banner-shrine",
       "target": [
         -25.35,
-        12.15,
+        11.83,
         -33.8
       ],
       "position": [
         -16.49,
-        15.01,
+        14.69,
         -22.04
       ],
       "fov": 46.0,
@@ -453,12 +449,12 @@
       "id": "p05-caravanserai-gate",
       "position": [
         -6.0,
-        15.9,
+        14.44,
         40.0
       ],
       "target": [
         -1.0,
-        13.21,
+        13.2,
         25.5
       ],
       "fov": 48.0,
@@ -470,12 +466,12 @@
       "id": "p06-windmill",
       "target": [
         44.0,
-        13.54,
+        11.14,
         36.0
       ],
       "position": [
         69.29,
-        18.95,
+        16.55,
         33.34
       ],
       "fov": 50.0,
@@ -488,16 +484,16 @@
     {
       "id": "p07-well-and-pens",
       "position": [
-        -28.5,
-        13.77,
-        25.5
+        -25.0,
+        13.87,
+        32.0
       ],
       "target": [
         -33.0,
-        12.15,
-        30.0
+        9.28,
+        24.0
       ],
-      "fov": 46.0,
+      "fov": 54.0,
       "framing": "placed",
       "note": "well, trough and horse paddocks",
       "golden": false
@@ -543,49 +539,217 @@
     {
       "id": "p10-market-props",
       "position": [
-        8.6,
-        11.3,
-        12.4
+        3.0,
+        11.7,
+        14.8
       ],
       "target": [
         8.6,
-        10.6,
+        11.0,
         8.6
       ],
-      "fov": 40.0,
+      "fov": 54.0,
       "framing": "placed",
       "note": "player-scale market goods and prop language",
       "golden": false
     },
     {
-      "id": "salt-pan",
-      "target": [
-        6.0,
-        13.0,
-        -124.0
-      ],
+      "id": "review-cove-bridge",
       "position": [
-        -8.86,
-        19.88,
-        -164.84
+        -43,
+        9.38,
+        25
       ],
-      "fov": 55.0,
-      "pitchDegrees": -9.0,
-      "yawDegrees": 200.0,
-      "distance": 44.0,
-      "note": "the bright salt-pan floor between dune trains",
+      "target": [
+        -55,
+        8.98,
+        25
+      ],
+      "fov": 58,
+      "framing": "placed",
+      "note": "sloping drovers bridge over the beck",
+      "golden": false
+    },
+    {
+      "id": "review-dune-road",
+      "position": [
+        8,
+        16.47,
+        -112
+      ],
+      "target": [
+        8,
+        17.5,
+        -126
+      ],
+      "fov": 58,
+      "framing": "placed",
+      "note": "menhirs frame the northern crossing",
+      "golden": false
+    },
+    {
+      "id": "review-north-gate",
+      "position": [
+        0,
+        11.14,
+        -29
+      ],
+      "target": [
+        0,
+        13.6,
+        -20
+      ],
+      "fov": 60,
+      "framing": "placed",
+      "note": "north approach with the hall as a landmark",
+      "golden": false
+    },
+    {
+      "id": "review-north-road",
+      "position": [
+        18,
+        12.07,
+        -51
+      ],
+      "target": [
+        8,
+        15.56,
+        -28
+      ],
+      "fov": 58,
+      "framing": "placed",
+      "note": "barrows beside the road instead of underneath it",
+      "golden": false
+    },
+    {
+      "id": "review-overview",
+      "position": [
+        105,
+        109.93,
+        85
+      ],
+      "target": [
+        5,
+        9.6,
+        -20
+      ],
+      "fov": 56,
+      "framing": "placed",
+      "note": "surveyed settlement and pasture layout",
+      "golden": false
+    },
+    {
+      "id": "review-pasture-bridge",
+      "position": [
+        -42,
+        10.57,
+        -28
+      ],
+      "target": [
+        -26,
+        11.28,
+        -28
+      ],
+      "fov": 58,
+      "framing": "placed",
+      "note": "bridge deck and the pasture approach",
+      "golden": false
+    },
+    {
+      "id": "review-service-court",
+      "position": [
+        0,
+        11.6,
+        18
+      ],
+      "target": [
+        0,
+        11.6,
+        5
+      ],
+      "fov": 66,
+      "framing": "placed",
+      "note": "bank and craft awnings grouped in the market",
+      "golden": false
+    },
+    {
+      "id": "review-water-pasture",
+      "position": [
+        35,
+        13.73,
+        42
+      ],
+      "target": [
+        37,
+        6.7,
+        50
+      ],
+      "fov": 56,
+      "framing": "placed",
+      "note": "waterhole below the grain fields",
+      "golden": false
+    },
+    {
+      "id": "review-west-arrival",
+      "position": [
+        -51,
+        10.53,
+        0
+      ],
+      "target": [
+        -24,
+        14.0,
+        0
+      ],
+      "fov": 60,
+      "framing": "placed",
+      "note": "ford and west gate from the Four Gates approach",
+      "golden": false
+    },
+    {
+      "id": "review-west-inn",
+      "position": [
+        -45,
+        10.59,
+        1
+      ],
+      "target": [
+        -45,
+        11.1,
+        13
+      ],
+      "fov": 62,
+      "framing": "placed",
+      "note": "inn gate and horse court beside the road",
+      "golden": false
+    },
+    {
+      "id": "salt-pan",
+      "position": [
+        -5,
+        19.7,
+        -118
+      ],
+      "target": [
+        -21,
+        12.6,
+        -122
+      ],
+      "fov": 60,
+      "framing": "placed",
+      "note": "salt pan below the dune road",
       "golden": false
     },
     {
       "id": "waystone-road",
       "target": [
         30.0,
-        22.1,
+        19.95,
         -86.0
       ],
       "position": [
         38.77,
-        26.15,
+        24.0,
         -101.19
       ],
       "fov": 48.0,

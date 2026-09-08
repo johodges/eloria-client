@@ -73,10 +73,11 @@ def amberwood_terrain():
 
 # package directory -> (manifest keys it answers, terrain factory)
 def sunmane_terrain():
-    sys.path.insert(0, str(HERE / "sunmane"))
+    sys.path.insert(0, str(ASSETS / "maps/nymara-regions/sunmane_steppe/source"))
     import terrain
 
-    landform = terrain.build()
+    import settlement
+    landform = terrain.build(pads=settlement.compose_layout(None).pads())
     return lambda x, z: float(np.ravel(landform.sample(
         np.array([x]), np.array([z])))[0])
 
@@ -360,11 +361,9 @@ def main() -> int:
             continue
         package = ASSETS / "maps" / relative
         if args.write_source_posts:
-            if any(len(section.path) != 1 for section in sections):
-                raise ValueError("source posts require top-level marker lists")
             sys.path.insert(0, str(ASSETS / "maps/nymara-regions/_toolkit"))
             import contentposts
-            posts = {section.path[0]: wanted_tiles(manifest, section) for section in sections}
+            posts = {".".join(section.path): wanted_tiles(manifest, section) for section in sections}
             data = json.loads((package / "world.json").read_text(encoding="utf-8"))
             contentposts.apply(data, package, posts)
             print(f"[posts] {sum(len(entries) for entries in posts.values())} markers for {package.name}")

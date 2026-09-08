@@ -127,7 +127,7 @@ HEAD_ROOM = 2.1
 
 
 def blocked_by_scenery(package: Path, gx: np.ndarray, gz: np.ndarray,
-                       cell: float) -> tuple[np.ndarray, int]:
+                       cell: float, landform=None) -> tuple[np.ndarray, int]:
     """Mark every cell the declared collision geometry actually covers.
 
     Not the bounding box. Half of what the steppe blocks is hollow - the
@@ -136,6 +136,9 @@ def blocked_by_scenery(package: Path, gx: np.ndarray, gz: np.ndarray,
     instead leaves the inside of a pen walkable and keeps its rails solid.
     """
     manifest = json.loads((package / "world.json").read_text(encoding="utf-8"))
+    if landform is None:
+        import settlement
+        landform=terrain.build(pads=settlement.compose_layout(None).pads())
     wanted = set(manifest.get("collision", {}).get("nodeNames", ()))
     mask = np.zeros(gx.shape, dtype=bool)
     if not wanted:
@@ -166,8 +169,9 @@ def blocked_by_scenery(package: Path, gx: np.ndarray, gz: np.ndarray,
             # tree's crown all cast a shadow on the ground plane, and stamping
             # those sealed every palisade gate: the opening was open, and the
             # beam above it was not.
-            base = float(world[1, 3])
-            triangles = triangles[triangles[:, :, 1].min(axis=1) < base + HEAD_ROOM]
+            centre=triangles.mean(axis=1)
+            base=landform.sample(centre[:,0],centre[:,2])
+            triangles=triangles[triangles[:,:,1].min(axis=1)<base+HEAD_ROOM]
             if not len(triangles):
                 continue
             _stamp(mask, triangles, origin_x, origin_z, cell, rows, columns)
@@ -231,14 +235,20 @@ def build_grid(package: Path) -> tuple[bytes, dict]:
     zs = (origin_y - tiles) * metres_per_tile
     gx, gz = np.meshgrid(xs, zs, indexing="xy")
 
-    landform = terrain.build()
+    import settlement
+    landform = terrain.build(pads=settlement.compose_layout(None).pads())
     heights = landform.sample(gx.ravel(), gz.ravel()).reshape(gx.shape)
 
     gradient_z, gradient_x = np.gradient(heights, CELL_METRES)
     slope = np.hypot(gradient_x, gradient_z)
     walkable = (heights > terrain.BEACH_LEVEL + SHORE_CLEARANCE) & (slope < MAX_SLOPE)
+    # Water is blocked; the explicit Walk_ decks reopen only their own span.
+    import layout as DESIGN
+    for x,z,r,level in DESIGN.POOLS:
+        walkable &= ~((np.hypot(gx-x,gz-z)<r*1.3)&(heights<level+.08))
+    walkable &= ~(terrain._polyline_distance(gx,gz,[(x,z) for x,_,z in DESIGN.STREAM])<1.4)
 
-    scenery, nodes = blocked_by_scenery(package, gx, gz, CELL_METRES)
+    scenery, nodes = blocked_by_scenery(package, gx, gz, CELL_METRES, landform)
     walkable &= ~scenery
 
     encoded = np.clip(np.round((heights - HEIGHT_ORIGIN) / HEIGHT_STEP), 1, 255)

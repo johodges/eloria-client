@@ -324,3 +324,23 @@ the tile source and package with eloria-assets/tools/sync_package_content.py
 --package nymara-regions/amberwood --write-source-posts --apply.
 The server content writer follows stable resource object IDs and NPC names;
 a change of plot must not detach the client marker from its server identity.
+
+## Clipped waterholes and legacy content markers
+
+amberwood.watercraft.pools accepts a vectorised terrain sampler and
+(x, z, radius, water level) sites. It clips each water triangle against wet
+depth inside a sampled bowl, so a shore cell never paints a whole square over
+dry land. The caller owns excavation, surveyed levels and material names.
+There are no new surface classes. Sunmane adapts the returned Mesh to its
+legacy Geometry container; new mesh recipes still belong in the shared kit.
+
+contentposts.apply supports dotted manifest sections such as
+runtimePopulation.npcs and runtimePopulation.resources, with position or
+center fields, and a glb_name argument for LOD2 grounding. Sunmane and Amberwood
+both use source/server-content.json. Sync final server posts with
+sync_package_content.py --write-source-posts --apply, then regenerate LOD2
+so both manifests carry the same final tile identities.
+
+contentLayout.requireFullWildlife is an opt-in failure if authored habitat
+cannot hold a species' requested count. Enlarge or connect the designed
+habitat instead of silently publishing a smaller population.

@@ -10,6 +10,7 @@ import hashlib
 from pathlib import Path
 
 import terrain
+import layout as DESIGN
 
 # The client registry maps this region at one metre per tile with the server
 # arrival datum (58, 58) at the Godot origin.
@@ -48,10 +49,10 @@ def build(builder, landform: terrain.Landform, statistics: dict) -> dict:
     for identifier, tile, facing, note in (
             ("arrival-datum", (58, 58), [0, 0, -1],
              "ceremonial crossroads at the shared market"),
-            ("west-caravanserai", (6, 58), [1, 0, 0], "arrival from Amethyst Barrens"),
-            ("east-caravanserai", (110, 58), [-1, 0, 0], "departure toward Amberwood"),
+            ("west-caravanserai", (6, 58), [1, 0, 0], "arrival from the Four Gates"),
+            ("east-caravanserai", (110, 58), [-1, 0, 0], "eastern frontier; no exterior map link"),
             ("north-barrowfield", (58, 100), [0, 0, 1],
-             "Ssarathi Royal Archive entrance approach")):
+             "sealed Orun barrow approach")):
         world_x, world_z = server_to_world(*tile)
         spawn_points.append({
             "id": identifier,
@@ -77,6 +78,7 @@ def build(builder, landform: terrain.Landform, statistics: dict) -> dict:
                 "min": [world_min[0], round(lowest - 1.0, 2), world_min[1]],
                 "max": [world_max[0], round(highest + 1.0, 2), world_max[1]]},
             "regionSpanMeters": half * 2.0,
+            "serverCells": 192,
             "worldCentre": [centre[0], 0.0, centre[1]],
             "seaLevel": terrain.SEA_LEVEL,
         },
@@ -97,21 +99,29 @@ def build(builder, landform: terrain.Landform, statistics: dict) -> dict:
             "addressableWorldBounds": {"min": [-58.0, -133.0],
                                        "max": [133.0, 58.0]},
         },
-        "spawnPoints": spawn_points,
+        "spawnPoints": spawn_points + [{
+            "id":"server-arrival", "serverTile":[79,37], "position":[21,9.6,21],
+            "facing":[-1,0,0], "groundedBy":"navigation-surface-raycast",
+            "note":"southern arrival forecourt; the gate leads to the market"}],
         "collision": collision_block(builder),
         "navigation": {
-            "surfaceNodePrefixes": ["Terrain_"],
+            "surfaceNodePrefixes": ["Terrain_", "Walk_"],
             "walkableAreas": [terrain.CLASS_NAMES[c] for c in
                               (terrain.CLASS_CLEARING, terrain.CLASS_STEPPE,
                                terrain.CLASS_ROAD, terrain.CLASS_DRY_GRASS,
                                terrain.CLASS_SAND)],
             "navmesh": {"format": "surface-prefix-v1", "agentRadius": 0.55,
                         "agentHeight": 1.9, "maxSlopeDegrees": 42, "polygons": []},
+            "crossings":[{"id":name,"endpoints":[list(a),list(b)]}
+                         for name,a,b,_ in DESIGN.BRIDGES],
             "note": ("Every terrain chunk carries the Terrain_ prefix, so the "
                      "navigation-surface layer covers the whole landform "
                      "including the shallow shelf. A grounding raycast can "
                      "therefore never miss and fall back to walkingHeight."),
         },
+        "contentLayout": DESIGN.CONTENT,
+        "roads": [{"id":name,"waypoints":[[x,round(landform.height_at(x,z),3),z] for x,z in points]}
+                  for name,points in {**DESIGN.ROADS,**DESIGN.TRAILS}.items()],
         "landmarks": builder.landmarks,
         "interactives": builder.interactives,
         "terrain": {
@@ -212,7 +222,7 @@ def build(builder, landform: terrain.Landform, statistics: dict) -> dict:
             "license": "Original Eloria project work, CC-BY-4.0",
             "thirdPartyAssets": "none",
         },
-        "statistics": statistics,
+        "statistics": {key:value for key,value in statistics.items() if key!="buildSeconds"},
     }
     return manifest
 

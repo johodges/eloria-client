@@ -152,5 +152,6 @@
         720
       ]
     }
-  }
+  },
+  "measurementStatus": "Historical: predates the September 2026 circulation pass; current geometry totals are in world-statistics.json and world-lod2-statistics.json."
 }

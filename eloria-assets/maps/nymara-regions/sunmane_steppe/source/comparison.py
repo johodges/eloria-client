@@ -7,6 +7,7 @@ per-panel sheets and one contact sheet.
 """
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -108,14 +109,29 @@ def pair(reference: Image.Image, capture: Image.Image, title: str) -> Image.Imag
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--surface-only", action="store_true",
+                        help="use the package's current manifest-lit surface captures")
+    args = parser.parse_args()
+    shots = REFERENCES / "godot-captures" if args.surface_only else SHOTS
+    def capture(identifier):
+        for extension in (".webp", ".png"):
+            path = shots / (identifier + extension)
+            if path.exists():
+                return path
+        return shots / (identifier + ".png")
+    panels = [(i, name.removeprefix("golden-"), subject.replace(" at golden hour", ""))
+              for i, name, subject in PANELS] if args.surface_only else PANELS
+    extra = [(name, subject) for name, subject in EXTRA
+             if not args.surface_only or not name.startswith("golden-")]
     OUTPUT.mkdir(parents=True, exist_ok=True)
     board = Image.open(REFERENCES / "00-concept-detail-board.png")
     aerial = Image.open(REFERENCES / "01-aerial-overview.png")
     written: list[dict] = []
 
     missing = []
-    for index, capture_id, subject in PANELS:
-        capture_path = SHOTS / f"{capture_id}.png"
+    for index, capture_id, subject in panels:
+        capture_path = capture(capture_id)
         if not capture_path.exists():
             missing.append(capture_id)
             continue
@@ -128,8 +144,8 @@ def main() -> int:
         written.append({"panel": index + 1, "subject": subject,
                         "capture": capture_id, "sheet": f"comparison/{name}"})
 
-    if (SHOTS / "aerial-overview.png").exists():
-        sheet = pair(aerial, Image.open(SHOTS / "aerial-overview.png"),
+    if capture("aerial-overview").exists():
+        sheet = pair(aerial, Image.open(capture("aerial-overview")),
                      "Aerial overview - regional composition")
         sheet.save(OUTPUT / "aerial-overview.webp", quality=90, method=5)
         written.append({"panel": 0, "subject": "Aerial overview",
@@ -140,8 +156,8 @@ def main() -> int:
 
     # Landmarks the ten panels do not cover, as a plain contact sheet.
     tiles = []
-    for capture_id, subject in EXTRA:
-        path = SHOTS / f"{capture_id}.png"
+    for capture_id, subject in extra:
+        path = capture(capture_id)
         if path.exists():
             tiles.append(labelled(fit(Image.open(path)), subject))
         else:
@@ -162,7 +178,7 @@ def main() -> int:
     # The cave interiors, captured from their own packages.
     interior_shots = SHOTS.parent / "sunmane-caves"
     tiles = []
-    for capture_id, subject in INTERIORS:
+    for capture_id, subject in ([] if args.surface_only else INTERIORS):
         path = interior_shots / f"{capture_id}.png"
         if path.exists():
             tiles.append(labelled(fit(Image.open(path)), subject))
@@ -186,7 +202,9 @@ def main() -> int:
         {"schemaVersion": 1,
          "references": {"detailBoard": "references/00-concept-detail-board.png",
                         "aerial": "references/01-aerial-overview.png"},
-         "captureSource": ("godot-client/tests/integration/"
+         "captureSource": ("_toolkit/godot_capture.gd, Godot 4.7.2, GL Compatibility, "
+                           "--environment=manifest; references/godot-captures/index.json"
+                           if args.surface_only else "godot-client/tests/integration/"
                            "rendered_sunmane_steppe.gd, Godot 4.7.2, "
                            "gl_compatibility renderer"),
          "sheets": written, "missing": missing}, indent=2) + "\n")

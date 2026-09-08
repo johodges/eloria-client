@@ -11,6 +11,12 @@ and the Whitehorn front, whose foothills and summits close the world on those
 two sides. Four cave mouths open off that ground; two of them lead to explorable
 interiors that ship as their own packages under `../interiors/`.
 
+The September 2026 circulation pass gives the market grouped services, side-court
+inns, three surveyed bridges and watered grain plots. The actual arrival is
+server (79, 37); (58, 58) remains the coordinate datum. See
+[layout-review.md](layout-review.md), [coverage-map.md](coverage-map.md) and
+[change-log.md](change-log.md) for the current design and validation.
+
 This package replaces the earlier starter conversion, which carried landmark
 silhouettes borrowed from other regions' name-spaces and no authored
 architecture.
@@ -27,7 +33,8 @@ architecture.
 | `textures/` | The authored PBR kit as editable source; the same maps are embedded in the GLB |
 | `references/` | Aerial overview and the ten-panel detail board, the visual authority for the region |
 | `comparison/` | Concept-versus-client sheets, one per reference panel, plus contact sheets for the desert, badland and mountain ground and for the two cave interiors |
-| `performance.json`, `performance-summary.md` | Measured load time, draw calls, primitives and memory for both packages |
+| `world-statistics.json`, `world-lod2-statistics.json` | Current geometry and package cost |
+| `performance.json`, `performance-summary.md` | Historical runtime measurements, with current package costs identified separately |
 
 Nothing at runtime depends on rerunning the build: the committed GLB, manifest
 and minimap load directly.
@@ -36,7 +43,8 @@ and minimap load directly.
 
 | Property | Value |
 |---|---|
-| Server arrival datum | `(58, 58)` -> Godot `(0, 0)` |
+| Coordinate datum | `(58, 58)` -> Godot `(0, 0)` |
+| Current server arrival | (79, 37) -> Godot (21, 21) |
 | Metres per server tile | 1.0 |
 | World span | 280 m x 280 m, centred on Godot `(36, -36)` |
 | World bounds | X -104..176, Z -176..104 |
@@ -102,6 +110,32 @@ xvfb-run -a godot --display-driver x11 --rendering-method gl_compatibility \
 python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/caves.py                 # both cave interiors
 python3 eloria-assets/maps/nymara-regions/sunmane_steppe/source/comparison.py            # comparison sheets
 ```
+
+For the current layout, follow each exterior build with the correction passes
+in this order from nymara-regions, then rebuild the secrets:
+
+```sh
+python _toolkit/refine_walk_heights.py sunmane_steppe
+python _toolkit/open_walk_surfaces.py sunmane_steppe
+python _toolkit/stamp_solid_landmarks.py sunmane_steppe
+python _toolkit/secrets_build.py sunmane_steppe
+```
+
+On the server, sync authored collision for sunmane_steppe,
+sunmane_wind_caves and sunmane_steppe_secrets, generate the served maps, apply
+continent_portals.py --region sunmane_steppe, then author_region_content.py all
+--region sunmane_steppe and relocate content using those maps. The full rebuild
+order in CONTINENT.md remains authoritative. Refresh source/server-content.json
+with sync_package_content.py --package nymara-regions/sunmane_steppe
+--write-source-posts --apply and regenerate LOD2 after the final server posts.
+
+For current surface review, regenerate source/views.py and use the shared
+_toolkit/godot_capture.gd with --package=<this package>,
+--out=<this package>/references/godot-captures and --environment=manifest.
+Use a real GL Compatibility context. Then run source/comparison.py
+--surface-only; its default mode retains the historical golden-hour and cave
+capture workflow. The shipped current frames are WebP review images, while
+references/captures/index.json is camera input only.
 
 The render and minimap passes need a real GL context, so they run under `xvfb`
 without `--headless`; the grounding, traversal and cave tests are pure physics

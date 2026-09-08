@@ -103,7 +103,7 @@ def main() -> int:
     check(len(terrain_nodes) >= 64,
           f"terrain chunks carry the navigation prefix ({len(terrain_nodes)} found)")
     prefixes = manifest["navigation"]["surfaceNodePrefixes"]
-    check(prefixes == ["Terrain_"], "navigation surface prefix matches the node names")
+    check(prefixes == ["Terrain_", "Walk_"], "navigation surface prefix matches the node names")
 
     for node_name in manifest["collision"]["nodeNames"]:
         check(node_name in name_set,

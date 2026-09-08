@@ -25,6 +25,7 @@ import secrets_design as SECRETS  # noqa: E402
 
 import kit
 import terrain
+import layout as DESIGN
 from glb import Geometry, compose
 from noise import stable_seed
 from shapes import UV_SCALE, beam, box, frustum, polygon_points, ribbon, sphere
@@ -326,6 +327,28 @@ def compose_layout(landform: terrain.Landform) -> Layout:
                landmark="landing",
                interactive={"id": "cove-landing", "kind": "dock",
                             "label": "Saltmane cove landing"})
+    # Roads remain outside the built footprints. Stable IDs keep their portals.
+    for index,(x,z,spin) in enumerate(DESIGN.INNS):
+        p=next(p for p in layout.placements if p.name=="Landmark_sunmane_caravanserai_%02d"%index)
+        p.x,p.z,p.rotation=x,z,spin
+    moves={
+        "Landmark_sunmane_windmill_02":(-53,-7),
+        "Landmark_sunmane_windmill_01":(58,50),
+        "Landmark_sunmane_windmill_05":(83,6),
+        "Landmark_sunmane_animal_pen_00":(-39,-59),
+        "Landmark_sunmane_animal_pen_03":(-28,45),
+        "Landmark_sunmane_animal_pen_02":(57,37),
+        "Landmark_sunmane_animal_pen_05":(43,-51),
+        "Landmark_sunmane_outpost_04":(51,-61),
+        "Landmark_sunmane_burial_mound_05":(-4,-63),
+        "Landmark_sunmane_desert_station_00":(0,-92),
+        "Landmark_sunmane_desert_station_01":(56,-103),
+        "Encampment_Cart_00":(-17,12),
+        "Encampment_Cart_01":(17,13),
+        "Encampment_Cart_02":(-16,18),
+    }
+    for p in layout.placements:
+        if p.name in moves:p.x,p.z=moves[p.name]
     return layout
 
 
@@ -382,7 +405,7 @@ def _asset_builders() -> dict:
                                        ("crystal", False, True)):
         builders["cave_mouth_%s" % identifier] = (
             lambda f=framed, c=crystal: kit.cave_mouth(
-                5.4, 4.6, 6.8, framed=f, crystal=c, seed=hash(f) % 97))
+                5.4, 4.6, 6.8, framed=f, crystal=c, seed=int(f)))
     builders["desert_water_station"] = kit.desert_water_station
     for index in range(3):
         builders["desert_waystone_%d" % index] = (
@@ -535,44 +558,6 @@ def _plaza(layout: Layout) -> Geometry:
                 corners.append([px, landform.height_at(px, pz) + lift, pz])
                 uvs.append([px / UV_SCALE["stone"], pz / UV_SCALE["stone"]])
             geometry.add(corners, [[0.0, 1.0, 0.0]] * 4, uvs, [0, 1, 2, 0, 2, 3])
-    return geometry
-
-
-def _bridge(layout: Layout, x: float, z: float, rotation: float,
-            span: float = 7.0) -> Geometry:
-    """A plank bridge carrying a trail over the steppe stream."""
-    geometry = Geometry()
-    landform = layout.landform
-    axis = (math.cos(rotation), math.sin(rotation))
-    across = (-axis[1], axis[0])
-    deck = max(landform.height_at(x + axis[0] * span * 0.5, z + axis[1] * span * 0.5),
-               landform.height_at(x - axis[0] * span * 0.5,
-                                  z - axis[1] * span * 0.5)) + 0.28
-    for sign in (-1, 1):
-        for end in (-1, 1):
-            post = (x + axis[0] * span * 0.42 * end + across[0] * 1.35 * sign,
-                    z + axis[1] * span * 0.42 * end + across[1] * 1.35 * sign)
-            beam(geometry, (post[0], deck - 3.0, post[1]), (post[0], deck + 1.0, post[1]),
-                 0.22, uv_scale=UV_SCALE["timber"])
-        rail_a = (x - axis[0] * span * 0.5 + across[0] * 1.35 * sign, deck + 0.92,
-                  z - axis[1] * span * 0.5 + across[1] * 1.35 * sign)
-        rail_b = (x + axis[0] * span * 0.5 + across[0] * 1.35 * sign, deck + 0.92,
-                  z + axis[1] * span * 0.5 + across[1] * 1.35 * sign)
-        beam(geometry, rail_a, rail_b, 0.12, uv_scale=UV_SCALE["timber"])
-    planks = int(span / 0.42)
-    for index in range(planks):
-        t = (index + 0.5) / planks - 0.5
-        centre = (x + axis[0] * span * t, z + axis[1] * span * t)
-        beam(geometry, (centre[0] - across[0] * 1.45, deck, centre[1] - across[1] * 1.45),
-             (centre[0] + across[0] * 1.45, deck, centre[1] + across[1] * 1.45),
-             span / planks - 0.04, 0.12, uv_scale=UV_SCALE["timber"], roll=math.pi / 2)
-    for end in (-1, 1):
-        beam(geometry,
-             (x + axis[0] * span * 0.52 * end - across[0] * 1.5, deck - 0.1,
-              z + axis[1] * span * 0.52 * end - across[1] * 1.5),
-             (x + axis[0] * span * 0.52 * end + across[0] * 1.5, deck - 0.1,
-              z + axis[1] * span * 0.52 * end + across[1] * 1.5), 0.7, 0.24,
-             uv_scale=UV_SCALE["timber"], roll=math.pi / 2)
     return geometry
 
 
@@ -897,17 +882,7 @@ def populate(builder, landform: terrain.Landform, layout: Layout | None = None,
     plaza = _plaza(layout)
     builder.emit("Terrain_Plaza_Crossroads", [(plaza, materials["plaza_surface"])])
 
-    bridge_specs = ((-24.0, 22.5, 0.72), (-2.0, -37.0, 1.35), (-40.0, 34.5, 0.55))
-    for index, (x, z, rotation) in enumerate(bridge_specs):
-        geometry = _bridge(layout, x, z, rotation)
-        builder.emit("Structure_Bridge_%02d" % index,
-                     [(geometry, materials[kit.TIMBER_WARM])], collide=True)
-        builder.landmarks.append({
-            "id": "Structure_Bridge_%02d" % index, "kind": "bridge",
-            "node": "Structure_Bridge_%02d" % index,
-            "position": [x, round(landform.height_at(x, z), 2), z],
-            "serverTile": _server_tile(x, z),
-            "reachable": _addressable(_server_tile(x, z))})
+    DESIGN.emit_bridges(builder,materials,landform)
 
     dressing = _road_dressing(layout) if lod == 1 else {}
     builder.emit("Detail_RoadDressing",
@@ -1005,26 +980,26 @@ def _lighting(builder, layout: Layout) -> None:
 # client's ambient population system rather than baked into the world mesh, so
 # they never become part of the static collision surface.
 HERDS = (
-    ("herd-north-pasture", "sunmane_steppe_horse", 7, (-30.0, -30.0), 6.0, "Idle_A"),
+    ("herd-north-pasture", "sunmane_steppe_horse", 7, (-39.0, -59.0), 5.4, "Idle_A"),
     ("herd-east-paddock", "sunmane_dun_mare", 6, (40.0, -18.0), 5.6, "Idle_A"),
-    ("herd-saltmane-paddock", "sunmane_steppe_horse", 6, (56.0, 28.0), 5.8, "Idle_A"),
-    ("herd-duskrider-paddock", "sunmane_dun_mare", 6, (-44.0, 40.0), 6.2, "Idle_A"),
+    ("herd-saltmane-paddock", "sunmane_steppe_horse", 6, (57.0, 37.0), 5.8, "Idle_A"),
+    ("herd-duskrider-paddock", "sunmane_dun_mare", 6, (-28.0, 45.0), 6.2, "Idle_A"),
     ("herd-south-paddock", "sunmane_steppe_horse", 5, (18.0, 40.0), 5.4, "Idle_A"),
-    ("herd-barrow-paddock", "sunmane_grey_pony", 5, (-16.0, -52.0), 5.6, "Idle_A"),
+    ("herd-barrow-paddock", "sunmane_grey_pony", 5, (43.0, -51.0), 5.6, "Idle_A"),
     ("herd-open-steppe-west", "sunmane_steppe_horse", 8, (-50.0, -8.0), 13.0, "Idle_A"),
     ("herd-open-steppe-east", "sunmane_dun_mare", 8, (66.0, -8.0), 12.0, "Idle_A"),
     ("herd-open-steppe-north", "sunmane_steppe_horse", 7, (-6.0, -64.0), 12.0, "Idle_A"),
     ("herd-open-steppe-south", "sunmane_dun_mare", 7, (24.0, 50.0), 12.0, "Idle_A"),
     ("mounts-crossroads", "sunmane_grey_pony", 4, (-21.0, 12.0), 2.6, "Idle_A"),
     ("mounts-east-hitching", "sunmane_grey_pony", 4, (21.0, 13.0), 2.6, "Idle_A"),
-    ("mounts-west-caravanserai", "sunmane_grey_pony", 4, (-42.0, 4.0), 3.2, "Idle_A"),
-    ("mounts-east-caravanserai", "sunmane_grey_pony", 4, (42.0, 4.0), 3.2, "Idle_A"),
-    ("mounts-market", "sunmane_steppe_horse", 3, (0.0, 22.0), 3.0, "Idle_A"),
+    ("mounts-west-caravanserai", "sunmane_grey_pony", 4, (-45.0, 12.0), 2.2, "Idle_A"),
+    ("mounts-east-caravanserai", "sunmane_grey_pony", 4, (45.0, 11.0), 2.2, "Idle_A"),
+    ("mounts-market", "sunmane_steppe_horse", 3, (-20.0, 12.0), 1.8, "Idle_A"),
     # The desert road: strings of ponies waiting out the heat at the two water
     # stations, and the picket lines of the three dune camps.
     ("mounts-dune-station-west", "sunmane_grey_pony", 3, (4.0, -88.0), 2.8, "Idle_A"),
     ("mounts-dune-station-east", "sunmane_grey_pony", 3, (64.0, -96.0), 2.8, "Idle_A"),
-    ("mounts-dune-camp-north", "sunmane_dun_mare", 3, (-16.0, -95.0), 3.0, "Idle_A"),
+    ("mounts-dune-camp-north", "sunmane_dun_mare", 3, (-19.0, -108.0), 3.0, "Idle_A"),
     ("mounts-dune-camp-mid", "sunmane_grey_pony", 3, (46.0, -99.0), 3.0, "Idle_A"),
     ("mounts-dune-camp-east", "sunmane_dun_mare", 3, (86.0, -79.0), 3.0, "Idle_A"),
     ("herd-dune-margin", "sunmane_dun_mare", 6, (30.0, -78.0), 11.0, "Idle_A"),
@@ -1034,11 +1009,8 @@ HERDS = (
 # Server-owned population: NPCs, harvestables and hostile spawns the server
 # profile must register. Recorded here so the server pull request has an exact
 # list rather than a description.
-# Positions here are the placements the package ships, which were nudged by
-# hand after the last build and never written back: ten of the fifteen posts
-# and eight of the resource sites sat a few metres from what this table said,
-# the two caravan masters symmetrically so. Rebuilding from the old values
-# would have walked them back onto the ground they were moved off.
+# DESIGN owns the authored posts; server-content.json preserves final server
+# tiles after collision-aware placement and is reapplied by the builder.
 NPC_POSTS = (
     ("khan-of-the-sunmane", "Orun khan", (14.0, -21.0), "quest"),
     ("market-broker", "Seasonal market broker", (-15.0, 22.0), "trade"),
@@ -1058,27 +1030,24 @@ NPC_POSTS = (
 )
 
 HARVESTABLES = (
-    # The crop sites are the fields, except that the second one harvests from
-    # five metres south of its own centre. `terrain.FIELDS` also shapes the
-    # crop ground, so nudging the field to follow the harvestable would move
-    # the ground with it - and the field's centre is under a stack that the
-    # walk grid blocks, which is why it was moved off in the first place.
-    ("sunmane-wheat", "Sunmane wheat", "crop",
+    # Initial field seeds keep legacy marker identities. Final server-owned
+    # tiles are reapplied from source/server-content.json after geometry export.
+    ("sunmane-wheat", "Wheat", "crop",
      tuple((x, z - 5.0, w, d) if index == 1 else (x, z, w, d)
            for index, (x, z, w, d) in enumerate(terrain.FIELDS))),
-    ("steppe-herbs", "Steppe herbs", "herb",
+    ("steppe-herbs", "Sage", "herb",
      ((-48.0, -20.0, 8.0, 8.0), (62.0, -40.0, 8.0, 8.0), (-24.0, 56.0, 8.0, 8.0))),
-    ("shore-clay", "Shore clay", "mineral",
+    ("shore-clay", "Clay", "mineral",
      ((-52.0, 47.0, 6.0, 6.0), (-52.0, -46.0, 6.0, 6.0))),
-    ("mesa-flint", "Mesa flint", "mineral",
+    ("mesa-flint", "Flint", "mineral",
      ((-6.0, -69.0, 7.0, 7.0), (67.0, -55.0, 7.0, 7.0))),
-    ("amethyst-shard", "Amethyst shard", "mineral",
+    ("amethyst-shard", "Crystal", "mineral",
      ((118.0, -103.0, 8.0, 8.0), (119.0, -63.0, 7.0, 7.0))),
-    ("pan-salt", "Pan salt", "mineral",
+    ("pan-salt", "Salt", "mineral",
      ((6.0, -124.0, 9.0, 9.0), (62.0, -110.0, 7.0, 7.0))),
-    ("dune-sage", "Dune sage", "herb",
+    ("dune-sage", "Sage", "herb",
      ((-20.0, -108.0, 8.0, 8.0), (40.0, -96.0, 8.0, 8.0))),
-    ("scree-ore", "Scree iron ore", "mineral",
+    ("scree-ore", "Iron", "mineral",
      ((124.0, -40.0, 6.0, 6.0), (-46.0, -126.0, 6.0, 6.0))),
 )
 
@@ -1114,6 +1083,7 @@ def population_records(layout: Layout) -> dict:
             "serverTile": _server_tile(x, z)})
     npcs = []
     for identifier, label, (x, z), role in NPC_POSTS:
+        x,z=DESIGN.NPCS.get(label,(x,z))
         npcs.append({"id": identifier, "label": label, "role": role,
                      "position": [x, round(landform.height_at(x, z), 2), z],
                      "serverTile": _server_tile(x, z),
@@ -1310,7 +1280,7 @@ def compose_expansion(layout: Layout, rng) -> None:
                                 "kind": "lookout", "label": "Desert watch"})
 
     # --- desert camps ------------------------------------------------------
-    for index, (cx, cz, facing) in enumerate(((-16.0, -100.0, 1.1),
+    for index, (cx, cz, facing) in enumerate(((-19.0, -113.0, 1.1),
                                               (46.0, -104.0, 3.9),
                                               (86.0, -84.0, 5.4))):
         for slot in range(2):

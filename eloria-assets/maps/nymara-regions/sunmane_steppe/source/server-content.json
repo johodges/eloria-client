@@ -1,0 +1,146 @@
+{
+  "runtimePopulation.npcs": {
+    "khan-of-the-sunmane": [
+      62,
+      59
+    ],
+    "market-broker": [
+      52,
+      53
+    ],
+    "horse-master": [
+      29,
+      92
+    ],
+    "caravan-master-west": [
+      13,
+      53
+    ],
+    "caravan-master-east": [
+      103,
+      54
+    ],
+    "shrine-keeper": [
+      33,
+      94
+    ],
+    "miller": [
+      100,
+      25
+    ],
+    "well-keeper": [
+      54,
+      47
+    ],
+    "barrow-warden": [
+      64,
+      92
+    ],
+    "cove-factor": [
+      5,
+      14
+    ],
+    "dune-well-keeper": [
+      63,
+      149
+    ],
+    "salt-factor": [
+      118,
+      156
+    ],
+    "wind-cave-watch": [
+      125,
+      168
+    ],
+    "amethyst-prospector": [
+      178,
+      152
+    ],
+    "range-warden": [
+      158,
+      140
+    ]
+  },
+  "runtimePopulation.resources": {
+    "sunmane-wheat-00": [
+      109,
+      12
+    ],
+    "sunmane-wheat-01": [
+      102,
+      12
+    ],
+    "sunmane-wheat-02": [
+      84,
+      112
+    ],
+    "sunmane-wheat-03": [
+      86,
+      17
+    ],
+    "sunmane-wheat-04": [
+      35,
+      109
+    ],
+    "steppe-herbs-00": [
+      27,
+      6
+    ],
+    "steppe-herbs-01": [
+      117,
+      91
+    ],
+    "steppe-herbs-02": [
+      96,
+      151
+    ],
+    "shore-clay-00": [
+      14,
+      94
+    ],
+    "shore-clay-01": [
+      9,
+      101
+    ],
+    "mesa-flint-00": [
+      24,
+      119
+    ],
+    "mesa-flint-01": [
+      117,
+      119
+    ],
+    "amethyst-shard-00": [
+      175,
+      126
+    ],
+    "amethyst-shard-01": [
+      178,
+      159
+    ],
+    "pan-salt-00": [
+      112,
+      171
+    ],
+    "pan-salt-01": [
+      43,
+      184
+    ],
+    "dune-sage-00": [
+      38,
+      170
+    ],
+    "dune-sage-01": [
+      31,
+      9
+    ],
+    "scree-ore-00": [
+      9,
+      176
+    ],
+    "scree-ore-01": [
+      181,
+      100
+    ]
+  }
+}

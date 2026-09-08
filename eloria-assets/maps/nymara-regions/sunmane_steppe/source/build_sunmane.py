@@ -26,6 +26,8 @@ sys.path.insert(0, str(HERE))
 
 import checks                                        # noqa: E402
 import terrain                                       # noqa: E402
+import layout as DESIGN
+from amberwood import watercraft as WATER
 import terrain_mesh                                  # noqa: E402
 import textures as texture_kit                       # noqa: E402
 from glb import GLBWriter, Geometry, compose         # noqa: E402
@@ -39,10 +41,6 @@ PACKAGE = HERE.parent
 GENERATOR = "Eloria Sunmane Steppe production builder 1.0"
 SCHEMA_VERSION = "1.1.0"
 ASSET_VERSION = "1.0.0"
-
-PONDS = ((-8.5, -58.0, 7.0), (3.0, -30.5, 5.8), (-58.0, 30.0, 6.4),
-         (-46.0, 40.0, 7.6), (48.0, -30.0, 5.4), (36.0, 52.0, 6.0))
-
 
 class Builder:
     """Accumulates geometry, materials and manifest metadata for one export."""
@@ -164,18 +162,19 @@ def build_terrain(builder: Builder, landform: terrain.Landform) -> dict:
         builder.emit(chunk["name"], parts)
 
     sea_material = builder.glb.material(
-        "sea_water", base_color=(0.05, 0.36, 0.44, 1.0), metallic=0.10,
-        roughness=0.22, normal_texture=builder.slots("canvas")["normal"],
+        "sea_water", base_color=(0.018, 0.11, 0.14, 1.0), metallic=0.0,
+        roughness=0.40, normal_texture=builder.slots("canvas")["normal"],
         normal_scale=0.35)
     sea = terrain_mesh.water_surface(landform)
     builder.emit("Water_Sea", [(sea, sea_material)])
 
     pond_material = builder.glb.material(
-        "pond_water", base_color=(0.10, 0.28, 0.28, 1.0), metallic=0.05,
-        roughness=0.30, normal_texture=builder.slots("canvas")["normal"],
+        "pond_water", base_color=(0.028, 0.085, 0.067, 1.0), metallic=0.0,
+        roughness=0.64, normal_texture=builder.slots("canvas")["normal"],
         normal_scale=0.3)
-    ponds = terrain_mesh.pond_surfaces(landform, PONDS)
+    ponds = DESIGN.geometry(WATER.pools(landform.sample,DESIGN.POOLS))
     builder.emit("Water_Waterholes", [(ponds, pond_material)])
+    DESIGN.emit_water(builder,landform,pond_material)
 
     # Named with the Terrain_ prefix so it joins the navigation surface.
     apron = terrain_mesh.edge_apron(landform)
@@ -238,6 +237,10 @@ def main() -> int:
     statistics["buildSeconds"] = round(time.time() - started, 1)
 
     manifest = build_manifest(builder, landform, statistics)
+    posts = HERE / "server-content.json"
+    if posts.is_file():
+        import contentposts
+        contentposts.apply(manifest, output, json.loads(posts.read_text()), glb_name=f"{base}.glb")
     manifest["asset"]["glb"] = f"{base}.glb"
     if lod != 1:
         manifest["asset"]["id"] = "sunmane_steppe_lod2"

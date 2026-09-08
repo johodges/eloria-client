@@ -89,7 +89,9 @@ func _run() -> void:
 	_expect(image.get_size() == Vector2i(SIZE, SIZE), "minimap render is square")
 
 	var directory := ProjectSettings.globalize_path(PACKAGE)
-	_expect(image.save_webp(directory.path_join("minimap.webp"), true, 0.92) == OK,
+	var minimap := image.duplicate() as Image
+	minimap.resize(int(round(span)), int(round(span)), Image.INTERPOLATE_LANCZOS)
+	_expect(minimap.save_webp(directory.path_join("minimap.webp"), true, 0.92) == OK,
 		"saved minimap.webp")
 	var full := image.duplicate() as Image
 	_expect(full.save_webp(directory.path_join("full-map.webp"), true, 0.95) == OK,
@@ -99,7 +101,7 @@ func _run() -> void:
 	preview.resize(512, 512, Image.INTERPOLATE_LANCZOS)
 	_expect(preview.save_webp(directory.path_join("minimap-preview.webp"), true, 0.9) == OK,
 		"saved minimap-preview.webp")
-	print("minimap span=%.1f m pixelsPerMetre=%.4f" % [span, float(SIZE) / span])
+	print("minimap span=%.1f m pixelsPerMetre=%.4f" % [span, float(minimap.get_width()) / span])
 	_finish()
 
 func _expect(condition: bool, message: String) -> void:
