@@ -101,6 +101,18 @@ static var _server_digests: Dictionary = {}
 static var _local_digests: Dictionary = {}
 static var _mismatches: Dictionary = {}
 
+## Where a mismatch is announced, beyond the log. The two halves of the
+## comparison arrive in either order - the server's digest can land before the
+## map has finished hashing, or long after - so whichever completes the pair
+## is the one that has to speak. A sink rather than a signal because this class
+## is a bag of statics with no instance to connect to, and installed by
+## `AppState` rather than reached for, so the world layer does not have to know
+## the interface layer exists.
+static var _mismatch_sink: Callable = Callable()
+
+static func set_mismatch_sink(sink: Callable) -> void:
+	_mismatch_sink = sink
+
 # --------------------------------------------------------------------------
 # The key
 # --------------------------------------------------------------------------
@@ -353,11 +365,13 @@ static func _compare(key: String) -> void:
 	if _mismatches.has(key):
 		return
 	_mismatches[key] = [server, local]
-	push_warning(("map_digest stage=mismatch map=%s server=%s client=%s"
-		+ " note=the installed package is not the one the server expects")
-		% [key, server, local])
-	print("map_digest stage=mismatch map=", key, " server=", server,
-		" client=", local)
+	var line: String = ("map_digest stage=mismatch map=%s server=%s client=%s"
+		+ " note=the installed package is not the one the server expects") % [
+		key, server, local]
+	push_warning(line)
+	print(line)
+	if _mismatch_sink.is_valid():
+		_mismatch_sink.call(key, server, local)
 
 static func has_mismatch(map_id: String) -> bool:
 	return _mismatches.has(map_id.strip_edges().to_lower())

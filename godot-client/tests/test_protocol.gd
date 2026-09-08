@@ -35,6 +35,7 @@ func _init() -> void:
 		"inventory_window_v1": EloriaProtocol.ServerMessage.ELORIA_INVENTORY_STATE,
 		"item_detail_v1": EloriaProtocol.ServerMessage.ELORIA_ITEM_DETAIL,
 		"mail_window_v1": EloriaProtocol.ServerMessage.ELORIA_MAIL_STATE,
+		"map_digest_v1": EloriaProtocol.ServerMessage.ELORIA_MAP_DIGEST,
 		"mix_window_v1": EloriaProtocol.ServerMessage.ELORIA_MIX_STATE,
 		"market_window_v1": EloriaProtocol.ServerMessage.ELORIA_MARKETPLACE_STATE,
 		"merchant_window_v1": EloriaProtocol.ServerMessage.ELORIA_MERCHANT_STATE,
@@ -84,6 +85,10 @@ func _init() -> void:
 			"5b00fa000000140000005000000000005300",
 		EloriaProtocol.ServerMessage.ELORIA_NAVIGATION_STATE:
 			"000000000000000000",
+		# "amberwood" and a sha256 of zeroes: the map the server was built
+		# against, and the digest of the package it means.
+		EloriaProtocol.ServerMessage.ELORIA_MAP_DIGEST:
+			"616d626572776f6f6400" + "30".repeat(64) + "00",
 		# No party, no invitation: the shortest frame the server ever sends.
 		EloriaProtocol.ServerMessage.ELORIA_PARTY_STATE: "0000000000",
 		# No guild: the header, seven empty strings and seven empty
@@ -148,6 +153,31 @@ func _init() -> void:
 			_expect(probe.type != "unknown" and probe.type != "invalid",
 				"the packet behind %s actually decodes (%s)" % [capability,
 					str(probe.get("error", probe.type))])
+	# Command 209: which map package the server was built against. Two
+	# NUL-terminated strings, and nothing else - a mismatched install is
+	# something to be told about, not a negotiation.
+	var digest_frame: PackedByteArray = _hex(
+		"616d626572776f6f6400" + "61".repeat(64) + "00")
+	var digest: Dictionary = EloriaProtocol.decode_server(
+		EloriaProtocol.ServerMessage.ELORIA_MAP_DIGEST, digest_frame)
+	_expect(digest.type == "map_digest" and str(digest.map_id) == "amberwood"
+		and str(digest.digest) == "a".repeat(64),
+		"a map digest carries the map it is about and the package it expects")
+	# An empty digest is a real answer and means the server publishes none for
+	# this map; the client has nothing to compare and says nothing.
+	var no_digest: Dictionary = EloriaProtocol.decode_server(
+		EloriaProtocol.ServerMessage.ELORIA_MAP_DIGEST, _hex("666f6f000000"))
+	_expect(no_digest.type == "invalid",
+		"a map digest with a third field is refused rather than half read")
+	_expect(EloriaProtocol.decode_server(
+			EloriaProtocol.ServerMessage.ELORIA_MAP_DIGEST,
+			_hex("616d626572776f6f6400")).type == "invalid",
+		"a map digest missing its digest is refused")
+	_expect(EloriaProtocol.decode_server(
+			EloriaProtocol.ServerMessage.ELORIA_MAP_DIGEST,
+			PackedByteArray()).type == "invalid",
+		"an empty map digest frame is refused")
+
 	_expect_bytes("turn left fixture", EloriaProtocol.turn(true),
 		PackedByteArray([11, 1, 0]))
 	_expect_bytes("turn right fixture", EloriaProtocol.turn(false),

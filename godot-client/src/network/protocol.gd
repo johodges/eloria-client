@@ -109,6 +109,9 @@ enum ServerMessage {
 	# extensions overflowed into rather than beside 244, because 219 was the
 	# last free number of the 215-219 block and this run continues downwards.
 	ELORIA_ACTOR_TITLES = 211,
+	# Which map package the server was built against. Continues the same
+	# downward run below 211.
+	ELORIA_MAP_DIGEST = 209,
 	ADD_ACTOR_ANIMATION = 89,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
@@ -200,6 +203,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"inventory_window_v1",
 	"item_detail_v1",
 	"mail_window_v1",
+	"map_digest_v1",
 	"mix_window_v1",
 	"market_window_v1",
 	"merchant_window_v1",
@@ -992,6 +996,8 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return decode_achievements_catalog(payload)
 		ServerMessage.ELORIA_ACTOR_TITLES:
 			return decode_actor_titles(payload)
+		ServerMessage.ELORIA_MAP_DIGEST:
+			return decode_map_digest(payload)
 		ServerMessage.ELORIA_EXPERIENCE_STATE:
 			return decode_experience_state(payload)
 		ServerMessage.ELORIA_INVENTORY_NAMES:
@@ -1373,6 +1379,27 @@ static func decode_actor_titles(payload: PackedByteArray) -> Dictionary:
 	if offset != payload.size():
 		return {"type": "invalid", "error": "actor_titles_trailing"}
 	return {"type": "actor_titles", "titles": titles}
+
+## Command 209. Which map package the server was built against.
+##
+## Map id then digest, both NUL-terminated. The digest is the sha256
+## `MapSceneCache.package_digest()` computes over the package's own bytes, so
+## the client can hash what it has and compare like for like.
+##
+## Sent at login for the map the player is on, and after every map change. It
+## is a statement, not an instruction: the client's map cache is keyed on the
+## package this machine actually has, so a mismatch cannot make the cache
+## wrong. It means the install is not the one this server was built against,
+## and the only right response is to say so where somebody will read it.
+static func decode_map_digest(payload: PackedByteArray) -> Dictionary:
+	var fields: Dictionary = _nul_run(payload, 0, 2)
+	if fields.is_empty():
+		return {"type": "invalid", "error": "map_digest_fields"}
+	if int(fields.offset) != payload.size():
+		return {"type": "invalid", "error": "map_digest_trailing"}
+	var values: Array = fields.values as Array
+	return {"type": "map_digest", "map_id": str(values[0]),
+		"digest": str(values[1])}
 
 ## Command 242. Which item names exist only because something wore out.
 ##
