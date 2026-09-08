@@ -1,3 +1,6 @@
+> Historical report: the September 2026 circulation pass is documented in
+> [layout-review.md](layout-review.md). Its measurements supersede this report.
+
 # Ssarathi Ruins: concept versus build
 
 Sheets:

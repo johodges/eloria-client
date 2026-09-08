@@ -94,6 +94,9 @@ class Secret:
     # filled by the region build once the entrance is placed
     door_position: list = field(default_factory=list)
     door_tile: list = field(default_factory=list)
+    # Prefer nearby paving over distant vegetation-free ground when a precinct
+    # reservation is only keeping trees off an otherwise usable forecourt.
+    prefer_near: bool = False
 
 
 def label_for(secret: Secret) -> str:

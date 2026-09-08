@@ -277,13 +277,13 @@ SPURS: dict[str, np.ndarray] = {
     "spur_arrival":   _route(ARRIVAL, (8.0, 4.0), (AXIS_X, 8.0)),
     "spur_west_dock": _route((-30.0, 14.0), (-26.0, 8.0), (-24.0, 4.0)),
     "spur_east_dock": _route((84.0, -6.0), (76.0, -2.0), (66.0, 4.0)),
-    "spur_south_dock": _route((6.0, 44.0), (12.0, 38.0), (AXIS_X, SOUTH_GATE_Z)),
+    "spur_south_dock": _route((6.0, 44.0), (6.0, 38.0), (AXIS_X, 36.0)),
     "spur_stela":     _route((56.0, -26.0), (60.0, -44.0), (62.0, -60.0)),
     "spur_drowned":   _route((-24.0, -30.0), (-30.0, -24.0), (-34.0, -20.0)),
     "spur_root_arch": _route((66.0, 4.0), (74.0, 14.0), (78.0, 22.0)),
     "spur_west_shrine": _route((-24.0, -74.0), (-38.0, -60.0), (-46.0, -54.0)),
     "spur_east_shrine": _route((104.0, -14.0), (102.0, -30.0), (100.0, -44.0)),
-    "spur_south_shrine": _route((AXIS_X, SOUTH_GATE_Z), (4.0, 40.0), (-8.0, 46.0)),
+    "spur_south_shrine": _route((AXIS_X, 36.0), (4.0, 44.0), (-8.0, 46.0)),
     "spur_north_terrace": _route((AXIS_X, -62.0), (32.0, -80.0), (44.0, -92.0)),
 }
 

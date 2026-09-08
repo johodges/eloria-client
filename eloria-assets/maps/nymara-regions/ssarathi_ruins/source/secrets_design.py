@@ -45,7 +45,7 @@ SECRETS = [
     Secret("ruins-cistern-well", "The Cistern Well", "nullwell", "drain_grate", "cistern-shaft", (10.0, 8.0),
            creatures=(("saltmarsh_crocodile", 2),),
            note="The cistern's jade drinks every spell; the crocodile penned there does not care."),
-    Secret("ruins-temple-focus", "The Great Temple Focus", "focus", "cracked_slab", "great-temple", (-14.0, 8.0), key="Iron Rune",
+    Secret("ruins-temple-focus", "The Great Temple Focus", "focus", "cracked_slab", "sun-vault", (-16.0, 10.0), key="Iron Rune", prefer_near=True,
            note="Under the great temple the ether pools; spells cost half."),
     Secret("ruins-rootrun", "The Root-Run", "tunnel", "root_door", "undercroft-mouth", (10.0, 8.0),
            resources=(("Lichen", 3), ("Sap", 3)),

@@ -79,7 +79,7 @@ def _clear_of(prints: np.ndarray, x: float, z: float, margin: float) -> bool:
 
 
 def _site(t: TER.Terrain, x: float, z: float, sea_level: float, reach: float = 14.0,
-          prints: np.ndarray | None = None):
+          prints: np.ndarray | None = None, prefer_near: bool = False):
     """Where the prop stands: natural ground near the anchor first; failing
     that paved ground with room around it (a grate or a slab in a square,
     never in a three-metre lane); failing that the same further out. Towns
@@ -95,6 +95,8 @@ def _site(t: TER.Terrain, x: float, z: float, sea_level: float, reach: float = 1
     if prints is not None:
         passes += [(True, 1.2, reach, False), (False, 2.6, reach, False),
                    (True, 1.2, FAR_REACH, False), (False, 2.6, FAR_REACH, False)]
+    if prefer_near and prints is not None:
+        passes.sort(key=lambda p:p[2]>reach)
     for natural, clearance, far, mask in passes:
         def ok(cx, cz):
             if not _fits(t, cx, cz, sea_level, natural=natural, clearance=clearance, mask=mask):
@@ -140,7 +142,7 @@ def dress(build: RegionBuild, t: TER.Terrain, design, seed: int, *, sea_level: f
         if secret.door_map:
             continue
         ax, az = resolve_anchor(build, secret.at, secret.offset)
-        site = _site(t, ax, az, sea_level, prints=prints)
+        site = _site(t,ax,az,sea_level,prints=prints,prefer_near=secret.prefer_near)
         if site is None:
             build.notes.append(f"secret {secret.id}: no open ground within {FAR_REACH:.0f} m of {secret.at}; "
                                "entrance not placed")

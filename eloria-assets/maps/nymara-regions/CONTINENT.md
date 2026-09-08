@@ -281,3 +281,18 @@ and gullies. The arrival has a Glasswarden assay exchange and grouped services;
 the observatory stair reaches an open podium and a framed Resonant Vault door.
 The basin river is incised downstream before the roads are graded, and its
 western tributary now meets the main course. No graph edge is added or removed.
+
+## Ssarathi Ruins circulation pass — September 2026
+
+The four continent links retain their ids and destinations. The Crownwater boat
+uses the western southern jetty at world (8, 99), with its cargo station on the
+dry Water Gate quay. Five surveyed stone bridges, eight jetties and the cistern
+walk declare their complete spans for the server collision contract.
+
+Lily Court connects to the formerly drowned cistern shaft by a pile-supported
+walk and sounding stage. The arrival has grouped archive supply services and
+the eastern market has facing stall rows. The Great Temple Focus secret uses
+the reachable Sun Vault forecourt, with its original key and contents.
+Ssarathi's canonical archive rebuild is source/build_insides.py, followed by
+export_insides_collision.py and the documented exterior correction sequence.
+See ssarathi_ruins/layout-review.md for measured access and visual review.

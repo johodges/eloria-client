@@ -152,3 +152,32 @@ def test_channel_removes_a_downstream_rise_without_raising_its_banks():
     bed=t.height_at(np.arange(1,20),np.zeros(19))
     assert np.max(np.diff(bed))<1e-6
     assert t.height_at(12,0)<before[2,14]-2
+
+
+def test_sounding_stage_has_an_open_shaft_and_a_continuous_work_floor():
+    from amberwood import civiccraft
+    from verify_runtime import VerticalRayIndex
+    piece=civiccraft.sounding_stage()
+    triangles=np.concatenate([p.positions[p.indices.reshape(-1,3)] for p in piece.walk_parts])
+    ray=VerticalRayIndex(triangles,cell=1)
+    assert ray.top_hit(0,0) is None
+    for x,z in ((5.9,-1.6),(5.9,0),(5.9,1.6),(-5,0),(0,4),(0,-4),(3,3)):
+        assert abs(ray.top_hit(x,z))<1e-6
+    normal=np.cross(triangles[:,1]-triangles[:,0],triangles[:,2]-triangles[:,0])
+    assert np.all(normal[:,1]>0)
+    # The faceted circular opening approximates the coping circle.
+    assert abs(normal[:,1].sum()/2-(12*10-np.pi*1.84**2))<0.03
+
+
+def test_near_secret_uses_reserved_paving_but_respects_real_structures():
+    from amberwood import terrain as TER
+    import secretdoors as SD
+    t=TER.Terrain(-80,-80,160,160,2)
+    t.height[:]=5
+    t.surface[:]=next(iter(TER.AUTHORED_SURFACES))
+    t.tree_block[:]=np.hypot(t.gx,t.gz)<25
+    prints=np.array([[0,0,5]])
+    old=SD._site(t,0,0,0,prints=prints)
+    near=SD._site(t,0,0,0,prints=prints,prefer_near=True)
+    assert np.linalg.norm(old)>25
+    assert 7<np.linalg.norm(near)<=14

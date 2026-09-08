@@ -238,3 +238,17 @@ ground, preserving surface classes for the region's later painting pass.
 Build water from that frozen bed before roads or bridge rebates can alter it.
 Keep the water surface above the channel floor. Set Terrain.backdrop's
 open_side to the actual sea side; the default west belongs to Amberwood.
+
+## Cistern work floors and precinct secrets
+
+amberwood.civiccraft.sounding_stage supplies a pile-supported work floor with
+an open circular shaft, coping and sounding windlass. The east edge accepts a
+flush boardwalk. The floor is one annular walking skin; the coping is scenery
+and needs its own solid footprint. Use region materials, without reallocating
+surface classes, and keep the deck above the surveyed water bed.
+
+Secret.prefer_near is opt-in and defaults to False. It tries nearby ground,
+including paving reserved against trees, before extending the search farther
+away. The actual colliding structure footprints still constrain every attempt.
+Use it for a deliberately selected forecourt; it does not override water,
+terrain suitability or structure clearance. Default secret placement is unchanged.

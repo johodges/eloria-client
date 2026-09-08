@@ -137,3 +137,32 @@ reasonably want to overrule the build.
     The intact 1983x793 board was supplied for this build and now sits at that
     path, so all ten panels are real comparison material rather than five panels
     and five placeholders.
+
+## September 2026 circulation assumptions
+
+This section supersedes the legacy server-size, portal and height-encoding
+assumptions above. CONTINENT.md and region-connections.json own the eleven-region
+graph. The server consumes the corrected authored grid at the current 576-tile
+extent. The ordered refine/open/stamp passes restate its full byte encoding.
+
+The arrival is an inhabited supply quay beside the ceremonial approach; the
+eastern court is its trading district. Market rows face a clear aisle. Water
+routes use surveyed shore heights and beds recessed at least 0.22 m beneath
+their walking skins. Eight jetties point into water; the Crownwater ferry uses
+the western southern jetty, retaining south-gate as its stable id.
+
+The cistern work floor is pile-supported and its shaft is scenery, not a raised
+walkable lid. The approach and trigger share the actual deck level. The temple
+focus secret belongs on the reachable Sun Vault forecourt. Its prefer_near
+placement option may ignore a vegetation reservation while still respecting
+the real structure footprints.
+
+Rebuild the canonical archive with source/build_insides.py; the older
+build_interiors.py writes separate legacy room packages. Rebuild/export it
+before the exterior correction triplet and secrets. See layout-review.md for
+current counts, comparisons and explicitly outstanding old geometry warnings.
+
+The final player-height review also turned the Water Gate across the causeway.
+Separate pylon footprints leave its opening clear; the original quarter-turn
+and whole-gate circular blocker obstructed the approach. Its camera now
+stands on the rendered deck instead of the channel bed.

@@ -198,27 +198,8 @@ def populate_bridges(build, seed: int = 0) -> None:
     embankment level so a player walks straight on to it, and the arch hangs
     below into the channel the terrain pass re-cut.
     """
-    made: set[str] = set()
-    for span in REG.bridge_spans():
-        cx, cz = span["centre"]
-        length = span["half_span"] * 2.0
-        width = span["half_width"] * 2.0
-        klass = f"{int(round(length / 4.0))}_{int(round(width))}"
-        key = f"ArchBridge_{klass}"
-        if key not in made:
-            build.meshes[key] = A.arch_bridge(length, width, rise=2.6,
-                                              seed=seed + len(made))
-            made.add(key)
-        heading = _heading(span["heading"][0], span["heading"][1])
-        # Only the great causeway's own crossing is a landmark - it is panel 4
-        # and the one span a player is sent to. The other six are street
-        # furniture, and recording each as a landmark filled the manifest with
-        # entries called "Bridge Spur South Shrine Channel South".
-        is_named = span["street"] == "great_causeway" and span["channel"] == "channel_main"
-        _add(build, f"Bridge_{span['name']}", key, build.meshes[key],
-             (cx, span["deck"], cz), heading,
-             kind="landmark" if is_named else "structure",
-             landmark="channel-bridge" if is_named else None)
+    import layout as PLAN
+    PLAN.dress_crossings(build,seed)
 
 
 # ---------------------------------------------------------------- temple
@@ -325,10 +306,17 @@ def populate_landmarks(build, seed: int = 0) -> None:
          kind="landmark", collides=True, landmark="root-arch")
 
     gx, gz = REG.ANCHORS["south_gate"]
-    _add(build, "WaterGate", "WaterGate",
-         A.water_gate(span=REG.CAUSEWAY_WIDTH * 2.0, height=14.0, seed=seed + 41),
-         (gx, float(t.height_at(gx, gz)), gz), math.pi / 2.0,
-         kind="landmark", collides=True, landmark="south-water-gate")
+    span=REG.CAUSEWAY_WIDTH*2.0
+    gate=_add(build,"WaterGate","WaterGate",
+         A.water_gate(span=span,height=14.0,seed=seed+41),
+         (gx,float(t.height_at(gx,gz)),gz),0.0,
+         kind="landmark",collides=True,landmark="south-water-gate")
+    # The gateway opens along the ceremonial axis. Each pylon blocks its
+    # own base; the overhead lintel does not turn the opening into a wall.
+    pylon=span*0.34;half=pylon*0.78
+    gate.extras={"solidRects":[[sign*(span+pylon)/2-half,-half,
+                                sign*(span+pylon)/2+half,half]
+                               for sign in (-1,1)]}
 
     sgx, sgz = REG.ANCHORS["serpent_gate"]
     for sign in (-1.0, 1.0):
@@ -355,37 +343,15 @@ def populate_quarters(build, seed: int = 0) -> None:
     t = build.terrain
     rng = N.Rng(seed + 211)
 
-    mx, mz = REG.ANCHORS["market"]
-    my = float(t.height_at(mx, mz))
-    for i in range(11):
-        angle = float(rng.uniform(0.0, math.tau))
-        r = float(rng.uniform(4.0, 20.0))
-        px, pz = mx + math.cos(angle) * r, mz + math.sin(angle) * r
-        y = float(t.height_at(px, pz))
-        if y < REG.WATER_LEVEL + 0.6:
-            continue
-        _add(build, f"MarketStall_{i}", f"MarketStall_{i % 4}",
-             A.market_stall(3.6, seed=seed + 60 + i % 4), (px, y, pz),
-             float(rng.uniform(0.0, math.tau)), kind="prop", collides=True)
-    _add(build, "MarketShrine", "MarketShrine", A.shrine(3.8, seed=seed + 63),
-         (mx, my, mz), math.pi, kind="structure", collides=True)
-
-    for name, count in (("east_dock", 3), ("west_dock", 3), ("south_dock", 2)):
-        dx, dz = REG.ANCHORS[name]
-        dy = float(t.height_at(dx, dz))
-        # run the jetties out toward the deepest water nearby
-        for i in range(count):
-            offset = (i - (count - 1) * 0.5) * 6.0
-            # point away from the region centre, which is where the water is
-            away = _heading(dx - REG.ANCHORS["causeway_mid"][0],
-                            dz - REG.ANCHORS["causeway_mid"][1])
-            px = dx + math.cos(away + math.pi / 2.0) * offset
-            pz = dz - math.sin(away + math.pi / 2.0) * offset
-            _add(build, f"Dock_{name}_{i}", "TimberDock",
-                 A.timber_dock(11.0, 3.4, seed=seed + 71),
-                 (px, dy, pz), away, kind="structure")
-        _add(build, f"DockLamp_{name}", "DockLamp",
-             SW.lamp_post(3.0), (dx, dy, dz), 0.0, kind="prop")
+    mx,mz=REG.ANCHORS["market"]
+    # Face two rows into a clear trading aisle, with the shrine at its head.
+    for i in range(10):
+        x=mx+(i%5-2)*7.0;z=mz+(-1 if i<5 else 1)*8.0
+        _add(build,f"MarketStall_{i}",f"MarketStall_{i%4}",
+             A.market_stall(3.6,seed=seed+60+i%4),(x,float(t.height_at(x,z)),z),
+             0 if i<5 else math.pi,kind="structure",collides=True)
+    _add(build,"MarketShrine","MarketShrine",A.shrine(3.8,seed=seed+63),
+         (mx+18,float(t.height_at(mx+18,mz)),mz),0,kind="structure",collides=True)
 
     # The drowned quarter: rubble, half-standing walls and drowned columns
     # standing in shallow water. This is the part of the aerial that says the
@@ -704,13 +670,8 @@ def populate_interior_doors(build, seed: int = 0) -> None:
     """
     t = build.terrain
 
-    # The cistern shaft, in the drowned quarter: a well-head standing in the
-    # shallow water with a stair going down inside it.
-    qx, qz = REG.ANCHORS["drowned_quarter"]
-    qy = float(t.height_at(qx, qz))
-    _add(build, "CisternShaft", "CisternShaft",
-         A.well_head(3.4, 3.0, seed=seed + 301), (qx, qy, qz), 0.0,
-         kind="landmark", collides=True, landmark="cistern-shaft")
+    import layout as PLAN
+    PLAN.dress_cistern(build,seed)
 
     # The hatchery descent, on the ritual plaza's north rim: a stepped mouth
     # between two serpent columns, so it reads as a way in and not a drain.

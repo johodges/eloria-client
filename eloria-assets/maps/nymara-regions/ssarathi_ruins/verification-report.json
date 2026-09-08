@@ -1,19 +1,19 @@
 {
   "summary": {
-    "walkSurfaceNodes": 32,
-    "walkSurfaceTriangles": 206998,
+    "walkSurfaceNodes": 35,
+    "walkSurfaceTriangles": 226294,
     "tilesSampled": 331776,
     "groundingMisses": 0,
     "groundingMissFraction": 0.0,
-    "surfaceDiscontinuities": 227,
-    "spawnPoints": 7
+    "surfaceDiscontinuities": 330,
+    "spawnPoints": 10
   },
   "errors": [],
   "warnings": [
     {
       "severity": "warning",
       "code": "GROUNDING_DISCONTINUITY",
-      "message": "227 adjacent tile pairs differ by more than 6 m of surface height (expected at cliffs and under bridges)",
+      "message": "330 adjacent tile pairs differ by more than 6 m of surface height (expected at cliffs and under bridges)",
       "detail": [
         [
           219,
@@ -79,12 +79,50 @@
     },
     {
       "severity": "warning",
+      "code": "SPAWN_NEIGHBOURHOOD_ROUGH",
+      "message": "spawn 'tenth-mouth-door' has uneven ground within 1.2 m",
+      "detail": [
+        0.0,
+        0.0,
+        -1.01,
+        -1.74,
+        -1.01,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "severity": "warning",
       "code": "LANDMARK_BELOW_SURFACE",
       "message": "landmark 'great-temple' is 35.32 m below the surface",
       "detail": [
         60.0,
         21.0,
         -264.0
+      ]
+    },
+    {
+      "severity": "warning",
+      "code": "COLLISION_SURFACE_MISMATCH",
+      "message": "2 sampled walkable cells disagree with the rendered walk surface",
+      "detail": [
+        {
+          "cell": [
+            396,
+            528
+          ],
+          "encoded": 2.06,
+          "surface": -4.6
+        },
+        {
+          "cell": [
+            408,
+            528
+          ],
+          "encoded": 2.06,
+          "surface": -4.56
+        }
       ]
     },
     {

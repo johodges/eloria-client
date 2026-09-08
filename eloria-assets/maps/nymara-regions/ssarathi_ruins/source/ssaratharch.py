@@ -1096,14 +1096,9 @@ def market_stall(width: float = 3.4, seed: int = 0) -> SW.MeshGroup:
         for sz in (-1.0, 1.0):
             out.add(M.cylinder(0.07, 0.06, post_h, segments=5, material=TIMBER)
                     .translate(sx * width * 0.5, 0.0, sz * depth * 0.5))
-    # a shallow gabled awning, sagging between the posts
-    peak = post_h + width * 0.20
-    for sz in (-1.0, 1.0):
-        panel = M.quad([(-width * 0.56, post_h, sz * depth * 0.58),
-                        (width * 0.56, post_h, sz * depth * 0.58),
-                        (width * 0.56, peak, 0.0),
-                        (-width * 0.56, peak, 0.0)], material=CANVAS)
-        out.add(panel)
+    from amberwood import civiccraft as CIV
+    out.add(CIV.pitched_canopy(width*1.12,depth*1.16,post_h,
+                              post_h+width*0.20,CANVAS,TIMBER))
     out.add(M.box((width * 0.94, 0.10, depth * 0.62),
                   center=(0.0, 0.86, 0.0), material=TIMBER))
     for sx in (-1.0, 1.0):

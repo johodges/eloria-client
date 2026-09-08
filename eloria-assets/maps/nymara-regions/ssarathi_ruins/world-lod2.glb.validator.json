@@ -1,12 +1,12 @@
 {
-  "uri": "world-lod2.glb",
+  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-continent\\eloria-assets\\maps\\nymara-regions\\ssarathi_ruins\\world-lod2.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-09-05T11:13:43.448950Z",
+  "validatedAt": "2026-09-07T21:10:54.563232Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
-    "numInfos": 8,
+    "numInfos": 9,
     "numHints": 0,
     "messages": [
       {
@@ -32,6 +32,12 @@
         "message": "This object may be unused.",
         "severity": 2,
         "pointer": "/materials/12"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/15"
       },
       {
         "code": "UNUSED_OBJECT",

@@ -154,3 +154,44 @@ def roadside_shelter(width=12.0,depth=5.0,stone="rubble_stone",
                   center=(0,2.55,depth/2-0.4),material=timber))
     out.add(pitched_canopy(width+1,depth+1,2.75,3.65,roof,timber))
     return out
+
+
+def sounding_stage(width=12.0, depth=10.0, foot=-3.0,
+                   stone="pale_ashlar", timber="timber_grey"):
+    """A pile-supported cistern work floor, open shaft and sounding windlass.
+
+    The floor is at Y=0 and the east edge accepts a boardwalk flush with it.
+    A tessellated floor leaves a circular shaft open; the coping is solid
+    scenery, so the grounding ray never mistakes its rim for a second floor.
+    """
+    if width < 7 or depth < 7 or foot >= -0.5:
+        raise ValueError("sounding stage needs a work floor and submerged piles")
+    out = SW.MeshGroup()
+    x,z,hole=width/2,depth/2,1.84
+    angles=sorted(set([i*math.tau/64 for i in range(64)]+
+                      [math.atan2(sz*z,sx*x)%math.tau for sx in (-1,1) for sz in (-1,1)]))
+    def rim(angle,radius=None):
+        dx,dz=math.cos(angle),math.sin(angle)
+        r=radius if radius is not None else 1/max(abs(dx)/x,abs(dz)/z)
+        return (dx*r,0,dz*r)
+    for i,a in enumerate(angles):
+        b=angles[(i+1)%len(angles)]
+        out.add_walk(M.quad([rim(a,hole),rim(b,hole),rim(b),rim(a)],
+                            material=timber,uv_scale=0.85))
+    for side in (-1,1):
+        out.add(M.box((width,0.18,0.24),center=(0,-0.25,side*(z-0.3)),
+                      material=timber))
+        for px in (-x+0.4,0,x-0.4):
+            out.add(M.cylinder(0.16,0.14,-foot-0.36,8,material=timber)
+                    .translate(px,foot,side*(z-0.4)))
+    # An uncapped ring, raised off the floor; no hidden seating face duplicates it.
+    out.add(M.lathe([(2.12,0.06),(2.12,0.82),(1.84,0.82),(1.84,0.06)],
+                    segments=32,material=stone))
+    for side in (-1,1):
+        out.add(M.cylinder(0.13,0.11,2.8,8,material=timber)
+                .translate(side*2.5,0.05,0))
+    out.add(M.box((5.5,0.22,0.25),center=(0,2.94,0),material=timber))
+    out.add(M.cylinder(0.035,0.035,3.4,6,material=timber).translate(0,-0.45,0))
+    out.add(M.lathe([(0.28,0),(0.38,0.45),(0.31,0.45),(0.23,0.07)],
+                    segments=12,material=timber).translate(0,-0.65,0))
+    return out
