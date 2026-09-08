@@ -66,6 +66,11 @@ def test_spatial_batches_preserve_every_face_uv_and_surface_class():
     g.add_overhead(sheet(0, 0, 2, 30, y=4))
     result = sections(g, "test", cell_metres=10)
     assert len(result) > 1
+    # NumPy can return inverse indices in the input's 2D shape. Mesh expects
+    # a flat index stream; otherwise two-triangle panels count as empty and
+    # the material merge silently drops them at export.
+    assert sum(part.triangle_count for _, chunk in result for part in chunk.all_parts) == g.triangle_count
+    assert all(part.indices.ndim == 1 for _, chunk in result for part in chunk.all_parts)
     for bucket in ("parts", "walk_parts", "overhead_parts"):
         def faces(parts):
             return sorted(tuple(np.concatenate([p.positions[t], p.uvs[t]], axis=1).ravel())

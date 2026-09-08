@@ -139,6 +139,27 @@ class GauntletPackages(unittest.TestCase):
             for start, goal in checks:
                 self.assertIn(goal, flood(grid, start), (theme, start, goal))
 
+    def test_every_walkable_tile_has_exported_ground(self):
+        # The collision builder sees authored geometry before GLB batching.
+        # A successful flood cannot prove the exporter retained a bridge deck.
+        import sys
+        sys.path.insert(0, str(INTERIORS.parent / "_toolkit"))
+        import verify_runtime as runtime
+        for theme in THEMES:
+            package = INTERIORS / theme
+            manifest = self.manifest(theme)
+            document, binary = runtime.load_glb(package / "world.glb")
+            triangles, _ = runtime.collect_triangles(
+                document, binary, lambda name: name.startswith("Walk_"))
+            rays = runtime.VerticalRayIndex(triangles)
+            ox, oz = manifest["coordinateTransform"]["serverOrigin"]
+            missing = []
+            for y, row in enumerate(read_walk_grid(WALK / f"{theme}.bin")):
+                for x, height in enumerate(row):
+                    if height and rays.top_hit(x - ox, oz - y) is None:
+                        missing.append((x, y))
+            self.assertFalse(missing, (theme, len(missing), missing[:12]))
+
 
 if __name__ == "__main__":
     unittest.main()

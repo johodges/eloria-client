@@ -362,3 +362,21 @@ The capture harness now honours --environment=manifest for sealed interiors,
 creates declared lamps after the scene enters the tree, and applies the game's
 InteriorCutaway rules for each camera view. A manifest-lit capture therefore
 includes both the actual light sources and the gameplay ceiling visibility.
+
+## Glacial mine workings and exported ground
+
+The Ice Stair uses mountaincraft.frozen_cascade and mountaincraft.ore_face.
+Both accept dimensions, material names and explicit seeds. Together with the
+shared suspension bridge, ore sledge, timber bent and haul winch, these keep
+Whitehorn's underground equipment in its exterior palette.
+
+Gauntlet composition opts into rope bridge decks, a rear dais step, room floor
+materials, joint clipping and local batches through theme props. Other routes
+keep their defaults. ice_mine.py arranges the working bays and frozen falls;
+its accent lights extend the manifest's ordinary hanging lamps.
+
+Spatial batches flatten the inverse vertex index array before creating Mesh
+parts. NumPy can return that inverse with the input's triangle shape, which
+otherwise miscounts triangles and drops small parts during merge. The geometry
+tests verify triangle preservation, and test_gauntlet_packages.py independently
+casts onto the exported GLB beneath every walkable tile in all eight routes.

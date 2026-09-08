@@ -142,3 +142,45 @@ def ore_sledge(length=3.1,width=1.5,timber="timber_grey",
         rock=M.icosphere(0.29+(i%2)*0.04,1,material=ore)
         out.add(rock.translate((-0.24 if i%2 else 0.21),0.67,(i-2)*0.43))
     return out
+
+
+def frozen_cascade(width=6.0, height=6.5, depth=1.0, seed=0,
+                   ice="glacier_ice", rock="cliff_rock"):
+    """A frozen seep backed by rock, with irregular downward icicles.
+
+    Faces -Z. The solid backing seats it against a cavern wall; the frozen
+    curtain projects into the room, leaving its silhouette visible in cutaway.
+    """
+    if min(width, height, depth) <= 0:
+        raise ValueError("a frozen cascade needs positive dimensions")
+    rng = np.random.default_rng(seed)
+    out = SW.MeshGroup()
+    out.add(M.box((width, height * .85, depth * .45),
+                  center=(0, height * .425, depth * .6), material=rock))
+    count = max(5, int(width / .55))
+    for i in range(count):
+        x = -width * .5 + (i + .5) * width / count
+        length = height * float(rng.uniform(.5, .97))
+        radius = width / count * float(rng.uniform(.43, .68))
+        top = height * float(rng.uniform(.91, 1.0))
+        out.add(M.cylinder(.025, radius, length, 7, uv_scale=.8,
+                           material=ice).translate(x, top - length,
+                                                 float(rng.uniform(-depth * .3, depth * .15))))
+        # Rounded accretion at the foot, where the seep has frozen against rock.
+        toe = M.icosphere(radius * 1.1, 1, material=ice)
+        out.add(toe.scale(1.0, .55, 1.0).translate(x, .18, -.2))
+    return out
+
+
+def ore_face(width=4.4, height=3.4, seed=0, rock="cliff_rock", ore="whitehorn_silver"):
+    """A worked rock face with exposed seams; the accessible face points -Z."""
+    from . import crystalcraft as C
+    rng = np.random.default_rng(seed)
+    out = SW.MeshGroup()
+    out.add(M.box((width, height, .4), center=(0, height * .5, .2), material=rock))
+    for i in range(5):
+        x = (i - 2) * width * .17
+        y = float(rng.uniform(.4, height * .6))
+        out.add(C.shard(height=height * .42, radius=.13, seed=seed + i,
+                        material=ore).rotate_z(float(rng.uniform(-.25, .25))).translate(x, y, -.15))
+    return out

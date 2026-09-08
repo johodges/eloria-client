@@ -72,7 +72,8 @@ def compose(theme: D.Theme, seed: int):
         elif leg.kind == "cavern":
             built = R.cavern(it, leg.id, pal, kit, z_room, x, floor, leg_seed, leg.pressure)
         elif leg.kind == "bridge":
-            built = R.bridge(it, leg.id, pal, kit, z_room, x, floor, leg_seed, leg.pressure)
+            built = R.bridge(it, leg.id, pal, kit, z_room, x, floor, leg_seed, leg.pressure,
+                             deck=theme.props.get("bridgeDeck", "stone"))
         elif leg.kind == "stair":
             built = R.stair(it, leg.id, pal, kit, z_room, x, floor, leg_seed, leg.pressure)
         elif leg.kind == "gallery":
@@ -99,7 +100,8 @@ def compose(theme: D.Theme, seed: int):
             prev = built
             continue
         elif leg.kind == "court":
-            built = R.court(it, leg.id, pal, kit, z_room, x, floor, leg_seed, leg.pressure)
+            built = R.court(it, leg.id, pal, kit, z_room, x, floor, leg_seed, leg.pressure,
+                            rear_step=theme.props.get("rearDaisStep", False))
             record["boss"] = built.boss
         else:
             raise ValueError(f"unknown leg kind {leg.kind!r} in {theme.id}")
@@ -120,10 +122,13 @@ def compose(theme: D.Theme, seed: int):
     if kit == "forest_haul":
         from gauntlets import forest_haul
         forest_haul.dress(it, pal, seed)
+    elif kit == "ice_mine":
+        from gauntlets import ice_mine
+        ice_mine.dress(it, pal, seed)
     lamps, placed = hanging_lamps(it.lamps, seed=seed)
     it.group.add(lamps)
     it.lamps = placed
-    if kit == "forest_haul":
+    if theme.props.get("clipCoplanar", kit == "forest_haul"):
         from amberwood.coplanar import trim_coplanar
         trim_coplanar(it.group)
     it.spawn_space = "staging"
@@ -137,6 +142,8 @@ def compose(theme: D.Theme, seed: int):
             "ambient": {"color": [0.44, 0.49, 0.43], "energy": 1.05},
             "fog": {"enabled": True, "color": [0.05, 0.065, 0.052], "density": 0.004},
             "tonemap": {"mode": "filmic", "exposure": 1.25, "white": 3.5}}
+    if theme.props.get("environment"):
+        it.environment = dict(theme.props["environment"])
     return it, legs_out, staging, {"key": "vault", "bounds": vault_built.bounds}
 
 
@@ -249,7 +256,7 @@ def write_manifest(theme: D.Theme, it: Interior, legs, staging, vault, stats, co
         "environment": dict(it.environment, openToSky=[],
                             lights=[{"id": f"lamp-{i:03d}", "kind": "point", "position": p,
                                      "color": [1.0, 0.66, 0.32], "range": 14.0, "energy": 3.2,
-                                     "attenuation": 1.2} for i, p in enumerate(it.lamps)]),
+                                     "attenuation": 1.2} for i, p in enumerate(it.lamps)] + getattr(it, "accent_lights", [])),
         "spaces": {k: {kk: round(float(vv), 2) for kk, vv in v.items()} for k, v in it.spaces.items()},
         "gauntlet": gauntlet,
         "performance": stats,
@@ -280,7 +287,7 @@ def main() -> int:
     sets = preview.texture_sets()
     it, legs, staging, vault = compose(theme, args.seed)
     sections = [(theme.id, it.group)]
-    if theme.props.get("kit") == "forest_haul":
+    if theme.props.get("localBatches", theme.props.get("kit") == "forest_haul"):
         from amberwood.spatial import sections as local_sections
         sections = local_sections(it.group, theme.id)
     stats = SB.export_glb(sections, sets, out / "world.glb", theme.id)

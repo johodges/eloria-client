@@ -235,7 +235,17 @@ _theme(Theme(
 
 _theme(Theme(
     region="whitehorn_range", id="whitehorn_gauntlet", name="The Ice Stair", short="icestair",
-    palette=WHITEHORN, props={"kit": "ice"},
+    palette=WHITEHORN, props={
+        "kit": "ice_mine", "wayLength": 8.0, "bridgeDeck": "rope",
+        "clipCoplanar": True, "localBatches": True, "rearDaisStep": True,
+        "roomFloors": {"twin-crevasses-blue-crevasse": "glacier_ice",
+                       "twin-crevasses-white-crevasse": "snow_pack"},
+        "environment": {
+            "sky": "none", "backgroundColor": [.025, .04, .065],
+            "sun": {"enabled": False},
+            "ambient": {"color": [.44, .56, .69], "energy": 1.0},
+            "fog": {"enabled": True, "color": [.045, .065, .085], "density": .004},
+            "tonemap": {"mode": "filmic", "exposure": 1.2, "white": 3.5}}},
     flavour="A miners' stair up the inside of the glacier, cut for the silver and abandoned to what "
             "lives in the ice.",
     legs=(

@@ -39,7 +39,7 @@ DOOR = (3.6, 3.0)        # width, head
 def dress(it: Interior, kit: str, pal: dict, x0, z0, x1, z1, floor_y, seed: int, count: int = 6):
     """Scatter the region's growth along the walls of a room, never in the
     middle where the fight is and never in the door lanes."""
-    if kit == "forest_haul":
+    if kit in ("forest_haul", "ice_mine"):
         return  # the haul layout authors working bays instead of scattered growth
     rng = np.random.default_rng(seed)
     width, depth = x1 - x0, z1 - z0
@@ -179,7 +179,7 @@ def cavern(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float, 
 
 
 def bridge(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float, floor: float, seed: int,
-           pressure: float = 1.0) -> Built:
+           pressure: float = 1.0, *, deck: str = "stone") -> Built:
     """A narrow span: a deck two abreast over a pit of dark water, with lamp
     posts, between two small landings."""
     half = 2.2
@@ -196,14 +196,30 @@ def bridge(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float, 
     _room_(it, key, x_in - wide, z0 + landing, x_in + wide, z0 + d - landing, floor - 3.0, 9.0, pal,
            doors=[("south", x_in, DOOR[0], 5.6), ("north", x_in, DOOR[0], 5.6)], ceiling="vault",
            vault_rise=3.0, walls=pal["rock"], ceil=pal["rock"], floor=pal["water"], walk=False)
-    it.group.add_walk(M.box((half * 2, 0.6, d - 2 * landing + 0.6), center=(x_in, floor - 0.3, z0 + d * 0.5),
-                            uv_scale=0.5, material=pal["stone"]))
+    if deck == "rope":
+        from amberwood import mountaincraft as H
+        span = H.suspension_bridge(length=d - 2 * landing, width=half * 2, sag=.55,
+                                   seed=seed, deck_y=floor, stone=pal["stone"],
+                                   timber=pal["timber"], posts=pal["timber"],
+                                   rope=pal["cloth"], iron=pal["metal"])
+        it.group.add(span.rotate_y(-math.pi / 2).translate(x_in, 0, z0 + d * .5))
+    else:
+        it.group.add_walk(M.box((half * 2, 0.6, d - 2 * landing + 0.6), center=(x_in, floor - 0.3, z0 + d * .5),
+                                uv_scale=.5, material=pal["stone"]))
     for k in range(6):
         pz = z0 + 5.0 + k * (d - 10.0) / 5.0
         for sx in (-half, half):
-            it.group.add(M.box((0.24, 1.1, 0.24), center=(x_in + sx, floor + 0.55, pz), uv_scale=1.0,
+            height = 2.8 if deck == "rope" else 1.1
+            it.group.add(M.box((.24, height, .24), center=(x_in + sx, floor + height * .5, pz), uv_scale=1.0,
                                material=pal["metal"]))
-        it.lamps.append([round(x_in - half, 2), round(floor + 1.6, 2), round(pz, 2)])
+        if deck == "rope":
+            # Hang inward from an arm so the vessel and its light clear the
+            # solid post, while keeping the middle of the deck unobstructed.
+            it.group.add(M.box((.7, .08, .12), center=(x_in - half + .35, floor + 2.76, pz),
+                               material=pal["metal"]))
+            it.lamps.append([round(x_in - half + .7, 2), round(floor + 2.8, 2), round(pz, 2)])
+        else:
+            it.lamps.append([round(x_in - half, 2), round(floor + 1.6, 2), round(pz, 2)])
     spawns = [[round(x_in + sx, 2), round(floor, 2), round(z0 + 7.0 + k * 3.2, 2)]
               for k in range(7) for sx in (-1.1, 1.1)]
     return Built(key, z0 + d, x_in, floor, spawns, (x_in - half, z0 + landing, x_in + half, z0 + d - landing))
@@ -324,7 +340,7 @@ def fork(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float, fl
 
 
 def court(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float, floor: float, seed: int,
-          pressure: float = 1.0) -> Built:
+          pressure: float = 1.0, *, rear_step: bool = False) -> Built:
     """The boss room: wide, with a dais at the far end and braziers round it."""
     w, d = 16.0, 30.0
     x_out = x_in
@@ -334,6 +350,10 @@ def court(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float, f
                             material=pal["stone"]))
     it.group.add_walk(M.box((6.0, 0.25, 2.0), center=(x_in, floor + 0.125, z0 + d - 12.0), uv_scale=0.8,
                             material=pal["stone"]))
+    if rear_step:
+        it.group.add_walk(M.box((6.0, .25, 2.0),
+                                center=(x_in, floor + .125, z0 + d - 2.0),
+                                uv_scale=.8, material=pal["stone"]))
     for k in range(6):
         angle = math.pi * (0.15 + 0.7 * k / 5.0)
         _brazier(it, x_in + math.cos(angle) * (w - 2.0), floor, z0 + d * 0.5 + math.sin(angle) * (d * 0.4), seed + k)

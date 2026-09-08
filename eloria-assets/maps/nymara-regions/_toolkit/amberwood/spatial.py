@@ -26,7 +26,7 @@ def sections(group, ident, cell_metres=12.0, axis=2):
                 used, inverse = np.unique(faces[cells == cell], return_inverse=True)
                 part = M.Mesh(positions=piece.positions[used].copy(),
                               normals=piece.normals[used].copy(),
-                              uvs=piece.uvs[used].copy(), indices=inverse,
+                              uvs=piece.uvs[used].copy(), indices=inverse.reshape(-1),
                               colors=piece.colors[used].copy() if piece.colors is not None else None,
                               material=piece.material)
                 getattr(bands[int(cell)], bucket).append(part)

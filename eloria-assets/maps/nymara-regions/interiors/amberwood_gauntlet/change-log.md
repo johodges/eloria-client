@@ -1,6 +1,6 @@
-# The Resin Road — change log
+# The Resin Road â€” change log
 
-## 2026-09-08 — underground haul route
+## 2026-09-08 â€” underground haul route
 
 Replaced scattered wall stumps with working bays, using shared timber bents,
 open resin vats, hand winches, carts and stacked logs. Packed-earth floors mark
@@ -41,3 +41,18 @@ diagnostic metadata.
 
 See references/comparison.jpg, references/godot-captures/index.json and
 references/validation.json for the evidence.
+
+## 2026-09-08 — preserve small exported mesh panels
+
+The Ice Stair review found that local material batching could retain a
+two-dimensional inverse index array. Small parts were then counted as empty
+during merge. Flattening that array restores 130 triangles in the Resin Road,
+bringing it to 31,423 triangles and 5.54 MB. Client and server collision remain
+byte-identical to the published layout, and its server content is unchanged.
+
+Re-exported and reviewed all eighteen captures, refreshed the comparison and
+validation evidence, and verified a second isolated build byte-for-byte.
+The shared regression checks triangle preservation, while an independent
+exported-ground test covers every walkable tile across all eight gauntlets.
+Current suites: 1,802 server tests and 546 subtests pass; 192 client tests and
+9,284 subtests pass with the same 88 known failures.

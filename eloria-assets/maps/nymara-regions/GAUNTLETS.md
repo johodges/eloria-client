@@ -111,9 +111,29 @@ python tools/sync_authored_collision.py --client <eloria-assets/maps>
 python tools/generate_nymara_maps.py <maps dir>
 ```
 
-A design change (`_toolkit/gauntlets/designs.py`) is a rebuild of that
-route's package followed by the authoring tool; the waves are regenerated
-deterministically from the roster, so nothing else has to be edited.
+Use the full authoring tool when intentionally changing rosters or rules; it
+regenerates waves for every route. For a layout change to an existing route,
+preserve its published encounters and exterior return berth with the narrower
+refresh instead:
+
+```sh
+# after building the one client package, run in the server worktree
+python tools/sync_gauntlet_layout.py --client <client repo> --route <route> --apply
+python tools/sync_authored_collision.py --client <eloria-assets/maps> --region <route>
+python tools/sync_authored_collision.py --client <eloria-assets/maps> --region <route>_2
+python tools/sync_authored_collision.py --client <eloria-assets/maps> --region <route>_3
+python tools/generate_nymara_maps.py <maps dir>
+```
+
+Omit --apply to review the files that would change. The refresh updates existing
+instance bounds, gates, waves, interactives and bonus-node coordinates, plus the
+client coordinate transform and server arrival constants. It preserves creature
+types, counts, variants, rules, rewards, keeper locations and exterior returns.
+Each wave moves to distinct authored spawn candidates. Unknown room or object
+identities fail before writing. A second run makes no further changes.
+
+Do not run the exterior height-field correction passes on a gauntlet: its
+geometry-derived grid deliberately seals the gates until the server opens them.
 
 The package build writes the grid the server walks on
 (`server-collision/<route>.bin`) itself, and three things about it were

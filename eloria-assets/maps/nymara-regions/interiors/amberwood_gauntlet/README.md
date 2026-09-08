@@ -15,7 +15,8 @@ For an isolated repeat build, pass both --out and --server-collision with paths
 in a temporary directory. Geometry corrections for exterior height fields must
 not reopen this instance's gate cuts.
 
-Server authoring follows GAUNTLETS.md. A layout-only refresh must preserve the
+Server authoring follows GAUNTLETS.md. Use tools/sync_gauntlet_layout.py for
+a layout refresh of an existing route. A layout-only refresh must preserve the
 published wave definitions, keeper and exterior return berth: the full authoring
 tool also rerolls waves and repositions other keepers. Update the arrival in
 tools/generate_nymara_maps.py when the package origin changes, then sync each
