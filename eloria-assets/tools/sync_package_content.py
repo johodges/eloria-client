@@ -297,6 +297,8 @@ def publish_digests(manifest: dict) -> tuple[str | None, list, list, int]:
         # file is read by people.
         rebuilt = {}
         for key, value in entry.items():
+            if key == "packageSha256":
+                continue  # An existing value must not overwrite the new digest.
             rebuilt[key] = value
             if key == "arrival":
                 rebuilt["packageSha256"] = digest
