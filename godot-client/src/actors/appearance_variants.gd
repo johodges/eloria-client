@@ -5,18 +5,23 @@ const PART_HEAD := 3
 const PART_PANTS := 4
 const PART_SHIRT := 5
 const PART_BOOTS := 6
-const HAIR_STYLE_COUNT := 4
+const HAIR_STYLE_COUNT := 5
 const HAIR_COLOR_COUNT := 20
-const PACKED_HAIR_START := 20
+const PACKED_HAIR_START := 100
+const LEGACY_PACKED_HAIR_START := 20
+const LEGACY_HAIR_STYLE_COUNT := 4
 
 static func pack_hair(style: int, color: int) -> int:
 	# Existing values 0..19 keep their original combined style/color meaning.
-	# The next 80 values store independent choices in the same protocol byte.
+	# Values 20..99 retain the previous four-style encoding.
+	# Values 100..199 add the restored buzzcut in the same protocol byte.
 	return PACKED_HAIR_START + clampi(color, 0, HAIR_COLOR_COUNT - 1) * HAIR_STYLE_COUNT + clampi(style, 0, HAIR_STYLE_COUNT - 1)
 
 static func hair_color_index(index: int) -> int:
 	if index >= PACKED_HAIR_START and index < PACKED_HAIR_START + HAIR_STYLE_COUNT * HAIR_COLOR_COUNT:
 		return (index - PACKED_HAIR_START) / HAIR_STYLE_COUNT
+	if index >= LEGACY_PACKED_HAIR_START and index < PACKED_HAIR_START:
+		return (index - LEGACY_PACKED_HAIR_START) / LEGACY_HAIR_STYLE_COUNT
 	return posmod(index, HAIR_COLOR_COUNT)
 
 static func wardrobe_color(culture: String, part: int, index: int) -> Color:
@@ -123,7 +128,9 @@ static func eye_color(index: int) -> Color:
 	return colors[posmod(index, colors.size())]
 
 static func hair_style(index: int) -> int:
-	return posmod(index, HAIR_STYLE_COUNT)
+	if index >= PACKED_HAIR_START and index < PACKED_HAIR_START + HAIR_STYLE_COUNT * HAIR_COLOR_COUNT:
+		return (index - PACKED_HAIR_START) % HAIR_STYLE_COUNT
+	return posmod(index, LEGACY_HAIR_STYLE_COUNT)
 
 static func head_style(_index: int) -> int:
 	# The retired cosmetic headwear byte remains on the wire for compatibility.

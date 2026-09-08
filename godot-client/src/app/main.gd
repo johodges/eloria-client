@@ -1,5 +1,7 @@
 extends Control
 
+const AppearanceChoices = preload("res://src/actors/appearance_choices.gd")
+
 @onready var login_panel: Control = %LoginPanel
 @onready var game_view: Control = %GameView
 @onready var creation_panel: Control = %CreationPanel
@@ -991,12 +993,17 @@ func _ready() -> void:
 	manufacturing_panel.hide()
 	game_view.hide()
 	creation_panel.hide()
-	for raw_option: Variant in creation_options:
+	var sorted_creation_options := creation_options.duplicate()
+	sorted_creation_options.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return str(a.get("label", "")).naturalnocasecmp_to(str(b.get("label", ""))) < 0)
+	for raw_option: Variant in sorted_creation_options:
 		if raw_option is not Dictionary:
 			continue
 		var option: Dictionary = raw_option as Dictionary
 		create_gender.add_item(str(option.get("label", "Unknown appearance")),
 			int(option.get("actorType", 1)))
+	create_gender.select(create_gender.get_item_index(0))
+	_populate_creation_choices()
 	_update_preview_camera()
 	_apply_eloria_art()
 	_configure_banner_menu()
@@ -1339,6 +1346,7 @@ func _on_creation_back_pressed() -> void:
 	login_panel.show()
 
 func _on_create_gender_item_selected(_index: int) -> void:
+	_populate_creation_choices()
 	_refresh_creation_preview()
 
 func _on_create_appearance_changed(_value: float) -> void:
@@ -1413,18 +1421,28 @@ func _refresh_creation_preview() -> void:
 	else:
 		create_status.text = "Drag the preview to rotate; use the mouse wheel to zoom."
 
+func _populate_creation_choices() -> void:
+	AppearanceChoices.populate(%CreateSkin, AppearanceChoices.options("skin"))
+	AppearanceChoices.populate(%CreateEyes, AppearanceChoices.options("eyes"))
+	AppearanceChoices.populate(%CreateHair, AppearanceChoices.options("hair"))
+	AppearanceChoices.populate(%CreateHairColor, AppearanceChoices.options("hair_color"))
+	var culture := AppearanceVariants.culture_for_actor_type(create_gender.get_selected_id())
+	AppearanceChoices.populate(%CreateShirt, AppearanceChoices.options("wardrobe", culture, AppearanceVariants.PART_SHIRT))
+	AppearanceChoices.populate(%CreatePants, AppearanceChoices.options("wardrobe", culture, AppearanceVariants.PART_PANTS))
+	AppearanceChoices.populate(%CreateBoots, AppearanceChoices.options("wardrobe", culture, AppearanceVariants.PART_BOOTS))
+
 func _creation_appearance() -> Dictionary:
 	return {
-		"skin": int(%CreateSkin.value),
+		"skin": %CreateSkin.get_selected_id(),
 		"hair": AppearanceVariants.pack_hair(%CreateHair.get_selected_id(), %CreateHairColor.get_selected_id()),
-		"eyes": int(%CreateEyes.value),
+		"eyes": %CreateEyes.get_selected_id(),
 		"head": 0,
 		# Reinstated 2026-09-02 for Eloria Client: the race bodies' painted
 		# outfits are split into their own wardrobe surfaces now, so these
 		# three bytes recolour the shirt, the trousers and the boots the way
 		# the create packet always intended.
-		"shirt": int(%CreateShirt.value), "pants": int(%CreatePants.value),
-		"boots": int(%CreateBoots.value),
+		"shirt": %CreateShirt.get_selected_id(), "pants": %CreatePants.get_selected_id(),
+		"boots": %CreateBoots.get_selected_id(),
 	}
 
 func _on_character_preview_gui_input(event: InputEvent) -> void:

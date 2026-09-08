@@ -161,7 +161,7 @@ def run(workspace,client_root,candidates=None):
         necks.pop(slug,None)
         # Fit the existing authored hairstyle designs to the new source skull.
         skull=source_head(d,b);hair_report={}
-        for style in ('parted','long','buns'):
+        for style in ('parted','long','buns','buzzed'):
             src=native/'hair'/f'{style}_{sex}.glb'
             dest=native/'hair/fitted'/f'{slug}_{style}_{sex}.glb'
             hair_report[style]=fit_hair(src,dest,skull,{'scale':[1,1,1],'offset':[0,0,-.015]},d,b)
@@ -177,8 +177,14 @@ def run(workspace,client_root,candidates=None):
                      neckAdaptorTriangles=0, pipeline='eloria-assets/tools/integrate_luminous_sources.py',
                      sourceIntegration=d['asset']['extras']['sourceIntegration'])
         entry.pop('appearanceFit', None)
-        for index, style in enumerate(('parted', 'long', 'buns'), 1):
-            catalog['fittedHair'][f'{slug}:{index}']['sha256'] = hair_report[style]['sha256']
+        config['hairStyles'] = config['hairStyles'][:4] + [f'res://assets/actors/native/hair/fitted/{slug}_buzzed_{sex}.glb']
+        for index, style in enumerate(('parted', 'long', 'buns', 'buzzed'), 1):
+            hair_path = native/'hair/fitted'/f'{slug}_{style}_{sex}.glb'
+            hd, _ = g.read(hair_path)
+            catalog['fittedHair'][f'{slug}:{index}'] = {
+                'path': hair_path.relative_to(client_root).as_posix(),
+                'sha256': hair_report[style]['sha256'], 'joints': 77,
+                'triangles': sum(hd['accessors'][p['indices']]['count']//3 for m in hd['meshes'] for p in m['primitives'])}
         print(slug,report[slug]['triangles'],'integrated',flush=True)
     models_path.write_text(json.dumps(models,indent=2)+'\n');masks_path.write_text(json.dumps(masks,indent=2)+'\n');necks_path.write_text(json.dumps(necks,indent=2)+'\n')
     equipment_path.write_text(json.dumps(equipment, indent=2)+'\n')

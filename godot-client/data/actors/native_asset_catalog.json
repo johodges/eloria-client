@@ -29040,6 +29040,102 @@
       "sha256": "872e2ae9a03edc745ff7d38e8408189428144163fe84ad9b1a14323221d98fc2",
       "joints": 77,
       "triangles": 13136
+    },
+    "luminous_female:4": {
+      "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_buzzed_female.glb",
+      "sha256": "b81a5507f718798dc032d92de3084d601a39d1b0a1312314b2cafe63dc8d07b8",
+      "joints": 77,
+      "triangles": 3320
+    },
+    "luminous_male:4": {
+      "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_buzzed_male.glb",
+      "sha256": "955bd69c7e9084ce96c4ff5c7445d410343f6a56b92c7bb2a654b709186cb09d",
+      "joints": 77,
+      "triangles": 3320
+    },
+    "votary_female:4": {
+      "path": "godot-client/assets/actors/native/hair/fitted/votary_female_buzzed_female.glb",
+      "sha256": "f079e3373f458d2d76e0ee846ab5fc14de5e037cef84ea00e7d23913a6018f21",
+      "joints": 77,
+      "triangles": 3320
+    },
+    "votary_male:4": {
+      "path": "godot-client/assets/actors/native/hair/fitted/votary_male_buzzed_male.glb",
+      "sha256": "23301376236c49899c56b4648b73857cba889c0fc37ebc8fdf6490591829be3e",
+      "joints": 77,
+      "triangles": 3320
+    },
+    "glasswarden_female:4": {
+      "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_female_buzzed_female.glb",
+      "sha256": "2920948382b3636c26a00ec13af77f26fbcd3e93782cb5a20c2a295a2af7e4bc",
+      "joints": 77,
+      "triangles": 3320
+    },
+    "glasswarden_male:4": {
+      "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_male_buzzed_male.glb",
+      "sha256": "cfc829da48e386d281407afa53e1ad410f2903e7829bfdacf313d08c8af8a1c2",
+      "joints": 77,
+      "triangles": 3320
+    },
+    "orun_female:4": {
+      "path": "godot-client/assets/actors/native/hair/fitted/orun_female_buzzed_female.glb",
+      "sha256": "d3d6ec37ec0321e0ee9543302ffc8e9cc31ae962b8af29b565037fee12d80601",
+      "joints": 77,
+      "triangles": 3320
+    },
+    "orun_male:4": {
+      "path": "godot-client/assets/actors/native/hair/fitted/orun_male_buzzed_male.glb",
+      "sha256": "3977aa6bf8579626bc2bb1fa453df52695526ca0385d3c3c96c4788c448b67ae",
+      "joints": 77,
+      "triangles": 3320
+    },
+    "greyhaven_female:4": {
+      "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_female_buzzed_female.glb",
+      "sha256": "eae8ac8b0485b6b78a30455338f0f6714f7c6b673e1c9d5a3487fe79dd60e106",
+      "joints": 77,
+      "triangles": 3320
+    },
+    "greyhaven_male:4": {
+      "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_male_buzzed_male.glb",
+      "sha256": "d63323563ca41954e42c644ac9ecac0e18a1e00d0c596ff9f65dce4353a654cd",
+      "joints": 77,
+      "triangles": 3320
+    },
+    "ssarathi_female:4": {
+      "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_female_buzzed_female.glb",
+      "sha256": "7453bf9ae905dd95268b4c3483f4deaa3b2d0fb0194e8fe29c0794f5599da855",
+      "joints": 77,
+      "triangles": 3320
+    },
+    "ssarathi_male:4": {
+      "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_male_buzzed_male.glb",
+      "sha256": "d44b26441228a4e201f8e1f56a39def9d5a4410e6e8a4d408d87c9daa53ebf0f",
+      "joints": 77,
+      "triangles": 3320
+    },
+    "stoneborn_female:4": {
+      "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_female_buzzed_female.glb",
+      "sha256": "7239ae354287595b288a72661bbc0ca1662355a76b1c56e70895ff401e9cbe52",
+      "joints": 77,
+      "triangles": 3320
+    },
+    "stoneborn_male:4": {
+      "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_male_buzzed_male.glb",
+      "sha256": "5efba9c7755849e7aa2098bfe8bcdf966a3103c912f68ef6c1025428164c9109",
+      "joints": 77,
+      "triangles": 3320
+    },
+    "mycelari_female:4": {
+      "path": "godot-client/assets/actors/native/hair/fitted/mycelari_female_buzzed_female.glb",
+      "sha256": "25bce4992f91ac5d9e5f8bf75c98c221b294e56a185bd968c5f3e76ebac1a9ce",
+      "joints": 77,
+      "triangles": 3320
+    },
+    "mycelari_male:4": {
+      "path": "godot-client/assets/actors/native/hair/fitted/mycelari_male_buzzed_male.glb",
+      "sha256": "83f44cb7c22c15a43e4599af7cd0b42c6774c3a6b884ada66ad04f0b0df9230c",
+      "joints": 77,
+      "triangles": 3320
     }
   }
 }

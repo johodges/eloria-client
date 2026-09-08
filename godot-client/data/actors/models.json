@@ -11,7 +11,8 @@
         "res://assets/actors/native/hair/buzzed_female.glb",
         "res://assets/actors/native/hair/fitted/luminous_female_parted_female.glb",
         "res://assets/actors/native/hair/fitted/luminous_female_long_female.glb",
-        "res://assets/actors/native/hair/fitted/luminous_female_buns_female.glb"
+        "res://assets/actors/native/hair/fitted/luminous_female_buns_female.glb",
+        "res://assets/actors/native/hair/fitted/luminous_female_buzzed_female.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -101,7 +102,8 @@
         "res://assets/actors/native/hair/buzzed_male.glb",
         "res://assets/actors/native/hair/fitted/luminous_male_parted_male.glb",
         "res://assets/actors/native/hair/fitted/luminous_male_long_male.glb",
-        "res://assets/actors/native/hair/fitted/luminous_male_buns_male.glb"
+        "res://assets/actors/native/hair/fitted/luminous_male_buns_male.glb",
+        "res://assets/actors/native/hair/fitted/luminous_male_buzzed_male.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -191,7 +193,8 @@
         "res://assets/actors/native/hair/buzzed_female.glb",
         "res://assets/actors/native/hair/fitted/votary_female_parted_female.glb",
         "res://assets/actors/native/hair/fitted/votary_female_long_female.glb",
-        "res://assets/actors/native/hair/fitted/votary_female_buns_female.glb"
+        "res://assets/actors/native/hair/fitted/votary_female_buns_female.glb",
+        "res://assets/actors/native/hair/fitted/votary_female_buzzed_female.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -239,7 +242,8 @@
         "res://assets/actors/native/hair/buzzed_male.glb",
         "res://assets/actors/native/hair/fitted/votary_male_parted_male.glb",
         "res://assets/actors/native/hair/fitted/votary_male_long_male.glb",
-        "res://assets/actors/native/hair/fitted/votary_male_buns_male.glb"
+        "res://assets/actors/native/hair/fitted/votary_male_buns_male.glb",
+        "res://assets/actors/native/hair/fitted/votary_male_buzzed_male.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -287,7 +291,8 @@
         "res://assets/actors/native/hair/buzzed_female.glb",
         "res://assets/actors/native/hair/fitted/glasswarden_female_parted_female.glb",
         "res://assets/actors/native/hair/fitted/glasswarden_female_long_female.glb",
-        "res://assets/actors/native/hair/fitted/glasswarden_female_buns_female.glb"
+        "res://assets/actors/native/hair/fitted/glasswarden_female_buns_female.glb",
+        "res://assets/actors/native/hair/fitted/glasswarden_female_buzzed_female.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -335,7 +340,8 @@
         "res://assets/actors/native/hair/buzzed_male.glb",
         "res://assets/actors/native/hair/fitted/glasswarden_male_parted_male.glb",
         "res://assets/actors/native/hair/fitted/glasswarden_male_long_male.glb",
-        "res://assets/actors/native/hair/fitted/glasswarden_male_buns_male.glb"
+        "res://assets/actors/native/hair/fitted/glasswarden_male_buns_male.glb",
+        "res://assets/actors/native/hair/fitted/glasswarden_male_buzzed_male.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -383,7 +389,8 @@
         "res://assets/actors/native/hair/buzzed_female.glb",
         "res://assets/actors/native/hair/fitted/orun_female_parted_female.glb",
         "res://assets/actors/native/hair/fitted/orun_female_long_female.glb",
-        "res://assets/actors/native/hair/fitted/orun_female_buns_female.glb"
+        "res://assets/actors/native/hair/fitted/orun_female_buns_female.glb",
+        "res://assets/actors/native/hair/fitted/orun_female_buzzed_female.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -431,7 +438,8 @@
         "res://assets/actors/native/hair/buzzed_male.glb",
         "res://assets/actors/native/hair/fitted/orun_male_parted_male.glb",
         "res://assets/actors/native/hair/fitted/orun_male_long_male.glb",
-        "res://assets/actors/native/hair/fitted/orun_male_buns_male.glb"
+        "res://assets/actors/native/hair/fitted/orun_male_buns_male.glb",
+        "res://assets/actors/native/hair/fitted/orun_male_buzzed_male.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -479,7 +487,8 @@
         "res://assets/actors/native/hair/buzzed_female.glb",
         "res://assets/actors/native/hair/fitted/greyhaven_female_parted_female.glb",
         "res://assets/actors/native/hair/fitted/greyhaven_female_long_female.glb",
-        "res://assets/actors/native/hair/fitted/greyhaven_female_buns_female.glb"
+        "res://assets/actors/native/hair/fitted/greyhaven_female_buns_female.glb",
+        "res://assets/actors/native/hair/fitted/greyhaven_female_buzzed_female.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -527,7 +536,8 @@
         "res://assets/actors/native/hair/buzzed_male.glb",
         "res://assets/actors/native/hair/fitted/greyhaven_male_parted_male.glb",
         "res://assets/actors/native/hair/fitted/greyhaven_male_long_male.glb",
-        "res://assets/actors/native/hair/fitted/greyhaven_male_buns_male.glb"
+        "res://assets/actors/native/hair/fitted/greyhaven_male_buns_male.glb",
+        "res://assets/actors/native/hair/fitted/greyhaven_male_buzzed_male.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -575,7 +585,8 @@
         "res://assets/actors/native/hair/buzzed_female.glb",
         "res://assets/actors/native/hair/fitted/ssarathi_female_parted_female.glb",
         "res://assets/actors/native/hair/fitted/ssarathi_female_long_female.glb",
-        "res://assets/actors/native/hair/fitted/ssarathi_female_buns_female.glb"
+        "res://assets/actors/native/hair/fitted/ssarathi_female_buns_female.glb",
+        "res://assets/actors/native/hair/fitted/ssarathi_female_buzzed_female.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -623,7 +634,8 @@
         "res://assets/actors/native/hair/buzzed_male.glb",
         "res://assets/actors/native/hair/fitted/ssarathi_male_parted_male.glb",
         "res://assets/actors/native/hair/fitted/ssarathi_male_long_male.glb",
-        "res://assets/actors/native/hair/fitted/ssarathi_male_buns_male.glb"
+        "res://assets/actors/native/hair/fitted/ssarathi_male_buns_male.glb",
+        "res://assets/actors/native/hair/fitted/ssarathi_male_buzzed_male.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -671,7 +683,8 @@
         "res://assets/actors/native/hair/buzzed_female.glb",
         "res://assets/actors/native/hair/fitted/stoneborn_female_parted_female.glb",
         "res://assets/actors/native/hair/fitted/stoneborn_female_long_female.glb",
-        "res://assets/actors/native/hair/fitted/stoneborn_female_buns_female.glb"
+        "res://assets/actors/native/hair/fitted/stoneborn_female_buns_female.glb",
+        "res://assets/actors/native/hair/fitted/stoneborn_female_buzzed_female.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -719,7 +732,8 @@
         "res://assets/actors/native/hair/buzzed_male.glb",
         "res://assets/actors/native/hair/fitted/stoneborn_male_parted_male.glb",
         "res://assets/actors/native/hair/fitted/stoneborn_male_long_male.glb",
-        "res://assets/actors/native/hair/fitted/stoneborn_male_buns_male.glb"
+        "res://assets/actors/native/hair/fitted/stoneborn_male_buns_male.glb",
+        "res://assets/actors/native/hair/fitted/stoneborn_male_buzzed_male.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -767,7 +781,8 @@
         "res://assets/actors/native/hair/buzzed_female.glb",
         "res://assets/actors/native/hair/fitted/mycelari_female_parted_female.glb",
         "res://assets/actors/native/hair/fitted/mycelari_female_long_female.glb",
-        "res://assets/actors/native/hair/fitted/mycelari_female_buns_female.glb"
+        "res://assets/actors/native/hair/fitted/mycelari_female_buns_female.glb",
+        "res://assets/actors/native/hair/fitted/mycelari_female_buzzed_female.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -815,7 +830,8 @@
         "res://assets/actors/native/hair/buzzed_male.glb",
         "res://assets/actors/native/hair/fitted/mycelari_male_parted_male.glb",
         "res://assets/actors/native/hair/fitted/mycelari_male_long_male.glb",
-        "res://assets/actors/native/hair/fitted/mycelari_male_buns_male.glb"
+        "res://assets/actors/native/hair/fitted/mycelari_male_buns_male.glb",
+        "res://assets/actors/native/hair/fitted/mycelari_male_buzzed_male.glb"
       ],
       "boneAliases": {
         "head": "Head"

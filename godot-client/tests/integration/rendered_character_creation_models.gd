@@ -47,7 +47,7 @@ func _run() -> void:
 		"CreateShirt", "CreatePants", "CreateBoots"]
 	var hair := main.get_node("CreationPanel/Columns/Form/AppearanceGrid/CreateHair") as OptionButton
 	var hair_color := main.get_node("CreationPanel/Columns/Form/AppearanceGrid/CreateHairColor") as OptionButton
-	_expect(hair.item_count == 4 and hair_color.item_count == 20, "independent named hairstyle and color choices")
+	_expect(hair.item_count == 5 and hair_color.item_count == 20, "independent named hairstyle and color choices")
 	_expect(main.get_node_or_null("CreationPanel/Columns/Form/AppearanceGrid/CreateHead") == null, "broken head control removed")
 	hair.select(0)
 	hair_color.select(0)
@@ -55,13 +55,21 @@ func _run() -> void:
 	# existing controls alongside the hair choices, including the bald default.
 	for garment: String in ["CreateShirt", "CreatePants", "CreateBoots"]:
 		_expect(main.get_node_or_null(
-			"CreationPanel/Columns/Form/AppearanceGrid/" + garment) is SpinBox,
+			"CreationPanel/Columns/Form/AppearanceGrid/" + garment) is OptionButton,
 			"creation offers native wardrobe dye " + garment)
 	for spin_name: String in spin_names:
-		(main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + spin_name) as SpinBox).value = 0
+		(main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + spin_name) as OptionButton).select((main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + spin_name) as OptionButton).get_item_index(0))
 
 	for index: int in range(selector.item_count):
 		selector.select(index)
+		main.call("_populate_creation_choices")
+		for choice_name: String in spin_names + ["CreateHair", "CreateHairColor"]:
+			var choice := main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + choice_name) as OptionButton
+			var seen: Dictionary = {}
+			for item: int in range(choice.item_count):
+				var label_text := choice.get_item_text(item)
+				_expect(not seen.has(label_text) and not label_text.is_valid_int(), "customization choices have unique descriptive names")
+				seen[label_text] = true
 		main.call("_refresh_creation_preview")
 		for unused_frame: int in range(10):
 			await process_frame
@@ -72,12 +80,13 @@ func _run() -> void:
 
 	# Exercise all four runtime appearance families through the same creation
 	# controls: skin, eyes, native hair, and wardrobe palettes.
-	selector.select(0)
-	for style: int in range(4):
-		hair.select(style)
-		hair_color.select(style)
+	selector.select(selector.get_item_index(0))
+	main.call("_populate_creation_choices")
+	for style: int in range(5):
+		hair.select(hair.get_item_index(style))
+		hair_color.select(hair_color.get_item_index(style))
 		for spin_name: String in spin_names:
-			(main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + spin_name) as SpinBox).value = style
+			(main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + spin_name) as OptionButton).select(style)
 		main.call("_refresh_creation_preview")
 		for unused_frame: int in range(10):
 			await process_frame
@@ -88,14 +97,15 @@ func _run() -> void:
 	# Changing colour must leave the selected mesh alone, and changing style
 	# must keep its colour. Exercise the real controls/materials and wire value.
 	for spin_name: String in spin_names:
-		(main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + spin_name) as SpinBox).value = 0
+		(main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + spin_name) as OptionButton).select((main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + spin_name) as OptionButton).get_item_index(0))
 	for model_index: int in [0, 1]:
-		selector.select(model_index)
-		for style: int in range(4):
+		selector.select(selector.get_item_index(model_index))
+		main.call("_populate_creation_choices")
+		for style: int in range(5):
 			var chosen_meshes: Array[Mesh] = []
 			for color: int in range(20):
-				hair.select(style)
-				hair_color.select(color)
+				hair.select(hair.get_item_index(style))
+				hair_color.select(hair_color.get_item_index(color))
 				if color == 0:
 					hair.item_selected.emit(style)
 				else:
@@ -103,7 +113,7 @@ func _run() -> void:
 				await process_frame
 				var look: Dictionary = main.call("_creation_appearance")
 				var packet := EloriaProtocol.create_character("Test", "secret", look)
-				_expect(packet[16] == 20 + color * 4 + style and packet[21] == 0,
+				_expect(packet[16] == 100 + color * 5 + style and packet[21] == 0,
 					"creation saves independent hair choices and no cosmetic headwear")
 				var actor := main.get("preview_actor") as ReplicatedActor3D
 				var meshes: Array[Mesh] = []
@@ -127,9 +137,10 @@ func _run() -> void:
 				if style == 1 and color in [2, 3, 4, 6]:
 					await _capture_preview(preview, "hair-%d-color-%02d.png" % [model_index, color])
 	# Leave the full UI proof showing a readily visible hairstyle and colour.
-	selector.select(1)
-	hair.select(1)
-	hair_color.select(3)
+	selector.select(selector.get_item_index(1))
+	main.call("_populate_creation_choices")
+	hair.select(hair.get_item_index(1))
+	hair_color.select(hair_color.get_item_index(3))
 	main.call("_refresh_creation_preview")
 	for unused_frame: int in range(4):
 		await process_frame

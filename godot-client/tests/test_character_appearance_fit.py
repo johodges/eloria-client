@@ -73,8 +73,8 @@ class CharacterAppearanceFitTest(unittest.TestCase):
             with self.subTest(model=slug):
                 self.assertTrue(config['hairSkinned'])
                 self.assertEqual({},config['hairFit'])
-                self.assertEqual(4,len(config['hairStyles']))
-            for style in (1,2,3):
+                self.assertEqual(5,len(config['hairStyles']))
+            for style in (1,2,3,4):
                 with self.subTest(model=slug,style=style):
                     d,b = ea.read_glb(CLIENT / config['hairStyles'][style].removeprefix('res://'))
                     skin = d['skins'][0]
