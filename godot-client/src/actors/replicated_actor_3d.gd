@@ -141,18 +141,6 @@ const CAPE_PART := 2
 const BODY_PART := 5
 ## How many cut capes are kept before the cache is dropped and rebuilt.
 const DRAPE_CACHE_LIMIT := 48
-## The wardrobe meshes are shells fitted straight onto the skin they cover, so
-## the body surface underneath pokes through them wherever the skeleton bends -
-## which is what skin showing through the shirt is. Pushing each garment out a
-## few millimetres along its own normals puts the skin behind it for good
-## without changing the silhouette. Trims and seams grow slightly more so they
-## stay on top of the garment they edge.
-## Four millimetres closed the flat panels but not the shoulders, where the
-## deltoid swings furthest from the shell it was fitted to, nor the waist,
-## where the shirt hem and the pants waistband meet over the same skin. The
-## shirt is given the most room, the waistband enough more than the shirt hem
-## to read as a separate garment over it, and the boots enough to swallow the
-## foot they are pulled over.
 ## The shade an undershirt takes while torso armour is worn over it.
 ##
 ## A generated cuirass is an open design of straps and plates, so the shirt
@@ -173,6 +161,9 @@ const COVERED_SHIRT := Color8(56, 47, 40)
 ## character's legs.
 const SHIRT_SURFACES := ["wardrobe_shirt", "wardrobe_shirt_trim"]
 
+## Clearance for wardrobe assets that still need a material offset. Fitted
+## shirts bake a continuous offset across UV/facet seams; growing those again
+## would pull adjacent faces apart. Their model lists them in wardrobeBakedGrow.
 const WARDROBE_GROW := {
 	"wardrobe_shirt": 0.011, "wardrobe_shirt_trim": 0.013,
 	"wardrobe_pants": 0.009, "wardrobe_pants_seam": 0.016,
@@ -484,7 +475,9 @@ func apply_appearance_variants(appearance: Dictionary) -> void:
 			_set_mesh_color(mesh_node, AppearanceVariants.wardrobe_color(
 				culture, AppearanceVariants.PART_HEAD, int(appearance.get("head", 0))))
 		if WARDROBE_GROW.has(mesh_name):
-			_grow_mesh(mesh_node, float(WARDROBE_GROW[mesh_name]))
+			var baked: Array = _model_config.get("wardrobeBakedGrow", []) as Array
+			if not baked.has(mesh_name):
+				_grow_mesh(mesh_node, float(WARDROBE_GROW[mesh_name]))
 	_add_hair_variant(AppearanceVariants.hair_style(
 		int(appearance.get("hair", 0))), hair_tint)
 	_refresh_body_surface_visibility()
@@ -581,12 +574,39 @@ func _grow_mesh(mesh_node: MeshInstance3D, amount: float) -> void:
 func _add_hair_variant(style: int, color: Color) -> void:
 	for old_attachment: Node in _native_skeleton.get_children():
 		if old_attachment.name.begins_with("AppearanceHair_"):
+			_native_skeleton.remove_child(old_attachment)
 			old_attachment.queue_free()
+	# Zero is bald for every colour cycle. Also hide any legacy sculpted hair;
+	# appearance metadata keeps helmet removal from revealing it again.
+	for node_value: Node in find_children("hair", "MeshInstance3D", true, false):
+		var mesh := node_value as MeshInstance3D
+		mesh.set_meta("uncovered_head_visible", false)
+		mesh.hide()
+	if style == 0:
+		return
 	var styles_value: Variant = _model_config.get("hairStyles", [])
 	if styles_value is not Array or (styles_value as Array).is_empty():
 		return
 	var styles: Array = styles_value as Array
 	var path: String = str(styles[posmod(style, styles.size())])
+	if bool(_model_config.get("hairSkinned", false)):
+		var holder := Node3D.new()
+		holder.name = "AppearanceHair_%d" % style
+		_native_skeleton.add_child(holder)
+		for piece: Dictionary in _equipment_pieces(path):
+			var skin := _rebound_skin(piece.get("bones", PackedStringArray()) as PackedStringArray,
+				piece.get("binds", [] as Array[Transform3D]) as Array[Transform3D], Transform3D.IDENTITY)
+			if skin == null:
+				push_warning("Fitted hairstyle has an incompatible skeleton: " + path)
+				continue
+			var mesh := MeshInstance3D.new()
+			mesh.name = str(piece.get("name", "NativeHair"))
+			mesh.mesh = piece.get("mesh") as Mesh
+			mesh.skin = skin
+			holder.add_child(mesh)
+			mesh.skeleton = NodePath("../..")
+			_tint_mesh(mesh, color)
+		return
 	var native_hair: Node3D = _equipment_instance(path)
 	if native_hair == null:
 		push_warning("Native hairstyle failed to load: " + path)
@@ -595,10 +615,6 @@ func _add_hair_variant(style: int, color: Color) -> void:
 	if attachment == null:
 		native_hair.queue_free()
 		return
-	# The chosen style replaces the sculpted hair, not sits on top of it:
-	# the split body carries that hair as its own surface, so it hides.
-	for node_value: Node in find_children("hair", "MeshInstance3D", true, false):
-		(node_value as MeshInstance3D).visible = false
 	attachment.name = "AppearanceHair_%d" % style
 	native_hair.name = "NativeHair"
 	# Skull proportions are baked into each body. Fit shared hairstyles in

@@ -110,6 +110,7 @@ static func eye_color(index: int) -> Color:
 	return colors[posmod(index, colors.size())]
 
 static func hair_style(index: int) -> int:
+	# Zero is bald; the other three styles retain their existing colour cycles.
 	return posmod(index, 4)
 
 static func head_style(index: int) -> int:

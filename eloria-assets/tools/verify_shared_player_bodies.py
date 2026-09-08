@@ -97,7 +97,7 @@ def neck_attributes(parts, origin, axis, height):
             'maxWeightL1Delta':max(weight_errors,default=0)}
 
 
-def neck_join_checks(parts):
+def neck_join_checks(parts, boundary_plane=None):
     """Check the actual bridge boundary, including nonplanar chest cuts.
 
     Checking only a horizontal band can miss every edge of a shaped neck base.
@@ -128,6 +128,14 @@ def neck_join_checks(parts):
     bridge = f[(roles[f] == 'neck_join').all(1)]
     bridge_counts = edge_counts(bridge)
     boundary = [edge for edge, count in bridge_counts.items() if count == 1]
+    if boundary_plane is not None:
+        # Once clothing has a baked clearance, the lower anatomical cut ends
+        # underneath a separate garment. Keep the exact head/neck seam check;
+        # garment coverage is checked independently against the rendered shell.
+        origin, axis, height = boundary_plane
+        _, representatives = np.unique(ids, return_index=True)
+        on_plane = np.abs((p[representatives] - origin) @ axis - height) < 2e-6
+        boundary = [edge for edge in boundary if on_plane[list(edge)].all()]
     all_counts = edge_counts(f)
     report = {'geometricEdges': len(boundary),
               'unmatchedEdges': sum(all_counts[e] != 2 for e in boundary)}

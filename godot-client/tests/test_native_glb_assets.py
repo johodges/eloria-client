@@ -281,6 +281,14 @@ class NativeGlbAssetsTest(unittest.TestCase):
                         continue
                     height = (attrs["POSITION"] - origin) @ axis
                     selected = (height[faces] < .075 - 1e-6).all(1) if lower else (height[faces] > .110 + 1e-6).all(1)
+                    if lower and name == "wardrobe_shirt" and document["asset"].get("extras", {}).get("appearanceFit"):
+                        # Collars now fit each reconstructed neck. Compare the
+                        # shared trunk/sleeves outside that local fit, including
+                        # a margin for the baked fabric clearance.
+                        relative = attrs["POSITION"] - origin
+                        radius = np.linalg.norm(relative - height[:, None] * axis, axis=1)
+                        collar = (height > -.10) & (radius < .24)
+                        selected &= ~collar[faces].any(1)
                     result.update(signatures(attrs, faces[selected], GEOMETRY_FIELDS))
                 return result
             expected[gender] = geometry(d, binary, True)
@@ -368,7 +376,14 @@ class NativeGlbAssetsTest(unittest.TestCase):
             d, b = ea.read_glb(path)
             with self.subTest(model=slug):
                 self.assertIn("neckBase", d["asset"]["extras"]["sharedBodyShape"])
-                edges, a = neck_join_checks(list(primitives(d, b)))
+                plane = None
+                if d["asset"].get("extras", {}).get("appearanceFit"):
+                    rig = ea.load_rig(path, ea.BODY_SURFACES)
+                    origin = rig.origin("neck_01")
+                    axis = rig.origin("Head") - origin
+                    axis /= np.linalg.norm(axis)
+                    plane = (origin, axis, d["asset"]["extras"]["sharedBodyShape"]["upperCutM"])
+                edges, a = neck_join_checks(list(primitives(d, b)), boundary_plane=plane)
                 self.assertGreater(edges["geometricEdges"], 30)
                 self.assertEqual(0, edges["unmatchedEdges"])
                 self.assertEqual(0, a["unmatchedCopies"])
