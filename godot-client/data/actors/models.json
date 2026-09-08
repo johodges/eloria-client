@@ -40,13 +40,55 @@
       "bodyTemplate": "luminous_female",
       "hairSkinned": true,
       "wardrobeBakedGrow": [
-        "wardrobe_shirt"
+        "wardrobe_shirt",
+        "wardrobe_pants",
+        "wardrobe_boots"
       ],
       "faceAppearance": {
-        "sourceSurface": 1,
+        "sourceSurface": 0,
         "mask": "res://assets/actors/native/face_masks/luminous_female.png",
-        "neckSurface": 2,
-        "neckTexture": "res://assets/actors/native/neck_textures/luminous_female.png"
+        "groups": {
+          "body": {
+            "uvScale": [
+              1.0,
+              1.0
+            ],
+            "uvOffset": [
+              0.0,
+              0.0
+            ]
+          },
+          "eyes": {
+            "uvScale": [
+              0.6845703125,
+              0.2216796875
+            ],
+            "uvOffset": [
+              0.09228515625,
+              0.03515625
+            ]
+          },
+          "eyebrows": {
+            "uvScale": [
+              0.5810546875,
+              0.69677734375
+            ],
+            "uvOffset": [
+              0.337890625,
+              0.1845703125
+            ]
+          },
+          "scalp": {
+            "uvScale": [
+              0.89794921875,
+              0.86572265625
+            ],
+            "uvOffset": [
+              0.009765625,
+              0.123046875
+            ]
+          }
+        }
       }
     },
     "luminous_male": {
@@ -88,13 +130,55 @@
       "bodyTemplate": "luminous_male",
       "hairSkinned": true,
       "wardrobeBakedGrow": [
-        "wardrobe_shirt"
+        "wardrobe_shirt",
+        "wardrobe_pants",
+        "wardrobe_boots"
       ],
       "faceAppearance": {
-        "sourceSurface": 1,
+        "sourceSurface": 0,
         "mask": "res://assets/actors/native/face_masks/luminous_male.png",
-        "neckSurface": 2,
-        "neckTexture": "res://assets/actors/native/neck_textures/luminous_male.png"
+        "groups": {
+          "body": {
+            "uvScale": [
+              1.0,
+              1.0
+            ],
+            "uvOffset": [
+              0.0,
+              0.0
+            ]
+          },
+          "eyes": {
+            "uvScale": [
+              0.2412109375,
+              0.052734375
+            ],
+            "uvOffset": [
+              0.67138671875,
+              0.15966796875
+            ]
+          },
+          "eyebrows": {
+            "uvScale": [
+              0.2392578125,
+              0.08056640625
+            ],
+            "uvOffset": [
+              0.68505859375,
+              0.146484375
+            ]
+          },
+          "scalp": {
+            "uvScale": [
+              0.794921875,
+              0.623046875
+            ],
+            "uvOffset": [
+              0.19287109375,
+              0.00146484375
+            ]
+          }
+        }
       }
     },
     "votary_female": {

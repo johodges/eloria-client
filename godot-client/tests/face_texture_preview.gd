@@ -100,9 +100,14 @@ func run() -> void:
 		actor.animation_player.pause()
 		await process_frame
 		var body := actor.find_child("body", true, false) as MeshInstance3D
+		var spec: Dictionary = config["faceAppearance"]
+		var surface := int(spec["sourceSurface"])
+		body.material_override = null
+		body.set_surface_override_material(surface, body.mesh.surface_get_material(surface))
 		for n: Node in actor.find_children("*", "MeshInstance3D", true, false):
 			if n.name in ["eyes", "eyebrows", "scalp"]:
-				(n as MeshInstance3D).material_override = body.mesh.surface_get_material(1)
+				var mesh := n as MeshInstance3D
+				mesh.material_override = mesh.mesh.surface_get_material(0) if spec.has("groups") else body.mesh.surface_get_material(surface)
 		await capture(actor, slug, "source", 0)
 		actor.free()
 		await process_frame

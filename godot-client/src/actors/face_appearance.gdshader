@@ -6,6 +6,8 @@ uniform sampler2D base_texture : source_color, filter_linear_mipmap, repeat_enab
 // B selects source brow pigment or authored fine hair strokes on bare brows.
 // All use the original head UV atlas.
 uniform sampler2D region_texture : filter_linear_mipmap, repeat_enable;
+uniform vec2 mask_uv_scale = vec2(1.0);
+uniform vec2 mask_uv_offset = vec2(0.0);
 uniform sampler2D normal_texture : hint_normal, filter_linear_mipmap, repeat_enable;
 uniform bool use_normal = false;
 uniform float normal_scale = 1.0;
@@ -17,7 +19,7 @@ uniform float roughness = 0.85;
 
 void fragment() {
 	vec3 original = texture(base_texture, UV).rgb * base_color.rgb;
-	vec3 mask = texture(region_texture, UV).rgb;
+	vec3 mask = texture(region_texture, UV * mask_uv_scale + mask_uv_offset).rgb;
 	vec3 skin = original * skin_tint.rgb;
 	vec3 eye = original;
 	float peak = max(original.r, max(original.g, original.b));

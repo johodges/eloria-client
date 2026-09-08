@@ -56,32 +56,116 @@
     "maskSHA256": "d59ddaace34fba0c335223bbbd8812070f7f125278368468d3fdad87ebe33ba9"
   },
   "luminous_female": {
-    "modelSHA256": "69b0612bfeb86732d8e2b96a759a19c8ebeaaef94d0975fb45c6a54bf516a0ac",
+    "modelSHA256": "b06a880c074d00f50f5aaeb1ddaa2a4f069d74415123a5f28eedf91979805a7c",
+    "maskSHA256": "615b9646dfbdf48ce6af32b288b7bbfd61c8d363d24dbee143b2b6101d084cb3",
     "sourceMaterial": 0,
     "size": [
       2048,
       2048
     ],
     "pixelsPerChannel": [
-      3225,
-      2319,
-      2393
+      1047,
+      454,
+      967
     ],
-    "maskSHA256": "f785dfe5bb3beb57862e7b2db182504d5d692003ed45343bc030537902c84a6f"
+    "sourceUVGroups": {
+      "body": {
+        "uvScale": [
+          1.0,
+          1.0
+        ],
+        "uvOffset": [
+          0.0,
+          0.0
+        ]
+      },
+      "eyes": {
+        "uvScale": [
+          0.6845703125,
+          0.2216796875
+        ],
+        "uvOffset": [
+          0.09228515625,
+          0.03515625
+        ]
+      },
+      "eyebrows": {
+        "uvScale": [
+          0.5810546875,
+          0.69677734375
+        ],
+        "uvOffset": [
+          0.337890625,
+          0.1845703125
+        ]
+      },
+      "scalp": {
+        "uvScale": [
+          0.89794921875,
+          0.86572265625
+        ],
+        "uvOffset": [
+          0.009765625,
+          0.123046875
+        ]
+      }
+    }
   },
   "luminous_male": {
-    "modelSHA256": "6fdeaf01749bb37d38854a9692adc2df5d03dc06e67e0355e9cb12e28b3910ba",
+    "modelSHA256": "2ec727a080f7c98ea9a0d5c1204efbd4cb094d224618ae426eede01557c7c1bc",
+    "maskSHA256": "f56961fa63beaaf51a9c2e025a7af7f8eda257e6bc7a095323977d4e53a1e71f",
     "sourceMaterial": 0,
     "size": [
       2048,
       2048
     ],
     "pixelsPerChannel": [
-      1030,
-      636,
-      931
+      851,
+      372,
+      788
     ],
-    "maskSHA256": "61560fcb2ae916ec0fb09248f3e14fee21dcf1bc7cadb97a14f2e0b736cc8296"
+    "sourceUVGroups": {
+      "body": {
+        "uvScale": [
+          1.0,
+          1.0
+        ],
+        "uvOffset": [
+          0.0,
+          0.0
+        ]
+      },
+      "eyes": {
+        "uvScale": [
+          0.2412109375,
+          0.052734375
+        ],
+        "uvOffset": [
+          0.67138671875,
+          0.15966796875
+        ]
+      },
+      "eyebrows": {
+        "uvScale": [
+          0.2392578125,
+          0.08056640625
+        ],
+        "uvOffset": [
+          0.68505859375,
+          0.146484375
+        ]
+      },
+      "scalp": {
+        "uvScale": [
+          0.794921875,
+          0.623046875
+        ],
+        "uvOffset": [
+          0.19287109375,
+          0.00146484375
+        ]
+      }
+    }
   },
   "mycelari_female": {
     "modelSHA256": "8f913c71fd059ad7c9568d98d4fe174617c2114f08124a87a540a7255e462d05",

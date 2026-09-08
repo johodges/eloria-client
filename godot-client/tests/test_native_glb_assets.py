@@ -194,7 +194,8 @@ class NativeGlbAssetsTest(unittest.TestCase):
                 self.assertEqual(tail, entry.get("retainedTailTriangles", 0))
                 self.assertEqual(tail > 0, model_id.startswith("ssarathi_"))
                 self.assertLess(tail, 9_000)
-                self.assertLess(entry["triangles"] - tail, 25_000)
+                budget = 36_000 if entry.get('sourceIntegration') else 25_000
+                self.assertLess(entry["triangles"] - tail, budget)
                 document = glb_document(ROOT / entry["path"])
                 joints = document["skins"][0]["joints"]
                 self.assertEqual(entry["joints"], len(joints))
@@ -243,11 +244,15 @@ class NativeGlbAssetsTest(unittest.TestCase):
                 heights.append(entry["hipHeight"])
                 self.assertLess(abs(entry["groundHeight"]), .003)
                 document, binary = glb_chunks(ROOT / entry["path"])
-                mesh = next(m for m in document["meshes"] if m["name"].lower() == "body")
-                attrs = mesh["primitives"][0]["attributes"]
-                points = accessor_rows(document, binary, attrs["POSITION"])
-                joints = accessor_rows(document, binary, attrs["JOINTS_0"])
-                weights = accessor_rows(document, binary, attrs["WEIGHTS_0"])
+                points, joints, weights = [], [], []
+                for mesh in document['meshes']:
+                    if mesh['name'] not in ('body', 'wardrobe_boots'):
+                        continue
+                    for primitive in mesh['primitives']:
+                        attrs = primitive['attributes']
+                        points.extend(accessor_rows(document, binary, attrs['POSITION']))
+                        joints.extend(accessor_rows(document, binary, attrs['JOINTS_0']))
+                        weights.extend(accessor_rows(document, binary, attrs['WEIGHTS_0']))
                 names = [document["nodes"][j]["name"] for j in document["skins"][0]["joints"]]
                 for side in ("l", "r"):
                     feet = {names.index("foot_" + side), names.index("ball_" + side)}
@@ -258,7 +263,7 @@ class NativeGlbAssetsTest(unittest.TestCase):
                     self.assertLess(abs(min(sole)), .025)
         self.assertLess(max(heights) - min(heights), 1e-5)
 
-    def test_races_share_two_body_shapes_and_retain_distinct_heads(self) -> None:
+    def test_shared_bodies_and_source_replacements_retain_distinct_heads(self) -> None:
         """Compare actual below-neck triangles and weights, excluding tails."""
         from collections import Counter
         import numpy as np
@@ -268,7 +273,9 @@ class NativeGlbAssetsTest(unittest.TestCase):
         expected = {}
         heads = set()
         for gender in ("male", "female"):
-            path = ROOT / self.catalog["races"]["luminous_" + gender]["path"]
+            # Greyhaven retains the original shared geometry. Luminous now
+            # uses the separately approved source body and its own fit data.
+            path = ROOT / self.catalog["races"]["greyhaven_" + gender]["path"]
             d, binary = ea.read_glb(path)
             rig = ea.load_rig(path, ea.BODY_SURFACES)
             origin = rig.origin("neck_01")
@@ -300,7 +307,11 @@ class NativeGlbAssetsTest(unittest.TestCase):
                     self.assertEqual("luminous_" + gender, entry["bodyTemplate"])
                     self.assertEqual(entry["bodyTemplate"], self.models["models"][slug]["bodyTemplate"])
                     document, blob = ea.read_glb(ROOT / entry["path"])
-                    self.assertEqual(expected[gender], geometry(document, blob, True))
+                    if entry.get('sourceIntegration'):
+                        self.assertNotEqual(expected[gender], geometry(document, blob, True))
+                        self.assertIn(slug, self.equipment['refittedBodies'])
+                    else:
+                        self.assertEqual(expected[gender], geometry(document, blob, True))
                     heads.add(tuple(sorted(geometry(document, blob, False).items())))
                     # Approved stature scales the whole actor and its equipment;
                     # shared authoring geometry does not require equal race heights.
@@ -375,6 +386,17 @@ class NativeGlbAssetsTest(unittest.TestCase):
             path = ROOT / entry["path"]
             d, b = ea.read_glb(path)
             with self.subTest(model=slug):
+                if entry.get('sourceIntegration'):
+                    # These bodies keep their source neck, with no artificial
+                    # join. Welded copies must still deform together.
+                    from fit_character_appearance import combined, weld, average
+                    from shared_player_bodies import dense_weights
+                    a, _ = combined([p for p in primitives(d, b) if p[0] in ea.BODY_SURFACES])
+                    weights = dense_weights(a)
+                    np.testing.assert_allclose(weights, average(weights, weld(a['POSITION'])), atol=2e-6)
+                    self.assertEqual(0, entry['neckAdaptorTriangles'])
+                    self.assertFalse(any(p[1] == 'neck_join' for p in primitives(d, b)))
+                    continue
                 self.assertIn("neckBase", d["asset"]["extras"]["sharedBodyShape"])
                 plane = None
                 if d["asset"].get("extras", {}).get("appearanceFit"):
@@ -402,7 +424,7 @@ class NativeGlbAssetsTest(unittest.TestCase):
         """
         for gender in ("female", "male"):
             reference = body_bounds(ROOT / self.catalog["races"]
-                                    [f"luminous_{gender}"]["path"])
+                                    [f"greyhaven_{gender}"]["path"])
             slim = body_bounds(ROOT / self.catalog["races"]
                                [f"glasswarden_{gender}"]["path"])
             with self.subTest(gender=gender):

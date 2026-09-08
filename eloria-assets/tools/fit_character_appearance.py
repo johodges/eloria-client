@@ -212,7 +212,7 @@ def head_data(d,b):
 def fit_hair(source, out, head, base_fit, body, body_binary):
     skull, skull_weights, head_matrix = head
     d,b=g.read(source);binary=bytearray(b)
-    scale=np.array(base_fit['scale']);offset=np.array(base_fit['offset'])
+    scale=np.array(base_fit['scale'],dtype=float);offset=np.array(base_fit['offset'],dtype=float)
     # Reference caps have different crown heights. Use each style's crown,
     # excluding side buns and long locks from the measurement.
     p=d['meshes'][0]['primitives'][0]

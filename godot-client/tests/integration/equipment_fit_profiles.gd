@@ -90,8 +90,17 @@ func run() -> void:
 		var after := make_actor(slug, current)
 		var materials := body_materials(after)
 		var template: String = current["bodyTemplates"][slug]
-		expect(after._girth_ratios(template, "canonical").is_empty(), slug + " uses its shared body fit without girth scaling")
-		expect(after._ground_drops(template, "boots", "canonical").is_empty(), slug + " uses its shared foot fit without sole translation")
+		var refitted: bool = slug in current.get("refittedBodies", [])
+		if refitted:
+			var ratios := after._girth_ratios(template, "canonical")
+			expect(not ratios.is_empty(), slug + " fits clothing to replacement body")
+			for bone: String in ratios:
+				var expected := clampf(float(current["bodyGirth"][slug][bone]) / float(current["authoredBodyGirth"][template][bone]), 1.0, 2.0)
+				expect(is_equal_approx(ratios[bone], expected), slug + " uses original garment measurement: " + bone)
+			expect(after._ground_drops(template, "boots", "canonical").size() == 4, slug + " uses new foot anchors")
+		else:
+			expect(after._girth_ratios(template, "canonical").is_empty(), slug + " uses its shared body fit without girth scaling")
+			expect(after._ground_drops(template, "boots", "canonical").is_empty(), slug + " uses its shared foot fit without sole translation")
 		expect(not after._shares_authored_body(template, "legacy"), slug + " shared shape does not override legacy socket units")
 		expect(absf(after.rig_fit_scale() - 1.0) < 0.00001, slug + " canonical scale is one")
 		expect(absf(after.rig_fit_scale("legacy") - before.rig_fit_scale()) < 0.000001, slug + " legacy scale preserved")
@@ -123,7 +132,10 @@ func run() -> void:
 					if bone < 0:
 						continue
 					var at_rest := after.get_skeleton().get_bone_global_rest(bone) * skin.get_bind_pose(bind)
-					expect(at_rest.is_equal_approx(Transform3D.IDENTITY), slug + " garment has no repeated rest compensation: " + str(skin.get_bind_name(bind)))
+					if refitted:
+						expect(at_rest.is_finite() and at_rest.basis.determinant() > 0.0, slug + " fitted garment bind remains valid")
+					else:
+						expect(at_rest.is_equal_approx(Transform3D.IDENTITY), slug + " garment has no repeated rest compensation: " + str(skin.get_bind_name(bind)))
 		expect(skins >= 7, slug + " canonical outfit loaded")
 		after.apply_equipment_visuals({})
 		check_materials(materials, true, slug)

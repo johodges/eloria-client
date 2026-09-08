@@ -4,22 +4,22 @@
   "pipeline": "build_native_nymara_glbs.py",
   "races": {
     "luminous_female": {
-      "vertices": 30125,
-      "triangles": 21821,
+      "vertices": 24911,
+      "triangles": 35750,
       "joints": 77,
       "feature": "none",
       "wardrobe": "skinned",
       "anatomy": "retargeted",
       "capeBones": 12,
-      "baseBody": "luminous_human_female_tpose_rigged.glb",
+      "baseBody": "luminous_human_female_tpose.glb",
       "stature": 1.0,
       "legChainScale": 1.0,
       "hipHeight": 0.9167001247406004,
       "groundHeight": 0.0,
       "path": "godot-client/assets/actors/native/races/luminous_female.glb",
-      "source": "luminous_human_female_tpose_rigged.glb",
-      "sourceSHA256": "29db5c2a703326e1f8a23a3d0cb498309e314996616964ee00753a34d015212e",
-      "sha256": "72df5e24246b476f1100d47c887e0c835132982d570bbf596fc8cd89fb16bef2",
+      "source": "luminous_human_female_tpose.glb",
+      "sourceSHA256": "f5ebfc9e753d1120190863187753ed76b8b614a959e9a8efe5608194ad387d35",
+      "sha256": "b06a880c074d00f50f5aaeb1ddaa2a4f069d74415123a5f28eedf91979805a7c",
       "surfaces": [
         "body",
         "eyes",
@@ -33,30 +33,35 @@
       ],
       "bodyTemplate": "luminous_female",
       "retainedTailTriangles": 0,
-      "neckAdaptorTriangles": 669,
-      "appearanceFit": {
+      "neckAdaptorTriangles": 0,
+      "pipeline": "eloria-assets/tools/integrate_luminous_sources.py",
+      "sourceIntegration": {
         "version": 1,
-        "sourceSHA256": "6ecf10f515561e5673f2cbab27f0e5dfb49b32b32c662ce78e326a09522af6dc",
-        "bakedShirtGrowM": 0.011
+        "candidateSHA256": "ea1ea9dd187b753fcc83420586c16b139c4b623b37978a89800a2c1503e35db9",
+        "skinWeightRepair": {
+          "maximumWeightChange": 0.28410589034277056,
+          "smoothedRegion": "upper trousers",
+          "positionsChanged": false
+        }
       }
     },
     "luminous_male": {
-      "vertices": 27790,
-      "triangles": 20426,
+      "vertices": 23203,
+      "triangles": 35158,
       "joints": 77,
       "feature": "none",
       "wardrobe": "skinned",
       "anatomy": "retargeted",
       "capeBones": 12,
-      "baseBody": "luminous_human_male_tpose_rigged.glb",
+      "baseBody": "luminous_human_male_tpose.glb",
       "stature": 1.0,
       "legChainScale": 1.0,
       "hipHeight": 0.9167001247406004,
       "groundHeight": 0.0,
       "path": "godot-client/assets/actors/native/races/luminous_male.glb",
-      "source": "luminous_human_male_tpose_rigged.glb",
-      "sourceSHA256": "8324750a6cd3568095ce115801b7aaebff2ca5027d27884a1d6210cd6364275f",
-      "sha256": "9a38be40af7e7770d10ffa8f6f3475a11e21ccbfbb0c15b3429c5e65088344c2",
+      "source": "luminous_human_male_tpose.glb",
+      "sourceSHA256": "5e56f9535725e0ae3d8fc9e3acb284ed75dca1010fdbfd1a9b068fe21f16ee63",
+      "sha256": "2ec727a080f7c98ea9a0d5c1204efbd4cb094d224618ae426eede01557c7c1bc",
       "surfaces": [
         "body",
         "eyes",
@@ -70,11 +75,16 @@
       ],
       "bodyTemplate": "luminous_male",
       "retainedTailTriangles": 0,
-      "neckAdaptorTriangles": 727,
-      "appearanceFit": {
+      "neckAdaptorTriangles": 0,
+      "pipeline": "eloria-assets/tools/integrate_luminous_sources.py",
+      "sourceIntegration": {
         "version": 1,
-        "sourceSHA256": "926b4b9aac28ed88d6c6d0f930ee64596e35942d05ce6ebed7960872904d1958",
-        "bakedShirtGrowM": 0.011
+        "candidateSHA256": "befed1698709e8108ced520612b0aace8ba2ad8dc6f4eb855347747d9876f23b",
+        "skinWeightRepair": {
+          "maximumWeightChange": 0.3517571687698364,
+          "smoothedRegion": "upper trousers",
+          "positionsChanged": false
+        }
       }
     },
     "votary_female": {
@@ -28735,37 +28745,37 @@
   "fittedHair": {
     "luminous_female:1": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_parted_female.glb",
-      "sha256": "088330f4dbb23ddfd4becb8b9d9a7ff9efe3dfb881477a8edfa7806010647d15",
+      "sha256": "b9b9bddf5bb37fed2e8242de5a6381032f2800afcedb987a686894678d8bd929",
       "joints": 77,
       "triangles": 5204
     },
     "luminous_female:2": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_long_female.glb",
-      "sha256": "abd33f45bd1e249134627fd27e642a34ad09fc1e0ed27ea664d120c0a1da2bea",
+      "sha256": "b1a74faddef783196a09800ae5df3099967907eca2904736d7c645d9891ee1bf",
       "joints": 77,
       "triangles": 11624
     },
     "luminous_female:3": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_buns_female.glb",
-      "sha256": "f5e24880e5fb3a50cae8a8c2f8579903223e915dd0f209983de07457faed6e0d",
+      "sha256": "8b6f139e2c79ac6003538ff2d156b9331c49635770bdc549bfdf701d0e3d7d02",
       "joints": 77,
       "triangles": 13136
     },
     "luminous_male:1": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_parted_male.glb",
-      "sha256": "11753a6b529a05d899dd0b68e6f290d97e96fb27920f78b710b9c5c282ae4865",
+      "sha256": "5f167aea4afe71804355638af2629f546fe8345f414d92c5ab0f2144a269edcb",
       "joints": 77,
       "triangles": 5204
     },
     "luminous_male:2": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_long_male.glb",
-      "sha256": "678abf076d5100d264b2cdfadd5001f20dd64a4fe92e2d38cb36ef3c5285a40a",
+      "sha256": "884354c3c2d4b558643be3e005576eb7fd058b9c1d7469c112ea3fb7cea77b66",
       "joints": 77,
       "triangles": 11624
     },
     "luminous_male:3": {
       "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_buns_male.glb",
-      "sha256": "240b67ac54850d1c8c5141b282f9ad36c3aca4387ece3a4a1ccc39f5ecc8f994",
+      "sha256": "5a02cc0489bbf1c908d8e8a2a1315fa1ae057b7ba5ab5f916c34c3ddaa410ef9",
       "joints": 77,
       "triangles": 13136
     },

@@ -54,7 +54,13 @@ class CharacterAppearanceFitTest(unittest.TestCase):
                     depth[indices] = locations[:,2]
                     depths[name] = depth
                 hit = np.isfinite(depths['body'])
-                self.assertGreater(hit.sum(), 200)
+                if 'groups' in config['faceAppearance']:
+                    # The source has exposed skin and clothing as a single
+                    # surface, without a duplicate torso under the shirt.
+                    self.assertTrue(np.isfinite(np.minimum(depths['body'], depths['wardrobe_shirt'])).all())
+                    self.assertGreater(hit.sum(), 50)
+                else:
+                    self.assertGreater(hit.sum(), 200)
                 self.assertGreater(float((depths['body'][hit]-depths['wardrobe_shirt'][hit]).min()), .002)
                 self.assertIn('wardrobe_shirt',config['wardrobeBakedGrow'])
 

@@ -195,6 +195,7 @@ var _cape_cloth: SkeletonModifier3D = null
 var _attachment_bones: Dictionary = {}
 var _model_config: Dictionary = {}
 var _face_material: ShaderMaterial
+var _face_group_materials: Dictionary = {}
 var _equipment_config: Dictionary = {}
 var _equipment_visuals: Dictionary = {}
 var _equipment_nodes: Dictionary = {}
@@ -384,6 +385,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	resolver = AnimationResolver.new(animation_config)
 	_model_config = model_config.duplicate(true)
 	_face_material = null
+	_face_group_materials.clear()
 	_attachment_bones = (model_config.get("attachments", {}) as Dictionary).duplicate(true)
 	_equipment_config = (equipment_config as Dictionary).duplicate(true)
 	var source_path := _external_path(str(model_config.get("scene", "")))
@@ -501,6 +503,9 @@ func _apply_face_appearance(native_model: Node3D, skin: Color, eyes: Color, hair
 	var spec: Dictionary = _model_config.get("faceAppearance", {}) as Dictionary
 	if spec.is_empty():
 		return
+	if spec.has("groups"):
+		_apply_grouped_face_appearance(native_model, spec, skin, eyes, hair)
+		return
 	var body := native_model.find_child("body", true, false) as MeshInstance3D
 	if body == null or body.mesh == null:
 		return
@@ -532,6 +537,40 @@ func _apply_face_appearance(native_model: Node3D, skin: Color, eyes: Color, hair
 		var mesh := native_model.find_child(mesh_name, true, false) as MeshInstance3D
 		if mesh != null:
 			mesh.material_override = _face_material
+
+func _apply_grouped_face_appearance(native_model: Node3D, spec: Dictionary,
+		skin: Color, eyes: Color, hair: Color) -> void:
+	var groups: Dictionary = spec["groups"]
+	for part: String in groups:
+		var mesh := native_model.find_child(part, true, false) as MeshInstance3D
+		if mesh == null or mesh.mesh == null:
+			continue
+		var original := mesh.mesh.surface_get_material(0) as StandardMaterial3D
+		if original == null:
+			continue
+		var face := _face_group_materials.get(part) as ShaderMaterial
+		if face == null:
+			face = ShaderMaterial.new()
+			face.shader = preload("res://src/actors/face_appearance.gdshader")
+			face.set_shader_parameter("base_texture", original.albedo_texture)
+			face.set_shader_parameter("region_texture", load(str(spec["mask"])))
+			face.set_shader_parameter("base_color", original.albedo_color)
+			face.set_shader_parameter("roughness", original.roughness)
+			face.set_shader_parameter("use_normal", original.normal_enabled)
+			face.set_shader_parameter("normal_texture", original.normal_texture)
+			face.set_shader_parameter("normal_scale", original.normal_scale)
+			var crop: Dictionary = groups[part]
+			var scale: Array = crop["uvScale"]
+			var offset: Array = crop["uvOffset"]
+			face.set_shader_parameter("mask_uv_scale", Vector2(float(scale[0]), float(scale[1])))
+			face.set_shader_parameter("mask_uv_offset", Vector2(float(offset[0]), float(offset[1])))
+			_face_group_materials[part] = face
+		face.set_shader_parameter("skin_tint", skin)
+		face.set_shader_parameter("eye_tint", eyes)
+		face.set_shader_parameter("hair_tint", hair)
+		mesh.material_override = face
+		if part == "body":
+			_face_material = face
 
 func _tint_mesh(mesh_node: MeshInstance3D, tint: Color,
 		emissive: bool = false) -> void:
@@ -1949,16 +1988,22 @@ static func _tint_colour(value: Variant, fallback: Color) -> Color:
 func _shares_authored_body(author_rig: String, profile: String) -> bool:
 	if profile != "canonical":
 		return false
+	if _has_refitted_body(profile):
+		return false
 	var templates: Dictionary = _equipment_config.get("bodyTemplates", {}) as Dictionary
 	var author: String = str(templates.get(author_rig, ""))
 	return not author.is_empty() and author == str(templates.get(rig_name(), ""))
 
+func _has_refitted_body(profile: String) -> bool:
+	return profile == "canonical" and rig_name() in _equipment_config.get("refittedBodies", [])
+
 func _girth_ratios(author_rig: String, profile: String = "") -> Dictionary:
 	var mine: String = rig_name()
-	if author_rig.is_empty() or author_rig == mine or _shares_authored_body(author_rig, profile):
+	if author_rig.is_empty() or (author_rig == mine and not _has_refitted_body(profile)) or _shares_authored_body(author_rig, profile):
 		return {}
 	var table: Dictionary = _equipment_fit_profile(profile).get("bodyGirth", {}) as Dictionary
-	var author: Dictionary = table.get(author_rig, {}) as Dictionary
+	var authored: Dictionary = _equipment_config.get("authoredBodyGirth", table) as Dictionary if profile == "canonical" else table
+	var author: Dictionary = authored.get(author_rig, {}) as Dictionary
 	var wearer: Dictionary = table.get(mine, {}) as Dictionary
 	if author.is_empty() or wearer.is_empty():
 		return {}
@@ -1978,10 +2023,11 @@ func _ground_drops(author_rig: String, skin_region: String, profile: String = ""
 	if skin_region != "boots":
 		return {}
 	var mine: String = rig_name()
-	if author_rig.is_empty() or author_rig == mine or _shares_authored_body(author_rig, profile):
+	if author_rig.is_empty() or (author_rig == mine and not _has_refitted_body(profile)) or _shares_authored_body(author_rig, profile):
 		return {}
 	var table: Dictionary = _equipment_fit_profile(profile).get("footAnchor", {}) as Dictionary
-	var author: Dictionary = table.get(author_rig, {}) as Dictionary
+	var authored: Dictionary = _equipment_config.get("authoredFootAnchor", table) as Dictionary if profile == "canonical" else table
+	var author: Dictionary = authored.get(author_rig, {}) as Dictionary
 	var wearer: Dictionary = table.get(mine, {}) as Dictionary
 	if author.is_empty() or wearer.is_empty():
 		return {}

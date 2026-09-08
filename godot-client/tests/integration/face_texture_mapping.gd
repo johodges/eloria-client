@@ -28,10 +28,13 @@ func run() -> void:
 		actor.set_process(false)
 		actor.set_physics_process(false)
 		var body := actor.find_child("body", true, false) as MeshInstance3D
-		var source := body.mesh.surface_get_material(1) as StandardMaterial3D
+		var spec: Dictionary = config["faceAppearance"]
+		var surface := int(spec["sourceSurface"])
+		var grouped := spec.has("groups")
+		var source := body.mesh.surface_get_material(surface) as StandardMaterial3D
 		var original_color := source.albedo_color
 		var original_texture := source.albedo_texture
-		var face := body.get_active_material(1) as ShaderMaterial
+		var face := body.get_active_material(surface) as ShaderMaterial
 		expect(face != null, slug + " uses face mask")
 		if face == null:
 			actor.free()
@@ -46,10 +49,21 @@ func run() -> void:
 				for part: String in ["eyes", "eyebrows", "scalp"]:
 					var mesh := actor.find_child(part, true, false) as MeshInstance3D
 					if mesh != null:
-						expect(mesh.get_active_material(0) == face, slug + " " + part + " shares continuous skin/eye mapping")
-				var trunk := body.get_active_material(0) as StandardMaterial3D
-				var trunk_source := body.mesh.surface_get_material(0) as StandardMaterial3D
-				expect(trunk.albedo_color.is_equal_approx(trunk_source.albedo_color * AppearanceVariants.skin_tint(skin)), slug + " body tint does not accumulate")
+						if grouped:
+							var material := mesh.get_active_material(0) as ShaderMaterial
+							var original := mesh.mesh.surface_get_material(0) as StandardMaterial3D
+							var crop: Dictionary = spec["groups"][part]
+							expect(material != null and material != face, slug + " " + part + " has its own texture material")
+							expect(material.get_shader_parameter("base_texture") == original.albedo_texture, slug + " " + part + " retains its cropped texture")
+							expect(material.get_shader_parameter("mask_uv_scale") == Vector2(crop["uvScale"][0], crop["uvScale"][1]), slug + " crop scale")
+							expect(material.get_shader_parameter("mask_uv_offset") == Vector2(crop["uvOffset"][0], crop["uvOffset"][1]), slug + " crop offset")
+							expect(material.get_shader_parameter("skin_tint") == AppearanceVariants.skin_tint(skin) and material.get_shader_parameter("eye_tint") == AppearanceVariants.eye_color(eyes), slug + " group colours follow selection")
+						else:
+							expect(mesh.get_active_material(0) == face, slug + " " + part + " shares continuous skin/eye mapping")
+				if not grouped:
+					var trunk := body.get_active_material(0) as StandardMaterial3D
+					var trunk_source := body.mesh.surface_get_material(0) as StandardMaterial3D
+					expect(trunk.albedo_color.is_equal_approx(trunk_source.albedo_color * AppearanceVariants.skin_tint(skin)), slug + " body tint does not accumulate")
 		actor.apply_appearance_variants({"skin": 0, "eyes": 0, "hair": 0})
 		for hair in range(10):
 			actor.apply_appearance_variants({"skin": 0, "eyes": 0, "hair": hair})
@@ -59,12 +73,12 @@ func run() -> void:
 		expect(source.albedo_color == original_color and source.albedo_texture == original_texture, slug + " shared source material remains immutable")
 		actor.apply_equipment_visuals({3: 133})
 		actor.apply_equipment_visuals({})
-		expect(body.get_active_material(1) == face, slug + " helmet cycle retains face material")
+		expect(body.get_active_material(surface) == face, slug + " helmet cycle retains face material")
 		actor.apply_equipment_visuals({0: 114, 5: 208, 6: 248})
 		actor.apply_appearance_variants({"skin": 3, "eyes": 4, "hair": 0})
-		expect(body.get_active_material(1) == face, slug + " armour and dye retain face material")
+		expect(body.get_active_material(surface) == face, slug + " armour and dye retain face material")
 		actor.apply_equipment_visuals({})
-		expect(body.get_active_material(1) == face, slug + " armour removal retains face material")
+		expect(body.get_active_material(surface) == face, slug + " armour removal retains face material")
 		if config["faceAppearance"].has("neckTexture"):
 			var neck := body.get_active_material(2) as StandardMaterial3D
 			expect(neck.albedo_texture.resource_path == config["faceAppearance"]["neckTexture"], slug + " neck texture survives equipment and dye")

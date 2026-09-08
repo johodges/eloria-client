@@ -27,20 +27,6 @@
     "projection": "monotonic source neck below head cut",
     "textureSHA256": "67616909c6622ebb2dda08924965bb529646ed3c411fb9a41efeb5ee366a95b7"
   },
-  "luminous_female": {
-    "surface": 2,
-    "modelSHA256": "69b0612bfeb86732d8e2b96a759a19c8ebeaaef94d0975fb45c6a54bf516a0ac",
-    "sourceSHA256": "7d845c63c8f2800d873691d031e53aa7e3b5b795f8f0a4c3b46e86d5c7205bd0",
-    "projection": "monotonic source neck below head cut",
-    "textureSHA256": "4969e24dda65d8324844a816dd8f2b57502f96665c34cb8e12d3ebbc32fc39ed"
-  },
-  "luminous_male": {
-    "surface": 2,
-    "modelSHA256": "6fdeaf01749bb37d38854a9692adc2df5d03dc06e67e0355e9cb12e28b3910ba",
-    "sourceSHA256": "625cf1566e73b5c4a36d5323922732ff2694e80c34d1f1fd5bf8587163bf2f94",
-    "projection": "monotonic source neck below head cut",
-    "textureSHA256": "829f40a75e8f73d3b91e08bda828201f151f77fc057ed39fa6e4eb67afb3eb0f"
-  },
   "mycelari_female": {
     "surface": 2,
     "modelSHA256": "8f913c71fd059ad7c9568d98d4fe174617c2114f08124a87a540a7255e462d05",

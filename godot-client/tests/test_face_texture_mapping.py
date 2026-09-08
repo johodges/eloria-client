@@ -47,13 +47,19 @@ def mask_at(mesh, uv, mask, x, y):
     return mask[xy[1], xy[0]]/255.
 
 
+def atlas_uv(d, b, part):
+    uv = g.accessor(d, b, part['attributes']['TEXCOORD_0'])
+    extra = part.get('extras', {})
+    return uv * extra.get('sourceUVScale', [1, 1]) + extra.get('sourceUVOffset', [0, 0])
+
+
 class FaceTextureMappingTest(unittest.TestCase):
     def test_humanoid_faces_have_two_brows_above_the_eyes(self):
         # Independently measured brow centres, rather than the baker's curves.
         centres = {
             'glasswarden_female': (.047, 1.667), 'glasswarden_male': (.040, 1.667),
             'greyhaven_female': (.041, 1.639), 'greyhaven_male': (.042, 1.642),
-            'luminous_female': (.040, 1.650), 'luminous_male': (.037, 1.639),
+            'luminous_female': (.040, 1.650), 'luminous_male': (.037, 1.644),
             'mycelari_female': (.050, 1.655), 'mycelari_male': (.040, 1.650),
             'orun_female': (.047, 1.650), 'orun_male': (.043, 1.650),
             'votary_female': (.035, 1.622), 'votary_male': (.029, 1.613),
@@ -69,7 +75,7 @@ class FaceTextureMappingTest(unittest.TestCase):
                         a = p['attributes']
                         v = g.accessor(d, b, a['POSITION'])
                         vertices.append(v)
-                        uvs.append(g.accessor(d, b, a['TEXCOORD_0']))
+                        uvs.append(atlas_uv(d, b, p))
                         faces.append(g.accessor(d, b, p['indices']).astype(int).reshape(-1, 3)+offset)
                         offset += len(v)
                 mesh = trimesh.Trimesh(np.concatenate(vertices), np.concatenate(faces), process=False)
@@ -99,7 +105,13 @@ class FaceTextureMappingTest(unittest.TestCase):
                 body = next(m for m in d['meshes'] if m['name'] == 'body')
                 head = body['primitives'][spec['sourceSurface']]
                 self.assertEqual('race_head', head['extras']['sourceRole'])
-                self.assertEqual(mask.shape, source_image(d, b, head['material']).shape)
+                if 'groups' in spec:
+                    for name, crop in spec['groups'].items():
+                        part = next(m for m in d['meshes'] if m['name'] == name)['primitives'][0]
+                        texture = source_image(d, b, part['material'])
+                        np.testing.assert_array_equal(np.rint(np.array(crop['uvScale']) * mask.shape[:2][::-1]), texture.shape[:2][::-1])
+                else:
+                    self.assertEqual(mask.shape, source_image(d, b, head['material']).shape)
                 vertices, uvs, faces = [], [], []
                 offset = 0
                 for m in d['meshes']:
@@ -108,7 +120,7 @@ class FaceTextureMappingTest(unittest.TestCase):
                             continue
                         a = p['attributes']
                         v = g.accessor(d, b, a['POSITION'])
-                        uv = g.accessor(d, b, a['TEXCOORD_0'])
+                        uv = atlas_uv(d, b, p)
                         self.assertTrue(np.isfinite(uv).all())
                         vertices.append(v); uvs.append(uv)
                         faces.append(g.accessor(d, b, p['indices']).astype(int).reshape(-1, 3)+offset)
@@ -129,8 +141,9 @@ class FaceTextureMappingTest(unittest.TestCase):
     def test_rebaked_necks_match_the_models_and_keep_the_head_boundary(self):
         models = json.loads((CLIENT/'data/actors/models.json').read_text())['models']
         manifest = json.loads((CLIENT/'assets/actors/native/neck_textures/manifest.json').read_text())
-        self.assertEqual(set(LANDMARKS), set(manifest))
-        for slug in LANDMARKS:
+        joined = {slug for slug in LANDMARKS if 'neckTexture' in models[slug]['faceAppearance']}
+        self.assertEqual(joined, set(manifest))
+        for slug in joined:
             with self.subTest(model=slug):
                 config = models[slug]
                 d, b = g.read(CLIENT/config['scene'].removeprefix('res://'))
@@ -151,7 +164,7 @@ class FaceTextureMappingTest(unittest.TestCase):
         # the front of these necks. A single source neck may shade once, but
         # must not alternate between lips and skin repeatedly down the throat.
         for slug in ['greyhaven_female', 'votary_female', 'votary_male',
-                     'orun_female', 'orun_male', 'luminous_female']:
+                     'orun_female', 'orun_male']:
             with self.subTest(model=slug):
                 path = CLIENT/f'assets/actors/native/neck_textures/{slug}.png'
                 rgb = np.asarray(Image.open(path).convert('RGB')).astype(float)/255.

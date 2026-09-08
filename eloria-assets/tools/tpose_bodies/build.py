@@ -116,7 +116,7 @@ def canonical(library, template):
     return names, nodes
 
 
-def fit(source, library, template, out):
+def fit(source, library, template, out, preserve_source_shape=False):
     out = out.resolve()
     if "godot-client" in out.parts or "races" in out.parts or out == source.resolve():
         raise ValueError(
@@ -234,6 +234,7 @@ def fit(source, library, template, out):
     seen = set()
     report = {
         "source_sha256": digest(source),
+        "preserve_source_shape": preserve_source_shape,
         "library_sha256": digest(library),
         "template_sha256": digest(template),
         "segment_axial_scale": scales,
@@ -308,7 +309,7 @@ def fit(source, library, template, out):
             # Narrow the upper sleeves around their actual joint-to-joint axes.
             # The user's EL reference has relaxed shoulders, not inflated deltoids.
             # Bake this into vertices; no skeleton/rest-scale compensation.
-            for side in ("l", "r"):
+            for side in (() if preserve_source_shape else ("l", "r")):
                 chain = [
                     i
                     for i, n in enumerate(sn)
@@ -358,7 +359,8 @@ def fit(source, library, template, out):
             # split. In-engine normal-grow opens the exporter's split facet edges
             # unless their shading normals agree. Indices/positions stay intact.
             fi = split.accessor_array(d, blob, p["indices"]).astype(int).reshape(-1)
-            nout = split_reference.smooth_normals(vout, fi)
+            if not preserve_source_shape:
+                nout = split_reference.smooth_normals(vout, fi)
             dense = np.zeros((len(v), len(names)))
             for k in range(jj.shape[1]):
                 dense += transfer[jj[:, k]] * ww[:, k, None]
@@ -448,5 +450,7 @@ if __name__ == "__main__":
     ap.add_argument("out", type=Path)
     ap.add_argument("--library", type=Path, required=True)
     ap.add_argument("--template", type=Path, required=True)
+    ap.add_argument("--preserve-source-shape", action="store_true",
+                    help="Keep source sleeve shape and authored normals during rig fitting")
     a = ap.parse_args()
-    print(json.dumps(fit(a.source, a.library, a.template, a.out), indent=2))
+    print(json.dumps(fit(a.source, a.library, a.template, a.out, a.preserve_source_shape), indent=2))

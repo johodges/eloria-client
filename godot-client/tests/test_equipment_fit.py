@@ -86,7 +86,8 @@ class EquipmentFitTest(unittest.TestCase):
         # These sixteen approved bodies lie within this measured range.
         # A much larger value usually means a foot region included the tail
         # or an unweighted toe fell back to sampling the entire body.
-        reference = self.girth.get("luminous_male", {})
+        # Keep the authoring reference fixed when a playable body is replaced.
+        reference = self.registry.get("authoredBodyGirth", self.girth).get("luminous_male", {})
         self.assertTrue(reference, "the reference rig is unmeasured")
         for race in self.races:
             for bone, radius in self.girth[race].items():
@@ -96,6 +97,14 @@ class EquipmentFitTest(unittest.TestCase):
                 ratio = float(radius) / base
                 self.assertGreater(ratio, 0.4, f"{race}/{bone} ratio {ratio:.2f}")
                 self.assertLess(ratio, 2.0, f"{race}/{bone} ratio {ratio:.2f}")
+
+    def test_replacement_bodies_have_current_measurements_and_separate_authors(self):
+        for slug in self.registry.get('refittedBodies', []):
+            with self.subTest(model=slug):
+                rig = ea.load_rig(RACES/(slug+'.glb'))
+                self.assertEqual(ea.body_girth(rig), self.girth[slug])
+                self.assertEqual(ea.foot_anchor(rig), self.registry['footAnchor'][slug])
+                self.assertNotEqual(self.girth[slug], self.registry['authoredBodyGirth'][slug])
 
     def test_skinned_models_name_the_rig_they_were_authored_on(self) -> None:
         for key, model in self.models.items():
