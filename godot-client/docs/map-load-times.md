@@ -137,16 +137,44 @@ is split into buckets of about sqrt(n) empty `Node3D` groups, so neither the
 buckets nor the list of them is left wide. The groups carry an identity
 transform and no geometry.
 
-Nothing on screen changes. A mesh keeps its name, its mesh, its materials, its
-layers, its shadow casting and its world placement; only its depth in the tree
-changes, and every pass in the loader and every consumer of the loaded world -
-the batching, the occluder fade, the interior cutaway, the secret sections, the
-collision declarations - reaches nodes by a recursive search or by name.
-`rendering.regroupWideSiblings` in a world manifest turns it off, beside
-`batchStaticInstances`, and `rendering.maxSiblings` moves the limit. A package
-carrying a skin or a skeleton is skipped whatever the manifest says, because
-Godot places a `Skeleton3D` from where its joints sit among their siblings;
-none of the 56 shipped packages has one.
+A mesh keeps its name, its mesh, its materials, its layers, its shadow casting
+and its world placement - the last to the bit, because a grouping node's
+transform is exactly the identity and multiplying by it changes none. Only its
+depth in the tree changes, and every pass in the loader and every consumer of
+the loaded world - the batching, the occluder fade, the interior cutaway, the
+secret sections, the collision declarations - reaches nodes by a recursive
+search or by name. `rendering.regroupWideSiblings` in a world manifest turns it
+off, beside `batchStaticInstances`, and `rendering.maxSiblings` moves the
+limit. A package carrying a skin or a skeleton is skipped whatever the manifest
+says, because Godot places a `Skeleton3D` from where its joints sit among their
+siblings; none of the 56 shipped packages has one.
+
+### What does change on screen: 245 pixels in 7.4 million
+
+Not nothing, and it is worth being exact about. A scratch probe renders
+Amberwood through the loader from eight fixed cameras with nothing in the shot
+that moves, so two runs can be compared pixel for pixel. Two runs of the same
+build are byte-identical in all eight views, so the probe measures the change
+and not the weather. With the manifest switch off it is byte-identical to the
+loader as it was before this pass, in all eight views. With it on, **245 pixels
+of 7 372 800 differ - 0.0033%**.
+
+They are single pixels and pairs of pixels, scattered, always inside dense
+alpha-scissored autumn foliage, where two leaf surfaces meet the camera at the
+same depth. Which one wins a depth tie is decided by the order the two are
+drawn, and the draw order follows the shape of the tree. Crop the worst of them
+at twelve times and the two images are indistinguishable.
+
+Nor is the order the package happens to ship any more correct than the one the
+pass produces. Bucketing at 128, 256 and 512 gives three byte-identical
+renders - the widest list is split the same way by all three - while bucketing
+at 2048 flips a different 190 pixels again. There is no right answer to a depth
+tie; there is only which surface got there first.
+
+So: the geometry, the materials and the placements are identical to the last
+bit, and 0.0033% of the pixels of a foliage-heavy region resolve a coplanar tie
+the other way. If a reviewer wants even that not to move, the manifest switch
+is per map.
 
 Median of three loads per region, headless, milliseconds:
 
@@ -229,7 +257,10 @@ picture: it loads Four Gates and Sunmane Steppe through the production loader,
 rebuilds the same packages straight through `GLTFDocument` with no regrouping,
 and compares - the same 3 028 and 1 050 mesh instances, sharing the same 184
 and 258 meshes, each with the same name, mesh, surface count, layers, shadow
-casting and world transform.
+casting and world transform. The transform comparison is exact float equality
+rather than a tolerance, and it holds: 9 106 of Amberwood's 9 106 mesh
+instances come out of the regrouped tree bit-for-bit where they came out of
+the shipped one.
 
 ## The options, measured
 
@@ -238,7 +269,7 @@ where it says estimated.
 
 | option | saving | cost | risk | on screen |
 | --- | --- | --- | --- | --- |
-| **Regroup wide sibling lists** (landed) | 15.9 s of 28.1 s across twelve; 6.7 s off Verdant Stair | ~40 lines in `WorldLoader`, 158 ms and 700 nodes across twelve | low - the tree is deeper by one level | nothing |
+| **Regroup wide sibling lists** (landed) | 15.9 s of 28.1 s across twelve; 6.7 s off Verdant Stair | ~40 lines in `WorldLoader`, 158 ms and 700 nodes across twelve | low - the tree is deeper by one level | 245 pixels of 7.4 million, all coplanar ties inside foliage |
 | **Parse and build on a worker thread** | hides 400-610 ms of a 500-1 400 ms load; total unchanged | a thread, a deferred attach, and a decision about what the client shows meanwhile | medium - `GLTFDocument` off-thread is unsupported territory, though it worked in every probe | nothing, if the loading screen already covers the freeze |
 | **Cache the built region as a PackedScene** | 49% of what is left: 1 318 -> 664 ms Amberwood, 1 244 -> 567 ms Verdant Stair | first visit +640 to +960 ms; ~30 MB a region, ~360 MB for the twelve; an invalidation contract | medium-high - a cached tree can drift from what the loader would build | nothing, if the cache is right; something silent and undiagnosable if it is stale |
 | **Cheaper walk-surface collision** | up to 4.8 s across twelve, the largest item left | unknown; the shapes are two thirds of it and they are the grounding contract | high - this is what holds the player up | nothing, if the shapes are the same |
@@ -385,7 +416,9 @@ run against them, because this is what holds the player up.
 ## Recommendation
 
 1. **Landed: regroup wide sibling lists.** 56% of the twelve-region load, no
-   disk, no cache to invalidate, nothing on screen. Done.
+   disk, no cache to invalidate, and 245 pixels of 7.4 million where a depth
+   tie inside foliage falls the other way. Done, with a per-map switch if even
+   that is too much.
 2. **Threaded parse and scene build.** Measured feasible and cheap; hides
    400-610 ms of the 500-1 400 ms that is left. Wants a decision about what the
    client shows while the worker runs, and a run of the whole `rendered_*`

@@ -117,7 +117,7 @@ func _check_map(loader: WorldLoader, registry: Dictionary, identifier: String) -
 	var differences: PackedStringArray = _differences(
 		shipped["placements"] as Dictionary, loaded["placements"] as Dictionary)
 	_expect(differences.is_empty(),
-		"%s: every mesh instance keeps its name, mesh and world placement%s" % [
+		"%s: every mesh instance keeps its name, mesh and world placement to the last bit%s" % [
 			identifier, "" if differences.is_empty()
 			else " (" + ", ".join(differences) + ")"])
 	loader.unload_world()
@@ -137,6 +137,13 @@ func _generate_reference(glb_path: String) -> Node3D:
 ## geometry moves to a MultiMeshInstance3D at the same transforms, so
 ## visibility is deliberately not part of the key: the batching pass is guarded
 ## by its own tests, and this one is about the tree the parser built.
+##
+## The transform is held as a `Transform3D` and compared with `==`, which is
+## exact float equality rather than a tolerance. It can be, because a grouping
+## node's transform is exactly the identity and multiplying by it changes no
+## bit: every component of the child's world transform is a sum of the same
+## products with the same zeroes. A tolerance here would hide the one thing
+## worth knowing.
 func _mesh_placements(world: Node3D) -> Dictionary:
 	var placements: Dictionary = {}
 	var meshes: Dictionary = {}
@@ -146,16 +153,12 @@ func _mesh_placements(world: Node3D) -> Dictionary:
 		count += 1
 		if mesh_instance.mesh != null:
 			meshes[mesh_instance.mesh.get_instance_id()] = true
-		var transform: Transform3D = mesh_instance.global_transform
-		placements[mesh_instance.name] = "%s/%d/%s/%d/%d" % [
+		placements[mesh_instance.name] = [
 			"" if mesh_instance.mesh == null else mesh_instance.mesh.resource_name,
 			0 if mesh_instance.mesh == null else mesh_instance.mesh.get_surface_count(),
-			_round(transform), mesh_instance.layers, mesh_instance.cast_shadow]
+			mesh_instance.global_transform, mesh_instance.layers,
+			mesh_instance.cast_shadow]
 	return {"placements": placements, "meshes": meshes.size(), "count": count}
-
-func _round(transform: Transform3D) -> String:
-	return "%.4v|%.4v|%.4v|%.4v" % [transform.origin, transform.basis.x,
-		transform.basis.y, transform.basis.z]
 
 ## The first few names that disagree, so a failure says which prop moved.
 func _differences(shipped: Dictionary, loaded: Dictionary) -> PackedStringArray:
