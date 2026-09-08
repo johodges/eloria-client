@@ -291,7 +291,16 @@ _theme(Theme(
 
 _theme(Theme(
     region="ssarathi_ruins", id="ssarathi_gauntlet", name="The Coil Causeway", short="coil",
-    palette=SSARATHI, props={"kit": "jungle"},
+    palette=SSARATHI, props={
+        "kit": "temple_procession", "wayLength": 8.0, "clipCoplanar": True,
+        "localBatches": True, "rearDaisStep": True,
+        "roomFloors": {"two-mouths-wet-mouth": "verdant_jungle_floor",
+                       "two-mouths-carved-mouth": "verdant_terrace_stone"},
+        "environment": {
+            "sky": "none", "backgroundColor": [.025, .04, .035], "sun": {"enabled": False},
+            "ambient": {"color": [.54, .60, .47], "energy": 1.1},
+            "fog": {"enabled": True, "color": [.04, .06, .045], "density": .003},
+            "tonemap": {"mode": "filmic", "exposure": 1.25, "white": 3.5}}},
     flavour="A processional causeway under the temple, walked once a year when the sun stood on the "
             "stela. The hatchery kept the rest of the year.",
     legs=(

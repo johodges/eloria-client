@@ -125,6 +125,9 @@ def compose(theme: D.Theme, seed: int):
     elif kit == "ice_mine":
         from gauntlets import ice_mine
         ice_mine.dress(it, pal, seed)
+    elif kit == "temple_procession":
+        from gauntlets import temple_procession
+        temple_procession.dress(it, pal, seed)
     lamps, placed = hanging_lamps(it.lamps, seed=seed)
     it.group.add(lamps)
     it.lamps = placed

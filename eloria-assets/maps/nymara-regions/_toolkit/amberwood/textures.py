@@ -2597,3 +2597,31 @@ def grey_votive_flame(size: int = 128, seed: int = 677) -> TextureSet:
     return TextureSet("grey_votive_flame", _u8(np.clip(color, 0, 1)),
                       pack_orm(np.full((size, size), 1.0), np.full((size, size), 0.42)),
                       normal_from_height(np.full((size, size), 0.5), 1.0))
+
+
+def hatchery_eggshell(size: int = 256, seed: int = 719) -> TextureSet:
+    """Soft ivory with sparse mineral freckles, without masonry seams."""
+    body = N.tileable_fbm(size, 6, 4, seed=seed)
+    freckles = np.clip((N.tileable_fbm(size, 31, 3, seed=seed + 7) - .64) * 10, 0, 1)
+    color = _mix((.60, .63, .50), (.82, .82, .69), body)
+    color = _mix(color, (.31, .34, .22), freckles * .30)
+    height = body * .025 + freckles * .01
+    roughness = .70 + freckles * .10
+    return TextureSet("hatchery_eggshell", _u8(color),
+                      pack_orm(np.full_like(body, .97), roughness),
+                      normal_from_height(height, .8))
+
+
+def lily_pad(size: int = 256, seed: int = 727) -> TextureSet:
+    """An opaque waxy leaf with radial veins, mapped onto a round pad."""
+    body = N.tileable_fbm(size, 7, 4, seed=seed)
+    y, x = np.mgrid[0:size, 0:size] / (size - 1) * 2 - 1
+    radius = np.sqrt(x * x + y * y)
+    angle = np.arctan2(y, x)
+    veins = np.exp(-(np.sin(angle * 9) * 23) ** 2) * np.clip(1 - radius * .7, 0, 1)
+    color = _mix((.025, .065, .024), (.09, .20, .058), body)
+    color = _mix(color, (.14, .25, .07), veins * .55)
+    height = body * .035 + veins * .02
+    return TextureSet("lily_pad", _u8(color),
+                      pack_orm(np.full_like(body, .95), .50 + body * .10),
+                      normal_from_height(height, .8))

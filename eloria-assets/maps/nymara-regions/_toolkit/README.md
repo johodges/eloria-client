@@ -380,3 +380,23 @@ parts. NumPy can return that inverse with the input's triangle shape, which
 otherwise miscounts triangles and drops small parts during merge. The geometry
 tests verify triangle preservation, and test_gauntlet_packages.py independently
 casts onto the exported GLB beneath every walkable tile in all eight routes.
+
+
+## Ceremonial waterworks and hatcheries
+
+templecraft supplies a raised spiral sun seal, a processional gateway, an open
+ritual basin, a wall-fed spillway, lily clusters and dry nesting mounds.
+Dimensions and palette names belong to the caller; varied pieces accept an
+explicit seed. Eggshell and opaque lily-pad textures are appended material
+recipes, with no changes to terrain surface-class allocations.
+
+The Coil Causeway uses these pieces to divide its stone crossing into short
+reaches, distinguish a wet hatchery branch from a carved processional branch,
+and crown its final reward doorway. The ordinary cylinder primitive winds
+inward; these new opaque discs explicitly reverse that winding. Their tests
+check geometric faces against declared normals, and the leaf caps centre their
+radial texture coordinates.
+
+For existing gauntlets, the server layout refresh reads harvestable names from
+the manifest's resource field and preserves the published label and object ID.
+A complete preview/apply/repeat regression covers a route with a bonus node.

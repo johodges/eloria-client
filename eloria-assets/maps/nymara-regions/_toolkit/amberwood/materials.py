@@ -203,6 +203,9 @@ SPECS: tuple[MaterialSpec, ...] = (
                  base_color=(0.52, 0.53, 0.50, 1.0)),
     # Added for the barrows insides: an ossuary needs bone.
     MaterialSpec("grey_bone", "grey_bone", roughness=0.86),
+    # Hatchery furnishings; append so existing region material order is stable.
+    MaterialSpec("hatchery_eggshell", "hatchery_eggshell", roughness=0.72),
+    MaterialSpec("lily_pad", "lily_pad", roughness=0.64),
 )
 
 BY_NAME = {spec.name: spec for spec in SPECS}
@@ -306,6 +309,8 @@ def build_texture_sets() -> dict[str, T.TextureSet]:
     for name, texture_set in sets.items():
         texture_set.compact(orm_size=256, drop_normal=name in alpha_cut,
                             normal_size=256 if name.startswith("water") else None)
+    sets["hatchery_eggshell"] = T.hatchery_eggshell(256, seed=719)
+    sets["lily_pad"] = T.lily_pad(256, seed=727)
     return sets
 
 

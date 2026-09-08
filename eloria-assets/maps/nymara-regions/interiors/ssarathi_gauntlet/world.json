@@ -25,7 +25,7 @@
       "max": [
         26.55,
         16.65,
-        360.55
+        324.55
       ]
     },
     "playableBounds": {
@@ -37,7 +37,7 @@
       "max": [
         26.55,
         3.5,
-        360.55
+        324.55
       ]
     },
     "interiorClass": "gauntlet",
@@ -48,7 +48,7 @@
     "metresPerTile": 1.0,
     "serverOrigin": [
       15.0,
-      363.0
+      327.0
     ],
     "origin": [
       0.0,
@@ -74,7 +74,7 @@
       "position": [
         4.0,
         3.05,
-        354.0
+        318.0
       ],
       "rotationDegrees": 180,
       "surface": "Walk"
@@ -84,11 +84,11 @@
     "binary": "collision.bin",
     "format": "EWCG-v1",
     "width": 84,
-    "height": 732,
+    "height": 660,
     "cellMetres": 0.5,
     "originMetres": [
       -15.0,
-      363.0
+      327.0
     ],
     "heightEncoding": {
       "origin": -0.2,
@@ -99,32 +99,304 @@
       ],
       "zeroMeansBlocked": true
     },
-    "walkableCells": 17900,
-    "blockedCells": 43588,
-    "walkableFraction": 0.2911,
+    "walkableCells": 16074,
+    "blockedCells": 39366,
+    "walkableFraction": 0.2899,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
       "Secrets_ssarathi_gauntlet",
-      "Section_ssarathi_gauntlet",
-      "Roof_ssarathi_gauntlet_verdant_terrace_stone",
-      "Roof_ssarathi_gauntlet_verdant_wet_limestone",
-      "Build_ssarathi_gauntlet_amber_resin",
-      "Build_ssarathi_gauntlet_dark_iron",
-      "Build_ssarathi_gauntlet_gilt_brass",
-      "Build_ssarathi_gauntlet_timber_dark",
-      "Build_ssarathi_gauntlet_verdant_carved_jade",
-      "Build_ssarathi_gauntlet_verdant_frond",
-      "Build_ssarathi_gauntlet_verdant_jade",
-      "Build_ssarathi_gauntlet_verdant_terrace_stone",
-      "Build_ssarathi_gauntlet_verdant_wet_limestone",
-      "Build_ssarathi_gauntlet_water_lagoon"
+      "Section_ssarathi_gauntlet_band_-001",
+      "Roof_ssarathi_gauntlet_band_-001_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_-001_verdant_carved_jade",
+      "Section_ssarathi_gauntlet_band_+000",
+      "Roof_ssarathi_gauntlet_band_+000_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+000_amber_resin",
+      "Build_ssarathi_gauntlet_band_+000_dark_iron",
+      "Build_ssarathi_gauntlet_band_+000_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+000_timber_dark",
+      "Build_ssarathi_gauntlet_band_+000_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+000_verdant_terrace_stone",
+      "Section_ssarathi_gauntlet_band_+001",
+      "Roof_ssarathi_gauntlet_band_+001_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+001_timber_dark",
+      "Build_ssarathi_gauntlet_band_+001_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+001_verdant_jade",
+      "Build_ssarathi_gauntlet_band_+001_verdant_terrace_stone",
+      "Section_ssarathi_gauntlet_band_+002",
+      "Roof_ssarathi_gauntlet_band_+002_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+002_amber_resin",
+      "Build_ssarathi_gauntlet_band_+002_dark_iron",
+      "Build_ssarathi_gauntlet_band_+002_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+002_hatchery_eggshell",
+      "Build_ssarathi_gauntlet_band_+002_lily_pad",
+      "Build_ssarathi_gauntlet_band_+002_timber_dark",
+      "Build_ssarathi_gauntlet_band_+002_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+002_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+002_water_lagoon",
+      "Section_ssarathi_gauntlet_band_+003",
+      "Roof_ssarathi_gauntlet_band_+003_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+003_amber_resin",
+      "Build_ssarathi_gauntlet_band_+003_dark_iron",
+      "Build_ssarathi_gauntlet_band_+003_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+003_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+003_verdant_terrace_stone",
+      "Section_ssarathi_gauntlet_band_+004",
+      "Roof_ssarathi_gauntlet_band_+004_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+004_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+004_amber_resin",
+      "Build_ssarathi_gauntlet_band_+004_dark_iron",
+      "Build_ssarathi_gauntlet_band_+004_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+004_hatchery_eggshell",
+      "Build_ssarathi_gauntlet_band_+004_lily_pad",
+      "Build_ssarathi_gauntlet_band_+004_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+004_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+004_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+004_water_lagoon",
+      "Section_ssarathi_gauntlet_band_+005",
+      "Roof_ssarathi_gauntlet_band_+005_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+005_amber_resin",
+      "Build_ssarathi_gauntlet_band_+005_dark_iron",
+      "Build_ssarathi_gauntlet_band_+005_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+005_hatchery_eggshell",
+      "Build_ssarathi_gauntlet_band_+005_lily_pad",
+      "Build_ssarathi_gauntlet_band_+005_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+005_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+005_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+005_water_lagoon",
+      "Section_ssarathi_gauntlet_band_+006",
+      "Roof_ssarathi_gauntlet_band_+006_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+006_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+006_amber_resin",
+      "Build_ssarathi_gauntlet_band_+006_dark_iron",
+      "Build_ssarathi_gauntlet_band_+006_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+006_hatchery_eggshell",
+      "Build_ssarathi_gauntlet_band_+006_lily_pad",
+      "Build_ssarathi_gauntlet_band_+006_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+006_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+006_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+006_water_lagoon",
+      "Section_ssarathi_gauntlet_band_+007",
+      "Roof_ssarathi_gauntlet_band_+007_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+007_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+007_timber_dark",
+      "Build_ssarathi_gauntlet_band_+007_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+007_verdant_jade",
+      "Build_ssarathi_gauntlet_band_+007_verdant_jungle_floor",
+      "Build_ssarathi_gauntlet_band_+007_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+007_verdant_wet_limestone",
+      "Section_ssarathi_gauntlet_band_+008",
+      "Roof_ssarathi_gauntlet_band_+008_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+008_amber_resin",
+      "Build_ssarathi_gauntlet_band_+008_dark_iron",
+      "Build_ssarathi_gauntlet_band_+008_hatchery_eggshell",
+      "Build_ssarathi_gauntlet_band_+008_lily_pad",
+      "Build_ssarathi_gauntlet_band_+008_timber_dark",
+      "Build_ssarathi_gauntlet_band_+008_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+008_verdant_jungle_floor",
+      "Build_ssarathi_gauntlet_band_+008_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+008_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+008_water_lagoon",
+      "Section_ssarathi_gauntlet_band_+009",
+      "Roof_ssarathi_gauntlet_band_+009_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+009_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+009_amber_resin",
+      "Build_ssarathi_gauntlet_band_+009_dark_iron",
+      "Build_ssarathi_gauntlet_band_+009_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+009_hatchery_eggshell",
+      "Build_ssarathi_gauntlet_band_+009_lily_pad",
+      "Build_ssarathi_gauntlet_band_+009_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+009_verdant_jade",
+      "Build_ssarathi_gauntlet_band_+009_verdant_jungle_floor",
+      "Build_ssarathi_gauntlet_band_+009_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+009_verdant_wet_limestone",
+      "Section_ssarathi_gauntlet_band_+010",
+      "Roof_ssarathi_gauntlet_band_+010_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+010_amber_resin",
+      "Build_ssarathi_gauntlet_band_+010_dark_iron",
+      "Build_ssarathi_gauntlet_band_+010_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+010_timber_dark",
+      "Build_ssarathi_gauntlet_band_+010_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+010_verdant_terrace_stone",
+      "Section_ssarathi_gauntlet_band_+011",
+      "Roof_ssarathi_gauntlet_band_+011_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+011_amber_resin",
+      "Build_ssarathi_gauntlet_band_+011_dark_iron",
+      "Build_ssarathi_gauntlet_band_+011_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+011_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+011_verdant_frond",
+      "Build_ssarathi_gauntlet_band_+011_verdant_terrace_stone",
+      "Section_ssarathi_gauntlet_band_+012",
+      "Roof_ssarathi_gauntlet_band_+012_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+012_amber_resin",
+      "Build_ssarathi_gauntlet_band_+012_dark_iron",
+      "Build_ssarathi_gauntlet_band_+012_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+012_timber_dark",
+      "Build_ssarathi_gauntlet_band_+012_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+012_verdant_terrace_stone",
+      "Section_ssarathi_gauntlet_band_+013",
+      "Roof_ssarathi_gauntlet_band_+013_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+013_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+013_verdant_jade",
+      "Build_ssarathi_gauntlet_band_+013_verdant_terrace_stone",
+      "Section_ssarathi_gauntlet_band_+014",
+      "Roof_ssarathi_gauntlet_band_+014_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+014_amber_resin",
+      "Build_ssarathi_gauntlet_band_+014_dark_iron",
+      "Build_ssarathi_gauntlet_band_+014_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+014_hatchery_eggshell",
+      "Build_ssarathi_gauntlet_band_+014_lily_pad",
+      "Build_ssarathi_gauntlet_band_+014_timber_dark",
+      "Build_ssarathi_gauntlet_band_+014_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+014_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+014_water_lagoon",
+      "Section_ssarathi_gauntlet_band_+015",
+      "Roof_ssarathi_gauntlet_band_+015_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+015_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+015_amber_resin",
+      "Build_ssarathi_gauntlet_band_+015_dark_iron",
+      "Build_ssarathi_gauntlet_band_+015_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+015_lily_pad",
+      "Build_ssarathi_gauntlet_band_+015_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+015_verdant_jade",
+      "Build_ssarathi_gauntlet_band_+015_verdant_jungle_floor",
+      "Build_ssarathi_gauntlet_band_+015_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+015_verdant_wet_limestone",
+      "Section_ssarathi_gauntlet_band_+016",
+      "Roof_ssarathi_gauntlet_band_+016_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+016_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+016_amber_resin",
+      "Build_ssarathi_gauntlet_band_+016_dark_iron",
+      "Build_ssarathi_gauntlet_band_+016_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+016_hatchery_eggshell",
+      "Build_ssarathi_gauntlet_band_+016_lily_pad",
+      "Build_ssarathi_gauntlet_band_+016_timber_dark",
+      "Build_ssarathi_gauntlet_band_+016_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+016_verdant_jungle_floor",
+      "Build_ssarathi_gauntlet_band_+016_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+016_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+016_water_lagoon",
+      "Section_ssarathi_gauntlet_band_+017",
+      "Roof_ssarathi_gauntlet_band_+017_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+017_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+017_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+017_verdant_wet_limestone",
+      "Section_ssarathi_gauntlet_band_+018",
+      "Roof_ssarathi_gauntlet_band_+018_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+018_amber_resin",
+      "Build_ssarathi_gauntlet_band_+018_dark_iron",
+      "Build_ssarathi_gauntlet_band_+018_verdant_carved_jade",
+      "Section_ssarathi_gauntlet_band_+019",
+      "Roof_ssarathi_gauntlet_band_+019_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+019_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+019_dark_iron",
+      "Build_ssarathi_gauntlet_band_+019_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+019_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+019_verdant_wet_limestone",
+      "Section_ssarathi_gauntlet_band_+020",
+      "Roof_ssarathi_gauntlet_band_+020_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+020_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+020_amber_resin",
+      "Build_ssarathi_gauntlet_band_+020_dark_iron",
+      "Build_ssarathi_gauntlet_band_+020_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+020_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+020_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+020_verdant_wet_limestone",
+      "Section_ssarathi_gauntlet_band_+021",
+      "Roof_ssarathi_gauntlet_band_+021_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+021_amber_resin",
+      "Build_ssarathi_gauntlet_band_+021_dark_iron",
+      "Build_ssarathi_gauntlet_band_+021_hatchery_eggshell",
+      "Build_ssarathi_gauntlet_band_+021_lily_pad",
+      "Build_ssarathi_gauntlet_band_+021_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+021_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+021_water_lagoon",
+      "Section_ssarathi_gauntlet_band_+022",
+      "Roof_ssarathi_gauntlet_band_+022_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+022_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+022_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+022_verdant_jade",
+      "Build_ssarathi_gauntlet_band_+022_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+022_verdant_wet_limestone",
+      "Section_ssarathi_gauntlet_band_+023",
+      "Roof_ssarathi_gauntlet_band_+023_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+023_hatchery_eggshell",
+      "Build_ssarathi_gauntlet_band_+023_lily_pad",
+      "Build_ssarathi_gauntlet_band_+023_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+023_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+023_water_lagoon",
+      "Section_ssarathi_gauntlet_band_+024",
+      "Roof_ssarathi_gauntlet_band_+024_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+024_amber_resin",
+      "Build_ssarathi_gauntlet_band_+024_dark_iron",
+      "Build_ssarathi_gauntlet_band_+024_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+024_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+024_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+024_verdant_wet_limestone",
+      "Section_ssarathi_gauntlet_band_+025",
+      "Roof_ssarathi_gauntlet_band_+025_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+025_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+025_amber_resin",
+      "Build_ssarathi_gauntlet_band_+025_dark_iron",
+      "Build_ssarathi_gauntlet_band_+025_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+025_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+025_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+025_verdant_wet_limestone",
+      "Section_ssarathi_gauntlet_band_+026",
+      "Roof_ssarathi_gauntlet_band_+026_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+026_amber_resin",
+      "Build_ssarathi_gauntlet_band_+026_dark_iron",
+      "Build_ssarathi_gauntlet_band_+026_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+026_timber_dark",
+      "Build_ssarathi_gauntlet_band_+026_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+026_verdant_terrace_stone",
+      "Section_ssarathi_gauntlet_band_+027",
+      "Roof_ssarathi_gauntlet_band_+027_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+027_verdant_terrace_stone"
     ]
   },
   "cutaway": {
     "hideNodes": [
-      "Roof_ssarathi_gauntlet_verdant_terrace_stone",
-      "Roof_ssarathi_gauntlet_verdant_wet_limestone"
+      "Roof_ssarathi_gauntlet_band_-001_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+000_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+001_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+002_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+003_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+004_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+004_verdant_wet_limestone",
+      "Roof_ssarathi_gauntlet_band_+005_verdant_wet_limestone",
+      "Roof_ssarathi_gauntlet_band_+006_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+006_verdant_wet_limestone",
+      "Roof_ssarathi_gauntlet_band_+007_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+007_verdant_wet_limestone",
+      "Roof_ssarathi_gauntlet_band_+008_verdant_wet_limestone",
+      "Roof_ssarathi_gauntlet_band_+009_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+009_verdant_wet_limestone",
+      "Roof_ssarathi_gauntlet_band_+010_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+011_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+012_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+013_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+014_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+015_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+015_verdant_wet_limestone",
+      "Roof_ssarathi_gauntlet_band_+016_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+016_verdant_wet_limestone",
+      "Roof_ssarathi_gauntlet_band_+017_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+017_verdant_wet_limestone",
+      "Roof_ssarathi_gauntlet_band_+018_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+019_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+019_verdant_wet_limestone",
+      "Roof_ssarathi_gauntlet_band_+020_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+020_verdant_wet_limestone",
+      "Roof_ssarathi_gauntlet_band_+021_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+022_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+022_verdant_wet_limestone",
+      "Roof_ssarathi_gauntlet_band_+023_verdant_wet_limestone",
+      "Roof_ssarathi_gauntlet_band_+024_verdant_wet_limestone",
+      "Roof_ssarathi_gauntlet_band_+025_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+025_verdant_wet_limestone",
+      "Roof_ssarathi_gauntlet_band_+026_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+027_verdant_terrace_stone"
     ],
     "reason": "interior lids; the isometric rig frames the floor, not the roof"
   },
@@ -167,7 +439,7 @@
       ],
       "serverTile": [
         8,
-        350
+        314
       ],
       "objectId": 861
     },
@@ -184,7 +456,7 @@
       ],
       "serverTile": [
         21,
-        352
+        316
       ],
       "objectId": 800
     },
@@ -197,11 +469,11 @@
       "position": [
         -9.2,
         1.0,
-        28.0
+        24.0
       ],
       "serverTile": [
         6,
-        335
+        303
       ],
       "objectId": 862
     },
@@ -214,7 +486,7 @@
       "position": [
         4.0,
         3.6,
-        356.5
+        320.5
       ],
       "serverTile": [
         19,
@@ -231,7 +503,7 @@
       "position": [
         9.0,
         4.0,
-        351.0
+        315.0
       ],
       "serverTile": [
         24,
@@ -248,7 +520,7 @@
       "position": [
         -1.6,
         4.0,
-        358.0
+        322.0
       ],
       "serverTile": [
         13,
@@ -265,33 +537,45 @@
       "position": [
         -1.5,
         0.0,
-        156.0
+        140.0
       ],
       "serverTile": [
         14,
-        207
+        187
       ]
     }
   ],
   "environment": {
     "sky": "none",
+    "backgroundColor": [
+      0.025,
+      0.04,
+      0.035
+    ],
+    "sun": {
+      "enabled": false
+    },
     "ambient": {
-      "colour": [
-        0.1,
-        0.1,
-        0.12
+      "color": [
+        0.54,
+        0.6,
+        0.47
       ],
-      "energy": 0.5
+      "energy": 1.1
     },
     "fog": {
       "enabled": true,
-      "colour": [
-        0.02,
-        0.02,
-        0.03
+      "color": [
+        0.04,
+        0.06,
+        0.045
       ],
-      "begin": 16.0,
-      "end": 60.0
+      "density": 0.003
+    },
+    "tonemap": {
+      "mode": "filmic",
+      "exposure": 1.25,
+      "white": 3.5
     },
     "openToSky": [],
     "lights": [
@@ -335,7 +619,7 @@
         "position": [
           0.0,
           3.38,
-          36.0
+          32.0
         ],
         "color": [
           1.0,
@@ -350,9 +634,9 @@
         "id": "lamp-003",
         "kind": "point",
         "position": [
-          0.8,
-          0.98,
-          63.0
+          3.0,
+          4.38,
+          104.0
         ],
         "color": [
           1.0,
@@ -367,9 +651,9 @@
         "id": "lamp-004",
         "kind": "point",
         "position": [
-          0.8,
-          0.98,
-          67.8
+          7.0,
+          3.38,
+          140.0
         ],
         "color": [
           1.0,
@@ -384,9 +668,9 @@
         "id": "lamp-005",
         "kind": "point",
         "position": [
-          0.8,
-          0.98,
-          72.6
+          7.0,
+          3.38,
+          171.0
         ],
         "color": [
           1.0,
@@ -401,9 +685,9 @@
         "id": "lamp-006",
         "kind": "point",
         "position": [
-          0.8,
-          0.98,
-          77.4
+          -4.0,
+          3.38,
+          196.0
         ],
         "color": [
           1.0,
@@ -418,9 +702,9 @@
         "id": "lamp-007",
         "kind": "point",
         "position": [
-          0.8,
-          0.98,
-          82.2
+          18.0,
+          3.38,
+          196.0
         ],
         "color": [
           1.0,
@@ -435,9 +719,9 @@
         "id": "lamp-008",
         "kind": "point",
         "position": [
-          0.8,
-          0.98,
-          87.0
+          7.0,
+          3.38,
+          220.0
         ],
         "color": [
           1.0,
@@ -452,9 +736,9 @@
         "id": "lamp-009",
         "kind": "point",
         "position": [
-          3.0,
-          4.38,
-          116.0
+          7.0,
+          6.38,
+          257.0
         ],
         "color": [
           1.0,
@@ -469,9 +753,9 @@
         "id": "lamp-010",
         "kind": "point",
         "position": [
-          7.0,
-          3.38,
-          156.0
+          16.47,
+          3.98,
+          294.45
         ],
         "color": [
           1.0,
@@ -486,9 +770,9 @@
         "id": "lamp-011",
         "kind": "point",
         "position": [
-          7.0,
-          3.38,
-          191.0
+          12.58,
+          3.98,
+          298.48
         ],
         "color": [
           1.0,
@@ -503,9 +787,9 @@
         "id": "lamp-012",
         "kind": "point",
         "position": [
-          -4.0,
-          3.38,
-          220.0
+          7.05,
+          3.98,
+          300.71
         ],
         "color": [
           1.0,
@@ -520,9 +804,9 @@
         "id": "lamp-013",
         "kind": "point",
         "position": [
-          18.0,
-          3.38,
-          220.0
+          0.95,
+          3.98,
+          300.71
         ],
         "color": [
           1.0,
@@ -537,9 +821,9 @@
         "id": "lamp-014",
         "kind": "point",
         "position": [
-          7.0,
-          3.38,
-          248.0
+          -4.58,
+          3.98,
+          298.48
         ],
         "color": [
           1.0,
@@ -554,9 +838,9 @@
         "id": "lamp-015",
         "kind": "point",
         "position": [
-          7.0,
-          6.38,
-          289.0
+          -8.47,
+          3.98,
+          294.45
         ],
         "color": [
           1.0,
@@ -571,9 +855,9 @@
         "id": "lamp-016",
         "kind": "point",
         "position": [
-          16.47,
+          -1.0,
           3.98,
-          330.45
+          315.0
         ],
         "color": [
           1.0,
@@ -588,9 +872,9 @@
         "id": "lamp-017",
         "kind": "point",
         "position": [
-          12.58,
-          3.98,
-          334.48
+          -2.5,
+          3.18,
+          8.1
         ],
         "color": [
           1.0,
@@ -605,9 +889,9 @@
         "id": "lamp-018",
         "kind": "point",
         "position": [
-          7.05,
-          3.98,
-          336.71
+          -7.0,
+          3.08,
+          32.0
         ],
         "color": [
           1.0,
@@ -622,9 +906,9 @@
         "id": "lamp-019",
         "kind": "point",
         "position": [
-          0.95,
-          3.98,
-          336.71
+          7.0,
+          3.08,
+          32.0
         ],
         "color": [
           1.0,
@@ -639,9 +923,9 @@
         "id": "lamp-020",
         "kind": "point",
         "position": [
-          -4.58,
-          3.98,
-          334.48
+          -2.5,
+          3.38,
+          24.6
         ],
         "color": [
           1.0,
@@ -656,9 +940,9 @@
         "id": "lamp-021",
         "kind": "point",
         "position": [
-          -8.47,
-          3.98,
-          330.45
+          -2.5,
+          3.38,
+          38.6
         ],
         "color": [
           1.0,
@@ -673,9 +957,400 @@
         "id": "lamp-022",
         "kind": "point",
         "position": [
-          -1.0,
-          3.98,
-          351.0
+          1.0,
+          2.88,
+          55.6
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-023",
+        "kind": "point",
+        "position": [
+          1.0,
+          2.88,
+          66.6
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-024",
+        "kind": "point",
+        "position": [
+          1.0,
+          2.88,
+          77.6
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-025",
+        "kind": "point",
+        "position": [
+          -6.0,
+          2.38,
+          97.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-026",
+        "kind": "point",
+        "position": [
+          -6.0,
+          2.38,
+          103.5
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-027",
+        "kind": "point",
+        "position": [
+          -6.0,
+          2.38,
+          111.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-028",
+        "kind": "point",
+        "position": [
+          0.5,
+          3.58,
+          112.6
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-029",
+        "kind": "point",
+        "position": [
+          4.0,
+          2.98,
+          127.6
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-030",
+        "kind": "point",
+        "position": [
+          4.0,
+          2.98,
+          137.6
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-031",
+        "kind": "point",
+        "position": [
+          4.0,
+          2.98,
+          147.6
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-032",
+        "kind": "point",
+        "position": [
+          -1.5,
+          2.68,
+          130.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-033",
+        "kind": "point",
+        "position": [
+          -1.5,
+          2.68,
+          150.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-034",
+        "kind": "point",
+        "position": [
+          16.35,
+          3.28,
+          175.1
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-035",
+        "kind": "point",
+        "position": [
+          -6.0,
+          2.78,
+          190.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-036",
+        "kind": "point",
+        "position": [
+          -6.0,
+          2.78,
+          202.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-037",
+        "kind": "point",
+        "position": [
+          15.9,
+          3.48,
+          189.1
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-038",
+        "kind": "point",
+        "position": [
+          15.9,
+          3.48,
+          202.1
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-039",
+        "kind": "point",
+        "position": [
+          4.5,
+          6.78,
+          250.6
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-040",
+        "kind": "point",
+        "position": [
+          1.8,
+          5.88,
+          258.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-041",
+        "kind": "point",
+        "position": [
+          12.2,
+          5.88,
+          258.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-042",
+        "kind": "point",
+        "position": [
+          0.85,
+          7.78,
+          302.4
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-043",
+        "kind": "point",
+        "position": [
+          -2.5,
+          8.18,
+          300.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-044",
+        "kind": "point",
+        "position": [
+          10.5,
+          8.18,
+          300.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-045",
+        "kind": "point",
+        "position": [
+          4.0,
+          5.98,
+          321.0
         ],
         "color": [
           1.0,
@@ -701,303 +1376,303 @@
       "x0": -1.8,
       "z0": 12.2,
       "x1": 1.8,
-      "z1": 20.4,
+      "z1": 18.4,
       "floor": 0.0,
       "height": 3.8
     },
     "water-gate-way-b": {
       "x0": -1.8,
-      "z0": 19.6,
+      "z0": 17.6,
       "x1": 1.8,
-      "z1": 27.8,
+      "z1": 23.8,
       "floor": 0.0,
       "height": 3.8
     },
     "water-gate": {
       "x0": -10.6,
-      "z0": 26.0,
+      "z0": 22.0,
       "x1": 10.6,
-      "z1": 46.0,
+      "z1": 42.0,
       "floor": 0.0,
       "height": 5.6
     },
     "lily-causeway-way-a": {
       "x0": 1.2,
-      "z0": 44.2,
+      "z0": 40.2,
       "x1": 4.8,
-      "z1": 52.4,
+      "z1": 46.4,
       "floor": 0.0,
       "height": 3.8
     },
     "lily-causeway-way-b": {
       "x0": 1.2,
-      "z0": 51.6,
+      "z0": 45.6,
       "x1": 4.8,
-      "z1": 59.8,
+      "z1": 51.8,
       "floor": 0.0,
       "height": 3.8
     },
     "lily-causeway-in": {
       "x0": 0.0,
-      "z0": 58.0,
+      "z0": 50.0,
       "x1": 6.0,
-      "z1": 61.0,
+      "z1": 53.0,
       "floor": 0.0,
       "height": 4.4
     },
     "lily-causeway-out": {
       "x0": 0.0,
-      "z0": 89.0,
+      "z0": 81.0,
       "x1": 6.0,
-      "z1": 92.0,
+      "z1": 84.0,
       "floor": 0.0,
       "height": 4.4
     },
     "lily-causeway": {
       "x0": -6.0,
-      "z0": 61.0,
+      "z0": 53.0,
       "x1": 12.0,
-      "z1": 89.0,
+      "z1": 81.0,
       "floor": -3.0,
       "height": 9.0
     },
     "hatchery-way-a": {
       "x0": 1.2,
-      "z0": 90.2,
+      "z0": 82.2,
       "x1": 4.8,
-      "z1": 98.4,
+      "z1": 88.4,
       "floor": 0.0,
       "height": 3.8
     },
     "hatchery-way-b": {
       "x0": 1.2,
-      "z0": 97.6,
+      "z0": 87.6,
       "x1": 4.8,
-      "z1": 105.8,
+      "z1": 93.8,
       "floor": 0.0,
       "height": 3.8
     },
     "hatchery": {
       "x0": -10.2,
-      "z0": 104.0,
+      "z0": 92.0,
       "x1": 16.2,
-      "z1": 128.0,
+      "z1": 116.0,
       "floor": 0.0,
       "height": 8.0
     },
     "serpent-gallery-way-a": {
       "x0": 5.2,
-      "z0": 126.2,
+      "z0": 114.2,
       "x1": 8.8,
-      "z1": 134.4,
+      "z1": 120.4,
       "floor": 0.0,
       "height": 3.8
     },
     "serpent-gallery-way-b": {
       "x0": 5.2,
-      "z0": 133.6,
+      "z0": 119.6,
       "x1": 8.8,
-      "z1": 141.8,
+      "z1": 125.8,
       "floor": 0.0,
       "height": 3.8
     },
     "serpent-gallery": {
       "x0": 1.5,
-      "z0": 140.0,
+      "z0": 124.0,
       "x1": 12.5,
-      "z1": 172.0,
+      "z1": 156.0,
       "floor": 0.0,
       "height": 5.4
     },
     "serpent-gallery-alcove-0": {
       "x0": -4.5,
-      "z0": 143.5,
+      "z0": 127.5,
       "x1": 1.5,
-      "z1": 148.5,
+      "z1": 132.5,
       "floor": 0.0,
       "height": 4.0
     },
     "serpent-gallery-alcove-1": {
       "x0": -4.5,
-      "z0": 153.5,
+      "z0": 137.5,
       "x1": 1.5,
-      "z1": 158.5,
+      "z1": 142.5,
       "floor": 0.0,
       "height": 4.0
     },
     "serpent-gallery-alcove-2": {
       "x0": -4.5,
-      "z0": 163.5,
+      "z0": 147.5,
       "x1": 1.5,
-      "z1": 168.5,
+      "z1": 152.5,
       "floor": 0.0,
       "height": 4.0
     },
     "two-mouths-way-a": {
       "x0": 5.2,
-      "z0": 170.2,
+      "z0": 154.2,
       "x1": 8.8,
-      "z1": 178.4,
+      "z1": 160.4,
       "floor": 0.0,
       "height": 3.8
     },
     "two-mouths-way-b": {
       "x0": 5.2,
-      "z0": 177.6,
+      "z0": 159.6,
       "x1": 8.8,
-      "z1": 185.8,
+      "z1": 165.8,
       "floor": 0.0,
       "height": 3.8
     },
     "two-mouths-hub": {
       "x0": -8.0,
-      "z0": 184.0,
+      "z0": 164.0,
       "x1": 22.0,
-      "z1": 198.0,
+      "z1": 178.0,
       "floor": 0.0,
       "height": 5.6
     },
     "two-mouths-wet-mouth": {
       "x0": -12.0,
-      "z0": 210.0,
+      "z0": 186.0,
       "x1": 4.0,
-      "z1": 230.0,
+      "z1": 206.0,
       "floor": 0.0,
       "height": 6.0
     },
     "two-mouths-carved-mouth": {
       "x0": 10.0,
-      "z0": 210.0,
+      "z0": 186.0,
       "x1": 26.0,
-      "z1": 230.0,
+      "z1": 206.0,
       "floor": 0.0,
       "height": 6.0
     },
     "two-mouths-merge": {
       "x0": -8.0,
-      "z0": 242.0,
+      "z0": 214.0,
       "x1": 22.0,
-      "z1": 254.0,
+      "z1": 226.0,
       "floor": 0.0,
       "height": 5.6
     },
     "two-mouths-wet-mouth-out": {
       "x0": -5.8,
-      "z0": 228.2,
+      "z0": 204.2,
       "x1": -2.2,
-      "z1": 243.8,
+      "z1": 215.8,
       "floor": 0.0,
       "height": 3.8
     },
     "two-mouths-carved-mouth-out": {
       "x0": 16.2,
-      "z0": 228.2,
+      "z0": 204.2,
       "x1": 19.8,
-      "z1": 243.8,
+      "z1": 215.8,
       "floor": 0.0,
       "height": 3.8
     },
     "two-mouths-wet-mouth-way-a": {
       "x0": -5.8,
-      "z0": 196.2,
+      "z0": 176.2,
       "x1": -2.2,
-      "z1": 204.4,
+      "z1": 182.4,
       "floor": 0.0,
       "height": 3.8
     },
     "two-mouths-wet-mouth-way-b": {
       "x0": -5.8,
-      "z0": 203.6,
+      "z0": 181.6,
       "x1": -2.2,
-      "z1": 211.8,
+      "z1": 187.8,
       "floor": 0.0,
       "height": 3.8
     },
     "two-mouths-carved-mouth-way-a": {
       "x0": 16.2,
-      "z0": 196.2,
+      "z0": 176.2,
       "x1": 19.8,
-      "z1": 204.4,
+      "z1": 182.4,
       "floor": 0.0,
       "height": 3.8
     },
     "two-mouths-carved-mouth-way-b": {
       "x0": 16.2,
-      "z0": 203.6,
+      "z0": 181.6,
       "x1": 19.8,
-      "z1": 211.8,
+      "z1": 187.8,
       "floor": 0.0,
       "height": 3.8
     },
     "sun-stair-way-a": {
       "x0": 5.2,
-      "z0": 252.2,
+      "z0": 224.2,
       "x1": 8.8,
-      "z1": 260.4,
+      "z1": 230.4,
       "floor": 0.0,
       "height": 3.8
     },
     "sun-stair-way-b": {
       "x0": 5.2,
-      "z0": 259.6,
+      "z0": 229.6,
       "x1": 8.8,
-      "z1": 267.8,
+      "z1": 235.8,
       "floor": 0.0,
       "height": 3.8
     },
     "sun-stair-climb": {
       "x0": 5.2,
-      "z0": 264.2,
+      "z0": 232.2,
       "x1": 8.8,
-      "z1": 281.8,
+      "z1": 249.8,
       "floor": 0.0,
       "height": 3.8
     },
     "sun-stair": {
       "x0": -4.4,
-      "z0": 280.0,
+      "z0": 248.0,
       "x1": 18.4,
-      "z1": 298.0,
+      "z1": 266.0,
       "floor": 3.0,
       "height": 5.6
     },
     "coiled-court-way-a": {
       "x0": 2.2,
-      "z0": 296.2,
+      "z0": 264.2,
       "x1": 5.8,
-      "z1": 304.4,
+      "z1": 270.4,
       "floor": 3.0,
       "height": 3.8
     },
     "coiled-court-way-b": {
       "x0": 2.2,
-      "z0": 303.6,
+      "z0": 269.6,
       "x1": 5.8,
-      "z1": 311.8,
+      "z1": 275.8,
       "floor": 3.0,
       "height": 3.8
     },
     "coiled-court": {
       "x0": -12.0,
-      "z0": 310.0,
+      "z0": 274.0,
       "x1": 20.0,
-      "z1": 340.0,
+      "z1": 304.0,
       "floor": 3.0,
       "height": 9.0
     },
     "vault-way": {
       "x0": 2.2,
-      "z0": 338.2,
+      "z0": 302.2,
       "x1": 5.8,
-      "z1": 349.8,
+      "z1": 313.8,
       "floor": 3.0,
       "height": 3.8
     },
     "vault": {
       "x0": -3.0,
-      "z0": 348.0,
+      "z0": 312.0,
       "x1": 11.0,
-      "z1": 360.0,
+      "z1": 324.0,
       "floor": 3.0,
       "height": 5.0
     }
@@ -1013,11 +1688,11 @@
       "boundsTiles": {
         "min": [
           7,
-          349
+          313
         ],
         "max": [
           23,
-          363
+          327
         ]
       },
       "arrival": [
@@ -1027,7 +1702,7 @@
       ],
       "arrivalTile": [
         15,
-        356
+        320
       ],
       "exit": {
         "id": "exit-staging",
@@ -1042,7 +1717,7 @@
         ],
         "serverTile": [
           21,
-          352
+          316
         ],
         "objectId": 800
       }
@@ -1063,25 +1738,25 @@
           "position": [
             0.0,
             1.2,
-            20.0
+            18.0
           ],
           "before": [
             0.0,
             0.0,
-            17.0
+            15.0
           ],
           "beyond": [
             0.0,
             0.0,
-            23.1
+            21.1
           ],
           "tile": [
             15,
-            346
+            312
           ],
           "beyondTile": [
             15,
-            340
+            306
           ],
           "objectId": 801
         },
@@ -1089,276 +1764,252 @@
         "room": "water-gate",
         "bounds": [
           -10.6,
-          26.0,
+          22.0,
           10.6,
-          46.0
+          42.0
         ],
         "spawns": [
           [
             -8.2,
             0.0,
-            30.0
+            26.0
           ],
           [
             -5.2,
             0.0,
-            30.0
+            26.0
           ],
           [
             -2.2,
             0.0,
-            30.0
+            26.0
           ],
           [
             0.8,
             0.0,
-            30.0
+            26.0
           ],
           [
             3.8,
             0.0,
-            30.0
+            26.0
           ],
           [
             6.8,
             0.0,
-            30.0
+            26.0
           ],
           [
             -8.2,
             0.0,
-            33.0
+            29.0
           ],
           [
             -5.2,
             0.0,
-            33.0
+            29.0
           ],
           [
             -2.2,
             0.0,
-            33.0
+            29.0
           ],
           [
             0.8,
             0.0,
-            33.0
+            29.0
           ],
           [
             3.8,
             0.0,
-            33.0
+            29.0
           ],
           [
             6.8,
             0.0,
-            33.0
+            29.0
           ],
           [
             -8.2,
             0.0,
-            36.0
+            32.0
           ],
           [
             -5.2,
             0.0,
-            36.0
+            32.0
           ],
           [
             -2.2,
             0.0,
-            36.0
+            32.0
           ],
           [
             0.8,
             0.0,
-            36.0
+            32.0
           ],
           [
             3.8,
             0.0,
-            36.0
+            32.0
           ],
           [
             6.8,
             0.0,
-            36.0
+            32.0
           ],
           [
             -8.2,
             0.0,
-            39.0
+            35.0
           ],
           [
             -5.2,
             0.0,
-            39.0
+            35.0
           ],
           [
             -2.2,
             0.0,
-            39.0
+            35.0
           ],
           [
             0.8,
             0.0,
-            39.0
+            35.0
           ],
           [
             3.8,
             0.0,
-            39.0
+            35.0
           ],
           [
             6.8,
             0.0,
-            39.0
+            35.0
           ],
           [
             -8.2,
             0.0,
-            42.0
+            38.0
           ],
           [
             -5.2,
             0.0,
-            42.0
+            38.0
           ],
           [
             -2.2,
             0.0,
-            42.0
+            38.0
           ],
           [
             0.8,
             0.0,
-            42.0
+            38.0
           ],
           [
             3.8,
             0.0,
-            42.0
+            38.0
           ],
           [
             6.8,
             0.0,
-            42.0
+            38.0
           ]
         ],
         "boundsTiles": {
           "min": [
             4,
-            317
+            285
           ],
           "max": [
             26,
-            337
+            305
           ]
         },
         "spawnTiles": [
           [
-            10,
-            333
-          ],
-          [
-            13,
-            333
-          ],
-          [
-            16,
-            333
-          ],
-          [
-            19,
-            333
-          ],
-          [
-            22,
-            333
-          ],
-          [
             7,
-            330
-          ],
-          [
-            13,
-            330
-          ],
-          [
-            16,
-            330
-          ],
-          [
-            19,
-            330
-          ],
-          [
-            22,
-            330
-          ],
-          [
-            7,
-            327
+            301
           ],
           [
             10,
-            327
+            301
           ],
           [
             13,
-            327
+            301
           ],
           [
             16,
-            327
-          ],
-          [
-            19,
-            327
+            301
           ],
           [
             22,
-            327
+            301
           ],
           [
             13,
-            324
+            298
           ],
           [
             16,
-            324
+            298
           ],
           [
             19,
-            324
-          ],
-          [
-            22,
-            324
-          ],
-          [
-            7,
-            321
+            298
           ],
           [
             10,
-            321
+            295
           ],
           [
             13,
-            321
+            295
           ],
           [
             16,
-            321
+            295
           ],
           [
             19,
-            321
+            295
+          ],
+          [
+            13,
+            292
+          ],
+          [
+            16,
+            292
+          ],
+          [
+            19,
+            292
+          ],
+          [
+            7,
+            289
+          ],
+          [
+            10,
+            289
+          ],
+          [
+            13,
+            289
+          ],
+          [
+            16,
+            289
           ],
           [
             22,
-            321
+            289
           ]
         ]
       },
@@ -1377,25 +2028,25 @@
           "position": [
             3.0,
             1.2,
-            52.0
+            46.0
           ],
           "before": [
             3.0,
             0.0,
-            49.0
+            43.0
           ],
           "beyond": [
             3.0,
             0.0,
-            55.1
+            49.1
           ],
           "tile": [
             18,
-            314
+            284
           ],
           "beyondTile": [
             18,
-            308
+            278
           ],
           "objectId": 802
         },
@@ -1403,148 +2054,148 @@
         "room": "lily-causeway",
         "bounds": [
           0.7999999999999998,
-          61.0,
+          53.0,
           5.2,
-          89.0
+          81.0
         ],
         "spawns": [
           [
             1.9,
             0.0,
-            65.0
+            57.0
           ],
           [
             4.1,
             0.0,
-            65.0
+            57.0
           ],
           [
             1.9,
             0.0,
-            68.2
+            60.2
           ],
           [
             4.1,
             0.0,
-            68.2
+            60.2
           ],
           [
             1.9,
             0.0,
-            71.4
+            63.4
           ],
           [
             4.1,
             0.0,
-            71.4
+            63.4
           ],
           [
             1.9,
             0.0,
-            74.6
+            66.6
           ],
           [
             4.1,
             0.0,
-            74.6
+            66.6
           ],
           [
             1.9,
             0.0,
-            77.8
+            69.8
           ],
           [
             4.1,
             0.0,
-            77.8
+            69.8
           ],
           [
             1.9,
             0.0,
-            81.0
+            73.0
           ],
           [
             4.1,
             0.0,
-            81.0
+            73.0
           ],
           [
             1.9,
             0.0,
-            84.2
+            76.2
           ],
           [
             4.1,
             0.0,
-            84.2
+            76.2
           ]
         ],
         "boundsTiles": {
           "min": [
             16,
-            274
+            246
           ],
           "max": [
             20,
-            302
+            274
           ]
         },
         "spawnTiles": [
           [
             17,
-            298
+            270
           ],
           [
             19,
-            298
+            270
           ],
           [
             17,
-            295
+            267
           ],
           [
             19,
-            295
+            267
           ],
           [
             17,
-            292
+            264
           ],
           [
             19,
-            292
+            264
           ],
           [
             17,
-            288
+            260
           ],
           [
             19,
-            288
+            260
           ],
           [
             17,
-            285
+            257
           ],
           [
             19,
-            285
+            257
           ],
           [
             17,
-            282
+            254
           ],
           [
             19,
-            282
+            254
           ],
           [
             17,
-            279
+            251
           ],
           [
             19,
-            279
+            251
           ]
         ]
       },
@@ -1563,25 +2214,25 @@
           "position": [
             3.0,
             1.2,
-            98.0
+            88.0
           ],
           "before": [
             3.0,
             0.0,
-            95.0
+            85.0
           ],
           "beyond": [
             3.0,
             0.0,
-            101.1
+            91.1
           ],
           "tile": [
             18,
-            268
+            242
           ],
           "beyondTile": [
             18,
-            262
+            236
           ],
           "objectId": 803
         },
@@ -1589,317 +2240,301 @@
         "room": "hatchery",
         "bounds": [
           -10.2,
-          104.0,
+          92.0,
           16.2,
-          128.0
+          116.0
         ],
         "spawns": [
           [
             -7.8,
             0.0,
-            108.0
+            96.0
           ],
           [
             -4.3,
             0.0,
-            108.0
+            96.0
           ],
           [
             -0.8,
             0.0,
-            108.0
+            96.0
           ],
           [
             2.7,
             0.0,
-            108.0
+            96.0
           ],
           [
             6.2,
             0.0,
-            108.0
+            96.0
           ],
           [
             9.7,
             0.0,
-            108.0
+            96.0
           ],
           [
             13.2,
             0.0,
-            108.0
+            96.0
           ],
           [
             -7.8,
             0.0,
-            111.5
+            99.5
           ],
           [
             -4.3,
             0.0,
-            111.5
+            99.5
           ],
           [
             -0.8,
             0.0,
-            111.5
+            99.5
           ],
           [
             2.7,
             0.0,
-            111.5
+            99.5
           ],
           [
             6.2,
             0.0,
-            111.5
+            99.5
           ],
           [
             9.7,
             0.0,
-            111.5
+            99.5
           ],
           [
             13.2,
             0.0,
-            111.5
+            99.5
           ],
           [
             -7.8,
             0.0,
-            115.0
+            103.0
           ],
           [
             -4.3,
             0.0,
-            115.0
+            103.0
           ],
           [
             -0.8,
             0.0,
-            115.0
+            103.0
           ],
           [
             2.7,
             0.0,
-            115.0
+            103.0
           ],
           [
             6.2,
             0.0,
-            115.0
+            103.0
           ],
           [
             9.7,
             0.0,
-            115.0
+            103.0
           ],
           [
             13.2,
             0.0,
-            115.0
+            103.0
           ],
           [
             -7.8,
             0.0,
-            118.5
+            106.5
           ],
           [
             -4.3,
             0.0,
-            118.5
+            106.5
           ],
           [
             -0.8,
             0.0,
-            118.5
+            106.5
           ],
           [
             2.7,
             0.0,
-            118.5
+            106.5
           ],
           [
             6.2,
             0.0,
-            118.5
+            106.5
           ],
           [
             9.7,
             0.0,
-            118.5
+            106.5
           ],
           [
             13.2,
             0.0,
-            118.5
+            106.5
           ],
           [
             -7.8,
             0.0,
-            122.0
+            110.0
           ],
           [
             -4.3,
             0.0,
-            122.0
+            110.0
           ],
           [
             -0.8,
             0.0,
-            122.0
+            110.0
           ],
           [
             2.7,
             0.0,
-            122.0
+            110.0
           ],
           [
             6.2,
             0.0,
-            122.0
+            110.0
           ],
           [
             9.7,
             0.0,
-            122.0
+            110.0
           ],
           [
             13.2,
             0.0,
-            122.0
+            110.0
           ]
         ],
         "boundsTiles": {
           "min": [
             5,
-            235
+            211
           ],
           "max": [
             31,
-            259
+            235
           ]
         },
         "spawnTiles": [
           [
-            14,
-            255
+            11,
+            231
           ],
           [
             18,
-            255
+            231
           ],
           [
             21,
-            255
+            231
           ],
           [
             25,
-            255
-          ],
-          [
-            28,
-            255
+            231
           ],
           [
             7,
-            252
+            228
           ],
           [
             11,
-            252
+            228
           ],
           [
             14,
-            252
+            228
           ],
           [
             18,
-            252
+            228
           ],
           [
             21,
-            252
+            228
           ],
           [
             25,
-            252
+            228
           ],
           [
-            28,
-            252
+            11,
+            224
+          ],
+          [
+            14,
+            224
+          ],
+          [
+            18,
+            224
+          ],
+          [
+            21,
+            224
+          ],
+          [
+            25,
+            224
           ],
           [
             7,
-            248
+            220
           ],
           [
             11,
-            248
+            220
           ],
           [
             14,
-            248
+            220
           ],
           [
             18,
-            248
+            220
           ],
           [
             21,
-            248
+            220
           ],
           [
             25,
-            248
+            220
           ],
           [
             11,
-            244
+            217
           ],
           [
             14,
-            244
+            217
           ],
           [
             18,
-            244
+            217
           ],
           [
             21,
-            244
+            217
           ],
           [
             25,
-            244
-          ],
-          [
-            28,
-            244
-          ],
-          [
-            7,
-            241
-          ],
-          [
-            14,
-            241
-          ],
-          [
-            18,
-            241
-          ],
-          [
-            21,
-            241
-          ],
-          [
-            25,
-            241
-          ],
-          [
-            28,
-            241
+            217
           ]
         ]
       },
@@ -1918,25 +2553,25 @@
           "position": [
             7.0,
             1.2,
-            134.0
+            120.0
           ],
           "before": [
             7.0,
             0.0,
-            131.0
+            117.0
           ],
           "beyond": [
             7.0,
             0.0,
-            137.1
+            123.1
           ],
           "tile": [
             22,
-            232
+            210
           ],
           "beyondTile": [
             22,
-            226
+            204
           ],
           "objectId": 804
         },
@@ -1944,14 +2579,64 @@
         "room": "serpent-gallery",
         "bounds": [
           1.5,
-          140.0,
+          124.0,
           12.5,
-          172.0
+          156.0
         ],
         "spawns": [
           [
             3.9,
             0.0,
+            128.0
+          ],
+          [
+            7.1,
+            0.0,
+            128.0
+          ],
+          [
+            3.9,
+            0.0,
+            131.2
+          ],
+          [
+            7.1,
+            0.0,
+            131.2
+          ],
+          [
+            3.9,
+            0.0,
+            134.4
+          ],
+          [
+            7.1,
+            0.0,
+            134.4
+          ],
+          [
+            3.9,
+            0.0,
+            137.6
+          ],
+          [
+            7.1,
+            0.0,
+            137.6
+          ],
+          [
+            3.9,
+            0.0,
+            140.8
+          ],
+          [
+            7.1,
+            0.0,
+            140.8
+          ],
+          [
+            3.9,
+            0.0,
             144.0
           ],
           [
@@ -1978,128 +2663,70 @@
             7.1,
             0.0,
             150.4
-          ],
-          [
-            3.9,
-            0.0,
-            153.6
-          ],
-          [
-            7.1,
-            0.0,
-            153.6
-          ],
-          [
-            3.9,
-            0.0,
-            156.8
-          ],
-          [
-            7.1,
-            0.0,
-            156.8
-          ],
-          [
-            3.9,
-            0.0,
-            160.0
-          ],
-          [
-            7.1,
-            0.0,
-            160.0
-          ],
-          [
-            3.9,
-            0.0,
-            163.2
-          ],
-          [
-            7.1,
-            0.0,
-            163.2
-          ],
-          [
-            3.9,
-            0.0,
-            166.4
-          ],
-          [
-            7.1,
-            0.0,
-            166.4
           ]
         ],
         "boundsTiles": {
           "min": [
             16,
-            191
+            171
           ],
           "max": [
             28,
-            223
+            203
           ]
         },
         "spawnTiles": [
           [
-            19,
-            219
-          ],
-          [
             22,
-            219
+            199
           ],
           [
             19,
-            216
+            196
           ],
           [
             22,
-            216
+            196
           ],
           [
             19,
-            213
+            193
           ],
           [
             22,
-            213
+            193
+          ],
+          [
+            22,
+            189
           ],
           [
             19,
-            209
+            186
           ],
           [
             22,
-            209
+            186
           ],
           [
             19,
-            206
+            183
           ],
           [
             22,
-            206
+            183
           ],
           [
             22,
-            203
+            180
           ],
           [
             19,
-            200
+            177
           ],
           [
             22,
-            200
-          ],
-          [
-            19,
-            197
-          ],
-          [
-            22,
-            197
+            177
           ]
         ]
       },
@@ -2118,25 +2745,25 @@
           "position": [
             7.0,
             1.2,
-            178.0
+            160.0
           ],
           "before": [
             7.0,
             0.0,
-            175.0
+            157.0
           ],
           "beyond": [
             7.0,
             0.0,
-            181.1
+            163.1
           ],
           "tile": [
             22,
-            188
+            170
           ],
           "beyondTile": [
             22,
-            182
+            164
           ],
           "objectId": 805
         },
@@ -2144,130 +2771,130 @@
         "room": "two-mouths-hub",
         "bounds": [
           -8.0,
-          184.0,
+          164.0,
           22.0,
-          198.0
+          178.0
         ],
         "spawns": [
           [
             -5.6,
             0.0,
-            187.5
+            167.5
           ],
           [
             -2.1,
             0.0,
-            187.5
+            167.5
           ],
           [
             1.4,
             0.0,
-            187.5
+            167.5
           ],
           [
             4.9,
             0.0,
-            187.5
+            167.5
           ],
           [
             8.4,
             0.0,
-            187.5
+            167.5
           ],
           [
             11.9,
             0.0,
-            187.5
+            167.5
           ],
           [
             15.4,
             0.0,
-            187.5
+            167.5
           ],
           [
             18.9,
             0.0,
-            187.5
+            167.5
           ],
           [
             -5.6,
             0.0,
-            191.0
+            171.0
           ],
           [
             -2.1,
             0.0,
-            191.0
+            171.0
           ],
           [
             1.4,
             0.0,
-            191.0
+            171.0
           ],
           [
             4.9,
             0.0,
-            191.0
+            171.0
           ],
           [
             8.4,
             0.0,
-            191.0
+            171.0
           ],
           [
             11.9,
             0.0,
-            191.0
+            171.0
           ],
           [
             15.4,
             0.0,
-            191.0
+            171.0
           ],
           [
             18.9,
             0.0,
-            191.0
+            171.0
           ],
           [
             -5.6,
             0.0,
-            194.5
+            174.5
           ],
           [
             -2.1,
             0.0,
-            194.5
+            174.5
           ],
           [
             1.4,
             0.0,
-            194.5
+            174.5
           ],
           [
             4.9,
             0.0,
-            194.5
+            174.5
           ],
           [
             8.4,
             0.0,
-            194.5
+            174.5
           ],
           [
             11.9,
             0.0,
-            194.5
+            174.5
           ],
           [
             15.4,
             0.0,
-            194.5
+            174.5
           ],
           [
             18.9,
             0.0,
-            194.5
+            174.5
           ]
         ],
         "branches": [
@@ -2278,110 +2905,110 @@
             "room": "two-mouths-wet-mouth",
             "bounds": [
               -12.0,
-              210.0,
+              186.0,
               4.0,
-              230.0
+              206.0
             ],
             "spawns": [
               [
                 -9.6,
                 0.0,
-                214.0
+                190.0
               ],
               [
                 -6.6,
                 0.0,
-                214.0
+                190.0
               ],
               [
                 -3.6,
                 0.0,
-                214.0
+                190.0
               ],
               [
                 -0.6,
                 0.0,
-                214.0
+                190.0
               ],
               [
                 -9.6,
                 0.0,
-                217.0
+                193.0
               ],
               [
                 -6.6,
                 0.0,
-                217.0
+                193.0
               ],
               [
                 -3.6,
                 0.0,
-                217.0
+                193.0
               ],
               [
                 -0.6,
                 0.0,
-                217.0
+                193.0
               ],
               [
                 -9.6,
                 0.0,
-                220.0
+                196.0
               ],
               [
                 -6.6,
                 0.0,
-                220.0
+                196.0
               ],
               [
                 -3.6,
                 0.0,
-                220.0
+                196.0
               ],
               [
                 -0.6,
                 0.0,
-                220.0
+                196.0
               ],
               [
                 -9.6,
                 0.0,
-                223.0
+                199.0
               ],
               [
                 -6.6,
                 0.0,
-                223.0
+                199.0
               ],
               [
                 -3.6,
                 0.0,
-                223.0
+                199.0
               ],
               [
                 -0.6,
                 0.0,
-                223.0
+                199.0
               ],
               [
                 -9.6,
                 0.0,
-                226.0
+                202.0
               ],
               [
                 -6.6,
                 0.0,
-                226.0
+                202.0
               ],
               [
                 -3.6,
                 0.0,
-                226.0
+                202.0
               ],
               [
                 -0.6,
                 0.0,
-                226.0
+                202.0
               ]
             ],
             "gate": {
@@ -2391,110 +3018,106 @@
               "position": [
                 -4.0,
                 1.2,
-                204.0
+                182.0
               ],
               "before": [
                 -4.0,
                 0.0,
-                201.0
+                179.0
               ],
               "beyond": [
                 -4.0,
                 0.0,
-                207.1
+                185.1
               ],
               "tile": [
                 11,
-                162
+                148
               ],
               "beyondTile": [
                 11,
-                156
+                142
               ],
               "objectId": 806
             },
             "boundsTiles": {
               "min": [
                 3,
-                133
+                121
               ],
               "max": [
                 19,
-                153
+                141
               ]
             },
             "spawnTiles": [
               [
                 5,
-                149
+                137
               ],
               [
                 8,
-                149
+                137
               ],
               [
                 11,
-                149
+                137
               ],
               [
                 14,
-                149
+                137
+              ],
+              [
+                8,
+                134
+              ],
+              [
+                11,
+                134
+              ],
+              [
+                14,
+                134
               ],
               [
                 5,
-                146
+                131
               ],
               [
                 8,
-                146
+                131
               ],
               [
                 11,
-                146
+                131
               ],
               [
                 14,
-                146
-              ],
-              [
-                11,
-                143
-              ],
-              [
-                14,
-                143
+                131
               ],
               [
                 5,
-                140
+                128
               ],
               [
                 8,
-                140
+                128
               ],
               [
                 11,
-                140
+                128
               ],
               [
                 14,
-                140
-              ],
-              [
-                5,
-                137
-              ],
-              [
-                8,
-                137
+                128
               ],
               [
                 11,
-                137
+                125
               ],
               [
                 14,
-                137
+                125
               ]
             ]
           },
@@ -2505,110 +3128,110 @@
             "room": "two-mouths-carved-mouth",
             "bounds": [
               10.0,
-              210.0,
+              186.0,
               26.0,
-              230.0
+              206.0
             ],
             "spawns": [
               [
                 12.4,
                 0.0,
-                214.0
+                190.0
               ],
               [
                 15.4,
                 0.0,
-                214.0
+                190.0
               ],
               [
                 18.4,
                 0.0,
-                214.0
+                190.0
               ],
               [
                 21.4,
                 0.0,
-                214.0
+                190.0
               ],
               [
                 12.4,
                 0.0,
-                217.0
+                193.0
               ],
               [
                 15.4,
                 0.0,
-                217.0
+                193.0
               ],
               [
                 18.4,
                 0.0,
-                217.0
+                193.0
               ],
               [
                 21.4,
                 0.0,
-                217.0
+                193.0
               ],
               [
                 12.4,
                 0.0,
-                220.0
+                196.0
               ],
               [
                 15.4,
                 0.0,
-                220.0
+                196.0
               ],
               [
                 18.4,
                 0.0,
-                220.0
+                196.0
               ],
               [
                 21.4,
                 0.0,
-                220.0
+                196.0
               ],
               [
                 12.4,
                 0.0,
-                223.0
+                199.0
               ],
               [
                 15.4,
                 0.0,
-                223.0
+                199.0
               ],
               [
                 18.4,
                 0.0,
-                223.0
+                199.0
               ],
               [
                 21.4,
                 0.0,
-                223.0
+                199.0
               ],
               [
                 12.4,
                 0.0,
-                226.0
+                202.0
               ],
               [
                 15.4,
                 0.0,
-                226.0
+                202.0
               ],
               [
                 18.4,
                 0.0,
-                226.0
+                202.0
               ],
               [
                 21.4,
                 0.0,
-                226.0
+                202.0
               ]
             ],
             "gate": {
@@ -2618,101 +3241,41 @@
               "position": [
                 18.0,
                 1.2,
-                204.0
+                182.0
               ],
               "before": [
                 18.0,
                 0.0,
-                201.0
+                179.0
               ],
               "beyond": [
                 18.0,
                 0.0,
-                207.1
+                185.1
               ],
               "tile": [
                 33,
-                162
+                148
               ],
               "beyondTile": [
                 33,
-                156
+                142
               ],
               "objectId": 807
             },
             "boundsTiles": {
               "min": [
                 25,
-                133
+                121
               ],
               "max": [
                 41,
-                153
+                141
               ]
             },
             "spawnTiles": [
               [
-                30,
-                149
-              ],
-              [
-                33,
-                149
-              ],
-              [
-                36,
-                149
-              ],
-              [
                 27,
-                146
-              ],
-              [
-                30,
-                146
-              ],
-              [
-                33,
-                146
-              ],
-              [
-                36,
-                146
-              ],
-              [
-                27,
-                143
-              ],
-              [
-                30,
-                143
-              ],
-              [
-                33,
-                143
-              ],
-              [
-                36,
-                143
-              ],
-              [
-                27,
-                140
-              ],
-              [
-                30,
-                140
-              ],
-              [
-                33,
-                140
-              ],
-              [
-                36,
-                140
-              ],
-              [
-                30,
                 137
               ],
               [
@@ -2720,8 +3283,60 @@
                 137
               ],
               [
+                27,
+                134
+              ],
+              [
+                30,
+                134
+              ],
+              [
+                33,
+                134
+              ],
+              [
                 36,
-                137
+                134
+              ],
+              [
+                27,
+                131
+              ],
+              [
+                30,
+                131
+              ],
+              [
+                33,
+                131
+              ],
+              [
+                36,
+                131
+              ],
+              [
+                27,
+                128
+              ],
+              [
+                30,
+                128
+              ],
+              [
+                33,
+                128
+              ],
+              [
+                36,
+                128
+              ],
+              [
+                27,
+                125
+              ],
+              [
+                33,
+                125
               ]
             ]
           }
@@ -2730,115 +3345,107 @@
           "room": "two-mouths-merge",
           "bounds": [
             -8.0,
-            242.0,
+            214.0,
             22.0,
-            254.0
+            226.0
           ],
           "boundsTiles": {
             "min": [
               7,
-              109
+              101
             ],
             "max": [
               37,
-              121
+              113
             ]
           }
         },
         "boundsTiles": {
           "min": [
             7,
-            165
+            149
           ],
           "max": [
             37,
-            179
+            163
           ]
         },
         "spawnTiles": [
           [
-            13,
-            176
-          ],
-          [
-            16,
-            176
-          ],
-          [
-            20,
-            176
-          ],
-          [
-            23,
-            176
-          ],
-          [
-            27,
-            176
-          ],
-          [
-            30,
-            176
+            9,
+            160
           ],
           [
             13,
-            172
-          ],
-          [
-            16,
-            172
+            160
           ],
           [
             20,
-            172
+            160
           ],
           [
             23,
-            172
+            160
           ],
           [
             27,
-            172
+            160
           ],
           [
             30,
-            172
+            160
           ],
           [
             34,
-            172
+            160
           ],
           [
             9,
-            168
+            156
           ],
           [
             13,
-            168
-          ],
-          [
-            16,
-            168
+            156
           ],
           [
             20,
-            168
+            156
           ],
           [
             23,
-            168
+            156
           ],
           [
             27,
-            168
+            156
           ],
           [
             30,
-            168
+            156
           ],
           [
             34,
-            168
+            156
+          ],
+          [
+            16,
+            152
+          ],
+          [
+            20,
+            152
+          ],
+          [
+            23,
+            152
+          ],
+          [
+            27,
+            152
+          ],
+          [
+            34,
+            152
           ]
         ]
       },
@@ -2857,25 +3464,25 @@
           "position": [
             7.0,
             1.2,
-            260.0
+            230.0
           ],
           "before": [
             7.0,
             0.0,
-            257.0
+            227.0
           ],
           "beyond": [
             7.0,
             0.0,
-            263.1
+            233.1
           ],
           "tile": [
             22,
-            106
+            100
           ],
           "beyondTile": [
             22,
-            100
+            94
           ],
           "objectId": 808
         },
@@ -2883,238 +3490,194 @@
         "room": "sun-stair",
         "bounds": [
           -4.4,
-          280.0,
+          248.0,
           18.4,
-          298.0
+          266.0
         ],
         "spawns": [
           [
             -2.0,
             3.0,
-            284.0
+            252.0
           ],
           [
             1.0,
             3.0,
-            284.0
+            252.0
           ],
           [
             4.0,
             3.0,
-            284.0
+            252.0
           ],
           [
             7.0,
             3.0,
-            284.0
+            252.0
           ],
           [
             10.0,
             3.0,
-            284.0
+            252.0
           ],
           [
             13.0,
             3.0,
-            284.0
+            252.0
           ],
           [
             -2.0,
             3.0,
-            287.0
+            255.0
           ],
           [
             1.0,
             3.0,
-            287.0
+            255.0
           ],
           [
             4.0,
             3.0,
-            287.0
+            255.0
           ],
           [
             7.0,
             3.0,
-            287.0
+            255.0
           ],
           [
             10.0,
             3.0,
-            287.0
+            255.0
           ],
           [
             13.0,
             3.0,
-            287.0
+            255.0
           ],
           [
             -2.0,
             3.0,
-            290.0
+            258.0
           ],
           [
             1.0,
             3.0,
-            290.0
+            258.0
           ],
           [
             4.0,
             3.0,
-            290.0
+            258.0
           ],
           [
             7.0,
             3.0,
-            290.0
+            258.0
           ],
           [
             10.0,
             3.0,
-            290.0
+            258.0
           ],
           [
             13.0,
             3.0,
-            290.0
+            258.0
           ],
           [
             -2.0,
             3.0,
-            293.0
+            261.0
           ],
           [
             1.0,
             3.0,
-            293.0
+            261.0
           ],
           [
             4.0,
             3.0,
-            293.0
+            261.0
           ],
           [
             7.0,
             3.0,
-            293.0
+            261.0
           ],
           [
             10.0,
             3.0,
-            293.0
+            261.0
           ],
           [
             13.0,
             3.0,
-            293.0
+            261.0
           ]
         ],
         "boundsTiles": {
           "min": [
             11,
-            65
+            61
           ],
           "max": [
             33,
-            83
+            79
           ]
         },
         "spawnTiles": [
           [
             13,
-            79
+            75
           ],
           [
             16,
-            79
-          ],
-          [
-            19,
-            79
+            75
           ],
           [
             22,
-            79
-          ],
-          [
-            25,
-            79
+            75
           ],
           [
             28,
-            79
-          ],
-          [
-            13,
-            76
-          ],
-          [
-            16,
-            76
+            75
           ],
           [
             19,
-            76
+            72
           ],
           [
             22,
-            76
+            72
           ],
           [
             25,
-            76
-          ],
-          [
-            28,
-            76
-          ],
-          [
-            13,
-            73
-          ],
-          [
-            16,
-            73
+            72
           ],
           [
             19,
-            73
+            69
           ],
           [
             22,
-            73
+            69
           ],
           [
             25,
-            73
-          ],
-          [
-            28,
-            73
-          ],
-          [
-            13,
-            70
-          ],
-          [
-            16,
-            70
+            69
           ],
           [
             19,
-            70
+            66
           ],
           [
             22,
-            70
+            66
           ],
           [
             25,
-            70
-          ],
-          [
-            28,
-            70
+            66
           ]
         ]
       },
@@ -3133,25 +3696,25 @@
           "position": [
             4.0,
             4.2,
-            304.0
+            270.0
           ],
           "before": [
             4.0,
             3.0,
-            301.0
+            267.0
           ],
           "beyond": [
             4.0,
             3.0,
-            307.1
+            273.1
           ],
           "tile": [
             19,
-            62
+            60
           ],
           "beyondTile": [
             19,
-            56
+            54
           ],
           "objectId": 809
         },
@@ -3159,55 +3722,55 @@
         "boss": [
           4.0,
           3.5,
-          333.0
+          297.0
         ],
         "room": "coiled-court",
         "bounds": [
           -12.0,
-          310.0,
+          274.0,
           20.0,
-          340.0
+          304.0
         ],
         "spawns": [
           [
             11.0,
             3.0,
-            325.0
+            289.0
           ],
           [
             8.95,
             3.0,
-            329.24
+            293.24
           ],
           [
             4.0,
             3.0,
-            331.0
+            295.0
           ],
           [
             -0.95,
             3.0,
-            329.24
+            293.24
           ],
           [
             -3.0,
             3.0,
-            325.0
+            289.0
           ],
           [
             -0.95,
             3.0,
-            320.76
+            284.76
           ],
           [
             4.0,
             3.0,
-            319.0
+            283.0
           ],
           [
             8.95,
             3.0,
-            320.76
+            284.76
           ]
         ],
         "boundsTiles": {
@@ -3275,7 +3838,7 @@
       "spot": [
         4.0,
         3.05,
-        354.0
+        318.0
       ],
       "spotTile": [
         19,
@@ -3290,7 +3853,7 @@
         "position": [
           4.0,
           3.6,
-          356.5
+          320.5
         ],
         "serverTile": [
           19,
@@ -3307,7 +3870,7 @@
         "position": [
           9.0,
           4.0,
-          351.0
+          315.0
         ],
         "serverTile": [
           24,
@@ -3346,33 +3909,305 @@
     ]
   },
   "performance": {
-    "nodes": 16,
-    "meshes": 14,
-    "materials": 11,
-    "images": 32,
-    "textures": 32,
-    "accessors": 70,
-    "bufferViews": 102,
-    "uniqueTriangles": 15462,
-    "uniqueVertices": 22118,
-    "glbBytes": 3376908,
+    "nodes": 288,
+    "meshes": 258,
+    "materials": 14,
+    "images": 41,
+    "textures": 41,
+    "accessors": 1290,
+    "bufferViews": 1331,
+    "uniqueTriangles": 79200,
+    "uniqueVertices": 68655,
+    "glbBytes": 6661808,
     "nodeNames": [
       "Secrets_ssarathi_gauntlet",
-      "Section_ssarathi_gauntlet",
-      "Roof_ssarathi_gauntlet_verdant_terrace_stone",
-      "Roof_ssarathi_gauntlet_verdant_wet_limestone",
-      "Build_ssarathi_gauntlet_amber_resin",
-      "Build_ssarathi_gauntlet_dark_iron",
-      "Build_ssarathi_gauntlet_gilt_brass",
-      "Build_ssarathi_gauntlet_timber_dark",
-      "Build_ssarathi_gauntlet_verdant_carved_jade",
-      "Build_ssarathi_gauntlet_verdant_frond",
-      "Build_ssarathi_gauntlet_verdant_jade",
-      "Build_ssarathi_gauntlet_verdant_terrace_stone",
-      "Build_ssarathi_gauntlet_verdant_wet_limestone",
-      "Build_ssarathi_gauntlet_water_lagoon",
-      "Walk_ssarathi_gauntlet_verdant_mossy_stone",
-      "Walk_ssarathi_gauntlet_verdant_terrace_stone"
+      "Section_ssarathi_gauntlet_band_-001",
+      "Roof_ssarathi_gauntlet_band_-001_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_-001_verdant_carved_jade",
+      "Walk_ssarathi_gauntlet_band_-001_verdant_mossy_stone",
+      "Section_ssarathi_gauntlet_band_+000",
+      "Roof_ssarathi_gauntlet_band_+000_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+000_amber_resin",
+      "Build_ssarathi_gauntlet_band_+000_dark_iron",
+      "Build_ssarathi_gauntlet_band_+000_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+000_timber_dark",
+      "Build_ssarathi_gauntlet_band_+000_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+000_verdant_terrace_stone",
+      "Walk_ssarathi_gauntlet_band_+000_verdant_mossy_stone",
+      "Section_ssarathi_gauntlet_band_+001",
+      "Roof_ssarathi_gauntlet_band_+001_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+001_timber_dark",
+      "Build_ssarathi_gauntlet_band_+001_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+001_verdant_jade",
+      "Build_ssarathi_gauntlet_band_+001_verdant_terrace_stone",
+      "Walk_ssarathi_gauntlet_band_+001_verdant_mossy_stone",
+      "Section_ssarathi_gauntlet_band_+002",
+      "Roof_ssarathi_gauntlet_band_+002_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+002_amber_resin",
+      "Build_ssarathi_gauntlet_band_+002_dark_iron",
+      "Build_ssarathi_gauntlet_band_+002_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+002_hatchery_eggshell",
+      "Build_ssarathi_gauntlet_band_+002_lily_pad",
+      "Build_ssarathi_gauntlet_band_+002_timber_dark",
+      "Build_ssarathi_gauntlet_band_+002_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+002_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+002_water_lagoon",
+      "Walk_ssarathi_gauntlet_band_+002_verdant_mossy_stone",
+      "Section_ssarathi_gauntlet_band_+003",
+      "Roof_ssarathi_gauntlet_band_+003_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+003_amber_resin",
+      "Build_ssarathi_gauntlet_band_+003_dark_iron",
+      "Build_ssarathi_gauntlet_band_+003_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+003_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+003_verdant_terrace_stone",
+      "Walk_ssarathi_gauntlet_band_+003_verdant_mossy_stone",
+      "Section_ssarathi_gauntlet_band_+004",
+      "Roof_ssarathi_gauntlet_band_+004_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+004_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+004_amber_resin",
+      "Build_ssarathi_gauntlet_band_+004_dark_iron",
+      "Build_ssarathi_gauntlet_band_+004_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+004_hatchery_eggshell",
+      "Build_ssarathi_gauntlet_band_+004_lily_pad",
+      "Build_ssarathi_gauntlet_band_+004_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+004_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+004_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+004_water_lagoon",
+      "Walk_ssarathi_gauntlet_band_+004_verdant_mossy_stone",
+      "Walk_ssarathi_gauntlet_band_+004_verdant_terrace_stone",
+      "Section_ssarathi_gauntlet_band_+005",
+      "Roof_ssarathi_gauntlet_band_+005_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+005_amber_resin",
+      "Build_ssarathi_gauntlet_band_+005_dark_iron",
+      "Build_ssarathi_gauntlet_band_+005_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+005_hatchery_eggshell",
+      "Build_ssarathi_gauntlet_band_+005_lily_pad",
+      "Build_ssarathi_gauntlet_band_+005_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+005_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+005_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+005_water_lagoon",
+      "Walk_ssarathi_gauntlet_band_+005_verdant_terrace_stone",
+      "Section_ssarathi_gauntlet_band_+006",
+      "Roof_ssarathi_gauntlet_band_+006_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+006_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+006_amber_resin",
+      "Build_ssarathi_gauntlet_band_+006_dark_iron",
+      "Build_ssarathi_gauntlet_band_+006_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+006_hatchery_eggshell",
+      "Build_ssarathi_gauntlet_band_+006_lily_pad",
+      "Build_ssarathi_gauntlet_band_+006_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+006_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+006_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+006_water_lagoon",
+      "Walk_ssarathi_gauntlet_band_+006_verdant_mossy_stone",
+      "Walk_ssarathi_gauntlet_band_+006_verdant_terrace_stone",
+      "Section_ssarathi_gauntlet_band_+007",
+      "Roof_ssarathi_gauntlet_band_+007_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+007_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+007_timber_dark",
+      "Build_ssarathi_gauntlet_band_+007_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+007_verdant_jade",
+      "Build_ssarathi_gauntlet_band_+007_verdant_jungle_floor",
+      "Build_ssarathi_gauntlet_band_+007_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+007_verdant_wet_limestone",
+      "Walk_ssarathi_gauntlet_band_+007_verdant_mossy_stone",
+      "Section_ssarathi_gauntlet_band_+008",
+      "Roof_ssarathi_gauntlet_band_+008_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+008_amber_resin",
+      "Build_ssarathi_gauntlet_band_+008_dark_iron",
+      "Build_ssarathi_gauntlet_band_+008_hatchery_eggshell",
+      "Build_ssarathi_gauntlet_band_+008_lily_pad",
+      "Build_ssarathi_gauntlet_band_+008_timber_dark",
+      "Build_ssarathi_gauntlet_band_+008_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+008_verdant_jungle_floor",
+      "Build_ssarathi_gauntlet_band_+008_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+008_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+008_water_lagoon",
+      "Walk_ssarathi_gauntlet_band_+008_verdant_mossy_stone",
+      "Section_ssarathi_gauntlet_band_+009",
+      "Roof_ssarathi_gauntlet_band_+009_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+009_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+009_amber_resin",
+      "Build_ssarathi_gauntlet_band_+009_dark_iron",
+      "Build_ssarathi_gauntlet_band_+009_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+009_hatchery_eggshell",
+      "Build_ssarathi_gauntlet_band_+009_lily_pad",
+      "Build_ssarathi_gauntlet_band_+009_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+009_verdant_jade",
+      "Build_ssarathi_gauntlet_band_+009_verdant_jungle_floor",
+      "Build_ssarathi_gauntlet_band_+009_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+009_verdant_wet_limestone",
+      "Walk_ssarathi_gauntlet_band_+009_verdant_mossy_stone",
+      "Section_ssarathi_gauntlet_band_+010",
+      "Roof_ssarathi_gauntlet_band_+010_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+010_amber_resin",
+      "Build_ssarathi_gauntlet_band_+010_dark_iron",
+      "Build_ssarathi_gauntlet_band_+010_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+010_timber_dark",
+      "Build_ssarathi_gauntlet_band_+010_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+010_verdant_terrace_stone",
+      "Walk_ssarathi_gauntlet_band_+010_verdant_mossy_stone",
+      "Section_ssarathi_gauntlet_band_+011",
+      "Roof_ssarathi_gauntlet_band_+011_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+011_amber_resin",
+      "Build_ssarathi_gauntlet_band_+011_dark_iron",
+      "Build_ssarathi_gauntlet_band_+011_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+011_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+011_verdant_frond",
+      "Build_ssarathi_gauntlet_band_+011_verdant_terrace_stone",
+      "Walk_ssarathi_gauntlet_band_+011_verdant_mossy_stone",
+      "Section_ssarathi_gauntlet_band_+012",
+      "Roof_ssarathi_gauntlet_band_+012_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+012_amber_resin",
+      "Build_ssarathi_gauntlet_band_+012_dark_iron",
+      "Build_ssarathi_gauntlet_band_+012_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+012_timber_dark",
+      "Build_ssarathi_gauntlet_band_+012_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+012_verdant_terrace_stone",
+      "Walk_ssarathi_gauntlet_band_+012_verdant_mossy_stone",
+      "Section_ssarathi_gauntlet_band_+013",
+      "Roof_ssarathi_gauntlet_band_+013_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+013_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+013_verdant_jade",
+      "Build_ssarathi_gauntlet_band_+013_verdant_terrace_stone",
+      "Walk_ssarathi_gauntlet_band_+013_verdant_mossy_stone",
+      "Section_ssarathi_gauntlet_band_+014",
+      "Roof_ssarathi_gauntlet_band_+014_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+014_amber_resin",
+      "Build_ssarathi_gauntlet_band_+014_dark_iron",
+      "Build_ssarathi_gauntlet_band_+014_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+014_hatchery_eggshell",
+      "Build_ssarathi_gauntlet_band_+014_lily_pad",
+      "Build_ssarathi_gauntlet_band_+014_timber_dark",
+      "Build_ssarathi_gauntlet_band_+014_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+014_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+014_water_lagoon",
+      "Walk_ssarathi_gauntlet_band_+014_verdant_mossy_stone",
+      "Section_ssarathi_gauntlet_band_+015",
+      "Roof_ssarathi_gauntlet_band_+015_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+015_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+015_amber_resin",
+      "Build_ssarathi_gauntlet_band_+015_dark_iron",
+      "Build_ssarathi_gauntlet_band_+015_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+015_lily_pad",
+      "Build_ssarathi_gauntlet_band_+015_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+015_verdant_jade",
+      "Build_ssarathi_gauntlet_band_+015_verdant_jungle_floor",
+      "Build_ssarathi_gauntlet_band_+015_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+015_verdant_wet_limestone",
+      "Walk_ssarathi_gauntlet_band_+015_verdant_jungle_floor",
+      "Walk_ssarathi_gauntlet_band_+015_verdant_mossy_stone",
+      "Walk_ssarathi_gauntlet_band_+015_verdant_terrace_stone",
+      "Section_ssarathi_gauntlet_band_+016",
+      "Roof_ssarathi_gauntlet_band_+016_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+016_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+016_amber_resin",
+      "Build_ssarathi_gauntlet_band_+016_dark_iron",
+      "Build_ssarathi_gauntlet_band_+016_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+016_hatchery_eggshell",
+      "Build_ssarathi_gauntlet_band_+016_lily_pad",
+      "Build_ssarathi_gauntlet_band_+016_timber_dark",
+      "Build_ssarathi_gauntlet_band_+016_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+016_verdant_jungle_floor",
+      "Build_ssarathi_gauntlet_band_+016_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+016_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+016_water_lagoon",
+      "Walk_ssarathi_gauntlet_band_+016_verdant_jungle_floor",
+      "Walk_ssarathi_gauntlet_band_+016_verdant_terrace_stone",
+      "Section_ssarathi_gauntlet_band_+017",
+      "Roof_ssarathi_gauntlet_band_+017_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+017_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+017_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+017_verdant_wet_limestone",
+      "Walk_ssarathi_gauntlet_band_+017_verdant_jungle_floor",
+      "Walk_ssarathi_gauntlet_band_+017_verdant_mossy_stone",
+      "Walk_ssarathi_gauntlet_band_+017_verdant_terrace_stone",
+      "Section_ssarathi_gauntlet_band_+018",
+      "Roof_ssarathi_gauntlet_band_+018_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+018_amber_resin",
+      "Build_ssarathi_gauntlet_band_+018_dark_iron",
+      "Build_ssarathi_gauntlet_band_+018_verdant_carved_jade",
+      "Walk_ssarathi_gauntlet_band_+018_verdant_mossy_stone",
+      "Section_ssarathi_gauntlet_band_+019",
+      "Roof_ssarathi_gauntlet_band_+019_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+019_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+019_dark_iron",
+      "Build_ssarathi_gauntlet_band_+019_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+019_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+019_verdant_wet_limestone",
+      "Walk_ssarathi_gauntlet_band_+019_verdant_mossy_stone",
+      "Walk_ssarathi_gauntlet_band_+019_verdant_terrace_stone",
+      "Section_ssarathi_gauntlet_band_+020",
+      "Roof_ssarathi_gauntlet_band_+020_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+020_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+020_amber_resin",
+      "Build_ssarathi_gauntlet_band_+020_dark_iron",
+      "Build_ssarathi_gauntlet_band_+020_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+020_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+020_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+020_verdant_wet_limestone",
+      "Walk_ssarathi_gauntlet_band_+020_verdant_mossy_stone",
+      "Walk_ssarathi_gauntlet_band_+020_verdant_terrace_stone",
+      "Section_ssarathi_gauntlet_band_+021",
+      "Roof_ssarathi_gauntlet_band_+021_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+021_amber_resin",
+      "Build_ssarathi_gauntlet_band_+021_dark_iron",
+      "Build_ssarathi_gauntlet_band_+021_hatchery_eggshell",
+      "Build_ssarathi_gauntlet_band_+021_lily_pad",
+      "Build_ssarathi_gauntlet_band_+021_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+021_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+021_water_lagoon",
+      "Walk_ssarathi_gauntlet_band_+021_verdant_mossy_stone",
+      "Section_ssarathi_gauntlet_band_+022",
+      "Roof_ssarathi_gauntlet_band_+022_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+022_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+022_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+022_verdant_jade",
+      "Build_ssarathi_gauntlet_band_+022_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+022_verdant_wet_limestone",
+      "Walk_ssarathi_gauntlet_band_+022_verdant_mossy_stone",
+      "Section_ssarathi_gauntlet_band_+023",
+      "Roof_ssarathi_gauntlet_band_+023_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+023_hatchery_eggshell",
+      "Build_ssarathi_gauntlet_band_+023_lily_pad",
+      "Build_ssarathi_gauntlet_band_+023_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+023_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+023_water_lagoon",
+      "Walk_ssarathi_gauntlet_band_+023_verdant_mossy_stone",
+      "Section_ssarathi_gauntlet_band_+024",
+      "Roof_ssarathi_gauntlet_band_+024_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+024_amber_resin",
+      "Build_ssarathi_gauntlet_band_+024_dark_iron",
+      "Build_ssarathi_gauntlet_band_+024_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+024_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+024_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+024_verdant_wet_limestone",
+      "Walk_ssarathi_gauntlet_band_+024_verdant_mossy_stone",
+      "Walk_ssarathi_gauntlet_band_+024_verdant_terrace_stone",
+      "Section_ssarathi_gauntlet_band_+025",
+      "Roof_ssarathi_gauntlet_band_+025_verdant_terrace_stone",
+      "Roof_ssarathi_gauntlet_band_+025_verdant_wet_limestone",
+      "Build_ssarathi_gauntlet_band_+025_amber_resin",
+      "Build_ssarathi_gauntlet_band_+025_dark_iron",
+      "Build_ssarathi_gauntlet_band_+025_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+025_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+025_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+025_verdant_wet_limestone",
+      "Walk_ssarathi_gauntlet_band_+025_verdant_mossy_stone",
+      "Walk_ssarathi_gauntlet_band_+025_verdant_terrace_stone",
+      "Section_ssarathi_gauntlet_band_+026",
+      "Roof_ssarathi_gauntlet_band_+026_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+026_amber_resin",
+      "Build_ssarathi_gauntlet_band_+026_dark_iron",
+      "Build_ssarathi_gauntlet_band_+026_gilt_brass",
+      "Build_ssarathi_gauntlet_band_+026_timber_dark",
+      "Build_ssarathi_gauntlet_band_+026_verdant_carved_jade",
+      "Build_ssarathi_gauntlet_band_+026_verdant_terrace_stone",
+      "Walk_ssarathi_gauntlet_band_+026_verdant_mossy_stone",
+      "Section_ssarathi_gauntlet_band_+027",
+      "Roof_ssarathi_gauntlet_band_+027_verdant_terrace_stone",
+      "Build_ssarathi_gauntlet_band_+027_verdant_terrace_stone",
+      "Walk_ssarathi_gauntlet_band_+027_verdant_mossy_stone"
     ]
   },
   "sources": [

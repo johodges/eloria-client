@@ -39,7 +39,7 @@ DOOR = (3.6, 3.0)        # width, head
 def dress(it: Interior, kit: str, pal: dict, x0, z0, x1, z1, floor_y, seed: int, count: int = 6):
     """Scatter the region's growth along the walls of a room, never in the
     middle where the fight is and never in the door lanes."""
-    if kit in ("forest_haul", "ice_mine"):
+    if kit in ("forest_haul", "ice_mine", "temple_procession"):
         return  # the haul layout authors working bays instead of scattered growth
     rng = np.random.default_rng(seed)
     width, depth = x1 - x0, z1 - z0
@@ -164,7 +164,7 @@ def cavern(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float, 
     _room_(it, key, x_in - w, z0, x_in + w, z0 + d, floor, 8.0, pal, doors=_doors(x_in, x_out), ceiling="vault",
            vault_rise=3.8, walls=pal["rock"], ceil=pal["rock"])
     rng = np.random.default_rng(seed)
-    for index in range(7):
+    for index in range(0 if kit == "temple_procession" else 7):
         angle = float(rng.uniform(0, math.tau))
         radial = float(rng.uniform(0.7, 0.92))
         it.group.add(P.boulder(radius=float(rng.uniform(0.6, 1.4)), seed=seed + index, material=pal["rock"])
@@ -309,7 +309,7 @@ def fork(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float, fl
                walls=pal["rock"] if bkind == "cavern" else None, ceil=pal["rock"] if bkind == "cavern" else None)
         if bkind == "cavern":
             rng = np.random.default_rng(seed + (1 if sign > 0 else 2))
-            for index in range(4):
+            for index in range(0 if kit == "temple_procession" else 4):
                 it.group.add(P.boulder(radius=float(rng.uniform(0.6, 1.2)), seed=seed + index + sign * 9,
                                        material=pal["rock"])
                              .translate(bx + sign * float(rng.uniform(2.0, branch_w - 1.5)), floor,
