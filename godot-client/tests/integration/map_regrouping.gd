@@ -34,6 +34,11 @@ func _init() -> void:
 func _run() -> void:
 	OS.low_processor_usage_mode_sleep_usec = 1
 	Engine.max_fps = 0
+	# This is a test of what happens before Godot builds the scene, so it has
+	# to be the package that builds it. A cached region would pass every
+	# assertion below - the groups are in the cached tree too - while proving
+	# nothing about the pass that put them there.
+	OS.set_environment(MapSceneCache.DISABLE_ENVIRONMENT, "1")
 	var registry: Dictionary = _json(REGISTRY).get("maps", {}) as Dictionary
 	var stage := Node3D.new()
 	root.add_child(stage)

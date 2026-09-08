@@ -262,6 +262,300 @@ rather than a tolerance, and it holds: 9 106 of Amberwood's 9 106 mesh
 instances come out of the regrouped tree bit-for-bit where they came out of
 the shipped one.
 
+## What landed: the cache
+
+The first visit to a region packs the tree `WorldLoader` built into a
+`PackedScene` and writes it to the player's own disk. Every visit after that
+instantiates it instead of parsing the package again. Nothing ships in the
+repository; the cache is built on the machine that plays the game, out of the
+package that machine has.
+
+Median of three loads per region, headless, milliseconds. **build** is the
+loader with the cache switched off, which is the column the tables above are
+in. **first visit** is one load with the cache on: a build plus the package
+hash. **write** is packing and saving the entry, which happens three frames
+after the load rather than during it. **warm** is every visit after that.
+
+| region | build | first visit | write | warm | | on disk |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| four_gates | 800 | 1 037 | 929 | **639** | -20% | 32.9 MB |
+| mirrorhold | 1 270 | 1 256 | 844 | **771** | -39% | 35.0 MB |
+| crownwater | 1 275 | 1 148 | 618 | **706** | -45% | 29.3 MB |
+| whitehorn_range | 1 099 | 979 | 644 | **601** | -45% | 28.6 MB |
+| amethyst_barrens | 922 | 890 | 541 | **639** | -31% | 30.3 MB |
+| sunmane_steppe | 557 | 472 | 293 | **257** | -54% | 14.3 MB |
+| amberwood | 1 537 | 1 655 | 1 167 | **904** | -41% | 42.1 MB |
+| grey_moors | 1 380 | 1 858 | 1 225 | **861** | -38% | 39.7 MB |
+| westhaven | 1 264 | 1 283 | 872 | **813** | -36% | 34.4 MB |
+| verdant_stair | 1 422 | 1 598 | 1 321 | **734** | -48% | 34.4 MB |
+| ssarathi_ruins | 972 | 982 | 695 | **590** | -39% | 28.2 MB |
+| manymouth_delta | 1 595 | 1 430 | 980 | **777** | -51% | 33.9 MB |
+| **twelve regions** | **14 094** | **14 589** | **10 129** | **8 292** | **-41%** | **383 MB** |
+
+**Read the columns against each other, not against the tables higher up this
+page.** This run was taken while another session had a core of this machine;
+an earlier run of the same code, on a quiet one, built the twelve in 11 749 ms
+and warmed them in 6 901 ms. Both runs give **-41%**, and both give 383 MB,
+which is the point: the ratio is a property of the change and the absolutes
+are a property of the afternoon. The same noise is why Four Gates reads -20%
+and Sunmane Steppe -54% here where the quieter run had them at -43% and -47%;
+per-region figures at this spread say "about two fifths", not more.
+
+**The first visit costs the package hash and nothing else.** That is 58-147 ms
+a region, 1 228 ms across the twelve, and it is the only work the cache adds
+to a load. The measured first-visit column is +3.5% over twelve regions, which
+is the hash plus the same noise as everything else. The write is not on the
+load - it lands three frames later - and is discussed below.
+
+And where a warm load goes:
+
+| region | hash | read | instantiate | relink | **warm** |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| four_gates | 105 | 396 | 130 | 5 | **639** |
+| sunmane_steppe | 58 | 128 | 65 | 1 | **257** |
+| amberwood | 114 | 494 | 282 | 10 | **904** |
+| verdant_stair | 115 | 394 | 232 | 15 | **734** |
+| **twelve regions** | **1 228** | **4 573** | **2 259** | **76** | **8 292** |
+
+The hash is 15% of a warm load and it buys the whole invalidation contract, so
+it is not a candidate for removal. A size-and-mtime key would be nearly free
+and would be wrong the first time somebody's file system rounded a timestamp -
+and it could not be the number the server publishes, which the sha256 can be.
+
+### Where it lives, and what makes an entry stale
+
+`user://map-cache/<map id>-<key>.scn` - on Windows,
+`%APPDATA%/Godot/app_userdata/Eloria/map-cache`.
+
+The key is `sha256(PACKAGE_DIGEST_VERSION + glb sha256 + manifest sha256)`,
+folded together with `WorldLoader.CACHE_FORMAT_VERSION`. The glb is hashed
+exactly as it sits; the manifest is folded to LF first, because it is a text
+file that git and Python both rewrite the line endings of and the same digest
+has to come out of any checkout - that is also what lets the server publish it
+(below). All of it lives in `src/world/map_scene_cache.gd`.
+
+So the two ways an entry goes stale are one mechanism:
+
+* **the package changed** - a client update, a regenerated region - and the
+  digest moves;
+* **the loader changed** - a new pass, a different name, a different layer -
+  and `CACHE_FORMAT_VERSION` moves.
+
+Either way the name the loader looks for is not a name on disk, the region is
+built from the package, and the stale entry for that map is deleted when the
+new one lands. A player never has two builds of one map, and never has to be
+told to clear anything.
+
+**The failure mode this leaves is a loader change with no version bump**, which
+would leave every player holding the tree the previous version built, with
+nothing in the log. That is the thing to remember when editing `WorldLoader`:
+if a change would make it build a different tree from the same package, raise
+`CACHE_FORMAT_VERSION` in the same commit.
+
+### Everything in the table above is in the entry
+
+Collision bodies, walk surfaces and their layers, the shared trimesh shapes
+(a `PackedScene` stores a sub-resource once and references it, so the sharing
+survives), navigation collision, the static batches and their multimeshes, the
+material passes, the rebuilt mip chains, visibility ranges, node names,
+visibility, and the batch links. `tests/test_map_cache.gd` compares a cached
+region against a built one on every one of those, plus a hash over the name,
+world transform, layers, shadow casting, visibility range, visibility and
+override state of every mesh instance in the tree.
+
+Two things are **not** in it, and both are re-derived after instantiating:
+
+* **The batch links.** `WorldLoader` stamps every mesh a batch swallowed with
+  the `MultiMeshInstance3D` now drawing it, and `OccluderFade` reaches through
+  that to lift one instance out of the multimesh while it fades. A `Node` in
+  node metadata does not survive a pack - and not as null, which would at least
+  be checkable: after a round trip the key is not in `get_meta_list()` at all.
+  So the link is written twice, as the object and as a `NodePath` from the
+  imported root, and `_resolve_batch_links()` turns the path back into the
+  object on the way in. Four Gates relinks 1 531 of them in 3 ms.
+* **`manifest.warnings`.** A cached load does not run the collision pass, so it
+  does not re-report `collision node not found: X` for a package that declares
+  a node it does not have. Nothing reads those warnings, and the first visit
+  reports them, but it is a real difference and this is where it is written
+  down.
+
+### The write is off the load, but it is not free, and it is not threaded
+
+The write runs three frames after `load_completed`. Not during the load, and
+not deferred by one frame either, which would land it inside the frame that
+first draws the region - the frame the player is actually waiting on. Three
+frames puts it in the arrival, where the transition is still resolving and the
+wait is already expected. It costs **293-1 321 ms** on the frame it lands on
+(24-542 ms of packing, 247-944 ms of saving), once per region for the life of
+an install. The entry is written under a temporary name and renamed into place,
+so a write that does not finish leaves no half a region behind.
+
+**The save was on a worker thread first, and that was a bug.** It is the larger
+half of the write and appears to touch nothing but the `PackedScene`, which
+holds its own reference to every mesh, material and image in it - so a map
+change while it runs cannot pull them away. It worked, for every region, every
+time. Then the client was asked to quit while one was in flight, and it never
+quit again.
+
+`ResourceSaver.save` of a scene full of imported `ArrayMesh`es reaches the
+rendering server for their surface arrays, and off the main thread that is a
+synchronous request the main thread has to serve. At shutdown the main thread
+stops serving: the worker stops inside `ResourceSaver.save`, the
+`wait_to_finish()` in `_exit_tree` waits for it forever, and the process hangs
+with the engine half torn down. A probe that loads Sunmane Steppe and quits
+five frames later hung on every run; with prints in both places, the worker
+enters the save and never leaves it and the join is entered and never left.
+
+So **`ResourceSaver.save` on a scene of imported meshes is not safe on a worker
+thread in Godot 4.7**, however well it behaves while the main thread is still
+pumping. Two consolations: the main-thread save is *faster* than the threaded
+one was, because it makes no cross-thread round trips at all - Sunmane Steppe
+is 247 ms here against 313 on the worker - and there is now no thread to join,
+so a map change simply drops a queued write and the region is built again next
+time, which is where it started.
+
+Three frames is long enough for the rest of the client to have had the tree,
+and it does things to it: `InteriorCutaway` hides a wall the camera is looking
+through, `SecretSections` hides an undiscovered section, and `OccluderFade`
+hangs a duplicated translucent material on whatever stands between the camera
+and the player and makes a batched prop's own node visible so the fade can be
+seen. Packed in, any of those would be permanent - a rock made of glass, for
+the players whose cache happened to be written on a frame where the camera was
+in the wrong place. So `_snapshot_for_cache` records visibility and surface
+override materials while nothing but the loader has touched the tree, puts them
+back for the length of the pack, and restores whatever the client had
+afterwards; the snapshot costs 5 ms on Four Gates and is only taken on a miss.
+Nodes a consumer *adds* need no handling at all: `PackedScene.pack` stores only
+what the packed root owns, the owners are set from that same list, and anything
+else is left out for free.
+
+`test_map_cache.gd` does exactly what those three consumers do to a real
+region, then reads it back and proves none of it survived. With the restore
+removed, all three of its assertions fail.
+
+### Compression: on, and it is not close
+
+Measured on Four Gates, packing once and saving both ways:
+
+| | size | save | read |
+| --- | ---: | ---: | ---: |
+| `FLAG_COMPRESS` | 32.9 MB | 600 ms | 285 ms |
+| uncompressed | 87.8 MB | 74 ms | 136 ms |
+
+Two things to weigh, not one, now that the save is on the main thread.
+Uncompressed reads 150 ms faster on every warm load *and* writes about eight
+times faster, so it would take the write hitch from 293-1 321 ms down to
+roughly 70-630 ms. Against that it is 2.7x the disk: 1.02 GB across the twelve
+regions rather than 383 MB, and something like 3.2 GB rather than 1.2 GB if a
+player visits all 53 packages.
+
+Compressed, because disk is the resource the player did not agree to spend and
+there is no eviction policy to spend it against, while the write it pays for is
+one hitch per region for the life of an install. It is the closest call in this
+document, and `WorldLoader.CACHE_COMPRESS` is one constant: nothing else has to
+change, because an entry written either way is read by the same call.
+
+### What it draws
+
+`tests/integration/map_cache_render.gd` is the eight-camera probe, and it took
+two corrections before it said anything true.
+
+**Byte-identity between two loads is not achievable and never was.** Two loads
+of the same package, through the same code, in the same process, move pixels:
+each load builds its own meshes and materials, the renderer sorts opaque draws
+by the RIDs those got, and where two surfaces meet the camera at the same depth
+the tie falls to whichever sorted first. It is the same phenomenon as the 245
+pixels the regrouping moved. So the probe measures its own floor on every run,
+photographing the region twice the slow way before once from the cache.
+
+**And the first time a region is drawn in a process is not like the times
+after.** The probe's first reference was a first load, and it is not a
+reference: Amberwood's first eight views differ from its second eight by 22 000
+pixels and its second from its third by 613, because the renderer is still
+building pipelines and settling textures on the way through the first one. The
+probe now throws the first set away.
+
+With both corrected, and taken in one run over the three regions:
+
+| region | two builds | built vs cached |
+| --- | ---: | ---: |
+| four_gates | 564 | **528** |
+| verdant_stair | 4 110 | **1 132** |
+| amberwood | 24 303 | **30 621** |
+
+Of 4 147 200 pixels across eight views. Two of the three move *less* between a
+build and the cache than between two builds.
+
+Amberwood is the interesting one, and a separate probe took it apart. Its
+residue is real, it is small, and it is perfectly repeatable:
+
+* two loads **from the cache** are byte-identical to each other - zero pixels;
+* two warm builds, back to back, are 613 pixels apart;
+* a cached load against a warm build is **6 700-6 900 pixels, 1.6 per mille**,
+  the same number twice;
+* and the region's own build-to-build variation over a longer session, with
+  other regions loaded in between, is 24 303.
+
+So the cache's own contribution to the picture is a sixth of the variation the
+region already has between two builds of itself, and it is scattered
+single-pixel and pair-pixel differences inside dense alpha-scissored foliage,
+mean channel delta 16 of 255. Everything structural was checked and is
+identical: 11 658 nodes, 9 106 mesh instances, 429 meshes, 321 batches with
+byte-identical multimesh buffers and AABBs, 897 collision bodies, 35 walk
+surfaces, 3 019 hidden meshes, 3 019 resolved batch links, 46 materials with
+the same filters, transparency modes, cull modes and alpha-scissor thresholds,
+and 41 albedo textures all with their mip chains.
+
+That leaves resource-allocation order as the only candidate, which is the
+regrouping's finding again: there is no right answer to a depth tie, only which
+surface got there first.
+
+This is the weaker of the two guarantees and is deliberately not the
+load-bearing one. The structural comparison in `test_map_cache.gd` is: it is
+exact and deterministic, and it is what catches a baked-in fade or a wall left
+hidden. The probe's budget is 5 per mille or three times the run's own floor,
+whichever is larger, because what it exists to catch - three thousand batched
+props that failed to relink - is percent-scale.
+
+### The settings row
+
+Graphics tab: **Keep built maps on disk**, the size the cache is using, and
+**Clear map cache**. It gets a row rather than a bare toggle because it is the
+only setting in that window that spends the player's disk. The switch persists
+in `user://eloria_hud.cfg` under `graphics/map_cache`, written by
+`MapSceneCache` itself, so no part of this needed a line in `main.gd`.
+
+`--no-map-cache` on the command line and `ELORIA_NO_MAP_CACHE=1` in the
+environment turn it off for a run without touching the setting.
+`map_regrouping.gd`, `client_benchmarks.gd` and `sunmane_performance.gd` set
+the environment switch themselves: each of them measures or tests the
+*building* of a region, and a warm load would answer a different question in a
+column that does not say so.
+
+### The server says which package it expects
+
+The maps ship with the client, so the server cannot supply one; what it can do
+is say which it was built against. `config/eloria/client_content_manifest.json`
+now carries a `packageSha256` per map - the same digest, over the same bytes,
+in the same order - written by
+`eloria-assets/tools/sync_package_content.py --digests --apply`, which is in
+the client repository because that is where the packages are. The server sends
+`ELORIA_MAP_DIGEST` (209, capability `map_digest_v1`): map id NUL, hex digest
+NUL, at login and after every `CHANGE_MAP`.
+
+The client compares it with the hash it computed for the package it actually
+loaded, and on a mismatch says so in the console and in the settings row. It
+does nothing else, and must not: the cache is keyed on the local package, so a
+mismatch cannot make the cache wrong. It means the install is not the one the
+server expects, which is worth being told - the symptoms of a stale map, a door
+in the wrong place or a portal that goes nowhere, look like anything but a
+stale install.
+
+The manifest's map list is 12 entries and the client registry knows 53
+packages, so **digests are published for those twelve only**. That is not a
+gap: the twelve are the server's own maps, so they are the only ones it could
+ever send a digest for. The tool hashes all 53 and reports the count.
+
 ## The options, measured
 
 Everything below was measured on this base after the regrouping landed, except
@@ -271,7 +565,7 @@ where it says estimated.
 | --- | --- | --- | --- | --- |
 | **Regroup wide sibling lists** (landed) | 15.9 s of 28.1 s across twelve; 6.7 s off Verdant Stair | ~40 lines in `WorldLoader`, 158 ms and 700 nodes across twelve | low - the tree is deeper by one level | 245 pixels of 7.4 million, all coplanar ties inside foliage |
 | **Parse and build on a worker thread** | hides 400-610 ms of a 500-1 400 ms load; total unchanged | a thread, a deferred attach, and a decision about what the client shows meanwhile | medium - `GLTFDocument` off-thread is unsupported territory, though it worked in every probe | nothing, if the loading screen already covers the freeze |
-| **Cache the built region as a PackedScene** | 49% of what is left: 1 318 -> 664 ms Amberwood, 1 244 -> 567 ms Verdant Stair | first visit +640 to +960 ms; ~30 MB a region, ~360 MB for the twelve; an invalidation contract | medium-high - a cached tree can drift from what the loader would build | nothing, if the cache is right; something silent and undiagnosable if it is stale |
+| **Cache the built region as a PackedScene** (landed) | 41% of every visit after the first | first visit +58 to +147 ms, the package hash, plus a 293-1 321 ms write three frames later; 383 MB for the twelve; an invalidation contract | medium-high - a cached tree can drift from what the loader would build | 1.6 per mille on the worst region, a sixth of the variation it has between two builds of itself |
 | **Cheaper walk-surface collision** | up to 4.8 s across twelve, the largest item left | unknown; the shapes are two thirds of it and they are the grounding contract | high - this is what holds the player up | nothing, if the shapes are the same |
 | **Fewer nodes at build time** | little: Sunmane's own LOD2 package has 318 mesh instances against 1 050 and loads in 380 ms against 459 | a toolkit change and a regeneration of every package | low | LOD2 is a different, coarser map; a MultiMesh bake would not be |
 | **Compressed textures at build time** | ~180 ms a region headless (150-175 ms of PNG decode, ~30 ms of mip building), 400-480 ms windowed, where the mip pass is also an upload | `KHR_texture_basisu` in the toolkit, and a decision about quality | low | **yes** - compression artefacts, and the mip chain would come from the package rather than from the loader |
@@ -319,7 +613,14 @@ repeats into MultiMesh at build time would not help the parse at all and would
 lose the per-instance nodes the manifest, the occluder fade and the tooling all
 reach for.
 
-### (c) A cached native scene
+### (c) A cached native scene - landed
+
+*This is the study that was written before the cache existed. It is kept
+because its two warnings were both right and both cost work to answer; what
+actually landed, and what the numbers turned out to be, is under "What landed:
+the cache" above. The one thing this section got wrong is the shape of the
+bargain: the first visit does not cost +640 to +960 ms, because the pack does
+not happen on the load.*
 
 Measured end to end in a scratch probe: load the region through `WorldLoader`,
 set the owners, `PackedScene.pack()`, `ResourceSaver.save()` with
@@ -353,6 +654,12 @@ regrouping is about. Two things a landed version would have to deal with:
 
 Worth doing if a second visit to a region has to be instant. Not worth doing
 for another 600 ms once the worst region is 1.4 s.
+
+*Both warnings held. The metadata does not come back null - it does not come
+back at all - and the key is the whole feature rather than a detail of it. The
+size-and-mtime key this section proposed was replaced by a sha256 over the
+bytes: it costs 53-91 ms a load, and it is the same number the server can
+publish, which a size and an mtime could never be.*
 
 ### (d) Cells and streaming
 
@@ -424,13 +731,18 @@ run against them, because this is what holds the player up.
    client shows while the worker runs, and a run of the whole `rendered_*`
    set - the seam is already `load_completed` and every fixture already polls
    `world_root`, so nothing in `tests/` should need to change.
-3. **Walk-surface collision.** The largest phase left. Try attaching the world
-   after the collision passes rather than before, and measure again.
-4. **Cached PackedScene.** Another 49% of what is left, for 360 MB and an
-   invalidation contract. Worth it only if returning to a region has to be
-   instant.
+3. **Landed: the map cache.** 41% of what is left on every visit after the
+   first, for 383 MB of the player's disk, 58-147 ms of hashing on every load,
+   and one 0.3-1.3 s hitch per region the first time it is entered. Done, with
+   a settings row, a switch for fixtures, and a format version that has to be
+   raised whenever `WorldLoader` changes.
+4. **Walk-surface collision.** The largest phase left on a build, and now also
+   the largest phase the cache is skipping rather than fixing. Try attaching
+   the world after the collision passes rather than before, and measure again.
 5. **Compressed textures at build time.** 180 ms a region, and a decision about
-   how the maps look rather than a patch.
+   how the maps look rather than a patch. Worth revisiting now for a second
+   reason: 40-60 MB of every cache entry is decoded image data, so smaller
+   textures would take the 383 MB down with them.
 6. **Cells and streaming.** The largest change, the least certain payoff, and
    the only one the player would see.
 
@@ -447,7 +759,31 @@ run against them, because this is what holds the player up.
   the extra depth.
 * Nothing here measures a cold disk. Every number is with the page cache warm,
   which is what a second load in a session sees and not what a first launch
-  sees.
+  sees. This matters more for the cache than it did for anything before it: a
+  warm load is 3 853 ms of reading 383 MB across the twelve, and on a cold
+  spinning disk that is a different column. The cache should still win - it is
+  reading 33 MB where a build reads 23 MB and then does 700 ms of work on it -
+  but that is an argument, not a measurement.
+* **The cache is never bounded.** Fifty-three packages at 14-42 MB is about
+  1.6 GB if a player visits every one, and nothing evicts. The twelve regions
+  are 383 MB and the interiors are smaller, so this is a real number rather
+  than an alarming one, but there is no budget, no least-recently-used rule and
+  no warning - only the size in the settings row and the button beside it.
+* **`CACHE_FORMAT_VERSION` is a promise a person has to keep.** Nothing checks
+  that a change to `WorldLoader` raised it. A hash over the loader's own source
+  would be automatic and would also invalidate the world on every comment, so
+  it was not done; a test that pins the version against a list of the passes it
+  covers might be the middle ground and has not been tried.
+* Whether the pack can be made cheap enough to run inside the load, which would
+  remove the three-frame window and the snapshot that guards it entirely. It is
+  24-542 ms, so on the worst regions the answer is currently no.
+* **The write hitch is the least satisfying thing here.** 0.3-1.3 s on one
+  frame, once per region, and it cannot go on a thread (see above). What is
+  left to try is doing it on the way *out* of a region instead of on the way
+  in - `unload_world` still has the whole tree, and a freeze during a map
+  change is one the player is already braced for. It would mean a region
+  visited once and never left is never cached, and a crash loses the entry;
+  neither was measured against the hitch it would remove.
 * The 6.90 ms a frame that `sunmane_performance.gd` reports is the headless
   idle pad, not a frame time, and has been in its output since before this
   work.

@@ -11,6 +11,8 @@ down. Measured on the Four Gates package (1717 imported mesh nodes referencing
 | Visible world `MeshInstance3D` | 1 717 | 687 + 132 batches |
 | First actor spawned in a session | 1 169 ms | 1 204 ms |
 | Every actor after the first | 1 148 ms | 2.5 ms |
+| Loading the twelve regions once each | 28 106 ms | 11 749 ms |
+| Loading them again, from the map cache | 28 106 ms | -41% of whatever the build costs |
 
 ## Where the frame goes
 
@@ -352,6 +354,18 @@ reading.
   *Since taken up in `map-load-times.md`: the scene build itself is now 8% of
   what it was, so the freeze is 0.5-1.4 s rather than up to eight seconds, and
   the threading is measured but not landed.*
+* **A region built once is built again every time it is entered** - the same
+  tree, out of bytes that do not change between one launch and the next.
+  *Since landed: `MapSceneCache` and `WorldLoader` pack the built region to
+  `user://map-cache` on the first visit and instantiate it afterwards, which is
+  41% off every visit after the first, twice measured, for 383 MB of the
+  player's disk and one 0.3-1.3 s write three frames after the first load.
+  The entry is keyed on a sha256 of the package's own bytes and on
+  `WorldLoader.CACHE_FORMAT_VERSION`, so a client update or a loader change
+  rebuilds it with nothing to remember - and that version is the thing to
+  raise when editing `WorldLoader`, because nothing checks that you did.
+  `map-load-times.md` has the per-region table, what is and is not in an entry,
+  and why the write happens three frames after the load rather than during it.*
 * **Actor textures are 210 MB for ten species**, uncompressed and unmipped,
   against 14-80 MB for a whole region. Mip chains would cost another third and
   stop distant creatures shimmering; VRAM compression would cut it to a
@@ -386,6 +400,17 @@ primitive counts as JSON for a region package.
 `tests/integration/sunmane_grounding.gd` and `sunmane_caves.gd` are what say
 the shared collision shapes still hold a player up and in.
 `tests/integration/map_load_phases.gd` takes a map load apart step by step out
-of the loader's own `load_phases`, and `tests/integration/map_regrouping.gd`
+of the loader's own `load_phases` - three ways per region now: built, first
+visit, and warm out of the cache - and `tests/integration/map_regrouping.gd`
 says the regrouped tree holds the same geometry in the same places;
 `map-load-times.md` is what they were written for.
+`tests/test_map_cache.gd` is the map cache's contract: that a second visit
+hits, that a changed package or a raised format version misses, that a stale
+entry is removed, that a cached region has the same meshes, placements,
+collision, walk surfaces, batches and visibility as a built one, and that what
+the interior cutaway, the secret sections and the occluder fade do to a region
+after it loads cannot be baked into the entry.
+`tests/integration/map_cache_render.gd` photographs a region from eight fixed
+viewpoints built and cached and counts the pixels between them, against a floor
+it measures on the same run by photographing two builds - it must be run
+windowed, since headless draws nothing and every comparison would pass.
