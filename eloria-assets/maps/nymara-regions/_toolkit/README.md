@@ -252,3 +252,23 @@ including paving reserved against trees, before extending the search farther
 away. The actual colliding structure footprints still constrain every attempt.
 Use it for a deliberately selected forecourt; it does not override water,
 terrain suitability or structure clearance. Default secret placement is unchanged.
+
+
+## Joined timber waterfronts
+
+amberwood.waterfront provides deck_panel, junction, piled_route and lateen_rig.
+deck_panel partitions one slab into contiguous plank tops. piled_route uses
+surveyed 3D stations, mitred bends and optional end sections cut to an existing
+quay edge. junction fills between the entrance chords with one walking skin.
+A route and a landing share an edge, never an overlapping patch of deck.
+Piles descend to a supplied bed sampler; the rails stand outside the floor.
+
+A rectangular landing port must end on one side of its rectangle. Joining two
+points on different sides cuts across the corner and overlaps the quay. Clamp
+the entrance centre along one face and let the approach meet that full edge.
+Recess enough terrain samples beneath a deck to account for the two-metre
+terrain triangles as well as the narrower half-metre walk grid.
+
+Use the actual Walk_ triangles for sloping routes and point grounding.
+A bounding box's maximum Y is not a height sample. Keep closed rooms out of
+the walking bucket even when their surrounding veranda is walkable.

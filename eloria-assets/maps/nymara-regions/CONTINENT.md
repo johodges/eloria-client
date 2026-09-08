@@ -256,7 +256,7 @@ Both read the package with `_toolkit/glb_reader.py` and are idempotent, and
 `godot-client/tests/test_walk_surfaces.py` holds every region to the first.
 
 
-## Grey Moors circulation pass — September 2026
+## Grey Moors circulation pass â€” September 2026
 
 The stable east-waygate id still links to Crownwater, but its visible ferry
 now lands at the actual south-west cove. The earlier eastern marker stood
@@ -269,7 +269,7 @@ stone crown stands on the mound, reached by a side ascent; its entrance
 faces the ceremonial approach. Twelve surveyed wet crossings supply the
 corrected authored collision fold, including the cove jetty.
 
-## Amethyst Barrens circulation pass — September 2026
+## Amethyst Barrens circulation pass â€” September 2026
 
 The four continent links keep their stable ids and destinations. The Mirrorhold
 trigger stands beside its watchtower instead of inside it. The Crownwater
@@ -282,7 +282,7 @@ the observatory stair reaches an open podium and a framed Resonant Vault door.
 The basin river is incised downstream before the roads are graded, and its
 western tributary now meets the main course. No graph edge is added or removed.
 
-## Ssarathi Ruins circulation pass — September 2026
+## Ssarathi Ruins circulation pass â€” September 2026
 
 The four continent links retain their ids and destinations. The Crownwater boat
 uses the western southern jetty at world (8, 99), with its cargo station on the
@@ -296,3 +296,18 @@ the reachable Sun Vault forecourt, with its original key and contents.
 Ssarathi's canonical archive rebuild is source/build_insides.py, followed by
 export_insides_collision.py and the documented exterior correction sequence.
 See ssarathi_ruins/layout-review.md for measured access and visual review.
+
+## Manymouth Delta circulation pass - September 2026
+
+The four exterior links retain their stable ids and destinations. Arrival now
+stands in the stilt-town service court, at server tile (210, 222). Thirty-one
+surveyed timber routes and shared landing levels connect the inhabited bars,
+with shore branches and an approach to the lore Stelae Court. Their endpoints
+are declared under navigation.crossings for the authored collision contract.
+
+The market has facing stall rows, an open aisle and aligned moorings. Houses
+face their connected porches, and the quay has a procedural lateen packet.
+The Green Temple faces its southwest approach. The Great Arch descent is on
+the ring's platform; the Green Temple Spring secret is clear of the temple.
+No continent graph edge changes. See manymouth_delta/layout-review.md for
+measured reachability, remaining visual warnings and reviewed captures.

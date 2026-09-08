@@ -34,6 +34,7 @@ from amberwood.noise import Rng
 import deltakit as DK
 import region as REG
 import stiltkit as SK
+import layout as LAY
 
 from region import Placement
 
@@ -362,7 +363,7 @@ def populate_temple(build, seed: int, network: dict) -> None:
     build.add_mesh("green_temple", piece)
     build.place(Placement(node="Landmark_GreenTemple", mesh="green_temple",
                           position=(temple[0], y, temple[1]),
-                          rotation_y=math.radians(-104.0), collides=True,
+                          rotation_y=math.radians(45.0), collides=True,
                           kind="landmark", landmark="green-temple"))
 
     rng = Rng(seed + 23)
@@ -429,8 +430,7 @@ def populate_stilt_town(build, seed: int, network: dict) -> None:
     houses = _house_variants(build, seed)
 
     town_level = levels.get("stilt_town", REG.SEA_LEVEL + DECK_CLEAR)
-    _place_hamlet(build, seed + 101, "stilt_town", town_level, 22, 34.0,
-                  houses, "town")
+    LAY.house_rows(build, seed + 101, network, "stilt_town", 14, "town")
 
     # panel 2: the tiered gilded hall
     hall = REG.ANCHORS["town_hall"]
@@ -450,7 +450,7 @@ def populate_stilt_town(build, seed: int, network: dict) -> None:
                           position=(market[0],
                                     levels.get("market_hall", town_level),
                                     market[1]),
-                          rotation_y=math.radians(-64.0), collides=True,
+                          rotation_y=math.radians(20.0), collides=True,
                           walk_surface=False, kind="landmark",
                           landmark="market-hall"))
 
@@ -526,8 +526,7 @@ def populate_villages(build, seed: int, network: dict) -> None:
             ("far_bar", 6, 22.0), ("sea_landing", 5, 18.0),
             ("temple_quay", 6, 20.0), ("deep_grove", 5, 20.0))):
         level = levels.get(anchor, REG.SEA_LEVEL + DECK_CLEAR)
-        _place_hamlet(build, seed + 200 + index * 7, anchor, level, count,
-                      radius, houses, anchor)
+        LAY.house_rows(build, seed + 200 + index * 7, network, anchor, count, anchor)
 
     # the overlook of panel 9: a plain deck on the edge of a bar, looking north
     over = REG.ANCHORS["overlook"]
@@ -832,13 +831,11 @@ def populate_props(build, seed: int, network: dict) -> None:
     market = REG.ANCHORS["market_hall"]
     level = network["levels"].get("market_hall", REG.SEA_LEVEL + DECK_CLEAR)
     for i in range(6):
-        angle = math.radians(-64.0)
-        along = (i - 2.5) * 2.4
-        build.place(Placement(
-            node=f"market_stall_{i:02d}", mesh="market_stall",
-            position=(market[0] + math.cos(angle) * along, level,
-                      market[1] + math.sin(angle) * along),
-            rotation_y=angle + math.pi * 0.5, kind="prop"))
+        yaw=math.radians(20);along=(i%3-1)*4.8;side=-1 if i<3 else 1
+        x=market[0]+math.cos(yaw)*along+math.sin(yaw)*side*3.55
+        z=market[1]-math.sin(yaw)*along+math.cos(yaw)*side*3.55
+        build.place(Placement(node=f"market_stall_{i:02d}",mesh="market_stall",
+                   position=(x,level,z),rotation_y=yaw+(math.pi if side>0 else 0),kind="prop"))
     build.notes.append(f"props: {boats} moored boats, {clutter} deck gear")
 
 

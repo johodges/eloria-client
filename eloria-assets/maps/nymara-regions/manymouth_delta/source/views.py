@@ -130,3 +130,19 @@ PANELS = {
     10: ("10-deck-macro",
          "Macro: woven bamboo, coiled rope, verdigris bronze staff, blossom"),
 }
+
+# Verified player views, in world metres. These do not drift with bed height.
+WORLD_VIEWS = {
+    "02-tide-hall": ((38,3.9,-45),(30,6.8,-61.5)),
+    "03-walkway-junction": ((54,6.7,-33),(36,3.4,-48)),
+    "04-long-market": ((19.6,3.9,-29.2),(7.4,3.8,-24.8)),
+    "05-root-landing": ((86,4.1,-177),(70,7,-188)),
+    "06-floating-market": ((-26,5.5,-8),(-46,1,-10)),
+    "07-paddy-causeway": ((-44,4.1,-261),(-4,6,-271)),
+    "10-deck-macro": ((108.9,1.5,-110.4),(110.5,.83,-111.8)),
+    "11-great-arch": ((65,4.3,-46),(114,10,-114)),
+    "12-arch-platform": ((112,2.25,-114),(81,3,-93)),
+    "13-green-temple": ((258,7,-269),(297,23,-309)),
+    "14-temple-stair": ((277,16.6,-289),(297,24,-309)),
+}
+FIXED_VIEWS = set(WORLD_VIEWS)
