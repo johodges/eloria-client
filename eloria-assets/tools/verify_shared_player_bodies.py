@@ -39,6 +39,9 @@ def signatures(a, faces, fields=FIELDS):
 
 
 def image_payloads(d, b):
+    # Unused template resources may be stripped during lossless packaging.
+    from compact_character_materials import compact_materials
+    d = compact_materials(d, b)
     result = []
     for image in d['images']:
         view = d['bufferViews'][image['bufferView']]
@@ -207,7 +210,7 @@ def verify(candidate, source, template):
         relative = a['POSITION']-origin
         travel = relative@axis
         signed = travel-spec['lowerCutM']
-        if spec.get('neckBase'):
+        if spec.get('neckBase') and spec.get('bodyCutMode') != 'neck-plane':
             radius = np.linalg.norm(relative-travel[:,None]*axis,axis=1)
             base = spec['neckBase']
             signed = np.maximum(signed, np.minimum(travel-base['startM'],base['radiusM']-radius))
@@ -241,7 +244,7 @@ def verify(candidate, source, template):
         report['joins'], report['joinAttributes'] = [edges], [attributes]
     else:
         report['joins'] = [neck_edges(parts, origin, axis, spec[key]) for key in ('lowerCutM', 'upperCutM')]
-        require(all(q['unmatchedEdges'] == 0 for q in report['joins']), 'neck join has unmatched edges')
+    require(all(q['unmatchedEdges'] == 0 for q in report['joins']), 'neck join has unmatched edges')
     require(all(q['unmatchedCopies'] == 0 and q['maxNormalDelta'] < 2e-6
                 and q['maxWeightL1Delta'] < 2e-6 for q in report['joinAttributes']),
             'neck shading or skinning differs across joined copies')

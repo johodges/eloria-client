@@ -59,6 +59,8 @@ func run() -> void:
 	cam.current = true
 	var slug: String = args.get("slug", "luminous_female")
 	var config: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/actors/models.json"))["models"][slug].duplicate(true)
+	if args.has("config"):
+		config.merge(JSON.parse_string(FileAccess.get_file_as_string(args["config"])), true)
 	config["scene"] = args.get("model", config["scene"])
 	if args.has("library"):
 		config["animationLibrary"] = args["library"]
@@ -119,7 +121,7 @@ func run() -> void:
 			for suffix: String in str(args["hide"]).split(","):
 				if str(node.name).ends_with(suffix):
 					(node as MeshInstance3D).hide()
-	if args.get("region", "full") == "neck":
+	if args.get("region", "full") in ["neck", "head"]:
 		var skeleton := actor.get_skeleton()
 		var focus := (skeleton.global_transform * skeleton.get_bone_global_pose(skeleton.find_bone("Head"))).origin - Vector3(0, .035, 0)
 		var direction := Vector3(0, .08, 1)
@@ -127,7 +129,11 @@ func run() -> void:
 			direction = Vector3(1, .08, 0)
 		elif args.get("angle", "front") == "back":
 			direction = Vector3(0, .08, -1)
-		cam.size = .40
+		elif args.get("angle", "front") == "gameplay":
+			direction = Vector3(.55, .12, 1)
+		cam.size = .60 if args.get("region") == "head" else .40
+		if args.get("region") == "head":
+			focus += Vector3(0, .075, 0)
 		cam.position = focus + direction
 		cam.look_at(focus)
 		await process_frame

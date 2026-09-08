@@ -6,6 +6,7 @@ from pathlib import Path
 from fit_character_appearance import fit_hair, head_data, sha
 from integrate_luminous_sources import source_head
 from shared_player_bodies import g
+from race_hair_skull import hair_skull, allows_protrusions
 
 
 def run(root):
@@ -21,9 +22,11 @@ def run(root):
         sex = slug.rsplit('_', 1)[1]
         document, binary = g.read(client / config['scene'].removeprefix('res://'))
         skull = source_head(document, binary) if slug.startswith('luminous_') else head_data(document, binary)
+        if allows_protrusions(slug):skull=hair_skull(document,binary,slug)
+        horizontal=.95 if allows_protrusions(slug) else 1.
         target = native / 'hair/fitted' / f'{slug}_buzzed_{sex}.glb'
         report = fit_hair(native / 'hair' / f'buzzed_{sex}.glb', target, skull,
-                          {'scale': [1, 1, 1], 'offset': [0, 0, -.015]}, document, binary)
+                          {'scale': [horizontal, 1, horizontal], 'offset': [0, 0, -.015]}, document, binary)
         config['hairStyles'] = config['hairStyles'][:4] + ['res://' + target.relative_to(client).as_posix()]
         hair, _ = g.read(target)
         catalog['fittedHair'][f'{slug}:4'] = {

@@ -24,13 +24,13 @@ def hair_triangles(slug):
     fit[:3, :3] = np.diag(model.get('hairFit', {}).get('scale', [1., 1., 1.]))
     fit[:3, 3] = model.get('hairFit', {}).get('offset', [0., 0., 0.])
     triangles = []
-    for scene in model.get('hairStyles', []):
+    for scene in model.get('hairStyles', [])[1:]:
         doc, binary = ea.read_glb(CLIENT / scene.removeprefix('res://'))
         world = ea.global_matrices(doc)
         for index, node in enumerate(doc['nodes']):
             if 'mesh' not in node:
                 continue
-            transform = rig.rest['Head'] @ fit @ world[index]
+            transform = world[index] if model.get('hairSkinned') else rig.rest['Head'] @ fit @ world[index]
             for primitive in doc['meshes'][node['mesh']]['primitives']:
                 points = ea.accessor_array(doc, binary, primitive['attributes']['POSITION'])
                 faces = ea.accessor_array(doc, binary, primitive['indices']).reshape(-1, 3)

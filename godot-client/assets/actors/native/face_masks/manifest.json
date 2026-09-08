@@ -1,59 +1,59 @@
 {
   "glasswarden_female": {
-    "modelSHA256": "86c3a45067975a936c58c1372b1289ebb63d6a668ba51f3e6a46c7a2079b05ec",
-    "sourceMaterial": 0,
+    "modelSHA256": "d39b05cb007de3119a6183525c7e841b978bf710ac884d7ab8c3c7e8d382183a",
+    "sourceMaterial": 1,
     "size": [
       2048,
       2048
     ],
     "pixelsPerChannel": [
-      1188,
-      1188,
-      656
+      860,
+      859,
+      455
     ],
-    "maskSHA256": "8c3d52d7043080ca6dc750fbf12ce14783f558309983147f05c67a7154862d52"
+    "maskSHA256": "15d309e7c3c90d0b7c5283f44497e25783fcf74fa4bde91559beb11bc1a898f1"
   },
   "glasswarden_male": {
-    "modelSHA256": "72c8b0c783331c22148f15072da80a9fb2c139e9bb97cbbb61a6586bfb5b7837",
-    "sourceMaterial": 0,
+    "modelSHA256": "b8f38cbea6c1542c5d65a2c8401a01f1bdf83f5844b4131c5609c1043a484a45",
+    "sourceMaterial": 1,
     "size": [
       2048,
       2048
     ],
     "pixelsPerChannel": [
-      492,
-      492,
-      448
+      307,
+      306,
+      0
     ],
-    "maskSHA256": "a3a19cdf3721b612180911ca820c9456f9bf5d7da32cdb82db70f74356665696"
+    "maskSHA256": "f4fd7c6a27e3b9525d2fb145148ac9893e350cd797dd5b88f2948f0a209575e3"
   },
   "greyhaven_female": {
-    "modelSHA256": "351223f5366438679c85b694d67dd1bdb63971b5391179a8c5ab18348786aa7d",
-    "sourceMaterial": 0,
+    "modelSHA256": "ab23f8f16e0d3de5c7a0763c0cd4f2a43f42292cb5afe93c8bb365a8ae7f8cf6",
+    "sourceMaterial": 1,
     "size": [
       2048,
       2048
     ],
     "pixelsPerChannel": [
-      1695,
-      1237,
-      2558
+      803,
+      588,
+      969
     ],
-    "maskSHA256": "a391ea2adf74df33117cf5cccefedb85a9b5de967cacb890b787085536ebf3b6"
+    "maskSHA256": "32f3e1267464f0ca08f180035c55b491dd81693e38d5039a8287d4a429bb07e9"
   },
   "greyhaven_male": {
-    "modelSHA256": "942ed19892aaa36ae48f039d12e7634c1333d3668d6d4108ec6843800d1df4e8",
-    "sourceMaterial": 0,
+    "modelSHA256": "c6196b1d5cb71711866655bd4aaecc09c753577f56e69d22d9b2f8dca3a3e3c4",
+    "sourceMaterial": 1,
     "size": [
       2048,
       2048
     ],
     "pixelsPerChannel": [
-      800,
-      642,
-      1226
+      393,
+      301,
+      444
     ],
-    "maskSHA256": "d59ddaace34fba0c335223bbbd8812070f7f125278368468d3fdad87ebe33ba9"
+    "maskSHA256": "fd6b3e0da7902c30a6af9270ef71a05cf7d6ed1f754eb1cf9741eb9e44151915"
   },
   "luminous_female": {
     "modelSHA256": "8d8dea9c58e9a0085f8e28afbf28c8e3205d78dec8f098d166202fc8be6e2a66",
@@ -168,143 +168,143 @@
     }
   },
   "mycelari_female": {
-    "modelSHA256": "8f913c71fd059ad7c9568d98d4fe174617c2114f08124a87a540a7255e462d05",
-    "sourceMaterial": 0,
+    "modelSHA256": "4303b328ecb201aa582f0db71f8f6cdf5114598d42a433b48a58a5c538907d97",
+    "sourceMaterial": 1,
     "size": [
       2048,
       2048
     ],
     "pixelsPerChannel": [
-      2323,
-      1842,
-      649
+      1344,
+      1060,
+      0
     ],
-    "maskSHA256": "a2bdc87d86f185d375f27a1950ef9f42cffb51a80a81c901ac056f759067cb6a"
+    "maskSHA256": "7cc7c615c797b83c398f8d7998a9f8277f8c12381370a9d71f0d4affaf7d235e"
   },
   "mycelari_male": {
-    "modelSHA256": "d5ccfe8a2bf544e9cc9d0ced5504db26fef631e7cdb16819e07c888450017c4d",
-    "sourceMaterial": 0,
+    "modelSHA256": "db4b6034e20b0fb799279f4755a7c094eda5cf6b2b47c322f236538beaf65509",
+    "sourceMaterial": 1,
     "size": [
       2048,
       2048
     ],
     "pixelsPerChannel": [
-      2548,
-      2215,
-      3264
+      924,
+      779,
+      0
     ],
-    "maskSHA256": "afd02e56b09f9f2172a162386d5d1223d8023159a83b5ddee8f229aa80ee9f49"
+    "maskSHA256": "a92441d500f5e3e26ee405ed3c4570a91a98565528028f16108099069c19b64d"
   },
   "orun_female": {
-    "modelSHA256": "94b486694d9b252e1208c7eb1e1e52715da49c839a2cfe99d5fbd15eac4c8aaa",
-    "sourceMaterial": 0,
+    "modelSHA256": "8e999cd89c48733e0b1e236bc9b89f8d4d1924e467e0dec13ca5bfe36f5df869",
+    "sourceMaterial": 1,
     "size": [
       2048,
       2048
     ],
     "pixelsPerChannel": [
-      2186,
-      1330,
-      393
+      1418,
+      954,
+      419
     ],
-    "maskSHA256": "349d95e9182f71ebada7cb5bc48b17df87ed0e100d92f7a52c01c29adb56501f"
+    "maskSHA256": "a2570760c8cdcd4c62ee0a17633e953c685b2f69db0800d5b8e271e4408f6f23"
   },
   "orun_male": {
-    "modelSHA256": "ab4b2a179f800681fbd5f2cab7a68aa11c9acda26b65a3d5db4dbdd0fdd09421",
-    "sourceMaterial": 0,
+    "modelSHA256": "80799003ab637952e3337105c9aea8f52b947fed0104866e8f6d13e780b30cc9",
+    "sourceMaterial": 1,
     "size": [
       2048,
       2048
     ],
     "pixelsPerChannel": [
-      826,
-      564,
-      2076
+      497,
+      331,
+      1005
     ],
-    "maskSHA256": "e1b86f5e4d1c8207b0798bcf013c1191a6f69baf5e206bb5b438f3c13035a281"
+    "maskSHA256": "ede1f2f06973b3ebfc173e59eaebbc960dab124d496e8a3cb493fa02555b94cf"
   },
   "ssarathi_female": {
-    "modelSHA256": "4352b0b8ccfa05c21691ab7f6101fc14f25cf54510077d08247e038a9b6063b3",
-    "sourceMaterial": 0,
+    "modelSHA256": "d3ec87b86dbc57ea0fc664d18f1fe9e2827fa935da9a8713331932f6858b0324",
+    "sourceMaterial": 1,
     "size": [
       2048,
       2048
     ],
     "pixelsPerChannel": [
-      1773,
-      1773,
+      1162,
+      1162,
       0
     ],
-    "maskSHA256": "dfa5eedba9cbd6d393b0eac0e81e38461fa9a62f0311baa63a27b88ebb0403b1"
+    "maskSHA256": "012c7e3872bdeef67c2ca927371fadd54329f50b4b48e4ebae628ea7c7320b68"
   },
   "ssarathi_male": {
-    "modelSHA256": "e9933d9c78bc6987c1afd6b390f86223b99f37e536c742228579f62a7e1d72f6",
-    "sourceMaterial": 0,
+    "modelSHA256": "edf532b3c07d89aef20c105134ffed69e7f384c490daa9667989918601ae60ba",
+    "sourceMaterial": 1,
     "size": [
       2048,
       2048
     ],
     "pixelsPerChannel": [
-      1919,
-      1919,
+      1248,
+      1248,
       0
     ],
-    "maskSHA256": "2aa4b658f95904d9da5fd7f77dadb85997d36687d457416101e55b54236cf89e"
+    "maskSHA256": "2c2a53b806cac3cb980e6e84c780967409e342fd1d04369dfc7b9fc248b67467"
   },
   "stoneborn_female": {
-    "modelSHA256": "575a27a51d70ce9a12ebfa293838369975aae5774c5389d52d8867bd602a7ba9",
-    "sourceMaterial": 0,
+    "modelSHA256": "7cf5c3085122eb398ae522ba9f47f2c1693ffa482d4ecf1dad321795188624ed",
+    "sourceMaterial": 1,
     "size": [
       2048,
       2048
     ],
     "pixelsPerChannel": [
-      703,
-      599,
+      365,
+      300,
       0
     ],
-    "maskSHA256": "d389da2aff500d3a9f74ec325fbe9bde6353ecd10b3b89f41838436b8eff7af2"
+    "maskSHA256": "253f538f563cee1c3c56204f3800cdff719c5a49a0a6033fa383c5d608c7dde1"
   },
   "stoneborn_male": {
-    "modelSHA256": "4ac3ef5d3d84d13486df92a618193822659a7241844cbe443bb5e43ca18986c5",
-    "sourceMaterial": 0,
+    "modelSHA256": "f4718edbebbf17fa3d544b242127f30aa6d0609652b1ffc397926713193b99e4",
+    "sourceMaterial": 1,
     "size": [
       2048,
       2048
     ],
     "pixelsPerChannel": [
-      821,
-      821,
+      407,
+      407,
       0
     ],
-    "maskSHA256": "9e977e34e6626519026bea9ad0f42f67b9d27382d69866702e87613beebeec82"
+    "maskSHA256": "aba0d0b93b4a57957702904ec8e4d4980bc630ecc1eb76ae5e215d91f5126c90"
   },
   "votary_female": {
-    "modelSHA256": "ba0d95aaeea96cefb3d47921bfe8731fe60fe3b544606cffa7b1139a8a7afbbb",
-    "sourceMaterial": 0,
+    "modelSHA256": "bbca1fa2d71c8e1a8637121ac0ce730e350b26691006455346c1d450fecfd7e8",
+    "sourceMaterial": 1,
     "size": [
       2048,
       2048
     ],
     "pixelsPerChannel": [
-      2625,
-      1594,
-      1928
+      644,
+      407,
+      460
     ],
-    "maskSHA256": "2ba36a7169d8878c4307b3a0deadc85fe76ba9fbded8473f7d39027b9df817d4"
+    "maskSHA256": "95369b5a8b7b34053bb38164b401d438aa24046bc7a40186ea61c42425c61dfa"
   },
   "votary_male": {
-    "modelSHA256": "7b35f0c2a2f7f27b6476a9c1bce02cdd7f4b9c12ac2f0de963b06e1f24b6aa98",
-    "sourceMaterial": 0,
+    "modelSHA256": "9c08c46a55d6a0f1807edc55c183a827d86edde50469758e417f72d3f0b05ed7",
+    "sourceMaterial": 1,
     "size": [
       2048,
       2048
     ],
     "pixelsPerChannel": [
-      906,
-      805,
-      829
+      294,
+      252,
+      352
     ],
-    "maskSHA256": "9576953ceeb98be01b1c05b58e01c0a238170c91414b7bcb7b037aec4b636a92"
+    "maskSHA256": "900554e889ccb44418b29bb15659f697f9cdb74a2e53e635c399caf76353809e"
   }
 }

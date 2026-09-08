@@ -47,11 +47,21 @@ def block(document, blob):
             group = groups.setdefault(key, {'a': p['attributes'], 'f': {}})
             group['f'][(node['name'], p.get('material', 0))] = ea.accessor_array(
                 document, blob, p['indices']).astype(int).reshape(-1, 3)
-    if len(groups) != 1:
-        raise ValueError('Expected one shared source attribute set')
-    group = next(iter(groups.values()))
-    return {'a': {k: ea.accessor_array(document, blob, v).copy()
-                  for k, v in group['a'].items()}, 'f': group['f']}
+    if not groups:
+        raise ValueError('No body surfaces')
+    # Source-preserving material groups have separate cropped UV charts.
+    # Concatenate each distinct attribute set once, retaining material IDs.
+    attributes, faces, offset = {}, {}, 0
+    keys = {'POSITION', 'NORMAL', 'TEXCOORD_0', 'JOINTS_0', 'WEIGHTS_0'}
+    for group in groups.values():
+        a = {k: ea.accessor_array(document, blob, group['a'][k]).copy() for k in keys}
+        for k, values in a.items():
+            attributes.setdefault(k, []).append(values)
+        for key, ff in group['f'].items():
+            faces.setdefault(key, []).append(ff + offset)
+        offset += len(a['POSITION'])
+    return {'a': {k: np.concatenate(v) for k, v in attributes.items()},
+            'f': {k: np.concatenate(v) for k, v in faces.items()}}
 
 
 def dense_weights(a):
@@ -568,17 +578,20 @@ def texture_neck(d, binary, bridge, lower, upper, common, source, common_pixels,
 
 def write_group(d, binary, group, meshes):
     if not any(len(f) for f in group['f'].values()):return
-    used = np.unique(np.concatenate(list(group['f'].values())))
-    remap = np.full(len(group['a']['POSITION']), -1, dtype=int)
-    remap[used] = np.arange(len(used))
-    attrs = {}
-    for k, v in group['a'].items():
-        kind = 'VEC'+str(v.shape[1])
-        attrs[k] = append_array(d, binary, v[used], kind, 5123 if k == 'JOINTS_0' else 5126)
+    # Compact each primitive independently. Godot imports separate surfaces;
+    # a shared full-body accessor otherwise duplicates thousands of unused
+    # vertices in each garment and appearance mesh.
     for (name, mat), faces in group['f'].items():
-        indices = append_array(d, binary, remap[faces].reshape(-1), 'SCALAR', 5125)
+        if not len(faces):continue
+        used, inverse = np.unique(faces, return_inverse=True)
+        attrs = {}
+        for k, values in group['a'].items():
+            attrs[k] = append_array(d, binary, values[used], 'VEC'+str(values.shape[1]),
+                                    5123 if k == 'JOINTS_0' else 5126)
+        indices = append_array(d, binary, inverse.ravel(), 'SCALAR', 5125)
         meshes.setdefault(name, []).append({'attributes': attrs, 'indices': indices, 'material': mat,
                                            'extras': {'sourceRole': group['role']}})
+
 
 
 def run(source, template, out):
@@ -602,7 +615,11 @@ def run(source, template, out):
     travel=relative@axis
     radius=np.linalg.norm(relative-travel[:,None]*axis,axis=1)
     local_neck=np.minimum(travel+.060,.150-radius)
-    lower = clip(common, np.maximum(travel-LOWER_CUT,local_neck), False)
+    source_body = 'sourceIntegration' in td.get('asset',{}).get('extras',{})
+    # The approved source body already has a natural exposed neckline. Keep
+    # it intact instead of replacing the old procedural chest/neck region.
+    body_cut = travel-LOWER_CUT if source_body else np.maximum(travel-LOWER_CUT,local_neck)
+    lower = clip(common, body_cut, False)
     upper_cut = UPPER_CUT_BY_SOURCE.get(source.stem, UPPER_CUT)
     upper = clip(src, (src['a']['POSITION']-origin)@axis-upper_cut, True)
     # Retained head/neck facets are skin, even where the source classifier
@@ -622,7 +639,7 @@ def run(source, template, out):
     lower['f'] = {(name, mapping[mat]): ff for (name, mat), ff in lower['f'].items()}
     # The common shirt remains a separate complete garment over the new skin.
     # Cutting it away with the anatomical neck leaves a hole on unequip.
-    wardrobe=clip(common,np.maximum(travel-LOWER_CUT,local_neck),True)
+    wardrobe=clip(common,body_cut,True)
     wardrobe['f']={(name,mapping[mat]):ff for (name,mat),ff in wardrobe['f'].items() if name=='wardrobe_shirt'}
     wardrobe['role']='shared_wardrobe'
 
@@ -646,11 +663,12 @@ def run(source, template, out):
         write_group(d, binary, tail, meshes)
     # Retain the original fitted head band/cap with their original attributes.
     for node in sd['nodes']:
-        if node.get('name') in ('wardrobe_head_band', 'wardrobe_head_cap'):
+        if node.get('name') in ('wardrobe_head_band', 'wardrobe_head_cap') and 'mesh' in node:
             meshes[node['name']] = copy.deepcopy(sd['meshes'][node['mesh']]['primitives'])
     parent = next(i for i, node in enumerate(d['nodes'])
                   if any('mesh' in d['nodes'][j] for j in node.get('children', [])))
-    old_nodes = {node['name']: i for i, node in enumerate(d['nodes']) if 'mesh' in node}
+    old_nodes = {node['name']: i for i, node in enumerate(d['nodes'])
+                 if node.get('name') in (*PARTS, 'wardrobe_head_band', 'wardrobe_head_cap')}
     for node in d['nodes']:
         node.pop('mesh', None); node.pop('skin', None)
     d['meshes'] = []
@@ -664,6 +682,7 @@ def run(source, template, out):
     d['asset'].setdefault('extras', {})['sharedBodyShape'] = {
         'version': 2, 'neckBase': {'startM': -.060, 'radiusM': .150}, 'template': template.stem, 'templateSHA256': input_hashes[1],
         'headSourceSHA256': input_hashes[0], 'lowerCutM': LOWER_CUT, 'upperCutM': upper_cut,
+        'bodyCutMode': 'neck-plane' if source_body else 'chest-adaptor',
         'toolSHA256': digest(__file__)}
     d, binary = g.compact(d, bytes(binary))
     if (digest(source), digest(template)) != input_hashes:

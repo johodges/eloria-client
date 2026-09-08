@@ -54,13 +54,10 @@ class CharacterAppearanceFitTest(unittest.TestCase):
                     depth[indices] = locations[:,2]
                     depths[name] = depth
                 hit = np.isfinite(depths['body'])
-                if 'groups' in config['faceAppearance']:
-                    # The source has exposed skin and clothing as a single
-                    # surface, without a duplicate torso under the shirt.
-                    self.assertTrue(np.isfinite(np.minimum(depths['body'], depths['wardrobe_shirt'])).all())
-                    self.assertGreater(hit.sum(), 50)
-                else:
-                    self.assertGreater(hit.sum(), 200)
+                # All races share the approved source body: its open neckline
+                # and clothing form one shell rather than overlapping torsos.
+                self.assertTrue(np.isfinite(np.minimum(depths['body'], depths['wardrobe_shirt'])).all())
+                self.assertGreater(hit.sum(), 50)
                 self.assertGreater(float((depths['body'][hit]-depths['wardrobe_shirt'][hit]).min()), .002)
                 self.assertIn('wardrobe_shirt',config['wardrobeBakedGrow'])
 
@@ -99,7 +96,12 @@ class CharacterAppearanceFitTest(unittest.TestCase):
                     self.assertGreaterEqual(len(sd),3)
                     self.assertTrue(set(sd)<=set(hd))
                     for ray,height in sd.items():
-                        self.assertGreater(hd[ray]-height,.001)
+                        if not config.get('hairAllowsProtrusions'):
+                            self.assertGreater(hd[ray]-height,.001)
+                        else:
+                            # Crystals and horns remain exposed through a
+                            # closed coiffure instead of stretching it to tips.
+                            self.assertGreater(hd[ray],1.64)
 
 
 if __name__=='__main__':

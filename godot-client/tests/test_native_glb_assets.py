@@ -181,8 +181,7 @@ class NativeGlbAssetsTest(unittest.TestCase):
             with self.subTest(model=model_id):
                 self.assertEqual("skinned", entry["wardrobe"])
                 self.assertEqual("retargeted", entry["anatomy"])
-                # The selected Meshy derivatives target roughly 20k triangles;
-                # UV seam duplicates can exceed the old shared-body vertex budget.
+                # Keep the runtime vertex budget even with source UV seams.
                 self.assertLess(entry["vertices"], 40_000)
                 self.assertGreater(entry["triangles"], 18_000)
                 # A full retained Ssarathi tail is additional to the common
@@ -194,7 +193,9 @@ class NativeGlbAssetsTest(unittest.TestCase):
                 self.assertEqual(tail, entry.get("retainedTailTriangles", 0))
                 self.assertEqual(tail > 0, model_id.startswith("ssarathi_"))
                 self.assertLess(tail, 9_000)
-                budget = 36_000 if entry.get('sourceIntegration') else 25_000
+                # The detailed head gets its own regional budget on top of
+                # the approved body; the optional tail is counted separately.
+                budget = 50_000 if entry.get('highResolutionHead') else 36_000 if entry.get('sourceIntegration') else 25_000
                 self.assertLess(entry["triangles"] - tail, budget)
                 document = glb_document(ROOT / entry["path"])
                 joints = document["skins"][0]["joints"]
@@ -273,9 +274,8 @@ class NativeGlbAssetsTest(unittest.TestCase):
         expected = {}
         heads = set()
         for gender in ("male", "female"):
-            # Greyhaven retains the original shared geometry. Luminous now
-            # uses the separately approved source body and its own fit data.
-            path = ROOT / self.catalog["races"]["greyhaven_" + gender]["path"]
+            # Every race now uses the approved same-sex source body.
+            path = ROOT / self.catalog["races"]["luminous_" + gender]["path"]
             d, binary = ea.read_glb(path)
             rig = ea.load_rig(path, ea.BODY_SURFACES)
             origin = rig.origin("neck_01")
@@ -307,11 +307,8 @@ class NativeGlbAssetsTest(unittest.TestCase):
                     self.assertEqual("luminous_" + gender, entry["bodyTemplate"])
                     self.assertEqual(entry["bodyTemplate"], self.models["models"][slug]["bodyTemplate"])
                     document, blob = ea.read_glb(ROOT / entry["path"])
-                    if entry.get('sourceIntegration'):
-                        self.assertNotEqual(expected[gender], geometry(document, blob, True))
-                        self.assertIn(slug, self.equipment['refittedBodies'])
-                    else:
-                        self.assertEqual(expected[gender], geometry(document, blob, True))
+                    self.assertEqual(expected[gender], geometry(document, blob, True))
+                    self.assertIn(slug, self.equipment['refittedBodies'])
                     heads.add(tuple(sorted(geometry(document, blob, False).items())))
                     # Approved stature scales the whole actor and its equipment;
                     # shared authoring geometry does not require equal race heights.
