@@ -168,8 +168,8 @@ Median of three loads per region, headless, milliseconds:
 
 Crownwater and Amethyst Barrens are the two the pass leaves alone: their widest
 lists are 440 and 405, under the limit, and their movement is this machine's
-noise. The worst region in the game went from 7.9 s to 1.2 s, and no region is
-now over 1.4 s.
+noise. The worst region in the game went from 7.9 s to 1.2 s, and by the
+loader's own clock no region is now over 1.4 s.
 
 The regrouping costs 15.6 ms on Amberwood and adds 113 nodes to an 11 545-node
 import; across the twelve it is 158 ms and about 700 nodes.
@@ -191,6 +191,34 @@ Where the twelve-region load stands afterwards:
 
 The parse and walk-surface columns did not move for any reason of this pass;
 the differences there are the two runs, on a machine a dozen sessions share.
+
+**The other instrument says the same, and windowed says more.**
+`tests/integration/client_benchmarks.gd` times a load from the outside - from
+the call to `world_root` appearing - and its own median of three puts the
+twelve at 12 955 ms. It also says the memory story did not change: eleven of
+the twelve give back everything they took (the three that do not are 0.7 to
+4.8 MB of allocator high-water mark), the process keeps 11.7 MB across the
+whole tour, and a return to Four Gates after it costs 729 ms against the 742 ms
+it cost first, giving back 0.14 MB more than it took. Read its `staticBytes`
+column against other headless runs only: with no GPU to hand the images to,
+headless keeps them in process memory, which is why Amberwood reads 259 MB here
+and 177 MB in the third pass's windowed table.
+
+Windowed, on the RTX 5080 the third pass used, four regions against that pass's
+own numbers:
+
+| region | third pass | now | | mip chains | first frame |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| amberwood | 3 941 | 1 580 | -60% | 310 ms | 153 ms |
+| verdant_stair | 4 366 | 1 544 | -65% | 262 ms | 153 ms |
+| four_gates | 1 037 | 943 | -9% | 248 ms | 93 ms |
+| sunmane_steppe | 525 | 532 | +1% | 78 ms | 156 ms |
+
+Two things only a windowed run shows. The mip chains are 250-310 ms rather than
+the 31-46 ms of the headless table, because `ImageTexture.set_image()` hands the
+rebuilt image to the GPU; and the first frame is 93-156 ms rather than 3-8 ms,
+which is the upload and the pipelines. Both are real costs of a real load and
+neither is in the headless totals above.
 
 **Guards.** `tests/test_runtime_performance.gd` checks the pass on a synthetic
 `GLTFState`: no sibling list wider than the limit survives, every node keeps
@@ -215,7 +243,7 @@ where it says estimated.
 | **Cache the built region as a PackedScene** | 49% of what is left: 1 318 -> 664 ms Amberwood, 1 244 -> 567 ms Verdant Stair | first visit +640 to +960 ms; ~30 MB a region, ~360 MB for the twelve; an invalidation contract | medium-high - a cached tree can drift from what the loader would build | nothing, if the cache is right; something silent and undiagnosable if it is stale |
 | **Cheaper walk-surface collision** | up to 4.8 s across twelve, the largest item left | unknown; the shapes are two thirds of it and they are the grounding contract | high - this is what holds the player up | nothing, if the shapes are the same |
 | **Fewer nodes at build time** | little: Sunmane's own LOD2 package has 318 mesh instances against 1 050 and loads in 380 ms against 459 | a toolkit change and a regeneration of every package | low | LOD2 is a different, coarser map; a MultiMesh bake would not be |
-| **Compressed textures at build time** | ~180 ms a region: 150-175 ms of PNG decode and ~30 ms of mip building | `KHR_texture_basisu` in the toolkit, and a decision about quality | low | **yes** - compression artefacts, and the mip chain would come from the package rather than from the loader |
+| **Compressed textures at build time** | ~180 ms a region headless (150-175 ms of PNG decode, ~30 ms of mip building), 400-480 ms windowed, where the mip pass is also an upload | `KHR_texture_basisu` in the toolkit, and a decision about quality | low | **yes** - compression artefacts, and the mip chain would come from the package rather than from the loader |
 | **Load the region in cells** | perceived only; the player's cell could appear in a fraction of the time | the loader, the collision passes, the batching and every fixture that waits on `world_root` | high | **yes** - the far side of the region arrives late |
 
 ### (a) Threaded loading
@@ -317,13 +345,17 @@ it. Pulled out of the container and decoded by hand:
 | verdant_stair | 103 | 9.3 | 150 ms | 49.7 | 30 ms |
 | sunmane_steppe | 30 | 3.7 | 42 ms | 10.4 | 5 ms |
 
-So about 180 ms a region, or 2.2 s across the twelve, of the 12.3 s that is
-left - a seventh of the load, for the pixels. Shipping the textures
-VRAM-compressed with mip chains already built would take most of it and would
-also cut the texture memory a region holds (14-80 MB), but it is a visible
-change: compression is lossy and the mip chain would come from the package
-instead of from `_build_texture_mipmaps`. **Not landed, and it should not be
-landed as a patch** - it is a decision about how the maps look.
+So about 180 ms a region headless, or 2.2 s across the twelve, of the 12.3 s
+that is left. Windowed it is worth more than that: the mip pass is 250-310 ms
+rather than 30, because `ImageTexture.set_image()` hands every rebuilt image
+back to the GPU, so a region that arrived with its mip chains already in it
+would skip an upload as well as a decode.
+
+Shipping the textures VRAM-compressed and pre-mipped would take most of it and
+would also cut the texture memory a region holds (14-80 MB), but it is a
+visible change: compression is lossy and the mip chain would come from the
+package instead of from `_build_texture_mipmaps`. **Not landed, and it should
+not be landed as a patch** - it is a decision about how the maps look.
 
 ### (f) Walk-surface collision, the largest item left
 
