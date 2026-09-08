@@ -36,6 +36,34 @@ func _run() -> void:
 		and not rect.intersects(resource_rail.get_global_rect()),
 		"it fits 1280x720 clear of the resource rail: %s" % rect)
 
+	# The map cache row. It is the only setting in this window that spends the
+	# player's disk, so it carries three controls rather than one: the switch,
+	# what the cache is using, and a way to be rid of it. All three are checked
+	# because a row that silently lost its button would look fine.
+	var cache_toggle: CheckBox = window.find_child("map_cache", true, false) as CheckBox
+	var cache_size: Label = window.find_child("MapCacheSize", true, false) as Label
+	var cache_clear: Button = window.find_child("map_cache_clear", true, false) as Button
+	_expect(cache_toggle != null and cache_size != null and cache_clear != null,
+		"the graphics tab carries a map cache switch, a size and a clear button")
+	if cache_toggle != null and cache_size != null and cache_clear != null:
+		_expect(cache_toggle.button_pressed == MapSceneCache.is_enabled(),
+			"the switch opens showing what the client actually has")
+		_expect(not cache_size.text.is_empty(),
+			"the row says what the cache is using: %s" % cache_size.text)
+		# Through the signal a click sends, not by calling the handler.
+		cache_toggle.button_pressed = false
+		await process_frame
+		_expect(not MapSceneCache.is_enabled(),
+			"turning it off turns the cache off")
+		cache_toggle.button_pressed = true
+		await process_frame
+		_expect(MapSceneCache.is_enabled(), "and back on")
+		cache_clear.pressed.emit()
+		await process_frame
+		_expect(MapSceneCache.total_bytes() == 0
+				and cache_size.text.begins_with("empty"),
+			"clearing empties it and says so: %s" % cache_size.text)
+
 	# Every bindable action exists, so no row can be dead.
 	for group: Variant in window.get("BINDABLE"):
 		for action: Variant in (window.get("BINDABLE") as Dictionary)[group]:

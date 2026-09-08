@@ -86,6 +86,12 @@ func _run() -> void:
 	OS.low_processor_usage_mode_sleep_usec = 1
 	Engine.max_fps = 0
 	root.size = Vector2i(1280, 720)
+	# What a region costs to build, which is the question this file answers and
+	# is not the same question as what it costs to read one back. The map cache
+	# would turn every repeat after the first into a warm load and quietly
+	# rewrite this table; `map_load_phases.gd` reports the warm numbers, beside
+	# the cold ones, on purpose.
+	OS.set_environment(MapSceneCache.DISABLE_ENVIRONMENT, "1")
 
 	_artifacts = OS.get_environment("ELORIA_ARTIFACT_DIR")
 	if _artifacts.is_empty():

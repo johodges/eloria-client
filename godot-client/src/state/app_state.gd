@@ -315,6 +315,21 @@ var invasion_assistant: Dictionary = {"open": false}
 func _ready() -> void:
 	Network.connection_state_changed.connect(_on_connection_state_changed)
 	Network.packet_received.connect(_on_packet)
+	MapSceneCache.set_mismatch_sink(_on_map_digest_mismatch)
+
+## The server said it was built against a different package than the one this
+## machine loaded. Said out loud in the console because it is not something the
+## client can fix and not something it should hide: nothing about the map is
+## trustworthy afterwards, and the symptoms - a door in the wrong place, a
+## portal that goes nowhere - look like anything but a stale install.
+##
+## Installed as a sink rather than checked after the packet, because the two
+## halves arrive in either order: the digest can land while the map is still
+## being hashed, or minutes after it finished.
+func _on_map_digest_mismatch(map_id: String, server: String, local: String) -> void:
+	append_local_message(("The %s map here is not the one the server expects "
+		+ "(server %s, this install %s). Update the client.") % [
+		map_id, server.substr(0, 12), local.substr(0, 12)])
 
 func _on_connection_state_changed(value: String) -> void:
 	connection_state = value
@@ -970,6 +985,15 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 				else:
 					actor_titles[actor_id] = worn
 			state_changed.emit(&"actor_titles")
+		"map_digest":
+			# Which package the server was built against. Recorded rather than
+			# acted on: the map cache is keyed on the package this machine
+			# actually has, so a disagreement here cannot make the cache
+			# wrong - it says the install is not the one the server expects,
+			# which is a thing to be told, not a thing to work around.
+			MapSceneCache.note_server_digest(
+				str(event.map_id), str(event.digest))
+			state_changed.emit(&"map_digest")
 		"experience_state":
 			experience64.clear()
 			for raw_skill: Variant in event.skills:

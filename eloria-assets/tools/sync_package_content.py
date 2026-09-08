@@ -20,10 +20,23 @@ which `dev-server/tools/relocate_map_content.py` keeps current. Position moves
 with the tile: the horizontal part is exact, and the vertical part follows the
 package's own terrain over the distance moved, so a node keeps whatever height
 above the ground it was authored with.
+
+The same tool also publishes the digest of each map package:
+
+    python eloria-assets/tools/sync_package_content.py --digests [--apply]
+
+The maps ship with the client, so the server cannot hand one over; what it can
+do is say which package it was built against, and it does that by carrying a
+`packageSha256` per map in the same manifest. The client hashes the package it
+actually has - the same bytes, the same order, the same normalisation, because
+this is the value its map cache is keyed on - and says so in the console if
+the two disagree. That is all it does: a mismatch is a wrong install, not a
+reason to distrust a cache that was keyed locally in the first place.
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -33,6 +46,13 @@ import numpy as np
 HERE = Path(__file__).resolve().parent
 ASSETS = HERE.parent
 REPO = ASSETS.parent
+REGISTRY = REPO / "godot-client" / "data" / "maps" / "registry.json"
+
+#: Wrapped into every package digest so the hash of a map cannot be confused
+#: with the hash of anything else, and so the recipe can be revised without
+#: colliding with values a previous client wrote. Must stay in step with
+#: `MapSceneCache.PACKAGE_DIGEST_VERSION` in the client.
+PACKAGE_DIGEST_VERSION = "eloria-map-package-v1"
 
 
 def four_gates_terrain():
@@ -154,10 +174,169 @@ def sync(package: Path, sections, terrain, manifest: dict, moves: list) -> str |
     return json.dumps(data, indent=2) + "\n" if changed else None
 
 
+def package_digest(manifest_path: Path, glb_path: Path) -> str:
+    """sha256 over a map package's own bytes: the glb, then the manifest.
+
+    This is the client's `MapSceneCache.package_digest()`, written twice
+    because the two sides have to agree and neither can call the other. The
+    manifest is folded to LF before it is hashed: it is a text file that git
+    and Python both rewrite the line endings of, so hashing it raw would make
+    the same package hash differently in two checkouts and the cross-check
+    would report a mismatch that is not one. The glb is binary and is hashed
+    exactly as it sits. The server's own catalog digests normalise the same
+    way, for the same reason.
+    """
+    glb_hash = hashlib.sha256(glb_path.read_bytes()).hexdigest()
+    manifest_hash = hashlib.sha256(
+        manifest_path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+    return hashlib.sha256(
+        f"{PACKAGE_DIGEST_VERSION}\n{glb_hash}\n{manifest_hash}\n".encode()
+    ).hexdigest()
+
+
+def normalize_map_id(value: str) -> str:
+    """`MapRegistry.normalize_server_map_id`, in Python.
+
+    The registry tolerates a map named as a path with an extension, because
+    the server used to send one. Reducing an id that is already an id is a
+    no-op, which is what makes it safe to do to everything.
+    """
+    normalized = value.strip().replace("\\", "/").lstrip("/")
+    while "//" in normalized:
+        normalized = normalized.replace("//", "/")
+    normalized = normalized.rsplit("/", 1)[-1]
+    if "." in normalized:
+        normalized = normalized.rsplit(".", 1)[0]
+    return normalized.lower()
+
+
+def resolve_map(maps: dict, map_id: str) -> dict:
+    """`MapRegistry.resolve`, in Python: the entry, following any alias."""
+    wanted = normalize_map_id(map_id)
+    seen: set[str] = set()
+    while True:
+        key = next((k for k in maps if normalize_map_id(k) == wanted), None)
+        if key is None or key in seen:
+            return {}
+        entry = maps.get(key)
+        if not isinstance(entry, dict):
+            return {}
+        if "alias" not in entry:
+            return entry
+        seen.add(key)
+        wanted = normalize_map_id(str(entry["alias"]))
+
+
+def registry_packages() -> dict[str, Path]:
+    """Every registry id the client ships, and the manifest it resolves to."""
+    if not REGISTRY.is_file():
+        return {}
+    maps = json.loads(REGISTRY.read_text(encoding="utf-8")).get("maps", {})
+    out: dict[str, Path] = {}
+    for map_id in maps:
+        entry = resolve_map(maps, map_id)
+        relative = str(entry.get("manifest", ""))
+        if not relative:
+            continue
+        # The registry addresses packages from the Godot project directory.
+        path = REPO / "godot-client" / relative.removeprefix("res://")
+        try:
+            path = path.resolve()
+        except OSError:
+            continue
+        if path.is_file():
+            out[map_id] = path
+    return out
+
+
+def digest_for(manifest_path: Path) -> str | None:
+    """The digest of the package `manifest_path` heads, or None if it is not
+    whole - a manifest whose glb is missing is not a package."""
+    try:
+        data = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    glb = manifest_path.parent / str(data.get("asset", {}).get("glb", ""))
+    if not glb.is_file():
+        return None
+    return package_digest(manifest_path, glb)
+
+
+def publish_digests(manifest: dict) -> tuple[str | None, list, list, int]:
+    """Splices `packageSha256` into every map entry the client has a package
+    for, and returns the rewritten manifest, what was set, and what was not.
+
+    Only the maps the server actually runs get a digest, because those are the
+    only ones it can ever send one for - the manifest's `maps` list is that
+    list, and it is 12 of the 53 packages the client registry knows. The rest
+    are hashed anyway, so the count in the report is the truth rather than an
+    assumption.
+    """
+    packages = registry_packages()
+    digests = {}
+    for map_id, path in packages.items():
+        digest = digest_for(path)
+        if digest is not None:
+            digests[normalize_map_id(map_id)] = digest
+
+    published, missing = [], []
+    changed = False
+    entries = manifest.get("maps", [])
+    for index, entry in enumerate(entries):
+        map_id = str(entry.get("id", ""))
+        digest = digests.get(normalize_map_id(map_id))
+        if digest is None:
+            missing.append(map_id)
+            continue
+        published.append((map_id, digest, entry.get("packageSha256") != digest))
+        if entry.get("packageSha256") == digest:
+            continue
+        # Rebuilt so the digest sits with the other scalars rather than after
+        # the portal list; JSON objects keep their insertion order here and the
+        # file is read by people.
+        rebuilt = {}
+        for key, value in entry.items():
+            rebuilt[key] = value
+            if key == "arrival":
+                rebuilt["packageSha256"] = digest
+        if "packageSha256" not in rebuilt:
+            rebuilt["packageSha256"] = digest
+        entries[index] = rebuilt
+        changed = True
+
+    text = json.dumps(manifest, indent=2) + "\n" if changed else None
+    # Registry ids outnumber packages: several ids are aliases of one, and the
+    # interiors of a region share a package between them.
+    return text, published, missing, len(set(digests.values()))
+
+
+def run_digests(path: Path, manifest: dict, apply: bool) -> int:
+    text, published, missing, hashed = publish_digests(manifest)
+    for map_id, digest, moved in published:
+        print(f"[digest] {map_id:24s} {digest}{'  (changed)' if moved else ''}")
+    for map_id in missing:
+        print(f"[skip  ] {map_id:24s} no package in the client registry",
+              file=sys.stderr)
+    print(f"[done] {hashed} distinct packages hashed, {len(published)} carried "
+          f"by the server's map list, {len(missing)} of its maps with no package")
+    if text is None:
+        print("[same] every digest in the manifest is already current")
+        return 0
+    if not apply:
+        print("[dry ] nothing written; pass --apply to rewrite the manifest")
+        return 0
+    path.write_text(text, encoding="utf-8")
+    print(f"[write] {path}")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--manifest", default=None,
                         help="the server's config/eloria/client_content_manifest.json")
+    parser.add_argument("--digests", action="store_true",
+                        help="publish each map's packageSha256 instead of "
+                             "moving the packages' markers")
     parser.add_argument("--apply", action="store_true")
     args = parser.parse_args()
 
@@ -168,6 +347,8 @@ def main() -> int:
               file=sys.stderr)
         return 1
     manifest = json.loads(path.read_text(encoding="utf-8"))
+    if args.digests:
+        return run_digests(path, manifest, args.apply)
 
     moves: list = []
     written = {}

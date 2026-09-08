@@ -1851,6 +1851,41 @@ func _run() -> void:
 	diagnostics_button.button_pressed = false
 	await process_frame
 
+	# The map digest, which is the one thing the server can say about content
+	# it cannot send. A package that matches is silent; one that does not says
+	# so in the console, because the symptoms of a stale map - a door in the
+	# wrong place, a portal that goes nowhere - look like anything but a stale
+	# install, and nothing else in the client will ever mention it.
+	MapSceneCache.forget_digests()
+	var agreeing: String = "b".repeat(64)
+	MapSceneCache.note_local_digest("amberwood", agreeing)
+	var lines_before: int = (app_state_inventory.get("chat_lines") as Array).size()
+	app_state_inventory.call("_on_packet",
+		EloriaProtocol.ServerMessage.ELORIA_MAP_DIGEST,
+		_hex_bytes("616d626572776f6f6400" + "62".repeat(64) + "00"))
+	await process_frame
+	_expect((app_state_inventory.get("chat_lines") as Array).size() == lines_before
+		and not MapSceneCache.has_mismatch("amberwood"),
+		"a map package that matches the server's digest is not mentioned")
+
+	MapSceneCache.forget_digests()
+	MapSceneCache.note_local_digest("amberwood", "c".repeat(64))
+	app_state_inventory.call("_on_packet",
+		EloriaProtocol.ServerMessage.ELORIA_MAP_DIGEST,
+		_hex_bytes("616d626572776f6f6400" + "62".repeat(64) + "00"))
+	await process_frame
+	var digest_lines: Array = app_state_inventory.get("chat_lines") as Array
+	var digest_line: String = "" if digest_lines.is_empty() \
+		else str((digest_lines[digest_lines.size() - 1] as Dictionary).get("text", ""))
+	_expect(MapSceneCache.has_mismatch("amberwood"),
+		"a map package the server does not expect is recorded as a mismatch")
+	_expect(digest_line.contains("amberwood") and digest_line.contains("bbbb")
+		and digest_line.contains("cccc"),
+		"and named in the console with both digests: %s" % digest_line)
+	_expect(MapSceneCache.digest_summary().contains("amberwood"),
+		"so the settings row can say which map disagrees")
+	MapSceneCache.forget_digests()
+
 	# Decoded fields with a consumer: research progress and cooldown art.
 	(main.get_node("GameView/StatsPanel") as Control).show()
 	app_state_inventory.set("stats", {"health": 10, "max_health": 10,
