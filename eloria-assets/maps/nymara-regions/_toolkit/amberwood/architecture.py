@@ -79,7 +79,8 @@ def plank_floor(half_x: float, half_z: float, y: float, thickness: float = 0.14,
 
 def framed_wall(width: float, height: float, thickness: float = 0.24,
                 material_frame: str = TIMBER_DARK, material_fill: str = TIMBER,
-                studs: int = 4, braces: bool = True, seed: int = 0) -> M.Mesh:
+                studs: int = 4, braces: bool = True, seed: int = 0,
+                preserve_materials: bool = False) -> M.Mesh:
     """Timber-framed panel: sill, head, studs, diagonal braces and infill."""
     parts = []
     frame = 0.16
@@ -107,6 +108,9 @@ def framed_wall(width: float, height: float, thickness: float = 0.24,
     parts.append(M.box((width - frame * 2.0, height - frame * 2.0, thickness * 0.62),
                        center=(0.0, height * 0.5, 0.0), uv_scale=1.1,
                        material=material_fill))
+    if preserve_materials:
+        from .stonework import group
+        return group(*parts)
     return M.merge(parts, material_frame)
 
 
@@ -214,12 +218,21 @@ def railing(length: float, height: float = 0.98, posts: int = None,
 
 def roof(width: float, depth: float, pitch_height: float, overhang: float = 0.55,
          thickness: float = 0.20, material: str = SHINGLE,
-         rafters: str = TIMBER_DARK, ridge: bool = True, hip: bool = False) -> M.Mesh:
+         rafters: str = TIMBER_DARK, ridge: bool = True, hip: bool = False,
+         clean_join: bool = False) -> M.Mesh:
     """Steep pitched roof with rafter tails, fascia and a ridge cap."""
-    parts = [M.gable_roof(width, depth, pitch_height, overhang, thickness,
-                          uv_scale=2.3, material=material)]
     hw = width * 0.5 + overhang
     hd = depth * 0.5 + overhang
+    if clean_join:
+        from .civiccraft import pitched_canopy
+        parts=list(pitched_canopy(hd*2,hw*2,0,pitch_height,material,rafters,thickness).rotate_y(math.pi/2).parts)
+        for sign in (-1,1):
+            pts=[(-hw,-thickness,sign*hd),(hw,-thickness,sign*hd),(0,pitch_height-thickness,sign*hd)]
+            if sign<0:pts.reverse()
+            parts.append(M._make(pts,[(0,0,sign)]*3,[(0,0),(1,0),(.5,1)],[0,1,2],material))
+    else:
+        parts = [M.gable_roof(width, depth, pitch_height, overhang, thickness,
+                              uv_scale=2.3, material=material)]
     # exposed rafter tails under the eaves
     count = max(4, int(depth / 0.85))
     for i in range(count):
@@ -236,6 +249,9 @@ def roof(width: float, depth: float, pitch_height: float, overhang: float = 0.55
         parts.append(M.box((0.30, 0.18, hd * 2.0 + 0.2),
                            center=(0.0, pitch_height + 0.04, 0.0), uv_scale=1.6,
                            material=material))
+    if clean_join:
+        from .stonework import group
+        return group(*parts)
     return M.merge(parts, material)
 
 
@@ -280,7 +296,7 @@ def steps(width: float, height: float, run: float = 0.32, rise: float = 0.17,
 
 def forest_lodge(seed: int = 0, width: float = 7.2, depth: float = 9.4,
                  storeys: int = 2, porch: bool = True, balcony: bool = True,
-                 workshop: bool = True) -> M.Mesh:
+                 workshop: bool = True, preserve_materials: bool = False) -> M.Mesh:
     """Player-scale timber lodge: porch, balcony, chimney, workshop lean-to.
 
     Matches the close-up reference panel of the two-storey forest house with a
@@ -298,11 +314,11 @@ def forest_lodge(seed: int = 0, width: float = 7.2, depth: float = 9.4,
         fill = TIMBER if level == 0 else TIMBER_GREY
         for sign in (-1.0, 1.0):
             wall = framed_wall(width, storey_height, 0.26, TIMBER_DARK, fill,
-                               studs=4, seed=seed + level)
+                               studs=4, seed=seed + level, preserve_materials=preserve_materials)
             wall.translate(0.0, y, sign * hd)
             parts.append(wall)
             side = framed_wall(depth, storey_height, 0.26, TIMBER_DARK, fill,
-                               studs=5, seed=seed + level + 3)
+                               studs=5, seed=seed + level + 3, preserve_materials=preserve_materials)
             side.rotate_y(math.pi * 0.5).translate(sign * hw, y, 0.0)
             parts.append(side)
         # floor plate between storeys, visibly thicker than the wall
@@ -312,7 +328,7 @@ def forest_lodge(seed: int = 0, width: float = 7.2, depth: float = 9.4,
 
     top = base_height + storeys * storey_height
     pitch = width * 0.78
-    parts.append(roof(width + 0.5, depth + 0.5, pitch, 0.62, 0.22)
+    parts.append(roof(width + 0.5, depth + 0.5, pitch, 0.62, 0.22, clean_join=preserve_materials)
                  .translate(0.0, top + 0.22, 0.0))
     # gable infill under the roof so the interior is never open to the sky
     for sign in (-1.0, 1.0):
@@ -324,7 +340,7 @@ def forest_lodge(seed: int = 0, width: float = 7.2, depth: float = 9.4,
     parts.append(chimney(0.9, storeys * storey_height * 0.6 + 2.2)
                  .translate(hw - 0.7, top - 1.2, -hd + 1.6))
 
-    door_z = hd + 0.06
+    door_z = hd + (0.30 if preserve_materials else 0.06)
     parts.append(door().translate(-width * 0.16, base_height, door_z))
     for level in range(storeys):
         y = base_height + level * storey_height + 0.85
@@ -336,7 +352,7 @@ def forest_lodge(seed: int = 0, width: float = 7.2, depth: float = 9.4,
             parts.append(shutter(angle=-0.55).translate(x - 0.48, y, door_z + 0.06))
         for x in (-depth * 0.22, depth * 0.18):
             w = window()
-            w.rotate_y(math.pi * 0.5).translate(hw + 0.06, y, x)
+            w.rotate_y(math.pi * 0.5).translate(hw + (0.30 if preserve_materials else 0.06), y, x)
             parts.append(w)
 
     if porch:
@@ -350,7 +366,7 @@ def forest_lodge(seed: int = 0, width: float = 7.2, depth: float = 9.4,
             b = bracket(0.55)
             b.rotate_y(math.pi).translate(x, deck_y + 1.90, hd + porch_depth - 0.45)
             parts.append(b)
-        parts.append(roof(width + 0.7, porch_depth + 0.5, 1.55, 0.35, 0.16)
+        parts.append(roof(width + 0.7, porch_depth + 0.5, 1.55, 0.35, 0.16, clean_join=preserve_materials)
                      .translate(0.0, deck_y + 2.45, hd + porch_depth * 0.5))
         rail = railing(width - 1.0)
         parts.append(rail.translate(0.0, deck_y + 0.10, hd + porch_depth - 0.12))
@@ -387,12 +403,14 @@ def forest_lodge(seed: int = 0, width: float = 7.2, depth: float = 9.4,
                      uv_scale=1.1, material=SHINGLE)
         shed.rotate_z(0.30)
         parts.append(shed)
-    merged = M.merge(parts, TIMBER)
-    return merged
+    if preserve_materials:
+        from .stonework import group
+        return group(*parts)
+    return M.merge(parts, TIMBER)
 
 
 def manor(seed: int = 0, width: float = 15.0, depth: float = 11.0,
-          storeys: int = 3) -> M.Mesh:
+          storeys: int = 3, preserve_materials: bool = False) -> M.Mesh:
     """Multi-storey timber-and-stone civic hall / manor.
 
     The close-up reference shows a tall stone-and-timber house with tracery
@@ -425,10 +443,16 @@ def manor(seed: int = 0, width: float = 15.0, depth: float = 11.0,
             x = -width * 0.36 + width * 0.72 * i / 4
             for sign in (-1.0, 1.0):
                 w = window(1.05, 2.05, 0.20, panes=3)
-                w.translate(x, y + 0.55, sign * (hd + 0.20))
-                if sign < 0:
-                    w.rotate_y(math.pi)
-                    w.translate(0, 0, 0)
+                if preserve_materials:
+                    # Rotate in local space before translating to the back wall.
+                    # The old order put both rows on the front face.
+                    if sign<0:w.rotate_y(math.pi)
+                    w.translate(x,y+.55,sign*(hd+.40))
+                else:
+                    w.translate(x, y + 0.55, sign * (hd + 0.20))
+                    if sign < 0:
+                        w.rotate_y(math.pi)
+                        w.translate(0, 0, 0)
                 parts.append(w)
                 arch_head = M.arch(1.15, 0.62, 0.20, 0.30, 10, uv_scale=1.2,
                                    material=STONE)
@@ -438,14 +462,14 @@ def manor(seed: int = 0, width: float = 15.0, depth: float = 11.0,
             z = -depth * 0.30 + depth * 0.60 * i / 2
             for sign in (-1.0, 1.0):
                 w = window(0.95, 1.85, 0.20, panes=2)
-                w.rotate_y(math.pi * 0.5).translate(sign * (hw + 0.20), y + 0.55, z)
+                w.rotate_y(sign * math.pi * 0.5 if preserve_materials else math.pi * 0.5).translate(sign * (hw + (0.40 if preserve_materials else 0.20)), y + 0.55, z)
                 parts.append(w)
 
     top = base + storeys * storey_height
     # main roof plus cross gable
-    parts.append(roof(width + 0.6, depth + 0.6, 7.4, 0.75, 0.26)
+    parts.append(roof(width + 0.6, depth + 0.6, 7.4, 0.75, 0.26, clean_join=preserve_materials)
                  .translate(0.0, top + 0.25, 0.0))
-    cross = roof(depth * 0.72, width * 0.42, 5.0, 0.55, 0.22)
+    cross = roof(depth * 0.72, width * 0.42, 5.0, 0.55, 0.22, clean_join=preserve_materials)
     cross.rotate_y(math.pi * 0.5).translate(0.0, top + 0.25, hd - width * 0.10)
     parts.append(cross)
     for sign in (-1.0, 1.0):
@@ -460,7 +484,7 @@ def manor(seed: int = 0, width: float = 15.0, depth: float = 11.0,
         parts.append(M.box((1.5, dormer_height, 1.5),
                            center=(x, top + 0.9, hd - 1.1), uv_scale=1.0,
                            material=TIMBER_GREY))
-        parts.append(roof(1.9, 1.9, 1.55, 0.22, 0.14)
+        parts.append(roof(1.9, 1.9, 1.55, 0.22, 0.14, clean_join=preserve_materials)
                      .translate(x, top + 0.9 + dormer_height * 0.5, hd - 1.1))
         parts.append(window(0.8, 1.0, 0.16).translate(x, top + 0.35, hd - 0.34))
 
@@ -491,6 +515,9 @@ def manor(seed: int = 0, width: float = 15.0, depth: float = 11.0,
         parts.append(railing(base * 2.2, 0.85, style="square", material=STONE, carved=STONE)
                      .rotate_y(math.pi * 0.5)
                      .translate(sign * 1.9, 0.05, hd + 1.7))
+    if preserve_materials:
+        from .stonework import group
+        return group(*parts)
     return M.merge(parts, STONE)
 
 

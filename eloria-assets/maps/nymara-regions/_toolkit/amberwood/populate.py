@@ -407,8 +407,7 @@ def build_water(build: RegionBuild) -> None:
         build.water_meshes["Water_Streams"] = M.merge(stream_parts, "water_stream")
 
     pools = []
-    for name, radius in (("mill_pool", 7.0 * S), ("settlement_market", 3.2 * S),
-                         ("forest_lake", 20.0 * S)):
+    for name, radius in (("mill_pool", 12.0), ("forest_lake", 18.0)):
         centre = ANCHORS[name]
         level = float(t.height_at(*centre)) + 0.30
         disc = M.lathe([[0.0, 0.0], [radius, 0.0]], 18, uv_scale=0.4,
@@ -458,7 +457,7 @@ def populate_settlement(build: RegionBuild, seed: int = 20260827) -> None:
 
     # -- civic core ------------------------------------------------------
     build.add_mesh("Manor_MootHall", ARCH.manor(seed=seed + 1, width=15.0, depth=11.0,
-                                                storeys=3))
+                                                storeys=3, preserve_materials=True))
     x, y, z = _ground(t, *ANCHORS["moot_hall"], sink=0.35)
     build.place(Placement("Landmark_MootHall", "Manor_MootHall", (x, y, z),
                           _face(ANCHORS["moot_hall"], ANCHORS["settlement_market"]),
@@ -469,7 +468,7 @@ def populate_settlement(build: RegionBuild, seed: int = 20260827) -> None:
                             "position": [round(x, 2), round(y, 2), round(z, 2)]})
 
     build.add_mesh("Manor_AmberHall", ARCH.manor(seed=seed + 2, width=12.5, depth=9.5,
-                                                 storeys=2))
+                                                 storeys=2, preserve_materials=True))
     x, y, z = _ground(t, *ANCHORS["amber_hall"], sink=0.3)
     build.place(Placement("Landmark_AmberHall", "Manor_AmberHall", (x, y, z),
                           _face(ANCHORS["amber_hall"], ANCHORS["settlement_market"]),
@@ -484,7 +483,7 @@ def populate_settlement(build: RegionBuild, seed: int = 20260827) -> None:
         build.add_mesh(f"Lodge_{i}", ARCH.forest_lodge(
             seed=seed + 300 + i, width=float(6.2 + 0.5 * (i % 3)),
             depth=float(8.0 + 0.7 * (i % 4)), storeys=2 if i % 3 else 1,
-            porch=True, balcony=(i % 2 == 0), workshop=(i % 3 == 0)))
+            porch=True, balcony=(i % 2 == 0), workshop=(i % 3 == 0), preserve_materials=True))
 
     def near(anchor: str, dx: float = 0.0, dz: float = 0.0) -> tuple[float, float]:
         base = ANCHORS[anchor]
@@ -666,7 +665,7 @@ def populate_landmarks(build: RegionBuild, seed: int = 20260827) -> None:
 
     # -- the monumental arch on the central axis --------------------------
     build.add_mesh("Monument_GreatArch", STONE.monumental_gate(
-        seed=seed + 5, span=7.6, height=16.0, stair_width=14.0, stair_height=4.4))
+        seed=seed + 5, span=7.6, height=16.0, stair_width=14.0, stair_height=4.4, continuous_walk=True))
     x, y, z = _ground(t, *ANCHORS["great_arch"], sink=0.15)
     build.place(Placement("Landmark_GreatArch", "Monument_GreatArch", (x, y, z),
                           math.pi, 1.0, collides=True,

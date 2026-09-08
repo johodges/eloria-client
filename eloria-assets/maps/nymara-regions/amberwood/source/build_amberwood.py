@@ -46,6 +46,7 @@ import transitions as MARCH
 import secretdoors as SD
 import secrets_design as SEC
 import loresites as LORE
+import layout as LAYOUT
 
 HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
@@ -69,9 +70,9 @@ CROSSINGS = [
                    (140.0 * 3.0, -22.0 * 3.0), radius=44.0, name="The Gorge March"),
     MARCH.Crossing("south-road", "grey_moors", (52.0 * 3.0, 54.0 * 3.0),
                    (52.0 * 3.0, 64.0 * 3.0), radius=48.0, name="The Moor March"),
-    MARCH.Crossing("harbour-quay", "westhaven", (-40.0 * 3.0, 8.0 * 3.0),
+    MARCH.Crossing("harbour-quay", "westhaven", (-129.0, 24.0),
                    (-52.0 * 3.0, 8.0 * 3.0), radius=30.0, ferry=True,
-                   name="The Packet Quay"),
+                   name="The Packet Quay", station_position=(-88.0, 33.0)),
 ]
 
 # The places the region's people argue about (see loresites.py).
@@ -130,6 +131,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     t0 = time.time()
     terrain = REG.build_terrain(seed)
     REG.apply_built_ground(terrain, seed)
+    LAYOUT.prepare(terrain, seed)
     build = REG.RegionBuild(terrain=terrain)
 
     MARCH.prepare(terrain, CROSSINGS)
@@ -137,11 +139,13 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     POP.populate_settlement(build, seed)
     POP.populate_landmarks(build, seed)
     POP.populate_outlands(build, seed)
+    LAYOUT.dress(build, seed)
     POP.populate_forest(build, seed, spacing=6.8, lod=lod)
     if lod is None:
         POP.populate_undergrowth(build, seed)
         POP.populate_ground_detail(build, seed)
     POP.build_water(build)
+    LAYOUT.finish(build)
 
     # The marches: the neighbours' country coming in along the roads out.
     MARCH.paint(terrain, CROSSINGS, MARCH_MATERIALS, seed, sea_level=REG.SEA_LEVEL,
@@ -157,7 +161,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
         uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
         materials=MARCH_MATERIALS)
     build.terrain_meshes["Backdrop_Distant"] = TER.backdrop(terrain, reach=240.0,
-                                                            cell=11.0, seed=seed + 909)
+                                                            cell=11.0, seed=seed + 909, clip_interior=True)
     build.resolve_names()
     _add_spawns_and_portals(build)
     _add_population_markers(build, seed)
@@ -168,8 +172,8 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
 def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
     t = build.terrain
     for spawn_id, (x, z), facing in (
-            ("default", REG.SPAWN, 0.0),
-            ("harbour", REG.SPAWN_HARBOUR, math.pi * 0.5),
+            ("default", LAYOUT.ARRIVAL, 0.0),
+            ("harbour", (-90.0, 24.0), math.pi * 0.5),
             ("great-arch", REG.SPAWN_ARCH, math.pi)):
         y = float(t.height_at(x, z))
         build.spawns.append({
@@ -190,7 +194,7 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
              "grey_moors"),
             ("east-road", "Gorge Road to Mirrorhold", (131.0 * REG.SCALE, -22.0 * REG.SCALE),
              "mirrorhold"),
-            ("harbour-quay", "Greyhaven Packet to Westhaven", (-40.0 * REG.SCALE, 8.0 * REG.SCALE),
+            ("harbour-quay", "Greyhaven Packet to Westhaven", (-129.0, 24.0),
              "westhaven")):
         y = float(t.height_at(x, z))
         build.portals.append({
@@ -217,6 +221,10 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
         if anchor is None:
             continue
         x, y, z = anchor["position"]
+        posts={"motherroot-mouth":(78,-251),"gate-undercroft-stair":(190,-89),
+               "amber-hall-door":(57,-150),"cinder-chapel-door":(312,-214)}
+        x,z=posts[portal_id]
+        y=float(t.height_at(x,z))
         build.portals.append({
             "id": portal_id, "name": name, "type": "interior-entrance",
             "position": [round(float(x), 2), round(float(y) + 0.1, 2), round(float(z), 2)],
@@ -696,7 +704,7 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             "metresPerTile": REG.METRES_PER_TILE,
             "serverOrigin": list(REG.SERVER_ORIGIN),
             "origin": [0.0, 0.0, 0.0],
-            "walkingHeight": round(float(t.height_at(*REG.SPAWN)), 2),
+            "walkingHeight": round(float(t.height_at(*LAYOUT.ARRIVAL)), 2),
             "invertServerY": True,
         },
         "spawnPoints": build.spawns,
@@ -719,7 +727,9 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             "walkableCells": collision_stats["walkableCells"],
             "walkableFraction": collision_stats["walkableFraction"],
         },
+        "contentLayout": LAYOUT.CONTENT_LAYOUT,
         "navigation": {
+            "crossings": build.crossings,
             "surfaceNodePrefixes": surface_prefixes,
             "walkableAreas": ["forest-floor", "trails", "paving", "shore", "meadow",
                               "bridges", "canopy-platforms", "docks", "stairs"],
@@ -745,7 +755,7 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
                    "waypoints": [[round(float(p[0]), 1),
                                   round(float(t.height_at(p[0], p[1])), 2),
                                   round(float(p[1]), 1)] for p in points]}
-                  for name, points in REG.ROUTES.items()],
+                  for name, points in (REG.ROUTES | {k:v[0] for k,v in LAYOUT.EXTRA_ROADS.items()}).items()],
         "water": {
             "seaLevel": REG.SEA_LEVEL,
             "serverCells": REG.SERVER_CELLS,
@@ -785,8 +795,8 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
                                   "zones": ["forest-core", "settlement"]},
                 "mist": {"enabled": True, "zones": ["mill-pool", "ravine", "coast"]},
                 "chimneySmoke": {"enabled": True,
-                                 "nodes": ["Landmark_MootHall", "Building_Lodge_00",
-                                           "Building_Lodge_02", "Landmark_CharcoalKiln_0"]},
+                                 "nodes": ["Landmark_MootHall", "Landmark_Building_Lodge_00",
+                                           "Landmark_Building_Lodge_02", "Landmark_CharcoalKiln_0"]},
                 "waterSpray": {"enabled": True, "nodes": ["Water_Falls"]},
                 "ambientAudio": [
                     {"id": "forest-day", "zone": "forest-core"},
@@ -828,6 +838,10 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
         "productionStatus": "production-geometry-materials-population",
         "knownLimitations": [],
     }
+    posts = HERE / "server-content.json"
+    if posts.is_file():
+        import contentposts
+        contentposts.apply(manifest, path.parent, json.loads(posts.read_text(encoding="utf-8")))
     path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return manifest
 

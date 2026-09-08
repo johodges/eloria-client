@@ -338,6 +338,9 @@ def main() -> int:
                         help="publish each map's packageSha256 instead of "
                              "moving the packages' markers")
     parser.add_argument("--apply", action="store_true")
+    parser.add_argument("--package", choices=PACKAGES, help="only update this package")
+    parser.add_argument("--write-source-posts", action="store_true",
+                        help="record stable source tiles for a builder using contentposts.apply")
     args = parser.parse_args()
 
     path = Path(args.manifest) if args.manifest else (
@@ -353,8 +356,22 @@ def main() -> int:
     moves: list = []
     written = {}
     for relative, (sections, terrain) in PACKAGES.items():
+        if args.package and relative != args.package:
+            continue
         package = ASSETS / "maps" / relative
-        text = sync(package, sections, terrain, manifest, moves)
+        if args.write_source_posts:
+            if any(len(section.path) != 1 for section in sections):
+                raise ValueError("source posts require top-level marker lists")
+            sys.path.insert(0, str(ASSETS / "maps/nymara-regions/_toolkit"))
+            import contentposts
+            posts = {section.path[0]: wanted_tiles(manifest, section) for section in sections}
+            data = json.loads((package / "world.json").read_text(encoding="utf-8"))
+            contentposts.apply(data, package, posts)
+            print(f"[posts] {sum(len(entries) for entries in posts.values())} markers for {package.name}")
+            text = json.dumps(data, indent=2) + chr(10)
+            written[package / "source/server-content.json"] = json.dumps(posts, indent=2) + chr(10)
+        else:
+            text = sync(package, sections, terrain, manifest, moves)
         if text is not None:
             written[package / "world.json"] = text
 
@@ -363,7 +380,7 @@ def main() -> int:
         print(f"[move] {name:12s} {marker:24s} "
               f"({old[0]:8.2f}, {old[1]:8.2f}) -> ({new[0]:8.2f}, {new[1]:8.2f})"
               f"  {distance:5.1f} m")
-    print(f"[done] {len(moves)} markers on {len(written)} packages")
+    print(f"[done] {len(moves)} markers in {len(written)} files")
     if not args.apply:
         print("[dry ] nothing written; pass --apply to rewrite the packages")
         return 0

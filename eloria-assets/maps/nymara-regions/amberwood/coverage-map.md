@@ -105,3 +105,12 @@ collision test locations and a golden-hour pass; see
 | `east-grove` | The East Grove | old-growth | (198, -180) |
 | `deep-grove` | The Deep Grove | old-growth | (-60, -330) |
 | `upper-falls` | The Upper Falls | shrine | (60, -372) |
+
+## September 2026 circulation coverage
+
+The market arrival, civic frontage, Mother sightline, mill and its race,
+old bridge, high span, ridge span, packet quay, dry western cove and quarry
+haul road now have explicit layout treatment. New fixed player-height
+views cover the market, mill, stone bridge, quay approach, cove, quarry and
+Mother. The separate interiors and combined estate are rebuilt with the
+exterior package. See layout-review.md for measured validation and limits.

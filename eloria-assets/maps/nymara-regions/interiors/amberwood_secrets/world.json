@@ -292,17 +292,17 @@
       191.0
     ],
     "heightEncoding": {
-      "origin": -5.131,
-      "step": 0.1311,
+      "origin": -5.2,
+      "step": 0.2,
       "range": [
         1,
         63
       ],
       "zeroMeansBlocked": true
     },
-    "walkableCells": 21112,
-    "blockedCells": 196040,
-    "walkableFraction": 0.0972,
+    "walkableCells": 14053,
+    "blockedCells": 203099,
+    "walkableFraction": 0.0647,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
@@ -3778,7 +3778,7 @@
     "bufferViews": 668,
     "uniqueTriangles": 28084,
     "uniqueVertices": 38780,
-    "glbBytes": 7519928,
+    "glbBytes": 7478172,
     "nodeNames": [
       "Secrets_amberwood_secrets",
       "Section_amber-resin-hollow",

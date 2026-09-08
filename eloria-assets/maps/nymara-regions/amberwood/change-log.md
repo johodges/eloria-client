@@ -244,3 +244,25 @@ pairs that are both alpha-tested with vertex coverage.
 
 See `whitehorn_range/change-log.md` for the full account, including why the
 heightfield was not taken to one metre instead.
+
+## September 2026 - a market town above a working mill
+
+The old scatter put water through the market, cottages in the western sea
+and a footbridge against a hall. The new layout puts the arrival and services
+on a clear court, carries the forest road around the hall, surveys seven
+complete crossings and gives the quarry and orchard usable cart approaches.
+The Mother rises above the roofline. The mill's exposed wheel stands in its
+race below the settlement; packet and kelp boats sit beyond their quays.
+
+The shared toolkit gains woodland mill and water-ribbon recipes. Amberwood
+opts its lodges into retained timber, plaster, stone and shingle materials,
+and its great arch into a continuous stair and podium. Their former default
+recipes remain available to other regions. Every closed lodge now declares
+its solid footprint; an apparent shortcut through a facade is no longer a
+valid route.
+
+Habitat and harvest discs retain the existing roster and names. A training
+post completes the market's services. The client content contract follows
+server object IDs and NPC names, and source/server-content.json makes those
+positions reproducible after a standalone rebuild. Reviewed Godot frames,
+comparisons and measured limits are recorded in layout-review.md.

@@ -370,7 +370,7 @@ def main() -> int:
         # no ground-level candidate ever reaches its openness threshold, so it
         # falls back to the best it found - which is metres in the air. An
         # author who has checked a framing should be able to keep it.
-        if eye_h < 40.0 and name not in FIXED_VIEWS:
+        if eye_h < 40.0 and name not in FIXED_VIEWS and not resolved:
             eye = _free_camera(scene, terrain, eye, target, fov)
         centre = ((eye[0] + target[0]) * 0.5, target[1], (eye[2] + target[2]) * 0.5)
         image = scene.render(eye=eye, target=target, width=size[0], height=size[1],

@@ -289,7 +289,8 @@ def group(*meshes: M.Mesh) -> MeshGroup:
 
 
 def monumental_gate(seed: int = 0, span: float = 7.0, height: float = 15.0,
-                    stair_width: float = 13.0, stair_height: float = 4.2) -> MeshGroup:
+                    stair_width: float = 13.0, stair_height: float = 4.2,
+                    continuous_walk: bool = False) -> MeshGroup:
     """The region's central landmark: a monumental arched ruin above a grand stair.
 
     Read from the aerial reference - a tall arched gate with flanking towers,
@@ -302,16 +303,28 @@ def monumental_gate(seed: int = 0, span: float = 7.0, height: float = 15.0,
 
     # podium the whole monument stands on
     podium_front = 3.5
-    stone_parts.append(M.box((stair_width + 6.0, stair_height, 13.0),
-                             center=(0.0, stair_height * 0.5, -3.0),
-                             uv_scale=0.55, material=STONE))
+    podium=M.box((stair_width + 6.0, stair_height, 13.0),
+                 center=(0.0, stair_height * 0.5, -3.0), uv_scale=0.55, material=STONE)
+    walks=[]
+    if continuous_walk:
+        triangles=podium.indices.reshape(-1,3)
+        podium.indices=triangles[np.mean(podium.normals[triangles,1],axis=1)<0.9].reshape(-1)
+        half=(stair_width+6)/2
+        walks.append(M.quad([(-half,stair_height,-9.5),(-half,stair_height,3.5),
+                             (half,stair_height,3.5),(half,stair_height,-9.5)],material=STONE))
+    stone_parts.append(podium)
     # the ceremonial stair stands in front of the podium and lands on its top
     stair_run, stair_rise = 0.40, 0.19
     stair_steps = max(1, int(round(stair_height / stair_rise)))
     stair_length = stair_steps * stair_run
-    stair = steps(stair_width, stair_height, stair_run, stair_rise, STONE)
-    stair.rotate_y(math.pi)
-    stone_parts.append(stair.translate(0.0, 0.0, podium_front + stair_length))
+    if continuous_walk:
+        from .routecraft import stair_flight
+        stair=stair_flight(stair_width,stair_height,stair_length,stair_steps,STONE)
+        walks.append(stair.rotate_y(math.pi).translate(0,0,podium_front+stair_length))
+    else:
+        stair = steps(stair_width, stair_height, stair_run, stair_rise, STONE)
+        stair.rotate_y(math.pi)
+        stone_parts.append(stair.translate(0.0, 0.0, podium_front + stair_length))
     for sign in (-1.0, 1.0):
         cheek_length = stair_length + 2.0
         cheek = M.box((1.5, stair_height + 0.7, cheek_length),
@@ -395,7 +408,9 @@ def monumental_gate(seed: int = 0, span: float = 7.0, height: float = 15.0,
 
     stone = _weather(M.merge(stone_parts, STONE), 0.018, seed + 11)
     carved = _weather(M.merge(carved_parts, CARVED), 0.012, seed + 13)
-    return group(stone, carved)
+    result=group(stone, carved)
+    for part in walks: result.add_walk(part)
+    return result
 
 
 def high_bridge(length: float = 22.0, deck_height: float = 8.5, width: float = 4.6,

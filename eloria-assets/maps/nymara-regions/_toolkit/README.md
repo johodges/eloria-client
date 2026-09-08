@@ -286,3 +286,41 @@ as region data. Searching the nearest road pixels after grading another yard
 can pick both landings on one bank. Declare the complete surveyed endpoints
 under navigation.crossings, keep the bed below the sagging deck, and check
 player-height views as well as the server crossing tests.
+
+## Woodland work and material-preserving buildings
+
+amberwood.woodlandcraft supplies watermill, mill_wheel and water_ribbon.
+The wheel has open rims, spokes and paddles around the local X axis; the
+mill's wheel centre defaults to (4.65, 1.85, 0); wheel_height lets a caller
+match its race. Place its lower
+paddles in the surveyed race. water_ribbon takes world-space XYZ stations
+and splits each segment on the centreline so a bend retains its surveyed
+water height. Use the frozen channel survey, not terrain resampled after
+road grading.
+
+architecture.forest_lodge and manor accept preserve_materials=True to
+retain their stone, plaster, timber and shingle groups. Their opt-in clean
+roof uses a lined canopy with gables meeting its edge. Defaults preserve
+older callers' material buckets and geometry. stonework.monumental_gate
+accepts continuous_walk=True for one podium skin and a continuous stair
+flight; its masonry box omits the duplicate top.
+
+civiccraft.arcaded_causeway is centred on local X. sloped_boardwalk starts
+at local Z=0 and ends at Z=length. Centre a timber span by translating it
+by -length/2 on Z before applying the region's rotation and placement.
+Verify the final GLB's Walk_ surface at stations between both banks.
+
+contentLayout.primaryArrivalOnly opts exterior content placement into the
+main arrival's connected component. Incoming secret-return portals must
+not seed isolated pockets as acceptable resource or creature habitat.
+Entrances themselves still need designed, connected ground.
+
+contentposts.apply reattaches server-owned NPC and harvest markers to their
+recorded tiles and the rendered Terrain_/Walk_ height. Amberwood's builder
+reads source/server-content.json after writing the GLB, so a standalone build
+retains those positions. After authoring and relocating server content, refresh
+the tile source and package with eloria-assets/tools/sync_package_content.py
+--manifest <server/config/eloria/client_content_manifest.json>
+--package nymara-regions/amberwood --write-source-posts --apply.
+The server content writer follows stable resource object IDs and NPC names;
+a change of plot must not detach the client marker from its server identity.

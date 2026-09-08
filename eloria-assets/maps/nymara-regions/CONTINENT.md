@@ -326,3 +326,21 @@ terrain after a road or yard cut. The western watch's Cascade Cave has a
 visible mouth and approach, and the temple return point uses the podium.
 No graph edge changes. See whitehorn_range/layout-review.md for measured
 access, retained content counts, repeat-build evidence and visual limitations.
+
+## Amberwood circulation pass - September 2026
+
+Amberwood's arrival is the market court above the mill, world
+(24, 40.8, -171), server (198, 345). Storage, crafting, training and
+information share that court; the Mother rises above its northern roofline.
+Seven surveyed stone and timber crossings connect the town, forest ridges,
+millrace, packet quay and kelp landing. The western coves occupy dry shore
+terraces; the quarry has a cart-width haul road and the lower orchard has
+a cultivated approach. The north beck skirts the settlement and feeds the
+mill's exposed paddle wheel. Harbour-quay remains the Westhaven ferry,
+with its trigger on the deck at world (-129, 24).
+
+Amberwood's source/layout.py owns the new composition and content plots.
+The older region.py and populate.py remain in the toolkit's documented
+legacy Amberwood location. Shared mill and water recipes live in
+amberwood.woodlandcraft; the existing timber and stone palette is retained.
+The four continent crossings and interior/secret identities are preserved.

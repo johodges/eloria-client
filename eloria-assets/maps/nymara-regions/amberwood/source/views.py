@@ -70,3 +70,28 @@ PANELS = {
     9: ("09-high-overlook", "High overlook toward the settlement"),
     10: ("10-material-study", "Material study: amber, carved wood, moss, leaves"),
 }
+
+# Player-height reviews of the September circulation pass. X/Z are still
+# design-space; fixed views preserve the surveyed eye instead of moving uphill.
+FIXED_VIEWS={"02-moot-hall","05-high-bridge","12-harbour","14-market","22-mill-pool",
+             "23-old-bridge","30-spawn-grounding","35-quay-approach","36-dry-cove",
+             "37-quarry-haul","38-mother-sightline"}
+def _world_view(name,panel,eye,eye_h,target,target_h,fov=58,mode="day!"):
+    return (name,panel,(eye[0]/3,eye[1]/3),eye_h,(target[0]/3,target[1]/3),target_h,
+            fov,(1180,780),48,mode)
+_REVIEW_VIEWS=[
+ _world_view("02-moot-hall",2,(18,-169),1.7,(-12,-192),8,55),
+ _world_view("05-high-bridge",5,(100,-206),1.7,(136,-188),1.4,58,"deck!"),
+ _world_view("12-harbour",None,(-94,24),1.7,(-128,24),1,57),
+ _world_view("14-market",None,(24,-164),1.7,(24,-185),2,65),
+ _world_view("22-mill-pool",None,(-21,-114),1.7,(-30,-118),2.6,58),
+ _world_view("23-old-bridge",None,(42.5,-138),1.7,(39,-159),1.7,58,"deck!"),
+ _world_view("30-spawn-grounding",None,(24,-171),1.7,(34,-190),2,66),
+ _world_view("35-quay-approach",None,(-103,24),1.7,(-82,31),2.5,58,"deck!"),
+ _world_view("36-dry-cove",None,(-58,-157),1.7,(-63,-176),2.5,60),
+ _world_view("37-quarry-haul",None,(219,126),1.7,(225,155),3.5,58),
+ _world_view("38-mother-sightline",None,(45,-218),1.7,(78,-264),32,58),
+]
+_changed={v[0] for v in _REVIEW_VIEWS}
+VIEWS=[v for v in VIEWS if v[0] not in _changed]+_REVIEW_VIEWS
+VIEWS.sort(key=lambda v:v[0])

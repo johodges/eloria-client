@@ -62,7 +62,7 @@ TERRAIN_CELL = 2.0
 _DESIGN_ANCHORS: dict[str, tuple[float, float]] = {
     "harbour": (-45.0, 6.0),
     "harbour_village": (-20.0, 12.0),
-    "north_cove": (-30.0, -52.0),
+    "north_cove": (-20.0, -52.0),
     "south_headland": (-24.0, 44.0),
     "coast_waterfall": (-18.0, -22.0),
     "sea_stacks": (-46.0, -8.0),
@@ -75,7 +75,7 @@ _DESIGN_ANCHORS: dict[str, tuple[float, float]] = {
     "mill_pool": (-2.0, -44.0),
     "canopy_camp": (22.0, -70.0),
     "hollow_tree": (-26.0, -86.0),
-    "old_bridge": (10.0, -44.0),
+    "old_bridge": (14.0, -49.0),
     "high_bridge": (40.0, -66.0),
     "north_gate": (24.0, -104.0),
     "great_arch": (58.0, -34.0),
@@ -102,8 +102,8 @@ _DESIGN_ANCHORS: dict[str, tuple[float, float]] = {
 # original composition: settlements on water and roads, industry near its
 # resource, ruins in the deep forest, and the burnt country thinning eastward.
 _DESIGN_ANCHORS.update({
-    "west_cove": (-42.0, -60.0),
-    "cove_huts": (-33.0, -58.0),
+    "west_cove": (-26.0, -60.0),
+    "cove_huts": (-21.0, -57.0),
     "forest_lake": (-15.0, -85.0),
     "lake_lodge": (-6.0, -80.0),
     "deep_grove": (-20.0, -110.0),
@@ -119,15 +119,15 @@ _DESIGN_ANCHORS.update({
     "ash_tower": (122.0, 12.0),
     "burnt_mill": (94.0, 30.0),
     # --- a third ring of places, added with the move to 576 m ----------
-    "far_grove": (-40.0, -128.0),
-    "grove_camp": (-30.0, -134.0),
+    "far_grove": (-8.0, -124.0),
+    "grove_camp": (-2.0, -128.0),
     "sea_arch": (-14.5, -20.0),
     "kelp_landing": (-31.0, 24.0),
     "south_orchard": (16.0, 46.0),
     "beekeeper": (30.0, 34.0),
     "long_meadow": (-4.0, 8.0),
-    "stone_ring": (-30.0, -14.0),
-    "west_lodge": (-34.0, -76.0),
+    "stone_ring": (-17.0, -12.0),
+    "west_lodge": (-20.0, -76.0),
     "upper_falls": (18.0, -124.0),
     "coppice": (52.0, -122.0),
     "east_grove": (66.0, -60.0),
@@ -243,6 +243,28 @@ ROUTES: dict[str, np.ndarray] = {
                         _design("far_watch")),
 }
 
+# Surveyed circulation, in world metres. Buildings and water own their places;
+# cart routes approach the banks and hill benches rather than their centres.
+ROUTES.update({name: np.asarray(points,dtype=float) for name,points in {
+ "coast_road":[(-60,120),(-55,84),(-60,36),(-43,7),(-24,-30),(-3,-56),(16,-83),(20,-106),(12,-119)],
+ "harbour_road":[(-129,24),(-108,24),(-90,24),(-60,36),(-30,12),(0,-6),(40,-30),(80,-38),(108,-42)],
+ "settlement_road":[(108,-42),(89,-69),(63,-99),(46,-122),(43,-135),(39,-159),(24,-171),(31,-198),(45,-218),(54,-234),(72,-312)],
+ "ridge_road":[(54,-234),(80,-218),(96,-208),(143,-185),(180,-185),(218,-197),(258,-210)],
+ "north_ridge_road":[(90,-354),(112,-345),(131,-330),(173,-284),(192,-281),(210,-276),(240,-243),(258,-210)],
+ "cove_road":[(12,-119),(-9,-122),(-23,-137),(-40,-151),(-56,-158),(-63,-171),(-65,-191),(-54,-211),(-60,-228),(-67,-243),(-78,-258)],
+ "lake_road":[(-78,-258),(-79,-275),(-65,-284),(-40,-287),(-20,-276),(-13,-255),(-18,-240)],
+ "far_grove_road":[(-65,-284),(-50,-307),(-43,-323),(-50,-337),(-24,-354),(-24,-372),(-6,-384)],
+ "west_lodge_road":[(-78,-258),(-60,-228),(-54,-211),(-63,-171)],
+ "stone_ring_road":[(-60,36),(-43,7),(-45,-16),(-51,-36),(-24,-30)],
+ "meadow_road":[(0,0),(-12,24),(-34,46),(-60,67),(-68,72),(-91,72)],
+ "south_coast_road":[(-60,120),(-40,137),(-13,136),(17,125),(48,125),(87,118),(138,120)],
+ "hollow_road":[(24,-171),(10,-182),(-12,-177),(-28,-176),(-28,-187),(-41,-210),(-36,-218),(-56,-234),(-67,-243),(-78,-258)],
+ "diggings_road":[(78,-264),(101,-276),(105,-285),(108,-312),(98,-335),(90,-354)],
+ "canopy_road":[(31,-198),(53,-199),(61,-205),(68,-225),(69,-245),(78,-251),(90,-263),(101,-276)],
+ "timber_road":[(138,120),(168,117),(193,111),(216,102),(246,108),(271,102),(290,99),(324,90)],
+ "orchard_road":[(156,50),(141,69),(138,88),(156,104),(193,111),(210,131),(225,147),(237,155)],
+}.items()})
+
 STREAMS: dict[str, np.ndarray] = {
     "north_beck": _route((36.0, -126.0), (30.0, -112.0), (24.0, -96.0), (18.0, -80.0),
                          (12.0, -66.0), (6.0, -54.0), (-2.0, -44.0)),
@@ -267,6 +289,11 @@ STREAMS: dict[str, np.ndarray] = {
                          _design("west_lodge"), (-38.0, -66.0)),
 }
 
+# The beck skirts the inhabited bench and collects at the mill pool.
+STREAMS["north_beck"]=np.asarray([(108,-378),(90,-336),(72,-288),(54,-240),
+                                  (19,-215),(-36,-209),(-32,-172),(-28,-149),(-6,-132)],dtype=float)
+STREAMS["mill_race"]=np.asarray([(-6,-132),(-20,-132),(-29,-125),(-29,-112),
+                                (-30,-96),(-40,-80),(-54,-66),(-76,-60)],dtype=float)
 RAVINE = _route((52.0, -80.0), _design("high_bridge"), (30.0, -58.0))
 RAVINE_NORTH = _route((38.0, -122.0), _design("ridge_bridge"), (66.0, -88.0))
 
@@ -428,7 +455,7 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260827) -> None:
                          ("ash_chapel", 7.0), ("cinder_field", 10.0),
                          ("smoke_vents", 8.0), ("east_quarry", 10.0),
                          ("far_watch", 6.0)):
-        t.mark_blocked_disc(ANCHORS[name], radius * SCALE)
+        t.mark_blocked_disc(ANCHORS[name], radius * LOCAL)
 
     # built ground for the places added with the enlargement
     for name, half_x, half_z, surface in (
@@ -454,7 +481,7 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260827) -> None:
             ("east_quarry", 9.0, 7.0, TER.ROCK),
             ("smoke_vents", 8.0, 7.0, TER.SCORCHED)):
         centre = ANCHORS[name]
-        t.rect_terrace(centre, half_x * SCALE, half_z * SCALE,
+        t.rect_terrace(centre, half_x * LOCAL, half_z * LOCAL,
                        float(t.height_at(*centre)), 0.0, surface)
 
     # the burnt country starts further east than it did, so the forest keeps

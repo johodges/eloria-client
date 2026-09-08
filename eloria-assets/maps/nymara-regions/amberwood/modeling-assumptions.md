@@ -65,3 +65,20 @@ reasonably want to overrule the build.
 11. **Population markers are metadata.** NPCs, creature groups and harvestables
    are recorded as positions with `"authority": "server"`. Nothing is baked into
    the static mesh.
+
+## September 2026 inhabited terraces
+
+The market court at world (24, -171) is the safe arrival, above a mill on the
+outlet rather than in a stream. The north beck passes west of the court.
+Buildings face the streets; their actual closed footprints are stamped as
+solids. The Mother is enlarged uniformly to carry the settlement silhouette.
+
+The two western cove groups occupy dry benches. The quay has a descending
+timber deck and an offshore packet. Industry follows its access: the mill
+has an exposed wheel in the race, the quarry has a six-metre cart road,
+and cultivated rows sit beside the lower orchard approach.
+
+Seven exact bank surveys are declared in source/layout.py. Road shoulders
+meet them; terrain beneath a walking skin is recessed. Wildlife occupies
+successive meadow, working forest and remote ridge/ash habitats. Species,
+resource names, secret keys and room contents remain the existing roster.
