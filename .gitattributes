@@ -1,2 +1,9 @@
 *.emesh binary
 *.png binary
+
+# Byte-exact fitter snapshots used to verify build provenance.
+eloria-assets/qa/canonical-equipment-provenance/* -text
+eloria-assets/qa/canonical-equipment/** -text
+
+# Keep evidence hashes stable across Git newline settings.
+eloria-assets/qa/shared-equipment/** -text

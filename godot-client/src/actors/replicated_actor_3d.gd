@@ -494,6 +494,22 @@ func _tint_mesh(mesh_node: MeshInstance3D, tint: Color,
 		emissive: bool = false) -> void:
 	if mesh_node.mesh == null or mesh_node.mesh.get_surface_count() == 0:
 		return
+	# A shared trunk and an original race head keep distinct source materials.
+	# A node-wide override would repaint every primitive with the first atlas.
+	if mesh_node.mesh.get_surface_count() > 1:
+		for surface in range(mesh_node.mesh.get_surface_count()):
+			var original := mesh_node.mesh.surface_get_material(surface) as StandardMaterial3D
+			if original == null:
+				continue
+			var tinted := original.duplicate() as StandardMaterial3D
+			tinted.albedo_color = original.albedo_color * tint
+			var colours: Variant = mesh_node.mesh.surface_get_arrays(surface)[Mesh.ARRAY_COLOR]
+			tinted.vertex_color_use_as_albedo = colours is PackedColorArray and not colours.is_empty()
+			if emissive:
+				tinted.emission_enabled = true
+				tinted.emission = tint * 0.28
+			mesh_node.set_surface_override_material(surface, tinted)
+		return
 	var source: Material = mesh_node.get_active_material(0)
 	if source is not StandardMaterial3D:
 		return
@@ -507,6 +523,15 @@ func _tint_mesh(mesh_node: MeshInstance3D, tint: Color,
 func _set_mesh_color(mesh_node: MeshInstance3D, color: Color) -> void:
 	if mesh_node.mesh == null or mesh_node.mesh.get_surface_count() == 0:
 		return
+	if mesh_node.mesh.get_surface_count() > 1:
+		for surface in range(mesh_node.mesh.get_surface_count()):
+			var original := mesh_node.mesh.surface_get_material(surface) as StandardMaterial3D
+			if original == null:
+				continue
+			var coloured := original.duplicate() as StandardMaterial3D
+			coloured.albedo_color = color
+			mesh_node.set_surface_override_material(surface, coloured)
+		return
 	var source: Material = mesh_node.get_active_material(0)
 	if source is not StandardMaterial3D:
 		return
@@ -518,6 +543,18 @@ func _set_mesh_color(mesh_node: MeshInstance3D, color: Color) -> void:
 ## pass already installed so a garment keeps its colour.
 func _grow_mesh(mesh_node: MeshInstance3D, amount: float) -> void:
 	if mesh_node.mesh == null or mesh_node.mesh.get_surface_count() == 0:
+		return
+	if mesh_node.mesh.get_surface_count() > 1:
+		for surface in range(mesh_node.mesh.get_surface_count()):
+			var grown := mesh_node.get_surface_override_material(surface) as StandardMaterial3D
+			if grown == null:
+				var original := mesh_node.mesh.surface_get_material(surface) as StandardMaterial3D
+				if original == null:
+					continue
+				grown = original.duplicate() as StandardMaterial3D
+				mesh_node.set_surface_override_material(surface, grown)
+			grown.grow = true
+			grown.grow_amount = amount
 		return
 	var material: StandardMaterial3D = (mesh_node.material_override
 		as StandardMaterial3D)
@@ -1324,7 +1361,8 @@ func _create_equipment_part(part: int, visual_id: int, allow_fallback: bool) -> 
 			created.append_array(_attach_skinned_equipment(scene_path, part, visual_id,
 				model_config.get("tint", []) as Array,
 				str(model_config.get("authoredFor", "")),
-				str(model_config.get("skinRegion", ""))))
+				str(model_config.get("skinRegion", "")),
+				str(model_config.get("fitProfile", ""))))
 		else:
 			var socket: Dictionary = _equipment_socket(part, model_config)
 			var attachment: BoneAttachment3D = _attach_socketed_equipment(
@@ -1489,7 +1527,7 @@ func _refresh_wardrobe_cover() -> void:
 		for piece: Node in _equipment_nodes.get(part, []):
 			if not is_instance_valid(piece):
 				continue
-			if piece.has_meta("replaces_torso_body"):
+			if piece.has_meta("replaces_torso_body") and not piece.has_meta("generated_body_cover"):
 				cover_regions.append(Vector3(TorsoBodyCover.LOW, TorsoBodyCover.HIGH, TorsoBodyCover.WRIST))
 			elif piece.has_meta("generated_body_cover"):
 				cover_regions.append(piece.get_meta("generated_body_cover"))
@@ -1513,13 +1551,19 @@ func _refresh_wardrobe_cover() -> void:
 		if _native_skeleton != null and mesh_node.skin != null and is_body_surface:
 			TorsoBodyCover.apply(mesh_node, not cover_regions.is_empty(),
 				_native_skeleton.global_transform.affine_inverse() * mesh_node.global_transform,
-				rig_fit_scale(), cover_regions)
+				rig_fit_scale(), cover_regions, rig_name().begins_with("ssarathi_"))
 		if not SHIRT_SURFACES.has(mesh_node.name.to_lower()):
 			continue
 		if not mesh_node.has_meta("wardrobe_color"):
 			continue
 		var want: Color = (COVERED_SHIRT if covered
 			else mesh_node.get_meta("wardrobe_color") as Color)
+		if mesh_node.mesh.get_surface_count() > 1:
+			for surface in range(mesh_node.mesh.get_surface_count()):
+				var part_material := mesh_node.get_surface_override_material(surface) as StandardMaterial3D
+				if part_material != null:
+					part_material.albedo_color = want
+			continue
 		# Set on the override the appearance pass already installed rather than
 		# through `_set_mesh_color`: that duplicates the material afresh, which
 		# would drop the `grow` WARDROBE_GROW put on it and sink the shirt back
@@ -1587,12 +1631,9 @@ func rig_name() -> String:
 
 ## The fit groups this actor's race belongs to, in precedence order.
 ##
-## Modified 2026-08-29 for Eloria Client: this used to be a single name. A race
-## can differ from the reference body in more than one way - a Ssarathi female
-## has both a digitigrade leg and a bust, and the two are authored on different
-## rigs - so a race now names every group it is in and a garment resolves the
-## first one it actually ships a variant for. A registry written the old way,
-## with one name per race, still reads correctly.
+## Generated garments share male/female body fits; headwear keeps a fit for
+## each retained head. Registries list these fit groups in priority
+## order; the parser also retains compatibility with a single group string.
 func fit_groups() -> PackedStringArray:
 	var groups: Dictionary = _equipment_config.get("fitGroups", {}) as Dictionary
 	var mine: Variant = groups.get(rig_name(), "")
@@ -1632,13 +1673,17 @@ func _equipment_socket(part: int, model_config: Dictionary) -> Dictionary:
 	var sockets: Dictionary = _equipment_config.get("sockets", {}) as Dictionary
 	return sockets.get(str(part), {}) as Dictionary
 
-func rig_fit_scale() -> float:
-	# Equipment is authored once against the canonical rest pose. Rigs built
-	# shorter wear the same asset scaled about the floor, so one GLB fits every
-	# race and both body variants.
+func _equipment_fit_profile(name: String = "") -> Dictionary:
+	var profiles: Dictionary = _equipment_config.get("fitProfiles", {}) as Dictionary
+	return profiles.get(name, _equipment_config) as Dictionary
+
+func rig_fit_scale(profile: String = "") -> float:
+	# Canonical body variants use current Rest_Pose units. Unchanged socketed
+	# props/capes retain their recorded legacy units and measurement profile.
+	# A body variant already fits its wearer; no stature correction is repeated.
 	if _native_skeleton == null:
 		return 1.0
-	var canonical: float = float(_equipment_config.get("canonicalHeadRestY", 0.0))
+	var canonical: float = float(_equipment_fit_profile(profile).get("canonicalHeadRestY", 0.0))
 	if canonical <= 0.0:
 		return 1.0
 	var head: int = _native_skeleton.find_bone("Head")
@@ -1660,7 +1705,7 @@ func _attach_socketed_equipment(socket: Dictionary, scene_path: String,
 		return null
 	var bone_index: int = _native_skeleton.find_bone(bone)
 	var rest: Transform3D = _native_skeleton.get_bone_global_rest(bone_index)
-	var fit: float = rig_fit_scale()
+	var fit: float = rig_fit_scale(str(model_config.get("fitProfile", "")))
 	var scale: float = fit * float(model_config.get("scale", 1.0))
 	var placement: Transform3D = Transform3D(
 		Basis.from_euler(_vector3(socket.get("rotationDegrees", []),
@@ -1676,19 +1721,19 @@ func _attach_socketed_equipment(socket: Dictionary, scene_path: String,
 
 func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
 		tint: Array = [], author_rig: String = "",
-		skin_region: String = "") -> Array[Node]:
+		skin_region: String = "", fit_profile: String = "") -> Array[Node]:
 	# The garment ships with the shared joint hierarchy so it is a valid skinned
 	# glTF on its own. Replacing its bind poses with this skeleton's rest poses
 	# retargets the garment and applies the rig fit scale in one step.
 	var created: Array[Node] = []
-	var fit: float = rig_fit_scale()
+	var fit: float = rig_fit_scale(fit_profile)
 	var fit_basis: Transform3D = Transform3D(
 		Basis.IDENTITY.scaled(Vector3.ONE * fit), Vector3.ZERO)
 	# Bind poses depend only on the rig, and every actor built from one model
 	# shares a rest pose, so the rebound skin is cached per model and garment
-	# instead of rebuilt from 65 named binds for each actor that wears one.
-	var cache_key: String = "%s|%s" % [str(_model_config.get("scene", "")), scene_path]
-	var ground: Dictionary = _ground_drops(author_rig, skin_region)
+	# instead of rebuilt from 77 named binds for each actor that wears one.
+	var cache_key: String = "%s|%s|%s|%s" % [str(_model_config.get("scene", "")), scene_path, fit_profile, fit]
+	var ground: Dictionary = _ground_drops(author_rig, skin_region, fit_profile)
 	# The cape is the one garment cut against another: its yoke is rigid, so
 	# only this can hold it outside the torso worn under it.
 	var worn: String = _worn_torso_scene() if part == CAPE_PART else ""
@@ -1699,7 +1744,7 @@ func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
 		if rebound == null:
 			rebound = _rebound_skin(piece.get("bones", PackedStringArray()) as PackedStringArray,
 				piece.get("binds", [] as Array[Transform3D]) as Array[Transform3D],
-				fit_basis, _girth_ratios(author_rig), ground)
+				fit_basis, _girth_ratios(author_rig, fit_profile), ground)
 			if rebound != null:
 				_rebound_skins[surface_key] = rebound
 		if rebound == null:
@@ -1715,6 +1760,9 @@ func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
 		clone.set_meta("native_equipment", true)
 		if part == BODY_PART and str(piece.get("name", "")) == TorsoBodyCover.BACKING_NAME:
 			clone.set_meta("replaces_torso_body", true)
+			var cover: Array = piece.get("body_cover", []) as Array
+			if cover.size() == 3:
+				clone.set_meta("generated_body_cover", _vector3(cover, Vector3.ZERO))
 		if (part == 4 and str(piece.get("name", "")) == "GeneratedLegBacking") or (part == 6 and str(piece.get("name", "")) == "GeneratedBootBacking"):
 			var cover: Array = piece.get("body_cover", []) as Array
 			if cover.size() == 3:
@@ -1800,11 +1848,18 @@ static func _tint_colour(value: Variant, fallback: Color) -> Color:
 ## letting it out for a broader wearer is safe while taking it in is not: the
 ## measurement is one number for a whole bone, and a chest it underestimates
 ## would come straight through the shirt.
-func _girth_ratios(author_rig: String) -> Dictionary:
+func _shares_authored_body(author_rig: String, profile: String) -> bool:
+	if profile != "canonical":
+		return false
+	var templates: Dictionary = _equipment_config.get("bodyTemplates", {}) as Dictionary
+	var author: String = str(templates.get(author_rig, ""))
+	return not author.is_empty() and author == str(templates.get(rig_name(), ""))
+
+func _girth_ratios(author_rig: String, profile: String = "") -> Dictionary:
 	var mine: String = rig_name()
-	if author_rig.is_empty() or author_rig == mine:
+	if author_rig.is_empty() or author_rig == mine or _shares_authored_body(author_rig, profile):
 		return {}
-	var table: Dictionary = _equipment_config.get("bodyGirth", {}) as Dictionary
+	var table: Dictionary = _equipment_fit_profile(profile).get("bodyGirth", {}) as Dictionary
 	var author: Dictionary = table.get(author_rig, {}) as Dictionary
 	var wearer: Dictionary = table.get(mine, {}) as Dictionary
 	if author.is_empty() or wearer.is_empty():
@@ -1817,36 +1872,17 @@ func _girth_ratios(author_rig: String) -> Dictionary:
 			ratios[bone] = clampf(to / from, 1.0, 2.0)
 	return ratios
 
-## How far this actor's foot joints stand above the floor, against the body a
-## boot was lofted around. Empty for everything that is not footwear.
-##
-## The rest of the refit scales each bone about its own origin, and for the foot
-## chain that origin is the ankle - which is not a fixed height above the
-## ground. It stands 91 to 103 mm up on every male rig in the cast and only 78.6
-## to 83.4 mm on every female one. Stature does not predict that: the female
-## rigs are three per cent shorter overall and twenty per cent shorter from
-## ankle to sole, so a sole authored on the reference body and scaled by height
-## landed 14 mm through the floor on all seven of them, and no single authored
-## mesh could have fixed it.
-##
-## A vector, and a move rather than a scale, which is the whole point.
-##
-## Measured across the cast the foot barely varies: every female foot is within
-## four per cent of its male counterpart's width and seven per cent of its
-## length. What varies is where it sits relative to the joint that carries it -
-## the ankle stands 91 to 103 mm above the floor on the male rigs and 78.6 to
-## 83.4 on the female ones, and the Orun ankle sits 26 mm further inboard than
-## the reference's with the foot still under the body. Scaling a boot to close
-## the first would take eighteen per cent off a shell that has to contain a foot
-## four per cent *wider*, and no scale at all reaches the second. Moving the
-## shell instead lands it and leaves the fit alone.
-func _ground_drops(author_rig: String, skin_region: String) -> Dictionary:
+## Translate a shared boot by measured foot geometry, not skeleton stature.
+## Shared male/female body geometry includes matching weighted soles and toes.
+## Items authored on that same template need no second foot adjustment. Legacy
+## items retain their recorded authoring profile and socket scale.
+func _ground_drops(author_rig: String, skin_region: String, profile: String = "") -> Dictionary:
 	if skin_region != "boots":
 		return {}
 	var mine: String = rig_name()
-	if author_rig.is_empty() or author_rig == mine:
+	if author_rig.is_empty() or author_rig == mine or _shares_authored_body(author_rig, profile):
 		return {}
-	var table: Dictionary = _equipment_config.get("footAnchor", {}) as Dictionary
+	var table: Dictionary = _equipment_fit_profile(profile).get("footAnchor", {}) as Dictionary
 	var author: Dictionary = table.get(author_rig, {}) as Dictionary
 	var wearer: Dictionary = table.get(mine, {}) as Dictionary
 	if author.is_empty() or wearer.is_empty():

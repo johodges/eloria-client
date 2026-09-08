@@ -1,5 +1,11 @@
 # Original-source leg, foot and head fitting
 
+> Historical report for the previous body generation. The 16 current bodies
+> now share the canonical Rest_Pose and split wardrobe surfaces; references
+> below to 14 fused bodies and older fit measurements are obsolete. See
+> [the canonical-body equipment refit](canonical-equipment-refit.md) for the
+> current authoring, runtime units and validation.
+
 The 64 leg pieces, 72 foot pieces and 64 head pieces now enter
 `limb_head_remap.build` from `conform_equipment.build`. They read their original
 `.glb.orig` exports. The previous seat/correction chain is bypassed for these

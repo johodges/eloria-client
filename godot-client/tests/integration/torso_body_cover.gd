@@ -22,7 +22,7 @@ func run() -> void:
 		var body := scene.instantiate()
 		root.add_child(body)
 		var skeleton := body.find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
-		var fit := skeleton.get_bone_global_rest(skeleton.find_bone("Head")).origin.y / 1.6
+		var fit := skeleton.get_bone_global_rest(skeleton.find_bone("Head")).origin.y / 1.5684900288581848
 		var removed := 0
 		var retained := 0
 		for node: Node in body.find_children("*", "MeshInstance3D", true, false):
@@ -47,7 +47,7 @@ func run() -> void:
 					if indices[i] == indices[i + 1]:
 						continue
 					var c := (vertices[indices[i]] + vertices[indices[i + 1]] + vertices[indices[i + 2]]) / 3.0
-					expect(not TorsoBodyCover.covers((transform * c) / fit), "no covered body triangle remains")
+					expect(protected_face(mesh, after, indices, i) or not TorsoBodyCover.covers((transform * c) / fit), "only uncovered body and protected head/neck triangles remain")
 					retained += 1
 			TorsoBodyCover.apply(mesh, false, transform, fit)
 			expect(mesh.mesh == original, "unequip restores the exact body resource")
@@ -90,3 +90,25 @@ func run() -> void:
 		actor.free()
 	print("TORSO EQUIP/UNEQUIP: %d failures" % failures)
 	quit(1 if failures else 0)
+
+func protected_face(instance: MeshInstance3D, arrays: Array, ids: PackedInt32Array, start: int) -> bool:
+	if instance.name.to_lower() not in ["body", "char1", "mesh_node"] or instance.skin == null:
+		return false
+	var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
+	var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
+	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	var stride: int = bones.size()/vertices.size()
+	var total := 0.0
+	for corner: int in range(3):
+		for slot: int in range(stride):
+			var offset := ids[start+corner]*stride+slot
+			var bone_name := instance.skin.get_bind_name(bones[offset])
+			if bone_name.is_empty():
+				var skeleton := instance.get_node(instance.skeleton) as Skeleton3D
+				bone_name = skeleton.get_bone_name(instance.skin.get_bind_bone(bones[offset]))
+			if bone_name in [&"Head", &"neck_01"]:
+				total += weights[offset]
+	var center := (vertices[ids[start]]+vertices[ids[start+1]]+vertices[ids[start+2]])/3.
+	var skeleton := instance.get_node(instance.skeleton) as Skeleton3D
+	center = skeleton.global_transform.affine_inverse()*instance.global_transform*center
+	return total > 1.5 or (center.y > 1.40 and absf(center.x) < .11)

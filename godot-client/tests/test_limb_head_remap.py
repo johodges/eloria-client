@@ -70,7 +70,7 @@ def test_boots_use_foot_length_and_preserve_each_shell(rig):
             (points[offset : offset + 8] - points[offset]) * foot["scale"],
         )
         assert mapped[offset : offset + 8, 1].min() == pytest.approx(
-            rig.positions[:, 1].min() - 0.004 * rig.fit_scale
+            ea.weighted_sole(rig, foot["side"]) - 0.004 * rig.fit_scale
         )
     assert (
         np.ptp(mapped[:8, 1]) > 0.5
@@ -187,3 +187,26 @@ def test_original_source_writer_bypasses_old_fit_and_preserves_texture(
             np.testing.assert_allclose(primitive.weights.sum(axis=1), 1.0, atol=1e-6)
             shells = coverage.components(primitive.points, primitive.triangles)
             assert shells and all(s.closed and s.volume > 0 for s in shells)
+def test_closed_visor_uses_eyes_instead_of_full_head_feature_height(monkeypatch):
+    import equipment_authoring as ea
+    import conform_equipment as ce
+    import limb_head_remap as remap
+    rig = ea.load_rig(ce.RACES / 'votary_male.glb', ea.BODY_SURFACES)
+    target = ce.socket_origin(rig, 3).copy()
+    monkeypatch.setattr(ce, 'socket_origin', lambda *args: target.copy())
+    # A simple hood has side/back walls, a roof and a front brow, with its
+    # face open below the brow. This exercises the actual opening detector.
+    points = np.array([[x,y,z] for x in [-.16,.16]
+                       for y in [-.20,.20] for z in [-.12,.12]])
+    points = np.vstack([points, [-.16,.06,.12], [.16,.06,.12]])
+    faces = np.array([[0,1,3],[0,3,2],[4,6,7],[4,7,5],
+                      [0,2,6],[0,6,4],[2,3,7],[2,7,6],[8,9,7],[8,7,3]])
+    class TallFeature:
+        def __getattr__(self, name):
+            return getattr(rig, name)
+        def _region(self, bones):
+            return np.vstack([rig._region(bones), [0.,2.4,0.]])
+    regular, before = remap.head_frame(points, faces, rig, 'Fixture Hood')
+    tall, after = remap.head_frame(points, faces, TallFeature(), 'Fixture Hood')
+    assert before['sourceBrow'] is not None
+    np.testing.assert_allclose(tall, regular, atol=1e-10)

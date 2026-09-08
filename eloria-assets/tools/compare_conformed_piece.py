@@ -23,6 +23,7 @@ underlayer and see the armour on its own.
 from __future__ import annotations
 
 import argparse
+import os
 from pathlib import Path
 import subprocess
 import shutil
@@ -67,6 +68,7 @@ def main() -> int:
                          "mesh can still read badly on a character, and that "
                          "is the picture the player sees")
     ap.add_argument("--labels", default="")
+    ap.add_argument("--equipment", type=Path, help="Candidate equipment registry for per-body socket transforms")
     ap.add_argument("--worn-pose", choices=["rest", "source", "bent"], default="rest",
                     help="pose both the character and equipment in the worn sheet")
     ap.add_argument("--worn-region", choices=["torso", "legs", "boots", "head"], default="torso",
@@ -77,7 +79,10 @@ def main() -> int:
                     help="save editable Blender scenes beside the comparison and worn renders")
     ap.add_argument("--width", type=int, default=760,
                     help="pixels per column")
+    ap.add_argument("--threads", type=int, default=8, help="Maximum CPU render threads (default: 8)")
     args = ap.parse_args()
+    if not 1 <= args.threads <= 8:
+        ap.error("--threads must be between 1 and 8")
 
     for model in args.models:
         if not model.exists():
@@ -87,14 +92,16 @@ def main() -> int:
         raise SystemExit("no such race body: %s" % args.worn)
     if args.ensemble and args.worn is None:
         raise SystemExit("--ensemble needs --worn to resolve the head socket")
-    command = [str(find_blender()), "--background", "--python", str(SCRIPT),
+    command = [str(find_blender()), "--background", "--threads", str(args.threads), "--python", str(SCRIPT),
                "--", str(args.out.resolve()), str(args.yaw),
                "1" if args.pose_arms else "0", str(args.width),
                ",".join(args.drop_material), args.labels,
                str(args.worn.resolve()) if args.worn is not None else "", args.worn_pose,
-               args.worn_region, '1' if args.ensemble else '0', '1' if args.save_blend else '0']
+               args.worn_region, '1' if args.ensemble else '0', '1' if args.save_blend else '0',
+               str(args.equipment.resolve()) if args.equipment else '']
     command += [str(m.resolve()) for m in args.models]
-    result = subprocess.run(command, capture_output=True, text=True)
+    result = subprocess.run(command, capture_output=True, text=True,
+                            env=dict(os.environ, ELORIA_RENDER_CORES=str(args.threads)))
     if result.returncode != 0 or not args.out.exists():
         sys.stderr.write(result.stdout[-4000:])
         sys.stderr.write(result.stderr[-4000:])

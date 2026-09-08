@@ -11,7 +11,7 @@ permissions:
 jobs:
   protocol-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 60
     container:
       image: barichello/godot-ci:4.7.2
     steps:
@@ -22,13 +22,21 @@ jobs:
         run: |
           apt-get update
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-            python3 python3-numpy python3-pytest
+            python3 python3-numpy python3-scipy python3-pil python3-pytest
       - name: Validate native Nymara GLB catalog
         run: python3 godot-client/tests/test_native_glb_assets.py -v
       - name: Validate the generated sound set
         run: python3 godot-client/tests/test_native_sounds.py -v
       - name: Validate garment fit registry
         run: python3 godot-client/tests/test_equipment_fit.py -v
+      - name: Validate original-source equipment mapping
+        run: python3 -m pytest godot-client/tests/test_torso_remap.py godot-client/tests/test_limb_head_remap.py godot-client/tests/test_canonical_equipment.py -q
+      - name: Validate canonical equipment and animation paths
+        run: |
+          godot --headless --path godot-client --script res://tests/test_animation_looping.gd
+          godot --headless --path godot-client --script res://tests/integration/torso_body_cover.gd
+          godot --headless --path godot-client --script res://tests/integration/armour_body_cover.gd
+          godot --headless --path godot-client --script res://tests/integration/equipment_fit_profiles.gd
       - name: Validate held prop registry
         run: python3 godot-client/tests/test_held_props.py -v
       - name: Validate world object models
