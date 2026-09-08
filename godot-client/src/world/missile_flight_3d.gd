@@ -1,80 +1,61 @@
 class_name MissileFlight3D
 extends Node3D
-## One arrow, in flight between the two actors the server named.
-##
-## `MISSILE_AIM_A_AT_B(84)` and `MISSILE_FIRE_A_TO_B(86)` were undecoded, so a
-## ranged fight was two actors standing still while damage numbers appeared:
-## nothing was ever drawn between them.
-##
-## The flight is presentation over an event that has already happened - the
-## server resolves the shot on its own and sends the damage separately - so
-## this decides nothing. It travels from where the shooter stood to where the
-## target stood, in the time the shot is given, and frees itself.
-
+## Cosmetic flight over the authoritative shot. Same broadhead/fletching asset
+## as the nocked arrow, launched from the fingers, tangent to a shallow arc.
 const FLIGHT_SECONDS := 0.25
-## An arrow at true scale is two pixels at gameplay camera distance, which is
-## no better than drawing nothing. The shaft is drawn thicker than life and
-## given a bright trail so the shot reads as a shot.
-const SHAFT_LENGTH := 1.3
-const SHAFT_RADIUS := 0.07
-const TRAIL_LENGTH := 2.6
-const ARROW_COLOUR := Color(0.98, 0.92, 0.66)
-const TRAIL_COLOUR := Color(1.0, 0.86, 0.45, 0.55)
-
+const ARROW_PATH := "res://assets/actors/native/equipment/ranger_arrow.glb"
 var origin := Vector3.ZERO
 var destination := Vector3.ZERO
 var elapsed := 0.0
+var flight_seconds := FLIGHT_SECONDS
+var _arc_height := 0.12
+var _arrow: Node3D
+var _trail := ImmediateMesh.new()
+var _trail_material := CombatEffectMesh.material()
+var _trail_node: MeshInstance3D
 
-var _shaft: MeshInstance3D
-var _trail: MeshInstance3D
-
-func configure(from_position: Vector3, to_position: Vector3) -> void:
-	origin = from_position + Vector3(0.0, 1.1, 0.0)
-	destination = to_position + Vector3(0.0, 1.0, 0.0)
+func configure(from_position: Vector3, to_position: Vector3,
+		release_origin: Variant = null, ground_target := false) -> void:
+	origin = release_origin as Vector3 if release_origin is Vector3 else from_position + Vector3.UP * 1.1
+	destination = to_position + Vector3.UP * (0.06 if ground_target else 1.0)
+	var distance := origin.distance_to(destination)
+	flight_seconds = clampf(distance / 28.0, 0.12, 0.65)
+	_arc_height = clampf(distance * 0.025, 0.04, 0.45)
 	global_position = origin
-	var material := StandardMaterial3D.new()
-	material.albedo_color = ARROW_COLOUR
-	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	var shaft_mesh := CylinderMesh.new()
-	shaft_mesh.top_radius = SHAFT_RADIUS
-	shaft_mesh.bottom_radius = SHAFT_RADIUS
-	shaft_mesh.height = SHAFT_LENGTH
-	shaft_mesh.material = material
-	_shaft = MeshInstance3D.new()
-	_shaft.name = "Shaft"
-	_shaft.mesh = shaft_mesh
-	add_child(_shaft)
+	_arrow = GlbSceneCache.instantiate(ARROW_PATH)
+	if _arrow != null:
+		_arrow.name = "Shaft"
+		add_child(_arrow)
+	_trail_node = MeshInstance3D.new()
+	_trail_node.name = "Trail"
+	_trail_node.mesh = _trail
+	_trail_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(_trail_node)
+	_update_visual(0.0)
 
-	var trail_material := StandardMaterial3D.new()
-	trail_material.albedo_color = TRAIL_COLOUR
-	trail_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	trail_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	trail_material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-	var trail_mesh := CylinderMesh.new()
-	trail_mesh.top_radius = SHAFT_RADIUS * 0.35
-	trail_mesh.bottom_radius = SHAFT_RADIUS * 0.9
-	trail_mesh.height = TRAIL_LENGTH
-	trail_mesh.material = trail_material
-	_trail = MeshInstance3D.new()
-	_trail.name = "Trail"
-	_trail.mesh = trail_mesh
-	add_child(_trail)
-	_point_along(destination - origin)
+func point_at(progress: float) -> Vector3:
+	return origin.lerp(destination, progress) + Vector3.UP * (4.0 * _arc_height * progress * (1.0-progress))
 
-func _point_along(direction: Vector3) -> void:
-	if direction.length_squared() < 0.0001:
-		return
-	var up: Vector3 = (Vector3.UP if absf(direction.normalized().dot(Vector3.UP))
-		< 0.999 else Vector3.FORWARD)
-	for part: MeshInstance3D in [_shaft, _trail]:
-		part.look_at_from_position(Vector3.ZERO, direction.normalized(), up)
-		part.rotate_object_local(Vector3.RIGHT, PI * 0.5)
-	# The trail sits behind the head, along the path already flown.
-	_trail.position = -direction.normalized() * (TRAIL_LENGTH * 0.5)
+func _update_visual(progress: float) -> void:
+	global_position = point_at(progress)
+	var tangent := destination - origin + Vector3.UP * (4.0 * _arc_height * (1.0-2.0*progress))
+	if _arrow != null and tangent.length_squared() > 0.00001:
+		var up := Vector3.RIGHT if absf(tangent.normalized().dot(Vector3.UP)) > 0.99 else Vector3.UP
+		_arrow.look_at(global_position + tangent, up)
+	_trail.clear_surfaces()
+	_trail.surface_begin(Mesh.PRIMITIVE_TRIANGLES, _trail_material)
+	var tail_fraction := minf(progress, 0.055 / flight_seconds)
+	for i: int in 8:
+		var a := float(i) / 8.0
+		var b := float(i+1) / 8.0
+		CombatEffectMesh.line(_trail, to_local(point_at(progress-tail_fraction*(1.0-a))),
+			to_local(point_at(progress-tail_fraction*(1.0-b))), 0.022*b,
+			Color(0.88, 0.79, 0.51, b*0.42))
+	_trail.surface_end()
 
 func _process(delta: float) -> void:
 	elapsed += delta
-	var progress: float = clampf(elapsed / FLIGHT_SECONDS, 0.0, 1.0)
-	global_position = origin.lerp(destination, progress)
+	var progress := clampf(elapsed / flight_seconds, 0.0, 1.0)
+	_update_visual(progress)
 	if progress >= 1.0:
 		queue_free()

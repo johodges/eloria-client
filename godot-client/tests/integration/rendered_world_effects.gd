@@ -109,16 +109,20 @@ func _run() -> void:
 		await process_frame
 	app_state.call("_on_packet", 84, PackedByteArray([0x5b, 0, 0x4d, 0]))
 	app_state.call("_on_packet", 86, PackedByteArray([0x5b, 0, 0x4d, 0]))
-	for _settle: int in range(3):
-		await process_frame
+	# Freeze immediately: flight now scales with distance, and the first bow
+	# import can make even a few rendered frames outlive a short flight.
 	var shots: Array = main.get("world_effects") as Array
 	var arrow: MissileFlight3D = shots[shots.size() - 1] as MissileFlight3D
+	if arrow != null:
+		arrow.set_process(false)
+	for _settle: int in range(3):
+		await process_frame
 	_expect(arrow != null and arrow.get_node_or_null("Shaft") != null,
 		"the arrow is in flight between the two actors")
 	# A quarter-second flight is over in a handful of headless frames. The
 	# capture advances it to its midpoint so the frame shows the arrow
 	# between the two actors rather than at the moment it left the bow.
-	arrow.elapsed = MissileFlight3D.FLIGHT_SECONDS * 0.5
+	arrow._process(arrow.flight_seconds * 0.5)
 	await process_frame
 	await _capture("world-effect-missile.png",
 		"the arrow the server loosed, between the two actors it named")

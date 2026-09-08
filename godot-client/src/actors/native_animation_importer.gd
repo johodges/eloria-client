@@ -54,6 +54,9 @@ static func import_library(owner: Node, source_path: String,
 	if library == null:
 		return result
 	var target_player := AnimationPlayer.new()
+	# Normalize blend weights against the authored RESET, including tracks that
+	# one clip omits. Otherwise an idle's root yaw persists in the bow pose.
+	target_player.deterministic = true
 	target_player.name = "NativeAnimationPlayer"
 	owner.add_child(target_player)
 	target_player.add_animation_library("", library)
@@ -121,7 +124,7 @@ static func _parse_library(path: String) -> Node:
 static func _skeleton_signature(skeleton: Skeleton3D) -> String:
 	var names := PackedStringArray()
 	for bone: int in skeleton.get_bone_count():
-		names.append(skeleton.get_bone_name(bone))
+		names.append(skeleton.get_bone_name(bone) + str(skeleton.get_bone_rest(bone)))
 	return "%d:%d" % [names.size(), hash(names)]
 
 static func cached_library_count() -> int:
@@ -145,8 +148,9 @@ static func _build(source_path: String, skeleton_path: String,
 	# An empty request means "everything the file offers"; the actor path always
 	# passes the clips its action map can reach.
 	var filter_clips := not wanted_clips.is_empty()
+	var source_clips := CombatAnimationLibrary.source_clips(wanted_clips)
 	for clip_name in source_player.get_animation_list():
-		if filter_clips and not wanted_clips.has(String(clip_name)):
+		if filter_clips and not source_clips.has(String(clip_name)):
 			continue
 		var source := source_player.get_animation(clip_name)
 		var target := Animation.new()
@@ -172,6 +176,27 @@ static func _build(source_path: String, skeleton_path: String,
 		if target.get_track_count() > 0:
 			library.add_animation(clip_name, target)
 			built.clips.append(String(clip_name))
+	CombatAnimationLibrary.install(library, wanted_clips)
+	# A runtime glTF library has no RESET animation. Without a stable blend
+	# reference, the first played idle's turned root becomes the rotation base
+	# for subsequent crossfades (including a bow aimed 23 degrees off target).
+	var reset := Animation.new()
+	reset.length = 0.0
+	for bone: int in target_skeleton.get_bone_count():
+		var rest := target_skeleton.get_bone_rest(bone)
+		for type: Animation.TrackType in [Animation.TYPE_POSITION_3D, Animation.TYPE_ROTATION_3D, Animation.TYPE_SCALE_3D]:
+			var track := reset.add_track(type)
+			reset.track_set_path(track, NodePath(skeleton_path + ":" + target_skeleton.get_bone_name(bone)))
+			var value: Variant = rest.origin
+			if type == Animation.TYPE_ROTATION_3D:
+				value = rest.basis.get_rotation_quaternion()
+			elif type == Animation.TYPE_SCALE_3D:
+				value = rest.basis.get_scale()
+			reset.track_insert_key(track, 0.0, value)
+	if library.has_animation(&"RESET"):
+		library.remove_animation(&"RESET")
+	library.add_animation(&"RESET", reset)
+	built.clips = library.get_animation_list()
 	built.library = library
 	if built.clips.is_empty():
 		built.errors.append("no animation tracks matched the target skeleton")

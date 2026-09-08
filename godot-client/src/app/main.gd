@@ -3807,6 +3807,7 @@ func _spawn_actor(id: Variant) -> void:
 	if not errors.is_empty():
 		push_warning("Actor %d: %s" % [id, "; ".join(errors)])
 	node.apply_server_state(dto, adapter, true)
+	node.set_combat_effects_enabled(_effects_enabled)
 	node.set_nameplate_visible(_nameplate_visible_for(int(id)))
 	node.set_title(str(AppState.actor_titles.get(int(id), "")))
 	_place_actor_on_surface(node, true)
@@ -7137,6 +7138,12 @@ func _banner_row_height() -> float:
 ## the damage arrives in its own packet - so this decides nothing, and an
 ## actor the client has not been told about is not guessed at.
 func _on_missile_fired(shot: Dictionary) -> void:
+	var source := actor_nodes.get(int(shot.get("source_actor_id", -1))) as ReplicatedActor3D
+	var release_origin: Variant = null
+	if is_instance_valid(source):
+		release_origin = source.ranged_release_origin()
+		source.set_combat_effects_enabled(_effects_enabled)
+		source.play_action(&"ranged_attack", true)
 	if not _effects_enabled:
 		return
 	var from_value: Variant = _actor_effect_position(
@@ -7147,7 +7154,7 @@ func _on_missile_fired(shot: Dictionary) -> void:
 		return
 	var missile := MissileFlight3D.new()
 	world_root.add_child(missile)
-	missile.configure(from_value as Vector3, to_value as Vector3)
+	missile.configure(from_value as Vector3, to_value as Vector3, release_origin)
 	world_effects.append(missile)
 	world_effects = world_effects.filter(func(node: Variant) -> bool:
 		return is_instance_valid(node))
@@ -7231,6 +7238,12 @@ func _on_thunder_struck(severity: int) -> void:
 ## decision, arriving on the wire, so two clients watching one shot draw the
 ## same arrow instead of each inventing a scatter.
 func _on_ground_missile_fired(shot: Dictionary) -> void:
+	var source := actor_nodes.get(int(shot.get("source_actor_id", -1))) as ReplicatedActor3D
+	var release_origin: Variant = null
+	if is_instance_valid(source):
+		release_origin = source.ranged_release_origin()
+		source.set_combat_effects_enabled(_effects_enabled)
+		source.play_action(&"ranged_attack", true)
 	if not _effects_enabled:
 		return
 	var from_value: Variant = _actor_effect_position(
@@ -7241,7 +7254,7 @@ func _on_ground_missile_fired(shot: Dictionary) -> void:
 		int(shot.get("x", 0)), int(shot.get("y", 0)))
 	var missile := MissileFlight3D.new()
 	world_root.add_child(missile)
-	missile.configure(from_value as Vector3, landing)
+	missile.configure(from_value as Vector3, landing, release_origin, true)
 	world_effects.append(missile)
 	world_effects = world_effects.filter(func(node: Variant) -> bool:
 		return is_instance_valid(node))
@@ -7252,6 +7265,11 @@ func _on_ground_missile_fired(shot: Dictionary) -> void:
 ## told about has no position, so nothing is drawn for it rather than a guess
 ## at the middle of the map.
 func _on_special_effect_requested(effect: Dictionary) -> void:
+	var source := actor_nodes.get(int(effect.get("actor_id", -1))) as ReplicatedActor3D
+	var action := SpellPresentation.action_for_effect(int(effect.get("effect", -1)))
+	if is_instance_valid(source) and not action.is_empty():
+		source.set_combat_effects_enabled(_effects_enabled)
+		source.play_action(action)
 	var origin_value: Variant = _actor_effect_position(int(effect.get("actor_id", -1)))
 	if not origin_value is Vector3:
 		return
@@ -7275,6 +7293,9 @@ func _on_actor_animation_requested(animation: Dictionary) -> void:
 	var node: Variant = actor_nodes.get(int(animation.get("actor_id", -1)))
 	if not is_instance_valid(node):
 		return
+	if str(animation.get("action", "")) == "cast_exit" and (node as ReplicatedActor3D).current_action not in [&"cast_channel", &"cast_channel_enter"]:
+		return
+	(node as ReplicatedActor3D).set_combat_effects_enabled(_effects_enabled)
 	(node as ReplicatedActor3D).play_action(
 		StringName(str(animation.get("action", ""))))
 
@@ -8049,6 +8070,9 @@ func _on_client_setting_changed(section: String, key: String,
 			world_sun.shadow_enabled = _shadows_enabled and world_sun.visible
 		"particles":
 			_effects_enabled = bool(value)
+			for actor_value: Variant in actor_nodes.values():
+				if is_instance_valid(actor_value):
+					(actor_value as ReplicatedActor3D).set_combat_effects_enabled(_effects_enabled)
 		"nameplates":
 			_nameplates_enabled = bool(value)
 			_apply_banner_options()

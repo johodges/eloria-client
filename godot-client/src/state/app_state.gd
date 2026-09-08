@@ -748,13 +748,18 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			state_changed.emit(&"spells")
 		"spell_result":
 			last_spell_result = {"status": int(event.status), "spell_id": int(event.spell_id)}
+			var spell_action: StringName = &""
 			match int(event.status):
 				4:
 					pending_spell_target = "actor"
+					spell_action = &"cast_channel_enter"
 				5:
 					pending_spell_target = "location"
+					spell_action = &"cast_channel_enter"
 				_:
 					pending_spell_target = ""
+					spell_action = SpellPresentation.action_for_spell(int(event.spell_id)) if int(event.status) == 1 else &"cast_exit"
+			actor_animation_requested.emit({"actor_id": local_actor_id, "action": spell_action})
 			state_changed.emit(&"spells")
 		"missile":
 			# Aiming is state - the shooter is still drawing - and it lives on
@@ -771,6 +776,8 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			if bool(event.fired):
 				missile_fired.emit({"source_actor_id": shooter_id,
 					"target_actor_id": int(event.target_actor_id)})
+			else:
+				actor_animation_requested.emit({"actor_id": shooter_id, "action": "ranged_draw"})
 		"world_object":
 			if bool(event.replace):
 				world_objects.clear()
@@ -862,6 +869,8 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 				ground_missile_fired.emit({
 					"source_actor_id": ground_shooter_id,
 					"x": int(event.x), "y": int(event.y)})
+			else:
+				actor_animation_requested.emit({"actor_id": ground_shooter_id, "action": "ranged_draw"})
 		"actor_animation":
 			actor_animation_requested.emit({"actor_id": int(event.actor_id),
 				"action": str(event.action)})

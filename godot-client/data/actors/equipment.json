@@ -24711,7 +24711,8 @@
           25.9186
         ]
       },
-      "fitProfile": "legacy"
+      "fitProfile": "legacy",
+      "rangedAnimationScene": "res://assets/actors/native/equipment/amberwood_ranger_bow.glb"
     },
     "0:165": {
       "scene": "res://assets/actors/native/equipment/sunmane_recurve_bow.glb",
@@ -24730,7 +24731,8 @@
           25.9186
         ]
       },
-      "fitProfile": "legacy"
+      "fitProfile": "legacy",
+      "rangedAnimationScene": "res://assets/actors/native/equipment/sunmane_ranger_bow.glb"
     },
     "0:166": {
       "scene": "res://assets/actors/native/equipment/siege_great_crossbow.glb",
@@ -26655,6 +26657,26 @@
           "fitProfile": "canonical"
         }
       }
+    },
+    "0:64": {
+      "name": "Amberwood Ranger Longbow",
+      "scene": "res://assets/actors/native/equipment/amberwood_ranger_bow.glb",
+      "attach": "ranged_bow"
+    },
+    "0:65": {
+      "name": "Sunmane Ranger Recurve",
+      "scene": "res://assets/actors/native/equipment/sunmane_ranger_bow.glb",
+      "attach": "ranged_bow"
+    },
+    "0:66": {
+      "name": "Amberwood Ranger Longbow",
+      "scene": "res://assets/actors/native/equipment/amberwood_ranger_bow.glb",
+      "attach": "ranged_bow"
+    },
+    "0:67": {
+      "name": "Sunmane Ranger Recurve",
+      "scene": "res://assets/actors/native/equipment/sunmane_ranger_bow.glb",
+      "attach": "ranged_bow"
     }
   },
   "aliases": {},

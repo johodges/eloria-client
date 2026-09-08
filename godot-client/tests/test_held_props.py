@@ -50,7 +50,9 @@ class HeldPropTest(unittest.TestCase):
         """Every model an actor holds in a hand, with the bone it hangs off."""
         for key, model in self.models.items():
             part, _, visual = key.partition(":")
-            if part not in {"0", "1"} or model.get("attach") == "skinned":
+            # Two-hand bows follow both posed hands through RangerBow3D; they
+            # are not members of the single-hand weapon / off-hand id bank.
+            if part not in {"0", "1"} or model.get("attach") in {"skinned", "ranged_bow"}:
                 continue
             bone = str((model.get("socket") or {}).get("bone", ""))
             yield int(part), int(visual), bone, model

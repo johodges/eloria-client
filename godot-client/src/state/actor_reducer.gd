@@ -10,6 +10,7 @@ static func apply_command(actor: Dictionary, actor_command: int) -> Dictionary:
 	next["x"] = int(next.get("x", 0)) + step.x
 	next["y"] = int(next.get("y", 0)) + step.y
 	next["command"] = actor_command
+	next["command_sequence"] = int(actor.get("command_sequence", 0)) + 1
 	# The last command that named a direction, kept apart from the last command
 	# of any kind. A frame's packets are reduced to one state before anything
 	# renders it, so a turn followed by the swing it was made for - which is

@@ -34,6 +34,7 @@ jobs:
       - name: Validate canonical equipment and animation paths
         run: |
           godot --headless --path godot-client --script res://tests/test_animation_looping.gd
+          godot --headless --path godot-client --script res://tests/test_combat_presentation.gd
           godot --headless --path godot-client --script res://tests/integration/torso_body_cover.gd
           godot --headless --path godot-client --script res://tests/integration/armour_body_cover.gd
           godot --headless --path godot-client --script res://tests/integration/equipment_fit_profiles.gd
