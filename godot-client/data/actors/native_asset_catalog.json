@@ -1220,7 +1220,7 @@
       "vertices": 7450,
       "triangles": 12376,
       "joints": 27,
-      "animations": 7,
+      "animations": 8,
       "path": "godot-client/assets/actors/native/creatures/amethyst_golem.glb",
       "locale": "amethyst_barrens",
       "concept": {
@@ -1862,7 +1862,7 @@
       "vertices": 13041,
       "triangles": 20150,
       "joints": 27,
-      "animations": 7,
+      "animations": 8,
       "path": "godot-client/assets/actors/native/creatures/cascade_golem.glb",
       "locale": "crownwater",
       "concept": {
@@ -2185,7 +2185,7 @@
       "vertices": 10023,
       "triangles": 15778,
       "joints": 27,
-      "animations": 7,
+      "animations": 8,
       "path": "godot-client/assets/actors/native/creatures/millstone_golem.glb",
       "locale": "westhaven",
       "concept": {
@@ -2246,7 +2246,7 @@
       "vertices": 10855,
       "triangles": 16786,
       "joints": 27,
-      "animations": 7,
+      "animations": 8,
       "path": "godot-client/assets/actors/native/creatures/waterwheel_golem.glb",
       "locale": "westhaven",
       "concept": {
@@ -2667,7 +2667,7 @@
       "vertices": 11789,
       "triangles": 18152,
       "joints": 27,
-      "animations": 7,
+      "animations": 8,
       "path": "godot-client/assets/actors/native/creatures/cairn_golem.glb",
       "locale": "grey_moors",
       "concept": {
@@ -2768,7 +2768,7 @@
       "vertices": 5526,
       "triangles": 9312,
       "joints": 24,
-      "animations": 7,
+      "animations": 8,
       "path": "godot-client/assets/actors/native/creatures/reefplate_golem.glb",
       "locale": "mirrorhold",
       "concept": {
@@ -3430,7 +3430,7 @@
       "vertices": 7400,
       "triangles": 12356,
       "joints": 27,
-      "animations": 7,
+      "animations": 8,
       "path": "godot-client/assets/actors/native/creatures/glacier_golem.glb",
       "locale": "whitehorn_range",
       "concept": {
@@ -3811,7 +3811,7 @@
       "vertices": 7429,
       "triangles": 11292,
       "joints": 27,
-      "animations": 7,
+      "animations": 8,
       "path": "godot-client/assets/actors/native/creatures/ivy_stone_golem.glb",
       "locale": "amberwood",
       "concept": {
@@ -11685,7 +11685,7 @@
         "nodes": 28,
         "meshes": 1,
         "skins": 1,
-        "animations": 7
+        "animations": 8
       },
       "godot-client/assets/actors/native/creatures/amethyst_moth.glb": {
         "nodes": 58,
@@ -11715,7 +11715,7 @@
         "nodes": 27,
         "meshes": 1,
         "skins": 1,
-        "animations": 7
+        "animations": 8
       },
       "godot-client/assets/actors/native/creatures/arcane_core_colossus.glb": {
         "nodes": 58,
@@ -11913,7 +11913,7 @@
         "nodes": 28,
         "meshes": 1,
         "skins": 1,
-        "animations": 7
+        "animations": 8
       },
       "godot-client/assets/actors/native/creatures/cairnback_tortoise.glb": {
         "nodes": 25,
@@ -11937,7 +11937,7 @@
         "nodes": 28,
         "meshes": 1,
         "skins": 1,
-        "animations": 7
+        "animations": 8
       },
       "godot-client/assets/actors/native/creatures/cave_salamander.glb": {
         "nodes": 69,
@@ -12219,7 +12219,7 @@
         "nodes": 26,
         "meshes": 1,
         "skins": 1,
-        "animations": 7
+        "animations": 8
       },
       "godot-client/assets/actors/native/creatures/frost_tiger.glb": {
         "nodes": 25,
@@ -12333,7 +12333,7 @@
         "nodes": 28,
         "meshes": 1,
         "skins": 1,
-        "animations": 7
+        "animations": 8
       },
       "godot-client/assets/actors/native/creatures/glacier_harpy.glb": {
         "nodes": 61,
@@ -12471,7 +12471,7 @@
         "nodes": 28,
         "meshes": 1,
         "skins": 1,
-        "animations": 7
+        "animations": 8
       },
       "godot-client/assets/actors/native/creatures/jadefeather_raptor.glb": {
         "nodes": 80,
@@ -12585,7 +12585,7 @@
         "nodes": 28,
         "meshes": 1,
         "skins": 1,
-        "animations": 7
+        "animations": 8
       },
       "godot-client/assets/actors/native/creatures/mire_goblin.glb": {
         "nodes": 80,
@@ -12777,7 +12777,7 @@
         "nodes": 28,
         "meshes": 1,
         "skins": 1,
-        "animations": 7
+        "animations": 8
       },
       "godot-client/assets/actors/native/creatures/mountain_goat.glb": {
         "nodes": 25,
@@ -12921,7 +12921,7 @@
         "nodes": 25,
         "meshes": 1,
         "skins": 1,
-        "animations": 7
+        "animations": 8
       },
       "godot-client/assets/actors/native/creatures/ridgehorn.glb": {
         "nodes": 25,
@@ -12969,7 +12969,7 @@
         "nodes": 56,
         "meshes": 1,
         "skins": 1,
-        "animations": 7
+        "animations": 8
       },
       "godot-client/assets/actors/native/creatures/riverbank_ibis.glb": {
         "nodes": 22,
@@ -12993,7 +12993,7 @@
         "nodes": 49,
         "meshes": 1,
         "skins": 1,
-        "animations": 7
+        "animations": 8
       },
       "godot-client/assets/actors/native/creatures/russet_faun.glb": {
         "nodes": 68,
@@ -13353,7 +13353,7 @@
         "nodes": 28,
         "meshes": 1,
         "skins": 1,
-        "animations": 7
+        "animations": 8
       },
       "godot-client/assets/actors/native/creatures/whitehorn_ice_griffin.glb": {
         "nodes": 31,

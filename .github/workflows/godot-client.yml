@@ -35,6 +35,7 @@ jobs:
         run: |
           godot --headless --path godot-client --script res://tests/test_animation_looping.gd
           godot --headless --path godot-client --script res://tests/test_combat_presentation.gd
+          godot --headless --path godot-client --script res://tests/test_golem_ground_pound.gd
           godot --headless --path godot-client --script res://tests/test_spell_flights.gd
           godot --headless --path godot-client --script res://tests/test_magic_book_ui.gd
           godot --headless --path godot-client --script res://tests/integration/torso_body_cover.gd

@@ -4396,7 +4396,7 @@
     "mossbound_stone_golem": {
       "scene": "res://assets/actors/native/creatures/mossbound_stone_golem.glb",
       "animationLibrary": "res://assets/actors/native/creatures/mossbound_stone_golem.glb",
-      "animationMap": "res://data/animations/creature.json",
+      "animationMap": "res://data/animations/golem.json",
       "import": {
         "scale": 2.962085,
         "rotationDegreesX": 0,
@@ -5093,7 +5093,7 @@
     "amethyst_stone_golem": {
       "scene": "res://assets/actors/native/creatures/amethyst_stone_golem.glb",
       "animationLibrary": "res://assets/actors/native/creatures/amethyst_stone_golem.glb",
-      "animationMap": "res://data/animations/creature.json",
+      "animationMap": "res://data/animations/golem.json",
       "import": {
         "scale": 2.352942,
         "rotationDegreesX": 0,
@@ -5195,7 +5195,7 @@
     "frost_stone_golem": {
       "scene": "res://assets/actors/native/creatures/frost_stone_golem.glb",
       "animationLibrary": "res://assets/actors/native/creatures/frost_stone_golem.glb",
-      "animationMap": "res://data/animations/creature.json",
+      "animationMap": "res://data/animations/golem.json",
       "import": {
         "scale": 2.352942,
         "rotationDegreesX": 0,
@@ -5263,7 +5263,7 @@
     "river_stone_golem": {
       "scene": "res://assets/actors/native/creatures/river_stone_golem.glb",
       "animationLibrary": "res://assets/actors/native/creatures/river_stone_golem.glb",
-      "animationMap": "res://data/animations/creature.json",
+      "animationMap": "res://data/animations/golem.json",
       "import": {
         "scale": 2.352941,
         "rotationDegreesX": 0,
@@ -5280,7 +5280,7 @@
     "rune_stone_golem": {
       "scene": "res://assets/actors/native/creatures/rune_stone_golem.glb",
       "animationLibrary": "res://assets/actors/native/creatures/rune_stone_golem.glb",
-      "animationMap": "res://data/animations/creature.json",
+      "animationMap": "res://data/animations/golem.json",
       "import": {
         "scale": 2.352942,
         "rotationDegreesX": 0,
