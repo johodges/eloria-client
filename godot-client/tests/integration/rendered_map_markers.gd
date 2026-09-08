@@ -6,8 +6,7 @@ extends SceneTree
 ## shipped client did with every marker, because nothing decoded command 90 at
 ## all. The "after" frame is the same map once the marker belongs to it.
 ##
-## Markers draw on the map-camera layer only, so the gameplay view is captured
-## as well to show that a navigation aid does not become scenery.
+## The gameplay capture verifies the separate green effect and floating label.
 
 const SCREEN_SIZE := Vector2i(1280, 720)
 
@@ -32,6 +31,15 @@ func _run() -> void:
 	(main.get_node("LoginPanel") as Control).hide()
 	var app_state: Node = root.get_node("/root/AppState")
 	app_state.set("authenticated", true)
+	# Use the fixture ground and a known transform, without asynchronously
+	# loading a region whose real tile origin differs from this little stage.
+	app_state.set("current_map", "four_gates")
+	main.set("loaded_server_map", "four_gates")
+	var adapter := CoordinateAdapter.new()
+	main.set("adapter", adapter)
+	(main.get("console_commands") as ConsoleCommands).marks.clear()
+	(main.get("map_marker_overlay") as Control).configure(
+		main.get("full_map_camera"), adapter, (main.get("full_map_viewport") as SubViewport).size)
 
 	# A plain lit ground so the top-down cameras have something to render.
 	var stage: Node3D = main.get_node(
@@ -43,14 +51,11 @@ func _run() -> void:
 	ground_mesh.material = ground_material
 	var ground := MeshInstance3D.new()
 	ground.mesh = ground_mesh
+	ground.position.y = -0.02
 	stage.add_child(ground)
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-52.0, 38.0, 0.0)
 	stage.add_child(sun)
-	for _settle: int in range(4):
-		await process_frame
-
-	app_state.call("_on_packet", 7, _nul("./maps/four_gates.elm"))
 	for _settle: int in range(4):
 		await process_frame
 
@@ -84,15 +89,42 @@ func _run() -> void:
 	main.call("_on_map_button_pressed")
 	for _settle: int in range(6):
 		await process_frame
+	var pin: MapMarker3D = markers[490]
+	_expect((pin.get_node("WorldLabel") as Label3D).text == "Reed bank",
+		"the gameplay marker names the destination")
+	RenderingServer.force_draw(false)
+	var viewport: SubViewport = main.get("main_viewport") as SubViewport
+	var world_image: Image = viewport.get_texture().get_image()
+	_expect(_green_pixels(world_image) > 20,
+		"green marker light is actually rendered by the gameplay camera")
 	await _capture("map-marker-gameplay-view.png",
-		"the gameplay view: a navigation aid stays on the map cameras rather"
-			+ " than becoming a pin over the world")
+		"the gameplay view shows a green ground glow, rising sparks and the label")
 
 	app_state.call("_on_packet", 91, PackedByteArray([0xea, 0x01]))
 	for _settle: int in range(4):
 		await process_frame
 	_expect((main.get("map_marker_nodes") as Dictionary).is_empty(),
 		"the server takes the marker away again")
+	RenderingServer.force_draw(false)
+	_expect(_green_pixels(viewport.get_texture().get_image()) == 0,
+		"the gameplay effect disappears when the server removes its marker")
+
+	var lesson := PackedByteArray([255, 133])
+	lesson.append_array(_nul("The Gate Warden\n\n"
+		+ "Ilyon has held this gate long enough to stop being impressed by arrivals. "
+		+ "Walk close and click him to talk.\n\n"
+		+ "Anything a person asks of you is written into your quest log, so you "
+		+ "never have to remember an errand exactly as it was worded.\n\n"
+		+ "While you are here: what you type reaches everyone standing near you. "
+		+ "Use #jc to join a numbered channel, then put @ in front of a message "
+		+ "to send it there instead."))
+	app_state.call("_on_packet", 0, lesson)
+	for _settle: int in range(4):
+		await process_frame
+	var panel: Control = main.get("popup_panel") as Control
+	_expect(panel.visible and Rect2(Vector2.ZERO, Vector2(SCREEN_SIZE)).encloses(
+		panel.get_global_rect()), "the next tutorial lesson is visible and fits the screen")
+	await _capture("tutorial-plaza-next-instructions.png", "the next lesson after reaching the plaza")
 
 	app_state.set("authenticated", false)
 	main.queue_free()
@@ -108,6 +140,7 @@ func _nul(value: String) -> PackedByteArray:
 
 func _capture(name: String, description: String) -> void:
 	await process_frame
+	RenderingServer.force_draw(false)
 	var image: Image = root.get_texture().get_image()
 	_expect(image != null and image.get_size() == SCREEN_SIZE,
 		"%s is a full %dx%d frame" % [name, SCREEN_SIZE.x, SCREEN_SIZE.y])
@@ -128,6 +161,15 @@ func _has_colour_variation(image: Image) -> bool:
 			lowest = minf(lowest, luminance)
 			highest = maxf(highest, luminance)
 	return highest - lowest > 0.02
+
+func _green_pixels(image: Image) -> int:
+	var found := 0
+	for y: int in image.get_height():
+		for x: int in image.get_width():
+			var colour: Color = image.get_pixel(x, y)
+			if colour.g > 0.6 and colour.g > colour.r * 1.35 and colour.g > colour.b * 1.5:
+				found += 1
+	return found
 
 func _expect(value: bool, label: String) -> bool:
 	if not value:

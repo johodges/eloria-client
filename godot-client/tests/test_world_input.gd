@@ -2829,7 +2829,10 @@ func _run() -> void:
 	var pin: MeshInstance3D = (placed.get_node_or_null("Pin")
 		as MeshInstance3D) if placed != null else null
 	_expect(pin != null and pin.layers == MapMarker3D.MAP_MARKER_LAYER,
-		"a marker draws on the map cameras rather than over the gameplay view")
+		"the large pin stays on the full map")
+	var world_label: Label3D = placed.get_node_or_null("WorldLabel") as Label3D
+	_expect(world_label != null and world_label.layers == MapMarker3D.GAMEPLAY_LAYER
+		and world_label.text == "Reed bank", "the marker also labels the gameplay view")
 	var marker_sidebar: RichTextLabel = main.get_node(
 		"GameView/FullMap/MapLayout/Sidebar/SidebarContent/MapMarkerList") as RichTextLabel
 	_expect(marker_sidebar.visible and marker_sidebar.text.contains("Reed bank")

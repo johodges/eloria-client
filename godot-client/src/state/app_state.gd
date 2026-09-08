@@ -276,6 +276,7 @@ var harvest: Dictionary = {"active": false, "object_id": -1, "resource": ""}
 ## POPUP_REPLY(50) had no encoder.
 var popup: Dictionary = {"open": false, "popup_id": -1, "title": "", "text": "",
 	"options": []}
+var _pending_text_popups: Array[Dictionary] = []
 var perks: Array[Dictionary] = []
 ## Every perk that can be bought, as the server prices it, each carrying the
 ## server's own reason for refusing it where there is one. The client keeps no
@@ -411,6 +412,7 @@ func _on_connection_state_changed(value: String) -> void:
 		spell_power.clear()
 		harvest = _empty_harvest_state()
 		popup = _empty_popup_state()
+		_pending_text_popups.clear()
 		perks.clear()
 		perk_catalog.clear()
 		attributes.clear()
@@ -942,6 +944,10 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			if chat_lines.size() > CHAT_LINE_LIMIT:
 				chat_lines.pop_front()
 			state_changed.emit(&"chat")
+			# Channel 255 is the server's read-only popup channel. Tutorial
+			# lessons arrive here, not through DISPLAY_POPUP's choice packet.
+			if int(event.channel) == 255:
+				_show_text_popup(str(event.text))
 		"npc_info":
 			npc_dialogue["open"] = true
 			npc_dialogue["name"] = event.name
@@ -1261,7 +1267,23 @@ func _emit_stat_feedback(stat_key: String, previous_value: int,
 ## The popup is closed by the client once its answer is on the wire, or when
 ## the player dismisses it. The server does not send a close packet.
 func close_popup() -> void:
-	popup = _empty_popup_state()
+	popup = (_pending_text_popups.pop_front() if not _pending_text_popups.is_empty()
+		else _empty_popup_state())
+	state_changed.emit(&"popup")
+
+func _show_text_popup(message: String) -> void:
+	message = message.strip_edges()
+	if message.is_empty():
+		return
+	var split_at: int = message.find("\n")
+	var incoming: Dictionary = {"open": true, "popup_id": -1, "options": [],
+		"title": message.substr(0, split_at).strip_edges() if split_at >= 0 else "Quest progress",
+		"text": message.substr(split_at + 1).strip_edges() if split_at >= 0 else message}
+	# A notification must not swallow a question awaiting the player's reply.
+	if bool(popup.get("open", false)) and int(popup.get("popup_id", -1)) >= 0:
+		_pending_text_popups.append(incoming)
+		return
+	popup = incoming
 	state_changed.emit(&"popup")
 
 ## The reading slice is a typed reduction of the three research statistics, so

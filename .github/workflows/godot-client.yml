@@ -256,6 +256,8 @@ jobs:
           test -s "$ELORIA_ARTIFACT_DIR/parity-emotes-window.png"
           test -s "$ELORIA_ARTIFACT_DIR/parity-ranging-window.png"
           test -s "$ELORIA_ARTIFACT_DIR/parity-settings-hud-tab.png"
+      - name: Test navigation markers and tutorial instruction delivery
+        run: godot --headless --path godot-client --script res://tests/test_navigation_guidance.gd
       - name: Render server-placed map markers
         run: |
           mkdir -p "$ELORIA_ARTIFACT_DIR"
@@ -265,6 +267,7 @@ jobs:
           test -s "$ELORIA_ARTIFACT_DIR/map-marker-before.png"
           test -s "$ELORIA_ARTIFACT_DIR/map-marker-full-map.png"
           test -s "$ELORIA_ARTIFACT_DIR/map-marker-gameplay-view.png"
+          test -s "$ELORIA_ARTIFACT_DIR/tutorial-plaza-next-instructions.png"
       - name: Render the active-effect strip
         run: |
           mkdir -p "$ELORIA_ARTIFACT_DIR"

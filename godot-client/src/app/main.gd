@@ -279,6 +279,7 @@ var walk_highlight_markers: Dictionary = {}
 var map_object_nodes: Dictionary = {}
 ## Server-placed map markers on the current map, keyed by the server's marker id.
 var map_marker_nodes: Dictionary = {}
+var player_mark_nodes: Dictionary = {}
 var map_marker_overlay: Control
 ## The minimap's marks. The full map's are still modelled in the world; see
 ## `minimap_marker_overlay.gd` for why the minimap's cannot be.
@@ -2536,7 +2537,15 @@ func _clear_world_presentation() -> void:
 			(raw_object_node as Node).queue_free()
 	map_object_nodes.clear()
 	_ungrounded_map_objects.clear()
-	map_marker_overlay.set_waypoints([])
+	for markers: Dictionary in [map_marker_nodes, player_mark_nodes]:
+		for marker: Node in markers.values():
+			if is_instance_valid(marker):
+				marker.queue_free()
+		markers.clear()
+	var no_marks: Array[Dictionary] = []
+	map_marker_overlay.set_waypoints(no_marks)
+	map_marker_overlay.set_markers(no_marks)
+	map_marker_overlay.set_player_marks(no_marks)
 	if is_instance_valid(map_light_root):
 		map_light_root.queue_free()
 	map_light_root = null
@@ -9687,20 +9696,41 @@ func _sync_map_markers() -> void:
 		map_marker_nodes.erase(marker_id)
 	for raw_id: Variant in AppState.map_markers:
 		var marker_id: int = int(raw_id)
-		if map_marker_nodes.has(marker_id):
-			continue
 		var dto_value: Variant = AppState.map_markers.get(marker_id)
 		if not dto_value is Dictionary:
 			continue
 		var dto: Dictionary = dto_value as Dictionary
 		if str(dto.get("map_id", "")) != here:
 			continue
-		var marker := MapMarker3D.new()
+		var marker: MapMarker3D = map_marker_nodes.get(marker_id) as MapMarker3D
+		if not is_instance_valid(marker):
+			marker = MapMarker3D.new()
+			world_root.add_child(marker)
+			map_marker_nodes[marker_id] = marker
 		marker.configure(dto, adapter)
-		world_root.add_child(marker)
-		map_marker_nodes[marker_id] = marker
 		_place_map_marker_on_surface(marker)
+	_sync_player_mark_nodes()
 	_sync_map_marker_list()
+	_request_map_redraw()
+
+func _sync_player_mark_nodes() -> void:
+	var wanted: Dictionary = {}
+	for mark: Dictionary in _current_player_marks():
+		var key: String = str(mark.get("label", "Mark"))
+		wanted[key] = true
+		var marker: MapMarker3D = player_mark_nodes.get(key) as MapMarker3D
+		if not is_instance_valid(marker):
+			marker = MapMarker3D.new()
+			world_root.add_child(marker)
+			player_mark_nodes[key] = marker
+		marker.configure(mark, adapter, false)
+		_place_map_marker_on_surface(marker)
+	for key: Variant in player_mark_nodes.keys():
+		if not wanted.has(key):
+			var stale: Node = player_mark_nodes[key] as Node
+			if is_instance_valid(stale):
+				stale.queue_free()
+			player_mark_nodes.erase(key)
 
 ## The pins are readable as shapes on both map cameras, but a full map covers a
 ## whole map: no label drawn at that scale can be read. The sidebar lists what
@@ -9784,6 +9814,8 @@ func _snap_all_map_objects_to_surface() -> void:
 	for raw_object: Variant in map_object_nodes.values():
 		_place_map_object_on_surface(raw_object as MapObject3D)
 	for raw_marker: Variant in map_marker_nodes.values():
+		_place_map_marker_on_surface(raw_marker as MapMarker3D)
+	for raw_marker: Variant in player_mark_nodes.values():
 		_place_map_marker_on_surface(raw_marker as MapMarker3D)
 
 ## The "now harvesting" indicator. The stock client drove this by matching an
