@@ -56,7 +56,7 @@
     "maskSHA256": "d59ddaace34fba0c335223bbbd8812070f7f125278368468d3fdad87ebe33ba9"
   },
   "luminous_female": {
-    "modelSHA256": "b06a880c074d00f50f5aaeb1ddaa2a4f069d74415123a5f28eedf91979805a7c",
+    "modelSHA256": "8d8dea9c58e9a0085f8e28afbf28c8e3205d78dec8f098d166202fc8be6e2a66",
     "maskSHA256": "615b9646dfbdf48ce6af32b288b7bbfd61c8d363d24dbee143b2b6101d084cb3",
     "sourceMaterial": 0,
     "size": [
@@ -112,7 +112,7 @@
     }
   },
   "luminous_male": {
-    "modelSHA256": "2ec727a080f7c98ea9a0d5c1204efbd4cb094d224618ae426eede01557c7c1bc",
+    "modelSHA256": "9f97b8db169f61e971e5a9642e11fb10fcaef8b8b85f2a89e41a2f5812e91640",
     "maskSHA256": "f56961fa63beaaf51a9c2e025a7af7f8eda257e6bc7a095323977d4e53a1e71f",
     "sourceMaterial": 0,
     "size": [

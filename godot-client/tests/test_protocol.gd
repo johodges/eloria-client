@@ -316,11 +316,19 @@ func _init() -> void:
 	_expect(AppearanceVariants.skin_tint(0) != AppearanceVariants.skin_tint(1)
 		and AppearanceVariants.eye_color(0) != AppearanceVariants.eye_color(1)
 		and AppearanceVariants.hair_style(6) == 2
-		and AppearanceVariants.head_style(7) == 3
+		and AppearanceVariants.head_style(7) == 0
 		and AppearanceVariants.wardrobe_color("luminous",
 			AppearanceVariants.PART_SHIRT, 0) != AppearanceVariants.wardrobe_color(
 				"luminous", AppearanceVariants.PART_SHIRT, 1),
-		"skin, eye, hair, head, and wardrobe choices produce distinct variants")
+		"appearance variants work and retired cosmetic headwear stays hidden")
+	for style: int in range(4):
+		for color: int in range(20):
+			var packed := AppearanceVariants.pack_hair(style, color)
+			_expect(AppearanceVariants.hair_style(packed) == style
+				and AppearanceVariants.hair_color(packed) == AppearanceVariants.hair_color(color),
+				"hair style and color encode independently")
+			var packet := EloriaProtocol.create_character("Test", "secret", {"hair": packed})
+			_expect(packet[16] == packed and packet[21] == 0, "independent hair choices survive the creation packet without cosmetic headwear")
 	_expect_bytes("version fixture",
 		EloriaProtocol.version(10, 31, PackedByteArray([1, 9, 7, 0]),
 			PackedByteArray([127, 0, 0, 1]), 2000),

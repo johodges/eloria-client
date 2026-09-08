@@ -43,8 +43,14 @@ func _run() -> void:
 		"CreationPanel/Columns/Form/CreateGender") as OptionButton
 	var preview: SubViewport = main.get_node(
 		"CreationPanel/Columns/CharacterPreview/Viewport") as SubViewport
-	var spin_names: Array[String] = ["CreateSkin", "CreateHair", "CreateEyes",
-		"CreateHead", "CreateShirt", "CreatePants", "CreateBoots"]
+	var spin_names: Array[String] = ["CreateSkin", "CreateEyes",
+		"CreateShirt", "CreatePants", "CreateBoots"]
+	var hair := main.get_node("CreationPanel/Columns/Form/AppearanceGrid/CreateHair") as OptionButton
+	var hair_color := main.get_node("CreationPanel/Columns/Form/AppearanceGrid/CreateHairColor") as OptionButton
+	_expect(hair.item_count == 4 and hair_color.item_count == 20, "independent named hairstyle and color choices")
+	_expect(main.get_node_or_null("CreationPanel/Columns/Form/AppearanceGrid/CreateHead") == null, "broken head control removed")
+	hair.select(0)
+	hair_color.select(0)
 	# The shared bodies expose native wardrobe dye surfaces. Exercise their
 	# existing controls alongside the hair choices, including the bald default.
 	for garment: String in ["CreateShirt", "CreatePants", "CreateBoots"]:
@@ -65,9 +71,11 @@ func _run() -> void:
 		_validate_actor(main.get("preview_actor") as ReplicatedActor3D, label)
 
 	# Exercise all four runtime appearance families through the same creation
-	# controls: skin, eyes, native hair, headwear, and wardrobe palettes.
+	# controls: skin, eyes, native hair, and wardrobe palettes.
 	selector.select(0)
 	for style: int in range(4):
+		hair.select(style)
+		hair_color.select(style)
 		for spin_name: String in spin_names:
 			(main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + spin_name) as SpinBox).value = style
 		main.call("_refresh_creation_preview")
@@ -76,6 +84,55 @@ func _run() -> void:
 		await _capture_preview(preview, "appearance-variant-%d.png" % style)
 		_validate_actor(main.get("preview_actor") as ReplicatedActor3D,
 			"appearance variant %d" % style, style)
+
+	# Changing colour must leave the selected mesh alone, and changing style
+	# must keep its colour. Exercise the real controls/materials and wire value.
+	for spin_name: String in spin_names:
+		(main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + spin_name) as SpinBox).value = 0
+	for model_index: int in [0, 1]:
+		selector.select(model_index)
+		for style: int in range(4):
+			var chosen_meshes: Array[Mesh] = []
+			for color: int in range(20):
+				hair.select(style)
+				hair_color.select(color)
+				if color == 0:
+					hair.item_selected.emit(style)
+				else:
+					hair_color.item_selected.emit(color)
+				await process_frame
+				var look: Dictionary = main.call("_creation_appearance")
+				var packet := EloriaProtocol.create_character("Test", "secret", look)
+				_expect(packet[16] == 20 + color * 4 + style and packet[21] == 0,
+					"creation saves independent hair choices and no cosmetic headwear")
+				var actor := main.get("preview_actor") as ReplicatedActor3D
+				var meshes: Array[Mesh] = []
+				for node: Node in actor.find_children("*", "MeshInstance3D", true, false):
+					var mesh := node as MeshInstance3D
+					if str(mesh.name).begins_with("wardrobe_head_"):
+						_expect(not mesh.visible, "retired headwear remains hidden")
+					if not str(mesh.name).begins_with("NativeHair_"):
+						continue
+					meshes.append(mesh.mesh)
+					for surface: int in range(mesh.mesh.get_surface_count()):
+						var original := mesh.mesh.surface_get_material(surface) as StandardMaterial3D
+						var tinted := mesh.get_active_material(surface) as StandardMaterial3D
+						_expect(tinted != null and tinted.albedo_color.is_equal_approx(
+							original.albedo_color * AppearanceVariants.hair_color(color)),
+							"selected colour reaches the rendered hair material")
+				if color == 0:
+					chosen_meshes = meshes
+				_expect(meshes == chosen_meshes and meshes.is_empty() == (style == 0),
+					"colour selection preserves the chosen hairstyle geometry")
+				if style == 1 and color in [2, 3, 4, 6]:
+					await _capture_preview(preview, "hair-%d-color-%02d.png" % [model_index, color])
+	# Leave the full UI proof showing a readily visible hairstyle and colour.
+	selector.select(1)
+	hair.select(1)
+	hair_color.select(3)
+	main.call("_refresh_creation_preview")
+	for unused_frame: int in range(4):
+		await process_frame
 
 	if not _structure_only:
 		RenderingServer.force_draw(false)

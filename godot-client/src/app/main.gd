@@ -1415,9 +1415,10 @@ func _refresh_creation_preview() -> void:
 
 func _creation_appearance() -> Dictionary:
 	return {
-		"skin": int(%CreateSkin.value), "hair": int(%CreateHair.value),
+		"skin": int(%CreateSkin.value),
+		"hair": AppearanceVariants.pack_hair(%CreateHair.get_selected_id(), %CreateHairColor.get_selected_id()),
 		"eyes": int(%CreateEyes.value),
-		"head": int(%CreateHead.value),
+		"head": 0,
 		# Reinstated 2026-09-02 for Eloria Client: the race bodies' painted
 		# outfits are split into their own wardrobe surfaces now, so these
 		# three bytes recolour the shirt, the trousers and the boots the way

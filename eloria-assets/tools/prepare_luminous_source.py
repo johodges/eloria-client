@@ -146,8 +146,8 @@ def run(source, out, reuse_labels=None, sex='male'):
                        'atlasCrop':[int(x) for x in (*lo,*hi)]}
     assert np.array_equal(np.sort(assignments),np.arange(len(faces)))
     d['samplers']=[{'magFilter':9729,'minFilter':9987,'wrapS':33071,'wrapT':33071}]
-    d.setdefault('asset',{})['extras']={'approvedSourceSHA256':digest(source),
-        'geometryPreserved':True,'textureGroups':list(GROUPS)}
+    d.setdefault('asset',{}).setdefault('extras',{}).update({'approvedSourceSHA256':digest(source),
+        'geometryPreserved':True,'textureGroups':list(GROUPS)})
     d,binary=g.compact(d,bytes(binary))
     target=out/('luminous_'+sex+'.glb');g.write(target,d,binary)
     # Independent serialization checks recover source UVs and compare every

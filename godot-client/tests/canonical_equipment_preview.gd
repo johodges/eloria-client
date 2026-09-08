@@ -27,6 +27,8 @@ func run() -> void:
 	var light := DirectionalLight3D.new()
 	light.rotation_degrees = Vector3(-35, -30, 0)
 	light.light_energy = 1.2
+	if args.get("back-light", "no") == "yes":
+		light.rotation_degrees = Vector3(-35, 150, 0)
 	stage.add_child(light)
 	var floor_mesh := MeshInstance3D.new()
 	var plane := PlaneMesh.new()
@@ -51,6 +53,9 @@ func run() -> void:
 	elif args.get("angle", "front") == "back":
 		cam.position = Vector3(0, 1.1, -4)
 		cam.look_at(Vector3(0, 0.9, 0))
+	elif args.get("angle", "front") == "back-quarter":
+		cam.position = Vector3(-3, 2.1, -4)
+		cam.look_at(Vector3(0, 1.1, 0))
 	cam.current = true
 	var slug: String = args.get("slug", "luminous_female")
 	var config: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/actors/models.json"))["models"][slug].duplicate(true)
@@ -132,6 +137,13 @@ func run() -> void:
 		var focus := (skeleton.global_transform * skeleton.get_bone_global_pose(hand)).origin
 		cam.size = .36
 		cam.position = focus + Vector3(.3, .1, .7)
+		cam.look_at(focus)
+		await process_frame
+	if args.get("region", "full") in ["hips", "back"]:
+		var focus := Vector3(0, .88, 0) if args["region"] == "hips" else Vector3(0, 1.35, 0)
+		var direction := Vector3(0, .1, 1) if args["region"] == "hips" else Vector3(-.4, .2, -1)
+		cam.size = .65
+		cam.position = focus + direction
 		cam.look_at(focus)
 		await process_frame
 	if args.get("cycle", "no") == "yes":

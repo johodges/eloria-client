@@ -5,6 +5,19 @@ const PART_HEAD := 3
 const PART_PANTS := 4
 const PART_SHIRT := 5
 const PART_BOOTS := 6
+const HAIR_STYLE_COUNT := 4
+const HAIR_COLOR_COUNT := 20
+const PACKED_HAIR_START := 20
+
+static func pack_hair(style: int, color: int) -> int:
+	# Existing values 0..19 keep their original combined style/color meaning.
+	# The next 80 values store independent choices in the same protocol byte.
+	return PACKED_HAIR_START + clampi(color, 0, HAIR_COLOR_COUNT - 1) * HAIR_STYLE_COUNT + clampi(style, 0, HAIR_STYLE_COUNT - 1)
+
+static func hair_color_index(index: int) -> int:
+	if index >= PACKED_HAIR_START and index < PACKED_HAIR_START + HAIR_STYLE_COUNT * HAIR_COLOR_COUNT:
+		return (index - PACKED_HAIR_START) / HAIR_STYLE_COUNT
+	return posmod(index, HAIR_COLOR_COUNT)
 
 static func wardrobe_color(culture: String, part: int, index: int) -> Color:
 	var palettes: Dictionary = {
@@ -96,7 +109,7 @@ static func hair_color(index: int) -> Color:
 		Color(0.96, 0.78, 0.86), Color(0.14, 0.72, 0.52),
 		Color(0.90, 0.86, 0.40), Color(0.06, 0.10, 0.22),
 	]
-	return colors[posmod(index, colors.size())]
+	return colors[hair_color_index(index)]
 
 static func eye_color(index: int) -> Color:
 	var colors: Array[Color] = [
@@ -110,8 +123,9 @@ static func eye_color(index: int) -> Color:
 	return colors[posmod(index, colors.size())]
 
 static func hair_style(index: int) -> int:
-	# Zero is bald; the other three styles retain their existing colour cycles.
-	return posmod(index, 4)
+	return posmod(index, HAIR_STYLE_COUNT)
 
-static func head_style(index: int) -> int:
-	return posmod(index, 4)
+static func head_style(_index: int) -> int:
+	# The retired cosmetic headwear byte remains on the wire for compatibility.
+	# Actual equipped helmets still use the equipment system.
+	return 0

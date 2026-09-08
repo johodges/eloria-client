@@ -13,8 +13,10 @@ The models retain the source face, neck, collar, shoulders and clothing silhouet
 The female reduction reserves separate budgets for the head and eye region.
 Original normals are transferred through the source UVs after reduction. No
 procedural face morph, reconstructed neck, sleeve narrowing or global normal
-smoothing is applied. Upper-trouser weights are smoothed across welded copies,
-with opposite-leg influences constrained below the pelvis.
+smoothing is applied. Source-space trouser and upper-back weights are repaired
+across welded copies before fitting. The torso uses physical hip centres rather
+than the two rigs' differently placed pelvis bones. Head weighting is restricted
+to the actual head/neck column, so T-pose shoulders cannot follow Head.
 
 Seven independently editable RGBA textures per sex are in
 `godot-client/assets/actors/native/race_textures/luminous_{male,female}`:
@@ -24,8 +26,13 @@ original RGB crops are retained for editing. Each skin group samples its own
 crop and maps into the shared face mask using its recorded UV scale and offset.
 Skin, iris, brow, garment and hair appearance controls remain available.
 
-The three existing hairstyles are fitted to each new skull. Band and cap meshes
-follow Head. The original source neck replaces the previous rebaked neck join.
+The three existing hairstyles are fitted to each new skull. The broken cosmetic
+headwear control is removed and its band/cap surfaces remain hidden. Equipped
+helmets still work. Hair style and hair colour are independent named selectors:
+four styles (including bald) and twenty colours. New choices use values 20–99 in
+the existing hair byte (`20 + colour * 4 + style`); legacy values 0–19 retain their
+appearance. The server stores and echoes that byte without a schema change.
+The original source neck replaces the previous rebaked neck join.
 Equipment retains its original author measurements in `authoredBodyGirth` and
 `authoredFootAnchor`; `refittedBodies` identifies these two replacement wearers.
 Other races retain their existing geometry and equipment fitting behavior.
@@ -49,12 +56,13 @@ these inputs immutable. The corresponding `_tpose_rigged.glb` files are donors.
    fits the canonical Rest_Pose with `preserve_source_shape=True`.
 4. Split the reduced and canonical results with `prepare_luminous_source.py`,
    reusing reduced triangle labels for the canonical model.
-5. `integrate_luminous_sources.py --workspace <workspace> --client-root <checkout>`
-   installs the reviewed `work-output/luminous-source-base/rigged` and
-   `work-output/luminous-female-source-base/rigged` candidates. It writes texture
+5. `integrate_luminous_sources.py --workspace <workspace> --client-root <checkout>
+   --candidates <workspace>/work-output/luminous-body-repair/candidates`
+   installs the reviewed `male/rigged` and `female/rigged` candidates. It rejects
+   old candidates that lack the repair before fitting. It writes texture
    crops, masks, hair, headwear, equipment measurements and asset records.
 
-## Verification
+## Original source-integration verification
 
 - Independent comparison with both reviewed candidates: all seven groups retain
   their triangle indices, positions, normals, UVs and original texture RGB.
@@ -76,3 +84,26 @@ The initial clean Godot import also reports existing PNG-decoding problems on
 unrelated equipment files. The selected outfit loads and renders through the
 client's existing direct-image fallback. Runtime tests report only the sandbox's
 unavailable user log/cache and system certificate store; no script errors.
+
+## Body correction and customization verification
+
+Current evidence is in `work-output/luminous-body-repair`, including matching
+before/after close-ups, full running cycles, equipped views and the creation UI.
+The measured front-trouser region has zero reversed triangles in both corrected
+models, versus 180 male / 114 female before. Upper-back reversed-face fractions
+fall from 0.92% / 1.67% to 0.48% / 0.77%; small source collar lips remain.
+Positions, normals and UVs of the accepted head above the neck remain identical.
+These checks inspect the serialized geometry and fail on the reported models.
+
+- 22 body, hair/collar and canonical-equipment tests; 80 per-model subtests.
+- 12 native race/registry tests; 1,593 subtests.
+- Actual creation scene: all sixteen models, and all 80 independent hair choices
+  on each Luminous sex, including rendered material tints and saved packet bytes.
+- Appearance/helmet transitions: sixteen models, 809 checks, zero failures.
+- Full Idle_Subtle, Walk, Jog, Run_Female and Fighting_Idle numerical replays,
+  plus inspection of front/back rendered running cycles and equipped outfits.
+
+The broad protocol suite still has two unrelated assertions failing: its known
+capability list omits `magic_book_v2`, and its locomotion-facing expectation is
+outdated. The new hair encoding/packet assertions pass. Render shutdown also
+logs the existing texture cleanup warnings; no GDScript parse/runtime failure.

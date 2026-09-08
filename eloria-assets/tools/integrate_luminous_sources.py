@@ -10,9 +10,8 @@ import numpy as np
 import trimesh
 from PIL import Image
 from scipy.ndimage import maximum_filter
-from scipy.sparse import coo_matrix, diags
-from shared_player_bodies import g, append_array, append_view, dense_weights, sparse_weights
-from fit_character_appearance import combined, weld, average, head_data, fit_hair
+from shared_player_bodies import g, append_array, append_view, dense_weights
+from fit_character_appearance import combined, fit_hair
 from verify_shared_player_bodies import primitives
 from prepare_luminous_source import sample_pixels
 import equipment_authoring as ea
@@ -31,49 +30,6 @@ def image_pixels(d,b,p):
     ti=d['materials'][p['material']]['pbrMetallicRoughness']['baseColorTexture']['index']
     im=d['images'][d['textures'][ti]['source']];bv=d['bufferViews'][im['bufferView']];start=bv.get('byteOffset',0)
     return Image.open(io.BytesIO(b[start:start+bv['byteLength']])).convert('RGBA')
-
-
-def repair_weights(d,binary):
-    parts=list(primitives(d,bytes(binary)))
-    a,faces=combined(parts)
-    labels=weld(a['POSITION']);v=average(a['POSITION'],labels)
-    counts=np.bincount(labels)
-    unique=np.zeros((len(counts),3));np.add.at(unique,labels,v);unique/=counts[:,None]
-    weights=dense_weights(a);dense=np.zeros((len(counts),77));np.add.at(dense,labels,weights);dense/=counts[:,None]
-    ff=labels[faces];edges=np.unique(np.sort(np.concatenate([ff[:,[0,1]],ff[:,[1,2]],ff[:,[2,0]]]),axis=1),axis=0)
-    ii=np.r_[edges[:,0],edges[:,1]];jj=np.r_[edges[:,1],edges[:,0]]
-    graph=coo_matrix((np.ones(len(ii)),(ii,jj)),shape=(len(unique),len(unique))).tocsr()
-    graph=diags(1/np.maximum(np.asarray(graph.sum(1)).ravel(),1))@graph
-    relaxed=dense.copy()
-    for _ in range(24):relaxed=.55*relaxed+.45*(graph@relaxed)
-    region=smoothstep(unique[:,1],.52,.67)*(1-smoothstep(unique[:,1],.94,1.04))
-    dense=dense*(1-region[:,None])+relaxed*region[:,None]
-    names=[d['nodes'][j]['name'] for j in d['skins'][0]['joints']]
-    # Do not blend a trouser leg onto the opposite thigh across nearby surfaces.
-    for side,sign in [('l',1),('r',-1)]:
-        other='r' if side=='l' else 'l'
-        blend=smoothstep(unique[:,0]*sign,.006,.035)*(1-smoothstep(unique[:,1],.87,.94))
-        for bone in ['thigh','calf','foot','ball']:
-            src,dst=names.index(bone+'_'+other),names.index(bone+'_'+side)
-            amount=dense[:,src]*blend;dense[:,src]-=amount;dense[:,dst]+=amount
-    cursor=0;largest=0.
-    for mesh in d['meshes']:
-        for p in mesh['primitives']:
-            f=g.accessor(d,binary,p['indices']).astype(int).reshape(-1,3);ids=np.unique(f);n=len(ids)
-            current={k:g.accessor(d,binary,i) for k,i in p['attributes'].items()}
-            target=dense[labels[cursor:cursor+n]]
-            largest=max(largest,float(abs(target-weights[cursor:cursor+n]).max()))
-            joints,w=sparse_weights(target)
-            # Source group files are compact, but explicitly remap if needed.
-            index=np.full(len(current['POSITION']),-1,dtype=int);index[ids]=np.arange(n)
-            for key,data in current.items():
-                if key=='JOINTS_0':data=joints
-                elif key=='WEIGHTS_0':data=w
-                else:data=data[ids]
-                p['attributes'][key]=append_array(d,binary,data,'VEC'+str(data.shape[1]),5123 if key=='JOINTS_0' else 5126)
-            p['indices']=append_array(d,binary,index[f].ravel(),'SCALAR',5125)
-            cursor+=n
-    return {'maximumWeightChange':largest,'smoothedRegion':'upper trousers','positionsChanged':False}
 
 
 def bake_mask(original,sex):
@@ -146,7 +102,7 @@ def source_head(d, binary):
     return trimesh.Trimesh(v, faces, process=False), dense_weights(a), matrix
 
 
-def run(workspace,client_root):
+def run(workspace,client_root,candidates=None):
     client=client_root/'godot-client';native=client/'assets/actors/native'
     models_path=client/'data/actors/models.json';models=json.loads(models_path.read_text())
     masks_path=native/'face_masks/manifest.json';masks=json.loads(masks_path.read_text())
@@ -164,9 +120,13 @@ def run(workspace,client_root):
     for sex in ('male','female'):
         slug='luminous_'+sex
         root=workspace/'work-output'/('luminous-source-base' if sex=='male' else 'luminous-female-source-base')
+        if candidates is not None:
+            root=candidates/sex
         source=root/'rigged'/f'{slug}.glb';manifest=json.loads((root/'rigged/manifest.json').read_text())
         d,b=g.read(source);binary=bytearray(b)
-        weight_report=repair_weights(d,binary)
+        weight_report=d['asset'].get('extras',{}).get('bodyWeightRepair')
+        if not weight_report or weight_report.get('version', 0) < 2:
+            raise ValueError(f'{source}: rebuild with rig_luminous_source.py; post-fit weight smoothing cannot repair baked folds')
         config=models['models'][slug]
         groups={}
         textures=native/'race_textures'/slug;textures.mkdir(parents=True,exist_ok=True)
@@ -230,4 +190,5 @@ def run(workspace,client_root):
 
 if __name__=='__main__':
     ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--workspace',type=Path,required=True);ap.add_argument('--client-root',type=Path,required=True)
+    ap.add_argument('--candidates',type=Path,help='Alternate reviewed candidate root with male/rigged and female/rigged groups')
     run(**vars(ap.parse_args()))

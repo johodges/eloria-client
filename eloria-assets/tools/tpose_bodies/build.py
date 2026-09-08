@@ -194,6 +194,12 @@ def fit(source, library, template, out, preserve_source_shape=False):
     z = (src["upperarm_l"] + src["upperarm_r"]) * 0.5
     ta = target["pelvis"]
     tz = (target["upperarm_l"] + target["upperarm_r"]) * 0.5
+    if preserve_source_shape:
+        # Meshy's Hips lies ABOVE its thigh joints; the canonical pelvis lies
+        # BELOW them. Matching those labels compresses and inverts the crotch.
+        # Physical hip centres give torso and legs the same lower anchor.
+        a = (src["thigh_l"] + src["thigh_r"]) * 0.5
+        ta = (target["thigh_l"] + target["thigh_r"]) * 0.5
     axis = z - a
     tax = tz - ta
     unit = axis / np.linalg.norm(axis)
@@ -212,7 +218,12 @@ def fit(source, library, template, out, preserve_source_shape=False):
     heights = np.array([target[n][1] for n in torso_names])
     for si, name in enumerate(sn):
         mapped = MAPPING[name]
-        if mapped in torso_names:
+        if preserve_source_shape and mapped == 'pelvis':
+            # The fit uses physical hip centres, but Hips still drives the
+            # pelvis in motion. Its differently placed donor origin must not
+            # rebind all waistband cloth to a lumbar joint.
+            transfer[si, names.index('pelvis')] = 1
+        elif mapped in torso_names:
             y = (torso @ np.r_[src[mapped], 1])[1]
             upper = int(np.clip(np.searchsorted(heights, y), 1, len(heights) - 1))
             lower = upper - 1

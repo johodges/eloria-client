@@ -49,10 +49,10 @@ def run(original, reduced, donor, library, template, out):
     weight=1/np.maximum(dist,0.00005)**2;weight/=weight.sum(1,keepdims=True)
     dense=(ddense[ix]*weight[:,:,None]).sum(1)
     names=[dd['nodes'][i]['name'] for i in dd['skins'][0]['joints']]
-    head=names.index('Head')
-    # The face follows Head rigidly; blend through exposed neck only.
-    t=np.clip((ra['POSITION'][:,1]-1.410)/.045,0,1); t=t*t*(3-2*t)
-    dense*=1-t[:,None];dense[:,head]+=t
+    from luminous_body_weights import repair
+    binds=g.accessor(dd,db,dd['skins'][0]['inverseBindMatrices']).reshape(-1,4,4).transpose(0,2,1)
+    anchors={name:np.linalg.inv(bind)[:3,3] for name,bind in zip(names,binds)}
+    dense=repair(ra['POSITION'],dense,names,anchors)
     ra['JOINTS_0'],ra['WEIGHTS_0']=sparse_weights(dense)
     d=copy.deepcopy(dd);binary=bytearray(db)
     mat=copy.deepcopy(sd['materials'][0])
@@ -67,6 +67,12 @@ def run(original, reduced, donor, library, template, out):
     sys.path.insert(0,str(Path(__file__).parent/'tpose_bodies'))
     from build import fit
     fit(intermediate,library,template,out/'canonical_unsplit.glb',preserve_source_shape=True)
+    fitted,fb=g.read(out/'canonical_unsplit.glb')
+    fitted['asset'].setdefault('extras',{})['bodyWeightRepair']={
+        'version':2,'stage':'before canonical fit',
+        'regions':['hips','upper back','head boundary'],
+        'torsoAnchor':'physical hip centres'}
+    g.write(out/'canonical_unsplit.glb',fitted,fb)
     report={'sourceToDerivativeScale':float(scale),'sourceToDerivativeOffset':offset.tolist(),
             'weightDonorDistanceM':dict(zip(['median','p95','maximum'],np.percentile(dist[:,0],[50,95,100]).tolist())),
             'sourceNormalFallbackVertices':int(bad.sum()),'headFollowsOneRigidJoint':True,
