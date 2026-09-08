@@ -150,3 +150,13 @@ Spawn tiles the grid does not carry are dropped from the manifest, so no
 wave lands in a boulder. `tests/test_gauntlet_packages.py` walks every
 route on that grid, gate to gate, and the server's `tests/test_gauntlets.py`
 walks the vendored copy.
+
+## Barrow Run layout pass
+
+The Barrow Run now follows a candlelit family visitation road: cists and
+offering shelves, a piled timber crossing over flooded peat, an intact carved
+branch and a breached rooted branch, then the Reeve's stone-crowned hall.
+Shorter connecting passages remove thirty-six metres of empty travel.
+Published bands, roster, rules, rewards and keeper returns are preserved.
+The package's README, assumptions, coverage, comparison and validation live
+under interiors/grey_moors_gauntlet.

@@ -128,6 +128,9 @@ def compose(theme: D.Theme, seed: int):
     elif kit == "temple_procession":
         from gauntlets import temple_procession
         temple_procession.dress(it, pal, seed)
+    elif kit == "barrow_visitation":
+        from gauntlets import barrow_visitation
+        barrow_visitation.dress(it, pal, seed)
     lamps, placed = hanging_lamps(it.lamps, seed=seed)
     it.group.add(lamps)
     it.lamps = placed

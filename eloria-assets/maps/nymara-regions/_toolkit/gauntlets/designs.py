@@ -345,7 +345,16 @@ _theme(Theme(
 
 _theme(Theme(
     region="grey_moors", id="grey_moors_gauntlet", name="The Barrow Run", short="barrow",
-    palette=GREY_MOORS, props={"kit": "moor"},
+    palette=GREY_MOORS, props={
+        "kit": "barrow_visitation", "wayLength": 8.0, "clipCoplanar": True,
+        "localBatches": True, "rearDaisStep": True, "bridgeDeck": "piles",
+        "roomFloors": {"split-barrow-east-passage": "grey_carved_stone",
+                       "split-barrow-west-passage": "grey_barrow_turf"},
+        "environment": {
+            "sky": "none", "backgroundColor": [.025, .03, .034], "sun": {"enabled": False},
+            "ambient": {"color": [.43, .47, .50], "energy": 1.05},
+            "fog": {"enabled": True, "color": [.04, .05, .055], "density": .004},
+            "tonemap": {"mode": "filmic", "exposure": 1.3, "white": 3.5}}},
     flavour="Nine barrows joined under the peat by the people who dug them, so the dead could visit. "
             "They still do.",
     legs=(

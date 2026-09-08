@@ -19,25 +19,25 @@
     "bounds": {
       "min": [
         -26.55,
-        -3.4,
+        -6.2,
         -0.55
       ],
       "max": [
         13.55,
         16.65,
-        360.55
+        324.55
       ]
     },
     "playableBounds": {
       "min": [
         -26.55,
-        -0.6,
+        -0.4,
         -0.55
       ],
       "max": [
         13.55,
         3.5,
-        360.55
+        324.55
       ]
     },
     "interiorClass": "gauntlet",
@@ -48,7 +48,7 @@
     "metresPerTile": 1.0,
     "serverOrigin": [
       29.0,
-      363.0
+      327.0
     ],
     "origin": [
       0.0,
@@ -74,7 +74,7 @@
       "position": [
         -10.0,
         3.05,
-        354.0
+        318.0
       ],
       "rotationDegrees": 180,
       "surface": "Walk"
@@ -84,14 +84,14 @@
     "binary": "collision.bin",
     "format": "EWCG-v1",
     "width": 90,
-    "height": 732,
+    "height": 660,
     "cellMetres": 0.5,
     "originMetres": [
       -29.0,
-      363.0
+      327.0
     ],
     "heightEncoding": {
-      "origin": -0.2,
+      "origin": -0.24,
       "step": 0.2,
       "range": [
         1,
@@ -99,33 +99,314 @@
       ],
       "zeroMeansBlocked": true
     },
-    "walkableCells": 18296,
-    "blockedCells": 47584,
-    "walkableFraction": 0.2777,
+    "walkableCells": 16673,
+    "blockedCells": 42727,
+    "walkableFraction": 0.2807,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
       "Secrets_grey_moors_gauntlet",
-      "Section_grey_moors_gauntlet",
-      "Roof_grey_moors_gauntlet_grey_bog_timber",
-      "Roof_grey_moors_gauntlet_grey_carved_stone",
-      "Roof_grey_moors_gauntlet_grey_moor_granite",
-      "Build_grey_moors_gauntlet_amber_resin",
-      "Build_grey_moors_gauntlet_dark_iron",
-      "Build_grey_moors_gauntlet_grey_bog_timber",
-      "Build_grey_moors_gauntlet_grey_bog_water",
-      "Build_grey_moors_gauntlet_grey_carved_stone",
-      "Build_grey_moors_gauntlet_grey_drystone",
-      "Build_grey_moors_gauntlet_grey_moor_granite",
-      "Build_grey_moors_gauntlet_grey_votive_flame",
-      "Build_grey_moors_gauntlet_lime_plaster"
+      "Section_grey_moors_gauntlet_band_-001",
+      "Roof_grey_moors_gauntlet_band_-001_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_-001_grey_drystone",
+      "Section_grey_moors_gauntlet_band_+000",
+      "Roof_grey_moors_gauntlet_band_+000_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+000_amber_resin",
+      "Build_grey_moors_gauntlet_band_+000_dark_iron",
+      "Build_grey_moors_gauntlet_band_+000_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+000_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+000_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+000_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+000_lime_plaster",
+      "Section_grey_moors_gauntlet_band_+001",
+      "Roof_grey_moors_gauntlet_band_+001_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+001_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+001_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+001_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+001_grey_moor_granite",
+      "Section_grey_moors_gauntlet_band_+002",
+      "Roof_grey_moors_gauntlet_band_+002_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+002_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+002_amber_resin",
+      "Build_grey_moors_gauntlet_band_+002_dark_iron",
+      "Build_grey_moors_gauntlet_band_+002_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+002_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+002_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+002_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+002_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+002_lime_plaster",
+      "Section_grey_moors_gauntlet_band_+003",
+      "Roof_grey_moors_gauntlet_band_+003_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+003_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+003_amber_resin",
+      "Build_grey_moors_gauntlet_band_+003_dark_iron",
+      "Build_grey_moors_gauntlet_band_+003_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+003_grey_dead_bark",
+      "Build_grey_moors_gauntlet_band_+003_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+003_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+003_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+003_lime_plaster",
+      "Section_grey_moors_gauntlet_band_+004",
+      "Roof_grey_moors_gauntlet_band_+004_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+004_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+004_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+004_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+004_grey_moor_granite",
+      "Section_grey_moors_gauntlet_band_+005",
+      "Roof_grey_moors_gauntlet_band_+005_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+005_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+005_amber_resin",
+      "Build_grey_moors_gauntlet_band_+005_dark_iron",
+      "Build_grey_moors_gauntlet_band_+005_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+005_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+005_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+005_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+005_lime_plaster",
+      "Section_grey_moors_gauntlet_band_+006",
+      "Roof_grey_moors_gauntlet_band_+006_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+006_amber_resin",
+      "Build_grey_moors_gauntlet_band_+006_dark_iron",
+      "Build_grey_moors_gauntlet_band_+006_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+006_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+006_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+006_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+006_lime_plaster",
+      "Section_grey_moors_gauntlet_band_+007",
+      "Roof_grey_moors_gauntlet_band_+007_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+007_grey_carved_stone",
+      "Roof_grey_moors_gauntlet_band_+007_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+007_dark_iron",
+      "Build_grey_moors_gauntlet_band_+007_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+007_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+007_grey_moor_granite",
+      "Section_grey_moors_gauntlet_band_+008",
+      "Roof_grey_moors_gauntlet_band_+008_grey_carved_stone",
+      "Roof_grey_moors_gauntlet_band_+008_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+008_amber_resin",
+      "Build_grey_moors_gauntlet_band_+008_dark_iron",
+      "Build_grey_moors_gauntlet_band_+008_grey_barrow_turf",
+      "Build_grey_moors_gauntlet_band_+008_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+008_grey_bog_water",
+      "Build_grey_moors_gauntlet_band_+008_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+008_grey_dead_bark",
+      "Build_grey_moors_gauntlet_band_+008_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+008_timber_grey",
+      "Section_grey_moors_gauntlet_band_+009",
+      "Roof_grey_moors_gauntlet_band_+009_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+009_amber_resin",
+      "Build_grey_moors_gauntlet_band_+009_dark_iron",
+      "Build_grey_moors_gauntlet_band_+009_grey_barrow_turf",
+      "Build_grey_moors_gauntlet_band_+009_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+009_grey_bog_water",
+      "Build_grey_moors_gauntlet_band_+009_grey_dead_bark",
+      "Build_grey_moors_gauntlet_band_+009_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+009_timber_grey",
+      "Section_grey_moors_gauntlet_band_+010",
+      "Roof_grey_moors_gauntlet_band_+010_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+010_grey_carved_stone",
+      "Roof_grey_moors_gauntlet_band_+010_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+010_amber_resin",
+      "Build_grey_moors_gauntlet_band_+010_dark_iron",
+      "Build_grey_moors_gauntlet_band_+010_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+010_grey_bog_water",
+      "Build_grey_moors_gauntlet_band_+010_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+010_grey_dead_bark",
+      "Build_grey_moors_gauntlet_band_+010_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+010_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+010_timber_grey",
+      "Section_grey_moors_gauntlet_band_+011",
+      "Roof_grey_moors_gauntlet_band_+011_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+011_amber_resin",
+      "Build_grey_moors_gauntlet_band_+011_dark_iron",
+      "Build_grey_moors_gauntlet_band_+011_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+011_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+011_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+011_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+011_lime_plaster",
+      "Section_grey_moors_gauntlet_band_+012",
+      "Roof_grey_moors_gauntlet_band_+012_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+012_amber_resin",
+      "Build_grey_moors_gauntlet_band_+012_dark_iron",
+      "Build_grey_moors_gauntlet_band_+012_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+012_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+012_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+012_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+012_lime_plaster",
+      "Section_grey_moors_gauntlet_band_+013",
+      "Roof_grey_moors_gauntlet_band_+013_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+013_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+013_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+013_grey_moor_granite",
+      "Section_grey_moors_gauntlet_band_+014",
+      "Roof_grey_moors_gauntlet_band_+014_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+014_amber_resin",
+      "Build_grey_moors_gauntlet_band_+014_dark_iron",
+      "Build_grey_moors_gauntlet_band_+014_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+014_grey_dead_bark",
+      "Build_grey_moors_gauntlet_band_+014_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+014_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+014_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+014_lime_plaster",
+      "Section_grey_moors_gauntlet_band_+015",
+      "Roof_grey_moors_gauntlet_band_+015_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+015_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+015_amber_resin",
+      "Build_grey_moors_gauntlet_band_+015_dark_iron",
+      "Build_grey_moors_gauntlet_band_+015_grey_barrow_turf",
+      "Build_grey_moors_gauntlet_band_+015_grey_bog_water",
+      "Build_grey_moors_gauntlet_band_+015_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+015_grey_dead_bark",
+      "Build_grey_moors_gauntlet_band_+015_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+015_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+015_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+015_lime_plaster",
+      "Section_grey_moors_gauntlet_band_+016",
+      "Roof_grey_moors_gauntlet_band_+016_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+016_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+016_amber_resin",
+      "Build_grey_moors_gauntlet_band_+016_dark_iron",
+      "Build_grey_moors_gauntlet_band_+016_grey_barrow_turf",
+      "Build_grey_moors_gauntlet_band_+016_grey_bog_water",
+      "Build_grey_moors_gauntlet_band_+016_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+016_grey_dead_bark",
+      "Build_grey_moors_gauntlet_band_+016_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+016_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+016_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+016_lime_plaster",
+      "Section_grey_moors_gauntlet_band_+017",
+      "Roof_grey_moors_gauntlet_band_+017_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+017_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+017_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+017_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+017_grey_moor_granite",
+      "Section_grey_moors_gauntlet_band_+018",
+      "Roof_grey_moors_gauntlet_band_+018_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+018_amber_resin",
+      "Build_grey_moors_gauntlet_band_+018_dark_iron",
+      "Build_grey_moors_gauntlet_band_+018_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+018_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+018_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+018_lime_plaster",
+      "Section_grey_moors_gauntlet_band_+019",
+      "Roof_grey_moors_gauntlet_band_+019_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+019_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+019_dark_iron",
+      "Build_grey_moors_gauntlet_band_+019_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+019_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+019_grey_moor_granite",
+      "Section_grey_moors_gauntlet_band_+020",
+      "Roof_grey_moors_gauntlet_band_+020_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+020_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+020_amber_resin",
+      "Build_grey_moors_gauntlet_band_+020_dark_iron",
+      "Build_grey_moors_gauntlet_band_+020_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+020_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+020_grey_moor_granite",
+      "Section_grey_moors_gauntlet_band_+021",
+      "Roof_grey_moors_gauntlet_band_+021_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+021_amber_resin",
+      "Build_grey_moors_gauntlet_band_+021_dark_iron",
+      "Build_grey_moors_gauntlet_band_+021_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+021_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+021_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+021_lime_plaster",
+      "Section_grey_moors_gauntlet_band_+022",
+      "Roof_grey_moors_gauntlet_band_+022_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+022_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+022_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+022_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+022_grey_moor_granite",
+      "Section_grey_moors_gauntlet_band_+023",
+      "Roof_grey_moors_gauntlet_band_+023_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+023_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+023_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+023_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+023_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+023_lime_plaster",
+      "Section_grey_moors_gauntlet_band_+024",
+      "Roof_grey_moors_gauntlet_band_+024_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+024_amber_resin",
+      "Build_grey_moors_gauntlet_band_+024_dark_iron",
+      "Build_grey_moors_gauntlet_band_+024_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+024_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+024_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+024_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+024_lime_plaster",
+      "Section_grey_moors_gauntlet_band_+025",
+      "Roof_grey_moors_gauntlet_band_+025_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+025_grey_carved_stone",
+      "Roof_grey_moors_gauntlet_band_+025_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+025_amber_resin",
+      "Build_grey_moors_gauntlet_band_+025_dark_iron",
+      "Build_grey_moors_gauntlet_band_+025_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+025_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+025_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+025_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+025_lime_plaster",
+      "Section_grey_moors_gauntlet_band_+026",
+      "Roof_grey_moors_gauntlet_band_+026_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+026_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+026_amber_resin",
+      "Build_grey_moors_gauntlet_band_+026_dark_iron",
+      "Build_grey_moors_gauntlet_band_+026_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+026_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+026_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+026_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+026_lime_plaster",
+      "Section_grey_moors_gauntlet_band_+027",
+      "Roof_grey_moors_gauntlet_band_+027_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+027_grey_carved_stone"
     ]
   },
   "cutaway": {
     "hideNodes": [
-      "Roof_grey_moors_gauntlet_grey_bog_timber",
-      "Roof_grey_moors_gauntlet_grey_carved_stone",
-      "Roof_grey_moors_gauntlet_grey_moor_granite"
+      "Roof_grey_moors_gauntlet_band_-001_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+000_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+001_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+002_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+002_grey_carved_stone",
+      "Roof_grey_moors_gauntlet_band_+003_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+003_grey_carved_stone",
+      "Roof_grey_moors_gauntlet_band_+004_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+004_grey_carved_stone",
+      "Roof_grey_moors_gauntlet_band_+005_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+005_grey_moor_granite",
+      "Roof_grey_moors_gauntlet_band_+006_grey_moor_granite",
+      "Roof_grey_moors_gauntlet_band_+007_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+007_grey_carved_stone",
+      "Roof_grey_moors_gauntlet_band_+007_grey_moor_granite",
+      "Roof_grey_moors_gauntlet_band_+008_grey_carved_stone",
+      "Roof_grey_moors_gauntlet_band_+008_grey_moor_granite",
+      "Roof_grey_moors_gauntlet_band_+009_grey_moor_granite",
+      "Roof_grey_moors_gauntlet_band_+010_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+010_grey_carved_stone",
+      "Roof_grey_moors_gauntlet_band_+010_grey_moor_granite",
+      "Roof_grey_moors_gauntlet_band_+011_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+012_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+013_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+014_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+015_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+015_grey_moor_granite",
+      "Roof_grey_moors_gauntlet_band_+016_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+016_grey_moor_granite",
+      "Roof_grey_moors_gauntlet_band_+017_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+017_grey_moor_granite",
+      "Roof_grey_moors_gauntlet_band_+018_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+019_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+019_grey_moor_granite",
+      "Roof_grey_moors_gauntlet_band_+020_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+020_grey_moor_granite",
+      "Roof_grey_moors_gauntlet_band_+021_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+022_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+022_grey_moor_granite",
+      "Roof_grey_moors_gauntlet_band_+023_grey_moor_granite",
+      "Roof_grey_moors_gauntlet_band_+024_grey_moor_granite",
+      "Roof_grey_moors_gauntlet_band_+025_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+025_grey_carved_stone",
+      "Roof_grey_moors_gauntlet_band_+025_grey_moor_granite",
+      "Roof_grey_moors_gauntlet_band_+026_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+026_grey_carved_stone",
+      "Roof_grey_moors_gauntlet_band_+027_grey_carved_stone"
     ],
     "reason": "interior lids; the isometric rig frames the floor, not the roof"
   },
@@ -168,7 +449,7 @@
       ],
       "serverTile": [
         22,
-        350
+        314
       ],
       "objectId": 861
     },
@@ -185,7 +466,7 @@
       ],
       "serverTile": [
         35,
-        352
+        316
       ],
       "objectId": 800
     },
@@ -198,11 +479,11 @@
       "position": [
         -4.1,
         1.0,
-        28.0
+        24.0
       ],
       "serverTile": [
         25,
-        335
+        303
       ],
       "objectId": 862
     },
@@ -215,7 +496,7 @@
       "position": [
         -10.0,
         3.6,
-        356.5
+        320.5
       ],
       "serverTile": [
         19,
@@ -232,7 +513,7 @@
       "position": [
         -5.0,
         4.0,
-        351.0
+        315.0
       ],
       "serverTile": [
         24,
@@ -249,7 +530,7 @@
       "position": [
         -15.6,
         4.0,
-        358.0
+        322.0
       ],
       "serverTile": [
         13,
@@ -266,33 +547,45 @@
       "position": [
         8.5,
         0.0,
-        42.0
+        38.0
       ],
       "serverTile": [
         38,
-        321
+        289
       ]
     }
   ],
   "environment": {
     "sky": "none",
+    "backgroundColor": [
+      0.025,
+      0.03,
+      0.034
+    ],
+    "sun": {
+      "enabled": false
+    },
     "ambient": {
-      "colour": [
-        0.1,
-        0.1,
-        0.12
+      "color": [
+        0.43,
+        0.47,
+        0.5
       ],
-      "energy": 0.5
+      "energy": 1.05
     },
     "fog": {
       "enabled": true,
-      "colour": [
-        0.02,
-        0.02,
-        0.03
+      "color": [
+        0.04,
+        0.05,
+        0.055
       ],
-      "begin": 16.0,
-      "end": 60.0
+      "density": 0.004
+    },
+    "tonemap": {
+      "mode": "filmic",
+      "exposure": 1.3,
+      "white": 3.5
     },
     "openToSky": [],
     "lights": [
@@ -336,7 +629,7 @@
         "position": [
           0.0,
           3.38,
-          42.0
+          38.0
         ],
         "color": [
           1.0,
@@ -353,7 +646,7 @@
         "position": [
           0.0,
           4.38,
-          82.0
+          74.0
         ],
         "color": [
           1.0,
@@ -368,9 +661,9 @@
         "id": "lamp-004",
         "kind": "point",
         "position": [
-          -6.2,
-          0.98,
-          111.0
+          -4.0,
+          3.38,
+          146.0
         ],
         "color": [
           1.0,
@@ -385,9 +678,9 @@
         "id": "lamp-005",
         "kind": "point",
         "position": [
-          -6.2,
-          0.98,
-          115.8
+          -7.0,
+          3.38,
+          171.0
         ],
         "color": [
           1.0,
@@ -402,9 +695,9 @@
         "id": "lamp-006",
         "kind": "point",
         "position": [
-          -6.2,
-          0.98,
-          120.6
+          -18.0,
+          3.38,
+          196.0
         ],
         "color": [
           1.0,
@@ -419,9 +712,9 @@
         "id": "lamp-007",
         "kind": "point",
         "position": [
-          -6.2,
-          0.98,
-          125.4
+          4.0,
+          3.38,
+          196.0
         ],
         "color": [
           1.0,
@@ -436,9 +729,9 @@
         "id": "lamp-008",
         "kind": "point",
         "position": [
-          -6.2,
-          0.98,
-          130.2
+          -7.0,
+          3.38,
+          220.0
         ],
         "color": [
           1.0,
@@ -453,9 +746,9 @@
         "id": "lamp-009",
         "kind": "point",
         "position": [
-          -6.2,
-          0.98,
-          135.0
+          -7.0,
+          6.38,
+          257.0
         ],
         "color": [
           1.0,
@@ -470,9 +763,9 @@
         "id": "lamp-010",
         "kind": "point",
         "position": [
-          -4.0,
-          3.38,
-          162.0
+          2.47,
+          3.98,
+          294.45
         ],
         "color": [
           1.0,
@@ -487,9 +780,9 @@
         "id": "lamp-011",
         "kind": "point",
         "position": [
-          -7.0,
-          3.38,
-          191.0
+          -1.42,
+          3.98,
+          298.48
         ],
         "color": [
           1.0,
@@ -504,9 +797,9 @@
         "id": "lamp-012",
         "kind": "point",
         "position": [
-          -18.0,
-          3.38,
-          220.0
+          -6.95,
+          3.98,
+          300.71
         ],
         "color": [
           1.0,
@@ -521,9 +814,9 @@
         "id": "lamp-013",
         "kind": "point",
         "position": [
-          4.0,
-          3.38,
-          220.0
+          -13.05,
+          3.98,
+          300.71
         ],
         "color": [
           1.0,
@@ -538,9 +831,9 @@
         "id": "lamp-014",
         "kind": "point",
         "position": [
-          -7.0,
-          3.38,
-          248.0
+          -18.58,
+          3.98,
+          298.48
         ],
         "color": [
           1.0,
@@ -555,9 +848,9 @@
         "id": "lamp-015",
         "kind": "point",
         "position": [
-          -7.0,
-          6.38,
-          289.0
+          -22.47,
+          3.98,
+          294.45
         ],
         "color": [
           1.0,
@@ -572,9 +865,9 @@
         "id": "lamp-016",
         "kind": "point",
         "position": [
-          2.47,
+          -15.0,
           3.98,
-          330.45
+          315.0
         ],
         "color": [
           1.0,
@@ -589,9 +882,9 @@
         "id": "lamp-017",
         "kind": "point",
         "position": [
-          -1.42,
-          3.98,
-          334.48
+          -2.6,
+          2.68,
+          7.6
         ],
         "color": [
           1.0,
@@ -606,9 +899,9 @@
         "id": "lamp-018",
         "kind": "point",
         "position": [
-          -6.95,
-          3.98,
-          336.71
+          -4.6,
+          2.18,
+          7.0
         ],
         "color": [
           1.0,
@@ -623,9 +916,9 @@
         "id": "lamp-019",
         "kind": "point",
         "position": [
-          -13.05,
-          3.98,
-          336.71
+          -2.9,
+          2.78,
+          26.3
         ],
         "color": [
           1.0,
@@ -640,9 +933,9 @@
         "id": "lamp-020",
         "kind": "point",
         "position": [
-          -18.58,
-          3.98,
-          334.48
+          -2.9,
+          2.78,
+          36.3
         ],
         "color": [
           1.0,
@@ -657,9 +950,9 @@
         "id": "lamp-021",
         "kind": "point",
         "position": [
-          -22.47,
-          3.98,
-          330.45
+          -2.9,
+          2.78,
+          46.3
         ],
         "color": [
           1.0,
@@ -674,9 +967,519 @@
         "id": "lamp-022",
         "kind": "point",
         "position": [
-          -15.0,
-          3.98,
-          351.0
+          8.5,
+          2.68,
+          26.5
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-023",
+        "kind": "point",
+        "position": [
+          8.5,
+          2.68,
+          46.5
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-024",
+        "kind": "point",
+        "position": [
+          -10.7,
+          2.18,
+          72.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-025",
+        "kind": "point",
+        "position": [
+          10.7,
+          2.18,
+          72.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-026",
+        "kind": "point",
+        "position": [
+          -3.4,
+          3.68,
+          65.3
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-027",
+        "kind": "point",
+        "position": [
+          -3.4,
+          3.68,
+          81.3
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-028",
+        "kind": "point",
+        "position": [
+          -5.5,
+          2.38,
+          98.6
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-029",
+        "kind": "point",
+        "position": [
+          -5.5,
+          2.38,
+          110.6
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-030",
+        "kind": "point",
+        "position": [
+          -5.5,
+          2.38,
+          122.6
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-031",
+        "kind": "point",
+        "position": [
+          -12.8,
+          2.18,
+          141.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-032",
+        "kind": "point",
+        "position": [
+          -12.8,
+          2.18,
+          150.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-033",
+        "kind": "point",
+        "position": [
+          4.8,
+          2.18,
+          141.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-034",
+        "kind": "point",
+        "position": [
+          4.8,
+          2.18,
+          150.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-035",
+        "kind": "point",
+        "position": [
+          -6.85,
+          2.98,
+          152.3
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-036",
+        "kind": "point",
+        "position": [
+          -19.6,
+          2.78,
+          175.2
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-037",
+        "kind": "point",
+        "position": [
+          -7.0,
+          2.18,
+          176.1
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-038",
+        "kind": "point",
+        "position": [
+          -20.15,
+          2.88,
+          202.3
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-039",
+        "kind": "point",
+        "position": [
+          6.5,
+          3.18,
+          190.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-040",
+        "kind": "point",
+        "position": [
+          6.5,
+          3.18,
+          202.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-041",
+        "kind": "point",
+        "position": [
+          -13.0,
+          3.18,
+          220.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-042",
+        "kind": "point",
+        "position": [
+          -1.0,
+          3.18,
+          220.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-043",
+        "kind": "point",
+        "position": [
+          -9.9,
+          5.98,
+          250.3
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-044",
+        "kind": "point",
+        "position": [
+          -15.7,
+          5.18,
+          258.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-045",
+        "kind": "point",
+        "position": [
+          1.7,
+          5.18,
+          258.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-046",
+        "kind": "point",
+        "position": [
+          -13.4,
+          8.68,
+          302.1
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-047",
+        "kind": "point",
+        "position": [
+          -21.0,
+          5.18,
+          300.7
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-048",
+        "kind": "point",
+        "position": [
+          -15.2,
+          7.98,
+          299.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-049",
+        "kind": "point",
+        "position": [
+          1.0,
+          5.18,
+          300.7
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-050",
+        "kind": "point",
+        "position": [
+          -4.8,
+          7.98,
+          299.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-051",
+        "kind": "point",
+        "position": [
+          -14.9,
+          5.18,
+          319.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 14.0,
+        "energy": 3.2,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lamp-052",
+        "kind": "point",
+        "position": [
+          -10.0,
+          5.88,
+          321.0
         ],
         "color": [
           1.0,
@@ -702,303 +1505,303 @@
       "x0": -1.8,
       "z0": 12.2,
       "x1": 1.8,
-      "z1": 20.4,
+      "z1": 18.4,
       "floor": 0.0,
       "height": 3.8
     },
     "peat-cut-way-b": {
       "x0": -1.8,
-      "z0": 19.6,
+      "z0": 17.6,
       "x1": 1.8,
-      "z1": 27.8,
+      "z1": 23.8,
       "floor": 0.0,
       "height": 3.8
     },
     "peat-cut": {
       "x0": -5.5,
-      "z0": 26.0,
+      "z0": 22.0,
       "x1": 5.5,
-      "z1": 58.0,
+      "z1": 54.0,
       "floor": 0.0,
       "height": 5.4
     },
     "peat-cut-alcove-0": {
       "x0": 5.5,
-      "z0": 29.5,
+      "z0": 25.5,
       "x1": 11.5,
-      "z1": 34.5,
+      "z1": 30.5,
       "floor": 0.0,
       "height": 4.0
     },
     "peat-cut-alcove-1": {
       "x0": 5.5,
-      "z0": 39.5,
+      "z0": 35.5,
       "x1": 11.5,
-      "z1": 44.5,
+      "z1": 40.5,
       "floor": 0.0,
       "height": 4.0
     },
     "peat-cut-alcove-2": {
       "x0": 5.5,
-      "z0": 49.5,
+      "z0": 45.5,
       "x1": 11.5,
-      "z1": 54.5,
+      "z1": 50.5,
       "floor": 0.0,
       "height": 4.0
     },
     "first-barrow-way-a": {
       "x0": -1.8,
-      "z0": 56.2,
+      "z0": 52.2,
       "x1": 1.8,
-      "z1": 64.4,
+      "z1": 58.4,
       "floor": 0.0,
       "height": 3.8
     },
     "first-barrow-way-b": {
       "x0": -1.8,
-      "z0": 63.6,
+      "z0": 57.6,
       "x1": 1.8,
-      "z1": 71.8,
+      "z1": 63.8,
       "floor": 0.0,
       "height": 3.8
     },
     "first-barrow": {
       "x0": -13.0,
-      "z0": 70.0,
+      "z0": 62.0,
       "x1": 13.0,
-      "z1": 94.0,
+      "z1": 86.0,
       "floor": 0.0,
       "height": 8.0
     },
     "bog-board-way-a": {
       "x0": -5.8,
-      "z0": 92.2,
+      "z0": 84.2,
       "x1": -2.2,
-      "z1": 100.4,
+      "z1": 90.4,
       "floor": 0.0,
       "height": 3.8
     },
     "bog-board-way-b": {
       "x0": -5.8,
-      "z0": 99.6,
+      "z0": 89.6,
       "x1": -2.2,
-      "z1": 107.8,
+      "z1": 95.8,
       "floor": 0.0,
       "height": 3.8
     },
     "bog-board-in": {
       "x0": -7.0,
-      "z0": 106.0,
+      "z0": 94.0,
       "x1": -1.0,
-      "z1": 109.0,
+      "z1": 97.0,
       "floor": 0.0,
       "height": 4.4
     },
     "bog-board-out": {
       "x0": -7.0,
-      "z0": 137.0,
+      "z0": 125.0,
       "x1": -1.0,
-      "z1": 140.0,
+      "z1": 128.0,
       "floor": 0.0,
       "height": 4.4
     },
     "bog-board": {
       "x0": -13.0,
-      "z0": 109.0,
+      "z0": 97.0,
       "x1": 5.0,
-      "z1": 137.0,
+      "z1": 125.0,
       "floor": -3.0,
       "height": 9.0
     },
     "fifth-chamber-way-a": {
       "x0": -5.8,
-      "z0": 138.2,
+      "z0": 126.2,
       "x1": -2.2,
-      "z1": 146.4,
+      "z1": 132.4,
       "floor": 0.0,
       "height": 3.8
     },
     "fifth-chamber-way-b": {
       "x0": -5.8,
-      "z0": 145.6,
+      "z0": 131.6,
       "x1": -2.2,
-      "z1": 153.8,
+      "z1": 137.8,
       "floor": 0.0,
       "height": 3.8
     },
     "fifth-chamber": {
       "x0": -15.2,
-      "z0": 152.0,
+      "z0": 136.0,
       "x1": 7.2,
-      "z1": 172.0,
+      "z1": 156.0,
       "floor": 0.0,
       "height": 5.6
     },
     "split-barrow-way-a": {
       "x0": -8.8,
-      "z0": 170.2,
+      "z0": 154.2,
       "x1": -5.2,
-      "z1": 178.4,
+      "z1": 160.4,
       "floor": 0.0,
       "height": 3.8
     },
     "split-barrow-way-b": {
       "x0": -8.8,
-      "z0": 177.6,
+      "z0": 159.6,
       "x1": -5.2,
-      "z1": 185.8,
+      "z1": 165.8,
       "floor": 0.0,
       "height": 3.8
     },
     "split-barrow-hub": {
       "x0": -22.0,
-      "z0": 184.0,
+      "z0": 164.0,
       "x1": 8.0,
-      "z1": 198.0,
+      "z1": 178.0,
       "floor": 0.0,
       "height": 5.6
     },
     "split-barrow-east-passage": {
       "x0": -26.0,
-      "z0": 210.0,
+      "z0": 186.0,
       "x1": -10.0,
-      "z1": 230.0,
+      "z1": 206.0,
       "floor": 0.0,
       "height": 6.0
     },
     "split-barrow-west-passage": {
       "x0": -4.0,
-      "z0": 210.0,
+      "z0": 186.0,
       "x1": 12.0,
-      "z1": 230.0,
+      "z1": 206.0,
       "floor": 0.0,
       "height": 6.0
     },
     "split-barrow-merge": {
       "x0": -22.0,
-      "z0": 242.0,
+      "z0": 214.0,
       "x1": 8.0,
-      "z1": 254.0,
+      "z1": 226.0,
       "floor": 0.0,
       "height": 5.6
     },
     "split-barrow-east-passage-out": {
       "x0": -19.8,
-      "z0": 228.2,
+      "z0": 204.2,
       "x1": -16.2,
-      "z1": 243.8,
+      "z1": 215.8,
       "floor": 0.0,
       "height": 3.8
     },
     "split-barrow-west-passage-out": {
       "x0": 2.2,
-      "z0": 228.2,
+      "z0": 204.2,
       "x1": 5.8,
-      "z1": 243.8,
+      "z1": 215.8,
       "floor": 0.0,
       "height": 3.8
     },
     "split-barrow-east-passage-way-a": {
       "x0": -19.8,
-      "z0": 196.2,
+      "z0": 176.2,
       "x1": -16.2,
-      "z1": 204.4,
+      "z1": 182.4,
       "floor": 0.0,
       "height": 3.8
     },
     "split-barrow-east-passage-way-b": {
       "x0": -19.8,
-      "z0": 203.6,
+      "z0": 181.6,
       "x1": -16.2,
-      "z1": 211.8,
+      "z1": 187.8,
       "floor": 0.0,
       "height": 3.8
     },
     "split-barrow-west-passage-way-a": {
       "x0": 2.2,
-      "z0": 196.2,
+      "z0": 176.2,
       "x1": 5.8,
-      "z1": 204.4,
+      "z1": 182.4,
       "floor": 0.0,
       "height": 3.8
     },
     "split-barrow-west-passage-way-b": {
       "x0": 2.2,
-      "z0": 203.6,
+      "z0": 181.6,
       "x1": 5.8,
-      "z1": 211.8,
+      "z1": 187.8,
       "floor": 0.0,
       "height": 3.8
     },
     "reeve-stair-way-a": {
       "x0": -8.8,
-      "z0": 252.2,
+      "z0": 224.2,
       "x1": -5.2,
-      "z1": 260.4,
+      "z1": 230.4,
       "floor": 0.0,
       "height": 3.8
     },
     "reeve-stair-way-b": {
       "x0": -8.8,
-      "z0": 259.6,
+      "z0": 229.6,
       "x1": -5.2,
-      "z1": 267.8,
+      "z1": 235.8,
       "floor": 0.0,
       "height": 3.8
     },
     "reeve-stair-climb": {
       "x0": -8.8,
-      "z0": 264.2,
+      "z0": 232.2,
       "x1": -5.2,
-      "z1": 281.8,
+      "z1": 249.8,
       "floor": 0.0,
       "height": 3.8
     },
     "reeve-stair": {
       "x0": -18.4,
-      "z0": 280.0,
+      "z0": 248.0,
       "x1": 4.4,
-      "z1": 298.0,
+      "z1": 266.0,
       "floor": 3.0,
       "height": 5.6
     },
     "reeve-hall-way-a": {
       "x0": -11.8,
-      "z0": 296.2,
+      "z0": 264.2,
       "x1": -8.2,
-      "z1": 304.4,
+      "z1": 270.4,
       "floor": 3.0,
       "height": 3.8
     },
     "reeve-hall-way-b": {
       "x0": -11.8,
-      "z0": 303.6,
+      "z0": 269.6,
       "x1": -8.2,
-      "z1": 311.8,
+      "z1": 275.8,
       "floor": 3.0,
       "height": 3.8
     },
     "reeve-hall": {
       "x0": -26.0,
-      "z0": 310.0,
+      "z0": 274.0,
       "x1": 6.0,
-      "z1": 340.0,
+      "z1": 304.0,
       "floor": 3.0,
       "height": 9.0
     },
     "vault-way": {
       "x0": -11.8,
-      "z0": 338.2,
+      "z0": 302.2,
       "x1": -8.2,
-      "z1": 349.8,
+      "z1": 313.8,
       "floor": 3.0,
       "height": 3.8
     },
     "vault": {
       "x0": -17.0,
-      "z0": 348.0,
+      "z0": 312.0,
       "x1": -3.0,
-      "z1": 360.0,
+      "z1": 324.0,
       "floor": 3.0,
       "height": 5.0
     }
@@ -1014,11 +1817,11 @@
       "boundsTiles": {
         "min": [
           21,
-          349
+          313
         ],
         "max": [
           37,
-          363
+          327
         ]
       },
       "arrival": [
@@ -1028,7 +1831,7 @@
       ],
       "arrivalTile": [
         29,
-        356
+        320
       ],
       "exit": {
         "id": "exit-staging",
@@ -1043,7 +1846,7 @@
         ],
         "serverTile": [
           35,
-          352
+          316
         ],
         "objectId": 800
       }
@@ -1064,25 +1867,25 @@
           "position": [
             0.0,
             1.2,
-            20.0
+            18.0
           ],
           "before": [
             0.0,
             0.0,
-            17.0
+            15.0
           ],
           "beyond": [
             0.0,
             0.0,
-            23.1
+            21.1
           ],
           "tile": [
             29,
-            346
+            312
           ],
           "beyondTile": [
             29,
-            340
+            306
           ],
           "objectId": 801
         },
@@ -1090,166 +1893,158 @@
         "room": "peat-cut",
         "bounds": [
           -5.5,
-          26.0,
+          22.0,
           5.5,
-          58.0
+          54.0
         ],
         "spawns": [
           [
             -3.1,
             0.0,
-            30.0
+            26.0
           ],
           [
             0.1,
             0.0,
-            30.0
+            26.0
           ],
           [
             -3.1,
             0.0,
-            33.2
+            29.2
           ],
           [
             0.1,
             0.0,
-            33.2
+            29.2
           ],
           [
             -3.1,
             0.0,
-            36.4
+            32.4
           ],
           [
             0.1,
             0.0,
-            36.4
+            32.4
           ],
           [
             -3.1,
             0.0,
-            39.6
+            35.6
           ],
           [
             0.1,
             0.0,
-            39.6
+            35.6
           ],
           [
             -3.1,
             0.0,
-            42.8
+            38.8
           ],
           [
             0.1,
             0.0,
-            42.8
+            38.8
           ],
           [
             -3.1,
             0.0,
-            46.0
+            42.0
           ],
           [
             0.1,
             0.0,
-            46.0
+            42.0
           ],
           [
             -3.1,
             0.0,
-            49.2
+            45.2
           ],
           [
             0.1,
             0.0,
-            49.2
+            45.2
           ],
           [
             -3.1,
             0.0,
-            52.4
+            48.4
           ],
           [
             0.1,
             0.0,
-            52.4
+            48.4
           ]
         ],
         "boundsTiles": {
           "min": [
             24,
-            305
+            273
           ],
           "max": [
             34,
-            337
+            305
           ]
         },
         "spawnTiles": [
           [
-            26,
-            333
-          ],
-          [
             29,
-            333
+            301
           ],
           [
             26,
-            330
+            298
           ],
           [
             29,
-            330
+            298
           ],
           [
             26,
-            327
+            295
           ],
           [
             29,
-            327
+            295
+          ],
+          [
+            29,
+            291
           ],
           [
             26,
-            323
+            288
           ],
           [
             29,
-            323
+            288
           ],
           [
             26,
-            320
+            285
           ],
           [
             29,
-            320
+            285
           ],
           [
             26,
-            317
+            282
           ],
           [
             29,
-            317
+            282
           ],
           [
             26,
-            314
+            279
           ],
           [
             29,
-            314
-          ],
-          [
-            26,
-            311
-          ],
-          [
-            29,
-            311
+            279
           ]
         ]
       },
@@ -1268,25 +2063,25 @@
           "position": [
             0.0,
             1.2,
-            64.0
+            58.0
           ],
           "before": [
             0.0,
             0.0,
-            61.0
+            55.0
           ],
           "beyond": [
             0.0,
             0.0,
-            67.1
+            61.1
           ],
           "tile": [
             29,
-            302
+            272
           ],
           "beyondTile": [
             29,
-            296
+            266
           ],
           "objectId": 802
         },
@@ -1294,313 +2089,317 @@
         "room": "first-barrow",
         "bounds": [
           -13.0,
-          70.0,
+          62.0,
           13.0,
-          94.0
+          86.0
         ],
         "spawns": [
           [
             -10.6,
             0.0,
-            74.0
+            66.0
           ],
           [
             -7.1,
             0.0,
-            74.0
+            66.0
           ],
           [
             -3.6,
             0.0,
-            74.0
+            66.0
           ],
           [
             -0.1,
             0.0,
-            74.0
+            66.0
           ],
           [
             3.4,
             0.0,
-            74.0
+            66.0
           ],
           [
             6.9,
             0.0,
-            74.0
+            66.0
           ],
           [
             10.4,
             0.0,
-            74.0
+            66.0
           ],
           [
             -10.6,
             0.0,
-            77.5
+            69.5
           ],
           [
             -7.1,
             0.0,
-            77.5
+            69.5
           ],
           [
             -3.6,
             0.0,
-            77.5
+            69.5
           ],
           [
             -0.1,
             0.0,
-            77.5
+            69.5
           ],
           [
             3.4,
             0.0,
-            77.5
+            69.5
           ],
           [
             6.9,
             0.0,
-            77.5
+            69.5
           ],
           [
             10.4,
             0.0,
-            77.5
+            69.5
           ],
           [
             -10.6,
             0.0,
-            81.0
+            73.0
           ],
           [
             -7.1,
             0.0,
-            81.0
+            73.0
           ],
           [
             -3.6,
             0.0,
-            81.0
+            73.0
           ],
           [
             -0.1,
             0.0,
-            81.0
+            73.0
           ],
           [
             3.4,
             0.0,
-            81.0
+            73.0
           ],
           [
             6.9,
             0.0,
-            81.0
+            73.0
           ],
           [
             10.4,
             0.0,
-            81.0
+            73.0
           ],
           [
             -10.6,
             0.0,
-            84.5
+            76.5
           ],
           [
             -7.1,
             0.0,
-            84.5
+            76.5
           ],
           [
             -3.6,
             0.0,
-            84.5
+            76.5
           ],
           [
             -0.1,
             0.0,
-            84.5
+            76.5
           ],
           [
             3.4,
             0.0,
-            84.5
+            76.5
           ],
           [
             6.9,
             0.0,
-            84.5
+            76.5
           ],
           [
             10.4,
             0.0,
-            84.5
+            76.5
           ],
           [
             -10.6,
             0.0,
-            88.0
+            80.0
           ],
           [
             -7.1,
             0.0,
-            88.0
+            80.0
           ],
           [
             -3.6,
             0.0,
-            88.0
+            80.0
           ],
           [
             -0.1,
             0.0,
-            88.0
+            80.0
           ],
           [
             3.4,
             0.0,
-            88.0
+            80.0
           ],
           [
             6.9,
             0.0,
-            88.0
+            80.0
           ],
           [
             10.4,
             0.0,
-            88.0
+            80.0
           ]
         ],
         "boundsTiles": {
           "min": [
             16,
-            269
+            241
           ],
           "max": [
             42,
-            293
+            265
           ]
         },
         "spawnTiles": [
           [
             18,
-            289
-          ],
-          [
-            25,
-            289
-          ],
-          [
-            29,
-            289
-          ],
-          [
-            32,
-            289
-          ],
-          [
-            39,
-            289
+            261
           ],
           [
             22,
-            286
-          ],
-          [
-            25,
-            286
+            261
           ],
           [
             29,
-            286
+            261
           ],
           [
             32,
-            286
+            261
           ],
           [
             36,
-            286
-          ],
-          [
-            39,
-            286
-          ],
-          [
-            22,
-            282
-          ],
-          [
-            25,
-            282
-          ],
-          [
-            29,
-            282
-          ],
-          [
-            32,
-            282
-          ],
-          [
-            36,
-            282
-          ],
-          [
-            39,
-            282
+            261
           ],
           [
             18,
-            278
+            258
           ],
           [
             22,
-            278
+            258
           ],
           [
             25,
-            278
+            258
           ],
           [
             29,
-            278
+            258
           ],
           [
             32,
-            278
+            258
           ],
           [
             36,
-            278
+            258
           ],
           [
             22,
-            275
+            254
           ],
           [
             25,
-            275
+            254
           ],
           [
             29,
-            275
+            254
           ],
           [
             32,
-            275
+            254
           ],
           [
             36,
-            275
+            254
           ],
           [
             39,
-            275
+            254
+          ],
+          [
+            18,
+            250
+          ],
+          [
+            22,
+            250
+          ],
+          [
+            25,
+            250
+          ],
+          [
+            29,
+            250
+          ],
+          [
+            32,
+            250
+          ],
+          [
+            36,
+            250
+          ],
+          [
+            18,
+            247
+          ],
+          [
+            22,
+            247
+          ],
+          [
+            25,
+            247
+          ],
+          [
+            29,
+            247
+          ],
+          [
+            32,
+            247
+          ],
+          [
+            36,
+            247
+          ],
+          [
+            39,
+            247
           ]
         ]
       },
@@ -1619,25 +2418,25 @@
           "position": [
             -4.0,
             1.2,
-            100.0
+            90.0
           ],
           "before": [
             -4.0,
             0.0,
-            97.0
+            87.0
           ],
           "beyond": [
             -4.0,
             0.0,
-            103.1
+            93.1
           ],
           "tile": [
             25,
-            266
+            240
           ],
           "beyondTile": [
             25,
-            260
+            234
           ],
           "objectId": 803
         },
@@ -1645,148 +2444,140 @@
         "room": "bog-board",
         "bounds": [
           -6.2,
-          109.0,
+          97.0,
           -1.7999999999999998,
-          137.0
+          125.0
         ],
         "spawns": [
           [
             -5.1,
             0.0,
-            113.0
+            101.0
           ],
           [
             -2.9,
             0.0,
-            113.0
+            101.0
           ],
           [
             -5.1,
             0.0,
-            116.2
+            104.2
           ],
           [
             -2.9,
             0.0,
-            116.2
+            104.2
           ],
           [
             -5.1,
             0.0,
-            119.4
+            107.4
           ],
           [
             -2.9,
             0.0,
-            119.4
+            107.4
           ],
           [
             -5.1,
             0.0,
-            122.6
+            110.6
           ],
           [
             -2.9,
             0.0,
-            122.6
+            110.6
           ],
           [
             -5.1,
             0.0,
-            125.8
+            113.8
           ],
           [
             -2.9,
             0.0,
-            125.8
+            113.8
           ],
           [
             -5.1,
             0.0,
-            129.0
+            117.0
           ],
           [
             -2.9,
             0.0,
-            129.0
+            117.0
           ],
           [
             -5.1,
             0.0,
-            132.2
+            120.2
           ],
           [
             -2.9,
             0.0,
-            132.2
+            120.2
           ]
         ],
         "boundsTiles": {
           "min": [
             23,
-            226
+            202
           ],
           "max": [
             27,
-            254
+            230
           ]
         },
         "spawnTiles": [
           [
             24,
-            250
+            226
           ],
           [
             26,
-            250
+            226
           ],
           [
             24,
-            247
+            223
           ],
           [
             26,
-            247
+            223
           ],
           [
             24,
-            244
+            220
           ],
           [
             26,
-            244
+            220
           ],
           [
             24,
-            240
+            213
           ],
           [
             26,
-            240
+            213
           ],
           [
             24,
-            237
+            210
           ],
           [
             26,
-            237
+            210
           ],
           [
             24,
-            234
+            207
           ],
           [
             26,
-            234
-          ],
-          [
-            24,
-            231
-          ],
-          [
-            26,
-            231
+            207
           ]
         ]
       },
@@ -1805,25 +2596,25 @@
           "position": [
             -4.0,
             1.2,
-            146.0
+            132.0
           ],
           "before": [
             -4.0,
             0.0,
-            143.0
+            129.0
           ],
           "beyond": [
             -4.0,
             0.0,
-            149.1
+            135.1
           ],
           "tile": [
             25,
-            220
+            198
           ],
           "beyondTile": [
             25,
-            214
+            192
           ],
           "objectId": 804
         },
@@ -1831,268 +2622,252 @@
         "room": "fifth-chamber",
         "bounds": [
           -15.2,
-          152.0,
+          136.0,
           7.199999999999999,
-          172.0
+          156.0
         ],
         "spawns": [
           [
             -12.8,
             0.0,
-            156.0
+            140.0
           ],
           [
             -9.8,
             0.0,
-            156.0
+            140.0
           ],
           [
             -6.8,
             0.0,
-            156.0
+            140.0
           ],
           [
             -3.8,
             0.0,
-            156.0
+            140.0
           ],
           [
             -0.8,
             0.0,
-            156.0
+            140.0
           ],
           [
             2.2,
             0.0,
-            156.0
+            140.0
           ],
           [
             -12.8,
             0.0,
-            159.0
+            143.0
           ],
           [
             -9.8,
             0.0,
-            159.0
+            143.0
           ],
           [
             -6.8,
             0.0,
-            159.0
+            143.0
           ],
           [
             -3.8,
             0.0,
-            159.0
+            143.0
           ],
           [
             -0.8,
             0.0,
-            159.0
+            143.0
           ],
           [
             2.2,
             0.0,
-            159.0
+            143.0
           ],
           [
             -12.8,
             0.0,
-            162.0
+            146.0
           ],
           [
             -9.8,
             0.0,
-            162.0
+            146.0
           ],
           [
             -6.8,
             0.0,
-            162.0
+            146.0
           ],
           [
             -3.8,
             0.0,
-            162.0
+            146.0
           ],
           [
             -0.8,
             0.0,
-            162.0
+            146.0
           ],
           [
             2.2,
             0.0,
-            162.0
+            146.0
           ],
           [
             -12.8,
             0.0,
-            165.0
+            149.0
           ],
           [
             -9.8,
             0.0,
-            165.0
+            149.0
           ],
           [
             -6.8,
             0.0,
-            165.0
+            149.0
           ],
           [
             -3.8,
             0.0,
-            165.0
+            149.0
           ],
           [
             -0.8,
             0.0,
-            165.0
+            149.0
           ],
           [
             2.2,
             0.0,
-            165.0
+            149.0
           ],
           [
             -12.8,
             0.0,
-            168.0
+            152.0
           ],
           [
             -9.8,
             0.0,
-            168.0
+            152.0
           ],
           [
             -6.8,
             0.0,
-            168.0
+            152.0
           ],
           [
             -3.8,
             0.0,
-            168.0
+            152.0
           ],
           [
             -0.8,
             0.0,
-            168.0
+            152.0
           ],
           [
             2.2,
             0.0,
-            168.0
+            152.0
           ]
         ],
         "boundsTiles": {
           "min": [
             14,
-            191
+            171
           ],
           "max": [
             36,
-            211
+            191
           ]
         },
         "spawnTiles": [
           [
             19,
-            207
+            187
           ],
           [
             22,
-            207
+            187
           ],
           [
             25,
-            207
+            187
           ],
           [
             28,
-            207
+            187
           ],
           [
             31,
-            207
+            187
           ],
           [
             22,
-            204
+            184
           ],
           [
             25,
-            204
+            184
           ],
           [
             28,
-            204
+            184
           ],
           [
             16,
-            201
+            181
           ],
           [
             19,
-            201
+            181
           ],
           [
             22,
-            201
+            181
           ],
           [
             25,
-            201
+            181
           ],
           [
             28,
-            201
+            181
           ],
           [
             31,
-            201
-          ],
-          [
-            16,
-            198
+            181
           ],
           [
             22,
-            198
+            178
           ],
           [
             25,
-            198
+            178
           ],
           [
             28,
-            198
-          ],
-          [
-            16,
-            195
+            178
           ],
           [
             19,
-            195
-          ],
-          [
-            22,
-            195
+            175
           ],
           [
             25,
-            195
-          ],
-          [
-            28,
-            195
+            175
           ],
           [
             31,
-            195
+            175
           ]
         ]
       },
@@ -2111,25 +2886,25 @@
           "position": [
             -7.0,
             1.2,
-            178.0
+            160.0
           ],
           "before": [
             -7.0,
             0.0,
-            175.0
+            157.0
           ],
           "beyond": [
             -7.0,
             0.0,
-            181.1
+            163.1
           ],
           "tile": [
             22,
-            188
+            170
           ],
           "beyondTile": [
             22,
-            182
+            164
           ],
           "objectId": 805
         },
@@ -2137,130 +2912,130 @@
         "room": "split-barrow-hub",
         "bounds": [
           -22.0,
-          184.0,
+          164.0,
           8.0,
-          198.0
+          178.0
         ],
         "spawns": [
           [
             -19.6,
             0.0,
-            187.5
+            167.5
           ],
           [
             -16.1,
             0.0,
-            187.5
+            167.5
           ],
           [
             -12.6,
             0.0,
-            187.5
+            167.5
           ],
           [
             -9.1,
             0.0,
-            187.5
+            167.5
           ],
           [
             -5.6,
             0.0,
-            187.5
+            167.5
           ],
           [
             -2.1,
             0.0,
-            187.5
+            167.5
           ],
           [
             1.4,
             0.0,
-            187.5
+            167.5
           ],
           [
             4.9,
             0.0,
-            187.5
+            167.5
           ],
           [
             -19.6,
             0.0,
-            191.0
+            171.0
           ],
           [
             -16.1,
             0.0,
-            191.0
+            171.0
           ],
           [
             -12.6,
             0.0,
-            191.0
+            171.0
           ],
           [
             -9.1,
             0.0,
-            191.0
+            171.0
           ],
           [
             -5.6,
             0.0,
-            191.0
+            171.0
           ],
           [
             -2.1,
             0.0,
-            191.0
+            171.0
           ],
           [
             1.4,
             0.0,
-            191.0
+            171.0
           ],
           [
             4.9,
             0.0,
-            191.0
+            171.0
           ],
           [
             -19.6,
             0.0,
-            194.5
+            174.5
           ],
           [
             -16.1,
             0.0,
-            194.5
+            174.5
           ],
           [
             -12.6,
             0.0,
-            194.5
+            174.5
           ],
           [
             -9.1,
             0.0,
-            194.5
+            174.5
           ],
           [
             -5.6,
             0.0,
-            194.5
+            174.5
           ],
           [
             -2.1,
             0.0,
-            194.5
+            174.5
           ],
           [
             1.4,
             0.0,
-            194.5
+            174.5
           ],
           [
             4.9,
             0.0,
-            194.5
+            174.5
           ]
         ],
         "branches": [
@@ -2271,110 +3046,110 @@
             "room": "split-barrow-east-passage",
             "bounds": [
               -26.0,
-              210.0,
+              186.0,
               -10.0,
-              230.0
+              206.0
             ],
             "spawns": [
               [
                 -23.6,
                 0.0,
-                214.0
+                190.0
               ],
               [
                 -20.6,
                 0.0,
-                214.0
+                190.0
               ],
               [
                 -17.6,
                 0.0,
-                214.0
+                190.0
               ],
               [
                 -14.6,
                 0.0,
-                214.0
+                190.0
               ],
               [
                 -23.6,
                 0.0,
-                217.0
+                193.0
               ],
               [
                 -20.6,
                 0.0,
-                217.0
+                193.0
               ],
               [
                 -17.6,
                 0.0,
-                217.0
+                193.0
               ],
               [
                 -14.6,
                 0.0,
-                217.0
+                193.0
               ],
               [
                 -23.6,
                 0.0,
-                220.0
+                196.0
               ],
               [
                 -20.6,
                 0.0,
-                220.0
+                196.0
               ],
               [
                 -17.6,
                 0.0,
-                220.0
+                196.0
               ],
               [
                 -14.6,
                 0.0,
-                220.0
+                196.0
               ],
               [
                 -23.6,
                 0.0,
-                223.0
+                199.0
               ],
               [
                 -20.6,
                 0.0,
-                223.0
+                199.0
               ],
               [
                 -17.6,
                 0.0,
-                223.0
+                199.0
               ],
               [
                 -14.6,
                 0.0,
-                223.0
+                199.0
               ],
               [
                 -23.6,
                 0.0,
-                226.0
+                202.0
               ],
               [
                 -20.6,
                 0.0,
-                226.0
+                202.0
               ],
               [
                 -17.6,
                 0.0,
-                226.0
+                202.0
               ],
               [
                 -14.6,
                 0.0,
-                226.0
+                202.0
               ]
             ],
             "gate": {
@@ -2384,104 +3159,40 @@
               "position": [
                 -18.0,
                 1.2,
-                204.0
+                182.0
               ],
               "before": [
                 -18.0,
                 0.0,
-                201.0
+                179.0
               ],
               "beyond": [
                 -18.0,
                 0.0,
-                207.1
+                185.1
               ],
               "tile": [
                 11,
-                162
+                148
               ],
               "beyondTile": [
                 11,
-                156
+                142
               ],
               "objectId": 806
             },
             "boundsTiles": {
               "min": [
                 3,
-                133
+                121
               ],
               "max": [
                 19,
-                153
+                141
               ]
             },
             "spawnTiles": [
               [
-                5,
-                149
-              ],
-              [
-                8,
-                149
-              ],
-              [
-                11,
-                149
-              ],
-              [
-                14,
-                149
-              ],
-              [
-                5,
-                146
-              ],
-              [
-                8,
-                146
-              ],
-              [
-                11,
-                146
-              ],
-              [
-                14,
-                146
-              ],
-              [
-                5,
-                143
-              ],
-              [
-                8,
-                143
-              ],
-              [
-                11,
-                143
-              ],
-              [
-                14,
-                143
-              ],
-              [
-                5,
-                140
-              ],
-              [
-                8,
-                140
-              ],
-              [
-                11,
-                140
-              ],
-              [
-                14,
-                140
-              ],
-              [
                 8,
                 137
               ],
@@ -2492,6 +3203,50 @@
               [
                 14,
                 137
+              ],
+              [
+                8,
+                134
+              ],
+              [
+                11,
+                134
+              ],
+              [
+                14,
+                134
+              ],
+              [
+                5,
+                131
+              ],
+              [
+                8,
+                131
+              ],
+              [
+                11,
+                131
+              ],
+              [
+                14,
+                131
+              ],
+              [
+                8,
+                128
+              ],
+              [
+                11,
+                128
+              ],
+              [
+                14,
+                128
+              ],
+              [
+                11,
+                125
               ]
             ]
           },
@@ -2502,110 +3257,110 @@
             "room": "split-barrow-west-passage",
             "bounds": [
               -4.0,
-              210.0,
+              186.0,
               12.0,
-              230.0
+              206.0
             ],
             "spawns": [
               [
                 -1.6,
                 0.0,
-                214.0
+                190.0
               ],
               [
                 1.4,
                 0.0,
-                214.0
+                190.0
               ],
               [
                 4.4,
                 0.0,
-                214.0
+                190.0
               ],
               [
                 7.4,
                 0.0,
-                214.0
+                190.0
               ],
               [
                 -1.6,
                 0.0,
-                217.0
+                193.0
               ],
               [
                 1.4,
                 0.0,
-                217.0
+                193.0
               ],
               [
                 4.4,
                 0.0,
-                217.0
+                193.0
               ],
               [
                 7.4,
                 0.0,
-                217.0
+                193.0
               ],
               [
                 -1.6,
                 0.0,
-                220.0
+                196.0
               ],
               [
                 1.4,
                 0.0,
-                220.0
+                196.0
               ],
               [
                 4.4,
                 0.0,
-                220.0
+                196.0
               ],
               [
                 7.4,
                 0.0,
-                220.0
+                196.0
               ],
               [
                 -1.6,
                 0.0,
-                223.0
+                199.0
               ],
               [
                 1.4,
                 0.0,
-                223.0
+                199.0
               ],
               [
                 4.4,
                 0.0,
-                223.0
+                199.0
               ],
               [
                 7.4,
                 0.0,
-                223.0
+                199.0
               ],
               [
                 -1.6,
                 0.0,
-                226.0
+                202.0
               ],
               [
                 1.4,
                 0.0,
-                226.0
+                202.0
               ],
               [
                 4.4,
                 0.0,
-                226.0
+                202.0
               ],
               [
                 7.4,
                 0.0,
-                226.0
+                202.0
               ]
             ],
             "gate": {
@@ -2615,104 +3370,40 @@
               "position": [
                 4.0,
                 1.2,
-                204.0
+                182.0
               ],
               "before": [
                 4.0,
                 0.0,
-                201.0
+                179.0
               ],
               "beyond": [
                 4.0,
                 0.0,
-                207.1
+                185.1
               ],
               "tile": [
                 33,
-                162
+                148
               ],
               "beyondTile": [
                 33,
-                156
+                142
               ],
               "objectId": 807
             },
             "boundsTiles": {
               "min": [
                 25,
-                133
+                121
               ],
               "max": [
                 41,
-                153
+                141
               ]
             },
             "spawnTiles": [
               [
-                27,
-                149
-              ],
-              [
-                30,
-                149
-              ],
-              [
-                33,
-                149
-              ],
-              [
-                27,
-                146
-              ],
-              [
-                30,
-                146
-              ],
-              [
-                33,
-                146
-              ],
-              [
-                36,
-                146
-              ],
-              [
-                27,
-                143
-              ],
-              [
-                30,
-                143
-              ],
-              [
-                33,
-                143
-              ],
-              [
-                36,
-                143
-              ],
-              [
-                27,
-                140
-              ],
-              [
-                30,
-                140
-              ],
-              [
-                33,
-                140
-              ],
-              [
-                36,
-                140
-              ],
-              [
-                27,
-                137
-              ],
-              [
                 30,
                 137
               ],
@@ -2721,8 +3412,56 @@
                 137
               ],
               [
+                30,
+                134
+              ],
+              [
+                33,
+                134
+              ],
+              [
                 36,
-                137
+                134
+              ],
+              [
+                27,
+                131
+              ],
+              [
+                30,
+                131
+              ],
+              [
+                33,
+                131
+              ],
+              [
+                36,
+                131
+              ],
+              [
+                27,
+                128
+              ],
+              [
+                30,
+                128
+              ],
+              [
+                33,
+                128
+              ],
+              [
+                36,
+                128
+              ],
+              [
+                30,
+                125
+              ],
+              [
+                33,
+                125
               ]
             ]
           }
@@ -2731,123 +3470,115 @@
           "room": "split-barrow-merge",
           "bounds": [
             -22.0,
-            242.0,
+            214.0,
             8.0,
-            254.0
+            226.0
           ],
           "boundsTiles": {
             "min": [
               7,
-              109
+              101
             ],
             "max": [
               37,
-              121
+              113
             ]
           }
         },
         "boundsTiles": {
           "min": [
             7,
-            165
+            149
           ],
           "max": [
             37,
-            179
+            163
           ]
         },
         "spawnTiles": [
           [
             9,
-            176
+            160
           ],
           [
             13,
-            176
+            160
           ],
           [
             16,
-            176
+            160
           ],
           [
             20,
-            176
+            160
           ],
           [
             23,
-            176
+            160
           ],
           [
             27,
-            176
+            160
           ],
           [
             30,
-            176
+            160
           ],
           [
             34,
-            176
-          ],
-          [
-            13,
-            172
-          ],
-          [
-            16,
-            172
-          ],
-          [
-            20,
-            172
-          ],
-          [
-            23,
-            172
-          ],
-          [
-            27,
-            172
-          ],
-          [
-            30,
-            172
-          ],
-          [
-            34,
-            172
+            160
           ],
           [
             9,
-            168
+            156
           ],
           [
             13,
-            168
+            156
           ],
           [
             16,
-            168
+            156
           ],
           [
             20,
-            168
+            156
           ],
           [
             23,
-            168
+            156
           ],
           [
             27,
-            168
+            156
           ],
           [
             30,
-            168
+            156
           ],
           [
             34,
-            168
+            156
+          ],
+          [
+            16,
+            152
+          ],
+          [
+            20,
+            152
+          ],
+          [
+            23,
+            152
+          ],
+          [
+            27,
+            152
+          ],
+          [
+            34,
+            152
           ]
         ]
       },
@@ -2866,25 +3597,25 @@
           "position": [
             -7.0,
             1.2,
-            260.0
+            230.0
           ],
           "before": [
             -7.0,
             0.0,
-            257.0
+            227.0
           ],
           "beyond": [
             -7.0,
             0.0,
-            263.1
+            233.1
           ],
           "tile": [
             22,
-            106
+            100
           ],
           "beyondTile": [
             22,
-            100
+            94
           ],
           "objectId": 808
         },
@@ -2892,238 +3623,226 @@
         "room": "reeve-stair",
         "bounds": [
           -18.4,
-          280.0,
+          248.0,
           4.4,
-          298.0
+          266.0
         ],
         "spawns": [
           [
             -16.0,
             3.0,
-            284.0
+            252.0
           ],
           [
             -13.0,
             3.0,
-            284.0
+            252.0
           ],
           [
             -10.0,
             3.0,
-            284.0
+            252.0
           ],
           [
             -7.0,
             3.0,
-            284.0
+            252.0
           ],
           [
             -4.0,
             3.0,
-            284.0
+            252.0
           ],
           [
             -1.0,
             3.0,
-            284.0
+            252.0
           ],
           [
             -16.0,
             3.0,
-            287.0
+            255.0
           ],
           [
             -13.0,
             3.0,
-            287.0
+            255.0
           ],
           [
             -10.0,
             3.0,
-            287.0
+            255.0
           ],
           [
             -7.0,
             3.0,
-            287.0
+            255.0
           ],
           [
             -4.0,
             3.0,
-            287.0
+            255.0
           ],
           [
             -1.0,
             3.0,
-            287.0
+            255.0
           ],
           [
             -16.0,
             3.0,
-            290.0
+            258.0
           ],
           [
             -13.0,
             3.0,
-            290.0
+            258.0
           ],
           [
             -10.0,
             3.0,
-            290.0
+            258.0
           ],
           [
             -7.0,
             3.0,
-            290.0
+            258.0
           ],
           [
             -4.0,
             3.0,
-            290.0
+            258.0
           ],
           [
             -1.0,
             3.0,
-            290.0
+            258.0
           ],
           [
             -16.0,
             3.0,
-            293.0
+            261.0
           ],
           [
             -13.0,
             3.0,
-            293.0
+            261.0
           ],
           [
             -10.0,
             3.0,
-            293.0
+            261.0
           ],
           [
             -7.0,
             3.0,
-            293.0
+            261.0
           ],
           [
             -4.0,
             3.0,
-            293.0
+            261.0
           ],
           [
             -1.0,
             3.0,
-            293.0
+            261.0
           ]
         ],
         "boundsTiles": {
           "min": [
             11,
-            65
+            61
           ],
           "max": [
             33,
-            83
+            79
           ]
         },
         "spawnTiles": [
           [
             13,
-            79
+            75
           ],
           [
             16,
-            79
-          ],
-          [
-            19,
-            79
+            75
           ],
           [
             22,
-            79
-          ],
-          [
-            25,
-            79
+            75
           ],
           [
             28,
-            79
+            75
           ],
           [
             13,
-            76
+            72
           ],
           [
             16,
-            76
+            72
           ],
           [
             19,
-            76
+            72
           ],
           [
             22,
-            76
+            72
           ],
           [
             25,
-            76
+            72
           ],
           [
             28,
-            76
+            72
+          ],
+          [
+            16,
+            69
+          ],
+          [
+            19,
+            69
+          ],
+          [
+            22,
+            69
+          ],
+          [
+            25,
+            69
+          ],
+          [
+            28,
+            69
           ],
           [
             13,
-            73
+            66
           ],
           [
             16,
-            73
+            66
           ],
           [
             19,
-            73
+            66
           ],
           [
             22,
-            73
+            66
           ],
           [
             25,
-            73
+            66
           ],
           [
             28,
-            73
-          ],
-          [
-            13,
-            70
-          ],
-          [
-            16,
-            70
-          ],
-          [
-            19,
-            70
-          ],
-          [
-            22,
-            70
-          ],
-          [
-            25,
-            70
-          ],
-          [
-            28,
-            70
+            66
           ]
         ]
       },
@@ -3142,25 +3861,25 @@
           "position": [
             -10.0,
             4.2,
-            304.0
+            270.0
           ],
           "before": [
             -10.0,
             3.0,
-            301.0
+            267.0
           ],
           "beyond": [
             -10.0,
             3.0,
-            307.1
+            273.1
           ],
           "tile": [
             19,
-            62
+            60
           ],
           "beyondTile": [
             19,
-            56
+            54
           ],
           "objectId": 809
         },
@@ -3168,55 +3887,55 @@
         "boss": [
           -10.0,
           3.5,
-          333.0
+          297.0
         ],
         "room": "reeve-hall",
         "bounds": [
           -26.0,
-          310.0,
+          274.0,
           6.0,
-          340.0
+          304.0
         ],
         "spawns": [
           [
             -3.0,
             3.0,
-            325.0
+            289.0
           ],
           [
             -5.05,
             3.0,
-            329.24
+            293.24
           ],
           [
             -10.0,
             3.0,
-            331.0
+            295.0
           ],
           [
             -14.95,
             3.0,
-            329.24
+            293.24
           ],
           [
             -17.0,
             3.0,
-            325.0
+            289.0
           ],
           [
             -14.95,
             3.0,
-            320.76
+            284.76
           ],
           [
             -10.0,
             3.0,
-            319.0
+            283.0
           ],
           [
             -5.05,
             3.0,
-            320.76
+            284.76
           ]
         ],
         "boundsTiles": {
@@ -3284,7 +4003,7 @@
       "spot": [
         -10.0,
         3.05,
-        354.0
+        318.0
       ],
       "spotTile": [
         19,
@@ -3299,7 +4018,7 @@
         "position": [
           -10.0,
           3.6,
-          356.5
+          320.5
         ],
         "serverTile": [
           19,
@@ -3316,7 +4035,7 @@
         "position": [
           -5.0,
           4.0,
-          351.0
+          315.0
         ],
         "serverTile": [
           24,
@@ -3355,33 +4074,308 @@
     ]
   },
   "performance": {
-    "nodes": 16,
-    "meshes": 14,
-    "materials": 10,
-    "images": 30,
-    "textures": 30,
-    "accessors": 70,
-    "bufferViews": 100,
-    "uniqueTriangles": 26610,
-    "uniqueVertices": 27526,
-    "glbBytes": 4999476,
+    "nodes": 291,
+    "meshes": 261,
+    "materials": 13,
+    "images": 39,
+    "textures": 39,
+    "accessors": 1305,
+    "bufferViews": 1344,
+    "uniqueTriangles": 60291,
+    "uniqueVertices": 61205,
+    "glbBytes": 8615576,
     "nodeNames": [
       "Secrets_grey_moors_gauntlet",
-      "Section_grey_moors_gauntlet",
-      "Roof_grey_moors_gauntlet_grey_bog_timber",
-      "Roof_grey_moors_gauntlet_grey_carved_stone",
-      "Roof_grey_moors_gauntlet_grey_moor_granite",
-      "Build_grey_moors_gauntlet_amber_resin",
-      "Build_grey_moors_gauntlet_dark_iron",
-      "Build_grey_moors_gauntlet_grey_bog_timber",
-      "Build_grey_moors_gauntlet_grey_bog_water",
-      "Build_grey_moors_gauntlet_grey_carved_stone",
-      "Build_grey_moors_gauntlet_grey_drystone",
-      "Build_grey_moors_gauntlet_grey_moor_granite",
-      "Build_grey_moors_gauntlet_grey_votive_flame",
-      "Build_grey_moors_gauntlet_lime_plaster",
-      "Walk_grey_moors_gauntlet_grey_carved_stone",
-      "Walk_grey_moors_gauntlet_grey_moor_track"
+      "Section_grey_moors_gauntlet_band_-001",
+      "Roof_grey_moors_gauntlet_band_-001_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_-001_grey_drystone",
+      "Walk_grey_moors_gauntlet_band_-001_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+000",
+      "Roof_grey_moors_gauntlet_band_+000_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+000_amber_resin",
+      "Build_grey_moors_gauntlet_band_+000_dark_iron",
+      "Build_grey_moors_gauntlet_band_+000_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+000_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+000_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+000_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+000_lime_plaster",
+      "Walk_grey_moors_gauntlet_band_+000_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+001",
+      "Roof_grey_moors_gauntlet_band_+001_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+001_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+001_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+001_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+001_grey_moor_granite",
+      "Walk_grey_moors_gauntlet_band_+001_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+002",
+      "Roof_grey_moors_gauntlet_band_+002_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+002_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+002_amber_resin",
+      "Build_grey_moors_gauntlet_band_+002_dark_iron",
+      "Build_grey_moors_gauntlet_band_+002_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+002_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+002_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+002_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+002_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+002_lime_plaster",
+      "Walk_grey_moors_gauntlet_band_+002_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+003",
+      "Roof_grey_moors_gauntlet_band_+003_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+003_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+003_amber_resin",
+      "Build_grey_moors_gauntlet_band_+003_dark_iron",
+      "Build_grey_moors_gauntlet_band_+003_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+003_grey_dead_bark",
+      "Build_grey_moors_gauntlet_band_+003_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+003_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+003_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+003_lime_plaster",
+      "Walk_grey_moors_gauntlet_band_+003_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+004",
+      "Roof_grey_moors_gauntlet_band_+004_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+004_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+004_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+004_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+004_grey_moor_granite",
+      "Walk_grey_moors_gauntlet_band_+004_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+005",
+      "Roof_grey_moors_gauntlet_band_+005_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+005_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+005_amber_resin",
+      "Build_grey_moors_gauntlet_band_+005_dark_iron",
+      "Build_grey_moors_gauntlet_band_+005_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+005_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+005_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+005_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+005_lime_plaster",
+      "Walk_grey_moors_gauntlet_band_+005_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+006",
+      "Roof_grey_moors_gauntlet_band_+006_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+006_amber_resin",
+      "Build_grey_moors_gauntlet_band_+006_dark_iron",
+      "Build_grey_moors_gauntlet_band_+006_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+006_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+006_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+006_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+006_lime_plaster",
+      "Walk_grey_moors_gauntlet_band_+006_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+007",
+      "Roof_grey_moors_gauntlet_band_+007_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+007_grey_carved_stone",
+      "Roof_grey_moors_gauntlet_band_+007_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+007_dark_iron",
+      "Build_grey_moors_gauntlet_band_+007_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+007_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+007_grey_moor_granite",
+      "Walk_grey_moors_gauntlet_band_+007_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+008",
+      "Roof_grey_moors_gauntlet_band_+008_grey_carved_stone",
+      "Roof_grey_moors_gauntlet_band_+008_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+008_amber_resin",
+      "Build_grey_moors_gauntlet_band_+008_dark_iron",
+      "Build_grey_moors_gauntlet_band_+008_grey_barrow_turf",
+      "Build_grey_moors_gauntlet_band_+008_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+008_grey_bog_water",
+      "Build_grey_moors_gauntlet_band_+008_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+008_grey_dead_bark",
+      "Build_grey_moors_gauntlet_band_+008_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+008_timber_grey",
+      "Walk_grey_moors_gauntlet_band_+008_grey_bog_timber",
+      "Walk_grey_moors_gauntlet_band_+008_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+009",
+      "Roof_grey_moors_gauntlet_band_+009_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+009_amber_resin",
+      "Build_grey_moors_gauntlet_band_+009_dark_iron",
+      "Build_grey_moors_gauntlet_band_+009_grey_barrow_turf",
+      "Build_grey_moors_gauntlet_band_+009_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+009_grey_bog_water",
+      "Build_grey_moors_gauntlet_band_+009_grey_dead_bark",
+      "Build_grey_moors_gauntlet_band_+009_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+009_timber_grey",
+      "Walk_grey_moors_gauntlet_band_+009_grey_bog_timber",
+      "Section_grey_moors_gauntlet_band_+010",
+      "Roof_grey_moors_gauntlet_band_+010_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+010_grey_carved_stone",
+      "Roof_grey_moors_gauntlet_band_+010_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+010_amber_resin",
+      "Build_grey_moors_gauntlet_band_+010_dark_iron",
+      "Build_grey_moors_gauntlet_band_+010_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+010_grey_bog_water",
+      "Build_grey_moors_gauntlet_band_+010_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+010_grey_dead_bark",
+      "Build_grey_moors_gauntlet_band_+010_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+010_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+010_timber_grey",
+      "Walk_grey_moors_gauntlet_band_+010_grey_bog_timber",
+      "Walk_grey_moors_gauntlet_band_+010_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+011",
+      "Roof_grey_moors_gauntlet_band_+011_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+011_amber_resin",
+      "Build_grey_moors_gauntlet_band_+011_dark_iron",
+      "Build_grey_moors_gauntlet_band_+011_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+011_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+011_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+011_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+011_lime_plaster",
+      "Walk_grey_moors_gauntlet_band_+011_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+012",
+      "Roof_grey_moors_gauntlet_band_+012_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+012_amber_resin",
+      "Build_grey_moors_gauntlet_band_+012_dark_iron",
+      "Build_grey_moors_gauntlet_band_+012_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+012_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+012_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+012_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+012_lime_plaster",
+      "Walk_grey_moors_gauntlet_band_+012_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+013",
+      "Roof_grey_moors_gauntlet_band_+013_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+013_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+013_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+013_grey_moor_granite",
+      "Walk_grey_moors_gauntlet_band_+013_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+014",
+      "Roof_grey_moors_gauntlet_band_+014_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+014_amber_resin",
+      "Build_grey_moors_gauntlet_band_+014_dark_iron",
+      "Build_grey_moors_gauntlet_band_+014_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+014_grey_dead_bark",
+      "Build_grey_moors_gauntlet_band_+014_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+014_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+014_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+014_lime_plaster",
+      "Walk_grey_moors_gauntlet_band_+014_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+015",
+      "Roof_grey_moors_gauntlet_band_+015_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+015_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+015_amber_resin",
+      "Build_grey_moors_gauntlet_band_+015_dark_iron",
+      "Build_grey_moors_gauntlet_band_+015_grey_barrow_turf",
+      "Build_grey_moors_gauntlet_band_+015_grey_bog_water",
+      "Build_grey_moors_gauntlet_band_+015_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+015_grey_dead_bark",
+      "Build_grey_moors_gauntlet_band_+015_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+015_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+015_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+015_lime_plaster",
+      "Walk_grey_moors_gauntlet_band_+015_grey_barrow_turf",
+      "Walk_grey_moors_gauntlet_band_+015_grey_carved_stone",
+      "Walk_grey_moors_gauntlet_band_+015_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+016",
+      "Roof_grey_moors_gauntlet_band_+016_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+016_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+016_amber_resin",
+      "Build_grey_moors_gauntlet_band_+016_dark_iron",
+      "Build_grey_moors_gauntlet_band_+016_grey_barrow_turf",
+      "Build_grey_moors_gauntlet_band_+016_grey_bog_water",
+      "Build_grey_moors_gauntlet_band_+016_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+016_grey_dead_bark",
+      "Build_grey_moors_gauntlet_band_+016_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+016_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+016_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+016_lime_plaster",
+      "Walk_grey_moors_gauntlet_band_+016_grey_barrow_turf",
+      "Walk_grey_moors_gauntlet_band_+016_grey_carved_stone",
+      "Section_grey_moors_gauntlet_band_+017",
+      "Roof_grey_moors_gauntlet_band_+017_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+017_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+017_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+017_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+017_grey_moor_granite",
+      "Walk_grey_moors_gauntlet_band_+017_grey_barrow_turf",
+      "Walk_grey_moors_gauntlet_band_+017_grey_carved_stone",
+      "Walk_grey_moors_gauntlet_band_+017_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+018",
+      "Roof_grey_moors_gauntlet_band_+018_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+018_amber_resin",
+      "Build_grey_moors_gauntlet_band_+018_dark_iron",
+      "Build_grey_moors_gauntlet_band_+018_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+018_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+018_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+018_lime_plaster",
+      "Walk_grey_moors_gauntlet_band_+018_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+019",
+      "Roof_grey_moors_gauntlet_band_+019_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+019_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+019_dark_iron",
+      "Build_grey_moors_gauntlet_band_+019_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+019_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+019_grey_moor_granite",
+      "Walk_grey_moors_gauntlet_band_+019_grey_carved_stone",
+      "Walk_grey_moors_gauntlet_band_+019_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+020",
+      "Roof_grey_moors_gauntlet_band_+020_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+020_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+020_amber_resin",
+      "Build_grey_moors_gauntlet_band_+020_dark_iron",
+      "Build_grey_moors_gauntlet_band_+020_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+020_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+020_grey_moor_granite",
+      "Walk_grey_moors_gauntlet_band_+020_grey_carved_stone",
+      "Walk_grey_moors_gauntlet_band_+020_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+021",
+      "Roof_grey_moors_gauntlet_band_+021_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+021_amber_resin",
+      "Build_grey_moors_gauntlet_band_+021_dark_iron",
+      "Build_grey_moors_gauntlet_band_+021_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+021_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+021_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+021_lime_plaster",
+      "Walk_grey_moors_gauntlet_band_+021_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+022",
+      "Roof_grey_moors_gauntlet_band_+022_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+022_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+022_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+022_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+022_grey_moor_granite",
+      "Walk_grey_moors_gauntlet_band_+022_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+023",
+      "Roof_grey_moors_gauntlet_band_+023_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+023_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+023_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+023_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+023_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+023_lime_plaster",
+      "Walk_grey_moors_gauntlet_band_+023_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+024",
+      "Roof_grey_moors_gauntlet_band_+024_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+024_amber_resin",
+      "Build_grey_moors_gauntlet_band_+024_dark_iron",
+      "Build_grey_moors_gauntlet_band_+024_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+024_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+024_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+024_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+024_lime_plaster",
+      "Walk_grey_moors_gauntlet_band_+024_grey_carved_stone",
+      "Walk_grey_moors_gauntlet_band_+024_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+025",
+      "Roof_grey_moors_gauntlet_band_+025_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+025_grey_carved_stone",
+      "Roof_grey_moors_gauntlet_band_+025_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+025_amber_resin",
+      "Build_grey_moors_gauntlet_band_+025_dark_iron",
+      "Build_grey_moors_gauntlet_band_+025_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+025_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+025_grey_moor_granite",
+      "Build_grey_moors_gauntlet_band_+025_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+025_lime_plaster",
+      "Walk_grey_moors_gauntlet_band_+025_grey_carved_stone",
+      "Walk_grey_moors_gauntlet_band_+025_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+026",
+      "Roof_grey_moors_gauntlet_band_+026_grey_bog_timber",
+      "Roof_grey_moors_gauntlet_band_+026_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+026_amber_resin",
+      "Build_grey_moors_gauntlet_band_+026_dark_iron",
+      "Build_grey_moors_gauntlet_band_+026_grey_bog_timber",
+      "Build_grey_moors_gauntlet_band_+026_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+026_grey_drystone",
+      "Build_grey_moors_gauntlet_band_+026_grey_votive_flame",
+      "Build_grey_moors_gauntlet_band_+026_lime_plaster",
+      "Walk_grey_moors_gauntlet_band_+026_grey_moor_track",
+      "Section_grey_moors_gauntlet_band_+027",
+      "Roof_grey_moors_gauntlet_band_+027_grey_carved_stone",
+      "Build_grey_moors_gauntlet_band_+027_grey_carved_stone",
+      "Walk_grey_moors_gauntlet_band_+027_grey_moor_track"
     ]
   },
   "sources": [

@@ -400,3 +400,17 @@ radial texture coordinates.
 For existing gauntlets, the server layout refresh reads harvestable names from
 the manifest's resource field and preserves the published label and object ID.
 A complete preview/apply/repeat regression covers a route with a bonus node.
+
+## Burial furniture and piled crossings
+
+amberwood.barrowcraft supplies open or sealed stone cists, deep candle niches,
+low dolmen frames and supported plank walkways. The walkway has cross planks,
+bearers, driven piles, diagonal trestles and rope rails. A continuous substrate
+catches grounding rays in the joints without sharing the planks' top plane.
+All use existing material recipes; terrain surface IDs are unchanged.
+
+The opt-in barrow_visitation gauntlet layout places these pieces around a
+family burial road. Its bridgeDeck="piles" selects the supported crossing.
+Generic scatter and alcove crates are replaced only for this kit. Other
+gauntlets retain their existing build behaviour. See
+interiors/grey_moors_gauntlet for captures, layout notes and validation.
