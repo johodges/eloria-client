@@ -238,6 +238,12 @@ worst regions: Amberwood imports 9 106 mesh nodes and Verdant Stair 12 243, and
 the cost is worse than linear in them - Four Gates builds 3 028 in 88 ms. That
 is not addressable from here; the collision and the walks are, and were.
 
+> It was addressable, and the "worse than linear" was the clue. It is not the
+> node count but the width of a sibling list: Godot checks each name it adds
+> against the children the parent already holds, and Amberwood hangs 7 935
+> nodes off one parent. Bucketing those before the scene is built took the
+> twelve-region load from 28.1 s to 12.3 s. See `map-load-times.md`.
+
 **Nothing leaks between maps.** Unloading a region gives back everything it
 took, to within a rounding error, on nine of the twelve; the other three
 (Four Gates +9.9 MB, Amberwood +10.1 MB, Verdant Stair +5.6 MB) are one-time
@@ -343,6 +349,9 @@ reading.
   a thread plus the existing `load_completed` signal, and the client would stay
   responsive through a four-second load instead of freezing. Every fixture
   already waits for `world_root` rather than assuming it is there.
+  *Since taken up in `map-load-times.md`: the scene build itself is now 8% of
+  what it was, so the freeze is 0.5-1.4 s rather than up to eight seconds, and
+  the threading is measured but not landed.*
 * **Actor textures are 210 MB for ten species**, uncompressed and unmipped,
   against 14-80 MB for a whole region. Mip chains would cost another third and
   stop distant creatures shimmering; VRAM compression would cut it to a
@@ -376,3 +385,7 @@ instrument and re-runs any of its four sections on demand.
 primitive counts as JSON for a region package.
 `tests/integration/sunmane_grounding.gd` and `sunmane_caves.gd` are what say
 the shared collision shapes still hold a player up and in.
+`tests/integration/map_load_phases.gd` takes a map load apart step by step out
+of the loader's own `load_phases`, and `tests/integration/map_regrouping.gd`
+says the regrouped tree holds the same geometry in the same places;
+`map-load-times.md` is what they were written for.
