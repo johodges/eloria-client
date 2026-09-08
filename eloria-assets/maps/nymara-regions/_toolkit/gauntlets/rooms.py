@@ -39,6 +39,8 @@ DOOR = (3.6, 3.0)        # width, head
 def dress(it: Interior, kit: str, pal: dict, x0, z0, x1, z1, floor_y, seed: int, count: int = 6):
     """Scatter the region's growth along the walls of a room, never in the
     middle where the fight is and never in the door lanes."""
+    if kit == "forest_haul":
+        return  # the haul layout authors working bays instead of scattered growth
     rng = np.random.default_rng(seed)
     width, depth = x1 - x0, z1 - z0
     placed = 0
@@ -260,7 +262,7 @@ def gallery(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float,
 
 
 def fork(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float, floor: float, seed: int,
-         pressure: float, branches) -> tuple[Built, dict]:
+         pressure: float, branches, *, way: float = 12.0) -> tuple[Built, dict]:
     """A hub with two gates, two ways that both rejoin in a merge room.
 
     Returns the merge room as the leg's Built, and a dict describing the
@@ -275,7 +277,6 @@ def fork(it: Interior, key: str, pal: dict, kit: str, z0: float, x_in: float, fl
     dress(it, kit, pal, x_in - hub_w, z0, x_in + hub_w, z0 + hub_d, floor, seed, count=4)
     it.lamps.append([round(x_in, 2), round(floor + 4.0, 2), round(z0 + hub_d * 0.5, 2)])
     hub_spawns = lattice(x_in - hub_w, z0, x_in + hub_w, z0 + hub_d, floor, pitch=3.5, inset=3.5, back=2.5)
-    way = 12.0
     branch_d = 20.0
     branch_w = 8.0
     info = {"hub": {"key": f"{key}-hub", "bounds": (x_in - hub_w, z0, x_in + hub_w, z0 + hub_d),
@@ -441,6 +442,7 @@ def plain_way(it: Interior, key: str, pal: dict, a, b, floor_a: float, floor_b: 
 # ---------------------------------------------------------------- room
 def _room_(it: Interior, key: str, x0, z0, x1, z1, floor_y, height, pal, *, doors=(), ceiling="flat",
            vault_rise=2.2, walls=None, ceil=None, floor=None, walk=True):
+    floor = floor or pal.get("room_floors", {}).get(key)
     if walk:
         it.space(key, x0, z0, x1, z1, floor_y, height,
                  floor_mat=floor or pal["floor"], wall_mat=walls or pal["wall"],
@@ -450,7 +452,9 @@ def _room_(it: Interior, key: str, x0, z0, x1, z1, floor_y, height, pal, *, door
     group = I.chamber(x0, z0, x1, z1, floor_y, height, floor_mat=floor or pal["floor"],
                       wall_mat=walls or pal["wall"], ceil_mat=ceil or pal["ceil"], doors=list(doors),
                       ceiling=ceiling, vault_rise=vault_rise)
-    for piece in group.all_parts:
+    for piece in group.parts + group.walk_parts:
         it.group.add(piece)
+    for piece in group.overhead_parts:
+        it.group.add_overhead(piece)
     it.spaces[key] = {"x0": min(x0, x1), "z0": min(z0, z1), "x1": max(x0, x1), "z1": max(z0, z1),
                       "floor": floor_y, "height": height}

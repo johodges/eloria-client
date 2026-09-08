@@ -45,7 +45,9 @@ WAY = 12.0                # a barred way between two rooms
 def compose(theme: D.Theme, seed: int):
     pal = dict(theme.palette)
     pal.setdefault("bark", "bark_dark")
+    pal["room_floors"] = theme.props.get("roomFloors", {})
     kit = theme.props.get("kit", "forest")
+    way = float(theme.props.get("wayLength", WAY))
     it = Interior(theme.id, theme.name, "gauntlet", "", [0.0, 0.0, 0.0], "default")
     it.areas = []
     legs_out = []
@@ -57,7 +59,7 @@ def compose(theme: D.Theme, seed: int):
         x = prev.x_out
         floor = prev.floor_out
         z_gate_start = prev.z_end
-        z_room = z_gate_start + WAY
+        z_room = z_gate_start + way
         gate_position, before, beyond = R.barred_way(it, leg.id, pal, leg.gate, (x, z_gate_start), (x, z_room),
                                                      floor, floor, leg_seed)
         record = {"id": leg.id, "name": leg.name, "kind": leg.kind, "advance": leg.advance,
@@ -76,7 +78,7 @@ def compose(theme: D.Theme, seed: int):
         elif leg.kind == "gallery":
             built = R.gallery(it, leg.id, pal, kit, z_room, x, floor, leg_seed, leg.pressure, bonus=leg.bonus)
         elif leg.kind == "fork":
-            built, info = R.fork(it, leg.id, pal, kit, z_room, x, floor, leg_seed, leg.pressure, leg.branches)
+            built, info = R.fork(it, leg.id, pal, kit, z_room, x, floor, leg_seed, leg.pressure, leg.branches, way=way)
             record["room"] = info["hub"]["key"]
             record["bounds"] = info["hub"]["bounds"]
             record["spawns"] = info["hub"]["spawns"]
@@ -115,13 +117,26 @@ def compose(theme: D.Theme, seed: int):
     x = prev.x_out
     R.plain_way(it, "vault", pal, (x, prev.z_end), (x, prev.z_end + 8.0), prev.floor_out, prev.floor_out, seed)
     vault_built = R.vault(it, "vault", pal, kit, prev.z_end + 8.0, x, prev.floor_out, seed + 99)
+    if kit == "forest_haul":
+        from gauntlets import forest_haul
+        forest_haul.dress(it, pal, seed)
     lamps, placed = hanging_lamps(it.lamps, seed=seed)
     it.group.add(lamps)
     it.lamps = placed
+    if kit == "forest_haul":
+        from amberwood.coplanar import trim_coplanar
+        trim_coplanar(it.group)
     it.spawn_space = "staging"
     it.landmark(f"{theme.id}-staging", theme.name, "staging", 1.6)
     it.environment = {"sky": "none", "ambient": {"colour": [0.10, 0.10, 0.12], "energy": 0.5},
                       "fog": {"enabled": True, "colour": [0.02, 0.02, 0.03], "begin": 16.0, "end": 60.0}}
+    if kit == "forest_haul":
+        it.environment = {
+            "sky": "none", "backgroundColor": [0.035, 0.043, 0.038],
+            "sun": {"enabled": False},
+            "ambient": {"color": [0.44, 0.49, 0.43], "energy": 1.05},
+            "fog": {"enabled": True, "color": [0.05, 0.065, 0.052], "density": 0.004},
+            "tonemap": {"mode": "filmic", "exposure": 1.25, "white": 3.5}}
     return it, legs_out, staging, {"key": "vault", "bounds": vault_built.bounds}
 
 
@@ -254,6 +269,8 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("region")
     ap.add_argument("--out", default=None)
+    ap.add_argument("--server-collision", type=Path, default=None,
+                    help="override the exported server grid for an isolated verification build")
     ap.add_argument("--seed", type=int, default=20260906)
     args = ap.parse_args()
     theme = D.theme(args.region)
@@ -262,7 +279,11 @@ def main() -> int:
     t0 = time.time()
     sets = preview.texture_sets()
     it, legs, staging, vault = compose(theme, args.seed)
-    stats = SB.export_glb([(theme.id, it.group)], sets, out / "world.glb", theme.id)
+    sections = [(theme.id, it.group)]
+    if theme.props.get("kit") == "forest_haul":
+        from amberwood.spatial import sections as local_sections
+        sections = local_sections(it.group, theme.id)
+    stats = SB.export_glb(sections, sets, out / "world.glb", theme.id)
     payload, collision_stats = SB.build_collision(
         it.group, keep_open=[entry["position"] for entry in it.interactives + it.harvestables if "position" in entry])
     (out / "collision.bin").write_bytes(payload)
@@ -275,8 +296,8 @@ def main() -> int:
     # stride export it replaced let a tile reach half a metre into the wall
     # beside it and, passing the package's 0.1 m codes through, doubled every
     # riser so no stair could be climbed.
-    grid = EXPORT.export(out, ROOT / "server-collision" / f"{theme.id}.bin", TILES, "footprint",
-                         heights="server")
+    collision_out = args.server_collision or (ROOT / "server-collision" / f"{theme.id}.bin")
+    grid = EXPORT.export(out, collision_out, TILES, "footprint", heights="server")
     dropped = prune_spawns(out / "world.json", grid)
     blocked = []
     g = doc["gauntlet"]

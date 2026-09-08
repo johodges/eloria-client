@@ -185,7 +185,10 @@ def _theme(theme: Theme) -> Theme:
 
 _theme(Theme(
     region="amberwood", id="amberwood_gauntlet", name="The Resin Road", short="resin",
-    palette=AMBERWOOD, props={"kit": "forest"},
+    palette=AMBERWOOD, props={"kit": "forest_haul", "wayLength": 8.0,
+                               "roomFloors": {key: "packed_earth" for key in (
+                                   "staging", "undercut", "stump-stair", "twin-hollows-hub",
+                                   "twin-hollows-dry-hollow", "twin-hollows-merge", "lantern-walk")}},
     flavour="The charcoal burners cut a road under the forest to move resin in the wet months. "
             "The forest moved in behind them.",
     legs=(

@@ -344,3 +344,21 @@ so both manifests carry the same final tile identities.
 contentLayout.requireFullWildlife is an opt-in failure if authored habitat
 cannot hold a species' requested count. Enlarge or connect the designed
 habitat instead of silently publishing a smaller population.
+
+## Underground forestry and room joints
+
+The Resin Road uses shared forestcraft recipes for a braced timber bent, a
+living root arch, an open resin vat and a hand winch. They reuse existing
+materials and accept dimensions or palette names.
+
+amberwood.coplanar.trim_coplanar removes duplicate same-facing coverage at
+joined room shells, interpolating the original UVs. Walk parts take priority;
+overhead parts are processed separately so a hidden lid cannot erase visible
+geometry. This is opt-in at composition time. amberwood.spatial.sections
+partitions material batches into local bands for the Compatibility renderer's
+per-mesh point-light selection, preserving every triangle and its surface class.
+
+The capture harness now honours --environment=manifest for sealed interiors,
+creates declared lamps after the scene enters the tree, and applies the game's
+InteriorCutaway rules for each camera view. A manifest-lit capture therefore
+includes both the actual light sources and the gameplay ceiling visibility.

@@ -1,0 +1,49 @@
+{
+  "server": {
+    "passed": 1797,
+    "subtestsPassed": 546
+  },
+  "client": {
+    "passed": 191,
+    "preExistingFailures": 88,
+    "subtestsPassed": 9284,
+    "failureIdentitiesUnchanged": true
+  },
+  "focusedPassed": 11,
+  "gltf": {
+    "errors": 0,
+    "warnings": 0
+  },
+  "coplanarOverlapSquareMetres": 0,
+  "grounding": {
+    "walkableTiles": 3900,
+    "groundingMisses": 0,
+    "misses": []
+  },
+  "determinism": {
+    "world.glb": {
+      "identical": true,
+      "sha256": "a54f8c4cf3cfe2c8bbcab25e89ed6b48bc17fe6af9c6dd92e95f7ef1068c6b27"
+    },
+    "world.json": {
+      "identical": true,
+      "sha256": "4b5385125b1a42d854dd3e49276f0c7c78b34de19df1f3b8d291e148bade815c"
+    },
+    "collision.bin": {
+      "identical": true,
+      "sha256": "2f868304c4c3bf4f4afdf35f9456b66ff61b3ebd0c1bbb23bac75cd9951b18b2"
+    },
+    "server-collision.bin": {
+      "identical": true,
+      "sha256": "a065a4d4c7ef5261d7a75ae8d78affdb46da7fe456b761900863b6361ce9b9ca"
+    }
+  },
+  "captures": {
+    "count": 18,
+    "renderingMethod": "gl_compatibility",
+    "driver": "opengl3",
+    "environment": "manifest",
+    "declaredPointLights": 48
+  },
+  "cpuAffinityMask": 15
+}

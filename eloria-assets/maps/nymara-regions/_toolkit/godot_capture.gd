@@ -1,9 +1,9 @@
 # Capture real client frames of a region package.
 #
-# Loads world.glb the way the game does, rebuilds collision and navigation
-# through the project's own WorldLoader, then renders the camera set from the
-# region's references/captures/index.json so the shots line up with the offline
-# previews they are compared against.
+# Loads world.glb through GLTFDocument, as the runtime WorldLoader does, and
+# applies the game's environment binder and interior cutaway controller. The
+# region's references/captures/index.json provides repeatable camera positions.
+# Collision and navigation are verified separately by the package validators.
 #
 # Run from the godot-client directory:
 #   Godot_v4.7.2-stable_win64_console.exe --path . --script \
@@ -19,6 +19,7 @@
 extends SceneTree
 
 const SETTLE_FRAMES := 24
+const Cutaway = preload("res://src/world/interior_cutaway.gd")
 
 
 func _err(message: String) -> void:
@@ -74,6 +75,8 @@ func _init() -> void:
 	world.name = "World"
 	root.add_child(world)
 	world.add_child(scene)
+	# The binder creates lamps only after their parent has entered the tree.
+	await process_frame
 
 	var mesh_count := 0
 	var tri_count := 0
@@ -104,6 +107,10 @@ func _init() -> void:
 		if typeof(parsed) == TYPE_DICTIONARY:
 			manifest_env = manifest_env_root.get("environment", {})
 	var sealed := str(manifest_env.get("sky", "")) == "none"
+	var bind_manifest := WorldManifest.new()
+	bind_manifest.data = manifest_env_root
+	var cutaway := Cutaway.new()
+	print("[capture] cutaway nodes=%d" % cutaway.configure(bind_manifest, scene))
 
 	# environment: a plain daylight sky so the shot shows the map, not a mood
 	var env := Environment.new()
@@ -241,12 +248,13 @@ func _init() -> void:
 	# Note the two light sources are different manifest keys and do not
 	# collide: the loop above reads top-level `lights`, and the binder below
 	# spawns `environment.lights`. A package declaring both gets both.
-	if str(opts.get("environment", "harness")) == "manifest" and not sealed:
-		var bind_manifest := WorldManifest.new()
-		bind_manifest.data = manifest_env_root
+	if str(opts.get("environment", "harness")) == "manifest":
 		var bound: bool = WorldEnvironmentBinder.apply(
 			bind_manifest, world_env, sun, world)
-		if bound and sun.is_inside_tree():
+		print("[capture] manifest point lights=%d" % get_nodes_in_group("manifest_lights").size())
+		if bound and not sun.visible:
+			print("[capture] environment: manifest (sun disabled)")
+		elif bound and sun.is_inside_tree():
 			var travel: Vector3 = -sun.global_transform.basis.z
 			print("[capture] environment: manifest (sun travels %.2f, %.2f, %.2f%s)"
 				% [travel.x, travel.y, travel.z,
@@ -316,6 +324,8 @@ func _init() -> void:
 		var look := Vector3(target[0], target[1], target[2])
 		if camera.global_position.distance_to(look) > 0.01:
 			camera.look_at(look, Vector3.UP)
+		var to_camera := camera.global_position - look
+		cutaway.update(rad_to_deg(atan2(to_camera.x, to_camera.z)), true)
 		for i in 3:
 			await process_frame
 		var image := get_root().get_texture().get_image()
