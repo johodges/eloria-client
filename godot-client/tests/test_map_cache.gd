@@ -48,6 +48,7 @@ func _run() -> void:
 		_stage.add_child(_loader)
 		await process_frame
 		await _check_round_trip()
+		await _check_consumer_mutations()
 		await _check_package_change()
 		await _check_disabled()
 		_loader.unload_world()
@@ -274,6 +275,86 @@ func _check_package_change() -> void:
 		"an entry that will not load is reported, not trusted (%s)" % _loader.cache_status)
 	_expect(_loader.world_root != null, "and the region is built from the package")
 
+## The hazard the deferred write creates, and the answer to it.
+##
+## The entry is packed three frames after the load, and by then the rest of the
+## client has had the tree: `InteriorCutaway` hides a wall the camera is
+## looking through, `SecretSections` hides an undiscovered section, and
+## `OccluderFade` hangs a duplicated translucent material on whatever stands
+## between the camera and the player and makes a batched prop's own node
+## visible so it can be seen fading. None of that is the region; all of it is
+## the client's opinion of the region a moment ago. Packed in, it would be
+## permanent, and it would be permanent only for players whose cache happened
+## to be written on a frame where the camera was in the wrong place - the worst
+## kind of bug to be handed.
+##
+## So the loader takes the three values that can move while the tree is still
+## only its own, puts them back for the length of the pack, and restores
+## whatever the client had afterwards. This does to a real region exactly what
+## those three consumers do, and then reads the region back.
+func _check_consumer_mutations() -> void:
+	MapCache.clear_disk()
+	await _load("before a consumer touches it")
+	if not _expect(_loader.cache_status == &"miss", "a fresh region to pack"):
+		return
+
+	# Three mutations, one for each consumer, chosen from the tree by hand so
+	# the names can be looked up again in the cached copy.
+	var hide_me: MeshInstance3D = _first_mesh(true)
+	var fade_me: MeshInstance3D = _first_mesh(true, hide_me)
+	var lifted: MeshInstance3D = _first_mesh(false)
+	if not _expect(hide_me != null and fade_me != null and lifted != null,
+			"the fixture has a visible mesh to hide, one to fade and a hidden one to lift"):
+		return
+	var hidden_name: String = hide_me.name
+	var faded_name: String = fade_me.name
+	var lifted_name: String = lifted.name
+
+	hide_me.visible = false                      # the interior cutaway
+	lifted.visible = true                        # the occluder fade, lifting
+	var glass := StandardMaterial3D.new()        # the occluder fade, fading
+	glass.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	glass.albedo_color = Color(1.0, 1.0, 1.0, 0.35)
+	fade_me.set_surface_override_material(0, glass)
+
+	await _settle_for_the_write(_loader.cache_file)
+	# The client's own state is its own: the loader borrowed the tree for the
+	# length of the pack and gave it back exactly as it found it.
+	_expect(not hide_me.visible and lifted.visible
+			and fade_me.get_surface_override_material(0) == glass,
+		"packing leaves the client's view of the region alone")
+
+	await _load("read back after a consumer touched it")
+	if not _expect(_loader.loaded_from_cache,
+			"the mutated region comes back from the cache (%s)" % _loader.cache_status):
+		return
+	var restored_hidden: MeshInstance3D = _find_mesh(hidden_name)
+	var restored_faded: MeshInstance3D = _find_mesh(faded_name)
+	var restored_lifted: MeshInstance3D = _find_mesh(lifted_name)
+	_expect(restored_hidden != null and restored_hidden.visible,
+		"a wall the cutaway had hidden is not hidden in the cached region")
+	_expect(restored_lifted != null and not restored_lifted.visible,
+		"a prop the fade had lifted out of its batch is back in it")
+	_expect(restored_faded != null
+			and restored_faded.get_surface_override_material(0) == null,
+		"a rock the fade had turned to glass is solid again")
+
+## The first mesh instance in the tree with the visibility asked for, skipping
+## `except`. Deliberately the first rather than a chosen one: any mesh will do,
+## and naming one would tie this test to a package that may be regenerated.
+func _first_mesh(visible: bool, except: MeshInstance3D = null) -> MeshInstance3D:
+	for node: Node in _loader.world_root.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance: MeshInstance3D = node as MeshInstance3D
+		if mesh_instance.visible != visible or mesh_instance == except:
+			continue
+		if mesh_instance.mesh == null or mesh_instance.mesh.get_surface_count() == 0:
+			continue
+		return mesh_instance
+	return null
+
+func _find_mesh(node_name: String) -> MeshInstance3D:
+	return _loader.world_root.find_child(node_name, true, false) as MeshInstance3D
+
 func _check_disabled() -> void:
 	MapCache.clear_disk()
 	MapCache.set_enabled(false)
@@ -453,9 +534,18 @@ func _shape(world: Node3D) -> Dictionary:
 			if mesh_instance.has_meta(WorldLoader.BATCH_META) \
 					and mesh_instance.get_meta(WorldLoader.BATCH_META) is MultiMeshInstance3D:
 				resolved += 1
+			# Visibility and surface overrides are in the hash because they are
+			# exactly what a consumer changes: the cutaway hides a wall, the
+			# occluder fade hangs a translucent material on a rock. If either
+			# could reach the cache, this is the number that would move.
+			var overridden := false
+			for surface: int in mesh_instance.get_surface_override_material_count():
+				overridden = overridden \
+					or mesh_instance.get_surface_override_material(surface) != null
 			placement = hash([placement, mesh_instance.name,
 				mesh_instance.global_transform, mesh_instance.layers,
-				mesh_instance.cast_shadow, mesh_instance.visibility_range_end])
+				mesh_instance.cast_shadow, mesh_instance.visibility_range_end,
+				mesh_instance.visible, overridden])
 		elif node is MultiMeshInstance3D:
 			batches += 1
 		elif node is StaticBody3D:
