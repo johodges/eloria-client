@@ -238,8 +238,7 @@ func _process(_delta: float) -> void:
 	# The ring's Control fills the screen; reserve its actual circle instead.
 	var ring: Control = main.get("spell_wheel")
 	if _visible(ring):
-		var ring_center: Vector2 = ring.get_global_transform() * (ring.get("center") as Vector2)
-		var ring_bounds := Rect2(ring_center-Vector2(264,264), Vector2(528,580))
+		var ring_bounds: Rect2 = ring.get_ring_bounds().grow(12)
 		if Rect2(card.position, Vector2(width,card.size.y)).intersects(ring_bounds):
 			var left_space := ring_bounds.position.x-24
 			var right_space := area.x-96-ring_bounds.end.x-12

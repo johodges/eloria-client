@@ -269,7 +269,7 @@ func _process(_delta: float) -> void:
 func _layout() -> void:
 	var anchor: Vector2 = anchor_provider.call() if anchor_provider.is_valid() else get_global_rect().get_center()
 	center = get_global_transform().affine_inverse() * anchor
-	var margin := Vector2(RADIUS + NODE_SIZE.x / 2 + 10, RADIUS + NODE_SIZE.y / 2 + 12)
+	var margin := Vector2(RADIUS + NODE_SIZE.x / 2 + 10, RADIUS + NODE_SIZE.y / 2 + 12) * display_scale()
 	center = center.clamp(margin.min(size / 2), (size - margin).max(size / 2))
 	for index in range(buttons.size()):
 		var angle := -PI / 2 + TAU * index / buttons.size()
@@ -289,17 +289,34 @@ func _layout() -> void:
 	_previous.size = Vector2(88, 28)
 	_next.position = center + Vector2(6, -76)
 	_next.size = Vector2(88, 28)
+	_scale_controls()
 	queue_redraw()
+
+func display_scale() -> float:
+	# This footprint includes the largest ring and its footer controls.
+	return maxf(0.1, minf(float(loadout.ring_size) / 100.0, minf((size.x-16)/560.0, (size.y-16)/583.0)))
+
+func _scale_controls() -> void:
+	var factor := display_scale()
+	for child in get_children():
+		if child is Control and child.visible:
+			child.position = center + (child.position-center) * factor
+			child.scale = Vector2.ONE * factor
+
+func get_ring_bounds() -> Rect2:
+	var margin := Vector2(RADIUS + NODE_SIZE.x/2, RADIUS + NODE_SIZE.y/2) * display_scale()
+	return get_global_transform() * Rect2(center-margin, margin*2)
 
 func _draw() -> void:
 	# An annulus leaves the character visible in the middle of the wheel.
+	draw_set_transform(center, 0, Vector2.ONE * display_scale())
 	var fill := Color(0.035, 0.03, 0.022, 0.90)
 	for step in range(64):
 		var a := Vector2.from_angle(TAU * step / 64)
 		var b := Vector2.from_angle(TAU * (step + 1) / 64)
-		draw_colored_polygon(PackedVector2Array([center + a * 44, center + a * 236, center + b * 236, center + b * 44]), fill)
-	draw_arc(center, 236, 0, TAU, 96, Color(0.75, 0.56, 0.29, 0.8), 1.5, true)
-	draw_arc(center, 44, 0, TAU, 48, Color(0.75, 0.56, 0.29, 0.65), 1, true)
+		draw_colored_polygon(PackedVector2Array([a * 44, a * 236, b * 236, b * 44]), fill)
+	draw_arc(Vector2.ZERO, 236, 0, TAU, 96, Color(0.75, 0.56, 0.29, 0.8), 1.5, true)
+	draw_arc(Vector2.ZERO, 44, 0, TAU, 48, Color(0.75, 0.56, 0.29, 0.65), 1, true)
 
 func _notification(what: int) -> void:
 	if what in [NOTIFICATION_APPLICATION_FOCUS_OUT, NOTIFICATION_WM_WINDOW_FOCUS_OUT]: reset()

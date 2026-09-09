@@ -9,6 +9,7 @@ func run() -> void:
 	lab.trial_preferences_path = ""
 	lab.trial_preferences = {"scopes": {}, "powers": {}, "pins": {}}
 	lab.loadout.profile = ""
+	lab.loadout.set_ring_size(100)
 	lab.loadout.set_wheel_power(3)
 	root.get_node("AppState").select_actor(2)
 	for variant in ["quick", "orbit"]:
@@ -26,6 +27,12 @@ func run() -> void:
 			if rect.position.x < 0 or rect.position.y < 0 or rect.end.x > 1280 or rect.end.y > 720:
 				failures += 1
 				push_error("Trial control out of bounds: " + str(rect))
+	lab.set_wheel_variant("quick")
+	for percent in [75,100,125]:
+		lab.loadout.set_ring_size(percent)
+		lab.wheel.open_wheel(true)
+		lab.wheel.enter_class("Healing")
+		await capture("ring-size-%d.png" % percent)
 	lab.free()
 	await process_frame
 	print("magic wheel trial renders: ", "PASS" if failures == 0 else "FAIL")

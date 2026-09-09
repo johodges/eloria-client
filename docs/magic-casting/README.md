@@ -10,6 +10,12 @@ The production widget is `src/ui/quick_spell_ring.gd`; the comparison scene
 uses that same implementation. Target choices, powers and pins persist per
 character alongside the quickbar settings.
 
+Use the **Size** dropdown beside **Ring** on the quickbar to choose **75%, 90%,
+100%, 110% or 125%**. The setting is saved per character and works in the live
+client and all native practice variants. Labels, icons and clickable wedges
+scale together. Larger rings fit smaller windows automatically while retaining
+the requested size. Scrolling over an open ring still changes spell power.
+
 Run **`test-magic-tutorial.bat`** for the real Borrowed Sky tutorial with a
 separate local server and saved practice account. Log in as **RingStudent**
 with password **ringpractice**, then type **`#tutorial magic`** in chat.

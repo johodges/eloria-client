@@ -20,6 +20,7 @@ func run() -> void:
 	root.add_child(lab)
 	lab.trial_preferences_path = ""
 	lab.loadout.profile = ""
+	lab.loadout.set_ring_size(100)
 	lab.loadout.set_wheel_power(3)
 	lab.selector.request_sender = func(data: Dictionary) -> Error:
 		requests.append(data.duplicate(true))
@@ -141,10 +142,65 @@ func run() -> void:
 	check(lab.wheel.get_script() == load("res://src/ui/spell_wheel.gd"), "baseline uses the original wheel")
 	lab.set_wheel_variant("orbit")
 	check(lab.wheel.preferences == lab.trial_preferences, "switching trials preserves comparison preferences")
+	await test_sizes(lab)
 	lab.free()
 	await process_frame
 	print("magic wheel trials: ", "PASS" if failures == 0 else "FAIL")
 	quit(failures)
+
+func test_sizes(lab: Control) -> void:
+	var state := root.get_node("AppState")
+	state.select_actor(2)
+	for variant in ["quick", "orbit", "baseline"]:
+		lab.set_wheel_variant(variant)
+		for percent in [75,90,100,110,125]:
+			var picker: OptionButton = lab.bar.ring_size_picker
+			var before := requests.size()
+			picker.item_selected.emit(picker.get_item_index(percent))
+			check(lab.loadout.ring_size == percent and requests.size() == before, "size picker changes the preference without casting")
+			var wheel: Control = lab.wheel
+			wheel.open_wheel()
+			await process_frame
+			check(Rect2(Vector2.ZERO,Vector2(root.size)).encloses(wheel.get_ring_bounds()), variant + " fits the window at " + str(percent))
+			check(wheel.buttons[0].scale == Vector2.ONE * wheel.display_scale(), "visual and button transforms share the selected scale")
+			check(Rect2(Vector2.ZERO,Vector2(root.size)).encloses(lab.bar.panel.get_global_rect()), "size control and quickbar stay reachable")
+			if variant == "quick": await click_scaled_sector(wheel.buttons[0])
+			elif variant == "baseline":
+				wheel.choose(0)
+				wheel.choose(0)
+			if variant != "baseline":
+				wheel.effect = "heal"
+				wheel.select_scope("target")
+				wheel.change_power(1-wheel.power_for(1))
+				await click_scaled_sector(wheel.buttons[0])
+			else:
+				wheel.choose(1)
+			check(requests.back().get("id") == 1 and requests.back().get("target_id") == 2, "resized " + variant + " still casts Heal Target through the real selector")
+	# Refit a still-open ring on a smaller viewport without changing the preference.
+	lab.set_wheel_variant("quick")
+	lab.loadout.set_ring_size(125)
+	lab.wheel.open_wheel()
+	var original_canvas := root.content_scale_size
+	root.content_scale_size = Vector2i.ZERO
+	root.size = Vector2i(800,600)
+	for frame in range(3): await process_frame
+	check(Rect2(Vector2.ZERO,Vector2(root.size)).encloses(lab.wheel.get_ring_bounds()), "an open ring refits on window resize: " + str(lab.wheel.get_ring_bounds()) + " size=" + str(lab.wheel.size) + " visible=" + str(lab.wheel.visible))
+	check(lab.loadout.ring_size == 125, "automatic fitting preserves the requested size")
+	root.content_scale_size = original_canvas
+	root.size = Vector2i(1280,720)
+	lab.wheel.reset()
+	lab.loadout.set_ring_size(100)
+
+func click_scaled_sector(button: Button) -> void:
+	var point: Vector2 = button.get_global_transform() * (Vector2.ONE * button.outer + Vector2.from_angle(button.angle + button.spread * 0.3) * (button.inner+button.outer)/2)
+	for pressed in [true,false]:
+		var event := InputEventMouseButton.new()
+		event.position = point
+		event.global_position = point
+		event.pressed = pressed
+		event.button_index = MOUSE_BUTTON_LEFT
+		root.push_input(event,true)
+		await process_frame
 func alt_key(code: Key, pressed := true) -> InputEventKey:
 	var result := key(code, pressed)
 	result.shift_pressed = false

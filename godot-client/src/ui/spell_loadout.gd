@@ -6,6 +6,7 @@ var catalog: SpellCatalog
 var slots: Array[Dictionary] = []
 var powers: Dictionary = {}
 var wheel_power := 1
+var ring_size := 100
 var ring_preferences := {"scopes": {}, "powers": {}, "pins": {}}
 var mode := "wheel"
 var profile := ""
@@ -19,6 +20,7 @@ func _reset() -> void:
 	slots.clear()
 	powers.clear()
 	wheel_power = 1
+	ring_size = 100
 	ring_preferences = {"scopes": {}, "powers": {}, "pins": {}}
 	for index in range(SLOT_COUNT):
 		var id := catalog.default_quick_slots[index] if index < catalog.default_quick_slots.size() else -1
@@ -30,6 +32,7 @@ func load_profile(key: String) -> void:
 	var config := ConfigFile.new()
 	if config.load(path) == OK:
 		wheel_power = clampi(int(config.get_value(profile, "wheel_power", 1)), 1, 10)
+		ring_size = clampi(int(config.get_value(profile, "ring_size", 100)), 75, 125)
 		var saved_ring: Variant = config.get_value(profile, "ring_preferences", {})
 		if saved_ring is Dictionary:
 			for section in ring_preferences:
@@ -88,6 +91,13 @@ func set_mode(value: String) -> void:
 	mode = value if value in ["prepared", "aimed", "wheel"] else "wheel"
 	changed.emit()
 
+func set_ring_size(percent: int) -> void:
+	percent = clampi(percent, 75, 125)
+	if ring_size == percent: return
+	ring_size = percent
+	_save()
+	changed.emit()
+
 func save_ring_preferences() -> void:
 	# The ring shares this dictionary. Saving must not rebuild its hovered wedge.
 	_save()
@@ -102,6 +112,7 @@ func _save() -> void:
 	config.set_value(profile, "slots", slots)
 	config.set_value(profile, "powers", powers)
 	config.set_value(profile, "wheel_power", wheel_power)
+	config.set_value(profile, "ring_size", ring_size)
 	config.set_value(profile, "ring_preferences", ring_preferences)
 	var error := config.save(path)
 	if error != OK:

@@ -101,7 +101,6 @@ func open_wheel(held := false) -> void:
 	if loadout.mode != "wheel" or (can_open.is_valid() and not can_open.call()): return
 	var anchor: Vector2 = anchor_provider.call() if anchor_provider.is_valid() else get_global_rect().get_center()
 	_frozen_center = get_global_transform().affine_inverse() * anchor
-	_frozen_center = _frozen_center.clamp(Vector2(270, 265).min(size / 2), (size - Vector2(270, 318)).max(size / 2))
 	_hover_class = ""
 	_more = false
 	super.open_wheel(held)
@@ -371,7 +370,8 @@ func _process(_delta: float) -> void:
 
 func _layout() -> void:
 	if _preview == null: return
-	center = _frozen_center
+	var factor := display_scale()
+	center = _frozen_center.clamp(Vector2(270,265)*factor, size-Vector2(270,318)*factor)
 	for button in buttons + _class_buttons:
 		button.position = center - Vector2.ONE * button.outer
 		button.size = Vector2.ONE * button.outer * 2
@@ -390,14 +390,20 @@ func _layout() -> void:
 	_previous.size = Vector2(80, 24)
 	_next.position = center + Vector2(40, 286)
 	_next.size = Vector2(80, 24)
+	_scale_controls()
 	# Center controls stay above the geometric sectors' bounding rectangles.
 	for control in [_heading, _preview, _power_label, _scope_bar, _pin, _previous, _next, _hint]: move_child(control, -1)
 	queue_redraw()
 
+func get_ring_bounds() -> Rect2:
+	var factor := display_scale()
+	return get_global_transform() * Rect2(center-Vector2(252,252)*factor, Vector2(504,562)*factor)
+
 func _draw() -> void:
+	draw_set_transform(center, 0, Vector2.ONE * display_scale())
 	var outer := 124.0 if variant == "orbit" else 145.0
 	for step in range(64):
 		var a := Vector2.from_angle(TAU * step / 64)
 		var b := Vector2.from_angle(TAU * (step + 1) / 64)
-		draw_colored_polygon(PackedVector2Array([center + a * 29, center + a * outer, center + b * outer, center + b * 29]), Color(0.04, 0.035, 0.024, 0.96))
-	draw_arc(center, 29, 0, TAU, 48, Color(0.83, 0.65, 0.32), 1, true)
+		draw_colored_polygon(PackedVector2Array([a * 29, a * outer, b * outer, b * 29]), Color(0.04, 0.035, 0.024, 0.96))
+	draw_arc(Vector2.ZERO, 29, 0, TAU, 48, Color(0.83, 0.65, 0.32), 1, true)

@@ -953,6 +953,7 @@ func _ready() -> void:
 	spells_window.set_loadout(spell_loadout)
 	casting_bar = preload("res://src/ui/casting_bar.gd").new()
 	casting_bar.loadout = spell_loadout
+	casting_bar.reserved_right_width = 96.0
 	casting_bar.z_index = 7
 	game_view.add_child(casting_bar)
 	magic_selection.z_index = 8

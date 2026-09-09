@@ -64,6 +64,9 @@ func run() -> void:
 		show_lesson(control, "Choose your cast", "Hold Left Shift, open Healing and hover Heal. Right click cycles Self, Target, Allies and Burst. Scroll to Power 2, then choose Heal. The quickbar saves the last cast target type and power in the icon corners.")
 		await capture(control)
 		check(main.lantern_guide.control_for_step() == (main.spell_wheel._scope_bar if control == "ring_target" else main.spell_wheel._power_label), "lesson highlights " + control + " visible=" + str(main.spell_wheel.visible) + " actual=" + str(main.lantern_guide.control_for_step()))
+	for percent in [75,125]:
+		main.spell_loadout.set_ring_size(percent)
+		await capture("size-%d" % percent)
 	main.spell_wheel.reset()
 	show_lesson("quickbar", "A spell within reach", "Find Heal on the quickbar (default Alt+1). Its top-left badge is the saved target type; top-right is power. Click it or use its shortcut to heal this second wound.")
 	await capture("quickbar")
@@ -79,9 +82,10 @@ func show_lesson(control: String, title: String, hint: String) -> void:
 func capture(name: String) -> void:
 	for frame in range(6): await process_frame
 	var card: Rect2 = main.lantern_guide.card.get_global_rect()
+	check(main.casting_bar.panel.get_global_rect().end.x <= root.size.x-96, "ring size control leaves the live resource rail clear")
 	check(Rect2(Vector2.ZERO,Vector2(root.size)).encloses(card), "tutorial card stays in the viewport")
 	if main.spell_wheel.visible:
-		var bounds := Rect2(main.spell_wheel.center-Vector2(252,252),Vector2(504,504))
+		var bounds: Rect2 = main.spell_wheel.get_ring_bounds()
 		check(not card.intersects(bounds), "tutorial card leaves ring sectors unobstructed")
 	if render:
 		await RenderingServer.frame_post_draw

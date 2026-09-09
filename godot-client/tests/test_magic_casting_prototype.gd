@@ -21,6 +21,7 @@ func run() -> void:
 	model.assign_slot(1, 1, 2)
 	model.remember_power(1, 3)
 	model.set_wheel_power(5)
+	model.set_ring_size(125)
 	model.ring_preferences.scopes["heal"] = "burst"
 	model.ring_preferences.powers["heal"] = 4
 	model.ring_preferences.pins["Healing"] = ["heal", "dispel"]
@@ -29,10 +30,12 @@ func run() -> void:
 	model.load_profile("server-one/bob")
 	check(model.slots[0].id == 0 and model.slots[0].power == 1, "a new character starts with defaults")
 	check(model.wheel_power == 1, "a new character starts with wheel power one")
+	check(model.ring_size == 100, "a new character starts at the normal ring size")
 	check(model.ring_preferences.scopes.is_empty(), "ring choices are isolated per character")
 	model.load_profile("server-one/alice")
 	check(model.slots[0] == {"id": 1, "power": 4} and model.power_for(1) == 3, "character preferences survive reload")
 	check(model.wheel_power == 5, "wheel power persists independently of book and slot powers")
+	check(model.ring_size == 125, "ring size survives character profile reload")
 	check(model.ring_preferences.scopes.get("heal") == "burst" and model.ring_preferences.powers.get("heal") == 4 and model.ring_preferences.pins.get("Healing") == ["heal", "dispel"], "ring target, power and pins survive profile reload")
 	model.assign_slot(-1, 6, 4)
 	model.assign_slot(0, 999999, 4)

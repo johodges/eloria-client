@@ -10,6 +10,8 @@ var loadout
 var panel: PanelContainer
 var mode_picker: OptionButton
 var wheel_button: Button
+var ring_size_picker: OptionButton
+var reserved_right_width := 8.0
 var buttons: Array[Button] = []
 var menu: PopupMenu
 var _menu_slot := -1
@@ -40,6 +42,14 @@ func _ready() -> void:
 	wheel_button.tooltip_text = "Hold Left Shift to browse spells. Right click changes target; scroll changes power. Alt + number uses the quickbar."
 	wheel_button.pressed.connect(func(): open_wheel.emit())
 	header.add_child(wheel_button)
+	ring_size_picker = OptionButton.new()
+	ring_size_picker.name = "RingSize"
+	ring_size_picker.focus_mode = Control.FOCUS_NONE
+	ring_size_picker.tooltip_text = "Magic ring size, saved per character. Large rings automatically fit the window."
+	for percent in [75, 90, 100, 110, 125]:
+		ring_size_picker.add_item("Size %d%%" % percent, percent)
+	ring_size_picker.item_selected.connect(func(index: int): loadout.set_ring_size(ring_size_picker.get_item_id(index)))
+	header.add_child(ring_size_picker)
 	var book := Button.new()
 	book.text = "Spellbook"
 	book.pressed.connect(func(): open_book.emit())
@@ -102,6 +112,9 @@ func refresh() -> void:
 	if mode_picker == null: return
 	mode_picker.select(["prepared", "aimed", "wheel"].find(loadout.mode))
 	wheel_button.visible = loadout.mode == "wheel"
+	ring_size_picker.visible = loadout.mode == "wheel"
+	ring_size_picker.select(ring_size_picker.get_item_index(loadout.ring_size))
+	ring_size_picker.text = "Size %d%%" % loadout.ring_size
 	for index in range(buttons.size()):
 		var slot: Dictionary = loadout.slots[index]
 		var button = buttons[index]
@@ -129,3 +142,7 @@ func _slot_input(event: InputEvent, index: int) -> void:
 		menu.position = Vector2i(get_global_mouse_position())
 		menu.popup()
 		buttons[index].accept_event()
+
+func _process(_delta: float) -> void:
+	# Keep the extra ring setting and the draggable bar reachable after a resize.
+	panel.position = panel.position.clamp(Vector2(8,8), (size-panel.size-Vector2(reserved_right_width,8)).max(Vector2(8,8)))
