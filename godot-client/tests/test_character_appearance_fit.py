@@ -1,5 +1,6 @@
 """Geometry regressions for the visible back-of-shirt and scalp failures."""
 import json
+import hashlib
 import os
 from pathlib import Path
 import sys
@@ -61,6 +62,28 @@ class CharacterAppearanceFitTest(unittest.TestCase):
                 self.assertGreater(float((depths['body'][hit]-depths['wardrobe_shirt'][hit]).min()), .002)
                 self.assertIn('wardrobe_shirt',config['wardrobeBakedGrow'])
 
+    def test_skin_calibration_matches_the_installed_source_materials(self):
+        # Replacing a source head must not silently reuse the previous head's
+        # calibration: that would bring back wrong colors and neck seams.
+        for slug, config in self.models.items():
+            with self.subTest(model=slug):
+                path = CLIENT / config['scene'].removeprefix('res://')
+                palette = config['skinPalette']
+                self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), palette['sourceSHA256'])
+                document, _ = ea.read_glb(path)
+                refs = palette['references']
+                face = refs['body'][config['faceAppearance']['sourceSurface']]
+                for mesh in document['meshes']:
+                    if mesh['name'] not in ('body', 'eyes', 'eyebrows', 'scalp'):
+                        continue
+                    values = refs[mesh['name']]
+                    self.assertEqual(len(mesh['primitives']), len(values))
+                    self.assertTrue(np.isfinite(values).all())
+                    self.assertTrue((np.asarray(values) > 0).all())
+                    self.assertTrue((np.asarray(values) <= 1).all())
+                    if mesh['name'] != 'body':
+                        self.assertTrue(all(value == face for value in values))
+
     def test_hair_uses_the_body_bind_pose_and_has_a_closed_crown(self):
         for slug, config in self.models.items():
             body, bb = ea.read_glb(CLIENT / config['scene'].removeprefix('res://'))
@@ -70,8 +93,8 @@ class CharacterAppearanceFitTest(unittest.TestCase):
             with self.subTest(model=slug):
                 self.assertTrue(config['hairSkinned'])
                 self.assertEqual({},config['hairFit'])
-                self.assertEqual(5,len(config['hairStyles']))
-            for style in (1,2,3,4):
+                self.assertEqual(10,len(config['hairStyles']))
+            for style in range(1,10):
                 with self.subTest(model=slug,style=style):
                     d,b = ea.read_glb(CLIENT / config['hairStyles'][style].removeprefix('res://'))
                     skin = d['skins'][0]

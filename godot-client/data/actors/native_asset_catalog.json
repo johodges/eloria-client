@@ -1110,6 +1110,216 @@
         ]
       },
       "path": "godot-client/assets/actors/native/hair/buns_male.glb"
+    },
+    "bob_female": {
+      "style": "bob",
+      "gender": "female",
+      "source": "expand_hairstyles.py:bob",
+      "vertices": 3080,
+      "triangles": 2906,
+      "bounds": {
+        "min": [
+          -0.12847304344177246,
+          0.024771688506007195,
+          -0.1506996601819992
+        ],
+        "max": [
+          0.12847304344177246,
+          0.2274683117866516,
+          0.11696292459964752
+        ]
+      },
+      "path": "godot-client/assets/actors/native/hair/bob_female.glb",
+      "sha256": "cf645cc8d3be26dbbc77a4194221d7dbeb0399485940f13ca4b32fbaadecaf7d"
+    },
+    "ponytail_female": {
+      "style": "ponytail",
+      "gender": "female",
+      "source": "expand_hairstyles.py:ponytail",
+      "vertices": 1676,
+      "triangles": 3010,
+      "bounds": {
+        "min": [
+          -0.07933114469051361,
+          -0.14025495946407318,
+          -0.19527746737003326
+        ],
+        "max": [
+          0.07933114469051361,
+          0.22132574021816254,
+          0.09057717770338058
+        ]
+      },
+      "path": "godot-client/assets/actors/native/hair/ponytail_female.glb",
+      "sha256": "f6f470c3cfcf2001201ac7d329b60180c1cf49d1ac52150ca6cdd13ff372ad12"
+    },
+    "braid_female": {
+      "style": "braid",
+      "gender": "female",
+      "source": "expand_hairstyles.py:braid",
+      "vertices": 2249,
+      "triangles": 3994,
+      "bounds": {
+        "min": [
+          -0.07933114469051361,
+          -0.26504749059677124,
+          -0.17178425192832947
+        ],
+        "max": [
+          0.07933114469051361,
+          0.22132574021816254,
+          0.09057717770338058
+        ]
+      },
+      "path": "godot-client/assets/actors/native/hair/braid_female.glb",
+      "sha256": "0887e93bc27cb7b23f4d9383d92cab4e9719853d312f2f14a579cca7c27499c2"
+    },
+    "topknot_female": {
+      "style": "topknot",
+      "gender": "female",
+      "source": "expand_hairstyles.py:topknot",
+      "vertices": 1786,
+      "triangles": 3218,
+      "bounds": {
+        "min": [
+          -0.07933114469051361,
+          0.04979131743311882,
+          -0.10628728568553925
+        ],
+        "max": [
+          0.07933114469051361,
+          0.24964798986911774,
+          0.09057717770338058
+        ]
+      },
+      "path": "godot-client/assets/actors/native/hair/topknot_female.glb",
+      "sha256": "2460b62168241cba9d669b3d4e35ef2144cbca964e77b2ee5fe1d7b81e36b93d"
+    },
+    "mohawk_female": {
+      "style": "mohawk",
+      "gender": "female",
+      "source": "expand_hairstyles.py:mohawk",
+      "vertices": 1170,
+      "triangles": 2078,
+      "bounds": {
+        "min": [
+          -0.07933114469051361,
+          0.04979131743311882,
+          -0.10999999940395355
+        ],
+        "max": [
+          0.07933114469051361,
+          0.2546166479587555,
+          0.09057717770338058
+        ]
+      },
+      "path": "godot-client/assets/actors/native/hair/mohawk_female.glb",
+      "sha256": "31de14e0b5a74b46fcf034821c7fbde7d4ae557a1f5d6e5f850156a6628e9adc"
+    },
+    "bob_male": {
+      "style": "bob",
+      "gender": "male",
+      "source": "expand_hairstyles.py:bob",
+      "vertices": 3080,
+      "triangles": 2906,
+      "bounds": {
+        "min": [
+          -0.12847304344177246,
+          0.0043355985544621944,
+          -0.14273051917552948
+        ],
+        "max": [
+          0.12847304344177246,
+          0.17734487354755402,
+          0.12321479618549347
+        ]
+      },
+      "path": "godot-client/assets/actors/native/hair/bob_male.glb",
+      "sha256": "633e61585d395b238568d540233f087639b29c2297a446ee4f0070ce639467eb"
+    },
+    "ponytail_male": {
+      "style": "ponytail",
+      "gender": "male",
+      "source": "expand_hairstyles.py:ponytail",
+      "vertices": 1676,
+      "triangles": 3010,
+      "bounds": {
+        "min": [
+          -0.07729528844356537,
+          -0.14025495946407318,
+          -0.19527746737003326
+        ],
+        "max": [
+          0.0772952064871788,
+          0.21388061344623566,
+          0.09535305947065353
+        ]
+      },
+      "path": "godot-client/assets/actors/native/hair/ponytail_male.glb",
+      "sha256": "53da0a3b0e803855183d5adc1b07051fd7c7f8b00b4510b9867deeeed5fd33a4"
+    },
+    "braid_male": {
+      "style": "braid",
+      "gender": "male",
+      "source": "expand_hairstyles.py:braid",
+      "vertices": 2249,
+      "triangles": 3994,
+      "bounds": {
+        "min": [
+          -0.07729528844356537,
+          -0.26504749059677124,
+          -0.17178425192832947
+        ],
+        "max": [
+          0.0772952064871788,
+          0.21388061344623566,
+          0.09535305947065353
+        ]
+      },
+      "path": "godot-client/assets/actors/native/hair/braid_male.glb",
+      "sha256": "0b5ff32f7c78a060d595ac597aa8f84a5a519e75ef3af3459ef7ef3d6a5bbd0d"
+    },
+    "topknot_male": {
+      "style": "topknot",
+      "gender": "male",
+      "source": "expand_hairstyles.py:topknot",
+      "vertices": 1786,
+      "triangles": 3218,
+      "bounds": {
+        "min": [
+          -0.07729528844356537,
+          0.04245476797223091,
+          -0.105964295566082
+        ],
+        "max": [
+          0.0772952064871788,
+          0.24964798986911774,
+          0.09535305947065353
+        ]
+      },
+      "path": "godot-client/assets/actors/native/hair/topknot_male.glb",
+      "sha256": "410007eac116cd1cd9c2c2486853381f57310a713aca0a5c3382be73d9f5887a"
+    },
+    "mohawk_male": {
+      "style": "mohawk",
+      "gender": "male",
+      "source": "expand_hairstyles.py:mohawk",
+      "vertices": 1170,
+      "triangles": 2078,
+      "bounds": {
+        "min": [
+          -0.07729528844356537,
+          0.04245476797223091,
+          -0.10999999940395355
+        ],
+        "max": [
+          0.0772952064871788,
+          0.2546166479587555,
+          0.09535305947065353
+        ]
+      },
+      "path": "godot-client/assets/actors/native/hair/mohawk_male.glb",
+      "sha256": "888d093a518b6683c39431313fd267e32788e38261058f75e48cbbbad230011f"
     }
   },
   "creatures": {
@@ -11981,7 +12191,7 @@
   },
   "ambientCreaturesNote": "Scenery livestock instanced by the client's ambient population system. They carry no server actor type: actor-type allocation belongs to eloria-server, and these never arrive over the wire.",
   "validation": {
-    "files": 2594,
+    "files": 2751,
     "results": {
       "godot-client/assets/actors/native/creatures/abyssal_armored_fish.glb": {
         "nodes": 55,
@@ -27546,6 +27756,948 @@
         "meshes": 0,
         "skins": 0,
         "animations": 162
+      },
+      "godot-client/assets/actors/native/equipment/amberwood_ranger_bow.glb": {
+        "nodes": 21,
+        "meshes": 21,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/ranger_arrow.glb": {
+        "nodes": 4,
+        "meshes": 4,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/sunmane_ranger_bow.glb": {
+        "nodes": 21,
+        "meshes": 21,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/bob_female.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/bob_male.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/braid_female.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/braid_male.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/mohawk_female.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/mohawk_male.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/ponytail_female.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/ponytail_male.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/topknot_female.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/topknot_male.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/glasswarden_female_bob_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/glasswarden_female_braid_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/glasswarden_female_buns_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/glasswarden_female_buzzed_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/glasswarden_female_long_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/glasswarden_female_mohawk_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/glasswarden_female_parted_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/glasswarden_female_ponytail_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/glasswarden_female_topknot_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/glasswarden_male_bob_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/glasswarden_male_braid_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/glasswarden_male_buns_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/glasswarden_male_buzzed_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/glasswarden_male_long_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/glasswarden_male_mohawk_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/glasswarden_male_parted_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/glasswarden_male_ponytail_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/glasswarden_male_topknot_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/greyhaven_female_bob_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/greyhaven_female_braid_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/greyhaven_female_buns_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/greyhaven_female_buzzed_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/greyhaven_female_long_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/greyhaven_female_mohawk_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/greyhaven_female_parted_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/greyhaven_female_ponytail_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/greyhaven_female_topknot_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/greyhaven_male_bob_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/greyhaven_male_braid_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/greyhaven_male_buns_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/greyhaven_male_buzzed_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/greyhaven_male_long_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/greyhaven_male_mohawk_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/greyhaven_male_parted_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/greyhaven_male_ponytail_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/greyhaven_male_topknot_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/luminous_female_bob_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/luminous_female_braid_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/luminous_female_buns_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/luminous_female_buzzed_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/luminous_female_long_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/luminous_female_mohawk_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/luminous_female_parted_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/luminous_female_ponytail_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/luminous_female_topknot_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/luminous_male_bob_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/luminous_male_braid_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/luminous_male_buns_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/luminous_male_buzzed_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/luminous_male_long_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/luminous_male_mohawk_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/luminous_male_parted_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/luminous_male_ponytail_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/luminous_male_topknot_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/mycelari_female_bob_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/mycelari_female_braid_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/mycelari_female_buns_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/mycelari_female_buzzed_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/mycelari_female_long_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/mycelari_female_mohawk_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/mycelari_female_parted_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/mycelari_female_ponytail_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/mycelari_female_topknot_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/mycelari_male_bob_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/mycelari_male_braid_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/mycelari_male_buns_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/mycelari_male_buzzed_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/mycelari_male_long_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/mycelari_male_mohawk_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/mycelari_male_parted_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/mycelari_male_ponytail_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/mycelari_male_topknot_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/orun_female_bob_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/orun_female_braid_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/orun_female_buns_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/orun_female_buzzed_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/orun_female_long_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/orun_female_mohawk_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/orun_female_parted_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/orun_female_ponytail_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/orun_female_topknot_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/orun_male_bob_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/orun_male_braid_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/orun_male_buns_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/orun_male_buzzed_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/orun_male_long_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/orun_male_mohawk_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/orun_male_parted_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/orun_male_ponytail_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/orun_male_topknot_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/ssarathi_female_bob_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/ssarathi_female_braid_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/ssarathi_female_buns_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/ssarathi_female_buzzed_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/ssarathi_female_long_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/ssarathi_female_mohawk_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/ssarathi_female_parted_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/ssarathi_female_ponytail_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/ssarathi_female_topknot_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/ssarathi_male_bob_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/ssarathi_male_braid_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/ssarathi_male_buns_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/ssarathi_male_buzzed_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/ssarathi_male_long_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/ssarathi_male_mohawk_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/ssarathi_male_parted_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/ssarathi_male_ponytail_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/ssarathi_male_topknot_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/stoneborn_female_bob_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/stoneborn_female_braid_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/stoneborn_female_buns_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/stoneborn_female_buzzed_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/stoneborn_female_long_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/stoneborn_female_mohawk_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/stoneborn_female_parted_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/stoneborn_female_ponytail_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/stoneborn_female_topknot_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/stoneborn_male_bob_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/stoneborn_male_braid_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/stoneborn_male_buns_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/stoneborn_male_buzzed_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/stoneborn_male_long_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/stoneborn_male_mohawk_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/stoneborn_male_parted_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/stoneborn_male_ponytail_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/stoneborn_male_topknot_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/votary_female_bob_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/votary_female_braid_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/votary_female_buns_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/votary_female_buzzed_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/votary_female_long_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/votary_female_mohawk_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/votary_female_parted_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/votary_female_ponytail_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/votary_female_topknot_female.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/votary_male_bob_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/votary_male_braid_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/votary_male_buns_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/votary_male_buzzed_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/votary_male_long_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/votary_male_mohawk_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/votary_male_parted_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/votary_male_ponytail_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/fitted/votary_male_topknot_male.glb": {
+        "nodes": 89,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
       }
     }
   },
@@ -29472,6 +30624,486 @@
       "sha256": "74800610576a82d3311cee0189a7ff3a36db1ebf1c46680cb77afead66fb3a50",
       "joints": 77,
       "triangles": 3320
+    },
+    "luminous_female:5": {
+      "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_bob_female.glb",
+      "sha256": "76b819c77bbdce4ee65de18bbdde8ae31e0633ce3d3d77fe84ecc62ea9b22efc",
+      "joints": 77,
+      "triangles": 11624
+    },
+    "luminous_female:6": {
+      "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_ponytail_female.glb",
+      "sha256": "43c9e90a47a25c40f6adf058448212fb3baf459a1926950a918ec01319fbc3ef",
+      "joints": 77,
+      "triangles": 12040
+    },
+    "luminous_female:7": {
+      "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_braid_female.glb",
+      "sha256": "45f9687c24b247b998be972893362b90264f5b135da9593d9d2921f621909dbe",
+      "joints": 77,
+      "triangles": 15976
+    },
+    "luminous_female:8": {
+      "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_topknot_female.glb",
+      "sha256": "748d1db7dab360e169420b029385d4ad988c2a77064971f9026aede2ffb9d342",
+      "joints": 77,
+      "triangles": 12872
+    },
+    "luminous_female:9": {
+      "path": "godot-client/assets/actors/native/hair/fitted/luminous_female_mohawk_female.glb",
+      "sha256": "57b63b7773609f66da05c990f0894b28e4c3ce5e0247cefe00a6529b809dca10",
+      "joints": 77,
+      "triangles": 8312
+    },
+    "luminous_male:5": {
+      "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_bob_male.glb",
+      "sha256": "674d57e8ba143940ef99c284cb86b852c371c3f647a43b985930f24fae8782a7",
+      "joints": 77,
+      "triangles": 11624
+    },
+    "luminous_male:6": {
+      "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_ponytail_male.glb",
+      "sha256": "06a0b5c4c739709cb0b827a9df7078d3d939415de86a3c6d9f3b279bfc8f126b",
+      "joints": 77,
+      "triangles": 12040
+    },
+    "luminous_male:7": {
+      "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_braid_male.glb",
+      "sha256": "16f81eb9a0e0550c9c4537f2f665827eda6f5a365017f5d3f97f44332fe21f8b",
+      "joints": 77,
+      "triangles": 15976
+    },
+    "luminous_male:8": {
+      "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_topknot_male.glb",
+      "sha256": "d41197bd0b5653126025e159e39a7982ef5473921a9825ef8cd93fe9b993b592",
+      "joints": 77,
+      "triangles": 12872
+    },
+    "luminous_male:9": {
+      "path": "godot-client/assets/actors/native/hair/fitted/luminous_male_mohawk_male.glb",
+      "sha256": "859ff07276f7832c485da55040a3bf683ff6e7ef1138b6d7140714a382fa3120",
+      "joints": 77,
+      "triangles": 8312
+    },
+    "votary_female:5": {
+      "path": "godot-client/assets/actors/native/hair/fitted/votary_female_bob_female.glb",
+      "sha256": "ad6f5d89e4f4d196cafcae1ae6191539a1e09ad1e6c1caccfa78b8ccc24e83a2",
+      "joints": 77,
+      "triangles": 11624
+    },
+    "votary_female:6": {
+      "path": "godot-client/assets/actors/native/hair/fitted/votary_female_ponytail_female.glb",
+      "sha256": "a53dbc86b7d4ba8739b2ff4d051330aaae6caf416b03375dc2f55b3b79cb2f07",
+      "joints": 77,
+      "triangles": 12040
+    },
+    "votary_female:7": {
+      "path": "godot-client/assets/actors/native/hair/fitted/votary_female_braid_female.glb",
+      "sha256": "e1da699e915306cb84b35d897b5c71c9f789eb27fa57fbd5d5ae3d0029e95fda",
+      "joints": 77,
+      "triangles": 15976
+    },
+    "votary_female:8": {
+      "path": "godot-client/assets/actors/native/hair/fitted/votary_female_topknot_female.glb",
+      "sha256": "83a1ebf41ae47886d05e22535e4308a8b2ff64d01c69681b8bd0a45c3e5dd976",
+      "joints": 77,
+      "triangles": 12872
+    },
+    "votary_female:9": {
+      "path": "godot-client/assets/actors/native/hair/fitted/votary_female_mohawk_female.glb",
+      "sha256": "8dc53c6ce33ad29e4e3cfb783da50947b98fc1e901d7b8aa79246a8e2e436116",
+      "joints": 77,
+      "triangles": 8312
+    },
+    "votary_male:5": {
+      "path": "godot-client/assets/actors/native/hair/fitted/votary_male_bob_male.glb",
+      "sha256": "fc9a145373bf53972bb2c7f810a1bfff1db0bf4366a314a1746234c9c20f5265",
+      "joints": 77,
+      "triangles": 11624
+    },
+    "votary_male:6": {
+      "path": "godot-client/assets/actors/native/hair/fitted/votary_male_ponytail_male.glb",
+      "sha256": "979b97d0b574626488efcece71419aa3d3b34656e1716e0daf14b3305d8414da",
+      "joints": 77,
+      "triangles": 12040
+    },
+    "votary_male:7": {
+      "path": "godot-client/assets/actors/native/hair/fitted/votary_male_braid_male.glb",
+      "sha256": "b50141502fcb4bc9cc071b010f89be812ace320777fc992144ea3b9ed42ff6db",
+      "joints": 77,
+      "triangles": 15976
+    },
+    "votary_male:8": {
+      "path": "godot-client/assets/actors/native/hair/fitted/votary_male_topknot_male.glb",
+      "sha256": "358030ae5ce71978aacf7b7b9f7f8b0b744bad822c70ea156ae26132a3374a02",
+      "joints": 77,
+      "triangles": 12872
+    },
+    "votary_male:9": {
+      "path": "godot-client/assets/actors/native/hair/fitted/votary_male_mohawk_male.glb",
+      "sha256": "ce539ff3318c66489730942c50c2a9496df8ee13251dfa5a775c32d4d4e0c213",
+      "joints": 77,
+      "triangles": 8312
+    },
+    "glasswarden_female:5": {
+      "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_female_bob_female.glb",
+      "sha256": "bbdc76c8a5f5b1bbd830efe213c69796423bc6cc77753610427c45557a4ce9b7",
+      "joints": 77,
+      "triangles": 11624
+    },
+    "glasswarden_female:6": {
+      "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_female_ponytail_female.glb",
+      "sha256": "6903fc849f2af9039957b4ad4fb4e6fe05991210c2ca2efd42e52c0741eb2fbe",
+      "joints": 77,
+      "triangles": 12040
+    },
+    "glasswarden_female:7": {
+      "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_female_braid_female.glb",
+      "sha256": "eec2252c777de5ea5eba36793b9e9591df5298e9d2a7976e50d97d0f94136129",
+      "joints": 77,
+      "triangles": 15976
+    },
+    "glasswarden_female:8": {
+      "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_female_topknot_female.glb",
+      "sha256": "fa2268cac0c86aae58462f0feb0d9180b27dcd8a07ca671a8d042ef97f9220cc",
+      "joints": 77,
+      "triangles": 12872
+    },
+    "glasswarden_female:9": {
+      "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_female_mohawk_female.glb",
+      "sha256": "31fb4c2121092d1247e1a65a8db09b28a07d62f08ad11d4fae9528982e0e3ae3",
+      "joints": 77,
+      "triangles": 8312
+    },
+    "glasswarden_male:5": {
+      "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_male_bob_male.glb",
+      "sha256": "0f889c64137db7b0531f03bed9c629d9c7f385a462d3eeb6c2fe8131d2450bea",
+      "joints": 77,
+      "triangles": 11624
+    },
+    "glasswarden_male:6": {
+      "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_male_ponytail_male.glb",
+      "sha256": "adf1862b8fc1565a826972570b9c8f9e8b99784cc11083d4fd63647c865744d2",
+      "joints": 77,
+      "triangles": 12040
+    },
+    "glasswarden_male:7": {
+      "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_male_braid_male.glb",
+      "sha256": "ce5a099366552fee084584e5c5a25ce8ee167eb5aeda68d83564f8f1be7bbcb8",
+      "joints": 77,
+      "triangles": 15976
+    },
+    "glasswarden_male:8": {
+      "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_male_topknot_male.glb",
+      "sha256": "746a8dbdc8eebe0216bff60b26eb0f1b2e4ec2818a928f69e4694aa8dda04e4c",
+      "joints": 77,
+      "triangles": 12872
+    },
+    "glasswarden_male:9": {
+      "path": "godot-client/assets/actors/native/hair/fitted/glasswarden_male_mohawk_male.glb",
+      "sha256": "63cca68d752d5d9562321d3825a392303a55adf4c34473bd247a50a1f0023844",
+      "joints": 77,
+      "triangles": 8312
+    },
+    "orun_female:5": {
+      "path": "godot-client/assets/actors/native/hair/fitted/orun_female_bob_female.glb",
+      "sha256": "babcaaa628e414e1331d650ae4dcb7af8a2d8088010eabb91aba561dc1311fdf",
+      "joints": 77,
+      "triangles": 11624
+    },
+    "orun_female:6": {
+      "path": "godot-client/assets/actors/native/hair/fitted/orun_female_ponytail_female.glb",
+      "sha256": "61befa1829e19d5be75526a0de60b0545008dbfb39eee94ceaa3e294c165d593",
+      "joints": 77,
+      "triangles": 12040
+    },
+    "orun_female:7": {
+      "path": "godot-client/assets/actors/native/hair/fitted/orun_female_braid_female.glb",
+      "sha256": "57b202748edf79088e9b8759fc100a45db961fcf9ea3b0e622ba643fbb7fefd4",
+      "joints": 77,
+      "triangles": 15976
+    },
+    "orun_female:8": {
+      "path": "godot-client/assets/actors/native/hair/fitted/orun_female_topknot_female.glb",
+      "sha256": "c845868385b26f66029d0fa6b776e96b826c1540f035c2722947bb7aceba363d",
+      "joints": 77,
+      "triangles": 12872
+    },
+    "orun_female:9": {
+      "path": "godot-client/assets/actors/native/hair/fitted/orun_female_mohawk_female.glb",
+      "sha256": "60778f07e11e81fe2e5e2ea7755fb67ef18af2a1cdc5590a9ddf28621c04d087",
+      "joints": 77,
+      "triangles": 8312
+    },
+    "orun_male:5": {
+      "path": "godot-client/assets/actors/native/hair/fitted/orun_male_bob_male.glb",
+      "sha256": "f73174dffaabc40e4a7ca78118e87ae497f62e3f40d8d9f58249032d6fccdf04",
+      "joints": 77,
+      "triangles": 11624
+    },
+    "orun_male:6": {
+      "path": "godot-client/assets/actors/native/hair/fitted/orun_male_ponytail_male.glb",
+      "sha256": "0f1d96ca7858e474646f78aa92c954053c936815f5bc532c9db452094294060d",
+      "joints": 77,
+      "triangles": 12040
+    },
+    "orun_male:7": {
+      "path": "godot-client/assets/actors/native/hair/fitted/orun_male_braid_male.glb",
+      "sha256": "1b32073ac8054c29a9231d99c3e0d35ef8400308e94ce0ffcd219f80536a2918",
+      "joints": 77,
+      "triangles": 15976
+    },
+    "orun_male:8": {
+      "path": "godot-client/assets/actors/native/hair/fitted/orun_male_topknot_male.glb",
+      "sha256": "e357498edd39fc36e0b56ff9e62105d29f3f1e5300ac70b8839f7e958576c445",
+      "joints": 77,
+      "triangles": 12872
+    },
+    "orun_male:9": {
+      "path": "godot-client/assets/actors/native/hair/fitted/orun_male_mohawk_male.glb",
+      "sha256": "e80d86e0304c3dab0922eb6359cb3eab1fbcb4cdf4dd171b64518bb327d7a9dd",
+      "joints": 77,
+      "triangles": 8312
+    },
+    "greyhaven_female:5": {
+      "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_female_bob_female.glb",
+      "sha256": "a0f7a6acac34bf974f9f05591d479abf94b0dc67ee81ee3a35ad9d10e9b145ed",
+      "joints": 77,
+      "triangles": 11624
+    },
+    "greyhaven_female:6": {
+      "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_female_ponytail_female.glb",
+      "sha256": "743e24585c82241afe379672fbe7a0a84c893a33502a2d5a661df4cc3863ad2e",
+      "joints": 77,
+      "triangles": 12040
+    },
+    "greyhaven_female:7": {
+      "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_female_braid_female.glb",
+      "sha256": "8ab048089fa799c48ec19f59dd58e46b100727de0da52261311671c6a36d6951",
+      "joints": 77,
+      "triangles": 15976
+    },
+    "greyhaven_female:8": {
+      "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_female_topknot_female.glb",
+      "sha256": "b547b2046f5f92b30d19a057af9a27a7d0480f5c724b0dcd48aab6f9a7025c44",
+      "joints": 77,
+      "triangles": 12872
+    },
+    "greyhaven_female:9": {
+      "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_female_mohawk_female.glb",
+      "sha256": "3e371585b4b4d86775e5608acb596a313d2fe40240cb1078d2ff0357f1a047c1",
+      "joints": 77,
+      "triangles": 8312
+    },
+    "greyhaven_male:5": {
+      "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_male_bob_male.glb",
+      "sha256": "eb44bfa6b4e1c7ab3f36d74ffc953e849c3cf27fc90d51a3cc46709173d5ec51",
+      "joints": 77,
+      "triangles": 11624
+    },
+    "greyhaven_male:6": {
+      "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_male_ponytail_male.glb",
+      "sha256": "43c555d4910d56a8c20a3f3e05b57c945f00e1186f0c68bdfdb0ef48ca6d7ede",
+      "joints": 77,
+      "triangles": 12040
+    },
+    "greyhaven_male:7": {
+      "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_male_braid_male.glb",
+      "sha256": "582b5ee069b90524bcb7d325006f11df701a29cfa450a32420e494ed0ce4d771",
+      "joints": 77,
+      "triangles": 15976
+    },
+    "greyhaven_male:8": {
+      "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_male_topknot_male.glb",
+      "sha256": "a22a5e886a7184284687debe0065057895fb0259a8e506a968826548885bee01",
+      "joints": 77,
+      "triangles": 12872
+    },
+    "greyhaven_male:9": {
+      "path": "godot-client/assets/actors/native/hair/fitted/greyhaven_male_mohawk_male.glb",
+      "sha256": "571d432a11bb7cc5ba02df9c3db33fbc0079430a60182fa620135cd41b4fe40d",
+      "joints": 77,
+      "triangles": 8312
+    },
+    "ssarathi_female:5": {
+      "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_female_bob_female.glb",
+      "sha256": "6868c39ac7d2e43f8740929d8dbf06b94ad8b310f6484c33f98b6eae00ebf1c0",
+      "joints": 77,
+      "triangles": 11624
+    },
+    "ssarathi_female:6": {
+      "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_female_ponytail_female.glb",
+      "sha256": "eefab49b93287d3fe866f832e39d756fde3515226574ba2e2062cdfc2b7b5e17",
+      "joints": 77,
+      "triangles": 12040
+    },
+    "ssarathi_female:7": {
+      "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_female_braid_female.glb",
+      "sha256": "3db95ec2376eb54187a373c7107e870d171293885f36d2023e8a70967ff026f6",
+      "joints": 77,
+      "triangles": 15976
+    },
+    "ssarathi_female:8": {
+      "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_female_topknot_female.glb",
+      "sha256": "20a7c735c2bfd00dbc1face7459882694065aa4f73d938e6c359ab65f20eb804",
+      "joints": 77,
+      "triangles": 12872
+    },
+    "ssarathi_female:9": {
+      "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_female_mohawk_female.glb",
+      "sha256": "2650e474e6c76ca9af4399fb5f548d2b566dedc5f124582dc6a833a0765882ad",
+      "joints": 77,
+      "triangles": 8312
+    },
+    "ssarathi_male:5": {
+      "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_male_bob_male.glb",
+      "sha256": "d2f43f2b5f2368f847d83fca9205d098ccf2ec349a51082e884d5dc7a7c21d16",
+      "joints": 77,
+      "triangles": 11624
+    },
+    "ssarathi_male:6": {
+      "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_male_ponytail_male.glb",
+      "sha256": "a037d7756e52bc7b8d9e0c4671d8c5ded0954ba1520d3deb201e9cfd68680f45",
+      "joints": 77,
+      "triangles": 12040
+    },
+    "ssarathi_male:7": {
+      "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_male_braid_male.glb",
+      "sha256": "84e93d228495b3f398669a8893e0422de019fd2873aca27d3e9ec65430572d9b",
+      "joints": 77,
+      "triangles": 15976
+    },
+    "ssarathi_male:8": {
+      "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_male_topknot_male.glb",
+      "sha256": "2c7202b5e954b433be838a8c45a04afe5af7581f51332d1991ec8be34f52e4e6",
+      "joints": 77,
+      "triangles": 12872
+    },
+    "ssarathi_male:9": {
+      "path": "godot-client/assets/actors/native/hair/fitted/ssarathi_male_mohawk_male.glb",
+      "sha256": "f9e2af6ba11b686f428cdecc356357e50dc64a8df4f494d11bf1d1571a0ed4a6",
+      "joints": 77,
+      "triangles": 8312
+    },
+    "stoneborn_female:5": {
+      "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_female_bob_female.glb",
+      "sha256": "548296d2f0344d228ce23f2f4df4017cd7c71ca78fdc617e367628335410f781",
+      "joints": 77,
+      "triangles": 11624
+    },
+    "stoneborn_female:6": {
+      "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_female_ponytail_female.glb",
+      "sha256": "93c4f9913477debacbe31f8f4b83d52d112aaf95109d8fc8a750dd079d63187d",
+      "joints": 77,
+      "triangles": 12040
+    },
+    "stoneborn_female:7": {
+      "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_female_braid_female.glb",
+      "sha256": "11dba196ccb31b3547f9c04cc4cd9194225468719c3987df13ea68e98f636ffc",
+      "joints": 77,
+      "triangles": 15976
+    },
+    "stoneborn_female:8": {
+      "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_female_topknot_female.glb",
+      "sha256": "f522d05e6f8e4e8b5c53a1c7ae3db2aae3a69af0d4dbbeb19ce84cb0aede76bc",
+      "joints": 77,
+      "triangles": 12872
+    },
+    "stoneborn_female:9": {
+      "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_female_mohawk_female.glb",
+      "sha256": "6f589ad7e7d9f5e5f595f38a56809903c5345ae63d7826ce6eb18f5b513fae4d",
+      "joints": 77,
+      "triangles": 8312
+    },
+    "stoneborn_male:5": {
+      "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_male_bob_male.glb",
+      "sha256": "cb91caf3c842b0a66eef5710239fcda9e81002042e9c58d176047c74d2be4609",
+      "joints": 77,
+      "triangles": 11624
+    },
+    "stoneborn_male:6": {
+      "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_male_ponytail_male.glb",
+      "sha256": "ad40e9097d022cc5b26024a79deac7a70f58c92a0041d3293a3d8ada1bc5461b",
+      "joints": 77,
+      "triangles": 12040
+    },
+    "stoneborn_male:7": {
+      "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_male_braid_male.glb",
+      "sha256": "9271b1edf606b2f5db46c6632385839bcba00342bb64b4f27b7aec99fb188855",
+      "joints": 77,
+      "triangles": 15976
+    },
+    "stoneborn_male:8": {
+      "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_male_topknot_male.glb",
+      "sha256": "d95b7ac145900133391ab83f298f8ff4718f391294d10c660c4e5c1a1293f02b",
+      "joints": 77,
+      "triangles": 12872
+    },
+    "stoneborn_male:9": {
+      "path": "godot-client/assets/actors/native/hair/fitted/stoneborn_male_mohawk_male.glb",
+      "sha256": "4c27b48b2cc100b8e28a1e8e3e78981178689ef4e070adfea130a62d9dc769f5",
+      "joints": 77,
+      "triangles": 8312
+    },
+    "mycelari_female:5": {
+      "path": "godot-client/assets/actors/native/hair/fitted/mycelari_female_bob_female.glb",
+      "sha256": "bd591196b927ae7fea2b21e2b9375ad1c3af4f969e31e49f4ab0a8b1cf47be59",
+      "joints": 77,
+      "triangles": 11624
+    },
+    "mycelari_female:6": {
+      "path": "godot-client/assets/actors/native/hair/fitted/mycelari_female_ponytail_female.glb",
+      "sha256": "332a0cd26ea9d0e6bbd2a6c47d9e94c5a282a28f727ee5bc7aec46a167492e48",
+      "joints": 77,
+      "triangles": 12040
+    },
+    "mycelari_female:7": {
+      "path": "godot-client/assets/actors/native/hair/fitted/mycelari_female_braid_female.glb",
+      "sha256": "137c53feb1550ec2a9b4d15c6e953fa1737f592fe478893982408143a3e03ec7",
+      "joints": 77,
+      "triangles": 15976
+    },
+    "mycelari_female:8": {
+      "path": "godot-client/assets/actors/native/hair/fitted/mycelari_female_topknot_female.glb",
+      "sha256": "01f95638f5ce87c4932f8dea1a66699ae751cc1a3bd5066dc1cb9fc554285574",
+      "joints": 77,
+      "triangles": 12872
+    },
+    "mycelari_female:9": {
+      "path": "godot-client/assets/actors/native/hair/fitted/mycelari_female_mohawk_female.glb",
+      "sha256": "4325f93d9ed01c40ae2b7b9f046a57bbbbfe963b023e815a0734d0cdbc53edc9",
+      "joints": 77,
+      "triangles": 8312
+    },
+    "mycelari_male:5": {
+      "path": "godot-client/assets/actors/native/hair/fitted/mycelari_male_bob_male.glb",
+      "sha256": "e8b4f079f5e126c9e2c2bd723b95227c41537cde03cf2dae806483145b6f63f8",
+      "joints": 77,
+      "triangles": 11624
+    },
+    "mycelari_male:6": {
+      "path": "godot-client/assets/actors/native/hair/fitted/mycelari_male_ponytail_male.glb",
+      "sha256": "78838a4be2831d23fbf6951e0c90a33c75cc6b4a00453147cd6a903ae037fb10",
+      "joints": 77,
+      "triangles": 12040
+    },
+    "mycelari_male:7": {
+      "path": "godot-client/assets/actors/native/hair/fitted/mycelari_male_braid_male.glb",
+      "sha256": "cc50a1cfa02d44e43cfc87fa3a30fbf7ec990b801a7475f770105e04f9c4ff18",
+      "joints": 77,
+      "triangles": 15976
+    },
+    "mycelari_male:8": {
+      "path": "godot-client/assets/actors/native/hair/fitted/mycelari_male_topknot_male.glb",
+      "sha256": "6c3ed0ef27d09a9bce7f891b2dea9654eb9df697ce4ef9c21965c28df3a41014",
+      "joints": 77,
+      "triangles": 12872
+    },
+    "mycelari_male:9": {
+      "path": "godot-client/assets/actors/native/hair/fitted/mycelari_male_mohawk_male.glb",
+      "sha256": "8a31b2dd192d2a595e6dd40cab0125adb045f4d98d5384329d95b17c88b533b7",
+      "joints": 77,
+      "triangles": 8312
     }
   }
 }

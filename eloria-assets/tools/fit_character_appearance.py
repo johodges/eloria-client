@@ -56,6 +56,8 @@ def ray_surface(mesh, origins, directions):
     distance = np.full(len(origins), -np.inf)
     hit_face = np.full(len(origins), -1, dtype=int)
     hit_point = np.zeros_like(origins)
+    if not len(rays):
+        return distance, hit_face, hit_point
     lengths = np.einsum('ij,ij->i', locations-origins[rays], directions[rays])
     # Outermost hit closes cracks even where a source contains internal faces.
     for index in np.argsort(lengths):
@@ -220,7 +222,8 @@ def fit_hair(source, out, head, base_fit, body, body_binary):
     skull_core=skull.vertices[(abs(skull.vertices[:,0])<.045)&(skull.vertices[:,1]>.07)]
     top=np.percentile(skull_core[:,1],99)
     cap=raw[(abs(raw[:,0])<.04)&(abs(raw[:,2])<.055)]
-    scale[1]=(top+.007)/cap[:,1].max()
+    cap_top = d.get('asset', {}).get('extras', {}).get('hairCapTopM', cap[:,1].max())
+    scale[1]=(top+.007)/cap_top
     centre=np.array([offset[0],top-.075,offset[2]])
     maximum=0.
     for mesh in d['meshes']:

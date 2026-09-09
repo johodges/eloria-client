@@ -155,8 +155,12 @@ static func create_character(username: String, password: String, appearance: Dic
 	var payload := (username + " " + password).to_utf8_buffer()
 	payload.append(0)
 	# Exact legacy order: skin, hair, shirt, pants, boots, actor type, head, eyes.
+	var wire := appearance.duplicate()
+	var hair := int(appearance.get("hair", 0))
+	wire["head"] = AppearanceVariants.hair_wire_head(hair, int(appearance.get("head", 0)))
+	wire["hair"] = hair & 0xff
 	for key in ["skin", "hair", "shirt", "pants", "boots", "actor_type", "head", "eyes"]:
-		payload.append(clampi(int(appearance.get(key, 0)), 0, 255))
+		payload.append(clampi(int(wire.get(key, 0)), 0, 255))
 	return encode(ClientMessage.CREATE_CHAR, payload)
 
 static func version(protocol_major: int, protocol_minor: int,
@@ -2617,7 +2621,7 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := f
 		"scale": 1.0}
 	if enhanced:
 		actor["appearance"] = {
-			"skin": int(payload[12]), "hair": int(payload[13]), "shirt": int(payload[14]),
+			"skin": int(payload[12]), "hair": AppearanceVariants.hair_from_wire(int(payload[13]), int(payload[17])), "shirt": int(payload[14]),
 			"pants": int(payload[15]), "boots": int(payload[16]), "head": int(payload[17]),
 			"eyes": 0,
 			"shield": int(payload[18]), "weapon": int(payload[19]),

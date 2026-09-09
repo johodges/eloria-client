@@ -111,7 +111,7 @@ class NativeGlbAssetsTest(unittest.TestCase):
 
     def test_catalog_is_complete(self) -> None:
         self.assertEqual(16, len(self.catalog["races"]))
-        self.assertEqual(8, len(self.catalog["hair"]))
+        self.assertEqual(18, len(self.catalog["hair"]))
         # 32 first-pass creatures plus the wider concept-art roster.
         sys.path.insert(0, str(ROOT / "eloria-assets" / "tools"))
         import creature_roster

@@ -27,7 +27,7 @@ def run(root):
         target = native / 'hair/fitted' / f'{slug}_buzzed_{sex}.glb'
         report = fit_hair(native / 'hair' / f'buzzed_{sex}.glb', target, skull,
                           {'scale': [horizontal, 1, horizontal], 'offset': [0, 0, -.015]}, document, binary)
-        config['hairStyles'] = config['hairStyles'][:4] + ['res://' + target.relative_to(client).as_posix()]
+        config['hairStyles'] = config['hairStyles'][:4] + ['res://' + target.relative_to(client).as_posix()] + config['hairStyles'][5:]
         hair, _ = g.read(target)
         catalog['fittedHair'][f'{slug}:4'] = {
             'path': target.relative_to(root).as_posix(), 'sha256': sha(target), 'joints': 77,

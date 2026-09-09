@@ -12,7 +12,12 @@
         "res://assets/actors/native/hair/fitted/luminous_female_parted_female.glb",
         "res://assets/actors/native/hair/fitted/luminous_female_long_female.glb",
         "res://assets/actors/native/hair/fitted/luminous_female_buns_female.glb",
-        "res://assets/actors/native/hair/fitted/luminous_female_buzzed_female.glb"
+        "res://assets/actors/native/hair/fitted/luminous_female_buzzed_female.glb",
+        "res://assets/actors/native/hair/fitted/luminous_female_bob_female.glb",
+        "res://assets/actors/native/hair/fitted/luminous_female_ponytail_female.glb",
+        "res://assets/actors/native/hair/fitted/luminous_female_braid_female.glb",
+        "res://assets/actors/native/hair/fitted/luminous_female_topknot_female.glb",
+        "res://assets/actors/native/hair/fitted/luminous_female_mohawk_female.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -90,6 +95,40 @@
             ]
           }
         }
+      },
+      "skinPalette": {
+        "version": 1,
+        "sourceSHA256": "8d8dea9c58e9a0085f8e28afbf28c8e3205d78dec8f098d166202fc8be6e2a66",
+        "references": {
+          "body": [
+            [
+              0.9640124380101565,
+              0.7872742098141341,
+              0.6470588235294118
+            ]
+          ],
+          "eyes": [
+            [
+              0.9640124380101565,
+              0.7872742098141341,
+              0.6470588235294118
+            ]
+          ],
+          "eyebrows": [
+            [
+              0.9640124380101565,
+              0.7872742098141341,
+              0.6470588235294118
+            ]
+          ],
+          "scalp": [
+            [
+              0.9640124380101565,
+              0.7872742098141341,
+              0.6470588235294118
+            ]
+          ]
+        }
       }
     },
     "luminous_male": {
@@ -103,7 +142,12 @@
         "res://assets/actors/native/hair/fitted/luminous_male_parted_male.glb",
         "res://assets/actors/native/hair/fitted/luminous_male_long_male.glb",
         "res://assets/actors/native/hair/fitted/luminous_male_buns_male.glb",
-        "res://assets/actors/native/hair/fitted/luminous_male_buzzed_male.glb"
+        "res://assets/actors/native/hair/fitted/luminous_male_buzzed_male.glb",
+        "res://assets/actors/native/hair/fitted/luminous_male_bob_male.glb",
+        "res://assets/actors/native/hair/fitted/luminous_male_ponytail_male.glb",
+        "res://assets/actors/native/hair/fitted/luminous_male_braid_male.glb",
+        "res://assets/actors/native/hair/fitted/luminous_male_topknot_male.glb",
+        "res://assets/actors/native/hair/fitted/luminous_male_mohawk_male.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -181,6 +225,40 @@
             ]
           }
         }
+      },
+      "skinPalette": {
+        "version": 1,
+        "sourceSHA256": "9f97b8db169f61e971e5a9642e11fb10fcaef8b8b85f2a89e41a2f5812e91640",
+        "references": {
+          "body": [
+            [
+              0.743139376671486,
+              0.6217823002584809,
+              0.5308291102649972
+            ]
+          ],
+          "eyes": [
+            [
+              0.743139376671486,
+              0.6217823002584809,
+              0.5308291102649972
+            ]
+          ],
+          "eyebrows": [
+            [
+              0.743139376671486,
+              0.6217823002584809,
+              0.5308291102649972
+            ]
+          ],
+          "scalp": [
+            [
+              0.743139376671486,
+              0.6217823002584809,
+              0.5308291102649972
+            ]
+          ]
+        }
       }
     },
     "votary_female": {
@@ -194,7 +272,12 @@
         "res://assets/actors/native/hair/fitted/votary_female_parted_female.glb",
         "res://assets/actors/native/hair/fitted/votary_female_long_female.glb",
         "res://assets/actors/native/hair/fitted/votary_female_buns_female.glb",
-        "res://assets/actors/native/hair/fitted/votary_female_buzzed_female.glb"
+        "res://assets/actors/native/hair/fitted/votary_female_buzzed_female.glb",
+        "res://assets/actors/native/hair/fitted/votary_female_bob_female.glb",
+        "res://assets/actors/native/hair/fitted/votary_female_ponytail_female.glb",
+        "res://assets/actors/native/hair/fitted/votary_female_braid_female.glb",
+        "res://assets/actors/native/hair/fitted/votary_female_topknot_female.glb",
+        "res://assets/actors/native/hair/fitted/votary_female_mohawk_female.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -231,7 +314,56 @@
         "sourceSurface": 1,
         "mask": "res://assets/actors/native/face_masks/votary_female.png"
       },
-      "hairAllowsProtrusions": true
+      "hairAllowsProtrusions": true,
+      "skinPalette": {
+        "version": 1,
+        "sourceSHA256": "bbca1fa2d71c8e1a8637121ac0ce730e350b26691006455346c1d450fecfd7e8",
+        "references": {
+          "body": [
+            [
+              0.9409646281489619,
+              0.8384373362937004,
+              0.7336194254604038
+            ],
+            [
+              0.9595287301181967,
+              0.8573133680555558,
+              0.7570018699031509
+            ],
+            [
+              0.9439614289726309,
+              0.8392156862745098,
+              0.7372549019607844
+            ],
+            [
+              0.9491605073018792,
+              0.8470588235294118,
+              0.7423979550238886
+            ]
+          ],
+          "eyes": [
+            [
+              0.9595287301181967,
+              0.8573133680555558,
+              0.7570018699031509
+            ]
+          ],
+          "eyebrows": [
+            [
+              0.9595287301181967,
+              0.8573133680555558,
+              0.7570018699031509
+            ]
+          ],
+          "scalp": [
+            [
+              0.9595287301181967,
+              0.8573133680555558,
+              0.7570018699031509
+            ]
+          ]
+        }
+      }
     },
     "votary_male": {
       "scene": "res://assets/actors/native/races/votary_male.glb",
@@ -244,7 +376,12 @@
         "res://assets/actors/native/hair/fitted/votary_male_parted_male.glb",
         "res://assets/actors/native/hair/fitted/votary_male_long_male.glb",
         "res://assets/actors/native/hair/fitted/votary_male_buns_male.glb",
-        "res://assets/actors/native/hair/fitted/votary_male_buzzed_male.glb"
+        "res://assets/actors/native/hair/fitted/votary_male_buzzed_male.glb",
+        "res://assets/actors/native/hair/fitted/votary_male_bob_male.glb",
+        "res://assets/actors/native/hair/fitted/votary_male_ponytail_male.glb",
+        "res://assets/actors/native/hair/fitted/votary_male_braid_male.glb",
+        "res://assets/actors/native/hair/fitted/votary_male_topknot_male.glb",
+        "res://assets/actors/native/hair/fitted/votary_male_mohawk_male.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -281,7 +418,56 @@
         "sourceSurface": 1,
         "mask": "res://assets/actors/native/face_masks/votary_male.png"
       },
-      "hairAllowsProtrusions": true
+      "hairAllowsProtrusions": true,
+      "skinPalette": {
+        "version": 1,
+        "sourceSHA256": "9c08c46a55d6a0f1807edc55c183a827d86edde50469758e417f72d3f0b05ed7",
+        "references": {
+          "body": [
+            [
+              0.7277449935220167,
+              0.6959046661983652,
+              0.6716009191438207
+            ],
+            [
+              0.7484980161932893,
+              0.711556076847651,
+              0.6752396899370822
+            ],
+            [
+              0.7378771414164623,
+              0.7019607843137254,
+              0.6652888279335172
+            ],
+            [
+              0.7451041521816992,
+              0.7058823529411765,
+              0.6680662067887051
+            ]
+          ],
+          "eyes": [
+            [
+              0.7484980161932893,
+              0.711556076847651,
+              0.6752396899370822
+            ]
+          ],
+          "eyebrows": [
+            [
+              0.7484980161932893,
+              0.711556076847651,
+              0.6752396899370822
+            ]
+          ],
+          "scalp": [
+            [
+              0.7484980161932893,
+              0.711556076847651,
+              0.6752396899370822
+            ]
+          ]
+        }
+      }
     },
     "glasswarden_female": {
       "scene": "res://assets/actors/native/races/glasswarden_female.glb",
@@ -294,7 +480,12 @@
         "res://assets/actors/native/hair/fitted/glasswarden_female_parted_female.glb",
         "res://assets/actors/native/hair/fitted/glasswarden_female_long_female.glb",
         "res://assets/actors/native/hair/fitted/glasswarden_female_buns_female.glb",
-        "res://assets/actors/native/hair/fitted/glasswarden_female_buzzed_female.glb"
+        "res://assets/actors/native/hair/fitted/glasswarden_female_buzzed_female.glb",
+        "res://assets/actors/native/hair/fitted/glasswarden_female_bob_female.glb",
+        "res://assets/actors/native/hair/fitted/glasswarden_female_ponytail_female.glb",
+        "res://assets/actors/native/hair/fitted/glasswarden_female_braid_female.glb",
+        "res://assets/actors/native/hair/fitted/glasswarden_female_topknot_female.glb",
+        "res://assets/actors/native/hair/fitted/glasswarden_female_mohawk_female.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -330,6 +521,55 @@
       "faceAppearance": {
         "sourceSurface": 1,
         "mask": "res://assets/actors/native/face_masks/glasswarden_female.png"
+      },
+      "skinPalette": {
+        "version": 1,
+        "sourceSHA256": "a7f8fc3dece1bc3a2ff1cdd2f7f4db5b80ff8980bcd405b7da0b7954bf2e0092",
+        "references": {
+          "body": [
+            [
+              0.5600936159199359,
+              0.6927347282471223,
+              0.8470588235294118
+            ],
+            [
+              0.5841244439673567,
+              0.7277047702592184,
+              0.8880662463069718
+            ],
+            [
+              0.561333131478503,
+              0.6973073023466764,
+              0.8542452569807472
+            ],
+            [
+              0.5554337245966093,
+              0.6914604866378057,
+              0.8482430022867287
+            ]
+          ],
+          "eyes": [
+            [
+              0.5841244439673567,
+              0.7277047702592184,
+              0.8880662463069718
+            ]
+          ],
+          "eyebrows": [
+            [
+              0.5841244439673567,
+              0.7277047702592184,
+              0.8880662463069718
+            ]
+          ],
+          "scalp": [
+            [
+              0.5841244439673567,
+              0.7277047702592184,
+              0.8880662463069718
+            ]
+          ]
+        }
       }
     },
     "glasswarden_male": {
@@ -343,7 +583,12 @@
         "res://assets/actors/native/hair/fitted/glasswarden_male_parted_male.glb",
         "res://assets/actors/native/hair/fitted/glasswarden_male_long_male.glb",
         "res://assets/actors/native/hair/fitted/glasswarden_male_buns_male.glb",
-        "res://assets/actors/native/hair/fitted/glasswarden_male_buzzed_male.glb"
+        "res://assets/actors/native/hair/fitted/glasswarden_male_buzzed_male.glb",
+        "res://assets/actors/native/hair/fitted/glasswarden_male_bob_male.glb",
+        "res://assets/actors/native/hair/fitted/glasswarden_male_ponytail_male.glb",
+        "res://assets/actors/native/hair/fitted/glasswarden_male_braid_male.glb",
+        "res://assets/actors/native/hair/fitted/glasswarden_male_topknot_male.glb",
+        "res://assets/actors/native/hair/fitted/glasswarden_male_mohawk_male.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -380,7 +625,56 @@
         "sourceSurface": 1,
         "mask": "res://assets/actors/native/face_masks/glasswarden_male.png"
       },
-      "hairAllowsProtrusions": true
+      "hairAllowsProtrusions": true,
+      "skinPalette": {
+        "version": 1,
+        "sourceSHA256": "acde0bf5d110d1db68be8d2158c2f2dc7a86a692784b94c4a529d42a26e2f0a4",
+        "references": {
+          "body": [
+            [
+              0.43158246613795465,
+              0.5505819559584254,
+              0.736537749042698
+            ],
+            [
+              0.46346504922980575,
+              0.5859987745098058,
+              0.7694821908712904
+            ],
+            [
+              0.45355563307412317,
+              0.5713889922232472,
+              0.7529411764705882
+            ],
+            [
+              0.44406100710963503,
+              0.5509883483510652,
+              0.7372549019607844
+            ]
+          ],
+          "eyes": [
+            [
+              0.46346504922980575,
+              0.5859987745098058,
+              0.7694821908712904
+            ]
+          ],
+          "eyebrows": [
+            [
+              0.46346504922980575,
+              0.5859987745098058,
+              0.7694821908712904
+            ]
+          ],
+          "scalp": [
+            [
+              0.46346504922980575,
+              0.5859987745098058,
+              0.7694821908712904
+            ]
+          ]
+        }
+      }
     },
     "orun_female": {
       "scene": "res://assets/actors/native/races/orun_female.glb",
@@ -393,7 +687,12 @@
         "res://assets/actors/native/hair/fitted/orun_female_parted_female.glb",
         "res://assets/actors/native/hair/fitted/orun_female_long_female.glb",
         "res://assets/actors/native/hair/fitted/orun_female_buns_female.glb",
-        "res://assets/actors/native/hair/fitted/orun_female_buzzed_female.glb"
+        "res://assets/actors/native/hair/fitted/orun_female_buzzed_female.glb",
+        "res://assets/actors/native/hair/fitted/orun_female_bob_female.glb",
+        "res://assets/actors/native/hair/fitted/orun_female_ponytail_female.glb",
+        "res://assets/actors/native/hair/fitted/orun_female_braid_female.glb",
+        "res://assets/actors/native/hair/fitted/orun_female_topknot_female.glb",
+        "res://assets/actors/native/hair/fitted/orun_female_mohawk_female.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -429,6 +728,55 @@
       "faceAppearance": {
         "sourceSurface": 1,
         "mask": "res://assets/actors/native/face_masks/orun_female.png"
+      },
+      "skinPalette": {
+        "version": 1,
+        "sourceSHA256": "8e999cd89c48733e0b1e236bc9b89f8d4d1924e467e0dec13ca5bfe36f5df869",
+        "references": {
+          "body": [
+            [
+              0.7797608016144021,
+              0.4655373965992647,
+              0.20392156862745098
+            ],
+            [
+              0.8007700106676887,
+              0.4748021791898083,
+              0.20253145128553582
+            ],
+            [
+              0.7954486123876637,
+              0.47618962705524903,
+              0.20784313725490197
+            ],
+            [
+              0.8328538115994603,
+              0.5019607843137255,
+              0.2202837683406533
+            ]
+          ],
+          "eyes": [
+            [
+              0.8007700106676887,
+              0.4748021791898083,
+              0.20253145128553582
+            ]
+          ],
+          "eyebrows": [
+            [
+              0.8007700106676887,
+              0.4748021791898083,
+              0.20253145128553582
+            ]
+          ],
+          "scalp": [
+            [
+              0.8007700106676887,
+              0.4748021791898083,
+              0.20253145128553582
+            ]
+          ]
+        }
       }
     },
     "orun_male": {
@@ -442,7 +790,12 @@
         "res://assets/actors/native/hair/fitted/orun_male_parted_male.glb",
         "res://assets/actors/native/hair/fitted/orun_male_long_male.glb",
         "res://assets/actors/native/hair/fitted/orun_male_buns_male.glb",
-        "res://assets/actors/native/hair/fitted/orun_male_buzzed_male.glb"
+        "res://assets/actors/native/hair/fitted/orun_male_buzzed_male.glb",
+        "res://assets/actors/native/hair/fitted/orun_male_bob_male.glb",
+        "res://assets/actors/native/hair/fitted/orun_male_ponytail_male.glb",
+        "res://assets/actors/native/hair/fitted/orun_male_braid_male.glb",
+        "res://assets/actors/native/hair/fitted/orun_male_topknot_male.glb",
+        "res://assets/actors/native/hair/fitted/orun_male_mohawk_male.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -478,6 +831,55 @@
       "faceAppearance": {
         "sourceSurface": 1,
         "mask": "res://assets/actors/native/face_masks/orun_male.png"
+      },
+      "skinPalette": {
+        "version": 1,
+        "sourceSHA256": "80799003ab637952e3337105c9aea8f52b947fed0104866e8f6d13e780b30cc9",
+        "references": {
+          "body": [
+            [
+              0.7117476199966629,
+              0.42745098039215684,
+              0.212950782526552
+            ],
+            [
+              0.7275593199890942,
+              0.4326915865630103,
+              0.21248962801266313
+            ],
+            [
+              0.7289481895649094,
+              0.43137254901960786,
+              0.21176470588235294
+            ],
+            [
+              0.7137254901960784,
+              0.4196078431372549,
+              0.20392156862745098
+            ]
+          ],
+          "eyes": [
+            [
+              0.7275593199890942,
+              0.4326915865630103,
+              0.21248962801266313
+            ]
+          ],
+          "eyebrows": [
+            [
+              0.7275593199890942,
+              0.4326915865630103,
+              0.21248962801266313
+            ]
+          ],
+          "scalp": [
+            [
+              0.7275593199890942,
+              0.4326915865630103,
+              0.21248962801266313
+            ]
+          ]
+        }
       }
     },
     "greyhaven_female": {
@@ -491,7 +893,12 @@
         "res://assets/actors/native/hair/fitted/greyhaven_female_parted_female.glb",
         "res://assets/actors/native/hair/fitted/greyhaven_female_long_female.glb",
         "res://assets/actors/native/hair/fitted/greyhaven_female_buns_female.glb",
-        "res://assets/actors/native/hair/fitted/greyhaven_female_buzzed_female.glb"
+        "res://assets/actors/native/hair/fitted/greyhaven_female_buzzed_female.glb",
+        "res://assets/actors/native/hair/fitted/greyhaven_female_bob_female.glb",
+        "res://assets/actors/native/hair/fitted/greyhaven_female_ponytail_female.glb",
+        "res://assets/actors/native/hair/fitted/greyhaven_female_braid_female.glb",
+        "res://assets/actors/native/hair/fitted/greyhaven_female_topknot_female.glb",
+        "res://assets/actors/native/hair/fitted/greyhaven_female_mohawk_female.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -527,6 +934,55 @@
       "faceAppearance": {
         "sourceSurface": 1,
         "mask": "res://assets/actors/native/face_masks/greyhaven_female.png"
+      },
+      "skinPalette": {
+        "version": 1,
+        "sourceSHA256": "ab23f8f16e0d3de5c7a0763c0cd4f2a43f42292cb5afe93c8bb365a8ae7f8cf6",
+        "references": {
+          "body": [
+            [
+              0.7097658141376146,
+              0.48221829125986443,
+              0.33041001408155957
+            ],
+            [
+              0.7017484853470266,
+              0.47424352067747866,
+              0.31994667037639724
+            ],
+            [
+              0.6939463496987338,
+              0.47193043577176114,
+              0.32159302962014646
+            ],
+            [
+              0.6510746974571079,
+              0.4373020546109069,
+              0.2901960784313726
+            ]
+          ],
+          "eyes": [
+            [
+              0.7017484853470266,
+              0.47424352067747866,
+              0.31994667037639724
+            ]
+          ],
+          "eyebrows": [
+            [
+              0.7017484853470266,
+              0.47424352067747866,
+              0.31994667037639724
+            ]
+          ],
+          "scalp": [
+            [
+              0.7017484853470266,
+              0.47424352067747866,
+              0.31994667037639724
+            ]
+          ]
+        }
       }
     },
     "greyhaven_male": {
@@ -540,7 +996,12 @@
         "res://assets/actors/native/hair/fitted/greyhaven_male_parted_male.glb",
         "res://assets/actors/native/hair/fitted/greyhaven_male_long_male.glb",
         "res://assets/actors/native/hair/fitted/greyhaven_male_buns_male.glb",
-        "res://assets/actors/native/hair/fitted/greyhaven_male_buzzed_male.glb"
+        "res://assets/actors/native/hair/fitted/greyhaven_male_buzzed_male.glb",
+        "res://assets/actors/native/hair/fitted/greyhaven_male_bob_male.glb",
+        "res://assets/actors/native/hair/fitted/greyhaven_male_ponytail_male.glb",
+        "res://assets/actors/native/hair/fitted/greyhaven_male_braid_male.glb",
+        "res://assets/actors/native/hair/fitted/greyhaven_male_topknot_male.glb",
+        "res://assets/actors/native/hair/fitted/greyhaven_male_mohawk_male.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -576,6 +1037,55 @@
       "faceAppearance": {
         "sourceSurface": 1,
         "mask": "res://assets/actors/native/face_masks/greyhaven_male.png"
+      },
+      "skinPalette": {
+        "version": 1,
+        "sourceSHA256": "c6196b1d5cb71711866655bd4aaecc09c753577f56e69d22d9b2f8dca3a3e3c4",
+        "references": {
+          "body": [
+            [
+              0.7004373344525789,
+              0.48806797149134623,
+              0.29341412599569827
+            ],
+            [
+              0.7365658773056559,
+              0.49945076337826766,
+              0.28018068654345046
+            ],
+            [
+              0.7279352325239993,
+              0.4978639291002858,
+              0.2878981646369485
+            ],
+            [
+              0.7411764705882353,
+              0.4980392156862745,
+              0.27450980392156865
+            ]
+          ],
+          "eyes": [
+            [
+              0.7365658773056559,
+              0.49945076337826766,
+              0.28018068654345046
+            ]
+          ],
+          "eyebrows": [
+            [
+              0.7365658773056559,
+              0.49945076337826766,
+              0.28018068654345046
+            ]
+          ],
+          "scalp": [
+            [
+              0.7365658773056559,
+              0.49945076337826766,
+              0.28018068654345046
+            ]
+          ]
+        }
       }
     },
     "ssarathi_female": {
@@ -589,7 +1099,12 @@
         "res://assets/actors/native/hair/fitted/ssarathi_female_parted_female.glb",
         "res://assets/actors/native/hair/fitted/ssarathi_female_long_female.glb",
         "res://assets/actors/native/hair/fitted/ssarathi_female_buns_female.glb",
-        "res://assets/actors/native/hair/fitted/ssarathi_female_buzzed_female.glb"
+        "res://assets/actors/native/hair/fitted/ssarathi_female_buzzed_female.glb",
+        "res://assets/actors/native/hair/fitted/ssarathi_female_bob_female.glb",
+        "res://assets/actors/native/hair/fitted/ssarathi_female_ponytail_female.glb",
+        "res://assets/actors/native/hair/fitted/ssarathi_female_braid_female.glb",
+        "res://assets/actors/native/hair/fitted/ssarathi_female_topknot_female.glb",
+        "res://assets/actors/native/hair/fitted/ssarathi_female_mohawk_female.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -625,6 +1140,65 @@
       "faceAppearance": {
         "sourceSurface": 1,
         "mask": "res://assets/actors/native/face_masks/ssarathi_female.png"
+      },
+      "skinPalette": {
+        "version": 1,
+        "sourceSHA256": "296e97507321a22b64f93957c7b4c413ed2b1c0edd9e563ce267e0c45e50ecd9",
+        "references": {
+          "body": [
+            [
+              0.3411764705882353,
+              0.3809915134135416,
+              0.2940795396278107
+            ],
+            [
+              0.34970057107069913,
+              0.39055685955455205,
+              0.2989776148515647
+            ],
+            [
+              0.33667543418461976,
+              0.3795486824185236,
+              0.2899020594254564
+            ],
+            [
+              0.35697715904782806,
+              0.3934177348589062,
+              0.2976478346829427
+            ],
+            [
+              0.30919303286309313,
+              0.3510456507404645,
+              0.2719305491005939
+            ],
+            [
+              0.2171481722580322,
+              0.14838552177601644,
+              0.09411764705882353
+            ]
+          ],
+          "eyes": [
+            [
+              0.34970057107069913,
+              0.39055685955455205,
+              0.2989776148515647
+            ]
+          ],
+          "eyebrows": [
+            [
+              0.34970057107069913,
+              0.39055685955455205,
+              0.2989776148515647
+            ]
+          ],
+          "scalp": [
+            [
+              0.34970057107069913,
+              0.39055685955455205,
+              0.2989776148515647
+            ]
+          ]
+        }
       }
     },
     "ssarathi_male": {
@@ -638,7 +1212,12 @@
         "res://assets/actors/native/hair/fitted/ssarathi_male_parted_male.glb",
         "res://assets/actors/native/hair/fitted/ssarathi_male_long_male.glb",
         "res://assets/actors/native/hair/fitted/ssarathi_male_buns_male.glb",
-        "res://assets/actors/native/hair/fitted/ssarathi_male_buzzed_male.glb"
+        "res://assets/actors/native/hair/fitted/ssarathi_male_buzzed_male.glb",
+        "res://assets/actors/native/hair/fitted/ssarathi_male_bob_male.glb",
+        "res://assets/actors/native/hair/fitted/ssarathi_male_ponytail_male.glb",
+        "res://assets/actors/native/hair/fitted/ssarathi_male_braid_male.glb",
+        "res://assets/actors/native/hair/fitted/ssarathi_male_topknot_male.glb",
+        "res://assets/actors/native/hair/fitted/ssarathi_male_mohawk_male.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -674,6 +1253,65 @@
       "faceAppearance": {
         "sourceSurface": 1,
         "mask": "res://assets/actors/native/face_masks/ssarathi_male.png"
+      },
+      "skinPalette": {
+        "version": 1,
+        "sourceSHA256": "3df907b2e21986c87fa49dc2fa4dc608d2f01722ed911a566314b41ba0d5320e",
+        "references": {
+          "body": [
+            [
+              0.2548595644206962,
+              0.30980392156862746,
+              0.22860771820825712
+            ],
+            [
+              0.3349568211694712,
+              0.3883347048478939,
+              0.2648608305095843
+            ],
+            [
+              0.275595032935049,
+              0.3303021967329881,
+              0.2364043896080426
+            ],
+            [
+              0.4666666666666667,
+              0.5176470588235295,
+              0.3215686274509804
+            ],
+            [
+              0.260921101031058,
+              0.3137254901960784,
+              0.2274254871869073
+            ],
+            [
+              0.19593419739915646,
+              0.12612517189096512,
+              0.08543673949498712
+            ]
+          ],
+          "eyes": [
+            [
+              0.3349568211694712,
+              0.3883347048478939,
+              0.2648608305095843
+            ]
+          ],
+          "eyebrows": [
+            [
+              0.3349568211694712,
+              0.3883347048478939,
+              0.2648608305095843
+            ]
+          ],
+          "scalp": [
+            [
+              0.3349568211694712,
+              0.3883347048478939,
+              0.2648608305095843
+            ]
+          ]
+        }
       }
     },
     "stoneborn_female": {
@@ -687,7 +1325,12 @@
         "res://assets/actors/native/hair/fitted/stoneborn_female_parted_female.glb",
         "res://assets/actors/native/hair/fitted/stoneborn_female_long_female.glb",
         "res://assets/actors/native/hair/fitted/stoneborn_female_buns_female.glb",
-        "res://assets/actors/native/hair/fitted/stoneborn_female_buzzed_female.glb"
+        "res://assets/actors/native/hair/fitted/stoneborn_female_buzzed_female.glb",
+        "res://assets/actors/native/hair/fitted/stoneborn_female_bob_female.glb",
+        "res://assets/actors/native/hair/fitted/stoneborn_female_ponytail_female.glb",
+        "res://assets/actors/native/hair/fitted/stoneborn_female_braid_female.glb",
+        "res://assets/actors/native/hair/fitted/stoneborn_female_topknot_female.glb",
+        "res://assets/actors/native/hair/fitted/stoneborn_female_mohawk_female.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -724,7 +1367,56 @@
         "sourceSurface": 1,
         "mask": "res://assets/actors/native/face_masks/stoneborn_female.png"
       },
-      "hairAllowsProtrusions": true
+      "hairAllowsProtrusions": true,
+      "skinPalette": {
+        "version": 1,
+        "sourceSHA256": "7cf5c3085122eb398ae522ba9f47f2c1693ffa482d4ecf1dad321795188624ed",
+        "references": {
+          "body": [
+            [
+              0.2549019607843137,
+              0.2542004903741911,
+              0.2559720511529961
+            ],
+            [
+              0.2644850927240702,
+              0.26358148210188975,
+              0.2645022844696854
+            ],
+            [
+              0.25555236417483673,
+              0.2555072061376635,
+              0.25646115342329595
+            ],
+            [
+              0.26666666666666666,
+              0.2671718618884775,
+              0.2667558615584909
+            ]
+          ],
+          "eyes": [
+            [
+              0.2644850927240702,
+              0.26358148210188975,
+              0.2645022844696854
+            ]
+          ],
+          "eyebrows": [
+            [
+              0.2644850927240702,
+              0.26358148210188975,
+              0.2645022844696854
+            ]
+          ],
+          "scalp": [
+            [
+              0.2644850927240702,
+              0.26358148210188975,
+              0.2645022844696854
+            ]
+          ]
+        }
+      }
     },
     "stoneborn_male": {
       "scene": "res://assets/actors/native/races/stoneborn_male.glb",
@@ -737,7 +1429,12 @@
         "res://assets/actors/native/hair/fitted/stoneborn_male_parted_male.glb",
         "res://assets/actors/native/hair/fitted/stoneborn_male_long_male.glb",
         "res://assets/actors/native/hair/fitted/stoneborn_male_buns_male.glb",
-        "res://assets/actors/native/hair/fitted/stoneborn_male_buzzed_male.glb"
+        "res://assets/actors/native/hair/fitted/stoneborn_male_buzzed_male.glb",
+        "res://assets/actors/native/hair/fitted/stoneborn_male_bob_male.glb",
+        "res://assets/actors/native/hair/fitted/stoneborn_male_ponytail_male.glb",
+        "res://assets/actors/native/hair/fitted/stoneborn_male_braid_male.glb",
+        "res://assets/actors/native/hair/fitted/stoneborn_male_topknot_male.glb",
+        "res://assets/actors/native/hair/fitted/stoneborn_male_mohawk_male.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -774,7 +1471,56 @@
         "sourceSurface": 1,
         "mask": "res://assets/actors/native/face_masks/stoneborn_male.png"
       },
-      "hairAllowsProtrusions": true
+      "hairAllowsProtrusions": true,
+      "skinPalette": {
+        "version": 1,
+        "sourceSHA256": "f4718edbebbf17fa3d544b242127f30aa6d0609652b1ffc397926713193b99e4",
+        "references": {
+          "body": [
+            [
+              0.21787093418096376,
+              0.21550124603159287,
+              0.21113675575954985
+            ],
+            [
+              0.23529411764705882,
+              0.23007190180759804,
+              0.2234022789726072
+            ],
+            [
+              0.2196078431372549,
+              0.21509180006638087,
+              0.20626876178909734
+            ],
+            [
+              0.20392156862745098,
+              0.2017539358825659,
+              0.1939385061839105
+            ]
+          ],
+          "eyes": [
+            [
+              0.23529411764705882,
+              0.23007190180759804,
+              0.2234022789726072
+            ]
+          ],
+          "eyebrows": [
+            [
+              0.23529411764705882,
+              0.23007190180759804,
+              0.2234022789726072
+            ]
+          ],
+          "scalp": [
+            [
+              0.23529411764705882,
+              0.23007190180759804,
+              0.2234022789726072
+            ]
+          ]
+        }
+      }
     },
     "mycelari_female": {
       "scene": "res://assets/actors/native/races/mycelari_female.glb",
@@ -787,7 +1533,12 @@
         "res://assets/actors/native/hair/fitted/mycelari_female_parted_female.glb",
         "res://assets/actors/native/hair/fitted/mycelari_female_long_female.glb",
         "res://assets/actors/native/hair/fitted/mycelari_female_buns_female.glb",
-        "res://assets/actors/native/hair/fitted/mycelari_female_buzzed_female.glb"
+        "res://assets/actors/native/hair/fitted/mycelari_female_buzzed_female.glb",
+        "res://assets/actors/native/hair/fitted/mycelari_female_bob_female.glb",
+        "res://assets/actors/native/hair/fitted/mycelari_female_ponytail_female.glb",
+        "res://assets/actors/native/hair/fitted/mycelari_female_braid_female.glb",
+        "res://assets/actors/native/hair/fitted/mycelari_female_topknot_female.glb",
+        "res://assets/actors/native/hair/fitted/mycelari_female_mohawk_female.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -823,6 +1574,48 @@
       "faceAppearance": {
         "sourceSurface": 1,
         "mask": "res://assets/actors/native/face_masks/mycelari_female.png"
+      },
+      "skinPalette": {
+        "version": 1,
+        "sourceSHA256": "4303b328ecb201aa582f0db71f8f6cdf5114598d42a433b48a58a5c538907d97",
+        "references": {
+          "body": [
+            [
+              0.7882153674667957,
+              0.7051544712065096,
+              0.6430319393382353
+            ],
+            [
+              0.803331220851225,
+              0.7179026785629304,
+              0.655376099020827
+            ],
+            [
+              0.7899517175483803,
+              0.704877799593545,
+              0.6403381746578846
+            ],
+            [
+              0.803921568627451,
+              0.7191791066246551,
+              0.6575636766339634
+            ]
+          ],
+          "eyes": [
+            [
+              0.803331220851225,
+              0.7179026785629304,
+              0.655376099020827
+            ]
+          ],
+          "scalp": [
+            [
+              0.803331220851225,
+              0.7179026785629304,
+              0.655376099020827
+            ]
+          ]
+        }
       }
     },
     "mycelari_male": {
@@ -836,7 +1629,12 @@
         "res://assets/actors/native/hair/fitted/mycelari_male_parted_male.glb",
         "res://assets/actors/native/hair/fitted/mycelari_male_long_male.glb",
         "res://assets/actors/native/hair/fitted/mycelari_male_buns_male.glb",
-        "res://assets/actors/native/hair/fitted/mycelari_male_buzzed_male.glb"
+        "res://assets/actors/native/hair/fitted/mycelari_male_buzzed_male.glb",
+        "res://assets/actors/native/hair/fitted/mycelari_male_bob_male.glb",
+        "res://assets/actors/native/hair/fitted/mycelari_male_ponytail_male.glb",
+        "res://assets/actors/native/hair/fitted/mycelari_male_braid_male.glb",
+        "res://assets/actors/native/hair/fitted/mycelari_male_topknot_male.glb",
+        "res://assets/actors/native/hair/fitted/mycelari_male_mohawk_male.glb"
       ],
       "boneAliases": {
         "head": "Head"
@@ -872,6 +1670,48 @@
       "faceAppearance": {
         "sourceSurface": 1,
         "mask": "res://assets/actors/native/face_masks/mycelari_male.png"
+      },
+      "skinPalette": {
+        "version": 1,
+        "sourceSHA256": "db4b6034e20b0fb799279f4755a7c094eda5cf6b2b47c322f236538beaf65509",
+        "references": {
+          "body": [
+            [
+              0.8492178897257724,
+              0.80491233277165,
+              0.7326081366515627
+            ],
+            [
+              0.8942362134752715,
+              0.8453038832720589,
+              0.7629721233657761
+            ],
+            [
+              0.8765123162931947,
+              0.8217357733345767,
+              0.7370457069546569
+            ],
+            [
+              0.8705740259818262,
+              0.8142103207656761,
+              0.7236460766761131
+            ]
+          ],
+          "eyes": [
+            [
+              0.8942362134752715,
+              0.8453038832720589,
+              0.7629721233657761
+            ]
+          ],
+          "scalp": [
+            [
+              0.8942362134752715,
+              0.8453038832720589,
+              0.7629721233657761
+            ]
+          ]
+        }
       }
     },
     "emberfox": {

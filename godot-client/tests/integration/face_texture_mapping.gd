@@ -45,6 +45,8 @@ func run() -> void:
 			for eyes in range(12):
 				actor.apply_appearance_variants({"skin": skin, "eyes": eyes, "hair": 0})
 				expect(face.get_shader_parameter("skin_tint") == AppearanceVariants.skin_tint(skin), slug + " skin selection")
+				expect(face.get_shader_parameter("skin_color") == AppearanceVariants.skin_color(skin), slug + " face uses the named target color")
+				expect(face.get_shader_parameter("recolor_skin") == (skin != 0), slug + " legacy authored tone stays compatible")
 				expect(face.get_shader_parameter("eye_tint") == AppearanceVariants.eye_color(eyes), slug + " eye selection")
 				for part: String in ["eyes", "eyebrows", "scalp"]:
 					var mesh := actor.find_child(part, true, false) as MeshInstance3D
@@ -61,9 +63,14 @@ func run() -> void:
 						else:
 							expect(mesh.get_active_material(0) == face, slug + " " + part + " shares continuous skin/eye mapping")
 				if not grouped:
-					var trunk := body.get_active_material(0) as StandardMaterial3D
-					var trunk_source := body.mesh.surface_get_material(0) as StandardMaterial3D
-					expect(trunk.albedo_color.is_equal_approx(trunk_source.albedo_color * AppearanceVariants.skin_tint(skin)), slug + " body tint does not accumulate")
+					for body_surface in range(body.mesh.get_surface_count()):
+						var trunk := body.get_active_material(body_surface) as ShaderMaterial
+						var trunk_source := body.mesh.surface_get_material(body_surface) as StandardMaterial3D
+						expect(trunk != null, slug + " every skin surface uses calibrated color")
+						if trunk == null:
+							continue
+						expect(trunk.get_shader_parameter("skin_color") == AppearanceVariants.skin_color(skin), slug + " face, hands, neck and tail share the selected color")
+						expect(trunk.get_shader_parameter("base_texture") == trunk_source.albedo_texture, slug + " skin dye preserves each source atlas")
 		actor.apply_appearance_variants({"skin": 0, "eyes": 0, "hair": 0})
 		for hair in range(10):
 			actor.apply_appearance_variants({"skin": 0, "eyes": 0, "hair": hair})

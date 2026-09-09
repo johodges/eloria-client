@@ -196,6 +196,8 @@ var _attachment_bones: Dictionary = {}
 var _model_config: Dictionary = {}
 var _face_material: ShaderMaterial
 var _face_group_materials: Dictionary = {}
+var _skin_materials: Dictionary = {}
+var _skin_choice := 0
 var _equipment_config: Dictionary = {}
 var _equipment_visuals: Dictionary = {}
 var _equipment_nodes: Dictionary = {}
@@ -386,6 +388,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	_model_config = model_config.duplicate(true)
 	_face_material = null
 	_face_group_materials.clear()
+	_skin_materials.clear()
 	_attachment_bones = (model_config.get("attachments", {}) as Dictionary).duplicate(true)
 	_equipment_config = (equipment_config as Dictionary).duplicate(true)
 	var source_path := _external_path(str(model_config.get("scene", "")))
@@ -436,6 +439,7 @@ func apply_appearance_variants(appearance: Dictionary) -> void:
 	if _native_skeleton == null:
 		return
 	var culture: String = str(_model_config.get("culture", "luminous"))
+	_skin_choice = int(appearance.get("skin", 0))
 	var skin_tint: Color = AppearanceVariants.skin_tint(int(appearance.get("skin", 0)))
 	var hair_tint: Color = AppearanceVariants.hair_color(int(appearance.get("hair", 0)))
 	var eye_tint: Color = AppearanceVariants.eye_color(int(appearance.get("eyes", 0)))
@@ -451,11 +455,11 @@ func apply_appearance_variants(appearance: Dictionary) -> void:
 		elif mesh_name == "eyebrows":
 			_tint_mesh(mesh_node, hair_tint)
 		elif mesh_name == "body":
-			_tint_mesh(mesh_node, skin_tint)
+			_apply_skin_materials(mesh_node, skin_tint)
 		elif mesh_name == "hair":
 			_tint_mesh(mesh_node, hair_tint)
 		elif mesh_name == "scalp":
-			_tint_mesh(mesh_node, skin_tint)
+			_apply_skin_materials(mesh_node, skin_tint)
 		elif mesh_name == "wardrobe_shirt":
 			# Kept on the node so equipping and unequipping a cuirass can put
 			# the character's own colour back without the appearance dictionary.
@@ -524,6 +528,7 @@ func _apply_face_appearance(native_model: Node3D, skin: Color, eyes: Color, hair
 		_face_material.set_shader_parameter("normal_texture", original.normal_texture)
 		_face_material.set_shader_parameter("normal_scale", original.normal_scale)
 	_face_material.set_shader_parameter("skin_tint", skin)
+	_configure_skin_color(_face_material, "body", surface)
 	_face_material.set_shader_parameter("eye_tint", eyes)
 	_face_material.set_shader_parameter("hair_tint", hair)
 	body.set_surface_override_material(surface, _face_material)
@@ -566,11 +571,48 @@ func _apply_grouped_face_appearance(native_model: Node3D, spec: Dictionary,
 			face.set_shader_parameter("mask_uv_offset", Vector2(float(offset[0]), float(offset[1])))
 			_face_group_materials[part] = face
 		face.set_shader_parameter("skin_tint", skin)
+		_configure_skin_color(face, part, 0)
 		face.set_shader_parameter("eye_tint", eyes)
 		face.set_shader_parameter("hair_tint", hair)
 		mesh.material_override = face
 		if part == "body":
 			_face_material = face
+
+func _configure_skin_color(material: ShaderMaterial, part: String, surface: int) -> void:
+	var palette: Dictionary = _model_config.get("skinPalette", {})
+	var refs: Array = palette.get("references", {}).get(part, [])
+	var calibrated := surface < refs.size()
+	material.set_shader_parameter("recolor_skin", calibrated and _skin_choice != 0)
+	material.set_shader_parameter("skin_color", AppearanceVariants.skin_color(_skin_choice))
+	if calibrated:
+		var rgb: Array = refs[surface]
+		material.set_shader_parameter("skin_reference", Color(float(rgb[0]), float(rgb[1]), float(rgb[2])))
+
+func _apply_skin_materials(mesh: MeshInstance3D, tint: Color) -> void:
+	if not _model_config.has("skinPalette"):
+		_tint_mesh(mesh, tint)
+		return
+	mesh.material_override = null
+	for surface in range(mesh.mesh.get_surface_count()):
+		var key := str(mesh.name) + ":" + str(surface)
+		var material := _skin_materials.get(key) as ShaderMaterial
+		if material == null:
+			var original := mesh.mesh.surface_get_material(surface) as StandardMaterial3D
+			if original == null:
+				continue
+			material = ShaderMaterial.new()
+			material.shader = preload("res://src/actors/face_appearance.gdshader")
+			material.set_shader_parameter("base_texture", original.albedo_texture)
+			material.set_shader_parameter("base_color", original.albedo_color)
+			material.set_shader_parameter("roughness", original.roughness)
+			material.set_shader_parameter("use_normal", original.normal_enabled)
+			material.set_shader_parameter("normal_texture", original.normal_texture)
+			material.set_shader_parameter("normal_scale", original.normal_scale)
+			material.set_shader_parameter("use_regions", false)
+			_skin_materials[key] = material
+		material.set_shader_parameter("skin_tint", tint)
+		_configure_skin_color(material, str(mesh.name), surface)
+		mesh.set_surface_override_material(surface, material)
 
 func _tint_mesh(mesh_node: MeshInstance3D, tint: Color,
 		emissive: bool = false) -> void:

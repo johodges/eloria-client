@@ -8,25 +8,25 @@ static func options(category: String, culture := "luminous", part := 0) -> Array
 	var colors: Array[Color] = []
 	match category:
 		"hair":
-			names = ["Bald", "Parted", "Long", "Buns", "Buzzcut"]
-			order = [0, 4, 1, 2, 3]
+			names = ["Bald", "Parted", "Long", "Buns", "Buzzcut", "Bob", "Ponytail", "Long braid", "Topknot", "Mohawk"]
+			order = [0, 4, 1, 9, 5, 8, 3, 6, 2, 7]
 		"skin":
-			names = ["Natural", "Pale", "Golden", "Tan", "Deep brown", "Ebony", "Frost blue", "Moss green", "Dusk violet", "Stone grey"]
-			order = [1, 0, 2, 3, 4, 5, 9, 7, 6, 8]
+			names = ["", "Pale beige", "Golden tan", "Warm brown", "Deep brown", "Ebony brown", "Frost blue", "Moss green", "Dusk violet", "Stone grey"]
+			order = [1, 2, 3, 4, 5, 9, 7, 6, 8]
 			for id: int in range(names.size()):
-				colors.append(AppearanceVariants.skin_tint(id))
+				colors.append(AppearanceVariants.skin_color(id))
 		"eyes":
-			names = ["Blue", "Green", "Brown", "Amber", "Violet", "Teal", "Red", "Silver", "Slate", "Orange", "Lime", "Pink"]
+			names = ["Sky blue", "Emerald green", "Chestnut brown", "Amber gold", "Violet purple", "Turquoise blue", "Brick red", "Silver grey", "Slate blue", "Amber orange", "Lime green", "Rose pink"]
 			order = [7, 8, 2, 3, 9, 6, 10, 1, 5, 0, 4, 11]
 			for id: int in range(names.size()):
 				colors.append(AppearanceVariants.eye_color(id))
 		"hair_color":
-			names = ["Black", "Dark brown", "Brown", "Blond", "Red", "Silver", "White", "Blue", "Green", "Violet", "Rose", "Teal", "Sandy brown", "Charcoal", "Copper", "Auburn", "Pink", "Jade", "Pale gold", "Midnight blue"]
+			names = ["Soft black", "Dark brown", "Chestnut brown", "Golden blond", "Copper red", "Silver grey", "Ivory white", "Steel blue", "Pine green", "Violet purple", "Rose pink", "Teal blue", "Sandy brown", "Charcoal grey", "Copper orange", "Auburn brown", "Pale pink", "Jade green", "Pale gold", "Midnight blue"]
 			order = [6, 5, 13, 0, 18, 3, 12, 2, 1, 14, 15, 4, 17, 8, 11, 7, 19, 9, 16, 10]
 			for id: int in range(names.size()):
 				colors.append(AppearanceVariants.hair_color(id))
 		"wardrobe":
-			names = ["Traditional", "Light traditional", "Dark traditional", "Accent", "Crimson", "Forest", "Navy", "Gold", "Plum", "Rust", "Ivory", "Charcoal"]
+			names = wardrobe_names(culture, part)
 			order = range(names.size())
 			for id: int in order:
 				colors.append(AppearanceVariants.wardrobe_color(culture, part, id))
@@ -64,4 +64,21 @@ static func populate(control: OptionButton, choices: Array[Dictionary]) -> void:
 		else:
 			control.add_item(entry.label, entry.id)
 	var selected := control.get_item_index(previous)
-	control.select(selected if selected >= 0 else control.get_item_index(0))
+	control.select(selected if selected >= 0 else (0 if not choices.is_empty() else -1))
+
+static func wardrobe_names(culture: String, part: int) -> Array:
+	# Names describe the actual palette for each garment, independent of race.
+	var palettes := {
+		"luminous": ["Teal blue", "Slate blue", "Walnut brown", "Champagne gold"],
+		"votary": ["Steel blue", "Slate blue", "Blue grey", "Ice white"],
+		"glasswarden": ["Indigo purple", "Ink blue", "Walnut brown", "Antique gold"],
+		"orun": ["Burnt orange", "Umber brown", "Walnut brown", "Turquoise blue"],
+		"greyhaven": ["Ivory white", "Slate blue", "Espresso brown", "Bronze gold"],
+		"ssarathi": ["Jade green", "Pine green", "Olive brown", "Antique gold"],
+		"stoneborn": ["Warm grey", "Slate grey", "Taupe brown", "Turquoise blue"],
+		"mycelari": ["Moss green", "Olive green", "Walnut brown", "Apricot orange"]}
+	var row: Array = palettes.get(culture, palettes["luminous"])
+	var column := 1 if part == AppearanceVariants.PART_PANTS else (2 if part == AppearanceVariants.PART_BOOTS else 0)
+	var base: String = row[column]
+	return [base, "Light " + base.to_lower(), "Dark " + base.to_lower(), row[3],
+		"Crimson red", "Forest green", "Navy blue", "Ochre gold", "Plum purple", "Rust orange", "Cream white", "Charcoal grey"]

@@ -13,14 +13,27 @@ uniform bool use_normal = false;
 uniform float normal_scale = 1.0;
 uniform vec4 base_color : source_color = vec4(1.0);
 uniform vec4 skin_tint : source_color = vec4(1.0);
+uniform vec4 skin_reference : source_color = vec4(1.0);
+uniform vec4 skin_color : source_color = vec4(1.0);
+uniform bool recolor_skin = false;
+uniform bool use_regions = true;
 uniform vec4 eye_tint : source_color = vec4(1.0);
 uniform vec4 hair_tint : source_color = vec4(1.0);
 uniform float roughness = 0.85;
 
 void fragment() {
 	vec3 original = texture(base_texture, UV).rgb * base_color.rgb;
-	vec3 mask = texture(region_texture, UV * mask_uv_scale + mask_uv_offset).rgb;
+	vec3 mask = use_regions ? texture(region_texture, UV * mask_uv_scale + mask_uv_offset).rgb : vec3(0.0);
 	vec3 skin = original * skin_tint.rgb;
+	if (recolor_skin) {
+		// Divide in linear space, then apply the selected color. Retain a
+		// little local pigment variation without letting the source race hue
+		// overwhelm a blue, grey or brown selection.
+		vec3 detail = original / max(skin_reference.rgb, vec3(0.005));
+		float value = dot(original, vec3(0.2126, 0.7152, 0.0722)) /
+			max(dot(skin_reference.rgb, vec3(0.2126, 0.7152, 0.0722)), 0.005);
+		skin = skin_color.rgb * mix(vec3(value), detail, 0.2);
+	}
 	vec3 eye = original;
 	float peak = max(original.r, max(original.g, original.b));
 	// Neutralise the authored iris hue, retaining its pupil and highlights.

@@ -3484,6 +3484,11 @@ AUTHORED_IMPORT_KEYS = ("rotationDegreesX", "rotationDegreesY",
 
 def keep_catalogued(previous: dict, fresh: dict) -> dict:
     """One model entry: the generator's lines, and the catalogue's numbers."""
+    if previous.get('bodyTemplate'):
+        # The source-body installer owns these reviewed models, including the
+        # fitted hairstyles and skin calibration. Generic seeds cannot replace
+        # those assets with old hair caps on a subsequent registry rebuild.
+        return copy.deepcopy(previous)
     merged = {**fresh,
               **{key: value for key, value in previous.items()
                  if key != "import" and key not in AUTHORED_MODEL_KEYS}}

@@ -14,10 +14,10 @@ ambient_light_energy = 0.85
 [sub_resource type="Environment" id="Environment_preview"]
 background_mode = 1
 background_color = Color(0.22, 0.23, 0.25, 1)
-ambient_light_source = 3
-ambient_light_color = Color(0.72, 0.75, 0.82, 1)
-ambient_light_energy = 1.15
-tonemap_mode = 2
+ambient_light_source = 2
+ambient_light_color = Color(0.9, 0.93, 1, 1)
+ambient_light_energy = 0.45
+tonemap_mode = 0
 
 [sub_resource type="StandardMaterial3D" id="Material_ground"]
 albedo_color = Color(0.2, 0.28, 0.22, 1)
@@ -2927,21 +2927,21 @@ environment = SubResource("Environment_preview")
 [node name="KeyLight" type="DirectionalLight3D" parent="CreationPanel/Columns/CharacterPreview/Viewport/PreviewRoot"]
 unique_name_in_owner = true
 rotation_degrees = Vector3(-32, 0, 0)
-light_energy = 1.15
+light_energy = 0.85
 shadow_enabled = true
 directional_shadow_max_distance = 12.0
 
 [node name="FillLight" type="DirectionalLight3D" parent="CreationPanel/Columns/CharacterPreview/Viewport/PreviewRoot"]
 unique_name_in_owner = true
 rotation_degrees = Vector3(-8, 145, 0)
-light_color = Color(0.78, 0.83, 0.95, 1)
-light_energy = 0.45
+light_color = Color(1, 1, 1, 1)
+light_energy = 0.2
 
 [node name="RimLight" type="DirectionalLight3D" parent="CreationPanel/Columns/CharacterPreview/Viewport/PreviewRoot"]
 unique_name_in_owner = true
 rotation_degrees = Vector3(28, 205, 0)
-light_color = Color(0.95, 0.9, 0.82, 1)
-light_energy = 0.35
+light_color = Color(1, 1, 1, 1)
+light_energy = 0.2
 
 [node name="Form" type="VBoxContainer" parent="CreationPanel/Columns" unique_id=381403297]
 custom_minimum_size = Vector2(440, 0)

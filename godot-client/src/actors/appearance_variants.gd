@@ -5,7 +5,9 @@ const PART_HEAD := 3
 const PART_PANTS := 4
 const PART_SHIRT := 5
 const PART_BOOTS := 6
-const HAIR_STYLE_COUNT := 5
+const HAIR_STYLE_COUNT := 10
+const ORIGINAL_HAIR_STYLE_COUNT := 5
+const EXTENDED_HAIR_START := 200
 const HAIR_COLOR_COUNT := 20
 const PACKED_HAIR_START := 100
 const LEGACY_PACKED_HAIR_START := 20
@@ -15,11 +17,27 @@ static func pack_hair(style: int, color: int) -> int:
 	# Existing values 0..19 keep their original combined style/color meaning.
 	# Values 20..99 retain the previous four-style encoding.
 	# Values 100..199 add the restored buzzcut in the same protocol byte.
-	return PACKED_HAIR_START + clampi(color, 0, HAIR_COLOR_COUNT - 1) * HAIR_STYLE_COUNT + clampi(style, 0, HAIR_STYLE_COUNT - 1)
+	style = clampi(style, 0, HAIR_STYLE_COUNT - 1)
+	color = clampi(color, 0, HAIR_COLOR_COUNT - 1)
+	if style >= ORIGINAL_HAIR_STYLE_COUNT:
+		return EXTENDED_HAIR_START + color * 5 + style - ORIGINAL_HAIR_STYLE_COUNT
+	return PACKED_HAIR_START + color * ORIGINAL_HAIR_STYLE_COUNT + style
+
+# The server stores and echoes both appearance bytes unchanged. The retired
+# cosmetic head field carries a tagged high byte for the additional styles.
+# Existing 0..199 values and their saved head bytes retain their old meaning.
+static func hair_wire_head(hair: int, head: int = 0) -> int:
+	return 0x80 | (hair >> 8) if hair >= 200 and hair < 300 else head
+
+static func hair_from_wire(hair: int, head: int) -> int:
+	var extended := hair | ((head & 1) << 8)
+	return extended if head in [0x80, 0x81] and extended >= 200 and extended < 300 else hair
 
 static func hair_color_index(index: int) -> int:
-	if index >= PACKED_HAIR_START and index < PACKED_HAIR_START + HAIR_STYLE_COUNT * HAIR_COLOR_COUNT:
-		return (index - PACKED_HAIR_START) / HAIR_STYLE_COUNT
+	if index >= EXTENDED_HAIR_START and index < 300:
+		return (index - EXTENDED_HAIR_START) / 5
+	if index >= PACKED_HAIR_START and index < EXTENDED_HAIR_START:
+		return (index - PACKED_HAIR_START) / ORIGINAL_HAIR_STYLE_COUNT
 	if index >= LEGACY_PACKED_HAIR_START and index < PACKED_HAIR_START:
 		return (index - LEGACY_PACKED_HAIR_START) / LEGACY_HAIR_STYLE_COUNT
 	return posmod(index, HAIR_COLOR_COUNT)
@@ -83,6 +101,15 @@ static func culture_for_actor_type(actor_type: int) -> String:
 		_:
 			return ""
 
+static func skin_color(index: int) -> Color:
+	# Actual sRGB skin colors, also used for the menu swatches. Index 0 is
+	# retained for existing characters but is no longer offered in creation.
+	var colors: Array[Color] = [Color8(220, 182, 153),
+		Color8(211, 184, 161), Color8(196, 151, 99), Color8(158, 107, 73),
+		Color8(103, 66, 47), Color8(61, 42, 33), Color8(143, 179, 205),
+		Color8(119, 151, 98), Color8(156, 126, 184), Color8(147, 146, 150)]
+	return colors[posmod(index, colors.size())]
+
 static func skin_tint(index: int) -> Color:
 	# The base texture is a light tan, so these multiply into the real
 	# tone: the first six run the realistic range from pale to deep, the
@@ -128,8 +155,10 @@ static func eye_color(index: int) -> Color:
 	return colors[posmod(index, colors.size())]
 
 static func hair_style(index: int) -> int:
-	if index >= PACKED_HAIR_START and index < PACKED_HAIR_START + HAIR_STYLE_COUNT * HAIR_COLOR_COUNT:
-		return (index - PACKED_HAIR_START) % HAIR_STYLE_COUNT
+	if index >= EXTENDED_HAIR_START and index < 300:
+		return ORIGINAL_HAIR_STYLE_COUNT + (index - EXTENDED_HAIR_START) % 5
+	if index >= PACKED_HAIR_START and index < EXTENDED_HAIR_START:
+		return (index - PACKED_HAIR_START) % ORIGINAL_HAIR_STYLE_COUNT
 	return posmod(index, LEGACY_HAIR_STYLE_COUNT)
 
 static func head_style(_index: int) -> int:
