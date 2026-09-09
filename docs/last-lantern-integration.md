@@ -25,7 +25,7 @@ The original prototype's `project.godot` remains available for design reference.
 | Storage | Category, item, quantity, Deposit / Withdraw | Inventory and storage transfers succeed |
 | Manufacturing | Torch recipe, quantity 1, Mix Now | The normal recipe produces a real Torch |
 | Equipment | Inventory double-click or drag | Sword and shield occupy real equipment slots |
-| Combat | Click the boar | Normal combat resolves its defeat |
+| Combat | Click the otter | Normal combat resolves its defeat |
 | Loot | Ground bag, Get All / auto-gather | Real drops reach inventory |
 | Food | Double-click Bread | An actual meal is consumed and food reaches 35 |
 | Character growth | Statistics, Character, attribute +, confirmation | A pickpoint is spent by the server |
@@ -63,8 +63,14 @@ The wooden shield's embedded JPEG is correctly labelled in its GLB metadata.
 Reconnect restores the stage, gates and belongings. Supplies held in inventory,
 equipment, storage or a dropped bag are not duplicated. Caldus and the bench
 recover missing essentials after loss or crafting failure. A novice defeat keeps
-the kit and resets the boar; a defeated boar does not respawn. Global days that
+the kit and resets the otter; a defeated otter does not respawn. Global days that
 prohibit harvesting, mixing, food or combat cannot block the private rescue.
+
+The causeway encounter is a level-1 Mirrorfin Otter named "Storm-frightened
+otter", rendered with the updated `river_otter.glb` model (actor type 400).
+It keeps the novice combat stats and guaranteed Raw Meat drop for the trading
+lesson. The internal `lantern_boar` species and `boar` marker IDs remain stable
+for the existing encounter hooks and authored target references.
 
 The template is intentionally absent from the public portal and invasion graphs
 and from required public exploration totals. Existing quest progress is preserved

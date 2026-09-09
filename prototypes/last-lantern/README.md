@@ -28,7 +28,7 @@ The matching `dev-server` checkout must sit beside `eloria-client`.
 | Boathouse | Talk to Caldus through NPC dialogue, read the chart, open Map with Tab |
 | Tidal garden | Start native harvesting; collect 3 Reed and 1 Quartz with a Pickaxe |
 | Repair shed | Deposit materials in Storage, withdraw tools and ingredients, make a Torch in Manufacturing |
-| Causeway | Equip the sword and shield in Inventory, fight the boar, collect its real drops |
+| Causeway | Equip the sword and shield in Inventory, fight the level-1 otter, collect its real drops |
 | Beacon steps | Eat Bread and spend an earned attribute pickpoint in Statistics |
 | Lantern room | Withdraw the stored repair materials, repair the housing and light it with the crafted Torch |
 | Return dock | Sell meat and buy Bread through the merchant window, then sail to Four Gates |

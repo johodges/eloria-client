@@ -191,7 +191,7 @@ func run() -> void:
 	await capture("08-equipment")
 	main._on_inventory_close_pressed()
 	await go(Vector2i(66,53))
-	main._send_attack(actor_id("Storm-frightened boar"))
+	main._send_attack(actor_id("Storm-frightened otter"))
 	await stage("loot")
 	await capture("09-combat-loot")
 	await wait_until(func():return not state.ground_bags.is_empty(),"dropped bag")
