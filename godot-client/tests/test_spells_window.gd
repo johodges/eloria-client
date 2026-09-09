@@ -46,7 +46,7 @@ func _run() -> void:
 	var listed: Array[int] = []
 	for group: String in ["Health", "General", "Attack", "Defense"]:
 		var section: VBoxContainer = window.get_node(
-			body + "SpellScroll/SpellGroups/%sSpells" % group) as VBoxContainer
+			body + "SpellScroll/SpellBrowser/SpellGroups/%sSpells" % group) as VBoxContainer
 		for child: Node in section.find_children("SpellButton*", "Button", true, false):
 			listed.append(int(str(child.name).trim_prefix("SpellButton")))
 	_expect(listed.size() == 86,
@@ -76,7 +76,7 @@ func _run() -> void:
 	_expect(str(window.call("group_of", 17)) == "General",
 		"Swiftwend is a general spell")
 	var heal_button: Button = window.get_node(
-		body + "SpellScroll/SpellGroups/HealthSpells/HealEffectRow/SelfCell/SpellButton0") as Button
+		body + "SpellScroll/SpellBrowser/SpellGroups/HealthSpells/HealEffectRow/SelfCell/SpellButton0") as Button
 	_expect(heal_button != null, "Heal sits at the Heal effect and Self target")
 	_expect(heal_button.tooltip_text == "Heal",
 		"a spell button says which spell it is: " + heal_button.tooltip_text)
@@ -149,7 +149,7 @@ func _run() -> void:
 	_expect(int(window.get("selected_spell_id")) == -1,
 		"and no spell starts selected")
 	var blinkstep: Button = window.get_node(
-		body + "SpellScroll/SpellGroups/GeneralSpells/BlinkEffectRow/UtilityCell/SpellButton5") as Button
+		body + "SpellScroll/SpellBrowser/SpellGroups/GeneralSpells/BlinkEffectRow/UtilityCell/SpellButton5") as Button
 	blinkstep.pressed.emit()
 	await process_frame
 	_expect(int(window.get("selected_spell_id")) == 5,

@@ -1529,8 +1529,8 @@ func _run() -> void:
 		1: {"image_id": 16, "quantity": 1, "slot": 1, "flags": 6},
 		2: {"image_id": 67, "quantity": 1, "slot": 2, "flags": 6}})
 	main.call("_sync_spells")
-	var first_spell_slot: Button = main.get_node(
-		"GameView/SpellQuickbar/SpellContent/SpellSlots/Spell1") as Button
+	var prepared_bar: Control = main.get("casting_bar") as Control
+	var first_spell_slot: Button = (prepared_bar.get("buttons") as Array)[0] as Button
 	_expect(not first_spell_slot.disabled,
 		"owned castable spell is enabled; tooltip=" + first_spell_slot.tooltip_text)
 	_expect(first_spell_slot.icon != null, "owned castable spell has its legacy icon")
@@ -1542,9 +1542,9 @@ func _run() -> void:
 		0: {"image_id": 68, "quantity": 1, "slot": 0, "flags": 6},
 		1: {"image_id": 16, "quantity": 1, "slot": 1, "flags": 6}})
 	main.call("_sync_spells")
-	_expect(first_spell_slot.disabled
+	_expect(first_spell_slot.modulate.a < 1.0
 			and first_spell_slot.tooltip_text.contains("Woven Charm"),
-		"a missing reagent disables the slot and is named: "
+		"a missing reagent dims the editable slot and is named: "
 			+ first_spell_slot.tooltip_text)
 	app_state_inventory.set("inventory", {
 		0: {"image_id": 68, "quantity": 1, "slot": 0, "flags": 6},
@@ -1554,8 +1554,8 @@ func _run() -> void:
 	var no_sigils: Array[int] = []
 	app_state_inventory.set("owned_sigils", no_sigils)
 	main.call("_sync_spells")
-	_expect(first_spell_slot.disabled and first_spell_slot.tooltip_text.contains("Missing sigils"),
-		"unowned spell is visibly disabled with the exact availability reason")
+	_expect(first_spell_slot.modulate.a < 1.0 and first_spell_slot.tooltip_text.contains("Missing sigils"),
+		"unowned spell is visibly dimmed with the exact availability reason")
 	for spell_index: int in range(1, 7):
 		_expect(InputMap.has_action("quick_spell_%d" % spell_index),
 			"spell quick slot %d has a centralized input action" % spell_index)
