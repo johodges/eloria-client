@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('prepared', 'aimed')][string]$Mode = 'prepared',
+    [ValidateSet('prepared', 'aimed', 'wheel')][string]$Mode = 'prepared',
     [switch]$Live,
     [switch]$Check,
     [string]$GodotPath = '',

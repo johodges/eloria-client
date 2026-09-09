@@ -332,6 +332,7 @@ var requested_spell_power := 1
 var magic_selection: Control
 var spell_loadout = preload("res://src/ui/spell_loadout.gd").new()
 var casting_bar: Control
+var spell_wheel: Control
 var _magic_area_preview: MeshInstance3D
 var player_info_panel: Control
 var active_buff_bar: Control
@@ -957,8 +958,20 @@ func _ready() -> void:
 	casting_bar.cast_slot.connect(_cast_spell_slot)
 	casting_bar.edit_slot.connect(spells_window.edit_prepared_slot)
 	casting_bar.open_book.connect(spells_window.toggle)
+	spell_wheel = preload("res://src/ui/spell_wheel.gd").new()
+	spell_wheel.loadout = spell_loadout
+	spell_wheel.anchor_provider = _spell_wheel_anchor
+	spell_wheel.can_open = _can_open_spell_wheel
+	spell_wheel.z_index = 20
+	game_view.add_child(spell_wheel)
+	spell_wheel.spell_chosen.connect(_cast_spell_by_id)
+	spell_wheel.opened.connect(func():
+		magic_selection.cancel()
+		spells_window.close()
+		_stop_keyboard_movement())
+	casting_bar.open_wheel.connect(spell_wheel.open_wheel)
 	spell_loadout.changed.connect(func():
-		magic_selection.target_mode = spell_loadout.mode
+		magic_selection.target_mode = spell_loadout.targeting_mode()
 		_sync_spells())
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--magic-mode="):
@@ -1234,7 +1247,7 @@ func _text_entry_active() -> bool:
 	return focus is LineEdit or focus is TextEdit
 
 func _update_keyboard_movement() -> void:
-	if _text_entry_active() or dialogue_panel.visible or trade_panel.visible \
+	if (spell_wheel != null and spell_wheel.visible) or _text_entry_active() or dialogue_panel.visible or trade_panel.visible \
 			or storage_panel.visible or full_map.visible \
 			or console_panel.visible or settings_panel.visible or item_lists_panel.visible \
 			or Input.is_key_pressed(KEY_ALT) or Input.is_key_pressed(KEY_CTRL):
@@ -2644,11 +2657,33 @@ func _clear_world_presentation() -> void:
 	selected_target.text = "Target: none"
 
 func _input(event: InputEvent) -> void:
+	if spell_wheel != null:
+		if spell_wheel.handle_event(event):
+			_set_attack_modifier(false)
+			get_viewport().set_input_as_handled()
+			return
+		if spell_wheel.visible: return
 	if event is InputEventKey and (event as InputEventKey).echo:
 		return
 	_track_attack_modifier(event)
 	if _handle_bound_action(event):
 		get_viewport().set_input_as_handled()
+
+func _can_open_spell_wheel() -> bool:
+	return game_view.visible and not _text_entry_active() \
+		and not dialogue_panel.visible and not trade_panel.visible \
+		and not storage_panel.visible and not full_map.visible \
+		and not console_panel.visible and not settings_panel.visible \
+		and not item_lists_panel.visible and not magic_selection.popup.visible
+
+func _spell_wheel_anchor() -> Vector2:
+	var actor_position: Variant = _actor_effect_position(AppState.local_actor_id)
+	if actor_position is Vector3 and gameplay_camera != null:
+		var body: Vector3 = actor_position + Vector3(0, 0.9, 0)
+		if not gameplay_camera.is_position_behind(body):
+			var point := gameplay_camera.unproject_position(body)
+			return viewport_container.get_global_transform() * (point * viewport_container.size / Vector2(main_viewport.size))
+	return viewport_container.get_global_rect().get_center()
 
 ## Watches Alt so the move icon can say what a click would do. Every key and
 ## mouse event carries the modifier state it was sent with, and Alt itself
@@ -2749,7 +2784,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		return
 	for spell_slot: int in range(SPELL_QUICK_SLOTS):
-		if event.is_action_pressed("quick_spell_%d" % (spell_slot + 1)):
+		if spell_loadout.mode != "wheel" and event.is_action_pressed("quick_spell_%d" % (spell_slot + 1)):
 			_cast_spell_slot(spell_slot)
 			get_viewport().set_input_as_handled()
 			return

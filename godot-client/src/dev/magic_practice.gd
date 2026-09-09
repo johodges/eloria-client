@@ -5,6 +5,7 @@ var loadout = preload("res://src/ui/spell_loadout.gd").new()
 var book: Control
 var bar: Control
 var selector: Control
+var wheel: Control
 var arena: Control
 var log_label: Label
 var target_label: Label
@@ -122,11 +123,11 @@ func _ready() -> void:
 	selector.catalog = catalog
 	selector.request_sender = _simulate
 	selector.target_validator = _candidate
-	selector.target_mode = loadout.mode
+	selector.target_mode = loadout.targeting_mode()
 	selector.z_index = 10
 	add_child(selector)
 	selector.status_changed.connect(record)
-	loadout.changed.connect(func(): selector.target_mode = loadout.mode)
+	loadout.changed.connect(func(): selector.target_mode = loadout.targeting_mode())
 	book = preload("res://src/ui/spells_window.gd").new()
 	book.z_index = 7
 	add_child(book)
@@ -140,6 +141,21 @@ func _ready() -> void:
 	bar.cast_slot.connect(_cast_slot)
 	bar.open_book.connect(book.toggle)
 	bar.edit_slot.connect(book.edit_prepared_slot)
+	wheel = preload("res://src/ui/spell_wheel.gd").new()
+	wheel.loadout = loadout
+	wheel.z_index = 20
+	wheel.anchor_provider = func() -> Vector2: return arena.global_position + (Vector2(actors[1].tile) + Vector2.ONE * 0.5) * PracticeArena.CELL
+	wheel.can_open = func() -> bool: return not (get_viewport().gui_get_focus_owner() is LineEdit or get_viewport().gui_get_focus_owner() is TextEdit) and not selector.popup.visible
+	add_child(wheel)
+	wheel.spell_chosen.connect(_cast_from_book)
+	wheel.opened.connect(func():
+		selector.cancel()
+		book.close())
+	bar.open_wheel.connect(wheel.open_wheel)
+	var standard_instructions := instructions.text
+	var wheel_instructions := "TRY THE WHEEL\n\nHold Alt. Pick a class with 1–5 or click it. Choose a spell, then its target.\n\nAlt → 1 → 1 → 2 = Heal Target.\nSelect Tavin first to heal him directly.\n\nRelease Alt to dismiss.\nBackspace / right click goes back.\n[ / ] or scroll changes pages.\n\nThe Wheel button works without Alt.\nSet spell power in the spellbook."
+	loadout.changed.connect(func(): instructions.text = wheel_instructions if loadout.mode == "wheel" else standard_instructions)
+	instructions.text = wheel_instructions if loadout.mode == "wheel" else standard_instructions
 	record("Ready. Choose a recipient and try a spell.")
 
 func _seed_reagents() -> void:
@@ -151,13 +167,18 @@ func _seed_reagents() -> void:
 		AppState.inventory[index] = {"image_id": id, "quantity": 999}
 		index += 1
 
+func _input(event: InputEvent) -> void:
+	if wheel != null and wheel.handle_event(event): get_viewport().set_input_as_handled()
+
 func _unhandled_key_input(event: InputEvent) -> void:
+	if wheel != null and wheel.visible: return
+	if get_viewport().gui_get_focus_owner() is LineEdit or get_viewport().gui_get_focus_owner() is TextEdit: return
 	if event is InputEventKey and event.echo: return
 	if event.is_action_pressed("toggle_spells"):
 		book.toggle()
 		get_viewport().set_input_as_handled()
 	for index in range(12):
-		if event.is_action_pressed("quick_spell_%d" % (index + 1)):
+		if loadout.mode != "wheel" and event.is_action_pressed("quick_spell_%d" % (index + 1)):
 			_cast_slot(index)
 			get_viewport().set_input_as_handled()
 
@@ -170,6 +191,7 @@ func _cast_slot(index: int) -> void:
 
 func _cast_from_book(id: int) -> void:
 	selector.begin(id, loadout.power_for(id), AppState.selected_actor_id)
+	book.close()
 
 func _candidate(id: int, target: int) -> bool:
 	if not actors.has(target): return false

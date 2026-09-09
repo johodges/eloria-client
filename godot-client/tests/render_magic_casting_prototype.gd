@@ -26,6 +26,27 @@ func run() -> void:
 	lab.selector.begin(69, 3)
 	await capture("area-targeting.png")
 	lab.selector.cancel()
+	lab.loadout.set_mode("wheel")
+	lab.wheel.open_wheel(true)
+	await capture("wheel-classes.png")
+	check_wheel(lab.wheel)
+	lab.wheel.choose(0)
+	await capture("wheel-healing.png")
+	check_wheel(lab.wheel)
+	lab.wheel.choose(0)
+	await capture("wheel-targets.png")
+	check_wheel(lab.wheel)
+	lab.wheel.open_wheel()
+	lab.wheel.choose(2)
+	await capture("wheel-offense.png")
+	check_wheel(lab.wheel)
+	lab.wheel.change_page(1)
+	await capture("wheel-offense-page2.png")
+	check_wheel(lab.wheel)
+	lab.actors[1].tile = Vector2i(0, 0)
+	await capture("wheel-edge.png")
+	check_wheel(lab.wheel)
+	lab.wheel.reset()
 	lab.free()
 	await process_frame
 	print("magic casting rendered: ", "PASS" if failures == 0 else "FAIL")
@@ -41,3 +62,11 @@ func check_bounds(control: Control, label: String) -> void:
 	if rect.position.x < 0 or rect.position.y < 0 or rect.end.x > 1280 or rect.end.y > 720:
 		failures += 1
 		push_error("Out of bounds: %s %s" % [label, rect])
+
+func check_wheel(wheel: Control) -> void:
+	for index in range(wheel.buttons.size()):
+		check_bounds(wheel.buttons[index], "wheel choice")
+		for other in range(index):
+			if wheel.buttons[index].get_global_rect().intersects(wheel.buttons[other].get_global_rect()):
+				failures += 1
+				push_error("Overlapping wheel choices")

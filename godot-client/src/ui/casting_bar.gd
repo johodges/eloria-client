@@ -2,11 +2,13 @@ extends Control
 signal cast_slot(index: int)
 signal edit_slot(index: int)
 signal open_book
+signal open_wheel
 const SpellButton := preload("res://src/ui/prepared_spell_button.gd")
 const SCOPE_BADGES := {"self": "Self", "target": "Target", "allies": "Allies", "burst": "Burst", "location": "Ground", "inventory": "Item", "destination": "Recall"}
 var loadout
 var panel: PanelContainer
 var mode_picker: OptionButton
+var wheel_button: Button
 var buttons: Array[Button] = []
 var menu: PopupMenu
 var _menu_slot := -1
@@ -29,8 +31,13 @@ func _ready() -> void:
 	mode_picker = OptionButton.new()
 	mode_picker.add_item("Prepared · selected target")
 	mode_picker.add_item("Aimed · click target")
-	mode_picker.item_selected.connect(func(index: int): loadout.set_mode("aimed" if index == 1 else "prepared"))
+	mode_picker.add_item("Wheel · hold Alt")
+	mode_picker.item_selected.connect(func(index: int): loadout.set_mode(["prepared", "aimed", "wheel"][index]))
 	header.add_child(mode_picker)
+	wheel_button = Button.new()
+	wheel_button.text = "Wheel"
+	wheel_button.pressed.connect(func(): open_wheel.emit())
+	header.add_child(wheel_button)
 	var book := Button.new()
 	book.text = "Spellbook"
 	book.pressed.connect(func(): open_book.emit())
@@ -80,10 +87,12 @@ func _ready() -> void:
 
 func refresh() -> void:
 	if mode_picker == null: return
-	mode_picker.select(1 if loadout.mode == "aimed" else 0)
+	mode_picker.select(["prepared", "aimed", "wheel"].find(loadout.mode))
+	wheel_button.visible = loadout.mode == "wheel"
 	for index in range(buttons.size()):
 		var slot: Dictionary = loadout.slots[index]
 		var button = buttons[index]
+		button.get_node("Key").visible = loadout.mode != "wheel"
 		button.spell_id = int(slot.id)
 		button.power = int(slot.power)
 		var definition: Dictionary = loadout.catalog.spell(int(slot.id))
@@ -96,6 +105,7 @@ func refresh() -> void:
 		badge.text = "%s P%d" % [scope, effective_power] if int(slot.id) >= 0 else "Empty"
 		var keys: Array[InputEvent] = InputMap.action_get_events("quick_spell_%d" % (index + 1))
 		var shortcut := keys[0].as_text() if not keys.is_empty() else "Unbound"
+		if loadout.mode == "wheel": shortcut = "Click to cast. Alt + numbers navigate the wheel."
 		button.tooltip_text = "%s · P%d\n%s\nRight click to edit; drag a spell here." % [definition.get("name", "Empty slot"), int(slot.power), shortcut]
 		if effective_power != int(slot.power): button.tooltip_text += "\nSaved P%d; currently limited to P%d." % [int(slot.power), effective_power]
 		var reasons: Array[String] = loadout.catalog.unavailable_reasons(int(slot.id), AppState.owned_sigils, AppState.stats, AppState.inventory) if int(slot.id) >= 0 else []

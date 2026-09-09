@@ -54,8 +54,11 @@ func remember_power(spell_id: int, power: int) -> void:
 	changed.emit()
 
 func set_mode(value: String) -> void:
-	mode = "aimed" if value == "aimed" else "prepared"
+	mode = value if value in ["prepared", "aimed", "wheel"] else "prepared"
 	changed.emit()
+
+func targeting_mode() -> String:
+	return "aimed" if mode == "aimed" else "prepared"
 
 func _save() -> void:
 	if profile.is_empty(): return
