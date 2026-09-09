@@ -47,7 +47,7 @@ enum ClientMessage {
 	CREATE_CHAR = 141, GET_DATE = 230, GET_TIME = 231,
 	# Eternal Lands spoke for everything below 200, so what this client asks
 	# for that Eternal Lands never had is numbered from there up.
-	ELORIA_MIX_REQUEST = 200, ELORIA_TOOL_REQUEST = 201
+	ELORIA_MIX_REQUEST = 200, ELORIA_TOOL_REQUEST = 201, ELORIA_TUTORIAL_UI = 203
 }
 
 enum ServerMessage {
@@ -113,6 +113,7 @@ enum ServerMessage {
 	# Which map package the server was built against. Continues the same
 	# downward run below 211.
 	ELORIA_MAP_DIGEST = 209,
+	ELORIA_LANTERN_STATE = 207,
 	ADD_ACTOR_ANIMATION = 89,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
@@ -201,6 +202,10 @@ static func turn(left: bool) -> PackedByteArray:
 ## Grow this list in the same commit that lands the window which decodes the
 ## packet, never before.
 const CLIENT_CAPABILITIES: Array[String] = [
+	"lantern_tutorial_v1",
+	"second_bell_v1",
+	"borrowed_sky_v1",
+	"followup_tutorials_v1",
 	"actor16_v1",
 	"almanac_v1",
 	"combat_hud_v1",
@@ -1019,6 +1024,8 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return decode_actor_titles(payload)
 		ServerMessage.ELORIA_MAP_DIGEST:
 			return decode_map_digest(payload)
+		ServerMessage.ELORIA_LANTERN_STATE:
+			return decode_lantern(payload)
 		ServerMessage.ELORIA_EXPERIENCE_STATE:
 			return decode_experience_state(payload)
 		ServerMessage.ELORIA_INVENTORY_NAMES:
@@ -2815,3 +2822,60 @@ static func u32(bytes: PackedByteArray, offset := 0) -> int:
 static func s32(bytes: PackedByteArray, offset := 0) -> int:
 	var value: int = u32(bytes, offset)
 	return value - 4294967296 if value >= 2147483648 else value
+
+
+static func decode_lantern(payload: PackedByteArray) -> Dictionary:
+	if payload.is_empty() or payload.size() > 8192:
+		return {"type":"invalid", "error":"lantern_length"}
+	var json := JSON.new()
+	if json.parse(payload.get_string_from_utf8()) != OK:
+		return {"type":"invalid", "error":"lantern_json"}
+	var parsed: Variant = json.data
+	if not parsed is Dictionary:
+		return {"type":"invalid", "error":"lantern_json"}
+	var value: Dictionary = parsed
+	if value.get("version") != 1 or not value.get("active") is bool:
+		return {"type":"invalid", "error":"lantern_version"}
+	if value.has("tutorial") and value.tutorial not in ["second_bell", "borrowed_sky", "followup"]:
+		return {"type":"invalid", "error":"tutorial_kind"}
+	if value.get("tutorial", "") == "followup" and bool(value.active):
+		for key in ["adventure", "guide"]:
+			if not value.get(key) is String:
+				return {"type":"invalid", "error":"adventure_text"}
+	if value.get("tutorial", "") in ["second_bell", "borrowed_sky"] and bool(value.active):
+		if value.get("chapter") != ("THE BORROWED SKY" if value.tutorial == "borrowed_sky" else "THE SECOND BELL") or not value.get("pending") is bool or not value.get("assisted") is bool:
+			return {"type":"invalid", "error":"bell_state"}
+		var remaining: Variant = value.get("remaining")
+		if typeof(remaining) not in [TYPE_FLOAT, TYPE_INT] or not is_finite(float(remaining)) or remaining < 0 or remaining > 500 or int(remaining) != remaining:
+			return {"type":"invalid", "error":"bell_remaining"}
+		if not value.get("flags") is Dictionary:
+			return {"type":"invalid", "error":"bell_flags"}
+		for key in ["north", "east", "south", "west", "rung"]:
+			if not value.flags.get(key) is bool:
+				return {"type":"invalid", "error":"bell_flags"}
+	if bool(value.active):
+		for key in ["stage","total","scene","count","required"]:
+			var number: Variant = value.get(key)
+			if typeof(number) not in [TYPE_FLOAT, TYPE_INT] or not is_finite(float(number)) or int(number)!=number or number<0 or number>65535:
+				return {"type":"invalid", "error":"lantern_number"}
+		for key in ["key","title","hint","control","item","map","target_id"]:
+			if not value.get(key) is String:
+				return {"type":"invalid", "error":"lantern_text"}
+		if int(value.get("stage",0)) < 1 or int(value.get("stage",0)) > int(value.get("total",0)):
+			return {"type":"invalid", "error":"lantern_stage"}
+		if not value.get("flags") is Dictionary or not value.get("target") is Array:
+			return {"type":"invalid", "error":"lantern_target"}
+		if value.target.size() != 2:
+			return {"type":"invalid", "error":"lantern_target"}
+		for coordinate: Variant in value.target:
+			if typeof(coordinate) not in [TYPE_FLOAT, TYPE_INT] or not is_finite(float(coordinate)) or coordinate<0 or coordinate>65535 or int(coordinate)!=coordinate:
+				return {"type":"invalid", "error":"lantern_target"}
+		var required_flags: Array = ["north","east","south","west"] if value.get("tutorial", "") == "followup" else ["crafted","prepared","repaired","lit"]
+		for key in required_flags:
+			if not value.flags.get(key) is bool:
+				return {"type":"invalid", "error":"lantern_flags"}
+		for key in ["forge_lit", "sword_ready", "pump_repaired", "order_ready",
+				"caravan_north_open", "caravan_east_home", "caravan_south_home", "caravan_west_home"]:
+			if value.flags.has(key) and not value.flags[key] is bool:
+				return {"type":"invalid", "error":"lantern_flags"}
+	return {"type":"lantern_tutorial", "state":value}

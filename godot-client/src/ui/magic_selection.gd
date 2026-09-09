@@ -40,7 +40,9 @@ func _ready() -> void:
 	AppState.magic_state_received.connect(_receive)
 	AppState.state_changed.connect(func(path: StringName) -> void:
 		if path == &"map": cancel())
-	Network.magic_selection_completed.connect(func() -> void: AppState.pending_spell_target = "")
+	Network.magic_selection_completed.connect(func() -> void:
+		AppState.pending_spell_target = ""
+		pending.clear())
 	Network.connection_state_changed.connect(func(state: String) -> void:
 		if state == "disconnected": cancel())
 
@@ -64,6 +66,8 @@ func begin(spell_id: int, power: int) -> void:
 		pending.clear()
 
 func cancel() -> void:
+	if not pending.is_empty() or not Network.magic_pending.is_empty():
+		Network.magic_request({"op":"cancel"})
 	pending.clear()
 	Network.magic_pending.clear()
 	AppState.pending_spell_target = ""

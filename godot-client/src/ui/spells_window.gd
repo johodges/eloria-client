@@ -72,8 +72,29 @@ var _buttons: Dictionary = {}
 var _reasons: Dictionary = {}
 var search: LineEdit
 var scope_filter: OptionButton
+var requested_power := 1
+var _quote_request := ""
+var _last_quote: Dictionary = {}
+
+func _quote_state(data: Dictionary) -> void:
+	if data.get("kind") != "preview" or int(data.get("id", -1)) != selected_spell_id or int(data.get("requested", 0)) != requested_power:
+		return
+	_last_quote=data.duplicate(true)
+	name_label.text = str(catalog.spell(selected_spell_id).get("name", "Spell"))
+	name_label.add_theme_color_override("font_color",CASTABLE_COLOR if data.get("ready",false) else BLOCKED_COLOR)
+	numbers_label.text = "Power %d / %d allowed · Ether %d" % [int(data.power), int(data.limit), int(data.mana)]
+	var parts: Array[String] = []
+	for reagent: Dictionary in data.get("reagents", []):
+		parts.append("%s %d (have %d)" % [str(reagent.name), int(reagent.quantity), int(reagent.have)])
+	reagents_label.text = ", ".join(parts)
+	if not str(data.get("focus", "")).is_empty():
+		reagents_label.text += "\n%s replaces the anchor with one charge." % str(data.focus)
+	if not bool(data.get("ready", false)):
+		name_label.text += " — " + str(data.get("reason", "Unavailable"))
+	cast_button.disabled = not bool(data.get("ready", false))
 
 func _ready() -> void:
+	AppState.magic_state_received.connect(_quote_state)
 	name = "SpellsLayer"
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -116,6 +137,7 @@ func _on_state_changed(path: StringName) -> void:
 ## the selected details. Everything it reads is the server's last word held
 ## in AppState; nothing here predicts what the server will actually allow.
 func sync() -> void:
+	_quote_request = ""
 	if not panel.visible or catalog == null:
 		return
 	_reasons.clear()
@@ -162,6 +184,14 @@ func _refresh_details() -> void:
 		int(definition.get("level", 0)), int(definition.get("mana", 0))]
 	sigils_label.text = _sigils_line(definition)
 	reagents_label.text = _reagents_line(definition)
+	if AppState.authenticated:
+		var token := "%d:%d" % [selected_spell_id, requested_power]
+		if token != _quote_request:
+			_quote_request = token
+			cast_button.disabled = true
+			Network.magic_request({"op":"preview", "id":selected_spell_id, "power":requested_power})
+		elif not _last_quote.is_empty():
+			_quote_state(_last_quote)
 
 ## The required sigils by name, owned ones plain and missing ones marked
 ## with a leading "!". Ownership is the server's set in AppState.

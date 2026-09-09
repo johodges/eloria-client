@@ -28,7 +28,22 @@ godot --path godot-client
 ```
 
 The client needs `eloria-server` on TCP 2000. Point it at one with the login
-screen's server field, or `--server`.
+screen's server field, or `-- --server=127.0.0.1 --port=2000`.
+
+For the integrated **Last Lantern** opening adventure, run
+[`prototypes/last-lantern/play.cmd`](prototypes/last-lantern/play.cmd). It starts
+the real client and a loopback dev-server with a separate local character database.
+See the [integration notes](docs/last-lantern-integration.md).
+
+Continue with **The Second Bell**, a private invasion adventure on Bellwatch's
+four-gate map. After The Last Lantern, talk to Ilyon or enter `#tutorial invasions`
+in chat. See the [play instructions and verification](docs/invasion-tutorial/implementation.md).
+
+**The Borrowed Sky** teaches magic in Stillglass Observatory through the actual
+spellbook and gameplay. Enter `#tutorial magic` for the private four-gate rescue;
+afterward, `#tutorial magic a` through `d` open its optional experiments. Borrowed
+attunement and supplies use a separate saved practice profile. See the
+[play instructions and verification](docs/magic-tutorial/implementation.md).
 
 ## Tests
 

@@ -1,5 +1,13 @@
 extends Control
 
+const LanternGuideScript = preload("res://src/ui/lantern_guide.gd")
+const LanternSceneScript = preload("res://src/world/lantern_scene.gd")
+const BellSceneScript = preload("res://src/world/bell_scene.gd")
+const RoadSceneScript = preload("res://src/world/road_scene.gd")
+const SkySceneScript = preload("res://src/world/sky_scene.gd")
+var lantern_guide: Control
+var lantern_scene: Node3D
+
 const AppearanceChoices = preload("res://src/actors/appearance_choices.gd")
 
 @onready var login_panel: Control = %LoginPanel
@@ -850,6 +858,9 @@ const EXPERIENCE_SKILLS: Array[String] = [
 	"ranging", "overall"]
 
 func _ready() -> void:
+	lantern_guide = LanternGuideScript.new()
+	add_child(lantern_guide)
+	lantern_guide.configure(self)
 	var model_registry: Dictionary = _json("res://data/actors/models.json")
 	models = model_registry.get("models", {})
 	actor_type_models = model_registry.get("actorTypes", {})
@@ -1011,6 +1022,14 @@ func _ready() -> void:
 	_configure_window_layers()
 	_configure_cartography()
 	_load_hud_settings()
+	# Explicit launch options select a server without changing saved settings.
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--server="):
+			host_edit.text = argument.trim_prefix("--server=")
+		elif argument.begins_with("--port="):
+			var value := argument.trim_prefix("--port=")
+			if value.is_valid_int() and int(value) > 0 and int(value) <= 65535:
+				port_edit.value = int(value)
 	_configure_inventory_menus()
 	_configure_minimap_menu()
 	_build_inventory_slots()
@@ -1629,6 +1648,8 @@ func _toggle_full_map() -> void:
 	_close_settings()
 	_show_current_map_view()
 	full_map.show()
+	if bool(AppState.lantern_tutorial.get("active",false)):
+		Network.tutorial_ui(1)
 	full_map.move_to_front()
 	_request_map_redraw()
 	_sync_map_viewport_activity()
@@ -1752,6 +1773,7 @@ func _on_stats_button_pressed() -> void:
 		return
 	stats_panel.visible = not stats_panel.visible
 	if stats_panel.visible:
+		_road_ui(12)
 		inventory_panel.hide()
 		manufacturing_panel.hide()
 		stats_tabs.current_tab = 0
@@ -1763,6 +1785,7 @@ func _on_inventory_button_pressed() -> void:
 		return
 	inventory_panel.visible = not inventory_panel.visible
 	if inventory_panel.visible:
+		_road_ui(16)
 		stats_panel.hide()
 		manufacturing_panel.hide()
 		# Ask for the enriched view of what the ordinary inventory packet
@@ -1792,6 +1815,7 @@ func _on_manufacturing_button_pressed() -> void:
 		return
 	manufacturing_panel.visible = not manufacturing_panel.visible
 	if manufacturing_panel.visible:
+		_road_ui(10)
 		inventory_panel.hide()
 		stats_panel.hide()
 		full_map.hide()
@@ -1846,6 +1870,7 @@ func _on_manufacturing_queue_remove_pressed(position: int) -> void:
 	_sync_manufacturing_queue()
 
 func _on_manufacturing_queue_clear_pressed() -> void:
+	_road_ui(18)
 	manufacturing_queue.clear()
 	manufacturing_queue_running = false
 	manufacturing_queue_index = 0
@@ -1858,12 +1883,14 @@ func _on_manufacturing_queue_clear_pressed() -> void:
 ## away whatever it had made.
 func _on_manufacturing_queue_start_pressed() -> void:
 	if manufacturing_queue_running:
+		_road_ui(18)
 		manufacturing_queue_running = false
 		manufacturing_server_status = "Queue stopped after this batch."
 		_sync_manufacturing_queue()
 		return
 	if manufacturing_queue.is_empty():
 		return
+	_road_ui(17)
 	manufacturing_queue_running = true
 	manufacturing_queue_index = 0
 	_advance_manufacturing_queue()
@@ -3416,6 +3443,11 @@ func _on_state_changed(path: StringName) -> void:
 	if not AppState.authenticated:
 		return
 	match path:
+		&"lantern_tutorial":
+			if bool(AppState.lantern_tutorial.get("active", false)) and int(AppState.popup.get("popup_id", -1)) in [4000, 4001, 4002]:
+				AppState.close_popup()
+			lantern_guide.apply_state(AppState.lantern_tutorial)
+			if is_instance_valid(lantern_scene): lantern_scene.apply_state(AppState.lantern_tutorial)
 		&"map":
 			_load_server_map()
 			_sync_world()
@@ -3605,6 +3637,14 @@ func _load_server_map() -> void:
 
 func _on_world_loaded(manifest: WorldManifest) -> void:
 	_bind_shared_world()
+	if is_instance_valid(lantern_scene):
+		lantern_scene.queue_free()
+	lantern_scene = null
+	if manifest.asset_id() in ["lantern_reach", "bellwatch", "stillglass", "reedway", "cinderbank", "echo_court", "wayfarer_bastion", "lantern_exchange", "waystone_yard"]:
+		lantern_scene = RoadSceneScript.new() if manifest.asset_id() not in ["lantern_reach", "bellwatch", "stillglass"] else SkySceneScript.new() if manifest.asset_id() == "stillglass" else BellSceneScript.new() if manifest.asset_id() == "bellwatch" else LanternSceneScript.new()
+		world_root.add_child(lantern_scene)
+		lantern_scene.configure(world_loader.world_root, manifest)
+		lantern_scene.apply_state(AppState.lantern_tutorial)
 	fallback_ground.hide()
 	# Regions and interiors may declare their own sky, sun, fog, tonemap, point
 	# lights and camera framing. Maps that do not keep the client's previous
@@ -3846,6 +3886,7 @@ func _spawn_actor(id: Variant) -> void:
 	if not errors.is_empty():
 		push_warning("Actor %d: %s" % [id, "; ".join(errors)])
 	node.apply_server_state(dto, adapter, true)
+	_fit_lantern_map_marker(node, "MapDot")
 	node.set_combat_effects_enabled(_effects_enabled)
 	node.set_nameplate_visible(_nameplate_visible_for(int(id)))
 	node.set_title(str(AppState.actor_titles.get(int(id), "")))
@@ -3965,6 +4006,7 @@ func _sync_ground_bags() -> void:
 		_place_ground_bag_on_surface(bag)
 
 func _place_ground_bag_on_surface(bag: GroundBag3D) -> void:
+	_fit_lantern_map_marker(bag, "BagMapMarker")
 	if not is_instance_valid(bag) or gameplay_world == null:
 		return
 	var ray_start: Vector3 = Vector3(bag.global_position.x, 400.0, bag.global_position.z)
@@ -4647,7 +4689,9 @@ func _configure_full_map(manifest: WorldManifest) -> void:
 	if not asset_value is Dictionary:
 		return
 	var asset: Dictionary = asset_value as Dictionary
-	var bounds_value: Variant = asset.get("bounds", {})
+	# A coastal scene can include an ocean backdrop far beyond its playable
+	# island. An explicit map extent keeps that backdrop out of the map view.
+	var bounds_value: Variant = asset.get("mapBounds", asset.get("bounds", {}))
 	if not bounds_value is Dictionary:
 		return
 	var bounds: Dictionary = bounds_value as Dictionary
@@ -4669,6 +4713,7 @@ func _configure_full_map(manifest: WorldManifest) -> void:
 	full_map_camera.rotation_degrees = Vector3(-90, 0, 0)
 	full_map_camera.size = extent * 1.05
 	full_map_camera.far = maxf(2500.0, center.y + 500.0)
+	player_map_marker.scale = Vector3(.18,1,.18) if world_loader.manifest.asset_id() in ["lantern_reach", "bellwatch", "stillglass", "reedway", "cinderbank", "echo_court", "wayfarer_bastion", "lantern_exchange", "waystone_yard"] else Vector3.ONE
 
 func _configure_cartography() -> void:
 	var continent_value: Variant = cartography.get("continent", {})
@@ -6119,6 +6164,7 @@ func _ask_to_spend(kind: String, name: String) -> void:
 ## is a line of text and fresh stats, perks and catalogue packets, so the
 ## window redraws from the server's answer rather than from the request.
 func _on_purchase_cancelled() -> void:
+	if not _pending_purchase.is_empty(): _road_ui(19)
 	_pending_purchase.clear()
 	purchase_confirm.hide()
 
@@ -6429,6 +6475,8 @@ func _on_stats_tab_changed(tab: int) -> void:
 		_sync_knowledge()
 	elif tab == 2:
 		_sync_counters()
+		if stats_panel.visible and AppState.lantern_tutorial.get("tutorial", "") == "second_bell":
+			Network.tutorial_ui(4)
 	elif tab == 3:
 		_sync_session_experience()
 
@@ -8025,7 +8073,7 @@ func _sync_spells() -> void:
 		button.icon = spell_catalog.icon_for(spell_id)
 		button.expand_icon = true
 		button.text = ""
-		button.disabled = not reasons.is_empty()
+		button.disabled = not AppState.pending_spell_target.is_empty()
 		button.tooltip_text = _spell_tooltip(definition, reasons, slot)
 	_sync_spell_power_controls()
 	match AppState.pending_spell_target:
@@ -8179,6 +8227,8 @@ func _on_sigil_button_pressed() -> void:
 ## quickbar uses, so the two can never disagree about what a cast sends.
 func _on_spells_button_pressed() -> void:
 	spells_window.toggle()
+	if spells_window.is_open() and AppState.lantern_tutorial.get("tutorial", "") == "borrowed_sky":
+		Network.tutorial_ui(7)
 	audio_director.play("ui_click" if spells_window.is_open() else "ui_close")
 	_sync_hud_button_states(true)
 
@@ -8186,6 +8236,7 @@ func _on_spells_button_pressed() -> void:
 ## what each creature costs written beside it.
 func _on_summoning_button_pressed() -> void:
 	summoning_window.call("toggle")
+	if bool(summoning_window.call("is_open")): _road_ui(11)
 	audio_director.play("ui_click" if bool(summoning_window.call("is_open"))
 		else "ui_close")
 
@@ -8226,6 +8277,8 @@ func _on_quest_button_pressed() -> void:
 
 func _on_ranging_button_pressed() -> void:
 	ranging_window.toggle()
+	if ranging_window.is_open() and AppState.lantern_tutorial.get("tutorial", "") == "second_bell":
+		Network.tutorial_ui(5)
 	audio_director.play("ui_click" if ranging_window.is_open() else "ui_close")
 	_sync_hud_button_states(true)
 
@@ -8270,10 +8323,7 @@ func _reference_tab_open(tab: int) -> bool:
 ## Casts one catalogued spell: the spells window's seam onto the network. The
 ## same checks the quickbar makes, because it is the same cast.
 func _cast_spell_by_id(spell_id: int) -> void:
-	var reasons := spell_catalog.unavailable_reasons(spell_id, AppState.owned_sigils, AppState.stats, AppState.inventory)
-	if not reasons.is_empty():
-		spell_status.text = reasons[0]
-		return
+	# Selected power and focus-adjusted readiness are quoted by the server.
 	magic_selection.begin(spell_id, _cast_power_for(spell_id))
 
 func _on_magic_state(data: Dictionary) -> void:
@@ -8305,10 +8355,14 @@ func _on_buddy_add_requested(buddy_name: String) -> void:
 func _on_spell_power_down_pressed() -> void:
 	requested_spell_power = maxi(1, requested_spell_power - 1)
 	_sync_spells()
+	spells_window.requested_power = requested_spell_power
+	spells_window.sync()
 
 func _on_spell_power_up_pressed() -> void:
 	requested_spell_power += 1
 	_sync_spells()
+	spells_window.requested_power = requested_spell_power
+	spells_window.sync()
 
 ## The power this cast asks for: the stepper, clamped to what the server said
 ## this effect may reach. With no stated limit the legacy frame is sent, which
@@ -9303,11 +9357,13 @@ func _fill_storage_item_list(list_control: ItemList, items: Dictionary, prefix: 
 			continue
 		var image_id: int = int(item.get("image_id", 0))
 		var index: int = list_control.item_count
-		var name: String = str(described.get("name", ""))
+		var name: String = str(described.get("name", "")) if stored else str(AppState.inventory_names.get(position, ""))
 		var label: String = ""
 		if name.is_empty():
 			label = "%s %d  •  item #%d  ×%d" % [prefix, position + 1,
 				image_id, int(item.get("quantity", 0))]
+		elif not stored:
+			label = "%s  ×%d" % [name, int(item.get("quantity", 0))]
 		else:
 			label = "%s  ×%d  •  %s" % [name, int(item.get("quantity", 0)),
 				_storage_row_detail(described)]
@@ -9684,13 +9740,33 @@ func _sync_map_objects() -> void:
 		if map_object_nodes.has(object_id):
 			continue
 		var map_object := MapObject3D.new()
-		map_object.configure(dto_value as Dictionary, adapter, world_object_models)
+		var catalog := world_object_models
+		if EloriaProtocol.map_id_from_reference(AppState.current_map) in ["lantern_reach", "bellwatch", "stillglass", "reedway", "cinderbank", "echo_court", "wayfarer_bastion", "lantern_exchange", "waystone_yard"]:
+			# The island authors its caches, bench and chart. Retain native
+			# picking and resource models without putting a second prop on top.
+			catalog = world_object_models.duplicate(true)
+			catalog["interactives"] = {"roles":{},"models":{},"mapAuthored":{
+				"Storage":true,"Crafting Station":true,"Information":true}}
+			var authored_map := EloriaProtocol.map_id_from_reference(AppState.current_map)
+			if authored_map in ["cinderbank", "reedway"]:
+				var authored: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(
+					"res://../eloria-assets/maps/" + authored_map + "/layout.json"))
+				catalog["authoredObjects"] = authored.get("presentation", {}).get("pickShapes", {})
+		map_object.configure(dto_value as Dictionary, adapter, catalog)
+		_fit_lantern_map_marker(map_object, "MapMarker")
 		world_root.add_child(map_object)
 		map_object_nodes[object_id] = map_object
 		_place_map_object_on_surface(map_object)
 	map_marker_overlay.set_waypoints(_collect_map_waypoints())
 	_request_map_redraw()
 	_sync_harvest_indicator()
+
+func _fit_lantern_map_marker(node: Node3D, marker_name: String) -> void:
+	# The standard discs span 12–14 metres on the large regional maps.
+	# On this 120-metre island they would cover entire lesson locations.
+	if EloriaProtocol.map_id_from_reference(AppState.current_map) not in ["lantern_reach", "bellwatch", "stillglass", "reedway", "cinderbank", "echo_court", "wayfarer_bastion", "lantern_exchange", "waystone_yard"]: return
+	var marker := node.get_node_or_null(marker_name) as Node3D
+	if marker: marker.scale = Vector3(.18, 1, .18)
 
 ## Draws the markers the server placed for the map the player is standing on.
 ##
@@ -9727,6 +9803,7 @@ func _sync_map_markers() -> void:
 			world_root.add_child(marker)
 			map_marker_nodes[marker_id] = marker
 		marker.configure(dto, adapter)
+		_fit_lantern_map_marker(marker, "Pin")
 		_place_map_marker_on_surface(marker)
 	_sync_player_mark_nodes()
 	_sync_map_marker_list()
@@ -10351,3 +10428,7 @@ static func _json(path: String) -> Dictionary:
 		return {}
 	var parsed = JSON.parse_string(file.get_as_text())
 	return parsed if parsed is Dictionary else {}
+
+func _road_ui(code: int) -> void:
+	if str(AppState.lantern_tutorial.get("tutorial", "")) == "followup":
+		Network.tutorial_ui(code)

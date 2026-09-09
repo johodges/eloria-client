@@ -28,6 +28,11 @@ func _init() -> void:
 			"capability %s survives the server's comma split" % capability)
 	# Nothing may be advertised whose packet this client does not decode.
 	var decoded_extensions: Dictionary = {
+		"lantern_tutorial_v1": EloriaProtocol.ServerMessage.ELORIA_LANTERN_STATE,
+		"second_bell_v1": EloriaProtocol.ServerMessage.ELORIA_LANTERN_STATE,
+		"borrowed_sky_v1": EloriaProtocol.ServerMessage.ELORIA_LANTERN_STATE,
+		"followup_tutorials_v1": EloriaProtocol.ServerMessage.ELORIA_LANTERN_STATE,
+		"magic_book_v2": EloriaProtocol.ServerMessage.ELORIA_MAGIC_STATE,
 		"actor16_v1": EloriaProtocol.ServerMessage.ADD_NEW_ACTOR_EXTENDED,
 		"almanac_v1": EloriaProtocol.ServerMessage.ELORIA_ALMANAC_STATE,
 		"combat_hud_v1": EloriaProtocol.ServerMessage.ELORIA_COMBAT_STATE,
@@ -65,6 +70,8 @@ func _init() -> void:
 		"special_events_v1": EloriaProtocol.ServerMessage.ELORIA_SPECIAL_EVENT_STATE,
 		"storage_window_v1": EloriaProtocol.ServerMessage.ELORIA_STORAGE_STATE}
 	var capability_probes: Dictionary = {
+		EloriaProtocol.ServerMessage.ELORIA_LANTERN_STATE: '{"version":1,"active":false}'.to_utf8_buffer().hex_encode(),
+		EloriaProtocol.ServerMessage.ELORIA_MAGIC_STATE: '{"kind":"recall","id":9,"entries":[]}'.to_utf8_buffer().hex_encode(),
 		EloriaProtocol.ServerMessage.SEND_SPECIAL_EFFECT: "025b004d0005",
 		EloriaProtocol.ServerMessage.ELORIA_COMBAT_STATE:
 			"016600120014001e002c00050052656564686f726e205374616700",
@@ -793,13 +800,11 @@ func _init() -> void:
 	_expect(not transition_resolver.looping_clips.has(
 		str(transition_resolver.clip_for_action(&"stand"))),
 		"the stand transition stays one-shot")
-	# The locomotion clips are authored with the body turned ~23 degrees off the
-	# rig forward, so a walk or run faces that far off its travel until the action
-	# map turns it back. Walk and run must carry a correction near that; a still
-	# pose whose facing is the server's to keep must not.
-	_expect(transition_resolver.facing_offset_for_action(&"walk") > 15.0
-		and transition_resolver.facing_offset_for_action(&"run") > 15.0,
-		"walk and run turn the body back onto their travel (%.1f, %.1f deg)"
+	# The canonical body rebuild aligned locomotion to rig forward. Restoring
+	# the older body's ~23 degree correction would turn these clips sideways.
+	_expect(is_zero_approx(transition_resolver.facing_offset_for_action(&"walk"))
+		and is_zero_approx(transition_resolver.facing_offset_for_action(&"run")),
+		"canonical walk and run retain their aligned facing (%.1f, %.1f deg)"
 			% [transition_resolver.facing_offset_for_action(&"walk"),
 				transition_resolver.facing_offset_for_action(&"run")])
 	_expect(is_equal_approx(transition_resolver.facing_offset_for_action(&"idle"), 0.0)

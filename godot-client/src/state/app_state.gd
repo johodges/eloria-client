@@ -59,6 +59,7 @@ var connection_state := "disconnected"
 var authenticated := false
 var local_actor_id := -1
 var current_map := ""
+var lantern_tutorial: Dictionary = {}
 var actors: Dictionary = {}
 ## The ids of actors written since the presentation last read them. Every
 ## site that writes `actors` records the id here and `take_changed_actors`
@@ -358,6 +359,7 @@ func _on_connection_state_changed(value: String) -> void:
 		active_channels = [0, 0, 0]
 		active_channel_index = 0
 		current_map = ""
+		lantern_tutorial.clear()
 		selected_actor_id = -1
 		npc_dialogue = {"open": false, "name": "", "text": "", "options": [],
 			"quest": false, "quest_id": 0}
@@ -513,6 +515,9 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 					var actor_command: int = int(command_event.get("command", 0))
 					var actor: Dictionary = actors[actor_id]
 					actors[actor_id] = ActorReducer.apply_command(actor, actor_command)
+					if actor_id == local_actor_id and actor_command == 19:
+						combat_state = _empty_combat_state()
+						state_changed.emit(&"combat_state")
 					mark_actor_changed(actor_id)
 			state_changed.emit(&"actors")
 		"actor_wear":
@@ -1050,6 +1055,9 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			for raw_quest: Variant in event.entries:
 				quest_journal.append((raw_quest as Dictionary).duplicate(true))
 			state_changed.emit(&"quest_journal")
+		"lantern_tutorial":
+			lantern_tutorial = (event.state as Dictionary).duplicate(true)
+			state_changed.emit(&"lantern_tutorial")
 		"almanac":
 			almanac = (event as Dictionary).duplicate(true)
 			almanac.erase("type")

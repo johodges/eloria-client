@@ -178,6 +178,18 @@ func _run() -> void:
 		"Cast asks with the new selection: %s" % str(cast_ids))
 
 	window.call("close")
+	# The selected-power quote supersedes base-cost guesses, including foci.
+	window.set("selected_spell_id",0)
+	window.set("requested_power",2)
+	window.call("_quote_state",{"kind":"preview","id":0,"requested":2,"power":2,"limit":4,"mana":8,
+		"ready":true,"focus":"Hearthstone Focus","reagents":[{"name":"Attunement Charge","quantity":1,"have":1}]})
+	_expect(not cast.disabled and numbers.text.contains("Ether 8"),"selected power uses the server cost")
+	_expect(reagents.text.contains("Hearthstone Focus"),"focus substitution is visible")
+	window.call("_quote_state",{"kind":"preview","id":0,"requested":1,"power":1,"limit":4,"mana":5,"ready":false})
+	_expect(not cast.disabled,"stale quote for another power is ignored")
+	window.call("_quote_state",{"kind":"preview","id":0,"requested":2,"power":2,"limit":4,"mana":8,
+		"ready":false,"reason":"Missing materials.","reagents":[]})
+	_expect(cast.disabled and name_label.text.contains("Missing materials"),"server rejection remains visible")
 	_expect(not panel.visible and not bool(window.call("is_open")),
 		"close hides it")
 

@@ -1,0 +1,369 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.1.0",
+  "asset": {
+    "id": "reedway",
+    "name": "Reedway Halt",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "bounds": {
+      "min": [
+        -2,
+        -2,
+        -122
+      ],
+      "max": [
+        122,
+        8,
+        2
+      ]
+    },
+    "playableBounds": {
+      "min": [
+        -0.5,
+        0.4,
+        -119.5
+      ],
+      "max": [
+        119.5,
+        0.4,
+        0.5
+      ]
+    },
+    "serverCells": 120,
+    "mapBounds": {
+      "min": [
+        -2,
+        -2,
+        -122
+      ],
+      "max": [
+        122,
+        8,
+        2
+      ]
+    }
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      0,
+      0
+    ],
+    "origin": [
+      -0.5,
+      0,
+      0.5
+    ],
+    "walkingHeight": 0.4,
+    "invertServerY": true
+  },
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        55,
+        0.4,
+        -59
+      ],
+      "rotationDegrees": 0
+    }
+  ],
+  "collision": {
+    "binary": "collision.bin",
+    "format": "EWCG-v2",
+    "width": 240,
+    "height": 240,
+    "cellMetres": 0.5,
+    "heightEncoding": {
+      "origin": -2.2,
+      "step": 0.2,
+      "zeroMeansBlocked": true
+    }
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Walk_"
+    ],
+    "agentRadius": 0.4,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 45
+  },
+  "landmarks": [
+    {
+      "id": "guide",
+      "name": "Toma",
+      "position": [
+        55,
+        0.4,
+        -69
+      ]
+    },
+    {
+      "id": "cache",
+      "name": "Toma's supply cache",
+      "position": [
+        67,
+        0.4,
+        -68
+      ]
+    },
+    {
+      "id": "north",
+      "name": "Quiet pen arrival",
+      "position": [
+        60,
+        0.4,
+        -104
+      ]
+    },
+    {
+      "id": "east",
+      "name": "Axle Lane",
+      "position": [
+        93,
+        0.4,
+        -60
+      ]
+    },
+    {
+      "id": "south",
+      "name": "Rival Yard",
+      "position": [
+        60,
+        0.4,
+        -28
+      ]
+    },
+    {
+      "id": "west",
+      "name": "Return Road",
+      "position": [
+        27,
+        0.4,
+        -60
+      ]
+    },
+    {
+      "id": "merchant",
+      "name": "Practice merchant",
+      "position": [
+        64,
+        0.4,
+        -100
+      ]
+    },
+    {
+      "id": "partner",
+      "name": "Mara",
+      "position": [
+        55,
+        0.4,
+        -108
+      ]
+    },
+    {
+      "id": "second",
+      "name": "Bran",
+      "position": [
+        74,
+        0.4,
+        -60
+      ]
+    },
+    {
+      "id": "rival",
+      "name": "Practice prism",
+      "position": [
+        102,
+        0.4,
+        -73
+      ]
+    },
+    {
+      "id": "enemy",
+      "name": "Road opponent",
+      "position": [
+        101,
+        0.4,
+        -65
+      ]
+    },
+    {
+      "id": "north_object",
+      "name": "North wagon latch",
+      "position": [
+        60,
+        0.4,
+        -107
+      ]
+    },
+    {
+      "id": "east_object",
+      "name": "East Wagon latch",
+      "position": [
+        109,
+        0.4,
+        -57
+      ]
+    },
+    {
+      "id": "south_object",
+      "name": "South Wagon latch",
+      "position": [
+        60,
+        0.4,
+        -9
+      ]
+    },
+    {
+      "id": "west_object",
+      "name": "West Wagon latch",
+      "position": [
+        12,
+        0.4,
+        -57
+      ]
+    },
+    {
+      "id": "calling_circle",
+      "name": "North calling circle",
+      "position": [
+        60,
+        0.4,
+        -90
+      ]
+    }
+  ],
+  "interactives": [
+    {
+      "id": "cache",
+      "kind": "storage",
+      "objectId": 7301,
+      "position": [
+        67,
+        0.4,
+        -68
+      ],
+      "serverTile": [
+        67,
+        68
+      ],
+      "approachTile": [
+        65,
+        67
+      ],
+      "resource": ""
+    },
+    {
+      "id": "north_object",
+      "kind": "information",
+      "objectId": 7302,
+      "position": [
+        60,
+        0.4,
+        -107
+      ],
+      "serverTile": [
+        60,
+        107
+      ],
+      "approachTile": [
+        60,
+        105
+      ],
+      "resource": ""
+    },
+    {
+      "id": "east_object",
+      "kind": "information",
+      "objectId": 7303,
+      "position": [
+        109,
+        0.4,
+        -57
+      ],
+      "serverTile": [
+        109,
+        57
+      ],
+      "approachTile": [
+        109,
+        54
+      ],
+      "resource": ""
+    },
+    {
+      "id": "south_object",
+      "kind": "information",
+      "objectId": 7304,
+      "position": [
+        60,
+        0.4,
+        -9
+      ],
+      "serverTile": [
+        60,
+        9
+      ],
+      "approachTile": [
+        60,
+        6
+      ],
+      "resource": ""
+    },
+    {
+      "id": "west_object",
+      "kind": "information",
+      "objectId": 7305,
+      "position": [
+        12,
+        0.4,
+        -57
+      ],
+      "serverTile": [
+        12,
+        57
+      ],
+      "approachTile": [
+        12,
+        54
+      ],
+      "resource": ""
+    }
+  ],
+  "tutorial": {
+    "layout": "layout.json"
+  },
+  "camera": {
+    "distance": 24,
+    "minDistance": 8,
+    "maxDistance": 64,
+    "pitchDegrees": -52
+  },
+  "environment": {
+    "backgroundColor": "#344a40",
+    "ambient": {
+      "color": "#b7c9bc",
+      "energy": 0.43
+    },
+    "sun": {
+      "color": "#ffeed1",
+      "energy": 0.68,
+      "rotationDegrees": [
+        -50,
+        -32,
+        0
+      ]
+    },
+    "tonemap": {
+      "mode": "filmic",
+      "exposure": 0.95
+    }
+  }
+}

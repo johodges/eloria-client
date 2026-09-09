@@ -122,6 +122,18 @@ func _run() -> void:
 	_expect(list.item_count == 1 and _positions(list) == [7],
 		"an undescribed row still lists and keeps its position")
 
+	# The tutorial names the resource to deposit. The backpack column must
+	# use the same server identity as Inventory, including shared artwork.
+	app_state.inventory = {4:{"image_id":88,"quantity":3}}
+	app_state.inventory_names = {4:"Reed"}
+	main.call("_sync_storage")
+	var backpack: ItemList = main.get_node("%StorageInventory")
+	_expect(_names(backpack)==["Reed"] and _positions(backpack)==[4],
+		"deposit names come from the server and retain their inventory slots")
+	app_state.inventory_names.clear()
+	main.call("_sync_storage")
+	_expect(backpack.get_item_text(0).contains("item #88"),
+		"older servers retain an honest unnamed-item fallback")
 	main.queue_free()
 	if failures == 0:
 		print("storage organizer tests passed")

@@ -56,6 +56,16 @@ func _run() -> void:
 	var two: Node3D = second.get_node_or_null("Model") as Node3D
 	_expect(one != null and two != null and not is_equal_approx(one.rotation.y, two.rotation.y),
 		"two of the same node do not stand identically")
+	var workshop_catalog: Dictionary = catalog.duplicate(true)
+	workshop_catalog.authoredObjects = {"7310":{"height":1.9,"radius":1.25}}
+	var seam := _object(adapter, workshop_catalog, EloriaProtocol.MAP_OBJECT_HARVEST, "Iron Ore", 7310)
+	_expect(seam.get_node_or_null("Model") == null, "Authored ore is not doubled by a catalog model")
+	_expect(not seam.get_node("Ring").visible, "Authored ore keeps its idle ring hidden")
+	seam.set_active(true)
+	_expect(seam.get_node("Ring").visible, "Real harvesting still highlights the authored seam")
+	_expect(seam.get_node_or_null("MapMarker") != null, "Authored resources keep their map markers")
+	var pick: CylinderShape3D = seam.get_node("PickShape").shape
+	_expect(is_equal_approx(pick.height,1.9) and is_equal_approx(pick.radius,1.25), "Pick volume matches the authored resource")
 
 	print("world object placement tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	quit(failures)

@@ -466,6 +466,16 @@
               ]
             },
             {
+              "title": "Worn gear",
+              "kind": "facts",
+              "rows": [
+                [
+                  "Carried by",
+                  "Echo Practice Cape"
+                ]
+              ]
+            },
+            {
               "title": "Also",
               "kind": "facts",
               "rows": [
@@ -481,7 +491,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 300 gold. Three defense lost for each extra opponent instead of five.\nTier 2 - 6 pick points, 2,000 gold. Two defense lost for each extra opponent.\nTier 3 - 9 pick points, 12,000 gold. One defense lost for each extra opponent.\n\nCannot be held with There is no Fork, I can't dance.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 300 gold. Three defense lost for each extra opponent instead of five.\nTier 2 - 6 pick points, 2,000 gold. Two defense lost for each extra opponent.\nTier 3 - 9 pick points, 12,000 gold. One defense lost for each extra opponent.\n\nWorn gear carries this perk, and adds a tier to it for anybody who has already bought one.\n\nCarried by: Echo Practice Cape.\n\nCannot be held with There is no Fork, I can't dance.",
           "facts": [
             [
               "Tiers",
@@ -494,6 +504,10 @@
             [
               "Gold",
               "14,300 gold"
+            ],
+            [
+              "Gear",
+              "Echo Practice Cape"
             ],
             [
               "Excludes",
@@ -2532,7 +2546,7 @@
       "id": "spells",
       "title": "Magic",
       "summary": "Sigils, spells and the effects they leave",
-      "intro": "Choose a spell family, targeting mode and Power 1\u201310. Higher power replaces separate greater spells.",
+      "intro": "Choose a spell family, targeting mode and Power 1–10. Higher power replaces separate greater spells.",
       "generate": "spells",
       "entries": [
         {
@@ -2563,7 +2577,7 @@
           "id": "recall-portals",
           "title": "Recall and portal destinations",
           "summary": "Higher power opens destination selection",
-          "body": "Recall at Power 1\u20134 returns you to Four Gates. At Power 5\u201310 choose a map with a portal entrance and the entrance where you will arrive. Maps with several entrances list each location. Blink remains a short teleport to a walkable place within 15 tiles."
+          "body": "Recall at Power 1–4 returns you to Four Gates. At Power 5–10 choose a map with a portal entrance and the entrance where you will arrive. Maps with several entrances list each location. Blink remains a short teleport to a walkable place within 15 tiles."
         }
       ]
     },

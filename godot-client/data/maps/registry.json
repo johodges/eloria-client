@@ -1425,6 +1425,168 @@
     },
     "manymouth_gauntlet_3": {
       "alias": "manymouth_gauntlet"
+    },
+    "lantern_reach": {
+      "manifest": "res://../eloria-assets/maps/lantern-reach/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          0,
+          0
+        ],
+        "origin": [
+          -0.5,
+          0,
+          0.5
+        ],
+        "walkingHeight": 0.4,
+        "invertServerY": true
+      },
+      "status": "private-onboarding"
+    },
+    "bellwatch": {
+      "manifest": "res://../eloria-assets/maps/bellwatch/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          0,
+          0
+        ],
+        "origin": [
+          -0.5,
+          0,
+          0.5
+        ],
+        "walkingHeight": 0.4,
+        "invertServerY": true
+      },
+      "status": "private-invasion-tutorial"
+    },
+    "stillglass": {
+      "manifest": "res://../eloria-assets/maps/stillglass/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          0,
+          0
+        ],
+        "origin": [
+          -0.5,
+          0,
+          0.5
+        ],
+        "walkingHeight": 0.4,
+        "invertServerY": true
+      },
+      "status": "private-magic-tutorial"
+    },
+    "reedway": {
+      "manifest": "res://../eloria-assets/maps/reedway/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          0,
+          0
+        ],
+        "origin": [
+          -0.5,
+          0,
+          0.5
+        ],
+        "walkingHeight": 0.4,
+        "invertServerY": true
+      },
+      "status": "private-followup-tutorial"
+    },
+    "cinderbank": {
+      "manifest": "res://../eloria-assets/maps/cinderbank/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          0,
+          0
+        ],
+        "origin": [
+          -0.5,
+          0,
+          0.5
+        ],
+        "walkingHeight": 0.4,
+        "invertServerY": true
+      },
+      "status": "private-followup-tutorial"
+    },
+    "echo_court": {
+      "manifest": "res://../eloria-assets/maps/echo_court/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          0,
+          0
+        ],
+        "origin": [
+          -0.5,
+          0,
+          0.5
+        ],
+        "walkingHeight": 0.4,
+        "invertServerY": true
+      },
+      "status": "private-followup-tutorial"
+    },
+    "wayfarer_bastion": {
+      "manifest": "res://../eloria-assets/maps/wayfarer_bastion/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          0,
+          0
+        ],
+        "origin": [
+          -0.5,
+          0,
+          0.5
+        ],
+        "walkingHeight": 0.4,
+        "invertServerY": true
+      },
+      "status": "private-followup-tutorial"
+    },
+    "lantern_exchange": {
+      "manifest": "res://../eloria-assets/maps/lantern_exchange/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          0,
+          0
+        ],
+        "origin": [
+          -0.5,
+          0,
+          0.5
+        ],
+        "walkingHeight": 0.4,
+        "invertServerY": true
+      },
+      "status": "private-followup-tutorial"
+    },
+    "waystone_yard": {
+      "manifest": "res://../eloria-assets/maps/waystone_yard/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          0,
+          0
+        ],
+        "origin": [
+          -0.5,
+          0,
+          0.5
+        ],
+        "walkingHeight": 0.4,
+        "invertServerY": true
+      },
+      "status": "private-followup-tutorial"
     }
   }
 }

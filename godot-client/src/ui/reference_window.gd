@@ -330,6 +330,14 @@ func _build() -> void:
 	var help_page := VBoxContainer.new()
 	help_page.name = "Help"
 	tabs.add_child(help_page)
+	var adventures := Button.new()
+	adventures.name = "PracticeAdventures"
+	adventures.text = "Practice adventures"
+	adventures.pressed.connect(func():
+		if AppState.authenticated:
+			Network.send_chat("#tutorial adventures")
+			close())
+	help_page.add_child(adventures)
 	var help_scroll := ScrollContainer.new()
 	help_scroll.name = "HelpScroll"
 	help_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL

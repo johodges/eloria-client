@@ -34,6 +34,9 @@ func run() -> void:
 	main.get_node("LoginPanel").hide()
 	main.get_node("GameView").show()
 	var selector: Control = main.get("magic_selection")
+	selector.pending={"op":"cast","id":10,"power":1}
+	root.get_node("Network").magic_selection_completed.emit()
+	check(selector.pending.is_empty(),"a completed target selection cannot later count as cancellation")
 	var payload := {"kind":"transmute", "id":8, "entries":[{"slot":2,"item_id":33,
 		"instance_id":0,"name":"Deep Coal","rarity":"Rare","required_power":5,
 		"available":10,"unit_gold":24}]}

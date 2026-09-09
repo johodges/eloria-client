@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 # nested, and a point uses `position` where something with an extent uses
 # `center`.
 PACKAGES = {
+    "stillglass": ((("interactives",), "position"),),
     "four-gates": (
         (("harvestables",), "position"),
         (("npcMarkers",), "position"),

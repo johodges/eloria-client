@@ -189,7 +189,9 @@ func _build_visual(catalog: Dictionary) -> void:
 		# this node's position; see `Main._collect_map_waypoints`.
 		return
 	var entry: Dictionary = _catalog_entry(catalog)
-	var height: float = _add_model(entry)
+	var authored: Dictionary = catalog.get("authoredObjects", {}).get(str(object_id), {})
+	var height: float = float(authored.get("height", 1.2)) if not authored.is_empty() else _add_model(entry)
+	if not authored.is_empty(): model_id = "map_authored_" + str(object_id)
 	_map_authored = (catalog.get("interactives", {}) as Dictionary).get(
 		"mapAuthored", {}).has(label)
 	# A role the region package authors is already standing in the world art:
@@ -201,6 +203,8 @@ func _build_visual(catalog: Dictionary) -> void:
 	if not is_portal():
 		_add_map_marker()
 	_add_pick_shape(height)
+	if not authored.is_empty():
+		($PickShape.shape as CylinderShape3D).radius = float(authored.get("radius", .9))
 
 ## Returns the height of the model that was placed, or 0.0 for none.
 func _add_model(entry: Dictionary) -> float:

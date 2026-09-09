@@ -1,0 +1,302 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "bellwatch",
+    "name": "Bellwatch",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "bounds": {
+      "min": [
+        -5,
+        -2,
+        -149
+      ],
+      "max": [
+        149,
+        10,
+        5
+      ]
+    },
+    "playableBounds": {
+      "min": [
+        -0.5,
+        0.4,
+        -143.5
+      ],
+      "max": [
+        143.5,
+        0.4,
+        0.5
+      ]
+    },
+    "serverCells": 144,
+    "mapBounds": {
+      "min": [
+        -2,
+        -2,
+        -146
+      ],
+      "max": [
+        146,
+        10,
+        2
+      ]
+    }
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      0,
+      0
+    ],
+    "origin": [
+      -0.5,
+      0,
+      0.5
+    ],
+    "walkingHeight": 0.4,
+    "invertServerY": true
+  },
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        65,
+        0.4,
+        -70
+      ],
+      "rotationDegrees": 0
+    }
+  ],
+  "collision": {
+    "binary": "collision.bin",
+    "format": "EWCG-v2",
+    "width": 288,
+    "height": 288,
+    "cellMetres": 0.5,
+    "heightEncoding": {
+      "origin": -2.2,
+      "step": 0.2,
+      "zeroMeansBlocked": true
+    }
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Walk_"
+    ],
+    "agentRadius": 0.4,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 45
+  },
+  "landmarks": [
+    {
+      "id": "nesh",
+      "name": "Wayfinder Nesh",
+      "position": [
+        68,
+        0.4,
+        -78
+      ]
+    },
+    {
+      "id": "cache",
+      "name": "Bellwatch supply chest",
+      "position": [
+        79,
+        0.4,
+        -78
+      ]
+    },
+    {
+      "id": "bell",
+      "name": "The second bell",
+      "position": [
+        72,
+        0.4,
+        -85
+      ]
+    },
+    {
+      "id": "cart",
+      "name": "The waiting cart",
+      "position": [
+        59,
+        0.4,
+        -72
+      ]
+    },
+    {
+      "id": "winch",
+      "name": "Mill breach winch",
+      "position": [
+        132,
+        0.4,
+        -82
+      ]
+    },
+    {
+      "id": "lookout",
+      "name": "Orchard lookout",
+      "position": [
+        72,
+        0.4,
+        -102
+      ]
+    },
+    {
+      "id": "east_landing",
+      "name": "Mill approach",
+      "position": [
+        109,
+        0.4,
+        -72
+      ]
+    },
+    {
+      "id": "refuge",
+      "name": "Bell Court refuge",
+      "position": [
+        89,
+        0.4,
+        -72
+      ]
+    },
+    {
+      "id": "south_landing",
+      "name": "Muster firing position",
+      "position": [
+        72,
+        0.4,
+        -42
+      ]
+    },
+    {
+      "id": "boss_approach",
+      "name": "Captain overlook",
+      "position": [
+        72,
+        0.4,
+        -40
+      ]
+    },
+    {
+      "id": "road",
+      "name": "Departure road",
+      "position": [
+        34,
+        0.4,
+        -72
+      ]
+    }
+  ],
+  "interactives": [
+    {
+      "id": "cache",
+      "kind": "storage",
+      "objectId": 7101,
+      "position": [
+        79,
+        0.4,
+        -78
+      ],
+      "serverTile": [
+        79,
+        78
+      ],
+      "approachTile": [
+        77,
+        77
+      ]
+    },
+    {
+      "id": "bell",
+      "kind": "information",
+      "objectId": 7102,
+      "position": [
+        72,
+        0.4,
+        -85
+      ],
+      "serverTile": [
+        72,
+        85
+      ],
+      "approachTile": [
+        72,
+        83
+      ]
+    },
+    {
+      "id": "cart",
+      "kind": "information",
+      "objectId": 7103,
+      "position": [
+        59,
+        0.4,
+        -72
+      ],
+      "serverTile": [
+        59,
+        72
+      ],
+      "approachTile": [
+        62,
+        72
+      ]
+    },
+    {
+      "id": "winch",
+      "kind": "information",
+      "objectId": 7104,
+      "position": [
+        132,
+        0.4,
+        -82
+      ],
+      "serverTile": [
+        132,
+        82
+      ],
+      "approachTile": [
+        130,
+        81
+      ]
+    }
+  ],
+  "tutorial": {
+    "art": "art.json",
+    "layout": "layout.json"
+  },
+  "camera": {
+    "distance": 24,
+    "minDistance": 8,
+    "maxDistance": 64,
+    "pitchDegrees": -52
+  },
+  "environment": {
+    "backgroundColor": "#18363f",
+    "ambient": {
+      "color": "#acc6cb",
+      "energy": 0.7
+    },
+    "sun": {
+      "color": "#ffe5ba",
+      "energy": 1.0,
+      "rotationDegrees": [
+        -48,
+        -28,
+        0
+      ]
+    },
+    "tonemap": {
+      "mode": "filmic",
+      "exposure": 1.0
+    }
+  }
+}
