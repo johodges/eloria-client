@@ -23,7 +23,7 @@ func configure(owner_ui: Control) -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	card = PanelContainer.new()
 	card.name = "TutorialInstruction"
-	card.position = Vector2(16, 62)
+	card.position = Vector2(maxf(16, get_viewport_rect().size.x-310-96), 62)
 	card.custom_minimum_size.x = 310
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color("13262eee")
@@ -195,50 +195,35 @@ func _process(_delta: float) -> void:
 		manufacturing.position.y = 8
 		queue_redraw()
 		return
-	# Keep the guide within small/resized windows, and move beside an open
-	# gameplay panel instead of covering the controls being taught.
+	# Start at the upper right, clear of chat and the resource rail, and move
+	# beside an open gameplay panel if it covers the controls being taught.
 	var area := get_viewport_rect().size
-	card.position.x = 16
 	var width := 310.0
+	card.position = Vector2(maxf(16, area.x-width-96),
+		clampf(62, 8, maxf(8, area.y-card.size.y-110)))
+	var panels: Array[Control] = []
 	for key in ["InventoryPanel", "StoragePanel", "ManufacturingPanel", "StatsPanel", "DialoguePanel"]:
-		var panel := _node(key)
-		if _visible(panel):
-			var bounds := panel.get_global_rect()
-			var left := bounds.position.x-28
-			var right := area.x-84-bounds.end.x-24
-			if left >= 190:
-				width = minf(width,left)
-			elif right >= 190:
-				width = minf(width,right)
-				card.position.x = bounds.end.x+12
+		panels.append(_node(key))
 	var ranging: Control = main.get("ranging_window")
-	if is_instance_valid(ranging) and _visible(ranging.panel):
-		var bounds: Rect2 = ranging.panel.get_global_rect()
-		if card.get_global_rect().intersects(bounds):
-			card.position.x = bounds.end.x+12
-			width = minf(width, maxf(190, area.x-96-card.position.x))
+	if is_instance_valid(ranging): panels.append(ranging.panel)
 	var book: Control = main.get("spells_window")
-	if is_instance_valid(book) and _visible(book.panel):
-		var bounds: Rect2 = book.panel.get_global_rect()
-		if card.get_global_rect().intersects(bounds):
-			card.position.x = bounds.end.x+12
-			width = minf(width, maxf(190, area.x-96-card.position.x))
+	if is_instance_valid(book): panels.append(book.panel)
 	var ext: Control = main.get("extension_windows")
 	var summons: Control = main.get("summoning_window")
-	var extra_panels: Array[Control] = [summons.panel, ext.get("detail_panel"), ext.get("party_panel"), ext.get("market_panel")]
-	for panel: Control in extra_panels:
+	panels.append_array([summons.panel, ext.get("detail_panel"), ext.get("party_panel"),
+		ext.get("market_panel"), ext.find_child("MerchantWindow",true,false) as Control])
+	for panel: Control in panels:
 		if not _visible(panel): continue
 		var bounds := panel.get_global_rect()
+		if not Rect2(card.position, Vector2(width, card.size.y)).intersects(bounds): continue
 		var left := bounds.position.x-28
-		var right := area.x-84-bounds.end.x-24
-		if left >= 190:
-			width = minf(width,left)
-		elif right >= 190:
+		var right := area.x-96-bounds.end.x-12
+		if right >= 190:
 			width = minf(width,right)
-			card.position.x = bounds.end.x+12
-	var merchant := ext.find_child("MerchantWindow",true,false) as Control
-	if _visible(merchant):
-		width = minf(width,maxf(190,merchant.get_global_rect().position.x-28))
+			card.position.x = area.x-96-width
+		elif left >= 190:
+			width = minf(width,left)
+			card.position.x = bounds.position.x-12-width
 	if card.custom_minimum_size.x != width:
 		card.custom_minimum_size.x = width
 		heading.custom_minimum_size.x = width-24
