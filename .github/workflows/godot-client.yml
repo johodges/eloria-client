@@ -73,6 +73,7 @@ jobs:
         run: |
           godot --headless --path godot-client --script res://tests/test_lantern_protocol.gd
           godot --headless --path godot-client --script res://tests/test_bell_state.gd
+          godot --headless --path godot-client --script res://tests/test_tutorial_companion_interaction.gd
           godot --headless --path godot-client --script res://tests/test_ranging_window.gd
       - name: World input routing fixtures
         run: godot --headless --path godot-client --script res://tests/test_world_input.gd

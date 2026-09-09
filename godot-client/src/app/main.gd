@@ -9478,7 +9478,7 @@ func _actor_click_action(actor_id: int, dto: Dictionary,
 	# NPCs and summons are the two actors a plain click talks to. TOUCH_PLAYER
 	# on your own summon is how the server opens the behaviour popup, so it
 	# has to outrank the attack below - a summon is a creature kind.
-	if int(dto.get("kind", 0)) == 2 or ReplicatedActor3D.is_summon(dto):
+	if int(dto.get("kind", 0)) == 2 or _is_tutorial_companion(actor_id) or ReplicatedActor3D.is_summon(dto):
 		return "talk"
 	if _is_creature_actor(dto) and _is_attackable_actor(actor_id, dto):
 		return "attack"
@@ -9489,14 +9489,27 @@ func _actor_click_action(actor_id: int, dto: Dictionary,
 func _is_creature_actor(dto: Dictionary) -> bool:
 	return int(dto.get("kind", 0)) in [3, 5]
 
+func _is_tutorial_companion(actor_id: int) -> bool:
+	var tutorial: Dictionary = AppState.lantern_tutorial
+	if not bool(tutorial.get("active", false)) or tutorial.get("tutorial", "") != "borrowed_sky":
+		return false
+	for companion_id: Variant in tutorial.get("talk_actor_ids", []):
+		if int(companion_id) == actor_id:
+			return true
+	return false
+
 func _is_attackable_actor(actor_id: int, dto: Dictionary) -> bool:
 	if actor_id < 0 or actor_id == AppState.local_actor_id or dto.is_empty():
+		return false
+	if _is_tutorial_companion(actor_id):
 		return false
 	var kind: int = int(dto.get("kind", 0))
 	return kind in [1, 3, 4, 5] and bool(dto.get("alive", int(dto.get("health", 0)) > 0))
 
 func _is_tradeable_player(actor_id: int, dto: Dictionary) -> bool:
 	if actor_id < 0 or actor_id == AppState.local_actor_id or dto.is_empty():
+		return false
+	if _is_tutorial_companion(actor_id):
 		return false
 	var kind: int = int(dto.get("kind", 0))
 	return kind in [1, 4] and bool(dto.get("alive", int(dto.get("health", 0)) > 0))
@@ -10062,7 +10075,7 @@ func _cursor_context_at(viewport_position: Vector2) -> Dictionary:
 				context["target"] = "bag"
 				return context
 			context["target"] = "self"
-		elif kind == 2:
+		elif kind == 2 or _is_tutorial_companion(actor_id):
 			context["target"] = "npc"
 		elif ReplicatedActor3D.is_summon(dto):
 			context["target"] = "summon"
