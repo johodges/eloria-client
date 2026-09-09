@@ -1,7 +1,6 @@
 extends Control
-## The spell book: every catalogued spell, grouped the way Eternal Lands
-## groups its own - health, general, attack, defense - with the reasons a
-## cast would fail written where the player can read them.
+## The spell book: effect rows and target columns, within the health,
+## general, attack and defense groups, with reasons a cast would fail.
 ##
 ## Everything on it is a rendering of what the client honestly knows. The
 ## definitions are the client's own spell catalog; the sigils the player
@@ -49,6 +48,18 @@ const BLOCKED_ALPHA := 0.45
 const BLOCKED_COLOR := Color(1.0, 0.36, 0.36)
 const CASTABLE_COLOR := Color(0.85, 1.0, 0.85)
 const ICON_SIZE := Vector2(28.0, 28.0)
+const TARGET_COLUMNS: Array[String] = ["self", "target", "allies", "burst", "utility"]
+const EFFECT_COLUMN_WIDTH := 164.0
+const TARGET_COLUMN_WIDTH := 56.0
+const EFFECT_LABELS := {
+	"harm": "Magic Damage", "heat_bolt": "Fire Damage", "cold_bolt": "Frost Damage",
+	"radiation_bolt": "Radiation Damage", "mana_drain": "Ether Drain",
+	"invisibility": "Conceal", "magic_protection": "Magic Ward",
+	"heat_protection": "Heat Ward", "cold_protection": "Cold Ward",
+	"radiation_protection": "Radiation Ward", "element_ward": "Elemental Ward",
+	"expose_magic": "Weaken Magic", "expose_heat": "Weaken Heat",
+	"expose_cold": "Weaken Cold", "expose_radiation": "Weaken Radiation",
+}
 
 var catalog: SpellCatalog
 var selected_spell_id: int = -1
@@ -62,8 +73,10 @@ var reagents_label: Label
 var cast_button: Button
 
 var _cast: Callable = Callable()
-## Group name to its HFlowContainer of spell buttons.
+## Effect key to its row, and group name to its section.
 var _rows: Dictionary = {}
+var _groups: Dictionary = {}
+var _empty_label: Label
 ## Spell id to its Button, for re-dimming without a rebuild.
 var _buttons: Dictionary = {}
 ## Spell id to the Array[String] of everything blocking a cast, as the
@@ -228,14 +241,17 @@ func _reagents_line(definition: Dictionary) -> String:
 				parts.append(label)
 	return "Reagents: " + (", ".join(parts) if not parts.is_empty() else "none")
 
-## Fills the four group rows from the catalog: one icon button per spell,
-## grouped by effect and ordered by the level the spell asks for.
+## Each effect owns a row. Target cells stay in place even when empty or
+## filtered, so comparing variants never changes the meaning of a column.
 func _populate() -> void:
 	for group: String in GROUP_ORDER:
-		var row: HFlowContainer = _rows[group] as HFlowContainer
-		for child: Node in row.get_children():
-			row.remove_child(child)
+		var section: VBoxContainer = _groups[group] as VBoxContainer
+		for child: Node in section.get_children():
+			if child is Label:
+				continue
+			section.remove_child(child)
 			child.free()
+	_rows.clear()
 	_buttons.clear()
 	if catalog == null:
 		return
@@ -252,15 +268,58 @@ func _populate() -> void:
 			return level_a < level_b if level_a != level_b else int(a) < int(b))
 		for raw_id: Variant in ids:
 			var spell_id: int = int(raw_id)
+			var definition := catalog.spell(spell_id)
+			var effect := str(definition.get("effect", ""))
+			if effect.is_empty():
+				effect = str(definition.get("name", "Spell %d" % spell_id))
+			if not _rows.has(effect):
+				var row := _make_effect_row(effect)
+				(_groups[group] as VBoxContainer).add_child(row)
+				_rows[effect] = row
+			var scope := str(definition.get("scope", "self"))
+			var target := scope if scope in TARGET_COLUMNS else "utility"
+			var cell := (_rows[effect] as HBoxContainer).get_node(
+				"%sCell" % target.capitalize()) as VBoxContainer
+			(cell.get_node("Empty") as Label).hide()
 			var button := Button.new()
 			button.name = "SpellButton%d" % spell_id
-			button.tooltip_text = str(catalog.spell(spell_id).get("name", ""))
+			button.tooltip_text = str(definition.get("name", ""))
+			if target == "utility":
+				button.tooltip_text += "\nTarget: " + scope.capitalize()
 			button.icon = catalog.icon_for(spell_id)
 			button.expand_icon = true
 			button.custom_minimum_size = ICON_SIZE
+			button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 			button.pressed.connect(_on_spell_pressed.bind(spell_id))
-			(_rows[group] as HFlowContainer).add_child(button)
+			cell.add_child(button)
 			_buttons[spell_id] = button
+	_filter_spells()
+
+func _make_effect_row(effect: String, heading := false) -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.name = "TargetHeadings" if heading else "%sEffectRow" % effect.to_pascal_case()
+	var label := Label.new()
+	label.name = "EffectLabel"
+	label.text = "Effect" if heading else str(EFFECT_LABELS.get(effect, effect.capitalize()))
+	label.tooltip_text = label.text
+	label.custom_minimum_size.x = EFFECT_COLUMN_WIDTH
+	label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	row.add_child(label)
+	for target: String in TARGET_COLUMNS:
+		var cell := VBoxContainer.new()
+		cell.name = "%sCell" % target.capitalize()
+		cell.custom_minimum_size.x = TARGET_COLUMN_WIDTH
+		cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cell.alignment = BoxContainer.ALIGNMENT_CENTER
+		row.add_child(cell)
+		var placeholder := Label.new()
+		placeholder.name = "Empty"
+		placeholder.text = target.capitalize() if heading else "—"
+		placeholder.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		if not heading:
+			placeholder.modulate.a = BLOCKED_ALPHA
+		cell.add_child(placeholder)
+	return row
 
 func _build() -> void:
 	panel = PanelContainer.new()
@@ -303,27 +362,41 @@ func _build() -> void:
 	column.add_child(scope_filter)
 	search.text_changed.connect(func(_text: String) -> void: _filter_spells())
 	scope_filter.item_selected.connect(func(_index: int) -> void: _filter_spells())
+	var headings := MarginContainer.new()
+	headings.name = "SpellTargetHeadings"
+	column.add_child(headings)
+	headings.add_child(_make_effect_row("", true))
 	var scroll := ScrollContainer.new()
 	scroll.name = "SpellScroll"
 	scroll.custom_minimum_size.y = 230
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_ALWAYS
 	column.add_child(scroll)
+	# Reserve the same scrollbar gutter in the fixed headings as in the rows.
+	headings.add_theme_constant_override("margin_right",
+		int(scroll.get_v_scroll_bar().get_combined_minimum_size().x))
 	var groups := VBoxContainer.new()
 	groups.name = "SpellGroups"
 	groups.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(groups)
 	for group: String in GROUP_ORDER:
+		var section := VBoxContainer.new()
+		section.name = "%sSpells" % group
+		groups.add_child(section)
 		var label := Label.new()
 		label.name = "%sSpellsLabel" % group
 		label.text = "%s Spells" % group
-		groups.add_child(label)
-		var row := HFlowContainer.new()
-		row.name = "%sSpellsRow" % group
-		groups.add_child(row)
-		_rows[group] = row
+		section.add_child(label)
+		_groups[group] = section
+	_empty_label = Label.new()
+	_empty_label.name = "NoMatchingSpells"
+	_empty_label.text = "No spells match your search."
+	_empty_label.hide()
+	groups.add_child(_empty_label)
 
 	var details := VBoxContainer.new()
 	details.name = "SpellDetails"
-	details.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	column.add_child(details)
 	name_label = Label.new()
 	name_label.name = "SpellName"
@@ -355,19 +428,35 @@ func _build() -> void:
 
 func _filter_spells() -> void:
 	if catalog == null: return
-	var scopes := ["", "self", "target", "allies", "burst", "utility"]
-	var selected := str(scopes[scope_filter.selected])
+	var selected := "" if scope_filter.selected <= 0 else TARGET_COLUMNS[scope_filter.selected - 1]
+	var query := search.text.strip_edges().to_lower()
 	for spell_id: int in catalog.spell_ids():
 		var spell := catalog.spell(spell_id)
 		var scope := str(spell.get("scope", "self"))
-		var scope_matches := selected.is_empty() or scope == selected or (selected == "utility" and scope in ["inventory", "destination", "location"])
-		var haystack := "%s %s %s" % [spell.name, spell.get("effect", ""), spell.get("damage_type", "")]
-		(_buttons[spell_id] as Button).visible = scope_matches and (search.text.is_empty() or haystack.to_lower().contains(search.text.to_lower()))
+		var target := scope if scope in TARGET_COLUMNS else "utility"
+		var effect := str(spell.get("effect", ""))
+		var scope_matches := selected.is_empty() or target == selected
+		var haystack := "%s %s %s %s" % [spell.name, effect, spell.get("damage_type", ""), EFFECT_LABELS.get(effect, effect.capitalize())]
+		(_buttons[spell_id] as Button).visible = scope_matches and (query.is_empty() or haystack.to_lower().contains(query))
 
-	for group: String in GROUP_ORDER:
-		var row: HFlowContainer = _rows[group]
+	var any_matches := false
+	for row: HBoxContainer in _rows.values():
 		var any_visible := false
-		for button: Control in row.get_children():
-			any_visible = any_visible or button.visible
+		for target: String in TARGET_COLUMNS:
+			var cell := row.get_node("%sCell" % target.capitalize()) as VBoxContainer
+			var cell_visible := false
+			for child: Node in cell.get_children():
+				if child is Button:
+					cell_visible = cell_visible or (child as Button).visible
+			(cell.get_node("Empty") as Label).visible = not cell_visible
+			any_visible = any_visible or cell_visible
 		row.visible = any_visible
-		row.get_parent().get_node("%sSpellsLabel" % group).visible = any_visible
+		any_matches = any_matches or any_visible
+	for group: String in GROUP_ORDER:
+		var section: VBoxContainer = _groups[group]
+		var any_visible := false
+		for child: Node in section.get_children():
+			if child is HBoxContainer:
+				any_visible = any_visible or (child as Control).visible
+		section.visible = any_visible
+	_empty_label.visible = not any_matches

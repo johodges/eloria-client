@@ -3,7 +3,7 @@ extends SceneTree
 ##
 ## The window is a view of two honest sources: the client's own spell
 ## catalog, and the server's state in AppState - owned sigils, stats,
-## inventory. It groups the catalogued spells the way Eternal Lands does,
+## inventory. It aligns effect rows with target columns within spell groups,
 ## dims what the client can see no way to cast, writes the first blocking
 ## reason beside the name, and its Cast button only asks: the id goes to a
 ## Callable and the server decides. Everything below checks that the window
@@ -45,9 +45,9 @@ func _run() -> void:
 	var body := "SpellsWindow/SpellsBody/"
 	var listed: Array[int] = []
 	for group: String in ["Health", "General", "Attack", "Defense"]:
-		var row: HFlowContainer = window.get_node(
-			body + "SpellScroll/SpellGroups/%sSpellsRow" % group) as HFlowContainer
-		for child: Node in row.get_children():
+		var section: VBoxContainer = window.get_node(
+			body + "SpellScroll/SpellGroups/%sSpells" % group) as VBoxContainer
+		for child: Node in section.find_children("SpellButton*", "Button", true, false):
 			listed.append(int(str(child.name).trim_prefix("SpellButton")))
 	_expect(listed.size() == 86,
 		"all eighty-six spells are on the window: %d" % listed.size())
@@ -76,21 +76,64 @@ func _run() -> void:
 	_expect(str(window.call("group_of", 17)) == "General",
 		"Swiftwend is a general spell")
 	var heal_button: Button = window.get_node(
-		body + "SpellScroll/SpellGroups/HealthSpellsRow/SpellButton0") as Button
-	_expect(heal_button != null, "Heal's button sits in the health row")
+		body + "SpellScroll/SpellGroups/HealthSpells/HealEffectRow/SelfCell/SpellButton0") as Button
+	_expect(heal_button != null, "Heal sits at the Heal effect and Self target")
 	_expect(heal_button.tooltip_text == "Heal",
 		"a spell button says which spell it is: " + heal_button.tooltip_text)
 	_expect(heal_button.icon is Texture2D,
 		"and carries its sigil-atlas icon")
-	# Within a group the spells stand in order of the level each asks for.
-	var health_names: Array[String] = []
-	for child: Node in window.get_node(body + "SpellScroll/SpellGroups/HealthSpellsRow").get_children():
-		health_names.append(str(child.name))
-	var last_level := -1
-	for node_name: String in health_names:
-		var level := int(catalog.spell(int(node_name.trim_prefix("SpellButton"))).get("level", 0))
-		_expect(level >= last_level, "health spells are ordered by level")
-		last_level = level
+	# Every variant shares its effect row and lines up with its target heading.
+	await process_frame
+	await process_frame
+	var headings: HBoxContainer = window.get_node(
+		body + "SpellTargetHeadings/TargetHeadings") as HBoxContainer
+	var effect_rows: Dictionary = {}
+	for spell_id: int in catalog.spell_ids():
+		var button := window.find_child("SpellButton%d" % spell_id, true, false) as Button
+		var definition := catalog.spell(spell_id)
+		var effect := str(definition.effect)
+		var scope := str(definition.scope)
+		var target := scope if scope in ["self", "target", "allies", "burst"] else "utility"
+		var cell := button.get_parent() as Control
+		var row := cell.get_parent()
+		_expect(str(cell.name) == "%sCell" % target.capitalize(),
+			"spell %d is in its target column" % spell_id)
+		if effect_rows.has(effect):
+			_expect(effect_rows[effect] == row, "all %s variants share a row" % effect)
+		else:
+			effect_rows[effect] = row
+		var heading := headings.get_node(NodePath(cell.name)) as Control
+		_expect(is_equal_approx(cell.global_position.x, heading.global_position.x),
+			"spell %d aligns with its fixed target heading" % spell_id)
+	var heal_row: HBoxContainer = effect_rows["heal"]
+	var target_x := (heal_row.get_node("TargetCell") as Control).global_position.x
+	var search: LineEdit = window.get("search") as LineEdit
+	var scope_filter: OptionButton = window.get("scope_filter") as OptionButton
+	search.text = "heal"
+	scope_filter.select(2)
+	window.call("_filter_spells")
+	await process_frame
+	await process_frame
+	_expect(not heal_button.visible, "target filtering hides the Self variant")
+	var target_heal := heal_row.get_node("TargetCell/SpellButton1") as Button
+	_expect(target_heal.is_visible_in_tree(), "target filtering retains Heal Target")
+	_expect(is_equal_approx((target_heal.get_parent() as Control).global_position.x, target_x),
+		"filtering keeps the Target column in place")
+	_expect(not (effect_rows["shield"] as Control).visible, "search hides empty effect rows")
+	search.text = "no such spell"
+	window.call("_filter_spells")
+	_expect((window.find_child("NoMatchingSpells", true, false) as Label).is_visible_in_tree(),
+		"an empty search result is explained")
+	search.clear()
+	scope_filter.select(5)
+	window.call("_filter_spells")
+	var utility_count := 0
+	for button: Button in (window.get("_buttons") as Dictionary).values():
+		if button.is_visible_in_tree():
+			utility_count += 1
+	_expect(utility_count == 3, "utility includes Blink, Transmute and Recall")
+	scope_filter.select(0)
+	window.call("_filter_spells")
 
 	# With nothing owned, nothing is castable: dimmed, not hidden, and still
 	# there to inspect.
@@ -106,7 +149,7 @@ func _run() -> void:
 	_expect(int(window.get("selected_spell_id")) == -1,
 		"and no spell starts selected")
 	var blinkstep: Button = window.get_node(
-		body + "SpellScroll/SpellGroups/GeneralSpellsRow/SpellButton5") as Button
+		body + "SpellScroll/SpellGroups/GeneralSpells/BlinkEffectRow/UtilityCell/SpellButton5") as Button
 	blinkstep.pressed.emit()
 	await process_frame
 	_expect(int(window.get("selected_spell_id")) == 5,
