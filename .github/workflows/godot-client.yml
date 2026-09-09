@@ -40,6 +40,7 @@ jobs:
           godot --headless --path godot-client --script res://tests/test_magic_book_ui.gd
           godot --headless --path godot-client --script res://tests/integration/torso_body_cover.gd
           godot --headless --path godot-client --script res://tests/integration/armour_body_cover.gd
+          godot --headless --path godot-client --script res://tests/integration/wardrobe_replication.gd
           godot --headless --path godot-client --script res://tests/integration/equipment_fit_profiles.gd
       - name: Validate held prop registry
         run: python3 godot-client/tests/test_held_props.py -v

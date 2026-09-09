@@ -225,6 +225,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"achievements_catalog_v1",
 	"actor_titles_v1",
 	"actor_footprints_v1",
+	"actor_wardrobe_v1",
 	"attribute_state_v1",
 	"counter_layout_v1",
 	"degraded_items_v1",
@@ -2665,6 +2666,19 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := f
 			if neck_visual > 0:
 				var equipment_visuals: Dictionary = actor["equipment_visuals"] as Dictionary
 				equipment_visuals[7] = neck_visual
+			# Opt-in wardrobe trailer: WA, version 1, shirt/pants/boots dyes,
+			# then a mask of clothing parts whose legacy bytes really are gear.
+			var wardrobe_offset := trailer_offset + 5
+			if payload.size() >= wardrobe_offset + 7 and payload.slice(
+					wardrobe_offset, wardrobe_offset + 3) == PackedByteArray([87, 65, 1]):
+				var clothing_visuals: Dictionary = actor["equipment_visuals"] as Dictionary
+				var worn_mask := int(payload[wardrobe_offset + 6])
+				for index: int in range(3):
+					var key: String = ["shirt", "pants", "boots"][index]
+					var part: int = [5, 4, 6][index]
+					appearance[key] = int(payload[wardrobe_offset + 3 + index])
+					if (worn_mask & (1 << part)) == 0:
+						clothing_visuals.erase(part)
 	else:
 		actor["frame"] = int(payload[11 + shift])
 		actor["max_health"] = u16(payload, 12 + shift)

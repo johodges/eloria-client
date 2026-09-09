@@ -34,6 +34,7 @@ func _init() -> void:
 		"followup_tutorials_v1": EloriaProtocol.ServerMessage.ELORIA_LANTERN_STATE,
 		"magic_book_v2": EloriaProtocol.ServerMessage.ELORIA_MAGIC_STATE,
 		"actor16_v1": EloriaProtocol.ServerMessage.ADD_NEW_ACTOR_EXTENDED,
+		"actor_wardrobe_v1": EloriaProtocol.ServerMessage.ADD_NEW_ENHANCED_ACTOR,
 		"almanac_v1": EloriaProtocol.ServerMessage.ELORIA_ALMANAC_STATE,
 		"combat_hud_v1": EloriaProtocol.ServerMessage.ELORIA_COMBAT_STATE,
 		"inventory_names_v1": EloriaProtocol.ServerMessage.ELORIA_INVENTORY_NAMES,
@@ -497,6 +498,28 @@ func _init() -> void:
 	_expect(int((enhanced_actor.appearance as Dictionary).eyes) == 12
 		and int((enhanced_actor.equipment_visuals as Dictionary).get(7, 0)) == 13,
 		"enhanced actor trailer preserves eyes and neck visual")
+	var wardrobe_payload := enhanced_actor_payload.duplicate()
+	wardrobe_payload.append_array(PackedByteArray([87, 65, 1, 5, 6, 10, 0]))
+	var wardrobe_actor := EloriaProtocol.decode_server(51, wardrobe_payload)
+	_expect(wardrobe_actor.appearance.shirt == 5 and wardrobe_actor.appearance.pants == 6
+		and wardrobe_actor.appearance.boots == 10,
+		"spawn carries saved clothing dyes independently of legacy visuals")
+	for part: int in [4, 5, 6]:
+		_expect(not wardrobe_actor.equipment_visuals.has(part),
+			"an unworn clothing part %d does not turn a dye into equipment" % part)
+	wardrobe_payload[wardrobe_payload.size() - 1] = (1 << 5) | (1 << 6)
+	wardrobe_actor = EloriaProtocol.decode_server(51, wardrobe_payload)
+	_expect(wardrobe_actor.equipment_visuals.get(5) == 3
+		and wardrobe_actor.equipment_visuals.get(6) == 5
+		and not wardrobe_actor.equipment_visuals.has(4)
+		and wardrobe_actor.appearance.shirt == 5 and wardrobe_actor.appearance.boots == 10,
+		"real equipment with low visual IDs survives without replacing saved dyes")
+	for missing: int in range(1, 8):
+		var partial := EloriaProtocol.decode_server(51,
+			wardrobe_payload.slice(0, wardrobe_payload.size() - missing))
+		_expect(partial.appearance == enhanced_actor.appearance
+			and partial.equipment_visuals == enhanced_actor.equipment_visuals,
+			"incomplete wardrobe extension keeps legacy interpretation %d" % missing)
 	var equipment_config_file: FileAccess = FileAccess.open(
 		"res://data/actors/equipment.json", FileAccess.READ)
 	_expect(equipment_config_file != null, "equipment part registry opens")

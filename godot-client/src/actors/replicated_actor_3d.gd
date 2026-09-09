@@ -192,8 +192,10 @@ var _facing_offset_from := 0.0
 var _facing_offset_to := 0.0
 var _facing_offset_elapsed := 0.0
 var _cape_cloth: SkeletonModifier3D = null
+var _weapon_carry: SkeletonModifier3D = null
 var _attachment_bones: Dictionary = {}
 var _model_config: Dictionary = {}
+var _appearance: Dictionary = {}
 var _face_material: ShaderMaterial
 var _face_group_materials: Dictionary = {}
 var _skin_materials: Dictionary = {}
@@ -413,6 +415,12 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 			errors.append("Skeleton3D missing")
 		else:
 			_native_skeleton = skeleton
+			if model_config.has("culture"):
+				_weapon_carry = (load("res://src/actors/weapon_carry_pose.gd") as Script).new()
+				_weapon_carry.name = "WeaponCarryPose"
+				_weapon_carry.set("actor", self)
+				_weapon_carry.active = false
+				skeleton.add_child(_weapon_carry)
 			_attach_cape_cloth(skeleton)
 			apply_appearance_variants(dto.get("appearance", {}) as Dictionary)
 			var animation_path := _external_path(str(model_config.get("animationLibrary", "")))
@@ -436,6 +444,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	return errors
 
 func apply_appearance_variants(appearance: Dictionary) -> void:
+	_appearance = appearance.duplicate()
 	if _native_skeleton == null:
 		return
 	var culture: String = str(_model_config.get("culture", "luminous"))
@@ -1219,6 +1228,10 @@ static func footprint_outline(width_m: float, depth_m: float) -> ArrayMesh:
 	return mesh
 
 func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport := false) -> void:
+	# The capability handshake can correct an actor already spawned from the
+	# legacy clothing bytes. Update its dyes once, including under worn armour.
+	if dto.has("appearance") and dto.appearance != _appearance:
+		apply_appearance_variants(dto.appearance as Dictionary)
 	if not is_equal_approx(_metres_per_tile, adapter.metres_per_tile):
 		_metres_per_tile = maxf(0.01, adapter.metres_per_tile)
 		_resize_selection()
@@ -1441,6 +1454,8 @@ func apply_equipment_visuals(visuals: Dictionary, fallback_parts: Array = []) ->
 		_create_equipment_part(CAPE_PART, cape_visual,
 			fallback_parts.has(CAPE_PART))
 	_refresh_wardrobe_cover()
+	if _weapon_carry != null:
+		_weapon_carry.call("refresh_equipment")
 	if combat_presentation != null:
 		var weapon := _equipment_model_config(0, int(_equipment_visuals.get(0, 0)))
 		var bow_path := str(weapon.get("rangedAnimationScene", ""))
