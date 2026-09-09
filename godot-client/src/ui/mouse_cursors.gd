@@ -179,7 +179,7 @@ static func choose(context: Dictionary) -> int:
 		"harvest":
 			return HARVEST
 		"portal":
-			return ENTER
+			return EYE if bool(context.get("alt", false)) else ENTER
 		"interactive":
 			return USE
 	# Bare ground: a location cast claims the click, otherwise it walks.

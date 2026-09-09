@@ -32,13 +32,19 @@ The original prototype's `project.godot` remains available for design reference.
 | Repair | Click the housing | Three Reed and one Quartz are consumed |
 | Beacon | Click the housing while carrying the crafted Torch | The server lights the beacon and opens the return stair |
 | Trading | Merchant Buy / Sell mode, item, quantity, Trade | Real meat sale and Bread purchase succeed |
-| Departure | Boarding point and native confirmation | Character changes to Four Gates; Ilyon completes the quest |
+| Departure | Click the boat, sail or boarding point and confirm sailing | Character changes to Four Gates; Ilyon completes the quest |
 
 The guide highlights the existing control relevant to the current lesson. It
 uses the native manufacturing side pane, fits beside storage and merchant
 windows, and leaves the world clickable. Storage's inventory column now uses
 server-provided item names, allowing instructions to identify Reed unambiguously.
 The wooden shield's embedded JPEG is correctly labelled in its GLB metadata.
+
+The saved boat's hull and both faces of its sail share the server's boarding
+action. The door cursor appears once the boat is docked and the server's guide
+reaches departure; the original boarding point remains usable. Earlier lesson
+states and the arriving boat do not offer the map-change cursor. Alt inspects
+the boarding object, and sailing still uses the native confirmation.
 
 ## State and map ownership
 
@@ -94,6 +100,11 @@ rendered map check passes with the island framing and smaller marker discs.
   completes the entire rescue, and captures each lesson window. Craft failures
   are recovered through the actual cache and manufacturing controls.
 - `godot-client/tests/test_lantern_protocol.gd`: 25 packet validation checks.
+- `godot-client/tests/test_boat_portals.gd`: authored hull and both sail faces
+  through native cursor/click rays, exact boarding requests, availability,
+  reconnect and object-removal checks. The server's
+  `test_boat_boarding_requires_departure_and_confirmation` checks the crossing
+  and preservation of inventory, storage and equipment.
 - `godot-client/tests/test_storage_organizer.gd`: native storage regression checks.
 - The launcher was exercised with the real server and a headless client; local
   terrain preparation and server shutdown completed successfully.

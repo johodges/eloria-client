@@ -53,6 +53,8 @@ var server_tile: Vector2i = Vector2i.ZERO
 var label: String = ""
 var detail: String = ""
 var model_id: String = ""
+## Set by map presentation when a server-owned departure is available.
+var departure_available := false
 ## The ring as built, before any ground was laid under it. Kept so an object
 ## re-draped after a map's walk surface arrives is shaped by the ground it
 ## stands on rather than by whatever it was draped over before.
@@ -89,6 +91,49 @@ func is_exit() -> bool:
 ## A waygate: the clickable object standing at a march.
 func is_portal() -> bool:
 	return not is_exit() and (label == "Portal" or model_id == "portal")
+
+func offers_map_change() -> bool:
+	return is_portal() or departure_available
+
+## Bind authored scenery to this object's normal server action. Exact mesh
+## shapes include thin sails without making the empty space around a boat
+## clickable. Parenting to the model keeps the target on moving scenery.
+func bind_pick_model(model: Node3D) -> StaticBody3D:
+	var body := StaticBody3D.new()
+	body.name = "MapObjectPickProxy"
+	body.collision_layer = 0
+	body.collision_mask = 0
+	body.set_meta("map_object_target", weakref(self))
+	model.add_child(body)
+	var meshes: Array[Node] = model.find_children("*", "MeshInstance3D", true, false)
+	if model is MeshInstance3D:
+		meshes.append(model)
+	for node: Node in meshes:
+		var mesh_instance := node as MeshInstance3D
+		if mesh_instance.mesh == null or not mesh_instance.is_visible_in_tree():
+			continue
+		var shape := mesh_instance.mesh.create_trimesh_shape()
+		if shape == null:
+			continue
+		shape.backface_collision = true
+		var collision := CollisionShape3D.new()
+		collision.shape = shape
+		body.add_child(collision)
+		collision.global_transform = mesh_instance.global_transform
+	# A refreshed server object must not leave an orphaned pick body behind.
+	tree_exiting.connect(body.queue_free)
+	return body
+
+static func from_pick_collider(collider: Variant) -> MapObject3D:
+	if collider is MapObject3D:
+		return collider as MapObject3D
+	if collider is StaticBody3D:
+		var target: Variant = collider.get_meta("map_object_target", null)
+		if target is WeakRef:
+			var object := target.get_ref() as MapObject3D
+			if is_instance_valid(object) and not object.is_queued_for_deletion():
+				return object
+	return null
 
 ## Where this leads, as far as the server said: an exit is named for its
 ## destination, and a waygate's text names it in a fixed phrase. Empty when

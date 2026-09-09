@@ -9714,7 +9714,7 @@ func _pick_map_object(viewport_position: Vector2) -> MapObject3D:
 		MapObject3D.PICK_LAYER)
 	var hit: Dictionary = gameplay_world.direct_space_state.intersect_ray(query)
 	var collider_value: Variant = hit.get("collider")
-	return collider_value as MapObject3D if collider_value is MapObject3D else null
+	return MapObject3D.from_pick_collider(collider_value)
 
 ## A plain click acts on the object; Alt inspects it instead. Every outcome is
 ## a request: the server decides range, tools, level and whether anything
@@ -9769,6 +9769,8 @@ func _sync_map_objects() -> void:
 		world_root.add_child(map_object)
 		map_object_nodes[object_id] = map_object
 		_place_map_object_on_surface(map_object)
+	if is_instance_valid(lantern_scene) and lantern_scene.has_method("bind_map_objects"):
+		lantern_scene.bind_map_objects(map_object_nodes)
 	map_marker_overlay.set_waypoints(_collect_map_waypoints())
 	_request_map_redraw()
 	_sync_harvest_indicator()
@@ -10079,7 +10081,7 @@ func _cursor_context_at(viewport_position: Vector2) -> Dictionary:
 	if map_object != null:
 		if map_object.is_harvestable():
 			context["target"] = "harvest"
-		elif map_object.model_id == "portal" or map_object.label == "Portal":
+		elif map_object.offers_map_change():
 			context["target"] = "portal"
 		else:
 			context["target"] = "interactive"

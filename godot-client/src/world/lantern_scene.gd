@@ -3,6 +3,7 @@ extends Node3D
 ## picking belong to the normal client; this adds only the map's moving props.
 
 const ROOT := "res://../eloria-assets/maps/lantern-reach/"
+const BOAT_DOCK := Vector3(110, -.6, -22)
 var layout: Dictionary
 var gates: Dictionary = {}
 var beacon: OmniLight3D
@@ -10,6 +11,9 @@ var beam: MeshInstance3D
 var boat: Node3D
 var lit := false
 var initialized := false
+var departure_ready := false
+var boarding_point: MapObject3D
+var boat_pick_body: StaticBody3D
 
 func configure(imported: Node3D, _manifest: WorldManifest) -> void:
 	layout = JSON.parse_string(FileAccess.get_file_as_string(ROOT+"layout.json"))
@@ -70,16 +74,45 @@ func apply_state(state: Dictionary) -> void:
 	for key: String in gates:
 		for part: Node3D in gates[key]: part.visible = not bool(flags.get(key,false))
 	lit = bool(flags.get("lit",false))
+	departure_ready = bool(state.get("active", false)) and str(state.get("key", "")) == "depart"
 	beacon.visible = lit
 	beam.visible = lit
 	if boat and not initialized:
-		boat.position = Vector3(110,-.6,-22) if lit else Vector3(116,-.6,-48)
+		boat.position = BOAT_DOCK if lit else Vector3(116,-.6,-48)
 	initialized = true
+	_sync_boat_picking()
+
+func bind_map_objects(objects: Dictionary) -> void:
+	if not is_instance_valid(boat):
+		return
+	var target_id := -1
+	for target: Dictionary in layout.get("targets", []):
+		if str(target.get("id", "")) == "ferry":
+			target_id = int(target.get("objectId", -1))
+			break
+	var target := objects.get(target_id) as MapObject3D
+	if target != boarding_point or not is_instance_valid(boat_pick_body):
+		if is_instance_valid(boarding_point):
+			boarding_point.departure_available = false
+		if is_instance_valid(boat_pick_body):
+			boat_pick_body.collision_layer = 0
+			boat_pick_body.queue_free()
+		boarding_point = target
+		boat_pick_body = target.bind_pick_model(boat) if is_instance_valid(target) else null
+	_sync_boat_picking()
+
+func _sync_boat_picking() -> void:
+	var available := departure_ready and lit and is_instance_valid(boat) and boat.position.is_equal_approx(BOAT_DOCK)
+	if is_instance_valid(boarding_point):
+		boarding_point.departure_available = available
+	if is_instance_valid(boat_pick_body):
+		boat_pick_body.collision_layer = MapObject3D.PICK_LAYER if available else 0
 
 func _process(delta: float) -> void:
 	if lit:
 		beam.rotation.y += delta*.18
-		if boat: boat.position = boat.position.move_toward(Vector3(110,-.6,-22),delta*2.8)
+		if boat: boat.position = boat.position.move_toward(BOAT_DOCK,delta*2.8)
+	_sync_boat_picking()
 
 func _beam() -> MeshInstance3D:
 	var mesh := ImmediateMesh.new()

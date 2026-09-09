@@ -101,6 +101,8 @@ func _check_decision_table() -> void:
 		MouseCursors.HARVEST, "attack mode does not hide a harvest node")
 	_choice({"over_world": true, "target": "portal"}, MouseCursors.ENTER,
 		"a portal offers an entrance")
+	_choice({"over_world": true, "target": "portal", "alt": true}, MouseCursors.EYE,
+		"Alt inspects a portal instead of entering it")
 	_choice({"over_world": true, "target": "interactive"}, MouseCursors.USE,
 		"a service point offers a use")
 	# The one interface target: an item slot whose click will move the item.
