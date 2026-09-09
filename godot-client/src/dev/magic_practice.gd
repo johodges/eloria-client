@@ -147,13 +147,13 @@ func _ready() -> void:
 	wheel.anchor_provider = func() -> Vector2: return arena.global_position + (Vector2(actors[1].tile) + Vector2.ONE * 0.5) * PracticeArena.CELL
 	wheel.can_open = func() -> bool: return not (get_viewport().gui_get_focus_owner() is LineEdit or get_viewport().gui_get_focus_owner() is TextEdit) and not selector.popup.visible
 	add_child(wheel)
-	wheel.spell_chosen.connect(_cast_from_book)
+	wheel.spell_chosen.connect(_cast_from_wheel)
 	wheel.opened.connect(func():
 		selector.cancel()
 		book.close())
 	bar.open_wheel.connect(wheel.open_wheel)
 	var standard_instructions := instructions.text
-	var wheel_instructions := "TRY THE WHEEL\n\nHold Alt. Pick a class with 1–5 or click it. Choose a spell, then its target.\n\nAlt → 1 → 1 → 2 = Heal Target.\nSelect Tavin first to heal him directly.\n\nRelease Alt to dismiss.\nBackspace / right click goes back.\n[ / ] or scroll changes pages.\n\nThe Wheel button works without Alt.\nSet spell power in the spellbook."
+	var wheel_instructions := "TRY THE WHEEL\n\nHold Alt. Pick a class with 1–5 or click it. Choose a spell, then its target.\n\nAlt → 1 → 1 → 2 = Heal Target.\nSelect Tavin first to heal him directly.\n\nScroll up / down changes power.\nRelease Alt to dismiss.\nBackspace / right click goes back.\n[ / ] or Previous/Next changes pages.\n\nThe Wheel button works without Alt."
 	loadout.changed.connect(func(): instructions.text = wheel_instructions if loadout.mode == "wheel" else standard_instructions)
 	instructions.text = wheel_instructions if loadout.mode == "wheel" else standard_instructions
 	record("Ready. Choose a recipient and try a spell.")
@@ -191,6 +191,10 @@ func _cast_slot(index: int) -> void:
 
 func _cast_from_book(id: int) -> void:
 	selector.begin(id, loadout.power_for(id), AppState.selected_actor_id)
+	book.close()
+
+func _cast_from_wheel(id: int, power: int) -> void:
+	selector.begin(id, power, AppState.selected_actor_id)
 	book.close()
 
 func _candidate(id: int, target: int) -> bool:

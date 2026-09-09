@@ -964,7 +964,7 @@ func _ready() -> void:
 	spell_wheel.can_open = _can_open_spell_wheel
 	spell_wheel.z_index = 20
 	game_view.add_child(spell_wheel)
-	spell_wheel.spell_chosen.connect(_cast_spell_by_id)
+	spell_wheel.spell_chosen.connect(_begin_prepared_cast)
 	spell_wheel.opened.connect(func():
 		magic_selection.cancel()
 		spells_window.close()

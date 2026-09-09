@@ -19,11 +19,14 @@ func run() -> void:
 	model.assign_slot(0, 1, 4)
 	model.assign_slot(1, 1, 2)
 	model.remember_power(1, 3)
+	model.set_wheel_power(5)
 	check(model.slots[0].power == 4 and model.slots[1].power == 2, "two copies of a spell retain independent powers")
 	model.load_profile("server-one/bob")
 	check(model.slots[0].id == 0 and model.slots[0].power == 1, "a new character starts with defaults")
+	check(model.wheel_power == 1, "a new character starts with wheel power one")
 	model.load_profile("server-one/alice")
 	check(model.slots[0] == {"id": 1, "power": 4} and model.power_for(1) == 3, "character preferences survive reload")
+	check(model.wheel_power == 5, "wheel power persists independently of book and slot powers")
 	model.assign_slot(-1, 6, 4)
 	model.assign_slot(0, 999999, 4)
 	check(model.slots[0].id == 1, "invalid drops cannot overwrite a slot")
@@ -100,18 +103,22 @@ func run() -> void:
 	main.call("_input", key_event(KEY_ALT))
 	check(main.spell_wheel.visible, "live input opens the character wheel on Alt")
 	before = requests.size()
+	for step in range(3): main.call("_input", scroll_event(MOUSE_BUTTON_WHEEL_UP))
+	check(main.spell_loadout.wheel_power == 4 and requests.size() == before, "live scroll adjusts power without casting")
 	main.call("_input", key_event(KEY_1))
 	main.call("_unhandled_input", key_event(KEY_1))
 	check(main.spell_wheel.stage == "effects" and requests.size() == before, "Alt+1 enters Healing without firing a quick slot")
 	main.call("_input", key_event(KEY_1))
 	main.call("_input", key_event(KEY_2))
 	check(main.magic_selection.pending.get("id") == 1, "live wheel routes Heal Target into the existing targeting controller")
+	check(main.magic_selection.pending.get("power") == 3, "live wheel casts its scrolled power capped to the selected effect")
 	main.call("_input", key_event(KEY_ALT, false))
 	check(main.magic_selection.pending.get("id") == 1, "releasing Alt after a choice preserves armed targeting")
 	main.magic_selection.cancel()
 	main.free()
 	await process_frame
 	await test_wheel(catalog)
+	await test_wheel_power(catalog)
 	await test_wheel_mouse_routing()
 	NativeAnimationImporter.clear()
 	GlbSceneCache.clear()
@@ -135,7 +142,7 @@ func test_wheel(catalog: SpellCatalog) -> void:
 	wheel.loadout = model
 	wheel.anchor_provider = func() -> Vector2: return Vector2(510, 310)
 	var chosen: Array[int] = []
-	wheel.spell_chosen.connect(func(id: int): chosen.append(id))
+	wheel.spell_chosen.connect(func(id: int, _power: int): chosen.append(id))
 	root.add_child(wheel)
 	await process_frame
 	wheel.handle_event(key_event(KEY_ALT))
@@ -205,6 +212,8 @@ func test_wheel(catalog: SpellCatalog) -> void:
 func test_wheel_mouse_routing() -> void:
 	var lab := (load("res://src/dev/magic_practice.tscn") as PackedScene).instantiate()
 	root.add_child(lab)
+	lab.loadout.profile = ""
+	lab.loadout.set_wheel_power(1)
 	lab.loadout.set_mode("wheel")
 	root.get_node("AppState").select_actor(2)
 	await process_frame
@@ -215,11 +224,17 @@ func test_wheel_mouse_routing() -> void:
 	check(lab.wheel.stage == "effects", "GUI routes a class click to the wheel")
 	await click_at(lab.wheel.buttons[0].get_global_rect().get_center())
 	check(lab.wheel.stage == "targets", "GUI routes a family click to the wheel")
+	var scroll := scroll_event(MOUSE_BUTTON_WHEEL_UP)
+	scroll.position = lab.wheel.buttons[1].get_global_rect().get_center()
+	scroll.global_position = scroll.position
+	root.push_input(scroll, true)
+	await process_frame
+	check(lab.loadout.wheel_power == 2 and lab.wheel.visible, "scrolling over a target node adjusts power without choosing it")
 	await click_at(lab.wheel.buttons[1].get_global_rect().get_center())
-	check(not lab.wheel.visible and lab.actors[2].health == 45, "GUI target click casts once on the selected recipient")
+	check(not lab.wheel.visible and lab.actors[2].health == 55, "GUI target click casts once at the scrolled power")
 	check(lab.actors[1].tile == initial_tile, "wheel clicks cannot move the character underneath")
 	root.push_input(key_event(KEY_ALT, false), true)
-	check(lab.actors[2].health == 45, "Alt release after a mouse choice never casts twice")
+	check(lab.actors[2].health == 55, "Alt release after a mouse choice never casts twice")
 	var entry := LineEdit.new()
 	lab.add_child(entry)
 	entry.grab_focus()
@@ -227,6 +242,65 @@ func test_wheel_mouse_routing() -> void:
 	check(not lab.wheel.visible, "a focused text field prevents Alt opening the wheel")
 	root.push_input(key_event(KEY_ALT, false), true)
 	lab.free()
+	await process_frame
+
+func scroll_event(button: MouseButton) -> InputEventMouseButton:
+	var event := InputEventMouseButton.new()
+	event.button_index = button
+	event.pressed = true
+	event.alt_pressed = true
+	return event
+
+func test_wheel_power(catalog: SpellCatalog) -> void:
+	var model = load("res://src/ui/spell_loadout.gd").new()
+	model.configure(catalog)
+	model.set_mode("wheel")
+	model.remember_power(1, 7)
+	model.assign_slot(0, 1, 6)
+	var wheel = load("res://src/ui/spell_wheel.gd").new()
+	wheel.loadout = model
+	var casts: Array[Dictionary] = []
+	wheel.spell_chosen.connect(func(id: int, power: int): casts.append({"id": id, "power": power}))
+	root.add_child(wheel)
+	var app_state := root.get_node("AppState")
+	app_state.spell_power["heal"] = {"limit": 3}
+	app_state.spell_power["blink"] = {"limit": 4}
+	wheel.open_wheel(true)
+	for step in range(2): wheel.handle_event(scroll_event(MOUSE_BUTTON_WHEEL_UP))
+	check(model.wheel_power == 3 and wheel.stage == "classes" and casts.is_empty(), "scroll up adjusts power before choosing a class")
+	wheel.choose(0)
+	wheel.choose(0)
+	wheel.handle_event(scroll_event(MOUSE_BUTTON_WHEEL_UP))
+	check(model.wheel_power == 3 and wheel._power_label.text.contains("3 / 3"), "target ring shows and respects the server power cap")
+	check(wheel.buttons[1].text.contains("P3"), "target nodes show the actual wheel power")
+	model.set_wheel_power(10)
+	wheel.handle_event(scroll_event(MOUSE_BUTTON_WHEEL_DOWN))
+	check(model.wheel_power == 2, "scroll down starts from effective capped power")
+	check(model.power_for(1) == 7 and model.slots[0].power == 6, "scrolling leaves book and quick-slot powers independent")
+	wheel.choose(1)
+	check(casts == [{"id": 1, "power": 2}], "leaf selection carries the chosen power explicitly")
+	wheel.handle_event(scroll_event(MOUSE_BUTTON_WHEEL_UP))
+	check(model.wheel_power == 2, "scrolling after a final choice cannot alter its pending cast")
+	wheel.handle_event(key_event(KEY_ALT, false))
+	check(not wheel.handle_event(scroll_event(MOUSE_BUTTON_WHEEL_UP)), "a closed wheel leaves normal scrolling available")
+	wheel.open_wheel()
+	check(model.wheel_power == 2, "reopening the wheel retains its power")
+	wheel.choose(4)
+	wheel.choose(0)
+	check(casts.back() == {"id": 5, "power": 2}, "single-variant utility spells receive the scrolled power")
+	wheel.open_wheel()
+	for step in range(20): wheel.handle_event(scroll_event(MOUSE_BUTTON_WHEEL_UP))
+	check(model.wheel_power == 10, "generic wheel power never exceeds ten")
+	for step in range(20): wheel.handle_event(scroll_event(MOUSE_BUTTON_WHEEL_DOWN))
+	check(model.wheel_power == 1, "wheel power never falls below one")
+	wheel.choose(2)
+	wheel.handle_event(key_event(KEY_BRACKETRIGHT))
+	wheel.handle_event(scroll_event(MOUSE_BUTTON_WHEEL_UP))
+	check(wheel.page == 1 and model.wheel_power == 2, "scrolling Offense adjusts power without changing pages")
+	wheel._previous.pressed.emit()
+	check(wheel.page == 0 and model.wheel_power == 2, "page buttons still navigate without adjusting power")
+	check(casts.size() == 2, "power and page adjustments never cast")
+	wheel.free()
 	await process_frame
 
 func click_at(point: Vector2) -> void:

@@ -1,6 +1,6 @@
 extends Control
 ## Alt owns input until released. Choosing a leaf never casts again on release.
-signal spell_chosen(id: int)
+signal spell_chosen(id: int, power: int)
 signal opened
 const Book := preload("res://src/ui/spells_window.gd")
 const CLASSES := ["Healing", "Defense", "Offense", "Support", "Utility"]
@@ -21,6 +21,7 @@ var center := Vector2.ZERO
 var _alt_held := false
 var _latched := false
 var _heading: Label
+var _power_label: Label
 var _hint: Label
 var _back: Button
 var _close: Button
@@ -35,9 +36,14 @@ func _ready() -> void:
 	_heading.add_theme_font_size_override("font_size", 15)
 	_heading.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_heading)
+	_power_label = Label.new()
+	_power_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_power_label.add_theme_font_size_override("font_size", 14)
+	_power_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_power_label)
 	_hint = Label.new()
 	_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_hint.add_theme_font_size_override("font_size", 12)
+	_hint.add_theme_font_size_override("font_size", 11)
 	_hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_hint)
 	_back = _small_button("Back", go_back)
@@ -47,6 +53,8 @@ func _ready() -> void:
 	loadout.changed.connect(func():
 		if loadout.mode != "wheel": reset()
 		elif visible: _rebuild())
+	AppState.magic_state_received.connect(func(_data: Dictionary):
+		if visible: _rebuild())
 	hide()
 
 func _small_button(title: String, action: Callable) -> Button:
@@ -112,7 +120,7 @@ func handle_event(event: InputEvent) -> bool:
 			go_back()
 			return true
 		if event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
-			change_page(-1 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1)
+			change_power(1 if event.button_index == MOUSE_BUTTON_WHEEL_UP else -1)
 			return true
 	# Left clicks must reach the actual ring buttons through normal GUI routing.
 	return false
@@ -141,7 +149,7 @@ func choose(index: int) -> void:
 	if entry.get("disabled", false): return
 	if entry.has("id"):
 		dismiss()
-		spell_chosen.emit(int(entry.id))
+		spell_chosen.emit(int(entry.id), power_for(int(entry.id)))
 	elif stage == "classes":
 		category = str(entry.value)
 		stage = "effects"
@@ -152,7 +160,7 @@ func choose(index: int) -> void:
 		var variants := variants_for(effect)
 		if variants.size() == 1:
 			dismiss()
-			spell_chosen.emit(variants[0])
+			spell_chosen.emit(variants[0], power_for(variants[0]))
 		else:
 			stage = "targets"
 			_rebuild()
@@ -173,6 +181,21 @@ func change_page(delta: int) -> void:
 	page = posmod(page + delta, maxi(1, count))
 	_rebuild()
 
+func _power_limit(family: String) -> int:
+	var stated: Dictionary = AppState.spell_power.get(family, {})
+	return clampi(int(stated.get("limit", 1)), 1, 10)
+
+func power_for(id: int) -> int:
+	return mini(int(loadout.wheel_power), _power_limit(loadout.catalog.effect_for(id)))
+
+func change_power(delta: int) -> void:
+	if not visible: return
+	var limit := _power_limit(effect) if stage == "targets" else 10
+	var current := mini(int(loadout.wheel_power), limit)
+	# Scroll from the effective power, even if this family caps a higher setting.
+	var next := clampi(current + delta, 1, limit)
+	if next != current: loadout.set_wheel_power(next)
+
 func _rebuild() -> void:
 	for button in buttons:
 		remove_child(button)
@@ -187,7 +210,8 @@ func _rebuild() -> void:
 		var families := effects_for(category)
 		for index in range(page * PAGE_SIZE, mini((page + 1) * PAGE_SIZE, families.size())):
 			var family := families[index]
-			entries.append({"label": Book.EFFECT_LABELS.get(family, family.capitalize()), "value": family, "icon_id": variants_for(family)[0]})
+			var id := variants_for(family)[0]
+			entries.append({"label": Book.EFFECT_LABELS.get(family, family.capitalize()), "value": family, "icon_id": id, "power": power_for(id)})
 	else:
 		var variants := variants_for(effect)
 		for scope in SCOPES:
@@ -197,14 +221,14 @@ func _rebuild() -> void:
 				var target := str(definition.get("scope", "self"))
 				if target not in SCOPES: target = "utility"
 				if target != scope: continue
-				var limit: Dictionary = AppState.spell_power.get(effect, {})
-				var power := mini(int(loadout.power_for(id)), maxi(1, int(limit.get("limit", 1))))
+				var power := power_for(id)
 				entry = {"label": "%s · P%d" % [scope.capitalize(), power], "id": id, "icon_id": id}
 			entries.append(entry)
 	for index in range(entries.size()):
 		var entry := entries[index]
 		var button := Button.new()
 		var title := str(entry.label).replace(" ", "\n") if stage == "effects" else str(entry.label)
+		if entry.has("power"): title += "\nP%d" % int(entry.power)
 		button.text = "%d  %s" % [index + 1, title]
 		button.add_theme_font_size_override("font_size", 12)
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
@@ -214,9 +238,10 @@ func _rebuild() -> void:
 		button.focus_mode = Control.FOCUS_NONE
 		button.disabled = bool(entry.get("disabled", false))
 		button.tooltip_text = str(entry.label)
+		if entry.has("power"): button.tooltip_text += "\nPower %d · scroll up/down to adjust." % int(entry.power)
 		if entry.has("icon_id"): button.icon = loadout.catalog.icon_for(int(entry.icon_id))
 		if entry.has("id"):
-			button.tooltip_text = str(loadout.catalog.spell(int(entry.id)).name) + "\nUses the power saved in the spellbook."
+			button.tooltip_text = "%s\nPower %d · scroll up/down to adjust." % [loadout.catalog.spell(int(entry.id)).name, power_for(int(entry.id))]
 			var reasons: Array[String] = loadout.catalog.unavailable_reasons(int(entry.id), AppState.owned_sigils, AppState.stats, AppState.inventory)
 			if not reasons.is_empty():
 				button.modulate.a = 0.6
@@ -226,6 +251,8 @@ func _rebuild() -> void:
 		buttons.append(button)
 	_heading.text = "Choose a class" if stage == "classes" else category
 	if stage == "targets": _heading.text = str(Book.EFFECT_LABELS.get(effect, effect.capitalize()))
+	var limit := _power_limit(effect) if stage == "targets" else 10
+	_power_label.text = "Power %d / %d · Scroll" % [mini(int(loadout.wheel_power), limit), limit]
 	_hint.text = "1–%d or click\nRelease Alt to close" % entries.size() if _alt_held else "1–%d or click\nEsc to close" % entries.size()
 	_back.visible = stage != "classes"
 	var paged := stage == "effects" and effects_for(category).size() > PAGE_SIZE
@@ -250,12 +277,14 @@ func _layout() -> void:
 		buttons[index].size = NODE_SIZE
 	_heading.position = center + Vector2(-110, -108)
 	_heading.size = Vector2(220, 24)
-	_hint.position = center + Vector2(-95, 48)
-	_hint.size = Vector2(190, 42)
-	_back.position = center + Vector2(-76, 96)
-	_back.size = Vector2(70, 28)
-	_close.position = center + Vector2(6 if _back.visible else -35, 96)
-	_close.size = Vector2(70, 28)
+	_power_label.position = center + Vector2(-110, 46)
+	_power_label.size = Vector2(220, 20)
+	_hint.position = center + Vector2(-95, 68)
+	_hint.size = Vector2(190, 32)
+	_back.position = center + Vector2(-76, 104)
+	_back.size = Vector2(70, 24)
+	_close.position = center + Vector2(6 if _back.visible else -35, 104)
+	_close.size = Vector2(70, 24)
 	_previous.position = center + Vector2(-94, -76)
 	_previous.size = Vector2(88, 28)
 	_next.position = center + Vector2(6, -76)

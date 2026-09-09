@@ -8,6 +8,8 @@ func run() -> void:
 	DirAccess.make_dir_recursive_absolute(output)
 	var lab := (load("res://src/dev/magic_practice.tscn") as PackedScene).instantiate()
 	root.add_child(lab)
+	lab.loadout.profile = ""
+	lab.loadout.set_wheel_power(1)
 	await process_frame
 	await capture("prepared-practice.png")
 	lab.loadout.set_mode("aimed")
@@ -34,6 +36,7 @@ func run() -> void:
 	await capture("wheel-healing.png")
 	check_wheel(lab.wheel)
 	lab.wheel.choose(0)
+	lab.wheel.change_power(3)
 	await capture("wheel-targets.png")
 	check_wheel(lab.wheel)
 	lab.wheel.open_wheel()
@@ -64,9 +67,13 @@ func check_bounds(control: Control, label: String) -> void:
 		push_error("Out of bounds: %s %s" % [label, rect])
 
 func check_wheel(wheel: Control) -> void:
-	for index in range(wheel.buttons.size()):
-		check_bounds(wheel.buttons[index], "wheel choice")
+	var controls: Array[Control] = []
+	for control in [wheel._heading, wheel._power_label, wheel._hint, wheel._back, wheel._close, wheel._previous, wheel._next]:
+		if control.visible: controls.append(control)
+	for button in wheel.buttons: controls.append(button)
+	for index in range(controls.size()):
+		check_bounds(controls[index], "wheel control")
 		for other in range(index):
-			if wheel.buttons[index].get_global_rect().intersects(wheel.buttons[other].get_global_rect()):
+			if controls[index].get_global_rect().intersects(controls[other].get_global_rect()):
 				failures += 1
-				push_error("Overlapping wheel choices")
+				push_error("Overlapping wheel controls: %s and %s" % [controls[index].text, controls[other].text])

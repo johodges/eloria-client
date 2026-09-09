@@ -5,6 +5,7 @@ const SLOT_COUNT := 12
 var catalog: SpellCatalog
 var slots: Array[Dictionary] = []
 var powers: Dictionary = {}
+var wheel_power := 1
 var mode := "prepared"
 var profile := ""
 var path := "user://magic_loadouts.cfg"
@@ -16,6 +17,7 @@ func configure(value: SpellCatalog) -> void:
 func _reset() -> void:
 	slots.clear()
 	powers.clear()
+	wheel_power = 1
 	for index in range(SLOT_COUNT):
 		var id := catalog.default_quick_slots[index] if index < catalog.default_quick_slots.size() else -1
 		slots.append({"id": id, "power": 1})
@@ -25,6 +27,7 @@ func load_profile(key: String) -> void:
 	_reset()
 	var config := ConfigFile.new()
 	if config.load(path) == OK:
+		wheel_power = clampi(int(config.get_value(profile, "wheel_power", 1)), 1, 10)
 		var saved: Variant = config.get_value(profile, "slots", [])
 		if saved is Array:
 			for index in range(mini(saved.size(), SLOT_COUNT)):
@@ -53,6 +56,13 @@ func remember_power(spell_id: int, power: int) -> void:
 	_save()
 	changed.emit()
 
+func set_wheel_power(power: int) -> void:
+	power = clampi(power, 1, 10)
+	if wheel_power == power: return
+	wheel_power = power
+	_save()
+	changed.emit()
+
 func set_mode(value: String) -> void:
 	mode = value if value in ["prepared", "aimed", "wheel"] else "prepared"
 	changed.emit()
@@ -66,6 +76,7 @@ func _save() -> void:
 	config.load(path)
 	config.set_value(profile, "slots", slots)
 	config.set_value(profile, "powers", powers)
+	config.set_value(profile, "wheel_power", wheel_power)
 	var error := config.save(path)
 	if error != OK:
 		push_warning("Could not save spell loadout: " + error_string(error))

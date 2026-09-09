@@ -56,14 +56,18 @@ Single-variant families such as Blink go straight to their normal casting flow.
 
 For example, select Tavin, then hold Alt and press **1, 1, 2** to cast Heal
 Target. Release Alt afterward. Without a valid selected recipient, the same
-sequence arms a target click. Each spell uses its power saved in the spellbook,
-capped to the server's current limit; quick-slot powers remain independent.
+sequence arms a target click. **Scroll up to increase power; scroll down to
+decrease it.** This works on every ring, including before selecting a utility
+spell. The center readout shows the current power, and target choices show the
+power they will cast. Selecting a family caps power to its server-stated limit.
+The wheel remembers its own power per character across sessions; spellbook
+and quick-slot power settings remain independent. Scrolling never casts.
 
 - Choose with **1–8** or a left click. Hovering and releasing Alt never cast.
 - **Release Alt** before a final choice to dismiss without casting. After a
   choice, releasing Alt keeps any pending target selection intact.
 - **Backspace / right click** goes back one ring; **Escape** closes it.
-- **[ / ]**, the mouse wheel, or Previous/Next changes Offense pages.
+- **[ / ]** or Previous/Next changes Offense pages.
 - Click the casting bar's **Wheel** button to use it without holding Alt.
 - Alt+number navigates the wheel in this mode. Quick slots still work by click.
 
@@ -119,7 +123,8 @@ are written under `godot-client/test-artifacts/magic-casting/`.
 
 Verified with Godot 4.7.2: prototype loadout/casting regressions, spell-window
 tests, magic-book UI tests, and world-input tests pass. The wheel regressions
-cover all catalog spells, held-key navigation, cancelling, focus loss, stable
+cover all catalog spells, held-key navigation, scrolling power and its limits,
+per-character power persistence, cancelling, focus loss, stable
 target positions, pagination, the live casting connection, and real GUI mouse
 routing without world click-through. All three practice batch launchers
 were exercised with `-Check`. Practice views and the live client HUD were
