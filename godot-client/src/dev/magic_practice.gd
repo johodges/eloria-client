@@ -213,7 +213,7 @@ func _save_trial_preferences() -> void:
 
 func _trial_instructions() -> String:
 	var method := "Hover a class; click its spell.\n1–5: class · 1–7: spell" if wheel_variant == "quick" else "Hover an inner class; click its spell.\nQ/W/E/R/T: class · 1–7: spell"
-	return "%s WHEEL\n\n%s\n\nScroll: power\nShift+1–4: target type\nAlt+Space: repeat last spell\n\nSelect Tavin → Heal twice.\n\nUnpin to make room for More.\n[ / ]: More pages\nRelease Alt / Esc: cancel\n\nF1 / F2 / F3: compare versions" % [wheel_variant.to_upper(), method]
+	return "%s WHEEL\n\n%s\n\nScroll: power\nRight click: cycle target type\nShift+1–4: select target type\nAlt+Space: repeat last spell\n\nSelect Tavin → Heal twice.\n\nUnpin to make room for More.\n[ / ]: More pages · Backspace: back\nRelease Alt / Esc: cancel\n\nF1 / F2 / F3: compare versions" % [wheel_variant.to_upper(), method]
 
 func _seed_reagents() -> void:
 	var images: Dictionary = {}

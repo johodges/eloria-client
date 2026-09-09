@@ -25,8 +25,11 @@ selects immediately. The first use of a family prefers Target when the selected
 recipient is compatible, otherwise Self when available, otherwise the family's
 normal targeting flow. The center previews the spell, recipient, target type,
 and effective power before selection. Target variants and powers are then
-remembered per family. **Shift+1 / 2 / 3 / 4**, or the four small buttons, changes
-Self / Target / Allies / Burst without casting. Scroll adjusts the highlighted
+remembered per family. **Right click** cycles Self → Target → Allies → Burst,
+skipping unavailable options and wrapping around. It keeps the wheel open and
+does not cast; a family with only one target option stays on that option.
+**Shift+1 / 2 / 3 / 4**, or the four small buttons, selects a target type directly.
+**Backspace** goes back. Scroll adjusts the highlighted
 family's power, subject to its server-stated limit.
 
 Each class begins with up to six pinned families. **Unpin** makes room; choose
@@ -167,6 +170,7 @@ are written under `godot-client/test-artifacts/magic-casting/`.
 The comparison launchers with `-Check` also run `test_magic_wheel_trials.gd`.
 `render_magic_wheel_trials.gd` captures Quick and Orbit for visual inspection.
 The trial checks cover actual Alt input, class hover, whole-sector clicks,
+right-click target cycling and unavailable target options,
 remembered target type and power, repeat casting at a different recipient,
 ground confirmation, cancellation, pins, More access, and power limits.
 Both new batch launchers passed `-Check`; all eight trial captures were

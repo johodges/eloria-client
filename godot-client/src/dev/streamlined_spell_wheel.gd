@@ -2,6 +2,7 @@ extends "res://src/ui/spell_wheel.gd"
 ## Test-only alternatives; casting still goes through MagicSelection.
 signal preferences_changed
 const HOVER_DELAY := 0.18
+const TARGET_SCOPES := ["self", "target", "allies", "burst"]
 var variant := "quick"
 var preferences := {"scopes": {}, "powers": {}, "pins": {}}
 var target_validator: Callable
@@ -74,7 +75,7 @@ func _ready() -> void:
 	_scope_bar = GridContainer.new()
 	_scope_bar.columns = 2
 	add_child(_scope_bar)
-	for scope in ["self", "target", "allies", "burst"]:
+	for scope in TARGET_SCOPES:
 		var button := _small_button(scope.capitalize(), func(): select_scope(scope))
 		remove_child(button)
 		_scope_bar.add_child(button)
@@ -105,6 +106,9 @@ func open_wheel(held := false) -> void:
 	if variant == "orbit": enter_class("Healing")
 
 func handle_event(event: InputEvent) -> bool:
+	if visible and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
+		if event.pressed: cycle_scope()
+		return true
 	if visible and event is InputEventKey and event.pressed and not event.echo:
 		var key: int = event.physical_keycode if event.physical_keycode != 0 else event.keycode
 		if event.ctrl_pressed or (event.alt_pressed and key in [KEY_TAB, KEY_F4]): return super.handle_event(event)
@@ -112,7 +116,7 @@ func handle_event(event: InputEvent) -> bool:
 			repeat_last()
 			return true
 		if event.shift_pressed and key >= KEY_1 and key <= KEY_4:
-			select_scope(["self", "target", "allies", "burst"][key - KEY_1])
+			select_scope(TARGET_SCOPES[key - KEY_1])
 			return true
 		if variant == "orbit" and key in [KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T]:
 			enter_class(CLASSES[[KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T].find(key)])
@@ -173,6 +177,18 @@ func select_scope(scope: String) -> void:
 			preferences_changed.emit()
 			_update_details()
 			return
+
+func cycle_scope() -> void:
+	if not visible or effect.is_empty(): return
+	var available: Array[String] = []
+	for scope in TARGET_SCOPES:
+		for id in variants_for(effect):
+			if loadout.catalog.spell(id).scope == scope:
+				available.append(scope)
+				break
+	if available.size() < 2: return
+	var current := str(loadout.catalog.spell(resolve_spell(effect)).scope)
+	select_scope(available[(available.find(current) + 1) % available.size()])
 
 func toggle_pin() -> void:
 	if effect.is_empty(): return
@@ -319,7 +335,7 @@ func _update_details() -> void:
 		_preview.text = "%s\n→ %s · %s" % [Book.EFFECT_LABELS.get(effect, effect.capitalize()), recipient, scope.capitalize()]
 		_power_label.text = "Power %d / %d · Scroll" % [power_for(id), _power_limit(effect)]
 		for index in range(_scope_buttons.size()):
-			var wanted: String = ["self", "target", "allies", "burst"][index]
+			var wanted: String = TARGET_SCOPES[index]
 			_scope_buttons[index].disabled = not variants_for(effect).any(func(spell_id: int): return loadout.catalog.spell(spell_id).scope == wanted)
 			_scope_buttons[index].set_pressed_no_signal(scope == wanted)
 		var pins := pinned_families(category)
@@ -330,7 +346,7 @@ func _update_details() -> void:
 		buttons[index].selected = entry.get("value", "") == effect
 		if stage == "effects" and entry.has("value"):
 			var spell_id := resolve_spell(str(entry.value))
-			buttons[index].tooltip_text = "%s · P%d\nClick or %d casts; Shift+1–4 changes target type." % [loadout.catalog.spell(spell_id).name, power_for(spell_id), index + 1]
+			buttons[index].tooltip_text = "%s · P%d\nClick or %d casts; right click cycles target type." % [loadout.catalog.spell(spell_id).name, power_for(spell_id), index + 1]
 
 func _process(_delta: float) -> void:
 	if not visible: return

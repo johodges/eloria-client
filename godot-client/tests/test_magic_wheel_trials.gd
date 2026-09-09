@@ -37,6 +37,8 @@ func run() -> void:
 		await process_frame
 		check(wheel.center == frozen, variant + " stays fixed while the character moves")
 		if variant == "quick":
+			await right_click(wheel.center)
+			check(wheel.visible and wheel.stage == "classes", "right click before a spell is highlighted keeps classes open")
 			var sector: Button = wheel.buttons[0]
 			await move_to_sector(sector)
 			await create_timer(0.25).timeout
@@ -51,6 +53,11 @@ func run() -> void:
 		wheel.change_power(1)
 		wheel.select_scope("target")
 		check(requests.size() == before, "hover, power, and target controls do not cast")
+		for scope in ["allies", "burst", "self", "target"]:
+			await right_click(wheel.center + Vector2(0, -210))
+			check(lab.catalog.spell(wheel.resolve_spell("heal")).scope == scope, variant + " right click advances once to " + scope)
+			check(wheel.visible and wheel.stage == "effects" and wheel.power_for(1) == 4, "cycling keeps the wheel open and preserves power")
+		check(requests.size() == before and lab.selector.pending.is_empty(), "right clicks never cast or start targeting")
 		await click_sector(wheel.buttons[0])
 		check(requests.back() == {"op": "cast", "id": 1, "power": 4, "target_id": 2}, variant + " one click casts the previewed spell and power")
 		root.push_input(key(KEY_ALT, false), true)
@@ -75,6 +82,11 @@ func run() -> void:
 		check(requests.size() == before and not wheel.visible, "release cancels unfinished selection")
 		wheel.open_wheel()
 		wheel.enter_class("Offense")
+		before = requests.size()
+		for scope in ["burst", "target"]:
+			await right_click(wheel.center)
+			check(lab.catalog.spell(wheel.resolve_spell("poison")).scope == scope, "cycling skips unavailable Self and Allies options")
+		check(requests.size() == before, "cycling a hostile spell never casts")
 		check(wheel.pinned_families("Offense").size() == 6, "Offense begins with six stable pinned families")
 		var initial: Array[String] = wheel.pinned_families("Offense")
 		wheel.effect = initial[0]
@@ -91,6 +103,14 @@ func run() -> void:
 		expected.sort()
 		check(reachable == expected, "pinning leaves every family reachable")
 		var saved: Array[String] = wheel.pinned_families("Offense")
+		wheel.enter_class("Utility")
+		var utility_id: int = wheel.resolve_spell("blink")
+		await right_click(wheel.center)
+		check(wheel.visible and wheel.category == "Utility" and wheel.resolve_spell("blink") == utility_id, "single-option utility keeps its target and the wheel open")
+		check(requests.size() == before and not lab.selector.popup.visible, "right click cannot launch a utility action")
+		wheel.handle_event(key(KEY_BACKSPACE))
+		check(wheel.stage == "classes" if variant == "quick" else not wheel.visible, "Backspace retains back navigation")
+		wheel.open_wheel()
 		state.spell_power["heal"] = {"limit": 2}
 		wheel.enter_class("Healing")
 		check(wheel.power_for(1) == 2, "remembered power respects a lower server limit")
@@ -112,6 +132,16 @@ func move_to_sector(button: Button) -> void:
 	event.global_position = event.position
 	root.push_input(event, true)
 	await process_frame
+func right_click(point: Vector2) -> void:
+	for pressed in [true, false]:
+		var event := InputEventMouseButton.new()
+		event.position = point
+		event.global_position = point
+		event.pressed = pressed
+		event.button_index = MOUSE_BUTTON_RIGHT
+		event.alt_pressed = true
+		root.push_input(event, true)
+		await process_frame
 func click_sector(button: Button) -> void:
 	var point: Vector2 = button.global_position + Vector2.ONE * button.outer + Vector2.from_angle(button.angle + button.spread * 0.30) * (button.inner + button.outer) / 2
 	for pressed in [true, false]:
