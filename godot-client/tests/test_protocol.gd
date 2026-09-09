@@ -905,9 +905,15 @@ func _init() -> void:
 		and int(partial_action_event.values.overall_level) == 22,
 		"partial pickpoint and overall-level aliases")
 	var partial_experience_event: Dictionary = EloriaProtocol.decode_server(49,
-		PackedByteArray([59, 0x40, 0xe2, 0x01, 0x00, 35, 25, 0, 0, 0]))
+		PackedByteArray([59, 0x40, 0xe2, 0x01, 0x00, 33, 25, 0, 0, 0,
+			57, 0xd2, 0x04, 0, 0, 35, 7, 0, 0, 0,
+			32, 26, 0, 0, 0, 34, 8, 0, 0, 0]))
 	_expect(int(partial_experience_event.values.attack_exp) == 123456
-		and int(partial_experience_event.values.attack_base) == 25,
+		and int(partial_experience_event.values.attack_base) == 25
+		and int(partial_experience_event.values.attack) == 26
+		and int(partial_experience_event.values.defense_exp) == 1234
+		and int(partial_experience_event.values.defense_base) == 7
+		and int(partial_experience_event.values.defense) == 8,
 		"partial skill experience and levels use the legacy stat identifier map")
 
 	var inventory_payload: PackedByteArray = PackedByteArray([

@@ -2555,6 +2555,8 @@ static func decode_item_cooldowns(payload: PackedByteArray) -> Dictionary:
 ## identifiers and are a different namespace from the word offsets in the full
 ## statistics packet: research is 47/65/66 here and 47/81/82 there, and the
 ## server writes both from the same character fields.
+## Attack levels precede defense (32-35), but their partial XP identifiers
+## have the opposite order (defense 57/58, attack 59/60).
 ## Which stat each slot of a partial-stat packet carries.
 ##
 ## A constant, not a table built inside `stat_key`. Every health, food, mana
@@ -2573,8 +2575,8 @@ const STAT_SLOT_KEYS := {
 	21: "artificial_nexus_base", 22: "magic_nexus", 23: "magic_nexus_base",
 	24: "manufacturing", 25: "manufacturing_base", 26: "harvesting",
 	27: "harvesting_base", 28: "alchemy", 29: "alchemy_base",
-	30: "overall", 31: "overall_base", 32: "defense", 33: "defense_base",
-	34: "attack", 35: "attack_base", 36: "magic", 37: "magic_base",
+	30: "overall", 31: "overall_base", 32: "attack", 33: "attack_base",
+	34: "defense", 35: "defense_base", 36: "magic", 37: "magic_base",
 	38: "potion", 39: "potion_base", 40: "carried", 41: "capacity",
 	42: "health", 43: "max_health", 44: "ether", 45: "max_ether",
 	46: "food", 47: "researching", 49: "manufacturing_exp",
