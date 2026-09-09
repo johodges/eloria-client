@@ -35,17 +35,43 @@ func run() -> void:
 			actor._advance_facing_offset(1.0)
 			for heading: float in [0.0, PI * 0.5, PI, -PI * 0.5]:
 				actor.rotation.y = heading
+				var hand_paths := {0: PackedVector3Array(), 1: PackedVector3Array()}
 				for phase: float in [0.05, 0.3, 0.6, 0.9]:
 					actor.animation_player.seek(actor.animation_player.current_animation_length * phase, true)
+					var skeleton := actor.get_skeleton()
+					var animated_arms := {}
+					for side: String in ["r", "l"]:
+						for segment: String in ["upperarm_", "lowerarm_", "hand_"]:
+							var bone := skeleton.find_bone(segment + side)
+							animated_arms[bone] = skeleton.get_bone_global_pose(bone)
+					carry.call("_process_modification_with_delta", 0.0)
+					for side: String in ["r", "l"]:
+						for segment: String in ["upperarm_", "lowerarm_"]:
+							var bone := skeleton.find_bone(segment + side)
+							check((animated_arms[bone] as Transform3D).is_equal_approx(skeleton.get_bone_global_pose(bone)),
+								"%s %s retains animated %s%s swing" % [option.model, action, segment, side])
 					await process_frame
 					await process_frame
 					for part: int in [0, 1]:
 						var attachment: BoneAttachment3D = actor._equipment_nodes[part][0]
 						var prop := attachment.get_child(0) as Node3D
+						var hand := skeleton.find_bone("hand_r" if part == 0 else "hand_l")
+						var animated_wrist: Vector3 = skeleton.global_transform * (animated_arms[hand] as Transform3D).origin
+						check(attachment.global_position.distance_to(animated_wrist) < 0.0001,
+							"%s %s hand %d follows the unequipped animation path" % [option.model, action, part])
+						hand_paths[part].append(actor.to_local(attachment.global_position))
 						check(prop.global_basis.y.normalized().dot(-actor.global_basis.z.normalized()) > 0.98,
 							"%s %s %.2f hand %d points forward" % [option.model, action, phase, part])
 						check(prop.global_position.distance_to(attachment.global_position) < 0.12 * actor.rig_fit_scale(),
 							"weapon stays in its grip: " + str(option.model))
+				for part: int in [0, 1]:
+					var forward_min := INF
+					var forward_max := -INF
+					for position: Vector3 in hand_paths[part]:
+						forward_min = minf(forward_min, position.z)
+						forward_max = maxf(forward_max, position.z)
+					check(forward_max - forward_min > 0.08 * actor.rig_fit_scale(),
+						"%s %s hand %d swings through the stride" % [option.model, action, part])
 		# Fade back out, then compare the whole body with the unmodified clip.
 		actor.play_action(&"idle", true)
 		actor.animation_player.advance(0.2)
