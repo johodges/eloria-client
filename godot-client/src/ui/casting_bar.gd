@@ -11,6 +11,10 @@ var panel: PanelContainer
 var mode_picker: OptionButton
 var wheel_button: Button
 var ring_size_picker: OptionButton
+var start_expanded := true
+var launcher_bottom_margin := 8.0
+var launcher: Button
+var close_button: Button
 var reserved_right_width := 8.0
 var buttons: Array[Button] = []
 var menu: PopupMenu
@@ -23,6 +27,13 @@ func _ready() -> void:
 	panel.name = "PreparedCastingBar"
 	panel.position = Vector2(680, 470)
 	add_child(panel)
+	launcher = Button.new()
+	launcher.name = "QuickbarLauncher"
+	launcher.text = "Quickbar"
+	launcher.focus_mode = Control.FOCUS_NONE
+	launcher.tooltip_text = "Show spell shortcuts and ring settings. Alt + number works while this panel is closed."
+	launcher.pressed.connect(func(): set_expanded(true))
+	add_child(launcher)
 	var body := VBoxContainer.new()
 	panel.add_child(body)
 	var header := HBoxContainer.new()
@@ -54,6 +65,12 @@ func _ready() -> void:
 	book.text = "Spellbook"
 	book.pressed.connect(func(): open_book.emit())
 	header.add_child(book)
+	close_button = Button.new()
+	close_button.text = "X"
+	close_button.focus_mode = Control.FOCUS_NONE
+	close_button.tooltip_text = "Close the quickbar. Left Shift and Alt shortcuts stay available."
+	close_button.pressed.connect(func(): set_expanded(false))
+	header.add_child(close_button)
 	WindowDrag.attach(panel, header)
 	var row := GridContainer.new()
 	row.columns = 6
@@ -107,6 +124,19 @@ func _ready() -> void:
 	loadout.changed.connect(refresh)
 	AppState.magic_state_received.connect(func(_data: Dictionary): refresh())
 	refresh()
+	set_expanded(start_expanded)
+
+func set_expanded(expanded: bool) -> void:
+	panel.visible = expanded
+	launcher.visible = not expanded
+	_place_launcher()
+	if not expanded:
+		menu.hide()
+		mode_picker.get_popup().hide()
+		ring_size_picker.get_popup().hide()
+
+func _place_launcher() -> void:
+	launcher.position = Vector2(8, maxf(8, size.y - launcher.size.y - launcher_bottom_margin))
 
 func refresh() -> void:
 	if mode_picker == null: return
@@ -146,3 +176,4 @@ func _slot_input(event: InputEvent, index: int) -> void:
 func _process(_delta: float) -> void:
 	# Keep the extra ring setting and the draggable bar reachable after a resize.
 	panel.position = panel.position.clamp(Vector2(8,8), (size-panel.size-Vector2(reserved_right_width,8)).max(Vector2(8,8)))
+	_place_launcher()

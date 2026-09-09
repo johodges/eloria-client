@@ -130,7 +130,8 @@ func control_for_step() -> Control:
 		"spells": return _node("SpellsButton")
 		"quickbar":
 			var bar: Control = main.get("casting_bar")
-			return bar.get("panel") as Control if is_instance_valid(bar) else null
+			if not is_instance_valid(bar): return null
+			return bar.get("panel") as Control if _visible(bar.get("panel")) else bar.get("launcher") as Control
 		"spell_ring", "ring_power", "ring_target":
 			var ring: Control = main.get("spell_wheel")
 			if _visible(ring):
@@ -138,7 +139,8 @@ func control_for_step() -> Control:
 				if state.control == "ring_target": return ring.get("_scope_bar") as Control
 				return ring.get("_heading") as Control
 			var bar: Control = main.get("casting_bar")
-			return bar.get("wheel_button") as Control if is_instance_valid(bar) else _node("SpellsButton")
+			if not is_instance_valid(bar): return _node("SpellsButton")
+			return bar.get("wheel_button") as Control if _visible(bar.get("panel")) else bar.get("launcher") as Control
 		"map": return _node("MapButton")
 		"chat": return _node("ChatInput")
 		"ranging": return _node("RangingButton")

@@ -953,6 +953,8 @@ func _ready() -> void:
 	spells_window.set_loadout(spell_loadout)
 	casting_bar = preload("res://src/ui/casting_bar.gd").new()
 	casting_bar.loadout = spell_loadout
+	casting_bar.start_expanded = false
+	casting_bar.launcher_bottom_margin = 84.0
 	casting_bar.reserved_right_width = 96.0
 	casting_bar.z_index = 7
 	game_view.add_child(casting_bar)
@@ -2516,6 +2518,7 @@ func _on_disconnect_pressed() -> void:
 	Network.disconnect_from_server()
 
 func _on_login_succeeded() -> void:
+	casting_bar.set_expanded(false)
 	spell_loadout.load_profile("%s:%d/%s" % [host_edit.text.strip_edges().to_lower(), int(port_edit.value), user_edit.text.strip_edges().to_lower()])
 	# Tell the server which Eloria extensions this client implements. Without
 	# it the server serves the legacy dialogue and raw-text fallback for every

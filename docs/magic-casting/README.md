@@ -10,6 +10,10 @@ The production widget is `src/ui/quick_spell_ring.gd`; the comparison scene
 uses that same implementation. Target choices, powers and pins persist per
 character alongside the quickbar settings.
 
+The live spell panel starts collapsed. Click **Quickbar** to see the slots,
+**Ring** button and size setting; **X** closes it again. Left Shift and Alt
+shortcuts work while it is closed. The comparison preview starts expanded.
+
 Use the **Size** dropdown beside **Ring** on the quickbar to choose **75%, 90%,
 100%, 110% or 125%**. The setting is saved per character and works in the live
 client and all native practice variants. Labels, icons and clickable wedges

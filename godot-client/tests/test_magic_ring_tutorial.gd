@@ -36,8 +36,35 @@ func run() -> void:
 	main.magic_selection.request_sender = func(data: Dictionary) -> Error:
 		casts.append(data.duplicate(true))
 		return OK
+	await process_frame
+	check(not main.casting_bar.panel.visible and main.casting_bar.launcher.is_visible_in_tree(), "live spell panel starts collapsed with a reachable launcher")
+	main.spell_loadout.set_ring_size(90)
+	main._sync_spells()
+	check(not main.casting_bar.panel.visible, "spell and size refreshes do not reopen the panel")
+	var shortcut := key(KEY_1)
+	shortcut.shift_pressed = false
+	shortcut.alt_pressed = true
+	root.push_input(shortcut, true)
+	check(casts.size() == 1 and casts.back().get("id") == 0, "Alt+1 casts the saved slot with the panel closed")
+	check(not main.casting_bar.panel.visible, "using a shortcut leaves the panel closed")
+	var alt_release := key(KEY_ALT, false)
+	alt_release.shift_pressed = false
+	root.push_input(alt_release, true)
+	casts.clear()
 	show_lesson("spell_ring", "Your spell ring", "Hold Left Shift to open your spell ring, or click Ring on the quickbar. Alt remains available for quickbar shortcuts.")
-	check(main.lantern_guide.control_for_step() == main.casting_bar.wheel_button, "closed-ring lesson highlights the Ring button")
+	check(main.lantern_guide.control_for_step() == main.casting_bar.launcher, "closed-panel lesson highlights the visible Quickbar launcher")
+	await capture("collapsed")
+	click(main.casting_bar.launcher)
+	await process_frame
+	check(main.casting_bar.panel.visible and not main.casting_bar.launcher.visible, "Quickbar click opens the panel")
+	check(main.lantern_guide.control_for_step() == main.casting_bar.wheel_button, "expanded-panel lesson highlights the Ring button")
+	var size_picker: OptionButton = main.casting_bar.ring_size_picker
+	size_picker.select(size_picker.get_item_index(110))
+	size_picker.item_selected.emit(size_picker.selected)
+	check(main.spell_loadout.ring_size == 110, "ring size remains adjustable from the opened panel")
+	click(main.casting_bar.close_button)
+	await process_frame
+	check(not main.casting_bar.panel.visible, "X closes the spell panel")
 	root.push_input(key(KEY_SHIFT), true)
 	await process_frame
 	check(observed == [20] and main.spell_wheel.visible, "Left Shift opens the live ring and records one tutorial observation")
@@ -69,6 +96,8 @@ func run() -> void:
 		await capture("size-%d" % percent)
 	main.spell_wheel.reset()
 	show_lesson("quickbar", "A spell within reach", "Find Heal on the quickbar (default Alt+1). Its top-left badge is the saved target type; top-right is power. Click it or use its shortcut to heal this second wound.")
+	check(main.lantern_guide.control_for_step() == main.casting_bar.launcher, "quickbar lesson points to the launcher while collapsed")
+	click(main.casting_bar.launcher)
 	await capture("quickbar")
 	check(main.lantern_guide.control_for_step() == main.casting_bar.panel, "quickbar teaching highlights the panel rather than the whole viewport")
 	main.free()
@@ -79,6 +108,13 @@ func run() -> void:
 	quit(failures)
 func show_lesson(control: String, title: String, hint: String) -> void:
 	main.lantern_guide.apply_state({"active":true,"tutorial":"borrowed_sky","stage":1,"total":39,"control":control,"title":title,"hint":hint})
+func click(control: Control) -> void:
+	for pressed in [true, false]:
+		var event := InputEventMouseButton.new()
+		event.position = control.get_global_rect().get_center()
+		event.button_index = MOUSE_BUTTON_LEFT
+		event.pressed = pressed
+		root.push_input(event, true)
 func capture(name: String) -> void:
 	for frame in range(6): await process_frame
 	var card: Rect2 = main.lantern_guide.card.get_global_rect()
