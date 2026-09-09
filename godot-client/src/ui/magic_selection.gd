@@ -1,6 +1,8 @@
 extends Control
 ## Server-authored inventory quotes and portal entrances for utility spells.
 signal status_changed(message: String)
+signal selection_changed
+signal cast_submitted(spell_id: int, power: int)
 var catalog: SpellCatalog
 var pending: Dictionary = {}
 var popup: AcceptDialog
@@ -9,9 +11,30 @@ var quantity: SpinBox
 var description: Label
 var entries: Array = []
 var kind := ""
+var target_mode := "prepared"
+var target_validator: Callable
+## The practice scene supplies a local simulation; live play uses Network.
+var request_sender: Callable
+var _hint: Label
+var _feedback := ""
+var _feedback_until := 0
+
+func _send(data: Dictionary) -> Error:
+	var error: Error = int(request_sender.call(data)) if request_sender.is_valid() else Network.magic_request(data)
+	if error != OK: status_changed.emit("Could not send spell. Check your connection.")
+	elif data.get("op") == "cast": cast_submitted.emit(int(data.id), int(data.power))
+	return error
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_hint = Label.new()
+	_hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_hint.add_theme_constant_override("outline_size", 5)
+	_hint.add_theme_color_override("font_outline_color", Color(0.04, 0.03, 0.02))
+	add_child(_hint)
+	status_changed.connect(func(message: String):
+		_feedback = message
+		_feedback_until = Time.get_ticks_msec() + 2500)
 	popup = AcceptDialog.new()
 	popup.title = "Spell selection"
 	popup.min_size = Vector2i(520, 220)
@@ -42,41 +65,82 @@ func _ready() -> void:
 		if path == &"map": cancel())
 	Network.magic_selection_completed.connect(func() -> void:
 		AppState.pending_spell_target = ""
-		pending.clear())
+		pending.clear()
+		_feedback_until = 0
+		selection_changed.emit())
 	Network.connection_state_changed.connect(func(state: String) -> void:
 		if state == "disconnected": cancel())
 
-func begin(spell_id: int, power: int) -> void:
+func _process(_delta: float) -> void:
+	var aiming := not pending.is_empty() and not AppState.pending_spell_target.is_empty()
+	_hint.visible = aiming or Time.get_ticks_msec() < _feedback_until
+	if not _hint.visible: return
+	_hint.text = ("%s · P%d\n%s · Esc / right click cancels" % [
+		catalog.spell(int(pending.id)).get("name", "Spell"), int(pending.power),
+		"Click a recipient" if AppState.pending_spell_target == "actor" else "Click a location"]) if aiming else _feedback
+	var pointer := get_global_mouse_position() + Vector2(18, 22)
+	_hint.global_position = pointer.min(get_viewport_rect().size - _hint.size - Vector2(8, 8)).max(Vector2(8, 8))
+
+func begin(spell_id: int, power: int, selected_target_id := -1) -> void:
 	cancel()
 	var spell: Dictionary = catalog.spell(spell_id)
+	if spell.is_empty(): return
 	pending = {"op": "cast", "id": spell_id, "power": maxi(1, power)}
 	var scope := str(spell.get("scope", "self"))
 	if scope == "inventory" or (spell.get("effect") == "recall" and power >= 5):
-		Network.magic_request({"op": "options", "id": spell_id})
+		_send({"op": "options", "id": spell_id})
 	elif scope in ["target", "burst", "location"]:
 		Network.magic_pending = pending.duplicate()
 		Network.magic_scope = scope
 		AppState.pending_spell_target = "actor" if scope == "target" else "location"
+		if scope == "target" and target_mode == "prepared" and selected_target_id >= 0 \
+				and target_validator.is_valid() and bool(target_validator.call(spell_id, selected_target_id)):
+			confirm_actor(selected_target_id)
+			return
 		status_changed.emit("Select %s for %s. Escape cancels." % [
 			"an actor" if scope == "target" else "a location", spell.name])
 		AppState.actor_animation_requested.emit({"actor_id": AppState.local_actor_id,
 			"action": &"cast_channel_enter", "power": power})
 	else:
-		Network.magic_request(pending)
+		_send(pending)
 		pending.clear()
+	selection_changed.emit()
+
+func confirm_actor(actor_id: int) -> void:
+	if pending.is_empty() or Network.magic_scope != "target": return
+	AppState.select_actor(actor_id)
+	_finish({"target_id": actor_id})
+
+func confirm_location(tile: Vector2i) -> void:
+	if pending.is_empty() or Network.magic_scope not in ["burst", "location"]: return
+	_finish({"x": tile.x, "y": tile.y})
+
+func _finish(selection: Dictionary) -> void:
+	var request := pending.duplicate()
+	request.merge(selection, true)
+	pending.clear()
+	Network.magic_pending.clear()
+	Network.magic_scope = ""
+	AppState.pending_spell_target = ""
+	_feedback_until = 0
+	selection_changed.emit()
+	_send(request)
 
 func cancel() -> void:
 	if not pending.is_empty() or not Network.magic_pending.is_empty():
-		Network.magic_request({"op":"cancel"})
+		_send({"op":"cancel"})
+		AppState.actor_animation_requested.emit({"actor_id": AppState.local_actor_id, "action": &"cast_exit"})
 	pending.clear()
 	Network.magic_pending.clear()
+	Network.magic_scope = ""
 	AppState.pending_spell_target = ""
+	_feedback_until = 0
 	if popup != null: popup.hide()
+	selection_changed.emit()
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel") and (not pending.is_empty() or not Network.magic_pending.is_empty()):
 		cancel()
-		AppState.actor_animation_requested.emit({"actor_id": AppState.local_actor_id, "action": &"cast_exit"})
 		get_viewport().set_input_as_handled()
 
 func _receive(data: Dictionary) -> void:
@@ -120,5 +184,6 @@ func _confirm() -> void:
 		pending.merge({"slot": int(entry.slot), "item_id": int(entry.item_id), "instance_id": int(entry.get("instance_id", 0)), "quantity": int(quantity.value)}, true)
 	else:
 		pending["entry"] = str(entry.key)
-	Network.magic_request(pending)
+	_send(pending)
 	pending.clear()
+	selection_changed.emit()

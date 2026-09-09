@@ -330,6 +330,10 @@ var _day_night_refresh_msec := 0
 ## each effect may reach and refuses anything it will not allow.
 var requested_spell_power := 1
 var magic_selection: Control
+var spell_loadout = preload("res://src/ui/spell_loadout.gd").new()
+var casting_bar: Control
+var spell_wheel: Control
+var _magic_area_preview: MeshInstance3D
 var player_info_panel: Control
 var active_buff_bar: Control
 ## Server map objects whose tile has no navigation surface beneath it on the
@@ -943,6 +947,43 @@ func _ready() -> void:
 	add_child(magic_selection)
 	magic_selection.status_changed.connect(func(message: String) -> void: spell_status.text = message)
 	AppState.magic_state_received.connect(_on_magic_state)
+	spell_loadout.configure(spell_catalog)
+	magic_selection.cast_submitted.connect(spell_loadout.remember_cast)
+	magic_selection.target_validator = _spell_target_candidate
+	spells_window.set_loadout(spell_loadout)
+	casting_bar = preload("res://src/ui/casting_bar.gd").new()
+	casting_bar.loadout = spell_loadout
+	casting_bar.reserved_right_width = 96.0
+	casting_bar.z_index = 7
+	game_view.add_child(casting_bar)
+	magic_selection.z_index = 8
+	casting_bar.cast_slot.connect(_cast_spell_slot)
+	casting_bar.edit_slot.connect(spells_window.edit_prepared_slot)
+	casting_bar.open_book.connect(_on_spells_button_pressed)
+	spell_wheel = preload("res://src/ui/quick_spell_ring.gd").new()
+	spell_wheel.loadout = spell_loadout
+	spell_wheel.preferences = spell_loadout.ring_preferences
+	spell_wheel.preferences_changed.connect(spell_loadout.save_ring_preferences)
+	spell_wheel.target_validator = _spell_target_candidate
+	spell_wheel.tutorial_action.connect(_magic_ring_ui)
+	spell_wheel.anchor_provider = _spell_wheel_anchor
+	spell_wheel.can_open = _can_open_spell_wheel
+	spell_wheel.z_index = 20
+	game_view.add_child(spell_wheel)
+	spell_wheel.spell_chosen.connect(_begin_prepared_cast)
+	spell_wheel.opened.connect(func():
+		magic_selection.cancel()
+		spells_window.close()
+		_stop_keyboard_movement()
+		_magic_ring_ui(20))
+	casting_bar.open_wheel.connect(spell_wheel.open_wheel)
+	spell_loadout.changed.connect(func():
+		magic_selection.target_mode = spell_loadout.targeting_mode()
+		spell_wheel.preferences = spell_loadout.ring_preferences
+		_sync_spells())
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--magic-mode="):
+			spell_loadout.set_mode(argument.trim_prefix("--magic-mode="))
 
 	manufacturing_catalog.configure(_json("res://data/manufacturing/recipes.json"))
 	summoning_window.call("configure", manufacturing_catalog, item_atlas,
@@ -1039,6 +1080,7 @@ func _ready() -> void:
 	_build_inventory_quantity_boxes()
 	_bind_quick_slots()
 	_bind_spell_slots()
+	$GameView/SpellQuickbar.hide()
 	_reset_trade_destinations()
 	trade_source.item_selected.connect(_on_trade_source_selected)
 	trade_own_offers.item_selected.connect(_on_trade_own_selected)
@@ -1161,6 +1203,7 @@ func _process(delta: float) -> void:
 		_update_legacy_clock_and_compass()
 		_update_actor_resource_overlay()
 		_update_cooldown_overlays()
+		_update_magic_preview()
 		_update_chat_fade()
 		_update_hud_timer()
 		_update_fps_label()
@@ -1212,7 +1255,7 @@ func _text_entry_active() -> bool:
 	return focus is LineEdit or focus is TextEdit
 
 func _update_keyboard_movement() -> void:
-	if _text_entry_active() or dialogue_panel.visible or trade_panel.visible \
+	if (spell_wheel != null and spell_wheel.visible) or _text_entry_active() or dialogue_panel.visible or trade_panel.visible \
 			or storage_panel.visible or full_map.visible \
 			or console_panel.visible or settings_panel.visible or item_lists_panel.visible \
 			or Input.is_key_pressed(KEY_ALT) or Input.is_key_pressed(KEY_CTRL):
@@ -2473,6 +2516,7 @@ func _on_disconnect_pressed() -> void:
 	Network.disconnect_from_server()
 
 func _on_login_succeeded() -> void:
+	spell_loadout.load_profile("%s:%d/%s" % [host_edit.text.strip_edges().to_lower(), int(port_edit.value), user_edit.text.strip_edges().to_lower()])
 	# Tell the server which Eloria extensions this client implements. Without
 	# it the server serves the legacy dialogue and raw-text fallback for every
 	# extension, which is what it had been doing for this client since it was
@@ -2621,11 +2665,33 @@ func _clear_world_presentation() -> void:
 	selected_target.text = "Target: none"
 
 func _input(event: InputEvent) -> void:
+	if spell_wheel != null:
+		if spell_wheel.handle_event(event):
+			_set_attack_modifier(false)
+			get_viewport().set_input_as_handled()
+			return
+		if spell_wheel.visible: return
 	if event is InputEventKey and (event as InputEventKey).echo:
 		return
 	_track_attack_modifier(event)
 	if _handle_bound_action(event):
 		get_viewport().set_input_as_handled()
+
+func _can_open_spell_wheel() -> bool:
+	return game_view.visible and not _text_entry_active() \
+		and not dialogue_panel.visible and not trade_panel.visible \
+		and not storage_panel.visible and not full_map.visible \
+		and not console_panel.visible and not settings_panel.visible \
+		and not item_lists_panel.visible and not magic_selection.popup.visible
+
+func _spell_wheel_anchor() -> Vector2:
+	var actor_position: Variant = _actor_effect_position(AppState.local_actor_id)
+	if actor_position is Vector3 and gameplay_camera != null:
+		var body: Vector3 = actor_position + Vector3(0, 0.9, 0)
+		if not gameplay_camera.is_position_behind(body):
+			var point := gameplay_camera.unproject_position(body)
+			return viewport_container.get_global_transform() * (point * viewport_container.size / Vector2(main_viewport.size))
+	return viewport_container.get_global_rect().get_center()
 
 ## Watches Alt so the move icon can say what a click would do. Every key and
 ## mouse event carries the modifier state it was sent with, and Alt itself
@@ -2726,7 +2792,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		return
 	for spell_slot: int in range(SPELL_QUICK_SLOTS):
-		if event.is_action_pressed("quick_spell_%d" % (spell_slot + 1)):
+		if _can_open_spell_wheel() and event.is_action_pressed("quick_spell_%d" % (spell_slot + 1)):
 			_cast_spell_slot(spell_slot)
 			get_viewport().set_input_as_handled()
 			return
@@ -2867,6 +2933,10 @@ func _on_world_gui_input(event: InputEvent) -> void:
 		if mouse_button.pressed and actor_hud_menu.visible:
 			actor_hud_menu.hide()
 		if mouse_button.button_index == MOUSE_BUTTON_RIGHT:
+			if mouse_button.pressed and not magic_selection.pending.is_empty():
+				magic_selection.cancel()
+				viewport_container.accept_event()
+				return
 			if mouse_button.pressed:
 				_right_mouse_down = true
 				_right_mouse_dragged = false
@@ -3330,7 +3400,7 @@ static func _texture_to_viewport_position(local_position: Vector2,
 func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector2) -> void:
 	if not Network.magic_pending.is_empty() and Network.magic_scope in ["burst", "location"]:
 		var tile: Variant = _map_target_tile(gameplay_camera, viewport_position)
-		if tile is Vector2i: Network.move_to(tile)
+		if tile is Vector2i: magic_selection.confirm_location(tile)
 		return
 	if _carried_slot >= 0:
 		_drop_carry()
@@ -3351,10 +3421,7 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 		var selected_dto: Dictionary = AppState.actors.get(picked_actor_id, {})
 		match _actor_click_action(picked_actor_id, selected_dto, event.alt_pressed):
 			"spell":
-				var spell_touch_error: Error = Network.touch_actor(picked_actor_id)
-				if spell_touch_error != OK:
-					push_warning("TOUCH_PLAYER spell target failed: "
-						+ error_string(spell_touch_error))
+				magic_selection.confirm_actor(picked_actor_id)
 			"attack":
 				if _movement_locked(event.ctrl_pressed):
 					return
@@ -3369,6 +3436,8 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 					push_warning("TOUCH_PLAYER failed: " + error_string(touch_error))
 		return
 	var picked_bag_id: int = _pick_ground_bag(viewport_position)
+	if AppState.pending_spell_target == "actor":
+		return
 	if picked_bag_id >= 0:
 		_open_ground_bag(picked_bag_id)
 		return
@@ -3445,6 +3514,8 @@ func _on_state_changed(path: StringName) -> void:
 		return
 	match path:
 		&"lantern_tutorial":
+			if AppState.lantern_tutorial.get("active", false) and AppState.lantern_tutorial.get("ring_training", false):
+				if spell_loadout.mode != "wheel": spell_loadout.set_mode("wheel")
 			if bool(AppState.lantern_tutorial.get("active", false)) and int(AppState.popup.get("popup_id", -1)) in [4000, 4001, 4002]:
 				AppState.close_popup()
 			lantern_guide.apply_state(AppState.lantern_tutorial)
@@ -8060,6 +8131,7 @@ func _sync_quick_slots() -> void:
 				else "The selected item cannot be used right now")
 
 func _sync_spells() -> void:
+	if casting_bar != null: casting_bar.refresh()
 	for slot: int in range(spell_slot_buttons.size()):
 		var button: Button = spell_slot_buttons[slot]
 		if slot >= spell_catalog.default_quick_slots.size():
@@ -8077,7 +8149,7 @@ func _sync_spells() -> void:
 		button.icon = spell_catalog.icon_for(spell_id)
 		button.expand_icon = true
 		button.text = ""
-		button.disabled = not AppState.pending_spell_target.is_empty()
+		button.disabled = false
 		button.tooltip_text = _spell_tooltip(definition, reasons, slot)
 	_sync_spell_power_controls()
 	match AppState.pending_spell_target:
@@ -8336,8 +8408,8 @@ func _reference_tab_open(tab: int) -> bool:
 ## Casts one catalogued spell: the spells window's seam onto the network. The
 ## same checks the quickbar makes, because it is the same cast.
 func _cast_spell_by_id(spell_id: int) -> void:
-	# Selected power and focus-adjusted readiness are quoted by the server.
-	magic_selection.begin(spell_id, _cast_power_for(spell_id))
+	var power: int = spell_loadout.power_for(spell_id)
+	_begin_prepared_cast(spell_id, power)
 
 func _on_magic_state(data: Dictionary) -> void:
 	if data.get("kind") != "burst" or not _effects_enabled: return
@@ -8402,8 +8474,63 @@ func _spell_result_text(result: Dictionary) -> String:
 		_: return "Spell response received"
 
 func _cast_spell_slot(slot: int) -> void:
-	if slot >= 0 and slot < spell_catalog.default_quick_slots.size():
-		_cast_spell_by_id(spell_catalog.default_quick_slots[slot])
+	if slot < 0 or slot >= spell_loadout.slots.size(): return
+	var entry: Dictionary = spell_loadout.slots[slot]
+	if int(entry.id) < 0:
+		spells_window.edit_prepared_slot(slot)
+		return
+	_begin_prepared_cast(int(entry.id), int(entry.power))
+
+func _magic_ring_ui(action: int) -> void:
+	if AppState.lantern_tutorial.get("active", false) and AppState.lantern_tutorial.get("tutorial", "") == "borrowed_sky" and AppState.lantern_tutorial.get("key", "") == "book":
+		Network.tutorial_ui(action)
+
+func _begin_prepared_cast(spell_id: int, power: int) -> void:
+	var stated: Dictionary = AppState.spell_power.get(spell_catalog.effect_for(spell_id), {})
+	power = mini(power, maxi(1, int(stated.get("limit", 1))))
+	magic_selection.begin(spell_id, power, AppState.selected_actor_id)
+	spells_window.close()
+
+func _spell_target_candidate(spell_id: int, actor_id: int) -> bool:
+	var actor: Dictionary = AppState.actors.get(actor_id, {})
+	if actor.is_empty() or not bool(actor.get("alive", int(actor.get("health", 0)) > 0)):
+		return false
+	var spell: Dictionary = spell_catalog.spell(spell_id)
+	if bool(spell.get("hostile", false)):
+		if spell.get("effect") == "mana_drain" and int(actor.get("kind", 0)) not in [1, 4]: return false
+		if spell.get("effect") == "disrupt" and not ReplicatedActor3D.is_summon(actor): return false
+		return _is_attackable_actor(actor_id, actor)
+	return actor_id == AppState.local_actor_id or int(actor.get("kind", 0)) in [1, 4] or _is_tutorial_companion(actor_id)
+
+func _update_magic_preview() -> void:
+	var aiming := not Network.magic_pending.is_empty() and Network.magic_scope in ["burst", "location"]
+	if _magic_area_preview != null: _magic_area_preview.visible = false
+	if not aiming or full_map.visible: return
+	var hovered: Control = get_viewport().gui_get_hovered_control()
+	if hovered != null and hovered != viewport_container and not viewport_container.is_ancestor_of(hovered): return
+	var position := _local_viewport_position(viewport_container.get_local_mouse_position())
+	var tile: Variant = _map_target_tile(gameplay_camera, position)
+	if not tile is Vector2i: return
+	if _magic_area_preview == null:
+		_magic_area_preview = MeshInstance3D.new()
+		_magic_area_preview.mesh = PlaneMesh.new()
+		var material := StandardMaterial3D.new()
+		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		material.cull_mode = BaseMaterial3D.CULL_DISABLED
+		_magic_area_preview.material_override = material
+		_magic_area_preview.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		world_root.add_child(_magic_area_preview)
+	var width := 9.0 if Network.magic_scope == "burst" else 1.0
+	(_magic_area_preview.mesh as PlaneMesh).size = Vector2.ONE * width * adapter.metres_per_tile
+	var point: Vector3 = adapter.tile_center(tile.x, tile.y)
+	var sampled: Variant = _navigation_ray_position(point + Vector3(0, 200, 0), Vector3.DOWN)
+	if sampled is Vector3: point.y = sampled.y
+	_magic_area_preview.position = point + Vector3(0, 0.05, 0)
+	var player: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
+	var in_range := maxi(absi(tile.x - int(player.get("x", tile.x))), absi(tile.y - int(player.get("y", tile.y)))) <= 15
+	(_magic_area_preview.material_override as StandardMaterial3D).albedo_color = Color(0.2, 0.75, 1.0, 0.3) if in_range else Color(1.0, 0.2, 0.1, 0.3)
+	_magic_area_preview.visible = true
 
 ## Draws each item cooldown as a proportional drain over its slot, in both
 ## the quick bar and the inventory grid. `maximum_msec` came off the wire in

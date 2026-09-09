@@ -54,7 +54,7 @@ func _run() -> void:
 	# The detail block is the half of this window worth reviewing - the
 	# requirements it writes out - and it is blank until a spell is picked.
 	var embermend: Button = spells_window.get_node(
-		"SpellsWindow/SpellsBody/SpellScroll/SpellGroups/HealthSpells/HealEffectRow/SelfCell/SpellButton0") as Button
+		"SpellsWindow/SpellsBody/SpellScroll/SpellBrowser/SpellGroups/HealthSpells/HealEffectRow/SelfCell/SpellButton0") as Button
 	_expect(embermend != null, "Heal has a button to select")
 	if embermend != null:
 		embermend.pressed.emit()
