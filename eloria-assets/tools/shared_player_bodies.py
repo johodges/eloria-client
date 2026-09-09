@@ -18,6 +18,7 @@ import sys
 import numpy as np
 from PIL import Image
 from scipy.spatial import cKDTree
+from scipy.ndimage import gaussian_filter1d, maximum_filter1d
 from scipy.sparse import coo_matrix
 from scipy.sparse.csgraph import connected_components
 
@@ -30,6 +31,10 @@ LOWER_CUT = .075
 UPPER_CUT = .110
 # The adaptor ends on exposed neck skin above the source shirt collar.
 UPPER_CUT_BY_SOURCE = {}
+
+# These source necks are wider than the shared human neck and have painted
+# collars immediately below them. Preserve their skin detail above the collar.
+DETAILED_NECKS = ('ssarathi_', 'glasswarden_')
 
 
 def digest(path):
@@ -349,7 +354,7 @@ def copy_materials(out, binary, source, source_blob):
     return {i: i+offset for i in range(len(mats))}
 
 
-def neck_bridge(lower, upper, origin, axis, material, reference):
+def neck_bridge(lower, upper, origin, axis, material, reference, smooth_profile=False):
     lr, ur = loops(lower, origin, axis), loops(upper, origin, axis)
     def ordered(group, ids):
         v = group['a']['POSITION'][ids] - origin
@@ -376,7 +381,8 @@ def neck_bridge(lower, upper, origin, axis, material, reference):
     ri,rt=ordered(reference,loops(reference,origin,axis)[0]);rs=sample(reference,ri,rt)
     rings = [{k:lower['a'][k][li] for k in lower['a']}]
     angles = [lt]
-    for t in (.125,.25,.5,.75):
+    steps = np.arange(1, 8)/8 if smooth_profile else (.125,.25,.5,.75)
+    for t in steps:
         a = {k:(1-t)*ls[k]+t*us[k] for k in lower['a']}
         lp,up=ls['POSITION']-origin,us['POSITION']-origin
         lh,uh=lp@axis,up@axis
@@ -386,6 +392,21 @@ def neck_bridge(lower, upper, origin, axis, material, reference):
         g=1-(1-t)**6
         radial=(1-g)*(lp-lh[:,None]*axis)+g*neck_radial
         a['POSITION']=origin+((1-t)*lh+t*uh)[:,None]*axis+radial
+        if smooth_profile:
+            # Follow both end tangents without forcing a narrow human waist
+            # just below the wider source jaw. Keep the exact boundary copies.
+            derivatives = []
+            for section, rel, height in ((ls, lp, lh), (us, up, uh)):
+                direction = rel-height[:, None]*axis
+                direction /= np.maximum(np.linalg.norm(direction, axis=1, keepdims=True), 1e-9)
+                normal = gaussian_filter1d(section['NORMAL'], 1.5, axis=0, mode='wrap')
+                slope = -(normal@axis)/np.maximum((normal*direction).sum(1), .25)
+                derivatives.append(axis+np.clip(slope, -.8, .8)[:, None]*direction)
+            span = (uh-lh)[:, None]
+            a['POSITION'] = ((2*t**3-3*t*t+1)*ls['POSITION']
+                +(t**3-2*t*t+t)*span*derivatives[0]
+                +(-2*t**3+3*t*t)*us['POSITION']
+                +(t**3-t*t)*span*derivatives[1])
         a['JOINTS_0'],a['WEIGHTS_0'] = sparse_weights((1-t)*ls['dense']+t*us['dense'])
         a['NORMAL'] /= np.maximum(np.linalg.norm(a['NORMAL'],axis=1,keepdims=True),1e-9)
         rings.append(a);angles.append(theta)
@@ -462,7 +483,7 @@ def extend_neck_skin(group, pixels, points, origin, axis):
     return np.einsum('ni,nic->nc',weight,rgb[nearest])
 
 
-def project_neck_texture(group, pixels, points, origin, axis, extend=False):
+def project_neck_texture(group, pixels, points, origin, axis, extend=False, radius_limit=None):
     """Sample neck skin in angular/axial coordinates, independent of radius.
 
     Nearest triangles in 3-D collapse samples onto edges when two necks differ
@@ -471,22 +492,29 @@ def project_neck_texture(group, pixels, points, origin, axis, extend=False):
     """
     if extend:
         return extend_neck_skin(group,pixels,points,origin,axis)
-    faces = group['f'][('body', body_material(group))]
-    attrs=group['a'];corners=attrs['POSITION'][faces]-origin
-    travel=corners@axis;centre=corners.mean(1)
-    radial=centre-(centre@axis)[:,None]*axis
-    normals=attrs['NORMAL'][faces].mean(1)
-    selected=(travel.max(1)>.025)&(travel.min(1)<.190)&((radial*normals).sum(1)>0)
-    faces,corners,travel=faces[selected],corners[selected],travel[selected]
     side=np.cross(axis,[1.,0.,0.])
-    angles=np.arctan2(corners@side,corners[:,:,0])
-    angles=angles[:,:1]+np.angle(np.exp(1j*(angles-angles[:,:1])))
-    chart=np.stack([angles*.05,travel],axis=-1)
-    copies=np.concatenate([chart+[-2*np.pi*.05,0],chart,chart+[2*np.pi*.05,0]])
-    face_map=np.tile(np.arange(len(faces)),3)
+    cache_key = ('neck_projection', tuple(origin), tuple(axis), radius_limit)
+    if cache_key not in group:
+        faces = group['f'][('body', body_material(group))]
+        attrs=group['a'];corners=attrs['POSITION'][faces]-origin
+        travel=corners@axis;centre=corners.mean(1)
+        radial=centre-(centre@axis)[:,None]*axis
+        normals=attrs['NORMAL'][faces].mean(1)
+        selected=(travel.max(1)>.025)&(travel.min(1)<.190)&((radial*normals).sum(1)>0)
+        if radius_limit is not None:
+            selected &= np.linalg.norm(radial, axis=1) < radius_limit
+        faces,corners,travel=faces[selected],corners[selected],travel[selected]
+        angles=np.arctan2(corners@side,corners[:,:,0])
+        angles=angles[:,:1]+np.angle(np.exp(1j*(angles-angles[:,:1])))
+        chart=np.stack([angles*.05,travel],axis=-1)
+        copies=np.concatenate([chart+[-2*np.pi*.05,0],chart,chart+[2*np.pi*.05,0]])
+        face_map=np.tile(np.arange(len(faces)),3)
+        group[cache_key] = faces, copies, face_map, cKDTree(copies.mean(1))
+    faces, copies, face_map, tree = group[cache_key]
+    attrs = group['a']
     rel=points-origin;pt=rel@axis
     query=np.column_stack([np.arctan2(rel@side,rel[:,0])*.05,pt])
-    _,nearest=cKDTree(copies.mean(1)).query(query,k=min(32,len(copies)))
+    _,nearest=tree.query(query,k=min(32,len(copies)))
     if nearest.ndim==1:nearest=nearest[:,None]
     tri=copies[nearest];a,b,c=tri[:,:,0],tri[:,:,1],tri[:,:,2]
     ab,ac,ap=b-a,c-a,query[:,None]-a
@@ -510,7 +538,71 @@ def project_neck_texture(group, pixels, points, origin, axis, extend=False):
     return sample_image(pixels,uv)
 
 
-def texture_neck(d, binary, bridge, lower, upper, common, source, common_pixels, source_pixels, origin, axis):
+def detailed_neck_colours(source, pixels, points, origin, axis):
+    """Project intact neck texels; reflect only where the source wears cloth.
+
+    A nearest-skin search in the painted collar collapses entire columns to a
+    few edge texels. Find the collar separately around the circumference, then
+    extend the skin at its original scale from the clean neck above it.
+    """
+    side = np.cross(axis, [1., 0., 0.])
+    if '_clean_neck_floor' not in source:
+        angles = (np.arange(512)+.5)/512*2*np.pi-np.pi
+        heights = np.linspace(.025, .145, 121)
+        probe = (origin+heights[:, None, None]*axis
+                 +.055*(np.cos(angles)[None, :, None]*[1., 0., 0.]
+                         +np.sin(angles)[None, :, None]*side)).reshape(-1, 3)
+        rgb = np.concatenate([project_neck_texture(source, pixels, probe[i:i+4096], origin, axis, radius_limit=.095)
+                              for i in range(0, len(probe), 4096)]).reshape(121, 512, 3)
+        brightness = rgb.mean(2)
+        reference = np.median(brightness[heights >= .12], axis=0)
+        cloth = brightness < reference[None]*.55
+        floor = np.max(np.where(cloth, heights[:, None], .025), axis=0)+.006
+        floor = np.minimum(gaussian_filter1d(maximum_filter1d(floor, 7, mode='wrap'), 2, mode='wrap'), .125)
+        source['_clean_neck_floor'] = angles, floor
+        source['_clean_neck_palette'] = gaussian_filter1d(np.median(rgb[heights >= .12], axis=0), 2, axis=0, mode='wrap')
+    angles, floor = source['_clean_neck_floor']
+    rel = points-origin
+    theta = np.arctan2(rel@side, rel[:, 0])
+    lo = np.interp(theta, angles, floor, period=2*np.pi)
+    h = rel@axis
+    span = .155-lo
+    phase = (h-lo) % (2*span)
+    reflected = lo+span-np.abs(phase-span)
+    query = points+np.where(h < lo, reflected-h, 0)[:, None]*axis
+    colour = project_neck_texture(source, pixels, query, origin, axis, radius_limit=.095)
+    palette = source['_clean_neck_palette']
+    base = np.column_stack([np.interp(theta, angles, palette[:, k], period=2*np.pi) for k in range(3)])
+    detail = np.clip((h-.075)/.055, 0, 1)
+    detail = .35+.65*detail*detail*(3-2*detail)
+    return base+detail[:, None]*(colour-base)
+
+
+def collar_facing(d, binary, groups):
+    """Give the source's small chest-lacing patches the shirt dye, not skin."""
+    encoded = io.BytesIO()
+    Image.new('RGB', (2, 2), (175, 175, 175)).save(encoded, format='PNG')
+    d['images'].append({'mimeType': 'image/png', 'bufferView': append_view(d, binary, encoded.getvalue())})
+    d['textures'].append({'source': len(d['images'])-1})
+    d['materials'].append({'name': 'Collar facing', 'doubleSided': True,
+        'pbrMetallicRoughness': {'baseColorTexture': {'index': len(d['textures'])-1},
+                               'metallicFactor': 0, 'roughnessFactor': .85}})
+    count = 0
+    for group in groups:
+        for key, faces in list(group['f'].items()):
+            if key[0] != 'body': continue
+            centre = group['a']['POSITION'][faces].mean(1)
+            chosen = ((centre[:, 1] > 1.365) & (centre[:, 1] < 1.490)
+                      & (abs(centre[:, 0]) < .05) & (centre[:, 2] > .020))
+            if not chosen.any(): continue
+            group['f'][key] = faces[~chosen]
+            group['f'][('wardrobe_shirt', len(d['materials'])-1)] = faces[chosen]
+            count += int(chosen.sum())
+    return count
+
+
+def texture_neck(d, binary, bridge, lower, upper, common, source, common_pixels, source_pixels, origin, axis,
+                 upper_cut=UPPER_CUT, detailed=False, texture_geometry=None):
     """Use one continuous cylindrical atlas across the complete neck adaptor.
 
     The common atlas assigned little space to its plain skin. Baking detailed
@@ -526,7 +618,7 @@ def texture_neck(d, binary, bridge, lower, upper, common, source, common_pixels,
     neck={'a':{k:v.copy() for k,v in lower['a'].items()},
           'f':{('body',material):ff[selected]},'role':'shared_neck'}
     lower['f'][body_key]=ff[~selected]
-    side=np.cross(axis,[1.,0.,0.]);h0=-.160;h1=UPPER_CUT
+    side=np.cross(axis,[1.,0.,0.]);h0=-.160;h1=upper_cut
     width,height=1024,512
     yy,xx=np.mgrid[:height,:width]
     theta=((xx+.5)/width-.5)*2*np.pi
@@ -536,7 +628,8 @@ def texture_neck(d, binary, bridge, lower, upper, common, source, common_pixels,
     colours=[]
     for start in range(0,len(points),4096):
         query=points[start:start+4096]
-        high=project_neck_texture(source,source_pixels,query,origin,axis,extend=True)
+        high = (detailed_neck_colours(texture_geometry or source, source_pixels, query, origin, axis) if detailed
+                else project_neck_texture(source,source_pixels,query,origin,axis,extend=True))
         colours.append(high)
     colours=np.concatenate(colours).reshape(height,width,3)
     # The final atlas row samples the retained source boundary itself. A global
@@ -556,7 +649,7 @@ def texture_neck(d, binary, bridge, lower, upper, common, source, common_pixels,
     t=parameter[np.arange(width),chosen,None]
     edge_uv=upper['a']['TEXCOORD_0'][boundary[chosen]]
     boundary_colour=sample_image(source_pixels,edge_uv[:,0]*(1-t)+edge_uv[:,1]*t)
-    fade=np.clip((h-(UPPER_CUT-.006))/.006,0,1)[:,:,None];fade=fade*fade*(3-2*fade)
+    fade=np.clip((h-(upper_cut-.006))/.006,0,1)[:,:,None];fade=fade*fade*(3-2*fade)
     colours=colours*(1-fade)+boundary_colour[None]*fade
     atlas=np.rint(colours*255).astype('u1')
     for group in (bridge,neck):
@@ -584,6 +677,12 @@ def write_group(d, binary, group, meshes):
     for (name, mat), faces in group['f'].items():
         if not len(faces):continue
         used, inverse = np.unique(faces, return_inverse=True)
+        # Cylindrical UV baking emits per-triangle corners. Merge only exact
+        # full-attribute duplicates; keep every UV, normal and skinning seam.
+        rows = np.concatenate([np.ascontiguousarray(group['a'][k][used]).view('u1').reshape(len(used), -1)
+                               for k in sorted(group['a'])], axis=1)
+        _, keep, remap = np.unique(rows, axis=0, return_index=True, return_inverse=True)
+        used, inverse = used[keep], remap[inverse]
         attrs = {}
         for k, values in group['a'].items():
             attrs[k] = append_array(d, binary, values[used], 'VEC'+str(values.shape[1]),
@@ -594,7 +693,7 @@ def write_group(d, binary, group, meshes):
 
 
 
-def run(source, template, out):
+def run(source, template, out, texture_source=None):
     if 'godot-client' in out.resolve().parts or out.resolve() in (source.resolve(), template.resolve()):
         raise ValueError('Use a separate scratch output')
     if out.exists():
@@ -620,7 +719,17 @@ def run(source, template, out):
     # it intact instead of replacing the old procedural chest/neck region.
     body_cut = travel-LOWER_CUT if source_body else np.maximum(travel-LOWER_CUT,local_neck)
     lower = clip(common, body_cut, False)
-    upper_cut = UPPER_CUT_BY_SOURCE.get(source.stem, UPPER_CUT)
+    original = sd.get('asset', {}).get('extras', {}).get('highResolutionHead', {}).get('original', '')
+    detailed_neck = original.startswith(DETAILED_NECKS)
+    texture_geometry = None
+    if detailed_neck and texture_source is not None:
+        hd, hb = g.read(texture_source)
+        if hd['asset']['extras']['highResolutionHead']['originalSHA256'] != sd['asset']['extras']['highResolutionHead']['originalSHA256']:
+            raise ValueError('Neck texture geometry must come from the same original model')
+        hp = hd['meshes'][0]['primitives'][0]
+        texture_geometry = {'a': {k: g.accessor(hd, hb, v) for k, v in hp['attributes'].items()},
+                            'f': {('body', 0): g.accessor(hd, hb, hp['indices']).astype(int).reshape(-1, 3)}}
+    upper_cut = .130 if detailed_neck else UPPER_CUT_BY_SOURCE.get(source.stem, UPPER_CUT)
     upper = clip(src, (src['a']['POSITION']-origin)@axis-upper_cut, True)
     # Retained head/neck facets are skin, even where the source classifier
     # labelled a lip or neck patch as shirt. They must not receive shirt tint
@@ -647,8 +756,11 @@ def run(source, template, out):
     neck_material['name'] = 'Shared neck bridge'
     d['materials'].append(neck_material)
     reference=clip(common,(common['a']['POSITION']-origin)@axis-LOWER_CUT,False)
-    bridge, lr, ur = neck_bridge(lower, upper, origin, axis, len(d['materials'])-1, reference)
-    shared_neck = texture_neck(d, binary, bridge, lower, upper, common, src, common_pixels, source_pixels, origin, axis)
+    bridge, lr, ur = neck_bridge(lower, upper, origin, axis, len(d['materials'])-1, reference,
+                                smooth_profile=detailed_neck)
+    shared_neck = texture_neck(d, binary, bridge, lower, upper, common, src, common_pixels, source_pixels, origin, axis,
+                              upper_cut=upper_cut, detailed=detailed_neck, texture_geometry=texture_geometry)
+    facing_triangles = collar_facing(d, binary, (lower, shared_neck)) if detailed_neck and original.endswith('_male_tpose.glb') else 0
     cap_inner_loops(lower, lr, axis)
     cap_inner_loops(upper, ur, -axis)
     lower['role'], upper['role'], bridge['role'] = 'shared_body', 'race_head', 'neck_join'
@@ -684,6 +796,12 @@ def run(source, template, out):
         'headSourceSHA256': input_hashes[0], 'lowerCutM': LOWER_CUT, 'upperCutM': upper_cut,
         'bodyCutMode': 'neck-plane' if source_body else 'chest-adaptor',
         'toolSHA256': digest(__file__)}
+    if detailed_neck:
+        d['asset']['extras']['sharedBodyShape']['neckRefinement'] = {
+            'profile': 'boundary-tangent', 'texture': 'source-scale-collar-extension',
+            'collarFacingTriangles': facing_triangles, 'version': 1}
+        if texture_source is not None:
+            d['asset']['extras']['sharedBodyShape']['neckRefinement']['textureGeometrySHA256'] = digest(texture_source)
     d, binary = g.compact(d, bytes(binary))
     if (digest(source), digest(template)) != input_hashes:
         raise ValueError('A body input changed during generation')
@@ -706,5 +824,6 @@ if __name__ == '__main__':
     ap.add_argument('source', type=Path)
     ap.add_argument('--template', type=Path, required=True)
     ap.add_argument('--out', type=Path, required=True)
+    ap.add_argument('--texture-source', type=Path)
     args = ap.parse_args()
-    print(json.dumps(run(args.source, args.template, args.out), indent=2))
+    print(json.dumps(run(args.source, args.template, args.out, args.texture_source), indent=2))

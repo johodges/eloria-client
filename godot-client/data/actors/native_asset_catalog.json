@@ -216,8 +216,8 @@
       "pipeline": "eloria-assets/tools/build_high_resolution_race_heads.py"
     },
     "glasswarden_female": {
-      "vertices": 30754,
-      "triangles": 41258,
+      "vertices": 27889,
+      "triangles": 41360,
       "joints": 77,
       "feature": "crystal",
       "wardrobe": "skinned",
@@ -231,7 +231,7 @@
       "path": "godot-client/assets/actors/native/races/glasswarden_female.glb",
       "source": "glasswarden_female_tpose.glb",
       "sourceSHA256": "bcc56ed1bacd5f5bd8988e841d2cd9075fc2de8cf4d1bb65650483e7e46b9a6d",
-      "sha256": "d39b05cb007de3119a6183525c7e841b978bf710ac884d7ab8c3c7e8d382183a",
+      "sha256": "a7f8fc3dece1bc3a2ff1cdd2f7f4db5b80ff8980bcd405b7da0b7954bf2e0092",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -245,7 +245,7 @@
       ],
       "bodyTemplate": "luminous_female",
       "retainedTailTriangles": 0,
-      "neckAdaptorTriangles": 684,
+      "neckAdaptorTriangles": 1095,
       "highResolutionHead": {
         "original": "glasswarden_female_tpose.glb",
         "originalSHA256": "bcc56ed1bacd5f5bd8988e841d2cd9075fc2de8cf4d1bb65650483e7e46b9a6d",
@@ -268,15 +268,22 @@
         "templateSHA256": "8d8dea9c58e9a0085f8e28afbf28c8e3205d78dec8f098d166202fc8be6e2a66",
         "headSourceSHA256": "48a7e981e1b7677be78f649136759ce0d525ad543f73bc0ceda9d132b99aef3d",
         "lowerCutM": 0.075,
-        "upperCutM": 0.11,
+        "upperCutM": 0.13,
         "bodyCutMode": "neck-plane",
-        "toolSHA256": "d4f48be593f6ad9fa16949982ac20c69150879a817aea77a40d11ef89a19ea3f"
+        "toolSHA256": "a473843727dda4ac2d833615c84e2943bfc894150515cb692fc6006fbf88bc98",
+        "neckRefinement": {
+          "profile": "boundary-tangent",
+          "texture": "source-scale-collar-extension",
+          "collarFacingTriangles": 0,
+          "version": 1,
+          "textureGeometrySHA256": "59352482de7ff641ac3666f95d72481ef757a69321bc871509d1c9dd018de518"
+        }
       },
       "pipeline": "eloria-assets/tools/build_high_resolution_race_heads.py"
     },
     "glasswarden_male": {
-      "vertices": 34128,
-      "triangles": 47892,
+      "vertices": 31481,
+      "triangles": 48186,
       "joints": 77,
       "feature": "crystal",
       "wardrobe": "skinned",
@@ -290,7 +297,7 @@
       "path": "godot-client/assets/actors/native/races/glasswarden_male.glb",
       "source": "glasswarden_male_tpose.glb",
       "sourceSHA256": "efcec232675bfb5f233ea33cadb168d716658aa6569dd0b1a6c67fb0c0c85636",
-      "sha256": "b8f38cbea6c1542c5d65a2c8401a01f1bdf83f5844b4131c5609c1043a484a45",
+      "sha256": "acde0bf5d110d1db68be8d2158c2f2dc7a86a692784b94c4a529d42a26e2f0a4",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -304,7 +311,7 @@
       ],
       "bodyTemplate": "luminous_male",
       "retainedTailTriangles": 0,
-      "neckAdaptorTriangles": 673,
+      "neckAdaptorTriangles": 1062,
       "highResolutionHead": {
         "original": "glasswarden_male_tpose.glb",
         "originalSHA256": "efcec232675bfb5f233ea33cadb168d716658aa6569dd0b1a6c67fb0c0c85636",
@@ -327,9 +334,16 @@
         "templateSHA256": "9f97b8db169f61e971e5a9642e11fb10fcaef8b8b85f2a89e41a2f5812e91640",
         "headSourceSHA256": "f0541ef8603eb3fdec252e037852368dd78503105dbe1e5293e60791fe2470f1",
         "lowerCutM": 0.075,
-        "upperCutM": 0.11,
+        "upperCutM": 0.13,
         "bodyCutMode": "neck-plane",
-        "toolSHA256": "d4f48be593f6ad9fa16949982ac20c69150879a817aea77a40d11ef89a19ea3f"
+        "toolSHA256": "a473843727dda4ac2d833615c84e2943bfc894150515cb692fc6006fbf88bc98",
+        "neckRefinement": {
+          "profile": "boundary-tangent",
+          "texture": "source-scale-collar-extension",
+          "collarFacingTriangles": 39,
+          "version": 1,
+          "textureGeometrySHA256": "c6c70cb3bbba702193dc707072133d02fd656e41bc1e7fd65b1d19760e346780"
+        }
       },
       "pipeline": "eloria-assets/tools/build_high_resolution_race_heads.py"
     },
@@ -570,8 +584,8 @@
       "pipeline": "eloria-assets/tools/build_high_resolution_race_heads.py"
     },
     "ssarathi_female": {
-      "vertices": 39286,
-      "triangles": 48114,
+      "vertices": 36221,
+      "triangles": 48062,
       "joints": 77,
       "feature": "scaled",
       "wardrobe": "skinned",
@@ -585,7 +599,7 @@
       "path": "godot-client/assets/actors/native/races/ssarathi_female.glb",
       "source": "ssarathi_female_tpose.glb",
       "sourceSHA256": "c87560e8fe71372682314da2c4ec960e489a7fa50fccb90cb92f2a9459e4c3d6",
-      "sha256": "d3ec87b86dbc57ea0fc664d18f1fe9e2827fa935da9a8713331932f6858b0324",
+      "sha256": "296e97507321a22b64f93957c7b4c413ed2b1c0edd9e563ce267e0c45e50ecd9",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -599,7 +613,7 @@
       ],
       "bodyTemplate": "luminous_female",
       "retainedTailTriangles": 7158,
-      "neckAdaptorTriangles": 715,
+      "neckAdaptorTriangles": 1133,
       "highResolutionHead": {
         "original": "ssarathi_female_tpose.glb",
         "originalSHA256": "c87560e8fe71372682314da2c4ec960e489a7fa50fccb90cb92f2a9459e4c3d6",
@@ -622,15 +636,22 @@
         "templateSHA256": "8d8dea9c58e9a0085f8e28afbf28c8e3205d78dec8f098d166202fc8be6e2a66",
         "headSourceSHA256": "9725d1c3fd53ff4202a3edd8cbf55fb992fdf3385c270e2b192306dc5521dcf9",
         "lowerCutM": 0.075,
-        "upperCutM": 0.11,
+        "upperCutM": 0.13,
         "bodyCutMode": "neck-plane",
-        "toolSHA256": "d4f48be593f6ad9fa16949982ac20c69150879a817aea77a40d11ef89a19ea3f"
+        "toolSHA256": "a473843727dda4ac2d833615c84e2943bfc894150515cb692fc6006fbf88bc98",
+        "neckRefinement": {
+          "profile": "boundary-tangent",
+          "texture": "source-scale-collar-extension",
+          "collarFacingTriangles": 0,
+          "version": 1,
+          "textureGeometrySHA256": "da1a6148645cdaca87aee49e5b9d1617ae3ae2308e5ab3242e5f21537377a43e"
+        }
       },
       "pipeline": "eloria-assets/tools/build_high_resolution_race_heads.py"
     },
     "ssarathi_male": {
-      "vertices": 36745,
-      "triangles": 51118,
+      "vertices": 33813,
+      "triangles": 51040,
       "joints": 77,
       "feature": "scaled",
       "wardrobe": "skinned",
@@ -644,7 +665,7 @@
       "path": "godot-client/assets/actors/native/races/ssarathi_male.glb",
       "source": "ssarathi_male_tpose.glb",
       "sourceSHA256": "0aaf3f18262bfc71b3e60044afbb9770b7d1f5551854ac62c07ccd627bceaf75",
-      "sha256": "edf532b3c07d89aef20c105134ffed69e7f384c490daa9667989918601ae60ba",
+      "sha256": "3df907b2e21986c87fa49dc2fa4dc608d2f01722ed911a566314b41ba0d5320e",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -658,7 +679,7 @@
       ],
       "bodyTemplate": "luminous_male",
       "retainedTailTriangles": 3610,
-      "neckAdaptorTriangles": 722,
+      "neckAdaptorTriangles": 1153,
       "highResolutionHead": {
         "original": "ssarathi_male_tpose.glb",
         "originalSHA256": "0aaf3f18262bfc71b3e60044afbb9770b7d1f5551854ac62c07ccd627bceaf75",
@@ -681,9 +702,16 @@
         "templateSHA256": "9f97b8db169f61e971e5a9642e11fb10fcaef8b8b85f2a89e41a2f5812e91640",
         "headSourceSHA256": "6d58507c9e95ffb90687666abde479ee81f8d8e6e94a7a4640b050cb299b8091",
         "lowerCutM": 0.075,
-        "upperCutM": 0.11,
+        "upperCutM": 0.13,
         "bodyCutMode": "neck-plane",
-        "toolSHA256": "d4f48be593f6ad9fa16949982ac20c69150879a817aea77a40d11ef89a19ea3f"
+        "toolSHA256": "a473843727dda4ac2d833615c84e2943bfc894150515cb692fc6006fbf88bc98",
+        "neckRefinement": {
+          "profile": "boundary-tangent",
+          "texture": "source-scale-collar-extension",
+          "collarFacingTriangles": 39,
+          "version": 1,
+          "textureGeometrySHA256": "a51db6385365a5d1a1fa4e4d76f933e035543527b52edd365c86fa4a6efcfb8a"
+        }
       },
       "pipeline": "eloria-assets/tools/build_high_resolution_race_heads.py"
     },

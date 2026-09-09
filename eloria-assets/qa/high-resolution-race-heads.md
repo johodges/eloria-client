@@ -43,3 +43,31 @@ eight threads to Blender. This review used `work-output/race-heads/final`;
 the final neck exports are named `compact-body.glb` (`--body-name` selects
 them). Renders and preservation/packing reports are in
 `work-output/race-heads` outside the checkout.
+
+## Ssarathi and Glasswarden neck refinement — 2026-09-09
+
+Both sexes now use a longer transition to the source neck, ending at 0.130 m
+along the neck axis. Boundary tangents guide the shape instead of holding a
+narrow human waist immediately below the source jaw. The body below the
+existing 0.075 m cut, rig, face artwork, hair and Ssarathi tails are preserved.
+
+The neck atlas is projected from the original high-resolution extracted neck.
+The bake excludes distant chest surfaces, identifies the source collar around
+the circumference, and extends clean skin without collapsing onto cloth-edge
+texels. Detail fades toward the lower neckline to reduce repeated patterns.
+The male lacing has 39 existing facets reassigned to the shirt dye. Their
+positions, normals and skin weights remain unchanged.
+
+Exact duplicate attribute rows are compacted while keeping UV, normal and
+weight seams. The four complete models have 27,889–36,221 vertices. Face mask
+pixels and hair files are unchanged; equipment measurements are unchanged.
+
+Validation: 36 fit/source/equipment tests with 96 subtests and 12 native asset
+tests with 1,884 subtests passed. Exact per-triangle attribute comparisons
+confirm lossless vertex compaction and tail preservation. Default idle views
+from three angles, tinted walking views and equipped views are stored in
+`work-output/neck-refinement`, with installation and preservation reports.
+
+Use the source builder for fresh candidates; it passes the high-resolution
+extraction to the neck bake. `install_neck_refinements.py` installs reviewed
+four-model candidates while preserving existing hair, face masks and tails.

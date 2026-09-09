@@ -1,6 +1,6 @@
 {
   "glasswarden_female": {
-    "modelSHA256": "d39b05cb007de3119a6183525c7e841b978bf710ac884d7ab8c3c7e8d382183a",
+    "modelSHA256": "a7f8fc3dece1bc3a2ff1cdd2f7f4db5b80ff8980bcd405b7da0b7954bf2e0092",
     "sourceMaterial": 1,
     "size": [
       2048,
@@ -14,7 +14,7 @@
     "maskSHA256": "15d309e7c3c90d0b7c5283f44497e25783fcf74fa4bde91559beb11bc1a898f1"
   },
   "glasswarden_male": {
-    "modelSHA256": "b8f38cbea6c1542c5d65a2c8401a01f1bdf83f5844b4131c5609c1043a484a45",
+    "modelSHA256": "acde0bf5d110d1db68be8d2158c2f2dc7a86a692784b94c4a529d42a26e2f0a4",
     "sourceMaterial": 1,
     "size": [
       2048,
@@ -224,7 +224,7 @@
     "maskSHA256": "ede1f2f06973b3ebfc173e59eaebbc960dab124d496e8a3cb493fa02555b94cf"
   },
   "ssarathi_female": {
-    "modelSHA256": "d3ec87b86dbc57ea0fc664d18f1fe9e2827fa935da9a8713331932f6858b0324",
+    "modelSHA256": "296e97507321a22b64f93957c7b4c413ed2b1c0edd9e563ce267e0c45e50ecd9",
     "sourceMaterial": 1,
     "size": [
       2048,
@@ -238,7 +238,7 @@
     "maskSHA256": "012c7e3872bdeef67c2ca927371fadd54329f50b4b48e4ebae628ea7c7320b68"
   },
   "ssarathi_male": {
-    "modelSHA256": "edf532b3c07d89aef20c105134ffed69e7f384c490daa9667989918601ae60ba",
+    "modelSHA256": "3df907b2e21986c87fa49dc2fa4dc608d2f01722ed911a566314b41ba0d5320e",
     "sourceMaterial": 1,
     "size": [
       2048,

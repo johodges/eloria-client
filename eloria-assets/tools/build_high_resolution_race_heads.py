@@ -33,7 +33,7 @@ def run(root, sources, out, blender):
                 '--python-exit-code','1','--python',str(Path(__file__).with_name('reduce_race_head_blender.py')),
                 '--',str(extracted),str(reduced)],stdout=log,stderr=subprocess.STDOUT,check=True)
         bind(extracted,reduced,template,native/'races'/f'{slug}.glb',canonical)
-        reports[slug]=graft(canonical,template,folder/'body.glb')
+        reports[slug]=graft(canonical,template,folder/'body.glb',texture_source=extracted)
         print('GRAFTED',slug,flush=True)
     (out/'grafts.json').write_text(json.dumps(reports,indent=2)+'\n')
 
