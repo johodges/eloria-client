@@ -2,6 +2,50 @@
 
 Branch: `feature/magic-casting-prototype`, based on develop at `2191b7608`.
 
+## Compare streamlined wheels
+
+Run **`test-magic-compare.bat`** to start Quick in the practice previewer.
+Use the selector at the top right, or **F1 / F2 / F3**, to switch among:
+
+| Version | Selection flow | Purpose |
+| --- | --- | --- |
+| F1 · Baseline | Class → family → target variant | Original wheel, including scroll-to-power. |
+| F2 · Quick | Hover a class → click a spell | Fewest common-case mouse clicks, with a compact target selector. |
+| F3 · Orbit | Inner class ring → outer spell ring | Keeps classes visible for switching while browsing spells. |
+
+`test-magic-orbit.bat` starts Orbit directly. Both additions are **practice-only**;
+the live client continues to use the baseline wheel. The launchers reject
+`-Live` with an experimental variant. The browser comparison is a simulation
+of these interactions using the same 86-spell catalog; utility option dialogs
+are demonstrated in the runnable Godot practice scene.
+
+Quick and Orbit select whole wedges, freeze the wheel's position while it is
+open, and reveal a class after 180 ms of hover. A click or number key still
+selects immediately. The first use of a family prefers Target when the selected
+recipient is compatible, otherwise Self when available, otherwise the family's
+normal targeting flow. The center previews the spell, recipient, target type,
+and effective power before selection. Target variants and powers are then
+remembered per family. **Shift+1 / 2 / 3 / 4**, or the four small buttons, changes
+Self / Target / Allies / Burst without casting. Scroll adjusts the highlighted
+family's power, subject to its server-stated limit.
+
+Each class begins with up to six pinned families. **Unpin** makes room; choose
+**More**, hover a different family, then **Pin** it. Existing pins keep their
+order. **[ / ]** and Previous/Next navigate additional More pages. Every family
+remains accessible. Quick uses **1–5** for classes and **1–7** for spells/More;
+Orbit uses **Q/W/E/R/T** for classes and **1–7** for spells/More.
+
+**Alt+Space** repeats the last chosen spell and power using the current eligible
+recipient. Burst and Blink still wait for a ground click. Releasing Alt, Escape,
+or focus loss dismisses an unfinished selection without casting. Switching
+versions cancels pending targeting and preserves the shared trial preferences.
+Those practice preferences are stored separately in `magic_wheel_trials.cfg`.
+
+Try selecting Tavin, casting Heal twice, selecting Mira and repeating the last
+spell, choosing Heal Burst, then pinning a different Offense family. Compare the
+three versions with the same recipients and powers. Scrolling or changing scope
+alone should never cast; selecting a node should never move the character.
+
 Run `test-magic-wheel.bat` to try the character-centered Alt wheel,
 `test-magic-prepared.bat` for quick-slot casting, or
 `test-magic-aimed.bat` for the explicit-target comparison. All three launch an
@@ -120,6 +164,14 @@ available after a merge.
 `powershell -File tools/run-magic-prototype.ps1 -Check` runs the prototype
 regressions without opening a game window. Logs and rendered review captures
 are written under `godot-client/test-artifacts/magic-casting/`.
+The comparison launchers with `-Check` also run `test_magic_wheel_trials.gd`.
+`render_magic_wheel_trials.gd` captures Quick and Orbit for visual inspection.
+The trial checks cover actual Alt input, class hover, whole-sector clicks,
+remembered target type and power, repeat casting at a different recipient,
+ground confirmation, cancellation, pins, More access, and power limits.
+Both new batch launchers passed `-Check`; all eight trial captures were
+checked at 1280 × 720. Browser interactions were checked at desktop and
+narrow widths with no script errors or horizontal overflow.
 
 Verified with Godot 4.7.2: prototype loadout/casting regressions, spell-window
 tests, magic-book UI tests, and world-input tests pass. The wheel regressions

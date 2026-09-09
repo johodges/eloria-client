@@ -1,5 +1,6 @@
 param(
     [ValidateSet('prepared', 'aimed', 'wheel')][string]$Mode = 'prepared',
+    [ValidateSet('baseline', 'quick', 'orbit')][string]$WheelVariant = 'baseline',
     [switch]$Live,
     [switch]$Check,
     [string]$GodotPath = '',
@@ -7,6 +8,7 @@ param(
     [int]$Port = 2000
 )
 $ErrorActionPreference = 'Stop'
+if ($Live -and $WheelVariant -ne 'baseline') { throw 'Quick and Orbit are practice-only comparison variants. Omit -Live to try them.' }
 $prototypeRoot = Split-Path -Parent $PSScriptRoot
 $projectPath = Join-Path $prototypeRoot 'godot-client'
 $assetSource = Join-Path (Split-Path -Parent $prototypeRoot) 'eloria-client'
@@ -53,20 +55,28 @@ if (-not (Test-Path -LiteralPath $translation)) {
 }
 $artifactPath = Join-Path $projectPath 'test-artifacts/magic-casting'
 New-Item -ItemType Directory -Path $artifactPath -Force | Out-Null
-$launchArguments = @('--path', $projectPath, '--log-file', (Join-Path $artifactPath "launch-$Mode.log"))
+$launchLog = Join-Path $artifactPath $(if ($WheelVariant -eq 'baseline') { "launch-$Mode.log" } else { "launch-$Mode-$WheelVariant.log" })
+$launchArguments = @('--path', $projectPath, '--log-file', $launchLog)
 if ($Check) {
     $launchArguments += @('--headless', '--script', 'res://tests/test_magic_casting_prototype.gd', '--quit-after', '1200')
 } elseif (-not $Live) {
     $launchArguments += 'res://src/dev/magic_practice.tscn'
 }
-$launchArguments += @('--', "--magic-mode=$Mode")
+$launchArguments += @('--', "--magic-mode=$Mode", "--wheel-variant=$WheelVariant")
 if ($Server) { $launchArguments += @("--server=$Server", "--port=$Port") }
 Write-Host "Magic casting prototype: $Mode"
 Write-Host $(if ($Live) { 'Live client: log in through the normal login screen.' } else { 'Offline practice: simulated outcomes; no login required.' })
 & $GodotPath @launchArguments
 $engineExit = $LASTEXITCODE
 if ($Check) {
-    $logText = Get-Content -LiteralPath (Join-Path $artifactPath "launch-$Mode.log") -Raw
+    $logText = Get-Content -LiteralPath $launchLog -Raw
     if ($logText -notmatch 'magic casting prototype: PASS' -or $logText -match 'SCRIPT ERROR|FAIL:') { exit 1 }
+    if ($WheelVariant -ne 'baseline') {
+        $trialLog = Join-Path $artifactPath "trials-$WheelVariant.log"
+        & $GodotPath --headless --path $projectPath --script res://tests/test_magic_wheel_trials.gd --log-file $trialLog --quit-after 1200
+        $engineExit = $LASTEXITCODE
+        $trialText = Get-Content -LiteralPath $trialLog -Raw
+        if ($trialText -notmatch 'magic wheel trials: PASS' -or $trialText -match 'SCRIPT ERROR|FAIL:') { exit 1 }
+    }
 }
 exit $engineExit

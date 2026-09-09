@@ -212,6 +212,7 @@ func test_wheel(catalog: SpellCatalog) -> void:
 func test_wheel_mouse_routing() -> void:
 	var lab := (load("res://src/dev/magic_practice.tscn") as PackedScene).instantiate()
 	root.add_child(lab)
+	lab.set_wheel_variant("baseline")
 	lab.loadout.profile = ""
 	lab.loadout.set_wheel_power(1)
 	lab.loadout.set_mode("wheel")

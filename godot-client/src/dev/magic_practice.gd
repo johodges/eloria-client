@@ -6,13 +6,17 @@ var book: Control
 var bar: Control
 var selector: Control
 var wheel: Control
+var wheel_variant := "baseline"
+var variant_picker: OptionButton
+var trial_preferences := {"scopes": {}, "powers": {}, "pins": {}}
+var trial_preferences_path := "user://magic_wheel_trials.cfg"
 var arena: Control
 var log_label: Label
 var target_label: Label
 var events: Array[String] = []
 var pulses: Array[Dictionary] = []
 var actors := {
-	1: {"name": "You", "tile": Vector2i(6, 7), "health": 45, "friendly": true},
+	1: {"name": "You", "tile": Vector2i(10, 7), "health": 45, "friendly": true},
 	2: {"name": "Tavin", "tile": Vector2i(12, 4), "health": 35, "friendly": true},
 	3: {"name": "Mira", "tile": Vector2i(13, 10), "health": 55, "friendly": true},
 	4: {"name": "Training wisp", "tile": Vector2i(20, 7), "health": 100, "friendly": false},
@@ -82,6 +86,13 @@ func _ready() -> void:
 	loadout.load_profile("offline-practice")
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--magic-mode="): loadout.set_mode(argument.trim_prefix("--magic-mode="))
+		if argument.begins_with("--wheel-variant=") and argument.trim_prefix("--wheel-variant=") in ["baseline", "quick", "orbit"]:
+			wheel_variant = argument.trim_prefix("--wheel-variant=")
+	var trial_config := ConfigFile.new()
+	if trial_config.load(trial_preferences_path) == OK:
+		for key in trial_preferences:
+			var saved: Variant = trial_config.get_value("practice", key, {})
+			if saved is Dictionary: trial_preferences[key] = saved
 	AppState.local_actor_id = 1
 	AppState.stats = {"magic": 100, "ether": 10000}
 	for id in range(64): AppState.owned_sigils.append(id)
@@ -98,6 +109,13 @@ func _ready() -> void:
 	caption.position = Vector2(26, 63)
 	caption.text = "Practice sandbox · unlimited resources · simulated outcomes"
 	add_child(caption)
+	variant_picker = OptionButton.new()
+	variant_picker.position = Vector2(840, 24)
+	variant_picker.custom_minimum_size = Vector2(360, 36)
+	for title_text in ["F1 · Baseline / three steps", "F2 · Quick / hover then cast", "F3 · Orbit / two rings"]: variant_picker.add_item(title_text)
+	variant_picker.select(["baseline", "quick", "orbit"].find(wheel_variant))
+	variant_picker.item_selected.connect(func(index: int): set_wheel_variant(["baseline", "quick", "orbit"][index]))
+	add_child(variant_picker)
 	var instructions := Label.new()
 	instructions.position = Vector2(26, 126)
 	instructions.text = "TRY THIS\n\n1. Select Tavin. Cast Heal Target twice.\n2. Try Aimed mode and repeat.\n3. Place Fire Burst near the wisp.\n4. Arm Blink, then switch spells.\n5. Right click a slot to change its power.\n\nClick the floor to move.\nAlt+1–0, Alt+-, Alt+= cast slots.\nCtrl+S opens the spellbook.\nEsc / right click cancels targeting."
@@ -137,26 +155,65 @@ func _ready() -> void:
 	bar.loadout = loadout
 	bar.z_index = 8
 	add_child(bar)
-	bar.panel.position = Vector2(680, 530)
+	bar.panel.position = Vector2(800, 530)
 	bar.cast_slot.connect(_cast_slot)
 	bar.open_book.connect(book.toggle)
 	bar.edit_slot.connect(book.edit_prepared_slot)
-	wheel = preload("res://src/ui/spell_wheel.gd").new()
+	_install_wheel()
+	var standard_instructions := instructions.text
+	var wheel_instructions := "TRY THE WHEEL\n\nHold Alt. Pick a class with 1–5 or click it. Choose a spell, then its target.\n\nAlt → 1 → 1 → 2 = Heal Target.\nSelect Tavin first to heal him directly.\n\nScroll up / down changes power.\nRelease Alt to dismiss.\nBackspace / right click goes back.\n[ / ] or Previous/Next changes pages.\n\nThe Wheel button works without Alt."
+	loadout.changed.connect(func():
+		variant_picker.visible = loadout.mode == "wheel"
+		instructions.add_theme_font_size_override("font_size", 14 if wheel_variant != "baseline" else 16)
+		instructions.text = _trial_instructions() if loadout.mode == "wheel" and wheel_variant != "baseline" else (wheel_instructions if loadout.mode == "wheel" else standard_instructions))
+	loadout.changed.emit()
+	record("Ready. Choose a recipient and try a spell.")
+
+func _install_wheel() -> void:
+	var previous_spell := -1
+	var previous_power := 1
+	if wheel != null:
+		if wheel.get_script() == load("res://src/dev/streamlined_spell_wheel.gd"):
+			previous_spell = wheel.last_spell
+			previous_power = wheel.last_power
+		wheel.free()
+	wheel = load("res://src/ui/spell_wheel.gd").new() if wheel_variant == "baseline" else load("res://src/dev/streamlined_spell_wheel.gd").new()
 	wheel.loadout = loadout
 	wheel.z_index = 20
 	wheel.anchor_provider = func() -> Vector2: return arena.global_position + (Vector2(actors[1].tile) + Vector2.ONE * 0.5) * PracticeArena.CELL
 	wheel.can_open = func() -> bool: return not (get_viewport().gui_get_focus_owner() is LineEdit or get_viewport().gui_get_focus_owner() is TextEdit) and not selector.popup.visible
+	if wheel_variant != "baseline":
+		wheel.variant = wheel_variant
+		wheel.preferences = trial_preferences
+		wheel.target_validator = _candidate
+		wheel.last_spell = previous_spell
+		wheel.last_power = previous_power
+		wheel.preferences_changed.connect(_save_trial_preferences)
 	add_child(wheel)
 	wheel.spell_chosen.connect(_cast_from_wheel)
 	wheel.opened.connect(func():
 		selector.cancel()
 		book.close())
 	bar.open_wheel.connect(wheel.open_wheel)
-	var standard_instructions := instructions.text
-	var wheel_instructions := "TRY THE WHEEL\n\nHold Alt. Pick a class with 1–5 or click it. Choose a spell, then its target.\n\nAlt → 1 → 1 → 2 = Heal Target.\nSelect Tavin first to heal him directly.\n\nScroll up / down changes power.\nRelease Alt to dismiss.\nBackspace / right click goes back.\n[ / ] or Previous/Next changes pages.\n\nThe Wheel button works without Alt."
-	loadout.changed.connect(func(): instructions.text = wheel_instructions if loadout.mode == "wheel" else standard_instructions)
-	instructions.text = wheel_instructions if loadout.mode == "wheel" else standard_instructions
-	record("Ready. Choose a recipient and try a spell.")
+
+func set_wheel_variant(value: String) -> void:
+	if value not in ["baseline", "quick", "orbit"]: return
+	selector.cancel()
+	wheel_variant = value
+	variant_picker.select(["baseline", "quick", "orbit"].find(value))
+	_install_wheel()
+	loadout.set_mode("wheel")
+	record("Preview: " + value.capitalize())
+
+func _save_trial_preferences() -> void:
+	if trial_preferences_path.is_empty(): return
+	var config := ConfigFile.new()
+	for key in trial_preferences: config.set_value("practice", key, trial_preferences[key])
+	config.save(trial_preferences_path)
+
+func _trial_instructions() -> String:
+	var method := "Hover a class; click its spell.\n1–5: class · 1–7: spell" if wheel_variant == "quick" else "Hover an inner class; click its spell.\nQ/W/E/R/T: class · 1–7: spell"
+	return "%s WHEEL\n\n%s\n\nScroll: power\nShift+1–4: target type\nAlt+Space: repeat last spell\n\nSelect Tavin → Heal twice.\n\nUnpin to make room for More.\n[ / ]: More pages\nRelease Alt / Esc: cancel\n\nF1 / F2 / F3: compare versions" % [wheel_variant.to_upper(), method]
 
 func _seed_reagents() -> void:
 	var images: Dictionary = {}
@@ -168,6 +225,10 @@ func _seed_reagents() -> void:
 		index += 1
 
 func _input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode in [KEY_F1, KEY_F2, KEY_F3]:
+		set_wheel_variant(["baseline", "quick", "orbit"][event.keycode - KEY_F1])
+		get_viewport().set_input_as_handled()
+		return
 	if wheel != null and wheel.handle_event(event): get_viewport().set_input_as_handled()
 
 func _unhandled_key_input(event: InputEvent) -> void:

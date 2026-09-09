@@ -8,6 +8,7 @@ func run() -> void:
 	DirAccess.make_dir_recursive_absolute(output)
 	var lab := (load("res://src/dev/magic_practice.tscn") as PackedScene).instantiate()
 	root.add_child(lab)
+	lab.set_wheel_variant("baseline")
 	lab.loadout.profile = ""
 	lab.loadout.set_wheel_power(1)
 	await process_frame
