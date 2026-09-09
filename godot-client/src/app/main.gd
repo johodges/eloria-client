@@ -958,9 +958,13 @@ func _ready() -> void:
 	magic_selection.z_index = 8
 	casting_bar.cast_slot.connect(_cast_spell_slot)
 	casting_bar.edit_slot.connect(spells_window.edit_prepared_slot)
-	casting_bar.open_book.connect(spells_window.toggle)
-	spell_wheel = preload("res://src/ui/spell_wheel.gd").new()
+	casting_bar.open_book.connect(_on_spells_button_pressed)
+	spell_wheel = preload("res://src/ui/quick_spell_ring.gd").new()
 	spell_wheel.loadout = spell_loadout
+	spell_wheel.preferences = spell_loadout.ring_preferences
+	spell_wheel.preferences_changed.connect(spell_loadout.save_ring_preferences)
+	spell_wheel.target_validator = _spell_target_candidate
+	spell_wheel.tutorial_action.connect(_magic_ring_ui)
 	spell_wheel.anchor_provider = _spell_wheel_anchor
 	spell_wheel.can_open = _can_open_spell_wheel
 	spell_wheel.z_index = 20
@@ -969,10 +973,12 @@ func _ready() -> void:
 	spell_wheel.opened.connect(func():
 		magic_selection.cancel()
 		spells_window.close()
-		_stop_keyboard_movement())
+		_stop_keyboard_movement()
+		_magic_ring_ui(20))
 	casting_bar.open_wheel.connect(spell_wheel.open_wheel)
 	spell_loadout.changed.connect(func():
 		magic_selection.target_mode = spell_loadout.targeting_mode()
+		spell_wheel.preferences = spell_loadout.ring_preferences
 		_sync_spells())
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--magic-mode="):
@@ -3507,6 +3513,8 @@ func _on_state_changed(path: StringName) -> void:
 		return
 	match path:
 		&"lantern_tutorial":
+			if AppState.lantern_tutorial.get("active", false) and AppState.lantern_tutorial.get("ring_training", false):
+				if spell_loadout.mode != "wheel": spell_loadout.set_mode("wheel")
 			if bool(AppState.lantern_tutorial.get("active", false)) and int(AppState.popup.get("popup_id", -1)) in [4000, 4001, 4002]:
 				AppState.close_popup()
 			lantern_guide.apply_state(AppState.lantern_tutorial)
@@ -8471,6 +8479,10 @@ func _cast_spell_slot(slot: int) -> void:
 		spells_window.edit_prepared_slot(slot)
 		return
 	_begin_prepared_cast(int(entry.id), int(entry.power))
+
+func _magic_ring_ui(action: int) -> void:
+	if AppState.lantern_tutorial.get("active", false) and AppState.lantern_tutorial.get("tutorial", "") == "borrowed_sky" and AppState.lantern_tutorial.get("key", "") == "book":
+		Network.tutorial_ui(action)
 
 func _begin_prepared_cast(spell_id: int, power: int) -> void:
 	var stated: Dictionary = AppState.spell_power.get(spell_catalog.effect_for(spell_id), {})

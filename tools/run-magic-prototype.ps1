@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('prepared', 'aimed', 'wheel')][string]$Mode = 'prepared',
+    [ValidateSet('prepared', 'aimed', 'wheel')][string]$Mode = 'wheel',
     [ValidateSet('baseline', 'quick', 'orbit')][string]$WheelVariant = 'baseline',
     [switch]$Live,
     [switch]$Check,
@@ -8,7 +8,7 @@ param(
     [int]$Port = 2000
 )
 $ErrorActionPreference = 'Stop'
-if ($Live -and $WheelVariant -ne 'baseline') { throw 'Quick and Orbit are practice-only comparison variants. Omit -Live to try them.' }
+if ($Live -and $WheelVariant -eq 'orbit') { throw 'Orbit is a practice comparison. The live client uses the Quick ring.' }
 $prototypeRoot = Split-Path -Parent $PSScriptRoot
 $projectPath = Join-Path $prototypeRoot 'godot-client'
 $assetSource = Join-Path (Split-Path -Parent $prototypeRoot) 'eloria-client'

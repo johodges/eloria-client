@@ -2,6 +2,29 @@
 
 Branch: `feature/magic-casting-prototype`, based on develop at `2191b7608`.
 
+## Selected approach and tutorial
+
+**Quick is the default live ring.** Hold Left Shift, hover a class, then choose
+a spell. Right click cycles targets and the scroll wheel adjusts power.
+The production widget is `src/ui/quick_spell_ring.gd`; the comparison scene
+uses that same implementation. Target choices, powers and pins persist per
+character alongside the quickbar settings.
+
+Run **`test-magic-tutorial.bat`** for the real Borrowed Sky tutorial with a
+separate local server and saved practice account. Log in as **RingStudent**
+with password **ringpractice**, then type **`#tutorial magic`** in chat.
+The matching server branch is `feature/magic-ring-tutorial` in the sibling
+`wt-magic-ring-server` worktree. Pass `-ServerRoot` to use another checkout of
+that branch. Port 2013 is local only; `-Port` chooses another. `-Fresh` makes
+a new practice profile without deleting the previous one. `-Check` runs a
+headless client through login and the ring introduction on a fresh local server.
+
+The tutorial first asks you to inspect the book, open the ring, browse a class
+and dismiss without casting. Its existing rescue lessons then teach Heal,
+quickbar corner badges, cancelling ground targeting, Target/Allies/Burst,
+scrolling P1 → P2 → P1, and the other spell classes. Cast lessons still require
+real server outcomes. See [tutorial integration](../magic-tutorial/implementation.md).
+
 ## Compare streamlined wheels
 
 Hold **Left Shift** for the rings; **Alt+1–0 / minus / equals** casts quickbar
@@ -27,9 +50,9 @@ Use the selector at the top right, or **F1 / F2 / F3**, to switch among:
 | F2 · Quick | Hover a class → click a spell | Fewest common-case mouse clicks, with a compact target selector. |
 | F3 · Orbit | Inner class ring → outer spell ring | Keeps classes visible for switching while browsing spells. |
 
-`test-magic-orbit.bat` starts Orbit directly. Both additions are **practice-only**;
-the live client continues to use the baseline wheel. The launchers reject
-`-Live` with an experimental variant. The browser comparison is a simulation
+`test-magic-orbit.bat` starts Orbit directly. Orbit remains **practice-only**;
+the live client uses Quick. The launcher rejects `-Live` with Orbit.
+The browser comparison is a simulation
 of these interactions using the same 86-spell catalog; utility option dialogs
 are demonstrated in the runnable Godot practice scene.
 
@@ -107,7 +130,7 @@ In every mode, Alt+1–0, Alt+minus and Alt+equals cast the twelve slots.
 Ctrl+S opens the book. The live client's Settings / Controls can rebind them;
 the casting bar tooltips read the actual bindings. Its title bar is draggable.
 
-## Character wheel
+## Baseline wheel comparison
 
 Hold **Left Shift** to open the wheel around your character. Its first ring is always
 **1 Healing · 2 Defense · 3 Offense · 4 Support · 5 Utility**. Click a node or
@@ -129,7 +152,7 @@ never casts or changes a quickbar slot until a cast is submitted.
   choice, releasing Left Shift keeps any pending target selection intact.
 - **Backspace / right click** goes back one ring; **Escape** closes it.
 - **[ / ]** or Previous/Next changes Offense pages.
-- Click the casting bar's **Wheel** button to use it without holding Left Shift.
+- Click the casting bar's **Ring** button to use it without holding Left Shift.
 - Alt closes an open ring so Alt+number can cast from the quickbar.
 
 The wheel follows the character's projected position and shifts inward near
@@ -139,7 +162,7 @@ Category, family, and target positions do not reshuffle as resources change.
 It owns mouse clicks while open so selecting a node cannot move or attack in
 the world underneath. Alt-click remains available for the existing Attack action.
 
-Run `test-magic-wheel.bat -Live` to open the live client directly in Wheel mode.
+Run `test-magic-wheel.bat -Live` to open the live client with the selected Quick ring.
 
 ## Draft boundaries
 

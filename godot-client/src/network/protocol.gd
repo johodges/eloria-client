@@ -205,6 +205,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"lantern_tutorial_v1",
 	"second_bell_v1",
 	"borrowed_sky_v1",
+	"spell_ring_v1",
 	"followup_tutorials_v1",
 	"actor16_v1",
 	"almanac_v1",
@@ -2852,6 +2853,8 @@ static func decode_lantern(payload: PackedByteArray) -> Dictionary:
 	var value: Dictionary = parsed
 	if value.get("version") != 1 or not value.get("active") is bool:
 		return {"type":"invalid", "error":"lantern_version"}
+	if value.has("ring_training") and not value.ring_training is bool:
+		return {"type":"invalid", "error":"ring_training"}
 	if value.has("tutorial") and value.tutorial not in ["second_bell", "borrowed_sky", "followup"]:
 		return {"type":"invalid", "error":"tutorial_kind"}
 	if value.get("tutorial", "") == "followup" and bool(value.active):

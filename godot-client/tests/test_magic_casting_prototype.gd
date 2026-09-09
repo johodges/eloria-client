@@ -13,6 +13,7 @@ func run() -> void:
 	catalog.configure(JSON.parse_string(FileAccess.get_file_as_string("res://data/spells/catalog.json")))
 	var model = preload("res://src/ui/spell_loadout.gd").new()
 	model.configure(catalog)
+	check(model.mode == "wheel", "the ring is the default casting interface")
 	DirAccess.make_dir_recursive_absolute("res://test-artifacts/magic-casting")
 	model.path = "res://test-artifacts/magic-casting/loadout-%d.cfg" % Time.get_ticks_usec()
 	model.load_profile("server-one/alice")
@@ -20,13 +21,19 @@ func run() -> void:
 	model.assign_slot(1, 1, 2)
 	model.remember_power(1, 3)
 	model.set_wheel_power(5)
+	model.ring_preferences.scopes["heal"] = "burst"
+	model.ring_preferences.powers["heal"] = 4
+	model.ring_preferences.pins["Healing"] = ["heal", "dispel"]
+	model.save_ring_preferences()
 	check(model.slots[0].power == 4 and model.slots[1].power == 2, "two copies of a spell retain independent powers")
 	model.load_profile("server-one/bob")
 	check(model.slots[0].id == 0 and model.slots[0].power == 1, "a new character starts with defaults")
 	check(model.wheel_power == 1, "a new character starts with wheel power one")
+	check(model.ring_preferences.scopes.is_empty(), "ring choices are isolated per character")
 	model.load_profile("server-one/alice")
 	check(model.slots[0] == {"id": 1, "power": 4} and model.power_for(1) == 3, "character preferences survive reload")
 	check(model.wheel_power == 5, "wheel power persists independently of book and slot powers")
+	check(model.ring_preferences.scopes.get("heal") == "burst" and model.ring_preferences.powers.get("heal") == 4 and model.ring_preferences.pins.get("Healing") == ["heal", "dispel"], "ring target, power and pins survive profile reload")
 	model.assign_slot(-1, 6, 4)
 	model.assign_slot(0, 999999, 4)
 	check(model.slots[0].id == 1, "invalid drops cannot overwrite a slot")
@@ -122,6 +129,7 @@ func run() -> void:
 	check(main.spells_window.selected_spell_id == 69 and main.spells_window.power_picker.value == 3, "editing a slot restores its spell and saved power")
 	main.spells_window.close()
 	main.game_view.show()
+	check(main.spell_loadout.mode == "wheel" and main.spell_wheel.get_script() == load("res://src/ui/quick_spell_ring.gd"), "the real client defaults to the production Quick ring")
 	main.spell_loadout.set_mode("wheel")
 	check(main.magic_selection.target_mode == "prepared", "wheel mode uses selected recipients")
 	main.call("_input", key_event(KEY_SHIFT))
@@ -132,8 +140,11 @@ func run() -> void:
 	main.call("_input", key_event(KEY_1))
 	main.call("_unhandled_input", key_event(KEY_1))
 	check(main.spell_wheel.stage == "effects" and requests.size() == before, "Left Shift+1 enters Healing without firing a quick slot")
+	var cycle_target := InputEventMouseButton.new()
+	cycle_target.button_index = MOUSE_BUTTON_RIGHT
+	cycle_target.pressed = true
+	main.call("_input", cycle_target)
 	main.call("_input", key_event(KEY_1))
-	main.call("_input", key_event(KEY_2))
 	check(main.magic_selection.pending.get("id") == 1, "live wheel routes Heal Target into the existing targeting controller")
 	check(main.magic_selection.pending.get("power") == 3, "live wheel casts its scrolled power capped to the selected effect")
 	main.call("_input", key_event(KEY_SHIFT, false))

@@ -3,10 +3,16 @@
 Stillglass Observatory is implemented in the main Godot client and sibling
 `dev-server`. Its private 120 × 120 map has four gates, 39 saved core objectives
 and 31 objectives across four optional experiments. Players use the normal
-spellbook, power control, quick slots, actor and ground targeting, inventory,
+Left Shift spell ring, spellbook, quick slots, actor and ground targeting, inventory,
 storage, merchant, active effects and dialogue.
 
 ## Play
+
+For this branch, run **[`test-magic-tutorial.bat`](../../test-magic-tutorial.bat)**.
+It starts the matching `feature/magic-ring-tutorial` server on localhost:2013
+with a separate database. Log in as **RingStudent**, password **ringpractice**,
+then enter **`#tutorial magic`**. `-Fresh` starts another local profile without
+deleting saved progress; `-ServerRoot` selects another matching server checkout.
 
 Launch [`prototypes/last-lantern/play.cmd`](../../prototypes/last-lantern/play.cmd)
 with the matching updated client and server. Finish or leave The Last Lantern,
@@ -14,9 +20,18 @@ then enter **`#tutorial magic`** in chat. Ilyon's adventure dialogue in Four Gat
 also offers **The Borrowed Sky: magic practice**. An active older Four Gates
 walkthrough retains its own dialogue; the explicit command remains available.
 
-Open **Spells** with its button or **Ctrl+S**. Select a spell, choose its power,
-then **Cast**. Target spells wait for an actor click; Burst and Blink wait for a
-ground click. **Escape** cancels the selection without spending resources.
+Hold **Left Shift** to open the Quick ring. Hover a class or press its displayed
+number, then hover an effect. **Right click** cycles available target types;
+**scroll** changes power. Click the effect or press its number to choose it.
+Release Shift before aiming in the world. Target uses a compatible selected
+recipient or waits for an actor click; Burst and Blink wait for a ground click.
+**Escape** cancels targeting. Releasing Shift before choosing dismisses the ring.
+The **Ring** button opens it without holding a key; Escape dismisses it.
+
+**Alt+number** remains the quickbar shortcut. Each icon shows its saved target
+type at top left and saved power at top right. A submitted cast updates the
+assigned slots of that family; browsing or cancelling does not. Ring choices
+and pins persist per character. **Spells / Ctrl+S** remains the reference book.
 The selected spell shows a server quote for its actual power, ether cost,
 materials and focus substitution. The normal book search and scope filter work.
 
@@ -37,11 +52,11 @@ starting another experiment. Completed experiments are replayable.
 
 | Scene | Hands-on action | Completion evidence |
 | --- | --- | --- |
-| A sky held together | Inspect Spells; borrow attunement; collect the missing Heal sigil | Native book opening and nearby Sera responses; the missing sigil is genuinely absent until collected |
-| Your hand first | Heal yourself twice; use the quick slot or book; cancel a target spell; heal Tavin | Real health gain, server resource spending and an eligible actor in range |
+| A sky held together | Inspect Spells; open the ring; browse a class; dismiss; borrow attunement; collect the missing Heal sigil | Ordered UI observations for book/open/browse/dismiss, then nearby Sera responses; browsing spends nothing |
+| Your hand first | Cast Heal from the ring; try the quickbar and read its corner badges; cancel a Burst cursor; switch to Target and heal Tavin | Real health gain, server resource spending and an eligible actor in range |
 | Supplies | Withdraw 35 Sunleaf; use a mana potion; eat Bread | Actual storage transfer, ether restored and positive food |
-| How much light? | Compare Heal at P1/P2; lower power for a small wound; use a charged focus; cast after its charge is spent | Correct selected power, useful healing, focus substitution and subsequent ordinary anchor consumption |
-| Who is with you? | Heal Allies near Tavin and Mira; aim Heal Burst at unaffiliated Oren | The Allies cast heals both practice guildmates and excludes Oren; the Burst really heals Oren |
+| How much light? | Scroll Heal P1 → P2 → P1; check the saved quickbar power; use a charged focus; cast after its charge is spent | Correct selected power, useful healing, focus substitution and subsequent ordinary anchor consumption |
+| Who is with you? | Right click to Allies near Tavin and Mira, then Burst at unaffiliated Oren | The Allies cast heals both practice guildmates and excludes Oren; the Burst really heals Oren |
 | Prism lane | Cast Magic Bolt; hit the pair with Magic Burst; observe a poison tick; finish and loot the encounter | Both Burst targets take damage; a real timed poison tick occurs; defeat and loot are recorded |
 | Protection | Use Shield, Magic Ward and Heat Ward; take the prism's matching attacks; Dispel poison; refresh a ward | Ordinary buffs, real incoming spells, removal of harmful modifiers and poison, normal effect durations |
 | Folded Gate | Blink across an impassable gap; use Haste while walking | Valid landing within 15 tiles and movement with the effect active |
@@ -55,6 +70,30 @@ prompts, with contextual help available. Sera explicitly recharges practice
 ether after the resource exercise and when the player chooses to begin the last
 rescue. Other replenishment uses the supplied potions, normal food recovery,
 Storage or Sera's assisted refill.
+
+### Ring training compatibility
+
+Clients advertise `spell_ring_v1`. The existing `book` checkpoint gains ordered
+book-open (7), ring-open (20), class-browse (21) and ring-dismiss (22) observations
+over `ELORIA_TUTORIAL_UI`. The saved `sky_ring_intro` substep survives reconnects;
+the 39 core checkpoint numbers are unchanged. Out-of-order or repeated events
+cannot skip it. Choosing a spell, releasing Shift after choosing, and focus loss
+do not report dismissal. These UI events never complete a cast or aiming-cancel
+lesson: those continue to use the existing resolved gameplay checks. Later cast
+lessons teach the ring without requiring a particular input device to succeed.
+
+Ring-capable clients receive ring-specific hints and highlights for Ring,
+target type, power and quickbar. The guide moves beside the visible ring.
+Older clients retain the original book guidance and progression; resuming with
+an older client does not leave a ring-only gate in the way.
+
+Checks for this change: the server's 42 `test_sky.py` cases pass, including both
+39-objective playthroughs (ring and legacy book), ordered/resumable orientation,
+and rejection of UI observations as cast evidence. Client casting, comparison,
+world-input and ring-guide tests pass. `test-magic-tutorial.bat -Check` logs a
+real Godot client into a disposable local server and completes the introduction
+through the actual book button, Left Shift, class shortcut and Shift release.
+`test_magic_ring_tutorial.gd -- --render` captures native guide/ring layout.
 
 ## Optional experiments
 

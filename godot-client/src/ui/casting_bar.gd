@@ -32,11 +32,12 @@ func _ready() -> void:
 	mode_picker = OptionButton.new()
 	mode_picker.add_item("Prepared · selected target")
 	mode_picker.add_item("Aimed · click target")
-	mode_picker.add_item("Wheel · Left Shift")
+	mode_picker.add_item("Ring · Left Shift")
 	mode_picker.item_selected.connect(func(index: int): loadout.set_mode(["prepared", "aimed", "wheel"][index]))
 	header.add_child(mode_picker)
 	wheel_button = Button.new()
-	wheel_button.text = "Wheel"
+	wheel_button.text = "Ring"
+	wheel_button.tooltip_text = "Hold Left Shift to browse spells. Right click changes target; scroll changes power. Alt + number uses the quickbar."
 	wheel_button.pressed.connect(func(): open_wheel.emit())
 	header.add_child(wheel_button)
 	var book := Button.new()

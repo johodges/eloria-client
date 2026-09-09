@@ -128,6 +128,17 @@ func control_for_step() -> Control:
 			var rows: Control = main.get("perk_rows")
 			return rows if _visible(rows) else _node("StatsTabs")
 		"spells": return _node("SpellsButton")
+		"quickbar":
+			var bar: Control = main.get("casting_bar")
+			return bar.get("panel") as Control if is_instance_valid(bar) else null
+		"spell_ring", "ring_power", "ring_target":
+			var ring: Control = main.get("spell_wheel")
+			if _visible(ring):
+				if state.control == "ring_power": return ring.get("_power_label") as Control
+				if state.control == "ring_target": return ring.get("_scope_bar") as Control
+				return ring.get("_heading") as Control
+			var bar: Control = main.get("casting_bar")
+			return bar.get("wheel_button") as Control if is_instance_valid(bar) else _node("SpellsButton")
 		"map": return _node("MapButton")
 		"chat": return _node("ChatInput")
 		"ranging": return _node("RangingButton")
@@ -224,6 +235,20 @@ func _process(_delta: float) -> void:
 		elif left >= 190:
 			width = minf(width,left)
 			card.position.x = bounds.position.x-12-width
+	# The ring's Control fills the screen; reserve its actual circle instead.
+	var ring: Control = main.get("spell_wheel")
+	if _visible(ring):
+		var ring_center: Vector2 = ring.get_global_transform() * (ring.get("center") as Vector2)
+		var ring_bounds := Rect2(ring_center-Vector2(264,264), Vector2(528,580))
+		if Rect2(card.position, Vector2(width,card.size.y)).intersects(ring_bounds):
+			var left_space := ring_bounds.position.x-24
+			var right_space := area.x-96-ring_bounds.end.x-12
+			if left_space >= right_space:
+				width = clampf(left_space,190,310)
+				card.position.x = 12
+			else:
+				width = clampf(right_space,190,310)
+				card.position.x = area.x-96-width
 	if card.custom_minimum_size.x != width:
 		card.custom_minimum_size.x = width
 		heading.custom_minimum_size.x = width-24
