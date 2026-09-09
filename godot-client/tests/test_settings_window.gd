@@ -35,6 +35,7 @@ func _run() -> void:
 		and rect.end.x <= 1280.0 and rect.end.y <= 720.0
 		and not rect.intersects(resource_rail.get_global_rect()),
 		"it fits 1280x720 clear of the resource rail: %s" % rect)
+	_test_fps_limit(main, window)
 
 	# The map cache row. It is the only setting in this window that spends the
 	# player's disk, so it carries three controls rather than one: the switch,
@@ -188,6 +189,51 @@ func _run() -> void:
 	main.queue_free()
 	await process_frame
 	quit(failures)
+
+func _test_fps_limit(main: Control, window: Control) -> void:
+	var option: OptionButton = window.find_child("fps_limit", true, false) as OptionButton
+	if not _expect(option != null, "the graphics tab offers an FPS limit"):
+		return
+	var original: int = int(main.get("_fps_limit"))
+	var physics_ticks: int = Engine.physics_ticks_per_second
+	var time_scale: float = Engine.time_scale
+	_expect(option.get_selected_id() == Engine.max_fps,
+		"the dropdown shows the active frame cap")
+	_expect(option.get_item_text(option.get_item_index(0)) == "Unlimited",
+		"zero is presented as Unlimited")
+	for limit: int in [30, 60, 75, 90, 120, 144, 165, 240, 360, 0]:
+		var index: int = option.get_item_index(limit)
+		if not _expect(index >= 0, "%d FPS is available" % limit):
+			continue
+		option.select(index)
+		option.item_selected.emit(index)
+		_expect(Engine.max_fps == limit,
+			"selecting %d applies the frame cap immediately" % limit)
+		var stored := ConfigFile.new()
+		_expect(stored.load(str(main.get("SETTINGS_PATH"))) == OK
+			and stored.get_value("graphics", "fps_limit", -1) == limit,
+			"selecting %d saves the frame cap" % limit)
+	_expect(Engine.physics_ticks_per_second == physics_ticks
+		and Engine.time_scale == time_scale,
+		"frame limits preserve physics timing and game speed")
+
+	var config := ConfigFile.new()
+	var path: String = str(main.get("SETTINGS_PATH"))
+	config.load(path)
+	for invalid: Variant in [-1, 1, 9999, "60", null, true, 60.5]:
+		config.set_value("graphics", "fps_limit", invalid)
+		config.save(path)
+		Engine.max_fps = 60
+		main.call("_load_hud_settings")
+		_expect(Engine.max_fps == 0 and option.get_selected_id() == 0,
+			"an invalid saved limit falls back to Unlimited: %s" % str(invalid))
+	config.erase_section_key("graphics", "fps_limit")
+	config.save(path)
+	Engine.max_fps = 60
+	main.call("_load_hud_settings")
+	_expect(Engine.max_fps == 0 and option.get_selected_id() == 0,
+		"settings from an older client default to Unlimited")
+	main.call("_on_client_setting_changed", "Graphics", "fps_limit", original)
 
 func _hex(value: String) -> PackedByteArray:
 	var bytes := PackedByteArray()

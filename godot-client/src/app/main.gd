@@ -316,6 +316,7 @@ var reference_window: Control
 var _shadows_enabled := true
 var _effects_enabled := true
 var _nameplates_enabled := true
+var _fps_limit := 0
 var _camera_follows_player := true
 var _player_notes := ""
 ## True while the loaded package lets the hour drive its environment. An
@@ -4907,6 +4908,7 @@ func _load_hud_settings() -> void:
 			var box: CheckBox = _banner_option_boxes[banner_key] as CheckBox
 			box.set_pressed_no_signal(bool(config.get_value(
 				"banner", banner_key, BANNER_OPTION_DEFAULTS[banner_key])))
+	_apply_fps_limit(config.get_value("graphics", "fps_limit", 0))
 	reference_window.call("configure", console_commands,
 		settings_window.get("BINDABLE"), _player_notes, _encyclopedia_bookmarks)
 	sound_enabled.set_pressed_no_signal(bool(audio_director.enabled))
@@ -4994,6 +4996,7 @@ func _save_hud_settings() -> void:
 	config.set_value("graphics", "shadows", _shadows_enabled)
 	config.set_value("graphics", "particles", _effects_enabled)
 	config.set_value("graphics", "nameplates", _nameplates_enabled)
+	config.set_value("graphics", "fps_limit", _fps_limit)
 	config.set_value("hud", "combat_hud",
 		bool(extension_windows.get("combat_hud_enabled")))
 	config.set_value("hud", "combat_hud_pinned",
@@ -8148,6 +8151,13 @@ func _save_screenshot() -> String:
 	audio_director.play("ui_click")
 	return path
 
+## Apply the same validated frame cap at startup and after a settings change.
+func _apply_fps_limit(value: Variant) -> void:
+	# Old or invalid preferences keep the default of no explicit frame cap.
+	_fps_limit = int(value) if value is int and value in SettingsWindowScript.FPS_LIMITS else 0
+	Engine.max_fps = _fps_limit
+	settings_window.call("restore_fps_limit", _fps_limit)
+
 ## A client setting the player changed. Everything under Graphics and Camera
 ## is about this machine; everything under Gameplay is a command the server
 ## owns, sent as the player's own words rather than applied here.
@@ -8159,6 +8169,8 @@ func _on_client_setting_changed(section: String, key: String,
 		_save_hud_settings()
 		return
 	match key:
+		"fps_limit":
+			_apply_fps_limit(value)
 		"shadows":
 			_shadows_enabled = bool(value)
 			world_sun.shadow_enabled = _shadows_enabled and world_sun.visible

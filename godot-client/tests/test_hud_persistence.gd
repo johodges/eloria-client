@@ -16,6 +16,7 @@ func _init() -> void:
 func _run() -> void:
 	root.size = Vector2i(1280, 720)
 	var saved: Dictionary = _read_settings()
+	var original_max_fps: int = Engine.max_fps
 
 	var first: Node = (load("res://src/app/main.tscn") as PackedScene).instantiate()
 	root.add_child(first)
@@ -29,14 +30,25 @@ func _run() -> void:
 	_expect(stored.load(SETTINGS_PATH) == OK
 		and bool(stored.get_value("hud", "minimap_visible", false)),
 		"showing the minimap writes its visibility to the settings file")
+	var first_settings: Control = first.get("settings_window") as Control
+	var fps_option: OptionButton = first_settings.find_child("fps_limit", true, false) as OptionButton
+	fps_option.select(fps_option.get_item_index(120))
+	fps_option.item_selected.emit(fps_option.selected)
 	first.queue_free()
 	await process_frame
+	Engine.max_fps = 0
 
 	# A second instance must come back with the minimap visible without the
 	# player pressing Alt+M again.
 	var second: Node = (load("res://src/app/main.tscn") as PackedScene).instantiate()
 	root.add_child(second)
 	await process_frame
+	var second_settings: Control = second.get("settings_window") as Control
+	var restored_fps: OptionButton = second_settings.find_child("fps_limit", true, false) as OptionButton
+	_expect(Engine.max_fps == 120 and restored_fps.get_selected_id() == 120,
+		"a new session applies the saved FPS limit and restores the dropdown before login")
+	restored_fps.select(restored_fps.get_item_index(0))
+	restored_fps.item_selected.emit(restored_fps.selected)
 	var second_minimap: Control = second.get_node("GameView/MinimapFrame") as Control
 	_expect(bool(second.get("_minimap_visible")),
 		"a new session loads the remembered minimap visibility")
@@ -79,10 +91,15 @@ func _run() -> void:
 		"the minimap's marker and appearance choices are written to the file")
 	second.queue_free()
 	await process_frame
+	Engine.max_fps = 144
 
 	var third: Node = (load("res://src/app/main.tscn") as PackedScene).instantiate()
 	root.add_child(third)
 	await process_frame
+	var third_settings: Control = third.get("settings_window") as Control
+	var unlimited_fps: OptionButton = third_settings.find_child("fps_limit", true, false) as OptionButton
+	_expect(Engine.max_fps == 0 and unlimited_fps.get_selected_id() == 0,
+		"Unlimited also survives a new session and removes the engine frame cap")
 	var third_overlay: Control = third.get("minimap_marker_overlay") as Control
 	_expect(str(third.get("_minimap_shape")) == "round"
 		and is_equal_approx(float(third.get("_minimap_marker_scale")),
@@ -103,6 +120,7 @@ func _run() -> void:
 	await process_frame
 
 	_restore_settings(saved)
+	Engine.max_fps = original_max_fps
 	print("hud persistence tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	quit(failures)
 

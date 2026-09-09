@@ -18,6 +18,7 @@ extends Control
 const PANEL_SIZE := Vector2(560.0, 430.0)
 ## Nothing may cover the fixed resource rail down the right-hand edge.
 const RESERVED_RIGHT_RAIL := 96.0
+const FPS_LIMITS: Array[int] = [0, 30, 60, 75, 90, 120, 144, 165, 240, 360]
 
 ## Preloaded rather than reached by its global class name, for the same reason
 ## this script declares none: the global class cache is a build artifact, and
@@ -55,6 +56,7 @@ var binding_rows: Dictionary = {}
 var capture_label: Label
 ## What the map cache is costing on disk, refreshed when the window opens.
 var map_cache_size: Label
+var fps_limit_option: OptionButton
 
 ## The action waiting for a key. While this is set the window swallows every
 ## key press, so a rebind cannot fire the action it is rebinding.
@@ -278,6 +280,7 @@ func _build_graphics() -> void:
 	var page := VBoxContainer.new()
 	page.name = tr("ELORIA_SETTINGS_GRAPHICS")
 	tabs.add_child(page)
+	_add_fps_limit_row(page)
 	_add_toggle(page, "shadows", tr("ELORIA_SETTINGS_SHADOWS"), true)
 	_add_toggle(page, "particles", tr("ELORIA_SETTINGS_PARTICLES"), true)
 	_add_toggle(page, "nameplates", tr("ELORIA_SETTINGS_NAMEPLATES"), true)
@@ -285,6 +288,29 @@ func _build_graphics() -> void:
 	# this is the way back once a player has done that.
 	_add_toggle(page, "combat_hud", tr("ELORIA_SETTINGS_COMBAT_HUD"), true)
 	_add_map_cache_row(page)
+
+func _add_fps_limit_row(page: VBoxContainer) -> void:
+	var row := HBoxContainer.new()
+	page.add_child(row)
+	var caption := Label.new()
+	caption.text = tr("ELORIA_SETTINGS_FPS_LIMIT")
+	caption.custom_minimum_size = Vector2(200.0, 0.0)
+	row.add_child(caption)
+	fps_limit_option = OptionButton.new()
+	fps_limit_option.name = "fps_limit"
+	fps_limit_option.custom_minimum_size = Vector2(220.0, 0.0)
+	fps_limit_option.tooltip_text = tr("ELORIA_SETTINGS_FPS_LIMIT_HINT")
+	for limit: int in FPS_LIMITS:
+		fps_limit_option.add_item(tr("ELORIA_SETTINGS_FPS_UNLIMITED")
+			if limit == 0 else "%d FPS" % limit, limit)
+	fps_limit_option.item_selected.connect(func(index: int) -> void:
+		setting_changed.emit(page.name, "fps_limit",
+			fps_limit_option.get_item_id(index)))
+	row.add_child(fps_limit_option)
+
+func restore_fps_limit(value: int) -> void:
+	# Selecting an item programmatically does not emit item_selected.
+	fps_limit_option.select(fps_limit_option.get_item_index(value))
 
 ## The map cache: a switch, what it is costing, and a way to be rid of it.
 ##
