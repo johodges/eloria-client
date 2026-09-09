@@ -3,9 +3,7 @@
 config_version=5
 
 [application]
-config/name="Eloria Magic Prototype"
-config/use_custom_user_dir=true
-config/custom_user_dir_name="Eloria Magic Prototype"
+config/name="Eloria"
 run/main_scene="res://src/app/main.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 

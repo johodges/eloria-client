@@ -8,10 +8,10 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 $clientRoot = Split-Path -Parent $PSScriptRoot
-if (-not $ServerRoot) { $ServerRoot = Join-Path (Split-Path -Parent $clientRoot) 'wt-magic-ring-server' }
+if (-not $ServerRoot) { $ServerRoot = Join-Path (Split-Path -Parent $clientRoot) 'dev-server' }
 $ServerRoot = [IO.Path]::GetFullPath($ServerRoot)
 if (-not (Test-Path -LiteralPath (Join-Path $ServerRoot 'eloria/sky.py'))) {
-    throw 'Pass -ServerRoot pointing to the server branch feature/magic-ring-tutorial.'
+    throw 'Pass -ServerRoot pointing to the matching dev-server checkout with magic ring training.'
 }
 if (-not $Python) { $Python = (Get-Command python -ErrorAction Stop).Source }
 $profile = Join-Path $clientRoot 'godot-client/test-artifacts/magic-tutorial/local'

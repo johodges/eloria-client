@@ -66,17 +66,30 @@ $launchArguments += @('--', "--magic-mode=$Mode", "--wheel-variant=$WheelVariant
 if ($Server) { $launchArguments += @("--server=$Server", "--port=$Port") }
 Write-Host "Magic casting prototype: $Mode"
 Write-Host $(if ($Live) { 'Live client: log in through the normal login screen.' } else { 'Offline practice: simulated outcomes; no login required.' })
-& $GodotPath @launchArguments
-$engineExit = $LASTEXITCODE
-if ($Check) {
-    $logText = Get-Content -LiteralPath $launchLog -Raw
-    if ($logText -notmatch 'magic casting prototype: PASS' -or $logText -match 'SCRIPT ERROR|FAIL:') { exit 1 }
-    if ($WheelVariant -ne 'baseline') {
-        $trialLog = Join-Path $artifactPath "trials-$WheelVariant.log"
-        & $GodotPath --headless --path $projectPath --script res://tests/test_magic_wheel_trials.gd --log-file $trialLog --quit-after 1200
-        $engineExit = $LASTEXITCODE
-        $trialText = Get-Content -LiteralPath $trialLog -Raw
-        if ($trialText -notmatch 'magic wheel trials: PASS' -or $trialText -match 'SCRIPT ERROR|FAIL:') { exit 1 }
+$savedAppData = $env:APPDATA
+$savedLocalAppData = $env:LOCALAPPDATA
+try {
+    if (-not $Live -or $Check) {
+        $practiceProfile = Join-Path $artifactPath 'offline-profile'
+        New-Item -ItemType Directory -Path $practiceProfile -Force | Out-Null
+        $env:APPDATA = $practiceProfile
+        $env:LOCALAPPDATA = $practiceProfile
     }
+    & $GodotPath @launchArguments
+    $engineExit = $LASTEXITCODE
+    if ($Check) {
+        $logText = Get-Content -LiteralPath $launchLog -Raw
+        if ($logText -notmatch 'magic casting prototype: PASS' -or $logText -match 'SCRIPT ERROR|FAIL:') { exit 1 }
+        if ($WheelVariant -ne 'baseline') {
+            $trialLog = Join-Path $artifactPath "trials-$WheelVariant.log"
+            & $GodotPath --headless --path $projectPath --script res://tests/test_magic_wheel_trials.gd --log-file $trialLog --quit-after 1200
+            $engineExit = $LASTEXITCODE
+            $trialText = Get-Content -LiteralPath $trialLog -Raw
+            if ($trialText -notmatch 'magic wheel trials: PASS' -or $trialText -match 'SCRIPT ERROR|FAIL:') { exit 1 }
+        }
+    }
+} finally {
+    $env:APPDATA = $savedAppData
+    $env:LOCALAPPDATA = $savedLocalAppData
 }
 exit $engineExit

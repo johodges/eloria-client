@@ -9,7 +9,7 @@ storage, merchant, active effects and dialogue.
 ## Play
 
 For this branch, run **[`test-magic-tutorial.bat`](../../test-magic-tutorial.bat)**.
-It starts the matching `feature/magic-ring-tutorial` server on localhost:2013
+It starts the matching sibling `dev-server` checkout on localhost:2013
 with a separate database. Log in as **RingStudent**, password **ringpractice**,
 then enter **`#tutorial magic`**. `-Fresh` starts another local profile without
 deleting saved progress; `-ServerRoot` selects another matching server checkout.

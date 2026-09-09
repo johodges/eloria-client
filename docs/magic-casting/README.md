@@ -19,9 +19,9 @@ the requested size. Scrolling over an open ring still changes spell power.
 Run **`test-magic-tutorial.bat`** for the real Borrowed Sky tutorial with a
 separate local server and saved practice account. Log in as **RingStudent**
 with password **ringpractice**, then type **`#tutorial magic`** in chat.
-The matching server branch is `feature/magic-ring-tutorial` in the sibling
-`wt-magic-ring-server` worktree. Pass `-ServerRoot` to use another checkout of
-that branch. Port 2013 is local only; `-Port` chooses another. `-Fresh` makes
+The matching server is the sibling `dev-server` checkout with the ring tutorial
+updates. Pass `-ServerRoot` to use another matching server checkout.
+Port 2013 is local only; `-Port` chooses another. `-Fresh` makes
 a new practice profile without deleting the previous one. `-Check` runs a
 headless client through login and the ring introduction on a fresh local server.
 
@@ -181,8 +181,9 @@ they do not guarantee line of sight or a legal Blink landing. Automatic target
 selection is conservative about friendly creatures; explicit targeting remains
 available and the server makes the final decision.
 
-The prototype uses a separate Godot user-data directory named
-**Eloria Magic Prototype**. Loadouts are keyed by server, port and character;
+The live client retains Eloria's normal settings directory. Offline launchers
+keep a separate profile under `godot-client/test-artifacts/magic-casting/offline-profile`.
+The tutorial launcher also keeps its own isolated profile. Loadouts are keyed by server, port and character;
 the practice profile is separate. A slot's saved power is capped to the
 server's current allowed power when casting. All comparison modes share the
 same loadout so changing mode does not change the spells being compared.
