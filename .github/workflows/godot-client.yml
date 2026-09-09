@@ -67,6 +67,8 @@ jobs:
             --animations godot-client/data/animations/creature.json
       - name: Protocol and reducer fixtures
         run: godot --headless --path godot-client --script res://tests/test_protocol.gd
+      - name: Counter breakdown fixtures
+        run: godot --headless --path godot-client --script res://tests/test_counters.gd
       - name: Skill level updates and HUD fixtures
         run: godot --headless --path godot-client --script res://tests/test_skill_updates.gd
       - name: Invasion assistant UI fixtures
