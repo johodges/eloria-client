@@ -49,6 +49,14 @@ model, while raiders, the sentry and both captains use the updated Mire Goblin.
 The level-1 fox retains the scout's gentle combat stats and required meat drop.
 Waves, captain reinforcements and resumed encounters share these definitions.
 
+The Ash Captain now has 40 health (down from 60), and the Great Ash Captain
+has 46 (down from 69). Both have attack 1 and innate damage 1 (previously
+attack 2 and damage 1–2), before sword damage and player defenses. Their
+attributes remain at 1, keeping sword strikes gentle. Their swords, three
+healing charges and two summon thresholds still teach the boss mechanics.
+Older saved encounters receive the lower stats on resume, preserving the
+remaining health proportion, defeated enemies and spent healing/summon budgets.
+
 The final encounter has fewer prompts. Asking for help, checkpoint recovery or
 choosing the explicit recovery-practice waiver records assistance in the journal.
 The waiver is available for returning characters who already know fleeing and
