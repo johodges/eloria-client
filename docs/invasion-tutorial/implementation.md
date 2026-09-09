@@ -44,6 +44,11 @@ public drops and crafting; other bows and global hit probabilities are unchanged
 The sentry patrol stays within one tile of its starting post until ordinary
 retaliation moves it, keeping the firing marker outside minimum bow range.
 
+Every encounter uses reviewed creature art: scouts use the updated red fox
+model, while raiders, the sentry and both captains use the updated Mire Goblin.
+The level-1 fox retains the scout's gentle combat stats and required meat drop.
+Waves, captain reinforcements and resumed encounters share these definitions.
+
 The final encounter has fewer prompts. Asking for help, checkpoint recovery or
 choosing the explicit recovery-practice waiver records assistance in the journal.
 The waiver is available for returning characters who already know fleeing and

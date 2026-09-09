@@ -100,6 +100,17 @@ launchers rather than importing the shared artwork through the editor.
 The PowerShell launcher also accepts `-GodotPath` for a different installation
 of the pinned Godot 4.7.2 runtime.
 
+### Updating this local sparse worktree
+
+Before a merge, checkout, or sparse-checkout change, detach the two directory
+junctions at `godot-client/assets` and `eloria-assets` from this worktree.
+Verify each path is a junction and remove only the link, never its target or
+contents. Git can otherwise apply sparse exclusions through a junction and
+remove tracked artwork from the shared checkout. After the Git operation,
+the launcher recreates the missing junctions automatically. Keep
+`/test-magic-*.bat` in this worktree's sparse patterns so its launchers remain
+available after a merge.
+
 ## Validation
 
 `powershell -File tools/run-magic-prototype.ps1 -Check` runs the prototype
