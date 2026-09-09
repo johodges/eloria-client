@@ -145,6 +145,7 @@ func _ready() -> void:
 	selector.z_index = 10
 	add_child(selector)
 	selector.status_changed.connect(record)
+	selector.cast_submitted.connect(loadout.remember_cast)
 	loadout.changed.connect(func(): selector.target_mode = loadout.targeting_mode())
 	book = preload("res://src/ui/spells_window.gd").new()
 	book.z_index = 7
@@ -161,7 +162,7 @@ func _ready() -> void:
 	bar.edit_slot.connect(book.edit_prepared_slot)
 	_install_wheel()
 	var standard_instructions := instructions.text
-	var wheel_instructions := "TRY THE WHEEL\n\nHold Alt. Pick a class with 1–5 or click it. Choose a spell, then its target.\n\nAlt → 1 → 1 → 2 = Heal Target.\nSelect Tavin first to heal him directly.\n\nScroll up / down changes power.\nRelease Alt to dismiss.\nBackspace / right click goes back.\n[ / ] or Previous/Next changes pages.\n\nThe Wheel button works without Alt."
+	var wheel_instructions := "TRY THE WHEEL\n\nHold Left Shift. Pick a class with 1–5 or click it. Choose a spell, then its target.\n\nLeft Shift → 1 → 1 → 2 = Heal Target.\nSelect Tavin first to heal him directly.\n\nScroll up / down changes power.\nRelease Left Shift to dismiss.\nBackspace / right click goes back.\n[ / ] or Previous/Next changes pages.\n\nWheel button: click to open."
 	loadout.changed.connect(func():
 		variant_picker.visible = loadout.mode == "wheel"
 		instructions.add_theme_font_size_override("font_size", 14 if wheel_variant != "baseline" else 16)
@@ -213,7 +214,7 @@ func _save_trial_preferences() -> void:
 
 func _trial_instructions() -> String:
 	var method := "Hover a class; click its spell.\n1–5: class · 1–7: spell" if wheel_variant == "quick" else "Hover an inner class; click its spell.\nQ/W/E/R/T: class · 1–7: spell"
-	return "%s WHEEL\n\n%s\n\nScroll: power\nRight click: cycle target type\nShift+1–4: select target type\nAlt+Space: repeat last spell\n\nSelect Tavin → Heal twice.\n\nUnpin to make room for More.\n[ / ]: More pages · Backspace: back\nRelease Alt / Esc: cancel\n\nF1 / F2 / F3: compare versions" % [wheel_variant.to_upper(), method]
+	return "%s WHEEL\n\n%s\n\nScroll: power\nRight click: cycle target type\nAlt+number: quickbar\nLeft Shift+Space: repeat last spell\n\nSelect Tavin → Heal twice.\n\nUnpin to make room for More.\n[ / ]: More pages · Backspace: back\nRelease Left Shift / Esc: cancel\n\nF1 / F2 / F3: compare versions" % [wheel_variant.to_upper(), method]
 
 func _seed_reagents() -> void:
 	var images: Dictionary = {}
@@ -233,13 +234,14 @@ func _input(event: InputEvent) -> void:
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if wheel != null and wheel.visible: return
+	if selector.popup.visible: return
 	if get_viewport().gui_get_focus_owner() is LineEdit or get_viewport().gui_get_focus_owner() is TextEdit: return
 	if event is InputEventKey and event.echo: return
 	if event.is_action_pressed("toggle_spells"):
 		book.toggle()
 		get_viewport().set_input_as_handled()
 	for index in range(12):
-		if loadout.mode != "wheel" and event.is_action_pressed("quick_spell_%d" % (index + 1)):
+		if event.is_action_pressed("quick_spell_%d" % (index + 1)):
 			_cast_slot(index)
 			get_viewport().set_input_as_handled()
 
@@ -247,7 +249,8 @@ func _cast_slot(index: int) -> void:
 	var entry: Dictionary = loadout.slots[index]
 	if int(entry.id) < 0: book.edit_prepared_slot(index)
 	else:
-		selector.begin(int(entry.id), int(entry.power), AppState.selected_actor_id)
+		var limit: Dictionary = AppState.spell_power.get(catalog.effect_for(int(entry.id)), {})
+		selector.begin(int(entry.id), mini(int(entry.power), maxi(1, int(limit.get("limit", 1)))), AppState.selected_actor_id)
 		book.close()
 
 func _cast_from_book(id: int) -> void:

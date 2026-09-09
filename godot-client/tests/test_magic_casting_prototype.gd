@@ -32,6 +32,13 @@ func run() -> void:
 	check(model.slots[0].id == 1, "invalid drops cannot overwrite a slot")
 	model.assign_slot(1, -1, 1)
 	check(model.slots[1].id == -1, "slots can be cleared")
+	model.assign_slot(2, 21, 5)
+	model.assign_slot(3, 3, 2)
+	model.remember_cast(22, 6)
+	check(model.slots[0] == {"id": 22, "power": 6} and model.slots[2] == model.slots[0], "last cast updates every assigned slot for the same family")
+	check(model.slots[1].id == -1 and model.slots[3] == {"id": 3, "power": 2}, "last cast leaves empty slots and other families intact")
+	model.load_profile("server-one/alice")
+	check(model.slots[0] == {"id": 22, "power": 6}, "last cast target type and power survive a profile reload")
 	DirAccess.remove_absolute(model.path)
 	var selection = load("res://src/ui/magic_selection.gd").new()
 	selection.catalog = catalog
@@ -39,6 +46,8 @@ func run() -> void:
 		requests.append(data.duplicate(true))
 		return OK
 	selection.target_validator = func(_spell_id: int, actor_id: int) -> bool: return actor_id == 42
+	var remembered: Array[Dictionary] = []
+	selection.cast_submitted.connect(func(id: int, power: int): remembered.append({"id": id, "power": power}))
 	root.add_child(selection)
 	root.get_node("AppState").actors[42] = {"name": "Practice ally", "alive": true, "health": 40, "kind": 1}
 	selection.begin(1, 4, 42)
@@ -49,10 +58,12 @@ func run() -> void:
 	check(requests.size() == 2, "repeat casts require no target reselection or cancel packet")
 	selection.begin(1, 4, 99)
 	check(not selection.pending.is_empty() and requests.size() == 2, "invalid selected recipients arm targeting without changing scope")
+	check(remembered.size() == 2, "arming a target does not replace quickbar memory")
 	selection.begin(69, 3)
 	check(requests.back().op == "cancel" and selection.pending.id == 69, "a new spell replaces pending targeting")
 	selection.confirm_location(Vector2i(8, 9))
 	check(requests.back() == {"op": "cast", "id": 69, "power": 3, "x": 8, "y": 9}, "area confirmation preserves spell and power")
+	check(remembered.back() == {"id": 69, "power": 3}, "ground confirmation stores the actual submitted spell")
 	selection.target_mode = "aimed"
 	var before := requests.size()
 	selection.begin(1, 2, 42)
@@ -66,6 +77,17 @@ func run() -> void:
 	check(requests.size() == before and root.get_node("AppState").pending_spell_target.is_empty(), "cancelled aiming cannot cast later")
 	selection.begin(0, 2)
 	check(requests.back() == {"op": "cast", "id": 0, "power": 2}, "self spells cast immediately in both modes")
+	before = remembered.size()
+	selection.begin(8, 4)
+	check(remembered.size() == before, "asking for utility options does not replace quickbar memory")
+	selection.call("_receive", {"kind": "transmute", "id": 8, "entries": [{"name": "Scrap", "rarity": "Common", "available": 1, "required_power": 1, "unit_gold": 3, "slot": 0, "item_id": 1}]})
+	selection.call("_confirm")
+	check(remembered.back() == {"id": 8, "power": 4}, "confirmed utility casts remember their chosen power and target type")
+	selection.popup.hide()
+	before = remembered.size()
+	selection.request_sender = func(_data: Dictionary) -> Error: return ERR_CANT_CONNECT
+	selection.begin(0, 9)
+	check(remembered.size() == before, "a failed send cannot replace quickbar memory")
 	selection.queue_free()
 	await process_frame
 	# Instantiate the real application to verify the bar-to-cast integration.
@@ -85,6 +107,8 @@ func run() -> void:
 	root.get_node("AppState").spell_power["heal"] = {"limit": 3}
 	main.call("_cast_spell_slot", 0)
 	check(requests.back().id == 0 and requests.back().power == 3, "the live bar uses saved power capped to the server limit")
+	check(main.spell_loadout.slots[0].power == 3, "the quickbar remembers the actual capped cast power")
+	check(main.casting_bar.buttons[0].get_node("Target").text == "Self" and main.casting_bar.buttons[0].get_node("Power").text == "P3", "the live icon shows saved target and power in its corners")
 	main.spells_window.call("_on_spell_pressed", 1)
 	main.spells_window.power_picker.value = 2
 	main.call("_cast_spell_by_id", 1)
@@ -100,21 +124,28 @@ func run() -> void:
 	main.game_view.show()
 	main.spell_loadout.set_mode("wheel")
 	check(main.magic_selection.target_mode == "prepared", "wheel mode uses selected recipients")
-	main.call("_input", key_event(KEY_ALT))
-	check(main.spell_wheel.visible, "live input opens the character wheel on Alt")
+	main.call("_input", key_event(KEY_SHIFT))
+	check(main.spell_wheel.visible, "live input opens the character wheel on Left Shift")
 	before = requests.size()
 	for step in range(3): main.call("_input", scroll_event(MOUSE_BUTTON_WHEEL_UP))
 	check(main.spell_loadout.wheel_power == 4 and requests.size() == before, "live scroll adjusts power without casting")
 	main.call("_input", key_event(KEY_1))
 	main.call("_unhandled_input", key_event(KEY_1))
-	check(main.spell_wheel.stage == "effects" and requests.size() == before, "Alt+1 enters Healing without firing a quick slot")
+	check(main.spell_wheel.stage == "effects" and requests.size() == before, "Left Shift+1 enters Healing without firing a quick slot")
 	main.call("_input", key_event(KEY_1))
 	main.call("_input", key_event(KEY_2))
 	check(main.magic_selection.pending.get("id") == 1, "live wheel routes Heal Target into the existing targeting controller")
 	check(main.magic_selection.pending.get("power") == 3, "live wheel casts its scrolled power capped to the selected effect")
-	main.call("_input", key_event(KEY_ALT, false))
-	check(main.magic_selection.pending.get("id") == 1, "releasing Alt after a choice preserves armed targeting")
+	main.call("_input", key_event(KEY_SHIFT, false))
+	check(main.magic_selection.pending.get("id") == 1, "releasing Left Shift after a choice preserves armed targeting")
 	main.magic_selection.cancel()
+	var quick_key := key_event(KEY_1)
+	quick_key.shift_pressed = false
+	quick_key.alt_pressed = true
+	before = requests.size()
+	main.call("_input", quick_key)
+	main.call("_unhandled_input", quick_key)
+	check(not main.spell_wheel.visible and requests.size() == before + 1 and requests.back().id == 0, "Alt+1 casts the live quickbar in wheel mode")
 	main.free()
 	await process_frame
 	await test_wheel(catalog)
@@ -129,8 +160,9 @@ func key_event(code: Key, pressed := true, echo := false) -> InputEventKey:
 	var event := InputEventKey.new()
 	event.keycode = code
 	event.physical_keycode = code
+	if code == KEY_SHIFT: event.location = KEY_LOCATION_LEFT
 	event.pressed = pressed
-	event.alt_pressed = true
+	event.shift_pressed = true
 	event.echo = echo
 	return event
 
@@ -145,14 +177,14 @@ func test_wheel(catalog: SpellCatalog) -> void:
 	wheel.spell_chosen.connect(func(id: int, _power: int): chosen.append(id))
 	root.add_child(wheel)
 	await process_frame
-	wheel.handle_event(key_event(KEY_ALT))
+	wheel.handle_event(key_event(KEY_SHIFT))
 	check(wheel.visible and wheel.center.is_equal_approx(Vector2(510, 310)), "wheel is anchored around the character")
 	wheel.handle_event(key_event(KEY_1, true, true))
 	check(wheel.stage == "classes", "key repeat cannot skip a wheel stage")
 	wheel.handle_event(key_event(KEY_1))
-	wheel.handle_event(key_event(KEY_ALT, false))
-	check(not wheel.visible and chosen.is_empty(), "releasing Alt without a leaf never casts")
-	wheel.handle_event(key_event(KEY_ALT))
+	wheel.handle_event(key_event(KEY_SHIFT, false))
+	check(not wheel.visible and chosen.is_empty(), "releasing Left Shift without a leaf never casts")
+	wheel.handle_event(key_event(KEY_SHIFT))
 	wheel.handle_event(key_event(KEY_1))
 	wheel.handle_event(key_event(KEY_1))
 	check(wheel.entries[0].id == 0 and wheel.entries[1].id == 1 and wheel.entries[2].id == 22 and wheel.entries[3].id == 21, "target positions are Self, Target, Allies, Burst")
@@ -160,8 +192,8 @@ func test_wheel(catalog: SpellCatalog) -> void:
 	check(wheel.visible and chosen.is_empty(), "unavailable scopes cannot accidentally cast")
 	wheel.handle_event(key_event(KEY_2))
 	wheel.handle_event(key_event(KEY_2))
-	wheel.handle_event(key_event(KEY_ALT, false))
-	check(chosen == [1] and not wheel.visible, "a complete Alt sequence emits one exact spell, including repeated keys and release")
+	wheel.handle_event(key_event(KEY_SHIFT, false))
+	check(chosen == [1] and not wheel.visible, "a complete Left Shift sequence emits one exact spell, including repeated keys and release")
 	wheel.open_wheel()
 	wheel.buttons[0].pressed.emit()
 	wheel.buttons[0].pressed.emit()
@@ -176,14 +208,16 @@ func test_wheel(catalog: SpellCatalog) -> void:
 	check(wheel.stage == "effects" and wheel.page == 1, "back from a target preserves the current family page")
 	wheel.handle_event(key_event(KEY_ESCAPE))
 	check(not wheel.visible and chosen.size() == 2, "Escape dismisses without selecting")
-	wheel.handle_event(key_event(KEY_ALT))
+	wheel.handle_event(key_event(KEY_SHIFT))
 	wheel.call("_notification", Control.NOTIFICATION_APPLICATION_FOCUS_OUT)
-	check(not wheel.visible and not wheel.handle_event(key_event(KEY_ALT, false)), "focus loss clears Alt ownership")
+	check(not wheel.visible and not wheel.handle_event(key_event(KEY_SHIFT, false)), "focus loss clears Left Shift ownership")
 	wheel.can_open = func() -> bool: return false
-	check(not wheel.handle_event(key_event(KEY_ALT)) and not wheel.visible, "typing or a modal can suppress opening")
+	check(not wheel.handle_event(key_event(KEY_SHIFT)) and not wheel.visible, "typing or a modal can suppress opening")
 	wheel.can_open = Callable()
 	wheel.open_wheel(true)
-	wheel.handle_event(key_event(KEY_TAB))
+	var window_shortcut := key_event(KEY_TAB)
+	window_shortcut.alt_pressed = true
+	wheel.handle_event(window_shortcut)
 	check(not wheel.visible, "Alt+Tab releases the wheel")
 	# Walk the actual visible menus, including singleton utility families, and
 	# assert every catalog spell is reachable exactly once.
@@ -205,7 +239,7 @@ func test_wheel(catalog: SpellCatalog) -> void:
 	reachable.sort()
 	check(reachable == expected, "every catalog spell is reachable exactly once through the wheel")
 	model.set_mode("aimed")
-	check(not wheel.visible and not wheel.handle_event(key_event(KEY_ALT)), "other casting modes retain their Alt bindings")
+	check(not wheel.visible and not wheel.handle_event(key_event(KEY_SHIFT)), "other casting modes retain their Left Shift bindings")
 	wheel.free()
 	await process_frame
 
@@ -218,7 +252,7 @@ func test_wheel_mouse_routing() -> void:
 	lab.loadout.set_mode("wheel")
 	root.get_node("AppState").select_actor(2)
 	await process_frame
-	root.push_input(key_event(KEY_ALT), true)
+	root.push_input(key_event(KEY_SHIFT), true)
 	check(lab.wheel.visible, "viewport input opens the practice wheel")
 	var initial_tile: Vector2i = lab.actors[1].tile
 	await click_at(lab.wheel.buttons[0].get_global_rect().get_center())
@@ -234,14 +268,14 @@ func test_wheel_mouse_routing() -> void:
 	await click_at(lab.wheel.buttons[1].get_global_rect().get_center())
 	check(not lab.wheel.visible and lab.actors[2].health == 55, "GUI target click casts once at the scrolled power")
 	check(lab.actors[1].tile == initial_tile, "wheel clicks cannot move the character underneath")
-	root.push_input(key_event(KEY_ALT, false), true)
-	check(lab.actors[2].health == 55, "Alt release after a mouse choice never casts twice")
+	root.push_input(key_event(KEY_SHIFT, false), true)
+	check(lab.actors[2].health == 55, "Left Shift release after a mouse choice never casts twice")
 	var entry := LineEdit.new()
 	lab.add_child(entry)
 	entry.grab_focus()
-	root.push_input(key_event(KEY_ALT), true)
-	check(not lab.wheel.visible, "a focused text field prevents Alt opening the wheel")
-	root.push_input(key_event(KEY_ALT, false), true)
+	root.push_input(key_event(KEY_SHIFT), true)
+	check(not lab.wheel.visible, "a focused text field prevents Left Shift opening the wheel")
+	root.push_input(key_event(KEY_SHIFT, false), true)
 	lab.free()
 	await process_frame
 
@@ -249,7 +283,7 @@ func scroll_event(button: MouseButton) -> InputEventMouseButton:
 	var event := InputEventMouseButton.new()
 	event.button_index = button
 	event.pressed = true
-	event.alt_pressed = true
+	event.shift_pressed = true
 	return event
 
 func test_wheel_power(catalog: SpellCatalog) -> void:
@@ -282,7 +316,7 @@ func test_wheel_power(catalog: SpellCatalog) -> void:
 	check(casts == [{"id": 1, "power": 2}], "leaf selection carries the chosen power explicitly")
 	wheel.handle_event(scroll_event(MOUSE_BUTTON_WHEEL_UP))
 	check(model.wheel_power == 2, "scrolling after a final choice cannot alter its pending cast")
-	wheel.handle_event(key_event(KEY_ALT, false))
+	wheel.handle_event(key_event(KEY_SHIFT, false))
 	check(not wheel.handle_event(scroll_event(MOUSE_BUTTON_WHEEL_UP)), "a closed wheel leaves normal scrolling available")
 	wheel.open_wheel()
 	check(model.wheel_power == 2, "reopening the wheel retains its power")
@@ -315,6 +349,6 @@ func click_at(point: Vector2) -> void:
 		event.global_position = point
 		event.button_index = MOUSE_BUTTON_LEFT
 		event.pressed = pressed
-		event.alt_pressed = true
+		event.shift_pressed = true
 		root.push_input(event, true)
 		await process_frame

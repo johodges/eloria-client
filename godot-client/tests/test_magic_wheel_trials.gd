@@ -10,8 +10,9 @@ func key(code: Key, pressed := true) -> InputEventKey:
 	var result := InputEventKey.new()
 	result.keycode = code
 	result.physical_keycode = code
+	if code == KEY_SHIFT: result.location = KEY_LOCATION_LEFT
 	result.pressed = pressed
-	result.alt_pressed = true
+	result.shift_pressed = true
 	return result
 func run() -> void:
 	root.size = Vector2i(1280, 720)
@@ -27,11 +28,23 @@ func run() -> void:
 	for variant in ["quick", "orbit"]:
 		lab.trial_preferences = {"scopes": {}, "powers": {}, "pins": {}}
 		lab.set_wheel_variant(variant)
+		lab.loadout.assign_slot(0, 0, 1)
+		lab.loadout.assign_slot(1, 1, 2)
 		var wheel: Control = lab.wheel
 		state.select_actor(2)
-		root.push_input(key(KEY_ALT), true)
+		var right_shift := key(KEY_SHIFT)
+		right_shift.location = KEY_LOCATION_RIGHT
+		root.push_input(right_shift, true)
+		check(not wheel.visible, "Right Shift does not open the ring")
+		root.push_input(alt_key(KEY_ALT), true)
+		check(not wheel.visible, "Alt is reserved for the quickbar")
+		root.push_input(alt_key(KEY_ALT, false), true)
+		root.push_input(key(KEY_SHIFT), true)
 		await process_frame
-		check(wheel.visible, variant + " opens through real Alt input")
+		check(wheel.visible, variant + " opens through real Left Shift input")
+		right_shift.pressed = false
+		root.push_input(right_shift, true)
+		check(wheel.visible, "releasing Right Shift cannot dismiss the Left Shift ring")
 		var frozen: Vector2 = wheel.center
 		lab.actors[1].tile += Vector2i(1, 0)
 		await process_frame
@@ -60,12 +73,18 @@ func run() -> void:
 		check(requests.size() == before and lab.selector.pending.is_empty(), "right clicks never cast or start targeting")
 		await click_sector(wheel.buttons[0])
 		check(requests.back() == {"op": "cast", "id": 1, "power": 4, "target_id": 2}, variant + " one click casts the previewed spell and power")
-		root.push_input(key(KEY_ALT, false), true)
+		root.push_input(key(KEY_SHIFT, false), true)
+		check(lab.loadout.slots[0] == {"id": 1, "power": 4} and lab.loadout.slots[1] == lab.loadout.slots[0], "ring cast updates matching quickbar target types and powers")
+		check(lab.bar.buttons[0].get_node("Target").text == "Tgt" and lab.bar.buttons[0].get_node("Power").text == "P4", "quickbar corner labels reflect the last cast")
+		before = requests.size()
+		root.push_input(alt_key(KEY_1), true)
+		root.push_input(alt_key(KEY_1, false), true)
+		check(not wheel.visible and requests.size() == before + 1 and requests.back() == {"op": "cast", "id": 1, "power": 4, "target_id": 2}, "Alt+1 repeats the quickbar setup exactly once in wheel mode")
 		state.select_actor(3)
-		root.push_input(key(KEY_ALT), true)
+		root.push_input(key(KEY_SHIFT), true)
 		root.push_input(key(KEY_SPACE), true)
 		check(requests.back().get("target_id") == 3 and requests.back().power == 4, "repeat uses the current recipient and previous power")
-		root.push_input(key(KEY_ALT, false), true)
+		root.push_input(key(KEY_SHIFT, false), true)
 		wheel.open_wheel()
 		wheel.enter_class("Healing")
 		check(wheel.power_for(1) == 4, "family power is remembered")
@@ -78,7 +97,7 @@ func run() -> void:
 		wheel.enter_class("Healing")
 		check(wheel.resolve_spell("heal") == 21, "last target type is remembered per family")
 		before = requests.size()
-		wheel.handle_event(key(KEY_ALT, false))
+		wheel.handle_event(key(KEY_SHIFT, false))
 		check(requests.size() == before and not wheel.visible, "release cancels unfinished selection")
 		wheel.open_wheel()
 		wheel.enter_class("Offense")
@@ -126,6 +145,11 @@ func run() -> void:
 	await process_frame
 	print("magic wheel trials: ", "PASS" if failures == 0 else "FAIL")
 	quit(failures)
+func alt_key(code: Key, pressed := true) -> InputEventKey:
+	var result := key(code, pressed)
+	result.shift_pressed = false
+	result.alt_pressed = true
+	return result
 func move_to_sector(button: Button) -> void:
 	var event := InputEventMouseMotion.new()
 	event.position = button.global_position + Vector2.ONE * button.outer + Vector2.from_angle(button.angle) * (button.inner + button.outer) / 2
@@ -139,7 +163,7 @@ func right_click(point: Vector2) -> void:
 		event.global_position = point
 		event.pressed = pressed
 		event.button_index = MOUSE_BUTTON_RIGHT
-		event.alt_pressed = true
+		event.shift_pressed = true
 		root.push_input(event, true)
 		await process_frame
 func click_sector(button: Button) -> void:
@@ -150,6 +174,6 @@ func click_sector(button: Button) -> void:
 		event.global_position = point
 		event.pressed = pressed
 		event.button_index = MOUSE_BUTTON_LEFT
-		event.alt_pressed = true
+		event.shift_pressed = true
 		root.push_input(event, true)
 		await process_frame

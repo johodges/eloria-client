@@ -2,6 +2,7 @@ extends Control
 ## Server-authored inventory quotes and portal entrances for utility spells.
 signal status_changed(message: String)
 signal selection_changed
+signal cast_submitted(spell_id: int, power: int)
 var catalog: SpellCatalog
 var pending: Dictionary = {}
 var popup: AcceptDialog
@@ -21,6 +22,7 @@ var _feedback_until := 0
 func _send(data: Dictionary) -> Error:
 	var error: Error = int(request_sender.call(data)) if request_sender.is_valid() else Network.magic_request(data)
 	if error != OK: status_changed.emit("Could not send spell. Check your connection.")
+	elif data.get("op") == "cast": cast_submitted.emit(int(data.id), int(data.power))
 	return error
 
 func _ready() -> void:

@@ -1,5 +1,5 @@
 extends Control
-## Alt owns input until released. Choosing a leaf never casts again on release.
+## Left Shift owns ring input until released. Alt remains available to quick slots.
 signal spell_chosen(id: int, power: int)
 signal opened
 const Book := preload("res://src/ui/spells_window.gd")
@@ -18,7 +18,7 @@ var page := 0
 var entries: Array[Dictionary] = []
 var buttons: Array[Button] = []
 var center := Vector2.ZERO
-var _alt_held := false
+var _ring_held := false
 var _latched := false
 var _heading: Label
 var _power_label: Label
@@ -68,7 +68,7 @@ func _small_button(title: String, action: Callable) -> Button:
 
 func open_wheel(held := false) -> void:
 	if loadout.mode != "wheel" or (can_open.is_valid() and not can_open.call()): return
-	_alt_held = held
+	_ring_held = held
 	_latched = false
 	stage = "classes"
 	category = ""
@@ -80,29 +80,29 @@ func open_wheel(held := false) -> void:
 
 func dismiss() -> void:
 	hide()
-	_latched = _alt_held
+	_latched = _ring_held
 
 func reset() -> void:
 	hide()
-	_alt_held = false
+	_ring_held = false
 	_latched = false
 
 func handle_event(event: InputEvent) -> bool:
 	if loadout.mode != "wheel": return false
 	if event is InputEventKey:
 		var key: int = event.physical_keycode if event.physical_keycode != 0 else event.keycode
-		# Do not trap operating-system window shortcuts or AltGr text entry.
-		if event.ctrl_pressed or (event.alt_pressed and key in [KEY_TAB, KEY_F4]):
+		# Alt belongs to the quickbar and operating system, even while a ring is open.
+		if event.ctrl_pressed or event.alt_pressed or key == KEY_ALT:
 			reset()
 			return false
-		if key == KEY_ALT:
+		if key == KEY_SHIFT and event.location == KEY_LOCATION_LEFT:
 			if event.pressed:
 				if event.echo: return visible or _latched
 				if can_open.is_valid() and not can_open.call(): return false
-				if visible: _alt_held = true
+				if visible: _ring_held = true
 				else: open_wheel(true)
 				return visible
-			var owned := _alt_held or _latched
+			var owned := _ring_held or _latched
 			reset()
 			return owned
 		if _latched: return true
@@ -253,7 +253,7 @@ func _rebuild() -> void:
 	if stage == "targets": _heading.text = str(Book.EFFECT_LABELS.get(effect, effect.capitalize()))
 	var limit := _power_limit(effect) if stage == "targets" else 10
 	_power_label.text = "Power %d / %d · Scroll" % [mini(int(loadout.wheel_power), limit), limit]
-	_hint.text = "1–%d or click\nRelease Alt to close" % entries.size() if _alt_held else "1–%d or click\nEsc to close" % entries.size()
+	_hint.text = "1–%d or click\nRelease Left Shift to close" % entries.size() if _ring_held else "1–%d or click\nEsc to close" % entries.size()
 	_back.visible = stage != "classes"
 	var paged := stage == "effects" and effects_for(category).size() > PAGE_SIZE
 	_previous.visible = paged

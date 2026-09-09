@@ -111,12 +111,9 @@ func handle_event(event: InputEvent) -> bool:
 		return true
 	if visible and event is InputEventKey and event.pressed and not event.echo:
 		var key: int = event.physical_keycode if event.physical_keycode != 0 else event.keycode
-		if event.ctrl_pressed or (event.alt_pressed and key in [KEY_TAB, KEY_F4]): return super.handle_event(event)
+		if event.ctrl_pressed or event.alt_pressed or key == KEY_ALT: return super.handle_event(event)
 		if key == KEY_SPACE:
 			repeat_last()
-			return true
-		if event.shift_pressed and key >= KEY_1 and key <= KEY_4:
-			select_scope(TARGET_SCOPES[key - KEY_1])
 			return true
 		if variant == "orbit" and key in [KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T]:
 			enter_class(CLASSES[[KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T].find(key)])
@@ -311,7 +308,7 @@ func _rebuild() -> void:
 	_back.hide()
 	_close.hide()
 	_hint.show()
-	_hint.text = "Alt+Space repeats · Release Alt / Esc closes"
+	_hint.text = "Left Shift+Space repeats · Release / Esc closes"
 	_pin.visible = not effect.is_empty()
 	_scope_bar.visible = not effect.is_empty()
 	_changing = false
@@ -322,7 +319,7 @@ func _update_details() -> void:
 	if _preview == null: return
 	_heading.text = "Hover a class" if stage == "classes" else category + (" · More %d" % (page + 1) if _more else " · Pinned")
 	var id := resolve_spell(effect) if not effect.is_empty() else -1
-	_preview.text = "Alt+Space · repeat" if last_spell >= 0 else "Choose a spell"
+	_preview.text = "Left Shift+Space · repeat" if last_spell >= 0 else "Choose a spell"
 	_power_label.text = "Power %d · Scroll" % int(loadout.wheel_power)
 	if id >= 0:
 		var definition: Dictionary = loadout.catalog.spell(id)

@@ -21,7 +21,7 @@ func run() -> void:
 		await capture(variant + "-offense.png")
 		lab.wheel.change_page(1)
 		await capture(variant + "-more.png")
-		for control in [lab.wheel._scope_bar, lab.wheel._pin, lab.wheel._hint, lab.variant_picker]:
+		for control in [lab.wheel._scope_bar, lab.wheel._pin, lab.wheel._hint, lab.variant_picker, lab.bar.panel]:
 			var rect: Rect2 = control.get_global_rect()
 			if rect.position.x < 0 or rect.position.y < 0 or rect.end.x > 1280 or rect.end.y > 720:
 				failures += 1

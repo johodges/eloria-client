@@ -948,6 +948,7 @@ func _ready() -> void:
 	magic_selection.status_changed.connect(func(message: String) -> void: spell_status.text = message)
 	AppState.magic_state_received.connect(_on_magic_state)
 	spell_loadout.configure(spell_catalog)
+	magic_selection.cast_submitted.connect(spell_loadout.remember_cast)
 	magic_selection.target_validator = _spell_target_candidate
 	spells_window.set_loadout(spell_loadout)
 	casting_bar = preload("res://src/ui/casting_bar.gd").new()
@@ -2784,7 +2785,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		return
 	for spell_slot: int in range(SPELL_QUICK_SLOTS):
-		if spell_loadout.mode != "wheel" and event.is_action_pressed("quick_spell_%d" % (spell_slot + 1)):
+		if _can_open_spell_wheel() and event.is_action_pressed("quick_spell_%d" % (spell_slot + 1)):
 			_cast_spell_slot(spell_slot)
 			get_viewport().set_input_as_handled()
 			return

@@ -4,6 +4,20 @@ Branch: `feature/magic-casting-prototype`, based on develop at `2191b7608`.
 
 ## Compare streamlined wheels
 
+Hold **Left Shift** for the rings; **Alt+1–0 / minus / equals** casts quickbar
+slots in every mode. Right Shift does not open or close a ring. Numbers select
+classes/spells while Left Shift is held; right click cycles target type.
+
+The quickbar shows the saved **target type in the top left** of each icon and
+**power in the top right**. A submitted cast updates all assigned slots for
+that spell family, whether it came from the wheel, spellbook, or quickbar.
+Ground and utility casts update the slots after confirmation. Hovering,
+scrolling, changing target type, cancelling, and failed sends do not update
+them. The saved target is the type (Self, Target, Allies, Burst, etc.); Target
+uses the currently selected eligible recipient. Saved settings persist per
+character. Manual slot assignments set the initial target and power until
+the next cast of that family. The tooltip expands abbreviated target labels.
+
 Run **`test-magic-compare.bat`** to start Quick in the practice previewer.
 Use the selector at the top right, or **F1 / F2 / F3**, to switch among:
 
@@ -28,7 +42,7 @@ and effective power before selection. Target variants and powers are then
 remembered per family. **Right click** cycles Self → Target → Allies → Burst,
 skipping unavailable options and wrapping around. It keeps the wheel open and
 does not cast; a family with only one target option stays on that option.
-**Shift+1 / 2 / 3 / 4**, or the four small buttons, selects a target type directly.
+The four small buttons select a target type directly.
 **Backspace** goes back. Scroll adjusts the highlighted
 family's power, subject to its server-stated limit.
 
@@ -38,8 +52,8 @@ order. **[ / ]** and Previous/Next navigate additional More pages. Every family
 remains accessible. Quick uses **1–5** for classes and **1–7** for spells/More;
 Orbit uses **Q/W/E/R/T** for classes and **1–7** for spells/More.
 
-**Alt+Space** repeats the last chosen spell and power using the current eligible
-recipient. Burst and Blink still wait for a ground click. Releasing Alt, Escape,
+**Left Shift+Space** repeats the last chosen spell and power using the current eligible
+recipient. Burst and Blink still wait for a ground click. Releasing Left Shift, Escape,
 or focus loss dismisses an unfinished selection without casting. Switching
 versions cancels pending targeting and preserves the shared trial preferences.
 Those practice preferences are stored separately in `magic_wheel_trials.cfg`.
@@ -49,7 +63,7 @@ spell, choosing Heal Burst, then pinning a different Offense family. Compare the
 three versions with the same recipients and powers. Scrolling or changing scope
 alone should never cast; selecting a node should never move the character.
 
-Run `test-magic-wheel.bat` to try the character-centered Alt wheel,
+Run `test-magic-wheel.bat` to try the character-centered Left Shift wheel,
 `test-magic-prepared.bat` for quick-slot casting, or
 `test-magic-aimed.bat` for the explicit-target comparison. All three launch an
 offline practice courtyard with the production spellbook, loadout model,
@@ -65,7 +79,7 @@ the launcher accepts `-Server 127.0.0.1 -Port 2000`.
 
 | Version | Targeted spell behavior |
 | --- | --- |
-| Wheel | Hold Alt, choose a class, then a family and target variant. Uses an eligible selected recipient, otherwise arms a target click. |
+| Wheel | Hold Left Shift, choose a class, then a family and target variant. Uses an eligible selected recipient, otherwise arms a target click. |
 | Prepared | Quick slots cast on an eligible selected recipient. Otherwise arm a target click. |
 | Aimed | Always arms a target click, even with someone selected. |
 
@@ -74,7 +88,7 @@ preview followed by a click. Switching to another spell replaces targeting;
 Escape or right clicking the world cancels. Selecting a recipient retains it
 for subsequent casts. Changing mode never casts by itself.
 
-All versions provide twelve editable slots, independent power per slot,
+All versions provide twelve editable slots with last-cast target and power,
 family browsing, the effect/target comparison grid, and feedback beside the
 cursor. The spellbook closes when a spell is launched, exposing the world.
 
@@ -85,46 +99,45 @@ cursor. The spellbook closes when a spell is launched, exposing the world.
 3. Arm Blink, switch to Heal Target, then cancel with Escape or right click.
 4. Open the spellbook. Select a family, choose its target and power, then
    choose a slot and click **Assign to slot**. Alternatively drag a grid icon.
-5. Right click a casting slot to edit its spell/power or clear it. Put the
-   same spell into two slots at different powers; each keeps its own setting.
+5. Right click a casting slot to edit its spell/power or clear it. Cast that
+   family from the ring at a different power/target and check the icon corners.
 6. Close and reopen the launcher. Practice slots should be remembered.
 
-In Prepared and Aimed modes, Alt+1–0, Alt+minus and Alt+equals cast the twelve slots.
+In every mode, Alt+1–0, Alt+minus and Alt+equals cast the twelve slots.
 Ctrl+S opens the book. The live client's Settings / Controls can rebind them;
 the casting bar tooltips read the actual bindings. Its title bar is draggable.
 
 ## Character wheel
 
-Hold **Alt** to open the wheel around your character. Its first ring is always
+Hold **Left Shift** to open the wheel around your character. Its first ring is always
 **1 Healing · 2 Defense · 3 Offense · 4 Support · 5 Utility**. Click a node or
 press its number to open the families in that class. Choose a family, then
 **1 Self · 2 Target · 3 Allies · 4 Burst**; missing target variants are dimmed.
 Single-variant families such as Blink go straight to their normal casting flow.
 
-For example, select Tavin, then hold Alt and press **1, 1, 2** to cast Heal
-Target. Release Alt afterward. Without a valid selected recipient, the same
+For example, select Tavin, then hold Left Shift and press **1, 1, 2** to cast Heal
+Target. Release Left Shift afterward. Without a valid selected recipient, the same
 sequence arms a target click. **Scroll up to increase power; scroll down to
 decrease it.** This works on every ring, including before selecting a utility
 spell. The center readout shows the current power, and target choices show the
 power they will cast. Selecting a family caps power to its server-stated limit.
-The wheel remembers its own power per character across sessions; spellbook
-and quick-slot power settings remain independent. Scrolling never casts.
+The wheel remembers its own power per character across sessions. Scrolling
+never casts or changes a quickbar slot until a cast is submitted.
 
-- Choose with **1–8** or a left click. Hovering and releasing Alt never cast.
-- **Release Alt** before a final choice to dismiss without casting. After a
-  choice, releasing Alt keeps any pending target selection intact.
+- Choose with **1–8** or a left click. Hovering and releasing Left Shift never cast.
+- **Release Left Shift** before a final choice to dismiss without casting. After a
+  choice, releasing Left Shift keeps any pending target selection intact.
 - **Backspace / right click** goes back one ring; **Escape** closes it.
 - **[ / ]** or Previous/Next changes Offense pages.
-- Click the casting bar's **Wheel** button to use it without holding Alt.
-- Alt+number navigates the wheel in this mode. Quick slots still work by click.
+- Click the casting bar's **Wheel** button to use it without holding Left Shift.
+- Alt closes an open ring so Alt+number can cast from the quickbar.
 
 The wheel follows the character's projected position and shifts inward near
 screen edges so its choices remain reachable. Text fields, settings, and other
 blocking dialogs suppress it. Losing focus closes it and clears the held key.
 Category, family, and target positions do not reshuffle as resources change.
 It owns mouse clicks while open so selecting a node cannot move or attack in
-the world underneath. Existing Alt-click attack is reserved for the wheel in
-this mode; use the normal Attack action, or switch casting modes.
+the world underneath. Alt-click remains available for the existing Attack action.
 
 Run `test-magic-wheel.bat -Live` to open the live client directly in Wheel mode.
 
@@ -169,7 +182,8 @@ regressions without opening a game window. Logs and rendered review captures
 are written under `godot-client/test-artifacts/magic-casting/`.
 The comparison launchers with `-Check` also run `test_magic_wheel_trials.gd`.
 `render_magic_wheel_trials.gd` captures Quick and Orbit for visual inspection.
-The trial checks cover actual Alt input, class hover, whole-sector clicks,
+The trial checks cover Left/Right Shift input, Alt quickbar routing, saved
+last-cast target/power, class hover, whole-sector clicks,
 right-click target cycling and unavailable target options,
 remembered target type and power, repeat casting at a different recipient,
 ground confirmation, cancellation, pins, More access, and power limits.
