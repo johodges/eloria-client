@@ -1,5 +1,6 @@
 extends Control
 
+const ExperienceCurve = preload("res://src/state/experience_curve.gd")
 const LanternGuideScript = preload("res://src/ui/lantern_guide.gd")
 const LanternSceneScript = preload("res://src/world/lantern_scene.gd")
 const BellSceneScript = preload("res://src/world/bell_scene.gd")
@@ -7059,23 +7060,7 @@ func _sync_experience_meter(stats: Dictionary) -> void:
 	experience_skill_label.tooltip_text = experience_tooltip
 
 static func _experience_floor_for_level(level: int) -> int:
-	if level <= 0:
-		return 0
-	var experience: int = 100
-	for index: int in range(1, level + 1):
-		if index <= 10:
-			experience += experience * 40 / 100
-		elif index <= 20:
-			experience += experience * 30 / 100
-		elif index <= 30:
-			experience += experience * 20 / 100
-		elif index <= 40:
-			experience += experience * 14 / 100
-		elif index <= 90:
-			experience += experience * 7 / 100
-		else:
-			experience += experience * 5 / 100
-	return experience
+	return ExperienceCurve.for_level(level)
 
 ## The rail's side stats list, built the way Eternal Lands draws it: one thin
 ## row per skill, a green fill behind the text showing how far through the

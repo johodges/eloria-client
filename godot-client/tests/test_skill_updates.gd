@@ -45,6 +45,12 @@ func _run() -> void:
 			"the full refresh does not duplicate level-up feedback")
 	_expect(_level(rows, "Attack") == "6" and _level(rows, "Defense") == "10",
 		"defense advancing leaves the attack HUD level alone")
+	var midpoint := _snapshot(40, 10)
+	midpoint.encode_u32(130, 859115) # Halfway between new levels 40 and 41.
+	midpoint.encode_u32(134, 900302)
+	state.call("_on_packet", P.ServerMessage.HERE_YOUR_STATS, midpoint)
+	_expect(is_equal_approx((rows.get_node("SkillRowAttack") as ProgressBar).value, 0.5),
+		"HUD progress uses the new floor, not the old level-40 threshold")
 	state.free()
 	hud.free()
 	print("skill updates: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
