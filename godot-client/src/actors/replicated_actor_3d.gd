@@ -837,8 +837,8 @@ static func is_summon(dto: Dictionary) -> bool:
 ## name renders the colour byte as mojibake and the tag as part of the player's
 ## name. The decoder splits them; this draws the tag as a tag.
 ##
-## The name's colour is the server's, and it is how a field is read without
-## selecting anything: a demigod's name is green, an invasion creature's red, a
+## Natural creatures use their yellow map-dot colour. Other names keep the
+## server's colour: a demigod's name is green, an invasion creature's red, a
 ## summon's light blue. A Label3D tints as one piece, so a guild tag takes the
 ## name's colour rather than its own.
 func _add_nameplate(dto: Dictionary) -> void:
@@ -854,7 +854,10 @@ func _add_nameplate(dto: Dictionary) -> void:
 	label.pixel_size = OVERHEAD_PIXEL
 	label.font_size = NAMEPLATE_FONT_SIZE
 	label.outline_size = OVERHEAD_OUTLINE_SIZE
-	label.modulate = EloriaProtocol.el_text_colour(int(dto.get("name_colour", 0)))
+	var name_colour: int = int(dto.get("name_colour", 0))
+	label.modulate = (CREATURE_MAP_DOT_COLOUR
+		if int(dto.get("kind", 0)) == CREATURE_ACTOR_KIND and name_colour == 0
+		else EloriaProtocol.el_text_colour(name_colour))
 	label.layers = GAMEPLAY_ONLY_VISUAL_LAYER
 	add_child(label)
 	_nameplate = label
