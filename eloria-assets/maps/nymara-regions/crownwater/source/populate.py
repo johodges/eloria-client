@@ -278,7 +278,8 @@ def populate_harbour(build, seed: int = 0) -> None:
 
     lx, lz = REG.ANCHORS["harbour_lamp_walk"]
     ly = float(t.height_at(lx, lz))
-    for k in range(8):
+    # Stop before the last station, which extends beyond the quay into water.
+    for k in range(7):
         offset = -18.0 + k * 5.2
         _add(build, f"Prop_Lamp_Harbour_{k}", "LampPost",
              SW.lamp_post(height=3.4), (lx + offset, ly, lz - 2.4), 0.0,
@@ -295,7 +296,8 @@ def populate_harbour(build, seed: int = 0) -> None:
              (bx, REG.SEA_LEVEL - 0.18, bz), angle + math.pi * 0.5,
              kind="prop")
 
-    for k in range(4):
+    # The fourth landward banner station is beyond the harbour island.
+    for k in range(3):
         _add(build, f"Prop_Banner_Harbour_{k}", "BannerPole",
              CA.banner_pole(6.8, seed=seed + k),
              # landward of the quay, not on its seaward edge: on the edge the

@@ -7146,7 +7146,7 @@
     "bufferViews": 2149,
     "uniqueTriangles": 639967,
     "uniqueVertices": 514912,
-    "glbBytes": 36445172,
+    "glbBytes": 36445164,
     "instancedTriangles": 3084504,
     "embeddedTextureBytes": 12797688,
     "textureMemoryBytesUncompressed": 114229248,
@@ -7195,7 +7195,7 @@
       "march harbour-quay: 0 road pieces, 9 of westhaven's growth"
     ],
     "lod2": {
-      "glbBytes": 23941300,
+      "glbBytes": 23941292,
       "nodes": 6278,
       "uniqueTriangles": 588435,
       "instancedTriangles": 2093030,

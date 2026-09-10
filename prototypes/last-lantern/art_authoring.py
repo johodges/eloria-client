@@ -309,6 +309,46 @@ def shoreline(g,m,land,ground):
         g.mesh("cliff_courses",points,faces,m["stone"],colors)
 
 
+def gate_placements(p):
+    """Fit the complete gate footing inside the land at each crossing.
+
+    The reusable gate is 8.1 m wide including its stone feet. The upper
+    connectors are narrower, and the return connector is off-centre. These
+    are presentation transforms only; the server still owns the gate bounds.
+    """
+    def surface(x, y):
+        # Same shared corners and diagonal as Walk_Terrain below.
+        xx, yy = math.floor(x + .5) - .5, math.floor(y + .5) - .5
+        u, v = x - xx, y - yy
+        def corner(a, b):
+            return sum(p.ground(a + dx, b + dy)
+                       for dx in (-.5, .5) for dy in (-.5, .5)) / 4
+        a, b, c, d = (corner(xx, yy), corner(xx + 1, yy),
+                      corner(xx + 1, yy + 1), corner(xx, yy + 1))
+        return a * (1-u) + b * (u-v) + c * v if u >= v else a * (1-v) + c * u + d * (v-u)
+
+    result = {}
+    for gate in p.GATES:
+        x, y = gate["at"]
+        left = right = x
+        if not p.is_land(x, y):
+            raise ValueError(f"Gate {gate['id']} has no land at its crossing")
+        while left > 0 and p.is_land(left - 1, y):
+            left -= 1
+        while right < p.SIZE - 1 and p.is_land(right + 1, y):
+            right += 1
+        # Clip the original footprint to the shore, leaving 10 cm of bank.
+        lo, hi = max(x - 4.05, left - .4), min(x + 4.05, right + .4)
+        scale = (hi - lo) / 8.1
+        centre = (lo + hi) / 2
+        samples = [surface(centre + side * offset * scale, y + dz)
+                   for side in (-1, 1) for offset in (3.45, 4.05)
+                   for dz in (-.3, .3)]
+        result[gate["id"]] = {"position": [round(centre, 6), round(min(samples) - .02, 6), -y],
+                               "scale": [round(scale, 6), 1, 1]}
+    return result
+
+
 def author_world(g,p):
     rng=random.Random(90261)
     m=palette(g)
@@ -428,6 +468,7 @@ def author_world(g,p):
         torus(g,"mooring_rope",(x,p.ground(x,y)+.3,-y),.22,.045,m["rope"])
     g.group=""
     return grid,blockers,{"artVersion":"0.2.0","lanterns":lanterns,"solidDressing":solids,
+                          "gatePlacements":gate_placements(p),
                           "grassClumps":grass_count,"terrain":"continuous vertex-blended textured surface"}
 
 

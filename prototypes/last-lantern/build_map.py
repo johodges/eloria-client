@@ -285,7 +285,7 @@ def build():
     from types import SimpleNamespace
     from art_authoring import author_world, runtime_assets
     g = GLB()
-    spec = SimpleNamespace(SIZE=SIZE, ROUTE=ROUTE, SHORTCUT=SHORTCUT, TARGETS=TARGETS,
+    spec = SimpleNamespace(SIZE=SIZE, ROUTE=ROUTE, SHORTCUT=SHORTCUT, TARGETS=TARGETS, GATES=GATES,
                            ground=ground, is_land=is_land, road_distance=road_distance)
     grid, blockers, art = author_world(g, spec)
     # Targets use ground-level approach tiles, never the scenery's center.

@@ -519,6 +519,44 @@
       "radius": 0.893702395189114
     }
   ],
+  "gatePlacements": {
+    "causeway_gate": {
+      "position": [
+        57.0,
+        0.38,
+        -62
+      ],
+      "scale": [
+        1.0,
+        1,
+        1
+      ]
+    },
+    "beacon_gate": {
+      "position": [
+        85.0,
+        1.6,
+        -82
+      ],
+      "scale": [
+        0.839506,
+        1,
+        1
+      ]
+    },
+    "return_gate": {
+      "position": [
+        108.5,
+        1.9,
+        -85
+      ],
+      "scale": [
+        0.716049,
+        1,
+        1
+      ]
+    }
+  },
   "grassClumps": 199,
   "terrain": "continuous vertex-blended textured surface",
   "provenance": {

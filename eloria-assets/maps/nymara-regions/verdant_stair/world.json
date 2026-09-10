@@ -6774,7 +6774,7 @@
     "bufferViews": 1745,
     "uniqueTriangles": 570799,
     "uniqueVertices": 405089,
-    "glbBytes": 30176592,
+    "glbBytes": 30176596,
     "instancedTriangles": 2638945,
     "embeddedTextureBytes": 9709024,
     "placements": 9686,
@@ -6827,7 +6827,7 @@
     ],
     "trianglesPerSquareMetre": 7.98,
     "lod2": {
-      "glbBytes": 18390904,
+      "glbBytes": 18390908,
       "nodes": 3440,
       "uniqueTriangles": 507081,
       "instancedTriangles": 1065475,

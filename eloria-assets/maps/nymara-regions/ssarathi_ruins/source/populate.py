@@ -534,7 +534,8 @@ def populate_vegetation(build, seed: int = 0, lod: str | None = None) -> None:
                            else "ssarathi_strangler")
                 key = tree_key(species, tier, int(rng.uniform(0, 4)))
                 kind = "tree"
-            _add(build, f"Tree_{planted}", key, build.meshes[key], (x, y, z),
+            _add(build, f"Tree_{planted}", key, build.meshes[key],
+                 (x, float(t.mesh_height_at(x, z)), z),
                  float(rng.uniform(0.0, math.tau)),
                  scale=float(rng.uniform(0.86, 1.18)), kind=kind, collides=True)
             planted += 1

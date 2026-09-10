@@ -972,7 +972,9 @@ def populate_settlements(build: RegionBuild, seed: int) -> None:
         px, pz = REG.ANCHORS[anchor]
         _place(build, f"Signpost_{_camel(anchor)}", "Signpost",
                px + 4.5, pz + 4.5,
-               y=REG.terrace_level(REG._ANCHOR_TERRACE[anchor]), kind="prop")
+               # The temple forecourt is recessed below its terrace datum.
+               y=None if anchor == "temple_court" else REG.terrace_level(REG._ANCHOR_TERRACE[anchor]),
+               kind="prop")
 
 
 

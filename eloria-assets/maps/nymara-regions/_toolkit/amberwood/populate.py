@@ -1046,7 +1046,8 @@ def populate_landmarks(build: RegionBuild, seed: int = 20260827) -> None:
                               float(rng.uniform(0, math.pi)), 1.0, collides=True,
                               kind="prop"))
         build.place(Placement(f"Prop_BurntBrazier_{i}", "Brazier",
-                              (x + 3.0 * L, y, z + 1.5 * L), 0.0, 1.2, kind="prop"))
+                              _ground(t, x + 3.0 * L, z + 1.5 * L, 0.0),
+                              0.0, 1.2, kind="prop"))
     add_landmark("ash-flats", "The Ashen Reach", "Prop_BurntCamp_1", "transition",
                  _ground(t, *ANCHORS["ash_flats"], 0.0))
 

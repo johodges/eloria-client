@@ -509,7 +509,6 @@
       "Prop_Banner_Harbour_0",
       "Prop_Banner_Harbour_1",
       "Prop_Banner_Harbour_2",
-      "Prop_Banner_Harbour_3",
       "Prop_CrownFountain",
       "Prop_CrownStatue_0",
       "Prop_CrownStatue_1",
@@ -527,7 +526,6 @@
       "Prop_Lamp_Harbour_4",
       "Prop_Lamp_Harbour_5",
       "Prop_Lamp_Harbour_6",
-      "Prop_Lamp_Harbour_7",
       "Prop_Lamp_harbour_isle_0",
       "Prop_Lamp_harbour_isle_1",
       "Prop_Lamp_harbour_isle_2",
@@ -3592,7 +3590,7 @@
     }
   ],
   "performance": {
-    "nodes": 1973,
+    "nodes": 1966,
     "meshes": 298,
     "materials": 37,
     "images": 89,
@@ -3601,11 +3599,11 @@
     "bufferViews": 1286,
     "uniqueTriangles": 777008,
     "uniqueVertices": 476269,
-    "glbBytes": 33471372,
-    "instancedTriangles": 931510,
+    "glbBytes": 33470716,
+    "instancedTriangles": 931090,
     "embeddedTextureBytes": 28549576,
     "textureMemoryBytesUncompressed": 250478592,
-    "placements": 696,
+    "placements": 694,
     "collision": {
       "width": 1152,
       "height": 1152,
@@ -3638,10 +3636,10 @@
       "walk corridors: 0 encroaching dressing placements removed"
     ],
     "lod2": {
-      "glbBytes": 20663248,
-      "nodes": 1778,
+      "glbBytes": 20662596,
+      "nodes": 1771,
       "uniqueTriangles": 624004,
-      "instancedTriangles": 767978,
+      "instancedTriangles": 767558,
       "sizeReductionPercent": 38.3,
       "triangleReductionPercent": 17.6
     }

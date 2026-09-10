@@ -759,6 +759,7 @@ def populate_city(build, seed: int = 0) -> None:
             x = p[0] + side * REG.ROAD_WIDTH[name] * REG.SCALE * 0.42
             z = p[1] + side * 0.6
             _place(build, f"Prop_Lamp_{name}_{i:02d}", "Lamp_Post", x, z,
+                   y=float(build.terrain.mesh_height_at(x, z)),
                    collides=False, kind="prop")
     for name in ("lower_square", "mid_street", "crown_terrace"):
         x, z = REG.ANCHORS[name]

@@ -174,7 +174,9 @@ func _build_world() -> void:
 	add_child(marker)
 	for gate: Dictionary in q.layout.gates:
 		var root := Art.instantiate("gate")
-		root.position = tile_position(_tile(gate.at))
+		var placement: Dictionary = art.gatePlacements[str(gate.id)]
+		root.position = Vector3(placement.position[0], placement.position[1], placement.position[2])
+		root.scale = Vector3(placement.scale[0], placement.scale[1], placement.scale[2])
 		var leaf := Node3D.new()
 		root.add_child(leaf)
 		for part: Node in root.get_children():

@@ -3703,7 +3703,7 @@
     "bufferViews": 1778,
     "uniqueTriangles": 521884,
     "uniqueVertices": 397267,
-    "glbBytes": 29861016,
+    "glbBytes": 29861000,
     "instancedTriangles": 994606,
     "embeddedTextureBytes": 30504469,
     "textureMemoryBytesUncompressed": 268566528,
@@ -3767,7 +3767,7 @@
       "march amber-berth: 0 road pieces, 0 of amberwood's growth"
     ],
     "lod2": {
-      "glbBytes": 17570124,
+      "glbBytes": 17570112,
       "nodes": 2651,
       "uniqueTriangles": 435690,
       "instancedTriangles": 812822,

@@ -434,6 +434,23 @@ class Terrain:
         dz = self.height_at(x, np.asarray(z) + eps) - self.height_at(x, np.asarray(z) - eps)
         return np.hypot(dx, dz) / (2.0 * eps)
 
+    def mesh_height_at(self, x, z):
+        """Height on the triangles emitted by mesh.heightfield.
+
+        Bilinear height_at is useful for terrain shaping, but on a saddle it
+        can put a prop above the diagonal of the actual rendered floor.
+        """
+        fx = np.clip((np.asarray(x, dtype=np.float64) - self.x0) / self.cell,
+                     0, self.cols - 1.001)
+        fz = np.clip((np.asarray(z, dtype=np.float64) - self.z0) / self.cell,
+                     0, self.rows - 1.001)
+        ix, iz = np.asarray(fx, dtype=int), np.asarray(fz, dtype=int)
+        u, v = fx - ix, fz - iz
+        a, b = self.height[iz, ix], self.height[iz, ix + 1]
+        c, d = self.height[iz + 1, ix], self.height[iz + 1, ix + 1]
+        return np.where(u >= v, a * (1-u) + b * (u-v) + d * v,
+                        a * (1-v) + c * (v-u) + d * u)
+
     def surface_at(self, x, z) -> np.ndarray:
         cx = np.clip(np.round((np.asarray(x) - self.x0) / self.cell).astype(int),
                      0, self.cols - 1)

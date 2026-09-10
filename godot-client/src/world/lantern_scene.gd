@@ -43,7 +43,10 @@ func configure(imported: Node3D, _manifest: WorldManifest) -> void:
 	for gate: Dictionary in layout.gates:
 		var root := GlbSceneCache.instantiate(ProjectSettings.globalize_path(ROOT+"models/gate.glb"))
 		if root == null: continue
-		root.position = _tile(gate.at)
+		var placement: Dictionary = art.gatePlacements[str(gate.id)]
+		root.name = str(gate.id)
+		root.position = Vector3(placement.position[0], placement.position[1], placement.position[2])
+		root.scale = Vector3(placement.scale[0], placement.scale[1], placement.scale[2])
 		add_child(root)
 		var parts: Array[Node] = []
 		for part: Node in root.find_children("GateLeaf*","MeshInstance3D",true,false): parts.append(part)
