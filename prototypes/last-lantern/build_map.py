@@ -58,10 +58,10 @@ TARGETS = [
     target("boar", "Storm-frightened boar", "combat", (68, 54), (66, 53), objectId=7020),
     target("bag", "Supplies on the path", "loot", (68, 54), (66, 53), objectId=7021),
     target("rest", "Catch your breath", "rest", (83, 70), (82, 70)),
-    target("upper_cache", "Lantern cache", "storage", (91, 95), (90, 94), objectId=7030),
+    target("upper_cache", "Lantern cache", "storage", (91, 95), (89, 94), objectId=7030),
     target("housing", "The dark beacon", "beacon", (97, 98), (95, 97), objectId=7031),
     target("dock", "Caldus's galley counter", "merchant", (103, 26), (101, 26), objectId=7040),
-    target("dock_cache", "Dock cache", "storage", (105, 29), (104, 28), objectId=7042),
+    target("dock_cache", "Dock cache", "storage", (105, 29), (103, 28), objectId=7042),
     target("ferry", "The boat you saved", "departure", (106, 21), (104, 22), objectId=7041),
 ]
 

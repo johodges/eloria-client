@@ -84,7 +84,8 @@ def test_art_preserves_the_reviewed_route_and_quest():
     for name, digest in {
         "collision.bin": "5e4abbf804e7c8e405b66350c700994bb286a6d4a042149d07dd712e952cafc8",
         "quest.json": "b1777c7d72d5be759a33b93000f890694a235a01933caf109d3411f3a805fb2a",
-        "layout.json": "69432eb5091dacd4346a34adadc4861a714321fdf0a95be9186e19ad8d0b15ee",
+        # Storage approach markers stand outside the chests' solid footprints.
+        "layout.json": "8521660d461049d1b3e27a3fcfa5bd82d01f007f85287dd19703f62ec68c6a1a",
     }.items():
         assert hashlib.sha256((ROOT/"package"/name).read_bytes()).hexdigest() == digest
 
