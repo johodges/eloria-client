@@ -323,6 +323,8 @@ func _run() -> void:
 	var app_state_inventory: Node = root.get_node("AppState")
 	var chat_output: RichTextLabel = main.get_node("GameView/ChatPanel/ChatOutput") as RichTextLabel
 	var chat_input: LineEdit = main.get_node("GameView/ChatInput") as LineEdit
+	_expect(not chat_input.visible and not chat_input.has_focus(),
+		"entering the world starts with the chat entry closed")
 	app_state_inventory.call("_on_packet", 0,
 		PackedByteArray([1, 128, 91, 80, 77, 32, 102, 114, 111, 109, 32, 65, 108,
 			105, 99, 101, 58, 32, 104, 105, 93, 0]))
@@ -341,6 +343,14 @@ func _run() -> void:
 	_expect(not chat_input.visible, "Esc behavior can dismiss the active chat entry")
 	main.call("_show_chat_input")
 	_expect(chat_input.visible and chat_input.has_focus(), "T behavior restores chat entry focus")
+	main.call("_on_chat_submitted", "")
+	_expect(not chat_input.visible and not chat_input.has_focus(),
+		"submitting an empty line closes the chat entry")
+	main.call("_show_chat_input")
+	chat_input.release_focus()
+	_expect(not chat_input.visible,
+		"leaving chat focus hides the inactive entry")
+	main.call("_show_chat_input")
 	main.call("_reveal_chat_messages")
 	main.set("_last_chat_activity_msec", Time.get_ticks_msec() - 10000)
 	main.call("_update_chat_fade")
@@ -2776,12 +2786,15 @@ func _run() -> void:
 	# The console's own commands, routed through the real chat submit path.
 	var chat_input_line: LineEdit = main.get_node("GameView/ChatInput") as LineEdit
 	var chat_lines_before: int = (app_state_inventory.get("chat_lines") as Array).size()
+	main.call("_show_chat_input")
 	main.call("_on_chat_submitted", "#help")
 	await process_frame
 	_expect((app_state_inventory.get("chat_lines") as Array).size()
 			> chat_lines_before
 		and chat_input_line.text.is_empty(),
 		"a command the client answers writes its reply locally and clears the box")
+	_expect(not chat_input_line.visible and not chat_input_line.has_focus(),
+		"submitting a local command closes chat and releases keyboard input")
 	main.call("_on_chat_submitted", "#markpos 770 481 Reed bank")
 	await process_frame
 	var console: ConsoleCommands = main.get("console_commands") as ConsoleCommands

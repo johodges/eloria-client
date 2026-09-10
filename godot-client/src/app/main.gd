@@ -1705,6 +1705,7 @@ func _show_chat_input() -> void:
 func _hide_chat_input() -> void:
 	chat_input.release_focus()
 	chat_input.hide()
+	_sync_hud_button_states(true)
 
 ## Reacts to a map panel opening or closing. _update_map_viewports() owns the
 ## redraw schedule; this only ever idles a hidden viewport or asks a freshly
@@ -2575,6 +2576,7 @@ func _on_login_succeeded() -> void:
 				"Reconnected. Rebuilding world state from the server.", 3)
 	login_panel.hide()
 	creation_panel.hide()
+	_hide_chat_input()
 	game_view.show()
 	_sync_connection_banner()
 	# Restore the saved minimap visibility. _clear_world_presentation() hides
@@ -9247,7 +9249,7 @@ func _complete_console_command() -> void:
 func _on_chat_submitted(text: String) -> void:
 	var message: String = text.strip_edges()
 	if message.is_empty():
-		chat_input.release_focus()
+		_hide_chat_input()
 		return
 	_console_history.append(message)
 	if _console_history.size() > CONSOLE_HISTORY_LIMIT:
@@ -9265,6 +9267,7 @@ func _on_chat_submitted(text: String) -> void:
 			_save_hud_settings()
 			_sync_map_markers()
 		chat_input.clear()
+		_hide_chat_input()
 		return
 	# `#emote <name>` is the server's command, but it has a packet of its own,
 	# so the client sends that rather than the text. The server answers the
@@ -9275,6 +9278,7 @@ func _on_chat_submitted(text: String) -> void:
 			var emote_error: Error = Network.do_emote(wanted)
 			if emote_error == OK:
 				chat_input.clear()
+				_hide_chat_input()
 			else:
 				push_warning("DO_EMOTE failed: " + error_string(emote_error))
 			return
@@ -9285,6 +9289,7 @@ func _on_chat_submitted(text: String) -> void:
 		if is_private else Network.send_chat(message))
 	if error == OK:
 		chat_input.clear()
+		_hide_chat_input()
 	else:
 		push_warning(("SEND_PM" if is_private else "RAW_TEXT")
 			+ " failed: " + error_string(error))
