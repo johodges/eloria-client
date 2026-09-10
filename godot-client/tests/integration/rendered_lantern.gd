@@ -72,6 +72,9 @@ func select_item(list: ItemList, text: String) -> int:
 func withdraw(item: String, amount: int) -> void:
 	var found := false
 	for i in range(main.storage_categories.item_count):
+		# Follow the category named by the guide instead of searching every tab.
+		var category := "Tools" if item == "Hatchet" else "Misc"
+		if main.storage_categories.get_item_text(i) != category: continue
 		main.storage_categories.select(i)
 		main._on_storage_category_selected(i)
 		await create_timer(.3).timeout
@@ -144,15 +147,14 @@ func run() -> void:
 	await stage("quartz")
 	await capture("04-harvesting")
 	await use_target("quartz")
-	await stage("store_reed")
+	await stage("store_pickaxe")
 	await use_target("lower_cache")
 	await wait_until(func():return main.storage_inventory.item_count>0,"storage window")
 	await capture("05-storage")
-	for item in ["Reed","Quartz"]:
-		await wait_until(func():return select_item(main.storage_inventory,item)>=0,"select deposit "+item)
-		main.storage_quantity.value=3 if item=="Reed" else 1
-		main._on_storage_deposit_pressed()
-		await create_timer(.6).timeout
+	await wait_until(func():return select_item(main.storage_inventory,"Pickaxe")>=0,"select Pickaxe deposit")
+	main.storage_quantity.value=1
+	main._on_storage_deposit_pressed()
+	await create_timer(.6).timeout
 	await stage("plank")
 	for item in ["Wood Plank","Cloth Roll","Hatchet"]:
 		await withdraw(item,1)
@@ -212,14 +214,10 @@ func run() -> void:
 	main._adjust_pickpoint("attribute","magic_defense",1)
 	main._adjust_pickpoint("attribute","magic_defense",1)
 	main._confirm_pickpoints()
-	await stage("take_reed")
-	main.stats_panel.hide()
-	await use_target("upper_cache")
-	await withdraw("Reed",3)
-	await stage("take_quartz")
-	await withdraw("Quartz",1)
 	await stage("repair")
-	main._on_storage_close_pressed()
+	main.stats_panel.hide()
+	if "Reed" not in state.inventory_names.values() or "Quartz" not in state.inventory_names.values():
+		failures+=1;push_error("Repair materials did not stay in the pack")
 	await use_target("housing")
 	await stage("light")
 	await use_target("housing")
