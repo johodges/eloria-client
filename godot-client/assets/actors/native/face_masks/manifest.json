@@ -224,7 +224,7 @@
     "maskSHA256": "ede1f2f06973b3ebfc173e59eaebbc960dab124d496e8a3cb493fa02555b94cf"
   },
   "ssarathi_female": {
-    "modelSHA256": "296e97507321a22b64f93957c7b4c413ed2b1c0edd9e563ce267e0c45e50ecd9",
+    "modelSHA256": "d6924edbd26ee217631223e45bcaabc0fb332eba5853b7f1c5dc6cea8742a12d",
     "sourceMaterial": 1,
     "size": [
       2048,
@@ -238,7 +238,7 @@
     "maskSHA256": "012c7e3872bdeef67c2ca927371fadd54329f50b4b48e4ebae628ea7c7320b68"
   },
   "ssarathi_male": {
-    "modelSHA256": "3df907b2e21986c87fa49dc2fa4dc608d2f01722ed911a566314b41ba0d5320e",
+    "modelSHA256": "33e6b660b70c25ef73845ac852d0bbb2d7dbf285f99afc520156c39679eb95c3",
     "sourceMaterial": 1,
     "size": [
       2048,

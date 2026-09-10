@@ -584,8 +584,8 @@
       "pipeline": "eloria-assets/tools/build_high_resolution_race_heads.py"
     },
     "ssarathi_female": {
-      "vertices": 36221,
-      "triangles": 48062,
+      "vertices": 36945,
+      "triangles": 47808,
       "joints": 77,
       "feature": "scaled",
       "wardrobe": "skinned",
@@ -599,7 +599,7 @@
       "path": "godot-client/assets/actors/native/races/ssarathi_female.glb",
       "source": "ssarathi_female_tpose.glb",
       "sourceSHA256": "c87560e8fe71372682314da2c4ec960e489a7fa50fccb90cb92f2a9459e4c3d6",
-      "sha256": "296e97507321a22b64f93957c7b4c413ed2b1c0edd9e563ce267e0c45e50ecd9",
+      "sha256": "d6924edbd26ee217631223e45bcaabc0fb332eba5853b7f1c5dc6cea8742a12d",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -612,7 +612,7 @@
         "wardrobe_head_cap"
       ],
       "bodyTemplate": "luminous_female",
-      "retainedTailTriangles": 7158,
+      "retainedTailTriangles": 6904,
       "neckAdaptorTriangles": 1133,
       "highResolutionHead": {
         "original": "ssarathi_female_tpose.glb",
@@ -647,11 +647,18 @@
           "textureGeometrySHA256": "da1a6148645cdaca87aee49e5b9d1617ae3ae2308e5ab3242e5f21537377a43e"
         }
       },
-      "pipeline": "eloria-assets/tools/build_high_resolution_race_heads.py"
+      "pipeline": "eloria-assets/tools/build_high_resolution_race_heads.py",
+      "waistSeamRepair": {
+        "version": 1,
+        "hemHeightM": 1.083,
+        "waistbandTriangles": 403,
+        "texturesUnchanged": true,
+        "geometryUnchanged": true
+      }
     },
     "ssarathi_male": {
-      "vertices": 33813,
-      "triangles": 51040,
+      "vertices": 35613,
+      "triangles": 50642,
       "joints": 77,
       "feature": "scaled",
       "wardrobe": "skinned",
@@ -665,7 +672,7 @@
       "path": "godot-client/assets/actors/native/races/ssarathi_male.glb",
       "source": "ssarathi_male_tpose.glb",
       "sourceSHA256": "0aaf3f18262bfc71b3e60044afbb9770b7d1f5551854ac62c07ccd627bceaf75",
-      "sha256": "3df907b2e21986c87fa49dc2fa4dc608d2f01722ed911a566314b41ba0d5320e",
+      "sha256": "33e6b660b70c25ef73845ac852d0bbb2d7dbf285f99afc520156c39679eb95c3",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -678,7 +685,7 @@
         "wardrobe_head_cap"
       ],
       "bodyTemplate": "luminous_male",
-      "retainedTailTriangles": 3610,
+      "retainedTailTriangles": 3212,
       "neckAdaptorTriangles": 1153,
       "highResolutionHead": {
         "original": "ssarathi_male_tpose.glb",
@@ -713,7 +720,14 @@
           "textureGeometrySHA256": "a51db6385365a5d1a1fa4e4d76f933e035543527b52edd365c86fa4a6efcfb8a"
         }
       },
-      "pipeline": "eloria-assets/tools/build_high_resolution_race_heads.py"
+      "pipeline": "eloria-assets/tools/build_high_resolution_race_heads.py",
+      "waistSeamRepair": {
+        "version": 1,
+        "hemHeightM": 1.068,
+        "waistbandTriangles": 907,
+        "texturesUnchanged": true,
+        "geometryUnchanged": true
+      }
     },
     "stoneborn_female": {
       "vertices": 31466,
