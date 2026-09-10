@@ -31,6 +31,13 @@ func capture(filename: String) -> void:
 	DirAccess.make_dir_recursive_absolute(captures)
 	root.get_texture().get_image().save_png(captures.path_join(filename))
 
+func check_hud_dock(main: Control) -> void:
+	var bar = main.casting_bar
+	var shown: Control = bar.panel if bar.panel.visible else bar.launcher
+	check(bar._dock_bounds().encloses(shown.get_rect()), "the spell bar stays in the space below the logo and above skills")
+	for path in ["EloriaLogoFrame", "ItemQuickbar", "ResourceHud", "RailMeters", "ClockFrame", "CompassFrame", "ChatInput"]:
+		check(not shown.get_global_rect().intersects(main.get_node("GameView/" + path).get_global_rect()), "the attached spell bar leaves " + path + " clear")
+
 func run() -> void:
 	root.size = Vector2i(1280, 720)
 	var original := FileAccess.get_file_as_string(SETTINGS) if FileAccess.file_exists(SETTINGS) else ""
@@ -48,12 +55,11 @@ func run() -> void:
 	var bottom: Control = main.get_node("GameView/Quickbar")
 	check(bar.docked and bar.panel.visible and not bar.launcher.visible, "the fresh HUD shows the attached spell bar")
 	check(bar.buttons.size() == 12, "all twelve saved shortcuts are present")
-	check(absf(bar.panel.get_global_rect().end.x - rail.global_position.x) < 1, "the dock joins the HUD rail beside the item slots")
-	for path in ["ItemQuickbar", "ResourceHud", "RailMeters", "ClockFrame", "CompassFrame", "ChatInput"]:
-		check(not bar.panel.get_global_rect().intersects(main.get_node("GameView/" + path).get_global_rect()), "the attached spell bar leaves " + path + " clear")
-	check(bar.panel.get_global_rect().end.y < bottom.global_position.y, "the attached bar clears the bottom HUD")
+	check(rail.get_global_rect().encloses(bar.panel.get_global_rect()), "the dock sits inside the HUD rail beside the item slots")
+	check_hud_dock(main)
 	for button: Button in bar.buttons:
-		check(bar._scroll.get_global_rect().encloses(button.get_global_rect()), "every spell is visible at 1280 by 720")
+		check(bar._scroll.get_global_rect().encloses(button.get_global_rect()), "all twelve docked shortcuts are visible at 1280 by 720")
+	check(bar.panel.get_global_rect().end.y < bottom.global_position.y, "the attached bar clears the bottom HUD")
 	main.spell_loadout.assign_slot(0, 1, 10)
 	var app := root.get_node("AppState")
 	app.actors[42] = {"name": "Mira", "kind": 1, "alive": true, "health": 40}
@@ -89,6 +95,7 @@ func run() -> void:
 	mouse(motion.position, false)
 	await settle()
 	check(not bar.docked and bar.panel.position.x < items.position.x - 150, "dragging the grip detaches and moves the bar")
+	check(bar.buttons[0].size.x >= 36, "detaching restores the larger floating spell icons")
 	var detached: Vector2 = bar.panel.position
 	var saved := ConfigFile.new()
 	saved.load(SETTINGS)
@@ -105,7 +112,8 @@ func run() -> void:
 	await settle()
 	items = main.get_node("GameView/ItemQuickbar")
 	rail = main.get_node("GameView/RightRail")
-	check(bar.docked and absf(bar.panel.get_global_rect().end.x - rail.global_position.x) < 1, "Attach to HUD returns the bar beside item slots")
+	check(bar.docked and rail.get_global_rect().encloses(bar.panel.get_global_rect()), "Attach to HUD returns the bar inside the rail beside item slots")
+	check_hud_dock(main)
 	bar.dock_menu.get_popup().id_pressed.emit(2)
 	await settle()
 	check(bar.settings_popup.visible, "the compact menu opens ring and casting settings")
@@ -115,25 +123,35 @@ func run() -> void:
 	await settle()
 	check(not bar.settings_popup.visible and bar.panel.visible, "Done dismisses settings without hiding the bar")
 	# Resize the actual HUD canvas, then test a high UI scale as well.
-	for dimensions in [Vector2i(960, 600), Vector2i(1600, 900)]:
+	for dimensions in [Vector2i(960, 600), Vector2i(2559, 1531), Vector2i(1600, 900)]:
 		root.size = dimensions
 		await settle()
 		check(Rect2(Vector2.ZERO, main.size).encloses(bar.panel.get_rect()), "the attached bar fits after resizing to " + str(dimensions))
-		check(absf(bar.panel.get_global_rect().end.x - rail.global_position.x) < 1, "the resized dock remains next to items")
+		check(rail.get_global_rect().encloses(bar.panel.get_global_rect()), "the resized dock remains inside the rail")
+		check_hud_dock(main)
 	main.call("_on_ui_scale_changed", 1.5)
 	await settle()
 	check(Rect2(Vector2.ZERO, main.size).encloses(bar.panel.get_rect()), "the bar remains accessible at 150 percent HUD scale")
+	check_hud_dock(main)
+	bar._scroll.ensure_control_visible(bar.buttons[-1])
+	await settle()
+	check(bar._scroll.get_global_rect().encloses(bar.buttons[-1].get_global_rect()), "the last slot remains reachable when the dock needs scrolling")
+	bar._scroll.scroll_vertical = 0
+	await capture("docked-scaled.png")
 	bar.set_expanded(false)
 	await settle()
+	check_hud_dock(main)
 	main.free()
 	await settle()
 	main = scene()
 	await settle()
 	bar = main.casting_bar
 	check(bar.docked and not bar.panel.visible and bar.launcher.visible, "attachment and explicit hiding both survive a reload")
+	check_hud_dock(main)
 	bar.launcher.pressed.emit()
 	await settle()
 	check(bar.panel.visible and not bar.launcher.visible, "the HUD launcher reopens the saved dock")
+	check_hud_dock(main)
 	main.free()
 	await settle()
 	var restore := FileAccess.open(SETTINGS, FileAccess.WRITE)

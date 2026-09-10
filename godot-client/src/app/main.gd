@@ -963,6 +963,9 @@ func _ready() -> void:
 	casting_bar.loadout = spell_loadout
 	casting_bar.dock_anchor = $GameView/ItemQuickbar
 	casting_bar.dock_rail = right_rail
+	casting_bar.dock_top = $GameView/EloriaLogoFrame
+	casting_bar.dock_bottom = $GameView/ResourceHud
+	casting_bar.dock_footer = $GameView/RailMeters
 	casting_bar.bottom_hud = chat_input
 	casting_bar.reserved_right_width = 96.0
 	casting_bar.z_index = 7

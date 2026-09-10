@@ -21,6 +21,9 @@ var reserved_right_width := 8.0
 ## Both controls share the HUD canvas, including its user-selected scale.
 var dock_anchor: Control
 var dock_rail: Control
+var dock_top: Control
+var dock_bottom: Control
+var dock_footer: Control
 var bottom_hud: Control
 var docked := true
 var buttons: Array[Button] = []
@@ -36,7 +39,8 @@ var _dragging := false
 var _drag_moved := false
 var _grab_mouse := Vector2.ZERO
 var _grab_panel := Vector2.ZERO
-var _last_available := -1.0
+var _last_layout_size := Vector2(-1, -1)
+var _last_compact := false
 var _selected_actor := -2
 
 func _ready() -> void:
@@ -248,6 +252,7 @@ func _local_position(control: Control) -> Vector2:
 	return get_global_transform().affine_inverse() * control.global_position
 
 func _dock_origin() -> Vector2:
+	if _has_hud_dock(): return _dock_bounds().position
 	if is_instance_valid(dock_anchor):
 		var anchor := _local_position(dock_anchor)
 		# The item column is narrower than the meters and clock below it.
@@ -256,20 +261,64 @@ func _dock_origin() -> Vector2:
 		return Vector2(right - panel.size.x, maxf(EDGE, anchor.y - 24))
 	return Vector2(size.x - reserved_right_width - panel.size.x, EDGE)
 
+func _has_hud_dock() -> bool:
+	return is_instance_valid(dock_anchor) and is_instance_valid(dock_rail) \
+		and is_instance_valid(dock_top) and is_instance_valid(dock_bottom)
+
+func _dock_bounds() -> Rect2:
+	var left := _local_position(dock_rail).x + EDGE
+	var top := _local_position(dock_top).y + dock_top.size.y + 4
+	var right := _local_position(dock_anchor).x - 4
+	var bottom := minf(_local_position(dock_bottom).y - 4, _bottom_edge())
+	if is_instance_valid(dock_footer): bottom = minf(bottom, _local_position(dock_footer).y - 4)
+	return Rect2(Vector2(left, top), Vector2(maxf(0, right - left), maxf(0, bottom - top)))
+
 func _layout() -> void:
 	if panel == null or launcher == null: return
+	var compact := docked and _has_hud_dock()
 	var top := _dock_origin().y if docked else EDGE
-	var available := maxf(80, _bottom_edge() - top)
-	if not is_equal_approx(available, _last_available):
-		_last_available = available
+	var available := maxf(80, _dock_bounds().size.y if compact else _bottom_edge() - top)
+	var layout_size := Vector2(_dock_bounds().size.x if compact else 0, available)
+	if layout_size != _last_layout_size or compact != _last_compact:
+		_last_layout_size = layout_size
+		_last_compact = compact
+		panel.add_theme_stylebox_override("panel", _style(Color(0.16, 0.12, 0.075), 1 if compact else 4))
+		var body: VBoxContainer = _scroll.get_parent()
+		body.add_theme_constant_override("separation", 1 if compact else 2)
+		_column.add_theme_constant_override("separation", 1 if compact else 2)
+		grip.add_theme_font_size_override("font_size", 10 if compact else 13)
+		dock_menu.add_theme_font_size_override("font_size", 9 if compact else 11)
+		wheel_button.visible = not compact and loadout.mode == "wheel"
+		_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER if compact else ScrollContainer.SCROLL_MODE_AUTO
 		# Use 44px where they fit. Keep text readable at small HUD sizes;
 		# a scroll area preserves access to all twelve slots below that.
 		var side := clampf(floorf((available - 50) / 12) - 2, 36, SLOT_SIZE)
+		if compact:
+			# Fit all twelve shortcuts between the logo and skills, alongside items.
+			# At high HUD scales, scroll instead of making the icons any smaller.
+			side = maxf(21, minf(layout_size.x - 11, floorf((available - 18 - 11) / 12)))
 		for button in buttons:
 			button.custom_minimum_size = Vector2.ONE * side
-			button.add_theme_constant_override("icon_max_width", int(side - 6))
-		var content_height := 12 * side + 22
-		_scroll.custom_minimum_size = Vector2(side + 14, minf(content_height, available - 50))
+			button.add_theme_constant_override("icon_max_width", int(side - (2 if compact else 6)))
+			button.add_theme_font_size_override("font_size", 10 if compact else 16)
+			var cell: HBoxContainer = button.get_parent()
+			cell.add_theme_constant_override("separation", 1 if compact else 2)
+			var key: Label = cell.get_node("Key")
+			key.custom_minimum_size.x = 8 if compact else 12
+			key.add_theme_font_size_override("font_size", 8 if compact else 11)
+			for corner in ["Target", "Power"]:
+				var badge: Label = button.get_node(corner)
+				badge.add_theme_font_size_override("font_size", 7 if compact else 11)
+				badge.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT if corner == "Power" else Control.PRESET_TOP_LEFT)
+				badge.offset_left = (-12 if compact else -20) if corner == "Power" else 1
+				badge.offset_right = -1 if corner == "Power" else (8 if compact else 15)
+				badge.offset_top = 1
+				badge.offset_bottom = 10 if compact else 17
+		var content_height := 12 * side + (11 if compact else 22)
+		_scroll.custom_minimum_size = Vector2(side + (9 if compact else 14), minf(content_height, available - (18 if compact else 50)))
+		launcher.add_theme_font_size_override("font_size", 9 if compact else 16)
+		launcher.add_theme_stylebox_override("normal", _style(Color(0.13, 0.105, 0.065), 1 if compact else 4))
+		launcher.reset_size()
 		panel.reset_size()
 	if docked:
 		panel.position = _dock_origin()
@@ -278,7 +327,7 @@ func _layout() -> void:
 	grip.tooltip_text = "Drag to detach from the HUD" if docked else "Drag to move. Use the menu to attach to the HUD."
 	dock_menu.tooltip_text = "Spell bar: detach, spellbook and ring settings" if docked else "Spell bar: attach to HUD, spellbook and ring settings"
 	var launch_position := _dock_origin() if docked else _clamp_position(_floating_position)
-	if docked and is_instance_valid(dock_anchor):
+	if docked and is_instance_valid(dock_anchor) and not compact:
 		launch_position = Vector2(_dock_origin().x + panel.size.x - launcher.size.x, _local_position(dock_anchor).y)
 	launcher.position = launch_position.clamp(Vector2.ONE * EDGE, (size - launcher.size - Vector2.ONE * EDGE).max(Vector2.ONE * EDGE))
 
@@ -326,7 +375,7 @@ func _finish_drag() -> void:
 func refresh() -> void:
 	if mode_picker == null: return
 	mode_picker.select(["prepared", "aimed", "wheel"].find(loadout.mode))
-	wheel_button.visible = loadout.mode == "wheel"
+	wheel_button.visible = loadout.mode == "wheel" and not (docked and _has_hud_dock())
 	ring_size_picker.visible = loadout.mode == "wheel"
 	ring_size_picker.select(ring_size_picker.get_item_index(loadout.ring_size))
 	ring_size_picker.text = "Ring size %d%%" % loadout.ring_size
