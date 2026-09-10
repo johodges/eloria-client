@@ -54,11 +54,15 @@ func run() -> void:
 	var rail: Control = main.get_node("GameView/RightRail")
 	var bottom: Control = main.get_node("GameView/Quickbar")
 	check(bar.docked and bar.panel.visible and not bar.launcher.visible, "the fresh HUD shows the attached spell bar")
-	check(bar.buttons.size() == 12, "all twelve saved shortcuts are present")
+	check(bar.buttons.size() == 12, "all twelve saved shortcuts remain available")
+	check(bar.visible_slot_count == 6, "the HUD defaults to six quick spell icons")
 	check(rail.get_global_rect().encloses(bar.panel.get_global_rect()), "the dock sits inside the HUD rail beside the item slots")
 	check_hud_dock(main)
-	for button: Button in bar.buttons:
-		check(bar._scroll.get_global_rect().encloses(button.get_global_rect()), "all twelve docked shortcuts are visible at 1280 by 720")
+	for index in range(bar.buttons.size()):
+		var button: Button = bar.buttons[index]
+		check(button.get_parent().visible == (index < 6), "only the six default slots are shown")
+		if index < 6:
+			check(bar._scroll.get_global_rect().encloses(button.get_global_rect()), "all six docked shortcuts fit at 1280 by 720")
 	check(bar.panel.get_global_rect().end.y < bottom.global_position.y, "the attached bar clears the bottom HUD")
 	main.spell_loadout.assign_slot(0, 1, 10)
 	var app := root.get_node("AppState")
@@ -71,8 +75,38 @@ func run() -> void:
 	check(target.text == "T" and power.text == "10", "badges retain the target letter and two-digit power")
 	check(target.has_theme_stylebox_override("normal") and power.has_theme_stylebox_override("normal"), "both corner labels have opaque backings")
 	check(not target.get_rect().intersects(power.get_rect()), "target and power ten fit in separate corners")
+	var shortcut: Label = slot.get_node("Shortcut")
+	check(not target.get_rect().intersects(shortcut.get_rect()) and not power.get_rect().intersects(shortcut.get_rect()), "the shortcut number fits between the target and power: %s, %s, %s" % [target.get_rect(), shortcut.get_rect(), power.get_rect()])
+	var slot_style: StyleBox = slot.get_theme_stylebox("normal")
+	var art_size: Vector2 = slot.size - slot_style.get_minimum_size()
+	check(art_size.x >= 26 and art_size.y >= 26 and slot.get_theme_constant("icon_max_width") >= 26, "each docked spell has a larger readable square of artwork")
+	check(slot_style.get_content_margin(SIDE_TOP) >= maxf(target.get_rect().end.y, power.get_rect().end.y), "the target and power badges sit above the spell artwork: %s, %s" % [slot_style.get_content_margin(SIDE_TOP), maxf(target.get_rect().end.y, power.get_rect().end.y)])
 	check(slot.tooltip_text.contains("Target: Mira") and slot.tooltip_text.contains("Power 10"), "the tooltip expands the current recipient and power")
 	check(slot.modulate.a == 1 and target.modulate.a == 1, "unavailable spells do not fade their corner badges")
+	# Exercise the same clear action as the context menu, including its refresh.
+	main.spell_loadout.path = "user://spell-bar-clear-regression.cfg"
+	main.spell_loadout.load_profile("clear-slot-regression")
+	main.spell_loadout.assign_slot(0, 1, 10)
+	for attempt in range(2):
+		bar.buttons[1].tooltip_text = "refresh did not finish"
+		var right_click := InputEventMouseButton.new()
+		right_click.button_index = MOUSE_BUTTON_RIGHT
+		right_click.pressed = true
+		bar.call("_slot_input", right_click, 0)
+		bar.menu.id_pressed.emit(1)
+		bar.menu.hide()
+		await settle()
+		check(main.spell_loadout.slots[0].id == -1 and slot.icon == null and slot.text == "+", "clearing a slot leaves an empty assignable button")
+		check(not target.visible and not power.visible and slot.self_modulate.a == 1, "an empty slot clears its badges and dimming")
+		check(bar.buttons[1].tooltip_text != "refresh did not finish", "clearing a slot completes the refresh of later slots")
+	var restored_loadout = load("res://src/ui/spell_loadout.gd").new()
+	restored_loadout.configure(main.spell_catalog)
+	restored_loadout.path = main.spell_loadout.path
+	restored_loadout.load_profile("clear-slot-regression")
+	check(restored_loadout.slots[0].id == -1, "the cleared slot survives a profile reload")
+	slot.spell_dropped.emit(1, 10)
+	await settle()
+	check(slot.spell_id == 1 and slot.icon != null and target.visible and power.text == "10", "a cleared slot accepts a new spell and restores its badges")
 	await capture("docked.png")
 	# Drag through the same viewport events a player sends, rather than
 	# setting position directly. An ordinary grip click must keep it attached.
@@ -117,6 +151,17 @@ func run() -> void:
 	bar.dock_menu.get_popup().id_pressed.emit(2)
 	await settle()
 	check(bar.settings_popup.visible, "the compact menu opens ring and casting settings")
+	main.spell_loadout.assign_slot(11, 69, 3)
+	bar.slot_count_picker.item_selected.emit(bar.slot_count_picker.get_item_index(12))
+	await settle()
+	check(bar.visible_slot_count == 12 and bar.buttons[11].get_parent().visible and bar.buttons[11].spell_id == 69, "showing more icons keeps the extra saved spells")
+	bar._scroll.ensure_control_visible(bar.buttons[11])
+	await settle()
+	check(bar._scroll.get_global_rect().encloses(bar.buttons[11].get_global_rect()), "all twelve larger shortcuts remain reachable by scrolling")
+	bar.slot_count_picker.item_selected.emit(bar.slot_count_picker.get_item_index(6))
+	await settle()
+	check(main.spell_loadout.slots[11] == {"id": 69, "power": 3}, "returning to six icons preserves hidden assignments")
+	check_hud_dock(main)
 	bar.ring_size_picker.item_selected.emit(bar.ring_size_picker.get_item_index(125))
 	check(main.spell_loadout.ring_size == 125, "the menu keeps the ring size control functional")
 	bar.close_button.pressed.emit()
@@ -133,11 +178,12 @@ func run() -> void:
 	await settle()
 	check(Rect2(Vector2.ZERO, main.size).encloses(bar.panel.get_rect()), "the bar remains accessible at 150 percent HUD scale")
 	check_hud_dock(main)
-	bar._scroll.ensure_control_visible(bar.buttons[-1])
+	bar._scroll.ensure_control_visible(bar.buttons[bar.visible_slot_count - 1])
 	await settle()
-	check(bar._scroll.get_global_rect().encloses(bar.buttons[-1].get_global_rect()), "the last slot remains reachable when the dock needs scrolling")
+	check(bar._scroll.get_global_rect().encloses(bar.buttons[bar.visible_slot_count - 1].get_global_rect()), "the last shown slot remains reachable when the dock needs scrolling")
 	bar._scroll.scroll_vertical = 0
 	await capture("docked-scaled.png")
+	bar.set_visible_slot_count(8)
 	bar.set_expanded(false)
 	await settle()
 	check_hud_dock(main)
@@ -147,6 +193,7 @@ func run() -> void:
 	await settle()
 	bar = main.casting_bar
 	check(bar.docked and not bar.panel.visible and bar.launcher.visible, "attachment and explicit hiding both survive a reload")
+	check(bar.visible_slot_count == 8, "the chosen number of quick spell icons survives a reload")
 	check_hud_dock(main)
 	bar.launcher.pressed.emit()
 	await settle()

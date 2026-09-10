@@ -8,17 +8,21 @@ const SpellButton := preload("res://src/ui/prepared_spell_button.gd")
 const SCOPE_BADGES := {"self": "Self", "target": "Target", "allies": "Allies", "burst": "Burst", "location": "Ground", "inventory": "Item", "destination": "Recall"}
 const CORNER_BADGES := {"self": "S", "target": "T", "allies": "A", "burst": "B", "location": "G", "inventory": "I", "destination": "R"}
 const SLOT_SIZE := 44.0
+const DEFAULT_VISIBLE_SLOTS := 6
+const SLOT_BACKGROUNDS := {"normal": Color(0.11, 0.10, 0.07), "hover": Color(0.27, 0.22, 0.12), "pressed": Color(0.35, 0.27, 0.13)}
 const EDGE := 6.0
 var loadout
 var panel: PanelContainer
 var mode_picker: OptionButton
 var wheel_button: Button
 var ring_size_picker: OptionButton
+var slot_count_picker: OptionButton
+var visible_slot_count := DEFAULT_VISIBLE_SLOTS
 var start_expanded := true
 var launcher: Button
 var close_button: Button
 var reserved_right_width := 8.0
-## Both controls share the HUD canvas, including its user-selected scale.
+## Dock controls share the HUD canvas, including its user-selected scale.
 var dock_anchor: Control
 var dock_rail: Control
 var dock_top: Control
@@ -39,7 +43,7 @@ var _dragging := false
 var _drag_moved := false
 var _grab_mouse := Vector2.ZERO
 var _grab_panel := Vector2.ZERO
-var _last_layout_size := Vector2(-1, -1)
+var _last_layout_size := Vector3(-1, -1, -1)
 var _last_compact := false
 var _selected_actor := -2
 
@@ -84,7 +88,7 @@ func _ready() -> void:
 	_column = VBoxContainer.new()
 	_column.add_theme_constant_override("separation", 2)
 	_scroll.add_child(_column)
-	for index in range(12):
+	for index in range(loadout.slots.size()):
 		var cell := HBoxContainer.new()
 		cell.add_theme_constant_override("separation", 2)
 		_column.add_child(cell)
@@ -124,6 +128,18 @@ func _ready() -> void:
 			badge.offset_right = -1 if corner == "Power" else 15
 			badge.offset_top = 1
 			badge.offset_bottom = 17
+		var shortcut := Label.new()
+		shortcut.name = "Shortcut"
+		shortcut.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		shortcut.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		shortcut.add_theme_font_size_override("font_size", 8)
+		shortcut.add_theme_color_override("font_color", Color(0.78, 0.70, 0.53))
+		button.add_child(shortcut)
+		shortcut.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
+		shortcut.offset_left = -6
+		shortcut.offset_right = 2
+		shortcut.offset_top = 1
+		shortcut.offset_bottom = 12
 		buttons.append(button)
 	wheel_button = Button.new()
 	wheel_button.text = "Ring"
@@ -181,6 +197,13 @@ func _build_settings() -> void:
 	mode_picker.add_item("Ring · Left Shift")
 	mode_picker.item_selected.connect(func(index: int): loadout.set_mode(["prepared", "aimed", "wheel"][index]))
 	body.add_child(mode_picker)
+	slot_count_picker = OptionButton.new()
+	slot_count_picker.name = "QuickSlotCount"
+	slot_count_picker.tooltip_text = "Choose how many quick spell icons to show. Extra saved slots keep their spells and keyboard shortcuts."
+	for count in range(1, loadout.slots.size() + 1):
+		slot_count_picker.add_item("Quick spell icons: %d" % count, count)
+	slot_count_picker.item_selected.connect(func(index: int): set_visible_slot_count(slot_count_picker.get_item_id(index)))
+	body.add_child(slot_count_picker)
 	ring_size_picker = OptionButton.new()
 	ring_size_picker.name = "RingSize"
 	ring_size_picker.tooltip_text = "Magic ring size, saved per character."
@@ -218,10 +241,19 @@ func set_docked(value: bool) -> void:
 	layout_changed.emit()
 
 func hud_layout() -> Dictionary:
-	return {"docked": docked, "position": _floating_position, "expanded": panel.visible}
+	return {"docked": docked, "position": _floating_position, "expanded": panel.visible, "slot_count": visible_slot_count}
+
+func set_visible_slot_count(count: int) -> void:
+	count = clampi(count, 1, buttons.size())
+	if visible_slot_count == count: return
+	visible_slot_count = count
+	_scroll.scroll_vertical = 0
+	_layout()
+	layout_changed.emit()
 
 func restore_hud_layout(value: Dictionary) -> void:
 	docked = bool(value.get("docked", true))
+	visible_slot_count = clampi(int(value.get("slot_count", DEFAULT_VISIBLE_SLOTS)), 1, buttons.size())
 	var where: Variant = value.get("position", _floating_position)
 	if where is Vector2 and (where as Vector2).is_finite():
 		_floating_position = where
@@ -278,7 +310,7 @@ func _layout() -> void:
 	var compact := docked and _has_hud_dock()
 	var top := _dock_origin().y if docked else EDGE
 	var available := maxf(80, _dock_bounds().size.y if compact else _bottom_edge() - top)
-	var layout_size := Vector2(_dock_bounds().size.x if compact else 0, available)
+	var layout_size := Vector3(_dock_bounds().size.x if compact else 0, available, visible_slot_count)
 	if layout_size != _last_layout_size or compact != _last_compact:
 		_last_layout_size = layout_size
 		_last_compact = compact
@@ -290,32 +322,40 @@ func _layout() -> void:
 		dock_menu.add_theme_font_size_override("font_size", 9 if compact else 11)
 		wheel_button.visible = not compact and loadout.mode == "wheel"
 		_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER if compact else ScrollContainer.SCROLL_MODE_AUTO
-		# Use 44px where they fit. Keep text readable at small HUD sizes;
-		# a scroll area preserves access to all twelve slots below that.
-		var side := clampf(floorf((available - 50) / 12) - 2, 36, SLOT_SIZE)
-		if compact:
-			# Fit all twelve shortcuts between the logo and skills, alongside items.
-			# At high HUD scales, scroll instead of making the icons any smaller.
-			side = maxf(21, minf(layout_size.x - 11, floorf((available - 18 - 11) / 12)))
-		for button in buttons:
-			button.custom_minimum_size = Vector2.ONE * side
-			button.add_theme_constant_override("icon_max_width", int(side - (2 if compact else 6)))
+		slot_count_picker.select(slot_count_picker.get_item_index(visible_slot_count))
+		# Give the artwork its own square below the badges. Keep it readable
+		# when more slots are shown by scrolling, rather than shrinking it.
+		var width := minf(SLOT_SIZE, layout_size.x - 2) if compact else SLOT_SIZE
+		var badge_height := 15 if compact else 20
+		var icon_size := width - (6 if compact else 4)
+		var slot_height := icon_size + badge_height + 2
+		for index in range(buttons.size()):
+			var button := buttons[index]
+			button.custom_minimum_size = Vector2(width, slot_height)
+			button.add_theme_constant_override("icon_max_width", int(icon_size))
 			button.add_theme_font_size_override("font_size", 10 if compact else 16)
+			for state in SLOT_BACKGROUNDS:
+				var style := _style(SLOT_BACKGROUNDS[state], 2)
+				style.content_margin_top = badge_height
+				button.add_theme_stylebox_override(state, style)
 			var cell: HBoxContainer = button.get_parent()
+			cell.visible = index < visible_slot_count
 			cell.add_theme_constant_override("separation", 1 if compact else 2)
 			var key: Label = cell.get_node("Key")
+			key.visible = not compact
+			button.get_node("Shortcut").visible = compact
 			key.custom_minimum_size.x = 8 if compact else 12
 			key.add_theme_font_size_override("font_size", 8 if compact else 11)
 			for corner in ["Target", "Power"]:
 				var badge: Label = button.get_node(corner)
-				badge.add_theme_font_size_override("font_size", 7 if compact else 11)
+				badge.add_theme_font_size_override("font_size", 8 if compact else 11)
 				badge.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT if corner == "Power" else Control.PRESET_TOP_LEFT)
-				badge.offset_left = (-12 if compact else -20) if corner == "Power" else 1
-				badge.offset_right = -1 if corner == "Power" else (8 if compact else 15)
+				badge.offset_left = (-13 if compact else -20) if corner == "Power" else 1
+				badge.offset_right = -1 if corner == "Power" else (10 if compact else 15)
 				badge.offset_top = 1
-				badge.offset_bottom = 10 if compact else 17
-		var content_height := 12 * side + (11 if compact else 22)
-		_scroll.custom_minimum_size = Vector2(side + (9 if compact else 14), minf(content_height, available - (18 if compact else 50)))
+				badge.offset_bottom = 12 if compact else 17
+		var content_height := visible_slot_count * slot_height + (visible_slot_count - 1) * (1 if compact else 2)
+		_scroll.custom_minimum_size = Vector2(width + (0 if compact else 14), minf(content_height, available - (18 if compact else 50)))
 		launcher.add_theme_font_size_override("font_size", 9 if compact else 16)
 		launcher.add_theme_stylebox_override("normal", _style(Color(0.13, 0.105, 0.065), 1 if compact else 4))
 		launcher.reset_size()
@@ -401,13 +441,16 @@ func refresh() -> void:
 		# Keep the full binding in the tooltip, with the familiar Alt gutter.
 		key_label.text = str(index + 1) if index < 9 else ["0", "-", "="][index - 9]
 		key_label.tooltip_text = shortcut
+		button.get_node("Shortcut").text = key_label.text
 		var target_label := str(SCOPE_BADGES.get(scope, ""))
 		if scope == "target":
 			var actor: Dictionary = AppState.actors.get(AppState.selected_actor_id, {})
 			target_label += ": " + str(actor.get("name", "select a recipient"))
 		button.tooltip_text = "%s · %s · Power %d\n%s\nUses the last cast target type and power for this family.\nRight click to edit; drag a spell here." % [definition.get("name", "Empty slot"), target_label, int(slot.power), shortcut]
 		if effective_power != int(slot.power): button.tooltip_text += "\nSaved P%d; currently limited to P%d." % [int(slot.power), effective_power]
-		var reasons: Array[String] = loadout.catalog.unavailable_reasons(int(slot.id), AppState.owned_sigils, AppState.stats, AppState.inventory) if int(slot.id) >= 0 else []
+		var reasons: Array[String] = []
+		if int(slot.id) >= 0:
+			reasons = loadout.catalog.unavailable_reasons(int(slot.id), AppState.owned_sigils, AppState.stats, AppState.inventory)
 		# Dim only the button's art. Its child badges must remain legible.
 		button.self_modulate.a = 1.0 if reasons.is_empty() else 0.55
 		if not reasons.is_empty(): button.tooltip_text += "\n" + reasons[0]

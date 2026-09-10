@@ -125,7 +125,7 @@ func run() -> void:
 	check(main.magic_selection.pending.power == 2, "book casting uses its own remembered power")
 	main.magic_selection.cancel()
 	var bar: Control = main.casting_bar
-	check(bar.buttons.size() == 12, "all twelve shortcuts have visible prepared slots")
+	check(bar.buttons.size() == 12 and bar.visible_slot_count == 6, "six icons are shown by default while all twelve saved shortcuts remain available")
 	bar.buttons[1].spell_dropped.emit(69, 3)
 	check(main.spell_loadout.slots[1] == {"id": 69, "power": 3}, "dragging a variant assigns the actual casting slot")
 	main.spells_window.edit_prepared_slot(1)
