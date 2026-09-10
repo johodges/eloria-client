@@ -203,6 +203,7 @@ static func turn(left: bool) -> PackedByteArray:
 ## packet, never before.
 const CLIENT_CAPABILITIES: Array[String] = [
 	"lantern_tutorial_v1",
+	"tutorial_rewards_v1",
 	"second_bell_v1",
 	"borrowed_sky_v1",
 	"spell_ring_v1",
@@ -2851,6 +2852,8 @@ static func decode_lantern(payload: PackedByteArray) -> Dictionary:
 	if not parsed is Dictionary:
 		return {"type":"invalid", "error":"lantern_json"}
 	var value: Dictionary = parsed
+	if value.has("event"):
+		return decode_tutorial_experience(value)
 	if value.get("version") != 1 or not value.get("active") is bool:
 		return {"type":"invalid", "error":"lantern_version"}
 	if value.has("ring_training") and not value.ring_training is bool:
@@ -2898,3 +2901,24 @@ static func decode_lantern(payload: PackedByteArray) -> Dictionary:
 			if value.flags.has(key) and not value.flags[key] is bool:
 				return {"type":"invalid", "error":"lantern_flags"}
 	return {"type":"lantern_tutorial", "state":value}
+
+static func decode_tutorial_experience(value: Dictionary) -> Dictionary:
+	if typeof(value.get("version")) not in [TYPE_INT, TYPE_FLOAT] or value.version != 1 \
+			or not value.get("event") is String or value.event != "experience" \
+			or not value.get("permanent") is bool or not value.get("rewards") is Array:
+		return {"type":"invalid", "error":"tutorial_experience"}
+	var rewards: Array = value.rewards
+	if rewards.is_empty() or rewards.size() > 13:
+		return {"type":"invalid", "error":"tutorial_experience_rewards"}
+	var seen: Dictionary = {}
+	for reward: Variant in rewards:
+		if not reward is Dictionary or reward.get("skill") not in [
+				"manufacturing", "harvesting", "alchemy", "overall", "attack", "defense",
+				"magic", "potion", "summoning", "crafting", "engineering", "ranging", "tailoring"]:
+			return {"type":"invalid", "error":"tutorial_experience_skill"}
+		var amount: Variant = reward.get("amount")
+		if typeof(amount) not in [TYPE_FLOAT, TYPE_INT] or not is_finite(float(amount)) \
+				or amount <= 0 or amount > 4294967295 or int(amount) != amount or seen.has(reward.skill):
+			return {"type":"invalid", "error":"tutorial_experience_amount"}
+		seen[reward.skill] = true
+	return {"type":"tutorial_experience", "rewards":rewards, "permanent":value.permanent}

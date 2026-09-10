@@ -79,7 +79,7 @@ func _on_missile_fired(shot: Dictionary) -> void:
 ## One arrow that landed: the server awards ranging experience per successful
 ## hit, so the award is the hit. A ranging level-up is not one.
 func _on_floating_feedback(feedback: Dictionary) -> void:
-	if str(feedback.get("kind", "")) != "experience":
+	if str(feedback.get("kind", "")) != "experience" or bool(feedback.get("bonus", false)):
 		return
 	if str(feedback.get("skill", "")) != "ranging":
 		return
