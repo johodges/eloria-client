@@ -31,8 +31,11 @@ func server_to_godot(server_x: float, server_y: float, elevation := NAN) -> Vect
 func godot_to_server(position: Vector3) -> Vector2i:
 	var local := position - origin
 	var server_y := -local.z if invert_server_y else local.z
-	return Vector2i(roundi(local.x / metres_per_tile + server_origin.x),
-		roundi(server_y / metres_per_tile + server_origin.y))
+	# Integer coordinates address cells; tile_center places their centers at
+	# (x + 0.5, y + 0.5). Rounding instead selects the next cell across the
+	# upper half of either axis, shifting clicks by up to a full diagonal tile.
+	return Vector2i(floori(local.x / metres_per_tile + server_origin.x),
+		floori(server_y / metres_per_tile + server_origin.y))
 
 func rotation_to_godot(server_rotation: int) -> float:
 	# Legacy actor rotations span signed 16-bit storage; direction frames are audited separately.

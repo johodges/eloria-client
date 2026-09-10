@@ -82,6 +82,8 @@ jobs:
           godot --headless --path godot-client --script res://tests/test_ranging_window.gd
       - name: World input routing fixtures
         run: godot --headless --path godot-client --script res://tests/test_world_input.gd
+      - name: Viewport click and tile mapping fixtures
+        run: godot --headless --path godot-client --script res://tests/test_click_mapping.gd
       - name: Character creation race, sex and skin fixtures
         run: |
           godot --headless --path godot-client --script res://tests/test_character_creation.gd
