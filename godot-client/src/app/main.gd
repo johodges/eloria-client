@@ -934,6 +934,7 @@ func _ready() -> void:
 	reference_window.notes_changed.connect(_on_notes_changed)
 	reference_window.bookmarks_changed.connect(_on_encyclopedia_bookmarks_changed)
 	active_buff_bar = ActiveBuffBarScript.new()
+	active_buff_bar.bottom_hud = $GameView/Quickbar
 	game_view.add_child(active_buff_bar)
 	active_buff_bar.configure(spell_catalog)
 	extension_windows = ExtensionWindowsScript.new()

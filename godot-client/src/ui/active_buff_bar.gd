@@ -17,11 +17,11 @@ extends Control
 ## labels, so the labels are presentation, not state.
 
 const ICON_SIZE := Vector2(28.0, 28.0)
-## Nothing may cover the fixed resource rail down the right-hand edge.
-const RESERVED_RIGHT_RAIL := 96.0
+const BOTTOM_BAR_GAP := 10.0
 
 var catalog: SpellCatalog
 var row: HBoxContainer
+var bottom_hud: Control
 
 var _entries: Dictionary = {}
 
@@ -33,9 +33,18 @@ func _ready() -> void:
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_theme_constant_override("separation", 8)
 	add_child(row)
-	position = Vector2(12.0, 262.0)
+	row.resized.connect(_layout)
+	if bottom_hud != null:
+		bottom_hud.item_rect_changed.connect(_layout)
 	AppState.state_changed.connect(_on_state_changed)
 	sync()
+	_layout()
+
+func _layout() -> void:
+	if bottom_hud != null:
+		# Both controls share the HUD canvas, so resizing and UI scaling keep
+		# the effects just above the bottom bar.
+		position = Vector2(12.0, bottom_hud.position.y - row.size.y - BOTTOM_BAR_GAP)
 
 func configure(spell_catalog: SpellCatalog) -> void:
 	catalog = spell_catalog
@@ -106,11 +115,13 @@ func _rebuild(active: Array[int]) -> void:
 		chip.add_child(icon)
 		var caption := Label.new()
 		caption.name = "BuffName"
-		caption.text = label_text
+		caption.text = label_text.trim_suffix(" Ward")
+		caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		caption.add_theme_font_size_override("font_size", 11)
 		chip.add_child(caption)
 		var remaining := Label.new()
 		remaining.name = "BuffRemaining"
+		remaining.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		remaining.add_theme_font_size_override("font_size", 11)
 		chip.add_child(remaining)
 		row.add_child(chip)
