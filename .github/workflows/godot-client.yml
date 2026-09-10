@@ -93,6 +93,10 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_hud_persistence.gd
       - name: Reference window fixtures
         run: godot --headless --path godot-client --script res://tests/test_reference_window.gd
+      - name: Statistics allocation and tutorial scrolling fixtures
+        run: |
+          godot --headless --path godot-client --script res://tests/test_statistics_window.gd
+          godot --headless --path godot-client --script res://tests/test_pickpoint_allocation.gd
       - name: Encyclopedia and attack-preview fixtures
         run: godot --headless --path godot-client --script res://tests/test_encyclopedia.gd
       - name: Localization and screenshot fixtures

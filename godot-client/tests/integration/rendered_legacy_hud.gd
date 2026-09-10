@@ -114,15 +114,11 @@ func _run() -> void:
 	main.call("_on_stats_meta_clicked", "spend:attribute:physique")
 	for unused_confirm_frame: int in range(3):
 		await process_frame
-	var confirm_panel: PanelContainer = main.get(
-		"purchase_confirm") as PanelContainer
-	_expect(confirm_panel.visible and confirm_panel.size.x > 0.0
-			and confirm_panel.get_global_rect().intersects(
-				Rect2(Vector2.ZERO, Vector2(1280.0, 720.0))),
-		"the spend question is drawn on screen: visible=%s rect=%s" % [
-			confirm_panel.visible, confirm_panel.get_global_rect()])
+	var confirm_button: Button = main.get("stats_pickpoint_confirm") as Button
+	_expect(confirm_button.is_visible_in_tree() and not confirm_button.disabled,
+		"the draft has a visible Confirm button")
 	await _capture("legacy-spend-pickpoint.png")
-	main.call("_on_purchase_cancelled")
+	main.call("_adjust_pickpoint", "attribute", "physique", -1)
 	(main.get_node("GameView/StatsPanel") as Control).hide()
 	main.call("_toggle_full_map")
 	for unused_frame: int in range(4):

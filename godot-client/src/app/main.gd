@@ -527,6 +527,11 @@ var _open_counters: Dictionary = {}
 var counter_tabs: HBoxContainer
 var stats_pools: HBoxContainer
 var stats_character: VBoxContainer
+var stats_pickpoint_summary: Label
+var stats_pickpoint_status: Label
+var stats_pickpoint_confirm: Button
+var _pickpoint_draft: Dictionary = {}
+var _pickpoint_submitting := false
 var stats_skills: VBoxContainer
 var stats_overall: HBoxContainer
 var stats_perk_line: Label
@@ -2594,6 +2599,9 @@ func _on_login_failed(message: String) -> void:
 	login_button.disabled = false
 
 func _on_connection_state_changed(value: String) -> void:
+	if value == "disconnected":
+		_pickpoint_draft.clear()
+		_pickpoint_submitting = false
 	status_label.text = ("Securing the connection…" if value == "securing"
 		else value.capitalize())
 	connect_button.text = "Disconnect" if value == "connected" else "Connect"
@@ -3561,6 +3569,8 @@ func _on_state_changed(path: StringName) -> void:
 			lantern_guide.apply_state(AppState.lantern_tutorial)
 			if is_instance_valid(lantern_scene): lantern_scene.apply_state(AppState.lantern_tutorial)
 		&"map":
+			_pickpoint_draft.clear()
+			_pickpoint_submitting = false
 			_load_server_map()
 			_sync_world()
 			_update_console_location()
@@ -3580,6 +3590,7 @@ func _on_state_changed(path: StringName) -> void:
 			# has actually reserved for them.
 			_queue_world_sync()
 		&"chat":
+			_on_pickpoint_reply()
 			_capture_speech_bubble_from_chat()
 			_count_unseen_private_messages()
 			_append_chat_line()
@@ -5913,6 +5924,24 @@ func _build_statistics_tab() -> void:
 	left.size_flags_stretch_ratio = 2.0
 	columns.add_child(left)
 	left.add_child(_stats_heading("Character"))
+	var allocation := HBoxContainer.new()
+	allocation.name = "PickpointAllocation"
+	left.add_child(allocation)
+	stats_pickpoint_summary = Label.new()
+	stats_pickpoint_summary.name = "AvailablePickpoints"
+	stats_pickpoint_summary.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	allocation.add_child(stats_pickpoint_summary)
+	stats_pickpoint_confirm = Button.new()
+	stats_pickpoint_confirm.name = "ConfirmPickpoints"
+	stats_pickpoint_confirm.text = "Confirm"
+	stats_pickpoint_confirm.tooltip_text = "Permanently spend the selected pickpoints"
+	stats_pickpoint_confirm.pressed.connect(_confirm_pickpoints)
+	allocation.add_child(stats_pickpoint_confirm)
+	stats_pickpoint_status = Label.new()
+	stats_pickpoint_status.name = "PickpointStatus"
+	stats_pickpoint_status.custom_minimum_size.x = 240
+	stats_pickpoint_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	left.add_child(stats_pickpoint_status)
 	stats_pools = HBoxContainer.new()
 	stats_pools.name = "Pools"
 	stats_pools.add_theme_constant_override("separation", 8)
@@ -5961,6 +5990,9 @@ static func _stats_heading(text: String) -> Label:
 func _sync_statistics_document(stats: Dictionary) -> void:
 	if stats_character == null:
 		return
+	# Keep the preview stable until the complete server reply arrives.
+	if _pickpoint_submitting:
+		return
 	for host: Node in [stats_pools, stats_character, stats_skills, stats_overall]:
 		for child: Node in host.get_children():
 			host.remove_child(child)
@@ -5977,16 +6009,11 @@ func _sync_statistics_document(stats: Dictionary) -> void:
 		stats_pools.add_child(_stats_pool(str(pool[0]), int(pool[1]),
 			int(pool[2])))
 
-	# A pick point buys one attribute point or one nexus point. The control
-	# beside a line is live only while the server's own numbers allow it: a
-	# point to spend, and a value below the ceiling the server enforces.
-	var pickpoints: int = _available_pickpoints()
 	stats_character.add_child(_stats_heading("Attributes"))
 	for row: Dictionary in _attribute_rows(stats):
 		var value: int = int(row.value)
 		stats_character.add_child(_stats_spend_row(str(row.label), value,
-			value, "attribute", str(row.key),
-			pickpoints > 0 and value < int(row.maximum)))
+			value, "attribute", str(row.key), int(row.maximum)))
 	stats_character.add_child(_stats_heading("Nexus"))
 	for pair: Array in [["Human", "human_nexus"], ["Animal", "animal_nexus"],
 			["Vegetal", "vegetal_nexus"], ["Inorganic", "inorganic_nexus"],
@@ -5995,9 +6022,7 @@ func _sync_statistics_document(stats: Dictionary) -> void:
 		var current: int = int(stats.get(key, 0))
 		var base: int = int(stats.get(key + "_base", current))
 		stats_character.add_child(_stats_spend_row(str(pair[0]), current, base,
-			"nexus", key, pickpoints > 0 and base < NEXUS_MAXIMUM))
-	stats_character.add_child(_stats_value_row("Pick points",
-		_grouped(pickpoints)))
+			"nexus", key, NEXUS_MAXIMUM))
 	stats_character.add_child(_stats_value_row("Food",
 		str(int(stats.get("food", 0)))))
 	for pair: Array in _research_lines(stats):
@@ -6027,6 +6052,7 @@ func _sync_statistics_document(stats: Dictionary) -> void:
 		for raw_skill: Variant in group[1] as Array:
 			stats_skills.add_child(_stats_skill_row(str(raw_skill), stats))
 	stats_overall.add_child(_stats_skill_row("overall", stats))
+	_refresh_pickpoint_controls()
 
 static func _stats_pool(title: String, value: int, maximum: int) -> Control:
 	var box := VBoxContainer.new()
@@ -6045,29 +6071,129 @@ static func _stats_pool(title: String, value: int, maximum: int) -> Control:
 	box.add_child(amount)
 	return box
 
-## One buyable line: what it is, where it stands, and the control that spends
-## a point on it. The control is always drawn - a row whose button vanished
-## when it could not be used would jump about as pick points come and go.
+## Minus only undoes the draft; committed points are never removed here.
 func _stats_spend_row(label: String, current: int, base: int, kind: String,
-		key: String, affordable: bool) -> Control:
+		key: String, maximum: int) -> Control:
 	var row := HBoxContainer.new()
 	row.name = "Row%s" % key.replace(" ", "").validate_node_name()
+	row.set_meta("allocation", "%s:%s" % [kind, key])
+	row.set_meta("current", current)
+	row.set_meta("base", base)
+	row.set_meta("maximum", maximum)
 	row.add_child(_stats_cell(label, true))
-	row.add_child(_stats_cell("%d / %d" % [current, base], false,
-		HORIZONTAL_ALIGNMENT_RIGHT, 90))
+	var remove := Button.new()
+	remove.name = "Remove"
+	remove.custom_minimum_size = Vector2(30, 0)
+	remove.focus_mode = Control.FOCUS_NONE
+	remove.text = "−"
+	remove.tooltip_text = "Undo one unconfirmed point in %s" % label
+	remove.pressed.connect(_adjust_pickpoint.bind(kind, key, -1))
+	row.add_child(remove)
+	var value := _stats_cell("", false, HORIZONTAL_ALIGNMENT_RIGHT, 90)
+	value.name = "Value"
+	row.add_child(value)
 	var spend := Button.new()
 	spend.name = "Spend"
 	spend.custom_minimum_size = Vector2(30, 0)
 	spend.focus_mode = Control.FOCUS_NONE
-	spend.disabled = not affordable
-	spend.text = "+" if affordable else "−"
-	spend.tooltip_text = ("Spend a pick point on %s" % label if affordable
-		else "%s cannot be raised right now" % label)
-	if affordable:
-		spend.add_theme_color_override("font_color", Color(0.45, 0.85, 0.45))
-		spend.pressed.connect(_ask_to_spend.bind(kind, key))
+	spend.text = "+"
+	spend.tooltip_text = "Preview one more point in %s" % label
+	spend.add_theme_color_override("font_color", Color(0.45, 0.85, 0.45))
+	spend.pressed.connect(_adjust_pickpoint.bind(kind, key, 1))
 	row.add_child(spend)
 	return row
+
+func _draft_pickpoints() -> int:
+	var total := 0
+	for amount: int in _pickpoint_draft.values():
+		total += amount
+	return total
+
+func _refresh_pickpoint_controls() -> void:
+	var total := _draft_pickpoints()
+	var remaining := _available_pickpoints() - total
+	var valid := remaining >= 0
+	var found := 0
+	for row: Node in stats_character.get_children():
+		if not row.has_meta("allocation"):
+			continue
+		var amount := int(_pickpoint_draft.get(row.get_meta("allocation"), 0))
+		found += amount
+		var base := int(row.get_meta("base"))
+		var maximum := int(row.get_meta("maximum"))
+		valid = valid and (amount == 0 or base + amount <= maximum)
+		var value := row.get_node("Value") as Label
+		value.text = "%d / %d" % [int(row.get_meta("current")) + amount, base + amount]
+		value.modulate = Color("a1e899") if amount > 0 else Color.WHITE
+		value.tooltip_text = "%d unconfirmed point(s)" % amount if amount > 0 else ""
+		(row.get_node("Remove") as Button).disabled = _pickpoint_submitting or amount == 0
+		(row.get_node("Spend") as Button).disabled = _pickpoint_submitting or remaining <= 0 or base + amount >= maximum
+	valid = valid and found == total
+	stats_pickpoint_summary.text = "Pickpoints available: %s" % _grouped(maxi(0, remaining))
+	stats_pickpoint_confirm.disabled = _pickpoint_submitting or total == 0 or not valid
+	stats_pickpoint_confirm.text = "Confirming…" if _pickpoint_submitting else "Confirm"
+	stats_pickpoint_status.text = ("Confirming %d pickpoints…" % total if _pickpoint_submitting
+		else "Your points changed. Reduce the selection before confirming." if not valid
+		else "%d selected · Confirm to spend" % total if total > 0
+		else "Use − and + to choose your points.")
+
+func _adjust_pickpoint(kind: String, key: String, delta: int) -> void:
+	if _pickpoint_submitting or delta not in [-1, 1]:
+		return
+	var id := "%s:%s" % [kind, key]
+	var amount := int(_pickpoint_draft.get(id, 0))
+	var target: Node
+	for row: Node in stats_character.get_children():
+		if str(row.get_meta("allocation", "")) == id:
+			target = row
+			break
+	if target == null:
+		return
+	if delta > 0 and (_available_pickpoints() <= _draft_pickpoints()
+			or int(target.get_meta("base")) + amount >= int(target.get_meta("maximum"))):
+		return
+	if delta < 0 and amount == 0:
+		return
+	amount += delta
+	if amount == 0:
+		_pickpoint_draft.erase(id)
+	else:
+		_pickpoint_draft[id] = amount
+	if delta < 0:
+		_road_ui(19)
+	_refresh_pickpoint_controls()
+
+func _confirm_pickpoints() -> void:
+	if _pickpoint_submitting:
+		return
+	_refresh_pickpoint_controls()
+	if stats_pickpoint_confirm.disabled:
+		return
+	var entries: PackedStringArray = []
+	for id: String in _pickpoint_draft:
+		entries.append("%s:%d" % [id, int(_pickpoint_draft[id])])
+	var error := Network.send_chat("#spend batch " + ",".join(entries))
+	if error != OK:
+		stats_pickpoint_status.text = "Could not confirm. Your choices are still here."
+		return
+	_pickpoint_submitting = true
+	_refresh_pickpoint_controls()
+
+func _on_pickpoint_reply() -> void:
+	if not _pickpoint_submitting or AppState.chat_lines.is_empty():
+		return
+	var line: Dictionary = AppState.chat_lines.back()
+	if int(line.get("channel", -1)) != 0:
+		return
+	var reply := str(line.get("text", ""))
+	var accepted := reply.begins_with("Pickpoint allocation confirmed: ")
+	if not accepted and not reply.begins_with("Pickpoint allocation rejected: ") and not reply.begins_with("Syntax: #spend"):
+		return
+	_pickpoint_submitting = false
+	if accepted:
+		_pickpoint_draft.clear()
+	_sync_stats()
+	stats_pickpoint_status.text = "Pickpoints confirmed." if accepted else reply
 
 func _stats_value_row(label: String, value: String) -> Control:
 	var row := HBoxContainer.new()
@@ -6244,11 +6370,11 @@ func _on_stats_meta_clicked(meta: Variant) -> void:
 		return
 	_ask_to_spend(parts[1], parts[2])
 
-## Asks before spending, because nothing here can be taken back: a pick point
-## returns only through a removal stone. The wraith asks the same question in
-## its own dialogue, so buying from this window is not the quicker path to a
-## mistake.
+## Perks keep their priced confirmation; attributes and nexus use the draft.
 func _ask_to_spend(kind: String, name: String) -> void:
+	if kind in ["attribute", "nexus"]:
+		_adjust_pickpoint(kind, name, 1)
+		return
 	_pending_purchase = [kind, name]
 	var readable: String = name.capitalize()
 	match kind:

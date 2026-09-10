@@ -91,7 +91,7 @@ func _refresh() -> void:
 	if second_bell:
 		instruction.text += "\nBellwatch: %d invaders%s" % [int(state.get("remaining", 0)), " · another wave pending" if bool(state.get("pending", false)) else ""]
 	var needed := int(state.get("required", 1))
-	if needed > 1 and str(state.get("key", "")) in ["reed", "quartz", "take_reed"]:
+	if needed > 1 and str(state.get("key", "")) in ["reed", "quartz", "take_reed", "attribute"]:
 		instruction.text += "\nProgress: %d / %d" % [int(state.get("count", 0)), needed]
 	instruction.visible = not compact
 	collapse.text = "Instructions" if compact else "Less"
@@ -148,9 +148,23 @@ func control_for_step() -> Control:
 		"inventory": return _item_button() if _visible(_node("InventoryPanel")) else _node("InventoryButton")
 		"stats":
 			if not _visible(_node("StatsPanel")): return _node("StatsButton")
+			var body := main.get("stats_character") as Control
+			if _visible(body) and str(state.get("key", "")) == "cancel":
+				for candidate: Node in body.get_children():
+					var minus := candidate.get_node_or_null("Remove") as Button
+					if _visible(minus) and not minus.disabled: return minus
+			var confirm := main.get("stats_pickpoint_confirm") as Button
+			if _visible(confirm) and not confirm.disabled: return confirm
 			var row := main.find_child("Row" + (str(state.get("item", "matter")) if str(state.get("tutorial", "")) == "followup" else "matter"), true, false)
 			var plus := row.get_node_or_null("Spend") as Control if row else null
-			return plus if _visible(plus) else _node("StatsTabs")
+			if _visible(plus) and _highlight_rect(plus).encloses(plus.get_global_rect()): return plus
+			# Highlight another visible attribute when the first has scrolled away.
+			if _visible(body):
+				for candidate: Node in body.get_children():
+					if not str(candidate.get_meta("allocation", "")).begins_with("attribute:"): continue
+					var button := candidate.get_node_or_null("Spend") as Control
+					if _visible(button) and _highlight_rect(button).encloses(button.get_global_rect()): return button
+			return _node("StatsTabs")
 		"manufacture":
 			if not _visible(_node("ManufacturingPanel")): return _node("ManufacturingButton")
 			var list := _node("ManufacturingList") as ItemList
@@ -259,8 +273,19 @@ func _process(_delta: float) -> void:
 	card.position.y = clampf(62, 8, maxf(8, area.y-card.size.y-110))
 	queue_redraw()
 
+func _highlight_rect(control: Control) -> Rect2:
+	if not _visible(control): return Rect2()
+	var rect := control.get_global_rect().grow(4)
+	var parent := control.get_parent()
+	while parent != null:
+		if parent is Control and (parent as Control).clip_contents:
+			rect = rect.intersection((parent as Control).get_global_rect().grow(-1.5))
+		parent = parent.get_parent()
+	return rect.intersection(get_viewport_rect())
+
 func _draw() -> void:
-	if not _visible(highlighted): return
-	var rect := highlighted.get_global_rect().grow(4)
+	var rect := _highlight_rect(highlighted)
+	if not rect.has_area(): return
+	rect.position -= global_position
 	var alpha := .72 + .22*sin(Time.get_ticks_msec()*.005)
 	draw_rect(rect, Color(1,.79,.35,alpha), false, 3)

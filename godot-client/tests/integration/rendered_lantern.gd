@@ -209,8 +209,9 @@ func run() -> void:
 	main._on_stats_button_pressed()
 	await create_timer(.5).timeout
 	await capture("10-attributes")
-	main._ask_to_spend("attribute","matter")
-	main._on_purchase_confirmed()
+	main._adjust_pickpoint("attribute","magic_defense",1)
+	main._adjust_pickpoint("attribute","magic_defense",1)
+	main._confirm_pickpoints()
 	await stage("take_reed")
 	main.stats_panel.hide()
 	await use_target("upper_cache")

@@ -15,6 +15,9 @@ const MAIN := "res://src/app/main.gd"
 var _failures := 0
 
 func _init() -> void:
+	call_deferred("_run")
+
+func _run() -> void:
 	_grouping()
 	_every_skill_appears_once()
 	_the_window_is_built_from_controls()

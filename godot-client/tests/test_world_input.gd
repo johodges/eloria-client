@@ -2590,8 +2590,7 @@ func _run() -> void:
 		"the tab says how many pick points are unspent: "
 			+ (perk_summary.text if perk_summary != null else "<no label>"))
 
-	# The "+" beside a line is offered only while the server's numbers allow
-	# it, and clicking one asks before anything is spent.
+	# Plus previews a point within the server's budget and ceilings.
 	(main.get_node("GameView/StatsPanel") as Control).show()
 	main.call("_sync_stats")
 	# The control is a button on the row now rather than a link in a
@@ -2612,15 +2611,11 @@ func _run() -> void:
 	(main.get_node("GameView/StatsPanel") as Control).hide()
 	main.call("_ask_to_spend", "attribute", "physique")
 	var confirm: PanelContainer = main.get("purchase_confirm") as PanelContainer
-	var prompt: Label = main.get("purchase_prompt") as Label
-	_expect(confirm.visible and prompt.text.contains("Physique"),
-		"clicking a + asks first, naming what it would buy: " + prompt.text)
-	_expect((main.get("_pending_purchase") as Array) == ["attribute", "physique"],
-		"and holds the purchase until the question is answered")
-	main.call("_on_purchase_cancelled")
-	_expect(not confirm.visible
-			and (main.get("_pending_purchase") as Array).is_empty(),
-		"cancelling spends nothing and forgets the question")
+	_expect(not confirm.visible and int((main.get("_pickpoint_draft") as Dictionary).get("attribute:physique", 0)) == 1,
+		"plus previews the purchase without a popup")
+	main.call("_adjust_pickpoint", "attribute", "physique", -1)
+	_expect((main.get("_pickpoint_draft") as Dictionary).is_empty(),
+		"minus removes the unconfirmed purchase")
 
 	var sigils: Control = main.get("sigil_window") as Control
 	var sigil_panel: PanelContainer = sigils.get_node("SigilWindow") as PanelContainer
