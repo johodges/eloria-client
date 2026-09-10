@@ -2,7 +2,7 @@
 
 Lantern Reach is now an opening adventure in the main Godot client and the
 matching `dev-server` checkout. New characters enter a private island, complete
-28 server-owned objectives across eight scenes, and sail into Four Gates with
+25 server-owned objectives across eight scenes, and sail into Four Gates with
 their actual inventory, equipment and storage. The final objective is a real
 conversation with Gate Warden Ilyon.
 
@@ -22,7 +22,7 @@ The original prototype's `project.godot` remains available for design reference.
 | NPCs | NPC dialogue options | Caldus accepts the request and grants ordinary inventory items |
 | Map | Tab or Map toolbar button | Map window actually opens |
 | Harvesting | Click Reed / Quartz in the viewport | Successful server harvests; tools and capacity apply |
-| Storage | Category, item, quantity, Deposit / Withdraw | Inventory and storage transfers succeed |
+| Storage | Store the finished Pickaxe; withdraw Torch supplies by category | Pickaxe stays stored; Reed and Quartz stay in the pack for the repair |
 | Manufacturing | Torch recipe, quantity 1, Mix Now | The normal recipe produces a real Torch |
 | Equipment | Inventory double-click or drag | Sword and shield occupy real equipment slots |
 | Combat | Click the otter | Normal combat resolves its defeat |
@@ -39,6 +39,15 @@ uses the native manufacturing side pane, fits beside storage and merchant
 windows, and leaves the world clickable. Storage's inventory column now uses
 server-provided item names, allowing instructions to identify Reed unambiguously.
 The wooden shield's embedded JPEG is correctly labelled in its GLB metadata.
+
+The cache stop follows directly from mining: deposit the Pickaxe, withdraw one
+Wood Plank and one Cloth Roll from **Misc**, then one Hatchet from **Tools**.
+Carry the three Reed and one Quartz straight to the lantern housing after the
+combat and rest lessons. There is no required second cache visit. If repair
+materials were stored voluntarily, the guide points to the upstairs cache and
+names **Flowers** for Reed or **Minerals** for Quartz, with only the missing
+quantity requested. The guide and journal return to the housing once the
+materials are in the pack.
 
 The saved boat's hull and both faces of its sail share the server's boarding
 action. The door cursor appears once the boat is docked and the server's guide
@@ -72,6 +81,12 @@ recover missing essentials after loss or crafting failure. A novice defeat keeps
 the kit and resets the otter; a defeated otter does not respawn. Global days that
 prohibit harvesting, mixing, food or combat cannot block the private rescue.
 
+`lantern_flow_version` records the revised sequence. Login maps all 28 original
+stage numbers to the corresponding current lesson without changing belongings,
+earned progress or completion rewards. Old upstairs withdrawal saves resume at
+the repair lesson with category-specific recovery instructions. Finished and
+skipped saves stay finished.
+
 The causeway encounter is a level-1 Mirrorfin Otter named "Storm-frightened
 otter", rendered with the updated `river_otter.glb` model (actor type 400).
 It keeps the novice combat stats and guaranteed Raw Meat drop for the trading
@@ -85,7 +100,15 @@ characters that finish or skip this opening adventure.
 
 ## Verification
 
-Verified locally on 2026-09-09: **2,112 server tests and 498 subtests pass**;
+Storage-flow revision verified on 2026-09-10: **85 targeted server tests pass**,
+including all four full rescue playthroughs, saved-stage migration, tutorial
+returns and storage behavior. The final partial-withdrawal and voluntary-deposit
+refresh checks also pass. Godot's tutorial protocol reports **56 checks, zero
+failures**, and the storage organizer tests pass. The rendered playthrough script
+now follows the revised route and named categories and passes Godot's syntax
+check; the full rendered run has not been repeated for this revision.
+
+Earlier baseline, verified locally on 2026-09-09: **2,112 server tests and 498 subtests pass**;
 the complete 28-objective rendered native-client playthrough passes, including
 Four Gates and Ilyon; all 25 tutorial protocol checks and the storage regression
 checks pass. The rendered run also verifies real object picking and that the
