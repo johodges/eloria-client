@@ -84,7 +84,14 @@ class HeldPropTest(unittest.TestCase):
             points = np.concatenate([p for p, _ in _mesh_primitives(path)])
             span = float(points[:, 1].max() - points[:, 1].min())
             self.assertGreater(span, .1, f"{path.name} is not stood up along Y")
+            if path.stem == "gravity_anchor_weapon":
+                # The return chain passes below the wrapped bar in the same
+                # length band. Measure the bar, not the gap between the two.
+                points = points[points[:, 0] > -.06]
             near = _grip_band(points, span)
+            if path.stem == "gravity_anchor_weapon":
+                self.assertLess(float(np.ptp(near[:, 0])), .08,
+                                "the anchor socket must hold its narrow handle, not its head")
             for axis, way in ((0, "across"), (2, "through")):
                 middle = float(near[:, axis].max() + near[:, axis].min()) / 2.
                 self.assertLessEqual(

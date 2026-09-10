@@ -400,6 +400,8 @@ FLIP_EXCEPTIONS = {
     # its class buried the grip and stood the crescent on the floor, so the
     # fist closed on the flat of the blade with the haft out behind it.
     "030_crescent_spellblade_sickle",
+    # The chained anchor arrives head down, with its wrapped handle at +Y.
+    "089_gravity_anchor_weapon",
     "097_void_glass_greatblade",
 }
 
@@ -410,6 +412,14 @@ FLIP_EXCEPTIONS = {
 ROLL_EXCEPTIONS = {
     # Rides edge up otherwise, where a sickle is carried hooking down.
     "030_crescent_spellblade_sickle",
+}
+
+#: Grip centres in source-mesh coordinates for props whose handles cannot be
+#: found from the class's length fraction and cross-section bounds.
+GRIP_POINTS = {
+    # The wrapped bar sits beside a returning chain; centring both would put
+    # the socket in the gap instead of inside the handle.
+    "089_gravity_anchor_weapon": (0.095, 0.34, 0.0),
 }
 
 #: How a prop is laid into the hand, as a socket this set overrides the shared
@@ -687,7 +697,8 @@ def main() -> int:
         for p in pieces:
             try:
                 info = ce.build(p.source, EQUIPMENT / ("%s.glb" % p.slug), rig,
-                                p.kind, p.name, flip=p.flip, roll=p.roll)
+                                p.kind, p.name, flip=p.flip, roll=p.roll,
+                                grip=GRIP_POINTS.get(p.source.stem))
             except Exception as exc:                      # noqa: BLE001
                 print("  FAILED %-30s %s" % (p.slug, exc))
                 failed += 1

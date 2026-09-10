@@ -253,7 +253,8 @@ def _grip_centre(points: np.ndarray, axis: int, spec: dict) -> float:
 
 
 def seat_prop(surface: "Imported", kind: str, flip: bool = False,
-              roll: bool = False) -> None:
+              roll: bool = False,
+              grip: tuple[float, float, float] | None = None) -> None:
     """Stand a generated prop up along +Y and put its grip on the socket.
 
     A generated weapon arrives in whatever frame the drawing implied, boxed
@@ -283,6 +284,10 @@ def seat_prop(surface: "Imported", kind: str, flip: bool = False,
     on its bounding box, which for a sword is the same thing and for a curved
     head is not: see ``_grip_centre``.
 
+    ``grip`` names an explicit point in source-mesh coordinates when a prop's
+    handle cannot be inferred, such as a bar beside a returning chain. It
+    follows the mesh's axis conversion and scale and becomes the origin.
+
     It is needed because the concept art does not hold to one.  Hafted weapons
     are drawn head up -- an axe, a spear, a maul, a halberd all arrive the
     right way round -- but a sword is drawn hanging point down, so it arrives
@@ -295,6 +300,8 @@ def seat_prop(surface: "Imported", kind: str, flip: bool = False,
     spec = PROP_KIND[kind]
     points = np.array(surface.positions, dtype=np.float64)
     normals = np.array(surface.normals, dtype=np.float64)
+    if grip is not None:
+        points -= np.asarray(grip, dtype=np.float64)
 
     extent = points.max(axis=0) - points.min(axis=0)
     order = np.argsort(extent)                   # shortest, middle, longest
@@ -317,14 +324,13 @@ def seat_prop(surface: "Imported", kind: str, flip: bool = False,
 
     span = float(points[:, 1].max() - points[:, 1].min())
     points *= spec["length"] / max(span, 1e-9)
-    points[:, 1] -= points[:, 1].min() + spec["below"] * spec["length"]
-    # A shield is strapped across its own middle and is centred on the socket
-    # by design, so it keeps the bounding box.  Anything held is held by its
-    # grip, and it is the grip that has to sit on the socket.
-    for axis in (0, 2):
-        points[:, axis] -= (
-            (points[:, axis].max() + points[:, axis].min()) / 2.
-            if spec["part"] == 1 else _grip_centre(points, axis, spec))
+    if grip is None:
+        points[:, 1] -= points[:, 1].min() + spec["below"] * spec["length"]
+        # Shields are strapped across their middle; weapons use the grip band.
+        for axis in (0, 2):
+            points[:, axis] -= (
+                (points[:, axis].max() + points[:, axis].min()) / 2.
+                if spec["part"] == 1 else _grip_centre(points, axis, spec))
 
     surface.positions = points
     lengths = np.linalg.norm(normals, axis=1, keepdims=True)
@@ -1984,14 +1990,15 @@ def seat_socket(points: np.ndarray, rig: ea.Rig, kind: str) -> np.ndarray:
 
 
 def build_socket(source: Path, out: Path, rig: ea.Rig, kind: str,
-                 label: str, flip: bool = False, roll: bool = False) -> dict:
+                 label: str, flip: bool = False, roll: bool = False,
+                 grip: tuple[float, float, float] | None = None) -> dict:
     """Size and place one socket piece, and write it unskinned."""
     surface, png = read_source(source)
     before = surface.positions.copy()
     if kind in PROP_KIND:
         # A weapon or shield is sized from its own class rather than from the
         # body: it hangs off a hand and owes nothing to the wearer's build.
-        seat_prop(surface, kind, flip, roll)
+        seat_prop(surface, kind, flip, roll, grip)
     else:
         surface.positions = seat_socket(surface.positions, rig, kind)
     # Socket pieces carry concept-sheet debris too, and the runtime-size
@@ -2814,13 +2821,14 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
           clearance: float = CLEARANCE, fit: str = "seat",
           taper: bool = False,
           flip: bool = False, roll: bool = False,
-          span: tuple[float, float] | None = None) -> dict:
+          span: tuple[float, float] | None = None,
+          grip: tuple[float, float, float] | None = None) -> dict:
     """Fit one generated mesh to the rig and write it as a skinned piece."""
     if kind in SOCKET_KIND or (kind in ea.GARMENT_KINDS and ea.garment_region(kind) in ('legs', 'boots')):
         import limb_head_remap
         return limb_head_remap.build(source, out, rig, kind, label, span)
     if kind in PROP_KIND:
-        return build_socket(source, out, rig, kind, label, flip, roll)
+        return build_socket(source, out, rig, kind, label, flip, roll, grip)
     if kind not in ea.GARMENT_KINDS:
         raise ValueError(
             "%s is none of a garment kind (%s), a socket kind (%s) or a prop "
