@@ -20,7 +20,97 @@
     {
       "name": "footstep",
       "file": "footstep.wav",
+      "seconds": 0.18
+    },
+    {
+      "name": "footstep_dirt_1",
+      "file": "footstep_dirt_1.wav",
+      "seconds": 0.18
+    },
+    {
+      "name": "footstep_dirt_2",
+      "file": "footstep_dirt_2.wav",
+      "seconds": 0.18
+    },
+    {
+      "name": "footstep_dirt_3",
+      "file": "footstep_dirt_3.wav",
+      "seconds": 0.18
+    },
+    {
+      "name": "footstep_grass_1",
+      "file": "footstep_grass_1.wav",
+      "seconds": 0.22
+    },
+    {
+      "name": "footstep_grass_2",
+      "file": "footstep_grass_2.wav",
+      "seconds": 0.22
+    },
+    {
+      "name": "footstep_grass_3",
+      "file": "footstep_grass_3.wav",
+      "seconds": 0.22
+    },
+    {
+      "name": "footstep_sand_1",
+      "file": "footstep_sand_1.wav",
+      "seconds": 0.23
+    },
+    {
+      "name": "footstep_sand_2",
+      "file": "footstep_sand_2.wav",
+      "seconds": 0.23
+    },
+    {
+      "name": "footstep_sand_3",
+      "file": "footstep_sand_3.wav",
+      "seconds": 0.23
+    },
+    {
+      "name": "footstep_snow_1",
+      "file": "footstep_snow_1.wav",
+      "seconds": 0.24
+    },
+    {
+      "name": "footstep_snow_2",
+      "file": "footstep_snow_2.wav",
+      "seconds": 0.24
+    },
+    {
+      "name": "footstep_snow_3",
+      "file": "footstep_snow_3.wav",
+      "seconds": 0.24
+    },
+    {
+      "name": "footstep_stone_1",
+      "file": "footstep_stone_1.wav",
       "seconds": 0.16
+    },
+    {
+      "name": "footstep_stone_2",
+      "file": "footstep_stone_2.wav",
+      "seconds": 0.16
+    },
+    {
+      "name": "footstep_stone_3",
+      "file": "footstep_stone_3.wav",
+      "seconds": 0.16
+    },
+    {
+      "name": "footstep_wood_1",
+      "file": "footstep_wood_1.wav",
+      "seconds": 0.19
+    },
+    {
+      "name": "footstep_wood_2",
+      "file": "footstep_wood_2.wav",
+      "seconds": 0.19
+    },
+    {
+      "name": "footstep_wood_3",
+      "file": "footstep_wood_3.wav",
+      "seconds": 0.19
     },
     {
       "name": "harvest_gather",

@@ -86,6 +86,30 @@ class NativeSoundTests(unittest.TestCase):
                           "download"):
             self.assertNotIn(forbidden, source)
 
+    def test_footsteps_have_soft_edges_and_restrained_high_frequencies(self) -> None:
+        import numpy as np
+
+        for name, recipe in self.module.RECIPES.items():
+            if not name.startswith("footstep"):
+                continue
+            samples = recipe()
+            samples /= np.max(np.abs(samples))
+            with self.subTest(sound=name):
+                self.assertLess(np.max(np.abs(samples[:44])), 0.025,
+                                "the first millisecond must ease in without a click")
+                self.assertLess(np.max(np.abs(samples[-220:])), 0.015,
+                                "the last five milliseconds must fade out")
+                power = np.abs(np.fft.rfft(samples)) ** 2
+                frequencies = np.fft.rfftfreq(len(samples), 1 / self.module.SAMPLE_RATE)
+                self.assertLess(power[frequencies > 4000].sum() / power.sum(), 0.035,
+                                "repeated steps should not have a piercing treble edge")
+
+    def test_each_surface_has_distinct_step_variants(self) -> None:
+        for surface in ("dirt", "grass", "stone", "wood", "sand", "snow"):
+            variants = [self.module.RECIPES[f"footstep_{surface}_{i}"]().tobytes()
+                        for i in range(1, 4)]
+            self.assertEqual(len(set(variants)), 3)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

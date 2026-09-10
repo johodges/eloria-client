@@ -107,6 +107,8 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_ambient_audio.gd
       - name: Audio director fixtures
         run: godot --headless --path godot-client --script res://tests/test_audio_director.gd
+      - name: Surface footstep fixtures
+        run: godot --headless --path godot-client --script res://tests/test_footsteps.gd
       - name: Eloria extension window fixtures
         run: godot --headless --path godot-client --script res://tests/test_extension_windows.gd
       - name: Guild window fixtures

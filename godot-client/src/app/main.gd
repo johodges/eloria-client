@@ -50,6 +50,7 @@ const MapMarkerOverlayScript := preload("res://src/ui/map_marker_overlay.gd")
 const MinimapMarkerOverlayScript := preload("res://src/ui/minimap_marker_overlay.gd")
 const PlayerInfoPanelScript := preload("res://src/ui/player_info_panel.gd")
 const AudioDirectorScript := preload("res://src/audio/audio_director.gd")
+const FootstepSurface := preload("res://src/audio/footstep_surface.gd")
 const SigilWindowScript := preload("res://src/ui/sigil_window.gd")
 const SpellsWindowScript := preload("res://src/ui/spells_window.gd")
 const SummoningWindowScript := preload("res://src/ui/summoning_window.gd")
@@ -892,6 +893,7 @@ func _ready() -> void:
 	minimap_marker_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	minimap_marker_overlay.configure(map_camera, map_viewport.size)
 	audio_director = AudioDirectorScript.new()
+	audio_director.surface_at_tile = _footstep_surface_at
 	add_child(audio_director)
 	player_info_panel = PlayerInfoPanelScript.new()
 	game_view.add_child(player_info_panel)
@@ -4076,6 +4078,14 @@ func _place_actor_on_surface(actor: ReplicatedActor3D, force := false) -> void:
 		if actor.actor_id == AppState.local_actor_id:
 			push_warning("local_actor_placement navigation_miss map=%s actor_id=%d target=%s fallback_y=%.3f" % [
 				AppState.current_map, actor.actor_id, actor_position, adapter.walking_height + 0.02])
+
+func _footstep_surface_at(tile: Vector2i) -> String:
+	if gameplay_world == null or adapter == null:
+		return "dirt"
+	var actor: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
+	var footprint: Vector2i = AppState.footprint_for_actor_type(int(actor.get("actor_type", 0)))
+	return FootstepSurface.at_position(gameplay_world.direct_space_state,
+		adapter.footprint_center(tile.x, tile.y, footprint))
 
 func _navigation_ray_position(origin: Vector3, direction: Vector3) -> Variant:
 	if gameplay_world == null:

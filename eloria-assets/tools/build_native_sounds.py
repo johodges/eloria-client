@@ -20,6 +20,7 @@ import argparse
 import json
 import struct
 import wave
+from functools import partial
 from pathlib import Path
 
 import numpy as np
@@ -261,12 +262,44 @@ def music_depths() -> np.ndarray:
         seed=530, bar_seconds=9.0, air=0.04, brightness=0.45)
 
 
+# Duration, texture smoothing, texture weight, body frequency, body weight.
+# The short, rounded attack avoids a hard click; filtered noise keeps the
+# recurring texture out of the piercing high frequencies. Playback applies
+# a separate quiet footstep gain so normalising assets cannot undo the mix.
+FOOTSTEP_PROFILES = {
+    "dirt": (0.18, 70, 0.55, 125.0, 0.08),
+    "grass": (0.22, 42, 0.85, 110.0, 0.03),
+    "stone": (0.16, 22, 0.35, 210.0, 0.10),
+    "wood": (0.19, 50, 0.35, 165.0, 0.16),
+    "sand": (0.23, 95, 0.95, 115.0, 0.02),
+    "snow": (0.24, 32, 0.85, 105.0, 0.04),
+}
+FOOTSTEP_VARIANTS = 3
+
+
+def surface_footstep(surface: str, variant: int) -> np.ndarray:
+    """A muted sole contact and a brief, surface-specific scuff."""
+    duration, smoothing, texture_weight, frequency, body_weight = FOOTSTEP_PROFILES[surface]
+    length = seconds(duration)
+    seed = 910 + list(FOOTSTEP_PROFILES).index(surface) * 20 + variant * 3
+    time = np.arange(length) / SAMPLE_RATE
+    contact = noise(length, seed=seed, smoothing=140)
+    contact /= float(np.max(np.abs(contact))) or 1.0
+    texture = noise(length, seed=seed + 1, smoothing=smoothing)
+    texture /= float(np.max(np.abs(texture))) or 1.0
+    # The surface grain follows the contact instead of striking at full level.
+    scuff = np.sin(np.pi * time / duration) ** 2
+    body = tone(frequency * (0.97 + 0.03 * variant), length) * body_weight
+    samples = (contact * 0.55 + body) * np.exp(-time / 0.035)
+    samples += texture * texture_weight * scuff * np.exp(-time / 0.085)
+    attack = np.minimum(time / 0.012, 1.0)
+    release = np.minimum((duration - time) / 0.035, 1.0)
+    return samples * attack ** 2 * release ** 2
+
+
 def footstep() -> np.ndarray:
-    """One step: a short broadband tap with a soft low body."""
-    length = seconds(0.16)
-    tap = noise(length, seed=91, smoothing=4) * 0.7
-    body = tone(96.0, length, (1.0, 0.5)) * 0.5
-    return (tap + body) * envelope(length, 0.002, 0.06, 0.25, 0.09)
+    """Quiet earth contact for unnamed surfaces and older sound requests."""
+    return surface_footstep("dirt", 0)
 
 
 RECIPES = {
@@ -284,6 +317,10 @@ RECIPES = {
     "level_up": level_up,
     "world_effect": world_effect,
 }
+RECIPES.update({
+    f"footstep_{surface}_{variant + 1}": partial(surface_footstep, surface, variant)
+    for surface in FOOTSTEP_PROFILES for variant in range(FOOTSTEP_VARIANTS)
+})
 
 MUSIC = {
     "music_settlement": music_settlement,

@@ -28,7 +28,7 @@ func _run() -> void:
 	await process_frame
 
 	var names: Array = director.call("sound_names") as Array
-	_expect(names.size() == 13 and names.has("harvest_start")
+	_expect(names.size() == 31 and names.has("harvest_start")
 		and names.has("combat_hit") and names.has("world_effect")
 		and names.has("footstep") and names.has("civic_crowd")
 		and names.has("waterfall"),

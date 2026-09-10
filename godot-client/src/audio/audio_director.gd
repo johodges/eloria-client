@@ -20,7 +20,9 @@ const AUDIO_DIRECTORY := "res://assets/audio/"
 const VOICE_COUNT := 8
 ## The floor between two steps. The server can restate several movement
 ## commands in one frame; that is one step, not four.
-const STEP_INTERVAL_MSEC := 180
+const STEP_INTERVAL_MSEC := 280
+const FOOTSTEP_GAIN := 0.32
+const FOOTSTEP_VARIANTS := 3
 
 var enabled := true:
 	set(value):
@@ -31,7 +33,12 @@ var volume_linear := 0.7:
 	set(value):
 		volume_linear = clampf(value, 0.0, 1.0)
 		for player: AudioStreamPlayer in _voices:
-			player.volume_db = linear_to_db(maxf(0.0001, volume_linear))
+			player.volume_db = linear_to_db(maxf(0.0001,
+				volume_linear * float(player.get_meta("gain", 1.0))))
+
+## The world supplies the surface at the authoritative tile, independent of
+## actor presentation updates (which are coalesced until the end of a frame).
+var surface_at_tile: Callable
 
 var _streams: Dictionary = {}
 var _music_streams: Dictionary = {}
@@ -46,10 +53,14 @@ var _inventory_totals: Dictionary = {}
 ## Where the server last said the player was standing, so a step is heard when
 ## the tile changes rather than on every actor packet.
 var _local_tile := Vector2i(-1, -1)
-var _last_step_msec := 0
+var _last_step_msec := -STEP_INTERVAL_MSEC
+var _step_actor_id := -1
+var _last_step_variant := -1
+var _step_random := RandomNumberGenerator.new()
 
 func _ready() -> void:
 	name = "AudioDirector"
+	_step_random.randomize()
 	_load_catalog()
 	AppState.sound_requested.connect(_on_sound_requested)
 	AppState.music_requested.connect(_on_music_requested)
@@ -72,12 +83,16 @@ func sound_names() -> Array[String]:
 
 ## Plays one sound by name. Returns false when audio is off or the name is not
 ## in the catalog, so a caller can be tested without listening.
-func play(name: String) -> bool:
+func play(name: String, pitch := 1.0, gain := 1.0) -> bool:
 	if not enabled or not _streams.has(name):
 		return false
 	var player: AudioStreamPlayer = _voices[_next_voice]
 	_next_voice = (_next_voice + 1) % _voices.size()
 	player.stream = _streams[name] as AudioStream
+	var mixed_gain: float = gain * (FOOTSTEP_GAIN if name.begins_with("footstep") else 1.0)
+	player.set_meta("gain", mixed_gain)
+	player.volume_db = linear_to_db(maxf(0.0001, volume_linear * mixed_gain))
+	player.pitch_scale = pitch
 	player.play()
 	return true
 
@@ -171,6 +186,8 @@ func _on_state_changed(path: StringName) -> void:
 			_harvesting = harvesting
 		&"actors", &"local_actor":
 			_on_local_actor_moved()
+		&"map":
+			_reset_steps()
 		&"inventory":
 			_on_inventory_changed()
 		&"combat_state":
@@ -179,7 +196,7 @@ func _on_state_changed(path: StringName) -> void:
 			if AppState.connection_state == "disconnected":
 				_harvesting = false
 				_combat_event = -1
-				_local_tile = Vector2i(-1, -1)
+				_reset_steps()
 				_inventory_totals.clear()
 				stop_all()
 
@@ -207,17 +224,39 @@ func _on_local_actor_moved() -> void:
 	var actor: Variant = AppState.actors.get(AppState.local_actor_id)
 	if actor is not Dictionary:
 		return
+	if _step_actor_id != AppState.local_actor_id:
+		_reset_steps()
+		_step_actor_id = AppState.local_actor_id
 	var tile := Vector2i(int((actor as Dictionary).get("x", 0)),
 		int((actor as Dictionary).get("y", 0)))
 	if tile == _local_tile:
 		return
 	var first_sighting: bool = _local_tile == Vector2i(-1, -1)
+	var displacement := tile - _local_tile
 	_local_tile = tile
 	var now: int = Time.get_ticks_msec()
-	if first_sighting or now - _last_step_msec < STEP_INTERVAL_MSEC:
+	if first_sighting or maxi(absi(displacement.x), absi(displacement.y)) > 2:
+		return
+	if not enabled or now - _last_step_msec < STEP_INTERVAL_MSEC:
 		return
 	_last_step_msec = now
-	play("footstep")
+	var surface := "dirt"
+	if surface_at_tile.is_valid():
+		surface = str(surface_at_tile.call(tile))
+	var variant := _step_random.randi_range(0, FOOTSTEP_VARIANTS - 1)
+	if _last_step_variant >= 0:
+		variant = (_last_step_variant + _step_random.randi_range(1, FOOTSTEP_VARIANTS - 1)) % FOOTSTEP_VARIANTS
+	_last_step_variant = variant
+	var sound := "footstep_%s_%d" % [surface, variant + 1]
+	if not _streams.has(sound):
+		sound = "footstep"
+	play(sound, _step_random.randf_range(0.97, 1.03), _step_random.randf_range(0.94, 1.0))
+
+func _reset_steps() -> void:
+	_local_tile = Vector2i(-1, -1)
+	_step_actor_id = -1
+	_last_step_msec = -STEP_INTERVAL_MSEC
+	_last_step_variant = -1
 
 func _on_combat_changed() -> void:
 	var event: int = int(AppState.combat_state.get("event", 0))
