@@ -62,7 +62,28 @@ func _run() -> void:
 	_expect(nodes[520] == marker and marker.server_tile == Vector2i(5, 6)
 		and label.text == "Reed bank" and marker.position.x == 5.5,
 		"restating an id updates its position and label without duplicate effects")
+	var marker_instance: int = marker.get_instance_id()
+	var sparks_instance: int = marker.get_node("RisingSparks").get_instance_id()
+	var grounded_mesh: ArrayMesh = glow.mesh
+	# Let the fixture's first gameplay frame finish loading before timing
+	# the network gap; startup can take longer than the refresh grace.
+	await create_timer(0.3).timeout
+	# Refresh packets can straddle rendered frames. Neither the pin, its
+	# grounded mesh nor the live particle simulation should be replaced.
+	for refresh: int in range(3):
+		state.call("_on_packet", 91, PackedByteArray([8, 2]))
+		await create_timer(0.06).timeout
+		_expect(nodes.has(520), "refresh %d keeps the marker visible between packets" % refresh)
+		state.call("_on_packet", 90, _marker(520, 5, 6, "four_gates", "Reed bank"))
+		var refreshed: MapMarker3D = nodes[520]
+		_expect(refreshed.get_instance_id() == marker_instance
+			and refreshed.get_node("RisingSparks").get_instance_id() == sparks_instance
+			and (refreshed.get_node("GroundGlow") as MeshInstance3D).mesh == grounded_mesh,
+			"refresh %d preserves the animation and grounded glow" % refresh)
+	await create_timer(0.3).timeout
+	_expect(nodes.has(520), "cancelled removals cannot erase a refreshed marker")
 	state.call("_on_packet", 91, PackedByteArray([8, 2]))
+	await create_timer(0.3).timeout
 	await process_frame
 	_expect(nodes.is_empty() and not is_instance_valid(marker),
 		"removing a server marker removes its entire world effect")
@@ -96,6 +117,7 @@ func _run() -> void:
 	var message := "The Gate Warden\n\nWalk close and click Gate Warden Ilyon to talk."
 	state.call("_on_packet", 0, _notice(message))
 	state.call("_on_packet", 91, PackedByteArray([8, 2]))
+	await create_timer(0.3).timeout
 	await process_frame
 	var panel: Control = main.get("popup_panel")
 	_expect(panel.visible and (main.get("popup_title") as Label).text == "The Gate Warden"
@@ -132,8 +154,37 @@ func _run() -> void:
 	state.set("authenticated", false)
 	main.queue_free()
 	await process_frame
+	await _check_removal_deadlines(state)
 	print("navigation guidance: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	quit(failures)
+
+func _check_removal_deadlines(state: Node) -> void:
+	state.call("_on_connection_state_changed", "disconnected")
+	var markers: Dictionary = state.get("map_markers")
+	var pending: Dictionary = state.get("_pending_map_marker_removals")
+	state.call("_on_packet", 91, PackedByteArray([8, 2]))
+	_expect(pending.is_empty(), "removing an unknown id creates no pending work")
+	state.call("_on_packet", 90, _marker(520, 2, 3, "four_gates", "Old target"))
+	state.call("_on_packet", 91, PackedByteArray([8, 2]))
+	await create_timer(0.1).timeout
+	state.call("_on_packet", 90, _marker(520, 7, 8, "mirrorhold", "New target"))
+	_expect(markers[520].label == "New target" and markers[520].map_id == "mirrorhold",
+		"a refresh can change the destination and label immediately")
+	state.call("_on_packet", 91, PackedByteArray([8, 2]))
+	await create_timer(0.17).timeout
+	_expect(markers.has(520), "an older cancelled timer cannot remove a newer marker")
+	# A duplicate REMOVE must not postpone the active removal indefinitely.
+	state.call("_on_packet", 91, PackedByteArray([8, 2]))
+	await create_timer(0.13).timeout
+	_expect(markers.is_empty() and pending.is_empty(), "repeated removes keep the original deadline")
+	state.call("_on_packet", 90, _marker(520, 2, 3, "four_gates", "Before disconnect"))
+	state.call("_on_packet", 91, PackedByteArray([8, 2]))
+	state.call("_on_connection_state_changed", "disconnected")
+	_expect(markers.is_empty() and pending.is_empty(), "disconnect clears pending removals immediately")
+	state.call("_on_packet", 90, _marker(520, 2, 3, "four_gates", "After reconnect"))
+	await create_timer(0.3).timeout
+	_expect(markers.has(520), "an old session's timer cannot erase a new session's marker")
+	state.call("_on_connection_state_changed", "disconnected")
 
 func _marker(id: int, x: int, y: int, map: String, label: String) -> PackedByteArray:
 	var bytes := PackedByteArray()

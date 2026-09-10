@@ -95,9 +95,17 @@ func _build_world_visual() -> void:
 	particles.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
 	particles.emission_sphere_radius = 0.35
 	var gradient := Gradient.new()
-	gradient.colors = PackedColorArray([
-		Color(WORLD_COLOUR, 0.0), WORLD_COLOUR, Color(WORLD_COLOUR, 0.0)])
-	gradient.offsets = PackedFloat32Array([0.0, 0.12, 1.0])
+	var colours := PackedColorArray()
+	var offsets := PackedFloat32Array()
+	# Ease into and out of each spark's life with zero opacity and slope
+	# at the wrap. Overlapping ages keep the stream continuously populated.
+	for sample: int in range(65):
+		var age: float = float(sample) / 64.0
+		var alpha: float = smoothstep(0.0, 0.16, age) * (1.0 - smoothstep(0.35, 1.0, age))
+		colours.append(Color(WORLD_COLOUR, alpha))
+		offsets.append(age)
+	gradient.colors = colours
+	gradient.offsets = offsets
 	var ramp := GradientTexture1D.new()
 	ramp.gradient = gradient
 	particles.color_ramp = ramp
@@ -106,6 +114,11 @@ func _build_world_visual() -> void:
 	sparks.amount = 24
 	sparks.lifetime = 2.4
 	sparks.preprocess = 2.4
+	sparks.one_shot = false
+	sparks.explosiveness = 0.0
+	sparks.randomness = 0.0
+	sparks.fixed_fps = 60
+	sparks.interpolate = true
 	sparks.local_coords = true
 	sparks.position.y = 0.4
 	sparks.process_material = particles

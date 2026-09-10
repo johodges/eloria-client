@@ -100,7 +100,39 @@ func _run() -> void:
 	await _capture("map-marker-gameplay-view.png",
 		"the gameplay view shows a green ground glow, rising sparks and the label")
 
+	# Observe several particle lifetimes, including refreshes whose REMOVE
+	# and ADD land on different rendered frames. The glow alone must not
+	# conceal an empty/reset particle stream.
+	var glow: MeshInstance3D = pin.get_node("GroundGlow")
+	glow.hide()
+	var sparks: GPUParticles3D = pin.get_node("RisingSparks")
+	var spark_id: int = sparks.get_instance_id()
+	var minimum_sparks := 1000000
+	var samples := 0
+	var started: int = Time.get_ticks_msec()
+	while Time.get_ticks_msec() - started < int(sparks.lifetime * 3000.0):
+		if samples % 8 == 0:
+			app_state.call("_on_packet", 91, PackedByteArray([0xea, 0x01]))
+		await create_timer(0.06).timeout
+		RenderingServer.force_draw(false)
+		var spark_pixels: int = _green_pixels(viewport.get_texture().get_image())
+		minimum_sparks = mini(minimum_sparks, spark_pixels)
+		_expect(spark_pixels > 0, "sparks remain visible at loop sample %d" % samples)
+		if samples % 8 == 0:
+			app_state.call("_on_packet", 90, here)
+			var refreshed: MapMarker3D = markers[490]
+			if not _expect(refreshed == pin
+				and refreshed.get_node("RisingSparks").get_instance_id() == spark_id,
+				"a rendered refresh preserves the running particle stream"):
+				quit(_failures)
+				return
+		samples += 1
+	_expect(samples >= 12, "continuity sampled throughout three particle lifetimes")
+	print("marker continuity: samples=%d minimum_spark_pixels=%d" % [samples, minimum_sparks])
+	glow.show()
+
 	app_state.call("_on_packet", 91, PackedByteArray([0xea, 0x01]))
+	await create_timer(0.3).timeout
 	for _settle: int in range(4):
 		await process_frame
 	_expect((main.get("map_marker_nodes") as Dictionary).is_empty(),

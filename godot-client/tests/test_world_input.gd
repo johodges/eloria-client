@@ -2851,6 +2851,7 @@ func _run() -> void:
 	_expect((overlay.get("_markers") as Array).size() == 1,
 		"the full-map overlay is given the markers for this map and no others")
 	app_state_inventory.call("_on_packet", 91, PackedByteArray([0xea, 0x01]))
+	await create_timer(0.3).timeout
 	await process_frame
 	_expect((app_state_inventory.get("map_markers") as Dictionary).size() == 1
 		and (main.get("map_marker_nodes") as Dictionary).is_empty()

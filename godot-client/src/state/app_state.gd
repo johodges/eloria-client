@@ -238,6 +238,11 @@ var player_info: Dictionary = {"open": false, "actor_id": -1, "name": "",
 ## Map markers the server placed, keyed by its marker id. Purely server-stated:
 ## the client never invents one and never removes one the server still holds.
 var map_markers: Dictionary = {}
+## Older servers refresh a marker with REMOVE followed by ADD. Allow those
+## packets to cross frames without tearing down the marker's live animation.
+## A removal with no replacement still takes effect promptly.
+const MAP_MARKER_REFRESH_GRACE := 0.25
+var _pending_map_marker_removals: Dictionary = {}
 
 ## Adds a line the client wrote for itself - a console command's answer, not
 ## something the server said. Channel 254 keeps it out of the channel tabs and
@@ -410,6 +415,7 @@ func _on_connection_state_changed(value: String) -> void:
 		special_events.clear()
 		map_objects.clear()
 		map_markers.clear()
+		_pending_map_marker_removals.clear()
 		player_info = _empty_player_info()
 		spell_power.clear()
 		harvest = _empty_harvest_state()
@@ -429,6 +435,22 @@ func _on_connection_state_changed(value: String) -> void:
 func _empty_mix_state() -> Dictionary:
 	return {"served": false, "near_storage": false, "running": false,
 		"remaining": 0, "made": 0, "output": ""}
+
+func _queue_map_marker_removal(marker_id: int) -> void:
+	# Unknown ids and repeated removes must not create or extend a deadline.
+	if not map_markers.has(marker_id) or _pending_map_marker_removals.has(marker_id):
+		return
+	var timer: SceneTreeTimer = get_tree().create_timer(
+		MAP_MARKER_REFRESH_GRACE, true, false, true)
+	_pending_map_marker_removals[marker_id] = timer
+	timer.timeout.connect(func() -> void:
+		# ADD or disconnect cancels this particular removal. A subsequent
+		# REMOVE for the same id owns a different timer and its own deadline.
+		if _pending_map_marker_removals.get(marker_id) != timer:
+			return
+		_pending_map_marker_removals.erase(marker_id)
+		if map_markers.erase(marker_id):
+			state_changed.emit(&"map_markers"), CONNECT_ONE_SHOT)
 
 func _on_packet(command: int, payload: PackedByteArray) -> void:
 	var event := EloriaProtocol.decode_server(command, payload)
@@ -1123,16 +1145,18 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 				"achievements": (event.achievements as Array).duplicate()}
 			state_changed.emit(&"player_info")
 		"map_marker":
-			map_markers[int(event.marker_id)] = {
+			var marker_id: int = int(event.marker_id)
+			_pending_map_marker_removals.erase(marker_id)
+			var marker: Dictionary = {
 				"marker_id": int(event.marker_id), "x": int(event.x),
 				"y": int(event.y), "map_id": str(event.map_id),
 				"label": str(event.label)}
+			if map_markers.get(marker_id) == marker:
+				return
+			map_markers[marker_id] = marker
 			state_changed.emit(&"map_markers")
 		"remove_map_marker":
-			# Removing one the server never placed is not an error: the server
-			# clears a range of ids whenever it resyncs quest markers.
-			if map_markers.erase(int(event.marker_id)):
-				state_changed.emit(&"map_markers")
+			_queue_map_marker_removal(int(event.marker_id))
 		"map_objects":
 			# The list arrives in chunks; only the first clears what was there.
 			if bool(event.first):
