@@ -49,6 +49,65 @@ names **Flowers** for Reed or **Minerals** for Quartz, with only the missing
 quantity requested. The guide and journal return to the housing once the
 materials are in the pack.
 
+## Tutorial experience rewards
+
+Completed milestones award these bonuses in addition to ordinary gameplay XP.
+Skill bonuses also grant the same total to Overall. Each completion announces
+the earned XP and updates levels and available pickpoints through the normal
+stats notifications.
+
+| Milestone | Skill XP | Overall XP |
+| --- | --- | ---: |
+| Reach Nesh, accept Caldus's supplies, read the chart | — | 20 each |
+| Gather 3 Reed | 40 Harvesting | 40 |
+| Mine 1 Quartz | 60 Harvesting | 60 |
+| Store the Pickaxe | — | 25 |
+| Finish collecting the Torch materials and Hatchet | — | 25 |
+| Make the Torch | 100 Manufacturing | 100 |
+| Finish equipping sword and shield | — | 25 |
+| Defeat the otter | 90 Attack + 90 Defense | 180 |
+| Collect the loot | — | 25 |
+| Reach the rest landing | — | 20 |
+| Eat and recover to 35 food | — | 30 |
+| Spend two pickpoints | — | 30 |
+| Repair the housing | 100 Engineering | 100 |
+| Light the beacon | — | 100 |
+| Return to the dock | — | 20 |
+| Sell the meat, buy Bread | — | 40 each |
+| Sail to Four Gates | — | 50 |
+| Deliver the seal to Ilyon | — | 150 |
+
+A full rescue awards **1,120 bonus Overall XP**, **100 Harvesting**,
+**100 Manufacturing**, **100 Engineering**, **90 Attack** and **90 Defense**.
+There are enough earned overall levels to fund the two-pickpoint lesson before
+it appears. Opening the map and the intermediate withdrawal/equipment prompts
+have no separate bonus; rewards belong to the completed lesson.
+
+The checkpoint, XP and per-milestone receipt are saved together before network
+notifications. Repeated actions, reconnects, recovery requests and skipping do
+not duplicate or grant unearned bonuses. Existing saves continue earning bonuses
+from their current lesson onward; completed lessons receive no retroactive XP.
+The old 180 Overall XP combat receipt counts as an already-paid combat reward.
+
+Ilyon's final handoff also awards a complete starter armor set, one of each:
+
+| Slot | Item | Armor | Defense | Weight |
+|---|---|---|---|---|
+| Head | Buckled Hood | 1–5 | −1 | 8 EMU |
+| Torso | Scout Vest | 2–8 | −1 | 8 EMU |
+| Legs | Sidelace Breeches | 1–6 | −1 | 8 EMU |
+| Feet | Laced Fieldboots | 1–3 | 0 | 8 EMU |
+
+All four pieces are beginner-equippable. They arrive in Inventory with equip
+instructions. Pieces that exceed the available slots or carrying capacity go to
+Storage's **Armor** category. Separate messages name exactly which pieces went
+to the pack and which went to Storage, with withdrawal guidance for stored gear.
+The item reward, completion state and one-time receipt are saved together.
+Skipping, reconnecting, repeating the handoff or reloading an already completed
+tutorial cannot grant another set. Existing completed saves are not backfilled.
+
+## Boat interaction
+
 The saved boat's hull and both faces of its sail share the server's boarding
 action. The door cursor appears once the boat is docked and the server's guide
 reaches departure; the original boarding point remains usable. Earlier lesson
@@ -100,6 +159,14 @@ characters that finish or skip this opening adventure.
 
 ## Verification
 
+Experience rewards verified on 2026-09-10: **112 targeted server tests pass**
+against the current develop XP curve (66 tutorial/reward tests and 46 return,
+experience and XP-migration tests). All four full rescue playthroughs earn every
+milestone bonus. The reward tests also pass in the local development checkout.
+Walking and running delays are disabled in the tutorial test fixture; real
+pathfinding, collision, inventory transfers, crafting and combat handlers remain
+in use.
+
 Storage-flow revision verified on 2026-09-10: **85 targeted server tests pass**,
 including all four full rescue playthroughs, saved-stage migration, tutorial
 returns and storage behavior. The final partial-withdrawal and voluntary-deposit
@@ -118,6 +185,9 @@ rendered map check passes with the island framing and smaller marker discs.
 - `dev-server/tests/test_lantern.py`: complete real-handler playthroughs with and
   without auto-gather and early equipment, persistence, private-copy isolation,
   defeat, crafting recovery, lost loot, older-character opt-in and marker arrivals.
+- `dev-server/tests/test_lantern_rewards.py`: reward totals, skill/Overall level
+  updates, caps, persistence before notification, early and previously paid kills,
+  and protection against duplicate or unearned XP.
 - `godot-client/tests/integration/rendered_lantern.gd`: creates a real character
   over a loopback connection, uses native UI callbacks and viewport picking,
   completes the entire rescue, and captures each lesson window. Craft failures
