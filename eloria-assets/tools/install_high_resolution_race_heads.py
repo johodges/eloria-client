@@ -43,7 +43,7 @@ def run(root, candidates, body_name="body.glb"):
                 material=next(p['material'] for m in old['meshes'] for p in m['primitives']
                               if p.get('extras',{}).get('sourceRole')=='race_tail')
                 pieces={};write_group(d,binary,{'a':a,'f':{('body',mapping[material]):f},'role':'race_tail'},pieces)
-                mesh['primitives'].extend(pieces['body'])
+                mesh['primitives'].extend(pieces.get('body', []))
         provenance=d['asset']['extras']['highResolutionHead']
         d['asset']['extras']['sourceSHA256']=provenance['originalSHA256']
         d['asset']['extras']['eloriaSurfacesSplit']=14
@@ -73,6 +73,10 @@ def run(root, candidates, body_name="body.glb"):
         for key,measure in [('bodyGirth',ea.body_girth),('footAnchor',ea.foot_anchor),('soleDrop',ea.sole_drop)]:
             data['equipment'][key][slug]=measure(rig)
         catalog=data['catalog']['races'][slug]
+        if slug.startswith('ssarathi_'):
+            catalog['retainedTailTriangles'] = sum(d['accessors'][p['indices']]['count']//3
+                for mesh in d['meshes'] for p in mesh['primitives']
+                if p.get('extras', {}).get('sourceRole') == 'race_tail')
         catalog.update(sha256=digest(path),source=provenance['original'],sourceSHA256=provenance['originalSHA256'],
             baseBody=template.name,highResolutionHead=provenance,sharedBodyShape=d['asset']['extras']['sharedBodyShape'],
             surfaces=[mesh['name'] for mesh in d['meshes']],

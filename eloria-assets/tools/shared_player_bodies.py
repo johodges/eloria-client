@@ -273,6 +273,30 @@ def cap_inner_loops(group, rings, direction):
         group['f'][('body', material)] = np.concatenate([group['f'][('body', material)], extra])
 
 
+def clean_tail_root(group):
+    """Discard source trousers and the old closure fan inside the shared hips.
+
+    Tail extraction also caught the source's brown seat around the attachment.
+    Its material groups stop at the hips; the actual tail extends beyond x=.30.
+    A fan across that entire cut made the unwanted seat's outline visible even
+    after its clothing faces were removed. Keep the authored tail attributes
+    and leave its hidden root open inside the complete shared trouser surface.
+    """
+    v, normals = group['a']['POSITION'], group['a']['NORMAL']
+    result = dict(group)
+    result['f'] = {}
+    for key, faces in group['f'].items():
+        if not len(faces) or v[faces, 0].max() <= .30:
+            continue
+        incidence = np.bincount(faces.ravel(), minlength=len(v))
+        cap = (np.all(np.abs(normals-[0., 0., 1.]) < 1e-6, axis=1)
+               & (incidence >= 12) & (np.abs(v[:, 0]) < .20)
+               & (v[:, 1] > .70) & (v[:, 1] < .97)
+               & (v[:, 2] > -.17) & (v[:, 2] < -.05))
+        result['f'][key] = faces[~cap[faces].any(axis=1)]
+    return result
+
+
 def tail_graft(source, positions):
     """Keep the whole original tail, including its existing pelvis feather.
 
@@ -309,11 +333,12 @@ def tail_graft(source, positions):
     tail['f'] = {key: f for key, f in tail['f'].items() if len(f)}
     selected = np.unique(np.concatenate(list(tail['f'].values())))
     tail['boundary'] = tail['boundary'][np.isin(tail['boundary'], selected).all(1)]
-    # The cap is internal to the pelvis, never used as a visible substitute for
-    # missing original tail geometry. Its containment is checked before install.
+    # Record the source cut before removing the redundant seat and its cap.
     root_axis = np.array([0., 0., -1.])
     rings = loops(tail, positions['pelvis'], root_axis)
-    cap_inner_loops(tail, [np.empty(0, dtype=int), *rings], -root_axis)
+    tail = clean_tail_root(tail)
+    selected = np.unique(np.concatenate(list(tail['f'].values())))
+    tail['boundary'] = tail['boundary'][np.isin(tail['boundary'], selected).all(1)]
     source_tail = np.flatnonzero(signed > 0)
     return tail, {'sourceTailTip': v[source_tail[np.argmax(v[source_tail, 0])]].tolist(),
                   'keptVertices': int(len(selected)), 'rootLoops': list(map(len, rings)),
@@ -670,6 +695,10 @@ def texture_neck(d, binary, bridge, lower, upper, common, source, common_pixels,
 
 
 def write_group(d, binary, group, meshes):
+    # Head/neck installers also copy retained tails from older exports.
+    # Clean those copies here so an old backup cannot restore the brown seat.
+    if group.get('role') == 'race_tail':
+        group = clean_tail_root(group)
     if not any(len(f) for f in group['f'].values()):return
     # Compact each primitive independently. Godot imports separate surfaces;
     # a shared full-body accessor otherwise duplicates thousands of unused

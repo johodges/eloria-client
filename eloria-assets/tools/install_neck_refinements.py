@@ -49,7 +49,7 @@ def run(root, candidates, heads):
                     pieces = {}
                     write_group(d, binary, {'a': a, 'f': {('body', mapping[p['material']]): f},
                                            'role': 'race_tail'}, pieces)
-                    body['primitives'].extend(pieces['body'])
+                    body['primitives'].extend(pieces.get('body', []))
         # Masks remain valid only when the original face atlas is unchanged.
         prior_body = next(m for m in old['meshes'] if m['name'] == 'body')
         prior_head = next(p for p in prior_body['primitives'] if p.get('extras', {}).get('sourceRole') == 'race_head')
@@ -80,6 +80,10 @@ def run(root, candidates, heads):
         # reviewed equipment dimensions: sample quantiles can drift when
         # identical vertices are removed even though the surface is unchanged.
         parts = [p for m in d['meshes'] for p in m['primitives']]
+        if slug.startswith('ssarathi_'):
+            data['catalog']['races'][slug]['retainedTailTriangles'] = sum(
+                d['accessors'][p['indices']]['count']//3 for p in parts
+                if p.get('extras', {}).get('sourceRole') == 'race_tail')
         data['catalog']['races'][slug].update(sha256=digest(path), sharedBodyShape=d['asset']['extras']['sharedBodyShape'],
             neckAdaptorTriangles=sum(d['accessors'][p['indices']]['count']//3 for p in parts if p.get('extras', {}).get('sourceRole') == 'neck_join'),
             triangles=sum(d['accessors'][p['indices']]['count']//3 for p in parts),
