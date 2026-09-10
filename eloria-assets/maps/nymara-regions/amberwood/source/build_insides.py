@@ -284,6 +284,26 @@ def collision_nodes(prefix: str, package: Path) -> list[str]:
             for name in manifest.get("collision", {}).get("nodeNames", ())]
 
 
+def composed_bounds() -> dict:
+    """Frame the placed interiors, using the same offsets as the merged GLB."""
+    result = {}
+    for key in ("bounds", "playableBounds"):
+        lows, highs = [], []
+        for _, name, (offset_x, offset_y) in SECTIONS:
+            manifest = json.loads((INTERIORS / name / "world.json").read_text(encoding="utf-8"))
+            origin_x, origin_y = manifest["coordinateTransform"]["serverOrigin"]
+            translation = (offset_x - SERVER_ORIGIN[0] + origin_x, 0.0,
+                           SERVER_ORIGIN[1] - offset_y - origin_y)
+            bounds = manifest["asset"].get(key, manifest["asset"]["bounds"])
+            lows.append([bounds["min"][axis] + translation[axis] for axis in range(3)])
+            highs.append([bounds["max"][axis] + translation[axis] for axis in range(3)])
+        result[key] = {
+            "min": [round(min(row[axis] for row in lows), 3) for axis in range(3)],
+            "max": [round(max(row[axis] for row in highs), 3) for axis in range(3)],
+        }
+    return result
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--out", default=str(INTERIORS / "amberwood_insides"))
@@ -311,6 +331,7 @@ def main() -> int:
         "schemaVersion": "1.0.0", "assetVersion": "1.0.0",
         "asset": {"id": "amberwood_insides", "name": "Amberwood Insides",
                   "glb": "world.glb", "units": "meters",
+                  **composed_bounds(),
                   "coordinateSystem": {"handedness": "right", "upAxis": "Y",
                                        "northAxis": "-Z"}},
         "coordinateTransform": {

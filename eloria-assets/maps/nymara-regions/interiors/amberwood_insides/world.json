@@ -10,6 +10,30 @@
       "handedness": "right",
       "upAxis": "Y",
       "northAxis": "-Z"
+    },
+    "bounds": {
+      "min": [
+        -173.55,
+        -18.4,
+        -120.55
+      ],
+      "max": [
+        109.55,
+        8.49,
+        173.55
+      ]
+    },
+    "playableBounds": {
+      "min": [
+        -173.55,
+        -18.4,
+        -120.55
+      ],
+      "max": [
+        109.55,
+        3.6,
+        173.55
+      ]
     }
   },
   "coordinateTransform": {

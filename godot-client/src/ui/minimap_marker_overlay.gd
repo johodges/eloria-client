@@ -10,9 +10,8 @@ extends Control
 ##
 ## So the minimap camera stopped rendering that layer. Everything it marks is
 ## projected through that camera and drawn here in pixels instead, at the size
-## the player asked for and nothing else. The full map keeps the modelled
-## discs: it frames a whole map at one fixed scale, so nothing there changes
-## size, and the marks it draws are sized for that scale.
+## the player asked for and nothing else. The full map also uses this overlay
+## for live dots so small interiors and large regions share a marker size.
 ##
 ## The overlay owns no marker state. `main.gd` hands it the marks each time the
 ## minimap render is refreshed, and it projects them through the same camera

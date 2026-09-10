@@ -47,6 +47,7 @@ const SecretSectionsScript := preload("res://src/world/secret_sections.gd")
 const OccluderFadeScript := preload("res://src/world/occluder_fade.gd")
 const InvasionAssistantScript := preload("res://src/ui/invasion_assistant.gd")
 const ExtensionWindowsScript := preload("res://src/ui/extension_windows.gd")
+const MapViewScript := preload("res://src/world/map_view.gd")
 const MapMarkerOverlayScript := preload("res://src/ui/map_marker_overlay.gd")
 const MinimapMarkerOverlayScript := preload("res://src/ui/minimap_marker_overlay.gd")
 const PlayerInfoPanelScript := preload("res://src/ui/player_info_panel.gd")
@@ -294,8 +295,7 @@ var map_object_nodes: Dictionary = {}
 var map_marker_nodes: Dictionary = {}
 var player_mark_nodes: Dictionary = {}
 var map_marker_overlay: Control
-## The minimap's marks. The full map's are still modelled in the world; see
-## `minimap_marker_overlay.gd` for why the minimap's cannot be.
+## The minimap's marks. Both maps draw marks in pixels at every map extent.
 var minimap_marker_overlay: Control
 ## Short-lived world effects the server announced. Kept only so a test can see
 ## what is on screen; each one frees itself when it finishes.
@@ -1241,8 +1241,10 @@ func _update_map_viewports() -> void:
 	if full_map.visible and map_image.visible and now >= _full_map_refresh_msec:
 		_full_map_refresh_msec = now + FULL_MAP_REFRESH_MSEC
 		full_map_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
-		# The map camera follows the player, so the marker overlay is projected
-		# again whenever the image beneath it is - and never while it is hidden.
+		# Refresh projected markers alongside the terrain, including visibility
+		# changes when the player enters a different secret section.
+		map_marker_overlay.set_live_marks(_collect_minimap_marks())
+		map_marker_overlay.set_waypoints(_collect_map_waypoints())
 		map_marker_overlay.queue_redraw()
 
 ## The character preview renders its own 3D scene. It only needs to run while
@@ -2688,6 +2690,7 @@ func _clear_world_presentation() -> void:
 				marker.queue_free()
 		markers.clear()
 	var no_marks: Array[Dictionary] = []
+	map_marker_overlay.set_live_marks(no_marks)
 	map_marker_overlay.set_waypoints(no_marks)
 	map_marker_overlay.set_markers(no_marks)
 	map_marker_overlay.set_player_marks(no_marks)
@@ -3317,6 +3320,7 @@ func _apply_minimap_zoom() -> void:
 func _on_full_map_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		var mouse_motion: InputEventMouseMotion = event as InputEventMouseMotion
+		map_image.tooltip_text = map_marker_overlay.label_at(mouse_motion.position)
 		var viewport_position_value: Variant = _texture_to_viewport_position(
 			mouse_motion.position, map_image, full_map_viewport.size)
 		if not viewport_position_value is Vector2:
@@ -3333,6 +3337,7 @@ func _on_full_map_gui_input(event: InputEvent) -> void:
 	_handle_map_gui_input(event, map_image, full_map_viewport, full_map_camera, "full_map")
 
 func _on_full_map_mouse_exited() -> void:
+	map_image.tooltip_text = ""
 	if map_image.visible:
 		map_coordinates.text = "Coordinates: —"
 
@@ -4807,7 +4812,11 @@ func _update_secret_sections(force: bool = false) -> void:
 	var local_actor_node: Node3D = actor_nodes.get(AppState.local_actor_id) as Node3D
 	if local_actor_node == null:
 		return
+	var previous_section: String = secret_sections.current_section()
 	secret_sections.call("update", local_actor_node.global_position, force)
+	if secret_sections.current_section() != previous_section:
+		_configure_full_map(world_loader.manifest)
+		_request_map_redraw()
 	# whoever and whatever stands in another secret stays unseen
 	secret_sections.call("cull_dynamic", actor_nodes.values(), local_actor_node)
 	secret_sections.call("cull_dynamic", map_object_nodes.values())
@@ -4822,34 +4831,9 @@ func _configure_interior_cutaway(manifest: WorldManifest) -> void:
 
 
 func _configure_full_map(manifest: WorldManifest) -> void:
-	var asset_value: Variant = manifest.data.get("asset", {})
-	if not asset_value is Dictionary:
-		return
-	var asset: Dictionary = asset_value as Dictionary
-	# A coastal scene can include an ocean backdrop far beyond its playable
-	# island. An explicit map extent keeps that backdrop out of the map view.
-	var bounds_value: Variant = asset.get("mapBounds", asset.get("bounds", {}))
-	if not bounds_value is Dictionary:
-		return
-	var bounds: Dictionary = bounds_value as Dictionary
-	var min_value: Variant = bounds.get("min", [])
-	var max_value: Variant = bounds.get("max", [])
-	if not min_value is Array or not max_value is Array:
-		return
-	var minimum: Array = min_value as Array
-	var maximum: Array = max_value as Array
-	if minimum.size() < 3 or maximum.size() < 3:
-		return
-	var center: Vector3 = Vector3(
-		(float(minimum[0]) + float(maximum[0])) * 0.5,
-		maxf(float(maximum[1]) + 100.0, 300.0),
-		(float(minimum[2]) + float(maximum[2])) * 0.5)
-	var extent: float = maxf(float(maximum[0]) - float(minimum[0]),
-		float(maximum[2]) - float(minimum[2]))
-	full_map_camera.global_position = center
-	full_map_camera.rotation_degrees = Vector3(-90, 0, 0)
-	full_map_camera.size = extent * 1.05
-	full_map_camera.far = maxf(2500.0, center.y + 500.0)
+	MapViewScript.configure(full_map_camera, full_map_viewport,
+		MapViewScript.bounds_for(manifest, secret_sections.current_section()))
+	map_marker_overlay.configure(full_map_camera, adapter, full_map_viewport.size)
 	player_map_marker.scale = Vector3(.18,1,.18) if world_loader.manifest.asset_id() in ["lantern_reach", "bellwatch", "stillglass", "reedway", "cinderbank", "echo_court", "wayfarer_bastion", "lantern_exchange", "waystone_yard"] else Vector3.ONE
 
 func _configure_cartography() -> void:
@@ -5564,7 +5548,7 @@ func _collect_minimap_marks() -> Array[Dictionary]:
 		if not is_instance_valid(actor_value):
 			continue
 		var actor: ReplicatedActor3D = actor_value as ReplicatedActor3D
-		if actor == null:
+		if actor == null or not actor.is_visible_in_tree():
 			continue
 		var dto: Dictionary = AppState.actors.get(actor_id, {}) as Dictionary
 		marks.append({"position": actor.global_position,
@@ -5574,7 +5558,7 @@ func _collect_minimap_marks() -> Array[Dictionary]:
 		if not is_instance_valid(raw_object):
 			continue
 		var map_object: MapObject3D = raw_object as MapObject3D
-		if map_object == null:
+		if map_object == null or not map_object.is_visible_in_tree():
 			continue
 		var mark: Dictionary = {"position": map_object.global_position,
 			"type": _minimap_object_type(map_object),
@@ -5588,7 +5572,7 @@ func _collect_minimap_marks() -> Array[Dictionary]:
 		if not is_instance_valid(raw_bag):
 			continue
 		var bag: GroundBag3D = raw_bag as GroundBag3D
-		if bag == null:
+		if bag == null or not bag.is_visible_in_tree():
 			continue
 		marks.append({"position": bag.global_position, "type": &"bag",
 			"colour": GroundBag3D.MAP_MARKER_COLOUR})
@@ -5596,7 +5580,7 @@ func _collect_minimap_marks() -> Array[Dictionary]:
 		if not is_instance_valid(raw_marker):
 			continue
 		var marker: MapMarker3D = raw_marker as MapMarker3D
-		if marker == null:
+		if marker == null or not marker.is_visible_in_tree():
 			continue
 		marks.append({"position": marker.global_position, "type": &"marker",
 			"colour": MapMarker3D.MARKER_COLOUR,
@@ -5611,16 +5595,14 @@ static func _minimap_object_type(map_object: MapObject3D) -> StringName:
 		return &"portal"
 	return &"harvest" if map_object.is_harvestable() else &"interactive"
 
-## The waygates and the ways off this map, for the full map's overlay: it
-## draws them as their glyph with the destination's name beside it, which a
-## disc modelled in the world could never carry.
+## Waygates and exits use glyphs on the full map, with names on hover.
 func _collect_map_waypoints() -> Array[Dictionary]:
 	var waypoints: Array[Dictionary] = []
 	for raw_object: Variant in map_object_nodes.values():
 		if not is_instance_valid(raw_object):
 			continue
 		var map_object: MapObject3D = raw_object as MapObject3D
-		if map_object == null:
+		if map_object == null or not map_object.is_visible_in_tree():
 			continue
 		var glyph: String = map_object.map_glyph()
 		if glyph.is_empty():

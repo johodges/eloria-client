@@ -30,7 +30,19 @@
     },
     "cityRingDiameterMetres": 704.0,
     "plateauWalkHeight": 31.0,
-    "waterLevel": -2.0
+    "waterLevel": -2.0,
+    "mapBounds": {
+      "min": [
+        -360.0,
+        -42.2,
+        -360.0
+      ],
+      "max": [
+        360.0,
+        348.0,
+        360.0
+      ]
+    }
   },
   "coordinateTransform": {
     "metresPerTile": 1.0,

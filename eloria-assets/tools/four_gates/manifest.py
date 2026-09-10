@@ -313,6 +313,10 @@ def build(stats: dict, bounds: dict, landmark_records: List[dict],
                                  "northAxis": "-Z"},
             "origin": [0.0, 0.0, 0.0],
             "bounds": bounds,
+            # The server's 720-cell city grid ends at the four causeways;
+            # the ocean and mountain backdrop extend far beyond it.
+            "mapBounds": {"min": [-360.0, bounds["min"][1], -360.0],
+                          "max": [360.0, bounds["max"][1], 360.0]},
             "cityRingDiameterMetres": round(T.WALL_RADIUS * 2.0, 1),
             "plateauWalkHeight": T.PLATEAU_Y,
             "waterLevel": T.WATER_Y,

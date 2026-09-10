@@ -152,12 +152,11 @@ func _run() -> void:
 		"minimap camera ray resolves a server walking target")
 	_expect(main.call("_map_target_tile", full_map_camera, full_map_center) is Vector2i,
 		"Tab map camera ray resolves a server walking target")
-	# The full map draws the modelled marker layer; the minimap camera no
-	# longer does, because a disc modelled in metres is a different size at
-	# every zoom. Its marks are drawn over the render in pixels instead.
-	_expect((full_map_camera.cull_mask & 4) != 0
+	# Both maps draw marks in pixels so zoom and playable-area framing
+	# cannot change their size.
+	_expect((full_map_camera.cull_mask & 4) == 0
 		and (map_camera.cull_mask & 4) == 0,
-		"the full map renders the modelled marker layer and the minimap does not")
+		"both map cameras exclude the modelled marker layer")
 	var marker_material: StandardMaterial3D = player_marker.material_override as StandardMaterial3D
 	if marker_material == null and player_marker.mesh != null:
 		marker_material = player_marker.mesh.material as StandardMaterial3D
