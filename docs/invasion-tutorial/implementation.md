@@ -46,7 +46,7 @@ directly. This change has not been deployed to a remote server.
 | Mill breach | Clear two finite waves separated by a seven-second lull; operate the winch | Every required actor defeated, pending wave resolved, real nearby object use |
 | Ranging | Equip bow and compatible Arrow, fire a hit, open Ranging, finish the sentry | Real ammunition consumption, ranging hit, retaliation, panel opening and defeat |
 | Captain overlook | Enter the South approach and inspect the captain | Player position; the armed, larger captain already exists |
-| Ash Captain | Fight through healing charges and health-triggered reinforcements | Normal boss logic: three heals, two summon thresholds, finite summon budget; followers disperse on death |
+| Mire Goblin captain | Fight through healing charges and health-triggered reinforcements | Normal boss logic: three heals, two summon thresholds, finite summon budget; followers disperse on death |
 | Departure road | Ready the cart, defeat a Great captain, clear its survivors | Strength 1.15, dispersal disabled, no required living actors left |
 | Second bell | Ring the bell, open Counters, submit `#il`, board the cart | Native interactions, statistics tab, fresh command and one-time completion |
 
@@ -60,8 +60,11 @@ Every encounter uses reviewed creature art: scouts use the updated red fox
 model, while raiders, the sentry and both captains use the updated Mire Goblin.
 The level-1 fox retains the scout's gentle combat stats and required meat drop.
 Waves, captain reinforcements and resumed encounters share these definitions.
+Their nameplates use the normal species names, **Red Fox** and **Mire Goblin**,
+including both captains. Tutorial roles remain in the quest instructions;
+saved encounters receive the current species names when resumed.
 
-The Ash Captain now has 40 health (down from 60), and the Great Ash Captain
+The Mire Goblin captain now has 40 health (down from 60), and the final captain
 has 46 (down from 69). Both have attack 1 and innate damage 1 (previously
 attack 2 and damage 1–2), before sword damage and player defenses. Their
 attributes remain at 1, keeping sword strikes gentle. Their swords, three

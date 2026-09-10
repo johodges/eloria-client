@@ -154,7 +154,7 @@ func _check_block_hangs_together(actors: Array[ReplicatedActor3D]) -> void:
 		if not _expect(node != null, "the actor carries a %s" % piece):
 			continue
 		_expect(is_equal_approx(node.position.y,
-			ReplicatedActor3D.NAMEPLATE_HEIGHT),
+			(actor.get_node("Nameplate") as Node3D).position.y),
 			"%s hangs from the nameplate's height, not one of its own" % piece)
 
 ## The claim itself, checked against the thing it claims to match rather than

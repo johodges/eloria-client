@@ -186,6 +186,8 @@ var _native_skeleton: Skeleton3D
 ## walk does not snap the body. Poses meant to face off - a bladed combat idle, a
 ## sword lunge - declare nothing and are left as authored.
 var _native_model: Node3D
+## Authored body bounds, cached before equipment or animation can move them.
+var _native_body_bounds := AABB()
 var _base_model_yaw := 0.0
 var _facing_offset := 0.0
 var _facing_offset_from := 0.0
@@ -272,10 +274,10 @@ const INVASION_NAME_COLOUR := 14
 const SUMMON_NAME_COLOUR := 4
 const SETTLED_YAW_EPSILON := 0.0005
 
-## How high above the actor's feet the overhead block hangs. The one world
-## measurement left in it: everything inside the block is laid out in the
-## pixels of the 2D layer instead.
+## Fallback height when no native body could be loaded. Native actors anchor
+## the block above their imported body bounds, including both model scales.
 const NAMEPLATE_HEIGHT := 2.15
+const NAMEPLATE_CLEARANCE := 0.6
 
 ## The player's own name and health are a 2D panel projected over their head
 ## (`_update_actor_resource_overlay` in main.gd), so they are the same size to
@@ -1047,7 +1049,8 @@ func show_speech_bubble(speech: String, duration_msec: int) -> void:
 	if not is_instance_valid(_speech_bubble):
 		var label: Label3D = Label3D.new()
 		label.name = "SpeechBubble"
-		label.position.y = NAMEPLATE_HEIGHT
+		label.position.y = (_nameplate.position.y
+			if is_instance_valid(_nameplate) else NAMEPLATE_HEIGHT)
 		label.offset = Vector2(0.0, SPEECH_BUBBLE_RISE)
 		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 		label.no_depth_test = true
@@ -1099,6 +1102,10 @@ func _apply_model_scale() -> void:
 
 ## Keep the overhead furniture above the model as it grows.
 func _lift_overhead(factor: float) -> void:
+	var height: float = NAMEPLATE_HEIGHT * factor
+	if is_instance_valid(_native_model) and _native_body_bounds.size.y > 0.0:
+		var body_bounds: AABB = _native_model.transform * _native_body_bounds
+		height = body_bounds.end.y + NAMEPLATE_CLEARANCE
 	# One height for the lot: the bar, the numbers and the bubble sit above or
 	# below the name inside the block rather than at world heights of their
 	# own, so the gaps between them hold their size along with the text.
@@ -1106,7 +1113,7 @@ func _lift_overhead(factor: float) -> void:
 			"HealthBarFill", "HealthNumbers", "SpeechBubble"]:
 		var node := get_node_or_null(node_name) as Node3D
 		if node != null:
-			node.position.y = NAMEPLATE_HEIGHT * factor
+			node.position.y = height
 
 ## Restate how much ground this actor stands on, resizing what depends on
 ## it. Separate from `configure` because the footprint table is a login
@@ -2897,6 +2904,8 @@ func _apply_import_adapter(config: Dictionary) -> void:
 	var bounds: AABB = _native_visual_bounds(model)
 	if bounds.size.y > 0.0:
 		model.position.y = -bounds.position.y
+	_native_body_bounds = bounds
+	_lift_overhead(server_scale)
 
 func _validate_native_visual() -> String:
 	var native_model: Node3D = get_node_or_null("NativeModel") as Node3D

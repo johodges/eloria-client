@@ -243,7 +243,7 @@ warband disappear through the real group-dispersal behavior; the South lamps tur
 
 **Nesh, on the first actual summon:** “More at its feet. Make room, then finish it.”
 
-**Play:** Fight a new novice boss definition, **Ash Captain**, using the ordinary
+**Play:** Fight a novice **Mire Goblin** captain, using the ordinary
 boss response system. Starting tuning: three small healing charges and two
 single-creature summon stages near 65% and 30% health; final values depend on
 measured novice damage. Change targets to relieve pressure, heal or retreat as
@@ -267,7 +267,7 @@ enemy animation; any running-away animation would be additional presentation.
 ### 09 · The road without a voice — independent application · 5 minutes
 
 **Picture:** The West departure lane opens. A second captain blocks the cart:
-the same recognizable creature, now a larger **Great Ash Captain**. Nesh stays
+the same recognizable **Mire Goblin**, now a larger captain. Nesh stays
 with the cart. Only the destination and “Clear the departure road” remain.
 
 **Nesh:** “I'll stay with them. You know what to look for.”
