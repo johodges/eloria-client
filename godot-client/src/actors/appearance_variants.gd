@@ -103,7 +103,7 @@ static func culture_for_actor_type(actor_type: int) -> String:
 
 static func skin_color(index: int) -> Color:
 	# Actual sRGB skin colors, also used for the menu swatches. Index 0 is
-	# retained for existing characters but is no longer offered in creation.
+	# the authored texture, offered as Race default for non-human races.
 	var colors: Array[Color] = [Color8(220, 182, 153),
 		Color8(211, 184, 161), Color8(196, 151, 99), Color8(158, 107, 73),
 		Color8(103, 66, 47), Color8(61, 42, 33), Color8(143, 179, 205),

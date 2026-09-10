@@ -7123,32 +7123,32 @@
     {
       "actorType": 0,
       "model": "luminous_female",
-      "label": "Luminous Female"
+      "label": "Human Female"
     },
     {
       "actorType": 1,
       "model": "luminous_male",
-      "label": "Luminous Male"
+      "label": "Human Male"
     },
     {
       "actorType": 2,
       "model": "votary_female",
-      "label": "Whitehorn Votary Female"
+      "label": "Whitehorn Female"
     },
     {
       "actorType": 3,
       "model": "votary_male",
-      "label": "Whitehorn Votary Male"
+      "label": "Whitehorn Male"
     },
     {
       "actorType": 4,
       "model": "glasswarden_female",
-      "label": "Glasswarden Female"
+      "label": "Glassborn Female"
     },
     {
       "actorType": 5,
       "model": "glasswarden_male",
-      "label": "Glasswarden Male"
+      "label": "Glassborn Male"
     },
     {
       "actorType": 37,
@@ -7173,12 +7173,12 @@
     {
       "actorType": 41,
       "model": "ssarathi_female",
-      "label": "Ssarathi Female"
+      "label": "Lizardfolk Female"
     },
     {
       "actorType": 42,
       "model": "ssarathi_male",
-      "label": "Ssarathi Male"
+      "label": "Lizardfolk Male"
     },
     {
       "actorType": 79,
@@ -7193,12 +7193,12 @@
     {
       "actorType": 81,
       "model": "mycelari_female",
-      "label": "Mycelari Female"
+      "label": "Mushroomfolk Female"
     },
     {
       "actorType": 82,
       "model": "mycelari_male",
-      "label": "Mycelari Male"
+      "label": "Mushroomfolk Male"
     }
   ],
   "npcLooks": {

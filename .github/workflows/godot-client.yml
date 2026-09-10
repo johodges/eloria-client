@@ -81,6 +81,10 @@ jobs:
           godot --headless --path godot-client --script res://tests/test_ranging_window.gd
       - name: World input routing fixtures
         run: godot --headless --path godot-client --script res://tests/test_world_input.gd
+      - name: Character creation race, sex and skin fixtures
+        run: |
+          godot --headless --path godot-client --script res://tests/test_character_creation.gd
+          godot --headless --path godot-client --script res://tests/integration/appearance_options.gd
       - name: Manifest lighting rig fixtures
         run: godot --headless --path godot-client --script res://tests/test_world_lighting.gd
       - name: Connection lifecycle fixtures

@@ -17,6 +17,7 @@ const AppearanceChoices = preload("res://src/actors/appearance_choices.gd")
 @onready var create_name: LineEdit = %CreateName
 @onready var create_password: LineEdit = %CreatePassword
 @onready var create_confirm: LineEdit = %CreateConfirm
+@onready var create_race: OptionButton = %CreateRace
 @onready var create_gender: OptionButton = %CreateGender
 @onready var create_status: Label = %CreateStatus
 @onready var preview_container: SubViewportContainer = %CharacterPreview
@@ -1048,16 +1049,8 @@ func _ready() -> void:
 	manufacturing_panel.hide()
 	game_view.hide()
 	creation_panel.hide()
-	var sorted_creation_options := creation_options.duplicate()
-	sorted_creation_options.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
-		return str(a.get("label", "")).naturalnocasecmp_to(str(b.get("label", ""))) < 0)
-	for raw_option: Variant in sorted_creation_options:
-		if raw_option is not Dictionary:
-			continue
-		var option: Dictionary = raw_option as Dictionary
-		create_gender.add_item(str(option.get("label", "Unknown appearance")),
-			int(option.get("actorType", 1)))
-	create_gender.select(create_gender.get_item_index(0))
+	_populate_creation_races()
+	_populate_creation_sexes()
 	_populate_creation_choices()
 	_update_preview_camera()
 	_apply_eloria_art()
@@ -1410,6 +1403,11 @@ func _on_creation_back_pressed() -> void:
 	creation_panel.hide()
 	login_panel.show()
 
+func _on_create_race_item_selected(_index: int) -> void:
+	_populate_creation_sexes()
+	_populate_creation_choices(true)
+	_refresh_creation_preview()
+
 func _on_create_gender_item_selected(_index: int) -> void:
 	_populate_creation_choices()
 	_refresh_creation_preview()
@@ -1486,12 +1484,47 @@ func _refresh_creation_preview() -> void:
 	else:
 		create_status.text = "Drag the preview to rotate; use the mouse wheel to zoom."
 
-func _populate_creation_choices() -> void:
-	AppearanceChoices.populate(%CreateSkin, AppearanceChoices.options("skin"))
+func _populate_creation_races() -> void:
+	var races: Dictionary = {}
+	for option: Dictionary in creation_options:
+		var config: Dictionary = models.get(str(option.get("model", "")), {})
+		var culture := str(config.get("culture", ""))
+		var label := str(option.get("label", "")).trim_suffix(" Female").trim_suffix(" Male")
+		races[culture] = label
+	var cultures: Array = races.keys()
+	cultures.sort_custom(func(a: String, b: String) -> bool:
+		return str(races[a]).naturalnocasecmp_to(str(races[b])) < 0)
+	create_race.clear()
+	for culture: String in cultures:
+		create_race.add_item(str(races[culture]))
+		var index := create_race.item_count - 1
+		create_race.set_item_metadata(index, culture)
+		if culture == "luminous":
+			create_race.select(index)
+
+func _populate_creation_sexes() -> void:
+	var previous := str(create_gender.get_selected_metadata()) if create_gender.item_count > 0 else "female"
+	var culture := str(create_race.get_selected_metadata())
+	create_gender.clear()
+	for option: Dictionary in creation_options:
+		var config: Dictionary = models.get(str(option.get("model", "")), {})
+		if str(config.get("culture", "")) != culture:
+			continue
+		var sex := str(config.get("gender", ""))
+		create_gender.add_item(sex.capitalize(), int(option.get("actorType", 1)))
+		var index := create_gender.item_count - 1
+		create_gender.set_item_metadata(index, sex)
+		if sex == previous:
+			create_gender.select(index)
+
+func _populate_creation_choices(reset_skin := false) -> void:
+	var culture := AppearanceVariants.culture_for_actor_type(create_gender.get_selected_id())
+	AppearanceChoices.populate(%CreateSkin, AppearanceChoices.options("skin", culture))
+	if reset_skin and culture != "luminous":
+		%CreateSkin.select(%CreateSkin.get_item_index(0))
 	AppearanceChoices.populate(%CreateEyes, AppearanceChoices.options("eyes"))
 	AppearanceChoices.populate(%CreateHair, AppearanceChoices.options("hair"))
 	AppearanceChoices.populate(%CreateHairColor, AppearanceChoices.options("hair_color"))
-	var culture := AppearanceVariants.culture_for_actor_type(create_gender.get_selected_id())
 	AppearanceChoices.populate(%CreateShirt, AppearanceChoices.options("wardrobe", culture, AppearanceVariants.PART_SHIRT))
 	AppearanceChoices.populate(%CreatePants, AppearanceChoices.options("wardrobe", culture, AppearanceVariants.PART_PANTS))
 	AppearanceChoices.populate(%CreateBoots, AppearanceChoices.options("wardrobe", culture, AppearanceVariants.PART_BOOTS))

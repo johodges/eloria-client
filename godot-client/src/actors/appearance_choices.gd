@@ -51,6 +51,10 @@ static func options(category: String, culture := "luminous", part := 0) -> Array
 			var family_a := -1 if ca.s < 0.16 else int(ca.h * 12.0)
 			var family_b := -1 if cb.s < 0.16 else int(cb.h * 12.0)
 			return ca.v > cb.v if family_a == family_b else family_a < family_b)
+	if category == "skin" and culture != "luminous" and not culture.is_empty():
+		# Zero leaves the race's authored skin colors and markings intact.
+		# There is no single swatch for a textured, potentially multicolor skin.
+		result.push_front({"id": 0, "label": "Race default"})
 	return result
 
 static func populate(control: OptionButton, choices: Array[Dictionary]) -> void:

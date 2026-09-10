@@ -14,7 +14,7 @@ func _init() -> void:
 
 func run() -> void:
 	var skins := AppearanceChoices.options("skin")
-	expect(skins.size() == 9 and not skins.any(func(row: Dictionary) -> bool: return row.id == 0), "retired skin color is absent")
+	expect(skins.size() == 9 and not skins.any(func(row: Dictionary) -> bool: return row.id == 0), "human creation offers the nine named skin colors")
 	var control := OptionButton.new()
 	AppearanceChoices.populate(control, skins)
 	expect(control.get_selected_id() == 1, "skin has a valid pale beige default")
@@ -23,6 +23,9 @@ func run() -> void:
 	expect(control.get_selected_id() == 6, "refresh preserves the selected blue")
 	control.free()
 	for culture: String in ["luminous", "votary", "glasswarden", "orun", "greyhaven", "ssarathi", "stoneborn", "mycelari"]:
+		var race_skins := AppearanceChoices.options("skin", culture)
+		if culture != "luminous":
+			expect(race_skins.size() == 10 and race_skins[0].id == 0 and race_skins[0].label == "Race default", "non-human races offer their authored skin")
 		for category: String in ["skin", "eyes", "hair_color", "wardrobe"]:
 			for part in [4, 5, 6]:
 				var seen := {}

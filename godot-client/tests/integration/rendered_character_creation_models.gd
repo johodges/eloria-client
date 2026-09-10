@@ -39,8 +39,7 @@ func _run() -> void:
 	main.set("preview_distance", 2.4)
 	main.call("_update_preview_camera")
 
-	var selector: OptionButton = main.get_node(
-		"CreationPanel/Columns/Form/CreateGender") as OptionButton
+	var selector: OptionButton = main.get_node("%CreateGender") as OptionButton
 	var preview: SubViewport = main.get_node(
 		"CreationPanel/Columns/CharacterPreview/Viewport") as SubViewport
 	var spin_names: Array[String] = ["CreateSkin", "CreateEyes",
@@ -60,9 +59,10 @@ func _run() -> void:
 	for spin_name: String in spin_names:
 		(main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + spin_name) as OptionButton).select((main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + spin_name) as OptionButton).get_item_index(1 if spin_name == "CreateSkin" else 0))
 
-	for index: int in range(selector.item_count):
-		selector.select(index)
-		main.call("_populate_creation_choices")
+	var creation_options: Array = main.get("creation_options")
+	for index: int in range(creation_options.size()):
+		var option: Dictionary = creation_options[index]
+		_select_actor_type(main, int(option.actorType))
 		for choice_name: String in spin_names + ["CreateHair", "CreateHairColor"]:
 			var choice := main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + choice_name) as OptionButton
 			var seen: Dictionary = {}
@@ -73,15 +73,14 @@ func _run() -> void:
 		main.call("_refresh_creation_preview")
 		for unused_frame: int in range(10):
 			await process_frame
-		var label: String = selector.get_item_text(index)
+		var label: String = option.label
 		var slug: String = label.to_lower().replace(" ", "-")
 		await _capture_preview(preview, "default-%02d-%s.png" % [index, slug])
 		_validate_actor(main.get("preview_actor") as ReplicatedActor3D, label)
 
 	# Exercise all four runtime appearance families through the same creation
 	# controls: skin, eyes, native hair, and wardrobe palettes.
-	selector.select(selector.get_item_index(0))
-	main.call("_populate_creation_choices")
+	_select_actor_type(main, 0)
 	for style: int in range(AppearanceVariants.HAIR_STYLE_COUNT):
 		hair.select(hair.get_item_index(style))
 		hair_color.select(hair_color.get_item_index(style))
@@ -244,6 +243,18 @@ func _expect(condition: bool, message: String) -> void:
 		return
 	_failures += 1
 	push_error("FAIL: " + message)
+
+func _select_actor_type(main: Control, actor_type: int) -> void:
+	var race := main.get_node("%CreateRace") as OptionButton
+	var sex := main.get_node("%CreateGender") as OptionButton
+	var culture := AppearanceVariants.culture_for_actor_type(actor_type)
+	for index in range(race.item_count):
+		if str(race.get_item_metadata(index)) == culture:
+			race.select(index)
+			break
+	main.call("_populate_creation_sexes")
+	sex.select(sex.get_item_index(actor_type))
+	main.call("_populate_creation_choices", true)
 
 func _finish() -> void:
 	print("rendered character creation models: ",

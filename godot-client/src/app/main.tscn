@@ -2974,13 +2974,37 @@ placeholder_text = "Confirm password"
 max_length = 72
 secret = true
 
-[node name="GenderLabel" type="Label" parent="CreationPanel/Columns/Form" unique_id=1136646209]
+[node name="IdentityRow" type="HBoxContainer" parent="CreationPanel/Columns/Form"]
 layout_mode = 2
-text = "Luminous character"
+theme_override_constants/separation = 8
 
-[node name="CreateGender" type="OptionButton" parent="CreationPanel/Columns/Form" unique_id=49062652]
+[node name="RaceColumn" type="VBoxContainer" parent="CreationPanel/Columns/Form/IdentityRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RaceLabel" type="Label" parent="CreationPanel/Columns/Form/IdentityRow/RaceColumn"]
+layout_mode = 2
+text = "Race"
+
+[node name="CreateRace" type="OptionButton" parent="CreationPanel/Columns/Form/IdentityRow/RaceColumn"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
+fit_to_longest_item = false
+
+[node name="SexColumn" type="VBoxContainer" parent="CreationPanel/Columns/Form/IdentityRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SexLabel" type="Label" parent="CreationPanel/Columns/Form/IdentityRow/SexColumn" unique_id=1136646209]
+layout_mode = 2
+text = "Sex"
+
+[node name="CreateGender" type="OptionButton" parent="CreationPanel/Columns/Form/IdentityRow/SexColumn" unique_id=49062652]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+fit_to_longest_item = false
 
 [node name="AppearanceGrid" type="GridContainer" parent="CreationPanel/Columns/Form" unique_id=1087399755]
 layout_mode = 2
@@ -3218,7 +3242,8 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/GroundBagPanel/Content/Actions/GroundBagDrop" to="." method="_on_ground_bag_drop_pressed"]
 [connection signal="pressed" from="GameView/GroundBagPanel/Content/GroundBagHeader/GroundBagClose" to="." method="_on_ground_bag_close_pressed"]
 [connection signal="gui_input" from="CreationPanel/Columns/CharacterPreview" to="." method="_on_character_preview_gui_input"]
-[connection signal="item_selected" from="CreationPanel/Columns/Form/CreateGender" to="." method="_on_create_gender_item_selected"]
+[connection signal="item_selected" from="CreationPanel/Columns/Form/IdentityRow/RaceColumn/CreateRace" to="." method="_on_create_race_item_selected"]
+[connection signal="item_selected" from="CreationPanel/Columns/Form/IdentityRow/SexColumn/CreateGender" to="." method="_on_create_gender_item_selected"]
 [connection signal="item_selected" from="CreationPanel/Columns/Form/AppearanceGrid/CreateSkin" to="." method="_on_create_appearance_changed"]
 [connection signal="item_selected" from="CreationPanel/Columns/Form/AppearanceGrid/CreateHair" to="." method="_on_create_appearance_changed"]
 [connection signal="item_selected" from="CreationPanel/Columns/Form/AppearanceGrid/CreateEyes" to="." method="_on_create_appearance_changed"]
