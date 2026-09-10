@@ -60,7 +60,7 @@ starting another experiment. Completed experiments are replayable.
 | Prism lane | Cast Magic Bolt; hit the pair with Magic Burst; observe a poison tick; finish and loot the encounter | Both Burst targets take damage; a real timed poison tick occurs; defeat and loot are recorded |
 | Protection | Use Shield, Magic Ward and Heat Ward; take the prism's matching attacks; Dispel poison; refresh a ward | Ordinary buffs, real incoming spells, removal of harmful modifiers and poison, normal effect durations |
 | Folded Gate | Blink across an impassable gap; use Haste while walking | Valid landing within 15 tiles and movement with the effect active |
-| Hidden garden | Conceal before approaching the patrol; use Reveal Burst; click Oren | Normal aggression rules, a concealed eligible actor reported by native chat, nearby rescue interaction |
+| Hidden garden | Conceal before approaching the patrol; find Oren with Reveal Burst; talk to him and choose Return to Sera | Reveal must find Oren, who then lowers his own concealment; nearby dialogue explicitly asks Sera to recall him to Lens Court. Waiting leaves him in the garden. |
 | The fitting | Cancel a Transmute quote; convert one Bones; buy and install a Wood Plank | Inventory slot/item validation, actual gold, normal merchant transaction and nearby object use |
 | The last crossing | Choose spells and equipment, defeat the West guardians, heal and escort all three apprentices | Living enemies prevent escort; insufficient health prevents movement; all three must reach the rally |
 | The borrowed sky | Align the lens; Recall at P1 | Nearby lens interaction, all companions visibly home, restored permanent profile and one-time completion |

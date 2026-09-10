@@ -135,7 +135,10 @@ func run() -> void:
 		elif old=="haste":await book_cast("Haste");await go(Vector2i(64,20))
 		elif old=="conceal":await book_cast("Conceal");await go(Vector2i(69,14))
 		elif old=="reveal":await book_cast("Reveal Burst",1,-1,Vector2i(72,14));await capture("08-hidden-apprentice")
-		elif old=="rescue":await go_target();net.touch_actor(actor_id("Oren"))
+		elif old=="rescue":
+			await go_target();net.touch_actor(actor_id("Oren"))
+			await wait_until(func():return main.dialogue_panel.visible,"Oren return dialogue")
+			main._on_dialogue_option(actor_id("Oren"),1469)
 		elif old=="quote_cancel":await go_target();await book_cast("Transmute",1,-1,Vector2i(-1,-1),true)
 		elif old=="transmute":await book_cast("Transmute")
 		elif old=="purchase":
