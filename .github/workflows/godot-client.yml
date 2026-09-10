@@ -70,7 +70,9 @@ jobs:
       - name: Counter breakdown fixtures
         run: godot --headless --path godot-client --script res://tests/test_counters.gd
       - name: Skill level updates and HUD fixtures
-        run: godot --headless --path godot-client --script res://tests/test_skill_updates.gd
+        run: |
+          godot --headless --path godot-client --script res://tests/test_experience_curve.gd
+          godot --headless --path godot-client --script res://tests/test_skill_updates.gd
       - name: Invasion assistant UI fixtures
         run: godot --headless --path godot-client --script res://tests/test_invasion_assistant.gd
       - name: Native tutorial and recovery fixtures
