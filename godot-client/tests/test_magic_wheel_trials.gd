@@ -76,7 +76,7 @@ func run() -> void:
 		check(requests.back() == {"op": "cast", "id": 1, "power": 4, "target_id": 2}, variant + " one click casts the previewed spell and power")
 		root.push_input(key(KEY_SHIFT, false), true)
 		check(lab.loadout.slots[0] == {"id": 1, "power": 4} and lab.loadout.slots[1] == lab.loadout.slots[0], "ring cast updates matching quickbar target types and powers")
-		check(lab.bar.buttons[0].get_node("Target").text == "Tgt" and lab.bar.buttons[0].get_node("Power").text == "P4", "quickbar corner labels reflect the last cast")
+		check(lab.bar.buttons[0].get_node("Target").text == "T" and lab.bar.buttons[0].get_node("Power").text == "4", "quickbar corner labels reflect the last cast")
 		before = requests.size()
 		root.push_input(alt_key(KEY_1), true)
 		root.push_input(alt_key(KEY_1, false), true)

@@ -961,11 +961,13 @@ func _ready() -> void:
 	spells_window.set_loadout(spell_loadout)
 	casting_bar = preload("res://src/ui/casting_bar.gd").new()
 	casting_bar.loadout = spell_loadout
-	casting_bar.start_expanded = false
-	casting_bar.launcher_bottom_margin = 84.0
+	casting_bar.dock_anchor = $GameView/ItemQuickbar
+	casting_bar.dock_rail = right_rail
+	casting_bar.bottom_hud = chat_input
 	casting_bar.reserved_right_width = 96.0
 	casting_bar.z_index = 7
 	game_view.add_child(casting_bar)
+	casting_bar.layout_changed.connect(_save_hud_settings)
 	magic_selection.z_index = 8
 	casting_bar.cast_slot.connect(_cast_spell_slot)
 	casting_bar.edit_slot.connect(spells_window.edit_prepared_slot)
@@ -2559,7 +2561,6 @@ func _on_disconnect_pressed() -> void:
 	Network.disconnect_from_server()
 
 func _on_login_succeeded() -> void:
-	casting_bar.set_expanded(false)
 	spell_loadout.load_profile("%s:%d/%s" % [host_edit.text.strip_edges().to_lower(), int(port_edit.value), user_edit.text.strip_edges().to_lower()])
 	# Tell the server which Eloria extensions this client implements. Without
 	# it the server serves the legacy dialogue and raw-text fallback for every
@@ -4915,6 +4916,9 @@ func _friendly_map_name(server_map: String) -> String:
 func _load_hud_settings() -> void:
 	var config: ConfigFile = ConfigFile.new()
 	if config.load(SETTINGS_PATH) == OK:
+		var spell_bar_layout: Variant = config.get_value("hud", "spell_quickbar", {})
+		if spell_bar_layout is Dictionary:
+			casting_bar.restore_hud_layout(spell_bar_layout)
 		if secure_check != null:
 			secure_check.button_pressed = bool(config.get_value(
 				"connection", "secure", false))
@@ -5133,6 +5137,7 @@ func _save_hud_settings() -> void:
 		bool(extension_windows.get("combat_hud_pinned")))
 	config.set_value("hud", "combat_hud_position",
 		extension_windows.call("combat_hud_position"))
+	config.set_value("hud", "spell_quickbar", casting_bar.hud_layout())
 	config.set_value("camera", "rotation_sensitivity",
 		float(camera_rig.rotation_sensitivity))
 	config.set_value("camera", "pan_sensitivity",

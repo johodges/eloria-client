@@ -118,7 +118,7 @@ func run() -> void:
 	main.call("_cast_spell_slot", 0)
 	check(requests.back().id == 0 and requests.back().power == 3, "the live bar uses saved power capped to the server limit")
 	check(main.spell_loadout.slots[0].power == 3, "the quickbar remembers the actual capped cast power")
-	check(main.casting_bar.buttons[0].get_node("Target").text == "Self" and main.casting_bar.buttons[0].get_node("Power").text == "P3", "the live icon shows saved target and power in its corners")
+	check(main.casting_bar.buttons[0].get_node("Target").text == "S" and main.casting_bar.buttons[0].get_node("Power").text == "3", "the live icon shows saved target and power in its corners")
 	main.spells_window.call("_on_spell_pressed", 1)
 	main.spells_window.power_picker.value = 2
 	main.call("_cast_spell_by_id", 1)

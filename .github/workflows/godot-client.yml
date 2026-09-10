@@ -91,6 +91,8 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_connection_lifecycle.gd
       - name: HUD persistence fixtures
         run: godot --headless --path godot-client --script res://tests/test_hud_persistence.gd
+      - name: Spell bar docking and placement fixtures
+        run: godot --headless --path godot-client --script res://tests/test_spell_bar_docking.gd
       - name: Reference window fixtures
         run: godot --headless --path godot-client --script res://tests/test_reference_window.gd
       - name: Statistics allocation and tutorial scrolling fixtures

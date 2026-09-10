@@ -235,6 +235,9 @@ func _process(_delta: float) -> void:
 	if is_instance_valid(ranging): panels.append(ranging.panel)
 	var book: Control = main.get("spells_window")
 	if is_instance_valid(book): panels.append(book.panel)
+	var spell_bar: Control = main.get("casting_bar")
+	if is_instance_valid(spell_bar):
+		panels.append(spell_bar.panel if _visible(spell_bar.panel) else spell_bar.launcher)
 	var ext: Control = main.get("extension_windows")
 	var summons: Control = main.get("summoning_window")
 	panels.append_array([summons.panel, ext.get("detail_panel"), ext.get("party_panel"),

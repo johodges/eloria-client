@@ -10,11 +10,15 @@ The production widget is `src/ui/quick_spell_ring.gd`; the comparison scene
 uses that same implementation. Target choices, powers and pins persist per
 character alongside the quickbar settings.
 
-The live spell panel starts collapsed. Click **Quickbar** to see the slots,
-**Ring** button and size setting; **X** closes it again. Left Shift and Alt
-shortcuts work while it is closed. The comparison preview starts expanded.
+The live spell bar starts visible, attached just left of the item quick slots
+on the right HUD. Its twelve slots form a single column with backed corner
+badges. Drag the dotted grip to detach and move it; the **⋮** menu also offers
+**Detach from HUD** / **Attach to HUD**. Attachment, floating position and
+visibility are saved with the HUD settings. **Hide spell bar** leaves a
+**Spells** launcher beside the HUD. Left Shift and Alt shortcuts work while
+hidden. The menu also opens the spellbook and ring/casting settings.
 
-Use the **Size** dropdown beside **Ring** on the quickbar to choose **75%, 90%,
+Use **⋮ → Ring / casting settings** to choose **75%, 90%,
 100%, 110% or 125%**. The setting is saved per character and works in the live
 client and all native practice variants. Labels, icons and clickable wedges
 scale together. Larger rings fit smaller windows automatically while retaining
@@ -41,13 +45,17 @@ Hold **Left Shift** for the rings; **Alt+1–0 / minus / equals** casts quickbar
 slots in every mode. Right Shift does not open or close a ring. Numbers select
 classes/spells while Left Shift is held; right click cycles target type.
 
-The quickbar shows the saved **target type in the top left** of each icon and
-**power in the top right**. A submitted cast updates all assigned slots for
+The quickbar shows the saved **target letter in the top left** of each icon
+(S Self, T Target, A Allies, B Burst, G Ground, I Item, R Recall) and the
+**power number in the top right**, including 10. Shortcut keys sit in a
+separate gutter. The backed badges stay readable when unavailable spell art
+is dimmed. A submitted cast updates all assigned slots for
 that spell family, whether it came from the wheel, spellbook, or quickbar.
 Ground and utility casts update the slots after confirmation. Hovering,
 scrolling, changing target type, cancelling, and failed sends do not update
 them. The saved target is the type (Self, Target, Allies, Burst, etc.); Target
-uses the currently selected eligible recipient. Saved settings persist per
+uses the currently selected eligible recipient, whose name appears in the
+tooltip. Saved spell settings persist per
 character. Manual slot assignments set the initial target and power until
 the next cast of that family. The tooltip expands abbreviated target labels.
 

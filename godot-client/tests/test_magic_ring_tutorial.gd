@@ -23,6 +23,8 @@ func run() -> void:
 	main = (load("res://src/app/main.tscn") as PackedScene).instantiate()
 	root.add_child(main)
 	await process_frame
+	var original_layout: Dictionary = main.casting_bar.hud_layout()
+	main.casting_bar.restore_hud_layout({})
 	var state := root.get_node("AppState")
 	state.authenticated = true
 	state.select_actor(-1)
@@ -37,7 +39,9 @@ func run() -> void:
 		casts.append(data.duplicate(true))
 		return OK
 	await process_frame
-	check(not main.casting_bar.panel.visible and main.casting_bar.launcher.is_visible_in_tree(), "live spell panel starts collapsed with a reachable launcher")
+	check(main.casting_bar.docked and main.casting_bar.panel.visible, "live spell bar starts attached beside item slots")
+	main.casting_bar.dock_menu.get_popup().id_pressed.emit(3)
+	check(not main.casting_bar.panel.visible and main.casting_bar.launcher.is_visible_in_tree(), "Hide spell bar leaves a reachable launcher")
 	main.spell_loadout.set_ring_size(90)
 	main._sync_spells()
 	check(not main.casting_bar.panel.visible, "spell and size refreshes do not reopen the panel")
@@ -62,9 +66,9 @@ func run() -> void:
 	size_picker.select(size_picker.get_item_index(110))
 	size_picker.item_selected.emit(size_picker.selected)
 	check(main.spell_loadout.ring_size == 110, "ring size remains adjustable from the opened panel")
-	click(main.casting_bar.close_button)
+	main.casting_bar.dock_menu.get_popup().id_pressed.emit(3)
 	await process_frame
-	check(not main.casting_bar.panel.visible, "X closes the spell panel")
+	check(not main.casting_bar.panel.visible, "the bar menu hides the spell panel")
 	root.push_input(key(KEY_SHIFT), true)
 	await process_frame
 	check(observed == [20] and main.spell_wheel.visible, "Left Shift opens the live ring and records one tutorial observation")
@@ -100,6 +104,8 @@ func run() -> void:
 	click(main.casting_bar.launcher)
 	await capture("quickbar")
 	check(main.lantern_guide.control_for_step() == main.casting_bar.panel, "quickbar teaching highlights the panel rather than the whole viewport")
+	main.casting_bar.restore_hud_layout(original_layout)
+	main.call("_save_hud_settings")
 	main.free()
 	await process_frame
 	NativeAnimationImporter.clear()
@@ -118,7 +124,9 @@ func click(control: Control) -> void:
 func capture(name: String) -> void:
 	for frame in range(6): await process_frame
 	var card: Rect2 = main.lantern_guide.card.get_global_rect()
-	check(main.casting_bar.panel.get_global_rect().end.x <= root.size.x-96, "ring size control leaves the live resource rail clear")
+	var bar_surface: Control = main.casting_bar.panel if main.casting_bar.panel.visible else main.casting_bar.launcher
+	check(not card.intersects(bar_surface.get_global_rect()), "tutorial instructions leave the spell bar and launcher clickable")
+	check(not main.casting_bar.panel.get_global_rect().intersects(main.get_node("GameView/ItemQuickbar").get_global_rect()), "the attached spell bar leaves item slots clear")
 	check(Rect2(Vector2.ZERO,Vector2(root.size)).encloses(card), "tutorial card stays in the viewport")
 	if main.spell_wheel.visible:
 		var bounds: Rect2 = main.spell_wheel.get_ring_bounds()

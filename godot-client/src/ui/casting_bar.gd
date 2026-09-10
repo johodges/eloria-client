@@ -3,117 +3,138 @@ signal cast_slot(index: int)
 signal edit_slot(index: int)
 signal open_book
 signal open_wheel
+signal layout_changed
 const SpellButton := preload("res://src/ui/prepared_spell_button.gd")
 const SCOPE_BADGES := {"self": "Self", "target": "Target", "allies": "Allies", "burst": "Burst", "location": "Ground", "inventory": "Item", "destination": "Recall"}
-const CORNER_BADGES := {"self": "Self", "target": "Tgt", "allies": "All", "burst": "Burst", "location": "Gnd", "inventory": "Item", "destination": "Recall"}
+const CORNER_BADGES := {"self": "S", "target": "T", "allies": "A", "burst": "B", "location": "G", "inventory": "I", "destination": "R"}
+const SLOT_SIZE := 44.0
+const EDGE := 6.0
 var loadout
 var panel: PanelContainer
 var mode_picker: OptionButton
 var wheel_button: Button
 var ring_size_picker: OptionButton
 var start_expanded := true
-var launcher_bottom_margin := 8.0
 var launcher: Button
 var close_button: Button
 var reserved_right_width := 8.0
+## Both controls share the HUD canvas, including its user-selected scale.
+var dock_anchor: Control
+var dock_rail: Control
+var bottom_hud: Control
+var docked := true
 var buttons: Array[Button] = []
 var menu: PopupMenu
+var grip: Label
+var dock_menu: MenuButton
+var settings_popup: PopupPanel
+var _scroll: ScrollContainer
+var _column: VBoxContainer
 var _menu_slot := -1
+var _floating_position := Vector2(680, 80)
+var _dragging := false
+var _drag_moved := false
+var _grab_mouse := Vector2.ZERO
+var _grab_panel := Vector2.ZERO
+var _last_available := -1.0
+var _selected_actor := -2
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	panel = PanelContainer.new()
 	panel.name = "PreparedCastingBar"
-	panel.position = Vector2(680, 470)
+	panel.add_theme_stylebox_override("panel", _style(Color(0.16, 0.12, 0.075), 4))
 	add_child(panel)
-	launcher = Button.new()
-	launcher.name = "QuickbarLauncher"
-	launcher.text = "Quickbar"
-	launcher.focus_mode = Control.FOCUS_NONE
-	launcher.tooltip_text = "Show spell shortcuts and ring settings. Alt + number works while this panel is closed."
-	launcher.pressed.connect(func(): set_expanded(true))
-	add_child(launcher)
 	var body := VBoxContainer.new()
+	body.add_theme_constant_override("separation", 2)
 	panel.add_child(body)
 	var header := HBoxContainer.new()
+	header.add_theme_constant_override("separation", 0)
 	body.add_child(header)
-	var label := Label.new()
-	label.text = "Spells"
-	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	header.add_child(label)
-	mode_picker = OptionButton.new()
-	mode_picker.add_item("Prepared · selected target")
-	mode_picker.add_item("Aimed · click target")
-	mode_picker.add_item("Ring · Left Shift")
-	mode_picker.item_selected.connect(func(index: int): loadout.set_mode(["prepared", "aimed", "wheel"][index]))
-	header.add_child(mode_picker)
-	wheel_button = Button.new()
-	wheel_button.text = "Ring"
-	wheel_button.tooltip_text = "Hold Left Shift to browse spells. Right click changes target; scroll changes power. Alt + number uses the quickbar."
-	wheel_button.pressed.connect(func(): open_wheel.emit())
-	header.add_child(wheel_button)
-	ring_size_picker = OptionButton.new()
-	ring_size_picker.name = "RingSize"
-	ring_size_picker.focus_mode = Control.FOCUS_NONE
-	ring_size_picker.tooltip_text = "Magic ring size, saved per character. Large rings automatically fit the window."
-	for percent in [75, 90, 100, 110, 125]:
-		ring_size_picker.add_item("Size %d%%" % percent, percent)
-	ring_size_picker.item_selected.connect(func(index: int): loadout.set_ring_size(ring_size_picker.get_item_id(index)))
-	header.add_child(ring_size_picker)
-	var book := Button.new()
-	book.text = "Spellbook"
-	book.pressed.connect(func(): open_book.emit())
-	header.add_child(book)
-	close_button = Button.new()
-	close_button.text = "X"
-	close_button.focus_mode = Control.FOCUS_NONE
-	close_button.tooltip_text = "Close the quickbar. Left Shift and Alt shortcuts stay available."
-	close_button.pressed.connect(func(): set_expanded(false))
-	header.add_child(close_button)
-	WindowDrag.attach(panel, header)
-	var row := GridContainer.new()
-	row.columns = 6
-	body.add_child(row)
+	grip = Label.new()
+	grip.name = "DragGrip"
+	grip.text = "···"
+	grip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	grip.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	grip.add_theme_font_size_override("font_size", 13)
+	grip.mouse_filter = Control.MOUSE_FILTER_STOP
+	grip.mouse_default_cursor_shape = Control.CURSOR_MOVE
+	grip.gui_input.connect(_grip_input)
+	header.add_child(grip)
+	dock_menu = MenuButton.new()
+	dock_menu.text = "⋮"
+	_compact_button(dock_menu)
+	header.add_child(dock_menu)
+	var popup := dock_menu.get_popup()
+	popup.add_item("Detach from HUD", 0)
+	popup.add_item("Spellbook", 1)
+	popup.add_item("Ring / casting settings", 2)
+	popup.add_separator()
+	popup.add_item("Hide spell bar", 3)
+	popup.about_to_popup.connect(_refresh_dock_menu)
+	popup.id_pressed.connect(_dock_menu_action)
+	_scroll = ScrollContainer.new()
+	_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	body.add_child(_scroll)
+	_column = VBoxContainer.new()
+	_column.add_theme_constant_override("separation", 2)
+	_scroll.add_child(_column)
 	for index in range(12):
-		var cell := VBoxContainer.new()
-		cell.custom_minimum_size.x = 64
-		cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		row.add_child(cell)
+		var cell := HBoxContainer.new()
+		cell.add_theme_constant_override("separation", 2)
+		_column.add_child(cell)
+		var key := Label.new()
+		key.name = "Key"
+		key.custom_minimum_size.x = 12
+		key.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		key.add_theme_font_size_override("font_size", 11)
+		key.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		cell.add_child(key)
 		var button := SpellButton.new()
 		button.name = "PreparedSpell%d" % index
 		button.accepts_spells = true
 		button.expand_icon = true
 		button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		button.custom_minimum_size = Vector2(64, 48)
-		button.add_theme_constant_override("icon_max_width", 26)
+		button.custom_minimum_size = Vector2.ONE * SLOT_SIZE
+		button.add_theme_constant_override("icon_max_width", 36)
 		button.focus_mode = Control.FOCUS_NONE
+		button.add_theme_stylebox_override("normal", _style(Color(0.11, 0.10, 0.07), 2))
+		button.add_theme_stylebox_override("hover", _style(Color(0.27, 0.22, 0.12), 2))
+		button.add_theme_stylebox_override("pressed", _style(Color(0.35, 0.27, 0.13), 2))
 		button.pressed.connect(func(): cast_slot.emit(index))
 		button.spell_dropped.connect(func(id: int, power: int): loadout.assign_slot(index, id, power))
 		button.gui_input.connect(_slot_input.bind(index))
 		cell.add_child(button)
-		var key := Label.new()
-		key.name = "Key"
-		key.text = str(index + 1) if index < 9 else ["0", "-", "="][index - 9]
-		key.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		key.add_theme_font_size_override("font_size", 10)
-		key.add_theme_constant_override("outline_size", 3)
-		key.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		cell.add_child(key)
 		for corner in ["Target", "Power"]:
 			var badge := Label.new()
 			badge.name = corner
 			badge.add_theme_font_size_override("font_size", 11)
-			badge.add_theme_constant_override("outline_size", 4)
-			badge.add_theme_color_override("font_outline_color", Color(0.035, 0.03, 0.02))
+			badge.add_theme_color_override("font_color", Color(1.0, 0.94, 0.80))
+			badge.add_theme_stylebox_override("normal", _style(Color(0.065, 0.075, 0.055), 1))
 			badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			button.add_child(badge)
-			badge.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
-			badge.offset_left = 3
-			badge.offset_right = -3
+			badge.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT if corner == "Power" else Control.PRESET_TOP_LEFT)
+			badge.offset_left = -20 if corner == "Power" else 1
+			badge.offset_right = -1 if corner == "Power" else 15
 			badge.offset_top = 1
-			badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT if corner == "Power" else HORIZONTAL_ALIGNMENT_LEFT
+			badge.offset_bottom = 17
 		buttons.append(button)
+	wheel_button = Button.new()
+	wheel_button.text = "Ring"
+	wheel_button.tooltip_text = "Hold Left Shift to browse spells. Alt + key casts a quick slot."
+	_compact_button(wheel_button)
+	wheel_button.pressed.connect(func(): open_wheel.emit())
+	body.add_child(wheel_button)
+	_build_settings()
+	launcher = Button.new()
+	launcher.name = "QuickbarLauncher"
+	launcher.text = "Spells"
+	launcher.focus_mode = Control.FOCUS_NONE
+	launcher.tooltip_text = "Show spell shortcuts. Left Shift and Alt shortcuts also work while hidden."
+	launcher.pressed.connect(func(): set_expanded(true))
+	add_child(launcher)
 	menu = PopupMenu.new()
 	menu.add_item("Edit spell / power", 0)
 	menu.add_item("Clear slot", 1)
@@ -125,18 +146,182 @@ func _ready() -> void:
 	AppState.magic_state_received.connect(func(_data: Dictionary): refresh())
 	refresh()
 	set_expanded(start_expanded)
+	_layout()
+
+func _style(background: Color, margin: float) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = background
+	style.border_color = Color(0.44, 0.38, 0.25)
+	style.set_border_width_all(1)
+	style.set_content_margin_all(margin)
+	return style
+
+func _compact_button(button: Button) -> void:
+	button.focus_mode = Control.FOCUS_NONE
+	button.add_theme_font_size_override("font_size", 11)
+	button.add_theme_stylebox_override("normal", _style(Color(0.13, 0.105, 0.065), 1))
+	button.add_theme_stylebox_override("hover", _style(Color(0.27, 0.22, 0.12), 1))
+	button.add_theme_stylebox_override("pressed", _style(Color(0.35, 0.27, 0.13), 1))
+
+func _build_settings() -> void:
+	settings_popup = PopupPanel.new()
+	add_child(settings_popup)
+	var body := VBoxContainer.new()
+	settings_popup.add_child(body)
+	var heading := Label.new()
+	heading.text = "Spell bar settings"
+	body.add_child(heading)
+	mode_picker = OptionButton.new()
+	mode_picker.add_item("Prepared · selected target")
+	mode_picker.add_item("Aimed · click target")
+	mode_picker.add_item("Ring · Left Shift")
+	mode_picker.item_selected.connect(func(index: int): loadout.set_mode(["prepared", "aimed", "wheel"][index]))
+	body.add_child(mode_picker)
+	ring_size_picker = OptionButton.new()
+	ring_size_picker.name = "RingSize"
+	ring_size_picker.tooltip_text = "Magic ring size, saved per character."
+	for percent in [75, 90, 100, 110, 125]:
+		ring_size_picker.add_item("Ring size %d%%" % percent, percent)
+	ring_size_picker.item_selected.connect(func(index: int): loadout.set_ring_size(ring_size_picker.get_item_id(index)))
+	body.add_child(ring_size_picker)
+	close_button = Button.new()
+	close_button.text = "Done"
+	close_button.pressed.connect(settings_popup.hide)
+	body.add_child(close_button)
 
 func set_expanded(expanded: bool) -> void:
+	var changed := panel.visible != expanded
 	panel.visible = expanded
 	launcher.visible = not expanded
-	_place_launcher()
 	if not expanded:
 		menu.hide()
+		dock_menu.get_popup().hide()
+		settings_popup.hide()
 		mode_picker.get_popup().hide()
 		ring_size_picker.get_popup().hide()
+	_layout()
+	if changed: layout_changed.emit()
 
-func _place_launcher() -> void:
-	launcher.position = Vector2(8, maxf(8, size.y - launcher.size.y - launcher_bottom_margin))
+func set_docked(value: bool) -> void:
+	if docked == value: return
+	_finish_drag()
+	if not docked: _floating_position = panel.position
+	docked = value
+	if not docked:
+		# A menu detach keeps the bar beside the rail until it is dragged.
+		_floating_position = panel.position
+	_layout()
+	layout_changed.emit()
+
+func hud_layout() -> Dictionary:
+	return {"docked": docked, "position": _floating_position, "expanded": panel.visible}
+
+func restore_hud_layout(value: Dictionary) -> void:
+	docked = bool(value.get("docked", true))
+	var where: Variant = value.get("position", _floating_position)
+	if where is Vector2 and (where as Vector2).is_finite():
+		_floating_position = where
+	panel.visible = bool(value.get("expanded", true))
+	launcher.visible = not panel.visible
+	_layout()
+
+func _refresh_dock_menu() -> void:
+	dock_menu.get_popup().set_item_text(0, "Detach from HUD" if docked else "Attach to HUD")
+
+func _dock_menu_action(id: int) -> void:
+	match id:
+		0: set_docked(not docked)
+		1: open_book.emit()
+		2:
+			settings_popup.reset_size()
+			var popup_size := settings_popup.get_contents_minimum_size()
+			settings_popup.position = Vector2i((panel.global_position - Vector2(popup_size.x + EDGE, 0)).max(Vector2.ONE * EDGE))
+			settings_popup.popup()
+		3: set_expanded(false)
+
+func _bottom_edge() -> float:
+	if is_instance_valid(bottom_hud):
+		return minf(size.y - EDGE, _local_position(bottom_hud).y - EDGE)
+	return size.y - EDGE
+
+func _local_position(control: Control) -> Vector2:
+	return get_global_transform().affine_inverse() * control.global_position
+
+func _dock_origin() -> Vector2:
+	if is_instance_valid(dock_anchor):
+		var anchor := _local_position(dock_anchor)
+		# The item column is narrower than the meters and clock below it.
+		# Join the rail's outer edge so the twelve spells cannot cover them.
+		var right := minf(anchor.x - 4, _local_position(dock_rail).x) if is_instance_valid(dock_rail) else anchor.x - 4
+		return Vector2(right - panel.size.x, maxf(EDGE, anchor.y - 24))
+	return Vector2(size.x - reserved_right_width - panel.size.x, EDGE)
+
+func _layout() -> void:
+	if panel == null or launcher == null: return
+	var top := _dock_origin().y if docked else EDGE
+	var available := maxf(80, _bottom_edge() - top)
+	if not is_equal_approx(available, _last_available):
+		_last_available = available
+		# Use 44px where they fit. Keep text readable at small HUD sizes;
+		# a scroll area preserves access to all twelve slots below that.
+		var side := clampf(floorf((available - 50) / 12) - 2, 36, SLOT_SIZE)
+		for button in buttons:
+			button.custom_minimum_size = Vector2.ONE * side
+			button.add_theme_constant_override("icon_max_width", int(side - 6))
+		var content_height := 12 * side + 22
+		_scroll.custom_minimum_size = Vector2(side + 14, minf(content_height, available - 50))
+		panel.reset_size()
+	if docked:
+		panel.position = _dock_origin()
+	else:
+		panel.position = _clamp_position(_floating_position)
+	grip.tooltip_text = "Drag to detach from the HUD" if docked else "Drag to move. Use the menu to attach to the HUD."
+	dock_menu.tooltip_text = "Spell bar: detach, spellbook and ring settings" if docked else "Spell bar: attach to HUD, spellbook and ring settings"
+	var launch_position := _dock_origin() if docked else _clamp_position(_floating_position)
+	if docked and is_instance_valid(dock_anchor):
+		launch_position = Vector2(_dock_origin().x + panel.size.x - launcher.size.x, _local_position(dock_anchor).y)
+	launcher.position = launch_position.clamp(Vector2.ONE * EDGE, (size - launcher.size - Vector2.ONE * EDGE).max(Vector2.ONE * EDGE))
+
+func _clamp_position(where: Vector2) -> Vector2:
+	var limit := Vector2(maxf(EDGE, size.x - reserved_right_width - panel.size.x),
+		maxf(EDGE, _bottom_edge() - panel.size.y))
+	return where.clamp(Vector2.ONE * EDGE, limit)
+
+func _grip_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed:
+			_dragging = true
+			_drag_moved = false
+			_grab_mouse = get_global_transform().affine_inverse() * event.global_position
+			_grab_panel = panel.position
+			panel.move_to_front()
+		else:
+			_finish_drag()
+		grip.accept_event()
+	elif event is InputEventMouseMotion and _dragging:
+		var delta: Vector2 = get_global_transform().affine_inverse() * event.global_position - _grab_mouse
+		if not _drag_moved and delta.length() < 4: return
+		_drag_moved = true
+		docked = false
+		_floating_position = _clamp_position(_grab_panel + delta)
+		_layout()
+		grip.accept_event()
+
+func _input(event: InputEvent) -> void:
+	# Release can happen outside the grip after a resize or a fast drag.
+	if _dragging and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+		_finish_drag()
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT: _finish_drag()
+
+func _finish_drag() -> void:
+	if not _dragging: return
+	_dragging = false
+	if _drag_moved:
+		_floating_position = panel.position
+		_drag_moved = false
+		layout_changed.emit()
 
 func refresh() -> void:
 	if mode_picker == null: return
@@ -144,7 +329,8 @@ func refresh() -> void:
 	wheel_button.visible = loadout.mode == "wheel"
 	ring_size_picker.visible = loadout.mode == "wheel"
 	ring_size_picker.select(ring_size_picker.get_item_index(loadout.ring_size))
-	ring_size_picker.text = "Size %d%%" % loadout.ring_size
+	ring_size_picker.text = "Ring size %d%%" % loadout.ring_size
+	_selected_actor = AppState.selected_actor_id
 	for index in range(buttons.size()):
 		var slot: Dictionary = loadout.slots[index]
 		var button = buttons[index]
@@ -157,13 +343,24 @@ func refresh() -> void:
 		var limit: Dictionary = AppState.spell_power.get(loadout.catalog.effect_for(int(slot.id)), {})
 		var effective_power := mini(int(slot.power), maxi(1, int(limit.get("limit", 1))))
 		button.get_node("Target").text = str(CORNER_BADGES.get(scope, ""))
-		button.get_node("Power").text = "P%d" % int(slot.power) if int(slot.id) >= 0 else ""
+		button.get_node("Power").text = str(int(slot.power)) if int(slot.id) >= 0 else ""
+		button.get_node("Target").visible = int(slot.id) >= 0
+		button.get_node("Power").visible = int(slot.id) >= 0
 		var keys: Array[InputEvent] = InputMap.action_get_events("quick_spell_%d" % (index + 1))
 		var shortcut := keys[0].as_text() if not keys.is_empty() else "Unbound"
-		button.tooltip_text = "%s · %s · P%d\n%s\nUses the last cast target type and power for this family.\nRight click to edit; drag a spell here." % [definition.get("name", "Empty slot"), SCOPE_BADGES.get(scope, ""), int(slot.power), shortcut]
+		var key_label: Label = button.get_parent().get_node("Key")
+		# Keep the full binding in the tooltip, with the familiar Alt gutter.
+		key_label.text = str(index + 1) if index < 9 else ["0", "-", "="][index - 9]
+		key_label.tooltip_text = shortcut
+		var target_label := str(SCOPE_BADGES.get(scope, ""))
+		if scope == "target":
+			var actor: Dictionary = AppState.actors.get(AppState.selected_actor_id, {})
+			target_label += ": " + str(actor.get("name", "select a recipient"))
+		button.tooltip_text = "%s · %s · Power %d\n%s\nUses the last cast target type and power for this family.\nRight click to edit; drag a spell here." % [definition.get("name", "Empty slot"), target_label, int(slot.power), shortcut]
 		if effective_power != int(slot.power): button.tooltip_text += "\nSaved P%d; currently limited to P%d." % [int(slot.power), effective_power]
 		var reasons: Array[String] = loadout.catalog.unavailable_reasons(int(slot.id), AppState.owned_sigils, AppState.stats, AppState.inventory) if int(slot.id) >= 0 else []
-		button.modulate.a = 1.0 if reasons.is_empty() else 0.55
+		# Dim only the button's art. Its child badges must remain legible.
+		button.self_modulate.a = 1.0 if reasons.is_empty() else 0.55
 		if not reasons.is_empty(): button.tooltip_text += "\n" + reasons[0]
 
 func _slot_input(event: InputEvent, index: int) -> void:
@@ -174,6 +371,5 @@ func _slot_input(event: InputEvent, index: int) -> void:
 		buttons[index].accept_event()
 
 func _process(_delta: float) -> void:
-	# Keep the extra ring setting and the draggable bar reachable after a resize.
-	panel.position = panel.position.clamp(Vector2(8,8), (size-panel.size-Vector2(reserved_right_width,8)).max(Vector2(8,8)))
-	_place_launcher()
+	if AppState.selected_actor_id != _selected_actor: refresh()
+	_layout()
