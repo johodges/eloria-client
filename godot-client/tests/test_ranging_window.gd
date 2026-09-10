@@ -95,11 +95,13 @@ func _run() -> void:
 
 	# Another skill's experience and a ranging level-up are not hits.
 	app_state.emit_signal("floating_feedback_requested",
+		{"kind": "experience", "skill": "ranging", "amount": 80, "bonus": true})
+	app_state.emit_signal("floating_feedback_requested",
 		{"kind": "experience", "skill": "attack", "amount": 40, "value": 40})
 	app_state.emit_signal("floating_feedback_requested",
 		{"kind": "level", "skill": "ranging", "level": 12})
 	_expect(int(window.get("hits")) == 1 and int(window.get("ranging_exp")) == 25,
-		"only ranging experience awards count as hits")
+		"only normal ranging experience awards count as hits; tutorial bonuses do not")
 
 	# Reset, from the button the way the player would.
 	(panel.get_node("RangingBody/RangingReset") as Button).pressed.emit()

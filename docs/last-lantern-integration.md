@@ -51,6 +51,28 @@ materials are in the pack.
 
 ## Tutorial experience rewards
 
+All tutorial bonuses use the normal green, rising and fading XP numbers above
+the player. Skill rewards float by skill; only additional Overall XP floats
+separately, so the matching Overall total is not repeated. Permanent rewards
+earned in borrowed profiles also float without replacing practice stats.
+
+Clients advertise `tutorial_rewards_v1`. The server then sends a stateless
+`ELORIA_LANTERN_STATE` (207) event with `version: 1`, `event: "experience"`, a
+boolean `permanent`, and `rewards: [{"skill": "magic", "amount": 40}, ...]`.
+Amounts are awarded deltas, including the full Overall award, rather than
+cumulative XP. The client validates the entire message before requesting the
+existing floating feedback animation. These events neither replace the guide
+nor count as Ranging hits. Older clients retain the chat announcement and stats
+updates. Receipts are saved before sending feedback; guide refreshes and
+previously rewarded lessons do not replay it.
+
+Floating feedback verification (2026-09-10): 90 targeted server tests pass, along
+with the tutorial XP feedback, tutorial protocol (56 checks), Ranging window and
+skill-update client suites. The broader world-input test still reports two
+spell availability/dimming failures; both reproduce using the unchanged HEAD
+HUD script. The focused feedback tests cover simultaneous normal and bonus XP,
+Overall suppression, borrowed stats, malformed messages and silent stats refreshes.
+
 Completed milestones award these bonuses in addition to ordinary gameplay XP.
 Skill bonuses also grant the same total to Overall. Each completion announces
 the earned XP and updates levels and available pickpoints through the normal

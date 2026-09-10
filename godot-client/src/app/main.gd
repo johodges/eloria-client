@@ -7669,7 +7669,8 @@ func _flush_floating_feedback() -> void:
 		# to the skill that produced it says nothing new. The timestamp covers
 		# the case where the server splits the two gains across frames.
 		if str(feedback.get("kind", "")) == "experience" \
-				and str(feedback.get("skill", "")) == "overall":
+				and str(feedback.get("skill", "")) == "overall" \
+				and not bool(feedback.get("bonus", false)):
 			if has_skill_experience:
 				continue
 			if Time.get_ticks_msec() - _last_skill_experience_msec \
@@ -7679,7 +7680,8 @@ func _flush_floating_feedback() -> void:
 
 static func _is_skill_experience(feedback: Dictionary) -> bool:
 	return str(feedback.get("kind", "")) == "experience" \
-		and str(feedback.get("skill", "")) != "overall"
+		and str(feedback.get("skill", "")) != "overall" \
+		and not bool(feedback.get("bonus", false))
 
 func _spawn_floating_feedback(feedback: Dictionary) -> void:
 	if not game_view.visible or AppState.local_actor_id < 0:

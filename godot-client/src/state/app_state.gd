@@ -1077,6 +1077,20 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			for raw_quest: Variant in event.entries:
 				quest_journal.append((raw_quest as Dictionary).duplicate(true))
 			state_changed.emit(&"quest_journal")
+		"tutorial_experience":
+			# Overall includes the skill awards. Only float its additional bonus,
+			# while leaving the active (possibly borrowed) character's stats alone.
+			var skill_total := 0
+			for reward: Dictionary in event.rewards:
+				if reward.skill != "overall":
+					skill_total += int(reward.amount)
+			for reward: Dictionary in event.rewards:
+				var amount := int(reward.amount)
+				if reward.skill == "overall":
+					amount -= skill_total
+				if amount > 0:
+					floating_feedback_requested.emit({"kind":"experience", "skill":reward.skill,
+						"amount":amount, "bonus":true, "permanent":event.permanent})
 		"lantern_tutorial":
 			lantern_tutorial = (event.state as Dictionary).duplicate(true)
 			state_changed.emit(&"lantern_tutorial")
