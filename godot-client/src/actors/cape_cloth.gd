@@ -76,6 +76,11 @@ const TORSO_RADIUS := CapeDrape.BARE_TRUNK_RADIUS
 ## frame it gives a forward that follows the torso's lean and twist without
 ## being thrown off by an arm swinging across the body during an attack.
 var _forward_local := Vector3.ZERO
+## The sheet is authored hanging down, but its helper bones inherit the
+## spine's tilted bind frame. Simulate a vertical material line and carry
+## each bone's offset from it, so straightening the solver does not rotate
+## the fabric away from the legs at rest.
+var _hang_local := Vector3.DOWN
 ## Cape points stay this far behind the spine plane. The bone runs down the
 ## middle of the torso, so a small negative keeps cloth off the chest and the
 ## sternum while never disturbing a cape already hanging down the back.
@@ -133,6 +138,7 @@ func _cache(skeleton: Skeleton3D) -> bool:
 	# turns with the torso and not the arms. Which of its local axes points at
 	# the chest is found once, against the rest hang the cape drapes opposite.
 	var anchor_rest := skeleton.get_bone_global_rest(_anchor)
+	_hang_local = anchor_rest.basis.inverse() * Vector3.DOWN
 	var up_rest := Vector3.UP
 	var neck := skeleton.find_bone("neck_01")
 	if neck >= 0:
@@ -173,15 +179,14 @@ func _torso_forward(skeleton: Skeleton3D, to_world: Transform3D) -> Vector3:
 
 func _rest_joints(skeleton: Skeleton3D, to_world: Transform3D,
 		chain: int) -> PackedVector3Array:
-	"""Where this chain hangs with no simulation, in world space."""
+	"""Material-line joints, independent of the helper bones' bind tilt."""
 	var joints := PackedVector3Array()
 	var frame := skeleton.get_bone_global_pose(_anchor)
+	var down := (to_world.basis * frame.basis * _hang_local).normalized()
+	var root_frame := frame * skeleton.get_bone_rest(_bones[chain][0])
+	joints.append(to_world * root_frame.origin)
 	for link in range(LINKS):
-		var rest := skeleton.get_bone_rest(_bones[chain][link])
-		frame = frame * rest
-		joints.append(to_world * frame.origin)
-	var last := skeleton.get_bone_rest(_bones[chain][LINKS - 1])
-	joints.append(to_world * (frame * last.origin))
+		joints.append(joints[link] + down * _lengths[chain][link])
 	return joints
 
 
@@ -299,23 +304,27 @@ func _process_modification_with_delta(delta: float) -> void:
 		_points[chain] = points
 		_previous[chain] = previous
 
-		# Aim each bone at the joint below it. The chain is walked from the
-		# top so every bone sees the pose its parent has just been given.
+		# Carry the authored bone frame with the material segment. Its origin
+		# is offset from that segment, increasingly so down a tilted bind
+		# chain. Rotating bones alone turns that offset into an outward hem
+		# slope, even when every simulated segment has settled vertically.
 		var parent := skeleton.get_bone_global_pose(_anchor)
+		var authored := to_world * parent
+		var rest_direction := (rest[1] - rest[0]).normalized()
 		for link in range(LINKS):
 			var bone := _bones[chain][link]
 			var bone_rest := skeleton.get_bone_rest(bone)
-			var head := parent * bone_rest.origin
-			var basis := parent.basis * bone_rest.basis
-			var child: Vector3 = (skeleton.get_bone_rest(_bones[chain][link + 1]).origin
-				if link + 1 < LINKS else bone_rest.origin)
-			var aimed := (basis * child).normalized()
-			var wanted := (to_local * points[link + 1] - head).normalized()
-			if aimed.length_squared() > 0.5 and wanted.length_squared() > 0.5:
-				basis = Basis(Quaternion(aimed, wanted)) * basis
-			skeleton.set_bone_pose_rotation(bone,
-				(parent.basis.inverse() * basis).get_rotation_quaternion())
-			parent = Transform3D(basis, head)
+			authored = authored * bone_rest
+			var wanted := (points[link + 1] - points[link]).normalized()
+			var turn := Basis.IDENTITY
+			if wanted.length_squared() > 0.5:
+				turn = Basis(Quaternion(rest_direction, wanted))
+			var posed := to_local * Transform3D(turn * authored.basis,
+				points[link] + turn * (authored.origin - rest[link]))
+			var local_pose := parent.affine_inverse() * posed
+			skeleton.set_bone_pose_position(bone, local_pose.origin)
+			skeleton.set_bone_pose_rotation(bone, local_pose.basis.get_rotation_quaternion())
+			parent = posed
 	_settled = true
 
 

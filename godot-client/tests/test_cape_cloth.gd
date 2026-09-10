@@ -38,15 +38,15 @@ func _joints(skeleton: Skeleton3D) -> PackedVector3Array:
 	return out
 
 
-func _leg_clearance(skeleton: Skeleton3D) -> float:
-	"""Smallest distance from any cape joint to either leg bone, in metres."""
+func _leg_clearance(skeleton: Skeleton3D, points: PackedVector3Array) -> float:
+	"""Smallest distance from the cloth samples to either leg bone, in metres."""
 	var worst := 99.0
 	for side in ["l", "r"]:
 		var a := skeleton.get_bone_global_pose(skeleton.find_bone("thigh_%s" % side)).origin
 		var b := skeleton.get_bone_global_pose(skeleton.find_bone("calf_%s" % side)).origin
 		var axis := b - a
 		var span := axis.length_squared()
-		for point in _joints(skeleton):
+		for point in points:
 			var travel := 0.0 if span < 1e-9 else clampf((point - a).dot(axis) / span, 0.0, 1.0)
 			worst = minf(worst, point.distance_to(a + axis * travel))
 	return worst
@@ -82,11 +82,16 @@ func _run() -> void:
 		* Quaternion(Vector3.RIGHT, deg_to_rad(-45.0)))
 	await process_frame
 
-	var rest_clearance := _leg_clearance(skeleton)
+	var rest_clearance := _leg_clearance(skeleton, _joints(skeleton))
 	for _step in range(90):
 		cloth.call("_process_modification_with_delta", STEP)
-	var settled := _joints(skeleton)
-	var solved_clearance := _leg_clearance(skeleton)
+	# Helper bone origins carry offsets from the fabric's material line;
+	# collision and segment lengths belong to the simulated fabric itself.
+	var settled := PackedVector3Array()
+	for chain: PackedVector3Array in cloth.get("_points"):
+		for link: int in range(LINKS):
+			settled.append(skeleton.to_local(chain[link]))
+	var solved_clearance := _leg_clearance(skeleton, settled)
 
 	print("  leg clearance before solving: %.1f mm" % (rest_clearance * 1000.0))
 	print("  leg clearance after solving:  %.1f mm" % (solved_clearance * 1000.0))

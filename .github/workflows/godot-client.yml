@@ -58,7 +58,9 @@ jobs:
       - name: Validate the perk emblem atlas
         run: python3 godot-client/tests/test_perk_icon_atlas.py -v
       - name: Simulate and time the cape cloth
-        run: godot --headless --path godot-client --script res://tests/test_cape_cloth.gd
+        run: |
+          godot --headless --path godot-client --script res://tests/test_cape_cloth.gd
+          godot --headless --path godot-client --script res://tests/test_cape_idle.gd
       - name: Validate creature rigs, skinning and animation
         run: |
           python3 eloria-assets/tools/validate_creature_glbs.py \
