@@ -20,6 +20,18 @@ Nesh in the central court lends replacements and offers checkpoint recovery.
 Ilyon or use the entry command again to resume. This is one adventure per
 character; completion grants 25 gold and two Bread in storage once.
 
+Gameplay milestones also grant one-time XP alongside ordinary action XP. The
+full route adds **1,575 Overall XP**, including **380 Attack, 480 Defense,
+80 Ranging and 60 Engineering XP**. Encounters reward Attack and Defense;
+the winch rewards Engineering, the bow lesson rewards Ranging, and departure
+adds 150 Overall. Native chat identifies each completed lesson's bonus and
+normal stats/level notifications refresh immediately.
+
+The checkpoint, XP and receipt are saved before notifications. Reconnecting,
+recovering supplies and replaying events cannot duplicate rewards. Window-only
+steps, help and explicitly skipped recovery lessons award no XP. Existing
+completed tutorials are not backfilled.
+
 The `.cmd` launcher avoids PowerShell's restriction on launching `.ps1` files
 directly. This change has not been deployed to a remote server.
 

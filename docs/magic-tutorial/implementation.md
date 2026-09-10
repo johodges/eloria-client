@@ -116,7 +116,8 @@ The server creates a separate practice `Character` with an internal inventory
 owner, its own skills, attributes, sigils, equipment instances, supplies, XP and
 quest progress. Ordinary gameplay operates on that character. The database save
 boundary serializes its checkpoint into the permanent account without replacing
-the permanent character's possessions, skill progress or equipment instances.
+the permanent character's possessions or equipment instances. Ordinary practice
+XP stays private; fixed lesson bonuses advance the permanent character separately.
 
 Each account owns a separate map, companions, guardians and private practice PK
 zone. Borrowed items cannot be traded or taken to another map. Recall destinations
@@ -124,7 +125,22 @@ are restricted to the practice annex until P1 Recall restores the permanent
 profile. Death returns the player safely to Lens Court; the encounter remains.
 Leaving clears practice effects and actors. Completion retires practice item
 instances and grants **25 gold in permanent Storage once**; labs grant no repeat
-gold. No permanent magic level or sigil is granted.
+gold. Borrowed Magic 104 and practice sigils are not transferred.
+
+Completed gameplay lessons now grant permanent milestone XP: the core route
+awards **1,545 Overall, 1,120 Magic and 100 Engineering XP** in total. Skill XP
+is included in the Overall total. Most spell lessons award 40 Magic; the final
+rescue awards 100 Magic, and Recall awards 60 Magic plus 150 Overall. Opening
+the spell book, borrowing the profile, cancelling previews and starting the
+final encounter give no XP.
+
+Experiments have independent, one-time bonuses: A grants 200 Magic + 250 Overall;
+B grants 640 Magic + 690 Overall; C grants 120 Magic + 170 Overall; D grants
+240 Magic + 290 Overall. Each includes 50 Overall for finishing. Native chat
+identifies XP saved to the permanent character; borrowed HUD stats remain in
+place until returning. The XP, receipt and practice checkpoint share one saved
+permanent row before notification. Repeats and already completed experiments
+cannot pay again, and old completed routes receive no retroactive grant.
 
 Saved final-rescue positions and health survive reconnects, including already
 escorted companions. If an unfinished loot exercise loses its temporary bag on
@@ -166,7 +182,7 @@ Verification on 9 September 2026:
   visually checked.
 - Godot spellbook, selected-power quote, utility selection and tutorial protocol
   fixtures passed; shared asset placement validation passed.
-- Final QA account: core complete, all four labs complete, permanent Magic 0,
+- Before milestone rewards, the final QA account had core and all four labs complete, permanent Magic 0,
   exactly 25 reward gold in Storage, no remaining practice checkpoint, and
   location Four Gates `(360, 226)`.
 

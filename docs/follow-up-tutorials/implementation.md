@@ -46,7 +46,26 @@ For the duo exercise, the host enters `#tutorial parties duo` and shares the dis
 - The exchange uses ordinary merchants, reciprocal trades, two acceptance stages, storage destinations, listings, partial purchases, cancellation, expiry and escrow collection. Its scripted buyer and prices belong to this private exercise.
 - Parties use the real PartyBook, chat, leadership, gauntlet scaling, waves, fork selection, healing, individual caches and waystones. The second expedition changes the encounter arrangement. Scripted companions are identified as such; the duo exercise requires a separate player session.
 
-Each run owns a separate World, SQLite database, market, guild service and party roster. The public Session and Character are parked outside it. Borrowed items, instance identities, skills, perks, XP, currency and summons cannot reach public containers or markets. Only completion, assistance and resume information is written to the public quest state. Finishing restores the original Character object.
+Each run owns a separate World, SQLite database, market, guild service and party roster. The public Session and Character are parked outside it. Borrowed items, instance identities, skills, perks, ordinary practice XP, currency and summons cannot reach public containers or markets. Authored milestone bonuses are credited directly to the permanent character, alongside completion, assistance and resume information. Finishing restores the original Character object with its earned bonuses.
+
+## Milestone experience
+
+Validated objectives award fixed XP once per character and lesson. Skill awards also count toward Overall. Full core-route bonus totals are:
+
+| Adventure | Overall XP | Skill XP included in that Overall total |
+|---|---:|---|
+| The Missing Caravan | 950 | 600 Summoning, 50 Defense |
+| The Broken Workshop | 1,015 | 100 Harvesting, 300 Alchemy, 180 Manufacturing, 60 Engineering |
+| The Wraith's Three Trials | 820 | 60 Summoning, 60 Manufacturing, 110 Attack, 110 Defense |
+| The Quartermaster's Test | 810 | 180 Defense, 80 Ranging, 120 Attack, 60 Engineering |
+| The First Commission | 810 | — |
+| The Sealed Road | 810 | 60 Magic |
+
+Each core total includes 150 Overall for returning to the guide. All 22 optional exercises have separate one-time lesson awards plus 50 Overall for completion. The two-player road awards each participant their own bonuses (270 Overall for the full exercise). Opening windows, inspecting items, and reviewing repair quotes pay nothing.
+
+The native chat reports each bonus as saved to the permanent character. The practice HUD continues to show borrowed stats; returning restores the permanent stats with the earned XP and levels. Public XP and its receipt are committed before the private checkpoint, so interrupted saves, reconnects, retries and replays cannot duplicate a bonus. Previously completed core routes and labs remain ineligible; rewards are not backfilled. Ordinary practice combat, crafting and trading stay isolated.
+
+`eloria/tutorial_rewards.py` defines the fixed amounts and receipt keys. `test_roads.py` checks each core route and lab through real gameplay, including exact permanent XP totals; `test_tutorial_rewards.py` covers interrupted persistence, replay eligibility and isolation.
 
 Practice databases live beside the configured server database in `<database filename>.practice/`. Back them up with the public database if preserving practice checkpoints matters. They contain private test transactions, not public economy records.
 
