@@ -125,7 +125,7 @@ func _run() -> void:
 	_expect(region_preview.visible and not continent_view.visible and not map_image.visible,
 		"clicking a region shows its tab map")
 	_expect(region_preview.texture != null
-		and region_preview.texture.get_size() == Vector2(575.0, 575.0),
+		and region_preview.texture.get_size() == Vector2(383.0, 383.0),
 		"Mirrorhold's preview is its whole minimap, one pixel a metre")
 	_expect(map_title.text == "MIRRORHOLD", "the title is the region's name")
 	_expect(continent_button.texture_normal == continent_texture,
@@ -134,16 +134,16 @@ func _run() -> void:
 		"a preview idles the world render")
 
 	# The cursor names server tiles over the preview, through the map's own
-	# transform: the middle of Mirrorhold's 575 m square is tile (287, 287).
+	# transform: the middle of Mirrorhold's compact 383 m framing is tile (191, 191).
 	await process_frame
 	var preview_centre: Vector2 = region_preview.size * 0.5
 	var tile_value: Variant = main.call("_preview_tile_at", preview_centre)
-	_expect(tile_value is Vector2i and (tile_value as Vector2i) == Vector2i(287, 287),
-		"the middle of Mirrorhold's map is server tile (287, 287), got " + str(tile_value))
+	_expect(tile_value is Vector2i and (tile_value as Vector2i) == Vector2i(191, 191),
+		"the middle of Mirrorhold's map is server tile (191, 191), got " + str(tile_value))
 	var preview_motion := InputEventMouseMotion.new()
 	preview_motion.position = preview_centre
 	main.call("_on_region_preview_gui_input", preview_motion)
-	_expect(map_coordinates.text == "Coordinates: 287, 287",
+	_expect(map_coordinates.text == "Coordinates: 191, 191",
 		"the sidebar reports the tile under the cursor")
 	var off_picture := InputEventMouseMotion.new()
 	off_picture.position = Vector2(-10.0, -10.0)

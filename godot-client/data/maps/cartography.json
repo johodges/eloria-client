@@ -12,13 +12,13 @@
     "metresPerPixel": 2.0,
     "sources": {
       "four_gates": "27d1f515040110fd0cdf5b08f8500ac95c83789e54733dfd43b4520b526338ed",
-      "mirrorhold": "2dcf009515c932d9f0178ef77eae4b152eba72c553e777fa40a84344af5472a6",
+      "mirrorhold": "853e3dd1a089a8f018251d14f9fde6963187f25e1cca437c7bc5e5e01261be72",
       "crownwater": "d5cad955bc796cd4309b2124c2defd3de840b3793ff2e1c41c7724511afae53c",
-      "whitehorn_range": "24e2c12340ac5d50b38be137cf7eb1c064e7567f4076c21ff05d2f90083759f6",
-      "amethyst_barrens": "7b027bb204a72f077fa42832a3a56f62449035591f5b01419c7fb0411c935085",
+      "whitehorn_range": "77c73f7f5205b3de5b781d4ed70a87ff9d30441165eb1f9cd4883629933c6182",
+      "amethyst_barrens": "43f17041a26c2a887202241958a09fd5d972737e53c221e40d987ef502b6c9fa",
       "sunmane_steppe": "0a3dcacc24ff2ac41331856ead3760bd8d77a8c219713c7fe6d47d74a6345ae0",
-      "amberwood": "a1ef6aa78fb5db6990a1f3c118f0d5f176c21c5df6b4d0d153f48228342ec5ce",
-      "grey_moors": "69be6f2e835518c0d441213fa708018e7c3dfcbf20d5425efba68495e96b9cbf",
+      "amberwood": "c6c0a8a7e1c714257f8a127f39bf4672cc5eec3b2b18ffbf6807ebb2a16b4705",
+      "grey_moors": "e1a48bde9c442ddc9c0ecf466cff6cf4a6ff98b297a3053d7b2c3e00676e5424",
       "westhaven": "ed56edddae5d43fafa6f229c1b0f684539576d2fe42369f8d00448f534f29b52",
       "verdant_stair": "651e24054fdea3f341e6f5fd16171649c9c6e60745580ce53bc90fd78a95f842",
       "ssarathi_ruins": "8137b290bdfdbdf715511680a44d84e10018b12e7e5ce724103f10c1879da450",
@@ -57,26 +57,26 @@
       "name": "Mirrorhold",
       "serverMap": "mirrorhold",
       "continentRect": [
-        656,
-        176,
-        288,
-        288
+        704,
+        224,
+        192,
+        192
       ],
       "tabMap": {
         "texture": "res://../eloria-assets/maps/nymara-regions/mirrorhold/minimap.webp",
         "region": [
           0,
           0,
-          575,
-          575
+          383,
+          383
         ],
         "worldMin": [
-          -174.0,
-          -401.0
+          -120.0,
+          -287.0
         ],
         "worldMax": [
-          401.0,
-          174.0
+          263.0,
+          96.0
         ]
       }
     },
@@ -138,26 +138,26 @@
       "name": "Amethyst Barrens",
       "serverMap": "amethyst_barrens",
       "continentRect": [
-        1068,
-        326,
-        288,
-        288
+        1116,
+        374,
+        192,
+        192
       ],
       "tabMap": {
         "texture": "res://../eloria-assets/maps/nymara-regions/amethyst_barrens/minimap.webp",
         "region": [
           0,
           0,
-          575,
-          575
+          383,
+          383
         ],
         "worldMin": [
-          -174.0,
-          -401.0
+          -116.0,
+          -267.0
         ],
         "worldMax": [
-          401.0,
-          174.0
+          267.0,
+          116.0
         ]
       }
     },
@@ -219,26 +219,26 @@
       "name": "Grey Moors",
       "serverMap": "grey_moors",
       "continentRect": [
-        26,
-        705,
-        288,
-        288
+        74,
+        753,
+        192,
+        192
       ],
       "tabMap": {
         "texture": "res://../eloria-assets/maps/nymara-regions/grey_moors/minimap.webp",
         "region": [
           0,
           0,
-          575,
-          575
+          383,
+          383
         ],
         "worldMin": [
-          -174.0,
-          -401.0
+          -116.0,
+          -267.0
         ],
         "worldMax": [
-          401.0,
-          174.0
+          267.0,
+          116.0
         ]
       }
     },
