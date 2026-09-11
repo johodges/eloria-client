@@ -827,6 +827,12 @@ class NativeGlbAssetsTest(unittest.TestCase):
         }
         declared = dict(set_by_eye)
         declared.update(set_by_classifier)
+        # The compact expansion rigs omit jaw landmarks, and some bodies
+        # have no directional bone pairs. Their authored axes are recorded
+        # with the source hashes after checking textured client renders.
+        expansion = json.loads((CLIENT / "data/actors/basic_creature_expansion.json").read_text())
+        declared.update({entry["type"]: entry["forwardAxisCorrectionDegreesY"]
+                         for entry in expansion["creatures"]})
         for model_id, entry in self.models["models"].items():
             scene = entry["scene"].removeprefix("res://")
             with self.subTest(model=model_id):

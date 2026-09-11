@@ -12205,7 +12205,7 @@
   },
   "ambientCreaturesNote": "Scenery livestock instanced by the client's ambient population system. They carry no server actor type: actor-type allocation belongs to eloria-server, and these never arrive over the wire.",
   "validation": {
-    "files": 2751,
+    "files": 2851,
     "results": {
       "godot-client/assets/actors/native/creatures/abyssal_armored_fish.glb": {
         "nodes": 55,
@@ -28712,6 +28712,606 @@
         "meshes": 1,
         "skins": 1,
         "animations": 0
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/rabbit.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/beaver.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/skunk.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/hedgehog.glb": {
+        "nodes": 21,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/squirrel.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/dormouse.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/shrew.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/stoat.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/mongoose.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/armadillo.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/opossum.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/platypus.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/wombat.glb": {
+        "nodes": 21,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/puma.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/leopard.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/cheetah.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/donkey.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/tapir.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/elephant.glb": {
+        "nodes": 31,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/hippopotamus.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/giraffe.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/zebra.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/kangaroo.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/orangutan.glb": {
+        "nodes": 21,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/baboon.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/walrus.glb": {
+        "nodes": 20,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/manatee.glb": {
+        "nodes": 20,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/dolphin.glb": {
+        "nodes": 21,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/raven.glb": {
+        "nodes": 19,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 8
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/magpie.glb": {
+        "nodes": 19,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 8
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/mallard_duck.glb": {
+        "nodes": 19,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 8
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/goose.glb": {
+        "nodes": 19,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 8
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/swan.glb": {
+        "nodes": 19,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 8
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/rooster.glb": {
+        "nodes": 19,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 8
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/turkey.glb": {
+        "nodes": 19,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 8
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/pheasant.glb": {
+        "nodes": 19,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 8
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/ostrich.glb": {
+        "nodes": 19,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/penguin.glb": {
+        "nodes": 19,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/pelican.glb": {
+        "nodes": 19,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 8
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/macaw.glb": {
+        "nodes": 19,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 8
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/cobra.glb": {
+        "nodes": 19,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/chameleon.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/gecko.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/frilled_lizard.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/iguana.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/caecilian.glb": {
+        "nodes": 24,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/mudskipper.glb": {
+        "nodes": 18,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/snapping_turtle.glb": {
+        "nodes": 21,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/hammerhead_shark.glb": {
+        "nodes": 19,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/sturgeon.glb": {
+        "nodes": 19,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/seahorse.glb": {
+        "nodes": 17,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/octopus.glb": {
+        "nodes": 38,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/cuttlefish.glb": {
+        "nodes": 48,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/nautilus.glb": {
+        "nodes": 55,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/lobster.glb": {
+        "nodes": 39,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/giant_centipede.glb": {
+        "nodes": 114,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/giant_snail.glb": {
+        "nodes": 16,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/giant_leech.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/giant_wasp.glb": {
+        "nodes": 35,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 8
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/giant_ant.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/skeleton.glb": {
+        "nodes": 21,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/zombie.glb": {
+        "nodes": 21,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/ghoul.glb": {
+        "nodes": 21,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/mummy.glb": {
+        "nodes": 21,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/vampire.glb": {
+        "nodes": 21,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/imp.glb": {
+        "nodes": 31,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 8
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/gargoyle.glb": {
+        "nodes": 31,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 8
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/gremlin.glb": {
+        "nodes": 21,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/hobgoblin.glb": {
+        "nodes": 21,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/gnoll.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/centaur.glb": {
+        "nodes": 34,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/merfolk.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/tengu.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 8
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/arachne.glb": {
+        "nodes": 46,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/manticore.glb": {
+        "nodes": 31,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 8
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/cockatrice.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 8
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/peryton.glb": {
+        "nodes": 31,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 8
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/jackalope.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/qilin.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/dragon_turtle.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/burrowing_landshark.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/iron_eater.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/stalactite_maw.glb": {
+        "nodes": 23,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/mimic.glb": {
+        "nodes": 20,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/living_armor.glb": {
+        "nodes": 21,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/flesh_golem.glb": {
+        "nodes": 21,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/slime.glb": {
+        "nodes": 12,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/living_spellbook.glb": {
+        "nodes": 7,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/crawling_hand.glb": {
+        "nodes": 19,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/floating_eye.glb": {
+        "nodes": 23,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/levitating_jellyfish.glb": {
+        "nodes": 43,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/giant_worm.glb": {
+        "nodes": 24,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/cerberus.glb": {
+        "nodes": 30,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/two_headed_giant.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/winged_serpent.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 8
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/four_armed_guardian.glb": {
+        "nodes": 32,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/animated_sword.glb": {
+        "nodes": 5,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/giant_antlion.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/sphinx.glb": {
+        "nodes": 31,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 8
+      },
+      "godot-client/assets/actors/native/creatures/basic_expansion/air_elemental.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
       }
     }
   },
@@ -31118,6 +31718,1108 @@
       "sha256": "8a31b2dd192d2a595e6dd40cab0125adb045f4d98d5384329d95b17c88b533b7",
       "joints": 77,
       "triangles": 8312
+    }
+  },
+  "basicCreatureExpansion": {
+    "rabbit": {
+      "actor_type": 685,
+      "id": "rabbit",
+      "name": "Rabbit",
+      "family": "hopper",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/rabbit.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "a2a794ced81d92feaaa039b6d58a9a8099116cbc989d4377c3a80229f8f81eb3",
+      "source": "generate_models/basic_creature_expansion_100_animated/001_rabbit/2_rigged/001_rabbit_rigged.glb"
+    },
+    "beaver": {
+      "actor_type": 686,
+      "id": "beaver",
+      "name": "Beaver",
+      "family": "semiaquatic_quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/beaver.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "4674b12a41fdb30254a5c0d19b5b29dd9efe6979592360cf4bdfe27aca8c3507",
+      "source": "generate_models/basic_creature_expansion_100_animated/002_beaver/2_rigged/002_beaver_rigged.glb"
+    },
+    "skunk": {
+      "actor_type": 687,
+      "id": "skunk",
+      "name": "Skunk",
+      "family": "small_quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/skunk.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "2ff8241ee5bb0e3162f8a3a1b8d8a0ca848917103dfff6e5628ac42b0b14e5f3",
+      "source": "generate_models/basic_creature_expansion_100_animated/003_skunk/2_rigged/003_skunk_rigged.glb"
+    },
+    "hedgehog": {
+      "actor_type": 688,
+      "id": "hedgehog",
+      "name": "Hedgehog",
+      "family": "small_quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/hedgehog.glb",
+      "joints": 19,
+      "animations": 7,
+      "sha256": "0c50335d0474a79f0f2ed3c7af58eac13dc0f78dd12390d9adb3cb7948e6a527",
+      "source": "generate_models/basic_creature_expansion_100_animated/004_hedgehog/2_rigged/004_hedgehog_rigged.glb"
+    },
+    "squirrel": {
+      "actor_type": 689,
+      "id": "squirrel",
+      "name": "Squirrel",
+      "family": "climbing_quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/squirrel.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "2afd9ce3777bf404778c5d6bef93931fb631198f97bf5c068df0235466e670a5",
+      "source": "generate_models/basic_creature_expansion_100_animated/005_squirrel/2_rigged/005_squirrel_rigged.glb"
+    },
+    "dormouse": {
+      "actor_type": 690,
+      "id": "dormouse",
+      "name": "Dormouse",
+      "family": "small_quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/dormouse.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "2c7023b02d2bd6c0f08dd1044e0a5fc2661a7118ffb6ef93feebb9c7034a8c7f",
+      "source": "generate_models/basic_creature_expansion_100_animated/006_dormouse/2_rigged/006_dormouse_rigged.glb"
+    },
+    "shrew": {
+      "actor_type": 691,
+      "id": "shrew",
+      "name": "Shrew",
+      "family": "small_quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/shrew.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "7cc4ccfd0bdea6dae562c2ad15e75011561e544c7501d11ea99081fd3891b529",
+      "source": "generate_models/basic_creature_expansion_100_animated/007_shrew/2_rigged/007_shrew_rigged.glb"
+    },
+    "stoat": {
+      "actor_type": 692,
+      "id": "stoat",
+      "name": "Stoat",
+      "family": "long_quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/stoat.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "f8171dcc98be3be279cc9abde19b6a280b4e601e4959b0a4216508e11f3a958a",
+      "source": "generate_models/basic_creature_expansion_100_animated/008_stoat/2_rigged/008_stoat_rigged.glb"
+    },
+    "mongoose": {
+      "actor_type": 693,
+      "id": "mongoose",
+      "name": "Mongoose",
+      "family": "long_quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/mongoose.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "db12aa6eff27d599c5e2ad3e2821f69705d695b8750407a6a78db89806b3acec",
+      "source": "generate_models/basic_creature_expansion_100_animated/009_mongoose/2_rigged/009_mongoose_rigged.glb"
+    },
+    "armadillo": {
+      "actor_type": 694,
+      "id": "armadillo",
+      "name": "Armadillo",
+      "family": "armored_quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/armadillo.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "a5653dcaf604dbb9baa12a0cc611dc731c4290a6d4cc6f9f58cabf14e47666fc",
+      "source": "generate_models/basic_creature_expansion_100_animated/010_armadillo/2_rigged/010_armadillo_rigged.glb"
+    },
+    "opossum": {
+      "actor_type": 695,
+      "id": "opossum",
+      "name": "Opossum",
+      "family": "climbing_quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/opossum.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "3c7445bcf61f895cdd547fb0b1da2d67261d4fd5ce6ca5de698ad77ed8eedeeb",
+      "source": "generate_models/basic_creature_expansion_100_animated/011_opossum/2_rigged/011_opossum_rigged.glb"
+    },
+    "platypus": {
+      "actor_type": 696,
+      "id": "platypus",
+      "name": "Platypus",
+      "family": "semiaquatic_quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/platypus.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "7fa3fdcedc9bac6e2dad0346dbdcb0cdc94550f9f855e9a666087cd7eaa68a4a",
+      "source": "generate_models/basic_creature_expansion_100_animated/012_platypus/2_rigged/012_platypus_rigged.glb"
+    },
+    "wombat": {
+      "actor_type": 697,
+      "id": "wombat",
+      "name": "Wombat",
+      "family": "stocky_quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/wombat.glb",
+      "joints": 19,
+      "animations": 7,
+      "sha256": "6d63fef918a2dfea585dfc001b60e703a43f240ca545999a6a669a8002ae34a3",
+      "source": "generate_models/basic_creature_expansion_100_animated/013_wombat/2_rigged/013_wombat_rigged.glb"
+    },
+    "puma": {
+      "actor_type": 698,
+      "id": "puma",
+      "name": "Puma",
+      "family": "feline",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/puma.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "1c7373f28f47cc20e2aa9ae41894c0d7dca138e3754abd8339da5c6a57233e00",
+      "source": "generate_models/basic_creature_expansion_100_animated/014_puma/2_rigged/014_puma_rigged.glb"
+    },
+    "leopard": {
+      "actor_type": 699,
+      "id": "leopard",
+      "name": "Leopard",
+      "family": "feline",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/leopard.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "b93d403174ae48e7bcb49683215ee6262b21a35d80da17af1cd15d78b0f54e59",
+      "source": "generate_models/basic_creature_expansion_100_animated/015_leopard/2_rigged/015_leopard_rigged.glb"
+    },
+    "cheetah": {
+      "actor_type": 700,
+      "id": "cheetah",
+      "name": "Cheetah",
+      "family": "feline",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/cheetah.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "5f34e4935d9af0a190d78146841aa64f54fd0153653613eb23937e2885f3c8b2",
+      "source": "generate_models/basic_creature_expansion_100_animated/016_cheetah/2_rigged/016_cheetah_rigged.glb"
+    },
+    "donkey": {
+      "actor_type": 701,
+      "id": "donkey",
+      "name": "Donkey",
+      "family": "equine",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/donkey.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "c7b5762aeb4b8de7a5cd5388089a6de6b9c8276fd447a58cb4484838abf57ab7",
+      "source": "generate_models/basic_creature_expansion_100_animated/017_donkey/2_rigged/017_donkey_rigged.glb"
+    },
+    "tapir": {
+      "actor_type": 702,
+      "id": "tapir",
+      "name": "Tapir",
+      "family": "heavy_quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/tapir.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "d8a6c19c07bcae94dfb3cd6e233fdf9abb5c04de10387c91fdf940435396a22b",
+      "source": "generate_models/basic_creature_expansion_100_animated/018_tapir/2_rigged/018_tapir_rigged.glb"
+    },
+    "elephant": {
+      "actor_type": 703,
+      "id": "elephant",
+      "name": "Elephant",
+      "family": "heavy_quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/elephant.glb",
+      "joints": 29,
+      "animations": 7,
+      "sha256": "bb5589ff237db9a3adf12a044c9731518a72ddc1b3762c5bc0a9fef120ef8dc5",
+      "source": "generate_models/basic_creature_expansion_100_animated/019_elephant/2_rigged/019_elephant_rigged.glb"
+    },
+    "hippopotamus": {
+      "actor_type": 704,
+      "id": "hippopotamus",
+      "name": "Hippopotamus",
+      "family": "heavy_quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/hippopotamus.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "59834b974851639b0955e11fe059cdbc520c212086a235b4273990957daf0239",
+      "source": "generate_models/basic_creature_expansion_100_animated/020_hippopotamus/2_rigged/020_hippopotamus_rigged.glb"
+    },
+    "giraffe": {
+      "actor_type": 705,
+      "id": "giraffe",
+      "name": "Giraffe",
+      "family": "long_neck_quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/giraffe.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "73a17ae7cf0a87b21b109dceb3f23961d169180d6be8128fb26ea9b56cb1d3e2",
+      "source": "generate_models/basic_creature_expansion_100_animated/021_giraffe/2_rigged/021_giraffe_rigged.glb"
+    },
+    "zebra": {
+      "actor_type": 706,
+      "id": "zebra",
+      "name": "Zebra",
+      "family": "equine",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/zebra.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "da0c4c003445f9a95848b3c834c915b50d876f4b3af2297d8548a1963b18e5c7",
+      "source": "generate_models/basic_creature_expansion_100_animated/022_zebra/2_rigged/022_zebra_rigged.glb"
+    },
+    "kangaroo": {
+      "actor_type": 707,
+      "id": "kangaroo",
+      "name": "Kangaroo",
+      "family": "macropod",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/kangaroo.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "ebf1511988b5489dc9fa40fbaafa246f8c906ac8e56657aa59a782e3fb2957e8",
+      "source": "generate_models/basic_creature_expansion_100_animated/023_kangaroo/2_rigged/023_kangaroo_rigged.glb"
+    },
+    "orangutan": {
+      "actor_type": 708,
+      "id": "orangutan",
+      "name": "Orangutan",
+      "family": "ape",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/orangutan.glb",
+      "joints": 19,
+      "animations": 7,
+      "sha256": "dc631f89969e77cafe2b4de333bb76db86f0bec56a39be34dc532ac8d28503a3",
+      "source": "generate_models/basic_creature_expansion_100_animated/024_orangutan/2_rigged/024_orangutan_rigged.glb"
+    },
+    "baboon": {
+      "actor_type": 709,
+      "id": "baboon",
+      "name": "Baboon",
+      "family": "primate_quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/baboon.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "3671d689955ec386a0e7bd85de591c69aca37bebfefa4544c5cd12ebe8a415c0",
+      "source": "generate_models/basic_creature_expansion_100_animated/025_baboon/2_rigged/025_baboon_rigged.glb"
+    },
+    "walrus": {
+      "actor_type": 710,
+      "id": "walrus",
+      "name": "Walrus",
+      "family": "pinniped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/walrus.glb",
+      "joints": 18,
+      "animations": 7,
+      "sha256": "8e7e29cf71bd058f7ecac702f3422a77f71efde9a520bf32761c35596d13505d",
+      "source": "generate_models/basic_creature_expansion_100_animated/026_walrus/2_rigged/026_walrus_rigged.glb"
+    },
+    "manatee": {
+      "actor_type": 711,
+      "id": "manatee",
+      "name": "Manatee",
+      "family": "aquatic_mammal",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/manatee.glb",
+      "joints": 18,
+      "animations": 7,
+      "sha256": "823f8dd5ac50c9a08742257094ef91fab3ca8ac673ff3442133b81af254d180d",
+      "source": "generate_models/basic_creature_expansion_100_animated/027_manatee/2_rigged/027_manatee_rigged.glb"
+    },
+    "dolphin": {
+      "actor_type": 712,
+      "id": "dolphin",
+      "name": "Dolphin",
+      "family": "aquatic_mammal",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/dolphin.glb",
+      "joints": 19,
+      "animations": 7,
+      "sha256": "302fd6137c8bae3ce4f6609a204c0b2c300eb003be54b862b20a8ee246e6bb20",
+      "source": "generate_models/basic_creature_expansion_100_animated/028_dolphin/2_rigged/028_dolphin_rigged.glb"
+    },
+    "raven": {
+      "actor_type": 713,
+      "id": "raven",
+      "name": "Raven",
+      "family": "perching_bird",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/raven.glb",
+      "joints": 17,
+      "animations": 8,
+      "sha256": "fb9b28345f8c7d973365207b43786c592da328046dd93d8e138110e209ba5293",
+      "source": "generate_models/basic_creature_expansion_100_animated/029_raven/2_rigged/029_raven_rigged.glb"
+    },
+    "magpie": {
+      "actor_type": 714,
+      "id": "magpie",
+      "name": "Magpie",
+      "family": "perching_bird",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/magpie.glb",
+      "joints": 17,
+      "animations": 8,
+      "sha256": "cc0be0e8852342f574d3c3f0303eaad09596b9d0fde0779c3991dcc954605e2f",
+      "source": "generate_models/basic_creature_expansion_100_animated/030_magpie/2_rigged/030_magpie_rigged.glb"
+    },
+    "mallard_duck": {
+      "actor_type": 715,
+      "id": "mallard_duck",
+      "name": "Mallard Duck",
+      "family": "waterbird",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/mallard_duck.glb",
+      "joints": 17,
+      "animations": 8,
+      "sha256": "572d4ecd3bda423260c4a11d08da68e7bc799652921b71cf141a65dcd41976a8",
+      "source": "generate_models/basic_creature_expansion_100_animated/031_mallard_duck/2_rigged/031_mallard_duck_rigged.glb"
+    },
+    "goose": {
+      "actor_type": 716,
+      "id": "goose",
+      "name": "Goose",
+      "family": "waterbird",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/goose.glb",
+      "joints": 17,
+      "animations": 8,
+      "sha256": "748842b153614ccb2729b1814b6262255e47cf8a4f3b645f676b2082c2d2c0b7",
+      "source": "generate_models/basic_creature_expansion_100_animated/032_goose/2_rigged/032_goose_rigged.glb"
+    },
+    "swan": {
+      "actor_type": 717,
+      "id": "swan",
+      "name": "Swan",
+      "family": "waterbird",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/swan.glb",
+      "joints": 17,
+      "animations": 8,
+      "sha256": "8d10ad684c3ec141abb924402df5d207349618635ccba3c4c9c9a6e47b9c373e",
+      "source": "generate_models/basic_creature_expansion_100_animated/033_swan/2_rigged/033_swan_rigged.glb"
+    },
+    "rooster": {
+      "actor_type": 718,
+      "id": "rooster",
+      "name": "Rooster",
+      "family": "ground_bird",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/rooster.glb",
+      "joints": 17,
+      "animations": 8,
+      "sha256": "a5fb8cca6740d9f321c3296d4d85a2a6e1b09f860b3eacc8e3ee3199bac16f84",
+      "source": "generate_models/basic_creature_expansion_100_animated/034_rooster/2_rigged/034_rooster_rigged.glb"
+    },
+    "turkey": {
+      "actor_type": 719,
+      "id": "turkey",
+      "name": "Turkey",
+      "family": "ground_bird",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/turkey.glb",
+      "joints": 17,
+      "animations": 8,
+      "sha256": "56a395f2859f3a3c39da0007e262b4b9991579508aadbe830f5744d121f1dcdf",
+      "source": "generate_models/basic_creature_expansion_100_animated/035_turkey/2_rigged/035_turkey_rigged.glb"
+    },
+    "pheasant": {
+      "actor_type": 720,
+      "id": "pheasant",
+      "name": "Pheasant",
+      "family": "ground_bird",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/pheasant.glb",
+      "joints": 17,
+      "animations": 8,
+      "sha256": "051f6eaca5a286e3ad29e3b5aadf57c0ac10dda3f5e14e9728898951ca439914",
+      "source": "generate_models/basic_creature_expansion_100_animated/036_pheasant/2_rigged/036_pheasant_rigged.glb"
+    },
+    "ostrich": {
+      "actor_type": 721,
+      "id": "ostrich",
+      "name": "Ostrich",
+      "family": "flightless_bird",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/ostrich.glb",
+      "joints": 17,
+      "animations": 7,
+      "sha256": "05a477b70748777f2e2fdf278dbae3f3c3d2bdd990b968b49b79b35d9cb62bfe",
+      "source": "generate_models/basic_creature_expansion_100_animated/037_ostrich/2_rigged/037_ostrich_rigged.glb"
+    },
+    "penguin": {
+      "actor_type": 722,
+      "id": "penguin",
+      "name": "Penguin",
+      "family": "flightless_bird",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/penguin.glb",
+      "joints": 17,
+      "animations": 7,
+      "sha256": "9f40d56ad46f70b582d948816f2b7234c87587636937c8eb537a96c0f0c998c3",
+      "source": "generate_models/basic_creature_expansion_100_animated/038_penguin/2_rigged/038_penguin_rigged.glb"
+    },
+    "pelican": {
+      "actor_type": 723,
+      "id": "pelican",
+      "name": "Pelican",
+      "family": "waterbird",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/pelican.glb",
+      "joints": 17,
+      "animations": 8,
+      "sha256": "bf818f522b6215d28ce6fdd35cb3b0168108f0f1913446fa7757e7c2dd219e84",
+      "source": "generate_models/basic_creature_expansion_100_animated/039_pelican/2_rigged/039_pelican_rigged.glb"
+    },
+    "macaw": {
+      "actor_type": 724,
+      "id": "macaw",
+      "name": "Macaw",
+      "family": "perching_bird",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/macaw.glb",
+      "joints": 17,
+      "animations": 8,
+      "sha256": "354c7f369edb5fb981a72ab91b99851942738849bc3bdf74322edcc004011955",
+      "source": "generate_models/basic_creature_expansion_100_animated/040_macaw/2_rigged/040_macaw_rigged.glb"
+    },
+    "cobra": {
+      "actor_type": 725,
+      "id": "cobra",
+      "name": "Cobra",
+      "family": "serpentine",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/cobra.glb",
+      "joints": 17,
+      "animations": 7,
+      "sha256": "c6bf00e1fc44d2faebd3e8f5fdb6b0c98c95b1bf6b14e9df48d0ad5bc4d4db2c",
+      "source": "generate_models/basic_creature_expansion_100_animated/041_cobra/2_rigged/041_cobra_rigged.glb"
+    },
+    "chameleon": {
+      "actor_type": 726,
+      "id": "chameleon",
+      "name": "Chameleon",
+      "family": "lizard",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/chameleon.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "ad218360a5496d22f6b20686191edd00d055e87ecfb3ad61b0f0a4ad1672fee9",
+      "source": "generate_models/basic_creature_expansion_100_animated/042_chameleon/2_rigged/042_chameleon_rigged.glb"
+    },
+    "gecko": {
+      "actor_type": 727,
+      "id": "gecko",
+      "name": "Gecko",
+      "family": "lizard",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/gecko.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "d579777deccba822a99833dc7d11b18eeb31c51237a1273c91fc249b5d7ed73c",
+      "source": "generate_models/basic_creature_expansion_100_animated/043_gecko/2_rigged/043_gecko_rigged.glb"
+    },
+    "frilled_lizard": {
+      "actor_type": 728,
+      "id": "frilled_lizard",
+      "name": "Frilled Lizard",
+      "family": "lizard",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/frilled_lizard.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "91c72d05e3208b75e45e4c464476ce94ef250f7b041ebda846f85a57469b7110",
+      "source": "generate_models/basic_creature_expansion_100_animated/044_frilled_lizard/2_rigged/044_frilled_lizard_rigged.glb"
+    },
+    "iguana": {
+      "actor_type": 729,
+      "id": "iguana",
+      "name": "Iguana",
+      "family": "lizard",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/iguana.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "bcbc1ec0844b1a3f16e67695fe6d42f0139ead0ec7b260980fa461c33c4157f0",
+      "source": "generate_models/basic_creature_expansion_100_animated/045_iguana/2_rigged/045_iguana_rigged.glb"
+    },
+    "caecilian": {
+      "actor_type": 730,
+      "id": "caecilian",
+      "name": "Caecilian",
+      "family": "serpentine",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/caecilian.glb",
+      "joints": 22,
+      "animations": 7,
+      "sha256": "7602ccdd51ce53d69ee9456eb71972b8fe200bbbb591063b83a9ab5eedd43f57",
+      "source": "generate_models/basic_creature_expansion_100_animated/046_caecilian/2_rigged/046_caecilian_rigged.glb"
+    },
+    "mudskipper": {
+      "actor_type": 731,
+      "id": "mudskipper",
+      "name": "Mudskipper",
+      "family": "amphibious_fish",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/mudskipper.glb",
+      "joints": 16,
+      "animations": 7,
+      "sha256": "4f0b80ed7cadd5f7e7ddc81d95a34359b25930e37d15f983ea26377b1df4f99f",
+      "source": "generate_models/basic_creature_expansion_100_animated/047_mudskipper/2_rigged/047_mudskipper_rigged.glb"
+    },
+    "snapping_turtle": {
+      "actor_type": 732,
+      "id": "snapping_turtle",
+      "name": "Snapping Turtle",
+      "family": "chelonian",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/snapping_turtle.glb",
+      "joints": 19,
+      "animations": 7,
+      "sha256": "c8878cf7d4655e8d762b3fe0e5e83b602816469efa4aa41b70948151eda6b93f",
+      "source": "generate_models/basic_creature_expansion_100_animated/048_snapping_turtle/2_rigged/048_snapping_turtle_rigged.glb"
+    },
+    "hammerhead_shark": {
+      "actor_type": 733,
+      "id": "hammerhead_shark",
+      "name": "Hammerhead Shark",
+      "family": "fish",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/hammerhead_shark.glb",
+      "joints": 17,
+      "animations": 7,
+      "sha256": "993cfd025ab455825fdeee231a2e200a7dc54ed349dae03c91daf53f7f71f514",
+      "source": "generate_models/basic_creature_expansion_100_animated/049_hammerhead_shark/2_rigged/049_hammerhead_shark_rigged.glb"
+    },
+    "sturgeon": {
+      "actor_type": 734,
+      "id": "sturgeon",
+      "name": "Sturgeon",
+      "family": "fish",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/sturgeon.glb",
+      "joints": 17,
+      "animations": 7,
+      "sha256": "0c63f6064d0a6adcb3f43f0a3edb9b071509b062f0c0938db0c2c075514753d5",
+      "source": "generate_models/basic_creature_expansion_100_animated/050_sturgeon/2_rigged/050_sturgeon_rigged.glb"
+    },
+    "seahorse": {
+      "actor_type": 735,
+      "id": "seahorse",
+      "name": "Seahorse",
+      "family": "seahorse",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/seahorse.glb",
+      "joints": 15,
+      "animations": 7,
+      "sha256": "84507bc16d9b359de4f1b61a52e8f6322ac07b7b202c16318a6e178c74fe1a4d",
+      "source": "generate_models/basic_creature_expansion_100_animated/051_seahorse/2_rigged/051_seahorse_rigged.glb"
+    },
+    "octopus": {
+      "actor_type": 736,
+      "id": "octopus",
+      "name": "Octopus",
+      "family": "octopod",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/octopus.glb",
+      "joints": 36,
+      "animations": 7,
+      "sha256": "bcba1cf57023af3234995ceed64461b02387fc3a00bbb892119dce50e5536dba",
+      "source": "generate_models/basic_creature_expansion_100_animated/052_octopus/2_rigged/052_octopus_rigged.glb"
+    },
+    "cuttlefish": {
+      "actor_type": 737,
+      "id": "cuttlefish",
+      "name": "Cuttlefish",
+      "family": "cephalopod",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/cuttlefish.glb",
+      "joints": 46,
+      "animations": 7,
+      "sha256": "a9c0ad57208c02886226c4773ccbabe872d4d588fb1d4dbf4a4c9600b4491992",
+      "source": "generate_models/basic_creature_expansion_100_animated/053_cuttlefish/2_rigged/053_cuttlefish_rigged.glb"
+    },
+    "nautilus": {
+      "actor_type": 738,
+      "id": "nautilus",
+      "name": "Nautilus",
+      "family": "shelled_cephalopod",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/nautilus.glb",
+      "joints": 53,
+      "animations": 7,
+      "sha256": "f561a699f083d02fe80de24901a332db5bd1e2486e403533fa3362ef0b0bda60",
+      "source": "generate_models/basic_creature_expansion_100_animated/054_nautilus/2_rigged/054_nautilus_rigged.glb"
+    },
+    "lobster": {
+      "actor_type": 739,
+      "id": "lobster",
+      "name": "Lobster",
+      "family": "decapod",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/lobster.glb",
+      "joints": 37,
+      "animations": 7,
+      "sha256": "949531630df12d218e59868264835f8ce8fd0e97a2e87c982a6f0849d1fad1d4",
+      "source": "generate_models/basic_creature_expansion_100_animated/055_lobster/2_rigged/055_lobster_rigged.glb"
+    },
+    "giant_centipede": {
+      "actor_type": 740,
+      "id": "giant_centipede",
+      "name": "Giant Centipede",
+      "family": "myriapod",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/giant_centipede.glb",
+      "joints": 112,
+      "animations": 7,
+      "sha256": "47a52843cd7185c487c6a6f418acffa138e021a884432bcf0dbd5f6f1dffe387",
+      "source": "generate_models/basic_creature_expansion_100_animated/056_giant_centipede/2_rigged/056_giant_centipede_rigged.glb"
+    },
+    "giant_snail": {
+      "actor_type": 741,
+      "id": "giant_snail",
+      "name": "Giant Snail",
+      "family": "gastropod",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/giant_snail.glb",
+      "joints": 14,
+      "animations": 7,
+      "sha256": "9323cfc17bdfe8208ed0b552367c1abaf952eea983ccf77bbdcdd1f405f71a35",
+      "source": "generate_models/basic_creature_expansion_100_animated/057_giant_snail/2_rigged/057_giant_snail_rigged.glb"
+    },
+    "giant_leech": {
+      "actor_type": 742,
+      "id": "giant_leech",
+      "name": "Giant Leech",
+      "family": "annelid",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/giant_leech.glb",
+      "joints": 22,
+      "animations": 7,
+      "sha256": "cd8e24f266aa6438c28458818e6578191bd1d96654f8165db29e669d83eda65d",
+      "source": "generate_models/basic_creature_expansion_100_animated/058_giant_leech/2_rigged/058_giant_leech_rigged.glb"
+    },
+    "giant_wasp": {
+      "actor_type": 743,
+      "id": "giant_wasp",
+      "name": "Giant Wasp",
+      "family": "winged_insect",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/giant_wasp.glb",
+      "joints": 33,
+      "animations": 8,
+      "sha256": "7a5526bb48a713ecb621f3a9dc5fc8f143d9fc8d2e032b70f0ce373aead52ba1",
+      "source": "generate_models/basic_creature_expansion_100_animated/059_giant_wasp/2_rigged/059_giant_wasp_rigged.glb"
+    },
+    "giant_ant": {
+      "actor_type": 744,
+      "id": "giant_ant",
+      "name": "Giant Ant",
+      "family": "insect",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/giant_ant.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "cfc0830557b26e74b6f45c85652a310f0a944091b6a56b7c9944f45b8d33fc2f",
+      "source": "generate_models/basic_creature_expansion_100_animated/060_giant_ant/2_rigged/060_giant_ant_rigged.glb"
+    },
+    "skeleton": {
+      "actor_type": 745,
+      "id": "skeleton",
+      "name": "Skeleton",
+      "family": "humanoid",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/skeleton.glb",
+      "joints": 19,
+      "animations": 7,
+      "sha256": "fd23a2bcb49bb3b0678bb613d6c272984b4fad32936ddbee54db960c96585253",
+      "source": "generate_models/basic_creature_expansion_100_animated/061_skeleton/2_rigged/061_skeleton_rigged.glb"
+    },
+    "zombie": {
+      "actor_type": 746,
+      "id": "zombie",
+      "name": "Zombie",
+      "family": "humanoid",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/zombie.glb",
+      "joints": 19,
+      "animations": 7,
+      "sha256": "faab4f83db690add41b3943f4093022d366381ba2222b68a6d23b76587f451cc",
+      "source": "generate_models/basic_creature_expansion_100_animated/062_zombie/2_rigged/062_zombie_rigged.glb"
+    },
+    "ghoul": {
+      "actor_type": 747,
+      "id": "ghoul",
+      "name": "Ghoul",
+      "family": "crouched_humanoid",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/ghoul.glb",
+      "joints": 19,
+      "animations": 7,
+      "sha256": "cf2153dfef05e359b6ad46dae768662ec4078c12e778fdd6213be55a2997840e",
+      "source": "generate_models/basic_creature_expansion_100_animated/063_ghoul/2_rigged/063_ghoul_rigged.glb"
+    },
+    "mummy": {
+      "actor_type": 748,
+      "id": "mummy",
+      "name": "Mummy",
+      "family": "humanoid",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/mummy.glb",
+      "joints": 19,
+      "animations": 7,
+      "sha256": "f45c9055a5fb8b4ecfcca6f89ee3280ee5fc7d8c8a035c31dab0aba988d455b0",
+      "source": "generate_models/basic_creature_expansion_100_animated/064_mummy/2_rigged/064_mummy_rigged.glb"
+    },
+    "vampire": {
+      "actor_type": 749,
+      "id": "vampire",
+      "name": "Vampire",
+      "family": "humanoid",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/vampire.glb",
+      "joints": 19,
+      "animations": 7,
+      "sha256": "416ecc869a7c5688e875db60c5fded62a8b68ffb564732a634698cdfefa98e7d",
+      "source": "generate_models/basic_creature_expansion_100_animated/065_vampire/2_rigged/065_vampire_rigged.glb"
+    },
+    "imp": {
+      "actor_type": 750,
+      "id": "imp",
+      "name": "Imp",
+      "family": "winged_humanoid",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/imp.glb",
+      "joints": 29,
+      "animations": 8,
+      "sha256": "8f97fb8544ae1d611d2d218baf77019175dbe988a09590372e8a5a0f44781e87",
+      "source": "generate_models/basic_creature_expansion_100_animated/066_imp/2_rigged/066_imp_rigged.glb"
+    },
+    "gargoyle": {
+      "actor_type": 751,
+      "id": "gargoyle",
+      "name": "Gargoyle",
+      "family": "winged_humanoid",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/gargoyle.glb",
+      "joints": 29,
+      "animations": 8,
+      "sha256": "70ddd8fa0ecb7bad1ad30a6744235a5f19488ada12225f431db9453dd6d41f9e",
+      "source": "generate_models/basic_creature_expansion_100_animated/067_gargoyle/2_rigged/067_gargoyle_rigged.glb"
+    },
+    "gremlin": {
+      "actor_type": 752,
+      "id": "gremlin",
+      "name": "Gremlin",
+      "family": "crouched_humanoid",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/gremlin.glb",
+      "joints": 19,
+      "animations": 7,
+      "sha256": "76970d23b9a353a63a7da4f8b6bee9ffe22ff7b7acc0a27778d2127b1b1c918e",
+      "source": "generate_models/basic_creature_expansion_100_animated/068_gremlin/2_rigged/068_gremlin_rigged.glb"
+    },
+    "hobgoblin": {
+      "actor_type": 753,
+      "id": "hobgoblin",
+      "name": "Hobgoblin",
+      "family": "humanoid",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/hobgoblin.glb",
+      "joints": 19,
+      "animations": 7,
+      "sha256": "98a492e6e3c5018cbd94760fe4b2f8f4ccc4c6d369e3a5ff3c126e8b371f3466",
+      "source": "generate_models/basic_creature_expansion_100_animated/069_hobgoblin/2_rigged/069_hobgoblin_rigged.glb"
+    },
+    "gnoll": {
+      "actor_type": 754,
+      "id": "gnoll",
+      "name": "Gnoll",
+      "family": "digitigrade_humanoid",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/gnoll.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "24bf97d6940f7de18db9bed77cbf514e1c40842b3d02bb2d844ccf9018f3915e",
+      "source": "generate_models/basic_creature_expansion_100_animated/070_gnoll/2_rigged/070_gnoll_rigged.glb"
+    },
+    "centaur": {
+      "actor_type": 755,
+      "id": "centaur",
+      "name": "Centaur",
+      "family": "centaur",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/centaur.glb",
+      "joints": 32,
+      "animations": 7,
+      "sha256": "aeefadcde469c9dc3ca5eabb74a50bb135faafc66e64f21f027f206abac16130",
+      "source": "generate_models/basic_creature_expansion_100_animated/071_centaur/2_rigged/071_centaur_rigged.glb"
+    },
+    "merfolk": {
+      "actor_type": 756,
+      "id": "merfolk",
+      "name": "Merfolk",
+      "family": "merfolk",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/merfolk.glb",
+      "joints": 20,
+      "animations": 7,
+      "sha256": "665975b2932794618592eead76e590f4d22418185d3b8fdf0116d6ae3aa699d9",
+      "source": "generate_models/basic_creature_expansion_100_animated/072_merfolk/2_rigged/072_merfolk_rigged.glb"
+    },
+    "tengu": {
+      "actor_type": 757,
+      "id": "tengu",
+      "name": "Tengu",
+      "family": "winged_humanoid",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/tengu.glb",
+      "joints": 23,
+      "animations": 8,
+      "sha256": "5548743fda33173f84468c3c88bc78d707d1624b2444feaac7e5bcf76f74c583",
+      "source": "generate_models/basic_creature_expansion_100_animated/073_tengu/2_rigged/073_tengu_rigged.glb"
+    },
+    "arachne": {
+      "actor_type": 758,
+      "id": "arachne",
+      "name": "Arachne",
+      "family": "arachne",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/arachne.glb",
+      "joints": 44,
+      "animations": 7,
+      "sha256": "9d6dcfeef89979cbe1cf7d12aeaffe1e1e46906511d55b526ddc3b0be13f414d",
+      "source": "generate_models/basic_creature_expansion_100_animated/074_arachne/2_rigged/074_arachne_rigged.glb"
+    },
+    "manticore": {
+      "actor_type": 759,
+      "id": "manticore",
+      "name": "Manticore",
+      "family": "winged_quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/manticore.glb",
+      "joints": 29,
+      "animations": 8,
+      "sha256": "47d976682e5081b9b3a62047cfec1733c4e48ba0f8b62101c304205a33b5d285",
+      "source": "generate_models/basic_creature_expansion_100_animated/075_manticore/2_rigged/075_manticore_rigged.glb"
+    },
+    "cockatrice": {
+      "actor_type": 760,
+      "id": "cockatrice",
+      "name": "Cockatrice",
+      "family": "winged_biped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/cockatrice.glb",
+      "joints": 23,
+      "animations": 8,
+      "sha256": "eec86c7cc2fdb08155a37ec5377c071ce5a6ec757880f51d0f71c2651e6b3378",
+      "source": "generate_models/basic_creature_expansion_100_animated/076_cockatrice/2_rigged/076_cockatrice_rigged.glb"
+    },
+    "peryton": {
+      "actor_type": 761,
+      "id": "peryton",
+      "name": "Peryton",
+      "family": "winged_quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/peryton.glb",
+      "joints": 29,
+      "animations": 8,
+      "sha256": "f44292308548c21ecbffcdba4aedb57955c955de1ea3bac3b1f154f83110e55c",
+      "source": "generate_models/basic_creature_expansion_100_animated/077_peryton/2_rigged/077_peryton_rigged.glb"
+    },
+    "jackalope": {
+      "actor_type": 762,
+      "id": "jackalope",
+      "name": "Jackalope",
+      "family": "hopper",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/jackalope.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "ce0df7b2357bb8f9568f543b47ea02d3a972e121350925df052b6b3e4676de19",
+      "source": "generate_models/basic_creature_expansion_100_animated/078_jackalope/2_rigged/078_jackalope_rigged.glb"
+    },
+    "qilin": {
+      "actor_type": 763,
+      "id": "qilin",
+      "name": "Qilin",
+      "family": "quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/qilin.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "d14ce3e19582ab71bf00828b1518200493d603f147dc3a935d232d23a51e3ab9",
+      "source": "generate_models/basic_creature_expansion_100_animated/079_qilin/2_rigged/079_qilin_rigged.glb"
+    },
+    "dragon_turtle": {
+      "actor_type": 764,
+      "id": "dragon_turtle",
+      "name": "Dragon Turtle",
+      "family": "chelonian",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/dragon_turtle.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "943a6791d79c654471165a5e5bc15b5260ad966108db864584eb3ac0120e7052",
+      "source": "generate_models/basic_creature_expansion_100_animated/080_dragon_turtle/2_rigged/080_dragon_turtle_rigged.glb"
+    },
+    "burrowing_landshark": {
+      "actor_type": 765,
+      "id": "burrowing_landshark",
+      "name": "Burrowing Landshark",
+      "family": "armored_quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/burrowing_landshark.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "34923c95c9ab491a69aba7bc253f848f99caaffde13d35e5d51ed9d044e47d0b",
+      "source": "generate_models/basic_creature_expansion_100_animated/081_burrowing_landshark/2_rigged/081_burrowing_landshark_rigged.glb"
+    },
+    "iron_eater": {
+      "actor_type": 766,
+      "id": "iron_eater",
+      "name": "Iron Eater",
+      "family": "insect",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/iron_eater.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "5e833034af9ac8c576c7871288faae0fd71f0e21ff1e5e7db2f5123a5b7986e1",
+      "source": "generate_models/basic_creature_expansion_100_animated/082_iron_eater/2_rigged/082_iron_eater_rigged.glb"
+    },
+    "stalactite_maw": {
+      "actor_type": 767,
+      "id": "stalactite_maw",
+      "name": "Stalactite Maw",
+      "family": "radial_tentacles",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/stalactite_maw.glb",
+      "joints": 21,
+      "animations": 7,
+      "sha256": "109e21b3372e56cde576837d4b048b85e83f08b6e88abcc91088e33683641395",
+      "source": "generate_models/basic_creature_expansion_100_animated/083_stalactite_maw/2_rigged/083_stalactite_maw_rigged.glb"
+    },
+    "mimic": {
+      "actor_type": 768,
+      "id": "mimic",
+      "name": "Mimic",
+      "family": "hinged_creature",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/mimic.glb",
+      "joints": 18,
+      "animations": 7,
+      "sha256": "5c8d466de9b0815729cdcf8f0c3e428bb6074d0881688a74ab6eda45aea3ec18",
+      "source": "generate_models/basic_creature_expansion_100_animated/084_mimic/2_rigged/084_mimic_rigged.glb"
+    },
+    "living_armor": {
+      "actor_type": 769,
+      "id": "living_armor",
+      "name": "Living Armor",
+      "family": "humanoid",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/living_armor.glb",
+      "joints": 19,
+      "animations": 7,
+      "sha256": "9f870d6cd0fd49c403466a342fbf3809487bdc364b1f237fd1836f55867019af",
+      "source": "generate_models/basic_creature_expansion_100_animated/085_living_armor/2_rigged/085_living_armor_rigged.glb"
+    },
+    "flesh_golem": {
+      "actor_type": 770,
+      "id": "flesh_golem",
+      "name": "Flesh Golem",
+      "family": "heavy_humanoid",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/flesh_golem.glb",
+      "joints": 19,
+      "animations": 7,
+      "sha256": "a987f7414de4e9e4ebda1fdb72b77b0a3dfcd9a58f5f6c3e0c2ee5b6bdf2fa54",
+      "source": "generate_models/basic_creature_expansion_100_animated/086_flesh_golem/2_rigged/086_flesh_golem_rigged.glb"
+    },
+    "slime": {
+      "actor_type": 771,
+      "id": "slime",
+      "name": "Slime",
+      "family": "amorphous",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/slime.glb",
+      "joints": 10,
+      "animations": 7,
+      "sha256": "1eab1862b14d6c008c6769a4018fafc6719748cf51ced858afcbc14694a54825",
+      "source": "generate_models/basic_creature_expansion_100_animated/087_slime/2_rigged/087_slime_rigged.glb"
+    },
+    "living_spellbook": {
+      "actor_type": 772,
+      "id": "living_spellbook",
+      "name": "Living Spellbook",
+      "family": "hinged_creature",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/living_spellbook.glb",
+      "joints": 5,
+      "animations": 7,
+      "sha256": "eee270da6360d7a1da1091175aeae09fdedc1044785ee32c5ed55e287c352063",
+      "source": "generate_models/basic_creature_expansion_100_animated/088_living_spellbook/2_rigged/088_living_spellbook_rigged.glb"
+    },
+    "crawling_hand": {
+      "actor_type": 773,
+      "id": "crawling_hand",
+      "name": "Crawling Hand",
+      "family": "hand",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/crawling_hand.glb",
+      "joints": 17,
+      "animations": 7,
+      "sha256": "ebf48e9f0d250a292d42089c7ba119f3291cc8d997cda1d88e9790f3df6ddc4b",
+      "source": "generate_models/basic_creature_expansion_100_animated/089_crawling_hand/2_rigged/089_crawling_hand_rigged.glb"
+    },
+    "floating_eye": {
+      "actor_type": 774,
+      "id": "floating_eye",
+      "name": "Floating Eye",
+      "family": "radial_tentacles",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/floating_eye.glb",
+      "joints": 21,
+      "animations": 7,
+      "sha256": "141635468cd6ef3f780b194fc081cda3e0a644ee342ce69317866572f6202f4c",
+      "source": "generate_models/basic_creature_expansion_100_animated/090_floating_eye/2_rigged/090_floating_eye_rigged.glb"
+    },
+    "levitating_jellyfish": {
+      "actor_type": 775,
+      "id": "levitating_jellyfish",
+      "name": "Levitating Jellyfish",
+      "family": "jellyfish",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/levitating_jellyfish.glb",
+      "joints": 41,
+      "animations": 7,
+      "sha256": "8cd918b14f05659fefa933f2f9b37d607d68a3ca8567bf7b335615a49fb67c40",
+      "source": "generate_models/basic_creature_expansion_100_animated/091_levitating_jellyfish/2_rigged/091_levitating_jellyfish_rigged.glb"
+    },
+    "giant_worm": {
+      "actor_type": 776,
+      "id": "giant_worm",
+      "name": "Giant Worm",
+      "family": "worm",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/giant_worm.glb",
+      "joints": 22,
+      "animations": 7,
+      "sha256": "077ec50e0426789740bda69f742e79f96d706c34e4eeddf7417a04cea36d9125",
+      "source": "generate_models/basic_creature_expansion_100_animated/092_giant_worm/2_rigged/092_giant_worm_rigged.glb"
+    },
+    "cerberus": {
+      "actor_type": 777,
+      "id": "cerberus",
+      "name": "Cerberus",
+      "family": "multiheaded_quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/cerberus.glb",
+      "joints": 28,
+      "animations": 7,
+      "sha256": "a4b885fed6aa1dbefeebeb649b9e80f728c195479f98f58f3f04a8ca0934783e",
+      "source": "generate_models/basic_creature_expansion_100_animated/093_cerberus/2_rigged/093_cerberus_rigged.glb"
+    },
+    "two_headed_giant": {
+      "actor_type": 778,
+      "id": "two_headed_giant",
+      "name": "Two Headed Giant",
+      "family": "multiheaded_humanoid",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/two_headed_giant.glb",
+      "joints": 20,
+      "animations": 7,
+      "sha256": "821f85c86a9b9883fb214089258c3b0d57cdfb5e00af7e6e04ac96be8d51398d",
+      "source": "generate_models/basic_creature_expansion_100_animated/094_two_headed_giant/2_rigged/094_two_headed_giant_rigged.glb"
+    },
+    "winged_serpent": {
+      "actor_type": 779,
+      "id": "winged_serpent",
+      "name": "Winged Serpent",
+      "family": "winged_serpent",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/winged_serpent.glb",
+      "joints": 26,
+      "animations": 8,
+      "sha256": "d04b6473679543abac182b3f0a6f0a78594dbb12766cba12e6e0099268421433",
+      "source": "generate_models/basic_creature_expansion_100_animated/095_winged_serpent/2_rigged/095_winged_serpent_rigged.glb"
+    },
+    "four_armed_guardian": {
+      "actor_type": 780,
+      "id": "four_armed_guardian",
+      "name": "Four Armed Guardian",
+      "family": "four_armed_humanoid",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/four_armed_guardian.glb",
+      "joints": 30,
+      "animations": 7,
+      "sha256": "1a81474af000f9ca842e659404e442783064e6c1445d5d0ecfd421979dd13fa3",
+      "source": "generate_models/basic_creature_expansion_100_animated/096_four_armed_guardian/2_rigged/096_four_armed_guardian_rigged.glb"
+    },
+    "animated_sword": {
+      "actor_type": 781,
+      "id": "animated_sword",
+      "name": "Animated Sword",
+      "family": "rigid_prop",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/animated_sword.glb",
+      "joints": 3,
+      "animations": 7,
+      "sha256": "2fe619dd5378ca15903f098601020f2e98a018ca3e8e24524aaa71239bdc5bd2",
+      "source": "generate_models/basic_creature_expansion_100_animated/097_animated_sword/2_rigged/097_animated_sword_rigged.glb"
+    },
+    "giant_antlion": {
+      "actor_type": 782,
+      "id": "giant_antlion",
+      "name": "Giant Antlion",
+      "family": "insect",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/giant_antlion.glb",
+      "joints": 25,
+      "animations": 7,
+      "sha256": "2db3ca30ec7ffacd7080c663a86a918dfc50544409df058247640a0dfffa0e92",
+      "source": "generate_models/basic_creature_expansion_100_animated/098_giant_antlion/2_rigged/098_giant_antlion_rigged.glb"
+    },
+    "sphinx": {
+      "actor_type": 783,
+      "id": "sphinx",
+      "name": "Sphinx",
+      "family": "winged_quadruped",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/sphinx.glb",
+      "joints": 29,
+      "animations": 8,
+      "sha256": "07744b8dda9dbc38edf9c0bccfb3961f72b1fe9717d4e67d334bdda8d9e96dcb",
+      "source": "generate_models/basic_creature_expansion_100_animated/099_sphinx/2_rigged/099_sphinx_rigged.glb"
+    },
+    "air_elemental": {
+      "actor_type": 784,
+      "id": "air_elemental",
+      "name": "Air Elemental",
+      "family": "amorphous",
+      "path": "godot-client/assets/actors/native/creatures/basic_expansion/air_elemental.glb",
+      "joints": 20,
+      "animations": 7,
+      "sha256": "81d1ee05d63217d66ec8340bf40ce1004a09797049fd4a4855e3441c6d4d7f4c",
+      "source": "generate_models/basic_creature_expansion_100_animated/100_air_elemental/2_rigged/100_air_elemental_rigged.glb"
     }
   }
 }

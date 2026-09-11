@@ -6680,6 +6680,1706 @@
         "body": "body",
         "neck": "neck"
       }
+    },
+    "rabbit": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/rabbit.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/rabbit.glb",
+      "animationMap": "res://data/animations/basic_expansion/rabbit.json",
+      "import": {
+        "scale": 0.34999981,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "beaver": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/beaver.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/beaver.glb",
+      "animationMap": "res://data/animations/basic_expansion/beaver.json",
+      "import": {
+        "scale": 0.41231509,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "skunk": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/skunk.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/skunk.glb",
+      "animationMap": "res://data/animations/basic_expansion/skunk.json",
+      "import": {
+        "scale": 0.29999962,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "hedgehog": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/hedgehog.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/hedgehog.glb",
+      "animationMap": "res://data/animations/basic_expansion/hedgehog.json",
+      "import": {
+        "scale": 0.20078419,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "squirrel": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/squirrel.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/squirrel.glb",
+      "animationMap": "res://data/animations/basic_expansion/squirrel.json",
+      "import": {
+        "scale": 0.25000139,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "dormouse": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/dormouse.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/dormouse.glb",
+      "animationMap": "res://data/animations/basic_expansion/dormouse.json",
+      "import": {
+        "scale": 0.14999979,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "shrew": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/shrew.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/shrew.glb",
+      "animationMap": "res://data/animations/basic_expansion/shrew.json",
+      "import": {
+        "scale": 0.11999991,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "stoat": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/stoat.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/stoat.glb",
+      "animationMap": "res://data/animations/basic_expansion/stoat.json",
+      "import": {
+        "scale": 0.21999969,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "mongoose": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/mongoose.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/mongoose.glb",
+      "animationMap": "res://data/animations/basic_expansion/mongoose.json",
+      "import": {
+        "scale": 0.30000002,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "armadillo": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/armadillo.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/armadillo.glb",
+      "animationMap": "res://data/animations/basic_expansion/armadillo.json",
+      "import": {
+        "scale": 0.3499996,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "opossum": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/opossum.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/opossum.glb",
+      "animationMap": "res://data/animations/basic_expansion/opossum.json",
+      "import": {
+        "scale": 0.34999977,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "platypus": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/platypus.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/platypus.glb",
+      "animationMap": "res://data/animations/basic_expansion/platypus.json",
+      "import": {
+        "scale": 0.1999998,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "wombat": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/wombat.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/wombat.glb",
+      "animationMap": "res://data/animations/basic_expansion/wombat.json",
+      "import": {
+        "scale": 0.49999952,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "puma": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/puma.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/puma.glb",
+      "animationMap": "res://data/animations/basic_expansion/puma.json",
+      "import": {
+        "scale": 0.79999828,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "leopard": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/leopard.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/leopard.glb",
+      "animationMap": "res://data/animations/basic_expansion/leopard.json",
+      "import": {
+        "scale": 0.74999971,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "cheetah": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/cheetah.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/cheetah.glb",
+      "animationMap": "res://data/animations/basic_expansion/cheetah.json",
+      "import": {
+        "scale": 0.84999863,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "donkey": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/donkey.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/donkey.glb",
+      "animationMap": "res://data/animations/basic_expansion/donkey.json",
+      "import": {
+        "scale": 1.2999995,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "tapir": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/tapir.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/tapir.glb",
+      "animationMap": "res://data/animations/basic_expansion/tapir.json",
+      "import": {
+        "scale": 1.09999816,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "elephant": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/elephant.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/elephant.glb",
+      "animationMap": "res://data/animations/basic_expansion/elephant.json",
+      "import": {
+        "scale": 3.19999933,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "hippopotamus": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/hippopotamus.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/hippopotamus.glb",
+      "animationMap": "res://data/animations/basic_expansion/hippopotamus.json",
+      "import": {
+        "scale": 1.49999768,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "giraffe": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/giraffe.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/giraffe.glb",
+      "animationMap": "res://data/animations/basic_expansion/giraffe.json",
+      "import": {
+        "scale": 4.69999101,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "zebra": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/zebra.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/zebra.glb",
+      "animationMap": "res://data/animations/basic_expansion/zebra.json",
+      "import": {
+        "scale": 1.39999866,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "kangaroo": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/kangaroo.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/kangaroo.glb",
+      "animationMap": "res://data/animations/basic_expansion/kangaroo.json",
+      "import": {
+        "scale": 1.70000051,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "orangutan": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/orangutan.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/orangutan.glb",
+      "animationMap": "res://data/animations/basic_expansion/orangutan.json",
+      "import": {
+        "scale": 1.5,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "baboon": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/baboon.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/baboon.glb",
+      "animationMap": "res://data/animations/basic_expansion/baboon.json",
+      "import": {
+        "scale": 0.79999943,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "walrus": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/walrus.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/walrus.glb",
+      "animationMap": "res://data/animations/basic_expansion/walrus.json",
+      "import": {
+        "scale": 1.19999585,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head_neck"
+      }
+    },
+    "manatee": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/manatee.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/manatee.glb",
+      "animationMap": "res://data/animations/basic_expansion/manatee.json",
+      "import": {
+        "scale": 3.1999979,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head_neck"
+      }
+    },
+    "dolphin": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/dolphin.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/dolphin.glb",
+      "animationMap": "res://data/animations/basic_expansion/dolphin.json",
+      "import": {
+        "scale": 2.69999662,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head_neck"
+      }
+    },
+    "raven": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/raven.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/raven.glb",
+      "animationMap": "res://data/animations/basic_expansion/raven.json",
+      "import": {
+        "scale": 0.54999987,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "magpie": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/magpie.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/magpie.glb",
+      "animationMap": "res://data/animations/basic_expansion/magpie.json",
+      "import": {
+        "scale": 0.45000004,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "mallard_duck": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/mallard_duck.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/mallard_duck.glb",
+      "animationMap": "res://data/animations/basic_expansion/mallard_duck.json",
+      "import": {
+        "scale": 0.39999976,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "goose": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/goose.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/goose.glb",
+      "animationMap": "res://data/animations/basic_expansion/goose.json",
+      "import": {
+        "scale": 0.79999938,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "swan": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/swan.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/swan.glb",
+      "animationMap": "res://data/animations/basic_expansion/swan.json",
+      "import": {
+        "scale": 1.20470495,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "rooster": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/rooster.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/rooster.glb",
+      "animationMap": "res://data/animations/basic_expansion/rooster.json",
+      "import": {
+        "scale": 0.64999969,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "turkey": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/turkey.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/turkey.glb",
+      "animationMap": "res://data/animations/basic_expansion/turkey.json",
+      "import": {
+        "scale": 0.8999993,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "pheasant": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/pheasant.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/pheasant.glb",
+      "animationMap": "res://data/animations/basic_expansion/pheasant.json",
+      "import": {
+        "scale": 0.64999954,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "ostrich": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/ostrich.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/ostrich.glb",
+      "animationMap": "res://data/animations/basic_expansion/ostrich.json",
+      "import": {
+        "scale": 2.39999785,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "penguin": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/penguin.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/penguin.glb",
+      "animationMap": "res://data/animations/basic_expansion/penguin.json",
+      "import": {
+        "scale": 0.7999986,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "pelican": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/pelican.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/pelican.glb",
+      "animationMap": "res://data/animations/basic_expansion/pelican.json",
+      "import": {
+        "scale": 1.20000082,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "macaw": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/macaw.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/macaw.glb",
+      "animationMap": "res://data/animations/basic_expansion/macaw.json",
+      "import": {
+        "scale": 0.8499997,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "cobra": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/cobra.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/cobra.glb",
+      "animationMap": "res://data/animations/basic_expansion/cobra.json",
+      "import": {
+        "scale": 1.79999796,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head_neck"
+      }
+    },
+    "chameleon": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/chameleon.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/chameleon.glb",
+      "animationMap": "res://data/animations/basic_expansion/chameleon.json",
+      "import": {
+        "scale": 0.39999976,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "gecko": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/gecko.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/gecko.glb",
+      "animationMap": "res://data/animations/basic_expansion/gecko.json",
+      "import": {
+        "scale": 0.24999976,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "frilled_lizard": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/frilled_lizard.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/frilled_lizard.glb",
+      "animationMap": "res://data/animations/basic_expansion/frilled_lizard.json",
+      "import": {
+        "scale": 0.74999857,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "iguana": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/iguana.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/iguana.glb",
+      "animationMap": "res://data/animations/basic_expansion/iguana.json",
+      "import": {
+        "scale": 1.40273788,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "caecilian": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/caecilian.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/caecilian.glb",
+      "animationMap": "res://data/animations/basic_expansion/caecilian.json",
+      "import": {
+        "scale": 0.69999898,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head_neck"
+      }
+    },
+    "mudskipper": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/mudskipper.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/mudskipper.glb",
+      "animationMap": "res://data/animations/basic_expansion/mudskipper.json",
+      "import": {
+        "scale": 0.30000013,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head_neck"
+      }
+    },
+    "snapping_turtle": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/snapping_turtle.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/snapping_turtle.glb",
+      "animationMap": "res://data/animations/basic_expansion/snapping_turtle.json",
+      "import": {
+        "scale": 0.59999946,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "hammerhead_shark": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/hammerhead_shark.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/hammerhead_shark.glb",
+      "animationMap": "res://data/animations/basic_expansion/hammerhead_shark.json",
+      "import": {
+        "scale": 3.4999952,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head_neck"
+      }
+    },
+    "sturgeon": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/sturgeon.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/sturgeon.glb",
+      "animationMap": "res://data/animations/basic_expansion/sturgeon.json",
+      "import": {
+        "scale": 1.99999702,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head_neck"
+      }
+    },
+    "seahorse": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/seahorse.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/seahorse.glb",
+      "animationMap": "res://data/animations/basic_expansion/seahorse.json",
+      "import": {
+        "scale": 0.2999998,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head_neck"
+      }
+    },
+    "octopus": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/octopus.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/octopus.glb",
+      "animationMap": "res://data/animations/basic_expansion/octopus.json",
+      "import": {
+        "scale": 1.39999892,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "root",
+        "body": "spine_02",
+        "neck": "root"
+      }
+    },
+    "cuttlefish": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/cuttlefish.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/cuttlefish.glb",
+      "animationMap": "res://data/animations/basic_expansion/cuttlefish.json",
+      "import": {
+        "scale": 0.59999954,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "root",
+        "body": "spine_02",
+        "neck": "root"
+      }
+    },
+    "nautilus": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/nautilus.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/nautilus.glb",
+      "animationMap": "res://data/animations/basic_expansion/nautilus.json",
+      "import": {
+        "scale": 0.39999969,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "root",
+        "body": "spine_02",
+        "neck": "root"
+      }
+    },
+    "lobster": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/lobster.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/lobster.glb",
+      "animationMap": "res://data/animations/basic_expansion/lobster.json",
+      "import": {
+        "scale": 0.64999934,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "giant_centipede": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/giant_centipede.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/giant_centipede.glb",
+      "animationMap": "res://data/animations/basic_expansion/giant_centipede.json",
+      "import": {
+        "scale": 1.49999647,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head_neck"
+      }
+    },
+    "giant_snail": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/giant_snail.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/giant_snail.glb",
+      "animationMap": "res://data/animations/basic_expansion/giant_snail.json",
+      "import": {
+        "scale": 0.64999965,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head_neck"
+      }
+    },
+    "giant_leech": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/giant_leech.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/giant_leech.glb",
+      "animationMap": "res://data/animations/basic_expansion/giant_leech.json",
+      "import": {
+        "scale": 0.79999876,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head_neck"
+      }
+    },
+    "giant_wasp": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/giant_wasp.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/giant_wasp.glb",
+      "animationMap": "res://data/animations/basic_expansion/giant_wasp.json",
+      "import": {
+        "scale": 0.7000001,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "giant_ant": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/giant_ant.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/giant_ant.glb",
+      "animationMap": "res://data/animations/basic_expansion/giant_ant.json",
+      "import": {
+        "scale": 0.69999985,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "skeleton": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/skeleton.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/skeleton.glb",
+      "animationMap": "res://data/animations/basic_expansion/skeleton.json",
+      "import": {
+        "scale": 1.7999978,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "zombie": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/zombie.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/zombie.glb",
+      "animationMap": "res://data/animations/basic_expansion/zombie.json",
+      "import": {
+        "scale": 1.7999986,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "ghoul": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/ghoul.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/ghoul.glb",
+      "animationMap": "res://data/animations/basic_expansion/ghoul.json",
+      "import": {
+        "scale": 1.49999902,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "mummy": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/mummy.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/mummy.glb",
+      "animationMap": "res://data/animations/basic_expansion/mummy.json",
+      "import": {
+        "scale": 1.79999752,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "vampire": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/vampire.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/vampire.glb",
+      "animationMap": "res://data/animations/basic_expansion/vampire.json",
+      "import": {
+        "scale": 1.89999653,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "imp": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/imp.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/imp.glb",
+      "animationMap": "res://data/animations/basic_expansion/imp.json",
+      "import": {
+        "scale": 0.79999886,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "gargoyle": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/gargoyle.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/gargoyle.glb",
+      "animationMap": "res://data/animations/basic_expansion/gargoyle.json",
+      "import": {
+        "scale": 1.49999937,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "gremlin": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/gremlin.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/gremlin.glb",
+      "animationMap": "res://data/animations/basic_expansion/gremlin.json",
+      "import": {
+        "scale": 0.69999908,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "hobgoblin": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/hobgoblin.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/hobgoblin.glb",
+      "animationMap": "res://data/animations/basic_expansion/hobgoblin.json",
+      "import": {
+        "scale": 1.99999832,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "gnoll": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/gnoll.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/gnoll.glb",
+      "animationMap": "res://data/animations/basic_expansion/gnoll.json",
+      "import": {
+        "scale": 1.99999907,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "centaur": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/centaur.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/centaur.glb",
+      "animationMap": "res://data/animations/basic_expansion/centaur.json",
+      "import": {
+        "scale": 2.39999658,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head_neck"
+      }
+    },
+    "merfolk": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/merfolk.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/merfolk.glb",
+      "animationMap": "res://data/animations/basic_expansion/merfolk.json",
+      "import": {
+        "scale": 1.99999843,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head_neck"
+      }
+    },
+    "tengu": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/tengu.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/tengu.glb",
+      "animationMap": "res://data/animations/basic_expansion/tengu.json",
+      "import": {
+        "scale": 1.79999897,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "arachne": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/arachne.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/arachne.glb",
+      "animationMap": "res://data/animations/basic_expansion/arachne.json",
+      "import": {
+        "scale": 2.09999812,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head_neck"
+      }
+    },
+    "manticore": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/manticore.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/manticore.glb",
+      "animationMap": "res://data/animations/basic_expansion/manticore.json",
+      "import": {
+        "scale": 1.59999781,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "cockatrice": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/cockatrice.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/cockatrice.glb",
+      "animationMap": "res://data/animations/basic_expansion/cockatrice.json",
+      "import": {
+        "scale": 1.09999895,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "peryton": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/peryton.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/peryton.glb",
+      "animationMap": "res://data/animations/basic_expansion/peryton.json",
+      "import": {
+        "scale": 1.49999759,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "jackalope": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/jackalope.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/jackalope.glb",
+      "animationMap": "res://data/animations/basic_expansion/jackalope.json",
+      "import": {
+        "scale": 0.59999932,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "qilin": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/qilin.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/qilin.glb",
+      "animationMap": "res://data/animations/basic_expansion/qilin.json",
+      "import": {
+        "scale": 1.59999952,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "dragon_turtle": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/dragon_turtle.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/dragon_turtle.glb",
+      "animationMap": "res://data/animations/basic_expansion/dragon_turtle.json",
+      "import": {
+        "scale": 1.79999796,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "burrowing_landshark": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/burrowing_landshark.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/burrowing_landshark.glb",
+      "animationMap": "res://data/animations/basic_expansion/burrowing_landshark.json",
+      "import": {
+        "scale": 1.30000333,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "iron_eater": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/iron_eater.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/iron_eater.glb",
+      "animationMap": "res://data/animations/basic_expansion/iron_eater.json",
+      "import": {
+        "scale": 0.89999952,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "stalactite_maw": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/stalactite_maw.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/stalactite_maw.glb",
+      "animationMap": "res://data/animations/basic_expansion/stalactite_maw.json",
+      "import": {
+        "scale": 1.59999676,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "root",
+        "body": "spine_02",
+        "neck": "root"
+      }
+    },
+    "mimic": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/mimic.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/mimic.glb",
+      "animationMap": "res://data/animations/basic_expansion/mimic.json",
+      "import": {
+        "scale": 0.7999999,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "root",
+        "body": "body",
+        "neck": "root"
+      }
+    },
+    "living_armor": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/living_armor.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/living_armor.glb",
+      "animationMap": "res://data/animations/basic_expansion/living_armor.json",
+      "import": {
+        "scale": 1.89999805,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "flesh_golem": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/flesh_golem.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/flesh_golem.glb",
+      "animationMap": "res://data/animations/basic_expansion/flesh_golem.json",
+      "import": {
+        "scale": 2.59999539,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "slime": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/slime.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/slime.glb",
+      "animationMap": "res://data/animations/basic_expansion/slime.json",
+      "import": {
+        "scale": 0.7999999,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "root",
+        "body": "spine_02",
+        "neck": "root"
+      }
+    },
+    "living_spellbook": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/living_spellbook.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/living_spellbook.glb",
+      "animationMap": "res://data/animations/basic_expansion/living_spellbook.json",
+      "import": {
+        "scale": 0.69999998,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "root",
+        "body": "body",
+        "neck": "root"
+      }
+    },
+    "crawling_hand": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/crawling_hand.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/crawling_hand.glb",
+      "animationMap": "res://data/animations/basic_expansion/crawling_hand.json",
+      "import": {
+        "scale": 0.59999961,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "root",
+        "body": "root",
+        "neck": "root"
+      }
+    },
+    "floating_eye": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/floating_eye.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/floating_eye.glb",
+      "animationMap": "res://data/animations/basic_expansion/floating_eye.json",
+      "import": {
+        "scale": 0.89999938,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "root",
+        "body": "spine_02",
+        "neck": "root"
+      }
+    },
+    "levitating_jellyfish": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/levitating_jellyfish.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/levitating_jellyfish.glb",
+      "animationMap": "res://data/animations/basic_expansion/levitating_jellyfish.json",
+      "import": {
+        "scale": 1.39999868,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "root",
+        "body": "spine_02",
+        "neck": "root"
+      }
+    },
+    "giant_worm": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/giant_worm.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/giant_worm.glb",
+      "animationMap": "res://data/animations/basic_expansion/giant_worm.json",
+      "import": {
+        "scale": 3.99999523,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head_neck"
+      }
+    },
+    "cerberus": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/cerberus.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/cerberus.glb",
+      "animationMap": "res://data/animations/basic_expansion/cerberus.json",
+      "import": {
+        "scale": 1.49999812,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head_neck"
+      }
+    },
+    "two_headed_giant": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/two_headed_giant.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/two_headed_giant.glb",
+      "animationMap": "res://data/animations/basic_expansion/two_headed_giant.json",
+      "import": {
+        "scale": 3.29999509,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head_neck"
+      }
+    },
+    "winged_serpent": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/winged_serpent.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/winged_serpent.glb",
+      "animationMap": "res://data/animations/basic_expansion/winged_serpent.json",
+      "import": {
+        "scale": 2.07256225,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head_neck"
+      }
+    },
+    "four_armed_guardian": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/four_armed_guardian.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/four_armed_guardian.glb",
+      "animationMap": "res://data/animations/basic_expansion/four_armed_guardian.json",
+      "import": {
+        "scale": 2.19999967,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head_neck"
+      }
+    },
+    "animated_sword": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/animated_sword.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/animated_sword.glb",
+      "animationMap": "res://data/animations/basic_expansion/animated_sword.json",
+      "import": {
+        "scale": 1.29999976,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "root",
+        "body": "root",
+        "neck": "root"
+      }
+    },
+    "giant_antlion": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/giant_antlion.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/giant_antlion.glb",
+      "animationMap": "res://data/animations/basic_expansion/giant_antlion.json",
+      "import": {
+        "scale": 1.49999884,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "sphinx": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/sphinx.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/sphinx.glb",
+      "animationMap": "res://data/animations/basic_expansion/sphinx.json",
+      "import": {
+        "scale": 1.79999506,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head"
+      }
+    },
+    "air_elemental": {
+      "scene": "res://assets/actors/native/creatures/basic_expansion/air_elemental.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/basic_expansion/air_elemental.glb",
+      "animationMap": "res://data/animations/basic_expansion/air_elemental.json",
+      "import": {
+        "scale": 2.30449761,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "head": "head",
+        "body": "spine_02",
+        "neck": "head_neck"
+      }
     }
   },
   "actorTypes": {
@@ -7117,7 +8817,107 @@
     "681": "gloom_wyvern",
     "682": "mire_kelpie",
     "683": "barnacle_ogre",
-    "684": "ember_leaf_spirit"
+    "684": "ember_leaf_spirit",
+    "685": "rabbit",
+    "686": "beaver",
+    "687": "skunk",
+    "688": "hedgehog",
+    "689": "squirrel",
+    "690": "dormouse",
+    "691": "shrew",
+    "692": "stoat",
+    "693": "mongoose",
+    "694": "armadillo",
+    "695": "opossum",
+    "696": "platypus",
+    "697": "wombat",
+    "698": "puma",
+    "699": "leopard",
+    "700": "cheetah",
+    "701": "donkey",
+    "702": "tapir",
+    "703": "elephant",
+    "704": "hippopotamus",
+    "705": "giraffe",
+    "706": "zebra",
+    "707": "kangaroo",
+    "708": "orangutan",
+    "709": "baboon",
+    "710": "walrus",
+    "711": "manatee",
+    "712": "dolphin",
+    "713": "raven",
+    "714": "magpie",
+    "715": "mallard_duck",
+    "716": "goose",
+    "717": "swan",
+    "718": "rooster",
+    "719": "turkey",
+    "720": "pheasant",
+    "721": "ostrich",
+    "722": "penguin",
+    "723": "pelican",
+    "724": "macaw",
+    "725": "cobra",
+    "726": "chameleon",
+    "727": "gecko",
+    "728": "frilled_lizard",
+    "729": "iguana",
+    "730": "caecilian",
+    "731": "mudskipper",
+    "732": "snapping_turtle",
+    "733": "hammerhead_shark",
+    "734": "sturgeon",
+    "735": "seahorse",
+    "736": "octopus",
+    "737": "cuttlefish",
+    "738": "nautilus",
+    "739": "lobster",
+    "740": "giant_centipede",
+    "741": "giant_snail",
+    "742": "giant_leech",
+    "743": "giant_wasp",
+    "744": "giant_ant",
+    "745": "skeleton",
+    "746": "zombie",
+    "747": "ghoul",
+    "748": "mummy",
+    "749": "vampire",
+    "750": "imp",
+    "751": "gargoyle",
+    "752": "gremlin",
+    "753": "hobgoblin",
+    "754": "gnoll",
+    "755": "centaur",
+    "756": "merfolk",
+    "757": "tengu",
+    "758": "arachne",
+    "759": "manticore",
+    "760": "cockatrice",
+    "761": "peryton",
+    "762": "jackalope",
+    "763": "qilin",
+    "764": "dragon_turtle",
+    "765": "burrowing_landshark",
+    "766": "iron_eater",
+    "767": "stalactite_maw",
+    "768": "mimic",
+    "769": "living_armor",
+    "770": "flesh_golem",
+    "771": "slime",
+    "772": "living_spellbook",
+    "773": "crawling_hand",
+    "774": "floating_eye",
+    "775": "levitating_jellyfish",
+    "776": "giant_worm",
+    "777": "cerberus",
+    "778": "two_headed_giant",
+    "779": "winged_serpent",
+    "780": "four_armed_guardian",
+    "781": "animated_sword",
+    "782": "giant_antlion",
+    "783": "sphinx",
+    "784": "air_elemental"
   },
   "creationOptions": [
     {
