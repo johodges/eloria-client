@@ -1178,6 +1178,19 @@ func _run() -> void:
 	_expect(bag_node.collision_layer == GroundBag3D.PICK_LAYER
 		and bag_node.server_tile == Vector2i(10, 20),
 		"ground bag marker preserves its authoritative tile and pick layer")
+	var bag_map_camera: Camera3D = main.get_node("GameView/MapViewport/MapCamera")
+	var bag_tab_camera: Camera3D = main.get_node("GameView/FullMapViewport/FullMapCamera")
+	var bag_world_camera: Camera3D = main.get_node("GameView/ViewportContainer/Viewport/WorldRoot/CameraRig/Camera")
+	for mesh: MeshInstance3D in bag_node.find_children("*", "MeshInstance3D", true, false):
+		_expect((mesh.layers & bag_map_camera.cull_mask) == 0
+			and (mesh.layers & bag_tab_camera.cull_mask) == 0
+			and (mesh.layers & bag_world_camera.cull_mask) != 0,
+			"bags remain visible in the world and are excluded from both map cameras")
+	var bag_map_marks: Array = main.call("_collect_minimap_marks")
+	_expect(bag_map_marks.all(func(mark: Dictionary) -> bool: return mark.get("type") != &"bag"),
+		"the shared minimap and Tab map overlay contains no bag markers")
+	_expect(not (main.get("MINIMAP_MARKER_TYPES") as Array).has(&"bag"),
+		"the minimap menu cannot re-enable bag markers")
 	app_state_inventory.call("begin_ground_bag_inspection", 7)
 	app_state_inventory.call("_on_packet", 23,
 		PackedByteArray([1, 3, 0, 5, 0, 0, 0, 2]))

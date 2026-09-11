@@ -69,6 +69,7 @@ func _run() -> void:
 		"an empty refresh clears the previous large wave")
 	_expect(assistant._map_texture("four_gates") != null,
 		"minimap loads directly from the external asset workspace")
+	_check_map_coordinates_and_labels(assistant)
 	root.size = Vector2i(960, 540)
 	assistant._fit_to_viewport()
 	_expect(assistant.size.x <= root.size.x and assistant.size.y <= root.size.y,
@@ -287,6 +288,71 @@ func _forget_stored_size() -> void:
 		return
 	config.erase_section_key(WindowPreferences.SECTION, "invasion_assistant_scale")
 	config.save(SETTINGS_PATH)
+
+
+func _check_map_coordinates_and_labels(assistant: Window) -> void:
+	var canvas := InvasionMapCanvas.new()
+	root.add_child(canvas)
+	canvas.size = Vector2(600, 400)
+	var state := {"map": {"id": "test", "width": 256, "height": 192}}
+	canvas.set_map_state(state)
+	var north := canvas._point(Vector2(40, 170))
+	var south := canvas._point(Vector2(40, 20))
+	_expect(north.y < south.y and is_equal_approx(north.x, south.x),
+		"north draws above south without reversing east and west")
+	for tile: Vector2i in [Vector2i.ZERO, Vector2i(255, 191), Vector2i(40, 170)]:
+		_expect(canvas._tile(canvas._point(Vector2(tile))) == tile,
+			"clicking a marker selects its exact server tile, including edge tiles")
+	var rect := canvas._map_rect()
+	_expect(canvas._tile(rect.position) == Vector2i(0, 191)
+		and canvas._tile(rect.end) == Vector2i(255, 0),
+		"map corners clamp to the north-west and south-east server tiles")
+	# The background contains more world than the server's addressable grid.
+	# A flip alone would still put every off-centre marker in the wrong place.
+	var image := Image.create(4, 4, false, Image.FORMAT_RGBA8)
+	var texture := ImageTexture.create_from_image(image)
+	var projection := {"minimap": {"worldMin": [-100, -80], "worldMax": [300, 220]},
+		"coordinateTransform": {"metresPerTile": 2.0, "serverOrigin": [100, 90],
+			"origin": [10, 0, 20], "invertServerY": true}}
+	canvas.set_map_state(state, texture, projection)
+	var tile := Vector2i(120, 110)
+	# Tile centre -> world (51, -21) -> image UV (151/400, 59/300).
+	var expected := rect.position + Vector2(151.0 / 400.0, 59.0 / 300.0) * rect.size
+	_expect(canvas._point(Vector2(tile)).is_equal_approx(expected),
+		"markers use the background's world bounds and coordinate transform")
+	var selected: Array[Vector2i] = []
+	canvas.coordinate_selected.connect(func(value: Vector2i) -> void: selected.append(value))
+	var click := InputEventMouseButton.new()
+	click.button_index = MOUSE_BUTTON_LEFT
+	click.pressed = true
+	click.position = expected
+	canvas._gui_input(click)
+	_expect(selected == [tile] and canvas.selected_tile == tile,
+		"clicking the terrain stages the server coordinate under the cursor")
+	# Verify the real Four Gates package is wired into the same projection.
+	var actual: Dictionary = assistant._map_projection("four_gates")
+	canvas.set_map_state({"map": {"id": "four_gates", "width": 720, "height": 720}},
+		assistant._map_texture("four_gates"), actual)
+	_expect(canvas._adapter != null and canvas._tile(canvas._point(Vector2(360, 500)))
+		== Vector2i(360, 500), "the shipped map uses its authored projection")
+	var locations: Array[Dictionary] = []
+	for index: int in range(24):
+		locations.append({"name": "Spawn %d" % index, "kind": "invasion_spawn",
+			"x": 20 + (index % 4) * 60, "y": 15 + (index / 4) * 28})
+	locations.append({"name": "Waygate", "kind": "portal", "x": 100, "y": 100})
+	state["locations"] = locations
+	canvas.set_map_state(state)
+	var labels := canvas._location_labels(ThemeDB.fallback_font)
+	_expect(labels.size() > 0 and labels.size() <= 6 and labels[0].text == "Waygate",
+		"busy maps show at most six names and prioritise portals")
+	for a: int in range(labels.size()):
+		for b: int in range(a + 1, labels.size()):
+			_expect(not (labels[a].rect as Rect2).intersects(labels[b].rect),
+				"location names do not overlap")
+	canvas._update_hover(canvas._point(Vector2(20, 15)))
+	_expect(canvas.tooltip_text.begins_with("Spawn 0") and canvas.state.locations.size() == 25,
+		"locations without drawn names remain available on hover")
+	canvas.queue_free()
 
 
 func _expect(condition: bool, message: String) -> void:
