@@ -986,6 +986,7 @@ func _ready() -> void:
 	casting_bar = preload("res://src/ui/casting_bar.gd").new()
 	casting_bar.loadout = spell_loadout
 	casting_bar.dock_anchor = $GameView/ItemQuickbar
+	casting_bar.item_slots = quick_slot_container
 	casting_bar.dock_rail = right_rail
 	casting_bar.dock_top = $GameView/EloriaLogoFrame
 	casting_bar.dock_bottom = $GameView/ResourceHud
@@ -8382,6 +8383,19 @@ func _bind_quick_slots() -> void:
 			var button: Button = child as Button
 			button.focus_mode = Control.FOCUS_NONE
 			button.pressed.connect(_on_quick_slot_pressed.bind(slot))
+			button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			button.expand_icon = true
+			button.text = ""
+			var shortcut := Label.new()
+			shortcut.name = "Shortcut"
+			shortcut.text = str(slot + 1)
+			shortcut.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			shortcut.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			shortcut.add_theme_font_size_override("font_size", 8)
+			button.add_child(shortcut)
+			shortcut.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+			shortcut.offset_top = 1.0
+			shortcut.offset_bottom = 12.0
 			quick_slot_buttons.append(button)
 			slot += 1
 
@@ -8491,12 +8505,13 @@ func _sync_quick_slots() -> void:
 				quick_tooltip += "\nCooldown: %d seconds" % cooldown_seconds
 			elif not usable:
 				quick_tooltip += "\nThis item cannot be used directly."
+			quick_tooltip += "\nScroll this column for more item shortcuts."
 			quick_button.tooltip_text = quick_tooltip
 		else:
 			quick_button.icon = null
-			quick_button.text = str(slot + 1)
+			quick_button.text = ""
 			quick_button.disabled = true
-			quick_button.tooltip_text = "Empty item quick slot"
+			quick_button.tooltip_text = "Empty item quick slot\nScroll this column for more item shortcuts."
 	if selected_inventory_slot >= 0:
 		var selected_value: Variant = AppState.inventory.get(selected_inventory_slot)
 		if selected_value is Dictionary:

@@ -25,6 +25,7 @@ var close_button: Button
 var reserved_right_width := 8.0
 ## Dock controls share the HUD canvas, including its user-selected scale.
 var dock_anchor: Control
+var item_slots: GridContainer
 var dock_rail: Control
 var dock_top: Control
 var dock_bottom: Control
@@ -47,6 +48,8 @@ var _grab_panel := Vector2.ZERO
 var _last_layout_size := Vector3(-1, -1, -1)
 var _last_compact := false
 var _selected_actor := -2
+var _item_header_height := 0.0
+var _item_view_height := 0.0
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -357,6 +360,8 @@ func _layout() -> void:
 				badge.offset_bottom = 12 if compact else 17
 		var content_height := visible_slot_count * slot_height + (visible_slot_count - 1) * (1 if compact else 2)
 		_scroll.custom_minimum_size = Vector2(width + (0 if compact else 14), minf(content_height, available - (18 if compact else 50)))
+		if compact:
+			_sync_item_slot_layout(width, slot_height, icon_size)
 		launcher.add_theme_font_size_override("font_size", 9 if compact else 16)
 		launcher.add_theme_stylebox_override("normal", _style(Color(0.13, 0.105, 0.065), 1 if compact else 4))
 		launcher.reset_size()
@@ -371,6 +376,41 @@ func _layout() -> void:
 	if docked and is_instance_valid(dock_anchor) and not compact:
 		launch_position = Vector2(_dock_origin().x + panel.size.x - launcher.size.x, _local_position(dock_anchor).y)
 	launcher.position = launch_position.clamp(Vector2.ONE * EDGE, (size - launcher.size - Vector2.ONE * EDGE).max(Vector2.ONE * EDGE))
+	_layout_item_bar()
+
+func _sync_item_slot_layout(width: float, height: float, icon_size: float) -> void:
+	if not is_instance_valid(item_slots): return
+	var body: VBoxContainer = _scroll.get_parent()
+	var header: Control = body.get_child(0)
+	_item_header_height = panel.get_theme_stylebox("panel").get_content_margin(SIDE_TOP) \
+		+ header.get_combined_minimum_size().y + body.get_theme_constant("separation")
+	_item_view_height = _scroll.custom_minimum_size.y
+	item_slots.add_theme_constant_override("v_separation", _column.get_theme_constant("separation"))
+	# Both columns reserve the same header space and artwork square. Item
+	# shortcuts use that header so their numbers never reduce the icon size.
+	for child in item_slots.get_children():
+		var item := child as Button
+		if item == null: continue
+		item.custom_minimum_size = Vector2(width, height)
+		item.add_theme_constant_override("icon_max_width", int(icon_size))
+		for state: String in ["normal", "hover", "pressed", "disabled", "focus"]:
+			var source: String = "normal" if state in ["disabled", "focus"] else state
+			item.add_theme_stylebox_override(state, buttons[0].get_theme_stylebox(source).duplicate())
+	if dock_anchor is ScrollContainer:
+		(dock_anchor as ScrollContainer).get_v_scroll_bar().custom_step = height + 1.0
+
+func _layout_item_bar() -> void:
+	if not is_instance_valid(item_slots) or not _has_hud_dock(): return
+	if docked and panel.visible:
+		var header_height := _scroll.global_position.y - panel.global_position.y
+		if header_height > 0.0:
+			_item_header_height = header_height
+	# Keep all eight items in the rail when the spell bar is moved or hidden.
+	# The item viewport follows the dock, while retaining its compact cells.
+	var bounds := _dock_bounds()
+	var top := bounds.position.y + _item_header_height
+	dock_anchor.position.y = top
+	dock_anchor.size.y = minf(_item_view_height, maxf(0.0, bounds.end.y - top - 1.0))
 
 func _clamp_position(where: Vector2) -> Vector2:
 	var limit := Vector2(maxf(EDGE, size.x - reserved_right_width - panel.size.x),
