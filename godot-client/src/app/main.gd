@@ -10781,6 +10781,7 @@ func _style_right_rail(panel: StyleBoxFlat) -> void:
 	# fill hides that border below the join, leaving one continuous HUD frame.
 	var bottom_style: StyleBoxFlat = rail_style.duplicate() as StyleBoxFlat
 	bottom_style.border_width_right = 0
+	bottom_style.content_margin_top = 2.0
 	(%Quickbar as PanelContainer).add_theme_stylebox_override(
 		"panel", bottom_style)
 	var seamless: StyleBoxEmpty = StyleBoxEmpty.new()

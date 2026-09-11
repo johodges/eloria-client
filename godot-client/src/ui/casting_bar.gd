@@ -11,6 +11,7 @@ const SLOT_SIZE := 44.0
 const DEFAULT_VISIBLE_SLOTS := 6
 const SLOT_BACKGROUNDS := {"normal": Color(0.11, 0.10, 0.07), "hover": Color(0.27, 0.22, 0.12), "pressed": Color(0.35, 0.27, 0.13)}
 const EDGE := 6.0
+const DOCK_INSET := 2.0
 var loadout
 var panel: PanelContainer
 var mode_picker: OptionButton
@@ -298,7 +299,7 @@ func _has_hud_dock() -> bool:
 		and is_instance_valid(dock_top) and is_instance_valid(dock_bottom)
 
 func _dock_bounds() -> Rect2:
-	var left := _local_position(dock_rail).x + EDGE
+	var left := _local_position(dock_rail).x + DOCK_INSET
 	var top := _local_position(dock_top).y + dock_top.size.y + 4
 	var right := _local_position(dock_anchor).x - 4
 	var bottom := minf(_local_position(dock_bottom).y - 4, _bottom_edge())
