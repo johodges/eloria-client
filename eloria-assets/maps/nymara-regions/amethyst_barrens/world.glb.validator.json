@@ -1,25 +1,43 @@
 {
-  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-continent\\eloria-assets\\maps\\nymara-regions\\amethyst_barrens\\world.glb",
+  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-north-client\\eloria-assets\\maps\\nymara-regions\\amethyst_barrens\\world.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-09-07T19:37:03.255099Z",
+  "validatedAt": "2026-09-11T08:59:16.121050Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
-    "numInfos": 5,
+    "numInfos": 12,
     "numHints": 0,
     "messages": [
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/8"
+        "pointer": "/materials/0"
       },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/10"
+        "pointer": "/materials/1"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/9"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/11"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/17"
       },
       {
         "code": "UNUSED_OBJECT",
@@ -37,7 +55,31 @@
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/21"
+        "pointer": "/materials/20"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/22"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/23"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/29"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/32"
       }
     ]
   }

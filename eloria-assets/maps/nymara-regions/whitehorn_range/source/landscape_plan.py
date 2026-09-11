@@ -148,10 +148,6 @@ def compact(build):
     build.meshes={k:v for k,v in build.meshes.items() if k in used}
     build.border_vistas=[]
     root=Path(__file__).resolve().parents[2]
-    for region,portal,edge,forward,inward,material in [
-        ('mirrorhold','north-pass',(float(PLAN.x(0)),122),(0,1),(0,1),'alpine_turf'),
-        ('amethyst_barrens','north-pass',(277,float(PLAN.z(-12))),(1,0),(0,1),'alpine_bedrock')]:
-        build.border_vistas.append(add_vista(build,root/region,portal,edge,forward,inward,material,region))
     from streaming_borders import apply as stitch_border
     stitch_border(build, 'whitehorn_range')
 

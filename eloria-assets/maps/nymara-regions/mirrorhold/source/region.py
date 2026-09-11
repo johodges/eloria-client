@@ -306,7 +306,11 @@ def _close_world(t: TER.Terrain, seed: int) -> None:
     ridge = N.ridged(t.gx * 0.0135, t.gz * 0.0135, octaves=5, seed=seed + 611)
     rough = N.fbm(t.gx * 0.045, t.gz * 0.045, octaves=4, seed=seed + 617)
     wall = 44.0 + ridge * 82.0 + rough * 16.0
-    t.height += rim * wall
+    # The range closes the northern/eastern cirques. The western gorge and
+    # southern lake country continue beyond the served square naturally.
+    mountain_side = np.maximum(np.clip((t.gx - (PLAY_MAX_X - 40))/65,0,1),
+                               np.clip(((PLAY_MIN_Z + 35) - t.gz)/70,0,1))
+    t.height += rim * wall * mountain_side
 
 
 def _stamp_citadel(t: TER.Terrain) -> None:

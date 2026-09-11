@@ -760,6 +760,8 @@ def write_manifest(build: RegionBuild, stats: dict, collision_stats: dict,
     if (HERE / "server-content.json").exists():
         import server_posts
         server_posts.apply(manifest, path.parent, json.loads((HERE / "server-content.json").read_text()))
+    import contentposts
+    contentposts.apply_runtime(manifest, HERE.parent)
     path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return manifest
 

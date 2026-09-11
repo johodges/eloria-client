@@ -39,7 +39,8 @@ def build(server=None):
             frame = next((s for s in manifest.get('streamingBorders', []) if s['portal'] == portal['id']), {})
             visuals = set()
             harvest = objects['harvestables']
-            for resource in manifest.get('harvestables', []):
+            resources = manifest.get('harvestables', []) + manifest.get('runtimePopulation', {}).get('resources', [])
+            for resource in resources:
                 key = harvest['resources'].get(resource.get('resource', ''))
                 if key in harvest['models']: visuals.add(harvest['models'][key]['scene'])
             for actor_type in npc_types.get(region, []):

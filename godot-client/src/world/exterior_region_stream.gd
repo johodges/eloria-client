@@ -165,6 +165,7 @@ func take_ready(destination: String, loader: WorldLoader, position: Vector3) -> 
 		for stale: String in residents.keys():
 			_evict(stale)
 	var imported := resident.root as Node3D
+	_set_view(imported)
 	_set_collision(imported, true)
 	imported.visible = true
 	_generation += 1
@@ -176,21 +177,33 @@ func take_ready(destination: String, loader: WorldLoader, position: Vector3) -> 
 func _refresh_views() -> void:
 	if not is_instance_valid(active_root):
 		return
-	var has_join := false
+	_set_view(active_root)
+	var visible_borders: Dictionary = {}
 	for candidate: Dictionary in _candidates(_last_position):
 		var map_id := str(candidate.map)
 		if not residents.has(map_id):
 			continue
 		var imported := residents[map_id].root as Node3D
 		if bool(candidate.seamless):
+			var identity := str(candidate.there.frame.id)
 			imported.transform = frame_transform(candidate.here.frame, candidate.there.frame)
 			imported.visible = true
-			_set_collision(imported, false, true)
-			_set_overflow(imported, false)
-			has_join = true
+			_set_view(imported, identity)
+			_set_collision(imported, false, true, identity)
+			visible_borders[str(candidate.here.frame.id)] = true
 		else:
 			imported.visible = false
-	_set_overflow(active_root, not has_join)
+			_set_collision(imported, false)
+	_set_overflow(active_root, visible_borders)
+
+static func _set_view(imported: Node3D, border := "") -> void:
+	var active := imported.get_node_or_null("StreamActive") as Node3D
+	if active == null:
+		return
+	active.visible = border.is_empty()
+	for node: Node in imported.get_children():
+		if str(node.name).begins_with("StreamPreview_"):
+			(node as Node3D).visible = str(node.name) == "StreamPreview_" + border
 
 static func frame_transform(here: Dictionary, there: Dictionary) -> Transform3D:
 	var outward := Vector3(float(here.outward[0]), 0, float(here.outward[1]))
@@ -202,28 +215,39 @@ static func frame_transform(here: Dictionary, there: Dictionary) -> Transform3D:
 static func _vector(raw: Array) -> Vector3:
 	return Vector3(float(raw[0]), float(raw[1]), float(raw[2]))
 
-static func _set_collision(imported: Node3D, enabled: bool, preview_enabled := false) -> void:
-	var mode := 1 if enabled else (2 if preview_enabled else 0)
-	if imported.has_meta("stream_physics") and imported.get_meta("stream_physics") == mode:
+static func _set_collision(imported: Node3D, enabled: bool, preview_enabled := false, border := "") -> void:
+	var mode := str(enabled) + ":" + str(preview_enabled) + ":" + border
+	if imported.get_meta("stream_physics", "") == mode:
 		return
+	var has_views := imported.has_node("StreamActive")
 	for node: Node in imported.find_children("*", "CollisionObject3D", true, false):
 		var body := node as CollisionObject3D
 		if not body.has_meta("stream_collision_layer"):
 			body.set_meta("stream_collision_layer", body.collision_layer)
 		var original := int(body.get_meta("stream_collision_layer"))
-		var preview := PREVIEW_SURFACE_LAYER if preview_enabled and (original & WorldLoader.NAVIGATION_SURFACE_LAYER) != 0 else 0
-		if str(body.get_parent().name).ends_with("_StreamOverflow"):
-			preview = 0
-		body.collision_layer = original if enabled else preview
+		var view := ""
+		var ancestor := body.get_parent()
+		while ancestor != null and ancestor != imported:
+			if str(ancestor.name).begins_with("StreamPreview_"):
+				view = str(ancestor.name).trim_prefix("StreamPreview_")
+				break
+			ancestor = ancestor.get_parent()
+		var preview := 0
+		if (preview_enabled and (original & WorldLoader.NAVIGATION_SURFACE_LAYER) != 0
+				and (view == border if has_views else not "_StreamOverflow" in str(body.get_parent().name))):
+			preview = PREVIEW_SURFACE_LAYER
+		body.collision_layer = (original if view.is_empty() else 0) if enabled else preview
 	imported.set_meta("stream_physics", mode)
 
-static func _set_overflow(imported: Node3D, visible_overflow: bool) -> void:
-	# These large pieces never participate in static batching (walk collision).
-	if imported.has_meta("stream_overflow_visible") and imported.get_meta("stream_overflow_visible") == visible_overflow:
+static func _set_overflow(imported: Node3D, visible_borders: Dictionary) -> void:
+	var key := JSON.stringify(visible_borders)
+	if imported.get_meta("stream_overflow_visible", "") == key:
 		return
-	for node: Node in imported.find_children("*_StreamOverflow", "Node3D", true, false):
-		(node as Node3D).visible = visible_overflow
-	imported.set_meta("stream_overflow_visible", visible_overflow)
+	for node: Node in imported.find_children("*_StreamOverflow*", "Node3D", true, false):
+		var title := str(node.name)
+		var identity := title.get_slice("_StreamOverflow_", 1) if "_StreamOverflow_" in title else ""
+		(node as Node3D).visible = not visible_borders.has(identity) if not identity.is_empty() else visible_borders.is_empty()
+	imported.set_meta("stream_overflow_visible", key)
 
 func _evict(map_id: String) -> void:
 	var imported := residents[map_id].root as Node3D
@@ -294,7 +318,7 @@ func pick_neighbor(space: PhysicsDirectSpaceState3D, origin: Vector3, direction:
 	var foreground := space.intersect_ray(PhysicsRayQueryParameters3D.create(
 		origin, origin + direction * 2000, WorldLoader.NAVIGATION_SURFACE_LAYER))
 	if (not foreground.is_empty()
-			and not str(foreground.collider.get_parent().name).ends_with("_StreamOverflow")
+			and not "_StreamOverflow" in str(foreground.collider.get_parent().name)
 			and origin.distance_squared_to(foreground.position) + .01 < origin.distance_squared_to(point)):
 		return null
 	for candidate: Dictionary in _candidates(_last_position):

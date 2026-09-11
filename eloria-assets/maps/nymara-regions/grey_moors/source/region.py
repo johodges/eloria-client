@@ -137,7 +137,7 @@ _DESIGN_ANCHORS: dict[str, tuple[float, float]] = {
     "croft_south": (40.0, 26.0),
     "croft_west": (-40.0, -20.0),
     "croft_east": (100.0, -6.0),
-    "croft_north": (-4.0, -120.0),
+    "croft_north": (-22.0, -107.3333333333),
     "croft_mid": (60.0, -14.0),
 
     # -- five ritual shrines (the altar slabs, panel 3)
@@ -313,23 +313,8 @@ def build_terrain(seed: int = 20260829) -> TER.Terrain:
     t.add_ridge(_route((4.0, -98.0), (24.0, -94.0), (44.0, -90.0), (66.0, -86.0),
                        (86.0, -84.0)), 4.6, 46.0, seed=seed + 3, power=1.15)
 
-    # -- the rim. Not mountains: a scarp of higher moor closing the world on
-    #    three sides, with the fourth left open to the sea. Deliberately narrow
-    #    relative to its height, so its flanks exceed the collision slope limit
-    #    and the rim is scenery rather than reachable ground. A wide, gentle
-    #    rim was walkable, which put a tenth of the reachable surface above the
-    #    10.4 m ceiling the server's six-bit height byte can express.
-    t.add_ridge(_route((-58.0, -128.0), (-20.0, -134.0), (20.0, -136.0),
-                       (70.0, -132.0), (120.0, -126.0)), 22.0, 19.0,
-                seed=seed + 5, power=1.25)
-    t.add_ridge(_route((128.0, -110.0), (132.0, -70.0), (134.0, -30.0),
-                       (130.0, 10.0), (124.0, 46.0)), 20.0, 17.0,
-                seed=seed + 7, power=1.30)
-    t.add_ridge(_route((-56.0, -110.0), (-58.0, -80.0), (-60.0, -54.0)),
-                18.0, 15.0, seed=seed + 9, power=1.30)
-    t.add_ridge(_route((10.0, 52.0), (54.0, 54.0), (100.0, 50.0)), 17.0, 15.0,
-                seed=seed + 11, power=1.30)
-
+    # Low open moor continues outside the served rectangle. Isolated knolls
+    # give tower ruins a skyline; there is no artificial perimeter ridge.
     # -- the barrows themselves are TERRAIN, not meshes: the mound has to be
     #    ground the client's downward ray can hit, or a character walks through
     #    the hill. Only the portal stonework is geometry.
@@ -392,7 +377,7 @@ def close_world(t: TER.Terrain) -> None:
     # 30 m of wall inside a 27 m margin read as a sheer stepped cliff standing
     # at the edge of a flat moor. Lower, and left to the distant backdrop and
     # the fog to close the horizon, which is how the concept ends its world.
-    t.clamp_edges(MARGIN * 0.9, 21.0)
+    # No closing wall: the authored moor and shoreline continue into the margin.
     t.sea_shelf(shoreline_x, depth=16.0, slope=0.22, side="west")
 
 

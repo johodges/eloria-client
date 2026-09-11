@@ -5,22 +5,20 @@ overcast, standing stones and turf barrows over the whole of it, boardwalks and
 laid causeways across the bog, broken towers on the skyline, and a bay biting
 into the south-west corner.
 
-Production package. 576 m x 576 m at one metre per tile, on the server's 96x96
-ELM grid, with the arrival datum at server (174, 174) â€” the same extent every
-other production Nymara region uses.
+Current inhabited-landscape package: **384 m × 384 m**, one metre per tile,
+with server origin **(116,116)**. The peat refuge and Great Barrow crown retain
+full dimensions while the journeys between them shorten. See
+[landscape-redesign.md](landscape-redesign.md) for authored geography and rebuild order.
 
-| | |
+| Contract | Current result |
 | --- | --- |
-| status | `production-geometry-materials-population` |
-| extent | 576 m x 576 m, 1 m per tile, `serverCells` 576 |
-| arrival datum | server (174, 174) = Godot origin |
-| unique triangles | 352,170 |
-| instanced triangles | 662,590 (2.00 per mÂ²) |
-| nodes | 7,288 |
-| `world.glb` | 22.89 MB, self-contained, no glTF extensions |
-| `world-lod2.glb` | 12.49 MB, 314,680 instanced triangles |
-| validator | 0 errors, 0 warnings |
-| runtime verifier | 0 errors, 0 grounding misses across all 331,776 server tiles |
+| exterior extent | 384 × 384 server tiles |
+| half-metre collision | 768 × 768, 92.0% walkable |
+| full package | 33.29 MB |
+| instanced triangles including hidden receiving-scene view | 706,047 |
+| GLB validator | 0 errors, 0 warnings |
+| runtime grounding | 147,456 tiles, 0 misses, 0 errors, 0 warnings |
+| preserved content | 11 portals, 15 exterior secrets, 72 landmarks |
 
 ## Layout
 
@@ -29,7 +27,7 @@ grey_moors/
   world.glb                     self-contained glTF 2.0: geometry, materials, textures
   world-lod2.glb                reduced package for distance
   world.json                    manifest, schema version 1
-  collision.bin                 EWCG v1, 1152 x 1152 half-metre cells
+  collision.bin                 EWCG v2, 768 x 768 half-metre cells
   minimap.webp                  rendered from the final geometry, not drawn
   verification-report.json      verify_runtime.py output
   world.glb.validator.json      validate_gltf.py output
@@ -50,7 +48,7 @@ not copied.
 
 ```sh
 cd grey_moors/source
-python3 build_grey_moors.py                    # world.glb, world.json, collision.bin, minimap, lod2
+python3 rebuild_landscape.py                  # geometry, minimap, lod2, collision correction and verification
 python3 ../../_toolkit/validate_gltf.py ../world.glb
 python3 ../../_toolkit/verify_runtime.py --report ../verification-report.json
 python3 ../../_toolkit/export_server_collision.py    # writes ../server-collision/grey_moors.bin

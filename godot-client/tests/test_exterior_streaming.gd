@@ -40,9 +40,17 @@ func _run() -> void:
 		"phases": {}, "from_cache": false, "cache_status": &"disabled", "cache_file": ""}
 	stream._refresh_views()
 	_expect(second.visible, "a resident surveyed neighbor is visible")
-	_expect(not (first.get_node("Terrain_StreamOverflow") as Node3D).visible, "resident neighbor replaces overflow")
-	_expect((second.get_node("Terrain/Body") as StaticBody3D).collision_layer == 16,
+	_expect(not (first.get_node("StreamActive/Terrain_StreamOverflow_amberwood-whitehorn") as Node3D).visible, "resident neighbor replaces overflow")
+	_expect((second.get_node("StreamPreview_amberwood-whitehorn/Terrain/Body") as StaticBody3D).collision_layer == 16,
 		"neighbor picking cannot contaminate active grounding")
+	_expect((first.get_node("StreamActive/Terrain_StreamOverflow_other-border") as Node3D).visible,
+		"one resident does not cut another border's fallback terrain")
+	_expect(not (second.get_node("StreamActive") as Node3D).visible,
+		"unrelated destination geography is hidden in receiving preview")
+	_expect(not (second.get_node("StreamPreview_other-border") as Node3D).visible,
+		"only the reciprocal destination approach is displayed")
+	_expect((second.get_node("StreamPreview_other-border/Terrain/Body") as StaticBody3D).collision_layer == 0,
+		"an unrelated receiving approach cannot capture mouse rays")
 	var handoff := stream.take_ready("whitehorn_range", loader, Vector3(67.5, 55.2, -256.5))
 	_expect(bool(handoff.continuous), "nearby surveyed crossing permits a continuous handoff")
 	loader.adopt_world(handoff.resident)
@@ -51,7 +59,11 @@ func _run() -> void:
 	_expect(stream.residents.amberwood.root == first, "departed scene stays available for looking back")
 	_expect(first.get_parent() == loader and second.get_parent() == stream,
 		"resident scenes never leave their rendering and physics world during handoff")
-	_expect((second.get_node("Terrain/Body") as StaticBody3D).collision_layer == 8, "destination owns grounding after handoff")
+	_expect((second.get_node("StreamActive/Terrain/Body") as StaticBody3D).collision_layer == 8, "destination owns grounding after handoff")
+	_expect((second.get_node("StreamPreview_amberwood-whitehorn/Terrain/Body") as StaticBody3D).collision_layer == 0,
+		"adoption disables duplicate receiving collision")
+	_expect((second.get_node("StreamActive") as Node3D).visible,
+		"adoption restores the full authored destination")
 	stream.update_position(Vector3(2000, 0, 2000))
 	await process_frame
 	_expect(stream.residents.is_empty(), "far neighbours are evicted")
@@ -94,14 +106,18 @@ func _manifest(map_id: String) -> WorldManifest:
 func _terrain(label: String) -> Node3D:
 	var imported := Node3D.new()
 	imported.name = label
-	for title: String in ["Terrain", "Terrain_StreamOverflow"]:
-		var piece := Node3D.new()
-		piece.name = title
-		imported.add_child(piece)
-		var body := StaticBody3D.new()
-		body.name = "Body"
-		body.collision_layer = WorldLoader.NAVIGATION_SURFACE_LAYER
-		piece.add_child(body)
+	for group_name: String in ["StreamActive", "StreamPreview_amberwood-whitehorn", "StreamPreview_other-border"]:
+		var group := Node3D.new()
+		group.name = group_name
+		imported.add_child(group)
+		for title: String in ["Terrain", "Terrain_StreamOverflow_amberwood-whitehorn", "Terrain_StreamOverflow_other-border"]:
+			var piece := Node3D.new()
+			piece.name = title
+			group.add_child(piece)
+			var body := StaticBody3D.new()
+			body.name = "Body"
+			body.collision_layer = WorldLoader.NAVIGATION_SURFACE_LAYER
+			piece.add_child(body)
 	return imported
 
 func _expect(ok: bool, description: String) -> void:

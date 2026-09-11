@@ -206,8 +206,9 @@ def exterior_lines(graph, portals, collisions, load, errors, selected=None) -> t
             far = portals[destination][destination_portal]["tile"]
             if not collisions[source].walkable(*trigger):
                 errors.append(f"{source} portal {source_portal} trigger {trigger} is not walkable")
-            arrival = arrival_tile(collisions[destination], far,
-                                   inward_direction(far, collisions[destination].width))
+            frame=portals[destination][destination_portal].get('streaming', {})
+            inward=(-frame['outward'][0],frame['outward'][1]) if frame else inward_direction(far,collisions[destination].width)
+            arrival = arrival_tile(collisions[destination], far, inward)
             if arrival is None:
                 errors.append(f"{destination} portal {destination_portal} at {far}: no walkable arrival")
                 continue

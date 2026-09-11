@@ -251,6 +251,7 @@ func load_world(manifest_path: String) -> void:
 	# collision passes add are not MeshInstance3D, so nothing they add belongs
 	# in this list, and the batching pass took its list before it created any
 	# batch.
+	_group_streaming_views()
 	var index: Dictionary = _index_import()
 	var mesh_instances: Array = index["meshInstances"] as Array
 	mark = _phase(&"index", mark)
@@ -261,6 +262,7 @@ func load_world(manifest_path: String) -> void:
 	_apply_rendered_walk_surfaces(mesh_instances)
 	mark = _phase(&"walkSurfaces", mark)
 	_apply_navigation_collision()
+	_disable_streaming_preview_collision()
 	mark = _phase(&"navigation", mark)
 	# Must run last: it skips anything that carries collision, so the collision
 	# passes above decide what stays an individually culled MeshInstance3D.
@@ -829,6 +831,11 @@ func _batch_static_instances(mesh_instances: Array) -> void:
 			" instances=", collapsed)
 
 func _is_batchable(mesh_instance: MeshInstance3D) -> bool:
+	var ancestor: Node = mesh_instance
+	while ancestor != null and ancestor != world_root:
+		if str(ancestor.name).begins_with("StreamPreview_"):
+			return false
+		ancestor = ancestor.get_parent()
 	var mesh: Mesh = mesh_instance.mesh
 	if mesh == null or mesh.get_surface_count() == 0:
 		return false
@@ -872,7 +879,8 @@ func _create_batch(members: Array, index: int) -> void:
 	batch.layers = reference.layers
 	batch.cast_shadow = reference.cast_shadow
 	batch.gi_mode = reference.gi_mode
-	world_root.add_child(batch)
+	var parent := world_root.get_node_or_null("StreamActive")
+	(parent if parent != null else world_root).add_child(batch)
 	batch.transform = Transform3D.IDENTITY
 	# Taken after add_child, which is what settles the name: a package that
 	# already carries a node called StaticBatch_0_Rock would have had this one
@@ -906,6 +914,8 @@ func _apply_rendered_walk_surfaces(mesh_instances: Array) -> void:
 	for node_value: Variant in mesh_instances:
 		var mesh_instance: MeshInstance3D = node_value as MeshInstance3D
 		var node_name: String = mesh_instance.name
+		if node_name.begins_with("StreamView_"):
+			node_name = node_name.get_slice("__", 1)
 		var matches_surface: bool = false
 		for prefix_value: Variant in prefixes:
 			if node_name.begins_with(str(prefix_value)):
@@ -949,3 +959,41 @@ func _trimesh_shape(mesh: Mesh) -> ConcavePolygonShape3D:
 	var built: ConcavePolygonShape3D = mesh.create_trimesh_shape()
 	_collision_shapes[key] = built
 	return built
+
+
+func _group_streaming_views() -> void:
+	if manifest.data.get("streamingBorders", []).is_empty():
+		return
+	var views: Array[Node3D] = []
+	for node: Node in world_root.find_children("StreamView_*", "Node3D", true, false):
+		if not str(node.get_parent().name).begins_with("StreamView_"):
+			views.append(node as Node3D)
+	var active := Node3D.new()
+	active.name = "StreamActive"
+	var children := world_root.get_children()
+	world_root.add_child(active)
+	for child: Node in children:
+		child.owner = null
+		child.reparent(active, false)
+		child.owner = world_root
+	for view: Node3D in views:
+		var identity := str(view.name).trim_prefix("StreamView_").get_slice("__", 0)
+		var group := world_root.get_node_or_null("StreamPreview_" + identity) as Node3D
+		if group == null:
+			group = Node3D.new()
+			group.name = "StreamPreview_" + identity
+			group.visible = false
+			world_root.add_child(group)
+		var local := _import_transform(view)
+		view.owner = null
+		view.reparent(group, false)
+		view.owner = world_root
+		view.transform = local
+
+func _disable_streaming_preview_collision() -> void:
+	for group: Node in world_root.get_children():
+		if not str(group.name).begins_with("StreamPreview_"):
+			continue
+		for body: Node in group.find_children("*", "CollisionObject3D", true, false):
+			body.set_meta("stream_collision_layer", (body as CollisionObject3D).collision_layer)
+			(body as CollisionObject3D).collision_layer = 0

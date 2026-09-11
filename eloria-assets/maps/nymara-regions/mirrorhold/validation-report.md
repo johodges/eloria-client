@@ -1,5 +1,50 @@
 # Mirrorhold validation report
 
+## Current 384 m landscape
+
+The final package runs `source/rebuild_landscape.py --skip-secrets`: main GLB,
+LOD2, minimap, raw collision, height refinement, exposed-deck opening, solid
+stamping and runtime verification. The main GLB is 45,650,672 bytes; LOD2 is
+17,140,324 bytes. GLB validation reports zero errors and warnings. Runtime
+verification samples all 147,456 tile centres with zero grounding misses and
+zero errors; it finds 142 walk-surface nodes and 786,974 surface triangles.
+
+The three current observations in `runtime-validation.json` are 685 adjacent
+surface pairs differing by more than 6 m; one half-metre collision cell
+`(468, 132)` encoding 3.21 m above a sampled −6.82 m deck edge; and the
+Orrery armillary standing 9.63 m above ground. The residual edge discrepancy
+remains reported. Cliffs and elevated landmark geometry account for the other
+observations; final walking checks are recorded separately.
+
+The exact server fold passes 16 practical `World.find_path` distance bounds
+and connects all 146 served exterior destinations from the single main arrival
+`(93, 82)`, including strict diagonal corner checks. Sixteen pytest path
+regressions pass. The regional live fixture contains 14 routes and 52 exact
+walking legs, including the watch-secret entry, room movement and return.
+
+Final evidence is in `work-output/northern-rollout/mirrorhold`: package hashes
+in `final-package.json`, exact paths in `service-path-audit.json`, fixture
+paths in `fixture-path-audit.json`, actual gameplay-camera PNGs and telemetry,
+and annotated `review.html`. The combined rollout report supplies final live
+server movement and border results; these offline checks do not replace them.
+
+The configured runtime audit also checks NPC occupancy and storage bodies.
+Live validation corrected two exact fixture targets: storage `(185, 121)` to
+`(184, 120)` outside its chest, and training `(197, 120)` to `(196, 119)`.
+Full World initialization can reach the original training target, so its live
+mismatch is not attributed to a fixed footprint. The final full civic replay
+passes nine legs, 46 checks and all four actual service responses, including
+opening storage. Together with the other 42 routes, it proves all 43 combined
+routes on unchanged maps. The initialized occupancy audits remain snapshots;
+they do not reproduce changing live occupants. The map and geometric evidence
+remain unchanged. See `runtime-fixture-audit.json`, the full initialization
+diagnostic and the combined report's dedicated civic replay.
+
+## Historical 576 m baseline
+
+The measurements below describe the frozen original package used for before
+captures. They are retained as baseline evidence, not current package results.
+
 What was checked, what passed, and — the part that matters — what was not
 checked and could not be.
 

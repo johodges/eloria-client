@@ -8,10 +8,10 @@ from amberwood import terrain as TER, routecraft as RC, civiccraft as CIV
 from amberwood import mesh as M, props as PROP
 
 STONE="amethyst_pale_stone"
-ROAD="amethyst_resonant_road"
+ROAD="alpine_gravel"
 DOORS={
  "resonant-vault-stair":(-78,-196.2),
- "geode-hollow-mouth":(329,-99),
+ "geode-hollow-mouth":(333,-99),
  "shardworks-headframe":(122,-42),
  "storm-barrow-stair":(216,-147),
  "sour-cut-mouth":(192,-261),
@@ -31,7 +31,7 @@ CONTENT_LAYOUT={
  "Shard Counter Bel Ammon":[276,5,-84],
  "Geode Digger Torvin Slate":[-114,8,-294],
  "Storm-Ruin Surveyor Ash Kell":[210,5,-144],
- "Freight Factor Nils Corrow":[331,5,94],
+ "Freight Factor Nils Corrow":[338,5,80],
  "Watchtower Sentinel Ivar Quill":[354,7,-33],
  "Shard-Hauler Damu Orun":[-20,5,4],
  "Cluster Warden Peri Vance":[120,5,-47],
@@ -68,7 +68,10 @@ def prepare(t):
  t._survey={}
  for name,pts in REG.BRIDGE_ROUTES.items():
   t._survey[name]=(pts,[max(1.8,float(t.height_at(*p))+0.2) for p in pts])
- t._survey["ferry_jetty"]=(np.array([[333.,99.],[350.,118.]]),[2.7,1.8])
+ # The shore is a raised headland. Start inland at its surveyed height so the
+ # pier meets the cargo road instead of creating a cut-off low deck in a rebate.
+ t._survey["ferry_jetty"]=(np.array([[333.,72.],[350.,118.]]),
+                            [max(1.8,float(t.height_at(333.,72.))+0.2),1.8])
  for name,pts in REG.ROUTES.items():
   if name=="observatory_approach":continue
   hs=[max(1.6,float(t.height_at(*p))) for p in pts]
@@ -135,7 +138,7 @@ def dress(build,seed):
   build.landmarks.append({"id":key+"-entry","node":node,"name":key.replace("-"," ").title(),
    "type":"building","position":[x,y,z-5]})
  # Cargo and drinking water mark the pause before the open basin.
- for i,(x,z) in enumerate([(-19,0),(-18,2),(325,89),(327,89)]):
+ for i,(x,z) in enumerate([(-19,0),(-18,2),(334,78),(336,78)]):
   mesh=PROP.crate(size=1.1,seed=seed+3200+i)
   import populate as POP
   POP._remap(mesh,POP.KIT_TO_REGION)
@@ -143,5 +146,5 @@ def dress(build,seed):
   build.place(Placement(key,key,(x,float(t.height_at(x,z)),z),collides=True,kind="prop"))
  boat=PROP.rowing_boat(length=5.4,beam_width=1.8,seed=seed+3300)
  build.add_mesh("PacketTender",boat)
- build.place(Placement("PacketTender","PacketTender",(347,0.05,110),-0.84,kind="prop"))
+ build.place(Placement("PacketTender","PacketTender",(353,0.05,110),-0.84,kind="prop"))
  build.notes.append("Glasswarden service yard, seven surveyed crystal bridges, cove packet jetty and working habitat rings.")
