@@ -10561,11 +10561,16 @@ func _style_right_rail(panel: StyleBoxFlat) -> void:
 	# Lands' HUD - its wooden frame - so unlike the windows they get a solid
 	# warm brown rather than the see-through black.
 	var rail_style: StyleBoxFlat = panel.duplicate() as StyleBoxFlat
-	rail_style.bg_color = Color(0.16, 0.12, 0.075, 0.99)
+	rail_style.bg_color = Color(0.16, 0.12, 0.075, 1.0)
+	rail_style.set_corner_radius_all(0)
 	rail_style.set_content_margin_all(4.0)
 	right_rail.add_theme_stylebox_override("panel", rail_style)
+	# The bottom panel overlaps the rail's one-pixel left border. Its opaque
+	# fill hides that border below the join, leaving one continuous HUD frame.
+	var bottom_style: StyleBoxFlat = rail_style.duplicate() as StyleBoxFlat
+	bottom_style.border_width_right = 0
 	(%Quickbar as PanelContainer).add_theme_stylebox_override(
-		"panel", rail_style.duplicate() as StyleBoxFlat)
+		"panel", bottom_style)
 	var seamless: StyleBoxEmpty = StyleBoxEmpty.new()
 	for framed: Control in [$GameView/EloriaLogoFrame as Control,
 			$GameView/SpellQuickbar as Control, $GameView/ItemQuickbar as Control,
