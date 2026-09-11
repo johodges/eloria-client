@@ -2,32 +2,32 @@
 
 ```json
 {
-  "nodes": 4704,
-  "meshes": 337,
-  "materials": 39,
-  "images": 86,
-  "textures": 86,
-  "accessors": 1358,
-  "bufferViews": 1444,
-  "uniqueTriangles": 302146,
-  "uniqueVertices": 198979,
-  "glbBytes": 19889316,
-  "instancedTriangles": 744858,
-  "embeddedTextureBytes": 9578382,
-  "placements": 1941,
+  "nodes": 2489,
+  "meshes": 355,
+  "materials": 47,
+  "images": 107,
+  "textures": 107,
+  "accessors": 1459,
+  "bufferViews": 1566,
+  "uniqueTriangles": 549876,
+  "uniqueVertices": 328795,
+  "glbBytes": 26647000,
+  "instancedTriangles": 727086,
+  "embeddedTextureBytes": 10786428,
+  "placements": 915,
   "collision": {
-    "width": 1152,
-    "height": 1152,
+    "width": 792,
+    "height": 792,
     "cellMetres": 0.5,
-    "walkableCells": 929186,
-    "blockedCells": 397918,
-    "walkableFraction": 0.7002,
+    "walkableCells": 437587,
+    "blockedCells": 189677,
+    "walkableFraction": 0.6976,
     "elevatedDecks": 4,
-    "steepCells": 374189,
-    "reliefMetres": 161.73,
+    "steepCells": 176584,
+    "reliefMetres": 149.18,
     "heightEncoding": {
-      "origin": -6.4957,
-      "step": 2.608629,
+      "origin": 1.2212,
+      "step": 2.406115,
       "range": [
         1,
         63
@@ -37,6 +37,6 @@
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)"
   },
-  "trianglesPerSquareMetre": 2.25
+  "trianglesPerSquareMetre": 4.64
 }
 ```

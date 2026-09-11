@@ -276,7 +276,7 @@ def ice_cave_mouth(seed: int = 0, span: float = 7.5,
 
 
 def frozen_cascade(width: float = 9.0, height: float = 16.0,
-                   seed: int = 0) -> SW.MeshGroup:
+                   seed: int = 0, include_pool: bool = True) -> SW.MeshGroup:
     """A waterfall caught mid-fall, on the cliff it falls down. Panels 3 and 8.
 
     Two things the first version got wrong. It was built as a handful of fat
@@ -332,7 +332,8 @@ def frozen_cascade(width: float = 9.0, height: float = 16.0,
     pool = M.cylinder(width * 0.62, width * 0.70, 0.5, segments=14,
                       uv_scale=1.6, material=ICE)
     pool.transform(M.translation(0.0, 0.0, -0.6))
-    group.add(pool)
+    if include_pool:
+        group.add(pool)
     rubble = []
     for _ in range(8):
         block = M.icosphere(0.35 + 0.5 * rng.random(), subdivisions=1,

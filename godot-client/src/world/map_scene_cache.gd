@@ -51,7 +51,8 @@ extends RefCounted
 ##
 ## 1 - first version: collision bodies, walk surfaces, navigation collision,
 ##     static batching, mip chains and the batch links as node paths.
-const CACHE_FORMAT_VERSION := 1
+## 2 - batches use imported-root coordinates, including detached preloads.
+const CACHE_FORMAT_VERSION := 2
 
 ## Wrapped into the digest so the hash of a package cannot be confused with the
 ## hash of anything else, and so the digest itself can be revised without

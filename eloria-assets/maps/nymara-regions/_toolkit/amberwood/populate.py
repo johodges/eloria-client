@@ -110,6 +110,8 @@ def _route_distance_map(t: TER.Terrain, routes) -> np.ndarray:
 
 def build_density(t: TER.Terrain, seed: int) -> tuple[np.ndarray, np.ndarray]:
     """Return (tree density in [0,1], distance-to-road map)."""
+    if hasattr(t, "density_provider"):
+        return t.density_provider(t, seed)
     road_distance = _route_distance_map(t, list(ROUTES.values()))
     stream_distance = _route_distance_map(
         t, list(STREAMS.values()) + [RAVINE, RAVINE_NORTH])
@@ -255,6 +257,10 @@ def populate_forest(build: RegionBuild, seed: int = 20260827,
         y = float(t.height_at(x, z)) - 0.18
         rotation = float(rng.uniform(0.0, math.pi * 2.0))
         scale = float(rng.uniform(0.82, 1.24))
+        if hasattr(t, "density_provider"):
+            # Young edge trees leave breathing room; mature crowns are in the
+            # stands. The same scale applies to trunk and canopy.
+            scale *= .72 if near_road < 13 else .9
         if zone in (TRANSITION, BARREN):
             scale *= 0.85
         counter += 1
@@ -275,6 +281,10 @@ def populate_undergrowth(build: RegionBuild, seed: int = 20260827) -> None:
     fringe = np.clip((road_distance - 2.4 * S) / (3.0 * S), 0.0, 1.0) * \
         np.clip(1.0 - (road_distance - 3.0 * S) / (9.0 * S), 0.0, 1.0)
     field = np.clip(density * 0.8 + fringe * 0.9, 0.0, 1.0)
+    if hasattr(t, "woodland_moisture"):
+        field *= .25 + .7*t.woodland_moisture
+        field *= 1-t.woodland_open
+        field *= ~t.tree_block
     field *= (t.height > SEA_LEVEL + 0.8)
     field *= np.clip(1.0 - (t.gx - 92.0 * S) / (26.0 * S), 0.03, 1.0)
     points = scatter_points(t, field, 7.0, seed + 41)
@@ -787,6 +797,7 @@ def populate_landmarks(build: RegionBuild, seed: int = 20260827) -> None:
                               (4.0 * S, -86.0 * S), (30.0 * S, -100.0 * S),
                               (-2.0 * S, -72.0 * S), (-20.0 * S, -110.0 * S),
                               (-26.0 * S, -104.0 * S), (-14.0 * S, -116.0 * S))):
+        site = getattr(t, "giant_site_overrides", {}).get(i, site)
         wood, leaves = TREES.build_tree("great_oak", seed=seed + 400 + i,
                                         canopy_floor=CANOPY_FLOOR["great_oak"],
                                         detail="high" if i < 2 else "mid")

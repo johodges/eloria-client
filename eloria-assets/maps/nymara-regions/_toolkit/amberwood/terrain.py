@@ -325,25 +325,34 @@ class Terrain:
         return blend
 
     def terrace(self, center: tuple[float, float], radius: float, height: float,
-                surface: int | None = None) -> None:
+                surface: int | None = None, shoulder: float = 0.0) -> None:
         """Hard-edged terrace with a retaining lip - reads as built, not eroded."""
         d = np.hypot(self.gx - center[0], self.gz - center[1])
         inside = d < radius
-        self.height = np.where(inside, height, self.height)
+        if shoulder > 0:
+            from .landscape import feather_level
+            feather_level(self, d - radius, height, shoulder)
+        else:
+            self.height = np.where(inside, height, self.height)
         if surface is not None:
             self.surface = np.where(inside, surface, self.surface)
         self.tree_block |= d < radius + 1.5
 
     def rect_terrace(self, center: tuple[float, float], half_x: float, half_z: float,
                      height: float, rotation: float = 0.0,
-                     surface: int | None = None) -> None:
+                     surface: int | None = None, shoulder: float = 0.0) -> None:
         dx = self.gx - center[0]
         dz = self.gz - center[1]
         c, s = math.cos(-rotation), math.sin(-rotation)
         rx = dx * c - dz * s
         rz = dx * s + dz * c
         inside = (np.abs(rx) <= half_x) & (np.abs(rz) <= half_z)
-        self.height = np.where(inside, height, self.height)
+        if shoulder > 0:
+            from .landscape import feather_level
+            feather_level(self, np.hypot(np.maximum(np.abs(rx) - half_x, 0),
+                                        np.maximum(np.abs(rz) - half_z, 0)), height, shoulder)
+        else:
+            self.height = np.where(inside, height, self.height)
         if surface is not None:
             self.surface = np.where(inside, surface, self.surface)
         self.tree_block |= (np.abs(rx) <= half_x + 1.5) & (np.abs(rz) <= half_z + 1.5)

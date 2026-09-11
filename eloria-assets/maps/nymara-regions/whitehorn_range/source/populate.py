@@ -143,18 +143,19 @@ def _primary_landmarks(build: RegionBuild, seed: int) -> None:
     for index, (anchor, width, height) in enumerate((
             ("frozen_falls", 11.0, 20.0), ("upper_falls", 8.0, 15.0))):
         fx, fz = REG.ANCHORS[anchor]
+        fx,fz,fy = getattr(t,"cascade_sites",{}).get(anchor,(fx,fz,float(t.height_at(fx,fz))))
         fall = kit.frozen_cascade(width=width, height=height,
-                                  seed=seed + 11 + index)
+                                  seed=seed + 11 + index, include_pool=False)
         node = f"Landmark_frozen_cascade_{index:02d}"
         # Same trap as the temple: the piece is built facing -Z, with its rock
         # backing behind it at positive local z. Placed unrotated on a valley
         # approached from the south, the backing ends up between the camera
         # and the ice, and the fall renders as a plain grey slab.
         _place(build, node, f"frozen_cascade_{index:02d}", fall, fx, fz,
-               rotation_y=math.pi, kind="landmark", collides=True,
+               rotation_y=math.pi, kind="landmark", collides=True, y=fy,
                landmark=f"whitehorn-frozen-cascade-{index:02d}")
         _landmark(build, f"whitehorn-frozen-cascade-{index:02d}",
-                  "Frozen Cascade", node, fx, fz, "natural")
+                  "Frozen Cascade", node, fx, fz, "natural", y=fy)
 
 
 
@@ -367,7 +368,9 @@ def _vegetation(build: RegionBuild, seed: int, lod: str | None) -> None:
             if t.surface[cz, cx] not in (TER.TURF, TER.SNOW):
                 continue
             density = N.fbm(jx * 0.010, jz * 0.010, seed=seed + 3)
-            if density < 0.46 or rng.random() > 0.62:
+            habitat=getattr(t,'alpine_density',None)
+            chance=.62 if habitat is None else float(habitat[cz,cx])
+            if density < 0.36 or rng.random() > chance:
                 continue
             tier = rng.integers(0, 6)
             _place(build, f"Tree_pine_{count:04d}", f"pine_{int(tier)}",

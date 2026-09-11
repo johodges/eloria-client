@@ -18,36 +18,36 @@
     ],
     "bounds": {
       "min": [
-        -524.0,
+        -323.32,
         -25.99,
-        -691.0
+        -440.92
       ],
       "max": [
-        667.0,
-        143.3,
-        461.0
+        424.97,
+        145.57,
+        287.72
       ]
     },
     "playableBounds": {
       "min": [
-        -174.0,
-        -18.2,
-        -401.0
+        -116.0,
+        -18.15,
+        -267.0
       ],
       "max": [
-        401.0,
-        143.3,
-        174.0
+        267.0,
+        145.53,
+        116.0
       ]
     },
     "seaLevel": 0.0,
-    "serverCells": 576
+    "serverCells": 384
   },
   "coordinateTransform": {
     "metresPerTile": 1.0,
     "serverOrigin": [
-      174.0,
-      174.0
+      116.0,
+      116.0
     ],
     "origin": [
       0.0,
@@ -61,13 +61,13 @@
     {
       "id": "default",
       "position": [
-        24.0,
+        19.2229,
         40.85,
-        -171.0
+        -102.8745
       ],
       "serverTile": [
-        198,
-        345
+        135,
+        219
       ],
       "rotationDegrees": 0.0,
       "surface": "Paving",
@@ -76,13 +76,13 @@
     {
       "id": "harbour",
       "position": [
-        -90.0,
+        -66.242,
         3.03,
-        24.0
+        26.251
       ],
       "serverTile": [
-        84,
-        150
+        50,
+        90
       ],
       "rotationDegrees": 90.0,
       "surface": "Trail",
@@ -91,13 +91,13 @@
     {
       "id": "great-arch",
       "position": [
-        174.0,
+        132.9427,
         34.63,
-        -66.0
+        -27.5983
       ],
       "serverTile": [
-        348,
-        240
+        249,
+        144
       ],
       "rotationDegrees": 180.0,
       "surface": "Paving",
@@ -109,19 +109,14 @@
       "Boulder_3_smoke_vents_01",
       "Boulder_3_smoke_vents_02",
       "Boulder_3_smoke_vents_03",
-      "Boulder_3_smoke_vents_04",
       "Boulder_3_smoke_vents_05",
       "Boulder_3_smoke_vents_06",
       "Boulder_3_smoke_vents_07",
-      "Boulder_3_smoke_vents_08",
       "Cart_coppice_01",
       "Cart_coppice_02",
       "Cart_east_quarry_01",
       "Cart_east_quarry_02",
       "Cart_east_quarry_03",
-      "FallenLog_0001",
-      "FallenLog_0002",
-      "FallenLog_0003",
       "FallenLog_0004",
       "FallenLog_0005",
       "FallenLog_0006",
@@ -206,101 +201,11 @@
       "FallenLog_0085",
       "FallenLog_0086",
       "FallenLog_0087",
-      "FallenLog_0088",
       "FallenLog_0089",
-      "FallenLog_0090",
       "FallenLog_0091",
       "FallenLog_0092",
-      "FallenLog_0093",
-      "FallenLog_0094",
-      "FallenLog_0095",
-      "FallenLog_0096",
-      "FallenLog_0097",
-      "FallenLog_0098",
-      "FallenLog_0099",
-      "FallenLog_0100",
-      "FallenLog_0101",
-      "FallenLog_0102",
-      "FallenLog_0103",
-      "FallenLog_0104",
-      "FallenLog_0105",
-      "FallenLog_0106",
-      "FallenLog_0107",
-      "FallenLog_0108",
-      "FallenLog_0109",
-      "FallenLog_0110",
-      "FallenLog_0111",
-      "FallenLog_0112",
-      "FallenLog_0113",
-      "FallenLog_0114",
-      "FallenLog_0115",
-      "FallenLog_0116",
-      "FallenLog_0117",
-      "FallenLog_0118",
-      "FallenLog_0119",
-      "FallenLog_0120",
-      "FallenLog_0121",
-      "FallenLog_0122",
-      "FallenLog_0123",
-      "FallenLog_0124",
-      "FallenLog_0125",
-      "FallenLog_0126",
-      "FallenLog_0127",
-      "FallenLog_0128",
-      "FallenLog_0129",
-      "FallenLog_0130",
-      "FallenLog_0131",
-      "FallenLog_0132",
-      "FallenLog_0133",
-      "FallenLog_0134",
-      "FallenLog_0135",
-      "FallenLog_0136",
-      "FallenLog_0137",
-      "FallenLog_0138",
-      "FallenLog_0139",
-      "FallenLog_0140",
-      "FallenLog_0141",
-      "FallenLog_0142",
-      "FallenLog_0143",
-      "FallenLog_0144",
-      "FallenLog_0145",
-      "FallenLog_0146",
-      "FallenLog_0147",
-      "FallenLog_0148",
-      "FallenLog_0149",
-      "FallenLog_0150",
-      "FallenLog_0151",
-      "FallenLog_0152",
-      "FallenLog_0153",
-      "FallenLog_0154",
-      "FallenLog_0155",
-      "FallenLog_0156",
-      "FallenLog_0157",
-      "FallenLog_0158",
-      "FallenLog_0159",
-      "FallenLog_0160",
-      "FallenLog_0161",
-      "FallenLog_0162",
-      "FallenLog_0163",
-      "FallenLog_0164",
-      "FallenLog_0165",
-      "FallenLog_0166",
-      "FallenLog_0167",
-      "FallenLog_0168",
-      "FallenLog_0169",
       "FishingGear_kelp_landing_01",
-      "FishingGear_kelp_landing_02",
-      "Grove_01_Wood",
-      "Grove_03_Wood",
-      "Grove_04_Wood",
-      "Grove_05_Wood",
-      "Grove_06_Wood",
-      "Grove_07_Wood",
-      "Grove_08_Wood",
-      "Grove_09_Wood",
-      "Grove_10_Wood",
       "Grove_11_Wood",
-      "Grove_12_Wood",
       "Interact_AmberBench_0",
       "Interact_AmberBench_1",
       "Interact_AmberBench_2",
@@ -376,14 +281,10 @@
       "Landmark_GardenStatue_1",
       "Landmark_GardenStatue_2",
       "Landmark_GardenStatue_3",
-      "Landmark_Giant_0_Wood",
       "Landmark_Giant_1_Wood",
-      "Landmark_Giant_2_Wood",
       "Landmark_Giant_3_Wood",
-      "Landmark_Giant_4_Wood",
       "Landmark_Giant_5_Wood",
       "Landmark_Giant_6_Wood",
-      "Landmark_Giant_7_Wood",
       "Landmark_GreatArch",
       "Landmark_GreatTree_Wood",
       "Landmark_HollowTreeHall",
@@ -420,17 +321,12 @@
       "Lore_nine_watchers",
       "Lore_root_tally",
       "March_east_road_Station",
-      "March_east_road_Stone",
       "March_east_road_tree_000",
-      "March_east_road_tree_001",
       "March_east_road_tree_002",
       "March_east_road_tree_003",
-      "March_east_road_tree_004",
-      "March_east_road_turf_rock_005",
       "March_east_road_turf_rock_006",
       "March_east_road_turf_rock_007",
       "March_east_road_turf_rock_008",
-      "March_east_road_turf_rock_009",
       "March_harbour_quay_Station",
       "March_harbour_quay_Stone",
       "March_harbour_quay_cart_008",
@@ -439,31 +335,16 @@
       "March_harbour_quay_haven_rock_006",
       "March_harbour_quay_haven_rock_007",
       "March_north_pass_Station",
-      "March_north_pass_Stone",
       "March_north_pass_snow_boulder_009",
       "March_north_pass_snow_boulder_010",
-      "March_north_pass_snow_boulder_011",
       "March_north_pass_snow_boulder_012",
       "March_north_pass_snow_boulder_013",
-      "March_north_pass_snow_boulder_014",
       "March_north_pass_tree_000",
-      "March_north_pass_tree_001",
-      "March_north_pass_tree_002",
-      "March_north_pass_tree_003",
-      "March_north_pass_tree_004",
-      "March_north_pass_tree_005",
-      "March_north_pass_tree_006",
-      "March_north_pass_tree_007",
       "March_north_pass_tree_008",
       "March_south_road_Station",
-      "March_south_road_Stone",
-      "March_south_road_moor_stone_016",
       "March_south_road_moor_stone_017",
-      "March_south_road_moor_stone_018",
       "March_south_road_snag_000",
-      "March_south_road_snag_001",
       "March_south_road_snag_002",
-      "March_south_road_snag_003",
       "Prop_BurntCamp_0",
       "Prop_BurntCamp_1",
       "Prop_BurntCamp_2",
@@ -580,53 +461,6 @@
       "Prop_Ruin_045",
       "Prop_Ruin_046",
       "Prop_Ruin_047",
-      "Prop_Ruin_048",
-      "Prop_Ruin_049",
-      "Prop_Ruin_050",
-      "Prop_Ruin_051",
-      "Prop_Ruin_052",
-      "Prop_Ruin_053",
-      "Prop_Ruin_054",
-      "Prop_Ruin_055",
-      "Prop_Ruin_056",
-      "Prop_Ruin_057",
-      "Prop_Ruin_058",
-      "Prop_Ruin_059",
-      "Prop_Ruin_060",
-      "Prop_Ruin_061",
-      "Prop_Ruin_062",
-      "Prop_Ruin_063",
-      "Prop_Ruin_064",
-      "Prop_Ruin_065",
-      "Prop_Ruin_066",
-      "Prop_Ruin_067",
-      "Prop_Ruin_068",
-      "Prop_Ruin_069",
-      "Prop_Ruin_070",
-      "Prop_Ruin_071",
-      "Prop_Ruin_072",
-      "Prop_Ruin_073",
-      "Prop_Ruin_074",
-      "Prop_Ruin_075",
-      "Prop_Ruin_076",
-      "Prop_Ruin_077",
-      "Prop_Ruin_078",
-      "Prop_Ruin_079",
-      "Prop_Ruin_080",
-      "Prop_Ruin_081",
-      "Prop_Ruin_082",
-      "Prop_Ruin_083",
-      "Prop_Ruin_084",
-      "Prop_Ruin_085",
-      "Prop_Ruin_086",
-      "Prop_Ruin_087",
-      "Prop_Ruin_088",
-      "Prop_Ruin_089",
-      "Prop_Ruin_090",
-      "Prop_Ruin_091",
-      "Prop_Ruin_092",
-      "Prop_Ruin_093",
-      "Prop_Ruin_094",
       "Prop_Tent_ridge_camp_01",
       "Prop_Tent_ridge_camp_02",
       "Prop_Tent_ridge_camp_03",
@@ -658,55 +492,10 @@
       "RockCluster_2_sea_arch_01",
       "RockCluster_2_sea_arch_02",
       "RockCluster_2_sea_arch_03",
-      "Rock_0001",
-      "Rock_0002",
-      "Rock_0003",
-      "Rock_0004",
-      "Rock_0005",
-      "Rock_0006",
-      "Rock_0007",
-      "Rock_0008",
-      "Rock_0009",
-      "Rock_0010",
-      "Rock_0011",
-      "Rock_0012",
-      "Rock_0013",
-      "Rock_0014",
-      "Rock_0015",
-      "Rock_0016",
-      "Rock_0017",
-      "Rock_0018",
-      "Rock_0019",
-      "Rock_0020",
-      "Rock_0021",
-      "Rock_0022",
-      "Rock_0023",
-      "Rock_0024",
-      "Rock_0025",
-      "Rock_0026",
-      "Rock_0027",
-      "Rock_0028",
-      "Rock_0029",
       "Rock_0030",
-      "Rock_0031",
-      "Rock_0032",
       "Rock_0033",
-      "Rock_0034",
-      "Rock_0035",
-      "Rock_0036",
-      "Rock_0037",
-      "Rock_0039",
-      "Rock_0040",
       "Rock_0041",
-      "Rock_0042",
-      "Rock_0043",
-      "Rock_0044",
-      "Rock_0045",
       "Rock_0046",
-      "Rock_0047",
-      "Rock_0048",
-      "Rock_0049",
-      "Rock_0050",
       "Rock_0051",
       "Rock_0052",
       "Rock_0053",
@@ -727,7 +516,6 @@
       "Rock_0068",
       "Rock_0069",
       "Rock_0070",
-      "Rock_0071",
       "Rock_0072",
       "Rock_0073",
       "Rock_0074",
@@ -751,7 +539,6 @@
       "Rock_0092",
       "Rock_0093",
       "Rock_0094",
-      "Rock_0095",
       "Rock_0096",
       "Rock_0097",
       "Rock_0098",
@@ -765,7 +552,7 @@
       "Rock_0106",
       "Rock_0107",
       "Rock_0108",
-      "Rock_0110",
+      "Rock_0109",
       "Rock_0111",
       "Rock_0112",
       "Rock_0113",
@@ -775,7 +562,6 @@
       "Rock_0117",
       "Rock_0118",
       "Rock_0119",
-      "Rock_0120",
       "Rock_0121",
       "Rock_0122",
       "Rock_0123",
@@ -829,21 +615,16 @@
       "Rock_0171",
       "Rock_0172",
       "Rock_0173",
-      "Rock_0174",
       "Rock_0175",
       "Rock_0176",
       "Rock_0177",
-      "Rock_0178",
-      "Rock_0179",
       "Rock_0180",
       "Rock_0181",
       "Rock_0182",
       "Rock_0183",
       "Rock_0184",
-      "Rock_0185",
       "Rock_0186",
       "Rock_0187",
-      "Rock_0188",
       "Rock_0189",
       "Rock_0190",
       "Rock_0191",
@@ -853,12 +634,10 @@
       "Rock_0196",
       "Rock_0197",
       "Rock_0198",
-      "Rock_0199",
       "Rock_0200",
       "Rock_0201",
       "Rock_0202",
       "Rock_0203",
-      "Rock_0204",
       "Rock_0205",
       "Rock_0206",
       "Rock_0207",
@@ -868,11 +647,8 @@
       "Rock_0211",
       "Rock_0212",
       "Rock_0213",
-      "Rock_0214",
       "Rock_0215",
       "Rock_0216",
-      "Rock_0217",
-      "Rock_0218",
       "Rock_0219",
       "Rock_0220",
       "Rock_0221",
@@ -887,35 +663,6 @@
       "Rock_0230",
       "Rock_0231",
       "Rock_0232",
-      "Rock_0233",
-      "Rock_0234",
-      "Rock_0235",
-      "Rock_0236",
-      "Rock_0237",
-      "Rock_0238",
-      "Rock_0239",
-      "Rock_0240",
-      "Rock_0241",
-      "Rock_0242",
-      "Rock_0243",
-      "Rock_0244",
-      "Rock_0245",
-      "Rock_0246",
-      "Rock_0247",
-      "Rock_0248",
-      "Rock_0249",
-      "Rock_0250",
-      "Rock_0251",
-      "Rock_0252",
-      "Rock_0253",
-      "Rock_0254",
-      "Rock_0255",
-      "Rock_0256",
-      "Rock_0257",
-      "Rock_0258",
-      "Rock_0259",
-      "Rock_0260",
-      "Rock_0261",
       "Secret_amber_arch_reliquary",
       "Secret_amber_beekeepers_garden",
       "Secret_amber_boar_run",
@@ -953,229 +700,69 @@
       "Stone_RuinFragment_C_cinder_field_12",
       "Stone_RuinFragment_C_cinder_field_13",
       "Stone_RuinFragment_C_cinder_field_14",
-      "Tree_0007_amber_oak_Wood",
-      "Tree_0039_dark_holly_Wood",
-      "Tree_0079_pale_birch_Wood",
-      "Tree_0080_dark_pine_Wood",
-      "Tree_0083_dead_snag_Wood",
-      "Tree_0120_pale_birch_Wood",
-      "Tree_0121_gold_oak_Wood",
-      "Tree_0123_gold_oak_Wood",
-      "Tree_0184_gold_oak_Wood",
-      "Tree_0204_amber_oak_Wood",
-      "Tree_0225_amber_oak_Wood",
-      "Tree_0232_amber_oak_Wood",
-      "Tree_0233_pale_birch_Wood",
-      "Tree_0250_dark_pine_Wood",
-      "Tree_0251_amber_oak_Wood",
-      "Tree_0277_dark_pine_Wood",
-      "Tree_0309_dark_pine_Wood",
-      "Tree_0337_dark_pine_Wood",
-      "Tree_0343_gold_oak_Wood",
-      "Tree_0344_amber_oak_Wood",
-      "Tree_0362_dark_pine_Wood",
-      "Tree_0408_dark_pine_Wood",
-      "Tree_0409_amber_oak_Wood",
-      "Tree_0422_amber_oak_Wood",
-      "Tree_0431_dark_pine_Wood",
-      "Tree_0437_dark_pine_Wood",
-      "Tree_0438_dead_snag_Wood",
-      "Tree_0439_dead_snag_Wood",
-      "Tree_0463_amber_oak_Wood",
-      "Tree_0464_gold_oak_Wood",
-      "Tree_0471_pale_birch_Wood",
-      "Tree_0494_gold_oak_Wood",
-      "Tree_0501_dark_holly_Wood",
-      "Tree_0516_amber_oak_Wood",
-      "Tree_0530_amber_oak_Wood",
-      "Tree_0532_pale_birch_Wood",
-      "Tree_0539_gold_oak_Wood",
-      "Tree_0551_amber_oak_Wood",
-      "Tree_0559_gold_oak_Wood",
-      "Tree_0562_amber_oak_Wood",
-      "Tree_0568_dead_snag_Wood",
-      "Tree_0578_rust_maple_Wood",
-      "Tree_0580_gold_oak_Wood",
-      "Tree_0588_amber_oak_Wood",
-      "Tree_0611_dark_pine_Wood",
-      "Tree_0617_gold_oak_Wood",
-      "Tree_0629_understory_hazel_Wood",
-      "Tree_0630_amber_oak_Wood",
-      "Tree_0633_amber_oak_Wood",
-      "Tree_0637_amber_oak_Wood",
-      "Tree_0638_gold_oak_Wood",
-      "Tree_0655_amber_oak_Wood",
-      "Tree_0661_dark_pine_Wood",
-      "Tree_0663_gold_oak_Wood",
-      "Tree_0668_dark_pine_Wood",
-      "Tree_0679_dark_pine_Wood",
-      "Tree_0689_dark_pine_Wood",
-      "Tree_0704_gold_oak_Wood",
-      "Tree_0714_dark_pine_Wood",
-      "Tree_0715_amber_oak_Wood",
-      "Tree_0731_amber_oak_Wood",
-      "Tree_0772_gold_oak_Wood",
-      "Tree_0773_gold_oak_Wood",
-      "Tree_0804_rust_maple_Wood",
-      "Tree_0813_gold_oak_Wood",
-      "Tree_0839_pale_birch_Wood",
-      "Tree_0847_amber_oak_Wood",
-      "Tree_0850_pale_birch_Wood",
-      "Tree_0856_dark_pine_Wood",
-      "Tree_0857_amber_oak_Wood",
-      "Tree_0859_pale_birch_Wood",
-      "Tree_0864_burnt_snag_Wood",
-      "Tree_0867_amber_oak_Wood",
-      "Tree_0868_amber_oak_Wood",
-      "Tree_0872_dark_pine_Wood",
-      "Tree_0876_dark_pine_Wood",
-      "Tree_0879_rust_maple_Wood",
-      "Tree_0888_amber_oak_Wood",
-      "Tree_0905_dead_snag_Wood",
-      "Tree_0919_amber_oak_Wood",
-      "Tree_0920_rust_maple_Wood",
-      "Tree_0921_dark_holly_Wood",
-      "Tree_0943_amber_oak_Wood",
-      "Tree_0944_understory_hazel_Wood",
-      "Tree_0945_gold_oak_Wood",
-      "Tree_0951_dark_pine_Wood",
-      "Tree_0967_amber_oak_Wood",
-      "Tree_0969_dark_holly_Wood",
-      "Tree_0971_amber_oak_Wood",
-      "Tree_0972_dark_pine_Wood",
-      "Tree_0977_dead_snag_Wood",
-      "Tree_0998_dead_snag_Wood",
-      "Tree_1014_amber_oak_Wood",
-      "Tree_1056_amber_oak_Wood",
+      "Tree_0119_dead_snag_Wood",
+      "Tree_0148_dark_pine_Wood",
+      "Tree_0198_gold_oak_Wood",
+      "Tree_0269_dark_pine_Wood",
+      "Tree_0278_amber_oak_Wood",
+      "Tree_0279_amber_oak_Wood",
+      "Tree_0282_dark_pine_Wood",
+      "Tree_0302_gold_oak_Wood",
+      "Tree_0324_amber_oak_Wood",
+      "Tree_0338_gold_oak_Wood",
+      "Tree_0367_dark_holly_Wood",
+      "Tree_0378_pale_birch_Wood",
+      "Tree_0389_amber_oak_Wood",
+      "Tree_0404_dark_holly_Wood",
+      "Tree_0413_understory_hazel_Wood",
+      "Tree_0420_understory_hazel_Wood",
+      "Tree_0466_dead_snag_Wood",
+      "Tree_0486_rust_maple_Wood",
+      "Tree_0489_gold_oak_Wood",
+      "Tree_0496_rust_maple_Wood",
+      "Tree_0546_pale_birch_Wood",
+      "Tree_0558_amber_oak_Wood",
+      "Tree_0587_dark_holly_Wood",
+      "Tree_0594_gold_oak_Wood",
+      "Tree_0614_dark_holly_Wood",
+      "Tree_0630_understory_hazel_Wood",
+      "Tree_0654_dark_pine_Wood",
+      "Tree_0668_rust_maple_Wood",
+      "Tree_0706_understory_hazel_Wood",
+      "Tree_0719_pale_birch_Wood",
+      "Tree_0742_rust_maple_Wood",
+      "Tree_0827_amber_oak_Wood",
+      "Tree_0850_amber_oak_Wood",
+      "Tree_0880_amber_oak_Wood",
+      "Tree_0893_understory_hazel_Wood",
+      "Tree_0915_gold_oak_Wood",
+      "Tree_0931_gold_oak_Wood",
+      "Tree_0941_gold_oak_Wood",
+      "Tree_0952_amber_oak_Wood",
+      "Tree_0953_understory_hazel_Wood",
+      "Tree_0967_pale_birch_Wood",
+      "Tree_1003_amber_oak_Wood",
+      "Tree_1049_understory_hazel_Wood",
+      "Tree_1050_gold_oak_Wood",
+      "Tree_1052_rust_maple_Wood",
+      "Tree_1059_pale_birch_Wood",
+      "Tree_1060_gold_oak_Wood",
       "Tree_1068_amber_oak_Wood",
+      "Tree_1069_rust_maple_Wood",
+      "Tree_1073_rust_maple_Wood",
+      "Tree_1075_gold_oak_Wood",
       "Tree_1083_pale_birch_Wood",
-      "Tree_1084_rust_maple_Wood",
-      "Tree_1119_understory_hazel_Wood",
-      "Tree_1120_rust_maple_Wood",
-      "Tree_1122_understory_hazel_Wood",
-      "Tree_1124_pale_birch_Wood",
-      "Tree_1146_dead_snag_Wood",
-      "Tree_1147_pale_birch_Wood",
-      "Tree_1148_amber_oak_Wood",
-      "Tree_1149_rust_maple_Wood",
-      "Tree_1150_rust_maple_Wood",
-      "Tree_1159_rust_maple_Wood",
-      "Tree_1168_dark_pine_Wood",
-      "Tree_1174_rust_maple_Wood",
-      "Tree_1230_pale_birch_Wood",
-      "Tree_1236_amber_oak_Wood",
-      "Tree_1242_gold_oak_Wood",
-      "Tree_1246_rust_maple_Wood",
-      "Tree_1251_dark_holly_Wood",
-      "Tree_1252_rust_maple_Wood",
-      "Tree_1277_amber_oak_Wood",
-      "Tree_1278_amber_oak_Wood",
-      "Tree_1279_amber_oak_Wood",
-      "Tree_1283_pale_birch_Wood",
-      "Tree_1300_dark_holly_Wood",
-      "Tree_1303_amber_oak_Wood",
-      "Tree_1307_gold_oak_Wood",
-      "Tree_1309_gold_oak_Wood",
-      "Tree_1321_pale_birch_Wood",
-      "Tree_1329_amber_oak_Wood",
-      "Tree_1346_rust_maple_Wood",
-      "Tree_1347_pale_birch_Wood",
-      "Tree_1348_pale_birch_Wood",
-      "Tree_1350_rust_maple_Wood",
-      "Tree_1367_amber_oak_Wood",
-      "Tree_1390_gold_oak_Wood",
-      "Tree_1393_dead_snag_Wood",
-      "Tree_1396_pale_birch_Wood",
-      "Tree_1400_rust_maple_Wood",
-      "Tree_1401_amber_oak_Wood",
-      "Tree_1413_pale_birch_Wood",
-      "Tree_1420_pale_birch_Wood",
-      "Tree_1423_understory_hazel_Wood",
-      "Tree_1439_rust_maple_Wood",
-      "Tree_1497_burnt_snag_Wood",
-      "Tree_1505_dark_holly_Wood",
-      "Tree_1525_understory_hazel_Wood",
-      "Tree_1526_rust_maple_Wood",
-      "Tree_1528_gold_oak_Wood",
-      "Tree_1543_dark_pine_Wood",
-      "Tree_1545_pale_birch_Wood",
-      "Tree_1546_dark_holly_Wood",
-      "Tree_1547_dead_snag_Wood",
-      "Tree_1552_amber_oak_Wood",
-      "Tree_1570_amber_oak_Wood",
-      "Tree_1588_pale_birch_Wood",
-      "Tree_1613_dead_snag_Wood",
-      "Tree_1659_burnt_snag_Wood",
-      "Tree_1687_understory_hazel_Wood",
-      "Tree_1717_rust_maple_Wood",
-      "Tree_1721_gold_oak_Wood",
-      "Tree_1735_dark_holly_Wood",
-      "Tree_1765_understory_hazel_Wood",
-      "Tree_1813_amber_oak_Wood",
-      "Tree_1832_pale_birch_Wood",
-      "Tree_1833_understory_hazel_Wood",
-      "Tree_1836_gold_oak_Wood",
-      "Tree_1838_amber_oak_Wood",
-      "Tree_1843_rust_maple_Wood",
-      "Tree_1853_amber_oak_Wood",
-      "Tree_1854_rust_maple_Wood",
-      "Tree_1883_gold_oak_Wood",
-      "Tree_1889_understory_hazel_Wood",
-      "Tree_1890_amber_oak_Wood",
-      "Tree_1909_rust_maple_Wood",
-      "Tree_1916_rust_maple_Wood",
-      "Tree_1923_gold_oak_Wood",
-      "Tree_1940_gold_oak_Wood",
-      "Tree_1950_pale_birch_Wood",
-      "Tree_1956_pale_birch_Wood",
-      "Tree_1969_amber_oak_Wood",
-      "Tree_1972_gold_oak_Wood",
-      "Tree_1974_amber_oak_Wood",
-      "Tree_1980_understory_hazel_Wood",
-      "Tree_1982_gold_oak_Wood",
-      "Tree_1983_gold_oak_Wood",
-      "Tree_1991_amber_oak_Wood",
-      "Tree_2001_rust_maple_Wood",
-      "Tree_2002_gold_oak_Wood",
-      "Tree_2006_amber_oak_Wood",
-      "Tree_2007_gold_oak_Wood",
-      "Tree_2023_amber_oak_Wood",
-      "Tree_2024_amber_oak_Wood",
-      "Tree_2026_rust_maple_Wood",
-      "Tree_2047_dark_pine_Wood",
-      "Tree_2048_dark_holly_Wood",
-      "Tree_2057_dark_holly_Wood",
-      "Tree_2061_amber_oak_Wood",
-      "Tree_2069_gold_oak_Wood",
-      "Tree_2085_amber_oak_Wood",
-      "Tree_2100_amber_oak_Wood",
-      "Tree_2101_understory_hazel_Wood",
-      "Tree_2102_understory_hazel_Wood",
-      "Tree_2103_amber_oak_Wood",
-      "Tree_2115_understory_hazel_Wood",
-      "Tree_2116_amber_oak_Wood",
-      "Tree_2117_amber_oak_Wood",
-      "Tree_2118_rust_maple_Wood",
-      "Tree_2134_dead_snag_Wood",
-      "Tree_2135_amber_oak_Wood",
-      "Tree_2137_amber_oak_Wood",
-      "Tree_2143_rust_maple_Wood",
-      "Tree_2169_understory_hazel_Wood",
-      "Tree_2174_gold_oak_Wood",
-      "Tree_2175_understory_hazel_Wood",
-      "Tree_2194_dark_holly_Wood",
-      "Tree_2207_pale_birch_Wood",
-      "Tree_2242_gold_oak_Wood",
-      "Tree_2243_gold_oak_Wood"
+      "Tree_1091_understory_hazel_Wood",
+      "Tree_1157_rust_maple_Wood"
     ],
     "binary": "collision.bin",
     "format": "EWCG-v2",
     "cellMetres": 0.5,
-    "width": 1152,
-    "height": 1152,
+    "width": 768,
+    "height": 768,
     "heightEncoding": {
-      "origin": -0.4991,
-      "step": 0.429065,
+      "origin": -0.1524,
+      "step": 0.429035,
       "range": [
         1,
         255
@@ -1183,24 +770,24 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 893504,
-    "walkableFraction": 0.6733,
+    "walkableCells": 368186,
+    "walkableFraction": 0.6242,
     "refinedHeights": {
       "levels": 255,
-      "step": 0.429065,
-      "origin": -0.4991,
-      "previousStep": 1.751009,
-      "cellsRestated": 912223,
-      "cellsFromGeometry": 905927,
-      "cellsKept": 6296
+      "step": 0.429035,
+      "origin": -0.1524,
+      "previousStep": 1.753931,
+      "cellsRestated": 381899,
+      "cellsFromGeometry": 381957,
+      "cellsKept": 349
     },
     "openedWalkSurfaces": {
       "prefix": "Walk_",
-      "cellsCovered": 10249,
-      "cellsWidened": 993,
-      "cellsOpened": 756,
-      "cellsRaised": 5109,
-      "cellsDrowned": 150,
+      "cellsCovered": 11055,
+      "cellsWidened": 1261,
+      "cellsOpened": 893,
+      "cellsRaised": 5184,
+      "cellsDrowned": 0,
       "cellsInsideLandmarks": 0
     },
     "stampedLandmarks": [
@@ -1209,442 +796,442 @@
         "node": "Landmark_MootHall",
         "type": "building",
         "box": [
-          -22.68,
-          -201.92,
-          -0.19,
-          -180.11
+          -27.46,
+          -133.79,
+          -4.97,
+          -111.98
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 1572
+        "cellsBlocked": 1376
       },
       {
         "id": "amber-hall",
         "node": "Landmark_AmberHall",
         "type": "building",
         "box": [
-          57.95,
-          -157.32,
-          71.77,
-          -142.68
+          53.17,
+          -89.19,
+          67.0,
+          -74.55
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 332
+        "cellsBlocked": 555
       },
       {
         "id": "mill-house",
         "node": "Landmark_Building_Lodge_14",
         "type": "building",
         "box": [
-          -38.52,
-          -122.87,
-          -27.85,
-          -109.78
+          -37.59,
+          -63.58,
+          -26.92,
+          -50.49
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 266
+        "cellsBlocked": 171
       },
       {
         "id": "gate-cellar",
         "node": "Landmark_GateCellar",
         "type": "building",
         "box": [
-          187.6,
-          -97.9,
-          192.4,
-          -94.08
+          140.02,
+          -47.45,
+          144.82,
+          -43.63
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 120
+        "cellsBlocked": 96
       },
       {
         "id": "building-lodge-00",
         "node": "Landmark_Building_Lodge_00",
         "type": "building",
         "box": [
-          -0.41,
-          -211.09,
-          15.77,
-          -195.58
+          -5.19,
+          -142.97,
+          11.0,
+          -127.46
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 721
+        "cellsBlocked": 792
       },
       {
         "id": "building-lodge-01",
         "node": "Landmark_Building_Lodge_01",
         "type": "building",
         "box": [
-          49.25,
-          -182.49,
-          63.4,
-          -173.36
+          44.48,
+          -114.37,
+          58.62,
+          -105.24
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 310
+        "cellsBlocked": 276
       },
       {
         "id": "building-lodge-02",
         "node": "Landmark_Building_Lodge_02",
         "type": "building",
         "box": [
-          -12.44,
-          -213.66,
-          3.08,
-          -201.73
+          -17.22,
+          -145.53,
+          -1.69,
+          -133.61
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 207
+        "cellsBlocked": 263
       },
       {
         "id": "building-lodge-03",
         "node": "Landmark_Building_Lodge_03",
         "type": "building",
         "box": [
-          50.48,
-          -231.72,
-          67.99,
-          -216.94
+          45.7,
+          -163.6,
+          63.21,
+          -148.82
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 1147
+        "cellsBlocked": 717
       },
       {
         "id": "building-lodge-04",
         "node": "Landmark_Building_Lodge_04",
         "type": "building",
         "box": [
-          -7.86,
-          -171.23,
-          7.33,
-          -157.85
+          -12.64,
+          -103.1,
+          2.56,
+          -89.73
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 608
+        "cellsBlocked": 625
       },
       {
         "id": "building-lodge-05",
         "node": "Landmark_Building_Lodge_05",
         "type": "building",
         "box": [
-          48.45,
-          -146.24,
-          64.46,
-          -133.05
+          43.67,
+          -78.51,
+          59.68,
+          -65.33
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 435
+        "cellsBlocked": 365
       },
       {
         "id": "building-lodge-06",
         "node": "Landmark_Building_Lodge_06",
         "type": "building",
         "box": [
-          31.16,
-          -236.03,
-          45.55,
-          -226.14
+          26.38,
+          -167.9,
+          40.77,
+          -158.02
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 650
+        "cellsBlocked": 348
       },
       {
         "id": "building-lodge-07",
         "node": "Landmark_Building_Lodge_07",
         "type": "building",
         "box": [
-          55.29,
-          -253.06,
-          73.12,
-          -237.19
+          50.52,
+          -182.12,
+          68.35,
+          -166.25
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 1258
+        "cellsBlocked": 524
       },
       {
         "id": "building-lodge-08",
         "node": "Landmark_Building_Lodge_08",
         "type": "building",
         "box": [
-          -59.55,
-          22.7,
-          -43.64,
-          37.4
+          -51.08,
+          23.14,
+          -35.16,
+          37.85
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 776
+        "cellsBlocked": 706
       },
       {
         "id": "building-lodge-09",
         "node": "Landmark_Building_Lodge_09",
         "type": "building",
         "box": [
-          -72.68,
-          38.64,
-          -56.46,
-          53.11
+          -58.71,
+          32.45,
+          -42.49,
+          46.92
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 506
+        "cellsBlocked": 361
       },
       {
         "id": "building-lodge-10",
         "node": "Landmark_Building_Lodge_10",
         "type": "building",
         "box": [
-          304.62,
-          90.68,
-          319.7,
-          101.74
+          206.7,
+          64.01,
+          221.77,
+          75.07
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 436
+        "cellsBlocked": 301
       },
       {
         "id": "building-lodge-11",
         "node": "Landmark_Building_Lodge_11",
         "type": "building",
         "box": [
-          322.52,
-          74.83,
-          339.96,
-          89.44
+          216.65,
+          53.59,
+          234.09,
+          68.19
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 733
+        "cellsBlocked": 567
       },
       {
         "id": "building-lodge-12",
         "node": "Landmark_Building_Lodge_12",
         "type": "building",
         "box": [
-          195.26,
-          88.55,
-          211.34,
-          103.66
+          142.59,
+          62.48,
+          158.67,
+          77.6
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 522
+        "cellsBlocked": 351
       },
       {
         "id": "building-lodge-13",
         "node": "Landmark_Building_Lodge_13",
         "type": "building",
         "box": [
-          259.03,
-          -143.78,
-          269.45,
-          -128.91
+          181.28,
+          -76.46,
+          191.71,
+          -61.58
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 376
+        "cellsBlocked": 326
       },
       {
         "id": "building-lodge-15",
         "node": "Landmark_Building_Lodge_15",
         "type": "building",
         "box": [
-          68.04,
-          -210.57,
-          80.64,
-          -194.08
+          63.26,
+          -142.45,
+          75.87,
+          -125.96
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 945
+        "cellsBlocked": 550
       },
       {
         "id": "building-lodge-16",
         "node": "Landmark_Building_Lodge_16",
         "type": "building",
         "box": [
-          -83.87,
-          -172.02,
-          -71.1,
-          -162.05
+          -64.6,
+          -103.89,
+          -51.83,
+          -93.92
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 304
+        "cellsBlocked": 199
       },
       {
         "id": "building-lodge-17",
         "node": "Landmark_Building_Lodge_17",
         "type": "building",
         "box": [
-          -58.57,
-          -185.27,
-          -44.78,
-          -176.73
+          -51.12,
+          -117.14,
+          -37.33,
+          -108.6
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 155
+        "cellsBlocked": 138
       },
       {
         "id": "building-lodge-18",
         "node": "Landmark_Building_Lodge_18",
         "type": "building",
         "box": [
-          -52.43,
-          -163.09,
-          -35.91,
-          -148.28
+          -47.83,
+          -94.97,
+          -31.31,
+          -80.15
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 503
+        "cellsBlocked": 283
       },
       {
         "id": "building-lodge-19",
         "node": "Landmark_Building_Lodge_19",
         "type": "building",
         "box": [
-          -26.13,
-          -246.48,
-          -8.25,
-          -230.31
+          -30.91,
+          -177.55,
+          -13.03,
+          -161.38
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 600
+        "cellsBlocked": 618
       },
       {
         "id": "building-lodge-20",
         "node": "Landmark_Building_Lodge_20",
         "type": "building",
         "box": [
-          -36.29,
-          -241.11,
-          -21.17,
-          -227.86
+          -38.21,
+          -172.98,
+          -23.1,
+          -159.74
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 388
+        "cellsBlocked": 81
       },
       {
         "id": "building-lodge-21",
         "node": "Landmark_Building_Lodge_21",
         "type": "building",
         "box": [
-          74.88,
-          -357.32,
-          86.35,
-          -341.94
+          70.11,
+          -245.01,
+          81.57,
+          -229.63
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 436
+        "cellsBlocked": 338
       },
       {
         "id": "building-lodge-22",
         "node": "Landmark_Building_Lodge_22",
         "type": "building",
         "box": [
-          91.96,
-          -367.89,
-          108.43,
-          -353.39
+          81.47,
+          -250.76,
+          97.95,
+          -236.26
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 530
+        "cellsBlocked": 375
       },
       {
         "id": "building-lodge-23",
         "node": "Landmark_Building_Lodge_23",
         "type": "building",
         "box": [
-          82.55,
-          -371.35,
-          96.52,
-          -354.18
+          75.73,
+          -252.42,
+          89.7,
+          -235.24
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 396
+        "cellsBlocked": 195
       },
       {
         "id": "building-lodge-24",
         "node": "Landmark_Building_Lodge_24",
         "type": "building",
         "box": [
-          281.99,
-          -180.87,
-          296.63,
-          -168.35
+          193.24,
+          -112.74,
+          207.88,
+          -100.23
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 485
+        "cellsBlocked": 369
       },
       {
         "id": "building-lodge-25",
         "node": "Landmark_Building_Lodge_25",
         "type": "building",
         "box": [
-          303.05,
-          -195.55,
-          316.24,
-          -179.54
+          206.96,
+          -127.43,
+          220.15,
+          -111.41
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 592
+        "cellsBlocked": 583
       },
       {
         "id": "building-lodge-26",
         "node": "Landmark_Building_Lodge_26",
         "type": "building",
         "box": [
-          293.39,
-          -176.9,
-          309.21,
-          -164.35
+          200.97,
+          -108.77,
+          216.79,
+          -96.22
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 428
+        "cellsBlocked": 450
       },
       {
         "id": "building-lodge-27",
         "node": "Landmark_Building_Lodge_27",
         "type": "building",
         "box": [
-          126.16,
-          87.68,
-          138.44,
-          103.99
+          101.61,
+          61.62,
+          113.89,
+          77.92
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 433
+        "cellsBlocked": 509
       },
       {
         "id": "building-lodge-28",
         "node": "Landmark_Building_Lodge_28",
         "type": "building",
         "box": [
-          225.3,
-          152.44,
-          241.5,
-          168.17
+          159.79,
+          99.26,
+          175.99,
+          114.99
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 822
+        "cellsBlocked": 658
       },
       {
         "id": "building-lodge-29",
         "node": "Landmark_Building_Lodge_29",
         "type": "building",
         "box": [
-          276.0,
-          80.44,
-          289.34,
-          96.49
+          190.92,
+          56.18,
+          204.26,
+          72.23
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 433
+        "cellsBlocked": 472
       },
       {
         "id": "building-lodge-30",
         "node": "Landmark_Building_Lodge_30",
         "type": "building",
         "box": [
-          105.57,
-          -286.9,
-          121.9,
-          -272.99
+          89.58,
+          -201.7,
+          105.92,
+          -187.8
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 1050
+        "cellsBlocked": 475
       }
     ]
   },
@@ -1653,86 +1240,86 @@
       {
         "role": "information",
         "position": [
-          24,
+          19.2229,
           40.8,
-          -164
+          -95.8745
         ]
       },
       {
         "role": "storage",
         "position": [
-          13,
+          8.2229,
           40.8,
-          -177
+          -108.8745
         ]
       },
       {
         "role": "crafting_station",
         "position": [
-          40,
+          35.2229,
           41,
-          -177
+          -108.8745
         ]
       },
       {
         "role": "training",
         "position": [
-          40,
+          35.2229,
           40.8,
-          -162
+          -93.8745
         ]
       }
     ],
     "npcs": {
       "Eryn Amber": [
-        18,
+        13.2229,
         40.8,
-        -170
+        -101.8745
       ],
       "Tomas Root": [
-        11,
+        6.2229,
         40.8,
-        -177
+        -108.8745
       ],
       "Resin Trader": [
-        31,
+        26.2229,
         40.8,
-        -166
+        -97.8745
       ],
       "Hall Steward": [
-        -8,
+        -12.7771,
         42,
-        -176
+        -107.8745
       ],
       "Amber Master": [
-        54,
+        49.2229,
         41.4,
-        -164
+        -95.8745
       ],
       "Harbour Master": [
-        -83,
+        -62.0955,
         3.2,
-        31
+        30.4393
       ],
       "Kelp Landing Factor Hesper": [
-        -62,
+        -49.6561,
         3.2,
-        66
+        51.3808
       ],
       "Canopy Rigger": [
-        58,
+        53.2229,
         48,
-        -200
+        -131.8745
       ],
       "Grove Reader Nesh Pallid": [
-        -44,
+        -38.9936,
         26,
-        -323
+        -220.7322
       ],
       "Nine Watchers Hermit Bode": [
-        -50,
+        -42.5478,
         17,
-        -29
+        -5.4603
       ]
     },
     "roadClearance": 5.0,
@@ -1740,754 +1327,754 @@
     "harvest": {
       "Resin": [
         [
-          89,
-          -275,
-          24
+          82.59,
+          -192.01,
+          16.799999999999997
         ],
         [
-          114,
-          -294,
-          25
+          97.4,
+          -203.38,
+          17.5
         ],
         [
-          4,
-          -263,
-          26
+          -0.78,
+          -184.83,
+          18.2
         ]
       ],
       "Hearthroot": [
         [
-          104,
-          109,
-          21
+          91.48,
+          77.11,
+          14.7
         ],
         [
-          56,
-          114,
-          24
+          51.22,
+          80.1,
+          16.799999999999997
         ],
         [
-          10,
-          10,
-          25
+          5.22,
+          17.87,
+          17.5
         ]
       ],
       "Toadstool": [
         [
-          -22,
-          -240,
-          23
+          -25.96,
+          -171.07,
+          16.099999999999998
         ],
         [
-          -47,
-          -308,
-          23
+          -40.77,
+          -211.76,
+          16.099999999999998
         ],
         [
-          3,
-          -291,
-          22
+          -1.78,
+          -201.59,
+          15.399999999999999
         ]
       ],
       "Kelp": [
         [
-          -57,
-          69,
-          12
+          -46.69,
+          53.18,
+          8.399999999999999
         ]
       ],
       "Coal": [
         [
-          244,
-          18,
-          23
+          174.41,
+          22.66,
+          16.099999999999998
         ],
         [
-          224,
-          144,
-          20
+          162.56,
+          98.05,
+          14.0
         ]
       ],
       "Stormglass": [
         [
-          337,
-          -59,
-          25
+          229.5,
+          -23.41,
+          17.5
         ],
         [
-          362,
-          -166,
-          28
+          244.31,
+          -97.87,
+          19.599999999999998
         ]
       ],
       "Orchid": [
         [
-          -3,
-          -266,
-          25
+          -7.78,
+          -186.63,
+          17.5
         ]
       ],
       "Peat": [
         [
-          -16,
-          112,
-          22
+          -20.78,
+          78.9,
+          15.399999999999999
         ]
       ],
       "Bramble": [
         [
-          105,
-          76,
-          24
+          92.07,
+          57.36,
+          16.799999999999997
         ]
       ],
       "Moorcotton": [
         [
-          81,
-          132,
-          21
+          76.22,
+          90.87,
+          14.7
         ]
       ],
       "Wheat": [
         [
-          64,
-          114,
-          18
+          59.22,
+          80.1,
+          12.6
         ]
       ],
       "Seed": [
         [
-          107,
-          98,
-          17
+          93.25,
+          70.53,
+          11.899999999999999
         ]
       ],
       "Bog Iron": [
         [
-          238,
-          151,
-          19
+          170.85,
+          102.24,
+          13.299999999999999
         ]
       ],
       "Sage": [
         [
-          100,
-          110,
-          20
+          89.11,
+          77.71,
+          14.0
         ]
       ]
     },
     "wildlife": {
       "amberhart": [
         [
-          76,
-          76,
-          27
+          71.22,
+          57.36,
+          18.9
         ],
         [
-          39,
-          30,
-          27
+          34.22,
+          29.84,
+          18.9
         ],
         [
-          86,
-          -14,
-          22
+          80.82,
+          3.51,
+          15.399999999999999
         ]
       ],
       "amberwood_owl": [
         [
-          76,
-          76,
-          27
+          71.22,
+          57.36,
+          18.9
         ],
         [
-          39,
-          30,
-          27
+          34.22,
+          29.84,
+          18.9
         ],
         [
-          86,
-          -14,
-          22
+          80.82,
+          3.51,
+          15.399999999999999
         ]
       ],
       "lantern_stag": [
         [
-          76,
-          76,
-          27
+          71.22,
+          57.36,
+          18.9
         ],
         [
-          39,
-          30,
-          27
+          34.22,
+          29.84,
+          18.9
         ],
         [
-          86,
-          -14,
-          22
+          80.82,
+          3.51,
+          15.399999999999999
         ]
       ],
       "moss_badger": [
         [
-          76,
-          76,
-          27
+          71.22,
+          57.36,
+          18.9
         ],
         [
-          39,
-          30,
-          27
+          34.22,
+          29.84,
+          18.9
         ],
         [
-          86,
-          -14,
-          22
+          80.82,
+          3.51,
+          15.399999999999999
         ]
       ],
       "amber_lantern_moth": [
         [
-          76,
-          76,
-          27
+          71.22,
+          57.36,
+          18.9
         ],
         [
-          39,
-          30,
-          27
+          34.22,
+          29.84,
+          18.9
         ],
         [
-          86,
-          -14,
-          22
+          80.82,
+          3.51,
+          15.399999999999999
         ]
       ],
       "berry_bramble_boar": [
         [
-          76,
-          76,
-          27
+          71.22,
+          57.36,
+          18.9
         ],
         [
-          39,
-          30,
-          27
+          34.22,
+          29.84,
+          18.9
         ],
         [
-          86,
-          -14,
-          22
+          80.82,
+          3.51,
+          15.399999999999999
         ]
       ],
       "autumn_antler_stag": [
         [
-          76,
-          76,
-          27
+          71.22,
+          57.36,
+          18.9
         ],
         [
-          39,
-          30,
-          27
+          34.22,
+          29.84,
+          18.9
         ],
         [
-          86,
-          -14,
-          22
+          80.82,
+          3.51,
+          15.399999999999999
         ]
       ],
       "russet_faun": [
         [
-          76,
-          76,
-          27
+          71.22,
+          57.36,
+          18.9
         ],
         [
-          39,
-          30,
-          27
+          34.22,
+          29.84,
+          18.9
         ],
         [
-          86,
-          -14,
-          22
+          80.82,
+          3.51,
+          15.399999999999999
         ]
       ],
       "sapling_sprite": [
         [
-          76,
-          76,
-          27
+          71.22,
+          57.36,
+          18.9
         ],
         [
-          39,
-          30,
-          27
+          34.22,
+          29.84,
+          18.9
         ],
         [
-          86,
-          -14,
-          22
+          80.82,
+          3.51,
+          15.399999999999999
         ]
       ],
       "rootback_boar": [
         [
-          13,
-          -254,
-          26
+          8.22,
+          -179.45,
+          18.2
         ],
         [
-          114,
-          -253,
-          26
+          97.4,
+          -178.85,
+          18.2
         ],
         [
-          207,
-          63,
-          27
+          152.49,
+          49.59,
+          18.9
         ]
       ],
       "moss_bear": [
         [
-          13,
-          -254,
-          26
+          8.22,
+          -179.45,
+          18.2
         ],
         [
-          114,
-          -253,
-          26
+          97.4,
+          -178.85,
+          18.2
         ],
         [
-          207,
-          63,
-          27
+          152.49,
+          49.59,
+          18.9
         ]
       ],
       "mossback_boar": [
         [
-          13,
-          -254,
-          26
+          8.22,
+          -179.45,
+          18.2
         ],
         [
-          114,
-          -253,
-          26
+          97.4,
+          -178.85,
+          18.2
         ],
         [
-          207,
-          63,
-          27
+          152.49,
+          49.59,
+          18.9
         ]
       ],
       "autumn_bramble_boar": [
         [
-          13,
-          -254,
-          26
+          8.22,
+          -179.45,
+          18.2
         ],
         [
-          114,
-          -253,
-          26
+          97.4,
+          -178.85,
+          18.2
         ],
         [
-          207,
-          63,
-          27
+          152.49,
+          49.59,
+          18.9
         ]
       ],
       "brambleback_boar": [
         [
-          13,
-          -254,
-          26
+          8.22,
+          -179.45,
+          18.2
         ],
         [
-          114,
-          -253,
-          26
+          97.4,
+          -178.85,
+          18.2
         ],
         [
-          207,
-          63,
-          27
+          152.49,
+          49.59,
+          18.9
         ]
       ],
       "elderwood_stag": [
         [
-          13,
-          -254,
-          26
+          8.22,
+          -179.45,
+          18.2
         ],
         [
-          114,
-          -253,
-          26
+          97.4,
+          -178.85,
+          18.2
         ],
         [
-          207,
-          63,
-          27
+          152.49,
+          49.59,
+          18.9
         ]
       ],
       "giant_amber_moth": [
         [
-          13,
-          -254,
-          26
+          8.22,
+          -179.45,
+          18.2
         ],
         [
-          114,
-          -253,
-          26
+          97.4,
+          -178.85,
+          18.2
         ],
         [
-          207,
-          63,
-          27
+          152.49,
+          49.59,
+          18.9
         ]
       ],
       "amberwood_great_owl": [
         [
-          13,
-          -254,
-          26
+          8.22,
+          -179.45,
+          18.2
         ],
         [
-          114,
-          -253,
-          26
+          97.4,
+          -178.85,
+          18.2
         ],
         [
-          207,
-          63,
-          27
+          152.49,
+          49.59,
+          18.9
         ]
       ],
       "autumn_crown_stag": [
         [
-          13,
-          -254,
-          26
+          8.22,
+          -179.45,
+          18.2
         ],
         [
-          114,
-          -253,
-          26
+          97.4,
+          -178.85,
+          18.2
         ],
         [
-          207,
-          63,
-          27
+          152.49,
+          49.59,
+          18.9
         ]
       ],
       "mossback_badger": [
         [
-          13,
-          -254,
-          26
+          8.22,
+          -179.45,
+          18.2
         ],
         [
-          114,
-          -253,
-          26
+          97.4,
+          -178.85,
+          18.2
         ],
         [
-          207,
-          63,
-          27
+          152.49,
+          49.59,
+          18.9
         ]
       ],
       "giant_badger": [
         [
-          13,
-          -254,
-          26
+          8.22,
+          -179.45,
+          18.2
         ],
         [
-          114,
-          -253,
-          26
+          97.4,
+          -178.85,
+          18.2
         ],
         [
-          207,
-          63,
-          27
+          152.49,
+          49.59,
+          18.9
         ]
       ],
       "briarhide_wolf": [
         [
-          161,
-          -269,
-          29
+          125.24,
+          -188.42,
+          20.299999999999997
         ],
         [
-          277,
-          -161,
-          27
+          193.96,
+          -92.87,
+          18.9
         ],
         [
-          -4,
-          -320,
-          29
+          -8.78,
+          -218.94,
+          20.299999999999997
         ]
       ],
       "thornhide_wolf": [
         [
-          161,
-          -269,
-          29
+          125.24,
+          -188.42,
+          20.299999999999997
         ],
         [
-          277,
-          -161,
-          27
+          193.96,
+          -92.87,
+          18.9
         ],
         [
-          -4,
-          -320,
-          29
+          -8.78,
+          -218.94,
+          20.299999999999997
         ]
       ],
       "moss_armored_hound": [
         [
-          161,
-          -269,
-          29
+          125.24,
+          -188.42,
+          20.299999999999997
         ],
         [
-          277,
-          -161,
-          27
+          193.96,
+          -92.87,
+          18.9
         ],
         [
-          -4,
-          -320,
-          29
+          -8.78,
+          -218.94,
+          20.299999999999997
         ]
       ],
       "thornbark_wolf": [
         [
-          161,
-          -269,
-          29
+          125.24,
+          -188.42,
+          20.299999999999997
         ],
         [
-          277,
-          -161,
-          27
+          193.96,
+          -92.87,
+          18.9
         ],
         [
-          -4,
-          -320,
-          29
+          -8.78,
+          -218.94,
+          20.299999999999997
         ]
       ],
       "moonshadow_lynx": [
         [
-          161,
-          -269,
-          29
+          125.24,
+          -188.42,
+          20.299999999999997
         ],
         [
-          277,
-          -161,
-          27
+          193.96,
+          -92.87,
+          18.9
         ],
         [
-          -4,
-          -320,
-          29
+          -8.78,
+          -218.94,
+          20.299999999999997
         ]
       ],
       "moss_bugbear": [
         [
-          161,
-          -269,
-          29
+          125.24,
+          -188.42,
+          20.299999999999997
         ],
         [
-          277,
-          -161,
-          27
+          193.96,
+          -92.87,
+          18.9
         ],
         [
-          -4,
-          -320,
-          29
+          -8.78,
+          -218.94,
+          20.299999999999997
         ]
       ],
       "sporefolk": [
         [
-          161,
-          -269,
-          29
+          125.24,
+          -188.42,
+          20.299999999999997
         ],
         [
-          277,
-          -161,
-          27
+          193.96,
+          -92.87,
+          18.9
         ],
         [
-          -4,
-          -320,
-          29
+          -8.78,
+          -218.94,
+          20.299999999999997
         ]
       ],
       "owlbear": [
         [
-          161,
-          -269,
-          29
+          125.24,
+          -188.42,
+          20.299999999999997
         ],
         [
-          277,
-          -161,
-          27
+          193.96,
+          -92.87,
+          18.9
         ],
         [
-          -4,
-          -320,
-          29
+          -8.78,
+          -218.94,
+          20.299999999999997
         ]
       ],
       "mossbound_stone_golem": [
         [
-          161,
-          -269,
-          29
+          125.24,
+          -188.42,
+          20.299999999999997
         ],
         [
-          277,
-          -161,
-          27
+          193.96,
+          -92.87,
+          18.9
         ],
         [
-          -4,
-          -320,
-          29
+          -8.78,
+          -218.94,
+          20.299999999999997
         ]
       ],
       "thornwood_dryad_queen": [
         [
-          273,
-          -259,
-          28
+          191.59,
+          -182.44,
+          19.599999999999998
         ],
         [
-          183,
-          -350,
-          29
+          138.27,
+          -236.89,
+          20.299999999999997
         ],
         [
-          332,
-          -192,
-          29
+          226.54,
+          -123.87,
+          20.299999999999997
         ]
       ],
       "spectral_forest_knight": [
         [
-          273,
-          -259,
-          28
+          191.59,
+          -182.44,
+          19.599999999999998
         ],
         [
-          183,
-          -350,
-          29
+          138.27,
+          -236.89,
+          20.299999999999997
         ],
         [
-          332,
-          -192,
-          29
+          226.54,
+          -123.87,
+          20.299999999999997
         ]
       ],
       "autumn_bark_treant": [
         [
-          273,
-          -259,
-          28
+          191.59,
+          -182.44,
+          19.599999999999998
         ],
         [
-          183,
-          -350,
-          29
+          138.27,
+          -236.89,
+          20.299999999999997
         ],
         [
-          332,
-          -192,
-          29
+          226.54,
+          -123.87,
+          20.299999999999997
         ]
       ],
       "elderwood_dryad_queen": [
         [
-          273,
-          -259,
-          28
+          191.59,
+          -182.44,
+          19.599999999999998
         ],
         [
-          183,
-          -350,
-          29
+          138.27,
+          -236.89,
+          20.299999999999997
         ],
         [
-          332,
-          -192,
-          29
+          226.54,
+          -123.87,
+          20.299999999999997
         ]
       ],
       "spectral_forest_duelist": [
         [
-          273,
-          -259,
-          28
+          191.59,
+          -182.44,
+          19.599999999999998
         ],
         [
-          183,
-          -350,
-          29
+          138.27,
+          -236.89,
+          20.299999999999997
         ],
         [
-          332,
-          -192,
-          29
+          226.54,
+          -123.87,
+          20.299999999999997
         ]
       ],
       "moss_bearded_giant": [
         [
-          273,
-          -259,
-          28
+          191.59,
+          -182.44,
+          19.599999999999998
         ],
         [
-          183,
-          -350,
-          29
+          138.27,
+          -236.89,
+          20.299999999999997
         ],
         [
-          332,
-          -192,
-          29
+          226.54,
+          -123.87,
+          20.299999999999997
         ]
       ],
       "ember_leaf_spirit": [
         [
-          273,
-          -259,
-          28
+          191.59,
+          -182.44,
+          19.599999999999998
         ],
         [
-          183,
-          -350,
-          29
+          138.27,
+          -236.89,
+          20.299999999999997
         ],
         [
-          332,
-          -192,
-          29
+          226.54,
+          -123.87,
+          20.299999999999997
         ]
       ]
     }
@@ -2498,14 +2085,14 @@
         "id": "old-bridge",
         "endpoints": [
           [
-            42.671202025389285,
+            37.8941,
             40.06575959492214,
-            -136.97278784766428
+            -70.0632
           ],
           [
-            39.328797974610715,
+            34.5517,
             40.734240405077855,
-            -157.02721215233572
+            -88.9017
           ]
         ]
       },
@@ -2513,14 +2100,14 @@
         "id": "high-bridge",
         "endpoints": [
           [
-            97.79643344409556,
+            87.803,
             44.3847112047311,
-            -207.12089427203836
+            -138.9954
           ],
           [
-            141.20356655590444,
+            113.5155,
             44.0152887952689,
-            -185.87910572796164
+            -117.7536
           ]
         ]
       },
@@ -2528,14 +2115,14 @@
         "id": "ridge-bridge",
         "endpoints": [
           [
-            132.34853872804266,
+            108.2702,
             52.22568645196272,
-            -328.52302901214375
+            -224.0368
           ],
           [
-            171.65146127195734,
+            131.5515,
             52.97431354803728,
-            -285.47697098785625
+            -198.2812
           ]
         ]
       },
@@ -2543,14 +2130,14 @@
         "id": "mill-footbridge",
         "endpoints": [
           [
-            -10.0,
-            28.155555555555555,
-            -126.0
+            -14.7648,
+            28.15582738957006,
+            -63.6301
           ],
           [
-            -42.0,
-            27.444444444444443,
-            -126.0
+            -37.8162,
+            27.444172610429938,
+            -65.7591
           ]
         ]
       },
@@ -2558,14 +2145,14 @@
         "id": "moot-bridge",
         "endpoints": [
           [
-            -28.984114513335804,
+            -30.0989,
             40.58803687405075,
-            -188.74112567744027
+            -120.6156
           ],
           [
-            -40.015885486664196,
+            -36.6336,
             38.21196312594925,
-            -208.25887432255973
+            -140.1334
           ]
         ]
       },
@@ -2573,14 +2160,14 @@
         "id": "harbour",
         "endpoints": [
           [
-            -92.0,
+            -67.4268,
             3.128888888888889,
-            24.0
+            26.251
           ],
           [
-            -133.0,
+            -91.7134,
             1.6711111111111112,
-            24.0
+            26.251
           ]
         ]
       },
@@ -2588,14 +2175,14 @@
         "id": "kelp-landing",
         "endpoints": [
           [
-            -64.0,
+            -50.8408,
             3.102702702702703,
-            72.0
+            54.9707
           ],
           [
-            -97.0,
+            -70.3885,
             1.4972972972972973,
-            72.0
+            54.9707
           ]
         ]
       }
@@ -2625,6 +2212,42 @@
     "notes": [
       "Every terrain sub-mesh is named Terrain_<class>; every built walkable surface is named Walk_<...>. The client turns both into the navigation collision layer the grounding ray tests.",
       "Bridges and canopy platforms are walk surfaces, so a downward grounding ray under one resolves onto the deck above; the terrain beneath them is water or ravine and is not walkable."
+    ],
+    "borderVistas": [
+      {
+        "region": "mirrorhold",
+        "portal": "west-gorge",
+        "depthMetres": 140,
+        "widthMetres": 160,
+        "edge": [
+          269.0,
+          -27.59832635983262
+        ],
+        "direction": [
+          1.0,
+          0.0
+        ],
+        "sourceGlbSha256": "15abdbb412bf3f87e16d3bb1f845135930e755a0deff6618333686f5f50f9d12",
+        "staticSceneryMeshes": 0,
+        "mode": "static terrain view; simulation changes at the road crossing"
+      },
+      {
+        "region": "grey_moors",
+        "portal": "north-gate",
+        "depthMetres": 140,
+        "widthMetres": 160,
+        "edge": [
+          122.28025477707007,
+          118.0
+        ],
+        "direction": [
+          0.0,
+          1.0
+        ],
+        "sourceGlbSha256": "95dcd7c49abc0951ae4234736cc50164e80c86aebbbaaadc3e440f5e05840bed",
+        "staticSceneryMeshes": 0,
+        "mode": "static terrain view; simulation changes at the road crossing"
+      }
     ]
   },
   "landmarks": [
@@ -2634,9 +2257,9 @@
       "node": "Landmark_MootHall",
       "type": "building",
       "position": [
-        -12.0,
+        -16.7771,
         42.46,
-        -192.0
+        -123.8745
       ],
       "function": "civic"
     },
@@ -2646,9 +2269,9 @@
       "node": "Landmark_AmberHall",
       "type": "building",
       "position": [
-        66.0,
+        61.2229,
         41.1,
-        -150.0
+        -81.8745
       ],
       "function": "guild"
     },
@@ -2658,9 +2281,9 @@
       "node": "Landmark_MootHall",
       "type": "settlement",
       "position": [
-        30.0,
+        25.2229,
         40.8,
-        -174.0
+        -105.8745
       ]
     },
     {
@@ -2669,13 +2292,13 @@
       "node": "Landmark_GreatArch",
       "type": "monument",
       "position": [
-        174,
+        132.9427,
         41.4,
-        -102
+        -49.1381
       ],
       "approach": [
         58.0,
-        22.49,
+        22.15,
         -20.0
       ]
     },
@@ -2685,9 +2308,9 @@
       "node": "Landmark_AncientArch_0",
       "type": "ruin",
       "position": [
-        -48.0,
+        -41.3631,
         3.6,
-        -102.0
+        -49.1381
       ]
     },
     {
@@ -2696,9 +2319,9 @@
       "node": "Landmark_AncientArch_1",
       "type": "ruin",
       "position": [
-        114.0,
-        59.59,
-        -276.0
+        97.4013,
+        60.23,
+        -192.6109
       ]
     },
     {
@@ -2707,9 +2330,9 @@
       "node": "Landmark_AncientArch_2",
       "type": "ruin",
       "position": [
-        138.0,
-        32.56,
-        -60.0
+        111.6178,
+        31.71,
+        -24.0084
       ]
     },
     {
@@ -2718,9 +2341,9 @@
       "node": "Landmark_AncientArch_3",
       "type": "ruin",
       "position": [
-        -48.0,
+        -41.3631,
         7.75,
-        -186.0
+        -117.8745
       ]
     },
     {
@@ -2729,9 +2352,9 @@
       "node": "Landmark_AncientArch_4",
       "type": "ruin",
       "position": [
-        -102.0,
+        -73.3503,
         -0.97,
-        -300.0
+        -206.9707
       ]
     },
     {
@@ -2740,9 +2363,9 @@
       "node": "Landmark_AncientArch_5",
       "type": "ruin",
       "position": [
-        252.0,
+        179.1465,
         51.29,
-        -222.0
+        -153.8745
       ]
     },
     {
@@ -2751,9 +2374,9 @@
       "node": "Landmark_AncientArch_6",
       "type": "ruin",
       "position": [
-        312.0,
-        38.25,
-        -102.0
+        214.6879,
+        39.79,
+        -49.1381
       ]
     },
     {
@@ -2762,9 +2385,9 @@
       "node": "Landmark_ForestGate_0",
       "type": "gate",
       "position": [
-        -18.0,
+        -22.7771,
         0.91,
-        -78.0
+        -34.7782
       ]
     },
     {
@@ -2773,9 +2396,9 @@
       "node": "Landmark_ForestGate_1",
       "type": "gate",
       "position": [
-        222.0,
-        41.83,
-        -90.0
+        161.3758,
+        44.09,
+        -41.9582
       ]
     },
     {
@@ -2784,9 +2407,9 @@
       "node": "Landmark_HollowTreeHall",
       "type": "tree-hall",
       "position": [
-        -78.0,
+        -59.1338,
         26.14,
-        -258.0
+        -181.841
       ]
     },
     {
@@ -2795,9 +2418,9 @@
       "node": "Landmark_GreatTree_Wood",
       "type": "monumental-tree",
       "position": [
-        78.0,
+        73.2229,
         56.18,
-        -264.0
+        -185.431
       ]
     },
     {
@@ -2806,9 +2429,9 @@
       "node": "Landmark_CanopyPlatform_0",
       "type": "canopy-works",
       "position": [
-        66.0,
-        60.68,
-        -210.0
+        61.2229,
+        60.62,
+        -141.8745
       ]
     },
     {
@@ -2817,9 +2440,9 @@
       "node": "Landmark_GardenFountain",
       "type": "garden",
       "position": [
-        156.0,
-        21.14,
-        30.0
+        122.2803,
+        20.72,
+        29.841
       ]
     },
     {
@@ -2828,9 +2451,9 @@
       "node": "Landmark_GardenRotunda",
       "type": "pavilion",
       "position": [
-        156.5,
-        21.14,
-        20.5
+        122.5764,
+        20.72,
+        24.1569
       ]
     },
     {
@@ -2839,9 +2462,9 @@
       "node": "Landmark_Watchtower_0",
       "type": "lookout",
       "position": [
-        258.0,
+        182.7006,
         49.38,
-        -210.0
+        -141.8745
       ]
     },
     {
@@ -2850,9 +2473,9 @@
       "node": "Landmark_Watchtower_1",
       "type": "lookout",
       "position": [
-        240.0,
-        59.46,
-        -336.0
+        172.0382,
+        57.44,
+        -228.5105
       ]
     },
     {
@@ -2861,9 +2484,9 @@
       "node": "Landmark_Watchtower_2",
       "type": "lookout",
       "position": [
-        138.0,
-        11.9,
-        120.0
+        111.6178,
+        11.88,
+        83.6904
       ]
     },
     {
@@ -2872,9 +2495,9 @@
       "node": "Landmark_Watchtower_3",
       "type": "lookout",
       "position": [
-        72.0,
-        50.94,
-        -312.0
+        67.2229,
+        51.01,
+        -214.1506
       ]
     },
     {
@@ -2883,9 +2506,9 @@
       "node": "Landmark_Watchtower_4",
       "type": "lookout",
       "position": [
-        -48.0,
-        -0.76,
-        156.0
+        -41.3631,
+        -0.7,
+        105.2301
       ]
     },
     {
@@ -2894,9 +2517,9 @@
       "node": "Landmark_Watchtower_5",
       "type": "lookout",
       "position": [
-        366.0,
-        33.93,
-        36.0
+        246.6752,
+        31.47,
+        33.431
       ]
     },
     {
@@ -2905,9 +2528,9 @@
       "node": "Landmark_Watchtower_6",
       "type": "lookout",
       "position": [
-        210.0,
+        154.2675,
         57.54,
-        -276.0
+        -192.6109
       ]
     },
     {
@@ -2916,9 +2539,9 @@
       "node": "Landmark_Watchtower_7",
       "type": "lookout",
       "position": [
-        -46,
-        24.93011539478996,
-        -194
+        -40.1783,
+        25.857301040551945,
+        -125.8745
       ]
     },
     {
@@ -2927,9 +2550,9 @@
       "node": "Landmark_Wayshrine",
       "type": "shrine",
       "position": [
-        108.0,
+        93.8471,
         28.23,
-        -42.0
+        -13.2385
       ]
     },
     {
@@ -2938,9 +2561,9 @@
       "node": "Prop_TimberStack_0",
       "type": "industry",
       "position": [
-        216.0,
+        157.8217,
         23.53,
-        102.0
+        72.9205
       ]
     },
     {
@@ -2949,9 +2572,9 @@
       "node": "Landmark_CharcoalKiln_0",
       "type": "industry",
       "position": [
-        252.0,
-        29.83,
-        24.0
+        179.1465,
+        27.53,
+        26.251
       ]
     },
     {
@@ -2960,9 +2583,9 @@
       "node": "Prop_BurntCamp_1",
       "type": "transition",
       "position": [
-        324.0,
-        29.67,
-        -42.0
+        221.7962,
+        29.18,
+        -13.2385
       ]
     },
     {
@@ -2971,9 +2594,9 @@
       "node": "Landmark_StandingStone_0",
       "type": "ruin",
       "position": [
-        -51.0,
+        -43.1401,
         16.97,
-        -36.0
+        -9.6485
       ]
     },
     {
@@ -2982,20 +2605,20 @@
       "node": "Landmark_SeaArch",
       "type": "sea-stack",
       "position": [
-        -43.5,
-        -1.01,
-        -60.0
+        -38.6975,
+        -1.03,
+        -24.0084
       ]
     },
     {
       "id": "south-orchard",
       "name": "The Long Orchard",
-      "node": "Orchard_01_Wood",
+      "node": "Orchard_31_Wood",
       "type": "agriculture",
       "position": [
-        48.0,
-        3.52,
-        138.0
+        43.2229,
+        7.33,
+        94.4603
       ]
     },
     {
@@ -3004,9 +2627,9 @@
       "node": "Prop_Skep_beekeeper_01",
       "type": "agriculture",
       "position": [
-        90.0,
+        83.1847,
         12.02,
-        102.0
+        72.9205
       ]
     },
     {
@@ -3015,9 +2638,9 @@
       "node": "Interact_Well_Meadow",
       "type": "clearing",
       "position": [
-        -12.0,
+        -16.7771,
         10.72,
-        24.0
+        26.251
       ]
     },
     {
@@ -3026,9 +2649,9 @@
       "node": "LogPile_Large_coppice_01",
       "type": "industry",
       "position": [
-        156.0,
-        62.85,
-        -366.0
+        122.2803,
+        63.47,
+        -246.4603
       ]
     },
     {
@@ -3037,9 +2660,9 @@
       "node": "Prop_Tent_ridge_camp_01",
       "type": "camp",
       "position": [
-        222.0,
-        57.77,
-        -330.0
+        161.3758,
+        57.04,
+        -224.9205
       ]
     },
     {
@@ -3048,9 +2671,9 @@
       "node": "Landmark_BoundaryStone",
       "type": "marker",
       "position": [
-        288.0,
+        200.4713,
         58.45,
-        -288.0
+        -199.7908
       ]
     },
     {
@@ -3059,9 +2682,9 @@
       "node": "Landmark_AshChapel",
       "type": "ruin",
       "position": [
-        312.0,
-        51.25,
-        -222.0
+        214.6879,
+        50.28,
+        -153.8745
       ]
     },
     {
@@ -3070,9 +2693,9 @@
       "node": "Stone_RuinFragment_C_cinder_field_01",
       "type": "battlefield",
       "position": [
-        378.0,
-        51.15,
-        -174.0
+        253.7834,
+        51.91,
+        -105.8745
       ]
     },
     {
@@ -3081,9 +2704,9 @@
       "node": "Brazier_smoke_vents_01",
       "type": "transition",
       "position": [
-        354.0,
-        35.78,
-        -24.0
+        239.5669,
+        33.5,
+        -2.4686
       ]
     },
     {
@@ -3092,9 +2715,9 @@
       "node": "Landmark_EastQuarry",
       "type": "industry",
       "position": [
-        348.0,
-        29.67,
-        132.0
+        236.0127,
+        27.57,
+        90.8703
       ]
     },
     {
@@ -3103,42 +2726,42 @@
       "node": "Landmark_Tower_far_watch",
       "type": "lookout",
       "position": [
-        384.0,
-        32.81,
-        90.0
+        257.3376,
+        31.13,
+        65.7406
       ]
     },
     {
       "id": "far-grove",
       "name": "The Far Grove",
-      "node": "Grove_04_Wood",
+      "node": "Grove_11_Wood",
       "type": "old-growth",
       "position": [
-        -24.0,
+        -27.1465,
         44.84,
-        -372.0
+        -250.0502
       ]
     },
     {
       "id": "east-grove",
       "name": "The East Grove",
-      "node": "Grove_08_Wood",
+      "node": "Grove_11_Wood",
       "type": "old-growth",
       "position": [
-        198.0,
-        44.91,
-        -180.0
+        147.1592,
+        43.11,
+        -111.8745
       ]
     },
     {
       "id": "deep-grove",
       "name": "The Deep Grove",
-      "node": "Grove_12_Wood",
+      "node": "Grove_11_Wood",
       "type": "old-growth",
       "position": [
-        -60.0,
-        30.28,
-        -330.0
+        -48.4713,
+        28.7,
+        -224.9205
       ]
     },
     {
@@ -3147,9 +2770,9 @@
       "node": "Landmark_UpperFallsShrine",
       "type": "shrine",
       "position": [
-        60.0,
-        52.5,
-        -372.0
+        55.2229,
+        54.92,
+        -250.0502
       ]
     },
     {
@@ -3158,9 +2781,9 @@
       "node": "Landmark_Survey_old-bridge",
       "type": "bridge",
       "position": [
-        41.0,
+        36.2229,
         40.4,
-        -147.0
+        -78.8745
       ]
     },
     {
@@ -3169,9 +2792,9 @@
       "node": "Landmark_Survey_high-bridge",
       "type": "bridge",
       "position": [
-        119.5,
+        100.6592,
         44.2,
-        -196.5
+        -128.3745
       ]
     },
     {
@@ -3180,9 +2803,9 @@
       "node": "Landmark_Survey_ridge-bridge",
       "type": "bridge",
       "position": [
-        152.0,
+        119.9108,
         52.6,
-        -307.0
+        -211.159
       ]
     },
     {
@@ -3191,9 +2814,9 @@
       "node": "Landmark_Survey_mill-footbridge",
       "type": "bridge",
       "position": [
-        -26.0,
+        -28.3312,
         27.799999999999997,
-        -126.0
+        -64.6946
       ]
     },
     {
@@ -3202,9 +2825,9 @@
       "node": "Landmark_Survey_moot-bridge",
       "type": "bridge",
       "position": [
-        -34.5,
+        -33.3662,
         39.4,
-        -198.5
+        -130.3745
       ]
     },
     {
@@ -3213,9 +2836,9 @@
       "node": "Landmark_Survey_harbour",
       "type": "harbour",
       "position": [
-        -112.5,
+        -79.5701,
         2.4000000000000004,
-        24.0
+        26.251
       ]
     },
     {
@@ -3224,9 +2847,9 @@
       "node": "Landmark_Survey_kelp-landing",
       "type": "harbour",
       "position": [
-        -80.5,
+        -60.6146,
         2.3,
-        72.0
+        54.9707
       ]
     },
     {
@@ -3235,9 +2858,9 @@
       "node": "Landmark_Building_Lodge_14",
       "type": "building",
       "position": [
-        -34,
+        -33.0701,
         27.0,
-        -118
+        -58.7113
       ],
       "function": "building"
     },
@@ -3247,9 +2870,9 @@
       "node": "Landmark_GateCellar",
       "type": "building",
       "position": [
-        190,
-        37.12366531478244,
-        -96
+        142.4204,
+        39.7245983074849,
+        -45.5481
       ]
     },
     {
@@ -3258,9 +2881,9 @@
       "node": "Landmark_Building_Lodge_00",
       "type": "building",
       "position": [
-        7,
-        41.519354765660545,
-        -205
+        2.2229,
+        38.53668800336401,
+        -136.8745
       ]
     },
     {
@@ -3269,9 +2892,9 @@
       "node": "Landmark_Building_Lodge_01",
       "type": "building",
       "position": [
-        58,
-        40.90253705006156,
-        -178
+        53.2229,
+        40.88421504744452,
+        -109.8745
       ]
     },
     {
@@ -3280,9 +2903,9 @@
       "node": "Landmark_Building_Lodge_02",
       "type": "building",
       "position": [
-        -6,
-        38.477627460412116,
-        -208
+        -10.7771,
+        35.54696188857137,
+        -139.8745
       ]
     },
     {
@@ -3291,9 +2914,9 @@
       "node": "Landmark_Building_Lodge_03",
       "type": "building",
       "position": [
-        61,
-        48.35514159053289,
-        -224
+        56.2229,
+        48.22697748088302,
+        -155.8745
       ]
     },
     {
@@ -3302,9 +2925,9 @@
       "node": "Landmark_Building_Lodge_04",
       "type": "building",
       "position": [
-        -2,
+        -6.7771,
         40.65,
-        -165
+        -96.8745
       ]
     },
     {
@@ -3313,9 +2936,9 @@
       "node": "Landmark_Building_Lodge_05",
       "type": "building",
       "position": [
-        58,
-        41.25186958089267,
-        -139
+        53.2229,
+        40.97509409648533,
+        -71.2762
       ]
     },
     {
@@ -3324,9 +2947,9 @@
       "node": "Landmark_Building_Lodge_06",
       "type": "building",
       "position": [
-        37,
-        44.80583335429011,
-        -231
+        32.2229,
+        42.3428748439971,
+        -162.8745
       ]
     },
     {
@@ -3335,9 +2958,9 @@
       "node": "Landmark_Building_Lodge_07",
       "type": "building",
       "position": [
-        66,
-        53.65367270564698,
-        -245
+        61.2229,
+        53.64376950715989,
+        -174.0628
       ]
     },
     {
@@ -3346,9 +2969,9 @@
       "node": "Landmark_Building_Lodge_08",
       "type": "building",
       "position": [
-        -52.5,
+        -44.0287,
         6.549057942661243,
-        28.5
+        28.9435
       ]
     },
     {
@@ -3357,9 +2980,9 @@
       "node": "Landmark_Building_Lodge_09",
       "type": "building",
       "position": [
-        -66.0,
-        4.892299630879569,
-        45.0
+        -52.0255,
+        4.737058061162293,
+        38.8159
       ]
     },
     {
@@ -3368,9 +2991,9 @@
       "node": "Landmark_Building_Lodge_10",
       "type": "building",
       "position": [
-        313.5,
-        28.218482394466683,
-        96.0
+        215.5764,
+        28.034094969767757,
+        69.3305
       ]
     },
     {
@@ -3379,9 +3002,9 @@
       "node": "Landmark_Building_Lodge_11",
       "type": "building",
       "position": [
-        333.0,
-        28.864539081528264,
-        82.5
+        227.1274,
+        25.044145072034823,
+        61.2531
       ]
     },
     {
@@ -3390,9 +3013,9 @@
       "node": "Landmark_Building_Lodge_12",
       "type": "building",
       "position": [
-        202.5,
-        23.14955323674289,
-        94.5
+        149.8248,
+        22.050483125217138,
+        68.4331
       ]
     },
     {
@@ -3401,9 +3024,9 @@
       "node": "Landmark_Building_Lodge_13",
       "type": "building",
       "position": [
-        264.0,
-        43.9584374928734,
-        -138.0
+        186.2548,
+        42.73909682540835,
+        -70.6778
       ]
     },
     {
@@ -3412,9 +3035,9 @@
       "node": "Landmark_Building_Lodge_15",
       "type": "building",
       "position": [
-        75.0,
-        46.089040334065515,
-        -204.0
+        70.2229,
+        47.0345229195563,
+        -135.8745
       ]
     },
     {
@@ -3423,9 +3046,9 @@
       "node": "Landmark_Building_Lodge_16",
       "type": "building",
       "position": [
-        -79,
+        -59.7261,
         7.85,
-        -168
+        -99.8745
       ]
     },
     {
@@ -3434,9 +3057,9 @@
       "node": "Landmark_Building_Lodge_17",
       "type": "building",
       "position": [
-        -50,
+        -42.5478,
         7.85,
-        -181
+        -112.8745
       ]
     },
     {
@@ -3445,9 +3068,9 @@
       "node": "Landmark_Building_Lodge_18",
       "type": "building",
       "position": [
-        -43,
-        21.369419459788872,
-        -155
+        -38.4013,
+        21.395462847009135,
+        -86.8745
       ]
     },
     {
@@ -3456,9 +3079,9 @@
       "node": "Landmark_Building_Lodge_19",
       "type": "building",
       "position": [
-        -18.0,
+        -22.7771,
         36.230599999999995,
-        -240.0
+        -171.0711
       ]
     },
     {
@@ -3467,9 +3090,9 @@
       "node": "Landmark_Building_Lodge_20",
       "type": "building",
       "position": [
-        -27.0,
-        37.88887045589237,
-        -234.0
+        -28.9236,
+        35.76841736472457,
+        -165.8745
       ]
     },
     {
@@ -3478,9 +3101,9 @@
       "node": "Landmark_Building_Lodge_21",
       "type": "building",
       "position": [
-        81.0,
-        50.727087233142996,
-        -348.0
+        76.2229,
+        53.82599413415129,
+        -235.6904
       ]
     },
     {
@@ -3489,9 +3112,9 @@
       "node": "Landmark_Building_Lodge_22",
       "type": "building",
       "position": [
-        99.0,
-        46.57245836720621,
-        -360.0
+        88.5159,
+        53.39804739692603,
+        -242.8703
       ]
     },
     {
@@ -3500,9 +3123,9 @@
       "node": "Landmark_Building_Lodge_23",
       "type": "building",
       "position": [
-        90.0,
-        52.2416268210922,
-        -364.5
+        83.1847,
+        54.27819575143536,
+        -245.5628
       ]
     },
     {
@@ -3511,9 +3134,9 @@
       "node": "Landmark_Building_Lodge_24",
       "type": "building",
       "position": [
-        291.0,
-        49.29351197534615,
-        -174.0
+        202.2484,
+        44.79124306219981,
+        -105.8745
       ]
     },
     {
@@ -3522,9 +3145,9 @@
       "node": "Landmark_Building_Lodge_25",
       "type": "building",
       "position": [
-        309.0,
-        49.29351197534615,
-        -186.0
+        212.9108,
+        44.79124306219981,
+        -117.8745
       ]
     },
     {
@@ -3533,9 +3156,9 @@
       "node": "Landmark_Building_Lodge_26",
       "type": "building",
       "position": [
-        300.0,
-        49.29351197534615,
-        -171.0
+        207.5796,
+        44.79124306219981,
+        -102.8745
       ]
     },
     {
@@ -3544,9 +3167,9 @@
       "node": "Landmark_Building_Lodge_27",
       "type": "building",
       "position": [
-        133.5,
-        16.856291011998913,
-        94.5
+        108.9522,
+        16.69259324668998,
+        68.4331
       ]
     },
     {
@@ -3555,9 +3178,9 @@
       "node": "Landmark_Building_Lodge_28",
       "type": "building",
       "position": [
-        234.0,
-        16.58102427735493,
-        162.0
+        168.4841,
+        16.580970409390655,
+        108.8201
       ]
     },
     {
@@ -3566,9 +3189,9 @@
       "node": "Landmark_Building_Lodge_29",
       "type": "building",
       "position": [
-        282.0,
-        21.65371849608791,
-        90.0
+        196.9172,
+        21.726767173181823,
+        65.7406
       ]
     },
     {
@@ -3577,9 +3200,9 @@
       "node": "Landmark_Building_Lodge_30",
       "type": "building",
       "position": [
-        112.5,
-        59.16487340136661,
-        -280.5
+        96.5127,
+        60.18343178006215,
+        -195.3033
       ]
     },
     {
@@ -3589,9 +3212,9 @@
       "type": "lore-site",
       "thread": "A",
       "position": [
-        -70.89,
-        10.02,
-        -17.17
+        -54.9221,
+        9.43,
+        1.6179
       ],
       "note": "Nine stones with lantern niches cut in their east faces and a fire before the middle one that is never let out. Hermit Bode keeps it."
     },
@@ -3602,9 +3225,9 @@
       "type": "lore-site",
       "thread": "A",
       "position": [
-        -48.0,
-        31.19,
-        -322.0
+        -41.3631,
+        31.47,
+        -220.1339
       ],
       "note": "The deep grove, burnt to the heart in a ring, with one sapling in the char. The grove reader says the scar is older than the fire."
     },
@@ -3615,23 +3238,23 @@
       "type": "lore-site",
       "thread": "I",
       "position": [
-        -77.13,
-        4.07,
-        94.14
+        -67.4268,
+        -0.09,
+        62.1506
       ],
       "note": "Tomas Root's counting bench on one side of the bee fence, the Mycelari daybook-stump on the other, and the same count cut into both."
     },
     {
       "id": "march-north-pass",
       "name": "The Whitehorn March",
-      "node": "March_north_pass_Stone",
+      "node": "March_north_pass_Signpost",
       "type": "transition",
       "position": [
-        66.7,
-        55.76,
-        -378.0
+        61.9229,
+        55.0,
+        -253.6402
       ],
-      "note": "Where the Amberwood gives way to the Whitehorn Range: mycelari road furniture, a march stone, a waystation, and 19 pieces of the country beyond."
+      "note": "A changing landscape and an ordinary direction sign mark this border road."
     },
     {
       "id": "station-north-pass",
@@ -3639,22 +3262,22 @@
       "node": "March_north_pass_Station",
       "type": "waystation",
       "position": [
-        60.5,
-        50.88,
-        -362.0
+        55.7229,
+        54.79,
+        -244.0669
       ]
     },
     {
       "id": "march-east-road",
       "name": "The Gorge March",
-      "node": "March_east_road_Stone",
+      "node": "March_east_road_Signpost",
       "type": "transition",
       "position": [
-        387.0,
-        41.14,
-        -71.3
+        259.1146,
+        41.52,
+        -30.7695
       ],
-      "note": "Where the Amberwood gives way to Mirrorhold: mycelari road furniture, a march stone, a waystation, and 10 pieces of the country beyond."
+      "note": "A changing landscape and an ordinary direction sign mark this border road."
     },
     {
       "id": "station-east-road",
@@ -3662,22 +3285,22 @@
       "node": "March_east_road_Station",
       "type": "waystation",
       "position": [
-        371.0,
-        40.54,
-        -77.5
+        249.6369,
+        41.6,
+        -34.4791
       ]
     },
     {
       "id": "march-south-road",
       "name": "The Moor March",
-      "node": "March_south_road_Stone",
+      "node": "March_south_road_Signpost",
       "type": "transition",
       "position": [
-        161.3,
-        12.55,
-        156.0
+        125.4197,
+        11.24,
+        105.2301
       ],
-      "note": "Where the Amberwood gives way to the Grey Moors: mycelari road furniture, a march stone, a waystation, and 19 pieces of the country beyond."
+      "note": "A changing landscape and an ordinary direction sign mark this border road."
     },
     {
       "id": "station-south-road",
@@ -3685,9 +3308,9 @@
       "node": "March_south_road_Station",
       "type": "waystation",
       "position": [
-        167.5,
-        14.87,
-        140.0
+        129.0924,
+        13.22,
+        95.6569
       ]
     },
     {
@@ -3696,9 +3319,9 @@
       "node": "March_harbour_quay_Stone",
       "type": "transition",
       "position": [
-        -123.0,
+        -85.7898,
         1.47,
-        29.3
+        29.4222
       ],
       "note": "Where the Amberwood gives way to Westhaven: mycelari road furniture, a march stone, a waystation, and 9 pieces of the country beyond."
     },
@@ -3708,9 +3331,9 @@
       "node": "March_harbour_quay_Station",
       "type": "waystation",
       "position": [
-        -88.0,
+        -65.0573,
         3.28,
-        33.0
+        31.636
       ]
     }
   ],
@@ -3720,9 +3343,9 @@
       "node": "Interact_Well_Market",
       "type": "well",
       "position": [
-        1,
+        -3.7771,
         40.75,
-        -177
+        -108.8745
       ]
     },
     {
@@ -3731,9 +3354,9 @@
       "type": "craft-station",
       "craft": "amber-working",
       "position": [
-        54.75,
-        41.35,
-        -142.5
+        49.9729,
+        41.08,
+        -74.3745
       ]
     },
     {
@@ -3742,9 +3365,9 @@
       "type": "craft-station",
       "craft": "amber-working",
       "position": [
-        44,
+        39.2229,
         40.8,
-        -178
+        -109.8745
       ]
     },
     {
@@ -3753,9 +3376,9 @@
       "type": "craft-station",
       "craft": "amber-working",
       "position": [
-        58.5,
-        49.69,
-        -216.0
+        53.7229,
+        48.47,
+        -147.8745
       ]
     },
     {
@@ -3764,9 +3387,9 @@
       "type": "craft-station",
       "craft": "amber-working",
       "position": [
-        99.0,
-        59.22,
-        -289.5
+        88.5159,
+        59.92,
+        -200.6883
       ]
     },
     {
@@ -3775,9 +3398,9 @@
       "type": "craft-station",
       "craft": "amber-working",
       "position": [
-        96.0,
-        51.39,
-        -346.5
+        86.7389,
+        53.2,
+        -234.7929
       ]
     },
     {
@@ -3786,9 +3409,9 @@
       "type": "craft-station",
       "craft": "amber-working",
       "position": [
-        68.2,
-        60.84,
-        -211.4
+        63.4229,
+        60.78,
+        -143.2745
       ]
     },
     {
@@ -3797,9 +3420,9 @@
       "type": "harvest-station",
       "resource": "timber",
       "position": [
-        216.0,
+        157.8217,
         23.53,
-        102.0
+        72.9205
       ]
     },
     {
@@ -3807,9 +3430,9 @@
       "node": "Interact_Well_Meadow",
       "type": "well",
       "position": [
-        -12.0,
+        -16.7771,
         10.72,
-        24.0
+        26.251
       ]
     },
     {
@@ -3818,9 +3441,9 @@
       "type": "harvest-station",
       "resource": "stone",
       "position": [
-        348.0,
-        29.67,
-        132.0
+        236.0127,
+        27.57,
+        90.8703
       ]
     },
     {
@@ -3834,14 +3457,14 @@
       "destinationMap": "amberwood_secrets",
       "destinationSpawn": "amber-resin-hollow",
       "position": [
-        -85.5,
-        32.84,
-        -282.58
+        -63.5764,
+        32.22,
+        -196.5479
       ],
       "authority": "server",
       "serverTile": [
-        88,
-        457
+        52,
+        313
       ]
     },
     {
@@ -3855,14 +3478,14 @@
       "destinationMap": "amberwood_secrets",
       "destinationSpawn": "amber-beekeepers-garden",
       "position": [
-        87.61,
-        13.47,
-        90.0
+        100.2327,
+        16.23,
+        62.1506
       ],
       "authority": "server",
       "serverTile": [
-        262,
-        84
+        216,
+        54
       ]
     },
     {
@@ -3876,14 +3499,14 @@
       "destinationMap": "amberwood_secrets",
       "destinationSpawn": "amber-charcoal-cache",
       "position": [
-        268.0,
-        29.74,
-        30.0
+        188.6242,
+        26.77,
+        29.841
       ],
       "authority": "server",
       "serverTile": [
-        442,
-        144
+        305,
+        86
       ]
     },
     {
@@ -3897,14 +3520,14 @@
       "destinationMap": "amberwood_secrets",
       "destinationSpawn": "amber-moot-vault",
       "position": [
-        13.5,
-        45.15,
-        -222.17
+        8.7229,
+        39.66,
+        -154.0445
       ],
       "authority": "server",
       "serverTile": [
-        188,
-        396
+        125,
+        270
       ]
     },
     {
@@ -3918,14 +3541,14 @@
       "destinationMap": "amberwood_secrets",
       "destinationSpawn": "amber-boar-run",
       "position": [
-        154.5,
-        58.14,
-        -350.21
+        134.1274,
+        61.52188679245283,
+        -244.0669
       ],
       "authority": "server",
       "serverTile": [
-        328,
-        524
+        250,
+        360
       ]
     },
     {
@@ -3939,14 +3562,14 @@
       "destinationMap": "amberwood_secrets",
       "destinationSpawn": "amber-grove-school",
       "position": [
-        -37.0,
-        38.66,
-        -309.61
+        -34.8471,
+        37.0,
+        -212.7206
       ],
       "authority": "server",
       "serverTile": [
-        137,
-        484
+        81,
+        329
       ]
     },
     {
@@ -3960,14 +3583,14 @@
       "destinationMap": "amberwood_secrets",
       "destinationSpawn": "amber-warm-spring",
       "position": [
-        41.0,
-        46.74,
-        -364.0
+        40.7229,
+        51.61,
+        -240.6026
       ],
       "authority": "server",
       "serverTile": [
-        215,
-        538
+        157,
+        356
       ]
     },
     {
@@ -3981,14 +3604,14 @@
       "destinationMap": "amberwood_secrets",
       "destinationSpawn": "amber-lookout-butts",
       "position": [
-        144.0,
-        12.28,
-        141.0
+        107.1752,
+        12.2,
+        94.0893
       ],
       "authority": "server",
       "serverTile": [
-        318,
-        33
+        223,
+        22
       ]
     },
     {
@@ -4002,14 +3625,14 @@
       "destinationMap": "amberwood_secrets",
       "destinationSpawn": "amber-arch-reliquary",
       "position": [
-        199.0,
-        37.72,
-        -83.0
+        147.7516,
+        38.78,
+        -37.7699
       ],
       "authority": "server",
       "serverTile": [
-        373,
-        257
+        264,
+        154
       ]
     },
     {
@@ -4023,14 +3646,14 @@
       "destinationMap": "amberwood_secrets",
       "destinationSpawn": "amber-stone-ring-well",
       "position": [
-        -39.0,
-        21.13,
-        -46.0
+        -36.0318,
+        20.1,
+        -15.6318
       ],
       "authority": "server",
       "serverTile": [
-        135,
-        220
+        80,
+        132
       ]
     },
     {
@@ -4044,14 +3667,14 @@
       "destinationMap": "amberwood_secrets",
       "destinationSpawn": "amber-wayshrine-focus",
       "position": [
-        114.0,
-        25.64,
-        -30.0
+        97.4013,
+        25.7,
+        -6.0586
       ],
       "authority": "server",
       "serverTile": [
-        288,
-        204
+        213,
+        122
       ]
     },
     {
@@ -4065,14 +3688,14 @@
       "destinationMap": "amberwood_secrets",
       "destinationSpawn": "amber-undercut",
       "position": [
-        285.2,
-        56.59,
-        -269.0
+        196.4899,
+        55.63514090798866,
+        -184.9688
       ],
       "authority": "server",
       "serverTile": [
-        459,
-        443
+        312,
+        301
       ]
     },
     {
@@ -4086,14 +3709,14 @@
       "destinationMap": "amberwood_secrets",
       "destinationSpawn": "amber-waystone",
       "position": [
-        -29.5,
+        -30.4045,
         25.3,
-        -111.21
+        -54.6487
       ],
       "authority": "server",
       "serverTile": [
-        144,
-        285
+        85,
+        171
       ]
     },
     {
@@ -4107,14 +3730,14 @@
       "destinationMap": "amberwood_secrets",
       "destinationSpawn": "amber-kelp-eyrie",
       "position": [
-        -83.49,
-        1.67,
-        58.5
+        -54.6911,
+        3.37,
+        62.1506
       ],
       "authority": "server",
       "serverTile": [
-        91,
-        116
+        62,
+        54
       ]
     },
     {
@@ -4128,14 +3751,14 @@
       "destinationMap": "westhaven_secrets",
       "destinationSpawn": "haven-smuggle-far",
       "position": [
-        -100.5,
-        2.94,
-        34.0
+        -72.4618,
+        3.33,
+        32.2343
       ],
       "authority": "server",
       "serverTile": [
-        74,
-        140
+        44,
+        84
       ]
     }
   ],
@@ -4145,13 +3768,13 @@
       "name": "Warden of the Amber Gate",
       "type": "npc",
       "position": [
-        179.0,
-        38.91,
-        -93.0
+        136.0,
+        40.63,
+        -44.0
       ],
       "serverTile": [
-        353,
-        267
+        252,
+        160
       ],
       "authority": "server"
     },
@@ -4160,13 +3783,13 @@
       "name": "Hall Steward",
       "type": "npc",
       "position": [
-        -8.0,
-        40.86,
-        -176.0
+        -13.0,
+        40.9,
+        -108.0
       ],
       "serverTile": [
-        166,
-        350
+        103,
+        224
       ],
       "authority": "server"
     },
@@ -4175,13 +3798,13 @@
       "name": "Amber Master",
       "type": "npc",
       "position": [
-        54.0,
-        40.83,
-        -164.0
+        49.0,
+        41.36,
+        -96.0
       ],
       "serverTile": [
-        228,
-        338
+        165,
+        212
       ],
       "authority": "server"
     },
@@ -4190,13 +3813,13 @@
       "name": "Resin Trader",
       "type": "npc",
       "position": [
-        31.0,
+        26.0,
         40.8,
-        -166.0
+        -98.0
       ],
       "serverTile": [
-        205,
-        340
+        142,
+        214
       ],
       "authority": "server"
     },
@@ -4205,13 +3828,13 @@
       "name": "Harbour Master",
       "type": "npc",
       "position": [
-        -83.0,
-        3.8,
-        31.0
+        -62.0,
+        3.79,
+        30.0
       ],
       "serverTile": [
-        91,
-        143
+        54,
+        86
       ],
       "authority": "server"
     },
@@ -4220,13 +3843,13 @@
       "name": "Timber Reeve",
       "type": "npc",
       "position": [
-        219.0,
-        23.44,
-        94.0
+        160.0,
+        22.46,
+        65.0
       ],
       "serverTile": [
-        393,
-        80
+        276,
+        51
       ],
       "authority": "server"
     },
@@ -4235,13 +3858,13 @@
       "name": "Charcoal Burner",
       "type": "npc",
       "position": [
-        251.0,
-        29.83,
-        28.0
+        179.0,
+        27.53,
+        29.0
       ],
       "serverTile": [
-        425,
-        146
+        295,
+        87
       ],
       "authority": "server"
     },
@@ -4250,13 +3873,13 @@
       "name": "Canopy Rigger",
       "type": "npc",
       "position": [
-        58.0,
-        48.35,
-        -200.0
+        53.0,
+        48.34,
+        -132.0
       ],
       "serverTile": [
-        232,
-        374
+        169,
+        248
       ],
       "authority": "server"
     },
@@ -4265,13 +3888,13 @@
       "name": "Keeper of the Hollow",
       "type": "npc",
       "position": [
-        -74.0,
-        29.03,
-        -268.0
+        -54.0,
+        31.57,
+        -192.0
       ],
       "serverTile": [
-        100,
-        442
+        62,
+        308
       ],
       "authority": "server"
     },
@@ -4280,13 +3903,13 @@
       "name": "Garden Warden",
       "type": "npc",
       "position": [
-        151.0,
-        21.13,
-        33.0
+        119.0,
+        20.5,
+        32.0
       ],
       "serverTile": [
-        325,
-        141
+        235,
+        84
       ],
       "authority": "server"
     },
@@ -4295,13 +3918,13 @@
       "name": "Ash Scout",
       "type": "npc",
       "position": [
-        258.0,
-        44.21,
-        -142.0
+        183.0,
+        42.99,
+        -78.0
       ],
       "serverTile": [
-        432,
-        316
+        299,
+        194
       ],
       "authority": "server"
     },
@@ -4310,13 +3933,13 @@
       "name": "North Watcher",
       "type": "npc",
       "position": [
-        236.0,
-        59.58,
-        -337.0
+        170.0,
+        57.28,
+        -229.0
       ],
       "serverTile": [
-        410,
-        511
+        286,
+        345
       ],
       "authority": "server"
     },
@@ -4325,13 +3948,13 @@
       "name": "Hamlet Elder",
       "type": "npc",
       "position": [
-        327.0,
-        29.14,
-        94.0
+        225.0,
+        25.5,
+        70.0
       ],
       "serverTile": [
-        501,
-        80
+        341,
+        46
       ],
       "authority": "server"
     },
@@ -4340,13 +3963,13 @@
       "name": "Wayshrine Hermit",
       "type": "npc",
       "position": [
-        111.0,
+        96.0,
         28.31,
-        -41.0
+        -13.0
       ],
       "serverTile": [
-        285,
-        215
+        212,
+        129
       ],
       "authority": "server"
     },
@@ -4355,31 +3978,31 @@
       "type": "creature-group",
       "group": "forest-fauna",
       "centre": [
-        78.0,
+        73.2229,
         56.43,
-        -264.0
+        -185.431
       ],
       "radius": 22.0,
       "positions": [
         [
-          72.99,
-          53.78,
-          -271.69
+          68.2129,
+          51.41,
+          -190.0321
         ],
         [
-          68.86,
-          49.0,
-          -279.43
+          64.0829,
+          49.36,
+          -194.6631
         ],
         [
-          68.01,
-          52.29,
-          -256.81
+          63.2329,
+          51.01,
+          -181.129
         ],
         [
-          63.2,
-          48.23,
-          -259.97
+          58.4229,
+          48.32,
+          -183.0197
         ]
       ],
       "authority": "server"
@@ -4389,36 +4012,36 @@
       "type": "creature-group",
       "group": "forest-fauna",
       "centre": [
-        66.0,
-        49.18,
-        -210.0
+        61.2229,
+        49.12,
+        -141.8745
       ],
       "radius": 18.0,
       "positions": [
         [
-          65.52,
-          49.49,
-          -216.26
+          60.7429,
+          48.7,
+          -148.1345
         ],
         [
-          63.54,
-          48.51,
-          -222.0
+          58.7629,
+          48.38,
+          -153.8745
         ],
         [
-          64.28,
-          49.37,
-          -214.5
+          59.5029,
+          49.1,
+          -146.3745
         ],
         [
-          67.75,
-          49.52,
-          -214.34
+          62.9729,
+          49.15,
+          -146.2145
         ],
         [
-          81.48,
-          46.99,
-          -208.77
+          76.7029,
+          46.88,
+          -140.6445
         ]
       ],
       "authority": "server"
@@ -4428,31 +4051,31 @@
       "type": "creature-group",
       "group": "coastal-fauna",
       "centre": [
-        -135.0,
+        -92.8981,
         0.29,
-        18.0
+        22.6611
       ],
       "radius": 20.0,
       "positions": [
         [
-          -144.87,
+          -98.7446,
           -6.06,
-          0.98
+          12.4776
         ],
         [
-          -142.4,
+          -97.2815,
           -2.72,
-          18.43
+          22.9184
         ],
         [
-          -137.87,
+          -94.5982,
           -6.46,
-          30.76
+          30.2957
         ],
         [
-          -144.86,
+          -98.7387,
           -4.22,
-          5.11
+          14.9487
         ]
       ],
       "authority": "server"
@@ -4462,26 +4085,26 @@
       "type": "creature-group",
       "group": "forest-fauna",
       "centre": [
-        -78.0,
+        -59.1338,
         26.34,
-        -258.0
+        -181.841
       ],
       "radius": 24.0,
       "positions": [
         [
-          -87.9,
+          -64.9981,
           -0.09,
-          -253.72
+          -179.2802
         ],
         [
-          -98.26,
+          -71.1349,
           -2.31,
-          -253.95
+          -179.4178
         ],
         [
-          -79.89,
+          -60.2533,
           29.84,
-          -274.18
+          -191.5219
         ]
       ],
       "authority": "server"
@@ -4491,36 +4114,36 @@
       "type": "creature-group",
       "group": "transition-hostile",
       "centre": [
-        324.0,
-        29.67,
-        -42.0
+        221.7962,
+        29.18,
+        -13.2385
       ],
       "radius": 26.0,
       "positions": [
         [
-          324.48,
-          30.55,
-          -33.05
+          222.0805,
+          29.17,
+          -7.8835
         ],
         [
-          335.69,
-          34.16,
-          -33.02
+          228.7208,
+          30.41,
+          -7.8655
         ],
         [
-          341.4,
-          34.55,
-          -39.7
+          232.1032,
+          33.83,
+          -11.8623
         ],
         [
-          304.77,
-          34.99,
-          -53.86
+          210.4052,
+          31.86,
+          -20.3346
         ],
         [
-          323.07,
-          29.22,
-          -52.64
+          221.2453,
+          29.09,
+          -19.6047
         ]
       ],
       "authority": "server"
@@ -4530,31 +4153,31 @@
       "type": "creature-group",
       "group": "transition-hostile",
       "centre": [
-        348.0,
-        44.82,
-        -180.0
+        236.0127,
+        46.11,
+        -111.8745
       ],
       "radius": 22.0,
       "positions": [
         [
-          359.09,
-          48.62,
-          -178.54
+          242.582,
+          50.91,
+          -110.4145
         ],
         [
-          358.18,
-          49.58,
-          -194.19
+          242.0429,
+          48.02,
+          -126.0645
         ],
         [
-          364.5,
-          51.15,
-          -173.08
+          245.7866,
+          51.91,
+          -104.9545
         ],
         [
-          362.74,
-          49.35,
-          -168.27
+          244.7441,
+          51.89,
+          -100.1445
         ]
       ],
       "authority": "server"
@@ -4566,13 +4189,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        111.0,
-        57.22,
-        -306.0
+        -9.0,
+        36.36,
+        -170.0
       ],
       "serverTile": [
-        285,
-        480
+        107,
+        286
       ],
       "authority": "server"
     },
@@ -4581,13 +4204,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        98.0,
-        57.9,
-        -277.0
+        95.0,
+        56.44,
+        -212.0
       ],
       "serverTile": [
-        272,
-        451
+        211,
+        328
       ],
       "authority": "server"
     },
@@ -4596,13 +4219,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        99.0,
-        58.61,
-        -282.0
+        85.0,
+        57.42,
+        -191.0
       ],
       "serverTile": [
-        273,
-        456
+        201,
+        307
       ],
       "authority": "server"
     },
@@ -4611,13 +4234,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        96.0,
-        57.11,
-        -267.0
+        88.0,
+        58.03,
+        -186.0
       ],
       "serverTile": [
-        270,
-        441
+        204,
+        302
       ],
       "authority": "server"
     },
@@ -4626,13 +4249,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        104.0,
-        56.58,
-        -310.0
+        90.0,
+        57.15,
+        -214.0
       ],
       "serverTile": [
-        278,
-        484
+        206,
+        330
       ],
       "authority": "server"
     },
@@ -4641,13 +4264,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        14.0,
-        49.65,
-        -276.0
+        6.0,
+        46.29,
+        -194.0
       ],
       "serverTile": [
-        188,
-        450
+        122,
+        310
       ],
       "authority": "server"
     },
@@ -4656,13 +4279,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        -7.0,
-        40.71,
-        -269.0
+        -8.0,
+        42.15,
+        -184.0
       ],
       "serverTile": [
-        167,
-        443
+        108,
+        300
       ],
       "authority": "server"
     },
@@ -4671,13 +4294,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        104.0,
-        57.3,
-        -270.0
+        -8.0,
+        42.8,
+        -189.0
       ],
       "serverTile": [
-        278,
-        444
+        108,
+        305
       ],
       "authority": "server"
     },
@@ -4686,13 +4309,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        82.0,
-        57.06,
-        -279.0
+        3.0,
+        44.55,
+        -186.0
       ],
       "serverTile": [
-        256,
-        453
+        119,
+        302
       ],
       "authority": "server"
     },
@@ -4701,13 +4324,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        105.0,
-        56.76,
-        -307.0
+        -11.0,
+        41.33,
+        -186.0
       ],
       "serverTile": [
-        279,
-        481
+        105,
+        302
       ],
       "authority": "server"
     },
@@ -4716,13 +4339,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        16.0,
-        17.91,
-        9.0
+        11.0,
+        14.44,
+        30.0
       ],
       "serverTile": [
-        190,
-        165
+        127,
+        86
       ],
       "authority": "server"
     },
@@ -4731,13 +4354,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        -3.0,
-        13.51,
-        9.0
+        97.0,
+        10.21,
+        85.0
       ],
       "serverTile": [
-        171,
-        165
+        213,
+        31
       ],
       "authority": "server"
     },
@@ -4746,13 +4369,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        18.0,
-        14.25,
-        26.0
+        2.0,
+        15.79,
+        19.0
       ],
       "serverTile": [
-        192,
-        148
+        118,
+        97
       ],
       "authority": "server"
     },
@@ -4761,13 +4384,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        112.0,
-        10.06,
-        121.0
+        63.0,
+        6.52,
+        87.0
       ],
       "serverTile": [
-        286,
-        53
+        179,
+        29
       ],
       "authority": "server"
     },
@@ -4776,13 +4399,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        5.0,
-        15.23,
-        12.0
+        17.0,
+        17.0,
+        19.0
       ],
       "serverTile": [
-        179,
-        162
+        133,
+        97
       ],
       "authority": "server"
     },
@@ -4791,13 +4414,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        73.0,
-        6.53,
-        123.0
+        58.0,
+        8.41,
+        76.0
       ],
       "serverTile": [
-        247,
-        51
+        174,
+        40
       ],
       "authority": "server"
     },
@@ -4806,13 +4429,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        100.0,
-        12.01,
-        109.0
+        98.0,
+        10.11,
+        80.0
       ],
       "serverTile": [
-        274,
-        65
+        214,
+        36
       ],
       "authority": "server"
     },
@@ -4821,13 +4444,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        114.0,
-        9.04,
-        113.0
+        3.0,
+        16.81,
+        4.0
       ],
       "serverTile": [
-        288,
-        61
+        119,
+        112
       ],
       "authority": "server"
     },
@@ -4836,13 +4459,13 @@
       "resource": "forest-fungus",
       "category": "reagent",
       "position": [
-        0.0,
-        45.22,
-        -308.0
+        -30.0,
+        36.91,
+        -210.0
       ],
       "serverTile": [
-        174,
-        482
+        86,
+        326
       ],
       "authority": "server"
     },
@@ -4851,13 +4474,13 @@
       "resource": "forest-fungus",
       "category": "reagent",
       "position": [
-        -11.0,
-        36.95,
-        -247.0
+        -30.0,
+        35.25,
+        -158.0
       ],
       "serverTile": [
-        163,
-        421
+        86,
+        274
       ],
       "authority": "server"
     },
@@ -4866,13 +4489,13 @@
       "resource": "forest-fungus",
       "category": "reagent",
       "position": [
-        -31.0,
-        36.47,
-        -306.0
+        -33.0,
+        34.11,
+        -203.0
       ],
       "serverTile": [
-        143,
-        480
+        83,
+        319
       ],
       "authority": "server"
     },
@@ -4881,13 +4504,13 @@
       "resource": "forest-fungus",
       "category": "reagent",
       "position": [
-        -27.0,
-        38.01,
-        -221.0
+        -5.0,
+        43.73,
+        -210.0
       ],
       "serverTile": [
-        147,
-        395
+        111,
+        326
       ],
       "authority": "server"
     },
@@ -4896,13 +4519,13 @@
       "resource": "forest-fungus",
       "category": "reagent",
       "position": [
-        -36.0,
-        33.23,
-        -295.0
+        -6.0,
+        43.19,
+        -201.0
       ],
       "serverTile": [
-        138,
-        469
+        110,
+        317
       ],
       "authority": "server"
     },
@@ -4911,13 +4534,13 @@
       "resource": "shore-kelp",
       "category": "reagent",
       "position": [
-        -63.0,
-        2.83,
-        77.0
+        -44.0,
+        3.92,
+        52.0
       ],
       "serverTile": [
-        111,
-        97
+        72,
+        64
       ],
       "authority": "server"
     },
@@ -4926,13 +4549,13 @@
       "resource": "charcoal",
       "category": "fuel",
       "position": [
-        236.0,
-        30.31,
-        1.0
+        170.0,
+        20.81,
+        90.0
       ],
       "serverTile": [
-        410,
-        173
+        286,
+        26
       ],
       "authority": "server"
     },
@@ -4941,13 +4564,13 @@
       "resource": "charcoal",
       "category": "fuel",
       "position": [
-        261.0,
-        30.21,
-        15.0
+        164.0,
+        28.95,
+        18.0
       ],
       "serverTile": [
-        435,
-        159
+        280,
+        98
       ],
       "authority": "server"
     },
@@ -4956,13 +4579,13 @@
       "resource": "charcoal",
       "category": "fuel",
       "position": [
-        228.0,
-        18.6,
-        139.0
+        150.0,
+        16.95,
+        97.0
       ],
       "serverTile": [
-        402,
-        35
+        266,
+        19
       ],
       "authority": "server"
     },
@@ -4971,13 +4594,13 @@
       "resource": "ash-glass",
       "category": "reagent",
       "position": [
-        353.0,
-        48.35,
-        -154.0
+        247.0,
+        50.46,
+        -86.0
       ],
       "serverTile": [
-        527,
-        328
+        363,
+        202
       ],
       "authority": "server"
     },
@@ -4986,13 +4609,13 @@
       "resource": "ash-glass",
       "category": "reagent",
       "position": [
-        357.0,
-        37.77,
-        -61.0
+        227.0,
+        32.77,
+        -30.0
       ],
       "serverTile": [
-        531,
-        235
+        343,
+        146
       ],
       "authority": "server"
     },
@@ -5001,13 +4624,13 @@
       "resource": "ash-glass",
       "category": "reagent",
       "position": [
-        332.0,
-        33.53,
-        -55.0
+        237.0,
+        47.35,
+        -87.0
       ],
       "serverTile": [
-        506,
-        229
+        353,
+        203
       ],
       "authority": "server"
     },
@@ -5016,13 +4639,13 @@
       "resource": "ash-glass",
       "category": "reagent",
       "position": [
-        314.0,
-        34.61,
-        -60.0
+        246.0,
+        51.86,
+        -116.0
       ],
       "serverTile": [
-        488,
-        234
+        362,
+        232
       ],
       "authority": "server"
     }
@@ -5033,13 +4656,13 @@
       "name": "Whitehorn Pass",
       "type": "map-transition",
       "position": [
-        72.0,
-        55.1,
-        -384.0
+        67.2229,
+        55.16,
+        -257.2301
       ],
       "serverTile": [
-        246,
-        558
+        183,
+        373
       ],
       "destinationMap": "whitehorn_range",
       "radius": 3.5,
@@ -5050,13 +4673,13 @@
       "name": "Moor Road",
       "type": "map-transition",
       "position": [
-        156.0,
-        11.5,
-        162.0
+        122.2803,
+        11.09,
+        108.8201
       ],
       "serverTile": [
-        330,
-        12
+        238,
+        7
       ],
       "destinationMap": "grey_moors",
       "radius": 3.5,
@@ -5067,13 +4690,13 @@
       "name": "Gorge Road to Mirrorhold",
       "type": "map-transition",
       "position": [
-        393.0,
-        40.84,
-        -66.0
+        262.6688,
+        41.86,
+        -27.5983
       ],
       "serverTile": [
-        567,
-        240
+        379,
+        144
       ],
       "destinationMap": "mirrorhold",
       "radius": 3.5,
@@ -5084,13 +4707,13 @@
       "name": "Greyhaven Packet to Westhaven",
       "type": "map-transition",
       "position": [
-        -129.0,
+        -89.3439,
         1.69,
-        24.0
+        26.251
       ],
       "serverTile": [
-        45,
-        150
+        27,
+        90
       ],
       "destinationMap": "westhaven",
       "radius": 3.5,
@@ -5101,13 +4724,13 @@
       "name": "The Motherroot",
       "type": "interior-entrance",
       "position": [
-        78.0,
-        55.1,
-        -251.0
+        75.2229,
+        55.24,
+        -174.0029
       ],
       "serverTile": [
-        252,
-        425
+        191,
+        290
       ],
       "landmark": "great-tree",
       "destinationMap": "amberwood_motherroot",
@@ -5120,13 +4743,13 @@
       "name": "The Gate Undercroft",
       "type": "interior-entrance",
       "position": [
-        190.0,
-        37.22,
-        -89.0
+        142.4204,
+        39.82,
+        -41.3598
       ],
       "serverTile": [
-        364,
-        263
+        258,
+        157
       ],
       "landmark": "great-arch",
       "destinationMap": "amberwood_gate_undercroft",
@@ -5139,13 +4762,13 @@
       "name": "The Amber Hall",
       "type": "interior-entrance",
       "position": [
-        57.0,
-        41.27,
-        -150.0
+        52.2229,
+        41.49,
+        -81.8745
       ],
       "serverTile": [
-        231,
-        324
+        168,
+        198
       ],
       "landmark": "amber-hall",
       "destinationMap": "amberwood_amber_hall",
@@ -5158,13 +4781,13 @@
       "name": "The Cinder Chapel",
       "type": "interior-entrance",
       "position": [
-        312.0,
-        51.55,
-        -214.0
+        216.0029,
+        50.58,
+        -145.0045
       ],
       "serverTile": [
-        486,
-        388
+        332,
+        261
       ],
       "landmark": "ash-chapel",
       "destinationMap": "amberwood_cinder_chapel",
@@ -5178,49 +4801,49 @@
       "id": "coast_road",
       "waypoints": [
         [
-          -60.0,
-          3.2,
-          120.0
+          -48.5,
+          3.19,
+          83.7
         ],
         [
-          -55.0,
+          -45.5,
           3.22,
-          84.0
+          62.2
         ],
         [
-          -60.0,
-          5.46,
-          36.0
+          -48.5,
+          5.47,
+          33.4
         ],
         [
-          -43.0,
-          9.97,
-          7.0
+          -38.4,
+          10.04,
+          16.1
         ],
         [
-          -24.0,
-          16.0,
-          -30.0
+          -27.1,
+          16.02,
+          -6.1
         ],
         [
-          -3.0,
+          -7.8,
           20.03,
-          -56.0
+          -21.6
         ],
         [
-          16.0,
-          26.0,
-          -83.0
+          11.2,
+          25.99,
+          -37.8
         ],
         [
-          20.0,
+          15.2,
           28.97,
-          -106.0
+          -51.5
         ],
         [
-          12.0,
+          7.2,
           30.1,
-          -119.0
+          -59.3
         ]
       ]
     },
@@ -5228,49 +4851,49 @@
       "id": "harbour_road",
       "waypoints": [
         [
-          -129.0,
+          -89.3,
           1.59,
-          24.0
+          26.3
         ],
         [
-          -108.0,
+          -76.9,
           2.34,
-          24.0
+          26.3
         ],
         [
-          -90.0,
+          -66.2,
           2.98,
-          24.0
+          26.3
         ],
         [
-          -60.0,
-          5.46,
-          36.0
+          -48.5,
+          5.47,
+          33.4
         ],
         [
-          -30.0,
+          -30.7,
           10.0,
-          12.0
+          19.1
         ],
         [
-          0.0,
+          -4.8,
           15.02,
-          -6.0
+          8.3
         ],
         [
-          40.0,
-          22.97,
-          -30.0
+          35.2,
+          22.96,
+          -6.1
         ],
         [
-          80.0,
+          75.2,
           26.99,
-          -38.0
+          -10.8
         ],
         [
-          108.0,
-          28.33,
-          -42.0
+          93.8,
+          28.34,
+          -13.2
         ]
       ]
     },
@@ -5278,34 +4901,34 @@
       "id": "arrival_road",
       "waypoints": [
         [
-          0.0,
-          14.93,
-          0.0
+          -4.8,
+          14.92,
+          11.9
         ],
         [
-          24.0,
-          21.62,
-          -30.0
+          19.2,
+          20.85,
+          -6.1
         ],
         [
-          60.0,
-          25.63,
-          -42.0
+          55.2,
+          25.0,
+          -13.2
         ],
         [
-          108.0,
-          28.33,
-          -42.0
+          93.8,
+          28.34,
+          -13.2
         ],
         [
-          138.0,
-          31.1,
-          -48.0
+          111.6,
+          30.49,
+          -16.8
         ],
         [
-          174.0,
+          132.9,
           32.99,
-          -54.0
+          -20.4
         ]
       ]
     },
@@ -5313,59 +4936,59 @@
       "id": "settlement_road",
       "waypoints": [
         [
-          108.0,
-          28.33,
-          -42.0
+          93.8,
+          28.34,
+          -13.2
         ],
         [
-          89.0,
+          82.6,
           30.02,
-          -69.0
+          -29.4
         ],
         [
-          63.0,
+          58.2,
           34.01,
-          -99.0
+          -47.3
         ],
         [
-          46.0,
+          41.2,
           38.02,
-          -122.0
+          -61.1
         ],
         [
-          43.0,
-          39.78,
-          -135.0
+          38.2,
+          39.75,
+          -68.9
         ],
         [
-          39.0,
+          34.2,
           40.58,
-          -159.0
+          -90.9
         ],
         [
-          24.0,
+          19.2,
           40.8,
-          -171.0
+          -102.9
         ],
         [
-          31.0,
+          26.2,
           44.09,
-          -198.0
+          -129.9
         ],
         [
-          45.0,
-          46.22,
-          -218.0
+          40.2,
+          46.09,
+          -149.9
         ],
         [
-          54.0,
-          46.83,
-          -234.0
+          49.2,
+          47.08,
+          -165.9
         ],
         [
-          72.0,
-          51.24,
-          -312.0
+          67.2,
+          51.31,
+          -214.2
         ]
       ]
     },
@@ -5373,44 +4996,44 @@
       "id": "canopy_road",
       "waypoints": [
         [
-          31.0,
+          26.2,
           44.09,
-          -198.0
+          -129.9
         ],
         [
-          53.0,
+          48.2,
           47.94,
-          -199.0
+          -130.9
         ],
         [
-          61.0,
+          56.2,
           48.78,
-          -205.0
+          -136.9
         ],
         [
-          68.0,
-          49.95,
-          -225.0
+          63.2,
+          48.55,
+          -156.9
         ],
         [
-          69.0,
-          53.8,
-          -245.0
+          64.2,
+          53.79,
+          -174.1
         ],
         [
-          78.0,
+          73.2,
           55.0,
-          -251.0
+          -177.7
         ],
         [
-          90.0,
+          83.2,
           56.5,
-          -263.0
+          -184.8
         ],
         [
-          101.0,
+          89.7,
           57.97,
-          -276.0
+          -192.6
         ]
       ]
     },
@@ -5418,54 +5041,54 @@
       "id": "hollow_road",
       "waypoints": [
         [
-          24.0,
+          19.2,
           40.8,
-          -171.0
+          -102.9
         ],
         [
-          10.0,
+          5.2,
           40.8,
-          -182.0
+          -113.9
         ],
         [
-          -12.0,
+          -16.8,
           41.67,
-          -177.0
+          -108.9
         ],
         [
-          -28.0,
-          41.95,
-          -176.0
+          -29.5,
+          41.94,
+          -107.9
         ],
         [
-          -28.0,
-          40.58,
-          -187.0
+          -29.5,
+          40.57,
+          -118.9
         ],
         [
-          -41.0,
-          37.45,
-          -210.0
+          -37.2,
+          37.41,
+          -141.9
         ],
         [
-          -36.0,
-          36.0,
-          -218.0
+          -34.3,
+          35.98,
+          -149.9
         ],
         [
-          -56.0,
-          29.04,
-          -234.0
+          -46.1,
+          29.06,
+          -165.9
         ],
         [
-          -67.0,
-          27.04,
-          -243.0
+          -52.6,
+          27.05,
+          -172.9
         ],
         [
-          -78.0,
-          26.34,
-          -258.0
+          -59.1,
+          26.35,
+          -181.8
         ]
       ]
     },
@@ -5473,39 +5096,39 @@
       "id": "ridge_road",
       "waypoints": [
         [
-          54.0,
-          46.83,
-          -234.0
+          49.2,
+          47.08,
+          -165.9
         ],
         [
-          80.0,
+          75.2,
           45.98,
-          -218.0
+          -149.9
         ],
         [
-          96.0,
-          44.18,
-          -208.0
+          86.7,
+          44.21,
+          -139.9
         ],
         [
-          143.0,
+          114.6,
           43.78,
-          -185.0
+          -116.9
         ],
         [
-          180.0,
-          46.0,
-          -185.0
+          136.5,
+          45.99,
+          -116.9
         ],
         [
-          218.0,
-          47.0,
-          -197.0
+          159.0,
+          47.01,
+          -128.9
         ],
         [
-          258.0,
-          49.68,
-          -210.0
+          182.7,
+          49.69,
+          -141.9
         ]
       ]
     },
@@ -5513,34 +5136,34 @@
       "id": "monument_axis",
       "waypoints": [
         [
-          174.0,
+          132.9,
           32.99,
-          -54.0
+          -20.4
         ],
         [
-          174.0,
-          37.12,
-          -102.0
+          132.9,
+          39.71,
+          -49.1
         ],
         [
-          174.0,
-          41.23,
-          -138.0
+          132.9,
+          42.05,
+          -70.7
         ],
         [
-          222.0,
-          42.03,
-          -90.0
+          161.4,
+          44.3,
+          -42.0
         ],
         [
-          240.0,
-          45.18,
-          -114.0
+          172.0,
+          46.99,
+          -56.3
         ],
         [
-          264.0,
-          44.21,
-          -138.0
+          186.3,
+          42.99,
+          -70.7
         ]
       ]
     },
@@ -5548,34 +5171,34 @@
       "id": "south_road",
       "waypoints": [
         [
-          174.0,
+          132.9,
           32.99,
-          -54.0
+          -20.4
         ],
         [
-          168.0,
-          26.57,
-          -12.0
+          129.4,
+          25.82,
+          4.7
         ],
         [
-          156.0,
-          21.14,
-          30.0
+          122.3,
+          20.72,
+          29.8
         ],
         [
-          150.0,
-          17.92,
-          78.0
+          118.7,
+          16.54,
+          58.6
         ],
         [
-          138.0,
-          12.2,
-          120.0
+          111.6,
+          12.22,
+          83.7
         ],
         [
-          174.0,
-          14.76,
-          144.0
+          132.9,
+          13.94,
+          98.1
         ]
       ]
     },
@@ -5583,44 +5206,44 @@
       "id": "timber_road",
       "waypoints": [
         [
-          138.0,
-          12.2,
-          120.0
+          111.6,
+          12.22,
+          83.7
         ],
         [
-          168.0,
-          16.0,
-          117.0
+          129.4,
+          16.05,
+          81.9
         ],
         [
-          193.0,
+          144.2,
           19.97,
-          111.0
+          78.3
         ],
         [
-          216.0,
-          23.53,
-          102.0
+          157.8,
+          23.52,
+          72.9
         ],
         [
-          246.0,
+          175.6,
           25.0,
-          108.0
+          76.5
         ],
         [
-          271.0,
+          190.4,
           26.01,
-          102.0
+          72.9
         ],
         [
-          290.0,
-          27.0,
-          99.0
+          201.7,
+          27.01,
+          71.1
         ],
         [
-          324.0,
-          29.14,
-          90.0
+          221.8,
+          29.12,
+          65.7
         ]
       ]
     },
@@ -5628,29 +5251,29 @@
       "id": "east_road",
       "waypoints": [
         [
-          222.0,
-          42.03,
-          -90.0
-        ],
-        [
-          258.0,
-          35.29,
-          -78.0
-        ],
-        [
-          324.0,
-          29.67,
+          161.4,
+          44.3,
           -42.0
         ],
         [
-          360.0,
-          36.72,
-          -54.0
+          182.7,
+          37.92,
+          -34.8
         ],
         [
-          393.0,
-          40.74,
-          -66.0
+          221.8,
+          29.21,
+          -13.2
+        ],
+        [
+          243.1,
+          38.28,
+          -20.4
+        ],
+        [
+          262.7,
+          41.76,
+          -27.6
         ]
       ]
     },
@@ -5658,29 +5281,29 @@
       "id": "charcoal_track",
       "waypoints": [
         [
-          216.0,
-          23.53,
-          102.0
+          157.8,
+          23.52,
+          72.9
         ],
         [
-          240.0,
-          27.19,
-          60.0
+          172.0,
+          26.11,
+          47.8
         ],
         [
-          252.0,
-          29.83,
-          24.0
+          179.1,
+          27.53,
+          26.3
         ],
         [
-          276.0,
-          32.16,
-          -12.0
+          193.4,
+          28.85,
+          4.7
         ],
         [
-          324.0,
-          29.67,
-          -42.0
+          221.8,
+          29.21,
+          -13.2
         ]
       ]
     },
@@ -5688,29 +5311,29 @@
       "id": "burnt_track",
       "waypoints": [
         [
-          264.0,
-          44.21,
-          -138.0
+          186.3,
+          42.99,
+          -70.7
         ],
         [
-          294.0,
-          48.96,
-          -168.0
+          204.0,
+          45.02,
+          -99.9
         ],
         [
-          348.0,
-          44.82,
-          -180.0
+          236.0,
+          46.1,
+          -111.9
         ],
         [
-          336.0,
-          51.93,
-          -228.0
+          228.9,
+          52.46,
+          -159.9
         ],
         [
-          300.0,
-          55.09,
-          -252.0
+          207.6,
+          54.31,
+          -178.3
         ]
       ]
     },
@@ -5718,59 +5341,59 @@
       "id": "cove_road",
       "waypoints": [
         [
-          12.0,
+          7.2,
           30.1,
-          -119.0
+          -59.3
         ],
         [
-          -9.0,
-          28.62,
-          -122.0
+          -13.8,
+          28.41,
+          -61.1
         ],
         [
-          -23.0,
-          28.93,
-          -137.0
+          -26.6,
+          28.91,
+          -70.1
         ],
         [
-          -40.0,
-          21.52,
-          -151.0
+          -36.6,
+          21.55,
+          -82.9
         ],
         [
-          -56.0,
-          15.93,
-          -158.0
+          -46.1,
+          16.21,
+          -89.9
         ],
         [
-          -63.0,
-          8.03,
-          -171.0
+          -50.2,
+          8.08,
+          -102.9
         ],
         [
-          -65.0,
-          11.63,
-          -191.0
+          -51.4,
+          11.64,
+          -122.9
         ],
         [
-          -54.0,
-          18.0,
-          -211.0
+          -44.9,
+          18.04,
+          -142.9
         ],
         [
-          -60.0,
-          25.27,
-          -228.0
+          -48.5,
+          25.39,
+          -159.9
         ],
         [
-          -67.0,
-          27.04,
-          -243.0
+          -52.6,
+          27.05,
+          -172.9
         ],
         [
-          -78.0,
-          26.34,
-          -258.0
+          -59.1,
+          26.35,
+          -181.8
         ]
       ]
     },
@@ -5778,39 +5401,39 @@
       "id": "lake_road",
       "waypoints": [
         [
-          -78.0,
-          26.34,
-          -258.0
+          -59.1,
+          26.35,
+          -181.8
         ],
         [
-          -79.0,
-          30.13,
-          -275.0
+          -59.7,
+          30.06,
+          -192.0
         ],
         [
-          -65.0,
+          -51.4,
           34.94,
-          -284.0
+          -197.4
         ],
         [
-          -40.0,
+          -36.6,
           36.0,
-          -287.0
+          -199.2
         ],
         [
-          -20.0,
+          -24.8,
           36.49,
-          -276.0
+          -192.6
         ],
         [
-          -13.0,
+          -17.8,
           36.5,
-          -255.0
+          -180.0
         ],
         [
-          -18.0,
+          -22.8,
           36.48,
-          -240.0
+          -171.1
         ]
       ]
     },
@@ -5818,34 +5441,34 @@
       "id": "diggings_road",
       "waypoints": [
         [
-          78.0,
+          73.2,
           56.43,
-          -264.0
+          -185.4
         ],
         [
-          101.0,
+          89.7,
           57.97,
-          -276.0
+          -192.6
         ],
         [
-          105.0,
-          59.41,
-          -285.0
+          92.1,
+          59.31,
+          -198.0
         ],
         [
-          108.0,
+          93.8,
           55.99,
-          -312.0
+          -214.2
         ],
         [
-          98.0,
-          52.0,
-          -335.0
+          87.9,
+          52.82,
+          -227.9
         ],
         [
-          90.0,
-          51.05,
-          -354.0
+          83.2,
+          53.96,
+          -239.3
         ]
       ]
     },
@@ -5853,44 +5476,44 @@
       "id": "north_ridge_road",
       "waypoints": [
         [
-          90.0,
-          51.05,
-          -354.0
+          83.2,
+          53.96,
+          -239.3
         ],
         [
-          112.0,
-          52.0,
-          -345.0
+          96.2,
+          52.59,
+          -233.9
         ],
         [
-          131.0,
+          107.5,
           51.98,
-          -330.0
+          -224.9
         ],
         [
-          173.0,
-          52.78,
-          -284.0
+          132.4,
+          52.76,
+          -197.4
         ],
         [
-          192.0,
-          56.0,
-          -281.0
+          143.6,
+          55.98,
+          -195.6
         ],
         [
-          210.0,
-          57.84,
-          -276.0
+          154.3,
+          57.83,
+          -192.6
         ],
         [
-          240.0,
-          55.0,
-          -243.0
+          172.0,
+          54.96,
+          -172.9
         ],
         [
-          258.0,
-          49.68,
-          -210.0
+          182.7,
+          49.69,
+          -141.9
         ]
       ]
     },
@@ -5898,44 +5521,44 @@
       "id": "orchard_road",
       "waypoints": [
         [
-          156.0,
+          122.3,
           19.49,
-          50.0
+          41.8
         ],
         [
-          141.0,
-          19.0,
-          69.0
+          113.4,
+          18.98,
+          53.2
         ],
         [
-          138.0,
-          17.74,
-          88.0
+          111.6,
+          17.71,
+          64.5
         ],
         [
-          156.0,
-          18.49,
-          104.0
+          122.3,
+          18.5,
+          74.1
         ],
         [
-          193.0,
+          144.2,
           19.97,
-          111.0
+          78.3
         ],
         [
-          210.0,
-          19.5,
-          131.0
+          154.3,
+          19.47,
+          90.3
         ],
         [
-          225.0,
-          17.6,
-          147.0
+          163.2,
+          17.61,
+          99.8
         ],
         [
-          237.0,
+          170.3,
           16.85,
-          155.0
+          104.6
         ]
       ]
     },
@@ -5943,39 +5566,39 @@
       "id": "south_coast_road",
       "waypoints": [
         [
-          -60.0,
-          3.2,
-          120.0
+          -48.5,
+          3.19,
+          83.7
         ],
         [
-          -40.0,
-          2.8,
-          137.0
+          -36.6,
+          2.81,
+          93.9
         ],
         [
-          -13.0,
+          -17.8,
           3.0,
-          136.0
+          93.3
         ],
         [
-          17.0,
-          3.5,
-          125.0
-        ],
-        [
-          48.0,
-          4.0,
-          125.0
-        ],
-        [
-          87.0,
-          7.99,
-          118.0
-        ],
-        [
-          138.0,
           12.2,
-          120.0
+          3.5,
+          86.7
+        ],
+        [
+          43.2,
+          4.01,
+          86.7
+        ],
+        [
+          81.4,
+          8.0,
+          82.5
+        ],
+        [
+          111.6,
+          12.22,
+          83.7
         ]
       ]
     },
@@ -5983,39 +5606,39 @@
       "id": "east_hamlet_road",
       "waypoints": [
         [
-          264.0,
-          44.21,
-          -138.0
+          186.3,
+          42.99,
+          -70.7
         ],
         [
-          282.0,
-          47.34,
-          -156.0
+          196.9,
+          43.9,
+          -87.9
         ],
         [
-          300.0,
-          49.54,
-          -180.0
+          207.6,
+          45.04,
+          -111.9
         ],
         [
-          330.0,
-          42.33,
-          -150.0
+          225.4,
+          42.47,
+          -81.9
         ],
         [
-          345.0,
-          39.44,
-          -120.0
+          234.2,
+          41.47,
+          -59.9
         ],
         [
-          372.0,
-          41.59,
-          -90.0
-        ],
-        [
-          324.0,
-          29.67,
+          250.2,
+          42.67,
           -42.0
+        ],
+        [
+          221.8,
+          29.21,
+          -13.2
         ]
       ]
     },
@@ -6023,34 +5646,34 @@
       "id": "ash_tower_road",
       "waypoints": [
         [
-          324.0,
-          29.67,
-          -42.0
+          221.8,
+          29.21,
+          -13.2
         ],
         [
-          348.0,
-          33.88,
-          0.0
+          236.0,
+          31.61,
+          11.9
         ],
         [
-          366.0,
-          34.23,
-          36.0
+          246.7,
+          31.8,
+          33.4
         ],
         [
-          336.0,
-          29.11,
-          78.0
+          228.9,
+          25.29,
+          58.6
         ],
         [
-          282.0,
-          21.9,
-          90.0
+          196.9,
+          22.01,
+          65.7
         ],
         [
-          324.0,
-          29.14,
-          90.0
+          221.8,
+          29.12,
+          65.7
         ]
       ]
     },
@@ -6058,39 +5681,39 @@
       "id": "far_grove_road",
       "waypoints": [
         [
-          -65.0,
+          -51.4,
           34.94,
-          -284.0
+          -197.4
         ],
         [
-          -50.0,
-          32.54,
-          -307.0
+          -42.5,
+          32.47,
+          -211.2
         ],
         [
-          -43.0,
-          26.14,
-          -323.0
+          -38.4,
+          26.3,
+          -220.7
         ],
         [
-          -50.0,
-          24.0,
-          -337.0
+          -42.5,
+          24.2,
+          -229.1
         ],
         [
-          -24.0,
-          37.11,
-          -354.0
+          -27.1,
+          36.98,
+          -239.3
         ],
         [
-          -24.0,
-          44.84,
-          -372.0
+          -27.1,
+          44.92,
+          -250.1
         ],
         [
-          -6.0,
-          49.94,
-          -384.0
+          -10.8,
+          49.93,
+          -257.2
         ]
       ]
     },
@@ -6098,24 +5721,24 @@
       "id": "west_lodge_road",
       "waypoints": [
         [
-          -78.0,
-          26.34,
-          -258.0
+          -59.1,
+          26.35,
+          -181.8
         ],
         [
-          -60.0,
-          25.27,
-          -228.0
+          -48.5,
+          25.39,
+          -159.9
         ],
         [
-          -54.0,
-          18.0,
-          -211.0
+          -44.9,
+          18.04,
+          -142.9
         ],
         [
-          -63.0,
-          8.03,
-          -171.0
+          -50.2,
+          8.08,
+          -102.9
         ]
       ]
     },
@@ -6123,29 +5746,29 @@
       "id": "stone_ring_road",
       "waypoints": [
         [
-          -60.0,
-          5.46,
-          36.0
+          -48.5,
+          5.47,
+          33.4
         ],
         [
-          -43.0,
-          9.97,
-          7.0
+          -38.4,
+          10.04,
+          16.1
         ],
         [
-          -45.0,
+          -39.6,
           15.89,
-          -16.0
+          2.3
         ],
         [
-          -51.0,
+          -43.1,
           16.97,
-          -36.0
+          -9.6
         ],
         [
-          -24.0,
-          16.0,
-          -30.0
+          -27.1,
+          16.02,
+          -6.1
         ]
       ]
     },
@@ -6153,34 +5776,34 @@
       "id": "meadow_road",
       "waypoints": [
         [
-          0.0,
-          14.93,
-          0.0
+          -4.8,
+          14.92,
+          11.9
         ],
         [
-          -12.0,
+          -16.8,
           10.77,
-          24.0
+          26.3
         ],
         [
-          -34.0,
-          7.01,
-          46.0
+          -33.1,
+          7.0,
+          39.4
         ],
         [
-          -60.0,
-          3.2,
-          67.0
+          -48.5,
+          3.23,
+          52.0
         ],
         [
-          -68.0,
+          -53.2,
           2.69,
-          72.0
+          55.0
         ],
         [
-          -91.0,
-          1.57,
-          72.0
+          -66.8,
+          1.53,
+          55.0
         ]
       ]
     },
@@ -6188,29 +5811,29 @@
       "id": "south_orchard_road",
       "waypoints": [
         [
-          138.0,
-          12.2,
-          120.0
+          111.6,
+          12.22,
+          83.7
         ],
         [
-          96.0,
-          5.95,
-          132.0
+          86.7,
+          8.1,
+          90.9
         ],
         [
-          48.0,
-          3.52,
-          138.0
+          43.2,
+          7.33,
+          94.5
         ],
         [
-          90.0,
+          83.2,
           12.02,
-          102.0
+          72.9
         ],
         [
-          156.0,
-          21.14,
-          30.0
+          122.3,
+          20.72,
+          29.8
         ]
       ]
     },
@@ -6218,34 +5841,34 @@
       "id": "upper_falls_road",
       "waypoints": [
         [
-          72.0,
-          51.24,
-          -312.0
+          67.2,
+          51.31,
+          -214.2
         ],
         [
-          54.0,
-          51.3,
-          -372.0
+          49.2,
+          54.66,
+          -250.1
         ],
         [
-          90.0,
-          65.71,
-          -384.0
+          83.2,
+          56.37,
+          -257.2
         ],
         [
-          156.0,
-          62.85,
-          -366.0
+          122.3,
+          63.47,
+          -246.5
         ],
         [
-          198.0,
-          60.33,
-          -348.0
+          147.2,
+          57.75,
+          -235.7
         ],
         [
-          222.0,
-          57.77,
-          -330.0
+          161.4,
+          57.04,
+          -224.9
         ]
       ]
     },
@@ -6253,24 +5876,24 @@
       "id": "east_grove_road",
       "waypoints": [
         [
-          258.0,
-          49.68,
-          -210.0
+          182.7,
+          49.69,
+          -141.9
         ],
         [
-          198.0,
-          44.91,
-          -180.0
+          147.2,
+          43.11,
+          -111.9
         ],
         [
-          216.0,
-          43.54,
-          -138.0
+          157.8,
+          44.89,
+          -70.7
         ],
         [
-          264.0,
-          44.21,
-          -138.0
+          186.3,
+          42.99,
+          -70.7
         ]
       ]
     },
@@ -6278,29 +5901,29 @@
       "id": "boundary_road",
       "waypoints": [
         [
-          222.0,
-          57.77,
-          -330.0
+          161.4,
+          57.04,
+          -224.9
         ],
         [
-          288.0,
-          58.8,
-          -288.0
+          200.5,
+          58.79,
+          -199.8
         ],
         [
-          312.0,
-          51.45,
-          -222.0
+          214.7,
+          50.48,
+          -153.9
         ],
         [
-          336.0,
-          48.03,
-          -198.0
+          228.9,
+          48.08,
+          -129.9
         ],
         [
-          378.0,
-          51.15,
-          -174.0
+          253.8,
+          51.91,
+          -105.9
         ]
       ]
     },
@@ -6308,29 +5931,29 @@
       "id": "vent_road",
       "waypoints": [
         [
-          324.0,
-          29.67,
-          -42.0
+          221.8,
+          29.21,
+          -13.2
         ],
         [
-          354.0,
-          35.78,
-          -24.0
+          239.6,
+          33.5,
+          -2.5
         ],
         [
-          366.0,
-          33.47,
-          60.0
+          246.7,
+          30.87,
+          47.8
         ],
         [
-          348.0,
-          30.07,
-          132.0
+          236.0,
+          27.97,
+          90.9
         ],
         [
-          384.0,
-          33.11,
-          90.0
+          257.3,
+          31.45,
+          65.7
         ]
       ]
     },
@@ -6338,19 +5961,19 @@
       "id": "moot_court",
       "waypoints": [
         [
-          -12.0,
+          -16.8,
           41.67,
-          -177.0
+          -108.9
         ],
         [
-          9.0,
+          4.2,
           40.8,
-          -180.0
+          -111.9
         ],
         [
-          24.0,
+          19.2,
           40.8,
-          -171.0
+          -102.9
         ]
       ]
     },
@@ -6358,19 +5981,19 @@
       "id": "guild_walk",
       "waypoints": [
         [
-          24.0,
+          19.2,
           40.8,
-          -171.0
+          -102.9
         ],
         [
-          47.0,
-          40.82,
-          -171.0
+          42.2,
+          40.83,
+          -102.9
         ],
         [
-          64.0,
-          41.39,
-          -160.0
+          59.2,
+          41.4,
+          -91.9
         ]
       ]
     },
@@ -6378,24 +6001,24 @@
       "id": "mill_lane",
       "waypoints": [
         [
-          12.0,
+          7.2,
           30.1,
-          -119.0
+          -59.3
         ],
         [
-          -8.0,
+          -12.8,
           27.98,
-          -126.0
+          -63.5
         ],
         [
-          -44.0,
-          27.18,
-          -126.0
+          -39.0,
+          26.75,
+          -63.5
         ],
         [
-          -43.0,
-          27.2,
-          -106.0
+          -38.4,
+          27.19,
+          -51.5
         ]
       ]
     },
@@ -6403,29 +6026,29 @@
       "id": "orchard_cart_link",
       "waypoints": [
         [
-          48.0,
-          4.0,
-          125.0
+          43.2,
+          4.01,
+          86.7
         ],
         [
-          63.0,
-          8.0,
-          111.0
+          58.2,
+          7.97,
+          78.3
         ],
         [
-          90.0,
+          83.2,
           12.02,
-          102.0
+          72.9
         ],
         [
-          114.0,
+          97.4,
           15.0,
-          97.0
+          69.9
         ],
         [
-          138.0,
-          17.74,
-          88.0
+          111.6,
+          17.71,
+          64.5
         ]
       ]
     },
@@ -6433,24 +6056,24 @@
       "id": "quarry_haul",
       "waypoints": [
         [
-          216.0,
-          23.53,
-          102.0
+          157.8,
+          23.52,
+          72.9
         ],
         [
-          221.0,
-          21.99,
-          119.0
+          160.8,
+          21.96,
+          83.1
         ],
         [
-          225.0,
+          163.2,
           19.04,
-          136.0
+          93.3
         ],
         [
-          237.0,
+          170.3,
           16.85,
-          155.0
+          104.6
         ]
       ]
     },
@@ -6458,29 +6081,29 @@
       "id": "north_pass",
       "waypoints": [
         [
-          72.0,
-          51.24,
-          -312.0
+          67.2,
+          51.31,
+          -214.2
         ],
         [
-          67.0,
-          51.0,
-          -337.0
+          62.2,
+          52.97,
+          -229.1
         ],
         [
-          63.0,
-          51.04,
-          -355.0
+          58.2,
+          54.45,
+          -239.9
         ],
         [
-          72.0,
+          67.2,
           55.0,
-          -373.0
+          -250.6
         ],
         [
-          72.0,
-          55.0,
-          -384.0
+          67.2,
+          55.06,
+          -257.2
         ]
       ]
     },
@@ -6488,19 +6111,19 @@
       "id": "boundary_approach",
       "waypoints": [
         [
-          288.0,
-          58.8,
-          -288.0
+          200.5,
+          58.79,
+          -199.8
         ],
         [
-          283.0,
+          197.5,
           57.99,
-          -279.0
+          -194.4
         ],
         [
-          280.0,
-          57.06,
-          -272.0
+          195.7,
+          56.35,
+          -190.2
         ]
       ]
     },
@@ -6508,31 +6131,156 @@
       "id": "grove_school",
       "waypoints": [
         [
-          -43.0,
-          26.14,
-          -323.0
+          -38.4,
+          26.3,
+          -220.7
         ],
         [
-          -48.0,
-          29.95,
-          -316.0
+          -41.4,
+          30.07,
+          -216.5
         ],
         [
-          -48.0,
-          33.98,
-          -302.0
+          -41.4,
+          33.97,
+          -208.2
         ],
         [
-          -48.0,
-          35.88,
-          -294.0
+          -41.4,
+          35.86,
+          -203.4
+        ]
+      ]
+    },
+    {
+      "id": "coppice_work_lane",
+      "waypoints": [
+        [
+          132.4,
+          52.76,
+          -197.4
+        ],
+        [
+          138.3,
+          55.03,
+          -214.2
+        ],
+        [
+          134.7,
+          58.0,
+          -230.3
+        ],
+        [
+          134.1,
+          61.52,
+          -244.1
+        ]
+      ]
+    },
+    {
+      "id": "whitehorn_continuation",
+      "waypoints": [
+        [
+          67.2,
+          55.0,
+          -250.6
+        ],
+        [
+          67.2,
+          55.06,
+          -257.2
+        ],
+        [
+          67.2,
+          57.05,
+          -268.0
+        ],
+        [
+          67.2,
+          62.89,
+          -284.8
+        ]
+      ]
+    },
+    {
+      "id": "moor_continuation",
+      "waypoints": [
+        [
+          118.7,
+          11.98,
+          95.7
+        ],
+        [
+          122.3,
+          10.99,
+          108.8
+        ],
+        [
+          122.3,
+          10.0,
+          119.6
+        ],
+        [
+          123.5,
+          9.03,
+          131.6
+        ]
+      ]
+    },
+    {
+      "id": "gorge_continuation",
+      "waypoints": [
+        [
+          243.1,
+          38.28,
+          -20.4
+        ],
+        [
+          262.7,
+          41.76,
+          -27.6
+        ],
+        [
+          275.1,
+          42.01,
+          -27.6
+        ],
+        [
+          289.3,
+          42.75,
+          -28.8
+        ]
+      ]
+    },
+    {
+      "id": "grove_floor_walk",
+      "waypoints": [
+        [
+          -16.8,
+          35.7,
+          -147.9
+        ],
+        [
+          19.2,
+          45.02,
+          -166.9
+        ],
+        [
+          15.2,
+          45.19,
+          -177.7
+        ],
+        [
+          37.2,
+          44.6,
+          -192.6
         ]
       ]
     }
   ],
   "water": {
     "seaLevel": 0.0,
-    "serverCells": 576,
+    "serverCells": 384,
     "bodies": [
       {
         "id": "Water_Sea",
@@ -6553,6 +6301,16 @@
         "id": "Water_Falls",
         "node": "Water_Falls",
         "type": "waterfall"
+      },
+      {
+        "id": "Water_Sea_StreamOverflow",
+        "node": "Water_Sea_StreamOverflow",
+        "type": "sea"
+      },
+      {
+        "id": "Water_Streams_StreamOverflow",
+        "node": "Water_Streams_StreamOverflow",
+        "type": "stream"
       }
     ],
     "streams": [
@@ -6560,49 +6318,49 @@
         "id": "north_beck",
         "waypoints": [
           [
-            108.0,
-            64.69,
-            -378.0
+            93.8,
+            61.28,
+            -253.6
           ],
           [
-            90.0,
-            47.75,
-            -336.0
+            83.2,
+            52.05,
+            -228.5
           ],
           [
-            72.0,
-            48.86,
-            -288.0
+            67.2,
+            49.64,
+            -199.8
           ],
           [
-            54.0,
+            49.2,
             46.91,
-            -240.0
+            -171.1
           ],
           [
-            19.0,
-            41.49,
-            -215.0
+            14.2,
+            38.59,
+            -146.9
           ],
           [
-            -36.0,
-            36.93,
-            -209.0
+            -34.3,
+            36.5,
+            -140.9
           ],
           [
-            -32.0,
-            34.57,
-            -172.0
+            -31.9,
+            33.96,
+            -103.9
           ],
           [
-            -28.0,
-            26.56,
-            -149.0
+            -29.5,
+            26.73,
+            -80.9
           ],
           [
-            -6.0,
-            26.55,
-            -132.0
+            -10.8,
+            25.86,
+            -67.1
           ]
         ]
       },
@@ -6610,44 +6368,44 @@
         "id": "mill_race",
         "waypoints": [
           [
-            -6.0,
-            26.55,
-            -132.0
+            -10.8,
+            25.86,
+            -67.1
           ],
           [
-            -20.0,
-            28.9,
-            -132.0
+            -24.8,
+            28.48,
+            -67.1
           ],
           [
-            -29.0,
-            25.5,
-            -125.0
+            -30.1,
+            25.63,
+            -62.9
           ],
           [
-            -29.0,
-            25.31,
-            -112.0
+            -30.1,
+            25.26,
+            -55.1
           ],
           [
-            -30.0,
-            -1.75,
-            -96.0
+            -30.7,
+            -1.73,
+            -45.5
           ],
           [
-            -40.0,
-            -10.89,
-            -80.0
+            -36.6,
+            -10.84,
+            -36.0
           ],
           [
-            -54.0,
-            -11.92,
-            -66.0
+            -44.9,
+            -11.89,
+            -27.6
           ],
           [
-            -76.0,
-            -16.67,
-            -60.0
+            -57.9,
+            -16.63,
+            -24.0
           ]
         ]
       },
@@ -6655,44 +6413,44 @@
         "id": "east_brook",
         "waypoints": [
           [
-            198.0,
-            64.66,
-            -288.0
+            147.2,
+            71.92,
+            -199.8
           ],
           [
-            168.0,
-            41.81,
-            -252.0
+            129.4,
+            40.74,
+            -178.3
           ],
           [
-            138.0,
-            30.48,
-            -222.0
+            111.6,
+            33.66,
+            -153.9
           ],
           [
-            120.0,
-            43.98,
-            -198.0
+            101.0,
+            43.91,
+            -129.9
           ],
           [
-            102.0,
-            23.68,
-            -180.0
+            90.3,
+            28.23,
+            -111.9
           ],
           [
-            72.0,
-            22.89,
-            -162.0
+            67.2,
+            41.4,
+            -93.9
           ],
           [
-            36.0,
-            37.81,
-            -150.0
+            31.2,
+            38.49,
+            -81.9
           ],
           [
-            6.0,
-            22.1,
-            -138.0
+            1.2,
+            26.77,
+            -70.7
           ]
         ]
       },
@@ -6700,44 +6458,44 @@
         "id": "garden_rill",
         "waypoints": [
           [
-            174.0,
-            37.12,
-            -102.0
+            132.9,
+            39.71,
+            -49.1
           ],
           [
-            168.0,
-            34.55,
-            -66.0
+            129.4,
+            34.64,
+            -27.6
           ],
           [
-            162.0,
-            25.11,
-            -18.0
+            125.8,
+            25.69,
+            1.1
           ],
           [
-            156.0,
-            21.14,
-            30.0
+            122.3,
+            20.72,
+            29.8
           ],
           [
-            144.0,
+            115.2,
             19.09,
-            66.0
+            51.4
           ],
           [
-            120.0,
-            8.27,
-            108.0
+            101.0,
+            11.14,
+            76.5
           ],
           [
-            84.0,
-            3.97,
-            138.0
+            79.2,
+            5.95,
+            94.5
           ],
           [
-            30.0,
-            -0.8,
-            156.0
+            25.2,
+            3.74,
+            105.2
           ]
         ]
       },
@@ -6745,34 +6503,34 @@
         "id": "lake_outfall",
         "waypoints": [
           [
-            -18.0,
-            37.37,
-            -336.0
+            -22.8,
+            40.7,
+            -228.5
           ],
           [
-            -36.0,
-            34.69,
-            -300.0
+            -34.3,
+            35.18,
+            -207.0
           ],
           [
-            -45.0,
-            25.86,
-            -255.0
-          ],
-          [
-            -66.0,
-            23.81,
-            -222.0
-          ],
-          [
-            -96.0,
-            -8.95,
-            -192.0
-          ],
-          [
-            -78.0,
-            -0.11,
+            -39.6,
+            25.13,
             -180.0
+          ],
+          [
+            -52.0,
+            22.72,
+            -153.9
+          ],
+          [
+            -69.8,
+            -8.94,
+            -123.9
+          ],
+          [
+            -59.1,
+            -0.11,
+            -111.9
           ]
         ]
       },
@@ -6780,39 +6538,39 @@
         "id": "ash_burn",
         "waypoints": [
           [
-            354.0,
-            47.5,
-            -198.0
+            239.6,
+            47.69,
+            -129.9
           ],
           [
-            330.0,
-            42.33,
-            -150.0
+            225.4,
+            42.47,
+            -81.9
           ],
           [
-            345.0,
-            39.44,
-            -120.0
+            234.2,
+            41.47,
+            -59.9
           ],
           [
-            324.0,
-            30.17,
-            -60.0
+            221.8,
+            30.2,
+            -24.0
           ],
           [
-            336.0,
-            26.88,
-            18.0
+            228.9,
+            25.05,
+            22.7
           ],
           [
-            282.0,
-            21.9,
-            90.0
+            196.9,
+            22.01,
+            65.7
           ],
           [
-            264.0,
-            17.74,
-            132.0
+            186.3,
+            19.24,
+            90.9
           ]
         ]
       },
@@ -6820,29 +6578,34 @@
         "id": "upper_beck",
         "waypoints": [
           [
-            78.0,
-            72.97,
-            -414.0
+            42.2,
+            63.74,
+            -266.2
           ],
           [
-            54.0,
-            51.3,
-            -372.0
+            39.2,
+            56.37,
+            -258.4
           ],
           [
-            36.0,
-            43.25,
-            -342.0
+            39.2,
+            52.66,
+            -250.1
           ],
           [
-            42.0,
-            39.99,
-            -300.0
+            31.2,
+            46.96,
+            -232.1
           ],
           [
-            54.0,
+            37.2,
+            44.04,
+            -207.0
+          ],
+          [
+            49.2,
             46.91,
-            -240.0
+            -171.1
           ]
         ]
       },
@@ -6850,24 +6613,24 @@
         "id": "meadow_brook",
         "waypoints": [
           [
-            -12.0,
+            -16.8,
             10.77,
-            24.0
+            26.3
           ],
           [
-            -36.0,
-            6.93,
-            42.0
+            -34.3,
+            6.89,
+            37.0
           ],
           [
-            -66.0,
-            0.28,
-            60.0
+            -52.0,
+            1.5,
+            47.8
           ],
           [
-            -93.0,
-            1.47,
-            72.0
+            -68.0,
+            1.3,
+            55.0
           ]
         ]
       },
@@ -6875,29 +6638,29 @@
         "id": "grove_burn",
         "waypoints": [
           [
-            -24.0,
-            44.84,
-            -372.0
+            -27.1,
+            44.92,
+            -250.1
           ],
           [
-            -108.0,
-            -16.56,
-            -342.0
+            -76.9,
+            -16.52,
+            -232.1
           ],
           [
-            -102.0,
-            0.77,
-            -294.0
+            -73.4,
+            1.03,
+            -203.4
           ],
           [
-            -60.0,
-            25.27,
-            -228.0
+            -48.5,
+            25.39,
+            -159.9
           ],
           [
-            -114.0,
-            -17.55,
-            -198.0
+            -80.5,
+            -17.48,
+            -129.9
           ]
         ]
       }
@@ -7031,36 +6794,36 @@
       {
         "id": "forest-core",
         "centre": [
-          20.0,
+          15.2229,
           32.0,
-          -116.0
+          -57.5146
         ],
         "radius": 124.0
       },
       {
         "id": "coast",
         "centre": [
-          -60.0,
+          -48.4713,
           4.0,
-          0.0
+          11.8912
         ],
         "radius": 104.0
       },
       {
         "id": "settlement",
         "centre": [
-          16.0,
+          11.2229,
           32.0,
-          -112.0
+          -55.1213
         ],
         "radius": 60.0
       },
       {
         "id": "transition",
         "centre": [
-          216.0,
+          157.8217,
           20.0,
-          -40.0
+          -12.0418
         ],
         "radius": 92.0
       }
@@ -7069,17 +6832,17 @@
   "minimap": {
     "image": "minimap.webp",
     "imageSize": [
-      575,
-      575
+      383,
+      383
     ],
     "pixelsPerMetre": 1.0,
     "worldMin": [
-      -174.0,
-      -401.0
+      -116.0,
+      -267.0
     ],
     "worldMax": [
-      401.0,
-      174.0
+      267.0,
+      116.0
     ],
     "northAxis": "-Z",
     "orientation": "north-up",
@@ -7088,25 +6851,25 @@
     "transform": {
       "pixelX": {
         "scale": 1.0,
-        "offset": 174.0
+        "offset": 116.0
       },
       "pixelY": {
         "scale": 1.0,
-        "offset": 401.0
+        "offset": 267.0
       },
       "formula": "pixel_x = world_x * scale + offset; pixel_y = world_z * scale + offset"
     },
     "note": "Every Eloria minimap is drawn at one pixel to the metre, so the image's pixel size is the map's size in metres.",
     "file": "minimap.webp",
-    "pixels": 575,
+    "pixels": 383,
     "size": [
-      575,
-      575
+      383,
+      383
     ],
     "metresPerPixel": 1.0,
     "centre": [
-      113.5,
-      -113.5
+      75.5,
+      -75.5
     ],
     "northUp": true
   },
@@ -7137,33 +6900,33 @@
     }
   ],
   "performance": {
-    "nodes": 10142,
-    "meshes": 506,
-    "materials": 51,
-    "images": 114,
-    "textures": 114,
-    "accessors": 2035,
-    "bufferViews": 2149,
-    "uniqueTriangles": 639967,
-    "uniqueVertices": 514912,
-    "glbBytes": 36445172,
-    "instancedTriangles": 3084504,
-    "embeddedTextureBytes": 12797688,
-    "textureMemoryBytesUncompressed": 114229248,
-    "placements": 9133,
+    "nodes": 5038,
+    "meshes": 539,
+    "materials": 58,
+    "images": 126,
+    "textures": 126,
+    "accessors": 2200,
+    "bufferViews": 2326,
+    "uniqueTriangles": 813500,
+    "uniqueVertices": 597261,
+    "glbBytes": 40527648,
+    "instancedTriangles": 2154597,
+    "embeddedTextureBytes": 13467700,
+    "textureMemoryBytesUncompressed": 123666432,
+    "placements": 4009,
     "collision": {
-      "width": 1152,
-      "height": 1152,
+      "width": 768,
+      "height": 768,
       "cellMetres": 0.5,
-      "walkableCells": 912223,
-      "blockedCells": 414881,
-      "walkableFraction": 0.6874,
+      "walkableCells": 382306,
+      "blockedCells": 207518,
+      "walkableFraction": 0.6482,
       "elevatedDecks": 27,
-      "steepCells": 103649,
-      "reliefMetres": 108.56,
+      "steepCells": 76135,
+      "reliefMetres": 108.74,
       "heightEncoding": {
-        "origin": -1.401,
-        "step": 1.751009,
+        "origin": -1.4034,
+        "step": 1.753931,
         "range": [
           1,
           63
@@ -7175,32 +6938,33 @@
     },
     "notes": [
       "settlement props: 286, lamps: 38",
-      "ruin fragments: 94",
+      "ruin fragments: 47",
       "outland places: 51 landmarks total",
       "Amberwood circulation: a mill below a market town, seven surveyed crossings, dry coast settlements and graded cart approaches.",
-      "forest instances: 2386",
-      "undergrowth instances: 2337",
-      "FallenLog instances: 169",
-      "Stump instances: 214",
-      "LeafDrift instances: 619",
-      "Mushrooms instances: 251",
-      "Rock instances: 261",
-      "walk corridors: 15 encroaching dressing placements removed",
-      "lore site nine-watchers (The Nine Watchers): relief 10.74 m, 36 m from the ask",
+      "forest instances: 1196",
+      "undergrowth instances: 478",
+      "FallenLog instances: 93",
+      "Stump instances: 115",
+      "LeafDrift instances: 341",
+      "Mushrooms instances: 156",
+      "Rock instances: 232",
+      "walk corridors: 11 encroaching dressing placements removed",
+      "Landscape pilot: connected upland shoulder; quiet loam, irregular hay meadows, habitat groves, small household yards and one legible market court.",
+      "lore site nine-watchers (The Nine Watchers): relief 10.08 m, 36 m from the ask",
       "lore site deep-grove-scar (The Scarred Grove): no open ground within reach; placed where asked",
-      "lore site root-tally (Root's Tally): relief 3.33 m, 18 m from the ask",
+      "lore site root-tally (Root's Tally): no open ground within reach; placed where asked",
       "march north-pass: 0 road pieces, 19 of whitehorn_range's growth",
       "march east-road: 2 road pieces, 10 of mirrorhold's growth",
-      "march south-road: 1 road pieces, 19 of grey_moors's growth",
+      "march south-road: 0 road pieces, 19 of grey_moors's growth",
       "march harbour-quay: 0 road pieces, 9 of westhaven's growth"
     ],
     "lod2": {
-      "glbBytes": 23941300,
-      "nodes": 6278,
-      "uniqueTriangles": 588435,
-      "instancedTriangles": 2093030,
-      "sizeReductionPercent": 34.3,
-      "triangleReductionPercent": 32.1
+      "glbBytes": 27886508,
+      "nodes": 3721,
+      "uniqueTriangles": 773460,
+      "instancedTriangles": 1549951,
+      "sizeReductionPercent": 31.2,
+      "triangleReductionPercent": 28.1
     }
   },
   "sources": [
@@ -7229,5 +6993,29 @@
     "license": "same as the Eloria client repository"
   },
   "productionStatus": "production-geometry-materials-population",
-  "knownLimitations": []
+  "knownLimitations": [],
+  "landscapeRevision": "inhabited-384-v1",
+  "streamingBorders": [
+    {
+      "id": "amberwood-whitehorn",
+      "portal": "north-pass",
+      "destination": "whitehorn_range",
+      "anchor": [
+        67.5,
+        55.2,
+        -256.5
+      ],
+      "outward": [
+        0,
+        -1
+      ],
+      "uvSign": 1,
+      "preloadDistance": 170,
+      "retainDistance": 220,
+      "blendDistance": 65,
+      "overflowSuffix": "_StreamOverflow",
+      "collarDepth": 42,
+      "halfWidthTiles": 3
+    }
+  ]
 }

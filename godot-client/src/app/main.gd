@@ -58,6 +58,11 @@ var invasion_assistant_window
 var extension_windows: Control
 @onready var gameplay_camera: Camera3D = %Camera
 @onready var world_loader: WorldLoader = %WorldLoader
+var exterior_stream: ExteriorRegionStream
+var _continuous_map_handoff := false
+var _retained_traveller := -1
+var _retained_until := 0
+var _stream_lighting_at := 0
 @onready var fallback_ground: MeshInstance3D = $GameView/ViewportContainer/Viewport/WorldRoot/Ground
 @onready var world_environment: WorldEnvironment = $GameView/ViewportContainer/Viewport/WorldRoot/Environment
 @onready var world_sun: DirectionalLight3D = $GameView/ViewportContainer/Viewport/WorldRoot/Sun
@@ -855,6 +860,12 @@ func _ready() -> void:
 	animation_config = _json("res://data/animations/luminous.json")
 	animation_configs["res://data/animations/luminous.json"] = animation_config
 	map_registry = _json("res://data/maps/registry.json").get("maps", {})
+	exterior_stream = ExteriorRegionStream.new()
+	exterior_stream.name = "ExteriorRegionStream"
+	world_root.add_child(exterior_stream)
+	exterior_stream.configure(map_registry)
+	get_tree().auto_accept_quit = false
+	get_tree().root.close_requested.connect(_close_client)
 	world_object_models = _json("res://data/world/objects.json")
 	# The nine Eloria extension windows live in their own script: main.gd is
 	# already long enough that nine more windows would make it unreadable, and
@@ -1119,6 +1130,10 @@ func _process(delta: float) -> void:
 		_update_carried_item()
 		_update_map_viewports()
 		_update_local_actor_follow()
+		exterior_stream.update_position(camera_rig.focus)
+		if Time.get_ticks_msec() >= _stream_lighting_at:
+			_stream_lighting_at = Time.get_ticks_msec() + 100
+			_update_border_lighting()
 		_update_animation_gate(delta)
 		# Rain is everywhere, so only the box the player is standing in is
 		# drawn. Left at the world origin it fell a hundred metres away from
@@ -1230,6 +1245,7 @@ func _update_keyboard_movement() -> void:
 			and not close_to_goal and now < _keyboard_refresh_msec:
 		return
 	var target: Vector2i = origin + direction * KEYBOARD_LOOKAHEAD_TILES
+	exterior_stream.pending_walk.clear()
 	var error: Error = Network.move_to(target, run)
 	if error == OK:
 		_keyboard_moving = true
@@ -2424,6 +2440,14 @@ func _close_ground_bag() -> void:
 func _on_disconnect_pressed() -> void:
 	Network.disconnect_from_server()
 
+func _close_client() -> void:
+	# Keep serving rendering/physics commands until a private loader completes;
+	# joining a live import while the rendering server shuts down can deadlock.
+	exterior_stream.clear()
+	while not exterior_stream.is_idle():
+		await get_tree().process_frame
+	get_tree().quit()
+
 func _on_login_succeeded() -> void:
 	# Tell the server which Eloria extensions this client implements. Without
 	# it the server serves the legacy dialogue and raw-text fallback for every
@@ -2536,7 +2560,8 @@ func _clear_world_presentation() -> void:
 			(raw_object_node as Node).queue_free()
 	map_object_nodes.clear()
 	_ungrounded_map_objects.clear()
-	map_marker_overlay.set_waypoints([])
+	var no_waypoints: Array[Dictionary] = []
+	map_marker_overlay.set_waypoints(no_waypoints)
 	if is_instance_valid(map_light_root):
 		map_light_root.queue_free()
 	map_light_root = null
@@ -2546,6 +2571,8 @@ func _clear_world_presentation() -> void:
 	# session they were built in.
 	GlbSceneCache.clear()
 	NativeAnimationImporter.clear()
+	exterior_stream.clear()
+	_retained_traveller = -1
 	world_loader.unload_world()
 	loaded_server_map = ""
 	full_map.hide()
@@ -3227,6 +3254,7 @@ func _handle_map_gui_input(event: InputEvent, map_control: TextureRect,
 		" viewport=", viewport_position, " server_tile=", target_value,
 		" command=", "RUN_TO" if mouse_button.shift_pressed else "MOVE_TO")
 	if target_value is Vector2i:
+		exterior_stream.pending_walk.clear()
 		_clear_keyboard_movement_tracking()
 		_clear_local_turn_prediction()
 		var move_error: Error = Network.move_to(target_value as Vector2i,
@@ -3272,6 +3300,7 @@ static func _texture_to_viewport_position(local_position: Vector2,
 	return _control_to_viewport_position(local_position, control_size, target_size)
 
 func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector2) -> void:
+	exterior_stream.pending_walk.clear()
 	if not Network.magic_pending.is_empty() and Network.magic_scope in ["burst", "location"]:
 		var tile: Variant = _map_target_tile(gameplay_camera, viewport_position)
 		if tile is Vector2i: Network.move_to(tile)
@@ -3323,6 +3352,10 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 	var ray_origin: Vector3 = camera_rig.ray_origin(viewport_position)
 	var ray_direction: Vector3 = camera_rig.ray_direction(viewport_position)
 	var point: Variant = _navigation_ray_position(ray_origin, ray_direction)
+	var neighbor_point: Variant = exterior_stream.pick_neighbor(
+		gameplay_world.direct_space_state, ray_origin, ray_direction, event.shift_pressed)
+	if neighbor_point is Vector3:
+		point = neighbor_point
 	if not point is Vector3:
 		var ground_height: float = adapter.walking_height
 		if actor_nodes.has(AppState.local_actor_id):
@@ -3533,6 +3566,18 @@ func _load_server_map() -> void:
 		push_error("map_registry_miss server_id=%s normalized=%s keys=%s" % [
 			AppState.current_map, normalized_map, map_registry.keys()])
 		return
+	var handoff := exterior_stream.take_ready(normalized_map, world_loader, camera_rig.focus)
+	_continuous_map_handoff = bool(handoff.get("continuous", false))
+	_retained_traveller = AppState.local_actor_id if _continuous_map_handoff else -1
+	_retained_until = Time.get_ticks_msec() + 3000
+	if _continuous_map_handoff:
+		var rebase: Transform3D = handoff.rebase
+		camera_rig.rebase_world(rebase)
+		var traveller: Variant = actor_nodes.get(_retained_traveller)
+		if is_instance_valid(traveller):
+			(traveller as ReplicatedActor3D).rebase_world(rebase)
+			exterior_stream.last_handoff["traveller_at_rebase"] = traveller.global_position
+			exterior_stream.last_handoff["target_at_rebase"] = traveller.server_target
 	loaded_server_map = AppState.current_map
 	_actor_surface_samples.clear()
 	_local_placement_logged = false
@@ -3550,10 +3595,13 @@ func _load_server_map() -> void:
 	# in the far corner
 	# of the map instead of the middle of it.
 	map_marker_overlay.configure(full_map_camera, adapter, full_map_viewport.size)
-	for raw_actor_node: Variant in actor_nodes.values():
+	for actor_id: Variant in actor_nodes.keys():
+		if int(actor_id) == _retained_traveller:
+			continue
+		var raw_actor_node: Variant = actor_nodes[actor_id]
 		if is_instance_valid(raw_actor_node):
 			(raw_actor_node as Node).queue_free()
-	actor_nodes.clear()
+		actor_nodes.erase(actor_id)
 	for bag_node_value: Variant in ground_bag_nodes.values():
 		if is_instance_valid(bag_node_value):
 			(bag_node_value as Node).queue_free()
@@ -3572,19 +3620,27 @@ func _load_server_map() -> void:
 	print_debug("map_resolved server_id=", AppState.current_map,
 		" normalized=", normalized_map, " registry_key=", entry.get("registryKey", ""),
 		" manifest_resource=", manifest_resource, " manifest_path=", manifest_path)
-	world_loader.load_world(manifest_path)
-	map_label.text = "Loading " + AppState.current_map + "…"
+	if not handoff.is_empty():
+		world_loader.adopt_world(handoff.resident)
+	else:
+		exterior_stream.clear()
+		world_loader.load_world(manifest_path)
 
 func _on_world_loaded(manifest: WorldManifest) -> void:
+	var binding_started := Time.get_ticks_usec()
+	exterior_stream.activate(loaded_server_map, world_loader.world_root, manifest)
 	_bind_shared_world()
 	fallback_ground.hide()
 	# Regions and interiors may declare their own sky, sun, fog, tonemap, point
 	# lights and camera framing. Maps that do not keep the client's previous
 	# placeholder environment unchanged.
-	WorldEnvironmentBinder.apply(manifest, world_environment, world_sun, world_root)
-	WorldEnvironmentBinder.apply_camera(manifest, camera_rig)
+	if not _continuous_map_handoff:
+		WorldEnvironmentBinder.apply(manifest, world_environment, world_sun, world_root)
+	if not _continuous_map_handoff:
+		WorldEnvironmentBinder.apply_camera(manifest, camera_rig)
 	_bind_light_markers(manifest)
 	_apply_day_night()
+	_update_border_lighting()
 	_bind_ambient_audio(manifest)
 	_populate_ambient_life(manifest)
 	_current_map_display_name = str(
@@ -3603,6 +3659,8 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	_snap_all_actors_to_surface.call_deferred()
 	_snap_all_ground_bags_to_surface.call_deferred()
 	_snap_all_map_objects_to_surface.call_deferred()
+	if _continuous_map_handoff:
+		exterior_stream.last_handoff["binding_ms"] = (Time.get_ticks_usec() - binding_started) / 1000.0
 
 func _bind_light_markers(manifest: WorldManifest) -> void:
 	# Braziers, hearths and shrine lamps the map declares as markers. Interiors
@@ -3641,9 +3699,25 @@ func _update_console_location() -> void:
 func _apply_day_night() -> void:
 	if world_loader.manifest == null:
 		return
-	_day_night_active = DayNightBinder.apply(world_loader.manifest,
+	var lighting := exterior_stream.lighting_manifest(camera_rig.focus)
+	_day_night_active = DayNightBinder.apply(lighting,
 		world_environment, world_sun, AppState.continuous_game_minute())
 	_sync_map_environment()
+
+func _update_border_lighting() -> void:
+	var lighting := exterior_stream.lighting_manifest(camera_rig.focus)
+	if lighting == null or not lighting.data.has("streamingBorders"):
+		return
+	# Reuse the bound sky; changing a border's colour must not allocate a new
+	# sky or respawn the map's lamps every frame.
+	var declared: Dictionary = lighting.data.environment
+	var environment := world_environment.environment
+	var direction := ExteriorRegionStream._vector(declared.sun.direction).normalized()
+	world_sun.look_at_from_position(Vector3.ZERO, direction, Vector3.UP)
+	if environment != null:
+		environment.fog_density = float(declared.get("fog", {}).get("density", environment.fog_density))
+		environment.adjustment_saturation = float(declared.get("saturation", 1))
+	DayNightBinder.apply(lighting, world_environment, world_sun, AppState.continuous_game_minute())
 
 ## The maps are navigation aids, not scenery. Rendered through the world's own
 ## environment they went as dark as the world did, and a minimap nobody can
@@ -3730,6 +3804,8 @@ func _sync_world(changed: Variant = null) -> void:
 	for id: Variant in actor_nodes.keys():
 		if AppState.actors.has(id):
 			continue
+		if int(id) == _retained_traveller and Time.get_ticks_msec() < _retained_until:
+			continue
 		# An entry can already be dangling: anything that frees an actor node
 		# without going through this map leaves the dictionary holding a freed
 		# object, and calling queue_free() on that crashes the engine rather
@@ -3771,9 +3847,12 @@ func _sync_world(changed: Variant = null) -> void:
 			_spawn_actor(id)
 			spawned += 1
 	actor_label.text = "Actors: %d" % AppState.actors.size()
-	if AppState.local_actor_id >= 0 and actor_nodes.has(AppState.local_actor_id):
+	if AppState.local_actor_id >= 0 and actor_nodes.has(AppState.local_actor_id) and AppState.actors.has(AppState.local_actor_id):
 		_update_local_actor_follow()
 		var local_dto: Dictionary = AppState.actors[AppState.local_actor_id]
+		var continuation := exterior_stream.take_continuation(MapRegistry.normalize_server_map_id(AppState.current_map))
+		if not continuation.is_empty():
+			Network.move_to(continuation.tile, bool(continuation.run))
 		overhead_player_name.text = str(local_dto.get("name", "Player"))
 		# You get no nameplate of your own - _nameplate_visible_for skips the
 		# local actor - so this banner is the only place your own name colour
@@ -9624,6 +9703,7 @@ func _pick_map_object(viewport_position: Vector2) -> MapObject3D:
 ## a request: the server decides range, tools, level and whether anything
 ## happens at all.
 func _activate_map_object(map_object: MapObject3D, inspect: bool) -> void:
+	exterior_stream.pending_walk.clear()
 	if inspect:
 		var look_error: Error = Network.look_at_map_object(map_object.object_id)
 		if look_error != OK:
@@ -9656,7 +9736,9 @@ func _sync_map_objects() -> void:
 		if map_object_nodes.has(object_id):
 			continue
 		var map_object := MapObject3D.new()
-		map_object.configure(dto_value as Dictionary, adapter, world_object_models)
+		var region_entry: Dictionary = map_registry.get(AppState.current_map, {})
+		var landscape_crossing: bool = bool(region_entry.get("landscapeTransitions", false)) and str(dto_value.get("label", "")) == "Portal"
+		map_object.configure(dto_value as Dictionary, adapter, world_object_models, landscape_crossing)
 		world_root.add_child(map_object)
 		map_object_nodes[object_id] = map_object
 		_place_map_object_on_surface(map_object)

@@ -449,3 +449,44 @@ so their three-metre climb remains a gradual sequence of server heights.
 Keep both ends on their surveyed floor levels. Open-bank profiles return
 to flat ends at joins; passage banks omit end caps buried in adjoining
 banks or gates so those surfaces cannot nearly share a plane.
+
+### Inhabited landscape pilot (Amberwood, September 2026)
+
+`amberwood/landscape.py` provides opt-in grove density, worn surface edges and
+feathered level ground. The existing terrain operators keep their old behaviour
+unless a shoulder is requested. Grove density reserves quiet ground and combines
+slope, stream moisture and route clearance; it should be supplied with each
+biome's own open-ground field rather than reused as a universal forest pattern.
+
+`compact_landscape.py` shortens travel distances with monotonic axis surveys.
+Protected intervals retain settlement dimensions. Houses and furniture keep
+their meshes; bridges and stairs follow their transformed bank surveys. Restore
+human clearance after compression, then rebuild collision from actual walking
+triangles. A smaller extent is a new level-design pass, not just a changed scale.
+
+`border_vistas.py` samples a neighbouring package's authored terrain into a
+static view outside the served footprint. Each use specifies the corresponding
+portal, inward and outward directions, seam position and biome material. The
+manifest records the source GLB hash. Clear the local boundary landform and
+camera corridor before adding a view, and check it from the real gameplay rig.
+These views carry no navigation or simulated neighbouring actors. They must be
+paired with a receiving-region approach during rollout; they are not streaming.
+
+Amberwood's `source/rebuild_landscape.py` runs its authored builds, walk-height
+refinement, deck opening, solid-footprint stamping, scoped server collision sync,
+map generation, portal/content authoring and client marker sync. The one-time
+server coordinate migration is revision guarded. Run the map crossing and
+content reachability contracts after this sequence, and use
+`godot-client/tests/integration/rendered_landscape_walk.gd` with an isolated real
+server to verify authoritative movement and grounding.
+
+
+Whitehorn applies the compact landscape operators at 396 m with protected refuge bands and an explicit gorge floor profile. Optional `border_vistas.add_vista(..., scenery=True)` copies ordinary receiving-region tree silhouettes into the static view; it never copies actors, triggers, walking surfaces or prior vistas. The `alpine_snowfield`, `alpine_blue_ice` and `alpine_bedrock` recipes are opt-in, so existing regions keep their original materials. See `../whitehorn_range/landscape-redesign.md`.
+
+`streaming_borders.py` replaces the Amberwood–Whitehorn copied views with
+reciprocal authored terrain cuts for the real resident scenes. It grades a
+shared saddle, aligns material coordinates, and declares the frame used by
+the client and server's seven crossing lanes. Keep a continuous substrate under
+cutout material paint. The overflow retains surveyed walking ground while the
+neighbor owns the visible far side. See `../../../../docs/exterior-streaming.md`
+for proximity loading, build commands, contracts and the remaining pilot limits.

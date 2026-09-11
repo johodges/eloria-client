@@ -41,6 +41,12 @@ func set_focus(value: Vector3) -> void:
 	focus = value
 	_update_camera()
 
+func rebase_world(frame: Transform3D) -> void:
+	focus = frame * focus
+	pan_offset = frame.basis * pan_offset
+	yaw_degrees += rad_to_deg(frame.basis.get_euler().y)
+	_update_camera()
+
 func handle_mouse_button(event: InputEventMouseButton) -> bool:
 	if event.button_index == MOUSE_BUTTON_RIGHT:
 		_rotating = event.pressed

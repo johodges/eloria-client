@@ -12,7 +12,8 @@ is. The server's generated maps say which tiles a player can stand on. This
 puts them together:
 
 * every declared link resolves to a portal on both ends, or it is an error;
-* each direction becomes one `portal | map | x | y | dest | ax | ay` line,
+* each direction becomes `portal | map | x | y | dest | ax | ay` lines;
+  reciprocal surveyed roads use a band of lanes that preserves lateral position,
   the trigger on the source portal's tile and the arrival two tiles in from
   the destination portal's tile, on ground the destination map lets a player
   stand on (the arrival is walked inward until it is);
@@ -100,7 +101,9 @@ def load_portals(region: str) -> dict[str, dict]:
         out[entry["id"]] = {"tile": (int(tile[0]), int(tile[1])),
                             "name": entry.get("name") or entry.get("label") or entry["id"],
                             "destination": entry.get("destinationMap") or entry.get("destination"),
-                            "spawn": entry.get("destinationSpawn")}
+                            "spawn": entry.get("destinationSpawn"),
+                            "streaming": next((s for s in manifest.get("streamingBorders", [])
+                                               if s["portal"] == entry["id"]), {})}
     return out
 
 
@@ -177,7 +180,7 @@ def inward_direction(tile, cells: int) -> tuple[int, int]:
 
 
 def exterior_lines(graph, portals, collisions, load, errors, selected=None) -> tuple[list[str], int]:
-    lines = ["# One line per direction of every link in region-connections.json. The",
+    lines = ["# Directions and surveyed road lanes from region-connections.json. The",
              "# trigger is the package's portal tile; the arrival is the first tile a",
              "# player can stand on, two or more tiles in from the far portal, so a",
              "# crossing never lands anyone back on the tile that sent them.", ""]
@@ -208,9 +211,21 @@ def exterior_lines(graph, portals, collisions, load, errors, selected=None) -> t
             if arrival is None:
                 errors.append(f"{destination} portal {destination_portal} at {far}: no walkable arrival")
                 continue
-            lines.append(f"portal | {source} | {trigger[0]} | {trigger[1]} | {destination} | "
-                         f"{arrival[0]} | {arrival[1]}")
-            written += 1
+            a = portals[source][source_portal].get('streaming', {})
+            b = portals[destination][destination_portal].get('streaming', {})
+            width = min(a.get('halfWidthTiles', 0), b.get('halfWidthTiles', 0)) if a and b and a['id'] == b['id'] else 0
+            # A surveyed road crosses across its whole width, maintaining the
+            # traveller's lateral position. The opposite frame reverses sides.
+            sa = (-a['outward'][1], -a['outward'][0]) if width else (0, 0)
+            sb = (-b['outward'][1], -b['outward'][0]) if width else (0, 0)
+            for offset in range(-width, width + 1):
+                start = (trigger[0] + offset * sa[0], trigger[1] + offset * sa[1])
+                end = (arrival[0] - offset * sb[0], arrival[1] - offset * sb[1])
+                if not collisions[source].walkable(*start) or not collisions[destination].walkable(*end):
+                    errors.append(f'{source} streaming lane {offset} has blocked trigger/arrival {start}/{end}')
+                    continue
+                lines.append(f"portal | {source} | {start[0]} | {start[1]} | {destination} | {end[0]} | {end[1]}")
+                written += 1
         lines.append("")
     return lines, written
 

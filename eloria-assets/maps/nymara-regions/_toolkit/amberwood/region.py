@@ -290,6 +290,8 @@ STREAMS: dict[str, np.ndarray] = {
 }
 
 # The beck skirts the inhabited bench and collects at the mill pool.
+STREAMS["upper_beck"]=np.asarray([(47,-399),(44,-386),(44,-372),(36,-342),
+                                   (42,-300),(54,-240)],dtype=float)
 STREAMS["north_beck"]=np.asarray([(108,-378),(90,-336),(72,-288),(54,-240),
                                   (19,-215),(-36,-209),(-32,-172),(-28,-149),(-6,-132)],dtype=float)
 STREAMS["mill_race"]=np.asarray([(-6,-132),(-20,-132),(-29,-125),(-29,-112),
@@ -332,8 +334,8 @@ def build_terrain(seed: int = 20260827) -> TER.Terrain:
     t = TER.Terrain(TERRAIN_X0, TERRAIN_Z0, TERRAIN_SIZE_X, TERRAIN_SIZE_Z, TERRAIN_CELL)
 
     t.add_slope((0.62, -0.78), 0.108, origin=(0.0, 0.0))
-    t.base_noise(7.0, 0.0125, seed=seed, octaves=6, warp=1.35)
-    t.base_noise(2.2, 0.052, seed=seed + 17, octaves=4)
+    t.base_noise(3.0, 0.008, seed=seed, octaves=3, warp=0.7)
+    t.base_noise(0.45, 0.045, seed=seed + 17, octaves=2)
     t.height += 15.0
 
     t.add_ridge(_route((-30.0, -140.0), (10.0, -134.0), (54.0, -128.0), (96.0, -124.0),
@@ -343,7 +345,7 @@ def build_terrain(seed: int = 20260827) -> TER.Terrain:
     t.add_ridge(_route((-40.0, 66.0), (20.0, 72.0), (86.0, 70.0), (140.0, 62.0)),
                 34.0, 20.0, seed=seed + 7, power=1.4)
     t.add_ridge(_route((62.0, -108.0), (72.0, -78.0), (78.0, -50.0), (80.0, -18.0)),
-                14.0, 15.0, seed=seed + 9, power=1.6)
+                38.0, 11.0, seed=seed + 9, power=1.6)
 
     t.add_dome(ANCHORS["settlement"], 62.0 * SCALE, 13.0, power=1.5, noise_seed=seed + 11,
                noise_amount=0.22)
@@ -482,7 +484,7 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260827) -> None:
             ("smoke_vents", 8.0, 7.0, TER.SCORCHED)):
         centre = ANCHORS[name]
         t.rect_terrace(centre, half_x * LOCAL, half_z * LOCAL,
-                       float(t.height_at(*centre)), 0.0, surface)
+                       float(t.height_at(*centre)), 0.0, surface, shoulder=12.0)
 
     # the burnt country starts further east than it did, so the forest keeps
     # more of the enlarged region

@@ -16,8 +16,32 @@ extends RefCounted
 static var _scenes: Dictionary = {}
 static var _failed: Dictionary = {}
 
+static func missing(paths: PackedStringArray) -> PackedStringArray:
+	var out := PackedStringArray()
+	for path: String in paths:
+		path = _canonical_path(path)
+		if not _scenes.has(path) and not _failed.has(path):
+			out.append(path)
+	return out
+
+static func prepare(paths: PackedStringArray) -> Dictionary:
+	# Worker-owned resources. The main thread publishes them only on arrival.
+	var result: Dictionary = {}
+	for path: String in paths:
+		path = _canonical_path(path)
+		var scene := _build(path)
+		if scene != null:
+			result[path] = scene
+	return result
+
+static func install_prepared(scenes: Dictionary) -> void:
+	for path: String in scenes:
+		if not _scenes.has(path):
+			_scenes[path] = scenes[path]
+
 ## Returns a fresh instance of `path`, or null when the file cannot be imported.
 static func instantiate(path: String) -> Node3D:
+	path = _canonical_path(path)
 	if path.is_empty() or _failed.has(path):
 		return null
 	var packed: PackedScene = _scenes.get(path) as PackedScene
@@ -37,6 +61,9 @@ static func clear() -> void:
 
 static func cached_scene_count() -> int:
 	return _scenes.size()
+
+static func _canonical_path(path: String) -> String:
+	return ProjectSettings.globalize_path(path) if path.begins_with("res://") else path
 
 static func _build(path: String) -> PackedScene:
 	var document: GLTFDocument = GLTFDocument.new()

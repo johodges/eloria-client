@@ -77,3 +77,8 @@ for secret in SECRETS:
         secret.at,secret.offset=(125.0,-302.0),(0.0,0.0)
     elif secret.id == "horn-temple-eyrie":
         secret.at,secret.offset=(78.0,-314.0),(0.0,0.0)
+
+# The cascade pocket opens beside the watcher path, below the icefall lip.
+for secret in SECRETS:
+    if secret.id == "horn-cascade-spring":
+        secret.at,secret.offset=(114.0,-215.0),(0.0,0.0)

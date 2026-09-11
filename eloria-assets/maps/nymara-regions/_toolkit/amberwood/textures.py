@@ -549,7 +549,8 @@ def cliff_rock(size: int = 512, seed: int = 67) -> TextureSet:
                       normal_from_height(height, 6.0))
 
 
-def forest_floor(size: int = 512, seed: int = 71) -> TextureSet:
+def forest_floor(size: int = 512, seed: int = 71, leaf_count: int = 900,
+                 leaf_strength: float = 0.92) -> TextureSet:
     """Leaf litter over dark loam, with twigs, moss patches and exposed roots."""
     rng = np.random.default_rng(seed)
     loam = N.tileable_fbm(size, 8, 5, seed=seed)
@@ -567,7 +568,7 @@ def forest_floor(size: int = 512, seed: int = 71) -> TextureSet:
     ad = ImageDraw.Draw(leaf_alpha)
     palette = [(158, 96, 36), (186, 124, 48), (134, 74, 30), (204, 152, 64),
                (116, 60, 26), (172, 130, 56), (100, 66, 32)]
-    for _ in range(900):
+    for _ in range(leaf_count):
         cx, cy = rng.uniform(0, size, 2)
         length = rng.uniform(size * 0.020, size * 0.052)
         angle = rng.uniform(0, math.pi * 2)
@@ -584,7 +585,7 @@ def forest_floor(size: int = 512, seed: int = 71) -> TextureSet:
                               lobes=int(rng.integers(3, 6)))
     leaves = np.asarray(leaf_color).astype(np.float64) / 255.0
     mask = np.asarray(leaf_alpha).astype(np.float64) / 255.0
-    color = _mix(color, leaves, mask * 0.92)
+    color = _mix(color, leaves, mask * leaf_strength)
     height = height + mask * 0.35
 
     # Moss fills the gaps between leaves, so its colour sets how dark the floor
@@ -600,9 +601,9 @@ def forest_floor(size: int = 512, seed: int = 71) -> TextureSet:
                       normal_from_height(height, 2.6))
 
 
-def leaf_path(size: int = 512, seed: int = 79) -> TextureSet:
+def leaf_path(size: int = 512, seed: int = 79, leaf_count: int = 900) -> TextureSet:
     """Packed earth track showing through a thin leaf cover, with pebbles."""
-    base = forest_floor(size, seed + 3)
+    base = forest_floor(size, seed + 3, leaf_count=leaf_count)
     earth = N.tileable_fbm(size, 10, 5, seed=seed)
     packed = _colorize(earth, (0.0, (0.156, 0.128, 0.096)), (0.5, (0.232, 0.196, 0.152)),
                        (1.0, (0.308, 0.268, 0.212)))
@@ -1025,6 +1026,23 @@ def canvas_awning(size: int = 256, seed: int = 139) -> TextureSet:
 # --------------------------------------------------------------------------
 # Mirrorhold: alpine stone, ice and the blue crystal the region is named for
 # --------------------------------------------------------------------------
+
+def alpine_ground(name: str, size: int = 512, seed: int = 743) -> TextureSet:
+    """Quiet alpine masses; directional strata belong to the landform, not a tile."""
+    broad=N.tileable_fbm(size,3,3,seed=seed)
+    grain=N.tileable_fbm(size,24,2,seed=seed+3)
+    field=.75*broad+.25*grain
+    colours={
+        'alpine_snowfield':((.70,.76,.82),(.86,.89,.92)),
+        'alpine_blue_ice':((.30,.46,.55),(.53,.66,.73)),
+        'alpine_bedrock':((.29,.32,.35),(.43,.46,.49)),
+    }
+    lo,hi=colours[name]
+    colour=np.asarray(lo)+(np.asarray(hi)-lo)*field[...,None]
+    roughness=np.full((size,size),.72 if name=='alpine_blue_ice' else .96)
+    return TextureSet(name,_u8(colour),pack_orm(np.full_like(field,.94),roughness),
+                      normal_from_height(field,.22))
+
 
 def snow_pack(size: int = 512, seed: int = 401) -> TextureSet:
     """Wind-packed snow: sastrugi ripples, a crust that catches light, blue shade."""

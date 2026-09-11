@@ -56,6 +56,15 @@ func _run() -> void:
 	var two: Node3D = second.get_node_or_null("Model") as Node3D
 	_expect(one != null and two != null and not is_equal_approx(one.rotation.y, two.rotation.y),
 		"two of the same node do not stand identically")
+	var crossing := MapObject3D.new()
+	root.add_child(crossing)
+	crossing.configure({"object_id": 23, "kind": EloriaProtocol.MAP_OBJECT_INTERACTIVE,
+		"x": 10, "y": 10, "label": "Portal", "detail": "Beyond it lies Whitehorn Range."},
+		adapter, catalog, true)
+	_expect(crossing.get_node_or_null("Model") == null and crossing.get_node_or_null("Ring") == null,
+		"an authored landscape crossing adds no second monument or ring")
+	_expect(crossing.is_portal() and crossing.map_glyph() == "P" and crossing.destination() == "Whitehorn Range",
+		"the crossing retains its interaction identity and map destination")
 
 	print("world object placement tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	quit(failures)

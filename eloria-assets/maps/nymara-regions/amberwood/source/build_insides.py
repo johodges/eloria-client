@@ -32,6 +32,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
+from PIL import Image
 
 HERE = Path(__file__).resolve().parent
 REGIONS = HERE.parents[1]
@@ -289,9 +290,13 @@ def main() -> int:
     parser.add_argument("--out", default=str(INTERIORS / "amberwood_insides"))
     args = parser.parse_args()
     out = Path(args.out)
+    out.mkdir(parents=True, exist_ok=True)
 
     merge = Merge()
     nodes: list[str] = []
+    walk_prefixes: list[str] = []
+    bounds = []
+    cutaway_nodes, lights, spawns = [], [], []
     for prefix, name, (offset_x, offset_y) in SECTIONS:
         package = INTERIORS / name
         manifest = json.loads((package / "world.json").read_text(encoding="utf-8"))
@@ -302,15 +307,34 @@ def main() -> int:
         gltf, buffer = read_glb(package / "world.glb")
         merge.add(gltf, buffer, prefix, translation)
         nodes.extend(collision_nodes(prefix, package))
+        walk_prefixes.extend(f"{prefix}_{p}" for p in
+                             manifest.get("navigation", {}).get("surfaceNodePrefixes", []))
+        source_bounds = manifest["asset"]["bounds"]
+        bounds.extend(np.asarray(source_bounds[k]) + translation for k in ("min", "max"))
+        cutaway_nodes.extend(f"{prefix}_{n}" for n in manifest.get("cutaway", {}).get("hideNodes", []))
+        for key, target in (("lights", lights), ("spawnPoints", spawns)):
+            for original in manifest.get(key, []):
+                entry = dict(original)
+                entry["id"] = prefix + "-" + entry["id"]
+                entry["position"] = (np.asarray(entry["position"]) + translation).tolist()
+                target.append(entry)
 
     payload, stats = build_collision()
     size = write_glb(out / "world.glb", merge.finish(), bytes(merge.buffer))
     (out / "collision.bin").write_bytes(payload)
+    # A real overview of the four served floor plans; dark space is unserved.
+    grid = np.frombuffer(payload, dtype=np.uint8, offset=16).reshape(stats["cells"], stats["cells"])
+    pixels = np.full((*grid.shape, 3), [25, 29, 26], dtype=np.uint8)
+    pixels[grid > 0] = [170, 151, 111]
+    Image.fromarray(np.flipud(pixels)).resize((384, 384), Image.Resampling.LANCZOS).save(out / "minimap.webp", lossless=True)
 
     manifest = {
         "schemaVersion": "1.0.0", "assetVersion": "1.0.0",
         "asset": {"id": "amberwood_insides", "name": "Amberwood Insides",
-                  "glb": "world.glb", "units": "meters",
+                  "glb": "world.glb", "units": "meters", "serverCells": SERVER_CELLS,
+                  "origin": [0, 0, 0],
+                  "bounds": {"min": np.min(bounds, axis=0).tolist(),
+                             "max": np.max(bounds, axis=0).tolist()},
                   "coordinateSystem": {"handedness": "right", "upAxis": "Y",
                                        "northAxis": "-Z"}},
         "coordinateTransform": {
@@ -324,6 +348,15 @@ def main() -> int:
                                          "step": HEIGHT_STEP,
                                          "range": [1, 255], "zeroMeansBlocked": True},
                       "nodeNames": nodes},
+        "navigation": {"surfaceNodePrefixes": walk_prefixes,
+                       "agentRadius": 0.4, "agentHeight": 1.9, "maxSlopeDegrees": 45,
+                       "navmesh": {"format": "surface-prefix-v1", "polygons": []}},
+        "cutaway": {"hideNodes": cutaway_nodes, "reason": "Preserve each source interior's camera cutaway."},
+        "lights": lights,
+        "spawnPoints": spawns,
+        "minimap": {"file": "minimap.webp", "worldMin": [-192, -192],
+                    "worldMax": [192, 192], "imageSize": [384, 384],
+                    "pixelsPerMetre": 1},
         "sections": [
             {"id": prefix, "package": name, "serverTile": [x, y]}
             for prefix, name, (x, y) in SECTIONS],

@@ -2,19 +2,13 @@
   "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-continent\\eloria-assets\\maps\\nymara-regions\\amberwood\\world-lod2.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-09-08T08:51:52.212347Z",
+  "validatedAt": "2026-09-11T05:32:31.356958Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
-    "numInfos": 8,
+    "numInfos": 11,
     "numHints": 0,
     "messages": [
-      {
-        "code": "NODE_EMPTY",
-        "message": "Empty node encountered.",
-        "severity": 2,
-        "pointer": "/nodes/6"
-      },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
@@ -56,6 +50,30 @@
         "message": "This object may be unused.",
         "severity": 2,
         "pointer": "/materials/36"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/41"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/42"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/43"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/44"
       }
     ]
   }
