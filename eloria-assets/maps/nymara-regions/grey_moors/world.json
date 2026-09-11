@@ -278,11 +278,7 @@
       "March_south_gate_fern_015",
       "March_west_waygate_Station",
       "March_west_waygate_Stone",
-      "March_west_waygate_cart_008",
-      "March_west_waygate_haven_rock_004",
       "March_west_waygate_haven_rock_005",
-      "March_west_waygate_haven_rock_006",
-      "March_west_waygate_haven_rock_007",
       "RefugeWall0",
       "RefugeWall1",
       "RefugeWall2",
@@ -314,19 +310,20 @@
         1,
         255
       ],
-      "zeroMeansBlocked": true
+      "zeroMeansBlocked": true,
+      "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 542448,
-    "walkableFraction": 0.9197,
+    "walkableCells": 542327,
+    "walkableFraction": 0.9195,
     "saturatedCells": 4259,
     "refinedHeights": {
       "levels": 255,
       "step": 0.2,
       "origin": 0.1639,
       "previousStep": 0.253007,
-      "cellsRestated": 542230,
-      "cellsFromGeometry": 542211,
-      "cellsKept": 111
+      "cellsRestated": 542773,
+      "cellsFromGeometry": 542752,
+      "cellsKept": 113
     },
     "openedWalkSurfaces": {
       "prefix": "Walk_",
@@ -337,6 +334,140 @@
       "cellsDrowned": 0,
       "cellsBuried": 0,
       "cellsInsideLandmarks": 0
+    },
+    "actorSurfaceGuard": {
+      "method": "rendered-tile-centre-v1",
+      "actorTileOffset": [
+        0.5,
+        0.5
+      ],
+      "heightToleranceMetres": 0.8,
+      "closedTiles": 166,
+      "unsupportedTiles": 51,
+      "submergedTiles": 4,
+      "heightMismatchTiles": 166,
+      "samples": [
+        {
+          "tile": [
+            70,
+            5
+          ],
+          "encodedY": 4.564,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": false
+        },
+        {
+          "tile": [
+            71,
+            5
+          ],
+          "encodedY": 4.564,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": false
+        },
+        {
+          "tile": [
+            109,
+            11
+          ],
+          "encodedY": 4.164,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": false
+        },
+        {
+          "tile": [
+            67,
+            51
+          ],
+          "encodedY": 1.764,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": true
+        },
+        {
+          "tile": [
+            67,
+            52
+          ],
+          "encodedY": 1.764,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": true
+        },
+        {
+          "tile": [
+            67,
+            53
+          ],
+          "encodedY": 1.964,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": true
+        },
+        {
+          "tile": [
+            67,
+            54
+          ],
+          "encodedY": 1.964,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": true
+        },
+        {
+          "tile": [
+            67,
+            55
+          ],
+          "encodedY": 2.164,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": false
+        },
+        {
+          "tile": [
+            67,
+            56
+          ],
+          "encodedY": 2.164,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": false
+        },
+        {
+          "tile": [
+            67,
+            68
+          ],
+          "encodedY": 3.164,
+          "surfaceY": 2.362,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            50,
+            69
+          ],
+          "encodedY": 6.164,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": false
+        },
+        {
+          "tile": [
+            43,
+            70
+          ],
+          "encodedY": 8.164,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": false
+        }
+      ]
     }
   },
   "contentLayout": {
@@ -1268,7 +1399,7 @@
       "type": "shrine",
       "position": [
         -69.1802,
-        7.22,
+        7.196146215669701,
         47.9832
       ]
     },
@@ -1378,7 +1509,7 @@
       "type": "ruin",
       "position": [
         -84.7868,
-        5.24,
+        6.661948010444136,
         -39.7479
       ]
     },
@@ -1521,7 +1652,7 @@
       "type": "landmark-tree",
       "position": [
         -88.3474,
-        6.26,
+        6.934673873173896,
         28.5686
       ]
     },
@@ -1743,7 +1874,7 @@
       "type": "transition",
       "position": [
         -102.1275,
-        4.8,
+        4.982064677886367,
         11.4345
       ],
       "note": "Where the Grey Moors gives way to Westhaven: greyhaven road furniture, a march stone, a waystation, and 9 pieces of the country beyond."
@@ -1755,7 +1886,7 @@
       "type": "waystation",
       "position": [
         -92.8791,
-        4.77,
+        5.125449068647925,
         17.6345
       ]
     },
@@ -3169,13 +3300,13 @@
       "name": "Haven Road to Westhaven",
       "type": "map-transition",
       "position": [
-        -105.5956,
+        -106.5,
         4.95,
-        6.1345
+        6.5
       ],
       "serverTile": [
-        10,
-        110
+        9,
+        109
       ],
       "destinationMap": "westhaven",
       "radius": 3.5,
@@ -3407,17 +3538,17 @@
       "waypoints": [
         [
           -105.6,
-          4.85,
+          4.95,
           6.1
         ],
         [
           -90.0,
-          4.73,
+          4.93,
           6.1
         ],
         [
           -72.6,
-          4.1,
+          4.28,
           0.1
         ],
         [
@@ -3567,17 +3698,17 @@
         ],
         [
           -67.4,
-          4.8,
+          4.85,
           42.6
         ],
         [
           -69.2,
-          6.43,
+          6.41,
           48.0
         ],
         [
           -76.1,
-          9.96,
+          8.65,
           48.0
         ]
       ]
@@ -3697,12 +3828,12 @@
         ],
         [
           -67.4,
-          2.73,
+          2.83,
           -45.1
         ],
         [
           -79.6,
-          3.94,
+          4.78,
           -43.3
         ],
         [
@@ -3827,7 +3958,7 @@
         ],
         [
           -79.6,
-          3.94,
+          4.78,
           -43.3
         ]
       ]
@@ -4102,12 +4233,12 @@
       "waypoints": [
         [
           -76.1,
-          3.87,
+          4.48,
           -42.7
         ],
         [
           -84.8,
-          4.02,
+          5.57,
           -35.6
         ]
       ]
@@ -4180,6 +4311,16 @@
       {
         "id": "Water_Sea",
         "node": "Water_Sea",
+        "type": "sea"
+      },
+      {
+        "id": "Water_Sea_StreamOverflow_grey-westhaven",
+        "node": "Water_Sea_StreamOverflow_grey-westhaven",
+        "type": "sea"
+      },
+      {
+        "id": "StreamView_grey-westhaven__Water_Sea",
+        "node": "StreamView_grey-westhaven__Water_Sea",
         "type": "sea"
       }
     ],
@@ -4561,29 +4702,29 @@
     }
   ],
   "performance": {
-    "nodes": 4690,
-    "meshes": 713,
+    "nodes": 5051,
+    "meshes": 765,
     "materials": 48,
     "images": 106,
     "textures": 106,
-    "accessors": 2922,
-    "bufferViews": 3028,
-    "uniqueTriangles": 522281,
-    "uniqueVertices": 411104,
-    "glbBytes": 33328092,
-    "instancedTriangles": 719147,
+    "accessors": 3180,
+    "bufferViews": 3286,
+    "uniqueTriangles": 633346,
+    "uniqueVertices": 473277,
+    "glbBytes": 36404768,
+    "instancedTriangles": 863676,
     "embeddedTextureBytes": 13786054,
     "textureMemoryBytesUncompressed": 108134400,
-    "placements": 4068,
+    "placements": 4289,
     "collision": {
       "width": 768,
       "height": 768,
       "cellMetres": 0.5,
-      "walkableCells": 542322,
-      "blockedCells": 47502,
-      "walkableFraction": 0.9195,
+      "walkableCells": 542865,
+      "blockedCells": 46959,
+      "walkableFraction": 0.9204,
       "elevatedDecks": 13,
-      "steepCells": 12563,
+      "steepCells": 13085,
       "reliefMetres": 15.69,
       "heightEncoding": {
         "origin": 0.2971,
@@ -4595,7 +4736,7 @@
         "zeroMeansBlocked": true
       },
       "saturatedCells": 4259,
-      "saturatedFraction": 0.0079,
+      "saturatedFraction": 0.0078,
       "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
       "columnOrder": "server-tile-x (column 0 is the -X western edge)"
     },
@@ -4611,10 +4752,10 @@
       "walk corridors: 28 encroaching dressing placements removed"
     ],
     "lod2": {
-      "glbBytes": 20613284,
-      "nodes": 928,
-      "uniqueTriangles": 505701,
-      "instancedTriangles": 532155
+      "glbBytes": 23645708,
+      "nodes": 1115,
+      "uniqueTriangles": 616766,
+      "instancedTriangles": 667904
     }
   },
   "sources": [
@@ -4669,6 +4810,32 @@
       "viewDepth": 145.0,
       "previewPrefix": "StreamView_amberwood-grey__",
       "overflowSuffix": "_StreamOverflow_amberwood-grey"
+    },
+    {
+      "id": "grey-westhaven",
+      "portal": "west-waygate",
+      "destination": "westhaven",
+      "anchor": [
+        -105.5,
+        4.95,
+        6.5
+      ],
+      "outward": [
+        -1,
+        0
+      ],
+      "uvSign": 1,
+      "palette": "pasture",
+      "preloadDistance": 170,
+      "retainDistance": 220,
+      "blendDistance": 65,
+      "collarDepth": 42,
+      "halfWidthTiles": 3,
+      "viewHalfWidth": 40.0,
+      "viewDepth": 145.0,
+      "previewPrefix": "StreamView_grey-westhaven__",
+      "overflowSuffix": "_StreamOverflow_grey-westhaven",
+      "profile": "pasture"
     }
   ],
   "landscapeRevision": "inhabited-384-v1",
@@ -4679,7 +4846,7 @@
         "name": "Barrow Warden Cassa Loom",
         "role": "dialogue",
         "serverTile": [
-          198,
+          197,
           261
         ],
         "authority": "server"
@@ -4902,7 +5069,7 @@
         "resource": "Resin",
         "serverTile": [
           73,
-          6
+          5
         ],
         "authority": "server"
       },
@@ -4947,7 +5114,7 @@
         "resource": "Moorcotton",
         "serverTile": [
           103,
-          50
+          51
         ],
         "authority": "server"
       },
@@ -4955,8 +5122,8 @@
         "id": 62,
         "resource": "Moorcotton",
         "serverTile": [
-          141,
-          39
+          142,
+          40
         ],
         "authority": "server"
       },

@@ -1,31 +1,31 @@
 {
-  "nodes": 3935,
-  "meshes": 416,
-  "materials": 47,
-  "images": 106,
-  "textures": 106,
-  "accessors": 1672,
-  "bufferViews": 1778,
-  "uniqueTriangles": 521884,
-  "uniqueVertices": 397267,
-  "glbBytes": 29861016,
-  "instancedTriangles": 994606,
-  "embeddedTextureBytes": 30504469,
-  "textureMemoryBytesUncompressed": 268566528,
-  "placements": 2435,
+  "nodes": 2536,
+  "meshes": 428,
+  "materials": 51,
+  "images": 112,
+  "textures": 112,
+  "accessors": 1751,
+  "bufferViews": 1863,
+  "uniqueTriangles": 488516,
+  "uniqueVertices": 371781,
+  "glbBytes": 29531584,
+  "instancedTriangles": 864737,
+  "embeddedTextureBytes": 31514507,
+  "textureMemoryBytesUncompressed": 285868032,
+  "placements": 1629,
   "collision": {
-    "width": 1152,
-    "height": 1152,
+    "width": 792,
+    "height": 792,
     "cellMetres": 0.5,
-    "walkableCells": 772912,
-    "blockedCells": 554192,
-    "walkableFraction": 0.5824,
+    "walkableCells": 369630,
+    "blockedCells": 257634,
+    "walkableFraction": 0.5893,
     "elevatedDecks": 31,
-    "steepCells": 222513,
-    "reliefMetres": 99.87,
+    "steepCells": 94658,
+    "reliefMetres": 79.17,
     "heightEncoding": {
-      "origin": -1.2603,
-      "step": 1.610765,
+      "origin": -0.705,
+      "step": 1.276915,
       "range": [
         1,
         63
@@ -34,49 +34,29 @@
     },
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
-    "nudgedEntries": [
-      {
-        "id": "custom-house-hall",
-        "metres": 3.15
-      },
-      {
-        "id": "gullstone-cleft",
-        "metres": 3.14
-      },
-      {
-        "id": "amber-berth",
-        "metres": 1.45
-      },
-      {
-        "id": "custom-house-door",
-        "metres": 3.15
-      },
-      {
-        "id": "gullstone-door",
-        "metres": 3.14
-      }
-    ]
+    "nudgedEntries": []
   },
   "notes": [
-    "surf cards placed: 691",
+    "surf cards placed: 456",
     "surf breakers placed: 7",
     "jetties placed: 8",
-    "city houses placed: 144",
+    "26 full-sized town houses on connected lanes and small working yards.",
     "Surveyed cart loop, two tidal crossings, enclosed Gullscar fields.",
-    "trees placed: 253",
-    "ground dressing placed: 518",
-    "lore site league-post-house (The League Post-House): relief 1.80 m, 36 m from the ask",
-    "march north-road: 8 road pieces, 19 of grey_moors's growth",
-    "march east-road: 9 road pieces, 16 of manymouth_delta's growth",
-    "march crownwater-berth: 0 road pieces, 0 of crownwater's growth",
-    "march amber-berth: 0 road pieces, 0 of amberwood's growth"
+    "trees placed: 207",
+    "ground dressing placed: 118",
+    "lore site league-post-house (The League Post-House): no open ground within reach; placed where asked",
+    "march north-road: 4 road pieces, 19 of grey_moors's growth",
+    "march east-road: 2 road pieces, 16 of manymouth_delta's growth",
+    "march crownwater-berth: 4 road pieces, 11 of crownwater's growth",
+    "march amber-berth: 3 road pieces, 0 of amberwood's growth",
+    "396m harbour: public cargo spine, terrace lanes, framed services, Gullstone span and tidal Lamp route."
   ],
   "lod2": {
-    "glbBytes": 17570124,
-    "nodes": 2651,
-    "uniqueTriangles": 435690,
-    "instancedTriangles": 812822,
-    "sizeReductionPercent": 41.2,
-    "triangleReductionPercent": 18.3
+    "glbBytes": 16872820,
+    "nodes": 1792,
+    "uniqueTriangles": 414042,
+    "instancedTriangles": 630985,
+    "sizeReductionPercent": 42.9,
+    "triangleReductionPercent": 27.0
   }
 }

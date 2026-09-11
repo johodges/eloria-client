@@ -1,5 +1,20 @@
 # Crownwater performance summary
 
+The current 396-metre coastal package is 22.13 MB / 579,630 instanced triangles;
+the far package is 13.29 MB / 567,318 triangles. The matched 576-metre baseline
+was 33.47 MB / 931,090 triangles and 20.66 MB for its far package. Exact current
+measurements are in `performance.json`; see `coastal-review.md` for validation.
+
+The lagoon is a continuous water plane occluded by the actual shoreline, with
+an exactly partitioned shared causeway patch. Removing the coarse shoreline
+mask also removes unnecessary flat-water triangles from both packages.
+
+The 1440 × 900 gameplay-camera survey is runtime/composition evidence rather
+than a controlled GPU benchmark. Window focus, frame caps and neighbor residency
+affect frame timing; raw samples and draw counts remain in each `survey.json`.
+
+**Historical performance notes follow.**
+
 Current layout pass: full package 33.47 MB and
 931,510 instanced triangles; reduced package
 20.66 MB and 767,978

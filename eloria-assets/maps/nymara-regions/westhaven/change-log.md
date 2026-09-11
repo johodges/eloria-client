@@ -1,3 +1,14 @@
+# Coastal landscape update — 2026-09-11
+
+- Recompose Westhaven into a 396m square with origin `(120,172)` and explicit anchors; keep full-sized service and building geometry.
+- Regrade the city hillside and both islands before foundations; connect house yards, market/civic streets, farm routes and both physical island approaches.
+- Face warehouses toward their loading paths, frame the service court, retain a quiet quay strip and reduce repetitive moored ships.
+- Preserve all portals, interiors, secret roles and the League Post-House lore; move secret props beside clear authored standing posts.
+- Use actual transformed Walk triangles for raw deck collision; preserve the shared border clipping in both main and reduced packages.
+- Record deterministic migration and a read-only server-path verification helper. Gameplay-camera evidence is in the coastal rollout artifact.
+
+---
+
 # Westhaven: change log
 
 From the `terrain-landmark-material-pass` placeholder to a production package.

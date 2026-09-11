@@ -11,15 +11,15 @@
     ],
     "metresPerPixel": 2.0,
     "sources": {
-      "four_gates": "27d1f515040110fd0cdf5b08f8500ac95c83789e54733dfd43b4520b526338ed",
-      "mirrorhold": "853e3dd1a089a8f018251d14f9fde6963187f25e1cca437c7bc5e5e01261be72",
-      "crownwater": "d5cad955bc796cd4309b2124c2defd3de840b3793ff2e1c41c7724511afae53c",
+      "four_gates": "0500230b965e705091839cb740c33bf538f5f1636eff44b77b15227e2aae2fbd",
+      "mirrorhold": "2646ece206b17f4dc2b42d14d92d2f5c006a3f36c4b3e68207e1da1a2afb76d5",
+      "crownwater": "2eb0c30cf87abcdfcb012f7dff2c21b2d26f908a12269c711d17e1dc8ea0d79b",
       "whitehorn_range": "77c73f7f5205b3de5b781d4ed70a87ff9d30441165eb1f9cd4883629933c6182",
       "amethyst_barrens": "43f17041a26c2a887202241958a09fd5d972737e53c221e40d987ef502b6c9fa",
       "sunmane_steppe": "0a3dcacc24ff2ac41331856ead3760bd8d77a8c219713c7fe6d47d74a6345ae0",
       "amberwood": "c6c0a8a7e1c714257f8a127f39bf4672cc5eec3b2b18ffbf6807ebb2a16b4705",
-      "grey_moors": "e1a48bde9c442ddc9c0ecf466cff6cf4a6ff98b297a3053d7b2c3e00676e5424",
-      "westhaven": "ed56edddae5d43fafa6f229c1b0f684539576d2fe42369f8d00448f534f29b52",
+      "grey_moors": "f829117c0a8980c1afc1cb729357b4705eb4407df2ee162c271f93c7109834a6",
+      "westhaven": "176934ed06ef23358bbb2e1d3176b943358bcddab7c8ba84228a092d8c340e75",
       "verdant_stair": "651e24054fdea3f341e6f5fd16171649c9c6e60745580ce53bc90fd78a95f842",
       "ssarathi_ruins": "8137b290bdfdbdf715511680a44d84e10018b12e7e5ce724103f10c1879da450",
       "manymouth_delta": "d95b8ebebb2f41155b1d3c9d7c1197c15806dd7abce74294cf5602cf27bc269a"
@@ -30,26 +30,26 @@
       "name": "Four Gates",
       "serverMap": "four_gates",
       "continentRect": [
-        620,
-        780,
-        360,
-        360
+        701,
+        861,
+        198,
+        198
       ],
       "tabMap": {
         "texture": "res://../eloria-assets/maps/four-gates/minimap.webp",
         "region": [
-          450,
-          450,
-          720,
-          720
+          0,
+          0,
+          396,
+          396
         ],
         "worldMin": [
-          -360.0,
-          -360.0
+          -198.0,
+          -198.0
         ],
         "worldMax": [
-          360.0,
-          360.0
+          198.0,
+          198.0
         ]
       }
     },
@@ -84,26 +84,26 @@
       "name": "Crownwater",
       "serverMap": "crownwater",
       "continentRect": [
-        326,
-        816,
-        288,
-        288
+        371,
+        861,
+        198,
+        198
       ],
       "tabMap": {
         "texture": "res://../eloria-assets/maps/nymara-regions/crownwater/minimap.webp",
         "region": [
           0,
           0,
-          575,
-          575
+          395,
+          395
         ],
         "worldMin": [
-          -174.0,
-          -401.0
+          -120.0,
+          -275.0
         ],
         "worldMax": [
-          401.0,
-          174.0
+          275.0,
+          120.0
         ]
       }
     },
@@ -246,26 +246,26 @@
       "name": "Westhaven",
       "serverMap": "westhaven",
       "continentRect": [
-        102,
-        1136,
-        288,
-        288
+        147,
+        1181,
+        198,
+        198
       ],
       "tabMap": {
         "texture": "res://../eloria-assets/maps/nymara-regions/westhaven/minimap.webp",
         "region": [
           0,
           0,
-          575,
-          575
+          395,
+          395
         ],
         "worldMin": [
-          -174.0,
-          -325.0
+          -120.0,
+          -223.0
         ],
         "worldMax": [
-          401.0,
-          250.0
+          275.0,
+          172.0
         ]
       }
     },

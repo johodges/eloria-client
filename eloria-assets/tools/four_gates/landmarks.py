@@ -214,7 +214,7 @@ def bridge_span(p: Palette, length: float, deck_y: float, water_y: float,
     return Geo.concat(parts)
 
 
-def sanctuary(p: Palette) -> Geo:
+def sanctuary(p: Palette, landscape_terrace: bool = True) -> Geo:
     """Cliff-shelf temple with a glowing portal, beacon and flanking spires."""
     parts: List[Geo] = []
     # battered retaining wall carrying the shelf out of the hillside, so the
@@ -244,12 +244,18 @@ def sanctuary(p: Palette) -> Geo:
         post.translate(math.cos(a) * 53.7, -0.1, math.sin(a) * 53.7)
         parts.append(post)
 
+    if not landscape_terrace:
+        # A terrain-authored shelf supplies the approach in compact regions.
+        # Keep the temple, podium and stair dimensions; omit the old 106m disc.
+        parts = []
     podium = M.box(56.0, 5.0, 34.0, p.stone_ashlar, 4.0, origin="corner")
     podium.translate(0.0, 0.0, -14.0)
     parts.append(podium)
-    steps = M.stairs(34.0, 5.0, 9.0, 6, p.stone_trim, 2.0)
-    steps.translate(0.0, 0.0, 5.5)
-    parts.append(steps)
+    if landscape_terrace:
+        steps = M.stairs(34.0, 5.0, 9.0, 6, p.stone_trim, 2.0)
+        steps.rotate_y(math.pi)
+        steps.translate(0.0, 0.0, 5.5)
+        parts.append(steps)
 
     body = M.box(44.0, 22.0, 28.0, p.stone_ashlar, 4.0, origin="corner")
     body.translate(0.0, 5.0, -14.0)
@@ -397,7 +403,8 @@ def ceremonial_stair(p: Palette, width: float, rise: float, run: float,
     return Geo.concat(parts)
 
 
-def plaza_arcade(p: Palette, radius: float, sweep: float, bays: int = 7) -> Geo:
+def plaza_arcade(p: Palette, radius: float, sweep: float, bays: int = 7,
+                 plinth_rise: float = 1.2) -> Geo:
     """Curved arcaded portico enclosing the plaza, as in the plaza reference."""
     parts = []
     depth = 9.0
@@ -420,14 +427,14 @@ def plaza_arcade(p: Palette, radius: float, sweep: float, bays: int = 7) -> Geo:
         column = M.revolve([(0.85, 0.0), (0.75, 0.9), (0.66, height - 1.6),
                             (0.82, height - 0.9), (0.95, height - 0.4),
                             (0.92, height)], 10, p.stone_trim, 2.0)
-        column.translate(math.cos(a) * (radius - depth * 0.42), 1.2,
+        column.translate(math.cos(a) * (radius - depth * 0.42), plinth_rise,
                          math.sin(a) * (radius - depth * 0.42))
         parts.append(column)
     entablature = M.cylinder(radius + depth * 0.55, 1.8, bays * 4, p.stone_trim, 2.2,
                              start_angle=-sweep * 0.5, sweep=sweep,
                              top_radius=radius + depth * 0.60,
                              cap_top=False, cap_bottom=False)
-    entablature.translate(0.0, height + 1.2, 0.0)
+    entablature.translate(0.0, height + plinth_rise, 0.0)
     parts.append(entablature)
     roof = M.ring_band(radius - depth * 0.5, radius + depth * 0.62, bays * 4,
                        lambda x, z: 0.0, p.roof_verdigris, 2.6,

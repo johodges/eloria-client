@@ -29,7 +29,7 @@ def test_prop_height_matches_the_rendered_triangles_on_a_saddle():
 @pytest.mark.parametrize("region,name", [
     ("amberwood", "Prop_BurntBrazier_2"),
     ("verdant_stair", "Signpost_TempleCourt"),
-    ("westhaven", "Prop_Lamp_crown_climb_06"),
+    ("westhaven", "Prop_Lamp_market_climb_03"),
     ("ssarathi_ruins", "Tree_779"),
 ])
 def test_corrected_prop_anchor_touches_the_actual_floor_in_each_lod(region, name):

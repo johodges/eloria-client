@@ -29,7 +29,7 @@
       ]
     },
     "interior": true,
-    "parentMap": "maps/startmap.elm",
+    "parentMap": "four_gates",
     "quarter": "civic",
     "description": "Storage and banking; four keyed vault doors and a plastered fifth."
   },
@@ -45,7 +45,21 @@
       0.0
     ],
     "walkingHeight": 0.05,
-    "invertServerY": true
+    "invertServerY": true,
+    "serverCells": [
+      36,
+      36
+    ],
+    "addressableWorldBounds": {
+      "min": [
+        -12.0,
+        -23.0
+      ],
+      "max": [
+        23.0,
+        12.0
+      ]
+    }
   },
   "spawnPoints": [
     {
@@ -54,7 +68,7 @@
       "position": [
         0.0,
         0.0,
-        4.6
+        2.0
       ],
       "facing": [
         0,
@@ -70,14 +84,14 @@
       "position": [
         0.0,
         0.0,
-        5.6
+        5.0
       ],
       "radius": 1.6,
       "targetMap": "four_gates",
       "targetPosition": [
-        -125.76,
-        31.0,
-        17.67
+        -71.85000000000001,
+        31.08,
+        38.0
       ],
       "label": "Out to the street"
     }
@@ -124,7 +138,45 @@
       "Clerk_Desk",
       "Sealed_Fifth_Bay"
     ],
-    "note": "The four walls plus solid fittings; the floor is a walk surface and the walls stay solid while cut away."
+    "note": "The four walls plus solid fittings; the floor is a walk surface and the walls stay solid while cut away.",
+    "binary": "collision.bin",
+    "format": "EWCG",
+    "version": 2,
+    "cellSize": 0.5,
+    "width": 72,
+    "height": 72,
+    "originMetres": [
+      -12.0,
+      12.0
+    ],
+    "heightEncoding": {
+      "origin": -0.2,
+      "step": 0.2,
+      "range": [
+        1,
+        255
+      ]
+    },
+    "authoredSurfaceExport": {
+      "floorMeshNodes": 1,
+      "solidMeshNodes": 6,
+      "walkableCells": 564
+    },
+    "walkableCells": 564,
+    "walkableFraction": 0.1088,
+    "actorSurfaceGuard": {
+      "method": "rendered-tile-centre-v1",
+      "actorTileOffset": [
+        0.5,
+        0.5
+      ],
+      "heightToleranceMetres": 0.8,
+      "closedTiles": 0,
+      "unsupportedTiles": 0,
+      "submergedTiles": 0,
+      "heightMismatchTiles": 0,
+      "samples": []
+    }
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -324,7 +376,7 @@
     ]
   },
   "performance": {
-    "bytes": 3262112,
+    "bytes": 3300136,
     "nodes": 20,
     "meshes": 11,
     "materials": 11,

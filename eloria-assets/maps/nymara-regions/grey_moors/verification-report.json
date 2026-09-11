@@ -1,7 +1,7 @@
 {
   "summary": {
-    "walkSurfaceNodes": 61,
-    "walkSurfaceTriangles": 301307,
+    "walkSurfaceNodes": 95,
+    "walkSurfaceTriangles": 371434,
     "tilesSampled": 147456,
     "groundingMisses": 0,
     "groundingMissFraction": 0.0,

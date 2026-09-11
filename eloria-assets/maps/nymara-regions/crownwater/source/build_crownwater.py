@@ -45,6 +45,9 @@ from amberwood import routecraft as RC
 
 import crownkit as CK
 import populate as POP
+import coastal_plan as COAST
+import coastal_population as COAST_POP
+import streaming_borders as SB
 import region as REG
 import transitions as MARCH
 import secretdoors as SD
@@ -73,21 +76,21 @@ SCHEMA_VERSION = "1.0.0"
 CROSSINGS = [
     MARCH.Crossing("east-quay", "four_gates", REG.ANCHORS["outer_east"],
                    (REG.PLAY_MAX_X + 20.0, REG.ANCHORS["outer_east"][1]),
-                   radius=28.0, name="The Causeway Quay", station_position=(366, -3)),
+                   radius=28.0, name="The Causeway Quay", station_position=(203, -35)),
     MARCH.Crossing("north-quay", "mirrorhold", REG.ANCHORS["outer_north"],
                    (REG.ANCHORS["outer_north"][0], REG.PLAY_MIN_Z - 20.0),
-                   radius=28.0, ferry=True, name="The North Quay", station_position=(225, -352)),
+                   radius=28.0, ferry=True, name="The North Quay", station_position=(142, -237)),
     MARCH.Crossing("west-quay", "westhaven", REG.ANCHORS["outer_west"],
                    (REG.PLAY_MIN_X - 20.0, REG.ANCHORS["outer_west"][1]),
-                   radius=28.0, ferry=True, name="The West Quay", station_position=(-132, -225)),
+                   radius=28.0, ferry=True, name="The West Quay", station_position=(-86, -150)),
     MARCH.Crossing("south-quay", "manymouth_delta", REG.ANCHORS["outer_south"],
                    (REG.ANCHORS["outer_south"][0], REG.PLAY_MAX_Z + 20.0),
-                   radius=28.0, ferry=True, name="The South Quay", station_position=(3, 133)),
+                   radius=28.0, ferry=True, name="The South Quay", station_position=(16, 91)),
 ]
 
 # The places the region's people argue about (see loresites.py).
 SITES = [
-    LORE.Site("court-grating", "The Open Grating", "drowned_grating", (122.0, -158.0),
+    LORE.Site("court-grating", "The Open Grating", "drowned_grating", (86.0, -122.0),
               thread="D", clearing=9.0,
               note="The grating over the drowned court, found thrown back on its hinge. "
                    "The diver's rope and weights are still on the kerb."),
@@ -99,7 +102,7 @@ SECOND_BERTHS = (
     ("south-quay", "south-quay-east", "ssarathi_ruins", "Temple Boat"),
 )
 MARCH_MATERIALS: dict = dict(getattr(REG, "SURFACE_MATERIALS", {}))
-CK.MATERIALS = CK.MATERIALS | MARCH.materials_for("crownwater", CROSSINGS) | SD.materials(SEC) | LORE.materials([s.piece for s in SITES])
+CK.MATERIALS = CK.MATERIALS | SB.materials_for("crownwater") | MARCH.materials_for("crownwater", CROSSINGS) | SD.materials(SEC) | LORE.materials([s.piece for s in SITES])
 
 
 # --------------------------------------------------------------------------
@@ -111,7 +114,8 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     terrain = REG.build_terrain(seed)
     REG.apply_built_ground(terrain, seed)
     build = REG.RegionBuild(terrain=terrain)
-    MARCH.prepare(terrain, CROSSINGS)
+    # Ferry decks are explicitly surveyed; no generic station plateau.
+
     LORE.prepare(terrain, SITES, sea_level=getattr(REG, "SEA_LEVEL", 0.0))
 
     POP.build_water(build, lod=lod)
@@ -120,14 +124,16 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     POP.populate_pavilions(build, seed)
     POP.populate_harbour(build, seed)
     POP.populate_sunken_court(build, seed)
+    COAST_POP.populate(build, seed)
     POP.populate_vegetation(build, seed, lod=lod)
     if lod is None:
         POP.populate_props(build, seed)
     POP.populate_metadata(build, seed)
 
     # The marches: the neighbours' country coming in along the roads out.
-    MARCH.paint(terrain, CROSSINGS, MARCH_MATERIALS, seed, sea_level=REG.SEA_LEVEL)
-    march = MARCH.dress(build, "crownwater", CROSSINGS, seed, sea_level=REG.SEA_LEVEL)
+    # Open-water approaches retain the local lagoon palette.
+
+    march = MARCH.dress(build, "crownwater", [], seed, sea_level=REG.SEA_LEVEL)
     LORE.dress(build, terrain, SITES, seed)
     SD.dress(build, terrain, SEC, seed, sea_level=getattr(REG, "SEA_LEVEL", 0.0), server_origin=REG.SERVER_ORIGIN)
     build.landmarks.extend(march.landmarks)
@@ -146,6 +152,10 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     build.resolve_names()
     _add_spawns_and_portals(build)
     _add_population_markers(build, seed)
+    SB.apply(build, "crownwater")
+    for item in build.interactives:
+        if item.get("id") in COAST.SECRET_STANDING_TILES:
+            item["serverTile"]=COAST.SECRET_STANDING_TILES[item["id"]]
     print(f"[region] built in {time.time() - t0:.1f}s")
     return build
 
@@ -173,53 +183,21 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
     # the client registry; the server remains authoritative for the transition.
     # Crownwater's are quays rather than roads - every land route out of an
     # archipelago is a boat.
-    quay_tiles: dict[str, tuple[float, float]] = {}
-    for portal_id, name, anchor, destination in (
-            ("north-quay", "Mirrorhold Packet", "outer_north", "mirrorhold"),
-            ("east-quay", "Four Gates Causeway", "outer_east", "four_gates"),
-            ("south-quay", "Delta Packet", "outer_south", "manymouth_delta"),
-            ("west-quay", "Westhaven Packet", "outer_west", "westhaven")):
-        x, z = REG.ANCHORS[anchor]
-        y = float(t.height_at(x, z))
-        quay_tiles[portal_id] = (x, z)
-        build.portals.append({
-            "id": portal_id, "name": name, "type": "map-transition",
-            "position": [round(x, 2), round(y + 0.1, 2), round(z, 2)],
-            "serverTile": [int(round(x + REG.SERVER_ORIGIN[0])),
-                           int(round(REG.SERVER_ORIGIN[1] - z))],
-            "destinationMap": destination, "radius": 3.5,
-            "authority": "server"})
-    # The second berths: a few metres along the dock from the first, on ground
-    # the islet actually has. Tried in the four cardinal offsets and the first
-    # standable one wins, so a change to an islet's shape moves the berth
-    # rather than drowning it.
-    for quay_id, portal_id, destination, name in SECOND_BERTHS:
-        qx, qz = quay_tiles[quay_id]
-        site = None
-        # Walk out from the quay in widening rings until there is dry,
-        # unblocked ground: a quay is a dock over water, and the berth beside
-        # it stands wherever the islet's shore comes closest.
-        for radius in (4.0, 6.0, 8.0, 10.0, 12.0, 14.0, 16.0):
-            for step in range(16):
-                angle = math.tau * step / 16.0
-                x, z = qx + math.cos(angle) * radius, qz + math.sin(angle) * radius
-                if float(t.height_at(x, z)) > REG.SEA_LEVEL + 0.5 and not bool(t.blocked_at(x, z)):
-                    site = (round(x, 2), round(z, 2))
-                    break
-            if site is not None:
-                break
-        if site is None:
-            build.notes.append(f"no standable second berth beside {quay_id}; {portal_id} not placed")
-            continue
-        x, z = site
-        y = float(t.height_at(x, z))
-        build.portals.append({
-            "id": portal_id, "name": name, "type": "map-transition",
-            "position": [round(x, 2), round(y + 0.1, 2), round(z, 2)],
-            "serverTile": [int(round(x + REG.SERVER_ORIGIN[0])),
-                           int(round(REG.SERVER_ORIGIN[1] - z))],
-            "destinationMap": destination, "radius": 3.5, "berthOf": quay_id,
-            "authority": "server"})
+    for portal_id,name,destination in (
+        ("north-quay","Mirrorhold Packet","mirrorhold"),
+        ("north-quay-east","Barrens Packet","amethyst_barrens"),
+        ("west-quay","Westhaven Packet","westhaven"),
+        ("west-quay-south","Moor Jetty Packet","grey_moors"),
+        ("south-quay","Delta Packet","manymouth_delta"),
+        ("south-quay-east","Temple Boat","ssarathi_ruins"),
+        ("east-quay","Four Gates Causeway","four_gates")):
+        if portal_id=="east-quay": x,y,z=271.5,4.0,-10.5
+        else:
+            (x,z),_,y=COAST.FERRIES[portal_id]
+        build.portals.append({"id":portal_id,"name":name,"type":"map-transition",
+            "position":[x,y,z],"serverTile":[math.floor(x+120),math.floor(120-z)],
+            "destinationMap":destination,"radius":2.0,"authority":"server",
+            "travelMode":"causeway" if portal_id=="east-quay" else "ferry"})
 
     # Interior entrances. Each sits on the landmark it belongs to, so the door a
     # player walks into is the building they were looking at; the interior
@@ -463,7 +441,7 @@ COLLISION_FORMAT_VERSION = 2
 COLLISION_HEIGHT_STEP = 0.2
 COLLISION_HEIGHT_ORIGIN = -2.2
 # Levels an ELM height byte holds: the server masks it with 0x3F, so 1..63.
-COLLISION_HEIGHT_LEVELS = 63
+COLLISION_HEIGHT_LEVELS = 255
 # Metres of rise per metre travelled that a walker will not climb. Eternal
 # Lands allows two 0.2 m stages across a half-metre tile, which is this.
 MAX_WALK_GRADIENT = 1.0
@@ -498,10 +476,21 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
     # solid structures block their footprint
     blockers = np.zeros_like(walkable)
     for placement in build.placements:
+        if placement.node.startswith(SB.VIEW_PREFIX):continue
         if not placement.collides:
             continue
         item = build.meshes[placement.mesh]
         low, high = item.bounds()
+        if (placement.kind == "building"
+                or placement.node.startswith("Landmark_Retaining_")
+                or placement.node == "Landmark_cistern-yard"
+                or placement.node in ("Landmark_Cathedral","Landmark_CustomsHouse")):
+            dx=gx-placement.position[0];dz=gz-placement.position[2]
+            co,si=math.cos(placement.rotation_y),math.sin(placement.rotation_y)
+            lx=(dx*co-dz*si)/placement.scale;lz=(dx*si+dz*co)/placement.scale
+            blockers |= ((lx>low[0]-.2)&(lx<high[0]+.2)&
+                         (lz>low[2]-.2)&(lz<high[2]+.2))
+            continue
         # trees block only their trunk, not the spread of their canopy
         footprint = float(max(abs(low[0]), abs(high[0]), abs(low[2]), abs(high[2]))) \
             * placement.scale
@@ -517,45 +506,38 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
     # on the highest walk surface below the ray, so a two-level column cannot be
     # expressed on a flat server grid. Bridges, decks and platforms therefore
     # take the cell, and the ground under them is not separately walkable.
+    # Rasterise the walking triangles, including station heights and bends.
+    # A bounds disc on a long bridge can open lakebed metres away from it.
+    import glb_reader as GLB
+    triangles = []
     elevated = 0
+    for name,mesh in build.terrain_meshes.items():
+        if name.startswith("Walk_") and not name.startswith(SB.VIEW_PREFIX):
+            triangles.append(mesh.positions[mesh.indices.reshape(-1,3)])
+            elevated += 1
     for placement in build.placements:
+        if placement.node.startswith(SB.VIEW_PREFIX):continue
         item = build.meshes[placement.mesh]
-        walk_bounds = getattr(item, "walk_bounds", lambda: None)()
-        if walk_bounds is None and not placement.walk_surface:
+        parts = list(getattr(item, "walk_parts", []))
+        if placement.walk_surface and not parts:
+            parts = [item] if isinstance(item, M.Mesh) else list(item.parts)
+        if not parts:
             continue
-        if walk_bounds is None:
-            low, high = item.bounds()
-        else:
-            low, high = walk_bounds
-        px, py, pz = placement.position
-        # The deck's real extent, not a symmetric half-extent about its origin.
-        # A quay apron sits entirely to one side of its placement point, so
-        # mirroring it claimed walkable ground on the water side where there is
-        # no deck at all - the ray found the lagoon floor 13 m below.
-        x0, x1 = float(low[0]) * placement.scale, float(high[0]) * placement.scale
-        z0, z1 = float(low[2]) * placement.scale, float(high[2]) * placement.scale
-        inset_x = (x1 - x0) * 0.03
-        inset_z = (z1 - z0) * 0.03
-        deck_y = py + float(high[1]) * placement.scale
-        # An oriented rectangle, not a disc. Amberwood's decks were roughly
-        # square, so a circle inscribed in the bounds covered them; Crownwater's
-        # causeways are 48 m x 5.4 m, and the inscribed circle covers 2.3 m of
-        # a 48 m deck. Everything outside it kept the lagoon floor's height and
-        # showed up as collision-versus-surface disagreement along every span.
-        angle = float(placement.rotation_y or 0.0)
-        c, sn = math.cos(angle), math.sin(angle)
-        local_x = c * (gx - px) - sn * (gz - pz)
-        local_z = sn * (gx - px) + c * (gz - pz)
-        footprint = ((local_x >= x0 + inset_x) & (local_x <= x1 - inset_x)
-                     & (local_z >= z0 + inset_z) & (local_z <= z1 - inset_z))
-        if not footprint.any():
-            continue
-        if deck_y > ground.max() + 200.0:
-            continue
+        matrix = (M.translation(*placement.position) @ M.rotation_y(placement.rotation_y)
+                  @ M.scaling(placement.scale))
+        for part in parts:
+            mesh = part.transformed(matrix)
+            triangles.append(mesh.positions[mesh.indices.reshape(-1, 3)])
         elevated += 1
-        decks |= footprint
-        surface = np.where(footprint, deck_y, surface)
-        walkable = np.where(footprint, True, walkable)
+    if triangles:
+        decks, deck_y = GLB.rasterise(np.concatenate(triangles), width, height,
+                                     REG.PLAY_MIN_X, REG.SERVER_ORIGIN[1], COLLISION_CELL)
+        # A bank can rise above the end of a bridge. The client's grounding
+        # ray chooses the highest surface; a buried deck must not create a
+        # false cliff in the raw steepness mask before refinement runs.
+        surface = np.where(decks, np.maximum(deck_y, surface), surface)
+        decks &= deck_y >= ground - 0.03
+        walkable |= decks
 
     # Steepness has to be part of walkability, not of the height byte. That
     # byte holds 63 steps, and a region with 253 m of relief cannot be encoded
@@ -608,7 +590,12 @@ MINIMAP_PIXELS_PER_METRE = 1.0
 def render_minimap(build: REG.RegionBuild, sets, path: Path, size: int = 0) -> dict:
     """Top-down orthographic-ish capture of the finished geometry."""
     import preview
-    scene = preview.scene_from_build(build, sets)
+    from copy import copy
+    overview=copy(build)
+    overview.placements=[p for p in build.placements if not p.node.startswith(SB.VIEW_PREFIX)]
+    overview.terrain_meshes={k:v for k,v in build.terrain_meshes.items() if not k.startswith(SB.VIEW_PREFIX)}
+    overview.water_meshes={k:v for k,v in build.water_meshes.items() if not k.startswith(SB.VIEW_PREFIX)}
+    scene = preview.scene_from_build(overview, sets)
     centre_x = (REG.PLAY_MIN_X + REG.PLAY_MAX_X) * 0.5
     centre_z = (REG.PLAY_MIN_Z + REG.PLAY_MAX_Z) * 0.5
     extent = max(REG.PLAY_MAX_X - REG.PLAY_MIN_X, REG.PLAY_MAX_Z - REG.PLAY_MIN_Z)
@@ -825,6 +812,7 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             "invertServerY": True,
         },
         "spawnPoints": build.spawns,
+        "streamingBorders": build.streaming_borders,
         "collision": {
             "nodeNames": collision_nodes,
             "binary": "collision.bin",
@@ -985,6 +973,8 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
         "productionStatus": "production-geometry-materials-population",
         "knownLimitations": [],
     }
+    import contentposts
+    contentposts.apply_runtime(manifest,path.parent)
     path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return manifest
 
@@ -1059,10 +1049,6 @@ def main() -> int:
                     for name, texture_set in sets.items()}
         lod_sets = CK.register(lod_sets)
         lod_build = build_region(args.seed, lod="far")
-        lod_build.terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
-        lod_build.terrain_meshes = lod_build.terrain.build_meshes(
-            uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
-            materials=MARCH_MATERIALS)
         _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb")
         stats["lod2"] = {
             "glbBytes": lod_stats["glbBytes"],

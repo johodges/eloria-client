@@ -204,8 +204,15 @@ def make(vertices, faces, material=0, uv_scale: float = 2.0,
     f = np.asarray(faces, dtype=np.uint32).reshape(-1, 3)
     geo = Geo(v, np.zeros_like(v), np.zeros((v.shape[0], 2)), f,
               np.full(f.shape[0], material))
-    geo.project_uv(uv_scale)
     geo.recompute_normals(smooth)
+    # UV projection requires separate corners at changes of projection axis.
+    # Projecting the shared box/cylinder vertices first lets the last face
+    # overwrite all earlier axes, collapsing top and front texture triangles.
+    if smooth:
+        saved_normals = geo.n[geo.f.reshape(-1)].copy()
+        geo.explode()
+        geo.n = saved_normals
+    geo.project_uv(uv_scale)
     return geo
 
 
@@ -286,6 +293,19 @@ def cylinder(radius: float, height: float, sides: int = 16, material: int = 0,
     u = (theta / TAU) * circumference / uv_scale
     geo.t = np.stack([u, p[:, 1] / uv_scale], axis=1).astype(np.float32)
     geo.recompute_normals(smooth)
+    # Caps require planar UVs; cylindrical V is constant there. Split corners
+    # before assigning cap UVs so side brickwork keeps its cylindrical wrap.
+    saved_normals = geo.n[geo.f.reshape(-1)].copy()
+    geo.explode()
+    geo.n = saved_normals
+    cap_faces = np.abs(geo._face_normals()[:, 1]) > .999
+    cap_vertices = geo.f[cap_faces].reshape(-1)
+    geo.t[cap_vertices] = geo.v[cap_vertices][:, [0, 2]] / uv_scale
+    uv = geo.t[geo.f]
+    seam = (~cap_faces) & (np.ptp(uv[:, :, 0], axis=1) > circumference / uv_scale * .5)
+    for face in geo.f[seam]:
+        negative = face[geo.t[face, 0] < 0]
+        geo.t[negative, 0] += circumference / uv_scale
     return geo
 
 

@@ -181,6 +181,12 @@ def interior_manifest(spec: Interior, stats: dict, extras: dict) -> dict:
     # Pull back far enough to hold the long axis of the room in frame.
     distance = min(17.0, max(9.0, max(spec.width, spec.depth) * 0.55 + 3.0))
     spawn = extras.get("spawn", [0.0, 0.0, spec.depth * 0.5 - 2.0])
+    # Stand three metres inside the exit, so integer conversion cannot place a
+    # new arrival on its automatic return trigger.
+    spawn = [spawn[0], spawn[1], min(spawn[2], spec.depth * 0.5 - 3.9)]
+    post = INDEX.ROOM_DOOR_POSTS.get(spec.id, {})
+    spawn = post.get('arrival', spawn)
+    exit_post = post.get('exit', [round(spawn[0], 2), 0., round(spec.depth * .5 - .9, 2)])
     return {
         "schemaVersion": SCHEMA_VERSION,
         "assetVersion": ASSET_VERSION,
@@ -195,7 +201,7 @@ def interior_manifest(spec: Interior, stats: dict, extras: dict) -> dict:
             "bounds": {"min": [-half_w - 1.5, -1.0, -half_d - 1.5],
                        "max": [half_w + 1.5, spec.height + 1.5, half_d + 1.5]},
             "interior": True,
-            "parentMap": "maps/startmap.elm",
+            "parentMap": "four_gates",
             "quarter": spec.quarter,
             "description": spec.blurb,
         },
@@ -205,7 +211,7 @@ def interior_manifest(spec: Interior, stats: dict, extras: dict) -> dict:
                          "facing": [0, 0, -1], "default": True}],
         "portals": [{
             "id": "exit",
-            "position": [round(spawn[0], 2), 0.0, round(spec.depth * 0.5 - 0.9, 2)],
+            "position": exit_post,
             "radius": 1.6,
             "targetMap": "four_gates",
             "targetPosition": [round(v, 2) for v in spec.door_world],

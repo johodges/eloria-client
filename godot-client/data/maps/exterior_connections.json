@@ -431,11 +431,38 @@
           "map": "mirrorhold",
           "portal": "south-road",
           "position": [
-            57.6788,
-            5.74,
-            93.1823
+            175.5,
+            4.0,
+            93.5
           ],
-          "frame": {},
+          "frame": {
+            "id": "mirrorhold-four-gates",
+            "portal": "south-road",
+            "destination": "four_gates",
+            "anchor": [
+              175.5,
+              4,
+              92.5
+            ],
+            "outward": [
+              0,
+              1
+            ],
+            "uvSign": 1,
+            "palette": "causeway",
+            "preloadDistance": 170,
+            "retainDistance": 220,
+            "blendDistance": 65,
+            "collarDepth": 42,
+            "halfWidthTiles": 3,
+            "viewHalfWidth": 40.0,
+            "viewDepth": 145.0,
+            "previewPrefix": "StreamView_mirrorhold-four-gates__",
+            "overflowSuffix": "_StreamOverflow_mirrorhold-four-gates",
+            "profile": "causeway",
+            "waterBelowDeck": 4.0,
+            "deckWidth": 7.0
+          },
           "coordinateTransform": {
             "metresPerTile": 1.0,
             "serverOrigin": [
@@ -474,23 +501,50 @@
           "map": "four_gates",
           "portal": "north",
           "position": [
-            0.0,
-            29.0,
-            -356.0
+            0.5,
+            23.0,
+            -196.5
           ],
-          "frame": {},
+          "frame": {
+            "id": "mirrorhold-four-gates",
+            "portal": "north",
+            "destination": "mirrorhold",
+            "anchor": [
+              0.5,
+              23,
+              -195.5
+            ],
+            "outward": [
+              0,
+              -1
+            ],
+            "uvSign": -1,
+            "palette": "causeway",
+            "preloadDistance": 170,
+            "retainDistance": 220,
+            "blendDistance": 65,
+            "collarDepth": 42,
+            "halfWidthTiles": 3,
+            "viewHalfWidth": 40.0,
+            "viewDepth": 145.0,
+            "previewPrefix": "StreamView_mirrorhold-four-gates__",
+            "overflowSuffix": "_StreamOverflow_mirrorhold-four-gates",
+            "profile": "causeway",
+            "waterBelowDeck": 4.0,
+            "deckWidth": 7.0
+          },
           "coordinateTransform": {
             "metresPerTile": 1.0,
             "serverOrigin": [
-              360.0,
-              360.0
+              198,
+              198
             ],
             "origin": [
-              0.0,
-              31.15,
-              0.0
+              0,
+              31.1,
+              0
             ],
-            "walkingHeight": 31.15,
+            "walkingHeight": 31.1,
             "invertServerY": true
           },
           "visualScenes": [
@@ -504,11 +558,19 @@
             "res://assets/actors/native/races/orun_male.glb",
             "res://assets/actors/native/races/ssarathi_female.glb",
             "res://assets/actors/native/races/stoneborn_male.glb",
-            "res://assets/actors/native/races/votary_female.glb"
+            "res://assets/actors/native/races/votary_female.glb",
+            "res://assets/world/harvestables/mirror_reed.glb",
+            "res://assets/world/harvestables/pale_quartz.glb",
+            "res://assets/world/harvestables/resonant_crystal.glb",
+            "res://assets/world/harvestables/riverflax.glb",
+            "res://assets/world/harvestables/steppe_wheat.glb",
+            "res://assets/world/harvestables/stormglass_shard.glb",
+            "res://assets/world/harvestables/sunmane_seed.glb",
+            "res://assets/world/harvestables/wayside_sage.glb"
           ]
         }
       ],
-      "seamless": false
+      "seamless": true
     },
     {
       "id": "mirrorhold--amethyst_barrens",
@@ -932,23 +994,23 @@
           "map": "four_gates",
           "portal": "east",
           "position": [
-            356.0,
-            29.0,
-            0.0
+            195.5,
+            23,
+            0
           ],
           "frame": {},
           "coordinateTransform": {
             "metresPerTile": 1.0,
             "serverOrigin": [
-              360.0,
-              360.0
+              198,
+              198
             ],
             "origin": [
-              0.0,
-              31.15,
-              0.0
+              0,
+              31.1,
+              0
             ],
-            "walkingHeight": 31.15,
+            "walkingHeight": 31.1,
             "invertServerY": true
           },
           "visualScenes": [
@@ -962,7 +1024,15 @@
             "res://assets/actors/native/races/orun_male.glb",
             "res://assets/actors/native/races/ssarathi_female.glb",
             "res://assets/actors/native/races/stoneborn_male.glb",
-            "res://assets/actors/native/races/votary_female.glb"
+            "res://assets/actors/native/races/votary_female.glb",
+            "res://assets/world/harvestables/mirror_reed.glb",
+            "res://assets/world/harvestables/pale_quartz.glb",
+            "res://assets/world/harvestables/resonant_crystal.glb",
+            "res://assets/world/harvestables/riverflax.glb",
+            "res://assets/world/harvestables/steppe_wheat.glb",
+            "res://assets/world/harvestables/stormglass_shard.glb",
+            "res://assets/world/harvestables/sunmane_seed.glb",
+            "res://assets/world/harvestables/wayside_sage.glb"
           ]
         }
       ],
@@ -1169,23 +1239,23 @@
           "map": "four_gates",
           "portal": "south",
           "position": [
-            0.0,
-            29.0,
-            357.0
+            0,
+            23,
+            195.5
           ],
           "frame": {},
           "coordinateTransform": {
             "metresPerTile": 1.0,
             "serverOrigin": [
-              360.0,
-              360.0
+              198,
+              198
             ],
             "origin": [
-              0.0,
-              31.15,
-              0.0
+              0,
+              31.1,
+              0
             ],
-            "walkingHeight": 31.15,
+            "walkingHeight": 31.1,
             "invertServerY": true
           },
           "visualScenes": [
@@ -1199,7 +1269,15 @@
             "res://assets/actors/native/races/orun_male.glb",
             "res://assets/actors/native/races/ssarathi_female.glb",
             "res://assets/actors/native/races/stoneborn_male.glb",
-            "res://assets/actors/native/races/votary_female.glb"
+            "res://assets/actors/native/races/votary_female.glb",
+            "res://assets/world/harvestables/mirror_reed.glb",
+            "res://assets/world/harvestables/pale_quartz.glb",
+            "res://assets/world/harvestables/resonant_crystal.glb",
+            "res://assets/world/harvestables/riverflax.glb",
+            "res://assets/world/harvestables/steppe_wheat.glb",
+            "res://assets/world/harvestables/stormglass_shard.glb",
+            "res://assets/world/harvestables/sunmane_seed.glb",
+            "res://assets/world/harvestables/wayside_sage.glb"
           ]
         }
       ],
@@ -1390,16 +1468,16 @@
           "map": "westhaven",
           "portal": "east-road",
           "position": [
-            330.0,
-            25.66,
-            -59.76
+            264.5,
+            22.11,
+            -37.5
           ],
           "frame": {},
           "coordinateTransform": {
             "metresPerTile": 1.0,
             "serverOrigin": [
-              174.0,
-              250.0
+              120.0,
+              172.0
             ],
             "origin": [
               0.0,
@@ -1413,7 +1491,18 @@
             "res://assets/actors/native/races/greyhaven_female.glb",
             "res://assets/actors/native/races/greyhaven_male.glb",
             "res://assets/actors/native/races/luminous_female.glb",
-            "res://assets/actors/native/races/luminous_male.glb"
+            "res://assets/actors/native/races/luminous_male.glb",
+            "res://assets/world/harvestables/bogiron_nodule.glb",
+            "res://assets/world/harvestables/deep_lake_clay.glb",
+            "res://assets/world/harvestables/delta_lotus.glb",
+            "res://assets/world/harvestables/glacier_salt.glb",
+            "res://assets/world/harvestables/mangrove_sap.glb",
+            "res://assets/world/harvestables/moor_peat.glb",
+            "res://assets/world/harvestables/moorcotton.glb",
+            "res://assets/world/harvestables/shorebank_shell.glb",
+            "res://assets/world/harvestables/steppe_wheat.glb",
+            "res://assets/world/harvestables/tidewrack_kelp.glb",
+            "res://assets/world/harvestables/wayside_sage.glb"
           ]
         }
       ],
@@ -1426,16 +1515,41 @@
           "map": "westhaven",
           "portal": "north-road",
           "position": [
-            278.16,
-            44.11,
-            -282.96
+            190.5,
+            34.0,
+            -214.5
           ],
-          "frame": {},
+          "frame": {
+            "id": "grey-westhaven",
+            "portal": "north-road",
+            "destination": "grey_moors",
+            "anchor": [
+              190.5,
+              34,
+              -213.5
+            ],
+            "outward": [
+              0,
+              -1
+            ],
+            "uvSign": -1,
+            "palette": "pasture",
+            "preloadDistance": 170,
+            "retainDistance": 220,
+            "blendDistance": 65,
+            "collarDepth": 42,
+            "halfWidthTiles": 3,
+            "viewHalfWidth": 40.0,
+            "viewDepth": 145.0,
+            "previewPrefix": "StreamView_grey-westhaven__",
+            "overflowSuffix": "_StreamOverflow_grey-westhaven",
+            "profile": "pasture"
+          },
           "coordinateTransform": {
             "metresPerTile": 1.0,
             "serverOrigin": [
-              174.0,
-              250.0
+              120.0,
+              172.0
             ],
             "origin": [
               0.0,
@@ -1449,18 +1563,54 @@
             "res://assets/actors/native/races/greyhaven_female.glb",
             "res://assets/actors/native/races/greyhaven_male.glb",
             "res://assets/actors/native/races/luminous_female.glb",
-            "res://assets/actors/native/races/luminous_male.glb"
+            "res://assets/actors/native/races/luminous_male.glb",
+            "res://assets/world/harvestables/bogiron_nodule.glb",
+            "res://assets/world/harvestables/deep_lake_clay.glb",
+            "res://assets/world/harvestables/delta_lotus.glb",
+            "res://assets/world/harvestables/glacier_salt.glb",
+            "res://assets/world/harvestables/mangrove_sap.glb",
+            "res://assets/world/harvestables/moor_peat.glb",
+            "res://assets/world/harvestables/moorcotton.glb",
+            "res://assets/world/harvestables/shorebank_shell.glb",
+            "res://assets/world/harvestables/steppe_wheat.glb",
+            "res://assets/world/harvestables/tidewrack_kelp.glb",
+            "res://assets/world/harvestables/wayside_sage.glb"
           ]
         },
         {
           "map": "grey_moors",
           "portal": "west-waygate",
           "position": [
-            -105.5956,
+            -106.5,
             4.95,
-            6.1345
+            6.5
           ],
-          "frame": {},
+          "frame": {
+            "id": "grey-westhaven",
+            "portal": "west-waygate",
+            "destination": "westhaven",
+            "anchor": [
+              -105.5,
+              4.95,
+              6.5
+            ],
+            "outward": [
+              -1,
+              0
+            ],
+            "uvSign": 1,
+            "palette": "pasture",
+            "preloadDistance": 170,
+            "retainDistance": 220,
+            "blendDistance": 65,
+            "collarDepth": 42,
+            "halfWidthTiles": 3,
+            "viewHalfWidth": 40.0,
+            "viewDepth": 145.0,
+            "previewPrefix": "StreamView_grey-westhaven__",
+            "overflowSuffix": "_StreamOverflow_grey-westhaven",
+            "profile": "pasture"
+          },
           "coordinateTransform": {
             "metresPerTile": 1.0,
             "serverOrigin": [
@@ -1497,7 +1647,7 @@
           ]
         }
       ],
-      "seamless": false
+      "seamless": true
     },
     {
       "id": "grey_moors--amberwood",
@@ -1651,23 +1801,50 @@
           "map": "four_gates",
           "portal": "west",
           "position": [
-            -357.0,
-            29.0,
-            0.0
+            -196.5,
+            23.0,
+            -0.5
           ],
-          "frame": {},
+          "frame": {
+            "id": "four-gates-crownwater",
+            "portal": "west",
+            "destination": "crownwater",
+            "anchor": [
+              -195.5,
+              23,
+              -0.5
+            ],
+            "outward": [
+              -1,
+              0
+            ],
+            "uvSign": 1,
+            "palette": "causeway",
+            "preloadDistance": 170,
+            "retainDistance": 220,
+            "blendDistance": 65,
+            "collarDepth": 42,
+            "halfWidthTiles": 3,
+            "viewHalfWidth": 40.0,
+            "viewDepth": 145.0,
+            "previewPrefix": "StreamView_four-gates-crownwater__",
+            "overflowSuffix": "_StreamOverflow_four-gates-crownwater",
+            "profile": "causeway",
+            "waterBelowDeck": 4.0,
+            "deckWidth": 7.0
+          },
           "coordinateTransform": {
             "metresPerTile": 1.0,
             "serverOrigin": [
-              360.0,
-              360.0
+              198,
+              198
             ],
             "origin": [
-              0.0,
-              31.15,
-              0.0
+              0,
+              31.1,
+              0
             ],
-            "walkingHeight": 31.15,
+            "walkingHeight": 31.1,
             "invertServerY": true
           },
           "visualScenes": [
@@ -1681,23 +1858,58 @@
             "res://assets/actors/native/races/orun_male.glb",
             "res://assets/actors/native/races/ssarathi_female.glb",
             "res://assets/actors/native/races/stoneborn_male.glb",
-            "res://assets/actors/native/races/votary_female.glb"
+            "res://assets/actors/native/races/votary_female.glb",
+            "res://assets/world/harvestables/mirror_reed.glb",
+            "res://assets/world/harvestables/pale_quartz.glb",
+            "res://assets/world/harvestables/resonant_crystal.glb",
+            "res://assets/world/harvestables/riverflax.glb",
+            "res://assets/world/harvestables/steppe_wheat.glb",
+            "res://assets/world/harvestables/stormglass_shard.glb",
+            "res://assets/world/harvestables/sunmane_seed.glb",
+            "res://assets/world/harvestables/wayside_sage.glb"
           ]
         },
         {
           "map": "crownwater",
           "portal": "east-quay",
           "position": [
-            357.9,
-            3.9,
-            -12.97
+            271.5,
+            4.0,
+            -10.5
           ],
-          "frame": {},
+          "frame": {
+            "id": "four-gates-crownwater",
+            "portal": "east-quay",
+            "destination": "four_gates",
+            "anchor": [
+              270.5,
+              4,
+              -10.5
+            ],
+            "outward": [
+              1,
+              0
+            ],
+            "uvSign": -1,
+            "palette": "causeway",
+            "preloadDistance": 170,
+            "retainDistance": 220,
+            "blendDistance": 65,
+            "collarDepth": 42,
+            "halfWidthTiles": 3,
+            "viewHalfWidth": 40.0,
+            "viewDepth": 145.0,
+            "previewPrefix": "StreamView_four-gates-crownwater__",
+            "overflowSuffix": "_StreamOverflow_four-gates-crownwater",
+            "profile": "causeway",
+            "waterBelowDeck": 4.0,
+            "deckWidth": 7.0
+          },
           "coordinateTransform": {
             "metresPerTile": 1.0,
             "serverOrigin": [
-              174.0,
-              174.0
+              120.0,
+              120.0
             ],
             "origin": [
               0.0,
@@ -1713,11 +1925,20 @@
             "res://assets/actors/native/races/luminous_female.glb",
             "res://assets/actors/native/races/luminous_male.glb",
             "res://assets/actors/native/races/ssarathi_female.glb",
-            "res://assets/actors/native/races/ssarathi_male.glb"
+            "res://assets/actors/native/races/ssarathi_male.glb",
+            "res://assets/world/harvestables/cenote_watercress.glb",
+            "res://assets/world/harvestables/crownwater_pearl.glb",
+            "res://assets/world/harvestables/deep_lake_clay.glb",
+            "res://assets/world/harvestables/glacier_salt.glb",
+            "res://assets/world/harvestables/mirror_reed.glb",
+            "res://assets/world/harvestables/riverflax.glb",
+            "res://assets/world/harvestables/shorebank_shell.glb",
+            "res://assets/world/harvestables/tidewrack_kelp.glb",
+            "res://assets/world/harvestables/wayside_sage.glb"
           ]
         }
       ],
-      "seamless": false
+      "seamless": true
     }
   ]
 }

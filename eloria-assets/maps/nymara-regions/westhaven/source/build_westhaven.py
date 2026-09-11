@@ -49,6 +49,8 @@ from amberwood import render as RENDER
 
 from amberwood import terrain as TER
 
+import streaming_borders as SB
+import layout as LAYOUT
 import havenkit as HK
 import populate as POP
 import region as REG
@@ -75,11 +77,11 @@ SCHEMA_VERSION = "1.0.0"
 # and the Greyhaven packet up the coast to the Amberwood from the cargo pier.
 # Heather comes down the north road, reeds and delta ferns line the coast road.
 CROSSINGS = [
-    MARCH.Crossing("north-road", "grey_moors", REG.ANCHORS["upland_chapel"],
-                   (REG.ANCHORS["upland_chapel"][0], REG.PLAY_MIN_Z - 20.0),
+    MARCH.Crossing("north-road", "grey_moors", REG.ANCHORS["north_exit"],
+                   (REG.ANCHORS["north_exit"][0], REG.PLAY_MIN_Z - 20.0),
                    radius=46.0, name="The Moor Road March"),
-    MARCH.Crossing("east-road", "manymouth_delta", REG.ANCHORS["estate_door"],
-                   (REG.PLAY_MAX_X + 20.0, REG.ANCHORS["estate_door"][1]),
+    MARCH.Crossing("east-road", "manymouth_delta", REG.ANCHORS["east_exit"],
+                   (REG.PLAY_MAX_X + 20.0, REG.ANCHORS["east_exit"][1]),
                    radius=44.0, name="The Coast Road March"),
     MARCH.Crossing("crownwater-berth", "crownwater", REG.ANCHORS["west_quay"],
                    (REG.ANCHORS["west_quay"][0], REG.ANCHORS["west_quay"][1] + 30.0),
@@ -91,13 +93,13 @@ CROSSINGS = [
 
 # The places the region's people argue about (see loresites.py).
 SITES = [
-    LORE.Site("league-post-house", "The League Post-House", "post_house", (-30.0, 74.0),
+    LORE.Site("league-post-house", "The League Post-House", "post_house", (-37.0, -22.0),
               thread="E", clearing=9.0,
               note="Where the countersigns are checked. The returned post is stacked unopened "
                    "by the door, the way the reeve says it came back."),
 ]
 MARCH_MATERIALS: dict = dict(getattr(REG, "SURFACE_MATERIALS", {}))
-HK.MATERIALS = HK.MATERIALS | MARCH.materials_for("westhaven", CROSSINGS) | SD.materials(SEC) | LORE.materials([s.piece for s in SITES])
+HK.MATERIALS = HK.MATERIALS | SB.materials_for("westhaven") | MARCH.materials_for("westhaven", CROSSINGS) | SD.materials(SEC) | LORE.materials([s.piece for s in SITES])
 
 # The combined insides map every door on this region opens onto. One map key
 # for all four interiors, per the Eternal Lands convention: see
@@ -151,6 +153,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     build.landmarks.extend(march.landmarks)
     build.notes.extend(march.notes)
 
+    LAYOUT.finish(build)
     terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
     build.terrain_meshes = terrain.build_meshes(
         uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
@@ -167,6 +170,8 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     build.resolve_names()
     _add_spawns_and_portals(build)
     _add_population_markers(build, seed)
+    LAYOUT.finish_metadata(build)
+    SB.apply(build, "westhaven")
     print(f"[region] built in {time.time() - t0:.1f}s")
     return build
 
@@ -198,9 +203,9 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
     # over the upland and two sailing berths on the quay - which is what a
     # harbour city's connections actually are.
     for portal_id, name, anchor, destination, kind in (
-            ("north-road", "Upland Road to the Grey Moors", "upland_chapel",
+            ("north-road", "Upland Road to the Grey Moors", "north_exit",
              "grey_moors", "road"),
-            ("east-road", "Coast Road to the Manymouth Delta", "estate_door",
+            ("east-road", "Coast Road to the Manymouth Delta", "east_exit",
              "manymouth_delta", "road"),
             ("crownwater-berth", "Crownwater Packet", "west_quay",
              "crownwater", "berth"),
@@ -223,20 +228,20 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
     # this map, so the return portal standing on that arrival has somewhere to
     # land: without it the round trip resolves one way only.
     for door_id, name, anchor, spawn_id, facing in (
-            ("custom-house-door", "The Custom House", "custom_house",
+            ("custom-house-door", "The Custom House", "custom_house_entry",
              "custom-house-hall", 180.0),
-            ("bonded-vaults-door", "The Bonded Vaults", "warehouse_row",
+            ("bonded-vaults-door", "The Bonded Vaults", "bonded_entry",
              "bonded-vaults-tunnel", 180.0),
             # `lighthouse_yard`, not `lighthouse`: the tower's gallery is a
             # walk surface 28 m up, so a door on the tower's own centre has the
             # grounding ray snap it onto the gallery instead of the rock.
             ("lamp-rock-door", "The Lamp Rock Light", "lighthouse_yard",
              "lamp-rock-foot", 315.0),
-            ("gullstone-door", "The Gullstone Undertow", "gullstone_watch",
+            ("gullstone-door", "The Gullstone Undertow", "gullstone_door",
              "gullstone-cleft", 0.0),
              ("gullscar-farmhouse-door", "The Gullscar Farmhouse", "farm_door",
              "gullscar-farmhouse-door", 180.0),
-            ("haven-undercroft-door", "The Haven Undercroft", "cathedral",
+            ("haven-undercroft-door", "The Haven Undercroft", "cathedral_approach",
              "haven-undercroft-door", 180.0),
             ("salvage-hole-mouth", "The Salvage Hole", "watch_door",
              "salvage-hole-mouth", 180.0),
@@ -498,14 +503,22 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
     cz = np.clip(((gz - t.z0) / t.cell).astype(int), 0, t.rows - 1)
     slope = slope_grid[cz, cx]
 
-    walkable = (ground > REG.SEA_LEVEL + 0.35) & (slope < 1.05)
+    walkable = (ground > REG.SEA_LEVEL + 0.55) & (slope < 1.05)
     # solid structures block their footprint
     blockers = np.zeros_like(walkable)
     for placement in build.placements:
+        if placement.node.startswith("StreamView_"): continue
         if not placement.collides:
             continue
         item = build.meshes[placement.mesh]
         low, high = item.bounds()
+        if (placement.extras or {}).get('solidBox'):
+            px,_,pz=placement.position
+            c,s=math.cos(placement.rotation_y),math.sin(placement.rotation_y)
+            lx=(gx-px)*c-(gz-pz)*s; lz=(gx-px)*s+(gz-pz)*c
+            blockers|=((lx>=low[0]*placement.scale-.2)&(lx<=high[0]*placement.scale+.2)
+                       &(lz>=low[2]*placement.scale-.2)&(lz<=high[2]*placement.scale+.2))
+            continue
         # trees block only their trunk, not the spread of their canopy
         footprint = float(max(abs(low[0]), abs(high[0]), abs(low[2]), abs(high[2]))) \
             * placement.scale
@@ -516,57 +529,36 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
     walkable &= ~blockers
 
     surface = ground.copy()
-    decks = np.zeros_like(walkable)
-    # Cells an elevated deck claims. A spawn or a door must never be relocated
-    # under one: the cell is walkable, and its *ground* can be dry - the harbour
-    # gate's piers stand on land - but what the client's ray finds there is the
-    # deck overhead, so anything placed on the ground reads as buried. Recorded
-    # on the build so `nudge_onto_walkable` can exclude them.
-    deck_mask = np.zeros_like(walkable)
-    # An overhead walk surface owns its footprint: the client grounds an actor
-    # on the highest walk surface below the ray, so a two-level column cannot be
-    # expressed on a flat server grid. Bridges, decks and platforms therefore
-    # take the cell, and the ground under them is not separately walkable.
+    import glb_reader as GLB_READ
     elevated = 0
+    faces=[]
     for placement in build.placements:
-        item = build.meshes[placement.mesh]
-        walk_bounds = getattr(item, "walk_bounds", lambda: None)()
-        if walk_bounds is None and not placement.walk_surface:
-            continue
-        if walk_bounds is None:
-            low, high = item.bounds()
-        else:
-            low, high = walk_bounds
-        px, py, pz = placement.position
-        # The deck's real extent, not a symmetric half-extent about its origin.
-        # A quay apron sits entirely to one side of its placement point, so
-        # mirroring it claimed walkable ground on the water side where there is
-        # no deck at all - the ray found the lagoon floor 13 m below.
-        x0, x1 = float(low[0]) * placement.scale, float(high[0]) * placement.scale
-        z0, z1 = float(low[2]) * placement.scale, float(high[2]) * placement.scale
-        inset_x = (x1 - x0) * 0.03
-        inset_z = (z1 - z0) * 0.03
-        deck_y = py + float(high[1]) * placement.scale
-        # An oriented rectangle, not a disc. Amberwood's decks were roughly
-        # square, so a circle inscribed in the bounds covered them; Westhaven's
-        # causeways are 48 m x 5.4 m, and the inscribed circle covers 2.3 m of
-        # a 48 m deck. Everything outside it kept the lagoon floor's height and
-        # showed up as collision-versus-surface disagreement along every span.
-        angle = float(placement.rotation_y or 0.0)
-        c, sn = math.cos(angle), math.sin(angle)
-        local_x = c * (gx - px) - sn * (gz - pz)
-        local_z = sn * (gx - px) + c * (gz - pz)
-        footprint = ((local_x >= x0 + inset_x) & (local_x <= x1 - inset_x)
-                     & (local_z >= z0 + inset_z) & (local_z <= z1 - inset_z))
-        if not footprint.any():
-            continue
-        if deck_y > ground.max() + 200.0:
-            continue
-        elevated += 1
-        deck_mask |= footprint
-        decks |= footprint
-        surface = np.where(footprint, deck_y, surface)
-        walkable = np.where(footprint, True, walkable)
+        if placement.node.startswith('StreamView_'): continue
+        item=build.meshes[placement.mesh]
+        parts=getattr(item,'walk_parts',[])
+        if not parts and placement.walk_surface:
+            parts=getattr(item,'all_parts',[item])
+        if not parts: continue
+        elevated+=1
+        matrix=M.translation(*placement.position)@M.rotation_y(placement.rotation_y)@M.scaling(placement.scale)
+        for part in parts:
+            placed=part.transformed(matrix)
+            faces.append(placed.positions[placed.indices.reshape(-1,3)])
+    decks=np.zeros_like(walkable)
+    if faces:
+        hits,deck_height=GLB_READ.rasterise(np.concatenate(faces),width,height,
+                    REG.PLAY_MIN_X,REG.PLAY_MAX_Z,COLLISION_CELL)
+        decks=hits&(deck_height>=ground-.03)
+        surface=np.where(hits,np.maximum(ground,deck_height),surface)
+        walkable|=decks
+    water_faces=[part.positions[part.indices.reshape(-1,3)] for name,part in build.water_meshes.items()
+                 if not name.startswith('StreamView_')]
+    if water_faces:
+        wet,water_height=GLB_READ.rasterise(np.concatenate(water_faces),width,height,
+                    REG.PLAY_MIN_X,REG.PLAY_MAX_Z,COLLISION_CELL)
+        walkable&=~(wet&(water_height>surface+.25))
+    deck_mask=decks
+    build.walk_surface_height=surface
 
     # Steepness has to be part of walkability, not of the height byte. That
     # byte holds 63 steps, and a region with 253 m of relief cannot be encoded
@@ -630,21 +622,8 @@ def nudge_onto_walkable(build: REG.RegionBuild, payload: bytes,
     walkable = grid > 0
     if not walkable.any():
         return []
-    # An elevated deck makes its footprint walkable at deck height, so a naive
-    # nearest-walkable search can move a portal onto a bridge over open water
-    # and then record its Y from the terrain twenty metres below. Candidates are
-    # restricted to cells whose *ground* is above the water line, which is what
-    # "somewhere to stand" means for a spawn or a door.
-    ground_all = build.terrain.height_at(
-        REG.PLAY_MIN_X + (np.arange(width)[None, :] + 0.5) * COLLISION_CELL,
-        REG.SERVER_ORIGIN[1] * REG.METRES_PER_TILE
-        - (np.arange(height)[:, None] + 0.5) * COLLISION_CELL)
-    walkable = walkable & (ground_all > REG.SEA_LEVEL + 0.35)
-    deck_mask = getattr(build, "deck_mask", None)
-    if deck_mask is not None and deck_mask.shape == walkable.shape:
-        walkable = walkable & ~deck_mask
-    if not walkable.any():
-        return []
+    # Actual triangle hits are legitimate standing surfaces, including piers.
+    surface_all=build.walk_surface_height
     rows, cols = np.nonzero(walkable)
     cell_x = REG.PLAY_MIN_X + (cols + 0.5) * COLLISION_CELL
     cell_z = REG.SERVER_ORIGIN[1] * REG.METRES_PER_TILE - (rows + 0.5) * COLLISION_CELL
@@ -660,7 +639,7 @@ def nudge_onto_walkable(build: REG.RegionBuild, payload: bytes,
         distances = np.hypot(cell_x - x, cell_z - z)
         best = int(np.argmin(distances))
         nx, nz = float(cell_x[best]), float(cell_z[best])
-        ny = float(build.terrain.height_at(nx, nz))
+        ny = float(surface_all[rows[best],cols[best]])
         offset = round(float(distances[best]), 2)
         entry["position"] = [round(nx, 2), round(ny + (y - _ground_of(build, x, z)), 2),
                              round(nz, 2)]
@@ -757,6 +736,7 @@ def write_camera_views(build: REG.RegionBuild, path: Path) -> dict:
     # on. Checking is cheaper and more reliable than guessing.
     boxes = []
     for placement in build.placements:
+        if placement.node.startswith("StreamView_"): continue
         if placement.kind not in ("landmark", "building"):
             continue
         item = build.meshes[placement.mesh]
@@ -786,6 +766,7 @@ def write_camera_views(build: REG.RegionBuild, path: Path) -> dict:
     from verify_runtime import VerticalRayIndex
     walk_triangles = []
     for placement in build.placements:
+        if placement.node.startswith("StreamView_"): continue
         matrix = (M.translation(*placement.position) @ M.rotation_y(placement.rotation_y)
                   @ M.scaling(placement.scale))
         for piece in getattr(build.meshes[placement.mesh], "walk_parts", []):
@@ -949,6 +930,8 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
         # is the terrain's, read back from the terrain that was actually built
         # rather than from the height table that asked for it.
         "contentLayout": REG.CONTENT_LAYOUT,
+        "streamingBorders": SB.region_specs("westhaven"),
+        "landscapeRevision": "inhabited-harbour-396-v1",
         "roads": [{"id": name,
                    "type": "quay" if name == "quayside" else (
                        "track" if REG.ROAD_SURFACE[name] == TER.PATH else "street"),
@@ -1088,14 +1071,10 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
         },
         "productionStatus": "production-geometry-materials-population",
         "requiresServerMap": {
-            "tiles": 96,
+            "tiles": REG.SERVER_CELLS // 6,
             "metresPerTile": REG.METRES_PER_TILE,
-            "arrivalTile": list(REG.SERVER_ORIGIN),
-            "note": ("Westhaven needs a 96x96 server map and, unlike the other "
-                     "576 m regions, an arrival datum at (174, 250) rather than "
-                     "(174, 174). Both are added by "
-                     "eloria-server tools/generate_nymara_maps.py on branch "
-                     "feature/westhaven-576m-server-map."),
+            "arrivalTile": [154, 166],
+            "note": "66x66 ELM map tiles provide the 396x396 one-metre collision grid; coordinate origin (120,172), main arrival (154,166).",
         },
         "knownLimitations": [
             "Place names are invented. No authoritative written description of "
@@ -1103,19 +1082,17 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             "Gullstone, Lamp Rock, the Mariners' Guild, Gullscar Farm - is a "
             "placeholder chosen to fit the concept art, not lore.",
             "Water and solid footprints are blocked in both authored and server grids. "
-            "Run refine_walk_heights, open_walk_surfaces and stamp_solid_landmarks "
-            "after building; their order is part of the collision contract.",
+            "Run refine_walk_heights, open_walk_surfaces, stamp_solid_landmarks and "
+            "guard_actor_surfaces after building; their order is part of the collision contract.",
             "The corrected half-metre grid records its own height origin and step. "
             "The server selects a stage large enough to retain the region's full relief; "
             "the client grounds actors on rendered walk surfaces.",
             "The city's terrace risers are deliberately not walkable. Every "
             "terrace is reachable along the graded ramp streets, but a player "
-            "cannot climb a retaining wall, and the 202 grounding "
-            "discontinuities verify_runtime reports are those risers, the "
-            "sea cliffs and the map's north and east rim.",
-            "Gullstone island has no bridge or ferry geometry. Its tiles are "
-            "grounded and walkable but form an isolated component reachable "
-            "only by boat, which the client does not yet model.",
+            "cannot climb a retaining wall. Grounding discontinuities remain at "
+            "tower galleries, terrace risers and sea cliffs.",
+            "The narrow Gullstone footbridge retains open water beneath it; the island path "
+            "serves the Undertow and secret entrances. Regional actors and resources remain map scoped.",
         ],
     }
     path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
@@ -1199,10 +1176,6 @@ def main() -> int:
                     for name, texture_set in sets.items()}
         lod_sets = HK.register(lod_sets)
         lod_build = build_region(args.seed, lod="far")
-        lod_build.terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
-        lod_build.terrain_meshes = lod_build.terrain.build_meshes(
-            uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
-            materials=MARCH_MATERIALS)
         # The reduced package drops the ground-dressing pass, so it references
         # one material fewer than the main one. Pinning it to the full set
         # embedded a texture nothing pointed at - which is precisely the

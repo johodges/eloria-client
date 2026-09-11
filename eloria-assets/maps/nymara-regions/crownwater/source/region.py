@@ -1,12 +1,12 @@
 """The authored Crownwater region plan.
 
 Coordinates are Godot metres, Y up, north toward -Z. The playable footprint is
-the server's 576-cell grid at one metre per tile with the arrival datum at
-server (174, 174), which lands on the Godot origin:
+the server's 396-cell grid at one metre per tile with the arrival datum at
+server (120, 120), which lands on the Godot origin:
 
-    godot_x = server_x - 174        godot_z = 174 - server_y
+    godot_x = server_x - 120        godot_z = 120 - server_y
 
-so the reachable area is x in [-174, 401] and z in [-401, 174]. The terrain is
+so the reachable area is x in [-120, 275] and z in [-275, 120]. The terrain is
 cut larger than that on every side, and the surplus is drowned or walled so a
 player can never walk off the authored world.
 
@@ -26,6 +26,7 @@ what makes zero grounding misses achievable on a map that is mostly sea.
 from __future__ import annotations
 
 import math
+import coastal_plan as COAST
 
 import numpy as np
 
@@ -44,13 +45,13 @@ from amberwood.region import Placement, RegionBuild  # noqa: F401
 # Crownwater is authored at 576 m x 576 m, matching Amberwood, so the server map
 # is 96x96 ELM tiles (576 height cells) at one metre per tile. The arrival datum
 # keeps the same 30%-in-from-the-south-west position Amberwood uses.
-SERVER_ORIGIN = (174.0, 174.0)
-SERVER_CELLS = 576
+SERVER_ORIGIN = COAST.SERVER_ORIGIN
+SERVER_CELLS = COAST.SERVER_CELLS
 METRES_PER_TILE = 1.0
 
 # The composition is written in a 192 m design space and scaled up here, so the
 # aerial concept's layout is preserved rather than stretched.
-SCALE = 3.0
+SCALE = 2.0
 
 # Distances between places scale with the region; the places themselves do not.
 # A plaza is sized by the buildings around it, a quay by the boats along it.
@@ -73,7 +74,7 @@ TERRAIN_CELL = 2.0
 # Crownwater's built ground uses its mosaic and sand palette. Bind the shared
 # paving and shore classes for this build; material recipes are registered by
 # amberwood.crownmaterials through the crownkit compatibility entry point.
-TER.SURFACE_MATERIALS[TER.PAVING] = "crownwater_mosaic"
+TER.SURFACE_MATERIALS[TER.PAVING] = "cobble_paving"
 TER.SURFACE_MATERIALS[TER.SHORE] = "crownwater_sand"
 
 # The lagoon floor datum. Everything starts here and islands are lifted out of
@@ -167,7 +168,8 @@ ANCHORS: dict[str, tuple[float, float]] = {
     name: (x * SCALE, z * SCALE) for name, (x, z) in _DESIGN_ANCHORS.items()
 }
 
-ANCHORS["customs_house"] = (23.0, 8.0)
+ANCHORS.update(COAST.ANCHORS)
+_DESIGN_ANCHORS.update({k:(x/SCALE,z/SCALE) for k,(x,z) in ANCHORS.items()})
 
 SPAWN = ANCHORS["harbour_isle"]
 SPAWN_PLAZA = ANCHORS["crown_plaza"]
@@ -396,6 +398,8 @@ for _name in _OUTER_NAMES:
     ISLANDS[_name] = (9.0 * SCALE, 3.2, 16.0 * SCALE, 9.0)
 
 
+ISLANDS.update(COAST.ISLANDS)
+
 # Each islet is varied so the ring does not read as eight copies of one disc.
 # Resolved once, here, rather than inside `build_terrain`: the population passes
 # need the *same* radii and levels the terrain was actually built from, and
@@ -406,10 +410,10 @@ for _name, (_radius, _level, _shelf, _edge) in ISLANDS.items():
     _j = N.stable_hash(_name) % 1000 / 1000.0
     ISLAND_GEOM[_name] = {
         "centre": ANCHORS[_name],
-        "radius": _radius * (0.86 + 0.28 * _j),
-        "level": _level * (0.90 + 0.22 * _j),
-        "shelf": _shelf * (0.90 + 0.20 * (1.0 - _j)),
-        "edge": _edge * (0.85 + 0.35 * _j),
+        "radius": _radius,
+        "level": _level,
+        "shelf": _shelf,
+        "edge": _edge,
     }
 
 
@@ -421,7 +425,7 @@ def region_noise(t: TER.Terrain, seed: int, frequency: float = 0.035) -> np.ndar
 
 def _island(t: TER.Terrain, centre: tuple[float, float], radius: float,
             level: float, shelf_radius: float, edge: float, seed: int,
-            surface: int = TER.PAVING) -> None:
+            surface: int = TER.PAVING, axes=(1,1,0)) -> None:
     """Raise one island out of the lagoon, with a shelving apron around it.
 
     Islands are **plateaus, not domes.** A dome of the right height has almost no
@@ -435,12 +439,19 @@ def _island(t: TER.Terrain, centre: tuple[float, float], radius: float,
     against, and it is what the concept's pale turquoise haloes around every
     islet actually are.
     """
+    # Elliptical banks follow the prevailing reef, retaining broad shelves.
+    saved_x,saved_z=t.gx,t.gz
+    sx,sz,yaw=axes
+    dx,dz=t.gx-centre[0],t.gz-centre[1]
+    t.gx=centre[0]+(dx*math.cos(yaw)-dz*math.sin(yaw))/sx
+    t.gz=centre[1]+(dx*math.sin(yaw)+dz*math.cos(yaw))/sz
     # the shelf first: a broad shallow apron lifted off the lagoon floor
     t.add_dome(centre, shelf_radius, abs(LAGOON_FLOOR - SHALLOWS), power=1.35,
                noise_seed=seed + 3, noise_amount=0.20)
     # then the island proper, as an absolute flat level with an organic edge
     t.plateau(centre, radius, level, edge=edge, surface=surface,
-              seed=seed + 7, irregular=0.26)
+              seed=seed + 7, irregular=0.19)
+    t.gx,t.gz=saved_x,saved_z
 
 
 def build_terrain(seed: int = 20260828) -> TER.Terrain:
@@ -477,7 +488,8 @@ def build_terrain(seed: int = 20260828) -> TER.Terrain:
         surface = TER.MEADOW
         _island(t, geom["centre"], geom["radius"], geom["level"],
                 geom["shelf"], geom["edge"],
-                seed + N.stable_hash(name) % 211, surface=surface)
+                seed + N.stable_hash(name) % 211, surface=surface,
+                axes=COAST.SHORE_AXES.get(name,(1,1,0)))
 
     # 4. the sunken court of panel 7 sits in its own shallow pan, so the tiled
     #    platform reads through clear water instead of vanishing into the dark.
@@ -560,25 +572,22 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260828) -> None:
 
     crown_y = float(t.height_at(*ANCHORS["crown_isle"]))
 
-    # The cathedral precinct is an acropolis, not a building on a lawn. In the
-    # concept the palace stands on terraces well above the water; here it sat at
-    # island level, 100 m in from a shore that is itself 8 m high, so from any
-    # boat you saw a grassy rise with a dome peeping over it - which is not the
-    # subject of panel 1. Raising the precinct by 9 m lifts the whole silhouette
-    # clear of the island's own horizon. The edge is wide enough (26 m for 9 m
-    # of rise, a gradient of 0.35) to stay comfortably walkable.
-    t.plateau(ANCHORS["cathedral"], 44.0 * LOCAL, crown_y + 9.0, edge=26.0,
+    # The raised civic precinct fits the full-size basilica and tower. Its
+    # garden rests on the local bank; wide shoulders make the descent toward
+    # the harbour a usable slope instead of a leftover tall terrace lip.
+    t.plateau((96,-92), 40.0, 13.5, edge=20.0,
               surface=TER.PAVING, seed=seed + 61, irregular=0.10)
     crown_y = float(t.height_at(*ANCHORS["crown_isle"]))
 
-    t.terrace(ANCHORS["crown_plaza"], 15.0 * LOCAL, crown_y + 0.35,
-              surface=TER.PAVING)
-    t.rect_terrace(ANCHORS["cathedral"], 13.0 * LOCAL, 11.0 * LOCAL,
-                   crown_y + 1.10, 0.0, TER.PAVING)
-    t.terrace(ANCHORS["crown_garden"], 9.0 * LOCAL, crown_y - 0.30,
-              surface=TER.MEADOW)
+    t.terrace(ANCHORS["crown_plaza"], 17.0, crown_y + 0.35,
+              surface=TER.PAVING, shoulder=10.0)
+    t.rect_terrace(ANCHORS["cathedral"], 22.0, 25.0,
+                   crown_y + 1.10, 0.0, TER.PAVING, shoulder=6.0)
+    t.terrace(ANCHORS["crown_garden"], 9.0 * LOCAL,
+              float(t.height_at(*ANCHORS["crown_garden"])),
+              surface=TER.MEADOW, shoulder=5.0)
     t.terrace(ANCHORS["crown_campanile"], 6.0 * LOCAL, crown_y + 0.60,
-              surface=TER.PAVING)
+              surface=TER.PAVING, shoulder=8.0)
 
     for quay in ("crown_quay_south", "crown_quay_north"):
         t.rect_terrace(ANCHORS[quay], 11.0 * LOCAL, 4.0 * LOCAL,
@@ -613,6 +622,8 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260828) -> None:
                    SUNKEN_COURT_LEVEL, 0.0, TER.PAVING)
 
     apply_civic_plan(t)
+    import coastal_population
+    coastal_population.prepare(t)
     t.assign_surface_by_rule(sea_level=SEA_LEVEL)
     t.dither_boundaries(seed=seed + 99, amount=0.5)
 
@@ -622,15 +633,11 @@ CIVIC_PATHS = {
     "harbour-court": [(-25,10),(-14,3),(0,0),(12,-12),(26,-26)],
     "quay-apron": [(0,0),(5,-18),(14,-22),(30,-22)],
     "customs-race": [(0,0),(7,8),(12,8)],
-    "basilica-procession": [(62,-62),(86,-82),(114,-96),(114,-108)],
-    "undercroft-turn": [(114,-96),(136,-101),(139,-109)],
-    "bell-court": [(139,-109),(154,-128),(162,-141),(162,-146)],
+    "basilica-procession": [(42,-40),(60,-49),(78,-60),(78,-72)],
+    "undercroft-turn": [(78,-60),(100,-65),(103,-73)],
+    "bell-court": [(103,-73),(118,-92),(126,-105),(126,-110)],
 }
-DOORS = {
-    "basilica-undercroft": (139.0,-109.0),
-    "campanile-door": (162.0,-146.0),
-    "customs-door": (10.0,8.0),
-}
+DOORS = dict(COAST.DOORS)
 CONTENT_LAYOUT = {
     "services": [
         {"role":"information","position":[-5,4.5,-2]},
@@ -674,6 +681,30 @@ CONTENT_LAYOUT = {
     },
 }
 
+# Exact working posts override the generic migration. Ecology stays near the
+# named banks; broad habitat discs allow actual footprint packing off roads.
+CONTENT_LAYOUT["npcs"].update({
+    "Basilica Sexton Oren Vale":[86,14,-71],
+    "Campanile Ringer Iska":[131,14,-108],
+    "Sunken Court Diver Teth-Sa":[-28,4.5,-27],
+    "Pearl Diver Ansil Quen":[167,4,-69],
+    "Chartsman Devrin Aisle":[184,4,-92],
+    "Drowned-Court Claimant Sesh-Va":[99,14,-67],
+})
+CONTENT_LAYOUT["wildlife"]={k:[[round(COAST.map_world(x,z)[0],2),
+    round(COAST.map_world(x,z)[1],2),max(17,r*.85)] for x,z,r in v]
+    for k,v in CONTENT_LAYOUT["wildlife"].items()}
+CONTENT_LAYOUT["harvest"]={k:[[round(COAST.map_world(x,z)[0],2),
+    round(COAST.map_world(x,z)[1],2),max(15,r*.85)] for x,z,r in v]
+    for k,v in CONTENT_LAYOUT["harvest"].items()}
+CONTENT_LAYOUT["requireFullWildlife"]=True
+CONTENT_LAYOUT["primaryArrivalOnly"]=True
+CONTENT_LAYOUT["wildlife"]["azure_axolotl"]=[[84,48,26],[59,33,22]]
+CONTENT_LAYOUT["wildlife"]["barnacle_ogre"]=[[153,90,26]]
+CONTENT_LAYOUT["gauntlets"]={"crownwater_gauntlet":{
+    "keeperTile":[135,123],"returnTile":[152,122]}}
+CONTENT_LAYOUT["landscapeRevision"]="inhabited-crownwater-396-v1"
+
 
 def apply_civic_plan(t):
     level = float(t.height_at(*SPAWN))
@@ -681,7 +712,7 @@ def apply_civic_plan(t):
     t.rect_terrace((23,8), 12, 10, level, 0, TER.PAVING)
     for name, points in CIVIC_PATHS.items():
         if name == "basilica-procession":
-            points = [t._crown_spans["spoke_harbour_isle"][0],*points]
+            points = [t._crown_spans["spoke_harbour_isle"][0],*points] if t._crown_spans["spoke_harbour_isle"] else points
         heights = [float(t.height_at(*p)) for p in points]
         if name in ("harbour-court","quay-apron","customs-race"):
             heights = [max(level-0.3,h) for h in heights]
@@ -708,7 +739,7 @@ def apply_civic_plan(t):
                               width=4.5,shoulder=2.5,surface=TER.PAVING,clearance=2)
     # The undercroft is entered beside the basilica, never through its solid
     # centre. The two-metre porch lies entirely on this little landing.
-    t.rect_terrace((139,-110),4,4,float(t.height_at(139,-109)),0,TER.PAVING)
+    t.rect_terrace((103,-74),4,4,float(t.height_at(103,-73)),0,TER.PAVING)
 
     # Stone decks sit in shallow rebates at their landings. This only lowers
     # existing land under the exact span; it never raises the lagoon bed.

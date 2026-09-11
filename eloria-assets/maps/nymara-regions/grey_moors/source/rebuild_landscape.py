@@ -24,6 +24,7 @@ def main():
     run(TOOLKIT/'refine_walk_heights.py','grey_moors')
     run(TOOLKIT/'open_walk_surfaces.py','grey_moors')
     run(TOOLKIT/'stamp_solid_landmarks.py','grey_moors')
+    run(TOOLKIT/'guard_actor_surfaces.py','--package',PACKAGE)
     run(TOOLKIT/'verify_runtime.py','--package',PACKAGE,'--report',PACKAGE/'verification-report.json')
 
 if __name__=='__main__':main()

@@ -25,6 +25,14 @@ var _next_update := 0
 var events: Array[Dictionary] = []
 var last_handoff: Dictionary = {}
 var pending_walk: Dictionary = {}
+## Retiring trees still occupy their old neighbour slots until their resources
+## are released. Do not dispatch another preload while any retirement remains.
+## One worker already in flight may finish: the temporary allowance is the
+## existing maximum_neighbours trees plus that single worker result, not an
+## additional cache of retired maps.
+var _retiring: Array[Dictionary] = []
+const RETIRE_NODES_PER_FRAME := 64
+const RETIRE_BUDGET_USEC := 2000
 
 func configure(maps: Dictionary) -> void:
 	registry = maps
@@ -56,7 +64,7 @@ func update_position(position: Vector3) -> void:
 		if not wanted.has(map_id):
 			_evict(map_id)
 	_refresh_views()
-	if _thread != null:
+	if not _can_dispatch_preload():
 		return
 	for candidate: Dictionary in candidates:
 		var map_id := str(candidate.map)
@@ -81,6 +89,7 @@ func update_position(position: Vector3) -> void:
 		break
 
 func _process(_delta: float) -> void:
+	_drain_retired()
 	if _thread == null or _thread.is_alive():
 		return
 	var builder := _thread.wait_to_finish() as WorldLoader
@@ -99,7 +108,7 @@ func _process(_delta: float) -> void:
 	var imported := resident.root as Node3D
 	# Login, teleport, disconnect or a second map change can supersede a load.
 	if _pending_generation != _generation or map_id == active_map or not _nearby(map_id):
-		imported.free()
+		_retire(resident, map_id)
 		_record("discarded", map_id)
 		return
 	imported.visible = false
@@ -250,10 +259,66 @@ static func _set_overflow(imported: Node3D, visible_borders: Dictionary) -> void
 	imported.set_meta("stream_overflow_visible", key)
 
 func _evict(map_id: String) -> void:
-	var imported := residents[map_id].root as Node3D
-	imported.queue_free()
+	var resident: Dictionary = residents[map_id]
 	residents.erase(map_id)
-	_record("evicted", map_id)
+	_retire(resident, map_id)
+	_record("evicted", map_id, {"retiring": _retiring.size()})
+
+func _can_dispatch_preload() -> bool:
+	return _thread == null and _retiring.is_empty()
+
+func _retire(resident: Dictionary, map_id: String) -> void:
+	var imported := resident.root as Node3D
+	imported.visible = false
+	_set_collision(imported, false)
+	imported.process_mode = Node.PROCESS_MODE_DISABLED
+	# Keep the root attached: remove_child/queue_free on the complete tree
+	# would unregister all renderer/physics instances in one handoff frame.
+	# Prepared visual PackedScenes are released separately after the nodes;
+	# dropping their complete dictionary here would merely move the spike.
+	_retiring.append({"resident": resident, "map": map_id, "stack": [imported],
+		"visual_keys": (resident.get("visuals", {}) as Dictionary).keys(),
+		"freed": 0, "released_visuals": 0, "release_usec": 0, "max_slice_usec": 0})
+
+func _drain_retired(max_nodes := RETIRE_NODES_PER_FRAME,
+		budget_usec := RETIRE_BUDGET_USEC) -> int:
+	var began := Time.get_ticks_usec()
+	var freed := 0
+	while not _retiring.is_empty() and freed < max_nodes and Time.get_ticks_usec() - began < budget_usec:
+		var retired: Dictionary = _retiring[0]
+		var stack: Array = retired.stack
+		var visual_keys: Array = retired.visual_keys
+		if stack.is_empty():
+			var visuals: Dictionary = retired.resident.get("visuals", {})
+			var release_started := Time.get_ticks_usec()
+			visuals.erase(visual_keys.pop_back())
+			retired.release_usec += Time.get_ticks_usec() - release_started
+			retired.released_visuals += 1
+			freed += 1
+		else:
+			var node: Variant = stack.back()
+			if not is_instance_valid(node):
+				stack.pop_back()
+			elif node.get_child_count() > 0:
+				# Walk down only one branch at a time; even descent through a very
+				# deep import is covered by the time budget. Last-child removal
+				# avoids repeatedly shifting a wide sibling array.
+				stack.append(node.get_child(node.get_child_count() - 1))
+			else:
+				stack.pop_back()
+				var release_started := Time.get_ticks_usec()
+				node.free()
+				retired.release_usec += Time.get_ticks_usec() - release_started
+				retired.freed += 1
+				freed += 1
+		retired.max_slice_usec = maxi(int(retired.max_slice_usec), Time.get_ticks_usec() - began)
+		if stack.is_empty() and visual_keys.is_empty():
+			_record("retired", str(retired.map), {"nodes": retired.freed,
+				"visuals": retired.released_visuals,
+				"max_slice_ms": float(retired.max_slice_usec) / 1000.0,
+				"release_ms": float(retired.release_usec) / 1000.0})
+			_retiring.pop_front()
+	return freed
 
 func lighting_manifest(position: Vector3) -> WorldManifest:
 	if active_manifest == null:
@@ -349,7 +414,7 @@ func take_continuation(map_id: String) -> Dictionary:
 	return result
 
 func is_idle() -> bool:
-	return _thread == null
+	return _thread == null and _retiring.is_empty()
 
 func _record(kind: String, map_id: String, detail := {}) -> void:
 	var entry := {"event": kind, "map": map_id, "at_ms": Time.get_ticks_msec()}

@@ -60,6 +60,8 @@ ROADS={
  'quarry-adit-lane':([(198,82,-106),(211,82,-112)],4),
  'icebore-lane':([(40,98,-123),(31,87,-135)],4),
  'canal-sluice-lane':([(28,40,-29),(21.7,46,-43)],4),
+ 'sanctuary-causeway-approach':([(158.5,7,12),(167,4.5,23),
+                                (175.5,4,39),(175.5,3.96,50.5)],7),
 }
 TOWN_ROWS=[(-48,30),(-31,23.5),(-14,17)]
 SECRET_POSTS={
@@ -195,7 +197,7 @@ def _waterworks(build,seed):
     build.notes.append(f'Meltwater: three descending catchments; {len(seen)} surveyed cart bridges.')
 
 
-def _excavate_bridge_beds(build):
+def _excavate_bridge_beds(build,only=None,shoulder=3.0):
     """Keep the cart decks above their beds after nearby yards are graded.
 
     Bridge sides retain the stream cut; longitudinal banks meet the surveyed
@@ -204,6 +206,7 @@ def _excavate_bridge_beds(build):
     """
     t=build.terrain
     for p in build.placements:
+        if only is not None and p.node not in only:continue
         if not (p.node.startswith('Landmark_MeltwaterBridge_')
                 or p.node=='Landmark_LakeLink_Sanctuary'):continue
         for part in build.meshes[p.mesh].walk_parts:
@@ -216,13 +219,13 @@ def _excavate_bridge_beds(build):
             across=np.abs((t.gx-start[0])*direction[1]-(t.gz-start[2])*direction[0])
             half_width=float(np.linalg.norm(points[0,[0,2]]-points[3,[0,2]]))/2
             signed=np.maximum.reduce([across-half_width-.75,-along,along-length])
-            edge=np.clip(signed/3,0,1);blend=1-edge*edge*(3-2*edge)
+            edge=np.clip(signed/shoulder,0,1);blend=1-edge*edge*(3-2*edge)
             inset=np.clip(np.minimum(along,length-along)/2,0,1)
             target=start[1]+along/length*(end[1]-start[1])-.04-.36*inset
             t.height-=np.maximum(t.height-target,0)*blend
 
 
-def compact(build,seed,materials):
+def compact(build,seed,materials,lod=None):
     old=build.terrain
     # Shared bank survey transforms full structural/walking bridge groups.
     for p in build.placements:
@@ -339,6 +342,22 @@ def compact(build,seed,materials):
     build.authored_roads.append({'id':'civic-bridge-exit','width':7,'waypoints':civic_exit})
     _excavate_bridge_beds(build)
 
+    # The Sanctuary bridge branches beside the rising quarry road. Its bank
+    # feather had cut a 2m hollow into that older carriageway, followed by a
+    # steep lip. Restore the surveyed ascending plane after those earthworks;
+    # an extrapolated plane avoids a flat end cap on the continuing climb.
+    _bridge_bank(t,np.array([158.5,7,12]),np.array([179,19,1]),6)
+    # Keep the whole branching bridge exposed. Its final narrow bed cut stops
+    # before the ascending carriageway instead of feathering a hollow into it.
+    _excavate_bridge_beds(build,only={'Landmark_MeltwaterBridge_5'},shoulder=1)
+    # The watch hatch is beside the bent lake bridge, on its low bank. Give
+    # both the standing point and the short watch approach actual level ground
+    # instead of relying on the former server-side opening of the bridge rim.
+    watch_front=[(58,6,88),(62,5.4,85),(65.5,5.4,82.5)]
+    _road(t,watch_front,3,TER.PATH,2)
+    _patch(t,65.5,82.5,4,4,5.4,TER.PATH,shoulder=2)
+    build.authored_roads.append({'id':'watch-hatch-approach','width':3,'waypoints':watch_front})
+
     # Decorative random falls did not have catchments. Keep the canal works
     # and upper meltwater cascade; their surveyed water remains visible.
     removed|={p.node for p in build.placements if p.node.startswith('Landmark_CliffFall_')}
@@ -443,11 +462,40 @@ def compact(build,seed,materials):
                               'waypoints':[[-80,y,z+6],[-20,y,z+6]]}
                              for i,(z,y) in enumerate(TOWN_ROWS)]
     build.notes.append('384 m inhabited survey: full-size civic core; three connected Stair Town streets; eight working yards; surveyed northern cols.')
+    # Four Gates leaves from the open southeast lake shore. The old west-bank
+    # spur remains useful for the watch and hidden butts, while the Ring island
+    # keeps its whole foundation outside the new causeway channel.
+    station_posts={'March_south_road_Station':(164,4.5,35),
+                   'March_south_road_Signpost':(179.8,4.0,40)}
+    _patch(t,164,35,12,10,4.5,TER.PATH,shoulder=4)
+    _road(t,[(164,4.5,38),(173,4.05,39)],4,TER.PATH,2)
+    for p in build.placements:
+        if p.node in station_posts:
+            x,y,z=station_posts[p.node];_seat(build,p,x,z,y)
+    for entry in build.landmarks:
+        if entry.get('node') in station_posts:
+            x,y,z=station_posts[entry['node']];entry['position']=[x,y,z]
+            entry['note']='The working quay road reaches the island causeway; the old shore spur serves the South Watch.'
+    # Recut the water after the approach and station foundations are final.
+    build.water_meshes['Water_Lake']=TER.water_plane(t,REG.LAKE_LEVEL,
+        t.x0,t.z0,t.xs[-1],t.zs[-1],material='water_lake',cell=2,margin=.15)
+    build.notes.append('Sanctuary Road: a seven-metre causeway from the southeast working shore; South Watch and Ring island retain their sheltered banks.')
     # Continuous one-metre substrate reflects the final grades, not the old
     # compressed surface triangles. Water and bridge surveys are retained.
     from amberwood import materials as MAT
     build.terrain_meshes={k:v for k,v in build.terrain_meshes.items() if not k.startswith('Terrain_')}
-    build.terrain_meshes.update(t.build_meshes(uv_scale=.28,materials=materials,
+    mesh_terrain=t
+    if lod is not None:
+        # Sample the finished native ground once at far spacing. Shared road
+        # collars are applied below, so their deck geometry and exact seam
+        # partitions survive in both packages.
+        mesh_terrain=TER.Terrain(t.x0,t.z0,t.size_x,t.size_z,cell=2)
+        mesh_terrain.height=t.height_at(mesh_terrain.gx,mesh_terrain.gz)
+        mesh_terrain.surface=t.surface_at(mesh_terrain.gx,mesh_terrain.gz)
+        ix=np.clip(np.rint((mesh_terrain.gx-t.x0)/t.cell).astype(int),0,t.cols-1)
+        iz=np.clip(np.rint((mesh_terrain.gz-t.z0)/t.cell).astype(int),0,t.rows-1)
+        mesh_terrain.surface_strength=t.surface_strength[iz,ix]
+    build.terrain_meshes.update(mesh_terrain.build_meshes(uv_scale=.28,materials=materials,
                               blend_edges=True,material_suffix=MAT.GROUND_SUFFIX))
     used={p.mesh for p in build.placements}
     build.meshes={k:v for k,v in build.meshes.items() if k in used}

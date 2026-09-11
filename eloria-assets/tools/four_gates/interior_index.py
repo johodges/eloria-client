@@ -60,6 +60,32 @@ for _entry in INTERIORS:
     _outward = _at(_entry["angleDegrees"], _entry["radius"] + 5.0)
     _entry["arrival"] = _outward
 
+# The compact city's authored parcels own the external street frame. This
+# changes only where each complete interior returns its player, never its
+# native room dimensions, lore, contents or identity.
+from pathlib import Path as _Path
+import importlib.util as _importlib_util
+_plan_path = _Path(__file__).resolve().parents[2] / 'maps/four-gates/source/landscape_plan.py'
+if _plan_path.is_file():
+    _spec = _importlib_util.spec_from_file_location('_four_gates_landscape_plan', _plan_path)
+    _plan = _importlib_util.module_from_spec(_spec)
+    _spec.loader.exec_module(_plan)
+    for _identity, _label, _quarter, _trade, _x, _z, _yaw, _width, _depth in _plan.SHOPS:
+        _entry = next(e for e in INTERIORS if e['id'] == _identity)
+        _dx, _dz = math.sin(_yaw), math.cos(_yaw)
+        _entry['door'] = [_x + _dx * (_depth / 2 + .55), 31.08,
+                          _z + _dz * (_depth / 2 + .55)]
+        _entry['arrival'] = [_entry['door'][0] + _dx * 5.6, 31.08,
+                             _entry['door'][2] + _dz * 5.6]
+        _entry['yaw'] = _yaw
+
+
+# Two old exit coordinates were outside the guarded actor-centre floor. These
+# posts stay in the visible doorway aisle with a separate three-metre arrival.
+ROOM_DOOR_POSTS = {
+    'four-gates-lantern-row': {'exit': [0.,0.,5.], 'arrival': [0.,0.,2.]},
+    'four-gates-deposit-four-keys': {'exit': [0.,0.,5.], 'arrival': [0.,0.,2.]},
+}
 
 def by_id(ident: str) -> Dict:
     for entry in INTERIORS:

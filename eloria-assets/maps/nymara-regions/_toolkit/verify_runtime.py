@@ -168,6 +168,21 @@ class VerticalRayIndex:
         return float(heights.max())
 
 
+def adjacent_jumps(heights, reachable, threshold=6.0):
+    """Compare real neighbours; opposing map edges are never adjacent."""
+    finite = np.isfinite(heights) & reachable
+    jumps = []
+    for axis in (0, 1):
+        a, b = [slice(None), slice(None)], [slice(None), slice(None)]
+        a[axis], b[axis] = slice(None, -1), slice(1, None)
+        a, b = tuple(a), tuple(b)
+        valid = finite[a] & finite[b]
+        difference = np.abs(heights[a] - heights[b])
+        for ty, tx in zip(*np.nonzero(valid & (difference > threshold))):
+            jumps.append((int(tx), int(ty), round(float(difference[ty, tx]), 2)))
+    return jumps
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--package", default=None)
@@ -266,15 +281,7 @@ def main() -> int:
         cols = min(reachable.shape[1], padded.shape[1])
         padded[:rows, :cols] = reachable[:rows, :cols]
         reachable = padded
-    finite = np.isfinite(heights) & reachable
-    jumps = []
-    for axis in (0, 1):
-        shifted = np.roll(heights, -1, axis=axis)
-        valid = finite & np.roll(finite, -1, axis=axis)
-        difference = np.abs(heights - shifted)
-        bad = valid & (difference > 6.0)
-        for ty, tx in zip(*np.nonzero(bad)):
-            jumps.append((int(tx), int(ty), round(float(difference[ty, tx]), 2)))
+    jumps = adjacent_jumps(heights, reachable)
     if jumps:
         warn("GROUNDING_DISCONTINUITY",
              f"{len(jumps)} adjacent tile pairs differ by more than 6 m of "

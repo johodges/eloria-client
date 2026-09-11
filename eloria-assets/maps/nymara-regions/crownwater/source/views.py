@@ -112,6 +112,17 @@ VIEWS += [
     ("25-basilica-procession",None,(38,-31),1.7,(38,-40),9.0,58,(1280,850),50,"day!"),
 ]
 FIXED_VIEWS = {v[0] for v in VIEWS if v[-1].endswith("!")}
+# Keep legacy review panel IDs while surveying their compact neighbourhoods.
+# The two bridge cameras explicitly stand on the newly surveyed harbour span.
+from coastal_plan import map_world
+_compact_views=[]
+for _id,_panel,_eye,_eh,_target,_th,_fov,_size,_radius,_mode in VIEWS:
+    _e=map_world(_eye[0]*3,_eye[1]*3)
+    _t=map_world(_target[0]*3,_target[1]*3)
+    if _mode.rstrip('!')=='deck':_e,_t=(29,-29),(34,-34)
+    _compact_views.append((_id,_panel,(_e[0]/2,_e[1]/2),_eh,
+        (_t[0]/2,_t[1]/2),_th,_fov,_size,_radius,_mode))
+VIEWS=_compact_views
 DAY_LIGHTING = {
     "sun_direction": (0.30,0.84,-0.45), "sun_color": (1.12,1.05,0.95),
     "sky_color": (0.52,0.68,0.78), "ambient_strength": 0.52,

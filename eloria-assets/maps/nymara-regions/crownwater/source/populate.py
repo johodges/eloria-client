@@ -68,30 +68,19 @@ def _add(build, node: str, mesh_name: str, mesh, position, rotation: float = 0.0
 
 # ------------------------------------------------------------------ water
 def build_water(build, lod: str | None = None) -> None:
-    """The lagoon surface.
-
-    Crownwater is one body of water, not a coast: a single plane at sea level
-    clipped to wherever the terrain is actually below it. Cut far outside the
-    authored terrain so an aerial or a rooftop view sees water running to the
-    horizon rather than the edge of a slab, which is what the concept's
-    background is.
-    """
+    """One continuous lagoon, with the actual banks occluding its shoreline."""
     t = build.terrain
-    # The plane is clipped per cell, so the cell size is the shoreline's step
-    # size: at 6 m every island had a visibly blocky waterline from the air.
-    # But it is also a flat quad over 1.5 km square, so halving the cell
-    # quadruples its triangles - at 3 m over a 420 m reach it was 480,000
-    # triangles, more than half the region's unique geometry, for flat water.
-    # 3.5 m over a 260 m reach keeps the waterline clean and costs a fifth of
-    # that; the horizon is still well past anything a camera can stand on.
     reach = 260.0
-    cell = 3.5 if lod is None else 7.0
-    build.water_meshes["Water_Lagoon"] = TER.water_plane(
-        t, REG.SEA_LEVEL,
-        t.x0 - reach, t.z0 - reach,
-        t.x0 + t.size_x + reach, t.z0 + t.size_z + reach,
-        material=CK.LAGOON, cell=cell, margin=0.12,
-        outside_is_water=True)
+    x0, z0 = t.x0 - reach, t.z0 - reach
+    x1, z1 = t.x0 + t.size_x + reach, t.z0 + t.size_z + reach
+    # A coarse terrain-sample mask left rectangular dry gaps beside the banks.
+    # Water needs no shoreline tessellation: terrain supplies that exact edge.
+    # The shared causeway pass partitions its seam patch without overlap.
+    water = M.quad([(x0, REG.SEA_LEVEL, z0), (x0, REG.SEA_LEVEL, z1),
+                    (x1, REG.SEA_LEVEL, z1), (x1, REG.SEA_LEVEL, z0)],
+                   material="water_lake")
+    water.uvs = water.positions[:, [0, 2]] * 0.09
+    build.water_meshes["Water_Lagoon"] = water
 
 
 # -------------------------------------------------------------- causeways
@@ -234,7 +223,7 @@ def _ring_quay(build, island: str, seed: int) -> None:
     t = build.terrain
     cx, cz = geom["centre"]
     radius = geom["radius"]
-    for k in range(4):
+    for k in (0,2) if island in ("pavilion_west","pavilion_east") else ():
         angle = math.pi * 0.5 * k + 0.35
         qx = cx + math.cos(angle) * (radius - 2.2)
         qz = cz + math.sin(angle) * (radius - 2.2)
@@ -408,8 +397,14 @@ def _compass_rose(radius: float) -> SW.MeshGroup:
     floor from, and so the same piece can be read underwater in panel 7.
     """
     out = SW.MeshGroup()
-    out.add(M.lathe([[0.0, 0.0], [radius, 0.0]], 40, uv_scale=0.35,
-                    material=CK.MOSAIC))
+    disc=M.lathe([[0.0, 0.0], [radius, 0.0]], 40, uv_scale=0.35,
+                 material=CK.MOSAIC)
+    # A flat lathe has no vertical UV span and its analytic normal points
+    # downward. Use a planar floor projection and geometry-derived normals;
+    # the plaza mosaic must read as paving rather than a dark radial fan.
+    disc.recompute_normals()
+    disc.uvs=disc.positions[:,[0,2]]*.35
+    out.add(disc)
     out.add(M.lathe([[radius * 0.92, 0.0], [radius * 0.92, 0.05],
                      [radius, 0.05], [radius, 0.0]], 40, uv_scale=0.5,
                     material=CK.GILT))
@@ -435,7 +430,7 @@ def populate_vegetation(build, seed: int = 0, lod: str | None = None) -> None:
     for name, geom in REG.ISLAND_GEOM.items():
         cx, cz = geom["centre"]
         radius = geom["radius"]
-        density = 0.55 if name in REG._OUTER_NAMES else 0.32
+        density = 0.17 if name in REG._OUTER_NAMES else (0.22 if name=="harbour_isle" else 0.29)
         attempts = int(radius * radius * 0.0055 * density * 10)
         for _ in range(attempts):
             angle = float(rng.uniform(0, math.tau))
@@ -443,7 +438,7 @@ def populate_vegetation(build, seed: int = 0, lod: str | None = None) -> None:
             px = cx + math.cos(angle) * r
             pz = cz + math.sin(angle) * r
             py = float(t.height_at(px, pz))
-            if py < REG.SEA_LEVEL + 1.0 or t.blocked_at(px, pz):
+            if py < REG.SEA_LEVEL + 1.8 or t.blocked_at(px, pz):
                 continue
             count += 1
             _add(build, f"Foliage_Palm_{name}_{count}", "Palm", palm,
@@ -459,9 +454,10 @@ def populate_vegetation(build, seed: int = 0, lod: str | None = None) -> None:
     _add(build, "Prop_GardenFountain", "GardenFountain",
          SW.fountain(radius=3.0, seed=seed + 7), (gx, gy, gz), 0.0,
          kind="prop", collides=True)
-    for ring, count_in_ring in ((7.5, 12), (11.0, 16), (14.5, 20)):
+    for ring, count_in_ring in ((11.0, 12), (16.0, 16)):
         for k in range(count_in_ring):
             angle = 2.0 * math.pi * k / count_in_ring
+            if k % 4 == 0: continue  # four clear garden walks
             hx = gx + math.cos(angle) * ring
             hz = gz + math.sin(angle) * ring
             hy = float(t.height_at(hx, hz))
@@ -481,14 +477,25 @@ def _palm(seed: int) -> SW.MeshGroup:
     radii = [0.30 - 0.020 * k for k in range(9)]
     out.add(M.tube(path, radii, segments=7, material="bark_pale"))
     top = path[-1]
-    for k in range(9):
-        angle = 2.0 * math.pi * k / 9
-        frond = M.extrude([[0.0, -0.30], [3.3, -0.10], [3.6, 0.0],
-                           [3.3, 0.10], [0.0, 0.30]], 0.05,
-                          material="foliage_green")
-        tilt = M.rotation_z(math.radians(-26.0 - (k % 3) * 9.0))
-        out.add(frond.transformed(
-            M.translation(top[0], top[1], top[2]) @ M.rotation_y(-angle) @ tilt))
+    # Curving feather palms: a visible midrib with paired narrow leaflets.
+    # Opaque leaf geometry reads as a palm in the normal camera, rather than
+    # an upright fern card whose alpha atlas resembles floating leaf specks.
+    for k in range(8):
+        frond=SW.MeshGroup();angle=math.tau*k/8
+        length=3.2+(k%3)*.22
+        def spine(u):return np.array([length*u,.6*math.sin(math.pi*u)-.85*u*u,0.])
+        path=np.array([spine(u) for u in np.linspace(0,1,9)])
+        frond.add(M.tube(path,[.045*(1-u)+.009 for u in np.linspace(0,1,9)],
+                         segments=4,material='meadow_grass'))
+        for u in np.linspace(.14,.91,8):
+            base=spine(u);spread=.68*math.sin(math.pi*u)**.6
+            for side in (-1,1):
+                tip=base+np.array([.52*(1-u)+.12,-.18,side*spread])
+                frond.add(M.quad([base,base+np.array([.13,.025,side*.07]),tip,
+                                  base+np.array([-.07,-.025,side*.04])],
+                                 material='meadow_grass'))
+        transform=M.translation(*top)@M.rotation_y(angle)
+        for part in frond.parts:out.add(part.transformed(transform))
     return out
 
 

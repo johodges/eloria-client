@@ -100,8 +100,8 @@ def load_portals(region: str) -> dict[str, dict]:
             continue
         out[entry["id"]] = {"tile": (int(tile[0]), int(tile[1])),
                             "name": entry.get("name") or entry.get("label") or entry["id"],
-                            "destination": entry.get("destinationMap") or entry.get("destination"),
-                            "spawn": entry.get("destinationSpawn"),
+                            "destination": entry.get("destinationMap") or entry.get("destination") or entry.get("targetMap"),
+                            "spawn": entry.get("destinationSpawn") or entry.get("targetSpawn"),
                             "streaming": next((s for s in manifest.get("streamingBorders", [])
                                                if s["portal"] == entry["id"]), {})}
     return out
@@ -286,6 +286,53 @@ def interior_lines(portals, collisions, load, errors, selected=None) -> tuple[li
                          f"{outside[0]} | {outside[1]}")
             written += 2
         lines.append("")
+    standalone, count = standalone_interior_lines(portals, collisions, load, errors, selected)
+    return lines + standalone, written + count
+
+
+def standalone_interior_lines(portals, collisions, load, errors, selected=None):
+    """Four Gates' named shops are separate authored rooms with real exit doors."""
+    if selected and selected != 'four_gates':
+        return [], 0
+    region='four_gates'
+    portals.setdefault(region, load_portals(region))
+    if region not in collisions:
+        collisions[region]=load(region)
+    outside_manifest=read_manifest(package_dir(region)/'world.json')
+    lines=['# Four Gates: standalone shops, workrooms and the ferry office.']
+    written=0
+    for door_id,door in sorted(portals[region].items()):
+        map_id=door['destination']
+        if not map_id or not map_id.startswith('four-gates-'):
+            continue
+        path=ASSETS/'maps'/map_id/'world.json'
+        room=read_manifest(path)
+        if not room.get('asset',{}).get('interior'):
+            errors.append(f'{door_id}: target {map_id} is not an authored interior')
+            continue
+        if map_id not in collisions:
+            collisions[map_id]=load(map_id)
+        spawn=next((s for s in room.get('spawnPoints',[]) if s['id']==door['spawn']),None)
+        exit_=next((p for p in room.get('portals',[]) if p.get('id')=='exit'),None)
+        if not spawn or not exit_ or not exit_.get('targetPosition'):
+            errors.append(f'{map_id}: missing named arrival or explicit exterior return')
+            continue
+        arrival=to_tile(spawn['position'],room['coordinateTransform'])
+        exit_tile=to_tile(exit_['position'],room['coordinateTransform'])
+        outside=to_tile(exit_['targetPosition'],outside_manifest['coordinateTransform'])
+        trigger=door['tile']
+        posts=((region,trigger,'entrance'),(map_id,arrival,'arrival'),
+               (map_id,exit_tile,'exit'),(region,outside,'return'))
+        if any(not collisions[m].walkable(*tile) for m,tile,_ in posts):
+            errors.extend(f'{door_id}: blocked {label} {m} {tile}' for m,tile,label in posts
+                          if not collisions[m].walkable(*tile))
+            continue
+        if arrival==exit_tile or outside==trigger:
+            errors.append(f'{door_id}: arrival overlaps its return trigger')
+            continue
+        lines.extend([f'portal | {region} | {trigger[0]} | {trigger[1]} | {map_id} | {arrival[0]} | {arrival[1]}',
+                      f'portal | {map_id} | {exit_tile[0]} | {exit_tile[1]} | {region} | {outside[0]} | {outside[1]}'])
+        written+=2
     return lines, written
 
 
@@ -379,7 +426,7 @@ def main() -> int:
     parser.add_argument("--server", type=Path, required=True)
     parser.add_argument("--maps", type=Path, required=True)
     parser.add_argument("--apply", action="store_true")
-    parser.add_argument("--region", choices=sorted(set(INSIDES) | {"sunmane_steppe"}),
+    parser.add_argument("--region", choices=sorted(set(INSIDES) | {"sunmane_steppe", "four_gates"}),
                         help="rebuild this region and both ends of its links only")
     args = parser.parse_args()
 

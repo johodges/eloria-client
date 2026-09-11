@@ -1,5 +1,22 @@
 # Crownwater production map
 
+Current package: **396 × 396 metres**, one metre per server tile, origin
+**(120,120)** and arrival in the working harbour at world (0,0). See
+[coastal-review.md](coastal-review.md) for the inhabited coastal composition,
+reproducible build, current verification and preserved travel/content identities.
+Main geometry is 22.13 MB; the far package is 13.29 MB. Both validators report
+zero errors and warnings; all 156,816 server positions have a grounding surface.
+
+The current served-grid fixture contains **18 routes and 39 exact path legs**,
+including all seven ordinary interior entries, a two-metre walk away from each
+threshold, and its real return. Service stops check positive replies or opened
+storage. Configured NPC footprints and conservative 3×3 service furniture stay
+clear of those standing posts. The undercroft verger works at (45,277), beside
+the arrival/exit at (43,277); the migration preserves this correction on reruns.
+
+**Historical production notes follow.** The measurements below describe the
+previous 576-metre iteration and are retained as its record.
+
 The Nymara lagoon city, taken from its placeholder package to a production
 runtime map at **576 m x 576 m, one metre per tile** (96x96 server ELM tiles).
 

@@ -5,7 +5,7 @@
       "name": "Barrow Warden Cassa Loom",
       "role": "dialogue",
       "serverTile": [
-        198,
+        197,
         261
       ],
       "authority": "server"
@@ -228,7 +228,7 @@
       "resource": "Resin",
       "serverTile": [
         73,
-        6
+        5
       ],
       "authority": "server"
     },
@@ -273,7 +273,7 @@
       "resource": "Moorcotton",
       "serverTile": [
         103,
-        50
+        51
       ],
       "authority": "server"
     },
@@ -281,8 +281,8 @@
       "id": 62,
       "resource": "Moorcotton",
       "serverTile": [
-        141,
-        39
+        142,
+        40
       ],
       "authority": "server"
     },

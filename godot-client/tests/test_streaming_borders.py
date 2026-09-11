@@ -62,8 +62,9 @@ def test_empty_overflow_keeps_its_material():
 
 def test_every_survey_is_reciprocal_and_has_one_independent_view():
     specs = [s for r in ('amberwood', 'whitehorn_range', 'grey_moors',
-                        'mirrorhold', 'amethyst_barrens') for s in S.region_specs(r)]
-    assert len(specs) == 12
+                        'mirrorhold', 'amethyst_barrens', 'westhaven',
+                        'four_gates', 'crownwater') for s in S.region_specs(r)]
+    assert len(specs) == 18
     for identity, *_ in S.LINKS:
         ends = [s for s in specs if s['id'] == identity]
         assert len(ends) == 2
@@ -71,6 +72,57 @@ def test_every_survey_is_reciprocal_and_has_one_independent_view():
         assert ends[0]['uvSign'] == -ends[1]['uvSign']
         assert ends[0]['previewPrefix'] == ends[1]['previewPrefix']
         assert ends[0]['overflowSuffix'].endswith(identity)
+
+
+def test_replacing_water_preserves_area_without_overlapping_patches():
+    source = square()
+    edge, forward, side = np.zeros(2), np.array([0.,1]), np.array([-1.,0])
+    patch = S.clip_rect(source,edge,forward,side,-42,80)
+    remaining = S.outside_rect(source,edge,forward,side,-42,80)
+    assert area(patch) == pytest.approx(122 * 80)
+    assert area(patch) + area(remaining) == pytest.approx(area(source))
+
+
+@pytest.mark.parametrize('region', ['crownwater','four_gates'])
+def test_causeway_has_seven_clear_lanes_above_water_and_no_earth_plug(monkeypatch, region):
+    spec = next(s for s in S.region_specs(region) if s['id']=='four-gates-crownwater')
+    monkeypatch.setattr(S, 'region_specs', lambda region: [spec])
+    x, level, z = spec['anchor']
+    t = T.Terrain(x-100,z-100,200,200,2)
+    t.height[:] = level + 12  # A bad legacy land platform must become a lake bed.
+    build = RegionBuild(t)
+    build.terrain_meshes = t.build_meshes()
+    water = square(); water.positions[:,[0,2]] += [x,z]
+    water.positions[:,1] = level-4
+    build.water_meshes['Water_Lake'] = water
+    S.apply(build,region)
+    def rays(bucket, prefix):
+        triangles=[m.positions[m.indices.reshape(-1,3)] for n,m in bucket.items()
+                   if n.startswith(prefix) and not n.startswith(S.VIEW_PREFIX) and m.triangle_count]
+        return VerticalRayIndex(np.concatenate(triangles))
+    deck, bed, lake = rays(build.terrain_meshes,'Walk_'), rays(build.terrain_meshes,'Terrain_'), rays(build.water_meshes,'Water_')
+    f=np.array(spec['outward']); side=np.array([-f[1],f[0]])
+    for depth in (-10,-.001,.001,4):
+        for lateral in range(-3,4):
+            px,pz=np.array([x,z])+f*depth+side*lateral
+            assert deck.top_hit(px,pz) == pytest.approx(level,abs=1e-5)
+            assert lake.top_hit(px,pz) == pytest.approx(level-4,abs=1e-5)
+            assert bed.top_hit(px,pz) == pytest.approx(level-6,abs=1e-5)
+        for lateral in (-30,-10,10,30):
+            px,pz=np.array([x,z])+f*depth+side*lateral
+            assert deck.top_hit(px,pz) is None
+            assert lake.top_hit(px,pz) == pytest.approx(level-4,abs=1e-5)
+    assert any(n.startswith(spec['previewPrefix']+'Walk_') for n in build.terrain_meshes)
+
+
+def test_pasture_crossing_remains_low_rolling_ground():
+    spec=next(s for s in S.region_specs('westhaven') if s['id']=='grey-westhaven')
+    x,level,z=spec['anchor']
+    t=T.Terrain(x-100,z-100,200,200,2);t.height[:]=level
+    b=RegionBuild(t);b.terrain_meshes=t.build_meshes()
+    S._apply_one(b,spec,[spec])
+    for lateral in (-39.9,0,39.9):
+        assert level <= b.terrain.height_at(x+lateral,z) <= level+1.4
 
 
 def _prop_view(monkeypatch, direction=(0, -1)):

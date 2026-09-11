@@ -29,7 +29,7 @@
       ]
     },
     "interior": true,
-    "parentMap": "maps/startmap.elm",
+    "parentMap": "four_gates",
     "quarter": "service",
     "description": "Glazier and alchemist; buys stormglass, sells lenses and reagents."
   },
@@ -45,7 +45,21 @@
       0.0
     ],
     "walkingHeight": 0.05,
-    "invertServerY": true
+    "invertServerY": true,
+    "serverCells": [
+      36,
+      36
+    ],
+    "addressableWorldBounds": {
+      "min": [
+        -12.0,
+        -23.0
+      ],
+      "max": [
+        23.0,
+        12.0
+      ]
+    }
   },
   "spawnPoints": [
     {
@@ -54,7 +68,7 @@
       "position": [
         0.0,
         0.0,
-        3.35
+        1.3499999999999996
       ],
       "facing": [
         0,
@@ -75,9 +89,9 @@
       "radius": 1.6,
       "targetMap": "four_gates",
       "targetPosition": [
-        -71.55,
-        31.0,
-        -177.09
+        -55.0,
+        31.08,
+        -69.85000000000001
       ],
       "label": "Out to the street"
     }
@@ -101,7 +115,45 @@
       "Sale_Counter",
       "Grinding_Wheel"
     ],
-    "note": "The four walls plus solid fittings; the floor is a walk surface and the walls stay solid while cut away."
+    "note": "The four walls plus solid fittings; the floor is a walk surface and the walls stay solid while cut away.",
+    "binary": "collision.bin",
+    "format": "EWCG",
+    "version": 2,
+    "cellSize": 0.5,
+    "width": 72,
+    "height": 72,
+    "originMetres": [
+      -12.0,
+      12.0
+    ],
+    "heightEncoding": {
+      "origin": -0.2,
+      "step": 0.2,
+      "range": [
+        1,
+        255
+      ]
+    },
+    "authoredSurfaceExport": {
+      "floorMeshNodes": 1,
+      "solidMeshNodes": 6,
+      "walkableCells": 464
+    },
+    "walkableCells": 464,
+    "walkableFraction": 0.0895,
+    "actorSurfaceGuard": {
+      "method": "rendered-tile-centre-v1",
+      "actorTileOffset": [
+        0.5,
+        0.5
+      ],
+      "heightToleranceMetres": 0.8,
+      "closedTiles": 0,
+      "unsupportedTiles": 0,
+      "submergedTiles": 0,
+      "heightMismatchTiles": 0,
+      "samples": []
+    }
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -287,7 +339,7 @@
     ]
   },
   "performance": {
-    "bytes": 3274000,
+    "bytes": 3305904,
     "nodes": 28,
     "meshes": 14,
     "materials": 11,

@@ -168,9 +168,9 @@ func _run() -> void:
 	app_state.set("current_map", "mirrorhold")
 	main.call("_preview_region", four_gates_index)
 	var four_gates_texture: Texture2D = region_preview.texture
-	_expect(four_gates_texture is AtlasTexture
-		and (four_gates_texture as AtlasTexture).region == Rect2(450.0, 450.0, 720.0, 720.0),
-		"Four Gates' preview is the city, not its backdrop rim")
+	_expect(four_gates_texture != null and not four_gates_texture is AtlasTexture
+		and four_gates_texture.get_size() == Vector2(396.0, 396.0),
+		"Four Gates' preview frames the compact civic island")
 	_expect(main.call("_tab_map_texture", regions[four_gates_index]) == four_gates_texture,
 		"a tab map is decoded once and kept")
 	_expect(map_title.text == "FOUR GATES", "the preview is titled with the map's name")

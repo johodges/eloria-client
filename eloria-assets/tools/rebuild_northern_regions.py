@@ -24,33 +24,38 @@ def run(cwd, *args):
     subprocess.run([sys.executable, '-u', *map(str, args)], cwd=cwd, check=True)
 
 
-def collision(server, data):
-    for region in FAMILY:
+def collision(server, data, *, family=FAMILY):
+    for region in family:
         run(server, server/'tools/sync_authored_collision.py', '--client',
             CLIENT/'eloria-assets/maps', '--region', region)
     run(server, server/'tools/generate_nymara_maps.py', data)
 
 
-def content(server, data):
-    for region in EXTERIORS:
+def content(server, data, *, exteriors=EXTERIORS, new=NEW, family=FAMILY):
+    for region in exteriors:
         run(CLIENT, CLIENT/'eloria-assets/tools/continent_portals.py', '--server',
             server, '--maps', data, '--region', region, '--apply')
-    for region in EXTERIORS:
+    for region in exteriors:
         run(server, server/'tools/author_region_content.py',
-            'all' if region in NEW else 'services', '--maps', data,
+            'all' if region in new else 'services', '--maps', data,
             '--client', CLIENT, '--region', region, '--apply')
     sys.path[:0] = [str(server/'tools'), str(server)]
     import relocate_map_content as relocate
+    import sync_authored_collision as collision_publication
     profile = server/'config/eloria'
     maps, portals = relocate.load_maps(profile/'maps.txt')
     cache = {}
     def mask_for(map_id):
-        if map_id not in FAMILY:
+        if map_id not in family:
             return None, 0
         if map_id not in cache:
             c = relocate.load_elm_collision(data/maps[map_id].file)
             cache[map_id] = (relocate.standable(c.heights, c.width,
-                relocate.arrivals_for(map_id, portals)), c.width)
+                relocate.arrivals_for(map_id, portals),
+                # Guarded decks deliberately cross the final addressable tiles.
+                # A generic empty-map margin would move the surveyed handoff.
+                margin=0 if collision_publication.strictly_authored(map_id,
+                    CLIENT/'eloria-assets/maps') else relocate.MARGIN), c.width)
         return cache[map_id]
     moves, taken, resolved, pending = [], {}, {}, []
     for name in relocate.COORDINATE_FIELDS:
@@ -68,14 +73,16 @@ def content(server, data):
     text, _ = relocate.follow_manifest(profile, moves)
     if text is not None:
         (profile/'client_content_manifest.json').write_text(text, encoding='utf-8')
-    run(CLIENT, CLIENT/'eloria-assets/tools/sync_package_content.py', '--manifest',
-        profile/'client_content_manifest.json', '--package', 'nymara-regions/amberwood',
-        '--write-source-posts', '--apply')
+    if 'amberwood' in exteriors:
+        run(CLIENT, CLIENT/'eloria-assets/tools/sync_package_content.py', '--manifest',
+            profile/'client_content_manifest.json', '--package', 'nymara-regions/amberwood',
+            '--write-source-posts', '--apply')
 
 
-def publish(server):
-    sync_instance_returns(server)
-    run(CLIENT, CLIENT/'eloria-assets/tools/publish_northern_content.py', '--server', server)
+def publish(server, *, exteriors=EXTERIORS, family=FAMILY):
+    sync_instance_returns(server, exteriors=exteriors)
+    run(CLIENT, CLIENT/'eloria-assets/tools/publish_northern_content.py', '--server', server,
+        *[arg for region in exteriors for arg in ('--region', region)])
     sys.path[:0] = [str(server/'tools'), str(server), str(CLIENT/'eloria-assets/tools')]
     import sync_package_content as packages
     from eloria.maps import load_maps
@@ -87,10 +94,10 @@ def publish(server):
     registry = packages.registry_packages()
     for entry in data['maps']:
         region = entry['id']
-        if region not in FAMILY or region not in registry:
+        if region not in family or region not in registry:
             continue
         entry['packageSha256'] = packages.digest_for(registry[region])
-        if region in EXTERIORS:
+        if region in exteriors:
             entry['arrival'] = list(ARRIVAL_TILES[region])
             entry['server_cells'] = MAP_TILES_WIDE_BY_NAME[region]*6
             entry['portals'] = [{'server_tile': [p.x, p.y], 'destination': p.destination}
@@ -99,7 +106,7 @@ def publish(server):
     run(CLIENT, CLIENT/'eloria-assets/tools/build_exterior_streaming.py', '--server', server)
 
 
-def sync_instance_returns(server):
+def sync_instance_returns(server, *, exteriors=EXTERIORS):
     """Instance completion and bailout use the same surveyed return as portals."""
     sys.path.insert(0, str(server))
     from eloria.maps import load_maps
@@ -109,7 +116,7 @@ def sync_instance_returns(server):
         text = path.read_text(encoding='utf-8')
         fields = dict(re.findall(r'^([a-z_]+):\s*(.*?)\s*$', text, re.M))
         region = fields.get('exit_map')
-        if region not in EXTERIORS or not fields.get('copies'):
+        if region not in exteriors or not fields.get('copies'):
             continue
         copies = set(fields['copies'].split(', '))
         returns = {(p.destination_x, p.destination_y) for p in portals

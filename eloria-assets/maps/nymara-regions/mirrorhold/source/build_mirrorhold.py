@@ -159,7 +159,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     build.resolve_names()
     _add_spawns_and_portals(build)
     _add_population_markers(build, seed)
-    LANDSCAPE.compact(build,seed,MARCH_MATERIALS)
+    LANDSCAPE.compact(build,seed,MARCH_MATERIALS,lod=lod)
     print(f"[region] built in {time.time() - t0:.1f}s")
     return build
 
@@ -950,10 +950,9 @@ def main() -> int:
         lod_sets = {name: texture_set.reduced()
                     for name, texture_set in sets.items()}
         lod_build = build_region(args.seed, lod="far")
-        lod_build.terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
-        lod_build.terrain_meshes = lod_build.terrain.build_meshes(
-            uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
-            materials=MARCH_MATERIALS)
+        # build_region already contains the finished ground and the shared
+        # causeway Walk/Structure meshes. Replacing the bucket here would
+        # discard those decks from the far package.
         _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb",
                                   warn_unreferenced=False)
         stats["lod2"] = {
@@ -977,7 +976,7 @@ def main() -> int:
         manifest["lodGroups"].append({
             "id": "package-lod2", "glb": "world-lod2.glb",
             "strategy": "reduced-package",
-            "notes": "Far-tier vegetation only, no ground clutter."})
+            "notes": "Two-metre native ground; shared decks and collars retained; far-tier vegetation, no ground clutter."})
         (out / "world.json").write_text(json.dumps(manifest, indent=2) + "\n")
 
     (out / "performance-summary.md").write_text(

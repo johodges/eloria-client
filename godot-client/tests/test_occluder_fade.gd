@@ -106,6 +106,19 @@ func _run() -> void:
 		"reset restores every obstacle it was holding")
 	_expect(fade.configure(null, null) == 0, "a world that failed to load indexes nothing")
 
+	var manifest := WorldManifest.new()
+	manifest.data = {"rendering": {"occluderFadeAlpha": 0.08}}
+	fade.configure(manifest, world)
+	fade.update(SETTLE, camera, player)
+	_expect(is_equal_approx(blocker.get_surface_override_material(0).albedo_color.a, 0.08),
+		"layered gates use their map's readable opacity")
+	fade.configure(null, world)
+	fade.update(SETTLE, camera, player)
+	_expect(is_equal_approx(blocker.get_surface_override_material(0).albedo_color.a, OccluderFadeScript.FADED_ALPHA),
+		"the following map restores the ordinary fade opacity")
+	fade.reset()
+	_test_causeway_structures()
+
 	print("occluder fade tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	world.queue_free()
 	await process_frame
@@ -148,6 +161,37 @@ func _build_world() -> void:
 	batched.visible = false
 	batched.set_meta(WorldLoader.BATCH_META, batch)
 	batched.set_meta(WorldLoader.BATCH_INDEX_META, 0)
+
+func _test_causeway_structures() -> void:
+	var causeway_nodes: Array[MeshInstance3D] = []
+	for node_name: String in [
+			"Structure_StreamCauseway_four-gates-crownwater_pale_ashlar",
+			"Structure_StreamCauseway_four-gates-crownwater_rubble_stone",
+			"Structure_StreamCauseway_four-gates-crownwater_pale_ashlar_StreamOverflow_four-gates-crownwater",
+			"StreamView_four-gates-crownwater__Structure_StreamCauseway_four-gates-crownwater_pale_ashlar"]:
+		var curb := _box(node_name, Vector3(0.0, -0.2, 0.0))
+		# The real merged slab/curb bounds: growing the top from 0.4m by
+		# PROBE_RADIUS incorrectly reaches the player's 1m chest target.
+		(curb.mesh as BoxMesh).size = Vector3(42.0, 1.2, 7.76)
+		causeway_nodes.append(curb)
+	var tower := _box("Structure_WatchTower", ON_THE_LINE)
+	var preview_tower := _box(
+		"StreamView_four-gates-crownwater__Structure_WatchTower", ON_THE_LINE)
+	var fade: RefCounted = OccluderFadeScript.new()
+	var manifest := WorldManifest.new()
+	manifest.data = {"rendering": {"occluderFadeAlpha": 0.08}}
+	_expect(fade.configure(manifest, world) == 5,
+		"canonical causeway native/overflow/preview structures do not index; tall structures still do")
+	fade.set_enabled(true)
+	fade.update(SETTLE, camera, player)
+	for curb: MeshInstance3D in causeway_nodes:
+		_expect(curb.get_surface_override_material(0) == null,
+			"low causeway stays opaque despite its enlarged sight-line box: " + str(curb.name))
+	_expect(tower.get_surface_override_material(0) != null,
+		"a tall native structure still fades")
+	_expect(preview_tower.get_surface_override_material(0) != null,
+		"a tall preview structure still fades")
+	fade.reset()
 
 func _box(node_name: String, position: Vector3) -> MeshInstance3D:
 	var mesh := BoxMesh.new()

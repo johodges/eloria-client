@@ -1,0 +1,35 @@
+{
+  "summary": {
+    "walkSurfaceNodes": 15,
+    "walkSurfaceTriangles": 383272,
+    "tilesSampled": 156816,
+    "groundingMisses": 0,
+    "groundingMissFraction": 0.0,
+    "surfaceDiscontinuities": 0,
+    "spawnPoints": 2
+  },
+  "errors": [],
+  "warnings": [
+    {
+      "severity": "warning",
+      "code": "LANDMARK_BELOW_SURFACE",
+      "message": "landmark 'northern-sanctuary' is 5.01 m below the surface",
+      "detail": [
+        -115,
+        37,
+        -162
+      ]
+    },
+    {
+      "severity": "warning",
+      "code": "LANDMARK_FLOATING",
+      "message": "1 landmarks sit more than 3 m above the walk surface",
+      "detail": [
+        {
+          "id": "sanctuary-beacon",
+          "gap": 39.6
+        }
+      ]
+    }
+  ]
+}

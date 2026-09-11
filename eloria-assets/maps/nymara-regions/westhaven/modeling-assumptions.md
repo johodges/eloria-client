@@ -1,3 +1,5 @@
+> Historical record of the previous 576m package. The current 396m coordinate contract and layout are documented in [README.md](README.md) and [layout-review.md](layout-review.md); current metrics are generated in `performance.json` and `verification-report.json`.
+
 # Westhaven: modelling assumptions
 
 What had to be decided without an authority, and on what grounds. Read this

@@ -276,8 +276,8 @@
     "width": 768,
     "height": 768,
     "heightEncoding": {
-      "origin": -0.6081,
-      "step": 0.9556,
+      "origin": -0.6131,
+      "step": 0.95562,
       "range": [
         1,
         255
@@ -285,26 +285,160 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 307139,
-    "walkableFraction": 0.5207,
+    "walkableCells": 304898,
+    "walkableFraction": 0.5169,
     "refinedHeights": {
       "levels": 255,
-      "step": 0.9556,
-      "origin": -0.6081,
+      "step": 0.95562,
+      "origin": -0.6131,
       "previousStep": 0.955411,
-      "cellsRestated": 2578,
-      "cellsFromGeometry": 305962,
-      "cellsKept": 70
+      "cellsRestated": 2257,
+      "cellsFromGeometry": 303690,
+      "cellsKept": 69
     },
     "openedWalkSurfaces": {
       "prefix": "Walk_",
-      "cellsCovered": 26305,
-      "cellsWidened": 1307,
-      "cellsOpened": 1107,
-      "cellsRaised": 7937,
+      "cellsCovered": 28028,
+      "cellsWidened": 1501,
+      "cellsOpened": 2403,
+      "cellsRaised": 8202,
       "cellsDrowned": 0,
-      "cellsBuried": 639,
+      "cellsBuried": 754,
       "cellsInsideLandmarks": 0
+    },
+    "actorSurfaceGuard": {
+      "method": "rendered-tile-centre-v1",
+      "actorTileOffset": [
+        0.5,
+        0.5
+      ],
+      "heightToleranceMetres": 1.43343,
+      "closedTiles": 316,
+      "unsupportedTiles": 83,
+      "submergedTiles": 125,
+      "heightMismatchTiles": 316,
+      "samples": [
+        {
+          "tile": [
+            299,
+            1
+          ],
+          "encodedY": 4.165,
+          "surfaceY": -2.0,
+          "unsupported": false,
+          "submerged": true
+        },
+        {
+          "tile": [
+            299,
+            2
+          ],
+          "encodedY": 4.165,
+          "surfaceY": -2.0,
+          "unsupported": false,
+          "submerged": true
+        },
+        {
+          "tile": [
+            299,
+            3
+          ],
+          "encodedY": 4.165,
+          "surfaceY": -2.0,
+          "unsupported": false,
+          "submerged": true
+        },
+        {
+          "tile": [
+            299,
+            4
+          ],
+          "encodedY": 4.165,
+          "surfaceY": -2.0,
+          "unsupported": false,
+          "submerged": true
+        },
+        {
+          "tile": [
+            299,
+            5
+          ],
+          "encodedY": 4.165,
+          "surfaceY": -2.0,
+          "unsupported": false,
+          "submerged": true
+        },
+        {
+          "tile": [
+            299,
+            6
+          ],
+          "encodedY": 4.165,
+          "surfaceY": -2.0,
+          "unsupported": false,
+          "submerged": true
+        },
+        {
+          "tile": [
+            299,
+            7
+          ],
+          "encodedY": 4.165,
+          "surfaceY": -2.0,
+          "unsupported": false,
+          "submerged": true
+        },
+        {
+          "tile": [
+            299,
+            8
+          ],
+          "encodedY": 4.165,
+          "surfaceY": -2.0,
+          "unsupported": false,
+          "submerged": true
+        },
+        {
+          "tile": [
+            299,
+            9
+          ],
+          "encodedY": 4.165,
+          "surfaceY": -2.0,
+          "unsupported": false,
+          "submerged": true
+        },
+        {
+          "tile": [
+            299,
+            10
+          ],
+          "encodedY": 4.165,
+          "surfaceY": -2.0,
+          "unsupported": false,
+          "submerged": true
+        },
+        {
+          "tile": [
+            299,
+            11
+          ],
+          "encodedY": 4.165,
+          "surfaceY": -2.0,
+          "unsupported": false,
+          "submerged": true
+        },
+        {
+          "tile": [
+            299,
+            12
+          ],
+          "encodedY": 4.165,
+          "surfaceY": -2.0,
+          "unsupported": false,
+          "submerged": true
+        }
+      ]
     }
   },
   "navigation": {
@@ -426,6 +560,21 @@
             194.64057643535153,
             34.9536592111331,
             -22.578637997881557
+          ]
+        ]
+      },
+      {
+        "id": "MeltwaterBridge_5",
+        "endpoints": [
+          [
+            160.39082362334207,
+            7.4811797353116045,
+            14.446948218442694
+          ],
+          [
+            168.33964113732705,
+            5.143292231198384,
+            24.733653236540864
           ]
         ]
       }
@@ -661,7 +810,7 @@
       "type": "structure",
       "position": [
         177.6788,
-        21.94858368433343,
+        21.925782955753185,
         -8.2541
       ]
     },
@@ -905,11 +1054,11 @@
       "node": "March_south_road_Signpost",
       "type": "transition",
       "position": [
-        62.9788,
-        5.53,
-        90.3646
+        179.8,
+        4.0,
+        40
       ],
-      "note": "Where Mirrorhold gives way to Four Gates: luminous road furniture, a march stone, a waystation, and 3 pieces of the country beyond."
+      "note": "The working quay road reaches the island causeway; the old shore spur serves the South Watch."
     },
     {
       "id": "station-south-road",
@@ -917,10 +1066,11 @@
       "node": "March_south_road_Station",
       "type": "waystation",
       "position": [
-        48.6788,
-        5.99,
-        90.8343
-      ]
+        164,
+        4.5,
+        35
+      ],
+      "note": "The working quay road reaches the island causeway; the old shore spur serves the South Watch."
     },
     {
       "id": "march-east-road",
@@ -1251,7 +1401,7 @@
       "destinationSpawn": "mirror-watch-butts",
       "position": [
         66,
-        5.378560770376094,
+        5.4,
         82
       ],
       "authority": "server",
@@ -2281,13 +2431,13 @@
       "name": "Sanctuary Road to Four Gates",
       "type": "map-transition",
       "position": [
-        57.6788,
-        5.74,
-        93.1823
+        175.5,
+        4.0,
+        93.5
       ],
       "serverTile": [
-        178,
-        3
+        295,
+        2
       ],
       "destinationMap": "four_gates",
       "radius": 3.5,
@@ -2705,6 +2855,27 @@
           58,
           58,
           -25.65
+        ]
+      ]
+    },
+    {
+      "id": "watch-hatch-approach",
+      "width": 3,
+      "waypoints": [
+        [
+          58,
+          6,
+          88
+        ],
+        [
+          62,
+          5.4,
+          85
+        ],
+        [
+          65.5,
+          5.4,
+          82.5
         ]
       ]
     },
@@ -3327,6 +3498,32 @@
       ]
     },
     {
+      "id": "sanctuary-causeway-approach",
+      "width": 7,
+      "waypoints": [
+        [
+          158.5,
+          7,
+          12
+        ],
+        [
+          167,
+          4.5,
+          23
+        ],
+        [
+          175.5,
+          4,
+          39
+        ],
+        [
+          175.5,
+          3.96,
+          50.5
+        ]
+      ]
+    },
+    {
       "id": "stair-town-0",
       "width": 6,
       "waypoints": [
@@ -3390,6 +3587,16 @@
         "type": "pool"
       },
       {
+        "id": "Water_StreamCauseway_mirrorhold-four-gates",
+        "node": "Water_StreamCauseway_mirrorhold-four-gates",
+        "type": "stream"
+      },
+      {
+        "id": "Water_StreamCauseway_mirrorhold-four-gates_StreamOverflow_mirrorhold-four-gates",
+        "node": "Water_StreamCauseway_mirrorhold-four-gates_StreamOverflow_mirrorhold-four-gates",
+        "type": "stream"
+      },
+      {
         "id": "StreamView_amberwood-mirrorhold__Water_Lake",
         "node": "StreamView_amberwood-mirrorhold__Water_Lake",
         "type": "stream"
@@ -3397,6 +3604,21 @@
       {
         "id": "StreamView_amberwood-mirrorhold__Water_Canal",
         "node": "StreamView_amberwood-mirrorhold__Water_Canal",
+        "type": "stream"
+      },
+      {
+        "id": "StreamView_mirrorhold-four-gates__Water_Lake",
+        "node": "StreamView_mirrorhold-four-gates__Water_Lake",
+        "type": "stream"
+      },
+      {
+        "id": "StreamView_mirrorhold-four-gates__Water_Canal",
+        "node": "StreamView_mirrorhold-four-gates__Water_Canal",
+        "type": "stream"
+      },
+      {
+        "id": "StreamView_mirrorhold-four-gates__Water_StreamCauseway_mirrorhold-four-gates",
+        "node": "StreamView_mirrorhold-four-gates__Water_StreamCauseway_mirrorhold-four-gates",
         "type": "stream"
       }
     ],
@@ -3694,33 +3916,33 @@
       "id": "package-lod2",
       "glb": "world-lod2.glb",
       "strategy": "reduced-package",
-      "notes": "Far-tier vegetation only, no ground clutter."
+      "notes": "Two-metre native ground; shared decks and collars retained; far-tier vegetation, no ground clutter."
     }
   ],
   "performance": {
-    "nodes": 1366,
-    "meshes": 421,
+    "nodes": 1488,
+    "meshes": 446,
     "materials": 57,
     "images": 121,
     "textures": 121,
-    "accessors": 1860,
-    "bufferViews": 1981,
-    "uniqueTriangles": 1149341,
-    "uniqueVertices": 665973,
-    "glbBytes": 45650672,
-    "instancedTriangles": 1455179,
+    "accessors": 1968,
+    "bufferViews": 2089,
+    "uniqueTriangles": 1218300,
+    "uniqueVertices": 705426,
+    "glbBytes": 47543224,
+    "instancedTriangles": 1540596,
     "embeddedTextureBytes": 12937171,
     "textureMemoryBytesUncompressed": 115015680,
-    "placements": 681,
+    "placements": 729,
     "collision": {
       "width": 768,
       "height": 768,
       "cellMetres": 0.5,
-      "walkableCells": 306032,
-      "blockedCells": 283792,
-      "walkableFraction": 0.5189,
-      "elevatedDecks": 27,
-      "steepCells": 222407,
+      "walkableCells": 303759,
+      "blockedCells": 286065,
+      "walkableFraction": 0.515,
+      "elevatedDecks": 28,
+      "steepCells": 223585,
       "reliefMetres": 242.67,
       "heightEncoding": {
         "origin": -0.6049,
@@ -3744,16 +3966,17 @@
       "march east-road: 0 road pieces, 13 of amethyst_barrens's growth",
       "march west-gorge: 8 road pieces, 12 of amberwood's growth",
       "march lake-quay: 0 road pieces, 0 of crownwater's growth",
-      "Meltwater: three descending catchments; 4 surveyed cart bridges.",
-      "384 m inhabited survey: full-size civic core; three connected Stair Town streets; eight working yards; surveyed northern cols."
+      "Meltwater: three descending catchments; 5 surveyed cart bridges.",
+      "384 m inhabited survey: full-size civic core; three connected Stair Town streets; eight working yards; surveyed northern cols.",
+      "Sanctuary Road: a seven-metre causeway from the southeast working shore; South Watch and Ring island retain their sheltered banks."
     ],
     "lod2": {
-      "glbBytes": 17140324,
-      "nodes": 1124,
-      "uniqueTriangles": 466638,
-      "instancedTriangles": 699274,
-      "sizeReductionPercent": 62.5,
-      "triangleReductionPercent": 51.9
+      "glbBytes": 22435204,
+      "nodes": 1397,
+      "uniqueTriangles": 691798,
+      "instancedTriangles": 939924,
+      "sizeReductionPercent": 52.8,
+      "triangleReductionPercent": 39.0
     }
   },
   "sources": [
@@ -3859,6 +4082,34 @@
       "viewDepth": 145.0,
       "previewPrefix": "StreamView_mirrorhold-amethyst__",
       "overflowSuffix": "_StreamOverflow_mirrorhold-amethyst"
+    },
+    {
+      "id": "mirrorhold-four-gates",
+      "portal": "south-road",
+      "destination": "four_gates",
+      "anchor": [
+        175.5,
+        4,
+        92.5
+      ],
+      "outward": [
+        0,
+        1
+      ],
+      "uvSign": 1,
+      "palette": "causeway",
+      "preloadDistance": 170,
+      "retainDistance": 220,
+      "blendDistance": 65,
+      "collarDepth": 42,
+      "halfWidthTiles": 3,
+      "viewHalfWidth": 40.0,
+      "viewDepth": 145.0,
+      "previewPrefix": "StreamView_mirrorhold-four-gates__",
+      "overflowSuffix": "_StreamOverflow_mirrorhold-four-gates",
+      "profile": "causeway",
+      "waterBelowDeck": 4.0,
+      "deckWidth": 7.0
     }
   ],
   "runtimePopulation": {
@@ -3908,8 +4159,8 @@
         "name": "Cistern Clerk Nim Halloway",
         "role": "dialogue",
         "serverTile": [
-          147,
-          112
+          143,
+          116
         ],
         "authority": "server"
       },
@@ -3918,8 +4169,8 @@
         "name": "Crown Watcher Ilva Sende",
         "role": "dialogue",
         "serverTile": [
-          139,
-          85
+          138,
+          86
         ],
         "authority": "server"
       },
@@ -4064,7 +4315,7 @@
         "id": 47,
         "resource": "Clay",
         "serverTile": [
-          138,
+          137,
           84
         ],
         "authority": "server"
@@ -4100,7 +4351,7 @@
         "id": 51,
         "resource": "Lotus",
         "serverTile": [
-          95,
+          94,
           53
         ],
         "authority": "server"
@@ -4146,7 +4397,7 @@
         "resource": "Riverflax",
         "serverTile": [
           96,
-          13
+          12
         ],
         "authority": "server"
       },
@@ -4235,7 +4486,7 @@
         "id": 66,
         "resource": "Reed",
         "serverTile": [
-          119,
+          121,
           51
         ],
         "authority": "server"

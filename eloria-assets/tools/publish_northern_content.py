@@ -1,4 +1,7 @@
-"""Record the northern regions' actual served NPCs, resources and encounters."""
+"""Record actual served NPCs, resources and encounters for a landscape batch.
+
+The default remains the original northern group; --region selects another batch.
+"""
 import argparse
 import json
 from pathlib import Path
@@ -9,7 +12,7 @@ REGIONS = CLIENT/'eloria-assets/maps/nymara-regions'
 EXTERIORS = ('amberwood', 'whitehorn_range', 'grey_moors', 'mirrorhold', 'amethyst_barrens')
 
 
-def publish(server):
+def publish(server, regions=EXTERIORS):
     sys.path[:0] = [str(server), str(REGIONS/'_toolkit')]
     from eloria.npcs import load_npcs
     from eloria.harvesting import load_harvesting
@@ -19,8 +22,8 @@ def publish(server):
     npcs = load_npcs(profile/'npcs.txt')
     _, resources = load_harvesting(profile/'harvesting.txt')
     spawns = load_spawns(profile/'spawns.txt')
-    for region in EXTERIORS:
-        package = REGIONS/region
+    for region in regions:
+        package = CLIENT/'eloria-assets/maps/four-gates' if region=='four_gates' else REGIONS/region
         path = package/'world.json'
         manifest = json.loads(path.read_text(encoding='utf-8'))
         def tile(entry):
@@ -40,5 +43,6 @@ def publish(server):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--server', required=True, type=Path)
+    parser.add_argument('--region', action='append')
     args = parser.parse_args()
-    publish(args.server.resolve())
+    publish(args.server.resolve(), args.region or EXTERIORS)

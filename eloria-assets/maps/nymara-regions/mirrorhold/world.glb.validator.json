@@ -1,8 +1,8 @@
 {
-  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-north-client\\eloria-assets\\maps\\nymara-regions\\mirrorhold\\world.glb",
+  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-coast-client\\eloria-assets\\maps\\nymara-regions\\mirrorhold\\world.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-09-11T10:54:16.210100Z",
+  "validatedAt": "2026-09-11T13:54:15.877664Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,

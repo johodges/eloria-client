@@ -45,8 +45,8 @@
       "name": "Cistern Clerk Nim Halloway",
       "role": "dialogue",
       "serverTile": [
-        147,
-        112
+        143,
+        116
       ],
       "authority": "server"
     },
@@ -55,8 +55,8 @@
       "name": "Crown Watcher Ilva Sende",
       "role": "dialogue",
       "serverTile": [
-        139,
-        85
+        138,
+        86
       ],
       "authority": "server"
     },
@@ -201,7 +201,7 @@
       "id": 47,
       "resource": "Clay",
       "serverTile": [
-        138,
+        137,
         84
       ],
       "authority": "server"
@@ -237,7 +237,7 @@
       "id": 51,
       "resource": "Lotus",
       "serverTile": [
-        95,
+        94,
         53
       ],
       "authority": "server"
@@ -283,7 +283,7 @@
       "resource": "Riverflax",
       "serverTile": [
         96,
-        13
+        12
       ],
       "authority": "server"
     },
@@ -372,7 +372,7 @@
       "id": 66,
       "resource": "Reed",
       "serverTile": [
-        119,
+        121,
         51
       ],
       "authority": "server"

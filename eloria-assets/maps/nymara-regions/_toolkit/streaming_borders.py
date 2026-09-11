@@ -24,13 +24,25 @@ LINKS = [
   ('amethyst_barrens','north-pass',[54.5,12,-261.5],[0,-1]), 'scree'),
  ('mirrorhold-amethyst', ('mirrorhold','east-road',[10.5,93,-281.5],[0,-1]),
   ('amethyst_barrens','west-road',[-110.5,8,-192.5],[-1,0]), 'scree'),
+ ('grey-westhaven', ('grey_moors','west-waygate',[-105.5,4.95,6.5],[-1,0]),
+  ('westhaven','north-road',[190.5,34,-213.5],[0,-1]), 'pasture'),
+ ('mirrorhold-four-gates', ('mirrorhold','south-road',[175.5,4,92.5],[0,1]),
+  ('four_gates','north',[.5,23,-195.5],[0,-1]), 'causeway'),
+ ('four-gates-crownwater', ('four_gates','west',[-195.5,23,-.5],[-1,0]),
+  ('crownwater','east-quay',[270.5,4,-10.5],[1,0]), 'causeway'),
 ]
 PALETTES = {
  'alpine': ('alpine_turf','alpine_snowfield','alpine_gravel'),
  'moor': ('meadow_grass','grey_heather_moor','packed_earth'),
  'upland': ('meadow_grass','alpine_turf','alpine_gravel'),
  'scree': ('alpine_turf','alpine_bedrock','alpine_gravel'),
+ 'pasture': ('meadow_grass','grey_heather_moor','packed_earth'),
+ 'causeway': ('alpine_gravel','rubble_stone','cobble_paving'),
 }
+ORIGINS = {'amberwood': (116,116), 'grey_moors': (116,116),
+           'amethyst_barrens': (116,116), 'mirrorhold': (120,96),
+           'whitehorn_range': (120,120), 'westhaven': (120,172),
+           'crownwater': (120,120), 'four_gates': (198,198)}
 VIEW_PREFIX = 'StreamView_'
 HALF_WIDTH = 40.0
 VIEW_DEPTH = 145.0
@@ -41,17 +53,78 @@ def region_specs(region):
     for identity,a,b,palette in LINKS:
         for here,there,sign in ((a,b,1),(b,a,-1)):
             if here[0] == region:
-                result.append(dict(id=identity, portal=here[1], destination=there[0],
+                spec = dict(id=identity, portal=here[1], destination=there[0],
                     anchor=here[2], outward=here[3], uvSign=sign, palette=palette,
                     preloadDistance=170, retainDistance=220, blendDistance=65,
                     collarDepth=42, halfWidthTiles=3, viewHalfWidth=HALF_WIDTH,
                     viewDepth=VIEW_DEPTH, previewPrefix=VIEW_PREFIX+identity+'__',
-                    overflowSuffix='_StreamOverflow_'+identity))
+                    overflowSuffix='_StreamOverflow_'+identity)
+                if palette == 'causeway':
+                    spec.update(profile='causeway', waterBelowDeck=4.0, deckWidth=7.0)
+                elif palette == 'pasture':
+                    spec.update(profile='pasture')
+                result.append(spec)
     return result
 
 
 def materials_for(region):
-    return {name for spec in region_specs(region) for name in PALETTES[spec['palette']]}
+    specs = region_specs(region)
+    result = {name for spec in specs for name in PALETTES[spec['palette']]}
+    if any(spec.get('profile') == 'causeway' for spec in specs):
+        result |= {'water_lake', 'pale_ashlar'}
+    return result
+
+
+def _causeway_meshes(build, spec):
+    """One shared bridge section meets the region's native deck at depth -42.
+
+    Its walk skin, slab, curbs and piers have separate names so grounding never
+    treats a parapet as the carriageway. The ordinary strip clipper partitions
+    these world-space meshes into active, overflow and receiving geometry.
+    """
+    from amberwood import mesh as M
+    edge = np.asarray(spec['anchor'], float)
+    forward = np.asarray(spec['outward'], float)
+    side = np.array([-forward[1], forward[0]])
+    half = spec['deckWidth'] / 2
+    def point(depth, lateral, rise=0):
+        p = edge.copy()
+        p[[0,2]] += forward * depth + side * lateral
+        p[1] += rise
+        return p
+    # Ordering is relative to outward and its left normal: the top faces up.
+    top = M.quad([point(-42,-half), point(80,-half), point(80,half), point(-42,half)],
+                 material='cobble_paving')
+    if top.normals[:,1].mean() < 0:
+        top.flip_winding(); top.recompute_normals(180)
+    relative = top.positions[:,[0,2]] - edge[[0,2]]
+    top.uvs = np.stack([relative @ side, relative @ forward], axis=1) * spec['uvSign'] * .28
+    build.terrain_meshes['Walk_StreamCauseway_' + spec['id']] = top
+    parts = []
+    for sign in (-1,1):
+        parts.append(M.quad([point(-42,sign*half,-.8), point(80,sign*half,-.8),
+                            point(80,sign*half), point(-42,sign*half)], material='pale_ashlar'))
+        # A low curb marks the edge without hiding players or the lake.
+        curb = M.box((122,.48,.38), material='pale_ashlar')
+        curb.rotate_y(np.arctan2(-forward[1], forward[0]))
+        centre = point(19,sign*(half+.19),.16)
+        parts.append(curb.translate(*centre))
+    for depth in range(-40,81,16):
+        pier = M.box((1.25,6.0,6.5), material='rubble_stone')
+        pier.rotate_y(np.arctan2(-forward[1], forward[0]))
+        parts.append(pier.translate(*point(depth,0,-3.81)))
+    for material in ('pale_ashlar','rubble_stone'):
+        build.terrain_meshes['Structure_StreamCauseway_' + spec['id'] + '_' + material] = M.merge(
+            [part for part in parts if part.material == material], material=material)
+    for name, original in list(build.water_meshes.items()):
+        build.water_meshes[name] = outside_rect(original, edge[[0,2]], forward, side, -42, 80)
+    water = M.quad([point(-42,-HALF_WIDTH,-4), point(80,-HALF_WIDTH,-4),
+                    point(80,HALF_WIDTH,-4), point(-42,HALF_WIDTH,-4)], material='water_lake')
+    if water.normals[:,1].mean() < 0:
+        water.flip_winding(); water.recompute_normals(180)
+    relative = water.positions[:,[0,2]] - edge[[0,2]]
+    water.uvs = np.stack([relative @ side, relative @ forward], axis=1) * spec['uvSign'] * .075
+    build.water_meshes['Water_StreamCauseway_' + spec['id']] = water
 
 
 def clip_plane(mesh, edge, normal, limit=0.):
@@ -88,6 +161,16 @@ def clip_rect(mesh, edge, forward, side, near, far, width=HALF_WIDTH):
     result=clip_plane(result,edge,-forward,-near)
     result=clip_plane(result,edge,side,width)
     return clip_plane(result,edge,-side,width)
+
+
+def outside_rect(mesh, edge, forward, side, near, far, width=HALF_WIDTH):
+    """Disjoint complement for replacing a water patch without coplanar overlap."""
+    from amberwood.mesh import merge
+    middle = clip_plane(clip_plane(mesh,edge,forward,far),edge,-forward,-near)
+    return merge([clip_plane(mesh,edge,forward,near),
+                  clip_plane(mesh,edge,-forward,-far),
+                  clip_plane(middle,edge,side,-width),
+                  clip_plane(middle,edge,-side,-width)], material=mesh.material)
 
 
 def split_overflow(mesh, edge, forward, side):
@@ -134,16 +217,23 @@ def _apply_one(build, spec, peers):
     forward = np.array(spec['outward'], float)
     side = np.array([-forward[1], forward[0]])
     level = spec['anchor'][1]
+    causeway = spec.get('profile') == 'causeway'
 
-    def grade(points):
+    def grade(points, water=False):
         points = points.copy()
         relative = points[:, [0, 2]] - edge
         depth, lateral = relative @ forward, relative @ side
         # One broad saddle, open across the road and rising into both shoulders.
-        target = level + 8 * (1 - np.exp(-(lateral / 30)**2))
+        if causeway:
+            # A navigable bridge above a lake channel, never an earth plug.
+            target = np.full_like(lateral, level - spec['waterBelowDeck'] - (0 if water else 2.0))
+        else:
+            rise = 1.4 if spec.get('profile') == 'pasture' else 8.0
+            target = level + rise * (1 - np.exp(-(lateral / 30)**2))
         blend = np.clip((depth + 42) / 32, 0, 1)
         blend = blend * blend * (3 - 2 * blend)
-        shoulder = np.clip((abs(lateral) - HALF_WIDTH) / (68 - HALF_WIDTH), 0, 1)
+        shoulder_width = 8 if causeway else 68 - HALF_WIDTH
+        shoulder = np.clip((abs(lateral) - HALF_WIDTH) / shoulder_width, 0, 1)
         blend *= 1 - shoulder * shoulder * (3 - 2 * shoulder)
         # A nearby second road may blend its outer shoulder into this region,
         # but never change another road's surveyed receiving strip. Mirrorhold
@@ -164,15 +254,15 @@ def _apply_one(build, spec, peers):
 
     for bucket in (build.terrain_meshes, build.water_meshes):
         for name, original in list(bucket.items()):
-            if name.startswith(VIEW_PREFIX) or '_StreamOverflow_' in name:
+            if name.startswith(VIEW_PREFIX) or '_StreamOverflow_' in name or '_StreamCauseway_' in name:
                 continue
             if name.startswith('Terrain_'):
                 _refine_collar(original, edge, forward, side)
-            original.positions = grade(original.positions)
+            original.positions = grade(original.positions, water=bucket is build.water_meshes)
             original.recompute_normals(180)
             # Both directions use the same gravel and UV frame for the last
             # few metres. A ragged inner edge blends back to each region's soil.
-            if name.startswith('Terrain_'):
+            if name.startswith('Terrain_') and not causeway:
                 faces = original.indices.reshape(-1, 3)
                 coords = original.positions[:, [0, 2]] - edge
                 depth, lateral = coords @ forward, coords @ side
@@ -218,6 +308,11 @@ def _apply_one(build, spec, peers):
             # only perimeter dressing leaves services and landmarks unchanged.
             if (depth > 0 and abs(lateral) < HALF_WIDTH) or (abs(lateral) < 7 and placement.kind in ('tree', 'foliage', 'rock', 'undergrowth')):
                 continue
+            if causeway:
+                # Authored structures stand on their own deck/footings; never
+                # lower a bridge or lighthouse with the seabed beneath it.
+                kept.append(placement)
+                continue
             ground=p.copy();ground[1]=build.terrain.height_at(p[0],p[2])
             lift=float(grade(ground[None,:])[0,1]-ground[1])
             p[1]+=lift
@@ -260,6 +355,8 @@ def apply(build, region):
             if name.startswith('Backdrop_Neighbour'): del bucket[name]
     build.border_vistas=[]
     for spec in specs:
+        if spec.get('profile') == 'causeway':
+            _causeway_meshes(build,spec)
         _apply_one(build,spec,specs)
         anchor=np.asarray(spec['anchor'],float); forward=np.asarray(spec['outward'],float)
         # Source metadata and the server's trigger use the same tile centres.
@@ -267,9 +364,7 @@ def apply(build, region):
             if portal.get('id')==spec['portal']:
                 p=anchor.copy();p[[0,2]]+=forward
                 portal['position']=p.tolist()
-                ox,oy={'amberwood':(116,116),'grey_moors':(116,116),
-                       'amethyst_barrens':(116,116),'mirrorhold':(120,96),
-                       'whitehorn_range':(120,120)}[region]
+                ox,oy=ORIGINS[region]
                 portal['serverTile']=[int(np.floor(p[0]+ox)),int(np.floor(oy-p[2]))]
     # The resident root contains exact subsets of its authored geometry. Only
     # its matching approach is shown while neighbouring; full geometry becomes

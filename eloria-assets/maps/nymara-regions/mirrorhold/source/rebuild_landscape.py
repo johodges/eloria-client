@@ -23,6 +23,7 @@ def main():
     if not args.skip_build:run(SOURCE,SOURCE/'build_mirrorhold.py')
     for script in ('refine_walk_heights.py','open_walk_surfaces.py','stamp_solid_landmarks.py'):
         run(REGIONS,REGIONS/'_toolkit'/script,'mirrorhold')
+    run(REGIONS,REGIONS/'_toolkit/guard_actor_surfaces.py','--package',SOURCE.parent)
     if not args.skip_secrets:run(REGIONS,REGIONS/'_toolkit/secrets_build.py','mirrorhold')
     run(REGIONS,REGIONS/'_toolkit/verify_runtime.py','--package',SOURCE.parent,
         '--report',SOURCE.parent/'runtime-validation.json')

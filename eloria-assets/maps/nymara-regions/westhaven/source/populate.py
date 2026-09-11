@@ -356,28 +356,12 @@ def populate_waterfront(build, seed: int = 0) -> None:
         build.add_mesh(f"Warehouse_{v}", HA.warehouse(
             width=7.4 + v * 0.7, depth=10.5 + v * 0.9, storeys=3 + (v % 2),
             seed=seed + 40 + v))
-    row_z = REG.cell(0.0, 4.30)[1] * REG.SCALE
-    x0 = REG.cell(1.28, 0.0)[0] * REG.SCALE
-    x1 = REG.cell(4.90, 0.0)[0] * REG.SCALE
-    count = 17
-    for i in range(count):
-        x = x0 + (x1 - x0) * (i + 0.5) / count
-        z = row_z + (_rand(seed, f"wh{i}") - 0.5) * 8.0
-        y = _ground(build, x, z)
-        if y < REG.SEA_LEVEL + 1.0:
-            continue
-        # Leave the market its own frontage. The warehouse row and the fish
-        # market are both on the lower-town terrace, so without this the row
-        # walks straight through the market and panel 7 is two blank gables.
-        if abs(x - REG.ANCHORS["fish_market"][0]) < 30.0:
-            continue
-        variant = int(_rand(seed, f"whv{i}") * 4) % 4
-        node = _place(build, f"Landmark_Warehouse_{i:02d}", f"Warehouse_{variant}",
-                      x, z, y=y, rotation=(_rand(seed, f"whr{i}") - 0.5) * 0.16,
-                      kind="building").node
-        if i % 4 == 0:
-            _landmark(build, f"warehouse-{i:02d}", "Harbour Warehouse",
-                      "warehouse", node, x, z, y)
+    from layout import WAREHOUSES
+    for j,(ident,x,z,y) in enumerate(WAREHOUSES):
+        variant=j%4
+        node=_place(build,f'Landmark_Warehouse_{ident}',f'Warehouse_{variant}',x,z,y=y,
+                    rotation=math.pi,kind='building').node
+        _landmark(build,f'warehouse-{ident}','Harbour Warehouse','warehouse',node,x,z,y)
 
     # -- the arch the quay street runs through (panel 3) -------------------
     ax, az = REG.ANCHORS["quay_arch"]
@@ -412,7 +396,7 @@ def populate_waterfront(build, seed: int = 0) -> None:
                collides=False, kind="prop")
 
     # -- the piers, with a ship alongside one and a crane on the other -----
-    pier_len = 34.0
+    pier_len = 29.0
     build.add_mesh("Pier", HA.pier(pier_len, width=5.4, deck_y=0.0,
                                    floor_y=REG.LEVEL["harbour_floor"] - quay_y,
                                    seed=seed + 81))
@@ -570,73 +554,12 @@ def populate_city(build, seed: int = 0) -> None:
     """
     t = build.terrain
 
-    # -- house variants ----------------------------------------------------
-    for v in range(12):
-        build.add_mesh(f"Town_House_{v}", HA.town_house(
-            width=5.2 + (v % 4) * 0.9, depth=6.4 + (v % 3) * 1.3,
-            storeys=2 + (v % 3), seed=seed + 200 + v, jetty=v % 4 != 3))
-
-    # Houses are seeded on a jittered grid and rejected where the ground is not
-    # suitable: too steep to build on, below the quay, outside the city
-    # polygon, or already claimed by a road corridor. Rejection sampling rather
-    # than authored positions, because three hundred hand-placed houses is not
-    # a thing anyone should write, and the terrain already encodes where a
-    # house can stand.
+    import layout
+    layout.populate_houses(build, seed)
     masks = REG.land_masks(t, seed)
-    gradient_z, gradient_x = np.gradient(t.height, t.cell)
-    slope_grid = np.hypot(gradient_x, gradient_z)
-
-    plots = []
-    placed = 0
-    step = 9.0
-    u0, u1 = 0.28, 5.45
-    v0, v1 = 0.95, 4.58
-    nu = int((u1 - u0) * 24.0 * REG.SCALE / step)
-    nv = int((v1 - v0) * 24.0 * REG.SCALE / step)
-    for iu in range(nu):
-        for iv in range(nv):
-            u = u0 + (u1 - u0) * (iu + 0.5) / nu
-            v = v0 + (v1 - v0) * (iv + 0.5) / nv
-            x, z = REG._design_to_world(REG.cell(u, v))
-            key = f"h{iu}:{iv}"
-            x += (_rand(seed, key + "x") - 0.5) * step * 0.7
-            z += (_rand(seed, key + "z") - 0.5) * step * 0.7
-            cx = int(np.clip((x - t.x0) / t.cell, 0, t.cols - 1))
-            cz = int(np.clip((z - t.z0) / t.cell, 0, t.rows - 1))
-            if not masks["city"][cz, cx]:
-                continue
-            if slope_grid[cz, cx] > 0.55:
-                continue          # a terrace riser, not a building plot
-            if t.tree_block[cz, cx]:
-                continue          # a road corridor
-            y = float(t.height[cz, cx])
-            if y < REG.LEVEL["quay"] + 1.0:
-                continue
-            if _rand(seed, key + "k") > 0.86:
-                continue          # courtyards and gaps, so it is not a lattice
-            variant = int(_rand(seed, key + "v") * 12) % 12
-            # Aligned to the contour, not randomly: a hillside town's houses
-            # all face downhill, and that alignment is most of what makes the
-            # roofscape read as a town rather than as scattered sheds.
-            facing = math.atan2(-gradient_x[cz, cx], -gradient_z[cz, cx])
-            angle = facing + (_rand(seed, key + "r") - 0.5) * 0.28
-            low, high = build.meshes[f"Town_House_{variant}"].bounds()
-            half_x = max(abs(low[0]), abs(high[0]))
-            half_z = max(abs(low[2]), abs(high[2]))
-            c, sn = abs(math.cos(angle)), abs(math.sin(angle))
-            ex, ez = c * half_x + sn * half_z, sn * half_x + c * half_z
-            plot = (x-ex-0.5, x+ex+0.5, z-ez-0.5, z+ez+0.5)
-            if any(plot[0] < b and plot[1] > a and plot[2] < d and plot[3] > c
-                   for a, b, c, d in plots):
-                continue
-            plots.append(plot)
-            _place(build, f"House_{iu:02d}_{iv:02d}", f"Town_House_{variant}",
-                   x, z, y=y, rotation=angle, kind="building")
-            placed += 1
-    build.notes.append(f"city houses placed: {placed}")
 
     # -- retaining walls along the terrace risers --------------------------
-    build.add_mesh("Retaining_Wall", SW.retaining_wall(22.0, 5.2, seed=seed + 301,
+    build.add_mesh("Retaining_Wall", SW.retaining_wall(10.0, 4.0, seed=seed + 301,
                                                        material="rubble_stone"))
     riser_v = (4.02, 3.36, 2.72, 2.04, 1.40)
     for band, v in enumerate(riser_v):
@@ -650,7 +573,7 @@ def populate_city(build, seed: int = 0) -> None:
                 continue
             y = float(t.height[cz, cx])
             _place(build, f"Retaining_{band}_{i:02d}", "Retaining_Wall",
-                   x, z + 2.0, y=y - 4.4, collides=False, kind="landmark")
+                   x, z + 2.0, y=y - 3.4, collides=False, kind="landmark")
 
     # -- the city gate -----------------------------------------------------
     gx, gz = REG.ANCHORS["city_gate"]
@@ -895,7 +818,8 @@ def populate_routes(build, seed=0):
                                                stone=HK.SEA_ROCK, paving=HK.SETT))
         node = _place(build, "Landmark_" + key, key, x, z, y=y,
                       collides=False, kind="landmark").node
-        _landmark(build, ident, "The Yard Bridge" if ident == "yard-bridge"
+        _landmark(build, ident, "The Quay-Mole Ramp" if ident == "quay-mole-ramp" else "The Yard Bridge" if ident == "yard-bridge"
+                  else "The Gullstone Footbridge" if ident == "gullstone-bridge"
                   else "The Lamp Causeway", "bridge", node, x, z, y)
 
     # The gateway frames the harbour skyline on the return from the fields.
@@ -905,9 +829,9 @@ def populate_routes(build, seed=0):
     gate.walk_parts.clear()
     build.add_mesh("Cart_Gate", gate)
     x, z = REG.ANCHORS["north_gate"]
-    node = _place(build, "Landmark_Cart_Gate", "Cart_Gate", x, z, y=48.0,
+    node = _place(build, "Landmark_Cart_Gate", "Cart_Gate", x, z, y=34.0,
                   rotation=0.54, collides=False, kind="landmark").node
-    _landmark(build, "cart-gate", "The Upland Gate", "gate", node, x, z, 48.0)
+    _landmark(build, "cart-gate", "The Upland Gate", "gate", node, x, z, 34.0)
 
     build.add_mesh("Farm_Grain", RC.crop_rows(seed=seed + 620))
     build.add_mesh("Farm_Herbs", RC.crop_rows(seed=seed + 621, material=HK.TURF,
@@ -932,7 +856,7 @@ def populate_routes(build, seed=0):
     _landmark(build, "farm-water-store", "The Farm Cistern", "water",
               node,x+12,z+1,_ground(build,x+12,z+1))
     build.add_mesh("Road_Cart", P.cart(seed=seed+630))
-    for i, (x,z) in enumerate(((169,-56),(233,-248))):
+    for i, (x,z) in enumerate(((116,-25),(170,-134))):
         _place(build, f"Road_Cart_{i}", "Road_Cart", x,z,rotation=0.4,kind="prop")
         _place(build, f"Road_Lamp_{i}", "Lamp_Post",x+3,z,collides=False,kind="prop")
     # A sign is beside the junction, not planted in its centre.

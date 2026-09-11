@@ -983,6 +983,12 @@ class WorldBuild:
 
 
 def main() -> None:
+    # The old WorldBuild class remains the native kit/reference implementation.
+    # The package itself is now composed once through the shared region toolkit.
+    # Keep the historical command usable without regenerating the720m layout.
+    from pathlib import Path
+    compact = Path(__file__).resolve().parents[2] / 'maps/four-gates/source/rebuild_landscape.py'
+    os.execv(sys.executable, [sys.executable, str(compact), *sys.argv[1:]])
     parser = argparse.ArgumentParser()
     here = os.path.dirname(os.path.abspath(__file__))
     default_out = os.path.abspath(os.path.join(here, "..", "..", "maps", "four-gates"))

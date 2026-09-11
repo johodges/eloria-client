@@ -6,18 +6,19 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          360.0,
-          360.0
+          198,
+          198
         ],
         "origin": [
-          0.0,
-          31.15,
-          0.0
+          0,
+          31.1,
+          0
         ],
-        "walkingHeight": 31.15,
+        "walkingHeight": 31.1,
         "invertServerY": true
       },
-      "status": "production_map_v1"
+      "status": "production_map_v1",
+      "landscapeTransitions": true
     },
     "mirrorhold": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/mirrorhold/world.json",
@@ -44,8 +45,8 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          174.0,
-          174.0
+          120.0,
+          120.0
         ],
         "origin": [
           0.0,
@@ -56,7 +57,8 @@
         "invertServerY": true
       },
       "status": "production-geometry-materials-population",
-      "requiresServerMap": "96x96 server tiles (576 cells)"
+      "requiresServerMap": "96x96 server tiles (576 cells)",
+      "landscapeTransitions": true
     },
     "whitehorn_range": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/whitehorn_range/world.json",
@@ -173,8 +175,8 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          174.0,
-          250.0
+          120.0,
+          172.0
         ],
         "origin": [
           0.0,
@@ -185,7 +187,8 @@
         "invertServerY": true
       },
       "status": "production-geometry-materials-population",
-      "requiresServerMap": "96x96 server tiles (576 cells) with the arrival datum at (174, 250), not the (174, 174) the other 576 m regions share"
+      "requiresServerMap": "96x96 server tiles (576 cells) with the arrival datum at (174, 250), not the (174, 174) the other 576 m regions share",
+      "landscapeTransitions": true
     },
     "verdant_stair": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/verdant_stair/world.json",
@@ -287,9 +290,24 @@
           0.0
         ],
         "walkingHeight": 0.05,
-        "invertServerY": true
+        "invertServerY": true,
+        "serverCells": [
+          36,
+          36
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -18.0,
+            -17.0
+          ],
+          "max": [
+            17.0,
+            18.0
+          ]
+        }
       },
-      "status": "interior_v1"
+      "status": "interior_v1",
+      "interiorOf": "four_gates"
     },
     "four-gates-reedworks": {
       "manifest": "res://../eloria-assets/maps/four-gates-reedworks/world.json",
@@ -305,9 +323,24 @@
           0.0
         ],
         "walkingHeight": 0.05,
-        "invertServerY": true
+        "invertServerY": true,
+        "serverCells": [
+          36,
+          36
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -15.0,
+            -20.0
+          ],
+          "max": [
+            20.0,
+            15.0
+          ]
+        }
       },
-      "status": "interior_v1"
+      "status": "interior_v1",
+      "interiorOf": "four_gates"
     },
     "four-gates-stormglass-house": {
       "manifest": "res://../eloria-assets/maps/four-gates-stormglass-house/world.json",
@@ -323,9 +356,24 @@
           0.0
         ],
         "walkingHeight": 0.05,
-        "invertServerY": true
+        "invertServerY": true,
+        "serverCells": [
+          36,
+          36
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -12.0,
+            -23.0
+          ],
+          "max": [
+            23.0,
+            12.0
+          ]
+        }
       },
-      "status": "interior_v1"
+      "status": "interior_v1",
+      "interiorOf": "four_gates"
     },
     "four-gates-mirrorsmith-forge": {
       "manifest": "res://../eloria-assets/maps/four-gates-mirrorsmith-forge/world.json",
@@ -341,9 +389,24 @@
           0.0
         ],
         "walkingHeight": 0.05,
-        "invertServerY": true
+        "invertServerY": true,
+        "serverCells": [
+          36,
+          36
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -12.0,
+            -23.0
+          ],
+          "max": [
+            23.0,
+            12.0
+          ]
+        }
       },
-      "status": "interior_v1"
+      "status": "interior_v1",
+      "interiorOf": "four_gates"
     },
     "four-gates-ferrymans-rest": {
       "manifest": "res://../eloria-assets/maps/four-gates-ferrymans-rest/world.json",
@@ -359,9 +422,24 @@
           0.0
         ],
         "walkingHeight": 0.05,
-        "invertServerY": true
+        "invertServerY": true,
+        "serverCells": [
+          36,
+          36
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -15.0,
+            -20.0
+          ],
+          "max": [
+            20.0,
+            15.0
+          ]
+        }
       },
-      "status": "interior_v1"
+      "status": "interior_v1",
+      "interiorOf": "four_gates"
     },
     "four-gates-deposit-four-keys": {
       "manifest": "res://../eloria-assets/maps/four-gates-deposit-four-keys/world.json",
@@ -377,9 +455,24 @@
           0.0
         ],
         "walkingHeight": 0.05,
-        "invertServerY": true
+        "invertServerY": true,
+        "serverCells": [
+          36,
+          36
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -12.0,
+            -23.0
+          ],
+          "max": [
+            23.0,
+            12.0
+          ]
+        }
       },
-      "status": "interior_v1"
+      "status": "interior_v1",
+      "interiorOf": "four_gates"
     },
     "amberwood_motherroot": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/amberwood_motherroot/world.json",

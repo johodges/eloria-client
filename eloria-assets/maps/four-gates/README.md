@@ -1,82 +1,53 @@
-# Four Gates — production map package
+# Four Gates
 
-Concept-derived, textured production environment for the Four Gates capital of
-Nymara. Replaces the previous graybox `four-gates-city` package.
+Four Gates is a 396 × 396 metre inhabited civic island. Its native gatehouses,
+shops, temple and crystal monument retain their dimensions. Streets, plots,
+shore roads and building parcels were replanned around those landmarks.
 
-## Package layout
+The server map remains `four_gates`. One tile is one metre, with server origin
+`[198, 198]`; +Y is up and −Z is north. Arrival is tile `[198, 143]`. The civic
+plateau is Y31, causeway decks Y23 and surrounding water Y19. The formal wall
+follows radius120; working shores and two practice yards occupy the outer land.
 
-```
-eloria-assets/maps/four-gates/
-    world.glb          self-contained glTF 2.0 scene, textures embedded
-    world.json         schema-1 manifest consumed by the Godot WorldLoader
-    collision.bin      EWCG walk grid in the established Four Gates format
-    minimap.webp       cartography rendered from the final geometry
-    references/        client comparison screenshots and contact sheets
-    README.md          this file
-    change-log.md      version history
-    validation-report.md  validator, viewer and runtime evidence
-```
+North connects to Mirrorhold and west to Crownwater through surveyed shared
+causeways with seven metre carriageways. East to Sunmane Steppe and south to
+Ssarathi Ruins retain ordinary transitions; those neighbours are not yet surveyed.
+All six named interiors, fourteen secrets, eight tutorial resource types and two
+35×35 practice areas with existing40/60 caps remain available.
 
-## Scene conventions
+## Reproduce
 
-- Metres, right handed, **+Y up, −Z north**, origin at the plaza monument.
-- Curtain-wall centre radius **352 m** (704 m defensive ring).
-- City plateau walking datum **Y = 31**; water ring surface **Y = −2**.
-- Authored bounds **±810 m** horizontally, **−42 … 348 m** vertically.
+From the client root:
 
-The map deliberately reuses the existing development server coordinate binding
-(`metresPerTile 0.4651162791`, `serverOrigin [384, 384]`, `walkingHeight 31.15`,
-`invertServerY true`), so it drops into the current registry entry without any
-server profile or protocol change. See *Known limitations* for the consequence.
-
-## Region composition
-
-From the centre outward, matching the canonical aerial:
-
-| Ring | Radius | Contents |
-|---|---|---|
-| Plaza | 0–70 m | paving mandala, crystal-crowned monument, fountains, statues, benches, planters, market awnings |
-| Arcade ring | 90 m | four curved arcaded porticos between the ceremonial avenues |
-| Civic band | 110–152 m | domed civic halls, market halls, large townhouses |
-| Residential band | 172–238 m | townhouses, market squares, warehouses |
-| Outer band | 264–322 m | small townhouses, farmsteads, granaries, service yards |
-| Curtain wall | 352 m | 40 battered bays with blind arcading, crenellations and 8 drum towers |
-| Cliff | 372–432 m | sculpted rock face with eight waterfall stacks |
-| Water ring | 432–600 m | turquoise basin |
-| Outer rim | 600–700 m | highland farms, evergreen belt, portal roads |
-| Skyline | 700–810 m | alpine ridge, snow caps, northern massif |
-
-Four monumental twin-drum gatehouses stand at the cardinal points, a fifth
-(`Gate_South_Outer`) guards the southern causeway, and four arched bridges cross
-the water ring. The northern axis climbs a ceremonial stair to the sanctuary
-shelf at Y = 74.
-
-## Rebuilding
-
-```sh
-python3 eloria-assets/tools/four_gates/build_four_gates.py
+```powershell
+python eloria-assets/maps/four-gates/source/rebuild_landscape.py --rebuild-interiors
 ```
 
-Deterministic: the same inputs always produce the same GLB. Texture synthesis
-takes ~90 s; set `FOUR_GATES_TEXCACHE=<dir>` to cache the generated PBR sets and
-rebuild geometry in ~4 s.
+The wrapper exports main and LOD scenes, raw half-metre collision and a minimap
+from final geometry; refines heights; opens exposed walking meshes; stamps solid
+landmarks; applies the actor-centre support guard; synchronizes six room doors;
+rebuilds shared secrets; and verifies the exterior. `--rebuild-interiors` also
+regenerates the six native rooms. `--skip-build`, `--skip-interiors` and
+`--skip-secrets` support focused maintenance passes.
 
-## Validation
+`source/landscape_plan.py` owns terrain, roads, parcels, content posts and combat
+yards. `source/build_four_gates.py` composes the existing art kits using shared
+`RegionBuild`. `source/native_adapter.py` translates native materials and fields
+into the shared exporter. `source/migrate_compact_server.py` produces a report by
+default; the rollout coordinator owns server writes. Served markers are restored
+through shared `contentposts`. Texture caches are disposable and ignored.
 
-```sh
-gltf_validator eloria-assets/maps/four-gates/world.glb          # Khronos
-godot --path godot-client --script res://tests/integration/rendered_four_gates_views.gd
-godot --path godot-client --script res://tests/integration/rendered_four_gates_gameplay.gd
+## Checks and evidence
+
+`runtime-validation.json` records grounding and manifest checks. Artifacts under
+`work-output/coastal-rollout/four-gates` hold actual `World.find_path` proofs,
+complete practice-yard audits, frozen baseline scenes, matched gameplay-camera
+images and the annotated review. The elevated Sanctuary beacon is intentionally
+above ground and produces an expected landmark warning.
+
+```powershell
+python eloria-assets/tools/four_gates/test_geometry.py
 ```
 
-The gameplay test needs a server. `tests/integration/local_protocol_server.py`
-is a self-contained local fixture for offline runs; point the test at a real
-`eloria-server` with `ELORIA_INTEGRATION_HOST`/`ELORIA_INTEGRATION_PORT` when one
-is available.
-
-## Originality
-
-Every mesh and texture in this package is generated by the checked-in tooling
-under `eloria-assets/tools/four_gates/` from primitives and noise written for
-this project. No Eternal Lands geometry, textures, maps or icons were copied,
-converted or traced, and no third-party asset packs are used.
+Native regressions cover outward winding, ground normals, complete material
+quads and noncollapsed box/cylinder UVs.

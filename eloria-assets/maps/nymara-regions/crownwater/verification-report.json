@@ -1,11 +1,11 @@
 {
   "summary": {
-    "walkSurfaceNodes": 205,
-    "walkSurfaceTriangles": 206692,
-    "tilesSampled": 331776,
+    "walkSurfaceNodes": 98,
+    "walkSurfaceTriangles": 141585,
+    "tilesSampled": 156816,
     "groundingMisses": 0,
     "groundingMissFraction": 0.0,
-    "surfaceDiscontinuities": 324,
+    "surfaceDiscontinuities": 128,
     "spawnPoints": 3
   },
   "errors": [],
@@ -13,115 +13,68 @@
     {
       "severity": "warning",
       "code": "GROUNDING_DISCONTINUITY",
-      "message": "324 adjacent tile pairs differ by more than 6 m of surface height (expected at cliffs and under bridges)",
+      "message": "128 adjacent tile pairs differ by more than 6 m of surface height (expected at cliffs and under bridges)",
       "detail": [
         [
-          383,
-          285,
-          17.35
+          144,
+          254,
+          15.95
         ],
         [
-          171,
-          290,
-          17.3
+          144,
+          254,
+          15.95
         ],
         [
-          380,
-          287,
-          17.24
+          145,
+          253,
+          15.73
         ],
         [
-          381,
-          290,
-          17.18
+          145,
+          253,
+          15.73
         ],
         [
-          226,
-          221,
-          17.17
+          143,
+          255,
+          15.69
         ],
         [
-          225,
-          221,
-          17.17
+          143,
+          255,
+          15.69
         ],
         [
-          179,
-          285,
-          17.16
+          190,
+          118,
+          15.57
         ],
         [
-          380,
-          290,
-          17.15
+          190,
+          117,
+          15.18
         ],
         [
-          380,
-          288,
-          17.14
+          142,
+          256,
+          15.1
         ],
         [
-          382,
-          290,
-          17.1
+          142,
+          256,
+          15.1
         ],
         [
-          353,
-          223,
-          17.1
+          190,
+          116,
+          14.74
         ],
         [
-          380,
-          289,
-          17.05
+          190,
+          115,
+          14.31
         ]
-      ]
-    },
-    {
-      "severity": "warning",
-      "code": "COLLISION_SURFACE_MISMATCH",
-      "message": "5 sampled walkable cells disagree with the rendered walk surface",
-      "detail": [
-        {
-          "cell": [
-            276,
-            348
-          ],
-          "encoded": 2.4,
-          "surface": 5.1
-        },
-        {
-          "cell": [
-            396,
-            396
-          ],
-          "encoded": 4.0,
-          "surface": 17.59
-        },
-        {
-          "cell": [
-            108,
-            744
-          ],
-          "encoded": 2.0,
-          "surface": 5.41
-        },
-        {
-          "cell": [
-            744,
-            828
-          ],
-          "encoded": 2.2,
-          "surface": 4.87
-        },
-        {
-          "cell": [
-            744,
-            1032
-          ],
-          "encoded": 0.4,
-          "surface": 4.87
-        }
       ]
     }
   ]

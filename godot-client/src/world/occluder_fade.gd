@@ -66,6 +66,7 @@ class Occluder extends RefCounted:
 	var fade := 0.0
 	var target := 0.0
 	var applied := false
+	var faded_alpha := FADED_ALPHA
 
 	var _saved_override: Material
 	var _saved_surfaces: Array[Material] = []
@@ -141,7 +142,7 @@ class Occluder extends RefCounted:
 
 	## Pushes the current fade onto the duplicated materials.
 	func write_alpha() -> void:
-		var scale: float = lerpf(1.0, FADED_ALPHA, clampf(fade, 0.0, 1.0))
+		var scale: float = lerpf(1.0, faded_alpha, clampf(fade, 0.0, 1.0))
 		for index: int in _faded.size():
 			var material: BaseMaterial3D = _faded[index]
 			if material == null:
@@ -186,6 +187,7 @@ var _grid: Dictionary = {}
 var _occluders: Array[Occluder] = []
 var _active: Array[Occluder] = []
 var _max_extent := MAX_EXTENT_METRES
+var _faded_alpha := FADED_ALPHA
 var _probe_countdown := 0.0
 
 func is_active() -> bool:
@@ -201,11 +203,15 @@ func configure(manifest: WorldManifest, imported_world: Node3D) -> int:
 	if imported_world == null:
 		return 0
 	_max_extent = MAX_EXTENT_METRES
+	_faded_alpha = FADED_ALPHA
 	if manifest != null:
 		var rendering_value: Variant = manifest.data.get("rendering", {})
 		if rendering_value is Dictionary:
 			_max_extent = maxf(1.0, float((rendering_value as Dictionary).get(
 				"occluderFadeMaxExtentMetres", MAX_EXTENT_METRES)))
+			# Layered monumental gates need less opacity than a single tree.
+			_faded_alpha = clampf(float((rendering_value as Dictionary).get(
+				"occluderFadeAlpha", FADED_ALPHA)), 0.0, 1.0)
 	for node: Node in imported_world.find_children("*", "MeshInstance3D", true, false):
 		var occluder := _index(node as MeshInstance3D)
 		if occluder != null:
@@ -312,6 +318,15 @@ func _index(mesh_instance: MeshInstance3D) -> Occluder:
 		return null
 	if mesh_instance.mesh.get_surface_count() == 0:
 		return null
+	# Shared causeway structure contains only the slab, piers and 0.4m curbs.
+	# Its merged box spans the whole road; growing it by the probe radius can
+	# enclose the actor's chest even though none of that geometry obscures it.
+	# Keep native and receiving-preview copies opaque across a handoff.
+	var node_name := str(mesh_instance.name)
+	if node_name.begins_with("StreamView_"):
+		node_name = node_name.get_slice("__", 1)
+	if node_name.begins_with("Structure_StreamCauseway_"):
+		return null
 	# The ground is not an obstacle: it is under the player, and fading it would
 	# open a hole onto the sky. The loader marks walk surfaces by hanging
 	# navigation collision off them, which is a firmer signal than a name.
@@ -323,6 +338,7 @@ func _index(mesh_instance: MeshInstance3D) -> Occluder:
 	if maxf(world_box.size.x, world_box.size.z) > _max_extent:
 		return null
 	var occluder := Occluder.new()
+	occluder.faded_alpha = _faded_alpha
 	occluder.node = mesh_instance
 	if mesh_instance.has_meta(WorldLoader.BATCH_META):
 		var batch_value: Variant = mesh_instance.get_meta(WorldLoader.BATCH_META)

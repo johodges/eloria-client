@@ -1,3 +1,5 @@
+> Historical record of the previous 576m package. The current 396m coordinate contract and layout are documented in [README.md](README.md) and [layout-review.md](layout-review.md); current metrics are generated in `performance.json` and `verification-report.json`.
+
 Current checkpoint: [2026-09-07 layout review](layout-review.md). The earlier
 counts and camera comments below describe the previous build.
 

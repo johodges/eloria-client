@@ -1,8 +1,8 @@
 {
-  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-north-client\\eloria-assets\\maps\\nymara-regions\\grey_moors\\world-lod2.glb",
+  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-coast-client\\eloria-assets\\maps\\nymara-regions\\grey_moors\\world-lod2.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-09-11T08:57:20.624233Z",
+  "validatedAt": "2026-09-11T12:38:38.424167Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,

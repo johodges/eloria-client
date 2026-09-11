@@ -159,6 +159,14 @@ CLASSIFIED = {
 
 def main() -> int:
     failures = []
+    print("projected UVs -- every box/cylinder face keeps two texture axes")
+    for name,geo in [('box',M.box(7,4,9)),('cylinder',M.cylinder(4,3,24))]:
+        uv=geo.t[geo.f]
+        a,b=uv[:,1]-uv[:,0],uv[:,2]-uv[:,0]
+        area=abs(a[:,0]*b[:,1]-a[:,1]*b[:,0])
+        collapsed=int(np.count_nonzero(area<1e-8))
+        if collapsed:failures.append(f'{name}: {collapsed} faces have collapsed UVs')
+        print(f'  {name}: collapsed={collapsed}')
     print("closed primitives -- signed volume must be positive")
     for name, factory in CLOSED.items():
         geo = factory()

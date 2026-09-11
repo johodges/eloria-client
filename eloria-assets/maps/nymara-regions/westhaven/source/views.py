@@ -179,3 +179,6 @@ PANELS = {
 
 FIXED_VIEWS = {"21-cart-ascent", "22-gullscar-fields", "23-lamp-approach",
                "24-yard-crossing", "25-harbour-court"}
+
+# Compact offline deck views use the new surveyed stations.
+VIEWS = [tuple(list(v[:9]) + ["day"]) if v[9] == "deck" else v for v in VIEWS]

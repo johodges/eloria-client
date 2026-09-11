@@ -1,49 +1,14 @@
-"""The authored Westhaven region plan.
+"""The authored 396m Westhaven region plan.
 
-Coordinates are Godot metres, Y up, north toward -Z. The playable footprint is
-the server's 576-cell grid at one metre per tile with the arrival datum at
-server (174, 250), which lands on the Godot origin:
+Coordinates are Godot metres, Y up and north toward -Z. One metre equals one
+server tile, with origin (120,172), so world_x=tile_x-120 and world_z=172-tile_y.
+The main arrival is world (34,3.4,6), tile (154,166).
 
-    godot_x = server_x - 174        godot_z = 250 - server_y
-
-so the reachable area is x in [-174, 401] and z in [-325, 250]. The terrain is
-cut larger than that on every side, and the surplus is drowned or walled so a
-player can never walk off the authored world. Why the datum is not the
-(174, 174) the other five regions share is argued at SERVER_ORIGIN below.
-
-READING THE CONCEPT
--------------------
-The aerial is a working port, not a coastal village: a dense masonry city on a
-south-facing headland that steps down through five terraces to a continuous
-built waterfront, a curved mole closing a harbour basin, finger piers and a
-shipyard along that waterfront, open upland with roads to the north and east,
-and two rocky lighthouse masses out in the water to the south.
-
-Two structural decisions follow from that reading, and everything else hangs
-off them.
-
-**The city is a staircase, not a hill with houses on it.** In the painting the
-roofs march downhill in distinct level bands with retaining walls between them,
-which is what a real port on a slope looks like and what makes the silhouette
-read from the water. So the terrain is authored as explicit terraces with
-graded ramp streets between them, not as smooth ground that buildings are later
-dropped onto. Sculpting it as a slope and placing houses on it produced a
-hillside of scattered roofs with no skyline at all.
-
-**The sea floor is terrain, not a hole.** The client grounds actors by casting
-a ray down at every server tile, not only walkable ones, so a region whose
-southern half is open water still needs a continuous surface underneath it.
-Westhaven's heightfield covers the entire footprint and simply sits below sea
-level across the south. That is what makes zero grounding misses achievable on
-a map that is 40% water.
-
-MAPPING THE PAINTING ONTO THE FOOTPRINT
----------------------------------------
-The aerial is read on an 8x8 cell grid, cell (0,0) at its north-west corner.
-`cell()` converts a grid coordinate to design space. The mapping is 1:1 on both
-axes: the painting's west, east, north and south edges are the playable square's
-four edges. Nothing is invented beyond the concept and nothing is trimmed out of
-it. That is what the arrival datum was moved to buy.
+Native harbour architecture and the continuous sea floor are retained. The
+explicit compact anchors, roads, service and habitat plans are applied from
+landscape_plan.configure; layout.prepare builds the connected terrain before
+population. Historical concept-space constants below remain inputs for retained
+architecture and are overridden where the compact composition needs new ground.
 """
 from __future__ import annotations
 
@@ -76,14 +41,14 @@ from amberwood.region import Placement, RegionBuild  # noqa: F401
 # `serverOrigin` is manifest data, read by `coordinate_adapter.gd`, and the
 # server's `ARRIVAL_TILES` is a per-region table, so this costs one entry on
 # each side and no code.
-SERVER_ORIGIN = (174.0, 250.0)
-SERVER_CELLS = 576
+SERVER_ORIGIN = (120.0, 172.0)
+SERVER_CELLS = 396
 METRES_PER_TILE = 1.0
 
 # The composition is written in a 192 m design space and scaled up here, so the
 # aerial's layout is preserved rather than stretched. Same convention and same
 # constant as Crownwater, for the same reason: one number changes the extent.
-SCALE = 3.0
+SCALE = 2.0625
 
 # Distances between places scale with the region; the places themselves do not.
 # A quay is sized by the ships along it and a market square by the stalls in it,
@@ -95,7 +60,7 @@ PLAY_MAX_X = (SERVER_CELLS - 1 - SERVER_ORIGIN[0]) * METRES_PER_TILE
 PLAY_MIN_Z = -(SERVER_CELLS - 1 - SERVER_ORIGIN[1]) * METRES_PER_TILE
 PLAY_MAX_Z = SERVER_ORIGIN[1] * METRES_PER_TILE
 
-MARGIN = 30.0
+MARGIN = 48.0
 TERRAIN_X0 = PLAY_MIN_X - MARGIN
 TERRAIN_Z0 = PLAY_MIN_Z - MARGIN
 TERRAIN_SIZE_X = (PLAY_MAX_X - PLAY_MIN_X) + MARGIN * 2.0
@@ -135,11 +100,11 @@ LEVEL = {
     "harbour_floor": -7.5,  # inside the mole: dredged, not deep
     "slip": -3.2,           # the shipyard slipway's underwater end
     "quay": 3.4,            # the working waterfront - one deck, whole harbour
-    "lower_town": 9.5,      # fish market, warehouses, the first street back
-    "mid_town": 18.0,       # the main east-west street and its arcades
-    "upper_town": 28.5,     # the dense roofs of the painting's middle band
-    "citadel": 41.0,        # cathedral precinct and the campanile's footing
-    "crown": 52.0,          # the highest civic terrace, the brass dome
+    "lower_town": 8.4,      # fish market, warehouses, the first street back
+    "mid_town": 14.0,       # the main east-west street and its arcades
+    "upper_town": 21.0,     # the dense roofs of the painting's middle band
+    "citadel": 28.0,        # cathedral precinct and the campanile's footing
+    "crown": 36.0,          # the highest civic terrace, the brass dome
     "headland": 78.0,       # the north-west cliff mass
     "upland": 34.0,         # the open country north and east of the city
     "ridge": 88.0,          # the northern and eastern world boundary
@@ -511,9 +476,9 @@ def land_masks(t: TER.Terrain, seed: int = 20260829) -> dict[str, np.ndarray]:
     southern edge is a built quay and wants to stay a line.
     """
     return {
-        "mainland": _polygon_mask(t, COAST, warp=26.0, seed=seed + 3),
-        "gullstone": _polygon_mask(t, GULLSTONE, warp=34.0, seed=seed + 11),
-        "lamp_rock": _polygon_mask(t, LAMP_ROCK, warp=34.0, seed=seed + 19),
+        "mainland": _polygon_mask(t, COAST, warp=15.0, seed=seed + 3),
+        "gullstone": _polygon_mask(t, GULLSTONE, warp=20.0, seed=seed + 11),
+        "lamp_rock": _polygon_mask(t, LAMP_ROCK, warp=20.0, seed=seed + 19),
         "city": _polygon_mask(t, CITY, warp=14.0, seed=seed + 23),
     }
 
@@ -617,11 +582,11 @@ def build_terrain(seed: int = 20260829) -> TER.Terrain:
     # 3. the mainland's own relief: the headland high in the north-west, the
     #    open upland rising to the north and east, and the long fall toward the
     #    waterfront that the city is terraced into.
-    t.add_dome(_design_to_world(cell(0.15, 0.55)), 190.0, LEVEL["headland"] - 16.0,
+    t.add_dome(_design_to_world(cell(0.15, 0.55)), 132.0, 43.0,
                power=1.7, noise_seed=seed + 31, noise_amount=0.22)
-    t.add_dome(_design_to_world(cell(6.60, 1.20)), 300.0, LEVEL["upland"] + 22.0,
+    t.add_dome(_design_to_world(cell(6.60, 1.20)), 206.0, 30.0,
                power=1.9, noise_seed=seed + 43, noise_amount=0.26)
-    t.add_dome(_design_to_world(cell(7.90, 2.60)), 200.0, LEVEL["upland"] + 6.0,
+    t.add_dome(_design_to_world(cell(7.90, 2.60)), 138.0, 23.0,
                power=2.1, noise_seed=seed + 47, noise_amount=0.24)
     # The upland's own texture: heath and pasture, not a smooth dome, and not a
     # rockscape either. Long wavelength and few octaves on purpose - the
@@ -630,7 +595,7 @@ def build_terrain(seed: int = 20260829) -> TER.Terrain:
     # that `assign_surface_by_rule` then correctly called rock.
     upland_noise = N.warped_fbm(t.gx * 0.0060, t.gz * 0.0060, warp=0.8,
                                 octaves=3, seed=seed + 59)
-    t.height += mainland * (upland_noise - 0.5) * 19.0
+    t.height += mainland * (upland_noise - 0.5) * 9.0
     # a second, finer pass only where the ground is already gentle, so pasture
     # gets texture without the cliffs gaining more
     fine = N.fbm(t.gx * 0.021, t.gz * 0.021, octaves=3, seed=seed + 61)
@@ -649,7 +614,7 @@ def build_terrain(seed: int = 20260829) -> TER.Terrain:
     #    is what the painting shows anyway; south and west are closed by open
     #    sea and need no wall. A rim on all four sides reads from any elevated
     #    camera as a dark slab floating at the map edge.
-    t.clamp_edges(46.0, LEVEL["ridge"] - LEVEL["upland"], sides=("north", "east"))
+    # Open geographic boundary: coastal land continues beyond the playable frame.
 
     # 5. the city's terrace staircase, cut into the mainland only. Five bands
     #    from the waterfront up to the crown, each an absolute level so the
@@ -707,7 +672,7 @@ def build_terrain(seed: int = 20260829) -> TER.Terrain:
     return t
 
 
-def apply_built_ground(t: TER.Terrain, seed: int = 20260829) -> None:
+def _legacy_apply_built_ground(t: TER.Terrain, seed: int = 20260829) -> None:
     """Quays, squares, roads and the built aprons.
 
     Runs after `build_terrain`, so every flattened level is either an authored
@@ -906,3 +871,12 @@ CONTENT_LAYOUT = {
     },
     "roadClearance": 6,
 }
+
+
+# Compact composition overrides are applied before the builder reads anchors.
+from landscape_plan import configure as _configure_compact
+_configure_compact(globals())
+
+def apply_built_ground(t, seed=20260829):
+    import layout
+    layout.prepare(t, seed)
