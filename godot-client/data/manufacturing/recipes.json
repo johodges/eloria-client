@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "sources": {
     "profile": "eloria",
-    "recipesSha256": "d61c3f283761de2ec8a44a8f27f89855dcdb8cb0305a8bf6757dbadf1049525a",
-    "itemsSha256": "500689596bda8731fd4455fa6218dddf68d4aee30a48980b387185dc3e202fc8",
+    "recipesSha256": "eabfdd2d19fc6c9369dc2ed6844a0a8ac67857b6bd440723ac64791ed75cb5c1",
+    "itemsSha256": "3cd4d70fa1b32d8048f0e7d163ce06d6bbc67cf5e9f18673841f9d640cbe638d",
     "booksSha256": "dbaf97061c7578ece676a3d6ff122d25af0bb69a01d4c4bcec9b16653df00329"
   },
   "recipes": [
@@ -1299,7 +1299,7 @@
     {
       "id": 29,
       "skill": "summoning",
-      "output": "Mirrorfin Otter",
+      "output": "Otter",
       "outputImageId": -1,
       "level": 0,
       "animalNexus": 0,
@@ -1339,7 +1339,7 @@
     {
       "id": 30,
       "skill": "summoning",
-      "output": "Stag",
+      "output": "Crown Stag",
       "outputImageId": -1,
       "level": 10,
       "animalNexus": 1,
@@ -1395,7 +1395,7 @@
     {
       "id": 31,
       "skill": "summoning",
-      "output": "Gate Turtle",
+      "output": "Crystalback Tortoise",
       "outputImageId": -1,
       "level": 20,
       "animalNexus": 2,
