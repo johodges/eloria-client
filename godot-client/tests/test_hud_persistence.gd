@@ -73,7 +73,7 @@ func _run() -> void:
 	# and size the window is. Each is written by the menu that changes it, so
 	# they are proved through the file rather than through a live variable.
 	second.call("_on_minimap_marker_type_toggled",
-		(second.get("MINIMAP_MARKER_TYPES") as Array).find(&"bag"))
+		(second.get("MINIMAP_MARKER_TYPES") as Array).find(&"harvest"))
 	second.call("_on_minimap_marker_scale_selected", 4)
 	second.call("_on_minimap_shape_selected", 1)
 	second.call("_on_minimap_border_selected", 0)
@@ -81,7 +81,7 @@ func _run() -> void:
 	var border_steps: Array = second.get("MINIMAP_BORDER_STEPS") as Array
 	var marker_scales: Array = second.get("MINIMAP_MARKER_SCALES") as Array
 	_expect(appearance.load(SETTINGS_PATH) == OK
-		and not bool(appearance.get_value("hud", "minimap_marker_bag", true))
+		and not bool(appearance.get_value("hud", "minimap_marker_harvest", true))
 		and bool(appearance.get_value("hud", "minimap_marker_player", false))
 		and str(appearance.get_value("hud", "minimap_shape", "")) == "round"
 		and is_equal_approx(float(appearance.get_value(
@@ -108,12 +108,12 @@ func _run() -> void:
 			float(border_steps[0])),
 		"a new session comes back with the remembered minimap appearance")
 	_expect(third_overlay != null
-		and not bool(third_overlay.call("type_enabled", &"bag"))
+		and not bool(third_overlay.call("type_enabled", &"harvest"))
 		and bool(third_overlay.call("type_enabled", &"creature")),
 		"the remembered marker switches reach the overlay that draws them")
 	var third_menu: PopupMenu = third.get("_minimap_marker_type_menu") as PopupMenu
-	var bag_index: int = (third.get("MINIMAP_MARKER_TYPES") as Array).find(&"bag")
-	_expect(third_menu != null and not third_menu.is_item_checked(bag_index)
+	var harvest_index: int = (third.get("MINIMAP_MARKER_TYPES") as Array).find(&"harvest")
+	_expect(third_menu != null and not third_menu.is_item_checked(harvest_index)
 		and third_menu.is_item_checked(0),
 		"the menu opens ticked to what was remembered rather than to the defaults")
 	third.queue_free()

@@ -11,11 +11,14 @@ const PLAYER_COLOR := Color("68e7ff")
 const INVASION_COLOR := Color("ff6b63")
 const BOSS_COLOR := Color("ffc94f")
 const MARKER_FONT_SIZE := 10
+const MAX_LOCATION_LABELS := 6
 
 var state: Dictionary = {}
 var selected_tile := Vector2i(-1, -1)
 var background: Texture2D
 var _hover_text := ""
+var _adapter: CoordinateAdapter
+var _world_rect := Rect2()
 
 
 func _ready() -> void:
@@ -28,11 +31,22 @@ func _ready() -> void:
 	set_process(false)
 
 
-func set_map_state(value: Dictionary, texture: Texture2D = null) -> void:
+func set_map_state(value: Dictionary, texture: Texture2D = null,
+		projection: Dictionary = {}) -> void:
 	var previous_map := str((state.get("map", {}) as Dictionary).get("id", ""))
 	var next_map := str((value.get("map", {}) as Dictionary).get("id", ""))
 	state = value.duplicate(true)
 	background = texture
+	_adapter = null
+	_world_rect = Rect2()
+	var minimap: Dictionary = projection.get("minimap", {})
+	var low: Array = minimap.get("worldMin", [])
+	var high: Array = minimap.get("worldMax", [])
+	if texture != null and low.size() == 2 and high.size() == 2:
+		_world_rect = Rect2(Vector2(float(low[0]), float(low[1])),
+			Vector2(float(high[0]) - float(low[0]), float(high[1]) - float(low[1])))
+		if _world_rect.size.x > 0.0 and _world_rect.size.y > 0.0:
+			_adapter = CoordinateAdapter.new(projection.get("coordinateTransform", {}))
 	if previous_map != next_map:
 		selected_tile = Vector2i(-1, -1)
 	_hover_text = ""
@@ -54,17 +68,63 @@ func _bounds() -> Vector2:
 func _point(tile: Vector2) -> Vector2:
 	var rect := _map_rect()
 	var bounds := _bounds()
-	return rect.position + Vector2(
-		clampf(tile.x / bounds.x, 0.0, 1.0) * rect.size.x,
-		clampf(tile.y / bounds.y, 0.0, 1.0) * rect.size.y)
+	# Server Y increases north; image Y increases south. Use the image's
+	# authored world bounds, which can include scenery outside the server grid.
+	var relative := (tile + Vector2(0.5, 0.5)) / bounds
+	relative.y = 1.0 - relative.y
+	if _adapter != null:
+		var world := _adapter.server_to_godot(tile.x + 0.5, tile.y + 0.5)
+		relative = (Vector2(world.x, world.z) - _world_rect.position) / _world_rect.size
+	return rect.position + relative * rect.size
 
 
 func _tile(point: Vector2) -> Vector2i:
 	var rect := _map_rect()
 	var bounds := _bounds()
 	var relative := (point - rect.position) / rect.size
-	return Vector2i(clampi(roundi(relative.x * bounds.x), 0, int(bounds.x) - 1),
-		clampi(roundi(relative.y * bounds.y), 0, int(bounds.y) - 1))
+	var tile := Vector2i(floori(relative.x * bounds.x),
+		floori((1.0 - relative.y) * bounds.y))
+	if _adapter != null:
+		var world := _world_rect.position + relative * _world_rect.size
+		tile = _adapter.godot_to_server(Vector3(world.x, 0.0, world.y))
+	return Vector2i(clampi(tile.x, 0, int(bounds.x) - 1),
+		clampi(tile.y, 0, int(bounds.y) - 1))
+
+
+## Keep a handful of readable names; every location still has a hover label
+## and remains available in the teleport picker. Portals and landmarks come
+## before the many individual invasion spawn points.
+func _location_labels(font: Font) -> Array[Dictionary]:
+	var labels: Array[Dictionary] = []
+	var occupied: Array[Rect2] = []
+	var rect := _map_rect()
+	for kind: String in ["portal", "landmark", "invasion_spawn"]:
+		for location: Dictionary in state.get("locations", []):
+			if str(location.get("kind", "landmark")) != kind:
+				continue
+			var point := _point(Vector2(float(location.get("x", 0)), float(location.get("y", 0))))
+			if not rect.has_point(point):
+				continue
+			var label := str(location.get("name", "Location"))
+			var extent := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, MARKER_FONT_SIZE)
+			var baseline := point + Vector2(6, -4)
+			if baseline.x + extent.x > rect.end.x:
+				baseline.x = point.x - extent.x - 6
+			var area := Rect2(baseline - Vector2(0, font.get_ascent(MARKER_FONT_SIZE)), extent)
+			if not rect.encloses(area):
+				continue
+			var overlaps := false
+			for previous: Rect2 in occupied:
+				if previous.grow(8).intersects(area):
+					overlaps = true
+					break
+			if overlaps:
+				continue
+			labels.append({"text": label, "position": baseline, "rect": area})
+			occupied.append(area)
+			if labels.size() == MAX_LOCATION_LABELS:
+				return labels
+	return labels
 
 
 func _draw() -> void:
@@ -88,7 +148,8 @@ func _draw() -> void:
 		var point := _point(Vector2(float(location.get("x", 0)), float(location.get("y", 0))))
 		var color := PORTAL_COLOR if str(location.get("kind", "")) == "portal" else LOCATION_COLOR
 		draw_rect(Rect2(point - Vector2(3, 3), Vector2(6, 6)), color, true)
-		draw_string(font, point + Vector2(6, -4), str(location.get("name", "Location")),
+	for label: Dictionary in _location_labels(font):
+		draw_string(font, label.position, label.text,
 			HORIZONTAL_ALIGNMENT_LEFT, -1.0, MARKER_FONT_SIZE, Color.WHITE)
 	for raw_player: Variant in state.get("players", []):
 		var player := raw_player as Dictionary

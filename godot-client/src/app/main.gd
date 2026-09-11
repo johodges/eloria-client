@@ -761,13 +761,13 @@ const MINIMAP_MARKER_SCALE_LABELS: Array[String] = [
 ## the settings-file keys, so a type added here is remembered without anything
 ## else being taught about it.
 const MINIMAP_MARKER_TYPES: Array[StringName] = [&"self", &"player", &"npc",
-	&"creature", &"invasion", &"harvest", &"interactive", &"bag", &"portal",
+	&"creature", &"invasion", &"harvest", &"interactive", &"portal",
 	&"exit", &"marker"]
 const MINIMAP_MARKER_TYPE_LABELS := {
 	&"self": "Your position", &"player": "Players", &"npc": "NPCs",
 	&"creature": "Creatures", &"invasion": "Invasion creatures",
 	&"harvest": "Harvest nodes", &"interactive": "Interactives",
-	&"bag": "Dropped bags", &"portal": "Portals", &"exit": "Map exits",
+	&"portal": "Portals", &"exit": "Map exits",
 	&"marker": "Map markers",
 }
 ## The floor under the ambient light the two map cameras render with, so a
@@ -5798,14 +5798,6 @@ func _collect_minimap_marks() -> Array[Dictionary]:
 		if not glyph.is_empty():
 			mark["glyph"] = glyph
 		marks.append(mark)
-	for raw_bag: Variant in ground_bag_nodes.values():
-		if not is_instance_valid(raw_bag):
-			continue
-		var bag: GroundBag3D = raw_bag as GroundBag3D
-		if bag == null or not bag.is_visible_in_tree():
-			continue
-		marks.append({"position": bag.global_position, "type": &"bag",
-			"colour": GroundBag3D.MAP_MARKER_COLOUR})
 	for raw_marker: Variant in map_marker_nodes.values():
 		if not is_instance_valid(raw_marker):
 			continue

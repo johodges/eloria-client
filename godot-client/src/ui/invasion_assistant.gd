@@ -773,7 +773,8 @@ func _show_map_state() -> void:
 		location_picker.add_item("%s  [%d, %d]" % [str(location.get("name", "Location")),
 			int(location.get("x", 0)), int(location.get("y", 0))])
 		location_picker.set_item_metadata(location_picker.item_count - 1, location)
-	map_canvas.set_map_state(display_state, _map_texture(str(map.get("id", ""))))
+	var map_id := str(map.get("id", ""))
+	map_canvas.set_map_state(display_state, _map_texture(map_id), _map_projection(map_id))
 	if map_canvas.selected_tile.x < 0:
 		var players: Array = map_state.get("players", []) as Array
 		if not players.is_empty():
@@ -1224,6 +1225,22 @@ func _group_name_exists(name: String) -> bool:
 
 func _clean_field(value: String) -> String:
 	return value.replace("|", "/").strip_edges()
+
+
+func _map_projection(map_id: String) -> Dictionary:
+	var entry: Dictionary = MapRegistry.resolve(map_registry, map_id)
+	var path := str(entry.get("manifest", ""))
+	if path.is_empty() or not FileAccess.file_exists(path):
+		return {}
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return {}
+	var manifest: Variant = JSON.parse_string(file.get_as_text())
+	if not manifest is Dictionary:
+		return {}
+	return {"minimap": manifest.get("minimap", {}),
+		"coordinateTransform": entry.get("coordinateTransform",
+			manifest.get("coordinateTransform", {}))}
 
 
 func _map_texture(map_id: String) -> Texture2D:
