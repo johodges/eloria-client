@@ -204,8 +204,8 @@ def build_terrain(seed: int = 20260828) -> TER.Terrain:
     # Deliberately gentler than the visual impression of the aerial, because
     # every metre of this is a metre a player has to climb.
     t.add_slope((0.10, -1.0), 0.108, origin=(0.0, 0.0))
-    t.base_noise(8.5, 0.0115, seed=seed, octaves=6, warp=1.30)
-    t.base_noise(2.6, 0.049, seed=seed + 17, octaves=4)
+    t.base_noise(4.0, 0.008, seed=seed, octaves=3, warp=0.65)
+    t.base_noise(0.6, 0.032, seed=seed + 17, octaves=2)
     t.height += VALLEY_FLOOR + 26.0
 
     # The ranges that close the world. North wall is the highest; the east and
@@ -260,12 +260,13 @@ def build_terrain(seed: int = 20260828) -> TER.Terrain:
                      shoulder=2.4, surface=TER.PATH, flatten=1.0)
 
     # The glacier trough: a broad U cut down the centre, which the ice fills.
-    t.carve_channel(GLACIER, GLACIER_WIDTH * SCALE, 13.0, bank=3.4,
+    t.carve_channel(GLACIER, GLACIER_WIDTH * SCALE, 8.0, bank=2.8,
                     seed=seed + 31)
 
     # The gorge the rope bridges span. Deep and narrow - this is the one place
     # the region is genuinely impassable without a crossing.
-    t.carve_channel(GORGE, 5.4 * SCALE, 22.0, bank=1.8, seed=seed + 37)
+    t.carve_channel(GORGE, 5.4 * SCALE, 10.0, bank=2.8, seed=seed + 37,
+                    floor_height=[3,5,7,14,24,30,33])
 
     for name, points in STREAMS.items():
         t.carve_channel(points, 2.6 * SCALE, 3.2, bank=2.4,
@@ -275,8 +276,7 @@ def build_terrain(seed: int = 20260828) -> TER.Terrain:
     t.smooth(iterations=2, weight=0.35)
 
     # Close the world on all four sides. No coast here, so nothing is left open.
-    t.clamp_edges(MARGIN + 14.0, 62.0,
-                  sides=("west", "east", "north", "south"))
+    t.clamp_edges(MARGIN + 14.0, 62.0, sides=("north",))
     return t
 
 
@@ -291,7 +291,7 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260828) -> None:
     # rather than a staircase of noise.
     for name, points in ROUTES.items():
         width = 3.4 if name in ("approach_road", "temple_road") else 2.6
-        t.grade_path(points, width * LOCAL, shoulder=2.6, surface=TER.PATH)
+        t.grade_path(points, width * LOCAL, shoulder=8.0, surface=TER.PATH)
 
     # The temple stands on a cut shelf. Terraces take the natural height at
     # their own centre, so the buildings sit on the mountain rather than
@@ -335,7 +335,8 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260828) -> None:
     # approach road and the upper path both cross the gorge, so grading them
     # erased the one feature the rope bridges exist to span. The cut has to win
     # over the roads, so it is repeated after them rather than before.
-    t.carve_channel(GORGE, 5.4 * SCALE, 22.0, bank=1.8, seed=seed + 37)
+    t.carve_channel(GORGE, 5.4 * SCALE, 10.0, bank=2.8, seed=seed + 37,
+                    floor_height=[3,5,7,14,24,30,33])
 
     # Keep vegetation and scatter out of the built places.
     for name, radius in (("temple", 30.0), ("temple_forecourt", 26.0),

@@ -206,6 +206,18 @@ SPECS: tuple[MaterialSpec, ...] = (
     # Hatchery furnishings; append so existing region material order is stable.
     MaterialSpec("hatchery_eggshell", "hatchery_eggshell", roughness=0.72),
     MaterialSpec("lily_pad", "lily_pad", roughness=0.64),
+    MaterialSpec("woodland_loam", "woodland_loam", roughness=1.0),
+    MaterialSpec("woodland_track", "woodland_track", roughness=.97),
+    MaterialSpec("alpine_snowfield", "alpine_snowfield", roughness=.98,
+                 base_color=(.79,.82,.87,1),normal_scale=.12),
+    MaterialSpec("alpine_blue_ice", "alpine_blue_ice", roughness=.66,
+                 base_color=(.68,.80,.89,1),normal_scale=.15),
+    MaterialSpec("alpine_gravel", "packed_earth", roughness=.98,
+                 base_color=(.91,.94,.96,1),normal_scale=.22),
+    MaterialSpec("alpine_bedrock", "alpine_bedrock", roughness=.95,
+                 base_color=(.90,.94,1,1),normal_scale=.25),
+    MaterialSpec("woodland_sward", "meadow_grass", roughness=1.0,
+                 base_color=(.72, .98, .76, 1.0)),
 )
 
 BY_NAME = {spec.name: spec for spec in SPECS}
@@ -311,6 +323,12 @@ def build_texture_sets() -> dict[str, T.TextureSet]:
                             normal_size=256 if name.startswith("water") else None)
     sets["hatchery_eggshell"] = T.hatchery_eggshell(256, seed=719)
     sets["lily_pad"] = T.lily_pad(256, seed=727)
+    sets["woodland_loam"] = T.forest_floor(512, seed=71, leaf_count=55, leaf_strength=.25)
+    sets["woodland_loam"].name = "woodland_loam"
+    sets["woodland_track"] = T.leaf_path(512, seed=79, leaf_count=18)
+    sets["woodland_track"].name = "woodland_track"
+    for name in ('alpine_snowfield','alpine_blue_ice','alpine_bedrock'):
+        sets[name]=T.alpine_ground(name)
     return sets
 
 

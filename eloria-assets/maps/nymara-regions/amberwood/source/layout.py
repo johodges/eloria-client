@@ -13,10 +13,10 @@ BRIDGES=[
  ("old-bridge","Millrace Bridge",(43,40.0,-135),(39,40.8,-159),5.0,"stone"),
  ("high-bridge","The Long Span",(96,44.4,-208),(143,44.0,-185),5.0,"stone"),
  ("ridge-bridge","The Ridge Span",(131,52.2,-330),(173,53.0,-284),4.5,"stone"),
- ("mill-footbridge","Mill Keeper's Walk",(-8,28.2,-126),(-44,27.4,-126),2.8,"wood"),
+ ("mill-footbridge","Mill Keeper's Walk",(-8,28.2,-126),(-44,27.4,-130),4.8,"wood"),
  ("moot-bridge","The Grove Footbridge",(-28,40.8,-187),(-41,38.0,-210),3.4,"wood"),
  ("harbour","Resinlanding",(-90,3.2,24),(-135,1.6,24),5.0,"wood"),
- ("kelp-landing","Kelp Landing",(-62,3.2,72),(-99,1.4,72),3.0,"wood"),
+ ("kelp-landing","Kelp Landing",(-62,3.2,72),(-99,1.4,72),4.8,"wood"),
 ]
 LEVELS={
  "coast_road":[3.2,3.2,5.4,10,16,20,26,29,30.1],
@@ -46,6 +46,10 @@ EXTRA_ROADS={
  "north_pass":([(72,-312),(67,-337),(63,-355),(72,-373),(72,-384)],[51.24,51,51,55,55],5),
  "boundary_approach":([(288,-288),(283,-279),(280,-272)],[58.84,58,57],3),
  "grove_school":([(-43,-323),(-48,-316),(-48,-302),(-48,-294)],[26,30,34,36],3),
+ "coppice_work_lane":([(173,-284),(183,-312),(177,-339),(176,-362)],[53,55,58,61.6],5),
+ "whitehorn_continuation":([(72,-373),(72,-384),(72,-402),(72,-430)],[55,55,57,63],12),
+ "moor_continuation":([(150,140),(156,162),(156,180),(158,200)],[12,11,10,9],8),
+ "gorge_continuation":([(360,-54),(393,-66),(414,-66),(438,-68)],[38.25,41.8,42,43],8),
 }
 LODGE_POSTS=[
  ((7,-205),(24,-193)),((58,-178),(35,-177)),((-6,-208),(20,-202)),
@@ -108,18 +112,24 @@ def prepare(t,seed):
  for name,points in REG.STREAMS.items():
   if name=="grove_burn":
    points=[(-24,-372),(-43,-351),(-50,-330),(-55,-297),(-60,-270),(-62,-242),(-58,-218),(-70,-194),(-82,-180)]
-  line,bed=RC.incise_channel(t,points,width=3.8,shoulder=4,floor=-.8)
+  line,bed=RC.incise_channel(t,points,width=3.8,shoulder=14,floor=-.8)
   t.amberwood_water.append((name,np.c_[line[:,0],bed+.32,line[:,1]]))
  for name,ys in LEVELS.items():
   RC.grade_road(t,REG.ROUTES[name],ys,width=5.5 if name in ("harbour_road","settlement_road","timber_road","orchard_road") else 4.2,
                 shoulder=7,surface=TER.PATH,clearance=3)
- for pts,ys,w in EXTRA_ROADS.values():
-  RC.grade_road(t,pts,ys,width=w,shoulder=6,surface=TER.PATH,clearance=3)
+ for name,(pts,ys,w) in EXTRA_ROADS.items():
+  # Border roads occupy broad saddles and drainage valleys. Their shoulders
+  # must shape the whole hill, rather than cut a slot through the old rim.
+  shoulder=60 if name=="whitehorn_continuation" else 24 if name.endswith("_continuation") else 6
+  RC.grade_road(t,pts,ys,width=w,shoulder=shoulder,surface=TER.PATH,clearance=3)
  for x,z in [(-79,-168),(-50,-181),(-43,-155)]:
   y=max(8,float(t.height_at(x,z)))
   RC.grade_road(t,[(x-3,z),(x+3,z)],[y,y],width=13,shoulder=6,surface=TER.PATH,clearance=3)
  # Court should be one clear ground surface, with two distinct market rows.
  RC.grade_road(t,[(6,-174),(44,-174)],[40.8,40.8],width=26,shoulder=8,surface=TER.PAVING,clearance=4)
+ # The guild hall shares the village bench. Re-establish it after shaping
+ # the river valley so bank blending cannot scoop out its entrance.
+ RC.grade_road(t,[(64,-160),(66,-150)],[41.4,41.4],width=20,shoulder=8,surface=TER.PAVING,clearance=3)
  for i,(site,toward) in enumerate(LODGE_POSTS):
   y=float(t.height_at(*site))
   RC.grade_road(t,[site,toward],[y,float(t.height_at(*toward))],width=7,shoulder=4,surface=TER.PATH,clearance=2)

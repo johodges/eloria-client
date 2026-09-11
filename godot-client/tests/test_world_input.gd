@@ -1551,7 +1551,7 @@ func _run() -> void:
 		0: {"image_id": 68, "quantity": 1, "slot": 0, "flags": 6},
 		1: {"image_id": 16, "quantity": 1, "slot": 1, "flags": 6}})
 	main.call("_sync_spells")
-	_expect(first_spell_slot.modulate.a < 1.0
+	_expect(first_spell_slot.self_modulate.a < 1.0
 			and first_spell_slot.tooltip_text.contains("Woven Charm"),
 		"a missing reagent dims the editable slot and is named: "
 			+ first_spell_slot.tooltip_text)
@@ -1563,7 +1563,7 @@ func _run() -> void:
 	var no_sigils: Array[int] = []
 	app_state_inventory.set("owned_sigils", no_sigils)
 	main.call("_sync_spells")
-	_expect(first_spell_slot.modulate.a < 1.0 and first_spell_slot.tooltip_text.contains("Missing sigils"),
+	_expect(first_spell_slot.self_modulate.a < 1.0 and first_spell_slot.tooltip_text.contains("Missing sigils"),
 		"unowned spell is visibly dimmed with the exact availability reason")
 	for spell_index: int in range(1, 7):
 		_expect(InputMap.has_action("quick_spell_%d" % spell_index),

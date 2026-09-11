@@ -62,8 +62,8 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          174.0,
-          174.0
+          120,
+          120
         ],
         "origin": [
           0.0,
@@ -74,7 +74,8 @@
         "invertServerY": true
       },
       "status": "production-geometry-materials-population",
-      "requiresServerMap": "96x96 server tiles (576 cells)"
+      "requiresServerMap": "66x66 server tiles (396 cells)",
+      "landscapeTransitions": true
     },
     "amethyst_barrens": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/amethyst_barrens/world.json",
@@ -126,12 +127,13 @@
       }
     },
     "amberwood": {
+      "landscapeTransitions": true,
       "manifest": "res://../eloria-assets/maps/nymara-regions/amberwood/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          174.0,
-          174.0
+          116.0,
+          116.0
         ],
         "origin": [
           0.0,
@@ -142,7 +144,7 @@
         "invertServerY": true
       },
       "status": "production-geometry-materials-population",
-      "requiresServerMap": "96x96 server tiles (576 cells)"
+      "requiresServerMap": "64x64 server tiles (384 cells)"
     },
     "grey_moors": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/grey_moors/world.json",

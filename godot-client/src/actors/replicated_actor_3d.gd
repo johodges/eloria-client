@@ -1237,6 +1237,16 @@ static func footprint_outline(width_m: float, depth_m: float) -> ArrayMesh:
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 	return mesh
 
+func rebase_world(frame: Transform3D) -> void:
+	global_position = frame * global_position
+	server_target = frame * server_target
+	_segment_start = frame * _segment_start
+	var yaw := frame.basis.get_euler().y
+	rotation.y += yaw
+	_target_yaw += yaw
+	_travel_yaw += yaw
+	_selection_ring_draped_at = Vector3(NAN, NAN, NAN)
+
 func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport := false) -> void:
 	# The capability handshake can correct an actor already spawned from the
 	# legacy clothing bytes. Update its dyes once, including under worn armour.

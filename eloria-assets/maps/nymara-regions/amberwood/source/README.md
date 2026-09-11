@@ -9,6 +9,10 @@ passes, its camera set, and its build entry points.
 | `build_amberwood.py` | Builds the whole runtime package: `world.glb`, `world.json`, `collision.bin`, `minimap.webp`, the validator report and the performance summary. Deterministic for a given seed. |
 | `build_interiors.py` | Builds Amberwood's four interior packages. |
 | `layout.py` | Surveyed terraces, crossings, millrace and authored content plots. |
+| `landscape_plan.py` | Clearings, woodland habitat, worn ground, household yards and entrance grounding. |
+| `compact_plan.py` | The 384-metre survey with protected village dimensions and restored route clearance. |
+| `border_plan.py` | Open border approaches and views sampled from Whitehorn, Mirrorhold and the Grey Moors. |
+| `rebuild_landscape.py` | Rebuilds the pilot and synchronises its collision, server content, entrances, markers and package digests. |
 | `views.py` | `VIEWS` (the comparison camera set) and `PANELS` (detail-board panel to capture mapping). Region data, read by the toolkit's `capture_views.py` and `make_comparison.py`. |
 | `preview_interior.py` | Interior preview harness. |
 

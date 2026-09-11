@@ -1,0 +1,336 @@
+class_name ExteriorRegionStream
+extends Node3D
+
+## One private loader worker, the current region and at most two neighbours.
+## Only surveyed reciprocal road collars are displayed simultaneously. The
+## server still selects the map and is the sole owner of actors/interactions.
+const CONNECTIONS := "res://data/maps/exterior_connections.json"
+const PREVIEW_SURFACE_LAYER := 16
+var registry: Dictionary = {}
+var links: Array = []
+var residents: Dictionary = {}
+var active_map := ""
+var active_root: Node3D
+var active_manifest: WorldManifest
+var preload_distance := 170.0
+var retain_distance := 220.0
+var maximum_neighbours := 2
+var _thread: Thread
+var _pending_map := ""
+var _generation := 0
+var _pending_generation := 0
+var _retry_after: Dictionary = {}
+var _last_position := Vector3.ZERO
+var _next_update := 0
+var events: Array[Dictionary] = []
+var last_handoff: Dictionary = {}
+var pending_walk: Dictionary = {}
+
+func configure(maps: Dictionary) -> void:
+	registry = maps
+	var raw: Variant = JSON.parse_string(FileAccess.get_file_as_string(CONNECTIONS))
+	if raw is Dictionary:
+		links = raw.get("connections", [])
+		preload_distance = float(raw.get("preloadDistance", 170))
+		retain_distance = float(raw.get("retainDistance", 220))
+		maximum_neighbours = int(raw.get("maximumNeighbours", 2))
+
+func activate(map_id: String, imported: Node3D, manifest: WorldManifest) -> void:
+	active_map = MapRegistry.normalize_server_map_id(map_id)
+	active_root = imported
+	active_manifest = manifest
+	_next_update = 0
+	_refresh_views()
+
+func update_position(position: Vector3) -> void:
+	_last_position = position
+	if Time.get_ticks_msec() < _next_update or active_map.is_empty():
+		return
+	_next_update = Time.get_ticks_msec() + 250
+	var candidates := _candidates(position)
+	var wanted: Dictionary = {}
+	for candidate: Dictionary in candidates:
+		if float(candidate.distance) <= retain_distance and wanted.size() < maximum_neighbours:
+			wanted[str(candidate.map)] = candidate
+	for map_id: String in residents.keys():
+		if not wanted.has(map_id):
+			_evict(map_id)
+	_refresh_views()
+	if _thread != null:
+		return
+	for candidate: Dictionary in candidates:
+		var map_id := str(candidate.map)
+		if (float(candidate.distance) > preload_distance or residents.has(map_id)
+				or not wanted.has(map_id) or Time.get_ticks_msec() < int(_retry_after.get(map_id, 0))):
+			continue
+		var entry := MapRegistry.resolve(registry, map_id)
+		if entry.is_empty():
+			continue
+		_pending_map = map_id
+		_pending_generation = _generation
+		_thread = Thread.new()
+		var path := ProjectSettings.globalize_path(str(entry.get("manifest", "")))
+		var visuals := GlbSceneCache.missing(PackedStringArray(candidate.there.get("visualScenes", [])))
+		var error := _thread.start(WorldLoader.prepare_detached.bind(path, MapSceneCache.is_enabled(), visuals))
+		if error != OK:
+			_thread = null
+			_retry_after[map_id] = Time.get_ticks_msec() + 30000
+			_record("failed", map_id, {"error": error_string(error)})
+		else:
+			_record("requested", map_id, {"distance": candidate.distance})
+		break
+
+func _process(_delta: float) -> void:
+	if _thread == null or _thread.is_alive():
+		return
+	var builder := _thread.wait_to_finish() as WorldLoader
+	_thread = null
+	var map_id := _pending_map
+	_pending_map = ""
+	if builder == null:
+		_retry_after[map_id] = Time.get_ticks_msec() + 30000
+		return
+	var resident := builder.release_world()
+	builder.free()
+	if resident.root == null:
+		_retry_after[map_id] = Time.get_ticks_msec() + 30000
+		_record("failed", map_id)
+		return
+	var imported := resident.root as Node3D
+	# Login, teleport, disconnect or a second map change can supersede a load.
+	if _pending_generation != _generation or map_id == active_map or not _nearby(map_id):
+		imported.free()
+		_record("discarded", map_id)
+		return
+	imported.visible = false
+	_set_collision(imported, false)
+	add_child(imported)
+	residents[map_id] = resident
+	MapSceneCache.note_local_digest((resident.manifest as WorldManifest).asset_id(), str(resident.digest))
+	_record("ready", map_id, {"load_ms": float(resident.phases.get(&"total", 0)) / 1000.0})
+	_refresh_views()
+
+func _nearby(map_id: String) -> bool:
+	var count := 0
+	for item: Dictionary in _candidates(_last_position):
+		if count >= maximum_neighbours:
+			break
+		if str(item.map) == map_id and float(item.distance) <= retain_distance:
+			return true
+		count += 1
+	return false
+
+func _candidates(position: Vector3) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for link: Dictionary in links:
+		var ends: Array = link.ends
+		for index: int in 2:
+			if str(ends[index].map) != active_map:
+				continue
+			var here: Dictionary = ends[index]
+			var there: Dictionary = ends[1 - index]
+			var at := _vector(here.position)
+			result.append({"map": str(there.map), "distance": Vector2(position.x - at.x, position.z - at.z).length(),
+				"here": here, "there": there, "seamless": bool(link.get("seamless", false))})
+	result.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a.distance) < float(b.distance))
+	return result
+
+## Transfer already-instantiated nodes. A surveyed join rebases the old world
+## and camera into the destination's coordinate frame; nothing moves on screen.
+func take_ready(destination: String, loader: WorldLoader, position: Vector3) -> Dictionary:
+	last_handoff = {}
+	if not residents.has(destination):
+		return {}
+	var join: Dictionary = {}
+	for candidate: Dictionary in _candidates(position):
+		if str(candidate.map) == destination:
+			join = candidate
+			break
+	# Render interpolation can trail an authoritative crossing during a slow
+	# frame. The surveyed approach, not a tiny radius around the trigger, is
+	# the continuous-travel zone.
+	var collar := float(join.get("here", {}).get("frame", {}).get("collarDepth", 42))
+	var continuous := bool(join.get("seamless", false)) and float(join.get("distance", INF)) < collar
+	var resident: Dictionary = residents[destination]
+	residents.erase(destination)
+	var rebase := Transform3D.IDENTITY
+	if continuous:
+		rebase = frame_transform(join.here.frame, join.there.frame).affine_inverse()
+		var previous := loader.release_world(false)
+		var old := previous.root as Node3D
+		_set_collision(old, false)
+		old.transform = rebase
+		residents[active_map] = previous
+	else:
+		for stale: String in residents.keys():
+			_evict(stale)
+	var imported := resident.root as Node3D
+	_set_collision(imported, true)
+	imported.visible = true
+	_generation += 1
+	last_handoff = {"from": active_map, "to": destination, "continuous": continuous,
+		"rebase": rebase, "root_id": imported.get_instance_id(), "source_distance": join.get("distance", INF)}
+	_record("handoff", destination, {"continuous": continuous})
+	return {"resident": resident, "continuous": continuous, "rebase": rebase}
+
+func _refresh_views() -> void:
+	if not is_instance_valid(active_root):
+		return
+	var has_join := false
+	for candidate: Dictionary in _candidates(_last_position):
+		var map_id := str(candidate.map)
+		if not residents.has(map_id):
+			continue
+		var imported := residents[map_id].root as Node3D
+		if bool(candidate.seamless):
+			imported.transform = frame_transform(candidate.here.frame, candidate.there.frame)
+			imported.visible = true
+			_set_collision(imported, false, true)
+			_set_overflow(imported, false)
+			has_join = true
+		else:
+			imported.visible = false
+	_set_overflow(active_root, not has_join)
+
+static func frame_transform(here: Dictionary, there: Dictionary) -> Transform3D:
+	var outward := Vector3(float(here.outward[0]), 0, float(here.outward[1]))
+	var incoming := -Vector3(float(there.outward[0]), 0, float(there.outward[1]))
+	var angle := atan2(outward.x, outward.z) - atan2(incoming.x, incoming.z)
+	var basis := Basis(Vector3.UP, angle)
+	return Transform3D(basis, _vector(here.anchor) - basis * _vector(there.anchor))
+
+static func _vector(raw: Array) -> Vector3:
+	return Vector3(float(raw[0]), float(raw[1]), float(raw[2]))
+
+static func _set_collision(imported: Node3D, enabled: bool, preview_enabled := false) -> void:
+	var mode := 1 if enabled else (2 if preview_enabled else 0)
+	if imported.has_meta("stream_physics") and imported.get_meta("stream_physics") == mode:
+		return
+	for node: Node in imported.find_children("*", "CollisionObject3D", true, false):
+		var body := node as CollisionObject3D
+		if not body.has_meta("stream_collision_layer"):
+			body.set_meta("stream_collision_layer", body.collision_layer)
+		var original := int(body.get_meta("stream_collision_layer"))
+		var preview := PREVIEW_SURFACE_LAYER if preview_enabled and (original & WorldLoader.NAVIGATION_SURFACE_LAYER) != 0 else 0
+		if str(body.get_parent().name).ends_with("_StreamOverflow"):
+			preview = 0
+		body.collision_layer = original if enabled else preview
+	imported.set_meta("stream_physics", mode)
+
+static func _set_overflow(imported: Node3D, visible_overflow: bool) -> void:
+	# These large pieces never participate in static batching (walk collision).
+	if imported.has_meta("stream_overflow_visible") and imported.get_meta("stream_overflow_visible") == visible_overflow:
+		return
+	for node: Node in imported.find_children("*_StreamOverflow", "Node3D", true, false):
+		(node as Node3D).visible = visible_overflow
+	imported.set_meta("stream_overflow_visible", visible_overflow)
+
+func _evict(map_id: String) -> void:
+	var imported := residents[map_id].root as Node3D
+	imported.queue_free()
+	residents.erase(map_id)
+	_record("evicted", map_id)
+
+func lighting_manifest(position: Vector3) -> WorldManifest:
+	if active_manifest == null:
+		return null
+	for candidate: Dictionary in _candidates(position):
+		if not bool(candidate.seamless) or not residents.has(str(candidate.map)):
+			continue
+		var here: Dictionary = candidate.here.frame
+		var normal := Vector3(float(here.outward[0]), 0, float(here.outward[1]))
+		var depth := (position - _vector(here.anchor)).dot(normal)
+		var width := float(here.get("blendDistance", 65))
+		if depth <= -width:
+			continue
+		var weight := smoothstep(-width, width, depth)
+		var other: WorldManifest = residents[str(candidate.map)].manifest
+		var far: Dictionary = other.data.get("environment", {}).duplicate(true)
+		var orientation := frame_transform(here, candidate.there.frame).basis
+		for block: Dictionary in [far, far.get("goldenHour", {})]:
+			var sun: Dictionary = block.get("sun", {})
+			if sun.has("direction"):
+				var direction := orientation * _vector(sun.direction)
+				sun.direction = [direction.x, direction.y, direction.z]
+		var blended := WorldManifest.new()
+		blended.source_path = active_manifest.source_path
+		blended.data = active_manifest.data.duplicate()
+		blended.data.environment = _blend(active_manifest.data.get("environment", {}), far, weight)
+		return blended
+	return active_manifest
+
+static func _blend(a: Variant, b: Variant, weight: float) -> Variant:
+	if a is Dictionary and b is Dictionary:
+		var result: Dictionary = a.duplicate(true)
+		for key: Variant in b:
+			result[key] = _blend(a[key], b[key], weight) if a.has(key) else b[key]
+		return result
+	if a is Array and b is Array and a.size() == b.size():
+		var values: Array = []
+		for index: int in a.size():
+			values.append(_blend(a[index], b[index], weight))
+		return values
+	if (a is float or a is int) and (b is float or b is int):
+		return lerpf(float(a), float(b), weight)
+	return a
+
+func clear() -> void:
+	_generation += 1
+	active_map = ""
+	active_root = null
+	active_manifest = null
+	for map_id: String in residents.keys():
+		_evict(map_id)
+	_retry_after.clear()
+	pending_walk.clear()
+
+func pick_neighbor(space: PhysicsDirectSpaceState3D, origin: Vector3, direction: Vector3, run: bool) -> Variant:
+	pending_walk.clear()
+	var query := PhysicsRayQueryParameters3D.create(origin, origin + direction * 2000, PREVIEW_SURFACE_LAYER)
+	var hit := space.intersect_ray(query)
+	if hit.is_empty():
+		return null
+	var point: Vector3 = hit.position
+	var foreground := space.intersect_ray(PhysicsRayQueryParameters3D.create(
+		origin, origin + direction * 2000, WorldLoader.NAVIGATION_SURFACE_LAYER))
+	if (not foreground.is_empty()
+			and not str(foreground.collider.get_parent().name).ends_with("_StreamOverflow")
+			and origin.distance_squared_to(foreground.position) + .01 < origin.distance_squared_to(point)):
+		return null
+	for candidate: Dictionary in _candidates(_last_position):
+		var map_id := str(candidate.map)
+		if not bool(candidate.seamless) or not residents.has(map_id):
+			continue
+		var imported := residents[map_id].root as Node3D
+		if not imported.is_ancestor_of(hit.collider):
+			continue
+		var frame: Dictionary = candidate.here.frame
+		var outward := Vector3(float(frame.outward[0]), 0, float(frame.outward[1]))
+		var anchor := _vector(frame.anchor)
+		if (point - anchor).dot(outward) <= 0:
+			continue
+		var adapter := (residents[map_id].manifest as WorldManifest).coordinate_adapter()
+		var tile := adapter.godot_to_server(imported.transform.affine_inverse() * point)
+		pending_walk = {"map": map_id, "tile": tile, "run": run}
+		# Route through the centre of the surveyed road. The server decides
+		# whether the approach and the continuation are walkable.
+		return _vector(candidate.here.position)
+	return null
+
+func take_continuation(map_id: String) -> Dictionary:
+	if pending_walk.get("map", "") != map_id:
+		return {}
+	var result := pending_walk.duplicate()
+	pending_walk.clear()
+	return result
+
+func is_idle() -> bool:
+	return _thread == null
+
+func _record(kind: String, map_id: String, detail := {}) -> void:
+	var entry := {"event": kind, "map": map_id, "at_ms": Time.get_ticks_msec()}
+	entry.merge(detail)
+	events.append(entry)
+	if events.size() > 100:
+		events.pop_front()
+	print("exterior_stream ", JSON.stringify(entry))

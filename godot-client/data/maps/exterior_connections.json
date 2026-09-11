@@ -1,0 +1,1328 @@
+{
+  "schema": 1,
+  "preloadDistance": 170,
+  "retainDistance": 220,
+  "maximumNeighbours": 2,
+  "connections": [
+    {
+      "id": "whitehorn_range--mirrorhold",
+      "ends": [
+        {
+          "map": "whitehorn_range",
+          "portal": "south-gate",
+          "position": [
+            -2.4964,
+            12.1,
+            109.3279
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              120.0,
+              120.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 19.66,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/luminous_female.glb",
+            "res://assets/actors/native/races/stoneborn_female.glb",
+            "res://assets/actors/native/races/stoneborn_male.glb",
+            "res://assets/actors/native/races/votary_female.glb",
+            "res://assets/actors/native/races/votary_male.glb",
+            "res://assets/world/harvestables/barrow_bramble.glb",
+            "res://assets/world/harvestables/emberseam_coal.glb",
+            "res://assets/world/harvestables/glacier_salt.glb",
+            "res://assets/world/harvestables/lantern_cap.glb",
+            "res://assets/world/harvestables/moor_peat.glb",
+            "res://assets/world/harvestables/pale_quartz.glb",
+            "res://assets/world/harvestables/resonant_crystal.glb",
+            "res://assets/world/harvestables/stormglass_shard.glb",
+            "res://assets/world/harvestables/sunstone_flint.glb",
+            "res://assets/world/harvestables/verdigris_bloom.glb",
+            "res://assets/world/harvestables/whitehorn_silverleaf.glb"
+          ]
+        },
+        {
+          "map": "mirrorhold",
+          "portal": "north-pass",
+          "position": [
+            -92.0,
+            85.1,
+            -390.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              174.0,
+              174.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 42.52,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/glasswarden_female.glb",
+            "res://assets/actors/native/races/glasswarden_male.glb",
+            "res://assets/actors/native/races/greyhaven_female.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/luminous_female.glb",
+            "res://assets/actors/native/races/luminous_male.glb",
+            "res://assets/actors/native/races/stoneborn_female.glb",
+            "res://assets/actors/native/races/stoneborn_male.glb"
+          ]
+        }
+      ],
+      "seamless": false
+    },
+    {
+      "id": "whitehorn_range--amberwood",
+      "ends": [
+        {
+          "map": "whitehorn_range",
+          "portal": "west-pass",
+          "position": [
+            -108.1971,
+            35.73,
+            -53.6066
+          ],
+          "frame": {
+            "id": "amberwood-whitehorn",
+            "portal": "west-pass",
+            "destination": "amberwood",
+            "anchor": [
+              -106.5,
+              35.8,
+              -54.5
+            ],
+            "outward": [
+              -1,
+              0
+            ],
+            "uvSign": -1,
+            "preloadDistance": 170,
+            "retainDistance": 220,
+            "blendDistance": 65,
+            "overflowSuffix": "_StreamOverflow",
+            "collarDepth": 42,
+            "halfWidthTiles": 3
+          },
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              120.0,
+              120.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 19.66,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/luminous_female.glb",
+            "res://assets/actors/native/races/stoneborn_female.glb",
+            "res://assets/actors/native/races/stoneborn_male.glb",
+            "res://assets/actors/native/races/votary_female.glb",
+            "res://assets/actors/native/races/votary_male.glb",
+            "res://assets/world/harvestables/barrow_bramble.glb",
+            "res://assets/world/harvestables/emberseam_coal.glb",
+            "res://assets/world/harvestables/glacier_salt.glb",
+            "res://assets/world/harvestables/lantern_cap.glb",
+            "res://assets/world/harvestables/moor_peat.glb",
+            "res://assets/world/harvestables/pale_quartz.glb",
+            "res://assets/world/harvestables/resonant_crystal.glb",
+            "res://assets/world/harvestables/stormglass_shard.glb",
+            "res://assets/world/harvestables/sunstone_flint.glb",
+            "res://assets/world/harvestables/verdigris_bloom.glb",
+            "res://assets/world/harvestables/whitehorn_silverleaf.glb"
+          ]
+        },
+        {
+          "map": "amberwood",
+          "portal": "north-pass",
+          "position": [
+            67.2229,
+            55.16,
+            -257.2301
+          ],
+          "frame": {
+            "id": "amberwood-whitehorn",
+            "portal": "north-pass",
+            "destination": "whitehorn_range",
+            "anchor": [
+              67.5,
+              55.2,
+              -256.5
+            ],
+            "outward": [
+              0,
+              -1
+            ],
+            "uvSign": 1,
+            "preloadDistance": 170,
+            "retainDistance": 220,
+            "blendDistance": 65,
+            "overflowSuffix": "_StreamOverflow",
+            "collarDepth": 42,
+            "halfWidthTiles": 3
+          },
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              116.0,
+              116.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 40.8,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/greyhaven_female.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/luminous_male.glb",
+            "res://assets/actors/native/races/mycelari_female.glb",
+            "res://assets/actors/native/races/mycelari_male.glb",
+            "res://assets/actors/native/races/stoneborn_female.glb",
+            "res://assets/actors/native/races/stoneborn_male.glb"
+          ]
+        }
+      ],
+      "seamless": true
+    },
+    {
+      "id": "whitehorn_range--amethyst_barrens",
+      "ends": [
+        {
+          "map": "whitehorn_range",
+          "portal": "east-pass",
+          "position": [
+            260.8248,
+            36.1,
+            -29.6066
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              120.0,
+              120.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 19.66,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/luminous_female.glb",
+            "res://assets/actors/native/races/stoneborn_female.glb",
+            "res://assets/actors/native/races/stoneborn_male.glb",
+            "res://assets/actors/native/races/votary_female.glb",
+            "res://assets/actors/native/races/votary_male.glb",
+            "res://assets/world/harvestables/barrow_bramble.glb",
+            "res://assets/world/harvestables/emberseam_coal.glb",
+            "res://assets/world/harvestables/glacier_salt.glb",
+            "res://assets/world/harvestables/lantern_cap.glb",
+            "res://assets/world/harvestables/moor_peat.glb",
+            "res://assets/world/harvestables/pale_quartz.glb",
+            "res://assets/world/harvestables/resonant_crystal.glb",
+            "res://assets/world/harvestables/stormglass_shard.glb",
+            "res://assets/world/harvestables/sunstone_flint.glb",
+            "res://assets/world/harvestables/verdigris_bloom.glb",
+            "res://assets/world/harvestables/whitehorn_silverleaf.glb"
+          ]
+        },
+        {
+          "map": "amethyst_barrens",
+          "portal": "north-pass",
+          "position": [
+            30.0,
+            4.17,
+            -330.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              174.0,
+              174.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 5.14,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/glasswarden_female.glb",
+            "res://assets/actors/native/races/glasswarden_male.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/orun_female.glb",
+            "res://assets/actors/native/races/stoneborn_female.glb",
+            "res://assets/actors/native/races/stoneborn_male.glb"
+          ]
+        }
+      ],
+      "seamless": false
+    },
+    {
+      "id": "mirrorhold--four_gates",
+      "ends": [
+        {
+          "map": "mirrorhold",
+          "portal": "south-road",
+          "position": [
+            120.0,
+            5.74,
+            168.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              174.0,
+              174.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 42.52,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/glasswarden_female.glb",
+            "res://assets/actors/native/races/glasswarden_male.glb",
+            "res://assets/actors/native/races/greyhaven_female.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/luminous_female.glb",
+            "res://assets/actors/native/races/luminous_male.glb",
+            "res://assets/actors/native/races/stoneborn_female.glb",
+            "res://assets/actors/native/races/stoneborn_male.glb"
+          ]
+        },
+        {
+          "map": "four_gates",
+          "portal": "north",
+          "position": [
+            0.0,
+            29.0,
+            -356.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              360.0,
+              360.0
+            ],
+            "origin": [
+              0.0,
+              31.15,
+              0.0
+            ],
+            "walkingHeight": 31.15,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/glasswarden_male.glb",
+            "res://assets/actors/native/races/greyhaven_female.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/luminous_female.glb",
+            "res://assets/actors/native/races/luminous_male.glb",
+            "res://assets/actors/native/races/mycelari_female.glb",
+            "res://assets/actors/native/races/orun_female.glb",
+            "res://assets/actors/native/races/orun_male.glb",
+            "res://assets/actors/native/races/ssarathi_female.glb",
+            "res://assets/actors/native/races/stoneborn_male.glb",
+            "res://assets/actors/native/races/votary_female.glb"
+          ]
+        }
+      ],
+      "seamless": false
+    },
+    {
+      "id": "mirrorhold--amethyst_barrens",
+      "ends": [
+        {
+          "map": "mirrorhold",
+          "portal": "east-road",
+          "position": [
+            72.0,
+            92.89,
+            -390.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              174.0,
+              174.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 42.52,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/glasswarden_female.glb",
+            "res://assets/actors/native/races/glasswarden_male.glb",
+            "res://assets/actors/native/races/greyhaven_female.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/luminous_female.glb",
+            "res://assets/actors/native/races/luminous_male.glb",
+            "res://assets/actors/native/races/stoneborn_female.glb",
+            "res://assets/actors/native/races/stoneborn_male.glb"
+          ]
+        },
+        {
+          "map": "amethyst_barrens",
+          "portal": "west-road",
+          "position": [
+            -141.0,
+            3.88,
+            -243.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              174.0,
+              174.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 5.14,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/glasswarden_female.glb",
+            "res://assets/actors/native/races/glasswarden_male.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/orun_female.glb",
+            "res://assets/actors/native/races/stoneborn_female.glb",
+            "res://assets/actors/native/races/stoneborn_male.glb"
+          ]
+        }
+      ],
+      "seamless": false
+    },
+    {
+      "id": "mirrorhold--amberwood",
+      "ends": [
+        {
+          "map": "mirrorhold",
+          "portal": "west-gorge",
+          "position": [
+            -156.0,
+            24.36,
+            12.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              174.0,
+              174.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 42.52,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/glasswarden_female.glb",
+            "res://assets/actors/native/races/glasswarden_male.glb",
+            "res://assets/actors/native/races/greyhaven_female.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/luminous_female.glb",
+            "res://assets/actors/native/races/luminous_male.glb",
+            "res://assets/actors/native/races/stoneborn_female.glb",
+            "res://assets/actors/native/races/stoneborn_male.glb"
+          ]
+        },
+        {
+          "map": "amberwood",
+          "portal": "east-road",
+          "position": [
+            262.6688,
+            41.86,
+            -27.5983
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              116.0,
+              116.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 40.8,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/greyhaven_female.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/luminous_male.glb",
+            "res://assets/actors/native/races/mycelari_female.glb",
+            "res://assets/actors/native/races/mycelari_male.glb",
+            "res://assets/actors/native/races/stoneborn_female.glb",
+            "res://assets/actors/native/races/stoneborn_male.glb"
+          ]
+        }
+      ],
+      "seamless": false
+    },
+    {
+      "id": "amethyst_barrens--sunmane_steppe",
+      "ends": [
+        {
+          "map": "amethyst_barrens",
+          "portal": "south-road",
+          "position": [
+            30.0,
+            19.01,
+            162.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              174.0,
+              174.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 5.14,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/glasswarden_female.glb",
+            "res://assets/actors/native/races/glasswarden_male.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/orun_female.glb",
+            "res://assets/actors/native/races/stoneborn_female.glb",
+            "res://assets/actors/native/races/stoneborn_male.glb"
+          ]
+        },
+        {
+          "map": "sunmane_steppe",
+          "portal": "north-track",
+          "position": [
+            8.0,
+            16.17,
+            -126.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              58.0,
+              58.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 9.6,
+            "invertServerY": true,
+            "addressableWorldBounds": {
+              "min": [
+                -58.0,
+                -133.0
+              ],
+              "max": [
+                133.0,
+                58.0
+              ]
+            }
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/glasswarden_male.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/luminous_female.glb",
+            "res://assets/actors/native/races/orun_female.glb",
+            "res://assets/actors/native/races/orun_male.glb",
+            "res://assets/actors/native/races/stoneborn_female.glb"
+          ]
+        }
+      ],
+      "seamless": false
+    },
+    {
+      "id": "sunmane_steppe--four_gates",
+      "ends": [
+        {
+          "map": "sunmane_steppe",
+          "portal": "west-landing",
+          "position": [
+            -52.0,
+            9.67,
+            0.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              58.0,
+              58.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 9.6,
+            "invertServerY": true,
+            "addressableWorldBounds": {
+              "min": [
+                -58.0,
+                -133.0
+              ],
+              "max": [
+                133.0,
+                58.0
+              ]
+            }
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/glasswarden_male.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/luminous_female.glb",
+            "res://assets/actors/native/races/orun_female.glb",
+            "res://assets/actors/native/races/orun_male.glb",
+            "res://assets/actors/native/races/stoneborn_female.glb"
+          ]
+        },
+        {
+          "map": "four_gates",
+          "portal": "east",
+          "position": [
+            356.0,
+            29.0,
+            0.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              360.0,
+              360.0
+            ],
+            "origin": [
+              0.0,
+              31.15,
+              0.0
+            ],
+            "walkingHeight": 31.15,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/glasswarden_male.glb",
+            "res://assets/actors/native/races/greyhaven_female.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/luminous_female.glb",
+            "res://assets/actors/native/races/luminous_male.glb",
+            "res://assets/actors/native/races/mycelari_female.glb",
+            "res://assets/actors/native/races/orun_female.glb",
+            "res://assets/actors/native/races/orun_male.glb",
+            "res://assets/actors/native/races/ssarathi_female.glb",
+            "res://assets/actors/native/races/stoneborn_male.glb",
+            "res://assets/actors/native/races/votary_female.glb"
+          ]
+        }
+      ],
+      "seamless": false
+    },
+    {
+      "id": "sunmane_steppe--verdant_stair",
+      "ends": [
+        {
+          "map": "sunmane_steppe",
+          "portal": "south-track",
+          "position": [
+            4.0,
+            9.89,
+            40.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              58.0,
+              58.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 9.6,
+            "invertServerY": true,
+            "addressableWorldBounds": {
+              "min": [
+                -58.0,
+                -133.0
+              ],
+              "max": [
+                133.0,
+                58.0
+              ]
+            }
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/glasswarden_male.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/luminous_female.glb",
+            "res://assets/actors/native/races/orun_female.glb",
+            "res://assets/actors/native/races/orun_male.glb",
+            "res://assets/actors/native/races/stoneborn_female.glb"
+          ]
+        },
+        {
+          "map": "verdant_stair",
+          "portal": "east-pass-gate",
+          "position": [
+            390.0,
+            124.1,
+            -150.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              174.0,
+              174.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 24.0,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/greyhaven_female.glb",
+            "res://assets/actors/native/races/mycelari_female.glb",
+            "res://assets/actors/native/races/mycelari_male.glb",
+            "res://assets/actors/native/races/ssarathi_female.glb",
+            "res://assets/actors/native/races/ssarathi_male.glb",
+            "res://assets/actors/native/races/stoneborn_male.glb",
+            "res://assets/world/harvestables/cenote_watercress.glb",
+            "res://assets/world/harvestables/delta_lotus.glb",
+            "res://assets/world/harvestables/ghost_orchid.glb",
+            "res://assets/world/harvestables/hearthroot.glb",
+            "res://assets/world/harvestables/lantern_cap.glb",
+            "res://assets/world/harvestables/pale_quartz.glb",
+            "res://assets/world/harvestables/ssarathi_scale_moss.glb",
+            "res://assets/world/harvestables/verdant_venom_bulb.glb",
+            "res://assets/world/harvestables/wayside_sage.glb"
+          ]
+        }
+      ],
+      "seamless": false
+    },
+    {
+      "id": "verdant_stair--ssarathi_ruins",
+      "ends": [
+        {
+          "map": "verdant_stair",
+          "portal": "west-quay-gate",
+          "position": [
+            -168.0,
+            0.5,
+            0.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              174.0,
+              174.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 24.0,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/greyhaven_female.glb",
+            "res://assets/actors/native/races/mycelari_female.glb",
+            "res://assets/actors/native/races/mycelari_male.glb",
+            "res://assets/actors/native/races/ssarathi_female.glb",
+            "res://assets/actors/native/races/ssarathi_male.glb",
+            "res://assets/actors/native/races/stoneborn_male.glb",
+            "res://assets/world/harvestables/cenote_watercress.glb",
+            "res://assets/world/harvestables/delta_lotus.glb",
+            "res://assets/world/harvestables/ghost_orchid.glb",
+            "res://assets/world/harvestables/hearthroot.glb",
+            "res://assets/world/harvestables/lantern_cap.glb",
+            "res://assets/world/harvestables/pale_quartz.glb",
+            "res://assets/world/harvestables/ssarathi_scale_moss.glb",
+            "res://assets/world/harvestables/verdant_venom_bulb.glb",
+            "res://assets/world/harvestables/wayside_sage.glb"
+          ]
+        },
+        {
+          "map": "ssarathi_ruins",
+          "portal": "east-causeway",
+          "position": [
+            300.0,
+            1.9,
+            -132.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              174.0,
+              174.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 1.45,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/ssarathi_female.glb",
+            "res://assets/actors/native/races/ssarathi_male.glb",
+            "res://assets/actors/native/races/stoneborn_female.glb"
+          ]
+        }
+      ],
+      "seamless": false
+    },
+    {
+      "id": "ssarathi_ruins--four_gates",
+      "ends": [
+        {
+          "map": "ssarathi_ruins",
+          "portal": "north-stair",
+          "position": [
+            132.0,
+            6.88,
+            -276.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              174.0,
+              174.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 1.45,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/ssarathi_female.glb",
+            "res://assets/actors/native/races/ssarathi_male.glb",
+            "res://assets/actors/native/races/stoneborn_female.glb"
+          ]
+        },
+        {
+          "map": "four_gates",
+          "portal": "south",
+          "position": [
+            0.0,
+            29.0,
+            357.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              360.0,
+              360.0
+            ],
+            "origin": [
+              0.0,
+              31.15,
+              0.0
+            ],
+            "walkingHeight": 31.15,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/glasswarden_male.glb",
+            "res://assets/actors/native/races/greyhaven_female.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/luminous_female.glb",
+            "res://assets/actors/native/races/luminous_male.glb",
+            "res://assets/actors/native/races/mycelari_female.glb",
+            "res://assets/actors/native/races/orun_female.glb",
+            "res://assets/actors/native/races/orun_male.glb",
+            "res://assets/actors/native/races/ssarathi_female.glb",
+            "res://assets/actors/native/races/stoneborn_male.glb",
+            "res://assets/actors/native/races/votary_female.glb"
+          ]
+        }
+      ],
+      "seamless": false
+    },
+    {
+      "id": "ssarathi_ruins--manymouth_delta",
+      "ends": [
+        {
+          "map": "ssarathi_ruins",
+          "portal": "west-causeway",
+          "position": [
+            -138.0,
+            1.9,
+            -162.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              174.0,
+              174.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 1.45,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/ssarathi_female.glb",
+            "res://assets/actors/native/races/ssarathi_male.glb",
+            "res://assets/actors/native/races/stoneborn_female.glb"
+          ]
+        },
+        {
+          "map": "manymouth_delta",
+          "portal": "east-landing",
+          "position": [
+            363.0,
+            3.84,
+            -36.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              174.0,
+              174.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 1.88,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/greyhaven_female.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/luminous_male.glb",
+            "res://assets/actors/native/races/ssarathi_female.glb",
+            "res://assets/actors/native/races/ssarathi_male.glb"
+          ]
+        }
+      ],
+      "seamless": false
+    },
+    {
+      "id": "manymouth_delta--grey_moors",
+      "ends": [
+        {
+          "map": "manymouth_delta",
+          "portal": "west-landing",
+          "position": [
+            -132.0,
+            1.85,
+            -330.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              174.0,
+              174.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 1.88,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/greyhaven_female.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/luminous_male.glb",
+            "res://assets/actors/native/races/ssarathi_female.glb",
+            "res://assets/actors/native/races/ssarathi_male.glb"
+          ]
+        },
+        {
+          "map": "grey_moors",
+          "portal": "south-gate",
+          "position": [
+            198.0,
+            7.21,
+            150.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              174.0,
+              174.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 2.74,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/greyhaven_female.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/mycelari_female.glb",
+            "res://assets/actors/native/races/stoneborn_female.glb",
+            "res://assets/actors/native/races/stoneborn_male.glb"
+          ]
+        }
+      ],
+      "seamless": false
+    },
+    {
+      "id": "manymouth_delta--westhaven",
+      "ends": [
+        {
+          "map": "manymouth_delta",
+          "portal": "south-landing",
+          "position": [
+            297.0,
+            1.85,
+            57.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              174.0,
+              174.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 1.88,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/greyhaven_female.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/luminous_male.glb",
+            "res://assets/actors/native/races/ssarathi_female.glb",
+            "res://assets/actors/native/races/ssarathi_male.glb"
+          ]
+        },
+        {
+          "map": "westhaven",
+          "portal": "east-road",
+          "position": [
+            330.0,
+            25.66,
+            -59.76
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              174.0,
+              250.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 3.4,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/greyhaven_female.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/luminous_female.glb",
+            "res://assets/actors/native/races/luminous_male.glb"
+          ]
+        }
+      ],
+      "seamless": false
+    },
+    {
+      "id": "westhaven--grey_moors",
+      "ends": [
+        {
+          "map": "westhaven",
+          "portal": "north-road",
+          "position": [
+            278.16,
+            44.11,
+            -282.96
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              174.0,
+              250.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 3.4,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/greyhaven_female.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/luminous_female.glb",
+            "res://assets/actors/native/races/luminous_male.glb"
+          ]
+        },
+        {
+          "map": "grey_moors",
+          "portal": "west-waygate",
+          "position": [
+            -156.0,
+            4.95,
+            0.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              174.0,
+              174.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 2.74,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/greyhaven_female.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/mycelari_female.glb",
+            "res://assets/actors/native/races/stoneborn_female.glb",
+            "res://assets/actors/native/races/stoneborn_male.glb"
+          ]
+        }
+      ],
+      "seamless": false
+    },
+    {
+      "id": "grey_moors--amberwood",
+      "ends": [
+        {
+          "map": "grey_moors",
+          "portal": "north-gate",
+          "position": [
+            -12.0,
+            7.43,
+            -384.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              174.0,
+              174.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 2.74,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/greyhaven_female.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/mycelari_female.glb",
+            "res://assets/actors/native/races/stoneborn_female.glb",
+            "res://assets/actors/native/races/stoneborn_male.glb"
+          ]
+        },
+        {
+          "map": "amberwood",
+          "portal": "south-road",
+          "position": [
+            122.2803,
+            11.09,
+            108.8201
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              116.0,
+              116.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 40.8,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/greyhaven_female.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/luminous_male.glb",
+            "res://assets/actors/native/races/mycelari_female.glb",
+            "res://assets/actors/native/races/mycelari_male.glb",
+            "res://assets/actors/native/races/stoneborn_female.glb",
+            "res://assets/actors/native/races/stoneborn_male.glb"
+          ]
+        }
+      ],
+      "seamless": false
+    },
+    {
+      "id": "four_gates--crownwater",
+      "ends": [
+        {
+          "map": "four_gates",
+          "portal": "west",
+          "position": [
+            -357.0,
+            29.0,
+            0.0
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              360.0,
+              360.0
+            ],
+            "origin": [
+              0.0,
+              31.15,
+              0.0
+            ],
+            "walkingHeight": 31.15,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/glasswarden_male.glb",
+            "res://assets/actors/native/races/greyhaven_female.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/luminous_female.glb",
+            "res://assets/actors/native/races/luminous_male.glb",
+            "res://assets/actors/native/races/mycelari_female.glb",
+            "res://assets/actors/native/races/orun_female.glb",
+            "res://assets/actors/native/races/orun_male.glb",
+            "res://assets/actors/native/races/ssarathi_female.glb",
+            "res://assets/actors/native/races/stoneborn_male.glb",
+            "res://assets/actors/native/races/votary_female.glb"
+          ]
+        },
+        {
+          "map": "crownwater",
+          "portal": "east-quay",
+          "position": [
+            357.9,
+            3.9,
+            -12.97
+          ],
+          "frame": {},
+          "coordinateTransform": {
+            "metresPerTile": 1.0,
+            "serverOrigin": [
+              174.0,
+              174.0
+            ],
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "walkingHeight": 4.5,
+            "invertServerY": true
+          },
+          "visualScenes": [
+            "res://assets/actors/native/races/greyhaven_female.glb",
+            "res://assets/actors/native/races/greyhaven_male.glb",
+            "res://assets/actors/native/races/luminous_female.glb",
+            "res://assets/actors/native/races/luminous_male.glb",
+            "res://assets/actors/native/races/ssarathi_female.glb",
+            "res://assets/actors/native/races/ssarathi_male.glb"
+          ]
+        }
+      ],
+      "seamless": false
+    }
+  ]
+}

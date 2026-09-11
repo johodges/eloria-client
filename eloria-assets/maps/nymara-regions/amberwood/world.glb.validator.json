@@ -1,14 +1,20 @@
 {
-  "uri": "eloria-assets\\maps\\nymara-regions\\amberwood\\world.glb",
+  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\work-output\\exterior-streaming\\publish\\client\\eloria-assets\\maps\\nymara-regions\\amberwood\\world.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-09-10T10:47:50.510624Z",
+  "validatedAt": "2026-09-11T06:34:59.919948Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
-    "numInfos": 5,
+    "numInfos": 9,
     "numHints": 0,
     "messages": [
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/20"
+      },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
@@ -38,6 +44,24 @@
         "message": "This object may be unused.",
         "severity": 2,
         "pointer": "/materials/36"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/42"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/43"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/44"
       }
     ]
   }

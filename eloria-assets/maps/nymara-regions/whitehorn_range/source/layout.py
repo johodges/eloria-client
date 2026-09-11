@@ -24,22 +24,24 @@ ROADS={
                     (90,-213),(102,-240),(82,-254),(116,-269),(88,-284),(102,-299)],
                    [22.3,30.2,32.5,34.0,38,42,48.49,53,58.8,64.1,67.85],5.0),
  "temple_vault_walk":([(102,-299),(119,-292),(127,-302),(121,-319)],
-                       [67.85,67.85,67.85,67.85],3.0),
+                       [67.85,67.85,67.85,67.85],6.0),
  "temple_eyrie_walk":([(102,-299),(85,-291),(77,-306),(79,-320)],
-                       [67.85,67.85,67.85,67.85],3.0),
+                       [67.85,67.85,67.85,67.85],6.0),
  "north_shrine_path":([(88,-284),(63,-299),(46,-327),(27,-348),(27,-357)],
                        [64.1,66,70,76.76,76.76],3.0),
  "east_shrine_path":([(318,-123),(336,-145),(342,-169),(354,-192)],
                        [50.1,52,55,58.1],3.4),
  "watch_cave_approach":([(-123,-119),(-122,-128),(-122,-137)],[47.3,47.64,47.64],4.0),
- "snowline_path":([(216,-120),(204,-133),(198,-137)],[55.8,55.3,55],3.0),
+ "snowline_path":([(216,-120),(208,-133),(194,-146),(184,-154)],[55.8,55,55,55],4.5),
+ "temple_keeper_approach":([(88,-284),(101,-281),(109,-284)],[64.1,64.1,64.1],4.0),
  "upper_bridge_south":([(90,-46),(132,-61),(163,-62),(186,-75)],
                          [31.99,35,39,42.2],3.5),
  "upper_bridge_north":([(186,-126),(208,-133),(230,-127),(267,-120)],
                          [49.4,55,53,50.26],3.5),
  "lower_bridge_south":([(30,-39),(36,-44),(41,-54)],[20,20,18],4.0),
- "upper_cascade_path":([(90,-213),(107,-223),(120,-215)],[42,49,51],3.0),
- "lower_cascade_path":([(55,-179),(65,-186),(87,-181)],[34,34,34],3.0),
+ "cairn_reader_path":([(-82,-198),(-79,-191)],[71.63,71.63],6.0),
+ "upper_cascade_path":([(90,-213),(107,-223),(120,-215)],[42,49,51],5.5),
+ "lower_cascade_path":([(55,-179),(65,-186),(87,-181)],[34,34,34],5.5),
 }
 # Each roof is a weather refuge with its open side facing a working court.
 # Court levels belong to the terrain; there is no duplicate paving mesh.
@@ -60,11 +62,11 @@ CONTENT_LAYOUT={
              {"role":"training","position":[5,19.66,76]}],
  "npcs":{"Sister Arel":[-22,19.66,68],"Korrin":[-29,19.66,64.5],
          "Brother Kell Ivorwind":[-17,19.66,79],"Ration Sister Petch":[-33,19.66,64.5],
-         "Ordinal Thrun":[109,67.85,-297],"Mine Captain Sarra Dolt":[270,50.26,-111],
+         "Ordinal Thrun":[109,64.1,-284],"Mine Captain Sarra Dolt":[270,50.26,-111],
          "Hesk Varne":[277,50.26,-118],"Ice-Cave Sounder Vesk":[-108,30.39,-37],
          "Cascade Watcher Ilun":[63,34,-183],"Rope-Bridge Keeper Adhe":[87,31.99,-51],
          "Shrine Sister Onwe":[27,76.76,-349],"Cairn-Reader Marrow Doun":[-82,71.63,-198],
-         "Snowline Ranger Kestrel Vane":[204,55,-134],"Silverleaf Picker Doun Ashe":[349,58,-184]},
+         "Snowline Ranger Kestrel Vane":[194,55,-146],"Silverleaf Picker Doun Ashe":[341,57,-185]},
  "roadClearance":5.0,
  "harvest":{"Salt":[[119,-168,25],[151,-246,22]],"Peat":[[-71,55,22],[91,87,20]],
             "Crystal":[[277,-147,23],[-106,-49,20]],
@@ -93,6 +95,8 @@ BRIDGES=[("rope_bridge",(41.0,18.0,-54.0),(61.0,22.3,-104.0)),
          ("rope_bridge_upper",(186.0,42.2,-75.0),(186.0,49.4,-126.0))]
 
 def prepare(t):
+ # The pilgrim stair and its side walks use one surveyed shelf datum.
+ t.rect_terrace((102,-309),16,13,67.85,0,TER.MARBLE,shoulder=12)
  # A mine's apron is a broad bench with a soft cut face, never an isolated
  # rectangular pad punched into the slope beside a higher cart track.
  RC.grade_road(t,[(251,-115),(279,-127),(293,-138)],[50.26,50.3,50.33],
@@ -110,7 +114,7 @@ def prepare(t):
                  if name=="gate_court" else TER.PATH,clearance=3)
  for name,(x,z),w,d,angle,y in SHELTERS:
   # Ground under the wind walls is cut with the same datum as the work floor.
-  t.rect_terrace((x,z),w/2+2,d/2+3,y,0,TER.PAVING if "Gate" in name else TER.PATH)
+  t.rect_terrace((x,z),w/2+2,d/2+3,y,0,TER.PAVING if "Gate" in name else TER.PATH,shoulder=8)
   t.mark_blocked_disc((x,z),max(w,d)/2+5)
 
  # Bridgeheads have fixed road stations. Searching the nearest brown pixel

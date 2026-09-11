@@ -66,6 +66,15 @@ func _run() -> void:
 	_expect(seam.get_node_or_null("MapMarker") != null, "Authored resources keep their map markers")
 	var pick: CylinderShape3D = seam.get_node("PickShape").shape
 	_expect(is_equal_approx(pick.height,1.9) and is_equal_approx(pick.radius,1.25), "Pick volume matches the authored resource")
+	var crossing := MapObject3D.new()
+	root.add_child(crossing)
+	crossing.configure({"object_id": 23, "kind": EloriaProtocol.MAP_OBJECT_INTERACTIVE,
+		"x": 10, "y": 10, "label": "Portal", "detail": "Beyond it lies Whitehorn Range."},
+		adapter, catalog, true)
+	_expect(crossing.get_node_or_null("Model") == null and crossing.get_node_or_null("Ring") == null,
+		"an authored landscape crossing adds no second monument or ring")
+	_expect(crossing.is_portal() and crossing.map_glyph() == "P" and crossing.destination() == "Whitehorn Range",
+		"the crossing retains its interaction identity and map destination")
 
 	print("world object placement tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	quit(failures)

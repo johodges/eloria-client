@@ -6,11 +6,12 @@
     "name": "Amberwood Insides",
     "glb": "world.glb",
     "units": "meters",
-    "coordinateSystem": {
-      "handedness": "right",
-      "upAxis": "Y",
-      "northAxis": "-Z"
-    },
+    "serverCells": 384,
+    "origin": [
+      0,
+      0,
+      0
+    ],
     "bounds": {
       "min": [
         -173.55,
@@ -34,6 +35,11 @@
         3.6,
         173.55
       ]
+    },
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
     }
   },
   "coordinateTransform": {
@@ -121,6 +127,1383 @@
       "Motherroot_Build_amberwood_motherroot_water_pool",
       "Motherroot_Build_amberwood_motherroot_water_stream"
     ]
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "AmberHall_Walk_",
+      "CinderChapel_Walk_",
+      "GateUndercroft_Walk_",
+      "Motherroot_Walk_"
+    ],
+    "agentRadius": 0.4,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 45,
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    }
+  },
+  "cutaway": {
+    "hideNodes": [
+      "AmberHall_Roof_amberwood_amber_hall_timber_dark",
+      "CinderChapel_Roof_amberwood_cinder_chapel_ashlar",
+      "CinderChapel_Roof_amberwood_cinder_chapel_charred_timber",
+      "GateUndercroft_Roof_amberwood_gate_undercroft_ashlar",
+      "Motherroot_Roof_amberwood_motherroot_ashlar",
+      "Motherroot_Roof_amberwood_motherroot_bark_dark",
+      "Motherroot_Roof_amberwood_motherroot_bark_oak",
+      "Motherroot_Roof_amberwood_motherroot_cliff_rock",
+      "Motherroot_Roof_amberwood_motherroot_packed_earth"
+    ],
+    "reason": "Preserve each source interior's camera cutaway."
+  },
+  "lights": [
+    {
+      "id": "AmberHall-lantern-00",
+      "kind": "point",
+      "position": [
+        -160.0,
+        2.78,
+        110.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "AmberHall-lantern-01",
+      "kind": "point",
+      "position": [
+        -160.0,
+        2.38,
+        122.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "AmberHall-lantern-02",
+      "kind": "point",
+      "position": [
+        -169.5,
+        4.78,
+        131.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "AmberHall-lantern-03",
+      "kind": "point",
+      "position": [
+        -150.5,
+        4.78,
+        131.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "AmberHall-lantern-04",
+      "kind": "point",
+      "position": [
+        -169.5,
+        4.78,
+        145.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "AmberHall-lantern-05",
+      "kind": "point",
+      "position": [
+        -150.5,
+        4.78,
+        145.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "AmberHall-lantern-06",
+      "kind": "point",
+      "position": [
+        -160.0,
+        4.78,
+        138.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "AmberHall-lantern-07",
+      "kind": "point",
+      "position": [
+        -133.5,
+        3.98,
+        133.5
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "AmberHall-lantern-08",
+      "kind": "point",
+      "position": [
+        -123.0,
+        3.98,
+        144.5
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "AmberHall-lantern-09",
+      "kind": "point",
+      "position": [
+        -128.5,
+        3.98,
+        139.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "AmberHall-lantern-10",
+      "kind": "point",
+      "position": [
+        -169.5,
+        4.38,
+        157.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "AmberHall-lantern-11",
+      "kind": "point",
+      "position": [
+        -148.5,
+        4.38,
+        157.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "AmberHall-lantern-12",
+      "kind": "point",
+      "position": [
+        -169.5,
+        4.38,
+        169.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "AmberHall-lantern-13",
+      "kind": "point",
+      "position": [
+        -148.5,
+        4.38,
+        169.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "AmberHall-lantern-14",
+      "kind": "point",
+      "position": [
+        -159.0,
+        4.38,
+        163.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "AmberHall-lantern-15",
+      "kind": "point",
+      "position": [
+        -133.5,
+        5.98,
+        160.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "AmberHall-lantern-16",
+      "kind": "point",
+      "position": [
+        -123.0,
+        5.98,
+        170.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "CinderChapel-lantern-00",
+      "kind": "point",
+      "position": [
+        32.0,
+        2.58,
+        102.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "CinderChapel-lantern-01",
+      "kind": "point",
+      "position": [
+        32.0,
+        2.18,
+        113.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "CinderChapel-lantern-02",
+      "kind": "point",
+      "position": [
+        22.0,
+        5.38,
+        121.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "CinderChapel-lantern-03",
+      "kind": "point",
+      "position": [
+        40.0,
+        5.38,
+        135.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "CinderChapel-lantern-04",
+      "kind": "point",
+      "position": [
+        31.0,
+        5.38,
+        128.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "CinderChapel-lantern-05",
+      "kind": "point",
+      "position": [
+        21.5,
+        3.18,
+        146.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "CinderChapel-lantern-06",
+      "kind": "point",
+      "position": [
+        29.0,
+        3.18,
+        154.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "CinderChapel-lantern-07",
+      "kind": "point",
+      "position": [
+        54.0,
+        2.78,
+        123.5
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "CinderChapel-lantern-08",
+      "kind": "point",
+      "position": [
+        64.0,
+        2.78,
+        134.5
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "CinderChapel-lantern-09",
+      "kind": "point",
+      "position": [
+        59.0,
+        -0.22,
+        141.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "CinderChapel-lantern-10",
+      "kind": "point",
+      "position": [
+        52.5,
+        -2.22,
+        148.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "CinderChapel-lantern-11",
+      "kind": "point",
+      "position": [
+        64.0,
+        -2.22,
+        158.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "CinderChapel-lantern-12",
+      "kind": "point",
+      "position": [
+        58.0,
+        -2.22,
+        153.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "CinderChapel-lantern-13",
+      "kind": "point",
+      "position": [
+        21.5,
+        5.78,
+        164.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "CinderChapel-lantern-14",
+      "kind": "point",
+      "position": [
+        29.0,
+        5.78,
+        170.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "GateUndercroft-lantern-00",
+      "kind": "point",
+      "position": [
+        -164.2,
+        3.18,
+        -100.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "GateUndercroft-lantern-01",
+      "kind": "point",
+      "position": [
+        -153.8,
+        3.18,
+        -94.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "GateUndercroft-lantern-02",
+      "kind": "point",
+      "position": [
+        -159.0,
+        -1.82,
+        -85.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "GateUndercroft-lantern-03",
+      "kind": "point",
+      "position": [
+        -159.0,
+        -4.02,
+        -78.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "GateUndercroft-lantern-04",
+      "kind": "point",
+      "position": [
+        -167.0,
+        -2.02,
+        -72.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "GateUndercroft-lantern-05",
+      "kind": "point",
+      "position": [
+        -151.0,
+        -2.02,
+        -62.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "GateUndercroft-lantern-06",
+      "kind": "point",
+      "position": [
+        -159.0,
+        -2.02,
+        -67.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "GateUndercroft-lantern-07",
+      "kind": "point",
+      "position": [
+        -141.5,
+        -3.22,
+        -67.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "GateUndercroft-lantern-08",
+      "kind": "point",
+      "position": [
+        -132.5,
+        -3.22,
+        -70.5
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "GateUndercroft-lantern-09",
+      "kind": "point",
+      "position": [
+        -121.5,
+        -3.22,
+        -59.5
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "GateUndercroft-lantern-10",
+      "kind": "point",
+      "position": [
+        -127.0,
+        -3.22,
+        -67.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "GateUndercroft-lantern-11",
+      "kind": "point",
+      "position": [
+        -127.0,
+        -5.22,
+        -52.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "GateUndercroft-lantern-12",
+      "kind": "point",
+      "position": [
+        -136.0,
+        -3.62,
+        -42.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "GateUndercroft-lantern-13",
+      "kind": "point",
+      "position": [
+        -118.0,
+        -3.62,
+        -26.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "GateUndercroft-lantern-14",
+      "kind": "point",
+      "position": [
+        -127.0,
+        -3.62,
+        -34.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "GateUndercroft-lantern-15",
+      "kind": "point",
+      "position": [
+        -143.0,
+        -5.22,
+        -34.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "GateUndercroft-lantern-16",
+      "kind": "point",
+      "position": [
+        -170.0,
+        -3.22,
+        -40.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "GateUndercroft-lantern-17",
+      "kind": "point",
+      "position": [
+        -150.0,
+        -3.22,
+        -22.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "GateUndercroft-lantern-18",
+      "kind": "point",
+      "position": [
+        -160.0,
+        -3.22,
+        -31.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-00",
+      "kind": "point",
+      "position": [
+        64.2,
+        3.58,
+        -106.5
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-01",
+      "kind": "point",
+      "position": [
+        77.8,
+        3.58,
+        -115.5
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-02",
+      "kind": "point",
+      "position": [
+        71.0,
+        3.58,
+        -103.8
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-03",
+      "kind": "point",
+      "position": [
+        71.0,
+        -1.92,
+        -96.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-04",
+      "kind": "point",
+      "position": [
+        71.0,
+        -4.22,
+        -88.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-05",
+      "kind": "point",
+      "position": [
+        53.5,
+        -3.22,
+        -78.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-06",
+      "kind": "point",
+      "position": [
+        53.5,
+        -3.22,
+        -66.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-07",
+      "kind": "point",
+      "position": [
+        68.0,
+        -3.22,
+        -72.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-08",
+      "kind": "point",
+      "position": [
+        61.0,
+        -3.22,
+        -79.5
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-09",
+      "kind": "point",
+      "position": [
+        82.5,
+        -6.02,
+        -72.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-10",
+      "kind": "point",
+      "position": [
+        93.5,
+        -4.42,
+        -79.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-11",
+      "kind": "point",
+      "position": [
+        106.5,
+        -4.42,
+        -65.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-12",
+      "kind": "point",
+      "position": [
+        100.0,
+        -4.42,
+        -78.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-13",
+      "kind": "point",
+      "position": [
+        100.0,
+        -8.02,
+        -59.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-14",
+      "kind": "point",
+      "position": [
+        100.0,
+        -8.42,
+        -49.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-15",
+      "kind": "point",
+      "position": [
+        89.5,
+        -6.42,
+        -43.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-16",
+      "kind": "point",
+      "position": [
+        106.5,
+        -6.42,
+        -27.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-17",
+      "kind": "point",
+      "position": [
+        98.0,
+        -6.42,
+        -35.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-18",
+      "kind": "point",
+      "position": [
+        80.0,
+        -8.62,
+        -35.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-19",
+      "kind": "point",
+      "position": [
+        57.5,
+        -12.22,
+        -42.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-20",
+      "kind": "point",
+      "position": [
+        70.5,
+        -12.22,
+        -26.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-21",
+      "kind": "point",
+      "position": [
+        64.0,
+        -12.22,
+        -34.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-22",
+      "kind": "point",
+      "position": [
+        49.0,
+        -15.02,
+        -34.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-23",
+      "kind": "point",
+      "position": [
+        22.0,
+        -9.12,
+        -46.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-24",
+      "kind": "point",
+      "position": [
+        40.0,
+        -9.12,
+        -22.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-25",
+      "kind": "point",
+      "position": [
+        31.0,
+        -9.12,
+        -34.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "Motherroot-lantern-26",
+      "kind": "point",
+      "position": [
+        31.0,
+        -9.12,
+        -43.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    }
+  ],
+  "spawnPoints": [
+    {
+      "id": "AmberHall-default",
+      "position": [
+        -160.0,
+        0.05,
+        111.5
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    },
+    {
+      "id": "AmberHall-amber-hall-door",
+      "position": [
+        -160.0,
+        0.05,
+        111.5
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    },
+    {
+      "id": "CinderChapel-default",
+      "position": [
+        32.0,
+        0.05,
+        104.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    },
+    {
+      "id": "CinderChapel-cinder-chapel-door",
+      "position": [
+        32.0,
+        0.05,
+        104.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    },
+    {
+      "id": "GateUndercroft-default",
+      "position": [
+        -159.0,
+        0.05,
+        -97.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    },
+    {
+      "id": "GateUndercroft-gate-undercroft-stair",
+      "position": [
+        -159.0,
+        0.05,
+        -97.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    },
+    {
+      "id": "Motherroot-default",
+      "position": [
+        71.0,
+        0.05,
+        -111.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    },
+    {
+      "id": "Motherroot-motherroot-mouth",
+      "position": [
+        71.0,
+        0.05,
+        -111.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    }
+  ],
+  "minimap": {
+    "file": "minimap.webp",
+    "worldMin": [
+      -192,
+      -192
+    ],
+    "worldMax": [
+      192,
+      192
+    ],
+    "imageSize": [
+      384,
+      384
+    ],
+    "pixelsPerMetre": 1
   },
   "sections": [
     {

@@ -67,7 +67,7 @@ var _map_authored: bool = false
 ## a release standing every node in the world on a bare ring because the one
 ## caller left the argument off and an empty registry is a legal one.
 func configure(dto: Dictionary, adapter: CoordinateAdapter,
-		catalog: Dictionary) -> void:
+		catalog: Dictionary, authored_presentation: bool = false) -> void:
 	object_id = int(dto.get("object_id", -1))
 	kind = int(dto.get("kind", 0))
 	server_tile = Vector2i(int(dto.get("x", 0)), int(dto.get("y", 0)))
@@ -77,6 +77,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	collision_layer = PICK_LAYER
 	collision_mask = 0
 	position = adapter.tile_center(server_tile.x, server_tile.y)
+	_map_authored = authored_presentation
 	_build_visual(catalog)
 
 func is_harvestable() -> bool:
@@ -233,12 +234,12 @@ func _build_visual(catalog: Dictionary) -> void:
 		# doorway is already there in the world art. The maps draw the X from
 		# this node's position; see `Main._collect_map_waypoints`.
 		return
+	_map_authored = _map_authored or (catalog.get("interactives", {}) as Dictionary).get(
+		"mapAuthored", {}).has(label)
 	var entry: Dictionary = _catalog_entry(catalog)
 	var authored: Dictionary = catalog.get("authoredObjects", {}).get(str(object_id), {})
-	var height: float = float(authored.get("height", 1.2)) if not authored.is_empty() else _add_model(entry)
+	var height: float = float(authored.get("height", 1.2)) if not authored.is_empty() else (0.0 if _map_authored else _add_model(entry))
 	if not authored.is_empty(): model_id = "map_authored_" + str(object_id)
-	_map_authored = (catalog.get("interactives", {}) as Dictionary).get(
-		"mapAuthored", {}).has(label)
 	# A role the region package authors is already standing in the world art:
 	# a secret's door is a `Secret_*` node in the region mesh, on the tile the
 	# server states. A ring under one duplicates the door and advertises it.

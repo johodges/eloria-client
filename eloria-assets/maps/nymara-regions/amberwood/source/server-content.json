@@ -1,186 +1,186 @@
 {
   "harvestables": {
     "amber-seep-01": [
-      285,
-      480
+      107,
+      286
     ],
     "amber-seep-02": [
-      272,
-      451
-    ],
-    "amber-seep-03": [
-      273,
-      456
-    ],
-    "amber-seep-04": [
-      270,
-      441
-    ],
-    "amber-seep-05": [
-      278,
-      484
-    ],
-    "amber-seep-06": [
-      188,
-      450
-    ],
-    "amber-seep-07": [
-      167,
-      443
-    ],
-    "amber-seep-08": [
-      278,
-      444
-    ],
-    "amber-seep-09": [
-      256,
-      453
-    ],
-    "amber-seep-10": [
-      279,
-      481
-    ],
-    "fallen-timber-11": [
-      190,
-      165
-    ],
-    "fallen-timber-12": [
-      171,
-      165
-    ],
-    "fallen-timber-13": [
-      192,
-      148
-    ],
-    "fallen-timber-14": [
-      286,
-      53
-    ],
-    "fallen-timber-15": [
-      179,
-      162
-    ],
-    "fallen-timber-16": [
-      247,
-      51
-    ],
-    "fallen-timber-17": [
-      274,
-      65
-    ],
-    "fallen-timber-18": [
-      288,
-      61
-    ],
-    "forest-fungus-19": [
-      174,
-      482
-    ],
-    "forest-fungus-20": [
-      163,
-      421
-    ],
-    "forest-fungus-21": [
-      143,
-      480
-    ],
-    "forest-fungus-22": [
-      147,
-      395
-    ],
-    "forest-fungus-23": [
-      138,
-      469
-    ],
-    "shore-kelp-24": [
-      111,
-      97
-    ],
-    "charcoal-25": [
-      410,
-      173
-    ],
-    "charcoal-26": [
-      435,
-      159
-    ],
-    "charcoal-27": [
-      402,
-      35
-    ],
-    "ash-glass-28": [
-      527,
+      211,
       328
     ],
+    "amber-seep-03": [
+      201,
+      307
+    ],
+    "amber-seep-04": [
+      204,
+      302
+    ],
+    "amber-seep-05": [
+      206,
+      330
+    ],
+    "amber-seep-06": [
+      122,
+      310
+    ],
+    "amber-seep-07": [
+      108,
+      300
+    ],
+    "amber-seep-08": [
+      108,
+      305
+    ],
+    "amber-seep-09": [
+      119,
+      302
+    ],
+    "amber-seep-10": [
+      105,
+      302
+    ],
+    "fallen-timber-11": [
+      127,
+      86
+    ],
+    "fallen-timber-12": [
+      213,
+      31
+    ],
+    "fallen-timber-13": [
+      118,
+      97
+    ],
+    "fallen-timber-14": [
+      200,
+      29
+    ],
+    "fallen-timber-15": [
+      121,
+      98
+    ],
+    "fallen-timber-16": [
+      209,
+      32
+    ],
+    "fallen-timber-17": [
+      170,
+      41
+    ],
+    "fallen-timber-18": [
+      179,
+      29
+    ],
+    "forest-fungus-19": [
+      124,
+      317
+    ],
+    "forest-fungus-20": [
+      112,
+      330
+    ],
+    "forest-fungus-21": [
+      111,
+      326
+    ],
+    "forest-fungus-22": [
+      110,
+      317
+    ],
+    "forest-fungus-23": [
+      108,
+      331
+    ],
+    "shore-kelp-24": [
+      70,
+      58
+    ],
+    "charcoal-25": [
+      283,
+      88
+    ],
+    "charcoal-26": [
+      297,
+      98
+    ],
+    "charcoal-27": [
+      289,
+      94
+    ],
+    "ash-glass-28": [
+      358,
+      130
+    ],
     "ash-glass-29": [
-      531,
-      235
+      342,
+      124
     ],
     "ash-glass-30": [
-      506,
-      229
+      340,
+      130
     ],
     "ash-glass-31": [
-      488,
-      234
+      370,
+      203
     ]
   },
   "npcMarkers": {
     "amberwood-warden": [
-      353,
-      267
+      252,
+      160
     ],
     "amberwood-steward": [
-      166,
-      350
+      103,
+      224
     ],
     "amber-master": [
-      228,
-      338
+      165,
+      212
     ],
     "market-trader": [
-      205,
-      340
+      142,
+      214
     ],
     "harbour-master": [
-      91,
-      143
+      54,
+      86
     ],
     "timber-reeve": [
-      393,
-      80
+      276,
+      51
     ],
     "charcoal-burner": [
-      425,
-      146
+      295,
+      87
     ],
     "canopy-rigger": [
-      232,
-      374
+      169,
+      248
     ],
     "hollow-keeper": [
-      100,
-      442
+      62,
+      308
     ],
     "garden-warden": [
-      325,
-      141
+      235,
+      84
     ],
     "east-scout": [
-      432,
-      316
+      299,
+      194
     ],
     "north-watcher": [
-      410,
-      511
+      286,
+      345
     ],
     "hamlet-elder": [
-      501,
-      80
+      341,
+      46
     ],
     "wayshrine-hermit": [
-      285,
-      215
+      212,
+      129
     ]
   }
 }

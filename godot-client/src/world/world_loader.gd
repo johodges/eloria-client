@@ -123,6 +123,63 @@ var load_phases: Dictionary = {}
 ## bodies that hold them.
 var _collision_shapes: Dictionary = {}
 
+# A preloader builds a private tree on one worker. It never enters the active
+# SceneTree, writes a disk cache, or mutates the shared digest registry there.
+var detached_build := false
+var detached_cache_enabled := true
+var _prepared_visuals: Dictionary = {}
+
+static func prepare_detached(path: String, cache_enabled: bool, visual_paths := PackedStringArray()) -> WorldLoader:
+	var builder := WorldLoader.new()
+	builder.detached_build = true
+	builder.detached_cache_enabled = cache_enabled
+	builder.load_world(path)
+	if builder.world_root != null:
+		var start := Time.get_ticks_usec()
+		builder._prepared_visuals = GlbSceneCache.prepare(visual_paths)
+		builder.load_phases[&"visualPreload"] = Time.get_ticks_usec() - start
+		builder.load_phases[&"total"] += builder.load_phases[&"visualPreload"]
+	return builder
+
+func release_world(detach := true) -> Dictionary:
+	_cache_write_countdown = 0
+	_release_snapshot()
+	var resident := {"root": world_root, "manifest": manifest,
+		"digest": package_digest, "phases": load_phases,
+		"from_cache": loaded_from_cache, "cache_status": cache_status,
+		"cache_file": cache_file, "visuals": _prepared_visuals}
+	_prepared_visuals = {}
+	if detach and is_instance_valid(world_root) and world_root.get_parent() != null:
+		world_root.get_parent().remove_child(world_root)
+	world_root = null
+	manifest = null
+	return resident
+
+func adopt_world(resident: Dictionary) -> void:
+	unload_world()
+	GlbSceneCache.install_prepared(resident.get("visuals", {}))
+	world_root = resident.root as Node3D
+	manifest = resident.manifest as WorldManifest
+	coordinate_adapter = manifest.coordinate_adapter()
+	package_digest = str(resident.digest)
+	loaded_from_cache = bool(resident.from_cache)
+	cache_status = resident.cache_status
+	cache_file = str(resident.cache_file)
+	load_phases = resident.phases
+	world_root.transform = Transform3D.IDENTITY
+	# An already-resident tree stays attached. Re-entering the SceneTree would
+	# destroy and recreate thousands of renderer/physics registrations at the
+	# very instant a preloaded crossing is supposed to avoid that work.
+	if world_root.get_parent() == null:
+		add_child(world_root)
+	else:
+		# Grounding is queried by load_completed in this same frame. Flush the
+		# rebased static bodies before a ray can see their previous map frame.
+		for body: Node3D in world_root.find_children("*", "CollisionObject3D", true, false):
+			body.force_update_transform()
+	MapSceneCache.note_local_digest(manifest.asset_id(), package_digest)
+	load_completed.emit(manifest)
+
 func load_world(manifest_path: String) -> void:
 	unload_world()
 	var began: int = Time.get_ticks_usec()
@@ -147,7 +204,8 @@ func load_world(manifest_path: String) -> void:
 	# match the package on disk is never read, so a client update rebuilds
 	# itself with nothing to remember.
 	package_digest = MapSceneCache.package_digest(manifest_path, resolved_glb_path)
-	MapSceneCache.note_local_digest(manifest.asset_id(), package_digest)
+	if not detached_build:
+		MapSceneCache.note_local_digest(manifest.asset_id(), package_digest)
 	cache_file = MapSceneCache.cache_path(manifest.asset_id(), package_digest)
 	mark = _phase(&"digest", mark)
 	if _load_from_cache(mark, began):
@@ -183,7 +241,7 @@ func load_world(manifest_path: String) -> void:
 	mark = _phase(&"generateScene", mark)
 	world_root.name = "ImportedWorld_" + manifest.asset_id()
 	add_child(world_root)
-	print_debug("world_load stage=scene_attached node=", world_root.get_path(),
+	print_debug("world_load stage=scene_attached node=", world_root.name,
 		" children=", world_root.get_child_count(), " transform=", world_root.transform)
 	mark = _phase(&"attach", mark)
 	# One walk of the import, not five. A region imports up to fifteen thousand
@@ -211,12 +269,12 @@ func load_world(manifest_path: String) -> void:
 	mark = _phase(&"batching", mark)
 	# What the loader produced, before anything else in the client has been
 	# handed it. See `_snapshot_for_cache`.
-	if cache_status == &"miss":
+	if cache_status == &"miss" and not detached_build:
 		_snapshot_for_cache()
 	mark = _phase(&"cacheSnapshot", mark)
 	load_phases[&"total"] = mark - began
 	load_completed.emit(manifest)
-	if cache_status == &"miss":
+	if cache_status == &"miss" and not detached_build:
 		_cache_write_countdown = CACHE_WRITE_DELAY_FRAMES
 		set_process(true)
 
@@ -239,7 +297,7 @@ var _cache_overrides: Dictionary = {}
 ## Every failure here falls through to the ordinary load. A cache is an
 ## optimisation; a client that cannot read one still has the package.
 func _load_from_cache(mark: int, began: int) -> bool:
-	if not MapSceneCache.is_enabled():
+	if not (detached_cache_enabled if detached_build else MapSceneCache.is_enabled()):
 		cache_status = &"disabled"
 		return false
 	if cache_file.is_empty():
@@ -748,7 +806,7 @@ func _batch_static_instances(mesh_instances: Array) -> void:
 		var mesh_instance: MeshInstance3D = node_value as MeshInstance3D
 		if not _is_batchable(mesh_instance):
 			continue
-		var origin: Vector3 = mesh_instance.global_transform.origin
+		var origin: Vector3 = _import_transform(mesh_instance).origin
 		var key: String = "%d|%d|%d|%d|%d|%d|%d" % [
 			mesh_instance.mesh.get_instance_id(), mesh_instance.layers,
 			mesh_instance.cast_shadow, mesh_instance.gi_mode,
@@ -782,7 +840,7 @@ func _is_batchable(mesh_instance: MeshInstance3D) -> bool:
 		return false
 	if mesh_instance.material_override != null or mesh_instance.material_overlay != null:
 		return false
-	if not mesh_instance.visible or not mesh_instance.is_visible_in_tree():
+	if not mesh_instance.visible or (not detached_build and not mesh_instance.is_visible_in_tree()):
 		return false
 	if mesh_instance.visibility_range_end > 0.0:
 		return false
@@ -815,20 +873,29 @@ func _create_batch(members: Array, index: int) -> void:
 	batch.cast_shadow = reference.cast_shadow
 	batch.gi_mode = reference.gi_mode
 	world_root.add_child(batch)
-	batch.global_transform = Transform3D.IDENTITY
+	batch.transform = Transform3D.IDENTITY
 	# Taken after add_child, which is what settles the name: a package that
 	# already carries a node called StaticBatch_0_Rock would have had this one
 	# renamed, and a path written before that would point at the wrong node.
 	var batch_path: NodePath = world_root.get_path_to(batch)
 	for member_index: int in members.size():
 		var member: MeshInstance3D = members[member_index] as MeshInstance3D
-		multimesh.set_instance_transform(member_index, member.global_transform)
+		multimesh.set_instance_transform(member_index, _import_transform(member))
 		# The source node stays in the tree so name lookups, manifest
 		# declarations and tooling keep resolving; it simply stops drawing.
 		member.visible = false
 		member.set_meta(BATCH_META, batch)
 		member.set_meta(BATCH_PATH_META, batch_path)
 		member.set_meta(BATCH_INDEX_META, member_index)
+
+func _import_transform(node: Node3D) -> Transform3D:
+	# Local to the imported root; global_transform needs an active SceneTree.
+	var result := node.transform
+	var parent := node.get_parent() as Node3D
+	while parent != null and parent != world_root:
+		result = parent.transform * result
+		parent = parent.get_parent() as Node3D
+	return result
 
 func _apply_rendered_walk_surfaces(mesh_instances: Array) -> void:
 	var navigation: Dictionary = manifest.data.get("navigation", {})
