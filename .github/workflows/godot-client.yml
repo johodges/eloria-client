@@ -125,7 +125,9 @@ jobs:
       - name: Console command fixtures
         run: godot --headless --path godot-client --script res://tests/test_console_commands.gd
       - name: Day and night cycle fixtures
-        run: godot --headless --path godot-client --script res://tests/test_day_night.gd
+        run: |
+          godot --headless --path godot-client --script res://tests/test_day_night.gd
+          godot --headless --path godot-client --script res://tests/test_border_lighting.gd
       - name: Ambient audio binder fixtures
         run: godot --headless --path godot-client --script res://tests/test_ambient_audio.gd
       - name: Audio director fixtures

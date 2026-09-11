@@ -51,8 +51,11 @@ the current live proof uses one QA traveller, not a multiplayer border crowd.
   traveller's interpolation endpoints all receive the same rigid transform.
 - If no scene is ready (for example a teleport directly to a cold border), the
   existing synchronous loader remains the fallback. This can still stall.
-- Atmosphere blends across 65 m on either side of the shared road, including
-  sun orientation in the rebased coordinate frame. The sky resource is reused.
+- Atmosphere and light colour/energy blend across 65 m on either side of the
+  shared road. Player position does not change the sun's direction; the game
+  clock drives its elevation. A continuous crossing rebases the sun with the
+  terrain and camera to preserve its physical direction. The sky resource is
+  reused.
 
 ## Authored geography and contracts
 

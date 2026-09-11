@@ -3782,12 +3782,7 @@ func _load_server_map() -> void:
 	_retained_until = Time.get_ticks_msec() + 3000
 	if _continuous_map_handoff:
 		var rebase: Transform3D = handoff.rebase
-		camera_rig.rebase_world(rebase)
-		var traveller: Variant = actor_nodes.get(_retained_traveller)
-		if is_instance_valid(traveller):
-			(traveller as ReplicatedActor3D).rebase_world(rebase)
-			exterior_stream.last_handoff["traveller_at_rebase"] = traveller.global_position
-			exterior_stream.last_handoff["target_at_rebase"] = traveller.server_target
+		_rebase_streamed_world(rebase)
 	loaded_server_map = AppState.current_map
 	_actor_surface_samples.clear()
 	_local_placement_logged = false
@@ -3835,6 +3830,17 @@ func _load_server_map() -> void:
 	else:
 		exterior_stream.clear()
 		world_loader.load_world(manifest_path)
+
+func _rebase_streamed_world(rebase: Transform3D) -> void:
+	camera_rig.rebase_world(rebase)
+	# The destination may use rotated coordinates. Transform the sun with the
+	# terrain and camera so crossing the seam keeps the same physical direction.
+	world_sun.global_basis = rebase.basis * world_sun.global_basis
+	var traveller: Variant = actor_nodes.get(_retained_traveller)
+	if is_instance_valid(traveller):
+		(traveller as ReplicatedActor3D).rebase_world(rebase)
+		exterior_stream.last_handoff["traveller_at_rebase"] = traveller.global_position
+		exterior_stream.last_handoff["target_at_rebase"] = traveller.server_target
 
 func _on_world_loaded(manifest: WorldManifest) -> void:
 	var binding_started := Time.get_ticks_usec()
@@ -3930,10 +3936,8 @@ func _update_border_lighting() -> void:
 	# sky or respawn the map's lamps every frame.
 	var declared: Dictionary = lighting.data.environment
 	var environment := world_environment.environment
-	var declared_sun: Dictionary = declared.get("sun", {})
-	if declared_sun.has("direction"):
-		var direction := ExteriorRegionStream._vector(declared_sun.direction).normalized()
-		world_sun.look_at_from_position(Vector3.ZERO, direction, Vector3.UP)
+	# Border proximity changes the atmosphere, not the sun's direction. Keep
+	# the bound heading; DayNightBinder alone advances its elevation with time.
 	if environment != null:
 		environment.fog_density = float(declared.get("fog", {}).get("density", environment.fog_density))
 		environment.adjustment_saturation = float(declared.get("saturation", 1))

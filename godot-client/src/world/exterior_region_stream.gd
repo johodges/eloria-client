@@ -343,12 +343,12 @@ func lighting_manifest(position: Vector3) -> WorldManifest:
 		var weight := smoothstep(-width, width, depth)
 		var other: WorldManifest = residents[str(candidate.map)].manifest
 		var far: Dictionary = other.data.get("environment", {}).duplicate(true)
-		var orientation := frame_transform(here, candidate.there.frame).basis
+		# A region's authored sun direction must never turn the shared sun as
+		# the player approaches it. Blend its colour/energy and atmosphere only.
 		for block: Dictionary in [far, far.get("goldenHour", {})]:
 			var sun: Dictionary = block.get("sun", {})
-			if sun.has("direction"):
-				var direction := orientation * _vector(sun.direction)
-				sun.direction = [direction.x, direction.y, direction.z]
+			sun.erase("direction")
+			sun.erase("rotationDegrees")
 		var blended := WorldManifest.new()
 		blended.source_path = active_manifest.source_path
 		blended.data = active_manifest.data.duplicate()
