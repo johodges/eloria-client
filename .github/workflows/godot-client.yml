@@ -51,6 +51,8 @@ jobs:
         run: python3 godot-client/tests/test_map_surface_materials.py -v
       - name: Validate map crossings
         run: python3 godot-client/tests/test_map_crossings.py -v
+      - name: Validate the continent cartography
+        run: python3 -m pytest godot-client/tests/test_cartography.py -q
       - name: Boat portal hover and click fixtures
         run: godot --headless --path godot-client --script res://tests/test_boat_portals.gd
       - name: Validate the shared subject icon atlas
@@ -142,6 +144,8 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_runtime_performance.gd
       - name: Map cache fixtures
         run: godot --headless --path godot-client --script res://tests/test_map_cache.gd
+      - name: Continent map fixtures
+        run: godot --headless --path godot-client --script res://tests/test_continent_map.gd
       - name: Animation gate fixtures
         run: godot --headless --path godot-client --script res://tests/test_animation_gate.gd
       - name: Ground marker draping fixtures

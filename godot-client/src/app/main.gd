@@ -49,6 +49,7 @@ const InvasionAssistantScript := preload("res://src/ui/invasion_assistant.gd")
 const ExtensionWindowsScript := preload("res://src/ui/extension_windows.gd")
 const MapViewScript := preload("res://src/world/map_view.gd")
 const MapMarkerOverlayScript := preload("res://src/ui/map_marker_overlay.gd")
+const ContinentMapScript := preload("res://src/ui/continent_map.gd")
 const MinimapMarkerOverlayScript := preload("res://src/ui/minimap_marker_overlay.gd")
 const PlayerInfoPanelScript := preload("res://src/ui/player_info_panel.gd")
 const AudioDirectorScript := preload("res://src/audio/audio_director.gd")
@@ -102,7 +103,6 @@ var map_light_root: Node3D
 @onready var region_preview: TextureRect = %RegionPreview
 @onready var continent_view: Control = %ContinentView
 @onready var continent_image: TextureRect = %ContinentImage
-@onready var region_buttons: VBoxContainer = %RegionButtons
 @onready var health_bar: ProgressBar = %Health
 @onready var health_text: Label = %HealthText
 @onready var mana_bar: ProgressBar = %Mana
@@ -363,6 +363,17 @@ var map_registry: Dictionary = {}
 var world_object_models: Dictionary = {}
 var cartography: Dictionary = {}
 var cartography_regions: Array = []
+## The continent picture and the regions' tab maps are decoded the first
+## time the map window opens, not at startup: the continent alone is a
+## 1600-pixel image nobody sees before pressing Tab.
+var continent_map: Control
+var _continent_texture: Texture2D
+var _cartography_loaded := false
+var _tab_map_textures: Dictionary = {}
+## Which region the big map is showing as a preview, or -1 for none, with
+## that map's own adapter so the cursor can name the tile under it.
+var _preview_region_index := -1
+var _preview_adapter: CoordinateAdapter
 var equipment_config: Dictionary = {}
 var item_atlas := ItemAtlas.new()
 var spell_catalog := SpellCatalog.new()
@@ -1056,8 +1067,10 @@ func _ready() -> void:
 	map_image.mouse_exited.connect(_on_full_map_mouse_exited)
 	clock_face.gui_input.connect(_on_clock_gui_input)
 	compass_face.gui_input.connect(_on_compass_gui_input)
-	continent_button.pressed.connect(_show_continent_view)
+	continent_button.pressed.connect(_on_continent_button_pressed)
 	current_map_button.pressed.connect(_show_current_map_view)
+	region_preview.gui_input.connect(_on_region_preview_gui_input)
+	region_preview.mouse_exited.connect(_on_region_preview_mouse_exited)
 	_bind_shared_world()
 	viewport_container.texture = main_viewport.get_texture()
 	minimap.texture = map_viewport.get_texture()
@@ -4914,45 +4927,127 @@ func _configure_full_map(manifest: WorldManifest) -> void:
 	map_marker_overlay.configure(full_map_camera, adapter, full_map_viewport.size)
 	player_map_marker.scale = Vector3(.18,1,.18) if manifest.asset_id() in ["lantern_reach", "bellwatch", "stillglass", "reedway", "cinderbank", "echo_court", "wayfarer_bastion", "lantern_exchange", "waystone_yard"] else Vector3.ONE
 
+## The map window's cartography: the continent picture and the regions on it.
+## Both are the client's own tab maps - every exterior region's minimap.webp,
+## laid out to scale by eloria-assets/tools/build_continent_map.py - so what a
+## region looks like from the continent is what it looks like on arrival, the
+## way the legacy map window's continent opened onto each map's own picture.
 func _configure_cartography() -> void:
-	var continent_value: Variant = cartography.get("continent", {})
-	if continent_value is Dictionary:
-		var continent: Dictionary = continent_value as Dictionary
-		var continent_texture: Texture2D = _external_texture(
-			str(continent.get("texture", "")))
-		continent_button.texture_normal = continent_texture
-		continent_image.texture = continent_texture
-	for child: Node in region_buttons.get_children():
-		child.queue_free()
-	for region_index: int in range(cartography_regions.size()):
-		var region_value: Variant = cartography_regions[region_index]
+	continent_map = ContinentMapScript.new()
+	continent_map.name = "ContinentMap"
+	continent_view.add_child(continent_map)
+	continent_map.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	continent_map.region_selected.connect(_preview_region)
+	continent_map.region_hovered.connect(_on_continent_region_hovered)
+	var continent: Dictionary = cartography.get("continent", {}) as Dictionary
+	var image_size: Array = continent.get("imageSize", []) as Array
+	var rects: Array[Dictionary] = []
+	for region_value: Variant in cartography_regions:
 		if not region_value is Dictionary:
 			continue
 		var region: Dictionary = region_value as Dictionary
-		var button: Button = Button.new()
-		button.text = str(region.get("name", "Unknown region"))
-		button.tooltip_text = "Preview " + button.text
-		button.focus_mode = Control.FOCUS_NONE
-		button.pressed.connect(_preview_region.bind(region_index))
-		region_buttons.add_child(button)
+		var rect: Array = region.get("continentRect", []) as Array
+		if rect.size() != 4:
+			continue
+		rects.append({"name": str(region.get("name", "Unknown region")),
+			"rect": Rect2(float(rect[0]), float(rect[1]), float(rect[2]), float(rect[3]))})
+	if image_size.size() == 2:
+		continent_map.configure(
+			Vector2(float(image_size[0]), float(image_size[1])), rects)
+
+## Decodes the continent picture on the first look at the map window.
+func _ensure_cartography_textures() -> void:
+	if _cartography_loaded:
+		return
+	_cartography_loaded = true
+	var continent: Dictionary = cartography.get("continent", {}) as Dictionary
+	_continent_texture = _external_texture(str(continent.get("texture", "")))
+	continent_image.texture = _continent_texture
+
+## A region's tab map: the pixels of its minimap the live Tab map would frame,
+## decoded once and kept.
+func _tab_map_texture(region: Dictionary) -> Texture2D:
+	var key: String = str(region.get("serverMap", ""))
+	if _tab_map_textures.has(key):
+		return _tab_map_textures[key] as Texture2D
+	var tab_map: Dictionary = region.get("tabMap", {}) as Dictionary
+	var whole: Texture2D = _external_texture(str(tab_map.get("texture", "")))
+	var texture: Texture2D = whole
+	var crop: Array = tab_map.get("region", []) as Array
+	if whole != null and crop.size() == 4:
+		var rect := Rect2(float(crop[0]), float(crop[1]), float(crop[2]), float(crop[3]))
+		if rect.position != Vector2.ZERO or rect.size != whole.get_size():
+			var atlas := AtlasTexture.new()
+			atlas.atlas = whole
+			atlas.region = rect
+			texture = atlas
+	_tab_map_textures[key] = texture
+	return texture
+
+func _region_index_for_map(server_map: String) -> int:
+	var wanted: String = MapRegistry.normalize_server_map_id(server_map)
+	if wanted.is_empty():
+		return -1
+	for region_index: int in range(cartography_regions.size()):
+		var region_value: Variant = cartography_regions[region_index]
+		if region_value is Dictionary and MapRegistry.normalize_server_map_id(
+				str((region_value as Dictionary).get("serverMap", ""))) == wanted:
+			return region_index
+	return -1
+
+func _continent_name() -> String:
+	return str((cartography.get("continent", {}) as Dictionary).get("name", "Nymara"))
+
+const CONTINENT_HINT := "Click a region to see its map. Your server map will not change."
+
+## The small map in the sidebar shows whichever of the two the big map is not,
+## and a click swaps them: the legacy map window's one control.
+func _on_continent_button_pressed() -> void:
+	if continent_view.visible:
+		_show_current_map_view()
+	else:
+		_show_continent_view()
 
 func _show_current_map_view() -> void:
+	_ensure_cartography_textures()
 	continent_view.hide()
 	region_preview.hide()
+	_preview_region_index = -1
 	map_image.show()
 	_sync_map_viewport_activity()
+	continent_button.texture_normal = _continent_texture
+	continent_button.tooltip_text = "Show the " + _continent_name() + " continent"
 	map_title.text = _current_map_display_name.to_upper()
 	map_coordinates.text = "Coordinates: —"
 
 func _show_continent_view() -> void:
+	_ensure_cartography_textures()
 	map_image.hide()
-	_sync_map_viewport_activity()
 	region_preview.hide()
+	_preview_region_index = -1
+	_sync_map_viewport_activity()
 	continent_view.show()
-	var continent: Dictionary = cartography.get("continent", {}) as Dictionary
-	map_title.text = str(continent.get("name", "Nymara")).to_upper() + " CONTINENT"
-	map_coordinates.text = "Select a region to preview. Your server map will not change."
+	continent_map.set_current_region(_region_index_for_map(AppState.current_map))
+	# The live render keeps its last frame while its viewport idles.
+	continent_button.texture_normal = full_map_viewport.get_texture()
+	continent_button.tooltip_text = "Return to your current map"
+	map_title.text = _continent_name().to_upper() + " CONTINENT"
+	map_coordinates.text = CONTINENT_HINT
 
+func _on_continent_region_hovered(region_index: int) -> void:
+	if not continent_view.visible:
+		return
+	if region_index < 0 or region_index >= cartography_regions.size():
+		map_coordinates.text = CONTINENT_HINT
+		return
+	var region: Dictionary = cartography_regions[region_index] as Dictionary
+	map_coordinates.text = "Click to see " + str(region.get("name", "the region"))
+	if region_index == _region_index_for_map(AppState.current_map):
+		map_coordinates.text += " (where you are)"
+
+## Shows a region's tab map without leaving the map you are on. The map you
+## are standing on is the live one, your marker and the server's pins
+## included, so asking for it returns to that rather than to a still of it.
 func _preview_region(region_index: int) -> void:
 	if region_index < 0 or region_index >= cartography_regions.size():
 		return
@@ -4960,16 +5055,67 @@ func _preview_region(region_index: int) -> void:
 	if not region_value is Dictionary:
 		return
 	var region: Dictionary = region_value as Dictionary
-	var preview_texture: Texture2D = _external_texture(str(region.get("preview", "")))
-	if preview_texture == null:
-		map_coordinates.text = "Preview unavailable for " + str(region.get("name", "region"))
+	if region_index == _region_index_for_map(AppState.current_map):
+		_show_current_map_view()
 		return
+	var texture: Texture2D = _tab_map_texture(region)
+	if texture == null:
+		map_coordinates.text = "No map of %s has been drawn yet." % str(
+			region.get("name", "that region"))
+		return
+	_ensure_cartography_textures()
 	continent_view.hide()
 	map_image.hide()
-	region_preview.texture = preview_texture
+	_sync_map_viewport_activity()
+	region_preview.texture = texture
 	region_preview.show()
-	map_title.text = str(region.get("name", "REGION")).to_upper() + " PREVIEW"
-	map_coordinates.text = "Preview only — click Current map to return."
+	_preview_region_index = region_index
+	var entry: Dictionary = MapRegistry.resolve(map_registry, str(region.get("serverMap", "")))
+	_preview_adapter = CoordinateAdapter.new(entry.get("coordinateTransform", {}))
+	continent_button.texture_normal = _continent_texture
+	continent_button.tooltip_text = "Show the " + _continent_name() + " continent"
+	map_title.text = str(region.get("name", "REGION")).to_upper()
+	map_coordinates.text = "Coordinates: —"
+
+## The server tile under a point on the preview. The image is north-up at a
+## known metre a pixel and the map's own transform turns metres into tiles,
+## so the sidebar reads the same numbers it would over the live map.
+func _preview_tile_at(local_position: Vector2) -> Variant:
+	if _preview_region_index < 0 or _preview_region_index >= cartography_regions.size():
+		return null
+	if region_preview.texture == null or _preview_adapter == null:
+		return null
+	var tab_map: Dictionary = (cartography_regions[_preview_region_index]
+		as Dictionary).get("tabMap", {}) as Dictionary
+	var low: Array = tab_map.get("worldMin", []) as Array
+	var high: Array = tab_map.get("worldMax", []) as Array
+	if low.size() != 2 or high.size() != 2:
+		return null
+	var texture_size: Vector2 = region_preview.texture.get_size()
+	var pixel_value: Variant = _texture_to_viewport_position(
+		local_position, region_preview, Vector2i(texture_size))
+	if not pixel_value is Vector2:
+		return null
+	var pixel: Vector2 = pixel_value as Vector2
+	var world := Vector3(
+		float(low[0]) + pixel.x / texture_size.x * (float(high[0]) - float(low[0])),
+		_preview_adapter.walking_height,
+		float(low[1]) + pixel.y / texture_size.y * (float(high[1]) - float(low[1])))
+	return _preview_adapter.godot_to_server(world)
+
+func _on_region_preview_gui_input(event: InputEvent) -> void:
+	if not event is InputEventMouseMotion:
+		return
+	var tile_value: Variant = _preview_tile_at((event as InputEventMouseMotion).position)
+	if tile_value is Vector2i:
+		var tile: Vector2i = tile_value as Vector2i
+		map_coordinates.text = "Coordinates: %d, %d" % [tile.x, tile.y]
+	else:
+		map_coordinates.text = "Coordinates: outside map image"
+
+func _on_region_preview_mouse_exited() -> void:
+	if region_preview.visible:
+		map_coordinates.text = "Coordinates: —"
 
 func _friendly_map_name(server_map: String) -> String:
 	# Normalisation already reduces every spelling the server uses - its own

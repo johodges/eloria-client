@@ -360,3 +360,18 @@ collision samples the rendered building pads; water opens only beneath a
 declared Walk_ deck. All 19 departures and all NPC, wildlife, resource and
 interactive rows are connected to the primary arrival. No graph edge changes.
 See sunmane_steppe/layout-review.md for evidence and remaining visual limits.
+
+## The continent map
+
+The map window's continent is not a painting. `continent-layout.json` says
+where each exterior region sits on one canvas, in metres, and
+`eloria-assets/tools/build_continent_map.py` lays every region's own
+`minimap.webp` there to scale - the same top-down picture the Tab map draws
+live of the map the player stands on - into `continent-map.webp` beside this
+file, and writes the client's `godot-client/data/maps/cartography.json`. Each
+region on the continent is a click target that opens the region's own tab
+map, cropped to what the live Tab map frames (`mapBounds`, then
+`playableBounds`, then the server's addressable rectangle), so a preview
+shows what a player sees on arrival. Re-run the tool after a region redraws
+its minimap or moves on the layout; `godot-client/tests/test_cartography.py`
+fails while the checked-in picture or cartography is stale.

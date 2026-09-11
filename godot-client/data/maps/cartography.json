@@ -1,69 +1,354 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
+  "generator": "eloria-assets/tools/build_continent_map.py",
+  "note": "Generated: the continent picture is every exterior region's own tab map (its minimap.webp) laid out to scale as continent-layout.json says, and each region's tabMap names the pixels of that image the live Tab map frames. Re-run the tool after a region redraws its minimap or moves; test_cartography.py fails while this file is stale.",
   "continent": {
     "name": "Nymara",
-    "texture": "res://../eloria-assets/concepts/nymara-regions/nymara_continent_master_concept.png"
+    "texture": "res://../eloria-assets/maps/nymara-regions/continent-map.webp",
+    "imageSize": [
+      1600,
+      1720
+    ],
+    "metresPerPixel": 2.0,
+    "sources": {
+      "four_gates": "27d1f515040110fd0cdf5b08f8500ac95c83789e54733dfd43b4520b526338ed",
+      "mirrorhold": "2dcf009515c932d9f0178ef77eae4b152eba72c553e777fa40a84344af5472a6",
+      "crownwater": "d5cad955bc796cd4309b2124c2defd3de840b3793ff2e1c41c7724511afae53c",
+      "whitehorn_range": "24e2c12340ac5d50b38be137cf7eb1c064e7567f4076c21ff05d2f90083759f6",
+      "amethyst_barrens": "7b027bb204a72f077fa42832a3a56f62449035591f5b01419c7fb0411c935085",
+      "sunmane_steppe": "0a3dcacc24ff2ac41331856ead3760bd8d77a8c219713c7fe6d47d74a6345ae0",
+      "amberwood": "a1ef6aa78fb5db6990a1f3c118f0d5f176c21c5df6b4d0d153f48228342ec5ce",
+      "grey_moors": "69be6f2e835518c0d441213fa708018e7c3dfcbf20d5425efba68495e96b9cbf",
+      "westhaven": "ed56edddae5d43fafa6f229c1b0f684539576d2fe42369f8d00448f534f29b52",
+      "verdant_stair": "651e24054fdea3f341e6f5fd16171649c9c6e60745580ce53bc90fd78a95f842",
+      "ssarathi_ruins": "8137b290bdfdbdf715511680a44d84e10018b12e7e5ce724103f10c1879da450",
+      "manymouth_delta": "d95b8ebebb2f41155b1d3c9d7c1197c15806dd7abce74294cf5602cf27bc269a"
+    }
   },
   "regions": [
     {
-      "name": "Four Gates City",
+      "name": "Four Gates",
       "serverMap": "four_gates",
-      "preview": "res://../eloria-assets/concepts/nymara-regions/four_gates_region_concept.png"
+      "continentRect": [
+        620,
+        780,
+        360,
+        360
+      ],
+      "tabMap": {
+        "texture": "res://../eloria-assets/maps/four-gates/minimap.webp",
+        "region": [
+          450,
+          450,
+          720,
+          720
+        ],
+        "worldMin": [
+          -360.0,
+          -360.0
+        ],
+        "worldMax": [
+          360.0,
+          360.0
+        ]
+      }
     },
     {
       "name": "Mirrorhold",
       "serverMap": "mirrorhold",
-      "preview": "res://../eloria-assets/concepts/nymara-regions/mirrorhold_region_concept.png"
+      "continentRect": [
+        656,
+        176,
+        288,
+        288
+      ],
+      "tabMap": {
+        "texture": "res://../eloria-assets/maps/nymara-regions/mirrorhold/minimap.webp",
+        "region": [
+          0,
+          0,
+          575,
+          575
+        ],
+        "worldMin": [
+          -174.0,
+          -401.0
+        ],
+        "worldMax": [
+          401.0,
+          174.0
+        ]
+      }
     },
     {
       "name": "Crownwater",
       "serverMap": "crownwater",
-      "preview": "res://../eloria-assets/concepts/nymara-regions/crownwater_region_concept.png"
+      "continentRect": [
+        326,
+        816,
+        288,
+        288
+      ],
+      "tabMap": {
+        "texture": "res://../eloria-assets/maps/nymara-regions/crownwater/minimap.webp",
+        "region": [
+          0,
+          0,
+          575,
+          575
+        ],
+        "worldMin": [
+          -174.0,
+          -401.0
+        ],
+        "worldMax": [
+          401.0,
+          174.0
+        ]
+      }
     },
     {
       "name": "Whitehorn Range",
       "serverMap": "whitehorn_range",
-      "preview": "res://../eloria-assets/concepts/nymara-regions/whitehorn_range_region_concept.png"
+      "continentRect": [
+        401,
+        61,
+        198,
+        198
+      ],
+      "tabMap": {
+        "texture": "res://../eloria-assets/maps/nymara-regions/whitehorn_range/minimap.webp",
+        "region": [
+          0,
+          0,
+          395,
+          395
+        ],
+        "worldMin": [
+          -120.0,
+          -275.0
+        ],
+        "worldMax": [
+          275.0,
+          120.0
+        ]
+      }
     },
     {
       "name": "Amethyst Barrens",
       "serverMap": "amethyst_barrens",
-      "preview": "res://../eloria-assets/concepts/nymara-regions/amethyst_barrens_region_concept.png"
+      "continentRect": [
+        1068,
+        326,
+        288,
+        288
+      ],
+      "tabMap": {
+        "texture": "res://../eloria-assets/maps/nymara-regions/amethyst_barrens/minimap.webp",
+        "region": [
+          0,
+          0,
+          575,
+          575
+        ],
+        "worldMin": [
+          -174.0,
+          -401.0
+        ],
+        "worldMax": [
+          401.0,
+          174.0
+        ]
+      }
     },
     {
       "name": "Sunmane Steppe",
       "serverMap": "sunmane_steppe",
-      "preview": "res://../eloria-assets/concepts/nymara-regions/sunmane_steppe_region_concept.png"
+      "continentRect": [
+        1383,
+        801,
+        96,
+        96
+      ],
+      "tabMap": {
+        "texture": "res://../eloria-assets/maps/nymara-regions/sunmane_steppe/minimap.webp",
+        "region": [
+          46,
+          43,
+          191,
+          191
+        ],
+        "worldMin": [
+          -58.0,
+          -133.0
+        ],
+        "worldMax": [
+          133.0,
+          58.0
+        ]
+      }
     },
     {
       "name": "Amberwood",
       "serverMap": "amberwood",
-      "preview": "res://../eloria-assets/concepts/nymara-regions/amberwood_region_concept.png"
+      "continentRect": [
+        293,
+        374,
+        192,
+        192
+      ],
+      "tabMap": {
+        "texture": "res://../eloria-assets/maps/nymara-regions/amberwood/minimap.webp",
+        "region": [
+          0,
+          0,
+          383,
+          383
+        ],
+        "worldMin": [
+          -116.0,
+          -267.0
+        ],
+        "worldMax": [
+          267.0,
+          116.0
+        ]
+      }
     },
     {
       "name": "Grey Moors",
       "serverMap": "grey_moors",
-      "preview": "res://../eloria-assets/concepts/nymara-regions/grey_moors_region_concept.png"
+      "continentRect": [
+        26,
+        705,
+        288,
+        288
+      ],
+      "tabMap": {
+        "texture": "res://../eloria-assets/maps/nymara-regions/grey_moors/minimap.webp",
+        "region": [
+          0,
+          0,
+          575,
+          575
+        ],
+        "worldMin": [
+          -174.0,
+          -401.0
+        ],
+        "worldMax": [
+          401.0,
+          174.0
+        ]
+      }
     },
     {
       "name": "Westhaven",
       "serverMap": "westhaven",
-      "preview": "res://../eloria-assets/concepts/nymara-regions/westhaven_region_concept.png"
+      "continentRect": [
+        102,
+        1136,
+        288,
+        288
+      ],
+      "tabMap": {
+        "texture": "res://../eloria-assets/maps/nymara-regions/westhaven/minimap.webp",
+        "region": [
+          0,
+          0,
+          575,
+          575
+        ],
+        "worldMin": [
+          -174.0,
+          -325.0
+        ],
+        "worldMax": [
+          401.0,
+          250.0
+        ]
+      }
     },
     {
       "name": "Verdant Stair",
       "serverMap": "verdant_stair",
-      "preview": "res://../eloria-assets/concepts/nymara-regions/verdant_stair_region_concept.png"
+      "continentRect": [
+        1210,
+        1136,
+        288,
+        288
+      ],
+      "tabMap": {
+        "texture": "res://../eloria-assets/maps/nymara-regions/verdant_stair/minimap.webp",
+        "region": [
+          0,
+          0,
+          575,
+          575
+        ],
+        "worldMin": [
+          -174.0,
+          -401.0
+        ],
+        "worldMax": [
+          401.0,
+          174.0
+        ]
+      }
     },
     {
       "name": "Ssarathi Ruins",
       "serverMap": "ssarathi_ruins",
-      "preview": "res://../eloria-assets/concepts/nymara-regions/ssarathi_ruins_region_concept.png"
+      "continentRect": [
+        875,
+        1418,
+        288,
+        288
+      ],
+      "tabMap": {
+        "texture": "res://../eloria-assets/maps/nymara-regions/ssarathi_ruins/minimap.webp",
+        "region": [
+          0,
+          0,
+          575,
+          575
+        ],
+        "worldMin": [
+          -174.0,
+          -401.0
+        ],
+        "worldMax": [
+          401.0,
+          174.0
+        ]
+      }
     },
     {
       "name": "Manymouth Delta",
       "serverMap": "manymouth_delta",
-      "preview": "res://../eloria-assets/concepts/nymara-regions/manymouth_delta_region_concept.png"
+      "continentRect": [
+        437,
+        1418,
+        288,
+        288
+      ],
+      "tabMap": {
+        "texture": "res://../eloria-assets/maps/nymara-regions/manymouth_delta/minimap.webp",
+        "region": [
+          0,
+          0,
+          575,
+          575
+        ],
+        "worldMin": [
+          -174.0,
+          -401.0
+        ],
+        "worldMax": [
+          401.0,
+          174.0
+        ]
+      }
     }
   ]
 }
