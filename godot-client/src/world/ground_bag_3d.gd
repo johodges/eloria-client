@@ -2,12 +2,8 @@ class_name GroundBag3D
 extends StaticBody3D
 
 const PICK_LAYER := 16
-## The disc a dropped bag shows on both maps, in the amber the loot windows
-## use for a bag. Sized like the harvest nodes and interactives it is dropped
-## among: a bag is the same kind of thing to read off a map as they are, and a
-## smaller disc than theirs is one the outline closes over rather than frames.
-const MAP_MARKER_RADIUS := 7.0
-const MAP_MARKER_COLOUR := Color(1.0, 0.78, 0.18, 1.0)
+## Layer 2 is visible to the world camera and excluded by both map cameras.
+const WORLD_VISUAL_LAYER := 2
 
 var bag_id: int = -1
 var server_tile: Vector2i = Vector2i.ZERO
@@ -53,6 +49,7 @@ func _build_visual() -> void:
 	var body: MeshInstance3D = MeshInstance3D.new()
 	body.name = "LegacyBagFallback"
 	body.mesh = body_mesh
+	body.layers = WORLD_VISUAL_LAYER
 	# Almost a full sphere: barely settled under its own weight, and sunk a
 	# touch into the ground so it sits rather than floats.
 	body.scale = Vector3(1.0, 0.9, 1.0)
@@ -67,6 +64,7 @@ func _build_visual() -> void:
 	var neck: MeshInstance3D = MeshInstance3D.new()
 	neck.name = "BagNeck"
 	neck.mesh = neck_mesh
+	neck.layers = WORLD_VISUAL_LAYER
 	neck.position.y = 0.218
 	add_child(neck)
 
@@ -81,6 +79,7 @@ func _build_visual() -> void:
 	var cord: MeshInstance3D = MeshInstance3D.new()
 	cord.name = "BagTie"
 	cord.mesh = cord_mesh
+	cord.layers = WORLD_VISUAL_LAYER
 	cord.position.y = 0.255
 	add_child(cord)
 
@@ -91,14 +90,10 @@ func _build_visual() -> void:
 	var puff: MeshInstance3D = MeshInstance3D.new()
 	puff.name = "BagPuff"
 	puff.mesh = puff_mesh
+	puff.layers = WORLD_VISUAL_LAYER
 	puff.scale = Vector3(1.0, 0.65, 1.0)
 	puff.position.y = 0.277
 	add_child(puff)
-
-	var map_marker: MeshInstance3D = MapMarkerDisc.build(
-		"BagMapMarker", MAP_MARKER_RADIUS, MAP_MARKER_COLOUR)
-	map_marker.position.y = 4.0
-	add_child(map_marker)
 
 	var shape: CapsuleShape3D = CapsuleShape3D.new()
 	shape.radius = 0.32
