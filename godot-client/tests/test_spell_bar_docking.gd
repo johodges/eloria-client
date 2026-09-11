@@ -37,6 +37,20 @@ func check_hud_dock(main: Control) -> void:
 	check(bar._dock_bounds().encloses(shown.get_rect()), "the spell bar stays in the space below the logo and above skills")
 	for path in ["EloriaLogoFrame", "ItemQuickbar", "ResourceHud", "RailMeters", "ClockFrame", "CompassFrame", "ChatInput"]:
 		check(not shown.get_global_rect().intersects(main.get_node("GameView/" + path).get_global_rect()), "the attached spell bar leaves " + path + " clear")
+	var items: ScrollContainer = main.get_node("GameView/ItemQuickbar")
+	check(main.right_rail.get_global_rect().encloses(items.get_global_rect()), "item shortcuts stay inside the right HUD")
+	for path in ["ResourceHud", "RailMeters", "ClockFrame", "CompassFrame"]:
+		check(not items.get_global_rect().intersects(main.get_node("GameView/" + path).get_global_rect()), "the item viewport leaves " + path + " clear")
+	for index in range(mini(6, bar.visible_slot_count)):
+		var item: Button = main.quick_slot_buttons[index]
+		var spell: Button = bar.buttons[index]
+		check(item.size.is_equal_approx(spell.size), "paired item and spell cells have equal dimensions")
+		check(item.get_theme_constant("icon_max_width") == spell.get_theme_constant("icon_max_width"), "paired item and spell artwork have equal size")
+		var item_y: float = item.global_position.y + items.scroll_vertical
+		var spell_y: float = spell.global_position.y + bar._scroll.scroll_vertical
+		if bar.panel.visible:
+			check(is_equal_approx(item_y, spell_y), "item and spell rows align vertically: item=%s spell=%s" % [item_y, spell_y])
+		check(is_equal_approx(item.get_theme_stylebox("normal").get_content_margin(SIDE_TOP), spell.get_theme_stylebox("normal").get_content_margin(SIDE_TOP)), "item and spell artwork align below their shortcut headers")
 
 func run() -> void:
 	root.size = Vector2i(1280, 720)
@@ -66,6 +80,19 @@ func run() -> void:
 	check(bar.panel.get_global_rect().end.y < bottom.global_position.y, "the attached bar clears the bottom HUD")
 	main.spell_loadout.assign_slot(0, 1, 10)
 	var app := root.get_node("AppState")
+	for index in range(8):
+		app.inventory[index] = {"image_id": [3, 31, 35, 42][index % 4], "quantity": index + 1, "slot": index, "inventory_usable": true}
+	main.call("_sync_inventory")
+	await settle()
+	check(main.quick_slot_buttons.size() == 8, "all eight item shortcuts are preserved")
+	var item_view: ScrollContainer = items as ScrollContainer
+	item_view.ensure_control_visible(main.quick_slot_buttons[7])
+	await settle()
+	check(item_view.get_global_rect().encloses(main.quick_slot_buttons[7].get_global_rect()), "the eighth item remains reachable by scrolling")
+	check(main.quick_slot_buttons[7].icon != null and not main.quick_slot_buttons[7].disabled, "the eighth item retains its artwork and usable state")
+	item_view.scroll_vertical = 0
+	await settle()
+	check_hud_dock(main)
 	app.actors[42] = {"name": "Mira", "kind": 1, "alive": true, "health": 40}
 	app.select_actor(42)
 	await settle()
@@ -129,6 +156,7 @@ func run() -> void:
 	mouse(motion.position, false)
 	await settle()
 	check(not bar.docked and bar.panel.position.x < items.position.x - 150, "dragging the grip detaches and moves the bar")
+	check(rail.get_global_rect().encloses(items.get_global_rect()) and main.quick_slot_buttons[0].get_theme_constant("icon_max_width") == 26, "detaching spells keeps compact item shortcuts in the HUD")
 	check(bar.buttons[0].size.x >= 36, "detaching restores the larger floating spell icons")
 	var detached: Vector2 = bar.panel.position
 	var saved := ConfigFile.new()
@@ -142,6 +170,7 @@ func run() -> void:
 	await settle()
 	bar = main.casting_bar
 	check(not bar.docked and bar.panel.position.is_equal_approx(detached), "a new scene restores the detached bar position")
+	check(main.right_rail.get_global_rect().encloses(main.get_node("GameView/ItemQuickbar").get_global_rect()), "a session restored with detached spells keeps the item shortcuts in the rail")
 	bar.call("_dock_menu_action", 0)
 	await settle()
 	items = main.get_node("GameView/ItemQuickbar")
