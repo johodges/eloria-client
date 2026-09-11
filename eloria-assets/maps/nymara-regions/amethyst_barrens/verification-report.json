@@ -1,11 +1,11 @@
 {
   "summary": {
-    "walkSurfaceNodes": 29,
-    "walkSurfaceTriangles": 224234,
-    "tilesSampled": 331776,
+    "walkSurfaceNodes": 86,
+    "walkSurfaceTriangles": 570398,
+    "tilesSampled": 147456,
     "groundingMisses": 0,
     "groundingMissFraction": 0.0,
-    "surfaceDiscontinuities": 10,
+    "surfaceDiscontinuities": 50,
     "spawnPoints": 10
   },
   "errors": [],
@@ -13,57 +13,67 @@
     {
       "severity": "warning",
       "code": "GROUNDING_DISCONTINUITY",
-      "message": "10 adjacent tile pairs differ by more than 6 m of surface height (expected at cliffs and under bridges)",
+      "message": "50 adjacent tile pairs differ by more than 6 m of surface height (expected at cliffs and under bridges)",
       "detail": [
         [
-          575,
-          211,
-          32.66
+          383,
+          117,
+          31.98
         ],
         [
-          575,
-          212,
-          32.59
+          383,
+          116,
+          31.95
         ],
         [
-          575,
-          213,
-          32.53
+          383,
+          115,
+          31.85
         ],
         [
-          575,
-          210,
-          32.47
+          383,
+          259,
+          10.07
         ],
         [
-          575,
-          214,
-          32.34
+          383,
+          260,
+          9.76
         ],
         [
-          575,
-          209,
-          32.25
+          383,
+          261,
+          9.5
         ],
         [
-          575,
-          208,
-          32.14
+          383,
+          262,
+          9.27
         ],
         [
-          575,
-          205,
-          32.06
+          383,
+          263,
+          9.03
         ],
         [
-          575,
-          207,
-          32.06
+          383,
+          264,
+          8.78
         ],
         [
-          575,
-          206,
-          32.02
+          383,
+          265,
+          8.53
+        ],
+        [
+          383,
+          266,
+          8.28
+        ],
+        [
+          383,
+          267,
+          8.07
         ]
       ]
     }

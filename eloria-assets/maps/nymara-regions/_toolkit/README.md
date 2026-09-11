@@ -483,10 +483,17 @@ server to verify authoritative movement and grounding.
 
 Whitehorn applies the compact landscape operators at 396 m with protected refuge bands and an explicit gorge floor profile. Optional `border_vistas.add_vista(..., scenery=True)` copies ordinary receiving-region tree silhouettes into the static view; it never copies actors, triggers, walking surfaces or prior vistas. The `alpine_snowfield`, `alpine_blue_ice` and `alpine_bedrock` recipes are opt-in, so existing regions keep their original materials. See `../whitehorn_range/landscape-redesign.md`.
 
-`streaming_borders.py` replaces the Amberwood–Whitehorn copied views with
-reciprocal authored terrain cuts for the real resident scenes. It grades a
-shared saddle, aligns material coordinates, and declares the frame used by
-the client and server's seven crossing lanes. Keep a continuous substrate under
-cutout material paint. The overflow retains surveyed walking ground while the
-neighbor owns the visible far side. See `../../../../docs/exterior-streaming.md`
-for proximity loading, build commands, contracts and the remaining pilot limits.
+`streaming_borders.py` defines the northern group's six reciprocal roads.
+Use `region_specs(region)`, `materials_for(region)` and `apply(build,region)`.
+Apply it after compacting terrain and metadata. Export `build.streaming_borders`
+at the manifest top level. It updates the terrain height field, graded meshes,
+placement/marker elevations and exact tile-centre triggers together. Separate
+border identities prevent one resident from hiding another road's terrain.
+
+Receiving geometry is prefixed `StreamView_<id>__`; exclude these duplicate
+subsets from offline minimaps, authored collision and placement counts. The
+loader handles their visibility and picking collision. Never treat their
+presence as a second attraction or add independent content to them. Overlapping
+collars protect each other's 40 m half-width strips before blending the outer
+shoulder. See `../../../../docs/exterior-streaming.md` for the build, server
+contracts and remaining runtime limits.

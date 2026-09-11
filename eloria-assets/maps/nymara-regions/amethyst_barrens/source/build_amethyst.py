@@ -53,6 +53,8 @@ import transitions as MARCH
 import secretdoors as SD
 import secrets_design as SEC
 import loresites as LORE
+import landscape_plan as LANDSCAPE
+import streaming_borders as SB
 
 HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
@@ -82,7 +84,7 @@ CROSSINGS = [
                    (REG.ANCHORS["road_end_south"][0], REG.PLAY_MAX_Z + 20.0),
                    radius=48.0, name="The Steppe March"),
     MARCH.Crossing("east-shore", "crownwater", REG.ANCHORS["road_end_east"],
-                   (400.0,160.0), station_position=(325.0,87.0),
+                   (400.0,160.0), station_position=(319.0,64.0),
                    radius=32.0, ferry=True, name="The East Landing"),
 ]
 
@@ -94,6 +96,7 @@ SITES = [
                    "cut to one length. A Glasswarden tunes against all eleven in a walk."),
 ]
 MARCH_MATERIALS: dict = dict(getattr(REG, "SURFACE_MATERIALS", {}))
+MARCH_MATERIALS[TER.RESONANT_ROAD] = "alpine_gravel"
 
 # The materials this region embeds. Named explicitly rather than derived, so a
 # kit added by another region cannot silently enlarge this package.
@@ -101,8 +104,8 @@ MATERIALS: frozenset[str] = frozenset({
     "amethyst_barrens_dust", "amethyst_crystal_field", "amethyst_resonant_road",
     "amethyst_storm_rock", "amethyst_crystal", "amethyst_pale_stone",
     "amethyst_verdigris", "amethyst_brass", "amethyst_banner",
-    "shore_shingle", "cobble_paving", "water_sea", "water_stream", "timber_grey",
-}) | MARCH.materials_for("amethyst_barrens", CROSSINGS) | SD.materials(SEC) | LORE.materials([s.piece for s in SITES])
+    "shore_shingle", "cobble_paving", "water_sea", "water_stream", "timber_grey", "thatch_reed", "alpine_gravel",
+}) | MARCH.materials_for("amethyst_barrens", CROSSINGS) | SD.materials(SEC) | LORE.materials([s.piece for s in SITES]) | (SB.materials_for("amethyst_barrens") if hasattr(SB,"materials_for") else set())
 
 
 # --------------------------------------------------------------------------
@@ -126,6 +129,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     LORE.prepare(terrain, SITES, sea_level=getattr(REG, "SEA_LEVEL", 0.0))
 
     PLAN.prepare(terrain)
+    LANDSCAPE.prepare(terrain, seed)
     POP.populate_landmarks(build, seed, lod=lod)
     PLAN.dress(build,seed)
     POP.populate_stations(build, seed, lod=lod)
@@ -134,6 +138,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
         POP.populate_ground_detail(build, seed)
 
     POP.build_water(build)
+    LANDSCAPE.dress(build, seed, lod)
 
     # The marches: the neighbours' country coming in along the roads out.
     MARCH.paint(terrain, CROSSINGS, MARCH_MATERIALS, seed, sea_level=REG.SEA_LEVEL)
@@ -158,6 +163,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     build.resolve_names()
     _add_spawns_and_portals(build)
     _add_population_markers(build, seed)
+    LANDSCAPE.compact(build)
     print(f"[region] built in {time.time() - t0:.1f}s")
     return build
 
@@ -443,9 +449,9 @@ MAX_WALK_GRADIENT = 1.0
 def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
     """Half-metre walkability grid over the server footprint (EWCG version 1)."""
     t = build.terrain
-    width = int(round((REG.PLAY_MAX_X - REG.PLAY_MIN_X + REG.METRES_PER_TILE)
+    width = int(round((LANDSCAPE.PLAY_MAX_X - LANDSCAPE.PLAY_MIN_X + REG.METRES_PER_TILE)
                       / COLLISION_CELL))
-    height = int(round((REG.PLAY_MAX_Z - REG.PLAY_MIN_Z + REG.METRES_PER_TILE)
+    height = int(round((LANDSCAPE.PLAY_MAX_Z - LANDSCAPE.PLAY_MIN_Z + REG.METRES_PER_TILE)
                        / COLLISION_CELL))
     width -= width % 6
     height -= height % 6
@@ -453,8 +459,8 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
     # Rows are indexed by server tile Y, which runs north to south, so row 0 is
     # the +Z (southern) edge. Writing the grid the other way round silently
     # mirrors every walkability decision about the map.
-    xs = REG.PLAY_MIN_X + (np.arange(width) + 0.5) * COLLISION_CELL
-    zs = REG.SERVER_ORIGIN[1] * REG.METRES_PER_TILE \
+    xs = LANDSCAPE.PLAY_MIN_X + (np.arange(width) + 0.5) * COLLISION_CELL
+    zs = LANDSCAPE.SERVER_ORIGIN[1] * REG.METRES_PER_TILE \
         - (np.arange(height) + 0.5) * COLLISION_CELL
     gx, gz = np.meshgrid(xs, zs)
     ground = t.height_at(gx, gz)
@@ -468,6 +474,8 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
     walkable = (ground > REG.SEA_LEVEL + 0.35) & (slope < 1.05)
     blockers = np.zeros_like(walkable)
     for placement in build.placements:
+        if placement.node.startswith('StreamView_'):
+            continue
         if not placement.collides:
             continue
         item = build.meshes[placement.mesh]
@@ -489,6 +497,8 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
     # the ground under them is not separately walkable.
     elevated = 0
     for placement in build.placements:
+        if placement.node.startswith('StreamView_'):
+            continue
         item = build.meshes[placement.mesh]
         walk_bounds = getattr(item, "walk_bounds", lambda: None)()
         if walk_bounds is None and not placement.walk_surface:
@@ -591,13 +601,13 @@ def snap_to_walkable(build: REG.RegionBuild, payload: bytes, width: int,
     moved: list[str] = []
 
     def cell_of(x: float, z: float) -> tuple[int, int]:
-        cx = int((x - REG.PLAY_MIN_X) / COLLISION_CELL)
-        cz = int((REG.SERVER_ORIGIN[1] * REG.METRES_PER_TILE - z) / COLLISION_CELL)
+        cx = int((x - LANDSCAPE.PLAY_MIN_X) / COLLISION_CELL)
+        cz = int((LANDSCAPE.SERVER_ORIGIN[1] * REG.METRES_PER_TILE - z) / COLLISION_CELL)
         return cx, cz
 
     def world_of(cx: int, cz: int) -> tuple[float, float]:
-        x = REG.PLAY_MIN_X + (cx + 0.5) * COLLISION_CELL
-        z = REG.SERVER_ORIGIN[1] * REG.METRES_PER_TILE - (cz + 0.5) * COLLISION_CELL
+        x = LANDSCAPE.PLAY_MIN_X + (cx + 0.5) * COLLISION_CELL
+        z = LANDSCAPE.SERVER_ORIGIN[1] * REG.METRES_PER_TILE - (cz + 0.5) * COLLISION_CELL
         return x, z
 
     for entry in list(build.spawns) + list(build.portals):
@@ -624,8 +634,8 @@ def snap_to_walkable(build: REG.RegionBuild, payload: bytes, width: int,
         nx, nz = world_of(*best)
         entry["position"] = [round(nx, 2), round(float(build.terrain.height_at(nx, nz)) + 0.1, 2),
                              round(nz, 2)]
-        entry["serverTile"] = [int(round(nx + REG.SERVER_ORIGIN[0])),
-                               int(round(REG.SERVER_ORIGIN[1] - nz))]
+        entry["serverTile"] = [int(round(nx + LANDSCAPE.SERVER_ORIGIN[0])),
+                               int(round(LANDSCAPE.SERVER_ORIGIN[1] - nz))]
         distance = math.hypot(nx - x, nz - z)
         moved.append(f"{entry['id']} moved {distance:.1f} m onto walkable ground")
     return moved
@@ -641,9 +651,9 @@ def render_minimap(build: REG.RegionBuild, sets, path: Path, size: int = 0) -> d
     import preview
     from amberwood import render as RENDER
     scene = preview.scene_from_build(build, sets)
-    centre_x = (REG.PLAY_MIN_X + REG.PLAY_MAX_X) * 0.5
-    centre_z = (REG.PLAY_MIN_Z + REG.PLAY_MAX_Z) * 0.5
-    extent = max(REG.PLAY_MAX_X - REG.PLAY_MIN_X, REG.PLAY_MAX_Z - REG.PLAY_MIN_Z)
+    centre_x = (LANDSCAPE.PLAY_MIN_X + LANDSCAPE.PLAY_MAX_X) * 0.5
+    centre_z = (LANDSCAPE.PLAY_MIN_Z + LANDSCAPE.PLAY_MAX_Z) * 0.5
+    extent = max(LANDSCAPE.PLAY_MAX_X - LANDSCAPE.PLAY_MIN_X, LANDSCAPE.PLAY_MAX_Z - LANDSCAPE.PLAY_MIN_Z)
     if size <= 0:
         size = int(round(extent * MINIMAP_PIXELS_PER_METRE))
     altitude = 900.0
@@ -664,7 +674,7 @@ def render_minimap(build: REG.RegionBuild, sets, path: Path, size: int = 0) -> d
     # is drawn at different densities. The old key spellings are written
     # alongside the new ones for one release; at this scale `metresPerPixel`
     # and `pixelsPerMetre` are the same number anyway.
-    min_x, min_z = REG.PLAY_MIN_X, REG.PLAY_MIN_Z
+    min_x, min_z = LANDSCAPE.PLAY_MIN_X, LANDSCAPE.PLAY_MIN_Z
     return {
         "image": path.name,
         "imageSize": [size, size],
@@ -729,16 +739,16 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             "bounds": {"min": [round(float(v), 2) for v in bounds_min],
                        "max": [round(float(v), 2) for v in bounds_max]},
             "playableBounds": {
-                "min": [REG.PLAY_MIN_X, round(float(t.height.min()), 2), REG.PLAY_MIN_Z],
-                "max": [REG.PLAY_MAX_X, round(float(t.height.max()), 2), REG.PLAY_MAX_Z]},
+                "min": [LANDSCAPE.PLAY_MIN_X, round(float(t.height.min()), 2), LANDSCAPE.PLAY_MIN_Z],
+                "max": [LANDSCAPE.PLAY_MAX_X, round(float(t.height.max()), 2), LANDSCAPE.PLAY_MAX_Z]},
             "seaLevel": REG.SEA_LEVEL,
-            "serverCells": REG.SERVER_CELLS,
+            "serverCells": LANDSCAPE.SERVER_CELLS,
         },
         "coordinateTransform": {
             "metresPerTile": REG.METRES_PER_TILE,
-            "serverOrigin": list(REG.SERVER_ORIGIN),
+            "serverOrigin": list(LANDSCAPE.SERVER_ORIGIN),
             "origin": [0.0, 0.0, 0.0],
-            "walkingHeight": round(float(t.height_at(*REG.SPAWN)), 2),
+            "walkingHeight": round(float(build.spawns[0]["position"][1]), 2),
             "invertServerY": True,
         },
         "spawnPoints": build.spawns,
@@ -762,7 +772,8 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             "walkableFraction": collision_stats["walkableFraction"],
             "saturatedCells": collision_stats["saturatedCells"],
         },
-        "contentLayout": PLAN.CONTENT_LAYOUT,
+        "contentLayout": LANDSCAPE.content_layout(),
+        "streamingBorders": getattr(build, "streaming_borders", []),
         "navigation": {
             "crossings": build.crossings,
             "surfaceNodePrefixes": ["Terrain_", "Walk_"],
@@ -786,14 +797,10 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
         "npcMarkers": build.npc_markers,
         "harvestables": build.harvestables,
         "portals": build.portals,
-        "roads": [{"id": name,
-                   "waypoints": [[round(float(p[0]), 1),
-                                  round(float(t.height_at(p[0], p[1])), 2),
-                                  round(float(p[1]), 1)] for p in points]}
-                  for name, points in REG.ROUTES.items()],
+        "roads": LANDSCAPE.roads(),
         "water": {
             "seaLevel": REG.SEA_LEVEL,
-            "serverCells": REG.SERVER_CELLS,
+            "serverCells": LANDSCAPE.SERVER_CELLS,
             "bodies": [{"id": name, "node": name,
                         "type": ("sea" if "Sea" in name
                                  else "stream" if "River" in name else "pool")}
@@ -813,7 +820,7 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
                     "color": [0.96, 0.88, 1.02], "energy": 0.82},
             "ambient": {"skyColor": [0.20, 0.17, 0.30],
                         "groundColor": [0.10, 0.08, 0.06], "energy": 0.34},
-            "saturation": 1.24,
+            "saturation": 1.04,
             "fog": {"enabled": True, "color": [0.30, 0.27, 0.36],
                     "density": 0.0011, "heightFalloff": 0.0026},
             "goldenHour": {"sun": {"direction": [0.86, -0.16, -0.48],
@@ -866,6 +873,14 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
         "productionStatus": "production-geometry-materials-population",
         "knownLimitations": [],
     }
+    manifest["environment"]["zones"] = LANDSCAPE.PLAN.metadata(manifest["environment"]["zones"])
+    manifest["water"]["streams"] = LANDSCAPE.PLAN.metadata(manifest["water"]["streams"])
+    posts=HERE/"server-content.json"
+    if posts.exists():
+        from contentposts import apply
+        apply(manifest, PACKAGE, json.loads(posts.read_text()))
+    import contentposts
+    contentposts.apply_runtime(manifest, HERE.parent)
     path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return manifest
 
@@ -941,10 +956,6 @@ def main() -> int:
         t0 = time.time()
         lod_sets = {name: texture_set.reduced() for name, texture_set in sets.items()}
         lod_build = build_region(args.seed, lod="far")
-        lod_build.terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
-        lod_build.terrain_meshes = lod_build.terrain.build_meshes(
-            uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
-            materials=MARCH_MATERIALS)
         _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb")
         stats["lod2"] = {
             "glbBytes": lod_stats["glbBytes"],

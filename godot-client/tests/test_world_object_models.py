@@ -19,6 +19,7 @@ a message rather than failing when it is not checked out beside the client.
 from __future__ import annotations
 
 import json
+import os
 import re
 import struct
 import unittest
@@ -40,6 +41,12 @@ ROLE_LABEL = re.compile(r"^[a-z_]+$")
 
 
 def server_root() -> Path | None:
+    configured = os.environ.get("ELORIA_SERVER_ROOT")
+    if configured:
+        root = Path(configured).resolve()
+        if not (root / "config/eloria/harvesting.txt").is_file():
+            raise ValueError(f"ELORIA_SERVER_ROOT is not an Eloria server: {root}")
+        return root
     for candidate in SERVER_CANDIDATES:
         if (candidate / "config/eloria/harvesting.txt").is_file():
             return candidate

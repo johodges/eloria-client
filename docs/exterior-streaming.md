@@ -1,15 +1,15 @@
 # Exterior region streaming
 
-Amberwood (384 m) and Whitehorn Range (396 m) now share a surveyed road. The
-client loads the actual receiving scene before arrival, displays it across a
-common terrain cut, and adopts that same scene when the server changes maps.
-The traveller and gameplay camera are rebased into the new coordinate frame.
-Their screen position, heading and zoom remain continuous.
+Amberwood (384 m), Whitehorn Range (396 m), Grey Moors (384 m), Mirrorhold
+(384 m) and Amethyst Barrens (384 m) form the first connected group. The client
+loads the receiving scene before arrival and displays its actual authored
+approach. The server's map handoff adopts that same root and rigidly rebases
+the traveller and camera, preserving their position, heading and zoom.
 
 ## Scope
 
 The generated continent graph enables background preloading on 17 walking and
-causeway links. Only Amberwood–Whitehorn currently has reciprocal terrain
+causeway links. Only Amberwoodâ€“Whitehorn currently has reciprocal terrain
 surveys and simultaneous visible scenery. The other 16 links preload hidden
 destinations and retain the existing scene transition. Seven ferry links and
 interior/magical portals retain their own travel behavior.
@@ -53,15 +53,31 @@ the current live proof uses one QA traveller, not a multiplayer border crowd.
 
 ## Authored geography and contracts
 
-`_toolkit/streaming_borders.py` defines reciprocal anchors, a 42 m approach
-collar, a broad saddle, a shared gravel/turf/frost palette and matching texture
-coordinates. The final paint sits above continuous substrate. Terrain is split
-at the exact join; `_StreamOverflow` geometry remains available for authoritative
-grounding and is visually hidden when the receiving region is resident.
-Ordinary map-specific terrain remains beyond the cut while loading. The old
-copied Amberwood/Whitehorn vistas were removed, so these builds no longer
-depend on each other's generated GLB. Other unsurveyed approaches retain their
-existing static views.
+`_toolkit/streaming_borders.py` defines each reciprocal frame, a 42 m graded
+approach, pair-specific ground materials and matching texture coordinates.
+Moor crossings use meadow/heather/earth; the inhabited upland uses turf and
+gravel; alpine and crystalline approaches use their own frost or scree mix.
+One road's grading protects another road's surveyed strip. This matters at
+Mirrorhold's two northern cols, only 87 m apart.
+
+Terrain is split on exact triangle edges within an 80 m wide receiving strip.
+Each border has its own overflow identity; making one neighbour resident hides
+only that border's overflow. Original collision stays available to departure
+tiles. The GLB also contains a 145 m deep subset of its own receiving terrain
+and nearby static placements, named `StreamView_<border-id>__...`. These are
+exact pieces of the same source geometry. They are excluded from minimaps and
+active navigation. No neighbouring generated GLB is an input to these builds.
+Placement selection uses transformed mesh bounds, so a tree canopy or boulder
+that reaches into the strip stays visible even when its origin lies outside.
+Grading also lifts linked portal, spawn and secret metadata with its landmark.
+
+The loader groups normal geometry under `StreamActive` and receiving subsets
+under `StreamPreview_<border-id>`. A resident shows only the matching subset;
+adoption restores the complete authored scene. This prevents distant terrain
+or an unrelated exit overlapping the current region. Preview collision is
+restricted to picking layer 16, and disabled when the full region becomes active.
+Static batches stay inside their active group, with cache format 3 retaining
+the group layout and transforms.
 
 Anchors sit halfway between each departure tile center and the reciprocal
 arrival. `continent_portals.py` generates seven lanes with mirrored lateral
@@ -75,23 +91,26 @@ return, authored content posts and portal table move together.
 
 ## Rebuild
 
-From each region's `source` directory, run:
+Rebuild and integrate the group from the client root:
 
 ```powershell
-python rebuild_landscape.py --server C:/path/to/server --data C:/path/to/generated-data
+python eloria-assets/tools/rebuild_northern_regions.py --server C:/path/to/server --data C:/path/to/generated-data
 ```
 
-For an exterior-only geometry iteration, run `build_amberwood.py` or
-`build_whitehorn.py`, then the same wrapper with `--skip-build`. The wrappers
-apply surface-height refinement, walk openings, landmark collision, scoped
-server collision sync, generated map grids, portal/content authoring, marker
-positions, package digests and the shared connection manifest. No hand edits to
-generated GLB, collision or server positions are needed.
+Use `--skip-build` for reviewed packages. `--stage collision`, `--stage content`
+and `--stage publish` allow a failed integration stage to resume. Revision-guarded
+migrations preserve content IDs while moving coordinates. Collision generation,
+all reciprocal portals, services, resources and encounters are synchronized in
+one coordinating checkout. A relocation over 12 m stops for a designed approach.
+The publisher records the actual served roster in `source/runtime-content.json`
+and `runtimePopulation`, then updates only this group's package digests and the
+shared connection JSON. Original lore/editor markers remain identifiable.
+Gauntlet completion and bailout definitions use the same surveyed exterior
+return as their portal records.
 
-`eloria-assets/tools/build_exterior_streaming.py --server C:/path/to/server`
-publishes the same connection JSON to the client and server. Supply `--server`
-to include the region's NPC model paths. The scene cache format is version 2;
-older snapshots rebuild because static batches now use root-local transforms.
+The client registry must use each region's compact origin: (116,116) for
+Amberwood, Grey Moors and Amethyst; (120,120) for Whitehorn; (120,96) for Mirrorhold.
+The server map sizes and arrival constants are versioned with the migration.
 
 ## Verification and expansion
 
@@ -103,15 +122,19 @@ extends the real-client route walker with scene/actor identity and camera
 continuity assertions and adjacent crossing captures. It accepts the same
 `ELORIA_WALK_SPEC` and isolated local-server environment as the landscape walk.
 
-Before enabling another visible join, survey both receiving roads, blend their
-landforms and materials, align tile-center arrival frames, regenerate all
-contracts, and walk every lane in both directions. Retain each biome's own
-settlement pattern and terrain logic. Multiple connected joins also need a
-continent-wide orientation and loop-consistency survey; the pilot uses local
-rebasing and is not a globally embedded continent.
+Before enabling another visible join, survey both roads, blend their landforms
+and materials, align tile-centre arrival frames, regenerate contracts, and walk
+every lane in both directions. Test camera angles, shoulders, multi-neighbour
+visibility and single-arrival connectivity, not just the portal's own tile.
 
-Next pairs: Amberwood–Grey Moors (dry meadow to wet peat causeway),
-Whitehorn–Mirrorhold (snowline to inhabited granite terraces), then
-Whitehorn–Amethyst Barrens (exposed rock and crystalline seams). Keep ferry
-journeys deliberate. A broader production rollout also needs lower-end memory
-budgets, chunked attachment/GPU preparation, and cross-map actor interest.
+The northern group uses local border frames and bounded receiving approaches;
+it is not a single globally embedded continent. Region interiors, actors,
+resources, ambient life and audio still activate with the server map. Their
+handoff can remain visible even when the road and camera are continuous.
+An unready scene still takes the synchronous fallback. Broader open-world work
+requires cross-map server interest, lower-memory chunks and asynchronous GPU
+preparation/attachment. The current budget remains one active map and at most
+two neighbouring roots.
+
+See [Northern region rollout](northern-region-rollout.md) for the landscape
+principles and the remaining biome-by-biome plan.

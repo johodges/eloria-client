@@ -1,0 +1,107 @@
+{
+  "summary": {
+    "walkSurfaceNodes": 142,
+    "walkSurfaceTriangles": 786974,
+    "tilesSampled": 147456,
+    "groundingMisses": 0,
+    "groundingMissFraction": 0.0,
+    "surfaceDiscontinuities": 685,
+    "spawnPoints": 3
+  },
+  "errors": [],
+  "warnings": [
+    {
+      "severity": "warning",
+      "code": "GROUNDING_DISCONTINUITY",
+      "message": "685 adjacent tile pairs differ by more than 6 m of surface height (expected at cliffs and under bridges)",
+      "detail": [
+        [
+          287,
+          383,
+          113.81
+        ],
+        [
+          288,
+          383,
+          113.09
+        ],
+        [
+          289,
+          383,
+          112.77
+        ],
+        [
+          290,
+          383,
+          112.5
+        ],
+        [
+          291,
+          383,
+          112.35
+        ],
+        [
+          292,
+          383,
+          112.24
+        ],
+        [
+          293,
+          383,
+          112.23
+        ],
+        [
+          294,
+          383,
+          112.22
+        ],
+        [
+          295,
+          383,
+          112.19
+        ],
+        [
+          296,
+          383,
+          112.02
+        ],
+        [
+          297,
+          383,
+          111.59
+        ],
+        [
+          87,
+          383,
+          96.91
+        ]
+      ]
+    },
+    {
+      "severity": "warning",
+      "code": "COLLISION_SURFACE_MISMATCH",
+      "message": "1 sampled walkable cells disagree with the rendered walk surface",
+      "detail": [
+        {
+          "cell": [
+            468,
+            132
+          ],
+          "encoded": 3.21,
+          "surface": -6.82
+        }
+      ]
+    },
+    {
+      "severity": "warning",
+      "code": "LANDMARK_FLOATING",
+      "message": "1 landmarks sit more than 3 m above the walk surface",
+      "detail": [
+        {
+          "id": "orrery",
+          "gap": 9.63
+        }
+      ]
+    }
+  ]
+}

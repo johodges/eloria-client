@@ -24,19 +24,20 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          174.0,
-          174.0
+          120.0,
+          96.0
         ],
         "origin": [
           0.0,
           0.0,
           0.0
         ],
-        "walkingHeight": 42.63,
+        "walkingHeight": 17.0,
         "invertServerY": true
       },
       "status": "production-geometry-materials-population",
-      "requiresServerMap": "96x96 server tiles (576 cells)"
+      "requiresServerMap": "96x96 server tiles (576 cells)",
+      "landscapeTransitions": true
     },
     "crownwater": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/crownwater/world.json",
@@ -82,15 +83,15 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          174.0,
-          174.0
+          116.0,
+          116.0
         ],
         "origin": [
           0.0,
           0.0,
           0.0
         ],
-        "walkingHeight": 5.2,
+        "walkingHeight": 5.19,
         "invertServerY": true
       },
       "status": "production-geometry-materials-population",
@@ -103,7 +104,8 @@
           174
         ],
         "note": "Amethyst Barrens is authored at 576 m x 576 m. The server map grows from 32x32 to 96x96 tiles; see eloria-server tools/generate_nymara_maps.py."
-      }
+      },
+      "landscapeTransitions": true
     },
     "sunmane_steppe": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/sunmane_steppe/world.json",
@@ -151,19 +153,20 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          174.0,
-          174.0
+          116.0,
+          116.0
         ],
         "origin": [
           0.0,
           0.0,
           0.0
         ],
-        "walkingHeight": 2.78,
+        "walkingHeight": 2.73,
         "invertServerY": true
       },
       "status": "production-geometry-materials-population",
-      "requiresServerMap": "96x96 server tiles (576 cells)"
+      "requiresServerMap": "96x96 server tiles (576 cells)",
+      "landscapeTransitions": true
     },
     "westhaven": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/westhaven/world.json",

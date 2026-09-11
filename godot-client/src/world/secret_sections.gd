@@ -28,12 +28,13 @@ func current_section() -> String:
 
 func reset() -> void:
 	for id: String in _members.keys():
-		for node: Node3D in _members[id] as Array:
-			if is_instance_valid(node):
-				node.visible = true
-	for node: Node3D in _culled:
-		if is_instance_valid(node):
-			node.visible = true
+		# A typed loop variable would cast a freed reference before the check.
+		for value: Variant in _members[id] as Array:
+			if is_instance_valid(value):
+				(value as Node3D).visible = true
+	for value: Variant in _culled:
+		if is_instance_valid(value):
+			(value as Node3D).visible = true
 	_sections.clear()
 	_members.clear()
 	_loose.clear()
@@ -98,9 +99,9 @@ func update(player_position: Vector3, force: bool = false) -> void:
 	_current = here
 	for id: String in _members.keys():
 		var shown := id == here
-		for node: Node3D in _members[id] as Array:
-			if is_instance_valid(node):
-				node.visible = shown
+		for value: Variant in _members[id] as Array:
+			if is_instance_valid(value):
+				(value as Node3D).visible = shown
 
 
 ## Actors and server map objects arrive after the scene was sorted and move
@@ -110,8 +111,10 @@ func cull_dynamic(nodes: Array, keep: Node3D = null) -> void:
 	if _sections.is_empty() or _current.is_empty():
 		return
 	for value: Variant in nodes:
+		if not is_instance_valid(value):
+			continue
 		var node := value as Node3D
-		if node == null or not is_instance_valid(node) or node == keep:
+		if node == null or node == keep:
 			continue
 		if not node.is_inside_tree():
 			continue
@@ -152,6 +155,10 @@ static func _spatial_nodes(root: Node) -> Array[Node3D]:
 	var stack: Array[Node] = [root]
 	while not stack.is_empty():
 		var node: Node = stack.pop_back()
+		# Old imports and lights may still share the root until the frame ends.
+		# Skip the whole retiring subtree, including its unmarked children.
+		if node.is_queued_for_deletion():
+			continue
 		for child: Node in node.get_children():
 			stack.append(child)
 		if node == root:

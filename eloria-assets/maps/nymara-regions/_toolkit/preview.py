@@ -51,6 +51,7 @@ def scene_from_build(build, sets=None, include_kinds=None):
     from dataclasses import replace
     by_name = {material.name: material for material in scene.materials}
     for name, piece in build.terrain_meshes.items():
+        if name.startswith('StreamView_') or not piece.triangle_count: continue
         if piece.material not in by_name:
             base = by_name.get(MAT.base_material(piece.material))
             if base is None:
@@ -60,8 +61,10 @@ def scene_from_build(build, sets=None, include_kinds=None):
             by_name[piece.material] = alias
         scene.add_mesh(piece)
     for name, piece in build.water_meshes.items():
+        if name.startswith('StreamView_') or not piece.triangle_count: continue
         scene.add_mesh(piece)
     for placement in build.placements:
+        if placement.node.startswith('StreamView_'): continue
         if include_kinds is not None and placement.kind not in include_kinds:
             continue
         transform = (M.translation(*placement.position)

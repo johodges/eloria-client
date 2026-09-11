@@ -1,4 +1,5 @@
 """Reapply server-owned marker tiles after deterministic region builds."""
+import json
 import glb_reader as G
 from verify_runtime import VerticalRayIndex
 
@@ -24,3 +25,14 @@ def apply(manifest, package, posts, glb_name="world.glb"):
             entry["serverTile"] = list(tile)
             field = "center" if "center" in entry else "position"
             entry[field] = [round(x, 2), round(height, 2), round(z, 2)]
+
+
+def apply_runtime(manifest, package):
+    """Carry the served roster as a reproducible, explicitly authoritative survey.
+
+    Region design markers keep their lore IDs; this separate roster records the
+    actual live NPC, encounter and resource IDs after server placement.
+    """
+    source = package / 'source/runtime-content.json'
+    if source.is_file():
+        manifest['runtimePopulation'] = json.loads(source.read_text(encoding='utf-8'))

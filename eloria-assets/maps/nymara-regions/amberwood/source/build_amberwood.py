@@ -853,6 +853,8 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
     if posts.is_file():
         import contentposts
         contentposts.apply(manifest, path.parent, json.loads(posts.read_text(encoding="utf-8")))
+    import contentposts
+    contentposts.apply_runtime(manifest, HERE.parent)
     path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return manifest
 

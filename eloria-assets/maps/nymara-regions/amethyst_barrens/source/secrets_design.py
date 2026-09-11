@@ -37,7 +37,7 @@ SECRETS = [
     Secret("barrens-bridge-butts", "The Bridge Butts", "range", "cellar_hatch", "amethyst-crystal-bridge-4", (-8.0, 8.0),
            creatures=(("amethyst_scorpion", 3),),
            note="A gallery under the crystal bridge; scorpions at the far end for slow shots."),
-    Secret("barrens-massif-reliquary", "The Massif Reliquary", "reliquary", "shrine_slab", "the-amethyst-massif", (12.0, 10.0), key="Crystal",
+    Secret("barrens-massif-reliquary", "The Massif Reliquary", "reliquary", "shrine_slab", "the-amethyst-massif", (-6.0, 70.0), key="Crystal",
            texts=(("The eleven measures", "The measures were cut from one crystal. The twelfth length was never set; the factor knows why."),
                   ("The storm ruins", "The ruins were not storm-broken. They were struck, once each, on the same night."),
                   ("The vault", "The Resonant Vault under the observatory was a mine before it was a vault.")),

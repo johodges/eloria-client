@@ -13,6 +13,11 @@ var _peak_static_bytes := 0.0
 var _last_frame_time := 0
 var _saving_capture := false
 var _crossing_images: Array = []
+var _walking_route := false
+
+func _issue_walk(step: Dictionary) -> void:
+	_walking_route = true
+	super._issue_walk(step)
 
 func _run() -> void:
 	RenderingServer.frame_post_draw.connect(_measure_frame)
@@ -39,7 +44,9 @@ func _measure_frame() -> void:
 		return
 	_peak_neighbours = maxi(_peak_neighbours, stream.residents.size())
 	_peak_static_bytes = maxf(_peak_static_bytes, Performance.get_monitor(Performance.MEMORY_STATIC))
-	if (map_id != _last_map and not _last_map.is_empty()
+	# Route setup uses an admin teleport, which may also reuse a resident map.
+	# Only player movement is expected to preserve the border camera transform.
+	if (_walking_route and map_id != _last_map and not _last_map.is_empty()
 			and stream.last_handoff.get("from", "") == _last_map
 			and stream.last_handoff.get("to", "") == map_id):
 		_expect(bool(stream.last_handoff.get("continuous", false)), "surveyed road uses continuous handoff")
@@ -69,7 +76,7 @@ func _measure_frame() -> void:
 	for candidate: Dictionary in stream._candidates(rig.focus):
 		if bool(candidate.seamless) and float(candidate.distance) < 8:
 			near_border = true
-	if near_border:
+	if near_border and _walking_route:
 		_last_image = root.get_texture().get_image()
 		if _last_frame_time > 0 and not _saving_capture:
 			_frame_times.append((Time.get_ticks_usec() - _last_frame_time) / 1000.0)
@@ -81,6 +88,7 @@ func _measure_frame() -> void:
 	_last_frame_time = Time.get_ticks_usec()
 
 func _write_report() -> void:
+	_walking_route = false
 	for capture: Array in _crossing_images:
 		(capture[1] as Image).save_png(_artifacts.path_join(capture[0]))
 	_crossing_images.clear()

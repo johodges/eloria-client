@@ -1,19 +1,22 @@
 # Amethyst Barrens production map
 
-A 576 m × 576 m Nymara region: a storm-scoured crystal basin under permanent
+A 384 m × 384 m Nymara region: a storm-scoured crystal basin under permanent
 cloud, with the Glasswarden Observatory on its terrace in the north-west, a
 crystal massif erupting from the northern uplands, mountains closing the north
 and west, and the sea biting into the north-east and south-east corners.
 
 | | |
 | --- | --- |
-| Extent | 576 m × 576 m, one metre per server tile |
-| Server map | 96 × 96 ELM tiles (576 × 576 collision cells) |
-| Arrival datum | server tile (174, 174) → Godot origin, ground 5.2 m |
-| `world.glb` | 19.53 MB, 887 nodes, 444,492 unique / 601,200 instanced triangles |
-| `collision.bin` | 1152 × 1152 at 0.5 m, 81.3% walkable |
-| Landmarks | 47 |
+| Extent | 384 m × 384 m, one metre per server tile |
+| Server map | 64 × 64 ELM tiles (384 × 384 collision cells) |
+| Arrival datum | primary server tile (140, 85); server origin (116, 116) |
+| `world.glb` | reproduced exterior with LOD and reciprocal receiving strips; see performance in world.json |
+| `collision.bin` | 768 × 768 at 0.5 m; corrected from exported walking surfaces |
+| Landmarks | 62, with stable legacy names |
 | Status | `production-geometry-materials-population` |
+
+See [landscape-redesign.md](landscape-redesign.md) for the inhabited-basin pass,
+compact coordinate decisions, retained content, reciprocal borders and review evidence.
 
 ## Contents
 
@@ -35,13 +38,13 @@ source/                   the region build; see source/README.md
 ## Building
 
 ```bash
-cd source && python build_amethyst.py
+cd source && python rebuild_landscape.py --verify
 ```
 
-Deterministic: two independent processes produce byte-identical `world.glb`,
-`world.json`, `collision.bin` and `minimap.webp`. The only file that differs
-between runs is `world.glb.validator.json`, which records its own absolute path
-and a timestamp.
+The seeded build reproduces the authored region and includes reciprocal
+receiving strips from the shared border specifications. Rebuild the frozen
+set of neighboring sources together when reproducing a release. Validation
+reports also record their absolute path and timestamp.
 
 The shared authoring toolkit lives at `../_toolkit/` and is imported, not
 copied. Region-specific code is `source/region.py` (extent, anchors, routes,
@@ -56,22 +59,22 @@ PYTHONPATH=../_toolkit python ../_toolkit/verify_runtime.py
 ```
 
 - `validate_gltf.py`: **0 errors, 0 warnings**
-- `verify_runtime.py`: **0 errors**, 331,776 tiles sampled, **0 grounding
-  misses**, one warning for 73 cliff-and-bridge height discontinuities
+- `verify_runtime.py`: **0 errors**, 147,456 tiles sampled, **0 grounding
+  misses**; see `verification-report.json` for current cliff-and-bridge warnings
 
-See `validation-report.md` for the full record and `comparison-report.md` for
-what does and does not match the concept.
+The current compact review is recorded in `landscape-redesign.md` and the
+northern rollout artifacts. Older `validation-report.md` and
+`comparison-report.md` document the original 576m production package.
 
 ## Server side
 
-The region needs the regenerated 96 × 96 ELM at
+The region needs the regenerated 64 × 64 ELM at
 `../server-collision/amethyst_barrens.bin`, written by
 `../_toolkit/export_server_collision.py` from the same terrain the GLB is built from.
-The matching server change is on `feature/amethyst-barrens-576m-server-map` in
-`eloria-server`. The client registry records this under `requiresServerMap`.
+The rollout coordinator applies `source/migrate_compact_server.py`, then
+synchronizes collision, portals, secrets and content against the final package.
 
-Height bytes follow the convention the client already uses,
-`elevation_metres = height_byte * 0.2 - 2.2`, with zero meaning blocked. The
-basin is authored to sit inside that six-bit band on purpose, so the server gets
-real elevation rather than a saturated plateau — 52 distinct height bytes with
-8% saturated, against Amberwood's near-total saturation.
+Client collision bytes use the refined height encoding in `world.json`, with
+zero meaning blocked. The server exporter applies the server's own height
+encoding and conservative tile folding; it must read the final corrected
+collision after the sequential rebuild completes.

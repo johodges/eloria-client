@@ -26,10 +26,6 @@ def finish(build):
         return True
     build.placements[:]=[p for p in build.placements if keep(p)]
     build.border_vistas=[]
-    for region,portal,edge,outward,inward,material in [
-        ('mirrorhold','west-gorge',(269,float(C.PLAN.z(-66))),(1,0),(1,0),'alpine_turf'),
-        ('grey_moors','north-gate',(float(C.PLAN.x(156)),118),(0,1),(0,1),'grey_heather_moor')]:
-        build.border_vistas.append(add_vista(build,root/region,portal,edge,outward,inward,material,region))
     from streaming_borders import apply as stitch_border
     stitch_border(build, 'amberwood')
     # Grove markers name a place, not one indispensable scatter instance.

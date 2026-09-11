@@ -1,6 +1,6 @@
 # Amethyst Barrens source
 
-Three region-specific modules plus one build script. Everything else is imported
+Region-specific authoring and review modules. Shared primitives are imported
 from the shared toolkit at `../../_toolkit/`, which is not copied here.
 
 | File | What it owns |
@@ -9,16 +9,23 @@ from the shared toolkit at `../../_toolkit/`, which is not copied here.
 | `populate.py` | the landmark kit and every placement pass |
 | `views.py` | the camera set, the panel mapping, and this region's capture lighting |
 | `build_amethyst.py` | the build: GLB, manifest, collision, minimap, validation |
+| `landscape_plan.py` | 384m survey, inhabited outpost, road grading, ecological placement and reciprocal borders |
+| `rebuild_landscape.py` | sequential exterior build, geometry height correction, open decks and solid footprints |
+| `migrate_compact_server.py` | revision-guarded server coordinate migration; preview by default |
+| `review_landscape.py` | stable IDs, retained node references and conservative portal tile checks |
+| `review_border_lanes.py` | all seven trigger/arrival lanes and 40m approaches in final client and served collision |
+| `write_walk_fixture.py` | short service, resource, habitat and all-door routes for the real server walker |
+| `write_review.py` | annotated raw gameplay-camera comparison and geometry-derived overview |
 
 ## Build
 
 ```bash
-python build_amethyst.py                 # full package
+python rebuild_landscape.py --verify     # complete corrected package
 python build_amethyst.py --skip-lod2 --skip-minimap   # fast iteration
 ```
 
-Deterministic: two independent processes produce byte-identical `world.glb`,
-`world.json`, `collision.bin` and `minimap.webp`.
+The seeded build also reads shared reciprocal border definitions and receiving
+sources; keep their revision fixed to reproduce the published package.
 
 Runtime startup never depends on running this. The package is the committed
 artefacts.
@@ -36,6 +43,13 @@ PYTHONPATH=../_toolkit python ../_toolkit/export_server_collision.py --out ../se
 
 ## Real client frames
 
+The current inhabited landscape's raw before/after frames and precise camera
+specifications are under `work-output/northern-rollout/amethyst_barrens`.
+Use `godot-client/tests/integration/rendered_landscape_survey.gd` for the complete
+gameplay-camera rig, traveller and HUD. The integrated server walker consumes
+the generated `walk-routes.json`. The older capture workflow below remains
+available for concept review.
+
 `references/captures/` is the offline rasteriser and is *not* the client.
 For engine frames, from a Godot 4.7.2 binary:
 
@@ -52,7 +66,7 @@ the offline previews they are compared against. Run `capture_views.py` first.
 ## Material set
 
 `build_amethyst.py` pins `MATERIALS` and passes `only=` when registering glTF
-materials, so this package embeds the 13 materials it uses rather than all 56
-in the shared table. Adding a kit piece that introduces a new material means
+materials, so this package embeds its selected palette and the reciprocal border
+materials. Adding a kit piece that introduces a new material means
 adding its name there; an unpinned material is a `KeyError` at export rather
 than a silent omission.

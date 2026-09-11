@@ -104,9 +104,80 @@ func _run() -> void:
 	_expect(a_walk.visible and b_build.visible and loose.visible,
 		"an inactive controller hides nothing")
 
+	await _test_retired_scene_nodes(manifest, plain)
+
 	if failures == 0:
 		print("test_secret_sections: all checks passed")
 	quit(failures)
+
+
+func _test_retired_scene_nodes(manifest: WorldManifest, plain: WorldManifest) -> void:
+	var world := Node3D.new()
+	root.add_child(world)
+	# Map changes leave an old import/light subtree queued while the new map
+	# is configured. Its children are not themselves marked for deletion.
+	var retiring := Node3D.new()
+	world.add_child(retiring)
+	var retired_light := OmniLight3D.new()
+	retired_light.position = Vector3(10, 2, 10)
+	retiring.add_child(retired_light)
+	retiring.queue_free()
+	var alpha := MeshInstance3D.new()
+	alpha.name = "Walk_alpha_live"
+	world.add_child(alpha)
+	var beta := MeshInstance3D.new()
+	beta.name = "Build_beta_live"
+	world.add_child(beta)
+	var removed := MeshInstance3D.new()
+	removed.name = "Build_alpha_removed"
+	world.add_child(removed)
+	var sections = SectionsScript.new()
+	_expect(sections.configure(manifest, world) == 3,
+		"indexing excludes an entire subtree queued for deletion")
+	# A mesh can also disappear after indexing. A dead first member must not
+	# prevent later live members and the next section from changing visibility.
+	removed.free()
+	await process_frame
+	beta.visible = false
+	sections.update(Vector3(110, 0, 20), true)
+	_expect(not alpha.visible and beta.visible,
+		"section changes continue past freed scene members")
+	var removed_actor := Node3D.new()
+	removed_actor.position = Vector3(20, 0, 20)
+	world.add_child(removed_actor)
+	var actor := Node3D.new()
+	actor.position = Vector3(20, 0, 20)
+	world.add_child(actor)
+	sections.cull_dynamic([removed_actor, actor])
+	_expect(not removed_actor.visible and not actor.visible,
+		"both actors are tracked when hidden outside the current section")
+	var stale: Variant = removed_actor
+	removed_actor.free()
+	actor.visible = true
+	sections.cull_dynamic([stale, actor])
+	_expect(not actor.visible, "a freed dynamic input does not stop later actor culling")
+	sections.reset()
+	_expect(not sections.is_active() and sections.current_section().is_empty(),
+		"reset clears state after static and culled dynamic members were freed")
+	_expect(alpha.visible and beta.visible and actor.visible,
+		"reset restores surviving members and actors after stale references")
+	# Leaving a secret can free the entire world before the next configure.
+	sections.configure(manifest, world)
+	sections.update(Vector3(20, 0, 20), true)
+	world.free()
+	var next_world := Node3D.new()
+	root.add_child(next_world)
+	_expect(sections.configure(plain, next_world) == 0 and not sections.is_active(),
+		"entering an ordinary map safely resets a freed secret scene")
+	var next_beta := MeshInstance3D.new()
+	next_beta.name = "Build_beta_new_visit"
+	next_world.add_child(next_beta)
+	_expect(sections.configure(manifest, next_world) == 1,
+		"reentering a secret indexes only the new scene")
+	sections.update(Vector3(20, 0, 20), true)
+	_expect(not next_beta.visible, "section culling works again after reentry")
+	sections.reset()
+	next_world.free()
 
 
 func _expect(condition: bool, message: String) -> void:

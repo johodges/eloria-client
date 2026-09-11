@@ -632,7 +632,8 @@ def populate_vegetation(build: RegionBuild, seed: int = 20260828,
     grain = REG.region_noise(t, seed + 401, frequency=0.010)
     density *= np.clip(grain * 2.1 - 0.42, 0.0, 1.0)
 
-    points = scatter_points(t, density, spacing=6.0, seed=seed + 403)
+    density *= getattr(t, "mirror_groves", np.ones_like(density))
+    points = scatter_points(t, density, spacing=7.2, seed=seed + 403)
     rng = N.Rng(seed + 405)
     count = 0
     for x, z in points:

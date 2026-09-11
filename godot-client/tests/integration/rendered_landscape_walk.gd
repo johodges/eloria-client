@@ -87,18 +87,42 @@ func _run() -> void:
 		var walked := 0
 		for step: Dictionary in route.steps:
 			var target: Array = step.tile
+			var walk_timeout: float = float(step.get("walkTimeout", route.get("walkTimeout", 45)))
+			var began: int = Time.get_ticks_msec()
 			_issue_walk(step)
 			var destination: String = str(step.get("destination", map_id))
 			var reached: bool
 			if step.has("destination"):
+				var ready_to_enter := true
 				if step.has("object"):
-					await _wait(func() -> bool: return _near(map_id, target, 2), 45)
-					_network.call("use_map_object", int(step.object))
-				reached = await _on_map(destination)
+					ready_to_enter = await _wait(func() -> bool: return _near(map_id, target, 2), walk_timeout)
+					if ready_to_enter:
+						_network.call("use_map_object", int(step.object))
+				reached = await _on_map(destination) if ready_to_enter else false
 				if bool(step.get("clickNeighbor", false)) and reached:
-					reached = await _wait(func() -> bool: return _at(destination, target), 45)
+					reached = await _wait(func() -> bool: return _at(destination, target), walk_timeout)
 			else:
-				reached = await _wait(func() -> bool: return _at(map_id, target), 45)
+				reached = await _wait(func() -> bool: return _at(map_id, target), walk_timeout)
+			if reached and step.has("useObject"):
+				var chat_cursor: int = (_state.get("chat_lines") as Array).size()
+				if bool(step.get("expectStorage", false)):
+					_state.call("close_storage")
+				_network.call("use_map_object", int(step.useObject))
+				if bool(step.get("expectStorage", false)):
+					reached = await _wait(func() -> bool:
+						return bool((_state.get("storage") as Dictionary).get("open", false)), 10)
+					_expect(reached, "%s / %s storage opened" % [route.id, step.get("label", str(walked))])
+				if reached and step.has("expectText"):
+					reached = await _wait(func() -> bool:
+						return _chat_contains_after(chat_cursor, str(step.expectText)), 10)
+					_expect(reached, "%s / %s interaction replied" % [route.id, step.get("label", str(walked))])
+			if not _report.has("walk_steps"): _report["walk_steps"] = []
+			(_report["walk_steps"] as Array).append({"route": route.id, "target": target,
+				"map": str(_state.get("current_map")), "ok": reached,
+				"used_object": int(step.get("useObject", -1)),
+				"storage_open": bool((_state.get("storage") as Dictionary).get("open", false)),
+				"seconds": (Time.get_ticks_msec() - began) / 1000.0,
+				"actor": (_state.get("actors") as Dictionary).get(int(_state.get("local_actor_id")), {}).duplicate(true)})
 			_expect(reached, "%s / %s (%d,%d)" % [route.id, step.get("label", str(walked)), int(target[0]), int(target[1])])
 			if not reached:
 				var current: Dictionary = (_state.get("actors") as Dictionary).get(int(_state.get("local_actor_id")), {})
@@ -108,9 +132,14 @@ func _run() -> void:
 			walked += 1
 			await _settle(10)
 			if step.has("capture"):
+				# Network arrival precedes the interpolated body. Measure its final
+				# footing once presentation has arrived, without relaxing grounding.
+				_expect(await _wait(_presentation_arrived, 3), "presentation arrived: " + str(step.capture))
 				var grounding: Dictionary = _ground(str(step.capture))
 				_expect(bool(grounding.get("ok", false)), "grounded: " + str(step.capture))
 				await _capture(str(step.capture) + ".png")
+			if bool(step.get("expectStorage", false)):
+				_state.call("close_storage")
 			map_id = destination
 		_report["routes_completed"] = int(_report.get("routes_completed", 0)) + int(walked == route.steps.size())
 		_write_report()
@@ -168,6 +197,17 @@ func _on_map(name: String) -> bool:
 			and _loader.world_root != null
 			and (_main.get("actor_nodes") as Dictionary).has(
 				int(_state.get("local_actor_id")))), TIMEOUT)
+
+func _chat_contains_after(cursor: int, expected: String) -> bool:
+	var lines: Array = _state.get("chat_lines")
+	for index in range(cursor, lines.size()):
+		if str((lines[index] as Dictionary).get("text", "")).contains(expected):
+			return true
+	return false
+
+func _presentation_arrived() -> bool:
+	var actor: ReplicatedActor3D = (_main.get("actor_nodes") as Dictionary).get(int(_state.get("local_actor_id"))) as ReplicatedActor3D
+	return is_instance_valid(actor) and actor.global_position.distance_to(actor.server_target) < 0.01
 
 func _ground(label: String) -> Dictionary:
 	var nodes: Dictionary = _main.get("actor_nodes") as Dictionary

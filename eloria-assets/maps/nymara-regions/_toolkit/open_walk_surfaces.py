@@ -18,6 +18,8 @@ height of the surface itself. A surface drawn under one of the map's `Water_*`
 bodies is left blocked: the drowned court in Crownwater's lagoon is scenery,
 not a floor. So is anything inside a landmark box `stamp_solid_landmarks.py`
 has closed, because a hall's floor is a walk surface too and the hall is shut.
+Buried decks cannot reopen their banks, and widening a narrow deck to server
+tiles cannot extend it through higher terrain, deep water or a closed structure.
 
     python _toolkit/open_walk_surfaces.py <region> [<region> ...]
     python _toolkit/open_walk_surfaces.py --all
@@ -44,6 +46,7 @@ WATER = "Water_"
 # How far under the water a surface may sit and still be a floor. A jetty deck
 # is flush with the water it stands in; the drowned court is metres below it.
 WADE = 0.25
+TERRAIN_CLEARANCE = 0.03
 ## How many levels the cell byte carries, as the package declares. 255 is what
 ## the format holds; a package still on the old 63 keeps its own until
 ## `refine_walk_heights.py` restates it.
@@ -138,6 +141,23 @@ def stamped(manifest: dict, shape, origin, cell: float) -> np.ndarray:
     return out
 
 
+def exposed_decks(covered, top, wet, water_top, terrain, terrain_top, shut):
+    """Only the highest visible floor can open a blocked navigation cell.
+
+    A buried bridge cannot override its bank's slope mask. Check again after
+    widening a narrow deck to server tiles: the added half-cells must also be
+    above terrain and water, and outside structural obstructions.
+    """
+    drowned = wet & (top < water_top - WADE)
+    buried = terrain & (top < terrain_top - TERRAIN_CLEARANCE)
+    usable = covered & ~drowned & ~buried & ~shut
+    widened, widened_top, _ = fill_tiles(usable, top, shut | (covered & (drowned | buried)))
+    exposed = (~wet | (widened_top >= water_top - WADE)) & (
+        ~terrain | (widened_top >= terrain_top - TERRAIN_CLEARANCE))
+    widened &= exposed & ~shut
+    return widened, widened_top, int((widened & ~usable).sum()), covered & drowned, covered & buried
+
+
 def open_package(package: Path, write: bool) -> dict | None:
     grid, manifest = GLB.read_grid(package)
     collision = manifest["collision"]
@@ -157,10 +177,12 @@ def open_package(package: Path, write: bool) -> dict | None:
     water_nodes = GLB.named(document, WATER)
     wet, water_top = GLB.rasterise(GLB.triangles(document, body, water_nodes),
                                    grid.shape[1], grid.shape[0], origin[0], origin[1], cell)
-    drowned = covered & wet & (top < water_top - WADE)
+    terrain_nodes = GLB.named(document, "Terrain_")
+    terrain, terrain_top = GLB.rasterise(GLB.triangles(document, body, terrain_nodes),
+        grid.shape[1], grid.shape[0], origin[0], origin[1], cell)
     shut = stamped(manifest, grid.shape, origin, cell)
-    usable = covered & ~drowned & ~shut
-    usable, top, widened = fill_tiles(usable, top, shut)
+    usable, top, widened, drowned, buried = exposed_decks(
+        covered, top, wet, water_top, terrain, terrain_top, shut)
 
     heights = decode(grid, encoding)
     blocked = np.isnan(heights)
@@ -171,10 +193,12 @@ def open_package(package: Path, write: bool) -> dict | None:
 
     record = {"prefix": WALK, "cellsCovered": int(covered.sum()), "cellsWidened": widened,
               "cellsOpened": int(opened.sum()), "cellsRaised": int(raised.sum()),
-              "cellsDrowned": int(drowned.sum()), "cellsInsideLandmarks": int((covered & shut).sum())}
+              "cellsDrowned": int(drowned.sum()), "cellsBuried": int(buried.sum()),
+              "cellsInsideLandmarks": int((covered & shut).sum())}
     print(f"[open] {package.name}: {record['cellsCovered']} cells carry a walk surface; "
           f"opened {record['cellsOpened']}, raised {record['cellsRaised']}, "
-          f"left {record['cellsDrowned']} under water and {record['cellsInsideLandmarks']} inside landmarks")
+          f"left {record['cellsDrowned']} under water, {record['cellsBuried']} under terrain "
+          f"and {record['cellsInsideLandmarks']} inside landmarks")
     if not write:
         return record
     walkable = int((codes != 0).sum())
