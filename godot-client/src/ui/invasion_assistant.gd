@@ -266,10 +266,11 @@ func apply_update(update: Dictionary) -> void:
 			_rebuild_maps()
 			_update_summary()
 		"map":
-			map_state = update.duplicate(true)
+			map_state = _accumulate(map_state, update, "creatures")
 			var map: Dictionary = map_state.get("map", {}) as Dictionary
 			selected_map_id = str(map.get("id", selected_map_id))
-			_show_map_state()
+			if _is_last_page(update):
+				_show_map_state()
 		"groups":
 			groups_state = _accumulate(groups_state, update, "groups")
 			if _is_last_page(update):
@@ -541,14 +542,16 @@ func _build_groups_tab() -> void:
 	_add_form_label(editor, "Population")
 	var population := HBoxContainer.new()
 	group_minimum = SpinBox.new()
+	group_minimum.custom_minimum_size = Vector2(108, 0)
 	group_minimum.prefix = "Min "
 	group_minimum.min_value = 0
-	group_minimum.max_value = 500
+	group_minimum.max_value = 1000
 	population.add_child(group_minimum)
 	group_maximum = SpinBox.new()
+	group_maximum.custom_minimum_size = Vector2(108, 0)
 	group_maximum.prefix = "Max "
 	group_maximum.min_value = 0
-	group_maximum.max_value = 500
+	group_maximum.max_value = 1000
 	population.add_child(group_maximum)
 	editor.add_child(population)
 	_add_form_label(editor, "Health")
@@ -892,7 +895,7 @@ func _on_group_selected(index: int) -> void:
 		selected_group.get("map_name", ""), selected_group.get("map_id", ""),
 		selected_group.get("minimum", 0), selected_group.get("maximum", 0),
 		selected_group.get("points", 0),
-		("ACTIVE — %d alive" % int(selected_group.get("alive", 0))) if bool(selected_group.get("active", false)) else "Ready",
+		_active_summary(selected_group),
 		_respawn_summary(selected_group),
 		selected_group.get("strength", 0),
 		float(selected_group.get("health_multiplier", 1.0)),
@@ -933,6 +936,15 @@ func _respawn_summary(group: Dictionary) -> String:
 	if minutes == 0:
 		return "every wipe, while active"
 	return "every wipe for %d min" % minutes
+
+
+func _active_summary(group: Dictionary) -> String:
+	if not bool(group.get("active", false)):
+		return "Ready"
+	var result := "ACTIVE — %d alive" % int(group.get("alive", 0))
+	if int(group.get("queued", 0)) > 0:
+		result += " · %d queued" % int(group["queued"])
+	return result
 
 
 func _open_group_map() -> void:

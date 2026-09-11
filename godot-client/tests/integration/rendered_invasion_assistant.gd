@@ -75,6 +75,10 @@ func _run() -> void:
 		"the selected group's composition is listed")
 	_expect(_assistant.group_detail.text.contains("none — spawns once"),
 		"a group built in the assistant states that it spawns once")
+	_expect(_assistant.group_maximum.value == 920,
+		"the largest wave remains editable without truncation")
+	_expect(_assistant.group_detail.text.contains("300 alive · 620 queued"),
+		"the live group reports its queued reinforcements")
 	await _capture("invasion-assistant-groups.png",
 		"the spawn-groups tab: group list, detail block - including the respawn"
 			+ " window, which reads none for a group built here - and the live"
@@ -225,13 +229,13 @@ func _map_state() -> Dictionary:
 func _groups_state() -> Dictionary:
 	return {"kind": "groups", "groups": [
 		{"name": "North Gate Wave", "description": "Opening pressure on the north road",
-			"map_id": "four_gates", "map_name": "Four Gates City", "minimum": 12,
-			"maximum": 24, "points": 3, "creatures": ["ash_wyrm", "cinder_hound"],
+			"map_id": "four_gates", "map_name": "Four Gates City", "minimum": 340,
+			"maximum": 920, "points": 3, "creatures": ["ash_wyrm", "cinder_hound"],
 			"composition": [{"type": "ash_wyrm", "name": "Ash Wyrm", "quantity": 4},
 				{"type": "cinder_hound", "name": "Cinder Hound", "quantity": 12},
 				{"type": "ember_shade", "name": "Ember Shade", "quantity": 6}],
 			"locations": [{"x": 128, "y": 20, "quantity": 12}], "strength": 1840,
-			"active": true, "alive": 17, "boss": "The Cinder Maw",
+			"active": true, "alive": 300, "queued": 620, "boss": "The Cinder Maw",
 			"boss_type": "ash_wyrm", "boss_name": "The Cinder Maw",
 			"health_multiplier": 1.5, "auto_respawn_minutes": -1, "dynamic": true},
 		{"name": "Ashfall Ridge", "description": "Emberhaven escalation",
