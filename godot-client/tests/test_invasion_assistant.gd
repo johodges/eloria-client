@@ -43,6 +43,30 @@ func _run() -> void:
 	_expect(assistant.map_canvas.state.players.size() == 1, "player marker populates")
 	_expect(assistant.map_canvas.state.creatures[0].boss, "boss marker populates")
 	_expect(not assistant.teleport_button.disabled, "teleport enables for a loaded map")
+	var busy_map: Dictionary = assistant.map_state.duplicate(true)
+	var invaders: Array = []
+	for i in range(921):
+		invaders.append({"actor_id": i, "name": "Rabbit", "x": i % 32,
+			"y": i / 32, "health": 10, "max_health": 10, "boss": i == 0})
+	busy_map["page"] = 0
+	busy_map["pages"] = 2
+	busy_map["creatures"] = invaders.slice(0, 500)
+	assistant.apply_update(busy_map)
+	_expect(assistant.map_canvas.state.creatures.size() == 1,
+		"a partial live map keeps the previous view until all actors arrive")
+	busy_map["page"] = 1
+	busy_map["creatures"] = invaders.slice(500)
+	assistant.apply_update(busy_map)
+	_expect(assistant.map_canvas.state.creatures.size() == 921,
+		"the map shows every actor from all pages of a large wave")
+	_expect(assistant.map_canvas.state.creatures[920].actor_id == 920,
+		"the final reinforcement marker survives the paged update")
+	busy_map.erase("page")
+	busy_map.erase("pages")
+	busy_map["creatures"] = []
+	assistant.apply_update(busy_map)
+	_expect(assistant.map_canvas.state.creatures.is_empty(),
+		"an empty refresh clears the previous large wave")
 	_expect(assistant._map_texture("four_gates") != null,
 		"minimap loads directly from the external asset workspace")
 	root.size = Vector2i(960, 540)
@@ -157,6 +181,25 @@ func _run() -> void:
 	assistant._on_group_selected(0)
 	_expect(not assistant.group_spawn.disabled, "defined group can be spawned")
 	_expect(not assistant.group_save.disabled, "dynamic group is editable")
+	var large_group: Dictionary = assistant.selected_group.duplicate(true)
+	large_group["minimum"] = 600
+	large_group["maximum"] = 920
+	large_group["active"] = true
+	large_group["alive"] = 300
+	large_group["queued"] = 620
+	assistant.apply_update({"kind": "groups", "groups": [large_group]})
+	assistant._on_group_selected(0)
+	_expect(assistant.group_minimum.value == 600 and assistant.group_maximum.value == 920,
+		"large wave counts are not clamped to the old 500 limit")
+	_expect(assistant.group_detail.text.contains("300 alive · 620 queued"),
+		"the group distinguishes living creatures from queued reinforcements")
+	assistant._save_group()
+	_expect(commands[-1].contains("|600|920|"),
+		"saving a duplicated large wave preserves both population endpoints")
+	large_group["queued"] = 0
+	large_group["active"] = false
+	assistant.apply_update({"kind": "groups", "groups": [large_group]})
+	assistant._on_group_selected(0)
 
 	# A group built in the assistant spawns once. The three respawn windows
 	# the server can report have to read differently, because activating a
