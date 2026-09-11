@@ -1,95 +1,159 @@
 {
   "summary": {
-    "walkSurfaceNodes": 35,
-    "walkSurfaceTriangles": 226294,
-    "tilesSampled": 331776,
-    "groundingMisses": 0,
-    "groundingMissFraction": 0.0,
-    "surfaceDiscontinuities": 330,
+    "walkSurfaceNodes": 61,
+    "walkSurfaceTriangles": 499475,
+    "tilesSampled": 147456,
+    "groundingMisses": 448,
+    "groundingMissFraction": 0.00304,
+    "surfaceDiscontinuities": 132,
     "spawnPoints": 10
   },
   "errors": [],
   "warnings": [
     {
       "severity": "warning",
-      "code": "GROUNDING_DISCONTINUITY",
-      "message": "330 adjacent tile pairs differ by more than 6 m of surface height (expected at cliffs and under bridges)",
+      "code": "GROUNDING_RAY_MISS",
+      "message": "448 server tiles have no walk surface under them; a character there would fall back to walkingHeight=1.45",
       "detail": [
         [
-          219,
-          422,
-          35.32
+          381,
+          165,
+          265.0,
+          -49.0
         ],
         [
-          220,
-          422,
-          35.32
+          382,
+          165,
+          266.0,
+          -49.0
         ],
         [
-          221,
-          422,
-          35.32
+          383,
+          165,
+          267.0,
+          -49.0
         ],
         [
-          222,
-          422,
-          35.32
+          381,
+          166,
+          265.0,
+          -50.0
         ],
         [
-          223,
-          422,
-          35.32
+          382,
+          166,
+          266.0,
+          -50.0
         ],
         [
-          224,
-          422,
-          35.32
+          383,
+          166,
+          267.0,
+          -50.0
         ],
         [
-          225,
-          422,
-          35.32
+          381,
+          167,
+          265.0,
+          -51.0
         ],
         [
-          226,
-          422,
-          35.32
+          382,
+          167,
+          266.0,
+          -51.0
         ],
         [
-          227,
-          422,
-          35.32
+          383,
+          167,
+          267.0,
+          -51.0
         ],
         [
-          228,
-          422,
-          35.32
+          381,
+          168,
+          265.0,
+          -52.0
         ],
         [
-          229,
-          422,
-          35.32
+          382,
+          168,
+          266.0,
+          -52.0
         ],
         [
-          230,
-          422,
-          35.32
+          383,
+          168,
+          267.0,
+          -52.0
         ]
       ]
     },
     {
       "severity": "warning",
-      "code": "SPAWN_NEIGHBOURHOOD_ROUGH",
-      "message": "spawn 'tenth-mouth-door' has uneven ground within 1.2 m",
+      "code": "GROUNDING_DISCONTINUITY",
+      "message": "132 adjacent tile pairs differ by more than 6 m of surface height (expected at cliffs and under bridges)",
       "detail": [
-        0.0,
-        0.0,
-        -1.01,
-        -1.74,
-        -1.01,
-        0.0,
-        0.0,
-        0.0
+        [
+          141,
+          313,
+          35.32
+        ],
+        [
+          142,
+          313,
+          35.32
+        ],
+        [
+          143,
+          313,
+          35.32
+        ],
+        [
+          144,
+          313,
+          35.32
+        ],
+        [
+          145,
+          313,
+          35.32
+        ],
+        [
+          146,
+          313,
+          35.32
+        ],
+        [
+          147,
+          313,
+          35.32
+        ],
+        [
+          148,
+          313,
+          35.32
+        ],
+        [
+          149,
+          313,
+          35.32
+        ],
+        [
+          150,
+          313,
+          35.32
+        ],
+        [
+          151,
+          313,
+          35.32
+        ],
+        [
+          152,
+          313,
+          35.32
+        ]
       ]
     },
     {
@@ -97,32 +161,9 @@
       "code": "LANDMARK_BELOW_SURFACE",
       "message": "landmark 'great-temple' is 35.32 m below the surface",
       "detail": [
-        60.0,
+        40.0,
         21.0,
-        -264.0
-      ]
-    },
-    {
-      "severity": "warning",
-      "code": "COLLISION_SURFACE_MISMATCH",
-      "message": "2 sampled walkable cells disagree with the rendered walk surface",
-      "detail": [
-        {
-          "cell": [
-            396,
-            528
-          ],
-          "encoded": 2.06,
-          "surface": -4.6
-        },
-        {
-          "cell": [
-            408,
-            528
-          ],
-          "encoded": 2.06,
-          "surface": -4.56
-        }
+        -182.0
       ]
     },
     {
@@ -132,7 +173,7 @@
       "detail": [
         {
           "id": "east-falls",
-          "gap": 22.23
+          "gap": 22.01
         }
       ]
     }

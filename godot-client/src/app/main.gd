@@ -3563,6 +3563,7 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 		" ray_origin=", ray_origin, " ray_direction=", ray_direction, " intersection=", point)
 	if point is Vector3:
 		if _movement_locked(event.ctrl_pressed):
+			exterior_stream.pending_walk.clear()
 			return
 		var tile: Vector2i = adapter.godot_to_server(point as Vector3)
 		print_debug("world_input godot=", point, " server_tile=", tile,
@@ -3571,9 +3572,11 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 		_clear_local_turn_prediction()
 		var move_error: Error = Network.move_to(tile, event.shift_pressed)
 		if move_error != OK:
+			exterior_stream.pending_walk.clear()
 			push_warning("MOVE_TO failed: " + error_string(move_error))
 		else:
-			_show_walk_highlight(tile, (point as Vector3).y)
+			var clicked: Vector3 = exterior_stream.pending_walk.get("world_point", point)
+			_show_walk_highlight(adapter.godot_to_server(clicked), clicked.y)
 
 ## Opens one ground bag: the optimistic reducer state first, so the window
 ## can say it is opening, then the request the server answers with contents.
@@ -3926,8 +3929,10 @@ func _update_border_lighting() -> void:
 	# sky or respawn the map's lamps every frame.
 	var declared: Dictionary = lighting.data.environment
 	var environment := world_environment.environment
-	var direction := ExteriorRegionStream._vector(declared.sun.direction).normalized()
-	world_sun.look_at_from_position(Vector3.ZERO, direction, Vector3.UP)
+	var declared_sun: Dictionary = declared.get("sun", {})
+	if declared_sun.has("direction"):
+		var direction := ExteriorRegionStream._vector(declared_sun.direction).normalized()
+		world_sun.look_at_from_position(Vector3.ZERO, direction, Vector3.UP)
 	if environment != null:
 		environment.fog_density = float(declared.get("fog", {}).get("density", environment.fog_density))
 		environment.adjustment_saturation = float(declared.get("saturation", 1))

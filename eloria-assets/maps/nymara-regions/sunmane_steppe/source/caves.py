@@ -39,6 +39,7 @@ sys.path.insert(0, str(HERE))
 
 import kit                                           # noqa: E402
 import noise as noise_kit                            # noqa: E402
+from noise import stable_seed                       # noqa: E402
 import settlement                                    # noqa: E402
 from build_sunmane import Builder                            # noqa: E402
 from glb import Geometry, compose                    # noqa: E402

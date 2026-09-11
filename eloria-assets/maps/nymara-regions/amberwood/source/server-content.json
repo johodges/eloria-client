@@ -18,7 +18,7 @@
     ],
     "amber-seep-05": [
       206,
-      330
+      329
     ],
     "amber-seep-06": [
       122,
@@ -143,11 +143,11 @@
       214
     ],
     "harbour-master": [
-      54,
+      55,
       86
     ],
     "timber-reeve": [
-      276,
+      277,
       51
     ],
     "charcoal-burner": [
@@ -171,7 +171,7 @@
       194
     ],
     "north-watcher": [
-      286,
+      285,
       345
     ],
     "hamlet-elder": [
@@ -182,5 +182,6 @@
       212,
       129
     ]
-  }
+  },
+  "landscapeRevision": "inhabited-384-v1"
 }

@@ -2,20 +2,20 @@
 
 ```json
 {
-  "nodes": 1488,
-  "meshes": 446,
+  "nodes": 1024,
+  "meshes": 369,
   "materials": 57,
   "images": 121,
   "textures": 121,
-  "accessors": 1968,
-  "bufferViews": 2089,
-  "uniqueTriangles": 1218300,
-  "uniqueVertices": 705426,
-  "glbBytes": 47543224,
-  "instancedTriangles": 1540596,
+  "accessors": 1594,
+  "bufferViews": 1715,
+  "uniqueTriangles": 822047,
+  "uniqueVertices": 487724,
+  "glbBytes": 36573068,
+  "instancedTriangles": 1015543,
   "embeddedTextureBytes": 12937171,
   "textureMemoryBytesUncompressed": 115015680,
-  "placements": 729,
+  "placements": 494,
   "collision": {
     "width": 768,
     "height": 768,
@@ -53,12 +53,12 @@
     "Sanctuary Road: a seven-metre causeway from the southeast working shore; South Watch and Ring island retain their sheltered banks."
   ],
   "lod2": {
-    "glbBytes": 22435204,
-    "nodes": 1397,
-    "uniqueTriangles": 691798,
-    "instancedTriangles": 939924,
-    "sizeReductionPercent": 52.8,
-    "triangleReductionPercent": 39.0
+    "glbBytes": 15696640,
+    "nodes": 959,
+    "uniqueTriangles": 440433,
+    "instancedTriangles": 584227,
+    "sizeReductionPercent": 57.1,
+    "triangleReductionPercent": 42.5
   }
 }
 ```

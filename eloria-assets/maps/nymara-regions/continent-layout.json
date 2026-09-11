@@ -1,27 +1,32 @@
 {
   "schema": 1,
-  "note": "Where each exterior region sits on the continent map the Tab map shows. Positions are metres on one canvas, x east and y south, and name the centre of the region's playable rectangle; the rectangle's size is the region's own, read from its package, so the map is to scale - one metre here is one metre there. The arrangement is the one region-connections.json describes: Four Gates on its island in the middle of the lake, Crownwater's archipelago on the lake west of it, nine regions in a ring clockwise from the north at forty-degree steps on a radius of 1280 m, and the Whitehorn Range beyond the ring to the north-west, above Amberwood and Mirrorhold. Nudge a centre to move a region; tools/build_continent_map.py refuses overlaps.",
+  "note": "Compact atlas placement: x east, y south, centres in metres; each region keeps its own true-scale tab-map rectangle. The clockwise ring and all links come from region-connections.json. Whitehorn stands above the north shore; Crownwater and Four Gates occupy the central lake. Road neighbours have short readable gaps, while ferry routes remain drawn over water. Atlas spacing is schematic, not a global world-coordinate transform. The builder rejects overlapping map rectangles.",
   "continent": "Nymara",
-  "canvasMetres": [3200, 3440],
+  "canvasMetres": [1800, 1880],
   "metresPerPixel": 2,
   "sea": [13, 28, 43],
   "lake": {
-    "centre": [1600, 1920],
-    "radius": 1010,
+    "centre": [850, 1050],
+    "radius": 430,
     "colour": [26, 84, 120]
   },
   "regions": {
-    "four_gates": [1600, 1920],
-    "crownwater": [939, 1920],
-    "whitehorn_range": [1000, 320],
-    "mirrorhold": [1600, 640],
-    "amethyst_barrens": [2423, 939],
-    "sunmane_steppe": [2861, 1698],
-    "verdant_stair": [2708, 2560],
-    "ssarathi_ruins": [2038, 3123],
-    "manymouth_delta": [1162, 3123],
-    "westhaven": [492, 2560],
-    "grey_moors": [339, 1698],
-    "amberwood": [777, 939]
+    "four_gates": [1050, 1040],
+    "crownwater": [650, 1040],
+    "whitehorn_range": [1050, 220],
+    "mirrorhold": [1050, 620],
+    "amethyst_barrens": [1445, 620],
+    "sunmane_steppe": [1450, 1040],
+    "verdant_stair": [1585, 1440],
+    "ssarathi_ruins": [1200, 1460],
+    "manymouth_delta": [710, 1560],
+    "westhaven": [210, 1450],
+    "grey_moors": [260, 1030],
+    "amberwood": [655, 620]
+  },
+  "routeBends": {
+    "amethyst_barrens--crownwater": [[1249, 825], [850, 825]],
+    "ssarathi_ruins--crownwater": [[1004, 1270], [997, 1254], [850, 1254]],
+    "westhaven--amberwood": [[30, 1240], [35, 810], [450, 815]]
   }
 }

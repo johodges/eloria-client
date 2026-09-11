@@ -114,21 +114,36 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          58.0,
-          58.0
+          116,
+          116
         ],
         "origin": [
-          0.0,
-          0.0,
-          0.0
+          0,
+          0,
+          0
         ],
         "walkingHeight": 9.6,
-        "invertServerY": true
+        "invertServerY": true,
+        "addressableWorldBounds": {
+          "min": [
+            -116,
+            -267
+          ],
+          "max": [
+            267,
+            116
+          ]
+        },
+        "serverCells": [
+          384,
+          384
+        ]
       },
       "status": "production",
       "lodManifests": {
         "lod2": "res://../eloria-assets/maps/nymara-regions/sunmane_steppe/world-lod2.json"
-      }
+      },
+      "landscapeTransitions": true
     },
     "amberwood": {
       "landscapeTransitions": true,
@@ -195,38 +210,40 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          174.0,
-          174.0
+          108,
+          108
         ],
         "origin": [
           0.0,
           0.0,
           0.0
         ],
-        "walkingHeight": 24.0,
+        "walkingHeight": 12.0,
         "invertServerY": true
       },
       "status": "production-geometry-materials-population",
-      "requiresServerMap": "96x96 server tiles (576 cells)"
+      "requiresServerMap": "96x96 server tiles (576 cells)",
+      "landscapeTransitions": true
     },
     "ssarathi_ruins": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/ssarathi_ruins/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          174.0,
-          174.0
+          116.0,
+          116.0
         ],
         "origin": [
           0.0,
           0.0,
           0.0
         ],
-        "walkingHeight": 0.0,
+        "walkingHeight": 1.45,
         "invertServerY": true
       },
       "status": "production-geometry-materials-population",
-      "requiresServerMap": "96x96 server tiles (576 cells)"
+      "requiresServerMap": "96x96 server tiles (576 cells)",
+      "landscapeTransitions": true
     },
     "manymouth_delta": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/manymouth_delta/world.json",

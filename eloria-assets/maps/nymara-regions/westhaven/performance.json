@@ -1,18 +1,18 @@
 {
-  "nodes": 2536,
-  "meshes": 428,
+  "nodes": 2415,
+  "meshes": 416,
   "materials": 51,
   "images": 112,
   "textures": 112,
-  "accessors": 1751,
-  "bufferViews": 1863,
-  "uniqueTriangles": 488516,
-  "uniqueVertices": 371781,
-  "glbBytes": 29531584,
-  "instancedTriangles": 864737,
-  "embeddedTextureBytes": 31514507,
-  "textureMemoryBytesUncompressed": 285868032,
-  "placements": 1629,
+  "accessors": 1692,
+  "bufferViews": 1804,
+  "uniqueTriangles": 442893,
+  "uniqueVertices": 346448,
+  "glbBytes": 28313536,
+  "instancedTriangles": 783859,
+  "embeddedTextureBytes": 32633210,
+  "textureMemoryBytesUncompressed": 292159488,
+  "placements": 1549,
   "collision": {
     "width": 792,
     "height": 792,
@@ -52,11 +52,11 @@
     "396m harbour: public cargo spine, terrace lanes, framed services, Gullstone span and tidal Lamp route."
   ],
   "lod2": {
-    "glbBytes": 16872820,
-    "nodes": 1792,
-    "uniqueTriangles": 414042,
-    "instancedTriangles": 630985,
-    "sizeReductionPercent": 42.9,
-    "triangleReductionPercent": 27.0
+    "glbBytes": 15691952,
+    "nodes": 1682,
+    "uniqueTriangles": 369913,
+    "instancedTriangles": 555301,
+    "sizeReductionPercent": 44.6,
+    "triangleReductionPercent": 29.2
   }
 }

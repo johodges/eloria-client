@@ -782,20 +782,8 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260829) -> None:
     t.assign_surface_by_rule(SEA_LEVEL)
     t.dither_boundaries(seed=seed + 97, amount=0.45)
 
-    # The sea closes the region's south-west corner; cliff walls close the rest.
-    # `clamp_edges` names sides by compass, and on a diagonal both the west and
-    # the south edges are partly water, so those two are raised only where the
-    # ground is already landward of the shoreline.
-    # 26 m, not 46. The summit terrace is already at 124 m, so a 46 m rim put
-    # a 170 m wall round the region and the aerial read as a grey box with the
-    # map sunk inside it. 26 m over a 30 m margin is still far too steep to
-    # climb, which is all the rim is for.
-    t.clamp_edges(MARGIN * 0.92, 26.0, sides=("east", "north"))
-    inset = MARGIN * 0.92
-    west = np.clip((t.x0 + inset - t.gx) / inset, 0.0, 1.0)
-    south = np.clip((t.gz - (t.z0 + t.size_z - inset)) / inset, 0.0, 1.0)
-    landward = stair_axis(t.gx, t.gz) > shoreline_s(cross_axis(t.gx, t.gz)) + 2.0
-    t.height += np.where(landward, np.maximum(west, south) * 26.0, 0.0)
+    # Limestone shelves continue into the surrounding jungle and lagoon.
+    # Shared surveyed collars own the two roads; no rectangular perimeter rim.
 
 
 # The surface-class to material mapping for this region. The terrain operators
@@ -915,3 +903,8 @@ def access_waypoints(t):
                  for name, (foot, head, width) in STAIR_RUNS.items())
     roads.append({"id": "cenote-landing", "waypoints": CENOTE_APPROACH})
     return roads
+
+# The compact revision keeps this native geographic vocabulary and kit while
+# reauthoring its route surveys, relief and settlement surfaces.
+from landscape_plan import configure as _configure_landscape
+_configure_landscape(globals())

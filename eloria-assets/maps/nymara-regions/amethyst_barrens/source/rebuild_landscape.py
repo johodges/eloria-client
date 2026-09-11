@@ -23,6 +23,8 @@ def main():
     for script in ('refine_walk_heights.py','open_walk_surfaces.py','stamp_solid_landmarks.py'):
         subprocess.run([sys.executable,str(REGIONS/'_toolkit'/script),'amethyst_barrens'],
                        cwd=REGIONS,check=True)
+    subprocess.run([sys.executable,str(REGIONS/'_toolkit/guard_actor_surfaces.py'),
+                    '--package',str(SOURCE.parent)],cwd=REGIONS,check=True)
     if args.verify:
         subprocess.run([sys.executable,str(REGIONS/'_toolkit/verify_runtime.py'),
                         '--report','verification-report.json'],cwd=SOURCE.parent,check=True)

@@ -131,7 +131,7 @@ def build_water(build: RegionBuild, seed: int = 0) -> None:
         # 4 m cells, not 8. The lagoon is clipped to where the ground is below
         # sea level, so the cell size *is* the shoreline resolution: at 8 m the
         # beach came out as a row of rectangular notches.
-        material="water_lagoon", cell=4.0, only_below=True, margin=0.30,
+        material="water_lagoon", cell=8.0, only_below=False, margin=0.30,
         outside_is_water=True)
 
     # -- the cenotes and the terrace pools. Each is filled to a level a little
@@ -139,17 +139,16 @@ def build_water(build: RegionBuild, seed: int = 0) -> None:
     for name, radius, drop, material in (
             ("cenote", 30.0, 4.0, "water_cenote"),
             ("north_cenote", 24.0, 4.0, "water_cenote"),
-            ("lower_pools", 38.0, 1.6, "water_cenote"),
+            ("lower_pools", 24.0, 1.6, "water_cenote"),
             ("shrine_pool", 32.0, 1.6, "water_cenote"),
             ("lotus_pools", 40.0, 1.6, "water_cenote"),
             ("summit_pools", 28.0, 1.6, "water_cenote"),
             ("quay_falls", 28.0, 1.2, "water_cenote")):
         x, z = REG.ANCHORS[name]
         level = float(t.height_at(x, z)) + drop
-        piece = TER.water_plane(t, level, x - radius, z - radius,
-                                x + radius, z + radius,
-                                material=material, cell=2.0, only_below=True,
-                                margin=0.20)
+        from landscape_plan import pool_water
+        piece = pool_water(t,level,x,z,radius,material,
+                           spill_radius=10.0 if name=="lower_pools" else None)
         if piece.triangle_count:
             build.water_meshes[f"Water_Cenote_{_camel(name)}"] = piece
 
@@ -188,7 +187,9 @@ def _stream_ribbon(t: TER.Terrain, points: np.ndarray, width: float,
     for index in range(points.shape[0] - 1):
         a, b = points[index], points[index + 1]
         span = float(np.linalg.norm(b - a))
-        steps = max(2, int(span / 8.0))
+        # Metre stations follow the compact terrace risers. The old eight-metre
+        # chord cut across dry stair landings and left water above the treads.
+        steps = max(2, math.ceil(span))
         for k in range(steps):
             t_local = k / steps
             samples.append(a + (b - a) * t_local)
@@ -213,7 +214,7 @@ def _stream_ribbon(t: TER.Terrain, points: np.ndarray, width: float,
                                       point[1] + side[1] * width * 0.5)),
                     float(t.height_at(point[0] - side[0] * width * 0.5,
                                       point[1] - side[1] * width * 0.5)))
-        y = floor + 0.45
+        y = floor + 0.12
         rings.append(np.array([
             [point[0] - side[0] * width * 0.5, y, point[1] - side[1] * width * 0.5],
             [point[0] + side[0] * width * 0.5, y, point[1] + side[1] * width * 0.5],
@@ -745,6 +746,9 @@ def populate_crossings(build: RegionBuild, seed: int) -> None:
         for bank in (start, end):
             bank[0] = np.clip(bank[0], REG.PLAY_MIN_X + 10, REG.PLAY_MAX_X - 10)
             bank[1] = np.clip(bank[1], REG.PLAY_MIN_Z + 10, REG.PLAY_MAX_Z - 10)
+        if anchor == 'ravine_bridge':
+            start=np.array([-98.,-146.]);end=np.array([-59.,-136.])
+            across=(start-end)/np.linalg.norm(start-end)
         start_y = _ground(t, start[0], start[1]) + 0.4
         end_y = _ground(t, end[0], end[1]) + 0.4
         deck_y = (start_y + end_y) * 0.5
@@ -770,12 +774,12 @@ def populate_crossings(build: RegionBuild, seed: int) -> None:
         # move it twice
         _place(build, f"Landmark_{key}", key, 0.0, 0.0, y=0.0, kind="bridge")
         _landmark(build, anchor.replace("_", "-"), label, f"Landmark_{key}",
-                  float(centre[0]), float(centre[1]), deck_y, type="bridge",
+                  float((start[0]+end[0])/2), float((start[1]+end[1])/2), deck_y, type="bridge",
                   note=note)
 
         build.crossings.append({"id": anchor, "endpoints": [
             [float(p[0]), float(y), float(p[1])]
-            for p, y in ((start + across * 6, start_y), (end - across * 6, end_y))]})
+            for p, y in ((start + across * (-2 if anchor == "ravine_bridge" else 6), start_y), (end - across * (-2 if anchor == "ravine_bridge" else 6), end_y))]})
         # Wide bank aprons carry the end posts; boarding walks extend onto
         # the banks rather than duplicating the first six metres of deck.
         for side_index, (bank, inward, bank_y) in enumerate(
@@ -1133,7 +1137,7 @@ def populate_jungle(build: RegionBuild, seed: int, lod: str | None = None) -> No
             height = float(t.height_at(x, z))
             # the canopy thins toward the summit, where the cloud forest is
             # lower and more open, and toward the strand
-            thin = 0.20 if height > 110.0 else (0.12 if height < 6.0 else 0.0)
+            thin = 0.20 if height > 54.0 else (0.12 if height < 6.0 else 0.0)
             if float(rng.uniform()) < thin:
                 continue
 
@@ -1169,7 +1173,7 @@ def populate_jungle(build: RegionBuild, seed: int, lod: str | None = None) -> No
                 fx = x + float(rng.uniform(-cell * 0.5, cell * 0.5))
                 fz = z + float(rng.uniform(-cell * 0.5, cell * 0.5))
                 if _standable(t, fx, fz, 1.05) and not bool(t.blocked_at(fx, fz)):
-                    palm = height < 26.0 and float(rng.uniform()) < 0.35
+                    palm = height < 15.0 and float(rng.uniform()) < 0.35
                     mesh = (f"Palm_{int(rng.integers(0, 3))}" if palm
                             else f"TreeFern_{int(rng.integers(0, 3))}")
                     _place(build, f"Fern_{row:03d}_{col:03d}", mesh, fx, fz,

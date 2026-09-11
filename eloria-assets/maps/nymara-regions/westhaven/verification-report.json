@@ -1,15 +1,94 @@
 {
   "summary": {
-    "walkSurfaceNodes": 57,
-    "walkSurfaceTriangles": 187006,
+    "walkSurfaceNodes": 59,
+    "walkSurfaceTriangles": 173361,
     "tilesSampled": 156816,
-    "groundingMisses": 0,
-    "groundingMissFraction": 0.0,
+    "groundingMisses": 784,
+    "groundingMissFraction": 0.005,
     "surfaceDiscontinuities": 138,
     "spawnPoints": 11
   },
   "errors": [],
   "warnings": [
+    {
+      "severity": "warning",
+      "code": "GROUNDING_RAY_MISS",
+      "message": "784 server tiles have no walk surface under them; a character there would fall back to walkingHeight=3.4",
+      "detail": [
+        [
+          271,
+          386,
+          151.0,
+          -214.0
+        ],
+        [
+          272,
+          386,
+          152.0,
+          -214.0
+        ],
+        [
+          273,
+          386,
+          153.0,
+          -214.0
+        ],
+        [
+          274,
+          386,
+          154.0,
+          -214.0
+        ],
+        [
+          275,
+          386,
+          155.0,
+          -214.0
+        ],
+        [
+          276,
+          386,
+          156.0,
+          -214.0
+        ],
+        [
+          277,
+          386,
+          157.0,
+          -214.0
+        ],
+        [
+          278,
+          386,
+          158.0,
+          -214.0
+        ],
+        [
+          279,
+          386,
+          159.0,
+          -214.0
+        ],
+        [
+          280,
+          386,
+          160.0,
+          -214.0
+        ],
+        [
+          281,
+          386,
+          161.0,
+          -214.0
+        ],
+        [
+          282,
+          386,
+          162.0,
+          -214.0
+        ]
+      ]
+    },
     {
       "severity": "warning",
       "code": "GROUNDING_DISCONTINUITY",

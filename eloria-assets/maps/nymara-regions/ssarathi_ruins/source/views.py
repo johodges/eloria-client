@@ -211,10 +211,10 @@ PANELS = {
 # Ground-level evidence for the inhabited quay and surveyed water routes.
 VIEWS.extend([
     ("50-quay-services",None,(0,4),1.7,(0,-2),2.0,62,(1280,820),50,"day!"),
-    ("51-cistern-walk",None,(-14,-20),1.7,(-33,-20),1.7,58,(1280,820),80,"deck"),
-    ("52-sounding-stage",None,(-32.5,-19),1.7,(-34,-20),1.7,62,(1280,820),25,"deck"),
-    ("53-packet-berth",None,(2.6667,38.6667),1.7,(2.6667,33.3333),1.7,60,(1280,820),45,"deck"),
-    ("54-market-aisle",None,(60,4),1.7,(70,4),2.0,58,(1280,820),50,"day!"),
+    ("51-cistern-walk",None,(-38,-22),1.7,(-39.2,-22),1.7,58,(1280,820),80,"deck"),
+    ("52-sounding-stage",None,(-40,-22),1.7,(-42.5,-22),1.7,62,(1280,820),25,"deck"),
+    ("53-packet-berth",None,(4,41),1.7,(4,35),1.7,60,(1280,820),45,"deck"),
+    ("54-market-aisle",None,(69,10),1.7,(77,10),2.0,58,(1280,820),50,"day!"),
     ("55-coil-bridge-walk",None,(20,-29),1.7,(20,-39),1.7,58,(1280,820),65,"deck"),
 ])
 FIXED_VIEWS=FIXED_VIEWS|{v[0] for v in VIEWS if v[0].startswith(("50-","51-","52-","53-","54-","55-"))}

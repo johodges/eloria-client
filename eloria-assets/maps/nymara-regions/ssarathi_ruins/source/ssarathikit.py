@@ -352,12 +352,12 @@ def basin_water(size: int = 512, seed: int = 647) -> T.TextureSet:
     b = N.tileable_fbm(size, 11, 3, seed=seed + 5)
     ripple = np.sin((a * 5.4 + b * 2.1) * 2.0 * math.pi) * 0.5 + 0.5
     colour = _colorize(np.clip(ripple * 0.5 + a * 0.55, 0.0, 1.0),
-                       (0.0, (0.036, 0.152, 0.150)),
-                       (0.5, (0.070, 0.244, 0.228)),
-                       (1.0, (0.128, 0.336, 0.294)))
-    height = ripple * 0.22 + b * 0.10
+                       (0.0, (0.075, 0.155, 0.128)),
+                       (0.5, (0.092, 0.183, 0.145)),
+                       (1.0, (0.115, 0.220, 0.173)))
+    height = ripple * 0.045 + b * 0.02
     occlusion = np.full((size, size), 0.94)
-    roughness = np.full((size, size), 0.09)
+    roughness = np.full((size, size), 0.40)
     return T.TextureSet(BASIN_WATER, _u8(colour), T.pack_orm(occlusion, roughness),
                         T.normal_from_height(height, 1.1))
 
@@ -573,8 +573,8 @@ SPECS_EXTRA = (
     # The basin water. Alpha 0.62 rather than Crownwater's 0.70: Ssarathi's
     # whole subject is drowned paving you can see through, so the surface has to
     # give more of the floor away than a lagoon's would.
-    MAT.MaterialSpec(BASIN_WATER, BASIN_WATER, roughness=0.09,
-                     base_color=(1.0, 1.0, 1.0, 0.62), alpha_mode="BLEND"),
+    MAT.MaterialSpec(BASIN_WATER, BASIN_WATER, roughness=0.40,
+                     base_color=(1.0, 1.0, 1.0, 0.83), alpha_mode="BLEND"),
     MAT.MaterialSpec(LILY, LILY, roughness=0.62,
                      alpha_mode="MASK", double_sided=True),
     MAT.MaterialSpec(PALM, PALM, roughness=0.88,

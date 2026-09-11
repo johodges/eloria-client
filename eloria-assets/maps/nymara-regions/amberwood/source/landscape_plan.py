@@ -151,3 +151,33 @@ def finish_water(build):
         points[:,1]=np.minimum.accumulate(np.minimum(points[:,1],final_ground+.14))
         ribbons.append(water_ribbon(points,2.6 if name=='garden_rill' else 3.6))
     build.water_meshes['Water_Streams']=M.merge(ribbons,'water_stream')
+
+
+def finish_compact_doors(build):
+    """Keep small secret props and their standing posts on the inhabited ground.
+
+    These are final compact coordinates: the cairn previously intersected the
+    sea-arch outcrop and the waystone sat inside the full-size mill lodge. Their
+    existing clearings need no terrain grading or changes to either landmark.
+    The smuggler's mouth keeps its cave, with use/return on the connected quay.
+    """
+    posts = {
+        'amber-stone-ring-well': ((-35.5, -11.5), (78, 127)),
+        'amber-waystone': ((-25.5, -55.5), (91, 173)),
+        'amber-smuggle-mouth': (None, (41, 86)),
+    }
+    t = build.terrain
+    for entry in build.interactives:
+        identity = entry.get('secret')
+        if identity not in posts:
+            continue
+        prop, tile = posts[identity]
+        if prop is not None:
+            x, z = prop
+            node = 'Secret_' + identity.replace('-', '_')
+            placement = next(p for p in build.placements if p.node == node)
+            placement.position = (x, float(t.height_at(x, z)) + .05, z)
+        x, z = tile[0] + .5 - 116, 116 - tile[1] - .5
+        entry['position'] = [x, float(t.height_at(x, z)), z]
+        entry['serverTile'] = list(tile)
+        entry['approachNote'] = 'Surveyed standing post connected to the main village arrival.'

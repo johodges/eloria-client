@@ -894,6 +894,28 @@ def meadow_grass(size: int = 512, seed: int = 131) -> TextureSet:
                       pack_orm(occlusion, roughness), normal_from_height(height, 1.8))
 
 
+def steppe_ground(name: str, size: int = 512) -> TextureSet:
+    """Dry grass and travel dust with the shared ground recipes' modest relief.
+
+    Recolour their seeded structure rather than tinting green grass at runtime.
+    The original meadow and earth recipes keep their existing output bytes.
+    """
+    if name == 'steppe_sward':
+        source = meadow_grass(size, seed=733)
+        stops = ((0., (.20, .18, .105)), (.5, (.39, .34, .18)),
+                 (1., (.56, .48, .28)))
+    elif name == 'steppe_dust':
+        source = packed_earth(size, seed=739)
+        stops = ((0., (.23, .20, .15)), (.5, (.43, .37, .265)),
+                 (1., (.62, .54, .40)))
+    else:
+        raise ValueError(name)
+    luminance = source.base_color.astype(float).mean(axis=2) / 255
+    lo, hi = np.percentile(luminance, [2, 98])
+    field = np.clip((luminance - lo) / max(hi - lo, .001), 0, 1)
+    return TextureSet(name, _u8(_colorize(field, *stops)), source.orm, source.normal)
+
+
 def amber_glass(size: int = 256, seed: int = 137) -> TextureSet:
     """Hand-blown amber glazing: uneven, streaked, slightly bubbled."""
     u = np.linspace(0.0, 1.0, size, endpoint=False)

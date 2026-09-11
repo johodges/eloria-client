@@ -1,27 +1,12 @@
-# Ssarathi Ruins performance summary — September 2026
+# Ssarathi Ruins package budgets
 
-Measured from the current exporter output. Collision counts in performance.json
-describe the initial build; world.json contains the authoritative corrected grid.
+Each approach surface and prop is exported once; resident scenes share those nodes. Collision values in `world.json` describe the corrected, actor-guarded grid.
 
-| Metric | Full package | LOD2 |
+| Metric | Main | LOD2 |
 | --- | ---: | ---: |
-| GLB bytes | 26,215,864 | 16,473,376 |
-| Unique triangles | 481,289 | 431,630 |
-| Instanced triangles | 1,847,337 | 978,596 |
-| Nodes | 7,352 | 3,534 |
+| GLB bytes | 31,210,652 | 13,142,944 |
+| Nodes | 3,192 | 1,529 |
+| Unique triangles | 655,868 | 335,519 |
+| Instanced triangles | 1,703,480 | 521,832 |
 
-Full export: 2,755 placements, 42 materials and
-104 embedded images. The exporter reports
-256.9 MiB of uncompressed textures.
-LOD2 reduces instanced triangles by 47.0% and GLB bytes by 37.2%.
-
-This pass adds 1,406,480 bytes and
-26,681 instanced triangles to the previous full
-package. Surveyed bridges, working docks and the cistern platform account for
-the added route geometry; the two redundant southern bridges and obstructing
-dressing were removed.
-
-The historical 1.5 million visible-triangle and 512 MiB texture guidelines are
-not a frame-time guarantee. The full export remains above that triangle count;
-LOD2 is below it. No GPU profiling or draw-call timing was performed. See
-[layout-review.md](layout-review.md) for reachability, geometry and capture proof.
+LOD2 reduces instanced triangles by 69.4%. The region survey records actual local frame samples; these are not a hardware-independent frame-rate guarantee.

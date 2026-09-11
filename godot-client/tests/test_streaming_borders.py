@@ -1,4 +1,4 @@
-"""Receiving approaches are exact pieces of authored geometry, never whole-map cuts."""
+"""Receiving approaches share single authored pieces, without border stand-ins."""
 import sys
 from pathlib import Path
 
@@ -60,11 +60,47 @@ def test_empty_overflow_keeps_its_material():
     assert front.material == overflow.material == square().material
 
 
+def test_shared_approach_partitions_original_area_without_copied_triangles():
+    spec = dict(S.region_specs('grey_moors')[0], anchor=[0, 2, 100],
+                outward=[0, 1], sceneNodes=[])
+    build = RegionBuild(T.Terrain(-100,-100,200,200,20))
+    build.terrain_meshes = {'Terrain_Original': square()}
+    original_area = area(build.terrain_meshes['Terrain_Original'])
+    S.partition_shared_approaches(build, [spec])
+    assert sum(area(m) for m in build.terrain_meshes.values()) == pytest.approx(original_area)
+    assert len(spec['sceneNodes']) == 1
+    assert not any(n.startswith(S.VIEW_PREFIX) or '_StreamOverflow_' in n for n in build.terrain_meshes)
+    # The same authored strip is absent from the core and present exactly once.
+    core=build.terrain_meshes['Terrain_Original']
+    cell=build.terrain_meshes[spec['sceneNodes'][0]]
+    def ray(mesh): return VerticalRayIndex(mesh.positions[mesh.indices.reshape(-1,3)])
+    assert ray(core).top_hit(0,50) is None
+    assert ray(cell).top_hit(0,50) == pytest.approx(2)
+
+
+def test_overlapping_roads_share_their_intersection_without_duplicate_faces():
+    a = dict(S.region_specs('grey_moors')[0], id='west', anchor=[-100,2,0],
+             outward=[-1,0], sceneNodes=[])
+    b = dict(a,id='south',anchor=[0,2,100],outward=[0,1],sceneNodes=[])
+    build = RegionBuild(T.Terrain(-100,-100,200,200,20))
+    build.terrain_meshes = {'Terrain_Original': square()}
+    S.partition_shared_approaches(build,[a,b])
+    assert sum(area(m) for m in build.terrain_meshes.values()) == pytest.approx(40000)
+    common = set(a['sceneNodes']) & set(b['sceneNodes'])
+    assert common
+    assert sum(area(build.terrain_meshes[n]) for n in common) == pytest.approx(6400)
+    for spec in (a,b):
+        pieces=[build.terrain_meshes[n] for n in spec['sceneNodes']]
+        triangles=np.concatenate([m.positions[m.indices.reshape(-1,3)] for m in pieces])
+        assert VerticalRayIndex(triangles).top_hit(0,20) == pytest.approx(2)
+
+
 def test_every_survey_is_reciprocal_and_has_one_independent_view():
     specs = [s for r in ('amberwood', 'whitehorn_range', 'grey_moors',
                         'mirrorhold', 'amethyst_barrens', 'westhaven',
-                        'four_gates', 'crownwater') for s in S.region_specs(r)]
-    assert len(specs) == 18
+                        'four_gates', 'crownwater', 'sunmane_steppe',
+                        'verdant_stair', 'ssarathi_ruins') for s in S.region_specs(r)]
+    assert len(specs) == 28
     for identity, *_ in S.LINKS:
         ends = [s for s in specs if s['id'] == identity]
         assert len(ends) == 2
@@ -83,9 +119,13 @@ def test_replacing_water_preserves_area_without_overlapping_patches():
     assert area(patch) + area(remaining) == pytest.approx(area(source))
 
 
-@pytest.mark.parametrize('region', ['crownwater','four_gates'])
-def test_causeway_has_seven_clear_lanes_above_water_and_no_earth_plug(monkeypatch, region):
-    spec = next(s for s in S.region_specs(region) if s['id']=='four-gates-crownwater')
+@pytest.mark.parametrize('region,identity', [('crownwater','four-gates-crownwater'),
+    ('four_gates','four-gates-crownwater'), ('four_gates','four-gates-sunmane'),
+    ('sunmane_steppe','four-gates-sunmane'), ('verdant_stair','verdant-ssarathi'),
+    ('ssarathi_ruins','verdant-ssarathi'), ('four_gates','four-gates-ssarathi'),
+    ('ssarathi_ruins','four-gates-ssarathi')])
+def test_causeway_has_seven_clear_lanes_above_water_and_no_earth_plug(monkeypatch, region, identity):
+    spec = next(s for s in S.region_specs(region) if s['id']==identity)
     monkeypatch.setattr(S, 'region_specs', lambda region: [spec])
     x, level, z = spec['anchor']
     t = T.Terrain(x-100,z-100,200,200,2)
@@ -102,7 +142,7 @@ def test_causeway_has_seven_clear_lanes_above_water_and_no_earth_plug(monkeypatc
         return VerticalRayIndex(np.concatenate(triangles))
     deck, bed, lake = rays(build.terrain_meshes,'Walk_'), rays(build.terrain_meshes,'Terrain_'), rays(build.water_meshes,'Water_')
     f=np.array(spec['outward']); side=np.array([-f[1],f[0]])
-    for depth in (-10,-.001,.001,4):
+    for depth in (-10,-.001):
         for lateral in range(-3,4):
             px,pz=np.array([x,z])+f*depth+side*lateral
             assert deck.top_hit(px,pz) == pytest.approx(level,abs=1e-5)
@@ -112,7 +152,13 @@ def test_causeway_has_seven_clear_lanes_above_water_and_no_earth_plug(monkeypatc
             px,pz=np.array([x,z])+f*depth+side*lateral
             assert deck.top_hit(px,pz) is None
             assert lake.top_hit(px,pz) == pytest.approx(level-4,abs=1e-5)
-    assert any(n.startswith(spec['previewPrefix']+'Walk_') for n in build.terrain_meshes)
+    assert any(n.startswith('Walk_') for n in spec['sceneNodes'])
+    assert not any('_StreamOverflow_' in n or n.startswith(S.VIEW_PREFIX) for n in build.terrain_meshes)
+    for depth in (.001,1.5):
+        for lateral in range(-3,4):
+            px,pz=np.array([x,z])+f*depth+side*lateral
+            assert deck.top_hit(px,pz) == pytest.approx(level,abs=1e-5)
+    assert deck.top_hit(*(np.array([x,z])+f*4)) is None
 
 
 def test_pasture_crossing_remains_low_rolling_ground():
@@ -125,6 +171,32 @@ def test_pasture_crossing_remains_low_rolling_ground():
         assert level <= b.terrain.height_at(x+lateral,z) <= level+1.4
 
 
+@pytest.mark.parametrize('region', ['amethyst_barrens','sunmane_steppe','verdant_stair'])
+def test_dry_crossings_have_broad_low_shoulders_instead_of_a_mountain_notch(region):
+    for spec in (s for s in S.region_specs(region) if s['palette']=='steppe'):
+        x,level,z=spec['anchor']
+        t=T.Terrain(x-100,z-100,200,200,2);t.height[:]=level
+        b=RegionBuild(t);b.terrain_meshes=t.build_meshes()
+        S._apply_one(b,spec,[spec])
+        f=np.asarray(spec['outward']);side=np.array([-f[1],f[0]])
+        for lateral in (-39.9,-20,0,20,39.9):
+            px,pz=np.array([x,z])+side*lateral
+            assert level <= b.terrain.height_at(px,pz) <= level+2.
+
+
+def test_submerged_lake_plane_stays_below_a_dry_steppe_pass():
+    spec=next(s for s in S.region_specs('sunmane_steppe') if s['portal']=='north-track')
+    x,level,z=spec['anchor']
+    t=T.Terrain(x-100,z-100,200,200,2);t.height[:]=level
+    b=RegionBuild(t);b.terrain_meshes=t.build_meshes()
+    water=square();water.positions[:,[0,2]] += [x,z];water.positions[:,1]=0
+    b.water_meshes['Water_Lake']=water
+    S._apply_one(b,spec,[spec])
+    for mesh in b.water_meshes.values():
+        assert np.allclose(mesh.positions[:,1],0)
+    assert b.terrain.height_at(x,z)==pytest.approx(level)
+
+
 def _prop_view(monkeypatch, direction=(0, -1)):
     spec = dict(S.region_specs('grey_moors')[0], anchor=[0, 4, 0], outward=list(direction))
     monkeypatch.setattr(S, 'region_specs', lambda region: [spec])
@@ -132,8 +204,7 @@ def _prop_view(monkeypatch, direction=(0, -1)):
 
 
 def _preview_nodes(build, spec):
-    return {p.node.removeprefix(spec['previewPrefix']): p for p in build.placements
-            if p.node.startswith(spec['previewPrefix'])}
+    return {p.node: p for p in build.placements if p.node in spec['sceneNodes']}
 
 
 @pytest.mark.parametrize('direction', [(0, 1), (1, 0), (0, -1), (-1, 0)])
@@ -151,12 +222,13 @@ def test_near_edge_boulder_is_previewed_as_the_same_whole_mesh(monkeypatch, dire
     build.place(original)
     S.apply(build, 'grey_moors')
     duplicate = _preview_nodes(build, spec)[original.node]
-    assert duplicate is not original
+    assert duplicate is original
+    assert len(build.placements) == 1
     assert build.meshes[duplicate.mesh] is mesh
     assert duplicate.position == original.position
     assert duplicate.rotation_y == original.rotation_y
     assert duplicate.scale == original.scale
-    assert not duplicate.collides and duplicate.extras is None
+    assert duplicate.collides and duplicate.extras == {'authored': True}
     assert original.collides and original.extras == {'authored': True}
     np.testing.assert_array_equal(mesh.positions, before)
 

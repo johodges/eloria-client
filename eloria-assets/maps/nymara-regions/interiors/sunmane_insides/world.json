@@ -88,10 +88,10 @@
         43,
         27
       ],
-      "returnMap": "maps/nymara/sunmane_steppe.elm",
+      "returnMap": "sunmane_steppe",
       "returnTile": [
-        128,
-        175
+        239,
+        291
       ],
       "bounds": {
         "min": [
@@ -199,10 +199,10 @@
         169,
         28
       ],
-      "returnMap": "maps/nymara/sunmane_steppe.elm",
+      "returnMap": "sunmane_steppe",
       "returnTile": [
-        182,
-        154
+        319,
+        274
       ],
       "bounds": {
         "min": [
@@ -1236,8 +1236,8 @@
       ],
       "destinationMap": "sunmane_steppe",
       "destinationTile": [
-        128,
-        175
+        239,
+        291
       ],
       "section": "sunmane_wind_caves",
       "label": "Back out to the Sunmane Steppe (Sunmane Wind Caves)"
@@ -1256,8 +1256,8 @@
       ],
       "destinationMap": "sunmane_steppe",
       "destinationTile": [
-        182,
-        154
+        319,
+        274
       ],
       "section": "sunmane_crystal_hollow",
       "label": "Back out to the Sunmane Steppe (Amethyst Crystal Hollow)"
@@ -1290,7 +1290,7 @@
     "accessors": 759,
     "uniqueMeshTriangles": 35467,
     "glbBytes": 6607636,
-    "buildSeconds": 9.4,
+    "buildSeconds": 9.1,
     "collision": {
       "width": 384,
       "height": 384,

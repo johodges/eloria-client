@@ -107,7 +107,7 @@
       "type": "gate",
       "position": [
         0,
-        27.545454545454547,
+        27.76923076923077,
         120
       ]
     },
@@ -118,7 +118,7 @@
       "type": "gate",
       "position": [
         120,
-        27.545454545454547,
+        27.76923076923077,
         0
       ]
     },
@@ -139,7 +139,7 @@
       "node": "Gate_South_Outer",
       "type": "gate",
       "position": [
-        0,
+        0.5,
         23,
         172
       ]
@@ -385,12 +385,12 @@
       "animation": "Gate_South_Inner_Portcullis_OpenClose",
       "exteriorApproach": [
         0.0,
-        27.545454545454547,
+        27.76923076923077,
         133.0
       ],
       "interiorApproach": [
         0.0,
-        27.545454545454547,
+        27.76923076923077,
         107.0
       ],
       "connectedBridgeId": "south",
@@ -411,12 +411,12 @@
       "animation": "Gate_East_Portcullis_OpenClose",
       "exteriorApproach": [
         133.0,
-        27.545454545454547,
+        27.76923076923077,
         0.0
       ],
       "interiorApproach": [
         107.0,
-        27.545454545454547,
+        27.76923076923077,
         0.0
       ],
       "connectedBridgeId": "east",
@@ -460,14 +460,14 @@
         "closed"
       ],
       "exteriorApproach": [
-        0.0,
+        0.5377905380000246,
         23,
-        185.0
+        184.99994507200847
       ],
       "interiorApproach": [
-        0.0,
+        0.4622094619999753,
         23,
-        159.0
+        159.00005492799153
       ],
       "connectedBridgeId": "south",
       "interactionId": "interact-south-outer"
@@ -510,15 +510,15 @@
     },
     {
       "id": "east",
-      "node": "Walk_Deck_Bridge_East",
-      "deckNode": "Walk_Deck_Bridge_East",
+      "node": "Walk_StreamCauseway_four-gates-sunmane",
+      "deckNode": "Walk_StreamCauseway_four-gates-sunmane",
       "walkable": true,
-      "spanMetres": 56,
+      "spanMetres": 42,
       "deckHeight": 23,
       "position": [
-        176,
-        23.08,
-        0
+        174.5,
+        23,
+        -0.5
       ],
       "connects": [
         "city",
@@ -527,15 +527,15 @@
     },
     {
       "id": "south",
-      "node": "Walk_Deck_Bridge_South",
-      "deckNode": "Walk_Deck_Bridge_South",
+      "node": "Walk_StreamCauseway_four-gates-ssarathi",
+      "deckNode": "Walk_StreamCauseway_four-gates-ssarathi",
       "walkable": true,
-      "spanMetres": 56,
+      "spanMetres": 42,
       "deckHeight": 23,
       "position": [
-        0,
-        23.08,
-        176
+        0.5,
+        23,
+        174.5
       ],
       "connects": [
         "city",
@@ -675,17 +675,17 @@
         [
           112,
           29,
-          0
+          -0.5
         ],
         [
-          145,
-          23,
-          0
+          138,
+          25,
+          -0.5
         ],
         [
-          198,
+          153.5,
           23,
-          0
+          -0.5
         ]
       ]
     },
@@ -704,19 +704,19 @@
           78
         ],
         [
-          0,
+          0.5,
           29,
           112
         ],
         [
-          0,
-          23,
-          145
+          0.5,
+          25,
+          138
         ],
         [
-          0,
+          0.5,
           23,
-          198
+          153.5
         ]
       ]
     },
@@ -914,7 +914,7 @@
       "targetNode": "Gate_South_Inner_Portcullis",
       "position": [
         0,
-        27.545454545454547,
+        27.76923076923077,
         120
       ],
       "states": [
@@ -932,7 +932,7 @@
       "targetNode": "Gate_East_Portcullis",
       "position": [
         120,
-        27.545454545454547,
+        27.76923076923077,
         0
       ],
       "states": [
@@ -965,7 +965,7 @@
       "kind": "gate",
       "node": "Gate_South_Outer",
       "position": [
-        0,
+        0.5,
         23,
         165
       ],
@@ -1546,14 +1546,14 @@
     {
       "id": "east",
       "position": [
-        195.5,
-        23,
-        0
+        196.5,
+        23.0,
+        -0.5
       ],
       "radius": 3.0,
       "destinationMap": "sunmane_steppe",
       "serverTile": [
-        393,
+        394,
         198
       ],
       "outward": [
@@ -1565,15 +1565,15 @@
     {
       "id": "south",
       "position": [
-        0,
-        23,
-        195.5
+        0.5,
+        23.0,
+        196.5
       ],
       "radius": 3.0,
       "destinationMap": "ssarathi_ruins",
       "serverTile": [
         198,
-        2
+        1
       ],
       "outward": [
         0,
@@ -2052,7 +2052,7 @@
       "resource": "steppe-wheat",
       "position": [
         22.0,
-        27.55,
+        27.77,
         109.0
       ],
       "serverTile": [
@@ -2269,7 +2269,7 @@
       "role": "guard",
       "position": [
         6.978800538459595,
-        26.544607929251907,
+        26.880819412410254,
         126.00612083329824
       ],
       "rotationDegrees": 180
@@ -2291,7 +2291,7 @@
       "role": "guard",
       "position": [
         126.00612083329824,
-        26.544607929251907,
+        26.986087265010713,
         6.978800538459595
       ],
       "rotationDegrees": 270
@@ -2324,7 +2324,7 @@
       "role": "ferryman",
       "position": [
         4.988878483113564,
-        22.992945734844838,
+        23.580494103786005,
         149.00117069565846
       ],
       "rotationDegrees": 180
@@ -2418,7 +2418,7 @@
       "id": "residential-quarter",
       "position": [
         89.38362149315553,
-        30.55896293280096,
+        30.596906607964385,
         8.938362149315552
       ],
       "radius": 24,
@@ -2431,7 +2431,7 @@
       "id": "agricultural-quarter",
       "position": [
         0.0,
-        29.641176470588235,
+        29.64147027027027,
         101.1
       ],
       "radius": 24,
@@ -2647,6 +2647,19 @@
       396,
       396
     ],
+    "imageSize": [
+      396,
+      396
+    ],
+    "pixelsPerMetre": 1.0,
+    "worldMin": [
+      -198.0,
+      -198.0
+    ],
+    "worldMax": [
+      198.0,
+      198.0
+    ],
     "bounds": {
       "min": [
         -198,
@@ -2666,20 +2679,7 @@
       0.0,
       0.0
     ],
-    "northUp": true,
-    "imageSize": [
-      396,
-      396
-    ],
-    "pixelsPerMetre": 1.0,
-    "worldMin": [
-      -198.0,
-      -198.0
-    ],
-    "worldMax": [
-      198.0,
-      198.0
-    ]
+    "northUp": true
   },
   "collision": {
     "file": "collision.bin",
@@ -2811,8 +2811,8 @@
       -198,
       198
     ],
-    "walkableCells": 344557,
-    "walkableFraction": 0.5493,
+    "walkableCells": 344923,
+    "walkableFraction": 0.5499,
     "heightEncoding": {
       "origin": 19.1402,
       "step": 0.2,
@@ -2828,16 +2828,16 @@
       "step": 0.2,
       "origin": 19.1402,
       "previousStep": 0.2,
-      "cellsRestated": 9848,
-      "cellsFromGeometry": 344556,
-      "cellsKept": 312
+      "cellsRestated": 9642,
+      "cellsFromGeometry": 345127,
+      "cellsKept": 1
     },
     "openedWalkSurfaces": {
       "prefix": "Walk_",
-      "cellsCovered": 7188,
-      "cellsWidened": 638,
-      "cellsOpened": 801,
-      "cellsRaised": 3953,
+      "cellsCovered": 6824,
+      "cellsWidened": 962,
+      "cellsOpened": 1107,
+      "cellsRaised": 6407,
       "cellsDrowned": 0,
       "cellsBuried": 0,
       "cellsInsideLandmarks": 0
@@ -2849,127 +2849,127 @@
         0.5
       ],
       "heightToleranceMetres": 0.8,
-      "closedTiles": 278,
-      "unsupportedTiles": 6,
-      "submergedTiles": 97,
-      "heightMismatchTiles": 278,
+      "closedTiles": 328,
+      "unsupportedTiles": 9,
+      "submergedTiles": 141,
+      "heightMismatchTiles": 328,
       "samples": [
         {
           "tile": [
-            59,
-            78
+            202,
+            1
           ],
-          "encodedY": 24.34,
-          "surfaceY": 23.363,
+          "encodedY": 22.94,
+          "surfaceY": 17.0,
           "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            308,
-            170
+            202,
+            2
           ],
-          "encodedY": 30.34,
-          "surfaceY": 29.525,
-          "unsupported": false,
-          "submerged": false
-        },
-        {
-          "tile": [
-            310,
-            170
-          ],
-          "encodedY": 29.74,
-          "surfaceY": 28.923,
-          "unsupported": false,
-          "submerged": false
-        },
-        {
-          "tile": [
-            308,
-            171
-          ],
-          "encodedY": 29.54,
-          "surfaceY": 28.666,
-          "unsupported": false,
-          "submerged": false
-        },
-        {
-          "tile": [
-            309,
-            171
-          ],
-          "encodedY": 29.34,
-          "surfaceY": 28.529,
-          "unsupported": false,
-          "submerged": false
-        },
-        {
-          "tile": [
-            347,
-            201
-          ],
-          "encodedY": 23.14,
-          "surfaceY": null,
-          "unsupported": true,
-          "submerged": true
-        },
-        {
-          "tile": [
-            348,
-            201
-          ],
-          "encodedY": 23.14,
+          "encodedY": 22.94,
           "surfaceY": 17.0,
           "unsupported": false,
           "submerged": true
         },
         {
           "tile": [
-            349,
-            201
+            202,
+            3
           ],
-          "encodedY": 23.14,
+          "encodedY": 22.94,
           "surfaceY": 17.0,
           "unsupported": false,
           "submerged": true
         },
         {
           "tile": [
-            350,
-            201
+            202,
+            4
           ],
-          "encodedY": 23.14,
+          "encodedY": 22.94,
           "surfaceY": 17.0,
           "unsupported": false,
           "submerged": true
         },
         {
           "tile": [
-            351,
-            201
+            202,
+            5
           ],
-          "encodedY": 23.14,
+          "encodedY": 22.94,
           "surfaceY": 17.0,
           "unsupported": false,
           "submerged": true
         },
         {
           "tile": [
-            352,
-            201
+            202,
+            6
           ],
-          "encodedY": 23.14,
+          "encodedY": 22.94,
           "surfaceY": 17.0,
           "unsupported": false,
           "submerged": true
         },
         {
           "tile": [
-            353,
-            201
+            202,
+            7
           ],
-          "encodedY": 23.14,
+          "encodedY": 22.94,
+          "surfaceY": 17.0,
+          "unsupported": false,
+          "submerged": true
+        },
+        {
+          "tile": [
+            202,
+            8
+          ],
+          "encodedY": 22.94,
+          "surfaceY": 17.0,
+          "unsupported": false,
+          "submerged": true
+        },
+        {
+          "tile": [
+            202,
+            9
+          ],
+          "encodedY": 22.94,
+          "surfaceY": 17.0,
+          "unsupported": false,
+          "submerged": true
+        },
+        {
+          "tile": [
+            202,
+            10
+          ],
+          "encodedY": 22.94,
+          "surfaceY": 17.0,
+          "unsupported": false,
+          "submerged": true
+        },
+        {
+          "tile": [
+            202,
+            11
+          ],
+          "encodedY": 22.94,
+          "surfaceY": 17.0,
+          "unsupported": false,
+          "submerged": true
+        },
+        {
+          "tile": [
+            202,
+            12
+          ],
+          "encodedY": 22.94,
           "surfaceY": 17.0,
           "unsupported": false,
           "submerged": true
@@ -2994,17 +2994,17 @@
     ]
   },
   "performance": {
-    "nodes": 1122,
-    "meshes": 731,
+    "nodes": 975,
+    "meshes": 726,
     "materials": 40,
     "images": 105,
     "textures": 105,
-    "accessors": 2947,
-    "bufferViews": 3052,
-    "uniqueTriangles": 541207,
-    "uniqueVertices": 364446,
-    "glbBytes": 28763996,
-    "instancedTriangles": 561073
+    "accessors": 2938,
+    "bufferViews": 3043,
+    "uniqueTriangles": 495146,
+    "uniqueVertices": 336937,
+    "glbBytes": 26479908,
+    "instancedTriangles": 495146
   },
   "sources": [
     {
@@ -3021,7 +3021,7 @@
   ],
   "assumptions": [
     "One metre per server tile; native building and doorway dimensions retained.",
-    "North/west frames surveyed; east/south retain ordinary transitions."
+    "All four causeways have reciprocal surveys and continuous receiving scenery."
   ],
   "knownLimitations": [],
   "landscapeRevision": "coastal-inhabited-396-v1",
@@ -3151,17 +3151,17 @@
         [
           112,
           29,
-          0
+          -0.5
         ],
         [
-          145,
-          23,
-          0
+          138,
+          25,
+          -0.5
         ],
         [
-          198,
+          153.5,
           23,
-          0
+          -0.5
         ]
       ]
     },
@@ -3179,19 +3179,19 @@
           78
         ],
         [
-          0,
+          0.5,
           29,
           112
         ],
         [
-          0,
-          23,
-          145
+          0.5,
+          25,
+          138
         ],
         [
-          0,
+          0.5,
           23,
-          198
+          153.5
         ]
       ]
     },
@@ -3381,6 +3381,28 @@
       "viewDepth": 145.0,
       "previewPrefix": "StreamView_mirrorhold-four-gates__",
       "overflowSuffix": "_StreamOverflow_mirrorhold-four-gates",
+      "geometryMode": "shared-cells-v2",
+      "sceneNodes": [
+        "Terrain_Paving_StreamCell_mirrorhold-four-gates",
+        "Terrain_Shore_StreamCell_mirrorhold-four-gates",
+        "Terrain_Rock_StreamCell_mirrorhold-four-gates",
+        "Terrain_Meadow_StreamCell_mirrorhold-four-gates",
+        "Walk_StreamCauseway_mirrorhold-four-gates_StreamCell_mirrorhold-four-gates",
+        "Structure_StreamCauseway_mirrorhold-four-gates_pale_ashlar_StreamCell_mirrorhold-four-gates",
+        "Structure_StreamCauseway_mirrorhold-four-gates_rubble_stone_StreamCell_mirrorhold-four-gates",
+        "Water_Lake_StreamCell_mirrorhold-four-gates",
+        "Water_StreamCauseway_mirrorhold-four-gates_StreamCell_mirrorhold-four-gates",
+        "Plaza_Arcade_2",
+        "Plaza_Arcade_3",
+        "Gate_North",
+        "Gate_North_Portcullis",
+        "City_Wall_44",
+        "City_Wall_45",
+        "City_Wall_50",
+        "City_Wall_51",
+        "Avenue_Standard_2",
+        "Avenue_Standard_3"
+      ],
       "profile": "causeway",
       "waterBelowDeck": 4.0,
       "deckWidth": 7.0
@@ -3409,6 +3431,162 @@
       "viewDepth": 145.0,
       "previewPrefix": "StreamView_four-gates-crownwater__",
       "overflowSuffix": "_StreamOverflow_four-gates-crownwater",
+      "geometryMode": "shared-cells-v2",
+      "sceneNodes": [
+        "Terrain_Paving_StreamCell_four-gates-crownwater",
+        "Terrain_Shore_StreamCell_four-gates-crownwater",
+        "Terrain_Rock_StreamCell_four-gates-crownwater",
+        "Terrain_Meadow_StreamCell_four-gates-crownwater",
+        "Walk_StreamCauseway_four-gates-crownwater_StreamCell_four-gates-crownwater",
+        "Structure_StreamCauseway_four-gates-crownwater_pale_ashlar_StreamCell_four-gates-crownwater",
+        "Structure_StreamCauseway_four-gates-crownwater_rubble_stone_StreamCell_four-gates-crownwater",
+        "Water_Lake_StreamCell_four-gates-crownwater",
+        "Water_StreamCauseway_four-gates-crownwater_StreamCell_four-gates-crownwater",
+        "Plaza_Arcade_1",
+        "Plaza_Arcade_2",
+        "Shopfront_four-gates-ferrymans-rest",
+        "Shopfront_four-gates-deposit-four-keys",
+        "Sign_four-gates-deposit-four-keys",
+        "Goods_four-gates-deposit-four-keys",
+        "Gate_West",
+        "Gate_West_Portcullis",
+        "City_Wall_28",
+        "City_Wall_29",
+        "City_Wall_34",
+        "City_Wall_35",
+        "Market_Stall_5",
+        "Market_Cart_5",
+        "Avenue_Standard_4",
+        "Avenue_Standard_5",
+        "Secret_gates_ferry_butts",
+        "Secret_gates_drain_mouth"
+      ],
+      "profile": "causeway",
+      "waterBelowDeck": 4.0,
+      "deckWidth": 7.0
+    },
+    {
+      "id": "four-gates-sunmane",
+      "portal": "east",
+      "destination": "sunmane_steppe",
+      "anchor": [
+        195.5,
+        23,
+        -0.5
+      ],
+      "outward": [
+        1,
+        0
+      ],
+      "uvSign": 1,
+      "palette": "causeway",
+      "preloadDistance": 170,
+      "retainDistance": 220,
+      "blendDistance": 65,
+      "collarDepth": 42,
+      "halfWidthTiles": 3,
+      "viewHalfWidth": 40.0,
+      "viewDepth": 145.0,
+      "previewPrefix": "StreamView_four-gates-sunmane__",
+      "overflowSuffix": "_StreamOverflow_four-gates-sunmane",
+      "geometryMode": "shared-cells-v2",
+      "sceneNodes": [
+        "Terrain_Paving_StreamCell_four-gates-sunmane",
+        "Terrain_Shore_StreamCell_four-gates-sunmane",
+        "Terrain_Rock_StreamCell_four-gates-sunmane",
+        "Terrain_Meadow_StreamCell_four-gates-sunmane",
+        "Walk_StreamCauseway_four-gates-sunmane_StreamCell_four-gates-sunmane",
+        "Structure_StreamCauseway_four-gates-sunmane_pale_ashlar_StreamCell_four-gates-sunmane",
+        "Structure_StreamCauseway_four-gates-sunmane_rubble_stone_StreamCell_four-gates-sunmane",
+        "Water_Lake_StreamCell_four-gates-sunmane",
+        "Water_StreamCauseway_four-gates-sunmane_StreamCell_four-gates-sunmane",
+        "Plaza_Arcade_0",
+        "Plaza_Arcade_3",
+        "Gate_East",
+        "Gate_East_Portcullis",
+        "City_Wall_02",
+        "City_Wall_03",
+        "City_Wall_60",
+        "City_Wall_61",
+        "Avenue_Standard_6",
+        "Avenue_Standard_7",
+        "Secret_gates_wall_eyrie"
+      ],
+      "profile": "causeway",
+      "waterBelowDeck": 4.0,
+      "deckWidth": 7.0
+    },
+    {
+      "id": "four-gates-ssarathi",
+      "portal": "south",
+      "destination": "ssarathi_ruins",
+      "anchor": [
+        0.5,
+        23,
+        195.5
+      ],
+      "outward": [
+        0,
+        1
+      ],
+      "uvSign": 1,
+      "palette": "causeway",
+      "preloadDistance": 170,
+      "retainDistance": 220,
+      "blendDistance": 65,
+      "collarDepth": 42,
+      "halfWidthTiles": 3,
+      "viewHalfWidth": 40.0,
+      "viewDepth": 145.0,
+      "previewPrefix": "StreamView_four-gates-ssarathi__",
+      "overflowSuffix": "_StreamOverflow_four-gates-ssarathi",
+      "geometryMode": "shared-cells-v2",
+      "sceneNodes": [
+        "Terrain_Trail_StreamCell_four-gates-ssarathi",
+        "Terrain_Paving_StreamCell_four-gates-ssarathi",
+        "Terrain_Shore_StreamCell_four-gates-ssarathi",
+        "Terrain_Rock_StreamCell_four-gates-ssarathi",
+        "Terrain_Meadow_StreamCell_four-gates-ssarathi",
+        "Walk_StreamCauseway_four-gates-ssarathi_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_four-gates-ssarathi_pale_ashlar_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_four-gates-ssarathi_rubble_stone_StreamCell_four-gates-ssarathi",
+        "Water_Lake_StreamCell_four-gates-ssarathi",
+        "Water_StreamCauseway_four-gates-ssarathi_StreamCell_four-gates-ssarathi",
+        "Plaza_Arcade_0",
+        "Plaza_Arcade_1",
+        "Shopfront_four-gates-lantern-row",
+        "Sign_four-gates-lantern-row",
+        "Gate_South_Inner",
+        "Gate_South_Inner_Portcullis",
+        "City_Wall_12",
+        "City_Wall_13",
+        "City_Wall_18",
+        "City_Wall_19",
+        "Gate_South_Outer",
+        "SouthOuter_Foundation_-1",
+        "SouthOuter_Foundation_1",
+        "Market_Stall_0",
+        "Market_Cart_0",
+        "Avenue_Standard_0",
+        "Avenue_Standard_1",
+        "Crop_0_0",
+        "Crop_0_1",
+        "Crop_0_2",
+        "Crop_0_3",
+        "Garden_Rail_0",
+        "Crop_1_0",
+        "Crop_1_1",
+        "Crop_1_2",
+        "Crop_1_3",
+        "Garden_Rail_1",
+        "Crop_2_0",
+        "Crop_2_1",
+        "Crop_2_2",
+        "Crop_2_3",
+        "Garden_Rail_2",
+        "Secret_gates_lantern_cache",
+        "Secret_gates_waystone"
+      ],
       "profile": "causeway",
       "waterBelowDeck": 4.0,
       "deckWidth": 7.0
@@ -3517,7 +3695,7 @@
       ],
       "Banner-Rider Ashaia": [
         98,
-        30.242,
+        30.354,
         9
       ],
       "Cold Sister Nevet": [

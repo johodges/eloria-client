@@ -55,6 +55,9 @@ func _run() -> void:
 		"GameView/FullMap/MapLayout/ContinentView/ContinentMap") as Control
 	_expect(overlay != null and int(overlay.call("region_count")) == regions.size(),
 		"the continent overlay knows every region")
+	var wrapped: PackedStringArray = overlay.call("_label_lines", overlay.get_theme_default_font(), "Amethyst Barrens", 90.0)
+	_expect(wrapped.size() == 2 and wrapped[0] == "Amethyst" and wrapped[1] == "Barrens",
+		"long adjacent-region labels wrap without truncation")
 	_expect(region_preview.mouse_filter != Control.MOUSE_FILTER_IGNORE,
 		"a preview takes the cursor, so it can name tiles")
 	for region_value: Variant in regions:
@@ -159,7 +162,7 @@ func _run() -> void:
 	main.call("_preview_region", _index_of(regions, "sunmane_steppe"))
 	var sunmane_texture: Texture2D = region_preview.texture
 	_expect(sunmane_texture is AtlasTexture
-		and (sunmane_texture as AtlasTexture).region == Rect2(46.0, 43.0, 191.0, 191.0),
+		and (sunmane_texture as AtlasTexture).region == Rect2(0.0, 1.0, 383.0, 383.0),
 		"Sunmane's preview is the live map's framing, not the landform past its last tile")
 	var four_gates_index: int = _index_of(regions, "four_gates")
 	main.call("_preview_region", four_gates_index)

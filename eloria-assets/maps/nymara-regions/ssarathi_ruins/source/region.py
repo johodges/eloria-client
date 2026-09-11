@@ -60,13 +60,13 @@ from amberwood.region import Placement, RegionBuild  # noqa: F401
 # Authored at 576 m x 576 m, matching Amberwood, Mirrorhold, Whitehorn,
 # Amethyst Barrens and Crownwater, so the server map is 96x96 ELM tiles at one
 # metre per tile and the arrival datum moves from (58, 58) to (174, 174).
-SERVER_ORIGIN = (174.0, 174.0)
-SERVER_CELLS = 576
+SERVER_ORIGIN = (116.0, 116.0)
+SERVER_CELLS = 384
 METRES_PER_TILE = 1.0
 
 # The composition is written in a 192 m design space and scaled up here, so the
 # aerial's layout is preserved rather than stretched.
-SCALE = 3.0
+SCALE = 2.0
 
 # Distances between places scale with the region; the places themselves do not.
 # A pool court is sized by the columns around it, a causeway by its balustrade.
@@ -83,7 +83,7 @@ TERRAIN_Z0 = PLAY_MIN_Z - MARGIN
 TERRAIN_SIZE_X = (PLAY_MAX_X - PLAY_MIN_X) + MARGIN * 2.0
 TERRAIN_SIZE_Z = (PLAY_MAX_Z - PLAY_MIN_Z) + MARGIN * 2.0
 
-TERRAIN_CELL = 2.0
+TERRAIN_CELL = 1.0
 
 # ------------------------------------------------------------------ datums
 WATER_LEVEL = 0.0
@@ -194,23 +194,23 @@ _DESIGN_ANCHORS: dict[str, tuple[float, float]] = {
     "channel_bridge":   (AXIS_X, -34.0),     # panel 4
     "causeway_north":   (AXIS_X, -52.0),
     "temple_foot":      (AXIS_X, -60.0),
-    "temple":           (AXIS_X, TEMPLE_Z),   # panel 2
-    "vault_door":       (AXIS_X, -69.5),      # panel 3
-    "temple_terrace":   (AXIS_X, -46.0),
+    "temple":           (AXIS_X, -91.0),   # panel 2
+    "vault_door":       (32.0, -63.25),        # east basement court
+    "temple_terrace":   (AXIS_X, -49.0),
 
     # the two pool courts either side of the axis
     "lily_court":       (-16.0, -30.0),       # panel 6, west
     "ritual_plaza":     (56.0, -26.0),        # panel 5, east
 
     # the stela on its knoll, high and alone
-    "sun_stela":        (62.0, -66.0),        # panel 7
+    "sun_stela":        (70.0, -75.0),        # panel 7
 
     # the overgrown broken arch out in the jungle
     "root_arch":        (78.0, 22.0),         # panel 8
 
     # the working edges of the city
-    "market":           (66.0, 4.0),
-    "east_dock":        (84.0, -6.0),
+    "market":           (73.0, 10.0),
+    "east_dock":        (95.0, 4.0),
     "west_dock":        (-30.0, 14.0),
     "south_dock":       (6.0, 44.0),
     "drowned_quarter":  (-34.0, -20.0),
@@ -219,12 +219,12 @@ _DESIGN_ANCHORS: dict[str, tuple[float, float]] = {
     # outliers that give the basin depth beyond the core
     "north_falls":      (-14.0, -112.0),
     "east_falls":       (96.0, -84.0),
-    "west_shrine":      (-46.0, -54.0),
+    "west_shrine":      (-39.0, -54.0),
     "east_shrine":      (100.0, -44.0),
     "south_shrine":     (-8.0, 46.0),
     "far_causeway_e":   (104.0, -14.0),
     "far_causeway_w":   (-44.0, 2.0),
-    "north_terrace":    (44.0, -92.0),
+    "north_terrace":    (64.0, -95.0),
     "west_terrace":     (-24.0, -74.0),
 }
 
@@ -483,7 +483,7 @@ def build_terrain(seed: int = 20260829) -> TER.Terrain:
     # jungle valley with ponds in it, not the flooded city in the painting.
     # At 115 m the floor stays under water across the centre and the ground
     # only climbs in the outer fifth, which is what the aerial shows.
-    RIM_REACH = 115.0
+    RIM_REACH = 82.0
     rise = np.clip(1.0 - edge / RIM_REACH, 0.0, 1.0)
     rim_noise = region_noise(t, seed + 53, frequency=0.019)
     t.height += (rise ** 2.0) * 30.0 * (0.72 + 0.56 * rim_noise)
@@ -496,8 +496,8 @@ def build_terrain(seed: int = 20260829) -> TER.Terrain:
     #    Crownwater walls none and closes with the collision grid. Ssarathi is a
     #    sunken basin, so all four sides are closed by rock - and the north wall
     #    is the tallest, because the waterfalls of panels 2 and 9 come off it.
-    t.clamp_edges(MARGIN + 34.0, 46.0)
-    t.clamp_edges(MARGIN + 58.0, 26.0, sides=("north",))
+    t.clamp_edges(MARGIN + 24.0, 32.0)
+    t.clamp_edges(MARGIN + 42.0, 26.0, sides=("north",))
 
     # 4. the navigable channels, cut into the floor before anything is built on
     #    top of it
@@ -638,17 +638,19 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260829) -> None:
     # the axis on each tier boundary, wide enough to walk and shallow enough to
     # stay under the walk-slope limit. Stair geometry sits on top of these in
     # populate.py; the ramp is what actually carries the player.
-    _ramp(t, (AXIS_X, -54.0), (AXIS_X, -60.5), DECK + 0.40, TIER_1, 7.0)
-    _ramp(t, (AXIS_X, -60.5), (AXIS_X, -66.5), TIER_1, TIER_2, 6.5)
-    # The last climb is a flanking pair, not one ramp on the axis: the axis
-    # itself ends at the vault door, which is the point of panel 3. You reach
-    # the summit by going round it.
-    _ramp(t, (AXIS_X - 8.0, -69.0), (AXIS_X - 8.0, -75.0), TIER_2, TIER_3, 4.0)
-    _ramp(t, (AXIS_X + 8.0, -69.0), (AXIS_X + 8.0, -75.0), TIER_2, TIER_3, 4.0)
-
-    # a switchback up the stela knoll, off the east spur
-    _ramp(t, (60.0, -60.0), (62.0, -64.0), DECK, STELA_KNOLL * 0.5, 4.5)
-    _ramp(t, (62.0, -64.0), (62.0, -66.0), STELA_KNOLL * 0.5, STELA_KNOLL + 0.4, 4.5)
+    # Surveyed processional ascent. Preserve the 72m temple and its vault
+    # relationship; shorter streets must not shorten the actual stair clearances.
+    from amberwood import routecraft as RC
+    surveys = [
+        ([(40,-126),(16,-130),(9,-149),(24,-149),(40,-145)],[13,13,21,21,21],5.5),
+        ([(40,-126),(64,-130),(71,-149),(56,-149),(40,-145)],[13,13,21,21,21],5.5),
+        ([(120,-114),(138,-126),(152,-142),(140,-150)],[2.2,6,10.5,13.9],6.0),
+        # Reapply the main ascent after the side landing feathers.
+        ([(40,-80),(40,-94),(40,-107),(40,-118)],[2.2,8,14,21],10.0),
+    ]
+    for points,heights,width in surveys:
+        RC.grade_road(t,points,heights,width=width,shoulder=3,
+                      surface=JADE_PAVING,clearance=3)
 
     # --- protect the plateaus ----------------------------------------------
     # `terrace` and `rect_terrace` mark their footprint in `tree_block`;

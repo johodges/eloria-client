@@ -930,7 +930,7 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
         # is the terrain's, read back from the terrain that was actually built
         # rather than from the height table that asked for it.
         "contentLayout": REG.CONTENT_LAYOUT,
-        "streamingBorders": SB.region_specs("westhaven"),
+        "streamingBorders": build.streaming_borders,
         "landscapeRevision": "inhabited-harbour-396-v1",
         "roads": [{"id": name,
                    "type": "quay" if name == "quayside" else (

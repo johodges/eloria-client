@@ -1,38 +1,38 @@
 {
-  "nodes": 7352,
-  "meshes": 499,
-  "materials": 42,
-  "images": 104,
-  "textures": 104,
-  "accessors": 2001,
-  "bufferViews": 2105,
-  "uniqueTriangles": 481289,
-  "uniqueVertices": 363367,
-  "glbBytes": 26215864,
-  "instancedTriangles": 1847337,
-  "embeddedTextureBytes": 28929731,
-  "textureMemoryBytesUncompressed": 269352960,
-  "placements": 2755,
+  "nodes": 3192,
+  "meshes": 424,
+  "materials": 45,
+  "images": 113,
+  "textures": 113,
+  "accessors": 1717,
+  "bufferViews": 1830,
+  "uniqueTriangles": 655868,
+  "uniqueVertices": 418703,
+  "glbBytes": 31210652,
+  "instancedTriangles": 1703480,
+  "embeddedTextureBytes": 30952001,
+  "textureMemoryBytesUncompressed": 292945920,
+  "placements": 1178,
   "collision": {
-    "width": 1152,
-    "height": 1152,
+    "width": 768,
+    "height": 768,
     "cellMetres": 0.5,
     "originMetres": [
-      -174.0,
-      174.0
+      -116.0,
+      116.0
     ],
-    "walkableCells": 540733,
-    "blockedCells": 786371,
-    "walkableFraction": 0.4075,
-    "elevatedDecks": 30,
-    "steepCells": 266266,
-    "reliefMetres": 56.86,
+    "walkableCells": 307186,
+    "blockedCells": 282638,
+    "walkableFraction": 0.5208,
+    "elevatedDecks": 40,
+    "steepCells": 96206,
+    "reliefMetres": 56.12,
     "heightEncoding": {
-      "origin": -1.4581,
-      "step": 0.917113,
+      "origin": -0.0208,
+      "step": 0.220945,
       "range": [
         1,
-        63
+        255
       ],
       "zeroMeansBlocked": true
     },
@@ -40,20 +40,19 @@
     "columnOrder": "server-tile-x (column 0 is the -X western edge)"
   },
   "notes": [
-    "Archive supply quay, aligned market rows, five surveyed channel bridges and eight working jetties.",
-    "march north-stair: 0 road pieces, 2 of four_gates's growth",
-    "march east-causeway: 0 road pieces, 3 of verdant_stair's growth",
-    "march west-causeway: 0 road pieces, 16 of manymouth_delta's growth",
-    "march south-gate: 0 road pieces, 5 of crownwater's growth",
-    "walk corridors: 18 encroaching dressing placements removed",
-    "Cleared quay, market and jetty conflicts: Kerb_street_market_268_-1, Kerb_street_market_268_1, Kerb_street_market_289_-1, Kerb_street_market_289_1, Kerb_spur_arrival_0_-1, Kerb_spur_arrival_0_1, Kerb_spur_arrival_16_-1, Kerb_spur_arrival_16_1, Kerb_spur_arrival_32_-1, Kerb_spur_arrival_32_1, Kerb_spur_east_dock_41_-1, Kerb_spur_east_dock_41_1, Kerb_spur_east_dock_61_-1, Kerb_spur_east_dock_61_1, Kerb_spur_root_arch_0_-1, Kerb_spur_root_arch_0_1, Kerb_spur_root_arch_16_-1, Kerb_spur_root_arch_16_1, Kerb_spur_root_arch_32_-1, Ruin_18, Rubble_spur_arrival_0"
+    "384m drowned city: six inhabited court houses, protected monumental temple, surveyed channel bridges, working jetties and a connected northern inlet.",
+    "march north-stair: 0 road pieces, 10 of four_gates's growth",
+    "march east-causeway: 1 road pieces, 16 of verdant_stair's growth",
+    "march west-causeway: 2 road pieces, 15 of manymouth_delta's growth",
+    "march south-gate: 2 road pieces, 1 of crownwater's growth",
+    "walk corridors: 21 encroaching dressing placements removed"
   ],
   "lod2": {
-    "glbBytes": 16473376,
-    "nodes": 3534,
-    "uniqueTriangles": 431630,
-    "instancedTriangles": 978596,
-    "sizeReductionPercent": 37.2,
-    "triangleReductionPercent": 47.0
+    "glbBytes": 13142944,
+    "nodes": 1529,
+    "uniqueTriangles": 335519,
+    "instancedTriangles": 521832,
+    "sizeReductionPercent": 57.9,
+    "triangleReductionPercent": 69.4
   }
 }
