@@ -19,6 +19,9 @@ extends RefCounted
 ## Animation resources are immutable during playback, so one library backing
 ## many AnimationPlayers is safe; per-actor playback state (current clip,
 ## speed_scale, seek position) lives on the player, not the library.
+## Corrective blend-shape tracks are mapped to each actor's mesh nodes too;
+## their defaults participate in RESET so attack and flight repairs survive
+## retargeting without persisting into unrelated clips.
 
 static var _libraries: Dictionary = {}
 ## The parsed library scenes, one per source file, kept for the session. A
@@ -41,13 +44,14 @@ static func import_library(owner: Node, source_path: String,
 	# The rig itself is part of the key: two models can sit at the same node
 	# path and still expose different bones, and a retargeted library is only
 	# reusable by a skeleton with the same bones in the same order.
-	var cache_key := "%s|%s|%s|%s|%s|%s" % [source_path, skeleton_path,
+	var shape_defaults := _blend_shape_defaults(owner)
+	var cache_key := "%s|%s|%s|%s|%s|%s|%s" % [source_path, skeleton_path,
 		_skeleton_signature(target_skeleton), JSON.stringify(bone_aliases),
-		",".join(wanted_clips), ",".join(looping_clips)]
+		",".join(wanted_clips), ",".join(looping_clips), JSON.stringify(shape_defaults)]
 	var cached: Dictionary = _libraries.get(cache_key, {}) as Dictionary
 	if cached.is_empty():
-		cached = _build(source_path, skeleton_path, target_skeleton, bone_aliases,
-			wanted_clips, looping_clips)
+		cached = _build(owner, source_path, skeleton_path, target_skeleton, bone_aliases,
+			wanted_clips, looping_clips, shape_defaults)
 		_libraries[cache_key] = cached
 	result.errors.append_array(cached.get("errors", PackedStringArray()))
 	var library: AnimationLibrary = cached.get("library") as AnimationLibrary
@@ -130,10 +134,40 @@ static func _skeleton_signature(skeleton: Skeleton3D) -> String:
 static func cached_library_count() -> int:
 	return _libraries.size()
 
-static func _build(source_path: String, skeleton_path: String,
+static func _blend_shape_defaults(owner: Node) -> Dictionary:
+	var defaults := {}
+	for node: Node in owner.find_children("*", "MeshInstance3D", true, false):
+		var mesh_node := node as MeshInstance3D
+		if mesh_node.mesh is not ArrayMesh:
+			continue
+		for index: int in mesh_node.mesh.get_blend_shape_count():
+			var path := "%s:%s" % [owner.get_path_to(mesh_node), mesh_node.mesh.get_blend_shape_name(index)]
+			defaults[path] = mesh_node.get_blend_shape_value(index)
+	return defaults
+
+static func _blend_shape_path(owner: Node, source_player: AnimationPlayer,
+		source_path: NodePath, target_skeleton: Skeleton3D) -> NodePath:
+	# Match the mesh by its path relative to its own rig, never by a global
+	# name search: two actors can have identical mesh and corrective names.
+	var source_root := source_player.get_node(source_player.root_node)
+	var source_mesh := source_root.get_node_or_null(NodePath(source_path.get_concatenated_names())) as MeshInstance3D
+	if source_mesh == null or source_mesh.mesh == null:
+		return NodePath()
+	var source_skeleton := source_mesh.get_node_or_null(source_mesh.skeleton) as Skeleton3D
+	if source_skeleton == null:
+		return NodePath()
+	var target_mesh := target_skeleton.get_node_or_null(source_skeleton.get_path_to(source_mesh)) as MeshInstance3D
+	if target_mesh == null or target_mesh.mesh == null:
+		return NodePath()
+	var shape := source_path.get_concatenated_subnames()
+	if target_mesh.find_blend_shape_by_name(shape) < 0:
+		return NodePath()
+	return NodePath("%s:%s" % [owner.get_path_to(target_mesh), shape])
+
+static func _build(owner: Node, source_path: String, skeleton_path: String,
 		target_skeleton: Skeleton3D, bone_aliases: Dictionary,
 		wanted_clips: PackedStringArray,
-		looping_clips: PackedStringArray) -> Dictionary:
+		looping_clips: PackedStringArray, shape_defaults: Dictionary) -> Dictionary:
 	var built := {"library": null, "clips": PackedStringArray(),
 		"errors": PackedStringArray()}
 	var source_scene := _source_scene(source_path)
@@ -160,12 +194,21 @@ static func _build(source_path: String, skeleton_path: String,
 		target.loop_mode = Animation.LOOP_LINEAR \
 			if looping_clips.has(String(clip_name)) else source.loop_mode
 		for source_track in source.get_track_count():
-			var source_bone := _track_bone(source.track_get_path(source_track))
-			var bone := str(bone_aliases.get(source_bone, source_bone))
-			if bone.is_empty() or target_skeleton.find_bone(bone) < 0:
-				continue
+			var track_path := NodePath()
+			if source.track_get_type(source_track) == Animation.TYPE_BLEND_SHAPE:
+				track_path = _blend_shape_path(owner, source_player,
+					source.track_get_path(source_track), target_skeleton)
+				if track_path.is_empty():
+					built.errors.append("corrective mesh track has no target: " + str(source.track_get_path(source_track)))
+					continue
+			else:
+				var source_bone := _track_bone(source.track_get_path(source_track))
+				var bone := str(bone_aliases.get(source_bone, source_bone))
+				if bone.is_empty() or target_skeleton.find_bone(bone) < 0:
+					continue
+				track_path = NodePath(skeleton_path + ":" + bone)
 			var target_track := target.add_track(source.track_get_type(source_track))
-			target.track_set_path(target_track, NodePath(skeleton_path + ":" + bone))
+			target.track_set_path(target_track, track_path)
 			target.track_set_interpolation_type(target_track,
 				source.track_get_interpolation_type(source_track))
 			for key_index in source.track_get_key_count(source_track):
@@ -193,6 +236,13 @@ static func _build(source_path: String, skeleton_path: String,
 			elif type == Animation.TYPE_SCALE_3D:
 				value = rest.basis.get_scale()
 			reset.track_insert_key(track, 0.0, value)
+	# Correctives must return to their authored default when switching to a
+	# clip that omits them. Bone-only RESET left the previous attack or wing
+	# correction applied indefinitely after crossfading back to idle.
+	for path: String in shape_defaults:
+		var track := reset.add_track(Animation.TYPE_BLEND_SHAPE)
+		reset.track_set_path(track, NodePath(path))
+		reset.track_insert_key(track, 0.0, shape_defaults[path])
 	if library.has_animation(&"RESET"):
 		library.remove_animation(&"RESET")
 	library.add_animation(&"RESET", reset)

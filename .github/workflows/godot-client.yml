@@ -23,6 +23,14 @@ jobs:
           apt-get update
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             python3 python3-numpy python3-scipy python3-pil python3-pytest
+      - name: Validate basic creature expansion assets and playback
+        run: |
+          python3 -m pytest godot-client/tests/test_basic_creature_expansion_assets.py -q
+          godot --headless --path godot-client --script res://tests/test_basic_creature_expansion.gd > basic-creature-expansion.log 2>&1
+          cat basic-creature-expansion.log
+          ! grep -q "SCRIPT ERROR" basic-creature-expansion.log
+          grep -q 'EXPANSION_REPORT .*"clips":719' basic-creature-expansion.log
+          grep -q 'EXPANSION_REPORT .*"creatures":100' basic-creature-expansion.log
       - name: Validate native Nymara GLB catalog
         run: python3 godot-client/tests/test_native_glb_assets.py -v
       - name: Validate the generated sound set
