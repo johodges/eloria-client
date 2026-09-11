@@ -1,7 +1,7 @@
 # Exterior region streaming
 
-Amberwood (384 m), Whitehorn Range (396 m), Grey Moors (384 m), Mirrorhold
-(384 m) and Amethyst Barrens (384 m) form the first connected group. The client
+The northern, coastal and southern landscape groups form a connected set of
+eleven compact regions. Most are 384 or 396 m across; Verdant Stair is 360 m. The client
 loads the receiving scene before arrival and displays its actual authored
 approach. The server's map handoff adopts that same root and rigidly rebases
 the traveller and camera, preserving their position, heading and zoom.
@@ -9,8 +9,8 @@ the traveller and camera, preserving their position, heading and zoom.
 ## Scope
 
 The generated continent graph enables background preloading on 17 walking and
-causeway links. Only Amberwoodâ€“Whitehorn currently has reciprocal terrain
-surveys and simultaneous visible scenery. The other 16 links preload hidden
+causeway links. Fourteen have reciprocal terrain surveys and simultaneous
+visible scenery. The three remaining links through Manymouth Delta preload hidden
 destinations and retain the existing scene transition. Seven ferry links and
 interior/magical portals retain their own travel behavior.
 
@@ -38,11 +38,14 @@ the current live proof uses one QA traveller, not a multiplayer border crowd.
 - Generation tokens discard work superseded by disconnect, teleport or another
   transition. Closing the client lets its worker finish before renderer teardown.
   Distant resident roots are freed. Shared actor model caches last until logout.
-- Active ground keeps navigation layer 8. A visible neighbor exposes terrain
+- Active ground keeps navigation layer 8. A visible neighbor exposes its actual shared approach
   only on picking layer 16, with no active structural collision. Clicking into
   it routes through the server crossing, then continues to the clicked tile
   after the authoritative arrival. A new world click, minimap click or keyboard
-  movement cancels that continuation.
+  movement cancels that continuation. The target stays in the destination's
+  tile frame, preserves Shift/run intent, and rejects out-of-map margins.
+  The walking marker appears on the clicked ground. A rejected move clears
+  the pending continuation.
 - A ready scene is transferred, not parsed again. A nearby surveyed crossing
   also retains the old scene for looking back. The camera focus, pan, yaw, and
   traveller's interpolation endpoints all receive the same rigid transform.
@@ -57,27 +60,39 @@ the current live proof uses one QA traveller, not a multiplayer border crowd.
 approach, pair-specific ground materials and matching texture coordinates.
 Moor crossings use meadow/heather/earth; the inhabited upland uses turf and
 gravel; alpine and crystalline approaches use their own frost or scree mix.
+Southern dry collars use low golden grass shoulders and dusty tracks. Lake
+causeways carry seven clear lanes above a channel with continuous water;
+grading a dry pass leaves submerged background water at its own elevation.
 One road's grading protects another road's surveyed strip. This matters at
 Mirrorhold's two northern cols, only 87 m apart.
 
-Terrain is split on exact triangle edges within an 80 m wide receiving strip.
-Each border has its own overflow identity; making one neighbour resident hides
-only that border's overflow. Original collision stays available to departure
-tiles. The GLB also contains a 145 m deep subset of its own receiving terrain
-and nearby static placements, named `StreamView_<border-id>__...`. These are
-exact pieces of the same source geometry. They are excluded from minimaps and
-active navigation. No neighbouring generated GLB is an input to these builds.
+Terrain is partitioned on exact triangle edges within an 80 m wide, 145 m deep
+receiving strip. Each approach piece is removed from the core and stored once.
+Overlapping strips share intersection pieces with multiple view memberships;
+whole props also retain one node. The same nodes draw before and after adoption.
+Frames declare `geometryMode: shared-cells-v2` and their `sceneNodes` membership.
+No copied `StreamView_` scenery or extended `_StreamOverflow_` surface is exported.
+An invisible two-metre `_StreamThreshold_` navigation skin supports the server's
+trigger one metre beyond the visual seam; it never draws or blocks a click on
+the real neighbor. No neighbouring generated GLB is an input to these builds.
+All eleven surveyed-region packages use this export. Cache format 4 invalidates
+the earlier duplicate-view scene layout. Minimap rendering includes each real
+surface once and excludes the invisible threshold.
 Placement selection uses transformed mesh bounds, so a tree canopy or boulder
 that reaches into the strip stays visible even when its origin lies outside.
 Grading also lifts linked portal, spawn and secret metadata with its landmark.
 
-The loader groups normal geometry under `StreamActive` and receiving subsets
-under `StreamPreview_<border-id>`. A resident shows only the matching subset;
-adoption restores the complete authored scene. This prevents distant terrain
-or an unrelated exit overlapping the current region. Preview collision is
-restricted to picking layer 16, and disabled when the full region becomes active.
-Static batches stay inside their active group, with cache format 3 retaining
-the group layout and transforms.
+These remain bounded, locally composed approaches. Distant cities and unrelated
+exits are not rendered through a folded neighbor frame. A globally embedded
+continent and cross-border actor simulation remain separate work.
+
+The loader groups core geometry under `StreamActive` and shared pieces under
+`StreamCell_<membership>`. An active map exposes all its pieces; a resident
+exposes the matching approach through the same nodes. This prevents distant
+terrain or unrelated exits overlapping the current region. Resident collision
+uses picking layer 16; adoption restores active navigation and structural
+collision. Shared pieces retain their original nodes and the core keeps its
+static batches. Cache format 4 preserves this grouping and its transforms.
 
 Anchors sit halfway between each departure tile center and the reciprocal
 arrival. `continent_portals.py` generates seven lanes with mirrored lateral
@@ -94,7 +109,7 @@ return, authored content posts and portal table move together.
 Rebuild and integrate the group from the client root:
 
 ```powershell
-python eloria-assets/tools/rebuild_northern_regions.py --server C:/path/to/server --data C:/path/to/generated-data
+python eloria-assets/tools/rebuild_southern_regions.py --server C:/path/to/server --data C:/path/to/generated-data
 ```
 
 Use `--skip-build` for reviewed packages. `--stage collision`, `--stage content`
@@ -109,7 +124,9 @@ Gauntlet completion and bailout definitions use the same surveyed exterior
 return as their portal records.
 
 The client registry must use each region's compact origin: (116,116) for
-Amberwood, Grey Moors and Amethyst; (120,120) for Whitehorn; (120,96) for Mirrorhold.
+Amberwood, Grey Moors, Amethyst, Sunmane and Ssarathi; (120,120) for Whitehorn
+and Crownwater; (120,96) for Mirrorhold; (120,172) for Westhaven; (198,198) for
+Four Gates; and (108,108) for Verdant Stair.
 The server map sizes and arrival constants are versioned with the migration.
 
 ## Verification and expansion
@@ -136,5 +153,6 @@ requires cross-map server interest, lower-memory chunks and asynchronous GPU
 preparation/attachment. The current budget remains one active map and at most
 two neighbouring roots.
 
-See [Northern region rollout](northern-region-rollout.md) for the landscape
-principles and the remaining biome-by-biome plan.
+See the [northern](northern-region-rollout.md), [coastal](coastal-region-rollout.md)
+and [southern](southern-region-rollout.md) rollout records for landscape decisions
+and the remaining biome-by-biome work.

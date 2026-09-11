@@ -130,6 +130,13 @@ func _draw() -> void:
 	var font: Font = get_theme_default_font()
 	if font == null:
 		return
+	var legend := display_rect().position + Vector2(18, 28)
+	draw_line(legend, legend + Vector2(30, 0), Color(0.85, 0.76, 0.54), 3.0)
+	draw_string(font, legend + Vector2(40, 5), "Road / causeway", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, LABEL_COLOUR)
+	legend.y += 23.0
+	for part: int in range(4):
+		draw_line(legend + Vector2(part * 8, 0), legend + Vector2(part * 8 + 4, 0), Color(0.51, 0.80, 0.87), 2.0)
+	draw_string(font, legend + Vector2(40, 5), "Ferry", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, LABEL_COLOUR)
 	for index: int in range(_regions.size()):
 		var rect: Rect2 = region_rect(index)
 		if rect.size.x <= 0.0:
@@ -139,9 +146,21 @@ func _draw() -> void:
 
 ## The name sits along the bottom edge of a region big enough to leave its
 ## map readable above it, and across the middle of one that is not. It is
-## centred on the region by measuring it rather than by fitting it to the
-## rectangle: a name wider than a small region runs past its edges, which
-## reads, where a name cut to "Whitehorn R" does not.
+## Long names wrap inside their own region so adjacent labels stay distinct.
+func _label_lines(font: Font, text: String, width: float) -> PackedStringArray:
+	var lines := PackedStringArray()
+	var current := ""
+	for word: String in text.split(" ", false):
+		var candidate: String = word if current.is_empty() else current + " " + word
+		if not current.is_empty() and font.get_string_size(candidate, HORIZONTAL_ALIGNMENT_LEFT, -1, LABEL_SIZE).x > width:
+			lines.append(current)
+			current = word
+		else:
+			current = candidate
+	if not current.is_empty():
+		lines.append(current)
+	return lines
+
 func _draw_label(font: Font, rect: Rect2, text: String, colour: Color) -> void:
 	if text.is_empty():
 		return
@@ -152,8 +171,12 @@ func _draw_label(font: Font, rect: Rect2, text: String, colour: Color) -> void:
 		baseline_y = rect.end.y - descent - 4.0
 	else:
 		baseline_y = rect.get_center().y + (ascent - descent) * 0.5
-	var extent: Vector2 = font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, LABEL_SIZE)
-	var baseline := Vector2(rect.get_center().x - extent.x * 0.5, baseline_y)
-	draw_string_outline(font, baseline, text, HORIZONTAL_ALIGNMENT_LEFT, -1,
-		LABEL_SIZE, LABEL_OUTLINE, Color(0.04, 0.04, 0.05, 0.95))
-	draw_string(font, baseline, text, HORIZONTAL_ALIGNMENT_LEFT, -1, LABEL_SIZE, colour)
+	var lines := _label_lines(font, text, maxf(72.0, rect.size.x - 8.0))
+	baseline_y -= float(lines.size()-1) * (ascent + descent)
+	for line: String in lines:
+		var extent: Vector2 = font.get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1, LABEL_SIZE)
+		var baseline := Vector2(rect.get_center().x - extent.x * 0.5, baseline_y)
+		draw_string_outline(font, baseline, line, HORIZONTAL_ALIGNMENT_LEFT, -1,
+			LABEL_SIZE, LABEL_OUTLINE, Color(0.04, 0.04, 0.05, 0.95))
+		draw_string(font, baseline, line, HORIZONTAL_ALIGNMENT_LEFT, -1, LABEL_SIZE, colour)
+		baseline_y += ascent + descent

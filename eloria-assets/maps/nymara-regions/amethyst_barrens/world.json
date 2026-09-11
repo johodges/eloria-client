@@ -306,13 +306,6 @@
       "March_east_shore_Stone",
       "March_east_shore_boat_007",
       "March_east_shore_boat_008",
-      "March_south_road_Station",
-      "March_south_road_Stone",
-      "March_south_road_steppe_rock_004",
-      "March_south_road_steppe_rock_005",
-      "March_south_road_steppe_rock_006",
-      "March_south_road_steppe_rock_007",
-      "March_south_road_steppe_rock_008",
       "Prop_OutpostStores_0",
       "Prop_OutpostStores_1",
       "Prop_OutpostStores_2",
@@ -343,11 +336,31 @@
         1,
         255
       ],
-      "zeroMeansBlocked": true
+      "zeroMeansBlocked": true,
+      "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 445262,
-    "walkableFraction": 0.7549,
+    "walkableCells": 442935,
+    "walkableFraction": 0.751,
     "saturatedCells": 5,
+    "refinedHeights": {
+      "levels": 255,
+      "step": 0.231808,
+      "origin": -0.8537,
+      "previousStep": 0.933979,
+      "cellsRestated": 449532,
+      "cellsFromGeometry": 444347,
+      "cellsKept": 5281
+    },
+    "openedWalkSurfaces": {
+      "prefix": "Walk_",
+      "cellsCovered": 7241,
+      "cellsWidened": 537,
+      "cellsOpened": 558,
+      "cellsRaised": 3964,
+      "cellsDrowned": 7,
+      "cellsBuried": 1864,
+      "cellsInsideLandmarks": 0
+    },
     "stampedLandmarks": [
       {
         "id": "glasswarden-tower-0",
@@ -386,7 +399,7 @@
           104.04
         ],
         "marginMetres": 0.5,
-        "cellsBlocked": 341
+        "cellsBlocked": 433
       },
       {
         "id": "glasswarden-bunkhouse",
@@ -415,24 +428,139 @@
         "cellsBlocked": 341
       }
     ],
-    "refinedHeights": {
-      "levels": 255,
-      "step": 0.231808,
-      "origin": -0.8537,
-      "previousStep": 0.933979,
-      "cellsRestated": 446059,
-      "cellsFromGeometry": 445319,
-      "cellsKept": 836
-    },
-    "openedWalkSurfaces": {
-      "prefix": "Walk_",
-      "cellsCovered": 7241,
-      "cellsWidened": 537,
-      "cellsOpened": 558,
-      "cellsRaised": 3964,
-      "cellsDrowned": 7,
-      "cellsBuried": 1864,
-      "cellsInsideLandmarks": 0
+    "actorSurfaceGuard": {
+      "method": "rendered-tile-centre-v1",
+      "actorTileOffset": [
+        0.5,
+        0.5
+      ],
+      "heightToleranceMetres": 0.8,
+      "closedTiles": 1427,
+      "unsupportedTiles": 1009,
+      "submergedTiles": 18,
+      "heightMismatchTiles": 1416,
+      "samples": [
+        {
+          "tile": [
+            131,
+            1
+          ],
+          "encodedY": 20.936,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": false
+        },
+        {
+          "tile": [
+            132,
+            1
+          ],
+          "encodedY": 20.936,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": false
+        },
+        {
+          "tile": [
+            133,
+            1
+          ],
+          "encodedY": 20.936,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": false
+        },
+        {
+          "tile": [
+            134,
+            1
+          ],
+          "encodedY": 20.936,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": false
+        },
+        {
+          "tile": [
+            135,
+            1
+          ],
+          "encodedY": 20.936,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": false
+        },
+        {
+          "tile": [
+            136,
+            1
+          ],
+          "encodedY": 20.936,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": false
+        },
+        {
+          "tile": [
+            137,
+            1
+          ],
+          "encodedY": 20.936,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": false
+        },
+        {
+          "tile": [
+            138,
+            1
+          ],
+          "encodedY": 20.009,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": false
+        },
+        {
+          "tile": [
+            139,
+            1
+          ],
+          "encodedY": 20.009,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": false
+        },
+        {
+          "tile": [
+            140,
+            1
+          ],
+          "encodedY": 20.009,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": false
+        },
+        {
+          "tile": [
+            141,
+            1
+          ],
+          "encodedY": 20.009,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": false
+        },
+        {
+          "tile": [
+            142,
+            1
+          ],
+          "encodedY": 20.009,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": false
+        }
+      ]
     }
   },
   "contentLayout": {
@@ -924,7 +1052,42 @@
       "viewHalfWidth": 40.0,
       "viewDepth": 145.0,
       "previewPrefix": "StreamView_whitehorn-amethyst__",
-      "overflowSuffix": "_StreamOverflow_whitehorn-amethyst"
+      "overflowSuffix": "_StreamOverflow_whitehorn-amethyst",
+      "geometryMode": "shared-cells-v2",
+      "sceneNodes": [
+        "Terrain_Shore_StreamCell_whitehorn-amethyst",
+        "Terrain_Barrens_StreamCell_whitehorn-amethyst",
+        "Terrain_ResonantRoad_StreamCell_whitehorn-amethyst",
+        "Terrain_StormRock_StreamCell_whitehorn-amethyst",
+        "Terrain_MarchWhitehornRange_StreamCell_whitehorn-amethyst",
+        "Terrain_Shore_StreamCollar_whitehorn-amethyst_Turf_StreamCell_whitehorn-amethyst",
+        "Terrain_Shore_StreamCollar_whitehorn-amethyst_Frost_StreamCell_whitehorn-amethyst",
+        "Terrain_Barrens_StreamCollar_whitehorn-amethyst_Turf_StreamCell_whitehorn-amethyst",
+        "Terrain_Barrens_StreamCollar_whitehorn-amethyst_Frost_StreamCell_whitehorn-amethyst",
+        "Terrain_Barrens_StreamCollar_whitehorn-amethyst_Road_StreamCell_whitehorn-amethyst",
+        "Terrain_ResonantRoad_StreamCollar_whitehorn-amethyst_Turf_StreamCell_whitehorn-amethyst",
+        "Terrain_ResonantRoad_StreamCollar_whitehorn-amethyst_Road_StreamCell_whitehorn-amethyst",
+        "Terrain_StormRock_StreamCollar_whitehorn-amethyst_Turf_StreamCell_whitehorn-amethyst",
+        "Terrain_StormRock_StreamCollar_whitehorn-amethyst_Frost_StreamCell_whitehorn-amethyst",
+        "Terrain_StormRock_StreamCollar_whitehorn-amethyst_Road_StreamCell_whitehorn-amethyst",
+        "Terrain_MarchWhitehornRange_StreamCollar_whitehorn-amethyst_Turf_StreamCell_whitehorn-amethyst",
+        "Terrain_MarchWhitehornRange_StreamCollar_whitehorn-amethyst_Frost_StreamCell_whitehorn-amethyst",
+        "Water_Sea_StreamCell_whitehorn-amethyst",
+        "Water_RiverResonant_StreamCell_whitehorn-amethyst",
+        "Water_RiverBeck_StreamCell_whitehorn-amethyst",
+        "Landmark_LevitatingShards_5",
+        "Landmark_StormRuin_5",
+        "Landmark_ResonantCluster_1",
+        "Prop_VeinScatter_68",
+        "Prop_VeinScatter_74",
+        "Prop_VeinScatter_118",
+        "March_north_pass_Signpost",
+        "Landmark_SurveyedBridge_6",
+        "Terrain_Shore_StreamCell_whitehorn-amethyst_StreamCell_mirrorhold-amethyst",
+        "Terrain_Barrens_StreamCell_whitehorn-amethyst_StreamCell_mirrorhold-amethyst",
+        "Terrain_MarchWhitehornRange_StreamCell_whitehorn-amethyst_StreamCell_mirrorhold-amethyst",
+        "Water_RiverBeck_StreamCell_whitehorn-amethyst_StreamCell_mirrorhold-amethyst"
+      ]
     },
     {
       "id": "mirrorhold-amethyst",
@@ -949,7 +1112,142 @@
       "viewHalfWidth": 40.0,
       "viewDepth": 145.0,
       "previewPrefix": "StreamView_mirrorhold-amethyst__",
-      "overflowSuffix": "_StreamOverflow_mirrorhold-amethyst"
+      "overflowSuffix": "_StreamOverflow_mirrorhold-amethyst",
+      "geometryMode": "shared-cells-v2",
+      "sceneNodes": [
+        "Terrain_Shore_StreamCell_mirrorhold-amethyst",
+        "Terrain_Barrens_StreamCell_mirrorhold-amethyst",
+        "Terrain_ResonantRoad_StreamCell_mirrorhold-amethyst",
+        "Terrain_StormRock_StreamCell_mirrorhold-amethyst",
+        "Terrain_MarchMirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Shore_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_mirrorhold-amethyst",
+        "Terrain_Shore_StreamCollar_mirrorhold-amethyst_Frost_StreamCell_mirrorhold-amethyst",
+        "Terrain_Barrens_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_mirrorhold-amethyst",
+        "Terrain_Barrens_StreamCollar_mirrorhold-amethyst_Frost_StreamCell_mirrorhold-amethyst",
+        "Terrain_ResonantRoad_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_mirrorhold-amethyst",
+        "Terrain_ResonantRoad_StreamCollar_mirrorhold-amethyst_Road_StreamCell_mirrorhold-amethyst",
+        "Terrain_StormRock_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_mirrorhold-amethyst",
+        "Terrain_StormRock_StreamCollar_mirrorhold-amethyst_Frost_StreamCell_mirrorhold-amethyst",
+        "Terrain_MarchMirrorhold_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_mirrorhold-amethyst",
+        "Terrain_MarchMirrorhold_StreamCollar_mirrorhold-amethyst_Frost_StreamCell_mirrorhold-amethyst",
+        "Terrain_MarchMirrorhold_StreamCollar_mirrorhold-amethyst_Road_StreamCell_mirrorhold-amethyst",
+        "Terrain_Shore_StreamCell_whitehorn-amethyst_StreamCell_mirrorhold-amethyst",
+        "Terrain_Barrens_StreamCell_whitehorn-amethyst_StreamCell_mirrorhold-amethyst",
+        "Terrain_MarchWhitehornRange_StreamCell_whitehorn-amethyst_StreamCell_mirrorhold-amethyst",
+        "Water_Sea_StreamCell_mirrorhold-amethyst",
+        "Water_RiverBeck_StreamCell_mirrorhold-amethyst",
+        "Water_RiverBeck_StreamCell_whitehorn-amethyst_StreamCell_mirrorhold-amethyst",
+        "Landmark_GlasswardenObservatory",
+        "Landmark_GeodeCave_0",
+        "Landmark_LevitatingShards_5",
+        "Landmark_Watchtower_0",
+        "Prop_VeinScatter_43",
+        "Prop_BarrensRocks_71",
+        "Scrub_LeeTuft_0",
+        "Scrub_LeeTuft_12",
+        "Scrub_LeeTuft_174",
+        "March_west_road_Signpost",
+        "Secret_barrens_observatory_vault"
+      ]
+    },
+    {
+      "id": "amethyst-sunmane",
+      "portal": "south-road",
+      "destination": "sunmane_steppe",
+      "anchor": [
+        54.5,
+        19,
+        113.5
+      ],
+      "outward": [
+        0,
+        1
+      ],
+      "uvSign": 1,
+      "palette": "steppe",
+      "preloadDistance": 170,
+      "retainDistance": 220,
+      "blendDistance": 65,
+      "collarDepth": 42,
+      "halfWidthTiles": 3,
+      "viewHalfWidth": 40.0,
+      "viewDepth": 145.0,
+      "previewPrefix": "StreamView_amethyst-sunmane__",
+      "overflowSuffix": "_StreamOverflow_amethyst-sunmane",
+      "geometryMode": "shared-cells-v2",
+      "sceneNodes": [
+        "Terrain_Barrens_StreamCell_amethyst-sunmane",
+        "Terrain_CrystalField_StreamCell_amethyst-sunmane",
+        "Terrain_ResonantRoad_StreamCell_amethyst-sunmane",
+        "Terrain_StormRock_StreamCell_amethyst-sunmane",
+        "Terrain_MarchSunmaneSteppe_StreamCell_amethyst-sunmane",
+        "Terrain_Barrens_StreamCollar_amethyst-sunmane_Turf_StreamCell_amethyst-sunmane",
+        "Terrain_Barrens_StreamCollar_amethyst-sunmane_Frost_StreamCell_amethyst-sunmane",
+        "Terrain_ResonantRoad_StreamCollar_amethyst-sunmane_Turf_StreamCell_amethyst-sunmane",
+        "Terrain_ResonantRoad_StreamCollar_amethyst-sunmane_Road_StreamCell_amethyst-sunmane",
+        "Terrain_StormRock_StreamCollar_amethyst-sunmane_Turf_StreamCell_amethyst-sunmane",
+        "Terrain_StormRock_StreamCollar_amethyst-sunmane_Frost_StreamCell_amethyst-sunmane",
+        "Terrain_MarchSunmaneSteppe_StreamCollar_amethyst-sunmane_Turf_StreamCell_amethyst-sunmane",
+        "Terrain_MarchSunmaneSteppe_StreamCollar_amethyst-sunmane_Frost_StreamCell_amethyst-sunmane",
+        "Landmark_GeodeCave_2",
+        "Landmark_LevitatingShards_6",
+        "Landmark_StormRuin_3",
+        "Landmark_ResonantCluster_6",
+        "Landmark_ResonantCluster_8",
+        "Landmark_Watchtower_2",
+        "Landmark_AssayExchange",
+        "Landmark_FieldStation_3",
+        "Prop_BarrensRocks_37",
+        "Prop_VeinScatter_162",
+        "Landmark_glasswarden-mess",
+        "Prop_OutpostStores_2",
+        "Prop_OutpostStores_3",
+        "Scrub_LeeTuft_6",
+        "Scrub_LeeTuft_9",
+        "Scrub_LeeTuft_15",
+        "Scrub_LeeTuft_19",
+        "Scrub_LeeTuft_28",
+        "Scrub_LeeTuft_29",
+        "Scrub_LeeTuft_34",
+        "Scrub_LeeTuft_36",
+        "Scrub_LeeTuft_38",
+        "Scrub_LeeTuft_39",
+        "Scrub_LeeTuft_42",
+        "Scrub_LeeTuft_47",
+        "Scrub_LeeTuft_51",
+        "Scrub_LeeTuft_57",
+        "Scrub_LeeTuft_66",
+        "Scrub_LeeTuft_82",
+        "Scrub_LeeTuft_84",
+        "Scrub_LeeTuft_87",
+        "Scrub_LeeTuft_89",
+        "Scrub_LeeTuft_91",
+        "Scrub_LeeTuft_93",
+        "Scrub_LeeTuft_95",
+        "Scrub_LeeTuft_97",
+        "Scrub_LeeTuft_99",
+        "Scrub_LeeTuft_111",
+        "Scrub_LeeTuft_114",
+        "Scrub_LeeTuft_118",
+        "Scrub_LeeTuft_120",
+        "Scrub_LeeTuft_133",
+        "Scrub_LeeTuft_134",
+        "Scrub_LeeTuft_137",
+        "Scrub_LeeTuft_147",
+        "Scrub_LeeTuft_149",
+        "Scrub_LeeTuft_152",
+        "Scrub_LeeTuft_156",
+        "Scrub_LeeTuft_160",
+        "Scrub_LeeTuft_165",
+        "Scrub_LeeTuft_169",
+        "Scrub_LeeTuft_170",
+        "March_south_road_Signpost",
+        "Secret_barrens_storm_well",
+        "Secret_barrens_sap",
+        "Secret_barrens_waystone",
+        "Secret_barrens_cave_eyrie"
+      ],
+      "profile": "steppe"
     }
   ],
   "navigation": {
@@ -1140,8 +1438,8 @@
       "node": "Landmark_GeodeCave_2",
       "type": "cave",
       "position": [
-        64.7051,
-        6.12,
+        74.7051,
+        12.679436231258391,
         87.4754
       ]
     },
@@ -1284,7 +1582,7 @@
       "type": "ruin",
       "position": [
         88.8248,
-        5.92,
+        9.49,
         64.6557
       ]
     },
@@ -1350,7 +1648,7 @@
       "type": "diggings",
       "position": [
         119.8359,
-        4.55,
+        4.532736641251488,
         76.0656
       ]
     },
@@ -1449,7 +1747,7 @@
       "type": "tower",
       "position": [
         95.7162,
-        8.47,
+        19.58332294417597,
         98.8852
       ]
     },
@@ -1537,7 +1835,7 @@
       "type": "camp",
       "position": [
         81.9335,
-        5.89,
+        10.15,
         53.2459
       ]
     },
@@ -1658,24 +1956,24 @@
     {
       "id": "march-south-road",
       "name": "The Steppe March",
-      "node": "March_south_road_Stone",
+      "node": "March_south_road_Signpost",
       "type": "transition",
       "position": [
-        57.4118,
-        18.13,
-        107.4426
+        49.6681,
+        19.02162473880126,
+        106.0164
       ],
       "note": "Where the Amethyst Barrens gives way to the Sunmane Steppe: glasswarden road furniture, a march stone, a waystation, and 12 pieces of the country beyond."
     },
     {
       "id": "station-south-road",
       "name": "Sunmane Steppe Road Station",
-      "node": "March_south_road_Station",
+      "node": "March_south_road_Signpost",
       "type": "waystation",
       "position": [
-        60.9723,
-        13.86,
-        99.8361
+        49.6681,
+        19.02162473880126,
+        106.0164
       ]
     },
     {
@@ -1834,7 +2132,7 @@
       "kind": "crafting",
       "position": [
         81.9335,
-        6.89,
+        11.15,
         53.2459
       ],
       "authority": "server"
@@ -1980,7 +2278,7 @@
       "destinationSpawn": "barrens-tower-school",
       "position": [
         100.3104,
-        7.9,
+        19.230966245357024,
         101.7377
       ],
       "authority": "server",
@@ -2064,7 +2362,7 @@
       "destinationSpawn": "barrens-storm-well",
       "position": [
         93.4191,
-        7.17,
+        6.61,
         71.3115
       ],
       "authority": "server",
@@ -2085,7 +2383,7 @@
       "destinationSpawn": "barrens-sap",
       "position": [
         83.4266,
-        6.73,
+        8.53,
         71.0738
       ],
       "authority": "server",
@@ -2106,13 +2404,13 @@
       "destinationSpawn": "barrens-waystone",
       "position": [
         76.1907,
-        6.42,
-        64.1803
+        11.35,
+        71.3115
       ],
       "authority": "server",
       "serverTile": [
         192,
-        52
+        45
       ]
     },
     {
@@ -2126,13 +2424,13 @@
       "destinationMap": "amethyst_barrens_secrets",
       "destinationSpawn": "barrens-cave-eyrie",
       "position": [
-        71.941,
-        7.04,
+        81.941,
+        11.498931454379584,
         83.9098
       ],
       "authority": "server",
       "serverTile": [
-        188,
+        197,
         32
       ]
     }
@@ -2248,7 +2546,7 @@
       "name": "Road Warden",
       "position": [
         81.9335,
-        5.94,
+        10.2,
         53.2459
       ],
       "serverTile": [
@@ -2333,7 +2631,7 @@
       "kind": "creature-zone",
       "position": [
         88.8248,
-        6.17,
+        9.74,
         64.6557
       ],
       "radius": 56.0,
@@ -2458,7 +2756,7 @@
       "resource": "amethyst-shard",
       "position": [
         67.0022,
-        6.89,
+        10.52,
         87.9508
       ],
       "serverTile": [
@@ -2682,7 +2980,7 @@
       "resource": "amethyst-shard",
       "position": [
         64.7051,
-        6.66,
+        13.39,
         86.0492
       ],
       "serverTile": [
@@ -2808,7 +3106,7 @@
       "resource": "amethyst-shard",
       "position": [
         65.8537,
-        7.03,
+        12.0,
         88.9016
       ],
       "serverTile": [
@@ -2836,7 +3134,7 @@
       "resource": "amethyst-shard",
       "position": [
         63.5565,
-        6.53,
+        14.8,
         87.0
       ],
       "serverTile": [
@@ -3309,13 +3607,13 @@
       "name": "Sunmane Track",
       "type": "map-transition",
       "position": [
-        54.3681,
-        18.99,
-        110.2951
+        54.5,
+        19.0,
+        114.5
       ],
       "serverTile": [
         170,
-        6
+        1
       ],
       "destinationMap": "sunmane_steppe",
       "radius": 3.5,
@@ -4005,35 +4303,35 @@
     },
     {
       "id": "sunmane_ascent",
-      "width": 6.4,
+      "width": 7.0,
       "waypoints": [
         [
           108,
           5.8,
-          67
+          48
         ],
         [
-          99,
-          8.0,
-          78
+          93,
+          9.0,
+          55
         ],
         [
-          85,
-          12.4,
-          93
+          77,
+          13.0,
+          62
         ],
         [
-          69,
-          16.0,
-          104
+          63,
+          17.0,
+          68
         ],
         [
-          54,
+          54.5,
           19.0,
-          111
+          71.5
         ],
         [
-          54,
+          54.5,
           19.0,
           127
         ]
@@ -4086,33 +4384,33 @@
         "type": "stream"
       },
       {
-        "id": "Water_RiverResonant_StreamOverflow_whitehorn-amethyst",
-        "node": "Water_RiverResonant_StreamOverflow_whitehorn-amethyst",
-        "type": "stream"
-      },
-      {
-        "id": "StreamView_whitehorn-amethyst__Water_Sea",
-        "node": "StreamView_whitehorn-amethyst__Water_Sea",
+        "id": "Water_Sea_StreamCell_whitehorn-amethyst",
+        "node": "Water_Sea_StreamCell_whitehorn-amethyst",
         "type": "sea"
       },
       {
-        "id": "StreamView_whitehorn-amethyst__Water_RiverResonant",
-        "node": "StreamView_whitehorn-amethyst__Water_RiverResonant",
+        "id": "Water_RiverResonant_StreamCell_whitehorn-amethyst",
+        "node": "Water_RiverResonant_StreamCell_whitehorn-amethyst",
         "type": "stream"
       },
       {
-        "id": "StreamView_whitehorn-amethyst__Water_RiverBeck",
-        "node": "StreamView_whitehorn-amethyst__Water_RiverBeck",
+        "id": "Water_RiverBeck_StreamCell_whitehorn-amethyst",
+        "node": "Water_RiverBeck_StreamCell_whitehorn-amethyst",
         "type": "stream"
       },
       {
-        "id": "StreamView_mirrorhold-amethyst__Water_Sea",
-        "node": "StreamView_mirrorhold-amethyst__Water_Sea",
+        "id": "Water_Sea_StreamCell_mirrorhold-amethyst",
+        "node": "Water_Sea_StreamCell_mirrorhold-amethyst",
         "type": "sea"
       },
       {
-        "id": "StreamView_mirrorhold-amethyst__Water_RiverBeck",
-        "node": "StreamView_mirrorhold-amethyst__Water_RiverBeck",
+        "id": "Water_RiverBeck_StreamCell_mirrorhold-amethyst",
+        "node": "Water_RiverBeck_StreamCell_mirrorhold-amethyst",
+        "type": "stream"
+      },
+      {
+        "id": "Water_RiverBeck_StreamCell_whitehorn-amethyst_StreamCell_mirrorhold-amethyst",
+        "node": "Water_RiverBeck_StreamCell_whitehorn-amethyst_StreamCell_mirrorhold-amethyst",
         "type": "stream"
       }
     ],
@@ -4443,29 +4741,29 @@
     }
   ],
   "performance": {
-    "nodes": 917,
-    "meshes": 430,
-    "materials": 43,
-    "images": 96,
-    "textures": 96,
-    "accessors": 1817,
-    "bufferViews": 1913,
-    "uniqueTriangles": 910973,
-    "uniqueVertices": 630319,
-    "glbBytes": 39957208,
-    "instancedTriangles": 984075,
-    "embeddedTextureBytes": 10508279,
-    "textureMemoryBytesUncompressed": 86704128,
-    "placements": 439,
+    "nodes": 779,
+    "meshes": 380,
+    "materials": 47,
+    "images": 102,
+    "textures": 102,
+    "accessors": 1608,
+    "bufferViews": 1710,
+    "uniqueTriangles": 801396,
+    "uniqueVertices": 566829,
+    "glbBytes": 36462140,
+    "instancedTriangles": 835444,
+    "embeddedTextureBytes": 11626982,
+    "textureMemoryBytesUncompressed": 92995584,
+    "placements": 374,
     "collision": {
       "width": 768,
       "height": 768,
       "cellMetres": 0.5,
-      "walkableCells": 446155,
-      "blockedCells": 143669,
-      "walkableFraction": 0.7564,
+      "walkableCells": 449628,
+      "blockedCells": 140196,
+      "walkableFraction": 0.7623,
       "elevatedDecks": 20,
-      "steepCells": 99081,
+      "steepCells": 95787,
       "reliefMetres": 57.91,
       "heightEncoding": {
         "origin": -0.5834,
@@ -4484,22 +4782,22 @@
     "notes": [
       "Glasswarden service yard, seven surveyed crystal bridges, cove packet jetty and working habitat rings.",
       "crystal outcrops placed: 62",
-      "ground dressing: 98 rock clusters, 203 vein scatters",
-      "Inhabited 384m basin: two sheltered dwellings, 192 lee tufts; 260 unrelated scatter instances removed from quiet ground.",
+      "ground dressing: 94 rock clusters, 175 vein scatters",
+      "Inhabited 384m basin: two sheltered dwellings, 176 lee tufts; 235 unrelated scatter instances removed from quiet ground.",
       "lore site eleven-measures (The Eleven Measures): relief 0.67 m, 12 m from the ask",
       "march north-pass: 2 road pieces, 19 of whitehorn_range's growth",
       "march west-road: 6 road pieces, 10 of mirrorhold's growth",
-      "march south-road: 7 road pieces, 12 of sunmane_steppe's growth",
+      "march south-road: 1 road pieces, 12 of sunmane_steppe's growth",
       "march east-shore: 2 road pieces, 9 of crownwater's growth",
       "walk corridors: 4 encroaching dressing placements removed",
       "walk corridors: 2 encroaching dressing placements removed",
       "massif-camp moved 2.3 m onto walkable ground"
     ],
     "lod2": {
-      "glbBytes": 30761044,
-      "nodes": 614,
-      "uniqueTriangles": 902021,
-      "instancedTriangles": 936403
+      "glbBytes": 26343892,
+      "nodes": 503,
+      "uniqueTriangles": 792444,
+      "instancedTriangles": 794760
     }
   },
   "sources": [
@@ -4586,7 +4884,7 @@
         "name": "Grinder Vell",
         "role": "instance",
         "serverTile": [
-          30,
+          29,
           332
         ],
         "authority": "server"
@@ -4858,7 +5156,7 @@
         "resource": "Quartz",
         "serverTile": [
           167,
-          78
+          80
         ],
         "authority": "server"
       },
@@ -4957,7 +5255,7 @@
         "resource": "Stormglass",
         "serverTile": [
           195,
-          317
+          316
         ],
         "authority": "server"
       },
@@ -4965,7 +5263,7 @@
         "id": 74,
         "resource": "Stormglass",
         "serverTile": [
-          189,
+          188,
           326
         ],
         "authority": "server"
@@ -5126,7 +5424,7 @@
     ],
     "encounters": [
       {
-        "creature": "crystal_mite",
+        "creature": "crystal_carapace_beetle",
         "serverTile": [
           297,
           125
@@ -5134,7 +5432,7 @@
         "authority": "server"
       },
       {
-        "creature": "crystal_mite",
+        "creature": "crystal_carapace_beetle",
         "serverTile": [
           306,
           118
@@ -5142,7 +5440,7 @@
         "authority": "server"
       },
       {
-        "creature": "crystal_mite",
+        "creature": "crystal_carapace_beetle",
         "serverTile": [
           216,
           153
@@ -5150,7 +5448,7 @@
         "authority": "server"
       },
       {
-        "creature": "crystal_mite",
+        "creature": "crystal_carapace_beetle",
         "serverTile": [
           212,
           142
@@ -5158,7 +5456,7 @@
         "authority": "server"
       },
       {
-        "creature": "resonant_hound",
+        "creature": "crystal_dire_wolf",
         "serverTile": [
           259,
           219
@@ -5166,7 +5464,7 @@
         "authority": "server"
       },
       {
-        "creature": "resonant_hound",
+        "creature": "crystal_dire_wolf",
         "serverTile": [
           296,
           296
@@ -5174,7 +5472,7 @@
         "authority": "server"
       },
       {
-        "creature": "resonant_hound",
+        "creature": "crystal_dire_wolf",
         "serverTile": [
           311,
           280
@@ -5182,7 +5480,7 @@
         "authority": "server"
       },
       {
-        "creature": "stormglass_grazer",
+        "creature": "cobalt_ibex",
         "serverTile": [
           73,
           192
@@ -5190,7 +5488,7 @@
         "authority": "server"
       },
       {
-        "creature": "stormglass_grazer",
+        "creature": "cobalt_ibex",
         "serverTile": [
           163,
           57
@@ -5198,7 +5496,7 @@
         "authority": "server"
       },
       {
-        "creature": "stormglass_grazer",
+        "creature": "cobalt_ibex",
         "serverTile": [
           185,
           53
@@ -5329,7 +5627,7 @@
         "creature": "crystal_wing_griffin",
         "serverTile": [
           301,
-          330
+          329
         ],
         "authority": "server"
       },
@@ -5366,7 +5664,7 @@
         "authority": "server"
       },
       {
-        "creature": "barrens_wisp",
+        "creature": "amethyst_moth",
         "serverTile": [
           295,
           304
@@ -5374,7 +5672,7 @@
         "authority": "server"
       },
       {
-        "creature": "barrens_wisp",
+        "creature": "amethyst_moth",
         "serverTile": [
           53,
           328
@@ -5382,7 +5680,7 @@
         "authority": "server"
       },
       {
-        "creature": "barrens_wisp",
+        "creature": "amethyst_moth",
         "serverTile": [
           280,
           297
@@ -5390,7 +5688,7 @@
         "authority": "server"
       },
       {
-        "creature": "prism_wyrm",
+        "creature": "emerald_canopy_dragon",
         "serverTile": [
           312,
           334
@@ -5398,7 +5696,7 @@
         "authority": "server"
       },
       {
-        "creature": "prism_wyrm",
+        "creature": "emerald_canopy_dragon",
         "serverTile": [
           298,
           322
@@ -5406,7 +5704,7 @@
         "authority": "server"
       },
       {
-        "creature": "prism_wyrm",
+        "creature": "emerald_canopy_dragon",
         "serverTile": [
           321,
           326
@@ -5520,8 +5818,8 @@
       {
         "creature": "arcane_crystal_automaton",
         "serverTile": [
-          292,
-          330
+          291,
+          329
         ],
         "authority": "server"
       },

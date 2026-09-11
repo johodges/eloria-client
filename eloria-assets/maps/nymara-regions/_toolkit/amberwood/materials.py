@@ -218,6 +218,8 @@ SPECS: tuple[MaterialSpec, ...] = (
                  base_color=(.90,.94,1,1),normal_scale=.25),
     MaterialSpec("woodland_sward", "meadow_grass", roughness=1.0,
                  base_color=(.72, .98, .76, 1.0)),
+    MaterialSpec("steppe_sward", "steppe_sward", roughness=1.0, normal_scale=.28),
+    MaterialSpec("steppe_dust", "steppe_dust", roughness=.98, normal_scale=.22),
 )
 
 BY_NAME = {spec.name: spec for spec in SPECS}
@@ -329,6 +331,8 @@ def build_texture_sets() -> dict[str, T.TextureSet]:
     sets["woodland_track"].name = "woodland_track"
     for name in ('alpine_snowfield','alpine_blue_ice','alpine_bedrock'):
         sets[name]=T.alpine_ground(name)
+    for name in ('steppe_sward', 'steppe_dust'):
+        sets[name] = T.steppe_ground(name)
     return sets
 
 
@@ -399,6 +403,7 @@ def register_preview_materials(scene, sets: dict[str, T.TextureSet]) -> None:
 # - and they are separate entries so that a prop standing on packed earth is not
 # alpha-tested for the sake of the road.
 GROUND_SUFFIX = "_ground"
+SOFT_GROUND_SUFFIX = "_soft_ground"
 
 
 def base_material(name: str) -> str:
@@ -409,6 +414,7 @@ def base_material(name: str) -> str:
     it carries the pinned one's textures and differs only in alpha mode - so
     the check has to look through the suffix or every region fails its own pin.
     """
+    if name.endswith(SOFT_GROUND_SUFFIX):return name[:-len(SOFT_GROUND_SUFFIX)]
     return name[:-len(GROUND_SUFFIX)] if name.endswith(GROUND_SUFFIX) else name
 
 
@@ -424,7 +430,7 @@ def register_ground_materials(builder: "gltf.GltfBuilder",
     for name in sorted(wanted):
         if not name.endswith(GROUND_SUFFIX):
             continue
-        spec = by_name[name[:-len(GROUND_SUFFIX)]]
+        spec = by_name[base_material(name)]
         texture_set = sets[spec.texture]
         images = texture_set.images()
         for image_name, blob in images.items():

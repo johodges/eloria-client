@@ -679,6 +679,7 @@ func _apply_material_passes(mesh_instances: Array) -> int:
 	var applied := 0
 	var filtered: Dictionary = {}
 	var covered: Dictionary = {}
+	var soft_materials: Dictionary = {}
 	for node_value: Variant in mesh_instances:
 		var mesh: Mesh = (node_value as MeshInstance3D).mesh
 		if mesh == null:
@@ -693,9 +694,25 @@ func _apply_material_passes(mesh_instances: Array) -> int:
 				filtered[id] = true
 				material.texture_filter = (
 					BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC)
-			if covered.has(id):
-				continue
 			if (mesh.surface_get_format(surface) & Mesh.ARRAY_FORMAT_COLOR) == 0:
+				continue
+			# Optional lowland overlays retain opaque depth and framebuffer alpha.
+			if material.resource_name.ends_with("_soft_ground"):
+				if not soft_materials.has(id):
+					var soft := ShaderMaterial.new()
+					soft.resource_name = material.resource_name
+					soft.shader = preload("res://src/world/soft_ground.gdshader")
+					soft.set_shader_parameter("soil_texture", material.albedo_texture)
+					soft.set_shader_parameter("soil_color", material.albedo_color)
+					soft.set_shader_parameter("soil_roughness", material.roughness)
+					soft.set_shader_parameter("soil_normal", material.normal_texture)
+					soft.set_shader_parameter("soil_normal_depth", material.normal_scale)
+					soft.set_shader_parameter("has_soil_normal", material.normal_enabled and material.normal_texture != null)
+					soft_materials[id] = soft
+					applied += 1
+				mesh.surface_set_material(surface, soft_materials[id])
+				continue
+			if covered.has(id):
 				continue
 			if material.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR:
 				continue
@@ -833,7 +850,7 @@ func _batch_static_instances(mesh_instances: Array) -> void:
 func _is_batchable(mesh_instance: MeshInstance3D) -> bool:
 	var ancestor: Node = mesh_instance
 	while ancestor != null and ancestor != world_root:
-		if str(ancestor.name).begins_with("StreamPreview_"):
+		if str(ancestor.name).begins_with("StreamPreview_") or ancestor.has_meta("stream_borders"):
 			return false
 		ancestor = ancestor.get_parent()
 	var mesh: Mesh = mesh_instance.mesh
@@ -964,6 +981,9 @@ func _trimesh_shape(mesh: Mesh) -> ConcavePolygonShape3D:
 func _group_streaming_views() -> void:
 	if manifest.data.get("streamingBorders", []).is_empty():
 		return
+	if manifest.data.streamingBorders[0].get("geometryMode", "") == "shared-cells-v2":
+		_group_shared_streaming_cells()
+		return
 	var views: Array[Node3D] = []
 	for node: Node in world_root.find_children("StreamView_*", "Node3D", true, false):
 		if not str(node.get_parent().name).begins_with("StreamView_"):
@@ -989,6 +1009,44 @@ func _group_streaming_views() -> void:
 		view.reparent(group, false)
 		view.owner = world_root
 		view.transform = local
+
+func _group_shared_streaming_cells() -> void:
+	var membership: Dictionary = {}
+	for border: Dictionary in manifest.data.streamingBorders:
+		for title: String in border.get("sceneNodes", []):
+			if not membership.has(title): membership[title] = []
+			membership[title].append(str(border.id))
+	var selected: Array[Node3D] = []
+	for node: Node in world_root.find_children("*", "Node3D", true, false):
+		if membership.has(str(node.name)): selected.append(node as Node3D)
+		if "_StreamThreshold_" in str(node.name):
+			(node as Node3D).visible = false
+			node.set_meta("stream_threshold", true)
+	var core := Node3D.new()
+	core.name = "StreamActive"
+	var children := world_root.get_children()
+	world_root.add_child(core)
+	for child: Node in children:
+		child.owner = null
+		child.reparent(core, false)
+		child.owner = world_root
+	var groups: Dictionary = {}
+	for node: Node3D in selected:
+		var borders: Array = membership[str(node.name)]
+		borders.sort()
+		var key := "+".join(borders)
+		if not groups.has(key):
+			var group := Node3D.new()
+			group.name = "StreamCell_" + key
+			group.set_meta("stream_borders", borders)
+			world_root.add_child(group)
+			groups[key] = group
+		var local := _import_transform(node)
+		node.owner = null
+		node.reparent(groups[key], false)
+		node.owner = world_root
+		node.transform = local
+	world_root.set_meta("shared_stream_cells", true)
 
 func _disable_streaming_preview_collision() -> void:
 	for group: Node in world_root.get_children():

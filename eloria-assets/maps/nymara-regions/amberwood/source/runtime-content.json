@@ -45,7 +45,7 @@
       "name": "Cinder Chaplain Osric Vane",
       "role": "dialogue",
       "serverTile": [
-        333,
+        334,
         270
       ],
       "authority": "server"
@@ -115,7 +115,7 @@
       "name": "Harbour Master",
       "role": "dialogue",
       "serverTile": [
-        54,
+        55,
         86
       ],
       "authority": "server"
@@ -165,7 +165,7 @@
       "name": "North Watcher",
       "role": "dialogue",
       "serverTile": [
-        286,
+        285,
         345
       ],
       "authority": "server"
@@ -216,7 +216,7 @@
       "role": "dialogue",
       "serverTile": [
         277,
-        341
+        342
       ],
       "authority": "server"
     },
@@ -245,7 +245,7 @@
       "name": "Timber Reeve",
       "role": "dialogue",
       "serverTile": [
-        276,
+        277,
         51
       ],
       "authority": "server"
@@ -275,7 +275,7 @@
       "name": "Wayshrine Cantor Ivy Marl",
       "role": "dialogue",
       "serverTile": [
-        211,
+        212,
         130
       ],
       "authority": "server"
@@ -333,7 +333,7 @@
       "resource": "Resin",
       "serverTile": [
         206,
-        330
+        329
       ],
       "authority": "server"
     },
@@ -835,7 +835,7 @@
   ],
   "encounters": [
     {
-      "creature": "amberhart",
+      "creature": "autumn_antler_stag",
       "serverTile": [
         141,
         88
@@ -843,7 +843,7 @@
       "authority": "server"
     },
     {
-      "creature": "amberhart",
+      "creature": "autumn_antler_stag",
       "serverTile": [
         189,
         67
@@ -851,7 +851,7 @@
       "authority": "server"
     },
     {
-      "creature": "amberhart",
+      "creature": "autumn_antler_stag",
       "serverTile": [
         164,
         74
@@ -859,7 +859,7 @@
       "authority": "server"
     },
     {
-      "creature": "amberhart",
+      "creature": "autumn_antler_stag",
       "serverTile": [
         165,
         84
@@ -867,7 +867,7 @@
       "authority": "server"
     },
     {
-      "creature": "rootback_boar",
+      "creature": "mossback_boar",
       "serverTile": [
         129,
         302
@@ -875,7 +875,7 @@
       "authority": "server"
     },
     {
-      "creature": "rootback_boar",
+      "creature": "mossback_boar",
       "serverTile": [
         282,
         71
@@ -883,7 +883,7 @@
       "authority": "server"
     },
     {
-      "creature": "rootback_boar",
+      "creature": "mossback_boar",
       "serverTile": [
         203,
         295

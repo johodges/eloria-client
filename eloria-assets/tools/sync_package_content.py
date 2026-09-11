@@ -120,8 +120,8 @@ PACKAGES = {
         amberwood_terrain,
     ),
     "nymara-regions/sunmane_steppe": (
-        [Section("sunmane_npcs", ("runtimePopulation", "npcs")),
-         Section("sunmane_resources", ("runtimePopulation", "resources"),
+        [Section("sunmane_npcs", ("npcMarkers",)),
+         Section("sunmane_resources", ("harvestables",),
                  position="center")],
         sunmane_terrain,
     ),
@@ -148,6 +148,20 @@ def sync(package: Path, sections, terrain, manifest: dict, moves: list) -> str |
     metres = transform["metresPerTile"]
 
     ground = None
+    if data.get('landscapeRevision'):
+        # Compact authored ground no longer follows the old terrain factory.
+        # Read the same final surfaces that ground the traveller in the client.
+        sys.path.insert(0, str(ASSETS / 'maps/nymara-regions/_toolkit'))
+        import glb_reader as geometry
+        from verify_runtime import VerticalRayIndex
+        document, body = geometry.load(package / 'world.glb')
+        names = geometry.named(document, 'Terrain_') + geometry.named(document, 'Walk_')
+        index = VerticalRayIndex(geometry.triangles(document, body, names), cell=4)
+        def ground(x, z):
+            y = index.top_hit(x, z)
+            if y is None:
+                raise ValueError(f'{package.name}: no authored marker ground at {(x,z)}')
+            return y
     changed = False
     for section in sections:
         wanted = wanted_tiles(manifest, section)
@@ -166,8 +180,9 @@ def sync(package: Path, sections, terrain, manifest: dict, moves: list) -> str |
                 ground = terrain()
             # Keep whatever the marker was authored to stand above the ground,
             # and let the ground itself carry it to the new tile.
-            rise = ground(new_x, new_z) - ground(old_x, old_z)
-            entry[section.position] = [round(new_x, 2), round(old_y + rise, 2),
+            new_y = ground(new_x, new_z) if data.get('landscapeRevision') else (
+                old_y + ground(new_x, new_z) - ground(old_x, old_z))
+            entry[section.position] = [round(new_x, 2), round(new_y, 2),
                                        round(new_z, 2)]
             entry["serverTile"] = [tile[0], tile[1]]
             moves.append((package.name, entry["id"], (old_x, old_z), (new_x, new_z)))
@@ -367,8 +382,10 @@ def main() -> int:
             import contentposts
             posts = {".".join(section.path): wanted_tiles(manifest, section) for section in sections}
             data = json.loads((package / "world.json").read_text(encoding="utf-8"))
+            if data.get('landscapeRevision'):
+                posts['landscapeRevision'] = data['landscapeRevision']
             contentposts.apply(data, package, posts)
-            print(f"[posts] {sum(len(entries) for entries in posts.values())} markers for {package.name}")
+            print(f"[posts] {sum(len(entries) for entries in posts.values() if isinstance(entries,dict))} markers for {package.name}")
             text = json.dumps(data, indent=2) + chr(10)
             written[package / "source/server-content.json"] = json.dumps(posts, indent=2) + chr(10)
         else:

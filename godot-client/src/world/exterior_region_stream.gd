@@ -211,6 +211,8 @@ static func _set_view(imported: Node3D, border := "") -> void:
 		return
 	active.visible = border.is_empty()
 	for node: Node in imported.get_children():
+		if node.has_meta("stream_borders"):
+			(node as Node3D).visible = border.is_empty() or border in node.get_meta("stream_borders")
 		if str(node.name).begins_with("StreamPreview_"):
 			(node as Node3D).visible = str(node.name) == "StreamPreview_" + border
 
@@ -229,23 +231,29 @@ static func _set_collision(imported: Node3D, enabled: bool, preview_enabled := f
 	if imported.get_meta("stream_physics", "") == mode:
 		return
 	var has_views := imported.has_node("StreamActive")
+	var shared := bool(imported.get_meta("shared_stream_cells", false))
 	for node: Node in imported.find_children("*", "CollisionObject3D", true, false):
 		var body := node as CollisionObject3D
 		if not body.has_meta("stream_collision_layer"):
 			body.set_meta("stream_collision_layer", body.collision_layer)
 		var original := int(body.get_meta("stream_collision_layer"))
 		var view := ""
+		var cells: Array = []
+		var threshold := false
 		var ancestor := body.get_parent()
 		while ancestor != null and ancestor != imported:
+			if ancestor.has_meta("stream_borders"): cells = ancestor.get_meta("stream_borders")
+			if ancestor.has_meta("stream_threshold"): threshold = true
 			if str(ancestor.name).begins_with("StreamPreview_"):
 				view = str(ancestor.name).trim_prefix("StreamPreview_")
 				break
 			ancestor = ancestor.get_parent()
 		var preview := 0
 		if (preview_enabled and (original & WorldLoader.NAVIGATION_SURFACE_LAYER) != 0
-				and (view == border if has_views else not "_StreamOverflow" in str(body.get_parent().name))):
+				and (border in cells and not threshold if shared else
+					(view == border if has_views else not "_StreamOverflow" in str(body.get_parent().name)))):
 			preview = PREVIEW_SURFACE_LAYER
-		body.collision_layer = (original if view.is_empty() else 0) if enabled else preview
+		body.collision_layer = (original if shared or view.is_empty() else 0) if enabled else preview
 	imported.set_meta("stream_physics", mode)
 
 static func _set_overflow(imported: Node3D, visible_borders: Dictionary) -> void:
@@ -384,6 +392,7 @@ func pick_neighbor(space: PhysicsDirectSpaceState3D, origin: Vector3, direction:
 		origin, origin + direction * 2000, WorldLoader.NAVIGATION_SURFACE_LAYER))
 	if (not foreground.is_empty()
 			and not "_StreamOverflow" in str(foreground.collider.get_parent().name)
+			and not "_StreamThreshold" in str(foreground.collider.get_parent().name)
 			and origin.distance_squared_to(foreground.position) + .01 < origin.distance_squared_to(point)):
 		return null
 	for candidate: Dictionary in _candidates(_last_position):
@@ -398,9 +407,16 @@ func pick_neighbor(space: PhysicsDirectSpaceState3D, origin: Vector3, direction:
 		var anchor := _vector(frame.anchor)
 		if (point - anchor).dot(outward) <= 0:
 			continue
-		var adapter := (residents[map_id].manifest as WorldManifest).coordinate_adapter()
+		var target_manifest := residents[map_id].manifest as WorldManifest
+		var adapter := target_manifest.coordinate_adapter()
 		var tile := adapter.godot_to_server(imported.transform.affine_inverse() * point)
-		pending_walk = {"map": map_id, "tile": tile, "run": run}
+		var dimensions: Variant = target_manifest.data.get("coordinateTransform", {}).get("serverCells",
+			target_manifest.data.get("asset", {}).get("serverCells", 0))
+		var width := int(dimensions[0]) if dimensions is Array else int(dimensions)
+		var height := int(dimensions[1]) if dimensions is Array else width
+		if tile.x < 0 or tile.y < 0 or (width > 0 and (tile.x >= width or tile.y >= height)):
+			return null
+		pending_walk = {"map": map_id, "tile": tile, "run": run, "world_point": point}
 		# Route through the centre of the surveyed road. The server decides
 		# whether the approach and the continuation are walkable.
 		return _vector(candidate.here.position)

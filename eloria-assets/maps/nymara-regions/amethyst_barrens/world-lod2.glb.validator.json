@@ -1,12 +1,12 @@
 {
-  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-north-client\\eloria-assets\\maps\\nymara-regions\\amethyst_barrens\\world-lod2.glb",
+  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-south-client\\eloria-assets\\maps\\nymara-regions\\amethyst_barrens\\world-lod2.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-09-11T08:59:49.360242Z",
+  "validatedAt": "2026-09-11T18:04:50.031595Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
-    "numInfos": 12,
+    "numInfos": 16,
     "numHints": 0,
     "messages": [
       {
@@ -25,6 +25,12 @@
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
+        "pointer": "/materials/8"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
         "pointer": "/materials/9"
       },
       {
@@ -32,6 +38,12 @@
         "message": "This object may be unused.",
         "severity": 2,
         "pointer": "/materials/11"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/14"
       },
       {
         "code": "UNUSED_OBJECT",
@@ -80,6 +92,18 @@
         "message": "This object may be unused.",
         "severity": 2,
         "pointer": "/materials/32"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/33"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/34"
       }
     ]
   }

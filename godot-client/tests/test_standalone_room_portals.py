@@ -57,3 +57,32 @@ def test_unrelated_region_does_not_load_or_rewrite_shop_routes():
     def forbidden(_):
         raise AssertionError('Unrelated region loaded a Four Gates room')
     assert C.standalone_interior_lines({}, {}, forbidden, [], 'westhaven') == ([], 0)
+
+
+def test_sunmane_caves_follow_explicit_section_arrivals_and_exterior_returns(monkeypatch):
+    doors={'cave-wind_caves':dict(destination='sunmane_wind_caves',spawn='wind-caves-mouth',tile=(239,294)),
+           'cave-crystal_hollow':dict(destination='sunmane_wind_caves',spawn='crystal-hollow-adit',tile=(322,273))}
+    monkeypatch.setattr(C,'load_portals',lambda region:doors)
+    monkeypatch.setattr(C,'load_arrivals',lambda package:{'wind-caves-mouth':(43,27),'crystal-hollow-adit':(169,28)})
+    room={'coordinateTransform':{'serverOrigin':[0,0]},'portals':[
+        dict(id='exit-wind-caves-mouth',serverTile=[43,27],destinationTile=[239,291]),
+        dict(id='exit-crystal-hollow-adit',serverTile=[169,28],destinationTile=[319,274])]}
+    monkeypatch.setattr(C,'read_manifest',lambda path:room)
+    monkeypatch.setattr(C,'nearest_open',lambda *args:(999,999))
+    errors=[]
+    lines,count=C.interior_lines({}, {},lambda _:SimpleNamespace(walkable=lambda x,y:True),errors,'sunmane_steppe')
+    assert not errors and count==4
+    assert 'portal | sunmane_steppe | 322 | 273 | sunmane_wind_caves | 169 | 28' in lines
+    assert 'portal | sunmane_wind_caves | 43 | 27 | sunmane_steppe | 239 | 291' in lines
+    assert 'portal | sunmane_wind_caves | 169 | 28 | sunmane_steppe | 319 | 274' in lines
+
+
+def test_legacy_cave_removal_preserves_definitions_other_regions_and_object_portals():
+    text=('map | sunmane_wind_caves | Sunmane Insides | cave.elm | SWC\n'
+          'portal | sunmane_steppe | 128 | 175 | sunmane_wind_caves | 43 | 27\n'
+          'portal | sunmane_wind_caves | 43 | 27 | sunmane_steppe | 128 | 175\n'
+          'portal | sunmane_steppe | 501 | 2 | 3 | sunmane_steppe_secrets | 8 | 9\n'
+          'portal | verdant_stair | 4 | 5 | ssarathi_ruins | 6 | 7\n')
+    result=C.remove_legacy_cave_links(text)
+    assert result==''.join(line for line in text.splitlines(keepends=True) if '| 128 | 175' not in line)
+    assert C.remove_legacy_cave_links(result)==result

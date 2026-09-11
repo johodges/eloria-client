@@ -23,7 +23,8 @@ PLAN = CompactLandscape(Axis(-174, 402, -116, 268, (-95, 30)),
                         Axis(-402, 174, -268, 116, (-205, 5)),
                         REG.SERVER_ORIGIN, SERVER_ORIGIN)
 PORTALS = {'north-pass': (54.0, 12.0, -262.0),
-           'west-road': (-111.0, 8.0, -192.0)}
+           'west-road': (-111.0, 8.0, -192.0),
+           'south-road': (54.5, 19.0, 114.5)}
 # Compact-space road surveys. Wide, gently feathered earth shoulders make the
 # shared 42m collars part of a landform rather than holes in the perimeter wall.
 BORDER_ROADS = {
@@ -31,8 +32,8 @@ BORDER_ROADS = {
                          [5.0,8.0,12.0,12.0,12.0], 6.4),
     'mirror_shelf': ([(-84,-161),(-88,-179),(-95,-192),(-111,-192),(-128,-192)],
                      [6.0,7.0,8.0,8.0,8.0], 6.4),
-    'sunmane_ascent': ([(108,67),(99,78),(85,93),(69,104),(54,111),(54,127)],
-                       [5.8,8.0,12.4,16.0,19.0,19.0], 6.4),
+    'sunmane_ascent': ([(108,48),(93,55),(77,62),(63,68),(54.5,71.5),(54.5,127)],
+                       [5.8,9.0,13.0,17.0,19.0,19.0], 7.0),
     'sour_cut_path': ([(132,-178),(135,-188),(139,-195),(147,-201)],
                      [6.8,9.0,13.0,17.8], 4.4),
 }
@@ -175,6 +176,28 @@ def compact(build):
     for name in survey:build.meshes.pop(name,None)
     PLAN.apply(build)
     t=build.terrain
+    # The full-size southern geode mouth used to project into the third cart
+    # lane. Recess it into the eastern shoulder with its exploration entrance.
+    moved={}
+    for p in build.placements:
+        if p.node == 'Landmark_GeodeCave_2' or p.node.startswith('Secret_barrens_cave_eyrie'):
+            x,y,z=p.position
+            dy=float(t.height_at(x+10,z)-t.height_at(x,z))
+            p.position=(x+10,y+dy,z)
+            moved[p.node]=dy
+    seen=set()
+    for entries in (build.landmarks,build.interactives,build.portals,build.spawns):
+        for entry in entries:
+            if id(entry) in seen:continue
+            seen.add(id(entry))
+            node=entry.get('node')
+            if entry.get('secret')=='barrens-cave-eyrie':node='Secret_barrens_cave_eyrie'
+            if node in moved and 'position' in entry:
+                entry['position'][0]+=10
+                entry['position'][1]+=moved[node]
+                if 'serverTile' in entry:
+                    entry['serverTile']=[math.floor(entry['position'][0]+116),
+                                         math.floor(116-entry['position'][2])]
     t._survey={name:(np.array([[float(PLAN.x(x)),float(PLAN.z(z))] for x,z in points]),heights)
                for name,(points,heights) in survey.items()}
     layout.dress_crossings(build,0)
@@ -192,7 +215,7 @@ def compact(build):
     # on the inland southern flank of the west shelf.
     removed=set()
     for p in build.placements:
-        if p.node.startswith('March_') and ('north_pass' in p.node or 'west_road' in p.node):
+        if p.node.startswith('March_') and any(road in p.node for road in ('north_pass','west_road','south_road')):
             if not p.node.endswith('_Signpost'):removed.add(p.node)
     build.placements[:]=[p for p in build.placements if p.node not in removed]
     for l in build.landmarks:

@@ -85,3 +85,41 @@ def test_every_region_is_a_real_tab_map_laid_out_to_scale():
         assert tab_map["region"][2] == round(metres_wide) and tab_map["region"][3] == round(metres_tall)
         seen.add(region["serverMap"])
     assert {"four_gates", "crownwater", "sunmane_steppe", "whitehorn_range"} <= seen
+
+
+def test_compact_atlas_preserves_every_declared_connection_and_ferry_type():
+    layout=tool.load_json(tool.LAYOUT)
+    atlas=tool.atlas_connections(layout)
+    graph=tool.load_json(tool.CONNECTIONS)['connections']
+    assert {(e['from'],e['to'],e['type']) for e in atlas} == {
+        (e['from'],e['to'],e['type']) for e in graph}
+    assert len(atlas)==24 and sum(e['type']=='ferry' for e in atlas)==7
+    assert not any(e['from']=='sunmane_steppe' and e['to'] not in {
+        'four_gates','verdant_stair'} for e in atlas)
+
+
+def test_compact_atlas_does_not_reintroduce_large_empty_gaps():
+    layout=tool.load_json(tool.LAYOUT)
+    cartography,_=tool.compose(layout,tool.load_json(tool.REGISTRY))
+    width,height=cartography['continent']['imageSize']
+    area=sum(r['continentRect'][2]*r['continentRect'][3] for r in cartography['regions'])
+    # Real minimaps cover over half the atlas, instead of the former~18%.
+    assert area/(width*height)>.55
+    rects={r['serverMap']:r['continentRect'] for r in cartography['regions']}
+    for a,b in [('mirrorhold','four_gates'),('four_gates','sunmane_steppe'),
+                ('sunmane_steppe','verdant_stair'),('verdant_stair','ssarathi_ruins'),
+                ('mirrorhold','amethyst_barrens'),('amberwood','mirrorhold')]:
+        x,y,w,h=rects[a];xx,yy,ww,hh=rects[b]
+        gap_x=max(0,x-(xx+ww),xx-(x+w))
+        gap_y=max(0,y-(yy+hh),yy-(y+h))
+        assert (gap_x**2+gap_y**2)**.5<=25,(a,b,gap_x,gap_y)
+
+
+def test_check_catches_changed_picture_even_with_unchanged_dimensions(monkeypatch):
+    original=tool.draw
+    def altered(layout,cartography,tiles):
+        result=original(layout,cartography,tiles)
+        result.paste((255,0,255),(0,0,30,30))
+        return result
+    monkeypatch.setattr(tool,'draw',altered)
+    assert 'continent picture content is stale; run build_continent_map.py' in tool.check()

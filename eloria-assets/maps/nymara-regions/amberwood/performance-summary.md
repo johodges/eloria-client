@@ -2,28 +2,28 @@
 
 ```json
 {
-  "nodes": 7297,
-  "meshes": 630,
+  "nodes": 5217,
+  "meshes": 596,
   "materials": 61,
   "images": 126,
   "textures": 126,
-  "accessors": 2649,
-  "bufferViews": 2775,
-  "uniqueTriangles": 955157,
-  "uniqueVertices": 685977,
-  "glbBytes": 45153876,
-  "instancedTriangles": 3051667,
+  "accessors": 2482,
+  "bufferViews": 2608,
+  "uniqueTriangles": 767119,
+  "uniqueVertices": 576837,
+  "glbBytes": 39620924,
+  "instancedTriangles": 2142096,
   "embeddedTextureBytes": 13467700,
   "textureMemoryBytesUncompressed": 123666432,
-  "placements": 5760,
+  "placements": 4131,
   "collision": {
     "width": 768,
     "height": 768,
     "cellMetres": 0.5,
-    "walkableCells": 385940,
-    "blockedCells": 203884,
+    "walkableCells": 385925,
+    "blockedCells": 203899,
     "walkableFraction": 0.6543,
-    "elevatedDecks": 44,
+    "elevatedDecks": 27,
     "steepCells": 71941,
     "reliefMetres": 108.74,
     "heightEncoding": {
@@ -61,12 +61,12 @@
     "march harbour-quay: 0 road pieces, 9 of westhaven's growth"
   ],
   "lod2": {
-    "glbBytes": 32391184,
-    "nodes": 5487,
-    "uniqueTriangles": 915117,
-    "instancedTriangles": 2194571,
-    "sizeReductionPercent": 28.3,
-    "triangleReductionPercent": 28.1
+    "glbBytes": 26968616,
+    "nodes": 3849,
+    "uniqueTriangles": 727079,
+    "instancedTriangles": 1521822,
+    "sizeReductionPercent": 31.9,
+    "triangleReductionPercent": 29.0
   }
 }
 ```

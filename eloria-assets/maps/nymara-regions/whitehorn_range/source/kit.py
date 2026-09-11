@@ -13,9 +13,9 @@ rope_bridge below supplies Whitehorn's palette. The older region-specific
 cairn, shrine, cave and cascade assemblies remain here. New reusable route
 equipment belongs in the shared toolkit.
 
-Walk surfaces: only the bridge deck and the temple stairs are registered with
-`MeshGroup.add_walk`. Everything else is structural, so the client's downward
-grounding ray can never snap an actor onto a gantry, a lintel or an icicle.
+Walk surfaces include the bridge deck, temple stairs and the actual mine and
+cave approach floors. Gantries, lintels and icicles remain structural, so they
+cannot catch the client's downward grounding ray.
 """
 from __future__ import annotations
 
@@ -180,6 +180,12 @@ def mine_portal(seed: int = 0, width: float = 3.6, height: float = 3.9,
                               uv_scale=1.4, material=TIMBER))
     group.add(M.merge(sleepers, material=TIMBER))
 
+    # The sleepers sit in a real bed of compacted spoil. Its exposed walking
+    # surface reaches the front of the recess; the dark tunnel itself remains
+    # solid. This narrow authored bed survives the landmark's broad blocker.
+    group.add_walk(M.box((3.2, 0.18, 9.0), center=(0.0, 0.02, -5.9),
+                         uv_scale=1.1, material=RUBBLE))
+
     # spoil heaps either side of the mouth
     for side in (-1.0, 1.0):
         heap = M.icosphere(1.5, subdivisions=1, material=RUBBLE)
@@ -211,7 +217,7 @@ def _icicle_fringe(span: float, count: int, seed: int, drop: float = 1.5,
 
 
 def ice_cave_mouth(seed: int = 0, span: float = 7.5,
-                   height: float = 5.2) -> SW.MeshGroup:
+                   height: float = 5.2, approach_drop: float = 0.0) -> SW.MeshGroup:
     """A cavern opening in blue ice, fringed with icicles. Panel 6.
 
     Faces -Z. The first version was a single icosphere with a throat pushed
@@ -244,7 +250,14 @@ def ice_cave_mouth(seed: int = 0, span: float = 7.5,
     # a floor of trodden ice running out of it
     floor = M.box((span * 0.80, 0.25, 6.0), center=(0.0, 0.12, 1.4),
                   uv_scale=1.4, material=ICE)
-    group.add(floor)
+    group.add_walk(floor)
+    # Nine low cut-ice treads lead from the natural shelf to the trodden lip.
+    # The larger western cave's shelf descends in front of its mouth; the
+    # smaller watch cave only needs a shallow continuation of its ice apron.
+    approach = M.stairs(span * 0.68, (0.245 + approach_drop) / 9.0,
+                        0.60, 9, uv_scale=1.4, material=ICE)
+    approach.transform(M.translation(0.0, -approach_drop, -7.0))
+    group.add_walk(approach)
 
     # broken ice around the lip, and the icicle fringe over the opening
     shards = []
@@ -415,8 +428,10 @@ def glacier_temple(seed: int = 0, width: float = 20.0,
     group.add_walk(stair)
 
     # the forecourt deck, walkable, with the circular inlay of the panel
-    group.add_walk(M.box((width + 4.4, 0.12, 12.4),
-                         center=(0.0, podium_h + 0.06, 3.0),
+    # The old deck started 0.4 m beyond the top tread. Extend the real marble
+    # lip to overlap it, rather than opening the unsupported folded grid row.
+    group.add_walk(M.box((width + 4.4, 0.12, 13.0),
+                         center=(0.0, podium_h + 0.06, 2.7),
                          uv_scale=1.4, material=MARBLE))
     inlay = M.cylinder(4.4, 4.4, 0.05, segments=32, uv_scale=2.2,
                        material=BRASS)

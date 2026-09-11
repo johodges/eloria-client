@@ -51,6 +51,8 @@ from amberwood import routecraft as RC
 import transitions as MARCH
 import secretdoors as SD
 import secrets_design as SEC
+import streaming_borders as SB
+import contentposts
 
 HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
@@ -69,22 +71,17 @@ SCHEMA_VERSION = "1.0.0"
 # to the Verdant Stair, the west causeway out onto the delta's bars, and the
 # south water gate where the Crown court's boat calls.
 CROSSINGS = [
-    MARCH.Crossing("north-stair", "four_gates", REG.ANCHORS["north_terrace"],
-                   (REG.ANCHORS["north_terrace"][0], REG.ANCHORS["north_terrace"][1] - 40.0),
-                   radius=40.0, name="The Causeway March"),
-    MARCH.Crossing("east-causeway", "verdant_stair", REG.ANCHORS["east_shrine"],
-                   (REG.PLAY_MAX_X + 20.0, REG.ANCHORS["east_shrine"][1]),
-                   radius=40.0, name="The Stair March"),
-    MARCH.Crossing("west-causeway", "manymouth_delta", REG.ANCHORS["west_shrine"],
-                   (REG.PLAY_MIN_X - 20.0, REG.ANCHORS["west_shrine"][1]),
-                   radius=40.0, name="The Delta March"),
-    MARCH.Crossing("south-gate", "crownwater", PLAN.FERRY,
-                   (PLAN.FERRY[0],PLAN.FERRY[1]-40.0),
-                   radius=30.0,ferry=True,name="The Water Gate",
-                   station_position=PLAN.FERRY_STATION),
+    MARCH.Crossing('north-stair','four_gates',(154.5,-264.5),(154.5,-304.5),
+                   radius=40,name='The Causeway March',station_position=(186,-191)),
+    MARCH.Crossing('east-causeway','verdant_stair',(264.5,-88.5),(304.5,-88.5),
+                   radius=40,name='The Stair March',station_position=(192,-68)),
+    MARCH.Crossing('west-causeway','manymouth_delta',(-112.5,-108.5),(-152.5,-108.5),
+                   radius=40,name='The Delta March',station_position=(-78,-96)),
+    MARCH.Crossing('south-gate','crownwater',PLAN.FERRY,(8,28),radius=30,
+                   ferry=True,name='The Water Gate',station_position=PLAN.FERRY_STATION),
 ]
 MARCH_MATERIALS: dict = dict(getattr(REG, "SURFACE_MATERIALS", {}))
-SK.MATERIALS = SK.MATERIALS | MARCH.materials_for("ssarathi_ruins", CROSSINGS) | SD.materials(SEC)
+SK.MATERIALS = SK.MATERIALS | MARCH.materials_for("ssarathi_ruins", CROSSINGS) | SD.materials(SEC) | SB.materials_for("ssarathi_ruins") | {"water_lake", "timber_dark", "glass", "dark_iron"}
 
 
 # --------------------------------------------------------------------------
@@ -127,14 +124,16 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     # The marches: the neighbours' country coming in along the roads out.
     MARCH.paint(terrain, CROSSINGS, MARCH_MATERIALS, seed, sea_level=REG.SEA_LEVEL, keep=(REG.SILT, REG.JADE_PAVING, REG.MOSS_STONE))
     march = MARCH.dress(build, "ssarathi_ruins", CROSSINGS, seed, sea_level=REG.SEA_LEVEL)
+    PLAN.seat_marches(build,march)
     SD.dress(build, terrain, SEC, seed, sea_level=getattr(REG, "SEA_LEVEL", 0.0), server_origin=REG.SERVER_ORIGIN)
+    PLAN.seat_secrets(build)
     build.landmarks.extend(march.landmarks)
     build.notes.extend(march.notes)
 
     PLAN.clear_routes(build)
     terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
     build.terrain_meshes = terrain.build_meshes(
-        uv_scale=0.30, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
+        uv_scale=0.12, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
         materials=MARCH_MATERIALS)
     # No backdrop. Amberwood needs one because its mountain walls have to stand
     # in front of something. Ssarathi is a closed basin: its own jungle-clad
@@ -145,6 +144,14 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     _collect_landmarks(build)
     _add_spawns_and_portals(build)
     _add_population_markers(build, seed)
+    if lod == 'far':
+        coarse=TER.Terrain(terrain.x0,terrain.z0,terrain.size_x,terrain.size_z,cell=2.0)
+        coarse.height=terrain.height_at(coarse.gx,coarse.gz)
+        coarse.surface=terrain.surface_at(coarse.gx,coarse.gz)
+        build.terrain_meshes=coarse.build_meshes(uv_scale=.12,blend_edges=True,
+            material_suffix=MAT.GROUND_SUFFIX,materials=MARCH_MATERIALS)
+    SB.apply(build,'ssarathi_ruins')
+    PLAN.clear_causeway_canopies(build)
     print(f"[region] built in {time.time() - t0:.1f}s")
     return build
 
@@ -187,6 +194,8 @@ def _collect_landmarks(build: REG.RegionBuild) -> None:
     t = build.terrain
     for placement in build.placements:
         if not placement.landmark:
+            continue
+        if any(mark['id']==placement.landmark for mark in build.landmarks):
             continue
         x, y, z = placement.position
         name, kind = LANDMARK_INFO.get(
@@ -239,8 +248,7 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
              "manymouth_delta"),
             ("south-gate", "Water Gate: the Crownwater boat", "south_shrine",
              "crownwater")):
-        x,z = PLAN.FERRY if portal_id=="south-gate" else REG.ANCHORS[anchor]
-        y = 1.2 if portal_id=="south-gate" else float(t.height_at(x,z))
+        x,y,z = PLAN.PORTALS[portal_id]
         build.portals.append({
             "id": portal_id, "name": name, "type": "map-transition",
             "position": [round(x, 2), round(y + 0.1, 2), round(z, 2)],
@@ -447,7 +455,7 @@ COLLISION_FORMAT_VERSION = 2
 COLLISION_HEIGHT_STEP = 0.2
 COLLISION_HEIGHT_ORIGIN = -2.2
 # Levels an ELM height byte holds: the server masks it with 0x3F, so 1..63.
-COLLISION_HEIGHT_LEVELS = 63
+COLLISION_HEIGHT_LEVELS = 255
 # Metres of rise per metre travelled that a walker will not climb. Eternal
 # Lands allows two 0.2 m stages across a half-metre tile, which is this.
 MAX_WALK_GRADIENT = 1.0
@@ -487,6 +495,7 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
     blockers = np.zeros_like(walkable)
     explicit_blockers = np.zeros_like(walkable)
     for placement in build.placements:
+        if placement.node.startswith(SB.VIEW_PREFIX):continue
         if not placement.collides:
             continue
         item = build.meshes[placement.mesh]
@@ -511,51 +520,31 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
         if "solidRadius" in extra or "solidRects" in extra:explicit_blockers |= mask
     walkable &= ~blockers
 
-    surface = ground.copy()
-    decks = np.zeros_like(walkable)
-    # An overhead walk surface owns its footprint: the client grounds an actor
-    # on the highest walk surface below the ray, so a two-level column cannot be
-    # expressed on a flat server grid. Bridges, decks and platforms therefore
-    # take the cell, and the ground under them is not separately walkable.
-    elevated = 0
+    surface=ground.copy();decks=np.zeros_like(walkable)
+    import glb_reader as GLB
+    triangles=[];elevated=0
+    for name,item in build.terrain_meshes.items():
+        if name.startswith('Walk_') and item.triangle_count:
+            triangles.append(item.positions[item.indices.reshape(-1,3)]);elevated+=1
     for placement in build.placements:
-        item = build.meshes[placement.mesh]
-        walk_bounds = getattr(item, "walk_bounds", lambda: None)()
-        if walk_bounds is None and not placement.walk_surface:
-            continue
-        if walk_bounds is None:
-            low, high = item.bounds()
-        else:
-            low, high = walk_bounds
-        px, py, pz = placement.position
-        # The deck's real extent, not a symmetric half-extent about its origin.
-        # A quay apron sits entirely to one side of its placement point, so
-        # mirroring it claimed walkable ground on the water side where there is
-        # no deck at all - the ray found the basin floor far below.
-        x0, x1 = float(low[0]) * placement.scale, float(high[0]) * placement.scale
-        z0, z1 = float(low[2]) * placement.scale, float(high[2]) * placement.scale
-        inset_x = (x1 - x0) * 0.03
-        inset_z = (z1 - z0) * 0.03
-        deck_y = py + float(high[1]) * placement.scale
-        # An oriented rectangle, not a disc. Amberwood's decks were roughly
-        # square, so a circle inscribed in the bounds covered them; Ssarathi Ruins's
-        # causeways are 48 m x 5.4 m, and the inscribed circle covers 2.3 m of
-        # a 48 m deck. Everything outside it kept the basin floor's height and
-        # showed up as collision-versus-surface disagreement along every span.
-        angle = float(placement.rotation_y or 0.0)
-        c, sn = math.cos(angle), math.sin(angle)
-        local_x = c * (gx - px) - sn * (gz - pz)
-        local_z = sn * (gx - px) + c * (gz - pz)
-        footprint = ((local_x >= x0 + inset_x) & (local_x <= x1 - inset_x)
-                     & (local_z >= z0 + inset_z) & (local_z <= z1 - inset_z))
-        if not footprint.any():
-            continue
-        if deck_y > ground.max() + 200.0:
-            continue
-        elevated += 1
-        decks |= footprint
-        surface = np.where(footprint, deck_y, surface)
-        walkable = np.where(footprint, True, walkable)
+        if placement.node.startswith(SB.VIEW_PREFIX):continue
+        item=build.meshes[placement.mesh]
+        parts=list(getattr(item,'walk_parts',[]))
+        if placement.walk_surface and not parts:parts=[item] if isinstance(item,M.Mesh) else list(item.parts)
+        if not parts:continue
+        matrix=M.translation(*placement.position)@M.rotation_y(placement.rotation_y)@M.scaling(placement.scale)
+        for part in parts:
+            mesh=part.transformed(matrix)
+            triangles.append(mesh.positions[mesh.indices.reshape(-1,3)])
+        elevated+=1
+    if triangles:
+        covered,deck_y=GLB.rasterise(np.concatenate(triangles),width,height,
+            REG.PLAY_MIN_X,REG.SERVER_ORIGIN[1],COLLISION_CELL)
+        surface=np.where(covered,np.maximum(surface,deck_y),surface)
+        # Only exposed walking decks own terrain cells. Buried skins cannot
+        # exempt a steep bank from the server's true surface slope mask.
+        decks=covered&(deck_y>=ground-.03)&(deck_y>REG.WATER_LEVEL+.20)
+        walkable|=decks
 
     # Steepness has to be part of walkability, not of the height byte. That
     # byte holds 63 steps, and a region with 253 m of relief cannot be encoded
@@ -662,7 +651,7 @@ def _nearest_walkable(payload: bytes, width: int, height: int,
 
 
 def _add_interior_doors(build: REG.RegionBuild, payload: bytes,
-                        width: int, height: int) -> None:
+                        width: int, height: int, collision_stats: dict) -> None:
     """The four ways into `ssarathi_insides`, and the four returns.
 
     Every door is an `interior-entrance` portal on this map pointing at the one
@@ -678,9 +667,13 @@ def _add_interior_doors(build: REG.RegionBuild, payload: bytes,
             z = z - REG.COURTS["ritual_plaza"]["radius"] * 0.80
         elif anchor == "root_arch":
             x, z = x - 14.0, z + 12.0
-        if door_id=="cistern-shaft":x,z=PLAN.CISTERN_DOOR
+        x,z=PLAN.DOORS[door_id]
         x,z,moved=_nearest_walkable(payload,width,height,x,z)
-        y=2.0 if door_id=="cistern-shaft" else float(t.height_at(x,z))
+        grid=np.frombuffer(payload[16:],dtype=np.uint8).reshape(height,width)
+        col=int(np.clip(round((x-REG.PLAY_MIN_X)/COLLISION_CELL-.5),0,width-1))
+        row=int(np.clip(round((REG.SERVER_ORIGIN[1]-z)/COLLISION_CELL-.5),0,height-1))
+        encoded=int(grid[row,col]);encoding=collision_stats['heightEncoding']
+        y=encoding['origin']+encoded*encoding['step']
         if moved > 0.05:
             print(f"[door] {door_id} moved {moved:.1f} m onto walkable ground")
         elif moved < 0.0:
@@ -863,6 +856,7 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             lows.append(low)
             highs.append(high)
     for placement in build.placements:
+        if placement.node.startswith(SB.VIEW_PREFIX):continue
         item = build.meshes[placement.mesh]
         low, high = item.bounds()
         offset = np.asarray(placement.position)
@@ -872,7 +866,7 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
     bounds_max = np.vstack(highs).max(axis=0)
 
     surface_prefixes = ["Terrain_", "Walk_"]
-    collision_nodes = sorted({p.node for p in build.placements if p.collides})
+    collision_nodes = sorted({p.node for p in build.placements if p.collides and not p.node.startswith(SB.VIEW_PREFIX)})
 
     manifest = {
         "schemaVersion": SCHEMA_VERSION,
@@ -903,6 +897,7 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
         "spawnPoints": build.spawns,
         "collision": {
             "nodeNames": collision_nodes,
+            "stampedLandmarks":PLAN.solid_records(build),
             "binary": "collision.bin",
             # Both of these describe the file `build_collision` just wrote,
             # so both are taken from it rather than from the constants above,
@@ -954,6 +949,7 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
         "npcMarkers": build.npc_markers,
         "harvestables": build.harvestables,
         "contentLayout":PLAN.CONTENT_LAYOUT,
+        "streamingBorders":getattr(build,"streaming_borders",[]),
         "portals": build.portals,
         # Ssarathi's routes are stone embankments carrying paved surface,
         # not graded earth roads, so they are typed as causeways. Waypoint
@@ -965,7 +961,10 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
                                   round(max(float(t.height_at(p[0], p[1])),
                                             REG.DECK), 2),
                                   round(float(p[1]), 1)] for p in points]}
-                  for name, points in REG.street_routes().items()],
+                  for name, points in REG.street_routes().items()] + [
+                     {"id": name, "type": "causeway", "width": width,
+                      "waypoints": [[float(x),float(y),float(z)] for (x,z),y in zip(points,heights)]}
+                     for name,(points,heights,width) in PLAN.ROADS.items()],
         "water": {
             "seaLevel": REG.WATER_LEVEL,
             "serverCells": REG.SERVER_CELLS,
@@ -1118,6 +1117,7 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
         "productionStatus": "production-geometry-materials-population",
         "knownLimitations": [],
     }
+    contentposts.apply_runtime(manifest,path.parent)
     path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return manifest
 
@@ -1150,7 +1150,7 @@ def main() -> int:
     print(f"[collision] {width}x{height} cells, "
           f"{collision_stats['walkableFraction'] * 100:.1f}% walkable")
 
-    _add_interior_doors(build, payload, width, height)
+    _add_interior_doors(build, payload, width, height, collision_stats)
 
     minimap = {"file": "minimap.webp"}
     if not args.skip_minimap:
@@ -1194,10 +1194,6 @@ def main() -> int:
                     for name, texture_set in sets.items()}
         lod_sets = SK.register(lod_sets)
         lod_build = build_region(args.seed, lod="far")
-        lod_build.terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
-        lod_build.terrain_meshes = lod_build.terrain.build_meshes(
-            uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
-            materials=MARCH_MATERIALS)
         _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb")
         stats["lod2"] = {
             "glbBytes": lod_stats["glbBytes"],

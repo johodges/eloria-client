@@ -30,8 +30,12 @@ def texture_sets(force: bool = False):
             return pickle.load(handle)
     t = time.time()
     sets = MAT.build_texture_sets()
-    with open(_CACHE, "wb") as handle:
+    # Concurrent regional builders may share a working-directory label. Publish
+    # only complete cache files so another reader never sees a partial pickle.
+    with tempfile.NamedTemporaryFile(dir=os.path.dirname(_CACHE), delete=False) as handle:
+        temporary = handle.name
         pickle.dump(sets, handle)
+    os.replace(temporary, _CACHE)
     print(f"[textures] generated {len(sets)} sets in {time.time() - t:.1f}s")
     return sets
 
@@ -51,7 +55,7 @@ def scene_from_build(build, sets=None, include_kinds=None):
     from dataclasses import replace
     by_name = {material.name: material for material in scene.materials}
     for name, piece in build.terrain_meshes.items():
-        if name.startswith('StreamView_') or not piece.triangle_count: continue
+        if name.startswith('StreamView_') or '_StreamThreshold_' in name or not piece.triangle_count: continue
         if piece.material not in by_name:
             base = by_name.get(MAT.base_material(piece.material))
             if base is None:
@@ -61,7 +65,7 @@ def scene_from_build(build, sets=None, include_kinds=None):
             by_name[piece.material] = alias
         scene.add_mesh(piece)
     for name, piece in build.water_meshes.items():
-        if name.startswith('StreamView_') or not piece.triangle_count: continue
+        if name.startswith('StreamView_') or '_StreamThreshold_' in name or not piece.triangle_count: continue
         scene.add_mesh(piece)
     for placement in build.placements:
         if placement.node.startswith('StreamView_'): continue

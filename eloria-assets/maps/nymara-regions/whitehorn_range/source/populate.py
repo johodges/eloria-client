@@ -132,7 +132,7 @@ def _primary_landmarks(build: RegionBuild, seed: int) -> None:
 
     # The ice cave in the west.
     cx, cz = REG.ANCHORS["ice_cave"]
-    cave = kit.ice_cave_mouth(seed=seed + 7)
+    cave = kit.ice_cave_mouth(seed=seed + 7, approach_drop=1.7)
     _place(build, "Landmark_ice_cave", "whitehorn_ice_cave", cave, cx, cz,
            rotation_y=_facing((cx, cz), REG.ANCHORS["lower_cairns"]),
            kind="landmark", collides=True, landmark="whitehorn-ice-cave")

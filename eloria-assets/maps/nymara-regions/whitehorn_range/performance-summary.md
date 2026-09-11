@@ -2,28 +2,28 @@
 
 ```json
 {
-  "nodes": 3388,
-  "meshes": 445,
+  "nodes": 2590,
+  "meshes": 417,
   "materials": 46,
   "images": 107,
   "textures": 107,
-  "accessors": 1909,
-  "bufferViews": 2016,
-  "uniqueTriangles": 1028025,
-  "uniqueVertices": 588696,
-  "glbBytes": 40804324,
-  "instancedTriangles": 1286331,
+  "accessors": 1766,
+  "bufferViews": 1873,
+  "uniqueTriangles": 668469,
+  "uniqueVertices": 395769,
+  "glbBytes": 29861552,
+  "instancedTriangles": 854857,
   "embeddedTextureBytes": 10786428,
-  "placements": 1197,
+  "placements": 929,
   "collision": {
     "width": 792,
     "height": 792,
     "cellMetres": 0.5,
-    "walkableCells": 455684,
-    "blockedCells": 171580,
-    "walkableFraction": 0.7265,
-    "elevatedDecks": 5,
-    "steepCells": 158901,
+    "walkableCells": 456025,
+    "blockedCells": 171239,
+    "walkableFraction": 0.727,
+    "elevatedDecks": 7,
+    "steepCells": 158864,
     "reliefMetres": 148.98,
     "heightEncoding": {
       "origin": 1.4249,
@@ -37,6 +37,6 @@
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)"
   },
-  "trianglesPerSquareMetre": 8.2
+  "trianglesPerSquareMetre": 5.45
 }
 ```

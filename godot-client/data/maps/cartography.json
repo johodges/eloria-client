@@ -6,22 +6,22 @@
     "name": "Nymara",
     "texture": "res://../eloria-assets/maps/nymara-regions/continent-map.webp",
     "imageSize": [
-      1600,
-      1720
+      900,
+      940
     ],
     "metresPerPixel": 2.0,
     "sources": {
-      "four_gates": "0500230b965e705091839cb740c33bf538f5f1636eff44b77b15227e2aae2fbd",
-      "mirrorhold": "2646ece206b17f4dc2b42d14d92d2f5c006a3f36c4b3e68207e1da1a2afb76d5",
-      "crownwater": "2eb0c30cf87abcdfcb012f7dff2c21b2d26f908a12269c711d17e1dc8ea0d79b",
-      "whitehorn_range": "77c73f7f5205b3de5b781d4ed70a87ff9d30441165eb1f9cd4883629933c6182",
-      "amethyst_barrens": "43f17041a26c2a887202241958a09fd5d972737e53c221e40d987ef502b6c9fa",
-      "sunmane_steppe": "0a3dcacc24ff2ac41331856ead3760bd8d77a8c219713c7fe6d47d74a6345ae0",
-      "amberwood": "c6c0a8a7e1c714257f8a127f39bf4672cc5eec3b2b18ffbf6807ebb2a16b4705",
-      "grey_moors": "f829117c0a8980c1afc1cb729357b4705eb4407df2ee162c271f93c7109834a6",
-      "westhaven": "176934ed06ef23358bbb2e1d3176b943358bcddab7c8ba84228a092d8c340e75",
-      "verdant_stair": "651e24054fdea3f341e6f5fd16171649c9c6e60745580ce53bc90fd78a95f842",
-      "ssarathi_ruins": "8137b290bdfdbdf715511680a44d84e10018b12e7e5ce724103f10c1879da450",
+      "four_gates": "411a04a3960d93f80d312f27ff1093d77f30c54c21ca1fdc1be31d9c939db304",
+      "mirrorhold": "e6aff5646dfe177f141bb1eca4c20b414ff71b3e0ced5e0a5acbd0729dfba02b",
+      "crownwater": "2c1beb7e678ad5d73acf4bfb92737d9a5da6b8a0ccb27139f90a52ea351d98d9",
+      "whitehorn_range": "fce92f4ba60333668254b53823022b3910735930b6f99b4e85ec103f81c7c426",
+      "amethyst_barrens": "a210437640ea16e3cfb585e46d229c1069fe1c675bf9f7173304725ab10171ea",
+      "sunmane_steppe": "32f36b0dece4f0f7011ff72354dd516127307d205d9259ca3640e62ac095364d",
+      "amberwood": "6582de86bdc4622278acca0630e39049763b37241c4c445536daf891fa13ecb0",
+      "grey_moors": "367524b8f566c10e62176ebd2f6211f9616bc8d3813404b1d5120dda4da2a0e9",
+      "westhaven": "7df69fcfb902a4395c8899a399b01694a86048e2484cc0016667f96bdf27709b",
+      "verdant_stair": "808fff980389d7791a518092dd54a18eefa1c79df7d18befae980a57cbbbd3b0",
+      "ssarathi_ruins": "cda3d04de7bf70de2dc85be91af8a04cbb3856ca83278cbb1963f21a93118748",
       "manymouth_delta": "d95b8ebebb2f41155b1d3c9d7c1197c15806dd7abce74294cf5602cf27bc269a"
     }
   },
@@ -30,8 +30,8 @@
       "name": "Four Gates",
       "serverMap": "four_gates",
       "continentRect": [
-        701,
-        861,
+        426,
+        421,
         198,
         198
       ],
@@ -57,8 +57,8 @@
       "name": "Mirrorhold",
       "serverMap": "mirrorhold",
       "continentRect": [
-        704,
-        224,
+        429,
+        214,
         192,
         192
       ],
@@ -84,8 +84,8 @@
       "name": "Crownwater",
       "serverMap": "crownwater",
       "continentRect": [
-        371,
-        861,
+        226,
+        421,
         198,
         198
       ],
@@ -111,8 +111,8 @@
       "name": "Whitehorn Range",
       "serverMap": "whitehorn_range",
       "continentRect": [
-        401,
-        61,
+        426,
+        11,
         198,
         198
       ],
@@ -138,8 +138,8 @@
       "name": "Amethyst Barrens",
       "serverMap": "amethyst_barrens",
       "continentRect": [
-        1116,
-        374,
+        627,
+        214,
         192,
         192
       ],
@@ -165,26 +165,26 @@
       "name": "Sunmane Steppe",
       "serverMap": "sunmane_steppe",
       "continentRect": [
-        1383,
-        801,
-        96,
-        96
+        629,
+        424,
+        192,
+        192
       ],
       "tabMap": {
         "texture": "res://../eloria-assets/maps/nymara-regions/sunmane_steppe/minimap.webp",
         "region": [
-          46,
-          43,
-          191,
-          191
+          0,
+          1,
+          383,
+          383
         ],
         "worldMin": [
-          -58.0,
-          -133.0
+          -116.0,
+          -267.0
         ],
         "worldMax": [
-          133.0,
-          58.0
+          267.0,
+          116.0
         ]
       }
     },
@@ -192,8 +192,8 @@
       "name": "Amberwood",
       "serverMap": "amberwood",
       "continentRect": [
-        293,
-        374,
+        232,
+        214,
         192,
         192
       ],
@@ -219,8 +219,8 @@
       "name": "Grey Moors",
       "serverMap": "grey_moors",
       "continentRect": [
-        74,
-        753,
+        34,
+        419,
         192,
         192
       ],
@@ -246,8 +246,8 @@
       "name": "Westhaven",
       "serverMap": "westhaven",
       "continentRect": [
-        147,
-        1181,
+        6,
+        626,
         198,
         198
       ],
@@ -273,26 +273,26 @@
       "name": "Verdant Stair",
       "serverMap": "verdant_stair",
       "continentRect": [
-        1210,
-        1136,
-        288,
-        288
+        703,
+        630,
+        180,
+        180
       ],
       "tabMap": {
         "texture": "res://../eloria-assets/maps/nymara-regions/verdant_stair/minimap.webp",
         "region": [
           0,
           0,
-          575,
-          575
+          359,
+          359
         ],
         "worldMin": [
-          -174.0,
-          -401.0
+          -108.0,
+          -251.0
         ],
         "worldMax": [
-          401.0,
-          174.0
+          251.0,
+          108.0
         ]
       }
     },
@@ -300,26 +300,26 @@
       "name": "Ssarathi Ruins",
       "serverMap": "ssarathi_ruins",
       "continentRect": [
-        875,
-        1418,
-        288,
-        288
+        504,
+        634,
+        192,
+        192
       ],
       "tabMap": {
         "texture": "res://../eloria-assets/maps/nymara-regions/ssarathi_ruins/minimap.webp",
         "region": [
           0,
           0,
-          575,
-          575
+          383,
+          383
         ],
         "worldMin": [
-          -174.0,
-          -401.0
+          -116.0,
+          -267.0
         ],
         "worldMax": [
-          401.0,
-          174.0
+          267.0,
+          116.0
         ]
       }
     },
@@ -327,8 +327,8 @@
       "name": "Manymouth Delta",
       "serverMap": "manymouth_delta",
       "continentRect": [
-        437,
-        1418,
+        211,
+        636,
         288,
         288
       ],
@@ -349,6 +349,400 @@
           174.0
         ]
       }
+    }
+  ],
+  "connections": [
+    {
+      "from": "whitehorn_range",
+      "to": "mirrorhold",
+      "type": "walk",
+      "points": [
+        [
+          525.0,
+          110.0
+        ],
+        [
+          525.0,
+          310.0
+        ]
+      ]
+    },
+    {
+      "from": "whitehorn_range",
+      "to": "amberwood",
+      "type": "walk",
+      "points": [
+        [
+          525.0,
+          110.0
+        ],
+        [
+          327.5,
+          310.0
+        ]
+      ]
+    },
+    {
+      "from": "whitehorn_range",
+      "to": "amethyst_barrens",
+      "type": "walk",
+      "points": [
+        [
+          525.0,
+          110.0
+        ],
+        [
+          722.5,
+          310.0
+        ]
+      ]
+    },
+    {
+      "from": "mirrorhold",
+      "to": "four_gates",
+      "type": "walk",
+      "points": [
+        [
+          525.0,
+          310.0
+        ],
+        [
+          525.0,
+          520.0
+        ]
+      ]
+    },
+    {
+      "from": "mirrorhold",
+      "to": "amethyst_barrens",
+      "type": "walk",
+      "points": [
+        [
+          525.0,
+          310.0
+        ],
+        [
+          722.5,
+          310.0
+        ]
+      ]
+    },
+    {
+      "from": "mirrorhold",
+      "to": "amberwood",
+      "type": "walk",
+      "points": [
+        [
+          525.0,
+          310.0
+        ],
+        [
+          327.5,
+          310.0
+        ]
+      ]
+    },
+    {
+      "from": "mirrorhold",
+      "to": "crownwater",
+      "type": "ferry",
+      "points": [
+        [
+          525.0,
+          310.0
+        ],
+        [
+          325.0,
+          520.0
+        ]
+      ]
+    },
+    {
+      "from": "amethyst_barrens",
+      "to": "sunmane_steppe",
+      "type": "walk",
+      "points": [
+        [
+          722.5,
+          310.0
+        ],
+        [
+          725.0,
+          520.0
+        ]
+      ]
+    },
+    {
+      "from": "amethyst_barrens",
+      "to": "crownwater",
+      "type": "ferry",
+      "points": [
+        [
+          722.5,
+          310.0
+        ],
+        [
+          624.5,
+          412.5
+        ],
+        [
+          425.0,
+          412.5
+        ],
+        [
+          325.0,
+          520.0
+        ]
+      ]
+    },
+    {
+      "from": "sunmane_steppe",
+      "to": "four_gates",
+      "type": "causeway",
+      "points": [
+        [
+          725.0,
+          520.0
+        ],
+        [
+          525.0,
+          520.0
+        ]
+      ]
+    },
+    {
+      "from": "sunmane_steppe",
+      "to": "verdant_stair",
+      "type": "walk",
+      "points": [
+        [
+          725.0,
+          520.0
+        ],
+        [
+          792.5,
+          720.0
+        ]
+      ]
+    },
+    {
+      "from": "verdant_stair",
+      "to": "ssarathi_ruins",
+      "type": "walk",
+      "points": [
+        [
+          792.5,
+          720.0
+        ],
+        [
+          600.0,
+          730.0
+        ]
+      ]
+    },
+    {
+      "from": "ssarathi_ruins",
+      "to": "four_gates",
+      "type": "walk",
+      "points": [
+        [
+          600.0,
+          730.0
+        ],
+        [
+          525.0,
+          520.0
+        ]
+      ]
+    },
+    {
+      "from": "ssarathi_ruins",
+      "to": "manymouth_delta",
+      "type": "walk",
+      "points": [
+        [
+          600.0,
+          730.0
+        ],
+        [
+          355.0,
+          780.0
+        ]
+      ]
+    },
+    {
+      "from": "ssarathi_ruins",
+      "to": "crownwater",
+      "type": "ferry",
+      "points": [
+        [
+          600.0,
+          730.0
+        ],
+        [
+          502.0,
+          635.0
+        ],
+        [
+          498.5,
+          627.0
+        ],
+        [
+          425.0,
+          627.0
+        ],
+        [
+          325.0,
+          520.0
+        ]
+      ]
+    },
+    {
+      "from": "manymouth_delta",
+      "to": "crownwater",
+      "type": "ferry",
+      "points": [
+        [
+          355.0,
+          780.0
+        ],
+        [
+          325.0,
+          520.0
+        ]
+      ]
+    },
+    {
+      "from": "manymouth_delta",
+      "to": "grey_moors",
+      "type": "walk",
+      "points": [
+        [
+          355.0,
+          780.0
+        ],
+        [
+          130.0,
+          515.0
+        ]
+      ]
+    },
+    {
+      "from": "manymouth_delta",
+      "to": "westhaven",
+      "type": "walk",
+      "points": [
+        [
+          355.0,
+          780.0
+        ],
+        [
+          105.0,
+          725.0
+        ]
+      ]
+    },
+    {
+      "from": "westhaven",
+      "to": "grey_moors",
+      "type": "walk",
+      "points": [
+        [
+          105.0,
+          725.0
+        ],
+        [
+          130.0,
+          515.0
+        ]
+      ]
+    },
+    {
+      "from": "westhaven",
+      "to": "crownwater",
+      "type": "ferry",
+      "points": [
+        [
+          105.0,
+          725.0
+        ],
+        [
+          325.0,
+          520.0
+        ]
+      ]
+    },
+    {
+      "from": "westhaven",
+      "to": "amberwood",
+      "type": "ferry",
+      "points": [
+        [
+          105.0,
+          725.0
+        ],
+        [
+          15.0,
+          620.0
+        ],
+        [
+          17.5,
+          405.0
+        ],
+        [
+          225.0,
+          407.5
+        ],
+        [
+          327.5,
+          310.0
+        ]
+      ]
+    },
+    {
+      "from": "grey_moors",
+      "to": "crownwater",
+      "type": "ferry",
+      "points": [
+        [
+          130.0,
+          515.0
+        ],
+        [
+          325.0,
+          520.0
+        ]
+      ]
+    },
+    {
+      "from": "grey_moors",
+      "to": "amberwood",
+      "type": "walk",
+      "points": [
+        [
+          130.0,
+          515.0
+        ],
+        [
+          327.5,
+          310.0
+        ]
+      ]
+    },
+    {
+      "from": "four_gates",
+      "to": "crownwater",
+      "type": "causeway",
+      "points": [
+        [
+          525.0,
+          520.0
+        ],
+        [
+          325.0,
+          520.0
+        ]
+      ]
     }
   ]
 }

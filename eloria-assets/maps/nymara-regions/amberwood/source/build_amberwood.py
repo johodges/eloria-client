@@ -176,6 +176,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     _add_population_markers(build, seed)
     COMPACT.PLAN.apply(build)
     COMPACT.clear_routes(build, REG.ROUTES | {k:v[0] for k,v in LAYOUT.EXTRA_ROADS.items()} | LANDSCAPE.EXPLORATION_ROADS)
+    LANDSCAPE.finish_compact_doors(build)
     BORDER.finish(build)
     print(f"[region] built in {time.time() - t0:.1f}s")
     return build

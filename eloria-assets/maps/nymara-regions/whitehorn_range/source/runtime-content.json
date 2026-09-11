@@ -219,7 +219,7 @@
       "resource": "Stormglass",
       "serverTile": [
         343,
-        273
+        272
       ],
       "authority": "server"
     },
@@ -640,7 +640,7 @@
   ],
   "encounters": [
     {
-      "creature": "glacier_ram",
+      "creature": "whitehorn_ice_ram",
       "serverTile": [
         37,
         272
@@ -648,7 +648,7 @@
       "authority": "server"
     },
     {
-      "creature": "glacier_ram",
+      "creature": "whitehorn_ice_ram",
       "serverTile": [
         229,
         274
@@ -656,7 +656,7 @@
       "authority": "server"
     },
     {
-      "creature": "glacier_ram",
+      "creature": "whitehorn_ice_ram",
       "serverTile": [
         351,
         287
@@ -664,7 +664,7 @@
       "authority": "server"
     },
     {
-      "creature": "glacier_ram",
+      "creature": "whitehorn_ice_ram",
       "serverTile": [
         47,
         282
@@ -672,7 +672,7 @@
       "authority": "server"
     },
     {
-      "creature": "iceback_ursid",
+      "creature": "crystal_polar_bear",
       "serverTile": [
         52,
         337
@@ -680,7 +680,7 @@
       "authority": "server"
     },
     {
-      "creature": "iceback_ursid",
+      "creature": "crystal_polar_bear",
       "serverTile": [
         351,
         321
@@ -688,7 +688,7 @@
       "authority": "server"
     },
     {
-      "creature": "iceback_ursid",
+      "creature": "crystal_polar_bear",
       "serverTile": [
         315,
         332
@@ -696,7 +696,7 @@
       "authority": "server"
     },
     {
-      "creature": "rimeclaw",
+      "creature": "ice_snow_leopard",
       "serverTile": [
         328,
         306
@@ -704,7 +704,7 @@
       "authority": "server"
     },
     {
-      "creature": "rimeclaw",
+      "creature": "ice_snow_leopard",
       "serverTile": [
         354,
         305
@@ -712,7 +712,7 @@
       "authority": "server"
     },
     {
-      "creature": "rimeclaw",
+      "creature": "ice_snow_leopard",
       "serverTile": [
         254,
         298

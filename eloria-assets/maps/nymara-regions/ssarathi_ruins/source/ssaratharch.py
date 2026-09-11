@@ -621,7 +621,8 @@ def square_frustum(bottom: float, top: float, height: float,
 
 
 def ziggurat_temple(base: float = 72.0, tiers: int = 5,
-                    tier_height: float = 7.0, seed: int = 0) -> SW.MeshGroup:
+                    tier_height: float = 7.0, seed: int = 0,
+                    include_roof: bool = True) -> SW.MeshGroup:
     """Panel 2: the great stepped temple, and the region's one real silhouette.
 
     The terrain carries three walkable tiers of precinct under this; the mesh is
@@ -654,32 +655,6 @@ def ziggurat_temple(base: float = 72.0, tiers: int = 5,
                       center=(0.0, level + tier_height * 0.845, 0.0),
                       material=GILT))
 
-        # The stair up the south face. `mesh.stairs` climbs toward +Z from
-        # y = 0, so it is rotated to climb north into the mass and its foot is
-        # placed outside the stage - a stair that starts inside its own podium
-        # is the trap the production guide names.
-        steps = 11
-        run = tier_height * 1.45
-        stair = M.stairs(w * 0.52, tier_height / steps, run / steps, steps,
-                         material=PAVING)
-        stair.rotate_y(math.pi)
-        stair.translate(0.0, level, w + run)
-        out.add_walk(stair)
-        for sign in (-1.0, 1.0):
-            out.add(M.box((0.6, tier_height * 0.55, run),
-                          center=(sign * (w * 0.30 + 0.3),
-                                  level + tier_height * 0.28, w + run * 0.5),
-                          material=JADE))
-            path, radii = [], []
-            for k in range(17):
-                t = k / 16.0
-                path.append((sign * (w * 0.30 + 0.9),
-                             level + tier_height * t,
-                             w + run * (1.0 - t) + math.sin(t * 4.0) * 0.45))
-                radii.append(0.42 - 0.16 * t)
-            out.add(M.tube(np.asarray(path), radii, segments=8,
-                           material=SCALE_TILE))
-
         if i < tiers - 1:
             for sx in (-1.0, 1.0):
                 for sz in (-1.0, 1.0):
@@ -694,6 +669,19 @@ def ziggurat_temple(base: float = 72.0, tiers: int = 5,
                 out.add(face)
         level += tier_height
 
+    # One continuous, supported ascent. The old independent flights overlap:
+    # their10m run exceeds the4.5m tier inset, making higher treads cut across
+    # the lower stair. This flight reaches the unchanged summit without jumps.
+    run=48.0;steps=72;rise=(level+.32)/steps
+    stair=M.stairs(9.0,rise,run/steps,steps,material=PAVING)
+    stair.rotate_y(math.pi);stair.translate(0,0,64)
+    out.add_walk(stair)
+    # The last tread and summit overlap at exactly the same walking height.
+    out.add_walk(M.box((9.0,.28,2.3),center=(0,level+.18,15.5),material=PAVING))
+    for sign in (-1,1):
+        for i in range(steps):
+            out.add(M.box((.55,.6,run/steps),center=(sign*4.8,rise*(i+1)+.22,64-(i+.5)*run/steps),material=JADE))
+
     # the summit shrine
     top = widths[-1] * 0.86
     out.add_walk(M.box((top * 2.0, 0.32, top * 2.0),
@@ -704,17 +692,8 @@ def ziggurat_temple(base: float = 72.0, tiers: int = 5,
                             material=JADE)
             col.translate(sx * top * 0.76, level + 0.32, sz * top * 0.76)
             out.add(col)
-    roof_h = top * 1.05
-    cap_y = level + 0.32 + top * 1.20
-    out.add(M.box((top * 2.16, roof_h * 0.16, top * 2.16),
-                  center=(0.0, cap_y + roof_h * 0.08, 0.0), material=JADE))
-    roof = square_frustum(top * 1.20, 0.02, roof_h * 0.82, SCALE_TILE)
-    roof.translate(0.0, cap_y + roof_h * 0.16, 0.0)
-    out.add(roof)
-    finial = sun_disc(top * 0.52, seed=seed + 11)
-    finial.transform(M.rotation_x(math.pi / 2.0))
-    finial.translate(0.0, cap_y + roof_h * 0.62, top * 0.10)
-    out.add(finial)
+    if include_roof:
+        out.add(ziggurat_summit_roof(base,tiers,tier_height,seed))
 
     # Vines falling down the stage faces. Each card is hung from a *named*
     # stage, so its x and z are taken from that stage's own width - hung from
@@ -738,6 +717,23 @@ def ziggurat_temple(base: float = 72.0, tiers: int = 5,
             card.rotate_y(math.pi / 2.0)
         card.translate(x, top, z)
         out.add(card)
+    out.sanitise_normals()
+    return out
+
+
+def ziggurat_summit_roof(base=72.0,tiers=5,tier_height=7.0,seed=0):
+    """Separate the unchanged summit lid so the gameplay camera can fade it."""
+    out=SW.MeshGroup()
+    top=base*.5*(1-(tiers-1)*(.62/max(tiers,1)))*.86
+    level=tiers*tier_height
+    roof_h=top*1.05;cap_y=level+.32+top*1.20
+    out.add(M.box((top*2.16,roof_h*.16,top*2.16),
+                  center=(0,cap_y+roof_h*.08,0),material=JADE))
+    roof=square_frustum(top*1.20,.02,roof_h*.82,SCALE_TILE)
+    roof.translate(0,cap_y+roof_h*.16,0);out.add(roof)
+    finial=sun_disc(top*.52,seed=seed+11)
+    finial.transform(M.rotation_x(math.pi/2))
+    finial.translate(0,cap_y+roof_h*.62,top*.10);out.add(finial)
     out.sanitise_normals()
     return out
 

@@ -1,12 +1,12 @@
 {
-  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-coast-client\\eloria-assets\\maps\\nymara-regions\\mirrorhold\\world.glb",
+  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-south-client\\eloria-assets\\maps\\nymara-regions\\mirrorhold\\world.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-09-11T13:54:15.877664Z",
+  "validatedAt": "2026-09-11T18:00:53.215310Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
-    "numInfos": 10,
+    "numInfos": 11,
     "numHints": 0,
     "messages": [
       {
@@ -68,6 +68,12 @@
         "message": "This object may be unused.",
         "severity": 2,
         "pointer": "/materials/42"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/50"
       }
     ]
   }

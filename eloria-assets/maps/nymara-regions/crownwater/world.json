@@ -104,6 +104,70 @@
       "grounded": true
     }
   ],
+  "streamingBorders": [
+    {
+      "id": "four-gates-crownwater",
+      "portal": "east-quay",
+      "destination": "four_gates",
+      "anchor": [
+        270.5,
+        4,
+        -10.5
+      ],
+      "outward": [
+        1,
+        0
+      ],
+      "uvSign": -1,
+      "palette": "causeway",
+      "preloadDistance": 170,
+      "retainDistance": 220,
+      "blendDistance": 65,
+      "collarDepth": 42,
+      "halfWidthTiles": 3,
+      "viewHalfWidth": 40.0,
+      "viewDepth": 145.0,
+      "previewPrefix": "StreamView_four-gates-crownwater__",
+      "overflowSuffix": "_StreamOverflow_four-gates-crownwater",
+      "geometryMode": "shared-cells-v2",
+      "sceneNodes": [
+        "Terrain_Paving_StreamCell_four-gates-crownwater",
+        "Terrain_Shore_StreamCell_four-gates-crownwater",
+        "Terrain_Meadow_StreamCell_four-gates-crownwater",
+        "Walk_StreamCauseway_four-gates-crownwater_StreamCell_four-gates-crownwater",
+        "Structure_StreamCauseway_four-gates-crownwater_pale_ashlar_StreamCell_four-gates-crownwater",
+        "Structure_StreamCauseway_four-gates-crownwater_rubble_stone_StreamCell_four-gates-crownwater",
+        "Water_Lagoon_StreamCell_four-gates-crownwater",
+        "Water_StreamCauseway_four-gates-crownwater_StreamCell_four-gates-crownwater",
+        "Causeway_spoke_pavilion_southeast",
+        "Causeway_ring_pavilion_east_pavilion_southeast",
+        "Causeway_ring_pavilion_southeast_pavilion_south",
+        "Causeway_reach_outer_east",
+        "Causeway_reach_outer_southeast",
+        "Landmark_Pavilion_pavilion_southeast",
+        "Landmark_Outer_outer_east",
+        "Walk_FourGatesNativeLanding",
+        "March_east_quay_Stone",
+        "March_east_quay_Station",
+        "Foliage_Palm_crown_isle_15",
+        "Foliage_Palm_pavilion_southeast_38",
+        "Foliage_Palm_pavilion_southeast_39",
+        "Foliage_Palm_outer_east_78",
+        "Foliage_Palm_outer_east_79",
+        "Foliage_Palm_outer_east_80",
+        "Prop_Lamp_pavilion_southeast_0",
+        "Prop_Lamp_pavilion_southeast_1",
+        "Prop_Lamp_pavilion_southeast_2",
+        "Prop_Lamp_pavilion_southeast_3",
+        "Prop_Lamp_pavilion_southeast_4",
+        "Prop_Lamp_pavilion_southeast_5",
+        "Secret_crown_lake_focus"
+      ],
+      "profile": "causeway",
+      "waterBelowDeck": 4.0,
+      "deckWidth": 7.0
+    }
+  ],
   "collision": {
     "nodeNames": [
       "Building_Shore_chart-house",
@@ -343,22 +407,22 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 174015,
-    "walkableFraction": 0.2774,
+    "walkableCells": 173917,
+    "walkableFraction": 0.2773,
     "refinedHeights": {
       "levels": 255,
       "step": 0.2,
       "origin": -0.1084,
       "previousStep": 0.2,
-      "cellsRestated": 175144,
-      "cellsFromGeometry": 175577,
+      "cellsRestated": 175046,
+      "cellsFromGeometry": 175479,
       "cellsKept": 10
     },
     "openedWalkSurfaces": {
       "prefix": "Walk_",
-      "cellsCovered": 25879,
-      "cellsWidened": 2013,
-      "cellsOpened": 1849,
+      "cellsCovered": 25781,
+      "cellsWidened": 2001,
+      "cellsOpened": 1837,
       "cellsRaised": 11949,
       "cellsDrowned": 0,
       "cellsBuried": 126,
@@ -399,10 +463,10 @@
         0.5
       ],
       "heightToleranceMetres": 0.8,
-      "closedTiles": 838,
+      "closedTiles": 835,
       "unsupportedTiles": 82,
-      "submergedTiles": 408,
-      "heightMismatchTiles": 838,
+      "submergedTiles": 403,
+      "heightMismatchTiles": 835,
       "samples": [
         {
           "tile": [
@@ -3352,28 +3416,13 @@
         "type": "lagoon"
       },
       {
-        "id": "Water_StreamCauseway_four-gates-crownwater",
-        "node": "Water_StreamCauseway_four-gates-crownwater",
-        "type": "pool"
-      },
-      {
-        "id": "Water_Lagoon_StreamOverflow_four-gates-crownwater",
-        "node": "Water_Lagoon_StreamOverflow_four-gates-crownwater",
+        "id": "Water_Lagoon_StreamCell_four-gates-crownwater",
+        "node": "Water_Lagoon_StreamCell_four-gates-crownwater",
         "type": "lagoon"
       },
       {
-        "id": "Water_StreamCauseway_four-gates-crownwater_StreamOverflow_four-gates-crownwater",
-        "node": "Water_StreamCauseway_four-gates-crownwater_StreamOverflow_four-gates-crownwater",
-        "type": "pool"
-      },
-      {
-        "id": "StreamView_four-gates-crownwater__Water_Lagoon",
-        "node": "StreamView_four-gates-crownwater__Water_Lagoon",
-        "type": "lagoon"
-      },
-      {
-        "id": "StreamView_four-gates-crownwater__Water_StreamCauseway_four-gates-crownwater",
-        "node": "StreamView_four-gates-crownwater__Water_StreamCauseway_four-gates-crownwater",
+        "id": "Water_StreamCauseway_four-gates-crownwater_StreamCell_four-gates-crownwater",
+        "node": "Water_StreamCauseway_four-gates-crownwater_StreamCell_four-gates-crownwater",
         "type": "pool"
       }
     ],
@@ -3647,27 +3696,27 @@
     }
   ],
   "performance": {
-    "nodes": 1065,
-    "meshes": 284,
+    "nodes": 979,
+    "meshes": 276,
     "materials": 39,
     "images": 95,
     "textures": 95,
-    "accessors": 1145,
-    "bufferViews": 1240,
-    "uniqueTriangles": 376280,
-    "uniqueVertices": 250232,
-    "glbBytes": 22127088,
-    "instancedTriangles": 579630,
-    "embeddedTextureBytes": 29559614,
-    "textureMemoryBytesUncompressed": 267780096,
-    "placements": 354,
+    "accessors": 1113,
+    "bufferViews": 1208,
+    "uniqueTriangles": 356579,
+    "uniqueVertices": 239586,
+    "glbBytes": 21607524,
+    "instancedTriangles": 501361,
+    "embeddedTextureBytes": 30678317,
+    "textureMemoryBytesUncompressed": 274071552,
+    "placements": 331,
     "collision": {
       "width": 792,
       "height": 792,
       "cellMetres": 0.5,
-      "walkableCells": 175587,
-      "blockedCells": 451677,
-      "walkableFraction": 0.2799,
+      "walkableCells": 175489,
+      "blockedCells": 451775,
+      "walkableFraction": 0.2798,
       "elevatedDecks": 55,
       "steepCells": 26180,
       "reliefMetres": 14.6,
@@ -3689,12 +3738,12 @@
       "walk corridors: 1 encroaching dressing placements removed"
     ],
     "lod2": {
-      "glbBytes": 13293740,
-      "nodes": 879,
-      "uniqueTriangles": 375444,
-      "instancedTriangles": 567318,
-      "sizeReductionPercent": 39.9,
-      "triangleReductionPercent": 2.1
+      "glbBytes": 12776772,
+      "nodes": 811,
+      "uniqueTriangles": 355743,
+      "instancedTriangles": 490321,
+      "sizeReductionPercent": 40.9,
+      "triangleReductionPercent": 2.2
     }
   },
   "sources": [
@@ -4267,7 +4316,7 @@
     ],
     "encounters": [
       {
-        "creature": "mirrorfin_otter",
+        "creature": "river_otter",
         "serverTile": [
           65,
           196
@@ -4275,7 +4324,7 @@
         "authority": "server"
       },
       {
-        "creature": "mirrorfin_otter",
+        "creature": "river_otter",
         "serverTile": [
           65,
           181
@@ -4283,7 +4332,7 @@
         "authority": "server"
       },
       {
-        "creature": "mirrorfin_otter",
+        "creature": "river_otter",
         "serverTile": [
           74,
           179
@@ -4291,7 +4340,7 @@
         "authority": "server"
       },
       {
-        "creature": "mirrorfin_otter",
+        "creature": "river_otter",
         "serverTile": [
           81,
           179
@@ -4427,7 +4476,7 @@
         "authority": "server"
       },
       {
-        "creature": "tidecoil_serpent",
+        "creature": "abyssal_armored_fish",
         "serverTile": [
           142,
           388
@@ -4435,7 +4484,7 @@
         "authority": "server"
       },
       {
-        "creature": "tidecoil_serpent",
+        "creature": "abyssal_armored_fish",
         "serverTile": [
           134,
           371
@@ -4443,7 +4492,7 @@
         "authority": "server"
       },
       {
-        "creature": "tidecoil_serpent",
+        "creature": "abyssal_armored_fish",
         "serverTile": [
           135,
           385
@@ -4659,35 +4708,5 @@
         "authority": "server"
       }
     ]
-  },
-  "streamingBorders": [
-    {
-      "id": "four-gates-crownwater",
-      "portal": "east-quay",
-      "destination": "four_gates",
-      "anchor": [
-        270.5,
-        4,
-        -10.5
-      ],
-      "outward": [
-        1,
-        0
-      ],
-      "uvSign": -1,
-      "palette": "causeway",
-      "preloadDistance": 170,
-      "retainDistance": 220,
-      "blendDistance": 65,
-      "collarDepth": 42,
-      "halfWidthTiles": 3,
-      "viewHalfWidth": 40.0,
-      "viewDepth": 145.0,
-      "previewPrefix": "StreamView_four-gates-crownwater__",
-      "overflowSuffix": "_StreamOverflow_four-gates-crownwater",
-      "profile": "causeway",
-      "waterBelowDeck": 4.0,
-      "deckWidth": 7.0
-    }
-  ]
+  }
 }

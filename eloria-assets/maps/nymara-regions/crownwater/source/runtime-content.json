@@ -541,7 +541,7 @@
   ],
   "encounters": [
     {
-      "creature": "mirrorfin_otter",
+      "creature": "river_otter",
       "serverTile": [
         65,
         196
@@ -549,7 +549,7 @@
       "authority": "server"
     },
     {
-      "creature": "mirrorfin_otter",
+      "creature": "river_otter",
       "serverTile": [
         65,
         181
@@ -557,7 +557,7 @@
       "authority": "server"
     },
     {
-      "creature": "mirrorfin_otter",
+      "creature": "river_otter",
       "serverTile": [
         74,
         179
@@ -565,7 +565,7 @@
       "authority": "server"
     },
     {
-      "creature": "mirrorfin_otter",
+      "creature": "river_otter",
       "serverTile": [
         81,
         179
@@ -701,7 +701,7 @@
       "authority": "server"
     },
     {
-      "creature": "tidecoil_serpent",
+      "creature": "abyssal_armored_fish",
       "serverTile": [
         142,
         388
@@ -709,7 +709,7 @@
       "authority": "server"
     },
     {
-      "creature": "tidecoil_serpent",
+      "creature": "abyssal_armored_fish",
       "serverTile": [
         134,
         371
@@ -717,7 +717,7 @@
       "authority": "server"
     },
     {
-      "creature": "tidecoil_serpent",
+      "creature": "abyssal_armored_fish",
       "serverTile": [
         135,
         385

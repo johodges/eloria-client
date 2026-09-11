@@ -134,12 +134,16 @@ def build_region(seed=SEED,lod=False):
         x,z=120*math.cos(a),120*math.sin(a);yaw=math.pi/2-a
         y=float(t.height_at(x,z))
         place(f'City_Wall_{i:02}',K.wall_segment(12.1,9.,4.,P),x,z,y,yaw,kind='wall',footprint=(12.1,4))
-    # The southern outer gate is a real customs arch before the unsurveyed road.
-    place('Gate_South_Outer',K.gatehouse(P,32,14,21,opening=12,tower_radius=5),0,172,23,math.pi,kind='landmark')
-    for side in (-1,1):box_block('SouthOuter_Pier',side*11,172,9,14)
-    landmark('south-outer','South Outer Gate','Gate_South_Outer','gate',(0,23,172))
+    # The customs arch straddles the southern lake road. Its paired masonry
+    # feet descend to the surveyed bed, leaving the seven-metre deck open.
+    place('Gate_South_Outer',K.gatehouse(P,32,14,21,opening=12,tower_radius=5),.5,172,23,math.pi,kind='landmark')
+    for side in (-1,1):
+        box_block('SouthOuter_Pier',.5+side*11,172,9,14)
+        feet=S.MeshGroup().add(M.box((9,5.95,14),material='rubble_stone'))
+        shared('SouthOuter_Foundation_'+str(side),feet,(.5+side*11,19.985,172),kind='landmark')
+    landmark('south-outer','South Outer Gate','Gate_South_Outer','gate',(.5,23,172))
     b.interactives.append({'id':'interact-south-outer','kind':'gate','node':'Gate_South_Outer',
-                          'position':[0,23,165],'states':['open','closed'],'defaultState':'open'})
+                          'position':[.5,23,165],'states':['open','closed'],'defaultState':'open'})
 
     # Sanctuary on a northern shore shelf: original temple and beacon dimensions,
     # a modest landing rather than its old 104m-diameter empty platform.
@@ -233,10 +237,11 @@ def build_region(seed=SEED,lod=False):
     # feather must not lift the dry bridge landing above its23m deck.
     for name,points in PLAN.ROADS.items():
         if 'avenue' in name:PLAN.grade(t,points,9,7)
-    # The eastern and southern roads retain ordinary preload transitions. Their
-    # last island spans are real stone bridges above open lake water, without
-    # claiming an unsurveyed neighbour is seamless.
+    # Keep the legacy span only for a road without a reciprocal survey. Shared
+    # decks own the complete walking surface once its receiving region exists.
     for identity,x,z,yaw in [('east',176,0,math.pi/2),('south',0,176,0.)]:
+        if any(frame['portal']==identity for frame in SB.region_specs('four_gates')):
+            continue
         depth=(t.gx if identity=='east' else t.gz)
         lateral=(t.gz if identity=='east' else t.gx)
         bed=(depth>=150)&(depth<=204)&(abs(lateral)<8)
@@ -341,8 +346,8 @@ def manifest(b,stats,collision):
         'deckHeight':23,'position':position,'connects':['city',identity+'-approach']} for identity,node,span,position in [
           ('north','Walk_StreamCauseway_mirrorhold-four-gates',42,[.5,23,-174.5]),
           ('west','Walk_StreamCauseway_four-gates-crownwater',42,[-174.5,23,-.5]),
-          ('east','Walk_Deck_Bridge_East',56,[176,23.08,0]),
-          ('south','Walk_Deck_Bridge_South',56,[0,23.08,176])]]
+          ('east','Walk_StreamCauseway_four-gates-sunmane',42,[174.5,23,-.5]),
+          ('south','Walk_StreamCauseway_four-gates-ssarathi',42,[.5,23,174.5])]]
     out['paths']=[{'id':v['id'],'widthMetres':9 if 'avenue' in v['id'] else 6,
                    'waypoints':v['waypoints']} for v in b.authored_roads]
     out['districts']=[{'id':k,'name':k.title()+' Quarter','position':p} for k,p in [
@@ -381,7 +386,7 @@ def manifest(b,stats,collision):
     for effect in out['effects']:
         if effect.get('id')=='water-ring':effect['node']='Water_Lake'
     out['assumptions']=['One metre per server tile; native building and doorway dimensions retained.',
-                        'North/west frames surveyed; east/south retain ordinary transitions.']
+                        'All four causeways have reciprocal surveys and continuous receiving scenery.']
     out['knownLimitations']=[]
     import contentposts
     posts=PACKAGE/'source/server-content.json'

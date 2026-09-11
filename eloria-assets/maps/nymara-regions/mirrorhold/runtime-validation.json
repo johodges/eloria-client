@@ -1,15 +1,94 @@
 {
   "summary": {
-    "walkSurfaceNodes": 154,
-    "walkSurfaceTriangles": 812252,
+    "walkSurfaceNodes": 148,
+    "walkSurfaceTriangles": 716456,
     "tilesSampled": 147456,
-    "groundingMisses": 0,
-    "groundingMissFraction": 0.0,
+    "groundingMisses": 2016,
+    "groundingMissFraction": 0.01367,
     "surfaceDiscontinuities": 330,
     "spawnPoints": 3
   },
   "errors": [],
   "warnings": [
+    {
+      "severity": "warning",
+      "code": "GROUNDING_RAY_MISS",
+      "message": "2016 server tiles have no walk surface under them; a character there would fall back to walkingHeight=17.0",
+      "detail": [
+        [
+          256,
+          0,
+          136.0,
+          96.0
+        ],
+        [
+          257,
+          0,
+          137.0,
+          96.0
+        ],
+        [
+          258,
+          0,
+          138.0,
+          96.0
+        ],
+        [
+          259,
+          0,
+          139.0,
+          96.0
+        ],
+        [
+          260,
+          0,
+          140.0,
+          96.0
+        ],
+        [
+          261,
+          0,
+          141.0,
+          96.0
+        ],
+        [
+          262,
+          0,
+          142.0,
+          96.0
+        ],
+        [
+          263,
+          0,
+          143.0,
+          96.0
+        ],
+        [
+          264,
+          0,
+          144.0,
+          96.0
+        ],
+        [
+          265,
+          0,
+          145.0,
+          96.0
+        ],
+        [
+          266,
+          0,
+          146.0,
+          96.0
+        ],
+        [
+          267,
+          0,
+          147.0,
+          96.0
+        ]
+      ]
+    },
     {
       "severity": "warning",
       "code": "GROUNDING_DISCONTINUITY",
@@ -75,6 +154,83 @@
           265,
           15.16
         ]
+      ]
+    },
+    {
+      "severity": "warning",
+      "code": "COLLISION_SURFACE_MISMATCH",
+      "message": "15 sampled walkable cells disagree with the rendered walk surface",
+      "detail": [
+        {
+          "cell": [
+            0,
+            72
+          ],
+          "issue": "no-surface"
+        },
+        {
+          "cell": [
+            0,
+            84
+          ],
+          "issue": "no-surface"
+        },
+        {
+          "cell": [
+            0,
+            96
+          ],
+          "issue": "no-surface"
+        },
+        {
+          "cell": [
+            0,
+            108
+          ],
+          "issue": "no-surface"
+        },
+        {
+          "cell": [
+            0,
+            120
+          ],
+          "issue": "no-surface"
+        },
+        {
+          "cell": [
+            0,
+            132
+          ],
+          "issue": "no-surface"
+        },
+        {
+          "cell": [
+            0,
+            144
+          ],
+          "issue": "no-surface"
+        },
+        {
+          "cell": [
+            0,
+            156
+          ],
+          "issue": "no-surface"
+        },
+        {
+          "cell": [
+            0,
+            168
+          ],
+          "issue": "no-surface"
+        },
+        {
+          "cell": [
+            0,
+            180
+          ],
+          "issue": "no-surface"
+        }
       ]
     },
     {

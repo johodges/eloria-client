@@ -106,12 +106,20 @@ def build_water(build, lod: str | None = None) -> None:
     running past that rim to a horizon would be visible from the temple summit
     as a flood outside the mountains.
     """
-    t = build.terrain
-    cell = 3.0 if lod is None else 6.0
-    build.water_meshes["Water_Basin"] = TER.water_plane(
-        t, REG.WATER_LEVEL, t.x0, t.z0, t.x0 + t.size_x, t.z0 + t.size_z,
-        material=SK.BASIN_WATER, cell=cell, margin=0.10,
-        outside_is_water=False)
+    t=build.terrain
+    # Continuous water is hidden by the actual banks; coarse whole-cell water
+    # clipping exposed black grid steps in the baseline gameplay captures.
+    # Fresh receiving bays meet the silted interior at the northern inlet and
+    # eastern embankment. All rectangles form one non-overlapping water plane;
+    # the real banks occlude it, never coarse water-cell cut-outs.
+    for name,x0,z0,x1,z1,material in (
+        ('Water_Basin',t.x0,-214,216,t.z0+t.size_z,SK.BASIN_WATER),
+        ('Water_NorthInlet',t.x0,t.z0,t.x0+t.size_x,-214,'water_lake'),
+        ('Water_EastInlet',216,-214,t.x0+t.size_x,t.z0+t.size_z,'water_lake')):
+        mesh=M.quad([(x0,0,z0),(x0,0,z1),(x1,0,z1),(x1,0,z0)],material=material)
+        mesh.uvs=mesh.positions[:,[0,2]]*.045
+        build.water_meshes[name]=mesh
+
 
 
 # ------------------------------------------------------------- causeways
@@ -209,9 +217,11 @@ def populate_temple(build, seed: int = 0) -> None:
     tx, tz = REG.ANCHORS["temple"]
     ty = float(t.height_at(tx, tz))
 
-    temple = A.ziggurat_temple(base=72.0, tiers=5, tier_height=7.0, seed=seed + 7)
+    temple = A.ziggurat_temple(base=72.0, tiers=5, tier_height=7.0, seed=seed + 7,include_roof=False)
     _add(build, "Temple_Ssarathi", "ZigguratTemple", temple, (tx, ty, tz),
-         math.pi, kind="landmark", collides=True, landmark="great-temple")
+         0.0, kind="landmark", collides=True, landmark="great-temple")
+    _add(build,"Structure_TempleSummitRoof","TempleSummitRoof",
+         A.ziggurat_summit_roof(seed=seed+7),(tx,ty,tz),kind="structure")
 
     vx, vz = REG.ANCHORS["vault_door"]
     portal = A.vault_portal(width=11.0, height=9.5, seed=seed + 11)
@@ -253,8 +263,8 @@ def populate_courts(build, seed: int = 0) -> None:
         cx, cz = REG.ANCHORS[name]
         rim = float(t.height_at(cx + court["radius"] * 0.86, cz))
         colonnade = A.pool_colonnade(court["radius"] * 0.88,
-                                     count=14 if i == 0 else 18,
-                                     height=court["radius"] * 0.26,
+                                     count=10 if i == 0 else 16,
+                                     height=6.2 if i == 0 else 8.2,
                                      seed=seed + 23 + i)
         _add(build, f"Colonnade_{name}", f"Colonnade_{name}", colonnade,
              (cx, rim, cz), 0.0, kind="landmark", collides=True)

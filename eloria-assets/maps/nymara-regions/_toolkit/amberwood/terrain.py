@@ -581,6 +581,46 @@ class Terrain:
         return labels, counts
 
     # -- export -----------------------------------------------------------
+    def build_feathered_meshes(self, base_surface: int, uv_scale: float = .30,
+                              materials: dict[int,str] | None = None,
+                              feather_metres: float = 1.5) -> dict[str,M.Mesh]:
+        """Opaque terrain below soft material coverage, with no possible holes.
+
+        Opt-in for lowland soil/grass transitions. Architecture still uses its
+        ordinary opaque material. Overlay vertices carry smoothed coverage;
+        the client gives these named materials depth-writing hash coverage.
+        Heights are unchanged apart from centimetre offsets avoiding coplanarity.
+        """
+        from .materials import SOFT_GROUND_SUFFIX
+        table=dict(SURFACE_MATERIALS);table.update(materials or {})
+        base=M.heightfield(self.height,self.x0,self.z0,self.cell,
+            uv_scale=uv_scale,material=table[base_surface])
+        base.recompute_normals(180.)
+        out={'Terrain_Base':base}
+        passes=max(1,round((feather_metres/self.cell)**2*2))
+        for order,surface_id in enumerate(sorted(set(np.unique(self.surface))-{base_surface})):
+            coverage=(self.surface==surface_id).astype(float)
+            # Separable binomial filtering expands the material edge gently.
+            # Edge padding keeps the exterior border covered without wrapping.
+            for _ in range(passes):
+                p=np.pad(coverage,((1,1),(0,0)),mode='edge')
+                coverage=(p[:-2]+2*p[1:-1]+p[2:])/4
+                p=np.pad(coverage,((0,0),(1,1)),mode='edge')
+                coverage=(p[:,:-2]+2*p[:,1:-1]+p[:,2:])/4
+            active=coverage>.005
+            touched=active[:-1,:-1]|active[1:,:-1]|active[:-1,1:]|active[1:,1:]
+            part=M.heightfield(self.height,self.x0,self.z0,self.cell,uv_scale=uv_scale,
+                material=table[surface_id]+SOFT_GROUND_SUFFIX,cells=touched)
+            part=_compact(part)
+            if not part.triangle_count:continue
+            columns=np.clip(np.rint((part.positions[:,0]-self.x0)/self.cell).astype(int),0,self.cols-1)
+            rows=np.clip(np.rint((part.positions[:,2]-self.z0)/self.cell).astype(int),0,self.rows-1)
+            part.colors=np.ones((part.vertex_count,4));part.colors[:,3]=coverage[rows,columns]
+            part.positions[:,1]+=.008*(order+1)
+            part.recompute_normals(180.)
+            out['Terrain_'+SURFACE_NAMES[surface_id]]=part
+        return out
+
     def build_meshes(self, uv_scale: float = 0.30,
                      name_prefix: str = "Terrain_",
                      materials: dict[int, str] | None = None,

@@ -730,7 +730,7 @@
   ],
   "encounters": [
     {
-      "creature": "amberhart",
+      "creature": "autumn_antler_stag",
       "serverTile": [
         152,
         88
@@ -738,7 +738,7 @@
       "authority": "server"
     },
     {
-      "creature": "amberhart",
+      "creature": "autumn_antler_stag",
       "serverTile": [
         36,
         129
@@ -746,7 +746,7 @@
       "authority": "server"
     },
     {
-      "creature": "amberhart",
+      "creature": "autumn_antler_stag",
       "serverTile": [
         27,
         120
@@ -754,7 +754,7 @@
       "authority": "server"
     },
     {
-      "creature": "moor_wisp_hound",
+      "creature": "mossbound_hound",
       "serverTile": [
         92,
         225
@@ -762,7 +762,7 @@
       "authority": "server"
     },
     {
-      "creature": "moor_wisp_hound",
+      "creature": "mossbound_hound",
       "serverTile": [
         314,
         172
@@ -770,7 +770,7 @@
       "authority": "server"
     },
     {
-      "creature": "moor_wisp_hound",
+      "creature": "mossbound_hound",
       "serverTile": [
         67,
         217

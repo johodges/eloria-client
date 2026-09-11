@@ -721,7 +721,7 @@
   ],
   "encounters": [
     {
-      "creature": "rootback_boar",
+      "creature": "mossback_boar",
       "serverTile": [
         294,
         278
@@ -729,7 +729,7 @@
       "authority": "server"
     },
     {
-      "creature": "rootback_boar",
+      "creature": "mossback_boar",
       "serverTile": [
         324,
         275
@@ -737,7 +737,7 @@
       "authority": "server"
     },
     {
-      "creature": "rootback_boar",
+      "creature": "mossback_boar",
       "serverTile": [
         328,
         289
@@ -745,7 +745,7 @@
       "authority": "server"
     },
     {
-      "creature": "moor_wisp_hound",
+      "creature": "mossbound_hound",
       "serverTile": [
         201,
         371
@@ -753,7 +753,7 @@
       "authority": "server"
     },
     {
-      "creature": "moor_wisp_hound",
+      "creature": "mossbound_hound",
       "serverTile": [
         380,
         359
@@ -761,7 +761,7 @@
       "authority": "server"
     },
     {
-      "creature": "moor_wisp_hound",
+      "creature": "mossbound_hound",
       "serverTile": [
         367,
         346

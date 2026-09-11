@@ -18,36 +18,36 @@
     ],
     "bounds": {
       "min": [
-        -220.1,
-        -9.92,
-        -445.13
+        -161.74,
+        -7.82,
+        -308.33
       ],
       "max": [
-        441.67,
-        132.58,
-        207.8
+        312.98,
+        116.66,
+        158.39
       ]
     },
     "playableBounds": {
       "min": [
-        -174.0,
-        -9.92,
-        -401.0
+        -116.0,
+        -6.6,
+        -267.0
       ],
       "max": [
-        401.0,
-        104.7,
-        174.0
+        267.0,
+        90.28,
+        116.0
       ]
     },
     "seaLevel": 0.0,
-    "serverCells": 576
+    "serverCells": 384
   },
   "coordinateTransform": {
     "metresPerTile": 1.0,
     "serverOrigin": [
-      174.0,
-      174.0
+      116.0,
+      116.0
     ],
     "origin": [
       0.0,
@@ -66,8 +66,8 @@
         0.0
       ],
       "serverTile": [
-        174,
-        174
+        116,
+        116
       ],
       "rotationDegrees": -52.0,
       "surface": "JadePaving",
@@ -76,13 +76,13 @@
     {
       "id": "great-causeway",
       "position": [
-        60.0,
+        40.0,
         1.85,
-        -60.0
+        -40.0
       ],
       "serverTile": [
-        234,
-        234
+        156,
+        156
       ],
       "rotationDegrees": 180.0,
       "surface": "JadePaving",
@@ -91,13 +91,13 @@
     {
       "id": "temple-terrace",
       "position": [
-        60.0,
-        2.25,
-        -138.0
+        40.0,
+        9.9,
+        -98.0
       ],
       "serverTile": [
-        234,
-        312
+        156,
+        214
       ],
       "rotationDegrees": 180.0,
       "surface": "JadePaving",
@@ -106,13 +106,13 @@
     {
       "id": "archive-vault-door",
       "position": [
-        60.0,
-        13.05,
-        -208.5
+        64.25,
+        13.29,
+        -124.25
       ],
       "serverTile": [
-        234,
-        382
+        180,
+        240
       ],
       "rotationDegrees": 180.0,
       "surface": "JadePaving",
@@ -121,28 +121,28 @@
     {
       "id": "hatchery-descent",
       "position": [
-        168.25,
-        2.3,
-        -116.75
+        118.0,
+        2.24,
+        -86.0
       ],
       "serverTile": [
-        342,
-        291
+        234,
+        202
       ],
       "rotationDegrees": 180.0,
-      "surface": "JadePaving",
+      "surface": "MossStone",
       "grounded": true
     },
     {
       "id": "cistern-shaft",
       "position": [
-        -97.0,
-        2.05,
-        -60.0
+        -80.0,
+        2.02,
+        -44.0
       ],
       "serverTile": [
-        77,
-        234
+        36,
+        160
       ],
       "rotationDegrees": 180.0,
       "surface": "MossStone",
@@ -151,28 +151,28 @@
     {
       "id": "undercroft-mouth",
       "position": [
-        220.25,
-        3.38,
-        78.25
+        138.0,
+        3.79,
+        60.0
       ],
       "serverTile": [
-        394,
-        96
+        254,
+        56
       ],
       "rotationDegrees": 180.0,
-      "surface": "JungleFloor",
+      "surface": "JadePaving",
       "grounded": true
     },
     {
       "id": "tenth-mouth-door",
       "position": [
-        -31.25,
-        1.87,
-        -106.75
+        -32.0,
+        2.02,
+        -83.0
       ],
       "serverTile": [
-        143,
-        281
+        84,
+        199
       ],
       "rotationDegrees": 180.0,
       "surface": "JadePaving",
@@ -181,13 +181,13 @@
     {
       "id": "water-gate-undercut-mouth",
       "position": [
-        60.0,
-        2.15,
-        48.0
+        40.0,
+        2.24,
+        35.0
       ],
       "serverTile": [
-        234,
-        126
+        156,
+        81
       ],
       "rotationDegrees": 180.0,
       "surface": "JadePaving",
@@ -196,13 +196,13 @@
     {
       "id": "lineage-house-door",
       "position": [
-        60.0,
-        2.0,
-        -18.0
+        50.0,
+        2.02,
+        -15.0
       ],
       "serverTile": [
-        234,
-        192
+        166,
+        131
       ],
       "rotationDegrees": 180.0,
       "surface": "JadePaving",
@@ -218,8 +218,6 @@
       "CourtShrine_ritual_plaza",
       "DrownedColumn_0",
       "DrownedColumn_12",
-      "DrownedColumn_15",
-      "DrownedColumn_18",
       "DrownedColumn_21",
       "DrownedColumn_24",
       "DrownedColumn_3",
@@ -228,23 +226,31 @@
       "HatcheryColumn_-1",
       "HatcheryColumn_1",
       "HatcheryDescent",
+      "House_archive-workers",
+      "House_lily-copyists",
+      "House_lineage-house",
+      "House_market-copyist",
+      "House_market-poler",
+      "House_quay-stores",
       "March_east_causeway_Station",
       "March_east_causeway_Stone",
       "March_east_causeway_treefern_000",
       "March_east_causeway_treefern_001",
+      "March_east_causeway_treefern_003",
+      "March_east_causeway_treefern_005",
       "March_north_stair_Station",
       "March_north_stair_Stone",
+      "March_north_stair_boat_008",
       "March_south_gate_Station",
       "March_south_gate_Stone",
-      "March_south_gate_boat_004",
       "March_west_causeway_Station",
       "March_west_causeway_Stone",
-      "March_west_causeway_boat_010",
+      "March_west_causeway_boat_009",
+      "March_west_causeway_fern_010",
       "March_west_causeway_fern_011",
       "March_west_causeway_fern_012",
       "March_west_causeway_fern_013",
       "March_west_causeway_fern_014",
-      "March_west_causeway_fern_015",
       "MarketShrine",
       "MarketStall_0",
       "MarketStall_1",
@@ -256,133 +262,45 @@
       "MarketStall_7",
       "MarketStall_8",
       "MarketStall_9",
-      "Obelisk_street_far_e_148",
+      "Obelisk_street_far_e_99",
       "Obelisk_street_market_0",
-      "Obelisk_street_market_144",
-      "Obelisk_street_market_289",
+      "Obelisk_street_market_128",
+      "Obelisk_street_market_192",
+      "Obelisk_street_market_64",
       "Obelisk_street_north_0",
       "Obelisk_street_north_139",
-      "Obelisk_street_north_209",
+      "Obelisk_street_north_69",
       "QuayCargo_0",
       "QuayCargo_1",
       "QuayCargo_2",
-      "QuayCargo_4",
+      "QuayCargo_3",
+      "QuayCargo_5",
+      "QuayRecordsBench_0",
+      "QuayRecordsBench_1",
+      "QuayStool_0",
+      "QuayStool_1",
       "RootArch",
       "RuinTower_1",
-      "RuinTower_11",
-      "RuinTower_12",
-      "RuinTower_15",
-      "RuinTower_16",
-      "RuinTower_19",
-      "RuinTower_23",
-      "RuinTower_3",
-      "RuinTower_30",
-      "RuinTower_32",
-      "RuinTower_34",
-      "RuinTower_41",
-      "RuinTower_42",
-      "RuinTower_43",
-      "RuinTower_44",
-      "RuinTower_45",
-      "RuinTower_47",
-      "RuinTower_50",
-      "RuinTower_52",
-      "RuinTower_55",
-      "RuinTower_8",
-      "RuinTree_10",
-      "RuinTree_11",
-      "RuinTree_12",
-      "RuinTree_14",
-      "RuinTree_15",
-      "RuinTree_16",
-      "RuinTree_20",
-      "RuinTree_25",
-      "RuinTree_26",
-      "RuinTree_27",
-      "RuinTree_29",
+      "RuinTower_6",
+      "RuinTree_2",
       "RuinTree_3",
-      "RuinTree_34",
-      "RuinTree_35",
-      "RuinTree_37",
-      "RuinTree_39",
-      "RuinTree_40",
-      "RuinTree_42",
-      "RuinTree_43",
-      "RuinTree_45",
-      "RuinTree_48",
-      "RuinTree_49",
+      "RuinTree_4",
       "RuinTree_5",
-      "RuinTree_51",
-      "RuinTree_53",
-      "RuinTree_55",
       "RuinTree_6",
-      "RuinTree_8",
+      "RuinTree_7",
       "Ruin_0",
       "Ruin_1",
-      "Ruin_10",
-      "Ruin_11",
-      "Ruin_12",
-      "Ruin_13",
-      "Ruin_14",
-      "Ruin_15",
-      "Ruin_16",
-      "Ruin_17",
-      "Ruin_19",
       "Ruin_2",
-      "Ruin_20",
-      "Ruin_21",
-      "Ruin_22",
-      "Ruin_23",
-      "Ruin_24",
-      "Ruin_25",
-      "Ruin_26",
-      "Ruin_27",
-      "Ruin_28",
-      "Ruin_29",
       "Ruin_3",
-      "Ruin_30",
-      "Ruin_31",
-      "Ruin_32",
-      "Ruin_33",
-      "Ruin_34",
-      "Ruin_35",
-      "Ruin_36",
-      "Ruin_37",
-      "Ruin_38",
-      "Ruin_39",
       "Ruin_4",
-      "Ruin_40",
-      "Ruin_41",
-      "Ruin_42",
-      "Ruin_43",
-      "Ruin_44",
-      "Ruin_45",
-      "Ruin_46",
-      "Ruin_47",
-      "Ruin_48",
-      "Ruin_49",
       "Ruin_5",
-      "Ruin_50",
-      "Ruin_51",
-      "Ruin_52",
-      "Ruin_53",
-      "Ruin_54",
-      "Ruin_55",
       "Ruin_6",
       "Ruin_7",
       "Ruin_8",
-      "Ruin_9",
-      "Secret_ruins_cistern_well",
       "Secret_ruins_culvert_mouth",
-      "Secret_ruins_falls_spring",
       "Secret_ruins_gate_cache",
-      "Secret_ruins_hatchery_pit",
-      "Secret_ruins_lily_garden",
       "Secret_ruins_moss_hollow",
-      "Secret_ruins_plaza_school",
       "Secret_ruins_rootrun",
-      "Secret_ruins_shrine_butts",
-      "Secret_ruins_shrine_eyrie",
       "Secret_ruins_stela_reliquary",
       "Secret_ruins_temple_focus",
       "SerpentColumn_0_-1",
@@ -391,17 +309,20 @@
       "SerpentColumn_1_1",
       "SerpentColumn_2_-1",
       "SerpentColumn_2_1",
-      "SerpentColumn_3_-1",
-      "SerpentColumn_3_1",
-      "SerpentColumn_4_-1",
-      "SerpentColumn_4_1",
-      "SerpentColumn_5_-1",
-      "SerpentColumn_5_1",
       "SerpentGateColumn_-1",
       "SerpentGateColumn_1",
       "Shrine_east_shrine",
       "Shrine_south_shrine",
       "Shrine_west_shrine",
+      "StoreBundle_0",
+      "StoreBundle_1",
+      "StoreBundle_2",
+      "StoreBundle_3",
+      "StoreBundle_4",
+      "StoreBundle_5",
+      "StoreBundle_6",
+      "StoreBundle_7",
+      "StoreBundle_8",
       "SunStela",
       "TempleGuardian_-1",
       "TempleGuardian_1",
@@ -413,959 +334,99 @@
       "Tree_1",
       "Tree_10",
       "Tree_100",
-      "Tree_1000",
-      "Tree_1001",
-      "Tree_1002",
-      "Tree_1003",
-      "Tree_1004",
-      "Tree_1005",
-      "Tree_1006",
-      "Tree_1007",
-      "Tree_1008",
-      "Tree_1009",
       "Tree_101",
-      "Tree_1010",
-      "Tree_1011",
-      "Tree_1012",
-      "Tree_1013",
-      "Tree_1014",
-      "Tree_1015",
-      "Tree_1016",
-      "Tree_1017",
-      "Tree_1018",
-      "Tree_1019",
       "Tree_102",
-      "Tree_1020",
-      "Tree_1021",
-      "Tree_1022",
-      "Tree_1023",
-      "Tree_1024",
-      "Tree_1025",
-      "Tree_1026",
-      "Tree_1027",
-      "Tree_1028",
-      "Tree_1029",
       "Tree_103",
-      "Tree_1030",
-      "Tree_1031",
-      "Tree_1032",
-      "Tree_1033",
-      "Tree_1034",
-      "Tree_1035",
-      "Tree_1036",
-      "Tree_1037",
-      "Tree_1038",
-      "Tree_1039",
       "Tree_104",
-      "Tree_1040",
-      "Tree_1041",
-      "Tree_1042",
-      "Tree_1043",
-      "Tree_1044",
-      "Tree_1045",
-      "Tree_1046",
-      "Tree_1047",
-      "Tree_1048",
-      "Tree_1049",
       "Tree_105",
-      "Tree_1050",
-      "Tree_1051",
-      "Tree_1052",
-      "Tree_1053",
-      "Tree_1054",
-      "Tree_1055",
-      "Tree_1056",
-      "Tree_1057",
-      "Tree_1058",
-      "Tree_1059",
       "Tree_106",
-      "Tree_1060",
-      "Tree_1061",
-      "Tree_1062",
-      "Tree_1063",
-      "Tree_1064",
-      "Tree_1065",
-      "Tree_1066",
-      "Tree_1067",
-      "Tree_1068",
-      "Tree_1069",
       "Tree_107",
-      "Tree_1070",
-      "Tree_1071",
-      "Tree_1072",
-      "Tree_1073",
-      "Tree_1074",
-      "Tree_1075",
-      "Tree_1076",
-      "Tree_1077",
-      "Tree_1078",
-      "Tree_1079",
       "Tree_108",
-      "Tree_1080",
-      "Tree_1081",
-      "Tree_1082",
-      "Tree_1083",
-      "Tree_1084",
-      "Tree_1085",
-      "Tree_1086",
-      "Tree_1087",
-      "Tree_1088",
-      "Tree_1089",
       "Tree_109",
-      "Tree_1090",
-      "Tree_1091",
-      "Tree_1092",
-      "Tree_1093",
-      "Tree_1094",
-      "Tree_1095",
-      "Tree_1096",
-      "Tree_1097",
-      "Tree_1098",
-      "Tree_1099",
       "Tree_11",
       "Tree_110",
-      "Tree_1100",
-      "Tree_1101",
-      "Tree_1102",
-      "Tree_1103",
-      "Tree_1104",
-      "Tree_1105",
-      "Tree_1106",
-      "Tree_1107",
-      "Tree_1108",
-      "Tree_1109",
       "Tree_111",
-      "Tree_1110",
-      "Tree_1111",
-      "Tree_1112",
-      "Tree_1113",
-      "Tree_1114",
-      "Tree_1115",
-      "Tree_1116",
-      "Tree_1117",
-      "Tree_1118",
-      "Tree_1119",
       "Tree_112",
-      "Tree_1120",
-      "Tree_1121",
-      "Tree_1122",
-      "Tree_1123",
-      "Tree_1124",
-      "Tree_1125",
-      "Tree_1126",
-      "Tree_1127",
-      "Tree_1128",
-      "Tree_1129",
       "Tree_113",
-      "Tree_1130",
-      "Tree_1131",
-      "Tree_1132",
-      "Tree_1133",
-      "Tree_1134",
-      "Tree_1135",
-      "Tree_1136",
-      "Tree_1137",
-      "Tree_1138",
-      "Tree_1139",
       "Tree_114",
-      "Tree_1140",
-      "Tree_1141",
-      "Tree_1142",
-      "Tree_1143",
-      "Tree_1144",
-      "Tree_1145",
-      "Tree_1146",
-      "Tree_1147",
-      "Tree_1148",
-      "Tree_1149",
       "Tree_115",
-      "Tree_1150",
-      "Tree_1151",
-      "Tree_1152",
-      "Tree_1153",
-      "Tree_1154",
-      "Tree_1155",
-      "Tree_1156",
-      "Tree_1157",
-      "Tree_1158",
-      "Tree_1159",
       "Tree_116",
-      "Tree_1160",
-      "Tree_1161",
-      "Tree_1162",
-      "Tree_1163",
-      "Tree_1164",
-      "Tree_1165",
-      "Tree_1166",
-      "Tree_1167",
-      "Tree_1168",
-      "Tree_1169",
       "Tree_117",
-      "Tree_1170",
-      "Tree_1171",
-      "Tree_1172",
-      "Tree_1173",
-      "Tree_1174",
-      "Tree_1175",
-      "Tree_1176",
-      "Tree_1177",
-      "Tree_1178",
-      "Tree_1179",
       "Tree_118",
-      "Tree_1180",
-      "Tree_1181",
-      "Tree_1182",
-      "Tree_1183",
-      "Tree_1184",
-      "Tree_1185",
-      "Tree_1186",
-      "Tree_1187",
-      "Tree_1188",
-      "Tree_1189",
       "Tree_119",
-      "Tree_1190",
-      "Tree_1191",
-      "Tree_1192",
-      "Tree_1193",
-      "Tree_1194",
-      "Tree_1195",
-      "Tree_1196",
-      "Tree_1197",
-      "Tree_1198",
-      "Tree_1199",
       "Tree_12",
       "Tree_120",
-      "Tree_1200",
-      "Tree_1201",
-      "Tree_1202",
-      "Tree_1203",
-      "Tree_1204",
-      "Tree_1205",
-      "Tree_1206",
-      "Tree_1207",
-      "Tree_1208",
-      "Tree_1209",
       "Tree_121",
-      "Tree_1210",
-      "Tree_1211",
-      "Tree_1212",
-      "Tree_1213",
-      "Tree_1214",
-      "Tree_1215",
-      "Tree_1216",
-      "Tree_1217",
-      "Tree_1218",
-      "Tree_1219",
       "Tree_122",
-      "Tree_1220",
-      "Tree_1221",
-      "Tree_1222",
-      "Tree_1223",
-      "Tree_1224",
-      "Tree_1225",
-      "Tree_1226",
-      "Tree_1227",
-      "Tree_1228",
-      "Tree_1229",
       "Tree_123",
-      "Tree_1230",
-      "Tree_1231",
-      "Tree_1232",
-      "Tree_1233",
-      "Tree_1234",
-      "Tree_1235",
-      "Tree_1236",
-      "Tree_1237",
-      "Tree_1238",
-      "Tree_1239",
       "Tree_124",
-      "Tree_1240",
-      "Tree_1241",
-      "Tree_1242",
-      "Tree_1243",
-      "Tree_1244",
-      "Tree_1245",
-      "Tree_1246",
-      "Tree_1247",
-      "Tree_1248",
-      "Tree_1249",
       "Tree_125",
-      "Tree_1250",
-      "Tree_1251",
-      "Tree_1252",
-      "Tree_1253",
-      "Tree_1254",
-      "Tree_1255",
-      "Tree_1256",
-      "Tree_1257",
-      "Tree_1258",
-      "Tree_1259",
       "Tree_126",
-      "Tree_1260",
-      "Tree_1261",
-      "Tree_1262",
-      "Tree_1263",
-      "Tree_1264",
-      "Tree_1265",
-      "Tree_1266",
-      "Tree_1267",
-      "Tree_1268",
-      "Tree_1269",
       "Tree_127",
-      "Tree_1270",
-      "Tree_1271",
-      "Tree_1272",
-      "Tree_1273",
-      "Tree_1274",
-      "Tree_1275",
-      "Tree_1276",
-      "Tree_1277",
-      "Tree_1278",
-      "Tree_1279",
       "Tree_128",
-      "Tree_1280",
-      "Tree_1281",
-      "Tree_1282",
-      "Tree_1283",
-      "Tree_1284",
-      "Tree_1285",
-      "Tree_1286",
-      "Tree_1287",
-      "Tree_1288",
-      "Tree_1289",
       "Tree_129",
-      "Tree_1290",
-      "Tree_1291",
-      "Tree_1292",
-      "Tree_1293",
-      "Tree_1294",
-      "Tree_1295",
-      "Tree_1296",
-      "Tree_1297",
-      "Tree_1298",
-      "Tree_1299",
       "Tree_13",
       "Tree_130",
-      "Tree_1300",
-      "Tree_1301",
-      "Tree_1302",
-      "Tree_1303",
-      "Tree_1304",
-      "Tree_1305",
-      "Tree_1306",
-      "Tree_1307",
-      "Tree_1308",
-      "Tree_1309",
       "Tree_131",
-      "Tree_1310",
-      "Tree_1311",
-      "Tree_1312",
-      "Tree_1313",
-      "Tree_1314",
-      "Tree_1315",
-      "Tree_1316",
-      "Tree_1317",
-      "Tree_1318",
-      "Tree_1319",
       "Tree_132",
-      "Tree_1320",
-      "Tree_1321",
-      "Tree_1322",
-      "Tree_1323",
-      "Tree_1324",
-      "Tree_1325",
-      "Tree_1326",
-      "Tree_1327",
-      "Tree_1328",
-      "Tree_1329",
       "Tree_133",
-      "Tree_1330",
-      "Tree_1331",
-      "Tree_1332",
-      "Tree_1333",
-      "Tree_1334",
-      "Tree_1335",
-      "Tree_1336",
-      "Tree_1337",
-      "Tree_1338",
-      "Tree_1339",
       "Tree_134",
-      "Tree_1340",
-      "Tree_1341",
-      "Tree_1342",
-      "Tree_1343",
-      "Tree_1344",
-      "Tree_1345",
-      "Tree_1346",
-      "Tree_1347",
-      "Tree_1348",
-      "Tree_1349",
       "Tree_135",
-      "Tree_1350",
-      "Tree_1351",
-      "Tree_1352",
-      "Tree_1353",
-      "Tree_1354",
-      "Tree_1355",
-      "Tree_1356",
-      "Tree_1357",
-      "Tree_1358",
-      "Tree_1359",
       "Tree_136",
-      "Tree_1360",
-      "Tree_1361",
-      "Tree_1362",
-      "Tree_1363",
-      "Tree_1364",
-      "Tree_1365",
-      "Tree_1366",
-      "Tree_1367",
-      "Tree_1368",
-      "Tree_1369",
       "Tree_137",
-      "Tree_1370",
-      "Tree_1371",
-      "Tree_1372",
-      "Tree_1373",
-      "Tree_1374",
-      "Tree_1375",
-      "Tree_1376",
-      "Tree_1377",
-      "Tree_1378",
-      "Tree_1379",
       "Tree_138",
-      "Tree_1380",
-      "Tree_1381",
-      "Tree_1382",
-      "Tree_1383",
-      "Tree_1384",
-      "Tree_1385",
-      "Tree_1386",
-      "Tree_1387",
-      "Tree_1388",
-      "Tree_1389",
       "Tree_139",
-      "Tree_1390",
-      "Tree_1391",
-      "Tree_1392",
-      "Tree_1393",
-      "Tree_1394",
-      "Tree_1395",
-      "Tree_1396",
-      "Tree_1397",
-      "Tree_1398",
-      "Tree_1399",
       "Tree_14",
       "Tree_140",
-      "Tree_1400",
-      "Tree_1401",
-      "Tree_1402",
-      "Tree_1403",
-      "Tree_1404",
-      "Tree_1405",
-      "Tree_1406",
-      "Tree_1407",
-      "Tree_1408",
-      "Tree_1409",
       "Tree_141",
-      "Tree_1410",
-      "Tree_1411",
-      "Tree_1412",
-      "Tree_1413",
-      "Tree_1414",
-      "Tree_1415",
-      "Tree_1416",
-      "Tree_1417",
-      "Tree_1418",
-      "Tree_1419",
       "Tree_142",
-      "Tree_1420",
-      "Tree_1421",
-      "Tree_1422",
-      "Tree_1423",
-      "Tree_1424",
-      "Tree_1425",
-      "Tree_1426",
-      "Tree_1427",
-      "Tree_1428",
-      "Tree_1429",
       "Tree_143",
-      "Tree_1430",
-      "Tree_1431",
-      "Tree_1432",
-      "Tree_1433",
-      "Tree_1434",
-      "Tree_1435",
-      "Tree_1436",
-      "Tree_1437",
-      "Tree_1438",
-      "Tree_1439",
       "Tree_144",
-      "Tree_1440",
-      "Tree_1441",
-      "Tree_1442",
-      "Tree_1443",
-      "Tree_1444",
-      "Tree_1445",
-      "Tree_1446",
-      "Tree_1447",
-      "Tree_1448",
-      "Tree_1449",
       "Tree_145",
-      "Tree_1450",
-      "Tree_1451",
-      "Tree_1452",
-      "Tree_1453",
-      "Tree_1454",
-      "Tree_1455",
-      "Tree_1456",
-      "Tree_1457",
-      "Tree_1458",
-      "Tree_1459",
       "Tree_146",
-      "Tree_1460",
-      "Tree_1461",
-      "Tree_1462",
-      "Tree_1463",
-      "Tree_1464",
-      "Tree_1465",
-      "Tree_1466",
-      "Tree_1467",
-      "Tree_1468",
-      "Tree_1469",
       "Tree_147",
-      "Tree_1470",
-      "Tree_1471",
-      "Tree_1472",
-      "Tree_1473",
-      "Tree_1474",
-      "Tree_1475",
-      "Tree_1476",
-      "Tree_1477",
-      "Tree_1478",
-      "Tree_1479",
       "Tree_148",
-      "Tree_1480",
-      "Tree_1481",
-      "Tree_1482",
-      "Tree_1483",
-      "Tree_1484",
-      "Tree_1485",
-      "Tree_1486",
-      "Tree_1487",
-      "Tree_1488",
-      "Tree_1489",
       "Tree_149",
-      "Tree_1490",
-      "Tree_1491",
-      "Tree_1492",
-      "Tree_1493",
-      "Tree_1494",
-      "Tree_1495",
-      "Tree_1496",
-      "Tree_1497",
-      "Tree_1498",
-      "Tree_1499",
       "Tree_15",
       "Tree_150",
-      "Tree_1500",
-      "Tree_1501",
-      "Tree_1502",
-      "Tree_1503",
-      "Tree_1504",
-      "Tree_1505",
-      "Tree_1506",
-      "Tree_1507",
-      "Tree_1508",
-      "Tree_1509",
       "Tree_151",
-      "Tree_1510",
-      "Tree_1511",
-      "Tree_1512",
-      "Tree_1513",
-      "Tree_1514",
-      "Tree_1515",
-      "Tree_1516",
-      "Tree_1517",
-      "Tree_1518",
-      "Tree_1519",
       "Tree_152",
-      "Tree_1520",
-      "Tree_1521",
-      "Tree_1522",
-      "Tree_1523",
-      "Tree_1524",
-      "Tree_1525",
-      "Tree_1526",
-      "Tree_1527",
-      "Tree_1528",
-      "Tree_1529",
       "Tree_153",
-      "Tree_1530",
-      "Tree_1531",
-      "Tree_1532",
-      "Tree_1533",
-      "Tree_1534",
-      "Tree_1535",
-      "Tree_1536",
-      "Tree_1537",
-      "Tree_1538",
-      "Tree_1539",
       "Tree_154",
-      "Tree_1540",
-      "Tree_1541",
-      "Tree_1542",
-      "Tree_1543",
-      "Tree_1544",
-      "Tree_1545",
-      "Tree_1546",
-      "Tree_1547",
-      "Tree_1548",
-      "Tree_1549",
       "Tree_155",
-      "Tree_1550",
-      "Tree_1551",
-      "Tree_1552",
-      "Tree_1553",
-      "Tree_1554",
-      "Tree_1555",
-      "Tree_1556",
-      "Tree_1557",
-      "Tree_1558",
-      "Tree_1559",
       "Tree_156",
-      "Tree_1560",
-      "Tree_1561",
-      "Tree_1562",
-      "Tree_1563",
-      "Tree_1564",
-      "Tree_1565",
-      "Tree_1566",
-      "Tree_1567",
-      "Tree_1568",
-      "Tree_1569",
       "Tree_157",
-      "Tree_1570",
-      "Tree_1571",
-      "Tree_1572",
-      "Tree_1573",
-      "Tree_1574",
-      "Tree_1575",
-      "Tree_1576",
-      "Tree_1577",
-      "Tree_1578",
-      "Tree_1579",
       "Tree_158",
-      "Tree_1580",
-      "Tree_1581",
-      "Tree_1582",
-      "Tree_1583",
-      "Tree_1584",
-      "Tree_1585",
-      "Tree_1586",
-      "Tree_1587",
-      "Tree_1588",
-      "Tree_1589",
       "Tree_159",
-      "Tree_1590",
-      "Tree_1591",
-      "Tree_1592",
-      "Tree_1593",
-      "Tree_1594",
-      "Tree_1595",
-      "Tree_1596",
-      "Tree_1597",
-      "Tree_1598",
-      "Tree_1599",
       "Tree_16",
       "Tree_160",
-      "Tree_1600",
-      "Tree_1601",
-      "Tree_1602",
-      "Tree_1603",
-      "Tree_1604",
-      "Tree_1605",
-      "Tree_1606",
-      "Tree_1607",
-      "Tree_1608",
-      "Tree_1609",
       "Tree_161",
-      "Tree_1610",
-      "Tree_1611",
-      "Tree_1612",
-      "Tree_1613",
-      "Tree_1614",
-      "Tree_1615",
-      "Tree_1616",
-      "Tree_1617",
-      "Tree_1618",
-      "Tree_1619",
       "Tree_162",
-      "Tree_1620",
-      "Tree_1621",
-      "Tree_1622",
-      "Tree_1623",
-      "Tree_1624",
-      "Tree_1625",
-      "Tree_1626",
-      "Tree_1627",
-      "Tree_1628",
-      "Tree_1629",
       "Tree_163",
-      "Tree_1630",
-      "Tree_1631",
-      "Tree_1632",
-      "Tree_1633",
-      "Tree_1634",
-      "Tree_1635",
-      "Tree_1636",
-      "Tree_1637",
-      "Tree_1638",
-      "Tree_1639",
       "Tree_164",
-      "Tree_1640",
-      "Tree_1641",
-      "Tree_1642",
-      "Tree_1643",
-      "Tree_1644",
-      "Tree_1645",
-      "Tree_1646",
-      "Tree_1647",
-      "Tree_1648",
-      "Tree_1649",
       "Tree_165",
-      "Tree_1650",
-      "Tree_1651",
-      "Tree_1652",
-      "Tree_1653",
-      "Tree_1654",
-      "Tree_1655",
-      "Tree_1656",
-      "Tree_1657",
-      "Tree_1658",
-      "Tree_1659",
       "Tree_166",
-      "Tree_1660",
-      "Tree_1661",
-      "Tree_1662",
-      "Tree_1663",
-      "Tree_1664",
-      "Tree_1665",
-      "Tree_1666",
-      "Tree_1667",
-      "Tree_1668",
-      "Tree_1669",
       "Tree_167",
-      "Tree_1670",
-      "Tree_1671",
-      "Tree_1672",
-      "Tree_1673",
-      "Tree_1674",
-      "Tree_1675",
-      "Tree_1676",
-      "Tree_1677",
-      "Tree_1678",
-      "Tree_1679",
       "Tree_168",
-      "Tree_1680",
-      "Tree_1681",
-      "Tree_1682",
-      "Tree_1683",
-      "Tree_1684",
-      "Tree_1685",
-      "Tree_1686",
-      "Tree_1687",
-      "Tree_1688",
-      "Tree_1689",
       "Tree_169",
-      "Tree_1690",
-      "Tree_1691",
-      "Tree_1692",
-      "Tree_1693",
-      "Tree_1694",
-      "Tree_1695",
-      "Tree_1696",
-      "Tree_1697",
-      "Tree_1698",
-      "Tree_1699",
       "Tree_17",
       "Tree_170",
-      "Tree_1700",
-      "Tree_1701",
-      "Tree_1702",
-      "Tree_1703",
-      "Tree_1704",
-      "Tree_1705",
-      "Tree_1706",
-      "Tree_1707",
-      "Tree_1708",
-      "Tree_1709",
       "Tree_171",
-      "Tree_1710",
-      "Tree_1711",
-      "Tree_1712",
-      "Tree_1713",
-      "Tree_1714",
-      "Tree_1715",
-      "Tree_1716",
-      "Tree_1717",
-      "Tree_1718",
-      "Tree_1719",
       "Tree_172",
-      "Tree_1720",
-      "Tree_1721",
-      "Tree_1722",
-      "Tree_1723",
-      "Tree_1724",
-      "Tree_1725",
-      "Tree_1726",
-      "Tree_1727",
-      "Tree_1728",
-      "Tree_1729",
       "Tree_173",
-      "Tree_1730",
-      "Tree_1731",
-      "Tree_1732",
-      "Tree_1733",
-      "Tree_1734",
-      "Tree_1735",
-      "Tree_1736",
-      "Tree_1737",
-      "Tree_1738",
-      "Tree_1739",
       "Tree_174",
-      "Tree_1740",
-      "Tree_1741",
-      "Tree_1742",
-      "Tree_1743",
-      "Tree_1744",
-      "Tree_1745",
-      "Tree_1746",
-      "Tree_1747",
-      "Tree_1748",
-      "Tree_1749",
       "Tree_175",
-      "Tree_1750",
-      "Tree_1751",
-      "Tree_1752",
-      "Tree_1753",
-      "Tree_1754",
-      "Tree_1755",
-      "Tree_1756",
-      "Tree_1757",
-      "Tree_1758",
-      "Tree_1759",
       "Tree_176",
-      "Tree_1760",
-      "Tree_1761",
-      "Tree_1762",
-      "Tree_1763",
-      "Tree_1764",
-      "Tree_1765",
-      "Tree_1766",
-      "Tree_1767",
-      "Tree_1768",
-      "Tree_1769",
       "Tree_177",
-      "Tree_1770",
-      "Tree_1771",
-      "Tree_1772",
-      "Tree_1773",
-      "Tree_1774",
-      "Tree_1775",
-      "Tree_1776",
-      "Tree_1777",
-      "Tree_1778",
-      "Tree_1779",
       "Tree_178",
-      "Tree_1780",
-      "Tree_1781",
-      "Tree_1782",
-      "Tree_1783",
-      "Tree_1784",
-      "Tree_1785",
-      "Tree_1786",
-      "Tree_1787",
-      "Tree_1788",
-      "Tree_1789",
       "Tree_179",
-      "Tree_1790",
-      "Tree_1791",
-      "Tree_1792",
-      "Tree_1793",
-      "Tree_1794",
-      "Tree_1795",
-      "Tree_1796",
-      "Tree_1797",
-      "Tree_1798",
-      "Tree_1799",
       "Tree_18",
       "Tree_180",
-      "Tree_1800",
-      "Tree_1801",
-      "Tree_1802",
-      "Tree_1803",
-      "Tree_1804",
-      "Tree_1805",
-      "Tree_1806",
-      "Tree_1807",
-      "Tree_1808",
-      "Tree_1809",
       "Tree_181",
-      "Tree_1810",
-      "Tree_1811",
-      "Tree_1812",
-      "Tree_1813",
-      "Tree_1814",
-      "Tree_1815",
-      "Tree_1816",
-      "Tree_1817",
-      "Tree_1818",
-      "Tree_1819",
       "Tree_182",
-      "Tree_1820",
-      "Tree_1821",
-      "Tree_1822",
-      "Tree_1823",
-      "Tree_1824",
-      "Tree_1825",
-      "Tree_1826",
-      "Tree_1827",
-      "Tree_1828",
-      "Tree_1829",
       "Tree_183",
-      "Tree_1830",
-      "Tree_1831",
-      "Tree_1832",
-      "Tree_1833",
-      "Tree_1834",
-      "Tree_1835",
-      "Tree_1836",
-      "Tree_1837",
-      "Tree_1838",
-      "Tree_1839",
       "Tree_184",
-      "Tree_1840",
-      "Tree_1841",
-      "Tree_1842",
-      "Tree_1843",
-      "Tree_1844",
-      "Tree_1845",
-      "Tree_1846",
-      "Tree_1847",
-      "Tree_1848",
-      "Tree_1849",
       "Tree_185",
-      "Tree_1850",
-      "Tree_1851",
-      "Tree_1852",
-      "Tree_1853",
-      "Tree_1854",
-      "Tree_1855",
-      "Tree_1856",
-      "Tree_1857",
-      "Tree_1858",
-      "Tree_1859",
       "Tree_186",
       "Tree_187",
       "Tree_188",
@@ -1634,20 +695,13 @@
       "Tree_424",
       "Tree_425",
       "Tree_426",
-      "Tree_427",
-      "Tree_428",
-      "Tree_429",
       "Tree_43",
-      "Tree_430",
       "Tree_431",
       "Tree_432",
       "Tree_433",
       "Tree_434",
       "Tree_435",
       "Tree_436",
-      "Tree_437",
-      "Tree_438",
-      "Tree_439",
       "Tree_44",
       "Tree_440",
       "Tree_441",
@@ -1660,10 +714,7 @@
       "Tree_448",
       "Tree_449",
       "Tree_45",
-      "Tree_450",
-      "Tree_451",
       "Tree_452",
-      "Tree_453",
       "Tree_454",
       "Tree_455",
       "Tree_456",
@@ -1691,13 +742,7 @@
       "Tree_476",
       "Tree_477",
       "Tree_478",
-      "Tree_479",
       "Tree_48",
-      "Tree_480",
-      "Tree_481",
-      "Tree_482",
-      "Tree_483",
-      "Tree_484",
       "Tree_485",
       "Tree_486",
       "Tree_487",
@@ -1706,10 +751,6 @@
       "Tree_49",
       "Tree_490",
       "Tree_491",
-      "Tree_492",
-      "Tree_493",
-      "Tree_494",
-      "Tree_495",
       "Tree_496",
       "Tree_497",
       "Tree_498",
@@ -1721,7 +762,6 @@
       "Tree_502",
       "Tree_503",
       "Tree_504",
-      "Tree_505",
       "Tree_506",
       "Tree_507",
       "Tree_508",
@@ -1778,7 +818,6 @@
       "Tree_554",
       "Tree_555",
       "Tree_556",
-      "Tree_557",
       "Tree_558",
       "Tree_559",
       "Tree_56",
@@ -1802,10 +841,7 @@
       "Tree_576",
       "Tree_577",
       "Tree_578",
-      "Tree_579",
       "Tree_58",
-      "Tree_580",
-      "Tree_581",
       "Tree_582",
       "Tree_583",
       "Tree_584",
@@ -1835,12 +871,7 @@
       "Tree_605",
       "Tree_606",
       "Tree_607",
-      "Tree_608",
-      "Tree_609",
       "Tree_61",
-      "Tree_610",
-      "Tree_611",
-      "Tree_612",
       "Tree_613",
       "Tree_614",
       "Tree_615",
@@ -1885,11 +916,6 @@
       "Tree_650",
       "Tree_651",
       "Tree_652",
-      "Tree_653",
-      "Tree_654",
-      "Tree_655",
-      "Tree_656",
-      "Tree_657",
       "Tree_658",
       "Tree_659",
       "Tree_66",
@@ -1938,8 +964,6 @@
       "Tree_699",
       "Tree_7",
       "Tree_70",
-      "Tree_700",
-      "Tree_701",
       "Tree_702",
       "Tree_703",
       "Tree_704",
@@ -1985,15 +1009,7 @@
       "Tree_740",
       "Tree_741",
       "Tree_742",
-      "Tree_743",
-      "Tree_744",
-      "Tree_745",
-      "Tree_746",
-      "Tree_747",
-      "Tree_748",
-      "Tree_749",
       "Tree_75",
-      "Tree_750",
       "Tree_751",
       "Tree_752",
       "Tree_753",
@@ -2035,16 +1051,7 @@
       "Tree_786",
       "Tree_787",
       "Tree_788",
-      "Tree_789",
       "Tree_79",
-      "Tree_790",
-      "Tree_791",
-      "Tree_792",
-      "Tree_793",
-      "Tree_794",
-      "Tree_795",
-      "Tree_796",
-      "Tree_797",
       "Tree_798",
       "Tree_799",
       "Tree_8",
@@ -2088,16 +1095,7 @@
       "Tree_833",
       "Tree_834",
       "Tree_835",
-      "Tree_836",
-      "Tree_837",
-      "Tree_838",
-      "Tree_839",
       "Tree_84",
-      "Tree_840",
-      "Tree_841",
-      "Tree_842",
-      "Tree_843",
-      "Tree_844",
       "Tree_845",
       "Tree_846",
       "Tree_847",
@@ -2120,170 +1118,167 @@
       "Tree_862",
       "Tree_863",
       "Tree_864",
-      "Tree_865",
-      "Tree_866",
-      "Tree_867",
-      "Tree_868",
-      "Tree_869",
       "Tree_87",
-      "Tree_870",
-      "Tree_871",
-      "Tree_872",
-      "Tree_873",
-      "Tree_874",
-      "Tree_875",
-      "Tree_876",
-      "Tree_877",
-      "Tree_878",
-      "Tree_879",
       "Tree_88",
-      "Tree_880",
-      "Tree_881",
-      "Tree_882",
-      "Tree_883",
-      "Tree_884",
-      "Tree_885",
-      "Tree_886",
-      "Tree_887",
-      "Tree_888",
-      "Tree_889",
       "Tree_89",
-      "Tree_890",
-      "Tree_891",
-      "Tree_892",
-      "Tree_893",
-      "Tree_894",
-      "Tree_895",
-      "Tree_896",
-      "Tree_897",
-      "Tree_898",
-      "Tree_899",
       "Tree_9",
       "Tree_90",
-      "Tree_900",
-      "Tree_901",
-      "Tree_902",
-      "Tree_903",
-      "Tree_904",
-      "Tree_905",
-      "Tree_906",
-      "Tree_907",
-      "Tree_908",
-      "Tree_909",
       "Tree_91",
-      "Tree_910",
-      "Tree_911",
-      "Tree_912",
-      "Tree_913",
-      "Tree_914",
-      "Tree_915",
-      "Tree_916",
-      "Tree_917",
-      "Tree_918",
-      "Tree_919",
       "Tree_92",
-      "Tree_920",
-      "Tree_921",
-      "Tree_922",
-      "Tree_923",
-      "Tree_924",
-      "Tree_925",
-      "Tree_926",
-      "Tree_927",
-      "Tree_928",
-      "Tree_929",
       "Tree_93",
-      "Tree_930",
-      "Tree_931",
-      "Tree_932",
-      "Tree_933",
-      "Tree_934",
-      "Tree_935",
-      "Tree_936",
-      "Tree_937",
-      "Tree_938",
-      "Tree_939",
       "Tree_94",
-      "Tree_940",
-      "Tree_941",
-      "Tree_942",
-      "Tree_943",
-      "Tree_944",
-      "Tree_945",
-      "Tree_946",
-      "Tree_947",
-      "Tree_948",
-      "Tree_949",
       "Tree_95",
-      "Tree_950",
-      "Tree_951",
-      "Tree_952",
-      "Tree_953",
-      "Tree_954",
-      "Tree_955",
-      "Tree_956",
-      "Tree_957",
-      "Tree_958",
-      "Tree_959",
       "Tree_96",
-      "Tree_960",
-      "Tree_961",
-      "Tree_962",
-      "Tree_963",
-      "Tree_964",
-      "Tree_965",
-      "Tree_966",
-      "Tree_967",
-      "Tree_968",
-      "Tree_969",
       "Tree_97",
-      "Tree_970",
-      "Tree_971",
-      "Tree_972",
-      "Tree_973",
-      "Tree_974",
-      "Tree_975",
-      "Tree_976",
-      "Tree_977",
-      "Tree_978",
-      "Tree_979",
       "Tree_98",
-      "Tree_980",
-      "Tree_981",
-      "Tree_982",
-      "Tree_983",
-      "Tree_984",
-      "Tree_985",
-      "Tree_986",
-      "Tree_987",
-      "Tree_988",
-      "Tree_989",
       "Tree_99",
-      "Tree_990",
-      "Tree_991",
-      "Tree_992",
-      "Tree_993",
-      "Tree_994",
-      "Tree_995",
-      "Tree_996",
-      "Tree_997",
-      "Tree_998",
-      "Tree_999",
       "UndercroftMouth",
       "WaterGate"
+    ],
+    "stampedLandmarks": [
+      {
+        "id": "authored-WaterGate-0",
+        "node": "WaterGate",
+        "type": "authored-solid",
+        "box": [
+          27.3748,
+          28.4198,
+          34.5352,
+          35.5802
+        ],
+        "marginMetres": 0,
+        "cellsBlocked": 0
+      },
+      {
+        "id": "authored-WaterGate-1",
+        "node": "WaterGate",
+        "type": "authored-solid",
+        "box": [
+          45.4648,
+          28.4198,
+          52.6252,
+          35.5802
+        ],
+        "marginMetres": 0,
+        "cellsBlocked": 0
+      },
+      {
+        "id": "authored-QuayRecordsBench_0-0",
+        "node": "QuayRecordsBench_0",
+        "type": "authored-solid",
+        "box": [
+          -10.5,
+          -3.45,
+          -7.5,
+          -2.55
+        ],
+        "marginMetres": 0,
+        "cellsBlocked": 0
+      },
+      {
+        "id": "authored-QuayRecordsBench_1-0",
+        "node": "QuayRecordsBench_1",
+        "type": "authored-solid",
+        "box": [
+          7.5,
+          -3.45,
+          10.5,
+          -2.55
+        ],
+        "marginMetres": 0,
+        "cellsBlocked": 0
+      },
+      {
+        "id": "authored-House_archive-workers-0",
+        "node": "House_archive-workers",
+        "type": "authored-solid",
+        "box": [
+          -31.2,
+          -13.200000000000001,
+          -22.8,
+          -6.799999999999999
+        ],
+        "marginMetres": 0,
+        "cellsBlocked": 0
+      },
+      {
+        "id": "authored-House_quay-stores-0",
+        "node": "House_quay-stores",
+        "type": "authored-solid",
+        "box": [
+          22.8,
+          -13.200000000000001,
+          31.2,
+          -6.799999999999999
+        ],
+        "marginMetres": 0,
+        "cellsBlocked": 0
+      },
+      {
+        "id": "authored-House_market-poler-0",
+        "node": "House_market-poler",
+        "type": "authored-solid",
+        "box": [
+          119.8,
+          39.8,
+          128.2,
+          46.2
+        ],
+        "marginMetres": 0,
+        "cellsBlocked": 0
+      },
+      {
+        "id": "authored-House_market-copyist-0",
+        "node": "House_market-copyist",
+        "type": "authored-solid",
+        "box": [
+          160.8,
+          39.8,
+          169.2,
+          46.2
+        ],
+        "marginMetres": 0,
+        "cellsBlocked": 0
+      },
+      {
+        "id": "authored-House_lily-copyists-0",
+        "node": "House_lily-copyists",
+        "type": "authored-solid",
+        "box": [
+          -16.2,
+          -96.2,
+          -7.8,
+          -89.8
+        ],
+        "marginMetres": 0,
+        "cellsBlocked": 0
+      },
+      {
+        "id": "authored-House_lineage-house-0",
+        "node": "House_lineage-house",
+        "type": "authored-solid",
+        "box": [
+          45.8,
+          -24.2,
+          54.2,
+          -17.8
+        ],
+        "marginMetres": 0,
+        "cellsBlocked": 0
+      }
     ],
     "binary": "collision.bin",
     "format": "EWCG-v2",
     "cellMetres": 0.5,
     "originMetres": [
-      -174.0,
-      174.0
+      -116.0,
+      116.0
     ],
-    "width": 1152,
-    "height": 1152,
+    "width": 768,
+    "height": 768,
     "heightEncoding": {
-      "origin": -1.5739,
-      "step": 0.227035,
+      "origin": -0.2974,
+      "step": 0.222029,
       "range": [
         1,
         255
@@ -2291,25 +1286,160 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 542590,
-    "walkableFraction": 0.4089,
+    "walkableCells": 304748,
+    "walkableFraction": 0.5167,
     "refinedHeights": {
       "levels": 255,
-      "step": 0.227035,
-      "origin": -1.5739,
-      "previousStep": 0.917113,
-      "cellsRestated": 540710,
-      "cellsFromGeometry": 540038,
-      "cellsKept": 695
+      "step": 0.222029,
+      "origin": -0.2974,
+      "previousStep": 0.220945,
+      "cellsRestated": 300203,
+      "cellsFromGeometry": 307084,
+      "cellsKept": 102
     },
     "openedWalkSurfaces": {
       "prefix": "Walk_",
-      "cellsCovered": 20739,
-      "cellsWidened": 1529,
-      "cellsOpened": 1857,
-      "cellsRaised": 7350,
-      "cellsDrowned": 75,
-      "cellsInsideLandmarks": 0
+      "cellsCovered": 21095,
+      "cellsWidened": 1609,
+      "cellsOpened": 926,
+      "cellsRaised": 13494,
+      "cellsDrowned": 66,
+      "cellsBuried": 100,
+      "cellsInsideLandmarks": 1152
+    },
+    "actorSurfaceGuard": {
+      "method": "rendered-tile-centre-v1",
+      "actorTileOffset": [
+        0.5,
+        0.5
+      ],
+      "heightToleranceMetres": 0.8,
+      "closedTiles": 841,
+      "unsupportedTiles": 9,
+      "submergedTiles": 181,
+      "heightMismatchTiles": 841,
+      "samples": [
+        {
+          "tile": [
+            214,
+            9
+          ],
+          "encodedY": 13.468,
+          "surfaceY": 12.666,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            215,
+            9
+          ],
+          "encodedY": 13.468,
+          "surfaceY": 12.668,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            267,
+            9
+          ],
+          "encodedY": 12.136,
+          "surfaceY": 11.291,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            297,
+            9
+          ],
+          "encodedY": 12.136,
+          "surfaceY": 11.328,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            164,
+            10
+          ],
+          "encodedY": 11.248,
+          "surfaceY": 10.4,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            189,
+            10
+          ],
+          "encodedY": 11.47,
+          "surfaceY": 10.658,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            192,
+            10
+          ],
+          "encodedY": 11.47,
+          "surfaceY": 10.654,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            193,
+            10
+          ],
+          "encodedY": 11.47,
+          "surfaceY": 10.634,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            195,
+            10
+          ],
+          "encodedY": 11.47,
+          "surfaceY": 10.644,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            212,
+            10
+          ],
+          "encodedY": 12.58,
+          "surfaceY": 11.777,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            213,
+            10
+          ],
+          "encodedY": 12.58,
+          "surfaceY": 11.745,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            217,
+            10
+          ],
+          "encodedY": 12.58,
+          "surfaceY": 11.774,
+          "unsupported": false,
+          "submerged": false
+        }
+      ]
     }
   },
   "navigation": {
@@ -2318,14 +1448,14 @@
         "id": "great_causeway__channel_main",
         "endpoints": [
           [
-            60.0,
-            2.0336363636363637,
-            -81.5
+            40.0,
+            2.1221428571428573,
+            -54.5
           ],
           [
-            60.0,
-            2.4063636363636367,
-            -122.5
+            40.0,
+            3.600714285714286,
+            -81.5
           ]
         ]
       },
@@ -2333,14 +1463,14 @@
         "id": "great_causeway__channel_south",
         "endpoints": [
           [
-            60.0,
-            2.0302272727272728,
-            102.5
+            40.0,
+            2.0613940164647637,
+            68.16666666666667
           ],
           [
-            60.0,
-            2.3097727272727275,
-            61.5
+            40.0,
+            2.446486312830512,
+            41.16666666666667
           ]
         ]
       },
@@ -2348,14 +1478,14 @@
         "id": "spur_stela__channel_main",
         "endpoints": [
           [
-            177.979027071356,
-            2.5676471243709242,
-            -115.83221657084806
+            118.6733571700022,
+            2.076163263765655,
+            -77.38685736001767
           ],
           [
-            183.06445118951356,
-            5.23666852384285,
-            -156.51560951610844
+            122.02229500391083,
+            2.72710201154744,
+            -104.17836003128667
           ]
         ]
       },
@@ -2363,14 +1493,14 @@
         "id": "street_courts__channel_main",
         "endpoints": [
           [
-            -0.8870183396172737,
-            2.02,
-            -86.76759174270987
+            -0.4248508030431277,
+            3.739086548431195,
+            -57.83749321832014
           ],
           [
-            40.07069180900502,
-            2.02,
-            -84.90587764504522
+            26.547299782634965,
+            2.949301986721353,
+            -56.61148637351659
           ]
         ]
       },
@@ -2378,14 +1508,14 @@
         "id": "street_far_e__channel_east",
         "endpoints": [
           [
-            249.0409532911933,
-            2.0200000000000005,
-            -54.59180934176134
+            166.19073230674397,
+            2.04,
+            -36.361853538651204
           ],
           [
-            289.244760994521,
-            2.02,
-            -46.5510478010958
+            192.66641055039887,
+            2.04,
+            -31.06671788992023
           ]
         ]
       },
@@ -2393,14 +1523,14 @@
         "id": "east_dock_0",
         "endpoints": [
           [
-            265.5,
-            1.4515909090909092,
-            -25.0
+            199.5,
+            2.5785163147792702,
+            -3.0
           ],
           [
-            284.5,
-            1.2184090909090908,
-            -25.0
+            216.5,
+            1.311771593090211,
+            -3.0
           ]
         ]
       },
@@ -2408,14 +1538,14 @@
         "id": "east_dock_1",
         "endpoints": [
           [
-            265.5,
-            1.4515909090909092,
-            -18.0
+            199.5,
+            2.015925455162345,
+            4.0
           ],
           [
-            284.5,
-            1.2184090909090908,
-            -18.0
+            216.5,
+            1.266156117986136,
+            4.0
           ]
         ]
       },
@@ -2423,14 +1553,14 @@
         "id": "east_dock_2",
         "endpoints": [
           [
-            265.5,
-            1.4515909090909092,
-            -11.0
+            199.5,
+            1.650611610263128,
+            11.0
           ],
           [
-            284.5,
-            1.2184090909090908,
-            -11.0
+            216.5,
+            1.2365360765078213,
+            11.0
           ]
         ]
       },
@@ -2438,14 +1568,14 @@
         "id": "west_dock_0",
         "endpoints": [
           [
-            -76.5,
-            1.4446875,
-            39.0
+            -53.5,
+            1.4644117647058823,
+            27.0
           ],
           [
-            -63.5,
-            1.2253125,
-            39.0
+            -39.5,
+            1.2255882352941176,
+            27.0
           ]
         ]
       },
@@ -2453,14 +1583,14 @@
         "id": "west_dock_1",
         "endpoints": [
           [
-            -76.5,
-            1.4446875,
-            44.0
+            -53.5,
+            1.4644117647058823,
+            33.0
           ],
           [
-            -63.5,
-            1.2253125,
-            44.0
+            -39.5,
+            1.2255882352941176,
+            33.0
           ]
         ]
       },
@@ -2468,14 +1598,14 @@
         "id": "west_dock_2",
         "endpoints": [
           [
-            -76.5,
-            1.4446875,
-            49.0
+            -53.5,
+            1.4644117647058823,
+            39.0
           ],
           [
-            -63.5,
-            1.2253125,
-            49.0
+            -39.5,
+            1.2255882352941176,
+            39.0
           ]
         ]
       },
@@ -2484,13 +1614,13 @@
         "endpoints": [
           [
             8.0,
-            1.4544230769230768,
-            121.5
+            1.601938775510204,
+            85.5
           ],
           [
             8.0,
-            1.215576923076923,
-            98.5
+            1.2309183673469388,
+            67.5
           ]
         ]
       },
@@ -2498,14 +1628,14 @@
         "id": "south_dock_1",
         "endpoints": [
           [
-            30.0,
-            1.4544230769230768,
-            121.5
+            28.0,
+            1.4692857142857143,
+            85.5
           ],
           [
-            30.0,
-            1.215576923076923,
-            98.5
+            28.0,
+            1.2207142857142856,
+            67.5
           ]
         ]
       },
@@ -2513,14 +1643,14 @@
         "id": "cistern_walk",
         "endpoints": [
           [
-            -39.5,
-            2.2435344827586206,
-            -60.0
+            -76.5,
+            2.15625,
+            -44.0
           ],
           [
-            -94.5,
-            2.0064655172413794,
-            -60.0
+            -77.5,
+            2.09375,
+            -44.0
           ]
         ]
       }
@@ -2570,9 +1700,9 @@
       "node": "Bridge_great_causeway__channel_main",
       "type": "bridge",
       "position": [
-        60.0,
-        2.22,
-        -102.0
+        40.0,
+        2.8614285714285717,
+        -68.0
       ]
     },
     {
@@ -2581,13 +1711,13 @@
       "node": "CisternShaft",
       "type": "entrance",
       "position": [
-        -102.0,
+        -85.0,
         2.0,
-        -60.0
+        -44.0
       ],
       "serverTile": [
-        72,
-        234
+        31,
+        160
       ],
       "surface": "MossStone",
       "note": "placeholder name - see modeling-assumptions.md"
@@ -2598,13 +1728,13 @@
       "node": "Waterfall_east",
       "type": "waterfall",
       "position": [
-        288.0,
+        192.0,
         20.0,
-        -298.0
+        -214.0
       ],
       "serverTile": [
-        462,
-        472
+        308,
+        330
       ],
       "surface": "Silt",
       "note": "placeholder name - see modeling-assumptions.md"
@@ -2615,13 +1745,13 @@
       "node": "Shrine_east_shrine",
       "type": "shrine",
       "position": [
-        300.0,
+        200.0,
         1.8,
-        -132.0
+        -88.0
       ],
       "serverTile": [
-        474,
-        306
+        316,
+        204
       ],
       "surface": "JadePaving",
       "note": "placeholder name - see modeling-assumptions.md"
@@ -2632,13 +1762,13 @@
       "node": "Temple_Ssarathi",
       "type": "monument",
       "position": [
-        60.0,
+        40.0,
         21.0,
-        -264.0
+        -182.0
       ],
       "serverTile": [
-        234,
-        438
+        156,
+        298
       ],
       "surface": "JadePaving",
       "note": "placeholder name - see modeling-assumptions.md"
@@ -2649,15 +1779,15 @@
       "node": "HatcheryDescent",
       "type": "entrance",
       "position": [
-        168.0,
-        2.25,
-        -116.4
+        112.0,
+        0.81,
+        -90.4
       ],
       "serverTile": [
-        342,
-        290
+        228,
+        206
       ],
-      "surface": "JadePaving",
+      "surface": "MossStone",
       "note": "placeholder name - see modeling-assumptions.md"
     },
     {
@@ -2666,13 +1796,13 @@
       "node": "CourtShrine_lily_court",
       "type": "structure",
       "position": [
-        -48.0,
-        2.05,
-        -118.08
+        -32.0,
+        2.75,
+        -88.08
       ],
       "serverTile": [
-        126,
-        292
+        84,
+        204
       ],
       "surface": "JadePaving",
       "note": "placeholder name - see modeling-assumptions.md"
@@ -2683,28 +1813,11 @@
       "node": "March_east_causeway_Stone",
       "type": "transition",
       "position": [
-        294.0,
-        1.8,
-        -137.3
+        198.0,
+        4.0,
+        -72.0
       ],
-      "note": "Where the Ssarathi Ruins gives way to the Verdant Stair: ssarathi road furniture, a march stone, a waystation, and 3 pieces of the country beyond."
-    },
-    {
-      "id": "march-east-causeway",
-      "name": "March East Causeway",
-      "node": "March_east_causeway_Stone",
-      "type": "structure",
-      "position": [
-        294.0,
-        1.75,
-        -137.3
-      ],
-      "serverTile": [
-        468,
-        311
-      ],
-      "surface": "JadePaving",
-      "note": "placeholder name - see modeling-assumptions.md"
+      "note": "Where the Ssarathi Ruins gives way to the Verdant Stair: ssarathi road furniture, a march stone, a waystation, and 16 pieces of the country beyond."
     },
     {
       "id": "march-north-stair",
@@ -2712,28 +1825,11 @@
       "node": "March_north_stair_Stone",
       "type": "transition",
       "position": [
-        126.7,
-        10.55,
-        -270.0
+        176.0,
+        4.151353629712995,
+        -196.0
       ],
-      "note": "Where the Ssarathi Ruins gives way to Four Gates: ssarathi road furniture, a march stone, a waystation, and 2 pieces of the country beyond."
-    },
-    {
-      "id": "march-north-stair",
-      "name": "March North Stair",
-      "node": "March_north_stair_Stone",
-      "type": "structure",
-      "position": [
-        126.7,
-        10.5,
-        -270.0
-      ],
-      "serverTile": [
-        301,
-        444
-      ],
-      "surface": "JadePaving",
-      "note": "placeholder name - see modeling-assumptions.md"
+      "note": "Where the Ssarathi Ruins gives way to Four Gates: ssarathi road furniture, a march stone, a waystation, and 10 pieces of the country beyond."
     },
     {
       "id": "march-south-gate",
@@ -2741,28 +1837,11 @@
       "node": "March_south_gate_Stone",
       "type": "transition",
       "position": [
-        2.7,
-        -1.01,
-        105.0
+        13.0,
+        1.2726942857142858,
+        90.0
       ],
-      "note": "Where the Ssarathi Ruins gives way to Crownwater: ssarathi road furniture, a march stone, a waystation, and 5 pieces of the country beyond."
-    },
-    {
-      "id": "march-south-gate",
-      "name": "March South Gate",
-      "node": "March_south_gate_Stone",
-      "type": "structure",
-      "position": [
-        2.7,
-        -1.06,
-        105.0
-      ],
-      "serverTile": [
-        177,
-        69
-      ],
-      "surface": "Silt",
-      "note": "placeholder name - see modeling-assumptions.md"
+      "note": "Where the Ssarathi Ruins gives way to Crownwater: ssarathi road furniture, a march stone, a waystation, and 1 pieces of the country beyond."
     },
     {
       "id": "march-west-causeway",
@@ -2770,28 +1849,11 @@
       "node": "March_west_causeway_Stone",
       "type": "transition",
       "position": [
-        -132.0,
-        1.8,
-        -156.7
+        -91.0,
+        3.65625,
+        -104.0
       ],
-      "note": "Where the Ssarathi Ruins gives way to the Manymouth Delta: ssarathi road furniture, a march stone, a waystation, and 16 pieces of the country beyond."
-    },
-    {
-      "id": "march-west-causeway",
-      "name": "March West Causeway",
-      "node": "March_west_causeway_Stone",
-      "type": "structure",
-      "position": [
-        -132.0,
-        1.75,
-        -156.7
-      ],
-      "serverTile": [
-        42,
-        331
-      ],
-      "surface": "JadePaving",
-      "note": "placeholder name - see modeling-assumptions.md"
+      "note": "Where the Ssarathi Ruins gives way to the Manymouth Delta: ssarathi road furniture, a march stone, a waystation, and 15 pieces of the country beyond."
     },
     {
       "id": "north-falls",
@@ -2799,13 +1861,13 @@
       "node": "Waterfall_north",
       "type": "waterfall",
       "position": [
-        -42.0,
-        26.0,
-        -382.0
+        -28.0,
+        44.18,
+        -270.0
       ],
       "serverTile": [
-        132,
-        556
+        88,
+        386
       ],
       "surface": "JungleFloor",
       "note": "placeholder name - see modeling-assumptions.md"
@@ -2816,15 +1878,15 @@
       "node": "CourtShrine_ritual_plaza",
       "type": "structure",
       "position": [
-        168.0,
+        112.0,
         2.25,
-        -112.56
+        -86.56
       ],
       "serverTile": [
-        342,
-        287
+        228,
+        203
       ],
-      "surface": "JadePaving",
+      "surface": "MossStone",
       "note": "placeholder name - see modeling-assumptions.md"
     },
     {
@@ -2833,15 +1895,15 @@
       "node": "RootArch",
       "type": "ruin",
       "position": [
-        234.0,
-        3.7,
-        66.0
+        156.0,
+        1.9,
+        44.0
       ],
       "serverTile": [
-        408,
-        108
+        272,
+        72
       ],
-      "surface": "JungleFloor",
+      "surface": "MossStone",
       "note": "placeholder name - see modeling-assumptions.md"
     },
     {
@@ -2850,15 +1912,15 @@
       "node": "SerpentGateColumn_-1",
       "type": "monument",
       "position": [
-        51.05,
-        1.95,
-        -18.0
+        31.05,
+        1.45,
+        -12.0
       ],
       "serverTile": [
-        225,
-        192
+        147,
+        128
       ],
-      "surface": "JadePaving",
+      "surface": "MossStone",
       "note": "placeholder name - see modeling-assumptions.md"
     },
     {
@@ -2867,13 +1929,13 @@
       "node": "Shrine_south_shrine",
       "type": "shrine",
       "position": [
-        -24.0,
+        -16.0,
         1.8,
-        138.0
+        92.0
       ],
       "serverTile": [
-        150,
-        36
+        100,
+        24
       ],
       "surface": "JadePaving",
       "note": "placeholder name - see modeling-assumptions.md"
@@ -2884,13 +1946,13 @@
       "node": "WaterGate",
       "type": "gate",
       "position": [
-        60.0,
-        2.1,
-        48.0
+        40.0,
+        2.18,
+        32.0
       ],
       "serverTile": [
-        234,
-        126
+        156,
+        84
       ],
       "surface": "JadePaving",
       "note": "placeholder name - see modeling-assumptions.md"
@@ -2901,27 +1963,10 @@
       "node": "March_east_causeway_Station",
       "type": "waystation",
       "position": [
-        278.0,
-        -1.24,
-        -143.5
+        192,
+        4.0,
+        -68
       ]
-    },
-    {
-      "id": "station-east-causeway",
-      "name": "Station East Causeway",
-      "node": "March_east_causeway_Station",
-      "type": "structure",
-      "position": [
-        278.0,
-        -1.32,
-        -143.5
-      ],
-      "serverTile": [
-        452,
-        318
-      ],
-      "surface": "Silt",
-      "note": "placeholder name - see modeling-assumptions.md"
     },
     {
       "id": "station-north-stair",
@@ -2929,27 +1974,10 @@
       "node": "March_north_stair_Station",
       "type": "waystation",
       "position": [
-        120.5,
-        12.96,
-        -254.0
+        186,
+        4.0,
+        -191
       ]
-    },
-    {
-      "id": "station-north-stair",
-      "name": "Station North Stair",
-      "node": "March_north_stair_Station",
-      "type": "structure",
-      "position": [
-        120.5,
-        12.88,
-        -254.0
-      ],
-      "serverTile": [
-        294,
-        428
-      ],
-      "surface": "JadePaving",
-      "note": "placeholder name - see modeling-assumptions.md"
     },
     {
       "id": "station-south-gate",
@@ -2958,26 +1986,9 @@
       "type": "waystation",
       "position": [
         8.0,
-        1.25,
-        132.0
+        1.28,
+        92.0
       ]
-    },
-    {
-      "id": "station-south-gate",
-      "name": "Station South Gate",
-      "node": "March_south_gate_Station",
-      "type": "structure",
-      "position": [
-        8.0,
-        1.17,
-        132.0
-      ],
-      "serverTile": [
-        182,
-        42
-      ],
-      "surface": "MossStone",
-      "note": "placeholder name - see modeling-assumptions.md"
     },
     {
       "id": "station-west-causeway",
@@ -2985,27 +1996,10 @@
       "node": "March_west_causeway_Station",
       "type": "waystation",
       "position": [
-        -116.0,
-        -0.13,
-        -150.5
+        -78,
+        1.8,
+        -96
       ]
-    },
-    {
-      "id": "station-west-causeway",
-      "name": "Station West Causeway",
-      "node": "March_west_causeway_Station",
-      "type": "structure",
-      "position": [
-        -116.0,
-        -0.21,
-        -150.5
-      ],
-      "serverTile": [
-        58,
-        324
-      ],
-      "surface": "MossStone",
-      "note": "placeholder name - see modeling-assumptions.md"
     },
     {
       "id": "sun-stela",
@@ -3013,13 +2007,13 @@
       "node": "SunStela",
       "type": "monument",
       "position": [
-        186.0,
-        13.3,
-        -198.0
+        140.0,
+        13.9,
+        -150.0
       ],
       "serverTile": [
-        360,
-        372
+        256,
+        266
       ],
       "surface": "JadePaving",
       "note": "placeholder name - see modeling-assumptions.md"
@@ -3030,13 +2024,13 @@
       "node": "Temple_VaultPortal",
       "type": "gate",
       "position": [
-        60.0,
+        64.0,
         13.0,
-        -208.5
+        -126.5
       ],
       "serverTile": [
-        234,
-        382
+        180,
+        242
       ],
       "surface": "JadePaving",
       "note": "placeholder name - see modeling-assumptions.md"
@@ -3047,15 +2041,15 @@
       "node": "UndercroftMouth",
       "type": "entrance",
       "position": [
-        220.0,
-        3.34,
-        78.0
+        142.0,
+        3.7,
+        56.0
       ],
       "serverTile": [
-        394,
-        96
+        258,
+        60
       ],
-      "surface": "JungleFloor",
+      "surface": "MossStone",
       "note": "placeholder name - see modeling-assumptions.md"
     },
     {
@@ -3064,13 +2058,13 @@
       "node": "Shrine_west_shrine",
       "type": "shrine",
       "position": [
-        -138.0,
+        -78.0,
         1.8,
-        -162.0
+        -108.0
       ],
       "serverTile": [
-        36,
-        336
+        38,
+        224
       ],
       "surface": "JadePaving",
       "note": "placeholder name - see modeling-assumptions.md"
@@ -3082,13 +2076,13 @@
       "name": "Sun Vault Door",
       "type": "door",
       "position": [
-        60.0,
+        64.0,
         13.4,
-        -208.5
+        -126.5
       ],
       "serverTile": [
-        234,
-        382
+        180,
+        242
       ],
       "authority": "server"
     },
@@ -3097,13 +2091,13 @@
       "name": "Temple Summit Altar",
       "type": "altar",
       "position": [
-        60.0,
+        40.0,
         55.4,
-        -264.0
+        -182.0
       ],
       "serverTile": [
-        234,
-        438
+        156,
+        298
       ],
       "authority": "server"
     },
@@ -3112,13 +2106,13 @@
       "name": "Sun Stela",
       "type": "glyph",
       "position": [
-        186.0,
-        13.7,
-        -198.0
+        140.0,
+        14.3,
+        -150.0
       ],
       "serverTile": [
-        360,
-        372
+        256,
+        266
       ],
       "authority": "server"
     },
@@ -3127,13 +2121,13 @@
       "name": "South Water Gate",
       "type": "gate",
       "position": [
-        60.0,
-        2.5,
-        48.0
+        40.0,
+        2.58,
+        32.0
       ],
       "serverTile": [
-        234,
-        126
+        156,
+        84
       ],
       "authority": "server"
     },
@@ -3142,13 +2136,13 @@
       "name": "Lily Court Basin",
       "type": "fountain",
       "position": [
-        -48.0,
-        -0.45,
-        -90.0
+        -32.0,
+        -0.3,
+        -60.0
       ],
       "serverTile": [
-        126,
-        264
+        84,
+        176
       ],
       "authority": "server"
     },
@@ -3157,13 +2151,13 @@
       "name": "Ritual Pool",
       "type": "fountain",
       "position": [
-        168.0,
+        112.0,
         -0.65,
-        -78.0
+        -52.0
       ],
       "serverTile": [
-        342,
-        252
+        228,
+        168
       ],
       "authority": "server"
     },
@@ -3172,13 +2166,13 @@
       "name": "Root-grown Arch",
       "type": "glyph",
       "position": [
-        234.0,
-        4.1,
-        66.0
+        156.0,
+        2.3,
+        44.0
       ],
       "serverTile": [
-        408,
-        108
+        272,
+        72
       ],
       "authority": "server"
     },
@@ -3187,13 +2181,13 @@
       "name": "Market Well",
       "type": "well",
       "position": [
-        198.0,
+        146.0,
         2.3,
-        12.0
+        20.0
       ],
       "serverTile": [
-        372,
-        162
+        262,
+        96
       ],
       "authority": "server"
     },
@@ -3208,14 +2202,14 @@
       "destinationMap": "ssarathi_ruins_secrets",
       "destinationSpawn": "ruins-moss-hollow",
       "position": [
-        244.0,
-        1.06,
-        125.0
+        166.0,
+        1.03,
+        85.0
       ],
       "authority": "server",
       "serverTile": [
-        418,
-        49
+        282,
+        31
       ]
     },
     {
@@ -3229,14 +2223,14 @@
       "destinationMap": "ssarathi_ruins_secrets",
       "destinationSpawn": "ruins-lily-garden",
       "position": [
-        -36.5,
+        -43.0,
         2.05,
-        -112.68
+        -96.0
       ],
       "authority": "server",
       "serverTile": [
-        138,
-        287
+        75,
+        212
       ]
     },
     {
@@ -3250,14 +2244,14 @@
       "destinationMap": "ssarathi_ruins_secrets",
       "destinationSpawn": "ruins-gate-cache",
       "position": [
-        97.05,
-        0.68,
-        -10.0
+        27.0,
+        1.95,
+        -21.0
       ],
       "authority": "server",
       "serverTile": [
-        271,
-        184
+        145,
+        137
       ]
     },
     {
@@ -3271,14 +2265,14 @@
       "destinationMap": "ssarathi_ruins_secrets",
       "destinationSpawn": "ruins-hatchery-pit",
       "position": [
-        178.0,
-        2.25,
-        -108.4
+        120.5,
+        2.02,
+        -85.0
       ],
       "authority": "server",
       "serverTile": [
-        352,
-        282
+        236,
+        201
       ]
     },
     {
@@ -3292,14 +2286,14 @@
       "destinationMap": "ssarathi_ruins_secrets",
       "destinationSpawn": "ruins-plaza-school",
       "position": [
-        183.2,
-        2.25,
-        -107.56
+        119.0,
+        1.58,
+        -73.36
       ],
       "authority": "server",
       "serverTile": [
-        357,
-        282
+        235,
+        189
       ]
     },
     {
@@ -3313,14 +2307,14 @@
       "destinationMap": "ssarathi_ruins_secrets",
       "destinationSpawn": "ruins-falls-spring",
       "position": [
-        278.0,
-        1.32,
-        -320.0
+        184.0,
+        4.0,
+        -199.0
       ],
       "authority": "server",
       "serverTile": [
-        452,
-        494
+        302,
+        315
       ]
     },
     {
@@ -3334,14 +2328,14 @@
       "destinationMap": "ssarathi_ruins_secrets",
       "destinationSpawn": "ruins-shrine-butts",
       "position": [
-        -128.0,
-        2.02,
-        -145.0
+        -65.0,
+        1.8,
+        -118.0
       ],
       "authority": "server",
       "serverTile": [
-        46,
-        319
+        53,
+        234
       ]
     },
     {
@@ -3355,14 +2349,14 @@
       "destinationMap": "ssarathi_ruins_secrets",
       "destinationSpawn": "ruins-stela-reliquary",
       "position": [
-        196.0,
-        13.9,
-        -190.0
+        153.0,
+        10.5,
+        -142.0
       ],
       "authority": "server",
       "serverTile": [
-        370,
-        364
+        269,
+        258
       ]
     },
     {
@@ -3376,14 +2370,14 @@
       "destinationMap": "ssarathi_ruins_secrets",
       "destinationSpawn": "ruins-cistern-well",
       "position": [
-        -138.77,
-        4.25,
-        -25.0
+        -77.0,
+        2.25,
+        -55.0
       ],
       "authority": "server",
       "serverTile": [
-        35,
-        199
+        41,
+        171
       ]
     },
     {
@@ -3397,14 +2391,14 @@
       "destinationMap": "ssarathi_ruins_secrets",
       "destinationSpawn": "ruins-temple-focus",
       "position": [
-        44.0,
+        25.0,
         13.0,
-        -198.5
+        -122.0
       ],
       "authority": "server",
       "serverTile": [
-        218,
-        372
+        143,
+        238
       ]
     },
     {
@@ -3418,14 +2412,14 @@
       "destinationMap": "ssarathi_ruins_secrets",
       "destinationSpawn": "ruins-rootrun",
       "position": [
-        209.0,
-        1.04,
-        122.37
+        152.0,
+        1.23,
+        88.0
       ],
       "authority": "server",
       "serverTile": [
-        383,
-        52
+        268,
+        28
       ]
     },
     {
@@ -3439,14 +2433,14 @@
       "destinationMap": "ssarathi_ruins_secrets",
       "destinationSpawn": "ruins-waystone",
       "position": [
-        76.0,
+        51.5,
         1.8,
-        -83.61
+        -57.4
       ],
       "authority": "server",
       "serverTile": [
-        250,
-        258
+        168,
+        173
       ]
     },
     {
@@ -3460,14 +2454,14 @@
       "destinationMap": "ssarathi_ruins_secrets",
       "destinationSpawn": "ruins-shrine-eyrie",
       "position": [
-        333.38,
-        2.9,
-        -110.5
+        192.0,
+        4.0,
+        -80.0
       ],
       "authority": "server",
       "serverTile": [
-        507,
-        284
+        310,
+        196
       ]
     },
     {
@@ -3481,14 +2475,14 @@
       "destinationMap": "verdant_stair_secrets",
       "destinationSpawn": "stair-culvert-far",
       "position": [
-        -29.0,
-        8.72,
-        -368.8
+        -9.0,
+        6.0,
+        -246.41
       ],
       "authority": "server",
       "serverTile": [
-        145,
-        543
+        107,
+        362
       ]
     }
   ],
@@ -3498,13 +2492,13 @@
       "name": "Warden of the Water Gate",
       "type": "npc",
       "position": [
-        66.89,
-        2.1,
-        49.26
+        46.89,
+        2.2,
+        33.26
       ],
       "serverTile": [
-        241,
-        125
+        163,
+        83
       ],
       "authority": "server"
     },
@@ -3513,13 +2507,13 @@
       "name": "Causeway Guide",
       "type": "npc",
       "position": [
-        60.7,
-        1.8,
-        -65.96
+        40.7,
+        1.79,
+        -45.96
       ],
       "serverTile": [
-        235,
-        240
+        157,
+        162
       ],
       "authority": "server"
     },
@@ -3528,13 +2522,13 @@
       "name": "Keeper of the Sun Vault",
       "type": "npc",
       "position": [
-        64.27,
+        68.27,
         13.0,
-        -205.89
+        -123.89
       ],
       "serverTile": [
-        238,
-        380
+        184,
+        240
       ],
       "authority": "server"
     },
@@ -3543,13 +2537,13 @@
       "name": "Temple Hierophant",
       "type": "npc",
       "position": [
-        65.68,
-        2.2,
-        -142.09
+        45.68,
+        11.49,
+        -102.09
       ],
       "serverTile": [
-        240,
-        316
+        162,
+        218
       ],
       "authority": "server"
     },
@@ -3558,13 +2552,13 @@
       "name": "Stela Reader",
       "type": "npc",
       "position": [
-        185.48,
-        7.97,
-        -193.03
+        139.48,
+        13.6,
+        -145.03
       ],
       "serverTile": [
-        359,
-        367
+        255,
+        261
       ],
       "authority": "server"
     },
@@ -3573,13 +2567,13 @@
       "name": "Basin Trader",
       "type": "npc",
       "position": [
-        201.0,
+        149.0,
         1.9,
-        19.41
+        27.41
       ],
       "serverTile": [
-        375,
-        155
+        265,
+        89
       ],
       "authority": "server"
     },
@@ -3588,13 +2582,13 @@
       "name": "Punt Poler",
       "type": "npc",
       "position": [
-        257.0,
-        1.25,
-        -17.79
+        195.0,
+        1.66,
+        8.21
       ],
       "serverTile": [
-        431,
-        192
+        311,
+        108
       ],
       "authority": "server"
     },
@@ -3603,13 +2597,13 @@
       "name": "West Landing Poler",
       "type": "npc",
       "position": [
-        -85.02,
+        -55.02,
         1.25,
-        41.6
+        27.6
       ],
       "serverTile": [
-        89,
-        132
+        61,
+        88
       ],
       "authority": "server"
     },
@@ -3618,13 +2612,13 @@
       "name": "Lily Court Tender",
       "type": "npc",
       "position": [
-        -45.25,
-        -0.85,
-        -96.44
+        -29.25,
+        -0.86,
+        -66.44
       ],
       "serverTile": [
-        129,
-        270
+        87,
+        182
       ],
       "authority": "server"
     },
@@ -3633,13 +2627,13 @@
       "name": "Ritual Pool Adept",
       "type": "npc",
       "position": [
-        167.9,
+        111.9,
         -1.05,
-        -86.0
+        -60.0
       ],
       "serverTile": [
-        342,
-        260
+        228,
+        176
       ],
       "authority": "server"
     },
@@ -3648,13 +2642,13 @@
       "name": "Drowned Quarter Scavenger",
       "type": "npc",
       "position": [
-        -94.24,
+        -60.24,
         -0.7,
-        -50.84
+        -30.84
       ],
       "serverTile": [
-        80,
-        225
+        56,
+        147
       ],
       "authority": "server"
     },
@@ -3663,13 +2657,13 @@
       "name": "Hermit of the Root Arch",
       "type": "npc",
       "position": [
-        240.0,
-        3.7,
-        65.78
+        162.0,
+        1.9,
+        43.78
       ],
       "serverTile": [
-        414,
-        108
+        278,
+        72
       ],
       "authority": "server"
     },
@@ -3683,8 +2677,8 @@
         -4.92
       ],
       "serverTile": [
-        175,
-        179
+        117,
+        121
       ],
       "authority": "server"
     }
@@ -3694,13 +2688,13 @@
       "id": "ssarathi-harvest-0",
       "resource": "lotus-root",
       "position": [
-        -91.37,
+        -57.37,
         -0.7,
-        -47.66
+        -27.66
       ],
       "serverTile": [
-        83,
-        222
+        59,
+        144
       ],
       "authority": "server"
     },
@@ -3708,13 +2702,13 @@
       "id": "ssarathi-harvest-1",
       "resource": "reed",
       "position": [
-        -61.83,
+        -45.83,
         -0.7,
-        -63.06
+        -33.06
       ],
       "serverTile": [
-        112,
-        237
+        70,
+        149
       ],
       "authority": "server"
     },
@@ -3722,13 +2716,13 @@
       "id": "ssarathi-harvest-2",
       "resource": "jade-shard",
       "position": [
-        143.39,
+        87.39,
         -1.05,
-        -72.48
+        -46.48
       ],
       "serverTile": [
-        317,
-        246
+        203,
+        162
       ],
       "authority": "server"
     },
@@ -3736,13 +2730,13 @@
       "id": "ssarathi-harvest-3",
       "resource": "orchid",
       "position": [
-        179.07,
-        1.9,
-        -3.94
+        127.07,
+        1.93,
+        4.06
       ],
       "serverTile": [
-        353,
-        178
+        243,
+        112
       ],
       "authority": "server"
     },
@@ -3750,13 +2744,13 @@
       "id": "ssarathi-harvest-4",
       "resource": "lotus-root",
       "position": [
-        248.74,
-        1.25,
-        -12.04
+        186.74,
+        1.66,
+        13.96
       ],
       "serverTile": [
-        423,
-        186
+        303,
+        102
       ],
       "authority": "server"
     },
@@ -3764,13 +2758,13 @@
       "id": "ssarathi-harvest-5",
       "resource": "reed",
       "position": [
-        -101.73,
-        1.01,
-        56.5
+        -71.73,
+        -0.62,
+        42.5
       ],
       "serverTile": [
-        72,
-        117
+        44,
+        73
       ],
       "authority": "server"
     },
@@ -3778,13 +2772,13 @@
       "id": "ssarathi-harvest-6",
       "resource": "jade-shard",
       "position": [
-        243.13,
-        2.92,
-        44.67
+        165.13,
+        1.9,
+        22.67
       ],
       "serverTile": [
-        417,
-        129
+        281,
+        93
       ],
       "authority": "server"
     },
@@ -3792,13 +2786,13 @@
       "id": "ssarathi-harvest-7",
       "resource": "orchid",
       "position": [
-        -132.53,
+        -72.53,
         1.8,
-        -158.69
+        -104.69
       ],
       "serverTile": [
-        41,
-        333
+        43,
+        221
       ],
       "authority": "server"
     },
@@ -3806,13 +2800,13 @@
       "id": "ssarathi-harvest-8",
       "resource": "lotus-root",
       "position": [
-        285.61,
+        185.61,
         1.8,
-        -130.22
+        -86.22
       ],
       "serverTile": [
-        460,
-        304
+        302,
+        202
       ],
       "authority": "server"
     },
@@ -3820,13 +2814,13 @@
       "id": "ssarathi-harvest-9",
       "resource": "reed",
       "position": [
-        145.61,
-        4.52,
-        -283.79
+        141.61,
+        2.1,
+        -197.79
       ],
       "serverTile": [
-        320,
-        458
+        258,
+        314
       ],
       "authority": "server"
     },
@@ -3834,13 +2828,13 @@
       "id": "ssarathi-harvest-10",
       "resource": "jade-shard",
       "position": [
-        -126.08,
+        -92.08,
         -0.7,
-        -60.29
+        -40.29
       ],
       "serverTile": [
-        48,
-        234
+        24,
+        156
       ],
       "authority": "server"
     },
@@ -3848,13 +2842,13 @@
       "id": "ssarathi-harvest-11",
       "resource": "orchid",
       "position": [
-        -72.52,
-        -0.88,
-        -93.05
+        -56.52,
+        -0.7,
+        -63.05
       ],
       "serverTile": [
-        101,
-        267
+        59,
+        179
       ],
       "authority": "server"
     },
@@ -3862,13 +2856,13 @@
       "id": "ssarathi-harvest-12",
       "resource": "lotus-root",
       "position": [
-        142.03,
-        2.23,
-        -94.23
+        86.03,
+        2.25,
+        -68.23
       ],
       "serverTile": [
-        316,
-        268
+        202,
+        184
       ],
       "authority": "server"
     },
@@ -3876,13 +2870,13 @@
       "id": "ssarathi-harvest-13",
       "resource": "reed",
       "position": [
-        229.95,
-        -1.17,
-        23.24
+        177.95,
+        1.91,
+        31.24
       ],
       "serverTile": [
-        404,
-        151
+        294,
+        85
       ],
       "authority": "server"
     },
@@ -3890,13 +2884,13 @@
       "id": "ssarathi-harvest-14",
       "resource": "jade-shard",
       "position": [
-        270.94,
-        -1.61,
-        -3.85
+        208.94,
+        4.3,
+        22.15
       ],
       "serverTile": [
-        445,
-        178
+        325,
+        94
       ],
       "authority": "server"
     },
@@ -3904,13 +2898,13 @@
       "id": "ssarathi-harvest-15",
       "resource": "orchid",
       "position": [
-        -88.7,
-        1.45,
-        50.62
+        -58.7,
+        1.24,
+        36.62
       ],
       "serverTile": [
-        85,
-        123
+        57,
+        79
       ],
       "authority": "server"
     },
@@ -3918,13 +2912,13 @@
       "id": "ssarathi-harvest-16",
       "resource": "lotus-root",
       "position": [
-        244.39,
-        3.05,
-        46.74
+        166.39,
+        1.9,
+        24.74
       ],
       "serverTile": [
-        418,
-        127
+        282,
+        91
       ],
       "authority": "server"
     },
@@ -3932,13 +2926,13 @@
       "id": "ssarathi-harvest-17",
       "resource": "reed",
       "position": [
-        -126.31,
-        4.51,
-        -177.15
+        -66.31,
+        1.06,
+        -123.15
       ],
       "serverTile": [
-        48,
-        351
+        50,
+        239
       ],
       "authority": "server"
     },
@@ -3946,13 +2940,27 @@
       "id": "ssarathi-harvest-18",
       "resource": "jade-shard",
       "position": [
-        292.3,
-        -0.67,
-        -116.85
+        192.3,
+        4.0,
+        -72.85
       ],
       "serverTile": [
-        466,
-        291
+        308,
+        189
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "ssarathi-harvest-19",
+      "resource": "orchid",
+      "position": [
+        115.74,
+        6.0,
+        -165.08
+      ],
+      "serverTile": [
+        232,
+        281
       ],
       "authority": "server"
     },
@@ -3960,13 +2968,13 @@
       "id": "ssarathi-harvest-20",
       "resource": "lotus-root",
       "position": [
-        -121.38,
+        -87.38,
         -0.7,
-        -37.66
+        -17.66
       ],
       "serverTile": [
-        53,
-        212
+        29,
+        134
       ],
       "authority": "server"
     },
@@ -3974,13 +2982,13 @@
       "id": "ssarathi-harvest-21",
       "resource": "reed",
       "position": [
-        -72.86,
-        -0.88,
-        -93.76
+        -56.86,
+        -0.7,
+        -63.76
       ],
       "serverTile": [
-        101,
-        268
+        59,
+        180
       ],
       "authority": "server"
     },
@@ -3988,13 +2996,13 @@
       "id": "ssarathi-harvest-22",
       "resource": "jade-shard",
       "position": [
-        178.57,
+        122.57,
         -1.05,
-        -79.49
+        -53.49
       ],
       "serverTile": [
-        353,
-        253
+        239,
+        169
       ],
       "authority": "server"
     },
@@ -4002,13 +3010,13 @@
       "id": "ssarathi-harvest-23",
       "resource": "orchid",
       "position": [
-        200.31,
-        0.4,
-        39.22
+        148.31,
+        3.7,
+        47.22
       ],
       "serverTile": [
-        374,
-        135
+        264,
+        69
       ],
       "authority": "server"
     },
@@ -4016,13 +3024,13 @@
       "id": "ssarathi-harvest-24",
       "resource": "lotus-root",
       "position": [
-        258.29,
-        1.25,
-        -9.55
+        196.29,
+        1.89,
+        16.45
       ],
       "serverTile": [
-        432,
-        184
+        312,
+        100
       ],
       "authority": "server"
     },
@@ -4030,13 +3038,13 @@
       "id": "ssarathi-harvest-25",
       "resource": "reed",
       "position": [
-        -103.29,
-        1.4,
-        55.78
+        -73.29,
+        -0.58,
+        41.78
       ],
       "serverTile": [
-        71,
-        118
+        43,
+        74
       ],
       "authority": "server"
     },
@@ -4044,13 +3052,13 @@
       "id": "ssarathi-harvest-26",
       "resource": "jade-shard",
       "position": [
-        241.47,
-        3.7,
-        69.88
+        163.47,
+        1.9,
+        47.88
       ],
       "serverTile": [
-        415,
-        104
+        279,
+        68
       ],
       "authority": "server"
     },
@@ -4058,13 +3066,13 @@
       "id": "ssarathi-harvest-27",
       "resource": "orchid",
       "position": [
-        -139.11,
-        5.0,
-        -193.78
+        -79.11,
+        -0.59,
+        -139.78
       ],
       "serverTile": [
-        35,
-        368
+        37,
+        256
       ],
       "authority": "server"
     },
@@ -4072,13 +3080,13 @@
       "id": "ssarathi-harvest-28",
       "resource": "lotus-root",
       "position": [
-        295.33,
-        1.8,
-        -121.45
+        195.33,
+        3.83,
+        -77.45
       ],
       "serverTile": [
-        469,
-        295
+        311,
+        193
       ],
       "authority": "server"
     },
@@ -4086,13 +3094,13 @@
       "id": "ssarathi-harvest-29",
       "resource": "reed",
       "position": [
-        159.82,
-        0.15,
-        -288.29
+        155.82,
+        -1.93,
+        -202.29
       ],
       "serverTile": [
-        334,
-        462
+        272,
+        318
       ],
       "authority": "server"
     },
@@ -4100,13 +3108,13 @@
       "id": "ssarathi-harvest-30",
       "resource": "jade-shard",
       "position": [
-        -73.03,
+        -39.03,
         -0.7,
-        -69.66
+        -49.66
       ],
       "serverTile": [
-        101,
-        244
+        77,
+        166
       ],
       "authority": "server"
     },
@@ -4114,13 +3122,13 @@
       "id": "ssarathi-harvest-31",
       "resource": "orchid",
       "position": [
-        -74.75,
-        -0.88,
-        -89.95
+        -58.75,
+        -0.7,
+        -59.95
       ],
       "serverTile": [
-        99,
-        264
+        57,
+        176
       ],
       "authority": "server"
     },
@@ -4128,13 +3136,13 @@
       "id": "ssarathi-harvest-32",
       "resource": "lotus-root",
       "position": [
-        176.42,
+        120.42,
         -1.05,
-        -68.79
+        -42.79
       ],
       "serverTile": [
-        350,
-        243
+        236,
+        159
       ],
       "authority": "server"
     },
@@ -4142,18 +3150,33 @@
       "id": "ssarathi-harvest-33",
       "resource": "reed",
       "position": [
-        214.29,
+        162.29,
         1.9,
-        16.89
+        24.89
       ],
       "serverTile": [
-        388,
-        157
+        278,
+        91
       ],
       "authority": "server"
     }
   ],
   "contentLayout": {
+    "primaryArrivalOnly": true,
+    "requireFullWildlife": true,
+    "roadClearance": 3.0,
+    "gauntlets": {
+      "ssarathi_gauntlet": {
+        "keeperTile": [
+          170,
+          82
+        ],
+        "returnTile": [
+          174,
+          78
+        ]
+      }
+    },
     "services": [
       {
         "role": "information",
@@ -4188,7 +3211,6 @@
         ]
       }
     ],
-    "roadClearance": 3.0,
     "npcs": {
       "Archivist Sesh": [
         -8,
@@ -4201,268 +3223,468 @@
         -7
       ],
       "Sun-Vault Warden Hass-Ile": [
-        49,
+        73,
         13,
-        -199
+        -120
       ],
       "Lineage Reader Ssiran-Ta": [
-        69,
-        2,
-        -22
+        56,
+        1.95,
+        -14
       ],
       "Hatchery Keeper Nuu-Sesh": [
-        176,
-        2,
-        -116
+        120,
+        2.25,
+        -91
       ],
       "Cistern Sounder Vek-Ora": [
-        -98,
-        2,
-        -63
+        -74,
+        2.25,
+        -50
       ],
       "Stela Copyist Ilhu-Ren": [
-        194,
-        14,
-        -198
+        149,
+        13.9,
+        -147
       ],
       "Water-Gate Marshal Set-Kaal": [
         8,
         1.25,
-        132
+        92
       ],
       "Lily Court Steward Aa-Nesh": [
-        -34,
-        2,
-        -58
+        -21,
+        2.05,
+        -90
       ],
       "Marchstone Priest Osu-Val": [
-        294,
+        194,
         1.8,
-        -125
+        -82
       ],
       "Undercroft Digger Rell Marrow": [
-        215,
-        3,
-        78
+        137,
+        3.7,
+        56
       ],
       "Falls Measurer Ith-Anu": [
-        280,
+        187,
         4,
-        -317
+        -196
       ],
       "Coil Bridge Toll-Taker Ude-Sar": [
-        70,
+        50,
         1.8,
-        -75
+        -49
       ],
       "Ssethis the Doorkeeper": [
-        73,
-        2,
-        49
+        54,
+        2.1,
+        34
       ]
     },
     "wildlife": {
       "canopy_glider": [
         [
-          221,
-          69,
-          28
+          152,
+          48,
+          22
         ],
         [
-          307,
-          -119,
-          26
+          226,
+          -95,
+          24
         ]
       ],
       "swamp_heron": [
         [
-          -45,
-          -60,
-          22
+          -40,
+          -22,
+          19
         ],
         [
-          181,
-          -39,
-          24
+          102,
+          -21,
+          22
         ]
       ],
       "delta_mud_crab": [
         [
-          -62,
-          40,
-          24
+          -48,
+          29,
+          20
         ],
         [
-          240,
-          -12,
-          24
+          180,
+          5,
+          20
         ]
       ],
       "scalevine_stalker": [
         [
-          231,
-          68,
-          26
+          166,
+          54,
+          23
         ],
         [
-          -129,
-          -160,
-          26
+          -88,
+          -137,
+          23
         ]
       ],
       "saltmarsh_crocodile": [
         [
-          281,
-          -61,
-          24
+          210,
+          -43,
+          21
         ],
         [
-          -102,
-          -91,
-          28
+          -83,
+          -76,
+          22
         ]
       ],
       "sunscale_basilisk": [
         [
-          187,
-          -189,
-          26
+          138,
+          -150,
+          24
         ],
         [
-          124,
-          -268,
-          26
+          110,
+          -204,
+          24
         ]
       ],
       "rune_stone_golem": [
         [
-          -66,
-          -220,
-          28
+          -37,
+          -164,
+          25
         ],
         [
-          135,
-          -279,
-          28
+          115,
+          -209,
+          25
         ]
       ],
       "void_tentacle_construct": [
         [
-          -113,
-          -173,
-          27
+          -84,
+          -126,
+          25
         ],
         [
-          97,
-          -273,
-          28
+          96,
+          -212,
+          26
         ]
       ],
       "gloom_wyvern": [
         [
-          -9,
-          -259,
-          50
+          -11,
+          -217,
+          34
         ],
         [
-          -131,
-          -293,
-          35
+          -88,
+          -208,
+          29
         ],
         [
-          101,
-          -257,
-          37
+          98,
+          -218,
+          30
         ]
       ],
       "emerald_canopy_dragon": [
         [
-          -7,
-          -257,
-          45
+          -8,
+          -208,
+          36
         ],
         [
-          112,
-          -278,
-          40
+          111,
+          -225,
+          30
         ],
         [
-          360,
-          -91,
-          38
+          240,
+          -128,
+          31
         ]
       ]
     },
     "harvest": {
       "Lichen": [
         [
-          -45,
-          -62,
-          22
+          -44,
+          -28,
+          19
         ],
         [
-          183,
-          -42,
-          23
+          114,
+          -22,
+          20
         ]
       ],
       "Lotus": [
         [
-          172,
-          -49,
-          20
+          112,
+          -32,
+          18
         ]
       ],
       "Watercress": [
         [
-          -39,
-          -62,
-          22
+          -40,
+          -26,
+          19
         ]
       ],
       "Venom Bulb": [
         [
-          223,
-          74,
-          24
+          148,
+          58,
+          22
         ]
       ],
       "Toadstool": [
         [
-          307,
-          -132,
-          25
+          215,
+          -100,
+          22
         ]
       ],
       "Geode": [
         [
-          189,
-          -197,
-          24
+          140,
+          -148,
+          22
         ]
       ],
       "Flint": [
         [
-          -105,
-          -158,
-          22
+          -80,
+          -108,
+          20
         ]
       ]
     }
   },
+  "streamingBorders": [
+    {
+      "id": "verdant-ssarathi",
+      "portal": "east-causeway",
+      "destination": "verdant_stair",
+      "anchor": [
+        264.5,
+        4,
+        -88.5
+      ],
+      "outward": [
+        1,
+        0
+      ],
+      "uvSign": -1,
+      "palette": "causeway",
+      "preloadDistance": 170,
+      "retainDistance": 220,
+      "blendDistance": 65,
+      "collarDepth": 42,
+      "halfWidthTiles": 3,
+      "viewHalfWidth": 40.0,
+      "viewDepth": 145.0,
+      "previewPrefix": "StreamView_verdant-ssarathi__",
+      "overflowSuffix": "_StreamOverflow_verdant-ssarathi",
+      "geometryMode": "shared-cells-v2",
+      "sceneNodes": [
+        "Terrain_Rock_StreamCell_verdant-ssarathi",
+        "Terrain_Silt_StreamCell_verdant-ssarathi",
+        "Terrain_JadePaving_StreamCell_verdant-ssarathi",
+        "Terrain_JungleFloor_StreamCell_verdant-ssarathi",
+        "Terrain_MossStone_StreamCell_verdant-ssarathi",
+        "Walk_StreamCauseway_verdant-ssarathi_StreamCell_verdant-ssarathi",
+        "Structure_StreamCauseway_verdant-ssarathi_pale_ashlar_StreamCell_verdant-ssarathi",
+        "Structure_StreamCauseway_verdant-ssarathi_rubble_stone_StreamCell_verdant-ssarathi",
+        "Water_Basin_StreamCell_verdant-ssarathi",
+        "Water_EastInlet_StreamCell_verdant-ssarathi",
+        "Water_StreamCauseway_verdant-ssarathi_StreamCell_verdant-ssarathi",
+        "Bridge_spur_stela__channel_main",
+        "Colonnade_ritual_plaza",
+        "Lilies_ritual_plaza_3",
+        "Lilies_ritual_plaza_7",
+        "Shrine_east_shrine",
+        "Tree_605",
+        "Tree_606",
+        "Tree_607",
+        "Tree_613",
+        "Tree_614",
+        "Tree_649",
+        "Tree_650",
+        "Tree_651",
+        "Tree_652",
+        "Tree_658",
+        "Tree_659",
+        "Tree_660",
+        "Tree_696",
+        "Tree_697",
+        "Tree_698",
+        "Tree_699",
+        "Tree_702",
+        "Tree_703",
+        "Tree_704",
+        "Tree_705",
+        "Tree_742",
+        "Tree_751",
+        "Tree_787",
+        "Tree_788",
+        "Tree_799",
+        "Undergrowth_99",
+        "Undergrowth_115",
+        "LilyRaft_13",
+        "LilyRaft_21",
+        "LilyRaft_25",
+        "Rubble_spur_stela_69",
+        "March_east_causeway_Furniture_00",
+        "March_east_causeway_Stone",
+        "March_east_causeway_Signpost",
+        "March_east_causeway_Station",
+        "March_east_causeway_treefern_000",
+        "March_east_causeway_treefern_001",
+        "March_east_causeway_treefern_003",
+        "March_east_causeway_treefern_005",
+        "March_east_causeway_frond_006",
+        "March_east_causeway_frond_007",
+        "March_east_causeway_frond_008",
+        "March_east_causeway_frond_009",
+        "March_east_causeway_frond_010",
+        "March_east_causeway_frond_011",
+        "March_east_causeway_frond_012",
+        "March_east_causeway_frond_013",
+        "March_east_causeway_frond_014",
+        "March_east_causeway_frond_015",
+        "Terrain_Silt_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
+        "Terrain_JadePaving_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
+        "Terrain_JungleFloor_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
+        "Terrain_MossStone_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
+        "Water_Basin_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi"
+      ],
+      "profile": "causeway",
+      "waterBelowDeck": 4.0,
+      "deckWidth": 7.0
+    },
+    {
+      "id": "four-gates-ssarathi",
+      "portal": "north-stair",
+      "destination": "four_gates",
+      "anchor": [
+        154.5,
+        4,
+        -264.5
+      ],
+      "outward": [
+        0,
+        -1
+      ],
+      "uvSign": -1,
+      "palette": "causeway",
+      "preloadDistance": 170,
+      "retainDistance": 220,
+      "blendDistance": 65,
+      "collarDepth": 42,
+      "halfWidthTiles": 3,
+      "viewHalfWidth": 40.0,
+      "viewDepth": 145.0,
+      "previewPrefix": "StreamView_four-gates-ssarathi__",
+      "overflowSuffix": "_StreamOverflow_four-gates-ssarathi",
+      "geometryMode": "shared-cells-v2",
+      "sceneNodes": [
+        "Terrain_Rock_StreamCell_four-gates-ssarathi",
+        "Terrain_Silt_StreamCell_four-gates-ssarathi",
+        "Terrain_JadePaving_StreamCell_four-gates-ssarathi",
+        "Terrain_JungleFloor_StreamCell_four-gates-ssarathi",
+        "Terrain_MossStone_StreamCell_four-gates-ssarathi",
+        "Walk_StreamCauseway_four-gates-ssarathi_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_four-gates-ssarathi_pale_ashlar_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_four-gates-ssarathi_rubble_stone_StreamCell_four-gates-ssarathi",
+        "Terrain_Silt_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
+        "Terrain_JadePaving_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
+        "Terrain_JungleFloor_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
+        "Terrain_MossStone_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
+        "Water_Basin_StreamCell_four-gates-ssarathi",
+        "Water_NorthInlet_StreamCell_four-gates-ssarathi",
+        "Water_StreamCauseway_four-gates-ssarathi_StreamCell_four-gates-ssarathi",
+        "Water_Basin_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
+        "Waterfall_east",
+        "SunStela",
+        "Tree_407",
+        "Tree_408",
+        "Tree_420",
+        "Tree_421",
+        "Tree_431",
+        "Tree_432",
+        "Tree_440",
+        "Tree_441",
+        "Tree_442",
+        "Tree_443",
+        "Tree_452",
+        "Tree_485",
+        "Tree_496",
+        "Tree_497",
+        "Tree_498",
+        "Tree_507",
+        "Tree_508",
+        "Tree_509",
+        "Tree_510",
+        "Tree_511",
+        "Tree_512",
+        "Tree_521",
+        "Tree_522",
+        "Tree_523",
+        "Tree_524",
+        "Tree_525",
+        "Tree_526",
+        "Tree_537",
+        "Tree_539",
+        "Tree_541",
+        "Undergrowth_62",
+        "LilyRaft_19",
+        "LilyRaft_20",
+        "Rubble_spur_stela_69",
+        "March_north_stair_Stone",
+        "March_north_stair_Signpost",
+        "March_north_stair_Station",
+        "March_north_stair_reeds_000",
+        "March_north_stair_reeds_001",
+        "March_north_stair_reeds_002",
+        "March_north_stair_reeds_003",
+        "March_north_stair_reeds_004",
+        "March_north_stair_reeds_005",
+        "March_north_stair_reeds_006",
+        "March_north_stair_reeds_007",
+        "March_north_stair_boat_008",
+        "March_north_stair_lamp_009",
+        "Secret_ruins_stela_reliquary"
+      ],
+      "profile": "causeway",
+      "waterBelowDeck": 4.0,
+      "deckWidth": 7.0
+    }
+  ],
   "portals": [
     {
       "id": "north-stair",
       "name": "Stair to the Four Gates Causeway",
       "type": "map-transition",
       "position": [
-        132.0,
-        6.88,
-        -276.0
+        154.5,
+        4.0,
+        -265.5
       ],
       "serverTile": [
-        306,
-        450
+        270,
+        381
       ],
       "destinationMap": "four_gates",
       "radius": 3.5,
@@ -4473,13 +3695,13 @@
       "name": "Causeway to the Verdant Stair",
       "type": "map-transition",
       "position": [
-        300.0,
-        1.9,
-        -132.0
+        265.5,
+        4.0,
+        -88.5
       ],
       "serverTile": [
-        474,
-        306
+        381,
+        204
       ],
       "destinationMap": "verdant_stair",
       "radius": 3.5,
@@ -4490,13 +3712,13 @@
       "name": "Causeway to the Manymouth Delta",
       "type": "map-transition",
       "position": [
-        -138.0,
-        1.9,
-        -162.0
+        -112.5,
+        4.1,
+        -108.5
       ],
       "serverTile": [
-        36,
-        336
+        4,
+        224
       ],
       "destinationMap": "manymouth_delta",
       "radius": 3.5,
@@ -4509,11 +3731,11 @@
       "position": [
         8.0,
         1.3,
-        99.0
+        74.0
       ],
       "serverTile": [
-        182,
-        75
+        124,
+        42
       ],
       "destinationMap": "crownwater",
       "radius": 3.5,
@@ -4524,13 +3746,13 @@
       "name": "The Sun Vault",
       "type": "interior-entrance",
       "position": [
-        60.0,
-        13.1,
-        -208.5
+        64.25,
+        13.34,
+        -124.25
       ],
       "serverTile": [
-        234,
-        382
+        180,
+        240
       ],
       "landmark": "sun-vault",
       "destinationMap": "ssarathi_royal_archive",
@@ -4543,13 +3765,13 @@
       "name": "The Hatchery Descent",
       "type": "interior-entrance",
       "position": [
-        168.25,
-        2.35,
-        -116.75
+        118.0,
+        2.29,
+        -86.0
       ],
       "serverTile": [
-        342,
-        291
+        234,
+        202
       ],
       "landmark": "hatchery-descent",
       "destinationMap": "ssarathi_royal_archive",
@@ -4562,13 +3784,13 @@
       "name": "The Cistern Shaft",
       "type": "interior-entrance",
       "position": [
-        -97.0,
-        2.1,
-        -60.0
+        -80.0,
+        2.07,
+        -44.0
       ],
       "serverTile": [
-        77,
-        234
+        36,
+        160
       ],
       "landmark": "cistern-shaft",
       "destinationMap": "ssarathi_royal_archive",
@@ -4581,13 +3803,13 @@
       "name": "The Undercroft Mouth",
       "type": "interior-entrance",
       "position": [
-        220.25,
-        3.43,
-        78.25
+        138.0,
+        3.84,
+        60.0
       ],
       "serverTile": [
-        394,
-        96
+        254,
+        56
       ],
       "landmark": "undercroft-mouth",
       "destinationMap": "ssarathi_royal_archive",
@@ -4600,13 +3822,13 @@
       "name": "The Tenth Mouth Shrine",
       "type": "interior-entrance",
       "position": [
-        -31.25,
-        1.92,
-        -106.75
+        -32.0,
+        2.07,
+        -83.0
       ],
       "serverTile": [
-        143,
-        281
+        84,
+        199
       ],
       "landmark": "lily-court",
       "destinationMap": "ssarathi_royal_archive",
@@ -4619,13 +3841,13 @@
       "name": "The Water Gate Undercut",
       "type": "interior-entrance",
       "position": [
-        60.0,
-        2.2,
-        48.0
+        40.0,
+        2.29,
+        35.0
       ],
       "serverTile": [
-        234,
-        126
+        156,
+        81
       ],
       "landmark": "south-water-gate",
       "destinationMap": "ssarathi_royal_archive",
@@ -4638,13 +3860,13 @@
       "name": "The Lineage Reader's House",
       "type": "interior-entrance",
       "position": [
-        60.0,
-        2.05,
-        -18.0
+        50.0,
+        2.07,
+        -15.0
       ],
       "serverTile": [
-        234,
-        192
+        166,
+        131
       ],
       "landmark": "serpent-gate",
       "destinationMap": "ssarathi_royal_archive",
@@ -4659,34 +3881,34 @@
       "type": "causeway",
       "waypoints": [
         [
-          60.0,
+          40.0,
           1.8,
-          120.0
+          80.0
         ],
         [
-          60.0,
+          40.0,
+          1.81,
+          16.0
+        ],
+        [
+          40.0,
           1.8,
-          24.0
+          -40.0
         ],
         [
-          60.0,
+          40.0,
           1.8,
-          -60.0
+          -68.0
         ],
         [
-          60.0,
-          1.8,
-          -102.0
+          40.0,
+          12.62,
+          -104.0
         ],
         [
-          60.0,
-          2.2,
-          -156.0
-        ],
-        [
-          60.0,
-          13.0,
-          -210.0
+          40.0,
+          7.62,
+          -140.0
         ]
       ]
     },
@@ -4695,19 +3917,19 @@
       "type": "causeway",
       "waypoints": [
         [
-          -72.0,
+          -48.0,
           1.8,
-          -90.0
+          -60.0
         ],
         [
-          60.0,
-          1.82,
-          -84.0
+          40.0,
+          1.8,
+          -56.0
         ],
         [
-          168.0,
+          112.0,
           1.8,
-          -78.0
+          -52.0
         ]
       ]
     },
@@ -4716,19 +3938,19 @@
       "type": "causeway",
       "waypoints": [
         [
-          -90.0,
+          -60.0,
           1.8,
-          36.0
+          24.0
         ],
         [
-          60.0,
+          40.0,
           1.8,
-          18.0
-        ],
-        [
-          198.0,
-          1.9,
           12.0
+        ],
+        [
+          132.0,
+          1.9,
+          8.0
         ]
       ]
     },
@@ -4737,19 +3959,19 @@
       "type": "causeway",
       "waypoints": [
         [
-          -72.0,
-          2.15,
-          -222.0
+          -48.0,
+          2.61,
+          -148.0
         ],
         [
-          60.0,
-          7.75,
-          -186.0
+          40.0,
+          20.68,
+          -124.0
         ],
         [
-          132.0,
-          2.37,
-          -198.0
+          88.0,
+          7.69,
+          -132.0
         ]
       ]
     },
@@ -4758,19 +3980,19 @@
       "type": "causeway",
       "waypoints": [
         [
+          112.0,
+          1.8,
+          -52.0
+        ],
+        [
           168.0,
           1.8,
-          -78.0
+          -36.0
         ],
         [
-          252.0,
-          1.8,
-          -54.0
-        ],
-        [
-          312.0,
-          1.8,
-          -42.0
+          208.0,
+          3.74,
+          -28.0
         ]
       ]
     },
@@ -4779,19 +4001,19 @@
       "type": "causeway",
       "waypoints": [
         [
-          -90.0,
+          -60.0,
           1.8,
-          36.0
+          24.0
         ],
         [
-          -120.0,
+          -80.0,
           1.8,
-          18.0
+          12.0
         ],
         [
-          -132.0,
+          -88.0,
           1.8,
-          6.0
+          4.0
         ]
       ]
     },
@@ -4805,14 +4027,14 @@
           0.0
         ],
         [
-          24.0,
+          16.0,
           1.8,
-          12.0
+          8.0
         ],
         [
-          60.0,
-          1.8,
-          24.0
+          40.0,
+          1.81,
+          16.0
         ]
       ]
     },
@@ -4821,19 +4043,19 @@
       "type": "causeway",
       "waypoints": [
         [
-          -90.0,
+          -60.0,
           1.8,
-          42.0
+          28.0
         ],
         [
-          -78.0,
+          -52.0,
           1.8,
-          24.0
+          16.0
         ],
         [
-          -72.0,
+          -48.0,
           1.8,
-          12.0
+          8.0
         ]
       ]
     },
@@ -4842,19 +4064,19 @@
       "type": "causeway",
       "waypoints": [
         [
-          252.0,
+          168.0,
           1.8,
-          -18.0
+          -12.0
         ],
         [
-          228.0,
-          1.8,
-          -6.0
+          152.0,
+          1.97,
+          -4.0
         ],
         [
-          198.0,
+          132.0,
           1.9,
-          12.0
+          8.0
         ]
       ]
     },
@@ -4863,19 +4085,19 @@
       "type": "causeway",
       "waypoints": [
         [
-          18.0,
+          12.0,
           1.8,
-          132.0
+          88.0
         ],
         [
-          18.0,
+          12.0,
           1.8,
-          114.0
+          76.0
         ],
         [
-          60.0,
-          1.81,
-          108.0
+          40.0,
+          1.82,
+          72.0
         ]
       ]
     },
@@ -4884,19 +4106,19 @@
       "type": "causeway",
       "waypoints": [
         [
-          168.0,
+          112.0,
           1.8,
-          -78.0
+          -52.0
         ],
         [
-          180.0,
-          1.8,
-          -132.0
+          120.0,
+          2.09,
+          -88.0
         ],
         [
-          186.0,
-          6.85,
-          -180.0
+          124.0,
+          3.37,
+          -120.0
         ]
       ]
     },
@@ -4905,19 +4127,19 @@
       "type": "causeway",
       "waypoints": [
         [
-          -72.0,
-          1.8,
-          -90.0
-        ],
-        [
-          -90.0,
-          1.8,
-          -72.0
-        ],
-        [
-          -102.0,
+          -48.0,
           1.8,
           -60.0
+        ],
+        [
+          -60.0,
+          1.8,
+          -48.0
+        ],
+        [
+          -68.0,
+          1.8,
+          -40.0
         ]
       ]
     },
@@ -4926,19 +4148,19 @@
       "type": "causeway",
       "waypoints": [
         [
-          198.0,
+          132.0,
           1.9,
-          12.0
+          8.0
         ],
         [
-          222.0,
-          2.99,
-          42.0
+          148.0,
+          1.9,
+          28.0
         ],
         [
-          234.0,
-          3.7,
-          66.0
+          156.0,
+          1.9,
+          44.0
         ]
       ]
     },
@@ -4947,19 +4169,19 @@
       "type": "causeway",
       "waypoints": [
         [
-          -72.0,
-          2.15,
-          -222.0
+          -48.0,
+          2.61,
+          -148.0
         ],
         [
-          -114.0,
-          5.69,
-          -180.0
-        ],
-        [
-          -138.0,
+          -76.0,
           1.8,
-          -162.0
+          -120.0
+        ],
+        [
+          -92.0,
+          4.0,
+          -108.0
         ]
       ]
     },
@@ -4968,19 +4190,19 @@
       "type": "causeway",
       "waypoints": [
         [
-          312.0,
-          1.8,
-          -42.0
+          208.0,
+          3.74,
+          -28.0
         ],
         [
-          306.0,
-          1.8,
-          -90.0
+          204.0,
+          3.46,
+          -60.0
         ],
         [
-          300.0,
+          200.0,
           1.8,
-          -132.0
+          -88.0
         ]
       ]
     },
@@ -4989,19 +4211,19 @@
       "type": "causeway",
       "waypoints": [
         [
-          60.0,
-          1.81,
-          108.0
+          40.0,
+          1.82,
+          72.0
         ],
         [
-          12.0,
+          8.0,
           1.8,
-          132.0
+          88.0
         ],
         [
-          -24.0,
+          -16.0,
           1.8,
-          138.0
+          92.0
         ]
       ]
     },
@@ -5010,30 +4232,536 @@
       "type": "causeway",
       "waypoints": [
         [
-          60.0,
-          7.75,
-          -186.0
+          40.0,
+          20.68,
+          -124.0
         ],
         [
-          96.0,
-          20.98,
-          -240.0
+          64.0,
+          21.0,
+          -160.0
         ],
         [
-          132.0,
-          6.78,
-          -276.0
+          88.0,
+          19.28,
+          -184.0
+        ]
+      ]
+    },
+    {
+      "id": "market-connection",
+      "type": "causeway",
+      "width": 7.0,
+      "waypoints": [
+        [
+          40.0,
+          1.8,
+          12.0
+        ],
+        [
+          77.0,
+          1.8,
+          15.0
+        ],
+        [
+          111.0,
+          1.9,
+          20.0
+        ],
+        [
+          146.0,
+          1.9,
+          20.0
+        ]
+      ]
+    },
+    {
+      "id": "east-shore-road",
+      "type": "causeway",
+      "width": 7.0,
+      "waypoints": [
+        [
+          146.0,
+          1.9,
+          20.0
+        ],
+        [
+          190.0,
+          1.8,
+          8.0
+        ],
+        [
+          212.0,
+          4.0,
+          -32.0
+        ],
+        [
+          220.0,
+          4.0,
+          -60.0
+        ],
+        [
+          210.0,
+          4.0,
+          -88.5
+        ],
+        [
+          222.5,
+          4.0,
+          -88.5
+        ]
+      ]
+    },
+    {
+      "id": "east-shrine-link",
+      "type": "causeway",
+      "width": 5.0,
+      "waypoints": [
+        [
+          194.0,
+          1.8,
+          -83.0
+        ],
+        [
+          204.0,
+          3.0,
+          -79.0
+        ],
+        [
+          214.0,
+          4.0,
+          -78.0
+        ]
+      ]
+    },
+    {
+      "id": "north-basin-road",
+      "type": "causeway",
+      "width": 7.0,
+      "waypoints": [
+        [
+          212.0,
+          4.0,
+          -85.0
+        ],
+        [
+          214.0,
+          4.0,
+          -124.0
+        ],
+        [
+          204.0,
+          4.0,
+          -176.0
+        ],
+        [
+          180.0,
+          4.0,
+          -200.0
+        ],
+        [
+          154.5,
+          4.0,
+          -222.5
+        ]
+      ]
+    },
+    {
+      "id": "north-terrace-link",
+      "type": "causeway",
+      "width": 6.0,
+      "waypoints": [
+        [
+          128.0,
+          6.0,
+          -190.0
+        ],
+        [
+          150.0,
+          5.0,
+          -188.0
+        ],
+        [
+          180.0,
+          4.0,
+          -200.0
+        ]
+      ]
+    },
+    {
+      "id": "west-shrine-road",
+      "type": "causeway",
+      "width": 7.0,
+      "waypoints": [
+        [
+          -52.0,
+          2.05,
+          -80.0
+        ],
+        [
+          -76.0,
+          1.8,
+          -92.0
+        ],
+        [
+          -78.0,
+          1.8,
+          -108.0
+        ],
+        [
+          -90.0,
+          4.0,
+          -108.5
+        ],
+        [
+          -112.5,
+          4.0,
+          -108.5
+        ]
+      ]
+    },
+    {
+      "id": "ferry-yard",
+      "type": "causeway",
+      "width": 6.0,
+      "waypoints": [
+        [
+          12.0,
+          1.25,
+          88.0
+        ],
+        [
+          8.0,
+          1.25,
+          92.0
+        ],
+        [
+          8.0,
+          1.45,
+          85.0
+        ]
+      ]
+    },
+    {
+      "id": "cistern-service-walk",
+      "type": "causeway",
+      "width": 4.5,
+      "waypoints": [
+        [
+          -52.0,
+          2.05,
+          -80.0
+        ],
+        [
+          -65.0,
+          2.05,
+          -69.0
+        ],
+        [
+          -75.0,
+          2.25,
+          -58.0
+        ],
+        [
+          -75.0,
+          2.25,
+          -44.0
+        ]
+      ]
+    },
+    {
+      "id": "lily-north-walk",
+      "type": "causeway",
+      "width": 4.5,
+      "waypoints": [
+        [
+          -52.0,
+          2.05,
+          -80.0
+        ],
+        [
+          -51.0,
+          2.05,
+          -94.0
+        ],
+        [
+          -32.0,
+          2.05,
+          -94.0
+        ],
+        [
+          -12.0,
+          2.05,
+          -87.0
+        ]
+      ]
+    },
+    {
+      "id": "tenth-mouth-walk",
+      "type": "causeway",
+      "width": 4.5,
+      "waypoints": [
+        [
+          -51.0,
+          2.05,
+          -94.0
+        ],
+        [
+          -43.0,
+          2.05,
+          -85.0
+        ],
+        [
+          -32.0,
+          2.05,
+          -83.0
+        ]
+      ]
+    },
+    {
+      "id": "lineage-door-walk",
+      "type": "causeway",
+      "width": 4.5,
+      "waypoints": [
+        [
+          40.0,
+          1.95,
+          -12.0
+        ],
+        [
+          50.0,
+          1.95,
+          -15.0
+        ],
+        [
+          56.0,
+          1.95,
+          -14.0
+        ]
+      ]
+    },
+    {
+      "id": "root-mouth-walk",
+      "type": "causeway",
+      "width": 4.5,
+      "waypoints": [
+        [
+          151.0,
+          3.7,
+          49.0
+        ],
+        [
+          147.0,
+          3.7,
+          59.0
+        ],
+        [
+          140.0,
+          3.7,
+          59.0
+        ]
+      ]
+    },
+    {
+      "id": "falls-keeper-walk",
+      "type": "causeway",
+      "width": 4.5,
+      "waypoints": [
+        [
+          204.0,
+          4.0,
+          -176.0
+        ],
+        [
+          194.0,
+          4.0,
+          -189.0
+        ],
+        [
+          184.0,
+          4.0,
+          -199.0
+        ]
+      ]
+    },
+    {
+      "id": "east-waystation-walk",
+      "type": "causeway",
+      "width": 4.5,
+      "waypoints": [
+        [
+          213.0,
+          4.0,
+          -60.0
+        ],
+        [
+          199.0,
+          4.0,
+          -66.0
+        ],
+        [
+          192.0,
+          4.0,
+          -68.0
+        ],
+        [
+          192.0,
+          4.0,
+          -80.0
+        ]
+      ]
+    },
+    {
+      "id": "west-shrine-custodians",
+      "type": "causeway",
+      "width": 4.0,
+      "waypoints": [
+        [
+          -77.0,
+          1.8,
+          -110.0
+        ],
+        [
+          -70.0,
+          1.8,
+          -118.0
+        ],
+        [
+          -65.0,
+          1.8,
+          -118.0
+        ]
+      ]
+    },
+    {
+      "id": "vault-basement-court",
+      "type": "causeway",
+      "width": 6.0,
+      "waypoints": [
+        [
+          40.0,
+          14.0,
+          -107.0
+        ],
+        [
+          55.0,
+          13.0,
+          -112.0
+        ],
+        [
+          64.0,
+          13.0,
+          -112.0
+        ],
+        [
+          64.0,
+          13.0,
+          -123.0
+        ]
+      ]
+    },
+    {
+      "id": "temple-processional-ascent",
+      "type": "causeway",
+      "width": 10.0,
+      "waypoints": [
+        [
+          40.0,
+          2.2,
+          -80.0
+        ],
+        [
+          40.0,
+          8.0,
+          -94.0
+        ],
+        [
+          40.0,
+          14.0,
+          -107.0
+        ],
+        [
+          40.0,
+          21.0,
+          -118.0
+        ]
+      ]
+    },
+    {
+      "id": "north-waystation-walk",
+      "type": "causeway",
+      "width": 4.5,
+      "waypoints": [
+        [
+          180.0,
+          4.0,
+          -200.0
+        ],
+        [
+          186.0,
+          4.0,
+          -197.0
+        ],
+        [
+          186.0,
+          4.0,
+          -191.0
         ]
       ]
     }
   ],
   "water": {
     "seaLevel": 0.0,
-    "serverCells": 576,
+    "serverCells": 384,
     "bodies": [
       {
         "id": "Water_Basin",
         "node": "Water_Basin",
+        "type": "basin"
+      },
+      {
+        "id": "Water_NorthInlet",
+        "node": "Water_NorthInlet",
+        "type": "pool"
+      },
+      {
+        "id": "Water_EastInlet",
+        "node": "Water_EastInlet",
+        "type": "pool"
+      },
+      {
+        "id": "Water_Basin_StreamCell_verdant-ssarathi",
+        "node": "Water_Basin_StreamCell_verdant-ssarathi",
+        "type": "basin"
+      },
+      {
+        "id": "Water_EastInlet_StreamCell_verdant-ssarathi",
+        "node": "Water_EastInlet_StreamCell_verdant-ssarathi",
+        "type": "pool"
+      },
+      {
+        "id": "Water_StreamCauseway_verdant-ssarathi_StreamCell_verdant-ssarathi",
+        "node": "Water_StreamCauseway_verdant-ssarathi_StreamCell_verdant-ssarathi",
+        "type": "pool"
+      },
+      {
+        "id": "Water_Basin_StreamCell_four-gates-ssarathi",
+        "node": "Water_Basin_StreamCell_four-gates-ssarathi",
+        "type": "basin"
+      },
+      {
+        "id": "Water_NorthInlet_StreamCell_four-gates-ssarathi",
+        "node": "Water_NorthInlet_StreamCell_four-gates-ssarathi",
+        "type": "pool"
+      },
+      {
+        "id": "Water_StreamCauseway_four-gates-ssarathi_StreamCell_four-gates-ssarathi",
+        "node": "Water_StreamCauseway_four-gates-ssarathi_StreamCell_four-gates-ssarathi",
+        "type": "pool"
+      },
+      {
+        "id": "Water_Basin_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
+        "node": "Water_Basin_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
         "type": "basin"
       }
     ],
@@ -5065,9 +4793,9 @@
         "channel": "channel_main",
         "deck": 1.8,
         "centre": [
-          60.0,
+          40.0,
           0.0,
-          -102.0
+          -68.0
         ]
       },
       {
@@ -5076,9 +4804,9 @@
         "channel": "channel_south",
         "deck": 1.8,
         "centre": [
-          60.0,
+          40.0,
           0.0,
-          82.0
+          54.7
         ]
       },
       {
@@ -5087,9 +4815,9 @@
         "channel": "channel_main",
         "deck": 1.8,
         "centre": [
-          180.5,
+          120.3,
           0.0,
-          -136.2
+          -90.8
         ]
       },
       {
@@ -5098,9 +4826,9 @@
         "channel": "channel_main",
         "deck": 1.8,
         "centre": [
-          19.6,
+          13.1,
           0.0,
-          -85.8
+          -57.2
         ]
       },
       {
@@ -5109,9 +4837,9 @@
         "channel": "channel_east",
         "deck": 1.8,
         "centre": [
-          269.1,
+          179.4,
           0.0,
-          -50.6
+          -33.7
         ]
       }
     ]
@@ -5299,9 +5027,9 @@
       {
         "id": "temple",
         "centre": [
-          60.0,
+          40.0,
           16.0,
-          -264.0
+          -182.0
         ],
         "radius": 90.0
       },
@@ -5326,27 +5054,27 @@
       {
         "id": "market",
         "centre": [
-          198.0,
+          146.0,
           2.0,
-          12.0
+          20.0
         ],
         "radius": 46.0
       },
       {
         "id": "north-falls",
         "centre": [
-          -42.0,
+          -28.0,
           4.0,
-          -336.0
+          -224.0
         ],
         "radius": 70.0
       },
       {
         "id": "east-falls",
         "centre": [
-          288.0,
+          192.0,
           4.0,
-          -252.0
+          -168.0
         ],
         "radius": 55.0
       }
@@ -5355,17 +5083,17 @@
   "minimap": {
     "image": "minimap.webp",
     "imageSize": [
-      575,
-      575
+      383,
+      383
     ],
     "pixelsPerMetre": 1.0,
     "worldMin": [
-      -174.0,
-      -401.0
+      -116.0,
+      -267.0
     ],
     "worldMax": [
-      401.0,
-      174.0
+      267.0,
+      116.0
     ],
     "northAxis": "-Z",
     "orientation": "north-up",
@@ -5374,25 +5102,25 @@
     "transform": {
       "pixelX": {
         "scale": 1.0,
-        "offset": 174.0
+        "offset": 116.0
       },
       "pixelY": {
         "scale": 1.0,
-        "offset": 401.0
+        "offset": 267.0
       },
       "formula": "pixel_x = world_x * scale + offset; pixel_y = world_z * scale + offset"
     },
     "note": "Every Eloria minimap is drawn at one pixel to the metre, so the image's pixel size is the map's size in metres.",
     "file": "minimap.webp",
-    "pixels": 575,
+    "pixels": 383,
     "size": [
-      575,
-      575
+      383,
+      383
     ],
     "metresPerPixel": 1.0,
     "centre": [
-      113.5,
-      -113.5
+      75.5,
+      -75.5
     ],
     "northUp": true
   },
@@ -5423,40 +5151,40 @@
     }
   ],
   "performance": {
-    "nodes": 7352,
-    "meshes": 499,
-    "materials": 42,
-    "images": 104,
-    "textures": 104,
-    "accessors": 2001,
-    "bufferViews": 2105,
-    "uniqueTriangles": 481289,
-    "uniqueVertices": 363367,
-    "glbBytes": 26215856,
-    "instancedTriangles": 1847337,
-    "embeddedTextureBytes": 28929731,
-    "textureMemoryBytesUncompressed": 269352960,
-    "placements": 2755,
+    "nodes": 3192,
+    "meshes": 424,
+    "materials": 45,
+    "images": 113,
+    "textures": 113,
+    "accessors": 1717,
+    "bufferViews": 1830,
+    "uniqueTriangles": 655868,
+    "uniqueVertices": 418703,
+    "glbBytes": 31210652,
+    "instancedTriangles": 1703480,
+    "embeddedTextureBytes": 30952001,
+    "textureMemoryBytesUncompressed": 292945920,
+    "placements": 1178,
     "collision": {
-      "width": 1152,
-      "height": 1152,
+      "width": 768,
+      "height": 768,
       "cellMetres": 0.5,
       "originMetres": [
-        -174.0,
-        174.0
+        -116.0,
+        116.0
       ],
-      "walkableCells": 540733,
-      "blockedCells": 786371,
-      "walkableFraction": 0.4075,
-      "elevatedDecks": 30,
-      "steepCells": 266266,
-      "reliefMetres": 56.86,
+      "walkableCells": 307186,
+      "blockedCells": 282638,
+      "walkableFraction": 0.5208,
+      "elevatedDecks": 40,
+      "steepCells": 96206,
+      "reliefMetres": 56.12,
       "heightEncoding": {
-        "origin": -1.4581,
-        "step": 0.917113,
+        "origin": -0.0208,
+        "step": 0.220945,
         "range": [
           1,
-          63
+          255
         ],
         "zeroMeansBlocked": true
       },
@@ -5464,21 +5192,20 @@
       "columnOrder": "server-tile-x (column 0 is the -X western edge)"
     },
     "notes": [
-      "Archive supply quay, aligned market rows, five surveyed channel bridges and eight working jetties.",
-      "march north-stair: 0 road pieces, 2 of four_gates's growth",
-      "march east-causeway: 0 road pieces, 3 of verdant_stair's growth",
-      "march west-causeway: 0 road pieces, 16 of manymouth_delta's growth",
-      "march south-gate: 0 road pieces, 5 of crownwater's growth",
-      "walk corridors: 18 encroaching dressing placements removed",
-      "Cleared quay, market and jetty conflicts: Kerb_street_market_268_-1, Kerb_street_market_268_1, Kerb_street_market_289_-1, Kerb_street_market_289_1, Kerb_spur_arrival_0_-1, Kerb_spur_arrival_0_1, Kerb_spur_arrival_16_-1, Kerb_spur_arrival_16_1, Kerb_spur_arrival_32_-1, Kerb_spur_arrival_32_1, Kerb_spur_east_dock_41_-1, Kerb_spur_east_dock_41_1, Kerb_spur_east_dock_61_-1, Kerb_spur_east_dock_61_1, Kerb_spur_root_arch_0_-1, Kerb_spur_root_arch_0_1, Kerb_spur_root_arch_16_-1, Kerb_spur_root_arch_16_1, Kerb_spur_root_arch_32_-1, Ruin_18, Rubble_spur_arrival_0"
+      "384m drowned city: six inhabited court houses, protected monumental temple, surveyed channel bridges, working jetties and a connected northern inlet.",
+      "march north-stair: 0 road pieces, 10 of four_gates's growth",
+      "march east-causeway: 1 road pieces, 16 of verdant_stair's growth",
+      "march west-causeway: 2 road pieces, 15 of manymouth_delta's growth",
+      "march south-gate: 2 road pieces, 1 of crownwater's growth",
+      "walk corridors: 21 encroaching dressing placements removed"
     ],
     "lod2": {
-      "glbBytes": 16473376,
-      "nodes": 3534,
-      "uniqueTriangles": 431630,
-      "instancedTriangles": 978596,
-      "sizeReductionPercent": 37.2,
-      "triangleReductionPercent": 47.0
+      "glbBytes": 13142944,
+      "nodes": 1529,
+      "uniqueTriangles": 335519,
+      "instancedTriangles": 521832,
+      "sizeReductionPercent": 57.9,
+      "triangleReductionPercent": 69.4
     }
   },
   "sources": [
@@ -5508,5 +5235,694 @@
     "license": "same as the Eloria client repository"
   },
   "productionStatus": "production-geometry-materials-population",
-  "knownLimitations": []
+  "knownLimitations": [],
+  "runtimePopulation": {
+    "npcs": [
+      {
+        "id": "Archivist Sesh",
+        "name": "Archivist Sesh",
+        "role": "dialogue",
+        "serverTile": [
+          108,
+          111
+        ],
+        "authority": "server"
+      },
+      {
+        "id": "Cistern Sounder Vek-Ora",
+        "name": "Cistern Sounder Vek-Ora",
+        "role": "dialogue",
+        "serverTile": [
+          42,
+          166
+        ],
+        "authority": "server"
+      },
+      {
+        "id": "Coil Bridge Toll-Taker Ude-Sar",
+        "name": "Coil Bridge Toll-Taker Ude-Sar",
+        "role": "dialogue",
+        "serverTile": [
+          166,
+          165
+        ],
+        "authority": "server"
+      },
+      {
+        "id": "Falls Measurer Ith-Anu",
+        "name": "Falls Measurer Ith-Anu",
+        "role": "dialogue",
+        "serverTile": [
+          303,
+          312
+        ],
+        "authority": "server"
+      },
+      {
+        "id": "Hatchery Keeper Nuu-Sesh",
+        "name": "Hatchery Keeper Nuu-Sesh",
+        "role": "dialogue",
+        "serverTile": [
+          236,
+          207
+        ],
+        "authority": "server"
+      },
+      {
+        "id": "Lily Court Steward Aa-Nesh",
+        "name": "Lily Court Steward Aa-Nesh",
+        "role": "dialogue",
+        "serverTile": [
+          95,
+          206
+        ],
+        "authority": "server"
+      },
+      {
+        "id": "Lineage Reader Ssiran-Ta",
+        "name": "Lineage Reader Ssiran-Ta",
+        "role": "dialogue",
+        "serverTile": [
+          172,
+          130
+        ],
+        "authority": "server"
+      },
+      {
+        "id": "Marchstone Priest Osu-Val",
+        "name": "Marchstone Priest Osu-Val",
+        "role": "dialogue",
+        "serverTile": [
+          310,
+          198
+        ],
+        "authority": "server"
+      },
+      {
+        "id": "Ssethis the Doorkeeper",
+        "name": "Ssethis the Doorkeeper",
+        "role": "instance",
+        "serverTile": [
+          170,
+          82
+        ],
+        "authority": "server"
+      },
+      {
+        "id": "Stela Copyist Ilhu-Ren",
+        "name": "Stela Copyist Ilhu-Ren",
+        "role": "dialogue",
+        "serverTile": [
+          264,
+          263
+        ],
+        "authority": "server"
+      },
+      {
+        "id": "Sun-Vault Warden Hass-Ile",
+        "name": "Sun-Vault Warden Hass-Ile",
+        "role": "dialogue",
+        "serverTile": [
+          189,
+          236
+        ],
+        "authority": "server"
+      },
+      {
+        "id": "Undercroft Digger Rell Marrow",
+        "name": "Undercroft Digger Rell Marrow",
+        "role": "dialogue",
+        "serverTile": [
+          252,
+          60
+        ],
+        "authority": "server"
+      },
+      {
+        "id": "Vess Scale",
+        "name": "Vess Scale",
+        "role": "storage",
+        "serverTile": [
+          105,
+          123
+        ],
+        "authority": "server"
+      },
+      {
+        "id": "Water-Gate Marshal Set-Kaal",
+        "name": "Water-Gate Marshal Set-Kaal",
+        "role": "dialogue",
+        "serverTile": [
+          124,
+          24
+        ],
+        "authority": "server"
+      }
+    ],
+    "resources": [
+      {
+        "id": 36,
+        "resource": "Lotus",
+        "serverTile": [
+          221,
+          133
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 37,
+        "resource": "Lotus",
+        "serverTile": [
+          236,
+          138
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 38,
+        "resource": "Lichen",
+        "serverTile": [
+          241,
+          128
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 39,
+        "resource": "Lichen",
+        "serverTile": [
+          222,
+          127
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 40,
+        "resource": "Venom Bulb",
+        "serverTile": [
+          277,
+          47
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 41,
+        "resource": "Venom Bulb",
+        "serverTile": [
+          256,
+          68
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 42,
+        "resource": "Geode",
+        "serverTile": [
+          235,
+          268
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 43,
+        "resource": "Geode",
+        "serverTile": [
+          258,
+          270
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 44,
+        "resource": "Toadstool",
+        "serverTile": [
+          316,
+          206
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 45,
+        "resource": "Toadstool",
+        "serverTile": [
+          319,
+          200
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 46,
+        "resource": "Flint",
+        "serverTile": [
+          50,
+          215
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 47,
+        "resource": "Flint",
+        "serverTile": [
+          30,
+          221
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 48,
+        "resource": "Flint",
+        "serverTile": [
+          21,
+          227
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 49,
+        "resource": "Watercress",
+        "serverTile": [
+          81,
+          132
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 50,
+        "resource": "Watercress",
+        "serverTile": [
+          86,
+          131
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 51,
+        "resource": "Watercress",
+        "serverTile": [
+          90,
+          132
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 52,
+        "resource": "Lichen",
+        "serverTile": [
+          81,
+          128
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 53,
+        "resource": "Lichen",
+        "serverTile": [
+          228,
+          134
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 54,
+        "resource": "Lichen",
+        "serverTile": [
+          217,
+          126
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 55,
+        "resource": "Lichen",
+        "serverTile": [
+          227,
+          128
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 56,
+        "resource": "Lichen",
+        "serverTile": [
+          243,
+          133
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 57,
+        "resource": "Lichen",
+        "serverTile": [
+          241,
+          139
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 58,
+        "resource": "Venom Bulb",
+        "serverTile": [
+          259,
+          78
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 59,
+        "resource": "Venom Bulb",
+        "serverTile": [
+          263,
+          38
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 60,
+        "resource": "Venom Bulb",
+        "serverTile": [
+          257,
+          75
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 61,
+        "resource": "Lotus",
+        "serverTile": [
+          229,
+          137
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 62,
+        "resource": "Lotus",
+        "serverTile": [
+          211,
+          143
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 63,
+        "resource": "Lotus",
+        "serverTile": [
+          240,
+          135
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 64,
+        "resource": "Watercress",
+        "serverTile": [
+          81,
+          125
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 65,
+        "resource": "Watercress",
+        "serverTile": [
+          84,
+          126
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 66,
+        "resource": "Watercress",
+        "serverTile": [
+          77,
+          125
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 67,
+        "resource": "Toadstool",
+        "serverTile": [
+          320,
+          208
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 68,
+        "resource": "Toadstool",
+        "serverTile": [
+          333,
+          195
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 69,
+        "resource": "Geode",
+        "serverTile": [
+          271,
+          259
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 70,
+        "resource": "Geode",
+        "serverTile": [
+          250,
+          249
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 71,
+        "resource": "Flint",
+        "serverTile": [
+          26,
+          222
+        ],
+        "authority": "server"
+      },
+      {
+        "id": 72,
+        "resource": "Flint",
+        "serverTile": [
+          37,
+          210
+        ],
+        "authority": "server"
+      }
+    ],
+    "encounters": [
+      {
+        "creature": "leafwing_owl",
+        "serverTile": [
+          289,
+          63
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "leafwing_owl",
+        "serverTile": [
+          269,
+          55
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "leafwing_owl",
+        "serverTile": [
+          253,
+          84
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "emerald_canopy_dragon",
+        "serverTile": [
+          286,
+          84
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "emerald_canopy_dragon",
+        "serverTile": [
+          28,
+          247
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "emerald_canopy_dragon",
+        "serverTile": [
+          284,
+          52
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "emerald_canopy_dragon",
+        "serverTile": [
+          237,
+          306
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "emerald_canopy_dragon",
+        "serverTile": [
+          226,
+          297
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "emerald_canopy_dragon",
+        "serverTile": [
+          218,
+          308
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "swamp_heron",
+        "serverTile": [
+          210,
+          139
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "swamp_heron",
+        "serverTile": [
+          234,
+          127
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "swamp_heron",
+        "serverTile": [
+          203,
+          134
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "emerald_canopy_dragon",
+        "serverTile": [
+          208,
+          323
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "delta_mud_crab",
+        "serverTile": [
+          291,
+          94
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "delta_mud_crab",
+        "serverTile": [
+          303,
+          115
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "saltmarsh_crocodile",
+        "serverTile": [
+          22,
+          208
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "saltmarsh_crocodile",
+        "serverTile": [
+          30,
+          206
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "rune_stone_golem",
+        "serverTile": [
+          75,
+          276
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "rune_stone_golem",
+        "serverTile": [
+          254,
+          321
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "rune_stone_golem",
+        "serverTile": [
+          88,
+          303
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "void_tentacle_construct",
+        "serverTile": [
+          44,
+          223
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "void_tentacle_construct",
+        "serverTile": [
+          26,
+          234
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "void_tentacle_construct",
+        "serverTile": [
+          17,
+          243
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "gloom_wyvern",
+        "serverTile": [
+          25,
+          318
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "gloom_wyvern",
+        "serverTile": [
+          111,
+          301
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "gloom_wyvern",
+        "serverTile": [
+          91,
+          328
+        ],
+        "authority": "server"
+      }
+    ]
+  }
 }

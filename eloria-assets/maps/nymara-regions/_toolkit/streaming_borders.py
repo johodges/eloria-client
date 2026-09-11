@@ -2,8 +2,9 @@
 
 Coordinates are tile centres. The seam sits one metre inward from the trigger;
 the two-metre arrival offset therefore preserves the traveller's world position.
-Overflow remains in the collision survey and is hidden only while its real
-neighbour is resident. No server or rendered walking surface is invented at run time.
+Approaches are disjoint pieces of the actual region, stored once and shared
+between active and resident views. Only an invisible two-metre threshold keeps
+the authoritative crossing trigger supported beyond the rendered edge.
 """
 import numpy as np
 from amberwood.mesh import rotation_y
@@ -30,6 +31,16 @@ LINKS = [
   ('four_gates','north',[.5,23,-195.5],[0,-1]), 'causeway'),
  ('four-gates-crownwater', ('four_gates','west',[-195.5,23,-.5],[-1,0]),
   ('crownwater','east-quay',[270.5,4,-10.5],[1,0]), 'causeway'),
+ ('amethyst-sunmane', ('amethyst_barrens','south-road',[54.5,19,113.5],[0,1]),
+  ('sunmane_steppe','north-track',[20.5,17,-265.5],[0,-1]), 'steppe'),
+ ('four-gates-sunmane', ('four_gates','east',[195.5,23,-.5],[1,0]),
+  ('sunmane_steppe','west-landing',[-113.5,4,-.5],[-1,0]), 'causeway'),
+ ('sunmane-verdant', ('sunmane_steppe','south-track',[54.5,8,113.5],[0,1]),
+  ('verdant_stair','east-pass-gate',[244.5,62,-94.5],[1,0]), 'steppe'),
+ ('verdant-ssarathi', ('verdant_stair','west-quay-gate',[-102.5,4,.5],[-1,0]),
+  ('ssarathi_ruins','east-causeway',[264.5,4,-88.5],[1,0]), 'causeway'),
+ ('four-gates-ssarathi', ('four_gates','south',[.5,23,195.5],[0,1]),
+  ('ssarathi_ruins','north-stair',[154.5,4,-264.5],[0,-1]), 'causeway'),
 ]
 PALETTES = {
  'alpine': ('alpine_turf','alpine_snowfield','alpine_gravel'),
@@ -38,11 +49,14 @@ PALETTES = {
  'scree': ('alpine_turf','alpine_bedrock','alpine_gravel'),
  'pasture': ('meadow_grass','grey_heather_moor','packed_earth'),
  'causeway': ('alpine_gravel','rubble_stone','cobble_paving'),
+ 'steppe': ('steppe_sward','amethyst_barrens_dust','steppe_dust'),
 }
 ORIGINS = {'amberwood': (116,116), 'grey_moors': (116,116),
            'amethyst_barrens': (116,116), 'mirrorhold': (120,96),
            'whitehorn_range': (120,120), 'westhaven': (120,172),
-           'crownwater': (120,120), 'four_gates': (198,198)}
+           'crownwater': (120,120), 'four_gates': (198,198),
+           'sunmane_steppe': (116,116), 'verdant_stair': (108,108),
+           'ssarathi_ruins': (116,116)}
 VIEW_PREFIX = 'StreamView_'
 HALF_WIDTH = 40.0
 VIEW_DEPTH = 145.0
@@ -58,11 +72,14 @@ def region_specs(region):
                     preloadDistance=170, retainDistance=220, blendDistance=65,
                     collarDepth=42, halfWidthTiles=3, viewHalfWidth=HALF_WIDTH,
                     viewDepth=VIEW_DEPTH, previewPrefix=VIEW_PREFIX+identity+'__',
-                    overflowSuffix='_StreamOverflow_'+identity)
+                    overflowSuffix='_StreamOverflow_'+identity,
+                    geometryMode='shared-cells-v2', sceneNodes=[])
                 if palette == 'causeway':
                     spec.update(profile='causeway', waterBelowDeck=4.0, deckWidth=7.0)
                 elif palette == 'pasture':
                     spec.update(profile='pasture')
+                elif palette == 'steppe':
+                    spec.update(profile='steppe')
                 result.append(spec)
     return result
 
@@ -221,6 +238,11 @@ def _apply_one(build, spec, peers):
 
     def grade(points, water=False):
         points = points.copy()
+        # A lake can extend underneath dry ground. Grading that hidden plane
+        # into a land saddle floods the approach and closes its collision.
+        # Only a causeway has a surveyed replacement water elevation.
+        if water and not causeway:
+            return points
         relative = points[:, [0, 2]] - edge
         depth, lateral = relative @ forward, relative @ side
         # One broad saddle, open across the road and rising into both shoulders.
@@ -228,7 +250,7 @@ def _apply_one(build, spec, peers):
             # A navigable bridge above a lake channel, never an earth plug.
             target = np.full_like(lateral, level - spec['waterBelowDeck'] - (0 if water else 2.0))
         else:
-            rise = 1.4 if spec.get('profile') == 'pasture' else 8.0
+            rise = {'pasture': 1.4, 'steppe': 2.0}.get(spec.get('profile'), 8.0)
             target = level + rise * (1 - np.exp(-(lateral / 30)**2))
         blend = np.clip((depth + 42) / 32, 0, 1)
         blend = blend * blend * (3 - 2 * blend)
@@ -345,7 +367,6 @@ def _apply_one(build, spec, peers):
 
 
 def apply(build, region):
-    from copy import copy
     specs=region_specs(region)
     build.streaming_borders=specs
     build.vista_materials=getattr(build,'vista_materials',set())|materials_for(region)
@@ -366,17 +387,36 @@ def apply(build, region):
                 portal['position']=p.tolist()
                 ox,oy=ORIGINS[region]
                 portal['serverTile']=[int(np.floor(p[0]+ox)),int(np.floor(oy-p[2]))]
-    # The resident root contains exact subsets of its authored geometry. Only
-    # its matching approach is shown while neighbouring; full geometry becomes
-    # active on adoption. This prevents other exits and distant cities leaking
-    # through the region-local border frame.
-    # Props remain whole shared instances: their pivots can sit outside a view
-    # while a boulder or tree canopy crosses its edge. Cache all-part local
-    # bounds once per mesh, then transform the eight corners once per placement.
+    partition_shared_approaches(build, specs)
+
+
+def partition_shared_approaches(build, specs):
+    """Store each surface triangle and each prop once, with view membership.
+
+    The old export doubled receiving scenery and drew a fabricated extension
+    until loading finished. A resident now exposes the same nodes later used
+    by the active region. Prop bounds keep complete canopies and landmarks.
+    """
+    for bucket in (build.terrain_meshes, build.water_meshes):
+        for name in list(bucket):
+            if '_StreamOverflow_' not in name:
+                continue
+            mesh = bucket.pop(name)
+            identity = name.split('_StreamOverflow_', 1)[1]
+            spec = next(s for s in specs if s['id'] == identity)
+            # The server changes map at depth +1. Its final standing cell
+            # still needs source-map collision, but never duplicate scenery.
+            if bucket is build.terrain_meshes and name.startswith(('Terrain_', 'Walk_')):
+                edge = np.asarray(spec['anchor'])[[0, 2]]
+                forward = np.asarray(spec['outward'], float)
+                side = np.array([-forward[1], forward[0]])
+                threshold = clip_rect(mesh, edge, forward, side, 0, 2.01, 4.0)
+                if threshold.triangle_count:
+                    bucket[name.replace('_StreamOverflow_', '_StreamThreshold_')] = _compact(threshold)
+
     local_corners={}
-    preview_candidates=[]
+    candidates=[]
     for p in build.placements:
-        if p.node.startswith(VIEW_PREFIX): continue
         if p.mesh not in local_corners:
             mesh=build.meshes.get(p.mesh)
             if mesh is None or not mesh.triangle_count:
@@ -389,20 +429,33 @@ def apply(build, region):
         corners=local_corners[p.mesh]
         if corners is None: continue
         world=(corners*p.scale)@rotation_y(p.rotation_y)[:3,:3].T+np.asarray(p.position)
-        preview_candidates.append((p,world[:,[0,2]]))
+        candidates.append((p,world[:,[0,2]]))
     for spec in specs:
         edge=np.asarray(spec['anchor'])[[0,2]];forward=np.asarray(spec['outward'],float)
         side=np.array([-forward[1],forward[0]])
         for bucket in (build.terrain_meshes,build.water_meshes):
             for name,mesh in list(bucket.items()):
-                if name.startswith(VIEW_PREFIX) or '_StreamOverflow_' in name: continue
+                if '_StreamThreshold_' in name: continue
                 part=clip_rect(mesh,edge,forward,side,-VIEW_DEPTH,0)
-                if part.triangle_count: bucket[spec['previewPrefix']+name]=part
-        for p,corners in preview_candidates:
+                if part.triangle_count:
+                    cell = name + '_StreamCell_' + spec['id']
+                    bucket[cell] = _compact(part)
+                    bucket[name] = _compact(outside_rect(mesh,edge,forward,side,-VIEW_DEPTH,0))
+                    spec['sceneNodes'].append(cell)
+                    # Intersecting approaches share one atom; cutting a later
+                    # road may divide an earlier cell but must not erase it
+                    # from that earlier resident's view.
+                    for previous in specs:
+                        if previous is not spec and name in previous['sceneNodes']:
+                            previous['sceneNodes'].append(cell)
+                    if not bucket[name].triangle_count:
+                        del bucket[name]
+                        for previous in specs:
+                            if name in previous['sceneNodes']:
+                                previous['sceneNodes'].remove(name)
+        for p,corners in candidates:
             relative=corners-edge
             depth,lateral=relative@forward,relative@side
             if (depth.max()>=-VIEW_DEPTH and depth.min()<=0
                     and lateral.max()>=-HALF_WIDTH and lateral.min()<=HALF_WIDTH):
-                duplicate=copy(p); duplicate.node=spec['previewPrefix']+p.node
-                duplicate.collides=False;duplicate.extras=None
-                build.placements.append(duplicate)
+                spec['sceneNodes'].append(p.node)

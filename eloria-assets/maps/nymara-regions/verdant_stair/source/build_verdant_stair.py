@@ -46,6 +46,8 @@ from amberwood import terrain as TER
 
 import populate as POP
 import region as REG
+import landscape_plan as PLAN
+import streaming_borders as SB
 import transitions as MARCH
 import secretdoors as SD
 import secrets_design as SEC
@@ -81,7 +83,7 @@ CROSSINGS = [
 
 # The places the region's people argue about (see loresites.py).
 SITES = [
-    LORE.Site("moved-anchor", "The Moved Anchor", "moved_anchor", (133.0, -50.0),
+    LORE.Site("moved-anchor", "The Moved Anchor", "moved_anchor", PLAN.ground_point((133.0, -50.0)),
               thread="J", clearing=11.0,
               note="The stair's anchor stone on log rollers with the ropes still on it, and the "
                    "socket it was levered out of a few metres upslope."),
@@ -107,7 +109,7 @@ MATERIALS = frozenset({
     # vegetation
     'bark_pale', 'bark_dark', 'foliage_green', 'verdant_frond', 'verdant_vine',
     'undergrowth',
-}) | MARCH.materials_for("verdant_stair", CROSSINGS) | SD.materials(SEC) | LORE.materials([s.piece for s in SITES])
+}) | MARCH.materials_for("verdant_stair", CROSSINGS) | SD.materials(SEC) | LORE.materials([s.piece for s in SITES]) | SB.materials_for("verdant_stair")
 
 ASSET_VERSION = "1.0.0"
 SCHEMA_VERSION = "1.0.0"
@@ -173,6 +175,7 @@ def build_region(seed: int = SEED, lod: str | None = None,
         SD.dress(build, terrain, SEC, seed, sea_level=getattr(REG, "SEA_LEVEL", 0.0), server_origin=REG.SERVER_ORIGIN)
         build.landmarks.extend(march.landmarks)
         build.notes.extend(march.notes)
+        PLAN.inhabited_details(build, seed)
 
     terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
     build.terrain_meshes = terrain.build_meshes(
@@ -208,6 +211,7 @@ def build_region(seed: int = SEED, lod: str | None = None,
         {"tree": 18, "fern": 10, "undergrowth": 5, "vine": 9, "rock": 4})
     _add_spawns_and_portals(build)
     _add_population_markers(build, seed)
+    SB.apply(build, "verdant_stair")
     print(f"[region] built in {time.time() - t0:.1f}s "
           f"({len(build.placements)} placements)")
     return build
@@ -230,6 +234,7 @@ def _walk_surface_at(build: RegionBuild, x: float, z: float) -> float:
     best = float(build.terrain.height_at(x, z))
     point = np.array([x, z])
     for placement in build.placements:
+        if placement.node.startswith("StreamView_"): continue
         item = build.meshes[placement.mesh]
         walk_parts = getattr(item, "walk_parts", None)
         if not walk_parts:
@@ -365,8 +370,7 @@ def _add_population_markers(build: RegionBuild, seed: int) -> None:
     for npc_id, label, role, tile in (
             ("tessara", "Tessara", "dialogue", (52, 60)),
             ("orru-moss", "Orru Moss", "shop", (64, 60))):
-        x = tile[0] * 3.0 - REG.SERVER_ORIGIN[0]
-        z = REG.SERVER_ORIGIN[1] - tile[1] * 3.0
+        x, z = PLAN.ground_point((tile[0] * 3.0 - 174, 174 - tile[1] * 3.0))
         x, z, y = ground(x, z, f"npc {npc_id}")
         build.npc_markers.append({
             "id": npc_id, "name": label, "type": "npc", "role": role,
@@ -382,8 +386,7 @@ def _add_population_markers(build: RegionBuild, seed: int) -> None:
     for species, tiles in creature_tiles.items():
         points = []
         for tx, tz in tiles:
-            x = tx * 3.0 - REG.SERVER_ORIGIN[0]
-            z = REG.SERVER_ORIGIN[1] - tz * 3.0
+            x, z = PLAN.ground_point((tx * 3.0 - 174, 174 - tz * 3.0))
             x, z, y = ground(x, z, f"creature {species}")
             points.append([round(x, 2), round(y, 2), round(z, 2)])
         centre = np.asarray(points, dtype=np.float64).mean(axis=0)
@@ -400,8 +403,7 @@ def _add_population_markers(build: RegionBuild, seed: int) -> None:
 
     # -- harvestables, from config/eloria/harvesting.txt -------------------
     for index, (node_id, resource, tile) in enumerate(POP.SERVER_HARVEST, start=1):
-        x = tile[0] * 3.0 - REG.SERVER_ORIGIN[0]
-        z = REG.SERVER_ORIGIN[1] - tile[1] * 3.0
+        x, z = PLAN.ground_point((tile[0] * 3.0 - 174, 174 - tile[1] * 3.0))
         x, z, y = ground(x, z, f"harvestable {resource}")
         build.harvestables.append({
             "id": f"{resource.lower().replace(' ', '-')}-{index:02d}",
@@ -415,8 +417,7 @@ def _add_population_markers(build: RegionBuild, seed: int) -> None:
 
     # -- interactives, from config/eloria/interactives.txt ------------------
     for node_id, kind, label, tile in POP.SERVER_INTERACTIVES:
-        x = tile[0] * 3.0 - REG.SERVER_ORIGIN[0]
-        z = REG.SERVER_ORIGIN[1] - tile[1] * 3.0
+        x, z = PLAN.ground_point((tile[0] * 3.0 - 174, 174 - tile[1] * 3.0))
         x, z, y = ground(x, z, f"interactive {kind}")
         build.interactives.append({
             "id": f"{kind}-{node_id}", "type": kind, "name": label,
@@ -478,7 +479,8 @@ def export_glb(build: RegionBuild, sets, path: Path,
                warn_unreferenced: bool = True) -> tuple[GLTF.GltfBuilder, dict]:
     builder = GLTF.GltfBuilder(
         generator="Eloria Verdant Stair builder (original procedural assets)")
-    MAT.register_gltf_materials(builder, sets, only=MATERIALS)
+    active_materials = MATERIALS | getattr(build, "vista_materials", set())
+    MAT.register_gltf_materials(builder, sets, only=active_materials)
     MAT.register_ground_materials(
         builder, sets,
         {piece.material
@@ -499,7 +501,7 @@ def export_glb(build: RegionBuild, sets, path: Path,
             if part.triangle_count:
                 used_materials.add(part.material)
     missing = sorted({MAT.base_material(name) for name in used_materials}
-                     - set(MATERIALS))
+                     - set(active_materials))
     if missing:
         raise SystemExit(
             "[materials] these are referenced by geometry but not pinned, so "
@@ -509,7 +511,7 @@ def export_glb(build: RegionBuild, sets, path: Path,
     # now draws with an alpha-tested copy is still referenced, and
     # calling it dead weight would invite trimming a pin the copy
     # depends on.
-    unreferenced = sorted(set(MATERIALS)
+    unreferenced = sorted(set(active_materials)
                           - {MAT.base_material(name)
                              for name in used_materials})
     if warn_unreferenced and unreferenced:
@@ -690,6 +692,7 @@ def build_collision(build: RegionBuild) -> tuple[bytes, int, int, dict]:
     elevated = 0
     z_top = REG.SERVER_ORIGIN[1] * REG.METRES_PER_TILE
     for placement in build.placements:
+        if placement.node.startswith("StreamView_"): continue
         item = build.meshes[placement.mesh]
         walk_parts = getattr(item, "walk_parts", None)
         if not walk_parts:
@@ -821,6 +824,7 @@ def _walk_surface_at(build: RegionBuild, x: float, z: float) -> float:
     best = float(build.terrain.height_at(x, z))
     point = np.array([x, z])
     for placement in build.placements:
+        if placement.node.startswith("StreamView_"): continue
         item = build.meshes[placement.mesh]
         walk_parts = getattr(item, "walk_parts", None)
         if not walk_parts:
@@ -903,7 +907,9 @@ def snap_to_walkable(build: RegionBuild, payload: bytes, width: int,
         clearance = 0.1 if "destinationMap" in entry else 0.05
         entry["position"][1] = round(_walk_surface_at(build, x, z) + clearance, 2)
 
+    surveyed = {s["portal"] for s in getattr(build, "streaming_borders", [])}
     for entry in list(build.spawns) + list(build.portals):
+        if entry["id"] in surveyed: continue  # exposed shared decks are opened after raw collision
         x, _, z = entry["position"]
         if walkable(x, z):
             # An interior doorway is attached to the landmark it belongs to, and
@@ -948,7 +954,12 @@ MINIMAP_PIXELS_PER_METRE = 1.0
 def render_minimap(build: RegionBuild, sets, path: Path, size: int = 0) -> dict:
     """Top-down capture of the finished geometry, rendered not drawn."""
     import preview
-    scene = preview.scene_from_build(build, sets)
+    from copy import copy
+    local = copy(build)
+    local.placements = [p for p in build.placements if not p.node.startswith("StreamView_")]
+    local.terrain_meshes = {k:v for k,v in build.terrain_meshes.items() if not k.startswith("StreamView_")}
+    local.water_meshes = {k:v for k,v in build.water_meshes.items() if not k.startswith("StreamView_")}
+    scene = preview.scene_from_build(local, sets)
     centre_x = (REG.PLAY_MIN_X + REG.PLAY_MAX_X) * 0.5
     centre_z = (REG.PLAY_MIN_Z + REG.PLAY_MAX_Z) * 0.5
     extent = max(REG.PLAY_MAX_X - REG.PLAY_MIN_X, REG.PLAY_MAX_Z - REG.PLAY_MIN_Z)
@@ -1012,6 +1023,7 @@ def write_manifest(build: RegionBuild, stats: dict, collision_stats: dict,
             lows.append(low)
             highs.append(high)
     for placement in build.placements:
+        if placement.node.startswith("StreamView_"): continue
         item = build.meshes[placement.mesh]
         low, high = item.bounds()
         offset = np.asarray(placement.position)
@@ -1100,6 +1112,7 @@ def write_manifest(build: RegionBuild, stats: dict, collision_stats: dict,
         "harvestables": build.harvestables,
         "portals": build.portals,
         "contentLayout": REG.CONTENT_LAYOUT,
+        "streamingBorders": getattr(build, "streaming_borders", []),
         "roads": [{"id": name,
                    "waypoints": [[round(float(p[0]), 1),
                                   round(float(t.height_at(p[0], p[1])), 2),
@@ -1229,6 +1242,9 @@ def main() -> int:
 
     import preview
     sets = preview.texture_sets()
+    needed = {MAT.BY_NAME[m].texture for m in MATERIALS}
+    if needed - sets.keys():
+        sets.update({k:v for k,v in MAT.build_texture_sets().items() if k not in sets})
 
     build = build_region(args.seed, stage=args.stage)
 

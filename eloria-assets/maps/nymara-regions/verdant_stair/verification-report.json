@@ -1,80 +1,181 @@
 {
   "summary": {
-    "walkSurfaceNodes": 85,
-    "walkSurfaceTriangles": 223642,
-    "tilesSampled": 331776,
-    "groundingMisses": 0,
-    "groundingMissFraction": 0.0,
-    "surfaceDiscontinuities": 1412,
-    "spawnPoints": 7
+    "walkSurfaceNodes": 129,
+    "walkSurfaceTriangles": 461951,
+    "tilesSampled": 129600,
+    "groundingMisses": 1008,
+    "groundingMissFraction": 0.00778,
+    "surfaceDiscontinuities": 66,
+    "spawnPoints": 10
   },
   "errors": [],
   "warnings": [
     {
       "severity": "warning",
-      "code": "GROUNDING_DISCONTINUITY",
-      "message": "1412 adjacent tile pairs differ by more than 6 m of surface height (expected at cliffs and under bridges)",
+      "code": "GROUNDING_RAY_MISS",
+      "message": "1008 server tiles have no walk surface under them; a character there would fall back to walkingHeight=12.0",
       "detail": [
         [
-          575,
-          254,
-          115.7
+          0,
+          68,
+          -108.0,
+          40.0
         ],
         [
-          575,
-          253,
-          115.51
+          1,
+          68,
+          -107.0,
+          40.0
         ],
         [
-          263,
-          575,
-          110.2
+          2,
+          68,
+          -106.0,
+          40.0
         ],
         [
-          262,
-          575,
-          110.12
+          3,
+          68,
+          -105.0,
+          40.0
         ],
         [
-          261,
-          575,
-          109.75
+          4,
+          68,
+          -104.0,
+          40.0
         ],
         [
-          260,
-          575,
-          109.18
+          5,
+          68,
+          -103.0,
+          40.0
         ],
         [
-          259,
-          575,
-          108.4
+          0,
+          69,
+          -108.0,
+          39.0
         ],
         [
-          258,
-          575,
-          107.57
+          1,
+          69,
+          -107.0,
+          39.0
         ],
         [
-          186,
-          575,
-          106.17
+          2,
+          69,
+          -106.0,
+          39.0
         ],
         [
-          185,
-          575,
-          106.15
+          3,
+          69,
+          -105.0,
+          39.0
         ],
         [
-          184,
-          575,
-          106.12
+          4,
+          69,
+          -104.0,
+          39.0
         ],
         [
-          257,
-          575,
-          106.06
+          5,
+          69,
+          -103.0,
+          39.0
         ]
+      ]
+    },
+    {
+      "severity": "warning",
+      "code": "GROUNDING_DISCONTINUITY",
+      "message": "66 adjacent tile pairs differ by more than 6 m of surface height (expected at cliffs and under bridges)",
+      "detail": [
+        [
+          179,
+          152,
+          18.69
+        ],
+        [
+          179,
+          151,
+          18.53
+        ],
+        [
+          179,
+          152,
+          18.41
+        ],
+        [
+          178,
+          152,
+          18.25
+        ],
+        [
+          202,
+          133,
+          17.63
+        ],
+        [
+          202,
+          132,
+          17.11
+        ],
+        [
+          201,
+          130,
+          16.6
+        ],
+        [
+          180,
+          150,
+          16.45
+        ],
+        [
+          201,
+          129,
+          16.13
+        ],
+        [
+          181,
+          150,
+          15.07
+        ],
+        [
+          177,
+          151,
+          15.01
+        ],
+        [
+          181,
+          150,
+          14.76
+        ]
+      ]
+    },
+    {
+      "severity": "warning",
+      "code": "COLLISION_SURFACE_MISMATCH",
+      "message": "2 sampled walkable cells disagree with the rendered walk surface",
+      "detail": [
+        {
+          "cell": [
+            180,
+            336
+          ],
+          "encoded": 15.14,
+          "surface": 21.24
+        },
+        {
+          "cell": [
+            708,
+            396
+          ],
+          "issue": "no-surface"
+        }
       ]
     }
   ]

@@ -36,7 +36,9 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -45,6 +47,7 @@ from PIL import Image, ImageDraw
 ROOT = Path(__file__).resolve().parents[2]
 REGISTRY = ROOT / "godot-client" / "data" / "maps" / "registry.json"
 LAYOUT = ROOT / "eloria-assets" / "maps" / "nymara-regions" / "continent-layout.json"
+CONNECTIONS = LAYOUT.with_name("region-connections.json")
 CONTINENT_IMAGE = ROOT / "eloria-assets" / "maps" / "nymara-regions" / "continent-map.webp"
 CARTOGRAPHY = ROOT / "godot-client" / "data" / "maps" / "cartography.json"
 RESOURCE_PREFIX = "res://../"
@@ -136,6 +139,21 @@ def registry_entries(registry: dict, layout: dict) -> list[tuple[str, dict]]:
     return entries
 
 
+def atlas_connections(layout: dict) -> list[dict]:
+    """Draw only actual graph edges; bends route ferries around unrelated land."""
+    scale = float(layout['metresPerPixel'])
+    result = []
+    for link in load_json(CONNECTIONS)['connections']:
+        a, b = link['from'], link['to']
+        if a not in layout['regions'] or b not in layout['regions']:
+            continue
+        key = a + '--' + b
+        points = [layout['regions'][a], *layout.get('routeBends', {}).get(key, []), layout['regions'][b]]
+        result.append({'from': a, 'to': b, 'type': link['type'],
+                       'points': [[round(float(v)/scale, 3) for v in p] for p in points]})
+    return result
+
+
 def compose(layout: dict, registry: dict) -> tuple[dict, list[dict]]:
     """The cartography document, and what to paste where to draw the picture."""
     metres_per_pixel = float(layout["metresPerPixel"])
@@ -204,6 +222,7 @@ def compose(layout: dict, registry: dict) -> tuple[dict, list[dict]]:
             "sources": sources,
         },
         "regions": regions,
+        "connections": atlas_connections(layout),
     }
     return cartography, tiles
 
@@ -219,6 +238,21 @@ def draw(layout: dict, cartography: dict, tiles: list[dict]) -> Image.Image:
         ImageDraw.Draw(canvas).ellipse(
             [cx - radius, cy - radius, cx + radius, cy + radius],
             fill=tuple(int(v) for v in lake["colour"]))
+    pen = ImageDraw.Draw(canvas)
+    for link in cartography['connections']:
+        points = [tuple(p) for p in link['points']]
+        if link['type'] != 'ferry':
+            pen.line(points, fill=(53, 48, 36), width=6, joint='curve')
+            pen.line(points, fill=(218, 193, 137), width=3, joint='curve')
+        else:
+            # Dash spacing is in image pixels, so the ferry stays distinct
+            # from a road even across a narrow gap between real lake tiles.
+            for a, b in zip(points, points[1:]):
+                length = math.dist(a, b)
+                for begin in range(0, int(length), 9):
+                    end = min(begin+5, length)
+                    at = lambda d: tuple(a[i]+(b[i]-a[i])*d/length for i in (0, 1))
+                    pen.line([at(begin), at(end)], fill=(129, 204, 221), width=2)
     for tile in tiles:
         x, y, w, h = tile["crop"]
         rect = tile["rect"]
@@ -234,7 +268,7 @@ def check() -> list[str]:
     problems: list[str] = []
     layout = load_json(LAYOUT)
     registry = load_json(REGISTRY)
-    wanted, _ = compose(layout, registry)
+    wanted, tiles = compose(layout, registry)
     if not CARTOGRAPHY.exists():
         return [f"{CARTOGRAPHY} is missing; run build_continent_map.py"]
     current = load_json(CARTOGRAPHY)
@@ -249,6 +283,10 @@ def check() -> list[str]:
             if list(image.size) != wanted["continent"]["imageSize"]:
                 problems.append(f"continent image is {list(image.size)}, cartography says "
                                 f"{wanted['continent']['imageSize']}; run build_continent_map.py")
+        encoded = io.BytesIO()
+        draw(layout, wanted, tiles).save(encoded, 'WEBP', quality=WEBP_QUALITY, method=6)
+        if CONTINENT_IMAGE.read_bytes() != encoded.getvalue():
+            problems.append('continent picture content is stale; run build_continent_map.py')
     return problems
 
 

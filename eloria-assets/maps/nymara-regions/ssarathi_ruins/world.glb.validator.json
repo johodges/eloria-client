@@ -1,12 +1,12 @@
 {
-  "uri": "eloria-assets\\maps\\nymara-regions\\ssarathi_ruins\\world.glb",
+  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-south-client\\eloria-assets\\maps\\nymara-regions\\ssarathi_ruins\\world.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-09-10T10:47:51.609369Z",
+  "validatedAt": "2026-09-11T18:02:47.017274Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
-    "numInfos": 8,
+    "numInfos": 7,
     "numHints": 0,
     "messages": [
       {
@@ -25,25 +25,13 @@
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/11"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
         "pointer": "/materials/12"
       },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/18"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/26"
+        "pointer": "/materials/20"
       },
       {
         "code": "UNUSED_OBJECT",
@@ -55,7 +43,13 @@
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/28"
+        "pointer": "/materials/29"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/30"
       }
     ]
   }

@@ -68,6 +68,10 @@ func _run() -> void:
 	_network.call("send_chat", "#demigod")
 	var specs: Array = JSON.parse_string(FileAccess.get_file_as_string(OS.get_environment("ELORIA_WALK_SPEC")))
 	for route: Dictionary in specs:
+		if not (route.get("requiresItems", {}) as Dictionary).is_empty():
+			var items_ready: bool = await _ensure_fixture_items(route.requiresItems as Dictionary)
+			_expect(items_ready, str(route.id) + " required inventory received from server")
+			if not items_ready: continue
 		var map_id: String = str(route.get("map", "amberwood"))
 		var start: Array = route.start
 		_network.call("send_chat", "#invasion_assistant teleport %s %d %d" % [map_id, int(start[0]), int(start[1])])
@@ -116,6 +120,12 @@ func _run() -> void:
 					reached = await _wait(func() -> bool:
 						return _chat_contains_after(chat_cursor, str(step.expectText)), 10)
 					_expect(reached, "%s / %s interaction replied" % [route.id, step.get("label", str(walked))])
+			if reached and step.has("expectResource"):
+				reached = await _wait(func() -> bool: return _resource_present(int(step.expectResource)), 8)
+				_expect(reached, "%s / %s resource visible and within reach" % [route.id, step.get("label", str(walked))])
+			if reached and step.has("expectCreature"):
+				reached = await _wait(func() -> bool: return _creature_present(step.expectCreature), 8)
+				_expect(reached, "%s / %s encounter creature visible nearby" % [route.id, step.get("label", str(walked))])
 			if not _report.has("walk_steps"): _report["walk_steps"] = []
 			(_report["walk_steps"] as Array).append({"route": route.id, "target": target,
 				"map": str(_state.get("current_map")), "ok": reached,
@@ -153,6 +163,39 @@ func _run() -> void:
 	_main.queue_free()
 	await process_frame
 	quit(_failures)
+
+func _has_visible_model(node: Node3D) -> bool:
+	if not is_instance_valid(node) or not node.is_visible_in_tree(): return false
+	var pending: Array[Node] = [node]
+	while not pending.is_empty():
+		var child: Node = pending.pop_back()
+		if child is MeshInstance3D:
+			var mesh := child as MeshInstance3D
+			if mesh.mesh != null and mesh.is_visible_in_tree() and (mesh.layers & 1) != 0: return true
+		for descendant: Node in child.get_children(): pending.append(descendant)
+	return false
+
+func _resource_present(identity: int) -> bool:
+	var object: MapObject3D = (_main.get("map_object_nodes") as Dictionary).get(identity) as MapObject3D
+	var dto: Dictionary = (_state.get("map_objects") as Dictionary).get(identity, {})
+	var player: Dictionary = (_state.get("actors") as Dictionary).get(int(_state.get("local_actor_id")), {})
+	if dto.is_empty() or player.is_empty() or not is_instance_valid(object): return false
+	var distance := Vector2(float(dto.x)-float(player.x),float(dto.y)-float(player.y)).length()
+	return object.is_harvestable() and distance <= 5.0 and _has_visible_model(object) and not (_main.get("_ungrounded_map_objects") as Dictionary).has(identity)
+
+func _creature_present(expected: Variant) -> bool:
+	var player: Dictionary = (_state.get("actors") as Dictionary).get(int(_state.get("local_actor_id")), {})
+	if player.is_empty(): return false
+	var actors: Dictionary = _state.get("actors")
+	for identity: Variant in actors:
+		if int(identity) == int(_state.get("local_actor_id")): continue
+		var actor: Dictionary = actors[identity]
+		var matches: bool = int(actor.get("actor_type",-1)) == int(expected) if expected is float or expected is int else str(actor.get("name","")).to_lower().replace(" ","_").contains(str(expected).to_lower().replace(" ","_"))
+		if not matches: continue
+		var distance := Vector2(float(actor.x)-float(player.x),float(actor.y)-float(player.y)).length()
+		var node: Node3D = (_main.get("actor_nodes") as Dictionary).get(identity) as Node3D
+		if distance <= 35.0 and _has_visible_model(node): return true
+	return false
 
 func _issue_walk(step: Dictionary) -> void:
 	var target: Array = step.tile
@@ -204,6 +247,32 @@ func _chat_contains_after(cursor: int, expected: String) -> bool:
 		if str((lines[index] as Dictionary).get("text", "")).contains(expected):
 			return true
 	return false
+
+func _fixture_item_quantity(item_name: String) -> int:
+	var total := 0
+	for item: Dictionary in (_state.get("inventory_state") as Dictionary).get("items", []):
+		if str(item.get("name", "")) == item_name:
+			total += int(item.get("quantity", 0))
+	return total
+
+func _ensure_fixture_items(required: Dictionary) -> bool:
+	# This temporary QA character uses the existing server testing command.
+	# The entrance still performs its ordinary authoritative key check.
+	for item_name: String in required:
+		var quantity: int = int(required[item_name])
+		var missing: int = maxi(0, quantity - _fixture_item_quantity(item_name))
+		if missing == 0: continue
+		var cursor: int = (_state.get("chat_lines") as Array).size()
+		_network.call("send_chat", "#give %s %d" % [item_name, missing])
+		if not await _wait(func() -> bool:
+			return _chat_contains_after(cursor, "Gave %d %s (item ID " % [missing, item_name]), 10):
+			return false
+		# The organizer packet carries canonical item names and quantities;
+		# chat alone does not prove the received authoritative inventory.
+		_network.call("send_chat", "#inventory")
+		if not await _wait(func() -> bool: return _fixture_item_quantity(item_name) >= quantity, 10):
+			return false
+	return true
 
 func _presentation_arrived() -> bool:
 	var actor: ReplicatedActor3D = (_main.get("actor_nodes") as Dictionary).get(int(_state.get("local_actor_id"))) as ReplicatedActor3D

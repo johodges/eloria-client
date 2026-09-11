@@ -542,7 +542,7 @@
   ],
   "encounters": [
     {
-      "creature": "mirrorfin_otter",
+      "creature": "river_otter",
       "serverTile": [
         103,
         371
@@ -550,7 +550,7 @@
       "authority": "server"
     },
     {
-      "creature": "mirrorfin_otter",
+      "creature": "river_otter",
       "serverTile": [
         198,
         171
@@ -558,7 +558,7 @@
       "authority": "server"
     },
     {
-      "creature": "mirrorfin_otter",
+      "creature": "river_otter",
       "serverTile": [
         226,
         119
@@ -566,7 +566,7 @@
       "authority": "server"
     },
     {
-      "creature": "mirrorfin_otter",
+      "creature": "river_otter",
       "serverTile": [
         125,
         26
@@ -574,7 +574,7 @@
       "authority": "server"
     },
     {
-      "creature": "reedhorn_stag",
+      "creature": "crown_antler_stag",
       "serverTile": [
         28,
         35
@@ -582,7 +582,7 @@
       "authority": "server"
     },
     {
-      "creature": "reedhorn_stag",
+      "creature": "crown_antler_stag",
       "serverTile": [
         35,
         50
@@ -590,7 +590,7 @@
       "authority": "server"
     },
     {
-      "creature": "reedhorn_stag",
+      "creature": "crown_antler_stag",
       "serverTile": [
         47,
         50
@@ -598,7 +598,7 @@
       "authority": "server"
     },
     {
-      "creature": "reedhorn_stag",
+      "creature": "crown_antler_stag",
       "serverTile": [
         177,
         133

@@ -150,6 +150,26 @@ def compact(build):
     root=Path(__file__).resolve().parents[2]
     from streaming_borders import apply as stitch_border
     stitch_border(build, 'whitehorn_range')
+    # Door triggers belong on the physical front threshold, not in the solid
+    # shrine or the mine's dark recessed backing. Keep the full native meshes
+    # and the destination IDs; root publication derives both return bindings.
+    door_posts={'snowline-cell-door':(248.0,-167.0),
+                'whitehorn-mine-adit':(210.0,-140.0),
+                'whitehorn-ice-cave-mouth':(-85.0,-59.0)}
+    for portal in build.portals:
+        if portal['id'] not in door_posts:continue
+        x,z=door_posts[portal['id']]
+        if portal['id']=='whitehorn-mine-adit':
+            placement=next(p for p in build.placements if p.node=='Landmark_mine_portal')
+            height=placement.position[1]+.11
+        elif portal['id']=='whitehorn-ice-cave-mouth':
+            placement=next(p for p in build.placements if p.node=='Landmark_ice_cave')
+            height=placement.position[1]+.245
+        else:height=float(build.terrain.height_at(x+.5,z-.5))
+        portal['position']=[x,round(height+.1,4),z]
+        portal['serverTile']=[round(x+SERVER_ORIGIN[0]),round(SERVER_ORIGIN[1]-z)]
+        for spawn in build.spawns:
+            if spawn['id']==portal['id']:spawn['position']=[x,round(height,4),z]
 
 
 def content_layout():

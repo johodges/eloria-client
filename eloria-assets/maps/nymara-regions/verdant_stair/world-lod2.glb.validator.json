@@ -1,49 +1,67 @@
 {
-  "uri": "eloria-assets\\maps\\nymara-regions\\verdant_stair\\world-lod2.glb",
+  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-south-client\\eloria-assets\\maps\\nymara-regions\\verdant_stair\\world-lod2.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-09-10T10:47:50.669342Z",
+  "validatedAt": "2026-09-11T17:56:34.909030Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
-    "numInfos": 6,
+    "numInfos": 9,
     "numHints": 0,
     "messages": [
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/14"
+        "pointer": "/materials/15"
       },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/20"
+        "pointer": "/materials/23"
       },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/21"
+        "pointer": "/materials/25"
       },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/24"
+        "pointer": "/materials/28"
       },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/26"
+        "pointer": "/materials/30"
       },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/27"
+        "pointer": "/materials/31"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/40"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/41"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/42"
       }
     ]
   }

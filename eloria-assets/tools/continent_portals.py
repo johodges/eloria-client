@@ -22,15 +22,14 @@ puts them together:
   arrival tile (where the insides package puts its return portal) lands two
   tiles from the door outside;
 * `--apply` rewrites the block of `config/eloria/maps.txt` between its two
-  markers and leaves every other line - bootstrap maps, Sunmane's caves,
-  comments - exactly as it was.
+  markers, preserving unrelated bootstrap maps, other regions' lines and comments.
 
 Crownwater's quays serve several routes each, so a quay may carry a second
 portal a few tiles along the dock; the graph names those with a suffix and the
 package declares them as separate portals on separate tiles.
 
-Sunmane's caves are not generated here: their tiles are a tested contract in
-`tests/test_nymara_maps.py` and stay in the hand-written block below this one.
+Sunmane's two cave mouths now follow their authored section arrivals and return
+posts too. Their previous hand-written links are replaced on scoped publication.
 """
 from __future__ import annotations
 
@@ -49,6 +48,7 @@ import secret_doors as SD  # noqa: E402
 
 # region -> (insides package directory, the map id the server serves it as)
 INSIDES = {
+    "sunmane_steppe": ("sunmane_insides", "sunmane_wind_caves"),
     "amethyst_barrens": ("amethyst_barrens_insides", "resonant_vault"),
     "grey_moors": ("grey_moors_insides", "grey_moor_barrows"),
     "westhaven": ("westhaven_insides", "westhaven_insides"),
@@ -276,13 +276,23 @@ def interior_lines(portals, collisions, load, errors, selected=None) -> tuple[li
                     errors.append(f"{region} door {door_id} at {trigger} is not walkable")
                     continue
                 trigger = moved
+            exit_tile=inside
             outside = nearest_open(collisions[region], trigger, 2, 5)
+            if region=='sunmane_steppe':
+                room=read_manifest(INTERIORS/package/'world.json')
+                exit_=next((p for p in room['portals'] if p['id']=='exit-'+spawn),None)
+                if exit_ is None or 'destinationTile' not in exit_:
+                    errors.append(f'{region} door {door_id}: missing authored return');continue
+                exit_tile=tuple(exit_.get('serverTile') or to_tile(exit_['position'],room['coordinateTransform']))
+                outside=tuple(exit_['destinationTile'])
+                if not collisions[map_id].walkable(*exit_tile) or not collisions[region].walkable(*outside):
+                    errors.append(f'{region} door {door_id}: blocked authored return {exit_tile}/{outside}');continue
             if outside is None:
                 errors.append(f"{region} door {door_id}: no open ground within five tiles")
                 continue
             lines.append(f"portal | {region} | {trigger[0]} | {trigger[1]} | {map_id} | "
                          f"{inside[0]} | {inside[1]}")
-            lines.append(f"portal | {map_id} | {inside[0]} | {inside[1]} | {region} | "
+            lines.append(f"portal | {map_id} | {exit_tile[0]} | {exit_tile[1]} | {region} | "
                          f"{outside[0]} | {outside[1]}")
             written += 2
         lines.append("")
@@ -421,6 +431,17 @@ def secret_lines(collisions, load, errors) -> tuple[list[str], int]:
     return lines, written
 
 
+def remove_legacy_cave_links(text):
+    """Replace only the four old ordinary Sunmane links, keeping map definitions."""
+    kept=[]
+    for line in text.splitlines(keepends=True):
+        fields=[part.strip() for part in line.split('|')]
+        if len(fields)==7 and fields[0]=='portal' and {fields[1],fields[4]}=={'sunmane_steppe','sunmane_wind_caves'}:
+            continue
+        kept.append(line)
+    return ''.join(kept)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--server", type=Path, required=True)
@@ -452,6 +473,8 @@ def main() -> int:
     block = "\n".join(lines)
     maps_txt = args.server / "config" / "eloria" / "maps.txt"
     text = maps_txt.read_text(encoding="utf-8")
+    if args.region in (None,'sunmane_steppe'):
+        text=remove_legacy_cave_links(text)
     if BEGIN in text and END in text:
         head = text[:text.index(BEGIN)]
         tail = text[text.index(END) + len(END):]
@@ -462,8 +485,6 @@ def main() -> int:
         chosen = {args.region, args.region + "_secrets"}
         if args.region in INSIDES:
             chosen.add(INSIDES[args.region][1])
-        # Sunmane's two cave links live in the profile's legacy block above
-        # BEGIN. This scope rebuilds its exterior marches and secret entrances.
         def belongs(line):
             fields = [part.strip() for part in line.split("|")]
             if not fields or fields[0] != "portal":
