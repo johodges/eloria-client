@@ -1264,11 +1264,11 @@ func _init() -> void:
 			# stale along with every fixture below. What the catalog was built
 			# from is now asserted where both halves are visible - the
 			# server's client_content_manifest.json and its content-sync test.
-			# 542: the forty-two hand-authored recipes, which stay first in
-			# the file and so stay first here, and the five hundred the
+			# 540: the forty-two hand-authored recipes, which stay first in
+			# the file and so stay first here, and the 498 the
 			# crafting ladder generates below them.
 			_expect(str(sources.get("profile", "")) == "eloria"
-				and manufacturing_recipes.size() == 542
+				and manufacturing_recipes.size() == 540
 				and str((manufacturing_recipes[0] as Dictionary).get("output", "")) == "Torch",
 				"manufacturing catalog matches the served profile's own recipes")
 			# Both catalogs come out of one generator run, so an index into the

@@ -1030,9 +1030,9 @@ func _run() -> void:
 		"GameView/ManufacturingPanel/Content/Columns/ManufacturingSide/ManufacturingDetail") as RichTextLabel
 	var manufacturing_mix_one: Button = main.get_node(
 		"GameView/ManufacturingPanel/Content/Columns/ManufacturingSide/ManufacturingActions/ManufacturingMixOne") as Button
-	# 542 recipes: the 42 hand-authored ones and the 500 the crafting ladder
+	# 540 recipes: the 42 hand-authored ones and the 498 the crafting ladder
 	# generates for every wearable, the potion shelf and the base materials.
-	_expect(manufacturing_panel.visible and manufacturing_list.item_count == 542
+	_expect(manufacturing_panel.visible and manufacturing_list.item_count == 540
 		and root.get_visible_rect().encloses(manufacturing_panel.get_global_rect()),
 		"the served recipe catalog opens within the reference viewport: %d"
 			% manufacturing_list.item_count)
@@ -1073,7 +1073,7 @@ func _run() -> void:
 		"the All tab draws the sheet's own picture for everything")
 	main.set("manufacturing_skill", "tailoring")
 	main.call("_sync_manufacturing")
-	_expect(manufacturing_list.item_count == 190,
+	_expect(manufacturing_list.item_count == 188,
 		"a skill tab narrows the list to that skill: %d"
 			% manufacturing_list.item_count)
 	main.set("manufacturing_skill", "")

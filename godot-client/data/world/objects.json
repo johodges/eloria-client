@@ -332,16 +332,6 @@
         "alphaTested": true,
         "height": 1.041
       },
-      "frost_reed": {
-        "scene": "res://assets/world/harvestables/frost_reed.glb",
-        "label": "Frost Reed",
-        "kind": "fibre",
-        "tier": "common",
-        "vertices": 412,
-        "triangles": 206,
-        "alphaTested": true,
-        "height": 1.465
-      },
       "copper_ore": {
         "scene": "res://assets/world/harvestables/copper_ore.glb",
         "label": "Copper",
@@ -372,26 +362,6 @@
         "alphaTested": false,
         "height": 0.66
       },
-      "wheat": {
-        "scene": "res://assets/world/harvestables/wheat.glb",
-        "label": "Winter Wheat",
-        "kind": "grain",
-        "tier": "common",
-        "vertices": 492,
-        "triangles": 246,
-        "alphaTested": true,
-        "height": 1.43
-      },
-      "cotton": {
-        "scene": "res://assets/world/harvestables/cotton.glb",
-        "label": "Cotton",
-        "kind": "fibre",
-        "tier": "common",
-        "vertices": 448,
-        "triangles": 224,
-        "alphaTested": true,
-        "height": 0.66
-      },
       "lavender": {
         "scene": "res://assets/world/harvestables/lavender.glb",
         "label": "Lavender",
@@ -401,26 +371,6 @@
         "triangles": 144,
         "alphaTested": true,
         "height": 1.0
-      },
-      "flax": {
-        "scene": "res://assets/world/harvestables/flax.glb",
-        "label": "Flax",
-        "kind": "fibre",
-        "tier": "common",
-        "vertices": 448,
-        "triangles": 224,
-        "alphaTested": true,
-        "height": 1.212
-      },
-      "sage": {
-        "scene": "res://assets/world/harvestables/sage.glb",
-        "label": "Garden Sage",
-        "kind": "herb",
-        "tier": "common",
-        "vertices": 208,
-        "triangles": 104,
-        "alphaTested": true,
-        "height": 0.849
       },
       "rosemary": {
         "scene": "res://assets/world/harvestables/rosemary.glb",
@@ -462,16 +412,6 @@
         "alphaTested": true,
         "height": 0.826
       },
-      "coal": {
-        "scene": "res://assets/world/harvestables/coal.glb",
-        "label": "Deep Coal",
-        "kind": "mineral",
-        "tier": "common",
-        "vertices": 408,
-        "triangles": 204,
-        "alphaTested": false,
-        "height": 0.66
-      },
       "iron_ore": {
         "scene": "res://assets/world/harvestables/iron_ore.glb",
         "label": "Iron Ore",
@@ -481,36 +421,6 @@
         "triangles": 208,
         "alphaTested": false,
         "height": 0.66
-      },
-      "stormglass": {
-        "scene": "res://assets/world/harvestables/stormglass.glb",
-        "label": "Storm Crystal",
-        "kind": "crystal",
-        "tier": "uncommon",
-        "vertices": 352,
-        "triangles": 176,
-        "alphaTested": false,
-        "height": 1.122
-      },
-      "moon_salt": {
-        "scene": "res://assets/world/harvestables/moon_salt.glb",
-        "label": "Moon Salt",
-        "kind": "mineral",
-        "tier": "uncommon",
-        "vertices": 304,
-        "triangles": 152,
-        "alphaTested": false,
-        "height": 0.576
-      },
-      "quartz": {
-        "scene": "res://assets/world/harvestables/quartz.glb",
-        "label": "Clear Quartz",
-        "kind": "crystal",
-        "tier": "common",
-        "vertices": 352,
-        "triangles": 176,
-        "alphaTested": false,
-        "height": 1.034
       },
       "sulfur": {
         "scene": "res://assets/world/harvestables/sulfur.glb",
@@ -557,24 +467,15 @@
       "Thistle": "indigo_thistle",
       "Watercress": "cenote_watercress",
       "Sunleaf": "sunleaf",
-      "Frost Reed": "frost_reed",
       "Copper": "copper_ore",
       "Ember Crystal": "ember_crystal",
       "Slate": "slate_outcrop",
-      "Winter Wheat": "wheat",
-      "Cotton": "cotton",
       "Lavender": "lavender",
-      "Flax": "flax",
-      "Garden Sage": "sage",
       "Rosemary": "rosemary",
       "Mushroom": "mushroom",
       "Moss": "grave_moss",
       "Blueberries": "blueberries",
-      "Deep Coal": "coal",
       "Iron Ore": "iron_ore",
-      "Storm Crystal": "stormglass",
-      "Moon Salt": "moon_salt",
-      "Clear Quartz": "quartz",
       "Sulfur": "sulfur"
     }
   },

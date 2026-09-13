@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "sources": {
     "profile": "eloria",
-    "recipesSha256": "f58dc5847abe5d0bc2c302fd7c5354539e2e2d3bfb7933bd87f5dcb05d8dac83",
-    "itemsSha256": "8296c55b0def25ca07c0f714aa4a53435b844dc13b35613489ace863651c6d01",
+    "recipesSha256": "ff4684b4fa950c4f4117560fe2c2c89df0f77f0f39bd25b7a5f675bbfa52ceb1",
+    "itemsSha256": "33c57a1f4e48e2402887f1d602578cb44d4c0c5a77dc3daab87b81c1ea50c6ab",
     "booksSha256": "dbaf97061c7578ece676a3d6ff122d25af0bb69a01d4c4bcec9b16653df00329"
   },
   "recipes": [
@@ -277,9 +277,9 @@
       "knowledgeIndex": -1,
       "ingredients": [
         {
-          "name": "Moon Salt",
+          "name": "Salt",
           "quantity": 2,
-          "imageId": 71,
+          "imageId": 90,
           "ambiguousImage": false,
           "imageAliases": []
         },
@@ -360,16 +360,16 @@
       "knowledgeIndex": -1,
       "ingredients": [
         {
-          "name": "Frost Reed",
+          "name": "Reed",
           "quantity": 2,
-          "imageId": 17,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Moon Salt",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 71,
+          "imageId": 90,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -446,9 +446,9 @@
           ]
         },
         {
-          "name": "Moon Salt",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 71,
+          "imageId": 90,
           "ambiguousImage": false,
           "imageAliases": []
         },
@@ -586,9 +586,9 @@
           "imageAliases": []
         },
         {
-          "name": "Frost Reed",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 17,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -922,9 +922,9 @@
           "imageAliases": []
         },
         {
-          "name": "Moon Salt",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 71,
+          "imageId": 90,
           "ambiguousImage": false,
           "imageAliases": []
         },
@@ -2018,14 +2018,11 @@
       "knowledgeIndex": -1,
       "ingredients": [
         {
-          "name": "Flax",
+          "name": "Riverflax",
           "quantity": 2,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -2052,14 +2049,11 @@
       "knowledgeIndex": -1,
       "ingredients": [
         {
-          "name": "Cotton",
+          "name": "Moorcotton",
           "quantity": 3,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Thread",
@@ -2234,87 +2228,6 @@
     {
       "id": 51,
       "skill": "tailoring",
-      "output": "Thread",
-      "outputImageId": 12,
-      "level": 2,
-      "animalNexus": 0,
-      "experience": 32,
-      "food": 2,
-      "mana": 0,
-      "knowledge": "",
-      "knowledgeIndex": -1,
-      "ingredients": [
-        {
-          "name": "Riverflax",
-          "quantity": 3,
-          "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
-        }
-      ],
-      "tools": [
-        {
-          "name": "Needle",
-          "quantity": 1,
-          "imageId": 7,
-          "ambiguousImage": false,
-          "imageAliases": []
-        }
-      ]
-    },
-    {
-      "id": 52,
-      "skill": "tailoring",
-      "output": "Cloth Roll",
-      "outputImageId": 36,
-      "level": 5,
-      "animalNexus": 0,
-      "experience": 36,
-      "food": 2,
-      "mana": 0,
-      "knowledge": "",
-      "knowledgeIndex": -1,
-      "ingredients": [
-        {
-          "name": "Moorcotton",
-          "quantity": 3,
-          "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
-        },
-        {
-          "name": "Thread",
-          "quantity": 1,
-          "imageId": 12,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Thread",
-            "Silk Thread",
-            "Carry Removal Stone",
-            "Power Hungry Removal",
-            "Reedway Summoning Stone"
-          ]
-        }
-      ],
-      "tools": [
-        {
-          "name": "Needle",
-          "quantity": 1,
-          "imageId": 7,
-          "ambiguousImage": false,
-          "imageAliases": []
-        }
-      ]
-    },
-    {
-      "id": 53,
-      "skill": "tailoring",
       "output": "Leather",
       "outputImageId": 37,
       "level": 8,
@@ -2357,7 +2270,7 @@
       ]
     },
     {
-      "id": 54,
+      "id": 52,
       "skill": "tailoring",
       "output": "Bandage",
       "outputImageId": 56,
@@ -2395,7 +2308,7 @@
       ]
     },
     {
-      "id": 55,
+      "id": 53,
       "skill": "tailoring",
       "output": "Green Cloak",
       "outputImageId": 49,
@@ -2431,11 +2344,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Lichen",
@@ -2459,7 +2369,7 @@
       ]
     },
     {
-      "id": 56,
+      "id": 54,
       "skill": "tailoring",
       "output": "Wool Cap",
       "outputImageId": 206,
@@ -2520,7 +2430,7 @@
       ]
     },
     {
-      "id": 57,
+      "id": 55,
       "skill": "tailoring",
       "output": "Drover Hat",
       "outputImageId": 207,
@@ -2578,7 +2488,7 @@
       ]
     },
     {
-      "id": 58,
+      "id": 56,
       "skill": "tailoring",
       "output": "Patched Sunhat",
       "outputImageId": 208,
@@ -2636,7 +2546,7 @@
       ]
     },
     {
-      "id": 59,
+      "id": 57,
       "skill": "tailoring",
       "output": "Earflap Cap",
       "outputImageId": 209,
@@ -2697,7 +2607,7 @@
       ]
     },
     {
-      "id": 60,
+      "id": 58,
       "skill": "tailoring",
       "output": "Linen Kerchief",
       "outputImageId": 210,
@@ -2758,7 +2668,7 @@
       ]
     },
     {
-      "id": 61,
+      "id": 59,
       "skill": "tailoring",
       "output": "Felt Hat",
       "outputImageId": 211,
@@ -2816,7 +2726,7 @@
       ]
     },
     {
-      "id": 62,
+      "id": 60,
       "skill": "tailoring",
       "output": "Field Hood",
       "outputImageId": 212,
@@ -2859,11 +2769,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -2877,7 +2784,7 @@
       ]
     },
     {
-      "id": 63,
+      "id": 61,
       "skill": "tailoring",
       "output": "Fur Cap",
       "outputImageId": 213,
@@ -2913,11 +2820,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Reed",
@@ -2938,7 +2842,7 @@
       ]
     },
     {
-      "id": 64,
+      "id": 62,
       "skill": "tailoring",
       "output": "Redtrim Tunic",
       "outputImageId": 271,
@@ -2999,7 +2903,7 @@
       ]
     },
     {
-      "id": 65,
+      "id": 63,
       "skill": "tailoring",
       "output": "Patched Workshirt",
       "outputImageId": 272,
@@ -3057,7 +2961,7 @@
       ]
     },
     {
-      "id": 66,
+      "id": 64,
       "skill": "tailoring",
       "output": "Whipstitch Shirt",
       "outputImageId": 273,
@@ -3118,7 +3022,7 @@
       ]
     },
     {
-      "id": 67,
+      "id": 65,
       "skill": "tailoring",
       "output": "Sashwrap Shirt",
       "outputImageId": 274,
@@ -3176,7 +3080,7 @@
       ]
     },
     {
-      "id": 68,
+      "id": 66,
       "skill": "tailoring",
       "output": "Laced Field Tunic",
       "outputImageId": 275,
@@ -3237,7 +3141,7 @@
       ]
     },
     {
-      "id": 69,
+      "id": 67,
       "skill": "tailoring",
       "output": "Tattered Blue Shirt",
       "outputImageId": 276,
@@ -3280,11 +3184,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -3298,7 +3199,7 @@
       ]
     },
     {
-      "id": 70,
+      "id": 68,
       "skill": "tailoring",
       "output": "Woollen Tunic",
       "outputImageId": 277,
@@ -3356,7 +3257,7 @@
       ]
     },
     {
-      "id": 71,
+      "id": 69,
       "skill": "tailoring",
       "output": "Tasselled Tunic",
       "outputImageId": 278,
@@ -3392,11 +3293,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Thistle",
@@ -3417,7 +3315,7 @@
       ]
     },
     {
-      "id": 72,
+      "id": 70,
       "skill": "tailoring",
       "output": "Fringed Kaftan",
       "outputImageId": 279,
@@ -3478,7 +3376,7 @@
       ]
     },
     {
-      "id": 73,
+      "id": 71,
       "skill": "tailoring",
       "output": "Rider Vest",
       "outputImageId": 280,
@@ -3539,7 +3437,7 @@
       ]
     },
     {
-      "id": 74,
+      "id": 72,
       "skill": "tailoring",
       "output": "Bone Clasp Coat",
       "outputImageId": 281,
@@ -3597,7 +3495,7 @@
       ]
     },
     {
-      "id": 75,
+      "id": 73,
       "skill": "tailoring",
       "output": "Sundisc Cuirass",
       "outputImageId": 282,
@@ -3655,7 +3553,7 @@
       ]
     },
     {
-      "id": 76,
+      "id": 74,
       "skill": "tailoring",
       "output": "Red Sash Wrap",
       "outputImageId": 283,
@@ -3701,11 +3599,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -3719,7 +3614,7 @@
       ]
     },
     {
-      "id": 77,
+      "id": 75,
       "skill": "tailoring",
       "output": "Riding Jacket",
       "outputImageId": 284,
@@ -3777,7 +3672,7 @@
       ]
     },
     {
-      "id": 78,
+      "id": 76,
       "skill": "tailoring",
       "output": "Boneplate Coat",
       "outputImageId": 285,
@@ -3813,11 +3708,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Watercress",
@@ -3838,7 +3730,7 @@
       ]
     },
     {
-      "id": 79,
+      "id": 77,
       "skill": "tailoring",
       "output": "Patched Trousers",
       "outputImageId": 334,
@@ -3902,7 +3794,7 @@
       ]
     },
     {
-      "id": 80,
+      "id": 78,
       "skill": "tailoring",
       "output": "Work Trousers",
       "outputImageId": 335,
@@ -3960,7 +3852,7 @@
       ]
     },
     {
-      "id": 81,
+      "id": 79,
       "skill": "tailoring",
       "output": "Ragged Trousers",
       "outputImageId": 336,
@@ -4018,7 +3910,7 @@
       ]
     },
     {
-      "id": 82,
+      "id": 80,
       "skill": "tailoring",
       "output": "Redtrim Trousers",
       "outputImageId": 337,
@@ -4061,11 +3953,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -4079,7 +3968,7 @@
       ]
     },
     {
-      "id": 83,
+      "id": 81,
       "skill": "tailoring",
       "output": "Sashed Breeches",
       "outputImageId": 338,
@@ -4140,7 +4029,7 @@
       ]
     },
     {
-      "id": 84,
+      "id": 82,
       "skill": "tailoring",
       "output": "Kneepad Trousers",
       "outputImageId": 339,
@@ -4176,11 +4065,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Bramble",
@@ -4204,7 +4090,7 @@
       ]
     },
     {
-      "id": 85,
+      "id": 83,
       "skill": "tailoring",
       "output": "Faded Trousers",
       "outputImageId": 340,
@@ -4265,7 +4151,7 @@
       ]
     },
     {
-      "id": 86,
+      "id": 84,
       "skill": "tailoring",
       "output": "Woollen Breeches",
       "outputImageId": 341,
@@ -4323,7 +4209,7 @@
       ]
     },
     {
-      "id": 87,
+      "id": 85,
       "skill": "tailoring",
       "output": "Linen Shirt",
       "outputImageId": 554,
@@ -4366,11 +4252,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -4384,7 +4267,7 @@
       ]
     },
     {
-      "id": 88,
+      "id": 86,
       "skill": "tailoring",
       "output": "Short-Sleeve Tunic",
       "outputImageId": 555,
@@ -4442,7 +4325,7 @@
       ]
     },
     {
-      "id": 89,
+      "id": 87,
       "skill": "tailoring",
       "output": "Patched Tunic",
       "outputImageId": 556,
@@ -4478,11 +4361,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Kelp",
@@ -4503,7 +4383,7 @@
       ]
     },
     {
-      "id": 90,
+      "id": 88,
       "skill": "tailoring",
       "output": "Buttoned Tunic",
       "outputImageId": 557,
@@ -4564,7 +4444,7 @@
       ]
     },
     {
-      "id": 91,
+      "id": 89,
       "skill": "tailoring",
       "output": "Wrap Tunic",
       "outputImageId": 558,
@@ -4607,11 +4487,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -4625,7 +4502,7 @@
       ]
     },
     {
-      "id": 92,
+      "id": 90,
       "skill": "tailoring",
       "output": "Laced Work Tunic",
       "outputImageId": 559,
@@ -4683,7 +4560,7 @@
       ]
     },
     {
-      "id": 93,
+      "id": 91,
       "skill": "tailoring",
       "output": "Ragged Tunic",
       "outputImageId": 560,
@@ -4719,11 +4596,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Toadstool",
@@ -4744,7 +4618,7 @@
       ]
     },
     {
-      "id": 94,
+      "id": 92,
       "skill": "tailoring",
       "output": "Wool Tunic",
       "outputImageId": 561,
@@ -4790,11 +4664,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -4808,7 +4679,7 @@
       ]
     },
     {
-      "id": 95,
+      "id": 93,
       "skill": "tailoring",
       "output": "Four Gates Guard Cape",
       "outputImageId": 49,
@@ -4844,11 +4715,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Lichen",
@@ -4872,7 +4740,7 @@
       ]
     },
     {
-      "id": 96,
+      "id": 94,
       "skill": "tailoring",
       "output": "Amberwood Leaf Cape",
       "outputImageId": 49,
@@ -4933,7 +4801,7 @@
       ]
     },
     {
-      "id": 97,
+      "id": 95,
       "skill": "tailoring",
       "output": "Glasswarden Crystal Cape",
       "outputImageId": 49,
@@ -4991,7 +4859,7 @@
       ]
     },
     {
-      "id": 98,
+      "id": 96,
       "skill": "tailoring",
       "output": "Greyhaven Storm Cape",
       "outputImageId": 49,
@@ -5049,7 +4917,7 @@
       ]
     },
     {
-      "id": 99,
+      "id": 97,
       "skill": "tailoring",
       "output": "Orun Rider Cape",
       "outputImageId": 49,
@@ -5110,7 +4978,7 @@
       ]
     },
     {
-      "id": 100,
+      "id": 98,
       "skill": "tailoring",
       "output": "Ssarathi Frond Cape",
       "outputImageId": 49,
@@ -5171,7 +5039,7 @@
       ]
     },
     {
-      "id": 101,
+      "id": 99,
       "skill": "tailoring",
       "output": "Four Gates Guardian Cape",
       "outputImageId": 49,
@@ -5229,7 +5097,7 @@
       ]
     },
     {
-      "id": 102,
+      "id": 100,
       "skill": "tailoring",
       "output": "Orun Linen Tunic",
       "outputImageId": 522,
@@ -5272,11 +5140,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -5290,7 +5155,7 @@
       ]
     },
     {
-      "id": 103,
+      "id": 101,
       "skill": "tailoring",
       "output": "Orun Wrap Robe",
       "outputImageId": 523,
@@ -5326,11 +5191,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Reed",
@@ -5351,7 +5213,7 @@
       ]
     },
     {
-      "id": 104,
+      "id": 102,
       "skill": "tailoring",
       "output": "Orun Toggle Tunic",
       "outputImageId": 525,
@@ -5387,11 +5249,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Silverleaf",
@@ -5412,7 +5271,7 @@
       ]
     },
     {
-      "id": 105,
+      "id": 103,
       "skill": "tailoring",
       "output": "Orun Sash Robe",
       "outputImageId": 527,
@@ -5473,7 +5332,7 @@
       ]
     },
     {
-      "id": 106,
+      "id": 104,
       "skill": "tailoring",
       "output": "Orun Ceremonial Tunic",
       "outputImageId": 529,
@@ -5531,7 +5390,7 @@
       ]
     },
     {
-      "id": 107,
+      "id": 105,
       "skill": "tailoring",
       "output": "Quilted Gambeson",
       "outputImageId": 562,
@@ -5592,7 +5451,7 @@
       ]
     },
     {
-      "id": 108,
+      "id": 106,
       "skill": "tailoring",
       "output": "Verdant Bough Tunic",
       "outputImageId": 532,
@@ -5641,11 +5500,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Lichen",
@@ -5669,7 +5525,7 @@
       ]
     },
     {
-      "id": 109,
+      "id": 107,
       "skill": "tailoring",
       "output": "Warded Turban",
       "outputImageId": 142,
@@ -5718,11 +5574,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Lichen",
@@ -5746,7 +5599,7 @@
       ]
     },
     {
-      "id": 110,
+      "id": 108,
       "skill": "tailoring",
       "output": "Glowline Hood",
       "outputImageId": 143,
@@ -5820,7 +5673,7 @@
       ]
     },
     {
-      "id": 111,
+      "id": 109,
       "skill": "tailoring",
       "output": "Palesteel Circlet",
       "outputImageId": 144,
@@ -5891,7 +5744,7 @@
       ]
     },
     {
-      "id": 112,
+      "id": 110,
       "skill": "tailoring",
       "output": "Starglass Circlet",
       "outputImageId": 145,
@@ -5962,7 +5815,7 @@
       ]
     },
     {
-      "id": 113,
+      "id": 111,
       "skill": "tailoring",
       "output": "Twilight Helm",
       "outputImageId": 146,
@@ -6036,7 +5889,7 @@
       ]
     },
     {
-      "id": 114,
+      "id": 112,
       "skill": "tailoring",
       "output": "Seawrap Veil",
       "outputImageId": 147,
@@ -6110,7 +5963,7 @@
       ]
     },
     {
-      "id": 115,
+      "id": 113,
       "skill": "tailoring",
       "output": "Acolyte Hood",
       "outputImageId": 148,
@@ -6181,7 +6034,7 @@
       ]
     },
     {
-      "id": 116,
+      "id": 114,
       "skill": "tailoring",
       "output": "Crystalward Helm",
       "outputImageId": 149,
@@ -6237,11 +6090,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -6255,7 +6105,7 @@
       ]
     },
     {
-      "id": 117,
+      "id": 115,
       "skill": "tailoring",
       "output": "Luminous Tabard Coat",
       "outputImageId": 538,
@@ -6304,11 +6154,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Reed",
@@ -6329,7 +6176,7 @@
       ]
     },
     {
-      "id": 118,
+      "id": 116,
       "skill": "tailoring",
       "output": "Luminous Violet Coat",
       "outputImageId": 542,
@@ -6378,11 +6225,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Silverleaf",
@@ -6403,7 +6247,7 @@
       ]
     },
     {
-      "id": 119,
+      "id": 117,
       "skill": "tailoring",
       "output": "Luminous Feather Robe",
       "outputImageId": 543,
@@ -6477,7 +6321,7 @@
       ]
     },
     {
-      "id": 120,
+      "id": 118,
       "skill": "tailoring",
       "output": "Luminous Gilt Robe",
       "outputImageId": 544,
@@ -6548,7 +6392,7 @@
       ]
     },
     {
-      "id": 121,
+      "id": 119,
       "skill": "tailoring",
       "output": "Ankle Boots",
       "outputImageId": 358,
@@ -6587,11 +6431,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Lichen",
@@ -6615,7 +6456,7 @@
       ]
     },
     {
-      "id": 122,
+      "id": 120,
       "skill": "tailoring",
       "output": "Slouch Boots",
       "outputImageId": 359,
@@ -6679,7 +6520,7 @@
       ]
     },
     {
-      "id": 123,
+      "id": 121,
       "skill": "tailoring",
       "output": "Laced Fieldboots",
       "outputImageId": 360,
@@ -6740,7 +6581,7 @@
       ]
     },
     {
-      "id": 124,
+      "id": 122,
       "skill": "tailoring",
       "output": "Corded Moccasins",
       "outputImageId": 361,
@@ -6801,7 +6642,7 @@
       ]
     },
     {
-      "id": 125,
+      "id": 123,
       "skill": "tailoring",
       "output": "Riding Boots",
       "outputImageId": 362,
@@ -6865,7 +6706,7 @@
       ]
     },
     {
-      "id": 126,
+      "id": 124,
       "skill": "tailoring",
       "output": "Fleece Boots",
       "outputImageId": 363,
@@ -6929,7 +6770,7 @@
       ]
     },
     {
-      "id": 127,
+      "id": 125,
       "skill": "tailoring",
       "output": "Canvas Boots",
       "outputImageId": 364,
@@ -6990,7 +6831,7 @@
       ]
     },
     {
-      "id": 128,
+      "id": 126,
       "skill": "tailoring",
       "output": "Cuffed Boots",
       "outputImageId": 365,
@@ -7036,11 +6877,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -7054,7 +6892,7 @@
       ]
     },
     {
-      "id": 129,
+      "id": 127,
       "skill": "tailoring",
       "output": "Outrider Fur-Collar Coat",
       "outputImageId": 513,
@@ -7115,7 +6953,7 @@
       ]
     },
     {
-      "id": 130,
+      "id": 128,
       "skill": "tailoring",
       "output": "Bark Jerkin",
       "outputImageId": 118,
@@ -7154,11 +6992,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Lichen",
@@ -7182,7 +7017,7 @@
       ]
     },
     {
-      "id": 131,
+      "id": 129,
       "skill": "tailoring",
       "output": "Mossbound Coat",
       "outputImageId": 119,
@@ -7246,7 +7081,7 @@
       ]
     },
     {
-      "id": 132,
+      "id": 130,
       "skill": "tailoring",
       "output": "Rootwrap Tunic",
       "outputImageId": 120,
@@ -7307,7 +7142,7 @@
       ]
     },
     {
-      "id": 133,
+      "id": 131,
       "skill": "tailoring",
       "output": "Leafscale Cuirass",
       "outputImageId": 121,
@@ -7368,7 +7203,7 @@
       ]
     },
     {
-      "id": 134,
+      "id": 132,
       "skill": "tailoring",
       "output": "Heartwood Cuirass",
       "outputImageId": 122,
@@ -7432,7 +7267,7 @@
       ]
     },
     {
-      "id": 135,
+      "id": 133,
       "skill": "tailoring",
       "output": "Furtrim Coat",
       "outputImageId": 123,
@@ -7496,7 +7331,7 @@
       ]
     },
     {
-      "id": 136,
+      "id": 134,
       "skill": "tailoring",
       "output": "Amberglass Cuirass",
       "outputImageId": 124,
@@ -7557,7 +7392,7 @@
       ]
     },
     {
-      "id": 137,
+      "id": 135,
       "skill": "tailoring",
       "output": "Ivory Vine Cuirass",
       "outputImageId": 125,
@@ -7603,11 +7438,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -7621,7 +7453,7 @@
       ]
     },
     {
-      "id": 138,
+      "id": 136,
       "skill": "tailoring",
       "output": "Bark Legguards",
       "outputImageId": 126,
@@ -7660,11 +7492,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Reed",
@@ -7685,7 +7514,7 @@
       ]
     },
     {
-      "id": 139,
+      "id": 137,
       "skill": "tailoring",
       "output": "Mossbound Legguards",
       "outputImageId": 127,
@@ -7724,11 +7553,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Silverleaf",
@@ -7749,7 +7575,7 @@
       ]
     },
     {
-      "id": 140,
+      "id": 138,
       "skill": "tailoring",
       "output": "Rootwrap Legguards",
       "outputImageId": 128,
@@ -7813,7 +7639,7 @@
       ]
     },
     {
-      "id": 141,
+      "id": 139,
       "skill": "tailoring",
       "output": "Leafscale Legguards",
       "outputImageId": 129,
@@ -7874,7 +7700,7 @@
       ]
     },
     {
-      "id": 142,
+      "id": 140,
       "skill": "tailoring",
       "output": "Heartwood Legguards",
       "outputImageId": 130,
@@ -7938,7 +7764,7 @@
       ]
     },
     {
-      "id": 143,
+      "id": 141,
       "skill": "tailoring",
       "output": "Furtrim Legguards",
       "outputImageId": 131,
@@ -7999,7 +7825,7 @@
       ]
     },
     {
-      "id": 144,
+      "id": 142,
       "skill": "tailoring",
       "output": "Amberglass Legguards",
       "outputImageId": 132,
@@ -8063,7 +7889,7 @@
       ]
     },
     {
-      "id": 145,
+      "id": 143,
       "skill": "tailoring",
       "output": "Ivory Vine Legguards",
       "outputImageId": 133,
@@ -8109,11 +7935,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -8127,7 +7950,7 @@
       ]
     },
     {
-      "id": 146,
+      "id": 144,
       "skill": "tailoring",
       "output": "Bark Boots",
       "outputImageId": 158,
@@ -8188,7 +8011,7 @@
       ]
     },
     {
-      "id": 147,
+      "id": 145,
       "skill": "tailoring",
       "output": "Mossbound Boots",
       "outputImageId": 159,
@@ -8227,11 +8050,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Thistle",
@@ -8252,7 +8072,7 @@
       ]
     },
     {
-      "id": 148,
+      "id": 146,
       "skill": "tailoring",
       "output": "Rootwrap Boots",
       "outputImageId": 160,
@@ -8316,7 +8136,7 @@
       ]
     },
     {
-      "id": 149,
+      "id": 147,
       "skill": "tailoring",
       "output": "Leafscale Boots",
       "outputImageId": 161,
@@ -8380,7 +8200,7 @@
       ]
     },
     {
-      "id": 150,
+      "id": 148,
       "skill": "tailoring",
       "output": "Heartwood Boots",
       "outputImageId": 162,
@@ -8441,7 +8261,7 @@
       ]
     },
     {
-      "id": 151,
+      "id": 149,
       "skill": "tailoring",
       "output": "Furtrim Boots",
       "outputImageId": 163,
@@ -8502,7 +8322,7 @@
       ]
     },
     {
-      "id": 152,
+      "id": 150,
       "skill": "tailoring",
       "output": "Amberglass Boots",
       "outputImageId": 164,
@@ -8551,11 +8371,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -8569,7 +8386,7 @@
       ]
     },
     {
-      "id": 153,
+      "id": 151,
       "skill": "tailoring",
       "output": "Ivory Vine Boots",
       "outputImageId": 165,
@@ -8630,7 +8447,7 @@
       ]
     },
     {
-      "id": 154,
+      "id": 152,
       "skill": "tailoring",
       "output": "Fang Hood",
       "outputImageId": 214,
@@ -8669,11 +8486,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Watercress",
@@ -8694,7 +8508,7 @@
       ]
     },
     {
-      "id": 155,
+      "id": 153,
       "skill": "tailoring",
       "output": "Feathered Cap",
       "outputImageId": 215,
@@ -8761,7 +8575,7 @@
       ]
     },
     {
-      "id": 156,
+      "id": 154,
       "skill": "tailoring",
       "output": "Buckled Hood",
       "outputImageId": 216,
@@ -8822,7 +8636,7 @@
       ]
     },
     {
-      "id": 157,
+      "id": 155,
       "skill": "tailoring",
       "output": "Plumed Hat",
       "outputImageId": 217,
@@ -8883,7 +8697,7 @@
       ]
     },
     {
-      "id": 158,
+      "id": 156,
       "skill": "tailoring",
       "output": "Charm Hood",
       "outputImageId": 218,
@@ -8929,11 +8743,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -8947,7 +8758,7 @@
       ]
     },
     {
-      "id": 159,
+      "id": 157,
       "skill": "tailoring",
       "output": "Studded Cap",
       "outputImageId": 219,
@@ -9011,7 +8822,7 @@
       ]
     },
     {
-      "id": 160,
+      "id": 158,
       "skill": "tailoring",
       "output": "Banded Cap",
       "outputImageId": 220,
@@ -9050,11 +8861,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Bramble",
@@ -9078,7 +8886,7 @@
       ]
     },
     {
-      "id": 161,
+      "id": 159,
       "skill": "tailoring",
       "output": "Fur Hood",
       "outputImageId": 221,
@@ -9142,7 +8950,7 @@
       ]
     },
     {
-      "id": 162,
+      "id": 160,
       "skill": "tailoring",
       "output": "Riding Hat",
       "outputImageId": 222,
@@ -9203,7 +9011,7 @@
       ]
     },
     {
-      "id": 163,
+      "id": 161,
       "skill": "tailoring",
       "output": "Steppe Headcloth",
       "outputImageId": 223,
@@ -9249,11 +9057,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -9267,7 +9072,7 @@
       ]
     },
     {
-      "id": 164,
+      "id": 162,
       "skill": "tailoring",
       "output": "Rider Helm",
       "outputImageId": 224,
@@ -9328,7 +9133,7 @@
       ]
     },
     {
-      "id": 165,
+      "id": 163,
       "skill": "tailoring",
       "output": "Steppe Turban",
       "outputImageId": 225,
@@ -9367,11 +9172,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Kelp",
@@ -9392,7 +9194,7 @@
       ]
     },
     {
-      "id": 166,
+      "id": 164,
       "skill": "tailoring",
       "output": "Sundisc Helm",
       "outputImageId": 226,
@@ -9456,7 +9258,7 @@
       ]
     },
     {
-      "id": 167,
+      "id": 165,
       "skill": "tailoring",
       "output": "Sun Headband",
       "outputImageId": 227,
@@ -9502,11 +9304,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -9520,7 +9319,7 @@
       ]
     },
     {
-      "id": 168,
+      "id": 166,
       "skill": "tailoring",
       "output": "Scarf Hood",
       "outputImageId": 228,
@@ -9581,7 +9380,7 @@
       ]
     },
     {
-      "id": 169,
+      "id": 167,
       "skill": "tailoring",
       "output": "Redplume Helm",
       "outputImageId": 229,
@@ -9620,11 +9419,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Toadstool",
@@ -9645,7 +9441,7 @@
       ]
     },
     {
-      "id": 170,
+      "id": 168,
       "skill": "tailoring",
       "output": "Scout Vest",
       "outputImageId": 263,
@@ -9706,7 +9502,7 @@
       ]
     },
     {
-      "id": 171,
+      "id": 169,
       "skill": "tailoring",
       "output": "Sashed Jerkin",
       "outputImageId": 264,
@@ -9745,21 +9541,15 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -9773,7 +9563,7 @@
       ]
     },
     {
-      "id": 172,
+      "id": 170,
       "skill": "tailoring",
       "output": "Brassbuckle Coat",
       "outputImageId": 265,
@@ -9837,7 +9627,7 @@
       ]
     },
     {
-      "id": 173,
+      "id": 171,
       "skill": "tailoring",
       "output": "Mossfringe Jerkin",
       "outputImageId": 266,
@@ -9876,11 +9666,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Reed",
@@ -9901,7 +9688,7 @@
       ]
     },
     {
-      "id": 174,
+      "id": 172,
       "skill": "tailoring",
       "output": "Ropecoil Jerkin",
       "outputImageId": 267,
@@ -9940,11 +9727,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Reed",
@@ -9965,7 +9749,7 @@
       ]
     },
     {
-      "id": 175,
+      "id": 173,
       "skill": "tailoring",
       "output": "Riveted Jerkin",
       "outputImageId": 268,
@@ -10004,11 +9788,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Silverleaf",
@@ -10029,7 +9810,7 @@
       ]
     },
     {
-      "id": 176,
+      "id": 174,
       "skill": "tailoring",
       "output": "Trapper Coat",
       "outputImageId": 269,
@@ -10093,7 +9874,7 @@
       ]
     },
     {
-      "id": 177,
+      "id": 175,
       "skill": "tailoring",
       "output": "Pouchbelt Breeches",
       "outputImageId": 318,
@@ -10154,7 +9935,7 @@
       ]
     },
     {
-      "id": 178,
+      "id": 176,
       "skill": "tailoring",
       "output": "Fangbelt Breeches",
       "outputImageId": 319,
@@ -10218,7 +9999,7 @@
       ]
     },
     {
-      "id": 179,
+      "id": 177,
       "skill": "tailoring",
       "output": "Strapwrap Breeches",
       "outputImageId": 320,
@@ -10282,7 +10063,7 @@
       ]
     },
     {
-      "id": 180,
+      "id": 178,
       "skill": "tailoring",
       "output": "Sidelace Breeches",
       "outputImageId": 321,
@@ -10343,7 +10124,7 @@
       ]
     },
     {
-      "id": 181,
+      "id": 179,
       "skill": "tailoring",
       "output": "Bonecharm Breeches",
       "outputImageId": 322,
@@ -10389,11 +10170,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -10407,7 +10185,7 @@
       ]
     },
     {
-      "id": 182,
+      "id": 180,
       "skill": "tailoring",
       "output": "Ringcoil Breeches",
       "outputImageId": 323,
@@ -10468,7 +10246,7 @@
       ]
     },
     {
-      "id": 183,
+      "id": 181,
       "skill": "tailoring",
       "output": "Studded Chaps",
       "outputImageId": 324,
@@ -10507,11 +10285,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Thistle",
@@ -10532,7 +10307,7 @@
       ]
     },
     {
-      "id": 184,
+      "id": 182,
       "skill": "tailoring",
       "output": "Furwrap Breeches",
       "outputImageId": 325,
@@ -10596,7 +10371,7 @@
       ]
     },
     {
-      "id": 185,
+      "id": 183,
       "skill": "tailoring",
       "output": "Rider Breeches",
       "outputImageId": 326,
@@ -10660,7 +10435,7 @@
       ]
     },
     {
-      "id": 186,
+      "id": 184,
       "skill": "tailoring",
       "output": "Wrapskirt Trousers",
       "outputImageId": 327,
@@ -10721,7 +10496,7 @@
       ]
     },
     {
-      "id": 187,
+      "id": 185,
       "skill": "tailoring",
       "output": "Steppe Chaps",
       "outputImageId": 328,
@@ -10782,7 +10557,7 @@
       ]
     },
     {
-      "id": 188,
+      "id": 186,
       "skill": "tailoring",
       "output": "Bonepeg Trousers",
       "outputImageId": 329,
@@ -10831,11 +10606,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -10849,7 +10621,7 @@
       ]
     },
     {
-      "id": 189,
+      "id": 187,
       "skill": "tailoring",
       "output": "Bronze Tassets",
       "outputImageId": 330,
@@ -10910,7 +10682,7 @@
       ]
     },
     {
-      "id": 190,
+      "id": 188,
       "skill": "tailoring",
       "output": "Sashcord Trousers",
       "outputImageId": 331,
@@ -10949,11 +10721,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Watercress",
@@ -10974,7 +10743,7 @@
       ]
     },
     {
-      "id": 191,
+      "id": 189,
       "skill": "tailoring",
       "output": "Corded Trousers",
       "outputImageId": 332,
@@ -11041,7 +10810,7 @@
       ]
     },
     {
-      "id": 192,
+      "id": 190,
       "skill": "tailoring",
       "output": "Sunplate Tassets",
       "outputImageId": 333,
@@ -11102,7 +10871,7 @@
       ]
     },
     {
-      "id": 193,
+      "id": 191,
       "skill": "tailoring",
       "output": "Tasselled Boots",
       "outputImageId": 350,
@@ -11151,11 +10920,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -11169,7 +10935,7 @@
       ]
     },
     {
-      "id": 194,
+      "id": 192,
       "skill": "tailoring",
       "output": "Steppe Wrap Boots",
       "outputImageId": 351,
@@ -11230,7 +10996,7 @@
       ]
     },
     {
-      "id": 195,
+      "id": 193,
       "skill": "tailoring",
       "output": "Bronze Boots",
       "outputImageId": 352,
@@ -11269,21 +11035,15 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -11297,7 +11057,7 @@
       ]
     },
     {
-      "id": 196,
+      "id": 194,
       "skill": "tailoring",
       "output": "Bonepeg Boots",
       "outputImageId": 353,
@@ -11361,7 +11121,7 @@
       ]
     },
     {
-      "id": 197,
+      "id": 195,
       "skill": "tailoring",
       "output": "Sunplate Boots",
       "outputImageId": 354,
@@ -11400,11 +11160,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Reed",
@@ -11425,7 +11182,7 @@
       ]
     },
     {
-      "id": 198,
+      "id": 196,
       "skill": "tailoring",
       "output": "Sashed Boots",
       "outputImageId": 355,
@@ -11464,11 +11221,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Lichen",
@@ -11492,7 +11246,7 @@
       ]
     },
     {
-      "id": 199,
+      "id": 197,
       "skill": "tailoring",
       "output": "Corded Boots",
       "outputImageId": 356,
@@ -11556,7 +11310,7 @@
       ]
     },
     {
-      "id": 200,
+      "id": 198,
       "skill": "tailoring",
       "output": "Ivory Riding Boots",
       "outputImageId": 357,
@@ -11617,7 +11371,7 @@
       ]
     },
     {
-      "id": 201,
+      "id": 199,
       "skill": "tailoring",
       "output": "Charmcord Boots",
       "outputImageId": 366,
@@ -11678,7 +11432,7 @@
       ]
     },
     {
-      "id": 202,
+      "id": 200,
       "skill": "tailoring",
       "output": "Furcuff Boots",
       "outputImageId": 367,
@@ -11742,7 +11496,7 @@
       ]
     },
     {
-      "id": 203,
+      "id": 201,
       "skill": "tailoring",
       "output": "Buckled Boots",
       "outputImageId": 368,
@@ -11806,7 +11560,7 @@
       ]
     },
     {
-      "id": 204,
+      "id": 202,
       "skill": "tailoring",
       "output": "Beaded Boots",
       "outputImageId": 369,
@@ -11867,7 +11621,7 @@
       ]
     },
     {
-      "id": 205,
+      "id": 203,
       "skill": "tailoring",
       "output": "Redlace Boots",
       "outputImageId": 370,
@@ -11913,11 +11667,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -11931,7 +11682,7 @@
       ]
     },
     {
-      "id": 206,
+      "id": 204,
       "skill": "tailoring",
       "output": "Runewrap Boots",
       "outputImageId": 371,
@@ -11970,11 +11721,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Reed",
@@ -11995,7 +11743,7 @@
       ]
     },
     {
-      "id": 207,
+      "id": 205,
       "skill": "tailoring",
       "output": "Guard Boots",
       "outputImageId": 372,
@@ -12034,11 +11782,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Silverleaf",
@@ -12059,7 +11804,7 @@
       ]
     },
     {
-      "id": 208,
+      "id": 206,
       "skill": "tailoring",
       "output": "Strapped Boots",
       "outputImageId": 373,
@@ -12123,7 +11868,7 @@
       ]
     },
     {
-      "id": 209,
+      "id": 207,
       "skill": "tailoring",
       "output": "Outrider Ranger Coat",
       "outputImageId": 506,
@@ -12162,11 +11907,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Kelp",
@@ -12187,7 +11929,7 @@
       ]
     },
     {
-      "id": 210,
+      "id": 208,
       "skill": "tailoring",
       "output": "Outrider Laced Jerkin",
       "outputImageId": 507,
@@ -12251,7 +11993,7 @@
       ]
     },
     {
-      "id": 211,
+      "id": 209,
       "skill": "tailoring",
       "output": "Outrider Oxblood Coat",
       "outputImageId": 508,
@@ -12297,11 +12039,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -12315,7 +12054,7 @@
       ]
     },
     {
-      "id": 212,
+      "id": 210,
       "skill": "tailoring",
       "output": "Outrider Buckled Coat",
       "outputImageId": 509,
@@ -12376,7 +12115,7 @@
       ]
     },
     {
-      "id": 213,
+      "id": 211,
       "skill": "tailoring",
       "output": "Outrider Scout Jerkin",
       "outputImageId": 510,
@@ -12415,11 +12154,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Toadstool",
@@ -12440,7 +12176,7 @@
       ]
     },
     {
-      "id": 214,
+      "id": 212,
       "skill": "tailoring",
       "output": "Outrider Rope Jerkin",
       "outputImageId": 511,
@@ -12489,11 +12225,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -12507,7 +12240,7 @@
       ]
     },
     {
-      "id": 215,
+      "id": 213,
       "skill": "tailoring",
       "output": "Outrider Brigandine",
       "outputImageId": 512,
@@ -12568,7 +12301,7 @@
       ]
     },
     {
-      "id": 216,
+      "id": 214,
       "skill": "tailoring",
       "output": "Orun Rider Jerkin",
       "outputImageId": 524,
@@ -12632,7 +12365,7 @@
       ]
     },
     {
-      "id": 217,
+      "id": 215,
       "skill": "tailoring",
       "output": "Orun Ochre Coat",
       "outputImageId": 528,
@@ -12693,7 +12426,7 @@
       ]
     },
     {
-      "id": 218,
+      "id": 216,
       "skill": "tailoring",
       "output": "Verdant Toggle Coat",
       "outputImageId": 535,
@@ -12757,7 +12490,7 @@
       ]
     },
     {
-      "id": 219,
+      "id": 217,
       "skill": "tailoring",
       "output": "Studded Brigandine",
       "outputImageId": 563,
@@ -12803,11 +12536,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -12821,7 +12551,7 @@
       ]
     },
     {
-      "id": 220,
+      "id": 218,
       "skill": "tailoring",
       "output": "Verdant Leafscale Coat",
       "outputImageId": 530,
@@ -12870,11 +12600,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Lichen",
@@ -12898,7 +12625,7 @@
       ]
     },
     {
-      "id": 221,
+      "id": 219,
       "skill": "tailoring",
       "output": "Verdant Mantle Coat",
       "outputImageId": 531,
@@ -12972,7 +12699,7 @@
       ]
     },
     {
-      "id": 222,
+      "id": 220,
       "skill": "tailoring",
       "output": "Verdant Leaf Cuirass",
       "outputImageId": 533,
@@ -13043,7 +12770,7 @@
       ]
     },
     {
-      "id": 223,
+      "id": 221,
       "skill": "tailoring",
       "output": "Warded Boots",
       "outputImageId": 134,
@@ -13092,11 +12819,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Lichen",
@@ -13120,7 +12844,7 @@
       ]
     },
     {
-      "id": 224,
+      "id": 222,
       "skill": "tailoring",
       "output": "Glowline Boots",
       "outputImageId": 135,
@@ -13194,7 +12918,7 @@
       ]
     },
     {
-      "id": 225,
+      "id": 223,
       "skill": "tailoring",
       "output": "Palesteel Boots",
       "outputImageId": 136,
@@ -13265,7 +12989,7 @@
       ]
     },
     {
-      "id": 226,
+      "id": 224,
       "skill": "tailoring",
       "output": "Starglass Boots",
       "outputImageId": 137,
@@ -13336,7 +13060,7 @@
       ]
     },
     {
-      "id": 227,
+      "id": 225,
       "skill": "tailoring",
       "output": "Twilight Boots",
       "outputImageId": 138,
@@ -13410,7 +13134,7 @@
       ]
     },
     {
-      "id": 228,
+      "id": 226,
       "skill": "tailoring",
       "output": "Seawrap Boots",
       "outputImageId": 139,
@@ -13484,7 +13208,7 @@
       ]
     },
     {
-      "id": 229,
+      "id": 227,
       "skill": "tailoring",
       "output": "Acolyte Boots",
       "outputImageId": 140,
@@ -13555,7 +13279,7 @@
       ]
     },
     {
-      "id": 230,
+      "id": 228,
       "skill": "tailoring",
       "output": "Crystalward Boots",
       "outputImageId": 141,
@@ -13611,11 +13335,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -13629,7 +13350,7 @@
       ]
     },
     {
-      "id": 231,
+      "id": 229,
       "skill": "tailoring",
       "output": "Verdant Bark Cuirass",
       "outputImageId": 534,
@@ -13678,11 +13399,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Reed",
@@ -13703,7 +13421,7 @@
       ]
     },
     {
-      "id": 232,
+      "id": 230,
       "skill": "tailoring",
       "output": "Luminous Rune Coat",
       "outputImageId": 539,
@@ -13752,11 +13470,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Silverleaf",
@@ -13777,7 +13492,7 @@
       ]
     },
     {
-      "id": 233,
+      "id": 231,
       "skill": "manufacturing",
       "output": "Wood Plank",
       "outputImageId": 35,
@@ -13818,7 +13533,7 @@
       ]
     },
     {
-      "id": 234,
+      "id": 232,
       "skill": "manufacturing",
       "output": "Padded Coif",
       "outputImageId": 190,
@@ -13876,7 +13591,7 @@
       ]
     },
     {
-      "id": 235,
+      "id": 233,
       "skill": "manufacturing",
       "output": "Leather Helm",
       "outputImageId": 191,
@@ -13934,7 +13649,7 @@
       ]
     },
     {
-      "id": 236,
+      "id": 234,
       "skill": "manufacturing",
       "output": "Kettle Hat",
       "outputImageId": 192,
@@ -13992,7 +13707,7 @@
       ]
     },
     {
-      "id": 237,
+      "id": 235,
       "skill": "manufacturing",
       "output": "Spangenhelm",
       "outputImageId": 193,
@@ -14050,7 +13765,7 @@
       ]
     },
     {
-      "id": 238,
+      "id": 236,
       "skill": "manufacturing",
       "output": "Mail Coif",
       "outputImageId": 194,
@@ -14108,7 +13823,7 @@
       ]
     },
     {
-      "id": 239,
+      "id": 237,
       "skill": "manufacturing",
       "output": "Cheekguard Helm",
       "outputImageId": 195,
@@ -14166,7 +13881,7 @@
       ]
     },
     {
-      "id": 240,
+      "id": 238,
       "skill": "manufacturing",
       "output": "Brass Helm",
       "outputImageId": 196,
@@ -14224,7 +13939,7 @@
       ]
     },
     {
-      "id": 241,
+      "id": 239,
       "skill": "manufacturing",
       "output": "Crimson Helm",
       "outputImageId": 197,
@@ -14285,7 +14000,7 @@
       ]
     },
     {
-      "id": 242,
+      "id": 240,
       "skill": "manufacturing",
       "output": "Arming Gambeson",
       "outputImageId": 246,
@@ -14346,7 +14061,7 @@
       ]
     },
     {
-      "id": 243,
+      "id": 241,
       "skill": "manufacturing",
       "output": "Studded Jack",
       "outputImageId": 247,
@@ -14404,7 +14119,7 @@
       ]
     },
     {
-      "id": 244,
+      "id": 242,
       "skill": "manufacturing",
       "output": "Splinted Vest",
       "outputImageId": 248,
@@ -14462,7 +14177,7 @@
       ]
     },
     {
-      "id": 245,
+      "id": 243,
       "skill": "manufacturing",
       "output": "Mail Shirt",
       "outputImageId": 249,
@@ -14520,7 +14235,7 @@
       ]
     },
     {
-      "id": 246,
+      "id": 244,
       "skill": "manufacturing",
       "output": "Riveted Lamellar",
       "outputImageId": 250,
@@ -14578,7 +14293,7 @@
       ]
     },
     {
-      "id": 247,
+      "id": 245,
       "skill": "manufacturing",
       "output": "Plain Breastplate",
       "outputImageId": 251,
@@ -14636,7 +14351,7 @@
       ]
     },
     {
-      "id": 248,
+      "id": 246,
       "skill": "manufacturing",
       "output": "Brass Breastplate",
       "outputImageId": 252,
@@ -14694,7 +14409,7 @@
       ]
     },
     {
-      "id": 249,
+      "id": 247,
       "skill": "manufacturing",
       "output": "Crimson Guard Cuirass",
       "outputImageId": 253,
@@ -14755,7 +14470,7 @@
       ]
     },
     {
-      "id": 250,
+      "id": 248,
       "skill": "manufacturing",
       "output": "Shinplate Boots",
       "outputImageId": 302,
@@ -14813,7 +14528,7 @@
       ]
     },
     {
-      "id": 251,
+      "id": 249,
       "skill": "manufacturing",
       "output": "Banded Warboots",
       "outputImageId": 303,
@@ -14871,7 +14586,7 @@
       ]
     },
     {
-      "id": 252,
+      "id": 250,
       "skill": "manufacturing",
       "output": "Steel Greaves",
       "outputImageId": 304,
@@ -14929,7 +14644,7 @@
       ]
     },
     {
-      "id": 253,
+      "id": 251,
       "skill": "manufacturing",
       "output": "Toecap Boots",
       "outputImageId": 305,
@@ -14987,7 +14702,7 @@
       ]
     },
     {
-      "id": 254,
+      "id": 252,
       "skill": "manufacturing",
       "output": "Brass Greaves",
       "outputImageId": 306,
@@ -15045,7 +14760,7 @@
       ]
     },
     {
-      "id": 255,
+      "id": 253,
       "skill": "manufacturing",
       "output": "Splinted Greaves",
       "outputImageId": 307,
@@ -15103,7 +14818,7 @@
       ]
     },
     {
-      "id": 256,
+      "id": 254,
       "skill": "manufacturing",
       "output": "Crimson Warboots",
       "outputImageId": 308,
@@ -15164,7 +14879,7 @@
       ]
     },
     {
-      "id": 257,
+      "id": 255,
       "skill": "manufacturing",
       "output": "Furtop Warboots",
       "outputImageId": 309,
@@ -15222,7 +14937,7 @@
       ]
     },
     {
-      "id": 258,
+      "id": 256,
       "skill": "manufacturing",
       "output": "Arming Chausses",
       "outputImageId": 310,
@@ -15280,7 +14995,7 @@
       ]
     },
     {
-      "id": 259,
+      "id": 257,
       "skill": "manufacturing",
       "output": "Leather Kneecops",
       "outputImageId": 311,
@@ -15338,7 +15053,7 @@
       ]
     },
     {
-      "id": 260,
+      "id": 258,
       "skill": "manufacturing",
       "output": "Splinted Chausses",
       "outputImageId": 312,
@@ -15396,7 +15111,7 @@
       ]
     },
     {
-      "id": 261,
+      "id": 259,
       "skill": "manufacturing",
       "output": "Mail Leggings",
       "outputImageId": 313,
@@ -15454,7 +15169,7 @@
       ]
     },
     {
-      "id": 262,
+      "id": 260,
       "skill": "manufacturing",
       "output": "Riveted Tassets",
       "outputImageId": 314,
@@ -15515,7 +15230,7 @@
       ]
     },
     {
-      "id": 263,
+      "id": 261,
       "skill": "manufacturing",
       "output": "Steel Kneecops",
       "outputImageId": 315,
@@ -15573,7 +15288,7 @@
       ]
     },
     {
-      "id": 264,
+      "id": 262,
       "skill": "manufacturing",
       "output": "Brass Chausses",
       "outputImageId": 316,
@@ -15631,7 +15346,7 @@
       ]
     },
     {
-      "id": 265,
+      "id": 263,
       "skill": "manufacturing",
       "output": "Crimson Guard Chausses",
       "outputImageId": 317,
@@ -15689,7 +15404,7 @@
       ]
     },
     {
-      "id": 266,
+      "id": 264,
       "skill": "manufacturing",
       "output": "Bark Hood",
       "outputImageId": 150,
@@ -15747,7 +15462,7 @@
       ]
     },
     {
-      "id": 267,
+      "id": 265,
       "skill": "manufacturing",
       "output": "Mossbound Cap",
       "outputImageId": 151,
@@ -15805,7 +15520,7 @@
       ]
     },
     {
-      "id": 268,
+      "id": 266,
       "skill": "manufacturing",
       "output": "Rootwrap Circlet",
       "outputImageId": 152,
@@ -15863,7 +15578,7 @@
       ]
     },
     {
-      "id": 269,
+      "id": 267,
       "skill": "manufacturing",
       "output": "Leafscale Hood",
       "outputImageId": 153,
@@ -15921,7 +15636,7 @@
       ]
     },
     {
-      "id": 270,
+      "id": 268,
       "skill": "manufacturing",
       "output": "Heartwood Helm",
       "outputImageId": 154,
@@ -15979,7 +15694,7 @@
       ]
     },
     {
-      "id": 271,
+      "id": 269,
       "skill": "manufacturing",
       "output": "Antler Hood",
       "outputImageId": 155,
@@ -16037,7 +15752,7 @@
       ]
     },
     {
-      "id": 272,
+      "id": 270,
       "skill": "manufacturing",
       "output": "Amberglass Helm",
       "outputImageId": 156,
@@ -16095,7 +15810,7 @@
       ]
     },
     {
-      "id": 273,
+      "id": 271,
       "skill": "manufacturing",
       "output": "Ivory Vine Helm",
       "outputImageId": 157,
@@ -16156,7 +15871,7 @@
       ]
     },
     {
-      "id": 274,
+      "id": 272,
       "skill": "manufacturing",
       "output": "Mail Hauberk",
       "outputImageId": 565,
@@ -16217,7 +15932,7 @@
       ]
     },
     {
-      "id": 275,
+      "id": 273,
       "skill": "manufacturing",
       "output": "Gilt Bascinet",
       "outputImageId": 198,
@@ -16285,7 +16000,7 @@
       ]
     },
     {
-      "id": 276,
+      "id": 274,
       "skill": "manufacturing",
       "output": "Visored Bascinet",
       "outputImageId": 199,
@@ -16353,7 +16068,7 @@
       ]
     },
     {
-      "id": 277,
+      "id": 275,
       "skill": "manufacturing",
       "output": "Great Helm",
       "outputImageId": 200,
@@ -16421,7 +16136,7 @@
       ]
     },
     {
-      "id": 278,
+      "id": 276,
       "skill": "manufacturing",
       "output": "Knight Sallet",
       "outputImageId": 201,
@@ -16489,7 +16204,7 @@
       ]
     },
     {
-      "id": 279,
+      "id": 277,
       "skill": "manufacturing",
       "output": "Winged Helm",
       "outputImageId": 202,
@@ -16557,7 +16272,7 @@
       ]
     },
     {
-      "id": 280,
+      "id": 278,
       "skill": "manufacturing",
       "output": "Crowned Helm",
       "outputImageId": 203,
@@ -16625,7 +16340,7 @@
       ]
     },
     {
-      "id": 281,
+      "id": 279,
       "skill": "manufacturing",
       "output": "Crested Helm",
       "outputImageId": 204,
@@ -16693,7 +16408,7 @@
       ]
     },
     {
-      "id": 282,
+      "id": 280,
       "skill": "manufacturing",
       "output": "Masked Helm",
       "outputImageId": 205,
@@ -16764,7 +16479,7 @@
       ]
     },
     {
-      "id": 283,
+      "id": 281,
       "skill": "manufacturing",
       "output": "Fluted Breastplate",
       "outputImageId": 238,
@@ -16835,7 +16550,7 @@
       ]
     },
     {
-      "id": 284,
+      "id": 282,
       "skill": "manufacturing",
       "output": "Polished Cuirass",
       "outputImageId": 239,
@@ -16903,7 +16618,7 @@
       ]
     },
     {
-      "id": 285,
+      "id": 283,
       "skill": "manufacturing",
       "output": "Gilded Vine Cuirass",
       "outputImageId": 240,
@@ -16971,7 +16686,7 @@
       ]
     },
     {
-      "id": 286,
+      "id": 284,
       "skill": "manufacturing",
       "output": "Scalework Cuirass",
       "outputImageId": 241,
@@ -17039,7 +16754,7 @@
       ]
     },
     {
-      "id": 287,
+      "id": 285,
       "skill": "manufacturing",
       "output": "Rosette Cuirass",
       "outputImageId": 242,
@@ -17107,7 +16822,7 @@
       ]
     },
     {
-      "id": 288,
+      "id": 286,
       "skill": "manufacturing",
       "output": "Tasset Cuirass",
       "outputImageId": 243,
@@ -17175,7 +16890,7 @@
       ]
     },
     {
-      "id": 289,
+      "id": 287,
       "skill": "manufacturing",
       "output": "Mantled Cuirass",
       "outputImageId": 244,
@@ -17243,7 +16958,7 @@
       ]
     },
     {
-      "id": 290,
+      "id": 288,
       "skill": "manufacturing",
       "output": "Blackened Cuirass",
       "outputImageId": 245,
@@ -17314,7 +17029,7 @@
       ]
     },
     {
-      "id": 291,
+      "id": 289,
       "skill": "manufacturing",
       "output": "Fluted Sabatons",
       "outputImageId": 294,
@@ -17382,7 +17097,7 @@
       ]
     },
     {
-      "id": 292,
+      "id": 290,
       "skill": "manufacturing",
       "output": "Palmette Greaves",
       "outputImageId": 295,
@@ -17450,7 +17165,7 @@
       ]
     },
     {
-      "id": 293,
+      "id": 291,
       "skill": "manufacturing",
       "output": "Tracery Greaves",
       "outputImageId": 296,
@@ -17518,7 +17233,7 @@
       ]
     },
     {
-      "id": 294,
+      "id": 292,
       "skill": "manufacturing",
       "output": "Cathedral Greaves",
       "outputImageId": 297,
@@ -17586,7 +17301,7 @@
       ]
     },
     {
-      "id": 295,
+      "id": 293,
       "skill": "manufacturing",
       "output": "Cross Greaves",
       "outputImageId": 298,
@@ -17654,7 +17369,7 @@
       ]
     },
     {
-      "id": 296,
+      "id": 294,
       "skill": "manufacturing",
       "output": "Star Greaves",
       "outputImageId": 299,
@@ -17722,7 +17437,7 @@
       ]
     },
     {
-      "id": 297,
+      "id": 295,
       "skill": "manufacturing",
       "output": "Crimson Greaves",
       "outputImageId": 300,
@@ -17793,7 +17508,7 @@
       ]
     },
     {
-      "id": 298,
+      "id": 296,
       "skill": "manufacturing",
       "output": "Blackened Sabatons",
       "outputImageId": 301,
@@ -17861,7 +17576,7 @@
       ]
     },
     {
-      "id": 299,
+      "id": 297,
       "skill": "manufacturing",
       "output": "Verdant Amber Cuirass",
       "outputImageId": 536,
@@ -17929,7 +17644,7 @@
       ]
     },
     {
-      "id": 300,
+      "id": 298,
       "skill": "manufacturing",
       "output": "Luminous Crystal Cuirass",
       "outputImageId": 541,
@@ -18004,7 +17719,7 @@
       ]
     },
     {
-      "id": 301,
+      "id": 299,
       "skill": "manufacturing",
       "output": "Luminous Winged Cuirass",
       "outputImageId": 545,
@@ -18079,7 +17794,7 @@
       ]
     },
     {
-      "id": 302,
+      "id": 300,
       "skill": "manufacturing",
       "output": "Rimeguard Plate",
       "outputImageId": 547,
@@ -18154,7 +17869,7 @@
       ]
     },
     {
-      "id": 303,
+      "id": 301,
       "skill": "manufacturing",
       "output": "Bonedrake Plate",
       "outputImageId": 549,
@@ -18229,7 +17944,7 @@
       ]
     },
     {
-      "id": 304,
+      "id": 302,
       "skill": "manufacturing",
       "output": "Frontier Cutlass",
       "outputImageId": 376,
@@ -18284,7 +17999,7 @@
       ]
     },
     {
-      "id": 305,
+      "id": 303,
       "skill": "manufacturing",
       "output": "Woodsman's Hatchet",
       "outputImageId": 384,
@@ -18339,7 +18054,7 @@
       ]
     },
     {
-      "id": 306,
+      "id": 304,
       "skill": "manufacturing",
       "output": "Militia Short Spear",
       "outputImageId": 394,
@@ -18394,7 +18109,7 @@
       ]
     },
     {
-      "id": 307,
+      "id": 305,
       "skill": "manufacturing",
       "output": "Throwing Javelin",
       "outputImageId": 395,
@@ -18449,7 +18164,7 @@
       ]
     },
     {
-      "id": 308,
+      "id": 306,
       "skill": "manufacturing",
       "output": "Frontier Voulge",
       "outputImageId": 413,
@@ -18504,7 +18219,7 @@
       ]
     },
     {
-      "id": 309,
+      "id": 307,
       "skill": "manufacturing",
       "output": "Militia Pike",
       "outputImageId": 414,
@@ -18559,7 +18274,7 @@
       ]
     },
     {
-      "id": 310,
+      "id": 308,
       "skill": "manufacturing",
       "output": "Iron Sledgehammer",
       "outputImageId": 419,
@@ -18617,7 +18332,7 @@
       ]
     },
     {
-      "id": 311,
+      "id": 309,
       "skill": "manufacturing",
       "output": "Studded Frontier Club",
       "outputImageId": 422,
@@ -18675,7 +18390,7 @@
       ]
     },
     {
-      "id": 312,
+      "id": 310,
       "skill": "manufacturing",
       "output": "Amberwood Leafblade",
       "outputImageId": 377,
@@ -18730,7 +18445,7 @@
       ]
     },
     {
-      "id": 313,
+      "id": 311,
       "skill": "manufacturing",
       "output": "Sunmane Steppe Saber",
       "outputImageId": 378,
@@ -18785,7 +18500,7 @@
       ]
     },
     {
-      "id": 314,
+      "id": 312,
       "skill": "manufacturing",
       "output": "Rondel Dagger",
       "outputImageId": 379,
@@ -18840,7 +18555,7 @@
       ]
     },
     {
-      "id": 315,
+      "id": 313,
       "skill": "manufacturing",
       "output": "Ring Guard Parrying Dagger",
       "outputImageId": 380,
@@ -18895,7 +18610,7 @@
       ]
     },
     {
-      "id": 316,
+      "id": 314,
       "skill": "manufacturing",
       "output": "Gladius",
       "outputImageId": 381,
@@ -18950,7 +18665,7 @@
       ]
     },
     {
-      "id": 317,
+      "id": 315,
       "skill": "manufacturing",
       "output": "Heavy Falchion",
       "outputImageId": 382,
@@ -19005,7 +18720,7 @@
       ]
     },
     {
-      "id": 318,
+      "id": 316,
       "skill": "manufacturing",
       "output": "Bearded Raider Axe",
       "outputImageId": 385,
@@ -19060,7 +18775,7 @@
       ]
     },
     {
-      "id": 319,
+      "id": 317,
       "skill": "manufacturing",
       "output": "Sunmane Crescent Axe",
       "outputImageId": 387,
@@ -19118,7 +18833,7 @@
       ]
     },
     {
-      "id": 320,
+      "id": 318,
       "skill": "manufacturing",
       "output": "Amberwood Tomahawk",
       "outputImageId": 388,
@@ -19176,7 +18891,7 @@
       ]
     },
     {
-      "id": 321,
+      "id": 319,
       "skill": "manufacturing",
       "output": "Flanged Mace",
       "outputImageId": 389,
@@ -19231,7 +18946,7 @@
       ]
     },
     {
-      "id": 322,
+      "id": 320,
       "skill": "manufacturing",
       "output": "War Hammer",
       "outputImageId": 390,
@@ -19286,7 +19001,7 @@
       ]
     },
     {
-      "id": 323,
+      "id": 321,
       "skill": "manufacturing",
       "output": "Blacksmith Maul",
       "outputImageId": 392,
@@ -19341,7 +19056,7 @@
       ]
     },
     {
-      "id": 324,
+      "id": 322,
       "skill": "manufacturing",
       "output": "Mariner's Trident",
       "outputImageId": 396,
@@ -19396,7 +19111,7 @@
       ]
     },
     {
-      "id": 325,
+      "id": 323,
       "skill": "manufacturing",
       "output": "Throwing Knife Fan",
       "outputImageId": 400,
@@ -19451,7 +19166,7 @@
       ]
     },
     {
-      "id": 326,
+      "id": 324,
       "skill": "manufacturing",
       "output": "Engraved War Chakram",
       "outputImageId": 401,
@@ -19506,7 +19221,7 @@
       ]
     },
     {
-      "id": 327,
+      "id": 325,
       "skill": "manufacturing",
       "output": "Single Edged Glaive",
       "outputImageId": 410,
@@ -19564,7 +19279,7 @@
       ]
     },
     {
-      "id": 328,
+      "id": 326,
       "skill": "manufacturing",
       "output": "Steppe Bardiche",
       "outputImageId": 412,
@@ -19619,7 +19334,7 @@
       ]
     },
     {
-      "id": 329,
+      "id": 327,
       "skill": "manufacturing",
       "output": "Forged War Scythe",
       "outputImageId": 415,
@@ -19674,7 +19389,7 @@
       ]
     },
     {
-      "id": 330,
+      "id": 328,
       "skill": "manufacturing",
       "output": "Three Pronged Ranseur",
       "outputImageId": 416,
@@ -19729,7 +19444,7 @@
       ]
     },
     {
-      "id": 331,
+      "id": 329,
       "skill": "manufacturing",
       "output": "Winged Partisan",
       "outputImageId": 417,
@@ -19784,7 +19499,7 @@
       ]
     },
     {
-      "id": 332,
+      "id": 330,
       "skill": "manufacturing",
       "output": "Heavy Boar Spear",
       "outputImageId": 418,
@@ -19839,7 +19554,7 @@
       ]
     },
     {
-      "id": 333,
+      "id": 331,
       "skill": "manufacturing",
       "output": "Chain Sickle",
       "outputImageId": 455,
@@ -19894,7 +19609,7 @@
       ]
     },
     {
-      "id": 334,
+      "id": 332,
       "skill": "manufacturing",
       "output": "Bladed War Fans",
       "outputImageId": 456,
@@ -19952,7 +19667,7 @@
       ]
     },
     {
-      "id": 335,
+      "id": 333,
       "skill": "manufacturing",
       "output": "Serpent Coil Whip",
       "outputImageId": 458,
@@ -20007,7 +19722,7 @@
       ]
     },
     {
-      "id": 336,
+      "id": 334,
       "skill": "manufacturing",
       "output": "Knightly Cavalry Sword",
       "outputImageId": 375,
@@ -20072,7 +19787,7 @@
       ]
     },
     {
-      "id": 337,
+      "id": 335,
       "skill": "manufacturing",
       "output": "Swept Hilt Rapier",
       "outputImageId": 383,
@@ -20137,7 +19852,7 @@
       ]
     },
     {
-      "id": 338,
+      "id": 336,
       "skill": "manufacturing",
       "output": "Knightly Battle Axe",
       "outputImageId": 386,
@@ -20202,7 +19917,7 @@
       ]
     },
     {
-      "id": 339,
+      "id": 337,
       "skill": "manufacturing",
       "output": "Chain Morningstar",
       "outputImageId": 391,
@@ -20267,7 +19982,7 @@
       ]
     },
     {
-      "id": 340,
+      "id": 338,
       "skill": "manufacturing",
       "output": "Knightly Boar Spear",
       "outputImageId": 397,
@@ -20332,7 +20047,7 @@
       ]
     },
     {
-      "id": 341,
+      "id": 339,
       "skill": "manufacturing",
       "output": "Hooked Dueling Spear",
       "outputImageId": 398,
@@ -20397,7 +20112,7 @@
       ]
     },
     {
-      "id": 342,
+      "id": 340,
       "skill": "manufacturing",
       "output": "Knightly Greatsword",
       "outputImageId": 404,
@@ -20462,7 +20177,7 @@
       ]
     },
     {
-      "id": 343,
+      "id": 341,
       "skill": "manufacturing",
       "output": "Highland Claymore",
       "outputImageId": 405,
@@ -20530,7 +20245,7 @@
       ]
     },
     {
-      "id": 344,
+      "id": 342,
       "skill": "manufacturing",
       "output": "Flamberge Zweihander",
       "outputImageId": 406,
@@ -20598,7 +20313,7 @@
       ]
     },
     {
-      "id": 345,
+      "id": 343,
       "skill": "manufacturing",
       "output": "Executioner's Sword",
       "outputImageId": 407,
@@ -20663,7 +20378,7 @@
       ]
     },
     {
-      "id": 346,
+      "id": 344,
       "skill": "manufacturing",
       "output": "Classic Halberd",
       "outputImageId": 409,
@@ -20728,7 +20443,7 @@
       ]
     },
     {
-      "id": 347,
+      "id": 345,
       "skill": "manufacturing",
       "output": "Knightly Poleaxe",
       "outputImageId": 411,
@@ -20793,7 +20508,7 @@
       ]
     },
     {
-      "id": 348,
+      "id": 346,
       "skill": "manufacturing",
       "output": "Lucerne Hammer",
       "outputImageId": 420,
@@ -20858,7 +20573,7 @@
       ]
     },
     {
-      "id": 349,
+      "id": 347,
       "skill": "manufacturing",
       "output": "Knightly Great Maul",
       "outputImageId": 421,
@@ -20923,7 +20638,7 @@
       ]
     },
     {
-      "id": 350,
+      "id": 348,
       "skill": "manufacturing",
       "output": "Arcane Crystal Cudgel",
       "outputImageId": 393,
@@ -20988,7 +20703,7 @@
       ]
     },
     {
-      "id": 351,
+      "id": 349,
       "skill": "manufacturing",
       "output": "Crescent Spellblade Sickle",
       "outputImageId": 403,
@@ -21053,7 +20768,7 @@
       ]
     },
     {
-      "id": 352,
+      "id": 350,
       "skill": "manufacturing",
       "output": "Arcane Flame Greatblade",
       "outputImageId": 408,
@@ -21118,7 +20833,7 @@
       ]
     },
     {
-      "id": 353,
+      "id": 351,
       "skill": "manufacturing",
       "output": "Sunmane Twin Crescent Glaive",
       "outputImageId": 431,
@@ -21183,7 +20898,7 @@
       ]
     },
     {
-      "id": 354,
+      "id": 352,
       "skill": "manufacturing",
       "output": "Knightly Relic Banner Spear",
       "outputImageId": 432,
@@ -21248,7 +20963,7 @@
       ]
     },
     {
-      "id": 355,
+      "id": 353,
       "skill": "manufacturing",
       "output": "Storm Tuning Fork Spear",
       "outputImageId": 433,
@@ -21313,7 +21028,7 @@
       ]
     },
     {
-      "id": 356,
+      "id": 354,
       "skill": "manufacturing",
       "output": "Segmented Whip Sword",
       "outputImageId": 454,
@@ -21378,7 +21093,7 @@
       ]
     },
     {
-      "id": 357,
+      "id": 355,
       "skill": "manufacturing",
       "output": "Lantern Flail",
       "outputImageId": 457,
@@ -21446,7 +21161,7 @@
       ]
     },
     {
-      "id": 358,
+      "id": 356,
       "skill": "manufacturing",
       "output": "Circular Ringblade",
       "outputImageId": 460,
@@ -21514,7 +21229,7 @@
       ]
     },
     {
-      "id": 359,
+      "id": 357,
       "skill": "manufacturing",
       "output": "Rune Battle Gauntlet",
       "outputImageId": 464,
@@ -21579,7 +21294,7 @@
       ]
     },
     {
-      "id": 360,
+      "id": 358,
       "skill": "manufacturing",
       "output": "Clockwork Saw Lance",
       "outputImageId": 467,
@@ -21644,7 +21359,7 @@
       ]
     },
     {
-      "id": 361,
+      "id": 359,
       "skill": "manufacturing",
       "output": "Polarity War Hammer",
       "outputImageId": 461,
@@ -21716,7 +21431,7 @@
       ]
     },
     {
-      "id": 362,
+      "id": 360,
       "skill": "manufacturing",
       "output": "Gravity Anchor",
       "outputImageId": 462,
@@ -21788,7 +21503,7 @@
       ]
     },
     {
-      "id": 363,
+      "id": 361,
       "skill": "manufacturing",
       "output": "Phoenix Feather Spear",
       "outputImageId": 469,
@@ -21860,7 +21575,7 @@
       ]
     },
     {
-      "id": 364,
+      "id": 362,
       "skill": "manufacturing",
       "output": "Void Glass Greatblade",
       "outputImageId": 470,
@@ -21932,7 +21647,7 @@
       ]
     },
     {
-      "id": 365,
+      "id": 363,
       "skill": "manufacturing",
       "output": "Radiant Sun Disc Chakram",
       "outputImageId": 471,
@@ -22004,7 +21719,7 @@
       ]
     },
     {
-      "id": 366,
+      "id": 364,
       "skill": "manufacturing",
       "output": "Echo Bell Hammer",
       "outputImageId": 472,
@@ -22076,7 +21791,7 @@
       ]
     },
     {
-      "id": 367,
+      "id": 365,
       "skill": "manufacturing",
       "output": "Stormglass Shield Spear",
       "outputImageId": 473,
@@ -22148,7 +21863,7 @@
       ]
     },
     {
-      "id": 368,
+      "id": 366,
       "skill": "manufacturing",
       "output": "Orun Sunplate Cuirass",
       "outputImageId": 526,
@@ -22206,7 +21921,7 @@
       ]
     },
     {
-      "id": 369,
+      "id": 367,
       "skill": "manufacturing",
       "output": "Splinted Corselet",
       "outputImageId": 564,
@@ -22264,7 +21979,7 @@
       ]
     },
     {
-      "id": 370,
+      "id": 368,
       "skill": "manufacturing",
       "output": "Lamellar Corselet",
       "outputImageId": 566,
@@ -22322,7 +22037,7 @@
       ]
     },
     {
-      "id": 371,
+      "id": 369,
       "skill": "manufacturing",
       "output": "Steel Breastplate",
       "outputImageId": 567,
@@ -22380,7 +22095,7 @@
       ]
     },
     {
-      "id": 372,
+      "id": 370,
       "skill": "manufacturing",
       "output": "Bronze Breastplate",
       "outputImageId": 568,
@@ -22438,7 +22153,7 @@
       ]
     },
     {
-      "id": 373,
+      "id": 371,
       "skill": "manufacturing",
       "output": "Spauldered Breastplate",
       "outputImageId": 569,
@@ -22496,7 +22211,7 @@
       ]
     },
     {
-      "id": 374,
+      "id": 372,
       "skill": "manufacturing",
       "output": "Fluted Knight Cuirass",
       "outputImageId": 514,
@@ -22561,7 +22276,7 @@
       ]
     },
     {
-      "id": 375,
+      "id": 373,
       "skill": "manufacturing",
       "output": "Etched Knight Cuirass",
       "outputImageId": 515,
@@ -22626,7 +22341,7 @@
       ]
     },
     {
-      "id": 376,
+      "id": 374,
       "skill": "manufacturing",
       "output": "Gilded Knight Cuirass",
       "outputImageId": 516,
@@ -22691,7 +22406,7 @@
       ]
     },
     {
-      "id": 377,
+      "id": 375,
       "skill": "manufacturing",
       "output": "Scaled Knight Cuirass",
       "outputImageId": 517,
@@ -22756,7 +22471,7 @@
       ]
     },
     {
-      "id": 378,
+      "id": 376,
       "skill": "manufacturing",
       "output": "Chased Knight Cuirass",
       "outputImageId": 518,
@@ -22821,7 +22536,7 @@
       ]
     },
     {
-      "id": 379,
+      "id": 377,
       "skill": "manufacturing",
       "output": "Tourney Knight Cuirass",
       "outputImageId": 519,
@@ -22886,7 +22601,7 @@
       ]
     },
     {
-      "id": 380,
+      "id": 378,
       "skill": "manufacturing",
       "output": "Herald Knight Cuirass",
       "outputImageId": 520,
@@ -22951,7 +22666,7 @@
       ]
     },
     {
-      "id": 381,
+      "id": 379,
       "skill": "manufacturing",
       "output": "Warden Knight Cuirass",
       "outputImageId": 521,
@@ -23019,7 +22734,7 @@
       ]
     },
     {
-      "id": 382,
+      "id": 380,
       "skill": "manufacturing",
       "output": "Verdant Warden Cuirass",
       "outputImageId": 537,
@@ -23087,7 +22802,7 @@
       ]
     },
     {
-      "id": 383,
+      "id": 381,
       "skill": "manufacturing",
       "output": "Warded Legguards",
       "outputImageId": 166,
@@ -23152,7 +22867,7 @@
       ]
     },
     {
-      "id": 384,
+      "id": 382,
       "skill": "manufacturing",
       "output": "Glowline Legguards",
       "outputImageId": 167,
@@ -23217,7 +22932,7 @@
       ]
     },
     {
-      "id": 385,
+      "id": 383,
       "skill": "manufacturing",
       "output": "Palesteel Legguards",
       "outputImageId": 168,
@@ -23282,7 +22997,7 @@
       ]
     },
     {
-      "id": 386,
+      "id": 384,
       "skill": "manufacturing",
       "output": "Starglass Legguards",
       "outputImageId": 169,
@@ -23347,7 +23062,7 @@
       ]
     },
     {
-      "id": 387,
+      "id": 385,
       "skill": "manufacturing",
       "output": "Twilight Legguards",
       "outputImageId": 170,
@@ -23412,7 +23127,7 @@
       ]
     },
     {
-      "id": 388,
+      "id": 386,
       "skill": "manufacturing",
       "output": "Seawrap Legguards",
       "outputImageId": 171,
@@ -23477,7 +23192,7 @@
       ]
     },
     {
-      "id": 389,
+      "id": 387,
       "skill": "manufacturing",
       "output": "Acolyte Legguards",
       "outputImageId": 172,
@@ -23542,7 +23257,7 @@
       ]
     },
     {
-      "id": 390,
+      "id": 388,
       "skill": "manufacturing",
       "output": "Crystalward Legguards",
       "outputImageId": 173,
@@ -23610,7 +23325,7 @@
       ]
     },
     {
-      "id": 391,
+      "id": 389,
       "skill": "manufacturing",
       "output": "Herald Cuisses",
       "outputImageId": 174,
@@ -23678,7 +23393,7 @@
       ]
     },
     {
-      "id": 392,
+      "id": 390,
       "skill": "manufacturing",
       "output": "Fleur Cuisses",
       "outputImageId": 175,
@@ -23743,7 +23458,7 @@
       ]
     },
     {
-      "id": 393,
+      "id": 391,
       "skill": "manufacturing",
       "output": "Crimson Cuisses",
       "outputImageId": 176,
@@ -23808,7 +23523,7 @@
       ]
     },
     {
-      "id": 394,
+      "id": 392,
       "skill": "manufacturing",
       "output": "Ivory Cuisses",
       "outputImageId": 177,
@@ -23873,7 +23588,7 @@
       ]
     },
     {
-      "id": 395,
+      "id": 393,
       "skill": "manufacturing",
       "output": "Lion Cuisses",
       "outputImageId": 178,
@@ -23938,7 +23653,7 @@
       ]
     },
     {
-      "id": 396,
+      "id": 394,
       "skill": "manufacturing",
       "output": "Silver Cuisses",
       "outputImageId": 179,
@@ -24003,7 +23718,7 @@
       ]
     },
     {
-      "id": 397,
+      "id": 395,
       "skill": "manufacturing",
       "output": "Rosette Cuisses",
       "outputImageId": 180,
@@ -24068,7 +23783,7 @@
       ]
     },
     {
-      "id": 398,
+      "id": 396,
       "skill": "manufacturing",
       "output": "Blackened Cuisses",
       "outputImageId": 181,
@@ -24136,7 +23851,7 @@
       ]
     },
     {
-      "id": 399,
+      "id": 397,
       "skill": "manufacturing",
       "output": "Warded Tabard",
       "outputImageId": 254,
@@ -24201,7 +23916,7 @@
       ]
     },
     {
-      "id": 400,
+      "id": 398,
       "skill": "manufacturing",
       "output": "Glowline Coat",
       "outputImageId": 255,
@@ -24266,7 +23981,7 @@
       ]
     },
     {
-      "id": 401,
+      "id": 399,
       "skill": "manufacturing",
       "output": "Palesteel Cuirass",
       "outputImageId": 256,
@@ -24331,7 +24046,7 @@
       ]
     },
     {
-      "id": 402,
+      "id": 400,
       "skill": "manufacturing",
       "output": "Starglass Cuirass",
       "outputImageId": 257,
@@ -24396,7 +24111,7 @@
       ]
     },
     {
-      "id": 403,
+      "id": 401,
       "skill": "manufacturing",
       "output": "Twilight Cuirass",
       "outputImageId": 258,
@@ -24461,7 +24176,7 @@
       ]
     },
     {
-      "id": 404,
+      "id": 402,
       "skill": "manufacturing",
       "output": "Seawrap Robe",
       "outputImageId": 259,
@@ -24526,7 +24241,7 @@
       ]
     },
     {
-      "id": 405,
+      "id": 403,
       "skill": "manufacturing",
       "output": "Acolyte Tunic",
       "outputImageId": 260,
@@ -24594,7 +24309,7 @@
       ]
     },
     {
-      "id": 406,
+      "id": 404,
       "skill": "manufacturing",
       "output": "Crystalward Plate",
       "outputImageId": 261,
@@ -24659,7 +24374,7 @@
       ]
     },
     {
-      "id": 407,
+      "id": 405,
       "skill": "manufacturing",
       "output": "Luminous Silver Cuirass",
       "outputImageId": 540,
@@ -24724,7 +24439,7 @@
       ]
     },
     {
-      "id": 408,
+      "id": 406,
       "skill": "manufacturing",
       "output": "Phoenix Helm",
       "outputImageId": 182,
@@ -24767,11 +24482,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Copper",
@@ -24799,7 +24511,7 @@
       ]
     },
     {
-      "id": 409,
+      "id": 407,
       "skill": "manufacturing",
       "output": "Glacier Helm",
       "outputImageId": 183,
@@ -24842,11 +24554,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -24874,7 +24583,7 @@
       ]
     },
     {
-      "id": 410,
+      "id": 408,
       "skill": "manufacturing",
       "output": "Nightstorm Helm",
       "outputImageId": 184,
@@ -24917,11 +24626,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Flint",
@@ -24949,7 +24655,7 @@
       ]
     },
     {
-      "id": 411,
+      "id": 409,
       "skill": "manufacturing",
       "output": "Dragonbone Helm",
       "outputImageId": 185,
@@ -24992,11 +24698,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Shell",
@@ -25024,7 +24727,7 @@
       ]
     },
     {
-      "id": 412,
+      "id": 410,
       "skill": "manufacturing",
       "output": "Sunburst Helm",
       "outputImageId": 186,
@@ -25067,11 +24770,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Bog Iron",
@@ -25099,7 +24799,7 @@
       ]
     },
     {
-      "id": 413,
+      "id": 411,
       "skill": "manufacturing",
       "output": "Amethyst Helm",
       "outputImageId": 187,
@@ -25142,11 +24842,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Coal",
@@ -25174,7 +24871,7 @@
       ]
     },
     {
-      "id": 414,
+      "id": 412,
       "skill": "manufacturing",
       "output": "Knotwork Helm",
       "outputImageId": 188,
@@ -25217,11 +24914,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Quartz",
@@ -25249,7 +24943,7 @@
       ]
     },
     {
-      "id": 415,
+      "id": 413,
       "skill": "manufacturing",
       "output": "Lion Helm",
       "outputImageId": 189,
@@ -25292,11 +24986,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Salt",
@@ -25327,7 +25018,7 @@
       ]
     },
     {
-      "id": 416,
+      "id": 414,
       "skill": "manufacturing",
       "output": "Phoenix Cuirass",
       "outputImageId": 230,
@@ -25370,11 +25061,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Clay",
@@ -25405,7 +25093,7 @@
       ]
     },
     {
-      "id": 417,
+      "id": 415,
       "skill": "manufacturing",
       "output": "Glacier Cuirass",
       "outputImageId": 231,
@@ -25448,11 +25136,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Copper",
@@ -25480,7 +25165,7 @@
       ]
     },
     {
-      "id": 418,
+      "id": 416,
       "skill": "manufacturing",
       "output": "Nightstorm Cuirass",
       "outputImageId": 232,
@@ -25523,11 +25208,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -25555,7 +25237,7 @@
       ]
     },
     {
-      "id": 419,
+      "id": 417,
       "skill": "manufacturing",
       "output": "Dragonbone Cuirass",
       "outputImageId": 233,
@@ -25598,11 +25280,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Flint",
@@ -25630,7 +25309,7 @@
       ]
     },
     {
-      "id": 420,
+      "id": 418,
       "skill": "manufacturing",
       "output": "Sunburst Cuirass",
       "outputImageId": 234,
@@ -25673,11 +25352,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Shell",
@@ -25705,7 +25381,7 @@
       ]
     },
     {
-      "id": 421,
+      "id": 419,
       "skill": "manufacturing",
       "output": "Amethyst Cuirass",
       "outputImageId": 235,
@@ -25748,11 +25424,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Bog Iron",
@@ -25780,7 +25453,7 @@
       ]
     },
     {
-      "id": 422,
+      "id": 420,
       "skill": "manufacturing",
       "output": "Knotwork Cuirass",
       "outputImageId": 236,
@@ -25823,11 +25496,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Coal",
@@ -25855,7 +25525,7 @@
       ]
     },
     {
-      "id": 423,
+      "id": 421,
       "skill": "manufacturing",
       "output": "Lion Cuirass",
       "outputImageId": 237,
@@ -25898,11 +25568,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Quartz",
@@ -25933,7 +25600,7 @@
       ]
     },
     {
-      "id": 424,
+      "id": 422,
       "skill": "manufacturing",
       "output": "Phoenix Legguards",
       "outputImageId": 286,
@@ -25976,11 +25643,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Salt",
@@ -26008,7 +25672,7 @@
       ]
     },
     {
-      "id": 425,
+      "id": 423,
       "skill": "manufacturing",
       "output": "Glacier Legguards",
       "outputImageId": 287,
@@ -26051,11 +25715,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Copper",
@@ -26083,7 +25744,7 @@
       ]
     },
     {
-      "id": 426,
+      "id": 424,
       "skill": "manufacturing",
       "output": "Nightstorm Legguards",
       "outputImageId": 288,
@@ -26126,11 +25787,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -26158,7 +25816,7 @@
       ]
     },
     {
-      "id": 427,
+      "id": 425,
       "skill": "manufacturing",
       "output": "Dragonbone Legguards",
       "outputImageId": 289,
@@ -26201,11 +25859,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Flint",
@@ -26233,7 +25888,7 @@
       ]
     },
     {
-      "id": 428,
+      "id": 426,
       "skill": "manufacturing",
       "output": "Sunburst Legguards",
       "outputImageId": 290,
@@ -26276,11 +25931,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Shell",
@@ -26308,7 +25960,7 @@
       ]
     },
     {
-      "id": 429,
+      "id": 427,
       "skill": "manufacturing",
       "output": "Amethyst Legguards",
       "outputImageId": 291,
@@ -26351,11 +26003,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Bog Iron",
@@ -26383,7 +26032,7 @@
       ]
     },
     {
-      "id": 430,
+      "id": 428,
       "skill": "manufacturing",
       "output": "Knotwork Legguards",
       "outputImageId": 292,
@@ -26426,11 +26075,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Coal",
@@ -26461,7 +26107,7 @@
       ]
     },
     {
-      "id": 431,
+      "id": 429,
       "skill": "manufacturing",
       "output": "Lion Legguards",
       "outputImageId": 293,
@@ -26504,11 +26150,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Quartz",
@@ -26536,7 +26179,7 @@
       ]
     },
     {
-      "id": 432,
+      "id": 430,
       "skill": "manufacturing",
       "output": "Phoenix Boots",
       "outputImageId": 342,
@@ -26579,11 +26222,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Copper",
@@ -26611,7 +26251,7 @@
       ]
     },
     {
-      "id": 433,
+      "id": 431,
       "skill": "manufacturing",
       "output": "Glacier Boots",
       "outputImageId": 343,
@@ -26654,11 +26294,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -26686,7 +26323,7 @@
       ]
     },
     {
-      "id": 434,
+      "id": 432,
       "skill": "manufacturing",
       "output": "Nightstorm Boots",
       "outputImageId": 344,
@@ -26729,11 +26366,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Flint",
@@ -26761,7 +26395,7 @@
       ]
     },
     {
-      "id": 435,
+      "id": 433,
       "skill": "manufacturing",
       "output": "Dragonbone Boots",
       "outputImageId": 345,
@@ -26804,11 +26438,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Shell",
@@ -26836,7 +26467,7 @@
       ]
     },
     {
-      "id": 436,
+      "id": 434,
       "skill": "manufacturing",
       "output": "Sunburst Boots",
       "outputImageId": 346,
@@ -26879,11 +26510,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Bog Iron",
@@ -26914,7 +26542,7 @@
       ]
     },
     {
-      "id": 437,
+      "id": 435,
       "skill": "manufacturing",
       "output": "Amethyst Boots",
       "outputImageId": 347,
@@ -26957,11 +26585,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Coal",
@@ -26989,7 +26614,7 @@
       ]
     },
     {
-      "id": 438,
+      "id": 436,
       "skill": "manufacturing",
       "output": "Knotwork Boots",
       "outputImageId": 348,
@@ -27032,11 +26657,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Copper",
@@ -27064,7 +26686,7 @@
       ]
     },
     {
-      "id": 439,
+      "id": 437,
       "skill": "manufacturing",
       "output": "Lion Boots",
       "outputImageId": 349,
@@ -27107,11 +26729,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -27139,7 +26758,7 @@
       ]
     },
     {
-      "id": 440,
+      "id": 438,
       "skill": "manufacturing",
       "output": "Phoenix Plate",
       "outputImageId": 546,
@@ -27182,11 +26801,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Flint",
@@ -27214,7 +26830,7 @@
       ]
     },
     {
-      "id": 441,
+      "id": 439,
       "skill": "manufacturing",
       "output": "Stormcall Plate",
       "outputImageId": 548,
@@ -27257,11 +26873,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Shell",
@@ -27292,7 +26905,7 @@
       ]
     },
     {
-      "id": 442,
+      "id": 440,
       "skill": "manufacturing",
       "output": "Radiant Plate",
       "outputImageId": 550,
@@ -27335,11 +26948,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Bog Iron",
@@ -27367,7 +26977,7 @@
       ]
     },
     {
-      "id": 443,
+      "id": 441,
       "skill": "manufacturing",
       "output": "Voidsworn Plate",
       "outputImageId": 551,
@@ -27410,11 +27020,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Copper",
@@ -27442,7 +27049,7 @@
       ]
     },
     {
-      "id": 444,
+      "id": 442,
       "skill": "manufacturing",
       "output": "Runestone Plate",
       "outputImageId": 552,
@@ -27485,11 +27092,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -27517,7 +27121,7 @@
       ]
     },
     {
-      "id": 445,
+      "id": 443,
       "skill": "manufacturing",
       "output": "Lionheart Plate",
       "outputImageId": 553,
@@ -27560,11 +27164,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Flint",
@@ -27595,7 +27196,7 @@
       ]
     },
     {
-      "id": 446,
+      "id": 444,
       "skill": "manufacturing",
       "output": "Phoenix Sabatons",
       "outputImageId": 576,
@@ -27638,11 +27239,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Shell",
@@ -27670,7 +27268,7 @@
       ]
     },
     {
-      "id": 447,
+      "id": 445,
       "skill": "manufacturing",
       "output": "Glacier Sabatons",
       "outputImageId": 577,
@@ -27713,11 +27311,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Copper",
@@ -27745,7 +27340,7 @@
       ]
     },
     {
-      "id": 448,
+      "id": 446,
       "skill": "manufacturing",
       "output": "Nightstorm Sabatons",
       "outputImageId": 578,
@@ -27788,11 +27383,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -27823,7 +27415,7 @@
       ]
     },
     {
-      "id": 449,
+      "id": 447,
       "skill": "manufacturing",
       "output": "Dragonbone Sabatons",
       "outputImageId": 579,
@@ -27866,11 +27458,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Flint",
@@ -27898,7 +27487,7 @@
       ]
     },
     {
-      "id": 450,
+      "id": 448,
       "skill": "manufacturing",
       "output": "Sunburst Sabatons",
       "outputImageId": 580,
@@ -27941,11 +27530,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Copper",
@@ -27976,7 +27562,7 @@
       ]
     },
     {
-      "id": 451,
+      "id": 449,
       "skill": "manufacturing",
       "output": "Amethyst Sabatons",
       "outputImageId": 581,
@@ -28019,11 +27605,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -28051,7 +27634,7 @@
       ]
     },
     {
-      "id": 452,
+      "id": 450,
       "skill": "manufacturing",
       "output": "Knotwork Sabatons",
       "outputImageId": 582,
@@ -28094,11 +27677,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Copper",
@@ -28126,7 +27706,7 @@
       ]
     },
     {
-      "id": 453,
+      "id": 451,
       "skill": "manufacturing",
       "output": "Lion Sabatons",
       "outputImageId": 583,
@@ -28169,11 +27749,8 @@
           "name": "Polished Gem",
           "quantity": 1,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Clay",
@@ -28204,7 +27781,7 @@
       ]
     },
     {
-      "id": 454,
+      "id": 452,
       "skill": "manufacturing",
       "output": "Frontier Barricade Shield",
       "outputImageId": 448,
@@ -28259,7 +27836,7 @@
       ]
     },
     {
-      "id": 455,
+      "id": 453,
       "skill": "manufacturing",
       "output": "Parrying Buckler",
       "outputImageId": 437,
@@ -28314,7 +27891,7 @@
       ]
     },
     {
-      "id": 456,
+      "id": 454,
       "skill": "manufacturing",
       "output": "Reinforced Highland Targe",
       "outputImageId": 440,
@@ -28369,7 +27946,7 @@
       ]
     },
     {
-      "id": 457,
+      "id": 455,
       "skill": "manufacturing",
       "output": "Sunmane Hide Bronze Shield",
       "outputImageId": 445,
@@ -28424,7 +28001,7 @@
       ]
     },
     {
-      "id": 458,
+      "id": 456,
       "skill": "manufacturing",
       "output": "Amberwood Living Bark Shield",
       "outputImageId": 446,
@@ -28479,7 +28056,7 @@
       ]
     },
     {
-      "id": 459,
+      "id": 457,
       "skill": "manufacturing",
       "output": "Steel Rimmed Heater Shield",
       "outputImageId": 435,
@@ -28544,7 +28121,7 @@
       ]
     },
     {
-      "id": 460,
+      "id": 458,
       "skill": "manufacturing",
       "output": "Norman Kite Shield",
       "outputImageId": 436,
@@ -28609,7 +28186,7 @@
       ]
     },
     {
-      "id": 461,
+      "id": 459,
       "skill": "manufacturing",
       "output": "Rectangular Tower Shield",
       "outputImageId": 438,
@@ -28674,7 +28251,7 @@
       ]
     },
     {
-      "id": 462,
+      "id": 460,
       "skill": "manufacturing",
       "output": "Crossbowman's Pavise",
       "outputImageId": 439,
@@ -28739,7 +28316,7 @@
       ]
     },
     {
-      "id": 463,
+      "id": 461,
       "skill": "manufacturing",
       "output": "Legionary Scutum",
       "outputImageId": 441,
@@ -28804,7 +28381,7 @@
       ]
     },
     {
-      "id": 464,
+      "id": 462,
       "skill": "manufacturing",
       "output": "Long Dueling Shield",
       "outputImageId": 443,
@@ -28869,7 +28446,7 @@
       ]
     },
     {
-      "id": 465,
+      "id": 463,
       "skill": "manufacturing",
       "output": "Knightly Lion Shield",
       "outputImageId": 444,
@@ -28934,7 +28511,7 @@
       ]
     },
     {
-      "id": 466,
+      "id": 464,
       "skill": "manufacturing",
       "output": "Mechanical Lantern Shield",
       "outputImageId": 442,
@@ -28999,7 +28576,7 @@
       ]
     },
     {
-      "id": 467,
+      "id": 465,
       "skill": "manufacturing",
       "output": "Arcane Crystal Shield",
       "outputImageId": 447,
@@ -29064,7 +28641,7 @@
       ]
     },
     {
-      "id": 468,
+      "id": 466,
       "skill": "manufacturing",
       "output": "Polished Mirror Shield",
       "outputImageId": 449,
@@ -29129,7 +28706,7 @@
       ]
     },
     {
-      "id": 469,
+      "id": 467,
       "skill": "manufacturing",
       "output": "Dragon Scale Shield",
       "outputImageId": 450,
@@ -29194,7 +28771,7 @@
       ]
     },
     {
-      "id": 470,
+      "id": 468,
       "skill": "manufacturing",
       "output": "Ice Crystal Shield",
       "outputImageId": 451,
@@ -29259,7 +28836,7 @@
       ]
     },
     {
-      "id": 471,
+      "id": 469,
       "skill": "manufacturing",
       "output": "Molten Forge Shield",
       "outputImageId": 452,
@@ -29324,7 +28901,7 @@
       ]
     },
     {
-      "id": 472,
+      "id": 470,
       "skill": "manufacturing",
       "output": "Thorned Root Shield",
       "outputImageId": 453,
@@ -29389,7 +28966,7 @@
       ]
     },
     {
-      "id": 473,
+      "id": 471,
       "skill": "engineering",
       "output": "Fletching Bundle",
       "outputImageId": 14,
@@ -29436,7 +29013,7 @@
       ]
     },
     {
-      "id": 474,
+      "id": 472,
       "skill": "engineering",
       "output": "Smith's Hammer",
       "outputImageId": 38,
@@ -29487,7 +29064,7 @@
       ]
     },
     {
-      "id": 475,
+      "id": 473,
       "skill": "engineering",
       "output": "Needle",
       "outputImageId": 7,
@@ -29531,7 +29108,7 @@
       ]
     },
     {
-      "id": 476,
+      "id": 474,
       "skill": "engineering",
       "output": "Arrow",
       "outputImageId": 52,
@@ -29579,7 +29156,7 @@
       ]
     },
     {
-      "id": 477,
+      "id": 475,
       "skill": "engineering",
       "output": "Empty Vial",
       "outputImageId": 505,
@@ -29617,7 +29194,7 @@
       ]
     },
     {
-      "id": 478,
+      "id": 476,
       "skill": "engineering",
       "output": "Mortar and Pestle",
       "outputImageId": 8,
@@ -29658,7 +29235,7 @@
       ]
     },
     {
-      "id": 479,
+      "id": 477,
       "skill": "engineering",
       "output": "Pickaxe",
       "outputImageId": 5,
@@ -29699,7 +29276,7 @@
       ]
     },
     {
-      "id": 480,
+      "id": 478,
       "skill": "engineering",
       "output": "Hatchet",
       "outputImageId": 6,
@@ -29740,7 +29317,7 @@
       ]
     },
     {
-      "id": 481,
+      "id": 479,
       "skill": "engineering",
       "output": "Bolt",
       "outputImageId": 52,
@@ -29791,7 +29368,7 @@
       ]
     },
     {
-      "id": 482,
+      "id": 480,
       "skill": "engineering",
       "output": "Amberwood Yew Longbow",
       "outputImageId": 424,
@@ -29849,7 +29426,7 @@
       ]
     },
     {
-      "id": 483,
+      "id": 481,
       "skill": "engineering",
       "output": "Sunmane Recurve Bow",
       "outputImageId": 425,
@@ -29907,7 +29484,7 @@
       ]
     },
     {
-      "id": 484,
+      "id": 482,
       "skill": "engineering",
       "output": "Amberwood Branch Bowblade",
       "outputImageId": 430,
@@ -29978,7 +29555,7 @@
       ]
     },
     {
-      "id": 485,
+      "id": 483,
       "skill": "engineering",
       "output": "Folding Crescent Bow",
       "outputImageId": 463,
@@ -30049,7 +29626,7 @@
       ]
     },
     {
-      "id": 486,
+      "id": 484,
       "skill": "engineering",
       "output": "Living Vine Bow",
       "outputImageId": 468,
@@ -30127,7 +29704,7 @@
       ]
     },
     {
-      "id": 487,
+      "id": 485,
       "skill": "engineering",
       "output": "Frontier Hand Crossbow",
       "outputImageId": 399,
@@ -30182,7 +29759,7 @@
       ]
     },
     {
-      "id": 488,
+      "id": 486,
       "skill": "engineering",
       "output": "Siege Great Crossbow",
       "outputImageId": 426,
@@ -30247,7 +29824,7 @@
       ]
     },
     {
-      "id": 489,
+      "id": 487,
       "skill": "engineering",
       "output": "Clockwork Repeating Arbalest",
       "outputImageId": 427,
@@ -30312,7 +29889,7 @@
       ]
     },
     {
-      "id": 490,
+      "id": 488,
       "skill": "engineering",
       "output": "Alchemical Hand Cannon",
       "outputImageId": 428,
@@ -30377,7 +29954,7 @@
       ]
     },
     {
-      "id": 491,
+      "id": 489,
       "skill": "engineering",
       "output": "Alchemist Cannon",
       "outputImageId": 465,
@@ -30445,7 +30022,7 @@
       ]
     },
     {
-      "id": 492,
+      "id": 490,
       "skill": "crafting",
       "output": "Filigree Wire",
       "outputImageId": 22,
@@ -30483,7 +30060,7 @@
       ]
     },
     {
-      "id": 493,
+      "id": 491,
       "skill": "crafting",
       "output": "Polished Gem",
       "outputImageId": 27,
@@ -30528,7 +30105,7 @@
       ]
     },
     {
-      "id": 494,
+      "id": 492,
       "skill": "crafting",
       "output": "Fighting Quarterstaff",
       "outputImageId": 423,
@@ -30580,7 +30157,7 @@
       ]
     },
     {
-      "id": 495,
+      "id": 493,
       "skill": "crafting",
       "output": "Arcane Focus Wand",
       "outputImageId": 402,
@@ -30610,11 +30187,8 @@
           "name": "Polished Gem",
           "quantity": 2,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Quartz",
@@ -30642,7 +30216,7 @@
       ]
     },
     {
-      "id": 496,
+      "id": 494,
       "skill": "crafting",
       "output": "Arcane Double Staff",
       "outputImageId": 429,
@@ -30672,11 +30246,8 @@
           "name": "Polished Gem",
           "quantity": 2,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Crystal",
@@ -30704,7 +30275,7 @@
       ]
     },
     {
-      "id": 497,
+      "id": 495,
       "skill": "crafting",
       "output": "Double Ended Twinblade",
       "outputImageId": 459,
@@ -30734,11 +30305,8 @@
           "name": "Polished Gem",
           "quantity": 2,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Geode",
@@ -30766,7 +30334,7 @@
       ]
     },
     {
-      "id": 498,
+      "id": 496,
       "skill": "crafting",
       "output": "Crystal Prism Staff",
       "outputImageId": 466,
@@ -30796,11 +30364,8 @@
           "name": "Polished Gem",
           "quantity": 2,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Pearl",
@@ -30828,7 +30393,7 @@
       ]
     },
     {
-      "id": 499,
+      "id": 497,
       "skill": "crafting",
       "output": "Amberwood Leaf Amulet",
       "outputImageId": 50,
@@ -30851,11 +30416,8 @@
           "name": "Polished Gem",
           "quantity": 2,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Iron Rune",
@@ -30890,7 +30452,7 @@
       ]
     },
     {
-      "id": 500,
+      "id": 498,
       "skill": "crafting",
       "output": "Glasswarden Resonator",
       "outputImageId": 50,
@@ -30913,11 +30475,8 @@
           "name": "Polished Gem",
           "quantity": 2,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Iron Rune",
@@ -30952,7 +30511,7 @@
       ]
     },
     {
-      "id": 501,
+      "id": 499,
       "skill": "crafting",
       "output": "Greyhaven Compass",
       "outputImageId": 50,
@@ -30975,11 +30534,8 @@
           "name": "Polished Gem",
           "quantity": 2,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Iron Rune",
@@ -31014,7 +30570,7 @@
       ]
     },
     {
-      "id": 502,
+      "id": 500,
       "skill": "crafting",
       "output": "Orun Sun Amulet",
       "outputImageId": 50,
@@ -31037,11 +30593,8 @@
           "name": "Polished Gem",
           "quantity": 2,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Iron Rune",
@@ -31076,7 +30629,7 @@
       ]
     },
     {
-      "id": 503,
+      "id": 501,
       "skill": "crafting",
       "output": "Ssarathi Shell Amulet",
       "outputImageId": 50,
@@ -31099,11 +30652,8 @@
           "name": "Polished Gem",
           "quantity": 2,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Iron Rune",
@@ -31138,7 +30688,7 @@
       ]
     },
     {
-      "id": 504,
+      "id": 502,
       "skill": "crafting",
       "output": "Luminous Orbit Amulet",
       "outputImageId": 50,
@@ -31161,11 +30711,8 @@
           "name": "Polished Gem",
           "quantity": 2,
           "imageId": 27,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Clear Quartz",
-            "Polished Gem"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Iron Rune",
@@ -31200,7 +30747,7 @@
       ]
     },
     {
-      "id": 505,
+      "id": 503,
       "skill": "potion",
       "output": "Poison Antidote",
       "outputImageId": 504,
@@ -31255,7 +30802,7 @@
       ]
     },
     {
-      "id": 506,
+      "id": 504,
       "skill": "potion",
       "output": "Magic Potion",
       "outputImageId": 497,
@@ -31317,7 +30864,7 @@
       ]
     },
     {
-      "id": 507,
+      "id": 505,
       "skill": "potion",
       "output": "Potion of Magic Offense",
       "outputImageId": 574,
@@ -31379,7 +30926,7 @@
       ]
     },
     {
-      "id": 508,
+      "id": 506,
       "skill": "potion",
       "output": "Potion of Magic Defense",
       "outputImageId": 575,
@@ -31438,7 +30985,7 @@
       ]
     },
     {
-      "id": 509,
+      "id": 507,
       "skill": "potion",
       "output": "Potion of Action Points",
       "outputImageId": 481,
@@ -31496,7 +31043,7 @@
       ]
     },
     {
-      "id": 510,
+      "id": 508,
       "skill": "potion",
       "output": "Potion of Might",
       "outputImageId": 482,
@@ -31551,7 +31098,7 @@
       ]
     },
     {
-      "id": 511,
+      "id": 509,
       "skill": "potion",
       "output": "Potion of Dexterity",
       "outputImageId": 483,
@@ -31606,7 +31153,7 @@
       ]
     },
     {
-      "id": 512,
+      "id": 510,
       "skill": "potion",
       "output": "Potion of Rationality",
       "outputImageId": 484,
@@ -31661,7 +31208,7 @@
       ]
     },
     {
-      "id": 513,
+      "id": 511,
       "skill": "potion",
       "output": "Potion of Ethereality",
       "outputImageId": 485,
@@ -31701,11 +31248,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -31719,7 +31263,7 @@
       ]
     },
     {
-      "id": 514,
+      "id": 512,
       "skill": "potion",
       "output": "Potion of Toughness",
       "outputImageId": 486,
@@ -31759,11 +31303,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -31777,7 +31318,7 @@
       ]
     },
     {
-      "id": 515,
+      "id": 513,
       "skill": "potion",
       "output": "Potion of Perception",
       "outputImageId": 487,
@@ -31832,7 +31373,7 @@
       ]
     },
     {
-      "id": 516,
+      "id": 514,
       "skill": "potion",
       "output": "Potion of Matter",
       "outputImageId": 570,
@@ -31887,7 +31428,7 @@
       ]
     },
     {
-      "id": 517,
+      "id": 515,
       "skill": "potion",
       "output": "Potion of Carry",
       "outputImageId": 571,
@@ -31942,7 +31483,7 @@
       ]
     },
     {
-      "id": 518,
+      "id": 516,
       "skill": "potion",
       "output": "Potion of Charm",
       "outputImageId": 572,
@@ -31997,7 +31538,7 @@
       ]
     },
     {
-      "id": 519,
+      "id": 517,
       "skill": "potion",
       "output": "Potion of Reaction",
       "outputImageId": 573,
@@ -32052,7 +31593,7 @@
       ]
     },
     {
-      "id": 520,
+      "id": 518,
       "skill": "potion",
       "output": "Potion of Attack",
       "outputImageId": 488,
@@ -32114,7 +31655,7 @@
       ]
     },
     {
-      "id": 521,
+      "id": 519,
       "skill": "potion",
       "output": "Potion of Defense",
       "outputImageId": 489,
@@ -32173,7 +31714,7 @@
       ]
     },
     {
-      "id": 522,
+      "id": 520,
       "skill": "potion",
       "output": "Potion of Accuracy",
       "outputImageId": 498,
@@ -32232,7 +31773,7 @@
       ]
     },
     {
-      "id": 523,
+      "id": 521,
       "skill": "potion",
       "output": "Potion of Evasion",
       "outputImageId": 499,
@@ -32291,7 +31832,7 @@
       ]
     },
     {
-      "id": 524,
+      "id": 522,
       "skill": "potion",
       "output": "Potion of Feasting",
       "outputImageId": 480,
@@ -32321,11 +31862,8 @@
           "name": "Wheat",
           "quantity": 2,
           "imageId": 102,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Winter Wheat",
-            "Wheat"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Bramble",
@@ -32349,7 +31887,7 @@
       ]
     },
     {
-      "id": 525,
+      "id": 523,
       "skill": "potion",
       "output": "Potion of Minor Healing",
       "outputImageId": 474,
@@ -32404,7 +31942,7 @@
       ]
     },
     {
-      "id": 526,
+      "id": 524,
       "skill": "potion",
       "output": "Potion of Body Restoration",
       "outputImageId": 475,
@@ -32459,7 +31997,7 @@
       ]
     },
     {
-      "id": 527,
+      "id": 525,
       "skill": "potion",
       "output": "Potion of Great Healing",
       "outputImageId": 476,
@@ -32521,7 +32059,7 @@
       ]
     },
     {
-      "id": 528,
+      "id": 526,
       "skill": "potion",
       "output": "Potion of Mana",
       "outputImageId": 477,
@@ -32576,7 +32114,7 @@
       ]
     },
     {
-      "id": 529,
+      "id": 527,
       "skill": "potion",
       "output": "Potion of Spirit Restoration",
       "outputImageId": 478,
@@ -32631,7 +32169,7 @@
       ]
     },
     {
-      "id": 530,
+      "id": 528,
       "skill": "potion",
       "output": "Potion of Extra Mana",
       "outputImageId": 479,
@@ -32693,7 +32231,7 @@
       ]
     },
     {
-      "id": 531,
+      "id": 529,
       "skill": "potion",
       "output": "Potion of Harvesting",
       "outputImageId": 490,
@@ -32758,7 +32296,7 @@
       ]
     },
     {
-      "id": 532,
+      "id": 530,
       "skill": "potion",
       "output": "Potion of Manufacturing",
       "outputImageId": 491,
@@ -32820,7 +32358,7 @@
       ]
     },
     {
-      "id": 533,
+      "id": 531,
       "skill": "potion",
       "output": "Potion of Summoning",
       "outputImageId": 492,
@@ -32882,7 +32420,7 @@
       ]
     },
     {
-      "id": 534,
+      "id": 532,
       "skill": "potion",
       "output": "Potion of Crafting",
       "outputImageId": 493,
@@ -32944,7 +32482,7 @@
       ]
     },
     {
-      "id": 535,
+      "id": 533,
       "skill": "potion",
       "output": "Potion of Alchemy",
       "outputImageId": 494,
@@ -32991,11 +32529,8 @@
           "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -33009,7 +32544,7 @@
       ]
     },
     {
-      "id": 536,
+      "id": 534,
       "skill": "potion",
       "output": "Potion of Engineering",
       "outputImageId": 495,
@@ -33056,11 +32591,8 @@
           "name": "Moorcotton",
           "quantity": 1,
           "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -33074,7 +32606,7 @@
       ]
     },
     {
-      "id": 537,
+      "id": 535,
       "skill": "potion",
       "output": "Potion of Potion",
       "outputImageId": 496,
@@ -33136,7 +32668,7 @@
       ]
     },
     {
-      "id": 538,
+      "id": 536,
       "skill": "potion",
       "output": "Potion of Cold Protection",
       "outputImageId": 500,
@@ -33198,7 +32730,7 @@
       ]
     },
     {
-      "id": 539,
+      "id": 537,
       "skill": "potion",
       "output": "Potion of Heat Protection",
       "outputImageId": 501,
@@ -33257,7 +32789,7 @@
       ]
     },
     {
-      "id": 540,
+      "id": 538,
       "skill": "potion",
       "output": "Potion of Radiation Protection",
       "outputImageId": 502,
@@ -33316,7 +32848,7 @@
       ]
     },
     {
-      "id": 541,
+      "id": 539,
       "skill": "potion",
       "output": "Potion of Magic Protection",
       "outputImageId": 503,
