@@ -42,15 +42,9 @@
       ],
       "reagents": [
         {
-          "item_id": 70,
-          "image_id": 68,
-          "name": "Cinder Resin",
-          "quantity": 1
-        },
-        {
-          "item_id": 20,
-          "image_id": 16,
-          "name": "Sunleaf",
+          "item_id": 1850,
+          "image_id": 584,
+          "name": "Life Distillate",
           "quantity": 1
         },
         {
@@ -83,21 +77,21 @@
       ],
       "reagents": [
         {
-          "item_id": 64,
-          "image_id": 73,
-          "name": "Storm Crystal",
+          "item_id": 1850,
+          "image_id": 584,
+          "name": "Life Distillate",
           "quantity": 1
         },
         {
-          "item_id": 72,
-          "image_id": 69,
-          "name": "Verdant Tincture",
+          "item_id": 1852,
+          "image_id": 586,
+          "name": "Water Distillate",
           "quantity": 1
         },
         {
-          "item_id": 67,
-          "image_id": 66,
-          "name": "Quartz Lens",
+          "item_id": 69,
+          "image_id": 67,
+          "name": "Woven Charm",
           "quantity": 1
         }
       ]
@@ -124,15 +118,9 @@
       ],
       "reagents": [
         {
-          "item_id": 65,
-          "image_id": 71,
-          "name": "Moon Salt",
-          "quantity": 1
-        },
-        {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
           "quantity": 1
         },
         {
@@ -165,15 +153,9 @@
       ],
       "reagents": [
         {
-          "item_id": 33,
-          "image_id": 25,
-          "name": "Deep Coal",
-          "quantity": 1
-        },
-        {
-          "item_id": 22,
-          "image_id": 26,
-          "name": "Copper",
+          "item_id": 1853,
+          "image_id": 587,
+          "name": "Earth Distillate",
           "quantity": 1
         },
         {
@@ -206,21 +188,21 @@
       ],
       "reagents": [
         {
-          "item_id": 70,
-          "image_id": 68,
-          "name": "Cinder Resin",
+          "item_id": 1856,
+          "image_id": 590,
+          "name": "Death Distillate",
           "quantity": 1
         },
         {
-          "item_id": 66,
-          "image_id": 94,
-          "name": "Moss",
-          "quantity": 2
+          "item_id": 1852,
+          "image_id": 586,
+          "name": "Water Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 69,
-          "image_id": 67,
-          "name": "Woven Charm",
+          "item_id": 67,
+          "image_id": 66,
+          "name": "Quartz Lens",
           "quantity": 1
         }
       ]
@@ -247,15 +229,9 @@
       ],
       "reagents": [
         {
-          "item_id": 64,
-          "image_id": 73,
-          "name": "Storm Crystal",
-          "quantity": 1
-        },
-        {
-          "item_id": 21,
-          "image_id": 17,
-          "name": "Frost Reed",
+          "item_id": 1855,
+          "image_id": 589,
+          "name": "Air Distillate",
           "quantity": 1
         },
         {
@@ -288,15 +264,15 @@
       ],
       "reagents": [
         {
-          "item_id": 23,
-          "image_id": 30,
-          "name": "Ember Crystal",
-          "quantity": 2
+          "item_id": 1859,
+          "image_id": 593,
+          "name": "Magic Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 22,
-          "image_id": 26,
-          "name": "Copper",
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
           "quantity": 1
         },
         {
@@ -329,15 +305,9 @@
       ],
       "reagents": [
         {
-          "item_id": 33,
-          "image_id": 25,
-          "name": "Deep Coal",
-          "quantity": 1
-        },
-        {
-          "item_id": 73,
-          "image_id": 72,
-          "name": "Gloam Wax",
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
           "quantity": 1
         },
         {
@@ -371,22 +341,16 @@
       ],
       "reagents": [
         {
-          "item_id": 64,
-          "image_id": 73,
-          "name": "Storm Crystal",
+          "item_id": 1858,
+          "image_id": 592,
+          "name": "Spirit Distillate",
           "quantity": 2
-        },
-        {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
-          "quantity": 1
         },
         {
           "item_id": 58,
           "image_id": 55,
           "name": "Portal Shard",
-          "quantity": 2
+          "quantity": 1
         }
       ]
     },
@@ -412,21 +376,21 @@
       ],
       "reagents": [
         {
-          "item_id": 33,
-          "image_id": 25,
-          "name": "Deep Coal",
-          "quantity": 2
+          "item_id": 1856,
+          "image_id": 590,
+          "name": "Death Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 73,
-          "image_id": 72,
-          "name": "Gloam Wax",
-          "quantity": 2
+          "item_id": 1850,
+          "image_id": 584,
+          "name": "Life Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 68,
-          "image_id": 65,
-          "name": "Iron Rune",
+          "item_id": 67,
+          "image_id": 66,
+          "name": "Quartz Lens",
           "quantity": 1
         }
       ]
@@ -454,22 +418,16 @@
       ],
       "reagents": [
         {
-          "item_id": 37,
-          "image_id": 29,
-          "name": "Aether Salt",
-          "quantity": 4
-        },
-        {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
-          "quantity": 4
+          "item_id": 1859,
+          "image_id": 593,
+          "name": "Magic Distillate",
+          "quantity": 3
         },
         {
           "item_id": 68,
           "image_id": 65,
           "name": "Iron Rune",
-          "quantity": 3
+          "quantity": 2
         }
       ]
     },
@@ -496,22 +454,16 @@
       ],
       "reagents": [
         {
-          "item_id": 65,
-          "image_id": 71,
-          "name": "Moon Salt",
-          "quantity": 4
-        },
-        {
-          "item_id": 72,
-          "image_id": 69,
-          "name": "Verdant Tincture",
-          "quantity": 4
+          "item_id": 1858,
+          "image_id": 592,
+          "name": "Spirit Distillate",
+          "quantity": 2
         },
         {
           "item_id": 69,
           "image_id": 67,
           "name": "Woven Charm",
-          "quantity": 2
+          "quantity": 1
         }
       ]
     },
@@ -538,22 +490,22 @@
       ],
       "reagents": [
         {
-          "item_id": 23,
-          "image_id": 30,
-          "name": "Ember Crystal",
-          "quantity": 3
-        },
-        {
-          "item_id": 73,
-          "image_id": 72,
-          "name": "Gloam Wax",
-          "quantity": 3
-        },
-        {
-          "item_id": 68,
-          "image_id": 65,
-          "name": "Iron Rune",
+          "item_id": 1858,
+          "image_id": 592,
+          "name": "Spirit Distillate",
           "quantity": 2
+        },
+        {
+          "item_id": 1856,
+          "image_id": 590,
+          "name": "Death Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 67,
+          "image_id": 66,
+          "name": "Quartz Lens",
+          "quantity": 1
         }
       ]
     },
@@ -579,16 +531,16 @@
       ],
       "reagents": [
         {
-          "item_id": 64,
-          "image_id": 73,
-          "name": "Storm Crystal",
+          "item_id": 1855,
+          "image_id": 589,
+          "name": "Air Distillate",
           "quantity": 2
         },
         {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
-          "quantity": 2
+          "item_id": 1859,
+          "image_id": 593,
+          "name": "Magic Distillate",
+          "quantity": 1
         },
         {
           "item_id": 67,
@@ -620,21 +572,15 @@
       ],
       "reagents": [
         {
-          "item_id": 65,
-          "image_id": 71,
-          "name": "Moon Salt",
+          "item_id": 1855,
+          "image_id": 589,
+          "name": "Air Distillate",
           "quantity": 2
         },
         {
-          "item_id": 73,
-          "image_id": 72,
-          "name": "Gloam Wax",
-          "quantity": 3
-        },
-        {
-          "item_id": 67,
-          "image_id": 66,
-          "name": "Quartz Lens",
+          "item_id": 69,
+          "image_id": 67,
+          "name": "Woven Charm",
           "quantity": 1
         }
       ]
@@ -661,22 +607,28 @@
       ],
       "reagents": [
         {
-          "item_id": 64,
-          "image_id": 73,
-          "name": "Storm Crystal",
-          "quantity": 3
+          "item_id": 1858,
+          "image_id": 592,
+          "name": "Spirit Distillate",
+          "quantity": 2
         },
         {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
-          "quantity": 2
+          "item_id": 1855,
+          "image_id": 589,
+          "name": "Air Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1859,
+          "image_id": 593,
+          "name": "Magic Distillate",
+          "quantity": 1
         },
         {
           "item_id": 67,
           "image_id": 66,
           "name": "Quartz Lens",
-          "quantity": 2
+          "quantity": 1
         }
       ]
     },
@@ -702,15 +654,9 @@
       ],
       "reagents": [
         {
-          "item_id": 64,
-          "image_id": 73,
-          "name": "Storm Crystal",
-          "quantity": 2
-        },
-        {
-          "item_id": 21,
-          "image_id": 17,
-          "name": "Frost Reed",
+          "item_id": 1855,
+          "image_id": 589,
+          "name": "Air Distillate",
           "quantity": 1
         },
         {
@@ -745,16 +691,10 @@
       ],
       "reagents": [
         {
-          "item_id": 37,
-          "image_id": 29,
-          "name": "Aether Salt",
-          "quantity": 3
-        },
-        {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
-          "quantity": 3
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
+          "quantity": 2
         },
         {
           "item_id": 68,
@@ -788,22 +728,28 @@
       ],
       "reagents": [
         {
-          "item_id": 23,
-          "image_id": 30,
-          "name": "Ember Crystal",
-          "quantity": 5
+          "item_id": 1859,
+          "image_id": 593,
+          "name": "Magic Distillate",
+          "quantity": 2
         },
         {
-          "item_id": 73,
-          "image_id": 72,
-          "name": "Gloam Wax",
-          "quantity": 5
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1856,
+          "image_id": 590,
+          "name": "Death Distillate",
+          "quantity": 1
         },
         {
           "item_id": 67,
           "image_id": 66,
           "name": "Quartz Lens",
-          "quantity": 3
+          "quantity": 1
         }
       ]
     },
@@ -829,16 +775,22 @@
       ],
       "reagents": [
         {
-          "item_id": 65,
-          "image_id": 71,
-          "name": "Moon Salt",
-          "quantity": 2
+          "item_id": 1850,
+          "image_id": 584,
+          "name": "Life Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 72,
-          "image_id": 69,
-          "name": "Verdant Tincture",
-          "quantity": 2
+          "item_id": 1852,
+          "image_id": 586,
+          "name": "Water Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1853,
+          "image_id": 587,
+          "name": "Earth Distillate",
+          "quantity": 1
         },
         {
           "item_id": 69,
@@ -871,15 +823,21 @@
       ],
       "reagents": [
         {
-          "item_id": 65,
-          "image_id": 71,
-          "name": "Moon Salt",
+          "item_id": 1850,
+          "image_id": 584,
+          "name": "Life Distillate",
           "quantity": 1
         },
         {
-          "item_id": 72,
-          "image_id": 69,
-          "name": "Verdant Tincture",
+          "item_id": 1852,
+          "image_id": 586,
+          "name": "Water Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1853,
+          "image_id": 587,
+          "name": "Earth Distillate",
           "quantity": 1
         },
         {
@@ -913,16 +871,10 @@
       ],
       "reagents": [
         {
-          "item_id": 65,
-          "image_id": 71,
-          "name": "Moon Salt",
-          "quantity": 2
-        },
-        {
-          "item_id": 72,
-          "image_id": 69,
-          "name": "Verdant Tincture",
-          "quantity": 2
+          "item_id": 1850,
+          "image_id": 584,
+          "name": "Life Distillate",
+          "quantity": 1
         },
         {
           "item_id": 69,
@@ -955,16 +907,16 @@
       ],
       "reagents": [
         {
-          "item_id": 65,
-          "image_id": 71,
-          "name": "Moon Salt",
-          "quantity": 2
+          "item_id": 1850,
+          "image_id": 584,
+          "name": "Life Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 72,
-          "image_id": 69,
-          "name": "Verdant Tincture",
-          "quantity": 2
+          "item_id": 1853,
+          "image_id": 587,
+          "name": "Earth Distillate",
+          "quantity": 1
         },
         {
           "item_id": 69,
@@ -997,16 +949,22 @@
       ],
       "reagents": [
         {
-          "item_id": 65,
-          "image_id": 71,
-          "name": "Moon Salt",
-          "quantity": 2
+          "item_id": 1850,
+          "image_id": 584,
+          "name": "Life Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 72,
-          "image_id": 69,
-          "name": "Verdant Tincture",
-          "quantity": 2
+          "item_id": 1853,
+          "image_id": 587,
+          "name": "Earth Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1855,
+          "image_id": 589,
+          "name": "Air Distillate",
+          "quantity": 1
         },
         {
           "item_id": 69,
@@ -1039,16 +997,22 @@
       ],
       "reagents": [
         {
-          "item_id": 65,
-          "image_id": 71,
-          "name": "Moon Salt",
-          "quantity": 2
+          "item_id": 1850,
+          "image_id": 584,
+          "name": "Life Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 72,
-          "image_id": 69,
-          "name": "Verdant Tincture",
-          "quantity": 2
+          "item_id": 1853,
+          "image_id": 587,
+          "name": "Earth Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1855,
+          "image_id": 589,
+          "name": "Air Distillate",
+          "quantity": 1
         },
         {
           "item_id": 69,
@@ -1081,15 +1045,15 @@
       ],
       "reagents": [
         {
-          "item_id": 33,
-          "image_id": 25,
-          "name": "Deep Coal",
+          "item_id": 1853,
+          "image_id": 587,
+          "name": "Earth Distillate",
           "quantity": 1
         },
         {
-          "item_id": 22,
-          "image_id": 26,
-          "name": "Copper",
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
           "quantity": 1
         },
         {
@@ -1123,15 +1087,21 @@
       ],
       "reagents": [
         {
-          "item_id": 33,
-          "image_id": 25,
-          "name": "Deep Coal",
+          "item_id": 1853,
+          "image_id": 587,
+          "name": "Earth Distillate",
           "quantity": 1
         },
         {
-          "item_id": 22,
-          "image_id": 26,
-          "name": "Copper",
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1850,
+          "image_id": 584,
+          "name": "Life Distillate",
           "quantity": 1
         },
         {
@@ -1165,15 +1135,21 @@
       ],
       "reagents": [
         {
-          "item_id": 33,
-          "image_id": 25,
-          "name": "Deep Coal",
+          "item_id": 1853,
+          "image_id": 587,
+          "name": "Earth Distillate",
           "quantity": 1
         },
         {
-          "item_id": 22,
-          "image_id": 26,
-          "name": "Copper",
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1850,
+          "image_id": 584,
+          "name": "Life Distillate",
           "quantity": 1
         },
         {
@@ -1207,15 +1183,15 @@
       ],
       "reagents": [
         {
-          "item_id": 37,
-          "image_id": 29,
-          "name": "Aether Salt",
-          "quantity": 2
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
+          "item_id": 1859,
+          "image_id": 593,
+          "name": "Magic Distillate",
           "quantity": 1
         },
         {
@@ -1249,15 +1225,21 @@
       ],
       "reagents": [
         {
-          "item_id": 37,
-          "image_id": 29,
-          "name": "Aether Salt",
-          "quantity": 2
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
+          "item_id": 1859,
+          "image_id": 593,
+          "name": "Magic Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1858,
+          "image_id": 592,
+          "name": "Spirit Distillate",
           "quantity": 1
         },
         {
@@ -1291,15 +1273,21 @@
       ],
       "reagents": [
         {
-          "item_id": 37,
-          "image_id": 29,
-          "name": "Aether Salt",
-          "quantity": 2
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
+          "item_id": 1859,
+          "image_id": 593,
+          "name": "Magic Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1858,
+          "image_id": 592,
+          "name": "Spirit Distillate",
           "quantity": 1
         },
         {
@@ -1333,15 +1321,9 @@
       ],
       "reagents": [
         {
-          "item_id": 70,
-          "image_id": 68,
-          "name": "Cinder Resin",
-          "quantity": 2
-        },
-        {
-          "item_id": 22,
-          "image_id": 26,
-          "name": "Copper",
+          "item_id": 1852,
+          "image_id": 586,
+          "name": "Water Distillate",
           "quantity": 1
         },
         {
@@ -1375,15 +1357,15 @@
       ],
       "reagents": [
         {
-          "item_id": 70,
-          "image_id": 68,
-          "name": "Cinder Resin",
-          "quantity": 2
+          "item_id": 1852,
+          "image_id": 586,
+          "name": "Water Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 22,
-          "image_id": 26,
-          "name": "Copper",
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
           "quantity": 1
         },
         {
@@ -1417,15 +1399,21 @@
       ],
       "reagents": [
         {
-          "item_id": 70,
-          "image_id": 68,
-          "name": "Cinder Resin",
-          "quantity": 2
+          "item_id": 1852,
+          "image_id": 586,
+          "name": "Water Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 22,
-          "image_id": 26,
-          "name": "Copper",
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1853,
+          "image_id": 587,
+          "name": "Earth Distillate",
           "quantity": 1
         },
         {
@@ -1459,15 +1447,21 @@
       ],
       "reagents": [
         {
-          "item_id": 70,
-          "image_id": 68,
-          "name": "Cinder Resin",
-          "quantity": 2
+          "item_id": 1852,
+          "image_id": 586,
+          "name": "Water Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 22,
-          "image_id": 26,
-          "name": "Copper",
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1853,
+          "image_id": 587,
+          "name": "Earth Distillate",
           "quantity": 1
         },
         {
@@ -1501,15 +1495,9 @@
       ],
       "reagents": [
         {
-          "item_id": 65,
-          "image_id": 71,
-          "name": "Moon Salt",
-          "quantity": 2
-        },
-        {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
+          "item_id": 1851,
+          "image_id": 585,
+          "name": "Fire Distillate",
           "quantity": 1
         },
         {
@@ -1543,15 +1531,15 @@
       ],
       "reagents": [
         {
-          "item_id": 65,
-          "image_id": 71,
-          "name": "Moon Salt",
-          "quantity": 2
+          "item_id": 1851,
+          "image_id": 585,
+          "name": "Fire Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
           "quantity": 1
         },
         {
@@ -1585,15 +1573,21 @@
       ],
       "reagents": [
         {
-          "item_id": 65,
-          "image_id": 71,
-          "name": "Moon Salt",
-          "quantity": 2
+          "item_id": 1851,
+          "image_id": 585,
+          "name": "Fire Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1853,
+          "image_id": 587,
+          "name": "Earth Distillate",
           "quantity": 1
         },
         {
@@ -1627,15 +1621,21 @@
       ],
       "reagents": [
         {
-          "item_id": 65,
-          "image_id": 71,
-          "name": "Moon Salt",
-          "quantity": 2
+          "item_id": 1851,
+          "image_id": 585,
+          "name": "Fire Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1853,
+          "image_id": 587,
+          "name": "Earth Distillate",
           "quantity": 1
         },
         {
@@ -1669,15 +1669,9 @@
       ],
       "reagents": [
         {
-          "item_id": 37,
-          "image_id": 29,
-          "name": "Aether Salt",
-          "quantity": 2
-        },
-        {
-          "item_id": 73,
-          "image_id": 72,
-          "name": "Gloam Wax",
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
           "quantity": 1
         },
         {
@@ -1711,15 +1705,15 @@
       ],
       "reagents": [
         {
-          "item_id": 37,
-          "image_id": 29,
-          "name": "Aether Salt",
-          "quantity": 2
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 73,
-          "image_id": 72,
-          "name": "Gloam Wax",
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
           "quantity": 1
         },
         {
@@ -1753,15 +1747,21 @@
       ],
       "reagents": [
         {
-          "item_id": 37,
-          "image_id": 29,
-          "name": "Aether Salt",
-          "quantity": 2
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 73,
-          "image_id": 72,
-          "name": "Gloam Wax",
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1850,
+          "image_id": 584,
+          "name": "Life Distillate",
           "quantity": 1
         },
         {
@@ -1795,15 +1795,21 @@
       ],
       "reagents": [
         {
-          "item_id": 37,
-          "image_id": 29,
-          "name": "Aether Salt",
-          "quantity": 2
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 73,
-          "image_id": 72,
-          "name": "Gloam Wax",
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1850,
+          "image_id": 584,
+          "name": "Life Distillate",
           "quantity": 1
         },
         {
@@ -1837,16 +1843,16 @@
       ],
       "reagents": [
         {
-          "item_id": 37,
-          "image_id": 29,
-          "name": "Aether Salt",
-          "quantity": 3
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
+          "quantity": 2
         },
         {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
-          "quantity": 3
+          "item_id": 1858,
+          "image_id": 592,
+          "name": "Spirit Distillate",
+          "quantity": 1
         },
         {
           "item_id": 68,
@@ -1879,16 +1885,22 @@
       ],
       "reagents": [
         {
-          "item_id": 37,
-          "image_id": 29,
-          "name": "Aether Salt",
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
           "quantity": 3
         },
         {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
-          "quantity": 3
+          "item_id": 1858,
+          "image_id": 592,
+          "name": "Spirit Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
+          "quantity": 1
         },
         {
           "item_id": 68,
@@ -1921,16 +1933,22 @@
       ],
       "reagents": [
         {
-          "item_id": 37,
-          "image_id": 29,
-          "name": "Aether Salt",
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
           "quantity": 3
         },
         {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
-          "quantity": 3
+          "item_id": 1858,
+          "image_id": 592,
+          "name": "Spirit Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
+          "quantity": 1
         },
         {
           "item_id": 68,
@@ -1963,15 +1981,15 @@
       ],
       "reagents": [
         {
-          "item_id": 70,
-          "image_id": 68,
-          "name": "Cinder Resin",
-          "quantity": 1
+          "item_id": 1858,
+          "image_id": 592,
+          "name": "Spirit Distillate",
+          "quantity": 2
         },
         {
-          "item_id": 20,
-          "image_id": 16,
-          "name": "Sunleaf",
+          "item_id": 1850,
+          "image_id": 584,
+          "name": "Life Distillate",
           "quantity": 1
         },
         {
@@ -2005,15 +2023,21 @@
       ],
       "reagents": [
         {
-          "item_id": 70,
-          "image_id": 68,
-          "name": "Cinder Resin",
+          "item_id": 1858,
+          "image_id": 592,
+          "name": "Spirit Distillate",
+          "quantity": 2
+        },
+        {
+          "item_id": 1850,
+          "image_id": 584,
+          "name": "Life Distillate",
           "quantity": 1
         },
         {
-          "item_id": 20,
-          "image_id": 16,
-          "name": "Sunleaf",
+          "item_id": 1859,
+          "image_id": 593,
+          "name": "Magic Distillate",
           "quantity": 1
         },
         {
@@ -2047,15 +2071,21 @@
       ],
       "reagents": [
         {
-          "item_id": 70,
-          "image_id": 68,
-          "name": "Cinder Resin",
+          "item_id": 1858,
+          "image_id": 592,
+          "name": "Spirit Distillate",
+          "quantity": 2
+        },
+        {
+          "item_id": 1850,
+          "image_id": 584,
+          "name": "Life Distillate",
           "quantity": 1
         },
         {
-          "item_id": 20,
-          "image_id": 16,
-          "name": "Sunleaf",
+          "item_id": 1859,
+          "image_id": 593,
+          "name": "Magic Distillate",
           "quantity": 1
         },
         {
@@ -2089,22 +2119,22 @@
       ],
       "reagents": [
         {
-          "item_id": 70,
-          "image_id": 68,
-          "name": "Cinder Resin",
+          "item_id": 1859,
+          "image_id": 593,
+          "name": "Magic Distillate",
+          "quantity": 3
+        },
+        {
+          "item_id": 1858,
+          "image_id": 592,
+          "name": "Spirit Distillate",
           "quantity": 1
         },
         {
-          "item_id": 20,
-          "image_id": 16,
-          "name": "Sunleaf",
-          "quantity": 1
-        },
-        {
-          "item_id": 69,
-          "image_id": 67,
-          "name": "Woven Charm",
-          "quantity": 1
+          "item_id": 68,
+          "image_id": 65,
+          "name": "Iron Rune",
+          "quantity": 2
         }
       ]
     },
@@ -2131,22 +2161,28 @@
       ],
       "reagents": [
         {
-          "item_id": 70,
-          "image_id": 68,
-          "name": "Cinder Resin",
+          "item_id": 1859,
+          "image_id": 593,
+          "name": "Magic Distillate",
+          "quantity": 3
+        },
+        {
+          "item_id": 1858,
+          "image_id": 592,
+          "name": "Spirit Distillate",
           "quantity": 1
         },
         {
-          "item_id": 20,
-          "image_id": 16,
-          "name": "Sunleaf",
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
           "quantity": 1
         },
         {
-          "item_id": 69,
-          "image_id": 67,
-          "name": "Woven Charm",
-          "quantity": 1
+          "item_id": 68,
+          "image_id": 65,
+          "name": "Iron Rune",
+          "quantity": 2
         }
       ]
     },
@@ -2173,22 +2209,28 @@
       ],
       "reagents": [
         {
-          "item_id": 70,
-          "image_id": 68,
-          "name": "Cinder Resin",
+          "item_id": 1859,
+          "image_id": 593,
+          "name": "Magic Distillate",
+          "quantity": 3
+        },
+        {
+          "item_id": 1858,
+          "image_id": 592,
+          "name": "Spirit Distillate",
           "quantity": 1
         },
         {
-          "item_id": 20,
-          "image_id": 16,
-          "name": "Sunleaf",
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
           "quantity": 1
         },
         {
-          "item_id": 69,
-          "image_id": 67,
-          "name": "Woven Charm",
-          "quantity": 1
+          "item_id": 68,
+          "image_id": 65,
+          "name": "Iron Rune",
+          "quantity": 2
         }
       ]
     },
@@ -2215,15 +2257,15 @@
       ],
       "reagents": [
         {
-          "item_id": 64,
-          "image_id": 73,
-          "name": "Storm Crystal",
-          "quantity": 2
+          "item_id": 1855,
+          "image_id": 589,
+          "name": "Air Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 21,
-          "image_id": 17,
-          "name": "Frost Reed",
+          "item_id": 1850,
+          "image_id": 584,
+          "name": "Life Distillate",
           "quantity": 1
         },
         {
@@ -2257,15 +2299,21 @@
       ],
       "reagents": [
         {
-          "item_id": 64,
-          "image_id": 73,
-          "name": "Storm Crystal",
+          "item_id": 1855,
+          "image_id": 589,
+          "name": "Air Distillate",
           "quantity": 2
         },
         {
-          "item_id": 21,
-          "image_id": 17,
-          "name": "Frost Reed",
+          "item_id": 1850,
+          "image_id": 584,
+          "name": "Life Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
           "quantity": 1
         },
         {
@@ -2299,15 +2347,21 @@
       ],
       "reagents": [
         {
-          "item_id": 64,
-          "image_id": 73,
-          "name": "Storm Crystal",
+          "item_id": 1855,
+          "image_id": 589,
+          "name": "Air Distillate",
           "quantity": 2
         },
         {
-          "item_id": 21,
-          "image_id": 17,
-          "name": "Frost Reed",
+          "item_id": 1850,
+          "image_id": 584,
+          "name": "Life Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
           "quantity": 1
         },
         {
@@ -2341,15 +2395,15 @@
       ],
       "reagents": [
         {
-          "item_id": 70,
-          "image_id": 68,
-          "name": "Cinder Resin",
-          "quantity": 1
+          "item_id": 1855,
+          "image_id": 589,
+          "name": "Air Distillate",
+          "quantity": 2
         },
         {
-          "item_id": 20,
-          "image_id": 16,
-          "name": "Sunleaf",
+          "item_id": 1858,
+          "image_id": 592,
+          "name": "Spirit Distillate",
           "quantity": 1
         },
         {
@@ -2383,15 +2437,21 @@
       ],
       "reagents": [
         {
-          "item_id": 70,
-          "image_id": 68,
-          "name": "Cinder Resin",
+          "item_id": 1855,
+          "image_id": 589,
+          "name": "Air Distillate",
+          "quantity": 2
+        },
+        {
+          "item_id": 1858,
+          "image_id": 592,
+          "name": "Spirit Distillate",
           "quantity": 1
         },
         {
-          "item_id": 20,
-          "image_id": 16,
-          "name": "Sunleaf",
+          "item_id": 1852,
+          "image_id": 586,
+          "name": "Water Distillate",
           "quantity": 1
         },
         {
@@ -2425,15 +2485,21 @@
       ],
       "reagents": [
         {
-          "item_id": 70,
-          "image_id": 68,
-          "name": "Cinder Resin",
+          "item_id": 1855,
+          "image_id": 589,
+          "name": "Air Distillate",
+          "quantity": 2
+        },
+        {
+          "item_id": 1858,
+          "image_id": 592,
+          "name": "Spirit Distillate",
           "quantity": 1
         },
         {
-          "item_id": 20,
-          "image_id": 16,
-          "name": "Sunleaf",
+          "item_id": 1852,
+          "image_id": 586,
+          "name": "Water Distillate",
           "quantity": 1
         },
         {
@@ -2467,15 +2533,9 @@
       ],
       "reagents": [
         {
-          "item_id": 64,
-          "image_id": 73,
-          "name": "Storm Crystal",
-          "quantity": 1
-        },
-        {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
+          "item_id": 1855,
+          "image_id": 589,
+          "name": "Air Distillate",
           "quantity": 1
         },
         {
@@ -2509,15 +2569,15 @@
       ],
       "reagents": [
         {
-          "item_id": 64,
-          "image_id": 73,
-          "name": "Storm Crystal",
+          "item_id": 1855,
+          "image_id": 589,
+          "name": "Air Distillate",
           "quantity": 1
         },
         {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
           "quantity": 1
         },
         {
@@ -2551,15 +2611,21 @@
       ],
       "reagents": [
         {
-          "item_id": 64,
-          "image_id": 73,
-          "name": "Storm Crystal",
+          "item_id": 1855,
+          "image_id": 589,
+          "name": "Air Distillate",
           "quantity": 1
         },
         {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1851,
+          "image_id": 585,
+          "name": "Fire Distillate",
           "quantity": 1
         },
         {
@@ -2593,15 +2659,21 @@
       ],
       "reagents": [
         {
-          "item_id": 64,
-          "image_id": 73,
-          "name": "Storm Crystal",
+          "item_id": 1855,
+          "image_id": 589,
+          "name": "Air Distillate",
           "quantity": 1
         },
         {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1851,
+          "image_id": 585,
+          "name": "Fire Distillate",
           "quantity": 1
         },
         {
@@ -2635,21 +2707,15 @@
       ],
       "reagents": [
         {
-          "item_id": 23,
-          "image_id": 30,
-          "name": "Ember Crystal",
-          "quantity": 2
+          "item_id": 1851,
+          "image_id": 585,
+          "name": "Fire Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 22,
-          "image_id": 26,
-          "name": "Copper",
-          "quantity": 2
-        },
-        {
-          "item_id": 68,
-          "image_id": 65,
-          "name": "Iron Rune",
+          "item_id": 67,
+          "image_id": 66,
+          "name": "Quartz Lens",
           "quantity": 1
         }
       ]
@@ -2677,21 +2743,21 @@
       ],
       "reagents": [
         {
-          "item_id": 23,
-          "image_id": 30,
-          "name": "Ember Crystal",
+          "item_id": 1851,
+          "image_id": 585,
+          "name": "Fire Distillate",
           "quantity": 2
         },
         {
-          "item_id": 22,
-          "image_id": 26,
-          "name": "Copper",
-          "quantity": 2
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 68,
-          "image_id": 65,
-          "name": "Iron Rune",
+          "item_id": 67,
+          "image_id": 66,
+          "name": "Quartz Lens",
           "quantity": 1
         }
       ]
@@ -2719,21 +2785,27 @@
       ],
       "reagents": [
         {
-          "item_id": 23,
-          "image_id": 30,
-          "name": "Ember Crystal",
+          "item_id": 1851,
+          "image_id": 585,
+          "name": "Fire Distillate",
           "quantity": 2
         },
         {
-          "item_id": 22,
-          "image_id": 26,
-          "name": "Copper",
-          "quantity": 2
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 68,
-          "image_id": 65,
-          "name": "Iron Rune",
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 67,
+          "image_id": 66,
+          "name": "Quartz Lens",
           "quantity": 1
         }
       ]
@@ -2761,21 +2833,27 @@
       ],
       "reagents": [
         {
-          "item_id": 23,
-          "image_id": 30,
-          "name": "Ember Crystal",
+          "item_id": 1851,
+          "image_id": 585,
+          "name": "Fire Distillate",
           "quantity": 2
         },
         {
-          "item_id": 22,
-          "image_id": 26,
-          "name": "Copper",
-          "quantity": 2
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 68,
-          "image_id": 65,
-          "name": "Iron Rune",
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 67,
+          "image_id": 66,
+          "name": "Quartz Lens",
           "quantity": 1
         }
       ]
@@ -2803,15 +2881,15 @@
       ],
       "reagents": [
         {
-          "item_id": 23,
-          "image_id": 30,
-          "name": "Ember Crystal",
-          "quantity": 2
+          "item_id": 1851,
+          "image_id": 585,
+          "name": "Fire Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 22,
-          "image_id": 26,
-          "name": "Copper",
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
           "quantity": 1
         },
         {
@@ -2845,15 +2923,21 @@
       ],
       "reagents": [
         {
-          "item_id": 23,
-          "image_id": 30,
-          "name": "Ember Crystal",
+          "item_id": 1851,
+          "image_id": 585,
+          "name": "Fire Distillate",
           "quantity": 2
         },
         {
-          "item_id": 22,
-          "image_id": 26,
-          "name": "Copper",
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1855,
+          "image_id": 589,
+          "name": "Air Distillate",
           "quantity": 1
         },
         {
@@ -2887,15 +2971,15 @@
       ],
       "reagents": [
         {
-          "item_id": 65,
-          "image_id": 71,
-          "name": "Moon Salt",
-          "quantity": 2
+          "item_id": 1852,
+          "image_id": 586,
+          "name": "Water Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
           "quantity": 1
         },
         {
@@ -2929,15 +3013,21 @@
       ],
       "reagents": [
         {
-          "item_id": 65,
-          "image_id": 71,
-          "name": "Moon Salt",
+          "item_id": 1852,
+          "image_id": 586,
+          "name": "Water Distillate",
           "quantity": 2
         },
         {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1855,
+          "image_id": 589,
+          "name": "Air Distillate",
           "quantity": 1
         },
         {
@@ -2971,15 +3061,15 @@
       ],
       "reagents": [
         {
-          "item_id": 37,
-          "image_id": 29,
-          "name": "Aether Salt",
-          "quantity": 2
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 73,
-          "image_id": 72,
-          "name": "Gloam Wax",
+          "item_id": 1856,
+          "image_id": 590,
+          "name": "Death Distillate",
           "quantity": 1
         },
         {
@@ -3013,15 +3103,21 @@
       ],
       "reagents": [
         {
-          "item_id": 37,
-          "image_id": 29,
-          "name": "Aether Salt",
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
           "quantity": 2
         },
         {
-          "item_id": 73,
-          "image_id": 72,
-          "name": "Gloam Wax",
+          "item_id": 1856,
+          "image_id": 590,
+          "name": "Death Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1859,
+          "image_id": 593,
+          "name": "Magic Distillate",
           "quantity": 1
         },
         {
@@ -3055,16 +3151,22 @@
       ],
       "reagents": [
         {
-          "item_id": 70,
-          "image_id": 68,
-          "name": "Cinder Resin",
+          "item_id": 1856,
+          "image_id": 590,
+          "name": "Death Distillate",
           "quantity": 1
         },
         {
-          "item_id": 66,
-          "image_id": 94,
-          "name": "Moss",
-          "quantity": 2
+          "item_id": 1852,
+          "image_id": 586,
+          "name": "Water Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1853,
+          "image_id": 587,
+          "name": "Earth Distillate",
+          "quantity": 1
         },
         {
           "item_id": 67,
@@ -3097,15 +3199,21 @@
       ],
       "reagents": [
         {
-          "item_id": 23,
-          "image_id": 30,
-          "name": "Ember Crystal",
+          "item_id": 1856,
+          "image_id": 590,
+          "name": "Death Distillate",
           "quantity": 2
         },
         {
-          "item_id": 22,
-          "image_id": 26,
-          "name": "Copper",
+          "item_id": 1850,
+          "image_id": 584,
+          "name": "Life Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1858,
+          "image_id": 592,
+          "name": "Spirit Distillate",
           "quantity": 1
         },
         {
@@ -3139,22 +3247,28 @@
       ],
       "reagents": [
         {
-          "item_id": 23,
-          "image_id": 30,
-          "name": "Ember Crystal",
+          "item_id": 1855,
+          "image_id": 589,
+          "name": "Air Distillate",
           "quantity": 2
         },
         {
-          "item_id": 22,
-          "image_id": 26,
-          "name": "Copper",
+          "item_id": 1859,
+          "image_id": 593,
+          "name": "Magic Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1858,
+          "image_id": 592,
+          "name": "Spirit Distillate",
           "quantity": 1
         },
         {
           "item_id": 67,
           "image_id": 66,
           "name": "Quartz Lens",
-          "quantity": 1
+          "quantity": 2
         }
       ]
     },
@@ -3181,15 +3295,15 @@
       ],
       "reagents": [
         {
-          "item_id": 33,
-          "image_id": 25,
-          "name": "Deep Coal",
-          "quantity": 2
+          "item_id": 1856,
+          "image_id": 590,
+          "name": "Death Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 73,
-          "image_id": 72,
-          "name": "Gloam Wax",
+          "item_id": 1853,
+          "image_id": 587,
+          "name": "Earth Distillate",
           "quantity": 1
         },
         {
@@ -3223,15 +3337,21 @@
       ],
       "reagents": [
         {
-          "item_id": 33,
-          "image_id": 25,
-          "name": "Deep Coal",
+          "item_id": 1856,
+          "image_id": 590,
+          "name": "Death Distillate",
           "quantity": 2
         },
         {
-          "item_id": 73,
-          "image_id": 72,
-          "name": "Gloam Wax",
+          "item_id": 1853,
+          "image_id": 587,
+          "name": "Earth Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1854,
+          "image_id": 588,
+          "name": "Matter Distillate",
           "quantity": 1
         },
         {
@@ -3265,16 +3385,16 @@
       ],
       "reagents": [
         {
-          "item_id": 33,
-          "image_id": 25,
-          "name": "Deep Coal",
+          "item_id": 1859,
+          "image_id": 593,
+          "name": "Magic Distillate",
           "quantity": 2
         },
         {
-          "item_id": 73,
-          "image_id": 72,
-          "name": "Gloam Wax",
-          "quantity": 2
+          "item_id": 1856,
+          "image_id": 590,
+          "name": "Death Distillate",
+          "quantity": 1
         },
         {
           "item_id": 67,
@@ -3307,16 +3427,22 @@
       ],
       "reagents": [
         {
-          "item_id": 33,
-          "image_id": 25,
-          "name": "Deep Coal",
+          "item_id": 1859,
+          "image_id": 593,
+          "name": "Magic Distillate",
           "quantity": 2
         },
         {
-          "item_id": 73,
-          "image_id": 72,
-          "name": "Gloam Wax",
-          "quantity": 2
+          "item_id": 1856,
+          "image_id": 590,
+          "name": "Death Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1858,
+          "image_id": 592,
+          "name": "Spirit Distillate",
+          "quantity": 1
         },
         {
           "item_id": 67,
@@ -3349,15 +3475,15 @@
       ],
       "reagents": [
         {
-          "item_id": 65,
-          "image_id": 71,
-          "name": "Moon Salt",
-          "quantity": 2
+          "item_id": 1852,
+          "image_id": 586,
+          "name": "Water Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
+          "item_id": 1856,
+          "image_id": 590,
+          "name": "Death Distillate",
           "quantity": 1
         },
         {
@@ -3391,15 +3517,21 @@
       ],
       "reagents": [
         {
-          "item_id": 65,
-          "image_id": 71,
-          "name": "Moon Salt",
+          "item_id": 1852,
+          "image_id": 586,
+          "name": "Water Distillate",
           "quantity": 2
         },
         {
-          "item_id": 71,
-          "image_id": 74,
-          "name": "Frost Distillate",
+          "item_id": 1856,
+          "image_id": 590,
+          "name": "Death Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1859,
+          "image_id": 593,
+          "name": "Magic Distillate",
           "quantity": 1
         },
         {
@@ -3433,15 +3565,15 @@
       ],
       "reagents": [
         {
-          "item_id": 70,
-          "image_id": 68,
-          "name": "Cinder Resin",
-          "quantity": 2
+          "item_id": 1851,
+          "image_id": 585,
+          "name": "Fire Distillate",
+          "quantity": 1
         },
         {
-          "item_id": 22,
-          "image_id": 26,
-          "name": "Copper",
+          "item_id": 1856,
+          "image_id": 590,
+          "name": "Death Distillate",
           "quantity": 1
         },
         {
@@ -3475,15 +3607,21 @@
       ],
       "reagents": [
         {
-          "item_id": 70,
-          "image_id": 68,
-          "name": "Cinder Resin",
+          "item_id": 1851,
+          "image_id": 585,
+          "name": "Fire Distillate",
           "quantity": 2
         },
         {
-          "item_id": 22,
-          "image_id": 26,
-          "name": "Copper",
+          "item_id": 1856,
+          "image_id": 590,
+          "name": "Death Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1859,
+          "image_id": 593,
+          "name": "Magic Distillate",
           "quantity": 1
         },
         {
@@ -3517,16 +3655,16 @@
       ],
       "reagents": [
         {
-          "item_id": 37,
-          "image_id": 29,
-          "name": "Aether Salt",
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
           "quantity": 2
         },
         {
-          "item_id": 66,
-          "image_id": 94,
-          "name": "Moss",
-          "quantity": 2
+          "item_id": 1856,
+          "image_id": 590,
+          "name": "Death Distillate",
+          "quantity": 1
         },
         {
           "item_id": 67,
@@ -3559,16 +3697,22 @@
       ],
       "reagents": [
         {
-          "item_id": 37,
-          "image_id": 29,
-          "name": "Aether Salt",
+          "item_id": 1857,
+          "image_id": 591,
+          "name": "Energy Distillate",
           "quantity": 2
         },
         {
-          "item_id": 66,
-          "image_id": 94,
-          "name": "Moss",
-          "quantity": 2
+          "item_id": 1856,
+          "image_id": 590,
+          "name": "Death Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1859,
+          "image_id": 593,
+          "name": "Magic Distillate",
+          "quantity": 1
         },
         {
           "item_id": 67,
@@ -3601,22 +3745,28 @@
       ],
       "reagents": [
         {
-          "item_id": 23,
-          "image_id": 30,
-          "name": "Ember Crystal",
-          "quantity": 2
+          "item_id": 1858,
+          "image_id": 592,
+          "name": "Spirit Distillate",
+          "quantity": 3
         },
         {
-          "item_id": 22,
-          "image_id": 26,
-          "name": "Copper",
+          "item_id": 1856,
+          "image_id": 590,
+          "name": "Death Distillate",
+          "quantity": 1
+        },
+        {
+          "item_id": 1859,
+          "image_id": 593,
+          "name": "Magic Distillate",
           "quantity": 1
         },
         {
           "item_id": 67,
           "image_id": 66,
           "name": "Quartz Lens",
-          "quantity": 1
+          "quantity": 2
         }
       ]
     }

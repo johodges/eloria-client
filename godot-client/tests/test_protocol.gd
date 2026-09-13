@@ -1264,11 +1264,11 @@ func _init() -> void:
 			# stale along with every fixture below. What the catalog was built
 			# from is now asserted where both halves are visible - the
 			# server's client_content_manifest.json and its content-sync test.
-			# 532: the thirty-two hand-authored recipes, which stay first in
+			# 542: the forty-two hand-authored recipes, which stay first in
 			# the file and so stay first here, and the five hundred the
 			# crafting ladder generates below them.
 			_expect(str(sources.get("profile", "")) == "eloria"
-				and manufacturing_recipes.size() == 532
+				and manufacturing_recipes.size() == 542
 				and str((manufacturing_recipes[0] as Dictionary).get("output", "")) == "Torch",
 				"manufacturing catalog matches the served profile's own recipes")
 			# Both catalogs come out of one generator run, so an index into the
@@ -1421,27 +1421,26 @@ func _init() -> void:
 				"spell icon resolves at native aspect")
 			var ready_reasons: Array[String] = spell_catalog.unavailable_reasons(0,
 				[0, 7], {"magic": 0, "ether": 5}, {
-					0: {"image_id": 68, "quantity": 1},
-					1: {"image_id": 16, "quantity": 1},
-					2: {"image_id": 67, "quantity": 1}})
+					0: {"image_id": 584, "quantity": 1},
+					1: {"image_id": 67, "quantity": 1}})
 			_expect(ready_reasons.is_empty(),
 				"owned Heal requirements are locally ready")
 			var blocked_reasons: Array[String] = spell_catalog.unavailable_reasons(0,
 				[0], {"magic": 0, "ether": 4}, {})
-			_expect(blocked_reasons.size() == 5,
-				"the missing sigil, the mana, and each of the three reagents are explicit")
+			# Heal is a self spell: one distillate and its anchor.
+			_expect(blocked_reasons.size() == 4,
+				"the missing sigil, the mana, and each of the two reagents are explicit")
 			# A reagent is stated by the server's name for the item, not by
 			# the number the catalog files it under.
-			_expect(blocked_reasons.has("Requires 1 Cinder Resin (have 0)"),
+			_expect(blocked_reasons.has("Requires 1 Life Distillate (have 0)"),
 				"a missing reagent is named: %s" % str(blocked_reasons))
 			# The two ids are not interchangeable: a backpack holding the
 			# item id rather than the image id is not holding the reagent.
 			var mistaken_reasons: Array[String] = spell_catalog.unavailable_reasons(0,
 				[0, 7], {"magic": 0, "ether": 5}, {
-					0: {"image_id": 70, "quantity": 1},
-					1: {"image_id": 20, "quantity": 1},
-					2: {"image_id": 69, "quantity": 1}})
-			_expect(mistaken_reasons.size() == 3,
+					0: {"image_id": 1850, "quantity": 1},
+					1: {"image_id": 69, "quantity": 1}})
+			_expect(mistaken_reasons.size() == 2,
 				"reagents are counted by image id, not by the server's item id: %s"
 					% str(mistaken_reasons))
 
