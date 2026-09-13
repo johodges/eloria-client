@@ -1,14 +1,17 @@
 # Manymouth Delta production map package
 
-Manymouth is Nymara's braided river delta: a 576 m × 576 m distributary fan of
+Manymouth is Nymara's braided river delta: a 480 m × 396 m distributary fan of
 turquoise channels and low silt bars, inhabited by stilt villages linked by
 plank walkways, carrying a drowned glyph-cut ring-arch on its central axis and
 a stepped bronze-banded temple on its eastern rim, thinning north-west into
 open sea and thickening south-east into jungle.
 
-The region is authored at **576 m × 576 m** on a 96 × 96-tile server map at one
-metre per tile — the same shape Amberwood, Amethyst Barrens, Crownwater,
-Whitehorn Range and Mirrorhold already use.
+The region is authored at **480 m × 396 m** inside a 480 × 480 native server
+grid, at one metre per tile with origin [138,120]. Shared continent geography
+adds addressable padding for its land approaches; the atlas follows the owned
+physical footprint. The market, houses and monumental geometry retain their
+original scale. See [source/README.md](source/README.md) for the reproducible
+compact field, physical path audit and one-time content migration.
 
 Two thirds of it is water. That is not a gap in the map; it is the map. See
 `modeling-assumptions.md` for what follows from it, and `traversal-modes.md`
@@ -31,7 +34,7 @@ directions resolve. See that package's README.
 | `world.glb` | Self-contained glTF 2.0 scene: geometry, materials and every texture embedded. No external files, no glTF extensions. |
 | `world.json` | GLB world manifest, schema version 1 — bounds, coordinate transform, spawns, collision and navigation declarations, landmarks, interactives, NPC and creature markers, harvestables, portals, walkway routes, water, environment, minimap transform, provenance. |
 | `world-lod2.glb` | Reduced package: far-tier vegetation only, no ground clutter or root mats, a thinned mangrove belt, half-resolution textures. |
-| `collision.bin` | Half-metre walkability grid, `EWCG` version 1, 1152 × 1152 cells over the server footprint. |
+| `collision.bin` | Half-metre EWCG v2 surface grid over the current server footprint; its exact dimensions and encoding are in `world.json`. |
 | `minimap.webp` | North-up minimap rendered from the final geometry, not drawn by hand. |
 | `world.glb.validator.json` | glTF 2.0 validation report. |
 | `verification-report.json` | Runtime contract report: grounding, navigation, collision and spawn checks. |
@@ -55,10 +58,10 @@ authoring toolkit lives in `../_toolkit/` and is imported, not copied.
 
 ```sh
 cd source
-python3 build_manymouth_delta.py                 # writes the package one dir up
+python3 rebuild_landscape.py --server <paired-server-checkout>
 python3 ../../_toolkit/verify_runtime.py --package ..
 python3 ../../_toolkit/validate_gltf.py ../world.glb
-python3 ../../_toolkit/export_server_collision.py      # regenerates the 96x96 server walk grid
+## Server collision and content publication are owned by the shared coordinator.
 python3 ../../_toolkit/capture_views.py          # offline preview captures
 python3 ../../_toolkit/compress_captures.py      # PNG -> WebP
 python3 ../../_toolkit/make_comparison.py        # concept/build comparison sheets

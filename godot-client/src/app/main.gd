@@ -44,7 +44,7 @@ const AppearanceChoices = preload("res://src/actors/appearance_choices.gd")
 # stale in a working copy until the editor next scans the project.
 const InteriorCutawayScript := preload("res://src/world/interior_cutaway.gd")
 const SecretSectionsScript := preload("res://src/world/secret_sections.gd")
-const OccluderFadeScript := preload("res://src/world/occluder_fade.gd")
+const OccluderFadeScript := preload("res://src/world/occluder_fade_manager.gd")
 const InvasionAssistantScript := preload("res://src/ui/invasion_assistant.gd")
 const ExtensionWindowsScript := preload("res://src/ui/extension_windows.gd")
 const MapViewScript := preload("res://src/world/map_view.gd")
@@ -2605,6 +2605,9 @@ func _close_client() -> void:
 		await get_tree().process_frame
 	get_tree().quit()
 
+func _exit_tree() -> void:
+	occluder_fade.reset()
+
 func _on_login_succeeded() -> void:
 	spell_loadout.load_profile("%s:%d/%s" % [host_edit.text.strip_edges().to_lower(), int(port_edit.value), user_edit.text.strip_edges().to_lower()])
 	# Tell the server which Eloria extensions this client implements. Without
@@ -2741,6 +2744,7 @@ func _clear_world_presentation() -> void:
 	# session they were built in.
 	GlbSceneCache.clear()
 	NativeAnimationImporter.clear()
+	occluder_fade.reset()
 	exterior_stream.clear()
 	_retained_traveller = -1
 	world_loader.unload_world()
@@ -3831,9 +3835,12 @@ func _load_server_map() -> void:
 		" normalized=", normalized_map, " registry_key=", entry.get("registryKey", ""),
 		" manifest_resource=", manifest_resource, " manifest_path=", manifest_path)
 	if not handoff.is_empty():
+		if not _continuous_map_handoff:
+			occluder_fade.reset()
 		world_loader.adopt_world(handoff.resident)
 	else:
-		exterior_stream.clear()
+		occluder_fade.reset()
+		exterior_stream.clear(true) # A preload miss must not cancel the expected road continuation.
 		world_loader.load_world(manifest_path)
 
 func _on_world_loaded(manifest: WorldManifest) -> void:
@@ -4840,10 +4847,11 @@ func _manufacturing_queue_row(position: int) -> Control:
 	return row
 
 ## Anything the camera has to look through to see the player is blended towards
-## glass. Indexed against the imported world rather than `world_root`, so actors,
-## ground bags and the camera rig are never candidates.
+## glass. Only actual imported active/resident roots are indexed, so actors,
+## ground bags and the camera rig are never candidates. Promotion retains the
+## same root's materials and fade progress.
 func _configure_occluder_fade(manifest: WorldManifest) -> void:
-	var count: int = occluder_fade.configure(manifest, world_loader.world_root)
+	var count: int = occluder_fade.sync_worlds(manifest, world_loader.world_root, exterior_stream.residents)
 	occluder_fade.set_enabled(_show_through_obstacles)
 	print_debug("occluder_fade stage=indexed map=", AppState.current_map,
 		" meshes=", count)
@@ -4852,6 +4860,7 @@ func _configure_occluder_fade(manifest: WorldManifest) -> void:
 ## between a map change and the first actor list, so a frame without one simply
 ## lets whatever is faded blend back to solid.
 func _update_occluder_fade(delta: float) -> void:
+	occluder_fade.sync_worlds(world_loader.manifest, world_loader.world_root, exterior_stream.residents)
 	var target_value: Variant = actor_nodes.get(AppState.local_actor_id)
 	var target: Node3D = target_value as Node3D if target_value is Node3D else null
 	occluder_fade.update(delta, gameplay_camera, target)
@@ -4956,7 +4965,9 @@ func _configure_cartography() -> void:
 		if rect.size() != 4:
 			continue
 		rects.append({"name": str(region.get("name", "Unknown region")),
-			"rect": Rect2(float(rect[0]), float(rect[1]), float(rect[2]), float(rect[3]))})
+			"rect": Rect2(float(rect[0]), float(rect[1]), float(rect[2]), float(rect[3])),
+			"polygon": region.get("continentPolygon", []),
+			"label": region.get("continentLabel", [])})
 	if image_size.size() == 2:
 		continent_map.configure(
 			Vector2(float(image_size[0]), float(image_size[1])), rects)

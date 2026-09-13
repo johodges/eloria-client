@@ -7,10 +7,67 @@ connection can still preload its destination without changing server authority.
 import json
 import argparse
 import re
+import math
 from pathlib import Path
 
 CLIENT = Path(__file__).resolve().parents[2]
 REGIONS = CLIENT / 'eloria-assets/maps/nymara-regions'
+
+
+def physical_edges(geography):
+    """Merge profile samples into finite straight shared-edge spans."""
+    grouped = {}
+    for segment in geography.get('boundaryHeightField', {}).get('segments', []):
+        pair = tuple(sorted(segment['regions']))
+        a, b = segment['start'], segment['end']
+        axis = 1 if abs(a[0]-b[0]) < 1e-6 else 0
+        key = pair, axis, round(a[1-axis], 6)
+        grouped.setdefault(key, []).append(sorted([a[axis], b[axis]]))
+    result = {}
+    for (pair, axis, fixed), spans in sorted(grouped.items()):
+        merged = []
+        for lo, hi in sorted(spans):
+            if merged and lo <= merged[-1][1] + 1e-6:
+                merged[-1][1] = max(merged[-1][1], hi)
+            else:
+                merged.append([lo, hi])
+        for lo, hi in merged:
+            points = [[lo, fixed], [hi, fixed]] if axis == 0 else [[fixed, lo], [fixed, hi]]
+            result.setdefault(pair, []).append(points)
+    return result
+
+
+def add_geographic_views(result, registry):
+    path = REGIONS / 'continent-geography.json'
+    if not path.is_file(): return []
+    geography = json.loads(path.read_text(encoding='utf-8'))
+    edges = physical_edges(geography)
+    linked = {tuple(sorted(end['map'] for end in link['ends'])) for link in result}
+    def local_edges(region, spans):
+        t = geography['regions'][region]['translation']
+        return [[[p[0]-t[0], p[1]-t[2]] for p in line] for line in spans]
+    for link in result:
+        spans = edges.get(tuple(sorted(end['map'] for end in link['ends'])), [])
+        for end in link['ends']:
+            end['preloadEdges'] = local_edges(end['map'], spans)
+    visual = []
+    for pair, spans in sorted(edges.items()):
+        if pair in linked: continue
+        lengths = [math.dist(a, b) for a, b in spans]
+        center = [sum((a[i]+b[i])*.5*d for (a,b),d in zip(spans,lengths))/sum(lengths) for i in (0, 1)]
+        identity = 'geographic-view:' + '--'.join(pair)
+        ends = []
+        for index, region in enumerate(pair):
+            t = geography['regions'][region]['translation']
+            anchor = [center[0]-t[0], -t[1], center[1]-t[2]]
+            manifest_path = Path(registry[region]['manifest'].replace('res://', str(CLIENT/'godot-client')+'/')).resolve()
+            manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+            ends.append(dict(map=region, position=anchor, preloadEdges=local_edges(region, spans),
+                coordinateTransform=manifest['coordinateTransform'], visualScenes=[],
+                frame=dict(id=identity, anchor=anchor, outward=[1 if index == 0 else -1, 0],
+                    geometryMode='continent-owned-v1', viewHalfWidth=110, collarDepth=0)))
+        visual.append(dict(id=identity, ends=ends, seamless=False, visualOnly=True))
+    return visual
 
 
 def build(server=None):
@@ -51,7 +108,9 @@ def build(server=None):
         joined = bool(ends[0]['frame'] and ends[1]['frame'] and
                       ends[0]['frame']['id'] == ends[1]['frame']['id'])
         result.append(dict(id=link['from'] + '--' + link['to'], ends=ends, seamless=joined))
-    return dict(schema=1, preloadDistance=170, retainDistance=220, maximumNeighbours=2, connections=result)
+    visual = add_geographic_views(result, registry)
+    return dict(schema=1, preloadDistance=240, retainDistance=320, maximumNeighbours=3,
+                connections=result, visualConnections=visual)
 
 
 if __name__ == '__main__':

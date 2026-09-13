@@ -6,8 +6,8 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          198,
-          198
+          203,
+          210
         ],
         "origin": [
           0,
@@ -15,18 +15,40 @@
           0
         ],
         "walkingHeight": 31.1,
-        "invertServerY": true
+        "invertServerY": true,
+        "serverCells": [
+          414,
+          414
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -203,
+            -204
+          ],
+          "max": [
+            211,
+            210
+          ]
+        }
       },
       "status": "production_map_v1",
-      "landscapeTransitions": true
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "translation": [
+          1050.0,
+          -19,
+          1016.0
+        ],
+        "geometryMode": "continent-owned-v1"
+      }
     },
     "mirrorhold": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/mirrorhold/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          120.0,
-          96.0
+          129,
+          103
         ],
         "origin": [
           0.0,
@@ -34,34 +56,36 @@
           0.0
         ],
         "walkingHeight": 17.0,
-        "invertServerY": true
+        "invertServerY": true,
+        "serverCells": [
+          402,
+          402
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -129,
+            -299
+          ],
+          "max": [
+            273,
+            103
+          ]
+        }
       },
       "status": "production-geometry-materials-population",
       "requiresServerMap": "96x96 server tiles (576 cells)",
-      "landscapeTransitions": true
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "translation": [
+          978.0,
+          0,
+          716.0
+        ],
+        "geometryMode": "continent-owned-v1"
+      }
     },
     "crownwater": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/crownwater/world.json",
-      "coordinateTransform": {
-        "metresPerTile": 1.0,
-        "serverOrigin": [
-          120.0,
-          120.0
-        ],
-        "origin": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "walkingHeight": 4.5,
-        "invertServerY": true
-      },
-      "status": "production-geometry-materials-population",
-      "requiresServerMap": "96x96 server tiles (576 cells)",
-      "landscapeTransitions": true
-    },
-    "whitehorn_range": {
-      "manifest": "res://../eloria-assets/maps/nymara-regions/whitehorn_range/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
@@ -73,28 +97,106 @@
           0.0,
           0.0
         ],
-        "walkingHeight": 19.75,
-        "invertServerY": true
+        "walkingHeight": 4.5,
+        "invertServerY": true,
+        "serverCells": [
+          402,
+          402
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -120,
+            -282
+          ],
+          "max": [
+            282,
+            120
+          ]
+        }
       },
       "status": "production-geometry-materials-population",
-      "requiresServerMap": "66x66 server tiles (396 cells)",
-      "landscapeTransitions": true
+      "requiresServerMap": "96x96 server tiles (576 cells)",
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "translation": [
+          572.0,
+          0,
+          1042.0
+        ],
+        "geometryMode": "continent-owned-v1"
+      }
     },
-    "amethyst_barrens": {
-      "manifest": "res://../eloria-assets/maps/nymara-regions/amethyst_barrens/world.json",
+    "whitehorn_range": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/whitehorn_range/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          116.0,
-          116.0
+          126,
+          129
         ],
         "origin": [
           0.0,
           0.0,
           0.0
         ],
-        "walkingHeight": 5.19,
-        "invertServerY": true
+        "walkingHeight": 19.66,
+        "invertServerY": true,
+        "serverCells": [
+          414,
+          414
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -126,
+            -285
+          ],
+          "max": [
+            288,
+            129
+          ]
+        }
+      },
+      "status": "production-geometry-materials-population",
+      "requiresServerMap": "66x66 server tiles (396 cells)",
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "translation": [
+          972.0,
+          0,
+          298.0
+        ],
+        "geometryMode": "continent-owned-v1"
+      }
+    },
+    "amethyst_barrens": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/amethyst_barrens/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          125,
+          126
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 5.24,
+        "invertServerY": true,
+        "serverCells": [
+          402,
+          402
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -125,
+            -276
+          ],
+          "max": [
+            277,
+            126
+          ]
+        }
       },
       "status": "production-geometry-materials-population",
       "requiresServerMap": {
@@ -107,15 +209,23 @@
         ],
         "note": "Amethyst Barrens is authored at 576 m x 576 m. The server map grows from 32x32 to 96x96 tiles; see eloria-server tools/generate_nymara_maps.py."
       },
-      "landscapeTransitions": true
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "translation": [
+          1369.0,
+          0,
+          696.0
+        ],
+        "geometryMode": "continent-owned-v1"
+      }
     },
     "sunmane_steppe": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/sunmane_steppe/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          116,
-          116
+          124,
+          125
         ],
         "origin": [
           0,
@@ -126,24 +236,32 @@
         "invertServerY": true,
         "addressableWorldBounds": {
           "min": [
-            -116,
-            -267
+            -124,
+            -277
           ],
           "max": [
-            267,
-            116
+            278,
+            125
           ]
         },
         "serverCells": [
-          384,
-          384
+          402,
+          402
         ]
       },
       "status": "production",
       "lodManifests": {
         "lod2": "res://../eloria-assets/maps/nymara-regions/sunmane_steppe/world-lod2.json"
       },
-      "landscapeTransitions": true
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "translation": [
+          1374.0,
+          0,
+          1092.0
+        ],
+        "geometryMode": "continent-owned-v1"
+      }
     },
     "amberwood": {
       "landscapeTransitions": true,
@@ -151,8 +269,8 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          116.0,
-          116.0
+          146,
+          146
         ],
         "origin": [
           0.0,
@@ -160,18 +278,40 @@
           0.0
         ],
         "walkingHeight": 40.8,
-        "invertServerY": true
+        "invertServerY": true,
+        "serverCells": [
+          426,
+          426
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -146,
+            -280
+          ],
+          "max": [
+            280,
+            146
+          ]
+        }
       },
       "status": "production-geometry-materials-population",
-      "requiresServerMap": "64x64 server tiles (384 cells)"
+      "requiresServerMap": "64x64 server tiles (384 cells)",
+      "continentGeography": {
+        "translation": [
+          579.0,
+          0,
+          650.0
+        ],
+        "geometryMode": "continent-owned-v1"
+      }
     },
     "grey_moors": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/grey_moors/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          116.0,
-          116.0
+          116,
+          128
         ],
         "origin": [
           0.0,
@@ -179,19 +319,41 @@
           0.0
         ],
         "walkingHeight": 2.73,
-        "invertServerY": true
+        "invertServerY": true,
+        "serverCells": [
+          426,
+          426
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -116,
+            -298
+          ],
+          "max": [
+            310,
+            128
+          ]
+        }
       },
       "status": "production-geometry-materials-population",
       "requiresServerMap": "96x96 server tiles (576 cells)",
-      "landscapeTransitions": true
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "translation": [
+          174.0,
+          0,
+          1086.0
+        ],
+        "geometryMode": "continent-owned-v1"
+      }
     },
     "westhaven": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/westhaven/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          120.0,
-          172.0
+          120,
+          172
         ],
         "origin": [
           0.0,
@@ -199,18 +361,40 @@
           0.0
         ],
         "walkingHeight": 3.4,
-        "invertServerY": true
+        "invertServerY": true,
+        "serverCells": [
+          438,
+          438
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -120,
+            -266
+          ],
+          "max": [
+            318,
+            172
+          ]
+        }
       },
       "status": "production-geometry-materials-population",
       "requiresServerMap": "96x96 server tiles (576 cells) with the arrival datum at (174, 250), not the (174, 174) the other 576 m regions share",
-      "landscapeTransitions": true
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "translation": [
+          132.0,
+          0,
+          1426.0
+        ],
+        "geometryMode": "continent-owned-v1"
+      }
     },
     "verdant_stair": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/verdant_stair/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          108,
+          113,
           108
         ],
         "origin": [
@@ -219,19 +403,41 @@
           0.0
         ],
         "walkingHeight": 12.0,
-        "invertServerY": true
+        "invertServerY": true,
+        "serverCells": [
+          372,
+          372
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -113,
+            -264
+          ],
+          "max": [
+            259,
+            108
+          ]
+        }
       },
       "status": "production-geometry-materials-population",
       "requiresServerMap": "96x96 server tiles (576 cells)",
-      "landscapeTransitions": true
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "translation": [
+          1523.0,
+          0,
+          1470.0
+        ],
+        "geometryMode": "continent-owned-v1"
+      }
     },
     "ssarathi_ruins": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/ssarathi_ruins/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          116.0,
-          116.0
+          153,
+          116
         ],
         "origin": [
           0.0,
@@ -239,30 +445,75 @@
           0.0
         ],
         "walkingHeight": 1.45,
-        "invertServerY": true
+        "invertServerY": true,
+        "serverCells": [
+          426,
+          426
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -153,
+            -310
+          ],
+          "max": [
+            273,
+            116
+          ]
+        }
       },
       "status": "production-geometry-materials-population",
       "requiresServerMap": "96x96 server tiles (576 cells)",
-      "landscapeTransitions": true
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "translation": [
+          1144.0,
+          0,
+          1500.0
+        ],
+        "geometryMode": "continent-owned-v1"
+      }
     },
     "manymouth_delta": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/manymouth_delta/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          174.0,
-          174.0
+          177,
+          120
         ],
         "origin": [
           0.0,
           0.0,
           0.0
         ],
-        "walkingHeight": 1.33,
-        "invertServerY": true
+        "walkingHeight": 1.88,
+        "invertServerY": true,
+        "serverCells": [
+          558,
+          558
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -177,
+            -438
+          ],
+          "max": [
+            381,
+            120
+          ]
+        }
       },
       "status": "production-geometry-materials-population",
-      "requiresServerMap": "96x96 server tiles (576 cells)"
+      "requiresServerMap": "96x96 server tiles (576 cells)",
+      "continentGeography": {
+        "translation": [
+          618,
+          0,
+          1490
+        ],
+        "geometryMode": "continent-owned-v1"
+      },
+      "landscapeTransitions": true
     },
     "sunmane_wind_caves": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/sunmane_insides/world.json",

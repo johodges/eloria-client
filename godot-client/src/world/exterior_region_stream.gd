@@ -1,20 +1,27 @@
 class_name ExteriorRegionStream
 extends Node3D
 
-## One private loader worker, the current region and at most two neighbours.
-## Only surveyed reciprocal road collars are displayed simultaneously. The
+## One private loader worker, the current region and at most three neighbours.
+## Only surveyed reciprocal neighbors are displayed simultaneously. The
 ## server still selects the map and is the sole owner of actors/interactions.
 const CONNECTIONS := "res://data/maps/exterior_connections.json"
 const PREVIEW_SURFACE_LAYER := 16
+const DEFAULT_PRELOAD_DISTANCE := 240.0
+const DEFAULT_RETAIN_DISTANCE := 320.0
+const MAXIMUM_NEIGHBOURS := 3
+## The server returns at most 512 path steps per MOVE_TO. Renew the same
+## target before that prefix ends; never substitute a guessed client waypoint.
+const WALK_RENEW_COMMANDS := 448
+const MAX_WALK_RENEWALS_PER_LEG := 16
 var registry: Dictionary = {}
 var links: Array = []
 var residents: Dictionary = {}
 var active_map := ""
 var active_root: Node3D
 var active_manifest: WorldManifest
-var preload_distance := 170.0
-var retain_distance := 220.0
-var maximum_neighbours := 2
+var preload_distance := DEFAULT_PRELOAD_DISTANCE
+var retain_distance := DEFAULT_RETAIN_DISTANCE
+var maximum_neighbours := MAXIMUM_NEIGHBOURS
 var _thread: Thread
 var _pending_map := ""
 var _generation := 0
@@ -39,9 +46,10 @@ func configure(maps: Dictionary) -> void:
 	var raw: Variant = JSON.parse_string(FileAccess.get_file_as_string(CONNECTIONS))
 	if raw is Dictionary:
 		links = raw.get("connections", [])
-		preload_distance = float(raw.get("preloadDistance", 170))
-		retain_distance = float(raw.get("retainDistance", 220))
-		maximum_neighbours = int(raw.get("maximumNeighbours", 2))
+		links.append_array(raw.get("visualConnections", []))
+		preload_distance = maxf(0, float(raw.get("preloadDistance", DEFAULT_PRELOAD_DISTANCE)))
+		retain_distance = maxf(preload_distance, float(raw.get("retainDistance", DEFAULT_RETAIN_DISTANCE)))
+		maximum_neighbours = clampi(int(raw.get("maximumNeighbours", MAXIMUM_NEIGHBOURS)), 0, MAXIMUM_NEIGHBOURS)
 
 func activate(map_id: String, imported: Node3D, manifest: WorldManifest) -> void:
 	active_map = MapRegistry.normalize_server_map_id(map_id)
@@ -56,37 +64,48 @@ func update_position(position: Vector3) -> void:
 		return
 	_next_update = Time.get_ticks_msec() + 250
 	var candidates := _candidates(position)
-	var wanted: Dictionary = {}
-	for candidate: Dictionary in candidates:
-		if float(candidate.distance) <= retain_distance and wanted.size() < maximum_neighbours:
-			wanted[str(candidate.map)] = candidate
+	var wanted := _wanted_neighbours(candidates)
 	for map_id: String in residents.keys():
 		if not wanted.has(map_id):
 			_evict(map_id)
 	_refresh_views()
-	if not _can_dispatch_preload():
+	var candidate := _preload_candidate(candidates, wanted)
+	if candidate.is_empty():
 		return
+	var map_id := str(candidate.map)
+	var entry := MapRegistry.resolve(registry, map_id)
+	_pending_map = map_id
+	_pending_generation = _generation
+	_thread = Thread.new()
+	var path := ProjectSettings.globalize_path(str(entry.get("manifest", "")))
+	var visuals := GlbSceneCache.missing(PackedStringArray(candidate.there.get("visualScenes", [])))
+	var error := _thread.start(WorldLoader.prepare_detached.bind(path, MapSceneCache.is_enabled(), visuals))
+	if error != OK:
+		_thread = null
+		_retry_after[map_id] = Time.get_ticks_msec() + 30000
+		_record("failed", map_id, {"error": error_string(error)})
+	else:
+		_record("requested", map_id, {"distance": candidate.distance})
+
+func _wanted_neighbours(candidates: Array[Dictionary]) -> Dictionary:
+	var wanted: Dictionary = {}
 	for candidate: Dictionary in candidates:
 		var map_id := str(candidate.map)
-		if (float(candidate.distance) > preload_distance or residents.has(map_id)
-				or not wanted.has(map_id) or Time.get_ticks_msec() < int(_retry_after.get(map_id, 0))):
-			continue
-		var entry := MapRegistry.resolve(registry, map_id)
-		if entry.is_empty():
-			continue
-		_pending_map = map_id
-		_pending_generation = _generation
-		_thread = Thread.new()
-		var path := ProjectSettings.globalize_path(str(entry.get("manifest", "")))
-		var visuals := GlbSceneCache.missing(PackedStringArray(candidate.there.get("visualScenes", [])))
-		var error := _thread.start(WorldLoader.prepare_detached.bind(path, MapSceneCache.is_enabled(), visuals))
-		if error != OK:
-			_thread = null
-			_retry_after[map_id] = Time.get_ticks_msec() + 30000
-			_record("failed", map_id, {"error": error_string(error)})
-		else:
-			_record("requested", map_id, {"distance": candidate.distance})
-		break
+		if (float(candidate.distance) <= retain_distance and not wanted.has(map_id)
+				and wanted.size() < mini(maximum_neighbours, MAXIMUM_NEIGHBOURS)):
+			wanted[map_id] = candidate
+	return wanted
+
+func _preload_candidate(candidates: Array[Dictionary], wanted: Dictionary) -> Dictionary:
+	if not _can_dispatch_preload():
+		return {}
+	for candidate: Dictionary in candidates:
+		var map_id := str(candidate.map)
+		if (float(candidate.distance) <= preload_distance and not residents.has(map_id)
+				and wanted.has(map_id) and Time.get_ticks_msec() >= int(_retry_after.get(map_id, 0))
+				and not MapRegistry.resolve(registry, map_id).is_empty()):
+			return candidate
+	return {}
 
 func _process(_delta: float) -> void:
 	_drain_retired()
@@ -107,7 +126,8 @@ func _process(_delta: float) -> void:
 		return
 	var imported := resident.root as Node3D
 	# Login, teleport, disconnect or a second map change can supersede a load.
-	if _pending_generation != _generation or map_id == active_map or not _nearby(map_id):
+	if (_pending_generation != _generation or map_id == active_map or not _nearby(map_id)
+			or residents.size() >= mini(maximum_neighbours, MAXIMUM_NEIGHBOURS)):
 		_retire(resident, map_id)
 		_record("discarded", map_id)
 		return
@@ -120,14 +140,33 @@ func _process(_delta: float) -> void:
 	_refresh_views()
 
 func _nearby(map_id: String) -> bool:
-	var count := 0
-	for item: Dictionary in _candidates(_last_position):
-		if count >= maximum_neighbours:
-			break
-		if str(item.map) == map_id and float(item.distance) <= retain_distance:
-			return true
-		count += 1
-	return false
+	return _wanted_neighbours(_candidates(_last_position)).has(map_id)
+
+static func _seam_distance(position: Vector3, here: Dictionary, seamless: bool) -> float:
+	var edges: Array = here.get("preloadEdges", [])
+	if not edges.is_empty():
+		var nearest := INF
+		var xz := Vector2(position.x, position.z)
+		for edge: Array in edges:
+			var a := Vector2(float(edge[0][0]), float(edge[0][1]))
+			var b := Vector2(float(edge[1][0]), float(edge[1][1]))
+			nearest = minf(nearest, xz.distance_to(Geometry2D.get_closest_point_to_segment(xz, a, b)))
+		return nearest
+	var point := _vector(here.position)
+	var point_distance := Vector2(position.x - point.x, position.z - point.z).length()
+	var frame: Dictionary = here.get("frame", {})
+	var half_width := maxf(0, float(frame.get("viewHalfWidth", 0)))
+	if not seamless or half_width == 0 or not frame.has("anchor") or not frame.has("outward"):
+		return point_distance
+	var normal := Vector2(float(frame.outward[0]), float(frame.outward[1]))
+	if normal.is_zero_approx():
+		return point_distance
+	normal = normal.normalized()
+	var anchor := _vector(frame.anchor)
+	var delta := Vector2(position.x - anchor.x, position.z - anchor.z)
+	var lateral := absf(delta.dot(Vector2(-normal.y, normal.x)))
+	# Clamp to the actual finite visible edge, not its infinite supporting line.
+	return Vector2(delta.dot(normal), maxf(0, lateral - half_width)).length()
 
 func _candidates(position: Vector3) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
@@ -139,9 +178,12 @@ func _candidates(position: Vector3) -> Array[Dictionary]:
 			var here: Dictionary = ends[index]
 			var there: Dictionary = ends[1 - index]
 			var at := _vector(here.position)
-			result.append({"map": str(there.map), "distance": Vector2(position.x - at.x, position.z - at.z).length(),
-				"here": here, "there": there, "seamless": bool(link.get("seamless", false))})
-	result.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a.distance) < float(b.distance))
+			result.append({"map": str(there.map), "distance": _seam_distance(position, here, bool(link.get("seamless", false))),
+				"crossing_distance": Vector2(position.x - at.x, position.z - at.z).length(),
+				"here": here, "there": there, "seamless": bool(link.get("seamless", false)),
+				"visual_only": bool(link.get("visualOnly", false))})
+	result.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return str(a.map) < str(b.map) if float(a.distance) == float(b.distance) else float(a.distance) < float(b.distance))
 	return result
 
 ## Transfer already-instantiated nodes. A surveyed join rebases the old world
@@ -159,7 +201,7 @@ func take_ready(destination: String, loader: WorldLoader, position: Vector3) -> 
 	# frame. The surveyed approach, not a tiny radius around the trigger, is
 	# the continuous-travel zone.
 	var collar := float(join.get("here", {}).get("frame", {}).get("collarDepth", 42))
-	var continuous := bool(join.get("seamless", false)) and float(join.get("distance", INF)) < collar
+	var continuous := bool(join.get("seamless", false)) and float(join.get("crossing_distance", INF)) < collar
 	var resident: Dictionary = residents[destination]
 	residents.erase(destination)
 	var rebase := Transform3D.IDENTITY
@@ -179,7 +221,7 @@ func take_ready(destination: String, loader: WorldLoader, position: Vector3) -> 
 	imported.visible = true
 	_generation += 1
 	last_handoff = {"from": active_map, "to": destination, "continuous": continuous,
-		"rebase": rebase, "root_id": imported.get_instance_id(), "source_distance": join.get("distance", INF)}
+		"rebase": rebase, "root_id": imported.get_instance_id(), "source_distance": join.get("crossing_distance", INF)}
 	_record("handoff", destination, {"continuous": continuous})
 	return {"resident": resident, "continuous": continuous, "rebase": rebase}
 
@@ -193,28 +235,29 @@ func _refresh_views() -> void:
 		if not residents.has(map_id):
 			continue
 		var imported := residents[map_id].root as Node3D
-		if bool(candidate.seamless):
+		if bool(candidate.seamless) or bool(candidate.visual_only):
 			var identity := str(candidate.there.frame.id)
+			var full_owned := str(candidate.there.frame.get("geometryMode", "")) == "continent-owned-v1"
 			imported.transform = frame_transform(candidate.here.frame, candidate.there.frame)
 			imported.visible = true
-			_set_view(imported, identity)
-			_set_collision(imported, false, true, identity)
+			_set_view(imported, identity, full_owned)
+			_set_collision(imported, false, true, identity, full_owned)
 			visible_borders[str(candidate.here.frame.id)] = true
 		else:
 			imported.visible = false
 			_set_collision(imported, false)
 	_set_overflow(active_root, visible_borders)
 
-static func _set_view(imported: Node3D, border := "") -> void:
+static func _set_view(imported: Node3D, border := "", full_owned := false) -> void:
 	var active := imported.get_node_or_null("StreamActive") as Node3D
 	if active == null:
 		return
-	active.visible = border.is_empty()
+	active.visible = border.is_empty() or full_owned
 	for node: Node in imported.get_children():
 		if node.has_meta("stream_borders"):
-			(node as Node3D).visible = border.is_empty() or border in node.get_meta("stream_borders")
+			(node as Node3D).visible = border.is_empty() or full_owned or border in node.get_meta("stream_borders")
 		if str(node.name).begins_with("StreamPreview_"):
-			(node as Node3D).visible = str(node.name) == "StreamPreview_" + border
+			(node as Node3D).visible = not full_owned and str(node.name) == "StreamPreview_" + border
 
 static func frame_transform(here: Dictionary, there: Dictionary) -> Transform3D:
 	var outward := Vector3(float(here.outward[0]), 0, float(here.outward[1]))
@@ -226,8 +269,8 @@ static func frame_transform(here: Dictionary, there: Dictionary) -> Transform3D:
 static func _vector(raw: Array) -> Vector3:
 	return Vector3(float(raw[0]), float(raw[1]), float(raw[2]))
 
-static func _set_collision(imported: Node3D, enabled: bool, preview_enabled := false, border := "") -> void:
-	var mode := str(enabled) + ":" + str(preview_enabled) + ":" + border
+static func _set_collision(imported: Node3D, enabled: bool, preview_enabled := false, border := "", full_owned := false) -> void:
+	var mode := str(enabled) + ":" + str(preview_enabled) + ":" + border + ":" + str(full_owned)
 	if imported.get_meta("stream_physics", "") == mode:
 		return
 	var has_views := imported.has_node("StreamActive")
@@ -249,9 +292,9 @@ static func _set_collision(imported: Node3D, enabled: bool, preview_enabled := f
 				break
 			ancestor = ancestor.get_parent()
 		var preview := 0
-		if (preview_enabled and (original & WorldLoader.NAVIGATION_SURFACE_LAYER) != 0
-				and (border in cells and not threshold if shared else
-					(view == border if has_views else not "_StreamOverflow" in str(body.get_parent().name)))):
+		var visible_navigation := full_owned or (border in cells if shared else
+			(view == border if has_views else not "_StreamOverflow" in str(body.get_parent().name)))
+		if preview_enabled and (original & WorldLoader.NAVIGATION_SURFACE_LAYER) != 0 and not threshold and visible_navigation:
 			preview = PREVIEW_SURFACE_LAYER
 		body.collision_layer = (original if shared or view.is_empty() else 0) if enabled else preview
 	imported.set_meta("stream_physics", mode)
@@ -273,7 +316,8 @@ func _evict(map_id: String) -> void:
 	_record("evicted", map_id, {"retiring": _retiring.size()})
 
 func _can_dispatch_preload() -> bool:
-	return _thread == null and _retiring.is_empty()
+	return (_thread == null and _retiring.is_empty()
+		and residents.size() < mini(maximum_neighbours, MAXIMUM_NEIGHBOURS))
 
 func _retire(resident: Dictionary, map_id: String) -> void:
 	var imported := resident.root as Node3D
@@ -371,7 +415,13 @@ static func _blend(a: Variant, b: Variant, weight: float) -> Variant:
 		return lerpf(float(a), float(b), weight)
 	return a
 
-func clear() -> void:
+func clear(preserve_expected_walk := false) -> void:
+	var tree := Engine.get_main_loop() as SceneTree
+	var state := tree.root.get_node_or_null("AppState") if tree != null else null
+	var current := MapRegistry.normalize_server_map_id(str(state.get("current_map"))) if state != null else ""
+	var keep_walk := (preserve_expected_walk and bool(pending_walk.get("routed", false))
+		and not current.is_empty() and current == str(pending_walk.get("next_map", ""))
+		and current != str(pending_walk.get("issued_from", "")))
 	_generation += 1
 	active_map = ""
 	active_root = null
@@ -379,7 +429,8 @@ func clear() -> void:
 	for map_id: String in residents.keys():
 		_evict(map_id)
 	_retry_after.clear()
-	pending_walk.clear()
+	if not keep_walk:
+		pending_walk.clear()
 
 func pick_neighbor(space: PhysicsDirectSpaceState3D, origin: Vector3, direction: Vector3, run: bool) -> Variant:
 	pending_walk.clear()
@@ -397,7 +448,7 @@ func pick_neighbor(space: PhysicsDirectSpaceState3D, origin: Vector3, direction:
 		return null
 	for candidate: Dictionary in _candidates(_last_position):
 		var map_id := str(candidate.map)
-		if not bool(candidate.seamless) or not residents.has(map_id):
+		if not (bool(candidate.seamless) or bool(candidate.visual_only)) or not residents.has(map_id):
 			continue
 		var imported := residents[map_id].root as Node3D
 		if not imported.is_ancestor_of(hit.collider):
@@ -405,7 +456,11 @@ func pick_neighbor(space: PhysicsDirectSpaceState3D, origin: Vector3, direction:
 		var frame: Dictionary = candidate.here.frame
 		var outward := Vector3(float(frame.outward[0]), 0, float(frame.outward[1]))
 		var anchor := _vector(frame.anchor)
-		if (point - anchor).dot(outward) <= 0:
+		# Owned footprints can wrap behind the road plane at a shared corner.
+		# Their real geometry, foreground occlusion and served bounds decide the
+		# target; a local collar still needs the legacy outward-side restriction.
+		var full_owned := str(candidate.there.frame.get("geometryMode", "")) == "continent-owned-v1"
+		if not full_owned and (point - anchor).dot(outward) <= 0:
 			continue
 		var target_manifest := residents[map_id].manifest as WorldManifest
 		var adapter := target_manifest.coordinate_adapter()
@@ -416,18 +471,120 @@ func pick_neighbor(space: PhysicsDirectSpaceState3D, origin: Vector3, direction:
 		var height := int(dimensions[1]) if dimensions is Array else width
 		if tile.x < 0 or tile.y < 0 or (width > 0 and (tile.x >= width or tile.y >= height)):
 			return null
-		pending_walk = {"map": map_id, "tile": tile, "run": run, "world_point": point}
+		var leg := _first_walk_leg(active_map, map_id)
+		if leg.is_empty():
+			return null
+		pending_walk = {"map": map_id, "tile": tile, "run": run, "world_point": point,
+			"routed": true, "issued_from": active_map, "next_map": str(leg.there.map)}
+		var here_adapter := CoordinateAdapter.new(leg.here.get("coordinateTransform",
+			active_manifest.data.get("coordinateTransform", {})))
+		_arm_walk_leg(active_map, here_adapter.godot_to_server(_vector(leg.here.position)), _local_walk_actor(active_map))
 		# Route through the centre of the surveyed road. The server decides
 		# whether the approach and the continuation are walkable.
-		return _vector(candidate.here.position)
+		return _vector(leg.here.position)
 	return null
 
-func take_continuation(map_id: String) -> Dictionary:
-	if pending_walk.get("map", "") != map_id:
+func _local_walk_actor(map_id: String) -> Dictionary:
+	var tree := Engine.get_main_loop() as SceneTree
+	var state := tree.root.get_node_or_null("AppState") if tree != null else null
+	if state == null or MapRegistry.normalize_server_map_id(str(state.get("current_map"))) != map_id:
 		return {}
-	var result := pending_walk.duplicate()
-	pending_walk.clear()
-	return result
+	var actors: Dictionary = state.get("actors")
+	return actors.get(int(state.get("local_actor_id")), {})
+
+func _arm_walk_leg(map_id: String, tile: Vector2i, actor: Dictionary) -> void:
+	pending_walk.issued_from = map_id
+	pending_walk.leg_tile = tile
+	pending_walk.observed_commands = 0
+	pending_walk.renewals = 0
+	pending_walk.last_sequence = int(actor.get("command_sequence", -1))
+	pending_walk.last_tile = Vector2i(int(actor.get("x", -1)), int(actor.get("y", -1)))
+
+func take_continuation(map_id: String, actor := {}) -> Dictionary:
+	if pending_walk.is_empty():
+		return {}
+	if actor.is_empty():
+		actor = _local_walk_actor(map_id)
+	if not actor.is_empty() and (not bool(actor.get("alive", true))
+			or bool(actor.get("in_combat", false)) or bool(actor.get("sitting", false))):
+		pending_walk.clear()
+		return {}
+	var destination := str(pending_walk.get("map", ""))
+	var issued_from := str(pending_walk.get("issued_from", ""))
+	if issued_from != map_id:
+		# An unrelated doorway or teleport must not turn into a new road order.
+		# The final walking leg has no next map at all; a warm resident adoption
+		# skips clear(), so it must reject an unexpected transition here too.
+		if str(pending_walk.get("next_map", "")) != map_id:
+			_record("walk_cancelled", map_id, {"reason": "unexpected map"})
+			pending_walk.clear()
+			return {}
+		var target: Vector2i
+		if map_id == destination:
+			target = pending_walk.tile
+			pending_walk.erase("next_map")
+		else:
+			var leg := _first_walk_leg(map_id, destination)
+			if leg.is_empty():
+				pending_walk.clear()
+				return {}
+			var adapter := CoordinateAdapter.new(leg.here.coordinateTransform)
+			target = adapter.godot_to_server(_vector(leg.here.position))
+			pending_walk.next_map = str(leg.there.map)
+		_arm_walk_leg(map_id, target, actor)
+		if map_id == destination and not actor.is_empty() and pending_walk.last_tile == target:
+			pending_walk.clear()
+			return {}
+		return {"tile": target, "run": pending_walk.run}
+	if actor.is_empty() or not pending_walk.has("leg_tile"):
+		return {}
+	var here := Vector2i(int(actor.get("x", -1)), int(actor.get("y", -1)))
+	var target: Vector2i = pending_walk.leg_tile
+	if here == target:
+		if map_id == destination:
+			pending_walk.clear()
+		return {} # At a gate, preserve the exact final click until its handoff.
+	var sequence := int(actor.get("command_sequence", -1))
+	var prior_sequence := int(pending_walk.get("last_sequence", -1))
+	var prior_tile: Vector2i = pending_walk.get("last_tile", here)
+	# Multiple packets can be reduced before one visual update. Sequence deltas
+	# retain that movement count even around bends; distance-to-target cannot.
+	if here != prior_tile and prior_sequence >= 0 and sequence > prior_sequence:
+		pending_walk.observed_commands = int(pending_walk.get("observed_commands", 0)) + sequence - prior_sequence
+	pending_walk.last_sequence = sequence
+	pending_walk.last_tile = here
+	if int(pending_walk.get("observed_commands", 0)) < WALK_RENEW_COMMANDS:
+		return {}
+	if int(pending_walk.get("renewals", 0)) >= MAX_WALK_RENEWALS_PER_LEG:
+		_record("walk_cancelled", map_id, {"reason": "road renewal budget exhausted"})
+		pending_walk.clear()
+		return {}
+	pending_walk.renewals = int(pending_walk.get("renewals", 0)) + 1
+	pending_walk.observed_commands = 0
+	_record("walk_renewed", map_id, {"target": [target.x, target.y], "renewal": pending_walk.renewals})
+	return {"tile": target, "run": pending_walk.run}
+
+func _first_walk_leg(source: String, destination: String) -> Dictionary:
+	# Visible geography can meet across a river or cliff without a crossing.
+	# A click there follows surveyed roads, retaining the exact final tile.
+	var queue: Array[Dictionary] = [{"map": source, "first": {}}]
+	var visited := {source: true}
+	while not queue.is_empty():
+		var at: Dictionary = queue.pop_front()
+		for link: Dictionary in links:
+			if not bool(link.get("seamless", false)):
+				continue
+			for i: int in 2:
+				var here: Dictionary = link.ends[i]
+				var there: Dictionary = link.ends[1-i]
+				if str(here.map) != str(at.map) or visited.has(str(there.map)):
+					continue
+				var first: Dictionary = at.first if not at.first.is_empty() else {"here": here, "there": there}
+				if str(there.map) == destination:
+					return first
+				visited[str(there.map)] = true
+				queue.append({"map": str(there.map), "first": first})
+	return {}
 
 func is_idle() -> bool:
 	return _thread == null and _retiring.is_empty()

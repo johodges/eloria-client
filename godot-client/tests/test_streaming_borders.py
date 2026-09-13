@@ -15,6 +15,32 @@ from verify_runtime import VerticalRayIndex
 import streaming_borders as S
 
 
+@pytest.fixture(autouse=True)
+def isolated_collar_recipe(monkeypatch):
+    """Exercise the collar on small synthetic terrain, without the continent's
+    authored road network/ownership cut. Geographic packages have separate
+    placement and emitted-geometry tests; these retain the original tricky
+    two-col regression even though Mirrorhold's roads have since moved.
+    """
+    import continent_geography as G
+    monkeypatch.setattr(G, 'apply_geometry', lambda *_: None)
+    monkeypatch.setattr(G, 'finalize_geometry', lambda *_: None)
+    monkeypatch.setattr(S, 'region_specs', S.legacy_region_specs)
+    monkeypatch.setattr(S, 'HALF_WIDTH', 40.)
+    monkeypatch.setattr(S, 'VIEW_DEPTH', 145.)
+
+
+def test_wide_receiving_cut_preserves_every_triangle_once(monkeypatch):
+    monkeypatch.setattr(S, 'HALF_WIDTH', 110.)
+    source = square()
+    source.positions[:, [0, 2]] *= 3
+    forward, side = np.array([0., 1]), np.array([-1., 0])
+    front, overflow = S.split_overflow(source, np.zeros(2), forward, side)
+    assert area(front) + area(overflow) == pytest.approx(360000)
+    assert area(overflow) == pytest.approx(66000)
+    assert np.max(abs(overflow.positions[:, 0])) == pytest.approx(110)
+
+
 def square():
     return M.Mesh(positions=np.array([[-100., 2, -100], [100., 2, -100],
                                      [100., 2, 100], [-100., 2, 100]]),
@@ -369,3 +395,26 @@ def test_overlapping_cols_keep_overflow_flanks_continuous(overlapping_cols):
                 assert left is not None and right is not None, (spec['id'], edge, z)
                 assert abs(left - right) < .02, (
                     f"{spec['id']} overflow flank ({edge}, {z}) jumps {abs(left - right):.3f}m")
+
+
+def test_owned_connector_samples_centre_height_without_regrading_native_deck():
+    """A42m road quad must not interpolate its centre from raised shoulders."""
+    spec=dict(S.region_specs('grey_moors')[0],anchor=[0.,24.,0.],outward=[1,0],
+              geometryMode='continent-owned-v1',palette='alpine',profile='land')
+    build=RegionBuild(T.Terrain(-50,-10,60,20,2))
+    build.terrain.height[:]=24
+    vertices=[[-42,24.03,-3.5],[0,24.03,-3.5],[0,24.03,3.5],[-42,24.03,3.5]]
+    connector=M.quad(vertices,material='packed_earth')
+    native=M.quad([[x,y+2,z+10] for x,y,z in vertices],material='stone')
+    native_positions=native.positions.copy();native_indices=native.indices.copy()
+    build.terrain_meshes={'Walk_ContinentRoad_test':connector,'Walk_NativeBridge':native}
+    S._apply_one(build,spec,[spec])
+    mesh=build.terrain_meshes['Walk_ContinentRoad_test']
+    ray=VerticalRayIndex(mesh.positions[mesh.indices.reshape(-1,3)])
+    for depth in (-5,-1,0):
+        for lane in range(-3,4):
+            expected=24.03+S._shoulder_rise(spec)*(1-np.exp(-(lane/30)**2))
+            assert ray.top_hit(depth,lane)==pytest.approx(expected,abs=.002)
+    assert mesh.triangle_count>2
+    np.testing.assert_array_equal(build.terrain_meshes['Walk_NativeBridge'].positions,native_positions)
+    np.testing.assert_array_equal(build.terrain_meshes['Walk_NativeBridge'].indices,native_indices)

@@ -172,6 +172,11 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     _add_population_markers(build, seed)
     LAYOUT.finish_metadata(build)
     SB.apply(build, "westhaven")
+    import marsh_crossing
+    marsh_crossing.apply(build)
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / '_finishing'))
+    import connector_finish
+    connector_finish.apply(build, 'westhaven')
     print(f"[region] built in {time.time() - t0:.1f}s")
     return build
 

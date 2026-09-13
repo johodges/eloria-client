@@ -1,14 +1,20 @@
 {
-  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-south-client\\eloria-assets\\maps\\nymara-regions\\mirrorhold\\world-lod2.glb",
+  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-south-pub-c\\eloria-assets\\maps\\nymara-regions\\mirrorhold\\world-lod2.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-09-11T18:01:23.129053Z",
+  "validatedAt": "2026-09-12T17:53:02.484273Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
     "numInfos": 11,
     "numHints": 0,
     "messages": [
+      {
+        "code": "NODE_EMPTY",
+        "message": "Empty node encountered.",
+        "severity": 2,
+        "pointer": "/nodes/6"
+      },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
@@ -25,7 +31,7 @@
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/16"
+        "pointer": "/materials/13"
       },
       {
         "code": "UNUSED_OBJECT",
@@ -43,19 +49,19 @@
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/32"
+        "pointer": "/materials/19"
       },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/35"
+        "pointer": "/materials/33"
       },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/40"
+        "pointer": "/materials/36"
       },
       {
         "code": "UNUSED_OBJECT",
@@ -67,13 +73,7 @@
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/42"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/50"
+        "pointer": "/materials/43"
       }
     ]
   }

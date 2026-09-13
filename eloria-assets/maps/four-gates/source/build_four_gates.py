@@ -15,6 +15,7 @@ import region as REG
 import streaming_borders as SB
 import glb_reader as GR
 import secretrooms as SR
+import customs_landing
 from designs import four_gates_secrets_design as SEC
 
 PACKAGE=HERE.parent
@@ -255,6 +256,7 @@ def build_region(seed=SEED,lod=False):
         for sign in (-1,1):
             off=4.25*sign
             box_block('Bridge_'+identity+'_Parapet',x+math.cos(yaw)*off,z-math.sin(yaw)*off,1.5,56,yaw)
+    customs_landing.prepare(t,PLAN,TER.PAVING)
     t.water_depth=np.maximum(0,PLAN.WATER_Y-t.height)
     materials=dict(SURFACES);materials[TER.PATH]='packed_earth'
     b.terrain_meshes=t.build_meshes(uv_scale=.35,materials=materials,
@@ -262,7 +264,18 @@ def build_region(seed=SEED,lod=False):
     b.water_meshes['Water_Lake']=M.quad([[-204,19,204],[204,19,204],[204,19,-204],[-204,19,-204]],
                                         uv_scale=.09,material='water_lake')
     b.authored_roads=[{'id':key,'waypoints':[list(p) for p in pts]} for key,pts in PLAN.ROADS.items()]
-    SB.apply(b,'four_gates')
+    with customs_landing.retain_footing_during_geography(b):
+        SB.apply(b,'four_gates')
+    sys.path.insert(0, str(HERE.parents[1] / 'nymara-regions' / '_finishing'))
+    import connector_finish
+    import tidal_approaches
+    tidal_approaches.apply(b)
+    connector_finish.apply(b, 'four_gates')
+    sys.path.insert(0, str(HERE.parents[1] / 'nymara-regions' / '_color'))
+    import terrain_paint
+    terrain_paint.apply(b, 'four_gates')
+    import corner_paint
+    corner_paint.apply(b)
     return b
 
 def walk_triangles(b):

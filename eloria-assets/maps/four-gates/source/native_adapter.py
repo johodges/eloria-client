@@ -35,6 +35,11 @@ def register_materials(builder,build,cache):
     for item in list(build.meshes.values())+list(build.terrain_meshes.values())+list(build.water_meshes.values()):
         for part in getattr(item,'all_parts',[item]):
             if part.triangle_count:used.add(part.material)
+    import corner_material
+    corner_materials={n for n in used if n.startswith(corner_material.PREFIX)}
+    if corner_materials:
+        corner_material.register(builder,build,corner_materials)
+        used-=corner_materials
     native={n[3:] for n in used if n.startswith('fg_')}
     if native:
         from assembly import MaterialLibrary

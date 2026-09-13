@@ -77,7 +77,7 @@ class InhabitedSunmane(unittest.TestCase):
             names=[e.get('name','') for e in doc['nodes']]
             self.assertFalse(any('StreamView_' in n or '_StreamOverflow_' in n for n in names))
             for spec in self.m['streamingBorders']:
-                self.assertEqual(spec['geometryMode'],'shared-cells-v2')
+                self.assertEqual(spec['geometryMode'],'continent-owned-v1')
                 self.assertTrue(spec['sceneNodes'])
         specs={e['portal']:e for e in self.m['streamingBorders']}
         # The west/south overlap is one stored atom, referenced by both views.
@@ -85,10 +85,16 @@ class InhabitedSunmane(unittest.TestCase):
         self.assertTrue(overlap)
 
     def test_compact_datum_and_primary_arrival(self):
-        self.assertEqual(self.m['asset']['serverCells'],384)
-        self.assertEqual(self.m['coordinateTransform']['serverOrigin'],[116,116])
+        geography=json.loads((PACKAGE.parent/'continent-geography.json').read_text())['regions']['sunmane_steppe']
+        frame=self.m['continentGeography']
+        self.assertEqual(frame['nativeServerCells'],[384,384])
+        self.assertEqual(frame['nativeServerOrigin'],[116,116])
+        self.assertEqual(self.m['asset']['serverCells'],geography['serverCells'][0])
+        self.assertEqual(self.m['coordinateTransform']['serverOrigin'],geography['serverOrigin'])
         spawn=next(e for e in self.m['spawnPoints'] if e['id']=='server-arrival')
-        self.assertEqual(spawn['serverTile'],[137,95])
+        expected=[value+delta for value,delta in zip([137,95],frame['serverTileShift'])]
+        self.assertEqual(spawn['serverTile'],expected)
+        self.assertEqual([spawn['position'][0],spawn['position'][2]],[21.,21.])
         self.assertTrue(self.m['contentLayout']['primaryArrivalOnly'])
         self.assertTrue(self.m['contentLayout']['requireFullWildlife'])
 

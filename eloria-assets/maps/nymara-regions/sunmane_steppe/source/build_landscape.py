@@ -150,7 +150,20 @@ def build_region(lod=False):
     # landscape horizon. It is neither collision nor a fabricated new road.
     b.terrain_meshes['Backdrop_Steppe']=T.backdrop(t,reach=160,cell=10,seed=P.SEED,
                                 material='steppe_sward',sea_level=0,open_side='west',clip_interior=True)
+    sys.path.insert(0, str(HERE.parents[1] / '_outer'))
+    import outer_aprons
+    outer_snapshot = outer_aprons.capture(b, 'sunmane_steppe')
     SB.apply(b,'sunmane_steppe')
+    outer_aprons.apply(b, 'sunmane_steppe', outer_snapshot)
+    sys.path.insert(0, str(HERE.parents[1] / '_finishing'))
+    import connector_finish
+    import march_approach
+    march_approach.apply(b)
+    connector_finish.apply(b, 'sunmane_steppe')
+    import south_landform
+    south_landform.apply(b)
+    import north_paint
+    north_paint.apply(b)
     # Both converters consume these legacy aliases; they must share the exact
     # surveyed trigger rather than leaving a second portal at the signpost.
     portals={p['id']:p for p in b.portals}

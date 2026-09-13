@@ -255,6 +255,7 @@ func load_world(manifest_path: String) -> void:
 	var index: Dictionary = _index_import()
 	var mesh_instances: Array = index["meshInstances"] as Array
 	mark = _phase(&"index", mark)
+	_apply_continent_water(mesh_instances)
 	_apply_material_passes(mesh_instances)
 	mark = _phase(&"materials", mark)
 	_apply_collision_declarations(index["byName"] as Dictionary)
@@ -675,6 +676,55 @@ func _build_texture_mipmaps(state: GLTFState) -> int:
 ## alpha, so albedo is unchanged.
 ##
 ## Returns how many materials the coverage flag reached.
+func _apply_continent_water(mesh_instances: Array) -> int:
+	if manifest == null or not manifest.data.has("continentGeography"):
+		return 0
+	var borders: Array = manifest.data.get("streamingBorders", [])
+	if borders.is_empty():
+		return 0
+	var translation: Array = borders[0].get("globalTranslation", [])
+	if translation.size() != 3:
+		return 0
+	var origin := Vector3(float(translation[0]), float(translation[1]), float(translation[2]))
+	var wave_texture: Texture2D
+	# Shared pixels are exported unchanged from the toolkit's water_lake.
+	# Loading the PNG directly also works without an editor import or a local
+	# water_lake material (Grey Moors only packages its regional bog material).
+	var waves := Image.load_from_file("res://assets/world/continent-water.png")
+	if waves != null and not waves.is_empty():
+		waves.generate_mipmaps()
+		wave_texture = ImageTexture.create_from_image(waves)
+	var applied := 0
+	for value: Variant in mesh_instances:
+		var node := value as MeshInstance3D
+		if node.mesh == null or not str(node.name).begins_with("Water_"):
+			continue
+		var local := node.transform
+		var parent := node.get_parent()
+		while parent != world_root and parent is Node3D:
+			local = (parent as Node3D).transform * local
+			parent = parent.get_parent()
+		var to_continent := Transform3D(Basis.IDENTITY, origin) * local
+		var bounds := to_continent * node.mesh.get_aabb()
+		# Only the shared sea-level plane. Raised ponds, fountains, waterfalls
+		# and authored river surfaces retain their own regional materials.
+		if absf(bounds.position.y) > .06 or absf(bounds.end.y) > .06:
+			continue
+		for surface: int in node.mesh.get_surface_count():
+			var original := node.mesh.surface_get_material(surface) as BaseMaterial3D
+			if original == null:
+				continue
+			var water := ShaderMaterial.new()
+			water.resource_name = "continent_sea"
+			water.shader = preload("res://src/world/continent_water.gdshader")
+			water.set_shader_parameter("water_to_continent", to_continent)
+			water.set_shader_parameter("wave_texture", wave_texture)
+			water.set_shader_parameter("has_wave_texture", wave_texture != null)
+			node.set_surface_override_material(surface, water)
+			applied += 1
+	return applied
+
+
 func _apply_material_passes(mesh_instances: Array) -> int:
 	var applied := 0
 	var filtered: Dictionary = {}
@@ -981,7 +1031,7 @@ func _trimesh_shape(mesh: Mesh) -> ConcavePolygonShape3D:
 func _group_streaming_views() -> void:
 	if manifest.data.get("streamingBorders", []).is_empty():
 		return
-	if manifest.data.streamingBorders[0].get("geometryMode", "") == "shared-cells-v2":
+	if manifest.data.streamingBorders[0].get("geometryMode", "") in ["shared-cells-v2", "continent-owned-v1"]:
 		_group_shared_streaming_cells()
 		return
 	var views: Array[Node3D] = []

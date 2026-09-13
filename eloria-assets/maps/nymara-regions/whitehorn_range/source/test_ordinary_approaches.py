@@ -8,7 +8,7 @@ import pytest
 PACKAGE=Path(__file__).resolve().parents[1]
 CLIENT=PACKAGE.parents[3]
 WORKSPACE=CLIENT.parent
-SERVER=WORKSPACE/'wt-south-server'
+SERVER=WORKSPACE/'work-output/southern-rollout/publish/server'
 sys.path[:0]=[str(SERVER),str(SERVER/'tools'),str(PACKAGE.parent/'_toolkit')]
 import sync_authored_collision as S
 import verify_runtime as V
@@ -29,16 +29,42 @@ APPROACHES={
 @pytest.fixture(scope='module')
 def built():
     manifest=json.loads((PACKAGE/'world.json').read_text())
-    raw=S.sources.SOURCES['whitehorn_range'].load(PACKAGE.parent.parent,396)
+    cells=int(manifest['asset']['serverCells'])
+    raw=S.sources.SOURCES['whitehorn_range'].load(PACKAGE.parent.parent,cells)
     factor,_,_=S.choose_stage(raw);grid=S.rescale(raw,factor)
     world=World.__new__(World);world.settings=SimpleNamespace(max_walk_height_change=2)
     world.sessions=[];world.animals_by_map={};world.animals={}
-    world.collision_maps={'whitehorn_range':with_step_mask(CollisionMap(396,396,grid.tobytes()),2)}
+    world.collision_maps={'whitehorn_range':with_step_mask(CollisionMap(cells,cells,grid.tobytes()),2)}
     doc,blob=V.load_glb(PACKAGE/'world.glb')
     tri,_=V.collect_triangles(doc,blob,lambda n:n.startswith(('Terrain_','Walk_')))
     rays=V.VerticalRayIndex(tri)
     portals={p['id']:p for p in manifest['portals'] if p['id'] in DOORS}
     return manifest,world,rays,portals
+
+
+def served_tile(manifest,native_tile):
+    origin=manifest['coordinateTransform']['serverOrigin']
+    native=manifest.get('continentGeography',{}).get('nativeServerOrigin',[120,120])
+    return tuple(int(p+o-n) for p,o,n in zip(native_tile,origin,native))
+
+
+def actor_xz(manifest,tile):
+    ox,oy=manifest['coordinateTransform']['serverOrigin']
+    return tile[0]-ox+.5,oy-tile[1]-.5
+
+
+def test_native_core_and_published_address_frame_are_distinct(built):
+    manifest,_,_,_=built
+    geography=manifest.get('continentGeography')
+    if geography:
+        assert geography['nativeServerOrigin']==[120,120]
+        assert geography['nativeServerCells']==[396,396]
+        plan=json.loads((PACKAGE.parent/'continent-geography.json').read_text())['regions']['whitehorn_range']
+        assert manifest['coordinateTransform']['serverOrigin']==plan['serverOrigin']
+        assert [manifest['asset']['serverCells']]*2==plan['serverCells']
+    else:
+        assert manifest['coordinateTransform']['serverOrigin']==[120,120]
+        assert manifest['asset']['serverCells']==396
 
 def test_all_seven_ordinary_door_identities_are_preserved(built):
     _,_,_,portals=built
@@ -47,21 +73,22 @@ def test_all_seven_ordinary_door_identities_are_preserved(built):
 
 @pytest.mark.parametrize('door',sorted(DOORS))
 def test_exact_door_reachable_without_server_floor_opening(built,door):
-    _,world,rays,portals=built;target=tuple(portals[door]['serverTile'])
-    path=world.find_path('whitehorn_range',(106,69),target,set())
+    manifest,world,rays,portals=built;target=tuple(portals[door]['serverTile'])
+    path=world.find_path('whitehorn_range',served_tile(manifest,(106,69)),target,set())
     assert path and tuple(path[-1])==target,(door,target)
-    surface=rays.top_hit(target[0]-120+.5,120-target[1]-.5)
+    surface=rays.top_hit(*actor_xz(manifest,target))
     assert surface is not None
     assert abs(surface-(portals[door]['position'][1]-.1))<.65,(door,surface,portals[door]['position'])
 
 @pytest.mark.parametrize('door',sorted(APPROACHES))
 def test_front_approach_is_short_and_physically_grounded(built,door):
-    _,world,rays,portals=built;start,limit=APPROACHES[door]
+    manifest,world,rays,portals=built;start,limit=APPROACHES[door]
+    start=served_tile(manifest,start)
     target=tuple(portals[door]['serverTile'])
     path=world.find_path('whitehorn_range',start,target,set())
     assert path and tuple(path[-1])==target,(door,start,target)
     assert sum(math.dist(a,b) for a,b in zip([start]+path,path))<=limit,(door,len(path))
-    heights=[rays.top_hit(x-120+.5,120-y-.5) for x,y in [start]+path]
+    heights=[rays.top_hit(*actor_xz(manifest,tile)) for tile in [start]+path]
     assert all(y is not None for y in heights)
     assert max(abs(a-b) for a,b in zip(heights,heights[1:]))<.85,(door,heights)
 

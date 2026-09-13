@@ -1598,5 +1598,25 @@
         "walkable": 13440
       }
     }
-  }
+  },
+  "npcMarkers": [
+    {
+      "id": "served-staff-estate-sporewright-umber-coll",
+      "name": "Estate Sporewright Umber Coll",
+      "map": "amberwood_estate",
+      "role": "dialogue",
+      "authority": "server",
+      "serverTile": [
+        58,
+        55
+      ],
+      "position": [
+        -133.5,
+        0.0,
+        136.5
+      ],
+      "placementSource": "publish_interior_staff.py",
+      "placementReason": "Amber Hall entry-side service post"
+    }
+  ]
 }

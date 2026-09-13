@@ -79,10 +79,12 @@ def content(server, data, *, exteriors=EXTERIORS, new=NEW, family=FAMILY):
             '--write-source-posts', '--apply')
 
 
-def publish(server, *, exteriors=EXTERIORS, family=FAMILY):
+def publish(server, *, exteriors=EXTERIORS, family=FAMILY, before_digests=None):
     sync_instance_returns(server, exteriors=exteriors)
     run(CLIENT, CLIENT/'eloria-assets/tools/publish_northern_content.py', '--server', server,
         *[arg for region in exteriors for arg in ('--region', region)])
+    if before_digests is not None:
+        before_digests()
     sys.path[:0] = [str(server/'tools'), str(server), str(CLIENT/'eloria-assets/tools')]
     import sync_package_content as packages
     from eloria.maps import load_maps
@@ -92,16 +94,27 @@ def publish(server, *, exteriors=EXTERIORS, family=FAMILY):
     path = profile/'client_content_manifest.json'
     data = json.loads(path.read_text(encoding='utf-8'))
     registry = packages.registry_packages()
+    for region in family:
+        if region not in registry or region not in ARRIVAL_TILES or region not in MAP_TILES_WIDE_BY_NAME:
+            raise ValueError(f'{region}: served family lacks a complete registry/generator contract')
+    existing = {entry['id'] for entry in data['maps']}
+    for region in sorted(set(family)-existing):
+        manifest = json.loads(registry[region].read_text(encoding='utf-8'))
+        data['maps'].append({'id': region, 'coordinateTransform': manifest['coordinateTransform']})
     for entry in data['maps']:
         region = entry['id']
-        if region not in family or region not in registry:
+        if region not in family:
             continue
-        entry['packageSha256'] = packages.digest_for(registry[region])
-        if region in exteriors:
-            entry['arrival'] = list(ARRIVAL_TILES[region])
-            entry['server_cells'] = MAP_TILES_WIDE_BY_NAME[region]*6
-            entry['portals'] = [{'server_tile': [p.x, p.y], 'destination': p.destination}
-                               for p in portals if p.source == region]
+        digest = packages.digest_for(registry[region])
+        if not isinstance(digest, str) or len(digest) != 64:
+            raise ValueError(f'{region}: served family package is incomplete; cannot publish its digest')
+        entry['packageSha256'] = digest
+        entry['arrival'] = list(ARRIVAL_TILES[region])
+        entry['server_cells'] = MAP_TILES_WIDE_BY_NAME[region]*6
+        if 'coordinateTransform' in entry:
+            entry['coordinateTransform'] = json.loads(registry[region].read_text(encoding='utf-8'))['coordinateTransform']
+        entry['portals'] = [{'server_tile': [p.x, p.y], 'destination': p.destination}
+                           for p in portals if p.source == region]
     path.write_text(json.dumps(data, indent=2)+'\n', encoding='utf-8')
     run(CLIENT, CLIENT/'eloria-assets/tools/build_exterior_streaming.py', '--server', server)
 

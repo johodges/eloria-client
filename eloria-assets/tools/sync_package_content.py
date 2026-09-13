@@ -382,6 +382,10 @@ def main() -> int:
             import contentposts
             posts = {".".join(section.path): wanted_tiles(manifest, section) for section in sections}
             data = json.loads((package / "world.json").read_text(encoding="utf-8"))
+            delta = contentposts.native_tile_delta(data, package)
+            posts = {bucket: {identity: [int(tile[i]-delta[i]) for i in (0,1)]
+                              for identity, tile in entries.items()}
+                     for bucket, entries in posts.items()}
             if data.get('landscapeRevision'):
                 posts['landscapeRevision'] = data['landscapeRevision']
             contentposts.apply(data, package, posts)

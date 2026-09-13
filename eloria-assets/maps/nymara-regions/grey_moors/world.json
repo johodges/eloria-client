@@ -18,36 +18,36 @@
     ],
     "bounds": {
       "min": [
-        -133.34,
+        -152.0,
         -16.0,
-        -285.3
+        -304.0
       ],
       "max": [
-        285.34,
-        29.52,
-        134.5
+        295.0,
+        28.86,
+        151.0
       ]
     },
     "playableBounds": {
       "min": [
-        -116.0,
+        -152,
         -16.0,
-        -267.0
+        -304
       ],
       "max": [
-        267.0,
-        16.24,
-        116.0
+        295,
+        20.87,
+        151
       ]
     },
     "seaLevel": 0.0,
-    "serverCells": 384
+    "serverCells": 426
   },
   "coordinateTransform": {
     "metresPerTile": 1.0,
     "serverOrigin": [
-      116.0,
-      116.0
+      116,
+      128
     ],
     "origin": [
       0.0,
@@ -55,7 +55,21 @@
       0.0
     ],
     "walkingHeight": 2.73,
-    "invertServerY": true
+    "invertServerY": true,
+    "serverCells": [
+      426,
+      426
+    ],
+    "addressableWorldBounds": {
+      "min": [
+        -116,
+        -298
+      ],
+      "max": [
+        310,
+        128
+      ]
+    }
   },
   "spawnPoints": [
     {
@@ -67,7 +81,7 @@
       ],
       "serverTile": [
         120,
-        110
+        122
       ],
       "rotationDegrees": 0.0,
       "surface": "MoorTrack",
@@ -82,7 +96,7 @@
       ],
       "serverTile": [
         204,
-        260
+        272
       ],
       "rotationDegrees": 180.0,
       "surface": "Causeway",
@@ -97,7 +111,7 @@
       ],
       "serverTile": [
         66,
-        61
+        73
       ],
       "rotationDegrees": 90.0,
       "surface": "MoorTrack",
@@ -112,7 +126,7 @@
       ],
       "serverTile": [
         204,
-        262
+        274
       ],
       "rotationDegrees": 0.0,
       "surface": "Causeway",
@@ -128,7 +142,7 @@
       ],
       "serverTile": [
         50,
-        281
+        293
       ],
       "rotationDegrees": 0.0,
       "surface": "HeatherMoor",
@@ -144,7 +158,7 @@
       ],
       "serverTile": [
         318,
-        235
+        247
       ],
       "rotationDegrees": 0.0,
       "surface": "MoorTrack",
@@ -160,7 +174,7 @@
       ],
       "serverTile": [
         194,
-        91
+        103
       ],
       "rotationDegrees": 0.0,
       "surface": "PeatBog",
@@ -176,7 +190,7 @@
       ],
       "serverTile": [
         366,
-        229
+        241
       ],
       "rotationDegrees": 0.0,
       "surface": "MoorTrack",
@@ -192,7 +206,7 @@
       ],
       "serverTile": [
         214,
-        53
+        65
       ],
       "rotationDegrees": 0.0,
       "surface": "HeatherMoor",
@@ -208,7 +222,7 @@
       ],
       "serverTile": [
         208,
-        249
+        261
       ],
       "rotationDegrees": 0.0,
       "surface": "HeatherMoor",
@@ -264,21 +278,27 @@
       "March_east_waygate_boat_009",
       "March_north_gate_Station",
       "March_north_gate_Stone",
-      "March_north_gate_tree_001",
-      "March_north_gate_tree_002",
+      "March_north_gate_tree_000",
+      "March_north_gate_tree_003",
       "March_north_gate_tree_005",
-      "March_north_gate_tree_006",
+      "March_north_gate_tree_007",
+      "March_north_gate_tree_008",
+      "March_north_gate_tree_009",
       "March_north_gate_tree_010",
+      "March_north_gate_tree_011",
       "March_south_gate_Station",
       "March_south_gate_Stone",
       "March_south_gate_boat_010",
       "March_south_gate_fern_012",
-      "March_south_gate_fern_013",
       "March_south_gate_fern_014",
       "March_south_gate_fern_015",
       "March_west_waygate_Station",
       "March_west_waygate_Stone",
+      "March_west_waygate_cart_008",
+      "March_west_waygate_haven_rock_004",
       "March_west_waygate_haven_rock_005",
+      "March_west_waygate_haven_rock_006",
+      "March_west_waygate_haven_rock_007",
       "RefugeWall0",
       "RefugeWall1",
       "RefugeWall2",
@@ -301,10 +321,10 @@
     "binary": "collision.bin",
     "format": "EWCG-v2",
     "cellMetres": 0.5,
-    "width": 768,
-    "height": 768,
+    "width": 852,
+    "height": 852,
     "heightEncoding": {
-      "origin": 0.1639,
+      "origin": -2.5932,
       "step": 0.2,
       "range": [
         1,
@@ -313,26 +333,30 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 536583,
-    "walkableFraction": 0.9097,
-    "saturatedCells": 4259,
+    "walkableCells": 566869,
+    "walkableFraction": 0.7809,
+    "saturatedCells": 6500,
+    "originMetres": [
+      -116,
+      128
+    ],
     "refinedHeights": {
       "levels": 255,
       "step": 0.2,
-      "origin": 0.1639,
-      "previousStep": 0.253007,
-      "cellsRestated": 543161,
-      "cellsFromGeometry": 536256,
-      "cellsKept": 6997
+      "origin": -2.5932,
+      "previousStep": 0.375357,
+      "cellsRestated": 567620,
+      "cellsFromGeometry": 567598,
+      "cellsKept": 240
     },
     "openedWalkSurfaces": {
       "prefix": "Walk_",
-      "cellsCovered": 5538,
-      "cellsWidened": 555,
-      "cellsOpened": 126,
-      "cellsRaised": 2774,
+      "cellsCovered": 29667,
+      "cellsWidened": 1461,
+      "cellsOpened": 215,
+      "cellsRaised": 18012,
       "cellsDrowned": 0,
-      "cellsBuried": 0,
+      "cellsBuried": 1,
       "cellsInsideLandmarks": 0
     },
     "actorSurfaceGuard": {
@@ -342,129 +366,129 @@
         0.5
       ],
       "heightToleranceMetres": 0.8,
-      "closedTiles": 1699,
-      "unsupportedTiles": 1584,
+      "closedTiles": 296,
+      "unsupportedTiles": 69,
       "submergedTiles": 4,
-      "heightMismatchTiles": 1699,
+      "heightMismatchTiles": 296,
       "samples": [
         {
           "tile": [
-            70,
-            5
+            373,
+            10
           ],
-          "encodedY": 4.564,
+          "encodedY": 13.007,
           "surfaceY": null,
           "unsupported": true,
           "submerged": false
         },
         {
           "tile": [
-            71,
-            5
-          ],
-          "encodedY": 4.564,
-          "surfaceY": null,
-          "unsupported": true,
-          "submerged": false
-        },
-        {
-          "tile": [
-            109,
+            373,
             11
           ],
-          "encodedY": 4.164,
+          "encodedY": 13.007,
           "surfaceY": null,
           "unsupported": true,
           "submerged": false
         },
         {
           "tile": [
-            67,
-            51
+            373,
+            12
           ],
-          "encodedY": 1.764,
-          "surfaceY": null,
-          "unsupported": true,
-          "submerged": true
-        },
-        {
-          "tile": [
-            67,
-            52
-          ],
-          "encodedY": 1.764,
-          "surfaceY": null,
-          "unsupported": true,
-          "submerged": true
-        },
-        {
-          "tile": [
-            67,
-            53
-          ],
-          "encodedY": 1.964,
-          "surfaceY": null,
-          "unsupported": true,
-          "submerged": true
-        },
-        {
-          "tile": [
-            67,
-            54
-          ],
-          "encodedY": 1.964,
-          "surfaceY": null,
-          "unsupported": true,
-          "submerged": true
-        },
-        {
-          "tile": [
-            67,
-            55
-          ],
-          "encodedY": 2.164,
+          "encodedY": 13.807,
           "surfaceY": null,
           "unsupported": true,
           "submerged": false
         },
         {
           "tile": [
-            67,
-            56
+            380,
+            14
           ],
-          "encodedY": 2.164,
+          "encodedY": 10.207,
           "surfaceY": null,
           "unsupported": true,
           "submerged": false
         },
         {
           "tile": [
-            67,
-            68
+            335,
+            15
           ],
-          "encodedY": 3.164,
-          "surfaceY": 2.362,
+          "encodedY": 14.207,
+          "surfaceY": 13.359,
           "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            50,
-            69
+            1,
+            16
           ],
-          "encodedY": 6.164,
-          "surfaceY": null,
-          "unsupported": true,
+          "encodedY": 9.407,
+          "surfaceY": 8.557,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            2,
+            16
+          ],
+          "encodedY": 9.007,
+          "surfaceY": 7.973,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            333,
+            16
+          ],
+          "encodedY": 14.007,
+          "surfaceY": 13.193,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            335,
+            16
+          ],
+          "encodedY": 13.407,
+          "surfaceY": 12.557,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            336,
+            16
+          ],
+          "encodedY": 13.207,
+          "surfaceY": 12.36,
+          "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
             1,
-            70
+            17
           ],
-          "encodedY": 6.164,
-          "surfaceY": null,
-          "unsupported": true,
+          "encodedY": 9.007,
+          "surfaceY": 7.83,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            331,
+            17
+          ],
+          "encodedY": 14.007,
+          "surfaceY": 13.144,
+          "unsupported": false,
           "submerged": false
         }
       ]
@@ -1190,7 +1214,7 @@
       "type": "monument",
       "position": [
         36.2465,
-        8.459939787586237,
+        4.08,
         -232.7267
       ]
     },
@@ -1399,7 +1423,7 @@
       "type": "shrine",
       "position": [
         -69.1802,
-        7.196146215669701,
+        7.22,
         47.9832
       ]
     },
@@ -1509,7 +1533,7 @@
       "type": "ruin",
       "position": [
         -84.7868,
-        6.661948010444136,
+        5.24,
         -39.7479
       ]
     },
@@ -1531,7 +1555,7 @@
       "type": "ruin",
       "position": [
         -53.5736,
-        4.739815384713048,
+        4.09,
         -220.2689
       ]
     },
@@ -1608,7 +1632,7 @@
       "type": "landmark-tree",
       "position": [
         -64.8393,
-        4.181119288074273,
+        3.94,
         -219.6305
       ]
     },
@@ -1652,7 +1676,7 @@
       "type": "landmark-tree",
       "position": [
         -88.3474,
-        6.934673873173896,
+        6.26,
         28.5686
       ]
     },
@@ -1874,7 +1898,7 @@
       "type": "transition",
       "position": [
         -102.1275,
-        4.982064677886367,
+        4.8,
         11.4345
       ],
       "note": "Where the Grey Moors gives way to Westhaven: greyhaven road furniture, a march stone, a waystation, and 9 pieces of the country beyond."
@@ -1886,7 +1910,7 @@
       "type": "waystation",
       "position": [
         -92.8791,
-        5.125449068647925,
+        4.77,
         17.6345
       ]
     },
@@ -1920,7 +1944,7 @@
       "type": "transition",
       "position": [
         -13.3132,
-        4.203581338510655,
+        4.0,
         -253.6807
       ],
       "note": "Where the Grey Moors gives way to the Amberwood: greyhaven road furniture, a march stone, a waystation, and 12 pieces of the country beyond."
@@ -1932,7 +1956,7 @@
       "type": "waystation",
       "position": [
         -19.5132,
-        4.993119183992826,
+        4.0,
         -244.1345
       ]
     },
@@ -1979,7 +2003,7 @@
       "authority": "server",
       "serverTile": [
         143,
-        237
+        249
       ]
     },
     {
@@ -2000,7 +2024,7 @@
       "authority": "server",
       "serverTile": [
         226,
-        54
+        66
       ]
     },
     {
@@ -2021,7 +2045,7 @@
       "authority": "server",
       "serverTile": [
         198,
-        193
+        205
       ]
     },
     {
@@ -2042,7 +2066,7 @@
       "authority": "server",
       "serverTile": [
         222,
-        300
+        312
       ]
     },
     {
@@ -2063,7 +2087,7 @@
       "authority": "server",
       "serverTile": [
         268,
-        23
+        35
       ]
     },
     {
@@ -2084,7 +2108,7 @@
       "authority": "server",
       "serverTile": [
         174,
-        142
+        154
       ]
     },
     {
@@ -2105,7 +2129,7 @@
       "authority": "server",
       "serverTile": [
         169,
-        217
+        229
       ]
     },
     {
@@ -2126,7 +2150,7 @@
       "authority": "server",
       "serverTile": [
         251,
-        67
+        79
       ]
     },
     {
@@ -2147,7 +2171,7 @@
       "authority": "server",
       "serverTile": [
         296,
-        235
+        247
       ]
     },
     {
@@ -2168,7 +2192,7 @@
       "authority": "server",
       "serverTile": [
         316,
-        205
+        217
       ]
     },
     {
@@ -2189,7 +2213,7 @@
       "authority": "server",
       "serverTile": [
         305,
-        137
+        149
       ]
     },
     {
@@ -2210,7 +2234,7 @@
       "authority": "server",
       "serverTile": [
         172,
-        165
+        177
       ]
     },
     {
@@ -2231,7 +2255,7 @@
       "authority": "server",
       "serverTile": [
         375,
-        228
+        240
       ]
     },
     {
@@ -2252,7 +2276,7 @@
       "authority": "server",
       "serverTile": [
         340,
-        320
+        332
       ]
     },
     {
@@ -2273,7 +2297,7 @@
       "authority": "server",
       "serverTile": [
         269,
-        137
+        149
       ]
     }
   ],
@@ -2288,7 +2312,7 @@
       ],
       "serverTile": [
         204,
-        260
+        272
       ],
       "role": "editor-marker",
       "authority": "server"
@@ -2303,7 +2327,7 @@
       ],
       "serverTile": [
         175,
-        174
+        186
       ],
       "role": "editor-marker",
       "authority": "server"
@@ -2318,7 +2342,7 @@
       ],
       "serverTile": [
         234,
-        134
+        146
       ],
       "role": "editor-marker",
       "authority": "server"
@@ -2333,7 +2357,7 @@
       ],
       "serverTile": [
         140,
-        138
+        150
       ],
       "role": "editor-marker",
       "authority": "server"
@@ -2348,7 +2372,7 @@
       ],
       "serverTile": [
         192,
-        93
+        105
       ],
       "role": "editor-marker",
       "authority": "server"
@@ -2363,7 +2387,7 @@
       ],
       "serverTile": [
         47,
-        68
+        80
       ],
       "role": "editor-marker",
       "authority": "server"
@@ -2378,7 +2402,7 @@
       ],
       "serverTile": [
         59,
-        75
+        87
       ],
       "role": "editor-marker",
       "authority": "server"
@@ -2393,7 +2417,7 @@
       ],
       "serverTile": [
         120,
-        110
+        122
       ],
       "role": "editor-marker",
       "authority": "server"
@@ -2408,7 +2432,7 @@
       ],
       "serverTile": [
         304,
-        209
+        221
       ],
       "role": "editor-marker",
       "authority": "server"
@@ -2423,7 +2447,7 @@
       ],
       "serverTile": [
         256,
-        145
+        157
       ],
       "role": "editor-marker",
       "authority": "server"
@@ -2505,7 +2529,7 @@
       ],
       "serverTile": [
         72,
-        180
+        192
       ],
       "authority": "server"
     },
@@ -2519,7 +2543,7 @@
       ],
       "serverTile": [
         169,
-        361
+        373
       ],
       "authority": "server"
     },
@@ -2533,7 +2557,7 @@
       ],
       "serverTile": [
         188,
-        32
+        44
       ],
       "authority": "server"
     },
@@ -2547,7 +2571,7 @@
       ],
       "serverTile": [
         200,
-        187
+        199
       ],
       "authority": "server"
     },
@@ -2561,7 +2585,7 @@
       ],
       "serverTile": [
         200,
-        64
+        76
       ],
       "authority": "server"
     },
@@ -2575,7 +2599,7 @@
       ],
       "serverTile": [
         252,
-        87
+        99
       ],
       "authority": "server"
     },
@@ -2589,7 +2613,7 @@
       ],
       "serverTile": [
         60,
-        167
+        179
       ],
       "authority": "server"
     },
@@ -2603,7 +2627,7 @@
       ],
       "serverTile": [
         353,
-        292
+        304
       ],
       "authority": "server"
     },
@@ -2617,7 +2641,7 @@
       ],
       "serverTile": [
         167,
-        254
+        266
       ],
       "authority": "server"
     },
@@ -2631,7 +2655,7 @@
       ],
       "serverTile": [
         261,
-        346
+        358
       ],
       "authority": "server"
     },
@@ -2645,7 +2669,7 @@
       ],
       "serverTile": [
         379,
-        199
+        211
       ],
       "authority": "server"
     },
@@ -2659,7 +2683,7 @@
       ],
       "serverTile": [
         368,
-        274
+        286
       ],
       "authority": "server"
     },
@@ -2673,7 +2697,7 @@
       ],
       "serverTile": [
         204,
-        97
+        109
       ],
       "authority": "server"
     },
@@ -2687,7 +2711,7 @@
       ],
       "serverTile": [
         147,
-        166
+        178
       ],
       "authority": "server"
     },
@@ -2701,7 +2725,7 @@
       ],
       "serverTile": [
         332,
-        260
+        272
       ],
       "authority": "server"
     },
@@ -2715,7 +2739,7 @@
       ],
       "serverTile": [
         228,
-        234
+        246
       ],
       "authority": "server"
     },
@@ -2729,7 +2753,7 @@
       ],
       "serverTile": [
         298,
-        166
+        178
       ],
       "authority": "server"
     },
@@ -2743,7 +2767,7 @@
       ],
       "serverTile": [
         82,
-        156
+        168
       ],
       "authority": "server"
     },
@@ -2757,7 +2781,7 @@
       ],
       "serverTile": [
         175,
-        255
+        267
       ],
       "authority": "server"
     },
@@ -2771,7 +2795,7 @@
       ],
       "serverTile": [
         173,
-        177
+        189
       ],
       "authority": "server"
     },
@@ -2785,7 +2809,7 @@
       ],
       "serverTile": [
         158,
-        247
+        259
       ],
       "authority": "server"
     },
@@ -2799,7 +2823,7 @@
       ],
       "serverTile": [
         224,
-        375
+        387
       ],
       "authority": "server"
     },
@@ -2813,7 +2837,7 @@
       ],
       "serverTile": [
         313,
-        327
+        339
       ],
       "authority": "server"
     },
@@ -2827,7 +2851,7 @@
       ],
       "serverTile": [
         244,
-        147
+        159
       ],
       "authority": "server"
     },
@@ -2841,7 +2865,7 @@
       ],
       "serverTile": [
         287,
-        375
+        387
       ],
       "authority": "server"
     },
@@ -2855,7 +2879,7 @@
       ],
       "serverTile": [
         346,
-        113
+        125
       ],
       "authority": "server"
     },
@@ -2869,7 +2893,7 @@
       ],
       "serverTile": [
         76,
-        187
+        199
       ],
       "authority": "server"
     },
@@ -2883,7 +2907,7 @@
       ],
       "serverTile": [
         339,
-        314
+        326
       ],
       "authority": "server"
     },
@@ -2897,7 +2921,7 @@
       ],
       "serverTile": [
         280,
-        330
+        342
       ],
       "authority": "server"
     },
@@ -2911,7 +2935,7 @@
       ],
       "serverTile": [
         359,
-        137
+        149
       ],
       "authority": "server"
     },
@@ -2925,7 +2949,7 @@
       ],
       "serverTile": [
         38,
-        215
+        227
       ],
       "authority": "server"
     },
@@ -2939,7 +2963,7 @@
       ],
       "serverTile": [
         53,
-        369
+        381
       ],
       "authority": "server"
     },
@@ -2953,7 +2977,7 @@
       ],
       "serverTile": [
         175,
-        22
+        34
       ],
       "authority": "server"
     },
@@ -2967,7 +2991,7 @@
       ],
       "serverTile": [
         297,
-        142
+        154
       ],
       "authority": "server"
     },
@@ -2981,7 +3005,7 @@
       ],
       "serverTile": [
         353,
-        234
+        246
       ],
       "authority": "server"
     },
@@ -2995,7 +3019,7 @@
       ],
       "serverTile": [
         274,
-        173
+        185
       ],
       "authority": "server"
     },
@@ -3009,7 +3033,7 @@
       ],
       "serverTile": [
         308,
-        181
+        193
       ],
       "authority": "server"
     },
@@ -3023,7 +3047,7 @@
       ],
       "serverTile": [
         302,
-        171
+        183
       ],
       "authority": "server"
     },
@@ -3037,7 +3061,7 @@
       ],
       "serverTile": [
         224,
-        383
+        395
       ],
       "authority": "server"
     },
@@ -3051,7 +3075,7 @@
       ],
       "serverTile": [
         174,
-        340
+        352
       ],
       "authority": "server"
     },
@@ -3065,7 +3089,7 @@
       ],
       "serverTile": [
         346,
-        107
+        119
       ],
       "authority": "server"
     },
@@ -3079,7 +3103,7 @@
       ],
       "serverTile": [
         230,
-        48
+        60
       ],
       "authority": "server"
     },
@@ -3093,7 +3117,7 @@
       ],
       "serverTile": [
         55,
-        345
+        357
       ],
       "authority": "server"
     },
@@ -3107,7 +3131,7 @@
       ],
       "serverTile": [
         190,
-        57
+        69
       ],
       "authority": "server"
     },
@@ -3121,7 +3145,7 @@
       ],
       "serverTile": [
         22,
-        356
+        368
       ],
       "authority": "server"
     },
@@ -3135,7 +3159,7 @@
       ],
       "serverTile": [
         323,
-        186
+        198
       ],
       "authority": "server"
     },
@@ -3149,7 +3173,7 @@
       ],
       "serverTile": [
         92,
-        150
+        162
       ],
       "authority": "server"
     },
@@ -3163,7 +3187,7 @@
       ],
       "serverTile": [
         13,
-        357
+        369
       ],
       "authority": "server"
     },
@@ -3177,7 +3201,7 @@
       ],
       "serverTile": [
         58,
-        179
+        191
       ],
       "authority": "server"
     },
@@ -3191,7 +3215,7 @@
       ],
       "serverTile": [
         112,
-        83
+        95
       ],
       "authority": "server"
     },
@@ -3205,7 +3229,7 @@
       ],
       "serverTile": [
         49,
-        183
+        195
       ],
       "authority": "server"
     },
@@ -3219,7 +3243,7 @@
       ],
       "serverTile": [
         270,
-        107
+        119
       ],
       "authority": "server"
     },
@@ -3233,7 +3257,7 @@
       ],
       "serverTile": [
         136,
-        177
+        189
       ],
       "authority": "server"
     },
@@ -3247,7 +3271,7 @@
       ],
       "serverTile": [
         253,
-        355
+        367
       ],
       "authority": "server"
     },
@@ -3261,7 +3285,7 @@
       ],
       "serverTile": [
         186,
-        155
+        167
       ],
       "authority": "server"
     },
@@ -3275,7 +3299,7 @@
       ],
       "serverTile": [
         249,
-        72
+        84
       ],
       "authority": "server"
     },
@@ -3289,7 +3313,7 @@
       ],
       "serverTile": [
         308,
-        113
+        125
       ],
       "authority": "server"
     }
@@ -3300,13 +3324,13 @@
       "name": "Haven Road to Westhaven",
       "type": "map-transition",
       "position": [
-        -106.5,
-        4.95,
-        6.5
+        21.5,
+        19.475,
+        117.5
       ],
       "serverTile": [
-        9,
-        109
+        137,
+        10
       ],
       "destinationMap": "westhaven",
       "radius": 3.5,
@@ -3322,8 +3346,8 @@
         64.0924
       ],
       "serverTile": [
-        66,
-        52
+        65,
+        63
       ],
       "destinationMap": "crownwater",
       "radius": 3.5,
@@ -3334,13 +3358,13 @@
       "name": "North Track into the Amberwood",
       "type": "map-transition",
       "position": [
-        -8.5,
-        4.0,
-        -257.5
+        264.5,
+        7.55,
+        -294.5
       ],
       "serverTile": [
-        107,
-        373
+        380,
+        422
       ],
       "destinationMap": "amberwood",
       "radius": 3.5,
@@ -3351,13 +3375,13 @@
       "name": "Drain Road down to the Delta",
       "type": "map-transition",
       "position": [
-        150.0835,
-        4.43,
-        101.6807
+        289.5,
+        3.14,
+        122.5
       ],
       "serverTile": [
-        266,
-        14
+        405,
+        5
       ],
       "destinationMap": "manymouth_delta",
       "radius": 3.5,
@@ -3374,7 +3398,7 @@
       ],
       "serverTile": [
         204,
-        262
+        274
       ],
       "landmark": "grey-great-barrow",
       "destinationMap": "grey_moor_barrows",
@@ -3393,7 +3417,7 @@
       ],
       "serverTile": [
         50,
-        281
+        293
       ],
       "landmark": "grey-crypt-west",
       "destinationMap": "grey_moor_barrows",
@@ -3412,7 +3436,7 @@
       ],
       "serverTile": [
         318,
-        235
+        247
       ],
       "landmark": "grey-crypt-east",
       "destinationMap": "grey_moor_barrows",
@@ -3431,7 +3455,7 @@
       ],
       "serverTile": [
         194,
-        91
+        103
       ],
       "landmark": "grey-crypt-south",
       "destinationMap": "grey_moor_barrows",
@@ -3450,7 +3474,7 @@
       ],
       "serverTile": [
         366,
-        229
+        241
       ],
       "landmark": "grey-tower-3",
       "destinationMap": "grey_moor_barrows",
@@ -3469,7 +3493,7 @@
       ],
       "serverTile": [
         214,
-        53
+        65
       ],
       "landmark": "grey-croft-1",
       "destinationMap": "grey_moor_barrows",
@@ -3488,7 +3512,7 @@
       ],
       "serverTile": [
         208,
-        249
+        261
       ],
       "landmark": "grey-shrine-0",
       "destinationMap": "grey_moor_barrows",
@@ -3538,22 +3562,22 @@
       "waypoints": [
         [
           -105.6,
-          4.95,
+          4.85,
           6.1
         ],
         [
           -90.0,
-          4.93,
+          4.73,
           6.1
         ],
         [
           -72.6,
-          4.28,
+          4.09,
           0.1
         ],
         [
           -53.6,
-          3.31,
+          3.39,
           3.1
         ],
         [
@@ -3698,17 +3722,17 @@
         ],
         [
           -67.4,
-          4.85,
+          4.8,
           42.6
         ],
         [
           -69.2,
-          6.41,
+          6.43,
           48.0
         ],
         [
           -76.1,
-          8.65,
+          9.96,
           48.0
         ]
       ]
@@ -3788,17 +3812,17 @@
         ],
         [
           10.0,
-          4.15,
+          3.82,
           -221.5
         ],
         [
           -8.0,
-          4.04,
+          3.96,
           -234.0
         ],
         [
           -20.0,
-          5.06,
+          4.0,
           -242.9
         ],
         [
@@ -3828,12 +3852,12 @@
         ],
         [
           -67.4,
-          2.83,
+          2.73,
           -45.1
         ],
         [
           -79.6,
-          4.78,
+          3.94,
           -43.3
         ],
         [
@@ -3908,12 +3932,12 @@
         ],
         [
           150.1,
-          4.33,
+          10.94,
           101.7
         ],
         [
           150.1,
-          4.06,
+          19.87,
           116.0
         ]
       ]
@@ -3943,7 +3967,7 @@
       "waypoints": [
         [
           -53.6,
-          3.31,
+          3.39,
           3.1
         ],
         [
@@ -3958,7 +3982,7 @@
         ],
         [
           -79.6,
-          4.78,
+          3.94,
           -43.3
         ]
       ]
@@ -4218,12 +4242,12 @@
         ],
         [
           -30.0,
-          2.98,
+          2.85,
           12.1
         ],
         [
           -25.0,
-          2.98,
+          2.95,
           18.1
         ]
       ]
@@ -4233,12 +4257,12 @@
       "waypoints": [
         [
           -76.1,
-          4.48,
+          3.87,
           -42.7
         ],
         [
           -84.8,
-          5.57,
+          4.02,
           -35.6
         ]
       ]
@@ -4248,17 +4272,17 @@
       "waypoints": [
         [
           -31.0,
-          4.21,
+          3.25,
           -224.4
         ],
         [
           -44.9,
-          3.75,
+          2.86,
           -221.5
         ],
         [
           -53.6,
-          3.52,
+          2.87,
           -220.3
         ]
       ]
@@ -4268,12 +4292,12 @@
       "waypoints": [
         [
           -53.6,
-          3.31,
+          3.39,
           3.1
         ],
         [
           -59.9,
-          2.43,
+          2.48,
           -2.9
         ],
         [
@@ -4314,9 +4338,19 @@
         "type": "sea"
       },
       {
+        "id": "Water_Sea_StreamCell_amberwood-grey",
+        "node": "Water_Sea_StreamCell_amberwood-grey",
+        "type": "sea"
+      },
+      {
         "id": "Water_Sea_StreamCell_grey-westhaven",
         "node": "Water_Sea_StreamCell_grey-westhaven",
         "type": "sea"
+      },
+      {
+        "id": "Water_OuterApron_grey_moors",
+        "node": "Water_OuterApron_grey_moors",
+        "type": "pool"
       }
     ],
     "streams": [
@@ -4360,7 +4394,7 @@
           ],
           [
             -64.0,
-            -16.0,
+            -8.49,
             83.8
           ]
         ]
@@ -4400,7 +4434,7 @@
           ],
           [
             70.4,
-            1.91,
+            11.73,
             90.9
           ]
         ]
@@ -4410,12 +4444,12 @@
         "waypoints": [
           [
             -50.1,
-            10.72,
+            0.21,
             -253.7
           ],
           [
             -26.0,
-            4.12,
+            3.37,
             -225.0
           ],
           [
@@ -4635,46 +4669,60 @@
   "minimap": {
     "image": "minimap.webp",
     "imageSize": [
-      383,
-      383
+      447,
+      455
     ],
     "pixelsPerMetre": 1.0,
     "worldMin": [
-      -116.0,
-      -267.0
+      -152,
+      -304
     ],
     "worldMax": [
-      267.0,
-      116.0
+      295,
+      151
     ],
     "northAxis": "-Z",
     "orientation": "north-up",
     "projection": "orthographic-top-down",
-    "renderedFrom": "final geometry (offline rasteriser)",
+    "renderedFrom": "world.glb (shared geometry cartography renderer)",
     "transform": {
       "pixelX": {
         "scale": 1.0,
-        "offset": 116.0
+        "offset": 152
       },
       "pixelY": {
         "scale": 1.0,
-        "offset": 267.0
+        "offset": 304
       },
       "formula": "pixel_x = world_x * scale + offset; pixel_y = world_z * scale + offset"
     },
     "note": "Every Eloria minimap is drawn at one pixel to the metre, so the image's pixel size is the map's size in metres.",
     "file": "minimap.webp",
-    "pixels": 383,
+    "pixels": 447,
     "size": [
-      383,
-      383
+      447,
+      455
     ],
     "metresPerPixel": 1.0,
     "centre": [
-      75.5,
-      -75.5
+      71.5,
+      -76.5
     ],
-    "northUp": true
+    "northUp": true,
+    "geometryImage": "cartography.webp",
+    "cartographyRender": {
+      "generator": "eloria-assets/tools/render_region_cartography.py",
+      "styleVersion": 4,
+      "glbSha256": "9a341d4103060d2fb5f7af2cf839e983bb199e1f605f811c384880d7802948db",
+      "toolSha256": "e5c5cab675ec4f463d33a3dd17d43cec6c41a7aee2a4ea6defb82f4451d496c3",
+      "rendererSourceSha256": "20a909b6f7b76e84867caed2e5bdcc3b6ae708ffc5231899794b2bef09005a05",
+      "supersample": 2,
+      "waterRGB": [
+        79,
+        150,
+        157
+      ]
+    }
   },
   "lodGroups": [
     {
@@ -4697,41 +4745,41 @@
     }
   ],
   "performance": {
-    "nodes": 4357,
-    "meshes": 717,
-    "materials": 48,
-    "images": 106,
-    "textures": 106,
-    "accessors": 2941,
-    "bufferViews": 3047,
-    "uniqueTriangles": 512296,
-    "uniqueVertices": 404902,
-    "glbBytes": 32235108,
-    "instancedTriangles": 668060,
-    "embeddedTextureBytes": 13786054,
-    "textureMemoryBytesUncompressed": 108134400,
-    "placements": 3782,
+    "nodes": 4204,
+    "meshes": 768,
+    "materials": 49,
+    "images": 109,
+    "textures": 109,
+    "accessors": 3188,
+    "bufferViews": 3297,
+    "uniqueTriangles": 911770,
+    "uniqueVertices": 621421,
+    "glbBytes": 42994800,
+    "instancedTriangles": 1065574,
+    "embeddedTextureBytes": 14447815,
+    "textureMemoryBytesUncompressed": 111280128,
+    "placements": 3580,
     "collision": {
       "width": 768,
       "height": 768,
       "cellMetres": 0.5,
-      "walkableCells": 543253,
-      "blockedCells": 46571,
-      "walkableFraction": 0.921,
+      "walkableCells": 539278,
+      "blockedCells": 50546,
+      "walkableFraction": 0.9143,
       "elevatedDecks": 13,
-      "steepCells": 13085,
-      "reliefMetres": 15.69,
+      "steepCells": 21261,
+      "reliefMetres": 20.32,
       "heightEncoding": {
-        "origin": 0.2971,
-        "step": 0.253007,
+        "origin": 0.2222,
+        "step": 0.327822,
         "range": [
           1,
           63
         ],
         "zeroMeansBlocked": true
       },
-      "saturatedCells": 4259,
-      "saturatedFraction": 0.0078,
+      "saturatedCells": 6500,
+      "saturatedFraction": 0.0121,
       "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
       "columnOrder": "server-tile-x (column 0 is the -X western edge)"
     },
@@ -4744,13 +4792,17 @@
       "march north-gate: 2 road pieces, 12 of amberwood's growth",
       "march south-gate: 6 road pieces, 16 of manymouth_delta's growth",
       "Inhabited 384 m survey: protected peat refuge and Great Barrow; connected work yards; grazing clearings, wet sedge and ritual stone clusters.",
-      "walk corridors: 28 encroaching dressing placements removed"
+      "walk corridors: 28 encroaching dressing placements removed",
+      "Continent ownership is actual clipped geometry in one translation-only frame; native structures retain their scale and pose.",
+      "Outer apron: actual native perimeter, authored irregular outer contours, intact playable core and common approaches; physical water only at the existing regional datum.",
+      "Generated connector finish: one connected half-metre road bed at curves and shared junctions, intact boundary strip and native bridges, terrain and paint seated from actual final triangles.",
+      "Geographic paint corners use the nearest actual shared edge; each full neighboring recipe stays together above unchanged physical substrate."
     ],
     "lod2": {
-      "glbBytes": 19582640,
-      "nodes": 845,
-      "uniqueTriangles": 495716,
-      "instancedTriangles": 492524
+      "glbBytes": 29824088,
+      "nodes": 900,
+      "uniqueTriangles": 895190,
+      "instancedTriangles": 899386
     }
   },
   "sources": [
@@ -4786,223 +4838,811 @@
       "portal": "north-gate",
       "destination": "amberwood",
       "anchor": [
-        -8.5,
-        4,
-        -256.5
+        264.5,
+        7.55,
+        -293.5
       ],
       "outward": [
         0,
         -1
       ],
+      "globalTranslation": [
+        174.0,
+        0,
+        1086.0
+      ],
+      "globalAnchor": [
+        438.5,
+        7.55,
+        792.5
+      ],
       "uvSign": -1,
       "palette": "moor",
-      "preloadDistance": 170,
-      "retainDistance": 220,
-      "blendDistance": 65,
+      "preloadDistance": 240,
+      "retainDistance": 320,
+      "blendDistance": 90,
       "collarDepth": 42,
       "halfWidthTiles": 3,
-      "viewHalfWidth": 40.0,
-      "viewDepth": 145.0,
-      "previewPrefix": "StreamView_amberwood-grey__",
-      "overflowSuffix": "_StreamOverflow_amberwood-grey",
-      "geometryMode": "shared-cells-v2",
+      "viewHalfWidth": 110,
+      "viewDepth": 240,
+      "geometryMode": "continent-owned-v1",
       "sceneNodes": [
         "Terrain_Shore_StreamCell_amberwood-grey",
         "Terrain_HeatherMoor_StreamCell_amberwood-grey",
         "Terrain_PeatBog_StreamCell_amberwood-grey",
         "Terrain_BarrowTurf_StreamCell_amberwood-grey",
         "Terrain_MoorTrack_StreamCell_amberwood-grey",
-        "Terrain_MarchAmberwood_StreamCell_amberwood-grey",
         "Terrain_MoorJunctionSubstrate_StreamCell_amberwood-grey",
+        "Terrain_ContinentExtension_grey_moors_StreamCell_amberwood-grey",
         "Terrain_Shore_StreamCollar_amberwood-grey_Turf_StreamCell_amberwood-grey",
         "Terrain_Shore_StreamCollar_amberwood-grey_Frost_StreamCell_amberwood-grey",
-        "Terrain_HeatherMoor_StreamCollar_amberwood-grey_Turf_StreamCell_amberwood-grey",
-        "Terrain_HeatherMoor_StreamCollar_amberwood-grey_Frost_StreamCell_amberwood-grey",
-        "Terrain_HeatherMoor_StreamCollar_amberwood-grey_Road_StreamCell_amberwood-grey",
+        "Terrain_Shore_StreamCollar_amberwood-grey_Road_StreamCell_amberwood-grey",
         "Terrain_PeatBog_StreamCollar_amberwood-grey_Turf_StreamCell_amberwood-grey",
         "Terrain_PeatBog_StreamCollar_amberwood-grey_Frost_StreamCell_amberwood-grey",
-        "Terrain_MoorTrack_StreamCollar_amberwood-grey_Turf_StreamCell_amberwood-grey",
-        "Terrain_MoorTrack_StreamCollar_amberwood-grey_Frost_StreamCell_amberwood-grey",
-        "Terrain_MoorTrack_StreamCollar_amberwood-grey_Road_StreamCell_amberwood-grey",
-        "Terrain_MarchAmberwood_StreamCollar_amberwood-grey_Turf_StreamCell_amberwood-grey",
-        "Terrain_MarchAmberwood_StreamCollar_amberwood-grey_Frost_StreamCell_amberwood-grey",
-        "Terrain_MarchAmberwood_StreamCollar_amberwood-grey_Road_StreamCell_amberwood-grey",
-        "Terrain_MoorJunctionSubstrate_StreamCollar_amberwood-grey_Turf_StreamCell_amberwood-grey",
-        "Terrain_MoorJunctionSubstrate_StreamCollar_amberwood-grey_Frost_StreamCell_amberwood-grey",
-        "Terrain_MoorJunctionSubstrate_StreamCollar_amberwood-grey_Road_StreamCell_amberwood-grey",
-        "Landmark_Barrow_2",
-        "Landmark_Croft_4",
-        "Prop_CroftFence_4_0",
-        "Landmark_PeatCutting_2",
-        "Landmark_boardwalk_north",
-        "Prop_Waymarker_25",
-        "Prop_Cairn_8",
-        "Prop_Waymarker_60",
-        "Prop_Waymarker_61",
-        "Prop_Cairn_22",
-        "Prop_Waymarker_69",
+        "Terrain_ContinentExtension_grey_moors_StreamCollar_amberwood-grey_Turf_StreamCell_amberwood-grey",
+        "Terrain_ContinentExtension_grey_moors_StreamCollar_amberwood-grey_Frost_StreamCell_amberwood-grey",
+        "Terrain_ContinentExtension_grey_moors_StreamCollar_amberwood-grey_Road_StreamCell_amberwood-grey",
+        "Water_Sea_StreamCell_amberwood-grey",
+        "Landmark_Barrow_1",
+        "Landmark_Barrow_4",
+        "Landmark_Crypt_2",
+        "Landmark_Shrine_2",
+        "Landmark_Tower_3",
+        "Landmark_Tower_4",
+        "Landmark_DeadTree_1",
+        "Landmark_DeadTree_2",
+        "Landmark_DeadTree_6",
+        "Prop_Waymarker_18",
+        "Prop_Waymarker_19",
+        "Prop_Cairn_6",
+        "Prop_Waymarker_21",
+        "Prop_Waymarker_22",
+        "Prop_Cairn_17",
+        "Prop_Waymarker_54",
+        "Prop_Waymarker_55",
+        "Prop_Cairn_18",
+        "Prop_Waymarker_57",
+        "Prop_Waymarker_73",
+        "Water_BogPool_4",
+        "Scatter_Scrub_46",
+        "Scatter_Scrub_47",
+        "Scatter_Scrub_194",
+        "Scatter_Scrub_244",
+        "Scatter_Scrub_287",
+        "Scatter_Scrub_289",
+        "Scatter_Scrub_290",
+        "Scatter_Scrub_291",
+        "Scatter_Scrub_336",
+        "Scatter_Scrub_340",
+        "Scatter_Scrub_341",
+        "Scatter_Scrub_343",
+        "Scatter_Scrub_385",
+        "Scatter_Scrub_387",
+        "Scatter_Scrub_388",
+        "Scatter_Scrub_389",
+        "Scatter_Scrub_390",
+        "Scatter_Scrub_391",
+        "Scatter_Scrub_393",
+        "Scatter_Scrub_433",
+        "Scatter_Scrub_435",
+        "Scatter_Scrub_436",
+        "Scatter_Scrub_437",
+        "Scatter_Scrub_438",
+        "Scatter_Scrub_439",
+        "Scatter_Scrub_440",
+        "Scatter_Scrub_441",
+        "Scatter_Scrub_479",
+        "Scatter_Scrub_480",
+        "Scatter_Scrub_481",
+        "Scatter_Scrub_482",
+        "Scatter_Scrub_522",
+        "Scatter_Scrub_566",
+        "Scatter_Scrub_568",
+        "Scatter_Scrub_569",
+        "Scatter_Scrub_570",
+        "Scatter_Scrub_571",
+        "Scatter_Scrub_574",
+        "Scatter_Scrub_609",
+        "Scatter_Scrub_648",
+        "Scatter_Scrub_649",
+        "Scatter_Scrub_652",
+        "Scatter_Scrub_656",
+        "Scatter_Scrub_696",
+        "Scatter_Scrub_699",
+        "Scatter_Scrub_701",
+        "Scatter_Scrub_702",
+        "Scatter_Scrub_706",
+        "Scatter_Scrub_747",
+        "Scatter_Scrub_797",
+        "Scatter_Scrub_799",
+        "Scatter_Scrub_838",
+        "Scatter_Scrub_840",
+        "Scatter_Scrub_892",
+        "Scatter_Scrub_893",
+        "Scatter_Scrub_894",
+        "Scatter_Scrub_899",
+        "Scatter_Scrub_949",
+        "Scatter_Scrub_951",
+        "Scatter_Scrub_954",
+        "Scatter_Scrub_956",
+        "Scatter_Scrub_964",
+        "Scatter_Scrub_1015",
+        "Scatter_Scrub_1018",
+        "Scatter_Scrub_1019",
+        "Scatter_Scrub_1020",
+        "Scatter_Scrub_1022",
+        "Scatter_Scrub_1024",
+        "Scatter_Scrub_1025",
+        "Scatter_Scrub_1027",
+        "Scatter_Scrub_1029",
+        "Scatter_Scrub_1075",
+        "Scatter_Scrub_1078",
+        "Scatter_Scrub_1079",
+        "Scatter_Scrub_1080",
+        "Scatter_Scrub_1081",
+        "Scatter_Scrub_1082",
+        "Scatter_Scrub_1083",
+        "Scatter_Scrub_1084",
+        "Scatter_Scrub_1087",
+        "Scatter_Scrub_1089",
+        "Scatter_Scrub_1090",
+        "Scatter_Scrub_1092",
+        "Scatter_Scrub_1093",
+        "Scatter_Scrub_1094",
+        "Scatter_Scrub_1095",
+        "Scatter_Scrub_1143",
+        "Scatter_Scrub_1144",
+        "Scatter_Scrub_1145",
+        "Scatter_Scrub_1147",
+        "Scatter_Scrub_1148",
+        "Scatter_Scrub_1149",
+        "Scatter_Scrub_1150",
+        "Scatter_Scrub_1151",
+        "Scatter_Scrub_1152",
+        "Scatter_Scrub_1153",
+        "Scatter_Scrub_1158",
+        "Scatter_Scrub_1159",
+        "Scatter_Scrub_1203",
+        "Scatter_Scrub_1204",
+        "Scatter_Scrub_1205",
+        "Scatter_Scrub_1208",
+        "Scatter_Scrub_1210",
+        "Scatter_Scrub_1211",
+        "Scatter_Scrub_1214",
+        "Scatter_Scrub_1216",
+        "Scatter_Scrub_1217",
+        "Scatter_Scrub_1218",
+        "Scatter_Scrub_1220",
+        "Scatter_Scrub_1221",
+        "Scatter_Scrub_1263",
+        "Scatter_Scrub_1268",
+        "Scatter_Scrub_1269",
+        "Scatter_Scrub_1270",
+        "Scatter_Scrub_1273",
+        "Scatter_Scrub_1278",
+        "Scatter_Scrub_1279",
+        "Scatter_Scrub_1281",
+        "Scatter_Scrub_1325",
+        "Scatter_Scrub_1326",
+        "Scatter_Scrub_1327",
+        "Scatter_Scrub_1329",
+        "Scatter_Scrub_1331",
+        "Scatter_Scrub_1332",
+        "Scatter_Scrub_1333",
+        "Scatter_Scrub_1335",
+        "Scatter_Scrub_1336",
+        "Scatter_Scrub_1338",
+        "Scatter_Scrub_1340",
+        "Scatter_Scrub_1341",
+        "Scatter_Scrub_1383",
+        "Scatter_Scrub_1384",
+        "Scatter_Scrub_1386",
+        "Scatter_Scrub_1387",
+        "Scatter_Scrub_1389",
+        "Scatter_Scrub_1390",
+        "Scatter_Scrub_1392",
+        "Scatter_Scrub_1394",
+        "Scatter_Scrub_1398",
+        "Scatter_Scrub_1440",
+        "Scatter_Scrub_1441",
+        "Scatter_Scrub_1443",
+        "Scatter_Scrub_1444",
+        "Scatter_Scrub_1445",
+        "Scatter_Scrub_1447",
+        "Scatter_Scrub_1448",
+        "Scatter_Scrub_1449",
+        "Scatter_Scrub_1451",
+        "Scatter_Scrub_1453",
+        "Scatter_Scrub_1457",
+        "Scatter_Scrub_1458",
+        "Scatter_Scrub_1460",
+        "Scatter_Scrub_1461",
+        "Scatter_Scrub_1462",
+        "Scatter_Scrub_1500",
+        "Scatter_Scrub_1501",
+        "Scatter_Scrub_1502",
+        "Scatter_Scrub_1503",
+        "Scatter_Scrub_1504",
+        "Scatter_Scrub_1505",
+        "Scatter_Scrub_1506",
+        "Scatter_Scrub_1507",
+        "Scatter_Scrub_1511",
+        "Scatter_Scrub_1512",
+        "Scatter_Scrub_1515",
+        "Scatter_Scrub_1516",
+        "Scatter_Scrub_1517",
+        "Scatter_Scrub_1547",
+        "Scatter_Scrub_1549",
+        "Scatter_Scrub_1550",
+        "Scatter_Scrub_1551",
+        "Scatter_Scrub_1553",
+        "Scatter_Scrub_1554",
+        "Scatter_Scrub_1555",
+        "Scatter_Scrub_1556",
+        "Scatter_Scrub_1557",
+        "Scatter_Scrub_1558",
+        "Scatter_Scrub_1559",
+        "Scatter_Scrub_1560",
+        "Scatter_Scrub_1561",
+        "Scatter_Scrub_1599",
+        "Scatter_Scrub_1600",
+        "Scatter_Scrub_1601",
+        "Scatter_Scrub_1602",
+        "Scatter_Scrub_1603",
+        "Scatter_Scrub_1604",
+        "Scatter_Scrub_1605",
+        "Scatter_Scrub_1607",
+        "Scatter_Scrub_1613",
+        "Scatter_Scrub_1614",
+        "Scatter_Scrub_1615",
+        "Scatter_Scrub_1616",
+        "Scatter_Scrub_1647",
+        "Scatter_Scrub_1649",
+        "Scatter_Scrub_1651",
+        "Scatter_Scrub_1652",
+        "Scatter_Scrub_1660",
+        "Scatter_Scrub_1661",
+        "Scatter_Scrub_1662",
+        "Scatter_Scrub_1695",
+        "Scatter_Scrub_1696",
+        "Scatter_Scrub_1697",
+        "Scatter_Scrub_1698",
+        "Scatter_Scrub_1701",
+        "Scatter_Scrub_1702",
+        "Scatter_Scrub_1703",
+        "Scatter_Scrub_1704",
+        "Scatter_Scrub_1705",
+        "Scatter_Scrub_1706",
+        "Scatter_Scrub_1707",
+        "Scatter_Scrub_1742",
+        "Scatter_Scrub_1744",
+        "Scatter_Scrub_1748",
+        "Scatter_Scrub_1751",
+        "Scatter_Scrub_1755",
+        "Scatter_Scrub_1756",
+        "Scatter_Scrub_1757",
+        "Scatter_Scrub_1798",
+        "Scatter_Scrub_1799",
+        "Scatter_Scrub_1800",
+        "Scatter_Scrub_1807",
+        "Scatter_Scrub_1808",
+        "Scatter_Scrub_1809",
+        "Scatter_Scrub_1810",
+        "Scatter_Scrub_1812",
+        "Scatter_Scrub_1847",
+        "Scatter_Scrub_1848",
+        "Scatter_Scrub_1849",
+        "Scatter_Scrub_1858",
+        "Scatter_Scrub_1860",
+        "Scatter_Scrub_1861",
+        "Scatter_Scrub_1862",
+        "Scatter_Scrub_1863",
+        "Scatter_Scrub_1899",
+        "Scatter_Scrub_1900",
+        "Scatter_Scrub_1902",
+        "Scatter_Scrub_1904",
+        "Scatter_Scrub_1905",
+        "Scatter_Scrub_1907",
+        "Scatter_Scrub_1909",
+        "Scatter_Scrub_1910",
+        "Scatter_Scrub_1913",
+        "Scatter_Scrub_1951",
+        "Scatter_Scrub_1952",
+        "Scatter_Scrub_1953",
+        "Scatter_Scrub_1957",
+        "Scatter_Scrub_1998",
+        "Scatter_Scrub_2001",
+        "Scatter_Scrub_2002",
+        "Scatter_Scrub_2004",
+        "Scatter_Scrub_2005",
+        "Scatter_Scrub_2006",
+        "Scatter_Scrub_2007",
+        "Scatter_Scrub_2042",
+        "Scatter_Scrub_2043",
+        "Scatter_Scrub_2045",
+        "Scatter_Scrub_2046",
+        "Scatter_Scrub_2047",
+        "Scatter_Scrub_2048",
+        "Scatter_Scrub_2049",
+        "Scatter_Scrub_2051",
+        "Scatter_Scrub_2053",
+        "Scatter_Scrub_2091",
+        "Scatter_Scrub_2092",
+        "Scatter_Scrub_2096",
+        "Scatter_Scrub_2097",
+        "Scatter_Scrub_2098",
+        "Scatter_Scrub_2100",
+        "Scatter_Scrub_2102",
+        "Scatter_Scrub_2103",
+        "Scatter_Scrub_2104",
+        "Scatter_Scrub_2143",
+        "Scatter_Scrub_2145",
+        "Scatter_Scrub_2146",
+        "Scatter_Scrub_2147",
+        "Scatter_Scrub_2229",
+        "Scatter_Scrub_2230",
+        "Scatter_Scrub_2231",
+        "Scatter_Scrub_2232",
+        "Scatter_Scrub_2233",
+        "Scatter_Scrub_2234",
+        "Scatter_Scrub_2235",
+        "Scatter_Scrub_2236",
+        "Scatter_Scrub_2237",
+        "Scatter_Scrub_2238",
+        "Scatter_Scrub_2239",
+        "Scatter_Scrub_2240",
+        "Scatter_Scrub_2280",
+        "Scatter_Scrub_2281",
+        "Scatter_Scrub_2282",
+        "Scatter_Scrub_2283",
+        "Scatter_Scrub_2284",
+        "Scatter_Scrub_2285",
+        "Scatter_Scrub_2290",
+        "Scatter_Scrub_2291",
+        "Scatter_Scrub_2292",
+        "Scatter_Scrub_2337",
+        "Scatter_Scrub_2339",
+        "Scatter_Scrub_2340",
+        "Scatter_Scrub_2341",
+        "Scatter_Scrub_2342",
+        "Scatter_Scrub_2343",
+        "Scatter_Scrub_2344",
+        "Scatter_Scrub_2346",
+        "Scatter_Scrub_2347",
+        "Scatter_Scrub_2348",
+        "Scatter_Scrub_2391",
+        "Scatter_Scrub_2392",
+        "Scatter_Scrub_2393",
+        "Scatter_Scrub_2395",
+        "Scatter_Scrub_2397",
+        "Scatter_Scrub_2399",
+        "Scatter_Scrub_2400",
+        "Scatter_Scrub_2401",
+        "Scatter_Scrub_2402",
+        "Scatter_Scrub_2403",
+        "Scatter_Scrub_2404",
+        "Scatter_Scrub_2405",
+        "Scatter_Scrub_2406",
+        "Scatter_Scrub_2407",
+        "Scatter_Scrub_2408",
+        "Scatter_Scrub_2411",
+        "Scatter_Scrub_2455",
+        "Scatter_Scrub_2457",
+        "Scatter_Scrub_2458",
+        "Scatter_Scrub_2459",
+        "Scatter_Scrub_2461",
+        "Scatter_Scrub_2463",
+        "Scatter_Scrub_2466",
+        "Scatter_Scrub_2467",
+        "Scatter_Scrub_2469",
+        "Scatter_Scrub_2470",
+        "Scatter_Scrub_2471",
+        "Scatter_Scrub_2474",
+        "Scatter_Scrub_2475",
+        "Scatter_Scrub_2476",
+        "Scatter_Scrub_2522",
+        "Scatter_Scrub_2523",
+        "Scatter_Scrub_2524",
+        "Scatter_Scrub_2526",
+        "Scatter_Scrub_2527",
+        "Scatter_Scrub_2528",
+        "Scatter_Scrub_2529",
+        "Scatter_Scrub_2530",
+        "Scatter_Scrub_2531",
+        "Scatter_Scrub_2532",
+        "Scatter_Scrub_2533",
+        "Scatter_Scrub_2534",
+        "Scatter_Scrub_2535",
+        "Scatter_Scrub_2539",
+        "Scatter_Scrub_2585",
+        "Scatter_Scrub_2587",
+        "Scatter_Scrub_2588",
+        "Scatter_Scrub_2589",
+        "Scatter_Scrub_2591",
+        "Scatter_Scrub_2592",
+        "Scatter_Scrub_2593",
+        "Scatter_Scrub_2594",
+        "Scatter_Scrub_2595",
+        "Scatter_Scrub_2596",
+        "Scatter_Scrub_2597",
+        "Scatter_Scrub_2598",
+        "Scatter_Scrub_2599",
+        "Scatter_Scrub_2600",
+        "Scatter_Scrub_2651",
+        "Scatter_Scrub_2652",
+        "Scatter_Scrub_2653",
+        "Scatter_Scrub_2654",
+        "Scatter_Scrub_2655",
+        "Scatter_Scrub_2656",
+        "Scatter_Scrub_2657",
+        "Scatter_Scrub_2658",
+        "Scatter_Scrub_2659",
+        "Scatter_Scrub_2661",
+        "Scatter_Scrub_2667",
+        "Scatter_Scrub_2709",
+        "Scatter_Scrub_2711",
+        "Scatter_Scrub_2712",
+        "Scatter_Scrub_2714",
+        "Scatter_Scrub_2715",
+        "Scatter_Scrub_2716",
+        "Scatter_Scrub_2717",
+        "Scatter_Scrub_2718",
+        "Scatter_Scrub_2719",
+        "Scatter_Scrub_2721",
+        "Scatter_Scrub_2722",
+        "Scatter_Scrub_2723",
+        "Scatter_Scrub_2728",
+        "Scatter_Scrub_2775",
+        "Scatter_Scrub_2776",
+        "Scatter_Scrub_2779",
+        "Scatter_Scrub_2780",
+        "Scatter_Scrub_2781",
+        "Scatter_Scrub_2782",
+        "Scatter_Scrub_2783",
+        "Scatter_Scrub_2784",
+        "Scatter_Scrub_2785",
+        "Scatter_Scrub_2788",
+        "Scatter_Scrub_2836",
+        "Scatter_Scrub_2837",
+        "Scatter_Scrub_2838",
+        "Scatter_Scrub_2839",
+        "Scatter_Scrub_2841",
+        "Scatter_Scrub_2843",
+        "Scatter_Scrub_2845",
+        "Scatter_Scrub_2850",
+        "Scatter_Scrub_2852",
+        "Scatter_Scrub_2899",
+        "Scatter_Scrub_2900",
+        "Scatter_Scrub_2901",
+        "Scatter_Scrub_2902",
+        "Scatter_Scrub_2903",
+        "Scatter_Scrub_2904",
+        "Scatter_Scrub_2905",
+        "Scatter_Scrub_2907",
+        "Scatter_Scrub_2908",
+        "Scatter_Scrub_2909",
+        "Scatter_Scrub_2911",
+        "Scatter_Scrub_2914",
+        "Scatter_Scrub_2920",
+        "Scatter_Scrub_2921",
+        "Scatter_Scrub_2976",
+        "Scatter_Scrub_2978",
+        "Scatter_Scrub_2979",
+        "Scatter_Scrub_3036",
+        "Scatter_Scrub_3039",
+        "Scatter_Scrub_3040",
+        "Scatter_Scrub_3041",
+        "Scatter_Scrub_3045",
+        "Scatter_Scrub_3048",
+        "Scatter_Scrub_3049",
+        "Scatter_Scrub_3050",
+        "Scatter_Scrub_3051",
+        "Scatter_Scrub_3054",
+        "Scatter_Scrub_3103",
+        "Scatter_Scrub_3104",
+        "Scatter_Scrub_3105",
+        "Scatter_Scrub_3108",
+        "Scatter_Scrub_3109",
+        "Scatter_Scrub_3110",
+        "Scatter_Scrub_3111",
+        "Scatter_Scrub_3112",
+        "Scatter_Scrub_3113",
+        "Scatter_Scrub_3116",
+        "Scatter_Scrub_3118",
+        "Scatter_Scrub_3119",
+        "Scatter_Scrub_3121",
+        "Scatter_Scrub_3122",
+        "Scatter_Scrub_3123",
+        "Scatter_Scrub_3126",
+        "Scatter_Scrub_3128",
+        "Scatter_Scrub_3129",
+        "Scatter_Scrub_3130",
+        "Scatter_Scrub_3131",
+        "Scatter_Scrub_3174",
+        "Scatter_Scrub_3176",
+        "Scatter_Scrub_3178",
+        "Scatter_Scrub_3179",
+        "Scatter_Scrub_3180",
+        "Scatter_Scrub_3181",
+        "Scatter_Scrub_3182",
+        "Scatter_Scrub_3183",
+        "Scatter_Scrub_3184",
+        "Scatter_Scrub_3185",
+        "Scatter_Scrub_3186",
+        "Scatter_Scrub_3189",
+        "Scatter_Scrub_3190",
+        "Scatter_Scrub_3192",
+        "Scatter_Scrub_3193",
+        "Scatter_Scrub_3194",
+        "Scatter_Scrub_3195",
+        "Scatter_Scrub_3239",
+        "Scatter_Scrub_3240",
+        "Scatter_Scrub_3241",
+        "Scatter_Scrub_3242",
+        "Scatter_Scrub_3243",
+        "Scatter_Scrub_3244",
+        "Scatter_Scrub_3245",
+        "Scatter_Scrub_3246",
+        "Scatter_Scrub_3247",
+        "Scatter_Scrub_3248",
+        "Scatter_Scrub_3249",
+        "Scatter_Scrub_3250",
+        "Scatter_Scrub_3251",
+        "Scatter_Scrub_3252",
+        "Scatter_Scrub_3253",
+        "Scatter_Scrub_3254",
+        "Scatter_Scrub_3255",
+        "Scatter_Scrub_3258",
+        "Scatter_Scrub_3261",
+        "Scatter_Scrub_3262",
+        "Scatter_Scrub_3265",
+        "Scatter_Scrub_3301",
+        "Scatter_Scrub_3302",
+        "Scatter_Scrub_3303",
+        "Scatter_Scrub_3305",
+        "Scatter_Scrub_3306",
+        "Scatter_Scrub_3307",
+        "Scatter_Scrub_3308",
+        "Scatter_Scrub_3309",
+        "Scatter_Scrub_3310",
+        "Scatter_Scrub_3319",
+        "Scatter_Scrub_3320",
+        "Scatter_Scrub_3321",
+        "Scatter_Scrub_3356",
+        "Scatter_Scrub_3357",
+        "Scatter_Scrub_3358",
+        "Scatter_Scrub_3359",
+        "Scatter_Scrub_3360",
+        "Scatter_Scrub_3364",
+        "Scatter_Scrub_3366",
+        "Scatter_Scrub_3371",
+        "Scatter_Scrub_3372",
+        "Scatter_Scrub_3408",
+        "Scatter_Scrub_3413",
+        "Scatter_Scrub_3416",
+        "Scatter_Scrub_3417",
+        "Scatter_Scrub_3418",
+        "Scatter_Scrub_3424",
+        "Scatter_Scrub_3426",
+        "Scatter_Scrub_3428",
+        "Scatter_Scrub_3461",
+        "Scatter_Scrub_3467",
+        "Scatter_Erratic_29",
+        "Scatter_Erratic_76",
+        "Scatter_Erratic_106",
+        "Scatter_Erratic_153",
+        "Scatter_Erratic_157",
+        "Scatter_Erratic_169",
+        "Scatter_Erratic_172",
+        "Scatter_Erratic_174",
+        "Scatter_Erratic_182",
+        "Scatter_Erratic_184",
+        "Scatter_Erratic_207",
+        "Scatter_Erratic_213",
+        "Scatter_Erratic_217",
+        "Scatter_Erratic_242",
+        "Scatter_Erratic_251",
+        "Scatter_Erratic_271",
+        "Scatter_Erratic_279",
+        "Scatter_Erratic_283",
+        "Scatter_Erratic_303",
+        "Scatter_Erratic_328",
+        "Scatter_Erratic_332",
+        "Scatter_Erratic_333",
+        "Scatter_Erratic_350",
+        "Scatter_Erratic_375",
+        "Scatter_Erratic_391",
+        "Scatter_Erratic_396",
+        "Scatter_Erratic_402",
+        "Scatter_Erratic_413",
+        "Scatter_Erratic_460",
+        "Scatter_Erratic_467",
+        "Scatter_Erratic_540",
+        "Scatter_Erratic_541",
+        "Scatter_Erratic_543",
+        "Scatter_Erratic_550",
+        "Scatter_Erratic_559",
+        "Scatter_Erratic_573",
+        "Scatter_Erratic_580",
+        "Scatter_Erratic_589",
+        "Scatter_Erratic_598",
+        "Scatter_Erratic_618",
+        "Scatter_Erratic_632",
+        "Scatter_Erratic_642",
+        "Scatter_Erratic_650",
+        "Scatter_Erratic_658",
+        "Scatter_Erratic_666",
+        "Scatter_Erratic_704",
+        "Scatter_Erratic_705",
+        "Scatter_Erratic_708",
+        "Scatter_Menhir_6",
+        "Scatter_Menhir_12",
+        "Scatter_Menhir_14",
+        "Scatter_Menhir_52",
+        "Scatter_Menhir_90",
+        "Scatter_Menhir_116",
+        "Scatter_Menhir_117",
+        "Scatter_Menhir_144",
+        "Scatter_Menhir_145",
+        "Scatter_Menhir_174",
+        "Scatter_Menhir_186",
+        "Scatter_Menhir_231",
+        "Scatter_Menhir_270",
+        "Scatter_Menhir_284",
+        "Scatter_Menhir_336",
+        "Scatter_Menhir_355",
+        "Secret_moor_barrow_well",
+        "Secret_moor_wisp_focus",
+        "Secret_moor_tower_eyrie",
+        "Secret_moor_undercut_mouth",
+        "Walk_ContinentRoad_amberwood-grey"
+      ],
+      "previewPrefix": "StreamView_amberwood-grey__",
+      "overflowSuffix": "_StreamOverflow_amberwood-grey"
+    },
+    {
+      "id": "grey-westhaven",
+      "portal": "west-waygate",
+      "destination": "westhaven",
+      "anchor": [
+        21.5,
+        19.475,
+        116.5
+      ],
+      "outward": [
+        0,
+        1
+      ],
+      "globalTranslation": [
+        174.0,
+        0,
+        1086.0
+      ],
+      "globalAnchor": [
+        195.5,
+        19.475,
+        1202.5
+      ],
+      "uvSign": 1,
+      "palette": "pasture",
+      "preloadDistance": 240,
+      "retainDistance": 320,
+      "blendDistance": 90,
+      "collarDepth": 42,
+      "halfWidthTiles": 3,
+      "viewHalfWidth": 110,
+      "viewDepth": 240,
+      "geometryMode": "continent-owned-v1",
+      "sceneNodes": [
+        "Terrain_Shore_StreamCell_grey-westhaven",
+        "Terrain_Rock_StreamCell_grey-westhaven",
+        "Terrain_HeatherMoor_StreamCell_grey-westhaven",
+        "Terrain_PeatBog_StreamCell_grey-westhaven",
+        "Terrain_Causeway_StreamCell_grey-westhaven",
+        "Terrain_BarrowTurf_StreamCell_grey-westhaven",
+        "Terrain_MoorTrack_StreamCell_grey-westhaven",
+        "Terrain_MarchWesthaven_StreamCell_grey-westhaven",
+        "Terrain_MarchCrownwater_StreamCell_grey-westhaven",
+        "Terrain_MoorJunctionSubstrate_StreamCell_grey-westhaven",
+        "Walk_ContinentRoad_grey-westhaven_StreamCell_grey-westhaven",
+        "Terrain_Shore_StreamCollar_grey-westhaven_Turf_StreamCell_grey-westhaven",
+        "Terrain_Shore_StreamCollar_grey-westhaven_Frost_StreamCell_grey-westhaven",
+        "Terrain_Shore_StreamCollar_grey-westhaven_Road_StreamCell_grey-westhaven",
+        "Terrain_Rock_StreamCollar_grey-westhaven_Turf_StreamCell_grey-westhaven",
+        "Terrain_Rock_StreamCollar_grey-westhaven_Frost_StreamCell_grey-westhaven",
+        "Terrain_HeatherMoor_StreamCollar_grey-westhaven_Turf_StreamCell_grey-westhaven",
+        "Terrain_HeatherMoor_StreamCollar_grey-westhaven_Frost_StreamCell_grey-westhaven",
+        "Terrain_HeatherMoor_StreamCollar_grey-westhaven_Road_StreamCell_grey-westhaven",
+        "Terrain_MoorJunctionSubstrate_StreamCollar_grey-westhaven_Turf_StreamCell_grey-westhaven",
+        "Terrain_MoorJunctionSubstrate_StreamCollar_grey-westhaven_Frost_StreamCell_grey-westhaven",
+        "Water_Sea_StreamCell_grey-westhaven",
+        "Landmark_Barrow_3",
+        "Landmark_Crypt_3",
+        "Landmark_Shrine_1",
+        "Landmark_Shrine_3",
+        "Landmark_Croft_0",
+        "Prop_CroftFence_0_0",
+        "Prop_CroftFence_0_1",
+        "Landmark_Croft_1",
+        "Prop_CroftFence_1_0",
+        "Prop_CroftFence_1_1",
+        "Landmark_Croft_2",
+        "Prop_CroftFence_2_0",
+        "Prop_CroftFence_2_1",
+        "Landmark_PeatCutting_0",
+        "Landmark_PeatCutting_1",
+        "Landmark_HangedOak",
+        "Prop_OakWisp_0",
+        "Prop_OakWisp_1",
+        "Prop_OakWisp_2",
+        "Prop_OakWisp_3",
+        "Landmark_DeadTree_3",
+        "Landmark_DeadTree_4",
+        "Landmark_boardwalk_gate",
+        "Landmark_boardwalk_centre",
+        "Landmark_boardwalk_bog",
+        "Landmark_boardwalk_west",
+        "Landmark_boardwalk_south",
+        "Landmark_boardwalk_coast",
+        "Landmark_bridge_black_drain",
+        "Landmark_bridge_moor_gate",
+        "Landmark_ferry_jetty",
+        "Prop_Cairn_0",
+        "Prop_Waymarker_3",
+        "Prop_Waymarker_4",
+        "Prop_Cairn_1",
+        "Prop_Waymarker_6",
+        "Prop_Waymarker_7",
+        "Prop_Cairn_2",
+        "Prop_Cairn_3",
+        "Prop_Waymarker_12",
+        "Prop_Waymarker_13",
+        "Prop_Cairn_4",
+        "Prop_Waymarker_28",
+        "Prop_Cairn_9",
+        "Prop_Waymarker_30",
+        "Prop_Waymarker_31",
+        "Prop_Cairn_10",
+        "Prop_Cairn_12",
+        "Prop_Waymarker_39",
+        "Prop_Waymarker_40",
+        "Prop_Cairn_13",
+        "Prop_Waymarker_42",
+        "Prop_Waymarker_45",
+        "Prop_Waymarker_63",
+        "Prop_Waymarker_64",
+        "Prop_Cairn_21",
+        "Prop_Cairn_23",
+        "Water_BogPool_1",
+        "Prop_BogWisp_1_0",
+        "Prop_BogWisp_1_1",
+        "Water_BogPool_2",
+        "Prop_BogWisp_2_0",
+        "Prop_BogWisp_2_1",
         "Water_BogPool_3",
-        "Prop_BogWisp_3_0",
-        "Prop_BogWisp_3_1",
-        "Scatter_Scrub_156",
-        "Scatter_Scrub_158",
-        "Scatter_Scrub_159",
-        "Scatter_Scrub_160",
-        "Scatter_Scrub_162",
-        "Scatter_Scrub_163",
-        "Scatter_Scrub_165",
-        "Scatter_Scrub_207",
-        "Scatter_Scrub_209",
-        "Scatter_Scrub_210",
-        "Scatter_Scrub_211",
-        "Scatter_Scrub_212",
-        "Scatter_Scrub_213",
-        "Scatter_Scrub_253",
-        "Scatter_Scrub_257",
-        "Scatter_Scrub_258",
-        "Scatter_Scrub_259",
-        "Scatter_Scrub_305",
-        "Scatter_Scrub_307",
-        "Scatter_Scrub_309",
-        "Scatter_Scrub_310",
-        "Scatter_Scrub_313",
-        "Scatter_Scrub_314",
-        "Scatter_Scrub_362",
-        "Scatter_Scrub_456",
-        "Scatter_Scrub_500",
-        "Scatter_Scrub_501",
-        "Scatter_Scrub_507",
-        "Scatter_Scrub_543",
-        "Scatter_Scrub_545",
-        "Scatter_Scrub_546",
-        "Scatter_Scrub_589",
-        "Scatter_Scrub_590",
-        "Scatter_Scrub_591",
-        "Scatter_Scrub_592",
-        "Scatter_Scrub_593",
-        "Scatter_Scrub_633",
-        "Scatter_Scrub_634",
-        "Scatter_Scrub_635",
-        "Scatter_Scrub_671",
-        "Scatter_Scrub_672",
-        "Scatter_Scrub_673",
-        "Scatter_Scrub_674",
-        "Scatter_Scrub_721",
-        "Scatter_Scrub_722",
-        "Scatter_Scrub_725",
-        "Scatter_Scrub_768",
-        "Scatter_Scrub_769",
-        "Scatter_Scrub_770",
-        "Scatter_Scrub_771",
-        "Scatter_Scrub_814",
-        "Scatter_Scrub_815",
-        "Scatter_Scrub_818",
-        "Scatter_Scrub_819",
-        "Scatter_Scrub_860",
-        "Scatter_Scrub_862",
-        "Scatter_Scrub_863",
-        "Scatter_Scrub_866",
-        "Scatter_Scrub_869",
-        "Scatter_Scrub_871",
-        "Scatter_Scrub_921",
-        "Scatter_Scrub_922",
-        "Scatter_Scrub_923",
-        "Scatter_Scrub_926",
-        "Scatter_Scrub_928",
-        "Scatter_Scrub_929",
-        "Scatter_Scrub_930",
-        "Scatter_Scrub_989",
-        "Scatter_Scrub_990",
-        "Scatter_Scrub_992",
-        "Scatter_Scrub_993",
-        "Scatter_Scrub_995",
-        "Scatter_Scrub_998",
-        "Scatter_Scrub_999",
-        "Scatter_Scrub_1045",
-        "Scatter_Scrub_1048",
-        "Scatter_Scrub_1051",
-        "Scatter_Scrub_1052",
-        "Scatter_Scrub_1053",
-        "Scatter_Scrub_1054",
-        "Scatter_Scrub_1118",
-        "Scatter_Scrub_1119",
-        "Scatter_Scrub_1120",
-        "Scatter_Scrub_1122",
-        "Scatter_Scrub_1124",
-        "Scatter_Scrub_1125",
-        "Scatter_Scrub_1126",
-        "Scatter_Scrub_1128",
-        "Scatter_Scrub_1129",
-        "Scatter_Scrub_1130",
-        "Scatter_Scrub_1181",
-        "Scatter_Scrub_1183",
-        "Scatter_Scrub_1184",
-        "Scatter_Scrub_1186",
-        "Scatter_Scrub_1187",
-        "Scatter_Scrub_1188",
-        "Scatter_Scrub_1189",
-        "Scatter_Scrub_1190",
-        "Scatter_Scrub_1237",
-        "Scatter_Scrub_1239",
-        "Scatter_Scrub_1240",
-        "Scatter_Scrub_1242",
-        "Scatter_Scrub_1243",
-        "Scatter_Scrub_1244",
-        "Scatter_Scrub_1245",
-        "Scatter_Scrub_1246",
-        "Scatter_Scrub_1247",
-        "Scatter_Scrub_1248",
-        "Scatter_Scrub_1301",
-        "Scatter_Scrub_1303",
-        "Scatter_Scrub_1306",
-        "Scatter_Scrub_1307",
-        "Scatter_Scrub_1308",
-        "Scatter_Scrub_1309",
-        "Scatter_Scrub_1310",
-        "Scatter_Scrub_1361",
-        "Scatter_Scrub_1362",
-        "Scatter_Scrub_1363",
-        "Scatter_Scrub_1364",
-        "Scatter_Scrub_1366",
-        "Scatter_Scrub_1367",
-        "Scatter_Scrub_1369",
-        "Scatter_Scrub_1371",
-        "Scatter_Scrub_1433",
-        "Scatter_Scrub_1478",
-        "Scatter_Scrub_1480",
-        "Scatter_Scrub_1536",
-        "Scatter_Scrub_1537",
-        "Scatter_Scrub_1538",
-        "Scatter_Scrub_1540",
-        "Scatter_Scrub_1541",
-        "Scatter_Scrub_1542",
-        "Scatter_Scrub_1577",
-        "Scatter_Scrub_1583",
-        "Scatter_Scrub_1630",
-        "Scatter_Scrub_1631",
-        "Scatter_Scrub_1632",
-        "Scatter_Scrub_1681",
-        "Scatter_Scrub_1682",
-        "Scatter_Scrub_1683",
-        "Scatter_Scrub_1684",
-        "Scatter_Scrub_1725",
-        "Scatter_Scrub_1827",
-        "Scatter_Scrub_1828",
-        "Scatter_Scrub_1829",
-        "Scatter_Scrub_1878",
-        "Scatter_Scrub_1879",
-        "Scatter_Scrub_1880",
-        "Scatter_Scrub_1928",
+        "Water_BogPool_5",
+        "Prop_BogWisp_5_0",
+        "Prop_BogWisp_5_1",
+        "Water_BogPool_6",
+        "Water_BogPool_8",
+        "Water_BogPool_9",
+        "Water_BogPool_11",
+        "RefugeWall0",
+        "RefugeWall1",
+        "RefugeWall2",
+        "Landmark_RoadRefuge",
+        "RefugeFence1",
+        "RefugeFence2",
+        "RefugeLight0",
+        "RefugeLight1",
+        "RefugeLight2",
+        "Prop_RefugeFuel",
+        "Prop_CoveBoat",
         "Scatter_Scrub_1970",
-        "Scatter_Scrub_1971",
-        "Scatter_Scrub_1972",
-        "Scatter_Scrub_1973",
-        "Scatter_Scrub_1974",
-        "Scatter_Scrub_1975",
-        "Scatter_Scrub_1976",
         "Scatter_Scrub_1977",
-        "Scatter_Scrub_1978",
-        "Scatter_Scrub_1979",
+        "Scatter_Scrub_2011",
+        "Scatter_Scrub_2014",
+        "Scatter_Scrub_2018",
         "Scatter_Scrub_2019",
         "Scatter_Scrub_2020",
         "Scatter_Scrub_2022",
@@ -5010,6 +5650,13 @@
         "Scatter_Scrub_2024",
         "Scatter_Scrub_2025",
         "Scatter_Scrub_2028",
+        "Scatter_Scrub_2029",
+        "Scatter_Scrub_2031",
+        "Scatter_Scrub_2038",
+        "Scatter_Scrub_2039",
+        "Scatter_Scrub_2040",
+        "Scatter_Scrub_2062",
+        "Scatter_Scrub_2063",
         "Scatter_Scrub_2066",
         "Scatter_Scrub_2067",
         "Scatter_Scrub_2068",
@@ -5020,6 +5667,11 @@
         "Scatter_Scrub_2075",
         "Scatter_Scrub_2076",
         "Scatter_Scrub_2078",
+        "Scatter_Scrub_2080",
+        "Scatter_Scrub_2084",
+        "Scatter_Scrub_2087",
+        "Scatter_Scrub_2088",
+        "Scatter_Scrub_2089",
         "Scatter_Scrub_2113",
         "Scatter_Scrub_2114",
         "Scatter_Scrub_2115",
@@ -5029,6 +5681,10 @@
         "Scatter_Scrub_2123",
         "Scatter_Scrub_2125",
         "Scatter_Scrub_2128",
+        "Scatter_Scrub_2136",
+        "Scatter_Scrub_2138",
+        "Scatter_Scrub_2140",
+        "Scatter_Scrub_2141",
         "Scatter_Scrub_2156",
         "Scatter_Scrub_2158",
         "Scatter_Scrub_2159",
@@ -5036,6 +5692,10 @@
         "Scatter_Scrub_2162",
         "Scatter_Scrub_2168",
         "Scatter_Scrub_2170",
+        "Scatter_Scrub_2180",
+        "Scatter_Scrub_2181",
+        "Scatter_Scrub_2182",
+        "Scatter_Scrub_2183",
         "Scatter_Scrub_2200",
         "Scatter_Scrub_2201",
         "Scatter_Scrub_2202",
@@ -5045,150 +5705,338 @@
         "Scatter_Scrub_2209",
         "Scatter_Scrub_2210",
         "Scatter_Scrub_2211",
-        "Scatter_Erratic_64",
-        "Scatter_Erratic_68",
-        "Scatter_Erratic_72",
-        "Scatter_Erratic_78",
-        "Scatter_Erratic_101",
-        "Scatter_Erratic_118",
-        "Scatter_Erratic_177",
-        "Scatter_Erratic_201",
-        "Scatter_Erratic_230",
-        "Scatter_Erratic_322",
-        "Scatter_Erratic_325",
-        "Scatter_Erratic_407",
-        "Scatter_Erratic_438",
-        "Scatter_Erratic_475",
-        "Scatter_Erratic_483",
-        "Scatter_Erratic_506",
-        "Scatter_Erratic_565",
-        "Scatter_Erratic_620",
-        "Scatter_Erratic_660",
-        "Scatter_Erratic_662",
-        "Scatter_Erratic_701",
-        "Scatter_Erratic_713",
-        "Scatter_Menhir_109",
-        "Scatter_Menhir_234",
-        "Scatter_Menhir_351",
-        "March_north_gate_Furniture_00",
-        "March_north_gate_Furniture_01",
-        "March_north_gate_Stone",
-        "March_north_gate_Signpost",
-        "March_north_gate_Station",
-        "March_north_gate_tree_001",
-        "March_north_gate_tree_001_Canopy",
-        "March_north_gate_tree_002",
-        "March_north_gate_tree_002_Canopy",
-        "March_north_gate_tree_005",
-        "March_north_gate_tree_005_Canopy",
-        "March_north_gate_tree_006",
-        "March_north_gate_tree_006_Canopy",
-        "March_north_gate_tree_010",
-        "March_north_gate_tree_010_Canopy",
-        "Secret_moor_peat_hollow"
-      ]
-    },
-    {
-      "id": "grey-westhaven",
-      "portal": "west-waygate",
-      "destination": "westhaven",
-      "anchor": [
-        -105.5,
-        4.95,
-        6.5
-      ],
-      "outward": [
-        -1,
-        0
-      ],
-      "uvSign": 1,
-      "palette": "pasture",
-      "preloadDistance": 170,
-      "retainDistance": 220,
-      "blendDistance": 65,
-      "collarDepth": 42,
-      "halfWidthTiles": 3,
-      "viewHalfWidth": 40.0,
-      "viewDepth": 145.0,
-      "previewPrefix": "StreamView_grey-westhaven__",
-      "overflowSuffix": "_StreamOverflow_grey-westhaven",
-      "geometryMode": "shared-cells-v2",
-      "sceneNodes": [
-        "Terrain_Shore_StreamCell_grey-westhaven",
-        "Terrain_HeatherMoor_StreamCell_grey-westhaven",
-        "Terrain_PeatBog_StreamCell_grey-westhaven",
-        "Terrain_Causeway_StreamCell_grey-westhaven",
-        "Terrain_MoorTrack_StreamCell_grey-westhaven",
-        "Terrain_MarchWesthaven_StreamCell_grey-westhaven",
-        "Terrain_MoorJunctionSubstrate_StreamCell_grey-westhaven",
-        "Terrain_Shore_StreamCollar_grey-westhaven_Turf_StreamCell_grey-westhaven",
-        "Terrain_Shore_StreamCollar_grey-westhaven_Frost_StreamCell_grey-westhaven",
-        "Terrain_HeatherMoor_StreamCollar_grey-westhaven_Turf_StreamCell_grey-westhaven",
-        "Terrain_HeatherMoor_StreamCollar_grey-westhaven_Frost_StreamCell_grey-westhaven",
-        "Terrain_HeatherMoor_StreamCollar_grey-westhaven_Road_StreamCell_grey-westhaven",
-        "Terrain_MoorTrack_StreamCollar_grey-westhaven_Turf_StreamCell_grey-westhaven",
-        "Terrain_MoorTrack_StreamCollar_grey-westhaven_Road_StreamCell_grey-westhaven",
-        "Terrain_MarchWesthaven_StreamCollar_grey-westhaven_Turf_StreamCell_grey-westhaven",
-        "Terrain_MarchWesthaven_StreamCollar_grey-westhaven_Frost_StreamCell_grey-westhaven",
-        "Terrain_MarchWesthaven_StreamCollar_grey-westhaven_Road_StreamCell_grey-westhaven",
-        "Terrain_MoorJunctionSubstrate_StreamCollar_grey-westhaven_Turf_StreamCell_grey-westhaven",
-        "Terrain_MoorJunctionSubstrate_StreamCollar_grey-westhaven_Road_StreamCell_grey-westhaven",
-        "Water_Sea_StreamCell_grey-westhaven",
-        "Landmark_Shrine_3",
-        "Landmark_Croft_0",
-        "Prop_CroftFence_0_0",
-        "Prop_CroftFence_0_1",
-        "Landmark_PeatCutting_0",
-        "Landmark_DeadTree_4",
-        "Landmark_boardwalk_gate",
-        "Landmark_boardwalk_coast",
-        "Landmark_bridge_moor_gate",
-        "Prop_Cairn_0",
-        "Prop_Waymarker_3",
-        "Prop_Waymarker_4",
-        "Prop_Cairn_1",
-        "Prop_Waymarker_10",
-        "Prop_Cairn_3",
-        "Prop_Cairn_12",
-        "Prop_Waymarker_45",
-        "Water_BogPool_6",
-        "RefugeWall0",
-        "RefugeWall1",
-        "RefugeWall2",
-        "Landmark_RoadRefuge",
-        "RefugeFence0",
-        "RefugeFence1",
-        "RefugeFence2",
-        "RefugeLight0",
-        "RefugeLight1",
-        "RefugeLight2",
-        "Prop_RefugeFuel",
-        "Scatter_Scrub_3724",
-        "Scatter_Scrub_3725",
+        "Scatter_Scrub_2216",
+        "Scatter_Scrub_2222",
+        "Scatter_Scrub_2224",
+        "Scatter_Scrub_2225",
+        "Scatter_Scrub_2251",
+        "Scatter_Scrub_2254",
+        "Scatter_Scrub_2257",
+        "Scatter_Scrub_2259",
+        "Scatter_Scrub_2263",
+        "Scatter_Scrub_2265",
+        "Scatter_Scrub_2268",
+        "Scatter_Scrub_2269",
+        "Scatter_Scrub_2275",
+        "Scatter_Scrub_2276",
+        "Scatter_Scrub_2277",
+        "Scatter_Scrub_2304",
+        "Scatter_Scrub_2313",
+        "Scatter_Scrub_2314",
+        "Scatter_Scrub_2315",
+        "Scatter_Scrub_2321",
+        "Scatter_Scrub_2328",
+        "Scatter_Scrub_2357",
+        "Scatter_Scrub_2358",
+        "Scatter_Scrub_2359",
+        "Scatter_Scrub_2360",
+        "Scatter_Scrub_2361",
+        "Scatter_Scrub_2366",
+        "Scatter_Scrub_2367",
+        "Scatter_Scrub_2378",
+        "Scatter_Scrub_2381",
+        "Scatter_Scrub_2382",
+        "Scatter_Scrub_2383",
+        "Scatter_Scrub_2419",
+        "Scatter_Scrub_2421",
+        "Scatter_Scrub_2422",
+        "Scatter_Scrub_2435",
+        "Scatter_Scrub_2438",
+        "Scatter_Scrub_2443",
+        "Scatter_Scrub_2444",
+        "Scatter_Scrub_2451",
+        "Scatter_Scrub_2484",
+        "Scatter_Scrub_2485",
+        "Scatter_Scrub_2486",
+        "Scatter_Scrub_2488",
+        "Scatter_Scrub_2490",
+        "Scatter_Scrub_2492",
+        "Scatter_Scrub_2497",
+        "Scatter_Scrub_2501",
+        "Scatter_Scrub_2506",
+        "Scatter_Scrub_2509",
+        "Scatter_Scrub_2510",
+        "Scatter_Scrub_2512",
+        "Scatter_Scrub_2545",
+        "Scatter_Scrub_2546",
+        "Scatter_Scrub_2547",
+        "Scatter_Scrub_2549",
+        "Scatter_Scrub_2556",
+        "Scatter_Scrub_2557",
+        "Scatter_Scrub_2558",
+        "Scatter_Scrub_2561",
+        "Scatter_Scrub_2568",
+        "Scatter_Scrub_2569",
+        "Scatter_Scrub_2572",
+        "Scatter_Scrub_2574",
+        "Scatter_Scrub_2575",
+        "Scatter_Scrub_2576",
+        "Scatter_Scrub_2578",
+        "Scatter_Scrub_2612",
+        "Scatter_Scrub_2613",
+        "Scatter_Scrub_2614",
+        "Scatter_Scrub_2616",
+        "Scatter_Scrub_2617",
+        "Scatter_Scrub_2618",
+        "Scatter_Scrub_2624",
+        "Scatter_Scrub_2626",
+        "Scatter_Scrub_2627",
+        "Scatter_Scrub_2638",
+        "Scatter_Scrub_2639",
+        "Scatter_Scrub_2676",
+        "Scatter_Scrub_2677",
+        "Scatter_Scrub_2678",
+        "Scatter_Scrub_2679",
+        "Scatter_Scrub_2682",
+        "Scatter_Scrub_2686",
+        "Scatter_Scrub_2687",
+        "Scatter_Scrub_2688",
+        "Scatter_Scrub_2689",
+        "Scatter_Scrub_2690",
+        "Scatter_Scrub_2691",
+        "Scatter_Scrub_2694",
+        "Scatter_Scrub_2696",
+        "Scatter_Scrub_2700",
+        "Scatter_Scrub_2701",
+        "Scatter_Scrub_2702",
+        "Scatter_Scrub_2736",
+        "Scatter_Scrub_2737",
+        "Scatter_Scrub_2740",
+        "Scatter_Scrub_2742",
+        "Scatter_Scrub_2743",
+        "Scatter_Scrub_2745",
+        "Scatter_Scrub_2749",
+        "Scatter_Scrub_2750",
+        "Scatter_Scrub_2751",
+        "Scatter_Scrub_2752",
+        "Scatter_Scrub_2753",
+        "Scatter_Scrub_2754",
+        "Scatter_Scrub_2759",
+        "Scatter_Scrub_2762",
+        "Scatter_Scrub_2764",
+        "Scatter_Scrub_2798",
+        "Scatter_Scrub_2799",
+        "Scatter_Scrub_2800",
+        "Scatter_Scrub_2806",
+        "Scatter_Scrub_2809",
+        "Scatter_Scrub_2810",
+        "Scatter_Scrub_2811",
+        "Scatter_Scrub_2812",
+        "Scatter_Scrub_2813",
+        "Scatter_Scrub_2814",
+        "Scatter_Scrub_2815",
+        "Scatter_Scrub_2817",
+        "Scatter_Scrub_2820",
+        "Scatter_Scrub_2822",
+        "Scatter_Scrub_2823",
+        "Scatter_Scrub_2824",
+        "Scatter_Scrub_2825",
+        "Scatter_Scrub_2859",
+        "Scatter_Scrub_2860",
+        "Scatter_Scrub_2861",
+        "Scatter_Scrub_2863",
+        "Scatter_Scrub_2865",
+        "Scatter_Scrub_2871",
+        "Scatter_Scrub_2873",
+        "Scatter_Scrub_2875",
+        "Scatter_Scrub_2876",
+        "Scatter_Scrub_2877",
+        "Scatter_Scrub_2878",
+        "Scatter_Scrub_2879",
+        "Scatter_Scrub_2880",
+        "Scatter_Scrub_2881",
+        "Scatter_Scrub_2885",
+        "Scatter_Scrub_2886",
+        "Scatter_Scrub_2888",
+        "Scatter_Scrub_2889",
+        "Scatter_Scrub_2890",
+        "Scatter_Scrub_2930",
+        "Scatter_Scrub_2931",
+        "Scatter_Scrub_2933",
+        "Scatter_Scrub_2934",
+        "Scatter_Scrub_2935",
+        "Scatter_Scrub_2942",
+        "Scatter_Scrub_2943",
+        "Scatter_Scrub_2944",
+        "Scatter_Scrub_2945",
+        "Scatter_Scrub_2946",
+        "Scatter_Scrub_2948",
+        "Scatter_Scrub_2949",
+        "Scatter_Scrub_2950",
+        "Scatter_Scrub_2951",
+        "Scatter_Scrub_2952",
+        "Scatter_Scrub_2956",
+        "Scatter_Scrub_2959",
+        "Scatter_Scrub_2962",
+        "Scatter_Scrub_2964",
+        "Scatter_Scrub_2998",
+        "Scatter_Scrub_2999",
+        "Scatter_Scrub_3001",
+        "Scatter_Scrub_3002",
+        "Scatter_Scrub_3005",
+        "Scatter_Scrub_3007",
+        "Scatter_Scrub_3009",
+        "Scatter_Scrub_3010",
+        "Scatter_Scrub_3011",
+        "Scatter_Scrub_3012",
+        "Scatter_Scrub_3013",
+        "Scatter_Scrub_3014",
+        "Scatter_Scrub_3015",
+        "Scatter_Scrub_3016",
+        "Scatter_Scrub_3017",
+        "Scatter_Scrub_3020",
+        "Scatter_Scrub_3023",
+        "Scatter_Scrub_3025",
+        "Scatter_Scrub_3029",
+        "Scatter_Scrub_3030",
+        "Scatter_Scrub_3061",
+        "Scatter_Scrub_3062",
+        "Scatter_Scrub_3067",
+        "Scatter_Scrub_3070",
+        "Scatter_Scrub_3073",
+        "Scatter_Scrub_3075",
+        "Scatter_Scrub_3076",
+        "Scatter_Scrub_3077",
+        "Scatter_Scrub_3078",
+        "Scatter_Scrub_3079",
+        "Scatter_Scrub_3080",
+        "Scatter_Scrub_3081",
+        "Scatter_Scrub_3082",
+        "Scatter_Scrub_3085",
+        "Scatter_Scrub_3087",
+        "Scatter_Scrub_3095",
+        "Scatter_Scrub_3097",
+        "Scatter_Scrub_3137",
+        "Scatter_Scrub_3138",
+        "Scatter_Scrub_3141",
+        "Scatter_Scrub_3143",
+        "Scatter_Scrub_3145",
+        "Scatter_Scrub_3148",
+        "Scatter_Scrub_3149",
+        "Scatter_Scrub_3150",
+        "Scatter_Scrub_3151",
+        "Scatter_Scrub_3152",
+        "Scatter_Scrub_3153",
+        "Scatter_Scrub_3154",
+        "Scatter_Scrub_3157",
+        "Scatter_Scrub_3158",
+        "Scatter_Scrub_3164",
+        "Scatter_Scrub_3167",
+        "Scatter_Scrub_3168",
+        "Scatter_Scrub_3169",
+        "Scatter_Scrub_3201",
+        "Scatter_Scrub_3204",
+        "Scatter_Scrub_3205",
+        "Scatter_Scrub_3207",
+        "Scatter_Scrub_3208",
+        "Scatter_Scrub_3212",
+        "Scatter_Scrub_3213",
+        "Scatter_Scrub_3214",
+        "Scatter_Scrub_3215",
+        "Scatter_Scrub_3216",
+        "Scatter_Scrub_3218",
+        "Scatter_Scrub_3220",
+        "Scatter_Scrub_3221",
+        "Scatter_Scrub_3226",
+        "Scatter_Scrub_3230",
+        "Scatter_Scrub_3231",
+        "Scatter_Scrub_3232",
+        "Scatter_Scrub_3280",
+        "Scatter_Scrub_3281",
+        "Scatter_Scrub_3282",
+        "Scatter_Scrub_3284",
+        "Scatter_Scrub_3286",
+        "Scatter_Scrub_3287",
+        "Scatter_Scrub_3290",
+        "Scatter_Scrub_3291",
+        "Scatter_Scrub_3294",
+        "Scatter_Scrub_3295",
+        "Scatter_Scrub_3296",
+        "Scatter_Scrub_3330",
+        "Scatter_Scrub_3332",
+        "Scatter_Scrub_3333",
+        "Scatter_Scrub_3335",
+        "Scatter_Scrub_3336",
+        "Scatter_Scrub_3338",
+        "Scatter_Scrub_3339",
+        "Scatter_Scrub_3340",
+        "Scatter_Scrub_3341",
+        "Scatter_Scrub_3342",
+        "Scatter_Scrub_3343",
+        "Scatter_Scrub_3345",
+        "Scatter_Scrub_3382",
+        "Scatter_Scrub_3387",
+        "Scatter_Scrub_3388",
+        "Scatter_Scrub_3390",
+        "Scatter_Scrub_3391",
+        "Scatter_Scrub_3395",
+        "Scatter_Scrub_3397",
+        "Scatter_Scrub_3435",
+        "Scatter_Scrub_3441",
+        "Scatter_Scrub_3442",
+        "Scatter_Scrub_3448",
+        "Scatter_Scrub_3449",
+        "Scatter_Scrub_3450",
+        "Scatter_Scrub_3485",
+        "Scatter_Scrub_3488",
+        "Scatter_Scrub_3495",
+        "Scatter_Scrub_3498",
+        "Scatter_Scrub_3503",
+        "Scatter_Scrub_3534",
+        "Scatter_Scrub_3535",
+        "Scatter_Scrub_3536",
+        "Scatter_Scrub_3537",
+        "Scatter_Scrub_3544",
+        "Scatter_Scrub_3546",
+        "Scatter_Scrub_3547",
+        "Scatter_Scrub_3589",
+        "Scatter_Scrub_3623",
+        "Scatter_Scrub_3628",
+        "Scatter_Scrub_3630",
+        "Scatter_Scrub_3637",
+        "Scatter_Scrub_3639",
+        "Scatter_Scrub_3641",
+        "Scatter_Scrub_3643",
+        "Scatter_Scrub_3645",
+        "Scatter_Scrub_3647",
+        "Scatter_Scrub_3648",
+        "Scatter_Scrub_3682",
+        "Scatter_Scrub_3683",
+        "Scatter_Scrub_3684",
+        "Scatter_Scrub_3685",
+        "Scatter_Scrub_3687",
+        "Scatter_Scrub_3691",
+        "Scatter_Scrub_3692",
+        "Scatter_Scrub_3694",
+        "Scatter_Scrub_3695",
+        "Scatter_Scrub_3698",
         "Scatter_Scrub_3726",
         "Scatter_Scrub_3733",
         "Scatter_Scrub_3737",
         "Scatter_Scrub_3738",
-        "Scatter_Scrub_3767",
-        "Scatter_Scrub_3768",
-        "Scatter_Scrub_3769",
+        "Scatter_Scrub_3742",
+        "Scatter_Scrub_3745",
+        "Scatter_Scrub_3746",
+        "Scatter_Scrub_3750",
         "Scatter_Scrub_3770",
         "Scatter_Scrub_3771",
         "Scatter_Scrub_3776",
         "Scatter_Scrub_3777",
         "Scatter_Scrub_3778",
-        "Scatter_Scrub_3807",
-        "Scatter_Scrub_3808",
-        "Scatter_Scrub_3809",
+        "Scatter_Scrub_3783",
+        "Scatter_Scrub_3786",
+        "Scatter_Scrub_3787",
+        "Scatter_Scrub_3792",
         "Scatter_Scrub_3811",
         "Scatter_Scrub_3816",
         "Scatter_Scrub_3821",
         "Scatter_Scrub_3822",
         "Scatter_Scrub_3823",
         "Scatter_Scrub_3831",
-        "Scatter_Scrub_3859",
-        "Scatter_Scrub_3860",
-        "Scatter_Scrub_3861",
+        "Scatter_Scrub_3835",
+        "Scatter_Scrub_3836",
+        "Scatter_Scrub_3838",
+        "Scatter_Scrub_3842",
         "Scatter_Scrub_3863",
         "Scatter_Scrub_3864",
         "Scatter_Scrub_3866",
@@ -5197,124 +6045,161 @@
         "Scatter_Scrub_3874",
         "Scatter_Scrub_3878",
         "Scatter_Scrub_3880",
-        "Scatter_Scrub_3907",
+        "Scatter_Scrub_3882",
+        "Scatter_Scrub_3883",
+        "Scatter_Scrub_3884",
+        "Scatter_Scrub_3885",
+        "Scatter_Scrub_3886",
         "Scatter_Scrub_3909",
         "Scatter_Scrub_3916",
         "Scatter_Scrub_3917",
         "Scatter_Scrub_3918",
         "Scatter_Scrub_3921",
         "Scatter_Scrub_3923",
-        "Scatter_Scrub_3955",
+        "Scatter_Scrub_3926",
+        "Scatter_Scrub_3928",
+        "Scatter_Scrub_3929",
+        "Scatter_Scrub_3930",
+        "Scatter_Scrub_3931",
+        "Scatter_Scrub_3932",
+        "Scatter_Scrub_3933",
         "Scatter_Scrub_3963",
         "Scatter_Scrub_3966",
         "Scatter_Scrub_3967",
         "Scatter_Scrub_3969",
-        "Scatter_Scrub_3988",
-        "Scatter_Scrub_3990",
+        "Scatter_Scrub_3970",
+        "Scatter_Scrub_3971",
+        "Scatter_Scrub_3972",
+        "Scatter_Scrub_3973",
+        "Scatter_Scrub_3976",
         "Scatter_Scrub_3992",
         "Scatter_Scrub_3997",
-        "Scatter_Scrub_4019",
+        "Scatter_Scrub_4000",
+        "Scatter_Scrub_4005",
         "Scatter_Scrub_4025",
         "Scatter_Scrub_4027",
         "Scatter_Scrub_4028",
+        "Scatter_Scrub_4033",
+        "Scatter_Scrub_4037",
         "Scatter_Scrub_4065",
         "Scatter_Scrub_4066",
         "Scatter_Scrub_4067",
         "Scatter_Scrub_4071",
-        "Scatter_Scrub_4104",
-        "Scatter_Scrub_4105",
+        "Scatter_Scrub_4074",
+        "Scatter_Scrub_4075",
+        "Scatter_Scrub_4086",
         "Scatter_Scrub_4110",
         "Scatter_Scrub_4111",
+        "Scatter_Scrub_4115",
+        "Scatter_Scrub_4116",
+        "Scatter_Scrub_4117",
+        "Scatter_Scrub_4118",
+        "Scatter_Scrub_4122",
         "Scatter_Scrub_4153",
-        "Scatter_Scrub_4191",
-        "Scatter_Scrub_4201",
-        "Scatter_Scrub_4202",
+        "Scatter_Scrub_4155",
+        "Scatter_Scrub_4156",
+        "Scatter_Scrub_4157",
+        "Scatter_Scrub_4158",
+        "Scatter_Scrub_4160",
         "Scatter_Scrub_4204",
         "Scatter_Scrub_4207",
         "Scatter_Scrub_4208",
         "Scatter_Scrub_4209",
-        "Scatter_Scrub_4244",
+        "Scatter_Scrub_4210",
+        "Scatter_Scrub_4211",
+        "Scatter_Scrub_4212",
+        "Scatter_Scrub_4213",
+        "Scatter_Scrub_4214",
         "Scatter_Scrub_4246",
         "Scatter_Scrub_4249",
-        "Scatter_Scrub_4254",
         "Scatter_Scrub_4258",
         "Scatter_Scrub_4259",
         "Scatter_Scrub_4260",
         "Scatter_Scrub_4261",
-        "Scatter_Scrub_4304",
-        "Scatter_Scrub_4306",
-        "Scatter_Scrub_4315",
-        "Scatter_Scrub_4319",
+        "Scatter_Scrub_4263",
+        "Scatter_Scrub_4264",
+        "Scatter_Scrub_4265",
+        "Scatter_Scrub_4266",
+        "Scatter_Scrub_4267",
+        "Scatter_Scrub_4268",
+        "Scatter_Scrub_4274",
         "Scatter_Scrub_4320",
         "Scatter_Scrub_4321",
         "Scatter_Scrub_4323",
-        "Scatter_Scrub_4376",
-        "Scatter_Scrub_4377",
-        "Scatter_Scrub_4378",
+        "Scatter_Scrub_4326",
+        "Scatter_Scrub_4328",
+        "Scatter_Scrub_4333",
+        "Scatter_Scrub_4334",
+        "Scatter_Scrub_4336",
+        "Scatter_Scrub_4339",
         "Scatter_Scrub_4383",
         "Scatter_Scrub_4386",
         "Scatter_Scrub_4388",
         "Scatter_Scrub_4389",
         "Scatter_Scrub_4390",
         "Scatter_Scrub_4393",
-        "Scatter_Scrub_4453",
-        "Scatter_Scrub_4454",
-        "Scatter_Scrub_4455",
-        "Scatter_Scrub_4456",
+        "Scatter_Scrub_4398",
+        "Scatter_Scrub_4399",
+        "Scatter_Scrub_4400",
+        "Scatter_Scrub_4403",
+        "Scatter_Scrub_4404",
+        "Scatter_Scrub_4405",
+        "Scatter_Scrub_4407",
         "Scatter_Scrub_4457",
         "Scatter_Scrub_4460",
         "Scatter_Scrub_4461",
         "Scatter_Scrub_4466",
         "Scatter_Scrub_4468",
         "Scatter_Scrub_4473",
-        "Scatter_Scrub_4527",
-        "Scatter_Scrub_4528",
-        "Scatter_Scrub_4530",
+        "Scatter_Scrub_4479",
+        "Scatter_Scrub_4481",
+        "Scatter_Scrub_4483",
+        "Scatter_Scrub_4484",
+        "Scatter_Scrub_4485",
+        "Scatter_Scrub_4486",
         "Scatter_Scrub_4532",
         "Scatter_Scrub_4537",
         "Scatter_Scrub_4538",
         "Scatter_Scrub_4539",
         "Scatter_Scrub_4540",
-        "Scatter_Scrub_4542",
         "Scatter_Scrub_4543",
         "Scatter_Scrub_4544",
-        "Scatter_Scrub_4601",
-        "Scatter_Scrub_4603",
-        "Scatter_Scrub_4604",
-        "Scatter_Scrub_4605",
+        "Scatter_Scrub_4551",
+        "Scatter_Scrub_4554",
+        "Scatter_Scrub_4555",
+        "Scatter_Scrub_4556",
+        "Scatter_Scrub_4557",
+        "Scatter_Scrub_4558",
+        "Scatter_Scrub_4559",
+        "Scatter_Scrub_4560",
+        "Scatter_Scrub_4561",
+        "Scatter_Scrub_4563",
         "Scatter_Scrub_4606",
         "Scatter_Scrub_4607",
         "Scatter_Scrub_4613",
         "Scatter_Scrub_4614",
         "Scatter_Scrub_4615",
-        "Scatter_Scrub_4616",
-        "Scatter_Scrub_4617",
-        "Scatter_Scrub_4618",
         "Scatter_Scrub_4619",
         "Scatter_Scrub_4621",
+        "Scatter_Scrub_4627",
+        "Scatter_Scrub_4628",
         "Scatter_Scrub_4670",
         "Scatter_Scrub_4671",
         "Scatter_Scrub_4674",
         "Scatter_Scrub_4677",
-        "Scatter_Scrub_4679",
-        "Scatter_Scrub_4680",
-        "Scatter_Scrub_4681",
-        "Scatter_Scrub_4682",
         "Scatter_Scrub_4683",
-        "Scatter_Scrub_4732",
-        "Scatter_Scrub_4736",
+        "Scatter_Scrub_4694",
+        "Scatter_Scrub_4695",
         "Scatter_Scrub_4737",
         "Scatter_Scrub_4739",
         "Scatter_Scrub_4740",
         "Scatter_Scrub_4742",
         "Scatter_Scrub_4743",
-        "Scatter_Scrub_4744",
-        "Scatter_Scrub_4745",
         "Scatter_Scrub_4746",
         "Scatter_Scrub_4747",
         "Scatter_Scrub_4748",
         "Scatter_Scrub_4749",
-        "Scatter_Scrub_4797",
+        "Scatter_Scrub_4753",
         "Scatter_Scrub_4798",
         "Scatter_Scrub_4799",
         "Scatter_Scrub_4800",
@@ -5322,71 +6207,1373 @@
         "Scatter_Scrub_4803",
         "Scatter_Scrub_4804",
         "Scatter_Scrub_4805",
-        "Scatter_Scrub_4806",
-        "Scatter_Scrub_4807",
         "Scatter_Scrub_4808",
         "Scatter_Scrub_4810",
-        "Scatter_Scrub_4851",
-        "Scatter_Scrub_4852",
+        "Scatter_Scrub_4813",
         "Scatter_Scrub_4856",
         "Scatter_Scrub_4857",
-        "Scatter_Scrub_4863",
         "Scatter_Scrub_4865",
         "Scatter_Scrub_4866",
         "Scatter_Scrub_4867",
         "Scatter_Scrub_4869",
         "Scatter_Scrub_4870",
+        "Scatter_Scrub_4877",
+        "Scatter_Scrub_4925",
+        "Scatter_Scrub_4926",
         "Scatter_Scrub_4929",
         "Scatter_Scrub_4930",
-        "Scatter_Scrub_4931",
-        "Scatter_Scrub_4932",
-        "Scatter_Scrub_4933",
+        "Scatter_Scrub_4934",
         "Scatter_Scrub_4935",
+        "Scatter_Scrub_4936",
         "Scatter_Scrub_4939",
+        "Scatter_Scrub_4940",
+        "Scatter_Scrub_4943",
+        "Scatter_Scrub_4944",
+        "Scatter_Scrub_4947",
+        "Scatter_Scrub_4983",
+        "Scatter_Scrub_4988",
+        "Scatter_Scrub_4989",
+        "Scatter_Scrub_4990",
+        "Scatter_Scrub_4993",
+        "Scatter_Scrub_4997",
+        "Scatter_Scrub_4998",
+        "Scatter_Scrub_4999",
+        "Scatter_Scrub_5039",
+        "Scatter_Scrub_5040",
+        "Scatter_Scrub_5042",
+        "Scatter_Scrub_5046",
+        "Scatter_Scrub_5047",
+        "Scatter_Scrub_5048",
+        "Scatter_Scrub_5050",
+        "Scatter_Scrub_5054",
+        "Scatter_Scrub_5057",
+        "Scatter_Scrub_5062",
+        "Scatter_Scrub_5097",
+        "Scatter_Scrub_5101",
+        "Scatter_Scrub_5108",
+        "Scatter_Scrub_5109",
+        "Scatter_Scrub_5111",
+        "Scatter_Scrub_5144",
+        "Scatter_Scrub_5145",
+        "Scatter_Scrub_5152",
+        "Scatter_Scrub_5154",
+        "Scatter_Scrub_5155",
+        "Scatter_Scrub_5158",
+        "Scatter_Scrub_5160",
+        "Scatter_Scrub_5161",
+        "Scatter_Scrub_5162",
+        "Scatter_Scrub_5163",
+        "Scatter_Scrub_5165",
+        "Scatter_Scrub_5203",
+        "Scatter_Scrub_5211",
+        "Scatter_Scrub_5214",
+        "Scatter_Scrub_5218",
+        "Scatter_Scrub_5256",
+        "Scatter_Scrub_5257",
+        "Scatter_Scrub_5263",
+        "Scatter_Scrub_5269",
+        "Scatter_Scrub_5270",
+        "Scatter_Scrub_5271",
+        "Scatter_Scrub_5272",
+        "Scatter_Scrub_5273",
+        "Scatter_Scrub_5274",
+        "Scatter_Scrub_5275",
+        "Scatter_Scrub_5276",
+        "Scatter_Scrub_5277",
+        "Scatter_Scrub_5279",
+        "Scatter_Scrub_5331",
+        "Scatter_Scrub_5332",
+        "Scatter_Scrub_5333",
+        "Scatter_Scrub_5334",
+        "Scatter_Scrub_5336",
+        "Scatter_Scrub_5337",
+        "Scatter_Scrub_5339",
+        "Scatter_Scrub_5380",
+        "Scatter_Scrub_5384",
+        "Scatter_Scrub_5385",
+        "Scatter_Scrub_5386",
+        "Scatter_Scrub_5387",
+        "Scatter_Scrub_5389",
+        "Scatter_Scrub_5390",
+        "Scatter_Scrub_5391",
+        "Scatter_Scrub_5392",
+        "Scatter_Scrub_5393",
+        "Scatter_Scrub_5433",
+        "Scatter_Scrub_5436",
+        "Scatter_Scrub_5437",
+        "Scatter_Scrub_5438",
+        "Scatter_Scrub_5440",
+        "Scatter_Scrub_5441",
+        "Scatter_Scrub_5442",
+        "Scatter_Scrub_5443",
+        "Scatter_Scrub_5444",
+        "Scatter_Scrub_5445",
+        "Scatter_Scrub_5446",
+        "Scatter_Scrub_5447",
+        "Scatter_Scrub_5448",
+        "Scatter_Scrub_5486",
+        "Scatter_Scrub_5487",
+        "Scatter_Scrub_5489",
+        "Scatter_Scrub_5491",
+        "Scatter_Scrub_5492",
+        "Scatter_Scrub_5497",
+        "Scatter_Scrub_5533",
+        "Scatter_Scrub_5534",
+        "Scatter_Scrub_5535",
+        "Scatter_Scrub_5536",
+        "Scatter_Scrub_5538",
+        "Scatter_Scrub_5539",
+        "Scatter_Scrub_5542",
+        "Scatter_Scrub_5576",
+        "Scatter_Scrub_5577",
+        "Scatter_Scrub_5578",
+        "Scatter_Scrub_5579",
+        "Scatter_Scrub_5582",
+        "Scatter_Scrub_5585",
+        "Scatter_Scrub_5586",
+        "Scatter_Scrub_5622",
+        "Scatter_Scrub_5623",
+        "Scatter_Scrub_5624",
+        "Scatter_Scrub_5625",
+        "Scatter_Scrub_5630",
+        "Scatter_Scrub_5632",
+        "Scatter_Scrub_5634",
+        "Scatter_Scrub_5667",
+        "Scatter_Scrub_5668",
+        "Scatter_Scrub_5669",
+        "Scatter_Scrub_5670",
+        "Scatter_Scrub_5672",
+        "Scatter_Scrub_5673",
+        "Scatter_Scrub_5674",
+        "Scatter_Scrub_5675",
+        "Scatter_Scrub_5676",
+        "Scatter_Scrub_5677",
+        "Scatter_Scrub_5678",
+        "Scatter_Scrub_5679",
+        "Scatter_Scrub_5716",
+        "Scatter_Scrub_5717",
+        "Scatter_Scrub_5719",
+        "Scatter_Scrub_5721",
+        "Scatter_Scrub_5722",
+        "Scatter_Scrub_5723",
+        "Scatter_Scrub_5724",
+        "Scatter_Scrub_5725",
+        "Scatter_Scrub_5726",
+        "Scatter_Scrub_5727",
+        "Scatter_Scrub_5728",
+        "Scatter_Scrub_5729",
+        "Scatter_Scrub_5768",
+        "Scatter_Scrub_5769",
+        "Scatter_Scrub_5770",
+        "Scatter_Scrub_5773",
+        "Scatter_Scrub_5774",
+        "Scatter_Scrub_5775",
+        "Scatter_Scrub_5777",
+        "Scatter_Scrub_5778",
+        "Scatter_Scrub_5779",
+        "Scatter_Scrub_5783",
+        "Scatter_Scrub_5785",
+        "Scatter_Scrub_5786",
+        "Scatter_Scrub_5787",
+        "Scatter_Scrub_5788",
+        "Scatter_Scrub_5790",
+        "Scatter_Scrub_5791",
+        "Scatter_Scrub_5792",
+        "Scatter_Scrub_5829",
+        "Scatter_Scrub_5831",
+        "Scatter_Scrub_5832",
+        "Scatter_Scrub_5833",
+        "Scatter_Scrub_5834",
+        "Scatter_Scrub_5835",
+        "Scatter_Scrub_5836",
+        "Scatter_Scrub_5838",
+        "Scatter_Scrub_5839",
+        "Scatter_Scrub_5840",
+        "Scatter_Scrub_5842",
+        "Scatter_Scrub_5844",
+        "Scatter_Scrub_5845",
+        "Scatter_Scrub_5846",
+        "Scatter_Scrub_5847",
+        "Scatter_Scrub_5848",
+        "Scatter_Scrub_5884",
+        "Scatter_Scrub_5890",
+        "Scatter_Scrub_5891",
+        "Scatter_Scrub_5892",
+        "Scatter_Scrub_5893",
+        "Scatter_Scrub_5894",
+        "Scatter_Scrub_5895",
+        "Scatter_Scrub_5896",
+        "Scatter_Scrub_5897",
+        "Scatter_Scrub_5898",
+        "Scatter_Scrub_5899",
+        "Scatter_Scrub_5900",
+        "Scatter_Scrub_5903",
+        "Scatter_Scrub_5904",
+        "Scatter_Scrub_5905",
+        "Scatter_Scrub_5906",
+        "Scatter_Scrub_5908",
+        "Scatter_Scrub_5911",
+        "Scatter_Scrub_5948",
+        "Scatter_Scrub_5949",
+        "Scatter_Scrub_5950",
+        "Scatter_Scrub_5951",
+        "Scatter_Scrub_5952",
+        "Scatter_Scrub_5956",
+        "Scatter_Scrub_5957",
+        "Scatter_Scrub_5959",
+        "Scatter_Scrub_5960",
+        "Scatter_Scrub_5961",
+        "Scatter_Scrub_5963",
+        "Scatter_Scrub_5964",
+        "Scatter_Scrub_5965",
+        "Scatter_Scrub_5966",
+        "Scatter_Scrub_5967",
+        "Scatter_Scrub_5970",
+        "Scatter_Scrub_5971",
+        "Scatter_Scrub_5973",
+        "Scatter_Scrub_5974",
+        "Scatter_Scrub_5975",
+        "Scatter_Scrub_5976",
+        "Scatter_Scrub_6014",
+        "Scatter_Scrub_6015",
+        "Scatter_Scrub_6016",
+        "Scatter_Scrub_6017",
+        "Scatter_Scrub_6018",
+        "Scatter_Scrub_6019",
+        "Scatter_Scrub_6020",
+        "Scatter_Scrub_6021",
+        "Scatter_Scrub_6025",
+        "Scatter_Scrub_6027",
+        "Scatter_Scrub_6028",
+        "Scatter_Scrub_6029",
+        "Scatter_Scrub_6030",
+        "Scatter_Scrub_6031",
+        "Scatter_Scrub_6032",
+        "Scatter_Scrub_6033",
+        "Scatter_Scrub_6034",
+        "Scatter_Scrub_6035",
+        "Scatter_Scrub_6036",
+        "Scatter_Scrub_6039",
+        "Scatter_Scrub_6040",
+        "Scatter_Scrub_6041",
+        "Scatter_Scrub_6042",
+        "Scatter_Scrub_6043",
+        "Scatter_Scrub_6044",
+        "Scatter_Scrub_6079",
+        "Scatter_Scrub_6080",
+        "Scatter_Scrub_6081",
+        "Scatter_Scrub_6084",
+        "Scatter_Scrub_6085",
+        "Scatter_Scrub_6086",
+        "Scatter_Scrub_6088",
+        "Scatter_Scrub_6089",
+        "Scatter_Scrub_6096",
+        "Scatter_Scrub_6100",
+        "Scatter_Scrub_6101",
+        "Scatter_Scrub_6103",
+        "Scatter_Scrub_6104",
+        "Scatter_Scrub_6105",
+        "Scatter_Scrub_6106",
+        "Scatter_Scrub_6110",
+        "Scatter_Scrub_6111",
+        "Scatter_Scrub_6112",
+        "Scatter_Scrub_6113",
+        "Scatter_Scrub_6114",
+        "Scatter_Scrub_6115",
+        "Scatter_Erratic_3",
+        "Scatter_Erratic_5",
+        "Scatter_Erratic_10",
+        "Scatter_Erratic_11",
         "Scatter_Erratic_13",
-        "Scatter_Erratic_43",
+        "Scatter_Erratic_19",
+        "Scatter_Erratic_36",
+        "Scatter_Erratic_37",
+        "Scatter_Erratic_39",
+        "Scatter_Erratic_52",
+        "Scatter_Erratic_54",
+        "Scatter_Erratic_60",
         "Scatter_Erratic_65",
+        "Scatter_Erratic_68",
+        "Scatter_Erratic_90",
+        "Scatter_Erratic_98",
+        "Scatter_Erratic_99",
+        "Scatter_Erratic_101",
+        "Scatter_Erratic_107",
+        "Scatter_Erratic_124",
+        "Scatter_Erratic_134",
+        "Scatter_Erratic_136",
+        "Scatter_Erratic_148",
         "Scatter_Erratic_158",
-        "Scatter_Erratic_166",
+        "Scatter_Erratic_162",
+        "Scatter_Erratic_173",
         "Scatter_Erratic_183",
+        "Scatter_Erratic_192",
+        "Scatter_Erratic_214",
+        "Scatter_Erratic_216",
+        "Scatter_Erratic_225",
+        "Scatter_Erratic_231",
+        "Scatter_Erratic_239",
+        "Scatter_Erratic_254",
         "Scatter_Erratic_262",
+        "Scatter_Erratic_263",
+        "Scatter_Erratic_267",
+        "Scatter_Erratic_272",
+        "Scatter_Erratic_278",
         "Scatter_Erratic_280",
         "Scatter_Erratic_290",
-        "Scatter_Erratic_349",
-        "Scatter_Erratic_356",
+        "Scatter_Erratic_294",
+        "Scatter_Erratic_307",
+        "Scatter_Erratic_308",
+        "Scatter_Erratic_311",
+        "Scatter_Erratic_320",
+        "Scatter_Erratic_336",
+        "Scatter_Erratic_337",
+        "Scatter_Erratic_347",
+        "Scatter_Erratic_352",
+        "Scatter_Erratic_353",
+        "Scatter_Erratic_355",
         "Scatter_Erratic_364",
-        "Scatter_Erratic_381",
-        "Scatter_Erratic_463",
-        "Scatter_Erratic_468",
+        "Scatter_Erratic_366",
+        "Scatter_Erratic_390",
+        "Scatter_Erratic_404",
+        "Scatter_Erratic_406",
+        "Scatter_Erratic_411",
+        "Scatter_Erratic_418",
+        "Scatter_Erratic_421",
+        "Scatter_Erratic_438",
+        "Scatter_Erratic_454",
+        "Scatter_Erratic_456",
+        "Scatter_Erratic_487",
+        "Scatter_Erratic_488",
+        "Scatter_Erratic_491",
+        "Scatter_Erratic_510",
+        "Scatter_Erratic_518",
         "Scatter_Erratic_520",
+        "Scatter_Erratic_521",
+        "Scatter_Erratic_523",
         "Scatter_Erratic_527",
+        "Scatter_Erratic_528",
+        "Scatter_Erratic_536",
+        "Scatter_Erratic_546",
+        "Scatter_Erratic_551",
+        "Scatter_Erratic_552",
+        "Scatter_Erratic_558",
+        "Scatter_Erratic_569",
+        "Scatter_Erratic_578",
+        "Scatter_Erratic_593",
+        "Scatter_Erratic_596",
+        "Scatter_Erratic_609",
+        "Scatter_Erratic_613",
+        "Scatter_Erratic_634",
+        "Scatter_Erratic_638",
+        "Scatter_Erratic_639",
+        "Scatter_Erratic_649",
         "Scatter_Erratic_651",
-        "March_west_waygate_Furniture_00",
-        "March_west_waygate_Furniture_01",
-        "March_west_waygate_Furniture_02",
-        "March_west_waygate_Furniture_03",
+        "Scatter_Erratic_688",
+        "Scatter_Menhir_86",
+        "Scatter_Menhir_192",
+        "Scatter_Menhir_193",
+        "Scatter_Menhir_201",
+        "Scatter_Menhir_299",
+        "Scatter_Menhir_325",
+        "Scatter_Menhir_345",
         "March_west_waygate_Furniture_04",
         "March_west_waygate_Furniture_05",
         "March_west_waygate_Furniture_06",
         "March_west_waygate_Furniture_07",
-        "March_west_waygate_Stone",
-        "March_west_waygate_Signpost",
         "March_west_waygate_Station",
-        "March_west_waygate_haven_fence_000",
-        "March_west_waygate_haven_fence_002",
-        "March_west_waygate_haven_rock_005",
         "March_east_waygate_Furniture_00",
         "March_east_waygate_Furniture_01",
+        "March_east_waygate_Stone",
+        "March_east_waygate_Signpost",
         "March_east_waygate_Station",
+        "March_east_waygate_reeds_000",
+        "March_east_waygate_reeds_001",
+        "March_east_waygate_reeds_002",
+        "March_east_waygate_reeds_003",
+        "March_east_waygate_reeds_004",
+        "March_east_waygate_reeds_005",
+        "March_east_waygate_reeds_006",
+        "March_east_waygate_reeds_007",
+        "March_east_waygate_reeds_008",
+        "March_east_waygate_boat_009",
+        "March_south_gate_fern_012",
+        "Secret_moor_peat_hollow",
+        "Secret_moor_croft_garden",
+        "Secret_moor_boardwalk_cache",
+        "Secret_moor_shrine_school",
+        "Secret_moor_hanged_spring",
+        "Secret_moor_waystone",
         "Prop_WorkingMoor_SmithBench",
         "Prop_WorkingMoor_ChandlerBench",
         "Prop_WorkingMoor_FuelCart",
         "Prop_WorkingMoor_DryingPeat",
         "Prop_WorkingMoor_DryingPeat2",
-        "Prop_WorkingMoor_DroverWater",
-        "Prop_WorkingMoor_PeatReeveBench"
+        "Prop_WorkingMoor_CoveCargo",
+        "Prop_WorkingMoor_CoveCargo2",
+        "Prop_WorkingMoor_CoveTackle",
+        "Prop_WorkingMoor_PeatReeveBench",
+        "Terrain_Shore_StreamCell_grey-westhaven_StreamCell_grey-manymouth",
+        "Terrain_HeatherMoor_StreamCell_grey-westhaven_StreamCell_grey-manymouth",
+        "Terrain_PeatBog_StreamCell_grey-westhaven_StreamCell_grey-manymouth",
+        "Terrain_MoorTrack_StreamCell_grey-westhaven_StreamCell_grey-manymouth",
+        "Terrain_MoorJunctionSubstrate_StreamCell_grey-westhaven_StreamCell_grey-manymouth",
+        "Terrain_HeatherMoor_StreamCollar_grey-westhaven_Turf_StreamCell_grey-westhaven_StreamCell_grey-manymouth",
+        "Terrain_HeatherMoor_StreamCollar_grey-westhaven_Frost_StreamCell_grey-westhaven_StreamCell_grey-manymouth",
+        "Terrain_PeatBog_StreamCollar_grey-westhaven_Turf_StreamCell_grey-westhaven_StreamCell_grey-manymouth",
+        "Terrain_PeatBog_StreamCollar_grey-westhaven_Frost_StreamCell_grey-westhaven_StreamCell_grey-manymouth"
       ],
+      "previewPrefix": "StreamView_grey-westhaven__",
+      "overflowSuffix": "_StreamOverflow_grey-westhaven",
       "profile": "pasture"
+    },
+    {
+      "id": "grey-manymouth",
+      "portal": "south-gate",
+      "destination": "manymouth_delta",
+      "anchor": [
+        288.5,
+        3.14,
+        122.5
+      ],
+      "outward": [
+        1,
+        0
+      ],
+      "globalTranslation": [
+        174.0,
+        0,
+        1086.0
+      ],
+      "globalAnchor": [
+        462.5,
+        3.14,
+        1208.5
+      ],
+      "uvSign": 1,
+      "palette": "moor",
+      "preloadDistance": 240,
+      "retainDistance": 320,
+      "blendDistance": 90,
+      "collarDepth": 42,
+      "halfWidthTiles": 3,
+      "viewHalfWidth": 110,
+      "viewDepth": 240,
+      "geometryMode": "continent-owned-v1",
+      "sceneNodes": [
+        "Terrain_Shore_StreamCell_grey-manymouth",
+        "Terrain_HeatherMoor_StreamCell_grey-manymouth",
+        "Terrain_PeatBog_StreamCell_grey-manymouth",
+        "Terrain_MoorTrack_StreamCell_grey-manymouth",
+        "Terrain_MarchCrownwater_StreamCell_grey-manymouth",
+        "Terrain_MoorJunctionSubstrate_StreamCell_grey-manymouth",
+        "Terrain_ContinentExtension_grey_moors_StreamCell_grey-manymouth",
+        "Walk_ContinentRoad_grey-manymouth_StreamCell_grey-manymouth",
+        "Terrain_HeatherMoor_StreamCollar_grey-westhaven_Turf_StreamCell_grey-manymouth",
+        "Terrain_HeatherMoor_StreamCollar_grey-westhaven_Frost_StreamCell_grey-manymouth",
+        "Terrain_MarchCrownwater_StreamCollar_grey-westhaven_Turf_StreamCell_grey-manymouth",
+        "Terrain_Shore_StreamCollar_grey-manymouth_Turf_StreamCell_grey-manymouth",
+        "Terrain_Shore_StreamCollar_grey-manymouth_Frost_StreamCell_grey-manymouth",
+        "Terrain_HeatherMoor_StreamCollar_grey-manymouth_Turf_StreamCell_grey-manymouth",
+        "Terrain_HeatherMoor_StreamCollar_grey-manymouth_Frost_StreamCell_grey-manymouth",
+        "Terrain_HeatherMoor_StreamCollar_grey-manymouth_Road_StreamCell_grey-manymouth",
+        "Terrain_PeatBog_StreamCollar_grey-manymouth_Turf_StreamCell_grey-manymouth",
+        "Terrain_PeatBog_StreamCollar_grey-manymouth_Frost_StreamCell_grey-manymouth",
+        "Terrain_ContinentExtension_grey_moors_StreamCollar_grey-manymouth_Turf_StreamCell_grey-manymouth",
+        "Terrain_ContinentExtension_grey_moors_StreamCollar_grey-manymouth_Frost_StreamCell_grey-manymouth",
+        "Terrain_ContinentExtension_grey_moors_StreamCollar_grey-manymouth_Road_StreamCell_grey-manymouth",
+        "Terrain_Shore_StreamCell_grey-westhaven_StreamCell_grey-manymouth",
+        "Terrain_HeatherMoor_StreamCell_grey-westhaven_StreamCell_grey-manymouth",
+        "Terrain_PeatBog_StreamCell_grey-westhaven_StreamCell_grey-manymouth",
+        "Terrain_MoorTrack_StreamCell_grey-westhaven_StreamCell_grey-manymouth",
+        "Terrain_MoorJunctionSubstrate_StreamCell_grey-westhaven_StreamCell_grey-manymouth",
+        "Terrain_HeatherMoor_StreamCollar_grey-westhaven_Turf_StreamCell_grey-westhaven_StreamCell_grey-manymouth",
+        "Terrain_HeatherMoor_StreamCollar_grey-westhaven_Frost_StreamCell_grey-westhaven_StreamCell_grey-manymouth",
+        "Terrain_PeatBog_StreamCollar_grey-westhaven_Turf_StreamCell_grey-westhaven_StreamCell_grey-manymouth",
+        "Terrain_PeatBog_StreamCollar_grey-westhaven_Frost_StreamCell_grey-westhaven_StreamCell_grey-manymouth",
+        "Landmark_Crypt_3",
+        "Landmark_Tower_5",
+        "Landmark_Croft_1",
+        "Prop_CroftFence_1_0",
+        "Prop_CroftFence_1_1",
+        "Landmark_DeadTree_3",
+        "Landmark_DeadTree_8",
+        "Landmark_boardwalk_south",
+        "Landmark_bridge_black_drain",
+        "Prop_Waymarker_39",
+        "Prop_Waymarker_40",
+        "Prop_Cairn_13",
+        "Prop_Waymarker_42",
+        "Prop_Waymarker_43",
+        "Prop_Cairn_14",
+        "Prop_Waymarker_66",
+        "Prop_Waymarker_67",
+        "Water_BogPool_5",
+        "Prop_BogWisp_5_0",
+        "Prop_BogWisp_5_1",
+        "Water_BogPool_11",
+        "Scatter_Scrub_4212",
+        "Scatter_Scrub_4214",
+        "Scatter_Scrub_4219",
+        "Scatter_Scrub_4225",
+        "Scatter_Scrub_4231",
+        "Scatter_Scrub_4232",
+        "Scatter_Scrub_4233",
+        "Scatter_Scrub_4234",
+        "Scatter_Scrub_4235",
+        "Scatter_Scrub_4236",
+        "Scatter_Scrub_4239",
+        "Scatter_Scrub_4240",
+        "Scatter_Scrub_4263",
+        "Scatter_Scrub_4264",
+        "Scatter_Scrub_4265",
+        "Scatter_Scrub_4266",
+        "Scatter_Scrub_4267",
+        "Scatter_Scrub_4268",
+        "Scatter_Scrub_4274",
+        "Scatter_Scrub_4284",
+        "Scatter_Scrub_4293",
+        "Scatter_Scrub_4294",
+        "Scatter_Scrub_4295",
+        "Scatter_Scrub_4296",
+        "Scatter_Scrub_4297",
+        "Scatter_Scrub_4298",
+        "Scatter_Scrub_4299",
+        "Scatter_Scrub_4300",
+        "Scatter_Scrub_4301",
+        "Scatter_Scrub_4333",
+        "Scatter_Scrub_4334",
+        "Scatter_Scrub_4336",
+        "Scatter_Scrub_4339",
+        "Scatter_Scrub_4343",
+        "Scatter_Scrub_4347",
+        "Scatter_Scrub_4353",
+        "Scatter_Scrub_4354",
+        "Scatter_Scrub_4356",
+        "Scatter_Scrub_4358",
+        "Scatter_Scrub_4360",
+        "Scatter_Scrub_4361",
+        "Scatter_Scrub_4362",
+        "Scatter_Scrub_4363",
+        "Scatter_Scrub_4364",
+        "Scatter_Scrub_4366",
+        "Scatter_Scrub_4367",
+        "Scatter_Scrub_4368",
+        "Scatter_Scrub_4369",
+        "Scatter_Scrub_4370",
+        "Scatter_Scrub_4371",
+        "Scatter_Scrub_4398",
+        "Scatter_Scrub_4399",
+        "Scatter_Scrub_4400",
+        "Scatter_Scrub_4403",
+        "Scatter_Scrub_4404",
+        "Scatter_Scrub_4405",
+        "Scatter_Scrub_4407",
+        "Scatter_Scrub_4412",
+        "Scatter_Scrub_4414",
+        "Scatter_Scrub_4420",
+        "Scatter_Scrub_4423",
+        "Scatter_Scrub_4425",
+        "Scatter_Scrub_4426",
+        "Scatter_Scrub_4429",
+        "Scatter_Scrub_4430",
+        "Scatter_Scrub_4431",
+        "Scatter_Scrub_4433",
+        "Scatter_Scrub_4434",
+        "Scatter_Scrub_4437",
+        "Scatter_Scrub_4438",
+        "Scatter_Scrub_4439",
+        "Scatter_Scrub_4441",
+        "Scatter_Scrub_4442",
+        "Scatter_Scrub_4443",
+        "Scatter_Scrub_4444",
+        "Scatter_Scrub_4445",
+        "Scatter_Scrub_4446",
+        "Scatter_Scrub_4447",
+        "Scatter_Scrub_4448",
+        "Scatter_Scrub_4449",
+        "Scatter_Scrub_4479",
+        "Scatter_Scrub_4481",
+        "Scatter_Scrub_4483",
+        "Scatter_Scrub_4484",
+        "Scatter_Scrub_4485",
+        "Scatter_Scrub_4486",
+        "Scatter_Scrub_4494",
+        "Scatter_Scrub_4497",
+        "Scatter_Scrub_4505",
+        "Scatter_Scrub_4506",
+        "Scatter_Scrub_4507",
+        "Scatter_Scrub_4510",
+        "Scatter_Scrub_4511",
+        "Scatter_Scrub_4513",
+        "Scatter_Scrub_4514",
+        "Scatter_Scrub_4515",
+        "Scatter_Scrub_4518",
+        "Scatter_Scrub_4519",
+        "Scatter_Scrub_4522",
+        "Scatter_Scrub_4523",
+        "Scatter_Scrub_4524",
+        "Scatter_Scrub_4554",
+        "Scatter_Scrub_4555",
+        "Scatter_Scrub_4556",
+        "Scatter_Scrub_4557",
+        "Scatter_Scrub_4558",
+        "Scatter_Scrub_4559",
+        "Scatter_Scrub_4560",
+        "Scatter_Scrub_4561",
+        "Scatter_Scrub_4563",
+        "Scatter_Scrub_4572",
+        "Scatter_Scrub_4574",
+        "Scatter_Scrub_4576",
+        "Scatter_Scrub_4578",
+        "Scatter_Scrub_4582",
+        "Scatter_Scrub_4583",
+        "Scatter_Scrub_4584",
+        "Scatter_Scrub_4586",
+        "Scatter_Scrub_4587",
+        "Scatter_Scrub_4591",
+        "Scatter_Scrub_4593",
+        "Scatter_Scrub_4594",
+        "Scatter_Scrub_4595",
+        "Scatter_Scrub_4596",
+        "Scatter_Scrub_4597",
+        "Scatter_Scrub_4598",
+        "Scatter_Scrub_4627",
+        "Scatter_Scrub_4628",
+        "Scatter_Scrub_4633",
+        "Scatter_Scrub_4644",
+        "Scatter_Scrub_4645",
+        "Scatter_Scrub_4646",
+        "Scatter_Scrub_4652",
+        "Scatter_Scrub_4653",
+        "Scatter_Scrub_4655",
+        "Scatter_Scrub_4656",
+        "Scatter_Scrub_4658",
+        "Scatter_Scrub_4659",
+        "Scatter_Scrub_4660",
+        "Scatter_Scrub_4661",
+        "Scatter_Scrub_4662",
+        "Scatter_Scrub_4663",
+        "Scatter_Scrub_4664",
+        "Scatter_Scrub_4665",
+        "Scatter_Scrub_4694",
+        "Scatter_Scrub_4695",
+        "Scatter_Scrub_4702",
+        "Scatter_Scrub_4705",
+        "Scatter_Scrub_4706",
+        "Scatter_Scrub_4709",
+        "Scatter_Scrub_4711",
+        "Scatter_Scrub_4713",
+        "Scatter_Scrub_4714",
+        "Scatter_Scrub_4715",
+        "Scatter_Scrub_4718",
+        "Scatter_Scrub_4720",
+        "Scatter_Scrub_4722",
+        "Scatter_Scrub_4723",
+        "Scatter_Scrub_4724",
+        "Scatter_Scrub_4725",
+        "Scatter_Scrub_4727",
+        "Scatter_Scrub_4728",
+        "Scatter_Scrub_4753",
+        "Scatter_Scrub_4760",
+        "Scatter_Scrub_4762",
+        "Scatter_Scrub_4766",
+        "Scatter_Scrub_4770",
+        "Scatter_Scrub_4771",
+        "Scatter_Scrub_4780",
+        "Scatter_Scrub_4781",
+        "Scatter_Scrub_4782",
+        "Scatter_Scrub_4785",
+        "Scatter_Scrub_4786",
+        "Scatter_Scrub_4787",
+        "Scatter_Scrub_4788",
+        "Scatter_Scrub_4789",
+        "Scatter_Scrub_4790",
+        "Scatter_Scrub_4791",
+        "Scatter_Scrub_4813",
+        "Scatter_Scrub_4820",
+        "Scatter_Scrub_4821",
+        "Scatter_Scrub_4822",
+        "Scatter_Scrub_4823",
+        "Scatter_Scrub_4827",
+        "Scatter_Scrub_4828",
+        "Scatter_Scrub_4829",
+        "Scatter_Scrub_4830",
+        "Scatter_Scrub_4832",
+        "Scatter_Scrub_4836",
+        "Scatter_Scrub_4837",
+        "Scatter_Scrub_4838",
+        "Scatter_Scrub_4839",
+        "Scatter_Scrub_4840",
+        "Scatter_Scrub_4841",
+        "Scatter_Scrub_4842",
+        "Scatter_Scrub_4843",
+        "Scatter_Scrub_4844",
+        "Scatter_Scrub_4845",
+        "Scatter_Scrub_4846",
+        "Scatter_Scrub_4847",
+        "Scatter_Scrub_4877",
+        "Scatter_Scrub_4888",
+        "Scatter_Scrub_4889",
+        "Scatter_Scrub_4890",
+        "Scatter_Scrub_4891",
+        "Scatter_Scrub_4893",
+        "Scatter_Scrub_4894",
+        "Scatter_Scrub_4897",
+        "Scatter_Scrub_4898",
+        "Scatter_Scrub_4899",
+        "Scatter_Scrub_4905",
+        "Scatter_Scrub_4906",
+        "Scatter_Scrub_4908",
+        "Scatter_Scrub_4909",
+        "Scatter_Scrub_4910",
+        "Scatter_Scrub_4911",
+        "Scatter_Scrub_4912",
+        "Scatter_Scrub_4913",
+        "Scatter_Scrub_4914",
+        "Scatter_Scrub_4915",
+        "Scatter_Scrub_4916",
+        "Scatter_Scrub_4917",
+        "Scatter_Scrub_4919",
+        "Scatter_Scrub_4920",
+        "Scatter_Scrub_4947",
+        "Scatter_Scrub_4950",
+        "Scatter_Scrub_4955",
+        "Scatter_Scrub_4957",
+        "Scatter_Scrub_4958",
+        "Scatter_Scrub_4959",
+        "Scatter_Scrub_4960",
+        "Scatter_Scrub_4961",
+        "Scatter_Scrub_4962",
+        "Scatter_Scrub_4963",
+        "Scatter_Scrub_4964",
+        "Scatter_Scrub_4965",
+        "Scatter_Scrub_4966",
+        "Scatter_Scrub_4974",
+        "Scatter_Scrub_4975",
+        "Scatter_Scrub_4976",
+        "Scatter_Scrub_4977",
+        "Scatter_Scrub_4978",
+        "Scatter_Scrub_4979",
+        "Scatter_Scrub_4980",
+        "Scatter_Scrub_4982",
+        "Scatter_Scrub_4998",
+        "Scatter_Scrub_4999",
+        "Scatter_Scrub_5007",
+        "Scatter_Scrub_5008",
+        "Scatter_Scrub_5009",
+        "Scatter_Scrub_5010",
+        "Scatter_Scrub_5011",
+        "Scatter_Scrub_5012",
+        "Scatter_Scrub_5013",
+        "Scatter_Scrub_5014",
+        "Scatter_Scrub_5016",
+        "Scatter_Scrub_5017",
+        "Scatter_Scrub_5018",
+        "Scatter_Scrub_5026",
+        "Scatter_Scrub_5027",
+        "Scatter_Scrub_5028",
+        "Scatter_Scrub_5029",
+        "Scatter_Scrub_5030",
+        "Scatter_Scrub_5031",
+        "Scatter_Scrub_5032",
+        "Scatter_Scrub_5033",
+        "Scatter_Scrub_5034",
+        "Scatter_Scrub_5035",
+        "Scatter_Scrub_5036",
+        "Scatter_Scrub_5037",
+        "Scatter_Scrub_5038",
+        "Scatter_Scrub_5057",
+        "Scatter_Scrub_5062",
+        "Scatter_Scrub_5073",
+        "Scatter_Scrub_5074",
+        "Scatter_Scrub_5084",
+        "Scatter_Scrub_5085",
+        "Scatter_Scrub_5086",
+        "Scatter_Scrub_5087",
+        "Scatter_Scrub_5089",
+        "Scatter_Scrub_5090",
+        "Scatter_Scrub_5091",
+        "Scatter_Scrub_5092",
+        "Scatter_Scrub_5093",
+        "Scatter_Scrub_5094",
+        "Scatter_Scrub_5095",
+        "Scatter_Scrub_5108",
+        "Scatter_Scrub_5109",
+        "Scatter_Scrub_5111",
+        "Scatter_Scrub_5115",
+        "Scatter_Scrub_5124",
+        "Scatter_Scrub_5125",
+        "Scatter_Scrub_5126",
+        "Scatter_Scrub_5129",
+        "Scatter_Scrub_5132",
+        "Scatter_Scrub_5136",
+        "Scatter_Scrub_5137",
+        "Scatter_Scrub_5138",
+        "Scatter_Scrub_5139",
+        "Scatter_Scrub_5140",
+        "Scatter_Scrub_5141",
+        "Scatter_Scrub_5142",
+        "Scatter_Scrub_5143",
+        "Scatter_Scrub_5158",
+        "Scatter_Scrub_5160",
+        "Scatter_Scrub_5161",
+        "Scatter_Scrub_5162",
+        "Scatter_Scrub_5163",
+        "Scatter_Scrub_5165",
+        "Scatter_Scrub_5180",
+        "Scatter_Scrub_5181",
+        "Scatter_Scrub_5184",
+        "Scatter_Scrub_5187",
+        "Scatter_Scrub_5189",
+        "Scatter_Scrub_5191",
+        "Scatter_Scrub_5192",
+        "Scatter_Scrub_5193",
+        "Scatter_Scrub_5194",
+        "Scatter_Scrub_5195",
+        "Scatter_Scrub_5198",
+        "Scatter_Scrub_5199",
+        "Scatter_Scrub_5201",
+        "Scatter_Scrub_5214",
+        "Scatter_Scrub_5218",
+        "Scatter_Scrub_5224",
+        "Scatter_Scrub_5225",
+        "Scatter_Scrub_5226",
+        "Scatter_Scrub_5231",
+        "Scatter_Scrub_5232",
+        "Scatter_Scrub_5238",
+        "Scatter_Scrub_5246",
+        "Scatter_Scrub_5247",
+        "Scatter_Scrub_5249",
+        "Scatter_Scrub_5251",
+        "Scatter_Scrub_5252",
+        "Scatter_Scrub_5253",
+        "Scatter_Scrub_5254",
+        "Scatter_Scrub_5255",
+        "Scatter_Scrub_5269",
+        "Scatter_Scrub_5270",
+        "Scatter_Scrub_5271",
+        "Scatter_Scrub_5272",
+        "Scatter_Scrub_5273",
+        "Scatter_Scrub_5274",
+        "Scatter_Scrub_5275",
+        "Scatter_Scrub_5276",
+        "Scatter_Scrub_5277",
+        "Scatter_Scrub_5279",
+        "Scatter_Scrub_5295",
+        "Scatter_Scrub_5296",
+        "Scatter_Scrub_5297",
+        "Scatter_Scrub_5298",
+        "Scatter_Scrub_5299",
+        "Scatter_Scrub_5300",
+        "Scatter_Scrub_5304",
+        "Scatter_Scrub_5305",
+        "Scatter_Scrub_5306",
+        "Scatter_Scrub_5307",
+        "Scatter_Scrub_5308",
+        "Scatter_Scrub_5309",
+        "Scatter_Scrub_5310",
+        "Scatter_Scrub_5311",
+        "Scatter_Scrub_5312",
+        "Scatter_Scrub_5313",
+        "Scatter_Scrub_5314",
+        "Scatter_Scrub_5315",
+        "Scatter_Scrub_5316",
+        "Scatter_Scrub_5317",
+        "Scatter_Scrub_5331",
+        "Scatter_Scrub_5332",
+        "Scatter_Scrub_5333",
+        "Scatter_Scrub_5334",
+        "Scatter_Scrub_5336",
+        "Scatter_Scrub_5337",
+        "Scatter_Scrub_5339",
+        "Scatter_Scrub_5343",
+        "Scatter_Scrub_5346",
+        "Scatter_Scrub_5347",
+        "Scatter_Scrub_5348",
+        "Scatter_Scrub_5357",
+        "Scatter_Scrub_5358",
+        "Scatter_Scrub_5359",
+        "Scatter_Scrub_5367",
+        "Scatter_Scrub_5368",
+        "Scatter_Scrub_5369",
+        "Scatter_Scrub_5371",
+        "Scatter_Scrub_5372",
+        "Scatter_Scrub_5373",
+        "Scatter_Scrub_5374",
+        "Scatter_Scrub_5375",
+        "Scatter_Scrub_5386",
+        "Scatter_Scrub_5387",
+        "Scatter_Scrub_5389",
+        "Scatter_Scrub_5390",
+        "Scatter_Scrub_5391",
+        "Scatter_Scrub_5392",
+        "Scatter_Scrub_5393",
+        "Scatter_Scrub_5398",
+        "Scatter_Scrub_5400",
+        "Scatter_Scrub_5401",
+        "Scatter_Scrub_5409",
+        "Scatter_Scrub_5410",
+        "Scatter_Scrub_5411",
+        "Scatter_Scrub_5413",
+        "Scatter_Scrub_5423",
+        "Scatter_Scrub_5426",
+        "Scatter_Scrub_5427",
+        "Scatter_Scrub_5428",
+        "Scatter_Scrub_5429",
+        "Scatter_Scrub_5430",
+        "Scatter_Scrub_5438",
+        "Scatter_Scrub_5440",
+        "Scatter_Scrub_5441",
+        "Scatter_Scrub_5442",
+        "Scatter_Scrub_5443",
+        "Scatter_Scrub_5444",
+        "Scatter_Scrub_5445",
+        "Scatter_Scrub_5446",
+        "Scatter_Scrub_5447",
+        "Scatter_Scrub_5448",
+        "Scatter_Scrub_5457",
+        "Scatter_Scrub_5460",
+        "Scatter_Scrub_5467",
+        "Scatter_Scrub_5471",
+        "Scatter_Scrub_5477",
+        "Scatter_Scrub_5478",
+        "Scatter_Scrub_5479",
+        "Scatter_Scrub_5480",
+        "Scatter_Scrub_5481",
+        "Scatter_Scrub_5482",
+        "Scatter_Scrub_5483",
+        "Scatter_Scrub_5484",
+        "Scatter_Scrub_5485",
+        "Scatter_Scrub_5491",
+        "Scatter_Scrub_5492",
+        "Scatter_Scrub_5497",
+        "Scatter_Scrub_5502",
+        "Scatter_Scrub_5505",
+        "Scatter_Scrub_5506",
+        "Scatter_Scrub_5517",
+        "Scatter_Scrub_5518",
+        "Scatter_Scrub_5519",
+        "Scatter_Scrub_5526",
+        "Scatter_Scrub_5527",
+        "Scatter_Scrub_5528",
+        "Scatter_Scrub_5529",
+        "Scatter_Scrub_5530",
+        "Scatter_Scrub_5531",
+        "Scatter_Scrub_5538",
+        "Scatter_Scrub_5539",
+        "Scatter_Scrub_5542",
+        "Scatter_Scrub_5545",
+        "Scatter_Scrub_5546",
+        "Scatter_Scrub_5547",
+        "Scatter_Scrub_5549",
+        "Scatter_Scrub_5550",
+        "Scatter_Scrub_5561",
+        "Scatter_Scrub_5563",
+        "Scatter_Scrub_5564",
+        "Scatter_Scrub_5566",
+        "Scatter_Scrub_5568",
+        "Scatter_Scrub_5569",
+        "Scatter_Scrub_5570",
+        "Scatter_Scrub_5571",
+        "Scatter_Scrub_5573",
+        "Scatter_Scrub_5574",
+        "Scatter_Scrub_5575",
+        "Scatter_Scrub_5582",
+        "Scatter_Scrub_5585",
+        "Scatter_Scrub_5586",
+        "Scatter_Scrub_5588",
+        "Scatter_Scrub_5590",
+        "Scatter_Scrub_5594",
+        "Scatter_Scrub_5595",
+        "Scatter_Scrub_5604",
+        "Scatter_Scrub_5605",
+        "Scatter_Scrub_5607",
+        "Scatter_Scrub_5608",
+        "Scatter_Scrub_5609",
+        "Scatter_Scrub_5616",
+        "Scatter_Scrub_5625",
+        "Scatter_Scrub_5630",
+        "Scatter_Scrub_5632",
+        "Scatter_Scrub_5634",
+        "Scatter_Scrub_5635",
+        "Scatter_Scrub_5636",
+        "Scatter_Scrub_5642",
+        "Scatter_Scrub_5653",
+        "Scatter_Scrub_5654",
+        "Scatter_Scrub_5655",
+        "Scatter_Scrub_5660",
+        "Scatter_Scrub_5663",
+        "Scatter_Scrub_5665",
+        "Scatter_Scrub_5672",
+        "Scatter_Scrub_5673",
+        "Scatter_Scrub_5674",
+        "Scatter_Scrub_5675",
+        "Scatter_Scrub_5676",
+        "Scatter_Scrub_5677",
+        "Scatter_Scrub_5678",
+        "Scatter_Scrub_5679",
+        "Scatter_Scrub_5681",
+        "Scatter_Scrub_5687",
+        "Scatter_Scrub_5702",
+        "Scatter_Scrub_5704",
+        "Scatter_Scrub_5710",
+        "Scatter_Scrub_5711",
+        "Scatter_Scrub_5712",
+        "Scatter_Scrub_5713",
+        "Scatter_Scrub_5714",
+        "Scatter_Scrub_5721",
+        "Scatter_Scrub_5722",
+        "Scatter_Scrub_5723",
+        "Scatter_Scrub_5724",
+        "Scatter_Scrub_5725",
+        "Scatter_Scrub_5726",
+        "Scatter_Scrub_5727",
+        "Scatter_Scrub_5728",
+        "Scatter_Scrub_5729",
+        "Scatter_Scrub_5730",
+        "Scatter_Scrub_5731",
+        "Scatter_Scrub_5732",
+        "Scatter_Scrub_5733",
+        "Scatter_Scrub_5734",
+        "Scatter_Scrub_5739",
+        "Scatter_Scrub_5742",
+        "Scatter_Scrub_5746",
+        "Scatter_Scrub_5755",
+        "Scatter_Scrub_5756",
+        "Scatter_Scrub_5758",
+        "Scatter_Scrub_5759",
+        "Scatter_Scrub_5760",
+        "Scatter_Scrub_5762",
+        "Scatter_Scrub_5763",
+        "Scatter_Scrub_5764",
+        "Scatter_Scrub_5765",
+        "Scatter_Scrub_5774",
+        "Scatter_Scrub_5775",
+        "Scatter_Scrub_5777",
+        "Scatter_Scrub_5778",
+        "Scatter_Scrub_5779",
+        "Scatter_Scrub_5783",
+        "Scatter_Scrub_5785",
+        "Scatter_Scrub_5786",
+        "Scatter_Scrub_5787",
+        "Scatter_Scrub_5788",
+        "Scatter_Scrub_5790",
+        "Scatter_Scrub_5791",
+        "Scatter_Scrub_5792",
+        "Scatter_Scrub_5793",
+        "Scatter_Scrub_5794",
+        "Scatter_Scrub_5795",
+        "Scatter_Scrub_5797",
+        "Scatter_Scrub_5798",
+        "Scatter_Scrub_5799",
+        "Scatter_Scrub_5800",
+        "Scatter_Scrub_5801",
+        "Scatter_Scrub_5806",
+        "Scatter_Scrub_5809",
+        "Scatter_Scrub_5811",
+        "Scatter_Scrub_5821",
+        "Scatter_Scrub_5823",
+        "Scatter_Scrub_5825",
+        "Scatter_Scrub_5827",
+        "Scatter_Scrub_5835",
+        "Scatter_Scrub_5836",
+        "Scatter_Scrub_5838",
+        "Scatter_Scrub_5839",
+        "Scatter_Scrub_5840",
+        "Scatter_Scrub_5842",
+        "Scatter_Scrub_5844",
+        "Scatter_Scrub_5845",
+        "Scatter_Scrub_5846",
+        "Scatter_Scrub_5847",
+        "Scatter_Scrub_5848",
+        "Scatter_Scrub_5849",
+        "Scatter_Scrub_5850",
+        "Scatter_Scrub_5851",
+        "Scatter_Scrub_5853",
+        "Scatter_Scrub_5854",
+        "Scatter_Scrub_5855",
+        "Scatter_Scrub_5857",
+        "Scatter_Scrub_5858",
+        "Scatter_Scrub_5859",
+        "Scatter_Scrub_5861",
+        "Scatter_Scrub_5863",
+        "Scatter_Scrub_5864",
+        "Scatter_Scrub_5865",
+        "Scatter_Scrub_5879",
+        "Scatter_Scrub_5880",
+        "Scatter_Scrub_5881",
+        "Scatter_Scrub_5882",
+        "Scatter_Scrub_5883",
+        "Scatter_Scrub_5893",
+        "Scatter_Scrub_5894",
+        "Scatter_Scrub_5895",
+        "Scatter_Scrub_5896",
+        "Scatter_Scrub_5897",
+        "Scatter_Scrub_5898",
+        "Scatter_Scrub_5899",
+        "Scatter_Scrub_5900",
+        "Scatter_Scrub_5903",
+        "Scatter_Scrub_5904",
+        "Scatter_Scrub_5905",
+        "Scatter_Scrub_5906",
+        "Scatter_Scrub_5908",
+        "Scatter_Scrub_5911",
+        "Scatter_Scrub_5912",
+        "Scatter_Scrub_5913",
+        "Scatter_Scrub_5914",
+        "Scatter_Scrub_5915",
+        "Scatter_Scrub_5917",
+        "Scatter_Scrub_5918",
+        "Scatter_Scrub_5920",
+        "Scatter_Scrub_5921",
+        "Scatter_Scrub_5922",
+        "Scatter_Scrub_5923",
+        "Scatter_Scrub_5924",
+        "Scatter_Scrub_5925",
+        "Scatter_Scrub_5926",
+        "Scatter_Scrub_5927",
+        "Scatter_Scrub_5928",
+        "Scatter_Scrub_5929",
+        "Scatter_Scrub_5931",
+        "Scatter_Scrub_5943",
+        "Scatter_Scrub_5944",
+        "Scatter_Scrub_5945",
+        "Scatter_Scrub_5946",
+        "Scatter_Scrub_5947",
+        "Scatter_Scrub_5961",
+        "Scatter_Scrub_5963",
+        "Scatter_Scrub_5964",
+        "Scatter_Scrub_5965",
+        "Scatter_Scrub_5966",
+        "Scatter_Scrub_5967",
+        "Scatter_Scrub_5970",
+        "Scatter_Scrub_5971",
+        "Scatter_Scrub_5973",
+        "Scatter_Scrub_5974",
+        "Scatter_Scrub_5975",
+        "Scatter_Scrub_5976",
+        "Scatter_Scrub_5977",
+        "Scatter_Scrub_5978",
+        "Scatter_Scrub_5979",
+        "Scatter_Scrub_5980",
+        "Scatter_Scrub_5981",
+        "Scatter_Scrub_5982",
+        "Scatter_Scrub_5983",
+        "Scatter_Scrub_5984",
+        "Scatter_Scrub_5985",
+        "Scatter_Scrub_5986",
+        "Scatter_Scrub_5988",
+        "Scatter_Scrub_5989",
+        "Scatter_Scrub_5990",
+        "Scatter_Scrub_5991",
+        "Scatter_Scrub_5992",
+        "Scatter_Scrub_5994",
+        "Scatter_Scrub_5995",
+        "Scatter_Scrub_5996",
+        "Scatter_Scrub_5997",
+        "Scatter_Scrub_6008",
+        "Scatter_Scrub_6011",
+        "Scatter_Scrub_6028",
+        "Scatter_Scrub_6029",
+        "Scatter_Scrub_6030",
+        "Scatter_Scrub_6031",
+        "Scatter_Scrub_6032",
+        "Scatter_Scrub_6033",
+        "Scatter_Scrub_6034",
+        "Scatter_Scrub_6035",
+        "Scatter_Scrub_6036",
+        "Scatter_Scrub_6039",
+        "Scatter_Scrub_6040",
+        "Scatter_Scrub_6041",
+        "Scatter_Scrub_6042",
+        "Scatter_Scrub_6043",
+        "Scatter_Scrub_6044",
+        "Scatter_Scrub_6045",
+        "Scatter_Scrub_6046",
+        "Scatter_Scrub_6047",
+        "Scatter_Scrub_6048",
+        "Scatter_Scrub_6051",
+        "Scatter_Scrub_6052",
+        "Scatter_Scrub_6053",
+        "Scatter_Scrub_6054",
+        "Scatter_Scrub_6055",
+        "Scatter_Scrub_6057",
+        "Scatter_Scrub_6059",
+        "Scatter_Scrub_6060",
+        "Scatter_Scrub_6061",
+        "Scatter_Scrub_6062",
+        "Scatter_Scrub_6064",
+        "Scatter_Scrub_6065",
+        "Scatter_Scrub_6074",
+        "Scatter_Scrub_6077",
+        "Scatter_Scrub_6078",
+        "Scatter_Scrub_6100",
+        "Scatter_Scrub_6101",
+        "Scatter_Scrub_6103",
+        "Scatter_Scrub_6104",
+        "Scatter_Scrub_6105",
+        "Scatter_Scrub_6106",
+        "Scatter_Scrub_6110",
+        "Scatter_Scrub_6111",
+        "Scatter_Scrub_6112",
+        "Scatter_Scrub_6113",
+        "Scatter_Scrub_6114",
+        "Scatter_Scrub_6115",
+        "Scatter_Scrub_6117",
+        "Scatter_Scrub_6120",
+        "Scatter_Scrub_6122",
+        "Scatter_Scrub_6123",
+        "Scatter_Scrub_6124",
+        "Scatter_Scrub_6125",
+        "Scatter_Scrub_6126",
+        "Scatter_Scrub_6127",
+        "Scatter_Scrub_6128",
+        "Scatter_Scrub_6129",
+        "Scatter_Scrub_6130",
+        "Scatter_Scrub_6131",
+        "Scatter_Scrub_6132",
+        "Scatter_Scrub_6133",
+        "Scatter_Scrub_6134",
+        "Scatter_Scrub_6135",
+        "Scatter_Scrub_6136",
+        "Scatter_Scrub_6137",
+        "Scatter_Scrub_6138",
+        "Scatter_Scrub_6139",
+        "Scatter_Scrub_6140",
+        "Scatter_Scrub_6141",
+        "Scatter_Scrub_6142",
+        "Scatter_Scrub_6149",
+        "Scatter_Scrub_6150",
+        "Scatter_Scrub_6151",
+        "Scatter_Erratic_5",
+        "Scatter_Erratic_6",
+        "Scatter_Erratic_9",
+        "Scatter_Erratic_17",
+        "Scatter_Erratic_46",
+        "Scatter_Erratic_55",
+        "Scatter_Erratic_56",
+        "Scatter_Erratic_60",
+        "Scatter_Erratic_63",
+        "Scatter_Erratic_69",
+        "Scatter_Erratic_83",
+        "Scatter_Erratic_91",
+        "Scatter_Erratic_98",
+        "Scatter_Erratic_116",
+        "Scatter_Erratic_121",
+        "Scatter_Erratic_125",
+        "Scatter_Erratic_141",
+        "Scatter_Erratic_147",
+        "Scatter_Erratic_148",
+        "Scatter_Erratic_179",
+        "Scatter_Erratic_180",
+        "Scatter_Erratic_193",
+        "Scatter_Erratic_196",
+        "Scatter_Erratic_197",
+        "Scatter_Erratic_200",
+        "Scatter_Erratic_206",
+        "Scatter_Erratic_225",
+        "Scatter_Erratic_236",
+        "Scatter_Erratic_240",
+        "Scatter_Erratic_248",
+        "Scatter_Erratic_250",
+        "Scatter_Erratic_252",
+        "Scatter_Erratic_266",
+        "Scatter_Erratic_275",
+        "Scatter_Erratic_282",
+        "Scatter_Erratic_289",
+        "Scatter_Erratic_295",
+        "Scatter_Erratic_301",
+        "Scatter_Erratic_302",
+        "Scatter_Erratic_314",
+        "Scatter_Erratic_326",
+        "Scatter_Erratic_337",
+        "Scatter_Erratic_346",
+        "Scatter_Erratic_355",
+        "Scatter_Erratic_363",
+        "Scatter_Erratic_367",
+        "Scatter_Erratic_368",
+        "Scatter_Erratic_376",
+        "Scatter_Erratic_392",
+        "Scatter_Erratic_394",
+        "Scatter_Erratic_397",
+        "Scatter_Erratic_400",
+        "Scatter_Erratic_410",
+        "Scatter_Erratic_414",
+        "Scatter_Erratic_419",
+        "Scatter_Erratic_424",
+        "Scatter_Erratic_441",
+        "Scatter_Erratic_445",
+        "Scatter_Erratic_476",
+        "Scatter_Erratic_477",
+        "Scatter_Erratic_481",
+        "Scatter_Erratic_482",
+        "Scatter_Erratic_495",
+        "Scatter_Erratic_497",
+        "Scatter_Erratic_504",
+        "Scatter_Erratic_510",
+        "Scatter_Erratic_530",
+        "Scatter_Erratic_531",
+        "Scatter_Erratic_538",
+        "Scatter_Erratic_544",
+        "Scatter_Erratic_548",
+        "Scatter_Erratic_549",
+        "Scatter_Erratic_551",
+        "Scatter_Erratic_572",
+        "Scatter_Erratic_575",
+        "Scatter_Erratic_579",
+        "Scatter_Erratic_584",
+        "Scatter_Erratic_585",
+        "Scatter_Erratic_595",
+        "Scatter_Erratic_604",
+        "Scatter_Erratic_611",
+        "Scatter_Erratic_612",
+        "Scatter_Erratic_613",
+        "Scatter_Erratic_619",
+        "Scatter_Erratic_622",
+        "Scatter_Erratic_639",
+        "Scatter_Erratic_653",
+        "Scatter_Erratic_654",
+        "Scatter_Erratic_659",
+        "Scatter_Erratic_663",
+        "Scatter_Erratic_681",
+        "Scatter_Erratic_691",
+        "Scatter_Erratic_692",
+        "Scatter_Erratic_693",
+        "Scatter_Erratic_695",
+        "Scatter_Erratic_712",
+        "Scatter_Erratic_720",
+        "Scatter_Menhir_331",
+        "March_south_gate_Furniture_00",
+        "March_south_gate_Furniture_01",
+        "March_south_gate_Furniture_02",
+        "March_south_gate_Furniture_03",
+        "March_south_gate_Furniture_04",
+        "March_south_gate_Furniture_05",
+        "March_south_gate_Stone",
+        "March_south_gate_Signpost",
+        "March_south_gate_Station",
+        "March_south_gate_reeds_000",
+        "March_south_gate_reeds_001",
+        "March_south_gate_reeds_004",
+        "March_south_gate_reeds_005",
+        "March_south_gate_reeds_006",
+        "March_south_gate_reeds_007",
+        "March_south_gate_reeds_009",
+        "March_south_gate_boat_010",
+        "March_south_gate_fern_012",
+        "March_south_gate_fern_014",
+        "March_south_gate_fern_015",
+        "Secret_moor_croft_garden",
+        "Secret_moor_hound_pit",
+        "Secret_moor_ring_butts",
+        "Terrain_HeatherMoor_StreamCell_grey-manymouth_DeltaBankRock",
+        "Terrain_PeatBog_StreamCell_grey-manymouth_DeltaBankRock",
+        "Terrain_ContinentExtension_grey_moors_StreamCell_grey-manymouth_DeltaBankRock",
+        "Walk_DeltaRoadBankMouth"
+      ],
+      "previewPrefix": "StreamView_grey-manymouth__",
+      "overflowSuffix": "_StreamOverflow_grey-manymouth"
     }
   ],
   "landscapeRevision": "inhabited-384-v1",
@@ -5398,7 +7585,7 @@
         "role": "dialogue",
         "serverTile": [
           197,
-          261
+          273
         ],
         "authority": "server"
       },
@@ -5408,7 +7595,7 @@
         "role": "dialogue",
         "serverTile": [
           110,
-          117
+          129
         ],
         "authority": "server"
       },
@@ -5418,7 +7605,7 @@
         "role": "dialogue",
         "serverTile": [
           52,
-          271
+          283
         ],
         "authority": "server"
       },
@@ -5428,7 +7615,7 @@
         "role": "dialogue",
         "serverTile": [
           249,
-          236
+          248
         ],
         "authority": "server"
       },
@@ -5438,7 +7625,7 @@
         "role": "dialogue",
         "serverTile": [
           97,
-          116
+          128
         ],
         "authority": "server"
       },
@@ -5448,7 +7635,7 @@
         "role": "dialogue",
         "serverTile": [
           132,
-          332
+          344
         ],
         "authority": "server"
       },
@@ -5458,7 +7645,7 @@
         "role": "dialogue",
         "serverTile": [
           116,
-          116
+          128
         ],
         "authority": "server"
       },
@@ -5468,7 +7655,7 @@
         "role": "dialogue",
         "serverTile": [
           53,
-          72
+          84
         ],
         "authority": "server"
       },
@@ -5478,7 +7665,7 @@
         "role": "dialogue",
         "serverTile": [
           62,
-          131
+          143
         ],
         "authority": "server"
       },
@@ -5488,7 +7675,7 @@
         "role": "shop",
         "serverTile": [
           104,
-          117
+          129
         ],
         "authority": "server"
       },
@@ -5498,7 +7685,7 @@
         "role": "dialogue",
         "serverTile": [
           82,
-          105
+          117
         ],
         "authority": "server"
       },
@@ -5508,7 +7695,7 @@
         "role": "dialogue",
         "serverTile": [
           349,
-          158
+          170
         ],
         "authority": "server"
       },
@@ -5518,7 +7705,7 @@
         "role": "dialogue",
         "serverTile": [
           208,
-          284
+          296
         ],
         "authority": "server"
       },
@@ -5528,7 +7715,7 @@
         "role": "instance",
         "serverTile": [
           243,
-          264
+          276
         ],
         "authority": "server"
       }
@@ -5539,7 +7726,7 @@
         "resource": "Orchid",
         "serverTile": [
           192,
-          98
+          110
         ],
         "authority": "server"
       },
@@ -5548,7 +7735,7 @@
         "resource": "Orchid",
         "serverTile": [
           190,
-          79
+          91
         ],
         "authority": "server"
       },
@@ -5557,7 +7744,7 @@
         "resource": "Sap",
         "serverTile": [
           30,
-          147
+          159
         ],
         "authority": "server"
       },
@@ -5566,7 +7753,7 @@
         "resource": "Sap",
         "serverTile": [
           156,
-          226
+          238
         ],
         "authority": "server"
       },
@@ -5575,7 +7762,7 @@
         "resource": "Peat",
         "serverTile": [
           239,
-          141
+          153
         ],
         "authority": "server"
       },
@@ -5584,7 +7771,7 @@
         "resource": "Peat",
         "serverTile": [
           56,
-          120
+          132
         ],
         "authority": "server"
       },
@@ -5593,7 +7780,7 @@
         "resource": "Peat",
         "serverTile": [
           310,
-          140
+          152
         ],
         "authority": "server"
       },
@@ -5602,7 +7789,7 @@
         "resource": "Silverleaf",
         "serverTile": [
           292,
-          236
+          248
         ],
         "authority": "server"
       },
@@ -5611,7 +7798,7 @@
         "resource": "Silverleaf",
         "serverTile": [
           282,
-          245
+          257
         ],
         "authority": "server"
       },
@@ -5620,7 +7807,7 @@
         "resource": "Resin",
         "serverTile": [
           73,
-          5
+          17
         ],
         "authority": "server"
       },
@@ -5629,7 +7816,7 @@
         "resource": "Resin",
         "serverTile": [
           161,
-          45
+          57
         ],
         "authority": "server"
       },
@@ -5638,7 +7825,7 @@
         "resource": "Sage",
         "serverTile": [
           142,
-          61
+          73
         ],
         "authority": "server"
       },
@@ -5647,7 +7834,7 @@
         "resource": "Sage",
         "serverTile": [
           38,
-          186
+          198
         ],
         "authority": "server"
       },
@@ -5655,8 +7842,8 @@
         "id": 60,
         "resource": "Sage",
         "serverTile": [
-          31,
-          66
+          32,
+          79
         ],
         "authority": "server"
       },
@@ -5665,7 +7852,7 @@
         "resource": "Moorcotton",
         "serverTile": [
           103,
-          51
+          63
         ],
         "authority": "server"
       },
@@ -5674,7 +7861,7 @@
         "resource": "Moorcotton",
         "serverTile": [
           142,
-          40
+          52
         ],
         "authority": "server"
       },
@@ -5683,7 +7870,7 @@
         "resource": "Moorcotton",
         "serverTile": [
           90,
-          63
+          75
         ],
         "authority": "server"
       },
@@ -5692,7 +7879,7 @@
         "resource": "Hearthroot",
         "serverTile": [
           145,
-          166
+          178
         ],
         "authority": "server"
       },
@@ -5701,7 +7888,7 @@
         "resource": "Hearthroot",
         "serverTile": [
           62,
-          107
+          119
         ],
         "authority": "server"
       },
@@ -5710,7 +7897,7 @@
         "resource": "Hearthroot",
         "serverTile": [
           29,
-          98
+          110
         ],
         "authority": "server"
       },
@@ -5719,7 +7906,7 @@
         "resource": "Bramble",
         "serverTile": [
           180,
-          125
+          137
         ],
         "authority": "server"
       },
@@ -5728,7 +7915,7 @@
         "resource": "Bramble",
         "serverTile": [
           50,
-          72
+          84
         ],
         "authority": "server"
       },
@@ -5737,7 +7924,7 @@
         "resource": "Bramble",
         "serverTile": [
           49,
-          150
+          162
         ],
         "authority": "server"
       },
@@ -5746,7 +7933,7 @@
         "resource": "Bog Iron",
         "serverTile": [
           173,
-          145
+          157
         ],
         "authority": "server"
       },
@@ -5755,7 +7942,7 @@
         "resource": "Bog Iron",
         "serverTile": [
           55,
-          179
+          191
         ],
         "authority": "server"
       },
@@ -5764,7 +7951,7 @@
         "resource": "Bog Iron",
         "serverTile": [
           117,
-          79
+          91
         ],
         "authority": "server"
       },
@@ -5773,7 +7960,7 @@
         "resource": "Coal",
         "serverTile": [
           137,
-          95
+          107
         ],
         "authority": "server"
       },
@@ -5782,7 +7969,7 @@
         "resource": "Coal",
         "serverTile": [
           219,
-          98
+          110
         ],
         "authority": "server"
       },
@@ -5791,7 +7978,7 @@
         "resource": "Coal",
         "serverTile": [
           126,
-          143
+          155
         ],
         "authority": "server"
       },
@@ -5800,7 +7987,7 @@
         "resource": "Flint",
         "serverTile": [
           225,
-          128
+          140
         ],
         "authority": "server"
       },
@@ -5809,7 +7996,7 @@
         "resource": "Flint",
         "serverTile": [
           164,
-          77
+          89
         ],
         "authority": "server"
       },
@@ -5818,7 +8005,7 @@
         "resource": "Flint",
         "serverTile": [
           71,
-          177
+          189
         ],
         "authority": "server"
       },
@@ -5827,7 +8014,7 @@
         "resource": "Thistle",
         "serverTile": [
           120,
-          179
+          191
         ],
         "authority": "server"
       },
@@ -5836,7 +8023,7 @@
         "resource": "Thistle",
         "serverTile": [
           145,
-          192
+          204
         ],
         "authority": "server"
       },
@@ -5845,7 +8032,7 @@
         "resource": "Peat",
         "serverTile": [
           242,
-          129
+          141
         ],
         "authority": "server"
       },
@@ -5854,7 +8041,7 @@
         "resource": "Peat",
         "serverTile": [
           300,
-          136
+          148
         ],
         "authority": "server"
       },
@@ -5863,7 +8050,7 @@
         "resource": "Peat",
         "serverTile": [
           292,
-          142
+          154
         ],
         "authority": "server"
       },
@@ -5872,7 +8059,7 @@
         "resource": "Peat",
         "serverTile": [
           231,
-          125
+          137
         ],
         "authority": "server"
       },
@@ -5881,7 +8068,7 @@
         "resource": "Peat",
         "serverTile": [
           64,
-          123
+          135
         ],
         "authority": "server"
       },
@@ -5890,7 +8077,7 @@
         "resource": "Peat",
         "serverTile": [
           298,
-          150
+          162
         ],
         "authority": "server"
       },
@@ -5899,7 +8086,7 @@
         "resource": "Bramble",
         "serverTile": [
           346,
-          241
+          253
         ],
         "authority": "server"
       },
@@ -5908,7 +8095,7 @@
         "resource": "Bramble",
         "serverTile": [
           351,
-          245
+          257
         ],
         "authority": "server"
       },
@@ -5917,7 +8104,7 @@
         "resource": "Bramble",
         "serverTile": [
           347,
-          251
+          263
         ],
         "authority": "server"
       },
@@ -5926,7 +8113,7 @@
         "resource": "Bramble",
         "serverTile": [
           273,
-          38
+          50
         ],
         "authority": "server"
       },
@@ -5935,7 +8122,7 @@
         "resource": "Bramble",
         "serverTile": [
           274,
-          46
+          58
         ],
         "authority": "server"
       },
@@ -5944,7 +8131,7 @@
         "resource": "Bramble",
         "serverTile": [
           276,
-          41
+          53
         ],
         "authority": "server"
       },
@@ -5953,7 +8140,7 @@
         "resource": "Orchid",
         "serverTile": [
           65,
-          80
+          92
         ],
         "authority": "server"
       },
@@ -5962,7 +8149,7 @@
         "resource": "Orchid",
         "serverTile": [
           57,
-          84
+          96
         ],
         "authority": "server"
       },
@@ -5971,7 +8158,7 @@
         "resource": "Orchid",
         "serverTile": [
           60,
-          78
+          90
         ],
         "authority": "server"
       },
@@ -5980,7 +8167,7 @@
         "resource": "Moorcotton",
         "serverTile": [
           368,
-          72
+          84
         ],
         "authority": "server"
       },
@@ -5989,7 +8176,7 @@
         "resource": "Moorcotton",
         "serverTile": [
           373,
-          71
+          83
         ],
         "authority": "server"
       },
@@ -5998,7 +8185,7 @@
         "resource": "Moorcotton",
         "serverTile": [
           366,
-          77
+          89
         ],
         "authority": "server"
       },
@@ -6007,7 +8194,7 @@
         "resource": "Bog Iron",
         "serverTile": [
           235,
-          337
+          349
         ],
         "authority": "server"
       },
@@ -6016,7 +8203,7 @@
         "resource": "Bog Iron",
         "serverTile": [
           231,
-          330
+          342
         ],
         "authority": "server"
       },
@@ -6025,7 +8212,7 @@
         "resource": "Bog Iron",
         "serverTile": [
           232,
-          327
+          339
         ],
         "authority": "server"
       },
@@ -6034,7 +8221,7 @@
         "resource": "Hearthroot",
         "serverTile": [
           199,
-          7
+          19
         ],
         "authority": "server"
       },
@@ -6043,7 +8230,7 @@
         "resource": "Hearthroot",
         "serverTile": [
           200,
-          16
+          28
         ],
         "authority": "server"
       },
@@ -6052,7 +8239,7 @@
         "resource": "Resin",
         "serverTile": [
           312,
-          46
+          58
         ],
         "authority": "server"
       },
@@ -6061,7 +8248,7 @@
         "resource": "Resin",
         "serverTile": [
           312,
-          52
+          64
         ],
         "authority": "server"
       },
@@ -6070,7 +8257,7 @@
         "resource": "Sap",
         "serverTile": [
           150,
-          229
+          241
         ],
         "authority": "server"
       },
@@ -6079,7 +8266,7 @@
         "resource": "Sap",
         "serverTile": [
           163,
-          211
+          223
         ],
         "authority": "server"
       },
@@ -6088,7 +8275,7 @@
         "resource": "Thistle",
         "serverTile": [
           246,
-          40
+          52
         ],
         "authority": "server"
       },
@@ -6097,7 +8284,7 @@
         "resource": "Thistle",
         "serverTile": [
           244,
-          52
+          64
         ],
         "authority": "server"
       },
@@ -6106,7 +8293,7 @@
         "resource": "Flint",
         "serverTile": [
           128,
-          291
+          303
         ],
         "authority": "server"
       },
@@ -6115,7 +8302,7 @@
         "resource": "Flint",
         "serverTile": [
           125,
-          291
+          303
         ],
         "authority": "server"
       }
@@ -6125,7 +8312,7 @@
         "creature": "autumn_antler_stag",
         "serverTile": [
           152,
-          88
+          100
         ],
         "authority": "server"
       },
@@ -6133,7 +8320,7 @@
         "creature": "autumn_antler_stag",
         "serverTile": [
           36,
-          129
+          141
         ],
         "authority": "server"
       },
@@ -6141,7 +8328,7 @@
         "creature": "autumn_antler_stag",
         "serverTile": [
           27,
-          120
+          132
         ],
         "authority": "server"
       },
@@ -6149,7 +8336,7 @@
         "creature": "mossbound_hound",
         "serverTile": [
           92,
-          225
+          237
         ],
         "authority": "server"
       },
@@ -6157,7 +8344,7 @@
         "creature": "mossbound_hound",
         "serverTile": [
           314,
-          172
+          184
         ],
         "authority": "server"
       },
@@ -6165,7 +8352,7 @@
         "creature": "mossbound_hound",
         "serverTile": [
           67,
-          217
+          229
         ],
         "authority": "server"
       },
@@ -6173,7 +8360,7 @@
         "creature": "moor_pony",
         "serverTile": [
           48,
-          126
+          138
         ],
         "authority": "server"
       },
@@ -6181,7 +8368,7 @@
         "creature": "moor_pony",
         "serverTile": [
           23,
-          137
+          149
         ],
         "authority": "server"
       },
@@ -6189,7 +8376,7 @@
         "creature": "moor_pony",
         "serverTile": [
           45,
-          143
+          155
         ],
         "authority": "server"
       },
@@ -6197,7 +8384,7 @@
         "creature": "moor_heron",
         "serverTile": [
           272,
-          137
+          149
         ],
         "authority": "server"
       },
@@ -6205,7 +8392,7 @@
         "creature": "moor_heron",
         "serverTile": [
           230,
-          74
+          86
         ],
         "authority": "server"
       },
@@ -6213,7 +8400,7 @@
         "creature": "moor_heron",
         "serverTile": [
           277,
-          124
+          136
         ],
         "authority": "server"
       },
@@ -6221,7 +8408,7 @@
         "creature": "cobalt_ibex",
         "serverTile": [
           352,
-          321
+          333
         ],
         "authority": "server"
       },
@@ -6229,7 +8416,7 @@
         "creature": "cobalt_ibex",
         "serverTile": [
           41,
-          307
+          319
         ],
         "authority": "server"
       },
@@ -6237,7 +8424,7 @@
         "creature": "frosthorn_elk",
         "serverTile": [
           340,
-          350
+          362
         ],
         "authority": "server"
       },
@@ -6245,7 +8432,7 @@
         "creature": "amber_lantern_moth",
         "serverTile": [
           132,
-          81
+          93
         ],
         "authority": "server"
       },
@@ -6253,7 +8440,7 @@
         "creature": "berry_bramble_boar",
         "serverTile": [
           261,
-          137
+          149
         ],
         "authority": "server"
       },
@@ -6261,7 +8448,7 @@
         "creature": "berry_bramble_boar",
         "serverTile": [
           266,
-          125
+          137
         ],
         "authority": "server"
       },
@@ -6269,7 +8456,7 @@
         "creature": "briarhide_wolf",
         "serverTile": [
           82,
-          232
+          244
         ],
         "authority": "server"
       },
@@ -6277,7 +8464,7 @@
         "creature": "autumn_crown_stag",
         "serverTile": [
           221,
-          76
+          88
         ],
         "authority": "server"
       },
@@ -6285,7 +8472,7 @@
         "creature": "giant_mole",
         "serverTile": [
           208,
-          81
+          93
         ],
         "authority": "server"
       },
@@ -6293,7 +8480,7 @@
         "creature": "giant_mole",
         "serverTile": [
           223,
-          83
+          95
         ],
         "authority": "server"
       },
@@ -6301,7 +8488,7 @@
         "creature": "moorland_dire_wolf",
         "serverTile": [
           62,
-          233
+          245
         ],
         "authority": "server"
       },
@@ -6309,7 +8496,7 @@
         "creature": "moorland_dire_wolf",
         "serverTile": [
           85,
-          219
+          231
         ],
         "authority": "server"
       },
@@ -6317,7 +8504,7 @@
         "creature": "moorland_dire_wolf",
         "serverTile": [
           318,
-          179
+          191
         ],
         "authority": "server"
       },
@@ -6325,7 +8512,7 @@
         "creature": "moss_armored_hound",
         "serverTile": [
           322,
-          188
+          200
         ],
         "authority": "server"
       },
@@ -6333,7 +8520,7 @@
         "creature": "moss_armored_hound",
         "serverTile": [
           327,
-          180
+          192
         ],
         "authority": "server"
       },
@@ -6341,7 +8528,7 @@
         "creature": "moss_horn_ram",
         "serverTile": [
           20,
-          295
+          307
         ],
         "authority": "server"
       },
@@ -6349,7 +8536,7 @@
         "creature": "moss_horn_ram",
         "serverTile": [
           328,
-          341
+          353
         ],
         "authority": "server"
       },
@@ -6357,7 +8544,7 @@
         "creature": "mossback_badger",
         "serverTile": [
           49,
-          134
+          146
         ],
         "authority": "server"
       },
@@ -6365,7 +8552,7 @@
         "creature": "mossbound_hound",
         "serverTile": [
           321,
-          206
+          218
         ],
         "authority": "server"
       },
@@ -6373,7 +8560,7 @@
         "creature": "mossbound_hound",
         "serverTile": [
           72,
-          233
+          245
         ],
         "authority": "server"
       },
@@ -6381,7 +8568,7 @@
         "creature": "mossbound_hound",
         "serverTile": [
           78,
-          221
+          233
         ],
         "authority": "server"
       },
@@ -6389,7 +8576,7 @@
         "creature": "mossbound_stone_golem",
         "serverTile": [
           184,
-          330
+          342
         ],
         "authority": "server"
       },
@@ -6397,7 +8584,7 @@
         "creature": "spectral_forest_knight",
         "serverTile": [
           290,
-          294
+          306
         ],
         "authority": "server"
       },
@@ -6405,7 +8592,7 @@
         "creature": "mire_goblin",
         "serverTile": [
           61,
-          225
+          237
         ],
         "authority": "server"
       },
@@ -6413,7 +8600,7 @@
         "creature": "mire_goblin",
         "serverTile": [
           316,
-          198
+          210
         ],
         "authority": "server"
       },
@@ -6421,7 +8608,7 @@
         "creature": "mire_goblin",
         "serverTile": [
           311,
-          187
+          199
         ],
         "authority": "server"
       },
@@ -6429,7 +8616,7 @@
         "creature": "moonlit_unicorn",
         "serverTile": [
           90,
-          212
+          224
         ],
         "authority": "server"
       },
@@ -6437,7 +8624,7 @@
         "creature": "moonlit_unicorn",
         "serverTile": [
           330,
-          193
+          205
         ],
         "authority": "server"
       },
@@ -6445,7 +8632,7 @@
         "creature": "moonlit_unicorn",
         "serverTile": [
           70,
-          226
+          238
         ],
         "authority": "server"
       },
@@ -6453,7 +8640,7 @@
         "creature": "shadow_warg",
         "serverTile": [
           153,
-          338
+          350
         ],
         "authority": "server"
       },
@@ -6461,7 +8648,7 @@
         "creature": "shadow_warg",
         "serverTile": [
           157,
-          351
+          363
         ],
         "authority": "server"
       },
@@ -6469,7 +8656,7 @@
         "creature": "shadow_warg",
         "serverTile": [
           281,
-          318
+          330
         ],
         "authority": "server"
       },
@@ -6477,7 +8664,7 @@
         "creature": "nightweave_spider",
         "serverTile": [
           173,
-          357
+          369
         ],
         "authority": "server"
       },
@@ -6485,7 +8672,7 @@
         "creature": "nightweave_spider",
         "serverTile": [
           285,
-          286
+          298
         ],
         "authority": "server"
       },
@@ -6493,7 +8680,7 @@
         "creature": "nightweave_spider",
         "serverTile": [
           263,
-          306
+          318
         ],
         "authority": "server"
       },
@@ -6501,7 +8688,7 @@
         "creature": "black_iron_death_knight",
         "serverTile": [
           172,
-          325
+          337
         ],
         "authority": "server"
       },
@@ -6509,7 +8696,7 @@
         "creature": "black_iron_death_knight",
         "serverTile": [
           271,
-          299
+          311
         ],
         "authority": "server"
       },
@@ -6517,7 +8704,7 @@
         "creature": "black_iron_death_knight",
         "serverTile": [
           277,
-          290
+          302
         ],
         "authority": "server"
       },
@@ -6525,7 +8712,7 @@
         "creature": "moors_spectral_knight",
         "serverTile": [
           262,
-          292
+          304
         ],
         "authority": "server"
       },
@@ -6533,7 +8720,7 @@
         "creature": "moors_spectral_knight",
         "serverTile": [
           270,
-          307
+          319
         ],
         "authority": "server"
       },
@@ -6541,7 +8728,7 @@
         "creature": "moors_spectral_knight",
         "serverTile": [
           163,
-          339
+          351
         ],
         "authority": "server"
       },
@@ -6549,7 +8736,7 @@
         "creature": "spectral_moors_knight",
         "serverTile": [
           180,
-          344
+          356
         ],
         "authority": "server"
       },
@@ -6557,7 +8744,7 @@
         "creature": "spectral_moors_knight",
         "serverTile": [
           291,
-          314
+          326
         ],
         "authority": "server"
       },
@@ -6565,7 +8752,7 @@
         "creature": "spectral_moors_knight",
         "serverTile": [
           278,
-          297
+          309
         ],
         "authority": "server"
       },
@@ -6573,7 +8760,7 @@
         "creature": "ashen_wolf",
         "serverTile": [
           243,
-          69
+          81
         ],
         "authority": "server"
       },
@@ -6581,7 +8768,7 @@
         "creature": "ashen_wolf",
         "serverTile": [
           173,
-          351
+          363
         ],
         "authority": "server"
       },
@@ -6589,10 +8776,176 @@
         "creature": "ashen_wolf",
         "serverTile": [
           14,
-          128
+          140
         ],
         "authority": "server"
       }
     ]
+  },
+  "continentGeography": {
+    "schemaVersion": 1,
+    "nativeServerOrigin": [
+      116,
+      116
+    ],
+    "nativeServerCells": [
+      384,
+      384
+    ],
+    "serverOrigin": [
+      116,
+      128
+    ],
+    "serverCells": [
+      426,
+      426
+    ],
+    "serverTileShift": [
+      0,
+      12
+    ],
+    "serverBounds": [
+      [
+        -116,
+        -298
+      ],
+      [
+        310,
+        128
+      ]
+    ],
+    "mapBounds": [
+      [
+        -152,
+        -304
+      ],
+      [
+        295,
+        151
+      ]
+    ],
+    "geographySha256": "9abd167a99745cd0d5b6c164e496979884bc6db71b403210d1a3b837ef470830",
+    "geometrySha256": "9a341d4103060d2fb5f7af2cf839e983bb199e1f605f811c384880d7802948db",
+    "nativeCollisionSha256": "4cd4694e8347d7a5f0fee644a68bd73ef120d94036922e2aba0fa75801ad2402",
+    "result": {
+      "nativeBlockedPreserved": 50546,
+      "oldWalkableUnsupportedClosed": 0,
+      "oldWalkableSubmergedClosed": 0,
+      "paddingWalkableCells": 28560,
+      "walkableCells": 567838,
+      "maximumPaddingGradient": 0.8,
+      "minimumWaterClearanceMetres": 0.0,
+      "existingWadeDepthMetres": 0.25
+    }
+  },
+  "authoredGeometry": {
+    "generator": "eloria-assets/tools/rebuild_continent_geography.py",
+    "inputs": {
+      "eloria-assets/maps/nymara-regions/_color/terrain_paint.py": "32bd5948091cdbc33a674938bb8ce34ac4daf39a8e5df23b3bf1bc10b58338f4",
+      "eloria-assets/maps/nymara-regions/_finishing/causeway_rims.py": "61c898ab904dd5632c3e057463dd198d45631bb1725289ecdd9f54cd3d73c15a",
+      "eloria-assets/maps/nymara-regions/_finishing/connector_finish.py": "9c7fd186f7979565db3d20cdd7b8602e0be4dda4d91158933566be1cbdafec16",
+      "eloria-assets/maps/nymara-regions/_northern/landscape_finish.py": "8321fdc08064d0ad29329179d7d8d6979ff1d982ae746b15af1ca7ff1741126a",
+      "eloria-assets/maps/nymara-regions/_northern/road_profiles.py": "d608628d1dc9e63ab52c6b9ba103381e2324c30436c3fee60dda2bbc346472d0",
+      "eloria-assets/maps/nymara-regions/_outer/outer_aprons.py": "31038e07fdba448b696a34218f6bec7bad03c4813dab9ed31c3b1be397ca9e39",
+      "eloria-assets/maps/nymara-regions/_outer/probe_outer_aprons.py": "a39f2733da5de90f8f9561c0a38cbb8c4ab65e8ce6db014c577e7a57319f7dcf",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/__init__.py": "bcc6624b01ea53fc8be93665bc56aff69af74ece20ff6ae6ad891057cf4b8b23",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/arcadecraft.py": "034302006e0499827591385a290a8f2ec6e7cb5ead6bc5781574c7a4eb8f3b67",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/architecture.py": "bcaee2e29b73a3eff4de2e71ba73fb9eb724fd620075b2ff080cf9c1b4f928e8",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/barrowcraft.py": "49289f61a280e4f2212091606d7742dd0ff69326f9f8ed2a2f3dba5575a7244a",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/canyoncraft.py": "b71feab7ac07d08f3e39ad7760b1f3192e59e2741d3296c1ed2ab155d2ba4a17",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/civiccraft.py": "738ced5f7d36e91824dde9a964f27478a093116d217f957fed6f83712fa68a08",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/coplanar.py": "016dcdfb2c0f6687b20e2257076ef8833dc1e9600376184f0bb0c31bc298ccac",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/crownmaterials.py": "69d80d601786376d992b14637edee8cbf721f0d34b8499f4ea654cbafecd0cbb",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/crystalcraft.py": "439ae8820f87ff243efeb6270170353ca47d4f3dfa7f97feb4c747fd3d3b0d70",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/forestcraft.py": "2f2b2872dc070fe944b5fab3ddca98f1b71f6530f57c61d3e3adc5dc7e4c26dc",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/gltf.py": "3df32803d90efb5f7255d30e6027b36660773c5fd935ce5d5ec7796b0f2941b0",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/interiors.py": "516fada40372437f5950ff0a9bea7b00e5f49a9273d0fccb3b38c102d1b121b9",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/junglecraft.py": "e09a197f926a412d63132c7ab9efa721d7384e791b698286cbe6ee71d88f8dde",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/landscape.py": "b24717f59470152715b4079f924891fd241f4c8cb0950a7480be8382b03a4b9d",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/materials.py": "af4917a899a08fa663884defd35d79aa45ae9c264e2028cf03f10520898b53f6",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/mesh.py": "6a3930bc16c72a30df6cd406eb78369c4c7a0c39a2895f5db90df90b8b2170ba",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/moorcraft.py": "64338e95741c2d6cb7559e15df77ce80ffc8a089524bc19067ca3a4e05d89f1a",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/mountaincraft.py": "942f0afb01b958a4a8398b8e3b5bdec10ec88af93706f84a20b6068d9b6a9c7d",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/noise.py": "62c4b8d88d1c5f307b22768996382e91f31c0a6c16d723a2b3886450af278c4c",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/observatorycraft.py": "d431fa03cf00868eb0a0e62a858f622642fa54295839a47aba75f27af890b1c3",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/populate.py": "5086e89209fa9f1bb6b298fa90382738a9807d49f137ff2186c6c5fb9f84077b",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/props.py": "8368e2b0b2adafddb93381657fd78beba75ed084771560f7dd7dba0c33632494",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/region.py": "9d72472f480789e59ab849f0473ac0ca275c3f246d3a549da8c461862a9fe5b1",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/render.py": "ace7bbe332dbf87db4e2d4378617b831606f8861ff19f300fde7e3ef6ce0d228",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/routecraft.py": "34c88fbda7c826775b0e11148710dbd1f4d775198fd25ff6736852012061cb9c",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/smallrooms.py": "4a27b353b9ad8307e8f7fd37388f884ae2241ce2867d35c677cf6720f3c8bd35",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/spatial.py": "befd9a805574b37de45f65815941778cf2b6bb46f11868ff4d4a9cb03a52bd77",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/stonework.py": "225b8cdb38bafba7c3f2a4e8c730642aca8103f51877b3a0db31e95af0010881",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/templecraft.py": "1646e1907298dbedd406fcb4d086508a929c86065bf756795a54afdf4959e3df",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/terrain.py": "185ff68f54f2294e32b8ed89b157bb5be66d71d6cb2faf5678ece9a9516cf3df",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/textures.py": "576413d77324f3ce4bb152382af96663ee564943db3cc7841a0e264011417399",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/treecraft.py": "f7755cce4a38b32335cf7a2462cbf246a2dd3f1167399dc5282eaf8b308697b6",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/trees.py": "8cefc035655f20d09798c7ed41935c0c59d5d30ff07163619e0ca4e486684d63",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/watercraft.py": "39d9b79e531325a66288c2ee008831be73156d87740c885b11242450b144f028",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/waterfront.py": "75a79cb467428ae063c78a520b3fd921afc7e3648b00d2d1f59e2bd6daab6524",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/woodlandcraft.py": "921c59a131b7cccdfc2e2bd889438ee6e1887088739a30a72b41cc9df0cffb2f",
+      "eloria-assets/maps/nymara-regions/_toolkit/border_vistas.py": "ccd302df09d476b693368a28e62ad0124027ccae640ce1dd7c399e6dc579409b",
+      "eloria-assets/maps/nymara-regions/_toolkit/capture_views.py": "b14cda865ec067c8be87d964b96ab9addfaee10b8676bf4bfcd32be55bf91db5",
+      "eloria-assets/maps/nymara-regions/_toolkit/compact_landscape.py": "a75f505b8087be9b5bfe0668ee92dafa53292d3d33cbf544e4848e4a936f1289",
+      "eloria-assets/maps/nymara-regions/_toolkit/compress_captures.py": "242b23b718a95c756b48a8a4c0109592260091fa0b745fcb462dd0e19f8529bb",
+      "eloria-assets/maps/nymara-regions/_toolkit/contentposts.py": "4a6cf588584128191058c7ad48a4386806f45f565d9769f5f39dcdf201c132e9",
+      "eloria-assets/maps/nymara-regions/_toolkit/continent_geography.py": "33363d2be5f76d5d69c98dfe92ac5b8c7f576c3d141326a3f266d8bf8ab63f8c",
+      "eloria-assets/maps/nymara-regions/_toolkit/designs/four_gates_secrets_design.py": "eb7d1d20674547dbadde56bab4ac9555b3c1cb87be422b45801e30b4b621d652",
+      "eloria-assets/maps/nymara-regions/_toolkit/export_insides_collision.py": "11ca322c851b05fe32edfcc27380b072dffc9a9b0303879503af0aa0ccdc9dff",
+      "eloria-assets/maps/nymara-regions/_toolkit/export_interior_collision.py": "f41b095554fa953ff835e88387e9512f295a6178609d7cf3901e6e22669a42ab",
+      "eloria-assets/maps/nymara-regions/_toolkit/export_server_collision.py": "4528ec4e20a3b457d6a1dd0d3ef23c064c4a2e013686e7f6b2c9247634301f7c",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/__init__.py": "1770a3092c31648c5c9d3305c35ef51e62c374d0b3579048eac25cc4985835b3",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/barrow_visitation.py": "bfba53e656cfca95274514770b9a7b424da2073e2adcb5fe474b16f2fa44a246",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/build.py": "e432f3b44844e14aba238333b0b1fc627318984d60fd5a97dc6930149048413a",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/designs.py": "15560b8ff2f2a03fc6a2704eeca3028ed4d1edd7722fc2dc5091c70e4b5e4e08",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/drowned_customs.py": "4534c6177a01b6a5c223d46bb7fc53f724ad081337e26479257ffc10dafeff3b",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/forest_haul.py": "d83fe3419e2586613b0703aaea34cf4cd86885ca370133dd6f11004f54971713",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/ice_mine.py": "9237d00d96a0bfa6b3d7b0cbfab9114d7e77cabbf8cfd6d708a703d41463d607",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/red_canyon.py": "1a75991a5863e426d026e7c3b1ed9a5e8cb6ee7474f7c15b0556032a1860ca29",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/rooms.py": "a91d120ab48f5b905b9f4496b3d4c05e67f2fddf63f74723c58e580fc69d7e8a",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/temple_procession.py": "5c5bade746a0c2cdbb2d02b7495e707eeb9898a23a4cd517248c8075cdcedab4",
+      "eloria-assets/maps/nymara-regions/_toolkit/glb_reader.py": "be5e46a94acf014a8684be216fe8c67ac2aadbf789469087276f229bd85c9a57",
+      "eloria-assets/maps/nymara-regions/_toolkit/guard_actor_surfaces.py": "483c64ba394a3eabef0110296f7e11eedfd2bb4f3203d872c6268ecc0ea41a91",
+      "eloria-assets/maps/nymara-regions/_toolkit/interior_views.py": "f6ad2c7cd16f9a5faf7575154c0252fda8b3c5fb4793b1ff041c2165798d0cff",
+      "eloria-assets/maps/nymara-regions/_toolkit/loresites.py": "16a9b90b2256f956fe92196c303ba04bf2d67ea6b3287f76464aa85c23ff962c",
+      "eloria-assets/maps/nymara-regions/_toolkit/make_comparison.py": "ed2e70b89e7a6c03e830a2364681adb7a7f5412b23cd5691ac9e521f67320820",
+      "eloria-assets/maps/nymara-regions/_toolkit/northern_passes.py": "8b816082f1d1a040ac72d8dc785901ccab4d933aac3e1f4f9a2c575bd4ac6205",
+      "eloria-assets/maps/nymara-regions/_toolkit/open_walk_surfaces.py": "612a56f1c010a89eb6f1507c724242c2b32da757003657e8227132805b7ee555",
+      "eloria-assets/maps/nymara-regions/_toolkit/patch_collision_altitude.py": "c8c5dd2a15b169937d758f1d329d3786010a5f3b49e1e608398c0705b119a889",
+      "eloria-assets/maps/nymara-regions/_toolkit/plan_image.py": "939708d96db2aaa92ba130cd73d425877a1c68ad1e01c748202b464282f3e602",
+      "eloria-assets/maps/nymara-regions/_toolkit/preview.py": "73230ab1978e65480981b52225938826f7a379236c40e1708dce46850945071f",
+      "eloria-assets/maps/nymara-regions/_toolkit/rebuild_collision.py": "3fc76e6cd75ac60d9aa057e584666d7dee0bb5bc4ecc5b21f6682be9f5fc712b",
+      "eloria-assets/maps/nymara-regions/_toolkit/refine_walk_heights.py": "a4d8473b98bc65cd95164a7e5706a002abd0286603ef171eeaae513514883b4d",
+      "eloria-assets/maps/nymara-regions/_toolkit/regionbuild.py": "816c8d61ac0d0d2ccb20a7595a10f93a440df79765bd17804e13a746923f9b15",
+      "eloria-assets/maps/nymara-regions/_toolkit/regionpaths.py": "3a711cd50da4e5be22dd6f51ff6ca62d046fff418abc05edcd60531377b96257",
+      "eloria-assets/maps/nymara-regions/_toolkit/secretdoors.py": "508d26a78fe18389dd39051e49266d1b9c032de72add15a84e2e353a44181646",
+      "eloria-assets/maps/nymara-regions/_toolkit/secretrooms.py": "d7e4a6c6b1de205d3e3f1e94d2b1e18d627d30fef8cffcb0f30213d54d6b09f8",
+      "eloria-assets/maps/nymara-regions/_toolkit/secrets_build.py": "6778bd8634af74c0aaaa7da8ba00f2efdf0beea95fff3031c2c1606bc4c2f842",
+      "eloria-assets/maps/nymara-regions/_toolkit/secrets_doc.py": "a5221761d7595e367ef3e730c51f4ebea8cea7fcbf74d66f81b91e671d2c99bf",
+      "eloria-assets/maps/nymara-regions/_toolkit/server_walk_grid.py": "d6fd1ef43a3fe5903063637d22c1e9371650baea146f011b5f5ed41d4c95f6bb",
+      "eloria-assets/maps/nymara-regions/_toolkit/stamp_solid_landmarks.py": "2cc8b7688f849f59b2ecc22edf511fcaf2247c3cebed09c8fa76eb3e953065d1",
+      "eloria-assets/maps/nymara-regions/_toolkit/streaming_borders.py": "c101578ad9901484568c21dab8be1775bd1a385edfbde785e2dfc99f794a4d3e",
+      "eloria-assets/maps/nymara-regions/_toolkit/transitions.py": "7fb729f597406e72be68350c6c8b007ee74db63cdbfe88a6c1adc6072bf20f4c",
+      "eloria-assets/maps/nymara-regions/_toolkit/validate_gltf.py": "630807c19dfef54f65f6bdcb92bee279f1e3ed49b565ca15261f683539e44309",
+      "eloria-assets/maps/nymara-regions/_toolkit/verify_runtime.py": "7bd2d3d883ff9d07ebb64a21e972f943b2f2a4158683a40be5414bc52e6857be",
+      "eloria-assets/maps/nymara-regions/continent-geography.json": "9abd167a99745cd0d5b6c164e496979884bc6db71b403210d1a3b837ef470830",
+      "eloria-assets/maps/nymara-regions/grey_moors/source/build_grey_moors.py": "295f3efc1ef78390fdd791203253cbfa8bea7e04cf5adacb1a91ab4410bd154b",
+      "eloria-assets/maps/nymara-regions/grey_moors/source/build_interiors.py": "d10ebe19c90b1d418b1fde782d058cc0be52c2ddc619c0b7336a8b45daa25a29",
+      "eloria-assets/maps/nymara-regions/grey_moors/source/delta_bank_landform.py": "8cd335e79fb98b5d0ccf63ddcbd3f1ed4e5fb1b672e4896ce971ad31a87a3d76",
+      "eloria-assets/maps/nymara-regions/grey_moors/source/delta_verge.py": "c3e163ba08a6e7d9381f3ab849038eafe69d10fd7502b7d28ba4ea7f80a4c592",
+      "eloria-assets/maps/nymara-regions/grey_moors/source/export_insides_collision.py": "918e25638fb9556b48397c0c96d44da5ad1a9a19923dfb15d81eecccb5c5e7dd",
+      "eloria-assets/maps/nymara-regions/grey_moors/source/interiors.py": "d5626a486f14d71e4b00f7737f7c39f5d7c910303db747dda0127c584646fd7b",
+      "eloria-assets/maps/nymara-regions/grey_moors/source/landscape_plan.py": "ec5f6a05f941c7d1458d843dabcf0a20418eebebdd7e4f3bb2b204a348645685",
+      "eloria-assets/maps/nymara-regions/grey_moors/source/layout.py": "0530e76332f67b60bb9673c192172158b5f94e34db6dfa25b852b73a74a42753",
+      "eloria-assets/maps/nymara-regions/grey_moors/source/manymouth_approach.py": "a48d6fdf3f8c917925eae008299a6be1d7b85ad9e00ac715d63928cc19ded578",
+      "eloria-assets/maps/nymara-regions/grey_moors/source/migrate_compact_server.py": "f16b5fade45ddc85eb3556a6e1e9d0651c44948cf3bc4b38a43c8da052801083",
+      "eloria-assets/maps/nymara-regions/grey_moors/source/populate.py": "f5c6b425b34be10a2d1affeb27b5f0394236c96f60951abdf363f3fca96928ec",
+      "eloria-assets/maps/nymara-regions/grey_moors/source/preview_interior.py": "273e6d7fead9865ff90ae3afa0ff68ce1a8daf0cde1fe49aa57a681ec4cbe3d6",
+      "eloria-assets/maps/nymara-regions/grey_moors/source/rebuild_landscape.py": "fc3311e874303e1f95654edf078c4db79280d273eecc76b640889c6a9c56f7ea",
+      "eloria-assets/maps/nymara-regions/grey_moors/source/region.py": "c88865fa157242327d1cf46c9c66c6fa83764a7e48f59e2a865fca20ecd13979",
+      "eloria-assets/maps/nymara-regions/grey_moors/source/secrets_design.py": "bd046622b305037ec93182ed21fecd2808f6888dc7d0d9bd7c40896f876a0b30",
+      "eloria-assets/maps/nymara-regions/grey_moors/source/test_manymouth_approach.py": "03e724f9212f0076e133e9cb8d716ad40b049b5ae9d1939efea23fa282a0c147",
+      "eloria-assets/maps/nymara-regions/grey_moors/source/views.py": "11f0f61fbba7cc8929db0fcfcdbbab4e80417d2cd2303edb0ef4650076d21df8"
+    }
   }
 }

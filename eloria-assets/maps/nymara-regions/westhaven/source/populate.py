@@ -95,7 +95,10 @@ def build_water(build, lod: str | None = None) -> None:
     # sea alone was 203,000 triangles - more than half the region's geometry,
     # for flat water - and the waterline is not visibly better.
     reach = REG.WATER_MARGIN
-    cell = 4.5 if lod is None else 9.0
+    # The far view keeps the same coastline geometry. Coarser per-cell
+    # clipping discarded a real 39 m² sea strip at the Grey shared boundary;
+    # texture/detail reduction must not turn water into a hole.
+    cell = 4.5
     build.water_meshes["Water_Sea"] = TER.water_plane(
         t, REG.SEA_LEVEL,
         t.x0 - reach, t.z0 - reach,

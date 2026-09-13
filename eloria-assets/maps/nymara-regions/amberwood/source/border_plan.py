@@ -26,8 +26,24 @@ def finish(build):
         return True
     build.placements[:]=[p for p in build.placements if keep(p)]
     build.border_vistas=[]
+    import sys
+    sys.path.insert(0, str(root / '_outer'))
+    import outer_aprons
+    outer_snapshot = outer_aprons.capture(build, 'amberwood')
     from streaming_borders import apply as stitch_border
     stitch_border(build, 'amberwood')
+    outer_aprons.apply(build, 'amberwood', outer_snapshot)
+    sys.path.insert(0, str(root / '_finishing'))
+    import connector_finish
+    import tower_bypasses
+    tower_bypasses.apply(build)
+    import water_crossings
+    water_crossings.apply(build)
+    connector_finish.apply(build, 'amberwood')
+    import amber_paint
+    amber_paint.apply(build)
+    import approach_contract
+    approach_contract.apply(build)
     # Grove markers name a place, not one indispensable scatter instance.
     # Keep their logical centres but attach them to a surviving constituent.
     nodes={p.node for p in build.placements}

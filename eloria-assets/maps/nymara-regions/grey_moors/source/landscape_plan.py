@@ -211,7 +211,22 @@ def compact(build):
     # The shared reciprocal survey grades/cuts this collar and supplies the
     # actual region-view subset. Ordinary ferry travel keeps its own identity.
     from streaming_borders import apply as stitch_border
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / '_outer'))
+    import outer_aprons
+    outer_snapshot = outer_aprons.capture(build, 'grey_moors')
     stitch_border(build,'grey_moors')
+    outer_aprons.apply(build, 'grey_moors', outer_snapshot)
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / '_finishing'))
+    import connector_finish
+    import manymouth_approach
+    manymouth_approach.prepare(build)
+    connector_finish.apply(build, 'grey_moors')
+    manymouth_approach.finish(build)
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / '_color'))
+    import terrain_paint
+    terrain_paint.apply(build, 'grey_moors')
 
 def content_layout():
     result=PLAN.metadata(deepcopy(layout.CONTENT_LAYOUT))

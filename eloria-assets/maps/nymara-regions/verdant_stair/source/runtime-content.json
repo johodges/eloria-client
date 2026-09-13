@@ -155,7 +155,7 @@
       "resource": "Orchid",
       "serverTile": [
         39,
-        144
+        142
       ],
       "authority": "server"
     },
@@ -218,7 +218,7 @@
       "resource": "Sage",
       "serverTile": [
         37,
-        181
+        180
       ],
       "authority": "server"
     },
@@ -299,7 +299,7 @@
       "resource": "Quartz",
       "serverTile": [
         41,
-        143
+        142
       ],
       "authority": "server"
     },
@@ -532,8 +532,8 @@
       "id": 89,
       "resource": "Sage",
       "serverTile": [
-        205,
-        345
+        197,
+        338
       ],
       "authority": "server"
     },
@@ -541,8 +541,8 @@
       "id": 90,
       "resource": "Sage",
       "serverTile": [
-        203,
-        349
+        195,
+        354
       ],
       "authority": "server"
     },
@@ -577,7 +577,7 @@
     {
       "creature": "leafwing_owl",
       "serverTile": [
-        77,
+        76,
         158
       ],
       "authority": "server"

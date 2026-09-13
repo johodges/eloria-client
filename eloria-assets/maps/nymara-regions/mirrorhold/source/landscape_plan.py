@@ -12,6 +12,7 @@ from amberwood import terrain as TER, landscape as LAND, noise as N
 from amberwood import routecraft as RC, props as P, mesh as M
 from regionbuild import Placement
 import region as REG
+import secret_approaches as SECRET_APPROACHES
 
 SERVER_CELLS=384
 SERVER_ORIGIN=(120.0,96.0)
@@ -73,6 +74,7 @@ SECRET_POSTS={
  'mirror-adit':(211,82,-112),'mirror-waystone':(55.7,58,-25.65),
  'mirror-overlook-eyrie':(161.7,64,-64),'mirror-icebore-mouth':(35,94.05,-126),
 }
+SECRET_POSTS.update(SECRET_APPROACHES.POSTS)
 INTERACTION_POSTS={
  'orrery-console':(99.7,124,-234),'gate-ward':(110,84,-87),
  'plaza-well':(69.7,58,-27),'harbour-crane':(135.7,4.5,7),
@@ -273,6 +275,8 @@ def compact(build,seed,materials,lod=None):
         for l in build.landmarks:
             if l['id']==name:l['position']=[x,y,z]
     for x,y,z in SECRET_POSTS.values():_patch(t,x,z,4,4,y,TER.PATH)
+    for x,y,z in SECRET_APPROACHES.RETAINED_FOUNDATION_POSTS:
+        _patch(t,x,z,4,4,y,TER.PATH)
     # Full-size Ring colonnade needs its complete island after compression.
     ring=PLAN.point([156,3.5,60]);r=np.hypot(t.gx-ring[0],t.gz-ring[2])
     LAND.feather_level(t,r-23.2,3.5,shoulder=1.5)
@@ -480,6 +484,9 @@ def compact(build,seed,materials,lod=None):
     build.water_meshes['Water_Lake']=TER.water_plane(t,REG.LAKE_LEVEL,
         t.x0,t.z0,t.xs[-1],t.zs[-1],material='water_lake',cell=2,margin=.15)
     build.notes.append('Sanctuary Road: a seven-metre causeway from the southeast working shore; South Watch and Ring island retain their sheltered banks.')
+    import lens_vault_approach
+    lens_vault_approach.prepare(build)
+    SECRET_APPROACHES.prepare(build)
     # Continuous one-metre substrate reflects the final grades, not the old
     # compressed surface triangles. Water and bridge surveys are retained.
     from amberwood import materials as MAT
@@ -501,6 +508,18 @@ def compact(build,seed,materials,lod=None):
     build.meshes={k:v for k,v in build.meshes.items() if k in used}
     import streaming_borders as SB
     SB.apply(build,"mirrorhold")
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / '_northern'))
+    import landscape_finish
+    landscape_finish.apply(build, 'mirrorhold')
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / '_finishing'))
+    import connector_finish
+    import sanctuary_crossing
+    sanctuary_crossing.apply(build)
+    connector_finish.apply(build, 'mirrorhold')
+    lens_vault_approach.finish(build)
+    SECRET_APPROACHES.finish(build)
     for entry in build.portals:
         if "serverTile" not in entry:
             x,_,z=entry["position"]
@@ -512,15 +531,25 @@ def manifest(build,manifest):
     t=build.terrain
     manifest['landscapeRevision']=REVISION
     manifest['roads']=build.authored_roads
+    manifest['lensVaultApproach']=build.lens_vault_approach
+    SECRET_APPROACHES.manifest(build,manifest)
     manifest['contentLayout']=PLAN.metadata(deepcopy(REG.CONTENT_LAYOUT))
     # Explicit compact-frame posts beside the original work areas. The final
     # server mask reserves these before resources and services are placed.
     manifest['contentLayout']['npcs']={
+        # The Citadel/Orrery staff receive visitors on the two flanks of the
+        # connected Lens Vault court. Their inherited high-bank posts became
+        # disconnected; moving the staff preserves their workplaces without
+        # stretching the terrain or placing them on a bare slope below it.
+        'Lens-Master Corvine Ast':[70,91,-193],
+        'Orrery Keeper Sabel Roon':[64,91,-193],
         'Canal Factor Odile Wren':[13,35.8,-39],
         'Stair-Town Reeve Padric':[-43,17.0,-14],
         'Aqueduct Warden Sunna':[203,50.41,-54],
         'Quay Master Belen Tarr':[156,35.28,-9],
-        'Bench Steward Aurel Fane':[-81,21.42,-15],
+        # Public paving in front of the west-bench house, clear of the watch
+        # footing and fence. The former side post became an isolated floor.
+        'Bench Steward Aurel Fane':[-76,17,-7],
     }
     manifest['navigation']['crossings']=PLAN.metadata(manifest['navigation']['crossings'])
     manifest['navigation']['crossings']+=build.water_crossings

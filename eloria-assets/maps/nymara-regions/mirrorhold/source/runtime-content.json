@@ -25,8 +25,8 @@
       "name": "Bench Steward Aurel Fane",
       "role": "dialogue",
       "serverTile": [
-        39,
-        111
+        44,
+        103
       ],
       "authority": "server"
     },
@@ -65,8 +65,8 @@
       "name": "Lens-Master Corvine Ast",
       "role": "dialogue",
       "serverTile": [
-        228,
-        287
+        190,
+        289
       ],
       "authority": "server"
     },
@@ -85,8 +85,8 @@
       "name": "Orrery Keeper Sabel Roon",
       "role": "dialogue",
       "serverTile": [
-        203,
-        295
+        184,
+        289
       ],
       "authority": "server"
     },
@@ -247,7 +247,7 @@
       "resource": "Sage",
       "serverTile": [
         29,
-        86
+        87
       ],
       "authority": "server"
     },
@@ -435,7 +435,7 @@
       "id": 73,
       "resource": "Clay",
       "serverTile": [
-        99,
+        101,
         331
       ],
       "authority": "server"
@@ -498,8 +498,8 @@
       "id": 80,
       "resource": "Sage",
       "serverTile": [
-        155,
-        18
+        154,
+        19
       ],
       "authority": "server"
     },
@@ -526,7 +526,7 @@
       "resource": "Pearl",
       "serverTile": [
         161,
-        371
+        376
       ],
       "authority": "server"
     },
@@ -545,7 +545,7 @@
       "creature": "river_otter",
       "serverTile": [
         103,
-        371
+        372
       ],
       "authority": "server"
     },
@@ -657,7 +657,7 @@
       "creature": "frosthorn_elk",
       "serverTile": [
         29,
-        69
+        70
       ],
       "authority": "server"
     },
@@ -728,8 +728,8 @@
     {
       "creature": "moss_stone_troll",
       "serverTile": [
-        17,
-        9
+        21,
+        5
       ],
       "authority": "server"
     }

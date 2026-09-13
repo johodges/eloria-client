@@ -80,6 +80,7 @@ typedef struct {
     float world[3];
     float normal[3];
     float uv[2];
+    float color[4];
 } Vertex;
 
 static void lerp_vertex(const Vertex *a, const Vertex *b, float t, Vertex *out) {
@@ -87,6 +88,7 @@ static void lerp_vertex(const Vertex *a, const Vertex *b, float t, Vertex *out) 
     for (int i = 0; i < 3; ++i) out->world[i] = a->world[i] + (b->world[i] - a->world[i]) * t;
     for (int i = 0; i < 3; ++i) out->normal[i] = a->normal[i] + (b->normal[i] - a->normal[i]) * t;
     for (int i = 0; i < 2; ++i) out->uv[i] = a->uv[i] + (b->uv[i] - a->uv[i]) * t;
+    for (int i = 0; i < 4; ++i) out->color[i] = a->color[i] + (b->color[i] - a->color[i]) * t;
 }
 
 /* clip a polygon against w > epsilon (near plane) */
@@ -171,11 +173,14 @@ typedef struct {
     float shadow_strength;
 } Lighting;
 
-void render_scene(const Geometry *geo, const Material *materials, int material_count,
+static void render_scene_impl(const Geometry *geo, const Material *materials, int material_count,
                   const TextureArray *tex, const float *view_projection,
                   const float *camera_position, const Lighting *light,
                   const float *light_matrix, const float *shadow_depth, int shadow_size,
-                  float *color_buffer, float *depth_buffer, int width, int height) {
+                  float *color_buffer, float *depth_buffer, int width, int height,
+                  const float *vertex_colors) {
+    const int orthographic = fabsf(view_projection[12]) + fabsf(view_projection[13])
+        + fabsf(view_projection[14]) < 1e-9f;
     for (int i = 0; i < width * height; ++i) depth_buffer[i] = 1e30f;
 
     for (int t = 0; t < geo->triangle_count; ++t) {
@@ -194,6 +199,8 @@ void render_scene(const Geometry *geo, const Material *materials, int material_c
             poly[k].normal[2] = geo->normals[vi * 3 + 2];
             poly[k].uv[0] = geo->uvs[vi * 2];
             poly[k].uv[1] = geo->uvs[vi * 2 + 1];
+            for (int c = 0; c < 4; ++c)
+                poly[k].color[c] = vertex_colors ? vertex_colors[vi * 4 + c] : 1.0f;
         }
         int n = clip_near(poly, 3, clipped);
         for (int f = 2; f < n; ++f) {
@@ -227,7 +234,14 @@ void render_scene(const Geometry *geo, const Material *materials, int material_c
                     if (b0 < 0 || b1 < 0 || b2 < 0) continue;
                     float w_interp = b0 * iw[0] + b1 * iw[1] + b2 * iw[2];
                     if (w_interp <= 0) continue;
-                    float depth = 1.0f / w_interp;
+                    /* Perspective uses camera distance; an orthographic camera
+                     * has constant clip.w and must compare interpolated clip.z.
+                     * Otherwise the first triangle wins even below a roof. */
+                    float depth = orthographic
+                        ? b0 * tri[0]->clip[2] * iw[0]
+                          + b1 * tri[1]->clip[2] * iw[1]
+                          + b2 * tri[2]->clip[2] * iw[2]
+                        : 1.0f / w_interp;
                     int idx = y * width + x;
                     if (depth >= depth_buffer[idx]) continue;
 
@@ -246,6 +260,9 @@ void render_scene(const Geometry *geo, const Material *materials, int material_c
                         albedo[0] *= texel[0]; albedo[1] *= texel[1];
                         albedo[2] *= texel[2]; albedo[3] *= texel[3];
                     }
+                    for (int c = 0; c < 4; ++c)
+                        albedo[c] *= p0 * tri[0]->color[c]
+                            + p1 * tri[1]->color[c] + p2 * tri[2]->color[c];
                     if (mat->alpha_mode == 1 && albedo[3] < mat->alpha_cutoff) continue;
 
                     float occlusion = 1.0f, roughness = mat->roughness;
@@ -347,4 +364,27 @@ void render_scene(const Geometry *geo, const Material *materials, int material_c
             }
         }
     }
+}
+
+/* Keep the original ABI for every existing preview builder. */
+void render_scene(const Geometry *geo, const Material *materials, int material_count,
+                  const TextureArray *tex, const float *view_projection,
+                  const float *camera_position, const Lighting *light,
+                  const float *light_matrix, const float *shadow_depth, int shadow_size,
+                  float *color_buffer, float *depth_buffer, int width, int height) {
+    render_scene_impl(geo, materials, material_count, tex, view_projection,
+        camera_position, light, light_matrix, shadow_depth, shadow_size,
+        color_buffer, depth_buffer, width, height, NULL);
+}
+
+/* GLB vertex colors are optional; the caller supplies four floats per vertex. */
+void render_scene_colored(const Geometry *geo, const Material *materials, int material_count,
+                  const TextureArray *tex, const float *view_projection,
+                  const float *camera_position, const Lighting *light,
+                  const float *light_matrix, const float *shadow_depth, int shadow_size,
+                  float *color_buffer, float *depth_buffer, int width, int height,
+                  const float *vertex_colors) {
+    render_scene_impl(geo, materials, material_count, tex, view_projection,
+        camera_position, light, light_matrix, shadow_depth, shadow_size,
+        color_buffer, depth_buffer, width, height, vertex_colors);
 }

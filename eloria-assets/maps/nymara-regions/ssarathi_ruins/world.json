@@ -20,34 +20,34 @@
       "min": [
         -161.74,
         -7.82,
-        -308.33
+        -291.56
       ],
       "max": [
-        312.98,
-        116.66,
-        158.39
+        305.56,
+        93.64,
+        152.19
       ]
     },
     "playableBounds": {
       "min": [
-        -116.0,
-        -6.6,
-        -267.0
+        -152,
+        -7.0,
+        -280
       ],
       "max": [
-        267.0,
-        90.28,
-        116.0
+        304,
+        90.05,
+        152
       ]
     },
     "seaLevel": 0.0,
-    "serverCells": 384
+    "serverCells": 426
   },
   "coordinateTransform": {
     "metresPerTile": 1.0,
     "serverOrigin": [
-      116.0,
-      116.0
+      153,
+      116
     ],
     "origin": [
       0.0,
@@ -55,7 +55,21 @@
       0.0
     ],
     "walkingHeight": 1.45,
-    "invertServerY": true
+    "invertServerY": true,
+    "serverCells": [
+      426,
+      426
+    ],
+    "addressableWorldBounds": {
+      "min": [
+        -153,
+        -310
+      ],
+      "max": [
+        273,
+        116
+      ]
+    }
   },
   "spawnPoints": [
     {
@@ -66,7 +80,7 @@
         0.0
       ],
       "serverTile": [
-        116,
+        153,
         116
       ],
       "rotationDegrees": -52.0,
@@ -81,7 +95,7 @@
         -40.0
       ],
       "serverTile": [
-        156,
+        193,
         156
       ],
       "rotationDegrees": 180.0,
@@ -96,7 +110,7 @@
         -98.0
       ],
       "serverTile": [
-        156,
+        193,
         214
       ],
       "rotationDegrees": 180.0,
@@ -111,7 +125,7 @@
         -124.25
       ],
       "serverTile": [
-        180,
+        217,
         240
       ],
       "rotationDegrees": 180.0,
@@ -126,7 +140,7 @@
         -86.0
       ],
       "serverTile": [
-        234,
+        271,
         202
       ],
       "rotationDegrees": 180.0,
@@ -141,7 +155,7 @@
         -44.0
       ],
       "serverTile": [
-        36,
+        73,
         160
       ],
       "rotationDegrees": 180.0,
@@ -156,7 +170,7 @@
         60.0
       ],
       "serverTile": [
-        254,
+        291,
         56
       ],
       "rotationDegrees": 180.0,
@@ -171,7 +185,7 @@
         -83.0
       ],
       "serverTile": [
-        84,
+        121,
         199
       ],
       "rotationDegrees": 180.0,
@@ -186,7 +200,7 @@
         35.0
       ],
       "serverTile": [
-        156,
+        193,
         81
       ],
       "rotationDegrees": 180.0,
@@ -201,7 +215,7 @@
         -15.0
       ],
       "serverTile": [
-        166,
+        203,
         131
       ],
       "rotationDegrees": 180.0,
@@ -246,11 +260,8 @@
       "March_west_causeway_Station",
       "March_west_causeway_Stone",
       "March_west_causeway_boat_009",
-      "March_west_causeway_fern_010",
       "March_west_causeway_fern_011",
-      "March_west_causeway_fern_012",
       "March_west_causeway_fern_013",
-      "March_west_causeway_fern_014",
       "MarketShrine",
       "MarketStall_0",
       "MarketStall_1",
@@ -330,8 +341,6 @@
       "Temple_VaultPortal",
       "TerraceRelic_0",
       "TerraceRelic_1",
-      "Tree_0",
-      "Tree_1",
       "Tree_10",
       "Tree_100",
       "Tree_101",
@@ -350,7 +359,6 @@
       "Tree_113",
       "Tree_114",
       "Tree_115",
-      "Tree_116",
       "Tree_117",
       "Tree_118",
       "Tree_119",
@@ -374,8 +382,6 @@
       "Tree_135",
       "Tree_136",
       "Tree_137",
-      "Tree_138",
-      "Tree_139",
       "Tree_14",
       "Tree_140",
       "Tree_141",
@@ -395,7 +401,6 @@
       "Tree_154",
       "Tree_155",
       "Tree_156",
-      "Tree_157",
       "Tree_158",
       "Tree_159",
       "Tree_16",
@@ -417,8 +422,6 @@
       "Tree_174",
       "Tree_175",
       "Tree_176",
-      "Tree_177",
-      "Tree_178",
       "Tree_179",
       "Tree_18",
       "Tree_180",
@@ -431,7 +434,6 @@
       "Tree_187",
       "Tree_188",
       "Tree_189",
-      "Tree_19",
       "Tree_190",
       "Tree_191",
       "Tree_192",
@@ -439,11 +441,8 @@
       "Tree_194",
       "Tree_195",
       "Tree_196",
-      "Tree_197",
       "Tree_198",
       "Tree_199",
-      "Tree_2",
-      "Tree_20",
       "Tree_200",
       "Tree_201",
       "Tree_202",
@@ -454,18 +453,14 @@
       "Tree_207",
       "Tree_208",
       "Tree_209",
-      "Tree_21",
       "Tree_210",
       "Tree_211",
-      "Tree_212",
-      "Tree_213",
       "Tree_214",
       "Tree_215",
       "Tree_216",
       "Tree_217",
       "Tree_218",
       "Tree_219",
-      "Tree_22",
       "Tree_220",
       "Tree_221",
       "Tree_222",
@@ -476,8 +471,6 @@
       "Tree_227",
       "Tree_228",
       "Tree_229",
-      "Tree_23",
-      "Tree_230",
       "Tree_231",
       "Tree_232",
       "Tree_233",
@@ -487,18 +480,14 @@
       "Tree_237",
       "Tree_238",
       "Tree_239",
-      "Tree_24",
       "Tree_240",
       "Tree_241",
       "Tree_242",
       "Tree_243",
       "Tree_244",
-      "Tree_245",
-      "Tree_246",
       "Tree_247",
       "Tree_248",
       "Tree_249",
-      "Tree_25",
       "Tree_250",
       "Tree_251",
       "Tree_252",
@@ -509,18 +498,13 @@
       "Tree_257",
       "Tree_258",
       "Tree_259",
-      "Tree_26",
       "Tree_260",
       "Tree_261",
       "Tree_262",
-      "Tree_263",
-      "Tree_264",
-      "Tree_265",
       "Tree_266",
       "Tree_267",
       "Tree_268",
       "Tree_269",
-      "Tree_27",
       "Tree_270",
       "Tree_271",
       "Tree_272",
@@ -528,9 +512,6 @@
       "Tree_274",
       "Tree_275",
       "Tree_276",
-      "Tree_277",
-      "Tree_278",
-      "Tree_279",
       "Tree_28",
       "Tree_280",
       "Tree_281",
@@ -540,19 +521,13 @@
       "Tree_285",
       "Tree_286",
       "Tree_287",
-      "Tree_288",
-      "Tree_289",
       "Tree_29",
-      "Tree_290",
       "Tree_291",
       "Tree_292",
       "Tree_293",
       "Tree_294",
       "Tree_295",
       "Tree_296",
-      "Tree_297",
-      "Tree_298",
-      "Tree_299",
       "Tree_3",
       "Tree_30",
       "Tree_300",
@@ -561,9 +536,6 @@
       "Tree_303",
       "Tree_304",
       "Tree_305",
-      "Tree_306",
-      "Tree_307",
-      "Tree_308",
       "Tree_309",
       "Tree_31",
       "Tree_310",
@@ -571,97 +543,59 @@
       "Tree_312",
       "Tree_313",
       "Tree_314",
-      "Tree_315",
-      "Tree_316",
-      "Tree_317",
       "Tree_318",
       "Tree_319",
       "Tree_32",
       "Tree_320",
-      "Tree_321",
-      "Tree_322",
-      "Tree_323",
       "Tree_324",
       "Tree_325",
       "Tree_326",
-      "Tree_327",
-      "Tree_328",
-      "Tree_329",
       "Tree_33",
       "Tree_330",
       "Tree_331",
       "Tree_332",
       "Tree_333",
-      "Tree_334",
-      "Tree_335",
-      "Tree_336",
       "Tree_337",
       "Tree_338",
-      "Tree_339",
       "Tree_34",
-      "Tree_340",
-      "Tree_341",
-      "Tree_342",
       "Tree_343",
       "Tree_344",
       "Tree_345",
       "Tree_346",
-      "Tree_347",
-      "Tree_348",
-      "Tree_349",
       "Tree_35",
       "Tree_350",
       "Tree_351",
       "Tree_352",
-      "Tree_353",
-      "Tree_354",
-      "Tree_355",
       "Tree_356",
       "Tree_357",
       "Tree_358",
       "Tree_359",
       "Tree_36",
-      "Tree_360",
-      "Tree_361",
       "Tree_362",
       "Tree_363",
       "Tree_364",
       "Tree_365",
-      "Tree_366",
-      "Tree_367",
       "Tree_368",
       "Tree_369",
       "Tree_37",
       "Tree_370",
       "Tree_371",
       "Tree_372",
-      "Tree_373",
-      "Tree_374",
       "Tree_375",
       "Tree_376",
-      "Tree_377",
-      "Tree_378",
       "Tree_379",
       "Tree_38",
       "Tree_380",
       "Tree_381",
-      "Tree_382",
-      "Tree_383",
       "Tree_384",
       "Tree_385",
       "Tree_386",
       "Tree_387",
-      "Tree_388",
-      "Tree_389",
       "Tree_39",
-      "Tree_390",
       "Tree_391",
       "Tree_392",
       "Tree_393",
       "Tree_394",
-      "Tree_395",
-      "Tree_396",
-      "Tree_397",
       "Tree_398",
       "Tree_399",
       "Tree_4",
@@ -670,9 +604,6 @@
       "Tree_401",
       "Tree_402",
       "Tree_403",
-      "Tree_404",
-      "Tree_405",
-      "Tree_406",
       "Tree_407",
       "Tree_408",
       "Tree_409",
@@ -684,9 +615,6 @@
       "Tree_414",
       "Tree_415",
       "Tree_416",
-      "Tree_417",
-      "Tree_418",
-      "Tree_419",
       "Tree_42",
       "Tree_420",
       "Tree_421",
@@ -694,14 +622,14 @@
       "Tree_423",
       "Tree_424",
       "Tree_425",
-      "Tree_426",
+      "Tree_429",
       "Tree_43",
+      "Tree_430",
       "Tree_431",
       "Tree_432",
       "Tree_433",
       "Tree_434",
-      "Tree_435",
-      "Tree_436",
+      "Tree_439",
       "Tree_44",
       "Tree_440",
       "Tree_441",
@@ -712,37 +640,28 @@
       "Tree_446",
       "Tree_447",
       "Tree_448",
-      "Tree_449",
       "Tree_45",
       "Tree_452",
       "Tree_454",
       "Tree_455",
       "Tree_456",
       "Tree_457",
-      "Tree_458",
-      "Tree_459",
       "Tree_46",
       "Tree_460",
       "Tree_461",
       "Tree_462",
       "Tree_463",
-      "Tree_464",
-      "Tree_465",
       "Tree_466",
       "Tree_467",
       "Tree_468",
       "Tree_469",
-      "Tree_47",
-      "Tree_470",
-      "Tree_471",
       "Tree_472",
       "Tree_473",
       "Tree_474",
       "Tree_475",
       "Tree_476",
-      "Tree_477",
-      "Tree_478",
-      "Tree_48",
+      "Tree_481",
+      "Tree_482",
       "Tree_485",
       "Tree_486",
       "Tree_487",
@@ -750,7 +669,8 @@
       "Tree_489",
       "Tree_49",
       "Tree_490",
-      "Tree_491",
+      "Tree_494",
+      "Tree_495",
       "Tree_496",
       "Tree_497",
       "Tree_498",
@@ -761,8 +681,6 @@
       "Tree_501",
       "Tree_502",
       "Tree_503",
-      "Tree_504",
-      "Tree_506",
       "Tree_507",
       "Tree_508",
       "Tree_509",
@@ -776,9 +694,7 @@
       "Tree_516",
       "Tree_517",
       "Tree_518",
-      "Tree_519",
       "Tree_52",
-      "Tree_520",
       "Tree_521",
       "Tree_522",
       "Tree_523",
@@ -793,9 +709,6 @@
       "Tree_531",
       "Tree_532",
       "Tree_533",
-      "Tree_534",
-      "Tree_535",
-      "Tree_536",
       "Tree_537",
       "Tree_538",
       "Tree_539",
@@ -809,10 +722,7 @@
       "Tree_546",
       "Tree_547",
       "Tree_548",
-      "Tree_549",
       "Tree_55",
-      "Tree_550",
-      "Tree_551",
       "Tree_552",
       "Tree_553",
       "Tree_554",
@@ -828,9 +738,6 @@
       "Tree_564",
       "Tree_565",
       "Tree_566",
-      "Tree_567",
-      "Tree_568",
-      "Tree_569",
       "Tree_57",
       "Tree_570",
       "Tree_571",
@@ -852,10 +759,6 @@
       "Tree_589",
       "Tree_59",
       "Tree_590",
-      "Tree_591",
-      "Tree_592",
-      "Tree_593",
-      "Tree_594",
       "Tree_595",
       "Tree_596",
       "Tree_597",
@@ -872,8 +775,6 @@
       "Tree_606",
       "Tree_607",
       "Tree_61",
-      "Tree_613",
-      "Tree_614",
       "Tree_615",
       "Tree_616",
       "Tree_617",
@@ -893,9 +794,6 @@
       "Tree_63",
       "Tree_630",
       "Tree_631",
-      "Tree_632",
-      "Tree_633",
-      "Tree_634",
       "Tree_635",
       "Tree_636",
       "Tree_637",
@@ -916,8 +814,6 @@
       "Tree_650",
       "Tree_651",
       "Tree_652",
-      "Tree_658",
-      "Tree_659",
       "Tree_66",
       "Tree_660",
       "Tree_661",
@@ -941,7 +837,6 @@
       "Tree_678",
       "Tree_679",
       "Tree_68",
-      "Tree_680",
       "Tree_681",
       "Tree_682",
       "Tree_683",
@@ -963,16 +858,13 @@
       "Tree_698",
       "Tree_699",
       "Tree_7",
-      "Tree_70",
       "Tree_702",
-      "Tree_703",
       "Tree_704",
       "Tree_705",
       "Tree_706",
       "Tree_707",
       "Tree_708",
       "Tree_709",
-      "Tree_71",
       "Tree_710",
       "Tree_711",
       "Tree_712",
@@ -989,35 +881,19 @@
       "Tree_722",
       "Tree_723",
       "Tree_724",
-      "Tree_725",
-      "Tree_726",
-      "Tree_727",
-      "Tree_728",
-      "Tree_729",
       "Tree_73",
       "Tree_730",
-      "Tree_731",
-      "Tree_732",
-      "Tree_733",
-      "Tree_734",
       "Tree_735",
       "Tree_736",
       "Tree_737",
-      "Tree_738",
       "Tree_739",
       "Tree_74",
-      "Tree_740",
-      "Tree_741",
       "Tree_742",
+      "Tree_744",
       "Tree_75",
       "Tree_751",
-      "Tree_752",
       "Tree_753",
       "Tree_754",
-      "Tree_755",
-      "Tree_756",
-      "Tree_757",
-      "Tree_758",
       "Tree_759",
       "Tree_76",
       "Tree_760",
@@ -1032,86 +908,21 @@
       "Tree_769",
       "Tree_77",
       "Tree_770",
-      "Tree_771",
-      "Tree_772",
-      "Tree_773",
-      "Tree_774",
-      "Tree_775",
-      "Tree_776",
-      "Tree_777",
-      "Tree_778",
-      "Tree_779",
       "Tree_78",
-      "Tree_780",
-      "Tree_781",
-      "Tree_782",
-      "Tree_783",
-      "Tree_784",
-      "Tree_785",
-      "Tree_786",
-      "Tree_787",
-      "Tree_788",
       "Tree_79",
-      "Tree_798",
-      "Tree_799",
       "Tree_8",
       "Tree_80",
-      "Tree_800",
-      "Tree_801",
-      "Tree_802",
-      "Tree_803",
-      "Tree_804",
-      "Tree_805",
-      "Tree_806",
-      "Tree_807",
-      "Tree_808",
-      "Tree_809",
       "Tree_81",
-      "Tree_810",
-      "Tree_811",
       "Tree_812",
       "Tree_813",
       "Tree_814",
       "Tree_815",
       "Tree_816",
       "Tree_817",
-      "Tree_818",
-      "Tree_819",
       "Tree_82",
-      "Tree_820",
-      "Tree_821",
-      "Tree_822",
-      "Tree_823",
-      "Tree_824",
-      "Tree_825",
-      "Tree_826",
-      "Tree_827",
-      "Tree_828",
-      "Tree_829",
       "Tree_83",
-      "Tree_830",
-      "Tree_831",
-      "Tree_832",
-      "Tree_833",
-      "Tree_834",
-      "Tree_835",
       "Tree_84",
-      "Tree_845",
-      "Tree_846",
-      "Tree_847",
-      "Tree_848",
-      "Tree_849",
       "Tree_85",
-      "Tree_850",
-      "Tree_851",
-      "Tree_852",
-      "Tree_853",
-      "Tree_854",
-      "Tree_855",
-      "Tree_856",
-      "Tree_857",
-      "Tree_858",
-      "Tree_859",
       "Tree_86",
       "Tree_860",
       "Tree_861",
@@ -1126,8 +937,6 @@
       "Tree_91",
       "Tree_92",
       "Tree_93",
-      "Tree_94",
-      "Tree_95",
       "Tree_96",
       "Tree_97",
       "Tree_98",
@@ -1271,14 +1080,14 @@
     "format": "EWCG-v2",
     "cellMetres": 0.5,
     "originMetres": [
-      -116.0,
-      116.0
+      -153,
+      116
     ],
-    "width": 768,
-    "height": 768,
+    "width": 852,
+    "height": 852,
     "heightEncoding": {
-      "origin": -0.2974,
-      "step": 0.222029,
+      "origin": -2.2262,
+      "step": 0.229593,
       "range": [
         1,
         255
@@ -1286,23 +1095,23 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 304748,
-    "walkableFraction": 0.5167,
+    "walkableCells": 330863,
+    "walkableFraction": 0.4558,
     "refinedHeights": {
       "levels": 255,
-      "step": 0.222029,
-      "origin": -0.2974,
-      "previousStep": 0.220945,
-      "cellsRestated": 300203,
-      "cellsFromGeometry": 307084,
-      "cellsKept": 102
+      "step": 0.229593,
+      "origin": -2.2262,
+      "previousStep": 0.229593,
+      "cellsRestated": 0,
+      "cellsFromGeometry": 332999,
+      "cellsKept": 127
     },
     "openedWalkSurfaces": {
       "prefix": "Walk_",
-      "cellsCovered": 21095,
-      "cellsWidened": 1609,
-      "cellsOpened": 926,
-      "cellsRaised": 13494,
+      "cellsCovered": 32125,
+      "cellsWidened": 2049,
+      "cellsOpened": 977,
+      "cellsRaised": 19081,
       "cellsDrowned": 66,
       "cellsBuried": 100,
       "cellsInsideLandmarks": 1152
@@ -1314,128 +1123,128 @@
         0.5
       ],
       "heightToleranceMetres": 0.8,
-      "closedTiles": 841,
-      "unsupportedTiles": 9,
-      "submergedTiles": 181,
-      "heightMismatchTiles": 841,
+      "closedTiles": 810,
+      "unsupportedTiles": 16,
+      "submergedTiles": 156,
+      "heightMismatchTiles": 807,
       "samples": [
         {
           "tile": [
-            214,
+            209,
+            8
+          ],
+          "encodedY": 13.157,
+          "surfaceY": 12.313,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            210,
+            8
+          ],
+          "encodedY": 13.157,
+          "surfaceY": 12.323,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            229,
             9
           ],
-          "encodedY": 13.468,
-          "surfaceY": 12.666,
+          "encodedY": 12.468,
+          "surfaceY": 11.62,
           "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            215,
-            9
-          ],
-          "encodedY": 13.468,
-          "surfaceY": 12.668,
-          "unsupported": false,
-          "submerged": false
-        },
-        {
-          "tile": [
-            267,
-            9
-          ],
-          "encodedY": 12.136,
-          "surfaceY": 11.291,
-          "unsupported": false,
-          "submerged": false
-        },
-        {
-          "tile": [
-            297,
-            9
-          ],
-          "encodedY": 12.136,
-          "surfaceY": 11.328,
-          "unsupported": false,
-          "submerged": false
-        },
-        {
-          "tile": [
-            164,
+            186,
             10
           ],
-          "encodedY": 11.248,
-          "surfaceY": 10.4,
+          "encodedY": 11.09,
+          "surfaceY": 10.269,
           "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            189,
+            187,
             10
           ],
-          "encodedY": 11.47,
-          "surfaceY": 10.658,
+          "encodedY": 11.09,
+          "surfaceY": 10.233,
           "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            192,
+            234,
             10
           ],
-          "encodedY": 11.47,
-          "surfaceY": 10.654,
+          "encodedY": 11.549,
+          "surfaceY": 10.744,
           "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            193,
+            306,
             10
           ],
-          "encodedY": 11.47,
-          "surfaceY": 10.634,
+          "encodedY": 11.09,
+          "surfaceY": 10.246,
           "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            195,
-            10
+            48,
+            11
           ],
-          "encodedY": 11.47,
-          "surfaceY": 10.644,
+          "encodedY": 11.32,
+          "surfaceY": 10.507,
           "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            212,
-            10
+            105,
+            11
           ],
-          "encodedY": 12.58,
-          "surfaceY": 11.777,
+          "encodedY": 11.32,
+          "surfaceY": 10.49,
           "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            213,
-            10
+            156,
+            11
           ],
-          "encodedY": 12.58,
-          "surfaceY": 11.745,
+          "encodedY": 10.631,
+          "surfaceY": 9.803,
           "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            217,
-            10
+            178,
+            11
           ],
-          "encodedY": 12.58,
-          "surfaceY": 11.774,
+          "encodedY": 10.401,
+          "surfaceY": 9.572,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            186,
+            11
+          ],
+          "encodedY": 10.172,
+          "surfaceY": 9.347,
           "unsupported": false,
           "submerged": false
         }
@@ -1716,7 +1525,7 @@
         -44.0
       ],
       "serverTile": [
-        31,
+        68,
         160
       ],
       "surface": "MossStone",
@@ -1733,7 +1542,7 @@
         -214.0
       ],
       "serverTile": [
-        308,
+        345,
         330
       ],
       "surface": "Silt",
@@ -1750,7 +1559,7 @@
         -88.0
       ],
       "serverTile": [
-        316,
+        353,
         204
       ],
       "surface": "JadePaving",
@@ -1767,7 +1576,7 @@
         -182.0
       ],
       "serverTile": [
-        156,
+        193,
         298
       ],
       "surface": "JadePaving",
@@ -1784,7 +1593,7 @@
         -90.4
       ],
       "serverTile": [
-        228,
+        265,
         206
       ],
       "surface": "MossStone",
@@ -1801,7 +1610,7 @@
         -88.08
       ],
       "serverTile": [
-        84,
+        121,
         204
       ],
       "surface": "JadePaving",
@@ -1866,7 +1675,7 @@
         -270.0
       ],
       "serverTile": [
-        88,
+        125,
         386
       ],
       "surface": "JungleFloor",
@@ -1883,7 +1692,7 @@
         -86.56
       ],
       "serverTile": [
-        228,
+        265,
         203
       ],
       "surface": "MossStone",
@@ -1900,7 +1709,7 @@
         44.0
       ],
       "serverTile": [
-        272,
+        309,
         72
       ],
       "surface": "MossStone",
@@ -1917,7 +1726,7 @@
         -12.0
       ],
       "serverTile": [
-        147,
+        184,
         128
       ],
       "surface": "MossStone",
@@ -1934,7 +1743,7 @@
         92.0
       ],
       "serverTile": [
-        100,
+        137,
         24
       ],
       "surface": "JadePaving",
@@ -1951,7 +1760,7 @@
         32.0
       ],
       "serverTile": [
-        156,
+        193,
         84
       ],
       "surface": "JadePaving",
@@ -2012,7 +1821,7 @@
         -150.0
       ],
       "serverTile": [
-        256,
+        293,
         266
       ],
       "surface": "JadePaving",
@@ -2029,7 +1838,7 @@
         -126.5
       ],
       "serverTile": [
-        180,
+        217,
         242
       ],
       "surface": "JadePaving",
@@ -2046,7 +1855,7 @@
         56.0
       ],
       "serverTile": [
-        258,
+        295,
         60
       ],
       "surface": "MossStone",
@@ -2063,7 +1872,7 @@
         -108.0
       ],
       "serverTile": [
-        38,
+        75,
         224
       ],
       "surface": "JadePaving",
@@ -2081,7 +1890,7 @@
         -126.5
       ],
       "serverTile": [
-        180,
+        217,
         242
       ],
       "authority": "server"
@@ -2096,7 +1905,7 @@
         -182.0
       ],
       "serverTile": [
-        156,
+        193,
         298
       ],
       "authority": "server"
@@ -2111,7 +1920,7 @@
         -150.0
       ],
       "serverTile": [
-        256,
+        293,
         266
       ],
       "authority": "server"
@@ -2126,7 +1935,7 @@
         32.0
       ],
       "serverTile": [
-        156,
+        193,
         84
       ],
       "authority": "server"
@@ -2141,7 +1950,7 @@
         -60.0
       ],
       "serverTile": [
-        84,
+        121,
         176
       ],
       "authority": "server"
@@ -2156,7 +1965,7 @@
         -52.0
       ],
       "serverTile": [
-        228,
+        265,
         168
       ],
       "authority": "server"
@@ -2171,7 +1980,7 @@
         44.0
       ],
       "serverTile": [
-        272,
+        309,
         72
       ],
       "authority": "server"
@@ -2186,7 +1995,7 @@
         20.0
       ],
       "serverTile": [
-        262,
+        299,
         96
       ],
       "authority": "server"
@@ -2208,7 +2017,7 @@
       ],
       "authority": "server",
       "serverTile": [
-        282,
+        319,
         31
       ]
     },
@@ -2229,7 +2038,7 @@
       ],
       "authority": "server",
       "serverTile": [
-        75,
+        112,
         212
       ]
     },
@@ -2250,7 +2059,7 @@
       ],
       "authority": "server",
       "serverTile": [
-        145,
+        182,
         137
       ]
     },
@@ -2271,7 +2080,7 @@
       ],
       "authority": "server",
       "serverTile": [
-        236,
+        273,
         201
       ]
     },
@@ -2292,7 +2101,7 @@
       ],
       "authority": "server",
       "serverTile": [
-        235,
+        272,
         189
       ]
     },
@@ -2313,7 +2122,7 @@
       ],
       "authority": "server",
       "serverTile": [
-        302,
+        339,
         315
       ]
     },
@@ -2334,7 +2143,7 @@
       ],
       "authority": "server",
       "serverTile": [
-        53,
+        90,
         234
       ]
     },
@@ -2355,7 +2164,7 @@
       ],
       "authority": "server",
       "serverTile": [
-        269,
+        306,
         258
       ]
     },
@@ -2376,7 +2185,7 @@
       ],
       "authority": "server",
       "serverTile": [
-        41,
+        78,
         171
       ]
     },
@@ -2397,7 +2206,7 @@
       ],
       "authority": "server",
       "serverTile": [
-        143,
+        180,
         238
       ]
     },
@@ -2418,7 +2227,7 @@
       ],
       "authority": "server",
       "serverTile": [
-        268,
+        305,
         28
       ]
     },
@@ -2439,7 +2248,7 @@
       ],
       "authority": "server",
       "serverTile": [
-        168,
+        205,
         173
       ]
     },
@@ -2460,7 +2269,7 @@
       ],
       "authority": "server",
       "serverTile": [
-        310,
+        347,
         196
       ]
     },
@@ -2481,7 +2290,7 @@
       ],
       "authority": "server",
       "serverTile": [
-        107,
+        144,
         362
       ]
     }
@@ -2497,7 +2306,7 @@
         33.26
       ],
       "serverTile": [
-        163,
+        200,
         83
       ],
       "authority": "server"
@@ -2512,7 +2321,7 @@
         -45.96
       ],
       "serverTile": [
-        157,
+        194,
         162
       ],
       "authority": "server"
@@ -2527,7 +2336,7 @@
         -123.89
       ],
       "serverTile": [
-        184,
+        221,
         240
       ],
       "authority": "server"
@@ -2542,7 +2351,7 @@
         -102.09
       ],
       "serverTile": [
-        162,
+        199,
         218
       ],
       "authority": "server"
@@ -2557,7 +2366,7 @@
         -145.03
       ],
       "serverTile": [
-        255,
+        292,
         261
       ],
       "authority": "server"
@@ -2572,7 +2381,7 @@
         27.41
       ],
       "serverTile": [
-        265,
+        302,
         89
       ],
       "authority": "server"
@@ -2587,7 +2396,7 @@
         8.21
       ],
       "serverTile": [
-        311,
+        348,
         108
       ],
       "authority": "server"
@@ -2602,7 +2411,7 @@
         27.6
       ],
       "serverTile": [
-        61,
+        98,
         88
       ],
       "authority": "server"
@@ -2617,7 +2426,7 @@
         -66.44
       ],
       "serverTile": [
-        87,
+        124,
         182
       ],
       "authority": "server"
@@ -2632,7 +2441,7 @@
         -60.0
       ],
       "serverTile": [
-        228,
+        265,
         176
       ],
       "authority": "server"
@@ -2647,7 +2456,7 @@
         -30.84
       ],
       "serverTile": [
-        56,
+        93,
         147
       ],
       "authority": "server"
@@ -2662,7 +2471,7 @@
         43.78
       ],
       "serverTile": [
-        278,
+        315,
         72
       ],
       "authority": "server"
@@ -2677,7 +2486,7 @@
         -4.92
       ],
       "serverTile": [
-        117,
+        154,
         121
       ],
       "authority": "server"
@@ -2693,7 +2502,7 @@
         -27.66
       ],
       "serverTile": [
-        59,
+        96,
         144
       ],
       "authority": "server"
@@ -2707,7 +2516,7 @@
         -33.06
       ],
       "serverTile": [
-        70,
+        107,
         149
       ],
       "authority": "server"
@@ -2721,7 +2530,7 @@
         -46.48
       ],
       "serverTile": [
-        203,
+        240,
         162
       ],
       "authority": "server"
@@ -2735,7 +2544,7 @@
         4.06
       ],
       "serverTile": [
-        243,
+        280,
         112
       ],
       "authority": "server"
@@ -2749,7 +2558,7 @@
         13.96
       ],
       "serverTile": [
-        303,
+        340,
         102
       ],
       "authority": "server"
@@ -2763,7 +2572,7 @@
         42.5
       ],
       "serverTile": [
-        44,
+        81,
         73
       ],
       "authority": "server"
@@ -2777,7 +2586,7 @@
         22.67
       ],
       "serverTile": [
-        281,
+        318,
         93
       ],
       "authority": "server"
@@ -2791,7 +2600,7 @@
         -104.69
       ],
       "serverTile": [
-        43,
+        80,
         221
       ],
       "authority": "server"
@@ -2805,7 +2614,7 @@
         -86.22
       ],
       "serverTile": [
-        302,
+        339,
         202
       ],
       "authority": "server"
@@ -2819,7 +2628,7 @@
         -197.79
       ],
       "serverTile": [
-        258,
+        295,
         314
       ],
       "authority": "server"
@@ -2833,7 +2642,7 @@
         -40.29
       ],
       "serverTile": [
-        24,
+        61,
         156
       ],
       "authority": "server"
@@ -2847,7 +2656,7 @@
         -63.05
       ],
       "serverTile": [
-        59,
+        96,
         179
       ],
       "authority": "server"
@@ -2861,7 +2670,7 @@
         -68.23
       ],
       "serverTile": [
-        202,
+        239,
         184
       ],
       "authority": "server"
@@ -2875,7 +2684,7 @@
         31.24
       ],
       "serverTile": [
-        294,
+        331,
         85
       ],
       "authority": "server"
@@ -2889,7 +2698,7 @@
         22.15
       ],
       "serverTile": [
-        325,
+        362,
         94
       ],
       "authority": "server"
@@ -2903,7 +2712,7 @@
         36.62
       ],
       "serverTile": [
-        57,
+        94,
         79
       ],
       "authority": "server"
@@ -2917,7 +2726,7 @@
         24.74
       ],
       "serverTile": [
-        282,
+        319,
         91
       ],
       "authority": "server"
@@ -2931,7 +2740,7 @@
         -123.15
       ],
       "serverTile": [
-        50,
+        87,
         239
       ],
       "authority": "server"
@@ -2945,7 +2754,7 @@
         -72.85
       ],
       "serverTile": [
-        308,
+        345,
         189
       ],
       "authority": "server"
@@ -2959,7 +2768,7 @@
         -165.08
       ],
       "serverTile": [
-        232,
+        269,
         281
       ],
       "authority": "server"
@@ -2973,7 +2782,7 @@
         -17.66
       ],
       "serverTile": [
-        29,
+        66,
         134
       ],
       "authority": "server"
@@ -2987,7 +2796,7 @@
         -63.76
       ],
       "serverTile": [
-        59,
+        96,
         180
       ],
       "authority": "server"
@@ -3001,7 +2810,7 @@
         -53.49
       ],
       "serverTile": [
-        239,
+        276,
         169
       ],
       "authority": "server"
@@ -3015,7 +2824,7 @@
         47.22
       ],
       "serverTile": [
-        264,
+        301,
         69
       ],
       "authority": "server"
@@ -3029,7 +2838,7 @@
         16.45
       ],
       "serverTile": [
-        312,
+        349,
         100
       ],
       "authority": "server"
@@ -3043,7 +2852,7 @@
         41.78
       ],
       "serverTile": [
-        43,
+        80,
         74
       ],
       "authority": "server"
@@ -3057,7 +2866,7 @@
         47.88
       ],
       "serverTile": [
-        279,
+        316,
         68
       ],
       "authority": "server"
@@ -3071,7 +2880,7 @@
         -139.78
       ],
       "serverTile": [
-        37,
+        74,
         256
       ],
       "authority": "server"
@@ -3085,7 +2894,7 @@
         -77.45
       ],
       "serverTile": [
-        311,
+        348,
         193
       ],
       "authority": "server"
@@ -3099,7 +2908,7 @@
         -202.29
       ],
       "serverTile": [
-        272,
+        309,
         318
       ],
       "authority": "server"
@@ -3113,7 +2922,7 @@
         -49.66
       ],
       "serverTile": [
-        77,
+        114,
         166
       ],
       "authority": "server"
@@ -3127,7 +2936,7 @@
         -59.95
       ],
       "serverTile": [
-        57,
+        94,
         176
       ],
       "authority": "server"
@@ -3141,7 +2950,7 @@
         -42.79
       ],
       "serverTile": [
-        236,
+        273,
         159
       ],
       "authority": "server"
@@ -3155,7 +2964,7 @@
         24.89
       ],
       "serverTile": [
-        278,
+        315,
         91
       ],
       "authority": "server"
@@ -3168,11 +2977,11 @@
     "gauntlets": {
       "ssarathi_gauntlet": {
         "keeperTile": [
-          170,
+          207,
           82
         ],
         "returnTile": [
-          174,
+          211,
           78
         ]
       }
@@ -3478,74 +3287,224 @@
       "portal": "east-causeway",
       "destination": "verdant_stair",
       "anchor": [
-        264.5,
-        4,
-        -88.5
+        269.5,
+        4.0,
+        -58.5
       ],
       "outward": [
         1,
         0
       ],
+      "globalTranslation": [
+        1144.0,
+        0,
+        1500.0
+      ],
+      "globalAnchor": [
+        1413.5,
+        4,
+        1441.5
+      ],
       "uvSign": -1,
       "palette": "causeway",
-      "preloadDistance": 170,
-      "retainDistance": 220,
-      "blendDistance": 65,
+      "preloadDistance": 240,
+      "retainDistance": 320,
+      "blendDistance": 90,
       "collarDepth": 42,
       "halfWidthTiles": 3,
-      "viewHalfWidth": 40.0,
-      "viewDepth": 145.0,
-      "previewPrefix": "StreamView_verdant-ssarathi__",
-      "overflowSuffix": "_StreamOverflow_verdant-ssarathi",
-      "geometryMode": "shared-cells-v2",
+      "viewHalfWidth": 110,
+      "viewDepth": 240,
+      "geometryMode": "continent-owned-v1",
       "sceneNodes": [
         "Terrain_Rock_StreamCell_verdant-ssarathi",
         "Terrain_Silt_StreamCell_verdant-ssarathi",
         "Terrain_JadePaving_StreamCell_verdant-ssarathi",
         "Terrain_JungleFloor_StreamCell_verdant-ssarathi",
         "Terrain_MossStone_StreamCell_verdant-ssarathi",
+        "Walk_ContinentRoad_verdant-ssarathi_StreamCell_verdant-ssarathi",
         "Walk_StreamCauseway_verdant-ssarathi_StreamCell_verdant-ssarathi",
         "Structure_StreamCauseway_verdant-ssarathi_pale_ashlar_StreamCell_verdant-ssarathi",
         "Structure_StreamCauseway_verdant-ssarathi_rubble_stone_StreamCell_verdant-ssarathi",
         "Water_Basin_StreamCell_verdant-ssarathi",
         "Water_EastInlet_StreamCell_verdant-ssarathi",
         "Water_StreamCauseway_verdant-ssarathi_StreamCell_verdant-ssarathi",
+        "Bridge_great_causeway__channel_main",
+        "Bridge_great_causeway__channel_south",
         "Bridge_spur_stela__channel_main",
+        "Bridge_street_far_e__channel_east",
+        "Dock_east_dock_0",
+        "Dock_east_dock_1",
+        "Dock_east_dock_2",
+        "SerpentColumn_0_-1",
+        "SerpentColumn_0_1",
+        "SerpentColumn_1_-1",
+        "SerpentColumn_1_1",
+        "SerpentColumn_2_-1",
+        "SerpentColumn_2_1",
+        "Obelisk_street_market_128",
+        "Obelisk_street_market_192",
+        "Obelisk_street_north_139",
+        "Obelisk_street_far_e_99",
+        "Temple_Ssarathi",
+        "Structure_TempleSummitRoof",
+        "Temple_VaultPortal",
+        "TempleGuardian_1",
         "Colonnade_ritual_plaza",
+        "CourtShrine_ritual_plaza",
+        "Lilies_ritual_plaza_0",
         "Lilies_ritual_plaza_3",
+        "Lilies_ritual_plaza_4",
+        "Lilies_ritual_plaza_5",
+        "Lilies_ritual_plaza_6",
         "Lilies_ritual_plaza_7",
+        "SunStela",
+        "RootArch",
+        "WaterGate",
+        "SerpentGateColumn_-1",
+        "SerpentGateColumn_1",
         "Shrine_east_shrine",
+        "MarketStall_0",
+        "MarketStall_1",
+        "MarketStall_2",
+        "MarketStall_3",
+        "MarketStall_4",
+        "MarketStall_5",
+        "MarketStall_6",
+        "MarketStall_7",
+        "MarketStall_8",
+        "MarketStall_9",
+        "MarketShrine",
+        "Ruin_7",
+        "RuinTree_7",
+        "Ruin_8",
+        "Tree_410",
+        "Tree_513",
+        "Tree_528",
+        "Tree_542",
+        "Tree_543",
+        "Tree_558",
+        "Tree_559",
+        "Tree_560",
+        "Tree_561",
+        "Tree_582",
+        "Tree_583",
+        "Tree_584",
+        "Tree_585",
+        "Tree_586",
         "Tree_605",
         "Tree_606",
         "Tree_607",
-        "Tree_613",
-        "Tree_614",
+        "Tree_615",
+        "Tree_616",
+        "Tree_617",
+        "Tree_618",
+        "Tree_619",
+        "Tree_620",
+        "Tree_621",
+        "Tree_622",
+        "Tree_623",
+        "Tree_624",
+        "Tree_645",
+        "Tree_646",
+        "Tree_647",
+        "Tree_648",
         "Tree_649",
         "Tree_650",
         "Tree_651",
         "Tree_652",
-        "Tree_658",
-        "Tree_659",
         "Tree_660",
+        "Tree_661",
+        "Tree_662",
+        "Tree_663",
+        "Tree_664",
+        "Tree_665",
+        "Tree_666",
+        "Tree_667",
+        "Tree_668",
+        "Tree_669",
+        "Tree_670",
+        "Tree_671",
+        "Tree_692",
+        "Tree_693",
+        "Tree_694",
+        "Tree_695",
         "Tree_696",
         "Tree_697",
         "Tree_698",
         "Tree_699",
         "Tree_702",
-        "Tree_703",
         "Tree_704",
         "Tree_705",
+        "Tree_706",
+        "Tree_707",
+        "Tree_708",
+        "Tree_709",
+        "Tree_710",
+        "Tree_711",
+        "Tree_712",
+        "Tree_713",
+        "Tree_714",
+        "Tree_715",
+        "Tree_716",
+        "Tree_717",
+        "Tree_737",
+        "Tree_739",
         "Tree_742",
+        "Tree_744",
         "Tree_751",
-        "Tree_787",
-        "Tree_788",
-        "Tree_799",
+        "Tree_753",
+        "Tree_754",
+        "Tree_759",
+        "Tree_760",
+        "Tree_761",
+        "Tree_762",
+        "Undergrowth_74",
+        "Undergrowth_75",
+        "Undergrowth_80",
+        "Undergrowth_90",
+        "Undergrowth_98",
         "Undergrowth_99",
-        "Undergrowth_115",
+        "Undergrowth_101",
+        "Undergrowth_102",
+        "Undergrowth_103",
+        "Undergrowth_113",
+        "Undergrowth_114",
+        "Undergrowth_117",
+        "Undergrowth_118",
+        "Undergrowth_119",
+        "LilyRaft_8",
+        "LilyRaft_10",
+        "LilyRaft_11",
+        "LilyRaft_12",
         "LilyRaft_13",
+        "LilyRaft_14",
+        "LilyRaft_18",
+        "LilyRaft_19",
+        "LilyRaft_20",
         "LilyRaft_21",
+        "LilyRaft_22",
         "LilyRaft_25",
+        "Rubble_street_north_93",
         "Rubble_spur_stela_69",
+        "Rubble_spur_east_shrine_0",
+        "AxisLamp_1",
+        "AxisLamp_2",
+        "AxisLamp_3",
+        "AxisLamp_4",
+        "AxisLamp_5",
+        "AxisLamp_6",
+        "AxisLamp_7",
+        "TerraceRelic_0",
+        "TerraceRelic_1",
+        "HatcheryDescent",
+        "HatcheryColumn_-1",
+        "HatcheryColumn_1",
+        "House_quay-stores",
+        "House_market-poler",
+        "House_market-copyist",
+        "House_lineage-house",
+        "MooredPunt_0",
+        "QuayCargo_3",
         "March_east_causeway_Furniture_00",
         "March_east_causeway_Stone",
         "March_east_causeway_Signpost",
@@ -3558,18 +3517,35 @@
         "March_east_causeway_frond_007",
         "March_east_causeway_frond_008",
         "March_east_causeway_frond_009",
-        "March_east_causeway_frond_010",
-        "March_east_causeway_frond_011",
         "March_east_causeway_frond_012",
-        "March_east_causeway_frond_013",
         "March_east_causeway_frond_014",
         "March_east_causeway_frond_015",
+        "Secret_ruins_stela_reliquary",
+        "Terrain_Rock_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
         "Terrain_Silt_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
         "Terrain_JadePaving_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
         "Terrain_JungleFloor_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
         "Terrain_MossStone_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
-        "Water_Basin_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi"
+        "Water_Basin_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
+        "Terrain_Rock_StreamCell_verdant-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_Silt_StreamCell_verdant-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_JadePaving_StreamCell_verdant-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_JungleFloor_StreamCell_verdant-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_MossStone_StreamCell_verdant-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_Rock_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_Silt_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_JadePaving_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_JungleFloor_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_MossStone_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Water_Basin_StreamCell_verdant-ssarathi_StreamCell_ssarathi-manymouth",
+        "Water_Basin_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Walk_StreamCauseway_SsarathiEastInlet_StreamCell_verdant-ssarathi",
+        "Structure_SsarathiEastInlet_Ashlar_StreamCell_verdant-ssarathi",
+        "Structure_SsarathiEastInlet_Piers_StreamCell_verdant-ssarathi",
+        "Structure_StreamCauseway_verdant-ssarathi_rim"
       ],
+      "previewPrefix": "StreamView_verdant-ssarathi__",
+      "overflowSuffix": "_StreamOverflow_verdant-ssarathi",
       "profile": "causeway",
       "waterBelowDeck": 4.0,
       "deckWidth": 7.0
@@ -3579,26 +3555,34 @@
       "portal": "north-stair",
       "destination": "four_gates",
       "anchor": [
-        154.5,
-        4,
-        -264.5
+        30.5,
+        4.0,
+        -277.5
       ],
       "outward": [
         0,
         -1
       ],
+      "globalTranslation": [
+        1144.0,
+        0,
+        1500.0
+      ],
+      "globalAnchor": [
+        1174.5,
+        4,
+        1222.5
+      ],
       "uvSign": -1,
       "palette": "causeway",
-      "preloadDistance": 170,
-      "retainDistance": 220,
-      "blendDistance": 65,
+      "preloadDistance": 240,
+      "retainDistance": 320,
+      "blendDistance": 90,
       "collarDepth": 42,
       "halfWidthTiles": 3,
-      "viewHalfWidth": 40.0,
-      "viewDepth": 145.0,
-      "previewPrefix": "StreamView_four-gates-ssarathi__",
-      "overflowSuffix": "_StreamOverflow_four-gates-ssarathi",
-      "geometryMode": "shared-cells-v2",
+      "viewHalfWidth": 110,
+      "viewDepth": 240,
+      "geometryMode": "continent-owned-v1",
       "sceneNodes": [
         "Terrain_Rock_StreamCell_four-gates-ssarathi",
         "Terrain_Silt_StreamCell_four-gates-ssarathi",
@@ -3608,6 +3592,7 @@
         "Walk_StreamCauseway_four-gates-ssarathi_StreamCell_four-gates-ssarathi",
         "Structure_StreamCauseway_four-gates-ssarathi_pale_ashlar_StreamCell_four-gates-ssarathi",
         "Structure_StreamCauseway_four-gates-ssarathi_rubble_stone_StreamCell_four-gates-ssarathi",
+        "Terrain_Rock_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
         "Terrain_Silt_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
         "Terrain_JadePaving_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
         "Terrain_JungleFloor_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
@@ -3616,57 +3601,479 @@
         "Water_NorthInlet_StreamCell_four-gates-ssarathi",
         "Water_StreamCauseway_four-gates-ssarathi_StreamCell_four-gates-ssarathi",
         "Water_Basin_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
-        "Waterfall_east",
+        "Bridge_great_causeway__channel_main",
+        "Bridge_spur_stela__channel_main",
+        "Bridge_street_courts__channel_main",
+        "Dock_cistern_walk",
+        "SerpentColumn_2_-1",
+        "SerpentColumn_2_1",
+        "Obelisk_street_north_0",
+        "Obelisk_street_north_69",
+        "Obelisk_street_north_139",
+        "Temple_Ssarathi",
+        "Structure_TempleSummitRoof",
+        "Temple_VaultPortal",
+        "TempleGuardian_-1",
+        "TempleGuardian_1",
+        "Waterfall_north",
+        "Colonnade_lily_court",
+        "CourtShrine_lily_court",
+        "Lilies_lily_court_0",
+        "Lilies_lily_court_1",
+        "Lilies_lily_court_4",
+        "Lilies_lily_court_5",
+        "Lilies_lily_court_6",
+        "Lilies_lily_court_7",
+        "Lilies_lily_court_8",
+        "Colonnade_ritual_plaza",
+        "CourtShrine_ritual_plaza",
+        "Lilies_ritual_plaza_0",
+        "Lilies_ritual_plaza_3",
+        "Lilies_ritual_plaza_4",
+        "Lilies_ritual_plaza_5",
+        "Lilies_ritual_plaza_6",
+        "Lilies_ritual_plaza_7",
         "SunStela",
+        "Shrine_west_shrine",
+        "DrownedRubble_1",
+        "DrownedRubble_2",
+        "DrownedRubble_5",
+        "DrownedColumn_6",
+        "DrownedColumn_12",
+        "DrownedRubble_13",
+        "DrownedColumn_21",
+        "DrownedRubble_23",
+        "Tree_193",
+        "Tree_214",
+        "Tree_215",
+        "Tree_216",
+        "Tree_217",
+        "Tree_220",
+        "Tree_221",
+        "Tree_224",
+        "Tree_227",
+        "Tree_231",
+        "Tree_247",
+        "Tree_248",
+        "Tree_249",
+        "Tree_250",
+        "Tree_253",
+        "Tree_266",
+        "Tree_267",
+        "Tree_268",
+        "Tree_269",
+        "Tree_270",
+        "Tree_280",
+        "Tree_281",
+        "Tree_291",
+        "Tree_300",
+        "Tree_301",
+        "Tree_309",
+        "Tree_330",
+        "Tree_398",
         "Tree_407",
         "Tree_408",
         "Tree_420",
         "Tree_421",
+        "Tree_429",
+        "Tree_430",
         "Tree_431",
         "Tree_432",
+        "Tree_439",
         "Tree_440",
         "Tree_441",
         "Tree_442",
         "Tree_443",
         "Tree_452",
-        "Tree_485",
-        "Tree_496",
-        "Tree_497",
-        "Tree_498",
-        "Tree_507",
-        "Tree_508",
-        "Tree_509",
-        "Tree_510",
-        "Tree_511",
-        "Tree_512",
-        "Tree_521",
-        "Tree_522",
-        "Tree_523",
-        "Tree_524",
-        "Tree_525",
-        "Tree_526",
-        "Tree_537",
-        "Tree_539",
-        "Tree_541",
+        "Undergrowth_36",
+        "Undergrowth_58",
+        "Undergrowth_59",
+        "Undergrowth_61",
         "Undergrowth_62",
-        "LilyRaft_19",
-        "LilyRaft_20",
+        "LilyRaft_1",
+        "LilyRaft_2",
+        "LilyRaft_3",
+        "LilyRaft_4",
+        "LilyRaft_6",
+        "LilyRaft_7",
+        "LilyRaft_12",
+        "LilyRaft_13",
+        "Rubble_street_courts_40",
+        "Rubble_street_north_0",
+        "Rubble_street_north_93",
         "Rubble_spur_stela_69",
-        "March_north_stair_Stone",
-        "March_north_stair_Signpost",
-        "March_north_stair_Station",
-        "March_north_stair_reeds_000",
+        "AxisLamp_4",
+        "AxisLamp_5",
+        "AxisLamp_6",
+        "AxisLamp_7",
+        "TerraceRelic_0",
+        "TerraceRelic_1",
+        "CisternShaft",
+        "HatcheryDescent",
+        "HatcheryColumn_-1",
+        "HatcheryColumn_1",
+        "House_lily-copyists",
         "March_north_stair_reeds_001",
-        "March_north_stair_reeds_002",
-        "March_north_stair_reeds_003",
-        "March_north_stair_reeds_004",
-        "March_north_stair_reeds_005",
-        "March_north_stair_reeds_006",
         "March_north_stair_reeds_007",
-        "March_north_stair_boat_008",
-        "March_north_stair_lamp_009",
-        "Secret_ruins_stela_reliquary"
+        "March_west_causeway_Furniture_00",
+        "March_west_causeway_Furniture_01",
+        "March_west_causeway_Station",
+        "Secret_ruins_temple_focus",
+        "Secret_ruins_culvert_mouth",
+        "Terrain_Rock_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_Silt_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_JadePaving_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_JungleFloor_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_MossStone_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_Rock_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_Silt_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_JadePaving_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_JungleFloor_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_MossStone_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Water_Basin_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Water_Basin_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Walk_StreamCauseway_SsarathiNorthInlet_StreamCell_four-gates-ssarathi",
+        "Structure_SsarathiNorthInlet_Ashlar_StreamCell_four-gates-ssarathi",
+        "Structure_SsarathiNorthInlet_Piers_StreamCell_four-gates-ssarathi",
+        "Walk_ContinentRoad_four-gates-ssarathi",
+        "Walk_ContinentRoad_ssarathi-manymouth_StreamCell_ssarathi-manymouth",
+        "Structure_StreamCauseway_four-gates-ssarathi_rim",
+        "Structure_StreamCauseway_ssarathi-manymouth_rim"
       ],
+      "previewPrefix": "StreamView_four-gates-ssarathi__",
+      "overflowSuffix": "_StreamOverflow_four-gates-ssarathi",
+      "profile": "causeway",
+      "waterBelowDeck": 4.0,
+      "deckWidth": 7.0
+    },
+    {
+      "id": "ssarathi-manymouth",
+      "portal": "west-causeway",
+      "destination": "manymouth_delta",
+      "anchor": [
+        -149.5,
+        4.0,
+        -73.5
+      ],
+      "outward": [
+        -1,
+        0
+      ],
+      "globalTranslation": [
+        1144.0,
+        0,
+        1500.0
+      ],
+      "globalAnchor": [
+        994.5,
+        4,
+        1426.5
+      ],
+      "uvSign": 1,
+      "palette": "causeway",
+      "preloadDistance": 240,
+      "retainDistance": 320,
+      "blendDistance": 90,
+      "collarDepth": 42,
+      "halfWidthTiles": 3,
+      "viewHalfWidth": 110,
+      "viewDepth": 240,
+      "geometryMode": "continent-owned-v1",
+      "sceneNodes": [
+        "Terrain_Rock_StreamCell_ssarathi-manymouth",
+        "Terrain_Silt_StreamCell_ssarathi-manymouth",
+        "Terrain_JadePaving_StreamCell_ssarathi-manymouth",
+        "Terrain_JungleFloor_StreamCell_ssarathi-manymouth",
+        "Terrain_MossStone_StreamCell_ssarathi-manymouth",
+        "Terrain_ContinentExtension_ssarathi_ruins_StreamCell_ssarathi-manymouth",
+        "Walk_ContinentRoad_ssarathi-manymouth_StreamCell_ssarathi-manymouth",
+        "Walk_StreamCauseway_ssarathi-manymouth_StreamCell_ssarathi-manymouth",
+        "Structure_StreamCauseway_ssarathi-manymouth_pale_ashlar_StreamCell_ssarathi-manymouth",
+        "Structure_StreamCauseway_ssarathi-manymouth_rubble_stone_StreamCell_ssarathi-manymouth",
+        "Terrain_Rock_StreamCell_verdant-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_Silt_StreamCell_verdant-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_JadePaving_StreamCell_verdant-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_JungleFloor_StreamCell_verdant-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_MossStone_StreamCell_verdant-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_Rock_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_Silt_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_JadePaving_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_JungleFloor_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_MossStone_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_Rock_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_Silt_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_JadePaving_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_JungleFloor_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Terrain_MossStone_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Water_Basin_StreamCell_ssarathi-manymouth",
+        "Water_StreamCauseway_ssarathi-manymouth_StreamCell_ssarathi-manymouth",
+        "Water_Basin_StreamCell_verdant-ssarathi_StreamCell_ssarathi-manymouth",
+        "Water_Basin_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Water_Basin_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "Bridge_great_causeway__channel_main",
+        "Bridge_street_courts__channel_main",
+        "Dock_west_dock_0",
+        "Dock_west_dock_1",
+        "Dock_cistern_walk",
+        "SerpentColumn_0_-1",
+        "SerpentColumn_0_1",
+        "SerpentColumn_1_-1",
+        "SerpentColumn_1_1",
+        "SerpentColumn_2_-1",
+        "SerpentColumn_2_1",
+        "Obelisk_street_market_0",
+        "Obelisk_street_market_64",
+        "Obelisk_street_market_128",
+        "Obelisk_street_north_0",
+        "Obelisk_street_north_69",
+        "Obelisk_street_north_139",
+        "Temple_Ssarathi",
+        "Structure_TempleSummitRoof",
+        "Temple_VaultPortal",
+        "TempleGuardian_-1",
+        "TempleGuardian_1",
+        "Colonnade_lily_court",
+        "CourtShrine_lily_court",
+        "Lilies_lily_court_0",
+        "Lilies_lily_court_1",
+        "Lilies_lily_court_4",
+        "Lilies_lily_court_5",
+        "Lilies_lily_court_6",
+        "Lilies_lily_court_7",
+        "Lilies_lily_court_8",
+        "Colonnade_ritual_plaza",
+        "WaterGate",
+        "SerpentGateColumn_-1",
+        "SerpentGateColumn_1",
+        "Shrine_west_shrine",
+        "DrownedColumn_0",
+        "DrownedRubble_1",
+        "DrownedRubble_2",
+        "DrownedColumn_3",
+        "DrownedRubble_4",
+        "DrownedRubble_5",
+        "DrownedColumn_6",
+        "DrownedColumn_9",
+        "DrownedRubble_11",
+        "DrownedColumn_12",
+        "DrownedRubble_13",
+        "DrownedRubble_14",
+        "DrownedRubble_16",
+        "DrownedColumn_21",
+        "DrownedRubble_22",
+        "DrownedRubble_23",
+        "DrownedColumn_24",
+        "DrownedRubble_25",
+        "Ruin_0",
+        "RuinTree_3",
+        "RuinTree_4",
+        "Tree_11",
+        "Tree_12",
+        "Tree_13",
+        "Tree_14",
+        "Tree_15",
+        "Tree_16",
+        "Tree_17",
+        "Tree_18",
+        "Tree_28",
+        "Tree_29",
+        "Tree_30",
+        "Tree_31",
+        "Tree_32",
+        "Tree_33",
+        "Tree_34",
+        "Tree_35",
+        "Tree_57",
+        "Tree_58",
+        "Tree_59",
+        "Tree_60",
+        "Tree_61",
+        "Tree_62",
+        "Tree_63",
+        "Tree_64",
+        "Tree_65",
+        "Tree_66",
+        "Tree_67",
+        "Tree_68",
+        "Tree_69",
+        "Tree_72",
+        "Tree_73",
+        "Tree_74",
+        "Tree_75",
+        "Tree_76",
+        "Tree_77",
+        "Tree_78",
+        "Tree_79",
+        "Tree_80",
+        "Tree_81",
+        "Tree_82",
+        "Tree_83",
+        "Tree_105",
+        "Tree_106",
+        "Tree_107",
+        "Tree_108",
+        "Tree_109",
+        "Tree_110",
+        "Tree_111",
+        "Tree_112",
+        "Tree_113",
+        "Tree_114",
+        "Tree_115",
+        "Tree_117",
+        "Tree_118",
+        "Tree_119",
+        "Tree_120",
+        "Tree_121",
+        "Tree_122",
+        "Tree_123",
+        "Tree_124",
+        "Tree_125",
+        "Tree_126",
+        "Tree_127",
+        "Tree_149",
+        "Tree_150",
+        "Tree_151",
+        "Tree_152",
+        "Tree_153",
+        "Tree_154",
+        "Tree_155",
+        "Tree_156",
+        "Tree_158",
+        "Tree_159",
+        "Tree_160",
+        "Tree_161",
+        "Tree_162",
+        "Tree_163",
+        "Tree_164",
+        "Tree_165",
+        "Tree_166",
+        "Tree_188",
+        "Tree_189",
+        "Tree_190",
+        "Tree_191",
+        "Tree_192",
+        "Tree_193",
+        "Tree_194",
+        "Tree_195",
+        "Tree_196",
+        "Tree_198",
+        "Tree_199",
+        "Tree_200",
+        "Tree_201",
+        "Tree_222",
+        "Tree_224",
+        "Tree_225",
+        "Tree_226",
+        "Tree_227",
+        "Tree_228",
+        "Tree_229",
+        "Tree_231",
+        "Tree_232",
+        "Tree_233",
+        "Tree_234",
+        "Tree_235",
+        "Tree_252",
+        "Tree_253",
+        "Tree_254",
+        "Tree_255",
+        "Tree_270",
+        "Tree_300",
+        "Tree_301",
+        "Tree_309",
+        "Tree_343",
+        "Tree_350",
+        "Undergrowth_1",
+        "Undergrowth_2",
+        "Undergrowth_3",
+        "Undergrowth_6",
+        "Undergrowth_7",
+        "Undergrowth_13",
+        "Undergrowth_15",
+        "Undergrowth_16",
+        "Undergrowth_22",
+        "Undergrowth_23",
+        "Undergrowth_24",
+        "Undergrowth_25",
+        "Undergrowth_30",
+        "Undergrowth_31",
+        "Undergrowth_33",
+        "LilyRaft_0",
+        "LilyRaft_2",
+        "LilyRaft_3",
+        "LilyRaft_4",
+        "LilyRaft_5",
+        "LilyRaft_6",
+        "LilyRaft_7",
+        "LilyRaft_8",
+        "LilyRaft_10",
+        "LilyRaft_11",
+        "Rubble_street_courts_40",
+        "Rubble_street_market_0",
+        "Rubble_street_north_0",
+        "Rubble_street_north_93",
+        "Rubble_spur_arrival_0",
+        "AxisLamp_1",
+        "AxisLamp_2",
+        "AxisLamp_3",
+        "AxisLamp_4",
+        "AxisLamp_5",
+        "AxisLamp_6",
+        "AxisLamp_7",
+        "TerraceRelic_0",
+        "TerraceRelic_1",
+        "CisternShaft",
+        "QuayShelter_0",
+        "QuayShelter_1",
+        "QuayRecordsBench_0",
+        "QuayLedger_0_0",
+        "QuayLedger_0_1",
+        "QuayLedger_0_2",
+        "QuayStool_0",
+        "QuayRecordsBench_1",
+        "QuayLedger_1_0",
+        "QuayLedger_1_1",
+        "QuayLedger_1_2",
+        "QuayStool_1",
+        "StoreBundle_0",
+        "StoreBundle_1",
+        "StoreBundle_2",
+        "StoreBundle_3",
+        "StoreBundle_4",
+        "StoreBundle_5",
+        "StoreBundle_6",
+        "StoreBundle_7",
+        "StoreBundle_8",
+        "House_archive-workers",
+        "House_quay-stores",
+        "House_lily-copyists",
+        "House_lineage-house",
+        "MooredPunt_1",
+        "QuayCargo_0",
+        "QuayCargo_1",
+        "QuayCargo_2",
+        "March_west_causeway_Furniture_00",
+        "March_west_causeway_Furniture_01",
+        "March_west_causeway_Stone",
+        "March_west_causeway_Station",
+        "March_west_causeway_reeds_001",
+        "March_west_causeway_reeds_002",
+        "March_west_causeway_reeds_005",
+        "March_west_causeway_reeds_006",
+        "March_west_causeway_reeds_007",
+        "March_west_causeway_reeds_008",
+        "March_west_causeway_boat_009",
+        "March_west_causeway_fern_011",
+        "March_west_causeway_fern_013",
+        "Secret_ruins_gate_cache",
+        "Secret_ruins_temple_focus",
+        "Structure_WestRuinLanding_Cap",
+        "Structure_StreamCauseway_ssarathi-manymouth_rim",
+        "Terrain_JadePaving_StreamCell_ssarathi-manymouth_StreamCell_WestBankStone",
+        "Terrain_JungleFloor_StreamCell_ssarathi-manymouth_StreamCell_WestBankStone",
+        "Terrain_MossStone_StreamCell_ssarathi-manymouth_StreamCell_WestBankStone"
+      ],
+      "previewPrefix": "StreamView_ssarathi-manymouth__",
+      "overflowSuffix": "_StreamOverflow_ssarathi-manymouth",
       "profile": "causeway",
       "waterBelowDeck": 4.0,
       "deckWidth": 7.0
@@ -3678,13 +4085,13 @@
       "name": "Stair to the Four Gates Causeway",
       "type": "map-transition",
       "position": [
-        154.5,
+        30.5,
         4.0,
-        -265.5
+        -278.5
       ],
       "serverTile": [
-        270,
-        381
+        183,
+        394
       ],
       "destinationMap": "four_gates",
       "radius": 3.5,
@@ -3695,13 +4102,13 @@
       "name": "Causeway to the Verdant Stair",
       "type": "map-transition",
       "position": [
-        265.5,
+        270.5,
         4.0,
-        -88.5
+        -58.5
       ],
       "serverTile": [
-        381,
-        204
+        423,
+        174
       ],
       "destinationMap": "verdant_stair",
       "radius": 3.5,
@@ -3712,13 +4119,13 @@
       "name": "Causeway to the Manymouth Delta",
       "type": "map-transition",
       "position": [
-        -112.5,
-        4.1,
-        -108.5
+        -150.5,
+        4.0,
+        -73.5
       ],
       "serverTile": [
-        4,
-        224
+        2,
+        189
       ],
       "destinationMap": "manymouth_delta",
       "radius": 3.5,
@@ -3734,7 +4141,7 @@
         74.0
       ],
       "serverTile": [
-        124,
+        161,
         42
       ],
       "destinationMap": "crownwater",
@@ -3751,7 +4158,7 @@
         -124.25
       ],
       "serverTile": [
-        180,
+        217,
         240
       ],
       "landmark": "sun-vault",
@@ -3770,7 +4177,7 @@
         -86.0
       ],
       "serverTile": [
-        234,
+        271,
         202
       ],
       "landmark": "hatchery-descent",
@@ -3789,7 +4196,7 @@
         -44.0
       ],
       "serverTile": [
-        36,
+        73,
         160
       ],
       "landmark": "cistern-shaft",
@@ -3808,7 +4215,7 @@
         60.0
       ],
       "serverTile": [
-        254,
+        291,
         56
       ],
       "landmark": "undercroft-mouth",
@@ -3827,7 +4234,7 @@
         -83.0
       ],
       "serverTile": [
-        84,
+        121,
         199
       ],
       "landmark": "lily-court",
@@ -3846,7 +4253,7 @@
         35.0
       ],
       "serverTile": [
-        156,
+        193,
         81
       ],
       "landmark": "south-water-gate",
@@ -3865,7 +4272,7 @@
         -15.0
       ],
       "serverTile": [
-        166,
+        203,
         131
       ],
       "landmark": "serpent-gate",
@@ -4730,6 +5137,21 @@
         "type": "pool"
       },
       {
+        "id": "Water_StreamCauseway_verdant-ssarathi",
+        "node": "Water_StreamCauseway_verdant-ssarathi",
+        "type": "pool"
+      },
+      {
+        "id": "Water_StreamCauseway_four-gates-ssarathi",
+        "node": "Water_StreamCauseway_four-gates-ssarathi",
+        "type": "pool"
+      },
+      {
+        "id": "Water_StreamCauseway_ssarathi-manymouth",
+        "node": "Water_StreamCauseway_ssarathi-manymouth",
+        "type": "pool"
+      },
+      {
         "id": "Water_Basin_StreamCell_verdant-ssarathi",
         "node": "Water_Basin_StreamCell_verdant-ssarathi",
         "type": "basin"
@@ -4763,6 +5185,36 @@
         "id": "Water_Basin_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
         "node": "Water_Basin_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi",
         "type": "basin"
+      },
+      {
+        "id": "Water_Basin_StreamCell_ssarathi-manymouth",
+        "node": "Water_Basin_StreamCell_ssarathi-manymouth",
+        "type": "basin"
+      },
+      {
+        "id": "Water_StreamCauseway_ssarathi-manymouth_StreamCell_ssarathi-manymouth",
+        "node": "Water_StreamCauseway_ssarathi-manymouth_StreamCell_ssarathi-manymouth",
+        "type": "pool"
+      },
+      {
+        "id": "Water_Basin_StreamCell_verdant-ssarathi_StreamCell_ssarathi-manymouth",
+        "node": "Water_Basin_StreamCell_verdant-ssarathi_StreamCell_ssarathi-manymouth",
+        "type": "basin"
+      },
+      {
+        "id": "Water_Basin_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "node": "Water_Basin_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "type": "basin"
+      },
+      {
+        "id": "Water_Basin_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "node": "Water_Basin_StreamCell_verdant-ssarathi_StreamCell_four-gates-ssarathi_StreamCell_ssarathi-manymouth",
+        "type": "basin"
+      },
+      {
+        "id": "Water_OuterApron_ssarathi_ruins",
+        "node": "Water_OuterApron_ssarathi_ruins",
+        "type": "pool"
       }
     ],
     "streams": [],
@@ -5083,46 +5535,60 @@
   "minimap": {
     "image": "minimap.webp",
     "imageSize": [
-      383,
-      383
+      456,
+      432
     ],
     "pixelsPerMetre": 1.0,
     "worldMin": [
-      -116.0,
-      -267.0
+      -152,
+      -280
     ],
     "worldMax": [
-      267.0,
-      116.0
+      304,
+      152
     ],
     "northAxis": "-Z",
     "orientation": "north-up",
     "projection": "orthographic-top-down",
-    "renderedFrom": "final geometry (offline rasteriser)",
+    "renderedFrom": "world.glb (shared geometry cartography renderer)",
     "transform": {
       "pixelX": {
         "scale": 1.0,
-        "offset": 116.0
+        "offset": 152
       },
       "pixelY": {
         "scale": 1.0,
-        "offset": 267.0
+        "offset": 280
       },
       "formula": "pixel_x = world_x * scale + offset; pixel_y = world_z * scale + offset"
     },
     "note": "Every Eloria minimap is drawn at one pixel to the metre, so the image's pixel size is the map's size in metres.",
     "file": "minimap.webp",
-    "pixels": 383,
+    "pixels": 456,
     "size": [
-      383,
-      383
+      456,
+      432
     ],
     "metresPerPixel": 1.0,
     "centre": [
-      75.5,
-      -75.5
+      76.0,
+      -64.0
     ],
-    "northUp": true
+    "northUp": true,
+    "geometryImage": "cartography.webp",
+    "cartographyRender": {
+      "generator": "eloria-assets/tools/render_region_cartography.py",
+      "styleVersion": 4,
+      "glbSha256": "0ef130196d4a61070a0b8ca2cc5bf637771e96f32f2afcf378b930db3ee1f0bf",
+      "toolSha256": "e5c5cab675ec4f463d33a3dd17d43cec6c41a7aee2a4ea6defb82f4451d496c3",
+      "rendererSourceSha256": "20a909b6f7b76e84867caed2e5bdcc3b6ae708ffc5231899794b2bef09005a05",
+      "supersample": 2,
+      "waterRGB": [
+        79,
+        150,
+        157
+      ]
+    }
   },
   "lodGroups": [
     {
@@ -5151,20 +5617,20 @@
     }
   ],
   "performance": {
-    "nodes": 3192,
-    "meshes": 424,
-    "materials": 45,
-    "images": 113,
-    "textures": 113,
-    "accessors": 1717,
-    "bufferViews": 1830,
-    "uniqueTriangles": 655868,
-    "uniqueVertices": 418703,
-    "glbBytes": 31210652,
-    "instancedTriangles": 1703480,
+    "nodes": 2613,
+    "meshes": 497,
+    "materials": 51,
+    "images": 119,
+    "textures": 119,
+    "accessors": 2047,
+    "bufferViews": 2166,
+    "uniqueTriangles": 882997,
+    "uniqueVertices": 634072,
+    "glbBytes": 39762604,
+    "instancedTriangles": 1729214,
     "embeddedTextureBytes": 30952001,
     "textureMemoryBytesUncompressed": 292945920,
-    "placements": 1178,
+    "placements": 940,
     "collision": {
       "width": 768,
       "height": 768,
@@ -5173,14 +5639,14 @@
         -116.0,
         116.0
       ],
-      "walkableCells": 307186,
-      "blockedCells": 282638,
-      "walkableFraction": 0.5208,
-      "elevatedDecks": 40,
-      "steepCells": 96206,
+      "walkableCells": 319006,
+      "blockedCells": 270818,
+      "walkableFraction": 0.5408,
+      "elevatedDecks": 50,
+      "steepCells": 73604,
       "reliefMetres": 56.12,
       "heightEncoding": {
-        "origin": -0.0208,
+        "origin": -0.0209,
         "step": 0.220945,
         "range": [
           1,
@@ -5197,15 +5663,21 @@
       "march east-causeway: 1 road pieces, 16 of verdant_stair's growth",
       "march west-causeway: 2 road pieces, 15 of manymouth_delta's growth",
       "march south-gate: 2 road pieces, 1 of crownwater's growth",
-      "walk corridors: 21 encroaching dressing placements removed"
+      "walk corridors: 21 encroaching dressing placements removed",
+      "Continent ownership is actual clipped geometry in one translation-only frame; native structures retain their scale and pose.",
+      "Outer apron: actual native perimeter, authored irregular outer contours, intact playable core and common approaches; physical water only at the existing regional datum.",
+      "Jade-stone bridges carry the East and North Inlet approaches above the tide, with literal slabs and bed-grounded piers; the basin, ruin bypass and shared landing frames remain intact.",
+      "Generated connector finish: one connected half-metre road bed at curves and shared junctions, intact boundary strip and native bridges, terrain and paint seated from actual final triangles.",
+      "The western delta road runs through a broad low ruin-side bench, with exposed stone cuts and preserved causeway, water and actual ruin foundations.",
+      "Geographic paint corners use the nearest actual shared edge; each full neighboring recipe stays together above unchanged physical substrate."
     ],
     "lod2": {
-      "glbBytes": 13142944,
-      "nodes": 1529,
-      "uniqueTriangles": 335519,
-      "instancedTriangles": 521832,
-      "sizeReductionPercent": 57.9,
-      "triangleReductionPercent": 69.4
+      "glbBytes": 22994080,
+      "nodes": 1394,
+      "uniqueTriangles": 623158,
+      "instancedTriangles": 773527,
+      "sizeReductionPercent": 42.2,
+      "triangleReductionPercent": 55.3
     }
   },
   "sources": [
@@ -5243,7 +5715,7 @@
         "name": "Archivist Sesh",
         "role": "dialogue",
         "serverTile": [
-          108,
+          145,
           111
         ],
         "authority": "server"
@@ -5253,7 +5725,7 @@
         "name": "Cistern Sounder Vek-Ora",
         "role": "dialogue",
         "serverTile": [
-          42,
+          79,
           166
         ],
         "authority": "server"
@@ -5263,7 +5735,7 @@
         "name": "Coil Bridge Toll-Taker Ude-Sar",
         "role": "dialogue",
         "serverTile": [
-          166,
+          203,
           165
         ],
         "authority": "server"
@@ -5273,7 +5745,7 @@
         "name": "Falls Measurer Ith-Anu",
         "role": "dialogue",
         "serverTile": [
-          303,
+          340,
           312
         ],
         "authority": "server"
@@ -5283,7 +5755,7 @@
         "name": "Hatchery Keeper Nuu-Sesh",
         "role": "dialogue",
         "serverTile": [
-          236,
+          273,
           207
         ],
         "authority": "server"
@@ -5293,7 +5765,7 @@
         "name": "Lily Court Steward Aa-Nesh",
         "role": "dialogue",
         "serverTile": [
-          95,
+          132,
           206
         ],
         "authority": "server"
@@ -5303,7 +5775,7 @@
         "name": "Lineage Reader Ssiran-Ta",
         "role": "dialogue",
         "serverTile": [
-          172,
+          209,
           130
         ],
         "authority": "server"
@@ -5313,7 +5785,7 @@
         "name": "Marchstone Priest Osu-Val",
         "role": "dialogue",
         "serverTile": [
-          310,
+          347,
           198
         ],
         "authority": "server"
@@ -5323,7 +5795,7 @@
         "name": "Ssethis the Doorkeeper",
         "role": "instance",
         "serverTile": [
-          170,
+          207,
           82
         ],
         "authority": "server"
@@ -5333,7 +5805,7 @@
         "name": "Stela Copyist Ilhu-Ren",
         "role": "dialogue",
         "serverTile": [
-          264,
+          301,
           263
         ],
         "authority": "server"
@@ -5343,7 +5815,7 @@
         "name": "Sun-Vault Warden Hass-Ile",
         "role": "dialogue",
         "serverTile": [
-          189,
+          226,
           236
         ],
         "authority": "server"
@@ -5353,7 +5825,7 @@
         "name": "Undercroft Digger Rell Marrow",
         "role": "dialogue",
         "serverTile": [
-          252,
+          289,
           60
         ],
         "authority": "server"
@@ -5363,7 +5835,7 @@
         "name": "Vess Scale",
         "role": "storage",
         "serverTile": [
-          105,
+          142,
           123
         ],
         "authority": "server"
@@ -5373,7 +5845,7 @@
         "name": "Water-Gate Marshal Set-Kaal",
         "role": "dialogue",
         "serverTile": [
-          124,
+          161,
           24
         ],
         "authority": "server"
@@ -5384,7 +5856,7 @@
         "id": 36,
         "resource": "Lotus",
         "serverTile": [
-          221,
+          258,
           133
         ],
         "authority": "server"
@@ -5393,7 +5865,7 @@
         "id": 37,
         "resource": "Lotus",
         "serverTile": [
-          236,
+          273,
           138
         ],
         "authority": "server"
@@ -5402,7 +5874,7 @@
         "id": 38,
         "resource": "Lichen",
         "serverTile": [
-          241,
+          278,
           128
         ],
         "authority": "server"
@@ -5411,7 +5883,7 @@
         "id": 39,
         "resource": "Lichen",
         "serverTile": [
-          222,
+          259,
           127
         ],
         "authority": "server"
@@ -5420,7 +5892,7 @@
         "id": 40,
         "resource": "Venom Bulb",
         "serverTile": [
-          277,
+          314,
           47
         ],
         "authority": "server"
@@ -5429,7 +5901,7 @@
         "id": 41,
         "resource": "Venom Bulb",
         "serverTile": [
-          256,
+          293,
           68
         ],
         "authority": "server"
@@ -5438,7 +5910,7 @@
         "id": 42,
         "resource": "Geode",
         "serverTile": [
-          235,
+          272,
           268
         ],
         "authority": "server"
@@ -5447,7 +5919,7 @@
         "id": 43,
         "resource": "Geode",
         "serverTile": [
-          258,
+          295,
           270
         ],
         "authority": "server"
@@ -5456,7 +5928,7 @@
         "id": 44,
         "resource": "Toadstool",
         "serverTile": [
-          316,
+          353,
           206
         ],
         "authority": "server"
@@ -5465,7 +5937,7 @@
         "id": 45,
         "resource": "Toadstool",
         "serverTile": [
-          319,
+          356,
           200
         ],
         "authority": "server"
@@ -5474,7 +5946,7 @@
         "id": 46,
         "resource": "Flint",
         "serverTile": [
-          50,
+          87,
           215
         ],
         "authority": "server"
@@ -5483,7 +5955,7 @@
         "id": 47,
         "resource": "Flint",
         "serverTile": [
-          30,
+          67,
           221
         ],
         "authority": "server"
@@ -5492,7 +5964,7 @@
         "id": 48,
         "resource": "Flint",
         "serverTile": [
-          21,
+          58,
           227
         ],
         "authority": "server"
@@ -5501,7 +5973,7 @@
         "id": 49,
         "resource": "Watercress",
         "serverTile": [
-          81,
+          118,
           132
         ],
         "authority": "server"
@@ -5510,7 +5982,7 @@
         "id": 50,
         "resource": "Watercress",
         "serverTile": [
-          86,
+          123,
           131
         ],
         "authority": "server"
@@ -5519,7 +5991,7 @@
         "id": 51,
         "resource": "Watercress",
         "serverTile": [
-          90,
+          127,
           132
         ],
         "authority": "server"
@@ -5528,7 +6000,7 @@
         "id": 52,
         "resource": "Lichen",
         "serverTile": [
-          81,
+          118,
           128
         ],
         "authority": "server"
@@ -5537,7 +6009,7 @@
         "id": 53,
         "resource": "Lichen",
         "serverTile": [
-          228,
+          265,
           134
         ],
         "authority": "server"
@@ -5546,7 +6018,7 @@
         "id": 54,
         "resource": "Lichen",
         "serverTile": [
-          217,
+          254,
           126
         ],
         "authority": "server"
@@ -5555,7 +6027,7 @@
         "id": 55,
         "resource": "Lichen",
         "serverTile": [
-          227,
+          264,
           128
         ],
         "authority": "server"
@@ -5564,7 +6036,7 @@
         "id": 56,
         "resource": "Lichen",
         "serverTile": [
-          243,
+          280,
           133
         ],
         "authority": "server"
@@ -5573,7 +6045,7 @@
         "id": 57,
         "resource": "Lichen",
         "serverTile": [
-          241,
+          278,
           139
         ],
         "authority": "server"
@@ -5582,7 +6054,7 @@
         "id": 58,
         "resource": "Venom Bulb",
         "serverTile": [
-          259,
+          296,
           78
         ],
         "authority": "server"
@@ -5591,7 +6063,7 @@
         "id": 59,
         "resource": "Venom Bulb",
         "serverTile": [
-          263,
+          300,
           38
         ],
         "authority": "server"
@@ -5600,7 +6072,7 @@
         "id": 60,
         "resource": "Venom Bulb",
         "serverTile": [
-          257,
+          294,
           75
         ],
         "authority": "server"
@@ -5609,7 +6081,7 @@
         "id": 61,
         "resource": "Lotus",
         "serverTile": [
-          229,
+          266,
           137
         ],
         "authority": "server"
@@ -5618,7 +6090,7 @@
         "id": 62,
         "resource": "Lotus",
         "serverTile": [
-          211,
+          248,
           143
         ],
         "authority": "server"
@@ -5627,7 +6099,7 @@
         "id": 63,
         "resource": "Lotus",
         "serverTile": [
-          240,
+          277,
           135
         ],
         "authority": "server"
@@ -5636,7 +6108,7 @@
         "id": 64,
         "resource": "Watercress",
         "serverTile": [
-          81,
+          118,
           125
         ],
         "authority": "server"
@@ -5645,7 +6117,7 @@
         "id": 65,
         "resource": "Watercress",
         "serverTile": [
-          84,
+          121,
           126
         ],
         "authority": "server"
@@ -5654,7 +6126,7 @@
         "id": 66,
         "resource": "Watercress",
         "serverTile": [
-          77,
+          114,
           125
         ],
         "authority": "server"
@@ -5663,7 +6135,7 @@
         "id": 67,
         "resource": "Toadstool",
         "serverTile": [
-          320,
+          357,
           208
         ],
         "authority": "server"
@@ -5672,7 +6144,7 @@
         "id": 68,
         "resource": "Toadstool",
         "serverTile": [
-          333,
+          370,
           195
         ],
         "authority": "server"
@@ -5681,7 +6153,7 @@
         "id": 69,
         "resource": "Geode",
         "serverTile": [
-          271,
+          308,
           259
         ],
         "authority": "server"
@@ -5690,7 +6162,7 @@
         "id": 70,
         "resource": "Geode",
         "serverTile": [
-          250,
+          287,
           249
         ],
         "authority": "server"
@@ -5699,7 +6171,7 @@
         "id": 71,
         "resource": "Flint",
         "serverTile": [
-          26,
+          63,
           222
         ],
         "authority": "server"
@@ -5708,7 +6180,7 @@
         "id": 72,
         "resource": "Flint",
         "serverTile": [
-          37,
+          74,
           210
         ],
         "authority": "server"
@@ -5718,7 +6190,7 @@
       {
         "creature": "leafwing_owl",
         "serverTile": [
-          289,
+          326,
           63
         ],
         "authority": "server"
@@ -5726,7 +6198,7 @@
       {
         "creature": "leafwing_owl",
         "serverTile": [
-          269,
+          306,
           55
         ],
         "authority": "server"
@@ -5734,7 +6206,7 @@
       {
         "creature": "leafwing_owl",
         "serverTile": [
-          253,
+          290,
           84
         ],
         "authority": "server"
@@ -5742,7 +6214,7 @@
       {
         "creature": "emerald_canopy_dragon",
         "serverTile": [
-          286,
+          323,
           84
         ],
         "authority": "server"
@@ -5750,7 +6222,7 @@
       {
         "creature": "emerald_canopy_dragon",
         "serverTile": [
-          28,
+          65,
           247
         ],
         "authority": "server"
@@ -5758,7 +6230,7 @@
       {
         "creature": "emerald_canopy_dragon",
         "serverTile": [
-          284,
+          321,
           52
         ],
         "authority": "server"
@@ -5766,7 +6238,7 @@
       {
         "creature": "emerald_canopy_dragon",
         "serverTile": [
-          237,
+          274,
           306
         ],
         "authority": "server"
@@ -5774,7 +6246,7 @@
       {
         "creature": "emerald_canopy_dragon",
         "serverTile": [
-          226,
+          263,
           297
         ],
         "authority": "server"
@@ -5782,7 +6254,7 @@
       {
         "creature": "emerald_canopy_dragon",
         "serverTile": [
-          218,
+          255,
           308
         ],
         "authority": "server"
@@ -5790,7 +6262,7 @@
       {
         "creature": "swamp_heron",
         "serverTile": [
-          210,
+          247,
           139
         ],
         "authority": "server"
@@ -5798,7 +6270,7 @@
       {
         "creature": "swamp_heron",
         "serverTile": [
-          234,
+          271,
           127
         ],
         "authority": "server"
@@ -5806,7 +6278,7 @@
       {
         "creature": "swamp_heron",
         "serverTile": [
-          203,
+          240,
           134
         ],
         "authority": "server"
@@ -5814,7 +6286,7 @@
       {
         "creature": "emerald_canopy_dragon",
         "serverTile": [
-          208,
+          245,
           323
         ],
         "authority": "server"
@@ -5822,7 +6294,7 @@
       {
         "creature": "delta_mud_crab",
         "serverTile": [
-          291,
+          328,
           94
         ],
         "authority": "server"
@@ -5830,7 +6302,7 @@
       {
         "creature": "delta_mud_crab",
         "serverTile": [
-          303,
+          340,
           115
         ],
         "authority": "server"
@@ -5838,7 +6310,7 @@
       {
         "creature": "saltmarsh_crocodile",
         "serverTile": [
-          22,
+          59,
           208
         ],
         "authority": "server"
@@ -5846,7 +6318,7 @@
       {
         "creature": "saltmarsh_crocodile",
         "serverTile": [
-          30,
+          67,
           206
         ],
         "authority": "server"
@@ -5854,7 +6326,7 @@
       {
         "creature": "rune_stone_golem",
         "serverTile": [
-          75,
+          112,
           276
         ],
         "authority": "server"
@@ -5862,7 +6334,7 @@
       {
         "creature": "rune_stone_golem",
         "serverTile": [
-          254,
+          291,
           321
         ],
         "authority": "server"
@@ -5870,7 +6342,7 @@
       {
         "creature": "rune_stone_golem",
         "serverTile": [
-          88,
+          125,
           303
         ],
         "authority": "server"
@@ -5878,7 +6350,7 @@
       {
         "creature": "void_tentacle_construct",
         "serverTile": [
-          44,
+          81,
           223
         ],
         "authority": "server"
@@ -5886,7 +6358,7 @@
       {
         "creature": "void_tentacle_construct",
         "serverTile": [
-          26,
+          63,
           234
         ],
         "authority": "server"
@@ -5894,7 +6366,7 @@
       {
         "creature": "void_tentacle_construct",
         "serverTile": [
-          17,
+          54,
           243
         ],
         "authority": "server"
@@ -5902,7 +6374,7 @@
       {
         "creature": "gloom_wyvern",
         "serverTile": [
-          25,
+          62,
           318
         ],
         "authority": "server"
@@ -5910,7 +6382,7 @@
       {
         "creature": "gloom_wyvern",
         "serverTile": [
-          111,
+          148,
           301
         ],
         "authority": "server"
@@ -5918,11 +6390,184 @@
       {
         "creature": "gloom_wyvern",
         "serverTile": [
-          91,
+          128,
           328
         ],
         "authority": "server"
       }
     ]
+  },
+  "continentGeography": {
+    "schemaVersion": 1,
+    "nativeServerOrigin": [
+      116,
+      116
+    ],
+    "nativeServerCells": [
+      384,
+      384
+    ],
+    "serverOrigin": [
+      153,
+      116
+    ],
+    "serverCells": [
+      426,
+      426
+    ],
+    "serverTileShift": [
+      37,
+      0
+    ],
+    "serverBounds": [
+      [
+        -153,
+        -310
+      ],
+      [
+        273,
+        116
+      ]
+    ],
+    "mapBounds": [
+      [
+        -152,
+        -280
+      ],
+      [
+        304,
+        152
+      ]
+    ],
+    "geographySha256": "9abd167a99745cd0d5b6c164e496979884bc6db71b403210d1a3b837ef470830",
+    "geometrySha256": "0ef130196d4a61070a0b8ca2cc5bf637771e96f32f2afcf378b930db3ee1f0bf",
+    "nativeCollisionSha256": "ef8706674483c014cf865ac24d6c073b8d70a72c5cc97b260609ec628951e70c",
+    "result": {
+      "nativeBlockedPreserved": 270818,
+      "oldWalkableUnsupportedClosed": 0,
+      "oldWalkableSubmergedClosed": 74,
+      "paddingWalkableCells": 14194,
+      "walkableCells": 333126,
+      "maximumPaddingGradient": 0.8,
+      "minimumWaterClearanceMetres": 0.0,
+      "existingWadeDepthMetres": 0.25
+    }
+  },
+  "authoredGeometry": {
+    "generator": "eloria-assets/tools/rebuild_continent_geography.py",
+    "inputs": {
+      "eloria-assets/maps/nymara-regions/_color/terrain_paint.py": "32bd5948091cdbc33a674938bb8ce34ac4daf39a8e5df23b3bf1bc10b58338f4",
+      "eloria-assets/maps/nymara-regions/_finishing/causeway_rims.py": "61c898ab904dd5632c3e057463dd198d45631bb1725289ecdd9f54cd3d73c15a",
+      "eloria-assets/maps/nymara-regions/_finishing/connector_finish.py": "9c7fd186f7979565db3d20cdd7b8602e0be4dda4d91158933566be1cbdafec16",
+      "eloria-assets/maps/nymara-regions/_northern/landscape_finish.py": "8321fdc08064d0ad29329179d7d8d6979ff1d982ae746b15af1ca7ff1741126a",
+      "eloria-assets/maps/nymara-regions/_northern/road_profiles.py": "d608628d1dc9e63ab52c6b9ba103381e2324c30436c3fee60dda2bbc346472d0",
+      "eloria-assets/maps/nymara-regions/_outer/outer_aprons.py": "31038e07fdba448b696a34218f6bec7bad03c4813dab9ed31c3b1be397ca9e39",
+      "eloria-assets/maps/nymara-regions/_outer/probe_outer_aprons.py": "a39f2733da5de90f8f9561c0a38cbb8c4ab65e8ce6db014c577e7a57319f7dcf",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/__init__.py": "bcc6624b01ea53fc8be93665bc56aff69af74ece20ff6ae6ad891057cf4b8b23",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/arcadecraft.py": "034302006e0499827591385a290a8f2ec6e7cb5ead6bc5781574c7a4eb8f3b67",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/architecture.py": "bcaee2e29b73a3eff4de2e71ba73fb9eb724fd620075b2ff080cf9c1b4f928e8",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/barrowcraft.py": "49289f61a280e4f2212091606d7742dd0ff69326f9f8ed2a2f3dba5575a7244a",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/canyoncraft.py": "b71feab7ac07d08f3e39ad7760b1f3192e59e2741d3296c1ed2ab155d2ba4a17",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/civiccraft.py": "738ced5f7d36e91824dde9a964f27478a093116d217f957fed6f83712fa68a08",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/coplanar.py": "016dcdfb2c0f6687b20e2257076ef8833dc1e9600376184f0bb0c31bc298ccac",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/crownmaterials.py": "69d80d601786376d992b14637edee8cbf721f0d34b8499f4ea654cbafecd0cbb",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/crystalcraft.py": "439ae8820f87ff243efeb6270170353ca47d4f3dfa7f97feb4c747fd3d3b0d70",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/forestcraft.py": "2f2b2872dc070fe944b5fab3ddca98f1b71f6530f57c61d3e3adc5dc7e4c26dc",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/gltf.py": "3df32803d90efb5f7255d30e6027b36660773c5fd935ce5d5ec7796b0f2941b0",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/interiors.py": "516fada40372437f5950ff0a9bea7b00e5f49a9273d0fccb3b38c102d1b121b9",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/junglecraft.py": "e09a197f926a412d63132c7ab9efa721d7384e791b698286cbe6ee71d88f8dde",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/landscape.py": "b24717f59470152715b4079f924891fd241f4c8cb0950a7480be8382b03a4b9d",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/materials.py": "af4917a899a08fa663884defd35d79aa45ae9c264e2028cf03f10520898b53f6",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/mesh.py": "6a3930bc16c72a30df6cd406eb78369c4c7a0c39a2895f5db90df90b8b2170ba",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/moorcraft.py": "64338e95741c2d6cb7559e15df77ce80ffc8a089524bc19067ca3a4e05d89f1a",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/mountaincraft.py": "942f0afb01b958a4a8398b8e3b5bdec10ec88af93706f84a20b6068d9b6a9c7d",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/noise.py": "62c4b8d88d1c5f307b22768996382e91f31c0a6c16d723a2b3886450af278c4c",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/observatorycraft.py": "d431fa03cf00868eb0a0e62a858f622642fa54295839a47aba75f27af890b1c3",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/populate.py": "5086e89209fa9f1bb6b298fa90382738a9807d49f137ff2186c6c5fb9f84077b",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/props.py": "8368e2b0b2adafddb93381657fd78beba75ed084771560f7dd7dba0c33632494",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/region.py": "9d72472f480789e59ab849f0473ac0ca275c3f246d3a549da8c461862a9fe5b1",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/render.py": "ace7bbe332dbf87db4e2d4378617b831606f8861ff19f300fde7e3ef6ce0d228",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/routecraft.py": "34c88fbda7c826775b0e11148710dbd1f4d775198fd25ff6736852012061cb9c",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/smallrooms.py": "4a27b353b9ad8307e8f7fd37388f884ae2241ce2867d35c677cf6720f3c8bd35",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/spatial.py": "befd9a805574b37de45f65815941778cf2b6bb46f11868ff4d4a9cb03a52bd77",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/stonework.py": "225b8cdb38bafba7c3f2a4e8c730642aca8103f51877b3a0db31e95af0010881",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/templecraft.py": "1646e1907298dbedd406fcb4d086508a929c86065bf756795a54afdf4959e3df",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/terrain.py": "185ff68f54f2294e32b8ed89b157bb5be66d71d6cb2faf5678ece9a9516cf3df",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/textures.py": "576413d77324f3ce4bb152382af96663ee564943db3cc7841a0e264011417399",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/treecraft.py": "f7755cce4a38b32335cf7a2462cbf246a2dd3f1167399dc5282eaf8b308697b6",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/trees.py": "8cefc035655f20d09798c7ed41935c0c59d5d30ff07163619e0ca4e486684d63",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/watercraft.py": "39d9b79e531325a66288c2ee008831be73156d87740c885b11242450b144f028",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/waterfront.py": "75a79cb467428ae063c78a520b3fd921afc7e3648b00d2d1f59e2bd6daab6524",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/woodlandcraft.py": "921c59a131b7cccdfc2e2bd889438ee6e1887088739a30a72b41cc9df0cffb2f",
+      "eloria-assets/maps/nymara-regions/_toolkit/border_vistas.py": "ccd302df09d476b693368a28e62ad0124027ccae640ce1dd7c399e6dc579409b",
+      "eloria-assets/maps/nymara-regions/_toolkit/capture_views.py": "b14cda865ec067c8be87d964b96ab9addfaee10b8676bf4bfcd32be55bf91db5",
+      "eloria-assets/maps/nymara-regions/_toolkit/compact_landscape.py": "a75f505b8087be9b5bfe0668ee92dafa53292d3d33cbf544e4848e4a936f1289",
+      "eloria-assets/maps/nymara-regions/_toolkit/compress_captures.py": "242b23b718a95c756b48a8a4c0109592260091fa0b745fcb462dd0e19f8529bb",
+      "eloria-assets/maps/nymara-regions/_toolkit/contentposts.py": "4a6cf588584128191058c7ad48a4386806f45f565d9769f5f39dcdf201c132e9",
+      "eloria-assets/maps/nymara-regions/_toolkit/continent_geography.py": "33363d2be5f76d5d69c98dfe92ac5b8c7f576c3d141326a3f266d8bf8ab63f8c",
+      "eloria-assets/maps/nymara-regions/_toolkit/designs/four_gates_secrets_design.py": "eb7d1d20674547dbadde56bab4ac9555b3c1cb87be422b45801e30b4b621d652",
+      "eloria-assets/maps/nymara-regions/_toolkit/export_insides_collision.py": "11ca322c851b05fe32edfcc27380b072dffc9a9b0303879503af0aa0ccdc9dff",
+      "eloria-assets/maps/nymara-regions/_toolkit/export_interior_collision.py": "f41b095554fa953ff835e88387e9512f295a6178609d7cf3901e6e22669a42ab",
+      "eloria-assets/maps/nymara-regions/_toolkit/export_server_collision.py": "4528ec4e20a3b457d6a1dd0d3ef23c064c4a2e013686e7f6b2c9247634301f7c",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/__init__.py": "1770a3092c31648c5c9d3305c35ef51e62c374d0b3579048eac25cc4985835b3",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/barrow_visitation.py": "bfba53e656cfca95274514770b9a7b424da2073e2adcb5fe474b16f2fa44a246",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/build.py": "e432f3b44844e14aba238333b0b1fc627318984d60fd5a97dc6930149048413a",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/designs.py": "15560b8ff2f2a03fc6a2704eeca3028ed4d1edd7722fc2dc5091c70e4b5e4e08",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/drowned_customs.py": "4534c6177a01b6a5c223d46bb7fc53f724ad081337e26479257ffc10dafeff3b",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/forest_haul.py": "d83fe3419e2586613b0703aaea34cf4cd86885ca370133dd6f11004f54971713",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/ice_mine.py": "9237d00d96a0bfa6b3d7b0cbfab9114d7e77cabbf8cfd6d708a703d41463d607",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/red_canyon.py": "1a75991a5863e426d026e7c3b1ed9a5e8cb6ee7474f7c15b0556032a1860ca29",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/rooms.py": "a91d120ab48f5b905b9f4496b3d4c05e67f2fddf63f74723c58e580fc69d7e8a",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/temple_procession.py": "5c5bade746a0c2cdbb2d02b7495e707eeb9898a23a4cd517248c8075cdcedab4",
+      "eloria-assets/maps/nymara-regions/_toolkit/glb_reader.py": "be5e46a94acf014a8684be216fe8c67ac2aadbf789469087276f229bd85c9a57",
+      "eloria-assets/maps/nymara-regions/_toolkit/guard_actor_surfaces.py": "483c64ba394a3eabef0110296f7e11eedfd2bb4f3203d872c6268ecc0ea41a91",
+      "eloria-assets/maps/nymara-regions/_toolkit/interior_views.py": "f6ad2c7cd16f9a5faf7575154c0252fda8b3c5fb4793b1ff041c2165798d0cff",
+      "eloria-assets/maps/nymara-regions/_toolkit/loresites.py": "16a9b90b2256f956fe92196c303ba04bf2d67ea6b3287f76464aa85c23ff962c",
+      "eloria-assets/maps/nymara-regions/_toolkit/make_comparison.py": "ed2e70b89e7a6c03e830a2364681adb7a7f5412b23cd5691ac9e521f67320820",
+      "eloria-assets/maps/nymara-regions/_toolkit/northern_passes.py": "8b816082f1d1a040ac72d8dc785901ccab4d933aac3e1f4f9a2c575bd4ac6205",
+      "eloria-assets/maps/nymara-regions/_toolkit/open_walk_surfaces.py": "612a56f1c010a89eb6f1507c724242c2b32da757003657e8227132805b7ee555",
+      "eloria-assets/maps/nymara-regions/_toolkit/patch_collision_altitude.py": "c8c5dd2a15b169937d758f1d329d3786010a5f3b49e1e608398c0705b119a889",
+      "eloria-assets/maps/nymara-regions/_toolkit/plan_image.py": "939708d96db2aaa92ba130cd73d425877a1c68ad1e01c748202b464282f3e602",
+      "eloria-assets/maps/nymara-regions/_toolkit/preview.py": "73230ab1978e65480981b52225938826f7a379236c40e1708dce46850945071f",
+      "eloria-assets/maps/nymara-regions/_toolkit/rebuild_collision.py": "3fc76e6cd75ac60d9aa057e584666d7dee0bb5bc4ecc5b21f6682be9f5fc712b",
+      "eloria-assets/maps/nymara-regions/_toolkit/refine_walk_heights.py": "a4d8473b98bc65cd95164a7e5706a002abd0286603ef171eeaae513514883b4d",
+      "eloria-assets/maps/nymara-regions/_toolkit/regionbuild.py": "816c8d61ac0d0d2ccb20a7595a10f93a440df79765bd17804e13a746923f9b15",
+      "eloria-assets/maps/nymara-regions/_toolkit/regionpaths.py": "3a711cd50da4e5be22dd6f51ff6ca62d046fff418abc05edcd60531377b96257",
+      "eloria-assets/maps/nymara-regions/_toolkit/secretdoors.py": "508d26a78fe18389dd39051e49266d1b9c032de72add15a84e2e353a44181646",
+      "eloria-assets/maps/nymara-regions/_toolkit/secretrooms.py": "d7e4a6c6b1de205d3e3f1e94d2b1e18d627d30fef8cffcb0f30213d54d6b09f8",
+      "eloria-assets/maps/nymara-regions/_toolkit/secrets_build.py": "6778bd8634af74c0aaaa7da8ba00f2efdf0beea95fff3031c2c1606bc4c2f842",
+      "eloria-assets/maps/nymara-regions/_toolkit/secrets_doc.py": "a5221761d7595e367ef3e730c51f4ebea8cea7fcbf74d66f81b91e671d2c99bf",
+      "eloria-assets/maps/nymara-regions/_toolkit/server_walk_grid.py": "d6fd1ef43a3fe5903063637d22c1e9371650baea146f011b5f5ed41d4c95f6bb",
+      "eloria-assets/maps/nymara-regions/_toolkit/stamp_solid_landmarks.py": "2cc8b7688f849f59b2ecc22edf511fcaf2247c3cebed09c8fa76eb3e953065d1",
+      "eloria-assets/maps/nymara-regions/_toolkit/streaming_borders.py": "c101578ad9901484568c21dab8be1775bd1a385edfbde785e2dfc99f794a4d3e",
+      "eloria-assets/maps/nymara-regions/_toolkit/transitions.py": "7fb729f597406e72be68350c6c8b007ee74db63cdbfe88a6c1adc6072bf20f4c",
+      "eloria-assets/maps/nymara-regions/_toolkit/validate_gltf.py": "630807c19dfef54f65f6bdcb92bee279f1e3ed49b565ca15261f683539e44309",
+      "eloria-assets/maps/nymara-regions/_toolkit/verify_runtime.py": "7bd2d3d883ff9d07ebb64a21e972f943b2f2a4158683a40be5414bc52e6857be",
+      "eloria-assets/maps/nymara-regions/continent-geography.json": "9abd167a99745cd0d5b6c164e496979884bc6db71b403210d1a3b837ef470830",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/build_insides.py": "e7086ce33bf2fcf6e4da5592a0fde4fd7f7fcac87c074ce6cf24067e3fb52516",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/build_interiors.py": "5eb9da561cff9a66d293ba2c10482b9cfc81e1db7a36303fdc89bf49c6ca74d7",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/build_ssarathi.py": "df04a6e85d0f8e38703731055284f53fc348c2c7cba428a722f53a36a67a7f91",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/export_insides_collision.py": "7d500cf6c4acc77a146645d10761bfe932b2eee0da1981a2366d19971ed1e663",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/geographic_approach.py": "67584b5704910f6a30d7e39a15899c4ede4f32fbdb4fb3db912dd53ee8e013b5",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/inlet_crossings.py": "20998141d62c8850e86b72f8cc24d011025f3f967afc385063815ea04c7685d1",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/interiors_ssarathi.py": "77f46739432475f5748337fc554340851ed7352434461c0ca45573a858b21629",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/layout.py": "fda982ff0c06b2e53de9017272f51a85548a57249c077ddd286e6ba0ef05287b",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/migrate_compact_server.py": "213fd6fa5f4b1760a6fab6f90c8c12778f47d6b0d3e99c6ec8ef2b26a8066d7d",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/populate.py": "811a40077a8f988b636c5b957af029be4125534edd9209fd38346ff1b42bfe78",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/rebuild_landscape.py": "dc3837212a2c275e3a09a360541c31329d8241343890ec69a53bfee56b5a9f2e",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/region.py": "c5308e60328a1e913d11cc1e85092519c6ef8e70a18d2d59f521795871c7c9bc",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/review_landscape.py": "24f03b21a3c3881a04ac167dcbf976e60e71742694f1f5783eebb3de3b16a958",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/secrets_design.py": "14fa300fb33c98f8acb5a5c21dd2ba494439195c9ebc40f6a411b696c838d29d",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/ssaratharch.py": "896f66c1d04c08e1eaaf870db054b22efcd4eb9616af59a4bea9105048920672",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/ssarathikit.py": "eee010e06a779b0c6d592e591d7be4df469ee38473b8377a89c9eff9b9aff200",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/test_inlet_crossings.py": "384ab14f240f3d6960fde5534270e1b544484d36c4cc33790a22dcbc6fc7afce",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/test_landscape_contract.py": "7792bb1dd378a5ae5a995f5d04e59f4b36616b4023c60d0c56d0c83a6157bae6",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/test_west_bank_finish.py": "43802998b68706c2a54a29c2b461d630bba6eee79d4844614eb4a5200429049d",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/verify_interiors.py": "9da6e929120dd299682c8b90c6fc27b2af5183b9b7dafa9abc71cb9b7b0a9338",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/views.py": "4182698a2b0186adf90636a071c3fa516562c5ae59d3a037eabb040b298dc1e7",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/west_bank_finish.py": "8f512640a181acfffe3653d84a9b14bfa06b9874be4656f3eb049cd71ffebfc6",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/west_ruin_bypass.py": "a8d2d7b7e535755024c193090d4ee19fdb21960f39695ad206a28b4ba40faf06",
+      "eloria-assets/maps/nymara-regions/ssarathi_ruins/source/write_walk_fixture.py": "6fc8788a6c7ec9e5e1e975cd6fb5b79e8c0429a70eeaa5a6a32c6fb1bffed1ed"
+    }
   }
 }

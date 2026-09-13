@@ -183,6 +183,22 @@ def adjacent_jumps(heights, reachable, threshold=6.0):
     return jumps
 
 
+def served_reachable(grid, cells, metres_per_tile=1., cell_metres=.5):
+    """The server's conservative fold, including its half-tile origin shift."""
+    ratio = metres_per_tile / cell_metres
+    low = np.floor((np.arange(cells) - .5) * ratio).astype(int)
+    high = np.ceil((np.arange(cells) + .5) * ratio).astype(int) - 1
+    ys = [(max(0, min(a, grid.shape[0]-1)), max(0, min(b, grid.shape[0]-1))) for a, b in zip(low, high)]
+    xs = [(max(0, min(a, grid.shape[1]-1)), max(0, min(b, grid.shape[1]-1))) for a, b in zip(low, high)]
+    blocked = np.pad((grid == 0).astype(np.int32), ((1, 0), (1, 0))).cumsum(0).cumsum(1)
+    x0, x1 = np.array(xs).T
+    result = np.zeros((cells, cells), dtype=bool)
+    for y, (y0, y1) in enumerate(ys):
+        count = blocked[y1+1, x1+1] - blocked[y0, x1+1] - blocked[y1+1, x0] + blocked[y0, x0]
+        result[y] = count == 0
+    return result
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--package", default=None)
@@ -241,13 +257,20 @@ def main() -> int:
     metres = transform["metresPerTile"]
     cells = int(manifest.get('asset', {}).get('serverCells', 384))
     walking_height = transform["walkingHeight"]
+    collision = manifest["collision"]
+    collision_payload = (package / collision["binary"]).read_bytes()
+    _, _, _, cw, ch = struct.unpack("<4sHHII", collision_payload[:16])
+    collision_grid = np.frombuffer(collision_payload, dtype=np.uint8, offset=16).reshape(ch, cw)
+    reachable = served_reachable(collision_grid, cells, metres, collision['cellMetres'])
 
     misses = []
     heights = np.full((cells, cells), np.nan)
     for tile_y in range(0, cells, args.step):
         for tile_x in range(0, cells, args.step):
-            x = (tile_x - origin_x) * metres
-            z = -(tile_y - origin_y) * metres
+            if not reachable[tile_y, tile_x]:
+                continue
+            x = (tile_x + .5 - origin_x) * metres
+            z = -(tile_y + .5 - origin_y) * metres
             hit = index.top_hit(x, z)
             if hit is None:
                 misses.append((tile_x, tile_y, round(x, 1), round(z, 1)))
@@ -259,28 +282,12 @@ def main() -> int:
     print(f"[grounding] {sampled} tiles sampled, {len(misses)} misses "
           f"({miss_fraction * 100:.2f}%)")
     if misses:
-        warn("GROUNDING_RAY_MISS",
-             f"{len(misses)} server tiles have no walk surface under them; a "
+        fail("GROUNDING_RAY_MISS",
+             f"{len(misses)} walkable server tiles have no surface at their actor centre; a "
              f"character there would fall back to walkingHeight={walking_height}",
              misses[:12])
 
     # -- 5. the surface must be continuous across ground a player can reach --
-    collision = manifest["collision"]
-    collision_payload = (package / collision["binary"]).read_bytes()
-    _, _, _, cw, ch = struct.unpack("<4sHHII", collision_payload[:16])
-    collision_grid = np.frombuffer(collision_payload, dtype=np.uint8,
-                                   offset=16).reshape(ch, cw)
-    # the collision grid is half-metre; tiles are one metre
-    # collision rows are server-tile-Y at half-metre spacing
-    step = max(1, int(round(metres / collision['cellMetres'])))
-    reachable = collision_grid[::step, ::step] > 0
-    reachable = reachable[:cells, :cells]
-    if reachable.shape != heights.shape:
-        padded = np.zeros_like(heights, dtype=bool)
-        rows = min(reachable.shape[0], padded.shape[0])
-        cols = min(reachable.shape[1], padded.shape[1])
-        padded[:rows, :cols] = reachable[:rows, :cols]
-        reachable = padded
     jumps = adjacent_jumps(heights, reachable)
     if jumps:
         warn("GROUNDING_DISCONTINUITY",
@@ -347,29 +354,34 @@ def main() -> int:
         if walkable < 0.15:
             warn("COLLISION_TOO_TIGHT",
                  f"only {walkable * 100:.1f}% of the map is walkable")
-        # every walkable cell must have a rendered surface under it, and the
-        # encoded height must match what the client's ray would find
+        # The served conservative fold, not an isolated residual half-cell,
+        # determines which actors can stand here and their encoded elevation.
         mismatches = []
         step_metres = collision["cellMetres"]
         encode = collision["heightEncoding"]
-        for cz in range(0, height, 12):
-            for cx in range(0, width, 12):
-                if grid[cz, cx] == 0:
+        for tile_y in range(0, cells, 6):
+            for tile_x in range(0, cells, 6):
+                if not reachable[tile_y, tile_x]:
                     continue
-                x = -origin_x + (cx + 0.5) * step_metres
-                z = origin_y - (cz + 0.5) * step_metres
+                x = (tile_x + .5 - origin_x) * metres
+                z = -(tile_y + .5 - origin_y) * metres
                 hit = index.top_hit(x, z)
                 if hit is None:
-                    mismatches.append({"cell": [cx, cz], "issue": "no-surface"})
+                    mismatches.append({"tile": [tile_x, tile_y], "issue": "no-surface"})
                     continue
-                encoded = encode["origin"] + grid[cz, cx] * encode["step"]
-                if grid[cz, cx] < 63 and abs(encoded - hit) > 2.5:
-                    mismatches.append({"cell": [cx, cz],
+                ratio = metres / step_metres
+                x0 = max(0, min(width-1, math.floor((tile_x-.5)*ratio)))
+                x1 = max(x0, min(width-1, math.ceil((tile_x+.5)*ratio)-1))
+                y0 = max(0, min(height-1, math.floor((tile_y-.5)*ratio)))
+                y1 = max(y0, min(height-1, math.ceil((tile_y+.5)*ratio)-1))
+                encoded = encode["origin"] + float(grid[y0:y1+1,x0:x1+1].max()) * encode["step"]
+                if abs(encoded - hit) > 2.5:
+                    mismatches.append({"tile": [tile_x, tile_y],
                                        "encoded": round(float(encoded), 2),
                                        "surface": round(hit, 2)})
         if mismatches:
             warn("COLLISION_SURFACE_MISMATCH",
-                 f"{len(mismatches)} sampled walkable cells disagree with the "
+                 f"{len(mismatches)} sampled walkable actor centres disagree with the "
                  "rendered walk surface", mismatches[:10])
 
     # -- 9. nothing floats: sample landmark bases against the terrain surface --
@@ -392,6 +404,8 @@ def main() -> int:
         "walkSurfaceNodes": len(matched),
         "walkSurfaceTriangles": int(triangles.shape[0]),
         "tilesSampled": sampled,
+        "actorTileOffset": [.5, .5],
+        "walkableServerTiles": int(reachable.sum()),
         "groundingMisses": len(misses),
         "groundingMissFraction": round(miss_fraction, 5),
         "surfaceDiscontinuities": len(jumps),

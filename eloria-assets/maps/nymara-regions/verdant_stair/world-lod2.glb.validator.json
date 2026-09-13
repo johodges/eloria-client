@@ -1,14 +1,20 @@
 {
-  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-south-client\\eloria-assets\\maps\\nymara-regions\\verdant_stair\\world-lod2.glb",
+  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-south-pub-c\\eloria-assets\\maps\\nymara-regions\\verdant_stair\\world-lod2.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-09-11T17:56:34.909030Z",
+  "validatedAt": "2026-09-12T16:14:36.811686Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
-    "numInfos": 9,
+    "numInfos": 8,
     "numHints": 0,
     "messages": [
+      {
+        "code": "NODE_EMPTY",
+        "message": "Empty node encountered.",
+        "severity": 2,
+        "pointer": "/nodes/6"
+      },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
@@ -26,12 +32,6 @@
         "message": "This object may be unused.",
         "severity": 2,
         "pointer": "/materials/25"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/28"
       },
       {
         "code": "UNUSED_OBJECT",
@@ -56,12 +56,6 @@
         "message": "This object may be unused.",
         "severity": 2,
         "pointer": "/materials/41"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/42"
       }
     ]
   }

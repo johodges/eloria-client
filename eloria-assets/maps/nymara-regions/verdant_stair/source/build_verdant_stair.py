@@ -18,6 +18,7 @@ Deterministic: the same seed reproduces the same bytes.
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import math
 import os
@@ -211,7 +212,20 @@ def build_region(seed: int = SEED, lod: str | None = None,
         {"tree": 18, "fern": 10, "undergrowth": 5, "vine": 9, "rock": 4})
     _add_spawns_and_portals(build)
     _add_population_markers(build, seed)
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / '_outer'))
+    import outer_aprons
+    outer_snapshot = outer_aprons.capture(build, 'verdant_stair')
     SB.apply(build, "verdant_stair")
+    outer_aprons.apply(build, 'verdant_stair', outer_snapshot)
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / '_finishing'))
+    import connector_finish
+    connector_finish.apply(build, 'verdant_stair')
+    import north_burn
+    north_burn.apply(build)
+    import north_approach
+    north_approach.apply(build)
+    import verdant_paint
+    verdant_paint.apply(build)
     print(f"[region] built in {time.time() - t0:.1f}s "
           f"({len(build.placements)} placements)")
     return build
@@ -1013,6 +1027,24 @@ def render_minimap(build: RegionBuild, sets, path: Path, size: int = 0) -> dict:
 
 
 # --------------------------------------------------------------------------
+def grounded_content_layout(package: Path) -> dict:
+    """Keep authored resident posts and read their height at the actor centre."""
+    import verify_runtime
+    document, binary = verify_runtime.load_glb(package / 'world.glb')
+    triangles, _ = verify_runtime.collect_triangles(
+        document, binary, lambda name: name.startswith(('Terrain_', 'Walk_')))
+    ground = verify_runtime.VerticalRayIndex(triangles)
+    layout = copy.deepcopy(REG.CONTENT_LAYOUT)
+    ox, oy = REG.SERVER_ORIGIN
+    for name, position in layout['npcs'].items():
+        tx, ty = round(position[0] + ox), round(oy - position[2])
+        height = ground.top_hit(tx - ox + .5, oy - ty - .5)
+        if height is None:
+            raise ValueError(f'{name}: final resident post lacks a standing surface')
+        position[1] = float(height)
+    return layout
+
+
 def write_manifest(build: RegionBuild, stats: dict, collision_stats: dict,
                    minimap: dict, path: Path) -> dict:
     t = build.terrain
@@ -1111,7 +1143,7 @@ def write_manifest(build: RegionBuild, stats: dict, collision_stats: dict,
         "npcMarkers": build.npc_markers,
         "harvestables": build.harvestables,
         "portals": build.portals,
-        "contentLayout": REG.CONTENT_LAYOUT,
+        "contentLayout": grounded_content_layout(path.parent),
         "streamingBorders": getattr(build, "streaming_borders", []),
         "roads": [{"id": name,
                    "waypoints": [[round(float(p[0]), 1),

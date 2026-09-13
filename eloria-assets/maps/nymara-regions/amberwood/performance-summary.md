@@ -2,33 +2,33 @@
 
 ```json
 {
-  "nodes": 5217,
-  "meshes": 596,
+  "nodes": 5087,
+  "meshes": 603,
   "materials": 61,
   "images": 126,
   "textures": 126,
-  "accessors": 2482,
-  "bufferViews": 2608,
-  "uniqueTriangles": 767119,
-  "uniqueVertices": 576837,
-  "glbBytes": 39620924,
-  "instancedTriangles": 2142096,
+  "accessors": 2497,
+  "bufferViews": 2623,
+  "uniqueTriangles": 1143295,
+  "uniqueVertices": 792834,
+  "glbBytes": 49513756,
+  "instancedTriangles": 2473948,
   "embeddedTextureBytes": 13467700,
   "textureMemoryBytesUncompressed": 123666432,
-  "placements": 4131,
+  "placements": 3999,
   "collision": {
     "width": 768,
     "height": 768,
     "cellMetres": 0.5,
-    "walkableCells": 385925,
-    "blockedCells": 203899,
-    "walkableFraction": 0.6543,
+    "walkableCells": 383033,
+    "blockedCells": 206791,
+    "walkableFraction": 0.6494,
     "elevatedDecks": 27,
-    "steepCells": 71941,
-    "reliefMetres": 108.74,
+    "steepCells": 76602,
+    "reliefMetres": 86.92,
     "heightEncoding": {
-      "origin": -1.4034,
-      "step": 1.753931,
+      "origin": -1.0518,
+      "step": 1.4019,
       "range": [
         1,
         63
@@ -58,15 +58,20 @@
     "march north-pass: 0 road pieces, 19 of whitehorn_range's growth",
     "march east-road: 2 road pieces, 10 of mirrorhold's growth",
     "march south-road: 0 road pieces, 19 of grey_moors's growth",
-    "march harbour-quay: 0 road pieces, 9 of westhaven's growth"
+    "march harbour-quay: 0 road pieces, 9 of westhaven's growth",
+    "Continent ownership is actual clipped geometry in one translation-only frame; native structures retain their scale and pose.",
+    "Outer apron: actual native perimeter, authored irregular outer contours, intact playable core and common approaches; physical water only at the existing regional datum.",
+    "Low stone rill crossings keep the tower and Cinder road dry; a timber span carries the Moor road across the inlet without filling its channel.",
+    "Generated connector finish: one connected half-metre road bed at curves and shared junctions, intact boundary strip and native bridges, terrain and paint seated from actual final triangles.",
+    "Geographic paint corners use the nearest actual shared edge; each full neighboring recipe stays together above unchanged physical substrate."
   ],
   "lod2": {
-    "glbBytes": 26968616,
-    "nodes": 3849,
-    "uniqueTriangles": 727079,
-    "instancedTriangles": 1521822,
-    "sizeReductionPercent": 31.9,
-    "triangleReductionPercent": 29.0
+    "glbBytes": 36292788,
+    "nodes": 3774,
+    "uniqueTriangles": 1087421,
+    "instancedTriangles": 1864428,
+    "sizeReductionPercent": 26.7,
+    "triangleReductionPercent": 24.6
   }
 }
 ```

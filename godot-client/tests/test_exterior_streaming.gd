@@ -20,8 +20,17 @@ func _run() -> void:
 	stage.add_child(loader)
 	var a := _manifest("amberwood")
 	var b := _manifest("whitehorn_range")
+	# Preserve the legacy rotated-strip contract independently of today's
+	# translation-only geographic packages. Emitted joins have their own audit.
+	a.data.streamingBorders = [{"id":"amberwood-whitehorn", "anchor":[67.5,55.2,-256.5],
+		"outward":[0,-1], "collarDepth":42, "geometryMode":"legacy-preview"}]
+	b.data.streamingBorders = [{"id":"amberwood-whitehorn", "anchor":[-106.5,35.8,-54.5],
+		"outward":[-1,0], "collarDepth":42, "geometryMode":"legacy-preview"}]
 	var af: Dictionary = a.data.streamingBorders[0]
 	var bf: Dictionary = b.data.streamingBorders[0]
+	stream.links = [{"seamless":true, "ends":[
+		{"map":"amberwood", "position":[67.5,55.2,-257.5], "frame":af},
+		{"map":"whitehorn_range", "position":[-107.5,35.8,-54.5], "frame":bf}]}]
 	var transform := ExteriorRegionStream.frame_transform(af, bf)
 	var reverse := ExteriorRegionStream.frame_transform(bf, af)
 	_expect((transform * reverse).is_equal_approx(Transform3D.IDENTITY), "reciprocal survey transforms cancel")
