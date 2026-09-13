@@ -1,8 +1,8 @@
 {
-  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-south-client\\eloria-assets\\maps\\nymara-regions\\westhaven\\world-lod2.glb",
+  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-south-pub-c\\eloria-assets\\maps\\nymara-regions\\westhaven\\world-lod2.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-09-11T18:16:52.398114Z",
+  "validatedAt": "2026-09-12T10:56:30.573297Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
@@ -37,18 +37,6 @@
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/13"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/16"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
         "pointer": "/materials/17"
       },
       {
@@ -61,25 +49,37 @@
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/24"
+        "pointer": "/materials/19"
       },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/31"
+        "pointer": "/materials/27"
       },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
-        "pointer": "/materials/34"
+        "pointer": "/materials/32"
       },
       {
         "code": "UNUSED_OBJECT",
         "message": "This object may be unused.",
         "severity": 2,
         "pointer": "/materials/35"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/38"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/39"
       }
     ]
   }

@@ -698,6 +698,24 @@
       ],
       "radius": 12.0,
       "section": "fifth_chamber"
+    },
+    {
+      "id": "served-staff-barrow-lamplighter-ess-corrow",
+      "name": "Barrow Lamplighter Ess Corrow",
+      "map": "grey_moor_barrows",
+      "role": "dialogue",
+      "authority": "server",
+      "serverTile": [
+        11,
+        159
+      ],
+      "position": [
+        44.5,
+        0.0,
+        42.5
+      ],
+      "placementSource": "publish_interior_staff.py",
+      "placementReason": "Great Barrow entry lamp post"
     }
   ],
   "harvestables": [

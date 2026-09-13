@@ -58,18 +58,25 @@ ORIGINS = {'amberwood': (116,116), 'grey_moors': (116,116),
            'sunmane_steppe': (116,116), 'verdant_stair': (108,108),
            'ssarathi_ruins': (116,116)}
 VIEW_PREFIX = 'StreamView_'
-HALF_WIDTH = 40.0
-VIEW_DEPTH = 145.0
+HALF_WIDTH = 110.0
+VIEW_DEPTH = 240.0
+SHOULDER_WIDTH = 28.0
 
 
 def region_specs(region):
+    from continent_geography import region_specs as geographic_specs
+    return geographic_specs(region, LINKS)
+
+
+def legacy_region_specs(region):
+    """Legacy recipe defaults; geographic gates are authored separately."""
     result=[]
     for identity,a,b,palette in LINKS:
         for here,there,sign in ((a,b,1),(b,a,-1)):
             if here[0] == region:
                 spec = dict(id=identity, portal=here[1], destination=there[0],
                     anchor=here[2], outward=here[3], uvSign=sign, palette=palette,
-                    preloadDistance=170, retainDistance=220, blendDistance=65,
+                    preloadDistance=240, retainDistance=320, blendDistance=90,
                     collarDepth=42, halfWidthTiles=3, viewHalfWidth=HALF_WIDTH,
                     viewDepth=VIEW_DEPTH, previewPrefix=VIEW_PREFIX+identity+'__',
                     overflowSuffix='_StreamOverflow_'+identity,
@@ -85,8 +92,10 @@ def region_specs(region):
 
 
 def materials_for(region):
+    import continent_geography as geography
     specs = region_specs(region)
     result = {name for spec in specs for name in PALETTES[spec['palette']]}
+    result |= geography.materials_for(region)
     if any(spec.get('profile') == 'causeway' for spec in specs):
         result |= {'water_lake', 'pale_ashlar'}
     return result
@@ -173,15 +182,17 @@ def clip_plane(mesh, edge, normal, limit=0.):
     return _compact(result)
 
 
-def clip_rect(mesh, edge, forward, side, near, far, width=HALF_WIDTH):
+def clip_rect(mesh, edge, forward, side, near, far, width=None):
+    if width is None: width = HALF_WIDTH
     result=clip_plane(mesh,edge,forward,far)
     result=clip_plane(result,edge,-forward,-near)
     result=clip_plane(result,edge,side,width)
     return clip_plane(result,edge,-side,width)
 
 
-def outside_rect(mesh, edge, forward, side, near, far, width=HALF_WIDTH):
+def outside_rect(mesh, edge, forward, side, near, far, width=None):
     """Disjoint complement for replacing a water patch without coplanar overlap."""
+    if width is None: width = HALF_WIDTH
     from amberwood.mesh import merge
     middle = clip_plane(clip_plane(mesh,edge,forward,far),edge,-forward,-near)
     return merge([clip_plane(mesh,edge,forward,near),
@@ -214,7 +225,7 @@ def _refine_collar(mesh, edge, forward, side):
         depth, lateral = centres @ forward, centres @ side
         longest = np.maximum.reduce([np.linalg.norm(triangles[:, a] - triangles[:, b], axis=1)
                                      for a, b in ((0, 1), (1, 2), (2, 0))])
-        selected = (depth > -16) & (depth < 5) & (abs(lateral) < 55) & (longest > .9)
+        selected = (depth > -44) & (depth < 5) & (abs(lateral) < HALF_WIDTH + 20) & (longest > 1.8)
         if not selected.any(): break
         old = faces[selected]
         mids = np.stack([(values[old[:, a]] + values[old[:, b]]) / 2
@@ -229,12 +240,62 @@ def _refine_collar(mesh, edge, forward, side):
     mesh.indices = faces.reshape(-1)
 
 
+def _shoulder_rise(spec):
+    if spec.get('geometryMode') == 'continent-owned-v1':
+        return {'moor': 1.4, 'pasture': 1.4, 'steppe': 2., 'scree': 4.,
+                'upland': 5., 'alpine': 8.}.get(spec['palette'], 2.)
+    return {'pasture': 1.4, 'steppe': 2.0}.get(spec.get('profile'), 8.0)
+
+
+def _owned_threshold(build, spec):
+    """Invisible final source cells; all visible terrain belongs to its region.
+
+    Explicit support keeps a narrow nonconvex border neck from requiring an
+    overlapping visible extension just to reach the server's trigger at +1m.
+    """
+    from amberwood import mesh as M
+    f = np.asarray(spec['outward'], float); side = np.array([-f[1], f[0]])
+    edge = np.asarray(spec['anchor'], float)
+    lateral = np.linspace(-4., 4., 17)
+    points = []
+    # Ownership cuts use integer edges while actors stand at half metres.
+    # The conservative EWCG fold also samples .75m behind each actor. Cover
+    # that inner half-cell gap using the same invisible authoritative cap.
+    for depth in (-1.01, 1., 2.01):
+        for across in lateral:
+            p = edge.copy(); p[[0,2]] += f * depth + side * across
+            if spec.get('profile') != 'causeway':
+                p[1] += _shoulder_rise(spec) * (1 - np.exp(-(across/30)**2))
+            points.append(p)
+    faces = []
+    for row in range(2):
+        for col in range(16):
+            a = row * 17 + col
+            faces.extend([a, a+17, a+1, a+1, a+17, a+18])
+    mesh = M.Mesh(positions=np.asarray(points), normals=np.tile([0.,1.,0.],(51,1)),
+                  uvs=np.zeros((51,2)), indices=np.asarray(faces), material=PALETTES[spec['palette']][2])
+    mesh.recompute_normals(180)
+    if mesh.normals[:,1].mean() < 0:
+        mesh.flip_winding(); mesh.recompute_normals(180)
+    build.terrain_meshes['Walk_StreamThreshold_'+spec['id']] = mesh
+
+
 def _apply_one(build, spec, peers):
     edge = np.array(spec['anchor'])[[0, 2]]
     forward = np.array(spec['outward'], float)
     side = np.array([-forward[1], forward[0]])
     level = spec['anchor'][1]
     causeway = spec.get('profile') == 'causeway'
+    owned = spec.get('geometryMode') == 'continent-owned-v1'
+    disks = getattr(build, 'geography_protected_disks', []) if owned else []
+
+    def unprotected(points):
+        weight = np.ones(len(points))
+        for x,z,radius in disks:
+            distance = np.linalg.norm(points[:,[0,2]] - [x,z], axis=1)
+            fade = np.clip((distance-radius)/8., 0, 1)
+            weight = np.minimum(weight, fade*fade*(3-2*fade))
+        return weight
 
     def grade(points, water=False):
         points = points.copy()
@@ -250,13 +311,15 @@ def _apply_one(build, spec, peers):
             # A navigable bridge above a lake channel, never an earth plug.
             target = np.full_like(lateral, level - spec['waterBelowDeck'] - (0 if water else 2.0))
         else:
-            rise = {'pasture': 1.4, 'steppe': 2.0}.get(spec.get('profile'), 8.0)
+            rise = _shoulder_rise(spec)
             target = level + rise * (1 - np.exp(-(lateral / 30)**2))
         blend = np.clip((depth + 42) / 32, 0, 1)
         blend = blend * blend * (3 - 2 * blend)
-        shoulder_width = 8 if causeway else 68 - HALF_WIDTH
+        shoulder_width = 8 if causeway else SHOULDER_WIDTH
         shoulder = np.clip((abs(lateral) - HALF_WIDTH) / shoulder_width, 0, 1)
         blend *= 1 - shoulder * shoulder * (3 - 2 * shoulder)
+        if owned and not water:
+            blend *= unprotected(points)
         # A nearby second road may blend its outer shoulder into this region,
         # but never change another road's surveyed receiving strip. Mirrorhold
         # has two north-facing cols only 87m apart. Fade protection outside the
@@ -278,9 +341,18 @@ def _apply_one(build, spec, peers):
         for name, original in list(bucket.items()):
             if name.startswith(VIEW_PREFIX) or '_StreamOverflow_' in name or '_StreamCauseway_' in name:
                 continue
-            if name.startswith('Terrain_'):
+            if owned and bucket is build.terrain_meshes and not name.startswith(('Terrain_', 'Walk_ContinentRoad_')):
+                continue
+            # New road spans can be a single 42m quad. Sampling only their
+            # two outer edges raises the entire centre to the shoulder level.
+            # Refine the authored connector too; native decks remain intact.
+            if name.startswith('Terrain_') or (owned and name.startswith('Walk_ContinentRoad_')):
                 _refine_collar(original, edge, forward, side)
-            original.positions = grade(original.positions, water=bucket is build.water_meshes)
+            if owned and name.startswith('Walk_ContinentRoad_'):
+                road = original.positions.copy(); road[:,1] -= .03
+                original.positions = grade(road); original.positions[:,1] += .03
+            else:
+                original.positions = grade(original.positions, water=bucket is build.water_meshes)
             original.recompute_normals(180)
             # Both directions use the same gravel and UV frame for the last
             # few metres. A ragged inner edge blends back to each region's soil.
@@ -288,9 +360,10 @@ def _apply_one(build, spec, peers):
                 faces = original.indices.reshape(-1, 3)
                 coords = original.positions[:, [0, 2]] - edge
                 depth, lateral = coords @ forward, coords @ side
-                near = np.minimum(np.clip(.5 + (depth + 10 - 1.8 * np.sin(lateral * .19)
-                                             - .7 * np.sin(lateral * .73)) / 1.2, 0, 1),
-                                  np.clip((60 - abs(lateral)) / 3, 0, 1))
+                near = np.minimum(np.clip(.5 + (depth + 32 - 6.0 * np.sin(lateral * .055)
+                                             - 2.0 * np.sin(lateral * .17)) / 6.0, 0, 1),
+                                  np.clip((HALF_WIDTH + 20 - abs(lateral)) / 12, 0, 1))
+                if owned: near *= unprotected(original.positions)
                 if near.max(initial=0) > .5:
                     if original.colors is None: original.colors = np.ones((len(original.positions), 4))
                     alpha = original.colors[:, 3].copy()
@@ -315,6 +388,7 @@ def _apply_one(build, spec, peers):
                         bucket[name + '_StreamCollar_' + spec['id'] + '_' + suffix] = _compact(gravel)
             bucket[name] = _compact(original)
         for name, original in list(bucket.items()):
+            if owned: continue
             if not original.triangle_count or '_StreamOverflow_' in name: continue
             front,overflow=split_overflow(original,edge,forward,side)
             bucket[name]=_compact(front)
@@ -325,10 +399,14 @@ def _apply_one(build, spec, peers):
         p = np.asarray(placement.position, float)
         relative = p[[0, 2]] - edge
         depth, lateral = relative @ forward, relative @ side
-        if depth > -42 and abs(lateral) < 68:
+        if depth > -42 and abs(lateral) < HALF_WIDTH + SHOULDER_WIDTH:
             # The receiving scene supplies this side of the border. Removing
             # only perimeter dressing leaves services and landmarks unchanged.
-            if (depth > 0 and abs(lateral) < HALF_WIDTH) or (abs(lateral) < 7 and placement.kind in ('tree', 'foliage', 'rock', 'undergrowth')):
+            if owned and (placement.kind not in ('tree', 'foliage', 'rock', 'undergrowth', 'fallenlog')
+                          or unprotected(p[None,:])[0] < .999):
+                kept.append(placement)
+                continue
+            if (not owned and depth > 0 and abs(lateral) < HALF_WIDTH) or (abs(lateral) < 7 and placement.kind in ('tree', 'foliage', 'rock', 'undergrowth')):
                 continue
             if causeway:
                 # Authored structures stand on their own deck/footings; never
@@ -367,27 +445,38 @@ def _apply_one(build, spec, peers):
 
 
 def apply(build, region):
+    import continent_geography as geography
+    geography.apply_geometry(build, region)
     specs=region_specs(region)
     build.streaming_borders=specs
     build.vista_materials=getattr(build,'vista_materials',set())|materials_for(region)
-    # All surveyed neighbours use their own real receiving scene.
+    # Owned terrain and real neighbours supply the horizon. Old distant rings
+    # were painted outside the former square map; retaining them after the
+    # ownership expansion would put false mountains across the new approaches.
+    owned = any(s.get('geometryMode') == 'continent-owned-v1' for s in specs)
     for bucket in (build.terrain_meshes,build.water_meshes):
         for name in list(bucket):
-            if name.startswith('Backdrop_Neighbour'): del bucket[name]
+            if name.startswith('Backdrop_' if owned else 'Backdrop_Neighbour'):
+                del bucket[name]
     build.border_vistas=[]
     for spec in specs:
         if spec.get('profile') == 'causeway':
             _causeway_meshes(build,spec)
         _apply_one(build,spec,specs)
+        if spec.get('geometryMode') == 'continent-owned-v1':
+            _owned_threshold(build, spec)
         anchor=np.asarray(spec['anchor'],float); forward=np.asarray(spec['outward'],float)
         # Source metadata and the server's trigger use the same tile centres.
         for portal in build.portals:
             if portal.get('id')==spec['portal']:
                 p=anchor.copy();p[[0,2]]+=forward
                 portal['position']=p.tolist()
-                ox,oy=ORIGINS[region]
+                ox,oy=geography.plan()['regions'][region]['nativeServerOrigin']
                 portal['serverTile']=[int(np.floor(p[0]+ox)),int(np.floor(oy-p[2]))]
     partition_shared_approaches(build, specs)
+    # The final ownership cut also covers generated causeways. Invisible
+    # threshold cells remain for the server's last source-map movement step.
+    geography.finalize_geometry(build, region)
 
 
 def partition_shared_approaches(build, specs):

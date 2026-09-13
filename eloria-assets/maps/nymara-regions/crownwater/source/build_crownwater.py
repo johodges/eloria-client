@@ -153,6 +153,12 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     _add_spawns_and_portals(build)
     _add_population_markers(build, seed)
     SB.apply(build, "crownwater")
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / '_finishing'))
+    import connector_finish
+    connector_finish.apply(build, 'crownwater')
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / '_color'))
+    import terrain_paint
+    terrain_paint.apply(build, 'crownwater')
     for item in build.interactives:
         if item.get("id") in COAST.SECRET_STANDING_TILES:
             item["serverTile"]=COAST.SECRET_STANDING_TILES[item["id"]]

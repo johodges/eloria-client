@@ -60,6 +60,12 @@ def test_crop_is_the_framed_pixels_and_maps_back_to_the_world():
     assert tool.tab_map_crop(minimap, (-900.0, -900.0, 900.0, 900.0)) == (0, 0, 1620, 1620)
 
 
+def test_atlas_coordinates_keep_a_common_origin_and_scale():
+    layout = {'metresPerPixel': 2, 'originMetres': [-40, -20]}
+    assert tool.atlas_point([100.5, 300.5], layout) == [70.25, 160.25]
+    assert tool.atlas_point([-40, -20], layout) == [0, 0]
+
+
 def test_every_region_is_a_real_tab_map_laid_out_to_scale():
     cartography = json.loads((ROOT / "godot-client" / "data" / "maps" / "cartography.json")
                              .read_text(encoding="utf-8"))
@@ -113,6 +119,29 @@ def test_compact_atlas_does_not_reintroduce_large_empty_gaps():
         gap_x=max(0,x-(xx+ww),xx-(x+w))
         gap_y=max(0,y-(yy+hh),yy-(y+h))
         assert (gap_x**2+gap_y**2)**.5<=25,(a,b,gap_x,gap_y)
+
+
+def test_atlas_crossings_and_region_footprints_share_actual_world_coordinates():
+    layout = tool.load_json(tool.LAYOUT)
+    geography = tool.load_json(tool.GEOGRAPHY)
+    cartography, _ = tool.compose(layout, tool.load_json(tool.REGISTRY))
+    registry = tool.load_json(tool.REGISTRY)['maps']
+    graph = tool.load_json(tool.CONNECTIONS)['connections']
+    for source, drawn in zip(graph, cartography['connections']):
+        if source['type'] == 'ferry': continue
+        points = []
+        for key in ('from', 'to'):
+            region = source[key]
+            manifest = tool.load_json(tool.resource_to_path(registry[region]['manifest']))
+            frame = next(f for f in manifest['streamingBorders'] if f['portal'] == source[key+'_portal'])
+            translation = geography['regions'][region]['translation']
+            points.append(tool.atlas_point([frame['anchor'][0]+translation[0],
+                                             frame['anchor'][2]+translation[2]], layout))
+        assert points[0] == points[1] == drawn['points'][0] == drawn['points'][-1], source
+    for region in cartography['regions']:
+        spec = geography['regions'][region['serverMap']]
+        assert region['continentPolygon'] == [tool.atlas_point(p, layout) for p in spec['ownershipPolygon']]
+        assert region['globalTranslation'] == spec['translation']
 
 
 def test_check_catches_changed_picture_even_with_unchanged_dimensions(monkeypatch):

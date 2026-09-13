@@ -78,17 +78,17 @@ func _run() -> void:
 	stream._drain_retired(2, 100000)
 	_expect(_live_resources(weak_resources) == 0 and stream.is_idle(),
 		"prepared model resources are eventually released without a final dictionary burst")
-	# clear() may retire both neighbours together. The single worker slot is
+	# clear() may retire all three neighbours together. The single worker slot is
 	# represented by a stale completion, which must use the same bounded queue.
-	for index: int in 2:
+	for index: int in 3:
 		var old := _large_tree()
 		loader_parent.add_child(old)
 		stream.residents[str(index)] = {"root": old}
 	stream.clear()
 	var discarded := _large_tree()
 	stream._retire({"root": discarded}, "stale-worker")
-	_expect(stream._retiring.size() == 3 and not stream._can_dispatch_preload(),
-		"two neighbour slots plus one existing worker result are bounded retirement debt")
+	_expect(stream._retiring.size() == 4 and not stream._can_dispatch_preload(),
+		"three neighbour slots plus one existing worker result are bounded retirement debt")
 	stream.set_process(true)
 	var deadline := Time.get_ticks_msec() + 5000
 	while not stream.is_idle() and Time.get_ticks_msec() < deadline:

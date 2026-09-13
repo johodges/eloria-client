@@ -112,6 +112,55 @@ def dress(build,seed):
             part.material=PALETTE.get(part.material,part.material)
 
 
+def _orient_outer_escarpment(build, snapshot):
+    """Face the single-sided rock cliff away from retained Whitehorn ground.
+
+    Clipping intersections inherit each source triangle's starting vertex;
+    their order alone does not define the outside of the resulting cliff.
+    Only winding/normals change here, never the cut, UVs or substrate.
+    """
+    from verify_runtime import VerticalRayIndex
+    mesh=build.terrain_meshes.get('Terrain_OuterEscarpment_whitehorn_range')
+    if mesh is None or not mesh.triangle_count:return 0
+    faces=mesh.indices.reshape(-1,3).copy()
+    triangles=mesh.positions[faces]
+    normals=np.cross(triangles[:,1]-triangles[:,0],triangles[:,2]-triangles[:,0])
+    horizontal=normals[:,[0,2]]
+    length=np.linalg.norm(horizontal,axis=1)
+    valid=length>1e-10
+    horizontal[valid]/=length[valid,None]
+    # The real cut interpolates the field at each source triangle's vertices.
+    # Its edge can disagree with the nonlinear field between those vertices;
+    # use the retained triangles themselves as the orientation authority.
+    substrate=[m.positions[m.indices].reshape(-1,3,3)
+        for name,m in build.terrain_meshes.items()
+        if name.startswith('Terrain_') and m.triangle_count and not any(
+            tag in name for tag in ('OuterEscarpment','_StreamCollar_',
+                                    '_ContinentBlend_','_StreamThreshold_'))]
+    if not substrate:
+        raise ValueError('Whitehorn cliff has no retained substrate')
+    ray=VerticalRayIndex(np.concatenate(substrate))
+    centres=triangles.mean(axis=1)[:,[0,2]]
+    flip=np.zeros(len(faces),dtype=bool)
+    for index in np.flatnonzero(valid):
+        for epsilon in (.001,.005,.025,.1,.3):
+            plus=centres[index]+horizontal[index]*epsilon
+            minus=centres[index]-horizontal[index]*epsilon
+            retained_plus=ray.top_hit(*plus) is not None
+            retained_minus=ray.top_hit(*minus) is not None
+            if retained_plus != retained_minus:
+                flip[index]=retained_plus
+                break
+        else:
+            raise ValueError(f'Whitehorn cliff face {index} has ambiguous retained substrate coverage')
+    faces[flip]=faces[flip][:,[0,2,1]]
+    mesh.indices=faces.reshape(-1)
+    mesh.recompute_normals(180)
+    count=int(np.count_nonzero(flip))
+    build.outer_apron_audit['outwardCliffFacesFlipped']=count
+    return count
+
+
 def compact(build):
     # Both rope bridges are MeshGroups whose authored walking parts must
     # follow the bank survey. Their rails keep the same transformed frame.
@@ -148,8 +197,53 @@ def compact(build):
     build.meshes={k:v for k,v in build.meshes.items() if k in used}
     build.border_vistas=[]
     root=Path(__file__).resolve().parents[2]
+    import sys
+    sys.path.insert(0, str(root / '_outer'))
+    import outer_aprons
+    outer_snapshot = outer_aprons.capture(build, 'whitehorn_range')
     from streaming_borders import apply as stitch_border
     stitch_border(build, 'whitehorn_range')
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / '_northern'))
+    import landscape_finish
+    landscape_finish.apply(build, 'whitehorn_range')
+    outer_aprons.apply(build, 'whitehorn_range', outer_snapshot)
+    sys.path.insert(0, str(root / '_finishing'))
+    import connector_finish
+    connector_finish.apply(build, 'whitehorn_range')
+    _orient_outer_escarpment(build, outer_snapshot)
+    # Real structural footings stay fixed. The movable wayfinding pole below
+    # is seated and its landmark record synchronized after the hillside.
+    import approach_landform
+    approach_landform.apply(build, outer_snapshot)
+    import amber_road_mouth
+    amber_road_mouth.apply(build)
+    # The old march sign stood on a shoulder that now rises to the common
+    # mountain datum. Keep its identity beside the existing road station.
+    # Its kit is asymmetric, so ground the actual pole foot, not its root.
+    import continent_geography as geography
+    if geography.region_specs('whitehorn_range'):
+        from verify_runtime import VerticalRayIndex
+        sign=next(p for p in build.placements if p.node=='March_south_gate_Signpost')
+        mesh=build.meshes[sign.mesh]
+        vertices=np.concatenate([part.positions for part in getattr(mesh,'all_parts',[mesh])])
+        c,s=math.cos(sign.rotation_y),math.sin(sign.rotation_y)
+        rotation=np.array([[c,0,s],[0,1,0],[-s,0,c]])
+        actual=vertices*sign.scale@rotation.T+np.asarray(sign.position)
+        centre=(actual.min(axis=0)+actual.max(axis=0))/2
+        delta=np.array([3.5-centre[0],0.,96.5-centre[2]])
+        actual+=delta
+        foot=actual[actual[:,1]<=actual[:,1].min()+.08].mean(axis=0)
+        triangles=np.concatenate([piece.positions[piece.indices.reshape(-1,3)]
+            for name,piece in build.terrain_meshes.items() if name.startswith('Terrain_')
+            and '_StreamCollar_' not in name and '_ContinentBlend_' not in name])
+        ground=VerticalRayIndex(triangles).top_hit(float(foot[0]),float(foot[2]))
+        if ground is None:raise ValueError('March sign station post has no rendered ground')
+        delta[1]=ground+.02-actual[:,1].min()
+        sign.position=tuple(np.asarray(sign.position)+delta)
+        for marker in build.landmarks:
+            if marker.get('id')=='march-south-gate':
+                marker['position']=[float(foot[0]),float(ground+.02),float(foot[2])]
+                marker['note']='The retained Mirrorhold march sign beside its grounded road station.'
     # Door triggers belong on the physical front threshold, not in the solid
     # shrine or the mine's dark recessed backing. Keep the full native meshes
     # and the destination IDs; root publication derives both return bindings.

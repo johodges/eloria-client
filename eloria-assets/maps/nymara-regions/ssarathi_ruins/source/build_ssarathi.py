@@ -150,8 +150,26 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
         coarse.surface=terrain.surface_at(coarse.gx,coarse.gz)
         build.terrain_meshes=coarse.build_meshes(uv_scale=.12,blend_edges=True,
             material_suffix=MAT.GROUND_SUFFIX,materials=MARCH_MATERIALS)
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / '_outer'))
+    import outer_aprons
+    outer_snapshot = outer_aprons.capture(build, 'ssarathi_ruins')
     SB.apply(build,'ssarathi_ruins')
+    from geographic_approach import clear_west_channel
+    clear_west_channel(build)
     PLAN.clear_causeway_canopies(build)
+    outer_aprons.apply(build, 'ssarathi_ruins', outer_snapshot)
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / '_finishing'))
+    import connector_finish
+    import west_ruin_bypass
+    west_ruin_bypass.apply(build)
+    import inlet_crossings
+    inlet_crossings.apply(build)
+    connector_finish.apply(build, 'ssarathi_ruins')
+    import west_bank_finish
+    west_bank_finish.apply(build)
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / '_color'))
+    import terrain_paint
+    terrain_paint.apply(build, 'ssarathi_ruins')
     print(f"[region] built in {time.time() - t0:.1f}s")
     return build
 

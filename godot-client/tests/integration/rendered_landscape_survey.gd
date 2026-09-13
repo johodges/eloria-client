@@ -7,6 +7,23 @@ var state: Node
 var out: String
 var report: Array = []
 
+static func _override_registry(registry: Dictionary, data: Dictionary, path: String, specs: Array) -> Dictionary:
+	var entry := MapRegistry.resolve(registry, str(data.get("asset", {}).get("id", "")))
+	if entry.is_empty() or path.is_empty() or not data.get("coordinateTransform") is Dictionary:
+		return {"error": "Candidate manifest has no unique registry target/path/coordinate transform"}
+	var key := str(entry.registryKey)
+	var selected := false
+	for spec: Dictionary in specs:
+		if str(MapRegistry.resolve(registry, str(spec.get("map", ""))).get("registryKey", "")) == key:
+			selected = true
+	if not selected:
+		return {"error": "Candidate registry target is absent from the requested survey: " + key}
+	# Resolve aliases exactly as the production loader does. Four's asset id
+	# is four-gates, whose alias points to the actual four_gates registry row.
+	registry[key]["manifest"] = path
+	registry[key]["coordinateTransform"] = data.coordinateTransform.duplicate(true)
+	return {"registryKey": key, "manifest": path}
+
 func _init() -> void:
 	call_deferred("_run")
 
@@ -18,18 +35,25 @@ func _run() -> void:
 	root.add_child(main)
 	await process_frame
 	state = root.get_node("AppState")
+	var specs: Array = JSON.parse_string(FileAccess.get_file_as_string(OS.get_environment("ELORIA_SURVEY_SPEC")))
 	var override_path := OS.get_environment("ELORIA_SURVEY_MANIFEST")
+	var override_key := ""
 	if not override_path.is_empty():
 		var override_data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(override_path))
 		var registry: Dictionary = main.get("map_registry")
-		registry[str(override_data.asset.id)]["manifest"] = override_path
-		registry[str(override_data.asset.id)]["coordinateTransform"] = override_data.coordinateTransform
+		var applied := _override_registry(registry, override_data, override_path, specs)
+		if applied.has("error"):
+			push_error(str(applied.error))
+			quit(2)
+			return
+		override_key = str(applied.registryKey)
+		print("SURVEY_OVERRIDE selected asset=", override_data.asset.id,
+			" registry_key=", override_key, " manifest=", override_path)
 	state.set("authenticated", true)
 	main.get("login_panel").hide()
 	main.get("creation_panel").hide()
 	main.get("game_view").show()
 	state.call("_on_packet", 5, PackedByteArray([180, 0]))
-	var specs: Array = JSON.parse_string(FileAccess.get_file_as_string(OS.get_environment("ELORIA_SURVEY_SPEC")))
 	for spec: Dictionary in specs:
 		if state.get("current_map") != spec.map:
 			state.set("current_map", spec.map)
@@ -42,6 +66,16 @@ func _run() -> void:
 				push_error("Map failed to load: " + str(spec.map))
 				quit(2)
 				return
+		var active_loader: WorldLoader = main.get("world_loader")
+		if not override_key.is_empty() and str(MapRegistry.resolve(main.get("map_registry"), spec.map).get("registryKey", "")) == override_key:
+			var actual := ProjectSettings.globalize_path(active_loader.manifest.source_path).replace("\\", "/").simplify_path()
+			var expected := ProjectSettings.globalize_path(override_path).replace("\\", "/").simplify_path()
+			if actual != expected:
+				push_error("Candidate override was not loaded: expected=" + expected + " actual=" + actual)
+				quit(2)
+				return
+			print("SURVEY_OVERRIDE loaded registry_key=", override_key, " manifest=", actual,
+				" glb=", active_loader.manifest.glb_path())
 		var adapter: CoordinateAdapter = main.get("adapter")
 		var tile: Vector2i = adapter.godot_to_server(Vector3(float(spec.x), 0, float(spec.z)))
 		var actors := {1: {"actor_id": 1, "x": tile.x, "y": tile.y,
@@ -63,8 +97,11 @@ func _run() -> void:
 		# A border capture must include the actual resident neighbor. Time-based
 		# camera settling alone can finish before a cold background import.
 		var stream: ExteriorRegionStream = main.get("exterior_stream")
-		for candidate: Dictionary in stream._candidates(rig.get("focus")):
-			if bool(candidate.seamless) and float(candidate.distance) < 80:
+		var candidates := stream._candidates(rig.get("focus"))
+		var wanted := stream._wanted_neighbours(candidates)
+		for candidate: Dictionary in candidates:
+			if (wanted.has(str(candidate.map)) and float(candidate.distance) <= stream.preload_distance
+					and (bool(candidate.seamless) or bool(candidate.visual_only))):
 				var deadline := Time.get_ticks_msec() + 60000
 				while not stream.residents.has(str(candidate.map)) and Time.get_ticks_msec() < deadline:
 					await process_frame
@@ -81,7 +118,9 @@ func _run() -> void:
 		RenderingServer.force_draw(false)
 		root.get_texture().get_image().save_png(out.path_join(str(spec.id) + ".png"))
 		report.append({"id":spec.id,"map":spec.map,"tile":[tile.x,tile.y],
+			"manifest_source":active_loader.manifest.source_path,"glb_path":active_loader.manifest.glb_path(),
 			"actor":[actor.position.x,actor.position.y,actor.position.z] if actor else [],
+			"resident_maps":stream.residents.keys(), "preload_distance":stream.preload_distance,
 			"camera":str(rig.call("camera_diagnostics")), "frame_ms":times,
 			"draw_calls":Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),
 			"primitives":Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME)})

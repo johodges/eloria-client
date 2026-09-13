@@ -494,8 +494,8 @@
       "id": 30,
       "resource": "Stormglass",
       "serverTile": [
-        370,
-        203
+        372,
+        200
       ],
       "authority": "server"
     },
@@ -1165,8 +1165,8 @@
     {
       "creature": "thornhide_wolf",
       "serverTile": [
-        124,
-        337
+        120,
+        333
       ],
       "authority": "server"
     },
@@ -1205,16 +1205,16 @@
     {
       "creature": "mossbound_stone_golem",
       "serverTile": [
-        108,
-        347
+        107,
+        340
       ],
       "authority": "server"
     },
     {
       "creature": "mossbound_stone_golem",
       "serverTile": [
-        115,
-        352
+        106,
+        340
       ],
       "authority": "server"
     },
@@ -1253,8 +1253,8 @@
     {
       "creature": "thornbark_wolf",
       "serverTile": [
-        103,
-        355
+        96,
+        346
       ],
       "authority": "server"
     },
@@ -1381,8 +1381,8 @@
     {
       "creature": "owlbear",
       "serverTile": [
-        116,
-        341
+        113,
+        337
       ],
       "authority": "server"
     },

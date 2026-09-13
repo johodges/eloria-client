@@ -186,9 +186,9 @@
       "zeroMeansBlocked": true,
       "note": "Step is fitted to this interior's own vertical range, so the six-bit field spans it without clamping. The Godot loader still takes elevation from the rendered Walk_ surfaces; this grid is authoritative only for walkability."
     },
-    "walkableCells": 63176,
-    "blockedCells": 265360,
-    "walkableFraction": 0.1923,
+    "walkableCells": 63308,
+    "blockedCells": 265228,
+    "walkableFraction": 0.1927,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
@@ -422,6 +422,7 @@
         "smugglers_warren.cache",
         "smugglers_warren.crate_workroom",
         "smugglers_warren.ladderway",
+        "smugglers_warren.mazeway",
         "smugglers_warren.cacheway",
         "smugglers_warren.workway"
       ],
@@ -904,6 +905,24 @@
       ],
       "radius": 12.0,
       "section": "paddy_sump"
+    },
+    {
+      "id": "served-staff-labyrinth-sounder-ath-rulu",
+      "name": "Labyrinth Sounder Ath-Rulu",
+      "map": "manymouth_flooded_labyrinth",
+      "role": "dialogue",
+      "authority": "server",
+      "serverTile": [
+        20,
+        344
+      ],
+      "position": [
+        57.5,
+        0.0,
+        38.5
+      ],
+      "placementSource": "publish_interior_staff.py",
+      "placementReason": "Flooded Labyrinth dry entry verge"
     }
   ],
   "harvestables": [
@@ -3382,6 +3401,14 @@
       "floor": -1.6,
       "height": 3.0
     },
+    "smugglers_warren.mazeway": {
+      "x0": 168.3,
+      "x1": 171.7,
+      "z0": 92.3,
+      "z1": 107.7,
+      "floor": -1.6,
+      "height": 3.0
+    },
     "smugglers_warren.cacheway": {
       "x0": 190.4,
       "x1": 201.6,
@@ -3638,9 +3665,9 @@
     "textures": 72,
     "accessors": 180,
     "bufferViews": 252,
-    "uniqueTriangles": 96286,
-    "uniqueVertices": 103462,
-    "glbBytes": 13883916,
+    "uniqueTriangles": 96370,
+    "uniqueVertices": 103630,
+    "glbBytes": 13892484,
     "nodeNames": [
       "Interior_manymouth_delta_insides",
       "Roof_manymouth_delta_insides_bark_dark",

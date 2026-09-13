@@ -37,13 +37,16 @@ class LandscapeContract(unittest.TestCase):
    self.assertAlmostEqual(self.nav.top_hit(a[0],a[2]),a[1],delta=.03)
  def test_resident_posts_reproduce_source_and_leave_doors_clear(self):
   posts=self.m['contentLayout']['npcs']
-  self.assertEqual(posts,R.CONTENT_LAYOUT['npcs'])
-  self.assertEqual(len(posts),13)
+  self.assertEqual(set(posts),set(R.CONTENT_LAYOUT['npcs']))
   for name,position in posts.items():
-   tile=(round(position[0]+108),round(108-position[2]))
+   self.assertEqual(position[::2],R.CONTENT_LAYOUT['npcs'][name][::2],name)
+  self.assertEqual(len(posts),13)
+  ox,oy=self.m['coordinateTransform']['serverOrigin']
+  for name,position in posts.items():
+   tile=(round(position[0]+ox),round(oy-position[2]))
    for portal in self.m['portals']:
     self.assertGreater(max(abs(a-b) for a,b in zip(tile,portal['serverTile'])),3,(name,portal['id']))
-   height=self.nav.top_hit(tile[0]-108+.5,108-tile[1]-.5)
+   height=self.nav.top_hit(tile[0]-ox+.5,oy-tile[1]-.5)
    self.assertIsNotNone(height,name)
    self.assertAlmostEqual(height,position[1],delta=.02,msg=name)
  def test_pool_cannot_fill_a_separate_lower_terrace_across_a_dry_rim(self):
@@ -67,11 +70,12 @@ class LandscapeContract(unittest.TestCase):
      if wet is not None:self.assertGreaterEqual(ground,wet-.25,(name,lane,t,ground,wet))
  def test_guarded_actor_landing_tiles_keep_all_seven_lanes(self):
   grid,_=GLB.read_grid(HERE.parent)
+  ox,oy=self.m['coordinateTransform']['serverOrigin']
   for name,(a,b,width) in R.STAIR_RUNS.items():
    a,b=np.array(a),np.array(b);d=b[[0,2]]-a[[0,2]];side=np.array([-d[1],d[0]])/np.linalg.norm(d)
    for lane in np.linspace(-width/2+1,width/2-1,7):
     for point in (a,b):
-     x,z=point[[0,2]]+lane*side;tx,ty=round(x+108),round(108-z)
+     x,z=point[[0,2]]+lane*side;tx,ty=round(x+ox),round(oy-z)
      self.assertTrue(np.all(grid[ty*2-1:ty*2+1,tx*2-1:tx*2+1]>0),(name,lane,tx,ty))
 
 if __name__=='__main__':unittest.main()

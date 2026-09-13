@@ -346,7 +346,7 @@ def standalone_interior_lines(portals, collisions, load, errors, selected=None):
     return lines, written
 
 
-def secret_lines(collisions, load, errors) -> tuple[list[str], int]:
+def secret_lines(collisions, load, errors, link_proofs=None) -> tuple[list[str], int]:
     """Entrances, exits and links of every `<region>_secrets` map.
 
     An entrance is a portal bound to the object a player uses (the eighth
@@ -405,6 +405,7 @@ def secret_lines(collisions, load, errors) -> tuple[list[str], int]:
         lines.append("")
     for secrets_map, manifest in sorted(manifests.items()):
         lines.append(f"# {secrets_map}: exits and links")
+        floor=None
         for section in SD.sections(manifest):
             back = triggers.get((section["entranceMap"], f"secret-{section['id']}"))
             if back is None:
@@ -413,18 +414,24 @@ def secret_lines(collisions, load, errors) -> tuple[list[str], int]:
                 ax, ay = section["arrivalTile"]
                 lines.append(f"portal | {secrets_map} | {ax} | {ay} | {section['entranceMap']} | {back[0]} | {back[1]}")
                 written += 1
+            reserved={tuple(e['tile']) for e in section.get('exits',[])}
+            reserved.add(tuple(section['arrivalTile']))
             for exit_ in section.get("exits", []):
                 target = arrival_for(exit_["map"], exit_["spawn"])
                 if target is None:
                     errors.append(f"{secrets_map} section {section['id']}: link to {exit_['map']}/{exit_['spawn']} has no arrival")
                     continue
-                ex, ey = exit_["tile"]
-                if not walkable(secrets_map)(ex, ey):
-                    moved = SD.nearest_open(walkable(secrets_map), (ex, ey), 1, 2)
-                    if moved is None:
-                        errors.append(f"{secrets_map} section {section['id']}: link tile {ex, ey} is not walkable")
-                        continue
-                    ex, ey = moved
+                from secret_link_access import RoomFloor,select_link
+                walkable(secrets_map)  # Load the actual served staged ELM.
+                if floor is None:floor=RoomFloor(INTERIORS/secrets_map/manifest['asset']['glb'],manifest)
+                try:
+                    (ex,ey),proof=select_link(collisions[secrets_map],section['arrivalTile'],exit_['tile'],
+                                              floor,forbidden=reserved)
+                except ValueError as error:
+                    errors.append(f"{secrets_map} section {section['id']}: {error}");continue
+                reserved.add((ex,ey))
+                if link_proofs is not None:link_proofs.append({'map':secrets_map,'section':section['id'],
+                    'destinationMap':exit_['map'],'destinationSpawn':exit_['spawn'],**proof})
                 lines.append(f"portal | {secrets_map} | {ex} | {ey} | {exit_['map']} | {target[0]} | {target[1]}")
                 written += 1
         lines.append("")
@@ -447,6 +454,7 @@ def main() -> int:
     parser.add_argument("--server", type=Path, required=True)
     parser.add_argument("--maps", type=Path, required=True)
     parser.add_argument("--apply", action="store_true")
+    parser.add_argument('--report',type=Path,help='Write exact secret-link publication choices and physical evidence')
     parser.add_argument("--region", choices=sorted(set(INSIDES) | {"sunmane_steppe", "four_gates"}),
                         help="rebuild this region and both ends of its links only")
     args = parser.parse_args()
@@ -462,10 +470,12 @@ def main() -> int:
     lines = [BEGIN]
     outside, crossings = exterior_lines(graph, portals, collisions, load, errors, args.region)
     inside, doors = interior_lines(portals, collisions, load, errors, args.region)
-    hidden, secrets = secret_lines(collisions, load, errors)
+    link_proofs=[]
+    hidden, secrets = secret_lines(collisions, load, errors, link_proofs)
     lines += outside + inside + hidden + [END]
     for error in errors:
         print("ERROR", error)
+    if args.report:args.report.write_text(json.dumps({'errors':errors,'secretLinks':link_proofs},indent=2)+'\n',encoding='utf-8')
     print(f"{crossings} crossing lines from {len(graph['connections'])} links, {doors} door lines, "
           f"{secrets} secret lines")
     if errors:

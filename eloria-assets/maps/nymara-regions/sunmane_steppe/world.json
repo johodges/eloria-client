@@ -29,19 +29,31 @@
       ]
     },
     "regionSpanMeters": 384,
-    "serverCells": 384,
+    "serverCells": 402,
     "worldCentre": [
       76,
       0,
       -76
     ],
-    "seaLevel": 0.0
+    "seaLevel": 0.0,
+    "mapBounds": {
+      "min": [
+        -121,
+        -3,
+        -304
+      ],
+      "max": [
+        304,
+        55,
+        128
+      ]
+    }
   },
   "coordinateTransform": {
     "metresPerTile": 1.0,
     "serverOrigin": [
-      116,
-      116
+      124,
+      125
     ],
     "origin": [
       0,
@@ -52,17 +64,17 @@
     "invertServerY": true,
     "addressableWorldBounds": {
       "min": [
-        -116,
-        -267
+        -124,
+        -277
       ],
       "max": [
-        267,
-        116
+        278,
+        125
       ]
     },
     "serverCells": [
-      384,
-      384
+      402,
+      402
     ]
   },
   "spawnPoints": [
@@ -74,8 +86,8 @@
         21.0
       ],
       "serverTile": [
-        137,
-        95
+        145,
+        104
       ],
       "facing": [
         -1,
@@ -93,8 +105,8 @@
         0.0
       ],
       "serverTile": [
-        116,
-        116
+        124,
+        125
       ],
       "facing": [
         0,
@@ -111,11 +123,11 @@
     "version": 2,
     "cellMetres": 0.5,
     "cellSize": 0.5,
-    "width": 768,
-    "height": 768,
+    "width": 804,
+    "height": 804,
     "originMetres": [
-      -116,
-      116
+      -124,
+      125
     ],
     "nodeNames": [
       "Landmark_sunmane_great_hall__Kit_great_hall__solid__sun_canvas_pale",
@@ -844,7 +856,7 @@
       "Lee_4_1__Kit_steppe_tree_1__solid__sun_foliage"
     ],
     "heightEncoding": {
-      "origin": 0.0618,
+      "origin": -0.1991,
       "step": 0.2,
       "range": [
         1,
@@ -852,28 +864,28 @@
       ],
       "zeroMeansBlocked": true
     },
-    "walkableCells": 534617,
-    "walkableFraction": 0.9064,
+    "walkableCells": 553391,
+    "walkableFraction": 0.8561,
     "authoredSurfaceExport": {
       "solidMeshNodes": 724
     },
     "refinedHeights": {
       "levels": 255,
       "step": 0.2,
-      "origin": 0.0618,
+      "origin": -0.1991,
       "previousStep": 0.2,
-      "cellsRestated": 32461,
-      "cellsFromGeometry": 534046,
-      "cellsKept": 1474
+      "cellsRestated": 0,
+      "cellsFromGeometry": 555761,
+      "cellsKept": 11
     },
     "openedWalkSurfaces": {
       "prefix": "Walk_",
-      "cellsCovered": 1872,
-      "cellsWidened": 270,
-      "cellsOpened": 189,
-      "cellsRaised": 435,
+      "cellsCovered": 11707,
+      "cellsWidened": 658,
+      "cellsOpened": 195,
+      "cellsRaised": 8088,
       "cellsDrowned": 0,
-      "cellsBuried": 132,
+      "cellsBuried": 0,
       "cellsInsideLandmarks": 0
     },
     "actorSurfaceGuard": {
@@ -883,129 +895,129 @@
         0.5
       ],
       "heightToleranceMetres": 0.8,
-      "closedTiles": 273,
-      "unsupportedTiles": 210,
-      "submergedTiles": 26,
-      "heightMismatchTiles": 269,
+      "closedTiles": 644,
+      "unsupportedTiles": 2,
+      "submergedTiles": 9,
+      "heightMismatchTiles": 640,
       "samples": [
         {
           "tile": [
-            131,
-            1
+            146,
+            12
           ],
-          "encodedY": 9.662,
-          "surfaceY": null,
-          "unsupported": true,
+          "encodedY": 18.001,
+          "surfaceY": 17.055,
+          "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            132,
-            1
+            182,
+            23
           ],
-          "encodedY": 9.662,
-          "surfaceY": null,
-          "unsupported": true,
+          "encodedY": 33.001,
+          "surfaceY": 32.145,
+          "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            133,
-            1
+            183,
+            23
           ],
-          "encodedY": 9.662,
-          "surfaceY": null,
-          "unsupported": true,
+          "encodedY": 33.001,
+          "surfaceY": 32.15,
+          "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            134,
-            1
+            184,
+            23
           ],
-          "encodedY": 9.662,
-          "surfaceY": null,
-          "unsupported": true,
+          "encodedY": 33.001,
+          "surfaceY": 32.155,
+          "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            135,
-            1
+            185,
+            23
           ],
-          "encodedY": 9.462,
-          "surfaceY": null,
-          "unsupported": true,
+          "encodedY": 33.001,
+          "surfaceY": 32.159,
+          "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            136,
-            1
+            186,
+            23
           ],
-          "encodedY": 9.462,
-          "surfaceY": null,
-          "unsupported": true,
+          "encodedY": 33.001,
+          "surfaceY": 32.163,
+          "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            137,
-            1
+            187,
+            23
           ],
-          "encodedY": 9.462,
-          "surfaceY": null,
-          "unsupported": true,
+          "encodedY": 33.001,
+          "surfaceY": 32.167,
+          "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            138,
-            1
+            188,
+            23
           ],
-          "encodedY": 9.462,
-          "surfaceY": null,
-          "unsupported": true,
+          "encodedY": 33.001,
+          "surfaceY": 32.171,
+          "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            139,
-            1
+            189,
+            23
           ],
-          "encodedY": 9.262,
-          "surfaceY": null,
-          "unsupported": true,
+          "encodedY": 33.001,
+          "surfaceY": 32.174,
+          "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            140,
-            1
+            190,
+            23
           ],
-          "encodedY": 9.262,
-          "surfaceY": null,
-          "unsupported": true,
+          "encodedY": 33.001,
+          "surfaceY": 32.177,
+          "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            141,
-            1
+            191,
+            23
           ],
-          "encodedY": 9.262,
-          "surfaceY": null,
-          "unsupported": true,
+          "encodedY": 33.001,
+          "surfaceY": 32.18,
+          "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            142,
-            1
+            192,
+            23
           ],
-          "encodedY": 9.262,
-          "surfaceY": null,
-          "unsupported": true,
+          "encodedY": 33.001,
+          "surfaceY": 32.182,
+          "unsupported": false,
           "submerged": false
         }
       ]
@@ -1248,7 +1260,7 @@
       ],
       "Cove landing factor": [
         -90.0,
-        0.9336286407695059,
+        1.9148762785092701,
         44.0
       ],
       "Rider Anse": [
@@ -1831,12 +1843,12 @@
     "gauntlets": {
       "sunmane_gauntlet": {
         "keeperTile": [
-          147,
-          112
+          155,
+          121
         ],
         "returnTile": [
-          149,
-          113
+          157,
+          122
         ]
       }
     }
@@ -2464,8 +2476,8 @@
         -12.0
       ],
       "serverTile": [
-        116,
-        128
+        124,
+        137
       ],
       "reachable": true,
       "rotationDegrees": 0.0
@@ -2480,8 +2492,8 @@
         7.0
       ],
       "serverTile": [
-        108,
-        109
+        116,
+        118
       ],
       "reachable": true,
       "rotationDegrees": 20.05352282957881
@@ -2496,8 +2508,8 @@
         7.5
       ],
       "serverTile": [
-        124,
-        108
+        132,
+        117
       ],
       "reachable": true,
       "rotationDegrees": -18.334649444186343
@@ -2512,8 +2524,8 @@
         16.0
       ],
       "serverTile": [
-        106,
-        100
+        114,
+        109
       ],
       "reachable": true,
       "rotationDegrees": 6.875493541569878
@@ -2528,8 +2540,8 @@
         16.5
       ],
       "serverTile": [
-        125,
-        100
+        133,
+        109
       ],
       "reachable": true,
       "rotationDegrees": -8.594366926962348
@@ -2544,8 +2556,8 @@
         12.0
       ],
       "serverTile": [
-        108,
-        104
+        116,
+        113
       ],
       "reachable": true,
       "rotationDegrees": 11.459155902616466
@@ -2560,8 +2572,8 @@
         25.0
       ],
       "serverTile": [
-        116,
-        91
+        124,
+        100
       ],
       "reachable": true,
       "rotationDegrees": 180.0
@@ -2576,8 +2588,8 @@
         0.0
       ],
       "serverTile": [
-        141,
-        116
+        149,
+        125
       ],
       "reachable": true,
       "rotationDegrees": 270.0
@@ -2592,8 +2604,8 @@
         -25.0
       ],
       "serverTile": [
-        116,
-        141
+        124,
+        150
       ],
       "reachable": true,
       "rotationDegrees": 360.0
@@ -2608,8 +2620,8 @@
         0.0
       ],
       "serverTile": [
-        91,
-        116
+        99,
+        125
       ],
       "reachable": true,
       "rotationDegrees": 90.0
@@ -2624,8 +2636,8 @@
         -82.88801014667382
       ],
       "serverTile": [
-        66,
-        199
+        74,
+        208
       ],
       "reachable": true,
       "rotationDegrees": -4.428689768036027
@@ -2640,8 +2652,8 @@
         -91.2
       ],
       "serverTile": [
-        70,
-        207
+        78,
+        216
       ],
       "reachable": true,
       "rotationDegrees": -53.130102354155966
@@ -2656,8 +2668,8 @@
         -93.25567973760985
       ],
       "serverTile": [
-        79,
-        209
+        87,
+        218
       ],
       "reachable": true,
       "rotationDegrees": -101.83151494027591
@@ -2672,8 +2684,8 @@
         -75.8
       ],
       "serverTile": [
-        82,
-        192
+        90,
+        201
       ],
       "reachable": true,
       "rotationDegrees": 143.13010235415598
@@ -2688,8 +2700,8 @@
         -46.355559036912894
       ],
       "serverTile": [
-        214,
-        162
+        222,
+        171
       ],
       "reachable": true,
       "rotationDegrees": -101.8226984106343
@@ -2704,8 +2716,8 @@
         -41.2059657755464
       ],
       "serverTile": [
-        221,
-        157
+        229,
+        166
       ],
       "reachable": true,
       "rotationDegrees": -150.52411099675425
@@ -2720,8 +2732,8 @@
         -32.51614030291644
       ],
       "serverTile": [
-        222,
-        149
+        230,
+        158
       ],
       "reachable": true,
       "rotationDegrees": 160.77447641712578
@@ -2736,8 +2748,8 @@
         -32.491631759957855
       ],
       "serverTile": [
-        206,
-        148
+        214,
+        157
       ],
       "reachable": true,
       "rotationDegrees": 240.52411099675425
@@ -2752,8 +2764,8 @@
         48.49601276807538
       ],
       "serverTile": [
-        166,
-        68
+        174,
+        77
       ],
       "reachable": true,
       "rotationDegrees": -148.65261205014136
@@ -2768,8 +2780,8 @@
         57.15574942737832
       ],
       "serverTile": [
-        167,
-        59
+        175,
+        68
       ],
       "reachable": true,
       "rotationDegrees": 162.64597536373867
@@ -2784,8 +2796,8 @@
         63.669470101336366
       ],
       "serverTile": [
-        161,
-        52
+        169,
+        61
       ],
       "reachable": true,
       "rotationDegrees": 113.94456277761869
@@ -2800,8 +2812,8 @@
         51.8732992989407
       ],
       "serverTile": [
-        150,
-        64
+        158,
+        73
       ],
       "reachable": true,
       "rotationDegrees": -72.64597536373869
@@ -2816,8 +2828,8 @@
         82.57859414082262
       ],
       "serverTile": [
-        58,
-        33
+        66,
+        42
       ],
       "reachable": true,
       "rotationDegrees": 89.06594915921734
@@ -2832,8 +2844,8 @@
         78.85212028461082
       ],
       "serverTile": [
-        50,
-        37
+        58,
+        46
       ],
       "reachable": true,
       "rotationDegrees": 40.36453657309734
@@ -2848,8 +2860,8 @@
         70.46597366201688
       ],
       "serverTile": [
-        48,
-        46
+        56,
+        55
       ],
       "reachable": true,
       "rotationDegrees": -8.336876013022648
@@ -2864,8 +2876,8 @@
         67.38226676471879
       ],
       "serverTile": [
-        63,
-        49
+        71,
+        58
       ],
       "reachable": true,
       "rotationDegrees": 49.63546342690264
@@ -2880,8 +2892,8 @@
         -21.0
       ],
       "serverTile": [
-        92,
-        137
+        100,
+        146
       ],
       "reachable": true,
       "rotationDegrees": 45.836623610465864
@@ -2896,8 +2908,8 @@
         -20.0
       ],
       "serverTile": [
-        141,
-        136
+        149,
+        145
       ],
       "reachable": true,
       "rotationDegrees": -40.10704565915762
@@ -2912,8 +2924,8 @@
         22.0
       ],
       "serverTile": [
-        91,
-        94
+        99,
+        103
       ],
       "reachable": true,
       "rotationDegrees": 131.78029288008932
@@ -2928,8 +2940,8 @@
         24.0
       ],
       "serverTile": [
-        142,
-        92
+        150,
+        101
       ],
       "reachable": true,
       "rotationDegrees": -126.05071492878112
@@ -2944,8 +2956,8 @@
         14.0
       ],
       "serverTile": [
-        71,
-        102
+        79,
+        111
       ],
       "reachable": true,
       "rotationDegrees": 180.0
@@ -2960,8 +2972,8 @@
         13.0
       ],
       "serverTile": [
-        161,
-        103
+        169,
+        112
       ],
       "reachable": true,
       "rotationDegrees": 180.0
@@ -2976,8 +2988,8 @@
         -72.0
       ],
       "serverTile": [
-        142,
-        188
+        150,
+        197
       ],
       "reachable": true,
       "rotationDegrees": -90.0
@@ -2992,8 +3004,8 @@
         51.0
       ],
       "serverTile": [
-        107,
-        65
+        115,
+        74
       ],
       "reachable": true,
       "rotationDegrees": 90.0
@@ -3008,8 +3020,8 @@
         46.0
       ],
       "serverTile": [
-        174,
-        70
+        182,
+        79
       ],
       "reachable": true,
       "rotationDegrees": 22.918311805232932
@@ -3024,8 +3036,8 @@
         58.0
       ],
       "serverTile": [
-        195,
-        58
+        203,
+        67
       ],
       "reachable": true,
       "rotationDegrees": -34.37746770784939
@@ -3040,8 +3052,8 @@
         -7.0
       ],
       "serverTile": [
-        63,
-        123
+        71,
+        132
       ],
       "reachable": true,
       "rotationDegrees": 68.75493541569878
@@ -3056,8 +3068,8 @@
         -100.0
       ],
       "serverTile": [
-        167,
-        216
+        175,
+        225
       ],
       "reachable": true,
       "rotationDegrees": 137.50987083139756
@@ -3072,8 +3084,8 @@
         -88.0
       ],
       "serverTile": [
-        65,
-        204
+        73,
+        213
       ],
       "reachable": true,
       "rotationDegrees": -63.02535746439056
@@ -3088,8 +3100,8 @@
         -32.0
       ],
       "serverTile": [
-        263,
-        148
+        271,
+        157
       ],
       "reachable": true,
       "rotationDegrees": 51.56620156177409
@@ -3104,8 +3116,8 @@
         30.0
       ],
       "serverTile": [
-        83,
-        86
+        91,
+        95
       ],
       "reachable": true,
       "rotationDegrees": 17.188733853924695
@@ -3120,8 +3132,8 @@
         -28.0
       ],
       "serverTile": [
-        163,
-        144
+        171,
+        153
       ],
       "reachable": true,
       "rotationDegrees": -51.56620156177409
@@ -3136,8 +3148,8 @@
         22.0
       ],
       "serverTile": [
-        178,
-        94
+        186,
+        103
       ],
       "reachable": true,
       "rotationDegrees": 97.40282517223994
@@ -3152,8 +3164,8 @@
         40.0
       ],
       "serverTile": [
-        107,
-        76
+        115,
+        85
       ],
       "reachable": true,
       "rotationDegrees": 40.10704565915762
@@ -3168,8 +3180,8 @@
         -63.0
       ],
       "serverTile": [
-        52,
-        179
+        60,
+        188
       ],
       "reachable": true,
       "rotationDegrees": 98.18181818181817
@@ -3184,8 +3196,8 @@
         -52.0
       ],
       "serverTile": [
-        201,
-        168
+        209,
+        177
       ],
       "reachable": true,
       "rotationDegrees": 229.0909090909091
@@ -3200,8 +3212,8 @@
         39.0
       ],
       "serverTile": [
-        193,
-        77
+        201,
+        86
       ],
       "reachable": true,
       "rotationDegrees": 32.72727272727273
@@ -3216,8 +3228,8 @@
         54.0
       ],
       "serverTile": [
-        80,
-        62
+        88,
+        71
       ],
       "reachable": true,
       "rotationDegrees": 163.63636363636365
@@ -3232,8 +3244,8 @@
         49.0
       ],
       "serverTile": [
-        144,
-        67
+        152,
+        76
       ],
       "reachable": true,
       "rotationDegrees": 294.5454545454545
@@ -3248,8 +3260,8 @@
         -124.0
       ],
       "serverTile": [
-        215,
-        240
+        223,
+        249
       ],
       "reachable": true,
       "rotationDegrees": 65.45454545454545
@@ -3264,8 +3276,8 @@
         -42.0
       ],
       "serverTile": [
-        116,
-        158
+        124,
+        167
       ],
       "reachable": true,
       "rotationDegrees": 180.0
@@ -3280,8 +3292,8 @@
         -46.0
       ],
       "serverTile": [
-        105,
-        162
+        113,
+        171
       ],
       "reachable": true,
       "rotationDegrees": 37.359318554653676
@@ -3296,8 +3308,8 @@
         -47.0
       ],
       "serverTile": [
-        127,
-        163
+        135,
+        172
       ],
       "reachable": true,
       "rotationDegrees": 295.04983399407445
@@ -3312,8 +3324,8 @@
         -54.0
       ],
       "serverTile": [
-        110,
-        170
+        118,
+        179
       ],
       "reachable": true,
       "rotationDegrees": 270.0114069836213
@@ -3328,8 +3340,8 @@
         -55.0
       ],
       "serverTile": [
-        123,
-        171
+        131,
+        180
       ],
       "reachable": true,
       "rotationDegrees": 17.968769584142937
@@ -3344,8 +3356,8 @@
         -63.0
       ],
       "serverTile": [
-        112,
-        179
+        120,
+        188
       ],
       "reachable": true,
       "rotationDegrees": 132.59666029095186
@@ -3360,8 +3372,8 @@
         -139.0
       ],
       "serverTile": [
-        53,
-        255
+        61,
+        264
       ],
       "reachable": true,
       "rotationDegrees": 22.918311805232932
@@ -3376,8 +3388,8 @@
         -195.0
       ],
       "serverTile": [
-        269,
-        311
+        277,
+        320
       ],
       "reachable": true,
       "rotationDegrees": -45.836623610465864
@@ -3392,8 +3404,8 @@
         39.0
       ],
       "serverTile": [
-        307,
-        77
+        315,
+        86
       ],
       "reachable": true,
       "rotationDegrees": 108.8619810748564
@@ -3408,8 +3420,8 @@
         38.0
       ],
       "serverTile": [
-        37,
-        78
+        45,
+        87
       ],
       "reachable": true,
       "rotationDegrees": 154.6986046853223
@@ -3424,8 +3436,8 @@
         -88.0
       ],
       "serverTile": [
-        256,
-        204
+        264,
+        213
       ],
       "reachable": true,
       "rotationDegrees": 51.56620156177409
@@ -3440,8 +3452,8 @@
         -18.0
       ],
       "serverTile": [
-        80,
-        134
+        88,
+        143
       ],
       "reachable": true,
       "rotationDegrees": 11.459155902616466
@@ -3456,8 +3468,8 @@
         -11.74534814025576
       ],
       "serverTile": [
-        77,
-        128
+        85,
+        137
       ],
       "reachable": true,
       "rotationDegrees": -39.969415525954965
@@ -3472,8 +3484,8 @@
         -10.200576702545412
       ],
       "serverTile": [
-        70,
-        126
+        78,
+        135
       ],
       "reachable": true,
       "rotationDegrees": -91.39798695452639
@@ -3488,8 +3500,8 @@
         -14.528930087059534
       ],
       "serverTile": [
-        65,
-        131
+        73,
+        140
       ],
       "reachable": true,
       "rotationDegrees": -142.82655838309782
@@ -3504,8 +3516,8 @@
         -21.471069912940465
       ],
       "serverTile": [
-        65,
-        137
+        73,
+        146
       ],
       "reachable": true,
       "rotationDegrees": -194.25512981166924
@@ -3520,8 +3532,8 @@
         -25.799423297454588
       ],
       "serverTile": [
-        70,
-        142
+        78,
+        151
       ],
       "reachable": true,
       "rotationDegrees": -245.68370124024068
@@ -3536,8 +3548,8 @@
         -24.25465185974424
       ],
       "serverTile": [
-        77,
-        140
+        85,
+        149
       ],
       "reachable": true,
       "rotationDegrees": -297.11227266881207
@@ -3552,8 +3564,8 @@
         45.95043336396484
       ],
       "serverTile": [
-        148,
-        70
+        156,
+        79
       ],
       "reachable": true,
       "rotationDegrees": -5.729577951308231
@@ -3568,8 +3580,8 @@
         50.43569809569949
       ],
       "serverTile": [
-        143,
-        66
+        151,
+        75
       ],
       "reachable": true,
       "rotationDegrees": -65.72957795130823
@@ -3584,8 +3596,8 @@
         48.48526473173465
       ],
       "serverTile": [
-        137,
-        68
+        145,
+        77
       ],
       "reachable": true,
       "rotationDegrees": -125.7295779513082
@@ -3600,8 +3612,8 @@
         42.04956663603516
       ],
       "serverTile": [
-        136,
-        74
+        144,
+        83
       ],
       "reachable": true,
       "rotationDegrees": -185.72957795130822
@@ -3616,8 +3628,8 @@
         37.56430190430051
       ],
       "serverTile": [
-        141,
-        78
+        149,
+        87
       ],
       "reachable": true,
       "rotationDegrees": -245.7295779513082
@@ -3632,8 +3644,8 @@
         39.51473526826535
       ],
       "serverTile": [
-        147,
-        76
+        155,
+        85
       ],
       "reachable": true,
       "rotationDegrees": -305.7295779513082
@@ -3648,8 +3660,8 @@
         -184.0
       ],
       "serverTile": [
-        239,
-        300
+        247,
+        309
       ],
       "reachable": true,
       "rotationDegrees": 0.0
@@ -3664,8 +3676,8 @@
         -155.0
       ],
       "serverTile": [
-        327,
-        271
+        335,
+        280
       ],
       "reachable": true,
       "rotationDegrees": -111.60000000000001
@@ -3680,8 +3692,8 @@
         -210.0
       ],
       "serverTile": [
-        85,
-        326
+        93,
+        335
       ],
       "reachable": true,
       "rotationDegrees": 27.0
@@ -3696,8 +3708,8 @@
         -65.0
       ],
       "serverTile": [
-        353,
-        181
+        361,
+        190
       ],
       "reachable": true,
       "rotationDegrees": -90.0
@@ -3707,13 +3719,13 @@
       "node": "Landmark_sunmane_march_west-landing",
       "kind": "transition",
       "position": [
-        -65.5,
-        5.314285714285713,
-        -0.5
+        -69.5,
+        7.443992348573324,
+        -38.5
       ],
       "serverTile": [
-        50,
-        116
+        54,
+        163
       ],
       "reachable": true,
       "rotationDegrees": -90.0
@@ -3723,13 +3735,13 @@
       "node": "Landmark_sunmane_march_north-track",
       "kind": "transition",
       "position": [
-        20.5,
-        16.839776803507373,
-        -217.5
+        35.5,
+        14.684130118680939,
+        -225.5
       ],
       "serverTile": [
-        136,
-        334
+        160,
+        351
       ],
       "reachable": true,
       "rotationDegrees": 180.0
@@ -3739,16 +3751,16 @@
       "node": "Landmark_sunmane_march_south-track",
       "kind": "transition",
       "position": [
-        54.5,
-        9.787916058221562,
-        65.5
+        174.5,
+        34.685899843973,
+        113.0
       ],
       "serverTile": [
-        170,
-        50
+        298,
+        12
       ],
       "reachable": true,
-      "rotationDegrees": 0.0
+      "rotationDegrees": 90.0
     },
     {
       "id": "Landmark_sunmane_secret_steppe-seed-hollow",
@@ -3760,8 +3772,8 @@
         -146.8023644247254
       ],
       "serverTile": [
-        62,
-        263
+        70,
+        272
       ],
       "reachable": true,
       "rotationDegrees": 0.0
@@ -3776,8 +3788,8 @@
         62.0
       ],
       "serverTile": [
-        65,
-        54
+        73,
+        63
       ],
       "reachable": true,
       "rotationDegrees": 108.8619810748564
@@ -3792,8 +3804,8 @@
         54.0
       ],
       "serverTile": [
-        174,
-        62
+        182,
+        71
       ],
       "reachable": true,
       "rotationDegrees": 217.7239621497128
@@ -3808,8 +3820,8 @@
         -5.0
       ],
       "serverTile": [
-        106,
-        121
+        114,
+        130
       ],
       "reachable": true,
       "rotationDegrees": 326.5859432245692
@@ -3824,8 +3836,8 @@
         -189.0
       ],
       "serverTile": [
-        275,
-        305
+        283,
+        314
       ],
       "reachable": true,
       "rotationDegrees": 75.44792429942564
@@ -3840,8 +3852,8 @@
         29.0
       ],
       "serverTile": [
-        41,
-        87
+        49,
+        96
       ],
       "reachable": true,
       "rotationDegrees": 184.30990537428207
@@ -3856,8 +3868,8 @@
         60.99872159830893
       ],
       "serverTile": [
-        146,
-        55
+        154,
+        64
       ],
       "reachable": true,
       "rotationDegrees": 293.1718864491384
@@ -3872,8 +3884,8 @@
         -133.0
       ],
       "serverTile": [
-        53,
-        249
+        61,
+        258
       ],
       "reachable": true,
       "rotationDegrees": 42.033867523994836
@@ -3888,8 +3900,8 @@
         -89.35046666252315
       ],
       "serverTile": [
-        99,
-        205
+        107,
+        214
       ],
       "reachable": true,
       "rotationDegrees": 150.89584859885127
@@ -3904,8 +3916,8 @@
         -72.07293006054374
       ],
       "serverTile": [
-        57,
-        188
+        65,
+        197
       ],
       "reachable": true,
       "rotationDegrees": 259.7578296737076
@@ -3920,8 +3932,8 @@
         49.0
       ],
       "serverTile": [
-        156,
-        67
+        164,
+        76
       ],
       "reachable": true,
       "rotationDegrees": 8.61981074856414
@@ -3936,8 +3948,8 @@
         -26.3532964050856
       ],
       "serverTile": [
-        228,
-        142
+        236,
+        151
       ],
       "reachable": true,
       "rotationDegrees": 117.48179182342047
@@ -3952,8 +3964,8 @@
         -157.0
       ],
       "serverTile": [
-        125,
-        273
+        133,
+        282
       ],
       "reachable": true,
       "rotationDegrees": 226.3437728982768
@@ -3968,8 +3980,8 @@
         -214.0
       ],
       "serverTile": [
-        116,
-        330
+        124,
+        339
       ],
       "reachable": true,
       "rotationDegrees": 335.2057539731333
@@ -3984,8 +3996,8 @@
         -149.0
       ],
       "serverTile": [
-        121,
-        265
+        129,
+        274
       ],
       "reachable": true,
       "rotationDegrees": 11.459155902616466
@@ -4000,8 +4012,8 @@
         -176.0
       ],
       "serverTile": [
-        275,
-        292
+        283,
+        301
       ],
       "reachable": true,
       "rotationDegrees": 148.96902673401405
@@ -4016,8 +4028,8 @@
         -70.0
       ],
       "serverTile": [
-        118,
-        186
+        126,
+        195
       ],
       "reachable": true,
       "rotationDegrees": 22.918311805232932
@@ -4032,8 +4044,8 @@
         -104.0
       ],
       "serverTile": [
-        121,
-        220
+        129,
+        229
       ],
       "reachable": true,
       "rotationDegrees": 97.40282517223994
@@ -4048,8 +4060,8 @@
         -86.0
       ],
       "serverTile": [
-        146,
-        202
+        154,
+        211
       ],
       "reachable": true,
       "rotationDegrees": 171.88733853924697
@@ -4064,8 +4076,8 @@
         -96.0
       ],
       "serverTile": [
-        172,
-        212
+        180,
+        221
       ],
       "reachable": true,
       "rotationDegrees": 292.20847551671983
@@ -4080,8 +4092,8 @@
         -106.0
       ],
       "serverTile": [
-        208,
-        222
+        216,
+        231
       ],
       "reachable": true,
       "rotationDegrees": 51.56620156177409
@@ -4096,8 +4108,8 @@
         -130.0
       ],
       "serverTile": [
-        128,
-        246
+        136,
+        255
       ],
       "reachable": true,
       "rotationDegrees": 126.05071492878112
@@ -4112,8 +4124,8 @@
         -18.0
       ],
       "serverTile": [
-        236,
-        134
+        244,
+        143
       ],
       "reachable": true,
       "rotationDegrees": 252.10142985756224
@@ -4128,8 +4140,8 @@
         0.0
       ],
       "serverTile": [
-        220,
-        116
+        228,
+        125
       ],
       "reachable": true,
       "rotationDegrees": 63.02535746439056
@@ -4144,8 +4156,8 @@
         -177.4
       ],
       "serverTile": [
-        317,
-        293
+        325,
+        302
       ],
       "reachable": true,
       "rotationDegrees": 113.35085901508972
@@ -4160,8 +4172,8 @@
         -167.0
       ],
       "serverTile": [
-        328,
-        283
+        336,
+        292
       ],
       "reachable": true,
       "rotationDegrees": 118.10517043946014
@@ -4176,8 +4188,8 @@
         -198.2
       ],
       "serverTile": [
-        292,
-        314
+        300,
+        323
       ],
       "reachable": true,
       "rotationDegrees": 210.92994417303396
@@ -4192,8 +4204,8 @@
         -177.4
       ],
       "serverTile": [
-        359,
-        293
+        367,
+        302
       ],
       "reachable": true,
       "rotationDegrees": 265.1687953305463
@@ -4208,8 +4220,8 @@
         -206.0
       ],
       "serverTile": [
-        272,
-        322
+        280,
+        331
       ],
       "reachable": true,
       "rotationDegrees": 201.71213763596842
@@ -4224,8 +4236,8 @@
         -146.2
       ],
       "serverTile": [
-        345,
-        262
+        353,
+        271
       ],
       "reachable": true,
       "rotationDegrees": 116.02913284306364
@@ -4240,8 +4252,8 @@
         -130.6
       ],
       "serverTile": [
-        306,
-        247
+        314,
+        256
       ],
       "reachable": true,
       "rotationDegrees": 122.29514896723322
@@ -4256,8 +4268,8 @@
         -208.6
       ],
       "serverTile": [
-        365,
-        325
+        373,
+        334
       ],
       "reachable": true,
       "rotationDegrees": 204.22271628550627
@@ -4272,8 +4284,8 @@
         -214.0
       ],
       "serverTile": [
-        118,
-        330
+        126,
+        339
       ],
       "reachable": true,
       "rotationDegrees": 17.188733853924695
@@ -4288,8 +4300,8 @@
         -164.0
       ],
       "serverTile": [
-        331,
-        280
+        339,
+        289
       ],
       "reachable": true,
       "rotationDegrees": 137.50987083139756
@@ -4304,8 +4316,8 @@
         -51.0
       ],
       "serverTile": [
-        337,
-        167
+        345,
+        176
       ],
       "reachable": true,
       "rotationDegrees": 229.1831180523293
@@ -4320,8 +4332,8 @@
         46.0
       ],
       "serverTile": [
-        24,
-        70
+        32,
+        79
       ],
       "reachable": true,
       "rotationDegrees": 35.52338329811104
@@ -4337,8 +4349,8 @@
         0.0
       ],
       "serverTile": [
-        80,
-        116
+        88,
+        125
       ]
     },
     {
@@ -4352,8 +4364,8 @@
         -28.0
       ],
       "serverTile": [
-        79,
-        144
+        87,
+        153
       ]
     },
     {
@@ -4367,8 +4379,8 @@
         25.0
       ],
       "serverTile": [
-        68,
-        91
+        76,
+        100
       ]
     }
   ],
@@ -4384,8 +4396,8 @@
         0.0
       ],
       "serverTile": [
-        116,
-        116
+        124,
+        125
       ],
       "propPosition": [
         0.0,
@@ -4404,8 +4416,8 @@
         9.0
       ],
       "serverTile": [
-        110,
-        107
+        118,
+        116
       ],
       "propPosition": [
         -8.5,
@@ -4424,8 +4436,8 @@
         10.0
       ],
       "serverTile": [
-        123,
-        106
+        131,
+        115
       ],
       "propPosition": [
         8.5,
@@ -4444,8 +4456,8 @@
         19.077706771146985
       ],
       "serverTile": [
-        107,
-        97
+        115,
+        106
       ],
       "propPosition": [
         -9.5,
@@ -4464,8 +4476,8 @@
         19.56519034160173
       ],
       "serverTile": [
-        125,
-        96
+        133,
+        105
       ],
       "propPosition": [
         9.0,
@@ -4484,8 +4496,8 @@
         16.0
       ],
       "serverTile": [
-        109,
-        100
+        117,
+        109
       ],
       "propPosition": [
         -7.5,
@@ -4504,8 +4516,8 @@
         25.0
       ],
       "serverTile": [
-        116,
-        91
+        124,
+        100
       ]
     },
     {
@@ -4519,8 +4531,8 @@
         0.0
       ],
       "serverTile": [
-        141,
-        116
+        149,
+        125
       ]
     },
     {
@@ -4534,8 +4546,8 @@
         -25.0
       ],
       "serverTile": [
-        116,
-        141
+        124,
+        150
       ]
     },
     {
@@ -4549,8 +4561,8 @@
         0.0
       ],
       "serverTile": [
-        91,
-        116
+        99,
+        125
       ]
     },
     {
@@ -4564,8 +4576,8 @@
         -82.4941969511924
       ],
       "serverTile": [
-        71,
-        198
+        79,
+        207
       ],
       "propPosition": [
         -50.46566343389708,
@@ -4584,8 +4596,8 @@
         -86.0
       ],
       "serverTile": [
-        73,
-        202
+        81,
+        211
       ],
       "propPosition": [
         -45.900000000000006,
@@ -4604,8 +4616,8 @@
         -88.0
       ],
       "serverTile": [
-        77,
-        204
+        85,
+        213
       ],
       "propPosition": [
         -36.64210397931569,
@@ -4624,8 +4636,8 @@
         -78.36
       ],
       "serverTile": [
-        84,
-        194
+        92,
+        203
       ],
       "propPosition": [
         -34.35,
@@ -4644,8 +4656,8 @@
         -41.363748915149586
       ],
       "serverTile": [
-        213,
-        157
+        221,
+        166
       ],
       "propPosition": [
         98.16767087746541,
@@ -4664,8 +4676,8 @@
         -39.0
       ],
       "serverTile": [
-        216,
-        155
+        224,
+        164
       ],
       "propPosition": [
         105.21055483365902,
@@ -4684,8 +4696,8 @@
         -34.0
       ],
       "serverTile": [
-        216,
-        150
+        224,
+        159
       ],
       "propPosition": [
         105.9899510314634,
@@ -4704,8 +4716,8 @@
         -34.06621498129514
       ],
       "serverTile": [
-        203,
-        150
+        211,
+        159
       ],
       "propPosition": [
         89.79288695992544,
@@ -4724,8 +4736,8 @@
         51.0
       ],
       "serverTile": [
-        161,
-        65
+        169,
+        74
       ],
       "propPosition": [
         50.035625299380825,
@@ -4744,8 +4756,8 @@
         56.0
       ],
       "serverTile": [
-        161,
-        60
+        169,
+        69
       ],
       "propPosition": [
         51.09839816761061,
@@ -4764,8 +4776,8 @@
         58.0
       ],
       "serverTile": [
-        160,
-        58
+        168,
+        67
       ],
       "propPosition": [
         45.29391988273676,
@@ -4784,8 +4796,8 @@
         55.0
       ],
       "serverTile": [
-        148,
-        61
+        156,
+        70
       ],
       "propPosition": [
         34.19455775661024,
@@ -4804,8 +4816,8 @@
         77.47927182341286
       ],
       "serverTile": [
-        58,
-        39
+        66,
+        48
       ],
       "propPosition": [
         -58.172470298177856,
@@ -4824,8 +4836,8 @@
         76.0
       ],
       "serverTile": [
-        55,
-        40
+        63,
+        49
       ],
       "propPosition": [
         -66.06131798189509,
@@ -4844,8 +4856,8 @@
         71.0
       ],
       "serverTile": [
-        54,
-        45
+        62,
+        54
       ],
       "propPosition": [
         -68.46819770516272,
@@ -4864,8 +4876,8 @@
         69.45474170902452
       ],
       "serverTile": [
-        66,
-        47
+        74,
+        56
       ],
       "propPosition": [
         -52.56737266437506,
@@ -4884,8 +4896,8 @@
         -18.77053853008907
       ],
       "serverTile": [
-        94,
-        135
+        102,
+        144
       ],
       "propPosition": [
         -24.0,
@@ -4904,8 +4916,8 @@
         -17.552505000689635
       ],
       "serverTile": [
-        139,
-        134
+        147,
+        143
       ],
       "propPosition": [
         25.0,
@@ -4924,8 +4936,8 @@
         19.867916731904565
       ],
       "serverTile": [
-        93,
-        96
+        101,
+        105
       ],
       "propPosition": [
         -25.0,
@@ -4944,8 +4956,8 @@
         22.116796424782894
       ],
       "serverTile": [
-        139,
-        94
+        147,
+        103
       ],
       "propPosition": [
         26.0,
@@ -4964,8 +4976,8 @@
         5.0
       ],
       "serverTile": [
-        71,
-        111
+        79,
+        120
       ],
       "propPosition": [
         -45.0,
@@ -4984,8 +4996,8 @@
         4.0
       ],
       "serverTile": [
-        161,
-        112
+        169,
+        121
       ],
       "propPosition": [
         45.0,
@@ -5004,8 +5016,8 @@
         -72.0
       ],
       "serverTile": [
-        133,
-        188
+        141,
+        197
       ],
       "propPosition": [
         26.0,
@@ -5024,8 +5036,8 @@
         51.0
       ],
       "serverTile": [
-        116,
-        65
+        124,
+        74
       ],
       "propPosition": [
         -9.0,
@@ -5044,8 +5056,8 @@
         50.0526683736127
       ],
       "serverTile": [
-        176,
-        66
+        184,
+        75
       ],
       "propPosition": [
         58.0,
@@ -5064,8 +5076,8 @@
         61.63147670560259
       ],
       "serverTile": [
-        193,
-        54
+        201,
+        63
       ],
       "propPosition": [
         79.0,
@@ -5084,8 +5096,8 @@
         -5.405625880302636
       ],
       "serverTile": [
-        67,
-        121
+        75,
+        130
       ],
       "propPosition": [
         -53.0,
@@ -5104,8 +5116,8 @@
         -103.24453234838148
       ],
       "serverTile": [
-        170,
-        219
+        178,
+        228
       ],
       "propPosition": [
         51.0,
@@ -5124,8 +5136,8 @@
         -86.00417706572746
       ],
       "serverTile": [
-        61,
-        202
+        69,
+        211
       ],
       "propPosition": [
         -51.0,
@@ -5144,8 +5156,8 @@
         -29.264916139609078
       ],
       "serverTile": [
-        266,
-        145
+        274,
+        154
       ],
       "propPosition": [
         147.0,
@@ -5164,8 +5176,8 @@
         34.0
       ],
       "serverTile": [
-        84,
-        82
+        92,
+        91
       ],
       "propPosition": [
         -33.0,
@@ -5184,8 +5196,8 @@
         -26.0
       ],
       "serverTile": [
-        160,
-        142
+        168,
+        151
       ],
       "propPosition": [
         47.0,
@@ -5204,8 +5216,8 @@
         22.0
       ],
       "serverTile": [
-        182,
-        94
+        190,
+        103
       ],
       "propPosition": [
         62.0,
@@ -5224,8 +5236,8 @@
         42.0
       ],
       "serverTile": [
-        110,
-        74
+        118,
+        83
       ],
       "propPosition": [
         -9.0,
@@ -5244,8 +5256,8 @@
         -60.74613954526856
       ],
       "serverTile": [
-        60,
-        177
+        68,
+        186
       ],
       "propPosition": [
         -64.0,
@@ -5264,8 +5276,8 @@
         -52.57071346559386
       ],
       "serverTile": [
-        209,
-        169
+        217,
+        178
       ],
       "propPosition": [
         85.0,
@@ -5284,8 +5296,8 @@
         46.91857153504746
       ],
       "serverTile": [
-        194,
-        69
+        202,
+        78
       ],
       "propPosition": [
         77.0,
@@ -5304,8 +5316,8 @@
         61.02143191653804
       ],
       "serverTile": [
-        84,
-        55
+        92,
+        64
       ],
       "propPosition": [
         -36.0,
@@ -5324,8 +5336,8 @@
         49.0
       ],
       "serverTile": [
-        135,
-        67
+        143,
+        76
       ],
       "propPosition": [
         28.0,
@@ -5344,8 +5356,8 @@
         -123.0
       ],
       "serverTile": [
-        207,
-        239
+        215,
+        248
       ],
       "propPosition": [
         99.0,
@@ -5364,8 +5376,8 @@
         -50.0
       ],
       "serverTile": [
-        116,
-        166
+        124,
+        175
       ],
       "propPosition": [
         0.0,
@@ -5384,8 +5396,8 @@
         -40.833503129503534
       ],
       "serverTile": [
-        109,
-        157
+        117,
+        166
       ],
       "propPosition": [
         -11.0,
@@ -5404,8 +5416,8 @@
         -43.0
       ],
       "serverTile": [
-        122,
-        159
+        130,
+        168
       ],
       "propPosition": [
         11.0,
@@ -5424,8 +5436,8 @@
         -53.99870591876611
       ],
       "serverTile": [
-        104,
-        170
+        112,
+        179
       ],
       "propPosition": [
         -6.0,
@@ -5444,8 +5456,8 @@
         -46.0
       ],
       "serverTile": [
-        122,
-        162
+        130,
+        171
       ],
       "propPosition": [
         7.0,
@@ -5464,8 +5476,8 @@
         -67.39941490449084
       ],
       "serverTile": [
-        117,
-        183
+        125,
+        192
       ],
       "propPosition": [
         -4.0,
@@ -5484,8 +5496,8 @@
         -135.68418042158962
       ],
       "serverTile": [
-        54,
-        252
+        62,
+        261
       ],
       "propPosition": [
         -63.0,
@@ -5504,8 +5516,8 @@
         -192.4918558463502
       ],
       "serverTile": [
-        266,
-        308
+        274,
+        317
       ],
       "propPosition": [
         153.0,
@@ -5524,8 +5536,8 @@
         37.83615755929139
       ],
       "serverTile": [
-        310,
-        78
+        318,
+        87
       ],
       "propPosition": [
         191.0,
@@ -5544,8 +5556,8 @@
         34.74534028873858
       ],
       "serverTile": [
-        39,
-        81
+        47,
+        90
       ],
       "propPosition": [
         -79.0,
@@ -5564,8 +5576,8 @@
         -85.76220411422561
       ],
       "serverTile": [
-        259,
-        202
+        267,
+        211
       ],
       "propPosition": [
         140.0,
@@ -5590,8 +5602,8 @@
         -178.4
       ],
       "serverTile": [
-        239,
-        294
+        247,
+        303
       ],
       "propPosition": [
         123.0,
@@ -5616,8 +5628,8 @@
         -157.0614974950342
       ],
       "serverTile": [
-        322,
-        273
+        330,
+        282
       ],
       "propPosition": [
         211.0,
@@ -5636,8 +5648,8 @@
         -205.01036346454515
       ],
       "serverTile": [
-        88,
-        321
+        96,
+        330
       ],
       "propPosition": [
         -31.0,
@@ -5656,8 +5668,8 @@
         -65.0
       ],
       "serverTile": [
-        347,
-        181
+        355,
+        190
       ],
       "propPosition": [
         237.0,
@@ -5672,13 +5684,13 @@
       "destinationMap": "four_gates",
       "node": "Landmark_sunmane_march_west-landing",
       "position": [
-        -114.5,
+        -121.5,
         4.0,
-        -0.5
+        -38.5
       ],
       "serverTile": [
-        1,
-        116
+        2,
+        163
       ]
     },
     {
@@ -5688,13 +5700,13 @@
       "destinationMap": "amethyst_barrens",
       "node": "Landmark_sunmane_march_north-track",
       "position": [
-        20.5,
-        17.0,
-        -266.5
+        35.5,
+        18.0,
+        -274.5
       ],
       "serverTile": [
-        136,
-        382
+        159,
+        399
       ]
     },
     {
@@ -5704,13 +5716,13 @@
       "destinationMap": "verdant_stair",
       "node": "Landmark_sunmane_march_south-track",
       "position": [
-        54.5,
-        8.0,
-        114.5
+        166.5,
+        35.0,
+        122.5
       ],
       "serverTile": [
-        170,
-        1
+        290,
+        2
       ]
     },
     {
@@ -5730,8 +5742,8 @@
         -143.0
       ],
       "serverTile": [
-        62,
-        259
+        70,
+        268
       ],
       "propPosition": [
         -54.293940250918084,
@@ -5756,8 +5768,8 @@
         60.0
       ],
       "serverTile": [
-        68,
-        56
+        76,
+        65
       ],
       "propPosition": [
         -51.0,
@@ -5782,8 +5794,8 @@
         51.46890332187387
       ],
       "serverTile": [
-        172,
-        65
+        180,
+        74
       ],
       "propPosition": [
         58.0,
@@ -5808,8 +5820,8 @@
         -2.3289190885146898
       ],
       "serverTile": [
-        104,
-        118
+        112,
+        127
       ],
       "propPosition": [
         -10.0,
@@ -5834,8 +5846,8 @@
         -188.1959685037368
       ],
       "serverTile": [
-        278,
-        304
+        286,
+        313
       ],
       "propPosition": [
         159.0,
@@ -5860,8 +5872,8 @@
         25.80904910017159
       ],
       "serverTile": [
-        41,
-        90
+        49,
+        99
       ],
       "propPosition": [
         -75.0,
@@ -5886,8 +5898,8 @@
         62.0
       ],
       "serverTile": [
-        142,
-        54
+        150,
+        63
       ],
       "propPosition": [
         29.99857955367659,
@@ -5912,8 +5924,8 @@
         -130.62320264734825
       ],
       "serverTile": [
-        55,
-        247
+        63,
+        256
       ],
       "propPosition": [
         -63.0,
@@ -5938,8 +5950,8 @@
         -92.1464250081586
       ],
       "serverTile": [
-        101,
-        208
+        109,
+        217
       ],
       "propPosition": [
         -16.819692144775676,
@@ -5964,8 +5976,8 @@
         -72.64191908813773
       ],
       "serverTile": [
-        54,
-        189
+        62,
+        198
       ],
       "propPosition": [
         -58.60402705517357,
@@ -5990,8 +6002,8 @@
         52.16385477819734
       ],
       "serverTile": [
-        156,
-        64
+        164,
+        73
       ],
       "propPosition": [
         40.0,
@@ -6016,8 +6028,8 @@
         -27.829989859216514
       ],
       "serverTile": [
-        231,
-        144
+        239,
+        153
       ],
       "propPosition": [
         112.3100523286511,
@@ -6042,8 +6054,8 @@
         -159.20905560384503
       ],
       "serverTile": [
-        123,
-        275
+        131,
+        284
       ],
       "propPosition": [
         9.0,
@@ -6068,8 +6080,8 @@
         -210.0
       ],
       "serverTile": [
-        115,
-        326
+        123,
+        335
       ],
       "propPosition": [
         0.0,
@@ -6088,8 +6100,8 @@
         -145.66777363533978
       ],
       "serverTile": [
-        122,
-        262
+        130,
+        271
       ],
       "propPosition": [
         5.0,
@@ -6108,8 +6120,8 @@
         -178.91342176145443
       ],
       "serverTile": [
-        277,
-        295
+        285,
+        304
       ],
       "propPosition": [
         159.0,
@@ -6128,8 +6140,8 @@
         -210.0
       ],
       "serverTile": [
-        119,
-        326
+        127,
+        335
       ],
       "propPosition": [
         2.0,
@@ -6148,8 +6160,8 @@
         -166.65461737594848
       ],
       "serverTile": [
-        333,
-        283
+        341,
+        292
       ],
       "propPosition": [
         215.0,
@@ -6168,8 +6180,8 @@
         -53.353117035109
       ],
       "serverTile": [
-        334,
-        169
+        342,
+        178
       ],
       "propPosition": [
         221.0,
@@ -6188,8 +6200,8 @@
         47.0
       ],
       "serverTile": [
-        29,
-        69
+        37,
+        78
       ],
       "propPosition": [
         -92.0,
@@ -6260,8 +6272,8 @@
         1.0
       ]
     },
-    "lowestElevation": -2.000000000000001,
-    "highestElevation": 23.980099068168673,
+    "lowestElevation": -2.0000000000000004,
+    "highestElevation": 36.99999672552438,
     "worldEdgeBarrier": "Open grass and dry mineral benches; unlinked eastern frontier, western lake."
   },
   "materials": {
@@ -6466,24 +6478,69 @@
     "image": "minimap.webp",
     "file": "minimap.webp",
     "imageSize": [
-      384,
-      384
+      425,
+      432
     ],
     "pixelsPerMetre": 1.0,
     "metresPerPixel": 1.0,
     "worldMin": [
-      -116,
-      -268
+      -121,
+      -304
     ],
     "worldMax": [
-      268,
-      116
+      304,
+      128
     ],
     "northUp": true,
     "size": [
-      384,
-      384
-    ]
+      425,
+      432
+    ],
+    "transform": {
+      "pixelX": {
+        "scale": 1.0,
+        "offset": 121
+      },
+      "pixelY": {
+        "scale": 1.0,
+        "offset": 304
+      },
+      "formula": "pixel_x = world_x * scale + offset; pixel_y = world_z * scale + offset"
+    },
+    "geometryImage": "cartography.webp",
+    "renderedFrom": "world.glb (shared geometry cartography renderer)",
+    "cartographyRender": {
+      "generator": "eloria-assets/tools/render_region_cartography.py",
+      "styleVersion": 4,
+      "glbSha256": "54c66c4d4064683284b54dc301702eaa93452f9e1424367660bd7c0fd918e2da",
+      "toolSha256": "e5c5cab675ec4f463d33a3dd17d43cec6c41a7aee2a4ea6defb82f4451d496c3",
+      "rendererSourceSha256": "20a909b6f7b76e84867caed2e5bdcc3b6ae708ffc5231899794b2bef09005a05",
+      "supersample": 2,
+      "waterRGB": [
+        79,
+        150,
+        157
+      ],
+      "softGroundDither": {
+        "version": 2,
+        "adapterSha256": "fbabcad75a32a36999b2a937dbe61af91ad28a7e413825e3eff1aea92fdbf019",
+        "baseRasterSha256": "20a909b6f7b76e84867caed2e5bdcc3b6ae708ffc5231899794b2bef09005a05",
+        "runtimeShaderSha256": "3509e32877adc2032028412fdd1e458f207e30280e6e8366d71fc1163ac240b3",
+        "specializedSourceSha256": "5fc49b1e9025a8525025da83278e09894d609fa49e72b9970416b45914ed394d",
+        "compilerSha256": "ab37c11763fdcb3bf6f809b5d033a31ebeb77f10ba5934c72fa37287ee56144f",
+        "flags": [
+          "-O3",
+          "-ffast-math",
+          "-shared",
+          "-static-libgcc",
+          "-static",
+          "-Wl,--no-insert-timestamp",
+          "-Wl,--image-base,0x180000000"
+        ],
+        "compilerVersion": "gcc.exe (Rev3, Built by MSYS2 project) 16.2.0",
+        "librarySha256": "042b0130969f5732584fae29f973dba08ce184bc2f8da7a56368be5624290a65"
+      }
+    }
   },
   "ambientPopulation": {
     "note": "Scenery livestock instanced by the client's ambient population system. They carry no actor id and no collision, and are deliberately not baked into the world mesh.",
@@ -6501,8 +6558,8 @@
         "animation": "Idle_A",
         "seed": 74190,
         "serverTile": [
-          52,
-          179
+          60,
+          188
         ]
       },
       {
@@ -6518,8 +6575,8 @@
         "animation": "Idle_A",
         "seed": 12857,
         "serverTile": [
-          201,
-          168
+          209,
+          177
         ]
       },
       {
@@ -6535,8 +6592,8 @@
         "animation": "Idle_A",
         "seed": 23468,
         "serverTile": [
-          193,
-          77
+          201,
+          86
         ]
       },
       {
@@ -6552,8 +6609,8 @@
         "animation": "Idle_A",
         "seed": 75438,
         "serverTile": [
-          80,
-          62
+          88,
+          71
         ]
       },
       {
@@ -6569,8 +6626,8 @@
         "animation": "Idle_A",
         "seed": 32661,
         "serverTile": [
-          144,
-          67
+          152,
+          76
         ]
       },
       {
@@ -6586,8 +6643,8 @@
         "animation": "Idle_A",
         "seed": 2595,
         "serverTile": [
-          215,
-          240
+          223,
+          249
         ]
       },
       {
@@ -6596,15 +6653,15 @@
         "count": 8,
         "center": [
           -80.0,
-          6.67636820012134,
+          6.62217691761338,
           -71.0
         ],
         "radius": 13.0,
         "animation": "Idle_A",
         "seed": 49824,
         "serverTile": [
-          36,
-          187
+          44,
+          196
         ]
       },
       {
@@ -6620,8 +6677,8 @@
         "animation": "Idle_A",
         "seed": 94632,
         "serverTile": [
-          246,
-          94
+          254,
+          103
         ]
       },
       {
@@ -6637,8 +6694,8 @@
         "animation": "Idle_A",
         "seed": 46592,
         "serverTile": [
-          113,
-          273
+          121,
+          282
         ]
       },
       {
@@ -6647,15 +6704,15 @@
         "count": 7,
         "center": [
           116.0,
-          13.377672225470958,
+          13.561939070177473,
           70.0
         ],
         "radius": 12.0,
         "animation": "Idle_A",
         "seed": 16374,
         "serverTile": [
-          232,
-          46
+          240,
+          55
         ]
       },
       {
@@ -6671,8 +6728,8 @@
         "animation": "Idle_A",
         "seed": 8626,
         "serverTile": [
-          95,
-          104
+          103,
+          113
         ]
       },
       {
@@ -6688,8 +6745,8 @@
         "animation": "Idle_A",
         "seed": 45277,
         "serverTile": [
-          137,
-          103
+          145,
+          112
         ]
       },
       {
@@ -6705,8 +6762,8 @@
         "animation": "Idle_A",
         "seed": 30941,
         "serverTile": [
-          71,
-          106
+          79,
+          115
         ]
       },
       {
@@ -6722,8 +6779,8 @@
         "animation": "Idle_A",
         "seed": 36896,
         "serverTile": [
-          161,
-          107
+          169,
+          116
         ]
       },
       {
@@ -6739,8 +6796,8 @@
         "animation": "Idle_A",
         "seed": 60343,
         "serverTile": [
-          96,
-          104
+          104,
+          113
         ]
       },
       {
@@ -6756,8 +6813,8 @@
         "animation": "Idle_A",
         "seed": 35736,
         "serverTile": [
-          125,
-          261
+          133,
+          270
         ]
       },
       {
@@ -6773,8 +6830,8 @@
         "animation": "Idle_A",
         "seed": 7216,
         "serverTile": [
-          283,
-          285
+          291,
+          294
         ]
       },
       {
@@ -6790,8 +6847,8 @@
         "animation": "Idle_A",
         "seed": 40447,
         "serverTile": [
-          99,
-          269
+          107,
+          278
         ]
       },
       {
@@ -6807,8 +6864,8 @@
         "animation": "Idle_A",
         "seed": 927,
         "serverTile": [
-          265,
-          288
+          273,
+          297
         ]
       },
       {
@@ -6824,8 +6881,8 @@
         "animation": "Idle_A",
         "seed": 90839,
         "serverTile": [
-          302,
-          257
+          310,
+          266
         ]
       },
       {
@@ -6841,8 +6898,8 @@
         "animation": "Idle_A",
         "seed": 14314,
         "serverTile": [
-          159,
-          221
+          167,
+          230
         ]
       },
       {
@@ -6858,8 +6915,8 @@
         "animation": "Idle_A",
         "seed": 24325,
         "serverTile": [
-          291,
-          224
+          299,
+          233
         ]
       }
     ]
@@ -6871,8 +6928,8 @@
         "name": "Amethyst prospector",
         "role": "shop",
         "serverTile": [
-          323,
-          269
+          331,
+          278
         ],
         "authority": "server"
       },
@@ -6881,8 +6938,8 @@
         "name": "Banner Boy Suvi",
         "role": "dialogue",
         "serverTile": [
-          86,
-          194
+          94,
+          203
         ],
         "authority": "server"
       },
@@ -6891,8 +6948,8 @@
         "name": "Banner shrine keeper",
         "role": "dialogue",
         "serverTile": [
-          83,
-          194
+          91,
+          203
         ],
         "authority": "server"
       },
@@ -6901,8 +6958,8 @@
         "name": "Barrow warden",
         "role": "dialogue",
         "serverTile": [
-          121,
-          154
+          129,
+          163
         ],
         "authority": "server"
       },
@@ -6911,8 +6968,8 @@
         "name": "Camp horse master",
         "role": "shop",
         "serverTile": [
-          78,
-          192
+          86,
+          201
         ],
         "authority": "server"
       },
@@ -6921,8 +6978,8 @@
         "name": "Caravan Doctor Nesrin",
         "role": "dialogue",
         "serverTile": [
-          104,
-          111
+          112,
+          120
         ],
         "authority": "server"
       },
@@ -6931,8 +6988,8 @@
         "name": "Cove landing factor",
         "role": "shop",
         "serverTile": [
-          26,
-          72
+          34,
+          81
         ],
         "authority": "server"
       },
@@ -6941,8 +6998,8 @@
         "name": "Crossroads well keeper",
         "role": "storage",
         "serverTile": [
-          112,
-          105
+          120,
+          114
         ],
         "authority": "server"
       },
@@ -6951,8 +7008,8 @@
         "name": "Dune well keeper",
         "role": "storage",
         "serverTile": [
-          126,
-          264
+          134,
+          273
         ],
         "authority": "server"
       },
@@ -6961,8 +7018,8 @@
         "name": "East caravan master",
         "role": "dialogue",
         "serverTile": [
-          159,
-          112
+          167,
+          121
         ],
         "authority": "server"
       },
@@ -6971,8 +7028,8 @@
         "name": "Elder Sura",
         "role": "dialogue",
         "serverTile": [
-          111,
-          115
+          119,
+          124
         ],
         "authority": "server"
       },
@@ -6981,8 +7038,8 @@
         "name": "Grain Tallyman Sef Corrin",
         "role": "dialogue",
         "serverTile": [
-          170,
-          70
+          178,
+          79
         ],
         "authority": "server"
       },
@@ -6991,8 +7048,8 @@
         "name": "Guest-Right Judge Oru Bakhan",
         "role": "dialogue",
         "serverTile": [
-          111,
-          119
+          119,
+          128
         ],
         "authority": "server"
       },
@@ -7001,8 +7058,8 @@
         "name": "Herd-Mother Tamu Ashai",
         "role": "dialogue",
         "serverTile": [
-          79,
-          189
+          87,
+          198
         ],
         "authority": "server"
       },
@@ -7011,8 +7068,8 @@
         "name": "Kesh",
         "role": "shop",
         "serverTile": [
-          121,
-          111
+          129,
+          120
         ],
         "authority": "server"
       },
@@ -7021,8 +7078,8 @@
         "name": "Khanet Berel Suran",
         "role": "dialogue",
         "serverTile": [
-          122,
-          120
+          130,
+          129
         ],
         "authority": "server"
       },
@@ -7031,8 +7088,8 @@
         "name": "Orun khan",
         "role": "dialogue",
         "serverTile": [
-          120,
-          117
+          128,
+          126
         ],
         "authority": "server"
       },
@@ -7041,8 +7098,8 @@
         "name": "Rider Anse",
         "role": "instance",
         "serverTile": [
-          147,
-          112
+          155,
+          121
         ],
         "authority": "server"
       },
@@ -7051,8 +7108,8 @@
         "name": "Salt Rider Onen Dur",
         "role": "dialogue",
         "serverTile": [
-          276,
-          286
+          284,
+          295
         ],
         "authority": "server"
       },
@@ -7061,8 +7118,8 @@
         "name": "Salt-pan factor",
         "role": "shop",
         "serverTile": [
-          279,
-          287
+          287,
+          296
         ],
         "authority": "server"
       },
@@ -7071,8 +7128,8 @@
         "name": "Seasonal market broker",
         "role": "shop",
         "serverTile": [
-          110,
-          111
+          118,
+          120
         ],
         "authority": "server"
       },
@@ -7081,8 +7138,8 @@
         "name": "Steppe miller",
         "role": "shop",
         "serverTile": [
-          172,
-          73
+          180,
+          82
         ],
         "authority": "server"
       },
@@ -7091,8 +7148,8 @@
         "name": "Well-Digger Harun Tel",
         "role": "dialogue",
         "serverTile": [
-          114,
-          102
+          122,
+          111
         ],
         "authority": "server"
       },
@@ -7101,8 +7158,8 @@
         "name": "West caravan master",
         "role": "dialogue",
         "serverTile": [
-          74,
-          111
+          82,
+          120
         ],
         "authority": "server"
       },
@@ -7111,8 +7168,8 @@
         "name": "Whitehorn range warden",
         "role": "dialogue",
         "serverTile": [
-          334,
-          271
+          342,
+          280
         ],
         "authority": "server"
       },
@@ -7121,8 +7178,8 @@
         "name": "Wind caves watch",
         "role": "dialogue",
         "serverTile": [
-          236,
-          293
+          244,
+          302
         ],
         "authority": "server"
       },
@@ -7131,8 +7188,8 @@
         "name": "Wind-Cave Listener Esku",
         "role": "dialogue",
         "serverTile": [
-          234,
-          290
+          242,
+          299
         ],
         "authority": "server"
       }
@@ -7142,8 +7199,8 @@
         "id": 0,
         "resource": "Wheat",
         "serverTile": [
-          194,
-          62
+          202,
+          71
         ],
         "authority": "server"
       },
@@ -7151,8 +7208,8 @@
         "id": 1,
         "resource": "Wheat",
         "serverTile": [
-          186,
-          63
+          194,
+          72
         ],
         "authority": "server"
       },
@@ -7160,8 +7217,8 @@
         "id": 2,
         "resource": "Wheat",
         "serverTile": [
-          163,
-          213
+          171,
+          222
         ],
         "authority": "server"
       },
@@ -7169,8 +7226,8 @@
         "id": 3,
         "resource": "Wheat",
         "serverTile": [
-          68,
-          130
+          76,
+          139
         ],
         "authority": "server"
       },
@@ -7178,8 +7235,8 @@
         "id": 4,
         "resource": "Wheat",
         "serverTile": [
-          158,
-          212
+          166,
+          221
         ],
         "authority": "server"
       },
@@ -7187,8 +7244,8 @@
         "id": 5,
         "resource": "Sage",
         "serverTile": [
-          83,
-          59
+          91,
+          68
         ],
         "authority": "server"
       },
@@ -7196,8 +7253,8 @@
         "id": 6,
         "resource": "Sage",
         "serverTile": [
-          39,
-          71
+          47,
+          80
         ],
         "authority": "server"
       },
@@ -7205,8 +7262,8 @@
         "id": 7,
         "resource": "Sage",
         "serverTile": [
-          35,
-          73
+          43,
+          82
         ],
         "authority": "server"
       },
@@ -7214,8 +7271,8 @@
         "id": 8,
         "resource": "Clay",
         "serverTile": [
-          38,
-          42
+          46,
+          51
         ],
         "authority": "server"
       },
@@ -7223,8 +7280,8 @@
         "id": 9,
         "resource": "Clay",
         "serverTile": [
-          60,
-          203
+          68,
+          212
         ],
         "authority": "server"
       },
@@ -7232,8 +7289,8 @@
         "id": 10,
         "resource": "Flint",
         "serverTile": [
-          58,
-          184
+          66,
+          193
         ],
         "authority": "server"
       },
@@ -7241,8 +7298,8 @@
         "id": 11,
         "resource": "Flint",
         "serverTile": [
-          262,
-          197
+          270,
+          206
         ],
         "authority": "server"
       },
@@ -7250,8 +7307,8 @@
         "id": 12,
         "resource": "Crystal",
         "serverTile": [
-          312,
-          227
+          320,
+          236
         ],
         "authority": "server"
       },
@@ -7259,8 +7316,8 @@
         "id": 17,
         "resource": "Sage",
         "serverTile": [
-          77,
-          55
+          85,
+          64
         ],
         "authority": "server"
       },
@@ -7268,8 +7325,8 @@
         "id": 18,
         "resource": "Iron Ore",
         "serverTile": [
-          336,
-          194
+          344,
+          203
         ],
         "authority": "server"
       },
@@ -7277,8 +7334,8 @@
         "id": 19,
         "resource": "Iron Ore",
         "serverTile": [
-          77,
-          322
+          85,
+          331
         ],
         "authority": "server"
       },
@@ -7286,8 +7343,8 @@
         "id": 23,
         "resource": "Wheat",
         "serverTile": [
-          189,
-          67
+          197,
+          76
         ],
         "authority": "server"
       },
@@ -7295,8 +7352,8 @@
         "id": 24,
         "resource": "Wheat",
         "serverTile": [
-          69,
-          120
+          77,
+          129
         ],
         "authority": "server"
       },
@@ -7304,8 +7361,8 @@
         "id": 25,
         "resource": "Wheat",
         "serverTile": [
-          69,
-          125
+          77,
+          134
         ],
         "authority": "server"
       },
@@ -7313,8 +7370,8 @@
         "id": 26,
         "resource": "Seed",
         "serverTile": [
-          197,
-          67
+          205,
+          76
         ],
         "authority": "server"
       },
@@ -7322,8 +7379,8 @@
         "id": 27,
         "resource": "Seed",
         "serverTile": [
-          162,
-          217
+          170,
+          226
         ],
         "authority": "server"
       },
@@ -7331,8 +7388,8 @@
         "id": 28,
         "resource": "Seed",
         "serverTile": [
-          166,
-          209
+          174,
+          218
         ],
         "authority": "server"
       },
@@ -7340,8 +7397,8 @@
         "id": 29,
         "resource": "Seed",
         "serverTile": [
-          177,
-          65
+          185,
+          74
         ],
         "authority": "server"
       },
@@ -7349,8 +7406,8 @@
         "id": 30,
         "resource": "Seed",
         "serverTile": [
-          172,
-          62
+          180,
+          71
         ],
         "authority": "server"
       },
@@ -7358,8 +7415,8 @@
         "id": 31,
         "resource": "Seed",
         "serverTile": [
-          163,
-          208
+          171,
+          217
         ],
         "authority": "server"
       },
@@ -7367,8 +7424,8 @@
         "id": 32,
         "resource": "Sage",
         "serverTile": [
-          42,
-          77
+          50,
+          86
         ],
         "authority": "server"
       },
@@ -7376,8 +7433,8 @@
         "id": 33,
         "resource": "Sage",
         "serverTile": [
-          228,
-          167
+          236,
+          176
         ],
         "authority": "server"
       },
@@ -7385,8 +7442,8 @@
         "id": 34,
         "resource": "Sage",
         "serverTile": [
-          228,
-          173
+          236,
+          182
         ],
         "authority": "server"
       },
@@ -7394,8 +7451,8 @@
         "id": 35,
         "resource": "Flint",
         "serverTile": [
-          267,
-          201
+          275,
+          210
         ],
         "authority": "server"
       },
@@ -7403,8 +7460,8 @@
         "id": 36,
         "resource": "Flint",
         "serverTile": [
-          262,
-          201
+          270,
+          210
         ],
         "authority": "server"
       },
@@ -7412,8 +7469,8 @@
         "id": 37,
         "resource": "Flint",
         "serverTile": [
-          266,
-          194
+          274,
+          203
         ],
         "authority": "server"
       },
@@ -7421,8 +7478,8 @@
         "id": 38,
         "resource": "Resin",
         "serverTile": [
-          307,
-          75
+          315,
+          84
         ],
         "authority": "server"
       },
@@ -7430,8 +7487,8 @@
         "id": 39,
         "resource": "Resin",
         "serverTile": [
-          311,
-          77
+          319,
+          86
         ],
         "authority": "server"
       },
@@ -7439,8 +7496,8 @@
         "id": 40,
         "resource": "Thistle",
         "serverTile": [
-          250,
-          128
+          258,
+          137
         ],
         "authority": "server"
       },
@@ -7448,8 +7505,8 @@
         "id": 41,
         "resource": "Thistle",
         "serverTile": [
-          256,
-          119
+          264,
+          128
         ],
         "authority": "server"
       },
@@ -7457,8 +7514,8 @@
         "id": 42,
         "resource": "Geode",
         "serverTile": [
-          304,
-          288
+          312,
+          297
         ],
         "authority": "server"
       },
@@ -7466,8 +7523,8 @@
         "id": 43,
         "resource": "Geode",
         "serverTile": [
-          300,
-          287
+          308,
+          296
         ],
         "authority": "server"
       },
@@ -7475,8 +7532,8 @@
         "id": 44,
         "resource": "Verdigris",
         "serverTile": [
-          329,
-          188
+          337,
+          197
         ],
         "authority": "server"
       },
@@ -7484,8 +7541,8 @@
         "id": 45,
         "resource": "Verdigris",
         "serverTile": [
-          329,
-          195
+          337,
+          204
         ],
         "authority": "server"
       },
@@ -7493,8 +7550,8 @@
         "id": 46,
         "resource": "Coal",
         "serverTile": [
-          334,
-          189
+          342,
+          198
         ],
         "authority": "server"
       },
@@ -7502,8 +7559,8 @@
         "id": 47,
         "resource": "Coal",
         "serverTile": [
-          335,
-          186
+          343,
+          195
         ],
         "authority": "server"
       },
@@ -7511,8 +7568,8 @@
         "id": 2013,
         "resource": "Crystal",
         "serverTile": [
-          313,
-          233
+          321,
+          242
         ],
         "authority": "server"
       },
@@ -7520,8 +7577,8 @@
         "id": 2014,
         "resource": "Salt",
         "serverTile": [
-          276,
-          309
+          284,
+          318
         ],
         "authority": "server"
       },
@@ -7529,8 +7586,8 @@
         "id": 2015,
         "resource": "Salt",
         "serverTile": [
-          104,
-          297
+          112,
+          306
         ],
         "authority": "server"
       },
@@ -7538,8 +7595,8 @@
         "id": 2016,
         "resource": "Sage",
         "serverTile": [
-          100,
-          273
+          108,
+          282
         ],
         "authority": "server"
       },
@@ -7547,8 +7604,8 @@
         "id": 2020,
         "resource": "Wheat",
         "serverTile": [
-          164,
-          72
+          172,
+          81
         ],
         "authority": "server"
       },
@@ -7556,8 +7613,8 @@
         "id": 2021,
         "resource": "Wheat",
         "serverTile": [
-          166,
-          206
+          174,
+          215
         ],
         "authority": "server"
       },
@@ -7565,8 +7622,8 @@
         "id": 2022,
         "resource": "Wheat",
         "serverTile": [
-          72,
-          126
+          80,
+          135
         ],
         "authority": "server"
       }
@@ -7575,128 +7632,136 @@
       {
         "creature": "golden_plains_horse",
         "serverTile": [
-          263,
-          90
+          271,
+          99
         ],
         "authority": "server"
       },
       {
         "creature": "golden_plains_horse",
         "serverTile": [
-          208,
-          207
+          216,
+          216
         ],
         "authority": "server"
       },
       {
         "creature": "golden_plains_horse",
         "serverTile": [
-          52,
-          227
+          60,
+          236
         ],
         "authority": "server"
       },
       {
         "creature": "golden_plains_horse",
-        "serverTile": [
-          50,
-          217
-        ],
-        "authority": "server"
-      },
-      {
-        "creature": "golden_bison",
-        "serverTile": [
-          288,
-          197
-        ],
-        "authority": "server"
-      },
-      {
-        "creature": "golden_bison",
-        "serverTile": [
-          339,
-          118
-        ],
-        "authority": "server"
-      },
-      {
-        "creature": "golden_bison",
-        "serverTile": [
-          334,
-          104
-        ],
-        "authority": "server"
-      },
-      {
-        "creature": "stormmane_lion",
         "serverTile": [
           58,
-          275
+          226
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "golden_bison",
+        "serverTile": [
+          296,
+          206
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "golden_bison",
+        "serverTile": [
+          347,
+          127
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "golden_bison",
+        "serverTile": [
+          342,
+          113
         ],
         "authority": "server"
       },
       {
         "creature": "stormmane_lion",
         "serverTile": [
-          48,
-          280
+          66,
+          284
         ],
         "authority": "server"
       },
       {
         "creature": "stormmane_lion",
         "serverTile": [
-          220,
-          220
+          56,
+          289
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "stormmane_lion",
+        "serverTile": [
+          228,
+          229
         ],
         "authority": "server"
       },
       {
         "creature": "red_fox",
         "serverTile": [
-          214,
-          187
+          222,
+          196
         ],
         "authority": "server"
       },
       {
         "creature": "red_fox",
         "serverTile": [
-          194,
-          209
+          202,
+          218
         ],
         "authority": "server"
       },
       {
         "creature": "red_fox",
         "serverTile": [
-          204,
-          197
+          212,
+          206
         ],
         "authority": "server"
       },
       {
         "creature": "red_fox",
         "serverTile": [
-          271,
-          83
+          279,
+          92
         ],
         "authority": "server"
       },
       {
         "creature": "red_fox",
         "serverTile": [
-          248,
-          103
+          256,
+          112
         ],
         "authority": "server"
       },
       {
         "creature": "dire_wolf",
         "serverTile": [
-          253,
-          230
+          261,
+          239
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "dire_wolf",
+        "serverTile": [
+          300,
+          232
         ],
         "authority": "server"
       },
@@ -7704,303 +7769,295 @@
         "creature": "dire_wolf",
         "serverTile": [
           292,
-          223
+          215
         ],
         "authority": "server"
       },
       {
         "creature": "dire_wolf",
         "serverTile": [
-          284,
-          206
-        ],
-        "authority": "server"
-      },
-      {
-        "creature": "dire_wolf",
-        "serverTile": [
-          238,
-          240
+          246,
+          249
         ],
         "authority": "server"
       },
       {
         "creature": "golden_bison",
         "serverTile": [
-          339,
+          347,
+          105
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "golden_bison",
+        "serverTile": [
+          323,
+          138
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "golden_bison",
+        "serverTile": [
+          340,
+          138
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "golden_plains_horse",
+        "serverTile": [
+          193,
+          63
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "golden_plains_horse",
+        "serverTile": [
+          220,
+          208
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "golden_plains_horse",
+        "serverTile": [
+          209,
+          222
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "plains_griffin",
+        "serverTile": [
+          239,
+          361
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "plains_griffin",
+        "serverTile": [
+          374,
+          256
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "suncrest_heron",
+        "serverTile": [
+          85,
+          245
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "suncrest_heron",
+        "serverTile": [
+          247,
           96
         ],
         "authority": "server"
       },
       {
-        "creature": "golden_bison",
-        "serverTile": [
-          315,
-          129
-        ],
-        "authority": "server"
-      },
-      {
-        "creature": "golden_bison",
-        "serverTile": [
-          332,
-          129
-        ],
-        "authority": "server"
-      },
-      {
-        "creature": "golden_plains_horse",
-        "serverTile": [
-          185,
-          54
-        ],
-        "authority": "server"
-      },
-      {
-        "creature": "golden_plains_horse",
-        "serverTile": [
-          212,
-          199
-        ],
-        "authority": "server"
-      },
-      {
-        "creature": "golden_plains_horse",
-        "serverTile": [
-          201,
-          213
-        ],
-        "authority": "server"
-      },
-      {
-        "creature": "plains_griffin",
-        "serverTile": [
-          231,
-          352
-        ],
-        "authority": "server"
-      },
-      {
-        "creature": "plains_griffin",
-        "serverTile": [
-          366,
-          247
-        ],
-        "authority": "server"
-      },
-      {
         "creature": "suncrest_heron",
         "serverTile": [
-          77,
-          236
-        ],
-        "authority": "server"
-      },
-      {
-        "creature": "suncrest_heron",
-        "serverTile": [
-          239,
-          87
-        ],
-        "authority": "server"
-      },
-      {
-        "creature": "suncrest_heron",
-        "serverTile": [
-          265,
-          108
+          273,
+          117
         ],
         "authority": "server"
       },
       {
         "creature": "stormmane_lion",
         "serverTile": [
-          77,
-          335
+          85,
+          344
         ],
         "authority": "server"
       },
       {
         "creature": "stormmane_lion",
         "serverTile": [
-          305,
-          309
+          313,
+          318
         ],
         "authority": "server"
       },
       {
         "creature": "giant_mole",
         "serverTile": [
-          240,
-          224
+          248,
+          233
         ],
         "authority": "server"
       },
       {
         "creature": "jadefeather_raptor",
         "serverTile": [
-          68,
-          271
-        ],
-        "authority": "server"
-      },
-      {
-        "creature": "jadefeather_raptor",
-        "serverTile": [
-          229,
-          219
-        ],
-        "authority": "server"
-      },
-      {
-        "creature": "jadefeather_raptor",
-        "serverTile": [
-          69,
+          76,
           280
         ],
         "authority": "server"
       },
       {
-        "creature": "glowhorn_sheep",
+        "creature": "jadefeather_raptor",
         "serverTile": [
-          62,
-          221
+          237,
+          228
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "jadefeather_raptor",
+        "serverTile": [
+          77,
+          289
         ],
         "authority": "server"
       },
       {
         "creature": "glowhorn_sheep",
         "serverTile": [
-          180,
-          42
+          70,
+          230
         ],
         "authority": "server"
       },
       {
         "creature": "glowhorn_sheep",
         "serverTile": [
-          248,
-          95
+          188,
+          51
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "glowhorn_sheep",
+        "serverTile": [
+          256,
+          104
         ],
         "authority": "server"
       },
       {
         "creature": "highland_orc",
         "serverTile": [
-          330,
-          257
+          338,
+          266
         ],
         "authority": "server"
       },
       {
         "creature": "highland_orc",
         "serverTile": [
-          223,
-          345
+          231,
+          354
         ],
         "authority": "server"
       },
       {
         "creature": "highland_orc",
         "serverTile": [
-          258,
-          348
+          266,
+          357
         ],
         "authority": "server"
       },
       {
         "creature": "ironhorn_minotaur",
         "serverTile": [
-          243,
-          330
+          251,
+          339
         ],
         "authority": "server"
       },
       {
         "creature": "ironhorn_minotaur",
         "serverTile": [
-          355,
-          234
+          363,
+          243
         ],
         "authority": "server"
       },
       {
         "creature": "ironhorn_minotaur",
         "serverTile": [
-          329,
-          250
+          337,
+          259
         ],
         "authority": "server"
       },
       {
         "creature": "storm_chimera",
         "serverTile": [
-          61,
-          327
-        ],
-        "authority": "server"
-      },
-      {
-        "creature": "storm_chimera",
-        "serverTile": [
-          354,
-          269
-        ],
-        "authority": "server"
-      },
-      {
-        "creature": "storm_chimera",
-        "serverTile": [
-          226,
+          69,
           336
         ],
         "authority": "server"
       },
       {
-        "creature": "skystripe_antelope",
+        "creature": "storm_chimera",
         "serverTile": [
-          228,
-          198
+          362,
+          278
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "storm_chimera",
+        "serverTile": [
+          234,
+          345
         ],
         "authority": "server"
       },
       {
         "creature": "skystripe_antelope",
         "serverTile": [
-          193,
-          223
+          236,
+          207
         ],
         "authority": "server"
       },
       {
         "creature": "skystripe_antelope",
         "serverTile": [
-          212,
-          218
+          201,
+          232
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "skystripe_antelope",
+        "serverTile": [
+          220,
+          227
         ],
         "authority": "server"
       },
       {
         "creature": "azure_hyena",
         "serverTile": [
-          314,
-          316
+          322,
+          325
         ],
         "authority": "server"
       },
       {
         "creature": "azure_hyena",
         "serverTile": [
-          249,
-          360
+          257,
+          369
         ],
         "authority": "server"
       },
       {
         "creature": "azure_hyena",
         "serverTile": [
-          87,
-          347
+          95,
+          356
         ],
         "authority": "server"
       }
@@ -8061,8 +8118,8 @@
         21.0
       ],
       "serverTile": [
-        137,
-        95
+        145,
+        104
       ],
       "facing": [
         -1,
@@ -8080,8 +8137,8 @@
         0.0
       ],
       "serverTile": [
-        116,
-        116
+        124,
+        125
       ],
       "facing": [
         0,
@@ -8109,8 +8166,8 @@
         -178.4
       ],
       "serverTile": [
-        239,
-        294
+        247,
+        303
       ],
       "propPosition": [
         123.0,
@@ -8135,8 +8192,8 @@
         -157.0614974950342
       ],
       "serverTile": [
-        322,
-        273
+        330,
+        282
       ],
       "propPosition": [
         211.0,
@@ -8151,13 +8208,13 @@
       "destinationMap": "four_gates",
       "node": "Landmark_sunmane_march_west-landing",
       "position": [
-        -114.5,
+        -121.5,
         4.0,
-        -0.5
+        -38.5
       ],
       "serverTile": [
-        1,
-        116
+        2,
+        163
       ]
     },
     {
@@ -8167,13 +8224,13 @@
       "destinationMap": "amethyst_barrens",
       "node": "Landmark_sunmane_march_north-track",
       "position": [
-        20.5,
-        17.0,
-        -266.5
+        35.5,
+        18.0,
+        -274.5
       ],
       "serverTile": [
-        136,
-        382
+        159,
+        399
       ]
     },
     {
@@ -8183,13 +8240,13 @@
       "destinationMap": "verdant_stair",
       "node": "Landmark_sunmane_march_south-track",
       "position": [
-        54.5,
-        8.0,
-        114.5
+        166.5,
+        35.0,
+        122.5
       ],
       "serverTile": [
-        170,
-        1
+        290,
+        2
       ]
     }
   ],
@@ -8199,30 +8256,39 @@
       "portal": "north-track",
       "destination": "amethyst_barrens",
       "anchor": [
-        20.5,
-        17,
-        -265.5
+        35.5,
+        18.0,
+        -273.5
       ],
       "outward": [
         0,
         -1
       ],
+      "globalTranslation": [
+        1374.0,
+        0,
+        1092.0
+      ],
+      "globalAnchor": [
+        1409.5,
+        18,
+        818.5
+      ],
       "uvSign": -1,
       "palette": "steppe",
-      "preloadDistance": 170,
-      "retainDistance": 220,
-      "blendDistance": 65,
+      "preloadDistance": 240,
+      "retainDistance": 320,
+      "blendDistance": 90,
       "collarDepth": 42,
       "halfWidthTiles": 3,
-      "viewHalfWidth": 40.0,
-      "viewDepth": 145.0,
-      "previewPrefix": "StreamView_amethyst-sunmane__",
-      "overflowSuffix": "_StreamOverflow_amethyst-sunmane",
-      "geometryMode": "shared-cells-v2",
+      "viewHalfWidth": 110,
+      "viewDepth": 240,
+      "geometryMode": "continent-owned-v1",
       "sceneNodes": [
         "Terrain_Base_StreamCell_amethyst-sunmane",
         "Terrain_Trail_StreamCell_amethyst-sunmane",
-        "Backdrop_Steppe_StreamCell_amethyst-sunmane",
+        "Terrain_Shore_StreamCell_amethyst-sunmane",
+        "Walk_ContinentRoad_amethyst-sunmane_StreamCell_amethyst-sunmane",
         "Terrain_Base_StreamCollar_amethyst-sunmane_Turf_StreamCell_amethyst-sunmane",
         "Terrain_Base_StreamCollar_amethyst-sunmane_Frost_StreamCell_amethyst-sunmane",
         "Terrain_Base_StreamCollar_amethyst-sunmane_Road_StreamCell_amethyst-sunmane",
@@ -8230,20 +8296,128 @@
         "Terrain_Trail_StreamCollar_amethyst-sunmane_Frost_StreamCell_amethyst-sunmane",
         "Terrain_Trail_StreamCollar_amethyst-sunmane_Road_StreamCell_amethyst-sunmane",
         "Water_Sea_StreamCell_amethyst-sunmane",
+        "Landmark_orun_round_tent_00",
+        "Landmark_orun_round_tent_01",
+        "Landmark_orun_round_tent_02",
+        "Landmark_orun_banner_shrine_00",
+        "Camp00_FirePit",
+        "Camp00_DryingRack",
+        "Camp00_Cart",
+        "Camp00_Hitching",
+        "Camp00_ToolRack",
+        "Landmark_orun_round_tent_03",
+        "Landmark_orun_round_tent_04",
+        "Landmark_orun_round_tent_05",
+        "Landmark_orun_banner_shrine_01",
+        "Camp01_FirePit",
+        "Camp01_DryingRack",
+        "Camp01_Cart",
+        "Camp01_Hitching",
+        "Landmark_sunmane_caravanserai_02",
+        "Landmark_sunmane_windmill_03",
+        "Landmark_sunmane_windmill_04",
+        "Landmark_sunmane_windmill_05",
+        "Landmark_sunmane_animal_pen_00",
+        "Landmark_sunmane_animal_pen_01",
+        "Landmark_sunmane_animal_pen_05",
+        "Landmark_sunmane_burial_mound_00",
+        "Landmark_sunmane_burial_mound_01",
+        "Landmark_sunmane_burial_mound_02",
+        "Landmark_sunmane_burial_mound_03",
+        "Landmark_sunmane_burial_mound_04",
+        "Landmark_sunmane_burial_mound_05",
+        "Landmark_sunmane_outpost_00",
+        "Landmark_sunmane_outpost_04",
+        "Landmark_sunmane_cave_wind_caves",
+        "Landmark_sunmane_cave_drovers_shelter",
+        "Landmark_sunmane_march_west-landing",
         "Landmark_sunmane_march_north-track",
+        "Landmark_sunmane_secret_steppe-seed-hollow",
+        "Landmark_sunmane_secret_steppe-outpost-butts",
+        "Landmark_sunmane_secret_steppe-barrow-reliquary",
+        "Landmark_sunmane_secret_steppe-standing-well",
         "Landmark_sunmane_secret_steppe-dune-eyrie",
         "Landmark_sunmane_secret_steppe-sap-mouth",
         "Landmark_sunmane_desert_station_00",
+        "Landmark_sunmane_waystone_00",
+        "Landmark_sunmane_waystone_01",
+        "Landmark_sunmane_waystone_02",
+        "Landmark_sunmane_waystone_03",
+        "Landmark_sunmane_waystone_04",
         "Landmark_sunmane_waystone_05",
         "Landmark_sunmane_outpost_05",
         "Detail_DesertCamp_00_Pavilion_0",
         "Detail_DesertCamp_00_Pavilion_1",
         "Detail_DesertCamp_00_Fire",
+        "Detail_DesertCamp_00_Cart",
         "Detail_DesertCamp_00_Picket",
+        "Detail_DesertCamp_01_Pavilion_0",
+        "Detail_DesertCamp_01_Pavilion_1",
+        "Detail_DesertCamp_01_Fire",
+        "Detail_DesertCamp_01_Cart",
+        "Detail_DesertCamp_01_Picket",
+        "Detail_Scree_00",
         "Detail_Scree_01",
         "Detail_Scree_02",
-        "Detail_Scree_11"
+        "Detail_Scree_03",
+        "Detail_Scree_04",
+        "Detail_Scree_05",
+        "Detail_Scree_09",
+        "Detail_Scree_10",
+        "Detail_Scree_11",
+        "Landmark_sunmane_cave_wind_caves_EarthRock_0",
+        "Landmark_sunmane_cave_wind_caves_EarthRock_1",
+        "Landmark_sunmane_cave_wind_caves_EarthRock_2",
+        "Landmark_sunmane_cave_drovers_shelter_EarthRock_0",
+        "Landmark_sunmane_cave_drovers_shelter_EarthRock_1",
+        "Landmark_sunmane_cave_drovers_shelter_EarthRock_2",
+        "Lee_1_0",
+        "Lee_1_1",
+        "Lee_1_2",
+        "Lee_1_3",
+        "Lee_1_4",
+        "Lee_1_5",
+        "Lee_1_6",
+        "Lee_1_7",
+        "Lee_1_8",
+        "Lee_2_0",
+        "Lee_2_1",
+        "Lee_2_2",
+        "Lee_2_3",
+        "Lee_2_4",
+        "Lee_2_5",
+        "Lee_2_6",
+        "Lee_2_7",
+        "Grain_3_0_0",
+        "Grain_3_0_1",
+        "Grain_3_0_2",
+        "Grain_3_1_0",
+        "Grain_3_1_1",
+        "Grain_3_1_2",
+        "Grain_3_2_0",
+        "Grain_3_2_1",
+        "Grain_3_2_2",
+        "Terrain_Base_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane",
+        "Terrain_ForestFloor_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane",
+        "Terrain_Trail_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane",
+        "Water_Sea_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane",
+        "Water_SteppeBeck_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane",
+        "Water_Waterholes_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane",
+        "Terrain_Base_StreamCell_amethyst-sunmane_StreamCell_sunmane-verdant",
+        "Terrain_Trail_StreamCell_amethyst-sunmane_StreamCell_sunmane-verdant",
+        "Terrain_Base_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
+        "Terrain_Trail_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
+        "Water_Sea_StreamCell_amethyst-sunmane_StreamCell_sunmane-verdant",
+        "Water_Waterholes_StreamCell_amethyst-sunmane_StreamCell_sunmane-verdant",
+        "Water_Sea_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
+        "Water_Waterholes_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
+        "Terrain_Base_StreamCollar_amethyst-sunmane_Frost_StreamCell_amethyst-sunmane_InlandSoftHigh",
+        "Terrain_Base_StreamCollar_amethyst-sunmane_Frost_StreamCell_amethyst-sunmane_InlandSoftLow",
+        "Terrain_Trail_StreamCollar_amethyst-sunmane_Frost_StreamCell_amethyst-sunmane_InlandSoftHigh",
+        "Terrain_Trail_StreamCollar_amethyst-sunmane_Frost_StreamCell_amethyst-sunmane_InlandSoftLow"
       ],
+      "previewPrefix": "StreamView_amethyst-sunmane__",
+      "overflowSuffix": "_StreamOverflow_amethyst-sunmane",
       "profile": "steppe"
     },
     {
@@ -8251,40 +8425,54 @@
       "portal": "west-landing",
       "destination": "four_gates",
       "anchor": [
-        -113.5,
-        4,
-        -0.5
+        -120.5,
+        4.0,
+        -38.5
       ],
       "outward": [
         -1,
         0
       ],
+      "globalTranslation": [
+        1374.0,
+        0,
+        1092.0
+      ],
+      "globalAnchor": [
+        1253.5,
+        4,
+        1053.5
+      ],
       "uvSign": -1,
       "palette": "causeway",
-      "preloadDistance": 170,
-      "retainDistance": 220,
-      "blendDistance": 65,
+      "preloadDistance": 240,
+      "retainDistance": 320,
+      "blendDistance": 90,
       "collarDepth": 42,
       "halfWidthTiles": 3,
-      "viewHalfWidth": 40.0,
-      "viewDepth": 145.0,
-      "previewPrefix": "StreamView_four-gates-sunmane__",
-      "overflowSuffix": "_StreamOverflow_four-gates-sunmane",
-      "geometryMode": "shared-cells-v2",
+      "viewHalfWidth": 110,
+      "viewDepth": 240,
+      "geometryMode": "continent-owned-v1",
       "sceneNodes": [
         "Terrain_Base_StreamCell_four-gates-sunmane",
         "Terrain_ForestFloor_StreamCell_four-gates-sunmane",
         "Terrain_Trail_StreamCell_four-gates-sunmane",
         "Terrain_Paving_StreamCell_four-gates-sunmane",
         "Terrain_Shore_StreamCell_four-gates-sunmane",
-        "Backdrop_Steppe_StreamCell_four-gates-sunmane",
+        "Walk_ContinentRoad_four-gates-sunmane_StreamCell_four-gates-sunmane",
         "Walk_StreamCauseway_four-gates-sunmane_StreamCell_four-gates-sunmane",
         "Structure_StreamCauseway_four-gates-sunmane_pale_ashlar_StreamCell_four-gates-sunmane",
         "Structure_StreamCauseway_four-gates-sunmane_rubble_stone_StreamCell_four-gates-sunmane",
+        "Terrain_Base_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane",
+        "Terrain_ForestFloor_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane",
+        "Terrain_Trail_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane",
         "Water_Sea_StreamCell_four-gates-sunmane",
         "Water_SteppeBeck_StreamCell_four-gates-sunmane",
         "Water_Waterholes_StreamCell_four-gates-sunmane",
         "Water_StreamCauseway_four-gates-sunmane_StreamCell_four-gates-sunmane",
+        "Water_Sea_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane",
+        "Water_SteppeBeck_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane",
+        "Water_Waterholes_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane",
         "Landmark_sunmane_great_hall",
         "Landmark_orun_seasonal_market_00",
         "Landmark_orun_seasonal_market_01",
@@ -8317,106 +8505,24 @@
         "Encampment_WallTower_01",
         "Encampment_WallTower_02",
         "Encampment_WallTower_03",
-        "Landmark_orun_banner_shrine_04",
-        "Landmark_orun_banner_shrine_05",
-        "Landmark_orun_banner_shrine_06",
-        "Landmark_orun_banner_shrine_07",
-        "Landmark_sunmane_caravanserai_00",
-        "Landmark_sunmane_windmill_02",
-        "Landmark_sunmane_well_01",
-        "Landmark_sunmane_filled_well",
-        "Landmark_sunmane_burial_mound_00",
-        "Landmark_sunmane_burial_mound_01",
-        "Landmark_sunmane_burial_mound_02",
-        "Landmark_sunmane_outpost_03",
-        "Landmark_sunmane_standing_stone_000",
-        "Landmark_sunmane_standing_stone_001",
-        "Landmark_sunmane_standing_stone_002",
-        "Landmark_sunmane_standing_stone_003",
-        "Landmark_sunmane_standing_stone_004",
-        "Landmark_sunmane_standing_stone_005",
-        "Landmark_sunmane_standing_stone_006",
-        "StoneCircle00_Hearth",
-        "Landmark_sunmane_standing_stone_104",
-        "Landmark_sunmane_standing_stone_105",
-        "Landmark_sunmane_march_west-landing",
-        "Landmark_sunmane_secret_steppe-hall-vault",
-        "Landmark_sunmane_secret_steppe-caravan-school",
-        "Landmark_sunmane_landing_00",
-        "Structure_Palisade",
-        "Structure_Bridge_00",
-        "Structure_Bridge_01",
-        "Structure_Bridge_02",
-        "Lee_0_0",
-        "Lee_0_7",
-        "Lee_0_9",
-        "Grain_2_0_0",
-        "Grain_2_0_1",
-        "Grain_2_0_2",
-        "Grain_2_1_0",
-        "Grain_2_1_1",
-        "Grain_2_1_2",
-        "Grain_2_2_0",
-        "Grain_2_2_1",
-        "Grain_2_2_2",
-        "Terrain_Base_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
-        "Terrain_Trail_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
-        "Terrain_Paving_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
-        "Water_Sea_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant"
-      ],
-      "profile": "causeway",
-      "waterBelowDeck": 4.0,
-      "deckWidth": 7.0
-    },
-    {
-      "id": "sunmane-verdant",
-      "portal": "south-track",
-      "destination": "verdant_stair",
-      "anchor": [
-        54.5,
-        8,
-        113.5
-      ],
-      "outward": [
-        0,
-        1
-      ],
-      "uvSign": 1,
-      "palette": "steppe",
-      "preloadDistance": 170,
-      "retainDistance": 220,
-      "blendDistance": 65,
-      "collarDepth": 42,
-      "halfWidthTiles": 3,
-      "viewHalfWidth": 40.0,
-      "viewDepth": 145.0,
-      "previewPrefix": "StreamView_sunmane-verdant__",
-      "overflowSuffix": "_StreamOverflow_sunmane-verdant",
-      "geometryMode": "shared-cells-v2",
-      "sceneNodes": [
-        "Terrain_Base_StreamCell_sunmane-verdant",
-        "Terrain_Trail_StreamCell_sunmane-verdant",
-        "Backdrop_Steppe_StreamCell_sunmane-verdant",
-        "Terrain_Base_StreamCollar_sunmane-verdant_Turf_StreamCell_sunmane-verdant",
-        "Terrain_Base_StreamCollar_sunmane-verdant_Frost_StreamCell_sunmane-verdant",
-        "Terrain_Base_StreamCollar_sunmane-verdant_Road_StreamCell_sunmane-verdant",
-        "Terrain_Base_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
-        "Terrain_Trail_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
-        "Terrain_Paving_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
-        "Water_Sea_StreamCell_sunmane-verdant",
-        "Water_Waterholes_StreamCell_sunmane-verdant",
-        "Water_Sea_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
-        "Encampment_Pavilion_01",
-        "Encampment_Pavilion_03",
-        "Encampment_Pavilion_05",
-        "Encampment_ToolRack_01",
-        "Encampment_FirePit_03",
-        "Encampment_Cart_01",
-        "Encampment_Hitching_01",
-        "Gate_East",
-        "Encampment_WallTower_00",
-        "Encampment_WallTower_03",
+        "Landmark_orun_round_tent_00",
+        "Landmark_orun_round_tent_01",
+        "Landmark_orun_round_tent_02",
+        "Landmark_orun_banner_shrine_00",
+        "Camp00_FirePit",
+        "Camp00_DryingRack",
+        "Camp00_Cart",
+        "Camp00_Hitching",
+        "Camp00_ToolRack",
+        "Landmark_orun_round_tent_03",
+        "Landmark_orun_round_tent_04",
+        "Landmark_orun_round_tent_05",
         "Landmark_orun_banner_shrine_01",
+        "Camp01_FirePit",
+        "Camp01_DryingRack",
+        "Camp01_Cart",
+        "Camp01_Hitching",
+        "Camp01_ToolRack",
         "Landmark_orun_round_tent_06",
         "Landmark_orun_round_tent_07",
         "Landmark_orun_round_tent_08",
@@ -8426,15 +8532,50 @@
         "Camp02_Cart",
         "Camp02_Hitching",
         "Camp02_ToolRack",
+        "Landmark_orun_round_tent_11",
+        "Landmark_orun_banner_shrine_03",
+        "Camp03_FirePit",
+        "Camp03_Cart",
+        "Camp03_ToolRack",
+        "Landmark_orun_banner_shrine_04",
         "Landmark_orun_banner_shrine_05",
+        "Landmark_orun_banner_shrine_06",
         "Landmark_orun_banner_shrine_07",
+        "Landmark_sunmane_caravanserai_00",
         "Landmark_sunmane_caravanserai_01",
+        "Landmark_sunmane_caravanserai_02",
+        "Landmark_sunmane_caravanserai_03",
         "Landmark_sunmane_windmill_00",
         "Landmark_sunmane_windmill_01",
+        "Landmark_sunmane_windmill_02",
+        "Landmark_sunmane_windmill_03",
+        "Landmark_sunmane_windmill_04",
+        "Landmark_sunmane_well_01",
         "Landmark_sunmane_well_02",
         "Landmark_sunmane_well_03",
+        "Landmark_sunmane_filled_well",
+        "Landmark_sunmane_animal_pen_00",
+        "Landmark_sunmane_animal_pen_01",
         "Landmark_sunmane_animal_pen_02",
+        "Landmark_sunmane_animal_pen_03",
         "Landmark_sunmane_animal_pen_04",
+        "Landmark_sunmane_animal_pen_05",
+        "Landmark_sunmane_burial_mound_00",
+        "Landmark_sunmane_burial_mound_01",
+        "Landmark_sunmane_burial_mound_02",
+        "Landmark_sunmane_burial_mound_03",
+        "Landmark_sunmane_burial_mound_04",
+        "Landmark_sunmane_burial_mound_05",
+        "Landmark_sunmane_outpost_00",
+        "Landmark_sunmane_outpost_03",
+        "Landmark_sunmane_standing_stone_000",
+        "Landmark_sunmane_standing_stone_001",
+        "Landmark_sunmane_standing_stone_002",
+        "Landmark_sunmane_standing_stone_003",
+        "Landmark_sunmane_standing_stone_004",
+        "Landmark_sunmane_standing_stone_005",
+        "Landmark_sunmane_standing_stone_006",
+        "StoneCircle00_Hearth",
         "Landmark_sunmane_standing_stone_100",
         "Landmark_sunmane_standing_stone_101",
         "Landmark_sunmane_standing_stone_102",
@@ -8442,11 +8583,63 @@
         "Landmark_sunmane_standing_stone_104",
         "Landmark_sunmane_standing_stone_105",
         "StoneCircle01_Hearth",
-        "Landmark_sunmane_march_south-track",
+        "Landmark_sunmane_march_west-landing",
+        "Landmark_sunmane_secret_steppe-seed-hollow",
+        "Landmark_sunmane_secret_steppe-well-garden",
         "Landmark_sunmane_secret_steppe-mill-cache",
+        "Landmark_sunmane_secret_steppe-hall-vault",
+        "Landmark_sunmane_secret_steppe-caravan-school",
         "Landmark_sunmane_secret_steppe-spring",
+        "Landmark_sunmane_secret_steppe-outpost-butts",
+        "Landmark_sunmane_secret_steppe-barrow-reliquary",
+        "Landmark_sunmane_secret_steppe-standing-well",
         "Landmark_sunmane_secret_steppe-banner-focus",
+        "Landmark_sunmane_secret_steppe-waystone",
+        "Landmark_sunmane_desert_station_00",
+        "Landmark_sunmane_waystone_00",
+        "Landmark_sunmane_waystone_01",
+        "Landmark_sunmane_waystone_02",
+        "Landmark_sunmane_waystone_03",
+        "Landmark_sunmane_waystone_04",
+        "Landmark_sunmane_waystone_05",
+        "Landmark_sunmane_waystone_06",
+        "Landmark_sunmane_waystone_07",
+        "Detail_DesertCamp_01_Pavilion_0",
+        "Detail_DesertCamp_01_Pavilion_1",
+        "Detail_DesertCamp_01_Fire",
+        "Detail_DesertCamp_01_Cart",
+        "Detail_DesertCamp_01_Picket",
+        "Detail_Scree_00",
+        "Detail_Scree_02",
+        "Detail_Scree_03",
+        "Detail_Scree_04",
+        "Detail_Scree_09",
+        "Landmark_sunmane_landing_00",
         "Structure_Palisade",
+        "Structure_Bridge_00",
+        "Structure_Bridge_01",
+        "Structure_Bridge_02",
+        "Lee_0_0",
+        "Lee_0_7",
+        "Lee_0_9",
+        "Lee_1_0",
+        "Lee_1_1",
+        "Lee_1_2",
+        "Lee_1_3",
+        "Lee_1_4",
+        "Lee_1_5",
+        "Lee_1_6",
+        "Lee_1_7",
+        "Lee_1_8",
+        "Lee_2_0",
+        "Lee_2_1",
+        "Lee_2_2",
+        "Lee_2_3",
+        "Lee_2_4",
+        "Lee_2_5",
+        "Lee_2_6",
+        "Lee_2_7",
+        "Lee_3_3",
         "Grain_0_0_0",
         "Grain_0_0_1",
         "Grain_0_0_2",
@@ -8464,23 +8657,178 @@
         "Grain_1_1_2",
         "Grain_1_2_0",
         "Grain_1_2_1",
-        "Grain_1_2_2"
+        "Grain_1_2_2",
+        "Grain_2_0_0",
+        "Grain_2_0_1",
+        "Grain_2_0_2",
+        "Grain_2_1_0",
+        "Grain_2_1_1",
+        "Grain_2_1_2",
+        "Grain_2_2_0",
+        "Grain_2_2_1",
+        "Grain_2_2_2",
+        "Grain_3_0_0",
+        "Grain_3_0_1",
+        "Grain_3_0_2",
+        "Grain_3_1_0",
+        "Grain_3_1_1",
+        "Grain_3_1_2",
+        "Grain_3_2_0",
+        "Grain_3_2_1",
+        "Grain_3_2_2",
+        "Terrain_Base_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
+        "Terrain_Trail_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
+        "Terrain_Base_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
+        "Terrain_Trail_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
+        "Water_Sea_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
+        "Water_Waterholes_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
+        "Water_Sea_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
+        "Water_Waterholes_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
+        "Walk_ContinentRoad_sunmane-verdant",
+        "Structure_StreamCauseway_four-gates-sunmane_rim"
       ],
+      "previewPrefix": "StreamView_four-gates-sunmane__",
+      "overflowSuffix": "_StreamOverflow_four-gates-sunmane",
+      "profile": "causeway",
+      "waterBelowDeck": 4.0,
+      "deckWidth": 7.0
+    },
+    {
+      "id": "sunmane-verdant",
+      "portal": "south-track",
+      "destination": "verdant_stair",
+      "anchor": [
+        166.5,
+        35.0,
+        121.5
+      ],
+      "outward": [
+        0,
+        1
+      ],
+      "globalTranslation": [
+        1374.0,
+        0,
+        1092.0
+      ],
+      "globalAnchor": [
+        1540.5,
+        35,
+        1213.5
+      ],
+      "uvSign": 1,
+      "palette": "steppe",
+      "preloadDistance": 240,
+      "retainDistance": 320,
+      "blendDistance": 90,
+      "collarDepth": 42,
+      "halfWidthTiles": 3,
+      "viewHalfWidth": 110,
+      "viewDepth": 240,
+      "geometryMode": "continent-owned-v1",
+      "sceneNodes": [
+        "Terrain_Base_StreamCell_sunmane-verdant",
+        "Terrain_Trail_StreamCell_sunmane-verdant",
+        "Terrain_Barrens_StreamCell_sunmane-verdant",
+        "Terrain_ContinentExtension_sunmane_steppe_StreamCell_sunmane-verdant",
+        "Terrain_Base_StreamCollar_sunmane-verdant_Turf_StreamCell_sunmane-verdant",
+        "Terrain_Base_StreamCollar_sunmane-verdant_Frost_StreamCell_sunmane-verdant",
+        "Terrain_Base_StreamCollar_sunmane-verdant_Road_StreamCell_sunmane-verdant",
+        "Terrain_ContinentExtension_sunmane_steppe_StreamCollar_sunmane-verdant_Turf_StreamCell_sunmane-verdant",
+        "Terrain_ContinentExtension_sunmane_steppe_StreamCollar_sunmane-verdant_Frost_StreamCell_sunmane-verdant",
+        "Terrain_Base_StreamCell_amethyst-sunmane_StreamCell_sunmane-verdant",
+        "Terrain_Trail_StreamCell_amethyst-sunmane_StreamCell_sunmane-verdant",
+        "Terrain_Base_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
+        "Terrain_Trail_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
+        "Terrain_Base_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
+        "Terrain_Trail_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
+        "Water_Sea_StreamCell_sunmane-verdant",
+        "Water_Sea_StreamCell_amethyst-sunmane_StreamCell_sunmane-verdant",
+        "Water_Waterholes_StreamCell_amethyst-sunmane_StreamCell_sunmane-verdant",
+        "Water_Sea_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
+        "Water_Waterholes_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
+        "Water_Sea_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
+        "Water_Waterholes_StreamCell_amethyst-sunmane_StreamCell_four-gates-sunmane_StreamCell_sunmane-verdant",
+        "Landmark_orun_round_tent_03",
+        "Landmark_orun_round_tent_04",
+        "Landmark_orun_round_tent_05",
+        "Landmark_orun_banner_shrine_01",
+        "Camp01_FirePit",
+        "Camp01_DryingRack",
+        "Camp01_Cart",
+        "Camp01_Hitching",
+        "Camp01_ToolRack",
+        "Landmark_orun_round_tent_07",
+        "Landmark_sunmane_windmill_00",
+        "Landmark_sunmane_windmill_01",
+        "Landmark_sunmane_windmill_03",
+        "Landmark_sunmane_windmill_05",
+        "Landmark_sunmane_well_03",
+        "Landmark_sunmane_animal_pen_01",
+        "Landmark_sunmane_animal_pen_02",
+        "Landmark_sunmane_animal_pen_05",
+        "Landmark_sunmane_outpost_02",
+        "Landmark_sunmane_outpost_04",
+        "Landmark_sunmane_cave_east_adit",
+        "Landmark_sunmane_march_south-track",
+        "Landmark_sunmane_secret_steppe-mill-cache",
+        "Landmark_sunmane_secret_steppe-waystone",
+        "Landmark_sunmane_waystone_03",
+        "Landmark_sunmane_waystone_04",
+        "Landmark_sunmane_waystone_06",
+        "Landmark_sunmane_waystone_07",
+        "Landmark_sunmane_outpost_07",
+        "Detail_DesertCamp_01_Pavilion_0",
+        "Detail_DesertCamp_01_Fire",
+        "Detail_DesertCamp_01_Cart",
+        "Detail_DesertCamp_01_Picket",
+        "Detail_Scree_06",
+        "Detail_Scree_07",
+        "Detail_Scree_08",
+        "Landmark_sunmane_cave_east_adit_EarthRock_0",
+        "Landmark_sunmane_cave_east_adit_EarthRock_1",
+        "Landmark_sunmane_cave_east_adit_EarthRock_2",
+        "Lee_2_0",
+        "Lee_2_1",
+        "Lee_2_2",
+        "Lee_2_3",
+        "Lee_2_4",
+        "Lee_2_5",
+        "Lee_2_6",
+        "Lee_2_7",
+        "Grain_0_0_2",
+        "Grain_0_1_2",
+        "Grain_0_2_2",
+        "Grain_1_0_0",
+        "Grain_1_0_1",
+        "Grain_1_0_2",
+        "Grain_1_1_0",
+        "Grain_1_1_1",
+        "Grain_1_1_2",
+        "Grain_1_2_0",
+        "Grain_1_2_1",
+        "Grain_1_2_2",
+        "Walk_ContinentRoad_sunmane-verdant",
+        "Terrain_Base_StreamCell_sunmane-verdant_SouthRidgeSoil",
+        "Terrain_Base_StreamCollar_sunmane-verdant_Turf_StreamCell_sunmane-verdant_SouthRidgeSoil"
+      ],
+      "previewPrefix": "StreamView_sunmane-verdant__",
+      "overflowSuffix": "_StreamOverflow_sunmane-verdant",
       "profile": "steppe"
     }
   ],
   "performance": {
-    "nodes": 1292,
-    "meshes": 322,
-    "materials": 35,
-    "images": 63,
-    "textures": 63,
-    "accessors": 1582,
-    "bufferViews": 1645,
-    "uniqueTriangles": 667233,
-    "uniqueVertices": 398467,
-    "glbBytes": 28945532,
-    "instancedTriangles": 783630
+    "nodes": 1338,
+    "meshes": 368,
+    "materials": 39,
+    "images": 69,
+    "textures": 69,
+    "accessors": 1802,
+    "bufferViews": 1871,
+    "uniqueTriangles": 939487,
+    "uniqueVertices": 552746,
+    "glbBytes": 35950172,
+    "instancedTriangles": 1055884
   },
   "rendering": {
     "occluderFadeAlpha": 0.18
@@ -8496,8 +8844,8 @@
         -1.0
       ],
       "serverTile": [
-        120,
-        117
+        128,
+        126
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe"
     },
@@ -8511,8 +8859,8 @@
         5.0
       ],
       "serverTile": [
-        110,
-        111
+        118,
+        120
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe"
     },
@@ -8526,8 +8874,8 @@
         -76.0
       ],
       "serverTile": [
-        78,
-        192
+        86,
+        201
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe"
     },
@@ -8541,8 +8889,8 @@
         5.0
       ],
       "serverTile": [
-        74,
-        111
+        82,
+        120
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe"
     },
@@ -8556,8 +8904,8 @@
         4.0
       ],
       "serverTile": [
-        159,
-        112
+        167,
+        121
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe"
     },
@@ -8571,8 +8919,8 @@
         -78.0
       ],
       "serverTile": [
-        83,
-        194
+        91,
+        203
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe"
     },
@@ -8586,8 +8934,8 @@
         43.0
       ],
       "serverTile": [
-        172,
-        73
+        180,
+        82
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe"
     },
@@ -8601,8 +8949,8 @@
         11.0
       ],
       "serverTile": [
-        112,
-        105
+        120,
+        114
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe"
     },
@@ -8616,8 +8964,8 @@
         -38.0
       ],
       "serverTile": [
-        121,
-        154
+        129,
+        163
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe"
     },
@@ -8627,12 +8975,12 @@
       "role": "trade",
       "position": [
         -90.0,
-        0.96,
+        1.95,
         44.0
       ],
       "serverTile": [
-        26,
-        72
+        34,
+        81
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe"
     },
@@ -8646,8 +8994,8 @@
         -148.0
       ],
       "serverTile": [
-        126,
-        264
+        134,
+        273
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe"
     },
@@ -8661,8 +9009,8 @@
         -171.0
       ],
       "serverTile": [
-        279,
-        287
+        287,
+        296
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe"
     },
@@ -8676,8 +9024,8 @@
         -177.0
       ],
       "serverTile": [
-        236,
-        293
+        244,
+        302
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe"
     },
@@ -8691,8 +9039,8 @@
         -153.0
       ],
       "serverTile": [
-        323,
-        269
+        331,
+        278
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe"
     },
@@ -8706,8 +9054,8 @@
         -155.0
       ],
       "serverTile": [
-        334,
-        271
+        342,
+        280
       ],
       "spawnHook": "npcs.nymara.sunmane_steppe"
     }
@@ -8727,8 +9075,8 @@
         5
       ],
       "serverTile": [
-        194,
-        62
+        202,
+        71
       ],
       "harvestHook": "harvest.nymara.sunmane_steppe",
       "position": [
@@ -8751,8 +9099,8 @@
         5
       ],
       "serverTile": [
-        186,
-        63
+        194,
+        72
       ],
       "harvestHook": "harvest.nymara.sunmane_steppe",
       "position": [
@@ -8775,8 +9123,8 @@
         4
       ],
       "serverTile": [
-        163,
-        213
+        171,
+        222
       ],
       "harvestHook": "harvest.nymara.sunmane_steppe",
       "position": [
@@ -8799,8 +9147,8 @@
         4
       ],
       "serverTile": [
-        68,
-        130
+        76,
+        139
       ],
       "harvestHook": "harvest.nymara.sunmane_steppe",
       "position": [
@@ -8823,8 +9171,8 @@
         5
       ],
       "serverTile": [
-        158,
-        212
+        166,
+        221
       ],
       "harvestHook": "harvest.nymara.sunmane_steppe",
       "position": [
@@ -8847,8 +9195,8 @@
         8.0
       ],
       "serverTile": [
-        83,
-        59
+        91,
+        68
       ],
       "harvestHook": "harvest.nymara.sunmane_steppe",
       "position": [
@@ -8863,7 +9211,7 @@
       "kind": "herb",
       "center": [
         -77.0,
-        2.1,
+        2.17,
         45.0
       ],
       "extent": [
@@ -8871,8 +9219,8 @@
         8.0
       ],
       "serverTile": [
-        39,
-        71
+        47,
+        80
       ],
       "harvestHook": "harvest.nymara.sunmane_steppe",
       "position": [
@@ -8887,7 +9235,7 @@
       "kind": "herb",
       "center": [
         -81.0,
-        2.35,
+        2.97,
         43.0
       ],
       "extent": [
@@ -8895,8 +9243,8 @@
         8.0
       ],
       "serverTile": [
-        35,
-        73
+        43,
+        82
       ],
       "harvestHook": "harvest.nymara.sunmane_steppe",
       "position": [
@@ -8919,8 +9267,8 @@
         6.0
       ],
       "serverTile": [
-        38,
-        42
+        46,
+        51
       ],
       "harvestHook": "harvest.nymara.sunmane_steppe",
       "position": [
@@ -8943,8 +9291,8 @@
         6.0
       ],
       "serverTile": [
-        60,
-        203
+        68,
+        212
       ],
       "harvestHook": "harvest.nymara.sunmane_steppe",
       "position": [
@@ -8967,8 +9315,8 @@
         7.0
       ],
       "serverTile": [
-        58,
-        184
+        66,
+        193
       ],
       "harvestHook": "harvest.nymara.sunmane_steppe",
       "position": [
@@ -8991,8 +9339,8 @@
         7.0
       ],
       "serverTile": [
-        262,
-        197
+        270,
+        206
       ],
       "harvestHook": "harvest.nymara.sunmane_steppe",
       "position": [
@@ -9015,8 +9363,8 @@
         8.0
       ],
       "serverTile": [
-        312,
-        227
+        320,
+        236
       ],
       "harvestHook": "harvest.nymara.sunmane_steppe",
       "position": [
@@ -9039,8 +9387,8 @@
         7.0
       ],
       "serverTile": [
-        313,
-        233
+        321,
+        242
       ],
       "harvestHook": "harvest.nymara.sunmane_steppe",
       "position": [
@@ -9063,8 +9411,8 @@
         9.0
       ],
       "serverTile": [
-        276,
-        309
+        284,
+        318
       ],
       "harvestHook": "harvest.nymara.sunmane_steppe",
       "position": [
@@ -9087,8 +9435,8 @@
         7.0
       ],
       "serverTile": [
-        104,
-        297
+        112,
+        306
       ],
       "harvestHook": "harvest.nymara.sunmane_steppe",
       "position": [
@@ -9111,8 +9459,8 @@
         8.0
       ],
       "serverTile": [
-        100,
-        273
+        108,
+        282
       ],
       "harvestHook": "harvest.nymara.sunmane_steppe",
       "position": [
@@ -9135,8 +9483,8 @@
         8.0
       ],
       "serverTile": [
-        77,
-        55
+        85,
+        64
       ],
       "harvestHook": "harvest.nymara.sunmane_steppe",
       "position": [
@@ -9159,8 +9507,8 @@
         6.0
       ],
       "serverTile": [
-        336,
-        194
+        344,
+        203
       ],
       "harvestHook": "harvest.nymara.sunmane_steppe",
       "position": [
@@ -9183,8 +9531,8 @@
         6.0
       ],
       "serverTile": [
-        77,
-        322
+        85,
+        331
       ],
       "harvestHook": "harvest.nymara.sunmane_steppe",
       "position": [
@@ -9193,5 +9541,185 @@
         -75.49609375
       ]
     }
-  ]
+  ],
+  "continentGeography": {
+    "schemaVersion": 1,
+    "nativeServerOrigin": [
+      116,
+      116
+    ],
+    "nativeServerCells": [
+      384,
+      384
+    ],
+    "serverOrigin": [
+      124,
+      125
+    ],
+    "serverCells": [
+      402,
+      402
+    ],
+    "serverTileShift": [
+      8,
+      9
+    ],
+    "serverBounds": [
+      [
+        -124,
+        -277
+      ],
+      [
+        278,
+        125
+      ]
+    ],
+    "mapBounds": [
+      [
+        -121,
+        -304
+      ],
+      [
+        304,
+        128
+      ]
+    ],
+    "geographySha256": "9abd167a99745cd0d5b6c164e496979884bc6db71b403210d1a3b837ef470830",
+    "geometrySha256": "54c66c4d4064683284b54dc301702eaa93452f9e1424367660bd7c0fd918e2da",
+    "nativeCollisionSha256": "cf1e9b38c31a71d9ec7e96a3eafd020d8d72d749117f830123d999e9c6e1b4a6",
+    "result": {
+      "nativeBlockedPreserved": 60042,
+      "oldWalkableUnsupportedClosed": 0,
+      "oldWalkableSubmergedClosed": 0,
+      "paddingWalkableCells": 25990,
+      "walkableCells": 555772,
+      "maximumPaddingGradient": 0.8,
+      "minimumWaterClearanceMetres": 0.0,
+      "existingWadeDepthMetres": 0.25
+    }
+  },
+  "authoredGeometry": {
+    "generator": "eloria-assets/tools/rebuild_continent_geography.py",
+    "inputs": {
+      "eloria-assets/maps/nymara-regions/_color/terrain_paint.py": "32bd5948091cdbc33a674938bb8ce34ac4daf39a8e5df23b3bf1bc10b58338f4",
+      "eloria-assets/maps/nymara-regions/_finishing/causeway_rims.py": "61c898ab904dd5632c3e057463dd198d45631bb1725289ecdd9f54cd3d73c15a",
+      "eloria-assets/maps/nymara-regions/_finishing/connector_finish.py": "9c7fd186f7979565db3d20cdd7b8602e0be4dda4d91158933566be1cbdafec16",
+      "eloria-assets/maps/nymara-regions/_northern/landscape_finish.py": "8321fdc08064d0ad29329179d7d8d6979ff1d982ae746b15af1ca7ff1741126a",
+      "eloria-assets/maps/nymara-regions/_northern/road_profiles.py": "d608628d1dc9e63ab52c6b9ba103381e2324c30436c3fee60dda2bbc346472d0",
+      "eloria-assets/maps/nymara-regions/_outer/outer_aprons.py": "31038e07fdba448b696a34218f6bec7bad03c4813dab9ed31c3b1be397ca9e39",
+      "eloria-assets/maps/nymara-regions/_outer/probe_outer_aprons.py": "a39f2733da5de90f8f9561c0a38cbb8c4ab65e8ce6db014c577e7a57319f7dcf",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/__init__.py": "bcc6624b01ea53fc8be93665bc56aff69af74ece20ff6ae6ad891057cf4b8b23",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/arcadecraft.py": "034302006e0499827591385a290a8f2ec6e7cb5ead6bc5781574c7a4eb8f3b67",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/architecture.py": "bcaee2e29b73a3eff4de2e71ba73fb9eb724fd620075b2ff080cf9c1b4f928e8",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/barrowcraft.py": "49289f61a280e4f2212091606d7742dd0ff69326f9f8ed2a2f3dba5575a7244a",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/canyoncraft.py": "b71feab7ac07d08f3e39ad7760b1f3192e59e2741d3296c1ed2ab155d2ba4a17",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/civiccraft.py": "738ced5f7d36e91824dde9a964f27478a093116d217f957fed6f83712fa68a08",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/coplanar.py": "016dcdfb2c0f6687b20e2257076ef8833dc1e9600376184f0bb0c31bc298ccac",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/crownmaterials.py": "69d80d601786376d992b14637edee8cbf721f0d34b8499f4ea654cbafecd0cbb",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/crystalcraft.py": "439ae8820f87ff243efeb6270170353ca47d4f3dfa7f97feb4c747fd3d3b0d70",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/forestcraft.py": "2f2b2872dc070fe944b5fab3ddca98f1b71f6530f57c61d3e3adc5dc7e4c26dc",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/gltf.py": "3df32803d90efb5f7255d30e6027b36660773c5fd935ce5d5ec7796b0f2941b0",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/interiors.py": "516fada40372437f5950ff0a9bea7b00e5f49a9273d0fccb3b38c102d1b121b9",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/junglecraft.py": "e09a197f926a412d63132c7ab9efa721d7384e791b698286cbe6ee71d88f8dde",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/landscape.py": "b24717f59470152715b4079f924891fd241f4c8cb0950a7480be8382b03a4b9d",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/materials.py": "af4917a899a08fa663884defd35d79aa45ae9c264e2028cf03f10520898b53f6",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/mesh.py": "6a3930bc16c72a30df6cd406eb78369c4c7a0c39a2895f5db90df90b8b2170ba",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/moorcraft.py": "64338e95741c2d6cb7559e15df77ce80ffc8a089524bc19067ca3a4e05d89f1a",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/mountaincraft.py": "942f0afb01b958a4a8398b8e3b5bdec10ec88af93706f84a20b6068d9b6a9c7d",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/noise.py": "62c4b8d88d1c5f307b22768996382e91f31c0a6c16d723a2b3886450af278c4c",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/observatorycraft.py": "d431fa03cf00868eb0a0e62a858f622642fa54295839a47aba75f27af890b1c3",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/populate.py": "5086e89209fa9f1bb6b298fa90382738a9807d49f137ff2186c6c5fb9f84077b",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/props.py": "8368e2b0b2adafddb93381657fd78beba75ed084771560f7dd7dba0c33632494",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/region.py": "9d72472f480789e59ab849f0473ac0ca275c3f246d3a549da8c461862a9fe5b1",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/render.py": "ace7bbe332dbf87db4e2d4378617b831606f8861ff19f300fde7e3ef6ce0d228",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/routecraft.py": "34c88fbda7c826775b0e11148710dbd1f4d775198fd25ff6736852012061cb9c",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/smallrooms.py": "4a27b353b9ad8307e8f7fd37388f884ae2241ce2867d35c677cf6720f3c8bd35",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/spatial.py": "befd9a805574b37de45f65815941778cf2b6bb46f11868ff4d4a9cb03a52bd77",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/stonework.py": "225b8cdb38bafba7c3f2a4e8c730642aca8103f51877b3a0db31e95af0010881",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/templecraft.py": "1646e1907298dbedd406fcb4d086508a929c86065bf756795a54afdf4959e3df",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/terrain.py": "185ff68f54f2294e32b8ed89b157bb5be66d71d6cb2faf5678ece9a9516cf3df",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/textures.py": "576413d77324f3ce4bb152382af96663ee564943db3cc7841a0e264011417399",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/treecraft.py": "f7755cce4a38b32335cf7a2462cbf246a2dd3f1167399dc5282eaf8b308697b6",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/trees.py": "8cefc035655f20d09798c7ed41935c0c59d5d30ff07163619e0ca4e486684d63",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/watercraft.py": "39d9b79e531325a66288c2ee008831be73156d87740c885b11242450b144f028",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/waterfront.py": "75a79cb467428ae063c78a520b3fd921afc7e3648b00d2d1f59e2bd6daab6524",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/woodlandcraft.py": "921c59a131b7cccdfc2e2bd889438ee6e1887088739a30a72b41cc9df0cffb2f",
+      "eloria-assets/maps/nymara-regions/_toolkit/border_vistas.py": "ccd302df09d476b693368a28e62ad0124027ccae640ce1dd7c399e6dc579409b",
+      "eloria-assets/maps/nymara-regions/_toolkit/capture_views.py": "b14cda865ec067c8be87d964b96ab9addfaee10b8676bf4bfcd32be55bf91db5",
+      "eloria-assets/maps/nymara-regions/_toolkit/compact_landscape.py": "a75f505b8087be9b5bfe0668ee92dafa53292d3d33cbf544e4848e4a936f1289",
+      "eloria-assets/maps/nymara-regions/_toolkit/compress_captures.py": "242b23b718a95c756b48a8a4c0109592260091fa0b745fcb462dd0e19f8529bb",
+      "eloria-assets/maps/nymara-regions/_toolkit/contentposts.py": "4a6cf588584128191058c7ad48a4386806f45f565d9769f5f39dcdf201c132e9",
+      "eloria-assets/maps/nymara-regions/_toolkit/continent_geography.py": "33363d2be5f76d5d69c98dfe92ac5b8c7f576c3d141326a3f266d8bf8ab63f8c",
+      "eloria-assets/maps/nymara-regions/_toolkit/designs/four_gates_secrets_design.py": "eb7d1d20674547dbadde56bab4ac9555b3c1cb87be422b45801e30b4b621d652",
+      "eloria-assets/maps/nymara-regions/_toolkit/export_insides_collision.py": "11ca322c851b05fe32edfcc27380b072dffc9a9b0303879503af0aa0ccdc9dff",
+      "eloria-assets/maps/nymara-regions/_toolkit/export_interior_collision.py": "f41b095554fa953ff835e88387e9512f295a6178609d7cf3901e6e22669a42ab",
+      "eloria-assets/maps/nymara-regions/_toolkit/export_server_collision.py": "4528ec4e20a3b457d6a1dd0d3ef23c064c4a2e013686e7f6b2c9247634301f7c",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/__init__.py": "1770a3092c31648c5c9d3305c35ef51e62c374d0b3579048eac25cc4985835b3",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/barrow_visitation.py": "bfba53e656cfca95274514770b9a7b424da2073e2adcb5fe474b16f2fa44a246",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/build.py": "e432f3b44844e14aba238333b0b1fc627318984d60fd5a97dc6930149048413a",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/designs.py": "15560b8ff2f2a03fc6a2704eeca3028ed4d1edd7722fc2dc5091c70e4b5e4e08",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/drowned_customs.py": "4534c6177a01b6a5c223d46bb7fc53f724ad081337e26479257ffc10dafeff3b",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/forest_haul.py": "d83fe3419e2586613b0703aaea34cf4cd86885ca370133dd6f11004f54971713",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/ice_mine.py": "9237d00d96a0bfa6b3d7b0cbfab9114d7e77cabbf8cfd6d708a703d41463d607",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/red_canyon.py": "1a75991a5863e426d026e7c3b1ed9a5e8cb6ee7474f7c15b0556032a1860ca29",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/rooms.py": "a91d120ab48f5b905b9f4496b3d4c05e67f2fddf63f74723c58e580fc69d7e8a",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/temple_procession.py": "5c5bade746a0c2cdbb2d02b7495e707eeb9898a23a4cd517248c8075cdcedab4",
+      "eloria-assets/maps/nymara-regions/_toolkit/glb_reader.py": "be5e46a94acf014a8684be216fe8c67ac2aadbf789469087276f229bd85c9a57",
+      "eloria-assets/maps/nymara-regions/_toolkit/guard_actor_surfaces.py": "483c64ba394a3eabef0110296f7e11eedfd2bb4f3203d872c6268ecc0ea41a91",
+      "eloria-assets/maps/nymara-regions/_toolkit/interior_views.py": "f6ad2c7cd16f9a5faf7575154c0252fda8b3c5fb4793b1ff041c2165798d0cff",
+      "eloria-assets/maps/nymara-regions/_toolkit/loresites.py": "16a9b90b2256f956fe92196c303ba04bf2d67ea6b3287f76464aa85c23ff962c",
+      "eloria-assets/maps/nymara-regions/_toolkit/make_comparison.py": "ed2e70b89e7a6c03e830a2364681adb7a7f5412b23cd5691ac9e521f67320820",
+      "eloria-assets/maps/nymara-regions/_toolkit/northern_passes.py": "8b816082f1d1a040ac72d8dc785901ccab4d933aac3e1f4f9a2c575bd4ac6205",
+      "eloria-assets/maps/nymara-regions/_toolkit/open_walk_surfaces.py": "612a56f1c010a89eb6f1507c724242c2b32da757003657e8227132805b7ee555",
+      "eloria-assets/maps/nymara-regions/_toolkit/patch_collision_altitude.py": "c8c5dd2a15b169937d758f1d329d3786010a5f3b49e1e608398c0705b119a889",
+      "eloria-assets/maps/nymara-regions/_toolkit/plan_image.py": "939708d96db2aaa92ba130cd73d425877a1c68ad1e01c748202b464282f3e602",
+      "eloria-assets/maps/nymara-regions/_toolkit/preview.py": "73230ab1978e65480981b52225938826f7a379236c40e1708dce46850945071f",
+      "eloria-assets/maps/nymara-regions/_toolkit/rebuild_collision.py": "3fc76e6cd75ac60d9aa057e584666d7dee0bb5bc4ecc5b21f6682be9f5fc712b",
+      "eloria-assets/maps/nymara-regions/_toolkit/refine_walk_heights.py": "a4d8473b98bc65cd95164a7e5706a002abd0286603ef171eeaae513514883b4d",
+      "eloria-assets/maps/nymara-regions/_toolkit/regionbuild.py": "816c8d61ac0d0d2ccb20a7595a10f93a440df79765bd17804e13a746923f9b15",
+      "eloria-assets/maps/nymara-regions/_toolkit/regionpaths.py": "3a711cd50da4e5be22dd6f51ff6ca62d046fff418abc05edcd60531377b96257",
+      "eloria-assets/maps/nymara-regions/_toolkit/secretdoors.py": "508d26a78fe18389dd39051e49266d1b9c032de72add15a84e2e353a44181646",
+      "eloria-assets/maps/nymara-regions/_toolkit/secretrooms.py": "d7e4a6c6b1de205d3e3f1e94d2b1e18d627d30fef8cffcb0f30213d54d6b09f8",
+      "eloria-assets/maps/nymara-regions/_toolkit/secrets_build.py": "6778bd8634af74c0aaaa7da8ba00f2efdf0beea95fff3031c2c1606bc4c2f842",
+      "eloria-assets/maps/nymara-regions/_toolkit/secrets_doc.py": "a5221761d7595e367ef3e730c51f4ebea8cea7fcbf74d66f81b91e671d2c99bf",
+      "eloria-assets/maps/nymara-regions/_toolkit/server_walk_grid.py": "d6fd1ef43a3fe5903063637d22c1e9371650baea146f011b5f5ed41d4c95f6bb",
+      "eloria-assets/maps/nymara-regions/_toolkit/stamp_solid_landmarks.py": "2cc8b7688f849f59b2ecc22edf511fcaf2247c3cebed09c8fa76eb3e953065d1",
+      "eloria-assets/maps/nymara-regions/_toolkit/streaming_borders.py": "c101578ad9901484568c21dab8be1775bd1a385edfbde785e2dfc99f794a4d3e",
+      "eloria-assets/maps/nymara-regions/_toolkit/transitions.py": "7fb729f597406e72be68350c6c8b007ee74db63cdbfe88a6c1adc6072bf20f4c",
+      "eloria-assets/maps/nymara-regions/_toolkit/validate_gltf.py": "630807c19dfef54f65f6bdcb92bee279f1e3ed49b565ca15261f683539e44309",
+      "eloria-assets/maps/nymara-regions/_toolkit/verify_runtime.py": "7bd2d3d883ff9d07ebb64a21e972f943b2f2a4158683a40be5414bc52e6857be",
+      "eloria-assets/maps/nymara-regions/continent-geography.json": "9abd167a99745cd0d5b6c164e496979884bc6db71b403210d1a3b837ef470830",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/build_landscape.py": "c90ecd92e2290fead1b59336e04dfe78e352b0e4295f8b39cef55af847adfade",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/build_sunmane.py": "650a5a906922d174c205a1201cc950e1ba88ed27edcf523a0e1576f4f992a2e0",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/caves.py": "a5d761455bad5bf613d7af64900609d3f2e8da87b55d8edf905b3d4189c8f48a",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/checks.py": "2c211c3cece731a260a292255745b379494526a6ab6abf9f6d968c9013d3ff4d",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/collision.py": "601025d4eb3e1e970ed05e85ae2bbf377e309e4f817d3719175a45ba69f27c0e",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/comparison.py": "5515cf344f9a5844ad582993bf6693875b9b04da0c868b7c7393a4edb8c0073b",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/creatures.py": "217436ced2959599b2d5260f5e382b0af73e306078b88f45fb879319be3869a9",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/glb.py": "b7073486d77cddc905d26775fbeb98a5190cac7bd627cc3bea670932736f62c7",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/insides.py": "e1e0c8e97d8f589b0988233cdd2a6d535c46255484eeb44fdec1b58b3d66fba0",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/kit.py": "fbd3b40c5807379e298525fbe4ef776ba54e2a68206c0aca03687c1e32c362ff",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/landscape_plan.py": "c01c597e362d38138c3fb0ce9e685af408f20c699cf37c5d6906bc6b2b9c4016",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/layout.py": "c8716a05f626d61ac04f2b7baf9ac34dab86071b1d96518205f87900fba69e82",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/manifest.py": "bb0ec7fc3129524ebf27858b53bb4c4175d23e1a5502d7cb8eb3d8aee0c717d7",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/march_approach.py": "a6ac0648b89bd882f8b0c59e0dae62cf6811d814644c8e79549862f8c8daa646",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/migrate_compact_server.py": "f1c8c9826c959d38d2d9bafdb04108a44c202e0612b0ad45c99fba6751dbd503",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/native_adapter.py": "26f1ff48aa98faa91d6e500d207b2afd487d4a4f5c70d5bd99efd14658ea7798",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/noise.py": "08c3c7016473a851955876f5a8822caa234977910c07e8ee8f2b0547d8b74a41",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/north_paint.py": "8fe7035a6dc712a4371f88b7e8fca07f236d9fc7e970a93cfee05c49bc6be692",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/rebuild_landscape.py": "395d70e189fdd546062a2464369b8cbd34555785e79fc5e0a02b11a664a5e6c1",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/secrets_design.py": "8177b7117ef8d595081a40a31593f9f25b280ee4c26c2fa8488f872ae6608295",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/server_integration.py": "3c77563bd7cccce9d256c13dc2ba3a8b70106e228cb8557c7b92a4360890b8be",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/settlement.py": "18a5c0b78ccd5295e04c35189a7617b8e126f58e867b9a1e08a712968d699aa1",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/shapes.py": "d91b8aac405bc99787a28a55af5c58c511b2bb1d6618a17b6994d298d10fb107",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/south_landform.py": "51a3bd04871efb5079e2d0897513484d6ce1ef56fce19d56199b3854b393ec62",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/terrain.py": "45cbe0af7638f03a32336284fc0bb07a2489cd0289379e6973a72a7b36260975",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/terrain_mesh.py": "4bed41b4475ca4d051fb17f39c134b4dffe15b605042ecfcddacca63fbb9fd98",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/test_landscape_contract.py": "4e82ed5b03423402f414be9061e8cc525fc5746167988d8c230af0141868a3b7",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/test_north_paint.py": "c81793c72635510051dc6f710500946119e7965843f8548310cdeb5b001fc649",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/textures.py": "f648bc69e777e2dae845d5297d406ba16381bf55756f7b03b325829e91dfd9de",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/validate_package.py": "7e50fc04af97871bff89f0c5d1cdf6ec88b10ff1f424fa6bbef9f210328f09be",
+      "eloria-assets/maps/nymara-regions/sunmane_steppe/source/views.py": "18036dc3796e538115036b306b2477640eba7236ac67af561b1221dad577451b"
+    }
+  }
 }

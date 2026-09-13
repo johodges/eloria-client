@@ -90,8 +90,8 @@
       ],
       "returnMap": "sunmane_steppe",
       "returnTile": [
-        239,
-        291
+        247,
+        300
       ],
       "bounds": {
         "min": [
@@ -201,8 +201,8 @@
       ],
       "returnMap": "sunmane_steppe",
       "returnTile": [
-        319,
-        274
+        327,
+        283
       ],
       "bounds": {
         "min": [
@@ -1236,8 +1236,8 @@
       ],
       "destinationMap": "sunmane_steppe",
       "destinationTile": [
-        239,
-        291
+        247,
+        300
       ],
       "section": "sunmane_wind_caves",
       "label": "Back out to the Sunmane Steppe (Sunmane Wind Caves)"
@@ -1256,8 +1256,8 @@
       ],
       "destinationMap": "sunmane_steppe",
       "destinationTile": [
-        319,
-        274
+        327,
+        283
       ],
       "section": "sunmane_crystal_hollow",
       "label": "Back out to the Sunmane Steppe (Amethyst Crystal Hollow)"
@@ -1317,5 +1317,55 @@
   },
   "notes": [
     "Two cave systems on one map with unwalkable blackspace between them, following amethyst_barrens_insides, crownwater_insides and ssarathi_insides. The gutter is 66 m of nothing: the cavern floor only exists where a system's clearance field is open, so there is no floor between them to stand on and nothing there to render."
-  ]
+  ],
+  "geographicFamily": {
+    "schemaVersion": 1,
+    "geographySha256": "9abd167a99745cd0d5b6c164e496979884bc6db71b403210d1a3b837ef470830",
+    "fields": {
+      "/sections/0/returnTile": {
+        "map": "sunmane_steppe",
+        "native": [
+          239.0,
+          291.0
+        ],
+        "published": [
+          247,
+          300
+        ]
+      },
+      "/sections/1/returnTile": {
+        "map": "sunmane_steppe",
+        "native": [
+          319.0,
+          274.0
+        ],
+        "published": [
+          327,
+          283
+        ]
+      },
+      "/portals/0/destinationTile": {
+        "map": "sunmane_steppe",
+        "native": [
+          239.0,
+          291.0
+        ],
+        "published": [
+          247,
+          300
+        ]
+      },
+      "/portals/1/destinationTile": {
+        "map": "sunmane_steppe",
+        "native": [
+          319.0,
+          274.0
+        ],
+        "published": [
+          327,
+          283
+        ]
+      }
+    }
+  }
 }

@@ -21,7 +21,8 @@ extends RefCounted
 ## instead indexed once into a flat XZ grid, and each probe tests the
 ## camera-to-player segment against the oriented box of every mesh registered in
 ## the cells that segment crosses. The geometry is static, so the index is built
-## once per map and never maintained.
+## once per imported root. Its grid stays in that root's coordinates, so a
+## streamed root can move or become active without rebuilding it.
 
 ## Cell size of the lookup grid. Large enough that a probe touches a handful of
 ## cells, small enough that a cell holds a handful of meshes.
@@ -83,7 +84,7 @@ class Occluder extends RefCounted:
 		if not is_instance_valid(node):
 			return false
 		if batch != null:
-			return is_instance_valid(batch)
+			return is_instance_valid(batch) and batch.is_visible_in_tree()
 		return node.is_visible_in_tree()
 
 	## Swaps in duplicated materials that can carry an alpha. Duplicates rather
@@ -151,7 +152,7 @@ class Occluder extends RefCounted:
 			colour.a = _opacity[index] * scale
 			material.albedo_color = colour
 
-	## The batch holds this mesh's world transform, so collapsing that instance
+	## The batch holds this mesh's transform relative to its imported root, so collapsing that instance
 	## to zero scale drops it from the draw without disturbing the others.
 	## Keeping its origin leaves the batch's bounds, and so its culling, alone.
 	func _lift_from_batch() -> void:
@@ -189,6 +190,10 @@ var _active: Array[Occluder] = []
 var _max_extent := MAX_EXTENT_METRES
 var _faded_alpha := FADED_ALPHA
 var _probe_countdown := 0.0
+var _root: Node3D
+
+func indexed_count() -> int:
+	return _occluders.size()
 
 func is_active() -> bool:
 	return not _occluders.is_empty()
@@ -202,8 +207,10 @@ func configure(manifest: WorldManifest, imported_world: Node3D) -> int:
 	reset()
 	if imported_world == null:
 		return 0
+	_root = imported_world
 	_max_extent = MAX_EXTENT_METRES
 	_faded_alpha = FADED_ALPHA
+	var proxy_names: Dictionary = {}
 	if manifest != null:
 		var rendering_value: Variant = manifest.data.get("rendering", {})
 		if rendering_value is Dictionary:
@@ -212,7 +219,13 @@ func configure(manifest: WorldManifest, imported_world: Node3D) -> int:
 			# Layered monumental gates need less opacity than a single tree.
 			_faded_alpha = clampf(float((rendering_value as Dictionary).get(
 				"occluderFadeAlpha", FADED_ALPHA)), 0.0, 1.0)
+		var collision: Dictionary = manifest.data.get("collision", {})
+		if bool(collision.get("nodesAreProxies", false)):
+			for node_name: String in collision.get("nodeNames", []):
+				proxy_names[node_name] = true
 	for node: Node in imported_world.find_children("*", "MeshInstance3D", true, false):
+		if proxy_names.has(str(node.name)):
+			continue
 		var occluder := _index(node as MeshInstance3D)
 		if occluder != null:
 			_occluders.append(occluder)
@@ -227,6 +240,7 @@ func reset() -> void:
 	_occluders.clear()
 	_grid.clear()
 	_probe_countdown = 0.0
+	_root = null
 
 ## Turning it off does not snap: the targets go to zero and the next few frames
 ## blend the obstacles back to solid.
@@ -241,6 +255,9 @@ func set_enabled(enabled: bool) -> void:
 ## Called every frame. The probe runs on its own slower clock; the fades it
 ## decided are animated on every one of them.
 func update(delta: float, camera: Camera3D, player: Node3D) -> void:
+	if not is_instance_valid(_root) or not _root.is_inside_tree():
+		reset()
+		return
 	if _occluders.is_empty():
 		return
 	_probe_countdown -= delta
@@ -254,7 +271,7 @@ func update(delta: float, camera: Camera3D, player: Node3D) -> void:
 func _probe(camera: Camera3D, player: Node3D) -> void:
 	for occluder: Occluder in _active:
 		occluder.target = 0.0
-	if not _enabled or not is_instance_valid(camera) or not is_instance_valid(player):
+	if not _enabled or not _root.is_visible_in_tree() or not is_instance_valid(camera) or not is_instance_valid(player):
 		return
 	var to: Vector3 = player.global_position + Vector3(0.0, PROBE_HEIGHT, 0.0)
 	var from: Vector3 = camera.global_position
@@ -263,7 +280,8 @@ func _probe(camera: Camera3D, player: Node3D) -> void:
 	if length <= PROBE_NEAR:
 		return
 	from += along / length * PROBE_NEAR
-	for occluder: Occluder in _candidates(from, to):
+	var into_root := _root.global_transform.affine_inverse()
+	for occluder: Occluder in _candidates(into_root * from, into_root * to):
 		if occluder.target > 0.0 or not occluder.is_drawing():
 			continue
 		var into_local: Transform3D = occluder.node.global_transform.affine_inverse()
@@ -334,8 +352,9 @@ func _index(mesh_instance: MeshInstance3D) -> Occluder:
 		return null
 	var transform: Transform3D = mesh_instance.global_transform
 	var local_box: AABB = mesh_instance.get_aabb()
-	var world_box: AABB = transform * local_box
-	if maxf(world_box.size.x, world_box.size.z) > _max_extent:
+	var relative_transform := _root.global_transform.affine_inverse() * transform
+	var root_box: AABB = relative_transform * local_box
+	if maxf(root_box.size.x, root_box.size.z) > _max_extent:
 		return null
 	var occluder := Occluder.new()
 	occluder.faded_alpha = _faded_alpha
@@ -356,16 +375,16 @@ func _index(mesh_instance: MeshInstance3D) -> Occluder:
 	local_box.position -= margin
 	local_box.size += margin * 2.0
 	occluder.box = local_box
-	_register(occluder, world_box)
+	_register(occluder, relative_transform * local_box)
 	return occluder
 
-## Files an occluder under every cell its world bounds touch, so a probe that
+## Files an occluder under every cell its expanded root-local bounds touch, so a probe that
 ## crosses any part of a mesh finds it in the first cell it looks at.
-func _register(occluder: Occluder, world_box: AABB) -> void:
-	var min_x: int = floori(world_box.position.x / CELL_METRES)
-	var max_x: int = floori(world_box.end.x / CELL_METRES)
-	var min_z: int = floori(world_box.position.z / CELL_METRES)
-	var max_z: int = floori(world_box.end.z / CELL_METRES)
+func _register(occluder: Occluder, root_box: AABB) -> void:
+	var min_x: int = floori(root_box.position.x / CELL_METRES)
+	var max_x: int = floori(root_box.end.x / CELL_METRES)
+	var min_z: int = floori(root_box.position.z / CELL_METRES)
+	var max_z: int = floori(root_box.end.z / CELL_METRES)
 	for x: int in range(min_x, max_x + 1):
 		for z: int in range(min_z, max_z + 1):
 			var key := Vector2i(x, z)
@@ -376,7 +395,9 @@ func _register(occluder: Occluder, world_box: AABB) -> void:
 static func _is_walk_surface(mesh_instance: MeshInstance3D) -> bool:
 	for child: Node in mesh_instance.get_children():
 		var body: StaticBody3D = child as StaticBody3D
-		if body != null and body.collision_layer == WorldLoader.NAVIGATION_SURFACE_LAYER:
+		# Residents use a preview layer (or zero for hidden geometry). The
+		# original navigation identity survives both states and promotion.
+		if body != null and (int(body.get_meta("stream_collision_layer", body.collision_layer)) & WorldLoader.NAVIGATION_SURFACE_LAYER) != 0:
 			return true
 	return false
 

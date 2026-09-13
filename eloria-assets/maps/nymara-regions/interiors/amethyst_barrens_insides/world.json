@@ -976,6 +976,24 @@
       ],
       "radius": 12.0,
       "section": "sour_cut"
+    },
+    {
+      "id": "served-staff-vault-calibrator-oleth-ryne",
+      "name": "Vault Calibrator Oleth Ryne",
+      "map": "resonant_vault",
+      "role": "dialogue",
+      "authority": "server",
+      "serverTile": [
+        22,
+        307
+      ],
+      "position": [
+        50.5,
+        0.0,
+        38.5
+      ],
+      "placementSource": "publish_interior_staff.py",
+      "placementReason": "Resonant Vault entry-side calibration post"
     }
   ],
   "harvestables": [

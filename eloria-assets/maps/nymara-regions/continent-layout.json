@@ -1,32 +1,70 @@
 {
-  "schema": 1,
-  "note": "Compact atlas placement: x east, y south, centres in metres; each region keeps its own true-scale tab-map rectangle. The clockwise ring and all links come from region-connections.json. Whitehorn stands above the north shore; Crownwater and Four Gates occupy the central lake. Road neighbours have short readable gaps, while ferry routes remain drawn over water. Atlas spacing is schematic, not a global world-coordinate transform. The builder rejects overlapping map rectangles.",
+  "schema": 2,
+  "note": "North-up metre coordinates from continent-geography.json; the atlas and actual exterior frames share the same translations and ownership polygons.",
   "continent": "Nymara",
-  "canvasMetres": [1800, 1880],
+  "canvasMetres": [
+    1880,
+    1720
+  ],
   "metresPerPixel": 2,
-  "sea": [13, 28, 43],
-  "lake": {
-    "centre": [850, 1050],
-    "radius": 430,
-    "colour": [26, 84, 120]
-  },
+  "sea": [
+    79,
+    150,
+    157
+  ],
   "regions": {
-    "four_gates": [1050, 1040],
-    "crownwater": [650, 1040],
-    "whitehorn_range": [1050, 220],
-    "mirrorhold": [1050, 620],
-    "amethyst_barrens": [1445, 620],
-    "sunmane_steppe": [1450, 1040],
-    "verdant_stair": [1585, 1440],
-    "ssarathi_ruins": [1200, 1460],
-    "manymouth_delta": [710, 1560],
-    "westhaven": [210, 1450],
-    "grey_moors": [260, 1030],
-    "amberwood": [655, 620]
+    "four_gates": [
+      1050.0,
+      1016.0
+    ],
+    "crownwater": [
+      650.0,
+      964.0
+    ],
+    "whitehorn_range": [
+      1050.0,
+      220.0
+    ],
+    "mirrorhold": [
+      1050.0,
+      620.0
+    ],
+    "amethyst_barrens": [
+      1445.0,
+      620.0
+    ],
+    "sunmane_steppe": [
+      1450.0,
+      1016.0
+    ],
+    "verdant_stair": [
+      1595.0,
+      1398.0
+    ],
+    "ssarathi_ruins": [
+      1220.0,
+      1424.0
+    ],
+    "manymouth_delta": [
+      720.0,
+      1412.0
+    ],
+    "westhaven": [
+      210.0,
+      1400.0
+    ],
+    "grey_moors": [
+      250.0,
+      1010.0
+    ],
+    "amberwood": [
+      655.0,
+      574.0
+    ]
   },
-  "routeBends": {
-    "amethyst_barrens--crownwater": [[1249, 825], [850, 825]],
-    "ssarathi_ruins--crownwater": [[1004, 1270], [997, 1254], [850, 1254]],
-    "westhaven--amberwood": [[30, 1240], [35, 810], [450, 815]]
-  }
+  "routeBends": {},
+  "originMetres": [
+    -40,
+    -40
+  ]
 }

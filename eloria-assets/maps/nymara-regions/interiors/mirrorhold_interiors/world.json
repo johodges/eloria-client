@@ -402,6 +402,42 @@
       "id": "ice-cutter",
       "label": "Ice Cutter",
       "space": "cellars_cold_larder"
+    },
+    {
+      "id": "served-staff-lens-grinder-ottil-wren",
+      "name": "Lens Grinder Ottil Wren",
+      "map": "mirrorhold_interiors",
+      "role": "dialogue",
+      "authority": "server",
+      "serverTile": [
+        44,
+        187
+      ],
+      "position": [
+        44.5,
+        6.0,
+        16.5
+      ],
+      "placementSource": "publish_interior_staff.py",
+      "placementReason": "Lens Vault marble stairhead side"
+    },
+    {
+      "id": "served-staff-hall-register-sefton-ames",
+      "name": "Hall Register Sefton Ames",
+      "map": "mirrorhold_interiors",
+      "role": "dialogue",
+      "authority": "server",
+      "serverTile": [
+        151,
+        182
+      ],
+      "position": [
+        151.5,
+        0.0,
+        21.5
+      ],
+      "placementSource": "publish_interior_staff.py",
+      "placementReason": "Citadel cellar entry-side register"
     }
   ],
   "harvestables": [

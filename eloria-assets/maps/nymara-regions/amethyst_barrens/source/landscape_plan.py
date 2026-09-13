@@ -47,7 +47,8 @@ HOUSES = [('glasswarden-bunkhouse','Glasswarden Bunkhouse',-22,-43,9.6,7.6),
 NPC_COMPACT_POSTS = {
     'Tuning Adept Ollum Ghast': [204.0, 6.1767, 74.0],       # tile 320,42
     'Shard Counter Bel Ammon': [196.0, 6.1240, -52.0],      # tile 312,168
-    'Geode Digger Torvin Slate': [-82.0, 6.0751, -214.0],   # tile 34,330
+    'Geode Digger Torvin Slate': [-82.0, 2.873272, -214.0], # tile 34,330; final cave-front soil
+    'Grinder Vell': [-86.1375, 2.671041, -215.7049],       # tile 30,332; same working shelf
 }
 
 
@@ -228,7 +229,21 @@ def compact(build):
     # trigger belongs to the open road. Important entries are south/east of it.
     import streaming_borders as SB
     if hasattr(SB,'region_specs') and SB.region_specs('amethyst_barrens'):
+        import sys
+        from pathlib import Path
+        sys.path.insert(0, str(Path(__file__).resolve().parents[2] / '_outer'))
+        import outer_aprons
+        outer_snapshot = outer_aprons.capture(build, 'amethyst_barrens')
         SB.apply(build,'amethyst_barrens')
+        sys.path.insert(0, str(Path(__file__).resolve().parents[2] / '_northern'))
+        import landscape_finish
+        landscape_finish.apply(build, 'amethyst_barrens')
+        import sunmane_approach
+        sunmane_approach.apply(build)
+        outer_aprons.apply(build, 'amethyst_barrens', outer_snapshot)
+        sys.path.insert(0, str(Path(__file__).resolve().parents[2] / '_finishing'))
+        import geode_working_approach
+        geode_working_approach.apply(build)
     used={p.mesh for p in build.placements}
     build.meshes={k:v for k,v in build.meshes.items() if k in used}
 

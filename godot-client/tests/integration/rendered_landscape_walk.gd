@@ -84,13 +84,11 @@ func _run() -> void:
 		await _settle(20)
 		_main.get("invasion_assistant_window").hide()
 		_main.call("_on_popup_dismiss_pressed")
-		var rig: Node3D = _main.get("camera_rig")
-		rig.set("yaw_degrees", float(route.get("yaw", 0)))
-		rig.set("pitch_degrees", -60.0)
-		rig.set("distance", float(route.get("distance", 26)))
+		_configure_route_camera(_main.get("camera_rig"), route)
 		var walked := 0
 		for step: Dictionary in route.steps:
 			var target: Array = step.tile
+			var npc_result: Dictionary = {}
 			var walk_timeout: float = float(step.get("walkTimeout", route.get("walkTimeout", 45)))
 			var began: int = Time.get_ticks_msec()
 			_issue_walk(step)
@@ -120,6 +118,10 @@ func _run() -> void:
 					reached = await _wait(func() -> bool:
 						return _chat_contains_after(chat_cursor, str(step.expectText)), 10)
 					_expect(reached, "%s / %s interaction replied" % [route.id, step.get("label", str(walked))])
+			if reached and step.has("useNpc"):
+				npc_result = await _talk_to_npc(step)
+				reached = bool(npc_result.get("ok", false))
+				_expect(reached, "%s / %s live NPC dialogue opened, replied and closed" % [route.id, step.get("label", str(walked))])
 			if reached and step.has("expectResource"):
 				reached = await _wait(func() -> bool: return _resource_present(int(step.expectResource)), 8)
 				_expect(reached, "%s / %s resource visible and within reach" % [route.id, step.get("label", str(walked))])
@@ -130,6 +132,7 @@ func _run() -> void:
 			(_report["walk_steps"] as Array).append({"route": route.id, "target": target,
 				"map": str(_state.get("current_map")), "ok": reached,
 				"used_object": int(step.get("useObject", -1)),
+				"used_npc": str(step.get("useNpc", "")), "npc_dialogue": npc_result,
 				"storage_open": bool((_state.get("storage") as Dictionary).get("open", false)),
 				"seconds": (Time.get_ticks_msec() - began) / 1000.0,
 				"actor": (_state.get("actors") as Dictionary).get(int(_state.get("local_actor_id")), {}).duplicate(true)})
@@ -164,6 +167,111 @@ func _run() -> void:
 	await process_frame
 	quit(_failures)
 
+static func _npc_fixture_error(step: Dictionary) -> String:
+	for key: String in ["useNpc", "expectDialogue", "expectDialogueText"]:
+		if not step.get(key) is String or str(step[key]).strip_edges().is_empty():
+			return "NPC dialogue fixture needs a nonempty " + key
+	if step.has("useObject") or step.has("object") or step.has("destination"):
+		return "NPC dialogue and object/portal actions must be separate steps"
+	return ""
+
+static func _npc_actor_identity(actors: Dictionary, local_id: int, expected: String) -> int:
+	var found := -1
+	for identity: Variant in actors:
+		var actor: Dictionary = actors[identity]
+		if int(identity) == local_id or int(actor.get("kind", -1)) != 2: continue
+		if str(actor.get("name", "")) != expected: continue
+		# Ambiguous names must fail rather than silently talking to another body.
+		if found >= 0: return -1
+		found = int(identity)
+	return found
+
+static func _observe_npc_reply(reply: Dictionary, event: Dictionary) -> void:
+	match str(event.get("type", "")):
+		"npc_info": reply["name"] = str(event.get("name", ""))
+		"npc_text": reply["text"] = str(event.get("text", ""))
+		"npc_options": reply["options"] = event.get("options", [])
+
+static func _npc_reply_matches(reply: Dictionary, actor_id: int, step: Dictionary,
+		dialogue: Dictionary, panel_visible: bool, rendered_name: String, rendered_text: String) -> bool:
+	var expected_name := str(step.expectDialogue)
+	var expected_text := str(step.expectDialogueText)
+	if str(reply.get("name", "")) != expected_name or not str(reply.get("text", "")).contains(expected_text):
+		return false
+	var own_options := false
+	for option: Dictionary in reply.get("options", []):
+		if int(option.get("actor_id", -1)) == actor_id: own_options = true
+	if not own_options: return false
+	if not bool(dialogue.get("open", false)) or not panel_visible: return false
+	if str(dialogue.get("name", "")) != expected_name or not str(dialogue.get("text", "")).contains(expected_text):
+		return false
+	# The UI may append the ordinary quest number to the exact server speaker.
+	var visible_name_ok := rendered_name == expected_name or rendered_name.begins_with(expected_name + "  [Quest ")
+	return visible_name_ok and rendered_text.contains(expected_text)
+
+func _npc_ready(expected: String) -> bool:
+	var actors: Dictionary = _state.get("actors")
+	var identity := _npc_actor_identity(actors, int(_state.get("local_actor_id")), expected)
+	if identity < 0: return false
+	var actor: Dictionary = actors[identity]
+	var player: Dictionary = actors.get(int(_state.get("local_actor_id")), {})
+	if player.is_empty(): return false
+	var node: Node3D = (_main.get("actor_nodes") as Dictionary).get(identity) as Node3D
+	return maxi(absi(int(actor.x)-int(player.x)), absi(int(actor.y)-int(player.y))) <= 4 and _has_visible_model(node)
+
+func _close_npc_dialogue() -> bool:
+	if not bool((_state.get("npc_dialogue") as Dictionary).get("open", false)): return true
+	# This is the same cancel action a player uses; do not hide the panel or
+	# overwrite server dialogue data to manufacture a successful close.
+	var cancel := InputEventAction.new()
+	cancel.action = "cancel"
+	cancel.pressed = true
+	_main.call("_unhandled_input", cancel)
+	return await _wait(func() -> bool:
+		return not bool((_state.get("npc_dialogue") as Dictionary).get("open", false)) and not (_main.get("dialogue_panel") as Control).visible, 2)
+
+func _talk_to_npc(step: Dictionary) -> Dictionary:
+	var result := {"ok": false, "requested_name": str(step.get("useNpc", ""))}
+	var problem := _npc_fixture_error(step)
+	if not problem.is_empty():
+		result["error"] = problem
+		return result
+	if not await _wait(func() -> bool: return _npc_ready(str(step.useNpc)), 8):
+		result["error"] = "exact live NPC is missing, ambiguous, invisible or outside dialogue reach"
+		return result
+	if not await _close_npc_dialogue():
+		result["error"] = "prior dialogue did not close normally"
+		return result
+	var identity := _npc_actor_identity(_state.get("actors"), int(_state.get("local_actor_id")), str(step.useNpc))
+	if identity < 0:
+		result["error"] = "live NPC disappeared while closing prior dialogue"
+		return result
+	result["actor_id"] = identity
+	result["actor"] = ((_state.get("actors") as Dictionary)[identity] as Dictionary).duplicate(true)
+	result["map"] = str(_state.get("current_map"))
+	var reply: Dictionary = {}
+	var observer := func(command: int, payload: PackedByteArray) -> void:
+		if command in [EloriaProtocol.ServerMessage.SEND_NPC_INFO, EloriaProtocol.ServerMessage.NPC_TEXT, EloriaProtocol.ServerMessage.NPC_OPTIONS_LIST]:
+			_observe_npc_reply(reply, EloriaProtocol.decode_server(command, payload))
+	_network.connect("packet_received", observer)
+	var sent: int = int(_network.call("touch_actor", identity))
+	result["send_error"] = sent
+	var opened := false
+	if sent == OK:
+		opened = await _wait(func() -> bool:
+			return _npc_reply_matches(reply, identity, step, _state.get("npc_dialogue"),
+				(_main.get("dialogue_panel") as Control).visible,
+				(_main.get("dialogue_name") as Label).text,
+				(_main.get("dialogue_text") as RichTextLabel).get_parsed_text()), 10)
+	_network.disconnect("packet_received", observer)
+	result["fresh_reply"] = reply.duplicate(true)
+	result["dialogue"] = (_state.get("npc_dialogue") as Dictionary).duplicate(true)
+	result["opened_and_matched"] = opened
+	# Keep a failed response visible for the ordinary failure capture.
+	result["closed_normally"] = await _close_npc_dialogue() if opened else false
+	result["ok"] = opened and bool(result.closed_normally)
+	return result
+
 func _has_visible_model(node: Node3D) -> bool:
 	if not is_instance_valid(node) or not node.is_visible_in_tree(): return false
 	var pending: Array[Node] = [node]
@@ -196,6 +304,14 @@ func _creature_present(expected: Variant) -> bool:
 		var node: Node3D = (_main.get("actor_nodes") as Dictionary).get(identity) as Node3D
 		if distance <= 35.0 and _has_visible_model(node): return true
 	return false
+
+static func _configure_route_camera(rig: IsometricCameraController, route: Dictionary) -> void:
+	rig.yaw_degrees = float(route.get("yaw", 0))
+	rig.pitch_degrees = -60.0
+	rig.distance = float(route.get("distance", 26))
+	# These fields have no setters. Apply the authored pose before projecting
+	# the first click, without waiting for a later actor-follow frame.
+	rig.set_focus(rig.focus)
 
 func _issue_walk(step: Dictionary) -> void:
 	var target: Array = step.tile

@@ -2,32 +2,32 @@
 
 ```json
 {
-  "nodes": 5189,
-  "meshes": 466,
+  "nodes": 5067,
+  "meshes": 521,
   "materials": 55,
   "images": 121,
   "textures": 121,
-  "accessors": 1909,
-  "bufferViews": 2030,
-  "uniqueTriangles": 700678,
-  "uniqueVertices": 476531,
-  "glbBytes": 35511404,
-  "instancedTriangles": 1383588,
+  "accessors": 2156,
+  "bufferViews": 2277,
+  "uniqueTriangles": 1128167,
+  "uniqueVertices": 748962,
+  "glbBytes": 48313500,
+  "instancedTriangles": 1767391,
   "embeddedTextureBytes": 12513053,
-  "placements": 3407,
+  "placements": 3278,
   "collision": {
     "width": 720,
     "height": 720,
     "cellMetres": 0.5,
-    "walkableCells": 386684,
-    "blockedCells": 131716,
-    "walkableFraction": 0.7459,
+    "walkableCells": 376821,
+    "blockedCells": 141579,
+    "walkableFraction": 0.7269,
     "elevatedDecks": 64,
-    "steepCells": 63662,
-    "reliefMetres": 64.49,
+    "steepCells": 71377,
+    "reliefMetres": 64.07,
     "heightEncoding": {
-      "origin": -0.6897,
-      "step": 1.040235,
+      "origin": -0.6833,
+      "step": 1.033456,
       "range": [
         1,
         63
@@ -56,16 +56,22 @@
     "harvestable Sage: server tile [30, 68] is not standable on the built terrain; marker moved 6 m to [36, 68]",
     "harvestable Hearthroot: server tile [50, 21] is not standable on the built terrain; marker moved 20 m to [58, 40]",
     "harvestable Toadstool: server tile [174, 142] is not standable on the built terrain; marker moved 6 m to [168, 139]",
-    "interactive crafting_station: server tile [138, 120] is not standable on the built terrain; marker moved 6 m to [142, 116]"
+    "interactive crafting_station: server tile [138, 120] is not standable on the built terrain; marker moved 6 m to [142, 116]",
+    "Continent ownership is actual clipped geometry in one translation-only frame; native structures retain their scale and pose.",
+    "Outer apron: actual native perimeter, authored irregular outer contours, intact playable core and common approaches; physical water only at the existing regional datum.",
+    "Generated connector finish: one connected half-metre road bed at curves and shared junctions, intact boundary strip and native bridges, terrain and paint seated from actual final triangles.",
+    "North Burn upper drainage follows its real carved bed and crosses beneath a stone road culvert; the downstream falls remain authored.",
+    "The northern road descends through a broad asymmetric limestone cut; the old narrow leaf-painted walls are lowered around retained ruin and aqueduct foundations.",
+    "Geographic paint corners use the nearest actual shared edge; each full neighboring recipe stays together above unchanged physical substrate."
   ],
-  "trianglesPerSquareMetre": 10.74,
+  "trianglesPerSquareMetre": 13.71,
   "lod2": {
-    "glbBytes": 22664512,
-    "nodes": 1412,
-    "uniqueTriangles": 636960,
-    "instancedTriangles": 810952,
-    "sizeReductionPercent": 36.2,
-    "triangleReductionPercent": 41.4
+    "glbBytes": 35493424,
+    "nodes": 1460,
+    "uniqueTriangles": 1064449,
+    "instancedTriangles": 1236779,
+    "sizeReductionPercent": 26.5,
+    "triangleReductionPercent": 30.0
   }
 }
 ```

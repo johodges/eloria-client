@@ -52,6 +52,8 @@ import transitions as MARCH
 import secretdoors as SD
 import secrets_design as SEC
 import loresites as LORE
+import streaming_borders as SB
+import compact_plan as COMPACT
 
 HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
@@ -93,7 +95,7 @@ SITES = [
                    "reading path between them, and the tenth stone left blank."),
 ]
 MARCH_MATERIALS: dict = dict(getattr(REG, "SURFACE_MATERIALS", {}))
-DK.MATERIALS = DK.MATERIALS | MARCH.materials_for("manymouth_delta", CROSSINGS) | SD.materials(SEC) | LORE.materials([s.piece for s in SITES])
+DK.MATERIALS = DK.MATERIALS | MARCH.materials_for("manymouth_delta", CROSSINGS) | SD.materials(SEC) | LORE.materials([s.piece for s in SITES]) | SB.materials_for("manymouth_delta")
 
 
 def register_materials(sets):
@@ -112,7 +114,13 @@ def walk_triangles(build):
     if hasattr(build, "_walk_triangles"):
         return build._walk_triangles
     out=[]
+    # Shared causeway decks and invisible trigger skins are actual walking
+    # geometry in terrain_meshes, not placements. Preserve them in raw collision.
+    for name,part in build.terrain_meshes.items():
+        if name.startswith("Walk_") and not name.startswith(SB.VIEW_PREFIX):
+            out.append(part.positions[part.indices].reshape(-1,3,3))
     for p in build.placements:
+        if p.node.startswith(SB.VIEW_PREFIX):continue
         item=build.meshes[p.mesh]
         parts=getattr(item,"walk_parts",[]) or ([item] if p.walk_surface else [])
         c,s=math.cos(p.rotation_y or 0),math.sin(p.rotation_y or 0)
@@ -130,12 +138,33 @@ def walk_surface_at(build, x, z):
     return max(float(build.terrain.height_at(x,z)),float(top[0,0]))
 
 
+def apply_streaming(build):
+    """Finalize both main/LOD geometry once, after native posts are authored."""
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / '_outer'))
+    import outer_aprons
+    outer_snapshot = outer_aprons.capture(build, 'manymouth_delta')
+    SB.apply(build, "manymouth_delta")
+    outer_aprons.apply(build, 'manymouth_delta', outer_snapshot)
+    COMPACT.connector_requests(build)
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / '_finishing'))
+    import connector_finish
+    connector_finish.apply(build, 'manymouth_delta')
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / '_color'))
+    import terrain_paint
+    terrain_paint.apply(build, 'manymouth_delta')
+    # Native spawn authoring may have sampled decks before shared grading
+    # moved placements or added the causeways. Collision must sample final ones.
+    if hasattr(build, "_walk_triangles"):
+        del build._walk_triangles
+
+
 # --------------------------------------------------------------------------
-def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
+def build_region(seed: int = SEED, lod: str | None = None, *, prototype=False, legacy=False) -> REG.RegionBuild:
     """Build the region. `lod="far"` produces the reduced second package:
     far-tier vegetation only and no ground clutter, for low-end machines and for
     distant streaming."""
     t0 = time.time()
+    COMPACT.restore_legacy_frame()
     terrain = REG.build_terrain(seed)
     REG.apply_built_ground(terrain, seed)
     build = REG.RegionBuild(terrain=terrain)
@@ -179,6 +208,12 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     build.resolve_names()
     build.network = network
     _add_spawns_and_portals(build, network)
+    if not legacy:
+        COMPACT.apply(build,MARCH_MATERIALS)
+    if prototype:
+        build.streaming_borders=[]
+    else:
+        apply_streaming(build)
     print(f"[region] built in {time.time() - t0:.1f}s")
     return build
 
@@ -459,10 +494,7 @@ MAX_WALK_GRADIENT = 1.0
 def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
     """Half-metre walkability grid over the server footprint (EWCG version 1)."""
     t = build.terrain
-    width = int(round((REG.PLAY_MAX_X - REG.PLAY_MIN_X + REG.METRES_PER_TILE)
-                      / COLLISION_CELL))
-    height = int(round((REG.PLAY_MAX_Z - REG.PLAY_MIN_Z + REG.METRES_PER_TILE)
-                       / COLLISION_CELL))
+    width = height = int(round(REG.SERVER_CELLS*REG.METRES_PER_TILE/COLLISION_CELL))
     width -= width % 6
     height -= height % 6
 
@@ -481,7 +513,8 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
     cz = np.clip(((gz - t.z0) / t.cell).astype(int), 0, t.rows - 1)
     slope = slope_grid[cz, cx]
 
-    walkable = (ground > REG.SEA_LEVEL + 0.35) & (slope < 1.05)
+    actual_terrain = (gx>=t.x0)&(gx<=t.xs[-1])&(gz>=t.z0)&(gz<=t.zs[-1])
+    walkable = actual_terrain & (ground > REG.SEA_LEVEL + 0.35) & (slope < 1.05)
     # solid structures block their footprint
     blockers = np.zeros_like(walkable)
     for placement in build.placements:
@@ -580,60 +613,39 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
 MINIMAP_PIXELS_PER_METRE = 1.0
 
 
+def minimap_metadata(build,path):
+    low,high=(COMPACT.BOUNDS if hasattr(build,'compact_revision') else
+        [[REG.PLAY_MIN_X,REG.PLAY_MIN_Z],[REG.PLAY_MAX_X,REG.PLAY_MAX_Z]])
+    size=[round(high[i]-low[i]) for i in range(2)]
+    return {'image':path.name,'imageSize':size,'pixelsPerMetre':1.,'worldMin':low,'worldMax':high,
+        'northAxis':'-Z','orientation':'north-up','projection':'orthographic-top-down',
+        'renderedFrom':'actual packaged geometry','transform':{
+            'pixelX':{'scale':1.,'offset':-low[0]},'pixelY':{'scale':1.,'offset':-low[1]}},
+        'file':path.name,'size':size,'metresPerPixel':1.,
+        'centre':[(low[i]+high[i])/2 for i in range(2)],'northUp':True}
+
+
 def render_minimap(build: REG.RegionBuild, sets, path: Path, size: int = 0) -> dict:
     """Top-down orthographic-ish capture of the finished geometry."""
     import preview
     scene = preview.scene_from_build(build, sets)
-    centre_x = (REG.PLAY_MIN_X + REG.PLAY_MAX_X) * 0.5
-    centre_z = (REG.PLAY_MIN_Z + REG.PLAY_MAX_Z) * 0.5
-    extent = max(REG.PLAY_MAX_X - REG.PLAY_MIN_X, REG.PLAY_MAX_Z - REG.PLAY_MIN_Z)
-    if size <= 0:
-        size = int(round(extent * MINIMAP_PIXELS_PER_METRE))
+    metadata=minimap_metadata(build,path)
+    centre_x,centre_z=metadata['centre']
+    width,height=metadata['imageSize']
+    extent=max(width,height)
     altitude = 900.0
-    fov = 2.0 * math.degrees(math.atan((extent * 0.5) / altitude))
+    fov = 2.0 * math.degrees(math.atan((height * 0.5) / altitude))
     lighting = RENDER.Lighting(sun_direction=(-0.30, 0.90, 0.32),
                                fog_density=0.0, ambient_strength=0.72,
                                shadow_strength=0.35, sun_color=(1.10, 0.96, 0.74))
     image = scene.render(eye=(centre_x, altitude, centre_z + 0.01),
                          target=(centre_x, 0.0, centre_z),
-                         width=size, height=size, fov=fov, lighting=lighting,
+                         width=width, height=height, fov=fov, lighting=lighting,
                          shadows=True, shadow_size=2048,
                          shadow_center=(centre_x, 20.0, centre_z),
                          shadow_radius=extent * 0.62, near=200.0, far=1400.0)
     image.save(path, "WEBP", quality=88, method=5)
-    # Every Eloria minimap is drawn at one pixel to the metre, so the image's
-    # pixel size is the map's own size in metres and no two maps' cartography
-    # is drawn at different densities. The old key spellings are written
-    # alongside the new ones for one release; at this scale `metresPerPixel`
-    # and `pixelsPerMetre` are the same number anyway.
-    min_x, min_z = REG.PLAY_MIN_X, REG.PLAY_MIN_Z
-    return {
-        "image": path.name,
-        "imageSize": [size, size],
-        "pixelsPerMetre": MINIMAP_PIXELS_PER_METRE,
-        "worldMin": [min_x, min_z],
-        "worldMax": [min_x + extent, min_z + extent],
-        "northAxis": "-Z",
-        "orientation": "north-up",
-        "projection": "orthographic-top-down",
-        "renderedFrom": "final geometry (offline rasteriser)",
-        "transform": {
-            "pixelX": {"scale": MINIMAP_PIXELS_PER_METRE,
-                       "offset": round(-min_x * MINIMAP_PIXELS_PER_METRE, 4)},
-            "pixelY": {"scale": MINIMAP_PIXELS_PER_METRE,
-                       "offset": round(-min_z * MINIMAP_PIXELS_PER_METRE, 4)},
-            "formula": "pixel_x = world_x * scale + offset;"
-                       " pixel_y = world_z * scale + offset",
-        },
-        "note": ("Every Eloria minimap is drawn at one pixel to the metre, so"
-                 " the image's pixel size is the map's size in metres."),
-        "file": path.name,
-        "pixels": size,
-        "size": [size, size],
-        "metresPerPixel": round(1.0 / MINIMAP_PIXELS_PER_METRE, 6),
-        "centre": [min_x + extent * 0.5, min_z + extent * 0.5],
-        "northUp": True,
-    }
+    return metadata
 
 
 # --------------------------------------------------------------------------
@@ -707,6 +719,9 @@ def write_camera_views(build: REG.RegionBuild, path: Path) -> dict:
          _radius, mode) in VIEWTABLE.VIEWS:
         ex, ez = eye_xz[0] * REG.SCALE, eye_xz[1] * REG.SCALE
         tx, tz = target_xz[0] * REG.SCALE, target_xz[1] * REG.SCALE
+        if hasattr(build,'compact_revision'):
+            ex,ez=float(COMPACT.PLAN.x(ex)),float(COMPACT.PLAN.z(ez))
+            tx,tz=float(COMPACT.PLAN.x(tx)),float(COMPACT.PLAN.z(tz))
         ey = float(t.height_at(ex, ez)) + eye_h
         ty = float(t.height_at(tx, tz)) + target_h
         # a camera below the waterline sees nothing but the water plane's
@@ -727,6 +742,8 @@ def write_camera_views(build: REG.RegionBuild, path: Path) -> dict:
         fixed=getattr(VIEWTABLE,"WORLD_VIEWS",{}).get(name)
         if fixed:
             (ex,ey,ez),(tx,ty,tz)=fixed
+            if hasattr(build,'compact_revision'):
+                ex,ey,ez=COMPACT.PLAN.point([ex,ey,ez]);tx,ty,tz=COMPACT.PLAN.point([tx,ty,tz])
         entries.append({
             "id": name,
             "panel": panel if isinstance(panel, int) else None,
@@ -792,6 +809,7 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             "invertServerY": True,
         },
         "spawnPoints": build.spawns,
+        "streamingBorders": build.streaming_borders,
         "collision": {
             "nodeNames": collision_nodes,
             "binary": "collision.bin",
@@ -865,7 +883,7 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
         # This region has no roads in the Amberwood sense at all. Its routes
         # are plank walkways on piles over open water, so a waypoint's height
         # comes from the deck, never from the channel floor it crosses.
-        "contentLayout": LAY.CONTENT_LAYOUT,
+        "contentLayout": getattr(build,'content_layout',LAY.CONTENT_LAYOUT),
         "roads": [{"id":a+"--"+b,"type":"walkway","surface":"plank",
                    "waypoints":np.round(stations,3).tolist()}
                   for a,b,stations,_ in network["surveys"]],
@@ -1039,6 +1057,14 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
         "productionStatus": "production-geometry-materials-population",
         "knownLimitations": [],
     }
+    if hasattr(build,'compact_revision'):
+        manifest['compactLandscape']=build.compact_report
+        manifest['asset']['mapBounds']={'min':[COMPACT.BOUNDS[0][0],float(t.height.min()),COMPACT.BOUNDS[0][1]],
+            'max':[COMPACT.BOUNDS[1][0],float(t.height.max()),COMPACT.BOUNDS[1][1]]}
+        for channel in manifest['water']['channels']:
+            channel['waypoints']=[COMPACT.PLAN.point(point) for point in channel['waypoints']]
+    import contentposts
+    contentposts.apply_runtime(manifest,PACKAGE)
     path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return manifest
 
@@ -1050,14 +1076,18 @@ def main() -> int:
     parser.add_argument("--seed", type=int, default=SEED)
     parser.add_argument("--skip-minimap", action="store_true")
     parser.add_argument("--skip-lod2", action="store_true")
+    parser.add_argument("--prototype", action="store_true", help="Export compact native prototype without shared geography")
+    parser.add_argument("--legacy-native", action="store_true", help="Read-only comparison source composition before compaction")
     args = parser.parse_args()
     out = Path(args.out)
+    if args.prototype and out.resolve()==PACKAGE.resolve():
+        parser.error('--prototype requires a separate --out directory')
     out.mkdir(parents=True, exist_ok=True)
 
     import preview
     sets = DK.register(preview.texture_sets())
 
-    build = build_region(args.seed)
+    build = build_region(args.seed,prototype=args.prototype,legacy=args.legacy_native)
 
     t0 = time.time()
     builder, stats = export_glb(build, sets, out / "world.glb")
@@ -1071,7 +1101,7 @@ def main() -> int:
     print(f"[collision] {width}x{height} cells, "
           f"{collision_stats['walkableFraction'] * 100:.1f}% walkable")
 
-    minimap = {"file": "minimap.webp"}
+    minimap = minimap_metadata(build,out/'minimap.webp')
     if not args.skip_minimap:
         t0 = time.time()
         minimap = render_minimap(build, sets, out / "minimap.webp")
@@ -1112,11 +1142,9 @@ def main() -> int:
         lod_sets = {name: texture_set.reduced()
                     for name, texture_set in sets.items()}
         lod_sets = DK.register(lod_sets)
-        lod_build = build_region(args.seed, lod="far")
-        lod_build.terrain.despeckle_surfaces(DESPECKLE_MIN_CELLS)
-        lod_build.terrain_meshes = lod_build.terrain.build_meshes(
-            uv_scale=0.28, blend_edges=True, material_suffix=MAT.GROUND_SUFFIX,
-            materials=MARCH_MATERIALS)
+        lod_build = build_region(args.seed, lod="far",prototype=args.prototype,legacy=args.legacy_native)
+        # build_region has already produced and partitioned the far terrain.
+        # Rebuilding it here would discard shared cells and causeway deck skins.
         _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb")
         stats["lod2"] = {
             "glbBytes": lod_stats["glbBytes"],

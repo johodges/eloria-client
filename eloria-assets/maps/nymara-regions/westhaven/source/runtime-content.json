@@ -191,7 +191,7 @@
       "id": 46,
       "resource": "Salt",
       "serverTile": [
-        347,
+        349,
         168
       ],
       "authority": "server"
@@ -209,7 +209,7 @@
       "id": 48,
       "resource": "Salt",
       "serverTile": [
-        345,
+        343,
         160
       ],
       "authority": "server"
@@ -389,7 +389,7 @@
       "id": 68,
       "resource": "Shell",
       "serverTile": [
-        363,
+        359,
         179
       ],
       "authority": "server"
@@ -435,7 +435,7 @@
       "resource": "Kelp",
       "serverTile": [
         365,
-        158
+        157
       ],
       "authority": "server"
     },
@@ -443,8 +443,8 @@
       "id": 74,
       "resource": "Kelp",
       "serverTile": [
-        362,
-        172
+        360,
+        171
       ],
       "authority": "server"
     },
@@ -488,7 +488,7 @@
       "id": 79,
       "resource": "Shell",
       "serverTile": [
-        344,
+        343,
         177
       ],
       "authority": "server"
@@ -659,7 +659,7 @@
       "id": 98,
       "resource": "Bog Iron",
       "serverTile": [
-        65,
+        66,
         377
       ],
       "authority": "server"
@@ -787,7 +787,7 @@
     {
       "creature": "bronze_tide_crab",
       "serverTile": [
-        347,
+        349,
         178
       ],
       "authority": "server"

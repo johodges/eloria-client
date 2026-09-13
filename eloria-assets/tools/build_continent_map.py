@@ -4,19 +4,16 @@ client's cartography.
 
     python eloria-assets/tools/build_continent_map.py [--check]
 
-The Tab map shows the map the player is standing on the way the client draws
-it: straight down, north up, one metre a pixel. Every exterior region ships
-that same picture of itself as `minimap.webp` (see `unify_minimap_scale.py`),
-so the continent can be the real thing - each region's tab map laid on one
-canvas, to scale, in the arrangement `continent-layout.json` gives - and a
-region a player clicks on it can open as the tab map they would see standing
-there, not a painting of what the region was meant to look like.
+The region images come from the actual geometry under shared north-up lighting.
+Their transparent footprints occupy the same translated metre coordinates as
+the streamed exterior scenes. `continent-geography.json` owns those coordinates;
+`continent-layout.json` supplies the atlas scale, canvas and sea colour.
 
 Two files are written:
 
 * `maps/nymara-regions/continent-map.webp`, the continent as one picture;
 * `godot-client/data/maps/cartography.json`, what the client needs to use it -
-  the rectangle each region occupies on that picture (its click target), the
+  the polygon each region occupies on that picture (its click target), the
   region's own tab-map image, the pixels of it the live Tab map frames, and
   the world coordinates of that framing so the sidebar can name the tile
   under the cursor.
@@ -48,6 +45,7 @@ ROOT = Path(__file__).resolve().parents[2]
 REGISTRY = ROOT / "godot-client" / "data" / "maps" / "registry.json"
 LAYOUT = ROOT / "eloria-assets" / "maps" / "nymara-regions" / "continent-layout.json"
 CONNECTIONS = LAYOUT.with_name("region-connections.json")
+GEOGRAPHY = LAYOUT.with_name("continent-geography.json")
 CONTINENT_IMAGE = ROOT / "eloria-assets" / "maps" / "nymara-regions" / "continent-map.webp"
 CARTOGRAPHY = ROOT / "godot-client" / "data" / "maps" / "cartography.json"
 RESOURCE_PREFIX = "res://../"
@@ -139,18 +137,36 @@ def registry_entries(registry: dict, layout: dict) -> list[tuple[str, dict]]:
     return entries
 
 
+def atlas_point(point, layout):
+    origin = layout.get('originMetres', [0, 0])
+    return [round((float(point[i])-origin[i])/float(layout['metresPerPixel']), 3) for i in (0, 1)]
+
+
 def atlas_connections(layout: dict) -> list[dict]:
-    """Draw only actual graph edges; bends route ferries around unrelated land."""
+    """Roads meet at their actual surveyed coordinates, ferries at their quays."""
     scale = float(layout['metresPerPixel'])
+    geography = load_json(GEOGRAPHY) if GEOGRAPHY.exists() else None
+    registry = load_json(REGISTRY)['maps']
+    def endpoint(region, portal):
+        if geography is None:
+            return layout['regions'][region]
+        manifest = load_json(resource_to_path(registry[region]['manifest']))
+        entry = next(p for p in manifest.get('portals', []) + manifest.get('interactives', [])
+                     if p.get('id') == portal)
+        frame = next((s for s in manifest.get('streamingBorders', []) if s['portal'] == portal), None)
+        point = frame['anchor'] if frame else entry['position']
+        translation = geography['regions'][region]['translation']
+        return [point[0] + translation[0], point[2] + translation[2]]
     result = []
     for link in load_json(CONNECTIONS)['connections']:
         a, b = link['from'], link['to']
         if a not in layout['regions'] or b not in layout['regions']:
             continue
         key = a + '--' + b
-        points = [layout['regions'][a], *layout.get('routeBends', {}).get(key, []), layout['regions'][b]]
+        points = [endpoint(a, link['from_portal']),
+                  *layout.get('routeBends', {}).get(key, []), endpoint(b, link['to_portal'])]
         result.append({'from': a, 'to': b, 'type': link['type'],
-                       'points': [[round(float(v)/scale, 3) for v in p] for p in points]})
+                       'points': [atlas_point(p, layout) for p in points]})
     return result
 
 
@@ -161,6 +177,7 @@ def compose(layout: dict, registry: dict) -> tuple[dict, list[dict]]:
     regions: list[dict] = []
     tiles: list[dict] = []
     sources: dict[str, str] = {}
+    geography = load_json(GEOGRAPHY) if GEOGRAPHY.exists() else None
     for key, entry in registry_entries(registry, layout):
         manifest_path = resource_to_path(entry["manifest"])
         manifest = load_json(manifest_path)
@@ -178,11 +195,15 @@ def compose(layout: dict, registry: dict) -> tuple[dict, list[dict]]:
         frame = framing(manifest)
         crop = tab_map_crop(minimap, frame)
         world_min, world_max = crop_world(minimap, crop)
-        centre = layout["regions"][key]
+        placed = geography['regions'][key] if geography else None
+        centre = ([placed['translation'][0] + (world_min[0] + world_max[0]) * .5,
+                   placed['translation'][2] + (world_min[1] + world_max[1]) * .5]
+                  if placed else layout["regions"][key])
         width_m = world_max[0] - world_min[0]
         height_m = world_max[1] - world_min[1]
-        rect = [int(round((float(centre[0]) - width_m * 0.5) / metres_per_pixel)),
-                int(round((float(centre[1]) - height_m * 0.5) / metres_per_pixel)),
+        origin = layout.get('originMetres', [0, 0])
+        rect = [int(round((float(centre[0]) - width_m * 0.5 - origin[0]) / metres_per_pixel)),
+                int(round((float(centre[1]) - height_m * 0.5 - origin[1]) / metres_per_pixel)),
                 max(1, int(round(width_m / metres_per_pixel))),
                 max(1, int(round(height_m / metres_per_pixel)))]
         if rect[0] < 0 or rect[1] < 0 or rect[0] + rect[2] > canvas_w or rect[1] + rect[3] > canvas_h:
@@ -199,8 +220,24 @@ def compose(layout: dict, registry: dict) -> tuple[dict, list[dict]]:
                 "worldMax": world_max,
             },
         })
-        tiles.append({"key": key, "image": image_path, "crop": crop, "rect": rect})
-    for index, first in enumerate(regions):
+        geometry_path = manifest_path.parent / minimap.get('geometryImage', image_name)
+        if geometry_path != image_path:
+            sources[key + ':geometry'] = digest(geometry_path)
+        polygon = placed.get('ownershipPolygon') if placed else None
+        if polygon:
+            polygon = [atlas_point(point, layout) for point in polygon]
+            regions[-1]['continentPolygon'] = polygon
+        if placed:
+            # A concave ownership bbox can have its centre outside the region.
+            # The protected native core is wholly inside its owned footprint.
+            low, high = placed['nativePlayableBounds']
+            label = [placed['translation'][0]+(low[0]+high[0])*.5,
+                     placed['translation'][2]+(low[1]+high[1])*.5]
+            regions[-1]['continentLabel'] = atlas_point(placed.get('atlasLabel', label), layout)
+            regions[-1]['globalTranslation'] = placed['translation']
+        tiles.append({"key": key, "image": geometry_path, "crop": crop, "rect": rect,
+                      "polygon": polygon})
+    for index, first in enumerate(regions) if geography is None else []:
         a = first["continentRect"]
         for second in regions[index + 1:]:
             b = second["continentRect"]
@@ -209,21 +246,23 @@ def compose(layout: dict, registry: dict) -> tuple[dict, list[dict]]:
     cartography = {
         "schemaVersion": SCHEMA_VERSION,
         "generator": "eloria-assets/tools/build_continent_map.py",
-        "note": ("Generated: the continent picture is every exterior region's own tab map "
-                 "(its minimap.webp) laid out to scale as continent-layout.json says, and "
-                 "each region's tabMap names the pixels of that image the live Tab map "
-                 "frames. Re-run the tool after a region redraws its minimap or moves; "
-                 "test_cartography.py fails while this file is stale."),
+        "note": ("Generated from actual region geometry with shared north-up lighting. "
+                 "The atlas and streamed map crossings use continent-geography.json's "
+                 "translations and owned polygons. Each tabMap frames the local minimap "
+                 "the live client uses. Rebuild after geometry or geography changes."),
         "continent": {
             "name": str(layout.get("continent", "Nymara")),
             "texture": path_to_resource(CONTINENT_IMAGE),
             "imageSize": [canvas_w, canvas_h],
             "metresPerPixel": metres_per_pixel,
+            "originMetres": layout.get('originMetres', [0, 0]),
             "sources": sources,
         },
         "regions": regions,
         "connections": atlas_connections(layout),
     }
+    if geography:
+        cartography['continent']['geographySha256'] = digest(GEOGRAPHY)
     return cartography, tiles
 
 
@@ -231,35 +270,43 @@ def draw(layout: dict, cartography: dict, tiles: list[dict]) -> Image.Image:
     metres_per_pixel = float(layout["metresPerPixel"])
     width, height = cartography["continent"]["imageSize"]
     canvas = Image.new("RGB", (width, height), tuple(int(v) for v in layout["sea"]))
-    lake = layout.get("lake")
+    lake = layout.get("lake") if not GEOGRAPHY.exists() else None
     if lake:
         cx, cy = (float(v) / metres_per_pixel for v in lake["centre"])
         radius = float(lake["radius"]) / metres_per_pixel
         ImageDraw.Draw(canvas).ellipse(
             [cx - radius, cy - radius, cx + radius, cy + radius],
             fill=tuple(int(v) for v in lake["colour"]))
+    for tile in tiles:
+        x, y, w, h = tile["crop"]
+        rect = tile["rect"]
+        with Image.open(tile["image"]) as image:
+            piece = image.convert("RGBA").crop((x, y, x + w, y + h))
+            piece = piece.resize((rect[2], rect[3]), Image.LANCZOS)
+        if tile.get('polygon'):
+            from PIL import ImageChops
+            mask = Image.new('L', piece.size)
+            ImageDraw.Draw(mask).polygon([(px-rect[0], py-rect[1]) for px,py in tile['polygon']], fill=255)
+            piece.putalpha(ImageChops.multiply(piece.getchannel('A'), mask))
+        canvas.paste(piece, (rect[0], rect[1]), piece)
     pen = ImageDraw.Draw(canvas)
     for link in cartography['connections']:
         points = [tuple(p) for p in link['points']]
         if link['type'] != 'ferry':
-            pen.line(points, fill=(53, 48, 36), width=6, joint='curve')
-            pen.line(points, fill=(218, 193, 137), width=3, joint='curve')
+            # The roads themselves are part of the geometry. A small crossing
+            # mark records the graph without drawing a second invented road.
+            if GEOGRAPHY.exists():
+                cx, cy = points[0]
+                pen.ellipse((cx-1.5, cy-1.5, cx+1.5, cy+1.5), fill=(218, 193, 137))
+            else:
+                pen.line(points, fill=(218, 193, 137), width=2)
         else:
-            # Dash spacing is in image pixels, so the ferry stays distinct
-            # from a road even across a narrow gap between real lake tiles.
             for a, b in zip(points, points[1:]):
                 length = math.dist(a, b)
                 for begin in range(0, int(length), 9):
                     end = min(begin+5, length)
                     at = lambda d: tuple(a[i]+(b[i]-a[i])*d/length for i in (0, 1))
-                    pen.line([at(begin), at(end)], fill=(129, 204, 221), width=2)
-    for tile in tiles:
-        x, y, w, h = tile["crop"]
-        rect = tile["rect"]
-        with Image.open(tile["image"]) as image:
-            piece = image.convert("RGB").crop((x, y, x + w, y + h))
-            piece = piece.resize((rect[2], rect[3]), Image.LANCZOS)
-        canvas.paste(piece, (rect[0], rect[1]))
+                    pen.line([at(begin), at(end)], fill=(129, 204, 221), width=1)
     return canvas
 
 

@@ -18,36 +18,36 @@
     ],
     "bounds": {
       "min": [
-        -295.84,
+        -127.99,
         -12.0,
-        -442.5
+        -294.51
       ],
       "max": [
-        437.71,
-        258.29,
-        249.56
+        271.51,
+        195.39,
+        101.52
       ]
     },
     "playableBounds": {
       "min": [
-        -120.0,
+        -126,
         -11.0,
-        -287.0
+        -293
       ],
       "max": [
-        263.0,
-        258.29,
-        96.0
+        270,
+        195.39,
+        99
       ]
     },
     "seaLevel": 0.0,
-    "serverCells": 384
+    "serverCells": 402
   },
   "coordinateTransform": {
     "metresPerTile": 1.0,
     "serverOrigin": [
-      120.0,
-      96.0
+      129,
+      103
     ],
     "origin": [
       0.0,
@@ -55,7 +55,21 @@
       0.0
     ],
     "walkingHeight": 17.0,
-    "invertServerY": true
+    "invertServerY": true,
+    "serverCells": [
+      402,
+      402
+    ],
+    "addressableWorldBounds": {
+      "min": [
+        -129,
+        -299
+      ],
+      "max": [
+        273,
+        103
+      ]
+    }
   },
   "spawnPoints": [
     {
@@ -66,8 +80,8 @@
         14.2873
       ],
       "serverTile": [
-        93,
-        82
+        102,
+        89
       ],
       "rotationDegrees": 0.0,
       "surface": "Paving",
@@ -81,8 +95,8 @@
         5.8343
       ],
       "serverTile": [
-        256,
-        90
+        265,
+        97
       ],
       "rotationDegrees": 90.0,
       "surface": "Paving",
@@ -96,8 +110,8 @@
         -105.6464
       ],
       "serverTile": [
-        214,
-        202
+        223,
+        209
       ],
       "rotationDegrees": 180.0,
       "surface": "Paving",
@@ -189,17 +203,18 @@
       "Lore_ringing_quarry",
       "March_east_road_Station",
       "March_east_road_outcrop_000",
+      "March_east_road_outcrop_001",
+      "March_east_road_shard_009",
+      "March_east_road_shard_012",
       "March_lake_quay_Station",
       "March_north_pass_Station",
+      "March_north_pass_snow_boulder_009",
       "March_north_pass_snow_boulder_010",
-      "March_north_pass_snow_boulder_011",
-      "March_north_pass_snow_boulder_013",
-      "March_north_pass_snow_boulder_014",
       "March_north_pass_tree_001",
-      "March_north_pass_tree_002",
       "March_north_pass_tree_005",
       "March_south_road_Station",
       "March_west_gorge_Station",
+      "March_west_gorge_tree_009",
       "Prop_Boat_0",
       "Prop_Boat_1",
       "Prop_Boat_2",
@@ -273,11 +288,11 @@
     "binary": "collision.bin",
     "format": "EWCG-v2",
     "cellMetres": 0.5,
-    "width": 768,
-    "height": 768,
+    "width": 804,
+    "height": 804,
     "heightEncoding": {
-      "origin": -0.6131,
-      "step": 0.95562,
+      "origin": -2.7758,
+      "step": 0.776043,
       "range": [
         1,
         255
@@ -285,25 +300,29 @@
       "zeroMeansBlocked": true,
       "note": "The grid is authoritative for walkability. The Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 298752,
-    "walkableFraction": 0.5065,
+    "walkableCells": 362237,
+    "walkableFraction": 0.5604,
+    "originMetres": [
+      -129,
+      103
+    ],
     "refinedHeights": {
       "levels": 255,
-      "step": 0.95562,
-      "origin": -0.6131,
-      "previousStep": 0.955411,
-      "cellsRestated": 2222,
-      "cellsFromGeometry": 296682,
-      "cellsKept": 7077
+      "step": 0.776043,
+      "origin": -2.7758,
+      "previousStep": 0.776043,
+      "cellsRestated": 0,
+      "cellsFromGeometry": 359976,
+      "cellsKept": 183
     },
     "openedWalkSurfaces": {
       "prefix": "Walk_",
-      "cellsCovered": 27986,
-      "cellsWidened": 1497,
-      "cellsOpened": 2357,
-      "cellsRaised": 8202,
+      "cellsCovered": 50946,
+      "cellsWidened": 2338,
+      "cellsOpened": 3902,
+      "cellsRaised": 34704,
       "cellsDrowned": 0,
-      "cellsBuried": 754,
+      "cellsBuried": 923,
       "cellsInsideLandmarks": 0
     },
     "actorSurfaceGuard": {
@@ -312,129 +331,129 @@
         0.5,
         0.5
       ],
-      "heightToleranceMetres": 1.43343,
-      "closedTiles": 1841,
-      "unsupportedTiles": 1609,
-      "submergedTiles": 123,
-      "heightMismatchTiles": 1841,
+      "heightToleranceMetres": 1.1640645,
+      "closedTiles": 456,
+      "unsupportedTiles": 100,
+      "submergedTiles": 130,
+      "heightMismatchTiles": 454,
       "samples": [
         {
           "tile": [
-            299,
-            2
+            143,
+            5
           ],
-          "encodedY": 4.165,
+          "encodedY": -2.0,
           "surfaceY": -2.0,
+          "unsupported": false,
+          "submerged": true
+        },
+        {
+          "tile": [
+            258,
+            5
+          ],
+          "encodedY": 4.209,
+          "surfaceY": -2.0,
+          "unsupported": false,
+          "submerged": true
+        },
+        {
+          "tile": [
+            143,
+            6
+          ],
+          "encodedY": -2.0,
+          "surfaceY": -1.999,
+          "unsupported": false,
+          "submerged": true
+        },
+        {
+          "tile": [
+            258,
+            6
+          ],
+          "encodedY": 4.209,
+          "surfaceY": -2.0,
+          "unsupported": false,
+          "submerged": true
+        },
+        {
+          "tile": [
+            258,
+            7
+          ],
+          "encodedY": 4.209,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": true
+        },
+        {
+          "tile": [
+            258,
+            8
+          ],
+          "encodedY": 4.209,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": true
+        },
+        {
+          "tile": [
+            258,
+            9
+          ],
+          "encodedY": 4.209,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": true
+        },
+        {
+          "tile": [
+            113,
+            14
+          ],
+          "encodedY": 5.761,
+          "surfaceY": 4.558,
           "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            299,
-            3
+            190,
+            22
           ],
-          "encodedY": 4.165,
-          "surfaceY": -2.0,
-          "unsupported": false,
+          "encodedY": 7.313,
+          "surfaceY": null,
+          "unsupported": true,
           "submerged": true
         },
         {
           "tile": [
-            299,
-            4
+            201,
+            22
           ],
-          "encodedY": 4.165,
-          "surfaceY": -2.0,
-          "unsupported": false,
+          "encodedY": 5.761,
+          "surfaceY": null,
+          "unsupported": true,
           "submerged": true
         },
         {
           "tile": [
-            299,
-            5
+            202,
+            22
           ],
-          "encodedY": 4.165,
-          "surfaceY": -2.0,
-          "unsupported": false,
+          "encodedY": 5.761,
+          "surfaceY": null,
+          "unsupported": true,
           "submerged": true
         },
         {
           "tile": [
-            299,
-            6
+            204,
+            23
           ],
-          "encodedY": 4.165,
-          "surfaceY": -2.0,
-          "unsupported": false,
-          "submerged": true
-        },
-        {
-          "tile": [
-            299,
-            7
-          ],
-          "encodedY": 4.165,
-          "surfaceY": -2.0,
-          "unsupported": false,
-          "submerged": true
-        },
-        {
-          "tile": [
-            299,
-            8
-          ],
-          "encodedY": 4.165,
-          "surfaceY": -2.0,
-          "unsupported": false,
-          "submerged": true
-        },
-        {
-          "tile": [
-            299,
-            9
-          ],
-          "encodedY": 4.165,
-          "surfaceY": -2.0,
-          "unsupported": false,
-          "submerged": true
-        },
-        {
-          "tile": [
-            299,
-            10
-          ],
-          "encodedY": 4.165,
-          "surfaceY": -2.0,
-          "unsupported": false,
-          "submerged": true
-        },
-        {
-          "tile": [
-            299,
-            11
-          ],
-          "encodedY": 4.165,
-          "surfaceY": -2.0,
-          "unsupported": false,
-          "submerged": true
-        },
-        {
-          "tile": [
-            299,
-            12
-          ],
-          "encodedY": 4.165,
-          "surfaceY": -2.0,
-          "unsupported": false,
-          "submerged": true
-        },
-        {
-          "tile": [
-            299,
-            13
-          ],
-          "encodedY": 4.165,
-          "surfaceY": -2.0,
+          "encodedY": 5.761,
+          "surfaceY": -10.811,
           "unsupported": false,
           "submerged": true
         }
@@ -643,6 +662,16 @@
     ],
     "roadClearance": 5.0,
     "npcs": {
+      "Lens-Master Corvine Ast": [
+        70,
+        91,
+        -193
+      ],
+      "Orrery Keeper Sabel Roon": [
+        64,
+        91,
+        -193
+      ],
       "Canal Factor Odile Wren": [
         13,
         35.8,
@@ -664,9 +693,9 @@
         -9
       ],
       "Bench Steward Aurel Fane": [
-        -81,
-        21.42,
-        -15
+        -76,
+        17,
+        -7
       ]
     }
   },
@@ -876,7 +905,7 @@
       "type": "feature",
       "position": [
         -75.2409,
-        17.901090934389863,
+        16.99,
         31.1934
       ]
     },
@@ -1008,7 +1037,7 @@
       "type": "feature",
       "position": [
         -81.635,
-        21.53633128188131,
+        17.0,
         -11.0718
       ]
     },
@@ -1032,7 +1061,7 @@
       "type": "transition",
       "position": [
         -79.1307,
-        85.06443356104494,
+        85.0,
         -279.547
       ],
       "note": "Where Mirrorhold gives way to the Whitehorn Range: luminous road furniture, a march stone, a waystation, and 19 pieces of the country beyond."
@@ -1044,7 +1073,7 @@
       "type": "waystation",
       "position": [
         -82.4343,
-        85.30545582736548,
+        85.06,
         -272.0331
       ]
     },
@@ -1079,7 +1108,7 @@
       "type": "transition",
       "position": [
         8.2562,
-        93.09878578191432,
+        91.88422209548514,
         -279.547
       ],
       "note": "Where Mirrorhold gives way to the Amethyst Barrens: luminous road furniture, a march stone, a waystation, and 13 pieces of the country beyond."
@@ -1091,7 +1120,7 @@
       "type": "waystation",
       "position": [
         4.9526,
-        93.27059861822366,
+        93.43,
         -272.0331
       ]
     },
@@ -1102,7 +1131,7 @@
       "type": "transition",
       "position": [
         -107.2117,
-        24.068623451231797,
+        24.0,
         22.4116
       ],
       "note": "Where Mirrorhold gives way to the Amberwood: luminous road furniture, a march stone, a waystation, and 12 pieces of the country beyond."
@@ -1114,7 +1143,7 @@
       "type": "waystation",
       "position": [
         -98.6861,
-        24.206467071178743,
+        23.93,
         25.3232
       ]
     },
@@ -1153,8 +1182,8 @@
         -234
       ],
       "serverTile": [
-        220,
-        330
+        229,
+        337
       ],
       "authority": "server"
     },
@@ -1168,8 +1197,8 @@
         -87
       ],
       "serverTile": [
-        230,
-        183
+        239,
+        190
       ],
       "authority": "server"
     },
@@ -1183,8 +1212,8 @@
         -27
       ],
       "serverTile": [
-        190,
-        123
+        199,
+        130
       ],
       "authority": "server"
     },
@@ -1198,8 +1227,8 @@
         7
       ],
       "serverTile": [
-        256,
-        89
+        265,
+        96
       ],
       "authority": "server"
     },
@@ -1213,8 +1242,8 @@
         61
       ],
       "serverTile": [
-        214,
-        35
+        223,
+        42
       ],
       "authority": "server"
     },
@@ -1228,8 +1257,8 @@
         -39.75
       ],
       "serverTile": [
-        130,
-        136
+        139,
+        143
       ],
       "authority": "server"
     },
@@ -1243,8 +1272,8 @@
         -35
       ],
       "serverTile": [
-        310,
-        131
+        319,
+        138
       ],
       "authority": "server"
     },
@@ -1258,8 +1287,8 @@
         -7
       ],
       "serverTile": [
-        73,
-        103
+        82,
+        110
       ],
       "authority": "server"
     },
@@ -1280,8 +1309,8 @@
       ],
       "authority": "server",
       "serverTile": [
-        151,
-        66
+        160,
+        73
       ]
     },
     {
@@ -1301,8 +1330,8 @@
       ],
       "authority": "server",
       "serverTile": [
-        263,
-        134
+        272,
+        141
       ]
     },
     {
@@ -1316,14 +1345,14 @@
       "destinationMap": "mirrorhold_secrets",
       "destinationSpawn": "mirror-orrery-vault",
       "position": [
-        115,
-        124,
-        -230
+        62.0,
+        91.33360185185185,
+        -193.0
       ],
       "authority": "server",
       "serverTile": [
-        235,
-        326
+        191,
+        296
       ]
     },
     {
@@ -1343,8 +1372,8 @@
       ],
       "authority": "server",
       "serverTile": [
-        311,
-        129
+        320,
+        136
       ]
     },
     {
@@ -1364,8 +1393,8 @@
       ],
       "authority": "server",
       "serverTile": [
-        160,
-        194
+        169,
+        201
       ]
     },
     {
@@ -1379,14 +1408,14 @@
       "destinationMap": "mirrorhold_secrets",
       "destinationSpawn": "mirror-basin-spring",
       "position": [
-        80,
-        84,
-        -88
+        88.0,
+        84.0,
+        -109.0
       ],
       "authority": "server",
       "serverTile": [
-        200,
-        184
+        217,
+        212
       ]
     },
     {
@@ -1406,8 +1435,8 @@
       ],
       "authority": "server",
       "serverTile": [
-        186,
-        14
+        195,
+        21
       ]
     },
     {
@@ -1427,8 +1456,8 @@
       ],
       "authority": "server",
       "serverTile": [
-        258,
-        223
+        267,
+        230
       ]
     },
     {
@@ -1448,8 +1477,8 @@
       ],
       "authority": "server",
       "serverTile": [
-        169,
-        87
+        178,
+        94
       ]
     },
     {
@@ -1469,8 +1498,8 @@
       ],
       "authority": "server",
       "serverTile": [
-        160,
-        261
+        169,
+        268
       ]
     },
     {
@@ -1490,8 +1519,8 @@
       ],
       "authority": "server",
       "serverTile": [
-        331,
-        208
+        340,
+        215
       ]
     },
     {
@@ -1511,8 +1540,8 @@
       ],
       "authority": "server",
       "serverTile": [
-        176,
-        122
+        185,
+        129
       ]
     },
     {
@@ -1532,8 +1561,8 @@
       ],
       "authority": "server",
       "serverTile": [
-        282,
-        160
+        291,
+        167
       ]
     },
     {
@@ -1553,8 +1582,8 @@
       ],
       "authority": "server",
       "serverTile": [
-        155,
-        222
+        164,
+        229
       ]
     }
   ],
@@ -1568,8 +1597,8 @@
         -105.6464
       ],
       "serverTile": [
-        214,
-        202
+        223,
+        209
       ],
       "wanderRadius": 4.0,
       "authority": "server"
@@ -1583,8 +1612,8 @@
         -216.6464
       ],
       "serverTile": [
-        220,
-        313
+        229,
+        320
       ],
       "wanderRadius": 4.0,
       "authority": "server"
@@ -1598,8 +1627,8 @@
         -153.6464
       ],
       "serverTile": [
-        220,
-        250
+        229,
+        257
       ],
       "wanderRadius": 6.0,
       "authority": "server"
@@ -1613,8 +1642,8 @@
         -39.6464
       ],
       "serverTile": [
-        190,
-        136
+        199,
+        143
       ],
       "wanderRadius": 5.0,
       "authority": "server"
@@ -1628,8 +1657,8 @@
         -57.6464
       ],
       "serverTile": [
-        142,
-        154
+        151,
+        161
       ],
       "wanderRadius": 5.0,
       "authority": "server"
@@ -1643,8 +1672,8 @@
         5.8343
       ],
       "serverTile": [
-        256,
-        90
+        265,
+        97
       ],
       "wanderRadius": 5.0,
       "authority": "server"
@@ -1658,8 +1687,8 @@
         42.4641
       ],
       "serverTile": [
-        214,
-        54
+        223,
+        61
       ],
       "wanderRadius": 4.0,
       "authority": "server"
@@ -1673,8 +1702,8 @@
         -11.0718
       ],
       "serverTile": [
-        80,
-        107
+        89,
+        114
       ],
       "wanderRadius": 5.0,
       "authority": "server"
@@ -1688,8 +1717,8 @@
         -39.6464
       ],
       "serverTile": [
-        326,
-        136
+        335,
+        143
       ],
       "wanderRadius": 4.0,
       "authority": "server"
@@ -1703,8 +1732,8 @@
         -75.6464
       ],
       "serverTile": [
-        274,
-        172
+        283,
+        179
       ],
       "wanderRadius": 4.0,
       "authority": "server"
@@ -1718,8 +1747,8 @@
         3.0166
       ],
       "serverTile": [
-        83,
-        93
+        92,
+        100
       ],
       "wanderRadius": 5.0,
       "authority": "server"
@@ -1733,8 +1762,8 @@
         87.547
       ],
       "serverTile": [
-        166,
-        8
+        175,
+        15
       ],
       "wanderRadius": 4.0,
       "authority": "server"
@@ -1749,8 +1778,8 @@
         -240.0994
       ],
       "serverTile": [
-        330,
-        336
+        339,
+        343
       ],
       "wanderRadius": 26.0,
       "authority": "server"
@@ -1765,8 +1794,8 @@
         -245.7348
       ],
       "serverTile": [
-        70,
-        342
+        79,
+        349
       ],
       "wanderRadius": 24.0,
       "authority": "server"
@@ -1781,8 +1810,8 @@
         -183.6464
       ],
       "serverTile": [
-        58,
-        280
+        67,
+        287
       ],
       "wanderRadius": 30.0,
       "authority": "server"
@@ -1797,8 +1826,8 @@
         45.2818
       ],
       "serverTile": [
-        214,
-        51
+        223,
+        58
       ],
       "wanderRadius": 34.0,
       "authority": "server"
@@ -1813,8 +1842,8 @@
         -177.6464
       ],
       "serverTile": [
-        349,
-        274
+        358,
+        281
       ],
       "wanderRadius": 26.0,
       "authority": "server"
@@ -1829,8 +1858,8 @@
         -99.6464
       ],
       "serverTile": [
-        121,
-        196
+        130,
+        203
       ],
       "wanderRadius": 20.0,
       "authority": "server"
@@ -1847,8 +1876,8 @@
         -232.6232
       ],
       "serverTile": [
-        238,
-        329
+        247,
+        336
       ],
       "authority": "server"
     },
@@ -1862,8 +1891,8 @@
         -258.5552
       ],
       "serverTile": [
-        356,
-        354
+        365,
+        361
       ],
       "authority": "server"
     },
@@ -1877,8 +1906,8 @@
         -3.5251
       ],
       "serverTile": [
-        56,
-        100
+        65,
+        107
       ],
       "authority": "server"
     },
@@ -1892,8 +1921,8 @@
         -131.8064
       ],
       "serverTile": [
-        123,
-        228
+        132,
+        235
       ],
       "authority": "server"
     },
@@ -1907,8 +1936,8 @@
         -92.7764
       ],
       "serverTile": [
-        85,
-        189
+        94,
+        196
       ],
       "authority": "server"
     },
@@ -1922,8 +1951,8 @@
         35.387
       ],
       "serverTile": [
-        341,
-        61
+        350,
+        68
       ],
       "authority": "server"
     },
@@ -1937,8 +1966,8 @@
         18.5936
       ],
       "serverTile": [
-        356,
-        77
+        365,
+        84
       ],
       "authority": "server"
     },
@@ -1952,8 +1981,8 @@
         10.9296
       ],
       "serverTile": [
-        331,
-        85
+        340,
+        92
       ],
       "authority": "server"
     },
@@ -1967,8 +1996,8 @@
         -177.5264
       ],
       "serverTile": [
-        26,
-        274
+        35,
+        281
       ],
       "authority": "server"
     },
@@ -1982,8 +2011,8 @@
         -115.8064
       ],
       "serverTile": [
-        277,
-        212
+        286,
+        219
       ],
       "authority": "server"
     },
@@ -1997,8 +2026,8 @@
         -251.7834
       ],
       "serverTile": [
-        346,
-        348
+        355,
+        355
       ],
       "authority": "server"
     },
@@ -2012,8 +2041,8 @@
         -235.887
       ],
       "serverTile": [
-        330,
-        332
+        339,
+        339
       ],
       "authority": "server"
     },
@@ -2027,8 +2056,8 @@
         -220.5664
       ],
       "serverTile": [
-        355,
-        317
+        364,
+        324
       ],
       "authority": "server"
     },
@@ -2042,8 +2071,8 @@
         -222.0364
       ],
       "serverTile": [
-        313,
-        318
+        322,
+        325
       ],
       "authority": "server"
     },
@@ -2057,8 +2086,8 @@
         -259.7293
       ],
       "serverTile": [
-        307,
-        356
+        316,
+        363
       ],
       "authority": "server"
     },
@@ -2072,8 +2101,8 @@
         -234.6425
       ],
       "serverTile": [
-        345,
-        330
+        354,
+        337
       ],
       "authority": "server"
     },
@@ -2087,8 +2116,8 @@
         -220.0464
       ],
       "serverTile": [
-        88,
-        316
+        97,
+        323
       ],
       "authority": "server"
     },
@@ -2102,8 +2131,8 @@
         -215.0664
       ],
       "serverTile": [
-        325,
-        311
+        334,
+        318
       ],
       "authority": "server"
     },
@@ -2117,8 +2146,8 @@
         -66.5064
       ],
       "serverTile": [
-        72,
-        163
+        81,
+        170
       ],
       "authority": "server"
     },
@@ -2132,8 +2161,8 @@
         66.0199
       ],
       "serverTile": [
-        51,
-        30
+        60,
+        37
       ],
       "authority": "server"
     },
@@ -2147,8 +2176,8 @@
         -4.6099
       ],
       "serverTile": [
-        21,
-        100
+        30,
+        107
       ],
       "authority": "server"
     },
@@ -2162,8 +2191,8 @@
         -249.163
       ],
       "serverTile": [
-        27,
-        345
+        36,
+        352
       ],
       "authority": "server"
     },
@@ -2177,8 +2206,8 @@
         -89.2564
       ],
       "serverTile": [
-        20,
-        186
+        29,
+        193
       ],
       "authority": "server"
     },
@@ -2192,8 +2221,8 @@
         35.8472
       ],
       "serverTile": [
-        28,
-        60
+        37,
+        67
       ],
       "authority": "server"
     },
@@ -2207,8 +2236,8 @@
         -134.9864
       ],
       "serverTile": [
-        21,
-        231
+        30,
+        238
       ],
       "authority": "server"
     },
@@ -2222,8 +2251,8 @@
         -276.9923
       ],
       "serverTile": [
-        25,
-        373
+        34,
+        380
       ],
       "authority": "server"
     },
@@ -2237,8 +2266,8 @@
         70.5376
       ],
       "serverTile": [
-        61,
-        25
+        70,
+        32
       ],
       "authority": "server"
     },
@@ -2252,8 +2281,8 @@
         55.4865
       ],
       "serverTile": [
-        23,
-        40
+        32,
+        47
       ],
       "authority": "server"
     },
@@ -2267,8 +2296,8 @@
         -38.9764
       ],
       "serverTile": [
-        104,
-        135
+        113,
+        142
       ],
       "authority": "server"
     },
@@ -2282,8 +2311,8 @@
         66.0387
       ],
       "serverTile": [
-        339,
-        30
+        348,
+        37
       ],
       "authority": "server"
     },
@@ -2297,8 +2326,8 @@
         38.0309
       ],
       "serverTile": [
-        127,
-        58
+        136,
+        65
       ],
       "authority": "server"
     },
@@ -2312,8 +2341,8 @@
         56.5807
       ],
       "serverTile": [
-        108,
-        39
+        117,
+        46
       ],
       "authority": "server"
     },
@@ -2327,8 +2356,8 @@
         24.1022
       ],
       "serverTile": [
-        151,
-        72
+        160,
+        79
       ],
       "authority": "server"
     },
@@ -2342,8 +2371,8 @@
         64.874
       ],
       "serverTile": [
-        143,
-        31
+        152,
+        38
       ],
       "authority": "server"
     },
@@ -2357,8 +2386,8 @@
         51.8892
       ],
       "serverTile": [
-        175,
-        44
+        184,
+        51
       ],
       "authority": "server"
     },
@@ -2372,8 +2401,8 @@
         23.6514
       ],
       "serverTile": [
-        274,
-        72
+        283,
+        79
       ],
       "authority": "server"
     },
@@ -2387,8 +2416,8 @@
         33.2785
       ],
       "serverTile": [
-        271,
-        63
+        280,
+        70
       ],
       "authority": "server"
     },
@@ -2402,8 +2431,8 @@
         50.5837
       ],
       "serverTile": [
-        288,
-        46
+        297,
+        53
       ],
       "authority": "server"
     }
@@ -2414,13 +2443,13 @@
       "name": "Whitehorn Pass",
       "type": "map-transition",
       "position": [
-        -76.5,
-        85.0,
-        -282.5
+        -61.5,
+        48.55,
+        -293.5
       ],
       "serverTile": [
-        43,
-        378
+        67,
+        396
       ],
       "destinationMap": "whitehorn_range",
       "radius": 3.5,
@@ -2431,12 +2460,12 @@
       "name": "Sanctuary Road to Four Gates",
       "type": "map-transition",
       "position": [
-        175.5,
+        124.5,
         4.0,
-        93.5
+        100.5
       ],
       "serverTile": [
-        295,
+        253,
         2
       ],
       "destinationMap": "four_gates",
@@ -2448,13 +2477,13 @@
       "name": "Glasswarden Road",
       "type": "map-transition",
       "position": [
-        10.5,
-        93.0,
-        -282.5
+        270.5,
+        24.05,
+        -246.5
       ],
       "serverTile": [
-        130,
-        378
+        399,
+        349
       ],
       "destinationMap": "amethyst_barrens",
       "radius": 3.5,
@@ -2465,13 +2494,13 @@
       "name": "Gorge Road to the Amberwood",
       "type": "map-transition",
       "position": [
-        -111.5,
-        24.0,
-        20.5
+        -126.5,
+        32.9,
+        -36.5
       ],
       "serverTile": [
-        8,
-        75
+        2,
+        139
       ],
       "destinationMap": "amberwood",
       "radius": 3.5,
@@ -2487,8 +2516,8 @@
         5.8343
       ],
       "serverTile": [
-        256,
-        90
+        264,
+        97
       ],
       "destinationMap": "crownwater",
       "radius": 3.5,
@@ -2499,19 +2528,21 @@
       "name": "The Lens Vault",
       "type": "interior-entrance",
       "position": [
-        74.6788,
-        112.1,
-        -201.6464
+        67.0,
+        91.1,
+        -195.0
       ],
       "serverTile": [
-        195,
+        196,
         298
       ],
       "landmark": "orrery",
       "destinationMap": "mirrorhold_interiors",
       "destinationSpawn": "lens-vault-stair",
       "radius": 2.5,
-      "authority": "server"
+      "authority": "server",
+      "node": "Building_VaultEntry_lens-vault-stair",
+      "approachRevision": "working-road-vault-entry-1"
     },
     {
       "id": "cistern-door",
@@ -2523,8 +2554,8 @@
         -29.6464
       ],
       "serverTile": [
-        209,
-        126
+        218,
+        133
       ],
       "landmark": "plaza",
       "destinationMap": "mirrorhold_interiors",
@@ -2542,8 +2573,8 @@
         -5.6602
       ],
       "serverTile": [
-        67,
-        102
+        76,
+        109
       ],
       "landmark": "cliff-town",
       "destinationMap": "mirrorhold_interiors",
@@ -2994,8 +3025,20 @@
     },
     {
       "id": "lens-vault-lane",
-      "width": 5,
+      "width": 4.0,
       "waypoints": [
+        [
+          67.0,
+          91.0,
+          -193.0
+        ],
+        [
+          67.0,
+          91.0,
+          -195.0
+        ]
+      ],
+      "originalSurveyWaypoints": [
         [
           74.68,
           112,
@@ -3582,11 +3625,6 @@
         "type": "pool"
       },
       {
-        "id": "Water_Canal",
-        "node": "Water_Canal",
-        "type": "pool"
-      },
-      {
         "id": "Water_Lake_StreamCell_amberwood-mirrorhold",
         "node": "Water_Lake_StreamCell_amberwood-mirrorhold",
         "type": "stream"
@@ -3594,6 +3632,11 @@
       {
         "id": "Water_Canal_StreamCell_amberwood-mirrorhold",
         "node": "Water_Canal_StreamCell_amberwood-mirrorhold",
+        "type": "stream"
+      },
+      {
+        "id": "Water_Canal_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "node": "Water_Canal_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
         "type": "stream"
       },
       {
@@ -3609,6 +3652,21 @@
       {
         "id": "Water_StreamCauseway_mirrorhold-four-gates_StreamCell_mirrorhold-four-gates",
         "node": "Water_StreamCauseway_mirrorhold-four-gates_StreamCell_mirrorhold-four-gates",
+        "type": "stream"
+      },
+      {
+        "id": "Water_Lake_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "node": "Water_Lake_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "type": "stream"
+      },
+      {
+        "id": "Water_Canal_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "node": "Water_Canal_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "type": "stream"
+      },
+      {
+        "id": "Water_StreamCauseway_mirrorhold-four-gates_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "node": "Water_StreamCauseway_mirrorhold-four-gates_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
         "type": "stream"
       }
     ],
@@ -3699,7 +3757,7 @@
       ],
       "max": [
         263.0,
-        258.29,
+        195.39,
         96.0
       ]
     },
@@ -3711,7 +3769,7 @@
       ],
       "max": [
         280.014598540146,
-        258.2852802244457,
+        195.38943398150315,
         110.38121546961327
       ]
     },
@@ -3842,46 +3900,60 @@
   "minimap": {
     "image": "minimap.webp",
     "imageSize": [
-      383,
-      383
+      396,
+      392
     ],
     "pixelsPerMetre": 1.0,
     "worldMin": [
-      -120.0,
-      -287.0
+      -126,
+      -293
     ],
     "worldMax": [
-      263.0,
-      96.0
+      270,
+      99
     ],
     "northAxis": "-Z",
     "orientation": "north-up",
     "projection": "orthographic-top-down",
-    "renderedFrom": "final geometry (offline rasteriser)",
+    "renderedFrom": "world.glb (shared geometry cartography renderer)",
     "transform": {
       "pixelX": {
         "scale": 1.0,
-        "offset": 120.0
+        "offset": 126
       },
       "pixelY": {
         "scale": 1.0,
-        "offset": 287.0
+        "offset": 293
       },
       "formula": "pixel_x = world_x * scale + offset; pixel_y = world_z * scale + offset"
     },
     "note": "Every Eloria minimap is drawn at one pixel to the metre, so the image's pixel size is the map's size in metres.",
     "file": "minimap.webp",
-    "pixels": 383,
+    "pixels": 396,
     "size": [
-      383,
-      383
+      396,
+      392
     ],
     "metresPerPixel": 1.0,
     "centre": [
-      71.5,
-      -95.5
+      72.0,
+      -97.0
     ],
-    "northUp": true
+    "northUp": true,
+    "geometryImage": "cartography.webp",
+    "cartographyRender": {
+      "generator": "eloria-assets/tools/render_region_cartography.py",
+      "styleVersion": 4,
+      "glbSha256": "b4e48b8136acbc941e3e807c5e9cdeef5b3c8589e40e25e2b13036945b877474",
+      "toolSha256": "e5c5cab675ec4f463d33a3dd17d43cec6c41a7aee2a4ea6defb82f4451d496c3",
+      "rendererSourceSha256": "20a909b6f7b76e84867caed2e5bdcc3b6ae708ffc5231899794b2bef09005a05",
+      "supersample": 2,
+      "waterRGB": [
+        79,
+        150,
+        157
+      ]
+    }
   },
   "lodGroups": [
     {
@@ -3910,33 +3982,33 @@
     }
   ],
   "performance": {
-    "nodes": 1024,
-    "meshes": 369,
-    "materials": 57,
+    "nodes": 1096,
+    "meshes": 440,
+    "materials": 59,
     "images": 121,
     "textures": 121,
-    "accessors": 1594,
-    "bufferViews": 1715,
-    "uniqueTriangles": 822047,
-    "uniqueVertices": 487724,
-    "glbBytes": 36573068,
-    "instancedTriangles": 1015543,
+    "accessors": 1935,
+    "bufferViews": 2056,
+    "uniqueTriangles": 1591687,
+    "uniqueVertices": 901244,
+    "glbBytes": 56417732,
+    "instancedTriangles": 1784185,
     "embeddedTextureBytes": 12937171,
     "textureMemoryBytesUncompressed": 115015680,
-    "placements": 494,
+    "placements": 493,
     "collision": {
       "width": 768,
       "height": 768,
       "cellMetres": 0.5,
-      "walkableCells": 303759,
-      "blockedCells": 286065,
-      "walkableFraction": 0.515,
+      "walkableCells": 338653,
+      "blockedCells": 251171,
+      "walkableFraction": 0.5742,
       "elevatedDecks": 28,
-      "steepCells": 223585,
-      "reliefMetres": 242.67,
+      "steepCells": 189285,
+      "reliefMetres": 194.77,
       "heightEncoding": {
-        "origin": -0.6049,
-        "step": 0.955411,
+        "origin": -0.4163,
+        "step": 0.766805,
         "range": [
           1,
           255
@@ -3958,15 +4030,22 @@
       "march lake-quay: 0 road pieces, 0 of crownwater's growth",
       "Meltwater: three descending catchments; 5 surveyed cart bridges.",
       "384 m inhabited survey: full-size civic core; three connected Stair Town streets; eight working yards; surveyed northern cols.",
-      "Sanctuary Road: a seven-metre causeway from the southeast working shore; South Watch and Ring island retain their sheltered banks."
+      "Sanctuary Road: a seven-metre causeway from the southeast working shore; South Watch and Ring island retain their sheltered banks.",
+      "Continent ownership is actual clipped geometry in one translation-only frame; native structures retain their scale and pose.",
+      "Northern cols: broad connected valley floors and curved scree shoulders around the surveyed roads; exact common contours and real structure footings retained.",
+      "Northern road beds are seated from their final triangle surfaces; common boundaries and actual native structural footings are protected.",
+      "Northern surface finish: paint follows the actual shaped substrate with distinct layer offsets; valley grades use the finished road decks.",
+      "Sanctuary Road crosses the lake on a stone bridge at working-quay level, with six bed-grounded piers, open water between supports and the original shared causeway beyond.",
+      "Generated connector finish: one connected half-metre road bed at curves and shared junctions, intact boundary strip and native bridges, terrain and paint seated from actual final triangles.",
+      "The Lens Vault keeps its full-size covered doorway and interior identity on a grounded working-road court; the abandoned high entry footing is released."
     ],
     "lod2": {
-      "glbBytes": 15696640,
-      "nodes": 959,
-      "uniqueTriangles": 440433,
-      "instancedTriangles": 584227,
-      "sizeReductionPercent": 57.1,
-      "triangleReductionPercent": 42.5
+      "glbBytes": 38477552,
+      "nodes": 1025,
+      "uniqueTriangles": 1302933,
+      "instancedTriangles": 1447841,
+      "sizeReductionPercent": 31.8,
+      "triangleReductionPercent": 18.9
     }
   },
   "sources": [
@@ -3997,90 +4076,384 @@
   "productionStatus": "production-geometry-materials-population",
   "knownLimitations": [],
   "landscapeRevision": "inhabited-384-v1",
+  "lensVaultApproach": {
+    "revision": "working-road-vault-entry-1",
+    "originalPosition": [
+      74.6788,
+      112,
+      -205.6464
+    ],
+    "position": [
+      67.0,
+      91.0,
+      -199.0
+    ],
+    "trigger": [
+      67.0,
+      91.1,
+      -195.0
+    ],
+    "reason": "The existing full-size vault entry now fronts the connected lower working road; its old isolated approach footing is released.",
+    "finished": true,
+    "finishedTerrainMeshes": [
+      "Terrain_AlpineTurf_StreamCell_mirrorhold-amethyst",
+      "Terrain_Marble_StreamCell_mirrorhold-amethyst",
+      "Terrain_Paving_StreamCell_mirrorhold-amethyst",
+      "Terrain_Rock_StreamCell_mirrorhold-amethyst",
+      "Terrain_Trail_StreamCell_mirrorhold-amethyst"
+    ],
+    "maximumFinishRaise": 1.827200800209809,
+    "maximumFinishCut": -11.263992777355426,
+    "pavementBounds": [
+      63.8,
+      70.2,
+      -196.5,
+      -193.0
+    ],
+    "publicApproach": [
+      [
+        56.5,
+        92.80145,
+        -198.5
+      ],
+      [
+        60.0,
+        91.867364815,
+        -196.5
+      ],
+      [
+        63.25,
+        91.0,
+        -195.5
+      ]
+    ],
+    "supportedShoulderWidth": 6.0,
+    "publicApproachFeather": 4.0,
+    "walkingFinishExcludesEntryBounds": [
+      [
+        63.55,
+        -201.95000000000002
+      ],
+      [
+        70.45,
+        -196.04999999999998
+      ]
+    ]
+  },
+  "secretApproaches": {
+    "revision": "public-basin-and-orrery-discovery-1",
+    "entries": [
+      {
+        "secret": "mirror-basin-spring",
+        "node": "Secret_mirror_basin_spring",
+        "identity": {
+          "id": "secret-mirror-basin-spring",
+          "kind": "secret",
+          "secret": "mirror-basin-spring",
+          "name": "The Basin Spring",
+          "label": "A loose stone in the rock; something moves behind it.",
+          "prop": "loose_stone",
+          "key": "",
+          "destinationMap": "mirrorhold_secrets",
+          "destinationSpawn": "mirror-basin-spring",
+          "authority": "server"
+        },
+        "originalSurveyPosition": [
+          80.0,
+          84.0,
+          -88.0
+        ],
+        "position": [
+          88.0,
+          84.0,
+          -109.0
+        ],
+        "propPosition": [
+          88.0,
+          83.99036585634344,
+          -111.7
+        ],
+        "nativeServerTile": [
+          208,
+          205
+        ]
+      },
+      {
+        "secret": "mirror-orrery-vault",
+        "node": "Secret_mirror_orrery_vault",
+        "identity": {
+          "id": "secret-mirror-orrery-vault",
+          "kind": "secret",
+          "secret": "mirror-orrery-vault",
+          "name": "The Orrery Vault",
+          "label": "A cracked flagstone that rings hollow underfoot.",
+          "prop": "cracked_slab",
+          "key": "Storage Token",
+          "destinationMap": "mirrorhold_secrets",
+          "destinationSpawn": "mirror-orrery-vault",
+          "authority": "server"
+        },
+        "originalSurveyPosition": [
+          115.0,
+          124.0,
+          -230.0
+        ],
+        "position": [
+          62.0,
+          91.33360185185185,
+          -193.0
+        ],
+        "propPosition": [
+          62.5,
+          91.20891945944022,
+          -191.0
+        ],
+        "rigidGroundTilt": [
+          [
+            0.9825892456964435,
+            0.18543107220452773,
+            0.011562512822629042
+          ],
+          [
+            -0.18543107220452773,
+            0.9749105604170727,
+            0.12314510403726363
+          ],
+          [
+            0.011562512822629042,
+            -0.12314510403726363,
+            0.9923213147206292
+          ]
+        ],
+        "groundPlane": [
+          -0.19020316297035414,
+          0.126314257981349,
+          91.25891945944022
+        ],
+        "propRotationY": 0.0,
+        "nativeServerTile": [
+          182,
+          289
+        ]
+      }
+    ],
+    "reason": "The Basin Spring is discovered on its dry southern court; the Orrery Vault flagstone lies beside the keepers' working-court approach. The abandoned secret-only high footing is released.",
+    "finished": true
+  },
   "streamingBorders": [
     {
       "id": "amberwood-mirrorhold",
       "portal": "west-gorge",
       "destination": "amberwood",
       "anchor": [
-        -110.5,
-        24,
-        20.5
+        -125.5,
+        32.9,
+        -36.5
       ],
       "outward": [
         -1,
         0
       ],
+      "globalTranslation": [
+        978.0,
+        0,
+        716.0
+      ],
+      "globalAnchor": [
+        852.5,
+        32.9,
+        679.5
+      ],
       "uvSign": -1,
       "palette": "upland",
-      "preloadDistance": 170,
-      "retainDistance": 220,
-      "blendDistance": 65,
+      "preloadDistance": 240,
+      "retainDistance": 320,
+      "blendDistance": 90,
       "collarDepth": 42,
       "halfWidthTiles": 3,
-      "viewHalfWidth": 40.0,
-      "viewDepth": 145.0,
-      "previewPrefix": "StreamView_amberwood-mirrorhold__",
-      "overflowSuffix": "_StreamOverflow_amberwood-mirrorhold",
-      "geometryMode": "shared-cells-v2",
+      "viewHalfWidth": 110,
+      "viewDepth": 240,
+      "geometryMode": "continent-owned-v1",
       "sceneNodes": [
         "Terrain_Trail_StreamCell_amberwood-mirrorhold",
         "Terrain_Paving_StreamCell_amberwood-mirrorhold",
         "Terrain_Shore_StreamCell_amberwood-mirrorhold",
         "Terrain_Rock_StreamCell_amberwood-mirrorhold",
         "Terrain_AlpineTurf_StreamCell_amberwood-mirrorhold",
-        "Terrain_Trail_StreamCollar_amberwood-mirrorhold_Turf_StreamCell_amberwood-mirrorhold",
-        "Terrain_Trail_StreamCollar_amberwood-mirrorhold_Road_StreamCell_amberwood-mirrorhold",
+        "Terrain_MarchAmberwood_StreamCell_amberwood-mirrorhold",
+        "Walk_ContinentRoad_amberwood-mirrorhold_StreamCell_amberwood-mirrorhold",
         "Terrain_Rock_StreamCollar_amberwood-mirrorhold_Turf_StreamCell_amberwood-mirrorhold",
         "Terrain_Rock_StreamCollar_amberwood-mirrorhold_Frost_StreamCell_amberwood-mirrorhold",
+        "Terrain_Rock_StreamCollar_amberwood-mirrorhold_Road_StreamCell_amberwood-mirrorhold",
         "Terrain_AlpineTurf_StreamCollar_amberwood-mirrorhold_Turf_StreamCell_amberwood-mirrorhold",
         "Terrain_AlpineTurf_StreamCollar_amberwood-mirrorhold_Frost_StreamCell_amberwood-mirrorhold",
+        "Terrain_AlpineTurf_StreamCollar_amberwood-mirrorhold_Road_StreamCell_amberwood-mirrorhold",
+        "Terrain_MarchAmberwood_StreamCollar_amberwood-mirrorhold_Turf_StreamCell_amberwood-mirrorhold",
+        "Terrain_MarchAmberwood_StreamCollar_amberwood-mirrorhold_Frost_StreamCell_amberwood-mirrorhold",
         "Water_Lake_StreamCell_amberwood-mirrorhold",
         "Water_Canal_StreamCell_amberwood-mirrorhold",
+        "Landmark_CitadelCourt",
+        "Landmark_Basin_0",
+        "Landmark_Basin_1",
+        "Landmark_Basin_2",
+        "Landmark_GateWall",
+        "Landmark_GateWing_-1",
+        "Landmark_Gallery",
+        "Landmark_RoseWindow",
+        "Landmark_Fountain",
+        "Prop_PlazaLamp_0",
+        "Prop_PlazaLamp_1",
+        "Prop_PlazaLamp_2",
+        "Prop_PlazaLamp_3",
+        "Prop_PlazaLamp_4",
+        "Prop_PlazaLamp_5",
+        "Prop_PlazaLamp_6",
+        "Prop_PlazaLamp_7",
+        "Landmark_PlazaStatue_0",
+        "Landmark_PlazaStatue_1",
+        "Landmark_PlazaStatue_2",
+        "Landmark_PlazaStatue_3",
+        "Landmark_Channel_0",
+        "Landmark_Channel_1",
+        "Landmark_Channel_2",
+        "Landmark_Channel_3",
+        "Landmark_Channel_4",
+        "Landmark_Fall_0",
+        "Landmark_Fall_1",
+        "Landmark_Fall_2",
+        "Landmark_Retaining_0",
+        "Landmark_Retaining_1",
+        "Prop_OverlookRail_0",
+        "Building_CliffHouse_0",
+        "Building_CliffHouse_1",
+        "Building_CliffHouse_2",
+        "Building_CliffHouse_3",
+        "Building_CliffHouse_4",
+        "Building_CliffHouse_5",
+        "Building_CliffHouse_6",
+        "Building_CliffHouse_7",
+        "Building_CliffHouse_8",
+        "Building_CliffHouse_9",
         "Building_CliffHouse_10",
         "Building_CliffHouse_11",
         "Building_CliffHouse_12",
         "Building_CliffHouse_13",
         "Building_CliffHouse_14",
+        "Building_VaultEntry_cistern-door",
         "Building_VaultEntry_stair-cellars-door",
+        "Landmark_Ring",
+        "Landmark_LakeLink_Sanctuary",
+        "Landmark_LakeLink_City",
         "Landmark_LakeLink_WestPier",
+        "Landmark_LakeLink_EastPier",
+        "Landmark_Quay",
+        "Landmark_Dock_0",
         "Prop_PierCrate_0",
         "Prop_PierSkiff_0",
+        "Landmark_west_islet",
+        "Building_west-bench_0",
+        "Building_west-bench_1",
         "Landmark_west-shrine",
         "Landmark_gorge-head",
         "Building_lower-terrace_0",
         "Building_lower-terrace_1",
+        "Building_mid-bench_0",
+        "Building_mid-bench_1",
         "Landmark_cistern-yard",
+        "Prop_cistern-yard_bollard_0",
+        "Prop_cistern-yard_bollard_1",
         "Prop_cistern-yard_bollard_2",
+        "Landmark_north-post",
         "Building_lake-north_0",
         "Building_lake-north_1",
         "Building_west-shore_0",
         "Building_west-shore_1",
         "Landmark_far-west",
         "Landmark_RoadWall_0",
+        "Landmark_RoadWall_1",
+        "Tree_Spruce_111_Canopy",
+        "Tree_Spruce_115_Wood",
+        "Tree_Spruce_115_Canopy",
+        "Tree_Spruce_117_Wood",
+        "Tree_Spruce_117_Canopy",
+        "Tree_Spruce_118_Wood",
+        "Tree_Spruce_118_Canopy",
+        "Tree_Spruce_122_Wood",
+        "Tree_Spruce_122_Canopy",
+        "Tree_Spruce_124_Wood",
+        "Tree_Spruce_124_Canopy",
+        "Tree_Spruce_127_Wood",
+        "Tree_Spruce_127_Canopy",
+        "Tree_Spruce_128_Wood",
+        "Tree_Spruce_128_Canopy",
+        "Tree_Spruce_130_Wood",
+        "Tree_Spruce_130_Canopy",
+        "Tree_Spruce_133_Wood",
+        "Tree_Spruce_133_Canopy",
+        "Tree_Spruce_135_Wood",
+        "Tree_Spruce_135_Canopy",
+        "Tree_Spruce_136_Wood",
+        "Tree_Spruce_136_Canopy",
+        "Tree_Spruce_138_Wood",
+        "Tree_Spruce_138_Canopy",
+        "Tree_Spruce_139_Wood",
+        "Tree_Spruce_139_Canopy",
+        "Tree_Spruce_143_Wood",
+        "Tree_Spruce_143_Canopy",
+        "Tree_Spruce_145_Wood",
+        "Tree_Spruce_145_Canopy",
+        "Tree_Spruce_149_Wood",
+        "Tree_Spruce_149_Canopy",
+        "Tree_Spruce_151_Wood",
+        "Tree_Spruce_151_Canopy",
+        "Tree_Spruce_153_Wood",
+        "Tree_Spruce_153_Canopy",
+        "Tree_Spruce_154_Wood",
+        "Tree_Spruce_154_Canopy",
+        "Tree_Spruce_155_Wood",
+        "Tree_Spruce_155_Canopy",
+        "Tree_Spruce_156_Wood",
+        "Tree_Spruce_156_Canopy",
+        "Tree_Spruce_158_Wood",
+        "Tree_Spruce_158_Canopy",
+        "Tree_Spruce_160_Wood",
+        "Tree_Spruce_160_Canopy",
+        "Tree_Spruce_164_Wood",
+        "Tree_Spruce_164_Canopy",
+        "Tree_Spruce_165_Wood",
+        "Tree_Spruce_165_Canopy",
+        "Tree_Spruce_166_Wood",
+        "Tree_Spruce_166_Canopy",
+        "Tree_Spruce_181_Wood",
         "Tree_Spruce_181_Canopy",
+        "Tree_Spruce_184_Wood",
+        "Tree_Spruce_184_Canopy",
         "Tree_Spruce_186_Wood",
         "Tree_Spruce_186_Canopy",
-        "Tree_Spruce_188_Wood",
-        "Tree_Spruce_188_Canopy",
         "Tree_Spruce_193_Wood",
         "Tree_Spruce_193_Canopy",
+        "Tree_Spruce_194_Wood",
+        "Tree_Spruce_194_Canopy",
+        "Tree_Spruce_199_Wood",
+        "Tree_Spruce_199_Canopy",
+        "Tree_Spruce_200_Wood",
+        "Tree_Spruce_200_Canopy",
         "Tree_Spruce_201_Wood",
         "Tree_Spruce_201_Canopy",
-        "Tree_Spruce_205_Wood",
-        "Tree_Spruce_205_Canopy",
-        "Tree_Spruce_212_Wood",
-        "Tree_Spruce_212_Canopy",
         "Tree_Spruce_215_Wood",
         "Tree_Spruce_215_Canopy",
+        "Tree_Spruce_219_Wood",
+        "Tree_Spruce_219_Canopy",
         "Tree_Spruce_220_Wood",
         "Tree_Spruce_220_Canopy",
-        "Tree_Spruce_221_Wood",
-        "Tree_Spruce_221_Canopy",
+        "Tree_Spruce_235_Wood",
+        "Tree_Spruce_235_Canopy",
         "Tree_Spruce_236_Wood",
         "Tree_Spruce_236_Canopy",
         "Tree_Spruce_239_Wood",
         "Tree_Spruce_239_Canopy",
+        "Tree_Spruce_269_Wood",
+        "Tree_Spruce_269_Canopy",
         "Tree_Spruce_270_Wood",
         "Tree_Spruce_270_Canopy",
         "Tree_Spruce_271_Wood",
@@ -4093,6 +4466,8 @@
         "Tree_Spruce_277_Canopy",
         "Tree_Spruce_278_Wood",
         "Tree_Spruce_278_Canopy",
+        "Tree_Spruce_279_Wood",
+        "Tree_Spruce_279_Canopy",
         "Tree_Spruce_280_Wood",
         "Tree_Spruce_280_Canopy",
         "Tree_Spruce_283_Wood",
@@ -4107,44 +4482,123 @@
         "Tree_Spruce_311_Canopy",
         "Tree_Spruce_312_Wood",
         "Tree_Spruce_312_Canopy",
+        "Tree_Spruce_317_Wood",
+        "Tree_Spruce_317_Canopy",
+        "Tree_Spruce_321_Wood",
+        "Tree_Spruce_321_Canopy",
+        "Tree_Spruce_327_Wood",
+        "Tree_Spruce_327_Canopy",
+        "Tree_Spruce_328_Wood",
+        "Tree_Spruce_328_Canopy",
+        "Tree_Spruce_334_Wood",
+        "Tree_Spruce_334_Canopy",
+        "Tree_Spruce_335_Wood",
+        "Tree_Spruce_335_Canopy",
+        "Tree_Spruce_341_Canopy",
+        "Tree_Spruce_342_Canopy",
+        "Tree_Spruce_343_Canopy",
+        "Prop_RoadLamp_0",
+        "Prop_Brazier_0_-1",
+        "Prop_Brazier_0_1",
+        "Prop_Brazier_1_-1",
+        "Prop_Brazier_1_1",
+        "Prop_Brazier_4_-1",
+        "Prop_Brazier_4_1",
         "Prop_Signpost_0",
         "March_west_gorge_Signpost",
         "March_west_gorge_Station",
+        "March_west_gorge_tree_009",
+        "March_west_gorge_tree_009_Canopy",
         "Secret_mirror_reed_cut",
+        "Secret_mirror_rose_school",
+        "Secret_mirror_basin_spring",
+        "Secret_mirror_cistern_well",
+        "Secret_mirror_waystone",
+        "Secret_mirror_icebore_mouth",
         "Landmark_MeltwaterBridge_1",
         "Landmark_MeltwaterBridge_2",
         "Prop_WorkingStores_0",
         "Prop_WorkingStores_1",
         "Prop_WorkingStores_2",
         "Prop_WorkingStores_3",
-        "Prop_WorkingStores_4"
-      ]
+        "Prop_WorkingStores_4",
+        "Prop_WorkingStores_5",
+        "Prop_WorkingStores_6",
+        "Terrain_Trail_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Paving_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Shore_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Rock_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Snow_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_AlpineTurf_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Trail_StreamCollar_amberwood-mirrorhold_Turf_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Trail_StreamCollar_amberwood-mirrorhold_Frost_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Rock_StreamCollar_amberwood-mirrorhold_Turf_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Rock_StreamCollar_amberwood-mirrorhold_Frost_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_AlpineTurf_StreamCollar_amberwood-mirrorhold_Turf_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_AlpineTurf_StreamCollar_amberwood-mirrorhold_Frost_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Water_Canal_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Rock_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Marble_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Trail_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Rock_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Marble_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Trail_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Paving_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Shore_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Rock_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Marble_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_AlpineTurf_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Trail_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Paving_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Shore_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Rock_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Marble_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_AlpineTurf_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Rock_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Marble_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Trail_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Rock_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Marble_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Water_Lake_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Water_Canal_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Water_StreamCauseway_mirrorhold-four-gates_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates"
+      ],
+      "previewPrefix": "StreamView_amberwood-mirrorhold__",
+      "overflowSuffix": "_StreamOverflow_amberwood-mirrorhold"
     },
     {
       "id": "whitehorn-mirrorhold",
       "portal": "north-pass",
       "destination": "whitehorn_range",
       "anchor": [
-        -76.5,
-        85,
-        -281.5
+        -61.5,
+        48.55,
+        -292.5
       ],
       "outward": [
         0,
         -1
       ],
+      "globalTranslation": [
+        978.0,
+        0,
+        716.0
+      ],
+      "globalAnchor": [
+        916.5,
+        48.55,
+        423.5
+      ],
       "uvSign": -1,
       "palette": "alpine",
-      "preloadDistance": 170,
-      "retainDistance": 220,
-      "blendDistance": 65,
+      "preloadDistance": 240,
+      "retainDistance": 320,
+      "blendDistance": 90,
       "collarDepth": 42,
       "halfWidthTiles": 3,
-      "viewHalfWidth": 40.0,
-      "viewDepth": 145.0,
-      "previewPrefix": "StreamView_whitehorn-mirrorhold__",
-      "overflowSuffix": "_StreamOverflow_whitehorn-mirrorhold",
-      "geometryMode": "shared-cells-v2",
+      "viewHalfWidth": 110,
+      "viewDepth": 240,
+      "geometryMode": "continent-owned-v1",
       "sceneNodes": [
         "Terrain_Trail_StreamCell_whitehorn-mirrorhold",
         "Terrain_Rock_StreamCell_whitehorn-mirrorhold",
@@ -4152,36 +4606,76 @@
         "Terrain_Ice_StreamCell_whitehorn-mirrorhold",
         "Terrain_AlpineTurf_StreamCell_whitehorn-mirrorhold",
         "Terrain_MarchWhitehornRange_StreamCell_whitehorn-mirrorhold",
+        "Terrain_MarchAmethystBarrens_StreamCell_whitehorn-mirrorhold",
+        "Walk_ContinentRoad_whitehorn-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Walk_ContinentRoad_mirrorhold-amethyst_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Rock_StreamCollar_amberwood-mirrorhold_Turf_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Rock_StreamCollar_amberwood-mirrorhold_Frost_StreamCell_whitehorn-mirrorhold",
+        "Terrain_AlpineTurf_StreamCollar_amberwood-mirrorhold_Turf_StreamCell_whitehorn-mirrorhold",
+        "Terrain_AlpineTurf_StreamCollar_amberwood-mirrorhold_Frost_StreamCell_whitehorn-mirrorhold",
         "Terrain_Trail_StreamCollar_whitehorn-mirrorhold_Turf_StreamCell_whitehorn-mirrorhold",
-        "Terrain_Trail_StreamCollar_whitehorn-mirrorhold_Road_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Trail_StreamCollar_whitehorn-mirrorhold_Frost_StreamCell_whitehorn-mirrorhold",
         "Terrain_Rock_StreamCollar_whitehorn-mirrorhold_Turf_StreamCell_whitehorn-mirrorhold",
         "Terrain_Rock_StreamCollar_whitehorn-mirrorhold_Frost_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Rock_StreamCollar_whitehorn-mirrorhold_Road_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Snow_StreamCollar_whitehorn-mirrorhold_Turf_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Ice_StreamCollar_whitehorn-mirrorhold_Turf_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Ice_StreamCollar_whitehorn-mirrorhold_Frost_StreamCell_whitehorn-mirrorhold",
         "Terrain_AlpineTurf_StreamCollar_whitehorn-mirrorhold_Turf_StreamCell_whitehorn-mirrorhold",
         "Terrain_AlpineTurf_StreamCollar_whitehorn-mirrorhold_Frost_StreamCell_whitehorn-mirrorhold",
+        "Terrain_AlpineTurf_StreamCollar_whitehorn-mirrorhold_Road_StreamCell_whitehorn-mirrorhold",
         "Terrain_MarchWhitehornRange_StreamCollar_whitehorn-mirrorhold_Turf_StreamCell_whitehorn-mirrorhold",
         "Terrain_MarchWhitehornRange_StreamCollar_whitehorn-mirrorhold_Frost_StreamCell_whitehorn-mirrorhold",
-        "Terrain_Rock_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_whitehorn-mirrorhold",
-        "Terrain_Rock_StreamCollar_mirrorhold-amethyst_Frost_StreamCell_whitehorn-mirrorhold",
-        "Terrain_AlpineTurf_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_whitehorn-mirrorhold",
-        "Terrain_AlpineTurf_StreamCollar_mirrorhold-amethyst_Frost_StreamCell_whitehorn-mirrorhold",
-        "Terrain_Rock_StreamCollar_whitehorn-mirrorhold_Turf_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_whitehorn-mirrorhold",
-        "Terrain_Rock_StreamCollar_whitehorn-mirrorhold_Turf_StreamCollar_mirrorhold-amethyst_Frost_StreamCell_whitehorn-mirrorhold",
-        "Terrain_Rock_StreamCollar_whitehorn-mirrorhold_Frost_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_whitehorn-mirrorhold",
-        "Terrain_Rock_StreamCollar_whitehorn-mirrorhold_Frost_StreamCollar_mirrorhold-amethyst_Frost_StreamCell_whitehorn-mirrorhold",
-        "Terrain_AlpineTurf_StreamCollar_whitehorn-mirrorhold_Turf_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_whitehorn-mirrorhold",
-        "Terrain_AlpineTurf_StreamCollar_whitehorn-mirrorhold_Turf_StreamCollar_mirrorhold-amethyst_Frost_StreamCell_whitehorn-mirrorhold",
-        "Terrain_AlpineTurf_StreamCollar_whitehorn-mirrorhold_Frost_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_whitehorn-mirrorhold",
-        "Terrain_AlpineTurf_StreamCollar_whitehorn-mirrorhold_Frost_StreamCollar_mirrorhold-amethyst_Frost_StreamCell_whitehorn-mirrorhold",
+        "Terrain_MarchWhitehornRange_StreamCollar_whitehorn-mirrorhold_Road_StreamCell_whitehorn-mirrorhold",
+        "Terrain_MarchAmethystBarrens_StreamCollar_whitehorn-mirrorhold_Turf_StreamCell_whitehorn-mirrorhold",
+        "Terrain_MarchAmethystBarrens_StreamCollar_whitehorn-mirrorhold_Frost_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Trail_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Paving_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Shore_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Rock_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Snow_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_AlpineTurf_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Trail_StreamCollar_amberwood-mirrorhold_Turf_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Trail_StreamCollar_amberwood-mirrorhold_Frost_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Rock_StreamCollar_amberwood-mirrorhold_Turf_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_Rock_StreamCollar_amberwood-mirrorhold_Frost_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_AlpineTurf_StreamCollar_amberwood-mirrorhold_Turf_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Terrain_AlpineTurf_StreamCollar_amberwood-mirrorhold_Frost_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Water_Canal_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold",
+        "Landmark_GateWing_-1",
+        "Landmark_Gallery",
+        "Landmark_lens_tower_west",
+        "Landmark_Channel_0",
+        "Landmark_Channel_1",
+        "Landmark_Channel_2",
+        "Landmark_Channel_3",
+        "Landmark_Channel_4",
+        "Building_CliffHouse_0",
+        "Building_CliffHouse_1",
+        "Building_CliffHouse_2",
+        "Building_CliffHouse_3",
+        "Building_CliffHouse_4",
+        "Building_west-bench_0",
+        "Building_west-bench_1",
+        "Building_mid-bench_0",
+        "Building_mid-bench_1",
+        "Landmark_north-post",
         "Tree_Spruce_4_Wood",
         "Tree_Spruce_4_Canopy",
-        "Tree_Spruce_16_Wood",
-        "Tree_Spruce_16_Canopy",
+        "Tree_Spruce_6_Wood",
+        "Tree_Spruce_6_Canopy",
+        "Tree_Spruce_17_Wood",
+        "Tree_Spruce_17_Canopy",
+        "Tree_Spruce_19_Wood",
+        "Tree_Spruce_19_Canopy",
         "Tree_Spruce_29_Wood",
         "Tree_Spruce_29_Canopy",
         "Tree_Spruce_34_Wood",
         "Tree_Spruce_34_Canopy",
         "Tree_Spruce_35_Wood",
         "Tree_Spruce_35_Canopy",
+        "Tree_Spruce_53_Wood",
+        "Tree_Spruce_53_Canopy",
         "Tree_Spruce_56_Wood",
         "Tree_Spruce_56_Canopy",
         "Tree_Spruce_57_Wood",
@@ -4214,6 +4708,8 @@
         "Tree_Spruce_86_Canopy",
         "Tree_Spruce_88_Wood",
         "Tree_Spruce_88_Canopy",
+        "Tree_Spruce_90_Wood",
+        "Tree_Spruce_90_Canopy",
         "Tree_Spruce_92_Wood",
         "Tree_Spruce_92_Canopy",
         "Tree_Spruce_94_Wood",
@@ -4224,62 +4720,161 @@
         "Tree_Spruce_97_Canopy",
         "Tree_Spruce_98_Wood",
         "Tree_Spruce_98_Canopy",
+        "Tree_Spruce_101_Wood",
+        "Tree_Spruce_101_Canopy",
         "Tree_Spruce_102_Wood",
         "Tree_Spruce_102_Canopy",
         "Tree_Spruce_105_Wood",
         "Tree_Spruce_105_Canopy",
         "Tree_Spruce_111_Wood",
         "Tree_Spruce_111_Canopy",
+        "Tree_Spruce_113_Wood",
+        "Tree_Spruce_113_Canopy",
         "Tree_Spruce_115_Wood",
         "Tree_Spruce_115_Canopy",
+        "Tree_Spruce_117_Wood",
+        "Tree_Spruce_117_Canopy",
         "Tree_Spruce_118_Wood",
         "Tree_Spruce_118_Canopy",
+        "Tree_Spruce_122_Wood",
+        "Tree_Spruce_122_Canopy",
         "Tree_Spruce_124_Wood",
         "Tree_Spruce_124_Canopy",
+        "Tree_Spruce_127_Wood",
+        "Tree_Spruce_127_Canopy",
+        "Tree_Spruce_128_Wood",
+        "Tree_Spruce_128_Canopy",
+        "Tree_Spruce_130_Wood",
+        "Tree_Spruce_130_Canopy",
+        "Tree_Spruce_133_Wood",
+        "Tree_Spruce_133_Canopy",
+        "Tree_Spruce_135_Wood",
+        "Tree_Spruce_135_Canopy",
+        "Tree_Spruce_136_Wood",
+        "Tree_Spruce_136_Canopy",
+        "Tree_Spruce_138_Wood",
+        "Tree_Spruce_138_Canopy",
+        "Tree_Spruce_139_Wood",
+        "Tree_Spruce_139_Canopy",
+        "Tree_Spruce_143_Wood",
+        "Tree_Spruce_143_Canopy",
+        "Tree_Spruce_145_Wood",
+        "Tree_Spruce_145_Canopy",
+        "Tree_Spruce_149_Wood",
+        "Tree_Spruce_149_Canopy",
+        "Tree_Spruce_151_Wood",
+        "Tree_Spruce_151_Canopy",
+        "Tree_Spruce_153_Wood",
+        "Tree_Spruce_153_Canopy",
+        "Tree_Spruce_154_Wood",
+        "Tree_Spruce_154_Canopy",
+        "Tree_Spruce_155_Wood",
+        "Tree_Spruce_155_Canopy",
+        "Tree_Spruce_156_Wood",
+        "Tree_Spruce_156_Canopy",
+        "Tree_Spruce_158_Wood",
+        "Tree_Spruce_158_Canopy",
+        "Tree_Spruce_160_Wood",
+        "Tree_Spruce_160_Canopy",
+        "Tree_Spruce_164_Wood",
+        "Tree_Spruce_164_Canopy",
+        "Tree_Spruce_165_Wood",
+        "Tree_Spruce_165_Canopy",
+        "Tree_Spruce_166_Wood",
+        "Tree_Spruce_166_Canopy",
         "March_north_pass_Signpost",
         "March_north_pass_Station",
         "March_north_pass_tree_001",
         "March_north_pass_tree_001_Canopy",
-        "March_north_pass_tree_002",
-        "March_north_pass_tree_002_Canopy",
         "March_north_pass_tree_005",
         "March_north_pass_tree_005_Canopy",
+        "March_north_pass_snow_boulder_009",
         "March_north_pass_snow_boulder_010",
-        "March_north_pass_snow_boulder_011",
-        "March_north_pass_snow_boulder_013",
-        "March_north_pass_snow_boulder_014",
+        "March_north_pass_cairn_015",
         "March_north_pass_cairn_016",
         "March_north_pass_cairn_017",
-        "March_north_pass_cairn_018"
-      ]
+        "March_north_pass_cairn_018",
+        "March_east_road_Signpost",
+        "March_east_road_Station",
+        "March_east_road_outcrop_000",
+        "March_east_road_outcrop_001",
+        "March_east_road_vein_002",
+        "March_east_road_vein_003",
+        "March_east_road_vein_004",
+        "March_east_road_vein_005",
+        "March_east_road_vein_006",
+        "March_east_road_vein_007",
+        "March_east_road_vein_008",
+        "March_east_road_shard_009",
+        "March_east_road_shard_012",
+        "Secret_mirror_rose_school",
+        "Secret_mirror_lens_focus",
+        "Secret_mirror_icebore_mouth",
+        "Terrain_Trail_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Rock_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Snow_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Marble_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_AlpineTurf_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_MarchAmethystBarrens_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Rock_StreamCollar_whitehorn-mirrorhold_Turf_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Rock_StreamCollar_whitehorn-mirrorhold_Frost_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Snow_StreamCollar_whitehorn-mirrorhold_Turf_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Snow_StreamCollar_whitehorn-mirrorhold_Frost_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_AlpineTurf_StreamCollar_whitehorn-mirrorhold_Turf_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_MarchAmethystBarrens_StreamCollar_whitehorn-mirrorhold_Turf_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_MarchAmethystBarrens_StreamCollar_whitehorn-mirrorhold_Frost_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Trail_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Rock_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Marble_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Trail_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Paving_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Shore_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Rock_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Marble_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_AlpineTurf_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Trail_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Rock_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Marble_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates"
+      ],
+      "previewPrefix": "StreamView_whitehorn-mirrorhold__",
+      "overflowSuffix": "_StreamOverflow_whitehorn-mirrorhold"
     },
     {
       "id": "mirrorhold-amethyst",
       "portal": "east-road",
       "destination": "amethyst_barrens",
       "anchor": [
-        10.5,
-        93,
-        -281.5
+        269.5,
+        24.05,
+        -246.5
       ],
       "outward": [
+        1,
+        0
+      ],
+      "globalTranslation": [
+        978.0,
         0,
-        -1
+        716.0
+      ],
+      "globalAnchor": [
+        1247.5,
+        24.05,
+        469.5
       ],
       "uvSign": 1,
       "palette": "scree",
-      "preloadDistance": 170,
-      "retainDistance": 220,
-      "blendDistance": 65,
+      "preloadDistance": 240,
+      "retainDistance": 320,
+      "blendDistance": 90,
       "collarDepth": 42,
       "halfWidthTiles": 3,
-      "viewHalfWidth": 40.0,
-      "viewDepth": 145.0,
-      "previewPrefix": "StreamView_mirrorhold-amethyst__",
-      "overflowSuffix": "_StreamOverflow_mirrorhold-amethyst",
-      "geometryMode": "shared-cells-v2",
+      "viewHalfWidth": 110,
+      "viewDepth": 240,
+      "geometryMode": "continent-owned-v1",
       "sceneNodes": [
         "Terrain_Trail_StreamCell_mirrorhold-amethyst",
+        "Terrain_Paving_StreamCell_mirrorhold-amethyst",
         "Terrain_Rock_StreamCell_mirrorhold-amethyst",
         "Terrain_Snow_StreamCell_mirrorhold-amethyst",
         "Terrain_Ice_StreamCell_mirrorhold-amethyst",
@@ -4288,140 +4883,353 @@
         "Terrain_MarchAmethystBarrens_StreamCell_mirrorhold-amethyst",
         "Terrain_Rock_StreamCollar_whitehorn-mirrorhold_Turf_StreamCell_mirrorhold-amethyst",
         "Terrain_Rock_StreamCollar_whitehorn-mirrorhold_Frost_StreamCell_mirrorhold-amethyst",
+        "Terrain_Snow_StreamCollar_whitehorn-mirrorhold_Turf_StreamCell_mirrorhold-amethyst",
+        "Terrain_Snow_StreamCollar_whitehorn-mirrorhold_Frost_StreamCell_mirrorhold-amethyst",
         "Terrain_AlpineTurf_StreamCollar_whitehorn-mirrorhold_Turf_StreamCell_mirrorhold-amethyst",
-        "Terrain_AlpineTurf_StreamCollar_whitehorn-mirrorhold_Frost_StreamCell_mirrorhold-amethyst",
-        "Terrain_Trail_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_mirrorhold-amethyst",
-        "Terrain_Trail_StreamCollar_mirrorhold-amethyst_Road_StreamCell_mirrorhold-amethyst",
+        "Terrain_MarchAmethystBarrens_StreamCollar_whitehorn-mirrorhold_Turf_StreamCell_mirrorhold-amethyst",
+        "Terrain_MarchAmethystBarrens_StreamCollar_whitehorn-mirrorhold_Frost_StreamCell_mirrorhold-amethyst",
         "Terrain_Rock_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_mirrorhold-amethyst",
         "Terrain_Rock_StreamCollar_mirrorhold-amethyst_Frost_StreamCell_mirrorhold-amethyst",
+        "Terrain_Rock_StreamCollar_mirrorhold-amethyst_Road_StreamCell_mirrorhold-amethyst",
         "Terrain_Snow_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_mirrorhold-amethyst",
+        "Terrain_Snow_StreamCollar_mirrorhold-amethyst_Frost_StreamCell_mirrorhold-amethyst",
+        "Terrain_Ice_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_mirrorhold-amethyst",
         "Terrain_AlpineTurf_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_mirrorhold-amethyst",
         "Terrain_AlpineTurf_StreamCollar_mirrorhold-amethyst_Frost_StreamCell_mirrorhold-amethyst",
-        "Terrain_MarchAmethystBarrens_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_mirrorhold-amethyst",
-        "Terrain_MarchAmethystBarrens_StreamCollar_mirrorhold-amethyst_Frost_StreamCell_mirrorhold-amethyst",
-        "Terrain_Rock_StreamCollar_whitehorn-mirrorhold_Turf_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_mirrorhold-amethyst",
-        "Terrain_Rock_StreamCollar_whitehorn-mirrorhold_Turf_StreamCollar_mirrorhold-amethyst_Frost_StreamCell_mirrorhold-amethyst",
-        "Terrain_Rock_StreamCollar_whitehorn-mirrorhold_Frost_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_mirrorhold-amethyst",
-        "Terrain_Rock_StreamCollar_whitehorn-mirrorhold_Frost_StreamCollar_mirrorhold-amethyst_Frost_StreamCell_mirrorhold-amethyst",
-        "Terrain_AlpineTurf_StreamCollar_whitehorn-mirrorhold_Turf_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_mirrorhold-amethyst",
-        "Terrain_AlpineTurf_StreamCollar_whitehorn-mirrorhold_Turf_StreamCollar_mirrorhold-amethyst_Frost_StreamCell_mirrorhold-amethyst",
-        "Terrain_AlpineTurf_StreamCollar_whitehorn-mirrorhold_Frost_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_mirrorhold-amethyst",
-        "Terrain_AlpineTurf_StreamCollar_whitehorn-mirrorhold_Frost_StreamCollar_mirrorhold-amethyst_Frost_StreamCell_mirrorhold-amethyst",
+        "Terrain_AlpineTurf_StreamCollar_mirrorhold-amethyst_Road_StreamCell_mirrorhold-amethyst",
+        "Terrain_Rock_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Marble_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Trail_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Rock_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Snow_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Marble_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_AlpineTurf_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_MarchAmethystBarrens_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Rock_StreamCollar_whitehorn-mirrorhold_Turf_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Rock_StreamCollar_whitehorn-mirrorhold_Frost_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Snow_StreamCollar_whitehorn-mirrorhold_Turf_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Snow_StreamCollar_whitehorn-mirrorhold_Frost_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_AlpineTurf_StreamCollar_whitehorn-mirrorhold_Turf_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_MarchAmethystBarrens_StreamCollar_whitehorn-mirrorhold_Turf_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_MarchAmethystBarrens_StreamCollar_whitehorn-mirrorhold_Frost_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Trail_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Rock_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Terrain_Marble_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst",
+        "Landmark_Orrery",
+        "Landmark_OrreryDrum",
+        "Landmark_CitadelHigh",
+        "Landmark_CitadelCourt",
         "Landmark_lens_tower_west",
+        "Landmark_lens_tower_east",
+        "Building_VaultEntry_lens-vault-stair",
         "Landmark_north-post",
-        "Tree_Spruce_17_Wood",
-        "Tree_Spruce_17_Canopy",
-        "Tree_Spruce_19_Wood",
-        "Tree_Spruce_19_Canopy",
-        "Tree_Spruce_35_Wood",
-        "Tree_Spruce_35_Canopy",
-        "Tree_Spruce_53_Wood",
-        "Tree_Spruce_53_Canopy",
-        "Tree_Spruce_90_Wood",
-        "Tree_Spruce_90_Canopy",
-        "Tree_Spruce_101_Wood",
-        "Tree_Spruce_101_Canopy",
-        "Tree_Spruce_113_Wood",
-        "Tree_Spruce_113_Canopy",
-        "Tree_Spruce_117_Wood",
-        "Tree_Spruce_117_Canopy",
-        "Tree_Spruce_122_Wood",
-        "Tree_Spruce_122_Canopy",
-        "March_east_road_Signpost",
-        "March_east_road_Station",
-        "March_east_road_outcrop_000",
-        "March_east_road_vein_002",
-        "March_east_road_vein_003",
-        "March_east_road_vein_004",
-        "March_east_road_vein_005",
-        "Secret_mirror_lens_focus"
-      ]
+        "Tree_Spruce_3_Wood",
+        "Tree_Spruce_3_Canopy",
+        "Tree_Spruce_12_Wood",
+        "Tree_Spruce_12_Canopy",
+        "Tree_Spruce_13_Wood",
+        "Tree_Spruce_13_Canopy",
+        "Tree_Spruce_22_Wood",
+        "Tree_Spruce_22_Canopy",
+        "Tree_Spruce_23_Wood",
+        "Tree_Spruce_23_Canopy",
+        "Tree_Spruce_25_Wood",
+        "Tree_Spruce_25_Canopy",
+        "Tree_Spruce_48_Wood",
+        "Tree_Spruce_48_Canopy",
+        "Tree_Spruce_49_Wood",
+        "Tree_Spruce_49_Canopy",
+        "Tree_Spruce_54_Wood",
+        "Tree_Spruce_54_Canopy",
+        "Tree_Spruce_77_Wood",
+        "Tree_Spruce_77_Canopy",
+        "Tree_Spruce_78_Wood",
+        "Tree_Spruce_78_Canopy",
+        "Tree_Spruce_93_Wood",
+        "Tree_Spruce_93_Canopy",
+        "Tree_Spruce_123_Wood",
+        "Tree_Spruce_123_Canopy",
+        "Prop_Brazier_2_-1",
+        "Prop_Brazier_2_1",
+        "Secret_mirror_orrery_vault",
+        "Secret_mirror_lens_focus",
+        "Terrain_Paving_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Rock_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Snow_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Marble_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_AlpineTurf_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Rock_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Rock_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Marble_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Trail_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Rock_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Marble_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Walk_ContinentRoad_mirrorhold-amethyst_StreamCell_whitehorn-mirrorhold",
+        "Walk_LensVaultWorkingPath_Terrain_Trail_StreamCell_mirrorhold-amethyst",
+        "Walk_LensVaultWorkingPath_Terrain_Rock_StreamCell_mirrorhold-amethyst",
+        "Walk_LensVaultWorkingApron"
+      ],
+      "previewPrefix": "StreamView_mirrorhold-amethyst__",
+      "overflowSuffix": "_StreamOverflow_mirrorhold-amethyst"
     },
     {
       "id": "mirrorhold-four-gates",
       "portal": "south-road",
       "destination": "four_gates",
       "anchor": [
-        175.5,
-        4,
-        92.5
+        124.5,
+        4.0,
+        99.5
       ],
       "outward": [
         0,
         1
       ],
+      "globalTranslation": [
+        978.0,
+        0,
+        716.0
+      ],
+      "globalAnchor": [
+        1102.5,
+        4,
+        815.5
+      ],
       "uvSign": 1,
       "palette": "causeway",
-      "preloadDistance": 170,
-      "retainDistance": 220,
-      "blendDistance": 65,
+      "preloadDistance": 240,
+      "retainDistance": 320,
+      "blendDistance": 90,
       "collarDepth": 42,
       "halfWidthTiles": 3,
-      "viewHalfWidth": 40.0,
-      "viewDepth": 145.0,
-      "previewPrefix": "StreamView_mirrorhold-four-gates__",
-      "overflowSuffix": "_StreamOverflow_mirrorhold-four-gates",
-      "geometryMode": "shared-cells-v2",
+      "viewHalfWidth": 110,
+      "viewDepth": 240,
+      "geometryMode": "continent-owned-v1",
       "sceneNodes": [
         "Terrain_Trail_StreamCell_mirrorhold-four-gates",
         "Terrain_Paving_StreamCell_mirrorhold-four-gates",
         "Terrain_Shore_StreamCell_mirrorhold-four-gates",
         "Terrain_Rock_StreamCell_mirrorhold-four-gates",
+        "Terrain_Marble_StreamCell_mirrorhold-four-gates",
         "Terrain_AlpineTurf_StreamCell_mirrorhold-four-gates",
+        "Terrain_MarchFourGates_StreamCell_mirrorhold-four-gates",
+        "Walk_ContinentRoad_mirrorhold-four-gates_StreamCell_mirrorhold-four-gates",
         "Walk_StreamCauseway_mirrorhold-four-gates_StreamCell_mirrorhold-four-gates",
         "Structure_StreamCauseway_mirrorhold-four-gates_pale_ashlar_StreamCell_mirrorhold-four-gates",
         "Structure_StreamCauseway_mirrorhold-four-gates_rubble_stone_StreamCell_mirrorhold-four-gates",
+        "Terrain_Trail_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Paving_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Shore_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Rock_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Marble_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_AlpineTurf_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Trail_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Paving_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Shore_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Rock_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Marble_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_AlpineTurf_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Terrain_Paving_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Rock_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Snow_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Marble_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_AlpineTurf_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Rock_StreamCollar_mirrorhold-amethyst_Turf_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Rock_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Marble_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Trail_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Rock_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
+        "Terrain_Marble_StreamCell_amberwood-mirrorhold_StreamCell_whitehorn-mirrorhold_StreamCell_mirrorhold-amethyst_StreamCell_mirrorhold-four-gates",
         "Water_Lake_StreamCell_mirrorhold-four-gates",
         "Water_Canal_StreamCell_mirrorhold-four-gates",
         "Water_StreamCauseway_mirrorhold-four-gates_StreamCell_mirrorhold-four-gates",
+        "Water_Lake_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Water_Canal_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Water_StreamCauseway_mirrorhold-four-gates_StreamCell_amberwood-mirrorhold_StreamCell_mirrorhold-four-gates",
+        "Landmark_CitadelCourt",
+        "Landmark_Basin_0",
+        "Landmark_Basin_1",
+        "Landmark_Basin_2",
+        "Landmark_GateWall",
+        "Landmark_GateWing_-1",
+        "Landmark_GateWing_1",
+        "Landmark_Gallery",
+        "Landmark_RoseWindow",
+        "Landmark_Fountain",
+        "Prop_PlazaLamp_0",
+        "Prop_PlazaLamp_1",
+        "Prop_PlazaLamp_2",
+        "Prop_PlazaLamp_3",
+        "Prop_PlazaLamp_4",
+        "Prop_PlazaLamp_5",
+        "Prop_PlazaLamp_6",
+        "Prop_PlazaLamp_7",
+        "Landmark_PlazaStatue_0",
+        "Landmark_PlazaStatue_1",
+        "Landmark_PlazaStatue_2",
+        "Landmark_PlazaStatue_3",
+        "Landmark_Channel_2",
+        "Landmark_Channel_3",
+        "Landmark_Channel_4",
+        "Landmark_Fall_0",
+        "Landmark_Fall_1",
+        "Landmark_Fall_2",
+        "Landmark_Retaining_0",
+        "Landmark_Retaining_1",
+        "Landmark_Retaining_3",
         "Landmark_Aqueduct",
+        "Landmark_Overlook",
+        "Prop_OverlookRail_0",
+        "Prop_OverlookRail_1",
+        "Building_VaultEntry_cistern-door",
         "Walk_Landmark_EastStair",
+        "Landmark_Ring",
+        "Landmark_LakeLink_Sanctuary",
+        "Landmark_LakeLink_City",
+        "Landmark_LakeLink_WestPier",
         "Landmark_LakeLink_EastPier",
         "Landmark_Quay",
+        "Landmark_Dock_0",
+        "Prop_Boat_0",
         "Landmark_Dock_1",
         "Prop_Boat_1",
         "Prop_Boat_2",
+        "Prop_PierCrate_0",
+        "Prop_PierSkiff_0",
         "Prop_PierCrate_1",
         "Prop_PierSkiff_1",
+        "Landmark_SouthWatch",
         "Landmark_east_islet",
+        "Landmark_cistern-yard",
+        "Prop_cistern-yard_bollard_0",
+        "Prop_cistern-yard_bollard_1",
+        "Prop_cistern-yard_bollard_2",
+        "Landmark_lens-works",
         "Prop_lens-works_bollard_0",
+        "Prop_lens-works_bollard_1",
+        "Prop_lens-works_bollard_2",
         "Building_east-bench_0",
         "Building_east-bench_1",
+        "Landmark_east-post",
+        "Landmark_north-post",
+        "Landmark_upper-shrine",
+        "Landmark_quarry-shelf",
+        "Prop_quarry-shelf_bollard_0",
+        "Prop_quarry-shelf_bollard_1",
+        "Prop_quarry-shelf_bollard_2",
+        "Building_lake-north_0",
+        "Building_lake-north_1",
+        "Landmark_RoadWall_0",
+        "Landmark_RoadWall_1",
+        "Tree_Spruce_123_Wood",
+        "Tree_Spruce_123_Canopy",
+        "Tree_Spruce_131_Wood",
+        "Tree_Spruce_131_Canopy",
+        "Tree_Spruce_136_Wood",
+        "Tree_Spruce_136_Canopy",
+        "Tree_Spruce_137_Wood",
+        "Tree_Spruce_137_Canopy",
         "Tree_Spruce_173_Wood",
         "Tree_Spruce_173_Canopy",
         "Tree_Spruce_178_Wood",
         "Tree_Spruce_178_Canopy",
+        "Tree_Spruce_194_Wood",
+        "Tree_Spruce_194_Canopy",
+        "Tree_Spruce_199_Wood",
+        "Tree_Spruce_199_Canopy",
+        "Tree_Spruce_200_Wood",
+        "Tree_Spruce_200_Canopy",
+        "Tree_Spruce_263_Wood",
+        "Tree_Spruce_263_Canopy",
+        "Tree_Spruce_285_Wood",
+        "Tree_Spruce_285_Canopy",
         "Tree_Spruce_287_Wood",
         "Tree_Spruce_287_Canopy",
+        "Tree_Spruce_295_Wood",
+        "Tree_Spruce_295_Canopy",
+        "Tree_Spruce_299_Wood",
+        "Tree_Spruce_299_Canopy",
+        "Tree_Spruce_308_Wood",
         "Tree_Spruce_308_Canopy",
         "Tree_Spruce_313_Wood",
         "Tree_Spruce_313_Canopy",
+        "Tree_Spruce_315_Wood",
+        "Tree_Spruce_315_Canopy",
         "Tree_Spruce_323_Wood",
         "Tree_Spruce_323_Canopy",
         "Tree_Spruce_330_Wood",
         "Tree_Spruce_330_Canopy",
+        "Tree_Spruce_333_Wood",
         "Tree_Spruce_333_Canopy",
+        "Tree_Spruce_340_Wood",
+        "Tree_Spruce_340_Canopy",
         "Tree_Spruce_361_Wood",
         "Tree_Spruce_361_Canopy",
+        "Tree_Spruce_362_Wood",
         "Tree_Spruce_362_Canopy",
+        "Tree_Spruce_363_Wood",
+        "Tree_Spruce_363_Canopy",
+        "Tree_Spruce_374_Wood",
+        "Tree_Spruce_374_Canopy",
+        "Prop_RoadLamp_0",
+        "Prop_HarbourGoods_0",
+        "Prop_HarbourGoods_1",
+        "Prop_HarbourGoods_2",
+        "Prop_HarbourGoods_3",
+        "Prop_HarbourGoods_4",
+        "Prop_HarbourGoods_5",
+        "Prop_HarbourGoods_6",
+        "Prop_HarbourGoods_7",
         "Prop_HarbourGoods_8",
         "Prop_HarbourGoods_9",
         "Prop_HarbourGoods_10",
         "Prop_HarbourGoods_11",
         "Prop_HarbourGoods_12",
         "Prop_HarbourGoods_13",
+        "Prop_Brazier_0_-1",
+        "Prop_Brazier_0_1",
+        "Prop_Brazier_1_-1",
+        "Prop_Brazier_1_1",
+        "Prop_Brazier_3_-1",
+        "Prop_Brazier_3_1",
+        "Prop_Brazier_4_1",
         "Prop_Signpost_1",
         "Prop_Signpost_2",
         "March_south_road_Signpost",
         "March_south_road_Station",
+        "March_south_road_reeds_000",
+        "March_south_road_reeds_001",
+        "March_south_road_reeds_002",
+        "March_lake_quay_Signpost",
         "March_lake_quay_Station",
+        "Lore_ringing_quarry",
+        "Secret_mirror_reed_cut",
         "Secret_mirror_lens_garden",
         "Secret_mirror_stair_pit",
+        "Secret_mirror_rose_school",
+        "Secret_mirror_basin_spring",
+        "Secret_mirror_watch_butts",
+        "Secret_mirror_citadel_reliquary",
+        "Secret_mirror_cistern_well",
+        "Secret_mirror_adit",
+        "Secret_mirror_waystone",
+        "Secret_mirror_overlook_eyrie",
+        "Secret_mirror_icebore_mouth",
+        "Landmark_MeltwaterBridge_1",
+        "Landmark_MeltwaterBridge_2",
         "Landmark_MeltwaterBridge_3",
         "Landmark_MeltwaterBridge_4",
         "Landmark_MeltwaterBridge_5",
-        "Prop_WorkingStores_9"
+        "Prop_WorkingStores_7",
+        "Prop_WorkingStores_8",
+        "Prop_WorkingStores_9",
+        "Walk_StreamCauseway_mirrorhold-sanctuary_StreamCell_mirrorhold-four-gates",
+        "Structure_SanctuaryBridge_Ashlar_StreamCell_mirrorhold-four-gates",
+        "Structure_SanctuaryBridge_Piers_StreamCell_mirrorhold-four-gates",
+        "Structure_StreamCauseway_mirrorhold-four-gates_rim"
       ],
+      "previewPrefix": "StreamView_mirrorhold-four-gates__",
+      "overflowSuffix": "_StreamOverflow_mirrorhold-four-gates",
       "profile": "causeway",
       "waterBelowDeck": 4.0,
       "deckWidth": 7.0
@@ -4434,8 +5242,8 @@
         "name": "Aqueduct Warden Sunna",
         "role": "dialogue",
         "serverTile": [
-          323,
-          150
+          332,
+          157
         ],
         "authority": "server"
       },
@@ -4444,8 +5252,8 @@
         "name": "Basin Reader Tallis Mire",
         "role": "dialogue",
         "serverTile": [
-          222,
-          201
+          231,
+          208
         ],
         "authority": "server"
       },
@@ -4454,8 +5262,8 @@
         "name": "Bench Steward Aurel Fane",
         "role": "dialogue",
         "serverTile": [
-          39,
-          111
+          53,
+          110
         ],
         "authority": "server"
       },
@@ -4464,8 +5272,8 @@
         "name": "Canal Factor Odile Wren",
         "role": "dialogue",
         "serverTile": [
-          133,
-          135
+          142,
+          142
         ],
         "authority": "server"
       },
@@ -4474,8 +5282,8 @@
         "name": "Cistern Clerk Nim Halloway",
         "role": "dialogue",
         "serverTile": [
-          143,
-          116
+          152,
+          123
         ],
         "authority": "server"
       },
@@ -4484,8 +5292,8 @@
         "name": "Crown Watcher Ilva Sende",
         "role": "dialogue",
         "serverTile": [
-          138,
-          86
+          147,
+          93
         ],
         "authority": "server"
       },
@@ -4494,8 +5302,8 @@
         "name": "Lens-Master Corvine Ast",
         "role": "dialogue",
         "serverTile": [
-          228,
-          287
+          199,
+          296
         ],
         "authority": "server"
       },
@@ -4504,8 +5312,8 @@
         "name": "Liora",
         "role": "storage",
         "serverTile": [
-          102,
-          85
+          111,
+          92
         ],
         "authority": "server"
       },
@@ -4514,8 +5322,8 @@
         "name": "Orrery Keeper Sabel Roon",
         "role": "dialogue",
         "serverTile": [
-          203,
-          295
+          193,
+          296
         ],
         "authority": "server"
       },
@@ -4524,8 +5332,8 @@
         "name": "Quarry Foreman Hesk",
         "role": "dialogue",
         "serverTile": [
-          311,
-          203
+          320,
+          210
         ],
         "authority": "server"
       },
@@ -4534,8 +5342,8 @@
         "name": "Quay Master Belen Tarr",
         "role": "dialogue",
         "serverTile": [
-          276,
-          105
+          285,
+          112
         ],
         "authority": "server"
       },
@@ -4544,8 +5352,8 @@
         "name": "Shrine-Keeper Mattias",
         "role": "dialogue",
         "serverTile": [
-          67,
-          83
+          76,
+          90
         ],
         "authority": "server"
       },
@@ -4554,8 +5362,8 @@
         "name": "Sigil Keeper Oreth",
         "role": "sigil",
         "serverTile": [
-          98,
-          90
+          107,
+          97
         ],
         "authority": "server"
       },
@@ -4564,8 +5372,8 @@
         "name": "Stair-Town Reeve Padric",
         "role": "dialogue",
         "serverTile": [
-          77,
-          110
+          86,
+          117
         ],
         "authority": "server"
       },
@@ -4574,8 +5382,8 @@
         "name": "Vestra",
         "role": "dialogue",
         "serverTile": [
-          83,
-          84
+          92,
+          91
         ],
         "authority": "server"
       }
@@ -4585,8 +5393,8 @@
         "id": 42,
         "resource": "Reed",
         "serverTile": [
-          64,
-          18
+          73,
+          25
         ],
         "authority": "server"
       },
@@ -4594,8 +5402,8 @@
         "id": 43,
         "resource": "Reed",
         "serverTile": [
-          34,
-          31
+          43,
+          38
         ],
         "authority": "server"
       },
@@ -4603,8 +5411,8 @@
         "id": 44,
         "resource": "Reed",
         "serverTile": [
-          83,
-          55
+          92,
+          62
         ],
         "authority": "server"
       },
@@ -4612,8 +5420,8 @@
         "id": 45,
         "resource": "Pearl",
         "serverTile": [
-          104,
-          166
+          113,
+          173
         ],
         "authority": "server"
       },
@@ -4621,8 +5429,8 @@
         "id": 46,
         "resource": "Pearl",
         "serverTile": [
-          79,
-          163
+          88,
+          170
         ],
         "authority": "server"
       },
@@ -4630,8 +5438,8 @@
         "id": 47,
         "resource": "Clay",
         "serverTile": [
-          137,
-          84
+          146,
+          91
         ],
         "authority": "server"
       },
@@ -4639,8 +5447,8 @@
         "id": 48,
         "resource": "Clay",
         "serverTile": [
-          86,
-          77
+          95,
+          84
         ],
         "authority": "server"
       },
@@ -4648,8 +5456,8 @@
         "id": 49,
         "resource": "Clay",
         "serverTile": [
-          85,
-          34
+          94,
+          41
         ],
         "authority": "server"
       },
@@ -4657,8 +5465,8 @@
         "id": 50,
         "resource": "Lotus",
         "serverTile": [
-          92,
-          101
+          101,
+          108
         ],
         "authority": "server"
       },
@@ -4666,8 +5474,8 @@
         "id": 51,
         "resource": "Lotus",
         "serverTile": [
-          94,
-          53
+          103,
+          60
         ],
         "authority": "server"
       },
@@ -4675,8 +5483,8 @@
         "id": 52,
         "resource": "Sage",
         "serverTile": [
-          29,
-          86
+          38,
+          94
         ],
         "authority": "server"
       },
@@ -4684,8 +5492,8 @@
         "id": 53,
         "resource": "Sage",
         "serverTile": [
-          51,
-          72
+          60,
+          79
         ],
         "authority": "server"
       },
@@ -4693,8 +5501,8 @@
         "id": 54,
         "resource": "Sage",
         "serverTile": [
-          31,
-          121
+          40,
+          128
         ],
         "authority": "server"
       },
@@ -4702,8 +5510,8 @@
         "id": 55,
         "resource": "Riverflax",
         "serverTile": [
-          175,
-          124
+          184,
+          131
         ],
         "authority": "server"
       },
@@ -4711,8 +5519,8 @@
         "id": 56,
         "resource": "Riverflax",
         "serverTile": [
-          96,
-          12
+          105,
+          19
         ],
         "authority": "server"
       },
@@ -4720,8 +5528,8 @@
         "id": 57,
         "resource": "Riverflax",
         "serverTile": [
-          129,
-          79
+          138,
+          86
         ],
         "authority": "server"
       },
@@ -4729,8 +5537,8 @@
         "id": 58,
         "resource": "Hearthroot",
         "serverTile": [
-          72,
-          69
+          81,
+          76
         ],
         "authority": "server"
       },
@@ -4738,8 +5546,8 @@
         "id": 59,
         "resource": "Hearthroot",
         "serverTile": [
-          132,
-          80
+          141,
+          87
         ],
         "authority": "server"
       },
@@ -4747,8 +5555,8 @@
         "id": 60,
         "resource": "Hearthroot",
         "serverTile": [
-          183,
-          160
+          192,
+          167
         ],
         "authority": "server"
       },
@@ -4756,8 +5564,8 @@
         "id": 61,
         "resource": "Kelp",
         "serverTile": [
-          129,
-          107
+          138,
+          114
         ],
         "authority": "server"
       },
@@ -4765,8 +5573,8 @@
         "id": 62,
         "resource": "Kelp",
         "serverTile": [
-          112,
-          97
+          121,
+          104
         ],
         "authority": "server"
       },
@@ -4774,8 +5582,8 @@
         "id": 63,
         "resource": "Kelp",
         "serverTile": [
-          91,
-          136
+          100,
+          143
         ],
         "authority": "server"
       },
@@ -4783,8 +5591,8 @@
         "id": 64,
         "resource": "Thistle",
         "serverTile": [
-          22,
-          151
+          31,
+          158
         ],
         "authority": "server"
       },
@@ -4792,8 +5600,8 @@
         "id": 65,
         "resource": "Thistle",
         "serverTile": [
-          104,
-          79
+          113,
+          86
         ],
         "authority": "server"
       },
@@ -4801,8 +5609,8 @@
         "id": 66,
         "resource": "Reed",
         "serverTile": [
-          121,
-          51
+          130,
+          58
         ],
         "authority": "server"
       },
@@ -4810,8 +5618,8 @@
         "id": 67,
         "resource": "Reed",
         "serverTile": [
-          127,
-          51
+          136,
+          58
         ],
         "authority": "server"
       },
@@ -4819,8 +5627,8 @@
         "id": 68,
         "resource": "Reed",
         "serverTile": [
-          125,
-          45
+          134,
+          52
         ],
         "authority": "server"
       },
@@ -4828,8 +5636,8 @@
         "id": 69,
         "resource": "Reed",
         "serverTile": [
-          199,
-          67
+          208,
+          74
         ],
         "authority": "server"
       },
@@ -4837,8 +5645,8 @@
         "id": 70,
         "resource": "Reed",
         "serverTile": [
-          199,
-          63
+          208,
+          70
         ],
         "authority": "server"
       },
@@ -4846,8 +5654,8 @@
         "id": 71,
         "resource": "Reed",
         "serverTile": [
-          203,
-          69
+          212,
+          76
         ],
         "authority": "server"
       },
@@ -4855,8 +5663,8 @@
         "id": 72,
         "resource": "Clay",
         "serverTile": [
-          106,
-          333
+          115,
+          340
         ],
         "authority": "server"
       },
@@ -4864,8 +5672,8 @@
         "id": 73,
         "resource": "Clay",
         "serverTile": [
-          99,
-          331
+          110,
+          338
         ],
         "authority": "server"
       },
@@ -4873,8 +5681,8 @@
         "id": 74,
         "resource": "Clay",
         "serverTile": [
-          109,
-          332
+          118,
+          339
         ],
         "authority": "server"
       },
@@ -4882,8 +5690,8 @@
         "id": 75,
         "resource": "Thistle",
         "serverTile": [
-          280,
-          209
+          289,
+          216
         ],
         "authority": "server"
       },
@@ -4891,8 +5699,8 @@
         "id": 76,
         "resource": "Thistle",
         "serverTile": [
-          272,
-          216
+          281,
+          223
         ],
         "authority": "server"
       },
@@ -4900,8 +5708,8 @@
         "id": 77,
         "resource": "Thistle",
         "serverTile": [
-          272,
-          212
+          281,
+          219
         ],
         "authority": "server"
       },
@@ -4909,8 +5717,8 @@
         "id": 78,
         "resource": "Sage",
         "serverTile": [
-          152,
-          20
+          161,
+          27
         ],
         "authority": "server"
       },
@@ -4918,8 +5726,8 @@
         "id": 79,
         "resource": "Sage",
         "serverTile": [
-          154,
-          26
+          163,
+          33
         ],
         "authority": "server"
       },
@@ -4927,8 +5735,8 @@
         "id": 80,
         "resource": "Sage",
         "serverTile": [
-          155,
-          18
+          163,
+          26
         ],
         "authority": "server"
       },
@@ -4936,8 +5744,8 @@
         "id": 81,
         "resource": "Hearthroot",
         "serverTile": [
-          115,
-          225
+          124,
+          232
         ],
         "authority": "server"
       },
@@ -4945,8 +5753,8 @@
         "id": 82,
         "resource": "Hearthroot",
         "serverTile": [
-          118,
-          223
+          127,
+          230
         ],
         "authority": "server"
       },
@@ -4954,8 +5762,8 @@
         "id": 83,
         "resource": "Pearl",
         "serverTile": [
-          161,
-          371
+          170,
+          383
         ],
         "authority": "server"
       },
@@ -4963,8 +5771,8 @@
         "id": 84,
         "resource": "Pearl",
         "serverTile": [
-          164,
-          377
+          173,
+          384
         ],
         "authority": "server"
       }
@@ -4973,195 +5781,359 @@
       {
         "creature": "river_otter",
         "serverTile": [
-          103,
-          371
+          112,
+          379
         ],
         "authority": "server"
       },
       {
         "creature": "river_otter",
         "serverTile": [
-          198,
-          171
+          207,
+          178
         ],
         "authority": "server"
       },
       {
         "creature": "river_otter",
         "serverTile": [
-          226,
-          119
+          235,
+          126
         ],
         "authority": "server"
       },
       {
         "creature": "river_otter",
         "serverTile": [
-          125,
-          26
+          134,
+          33
         ],
         "authority": "server"
       },
       {
         "creature": "crown_antler_stag",
         "serverTile": [
-          28,
-          35
+          37,
+          42
         ],
         "authority": "server"
       },
       {
         "creature": "crown_antler_stag",
         "serverTile": [
-          35,
-          50
+          44,
+          57
         ],
         "authority": "server"
       },
       {
         "creature": "crown_antler_stag",
         "serverTile": [
-          47,
-          50
+          56,
+          57
         ],
         "authority": "server"
       },
       {
         "creature": "crown_antler_stag",
         "serverTile": [
-          177,
-          133
+          186,
+          140
         ],
         "authority": "server"
       },
       {
         "creature": "riverglass_otter",
         "serverTile": [
-          118,
-          172
+          127,
+          179
         ],
         "authority": "server"
       },
       {
         "creature": "riverglass_otter",
         "serverTile": [
-          271,
+          280,
+          122
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "riverglass_otter",
+        "serverTile": [
+          191,
+          253
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "crown_antler_stag",
+        "serverTile": [
+          256,
+          212
+        ],
+        "authority": "server"
+      },
+      {
+        "creature": "crown_antler_stag",
+        "serverTile": [
+          131,
           115
         ],
         "authority": "server"
       },
       {
-        "creature": "riverglass_otter",
-        "serverTile": [
-          182,
-          246
-        ],
-        "authority": "server"
-      },
-      {
         "creature": "crown_antler_stag",
         "serverTile": [
-          247,
-          205
-        ],
-        "authority": "server"
-      },
-      {
-        "creature": "crown_antler_stag",
-        "serverTile": [
-          122,
-          108
-        ],
-        "authority": "server"
-      },
-      {
-        "creature": "crown_antler_stag",
-        "serverTile": [
-          36,
-          161
+          45,
+          168
         ],
         "authority": "server"
       },
       {
         "creature": "frosthorn_elk",
         "serverTile": [
-          29,
-          69
+          38,
+          77
         ],
         "authority": "server"
       },
       {
         "creature": "frosthorn_elk",
         "serverTile": [
-          196,
-          204
+          205,
+          211
         ],
         "authority": "server"
       },
       {
         "creature": "luminous_manta_ray",
         "serverTile": [
-          159,
-          146
+          168,
+          153
         ],
         "authority": "server"
       },
       {
         "creature": "tidal_crystal_lion",
         "serverTile": [
-          87,
-          42
+          96,
+          49
         ],
         "authority": "server"
       },
       {
         "creature": "crag_ogre",
         "serverTile": [
-          25,
-          128
+          34,
+          135
         ],
         "authority": "server"
       },
       {
         "creature": "crag_ogre",
         "serverTile": [
-          300,
-          319
+          309,
+          326
         ],
         "authority": "server"
       },
       {
         "creature": "crag_ogre",
         "serverTile": [
-          225,
-          159
+          234,
+          166
         ],
         "authority": "server"
       },
       {
         "creature": "moss_stone_troll",
         "serverTile": [
-          266,
-          242
+          275,
+          249
         ],
         "authority": "server"
       },
       {
         "creature": "moss_stone_troll",
         "serverTile": [
-          203,
-          136
+          212,
+          143
         ],
         "authority": "server"
       },
       {
         "creature": "moss_stone_troll",
         "serverTile": [
-          17,
-          9
+          30,
+          12
         ],
         "authority": "server"
       }
     ]
+  },
+  "continentGeography": {
+    "schemaVersion": 1,
+    "nativeServerOrigin": [
+      120,
+      96
+    ],
+    "nativeServerCells": [
+      384,
+      384
+    ],
+    "serverOrigin": [
+      129,
+      103
+    ],
+    "serverCells": [
+      402,
+      402
+    ],
+    "serverTileShift": [
+      9,
+      7
+    ],
+    "serverBounds": [
+      [
+        -129,
+        -299
+      ],
+      [
+        273,
+        103
+      ]
+    ],
+    "mapBounds": [
+      [
+        -126,
+        -293
+      ],
+      [
+        270,
+        99
+      ]
+    ],
+    "geographySha256": "9abd167a99745cd0d5b6c164e496979884bc6db71b403210d1a3b837ef470830",
+    "geometrySha256": "b4e48b8136acbc941e3e807c5e9cdeef5b3c8589e40e25e2b13036945b877474",
+    "nativeCollisionSha256": "2db0a814f5efeaa5d20ee160272b0d9c681f980e680fa26f1516d579e1ac48cb",
+    "result": {
+      "nativeBlockedPreserved": 251171,
+      "oldWalkableUnsupportedClosed": 0,
+      "oldWalkableSubmergedClosed": 0,
+      "paddingWalkableCells": 21506,
+      "walkableCells": 360159,
+      "maximumPaddingGradient": 0.8,
+      "minimumWaterClearanceMetres": 0.0,
+      "existingWadeDepthMetres": 0.25
+    }
+  },
+  "authoredGeometry": {
+    "generator": "eloria-assets/tools/rebuild_continent_geography.py",
+    "inputs": {
+      "eloria-assets/maps/nymara-regions/_finishing/causeway_rims.py": "61c898ab904dd5632c3e057463dd198d45631bb1725289ecdd9f54cd3d73c15a",
+      "eloria-assets/maps/nymara-regions/_finishing/connector_finish.py": "9c7fd186f7979565db3d20cdd7b8602e0be4dda4d91158933566be1cbdafec16",
+      "eloria-assets/maps/nymara-regions/_northern/landscape_finish.py": "8321fdc08064d0ad29329179d7d8d6979ff1d982ae746b15af1ca7ff1741126a",
+      "eloria-assets/maps/nymara-regions/_northern/road_profiles.py": "d608628d1dc9e63ab52c6b9ba103381e2324c30436c3fee60dda2bbc346472d0",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/__init__.py": "bcc6624b01ea53fc8be93665bc56aff69af74ece20ff6ae6ad891057cf4b8b23",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/arcadecraft.py": "034302006e0499827591385a290a8f2ec6e7cb5ead6bc5781574c7a4eb8f3b67",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/architecture.py": "bcaee2e29b73a3eff4de2e71ba73fb9eb724fd620075b2ff080cf9c1b4f928e8",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/barrowcraft.py": "49289f61a280e4f2212091606d7742dd0ff69326f9f8ed2a2f3dba5575a7244a",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/canyoncraft.py": "b71feab7ac07d08f3e39ad7760b1f3192e59e2741d3296c1ed2ab155d2ba4a17",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/civiccraft.py": "738ced5f7d36e91824dde9a964f27478a093116d217f957fed6f83712fa68a08",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/coplanar.py": "016dcdfb2c0f6687b20e2257076ef8833dc1e9600376184f0bb0c31bc298ccac",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/crownmaterials.py": "69d80d601786376d992b14637edee8cbf721f0d34b8499f4ea654cbafecd0cbb",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/crystalcraft.py": "439ae8820f87ff243efeb6270170353ca47d4f3dfa7f97feb4c747fd3d3b0d70",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/forestcraft.py": "2f2b2872dc070fe944b5fab3ddca98f1b71f6530f57c61d3e3adc5dc7e4c26dc",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/gltf.py": "3df32803d90efb5f7255d30e6027b36660773c5fd935ce5d5ec7796b0f2941b0",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/interiors.py": "516fada40372437f5950ff0a9bea7b00e5f49a9273d0fccb3b38c102d1b121b9",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/junglecraft.py": "e09a197f926a412d63132c7ab9efa721d7384e791b698286cbe6ee71d88f8dde",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/landscape.py": "b24717f59470152715b4079f924891fd241f4c8cb0950a7480be8382b03a4b9d",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/materials.py": "af4917a899a08fa663884defd35d79aa45ae9c264e2028cf03f10520898b53f6",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/mesh.py": "6a3930bc16c72a30df6cd406eb78369c4c7a0c39a2895f5db90df90b8b2170ba",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/moorcraft.py": "64338e95741c2d6cb7559e15df77ce80ffc8a089524bc19067ca3a4e05d89f1a",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/mountaincraft.py": "942f0afb01b958a4a8398b8e3b5bdec10ec88af93706f84a20b6068d9b6a9c7d",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/noise.py": "62c4b8d88d1c5f307b22768996382e91f31c0a6c16d723a2b3886450af278c4c",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/observatorycraft.py": "d431fa03cf00868eb0a0e62a858f622642fa54295839a47aba75f27af890b1c3",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/populate.py": "5086e89209fa9f1bb6b298fa90382738a9807d49f137ff2186c6c5fb9f84077b",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/props.py": "8368e2b0b2adafddb93381657fd78beba75ed084771560f7dd7dba0c33632494",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/region.py": "9d72472f480789e59ab849f0473ac0ca275c3f246d3a549da8c461862a9fe5b1",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/render.py": "ace7bbe332dbf87db4e2d4378617b831606f8861ff19f300fde7e3ef6ce0d228",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/routecraft.py": "34c88fbda7c826775b0e11148710dbd1f4d775198fd25ff6736852012061cb9c",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/smallrooms.py": "4a27b353b9ad8307e8f7fd37388f884ae2241ce2867d35c677cf6720f3c8bd35",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/spatial.py": "befd9a805574b37de45f65815941778cf2b6bb46f11868ff4d4a9cb03a52bd77",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/stonework.py": "225b8cdb38bafba7c3f2a4e8c730642aca8103f51877b3a0db31e95af0010881",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/templecraft.py": "1646e1907298dbedd406fcb4d086508a929c86065bf756795a54afdf4959e3df",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/terrain.py": "185ff68f54f2294e32b8ed89b157bb5be66d71d6cb2faf5678ece9a9516cf3df",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/textures.py": "576413d77324f3ce4bb152382af96663ee564943db3cc7841a0e264011417399",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/treecraft.py": "f7755cce4a38b32335cf7a2462cbf246a2dd3f1167399dc5282eaf8b308697b6",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/trees.py": "8cefc035655f20d09798c7ed41935c0c59d5d30ff07163619e0ca4e486684d63",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/watercraft.py": "39d9b79e531325a66288c2ee008831be73156d87740c885b11242450b144f028",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/waterfront.py": "75a79cb467428ae063c78a520b3fd921afc7e3648b00d2d1f59e2bd6daab6524",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/woodlandcraft.py": "921c59a131b7cccdfc2e2bd889438ee6e1887088739a30a72b41cc9df0cffb2f",
+      "eloria-assets/maps/nymara-regions/_toolkit/border_vistas.py": "ccd302df09d476b693368a28e62ad0124027ccae640ce1dd7c399e6dc579409b",
+      "eloria-assets/maps/nymara-regions/_toolkit/capture_views.py": "b14cda865ec067c8be87d964b96ab9addfaee10b8676bf4bfcd32be55bf91db5",
+      "eloria-assets/maps/nymara-regions/_toolkit/compact_landscape.py": "a75f505b8087be9b5bfe0668ee92dafa53292d3d33cbf544e4848e4a936f1289",
+      "eloria-assets/maps/nymara-regions/_toolkit/compress_captures.py": "242b23b718a95c756b48a8a4c0109592260091fa0b745fcb462dd0e19f8529bb",
+      "eloria-assets/maps/nymara-regions/_toolkit/contentposts.py": "4a6cf588584128191058c7ad48a4386806f45f565d9769f5f39dcdf201c132e9",
+      "eloria-assets/maps/nymara-regions/_toolkit/continent_geography.py": "33363d2be5f76d5d69c98dfe92ac5b8c7f576c3d141326a3f266d8bf8ab63f8c",
+      "eloria-assets/maps/nymara-regions/_toolkit/designs/four_gates_secrets_design.py": "eb7d1d20674547dbadde56bab4ac9555b3c1cb87be422b45801e30b4b621d652",
+      "eloria-assets/maps/nymara-regions/_toolkit/export_insides_collision.py": "11ca322c851b05fe32edfcc27380b072dffc9a9b0303879503af0aa0ccdc9dff",
+      "eloria-assets/maps/nymara-regions/_toolkit/export_interior_collision.py": "f41b095554fa953ff835e88387e9512f295a6178609d7cf3901e6e22669a42ab",
+      "eloria-assets/maps/nymara-regions/_toolkit/export_server_collision.py": "4528ec4e20a3b457d6a1dd0d3ef23c064c4a2e013686e7f6b2c9247634301f7c",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/__init__.py": "1770a3092c31648c5c9d3305c35ef51e62c374d0b3579048eac25cc4985835b3",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/barrow_visitation.py": "bfba53e656cfca95274514770b9a7b424da2073e2adcb5fe474b16f2fa44a246",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/build.py": "e432f3b44844e14aba238333b0b1fc627318984d60fd5a97dc6930149048413a",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/designs.py": "15560b8ff2f2a03fc6a2704eeca3028ed4d1edd7722fc2dc5091c70e4b5e4e08",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/drowned_customs.py": "4534c6177a01b6a5c223d46bb7fc53f724ad081337e26479257ffc10dafeff3b",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/forest_haul.py": "d83fe3419e2586613b0703aaea34cf4cd86885ca370133dd6f11004f54971713",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/ice_mine.py": "9237d00d96a0bfa6b3d7b0cbfab9114d7e77cabbf8cfd6d708a703d41463d607",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/red_canyon.py": "1a75991a5863e426d026e7c3b1ed9a5e8cb6ee7474f7c15b0556032a1860ca29",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/rooms.py": "a91d120ab48f5b905b9f4496b3d4c05e67f2fddf63f74723c58e580fc69d7e8a",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/temple_procession.py": "5c5bade746a0c2cdbb2d02b7495e707eeb9898a23a4cd517248c8075cdcedab4",
+      "eloria-assets/maps/nymara-regions/_toolkit/glb_reader.py": "be5e46a94acf014a8684be216fe8c67ac2aadbf789469087276f229bd85c9a57",
+      "eloria-assets/maps/nymara-regions/_toolkit/guard_actor_surfaces.py": "483c64ba394a3eabef0110296f7e11eedfd2bb4f3203d872c6268ecc0ea41a91",
+      "eloria-assets/maps/nymara-regions/_toolkit/interior_views.py": "f6ad2c7cd16f9a5faf7575154c0252fda8b3c5fb4793b1ff041c2165798d0cff",
+      "eloria-assets/maps/nymara-regions/_toolkit/loresites.py": "16a9b90b2256f956fe92196c303ba04bf2d67ea6b3287f76464aa85c23ff962c",
+      "eloria-assets/maps/nymara-regions/_toolkit/make_comparison.py": "ed2e70b89e7a6c03e830a2364681adb7a7f5412b23cd5691ac9e521f67320820",
+      "eloria-assets/maps/nymara-regions/_toolkit/northern_passes.py": "8b816082f1d1a040ac72d8dc785901ccab4d933aac3e1f4f9a2c575bd4ac6205",
+      "eloria-assets/maps/nymara-regions/_toolkit/open_walk_surfaces.py": "612a56f1c010a89eb6f1507c724242c2b32da757003657e8227132805b7ee555",
+      "eloria-assets/maps/nymara-regions/_toolkit/patch_collision_altitude.py": "c8c5dd2a15b169937d758f1d329d3786010a5f3b49e1e608398c0705b119a889",
+      "eloria-assets/maps/nymara-regions/_toolkit/plan_image.py": "939708d96db2aaa92ba130cd73d425877a1c68ad1e01c748202b464282f3e602",
+      "eloria-assets/maps/nymara-regions/_toolkit/preview.py": "73230ab1978e65480981b52225938826f7a379236c40e1708dce46850945071f",
+      "eloria-assets/maps/nymara-regions/_toolkit/rebuild_collision.py": "3fc76e6cd75ac60d9aa057e584666d7dee0bb5bc4ecc5b21f6682be9f5fc712b",
+      "eloria-assets/maps/nymara-regions/_toolkit/refine_walk_heights.py": "a4d8473b98bc65cd95164a7e5706a002abd0286603ef171eeaae513514883b4d",
+      "eloria-assets/maps/nymara-regions/_toolkit/regionbuild.py": "816c8d61ac0d0d2ccb20a7595a10f93a440df79765bd17804e13a746923f9b15",
+      "eloria-assets/maps/nymara-regions/_toolkit/regionpaths.py": "3a711cd50da4e5be22dd6f51ff6ca62d046fff418abc05edcd60531377b96257",
+      "eloria-assets/maps/nymara-regions/_toolkit/secretdoors.py": "508d26a78fe18389dd39051e49266d1b9c032de72add15a84e2e353a44181646",
+      "eloria-assets/maps/nymara-regions/_toolkit/secretrooms.py": "d7e4a6c6b1de205d3e3f1e94d2b1e18d627d30fef8cffcb0f30213d54d6b09f8",
+      "eloria-assets/maps/nymara-regions/_toolkit/secrets_build.py": "6778bd8634af74c0aaaa7da8ba00f2efdf0beea95fff3031c2c1606bc4c2f842",
+      "eloria-assets/maps/nymara-regions/_toolkit/secrets_doc.py": "a5221761d7595e367ef3e730c51f4ebea8cea7fcbf74d66f81b91e671d2c99bf",
+      "eloria-assets/maps/nymara-regions/_toolkit/server_walk_grid.py": "d6fd1ef43a3fe5903063637d22c1e9371650baea146f011b5f5ed41d4c95f6bb",
+      "eloria-assets/maps/nymara-regions/_toolkit/stamp_solid_landmarks.py": "2cc8b7688f849f59b2ecc22edf511fcaf2247c3cebed09c8fa76eb3e953065d1",
+      "eloria-assets/maps/nymara-regions/_toolkit/streaming_borders.py": "c101578ad9901484568c21dab8be1775bd1a385edfbde785e2dfc99f794a4d3e",
+      "eloria-assets/maps/nymara-regions/_toolkit/transitions.py": "7fb729f597406e72be68350c6c8b007ee74db63cdbfe88a6c1adc6072bf20f4c",
+      "eloria-assets/maps/nymara-regions/_toolkit/validate_gltf.py": "630807c19dfef54f65f6bdcb92bee279f1e3ed49b565ca15261f683539e44309",
+      "eloria-assets/maps/nymara-regions/_toolkit/verify_runtime.py": "7bd2d3d883ff9d07ebb64a21e972f943b2f2a4158683a40be5414bc52e6857be",
+      "eloria-assets/maps/nymara-regions/continent-geography.json": "9abd167a99745cd0d5b6c164e496979884bc6db71b403210d1a3b837ef470830",
+      "eloria-assets/maps/nymara-regions/mirrorhold/source/audit_access.py": "ced38fb0a88b590bb9d9b15d1bf4c13d473c73c2e05969fa0185392e2015b95d",
+      "eloria-assets/maps/nymara-regions/mirrorhold/source/build_interiors.py": "7dfcabd2c354140c57fc94a34b1c1b57af9fa26aecc60d9fdb423a3891532def",
+      "eloria-assets/maps/nymara-regions/mirrorhold/source/build_mirrorhold.py": "422c152c96179cf0bbadadc407be34c9a26036ed0a8c02fddcfeef3c261e06fd",
+      "eloria-assets/maps/nymara-regions/mirrorhold/source/interiors_mirrorhold.py": "8b025603d762d0264d36bf6380040743ab3b0573a66c5b1d9f4ccfcf772dca47",
+      "eloria-assets/maps/nymara-regions/mirrorhold/source/landmarks.py": "21af013d90114a527db48da313c75603c3b9f34de2e89f08553eb747b46ec355",
+      "eloria-assets/maps/nymara-regions/mirrorhold/source/landscape_plan.py": "1fcac421ab473c3d31048c7e2f19bc36588df4ff0aa7baad4c0d972cb6ae4e20",
+      "eloria-assets/maps/nymara-regions/mirrorhold/source/lens_vault_approach.py": "ce722c81b123c16fbab6df1dfe0aef7f23b4377475adce418489b173ba1438da",
+      "eloria-assets/maps/nymara-regions/mirrorhold/source/migrate_compact_server.py": "8ef6e7e276466dcbb632767ad82119084d9e2eee72a2922ad04020dfdf6690d1",
+      "eloria-assets/maps/nymara-regions/mirrorhold/source/populate.py": "dc64bf553a115f14dfefa9cda6c68c4b66ec19b68ed7fad5fc6c29e9009a09fc",
+      "eloria-assets/maps/nymara-regions/mirrorhold/source/rebuild_landscape.py": "fd9271241c0534f38c3b02736b394e4e188b7a75be8a32b4461f13e26b572d34",
+      "eloria-assets/maps/nymara-regions/mirrorhold/source/region.py": "090792072db2426d545c4e7e2aafa62a32efb89b068d3cb392cca81b0f5354dc",
+      "eloria-assets/maps/nymara-regions/mirrorhold/source/sanctuary_crossing.py": "6273766df9069f63be3e4b531dc00629e3090e934a50d9b005302805705cf8e8",
+      "eloria-assets/maps/nymara-regions/mirrorhold/source/secret_approaches.py": "9a922b8f19f0e1dfafcb637f83e2f75ac84e658163ff7bcaca69a9d7177f78c0",
+      "eloria-assets/maps/nymara-regions/mirrorhold/source/secrets_design.py": "198f6aaeeab2bd450979785e927b3ef9ff8ae625dfe97ee5f13727c2160a6e56",
+      "eloria-assets/maps/nymara-regions/mirrorhold/source/test_lens_vault_access.py": "c7cb309e6a4a9b6eb9a9edb71f74159ae0be1320d2dc01c40a5942478fc37c16",
+      "eloria-assets/maps/nymara-regions/mirrorhold/source/test_npc_post_access.py": "faf8d8c8bb9253e43a912bbef04b65b33ab853ae8950d48ae246b7927b492e13",
+      "eloria-assets/maps/nymara-regions/mirrorhold/source/test_sanctuary_crossing.py": "bb76e2544a2ffabcc05f89cada7096b0a83ff8ce0a462d8ea87138bc286a6e68",
+      "eloria-assets/maps/nymara-regions/mirrorhold/source/views.py": "b2cee94e606b02bb02b21a7649524f7d446bdc52cc6f91fb8aed7f15eb98ccb1"
+    }
   }
 }

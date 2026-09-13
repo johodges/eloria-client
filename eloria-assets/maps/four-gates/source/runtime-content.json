@@ -596,8 +596,8 @@
     {
       "creature": "river_otter",
       "serverTile": [
-        18,
-        95
+        24,
+        88
       ],
       "authority": "server"
     },

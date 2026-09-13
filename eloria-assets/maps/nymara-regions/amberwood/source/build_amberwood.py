@@ -132,6 +132,9 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     """Build the region. `lod="far"` produces the reduced second package:
     every tree at its far tier and no ground clutter, for low-end machines and
     for distant streaming."""
+    if lod == "far":
+        from distant_landscape import derive
+        return derive(build_region(seed))
     t0 = time.time()
     terrain = REG.build_terrain(seed)
     REG.apply_built_ground(terrain, seed)
@@ -935,7 +938,8 @@ def main() -> int:
         # most of a self-contained GLB's bytes actually are
         lod_sets = {name: texture_set.reduced()
                     for name, texture_set in sets.items()}
-        lod_build = build_region(args.seed, lod="far")
+        from distant_landscape import derive
+        lod_build = derive(build)
         # build_region already emits the compacted landform and border views.
         # Rebuilding its grid here would replace the surveyed mesh at this tier.
         _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb",

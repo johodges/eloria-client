@@ -1,12 +1,7 @@
 extends Control
-## The continent, as the map window shows it: every region's own tab map laid
-## out to scale on one picture, and each of them a rectangle a click opens.
-##
-## The picture itself is the TextureRect under this control, drawn keep-aspect
-## and centred. This control projects each region's rectangle through the same
-## fit, names the regions, marks the one under the cursor and the one the
-## player is standing on, and reports a click by region index. It holds no map
-## state beyond the rectangles it was handed.
+## Geographic region footprints share the picture's north-up projection.
+## Labels and hover outlines remain readable without drawing a permanent grid
+## over the continuous landscape. Older cartography can still use rectangles.
 
 signal region_selected(region_index: int)
 ## -1 when the cursor is over none of them, or has left the map.
@@ -17,13 +12,10 @@ const LABEL_OUTLINE := 4
 const LABEL_COLOUR := Color(0.96, 0.96, 0.98)
 const CURRENT_COLOUR := Color(0.98, 0.78, 0.22)
 const HOVER_COLOUR := Color(1.0, 0.92, 0.55)
-const OUTLINE_COLOUR := Color(1.0, 1.0, 1.0, 0.28)
-const OUTLINE_WIDTH := 1.0
 const CURRENT_WIDTH := 2.0
 const HOVER_WIDTH := 3.0
-## The smallest region is 191 m across, which at the window's scale is a
-## square a few dozen pixels wide. Its click target grows to this so a mouse
-## can still find it; the drawn rectangle stays the region's true size.
+## Legacy rectangular atlases enlarge very small targets for the mouse.
+## Geographic atlases use their actual polygons to avoid selecting a neighbor.
 const MIN_HIT_SIZE := 44.0
 
 var _image_size := Vector2.ZERO
@@ -31,7 +23,7 @@ var _regions: Array[Dictionary] = []
 var _current_index := -1
 var _hovered_index := -1
 
-## `regions` carries a `name` and a `rect` in the picture's own pixels.
+## Region names, bounds and polygons use the picture's own pixels.
 func configure(image_size: Vector2, regions: Array[Dictionary]) -> void:
 	_image_size = image_size
 	_regions = regions
@@ -74,6 +66,27 @@ func hit_rect(index: int) -> Rect2:
 	var grown := Vector2(maxf(rect.size.x, MIN_HIT_SIZE), maxf(rect.size.y, MIN_HIT_SIZE))
 	return Rect2(rect.get_center() - grown * 0.5, grown)
 
+func region_polygon(index: int) -> PackedVector2Array:
+	var points := PackedVector2Array()
+	var display := display_rect()
+	if index < 0 or index >= _regions.size() or display.size.x <= 0.0:
+		return points
+	var scale_factor: float = display.size.x / _image_size.x
+	for point: Array in _regions[index].get("polygon", []):
+		points.append(display.position + Vector2(float(point[0]), float(point[1])) * scale_factor)
+	if points.size() < 3:
+		var rect := region_rect(index)
+		points = PackedVector2Array([rect.position, Vector2(rect.end.x, rect.position.y),
+			rect.end, Vector2(rect.position.x, rect.end.y)])
+	return points
+
+func region_label_position(index: int) -> Vector2:
+	var label: Array = _regions[index].get("label", [])
+	if label.size() == 2:
+		var display := display_rect()
+		return display.position + Vector2(float(label[0]), float(label[1])) * display.size.x / _image_size.x
+	return region_rect(index).get_center()
+
 ## The region under a point, or -1. A small region's grown target can sit
 ## inside a large neighbour's rectangle; the smaller one wins, being the one
 ## that would otherwise be unreachable.
@@ -82,7 +95,10 @@ func region_at(local_position: Vector2) -> int:
 	var best_area := INF
 	for index: int in range(_regions.size()):
 		var rect: Rect2 = hit_rect(index)
-		if rect.size.x > 0.0 and rect.has_point(local_position) and rect.get_area() < best_area:
+		var polygon: Array = _regions[index].get("polygon", [])
+		var contains := (Geometry2D.is_point_in_polygon(local_position, region_polygon(index))
+			if polygon.size() >= 3 else rect.has_point(local_position))
+		if rect.size.x > 0.0 and contains and rect.get_area() < best_area:
 			best = index
 			best_area = rect.get_area()
 	return best
@@ -120,13 +136,14 @@ func _draw() -> void:
 		var rect: Rect2 = region_rect(index)
 		if rect.size.x <= 0.0:
 			continue
+		var points := region_polygon(index)
 		if index == _hovered_index:
-			draw_rect(rect, Color(HOVER_COLOUR, 0.12), true)
-			draw_rect(rect, HOVER_COLOUR, false, HOVER_WIDTH)
+			draw_colored_polygon(points, Color(HOVER_COLOUR, 0.09))
+			points.append(points[0])
+			draw_polyline(points, HOVER_COLOUR, HOVER_WIDTH, true)
 		elif index == _current_index:
-			draw_rect(rect, CURRENT_COLOUR, false, CURRENT_WIDTH)
-		else:
-			draw_rect(rect, OUTLINE_COLOUR, false, OUTLINE_WIDTH)
+			points.append(points[0])
+			draw_polyline(points, CURRENT_COLOUR, CURRENT_WIDTH, true)
 	var font: Font = get_theme_default_font()
 	if font == null:
 		return
@@ -141,6 +158,8 @@ func _draw() -> void:
 		var rect: Rect2 = region_rect(index)
 		if rect.size.x <= 0.0:
 			continue
+		if (_regions[index].get("label", []) as Array).size() == 2:
+			rect = Rect2(region_label_position(index) - Vector2(rect.size.x * 0.5, 16), Vector2(rect.size.x, 32))
 		_draw_label(font, rect, str(_regions[index].get("name", "")),
 			CURRENT_COLOUR if index == _current_index else LABEL_COLOUR)
 

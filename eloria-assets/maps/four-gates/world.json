@@ -33,23 +33,23 @@
     "waterLevel": 19,
     "mapBounds": {
       "min": [
-        -198,
+        -224,
         13,
-        -198
+        -204
       ],
       "max": [
-        198,
+        208,
         111,
-        198
+        232
       ]
     },
-    "serverCells": 396
+    "serverCells": 414
   },
   "coordinateTransform": {
     "metresPerTile": 1.0,
     "serverOrigin": [
-      198,
-      198
+      203,
+      210
     ],
     "origin": [
       0,
@@ -57,7 +57,21 @@
       0
     ],
     "walkingHeight": 31.1,
-    "invertServerY": true
+    "invertServerY": true,
+    "serverCells": [
+      414,
+      414
+    ],
+    "addressableWorldBounds": {
+      "min": [
+        -203,
+        -204
+      ],
+      "max": [
+        211,
+        210
+      ]
+    }
   },
   "camera": {
     "distance": 26.0,
@@ -997,8 +1011,8 @@
       ],
       "node": "Secret_gates_sunleaf_hollow",
       "serverTile": [
-        283,
-        154
+        288,
+        166
       ],
       "authority": "server"
     },
@@ -1024,8 +1038,8 @@
       ],
       "node": "Secret_gates_reedworks_garden",
       "serverTile": [
-        273,
-        123
+        278,
+        135
       ],
       "authority": "server"
     },
@@ -1051,8 +1065,8 @@
       ],
       "node": "Secret_gates_lantern_cache",
       "serverTile": [
-        171,
-        124
+        176,
+        136
       ],
       "authority": "server"
     },
@@ -1078,8 +1092,8 @@
       ],
       "node": "Secret_gates_deposit_vault",
       "serverTile": [
-        123,
-        150
+        128,
+        162
       ],
       "authority": "server"
     },
@@ -1105,8 +1119,8 @@
       ],
       "node": "Secret_gates_otter_pit",
       "serverTile": [
-        332,
-        57
+        337,
+        69
       ],
       "authority": "server"
     },
@@ -1132,8 +1146,8 @@
       ],
       "node": "Secret_gates_stormglass_school",
       "serverTile": [
-        152,
-        270
+        157,
+        282
       ],
       "authority": "server"
     },
@@ -1159,8 +1173,8 @@
       ],
       "node": "Secret_gates_plaza_spring",
       "serverTile": [
-        215,
-        180
+        220,
+        192
       ],
       "authority": "server"
     },
@@ -1186,8 +1200,8 @@
       ],
       "node": "Secret_gates_ferry_butts",
       "serverTile": [
-        119,
-        223
+        124,
+        235
       ],
       "authority": "server"
     },
@@ -1213,8 +1227,8 @@
       ],
       "node": "Secret_gates_sanctuary_reliquary",
       "serverTile": [
-        99,
-        341
+        104,
+        353
       ],
       "authority": "server"
     },
@@ -1240,8 +1254,8 @@
       ],
       "node": "Secret_gates_mirrorsmith_well",
       "serverTile": [
-        242,
-        271
+        247,
+        283
       ],
       "authority": "server"
     },
@@ -1267,8 +1281,8 @@
       ],
       "node": "Secret_gates_civic_focus",
       "serverTile": [
-        180,
-        174
+        185,
+        186
       ],
       "authority": "server"
     },
@@ -1294,8 +1308,8 @@
       ],
       "node": "Secret_gates_waystone",
       "serverTile": [
-        206,
-        132
+        211,
+        144
       ],
       "authority": "server"
     },
@@ -1321,8 +1335,8 @@
       ],
       "node": "Secret_gates_wall_eyrie",
       "serverTile": [
-        305,
-        228
+        310,
+        240
       ],
       "authority": "server"
     },
@@ -1348,8 +1362,8 @@
       ],
       "node": "Secret_gates_drain_mouth",
       "serverTile": [
-        91,
-        175
+        96,
+        187
       ],
       "authority": "server"
     }
@@ -1375,8 +1389,8 @@
         71.35000000000001
       ],
       "serverTile": [
-        163,
-        123
+        168,
+        135
       ],
       "authority": "server"
     },
@@ -1400,8 +1414,8 @@
         70.35000000000001
       ],
       "serverTile": [
-        262,
-        124
+        267,
+        136
       ],
       "authority": "server"
     },
@@ -1425,8 +1439,8 @@
         -69.85000000000001
       ],
       "serverTile": [
-        143,
-        270
+        148,
+        282
       ],
       "authority": "server"
     },
@@ -1450,8 +1464,8 @@
         -71.35000000000001
       ],
       "serverTile": [
-        253,
-        272
+        258,
+        284
       ],
       "authority": "server"
     },
@@ -1475,8 +1489,8 @@
         -39.0
       ],
       "serverTile": [
-        119,
-        237
+        124,
+        249
       ],
       "authority": "server"
     },
@@ -1500,23 +1514,23 @@
         38.0
       ],
       "serverTile": [
-        123,
-        160
+        128,
+        172
       ],
       "authority": "server"
     },
     {
       "id": "north",
       "position": [
-        0.5,
+        52.5,
         23.0,
-        -196.5
+        -201.5
       ],
       "radius": 3.0,
       "destinationMap": "mirrorhold",
       "serverTile": [
-        198,
-        394
+        255,
+        411
       ],
       "outward": [
         0,
@@ -1527,15 +1541,15 @@
     {
       "id": "west",
       "position": [
-        -196.5,
+        -200.5,
         23.0,
-        -0.5
+        7.5
       ],
       "radius": 3.0,
       "destinationMap": "crownwater",
       "serverTile": [
-        1,
-        198
+        2,
+        202
       ],
       "outward": [
         -1,
@@ -1546,15 +1560,15 @@
     {
       "id": "east",
       "position": [
-        196.5,
+        204.5,
         23.0,
-        -0.5
+        37.5
       ],
       "radius": 3.0,
       "destinationMap": "sunmane_steppe",
       "serverTile": [
-        394,
-        198
+        407,
+        172
       ],
       "outward": [
         1,
@@ -1565,15 +1579,15 @@
     {
       "id": "south",
       "position": [
-        0.5,
+        124.5,
         23.0,
-        196.5
+        207.5
       ],
       "radius": 3.0,
       "destinationMap": "ssarathi_ruins",
       "serverTile": [
-        198,
-        1
+        327,
+        2
       ],
       "outward": [
         0,
@@ -1592,8 +1606,8 @@
         93.0
       ],
       "serverTile": [
-        221,
-        105
+        226,
+        117
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1608,8 +1622,8 @@
         94.0
       ],
       "serverTile": [
-        216,
-        104
+        221,
+        116
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1624,8 +1638,8 @@
         87.0
       ],
       "serverTile": [
-        228,
-        111
+        233,
+        123
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1640,8 +1654,8 @@
         -105.0
       ],
       "serverTile": [
-        226,
-        303
+        231,
+        315
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1656,8 +1670,8 @@
         -103.0
       ],
       "serverTile": [
-        234,
-        301
+        239,
+        313
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1672,8 +1686,8 @@
         -96.0
       ],
       "serverTile": [
-        162,
-        294
+        167,
+        306
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1688,8 +1702,8 @@
         -81.0
       ],
       "serverTile": [
-        169,
-        279
+        174,
+        291
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1704,8 +1718,8 @@
         -84.0
       ],
       "serverTile": [
-        223,
-        282
+        228,
+        294
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1720,8 +1734,8 @@
         -91.0
       ],
       "serverTile": [
-        225,
-        289
+        230,
+        301
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1736,8 +1750,8 @@
         -86.0
       ],
       "serverTile": [
-        232,
-        284
+        237,
+        296
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1752,8 +1766,8 @@
         100.0
       ],
       "serverTile": [
-        235,
-        98
+        240,
+        110
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1768,8 +1782,8 @@
         92.0
       ],
       "serverTile": [
-        240,
-        106
+        245,
+        118
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1784,8 +1798,8 @@
         94.0
       ],
       "serverTile": [
-        231,
-        104
+        236,
+        116
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1800,8 +1814,8 @@
         101.0
       ],
       "serverTile": [
-        218,
-        97
+        223,
+        109
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1816,8 +1830,8 @@
         97.0
       ],
       "serverTile": [
-        212,
-        101
+        217,
+        113
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1832,8 +1846,8 @@
         99.0
       ],
       "serverTile": [
-        227,
-        99
+        232,
+        111
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1848,8 +1862,8 @@
         86.0
       ],
       "serverTile": [
-        218,
-        112
+        223,
+        124
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1864,8 +1878,8 @@
         96.0
       ],
       "serverTile": [
-        224,
-        102
+        229,
+        114
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1880,8 +1894,8 @@
         89.0
       ],
       "serverTile": [
-        234,
-        109
+        239,
+        121
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1896,8 +1910,8 @@
         -91.0
       ],
       "serverTile": [
-        176,
-        289
+        181,
+        301
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1912,8 +1926,8 @@
         -85.0
       ],
       "serverTile": [
-        174,
-        283
+        179,
+        295
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1928,8 +1942,8 @@
         -100.0
       ],
       "serverTile": [
-        175,
-        298
+        180,
+        310
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1944,8 +1958,8 @@
         81.0
       ],
       "serverTile": [
-        224,
-        117
+        229,
+        129
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1960,8 +1974,8 @@
         80.0
       ],
       "serverTile": [
-        221,
-        118
+        226,
+        130
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1976,8 +1990,8 @@
         81.0
       ],
       "serverTile": [
-        227,
-        117
+        232,
+        129
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1992,8 +2006,8 @@
         83.0
       ],
       "serverTile": [
-        235,
-        115
+        240,
+        127
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -2008,8 +2022,8 @@
         94.0
       ],
       "serverTile": [
-        236,
-        104
+        241,
+        116
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -2024,8 +2038,8 @@
         81.0
       ],
       "serverTile": [
-        231,
-        117
+        236,
+        129
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -2040,8 +2054,8 @@
         104.0
       ],
       "serverTile": [
-        225,
-        94
+        230,
+        106
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -2056,8 +2070,8 @@
         109.0
       ],
       "serverTile": [
-        220,
-        89
+        225,
+        101
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -2072,8 +2086,8 @@
         103.0
       ],
       "serverTile": [
-        228,
-        95
+        233,
+        107
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -2088,8 +2102,8 @@
         102.0
       ],
       "serverTile": [
-        241,
-        96
+        246,
+        108
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -2104,8 +2118,8 @@
         106.0
       ],
       "serverTile": [
-        241,
-        92
+        246,
+        104
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -2120,8 +2134,8 @@
         106.0
       ],
       "serverTile": [
-        236,
-        92
+        241,
+        104
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -2136,8 +2150,8 @@
         -99.0
       ],
       "serverTile": [
-        170,
-        297
+        175,
+        309
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -2152,8 +2166,8 @@
         -99.0
       ],
       "serverTile": [
-        179,
-        297
+        184,
+        309
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -2168,8 +2182,8 @@
         -90.0
       ],
       "serverTile": [
-        165,
-        288
+        170,
+        300
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -2184,8 +2198,8 @@
         -90.0
       ],
       "serverTile": [
-        232,
-        288
+        237,
+        300
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -2200,8 +2214,8 @@
         -96.0
       ],
       "serverTile": [
-        225,
-        294
+        230,
+        306
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -2216,8 +2230,8 @@
         -80.0
       ],
       "serverTile": [
-        230,
-        278
+        235,
+        290
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -2232,8 +2246,8 @@
         -91.0
       ],
       "serverTile": [
-        221,
-        289
+        226,
+        301
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -2324,7 +2338,7 @@
       "role": "ferryman",
       "position": [
         4.988878483113564,
-        23.580494103786005,
+        22.885116912414848,
         149.00117069565846
       ],
       "rotationDegrees": 180
@@ -2335,7 +2349,7 @@
       "role": "lake_priest",
       "position": [
         0.0,
-        16.081213144986158,
+        14.156003466146991,
         -173.35294117647058
       ],
       "rotationDegrees": 0
@@ -2369,7 +2383,7 @@
       "creature": "reedhorn_stag",
       "position": [
         62.72422756339018,
-        16.971075297845115,
+        16.812207080530634,
         161.86897435713595
       ],
       "radius": 24,
@@ -2457,7 +2471,7 @@
       "id": "sanctuary-approach",
       "position": [
         0.0,
-        16.284651392376624,
+        14.165164846608882,
         -175.0
       ],
       "radius": 24,
@@ -2642,23 +2656,23 @@
   "minimap": {
     "file": "minimap.webp",
     "image": "minimap.webp",
-    "pixels": 396,
+    "pixels": 432,
     "size": [
-      396,
-      396
+      432,
+      436
     ],
     "imageSize": [
-      396,
-      396
+      432,
+      436
     ],
     "pixelsPerMetre": 1.0,
     "worldMin": [
-      -198.0,
-      -198.0
+      -224,
+      -204
     ],
     "worldMax": [
-      198.0,
-      198.0
+      208,
+      232
     ],
     "bounds": {
       "min": [
@@ -2676,10 +2690,55 @@
     ],
     "metresPerPixel": 1.0,
     "centre": [
-      0.0,
-      0.0
+      -8.0,
+      14.0
     ],
-    "northUp": true
+    "northUp": true,
+    "transform": {
+      "pixelX": {
+        "scale": 1.0,
+        "offset": 224
+      },
+      "pixelY": {
+        "scale": 1.0,
+        "offset": 204
+      },
+      "formula": "pixel_x = world_x * scale + offset; pixel_y = world_z * scale + offset"
+    },
+    "geometryImage": "cartography.webp",
+    "renderedFrom": "world.glb (shared geometry cartography renderer)",
+    "cartographyRender": {
+      "generator": "eloria-assets/tools/render_region_cartography.py",
+      "styleVersion": 4,
+      "glbSha256": "5c00ad8ee489cedd34c7f83fd08e630a1abbab14229602994f32be4d14a667c6",
+      "toolSha256": "e5c5cab675ec4f463d33a3dd17d43cec6c41a7aee2a4ea6defb82f4451d496c3",
+      "rendererSourceSha256": "20a909b6f7b76e84867caed2e5bdcc3b6ae708ffc5231899794b2bef09005a05",
+      "supersample": 2,
+      "waterRGB": [
+        79,
+        150,
+        157
+      ],
+      "opaqueClampSampler": {
+        "version": 2,
+        "adapterSha256": "fbabcad75a32a36999b2a937dbe61af91ad28a7e413825e3eff1aea92fdbf019",
+        "baseRasterSha256": "20a909b6f7b76e84867caed2e5bdcc3b6ae708ffc5231899794b2bef09005a05",
+        "runtimeShaderSha256": "3509e32877adc2032028412fdd1e458f207e30280e6e8366d71fc1163ac240b3",
+        "specializedSourceSha256": "5fc49b1e9025a8525025da83278e09894d609fa49e72b9970416b45914ed394d",
+        "compilerSha256": "ab37c11763fdcb3bf6f809b5d033a31ebeb77f10ba5934c72fa37287ee56144f",
+        "flags": [
+          "-O3",
+          "-ffast-math",
+          "-shared",
+          "-static-libgcc",
+          "-static",
+          "-Wl,--no-insert-timestamp",
+          "-Wl,--image-base,0x180000000"
+        ],
+        "compilerVersion": "gcc.exe (Rev3, Built by MSYS2 project) 16.2.0",
+        "librarySha256": "042b0130969f5732584fae29f973dba08ce184bc2f8da7a56368be5624290a65"
+      }
+    }
   },
   "collision": {
     "file": "collision.bin",
@@ -2803,18 +2862,18 @@
       "Tree_Civic_6",
       "Tree_Civic_7"
     ],
-    "width": 792,
-    "height": 792,
+    "width": 828,
+    "height": 828,
     "cellMetres": 0.5,
     "cellSize": 0.5,
     "originMetres": [
-      -198,
-      198
+      -203,
+      210
     ],
-    "walkableCells": 344923,
-    "walkableFraction": 0.5499,
+    "walkableCells": 347257,
+    "walkableFraction": 0.5065,
     "heightEncoding": {
-      "origin": 19.1402,
+      "origin": 14.4884,
       "step": 0.2,
       "range": [
         1,
@@ -2826,18 +2885,18 @@
     "refinedHeights": {
       "levels": 255,
       "step": 0.2,
-      "origin": 19.1402,
+      "origin": 14.4884,
       "previousStep": 0.2,
-      "cellsRestated": 9642,
-      "cellsFromGeometry": 345127,
-      "cellsKept": 1
+      "cellsRestated": 0,
+      "cellsFromGeometry": 347643,
+      "cellsKept": 3
     },
     "openedWalkSurfaces": {
       "prefix": "Walk_",
-      "cellsCovered": 6824,
-      "cellsWidened": 962,
-      "cellsOpened": 1107,
-      "cellsRaised": 6407,
+      "cellsCovered": 16970,
+      "cellsWidened": 1004,
+      "cellsOpened": 983,
+      "cellsRaised": 1185,
       "cellsDrowned": 0,
       "cellsBuried": 0,
       "cellsInsideLandmarks": 0
@@ -2849,128 +2908,128 @@
         0.5
       ],
       "heightToleranceMetres": 0.8,
-      "closedTiles": 328,
-      "unsupportedTiles": 9,
-      "submergedTiles": 141,
-      "heightMismatchTiles": 328,
+      "closedTiles": 343,
+      "unsupportedTiles": 4,
+      "submergedTiles": 122,
+      "heightMismatchTiles": 341,
       "samples": [
         {
           "tile": [
-            202,
-            1
+            217,
+            4
           ],
-          "encodedY": 22.94,
+          "encodedY": 17.088,
           "surfaceY": 17.0,
+          "unsupported": false,
+          "submerged": true
+        },
+        {
+          "tile": [
+            194,
+            5
+          ],
+          "encodedY": 36.088,
+          "surfaceY": 35.287,
           "unsupported": false,
           "submerged": false
         },
         {
           "tile": [
-            202,
-            2
-          ],
-          "encodedY": 22.94,
-          "surfaceY": 17.0,
-          "unsupported": false,
-          "submerged": true
-        },
-        {
-          "tile": [
-            202,
-            3
-          ],
-          "encodedY": 22.94,
-          "surfaceY": 17.0,
-          "unsupported": false,
-          "submerged": true
-        },
-        {
-          "tile": [
-            202,
-            4
-          ],
-          "encodedY": 22.94,
-          "surfaceY": 17.0,
-          "unsupported": false,
-          "submerged": true
-        },
-        {
-          "tile": [
-            202,
+            195,
             5
           ],
-          "encodedY": 22.94,
+          "encodedY": 35.488,
+          "surfaceY": 34.616,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            217,
+            5
+          ],
+          "encodedY": 17.088,
+          "surfaceY": 16.999,
+          "unsupported": false,
+          "submerged": true
+        },
+        {
+          "tile": [
+            332,
+            5
+          ],
+          "encodedY": 23.088,
           "surfaceY": 17.0,
           "unsupported": false,
           "submerged": true
         },
         {
           "tile": [
-            202,
+            332,
             6
           ],
-          "encodedY": 22.94,
+          "encodedY": 23.088,
           "surfaceY": 17.0,
           "unsupported": false,
           "submerged": true
         },
         {
           "tile": [
-            202,
+            332,
             7
           ],
-          "encodedY": 22.94,
-          "surfaceY": 17.0,
+          "encodedY": 23.088,
+          "surfaceY": 17.441,
           "unsupported": false,
           "submerged": true
         },
         {
           "tile": [
-            202,
+            332,
             8
           ],
-          "encodedY": 22.94,
-          "surfaceY": 17.0,
+          "encodedY": 23.088,
+          "surfaceY": null,
+          "unsupported": true,
+          "submerged": true
+        },
+        {
+          "tile": [
+            182,
+            20
+          ],
+          "encodedY": 24.888,
+          "surfaceY": 24.071,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            182,
+            21
+          ],
+          "encodedY": 24.488,
+          "surfaceY": 23.532,
+          "unsupported": false,
+          "submerged": false
+        },
+        {
+          "tile": [
+            299,
+            54
+          ],
+          "encodedY": 23.088,
+          "surfaceY": 17.926,
           "unsupported": false,
           "submerged": true
         },
         {
           "tile": [
-            202,
-            9
+            300,
+            54
           ],
-          "encodedY": 22.94,
-          "surfaceY": 17.0,
-          "unsupported": false,
-          "submerged": true
-        },
-        {
-          "tile": [
-            202,
-            10
-          ],
-          "encodedY": 22.94,
-          "surfaceY": 17.0,
-          "unsupported": false,
-          "submerged": true
-        },
-        {
-          "tile": [
-            202,
-            11
-          ],
-          "encodedY": 22.94,
-          "surfaceY": 17.0,
-          "unsupported": false,
-          "submerged": true
-        },
-        {
-          "tile": [
-            202,
-            12
-          ],
-          "encodedY": 22.94,
-          "surfaceY": 17.0,
+          "encodedY": 23.088,
+          "surfaceY": 18.255,
           "unsupported": false,
           "submerged": true
         }
@@ -2994,17 +3053,17 @@
     ]
   },
   "performance": {
-    "nodes": 975,
-    "meshes": 726,
-    "materials": 40,
-    "images": 105,
-    "textures": 105,
-    "accessors": 2938,
-    "bufferViews": 3043,
-    "uniqueTriangles": 495146,
-    "uniqueVertices": 336937,
-    "glbBytes": 26479908,
-    "instancedTriangles": 495146
+    "nodes": 1068,
+    "meshes": 819,
+    "materials": 52,
+    "images": 129,
+    "textures": 129,
+    "accessors": 3361,
+    "bufferViews": 3490,
+    "uniqueTriangles": 755632,
+    "uniqueVertices": 503789,
+    "glbBytes": 45642412,
+    "instancedTriangles": 755632
   },
   "sources": [
     {
@@ -3362,47 +3421,166 @@
       "portal": "north",
       "destination": "mirrorhold",
       "anchor": [
-        0.5,
-        23,
-        -195.5
+        52.5,
+        23.0,
+        -200.5
       ],
       "outward": [
         0,
         -1
       ],
+      "globalTranslation": [
+        1050.0,
+        -19,
+        1016.0
+      ],
+      "globalAnchor": [
+        1102.5,
+        4,
+        815.5
+      ],
       "uvSign": -1,
       "palette": "causeway",
-      "preloadDistance": 170,
-      "retainDistance": 220,
-      "blendDistance": 65,
+      "preloadDistance": 240,
+      "retainDistance": 320,
+      "blendDistance": 90,
       "collarDepth": 42,
       "halfWidthTiles": 3,
-      "viewHalfWidth": 40.0,
-      "viewDepth": 145.0,
-      "previewPrefix": "StreamView_mirrorhold-four-gates__",
-      "overflowSuffix": "_StreamOverflow_mirrorhold-four-gates",
-      "geometryMode": "shared-cells-v2",
+      "viewHalfWidth": 110,
+      "viewDepth": 240,
+      "geometryMode": "continent-owned-v1",
       "sceneNodes": [
         "Terrain_Paving_StreamCell_mirrorhold-four-gates",
         "Terrain_Shore_StreamCell_mirrorhold-four-gates",
         "Terrain_Rock_StreamCell_mirrorhold-four-gates",
         "Terrain_Meadow_StreamCell_mirrorhold-four-gates",
+        "Walk_ContinentRoad_mirrorhold-four-gates_StreamCell_mirrorhold-four-gates",
         "Walk_StreamCauseway_mirrorhold-four-gates_StreamCell_mirrorhold-four-gates",
         "Structure_StreamCauseway_mirrorhold-four-gates_pale_ashlar_StreamCell_mirrorhold-four-gates",
         "Structure_StreamCauseway_mirrorhold-four-gates_rubble_stone_StreamCell_mirrorhold-four-gates",
         "Water_Lake_StreamCell_mirrorhold-four-gates",
         "Water_StreamCauseway_mirrorhold-four-gates_StreamCell_mirrorhold-four-gates",
+        "Plaza_Monument",
+        "Plaza_Monument_Crystal",
+        "Plaza_Fountain_0",
+        "Plaza_Fountain_1",
+        "Plaza_Fountain_2",
+        "Plaza_Fountain_3",
+        "Plaza_Bench_0",
+        "Plaza_Lamp_0",
+        "Plaza_Bench_1",
+        "Plaza_Lamp_1",
+        "Plaza_Bench_4",
+        "Plaza_Lamp_4",
+        "Plaza_Bench_5",
+        "Plaza_Lamp_5",
+        "Plaza_Bench_6",
+        "Plaza_Lamp_6",
+        "Plaza_Bench_7",
+        "Plaza_Lamp_7",
+        "Plaza_Bench_8",
+        "Plaza_Lamp_8",
+        "Plaza_Bench_9",
+        "Plaza_Lamp_9",
+        "Plaza_Bench_10",
+        "Plaza_Lamp_10",
+        "Plaza_Bench_11",
+        "Plaza_Lamp_11",
+        "Plaza_Arcade_0",
+        "Plaza_Arcade_1",
         "Plaza_Arcade_2",
         "Plaza_Arcade_3",
+        "Shopfront_four-gates-stormglass-house",
+        "Sign_four-gates-stormglass-house",
+        "Goods_four-gates-stormglass-house",
+        "Shopfront_four-gates-mirrorsmith-forge",
+        "Sign_four-gates-mirrorsmith-forge",
+        "Goods_four-gates-mirrorsmith-forge",
+        "District_House_22",
+        "Outer_Farmhouse_3",
+        "Outer_Farmhouse_4",
         "Gate_North",
         "Gate_North_Portcullis",
+        "Gate_East",
+        "Gate_East_Portcullis",
+        "City_Wall_02",
+        "City_Wall_03",
+        "City_Wall_42",
+        "City_Wall_43",
         "City_Wall_44",
         "City_Wall_45",
         "City_Wall_50",
         "City_Wall_51",
+        "City_Wall_52",
+        "City_Wall_53",
+        "City_Wall_54",
+        "City_Wall_55",
+        "City_Wall_56",
+        "City_Wall_57",
+        "City_Wall_58",
+        "City_Wall_59",
+        "City_Wall_60",
+        "City_Wall_61",
+        "Market_Stall_3",
+        "Market_Cart_3",
+        "Market_Stall_4",
+        "Market_Cart_4",
         "Avenue_Standard_2",
-        "Avenue_Standard_3"
+        "Avenue_Standard_3",
+        "Avenue_Standard_6",
+        "Avenue_Standard_7",
+        "Tree_Shore_31",
+        "Tree_Shore_97",
+        "Tree_Shore_128",
+        "Tree_Shore_161",
+        "Tree_Shore_175",
+        "Tree_Civic_0",
+        "Tree_Civic_3",
+        "Tree_Civic_4",
+        "Tree_Civic_5",
+        "Tree_Civic_6",
+        "Tree_Civic_7",
+        "Secret_gates_stormglass_school",
+        "Secret_gates_plaza_spring",
+        "Secret_gates_mirrorsmith_well",
+        "Secret_gates_civic_focus",
+        "Secret_gates_wall_eyrie",
+        "Terrain_Paving_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater",
+        "Terrain_Rock_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater",
+        "Terrain_Meadow_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater",
+        "Water_Lake_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater",
+        "Terrain_Paving_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane",
+        "Terrain_Shore_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane",
+        "Terrain_Rock_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane",
+        "Terrain_Meadow_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane",
+        "Terrain_Paving_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane",
+        "Terrain_Meadow_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane",
+        "Water_Lake_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane",
+        "Water_StreamCauseway_four-gates-sunmane_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane",
+        "Water_Lake_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane",
+        "Terrain_Paving_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Shore_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Rock_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Meadow_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Walk_StreamCauseway_four-gates-sunmane_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_four-gates-sunmane_pale_ashlar_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Paving_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Meadow_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Water_Lake_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Water_StreamCauseway_four-gates-sunmane_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Water_Lake_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Walk_StreamCauseway_FourTidal_mirrorhold-four-gates_StreamCell_mirrorhold-four-gates",
+        "Structure_StreamCauseway_FourTidal_mirrorhold-four-gates_ashlar_StreamCell_mirrorhold-four-gates",
+        "Structure_StreamCauseway_FourTidal_mirrorhold-four-gates_piers_StreamCell_mirrorhold-four-gates",
+        "Walk_StreamCauseway_FourTidal_four-gates-sunmane_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_FourTidal_four-gates-sunmane_ashlar_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_FourTidal_four-gates-sunmane_piers_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Walk_ContinentRoad_four-gates-sunmane_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_mirrorhold-four-gates_rim",
+        "Structure_StreamCauseway_four-gates-sunmane_rim"
       ],
+      "previewPrefix": "StreamView_mirrorhold-four-gates__",
+      "overflowSuffix": "_StreamOverflow_mirrorhold-four-gates",
       "profile": "causeway",
       "waterBelowDeck": 4.0,
       "deckWidth": 7.0
@@ -3412,163 +3590,135 @@
       "portal": "west",
       "destination": "crownwater",
       "anchor": [
-        -195.5,
-        23,
-        -0.5
+        -199.5,
+        23.0,
+        7.5
       ],
       "outward": [
         -1,
         0
       ],
+      "globalTranslation": [
+        1050.0,
+        -19,
+        1016.0
+      ],
+      "globalAnchor": [
+        850.5,
+        4,
+        1023.5
+      ],
       "uvSign": 1,
       "palette": "causeway",
-      "preloadDistance": 170,
-      "retainDistance": 220,
-      "blendDistance": 65,
+      "preloadDistance": 240,
+      "retainDistance": 320,
+      "blendDistance": 90,
       "collarDepth": 42,
       "halfWidthTiles": 3,
-      "viewHalfWidth": 40.0,
-      "viewDepth": 145.0,
-      "previewPrefix": "StreamView_four-gates-crownwater__",
-      "overflowSuffix": "_StreamOverflow_four-gates-crownwater",
-      "geometryMode": "shared-cells-v2",
+      "viewHalfWidth": 110,
+      "viewDepth": 240,
+      "geometryMode": "continent-owned-v1",
       "sceneNodes": [
         "Terrain_Paving_StreamCell_four-gates-crownwater",
         "Terrain_Shore_StreamCell_four-gates-crownwater",
         "Terrain_Rock_StreamCell_four-gates-crownwater",
         "Terrain_Meadow_StreamCell_four-gates-crownwater",
+        "Walk_ContinentRoad_four-gates-crownwater_StreamCell_four-gates-crownwater",
         "Walk_StreamCauseway_four-gates-crownwater_StreamCell_four-gates-crownwater",
         "Structure_StreamCauseway_four-gates-crownwater_pale_ashlar_StreamCell_four-gates-crownwater",
         "Structure_StreamCauseway_four-gates-crownwater_rubble_stone_StreamCell_four-gates-crownwater",
+        "Terrain_Paving_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater",
+        "Terrain_Rock_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater",
+        "Terrain_Meadow_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater",
         "Water_Lake_StreamCell_four-gates-crownwater",
         "Water_StreamCauseway_four-gates-crownwater_StreamCell_four-gates-crownwater",
+        "Water_Lake_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater",
+        "Plaza_Monument",
+        "Plaza_Monument_Crystal",
+        "Plaza_Fountain_0",
+        "Plaza_Fountain_1",
+        "Plaza_Fountain_2",
+        "Plaza_Fountain_3",
+        "Plaza_Bench_0",
+        "Plaza_Bench_1",
+        "Plaza_Lamp_1",
+        "Plaza_Bench_2",
+        "Plaza_Lamp_2",
+        "Plaza_Bench_3",
+        "Plaza_Lamp_3",
+        "Plaza_Bench_4",
+        "Plaza_Lamp_4",
+        "Plaza_Bench_5",
+        "Plaza_Lamp_5",
+        "Plaza_Bench_6",
+        "Plaza_Lamp_6",
+        "Plaza_Bench_7",
+        "Plaza_Lamp_7",
+        "Plaza_Bench_8",
+        "Plaza_Lamp_8",
+        "Plaza_Bench_9",
+        "Plaza_Lamp_9",
+        "Plaza_Bench_10",
+        "Plaza_Lamp_10",
+        "Plaza_Bench_11",
+        "Plaza_Arcade_0",
         "Plaza_Arcade_1",
         "Plaza_Arcade_2",
+        "Plaza_Arcade_3",
+        "Shopfront_four-gates-lantern-row",
+        "Sign_four-gates-lantern-row",
+        "Goods_four-gates-lantern-row",
+        "Shopfront_four-gates-stormglass-house",
+        "Sign_four-gates-stormglass-house",
+        "Goods_four-gates-stormglass-house",
         "Shopfront_four-gates-ferrymans-rest",
+        "Sign_four-gates-ferrymans-rest",
+        "Goods_four-gates-ferrymans-rest",
         "Shopfront_four-gates-deposit-four-keys",
         "Sign_four-gates-deposit-four-keys",
         "Goods_four-gates-deposit-four-keys",
+        "District_House_09",
+        "Gate_South_Inner",
         "Gate_West",
         "Gate_West_Portcullis",
-        "City_Wall_28",
-        "City_Wall_29",
-        "City_Wall_34",
-        "City_Wall_35",
-        "Market_Stall_5",
-        "Market_Cart_5",
-        "Avenue_Standard_4",
-        "Avenue_Standard_5",
-        "Secret_gates_ferry_butts",
-        "Secret_gates_drain_mouth"
-      ],
-      "profile": "causeway",
-      "waterBelowDeck": 4.0,
-      "deckWidth": 7.0
-    },
-    {
-      "id": "four-gates-sunmane",
-      "portal": "east",
-      "destination": "sunmane_steppe",
-      "anchor": [
-        195.5,
-        23,
-        -0.5
-      ],
-      "outward": [
-        1,
-        0
-      ],
-      "uvSign": 1,
-      "palette": "causeway",
-      "preloadDistance": 170,
-      "retainDistance": 220,
-      "blendDistance": 65,
-      "collarDepth": 42,
-      "halfWidthTiles": 3,
-      "viewHalfWidth": 40.0,
-      "viewDepth": 145.0,
-      "previewPrefix": "StreamView_four-gates-sunmane__",
-      "overflowSuffix": "_StreamOverflow_four-gates-sunmane",
-      "geometryMode": "shared-cells-v2",
-      "sceneNodes": [
-        "Terrain_Paving_StreamCell_four-gates-sunmane",
-        "Terrain_Shore_StreamCell_four-gates-sunmane",
-        "Terrain_Rock_StreamCell_four-gates-sunmane",
-        "Terrain_Meadow_StreamCell_four-gates-sunmane",
-        "Walk_StreamCauseway_four-gates-sunmane_StreamCell_four-gates-sunmane",
-        "Structure_StreamCauseway_four-gates-sunmane_pale_ashlar_StreamCell_four-gates-sunmane",
-        "Structure_StreamCauseway_four-gates-sunmane_rubble_stone_StreamCell_four-gates-sunmane",
-        "Water_Lake_StreamCell_four-gates-sunmane",
-        "Water_StreamCauseway_four-gates-sunmane_StreamCell_four-gates-sunmane",
-        "Plaza_Arcade_0",
-        "Plaza_Arcade_3",
-        "Gate_East",
-        "Gate_East_Portcullis",
-        "City_Wall_02",
-        "City_Wall_03",
-        "City_Wall_60",
-        "City_Wall_61",
-        "Avenue_Standard_6",
-        "Avenue_Standard_7",
-        "Secret_gates_wall_eyrie"
-      ],
-      "profile": "causeway",
-      "waterBelowDeck": 4.0,
-      "deckWidth": 7.0
-    },
-    {
-      "id": "four-gates-ssarathi",
-      "portal": "south",
-      "destination": "ssarathi_ruins",
-      "anchor": [
-        0.5,
-        23,
-        195.5
-      ],
-      "outward": [
-        0,
-        1
-      ],
-      "uvSign": 1,
-      "palette": "causeway",
-      "preloadDistance": 170,
-      "retainDistance": 220,
-      "blendDistance": 65,
-      "collarDepth": 42,
-      "halfWidthTiles": 3,
-      "viewHalfWidth": 40.0,
-      "viewDepth": 145.0,
-      "previewPrefix": "StreamView_four-gates-ssarathi__",
-      "overflowSuffix": "_StreamOverflow_four-gates-ssarathi",
-      "geometryMode": "shared-cells-v2",
-      "sceneNodes": [
-        "Terrain_Trail_StreamCell_four-gates-ssarathi",
-        "Terrain_Paving_StreamCell_four-gates-ssarathi",
-        "Terrain_Shore_StreamCell_four-gates-ssarathi",
-        "Terrain_Rock_StreamCell_four-gates-ssarathi",
-        "Terrain_Meadow_StreamCell_four-gates-ssarathi",
-        "Walk_StreamCauseway_four-gates-ssarathi_StreamCell_four-gates-ssarathi",
-        "Structure_StreamCauseway_four-gates-ssarathi_pale_ashlar_StreamCell_four-gates-ssarathi",
-        "Structure_StreamCauseway_four-gates-ssarathi_rubble_stone_StreamCell_four-gates-ssarathi",
-        "Water_Lake_StreamCell_four-gates-ssarathi",
-        "Water_StreamCauseway_four-gates-ssarathi_StreamCell_four-gates-ssarathi",
-        "Plaza_Arcade_0",
-        "Plaza_Arcade_1",
-        "Shopfront_four-gates-lantern-row",
-        "Sign_four-gates-lantern-row",
-        "Gate_South_Inner",
-        "Gate_South_Inner_Portcullis",
         "City_Wall_12",
         "City_Wall_13",
         "City_Wall_18",
         "City_Wall_19",
-        "Gate_South_Outer",
-        "SouthOuter_Foundation_-1",
-        "SouthOuter_Foundation_1",
+        "City_Wall_20",
+        "City_Wall_21",
+        "City_Wall_22",
+        "City_Wall_23",
+        "City_Wall_24",
+        "City_Wall_25",
+        "City_Wall_26",
+        "City_Wall_27",
+        "City_Wall_28",
+        "City_Wall_29",
+        "City_Wall_34",
+        "City_Wall_35",
+        "City_Wall_36",
+        "City_Wall_37",
+        "City_Wall_38",
+        "City_Wall_39",
+        "City_Wall_40",
+        "City_Wall_41",
+        "City_Wall_42",
+        "City_Wall_43",
         "Market_Stall_0",
         "Market_Cart_0",
+        "Market_Stall_1",
+        "Market_Cart_1",
+        "Market_Stall_3",
+        "Market_Cart_3",
+        "Market_Stall_5",
+        "Market_Cart_5",
         "Avenue_Standard_0",
         "Avenue_Standard_1",
+        "Avenue_Standard_2",
+        "Avenue_Standard_3",
+        "Avenue_Standard_4",
+        "Avenue_Standard_5",
         "Crop_0_0",
         "Crop_0_1",
         "Crop_0_2",
@@ -3584,9 +3734,423 @@
         "Crop_2_2",
         "Crop_2_3",
         "Garden_Rail_2",
+        "Tree_Shore_35",
+        "Tree_Shore_55",
+        "Tree_Shore_59",
+        "Tree_Shore_96",
+        "Tree_Shore_122",
+        "Tree_Shore_143",
+        "Tree_Civic_1",
+        "Tree_Civic_2",
+        "Tree_Civic_3",
+        "Tree_Civic_4",
+        "Tree_Civic_5",
+        "Tree_Civic_6",
         "Secret_gates_lantern_cache",
-        "Secret_gates_waystone"
+        "Secret_gates_deposit_vault",
+        "Secret_gates_stormglass_school",
+        "Secret_gates_plaza_spring",
+        "Secret_gates_ferry_butts",
+        "Secret_gates_civic_focus",
+        "Secret_gates_waystone",
+        "Secret_gates_drain_mouth",
+        "Terrain_Trail_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane",
+        "Terrain_Paving_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane",
+        "Terrain_Rock_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane",
+        "Terrain_Meadow_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane",
+        "Terrain_Paving_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane",
+        "Terrain_Meadow_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane",
+        "Water_Lake_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane",
+        "Water_Lake_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane",
+        "Terrain_Trail_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Paving_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Rock_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Meadow_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Paving_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Meadow_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Water_Lake_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Water_Lake_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_four-gates-crownwater_rim"
       ],
+      "previewPrefix": "StreamView_four-gates-crownwater__",
+      "overflowSuffix": "_StreamOverflow_four-gates-crownwater",
+      "profile": "causeway",
+      "waterBelowDeck": 4.0,
+      "deckWidth": 7.0
+    },
+    {
+      "id": "four-gates-sunmane",
+      "portal": "east",
+      "destination": "sunmane_steppe",
+      "anchor": [
+        203.5,
+        23.0,
+        37.5
+      ],
+      "outward": [
+        1,
+        0
+      ],
+      "globalTranslation": [
+        1050.0,
+        -19,
+        1016.0
+      ],
+      "globalAnchor": [
+        1253.5,
+        4,
+        1053.5
+      ],
+      "uvSign": 1,
+      "palette": "causeway",
+      "preloadDistance": 240,
+      "retainDistance": 320,
+      "blendDistance": 90,
+      "collarDepth": 42,
+      "halfWidthTiles": 3,
+      "viewHalfWidth": 110,
+      "viewDepth": 240,
+      "geometryMode": "continent-owned-v1",
+      "sceneNodes": [
+        "Terrain_Paving_StreamCell_four-gates-sunmane",
+        "Terrain_Shore_StreamCell_four-gates-sunmane",
+        "Terrain_Rock_StreamCell_four-gates-sunmane",
+        "Terrain_Meadow_StreamCell_four-gates-sunmane",
+        "Terrain_Paving_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane",
+        "Terrain_Shore_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane",
+        "Terrain_Rock_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane",
+        "Terrain_Meadow_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane",
+        "Terrain_Trail_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane",
+        "Terrain_Paving_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane",
+        "Terrain_Rock_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane",
+        "Terrain_Meadow_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane",
+        "Terrain_Paving_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane",
+        "Terrain_Meadow_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane",
+        "Water_Lake_StreamCell_four-gates-sunmane",
+        "Water_StreamCauseway_four-gates-sunmane_StreamCell_four-gates-sunmane",
+        "Water_Lake_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane",
+        "Water_StreamCauseway_four-gates-sunmane_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane",
+        "Water_Lake_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane",
+        "Water_Lake_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane",
+        "Plaza_Monument",
+        "Plaza_Monument_Crystal",
+        "Plaza_Fountain_0",
+        "Plaza_Fountain_1",
+        "Plaza_Fountain_2",
+        "Plaza_Fountain_3",
+        "Plaza_Bench_0",
+        "Plaza_Lamp_0",
+        "Plaza_Bench_1",
+        "Plaza_Lamp_1",
+        "Plaza_Bench_2",
+        "Plaza_Lamp_2",
+        "Plaza_Bench_3",
+        "Plaza_Lamp_3",
+        "Plaza_Bench_4",
+        "Plaza_Lamp_4",
+        "Plaza_Bench_7",
+        "Plaza_Lamp_7",
+        "Plaza_Bench_8",
+        "Plaza_Lamp_8",
+        "Plaza_Bench_9",
+        "Plaza_Lamp_9",
+        "Plaza_Bench_10",
+        "Plaza_Lamp_10",
+        "Plaza_Bench_11",
+        "Plaza_Lamp_11",
+        "Plaza_Arcade_0",
+        "Plaza_Arcade_1",
+        "Plaza_Arcade_2",
+        "Plaza_Arcade_3",
+        "Shopfront_four-gates-lantern-row",
+        "Shopfront_four-gates-reedworks",
+        "Sign_four-gates-reedworks",
+        "Goods_four-gates-reedworks",
+        "District_House_02",
+        "District_House_22",
+        "Gate_South_Inner",
+        "Gate_South_Inner_Portcullis",
+        "Gate_East",
+        "Gate_East_Portcullis",
+        "City_Wall_02",
+        "City_Wall_03",
+        "City_Wall_04",
+        "City_Wall_05",
+        "City_Wall_06",
+        "City_Wall_07",
+        "City_Wall_08",
+        "City_Wall_09",
+        "City_Wall_10",
+        "City_Wall_11",
+        "City_Wall_12",
+        "City_Wall_13",
+        "City_Wall_18",
+        "City_Wall_19",
+        "City_Wall_57",
+        "City_Wall_58",
+        "City_Wall_59",
+        "City_Wall_60",
+        "City_Wall_61",
+        "Market_Stall_0",
+        "Market_Cart_0",
+        "Market_Stall_2",
+        "Market_Cart_2",
+        "Market_Stall_4",
+        "Market_Cart_4",
+        "Avenue_Standard_0",
+        "Avenue_Standard_1",
+        "Avenue_Standard_6",
+        "Avenue_Standard_7",
+        "Crop_0_0",
+        "Crop_0_1",
+        "Crop_0_2",
+        "Crop_0_3",
+        "Garden_Rail_0",
+        "Crop_1_0",
+        "Crop_1_1",
+        "Crop_1_2",
+        "Crop_1_3",
+        "Garden_Rail_1",
+        "Crop_2_0",
+        "Crop_2_1",
+        "Crop_2_2",
+        "Crop_2_3",
+        "Garden_Rail_2",
+        "Crop_3_0",
+        "Crop_3_1",
+        "Crop_3_2",
+        "Crop_3_3",
+        "Garden_Rail_3",
+        "Crop_4_0",
+        "Crop_4_1",
+        "Crop_4_2",
+        "Crop_4_3",
+        "Garden_Rail_4",
+        "Tree_Shore_10",
+        "Tree_Shore_24",
+        "Tree_Shore_37",
+        "Tree_Civic_0",
+        "Tree_Civic_1",
+        "Tree_Civic_2",
+        "Tree_Civic_5",
+        "Tree_Civic_6",
+        "Tree_Civic_7",
+        "Secret_gates_sunleaf_hollow",
+        "Secret_gates_reedworks_garden",
+        "Secret_gates_lantern_cache",
+        "Secret_gates_otter_pit",
+        "Secret_gates_plaza_spring",
+        "Secret_gates_mirrorsmith_well",
+        "Secret_gates_civic_focus",
+        "Secret_gates_waystone",
+        "Secret_gates_wall_eyrie",
+        "four-gates-60_Corner_0",
+        "four-gates-60_Corner_1",
+        "Terrain_Trail_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Paving_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Shore_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Rock_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Meadow_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Walk_ContinentRoad_four-gates-sunmane_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Walk_StreamCauseway_four-gates-sunmane_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_four-gates-sunmane_pale_ashlar_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_four-gates-sunmane_rubble_stone_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Paving_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Shore_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Rock_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Meadow_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Walk_StreamCauseway_four-gates-sunmane_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_four-gates-sunmane_pale_ashlar_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Trail_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Paving_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Rock_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Meadow_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Paving_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Meadow_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Water_Lake_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Water_StreamCauseway_four-gates-sunmane_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Water_Lake_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Water_StreamCauseway_four-gates-sunmane_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Water_Lake_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Water_Lake_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Walk_StreamCauseway_FourTidal_four-gates-sunmane_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_FourTidal_four-gates-sunmane_ashlar_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Walk_StreamCauseway_FourTidal_four-gates-sunmane_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_FourTidal_four-gates-sunmane_ashlar_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_FourTidal_four-gates-sunmane_piers_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_four-gates-sunmane_rim"
+      ],
+      "previewPrefix": "StreamView_four-gates-sunmane__",
+      "overflowSuffix": "_StreamOverflow_four-gates-sunmane",
+      "profile": "causeway",
+      "waterBelowDeck": 4.0,
+      "deckWidth": 7.0
+    },
+    {
+      "id": "four-gates-ssarathi",
+      "portal": "south",
+      "destination": "ssarathi_ruins",
+      "anchor": [
+        124.5,
+        23.0,
+        206.5
+      ],
+      "outward": [
+        0,
+        1
+      ],
+      "globalTranslation": [
+        1050.0,
+        -19,
+        1016.0
+      ],
+      "globalAnchor": [
+        1174.5,
+        4,
+        1222.5
+      ],
+      "uvSign": 1,
+      "palette": "causeway",
+      "preloadDistance": 240,
+      "retainDistance": 320,
+      "blendDistance": 90,
+      "collarDepth": 42,
+      "halfWidthTiles": 3,
+      "viewHalfWidth": 110,
+      "viewDepth": 240,
+      "geometryMode": "continent-owned-v1",
+      "sceneNodes": [
+        "Terrain_Paving_StreamCell_four-gates-ssarathi",
+        "Terrain_Shore_StreamCell_four-gates-ssarathi",
+        "Terrain_Meadow_StreamCell_four-gates-ssarathi",
+        "Terrain_ContinentExtension_four_gates_StreamCell_four-gates-ssarathi",
+        "Walk_StreamCauseway_four-gates-ssarathi_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_four-gates-ssarathi_pale_ashlar_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_four-gates-ssarathi_rubble_stone_StreamCell_four-gates-ssarathi",
+        "Terrain_Trail_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Paving_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Shore_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Rock_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Meadow_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Walk_ContinentRoad_four-gates-sunmane_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Walk_StreamCauseway_four-gates-sunmane_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_four-gates-sunmane_pale_ashlar_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_four-gates-sunmane_rubble_stone_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Paving_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Shore_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Rock_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Meadow_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Walk_StreamCauseway_four-gates-sunmane_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_four-gates-sunmane_pale_ashlar_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Trail_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Paving_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Rock_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Meadow_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Paving_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Terrain_Meadow_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Water_Lake_StreamCell_four-gates-ssarathi",
+        "Water_StreamCauseway_four-gates-ssarathi_StreamCell_four-gates-ssarathi",
+        "Water_Lake_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Water_StreamCauseway_four-gates-sunmane_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Water_Lake_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Water_StreamCauseway_four-gates-sunmane_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Water_Lake_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Water_Lake_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-crownwater_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Plaza_Fountain_0",
+        "Plaza_Fountain_3",
+        "Plaza_Bench_0",
+        "Plaza_Lamp_0",
+        "Plaza_Bench_1",
+        "Plaza_Lamp_1",
+        "Plaza_Bench_10",
+        "Plaza_Bench_11",
+        "Plaza_Lamp_11",
+        "Plaza_Arcade_0",
+        "Plaza_Arcade_3",
+        "Shopfront_four-gates-reedworks",
+        "Sign_four-gates-reedworks",
+        "Goods_four-gates-reedworks",
+        "District_House_02",
+        "Outer_Farmhouse_2",
+        "Gate_South_Inner",
+        "Gate_East",
+        "Gate_East_Portcullis",
+        "City_Wall_02",
+        "City_Wall_03",
+        "City_Wall_04",
+        "City_Wall_05",
+        "City_Wall_06",
+        "City_Wall_07",
+        "City_Wall_08",
+        "City_Wall_09",
+        "City_Wall_10",
+        "City_Wall_11",
+        "City_Wall_12",
+        "City_Wall_13",
+        "City_Wall_61",
+        "Gate_South_Outer",
+        "SouthOuter_Foundation_1",
+        "Market_Stall_2",
+        "Market_Cart_2",
+        "Avenue_Standard_1",
+        "Avenue_Standard_6",
+        "Avenue_Standard_7",
+        "Crop_0_0",
+        "Crop_0_1",
+        "Crop_0_2",
+        "Crop_0_3",
+        "Garden_Rail_0",
+        "Crop_1_0",
+        "Crop_1_1",
+        "Crop_1_2",
+        "Crop_1_3",
+        "Garden_Rail_1",
+        "Crop_2_0",
+        "Crop_2_1",
+        "Crop_2_2",
+        "Crop_2_3",
+        "Garden_Rail_2",
+        "Crop_3_0",
+        "Crop_3_1",
+        "Crop_3_2",
+        "Crop_3_3",
+        "Garden_Rail_3",
+        "Crop_4_0",
+        "Crop_4_1",
+        "Crop_4_2",
+        "Crop_4_3",
+        "Garden_Rail_4",
+        "Tree_Shore_10",
+        "Tree_Shore_20",
+        "Tree_Shore_24",
+        "Tree_Shore_37",
+        "Tree_Civic_0",
+        "Tree_Civic_1",
+        "Tree_Civic_7",
+        "Secret_gates_sunleaf_hollow",
+        "Secret_gates_reedworks_garden",
+        "Secret_gates_otter_pit",
+        "Secret_gates_plaza_spring",
+        "Secret_gates_wall_eyrie",
+        "four-gates-60_Corner_0",
+        "four-gates-60_Corner_1",
+        "four-gates-60_Corner_2",
+        "four-gates-60_Corner_3",
+        "four-gates-60_Notice",
+        "Walk_StreamCauseway_FourTidal_four-gates-ssarathi_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_FourTidal_four-gates-ssarathi_ashlar_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_FourTidal_four-gates-ssarathi_piers_StreamCell_four-gates-ssarathi",
+        "Walk_StreamCauseway_FourTidal_four-gates-sunmane_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_FourTidal_four-gates-sunmane_ashlar_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Walk_StreamCauseway_FourTidal_four-gates-sunmane_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_FourTidal_four-gates-sunmane_ashlar_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Structure_StreamCauseway_FourTidal_four-gates-sunmane_piers_StreamCell_mirrorhold-four-gates_StreamCell_four-gates-sunmane_StreamCell_four-gates-ssarathi",
+        "Walk_ContinentRoad_four-gates-ssarathi",
+        "Structure_StreamCauseway_four-gates-sunmane_rim",
+        "Structure_StreamCauseway_four-gates-ssarathi_rim"
+      ],
+      "previewPrefix": "StreamView_four-gates-ssarathi__",
+      "overflowSuffix": "_StreamOverflow_four-gates-ssarathi",
       "profile": "causeway",
       "waterBelowDeck": 4.0,
       "deckWidth": 7.0
@@ -4020,8 +4584,8 @@
         "name": "Banner-Rider Ashaia",
         "role": "dialogue",
         "serverTile": [
-          296,
-          189
+          301,
+          201
         ],
         "authority": "server"
       },
@@ -4030,8 +4594,8 @@
         "name": "Bettany Orl",
         "role": "shop",
         "serverTile": [
-          213,
-          185
+          218,
+          197
         ],
         "authority": "server"
       },
@@ -4040,8 +4604,8 @@
         "name": "Cache Keeper Dellin",
         "role": "storage",
         "serverTile": [
-          129,
-          163
+          134,
+          175
         ],
         "authority": "server"
       },
@@ -4050,8 +4614,8 @@
         "name": "Cairnwright Bodrum",
         "role": "dialogue",
         "serverTile": [
-          183,
-          133
+          188,
+          145
         ],
         "authority": "server"
       },
@@ -4060,8 +4624,8 @@
         "name": "Calibrator Yeshin Vol",
         "role": "dialogue",
         "serverTile": [
-          127,
-          179
+          132,
+          191
         ],
         "authority": "server"
       },
@@ -4070,8 +4634,8 @@
         "name": "Cold Sister Nevet",
         "role": "dialogue",
         "serverTile": [
-          188,
-          292
+          193,
+          304
         ],
         "authority": "server"
       },
@@ -4080,8 +4644,8 @@
         "name": "Drover Anhu Tam",
         "role": "dialogue",
         "serverTile": [
-          336,
-          335
+          341,
+          347
         ],
         "authority": "server"
       },
@@ -4090,8 +4654,8 @@
         "name": "Ferryman Caldus",
         "role": "dialogue",
         "serverTile": [
-          125,
-          233
+          130,
+          245
         ],
         "authority": "server"
       },
@@ -4100,8 +4664,8 @@
         "name": "Gate Warden Ilyon",
         "role": "guide",
         "serverTile": [
-          189,
-          301
+          194,
+          313
         ],
         "authority": "server"
       },
@@ -4110,8 +4674,8 @@
         "name": "Lake Priest Olyra",
         "role": "dialogue",
         "serverTile": [
-          91,
-          336
+          96,
+          348
         ],
         "authority": "server"
       },
@@ -4120,8 +4684,8 @@
         "name": "Lamp-Trimmer Doric Ashen",
         "role": "dialogue",
         "serverTile": [
-          230,
-          164
+          235,
+          176
         ],
         "authority": "server"
       },
@@ -4130,8 +4694,8 @@
         "name": "Nima Vey",
         "role": "auction",
         "serverTile": [
-          223,
-          180
+          228,
+          192
         ],
         "authority": "server"
       },
@@ -4140,8 +4704,8 @@
         "name": "Quartermaster Perrin Lock",
         "role": "shop",
         "serverTile": [
-          97,
-          189
+          102,
+          201
         ],
         "authority": "server"
       },
@@ -4150,8 +4714,8 @@
         "name": "Register Clerk Hemmen",
         "role": "dialogue",
         "serverTile": [
-          182,
-          190
+          187,
+          202
         ],
         "authority": "server"
       },
@@ -4160,8 +4724,8 @@
         "name": "Scholar Meret",
         "role": "shop",
         "serverTile": [
-          171,
-          237
+          176,
+          249
         ],
         "authority": "server"
       },
@@ -4170,8 +4734,8 @@
         "name": "Sigil Keeper Ansa",
         "role": "sigil",
         "serverTile": [
-          198,
-          221
+          203,
+          233
         ],
         "authority": "server"
       },
@@ -4180,8 +4744,8 @@
         "name": "Spore-Speaker Vell",
         "role": "dialogue",
         "serverTile": [
-          140,
-          248
+          145,
+          260
         ],
         "authority": "server"
       },
@@ -4190,8 +4754,8 @@
         "name": "Tallykeeper Ysolde",
         "role": "novac",
         "serverTile": [
-          213,
-          178
+          218,
+          190
         ],
         "authority": "server"
       },
@@ -4200,8 +4764,8 @@
         "name": "Toll-Reader Sarn Kesh",
         "role": "dialogue",
         "serverTile": [
-          104,
-          206
+          109,
+          218
         ],
         "authority": "server"
       },
@@ -4210,8 +4774,8 @@
         "name": "Toran",
         "role": "dialogue",
         "serverTile": [
-          175,
-          180
+          180,
+          192
         ],
         "authority": "server"
       },
@@ -4220,8 +4784,8 @@
         "name": "Water-Clerk Ussa-Ren",
         "role": "dialogue",
         "serverTile": [
-          128,
-          245
+          133,
+          257
         ],
         "authority": "server"
       },
@@ -4230,8 +4794,8 @@
         "name": "Wayfinder Nesh",
         "role": "tutorial",
         "serverTile": [
-          193,
-          140
+          198,
+          152
         ],
         "authority": "server"
       }
@@ -4241,8 +4805,8 @@
         "id": 496,
         "resource": "Reed",
         "serverTile": [
-          221,
-          105
+          226,
+          117
         ],
         "authority": "server"
       },
@@ -4250,8 +4814,8 @@
         "id": 497,
         "resource": "Reed",
         "serverTile": [
-          216,
-          104
+          221,
+          116
         ],
         "authority": "server"
       },
@@ -4259,8 +4823,8 @@
         "id": 498,
         "resource": "Reed",
         "serverTile": [
-          228,
-          111
+          233,
+          123
         ],
         "authority": "server"
       },
@@ -4268,8 +4832,8 @@
         "id": 499,
         "resource": "Crystal",
         "serverTile": [
-          226,
-          303
+          231,
+          315
         ],
         "authority": "server"
       },
@@ -4277,8 +4841,8 @@
         "id": 514,
         "resource": "Riverflax",
         "serverTile": [
-          234,
-          109
+          239,
+          121
         ],
         "authority": "server"
       },
@@ -4286,8 +4850,8 @@
         "id": 515,
         "resource": "Quartz",
         "serverTile": [
-          176,
-          289
+          181,
+          301
         ],
         "authority": "server"
       },
@@ -4295,8 +4859,8 @@
         "id": 516,
         "resource": "Quartz",
         "serverTile": [
-          174,
-          283
+          179,
+          295
         ],
         "authority": "server"
       },
@@ -4304,8 +4868,8 @@
         "id": 517,
         "resource": "Quartz",
         "serverTile": [
-          175,
-          298
+          180,
+          310
         ],
         "authority": "server"
       },
@@ -4313,8 +4877,8 @@
         "id": 632,
         "resource": "Reed",
         "serverTile": [
-          224,
-          117
+          229,
+          129
         ],
         "authority": "server"
       },
@@ -4322,8 +4886,8 @@
         "id": 633,
         "resource": "Reed",
         "serverTile": [
-          221,
-          118
+          226,
+          130
         ],
         "authority": "server"
       },
@@ -4331,8 +4895,8 @@
         "id": 634,
         "resource": "Reed",
         "serverTile": [
-          227,
-          117
+          232,
+          129
         ],
         "authority": "server"
       },
@@ -4340,8 +4904,8 @@
         "id": 635,
         "resource": "Riverflax",
         "serverTile": [
-          235,
-          115
+          240,
+          127
         ],
         "authority": "server"
       },
@@ -4349,8 +4913,8 @@
         "id": 636,
         "resource": "Riverflax",
         "serverTile": [
-          236,
-          104
+          241,
+          116
         ],
         "authority": "server"
       },
@@ -4358,8 +4922,8 @@
         "id": 637,
         "resource": "Riverflax",
         "serverTile": [
-          231,
-          117
+          236,
+          129
         ],
         "authority": "server"
       },
@@ -4367,8 +4931,8 @@
         "id": 638,
         "resource": "Wheat",
         "serverTile": [
-          225,
-          94
+          230,
+          106
         ],
         "authority": "server"
       },
@@ -4376,8 +4940,8 @@
         "id": 639,
         "resource": "Wheat",
         "serverTile": [
-          220,
-          89
+          225,
+          101
         ],
         "authority": "server"
       },
@@ -4385,8 +4949,8 @@
         "id": 640,
         "resource": "Wheat",
         "serverTile": [
-          228,
-          95
+          233,
+          107
         ],
         "authority": "server"
       },
@@ -4394,8 +4958,8 @@
         "id": 641,
         "resource": "Sage",
         "serverTile": [
-          241,
-          96
+          246,
+          108
         ],
         "authority": "server"
       },
@@ -4403,8 +4967,8 @@
         "id": 642,
         "resource": "Sage",
         "serverTile": [
-          241,
-          92
+          246,
+          104
         ],
         "authority": "server"
       },
@@ -4412,8 +4976,8 @@
         "id": 643,
         "resource": "Sage",
         "serverTile": [
-          236,
-          92
+          241,
+          104
         ],
         "authority": "server"
       },
@@ -4421,8 +4985,8 @@
         "id": 644,
         "resource": "Quartz",
         "serverTile": [
-          170,
-          297
+          175,
+          309
         ],
         "authority": "server"
       },
@@ -4430,8 +4994,8 @@
         "id": 645,
         "resource": "Quartz",
         "serverTile": [
-          179,
-          297
+          184,
+          309
         ],
         "authority": "server"
       },
@@ -4439,8 +5003,8 @@
         "id": 646,
         "resource": "Quartz",
         "serverTile": [
-          165,
-          288
+          170,
+          300
         ],
         "authority": "server"
       },
@@ -4448,8 +5012,8 @@
         "id": 647,
         "resource": "Crystal",
         "serverTile": [
-          232,
-          288
+          237,
+          300
         ],
         "authority": "server"
       },
@@ -4457,8 +5021,8 @@
         "id": 648,
         "resource": "Crystal",
         "serverTile": [
-          225,
-          294
+          230,
+          306
         ],
         "authority": "server"
       },
@@ -4466,8 +5030,8 @@
         "id": 649,
         "resource": "Seed",
         "serverTile": [
-          230,
-          278
+          235,
+          290
         ],
         "authority": "server"
       },
@@ -4475,8 +5039,8 @@
         "id": 650,
         "resource": "Seed",
         "serverTile": [
-          221,
-          289
+          226,
+          301
         ],
         "authority": "server"
       },
@@ -4484,8 +5048,8 @@
         "id": 2500,
         "resource": "Crystal",
         "serverTile": [
-          234,
-          301
+          239,
+          313
         ],
         "authority": "server"
       },
@@ -4493,8 +5057,8 @@
         "id": 2501,
         "resource": "Stormglass",
         "serverTile": [
-          162,
-          294
+          167,
+          306
         ],
         "authority": "server"
       },
@@ -4502,8 +5066,8 @@
         "id": 2502,
         "resource": "Stormglass",
         "serverTile": [
-          169,
-          279
+          174,
+          291
         ],
         "authority": "server"
       },
@@ -4511,8 +5075,8 @@
         "id": 2503,
         "resource": "Seed",
         "serverTile": [
-          223,
-          282
+          228,
+          294
         ],
         "authority": "server"
       },
@@ -4520,8 +5084,8 @@
         "id": 2504,
         "resource": "Seed",
         "serverTile": [
-          225,
-          289
+          230,
+          301
         ],
         "authority": "server"
       },
@@ -4529,8 +5093,8 @@
         "id": 2505,
         "resource": "Seed",
         "serverTile": [
-          232,
-          284
+          237,
+          296
         ],
         "authority": "server"
       },
@@ -4538,8 +5102,8 @@
         "id": 2506,
         "resource": "Sage",
         "serverTile": [
-          235,
-          98
+          240,
+          110
         ],
         "authority": "server"
       },
@@ -4547,8 +5111,8 @@
         "id": 2507,
         "resource": "Sage",
         "serverTile": [
-          240,
-          106
+          245,
+          118
         ],
         "authority": "server"
       },
@@ -4556,8 +5120,8 @@
         "id": 2508,
         "resource": "Sage",
         "serverTile": [
-          231,
-          104
+          236,
+          116
         ],
         "authority": "server"
       },
@@ -4565,8 +5129,8 @@
         "id": 2509,
         "resource": "Wheat",
         "serverTile": [
-          218,
-          97
+          223,
+          109
         ],
         "authority": "server"
       },
@@ -4574,8 +5138,8 @@
         "id": 2510,
         "resource": "Wheat",
         "serverTile": [
-          212,
-          101
+          217,
+          113
         ],
         "authority": "server"
       },
@@ -4583,8 +5147,8 @@
         "id": 2511,
         "resource": "Wheat",
         "serverTile": [
-          227,
-          99
+          232,
+          111
         ],
         "authority": "server"
       },
@@ -4592,8 +5156,8 @@
         "id": 2512,
         "resource": "Riverflax",
         "serverTile": [
-          218,
-          112
+          223,
+          124
         ],
         "authority": "server"
       },
@@ -4601,8 +5165,8 @@
         "id": 2513,
         "resource": "Riverflax",
         "serverTile": [
-          224,
-          102
+          229,
+          114
         ],
         "authority": "server"
       }
@@ -4611,107 +5175,265 @@
       {
         "creature": "river_otter",
         "serverTile": [
-          18,
-          95
+          29,
+          100
         ],
         "authority": "server"
       },
       {
         "creature": "river_otter",
         "serverTile": [
-          43,
-          73
+          48,
+          85
         ],
         "authority": "server"
       },
       {
         "creature": "river_otter",
         "serverTile": [
-          354,
-          58
+          359,
+          70
         ],
         "authority": "server"
       },
       {
         "creature": "river_otter",
         "serverTile": [
-          353,
-          79
+          358,
+          91
         ],
         "authority": "server"
       },
       {
         "creature": "river_otter",
         "serverTile": [
-          31,
-          73
+          36,
+          85
         ],
         "authority": "server"
       },
       {
         "creature": "crown_antler_stag",
         "serverTile": [
-          376,
-          381
+          381,
+          393
         ],
         "authority": "server"
       },
       {
         "creature": "crown_antler_stag",
         "serverTile": [
-          373,
-          311
+          378,
+          323
         ],
         "authority": "server"
       },
       {
         "creature": "crown_antler_stag",
         "serverTile": [
-          384,
-          328
+          389,
+          340
         ],
         "authority": "server"
       },
       {
         "creature": "crown_antler_stag",
         "serverTile": [
-          385,
-          346
+          390,
+          358
         ],
         "authority": "server"
       },
       {
         "creature": "crown_antler_stag",
         "serverTile": [
-          384,
-          379
+          389,
+          391
         ],
         "authority": "server"
       },
       {
         "creature": "crown_antler_stag",
         "serverTile": [
-          34,
-          306
+          39,
+          318
         ],
         "authority": "server"
       },
       {
         "creature": "crown_antler_stag",
         "serverTile": [
-          7,
-          309
+          12,
+          321
         ],
         "authority": "server"
       },
       {
         "creature": "riverglass_otter",
         "serverTile": [
-          23,
-          53
+          28,
+          65
         ],
         "authority": "server"
       }
     ]
+  },
+  "continentGeography": {
+    "schemaVersion": 1,
+    "nativeServerOrigin": [
+      198,
+      198
+    ],
+    "nativeServerCells": [
+      396,
+      396
+    ],
+    "serverOrigin": [
+      203,
+      210
+    ],
+    "serverCells": [
+      414,
+      414
+    ],
+    "serverTileShift": [
+      5,
+      12
+    ],
+    "serverBounds": [
+      [
+        -203,
+        -204
+      ],
+      [
+        211,
+        210
+      ]
+    ],
+    "mapBounds": [
+      [
+        -224,
+        -204
+      ],
+      [
+        208,
+        232
+      ]
+    ],
+    "geographySha256": "9abd167a99745cd0d5b6c164e496979884bc6db71b403210d1a3b837ef470830",
+    "geometrySha256": "5c00ad8ee489cedd34c7f83fd08e630a1abbab14229602994f32be4d14a667c6",
+    "nativeCollisionSha256": "c8655f80a55aff1ea00a06b0c6f3faee91e2464a5068a37e80611c43a1be7583",
+    "result": {
+      "nativeBlockedPreserved": 287534,
+      "oldWalkableUnsupportedClosed": 0,
+      "oldWalkableSubmergedClosed": 0,
+      "paddingWalkableCells": 7916,
+      "walkableCells": 347646,
+      "maximumPaddingGradient": 0.8,
+      "minimumWaterClearanceMetres": 0.0,
+      "existingWadeDepthMetres": 0.25
+    }
+  },
+  "authoredGeometry": {
+    "generator": "eloria-assets/tools/rebuild_continent_geography.py",
+    "inputs": {
+      "eloria-assets/maps/four-gates/source/build_four_gates.py": "78c74609857e30251675ff50526d81ce4f76d1b496f8099d55d877e06f95a084",
+      "eloria-assets/maps/four-gates/source/corner_material.py": "85d62bacc6fcab9a4d2ea7631346cf4bbb16f1dc3f7948dc646fac11f7e2833b",
+      "eloria-assets/maps/four-gates/source/corner_paint.py": "513fa1ddcf8653a52d7b768dcfeb11de808647dae5273483f4e166a5db4cdd2f",
+      "eloria-assets/maps/four-gates/source/customs_landing.py": "8554fdf16173c08c91d264a391e342ef3c2f618965d0e5465d45ccad7ebda0ae",
+      "eloria-assets/maps/four-gates/source/landscape_plan.py": "3c0e7c6b51b5bd94c2c7adea89addf67916b192a1399c1fb385ff89a1afe68bc",
+      "eloria-assets/maps/four-gates/source/migrate_compact_server.py": "35c481603ada8aab9bbbecfd5cc4a362c6558953944383538ad775fb780df04d",
+      "eloria-assets/maps/four-gates/source/native_adapter.py": "2d729dc4dce66aa172669dc3ba3abdf095c5c48dd3ed9cfc935b309da5da3e10",
+      "eloria-assets/maps/four-gates/source/rebuild_landscape.py": "20e87474318667a9bc79431dcfa5e26236aab048e750f453a65eda21055ff570",
+      "eloria-assets/maps/four-gates/source/region.py": "8767c2e5b38880fb2af3eae5c2a3ebd07a151a21bc0a5d8fdfda184665a2c0f9",
+      "eloria-assets/maps/four-gates/source/test_corner_paint.py": "422366006a6282a3b96b77bcb3899a6e0769cc963391fe078fbaeef748b5c69e",
+      "eloria-assets/maps/four-gates/source/tidal_approaches.py": "1c162524480d75b3154f4d865d2d0009d0870e31bd4991ca80f4798b7ed07a5d",
+      "eloria-assets/maps/nymara-regions/_color/terrain_paint.py": "32bd5948091cdbc33a674938bb8ce34ac4daf39a8e5df23b3bf1bc10b58338f4",
+      "eloria-assets/maps/nymara-regions/_finishing/causeway_rims.py": "61c898ab904dd5632c3e057463dd198d45631bb1725289ecdd9f54cd3d73c15a",
+      "eloria-assets/maps/nymara-regions/_finishing/connector_finish.py": "9c7fd186f7979565db3d20cdd7b8602e0be4dda4d91158933566be1cbdafec16",
+      "eloria-assets/maps/nymara-regions/_northern/landscape_finish.py": "8321fdc08064d0ad29329179d7d8d6979ff1d982ae746b15af1ca7ff1741126a",
+      "eloria-assets/maps/nymara-regions/_northern/road_profiles.py": "d608628d1dc9e63ab52c6b9ba103381e2324c30436c3fee60dda2bbc346472d0",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/__init__.py": "bcc6624b01ea53fc8be93665bc56aff69af74ece20ff6ae6ad891057cf4b8b23",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/arcadecraft.py": "034302006e0499827591385a290a8f2ec6e7cb5ead6bc5781574c7a4eb8f3b67",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/architecture.py": "bcaee2e29b73a3eff4de2e71ba73fb9eb724fd620075b2ff080cf9c1b4f928e8",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/barrowcraft.py": "49289f61a280e4f2212091606d7742dd0ff69326f9f8ed2a2f3dba5575a7244a",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/canyoncraft.py": "b71feab7ac07d08f3e39ad7760b1f3192e59e2741d3296c1ed2ab155d2ba4a17",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/civiccraft.py": "738ced5f7d36e91824dde9a964f27478a093116d217f957fed6f83712fa68a08",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/coplanar.py": "016dcdfb2c0f6687b20e2257076ef8833dc1e9600376184f0bb0c31bc298ccac",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/crownmaterials.py": "69d80d601786376d992b14637edee8cbf721f0d34b8499f4ea654cbafecd0cbb",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/crystalcraft.py": "439ae8820f87ff243efeb6270170353ca47d4f3dfa7f97feb4c747fd3d3b0d70",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/forestcraft.py": "2f2b2872dc070fe944b5fab3ddca98f1b71f6530f57c61d3e3adc5dc7e4c26dc",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/gltf.py": "3df32803d90efb5f7255d30e6027b36660773c5fd935ce5d5ec7796b0f2941b0",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/interiors.py": "516fada40372437f5950ff0a9bea7b00e5f49a9273d0fccb3b38c102d1b121b9",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/junglecraft.py": "e09a197f926a412d63132c7ab9efa721d7384e791b698286cbe6ee71d88f8dde",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/landscape.py": "b24717f59470152715b4079f924891fd241f4c8cb0950a7480be8382b03a4b9d",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/materials.py": "af4917a899a08fa663884defd35d79aa45ae9c264e2028cf03f10520898b53f6",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/mesh.py": "6a3930bc16c72a30df6cd406eb78369c4c7a0c39a2895f5db90df90b8b2170ba",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/moorcraft.py": "64338e95741c2d6cb7559e15df77ce80ffc8a089524bc19067ca3a4e05d89f1a",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/mountaincraft.py": "942f0afb01b958a4a8398b8e3b5bdec10ec88af93706f84a20b6068d9b6a9c7d",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/noise.py": "62c4b8d88d1c5f307b22768996382e91f31c0a6c16d723a2b3886450af278c4c",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/observatorycraft.py": "d431fa03cf00868eb0a0e62a858f622642fa54295839a47aba75f27af890b1c3",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/populate.py": "5086e89209fa9f1bb6b298fa90382738a9807d49f137ff2186c6c5fb9f84077b",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/props.py": "8368e2b0b2adafddb93381657fd78beba75ed084771560f7dd7dba0c33632494",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/region.py": "9d72472f480789e59ab849f0473ac0ca275c3f246d3a549da8c461862a9fe5b1",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/render.py": "ace7bbe332dbf87db4e2d4378617b831606f8861ff19f300fde7e3ef6ce0d228",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/routecraft.py": "34c88fbda7c826775b0e11148710dbd1f4d775198fd25ff6736852012061cb9c",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/smallrooms.py": "4a27b353b9ad8307e8f7fd37388f884ae2241ce2867d35c677cf6720f3c8bd35",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/spatial.py": "befd9a805574b37de45f65815941778cf2b6bb46f11868ff4d4a9cb03a52bd77",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/stonework.py": "225b8cdb38bafba7c3f2a4e8c730642aca8103f51877b3a0db31e95af0010881",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/templecraft.py": "1646e1907298dbedd406fcb4d086508a929c86065bf756795a54afdf4959e3df",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/terrain.py": "185ff68f54f2294e32b8ed89b157bb5be66d71d6cb2faf5678ece9a9516cf3df",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/textures.py": "576413d77324f3ce4bb152382af96663ee564943db3cc7841a0e264011417399",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/treecraft.py": "f7755cce4a38b32335cf7a2462cbf246a2dd3f1167399dc5282eaf8b308697b6",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/trees.py": "8cefc035655f20d09798c7ed41935c0c59d5d30ff07163619e0ca4e486684d63",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/watercraft.py": "39d9b79e531325a66288c2ee008831be73156d87740c885b11242450b144f028",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/waterfront.py": "75a79cb467428ae063c78a520b3fd921afc7e3648b00d2d1f59e2bd6daab6524",
+      "eloria-assets/maps/nymara-regions/_toolkit/amberwood/woodlandcraft.py": "921c59a131b7cccdfc2e2bd889438ee6e1887088739a30a72b41cc9df0cffb2f",
+      "eloria-assets/maps/nymara-regions/_toolkit/border_vistas.py": "ccd302df09d476b693368a28e62ad0124027ccae640ce1dd7c399e6dc579409b",
+      "eloria-assets/maps/nymara-regions/_toolkit/capture_views.py": "b14cda865ec067c8be87d964b96ab9addfaee10b8676bf4bfcd32be55bf91db5",
+      "eloria-assets/maps/nymara-regions/_toolkit/compact_landscape.py": "a75f505b8087be9b5bfe0668ee92dafa53292d3d33cbf544e4848e4a936f1289",
+      "eloria-assets/maps/nymara-regions/_toolkit/compress_captures.py": "242b23b718a95c756b48a8a4c0109592260091fa0b745fcb462dd0e19f8529bb",
+      "eloria-assets/maps/nymara-regions/_toolkit/contentposts.py": "4a6cf588584128191058c7ad48a4386806f45f565d9769f5f39dcdf201c132e9",
+      "eloria-assets/maps/nymara-regions/_toolkit/continent_geography.py": "33363d2be5f76d5d69c98dfe92ac5b8c7f576c3d141326a3f266d8bf8ab63f8c",
+      "eloria-assets/maps/nymara-regions/_toolkit/designs/four_gates_secrets_design.py": "eb7d1d20674547dbadde56bab4ac9555b3c1cb87be422b45801e30b4b621d652",
+      "eloria-assets/maps/nymara-regions/_toolkit/export_insides_collision.py": "11ca322c851b05fe32edfcc27380b072dffc9a9b0303879503af0aa0ccdc9dff",
+      "eloria-assets/maps/nymara-regions/_toolkit/export_interior_collision.py": "f41b095554fa953ff835e88387e9512f295a6178609d7cf3901e6e22669a42ab",
+      "eloria-assets/maps/nymara-regions/_toolkit/export_server_collision.py": "4528ec4e20a3b457d6a1dd0d3ef23c064c4a2e013686e7f6b2c9247634301f7c",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/__init__.py": "1770a3092c31648c5c9d3305c35ef51e62c374d0b3579048eac25cc4985835b3",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/barrow_visitation.py": "bfba53e656cfca95274514770b9a7b424da2073e2adcb5fe474b16f2fa44a246",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/build.py": "e432f3b44844e14aba238333b0b1fc627318984d60fd5a97dc6930149048413a",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/designs.py": "15560b8ff2f2a03fc6a2704eeca3028ed4d1edd7722fc2dc5091c70e4b5e4e08",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/drowned_customs.py": "4534c6177a01b6a5c223d46bb7fc53f724ad081337e26479257ffc10dafeff3b",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/forest_haul.py": "d83fe3419e2586613b0703aaea34cf4cd86885ca370133dd6f11004f54971713",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/ice_mine.py": "9237d00d96a0bfa6b3d7b0cbfab9114d7e77cabbf8cfd6d708a703d41463d607",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/red_canyon.py": "1a75991a5863e426d026e7c3b1ed9a5e8cb6ee7474f7c15b0556032a1860ca29",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/rooms.py": "a91d120ab48f5b905b9f4496b3d4c05e67f2fddf63f74723c58e580fc69d7e8a",
+      "eloria-assets/maps/nymara-regions/_toolkit/gauntlets/temple_procession.py": "5c5bade746a0c2cdbb2d02b7495e707eeb9898a23a4cd517248c8075cdcedab4",
+      "eloria-assets/maps/nymara-regions/_toolkit/glb_reader.py": "be5e46a94acf014a8684be216fe8c67ac2aadbf789469087276f229bd85c9a57",
+      "eloria-assets/maps/nymara-regions/_toolkit/guard_actor_surfaces.py": "483c64ba394a3eabef0110296f7e11eedfd2bb4f3203d872c6268ecc0ea41a91",
+      "eloria-assets/maps/nymara-regions/_toolkit/interior_views.py": "f6ad2c7cd16f9a5faf7575154c0252fda8b3c5fb4793b1ff041c2165798d0cff",
+      "eloria-assets/maps/nymara-regions/_toolkit/loresites.py": "16a9b90b2256f956fe92196c303ba04bf2d67ea6b3287f76464aa85c23ff962c",
+      "eloria-assets/maps/nymara-regions/_toolkit/make_comparison.py": "ed2e70b89e7a6c03e830a2364681adb7a7f5412b23cd5691ac9e521f67320820",
+      "eloria-assets/maps/nymara-regions/_toolkit/northern_passes.py": "8b816082f1d1a040ac72d8dc785901ccab4d933aac3e1f4f9a2c575bd4ac6205",
+      "eloria-assets/maps/nymara-regions/_toolkit/open_walk_surfaces.py": "612a56f1c010a89eb6f1507c724242c2b32da757003657e8227132805b7ee555",
+      "eloria-assets/maps/nymara-regions/_toolkit/patch_collision_altitude.py": "c8c5dd2a15b169937d758f1d329d3786010a5f3b49e1e608398c0705b119a889",
+      "eloria-assets/maps/nymara-regions/_toolkit/plan_image.py": "939708d96db2aaa92ba130cd73d425877a1c68ad1e01c748202b464282f3e602",
+      "eloria-assets/maps/nymara-regions/_toolkit/preview.py": "73230ab1978e65480981b52225938826f7a379236c40e1708dce46850945071f",
+      "eloria-assets/maps/nymara-regions/_toolkit/rebuild_collision.py": "3fc76e6cd75ac60d9aa057e584666d7dee0bb5bc4ecc5b21f6682be9f5fc712b",
+      "eloria-assets/maps/nymara-regions/_toolkit/refine_walk_heights.py": "a4d8473b98bc65cd95164a7e5706a002abd0286603ef171eeaae513514883b4d",
+      "eloria-assets/maps/nymara-regions/_toolkit/regionbuild.py": "816c8d61ac0d0d2ccb20a7595a10f93a440df79765bd17804e13a746923f9b15",
+      "eloria-assets/maps/nymara-regions/_toolkit/regionpaths.py": "3a711cd50da4e5be22dd6f51ff6ca62d046fff418abc05edcd60531377b96257",
+      "eloria-assets/maps/nymara-regions/_toolkit/secretdoors.py": "508d26a78fe18389dd39051e49266d1b9c032de72add15a84e2e353a44181646",
+      "eloria-assets/maps/nymara-regions/_toolkit/secretrooms.py": "d7e4a6c6b1de205d3e3f1e94d2b1e18d627d30fef8cffcb0f30213d54d6b09f8",
+      "eloria-assets/maps/nymara-regions/_toolkit/secrets_build.py": "6778bd8634af74c0aaaa7da8ba00f2efdf0beea95fff3031c2c1606bc4c2f842",
+      "eloria-assets/maps/nymara-regions/_toolkit/secrets_doc.py": "a5221761d7595e367ef3e730c51f4ebea8cea7fcbf74d66f81b91e671d2c99bf",
+      "eloria-assets/maps/nymara-regions/_toolkit/server_walk_grid.py": "d6fd1ef43a3fe5903063637d22c1e9371650baea146f011b5f5ed41d4c95f6bb",
+      "eloria-assets/maps/nymara-regions/_toolkit/stamp_solid_landmarks.py": "2cc8b7688f849f59b2ecc22edf511fcaf2247c3cebed09c8fa76eb3e953065d1",
+      "eloria-assets/maps/nymara-regions/_toolkit/streaming_borders.py": "c101578ad9901484568c21dab8be1775bd1a385edfbde785e2dfc99f794a4d3e",
+      "eloria-assets/maps/nymara-regions/_toolkit/transitions.py": "7fb729f597406e72be68350c6c8b007ee74db63cdbfe88a6c1adc6072bf20f4c",
+      "eloria-assets/maps/nymara-regions/_toolkit/validate_gltf.py": "630807c19dfef54f65f6bdcb92bee279f1e3ed49b565ca15261f683539e44309",
+      "eloria-assets/maps/nymara-regions/_toolkit/verify_runtime.py": "7bd2d3d883ff9d07ebb64a21e972f943b2f2a4158683a40be5414bc52e6857be",
+      "eloria-assets/maps/nymara-regions/continent-geography.json": "9abd167a99745cd0d5b6c164e496979884bc6db71b403210d1a3b837ef470830"
+    }
   }
 }

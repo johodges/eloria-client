@@ -17,7 +17,7 @@ def publish(server, regions=EXTERIORS):
     from eloria.npcs import load_npcs
     from eloria.harvesting import load_harvesting
     from eloria.spawns import load_spawns
-    from contentposts import apply_runtime
+    from contentposts import apply_runtime, native_tile_delta
     profile = server/'config/eloria'
     npcs = load_npcs(profile/'npcs.txt')
     _, resources = load_harvesting(profile/'harvesting.txt')
@@ -26,8 +26,9 @@ def publish(server, regions=EXTERIORS):
         package = CLIENT/'eloria-assets/maps/four-gates' if region=='four_gates' else REGIONS/region
         path = package/'world.json'
         manifest = json.loads(path.read_text(encoding='utf-8'))
+        delta = native_tile_delta(manifest, package)
         def tile(entry):
-            return {'serverTile': [entry.x, entry.y], 'authority': 'server'}
+            return {'serverTile': [int(entry.x-delta[0]), int(entry.y-delta[1])], 'authority': 'server'}
         roster = {
             'npcs': [dict(id=n.name, name=n.name, role=n.role, **tile(n)) for n in sorted(npcs,key=lambda n:n.name) if n.map_id == region],
             'resources': [dict(id=identity, resource=n.resource, **tile(n))

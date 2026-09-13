@@ -254,7 +254,7 @@
       "id": 54,
       "resource": "Toadstool",
       "serverTile": [
-        23,
+        24,
         335
       ],
       "authority": "server"
@@ -345,7 +345,7 @@
       "resource": "Thistle",
       "serverTile": [
         177,
-        51
+        50
       ],
       "authority": "server"
     },
@@ -578,8 +578,8 @@
       "id": 90,
       "resource": "Toadstool",
       "serverTile": [
-        34,
-        323
+        33,
+        324
       ],
       "authority": "server"
     },
@@ -846,7 +846,7 @@
       "creature": "amethyst_moth",
       "serverTile": [
         53,
-        328
+        327
       ],
       "authority": "server"
     },
@@ -1037,7 +1037,7 @@
     {
       "creature": "cave_salamander",
       "serverTile": [
-        21,
+        24,
         221
       ],
       "authority": "server"

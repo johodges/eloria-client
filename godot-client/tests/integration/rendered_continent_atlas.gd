@@ -39,14 +39,14 @@ func _run() -> void:
 	var regions: Array = _main.get("cartography_regions")
 	var checked := 0
 	for index: int in range(regions.size()):
-		var rectangle: Rect2 = overlay.call("region_rect", index)
-		assert(int(overlay.call("region_at", rectangle.get_center())) == index)
+		var label: Vector2 = overlay.call("region_label_position", index)
+		assert(int(overlay.call("region_at", label)) == index)
 		checked += 1
 	var index: int = _main.call("_region_index_for_map", "sunmane_steppe")
 	var click := InputEventMouseButton.new()
 	click.button_index = MOUSE_BUTTON_LEFT
 	click.pressed = true
-	click.position = (overlay.call("region_rect", index) as Rect2).get_center()
+	click.position = overlay.call("region_label_position", index)
 	overlay.call("_gui_input", click)
 	assert((_main.get("region_preview") as TextureRect).visible)
 	await _capture("sunmane-click-preview")
