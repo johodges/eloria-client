@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "sources": {
     "profile": "eloria",
-    "recipesSha256": "83fc04a707f057d4f0ebab74a175db23535c2a954fcdeffe163d1a91b5cd970a",
+    "recipesSha256": "f58dc5847abe5d0bc2c302fd7c5354539e2e2d3bfb7933bd87f5dcb05d8dac83",
     "itemsSha256": "8296c55b0def25ca07c0f714aa4a53435b844dc13b35613489ace863651c6d01",
     "booksSha256": "dbaf97061c7578ece676a3d6ff122d25af0bb69a01d4c4bcec9b16653df00329"
   },
@@ -66,9 +66,16 @@
           "imageAliases": []
         },
         {
-          "name": "Deep Coal",
+          "name": "Coal",
           "quantity": 2,
-          "imageId": 25,
+          "imageId": 112,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
+          "name": "Fire Distillate",
+          "quantity": 1,
+          "imageId": 585,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -315,9 +322,9 @@
           "imageAliases": []
         },
         {
-          "name": "Deep Coal",
+          "name": "Coal",
           "quantity": 2,
-          "imageId": 25,
+          "imageId": 112,
           "ambiguousImage": false,
           "imageAliases": []
         },
@@ -1863,7 +1870,7 @@
       "outputImageId": 32,
       "level": 14,
       "animalNexus": 0,
-      "experience": 48,
+      "experience": 40,
       "food": 3,
       "mana": 1,
       "knowledge": "",
@@ -1878,15 +1885,15 @@
         },
         {
           "name": "Verdigris",
-          "quantity": 2,
+          "quantity": 1,
           "imageId": 110,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Coal",
-          "quantity": 2,
-          "imageId": 112,
+          "name": "Fire Distillate",
+          "quantity": 1,
+          "imageId": 585,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -1908,7 +1915,7 @@
       "outputImageId": 31,
       "level": 24,
       "animalNexus": 0,
-      "experience": 84,
+      "experience": 88,
       "food": 4,
       "mana": 2,
       "knowledge": "Steel Smelting",
@@ -1925,21 +1932,18 @@
           ]
         },
         {
-          "name": "Deep Coal",
+          "name": "Coal",
           "quantity": 3,
-          "imageId": 25,
+          "imageId": 112,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Bone Ash",
-          "quantity": 1,
-          "imageId": 11,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Bones",
-            "Bone Ash"
-          ]
+          "name": "Fire Distillate",
+          "quantity": 2,
+          "imageId": 585,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -1983,9 +1987,9 @@
           ]
         },
         {
-          "name": "Aether Salt",
+          "name": "Energy Distillate",
           "quantity": 2,
-          "imageId": 29,
+          "imageId": 591,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -2424,11 +2428,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Lichen",
@@ -2849,13 +2856,13 @@
           "imageAliases": []
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -2903,19 +2910,19 @@
           ]
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -3270,13 +3277,13 @@
           "imageAliases": []
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -3331,9 +3338,9 @@
           "imageAliases": []
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -3382,11 +3389,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Thistle",
@@ -3688,13 +3698,13 @@
           ]
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -3749,9 +3759,9 @@
           "imageAliases": []
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -3800,11 +3810,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Watercress",
@@ -4045,13 +4058,13 @@
           "imageAliases": []
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -4109,9 +4122,9 @@
           ]
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -4160,11 +4173,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Bramble",
@@ -4347,13 +4363,13 @@
           "imageAliases": []
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -4408,9 +4424,9 @@
           "imageAliases": []
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -4459,11 +4475,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Kelp",
@@ -4585,13 +4604,13 @@
           "imageAliases": []
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -4646,9 +4665,9 @@
           "imageAliases": []
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -4697,11 +4716,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Toadstool",
@@ -4765,13 +4787,13 @@
           ]
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -4819,11 +4841,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Lichen",
@@ -5244,13 +5269,13 @@
           "imageAliases": []
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -5298,19 +5323,19 @@
           ]
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -5359,11 +5384,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Silverleaf",
@@ -5610,11 +5638,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Lichen",
@@ -5684,11 +5715,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Lichen",
@@ -6200,13 +6234,13 @@
           "imageAliases": []
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -6267,19 +6301,19 @@
           ]
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -6341,11 +6375,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Silverleaf",
@@ -6547,11 +6584,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Lichen",
@@ -6993,13 +7033,13 @@
           "imageAliases": []
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -7111,11 +7151,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Lichen",
@@ -7557,13 +7600,13 @@
           "imageAliases": []
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -7614,19 +7657,19 @@
           ]
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -7678,11 +7721,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Silverleaf",
@@ -8060,13 +8106,13 @@
           "imageAliases": []
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -8124,9 +8170,9 @@
           "imageAliases": []
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -8178,11 +8224,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Thistle",
@@ -8499,13 +8548,13 @@
           ]
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -8563,9 +8612,9 @@
           "imageAliases": []
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -8617,11 +8666,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Watercress",
@@ -8874,13 +8926,13 @@
           "imageAliases": []
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -8941,9 +8993,9 @@
           ]
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -8995,11 +9047,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Bramble",
@@ -9191,13 +9246,13 @@
           "imageAliases": []
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -9255,9 +9310,9 @@
           "imageAliases": []
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -9309,11 +9364,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Kelp",
@@ -9441,13 +9499,13 @@
           "imageAliases": []
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -9505,9 +9563,9 @@
           "imageAliases": []
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -9559,11 +9617,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Toadstool",
@@ -9627,9 +9688,9 @@
           "imageAliases": []
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -9681,20 +9742,23 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Moss",
-          "quantity": 1,
-          "imageId": 94,
+          "imageId": 103,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Flax",
+            "Riverflax"
+          ]
+        },
+        {
+          "name": "Moorcotton",
+          "quantity": 1,
+          "imageId": 104,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -9755,9 +9819,9 @@
           ]
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -9809,16 +9873,19 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -9870,19 +9937,19 @@
           ]
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -9934,11 +10001,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Silverleaf",
@@ -10316,13 +10386,13 @@
           "imageAliases": []
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -10380,9 +10450,9 @@
           "imageAliases": []
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -10434,11 +10504,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Thistle",
@@ -10755,13 +10828,13 @@
           ]
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -10819,9 +10892,9 @@
           "imageAliases": []
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -10873,11 +10946,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Watercress",
@@ -11072,13 +11148,13 @@
           ]
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -11136,9 +11212,9 @@
           "imageAliases": []
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -11190,20 +11266,23 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Moss",
-          "quantity": 1,
-          "imageId": 94,
+          "imageId": 103,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Flax",
+            "Riverflax"
+          ]
+        },
+        {
+          "name": "Moorcotton",
+          "quantity": 1,
+          "imageId": 104,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -11264,9 +11343,9 @@
           ]
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -11318,16 +11397,19 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -11379,11 +11461,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Lichen",
@@ -11825,13 +11910,13 @@
           "imageAliases": []
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -11882,19 +11967,19 @@
           ]
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -11946,11 +12031,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Silverleaf",
@@ -12071,11 +12159,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Kelp",
@@ -12203,13 +12294,13 @@
           "imageAliases": []
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -12267,9 +12358,9 @@
           "imageAliases": []
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -12321,11 +12412,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Toadstool",
@@ -12392,13 +12486,13 @@
           ]
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -12706,13 +12800,13 @@
           "imageAliases": []
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -12773,11 +12867,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Lichen",
@@ -12992,11 +13089,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Lichen",
@@ -13508,13 +13608,13 @@
           "imageAliases": []
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         }
       ],
@@ -13575,19 +13675,19 @@
           ]
         },
         {
-          "name": "Moss",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 104,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Cotton",
+            "Moorcotton"
           ]
         },
         {
-          "name": "Sunleaf",
+          "name": "Reed",
           "quantity": 1,
-          "imageId": 16,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -13649,11 +13749,14 @@
           ]
         },
         {
-          "name": "Lavender",
+          "name": "Riverflax",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 103,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Flax",
+            "Riverflax"
+          ]
         },
         {
           "name": "Silverleaf",
@@ -14103,14 +14206,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -14157,14 +14257,11 @@
           ]
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Clay",
@@ -14579,14 +14676,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -14694,14 +14788,11 @@
           ]
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Peat",
@@ -14994,14 +15085,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -15348,14 +15436,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -15992,14 +16077,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -16046,14 +16128,11 @@
           ]
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Clay",
@@ -16596,14 +16675,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -16660,14 +16736,11 @@
           ]
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Clay",
@@ -17152,14 +17225,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -17287,14 +17357,11 @@
           ]
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Peat",
@@ -17637,14 +17704,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -18367,14 +18431,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -18528,14 +18589,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Clay",
@@ -18984,14 +19042,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -19035,14 +19090,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Clay",
@@ -19436,14 +19488,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -19545,14 +19594,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Peat",
@@ -19830,14 +19876,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -20401,14 +20444,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -20462,14 +20502,11 @@
           ]
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Clay",
@@ -21323,14 +21360,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -21384,14 +21418,11 @@
           ]
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Clay",
@@ -22099,14 +22130,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -22905,14 +22933,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -22966,14 +22991,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Clay",
@@ -23502,14 +23524,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -23563,14 +23582,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Clay",
@@ -24034,14 +24050,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -24163,14 +24176,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Peat",
@@ -24498,14 +24508,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -25224,14 +25231,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -25295,14 +25299,11 @@
           ]
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Clay",
@@ -25836,14 +25837,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -25985,14 +25983,11 @@
           ]
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Peat",
@@ -26370,14 +26365,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -26826,14 +26818,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -27207,14 +27196,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -27513,14 +27499,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -27744,14 +27727,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -28936,14 +28916,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -29394,14 +29371,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 90,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -29656,14 +29630,11 @@
       "knowledgeIndex": -1,
       "ingredients": [
         {
-          "name": "Slate",
+          "name": "Flint",
           "quantity": 3,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 114,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Clay",
@@ -30539,14 +30510,11 @@
           "imageAliases": []
         },
         {
-          "name": "Slate",
+          "name": "Flint",
           "quantity": 1,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
+          "imageId": 114,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -31252,28 +31220,28 @@
           "imageAliases": []
         },
         {
-          "name": "Venom Bulb",
-          "quantity": 2,
-          "imageId": 97,
+          "name": "Water Distillate",
+          "quantity": 1,
+          "imageId": 586,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Lichen",
+          "name": "Watercress",
+          "quantity": 2,
+          "imageId": 116,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
+          "name": "Bramble",
           "quantity": 1,
-          "imageId": 94,
+          "imageId": 106,
           "ambiguousImage": true,
           "imageAliases": [
-            "Moss",
-            "Lichen"
+            "Blue Berries",
+            "Bramble"
           ]
-        },
-        {
-          "name": "Lavender",
-          "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
         }
       ],
       "tools": [
@@ -31307,6 +31275,13 @@
           "imageAliases": []
         },
         {
+          "name": "Magic Distillate",
+          "quantity": 4,
+          "imageId": 593,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
           "name": "Lotus",
           "quantity": 5,
           "imageId": 88,
@@ -31315,24 +31290,20 @@
         },
         {
           "name": "Stormglass",
-          "quantity": 4,
+          "quantity": 2,
           "imageId": 95,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Aether Salt",
-          "quantity": 2,
-          "imageId": 29,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Lavender",
+          "name": "Bramble",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 106,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Blue Berries",
+            "Bramble"
+          ]
         }
       ],
       "tools": [
@@ -31366,6 +31337,13 @@
           "imageAliases": []
         },
         {
+          "name": "Magic Distillate",
+          "quantity": 5,
+          "imageId": 593,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
           "name": "Lotus",
           "quantity": 6,
           "imageId": 88,
@@ -31374,24 +31352,20 @@
         },
         {
           "name": "Stormglass",
-          "quantity": 5,
+          "quantity": 3,
           "imageId": 95,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Aether Salt",
-          "quantity": 3,
-          "imageId": 29,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Lavender",
+          "name": "Bramble",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 106,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Blue Berries",
+            "Bramble"
+          ]
         }
       ],
       "tools": [
@@ -31409,7 +31383,7 @@
       "skill": "potion",
       "output": "Potion of Magic Defense",
       "outputImageId": 575,
-      "level": 94,
+      "level": 96,
       "animalNexus": 0,
       "experience": 764,
       "food": 6,
@@ -31425,6 +31399,13 @@
           "imageAliases": []
         },
         {
+          "name": "Magic Distillate",
+          "quantity": 5,
+          "imageId": 593,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
           "name": "Lotus",
           "quantity": 6,
           "imageId": 88,
@@ -31433,22 +31414,15 @@
         },
         {
           "name": "Stormglass",
-          "quantity": 5,
+          "quantity": 3,
           "imageId": 95,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Aether Salt",
-          "quantity": 3,
-          "imageId": 29,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Mushroom",
+          "name": "Kelp",
           "quantity": 1,
-          "imageId": 20,
+          "imageId": 108,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -31484,6 +31458,13 @@
           "imageAliases": []
         },
         {
+          "name": "Matter Distillate",
+          "quantity": 2,
+          "imageId": 588,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
           "name": "Sage",
           "quantity": 3,
           "imageId": 101,
@@ -31494,21 +31475,14 @@
           ]
         },
         {
-          "name": "Clay",
-          "quantity": 2,
-          "imageId": 87,
+          "name": "Bramble",
+          "quantity": 1,
+          "imageId": 106,
           "ambiguousImage": true,
           "imageAliases": [
-            "Slate",
-            "Clay"
+            "Blue Berries",
+            "Bramble"
           ]
-        },
-        {
-          "name": "Lavender",
-          "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
         }
       ],
       "tools": [
@@ -31526,7 +31500,7 @@
       "skill": "potion",
       "output": "Potion of Might",
       "outputImageId": 482,
-      "level": 20,
+      "level": 21,
       "animalNexus": 0,
       "experience": 88,
       "food": 3,
@@ -31542,6 +31516,13 @@
           "imageAliases": []
         },
         {
+          "name": "Matter Distillate",
+          "quantity": 2,
+          "imageId": 588,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
           "name": "Sage",
           "quantity": 3,
           "imageId": 101,
@@ -31552,19 +31533,9 @@
           ]
         },
         {
-          "name": "Clay",
-          "quantity": 2,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
-        },
-        {
-          "name": "Mushroom",
+          "name": "Kelp",
           "quantity": 1,
-          "imageId": 20,
+          "imageId": 108,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -31584,7 +31555,7 @@
       "skill": "potion",
       "output": "Potion of Dexterity",
       "outputImageId": 483,
-      "level": 20,
+      "level": 22,
       "animalNexus": 0,
       "experience": 88,
       "food": 3,
@@ -31600,6 +31571,13 @@
           "imageAliases": []
         },
         {
+          "name": "Matter Distillate",
+          "quantity": 2,
+          "imageId": 588,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
           "name": "Sage",
           "quantity": 3,
           "imageId": 101,
@@ -31607,16 +31585,6 @@
           "imageAliases": [
             "Rosemary",
             "Sage"
-          ]
-        },
-        {
-          "name": "Clay",
-          "quantity": 2,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
           ]
         },
         {
@@ -31642,7 +31610,7 @@
       "skill": "potion",
       "output": "Potion of Rationality",
       "outputImageId": 484,
-      "level": 20,
+      "level": 23,
       "animalNexus": 0,
       "experience": 88,
       "food": 3,
@@ -31658,63 +31626,9 @@
           "imageAliases": []
         },
         {
-          "name": "Sage",
-          "quantity": 3,
-          "imageId": 101,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Rosemary",
-            "Sage"
-          ]
-        },
-        {
-          "name": "Clay",
+          "name": "Matter Distillate",
           "quantity": 2,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
-        },
-        {
-          "name": "Winter Wheat",
-          "quantity": 1,
-          "imageId": 102,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Winter Wheat",
-            "Wheat"
-          ]
-        }
-      ],
-      "tools": [
-        {
-          "name": "Mortar and Pestle",
-          "quantity": 1,
-          "imageId": 8,
-          "ambiguousImage": false,
-          "imageAliases": []
-        }
-      ]
-    },
-    {
-      "id": 513,
-      "skill": "potion",
-      "output": "Potion of Ethereality",
-      "outputImageId": 485,
-      "level": 20,
-      "animalNexus": 0,
-      "experience": 88,
-      "food": 3,
-      "mana": 2,
-      "knowledge": "",
-      "knowledgeIndex": -1,
-      "ingredients": [
-        {
-          "name": "Empty Vial",
-          "quantity": 1,
-          "imageId": 505,
+          "imageId": 588,
           "ambiguousImage": false,
           "imageAliases": []
         },
@@ -31726,138 +31640,6 @@
           "imageAliases": [
             "Rosemary",
             "Sage"
-          ]
-        },
-        {
-          "name": "Clay",
-          "quantity": 2,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
-        },
-        {
-          "name": "Cotton",
-          "quantity": 1,
-          "imageId": 104,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Cotton",
-            "Moorcotton"
-          ]
-        }
-      ],
-      "tools": [
-        {
-          "name": "Mortar and Pestle",
-          "quantity": 1,
-          "imageId": 8,
-          "ambiguousImage": false,
-          "imageAliases": []
-        }
-      ]
-    },
-    {
-      "id": 514,
-      "skill": "potion",
-      "output": "Potion of Toughness",
-      "outputImageId": 486,
-      "level": 20,
-      "animalNexus": 0,
-      "experience": 88,
-      "food": 3,
-      "mana": 2,
-      "knowledge": "",
-      "knowledgeIndex": -1,
-      "ingredients": [
-        {
-          "name": "Empty Vial",
-          "quantity": 1,
-          "imageId": 505,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Sage",
-          "quantity": 3,
-          "imageId": 101,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Rosemary",
-            "Sage"
-          ]
-        },
-        {
-          "name": "Clay",
-          "quantity": 2,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
-        },
-        {
-          "name": "Flax",
-          "quantity": 1,
-          "imageId": 103,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Flax",
-            "Riverflax"
-          ]
-        }
-      ],
-      "tools": [
-        {
-          "name": "Mortar and Pestle",
-          "quantity": 1,
-          "imageId": 8,
-          "ambiguousImage": false,
-          "imageAliases": []
-        }
-      ]
-    },
-    {
-      "id": 515,
-      "skill": "potion",
-      "output": "Potion of Perception",
-      "outputImageId": 487,
-      "level": 20,
-      "animalNexus": 0,
-      "experience": 88,
-      "food": 3,
-      "mana": 2,
-      "knowledge": "",
-      "knowledgeIndex": -1,
-      "ingredients": [
-        {
-          "name": "Empty Vial",
-          "quantity": 1,
-          "imageId": 505,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Sage",
-          "quantity": 3,
-          "imageId": 101,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Rosemary",
-            "Sage"
-          ]
-        },
-        {
-          "name": "Clay",
-          "quantity": 2,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
           ]
         },
         {
@@ -31879,11 +31661,11 @@
       ]
     },
     {
-      "id": 516,
+      "id": 513,
       "skill": "potion",
-      "output": "Potion of Matter",
-      "outputImageId": 570,
-      "level": 20,
+      "output": "Potion of Ethereality",
+      "outputImageId": 485,
+      "level": 25,
       "animalNexus": 0,
       "experience": 88,
       "food": 3,
@@ -31899,6 +31681,13 @@
           "imageAliases": []
         },
         {
+          "name": "Matter Distillate",
+          "quantity": 2,
+          "imageId": 588,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
           "name": "Sage",
           "quantity": 3,
           "imageId": 101,
@@ -31909,19 +31698,180 @@
           ]
         },
         {
-          "name": "Clay",
-          "quantity": 2,
-          "imageId": 87,
+          "name": "Riverflax",
+          "quantity": 1,
+          "imageId": 103,
           "ambiguousImage": true,
           "imageAliases": [
-            "Slate",
-            "Clay"
+            "Flax",
+            "Riverflax"
+          ]
+        }
+      ],
+      "tools": [
+        {
+          "name": "Mortar and Pestle",
+          "quantity": 1,
+          "imageId": 8,
+          "ambiguousImage": false,
+          "imageAliases": []
+        }
+      ]
+    },
+    {
+      "id": 514,
+      "skill": "potion",
+      "output": "Potion of Toughness",
+      "outputImageId": 486,
+      "level": 26,
+      "animalNexus": 0,
+      "experience": 88,
+      "food": 3,
+      "mana": 2,
+      "knowledge": "",
+      "knowledgeIndex": -1,
+      "ingredients": [
+        {
+          "name": "Empty Vial",
+          "quantity": 1,
+          "imageId": 505,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
+          "name": "Matter Distillate",
+          "quantity": 2,
+          "imageId": 588,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
+          "name": "Sage",
+          "quantity": 3,
+          "imageId": 101,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Rosemary",
+            "Sage"
           ]
         },
         {
-          "name": "Thistle",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 115,
+          "imageId": 104,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Cotton",
+            "Moorcotton"
+          ]
+        }
+      ],
+      "tools": [
+        {
+          "name": "Mortar and Pestle",
+          "quantity": 1,
+          "imageId": 8,
+          "ambiguousImage": false,
+          "imageAliases": []
+        }
+      ]
+    },
+    {
+      "id": 515,
+      "skill": "potion",
+      "output": "Potion of Perception",
+      "outputImageId": 487,
+      "level": 27,
+      "animalNexus": 0,
+      "experience": 88,
+      "food": 3,
+      "mana": 2,
+      "knowledge": "",
+      "knowledgeIndex": -1,
+      "ingredients": [
+        {
+          "name": "Empty Vial",
+          "quantity": 1,
+          "imageId": 505,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
+          "name": "Matter Distillate",
+          "quantity": 2,
+          "imageId": 588,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
+          "name": "Sage",
+          "quantity": 3,
+          "imageId": 101,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Rosemary",
+            "Sage"
+          ]
+        },
+        {
+          "name": "Coal",
+          "quantity": 1,
+          "imageId": 112,
+          "ambiguousImage": false,
+          "imageAliases": []
+        }
+      ],
+      "tools": [
+        {
+          "name": "Mortar and Pestle",
+          "quantity": 1,
+          "imageId": 8,
+          "ambiguousImage": false,
+          "imageAliases": []
+        }
+      ]
+    },
+    {
+      "id": 516,
+      "skill": "potion",
+      "output": "Potion of Matter",
+      "outputImageId": 570,
+      "level": 28,
+      "animalNexus": 0,
+      "experience": 88,
+      "food": 3,
+      "mana": 2,
+      "knowledge": "",
+      "knowledgeIndex": -1,
+      "ingredients": [
+        {
+          "name": "Empty Vial",
+          "quantity": 1,
+          "imageId": 505,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
+          "name": "Matter Distillate",
+          "quantity": 2,
+          "imageId": 588,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
+          "name": "Sage",
+          "quantity": 3,
+          "imageId": 101,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Rosemary",
+            "Sage"
+          ]
+        },
+        {
+          "name": "Resin",
+          "quantity": 1,
+          "imageId": 100,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -31941,7 +31891,7 @@
       "skill": "potion",
       "output": "Potion of Carry",
       "outputImageId": 571,
-      "level": 20,
+      "level": 29,
       "animalNexus": 0,
       "experience": 88,
       "food": 3,
@@ -31957,6 +31907,13 @@
           "imageAliases": []
         },
         {
+          "name": "Matter Distillate",
+          "quantity": 2,
+          "imageId": 588,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
           "name": "Sage",
           "quantity": 3,
           "imageId": 101,
@@ -31967,19 +31924,9 @@
           ]
         },
         {
-          "name": "Clay",
-          "quantity": 2,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
-        },
-        {
-          "name": "Watercress",
+          "name": "Sap",
           "quantity": 1,
-          "imageId": 116,
+          "imageId": 91,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -31999,7 +31946,7 @@
       "skill": "potion",
       "output": "Potion of Charm",
       "outputImageId": 572,
-      "level": 20,
+      "level": 31,
       "animalNexus": 0,
       "experience": 88,
       "food": 3,
@@ -32015,6 +31962,13 @@
           "imageAliases": []
         },
         {
+          "name": "Matter Distillate",
+          "quantity": 2,
+          "imageId": 588,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
           "name": "Sage",
           "quantity": 3,
           "imageId": 101,
@@ -32025,19 +31979,9 @@
           ]
         },
         {
-          "name": "Clay",
-          "quantity": 2,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
-        },
-        {
-          "name": "Kelp",
+          "name": "Verdigris",
           "quantity": 1,
-          "imageId": 108,
+          "imageId": 110,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -32057,7 +32001,7 @@
       "skill": "potion",
       "output": "Potion of Reaction",
       "outputImageId": 573,
-      "level": 20,
+      "level": 32,
       "animalNexus": 0,
       "experience": 88,
       "food": 3,
@@ -32073,6 +32017,13 @@
           "imageAliases": []
         },
         {
+          "name": "Matter Distillate",
+          "quantity": 2,
+          "imageId": 588,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
           "name": "Sage",
           "quantity": 3,
           "imageId": 101,
@@ -32083,19 +32034,9 @@
           ]
         },
         {
-          "name": "Clay",
-          "quantity": 2,
-          "imageId": 87,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Slate",
-            "Clay"
-          ]
-        },
-        {
-          "name": "Seed",
+          "name": "Crystal",
           "quantity": 1,
-          "imageId": 96,
+          "imageId": 93,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -32131,35 +32072,35 @@
           "imageAliases": []
         },
         {
-          "name": "Rosemary",
+          "name": "Fire Distillate",
+          "quantity": 3,
+          "imageId": 585,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
+          "name": "Thistle",
           "quantity": 4,
-          "imageId": 101,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Rosemary",
-            "Sage"
-          ]
+          "imageId": 115,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Bog Iron",
-          "quantity": 3,
+          "quantity": 1,
           "imageId": 111,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Cinder Resin",
+          "name": "Bramble",
           "quantity": 1,
-          "imageId": 68,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Lavender",
-          "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 106,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Blue Berries",
+            "Bramble"
+          ]
         }
       ],
       "tools": [
@@ -32177,7 +32118,7 @@
       "skill": "potion",
       "output": "Potion of Defense",
       "outputImageId": 489,
-      "level": 41,
+      "level": 42,
       "animalNexus": 0,
       "experience": 200,
       "food": 4,
@@ -32193,33 +32134,30 @@
           "imageAliases": []
         },
         {
-          "name": "Rosemary",
+          "name": "Fire Distillate",
+          "quantity": 3,
+          "imageId": 585,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
+          "name": "Thistle",
           "quantity": 4,
-          "imageId": 101,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Rosemary",
-            "Sage"
-          ]
+          "imageId": 115,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Bog Iron",
-          "quantity": 3,
+          "quantity": 1,
           "imageId": 111,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Cinder Resin",
+          "name": "Kelp",
           "quantity": 1,
-          "imageId": 68,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Mushroom",
-          "quantity": 1,
-          "imageId": 20,
+          "imageId": 108,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -32239,7 +32177,7 @@
       "skill": "potion",
       "output": "Potion of Accuracy",
       "outputImageId": 498,
-      "level": 41,
+      "level": 43,
       "animalNexus": 0,
       "experience": 200,
       "food": 4,
@@ -32255,26 +32193,23 @@
           "imageAliases": []
         },
         {
-          "name": "Rosemary",
-          "quantity": 4,
-          "imageId": 101,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Rosemary",
-            "Sage"
-          ]
-        },
-        {
-          "name": "Bog Iron",
+          "name": "Fire Distillate",
           "quantity": 3,
-          "imageId": 111,
+          "imageId": 585,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Cinder Resin",
+          "name": "Thistle",
+          "quantity": 4,
+          "imageId": 115,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
+          "name": "Bog Iron",
           "quantity": 1,
-          "imageId": 68,
+          "imageId": 111,
           "ambiguousImage": false,
           "imageAliases": []
         },
@@ -32301,7 +32236,7 @@
       "skill": "potion",
       "output": "Potion of Evasion",
       "outputImageId": 499,
-      "level": 41,
+      "level": 45,
       "animalNexus": 0,
       "experience": 200,
       "food": 4,
@@ -32317,38 +32252,32 @@
           "imageAliases": []
         },
         {
-          "name": "Rosemary",
+          "name": "Fire Distillate",
+          "quantity": 3,
+          "imageId": 585,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
+          "name": "Thistle",
           "quantity": 4,
-          "imageId": 101,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Rosemary",
-            "Sage"
-          ]
+          "imageId": 115,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Bog Iron",
-          "quantity": 3,
+          "quantity": 1,
           "imageId": 111,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Cinder Resin",
+          "name": "Toadstool",
           "quantity": 1,
-          "imageId": 68,
+          "imageId": 107,
           "ambiguousImage": false,
           "imageAliases": []
-        },
-        {
-          "name": "Winter Wheat",
-          "quantity": 1,
-          "imageId": 102,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Winter Wheat",
-            "Wheat"
-          ]
         }
       ],
       "tools": [
@@ -32382,6 +32311,13 @@
           "imageAliases": []
         },
         {
+          "name": "Earth Distillate",
+          "quantity": 1,
+          "imageId": 587,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
           "name": "Wheat",
           "quantity": 2,
           "imageId": 102,
@@ -32392,18 +32328,14 @@
           ]
         },
         {
-          "name": "Berries",
+          "name": "Bramble",
           "quantity": 1,
-          "imageId": 2,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Lavender",
-          "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 106,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Blue Berries",
+            "Bramble"
+          ]
         }
       ],
       "tools": [
@@ -32437,25 +32369,28 @@
           "imageAliases": []
         },
         {
-          "name": "Sunleaf",
-          "quantity": 2,
-          "imageId": 16,
+          "name": "Life Distillate",
+          "quantity": 1,
+          "imageId": 584,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Hearthroot",
-          "quantity": 1,
+          "quantity": 2,
           "imageId": 105,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Lavender",
+          "name": "Bramble",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 106,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Blue Berries",
+            "Bramble"
+          ]
         }
       ],
       "tools": [
@@ -32489,25 +32424,28 @@
           "imageAliases": []
         },
         {
-          "name": "Sunleaf",
-          "quantity": 3,
-          "imageId": 16,
+          "name": "Life Distillate",
+          "quantity": 2,
+          "imageId": 584,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Hearthroot",
-          "quantity": 2,
+          "quantity": 3,
           "imageId": 105,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Lavender",
+          "name": "Bramble",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 106,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Blue Berries",
+            "Bramble"
+          ]
         }
       ],
       "tools": [
@@ -32541,32 +32479,35 @@
           "imageAliases": []
         },
         {
-          "name": "Sunleaf",
-          "quantity": 4,
-          "imageId": 16,
+          "name": "Life Distillate",
+          "quantity": 3,
+          "imageId": 584,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
           "name": "Hearthroot",
-          "quantity": 3,
+          "quantity": 4,
           "imageId": 105,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Verdant Tincture",
+          "name": "Salt",
           "quantity": 1,
-          "imageId": 69,
+          "imageId": 90,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Lavender",
+          "name": "Bramble",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 106,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Blue Berries",
+            "Bramble"
+          ]
         }
       ],
       "tools": [
@@ -32600,25 +32541,28 @@
           "imageAliases": []
         },
         {
-          "name": "Frost Reed",
+          "name": "Water Distillate",
+          "quantity": 1,
+          "imageId": 586,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
+          "name": "Reed",
           "quantity": 2,
-          "imageId": 17,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Moon Salt",
+          "name": "Bramble",
           "quantity": 1,
-          "imageId": 71,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Lavender",
-          "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 106,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Blue Berries",
+            "Bramble"
+          ]
         }
       ],
       "tools": [
@@ -32652,25 +32596,28 @@
           "imageAliases": []
         },
         {
-          "name": "Frost Reed",
-          "quantity": 3,
-          "imageId": 17,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Moon Salt",
+          "name": "Water Distillate",
           "quantity": 2,
-          "imageId": 71,
+          "imageId": 586,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Lavender",
-          "quantity": 1,
-          "imageId": 21,
+          "name": "Reed",
+          "quantity": 3,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
+        },
+        {
+          "name": "Bramble",
+          "quantity": 1,
+          "imageId": 106,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Blue Berries",
+            "Bramble"
+          ]
         }
       ],
       "tools": [
@@ -32704,32 +32651,35 @@
           "imageAliases": []
         },
         {
-          "name": "Frost Reed",
-          "quantity": 4,
-          "imageId": 17,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Moon Salt",
+          "name": "Water Distillate",
           "quantity": 3,
-          "imageId": 71,
+          "imageId": 586,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Aether Salt",
-          "quantity": 1,
-          "imageId": 29,
+          "name": "Reed",
+          "quantity": 4,
+          "imageId": 85,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Lavender",
+          "name": "Quartz",
           "quantity": 1,
-          "imageId": 21,
+          "imageId": 113,
           "ambiguousImage": false,
           "imageAliases": []
+        },
+        {
+          "name": "Bramble",
+          "quantity": 1,
+          "imageId": 106,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Blue Berries",
+            "Bramble"
+          ]
         }
       ],
       "tools": [
@@ -32763,32 +32713,38 @@
           "imageAliases": []
         },
         {
-          "name": "Garden Sage",
-          "quantity": 4,
-          "imageId": 24,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Quartz",
+          "name": "Air Distillate",
           "quantity": 3,
-          "imageId": 113,
+          "imageId": 589,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Gloam Wax",
+          "name": "Lichen",
+          "quantity": 4,
+          "imageId": 94,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Moss",
+            "Lichen"
+          ]
+        },
+        {
+          "name": "Flint",
           "quantity": 1,
-          "imageId": 72,
+          "imageId": 114,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Lavender",
+          "name": "Bramble",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 106,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Blue Berries",
+            "Bramble"
+          ]
         }
       ],
       "tools": [
@@ -32806,7 +32762,7 @@
       "skill": "potion",
       "output": "Potion of Manufacturing",
       "outputImageId": 491,
-      "level": 42,
+      "level": 43,
       "animalNexus": 0,
       "experience": 200,
       "food": 4,
@@ -32822,30 +32778,33 @@
           "imageAliases": []
         },
         {
-          "name": "Garden Sage",
-          "quantity": 4,
-          "imageId": 24,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Quartz",
+          "name": "Air Distillate",
           "quantity": 3,
-          "imageId": 113,
+          "imageId": 589,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Gloam Wax",
+          "name": "Lichen",
+          "quantity": 4,
+          "imageId": 94,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Moss",
+            "Lichen"
+          ]
+        },
+        {
+          "name": "Flint",
           "quantity": 1,
-          "imageId": 72,
+          "imageId": 114,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Mushroom",
+          "name": "Kelp",
           "quantity": 1,
-          "imageId": 20,
+          "imageId": 108,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -32865,7 +32824,7 @@
       "skill": "potion",
       "output": "Potion of Summoning",
       "outputImageId": 492,
-      "level": 42,
+      "level": 45,
       "animalNexus": 0,
       "experience": 200,
       "food": 4,
@@ -32881,23 +32840,26 @@
           "imageAliases": []
         },
         {
-          "name": "Garden Sage",
-          "quantity": 4,
-          "imageId": 24,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Quartz",
+          "name": "Air Distillate",
           "quantity": 3,
-          "imageId": 113,
+          "imageId": 589,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Gloam Wax",
+          "name": "Lichen",
+          "quantity": 4,
+          "imageId": 94,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Moss",
+            "Lichen"
+          ]
+        },
+        {
+          "name": "Flint",
           "quantity": 1,
-          "imageId": 72,
+          "imageId": 114,
           "ambiguousImage": false,
           "imageAliases": []
         },
@@ -32924,7 +32886,7 @@
       "skill": "potion",
       "output": "Potion of Crafting",
       "outputImageId": 493,
-      "level": 42,
+      "level": 46,
       "animalNexus": 0,
       "experience": 200,
       "food": 4,
@@ -32940,35 +32902,35 @@
           "imageAliases": []
         },
         {
-          "name": "Garden Sage",
-          "quantity": 4,
-          "imageId": 24,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Quartz",
+          "name": "Air Distillate",
           "quantity": 3,
-          "imageId": 113,
+          "imageId": 589,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Gloam Wax",
-          "quantity": 1,
-          "imageId": 72,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Winter Wheat",
-          "quantity": 1,
-          "imageId": 102,
+          "name": "Lichen",
+          "quantity": 4,
+          "imageId": 94,
           "ambiguousImage": true,
           "imageAliases": [
-            "Winter Wheat",
-            "Wheat"
+            "Moss",
+            "Lichen"
           ]
+        },
+        {
+          "name": "Flint",
+          "quantity": 1,
+          "imageId": 114,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
+          "name": "Toadstool",
+          "quantity": 1,
+          "imageId": 107,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -32986,7 +32948,7 @@
       "skill": "potion",
       "output": "Potion of Alchemy",
       "outputImageId": 494,
-      "level": 42,
+      "level": 47,
       "animalNexus": 0,
       "experience": 200,
       "food": 4,
@@ -33002,90 +32964,31 @@
           "imageAliases": []
         },
         {
-          "name": "Garden Sage",
-          "quantity": 4,
-          "imageId": 24,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Quartz",
+          "name": "Air Distillate",
           "quantity": 3,
-          "imageId": 113,
+          "imageId": 589,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Gloam Wax",
-          "quantity": 1,
-          "imageId": 72,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Cotton",
-          "quantity": 1,
-          "imageId": 104,
+          "name": "Lichen",
+          "quantity": 4,
+          "imageId": 94,
           "ambiguousImage": true,
           "imageAliases": [
-            "Cotton",
-            "Moorcotton"
+            "Moss",
+            "Lichen"
           ]
-        }
-      ],
-      "tools": [
+        },
         {
-          "name": "Mortar and Pestle",
+          "name": "Flint",
           "quantity": 1,
-          "imageId": 8,
-          "ambiguousImage": false,
-          "imageAliases": []
-        }
-      ]
-    },
-    {
-      "id": 536,
-      "skill": "potion",
-      "output": "Potion of Engineering",
-      "outputImageId": 495,
-      "level": 42,
-      "animalNexus": 0,
-      "experience": 200,
-      "food": 4,
-      "mana": 3,
-      "knowledge": "Fine Brewing",
-      "knowledgeIndex": 4,
-      "ingredients": [
-        {
-          "name": "Empty Vial",
-          "quantity": 1,
-          "imageId": 505,
+          "imageId": 114,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Garden Sage",
-          "quantity": 4,
-          "imageId": 24,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Quartz",
-          "quantity": 3,
-          "imageId": 113,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Gloam Wax",
-          "quantity": 1,
-          "imageId": 72,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Flax",
+          "name": "Riverflax",
           "quantity": 1,
           "imageId": 103,
           "ambiguousImage": true,
@@ -33106,11 +33009,11 @@
       ]
     },
     {
-      "id": 537,
+      "id": 536,
       "skill": "potion",
-      "output": "Potion of Potion",
-      "outputImageId": 496,
-      "level": 42,
+      "output": "Potion of Engineering",
+      "outputImageId": 495,
+      "level": 48,
       "animalNexus": 0,
       "experience": 200,
       "food": 4,
@@ -33126,30 +33029,98 @@
           "imageAliases": []
         },
         {
-          "name": "Garden Sage",
-          "quantity": 4,
-          "imageId": 24,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Quartz",
+          "name": "Air Distillate",
           "quantity": 3,
-          "imageId": 113,
+          "imageId": 589,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Gloam Wax",
+          "name": "Lichen",
+          "quantity": 4,
+          "imageId": 94,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Moss",
+            "Lichen"
+          ]
+        },
+        {
+          "name": "Flint",
           "quantity": 1,
-          "imageId": 72,
+          "imageId": 114,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Toadstool",
+          "name": "Moorcotton",
           "quantity": 1,
-          "imageId": 107,
+          "imageId": 104,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Cotton",
+            "Moorcotton"
+          ]
+        }
+      ],
+      "tools": [
+        {
+          "name": "Mortar and Pestle",
+          "quantity": 1,
+          "imageId": 8,
+          "ambiguousImage": false,
+          "imageAliases": []
+        }
+      ]
+    },
+    {
+      "id": 537,
+      "skill": "potion",
+      "output": "Potion of Potion",
+      "outputImageId": 496,
+      "level": 49,
+      "animalNexus": 0,
+      "experience": 200,
+      "food": 4,
+      "mana": 3,
+      "knowledge": "Fine Brewing",
+      "knowledgeIndex": 4,
+      "ingredients": [
+        {
+          "name": "Empty Vial",
+          "quantity": 1,
+          "imageId": 505,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
+          "name": "Air Distillate",
+          "quantity": 3,
+          "imageId": 589,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
+          "name": "Lichen",
+          "quantity": 4,
+          "imageId": 94,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Moss",
+            "Lichen"
+          ]
+        },
+        {
+          "name": "Flint",
+          "quantity": 1,
+          "imageId": 114,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
+          "name": "Coal",
+          "quantity": 1,
+          "imageId": 112,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -33185,6 +33156,13 @@
           "imageAliases": []
         },
         {
+          "name": "Spirit Distillate",
+          "quantity": 4,
+          "imageId": 592,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
           "name": "Silverleaf",
           "quantity": 5,
           "imageId": 99,
@@ -33192,25 +33170,21 @@
           "imageAliases": []
         },
         {
-          "name": "Salt",
-          "quantity": 4,
-          "imageId": 90,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Frost Distillate",
+          "name": "Geode",
           "quantity": 2,
-          "imageId": 74,
+          "imageId": 98,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Lavender",
+          "name": "Bramble",
           "quantity": 1,
-          "imageId": 21,
-          "ambiguousImage": false,
-          "imageAliases": []
+          "imageId": 106,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Blue Berries",
+            "Bramble"
+          ]
         }
       ],
       "tools": [
@@ -33228,7 +33202,7 @@
       "skill": "potion",
       "output": "Potion of Heat Protection",
       "outputImageId": 501,
-      "level": 65,
+      "level": 67,
       "animalNexus": 0,
       "experience": 412,
       "food": 5,
@@ -33244,6 +33218,13 @@
           "imageAliases": []
         },
         {
+          "name": "Spirit Distillate",
+          "quantity": 4,
+          "imageId": 592,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
           "name": "Silverleaf",
           "quantity": 5,
           "imageId": 99,
@@ -33251,23 +33232,16 @@
           "imageAliases": []
         },
         {
-          "name": "Salt",
-          "quantity": 4,
-          "imageId": 90,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Frost Distillate",
+          "name": "Geode",
           "quantity": 2,
-          "imageId": 74,
+          "imageId": 98,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Mushroom",
+          "name": "Kelp",
           "quantity": 1,
-          "imageId": 20,
+          "imageId": 108,
           "ambiguousImage": false,
           "imageAliases": []
         }
@@ -33287,7 +33261,7 @@
       "skill": "potion",
       "output": "Potion of Radiation Protection",
       "outputImageId": 502,
-      "level": 65,
+      "level": 69,
       "animalNexus": 0,
       "experience": 412,
       "food": 5,
@@ -33303,6 +33277,13 @@
           "imageAliases": []
         },
         {
+          "name": "Spirit Distillate",
+          "quantity": 4,
+          "imageId": 592,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
           "name": "Silverleaf",
           "quantity": 5,
           "imageId": 99,
@@ -33310,16 +33291,9 @@
           "imageAliases": []
         },
         {
-          "name": "Salt",
-          "quantity": 4,
-          "imageId": 90,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Frost Distillate",
+          "name": "Geode",
           "quantity": 2,
-          "imageId": 74,
+          "imageId": 98,
           "ambiguousImage": false,
           "imageAliases": []
         },
@@ -33346,7 +33320,7 @@
       "skill": "potion",
       "output": "Potion of Magic Protection",
       "outputImageId": 503,
-      "level": 65,
+      "level": 70,
       "animalNexus": 0,
       "experience": 412,
       "food": 5,
@@ -33362,6 +33336,13 @@
           "imageAliases": []
         },
         {
+          "name": "Spirit Distillate",
+          "quantity": 4,
+          "imageId": 592,
+          "ambiguousImage": false,
+          "imageAliases": []
+        },
+        {
           "name": "Silverleaf",
           "quantity": 5,
           "imageId": 99,
@@ -33369,28 +33350,18 @@
           "imageAliases": []
         },
         {
-          "name": "Salt",
-          "quantity": 4,
-          "imageId": 90,
-          "ambiguousImage": false,
-          "imageAliases": []
-        },
-        {
-          "name": "Frost Distillate",
+          "name": "Geode",
           "quantity": 2,
-          "imageId": 74,
+          "imageId": 98,
           "ambiguousImage": false,
           "imageAliases": []
         },
         {
-          "name": "Winter Wheat",
+          "name": "Toadstool",
           "quantity": 1,
-          "imageId": 102,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Winter Wheat",
-            "Wheat"
-          ]
+          "imageId": 107,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
