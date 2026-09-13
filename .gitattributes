@@ -1,6 +1,10 @@
 *.emesh binary
 *.png binary
 
+# Authored map certificates hash source bytes. Keep map inputs and manifests
+# byte-exact across Windows and Unix checkouts, including mixed line endings.
+eloria-assets/maps/** -text
+
 # Byte-exact fitter snapshots used to verify build provenance.
 eloria-assets/qa/canonical-equipment-provenance/* -text
 eloria-assets/qa/canonical-equipment/** -text
