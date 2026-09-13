@@ -173,6 +173,26 @@ func _run() -> void:
 		"and a page past the end lands on the last one: %s" % view.page_label.text)
 	view.entries_per_page = 24
 
+	# The page gets the window's width, not what the side panes leave over. The
+	# panes used to grow to their longest link, which left a 640 wide window a
+	# 218 wide page and wrapped a fact's value a letter to a line.
+	view.open_entry("gathering", "harvesting")
+	await process_frame
+	await process_frame
+	var content: Control = view.content_scroll
+	_expect(content.size.x >= panel.size.x * 0.5,
+		"a page keeps at least half the window: %.0f of %.0f"
+			% [content.size.x, panel.size.x])
+	_expect(panel.size.x <= 640.0,
+		"and a long related title does not widen the window: %.0f" % panel.size.x)
+	var value: Control = view.entry_page.find_child("Value", true, false) as Control
+	_expect(value != null and value.size.x >= 120.0,
+		"a fact's value has room for words: %.0f" % (value.size.x if value else 0.0))
+	view.open_category("gathering", 0)
+	await process_frame
+	_expect(not view.aside_pane.visible,
+		"a list page has no sections, so the pane beside it gives its width back")
+
 	# Back walks the trail, whatever the trail was made of.
 	view.reset_to_index()
 	_expect(view.back_button.disabled, "there is nothing behind the front page")
@@ -319,6 +339,8 @@ func _gather(host: Node) -> String:
 		text += " " + (host as Label).text
 	elif host is Button:
 		text += " " + (host as Button).text
+	elif host is RichTextLabel:
+		text += " " + (host as RichTextLabel).get_parsed_text()
 	for child: Node in host.get_children():
 		text += _gather(child)
 	return text
