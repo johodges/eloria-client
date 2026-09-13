@@ -431,6 +431,14 @@ func _build_maps_tab() -> void:
 	map_column.add_child(location_row)
 	location_picker = OptionButton.new()
 	location_picker.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# An OptionButton is as wide as its longest item by default, and a
+	# gauntlet's spawn points are named for their route, room and wave - 95
+	# characters - which pushed Teleport off the window's right edge. The
+	# picker takes the width the row leaves it; the open list still shows
+	# every name whole.
+	location_picker.fit_to_longest_item = false
+	location_picker.clip_text = true
+	location_picker.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	location_picker.item_selected.connect(_on_location_selected)
 	location_row.add_child(location_picker)
 	coordinate_x = SpinBox.new()
@@ -820,11 +828,14 @@ func _on_coordinate_selected(tile: Vector2i) -> void:
 	coordinate_x.value = tile.x
 	coordinate_y.value = tile.y
 	location_picker.select(0)
+	location_picker.tooltip_text = ""
 	map_status.text = "Selected %d, %d on %s." % [tile.x, tile.y, selected_map_id]
 
 
 func _on_location_selected(index: int) -> void:
 	var location: Dictionary = location_picker.get_item_metadata(index) as Dictionary
+	# The closed picker trims a long name; hovering it reads the whole one.
+	location_picker.tooltip_text = location_picker.get_item_text(index) if index > 0 else ""
 	if location.is_empty():
 		return
 	coordinate_x.value = int(location.get("x", 0))

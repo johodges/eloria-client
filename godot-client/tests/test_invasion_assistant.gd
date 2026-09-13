@@ -43,6 +43,17 @@ func _run() -> void:
 	_expect(assistant.map_canvas.state.players.size() == 1, "player marker populates")
 	_expect(assistant.map_canvas.state.creatures[0].boss, "boss marker populates")
 	_expect(not assistant.teleport_button.disabled, "teleport enables for a loaded map")
+	var long_named: Dictionary = assistant.map_state.duplicate(true)
+	long_named["locations"] = [{"name": ("The Drowned Arcades: The Campanile Stair "
+		+ "(mid, 0: heavies of abyssal_armored_fish) #1"), "kind": "invasion_spawn",
+		"x": 16, "y": 72}]
+	assistant.apply_update(long_named)
+	# The picker, both coordinates and Teleport share the row beside the
+	# 190-pixel map list; a gauntlet's spawn names used to widen it until
+	# Teleport sat off the window's right edge.
+	var location_row: Control = assistant.teleport_button.get_parent()
+	_expect(location_row.get_combined_minimum_size().x <= 784 - 190 - 16,
+		"a long location name leaves Teleport inside the window")
 	var busy_map: Dictionary = assistant.map_state.duplicate(true)
 	var invaders: Array = []
 	for i in range(921):
