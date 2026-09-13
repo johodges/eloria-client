@@ -17,12 +17,21 @@ func _run() -> void:
 	root.size = Vector2i(1280, 720)
 	var saved: Dictionary = _read_settings()
 	var original_max_fps: int = Engine.max_fps
+	# The first instance is a new installation: no settings file at all. The
+	# saved copy is written back at the end.
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(SETTINGS_PATH))
 
 	var first: Node = (load("res://src/app/main.tscn") as PackedScene).instantiate()
 	root.add_child(first)
 	await process_frame
 	var first_minimap: Control = first.get_node("GameView/MinimapFrame") as Control
 	_expect(not first_minimap.visible, "the minimap ships hidden")
+	var default_border_steps: Array = first.get("MINIMAP_BORDER_STEPS") as Array
+	_expect(str(first.get("_minimap_shape")) == "round"
+		and str(first.get("_minimap_orientation")) == "viewport_up"
+		and is_equal_approx(float(first.get("_minimap_border")),
+			float(default_border_steps[0])),
+		"a new installation shows a round, minimally bordered, viewport-aligned minimap")
 	first.call("_toggle_minimap")
 	_expect(first_minimap.visible and bool(first.get("_minimap_visible")),
 		"showing the minimap records that it is visible")
@@ -75,19 +84,23 @@ func _run() -> void:
 	second.call("_on_minimap_marker_type_toggled",
 		(second.get("MINIMAP_MARKER_TYPES") as Array).find(&"harvest"))
 	second.call("_on_minimap_marker_scale_selected", 4)
-	second.call("_on_minimap_shape_selected", 1)
-	second.call("_on_minimap_border_selected", 0)
+	# Shape and border are moved off their defaults, or an unwritten file
+	# would pass too.
+	second.call("_on_minimap_shape_selected", 0)
+	second.call("_on_minimap_border_selected", 3)
+	second.call("_on_minimap_orientation_selected", 0)
 	var appearance := ConfigFile.new()
 	var border_steps: Array = second.get("MINIMAP_BORDER_STEPS") as Array
 	var marker_scales: Array = second.get("MINIMAP_MARKER_SCALES") as Array
 	_expect(appearance.load(SETTINGS_PATH) == OK
 		and not bool(appearance.get_value("hud", "minimap_marker_harvest", true))
 		and bool(appearance.get_value("hud", "minimap_marker_player", false))
-		and str(appearance.get_value("hud", "minimap_shape", "")) == "round"
+		and str(appearance.get_value("hud", "minimap_shape", "")) == "square"
+		and str(appearance.get_value("hud", "minimap_orientation", "")) == "north_up"
 		and is_equal_approx(float(appearance.get_value(
 			"hud", "minimap_marker_scale", 0.0)), float(marker_scales[-1]))
 		and is_equal_approx(float(appearance.get_value(
-			"hud", "minimap_border", 0.0)), float(border_steps[0])),
+			"hud", "minimap_border", 0.0)), float(border_steps[-1])),
 		"the minimap's marker and appearance choices are written to the file")
 	second.queue_free()
 	await process_frame
@@ -101,11 +114,12 @@ func _run() -> void:
 	_expect(Engine.max_fps == 0 and unlimited_fps.get_selected_id() == 0,
 		"Unlimited also survives a new session and removes the engine frame cap")
 	var third_overlay: Control = third.get("minimap_marker_overlay") as Control
-	_expect(str(third.get("_minimap_shape")) == "round"
+	_expect(str(third.get("_minimap_shape")) == "square"
+		and str(third.get("_minimap_orientation")) == "north_up"
 		and is_equal_approx(float(third.get("_minimap_marker_scale")),
 			float(marker_scales[-1]))
 		and is_equal_approx(float(third.get("_minimap_border")),
-			float(border_steps[0])),
+			float(border_steps[-1])),
 		"a new session comes back with the remembered minimap appearance")
 	_expect(third_overlay != null
 		and not bool(third_overlay.call("type_enabled", &"harvest"))

@@ -444,13 +444,13 @@ var _chat_tab := "all"
 var _last_chat_activity_msec := 0
 var _current_map_display_name := "Unknown map"
 var _minimap_scale := 1.0
-var _minimap_orientation := "north_up"
+var _minimap_orientation := MINIMAP_DEFAULT_ORIENTATION
 var _minimap_zoom := MINIMAP_ZOOM_DEFAULT
 var _minimap_marker_scale := 1.0
-var _minimap_border := MINIMAP_DRAG_BORDER
+var _minimap_border := MINIMAP_DEFAULT_BORDER
 ## "square" or "round". A round minimap is the map masked to the circle its
 ## frame holds, which is the shape the compass letters were always arranged in.
-var _minimap_shape := "square"
+var _minimap_shape := MINIMAP_DEFAULT_SHAPE
 ## Which marker types are drawn, keyed by MINIMAP_MARKER_TYPES.
 var _minimap_marker_types: Dictionary = _default_minimap_marker_types()
 var _map_environment: Environment
@@ -723,10 +723,6 @@ const INVENTORY_TOOL_LABELS := {
 	"grab": "Move", "use": "Use", "equip": "Equip", "unequip": "Unequip",
 	"inspect": "Inspect",
 }
-## Doubles as the black margin around the minimap render and the band that
-## drags the window. 54 left more empty frame than map; half of it still
-## grabs comfortably and hands the render the rest.
-const MINIMAP_DRAG_BORDER := 27.0
 ## The widths that border can be set to, narrowest first. The band is also the
 ## only thing the minimap window can be dragged by, so the narrowest is a band
 ## a mouse can still find rather than none at all: a minimap that cannot be
@@ -748,6 +744,12 @@ void fragment() {
 """
 const MINIMAP_BORDER_STEPS: Array[float] = [8.0, 16.0, 27.0, 40.0]
 const MINIMAP_BORDER_LABELS: Array[String] = ["Minimal", "Thin", "Normal", "Wide"]
+## How a fresh installation shows the minimap, before the player picks
+## anything: a round map with the least frame, turned the way the camera
+## faces so up on the minimap is ahead on screen.
+const MINIMAP_DEFAULT_ORIENTATION := "viewport_up"
+const MINIMAP_DEFAULT_SHAPE := "round"
+const MINIMAP_DEFAULT_BORDER: float = MINIMAP_BORDER_STEPS[0]
 ## What the minimap window's size option offers, matching the range the
 ## settings window's slider already moves between so the two cannot disagree.
 const MINIMAP_SIZE_STEPS: Array[float] = [0.75, 1.0, 1.25, 1.5, 1.75]
@@ -5164,9 +5166,9 @@ func _load_hud_settings() -> void:
 		_show_through_obstacles = bool(config.get_value(
 			"hud", "show_through_obstacles", true))
 		_minimap_orientation = str(config.get_value(
-			"hud", "minimap_orientation", "north_up"))
+			"hud", "minimap_orientation", MINIMAP_DEFAULT_ORIENTATION))
 		if _minimap_orientation not in ["north_up", "player_up", "viewport_up"]:
-			_minimap_orientation = "north_up"
+			_minimap_orientation = MINIMAP_DEFAULT_ORIENTATION
 		_minimap_zoom = clampf(float(config.get_value(
 			"hud", "minimap_zoom", MINIMAP_ZOOM_DEFAULT)),
 			MINIMAP_ZOOM_MIN, MINIMAP_ZOOM_MAX)
@@ -5174,11 +5176,12 @@ func _load_hud_settings() -> void:
 			"hud", "minimap_marker_scale", 1.0)),
 			MINIMAP_MARKER_SCALES[0], MINIMAP_MARKER_SCALES[-1])
 		_minimap_border = clampf(float(config.get_value(
-			"hud", "minimap_border", MINIMAP_DRAG_BORDER)),
+			"hud", "minimap_border", MINIMAP_DEFAULT_BORDER)),
 			MINIMAP_BORDER_STEPS[0], MINIMAP_BORDER_STEPS[-1])
-		_minimap_shape = str(config.get_value("hud", "minimap_shape", "square"))
+		_minimap_shape = str(config.get_value(
+			"hud", "minimap_shape", MINIMAP_DEFAULT_SHAPE))
 		if _minimap_shape not in ["square", "round"]:
-			_minimap_shape = "square"
+			_minimap_shape = MINIMAP_DEFAULT_SHAPE
 		for type: StringName in MINIMAP_MARKER_TYPES:
 			_minimap_marker_types[type] = bool(config.get_value(
 				"hud", "minimap_marker_%s" % type, true))
