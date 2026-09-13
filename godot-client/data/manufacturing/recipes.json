@@ -3,7 +3,7 @@
   "sources": {
     "profile": "eloria",
     "recipesSha256": "eabfdd2d19fc6c9369dc2ed6844a0a8ac67857b6bd440723ac64791ed75cb5c1",
-    "itemsSha256": "3cd4d70fa1b32d8048f0e7d163ce06d6bbc67cf5e9f18673841f9d640cbe638d",
+    "itemsSha256": "c1d3a7d69401651ade7c39d0f3c143bcd5f6661ed713dc6b3108e9313ff0efdb",
     "booksSha256": "dbaf97061c7578ece676a3d6ff122d25af0bb69a01d4c4bcec9b16653df00329"
   },
   "recipes": [
@@ -61,7 +61,7 @@
         {
           "name": "Iron Ore",
           "quantity": 3,
-          "imageId": 26,
+          "imageId": 18,
           "ambiguousImage": false,
           "imageAliases": []
         },
@@ -400,12 +400,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [
@@ -1496,12 +1493,9 @@
         {
           "name": "Copper",
           "quantity": 3,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -13377,12 +13371,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -13914,12 +13905,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Flint",
@@ -14390,12 +14378,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Shell",
@@ -14805,12 +14790,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Bog Iron",
@@ -15162,12 +15144,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Coal",
@@ -15281,12 +15260,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -15828,12 +15804,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -16455,12 +16428,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Flint",
@@ -17011,12 +16981,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Shell",
@@ -17496,12 +17463,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -17574,12 +17538,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -18309,12 +18270,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -18819,12 +18777,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Flint",
@@ -19271,12 +19226,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Shell",
@@ -19675,12 +19627,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -20275,12 +20224,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Flint",
@@ -20603,12 +20549,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -21203,12 +21146,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Flint",
@@ -21343,12 +21283,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -21839,12 +21776,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -22197,12 +22131,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -22797,12 +22728,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -23397,12 +23325,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Flint",
@@ -23929,12 +23854,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Shell",
@@ -24393,12 +24315,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Bog Iron",
@@ -24471,12 +24390,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -25161,12 +25077,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Flint",
@@ -25773,12 +25686,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Shell",
@@ -26307,12 +26217,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Bog Iron",
@@ -26766,12 +26673,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Coal",
@@ -27150,12 +27054,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Quartz",
@@ -27459,12 +27360,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Slate",
@@ -27693,12 +27591,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Clay",
@@ -27849,12 +27744,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Peat",
@@ -28040,12 +27932,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -28273,12 +28162,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -28734,12 +28620,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -30227,12 +30110,9 @@
         {
           "name": "Copper",
           "quantity": 3,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Verdigris",
@@ -30617,11 +30497,8 @@
           "name": "Filigree Wire",
           "quantity": 4,
           "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Polished Gem",
@@ -30682,11 +30559,8 @@
           "name": "Filigree Wire",
           "quantity": 4,
           "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Polished Gem",
@@ -30747,11 +30621,8 @@
           "name": "Filigree Wire",
           "quantity": 4,
           "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Polished Gem",
@@ -30812,11 +30683,8 @@
           "name": "Filigree Wire",
           "quantity": 4,
           "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Polished Gem",
@@ -30877,11 +30745,8 @@
           "name": "Filigree Wire",
           "quantity": 4,
           "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Polished Gem",
@@ -30942,11 +30807,8 @@
           "name": "Filigree Wire",
           "quantity": 4,
           "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "ambiguousImage": false,
+          "imageAliases": []
         },
         {
           "name": "Polished Gem",
@@ -30975,12 +30837,9 @@
         {
           "name": "Copper",
           "quantity": 1,
-          "imageId": 22,
-          "ambiguousImage": true,
-          "imageAliases": [
-            "Copper",
-            "Filigree Wire"
-          ]
+          "imageId": 26,
+          "ambiguousImage": false,
+          "imageAliases": []
         }
       ],
       "tools": [

@@ -342,15 +342,15 @@
         "alphaTested": true,
         "height": 1.465
       },
-      "copper_bloom": {
-        "scene": "res://assets/world/harvestables/copper_bloom.glb",
+      "copper_ore": {
+        "scene": "res://assets/world/harvestables/copper_ore.glb",
         "label": "Copper",
-        "kind": "flora",
+        "kind": "mineral",
         "tier": "common",
-        "vertices": 272,
-        "triangles": 136,
-        "alphaTested": true,
-        "height": 0.98
+        "vertices": 544,
+        "triangles": 272,
+        "alphaTested": false,
+        "height": 0.76
       },
       "ember_crystal": {
         "scene": "res://assets/world/harvestables/ember_crystal.glb",
@@ -558,7 +558,7 @@
       "Watercress": "cenote_watercress",
       "Sunleaf": "sunleaf",
       "Frost Reed": "frost_reed",
-      "Copper": "copper_bloom",
+      "Copper": "copper_ore",
       "Ember Crystal": "ember_crystal",
       "Slate": "slate_outcrop",
       "Winter Wheat": "wheat",
