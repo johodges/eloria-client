@@ -645,7 +645,6 @@ var _last_skill_experience_msec := -100000
 var _banner_option_boxes: Dictionary = {}
 var _banner_background_style: StyleBoxFlat
 
-const FLOATING_FEEDBACK_BASE_OFFSET := 78.0
 const FLOATING_FEEDBACK_ROW_HEIGHT := 21.0
 const FLOATING_FEEDBACK_MAX_ROWS := 4
 const FLOATING_FEEDBACK_RISE := 58.0
@@ -7650,13 +7649,7 @@ func _update_actor_resource_overlay() -> void:
 	if not actor_value is Node3D or not is_instance_valid(actor_value as Node3D):
 		actor_resource_overlay.hide()
 		return
-	var actor_node: Node3D = actor_value as Node3D
-	# Hung from the top of the body rather than a fixed height over the feet,
-	# which left a head's height of empty air above a human-sized player.
-	var head: float = (float(actor_node.call("head_height"))
-		if actor_node.has_method("head_height") else 2.8 - BANNER_HEAD_CLEARANCE)
-	var world_position: Vector3 = actor_node.global_position + Vector3(
-		0.0, head + BANNER_HEAD_CLEARANCE, 0.0)
+	var world_position: Vector3 = _above_head(actor_value as Node3D)
 	if gameplay_camera.is_position_behind(world_position):
 		actor_resource_overlay.hide()
 		return
@@ -7678,6 +7671,15 @@ func _update_actor_resource_overlay() -> void:
 		clampf(overlay_position.y, 34.0,
 			maxf(34.0, game_view.size.y - actor_resource_overlay.size.y - 86.0)))
 	actor_resource_overlay.show()
+
+## Just over an actor's head, where your own banner and the experience that
+## floats up out of it are hung: from the top of the body rather than a fixed
+## height over the feet, which left a head's height of empty air above a
+## human-sized player.
+func _above_head(actor_node: Node3D) -> Vector3:
+	var head: float = (float(actor_node.call("head_height"))
+		if actor_node.has_method("head_height") else 2.8 - BANNER_HEAD_CLEARANCE)
+	return actor_node.global_position + Vector3(0.0, head + BANNER_HEAD_CLEARANCE, 0.0)
 
 func _banner_has_content() -> bool:
 	if _banner_option("show_names"):
@@ -7916,8 +7918,7 @@ func _spawn_floating_feedback(feedback: Dictionary) -> void:
 	var actor_value: Variant = actor_nodes.get(AppState.local_actor_id)
 	if not actor_value is Node3D or not is_instance_valid(actor_value as Node3D):
 		return
-	var actor_node: Node3D = actor_value as Node3D
-	var world_position: Vector3 = actor_node.global_position + Vector3(0.0, 3.15, 0.0)
+	var world_position: Vector3 = _above_head(actor_value as Node3D)
 	if gameplay_camera.is_position_behind(world_position):
 		return
 	var viewport_position: Vector2 = gameplay_camera.unproject_position(world_position)
@@ -7941,8 +7942,12 @@ func _spawn_floating_feedback(feedback: Dictionary) -> void:
 		label.add_theme_color_override("font_color", Color(0.45, 1.0, 0.38, 1.0))
 	_floating_feedback_layer.add_child(label)
 	label.reset_size()
+	# Out of the top of your own banner, a line clear of the name, or out of
+	# the top of your head when the banner is switched off.
+	var floor_y: float = ((actor_resource_overlay.position.y
+		if actor_resource_overlay.visible else screen_position.y) - label.size.y)
 	label.position = Vector2(screen_position.x - label.size.x * 0.5,
-		_floating_feedback_row(screen_position.y - FLOATING_FEEDBACK_BASE_OFFSET))
+		_floating_feedback_row(floor_y - FLOATING_FEEDBACK_ROW_HEIGHT, floor_y))
 	_active_floating_labels.append(label)
 	var tween: Tween = create_tween().set_parallel(true)
 	tween.tween_property(label, "position",
@@ -7955,9 +7960,11 @@ func _spawn_floating_feedback(feedback: Dictionary) -> void:
 		_active_floating_labels.erase(label)
 		label.queue_free())
 
-func _floating_feedback_row(preferred_y: float) -> float:
+func _floating_feedback_row(preferred_y: float, lowest_y: float) -> float:
 	# Messages drift upwards, so a new one takes the first free row at or below
-	# the preferred height rather than landing on top of one still on screen.
+	# the preferred height rather than landing on top of one still on screen -
+	# down as far as `lowest_y`, which keeps it off the banner, and upwards
+	# from the preferred row once that room is used.
 	var occupied: Array[float] = []
 	for index: int in range(_active_floating_labels.size() - 1, -1, -1):
 		var other: Label = _active_floating_labels[index]
@@ -7965,16 +7972,22 @@ func _floating_feedback_row(preferred_y: float) -> float:
 			occupied.append(other.position.y)
 		else:
 			_active_floating_labels.remove_at(index)
-	occupied.sort()
+	var candidates: Array[float] = []
 	var row_y: float = preferred_y
-	var lowest_row: float = preferred_y + FLOATING_FEEDBACK_ROW_HEIGHT * float(
-		FLOATING_FEEDBACK_MAX_ROWS)
-	for y: float in occupied:
-		if row_y > lowest_row:
-			break
-		if absf(y - row_y) < FLOATING_FEEDBACK_ROW_HEIGHT:
-			row_y = y + FLOATING_FEEDBACK_ROW_HEIGHT
-	return minf(row_y, lowest_row)
+	while row_y <= lowest_y:
+		candidates.append(row_y)
+		row_y += FLOATING_FEEDBACK_ROW_HEIGHT
+	for step: int in range(1, FLOATING_FEEDBACK_MAX_ROWS + 1):
+		candidates.append(preferred_y - FLOATING_FEEDBACK_ROW_HEIGHT * float(step))
+	for candidate: float in candidates:
+		var free := true
+		for y: float in occupied:
+			if absf(y - candidate) < FLOATING_FEEDBACK_ROW_HEIGHT:
+				free = false
+				break
+		if free:
+			return candidate
+	return candidates[candidates.size() - 1]
 
 func _on_window_size_changed() -> void:
 	# Match the render viewport to the actual drawable area so resizing changes
