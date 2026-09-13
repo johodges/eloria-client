@@ -671,6 +671,22 @@ func _init() -> void:
 			PackedFloat32Array([0.2, 0.05, 0.35, 0.2, 0.21]), 0.6), 0.2)
 		and is_equal_approx(ReplicatedActor3D.median_of(PackedFloat32Array(), 0.6), 0.6),
 		"the pace is the median of recent steps, so a burst and a hold do not move it")
+	# A gap is a pause, not a cadence, once it is later than a network hold
+	# could make it: a second stood looting between two running steps is not a
+	# step that took a second, and a walking step's 600 ms is not late at all.
+	_expect(ReplicatedActor3D.is_pause_gap(1.0, 0.2)
+		and not ReplicatedActor3D.is_pause_gap(0.35, 0.2)
+		and not ReplicatedActor3D.is_pause_gap(0.9, 0.6)
+		and ReplicatedActor3D.is_pause_gap(1.1, 0.6),
+		"a gap past what a network hold explains is a pause")
+	_expect(ReplicatedActor3D.pace_gait(32, false) != ReplicatedActor3D.pace_gait(22, false)
+		and ReplicatedActor3D.pace_gait(22, true) != ReplicatedActor3D.pace_gait(22, false)
+		and ReplicatedActor3D.pace_gait(46, false) == ReplicatedActor3D.pace_gait(22, false),
+		"running, walking and hastened steps are paced from separate histories")
+	_expect(ReplicatedActor3D.confirms_new_pace(PackedFloat32Array([1.0, 1.02, 0.97, 1.05, 1.0]))
+		and not ReplicatedActor3D.confirms_new_pace(PackedFloat32Array([1.0, 1.02, 0.97, 1.05]))
+		and not ReplicatedActor3D.confirms_new_pace(PackedFloat32Array([0.8, 1.2, 0.9, 1.4, 1.0])),
+		"only gaps that repeat themselves are taken for a pace that has slowed")
 
 	var reduced_actor: Dictionary = ActorReducer.apply_command(actor, 21)
 	_expect(int(reduced_actor.get("x", -1)) == 11
