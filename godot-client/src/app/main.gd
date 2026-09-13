@@ -305,6 +305,8 @@ var minimap_marker_overlay: Control
 ## Short-lived world effects the server announced. Kept only so a test can see
 ## what is on screen; each one frees itself when it finishes.
 var world_effects: Array = []
+## The glitter around the player while they harvest; null when they are not.
+var harvest_sparkle: HarvestSparkle3D
 ## The sky and the fires the server placed on this map.
 var weather_layer: Weather3D
 ## Objects the server placed into this map after it loaded, by object id.
@@ -4146,6 +4148,8 @@ func _spawn_actor(id: Variant) -> void:
 	node.set_nameplate_visible(_nameplate_visible_for(int(id)))
 	node.set_title(str(AppState.actor_titles.get(int(id), "")))
 	_place_actor_on_surface(node, true)
+	if int(id) == AppState.local_actor_id:
+		_sync_harvest_sparkle()
 
 ## Push the worn titles onto the actors wearing them.
 ##
@@ -8714,6 +8718,7 @@ func _on_client_setting_changed(section: String, key: String,
 			for actor_value: Variant in actor_nodes.values():
 				if is_instance_valid(actor_value):
 					(actor_value as ReplicatedActor3D).set_combat_effects_enabled(_effects_enabled)
+			_sync_harvest_sparkle()
 		"nameplates":
 			_nameplates_enabled = bool(value)
 			_apply_banner_options()
@@ -10552,6 +10557,7 @@ func _sync_harvest_indicator() -> void:
 		var map_object: MapObject3D = raw_object as MapObject3D
 		if is_instance_valid(map_object):
 			map_object.set_active(active and map_object.object_id == active_object)
+	_sync_harvest_sparkle()
 	if harvest_banner == null:
 		return
 	if not active:
@@ -10559,6 +10565,28 @@ func _sync_harvest_indicator() -> void:
 		return
 	harvest_banner.text = "Harvesting %s" % str(AppState.harvest.get("resource", ""))
 	harvest_banner.show()
+
+## Glitter around the player for as long as the server says they are
+## harvesting, the way the legacy client's harvesting eye candy did. Only the
+## local player's run is on the wire, so only the local player glitters.
+func _sync_harvest_sparkle() -> void:
+	var active: bool = bool(AppState.harvest.get("active", false))
+	# Checked before the cast: `as` on a freed node raises.
+	var actor_value: Variant = actor_nodes.get(AppState.local_actor_id)
+	var actor: ReplicatedActor3D = (actor_value as ReplicatedActor3D
+		) if is_instance_valid(actor_value) else null
+	var wanted: bool = active and _effects_enabled and actor != null
+	if is_instance_valid(harvest_sparkle):
+		if wanted and harvest_sparkle.is_following(actor):
+			return
+		harvest_sparkle.stop()
+	harvest_sparkle = null
+	if not wanted:
+		return
+	harvest_sparkle = HarvestSparkle3D.new()
+	harvest_sparkle.name = "HarvestSparkle"
+	world_root.add_child(harvest_sparkle)
+	harvest_sparkle.configure(actor)
 
 func _pick_ground_bag(viewport_position: Vector2) -> int:
 	if gameplay_world == null:
