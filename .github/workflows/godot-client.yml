@@ -122,6 +122,8 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_localization.gd
       - name: Settings window and key binding fixtures
         run: godot --headless --path godot-client --script res://tests/test_settings_window.gd
+      - name: Nameplate distance fade fixtures
+        run: godot --headless --path godot-client --script res://tests/test_nameplate_distance.gd
       - name: Console command fixtures
         run: godot --headless --path godot-client --script res://tests/test_console_commands.gd
       - name: Day and night cycle fixtures

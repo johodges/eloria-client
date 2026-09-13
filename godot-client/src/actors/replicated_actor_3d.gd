@@ -220,6 +220,11 @@ var _health_label: Label3D
 var _health_current := -1
 var _health_maximum := -1
 var _overhead_visible := true
+## How much of the name, title and health bar shows, from 0 to 1. The block is
+## drawn at a fixed screen size, so distance alone never made a far name any
+## less legible than a near one; main.gd fades it out past the player's name
+## distance instead. See `set_overhead_fade`.
+var _overhead_fade := 1.0
 ## Whether this actor's health is drawn over its head. main.gd's
 ## `_overhead_health_for` is what decides it.
 var _health_shown := false
@@ -310,6 +315,7 @@ const OVERHEAD_OUTLINE_SIZE := 4
 const HEALTH_BAR_WIDTH := 56.0
 const HEALTH_BAR_THICKNESS := 7.0
 const HEALTH_BAR_BORDER := 2.0
+const HEALTH_BAR_BACKING := Color(0.05, 0.04, 0.03, 0.78)
 const HEALTH_BAR_DROP := 16.0
 const HEALTH_LABEL_DROP := 32.0
 ## The speech bubble sits above the name instead, and wraps well short of the
@@ -881,7 +887,7 @@ func _add_health_bar() -> void:
 		HEALTH_BAR_THICKNESS + HEALTH_BAR_BORDER) * OVERHEAD_PIXEL
 	background_quad.center_offset = Vector3(
 		0.0, -HEALTH_BAR_DROP * OVERHEAD_PIXEL, 0.0)
-	background_quad.material = _overhead_material(Color(0.05, 0.04, 0.03, 0.78), 1)
+	background_quad.material = _overhead_material(HEALTH_BAR_BACKING, 1)
 	background.mesh = background_quad
 	background.position.y = NAMEPLATE_HEIGHT
 	background.layers = GAMEPLAY_ONLY_VISUAL_LAYER
@@ -983,14 +989,33 @@ func set_health_visible(enabled: bool) -> void:
 ## condition: a corpse at zero health keeps its empty frame rather than a
 ## sliver of colour.
 func _refresh_overhead_health() -> void:
-	var showing: bool = (_overhead_visible and _health_shown
+	var showing: bool = (_overhead_shown() and _health_shown
 		and _health_maximum > 0)
 	if is_instance_valid(_health_bar_background):
 		_health_bar_background.visible = showing
+		_fade_quad(_health_bar_background, HEALTH_BAR_BACKING.a)
 	if is_instance_valid(_health_bar_fill):
 		_health_bar_fill.visible = showing and _health_current > 0
+		# `apply_vitals` repaints the fill opaque, and calls this straight after.
+		_fade_quad(_health_bar_fill, 1.0)
 	if is_instance_valid(_health_label):
 		_health_label.visible = showing
+		_fade_label(_health_label)
+
+## Whether the overhead block is drawn at all: the banner options allow it,
+## the actor is inside the name distance, and it is inside the draw distance.
+## The last matters because `set_drawn` hides these nodes itself, and a label
+## switched back on while the actor is out of range would float over nothing.
+func _overhead_shown() -> bool:
+	return _overhead_visible and _overhead_fade > 0.0 and _drawn
+
+func _fade_label(label: Label3D) -> void:
+	label.modulate.a = _overhead_fade
+	label.outline_modulate.a = _overhead_fade
+
+func _fade_quad(quad: MeshInstance3D, opacity: float) -> void:
+	var material := (quad.mesh as QuadMesh).material as StandardMaterial3D
+	material.albedo_color.a = opacity * _overhead_fade
 
 static func _health_colour(ratio: float) -> Color:
 	if ratio > 0.6:
@@ -1001,10 +1026,29 @@ static func _health_colour(ratio: float) -> Color:
 
 func set_nameplate_visible(enabled: bool) -> void:
 	_overhead_visible = enabled
+	_refresh_overhead()
+
+## Fades the name, title and health bar together: 1 draws them as they are,
+## 0 hides them. main.gd works it out from how far this actor is from the
+## player. The speech bubble is not part of it - what somebody said is worth
+## seeing as long as they can be seen.
+func set_overhead_fade(fade: float) -> void:
+	var next: float = clampf(fade, 0.0, 1.0)
+	if next == _overhead_fade:
+		return
+	_overhead_fade = next
+	_refresh_overhead()
+
+func overhead_fade() -> float:
+	return _overhead_fade
+
+func _refresh_overhead() -> void:
 	if is_instance_valid(_nameplate):
-		_nameplate.visible = enabled
+		_nameplate.visible = _overhead_shown()
+		_fade_label(_nameplate)
 	if is_instance_valid(_title_line):
-		_title_line.visible = enabled and not _title_line.text.is_empty()
+		_title_line.visible = _overhead_shown() and not _title_line.text.is_empty()
+		_fade_label(_title_line)
 	_refresh_overhead_health()
 
 ## The title a player chose from the achievements that grant one, drawn as its
@@ -1043,7 +1087,8 @@ func set_title(title: String) -> void:
 		add_child(label)
 		_title_line = label
 	_title_line.text = title
-	_title_line.visible = _overhead_visible
+	_title_line.visible = _overhead_shown()
+	_fade_label(_title_line)
 
 ## Eternal Lands repeats local chat over the speaker's head while "Show Speech
 ## Bubbles" is on (text.c check_chat_text_to_overtext), sitting above the
@@ -2749,6 +2794,9 @@ func set_drawn(enabled: bool) -> void:
 			if is_instance_valid(node):
 				node.visible = true
 		_hidden_by_range.clear()
+		# What was showing when it went out of range need not be now: the name
+		# may have faded, or the banner options changed, in the meantime.
+		_refresh_overhead()
 		return
 	# Swept on every call rather than only on the way out. An actor out of range
 	# still takes packets: it can change what it is wearing, or lose the model it

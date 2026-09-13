@@ -324,6 +324,7 @@ var reference_window: Control
 var _shadows_enabled := true
 var _effects_enabled := true
 var _nameplates_enabled := true
+var _name_distance_metres := NAME_DISTANCE_DEFAULT_METRES
 var _fps_limit := 0
 var _camera_follows_player := true
 var _player_notes := ""
@@ -855,6 +856,15 @@ const ANIMATION_GATE_REFRESH_MSEC := 100
 ## open enough to read the names of everyone on a pavilion a hundred and sixty
 ## metres away, stacked over the water in front of the player.
 const ACTOR_DRAW_DISTANCE_METRES := 80.0
+## How far from the player another actor's name, title and health bar still
+## show. The block is drawn at a fixed screen size so it stays readable at any
+## zoom, which also means a name sixty metres off is as large as one at arm's
+## length, and a castle gate read as a field of labels. So the block
+## fades out over the last few metres before this distance, the body carries on
+## to the draw distance, and the player can move it from the Graphics settings.
+## The slider's range lives with the slider, in settings_window.gd.
+const NAME_DISTANCE_DEFAULT_METRES := SettingsWindowScript.NAME_DISTANCE_DEFAULT
+const NAME_FADE_METRES := 5.0
 ## How many actors `_sync_world` builds in one pass. A spawn is a couple of
 ## milliseconds of model, skin and equipment work, so a pack of twenty
 ## arriving together was one long frame; the rest follow on the next frames.
@@ -4890,6 +4900,7 @@ func _update_animation_gate(delta: float) -> void:
 	var local_value: Variant = actor_nodes.get(AppState.local_actor_id)
 	var local_node: Node3D = local_value as Node3D if is_instance_valid(local_value) else null
 	var here: Vector3 = local_node.global_position if local_node != null else Vector3.ZERO
+	var fighting: int = _combat_target_actor_id()
 	for raw_id: Variant in actor_nodes:
 		var actor_value: Variant = actor_nodes[raw_id]
 		if not is_instance_valid(actor_value):
@@ -4903,9 +4914,20 @@ func _update_animation_gate(delta: float) -> void:
 		else:
 			tier = animation_gate.classify(actor.global_position + Vector3.UP,
 				actor.view_radius())
-			actor.set_drawn(local_node == null
-				or here.distance_to(actor.global_position) <= ACTOR_DRAW_DISTANCE_METRES)
+			var distance: float = (0.0 if local_node == null
+				else here.distance_to(actor.global_position))
+			actor.set_drawn(distance <= ACTOR_DRAW_DISTANCE_METRES)
+			# Whoever the player is fighting keeps their name and bar at any
+			# range: a shot lined up from across a field still needs both.
+			actor.set_overhead_fade(1.0 if int(raw_id) == fighting
+				else nameplate_fade(distance, _name_distance_metres))
 		actor.set_animation_tier(tier, animation_gate)
+
+## How much of an actor's overhead block shows at this distance from the
+## player: all of it up to `NAME_FADE_METRES` short of the name distance,
+## nothing from the name distance on, and a straight fade between.
+static func nameplate_fade(distance: float, name_distance: float) -> float:
+	return clampf((name_distance - distance) / NAME_FADE_METRES, 0.0, 1.0)
 
 ## Interiors are closed boxes, so the isometric rig would render their ceiling
 ## and near wall. The manifest names the nodes to cut away; maps without a
@@ -5249,6 +5271,8 @@ func _load_hud_settings() -> void:
 		_effects_enabled = bool(config.get_value("graphics", "particles", true))
 		_nameplates_enabled = bool(
 			config.get_value("graphics", "nameplates", true))
+		_set_name_distance(config.get_value(
+			"graphics", "name_distance", NAME_DISTANCE_DEFAULT_METRES))
 		camera_rig.rotation_sensitivity = float(config.get_value(
 			"camera", "rotation_sensitivity", camera_rig.rotation_sensitivity))
 		camera_rig.pan_sensitivity = float(config.get_value(
@@ -5292,6 +5316,7 @@ func _load_hud_settings() -> void:
 	show_through_obstacles.set_pressed_no_signal(_show_through_obstacles)
 	settings_window.call("restore_toggle", "combat_hud",
 		bool(extension_windows.get("combat_hud_enabled")))
+	settings_window.call("restore_name_distance", _name_distance_metres)
 	for option_key: String in _hud_element_options:
 		settings_window.call("restore_toggle", option_key,
 			bool(_hud_element_options[option_key]))
@@ -5368,6 +5393,7 @@ func _save_hud_settings() -> void:
 	config.set_value("graphics", "shadows", _shadows_enabled)
 	config.set_value("graphics", "particles", _effects_enabled)
 	config.set_value("graphics", "nameplates", _nameplates_enabled)
+	config.set_value("graphics", "name_distance", _name_distance_metres)
 	config.set_value("graphics", "fps_limit", _fps_limit)
 	config.set_value("hud", "combat_hud",
 		bool(extension_windows.get("combat_hud_enabled")))
@@ -8657,6 +8683,16 @@ func _apply_fps_limit(value: Variant) -> void:
 	Engine.max_fps = _fps_limit
 	settings_window.call("restore_fps_limit", _fps_limit)
 
+## An old or hand-edited preference is held to the slider's range. The fades
+## are worked out on the animation gate's clock, so the next frame is asked to
+## rather than waiting out the rest of its tenth of a second.
+func _set_name_distance(value: Variant) -> void:
+	var metres: float = (float(value) if value is float or value is int
+		else NAME_DISTANCE_DEFAULT_METRES)
+	_name_distance_metres = clampf(metres, SettingsWindowScript.NAME_DISTANCE_MIN,
+		SettingsWindowScript.NAME_DISTANCE_MAX)
+	_animation_gate_refresh_msec = 0
+
 ## A client setting the player changed. Everything under Graphics and Camera
 ## is about this machine; everything under Gameplay is a command the server
 ## owns, sent as the player's own words rather than applied here.
@@ -8681,6 +8717,8 @@ func _on_client_setting_changed(section: String, key: String,
 		"nameplates":
 			_nameplates_enabled = bool(value)
 			_apply_banner_options()
+		"name_distance":
+			_set_name_distance(value)
 		"combat_hud":
 			extension_windows.call("set_combat_hud_enabled", bool(value))
 		"rotation_sensitivity":

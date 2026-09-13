@@ -11,6 +11,8 @@ ELORIA_SETTINGS_CONTROLS,Controls
 ELORIA_SETTINGS_SHADOWS,Directional shadows
 ELORIA_SETTINGS_PARTICLES,Spell and world effects
 ELORIA_SETTINGS_NAMEPLATES,Names above other players
+ELORIA_SETTINGS_NAME_DISTANCE,Name distance
+ELORIA_SETTINGS_NAME_DISTANCE_HINT,"How far away names, titles and health bars still show. Whoever you are fighting keeps theirs at any range."
 ELORIA_SETTINGS_COMBAT_HUD,Combat box while fighting
 ELORIA_SETTINGS_MAP_CACHE,Keep built maps on disk
 ELORIA_SETTINGS_MAP_CACHE_CLEAR,Clear map cache
