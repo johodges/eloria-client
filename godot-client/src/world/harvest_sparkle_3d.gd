@@ -12,7 +12,7 @@ extends Node3D
 
 ## The visual layer the gameplay camera renders; neither map draws it.
 const GAMEPLAY_LAYER := 1
-const PARTICLE_COUNT := 36
+const PARTICLE_COUNT := 18
 const LIFETIME_SECONDS := 1.6
 ## The flares fill a hollow cylinder around the body rather than a ball at its
 ## middle, so they read as surrounding the harvester instead of covering them.
