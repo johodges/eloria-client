@@ -7,7 +7,9 @@ extends SceneTree
 ## off; the body stays until the draw distance. Whoever the player is fighting
 ## keeps theirs at any range.
 
-const MainScript := preload("res://src/app/main.gd")
+## main.gd is loaded at run time, not preloaded: it reads the autoload singletons,
+## which a SceneTree script is compiled before.
+var MainScript: GDScript
 const SettingsWindowScript := preload("res://src/ui/settings_window.gd")
 
 var failures := 0
@@ -16,6 +18,10 @@ func _init() -> void:
 	call_deferred("_run")
 
 func _run() -> void:
+	MainScript = load("res://src/app/main.gd") as GDScript
+	if not _expect(MainScript != null and MainScript.can_instantiate(), "main.gd compiles"):
+		quit(failures)
+		return
 	_test_fade_curve()
 	await _test_actor()
 	await _test_main()
@@ -121,6 +127,8 @@ func _test_main() -> void:
 	await process_frame
 	var saved: Variant = main.get("_name_distance_metres")
 	var window: Control = main.get("settings_window") as Control
+	if not _expect(window != null, "main builds its settings window"):
+		return
 	var slider: HSlider = window.find_child("name_distance", true, false) as HSlider
 	var reading: Label = window.find_child("NameDistanceValue", true, false) as Label
 	_expect(slider != null and reading != null,
@@ -150,8 +158,9 @@ func _test_main() -> void:
 func _quad_alpha(quad: MeshInstance3D) -> float:
 	return ((quad.mesh as QuadMesh).material as StandardMaterial3D).albedo_color.a
 
-func _expect(value: bool, label: String) -> void:
+func _expect(value: bool, label: String) -> bool:
 	if value:
-		return
+		return true
 	failures += 1
 	push_error("FAIL: " + label)
+	return false
