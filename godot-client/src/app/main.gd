@@ -697,6 +697,8 @@ const RANGE_WEAPON_FIRST := 64
 const RANGE_WEAPON_LAST := 68
 ## interface.c defaults instance_mode_banner_height to five banner lines.
 const BANNER_INSTANCE_LIFT_ROWS := 5.0
+## World metres between the top of your head and the foot of your own banner.
+const BANNER_HEAD_CLEARANCE := 0.15
 const SPEECH_BUBBLE_MSEC := 6000
 
 const CHAT_FADE_DELAY_MSEC := 7000
@@ -7649,7 +7651,12 @@ func _update_actor_resource_overlay() -> void:
 		actor_resource_overlay.hide()
 		return
 	var actor_node: Node3D = actor_value as Node3D
-	var world_position: Vector3 = actor_node.global_position + Vector3(0.0, 2.8, 0.0)
+	# Hung from the top of the body rather than a fixed height over the feet,
+	# which left a head's height of empty air above a human-sized player.
+	var head: float = (float(actor_node.call("head_height"))
+		if actor_node.has_method("head_height") else 2.8 - BANNER_HEAD_CLEARANCE)
+	var world_position: Vector3 = actor_node.global_position + Vector3(
+		0.0, head + BANNER_HEAD_CLEARANCE, 0.0)
 	if gameplay_camera.is_position_behind(world_position):
 		actor_resource_overlay.hide()
 		return
