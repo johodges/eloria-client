@@ -322,12 +322,12 @@
       "destination": "whitehorn_range",
       "anchor": [
         -13.0,
-        80.84638503558259,
+        91.43718355646018,
         -164.0
       ],
       "globalAnchor": [
         497.0,
-        80.84638503558259,
+        91.43718355646018,
         376.0
       ],
       "globalTranslation": [
@@ -356,12 +356,12 @@
       "destination": "grey_moors",
       "anchor": [
         -148.0,
-        30.995926391378152,
+        30.99414393450803,
         -55.0
       ],
       "globalAnchor": [
         362.0,
-        30.995926391378152,
+        30.99414393450803,
         485.0
       ],
       "globalTranslation": [
@@ -1652,19 +1652,19 @@
       -30.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:c954e7697142ba9409d599c01d102d0527393a615a123b8e91ec19f2d59f3f10",
+  "terrainRevision": "diagonal-spine-v1:c8dc3895dc30af01a49516b86486359b53f15566d376af40881c548e6bf6bb5c",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035"
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
+    "masterSha256": "221fb20a7614da32024138d2efaf93e72e675d2c6ea5b7470e41f27d989de2f5",
     "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
-    "collisionSha256": "98ff37cdd03a9777cb7a949329a9799b2b789b81e5e93aef8dff1ab7502ec6b7",
-    "terrainRevision": "diagonal-spine-v1:c954e7697142ba9409d599c01d102d0527393a615a123b8e91ec19f2d59f3f10"
+    "masterSha256": "221fb20a7614da32024138d2efaf93e72e675d2c6ea5b7470e41f27d989de2f5",
+    "collisionSha256": "b704575b62bf68df52d77f55e94abad562ef7ebe594cfb4a34160df226da236b",
+    "terrainRevision": "diagonal-spine-v1:c8dc3895dc30af01a49516b86486359b53f15566d376af40881c548e6bf6bb5c"
   }
 }

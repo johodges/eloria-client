@@ -20,6 +20,12 @@ RETIRED_GREY_SPANS=('Landmark_boardwalk_gate','Landmark_boardwalk_centre','Landm
 # A ground-standing prop whose base the regional survey left this far under
 # its own terrain is stood on the ground when it is placed (see load()).
 BURIED_PROP_METRES=.2
+# A ground-standing prop the regional survey left this far in the air stands
+# on the target ground too; hulls are settled on the actual water or ground by
+# the boat modules, and props that float by design keep their authored offset.
+FLOATING_PROP_METRES=.5
+HULL_WORDS=('boat','skiff','dugout','canoe','punt','lateen','packet','tender','barge','raft','wherry')
+FLOATING_BY_DESIGN=('wisp','light','flame','spark','orb','crystal','shard','lantern')
 
 
 def retained_source_placements(region, placements):
@@ -202,8 +208,11 @@ class Content:
                 # on the ground here. Props above the ground may rest on decks
                 # or rocks and keep their authored offset, as do landmarks,
                 # buildings and buried crystals; hulls are settled on water.
-                hull=any(word in name.lower() for word in ('boat','skiff','dugout','canoe'))
+                hull=any(word in name.lower() for word in HULL_WORDS)
                 if kind=='prop' and not assembly_id and not hull and source_ground-float(low[1])>BURIED_PROP_METRES:
+                    source_ground=float(low[1])-.02
+                elif (kind=='prop' and not assembly_id and not hull and float(low[1])-source_ground>FLOATING_PROP_METRES
+                      and not any(word in name.lower() for word in FLOATING_BY_DESIGN)):
                     source_ground=float(low[1])-.02
                 target_ground=float(self.world.height_at(*new_xz))
                 # Large inhabited compounds retain their internal grade. The

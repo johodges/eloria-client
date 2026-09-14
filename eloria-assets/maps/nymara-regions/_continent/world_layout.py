@@ -10,6 +10,14 @@ from scipy.sparse.linalg import cg
 import landscape as L
 
 CELL=2.0
+# Graded road corridors through the natural bank apron and beside partial footing feathers.
+ROAD_APRON_FEATHER_METRES=8.
+ROAD_APRON_FEATHER_MAX_METRES=48.
+ROAD_APRON_FLANK_GRADE=.45
+ROAD_APRON_CONTENT_MARGIN_METRES=4.
+# Ground that retained content stands on, or that a footing feather blends
+# toward it at this weight or more, is never moved by a road pass.
+ROAD_STANDING_WEIGHT=.5
 CHUNK=96.0
 
 
@@ -227,6 +235,13 @@ class World:
         self.restore_drainage_corridor('foundations')
         self.water=L.water_fields(self.gx,self.gz,height=self.height,plan=self.plan)
 
+    def standing_weight(self):
+        """How firmly retained content or its footing feather claims each vertex (0..1)."""
+        footing=getattr(self,'road_footing_weight',getattr(self,'assembly_weight',None))
+        footing=np.zeros_like(self.height) if footing is None else footing
+        foundation=np.clip(getattr(self,'foundation_weight',np.zeros_like(self.height)),0,1)
+        return np.maximum(footing,foundation)
+
     def restore_drainage_corridor(self,stage):
         """Keep the natural bank apron through later cut/fill operations.
 
@@ -247,13 +262,34 @@ class World:
         hard&=~channel
         clearance=distance_transform_edt(~hard)*CELL if np.any(hard) else np.full_like(apron,np.inf)
         weight=apron*L.smoothstep(0,32,clearance)
+        # A graded road keeps its corridor through the bank apron: a road along
+        # a bank is a bench cut into it, feathered over 8 m. The channel bed
+        # itself stays natural below (restored unconditionally further down).
+        core=binary_dilation(self.road_distance<=1.65,iterations=1) if getattr(self,'roads',None) else np.zeros_like(apron,dtype=bool)
+        if core.any():
+            # Only where the bench's own flank stays clear of retained content
+            # and its footing feathers: a bench flank through a walked yard cut
+            # the content off the hub, and rigid floors cannot follow a partial
+            # change. Each core cell's flank reaches rise/.45 (8-48 m).
+            standing=self.standing_weight()
+            content_distance=distance_transform_edt(standing<ROAD_STANDING_WEIGHT*.5)*CELL
+            reach=np.clip(np.abs(self.height-self.original_height)/ROAD_APRON_FLANK_GRADE,ROAD_APRON_FEATHER_METRES,ROAD_APRON_FEATHER_MAX_METRES)
+            core&=content_distance>reach+ROAD_APRON_CONTENT_MARGIN_METRES
+        if core.any():
+            # The bench flank must itself be walkable: feather over at least
+            # 8 m, and over rise/.45 where the road sits far above or below
+            # the natural bank.
+            outside,nearest=distance_transform_edt(~core,return_indices=True)
+            rise=np.abs(self.height-self.original_height)[nearest[0],nearest[1]]
+            feather=np.clip(rise/ROAD_APRON_FLANK_GRADE,ROAD_APRON_FEATHER_METRES,ROAD_APRON_FEATHER_MAX_METRES)
+            weight*=L.smoothstep(0,1,outside*CELL/feather)
         conflict=hard&(apron>.05)&(np.abs(self.height-self.original_height)>.5)
         delta=self.height-self.original_height
         before=self.height.copy()
         self.height=self.height*(1-weight)+self.original_height*weight
         self.height[channel]=self.original_height[channel]
         report={'apronMetres':10,'outerMetres':42,'footingFeatherMetres':32,
-            'restoredVertices':int(np.count_nonzero(weight>0)),
+            'restoredVertices':int(np.count_nonzero(weight>0)),'roadCoreVertices':int(core.sum()),
             'conflictingHardVertices':int(conflict.sum()),
             'maximumRetainedFill':float(np.max(delta[conflict],initial=0)),
             'maximumRetainedCut':float(np.max(-delta[conflict],initial=0)),
@@ -283,7 +319,7 @@ class World:
         self.height=self.height*(1-weight)+elevation*weight
         self.quay_contacts.append({'center':list(center),'elevation':elevation})
 
-    def settle_roads(self):
+    def settle_roads(self,respect_standing=False):
         if not self.roads:return
         # All full-width roads agree before any shoulders are blended. This
         # prevents the last outgoing road from cutting a cliff through another.
@@ -296,6 +332,15 @@ class World:
         footing_weight=getattr(self,'road_footing_weight',self.assembly_weight)
         fixed=active&(footing_weight>=.999)&(np.hypot(dx,dz)<.5)&~self.water['mask']
         fixed_height=self.assembly_target.copy();quay_fixed=np.zeros_like(active)
+        # After the support stages, ground that retained content stands on, or
+        # that a footing feather blends toward it, is never moved by a road:
+        # the road is fitted to it. Pinned footings hold their surveyed plane,
+        # feathers their current blended ground (rigid assemblies cannot follow
+        # a partial change and nothing repairs it afterwards). The first pass
+        # may still shape those zones: the support stages refit them after it.
+        standing=self.standing_weight() if respect_standing else np.zeros_like(self.height)
+        feather=active&(standing>=ROAD_STANDING_WEIGHT)&~fixed&~self.water['mask']
+        fixed_height[feather]=self.height[feather];fixed|=feather
         for quay in self.quay_contacts:
             d=np.hypot(self.gx-quay['center'][0],self.gz-quay['center'][1])
             mask=active&(d<=4)&~self.water['mask']
@@ -308,15 +353,25 @@ class World:
         footing_weight=getattr(self,'road_footing_weight',self.assembly_weight)
         target=road_shoulder_field(target,active,self.height,distance,footing_weight>=.999)
         weight=1-L.smoothstep(0,24,distance)
+        # Shoulders inside standing ground stay as they are; the road's shoulder
+        # influence fades out continuously as the standing weight rises, so no
+        # step forms along the zone's contour.
+        standing_hold=L.smoothstep(ROAD_STANDING_WEIGHT*.5,ROAD_STANDING_WEIGHT,standing)
+        weight*=np.where(active,1.,1-standing_hold)
         wet=self.water['mask']&(self.water['depth']>.35)
         weight[wet]=0
         self.height=self.height*(1-weight)+target*weight
         # Built courtyards and thresholds retain their surveyed support plane.
         # Roads approach these constraints; they cannot excavate beneath them.
+        # A partial footing feather keeps pulling a road's shoulders toward its
+        # plane: the yards standing on that feather are walked, and letting the
+        # road's shoulder win there tilted them (fourteenth attempt). The
+        # cross-fall at the road edge in such feathers is per-site support work.
         support=np.where(active,(footing_weight>=.999).astype(float),footing_weight)
         protected=self.height*(1-support)+self.assembly_target*support
         self.height=np.where(wet,self.height,protected)
         self.height[quay_fixed]=fixed_height[quay_fixed]
+        self._respect_standing=bool(respect_standing)
         self.restore_drainage_corridor('roads')
         restore_graded_shores(self,active)
         target[ferry_fixed]=self.height[ferry_fixed]
@@ -324,9 +379,12 @@ class World:
             points=np.asarray(road['points'],float)
             points[:,1]=triangle_sample(target,points[:,0],points[:,2],self.x0,self.z0)
             road['points']=points.tolist()
-        self.road_grading={'corridorVertices':int(active.sum()),'targetMaximumTriangleGrade':.45,
+        self.road_grading_passes=getattr(self,'road_grading_passes',[])
+        self.road_grading={'pass':len(self.road_grading_passes)+1,'respectsStandingGround':bool(respect_standing),
+            'standingVertices':int(feather.sum()),'corridorVertices':int(active.sum()),'targetMaximumTriangleGrade':.45,
             'fixedFootingVertices':int(fixed.sum()),'conflictingFootingCorridorVertices':conflicts,
             'exceptions':'Original drainage beds and surveyed assembly support remain authoritative; exported collision and bridge tests verify actual traversability.'}
+        self.road_grading_passes.append(self.road_grading)
 
     def adjacent_edges(self):
         pairs={}

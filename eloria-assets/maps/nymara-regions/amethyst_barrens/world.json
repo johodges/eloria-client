@@ -239,7 +239,7 @@
     },
     "walkableCells": 566896,
     "walkableFraction": 0.219246,
-    "sourceGlbSha256": "44c144aed3520d8615946c8bdb2fbd4c214bad06c10f2ce92628cdfe6a8a80b5",
+    "sourceGlbSha256": "e71c9c4df99645c55cbf2f7ddf89a5d7ce051cf87dadd564d9fc557f212373a6",
     "exportStatistics": {
       "walkMeshes": 24,
       "structuralMeshes": 247,
@@ -326,12 +326,12 @@
       "destination": "sunmane_steppe",
       "anchor": [
         139.0,
-        28.343226514545826,
+        29.279641067856403,
         150.0
       ],
       "globalAnchor": [
         1089.0,
-        28.343226514545826,
+        29.279641067856403,
         550.0
       ],
       "globalTranslation": [
@@ -370,12 +370,12 @@
         "endpoints": [
           [
             142.3,
-            28.099661827087402,
+            28.244897842407227,
             145.7
           ],
           [
             123.3,
-            28.76922845840454,
+            28.603583812713623,
             141.7
           ]
         ]
@@ -2711,7 +2711,7 @@
       "name": "Road to Sunmane Steppe",
       "position": [
         139.5,
-        28.34027575253332,
+        29.072616614122378,
         150.5
       ],
       "serverTile": [
@@ -2918,7 +2918,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
+      "masterSha256": "221fb20a7614da32024138d2efaf93e72e675d2c6ea5b7470e41f27d989de2f5",
       "globalMin": [
         708.0,
         0.0
@@ -2937,7 +2937,7 @@
     }
   },
   "performance": {
-    "glbBytes": 13803084,
+    "glbBytes": 13803040,
     "nodes": 673,
     "meshes": 320,
     "externalResources": {
@@ -5784,7 +5784,7 @@
       162.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:3880d76114886d908c5d393f6c37c2306658ab7923e340e1af89bc3724f2182b",
+  "terrainRevision": "diagonal-spine-v1:9270e045463fd2b3f3a3f294a3dcb491cc4696686b0b9deb26f29b13442c5b88",
   "externalResources": {
     "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -5834,7 +5834,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
+    "masterSha256": "221fb20a7614da32024138d2efaf93e72e675d2c6ea5b7470e41f27d989de2f5",
     "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba"
   },
   "streamingChunks": {
@@ -6627,9 +6627,9 @@
             162.0
           ]
         },
-        "estimatedResidentBytes": 780946,
-        "glbBytes": 103760,
-        "geometryResidentBytes": 518800,
+        "estimatedResidentBytes": 780726,
+        "glbBytes": 103716,
+        "geometryResidentBytes": 518580,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -7047,12 +7047,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:3880d76114886d908c5d393f6c37c2306658ab7923e340e1af89bc3724f2182b"
+    "terrainRevision": "diagonal-spine-v1:9270e045463fd2b3f3a3f294a3dcb491cc4696686b0b9deb26f29b13442c5b88"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
-    "collisionSha256": "da8f1158a27cb7b28f35f76e585f9a8432c59aedc3d460ef3b36db21e577b58f",
-    "terrainRevision": "diagonal-spine-v1:3880d76114886d908c5d393f6c37c2306658ab7923e340e1af89bc3724f2182b"
+    "masterSha256": "221fb20a7614da32024138d2efaf93e72e675d2c6ea5b7470e41f27d989de2f5",
+    "collisionSha256": "2e6f8cc0d311606e4896fba8af24592a696e1082d0f0dac64f0a86aeafa22c46",
+    "terrainRevision": "diagonal-spine-v1:9270e045463fd2b3f3a3f294a3dcb491cc4696686b0b9deb26f29b13442c5b88"
   }
 }

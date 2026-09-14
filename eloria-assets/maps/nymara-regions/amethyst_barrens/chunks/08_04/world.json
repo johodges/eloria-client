@@ -168,12 +168,12 @@
       "destination": "sunmane_steppe",
       "anchor": [
         139.0,
-        28.343226514545826,
+        29.279641067856403,
         150.0
       ],
       "globalAnchor": [
         1089.0,
-        28.343226514545826,
+        29.279641067856403,
         550.0
       ],
       "globalTranslation": [
@@ -3155,19 +3155,19 @@
       70.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:3880d76114886d908c5d393f6c37c2306658ab7923e340e1af89bc3724f2182b",
+  "terrainRevision": "diagonal-spine-v1:9270e045463fd2b3f3a3f294a3dcb491cc4696686b0b9deb26f29b13442c5b88",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035"
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
+    "masterSha256": "221fb20a7614da32024138d2efaf93e72e675d2c6ea5b7470e41f27d989de2f5",
     "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
-    "collisionSha256": "da8f1158a27cb7b28f35f76e585f9a8432c59aedc3d460ef3b36db21e577b58f",
-    "terrainRevision": "diagonal-spine-v1:3880d76114886d908c5d393f6c37c2306658ab7923e340e1af89bc3724f2182b"
+    "masterSha256": "221fb20a7614da32024138d2efaf93e72e675d2c6ea5b7470e41f27d989de2f5",
+    "collisionSha256": "2e6f8cc0d311606e4896fba8af24592a696e1082d0f0dac64f0a86aeafa22c46",
+    "terrainRevision": "diagonal-spine-v1:9270e045463fd2b3f3a3f294a3dcb491cc4696686b0b9deb26f29b13442c5b88"
   }
 }

@@ -62,6 +62,20 @@ def road_shore_constraints(world,active):
     return mask&active&~world.water['mask'],world.ferry_shore_target
 
 
+def refresh_shore_surroundings(world):
+    """Adopt the ground the support stages left around each fitted shore as its feather target.
+
+    The exact quay footprint keeps the heights the landing fit produced; only
+    the surrounding band is re-read, so a later road pass restores today's
+    bank rather than the one the fit saw before the support stages.
+    """
+    mask=getattr(world,'ferry_shore_mask',None)
+    if mask is None:return
+    around=distance_transform_edt(~mask,sampling=(world.z[1]-world.z[0],world.x[1]-world.x[0]))<FEATHER_METRES
+    refresh=around&~mask
+    world.ferry_shore_target[refresh]=world.height[refresh]
+
+
 def restore_graded_shores(world,active):
     """Restore the full fitted shore after roads/assembly/drainage postpasses."""
     mask=getattr(world,'ferry_shore_mask',None)

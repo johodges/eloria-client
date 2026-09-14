@@ -839,12 +839,12 @@
       "destination": "amethyst_barrens",
       "anchor": [
         -111.0,
-        28.343226514545826,
+        29.279641067856403,
         -170.0
       ],
       "globalAnchor": [
         1089.0,
-        28.343226514545826,
+        29.279641067856403,
         550.0
       ],
       "globalTranslation": [
@@ -3015,7 +3015,7 @@
     ],
     "geometryMode": "continent-chunks-v1"
   },
-  "terrainRevision": "diagonal-spine-v1:fe875358cf23b1c027393b486cf3449d6f4663be2d35733225db02249a1b42b5",
+  "terrainRevision": "diagonal-spine-v1:f08ae846c7e990ceec36fb6ad99bcb43cab4327da46ae0bba0b24b2c79869d57",
   "sources": [
     "_continent/diagonal-plan.json",
     "_continent/build_continent.py",
@@ -3027,13 +3027,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
+    "masterSha256": "221fb20a7614da32024138d2efaf93e72e675d2c6ea5b7470e41f27d989de2f5",
     "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
-    "collisionSha256": "aef1a1fa1600445cc7e89386216062c1631f6ebd5147a3705bb1d7bf859fe7cb",
-    "terrainRevision": "diagonal-spine-v1:fe875358cf23b1c027393b486cf3449d6f4663be2d35733225db02249a1b42b5"
+    "masterSha256": "221fb20a7614da32024138d2efaf93e72e675d2c6ea5b7470e41f27d989de2f5",
+    "collisionSha256": "4239cbaf5103d8c238f716b86d848227fdef56f9ad3f85fae72dc9897e3395ca",
+    "terrainRevision": "diagonal-spine-v1:f08ae846c7e990ceec36fb6ad99bcb43cab4327da46ae0bba0b24b2c79869d57"
   }
 }

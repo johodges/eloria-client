@@ -1,9 +1,9 @@
 {
   "bridges": {
     "components": 29,
-    "visibleCells": 25953,
-    "visibleTriangles": 91068,
-    "wetCells": 5148,
+    "visibleCells": 23725,
+    "visibleTriangles": 82781,
+    "wetCells": 5143,
     "approachCoverage": {
       "amberwood": {
         "requestedMetres": 42.0,
@@ -17,45 +17,19 @@
         "additionalCells": 539
       }
     },
-    "maximumBankErrorMetres": 0.11439338782536623,
+    "maximumBankErrorMetres": 0.11847499838187758,
     "maximumGrade": 0.65,
     "outlineMaximumInsetFraction": 0.008555138626189618,
-    "precisionCleanupAreaSquareMetres": 0.00014467726563035784,
+    "precisionCleanupAreaSquareMetres": 0.00014190682019765664,
     "supports": [
       {
         "component": 1,
-        "supportsBefore": 14,
-        "supportsAfter": 11,
-        "oldMaximumUnsupportedSpanEstimateMetres": 16.55294535724685,
-        "maximumUnsupportedSpanEstimateMetres": 16.55294535724685,
+        "supportsBefore": 4,
+        "supportsAfter": 4,
+        "oldMaximumUnsupportedSpanEstimateMetres": 11.631881128652047,
+        "maximumUnsupportedSpanEstimateMetres": 11.347478916057744,
         "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
         "piers": [
-          {
-            "planned": [
-              460.5,
-              316.5
-            ],
-            "position": [
-              460.5,
-              316.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 87.0039071966894,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              452.5,
-              332.5
-            ],
-            "position": [
-              452.5,
-              332.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 81.70783666684292,
-            "status": "supported"
-          },
           {
             "planned": [
               476.5,
@@ -66,7 +40,7 @@
               332.5
             ],
             "shiftMetres": 0.4,
-            "minimumDeck": 83.44271058682352,
+            "minimumDeck": 86.36990269552916,
             "status": "supported"
           },
           {
@@ -79,20 +53,7 @@
               332.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 83.44271058682352,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              452.5,
-              340.5
-            ],
-            "position": [
-              452.9,
-              340.5
-            ],
-            "shiftMetres": 0.4,
-            "minimumDeck": 78.03834498277865,
+            "minimumDeck": 86.57719066389836,
             "status": "supported"
           },
           {
@@ -105,21 +66,8 @@
               340.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 83.8499984741211,
+            "minimumDeck": 85.29332675226033,
             "status": "supported"
-          },
-          {
-            "planned": [
-              452.5,
-              348.5
-            ],
-            "position": [
-              452.5,
-              348.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 74.4670604067971,
-            "status": "grounded bank stub"
           },
           {
             "planned": [
@@ -131,93 +79,15 @@
               348.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 81.39055997459218,
+            "minimumDeck": 87.83887085854076,
             "status": "supported"
-          },
-          {
-            "planned": [
-              492.5,
-              364.5
-            ],
-            "position": [
-              492.5,
-              364.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 78.32269118074328,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              500.5,
-              372.5
-            ],
-            "position": [
-              500.5,
-              372.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 84.4244477446191,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              500.5,
-              380.5
-            ],
-            "position": [
-              500.5,
-              380.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 87.2453622748144,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              500.5,
-              388.5
-            ],
-            "position": [
-              500.5,
-              388.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 90.17479037540033,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              500.5,
-              396.5
-            ],
-            "position": [
-              500.5,
-              396.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 91.63089780928567,
-            "status": "grounded bank stub"
-          },
-          {
-            "planned": [
-              484.5,
-              420.5
-            ],
-            "position": [
-              484.9,
-              420.5
-            ],
-            "shiftMetres": 0.4,
-            "minimumDeck": 80.81120299773049,
-            "status": "grounded bank stub"
           }
         ]
       },
       {
         "component": 2,
         "supportsBefore": 3,
-        "supportsAfter": 3,
+        "supportsAfter": 2,
         "oldMaximumUnsupportedSpanEstimateMetres": 19.282259457471262,
         "maximumUnsupportedSpanEstimateMetres": 19.282259457471262,
         "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
@@ -232,8 +102,8 @@
               340.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 30.072833132813685,
-            "status": "supported"
+            "minimumDeck": 29.87174269359093,
+            "status": "grounded bank stub"
           },
           {
             "planned": [
@@ -903,26 +773,12 @@
       },
       {
         "component": 7,
-        "supportsBefore": 1,
-        "supportsAfter": 1,
-        "oldMaximumUnsupportedSpanEstimateMetres": 16.601894591207586,
-        "maximumUnsupportedSpanEstimateMetres": 16.601894591207586,
+        "supportsBefore": 0,
+        "supportsAfter": 0,
+        "oldMaximumUnsupportedSpanEstimateMetres": 14.319951723010883,
+        "maximumUnsupportedSpanEstimateMetres": 14.319951723010883,
         "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
-        "piers": [
-          {
-            "planned": [
-              1092.5,
-              556.5
-            ],
-            "position": [
-              1092.5,
-              556.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 29.254889878444374,
-            "status": "supported"
-          }
-        ]
+        "piers": []
       },
       {
         "component": 8,
@@ -1013,8 +869,8 @@
         "component": 10,
         "supportsBefore": 1,
         "supportsAfter": 1,
-        "oldMaximumUnsupportedSpanEstimateMetres": 11.701924273615688,
-        "maximumUnsupportedSpanEstimateMetres": 11.701924273615688,
+        "oldMaximumUnsupportedSpanEstimateMetres": 11.276413116327943,
+        "maximumUnsupportedSpanEstimateMetres": 11.276413116327943,
         "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
         "piers": [
           {
@@ -1057,10 +913,10 @@
       },
       {
         "component": 12,
-        "supportsBefore": 7,
-        "supportsAfter": 7,
-        "oldMaximumUnsupportedSpanEstimateMetres": 14.099369396318686,
-        "maximumUnsupportedSpanEstimateMetres": 14.099369396318686,
+        "supportsBefore": 5,
+        "supportsAfter": 5,
+        "oldMaximumUnsupportedSpanEstimateMetres": 11.879933185839052,
+        "maximumUnsupportedSpanEstimateMetres": 11.879933185839052,
         "spanMetric": "Twice maximum nearest-support/bank distance at emitted vertices and triangle centres; geometric spacing estimate",
         "piers": [
           {
@@ -1099,7 +955,7 @@
               876.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 67.44955065660179,
+            "minimumDeck": 69.7305513760075,
             "status": "supported"
           },
           {
@@ -1112,7 +968,7 @@
               884.1
             ],
             "shiftMetres": 0.565685424949238,
-            "minimumDeck": 64.40362701452705,
+            "minimumDeck": 66.21347054233775,
             "status": "supported"
           },
           {
@@ -1125,33 +981,7 @@
               884.5
             ],
             "shiftMetres": 0.0,
-            "minimumDeck": 63.98422472923994,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              796.5,
-              892.5
-            ],
-            "position": [
-              796.5,
-              892.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 60.36383746098727,
-            "status": "supported"
-          },
-          {
-            "planned": [
-              804.5,
-              900.5
-            ],
-            "position": [
-              804.5,
-              900.5
-            ],
-            "shiftMetres": 0.0,
-            "minimumDeck": 53.202119721099734,
+            "minimumDeck": 65.0796535667032,
             "status": "supported"
           }
         ]
@@ -5084,7 +4914,7 @@
         866.5,
         874.5
       ],
-      "maximumGrade": 0.5493904163336093,
+      "maximumGrade": 0.533996866163788,
       "maximumSupportHeight": 3.211160768884156,
       "contactLift": [
         0.025000000000005684,

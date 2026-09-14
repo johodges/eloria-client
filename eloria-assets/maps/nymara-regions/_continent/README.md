@@ -5,27 +5,22 @@ exported. X runs east, Z runs south, and sea level is Y = 0. Named territories
 are server and content identities. Their boundaries do not determine the
 height, water level, ground colour, or vegetation of the landscape.
 
-**QA state: thirteenth publication (2026-09-14), verified with one open live suite.**
-Master `120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1`
-(unchanged since the twelfth), publication
-`494ffb6089326c451030fd924d89418851b6f12eda86888e4fcc30194f90c6fa`
-(`work-output/diagonal-continent/after/thirteenth-freeze.json`), after origin/develop
-was merged into both branches and the frozen profile baseline advanced to it.
-On these bytes the strict contracts passed with 0 failures over 3,660
-placements, the full audit passed and verified the publication, the 24
-primary, 9 supplement and 2 atlas gameplay views were captured with the
-published registry and no overrides (`final-review/`, `final-repairs/`), and
-six of the seven native loopback suites walked their 168 routes with 0
-failures on a real server; the interior round-trip suite completed 12 of 72
-routes and then the machine was put to sleep for 75 minutes (the harness
-watchdog recorded the gap and the server closed the idle connection), while
-the same 72 routes walked with 0 failures on the twelfth publication,
-whose geometry this one shares (`after/live-walk/final-live-summary.json`).
-Known limitations are listed in `STATUS-2026-09-13-takeover.md`: road cores
-steeper than 0.65 that the server routes around, boats
-inside rigid assemblies not settled on water, and props that floated in their
-regional surveys keeping that offset. Any later change to a shaping or export
-source returns this notice to provisional until the same chain is repeated.
+**QA state: verified for the fourteenth publication (2026-09-14).** Master
+`221fb20a7614da32024138d2efaf93e72e675d2c6ea5b7470e41f27d989de2f5`, publication
+`9cbb8e62e74abefbfc061144cf89750f1f0825cc375a247186178d5ade102679`
+(`work-output/diagonal-continent/after/fourteenth-freeze.json`). On these bytes the
+strict contracts passed with 0 failures over 3,660 placements, the full audit
+passed and verified the publication, the 24 primary, 9 supplement and 2 atlas
+gameplay views were captured with the published registry and no overrides
+(`final-review/`, `final-repairs/`), and the seven native loopback suites
+walked 240 routes with 0 failures on a real server (`after/live-walk/
+final-live-summary.json`). Known limitations are listed in
+`STATUS-2026-09-13-takeover.md`: road cores steeper than 0.65 in settlement
+feathers and pinned city footings that the server routes around, twelve
+decorative hulls resting across a slope with no water within 12 m, and ramp
+heads meeting banks with angular facets. Any later change to
+a shaping or export source returns this notice to provisional until the same
+chain is repeated.
 
 `diagonal-plan.json` describes the coast, connected mountain chain, river
 catchments, islands, territory centres, and placement controls. `landscape.py`
@@ -73,6 +68,7 @@ Use these source responsibilities when changing the world:
 | `mirror_access_geometry.py` | Low stone bank ramps and the physical opening onto the sanctuary walkway. |
 | `mirror_lake_support.py`, `ssarathi_bank_support.py` | Containing lake shores and natural river banks fitted around retained walking floors. |
 | `manymouth_boats.py` | Actual hull contact with water or ground for independent decorative dugouts. |
+| `hull_settle.py` | Every other decorative watercraft, standalone or inside a rigid assembly, settled by rigid Y only onto the actual water surface or hauled up on the ground, with rigs and cargo standing within a hull following it. |
 | `amberwood_support.py`, `amberwood_access.py` | Woodland workyard paths, coherent camp layout and visible canopy/root entrance construction. |
 | `manymouth_access.py` | Visible tidal fishing boardwalks linking retained porches and the landing. |
 | `manymouth_village_streets.py` | Graded timber streets connecting the other delta hamlets to their actual porch floors. |
@@ -248,7 +244,7 @@ shaping modules (`landscape`, `world_layout`, `content`, `assemblies`,
 `mirror_support`, `manymouth_support`, `mirror_streets`, `four_gates_support`,
 `amberwood_support`, `amberwood_access`, `mirror_lake_support`,
 `ssarathi_bank_support`, `manymouth_boats`, `terrain_export`, `scene_io`,
-`grey_crossings`, `four_gates_sage`, `door_approaches`),
+`grey_crossings`, `four_gates_sage`, `door_approaches`, `hull_settle`),
 the composition algorithm, the authoritative
 entrance profile and each retained library certificate. A changed source must
 be recomposed rather than accepted by editing a certificate.

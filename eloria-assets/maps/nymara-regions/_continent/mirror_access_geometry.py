@@ -94,6 +94,21 @@ def existing_floor(world,content,x,z):
     return result
 
 
+def stone_texture():
+    """Coursed ashlar readable from the gameplay camera: two courses per metre, staggered joints."""
+    import io
+    from PIL import Image
+    x,y=np.meshgrid(np.arange(128),np.arange(128));course=y//32
+    block=(x+(course%2)*32)//64
+    tone=np.array([0,-6,4,-3])[(course*3+block)%4]
+    grain=3*np.sin(x*.31+course*2.1)+2*np.sin(y*.47+block*1.3)
+    joint=(y%32<2)|(((x+(course%2)*32)%64)<2)
+    rgb=np.stack([150+tone+grain,146+tone+grain,132+tone+grain],axis=-1)
+    rgb[joint]=[92,88,78]
+    output=io.BytesIO();Image.fromarray(np.uint8(np.clip(rgb,0,255))).save(output,format='PNG')
+    return output.getvalue()
+
+
 def ramp_mesh(world,content,start,stop,material,half_width=1.8):
     start,stop=np.asarray(start,float),np.asarray(stop,float)
     vector=stop-start;length=np.linalg.norm(vector);normal=np.array([-vector[1],vector[0]])/length
@@ -138,7 +153,9 @@ def foundation_faces(world,mesh,material):
 def build_mirror_access(world,content,path):
     opening=open_sanctuary_landing(content)
     builder=G.GltfBuilder('Eloria Mirrorhold bank access')
-    builder.add_material(G.Material('mirror_bank_stone',base_color=tuple(np.array([.58,.57,.51])**2.2)+(1.,),roughness=.95,double_sided=True))
+    # Coursed stone instead of one flat pale colour; the ramp UVs are metres.
+    builder.add_image('mirror_bank_ashlar',stone_texture())
+    builder.add_material(G.Material('mirror_bank_stone',base_color_texture='mirror_bank_ashlar',roughness=.95,double_sided=True))
     parts=[];reports=[]
     for name,start,stop in [('Quay',[968.5,814.5],[940.5,796.5]),
                             ('Sanctuary',[874.5,900.5],[866.5,874.5])]:

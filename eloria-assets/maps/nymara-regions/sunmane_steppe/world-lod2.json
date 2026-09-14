@@ -854,16 +854,16 @@
       "height": 2.1,
       "halfCellWidth": 0.5
     },
-    "walkableCells": 693835,
-    "walkableFraction": 0.276532,
-    "sourceGlbSha256": "d77b22dc2aeaa2032d374845d4be387c6126519851a017c3c1470129b37b8729",
+    "walkableCells": 693477,
+    "walkableFraction": 0.27639,
+    "sourceGlbSha256": "a841e60ddd54908747fb628a03f5414d26264c0a69dc5ad0138d01ace0fa2b99",
     "exportStatistics": {
       "walkMeshes": 10,
       "structuralMeshes": 698,
       "structuralTriangles": 140346,
-      "walkTriangles": 2588,
-      "steepCells": 31129,
-      "waterCells": 262355,
+      "walkTriangles": 2576,
+      "steepCells": 31503,
+      "waterCells": 262339,
       "structuralCells": 13111,
       "thresholdHaloCells": 152
     }
@@ -6352,7 +6352,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
+      "masterSha256": "221fb20a7614da32024138d2efaf93e72e675d2c6ea5b7470e41f27d989de2f5",
       "globalMin": [
         1010.0,
         228.0
@@ -8049,7 +8049,7 @@
       "name": "Road to Amethyst Barrens",
       "position": [
         -110.5,
-        28.275569003118086,
+        28.802343990555485,
         -171.5
       ],
       "serverTile": [

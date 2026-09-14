@@ -2,7 +2,7 @@
   "schema": 1,
   "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba",
   "entranceProfileSha256": "874627beb1c09d24ea6761924e59bb9bd569848bf92658b70083ddbf3cd0c0c9",
-  "compositionAlgorithmSha256": "c23497fb19f67add75e4237dee44464be6b74f4625dd755610a421bf6fb002fe",
+  "compositionAlgorithmSha256": "0f5efece02fa1f31feb6adcb38cb0870ecf48138b5aad90cf8d508e89b64e871",
   "library": {
     "whitehorn_range": "42e087f58943b5db56a4c42027ac3ef64b7681fdf4945d10893d0d5325f68ed9",
     "grey_moors": "909e457b10da47d0282067578931521d40c9a4d993bf5d7a3721f97ff24b4101",
@@ -22,29 +22,30 @@
     "eloria-assets\\maps\\nymara-regions\\_continent\\amberwood_support.py": "41baa364b83da706436961ad81a8377a33cd8825acfd65fdc3531149db1dd2a3",
     "eloria-assets\\maps\\nymara-regions\\_continent\\assemblies.py": "e82b4786be226739af59d3746aa3a05ae999a8ac9e2ddce2bb908ae6f79dd2f7",
     "eloria-assets\\maps\\nymara-regions\\_continent\\atlas_export.py": "a19b270692eb12e5bba7e8a63dc10888134d48b807af22afbc7a1ed6305f6799",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\audit_continent.py": "d62f8ca1de735a8abde3c34817c79121ddcc512878f09743191881604b2b97f9",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\audit_continent.py": "7e6f7d52bcc656ecf3262bae1a027815707ffdce4413ea57051ab75930cc132c",
     "eloria-assets\\maps\\nymara-regions\\_continent\\bridge_export.py": "0a80fc24106acb6a2e8b60a272b35692fbdb79c48c6407430cb4f9a812c8196d",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\build_continent.py": "884ec8f201247cc2e28a468517d2617d4f8d09f6dd849be6aad29b8c9a718e7b",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\build_continent.py": "afd96c5fb25d863968234f2cb033660026bfc7779101b42a19ff6296aa6a04b8",
     "eloria-assets\\maps\\nymara-regions\\_continent\\build_library.py": "0b97ef43268c4e08fa05884b1e781c34bb76d806ae3766a5ae8ed811e4374a08",
     "eloria-assets\\maps\\nymara-regions\\_continent\\build_pipeline.py": "0e6d5ec550a83b362834d4a12db2fc087bc72fdabfed4e06fb500a4a25e4dff8",
     "eloria-assets\\maps\\nymara-regions\\_continent\\collision_export.py": "7a360c964db0524b61892d200916344a0c2238cb31357b2dec1573c371038609",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\content.py": "0c1227902596d61538ffbe6b6e1f246f15af3ec33852bc8d204fa0a0699cb897",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\content.py": "30798fb6f6ba991f531d0a93bcc8803247aeec35d75b696c882fff63caa467c5",
     "eloria-assets\\maps\\nymara-regions\\_continent\\crossings.py": "330edbd6b57112e6c903963396c110e233393578da34dff33d4864ca237b50d2",
     "eloria-assets\\maps\\nymara-regions\\_continent\\crossing_contracts.py": "6b823b5e20895375129b7590e77f8d0de6d7093ebcab6191e6dbdbfb2702794f",
     "eloria-assets\\maps\\nymara-regions\\_continent\\crown_support.py": "b5b2ea4de9abb1bafca495bdf06f779b1ebb376b01ab9b4558e4a9e41945ae59",
     "eloria-assets\\maps\\nymara-regions\\_continent\\door_approaches.py": "9d956b702807777cba4dd2c4323e2e9cba196de1a261aa6369646bf99ccf9616",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\export_contracts.py": "62683d2bd85e2a6942eaa3e76b73a0e4ee792ede8d3bfb95684752068a292081",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\export_contracts.py": "5d67a076961add5a1d1f2b1e4e117fe8afa685339df1d7d5f1ed6f42a43e6b14",
     "eloria-assets\\maps\\nymara-regions\\_continent\\ferry_export.py": "b62c3920560a902fe1197c6e9b4a2fe8067948d4218a50db2f366e7ef7d38453",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\ferry_support.py": "ed9305d6a05f51a7b15529db6335d11e4fc70a3aaf14825135df19ac03c87828",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\ferry_support.py": "e1b5412e3a1737b6a5fafbbfaba3e53a626ddeef3807b1b4c507de5f2ddb2da9",
     "eloria-assets\\maps\\nymara-regions\\_continent\\four_gates_sage.py": "42c3527e73d59c31877027d8f443b2504d4b61d6ea360451223f6477ae4e5f1c",
     "eloria-assets\\maps\\nymara-regions\\_continent\\four_gates_support.py": "1abbdc9354f7a7b3e88f80b7f9a593adbea71a474c5e9bb6706b9b5c6ab55c45",
     "eloria-assets\\maps\\nymara-regions\\_continent\\grey_crossings.py": "46bf2b3f8227af2e01ba88dc68d7d80fedfc4ef9410dad3cba1edc1663256d2f",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\hull_settle.py": "4ba7b961e639afdfbf0fc7ef9c8e0b135b73d07b06b8428f3a2effb0b3c0736e",
     "eloria-assets\\maps\\nymara-regions\\_continent\\landscape.py": "2ac3d2bad8f7810c9c56bb2f190698909b7ffb4664e9885a10b196a3b0212c05",
     "eloria-assets\\maps\\nymara-regions\\_continent\\manymouth_access.py": "384d8da2abfc40895fe4dc64cbe8ffd7a2d1cbad98e573a2fa254895b3d65eb7",
     "eloria-assets\\maps\\nymara-regions\\_continent\\manymouth_boats.py": "f484f0804942fd52004e0991510978b3dafe93245e532a9d9552ff09a162c2bd",
     "eloria-assets\\maps\\nymara-regions\\_continent\\manymouth_support.py": "eae7acdb0aa0aeb0a714114ad769f807cb336118b1f6506ce02a59223d081380",
     "eloria-assets\\maps\\nymara-regions\\_continent\\manymouth_village_streets.py": "da0b44781e8a6202c7031ed36e34047e2c33abca5404c8500b7fbeac82f0e862",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\mirror_access_geometry.py": "c54bbde0f2b0861e4d232e961f2be84d5be59ec798c5a16306c03b8f42400e41",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\mirror_access_geometry.py": "0e80b614cc1215c9536e9930a47ef1921889414d17d103cd03572724e71bb2fe",
     "eloria-assets\\maps\\nymara-regions\\_continent\\mirror_lake_support.py": "a473fc8ce7add5b39fcf2ad564216405f92353f8649072ed9df6478185150fc2",
     "eloria-assets\\maps\\nymara-regions\\_continent\\mirror_streets.py": "fd503b08be603a28d478896937af2d550a39bc09a1982d4601d6e5fc58a2ed0d",
     "eloria-assets\\maps\\nymara-regions\\_continent\\mirror_support.py": "c14e24c8e135ebe77a5a4f5aed6e1fb1b05c7884239fa8e49da39ff00c4162e7",
@@ -52,9 +53,9 @@
     "eloria-assets\\maps\\nymara-regions\\_continent\\ssarathi_bank_support.py": "589ebd84cce3201908103c623b07fd0ae6b8c513a5d1c0acc070650e6ff81638",
     "eloria-assets\\maps\\nymara-regions\\_continent\\terrain_export.py": "8172b53f4fc2b65780120e68b945e86991aa8ea2f70e4bfa05a49af809cbccb6",
     "eloria-assets\\maps\\nymara-regions\\_continent\\westhaven_support.py": "9e69ff36cca87f91effdc72ee87ead30e23db76b93110323846580a26b15d19a",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\world_layout.py": "f9ec74a76d5cc89e4cddbd7763c62634963f0f3cf375dd6d8b74bd33dc17dd1b"
+    "eloria-assets\\maps\\nymara-regions\\_continent\\world_layout.py": "17f46c789b78bd6981b44dc4392cbe174f1c8beb4ae7dd156c2bfdbc48d1805e"
   },
-  "objects": 5125,
+  "objects": 5112,
   "roads": 306,
   "assemblies": {
     "amberwood.great-arch": {
@@ -2776,5 +2777,1267 @@
     },
     "policy": "A door inside a retained pavilion gets its road on the pavilion's open side; the retained floor carries the last metres."
   },
-  "elapsedSeconds": 201.9
+  "hullSettle": {
+    "hulls": [
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000568,
+        "maximumGroundClearance": 0.6688052182778534,
+        "terrainIntersectionVertices": 312,
+        "sourceToWorldY": 45.69886151789175,
+        "region": "grey_moors",
+        "node": "Prop_CoveBoat",
+        "assembly": null,
+        "deltaY": -9.696260559813794,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          179.611444,
+          465.672588
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000568,
+        "maximumGroundClearance": 0.9256312592603635,
+        "terrainIntersectionVertices": 298,
+        "sourceToWorldY": 17.892118279832804,
+        "region": "amberwood",
+        "node": "Prop_RowingBoat_0",
+        "assembly": null,
+        "deltaY": -1.9774670623975759,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          419.7734219999999,
+          638.384442
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000568,
+        "maximumGroundClearance": 0.9260708311538437,
+        "terrainIntersectionVertices": 303,
+        "sourceToWorldY": 17.69842144662219,
+        "region": "amberwood",
+        "node": "Prop_RowingBoat_1",
+        "assembly": null,
+        "deltaY": -5.428121107550215,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          417.463218,
+          640.251216
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000568,
+        "maximumGroundClearance": 0.9161297022915207,
+        "terrainIntersectionVertices": 314,
+        "sourceToWorldY": 17.575153985271456,
+        "region": "amberwood",
+        "node": "Prop_RowingBoat_2",
+        "assembly": null,
+        "deltaY": -5.317825454659356,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          419.7734219999999,
+          642.11799
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000568,
+        "maximumGroundClearance": 0.897054282477793,
+        "terrainIntersectionVertices": 309,
+        "sourceToWorldY": 17.37985241059306,
+        "region": "amberwood",
+        "node": "Prop_RowingBoat_3",
+        "assembly": null,
+        "deltaY": -9.940140687294711,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          417.463218,
+          643.984764
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000568,
+        "maximumGroundClearance": 0.881808670777982,
+        "terrainIntersectionVertices": 305,
+        "sourceToWorldY": 17.265218548087663,
+        "region": "amberwood",
+        "node": "Prop_RowingBoat_4",
+        "assembly": null,
+        "deltaY": -10.060968602235324,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          419.7734219999999,
+          645.851538
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000568,
+        "maximumGroundClearance": 0.8689909725092129,
+        "terrainIntersectionVertices": 291,
+        "sourceToWorldY": 16.14744974717759,
+        "region": "amberwood",
+        "node": "Prop_KelpBoat",
+        "assembly": null,
+        "deltaY": -0.5446076725980973,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          436.40676600000006,
+          664.98603
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000568,
+        "maximumGroundClearance": 2.240291598443065,
+        "terrainIntersectionVertices": 503,
+        "sourceToWorldY": 17.845442879071495,
+        "region": "amberwood",
+        "node": "Prop_HarbourPacket",
+        "assembly": null,
+        "deltaY": -7.290666544045511,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [
+          "Prop_PacketRig"
+        ],
+        "positionXZ": [
+          417.92521199999993,
+          642.584742
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000568,
+        "maximumGroundClearance": 0.6290804661059433,
+        "terrainIntersectionVertices": 354,
+        "sourceToWorldY": 24.91001580511619,
+        "region": "amethyst_barrens",
+        "node": "PacketTender",
+        "assembly": null,
+        "deltaY": -0.8948098140707401,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          1118.083916,
+          442.836118
+        ]
+      },
+      {
+        "mode": "afloat",
+        "footprintWaterCoverage": 1.0,
+        "waterLevelRange": [
+          80.0,
+          80.0
+        ],
+        "minimumGroundClearance": 0.2938994262542991,
+        "maximumGroundClearance": 1.3527120863463153,
+        "terrainIntersectionVertices": 295,
+        "sourceToWorldY": 80.0,
+        "region": "mirrorhold",
+        "node": "Prop_Boat_0",
+        "assembly": "mirrorhold.city",
+        "deltaY": 0.0,
+        "movedXZ": [
+          -3.4441508912858074,
+          8.31491579260158
+        ],
+        "movedMetres": 9.0,
+        "companions": [],
+        "positionXZ": [
+          922.2346491087142,
+          811.6022157926016
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000568,
+        "maximumGroundClearance": 5.442980823480994,
+        "terrainIntersectionVertices": 282,
+        "sourceToWorldY": 82.01187595536881,
+        "region": "mirrorhold",
+        "node": "Prop_Boat_1",
+        "assembly": "mirrorhold.city",
+        "deltaY": 2.011875955368808,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          940.6787999999999,
+          803.2873
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000568,
+        "maximumGroundClearance": 0.8777228029603208,
+        "terrainIntersectionVertices": 306,
+        "sourceToWorldY": 86.64736704461383,
+        "region": "mirrorhold",
+        "node": "Prop_Boat_2",
+        "assembly": "mirrorhold.city",
+        "deltaY": 6.64736704461383,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          955.6788,
+          803.2873
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000568,
+        "maximumGroundClearance": 4.812807839861563,
+        "terrainIntersectionVertices": 349,
+        "sourceToWorldY": 73.13867817086157,
+        "region": "mirrorhold",
+        "node": "Prop_PierSkiff_0",
+        "assembly": "mirrorhold.city",
+        "deltaY": -6.861321829138433,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          834.1788,
+          834.2818
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000568,
+        "maximumGroundClearance": 0.7896671634608197,
+        "terrainIntersectionVertices": 313,
+        "sourceToWorldY": 81.40302890426436,
+        "region": "mirrorhold",
+        "node": "Prop_PierSkiff_1",
+        "assembly": "mirrorhold.city",
+        "deltaY": 1.4030289042643602,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          953.1788,
+          834.2818
+        ]
+      },
+      {
+        "mode": "afloat",
+        "footprintWaterCoverage": 0.9999999999874054,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": 8.155092395303663,
+        "maximumGroundClearance": 18.35183057369622,
+        "terrainIntersectionVertices": 292,
+        "sourceToWorldY": 0.0,
+        "region": "westhaven",
+        "node": "Prop_Boat_00",
+        "assembly": "westhaven.lamp-island",
+        "deltaY": 0.0,
+        "movedXZ": [
+          4.898587196589413e-16,
+          8.0
+        ],
+        "movedMetres": 8.0,
+        "companions": [],
+        "positionXZ": [
+          252.07499999999996,
+          1160.275
+        ]
+      },
+      {
+        "mode": "afloat",
+        "footprintWaterCoverage": 1.0,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": 10.22892039010734,
+        "maximumGroundClearance": 20.256619033277644,
+        "terrainIntersectionVertices": 300,
+        "sourceToWorldY": 0.0,
+        "region": "westhaven",
+        "node": "Prop_Boat_01",
+        "assembly": "westhaven.lamp-island",
+        "deltaY": 0.0,
+        "movedXZ": [
+          2.678784026555629,
+          6.467156727579007
+        ],
+        "movedMetres": 7.0,
+        "companions": [],
+        "positionXZ": [
+          264.65378402655557,
+          1159.7321567275792
+        ]
+      },
+      {
+        "mode": "afloat",
+        "footprintWaterCoverage": 1.0,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": 3.4127639646836765,
+        "maximumGroundClearance": 7.551952715507784,
+        "terrainIntersectionVertices": 327,
+        "sourceToWorldY": 0.0,
+        "region": "westhaven",
+        "node": "Prop_Boat_02",
+        "assembly": "westhaven.harbour",
+        "deltaY": 0.0,
+        "movedXZ": [
+          -1.414213562373095,
+          1.4142135623730951
+        ],
+        "movedMetres": 2.0,
+        "companions": [],
+        "positionXZ": [
+          317.7407864376269,
+          1145.669213562373
+        ]
+      },
+      {
+        "mode": "afloat",
+        "footprintWaterCoverage": 1.0,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": 0.12276056569720574,
+        "maximumGroundClearance": 7.04592363615102,
+        "terrainIntersectionVertices": 299,
+        "sourceToWorldY": 0.0,
+        "region": "westhaven",
+        "node": "Prop_Boat_03",
+        "assembly": "westhaven.harbour",
+        "deltaY": 0.0,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          64.72500000000001,
+          1131.385
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000124,
+        "maximumGroundClearance": 1.2276777743900604,
+        "terrainIntersectionVertices": 319,
+        "sourceToWorldY": 0.015,
+        "region": "westhaven",
+        "node": "Prop_Boat_04",
+        "assembly": "westhaven.harbour",
+        "deltaY": 0.015,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          129.07500000000002,
+          1132.375
+        ]
+      },
+      {
+        "mode": "afloat",
+        "footprintWaterCoverage": 1.0,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": 6.688784536180133,
+        "maximumGroundClearance": 7.91276602219377,
+        "terrainIntersectionVertices": 295,
+        "sourceToWorldY": 0.0,
+        "region": "westhaven",
+        "node": "Prop_Boat_05",
+        "assembly": "westhaven.harbour",
+        "deltaY": 0.0,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          203.325,
+          1133.365
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000124,
+        "maximumGroundClearance": 2.8168839180066922,
+        "terrainIntersectionVertices": 726,
+        "sourceToWorldY": 3.261664973507109,
+        "region": "manymouth_delta",
+        "node": "MooredMarketBoat_0",
+        "assembly": "manymouth_delta.boardwalk-town",
+        "deltaY": 3.261664973507109,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          431.32000000000005,
+          1170.97
+        ]
+      },
+      {
+        "mode": "afloat",
+        "footprintWaterCoverage": 1.0,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": 0.15848867842085257,
+        "maximumGroundClearance": 3.4651347771160914,
+        "terrainIntersectionVertices": 978,
+        "sourceToWorldY": 0.0,
+        "region": "manymouth_delta",
+        "node": "MooredMarketBoat_2",
+        "assembly": "manymouth_delta.boardwalk-town",
+        "deltaY": 0.0,
+        "movedXZ": [
+          6.123233995736766e-16,
+          10.0
+        ],
+        "movedMetres": 10.0,
+        "companions": [],
+        "positionXZ": [
+          440.32000000000005,
+          1180.97
+        ]
+      },
+      {
+        "mode": "afloat",
+        "footprintWaterCoverage": 0.9999999999845324,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": 0.3619901681375368,
+        "maximumGroundClearance": 6.921633580692457,
+        "terrainIntersectionVertices": 538,
+        "sourceToWorldY": 0.0,
+        "region": "manymouth_delta",
+        "node": "MooredMarketBoat_3",
+        "assembly": "manymouth_delta.boardwalk-town",
+        "deltaY": 0.0,
+        "movedXZ": [
+          -1.148050297095271,
+          -2.7716385975338595
+        ],
+        "movedMetres": 3.0,
+        "companions": [],
+        "positionXZ": [
+          439.1719497029048,
+          1190.1983614024662
+        ]
+      },
+      {
+        "mode": "moored",
+        "footprintWaterCoverage": 0.9926102514145297,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": -0.5953196469539033,
+        "maximumGroundClearance": 2.328997285667461,
+        "terrainIntersectionVertices": 603,
+        "sourceToWorldY": 0.0,
+        "bankIntrusionMetres": 0.5953196469539033,
+        "region": "manymouth_delta",
+        "node": "MooredMarketBoat_4",
+        "assembly": "manymouth_delta.boardwalk-town",
+        "deltaY": 0.0,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          449.32000000000005,
+          1170.97
+        ]
+      },
+      {
+        "mode": "afloat",
+        "footprintWaterCoverage": 1.0,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": 1.4832548681912954,
+        "maximumGroundClearance": 6.92237507432071,
+        "terrainIntersectionVertices": 726,
+        "sourceToWorldY": 0.0,
+        "region": "manymouth_delta",
+        "node": "MooredMarketBoat_5",
+        "assembly": "manymouth_delta.boardwalk-town",
+        "deltaY": 0.0,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          449.32000000000005,
+          1192.97
+        ]
+      },
+      {
+        "mode": "afloat",
+        "footprintWaterCoverage": 1.0,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": 0.3196526275904157,
+        "maximumGroundClearance": 2.997274314984327,
+        "terrainIntersectionVertices": 983,
+        "sourceToWorldY": 0.0,
+        "region": "manymouth_delta",
+        "node": "MooredMarketBoat_6",
+        "assembly": "manymouth_delta.boardwalk-town",
+        "deltaY": 0.0,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          458.32000000000005,
+          1170.97
+        ]
+      },
+      {
+        "mode": "afloat",
+        "footprintWaterCoverage": 0.9999999999938216,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": 3.6278211050196756,
+        "maximumGroundClearance": 7.042073182312571,
+        "terrainIntersectionVertices": 978,
+        "sourceToWorldY": 0.0,
+        "region": "manymouth_delta",
+        "node": "MooredMarketBoat_7",
+        "assembly": "manymouth_delta.boardwalk-town",
+        "deltaY": 0.0,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          458.32000000000005,
+          1192.97
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.01499999999999968,
+        "maximumGroundClearance": 8.109208192357341,
+        "terrainIntersectionVertices": 513,
+        "sourceToWorldY": 4.767846078511033,
+        "region": "manymouth_delta",
+        "node": "PacketLateen",
+        "assembly": "manymouth_delta.boardwalk-town",
+        "deltaY": 4.767846078511033,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          547.32,
+          1170.97
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.01499999999999968,
+        "maximumGroundClearance": 4.181352087613636,
+        "terrainIntersectionVertices": 229,
+        "sourceToWorldY": 4.4608115629487655,
+        "region": "crownwater",
+        "node": "Prop_Boat_Harbour_0",
+        "assembly": "crownwater.causeway-city",
+        "deltaY": 4.4608115629487655,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          301.72281561391287,
+          1539.9764584847226
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.01499999999999968,
+        "maximumGroundClearance": 5.305204642226072,
+        "terrainIntersectionVertices": 266,
+        "sourceToWorldY": 4.509851028057512,
+        "region": "crownwater",
+        "node": "Prop_Boat_Harbour_1",
+        "assembly": "crownwater.causeway-city",
+        "deltaY": 4.509851028057512,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          310.646856385963,
+          1536.7189293138958
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.01499999999999968,
+        "maximumGroundClearance": 5.113005056782319,
+        "terrainIntersectionVertices": 225,
+        "sourceToWorldY": 4.410383727214777,
+        "region": "crownwater",
+        "node": "Prop_Boat_Harbour_2",
+        "assembly": "crownwater.causeway-city",
+        "deltaY": 4.410383727214777,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          319.57089715801305,
+          1533.461400143069
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.01499999999999968,
+        "maximumGroundClearance": 5.7331969050756175,
+        "terrainIntersectionVertices": 244,
+        "sourceToWorldY": 5.343444144651623,
+        "region": "crownwater",
+        "node": "Prop_Boat_Harbour_3",
+        "assembly": "crownwater.causeway-city",
+        "deltaY": 5.343444144651623,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          328.4949379300632,
+          1530.2038709722424
+        ]
+      },
+      {
+        "mode": "moored",
+        "footprintWaterCoverage": 0.7858504870667601,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": 2.6678912471778724,
+        "maximumGroundClearance": 8.288840135968103,
+        "terrainIntersectionVertices": 227,
+        "sourceToWorldY": 0.0,
+        "bankIntrusionMetres": -2.6678912471778724,
+        "region": "crownwater",
+        "node": "Prop_PacketBoat_north-quay",
+        "assembly": "crownwater.causeway-city",
+        "deltaY": 0.0,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          430.0,
+          1299.0
+        ]
+      },
+      {
+        "mode": "afloat",
+        "footprintWaterCoverage": 1.0,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": 3.675596500998961,
+        "maximumGroundClearance": 8.763711359102887,
+        "terrainIntersectionVertices": 240,
+        "sourceToWorldY": 0.0,
+        "region": "crownwater",
+        "node": "Prop_PacketBoat_north-quay-east",
+        "assembly": "crownwater.causeway-city",
+        "deltaY": 0.0,
+        "movedXZ": [
+          -5.54327719506772,
+          2.2961005941905395
+        ],
+        "movedMetres": 6.0,
+        "companions": [],
+        "positionXZ": [
+          434.45672280493227,
+          1301.2961005941906
+        ]
+      },
+      {
+        "mode": "afloat",
+        "footprintWaterCoverage": 0.9999999999983586,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": 0.32963146600055526,
+        "maximumGroundClearance": 6.178068261230884,
+        "terrainIntersectionVertices": 238,
+        "sourceToWorldY": 0.0,
+        "region": "crownwater",
+        "node": "Prop_PacketBoat_west-quay",
+        "assembly": "crownwater.causeway-city",
+        "deltaY": 0.0,
+        "movedXZ": [
+          -2.1213203435596424,
+          2.121320343559643
+        ],
+        "movedMetres": 3.0,
+        "companions": [],
+        "positionXZ": [
+          179.87867965644037,
+          1424.1213203435595
+        ]
+      },
+      {
+        "mode": "afloat",
+        "footprintWaterCoverage": 0.9999999999967173,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": 0.9550649995699066,
+        "maximumGroundClearance": 6.280570922668545,
+        "terrainIntersectionVertices": 197,
+        "sourceToWorldY": 0.0,
+        "region": "crownwater",
+        "node": "Prop_PacketBoat_west-quay-south",
+        "assembly": "crownwater.causeway-city",
+        "deltaY": 0.0,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          182.0,
+          1432.0
+        ]
+      },
+      {
+        "mode": "afloat",
+        "footprintWaterCoverage": 0.9999999999967173,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": 0.6779262440697694,
+        "maximumGroundClearance": 7.502398088373884,
+        "terrainIntersectionVertices": 185,
+        "sourceToWorldY": 0.0,
+        "region": "crownwater",
+        "node": "Prop_PacketBoat_south-quay",
+        "assembly": "crownwater.causeway-city",
+        "deltaY": 0.0,
+        "movedXZ": [
+          3.6739403974420594e-16,
+          6.0
+        ],
+        "movedMetres": 6.0,
+        "companions": [],
+        "positionXZ": [
+          307.0,
+          1676.0
+        ]
+      },
+      {
+        "mode": "afloat",
+        "footprintWaterCoverage": 1.0,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": 0.23621707004734208,
+        "maximumGroundClearance": 6.208729944535846,
+        "terrainIntersectionVertices": 225,
+        "sourceToWorldY": 0.0,
+        "region": "crownwater",
+        "node": "Prop_PacketBoat_south-quay-east",
+        "assembly": "crownwater.causeway-city",
+        "deltaY": 0.0,
+        "movedXZ": [
+          4.619397662556434,
+          1.913417161825449
+        ],
+        "movedMetres": 5.0,
+        "companions": [],
+        "positionXZ": [
+          321.6193976625564,
+          1671.9134171618255
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000568,
+        "maximumGroundClearance": 1.094311716510468,
+        "terrainIntersectionVertices": 271,
+        "sourceToWorldY": 63.65629768023131,
+        "region": "verdant_stair",
+        "node": "Boat_00",
+        "assembly": null,
+        "deltaY": -4.072073321622192,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          1031.43878,
+          1173.7412199999999
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000568,
+        "maximumGroundClearance": 0.931013169725162,
+        "terrainIntersectionVertices": 288,
+        "sourceToWorldY": 59.22734852490172,
+        "region": "verdant_stair",
+        "node": "Boat_01",
+        "assembly": null,
+        "deltaY": -5.095475121344684,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          1025.31812,
+          1171.31542
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000568,
+        "maximumGroundClearance": 1.862842930716667,
+        "terrainIntersectionVertices": 392,
+        "sourceToWorldY": 54.27756621965327,
+        "region": "verdant_stair",
+        "node": "Boat_02",
+        "assembly": null,
+        "deltaY": -8.055107734801446,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          1020.4680800000001,
+          1164.9982
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000568,
+        "maximumGroundClearance": 3.111400269164392,
+        "terrainIntersectionVertices": 320,
+        "sourceToWorldY": 58.23041775202136,
+        "region": "verdant_stair",
+        "node": "Boat_03",
+        "assembly": null,
+        "deltaY": -5.683461461294783,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          1019.0399,
+          1155.68266
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000568,
+        "maximumGroundClearance": 2.7374621127772514,
+        "terrainIntersectionVertices": 284,
+        "sourceToWorldY": 67.90313440725981,
+        "region": "verdant_stair",
+        "node": "Boat_04",
+        "assembly": null,
+        "deltaY": -1.3558333938235592,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          1022.5631599999999,
+          1145.33518
+        ]
+      },
+      {
+        "mode": "afloat",
+        "footprintWaterCoverage": 1.0,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": 1.2316837295149672,
+        "maximumGroundClearance": 2.2526725242909933,
+        "terrainIntersectionVertices": 291,
+        "sourceToWorldY": 0.0,
+        "region": "ssarathi_ruins",
+        "node": "MooredPunt_0",
+        "assembly": "ssarathi_ruins.ruin-city",
+        "deltaY": 0.0,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          1283.0,
+          1567.0
+        ]
+      },
+      {
+        "mode": "afloat",
+        "footprintWaterCoverage": 1.0,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": 2.067295754829266,
+        "maximumGroundClearance": 2.6979513477732553,
+        "terrainIntersectionVertices": 321,
+        "sourceToWorldY": 0.0,
+        "region": "ssarathi_ruins",
+        "node": "MooredPunt_1",
+        "assembly": "ssarathi_ruins.ruin-city",
+        "deltaY": 0.0,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          1026.0,
+          1596.0
+        ]
+      },
+      {
+        "mode": "afloat",
+        "footprintWaterCoverage": 1.0,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": 1.653475187401845,
+        "maximumGroundClearance": 3.437791180881583,
+        "terrainIntersectionVertices": 266,
+        "sourceToWorldY": 0.0,
+        "region": "ssarathi_ruins",
+        "node": "MooredPunt_2",
+        "assembly": "ssarathi_ruins.ruin-city",
+        "deltaY": 0.0,
+        "movedXZ": [
+          0.0,
+          0.0
+        ],
+        "movedMetres": 0.0,
+        "companions": [],
+        "positionXZ": [
+          1063.0,
+          1632.0
+        ]
+      }
+    ],
+    "skipped": [],
+    "afloat": 19,
+    "moored": 2,
+    "hauledUp": 25,
+    "movedToWater": [
+      {
+        "region": "mirrorhold",
+        "node": "Prop_Boat_0",
+        "metres": 9.0
+      },
+      {
+        "region": "westhaven",
+        "node": "Prop_Boat_00",
+        "metres": 8.0
+      },
+      {
+        "region": "westhaven",
+        "node": "Prop_Boat_01",
+        "metres": 7.0
+      },
+      {
+        "region": "westhaven",
+        "node": "Prop_Boat_02",
+        "metres": 2.0
+      },
+      {
+        "region": "manymouth_delta",
+        "node": "MooredMarketBoat_2",
+        "metres": 10.0
+      },
+      {
+        "region": "manymouth_delta",
+        "node": "MooredMarketBoat_3",
+        "metres": 3.0
+      },
+      {
+        "region": "crownwater",
+        "node": "Prop_PacketBoat_north-quay-east",
+        "metres": 6.0
+      },
+      {
+        "region": "crownwater",
+        "node": "Prop_PacketBoat_west-quay",
+        "metres": 3.0
+      },
+      {
+        "region": "crownwater",
+        "node": "Prop_PacketBoat_south-quay",
+        "metres": 6.0
+      },
+      {
+        "region": "crownwater",
+        "node": "Prop_PacketBoat_south-quay-east",
+        "metres": 5.0
+      }
+    ],
+    "restingOnSlopes": [
+      {
+        "region": "amberwood",
+        "node": "Prop_HarbourPacket",
+        "spreadMetres": 2.23
+      },
+      {
+        "region": "mirrorhold",
+        "node": "Prop_Boat_1",
+        "spreadMetres": 5.43
+      },
+      {
+        "region": "mirrorhold",
+        "node": "Prop_PierSkiff_0",
+        "spreadMetres": 4.8
+      },
+      {
+        "region": "manymouth_delta",
+        "node": "MooredMarketBoat_0",
+        "spreadMetres": 2.8
+      },
+      {
+        "region": "manymouth_delta",
+        "node": "PacketLateen",
+        "spreadMetres": 8.09
+      },
+      {
+        "region": "crownwater",
+        "node": "Prop_Boat_Harbour_0",
+        "spreadMetres": 4.17
+      },
+      {
+        "region": "crownwater",
+        "node": "Prop_Boat_Harbour_1",
+        "spreadMetres": 5.29
+      },
+      {
+        "region": "crownwater",
+        "node": "Prop_Boat_Harbour_2",
+        "spreadMetres": 5.1
+      },
+      {
+        "region": "crownwater",
+        "node": "Prop_Boat_Harbour_3",
+        "spreadMetres": 5.72
+      },
+      {
+        "region": "verdant_stair",
+        "node": "Boat_02",
+        "spreadMetres": 1.85
+      },
+      {
+        "region": "verdant_stair",
+        "node": "Boat_03",
+        "spreadMetres": 3.1
+      },
+      {
+        "region": "verdant_stair",
+        "node": "Boat_04",
+        "spreadMetres": 2.72
+      }
+    ],
+    "assemblyDeviations": 11,
+    "maximumMoveMetres": 10.060968602235324,
+    "policy": "Rigid translation: afloat on the actual water surface with a complete navigable footprint, moored at the water line with the hull edge against the bank when most of the footprint is water, otherwise hauled up on the ground; a hull hauled up across a slope moves to the nearest spot within 12 m where it floats level, if one exists; companions within a hull footprint follow it; gameplay-linked hulls untouched."
+  },
+  "roadGradingPasses": [
+    {
+      "pass": 1,
+      "respectsStandingGround": false,
+      "standingVertices": 0,
+      "corridorVertices": 69281,
+      "targetMaximumTriangleGrade": 0.45,
+      "fixedFootingVertices": 9223,
+      "conflictingFootingCorridorVertices": 3585,
+      "exceptions": "Original drainage beds and surveyed assembly support remain authoritative; exported collision and bridge tests verify actual traversability."
+    }
+  ],
+  "elapsedSeconds": 240.61
 }

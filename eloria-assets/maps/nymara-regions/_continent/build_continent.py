@@ -33,7 +33,7 @@ from terrain_export import partition_surface
 from crossings import prepare_contracts,apply_manifest
 from amberwood import gltf as G,mesh as M
 from continent_geography import polygon_rectangles,clip_owned_mesh
-SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py')
+SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py')
 
 
 def package(region):return MAPS/'four-gates' if region=='four_gates' else REGIONS/region
@@ -208,6 +208,8 @@ def prepare(library,output):
     content.reground()
     from manymouth_boats import apply_manymouth_boats
     apply_manymouth_boats(world,content)
+    from hull_settle import apply_hull_settle
+    apply_hull_settle(world,content)
     refresh_amberwood_access_heights(world,content)
     refresh_grey_crossing_heights(world,content)
     refresh_four_gates_sage_heights(world,content)
@@ -225,7 +227,7 @@ def prepare(library,output):
         'objects':len(content.objects),'roads':len(world.roads),'assemblies':content.assembly_records,
         'mirrorLakeSupport':world.mirror_lake_support,'ssarathiBankSupport':world.ssarathi_bank_support,
         'manymouthBoats':world.manymouth_boats,'greyCrossings':world.grey_crossings,'fourGatesSage':world.four_gates_sage,
-        'doorApproaches':world.door_approaches,
+        'doorApproaches':world.door_approaches,'hullSettle':world.hull_settle,'roadGradingPasses':world.road_grading_passes,
         'elapsedSeconds':round(time.monotonic()-started,2)})
     return world,content
 

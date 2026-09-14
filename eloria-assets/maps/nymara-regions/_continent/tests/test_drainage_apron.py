@@ -37,6 +37,21 @@ class DrainageApronTests(unittest.TestCase):
         self.assertEqual(report['conflictingHardVertices'],0)
         self.assertEqual(world.drainage_restoration['test'],report)
 
+    def test_a_graded_road_core_keeps_its_corridor_through_the_bank_apron(self):
+        world,water=self.make_world()
+        # A 4 m road runs along the bank inside the fully restored 10 m apron, rows 60..100 only.
+        core=(world.gx>=24)&(world.gx<=28)&(world.gz>=60)&(world.gz<=100)
+        world.roads=[{'id':'bank-road','points':[],'width':4.}]
+        world.road_distance=np.where(core,0.,np.inf)
+        with patch.object(W.L,'water_fields',return_value=water):
+            report=world.restore_drainage_corridor('roads')
+        np.testing.assert_array_equal(world.height[core],8.)
+        np.testing.assert_array_equal(world.height[water['river_mask']],0.)
+        # Away from the road the same bank is restored; beside it the restore fades within 8 m.
+        self.assertEqual(float(world.height[10,13]),0.)
+        self.assertTrue(0.<float(world.height[40,16])<8.)
+        self.assertGreater(report['roadCoreVertices'],0)
+
     def test_hard_footing_stays_exact_with_continuous_exclusion(self):
         world,water=self.make_world()
         hard=(world.gx>=34)&(world.gx<=42)&(world.gz>=72)&(world.gz<=88)
