@@ -2,7 +2,7 @@
   "schema": 1,
   "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba",
   "entranceProfileSha256": "874627beb1c09d24ea6761924e59bb9bd569848bf92658b70083ddbf3cd0c0c9",
-  "compositionAlgorithmSha256": "00bf3afabf5eeba651eb380df31ab83e23ce9a3dd7eaef50cde19f31756a64cc",
+  "compositionAlgorithmSha256": "e175d18b2379dcd8cd346fc8dbc15d34eb4e5a2031569b9bd3360c04485b7223",
   "library": {
     "whitehorn_range": "42e087f58943b5db56a4c42027ac3ef64b7681fdf4945d10893d0d5325f68ed9",
     "grey_moors": "909e457b10da47d0282067578931521d40c9a4d993bf5d7a3721f97ff24b4101",
@@ -22,18 +22,19 @@
     "eloria-assets\\maps\\nymara-regions\\_continent\\amberwood_support.py": "41baa364b83da706436961ad81a8377a33cd8825acfd65fdc3531149db1dd2a3",
     "eloria-assets\\maps\\nymara-regions\\_continent\\assemblies.py": "e82b4786be226739af59d3746aa3a05ae999a8ac9e2ddce2bb908ae6f79dd2f7",
     "eloria-assets\\maps\\nymara-regions\\_continent\\atlas_export.py": "a19b270692eb12e5bba7e8a63dc10888134d48b807af22afbc7a1ed6305f6799",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\audit_continent.py": "e0568bd475459f5c79aa792463a8c93ba6e04c521adf0b5981681c77c041589c",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\bridge_export.py": "0a80fc24106acb6a2e8b60a272b35692fbdb79c48c6407430cb4f9a812c8196d",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\build_continent.py": "1abcefb0e802da876fe04fbe243ea601678f0812a6b7fe4aecea50720d238cfb",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\audit_continent.py": "914ad4d7cb1b683404eb8394e4857ec5619d50dd3203694eba29c8c8369ec2c0",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\bridge_export.py": "96ccbf2ebd4f062a698b236e373c77ab9794c5cae3d8124910dcdef8be9f4026",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\build_continent.py": "f9876756b54c4e60a76b39e176e53e96c792f737fa0dc0ac929f6c0835c08a31",
     "eloria-assets\\maps\\nymara-regions\\_continent\\build_library.py": "0b97ef43268c4e08fa05884b1e781c34bb76d806ae3766a5ae8ed811e4374a08",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\build_pipeline.py": "e9f7aa4d628a04a50974b1318f5438822375a5805c426e0fe26e98281cf21f1e",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\build_pipeline.py": "0e6d5ec550a83b362834d4a12db2fc087bc72fdabfed4e06fb500a4a25e4dff8",
     "eloria-assets\\maps\\nymara-regions\\_continent\\collision_export.py": "7a360c964db0524b61892d200916344a0c2238cb31357b2dec1573c371038609",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\content.py": "1438f0a1056c7b26b5ac991a3f7c1199d72dc533ef65d31d69ef84b138c32baa",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\content.py": "0c1227902596d61538ffbe6b6e1f246f15af3ec33852bc8d204fa0a0699cb897",
     "eloria-assets\\maps\\nymara-regions\\_continent\\crossings.py": "330edbd6b57112e6c903963396c110e233393578da34dff33d4864ca237b50d2",
     "eloria-assets\\maps\\nymara-regions\\_continent\\crown_support.py": "b5b2ea4de9abb1bafca495bdf06f779b1ebb376b01ab9b4558e4a9e41945ae59",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\export_contracts.py": "42d05b60b618ab5eab22745e2399b5f1d24d5f3bc5d1e686dd71b726a02259d5",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\export_contracts.py": "ecb9cd206f1f0898f08df3711fb260f55e2b68811b805177b13d51876a069053",
     "eloria-assets\\maps\\nymara-regions\\_continent\\ferry_export.py": "b62c3920560a902fe1197c6e9b4a2fe8067948d4218a50db2f366e7ef7d38453",
     "eloria-assets\\maps\\nymara-regions\\_continent\\ferry_support.py": "ed9305d6a05f51a7b15529db6335d11e4fc70a3aaf14825135df19ac03c87828",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\four_gates_sage.py": "42c3527e73d59c31877027d8f443b2504d4b61d6ea360451223f6477ae4e5f1c",
     "eloria-assets\\maps\\nymara-regions\\_continent\\four_gates_support.py": "1abbdc9354f7a7b3e88f80b7f9a593adbea71a474c5e9bb6706b9b5c6ab55c45",
     "eloria-assets\\maps\\nymara-regions\\_continent\\grey_crossings.py": "46bf2b3f8227af2e01ba88dc68d7d80fedfc4ef9410dad3cba1edc1663256d2f",
     "eloria-assets\\maps\\nymara-regions\\_continent\\landscape.py": "2ac3d2bad8f7810c9c56bb2f190698909b7ffb4664e9885a10b196a3b0212c05",
@@ -2729,5 +2730,40 @@
       ]
     }
   },
-  "elapsedSeconds": 219.56
+  "fourGatesSage": {
+    "authoredPoints": {
+      "[240, 110]": [
+        549.5,
+        22.343976149994866,
+        888.5
+      ],
+      "[245, 118]": [
+        554.5,
+        22.343976149994866,
+        880.5
+      ],
+      "[236, 116]": [
+        545.5,
+        22.343976149994866,
+        882.5
+      ],
+      "[246, 108]": [
+        555.5,
+        22.343976149994866,
+        890.5
+      ],
+      "[246, 104]": [
+        555.5,
+        22.343976149994866,
+        894.5
+      ],
+      "[241, 104]": [
+        550.5,
+        22.343976149994866,
+        894.5
+      ]
+    },
+    "policy": "Six compact Sage records pinned 48 tiles from the arrival with their surveyed layout; placement resolves standing ground."
+  },
+  "elapsedSeconds": 202.58
 }

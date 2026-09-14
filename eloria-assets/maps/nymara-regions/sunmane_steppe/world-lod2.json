@@ -854,9 +854,9 @@
       "height": 2.1,
       "halfCellWidth": 0.5
     },
-    "walkableCells": 693775,
-    "walkableFraction": 0.276508,
-    "sourceGlbSha256": "cc96eb21bbd930fd22c465bfcc53662a7c7515cd8f7b875a9ac3104b87111947",
+    "walkableCells": 693835,
+    "walkableFraction": 0.276532,
+    "sourceGlbSha256": "e504bae17af8030da8bea394f6322350f6487eeb710abbdfd1c9f3c4e43d24e3",
     "exportStatistics": {
       "walkMeshes": 10,
       "structuralMeshes": 698,
@@ -864,7 +864,7 @@
       "walkTriangles": 2588,
       "steepCells": 31129,
       "waterCells": 262355,
-      "structuralCells": 13171,
+      "structuralCells": 13111,
       "thresholdHaloCells": 152
     }
   },
@@ -6352,7 +6352,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
+      "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
       "globalMin": [
         1010.0,
         228.0
@@ -6498,7 +6498,7 @@
         "count": 8,
         "center": [
           81.48375700498718,
-          42.99049471741747,
+          43.38628982996773,
           4.8860643323034765
         ],
         "radius": 12.0,
@@ -6515,7 +6515,7 @@
         "count": 7,
         "center": [
           -18.191647801104182,
-          28.2698709581136,
+          28.67453252234452,
           -139.84667724830047
         ],
         "radius": 12.0,
@@ -6668,7 +6668,7 @@
         "count": 3,
         "center": [
           -32.584993306250226,
-          27.903832066591487,
+          28.308493630822408,
           -135.83300310420896
         ],
         "radius": 3.0,
@@ -6736,7 +6736,7 @@
         "count": 6,
         "center": [
           117.79278574234627,
-          41.49771179909258,
+          42.31005553312978,
           -97.66420746514211
         ],
         "radius": 11.0,
@@ -9260,7 +9260,7 @@
       "kind": "mineral",
       "center": [
         -25.1093127860363,
-        27.721093378884994,
+        28.061093381865227,
         -157.01192507761687
       ],
       "extent": [
@@ -9284,7 +9284,7 @@
       "kind": "herb",
       "center": [
         -31.191647801104182,
-        28.150886881373566,
+        28.555548445604487,
         -139.84667724830047
       ],
       "extent": [

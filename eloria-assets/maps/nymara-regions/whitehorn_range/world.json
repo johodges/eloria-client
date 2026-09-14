@@ -182,9 +182,9 @@
       "height": 2.1,
       "halfCellWidth": 0.5
     },
-    "walkableCells": 226457,
-    "walkableFraction": 0.112943,
-    "sourceGlbSha256": "be84c6c55fc944a0dbe95ad041533b4d0a1886fbffab2dfc932d27353878defa",
+    "walkableCells": 226378,
+    "walkableFraction": 0.112904,
+    "sourceGlbSha256": "19ce91dbf0e96203f56220db2c09810b94c0f9460c6d4d3c328d099b03c0e6af",
     "exportStatistics": {
       "walkMeshes": 9,
       "structuralMeshes": 144,
@@ -192,7 +192,7 @@
       "walkTriangles": 7949,
       "steepCells": 261663,
       "waterCells": 271842,
-      "structuralCells": 3366,
+      "structuralCells": 3450,
       "thresholdHaloCells": 232
     }
   },
@@ -204,7 +204,8 @@
     "terrainConforming": true,
     "authority": "server",
     "defaultSpawn": "continent-arrival",
-    "collisionFile": "collision.bin"
+    "collisionFile": "collision.bin",
+    "crossings": []
   },
   "landmarks": [
     {
@@ -470,7 +471,7 @@
       "type": "transition",
       "position": [
         13.668919867535692,
-        154.59698668845476,
+        184.16224599727585,
         33.601356904890196
       ],
       "note": "The retained Mirrorhold march sign beside its grounded road station."
@@ -482,7 +483,7 @@
       "type": "waystation",
       "position": [
         19.58262851376378,
-        151.67387449988001,
+        181.2391338087011,
         34.782381519823616
       ]
     },
@@ -579,7 +580,7 @@
       "destinationSpawn": "horn-silver-hollow",
       "position": [
         77.39189691515287,
-        5.806270479050049,
+        6.90481181182458,
         -133.985797638198
       ],
       "authority": "server",
@@ -663,7 +664,7 @@
       "destinationSpawn": "horn-ram-pit",
       "position": [
         121.15353211251227,
-        3.858931218122116,
+        5.377424033532421,
         -97.396383240833
       ],
       "authority": "server",
@@ -705,7 +706,7 @@
       "destinationSpawn": "horn-cascade-spring",
       "position": [
         72.06836189139858,
-        6.236446769843177,
+        8.29761588500471,
         -131.11892825210745
       ],
       "authority": "server",
@@ -747,7 +748,7 @@
       "destinationSpawn": "horn-ice-well",
       "position": [
         -51.98904601820669,
-        58.123299102714505,
+        59.42144362615874,
         -80.03191205648113
       ],
       "authority": "server",
@@ -789,7 +790,7 @@
       "destinationSpawn": "horn-icebore",
       "position": [
         30.973365053950147,
-        4.009460270973122,
+        5.7467741839136295,
         -153.73161368212536
       ],
       "authority": "server",
@@ -810,7 +811,7 @@
       "destinationSpawn": "horn-waystone",
       "position": [
         -57.24573477396672,
-        3.2391946006632253,
+        3.498385547722755,
         -144.86246325855706
       ],
       "authority": "server",
@@ -831,7 +832,7 @@
       "destinationSpawn": "horn-temple-eyrie",
       "position": [
         48.9502767174165,
-        5.119777442837162,
+        7.055559149678373,
         -144.46525885293684
       ],
       "authority": "server",
@@ -852,7 +853,7 @@
       "destinationSpawn": "mirror-adit-far",
       "position": [
         124.65640624124671,
-        2.5440018675811658,
+        3.3638843387280772,
         -106.63946160120213
       ],
       "authority": "server",
@@ -958,14 +959,14 @@
       "name": "Cascade Watcher Ilun",
       "role": "dialogue",
       "serverTile": [
-        409,
-        334
+        414,
+        332
       ],
       "authority": "server",
       "position": [
-        47.5,
+        52.5,
         7.512730121612549,
-        -148.5
+        -146.5
       ]
     },
     {
@@ -2194,7 +2195,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
+      "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
       "globalMin": [
         192.0,
         0.0
@@ -4260,7 +4261,7 @@
       182.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:320ab69c41d8ae7665a2e349943e48374ec4bbeeeca49994f2ed8d2191797bc2",
+  "terrainRevision": "diagonal-spine-v1:22640a437186cd93f5b71c5b95c07f0117751e582123e94fae18ec68e344c966",
   "externalResources": {
     "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -4334,7 +4335,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
+    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
     "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba"
   },
   "streamingChunks": {
@@ -4702,9 +4703,9 @@
             68.0
           ]
         },
-        "estimatedResidentBytes": 42147520,
-        "glbBytes": 442844,
-        "geometryResidentBytes": 2214220,
+        "estimatedResidentBytes": 42147500,
+        "glbBytes": 442840,
+        "geometryResidentBytes": 2214200,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "a545ebc294647e97a941081dde15a9b610e40393f9fb417f7b523e787935e4b0": 1398102,
@@ -5318,12 +5319,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:320ab69c41d8ae7665a2e349943e48374ec4bbeeeca49994f2ed8d2191797bc2"
+    "terrainRevision": "diagonal-spine-v1:22640a437186cd93f5b71c5b95c07f0117751e582123e94fae18ec68e344c966"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
-    "collisionSha256": "9eba1d6b96bd57027c59514bbb386e67def093c28b7ed46f67f9ad72b7435ae1",
-    "terrainRevision": "diagonal-spine-v1:320ab69c41d8ae7665a2e349943e48374ec4bbeeeca49994f2ed8d2191797bc2"
+    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
+    "collisionSha256": "2a844ef25ec3d5ca191b5c9b85537b7a4976a37bc524405834d2645fc797899b",
+    "terrainRevision": "diagonal-spine-v1:22640a437186cd93f5b71c5b95c07f0117751e582123e94fae18ec68e344c966"
   }
 }

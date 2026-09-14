@@ -16,7 +16,7 @@
   "regions": {
     "whitehorn_range": {
       "nativeManifestSource": "eloria-assets/maps/nymara-regions/whitehorn_range/world.json",
-      "nativeManifestSha256": "c2904b0098e7343f025c0618a5415454601e861d01c2b316e5ee18f508930320",
+      "nativeManifestSha256": "48742b212b6a1d1b483e8f3d5788b1b564d927e9c7e8675a87b108d9bf8817ad",
       "translation": [
         550.0,
         0,
@@ -277,7 +277,7 @@
           "kind": "landmarks",
           "position": [
             13.668919867535692,
-            154.59698668845476,
+            184.16224599727585,
             33.601356904890196
           ],
           "radius": 3
@@ -287,7 +287,7 @@
           "kind": "landmarks",
           "position": [
             19.58262851376378,
-            151.67387449988001,
+            181.2391338087011,
             34.782381519823616
           ],
           "radius": 3
@@ -2234,7 +2234,7 @@
     },
     "grey_moors": {
       "nativeManifestSource": "eloria-assets/maps/nymara-regions/grey_moors/world.json",
-      "nativeManifestSha256": "b4323caa6d8c7f226415f408bfb3ceb8961d660e38f465589def7ac41b027f0e",
+      "nativeManifestSha256": "2aae38bd478ec6e9a1aa88464e7799fabc5ebb30a0e569fa32563e10d8a8ed0c",
       "translation": [
         220.0,
         0,
@@ -2385,7 +2385,7 @@
           "kind": "landmarks",
           "position": [
             21.849987768527626,
-            27.37784134292385,
+            27.887813693307645,
             -19.210137977073032
           ],
           "radius": 3
@@ -2975,7 +2975,7 @@
           "kind": "landmarks",
           "position": [
             116.50947949154926,
-            28.496622611221216,
+            29.299448713288765,
             72.6933329460756
           ],
           "radius": 3
@@ -4804,7 +4804,7 @@
     },
     "amberwood": {
       "nativeManifestSource": "eloria-assets/maps/nymara-regions/amberwood/world.json",
-      "nativeManifestSha256": "f7e3c8a80d7f26cd204c2645fb364bbdb6475bc00f468f9ddcce2222ab48301c",
+      "nativeManifestSha256": "9a66d040f6e800b249cc22c368b0ee78ae686e48fa58e1a3e28627667f85908b",
       "translation": [
         510.0,
         0,
@@ -5165,7 +5165,7 @@
           "kind": "landmarks",
           "position": [
             13.077295484542901,
-            20.12898323309945,
+            20.865927768574508,
             144.22890676160637
           ],
           "radius": 3
@@ -5235,7 +5235,7 @@
           "kind": "landmarks",
           "position": [
             149.2077556222829,
-            63.55893329618322,
+            64.0188124277055,
             -1.6590540594587537
           ],
           "radius": 3
@@ -5285,7 +5285,7 @@
           "kind": "landmarks",
           "position": [
             100.91973431106544,
-            60.48532139143213,
+            60.72922673877235,
             -11.370992624955534
           ],
           "radius": 3
@@ -7098,7 +7098,7 @@
     },
     "amethyst_barrens": {
       "nativeManifestSource": "eloria-assets/maps/nymara-regions/amethyst_barrens/world.json",
-      "nativeManifestSha256": "f19e54c11c76af68ff50631ed8b0310848a4c8d96ee5b111ff8b07926dd1e262",
+      "nativeManifestSha256": "e17bd3a783d61158989bbb827c3c37a0e42b136cd6683744b1702072066d7c64",
       "translation": [
         950.0,
         0,
@@ -10608,7 +10608,7 @@
     },
     "mirrorhold": {
       "nativeManifestSource": "eloria-assets/maps/nymara-regions/mirrorhold/world.json",
-      "nativeManifestSha256": "dbe5ef72e073f1b2ab9a23e09e069f9945d974eca01f915ab9262afc4b615b15",
+      "nativeManifestSha256": "315f784bc73983c4bcbc3562948333f4dd765cef86edf4bba9c0409d631aadee",
       "translation": [
         840.0,
         0,
@@ -13658,7 +13658,7 @@
     },
     "sunmane_steppe": {
       "nativeManifestSource": "eloria-assets/maps/nymara-regions/sunmane_steppe/world.json",
-      "nativeManifestSha256": "917d30b2e6f96b340fd380441b872d340d2b405b587511b8010c506c921162ba",
+      "nativeManifestSha256": "9fabc8c9c6633a837a70461468370971821ef94b53c1d4ca93219d2a9f14c6f1",
       "translation": [
         1200.0,
         0,
@@ -17074,7 +17074,7 @@
     },
     "four_gates": {
       "nativeManifestSource": "eloria-assets/maps/four-gates/world.json",
-      "nativeManifestSha256": "eb43489e3b9a68604dbb8e197efce3d41d648c9884ac3ce1181ef1f7300d16b3",
+      "nativeManifestSha256": "77484f40d5dc0f3de39d1226f9622bd78a3e2cd90b01a56602caa1eced045626",
       "translation": [
         530.0,
         0,
@@ -19010,7 +19010,7 @@
     },
     "westhaven": {
       "nativeManifestSource": "eloria-assets/maps/nymara-regions/westhaven/world.json",
-      "nativeManifestSha256": "07734b45873c40dcfceca1c79c7b5906aae88c1ab5853aeda29caa46e91641a4",
+      "nativeManifestSha256": "682f89fb8c28ca4dd20cece28e090e9bd1c815a3fd552e5e2afb571034a0ae39",
       "translation": [
         170.0,
         0,
@@ -19451,7 +19451,7 @@
           "kind": "landmarks",
           "position": [
             112.0,
-            13.15553398210545,
+            13.560006810000655,
             -154.13229643917225
           ],
           "radius": 3
@@ -20868,7 +20868,7 @@
     },
     "manymouth_delta": {
       "nativeManifestSource": "eloria-assets/maps/nymara-regions/manymouth_delta/world.json",
-      "nativeManifestSha256": "fbec7368b8545727d57fb68a5697a8debac419ef690c1e396c53951f8740f365",
+      "nativeManifestSha256": "079bf32d9aca06d55d1b7583c43356e1961472bec7d17e90b23d9a4c5373afd9",
       "translation": [
         520.0,
         0,
@@ -22844,7 +22844,7 @@
     },
     "crownwater": {
       "nativeManifestSource": "eloria-assets/maps/nymara-regions/crownwater/world.json",
-      "nativeManifestSha256": "248119741e8171cb880c9d2ef5e0ae988e210470e856bdeb46386323ab55dfc1",
+      "nativeManifestSha256": "211648a0ed168e5537351cd945b106fb3e9c195895eb03887ac5efc8d325c594",
       "translation": [
         290.0,
         0,
@@ -24566,7 +24566,7 @@
     },
     "verdant_stair": {
       "nativeManifestSource": "eloria-assets/maps/nymara-regions/verdant_stair/world.json",
-      "nativeManifestSha256": "7f4e5746391bff22ee453093f5dc2466d82ece042789aae4e9be84eaf40d2412",
+      "nativeManifestSha256": "ecd13b6730c78e3619f54ada40451a02c2e153792f27d3025865df40969b6ca4",
       "translation": [
         1100.0,
         0,
@@ -26204,7 +26204,7 @@
     },
     "ssarathi_ruins": {
       "nativeManifestSource": "eloria-assets/maps/nymara-regions/ssarathi_ruins/world.json",
-      "nativeManifestSha256": "50abe91835fb93ab13561330c13cd1ad5688e0a0dffd82fa0b8c02921a940b7e",
+      "nativeManifestSha256": "af142c2ff17d113c1445721c1638d49c711ec78f97271b67f1a3a58010f01c95",
       "translation": [
         1100.0,
         0,
@@ -28733,20 +28733,20 @@
     "source": "shared global grid before partition",
     "releaseRevision": "diagonal-spine-v1",
     "terrainRevisions": {
-      "whitehorn_range": "diagonal-spine-v1:320ab69c41d8ae7665a2e349943e48374ec4bbeeeca49994f2ed8d2191797bc2",
-      "grey_moors": "diagonal-spine-v1:59a434618807710eb2a540096a4a39c79c7971a3a0f2004c6fc14e97785db06b",
-      "amberwood": "diagonal-spine-v1:482a9149b05b0212427fe4743fea8d08fa3675465751460aaf54a2bd50088aa4",
-      "amethyst_barrens": "diagonal-spine-v1:acf313da73b4f6fac438eda155cafd0a33837c6755df479a6857f260797c9273",
+      "whitehorn_range": "diagonal-spine-v1:22640a437186cd93f5b71c5b95c07f0117751e582123e94fae18ec68e344c966",
+      "grey_moors": "diagonal-spine-v1:c9fc019a60e438022714d94e630e5aec0f7bd65c60b194cf785bced7aab13750",
+      "amberwood": "diagonal-spine-v1:9ca4fa75c880c7588d641ff5308d59a0ca376bfb9fc3148f1523811275338ccb",
+      "amethyst_barrens": "diagonal-spine-v1:1a18d0f1ae12594e0264a13e58d1c3574949097e3182b9c7e1ceee46115528d7",
       "mirrorhold": "diagonal-spine-v1:df64978354e910a80e617f75acd5c25e9d0cdec71ba606284207a4309959a8a9",
-      "sunmane_steppe": "diagonal-spine-v1:cdc649e7078d8e0295a808c62cdb8de71f09aa75bcbbc19968eb5eba03625a41",
-      "four_gates": "diagonal-spine-v1:0b016dae00b51277d50e5e2ca8bf49f7bf9fa7cb9188f66bcbd4c5d4ee9874b0",
-      "westhaven": "diagonal-spine-v1:97057d701e1a9f9a6cf086c496025603be3532c4ce5d2a6e822f321909ebc10d",
-      "manymouth_delta": "diagonal-spine-v1:8ad3d15929d8f79282ed7d7854c7296ea26645058b06efaca626b28d5cbbb085",
+      "sunmane_steppe": "diagonal-spine-v1:8520b1a286ff9fb80e2d777876d795199b1bb94faaa6aca817e6e19797a88ee2",
+      "four_gates": "diagonal-spine-v1:4efc0d56e3511b2e12dab7f0603b60e7a1ea8289f8cf190b92f4d25b1ad9e60b",
+      "westhaven": "diagonal-spine-v1:6a8b0f69e21200ab23bbb340244e30f0f8f97dcbc35afd6a6acae538b6d88eb5",
+      "manymouth_delta": "diagonal-spine-v1:e9d5e9433dcfc8897e25d94f7b953a6b9ad6698e49c08bd9b17cd0a6e18c01bd",
       "crownwater": "diagonal-spine-v1:75460c482d527cf643de6f5485c431d59235b4ad58b5b0047b69ba0466508a40",
-      "verdant_stair": "diagonal-spine-v1:ebe3a503434da2c06262531e9e02f096adb2d5346bbe8ed285fe705101b06c03",
+      "verdant_stair": "diagonal-spine-v1:d42e9e2ea6407aed0980c83af32ce654f54ef5c495283662d42d04998986e6e5",
       "ssarathi_ruins": "diagonal-spine-v1:720590d63cc6f6a7f80adc8dfdc007ff2d933e4a9cd26f1439f56ebbed523e5c"
     },
     "sharedSurfaceSha256": "110424539f6a3067fcd6cd96f88f14299a970a6fbd655d84edb598fa42be856d",
-    "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec"
+    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f"
   }
 }

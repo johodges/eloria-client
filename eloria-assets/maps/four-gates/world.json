@@ -1230,13 +1230,13 @@
       "id": "wayside-sage-01",
       "resource": "wayside-sage",
       "position": [
-        37.5,
+        19.5,
         22.343976974487305,
-        84.5
+        48.5
       ],
       "serverTile": [
-        347,
-        79
+        329,
+        115
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1246,13 +1246,13 @@
       "id": "wayside-sage-02",
       "resource": "wayside-sage",
       "position": [
-        42.5,
+        24.5,
         22.343976974487305,
-        76.5
+        40.5
       ],
       "serverTile": [
-        352,
-        87
+        334,
+        123
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1262,13 +1262,13 @@
       "id": "wayside-sage-03",
       "resource": "wayside-sage",
       "position": [
-        33.5,
+        15.5,
         22.343976974487305,
-        78.5
+        42.5
       ],
       "serverTile": [
-        343,
-        85
+        325,
+        121
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1566,13 +1566,13 @@
       "id": "wayside-sage-04",
       "resource": "wayside-sage",
       "position": [
-        43.5,
-        22.329008102416992,
-        86.5
+        25.5,
+        22.343976974487305,
+        50.5
       ],
       "serverTile": [
-        353,
-        77
+        335,
+        113
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1582,13 +1582,13 @@
       "id": "wayside-sage-05",
       "resource": "wayside-sage",
       "position": [
-        43.5,
-        21.82691192626953,
-        89.5
+        25.5,
+        22.343976974487305,
+        54.5
       ],
       "serverTile": [
-        353,
-        74
+        335,
+        109
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1598,13 +1598,13 @@
       "id": "wayside-sage-06",
       "resource": "wayside-sage",
       "position": [
-        38.5,
-        22.151851654052734,
-        90.5
+        20.5,
+        22.343976974487305,
+        54.5
       ],
       "serverTile": [
-        348,
-        73
+        330,
+        109
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -2072,7 +2072,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
+      "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
       "globalMin": [
         224.0,
         684.0
@@ -2223,7 +2223,24 @@
     "terrainConforming": true,
     "authority": "server",
     "defaultSpawn": "continent-arrival",
-    "collisionFile": "collision.bin"
+    "collisionFile": "collision.bin",
+    "crossings": [
+      {
+        "id": "ContinentalBridgeUnion_013",
+        "endpoints": [
+          [
+            -155.7,
+            6.743521573036158,
+            20.7
+          ],
+          [
+            -159.7,
+            5.975078457743665,
+            54.7
+          ]
+        ]
+      }
+    ]
   },
   "performance": {
     "glbBytes": 7819016,
@@ -4297,7 +4314,7 @@
     ],
     "geometryMode": "continent-chunks-v1"
   },
-  "terrainRevision": "diagonal-spine-v1:0b016dae00b51277d50e5e2ca8bf49f7bf9fa7cb9188f66bcbd4c5d4ee9874b0",
+  "terrainRevision": "diagonal-spine-v1:4efc0d56e3511b2e12dab7f0603b60e7a1ea8289f8cf190b92f4d25b1ad9e60b",
   "externalResources": {
     "../nymara-regions/_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../nymara-regions/_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -4412,7 +4429,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
+    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
     "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba"
   },
   "streamingChunks": {
@@ -5569,12 +5586,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:0b016dae00b51277d50e5e2ca8bf49f7bf9fa7cb9188f66bcbd4c5d4ee9874b0"
+    "terrainRevision": "diagonal-spine-v1:4efc0d56e3511b2e12dab7f0603b60e7a1ea8289f8cf190b92f4d25b1ad9e60b"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
+    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
     "collisionSha256": "8afb19df6918221695c48839dfafe55801b533b527a1f949c5cf109fdf8fe677",
-    "terrainRevision": "diagonal-spine-v1:0b016dae00b51277d50e5e2ca8bf49f7bf9fa7cb9188f66bcbd4c5d4ee9874b0"
+    "terrainRevision": "diagonal-spine-v1:4efc0d56e3511b2e12dab7f0603b60e7a1ea8289f8cf190b92f4d25b1ad9e60b"
   }
 }

@@ -100,7 +100,39 @@
     ],
     "terrainConforming": true,
     "authority": "server",
-    "defaultSpawn": "continent-arrival"
+    "defaultSpawn": "continent-arrival",
+    "crossings": [
+      {
+        "id": "ContinentalBridgeUnion_006",
+        "endpoints": [
+          [
+            -133.7,
+            26.09791883380838,
+            -16.3
+          ],
+          [
+            -24.7,
+            13.994557858911278,
+            148.7
+          ]
+        ]
+      },
+      {
+        "id": "ContinentalBridgeUnion_009",
+        "endpoints": [
+          [
+            -3.7,
+            39.44994578666569,
+            107.7
+          ],
+          [
+            62.3,
+            24.549641988806528,
+            137.7
+          ]
+        ]
+      }
+    ]
   },
   "environment": {
     "sky": {
@@ -1666,7 +1698,7 @@
       -156.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:482a9149b05b0212427fe4743fea8d08fa3675465751460aaf54a2bd50088aa4",
+  "terrainRevision": "diagonal-spine-v1:9ca4fa75c880c7588d641ff5308d59a0ca376bfb9fc3148f1523811275338ccb",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -1679,13 +1711,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
+    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
     "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
-    "collisionSha256": "4132df6245123dc1e236c1421b863c2886486f34677e7fdc95d623a605a78575",
-    "terrainRevision": "diagonal-spine-v1:482a9149b05b0212427fe4743fea8d08fa3675465751460aaf54a2bd50088aa4"
+    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
+    "collisionSha256": "98ff37cdd03a9777cb7a949329a9799b2b789b81e5e93aef8dff1ab7502ec6b7",
+    "terrainRevision": "diagonal-spine-v1:9ca4fa75c880c7588d641ff5308d59a0ca376bfb9fc3148f1523811275338ccb"
   }
 }

@@ -111,7 +111,39 @@
     ],
     "terrainConforming": true,
     "authority": "server",
-    "defaultSpawn": "continent-arrival"
+    "defaultSpawn": "continent-arrival",
+    "crossings": [
+      {
+        "id": "ContinentalBridgeUnion_019",
+        "endpoints": [
+          [
+            -63.7,
+            8.425,
+            46.7
+          ],
+          [
+            -129.7,
+            13.948954518459008,
+            104.7
+          ]
+        ]
+      },
+      {
+        "id": "ContinentalBridgeUnion_022",
+        "endpoints": [
+          [
+            -25.7,
+            10.547792888049877,
+            131.7
+          ],
+          [
+            -16.7,
+            12.225369462696111,
+            145.7
+          ]
+        ]
+      }
+    ]
   },
   "streamingBorders": [
     {
@@ -1849,7 +1881,7 @@
       -4.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:97057d701e1a9f9a6cf086c496025603be3532c4ce5d2a6e822f321909ebc10d",
+  "terrainRevision": "diagonal-spine-v1:6a8b0f69e21200ab23bbb340244e30f0f8f97dcbc35afd6a6acae538b6d88eb5",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/34bfe9afef5484824ff7d670ae779edda8e8ea9e86183c4c0c75de066583480c.png": "34bfe9afef5484824ff7d670ae779edda8e8ea9e86183c4c0c75de066583480c",
@@ -1904,13 +1936,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
+    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
     "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
+    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
     "collisionSha256": "e6516b124e849c849e381dc785d92f9ea80d4267a3bcb2d026a6a97b53313cdc",
-    "terrainRevision": "diagonal-spine-v1:97057d701e1a9f9a6cf086c496025603be3532c4ce5d2a6e822f321909ebc10d"
+    "terrainRevision": "diagonal-spine-v1:6a8b0f69e21200ab23bbb340244e30f0f8f97dcbc35afd6a6acae538b6d88eb5"
   }
 }

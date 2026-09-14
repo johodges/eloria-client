@@ -439,9 +439,9 @@
       "height": 2.1,
       "halfCellWidth": 0.5
     },
-    "walkableCells": 266204,
-    "walkableFraction": 0.337589,
-    "sourceGlbSha256": "c95e744b778f539e07f0927d04c91a908348f7da578eb0efcb948faddad05be0",
+    "walkableCells": 266054,
+    "walkableFraction": 0.337399,
+    "sourceGlbSha256": "afaf7c37dfd256d522152b752214ec7a83aff740acda1141aa9d810853edc4f4",
     "exportStatistics": {
       "walkMeshes": 36,
       "structuralMeshes": 656,
@@ -449,7 +449,7 @@
       "walkTriangles": 42969,
       "steepCells": 95694,
       "waterCells": 26089,
-      "structuralCells": 19381,
+      "structuralCells": 19610,
       "thresholdHaloCells": 256
     }
   },
@@ -461,7 +461,39 @@
     "terrainConforming": true,
     "authority": "server",
     "defaultSpawn": "continent-arrival",
-    "collisionFile": "collision.bin"
+    "collisionFile": "collision.bin",
+    "crossings": [
+      {
+        "id": "ContinentalBridgeUnion_006",
+        "endpoints": [
+          [
+            -133.7,
+            26.09791883380838,
+            -16.3
+          ],
+          [
+            -24.7,
+            13.994557858911278,
+            148.7
+          ]
+        ]
+      },
+      {
+        "id": "ContinentalBridgeUnion_009",
+        "endpoints": [
+          [
+            -3.7,
+            39.44994578666569,
+            107.7
+          ],
+          [
+            62.3,
+            24.549641988806528,
+            137.7
+          ]
+        ]
+      }
+    ]
   },
   "landmarks": [
     {
@@ -830,7 +862,7 @@
       "type": "agriculture",
       "position": [
         13.077295484542901,
-        20.12898323309945,
+        20.865927768574508,
         144.22890676160637
       ]
     },
@@ -907,7 +939,7 @@
       "type": "battlefield",
       "position": [
         149.2077556222829,
-        63.55893329618322,
+        64.0188124277055,
         -1.6590540594587537
       ]
     },
@@ -962,7 +994,7 @@
       "type": "old-growth",
       "position": [
         100.91973431106544,
-        60.48532139143213,
+        60.72922673877235,
         -11.370992624955534
       ]
     },
@@ -1660,7 +1692,7 @@
       "destinationSpawn": "amber-resin-hollow",
       "position": [
         -64.63335273747867,
-        39.33392530453079,
+        39.70516686600257,
         -73.09169704706255
       ],
       "authority": "server",
@@ -1744,7 +1776,7 @@
       "destinationSpawn": "amber-boar-run",
       "position": [
         89.6113664760087,
-        112.46862464674506,
+        112.78174512334857,
         -110.12841396973317
       ],
       "authority": "server",
@@ -1765,7 +1797,7 @@
       "destinationSpawn": "amber-grove-school",
       "position": [
         -42.16377047029221,
-        64.32339707194062,
+        64.73688238407752,
         -85.65198887859071
       ],
       "authority": "server",
@@ -1786,7 +1818,7 @@
       "destinationSpawn": "amber-warm-spring",
       "position": [
         16.77261812101085,
-        100.20891248040547,
+        101.24117124568059,
         -107.29449663246209
       ],
       "authority": "server",
@@ -1892,7 +1924,7 @@
       "destinationSpawn": "amber-undercut",
       "position": [
         138.107280743425,
-        107.6751952614932,
+        107.98793669725943,
         -63.60785823644983
       ],
       "authority": "server",
@@ -1913,7 +1945,7 @@
       "destinationSpawn": "amber-waystone",
       "position": [
         -33.820229609963064,
-        47.99699398373275,
+        48.57388191818472,
         34.910191555301026
       ],
       "authority": "server",
@@ -1956,7 +1988,7 @@
       "destinationSpawn": "haven-smuggle-far",
       "position": [
         -73.54063873021323,
-        18.4029853335274,
+        20.54619601662516,
         102.65458544410478
       ],
       "authority": "server",
@@ -2048,13 +2080,13 @@
       "name": "Timber Reeve",
       "type": "npc",
       "position": [
-        101.5,
-        35.1325798034668,
-        118.5
+        104.5,
+        37.04667282104492,
+        120.5
       ],
       "serverTile": [
-        343,
-        51
+        346,
+        49
       ],
       "authority": "server"
     },
@@ -2754,13 +2786,13 @@
       "resource": "charcoal",
       "category": "fuel",
       "position": [
-        97.5,
-        35.602439880371094,
-        93.5
+        114.5,
+        61.62989807128906,
+        95.5
       ],
       "serverTile": [
-        339,
-        76
+        356,
+        74
       ],
       "authority": "server"
     },
@@ -3200,7 +3232,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
+      "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
       "globalMin": [
         272.0,
         366.0
@@ -3219,7 +3251,7 @@
     }
   },
   "performance": {
-    "glbBytes": 13517604,
+    "glbBytes": 13517600,
     "nodes": 2906,
     "meshes": 443,
     "externalResources": {
@@ -4754,7 +4786,7 @@
       166.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:482a9149b05b0212427fe4743fea8d08fa3675465751460aaf54a2bd50088aa4",
+  "terrainRevision": "diagonal-spine-v1:9ca4fa75c880c7588d641ff5308d59a0ca376bfb9fc3148f1523811275338ccb",
   "externalResources": {
     "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -4847,7 +4879,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
+    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
     "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba"
   },
   "streamingChunks": {
@@ -5166,9 +5198,9 @@
             46.3504226425739
           ]
         },
-        "estimatedResidentBytes": 65182530,
-        "glbBytes": 2655596,
-        "geometryResidentBytes": 13277980,
+        "estimatedResidentBytes": 65182550,
+        "glbBytes": 2655600,
+        "geometryResidentBytes": 13278000,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -5535,9 +5567,9 @@
             148.0
           ]
         },
-        "estimatedResidentBytes": 50178618,
-        "glbBytes": 843200,
-        "geometryResidentBytes": 4216000,
+        "estimatedResidentBytes": 50178598,
+        "glbBytes": 843196,
+        "geometryResidentBytes": 4215980,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -5757,7 +5789,7 @@
         "bounds": {
           "min": [
             61.83552415760346,
-            24.011112050147194,
+            25.700731414093383,
             32.204856548512225
           ],
           "max": [
@@ -5766,9 +5798,9 @@
             137.00109793285117
           ]
         },
-        "estimatedResidentBytes": 52427676,
-        "glbBytes": 2079444,
-        "geometryResidentBytes": 10397220,
+        "estimatedResidentBytes": 52427656,
+        "glbBytes": 2079440,
+        "geometryResidentBytes": 10397200,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -5886,13 +5918,13 @@
           ],
           "max": [
             198.0,
-            171.21589339563172,
+            171.48638880049145,
             -60.0
           ]
         },
-        "estimatedResidentBytes": 3399272,
-        "glbBytes": 33232,
-        "geometryResidentBytes": 166160,
+        "estimatedResidentBytes": 3399292,
+        "glbBytes": 33236,
+        "geometryResidentBytes": 166180,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "3c6d723b621fbc18f296c19362b666ff1803a213ab092a438d7dde7399dec288": 1398102,
@@ -5923,12 +5955,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:482a9149b05b0212427fe4743fea8d08fa3675465751460aaf54a2bd50088aa4"
+    "terrainRevision": "diagonal-spine-v1:9ca4fa75c880c7588d641ff5308d59a0ca376bfb9fc3148f1523811275338ccb"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
-    "collisionSha256": "4132df6245123dc1e236c1421b863c2886486f34677e7fdc95d623a605a78575",
-    "terrainRevision": "diagonal-spine-v1:482a9149b05b0212427fe4743fea8d08fa3675465751460aaf54a2bd50088aa4"
+    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
+    "collisionSha256": "98ff37cdd03a9777cb7a949329a9799b2b789b81e5e93aef8dff1ab7502ec6b7",
+    "terrainRevision": "diagonal-spine-v1:9ca4fa75c880c7588d641ff5308d59a0ca376bfb9fc3148f1523811275338ccb"
   }
 }

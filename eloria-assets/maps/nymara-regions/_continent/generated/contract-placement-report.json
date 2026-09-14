@@ -1990,14 +1990,14 @@
         267
       ],
       "tile": [
-        429,
-        288
+        428,
+        289
       ],
       "expectedTile": [
         428.756,
         287.918
       ],
-      "displacementMetres": 0.258,
+      "displacementMetres": 1.32,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -2210,14 +2210,14 @@
         267
       ],
       "tile": [
-        429,
-        288
+        428,
+        289
       ],
       "expectedTile": [
         428.756,
         287.918
       ],
-      "displacementMetres": 0.258,
+      "displacementMetres": 1.32,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -3706,14 +3706,14 @@
         342
       ],
       "tile": [
-        174,
+        173,
         244
       ],
       "expectedTile": [
         174.943,
         242.544
       ],
-      "displacementMetres": 1.735,
+      "displacementMetres": 2.428,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -3773,13 +3773,13 @@
       ],
       "tile": [
         259,
-        276
+        275
       ],
       "expectedTile": [
         259.05,
         275.692
       ],
-      "displacementMetres": 0.312,
+      "displacementMetres": 0.694,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -3838,14 +3838,14 @@
         342
       ],
       "tile": [
-        174,
+        173,
         244
       ],
       "expectedTile": [
         174.943,
         242.544
       ],
-      "displacementMetres": 1.735,
+      "displacementMetres": 2.428,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -3971,13 +3971,13 @@
       ],
       "tile": [
         259,
-        276
+        275
       ],
       "expectedTile": [
         259.05,
         275.692
       ],
-      "displacementMetres": 0.312,
+      "displacementMetres": 0.694,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -4587,13 +4587,13 @@
       ],
       "tile": [
         394,
-        338
+        337
       ],
       "expectedTile": [
         393.47,
         337.666
       ],
-      "displacementMetres": 0.627,
+      "displacementMetres": 0.851,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -4961,13 +4961,13 @@
       ],
       "tile": [
         394,
-        338
+        337
       ],
       "expectedTile": [
         393.47,
         337.666
       ],
-      "displacementMetres": 0.627,
+      "displacementMetres": 0.851,
       "maximumDisplacementMetres": 5,
       "footprint": [
         1,
@@ -11869,13 +11869,13 @@
       ],
       "tile": [
         394,
-        338
+        337
       ],
       "expectedTile": [
         393.47,
         337.666
       ],
-      "displacementMetres": 0.627,
+      "displacementMetres": 0.851,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
@@ -12154,14 +12154,14 @@
         294
       ],
       "tile": [
-        409,
-        334
+        414,
+        332
       ],
       "expectedTile": [
         412.941,
         336.847
       ],
-      "displacementMetres": 4.862,
+      "displacementMetres": 4.961,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
@@ -18556,14 +18556,14 @@
         342
       ],
       "tile": [
-        174,
+        173,
         244
       ],
       "expectedTile": [
         174.943,
         242.544
       ],
-      "displacementMetres": 1.735,
+      "displacementMetres": 2.428,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
@@ -18645,13 +18645,13 @@
       ],
       "tile": [
         259,
-        276
+        275
       ],
       "expectedTile": [
         259.05,
         275.692
       ],
-      "displacementMetres": 0.312,
+      "displacementMetres": 0.694,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
@@ -18864,14 +18864,14 @@
         81
       ],
       "tile": [
-        343,
-        51
+        346,
+        49
       ],
       "expectedTile": [
         341.914,
         51.988
       ],
-      "displacementMetres": 1.468,
+      "displacementMetres": 5.062,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
@@ -19876,14 +19876,14 @@
         118
       ],
       "tile": [
-        339,
-        76
+        356,
+        74
       ],
       "expectedTile": [
         344.764,
         78.021
       ],
-      "displacementMetres": 6.108,
+      "displacementMetres": 11.934,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -20558,14 +20558,14 @@
         49
       ],
       "tile": [
-        341,
-        48
+        345,
+        44
       ],
       "expectedTile": [
         339.255,
         43.886
       ],
-      "displacementMetres": 4.469,
+      "displacementMetres": 5.746,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -20778,14 +20778,14 @@
         101
       ],
       "tile": [
-        339,
-        63
+        329,
+        60
       ],
       "expectedTile": [
         342.296,
         63.46
       ],
-      "displacementMetres": 3.328,
+      "displacementMetres": 13.739,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -20954,14 +20954,14 @@
         94
       ],
       "tile": [
-        338,
-        67
+        356,
+        72
       ],
       "expectedTile": [
         341.709,
         66.714
       ],
-      "displacementMetres": 3.72,
+      "displacementMetres": 15.237,
       "maximumDisplacementMetres": 80,
       "footprint": [
         2,
@@ -21218,14 +21218,14 @@
         110
       ],
       "tile": [
-        345,
-        52
+        349,
+        50
       ],
       "expectedTile": [
         351.411,
         59.85
       ],
-      "displacementMetres": 10.135,
+      "displacementMetres": 10.141,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -21350,14 +21350,14 @@
         112
       ],
       "tile": [
-        339,
-        64
+        329,
+        59
       ],
       "expectedTile": [
         341.308,
         64.484
       ],
-      "displacementMetres": 2.358,
+      "displacementMetres": 13.475,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -21372,14 +21372,14 @@
         87
       ],
       "tile": [
-        335,
-        60
+        329,
+        58
       ],
       "expectedTile": [
         334.709,
         59.714
       ],
-      "displacementMetres": 0.407,
+      "displacementMetres": 5.961,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -21394,14 +21394,14 @@
         101
       ],
       "tile": [
-        340,
-        53
+        347,
+        50
       ],
       "expectedTile": [
         340.308,
         53.484
       ],
-      "displacementMetres": 0.574,
+      "displacementMetres": 7.544,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -21460,14 +21460,14 @@
         101
       ],
       "tile": [
-        334,
-        54
+        329,
+        56
       ],
       "expectedTile": [
         331.954,
         51.323
       ],
-      "displacementMetres": 3.369,
+      "displacementMetres": 5.532,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -21526,14 +21526,14 @@
         110
       ],
       "tile": [
-        334,
-        61
+        328,
+        60
       ],
       "expectedTile": [
         333.308,
         62.484
       ],
-      "displacementMetres": 1.637,
+      "displacementMetres": 5.861,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -21636,14 +21636,14 @@
         108
       ],
       "tile": [
-        339,
-        69
+        357,
+        74
       ],
       "expectedTile": [
         344.011,
         68.851
       ],
-      "displacementMetres": 5.013,
+      "displacementMetres": 13.972,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -32130,14 +32130,14 @@
         110
       ],
       "tile": [
-        347,
-        79
+        329,
+        115
       ],
       "expectedTile": [
-        347.0,
-        79.404
+        329.0,
+        115.0
       ],
-      "displacementMetres": 0.404,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -32152,14 +32152,14 @@
         118
       ],
       "tile": [
-        352,
-        87
+        334,
+        123
       ],
       "expectedTile": [
-        352.0,
-        87.404
+        334.0,
+        123.0
       ],
-      "displacementMetres": 0.404,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -32174,14 +32174,14 @@
         116
       ],
       "tile": [
-        343,
-        85
+        325,
+        121
       ],
       "expectedTile": [
-        343.0,
-        85.404
+        325.0,
+        121.0
       ],
-      "displacementMetres": 0.404,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -32592,14 +32592,14 @@
         108
       ],
       "tile": [
-        353,
-        77
+        335,
+        113
       ],
       "expectedTile": [
-        353.0,
-        77.404
+        335.0,
+        113.0
       ],
-      "displacementMetres": 0.404,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -32614,14 +32614,14 @@
         104
       ],
       "tile": [
-        353,
-        74
+        335,
+        109
       ],
       "expectedTile": [
-        353.0,
-        73.404
+        335.0,
+        109.0
       ],
-      "displacementMetres": 0.596,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -32636,14 +32636,14 @@
         104
       ],
       "tile": [
-        348,
-        73
+        330,
+        109
       ],
       "expectedTile": [
-        348.0,
-        73.404
+        330.0,
+        109.0
       ],
-      "displacementMetres": 0.404,
+      "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -41304,14 +41304,14 @@
         267
       ],
       "tile": [
-        429,
-        288
+        428,
+        289
       ],
       "expectedTile": [
         428.756,
         287.918
       ],
-      "displacementMetres": 0.258,
+      "displacementMetres": 1.32,
       "maximumDisplacementMetres": 12,
       "footprint": [
         1,
@@ -55968,14 +55968,14 @@
         272
       ],
       "tile": [
-        437,
+        436,
         318
       ],
       "expectedTile": [
         436.862,
         318.082
       ],
-      "displacementMetres": 0.16,
+      "displacementMetres": 0.866,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -57068,14 +57068,14 @@
         282
       ],
       "tile": [
-        411,
-        330
+        413,
+        331
       ],
       "expectedTile": [
         412.001,
         329.296
       ],
-      "displacementMetres": 1.224,
+      "displacementMetres": 1.975,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -57112,14 +57112,14 @@
         283
       ],
       "tile": [
-        409,
+        406,
         330
       ],
       "expectedTile": [
         409.001,
         330.296
       ],
-      "displacementMetres": 0.296,
+      "displacementMetres": 3.016,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -57134,14 +57134,14 @@
         285
       ],
       "tile": [
-        409,
+        406,
         330
       ],
       "expectedTile": [
         408.696,
         330.355
       ],
-      "displacementMetres": 0.468,
+      "displacementMetres": 2.719,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -57179,13 +57179,13 @@
       ],
       "tile": [
         410,
-        328
+        327
       ],
       "expectedTile": [
         409.825,
         328.673
       ],
-      "displacementMetres": 0.695,
+      "displacementMetres": 1.682,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -57244,14 +57244,14 @@
         285
       ],
       "tile": [
-        410,
-        330
+        413,
+        331
       ],
       "expectedTile": [
         409.696,
         330.355
       ],
-      "displacementMetres": 0.468,
+      "displacementMetres": 3.367,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63866,14 +63866,14 @@
         55
       ],
       "tile": [
-        349,
-        50
+        350,
+        49
       ],
       "expectedTile": [
         349.663,
         51.102
       ],
-      "displacementMetres": 1.286,
+      "displacementMetres": 2.129,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63888,14 +63888,14 @@
         56
       ],
       "tile": [
-        349,
-        50
+        350,
+        49
       ],
       "expectedTile": [
         348.663,
         52.102
       ],
-      "displacementMetres": 2.129,
+      "displacementMetres": 3.378,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63910,14 +63910,14 @@
         56
       ],
       "tile": [
-        336,
-        64
+        328,
+        59
       ],
       "expectedTile": [
         334.111,
         64.32
       ],
-      "displacementMetres": 1.916,
+      "displacementMetres": 8.102,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63954,14 +63954,14 @@
         55
       ],
       "tile": [
-        347,
-        50
+        348,
+        49
       ],
       "expectedTile": [
         347.663,
         51.102
       ],
-      "displacementMetres": 1.286,
+      "displacementMetres": 2.129,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63976,14 +63976,14 @@
         55
       ],
       "tile": [
-        336,
-        63
+        328,
+        59
       ],
       "expectedTile": [
         335.111,
         63.32
       ],
-      "displacementMetres": 0.945,
+      "displacementMetres": 8.32,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -63998,14 +63998,14 @@
         57
       ],
       "tile": [
-        336,
-        65
+        327,
+        60
       ],
       "expectedTile": [
         333.111,
         65.32
       ],
-      "displacementMetres": 2.907,
+      "displacementMetres": 8.102,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -64042,14 +64042,14 @@
         53
       ],
       "tile": [
-        335,
-        61
+        328,
+        59
       ],
       "expectedTile": [
         335.111,
         61.32
       ],
-      "displacementMetres": 0.338,
+      "displacementMetres": 7.48,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -64064,14 +64064,14 @@
         57
       ],
       "tile": [
-        347,
-        50
+        348,
+        49
       ],
       "expectedTile": [
         347.663,
         53.102
       ],
-      "displacementMetres": 3.172,
+      "displacementMetres": 4.116,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -64086,14 +64086,14 @@
         57
       ],
       "tile": [
-        336,
-        65
+        327,
+        60
       ],
       "expectedTile": [
         335.111,
         65.32
       ],
-      "displacementMetres": 0.945,
+      "displacementMetres": 9.7,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -65538,14 +65538,14 @@
         48
       ],
       "tile": [
-        356,
-        74
+        358,
+        75
       ],
       "expectedTile": [
         353.549,
         77.211
       ],
-      "displacementMetres": 4.04,
+      "displacementMetres": 4.97,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -65560,14 +65560,14 @@
         60
       ],
       "tile": [
-        356,
+        358,
         72
       ],
       "expectedTile": [
         356.334,
         72.079
       ],
-      "displacementMetres": 0.343,
+      "displacementMetres": 1.668,
       "maximumDisplacementMetres": 80.0,
       "footprint": [
         1,
@@ -80122,12 +80122,12 @@
     "whitehorn_range": {
       "stageFactor": 15,
       "stageMetres": 3.0,
-      "walkableServerTiles": 55615,
-      "largestComponentTiles": 47405,
+      "walkableServerTiles": 55597,
+      "largestComponentTiles": 47380,
       "reachableByStage": {
-        "15": 47405
+        "15": 47380
       },
-      "hubReachableTiles": 47405,
+      "hubReachableTiles": 47380,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80136,19 +80136,24 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 47396,
+      "hubReachableAfterStorageTiles": 47371,
       "updatedAuthoredMarkers": 75,
-      "terrainRevision": "diagonal-spine-v1:320ab69c41d8ae7665a2e349943e48374ec4bbeeeca49994f2ed8d2191797bc2"
+      "terrainRevision": "diagonal-spine-v1:22640a437186cd93f5b71c5b95c07f0117751e582123e94fae18ec68e344c966",
+      "servedTileContinuity": {
+        "keptServedTile": 271,
+        "movedTogether": 1,
+        "movedFromServedTile": 6
+      }
     },
     "grey_moors": {
       "stageFactor": 5,
       "stageMetres": 1.0,
-      "walkableServerTiles": 139902,
-      "largestComponentTiles": 139709,
+      "walkableServerTiles": 139895,
+      "largestComponentTiles": 139702,
       "reachableByStage": {
-        "5": 139709
+        "5": 139702
       },
-      "hubReachableTiles": 139709,
+      "hubReachableTiles": 139702,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80157,19 +80162,24 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 139695,
+      "hubReachableAfterStorageTiles": 139688,
       "updatedAuthoredMarkers": 8,
-      "terrainRevision": "diagonal-spine-v1:59a434618807710eb2a540096a4a39c79c7971a3a0f2004c6fc14e97785db06b"
+      "terrainRevision": "diagonal-spine-v1:c9fc019a60e438022714d94e630e5aec0f7bd65c60b194cf785bced7aab13750",
+      "servedTileContinuity": {
+        "keptServedTile": 288,
+        "movedTogether": 0,
+        "movedFromServedTile": 0
+      }
     },
     "amberwood": {
       "stageFactor": 14,
       "stageMetres": 2.8000000000000003,
-      "walkableServerTiles": 63942,
-      "largestComponentTiles": 46750,
+      "walkableServerTiles": 63873,
+      "largestComponentTiles": 46049,
       "reachableByStage": {
-        "14": 46750
+        "14": 46049
       },
-      "hubReachableTiles": 46750,
+      "hubReachableTiles": 46049,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80178,37 +80188,24 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 46741,
-      "bodyRelocations": [
-        {
-          "record": "npcs.txt:128:Timber Reeve",
-          "rejectedTile": [
-            342,
-            51
-          ],
-          "sealedTiles": 624
-        },
-        {
-          "record": "npcs.txt:128:Timber Reeve",
-          "rejectedTile": [
-            341,
-            51
-          ],
-          "sealedTiles": 623
-        }
-      ],
+      "hubReachableAfterStorageTiles": 46040,
       "updatedAuthoredMarkers": 49,
-      "terrainRevision": "diagonal-spine-v1:482a9149b05b0212427fe4743fea8d08fa3675465751460aaf54a2bd50088aa4"
+      "terrainRevision": "diagonal-spine-v1:9ca4fa75c880c7588d641ff5308d59a0ca376bfb9fc3148f1523811275338ccb",
+      "servedTileContinuity": {
+        "keptServedTile": 280,
+        "movedTogether": 3,
+        "movedFromServedTile": 21
+      }
     },
     "amethyst_barrens": {
       "stageFactor": 6,
       "stageMetres": 1.2000000000000002,
-      "walkableServerTiles": 140611,
-      "largestComponentTiles": 140526,
+      "walkableServerTiles": 140590,
+      "largestComponentTiles": 140505,
       "reachableByStage": {
-        "6": 140526
+        "6": 140505
       },
-      "hubReachableTiles": 140526,
+      "hubReachableTiles": 140505,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80217,9 +80214,14 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 140517,
+      "hubReachableAfterStorageTiles": 140496,
       "updatedAuthoredMarkers": 7,
-      "terrainRevision": "diagonal-spine-v1:acf313da73b4f6fac438eda155cafd0a33837c6755df479a6857f260797c9273"
+      "terrainRevision": "diagonal-spine-v1:1a18d0f1ae12594e0264a13e58d1c3574949097e3182b9c7e1ceee46115528d7",
+      "servedTileContinuity": {
+        "keptServedTile": 267,
+        "movedTogether": 0,
+        "movedFromServedTile": 0
+      }
     },
     "mirrorhold": {
       "stageFactor": 16,
@@ -80240,17 +80242,22 @@
       },
       "hubReachableAfterStorageTiles": 70498,
       "updatedAuthoredMarkers": 3,
-      "terrainRevision": "diagonal-spine-v1:df64978354e910a80e617f75acd5c25e9d0cdec71ba606284207a4309959a8a9"
+      "terrainRevision": "diagonal-spine-v1:df64978354e910a80e617f75acd5c25e9d0cdec71ba606284207a4309959a8a9",
+      "servedTileContinuity": {
+        "keptServedTile": 222,
+        "movedTogether": 0,
+        "movedFromServedTile": 0
+      }
     },
     "sunmane_steppe": {
       "stageFactor": 11,
       "stageMetres": 2.2,
-      "walkableServerTiles": 171275,
-      "largestComponentTiles": 170031,
+      "walkableServerTiles": 171288,
+      "largestComponentTiles": 170063,
       "reachableByStage": {
-        "11": 170031
+        "11": 170063
       },
-      "hubReachableTiles": 170031,
+      "hubReachableTiles": 170063,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80259,9 +80266,14 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 170012,
+      "hubReachableAfterStorageTiles": 170044,
       "updatedAuthoredMarkers": 40,
-      "terrainRevision": "diagonal-spine-v1:cdc649e7078d8e0295a808c62cdb8de71f09aa75bcbbc19968eb5eba03625a41"
+      "terrainRevision": "diagonal-spine-v1:8520b1a286ff9fb80e2d777876d795199b1bb94faaa6aca817e6e19797a88ee2",
+      "servedTileContinuity": {
+        "keptServedTile": 254,
+        "movedTogether": 0,
+        "movedFromServedTile": 0
+      }
     },
     "four_gates": {
       "stageFactor": 8,
@@ -80282,7 +80294,12 @@
       },
       "hubReachableAfterStorageTiles": 87591,
       "updatedAuthoredMarkers": 49,
-      "terrainRevision": "diagonal-spine-v1:0b016dae00b51277d50e5e2ca8bf49f7bf9fa7cb9188f66bcbd4c5d4ee9874b0"
+      "terrainRevision": "diagonal-spine-v1:4efc0d56e3511b2e12dab7f0603b60e7a1ea8289f8cf190b92f4d25b1ad9e60b",
+      "servedTileContinuity": {
+        "keptServedTile": 219,
+        "movedTogether": 0,
+        "movedFromServedTile": 6
+      }
     },
     "westhaven": {
       "stageFactor": 4,
@@ -80303,18 +80320,23 @@
       },
       "hubReachableAfterStorageTiles": 93840,
       "updatedAuthoredMarkers": 8,
-      "terrainRevision": "diagonal-spine-v1:97057d701e1a9f9a6cf086c496025603be3532c4ce5d2a6e822f321909ebc10d"
+      "terrainRevision": "diagonal-spine-v1:6a8b0f69e21200ab23bbb340244e30f0f8f97dcbc35afd6a6acae538b6d88eb5",
+      "servedTileContinuity": {
+        "keptServedTile": 238,
+        "movedTogether": 0,
+        "movedFromServedTile": 0
+      }
     },
     "manymouth_delta": {
       "stageFactor": 3,
       "stageMetres": 0.6000000000000001,
-      "walkableServerTiles": 107927,
-      "largestComponentTiles": 106573,
+      "walkableServerTiles": 107922,
+      "largestComponentTiles": 106570,
       "reachableByStage": {
-        "3": 106573,
-        "4": 106652
+        "3": 106570,
+        "4": 106649
       },
-      "hubReachableTiles": 106573,
+      "hubReachableTiles": 106570,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80323,9 +80345,14 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 106564,
+      "hubReachableAfterStorageTiles": 106561,
       "updatedAuthoredMarkers": 11,
-      "terrainRevision": "diagonal-spine-v1:8ad3d15929d8f79282ed7d7854c7296ea26645058b06efaca626b28d5cbbb085"
+      "terrainRevision": "diagonal-spine-v1:e9d5e9433dcfc8897e25d94f7b953a6b9ad6698e49c08bd9b17cd0a6e18c01bd",
+      "servedTileContinuity": {
+        "keptServedTile": 262,
+        "movedTogether": 0,
+        "movedFromServedTile": 0
+      }
     },
     "crownwater": {
       "stageFactor": 2,
@@ -80348,17 +80375,22 @@
       },
       "hubReachableAfterStorageTiles": 40918,
       "updatedAuthoredMarkers": 9,
-      "terrainRevision": "diagonal-spine-v1:75460c482d527cf643de6f5485c431d59235b4ad58b5b0047b69ba0466508a40"
+      "terrainRevision": "diagonal-spine-v1:75460c482d527cf643de6f5485c431d59235b4ad58b5b0047b69ba0466508a40",
+      "servedTileContinuity": {
+        "keptServedTile": 255,
+        "movedTogether": 0,
+        "movedFromServedTile": 0
+      }
     },
     "verdant_stair": {
       "stageFactor": 9,
       "stageMetres": 1.8,
-      "walkableServerTiles": 183588,
-      "largestComponentTiles": 182141,
+      "walkableServerTiles": 183580,
+      "largestComponentTiles": 182133,
       "reachableByStage": {
-        "9": 182141
+        "9": 182133
       },
-      "hubReachableTiles": 182141,
+      "hubReachableTiles": 182133,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80367,9 +80399,14 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 182132,
+      "hubReachableAfterStorageTiles": 182124,
       "updatedAuthoredMarkers": 11,
-      "terrainRevision": "diagonal-spine-v1:ebe3a503434da2c06262531e9e02f096adb2d5346bbe8ed285fe705101b06c03"
+      "terrainRevision": "diagonal-spine-v1:d42e9e2ea6407aed0980c83af32ce654f54ef5c495283662d42d04998986e6e5",
+      "servedTileContinuity": {
+        "keptServedTile": 236,
+        "movedTogether": 0,
+        "movedFromServedTile": 1
+      }
     },
     "ssarathi_ruins": {
       "stageFactor": 5,
@@ -80390,11 +80427,16 @@
       },
       "hubReachableAfterStorageTiles": 133818,
       "updatedAuthoredMarkers": 7,
-      "terrainRevision": "diagonal-spine-v1:720590d63cc6f6a7f80adc8dfdc007ff2d933e4a9cd26f1439f56ebbed523e5c"
+      "terrainRevision": "diagonal-spine-v1:720590d63cc6f6a7f80adc8dfdc007ff2d933e4a9cd26f1439f56ebbed523e5c",
+      "servedTileContinuity": {
+        "keptServedTile": 222,
+        "movedTogether": 0,
+        "movedFromServedTile": 0
+      }
     }
   },
   "sourceProfileSha256": {
-    "client_content_manifest.json": "a2aa0de8e51ca63ff70fcde10a5d2984a27500524766e64edb34511a2240147b",
+    "client_content_manifest.json": "16b426e92d758e6a596356812a0e59b13eac99047dd3c5657a438e24aa72ddfc",
     "creatures.txt": "1a66842a45645a6ff83ade9ff5a9473df2ed46685405e56307bf39bee2c1a24f",
     "harvesting.txt": "9c29bb1ef19f7ca461328c594736a85fb35baa259948d42e3b1d3d2dedd4001f",
     "instances/amberwood_gauntlet_low.def": "423a22c5001578126c44b7e3be09e3d5f17a7cc6c8480065198dfb14c3042dd4",

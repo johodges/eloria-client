@@ -237,9 +237,9 @@
       "height": 2.1,
       "halfCellWidth": 0.5
     },
-    "walkableCells": 566973,
-    "walkableFraction": 0.219276,
-    "sourceGlbSha256": "a959954d24fb2e16ad64e2ef81d43fe56c37a13f9e1833c2850cb1259b57c91d",
+    "walkableCells": 566896,
+    "walkableFraction": 0.219246,
+    "sourceGlbSha256": "12a78979601b6e90c91f8eb5bc8d2ae726de0c1d2aa433e5244582dffd87d52e",
     "exportStatistics": {
       "walkMeshes": 24,
       "structuralMeshes": 247,
@@ -247,7 +247,7 @@
       "walkTriangles": 1892,
       "steepCells": 43119,
       "waterCells": 613294,
-      "structuralCells": 10427,
+      "structuralCells": 10504,
       "thresholdHaloCells": 184
     }
   },
@@ -363,7 +363,8 @@
     "terrainConforming": true,
     "authority": "server",
     "defaultSpawn": "continent-arrival",
-    "collisionFile": "collision.bin"
+    "collisionFile": "collision.bin",
+    "crossings": []
   },
   "landmarks": [
     {
@@ -1140,7 +1141,7 @@
       "destinationSpawn": "barrens-geode-hollow",
       "position": [
         158.7990834467687,
-        18.604402507748354,
+        18.920929611074776,
         -68.70487213839726
       ],
       "authority": "server",
@@ -1161,7 +1162,7 @@
       "destinationSpawn": "barrens-shard-garden",
       "position": [
         80.29883476889268,
-        27.054220214266618,
+        27.348281794559867,
         39.489030068768955
       ],
       "authority": "server",
@@ -1224,7 +1225,7 @@
       "destinationSpawn": "barrens-beetle-pit",
       "position": [
         116.54529470893522,
-        9.344438178231885,
+        10.074509486539824,
         -135.7864350136806
       ],
       "authority": "server",
@@ -1266,7 +1267,7 @@
       "destinationSpawn": "barrens-resonance-spring",
       "position": [
         147.08532196078977,
-        25.028207689144764,
+        25.36023240058079,
         44.313404273811614
       ],
       "authority": "server",
@@ -1350,7 +1351,7 @@
       "destinationSpawn": "barrens-sap",
       "position": [
         46.06498603962791,
-        28.912089075541083,
+        30.281454088658812,
         31.526117999999997
       ],
       "authority": "server",
@@ -1392,7 +1393,7 @@
       "destinationSpawn": "barrens-cave-eyrie",
       "position": [
         44.94796546008445,
-        29.346188608266097,
+        29.681917154902877,
         41.5566246064231
       ],
       "authority": "server",
@@ -2901,7 +2902,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
+      "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
       "globalMin": [
         708.0,
         0.0
@@ -5767,7 +5768,7 @@
       162.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:acf313da73b4f6fac438eda155cafd0a33837c6755df479a6857f260797c9273",
+  "terrainRevision": "diagonal-spine-v1:1a18d0f1ae12594e0264a13e58d1c3574949097e3182b9c7e1ceee46115528d7",
   "externalResources": {
     "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -5817,7 +5818,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
+    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
     "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba"
   },
   "streamingChunks": {
@@ -7030,12 +7031,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:acf313da73b4f6fac438eda155cafd0a33837c6755df479a6857f260797c9273"
+    "terrainRevision": "diagonal-spine-v1:1a18d0f1ae12594e0264a13e58d1c3574949097e3182b9c7e1ceee46115528d7"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
-    "collisionSha256": "a9cf44aed184aec3bbbfd54b881f8c2b7355f458a6f7a4a204d9e5fc4a8d1735",
-    "terrainRevision": "diagonal-spine-v1:acf313da73b4f6fac438eda155cafd0a33837c6755df479a6857f260797c9273"
+    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
+    "collisionSha256": "da8f1158a27cb7b28f35f76e585f9a8432c59aedc3d460ef3b36db21e577b58f",
+    "terrainRevision": "diagonal-spine-v1:1a18d0f1ae12594e0264a13e58d1c3574949097e3182b9c7e1ceee46115528d7"
   }
 }

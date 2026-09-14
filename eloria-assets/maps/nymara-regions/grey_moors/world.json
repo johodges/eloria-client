@@ -195,9 +195,9 @@
       "height": 2.1,
       "halfCellWidth": 0.5
     },
-    "walkableCells": 564878,
-    "walkableFraction": 0.251057,
-    "sourceGlbSha256": "473d5269a51e504a4aae1ba9ec2c4037b4a3865175a80e57b89a228fdab778eb",
+    "walkableCells": 564860,
+    "walkableFraction": 0.251049,
+    "sourceGlbSha256": "957c7ebb3732a8bcacf27d95991d4de5c0be0fedb01e2a03215a6efa99479214",
     "exportStatistics": {
       "walkMeshes": 16,
       "structuralMeshes": 151,
@@ -205,7 +205,7 @@
       "walkTriangles": 6320,
       "steepCells": 20350,
       "waterCells": 344920,
-      "structuralCells": 5090,
+      "structuralCells": 5108,
       "thresholdHaloCells": 152
     }
   },
@@ -217,7 +217,54 @@
     "terrainConforming": true,
     "authority": "server",
     "defaultSpawn": "continent-arrival",
-    "collisionFile": "collision.bin"
+    "collisionFile": "collision.bin",
+    "crossings": [
+      {
+        "id": "ContinentalBridgeUnion_002",
+        "endpoints": [
+          [
+            -5.7,
+            35.53409407506656,
+            -77.3
+          ],
+          [
+            39.3,
+            25.989962444301717,
+            -42.3
+          ]
+        ]
+      },
+      {
+        "id": "ContinentalBridgeUnion_003",
+        "endpoints": [
+          [
+            21.3,
+            24.65751317600546,
+            -9.3
+          ],
+          [
+            37.3,
+            24.929755644222187,
+            -14.3
+          ]
+        ]
+      },
+      {
+        "id": "ContinentalBridgeUnion_004",
+        "endpoints": [
+          [
+            23.3,
+            24.137023594760976,
+            -0.3
+          ],
+          [
+            51.3,
+            22.097160391927773,
+            56.7
+          ]
+        ]
+      }
+    ]
   },
   "landmarks": [
     {
@@ -348,7 +395,7 @@
       "type": "monument",
       "position": [
         21.849987768527626,
-        27.37784134292385,
+        27.887813693307645,
         -19.210137977073032
       ]
     },
@@ -1020,7 +1067,7 @@
       "type": "transition",
       "position": [
         116.50947949154926,
-        28.496622611221216,
+        29.299448713288765,
         72.6933329460756
       ],
       "note": "Where the Grey Moors gives way to the Manymouth Delta: greyhaven road furniture, a march stone, a waystation, and 16 pieces of the country beyond."
@@ -1134,7 +1181,7 @@
       "destinationSpawn": "moor-hound-pit",
       "position": [
         115.46907949154922,
-        28.986622611221215,
+        29.789448713288763,
         67.79493294607562
       ],
       "authority": "server",
@@ -1176,7 +1223,7 @@
       "destinationSpawn": "moor-hanged-spring",
       "position": [
         22.59812972120295,
-        26.46580679797222,
+        26.91874091894007,
         -49.234508047696636
       ],
       "authority": "server",
@@ -1323,7 +1370,7 @@
       "destinationSpawn": "amber-undercut-far",
       "position": [
         125.00577829335992,
-        36.13344703913112,
+        36.43164838883618,
         -119.44678726303755
       ],
       "authority": "server",
@@ -1375,7 +1422,7 @@
       "name": "Reader of the Stones",
       "position": [
         21.849987768527626,
-        26.27784134292385,
+        26.787813693307648,
         -19.210137977073032
       ],
       "serverTile": [
@@ -1537,7 +1584,7 @@
       "kind": "creature-zone",
       "position": [
         17.97392972120295,
-        26.91580679797222,
+        27.36874091894007,
         -52.81440804769659
       ],
       "radius": 44.0,
@@ -1619,7 +1666,7 @@
       "resource": "cut-peat",
       "position": [
         47.42808776852763,
-        25.457841342923853,
+        25.967813693307647,
         -32.932737977072975
       ],
       "serverTile": [
@@ -1843,7 +1890,7 @@
       "resource": "cut-peat",
       "position": [
         19.53788776852764,
-        26.227841342923853,
+        26.737813693307647,
         -22.193337977072986
       ],
       "serverTile": [
@@ -1955,7 +2002,7 @@
       "resource": "cut-peat",
       "position": [
         124.03467829335989,
-        36.033447039131126,
+        36.331648388836186,
         -113.28678726303758
       ],
       "serverTile": [
@@ -2067,7 +2114,7 @@
       "resource": "cut-peat",
       "position": [
         120.78814173912048,
-        32.394610582464225,
+        33.350149352297606,
         -53.55715673535161
       ],
       "serverTile": [
@@ -2785,7 +2832,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
+      "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
       "globalMin": [
         0.0,
         0.0
@@ -4799,7 +4846,7 @@
       322.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:59a434618807710eb2a540096a4a39c79c7971a3a0f2004c6fc14e97785db06b",
+  "terrainRevision": "diagonal-spine-v1:c9fc019a60e438022714d94e630e5aec0f7bd65c60b194cf785bced7aab13750",
   "externalResources": {
     "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -4891,7 +4938,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
+    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
     "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba"
   },
   "streamingChunks": {
@@ -5466,9 +5513,9 @@
             -22.20018226723414
           ]
         },
-        "estimatedResidentBytes": 42332472,
-        "glbBytes": 846836,
-        "geometryResidentBytes": 4234180,
+        "estimatedResidentBytes": 42332492,
+        "glbBytes": 846840,
+        "geometryResidentBytes": 4234200,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -5925,9 +5972,9 @@
             156.0
           ]
         },
-        "estimatedResidentBytes": 23767484,
-        "glbBytes": 471808,
-        "geometryResidentBytes": 2359040,
+        "estimatedResidentBytes": 23767464,
+        "glbBytes": 471804,
+        "geometryResidentBytes": 2359020,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -6070,12 +6117,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:59a434618807710eb2a540096a4a39c79c7971a3a0f2004c6fc14e97785db06b"
+    "terrainRevision": "diagonal-spine-v1:c9fc019a60e438022714d94e630e5aec0f7bd65c60b194cf785bced7aab13750"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
-    "collisionSha256": "a68713ca67cd1f0191f1e3b6e125e328c2ea7f4f7b23795fbd61bdd658c19fa7",
-    "terrainRevision": "diagonal-spine-v1:59a434618807710eb2a540096a4a39c79c7971a3a0f2004c6fc14e97785db06b"
+    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
+    "collisionSha256": "7e900c310fcfc73d42d6d495cafaf1366db1c8014711f1d24e2f7ec33e8b19bd",
+    "terrainRevision": "diagonal-spine-v1:c9fc019a60e438022714d94e630e5aec0f7bd65c60b194cf785bced7aab13750"
   }
 }

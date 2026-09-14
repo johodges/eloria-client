@@ -411,3 +411,39 @@ class ExportTests(unittest.TestCase):
 
 
 if __name__=='__main__': unittest.main()
+
+class ServedTileContinuityTests(unittest.TestCase):
+    # Tiles away from the hub at (15,15), whose surroundings connect_hub reserves.
+    def previous(self, tile, old='5:5'):
+        return {'regions': {'test': {'baselineTilePositions': {old: list(tile)}}}}
+
+    def test_a_point_keeps_its_previously_served_tile_within_budget(self):
+        p = placement(); p.previous = self.previous([7, 7])
+        self.assertEqual(p.place([5, 5], 'spawn', 5), [7, 7])
+        self.assertEqual(p.records[-1]['tile'], [7, 7])
+
+    def test_a_blocked_or_distant_served_tile_falls_back_to_the_nearest_standing_point(self):
+        grid = np.ones((30, 30), dtype=np.uint8); grid[7, 7] = 0
+        p = placement(grid); p.previous = self.previous([7, 7])
+        self.assertEqual(p.place([5, 5], 'spawn', 5), [5, 5])
+        p = placement(); p.previous = self.previous([20, 5])
+        self.assertEqual(p.place([5, 5], 'spawn', 5), [5, 5])
+
+    def test_two_points_that_shared_a_served_tile_keep_sharing_it(self):
+        p = placement(); p.previous = {'regions': {'test': {'baselineTilePositions': {'5:5': [7, 7], '6:5': [7, 7]}}}}
+        self.assertEqual(p.place([5, 5], 'invasion a', 5), [7, 7])
+        self.assertEqual(p.place([6, 5], 'invasion b', 5), [7, 7])
+
+    def test_a_reserved_served_tile_is_not_reused_and_bodies_ignore_continuity(self):
+        p = placement(); p.previous = self.previous([7, 7]); p.reserve([7, 7])
+        self.assertEqual(p.place([5, 5], 'spawn', 5), [5, 5])
+        p = placement(); p.previous = self.previous([7, 7])
+        self.assertEqual(p.place([5, 5], 'npc', 5, body=True), [5, 5])
+
+    def test_points_that_lose_their_shared_served_tile_move_together(self):
+        p = placement(); p.previous = {'regions': {'test': {'baselineTilePositions': {'5:5': [7, 7], '6:5': [7, 7]}}}}
+        p.reserve([7, 7])   # taken this publication by a reserving record
+        first = p.place([5, 5], 'invasion a', 5)
+        self.assertNotEqual(first, [7, 7])
+        p.reserve(first)    # even if something reserves the new tile meanwhile
+        self.assertEqual(p.place([6, 5], 'invasion b', 5), first)

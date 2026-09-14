@@ -340,10 +340,13 @@ class PlacementError(ValueError):
 
 class RegionPlacement:
     """Deterministic bounded searches on one hub-connected server component."""
-    def __init__(self, world, content, region, spec, collision, grid, sources, report):
+    def __init__(self, world, content, region, spec, collision, grid, sources, report, previous=None):
         self.world, self.content, self.region, self.spec = world, content, region, spec
         self.collision, self.grid, self.sources = collision, grid.copy(), sources
         self.report = report
+        self.previous = previous
+        self.moved = {}   # served tile lost this publication -> where its first point went
+        self.continuity = {'keptServedTile': 0, 'movedTogether': 0, 'movedFromServedTile': 0}
         self.records, self.failures = report['placements'], report['failures']
         self.reserved = np.zeros(grid.shape, dtype=bool)
         self.reachable = grid != 0
@@ -396,6 +399,14 @@ class RegionPlacement:
         center = self.world.regions[self.region]['center']
         return np.array([p[0] - center[0] + self.spec['serverOrigin'][0] - .5,
                          self.spec['serverOrigin'][1] - (p[2] - center[1]) - .5])
+
+    def previous_tile(self, old):
+        """The tile this original point was served at by the previous publication, if any."""
+        if not self.previous:
+            return None
+        prior = self.previous.get('regions', {}).get(self.region, {})
+        served = prior.get('baselineTilePositions', {}).get(key(old))
+        return None if served is None else [int(served[0]), int(served[1])]
 
     def in_grid(self, tile):
         return 0 <= tile[0] < self.grid.shape[1] and 0 <= tile[1] < self.grid.shape[0]
@@ -484,14 +495,33 @@ class RegionPlacement:
         old = list(map(int, old))
         expected = self.expected(old, identity)
         existing = self.spec['tilePositions'].get(key(old))
+        served = None if body else self.previous_tile(old)
         if existing is not None:
             # A door, its bound interactive, and a quest return must name one
             # exact point. Never emit conflicting remaps for a shared source tile.
             tile = list(existing) if self.valid(existing, shape, allow_reserved=True) else None
         elif body:
             tile = self.place_body(expected, radius, shape, label)
+        elif (served is not None and self.valid(served, shape)
+              and float(np.linalg.norm(np.asarray(served, float) - expected)) <= radius + 1e-8):
+            # Continuity: a point keeps the tile it was served at in the previous
+            # publication while that tile still stands within its movement
+            # budget. Saved positions keep their mapping, and points that shared
+            # one served tile keep sharing it, which the rebase table requires.
+            tile = list(served)
+            self.continuity['keptServedTile'] += 1
+        elif (served is not None and self.moved.get(key(served)) is not None
+              and self.valid(self.moved[key(served)], shape, allow_reserved=True)
+              and float(np.linalg.norm(np.asarray(self.moved[key(served)], float) - expected)) <= radius + 1e-8):
+            # The served tile was lost (blocked or reserved this time): points
+            # that shared it move together to where the first of them went.
+            tile = list(self.moved[key(served)])
+            self.continuity['movedTogether'] += 1
         else:
             tile = self.nearest(expected, radius, shape)
+            if served is not None and tile is not None and list(tile) != list(served):
+                self.moved.setdefault(key(served), list(tile))
+                self.continuity['movedFromServedTile'] += 1
         if tile is None:
             self.failure(label, old, expected, radius, 'No hub-connected unoccupied standing point with the required footprint')
             return None
@@ -808,7 +838,7 @@ def export_contracts(world, content, manifests, output, server_path):
                 'contentPositions': {group: {} for group in records}, 'tilePositions': {},
                 'portalPositions': {}, 'removedInteractiveIds': [],
                 'collisionPath': str(collision_path), 'worldManifestPath': str(world_path)}
-            p = RegionPlacement(world, content, region, spec, result, grid, sources, report)
+            p = RegionPlacement(world, content, region, spec, result, grid, sources, report, previous=previous)
             p.connect_hub(old_maps[region]['arrival'], largest)
             placements[region], outputs[region], publication['regions'][region] = p, (world_path, manifest), spec
             print(f'{region}: exact server grid, stage {factor}, hub reaches {int(p.reachable.sum())} tiles in {time.monotonic()-started:.1f}s', flush=True)
@@ -862,6 +892,7 @@ def export_contracts(world, content, manifests, output, server_path):
             update_markers(p, manifest)
             p.spec['terrainRevision'] = terrain_revision(p.spec, p.collision, p.grid)
             report['regions'][region]['terrainRevision'] = p.spec['terrainRevision']
+            report['regions'][region]['servedTileContinuity'] = dict(p.continuity)
             chunk_metadata.extend(revision_metadata(path, manifest, p.spec, publication['masterSha256']))
             chosen = set(tuple(v) for v in p.spec['tilePositions'].values())
             chosen.update(p.fixed)

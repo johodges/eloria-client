@@ -105,7 +105,54 @@
     ],
     "terrainConforming": true,
     "authority": "server",
-    "defaultSpawn": "continent-arrival"
+    "defaultSpawn": "continent-arrival",
+    "crossings": [
+      {
+        "id": "ContinentalBridgeUnion_002",
+        "endpoints": [
+          [
+            -5.7,
+            35.53409407506656,
+            -77.3
+          ],
+          [
+            39.3,
+            25.989962444301717,
+            -42.3
+          ]
+        ]
+      },
+      {
+        "id": "ContinentalBridgeUnion_003",
+        "endpoints": [
+          [
+            21.3,
+            24.65751317600546,
+            -9.3
+          ],
+          [
+            37.3,
+            24.929755644222187,
+            -14.3
+          ]
+        ]
+      },
+      {
+        "id": "ContinentalBridgeUnion_004",
+        "endpoints": [
+          [
+            23.3,
+            24.137023594760976,
+            -0.3
+          ],
+          [
+            51.3,
+            22.097160391927773,
+            56.7
+          ]
+        ]
+      }
+    ]
   },
   "environment": {
     "sky": {
@@ -2214,7 +2261,7 @@
       -27.975383904678324
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:59a434618807710eb2a540096a4a39c79c7971a3a0f2004c6fc14e97785db06b",
+  "terrainRevision": "diagonal-spine-v1:c9fc019a60e438022714d94e630e5aec0f7bd65c60b194cf785bced7aab13750",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/ab5881fb0f1107266d0692b9c22bb22d3fd692dffa94c058823a27a2dd937b35.png": "ab5881fb0f1107266d0692b9c22bb22d3fd692dffa94c058823a27a2dd937b35",
@@ -2252,13 +2299,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
+    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
     "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
-    "collisionSha256": "a68713ca67cd1f0191f1e3b6e125e328c2ea7f4f7b23795fbd61bdd658c19fa7",
-    "terrainRevision": "diagonal-spine-v1:59a434618807710eb2a540096a4a39c79c7971a3a0f2004c6fc14e97785db06b"
+    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
+    "collisionSha256": "7e900c310fcfc73d42d6d495cafaf1366db1c8014711f1d24e2f7ec33e8b19bd",
+    "terrainRevision": "diagonal-spine-v1:c9fc019a60e438022714d94e630e5aec0f7bd65c60b194cf785bced7aab13750"
   }
 }

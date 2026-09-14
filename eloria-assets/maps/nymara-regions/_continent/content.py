@@ -17,6 +17,9 @@ METADATA=('landmarks','interactives','portals','spawnPoints','pointsOfInterest',
 # Grey Moors survey fragments crossing the drainage that the continental
 # bridge union now spans. Exactly these roots; see grey_crossings.py.
 RETIRED_GREY_SPANS=('Landmark_boardwalk_gate','Landmark_boardwalk_centre','Landmark_boardwalk_south')
+# A ground-standing prop whose base the regional survey left this far under
+# its own terrain is stood on the ground when it is placed (see load()).
+BURIED_PROP_METRES=.2
 
 
 def retained_source_placements(region, placements):
@@ -193,6 +196,15 @@ class Content:
                     if owned and dry:break
                     new_xz=hub+(new_xz-hub)*.90
                 source_ground=float(sample([[old_xz[1],old_xz[0]]])[0])
+                # Regional surveys left some ground-standing props buried in
+                # their own terrain (Whitehorn cairns up to 30 m under it). A
+                # compact prop whose base lies under the legacy ground stands
+                # on the ground here. Props above the ground may rest on decks
+                # or rocks and keep their authored offset, as do landmarks,
+                # buildings and buried crystals; hulls are settled on water.
+                hull=any(word in name.lower() for word in ('boat','skiff','dugout','canoe'))
+                if kind=='prop' and not assembly_id and not hull and source_ground-float(low[1])>BURIED_PROP_METRES:
+                    source_ground=float(low[1])-.02
                 target_ground=float(self.world.height_at(*new_xz))
                 # Large inhabited compounds retain their internal grade. The
                 # continent supplies a broad landing around their footprint.

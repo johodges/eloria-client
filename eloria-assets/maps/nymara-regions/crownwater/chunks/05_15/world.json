@@ -107,7 +107,39 @@
     ],
     "terrainConforming": true,
     "authority": "server",
-    "defaultSpawn": "continent-arrival"
+    "defaultSpawn": "continent-arrival",
+    "crossings": [
+      {
+        "id": "ContinentalBridgeUnion_024",
+        "endpoints": [
+          [
+            170.3,
+            4.2,
+            -170.3
+          ],
+          [
+            43.3,
+            0.85,
+            61.7
+          ]
+        ]
+      },
+      {
+        "id": "ContinentalBridgeUnion_027",
+        "endpoints": [
+          [
+            161.3,
+            3.9995212967280658,
+            -98.3
+          ],
+          [
+            178.3,
+            2.2387034162189896,
+            -4.3
+          ]
+        ]
+      }
+    ]
   },
   "environment": {
     "sky": {
@@ -1809,12 +1841,12 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
+    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
     "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec",
+    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
     "collisionSha256": "c9cf825fa66bb86d430ebdc8bd85f379175cd87d2ccd67794dd087216ae918d2",
     "terrainRevision": "diagonal-spine-v1:75460c482d527cf643de6f5485c431d59235b4ad58b5b0047b69ba0466508a40"
   }

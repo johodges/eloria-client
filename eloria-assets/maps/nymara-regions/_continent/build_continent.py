@@ -33,7 +33,7 @@ from terrain_export import partition_surface
 from crossings import prepare_contracts,apply_manifest
 from amberwood import gltf as G,mesh as M
 from continent_geography import polygon_rectangles,clip_owned_mesh
-SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py')
+SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py')
 
 
 def package(region):return MAPS/'four-gates' if region=='four_gates' else REGIONS/region
@@ -105,6 +105,8 @@ def prepare(library,output):
     prepare_amberwood_access(world,content)
     from grey_crossings import prepare_grey_crossings,refresh_grey_crossing_heights
     prepare_grey_crossings(world,content)
+    from four_gates_sage import prepare_four_gates_sage,refresh_four_gates_sage_heights
+    prepare_four_gates_sage(world,content)
     from crown_support import apply_crown_support
     from westhaven_support import apply_westhaven_support
     from manymouth_support import apply_manymouth_support
@@ -203,6 +205,7 @@ def prepare(library,output):
     apply_manymouth_boats(world,content)
     refresh_amberwood_access_heights(world,content)
     refresh_grey_crossing_heights(world,content)
+    refresh_four_gates_sage_heights(world,content)
     content.ecological_scatter()
     if any(digest(HERE/name)!=sha for name,sha in shaping.items()):
         raise ValueError('Landscape shaping source changed during composition; run prepare again')
@@ -216,7 +219,7 @@ def prepare(library,output):
         'sources':sources,
         'objects':len(content.objects),'roads':len(world.roads),'assemblies':content.assembly_records,
         'mirrorLakeSupport':world.mirror_lake_support,'ssarathiBankSupport':world.ssarathi_bank_support,
-        'manymouthBoats':world.manymouth_boats,'greyCrossings':world.grey_crossings,
+        'manymouthBoats':world.manymouth_boats,'greyCrossings':world.grey_crossings,'fourGatesSage':world.four_gates_sage,
         'elapsedSeconds':round(time.monotonic()-started,2)})
     return world,content
 
@@ -244,6 +247,14 @@ def bridge_scene(world,path):
 
 def local_point(point,center):
     p=np.array(point,float).copy();p[[0,2]]-=center;return p.tolist()
+
+
+def crossing_local(point,center,origin):
+    """A declared crossing end in package metres, placed so the server's rounding
+    (round(ox+x), round(oy-z)) names the tile that actually contains it."""
+    x,y,z=local_point(point,center)
+    tile_x=int(np.floor(x+origin[0]));tile_y=int(np.floor(origin[1]-z))
+    return [tile_x+.5-origin[0]-.2,y,origin[1]-tile_y-.5+.2]
 
 
 def manifest_for(world,content,region):
@@ -386,6 +397,9 @@ def export_geometry(world,content,output):
     for region in world.ids:
         root=package(region);shared=HERE/'shared-assets';center=np.array(world.regions[region]['center'])
         manifest=manifest_for(world,content,region)
+        origin=manifest['coordinateTransform']['serverOrigin']
+        manifest['navigation']['crossings']=[{'id':c['id'],'endpoints':[crossing_local(p,center,origin) for p in c['endpoints']]}
+                                             for c in world.bridge_crossings.get(region,[])]
         objects=by_region[region];bridges=by_bridge[region]
         manifest['collision']['nodeNames'].extend(part['node'] for part in bridges if part.get('collides'))
         # Retired Grey survey spans keep their generic identities on the actual emitted crossing floors.

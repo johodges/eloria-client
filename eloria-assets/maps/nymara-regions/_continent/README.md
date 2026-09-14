@@ -5,10 +5,10 @@ exported. X runs east, Z runs south, and sea level is Y = 0. Named territories
 are server and content identities. Their boundaries do not determine the
 height, water level, ground colour, or vegetation of the landscape.
 
-**QA state: verified for the tenth publication (2026-09-14).** Master
-`cf7078895b81809b6a30b1c0226c2e957ab8a9668dc7b694de977ff8b07fd4ec`, publication
-`b86192f654f2c0d208643e44072aaf908f18e67d1ebd4e328f297d3864198ca6`
-(`work-output/diagonal-continent/after/tenth-freeze.json`). On these bytes the
+**QA state: verified for the eleventh publication (2026-09-14).** Master
+`856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f`, publication
+`b022f13923d7adae280bb354c0e228c6d9acd0cea8ed9bf551905ea5705de975`
+(`work-output/diagonal-continent/after/eleventh-freeze.json`). On these bytes the
 strict contracts passed with 0 failures over 3,644 placements, the full audit
 passed and verified the publication, the 24 primary, 8 supplement and 2 atlas
 gameplay views were captured with the published registry and no overrides
@@ -16,10 +16,10 @@ gameplay views were captured with the published registry and no overrides
 walked 240 routes with 0 failures on a real server (`after/live-walk/
 final-live-summary.json`). Known limitations are listed in
 `STATUS-2026-09-13-takeover.md`: road cores steeper than 0.65 that the server
-routes around, legacy scenery props not regrounded on the final terrain, no
-`navigation.crossings` in the packages, and the Four Gates Sage patch 76 tiles
-from the arrival. Any later change to a shaping or export source returns this
-notice to provisional until the same chain is repeated.
+routes around, boats inside rigid assemblies not settled on water, and props
+that floated in their regional surveys keeping that offset. Any later change to
+a shaping or export source returns this notice to provisional until the same
+chain is repeated.
 
 `diagonal-plan.json` describes the coast, connected mountain chain, river
 catchments, islands, territory centres, and placement controls. `landscape.py`
@@ -71,6 +71,7 @@ Use these source responsibilities when changing the world:
 | `manymouth_access.py` | Visible tidal fishing boardwalks linking retained porches and the landing. |
 | `manymouth_village_streets.py` | Graded timber streets connecting the other delta hamlets to their actual porch floors. |
 | `grey_crossings.py` | Retirement of the three duplicate Grey Moors boardwalk spans, the four pinned server positions they anchored, and their landmark identities on the actual continental crossing floors. |
+| `four_gates_sage.py` | The six Four Gates tutorial Sage records pinned 48 tiles from the arrival beside the plaza approach, keeping their surveyed layout. |
 | `ferry_export.py`, `ferry_support.py` | Actual quay/boat fit and preservation of its complete shoreline footprint through road grading. |
 | `world_layout.py` | Ownership polygons, server address envelopes, common road grading, foundation reconciliation and drainage protection. |
 | `bridge_export.py` | One union of visible continental bridge decks, fitted to the common road surface and actual banks. |
@@ -239,7 +240,7 @@ shaping modules (`landscape`, `world_layout`, `content`, `assemblies`,
 `mirror_support`, `manymouth_support`, `mirror_streets`, `four_gates_support`,
 `amberwood_support`, `amberwood_access`, `mirror_lake_support`,
 `ssarathi_bank_support`, `manymouth_boats`, `terrain_export`, `scene_io`,
-`grey_crossings`),
+`grey_crossings`, `four_gates_sage`),
 the composition algorithm, the authoritative
 entrance profile and each retained library certificate. A changed source must
 be recomposed rather than accepted by editing a certificate.
