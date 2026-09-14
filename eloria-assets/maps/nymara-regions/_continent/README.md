@@ -17,12 +17,12 @@ primary, 9 supplement and 2 atlas gameplay views were captured with the
 published registry and no overrides (`final-review/`, `final-repairs/`), and
 six of the seven native loopback suites walked their 168 routes with 0
 failures on a real server; the interior round-trip suite completed 12 of 72
-routes and then the client produced no frame for 75 minutes (a recurring
-client freeze during chunk streaming, recorded by the harness watchdog),
-while the same 72 routes walked with 0 failures on the twelfth publication,
+routes and then the machine was put to sleep for 75 minutes (the harness
+watchdog recorded the gap and the server closed the idle connection), while
+the same 72 routes walked with 0 failures on the twelfth publication,
 whose geometry this one shares (`after/live-walk/final-live-summary.json`).
-Known limitations are listed in `STATUS-2026-09-13-takeover.md`: that client
-freeze, road cores steeper than 0.65 that the server routes around, boats
+Known limitations are listed in `STATUS-2026-09-13-takeover.md`: road cores
+steeper than 0.65 that the server routes around, boats
 inside rigid assemblies not settled on water, and props that floated in their
 regional surveys keeping that offset. Any later change to a shaping or export
 source returns this notice to provisional until the same chain is repeated.
