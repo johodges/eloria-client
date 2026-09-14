@@ -306,6 +306,20 @@ class PlacementTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'collapsed'):
             E.rebase_publication(new,prior)
 
+    def test_a_record_the_baseline_gained_is_rebased_from_its_content_transform_estimate(self):
+        # The previous publication never placed 6:7; the reconciled profile serves it at that
+        # publication's content transform of the original cell (16,17), where the rewrite finds it.
+        prior={'regions':{'test':{'baselineTilePositions':{'4:5':[14,15]},'serverOrigin':[25,25],'baselineServerOrigin':[15,15],
+            'baselineContentTransform':{'sourceCenter':[0,0],'targetCenter':[0,0],'scale':1}}}}
+        new={'regions':{'test':{'tilePositions':{'4:5':[24,25],'6:7':[26,27]},
+            'previousServerOrigin':[15,15],'serverOrigin':[35,35],
+            'contentTransform':{},'removedInteractiveIds':[],'portalPositions':{}}}}
+        E.rebase_publication(new,prior)
+        spec=new['regions']['test']
+        self.assertEqual(spec['tilePositions'],{'14:15':[24,25],'16:17':[26,27]})
+        self.assertEqual(spec['estimatedSourceTiles'],['6:7'])
+        self.assertEqual(spec['baselineTilePositions'],{'4:5':[24,25],'6:7':[26,27]})
+
     def test_published_server_without_baseline_is_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);path=root/'config/eloria/client_content_manifest.json';path.parent.mkdir(parents=True)

@@ -224,6 +224,23 @@ def verify_current_profile(server, baseline, certificate, previous, shared, publ
                              + ' ' + (result.stdout + result.stderr)[-1500:].strip())
 
 
+def estimated_served_tile(old_key, prior):
+    """Where the previous publication serves an original tile it never placed explicitly.
+
+    Mirrors publish_diagonal_continent.transform_tile for that publication's
+    baseline frame: the content transform of the original cell centre into the
+    published address frame.
+    """
+    old = [int(value) for value in old_key.split(':')]
+    origin = prior['serverOrigin']
+    previous_origin = prior['baselineServerOrigin']
+    transform = prior['baselineContentTransform']
+    source, target, scale = transform['sourceCenter'], transform['targetCenter'], transform['scale']
+    x = (old[0] + .5 - previous_origin[0] - source[0]) * scale + target[0]
+    z = (previous_origin[1] - old[1] - .5 - source[1]) * scale + target[1]
+    return [int(math.floor(x + origin[0])), int(math.floor(origin[1] - z))]
+
+
 def rebase_publication(publication, previous):
     """Keep geometry in its original frame, publish remaps from today's frame."""
     for region, spec in publication['regions'].items():
@@ -237,16 +254,23 @@ def rebase_publication(publication, previous):
         prior = previous['regions'][region]
         old_baseline = prior['baselineTilePositions']
         mapping = {}
+        estimated = []
         for old_key, target in baseline.items():
             current = old_baseline.get(old_key)
             if current is None:
-                # A newly required semantic point has no proven current address.
-                raise ValueError(f'{region}:{old_key}: revised contract has no source in the currently published baseline table')
+                # A record the authored baseline gained after the previous
+                # publication is served today at that publication's content
+                # transform of its original tile: exactly where the profile
+                # reconciliation put it, and where the publisher's rewrite
+                # will find it.
+                current = estimated_served_tile(old_key, prior)
+                estimated.append(old_key)
             current_key = key(current)
             if current_key in mapping and mapping[current_key] != target:
                 raise ValueError(f'{region}:{current_key}: distinct original points collapsed in the previous publication but need different revised targets')
             mapping[current_key] = target
         spec['tilePositions'] = mapping
+        spec['estimatedSourceTiles'] = estimated
         for portal in spec['portalPositions'].values():
             portal['oldTile'] = list(old_baseline[key(portal['oldTile'])])
         spec['previousServerOrigin'] = list(prior['serverOrigin'])

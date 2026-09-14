@@ -12324,7 +12324,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:144:35",
+      "record": "harvesting.txt:135:35",
       "oldTile": [
         259,
         288
@@ -12346,7 +12346,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:145:36",
+      "record": "harvesting.txt:136:36",
       "oldTile": [
         267,
         319
@@ -12368,7 +12368,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:146:37",
+      "record": "harvesting.txt:137:37",
       "oldTile": [
         255,
         275
@@ -12390,7 +12390,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:147:38",
+      "record": "harvesting.txt:138:38",
       "oldTile": [
         52,
         93
@@ -12412,7 +12412,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:148:39",
+      "record": "harvesting.txt:139:39",
       "oldTile": [
         225,
         55
@@ -12434,7 +12434,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:149:40",
+      "record": "harvesting.txt:140:40",
       "oldTile": [
         218,
         60
@@ -12456,7 +12456,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:150:41",
+      "record": "harvesting.txt:141:41",
       "oldTile": [
         37,
         198
@@ -12478,7 +12478,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:151:42",
+      "record": "harvesting.txt:142:42",
       "oldTile": [
         49,
         192
@@ -12500,7 +12500,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:152:43",
+      "record": "harvesting.txt:143:43",
       "oldTile": [
         349,
         281
@@ -12522,7 +12522,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:153:44",
+      "record": "harvesting.txt:144:44",
       "oldTile": [
         354,
         289
@@ -12544,7 +12544,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:154:45",
+      "record": "harvesting.txt:145:45",
       "oldTile": [
         368,
         285
@@ -12566,7 +12566,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:155:46",
+      "record": "harvesting.txt:146:46",
       "oldTile": [
         357,
         286
@@ -12588,7 +12588,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:156:47",
+      "record": "harvesting.txt:147:47",
       "oldTile": [
         55,
         101
@@ -12610,7 +12610,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:157:48",
+      "record": "harvesting.txt:148:48",
       "oldTile": [
         209,
         72
@@ -12632,7 +12632,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:158:49",
+      "record": "harvesting.txt:149:49",
       "oldTile": [
         191,
         69
@@ -12654,7 +12654,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:159:50",
+      "record": "harvesting.txt:150:50",
       "oldTile": [
         65,
         140
@@ -12676,7 +12676,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:160:51",
+      "record": "harvesting.txt:151:51",
       "oldTile": [
         320,
         84
@@ -12698,7 +12698,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:161:52",
+      "record": "harvesting.txt:152:52",
       "oldTile": [
         281,
         284
@@ -12720,7 +12720,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:162:53",
+      "record": "harvesting.txt:153:53",
       "oldTile": [
         373,
         303
@@ -12742,7 +12742,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:163:54",
+      "record": "harvesting.txt:154:54",
       "oldTile": [
         343,
         264
@@ -12764,7 +12764,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:164:55",
+      "record": "harvesting.txt:155:55",
       "oldTile": [
         339,
         285
@@ -12786,7 +12786,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:165:56",
+      "record": "harvesting.txt:156:56",
       "oldTile": [
         328,
         291
@@ -12808,7 +12808,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:166:57",
+      "record": "harvesting.txt:157:57",
       "oldTile": [
         46,
         270
@@ -12830,7 +12830,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:167:58",
+      "record": "harvesting.txt:158:58",
       "oldTile": [
         342,
         278
@@ -12852,7 +12852,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:168:59",
+      "record": "harvesting.txt:159:59",
       "oldTile": [
         343,
         310
@@ -12874,7 +12874,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:169:60",
+      "record": "harvesting.txt:160:60",
       "oldTile": [
         313,
         284
@@ -12896,7 +12896,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:170:61",
+      "record": "harvesting.txt:161:61",
       "oldTile": [
         322,
         288
@@ -12918,7 +12918,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:171:62",
+      "record": "harvesting.txt:162:62",
       "oldTile": [
         315,
         288
@@ -12940,7 +12940,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:447:63",
+      "record": "harvesting.txt:438:63",
       "oldTile": [
         249,
         294
@@ -12962,7 +12962,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:448:64",
+      "record": "harvesting.txt:439:64",
       "oldTile": [
         244,
         271
@@ -12984,7 +12984,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:449:65",
+      "record": "harvesting.txt:440:65",
       "oldTile": [
         243,
         284
@@ -13006,7 +13006,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:450:66",
+      "record": "harvesting.txt:441:66",
       "oldTile": [
         199,
         286
@@ -13028,7 +13028,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:451:67",
+      "record": "harvesting.txt:442:67",
       "oldTile": [
         369,
         312
@@ -13050,7 +13050,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:452:68",
+      "record": "harvesting.txt:443:68",
       "oldTile": [
         357,
         307
@@ -13072,7 +13072,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:453:69",
+      "record": "harvesting.txt:444:69",
       "oldTile": [
         358,
         290
@@ -13094,7 +13094,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:454:70",
+      "record": "harvesting.txt:445:70",
       "oldTile": [
         363,
         304
@@ -13116,7 +13116,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:455:71",
+      "record": "harvesting.txt:446:71",
       "oldTile": [
         40,
         322
@@ -13138,7 +13138,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:456:72",
+      "record": "harvesting.txt:447:72",
       "oldTile": [
         61,
         285
@@ -13160,7 +13160,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:457:73",
+      "record": "harvesting.txt:448:73",
       "oldTile": [
         47,
         262
@@ -13182,7 +13182,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:458:74",
+      "record": "harvesting.txt:449:74",
       "oldTile": [
         355,
         301
@@ -13204,7 +13204,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:459:75",
+      "record": "harvesting.txt:450:75",
       "oldTile": [
         322,
         283
@@ -13226,7 +13226,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:460:76",
+      "record": "harvesting.txt:451:76",
       "oldTile": [
         322,
         278
@@ -13248,7 +13248,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:461:77",
+      "record": "harvesting.txt:452:77",
       "oldTile": [
         343,
         286
@@ -13270,7 +13270,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:462:78",
+      "record": "harvesting.txt:453:78",
       "oldTile": [
         72,
         104
@@ -13292,7 +13292,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:463:79",
+      "record": "harvesting.txt:454:79",
       "oldTile": [
         47,
         94
@@ -13314,7 +13314,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:464:80",
+      "record": "harvesting.txt:455:80",
       "oldTile": [
         51,
         140
@@ -13336,7 +13336,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:465:81",
+      "record": "harvesting.txt:456:81",
       "oldTile": [
         309,
         101
@@ -13358,7 +13358,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:466:82",
+      "record": "harvesting.txt:457:82",
       "oldTile": [
         358,
         300
@@ -13380,7 +13380,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:467:83",
+      "record": "harvesting.txt:458:83",
       "oldTile": [
         364,
         285
@@ -13402,7 +13402,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:468:84",
+      "record": "harvesting.txt:459:84",
       "oldTile": [
         309,
         286
@@ -13424,7 +13424,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:469:85",
+      "record": "harvesting.txt:460:85",
       "oldTile": [
         30,
         306
@@ -13446,7 +13446,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:470:86",
+      "record": "harvesting.txt:461:86",
       "oldTile": [
         324,
         266
@@ -13468,7 +13468,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:471:87",
+      "record": "harvesting.txt:462:87",
       "oldTile": [
         327,
         287
@@ -13490,7 +13490,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:472:88",
+      "record": "harvesting.txt:463:88",
       "oldTile": [
         225,
         68
@@ -13512,7 +13512,7 @@
     },
     {
       "region": "whitehorn_range",
-      "record": "harvesting.txt:473:89",
+      "record": "harvesting.txt:464:89",
       "oldTile": [
         216,
         68
@@ -13526,6 +13526,72 @@
         176.093
       ],
       "displacementMetres": 0.293,
+      "maximumDisplacementMetres": 35,
+      "footprint": [
+        1,
+        1
+      ]
+    },
+    {
+      "region": "whitehorn_range",
+      "record": "harvesting.txt:465:90",
+      "oldTile": [
+        277,
+        288
+      ],
+      "tile": [
+        466,
+        322
+      ],
+      "expectedTile": [
+        466.244,
+        325.26
+      ],
+      "displacementMetres": 3.269,
+      "maximumDisplacementMetres": 35,
+      "footprint": [
+        1,
+        1
+      ]
+    },
+    {
+      "region": "whitehorn_range",
+      "record": "harvesting.txt:466:91",
+      "oldTile": [
+        285,
+        283
+      ],
+      "tile": [
+        473,
+        319
+      ],
+      "expectedTile": [
+        474.244,
+        320.26
+      ],
+      "displacementMetres": 1.77,
+      "maximumDisplacementMetres": 35,
+      "footprint": [
+        1,
+        1
+      ]
+    },
+    {
+      "region": "whitehorn_range",
+      "record": "harvesting.txt:467:92",
+      "oldTile": [
+        368,
+        289
+      ],
+      "tile": [
+        480,
+        282
+      ],
+      "expectedTile": [
+        481.516,
+        281.604
+      ],
+      "displacementMetres": 1.567,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -15558,7 +15624,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:195:47",
+      "record": "harvesting.txt:186:47",
       "oldTile": [
         192,
         110
@@ -15580,7 +15646,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:196:48",
+      "record": "harvesting.txt:187:48",
       "oldTile": [
         190,
         91
@@ -15602,7 +15668,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:197:49",
+      "record": "harvesting.txt:188:49",
       "oldTile": [
         30,
         159
@@ -15624,7 +15690,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:198:50",
+      "record": "harvesting.txt:189:50",
       "oldTile": [
         156,
         238
@@ -15646,7 +15712,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:199:51",
+      "record": "harvesting.txt:190:51",
       "oldTile": [
         239,
         153
@@ -15668,7 +15734,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:200:52",
+      "record": "harvesting.txt:191:52",
       "oldTile": [
         56,
         132
@@ -15690,7 +15756,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:201:53",
+      "record": "harvesting.txt:192:53",
       "oldTile": [
         310,
         152
@@ -15712,7 +15778,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:202:54",
+      "record": "harvesting.txt:193:54",
       "oldTile": [
         292,
         248
@@ -15734,7 +15800,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:203:55",
+      "record": "harvesting.txt:194:55",
       "oldTile": [
         282,
         257
@@ -15756,7 +15822,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:204:56",
+      "record": "harvesting.txt:195:56",
       "oldTile": [
         73,
         17
@@ -15778,7 +15844,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:205:57",
+      "record": "harvesting.txt:196:57",
       "oldTile": [
         161,
         57
@@ -15800,7 +15866,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:206:58",
+      "record": "harvesting.txt:197:58",
       "oldTile": [
         142,
         73
@@ -15822,7 +15888,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:207:59",
+      "record": "harvesting.txt:198:59",
       "oldTile": [
         38,
         198
@@ -15844,7 +15910,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:208:60",
+      "record": "harvesting.txt:199:60",
       "oldTile": [
         32,
         79
@@ -15866,7 +15932,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:209:61",
+      "record": "harvesting.txt:200:61",
       "oldTile": [
         103,
         63
@@ -15888,7 +15954,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:210:62",
+      "record": "harvesting.txt:201:62",
       "oldTile": [
         142,
         52
@@ -15910,7 +15976,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:211:63",
+      "record": "harvesting.txt:202:63",
       "oldTile": [
         90,
         75
@@ -15932,7 +15998,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:212:64",
+      "record": "harvesting.txt:203:64",
       "oldTile": [
         145,
         178
@@ -15954,7 +16020,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:213:65",
+      "record": "harvesting.txt:204:65",
       "oldTile": [
         62,
         119
@@ -15976,7 +16042,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:214:66",
+      "record": "harvesting.txt:205:66",
       "oldTile": [
         29,
         110
@@ -15998,7 +16064,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:215:67",
+      "record": "harvesting.txt:206:67",
       "oldTile": [
         180,
         137
@@ -16020,7 +16086,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:216:68",
+      "record": "harvesting.txt:207:68",
       "oldTile": [
         50,
         84
@@ -16042,7 +16108,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:217:69",
+      "record": "harvesting.txt:208:69",
       "oldTile": [
         49,
         162
@@ -16064,7 +16130,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:218:70",
+      "record": "harvesting.txt:209:70",
       "oldTile": [
         173,
         157
@@ -16086,7 +16152,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:219:71",
+      "record": "harvesting.txt:210:71",
       "oldTile": [
         55,
         191
@@ -16108,7 +16174,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:220:72",
+      "record": "harvesting.txt:211:72",
       "oldTile": [
         117,
         91
@@ -16130,7 +16196,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:221:73",
+      "record": "harvesting.txt:212:73",
       "oldTile": [
         137,
         107
@@ -16152,7 +16218,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:222:74",
+      "record": "harvesting.txt:213:74",
       "oldTile": [
         219,
         110
@@ -16174,7 +16240,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:223:75",
+      "record": "harvesting.txt:214:75",
       "oldTile": [
         126,
         155
@@ -16196,7 +16262,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:224:76",
+      "record": "harvesting.txt:215:76",
       "oldTile": [
         225,
         140
@@ -16218,7 +16284,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:225:77",
+      "record": "harvesting.txt:216:77",
       "oldTile": [
         164,
         89
@@ -16240,7 +16306,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:226:78",
+      "record": "harvesting.txt:217:78",
       "oldTile": [
         71,
         189
@@ -16262,7 +16328,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:227:79",
+      "record": "harvesting.txt:218:79",
       "oldTile": [
         120,
         191
@@ -16284,7 +16350,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:228:80",
+      "record": "harvesting.txt:219:80",
       "oldTile": [
         145,
         204
@@ -16306,7 +16372,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:566:81",
+      "record": "harvesting.txt:568:81",
       "oldTile": [
         242,
         141
@@ -16328,7 +16394,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:567:82",
+      "record": "harvesting.txt:569:82",
       "oldTile": [
         300,
         148
@@ -16350,7 +16416,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:568:83",
+      "record": "harvesting.txt:570:83",
       "oldTile": [
         292,
         154
@@ -16372,7 +16438,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:569:84",
+      "record": "harvesting.txt:571:84",
       "oldTile": [
         231,
         137
@@ -16394,7 +16460,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:570:85",
+      "record": "harvesting.txt:572:85",
       "oldTile": [
         64,
         135
@@ -16416,7 +16482,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:571:86",
+      "record": "harvesting.txt:573:86",
       "oldTile": [
         298,
         162
@@ -16438,7 +16504,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:572:87",
+      "record": "harvesting.txt:574:87",
       "oldTile": [
         346,
         253
@@ -16460,7 +16526,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:573:88",
+      "record": "harvesting.txt:575:88",
       "oldTile": [
         351,
         257
@@ -16482,7 +16548,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:574:89",
+      "record": "harvesting.txt:576:89",
       "oldTile": [
         347,
         263
@@ -16504,7 +16570,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:575:90",
+      "record": "harvesting.txt:577:90",
       "oldTile": [
         273,
         50
@@ -16526,7 +16592,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:576:91",
+      "record": "harvesting.txt:578:91",
       "oldTile": [
         274,
         58
@@ -16548,7 +16614,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:577:92",
+      "record": "harvesting.txt:579:92",
       "oldTile": [
         276,
         53
@@ -16570,7 +16636,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:578:93",
+      "record": "harvesting.txt:580:93",
       "oldTile": [
         65,
         92
@@ -16592,7 +16658,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:579:94",
+      "record": "harvesting.txt:581:94",
       "oldTile": [
         57,
         96
@@ -16614,7 +16680,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:580:95",
+      "record": "harvesting.txt:582:95",
       "oldTile": [
         60,
         90
@@ -16636,7 +16702,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:581:96",
+      "record": "harvesting.txt:583:96",
       "oldTile": [
         368,
         84
@@ -16658,7 +16724,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:582:97",
+      "record": "harvesting.txt:584:97",
       "oldTile": [
         373,
         83
@@ -16680,7 +16746,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:583:98",
+      "record": "harvesting.txt:585:98",
       "oldTile": [
         366,
         89
@@ -16702,7 +16768,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:584:99",
+      "record": "harvesting.txt:586:99",
       "oldTile": [
         235,
         349
@@ -16724,7 +16790,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:585:100",
+      "record": "harvesting.txt:587:100",
       "oldTile": [
         231,
         342
@@ -16746,7 +16812,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:586:101",
+      "record": "harvesting.txt:588:101",
       "oldTile": [
         232,
         339
@@ -16768,7 +16834,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:587:102",
+      "record": "harvesting.txt:589:102",
       "oldTile": [
         199,
         19
@@ -16790,7 +16856,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:588:103",
+      "record": "harvesting.txt:590:103",
       "oldTile": [
         200,
         28
@@ -16812,7 +16878,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:589:104",
+      "record": "harvesting.txt:591:104",
       "oldTile": [
         312,
         58
@@ -16834,7 +16900,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:590:105",
+      "record": "harvesting.txt:592:105",
       "oldTile": [
         312,
         64
@@ -16856,7 +16922,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:591:106",
+      "record": "harvesting.txt:593:106",
       "oldTile": [
         150,
         241
@@ -16878,7 +16944,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:592:107",
+      "record": "harvesting.txt:594:107",
       "oldTile": [
         163,
         223
@@ -16900,7 +16966,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:593:108",
+      "record": "harvesting.txt:595:108",
       "oldTile": [
         246,
         52
@@ -16922,7 +16988,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:594:109",
+      "record": "harvesting.txt:596:109",
       "oldTile": [
         244,
         64
@@ -16944,7 +17010,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:595:110",
+      "record": "harvesting.txt:597:110",
       "oldTile": [
         128,
         303
@@ -16966,7 +17032,7 @@
     },
     {
       "region": "grey_moors",
-      "record": "harvesting.txt:596:111",
+      "record": "harvesting.txt:598:111",
       "oldTile": [
         125,
         303
@@ -16980,6 +17046,72 @@
         468.583
       ],
       "displacementMetres": 0.428,
+      "maximumDisplacementMetres": 35,
+      "footprint": [
+        1,
+        1
+      ]
+    },
+    {
+      "region": "grey_moors",
+      "record": "harvesting.txt:599:112",
+      "oldTile": [
+        57,
+        136
+      ],
+      "tile": [
+        173,
+        336
+      ],
+      "expectedTile": [
+        175.202,
+        336.475
+      ],
+      "displacementMetres": 2.253,
+      "maximumDisplacementMetres": 35,
+      "footprint": [
+        1,
+        1
+      ]
+    },
+    {
+      "region": "grey_moors",
+      "record": "harvesting.txt:600:113",
+      "oldTile": [
+        292,
+        162
+      ],
+      "tile": [
+        357,
+        358
+      ],
+      "expectedTile": [
+        356.541,
+        358.429
+      ],
+      "displacementMetres": 0.628,
+      "maximumDisplacementMetres": 35,
+      "footprint": [
+        1,
+        1
+      ]
+    },
+    {
+      "region": "grey_moors",
+      "record": "harvesting.txt:601:114",
+      "oldTile": [
+        66,
+        131
+      ],
+      "tile": [
+        182,
+        334
+      ],
+      "expectedTile": [
+        182.472,
+        333.711
+      ],
+      "displacementMetres": 0.553,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -19342,7 +19474,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:328:0",
+      "record": "harvesting.txt:319:0",
       "oldTile": [
         137,
         316
@@ -19364,7 +19496,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:329:1",
+      "record": "harvesting.txt:320:1",
       "oldTile": [
         241,
         358
@@ -19386,7 +19518,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:330:2",
+      "record": "harvesting.txt:321:2",
       "oldTile": [
         231,
         337
@@ -19408,7 +19540,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:331:3",
+      "record": "harvesting.txt:322:3",
       "oldTile": [
         234,
         332
@@ -19430,7 +19562,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:332:4",
+      "record": "harvesting.txt:323:4",
       "oldTile": [
         236,
         359
@@ -19452,7 +19584,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:333:5",
+      "record": "harvesting.txt:324:5",
       "oldTile": [
         152,
         340
@@ -19474,7 +19606,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:334:6",
+      "record": "harvesting.txt:325:6",
       "oldTile": [
         138,
         330
@@ -19496,7 +19628,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:335:7",
+      "record": "harvesting.txt:326:7",
       "oldTile": [
         138,
         335
@@ -19518,7 +19650,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:336:8",
+      "record": "harvesting.txt:327:8",
       "oldTile": [
         149,
         332
@@ -19540,7 +19672,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:337:9",
+      "record": "harvesting.txt:328:9",
       "oldTile": [
         135,
         332
@@ -19562,7 +19694,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:338:10",
+      "record": "harvesting.txt:329:10",
       "oldTile": [
         157,
         116
@@ -19584,7 +19716,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:339:11",
+      "record": "harvesting.txt:330:11",
       "oldTile": [
         243,
         61
@@ -19606,7 +19738,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:340:12",
+      "record": "harvesting.txt:331:12",
       "oldTile": [
         148,
         127
@@ -19628,7 +19760,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:341:2013",
+      "record": "harvesting.txt:332:2013",
       "oldTile": [
         230,
         59
@@ -19650,7 +19782,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:342:2014",
+      "record": "harvesting.txt:333:2014",
       "oldTile": [
         151,
         128
@@ -19672,7 +19804,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:343:2015",
+      "record": "harvesting.txt:334:2015",
       "oldTile": [
         239,
         62
@@ -19694,7 +19826,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:344:2016",
+      "record": "harvesting.txt:335:2016",
       "oldTile": [
         200,
         71
@@ -19716,7 +19848,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:345:17",
+      "record": "harvesting.txt:336:17",
       "oldTile": [
         209,
         59
@@ -19738,7 +19870,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:346:18",
+      "record": "harvesting.txt:337:18",
       "oldTile": [
         154,
         347
@@ -19760,7 +19892,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:347:19",
+      "record": "harvesting.txt:338:19",
       "oldTile": [
         142,
         360
@@ -19782,7 +19914,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:348:2020",
+      "record": "harvesting.txt:339:2020",
       "oldTile": [
         141,
         356
@@ -19804,7 +19936,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:349:2021",
+      "record": "harvesting.txt:340:2021",
       "oldTile": [
         140,
         347
@@ -19826,7 +19958,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:350:2022",
+      "record": "harvesting.txt:341:2022",
       "oldTile": [
         138,
         361
@@ -19848,7 +19980,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:351:2023",
+      "record": "harvesting.txt:342:2023",
       "oldTile": [
         100,
         88
@@ -19870,7 +20002,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:352:24",
+      "record": "harvesting.txt:343:24",
       "oldTile": [
         313,
         118
@@ -19892,7 +20024,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:353:25",
+      "record": "harvesting.txt:344:25",
       "oldTile": [
         327,
         128
@@ -19914,7 +20046,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:354:26",
+      "record": "harvesting.txt:345:26",
       "oldTile": [
         319,
         124
@@ -19936,7 +20068,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:355:27",
+      "record": "harvesting.txt:346:27",
       "oldTile": [
         388,
         160
@@ -19958,7 +20090,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:356:28",
+      "record": "harvesting.txt:347:28",
       "oldTile": [
         372,
         154
@@ -19980,7 +20112,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:357:29",
+      "record": "harvesting.txt:348:29",
       "oldTile": [
         370,
         160
@@ -20002,7 +20134,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:358:30",
+      "record": "harvesting.txt:349:30",
       "oldTile": [
         402,
         230
@@ -20024,7 +20156,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:535:31",
+      "record": "harvesting.txt:534:31",
       "oldTile": [
         242,
         329
@@ -20046,7 +20178,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:536:32",
+      "record": "harvesting.txt:535:32",
       "oldTile": [
         234,
         345
@@ -20068,7 +20200,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:537:33",
+      "record": "harvesting.txt:536:33",
       "oldTile": [
         231,
         346
@@ -20090,7 +20222,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:538:34",
+      "record": "harvesting.txt:537:34",
       "oldTile": [
         246,
         332
@@ -20112,7 +20244,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:539:35",
+      "record": "harvesting.txt:538:35",
       "oldTile": [
         157,
         324
@@ -20134,7 +20266,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:540:36",
+      "record": "harvesting.txt:539:36",
       "oldTile": [
         232,
         349
@@ -20156,7 +20288,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:541:37",
+      "record": "harvesting.txt:540:37",
       "oldTile": [
         236,
         69
@@ -20178,7 +20310,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:542:38",
+      "record": "harvesting.txt:541:38",
       "oldTile": [
         184,
         75
@@ -20200,7 +20332,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:543:39",
+      "record": "harvesting.txt:542:39",
       "oldTile": [
         164,
         131
@@ -20222,7 +20354,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:544:40",
+      "record": "harvesting.txt:543:40",
       "oldTile": [
         135,
         353
@@ -20244,7 +20376,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:545:41",
+      "record": "harvesting.txt:544:41",
       "oldTile": [
         117,
         353
@@ -20266,7 +20398,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:546:42",
+      "record": "harvesting.txt:545:42",
       "oldTile": [
         146,
         356
@@ -20288,7 +20420,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:547:43",
+      "record": "harvesting.txt:546:43",
       "oldTile": [
         120,
         332
@@ -20310,7 +20442,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:548:44",
+      "record": "harvesting.txt:547:44",
       "oldTile": [
         142,
         316
@@ -20332,7 +20464,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:549:45",
+      "record": "harvesting.txt:548:45",
       "oldTile": [
         119,
         73
@@ -20354,7 +20486,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:550:46",
+      "record": "harvesting.txt:549:46",
       "oldTile": [
         131,
         71
@@ -20376,7 +20508,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:551:47",
+      "record": "harvesting.txt:550:47",
       "oldTile": [
         246,
         85
@@ -20398,7 +20530,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:552:48",
+      "record": "harvesting.txt:551:48",
       "oldTile": [
         239,
         80
@@ -20420,7 +20552,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:553:49",
+      "record": "harvesting.txt:552:49",
       "oldTile": [
         213,
         46
@@ -20442,7 +20574,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:554:50",
+      "record": "harvesting.txt:553:50",
       "oldTile": [
         222,
         41
@@ -20464,7 +20596,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:555:51",
+      "record": "harvesting.txt:554:51",
       "oldTile": [
         202,
         60
@@ -20486,7 +20618,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:556:52",
+      "record": "harvesting.txt:555:52",
       "oldTile": [
         202,
         57
@@ -20508,7 +20640,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:557:53",
+      "record": "harvesting.txt:556:53",
       "oldTile": [
         239,
         71
@@ -20530,7 +20662,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:558:54",
+      "record": "harvesting.txt:557:54",
       "oldTile": [
         228,
         79
@@ -20552,7 +20684,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:559:55",
+      "record": "harvesting.txt:558:55",
       "oldTile": [
         317,
         49
@@ -20574,7 +20706,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:560:56",
+      "record": "harvesting.txt:559:56",
       "oldTile": [
         313,
         48
@@ -20596,7 +20728,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:561:57",
+      "record": "harvesting.txt:560:57",
       "oldTile": [
         241,
         74
@@ -20618,7 +20750,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:562:58",
+      "record": "harvesting.txt:561:58",
       "oldTile": [
         226,
         61
@@ -20640,7 +20772,7 @@
     },
     {
       "region": "amberwood",
-      "record": "harvesting.txt:563:59",
+      "record": "harvesting.txt:562:59",
       "oldTile": [
         232,
         80
@@ -20654,6 +20786,72 @@
         39.229
       ],
       "displacementMetres": 0.291,
+      "maximumDisplacementMetres": 35,
+      "footprint": [
+        1,
+        1
+      ]
+    },
+    {
+      "region": "amberwood",
+      "record": "harvesting.txt:563:60",
+      "oldTile": [
+        133,
+        360
+      ],
+      "tile": [
+        170,
+        244
+      ],
+      "expectedTile": [
+        170.05,
+        244.236
+      ],
+      "displacementMetres": 0.241,
+      "maximumDisplacementMetres": 35,
+      "footprint": [
+        1,
+        1
+      ]
+    },
+    {
+      "region": "amberwood",
+      "record": "harvesting.txt:564:61",
+      "oldTile": [
+        150,
+        346
+      ],
+      "tile": [
+        189,
+        232
+      ],
+      "expectedTile": [
+        187.05,
+        230.236
+      ],
+      "displacementMetres": 2.63,
+      "maximumDisplacementMetres": 35,
+      "footprint": [
+        1,
+        1
+      ]
+    },
+    {
+      "region": "amberwood",
+      "record": "harvesting.txt:565:62",
+      "oldTile": [
+        146,
+        361
+      ],
+      "tile": [
+        177,
+        250
+      ],
+      "expectedTile": [
+        183.05,
+        245.236
+      ],
+      "displacementMetres": 7.7,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -22164,14 +22362,14 @@
         367
       ],
       "tile": [
-        176,
-        251
+        177,
+        254
       ],
       "expectedTile": [
         180.05,
         251.236
       ],
-      "displacementMetres": 4.057,
+      "displacementMetres": 4.116,
       "maximumDisplacementMetres": 80,
       "footprint": [
         3,
@@ -23258,7 +23456,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:172:42",
+      "record": "harvesting.txt:163:42",
       "oldTile": [
         246,
         204
@@ -23280,7 +23478,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:173:43",
+      "record": "harvesting.txt:164:43",
       "oldTile": [
         277,
         88
@@ -23302,7 +23500,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:174:44",
+      "record": "harvesting.txt:165:44",
       "oldTile": [
         248,
         196
@@ -23324,7 +23522,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:175:45",
+      "record": "harvesting.txt:166:45",
       "oldTile": [
         228,
         131
@@ -23346,7 +23544,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:176:46",
+      "record": "harvesting.txt:167:46",
       "oldTile": [
         238,
         147
@@ -23368,7 +23566,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:177:47",
+      "record": "harvesting.txt:168:47",
       "oldTile": [
         194,
         335
@@ -23390,7 +23588,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:178:48",
+      "record": "harvesting.txt:169:48",
       "oldTile": [
         294,
         272
@@ -23412,7 +23610,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:179:49",
+      "record": "harvesting.txt:170:49",
       "oldTile": [
         292,
         321
@@ -23434,7 +23632,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:180:50",
+      "record": "harvesting.txt:171:50",
       "oldTile": [
         348,
         206
@@ -23456,7 +23654,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:181:51",
+      "record": "harvesting.txt:172:51",
       "oldTile": [
         159,
         221
@@ -23478,7 +23676,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:182:52",
+      "record": "harvesting.txt:173:52",
       "oldTile": [
         148,
         232
@@ -23500,7 +23698,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:183:53",
+      "record": "harvesting.txt:174:53",
       "oldTile": [
         45,
         326
@@ -23522,7 +23720,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:184:54",
+      "record": "harvesting.txt:175:54",
       "oldTile": [
         33,
         345
@@ -23544,7 +23742,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:185:55",
+      "record": "harvesting.txt:176:55",
       "oldTile": [
         330,
         273
@@ -23566,7 +23764,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:186:56",
+      "record": "harvesting.txt:177:56",
       "oldTile": [
         309,
         288
@@ -23588,7 +23786,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:187:57",
+      "record": "harvesting.txt:178:57",
       "oldTile": [
         72,
         174
@@ -23610,7 +23808,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:188:58",
+      "record": "harvesting.txt:179:58",
       "oldTile": [
         61,
         179
@@ -23632,7 +23830,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:189:59",
+      "record": "harvesting.txt:180:59",
       "oldTile": [
         326,
         171
@@ -23654,7 +23852,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:190:60",
+      "record": "harvesting.txt:181:60",
       "oldTile": [
         351,
         93
@@ -23676,7 +23874,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:191:61",
+      "record": "harvesting.txt:182:61",
       "oldTile": [
         165,
         73
@@ -23698,7 +23896,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:192:62",
+      "record": "harvesting.txt:183:62",
       "oldTile": [
         176,
         90
@@ -23720,7 +23918,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:193:63",
+      "record": "harvesting.txt:184:63",
       "oldTile": [
         104,
         82
@@ -23742,7 +23940,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:194:64",
+      "record": "harvesting.txt:185:64",
       "oldTile": [
         186,
         60
@@ -23764,7 +23962,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:476:65",
+      "record": "harvesting.txt:470:65",
       "oldTile": [
         244,
         143
@@ -23786,7 +23984,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:477:66",
+      "record": "harvesting.txt:471:66",
       "oldTile": [
         224,
         306
@@ -23808,7 +24006,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:478:67",
+      "record": "harvesting.txt:472:67",
       "oldTile": [
         229,
         308
@@ -23830,7 +24028,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:479:68",
+      "record": "harvesting.txt:473:68",
       "oldTile": [
         217,
         300
@@ -23852,7 +24050,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:480:69",
+      "record": "harvesting.txt:474:69",
       "oldTile": [
         233,
         152
@@ -23874,7 +24072,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:481:70",
+      "record": "harvesting.txt:475:70",
       "oldTile": [
         206,
         314
@@ -23896,7 +24094,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:482:71",
+      "record": "harvesting.txt:476:71",
       "oldTile": [
         274,
         260
@@ -23918,7 +24116,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:483:72",
+      "record": "harvesting.txt:477:72",
       "oldTile": [
         269,
         256
@@ -23940,7 +24138,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:484:73",
+      "record": "harvesting.txt:478:73",
       "oldTile": [
         204,
         326
@@ -23962,7 +24160,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:485:74",
+      "record": "harvesting.txt:479:74",
       "oldTile": [
         197,
         336
@@ -23984,7 +24182,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:486:75",
+      "record": "harvesting.txt:480:75",
       "oldTile": [
         289,
         277
@@ -24006,7 +24204,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:487:76",
+      "record": "harvesting.txt:481:76",
       "oldTile": [
         295,
         260
@@ -24028,7 +24226,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:488:77",
+      "record": "harvesting.txt:482:77",
       "oldTile": [
         266,
         316
@@ -24050,7 +24248,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:489:78",
+      "record": "harvesting.txt:483:78",
       "oldTile": [
         329,
         192
@@ -24072,7 +24270,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:490:79",
+      "record": "harvesting.txt:484:79",
       "oldTile": [
         341,
         205
@@ -24094,7 +24292,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:491:80",
+      "record": "harvesting.txt:485:80",
       "oldTile": [
         158,
         75
@@ -24116,7 +24314,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:492:81",
+      "record": "harvesting.txt:486:81",
       "oldTile": [
         179,
         82
@@ -24138,7 +24336,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:493:82",
+      "record": "harvesting.txt:487:82",
       "oldTile": [
         169,
         93
@@ -24160,7 +24358,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:494:83",
+      "record": "harvesting.txt:488:83",
       "oldTile": [
         198,
         63
@@ -24182,7 +24380,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:495:84",
+      "record": "harvesting.txt:489:84",
       "oldTile": [
         112,
         72
@@ -24204,7 +24402,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:496:85",
+      "record": "harvesting.txt:490:85",
       "oldTile": [
         101,
         77
@@ -24226,7 +24424,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:497:86",
+      "record": "harvesting.txt:491:86",
       "oldTile": [
         306,
         272
@@ -24248,7 +24446,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:498:87",
+      "record": "harvesting.txt:492:87",
       "oldTile": [
         209,
         47
@@ -24270,7 +24468,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:499:88",
+      "record": "harvesting.txt:493:88",
       "oldTile": [
         323,
         184
@@ -24292,7 +24490,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:500:89",
+      "record": "harvesting.txt:494:89",
       "oldTile": [
         313,
         198
@@ -24314,7 +24512,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:501:90",
+      "record": "harvesting.txt:495:90",
       "oldTile": [
         42,
         334
@@ -24336,7 +24534,7 @@
     },
     {
       "region": "amethyst_barrens",
-      "record": "harvesting.txt:502:91",
+      "record": "harvesting.txt:496:91",
       "oldTile": [
         36,
         334
@@ -24350,6 +24548,50 @@
         349.096
       ],
       "displacementMetres": 0.141,
+      "maximumDisplacementMetres": 35,
+      "footprint": [
+        1,
+        1
+      ]
+    },
+    {
+      "region": "amethyst_barrens",
+      "record": "harvesting.txt:497:92",
+      "oldTile": [
+        313,
+        288
+      ],
+      "tile": [
+        371,
+        318
+      ],
+      "expectedTile": [
+        370.933,
+        317.957
+      ],
+      "displacementMetres": 0.079,
+      "maximumDisplacementMetres": 35,
+      "footprint": [
+        1,
+        1
+      ]
+    },
+    {
+      "region": "amethyst_barrens",
+      "record": "harvesting.txt:498:93",
+      "oldTile": [
+        308,
+        293
+      ],
+      "tile": [
+        373,
+        320
+      ],
+      "expectedTile": [
+        372.914,
+        320.27
+      ],
+      "displacementMetres": 0.283,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -26338,7 +26580,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:72:42",
+      "record": "harvesting.txt:63:42",
       "oldTile": [
         73,
         25
@@ -26360,7 +26602,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:73:43",
+      "record": "harvesting.txt:64:43",
       "oldTile": [
         43,
         38
@@ -26382,7 +26624,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:74:44",
+      "record": "harvesting.txt:65:44",
       "oldTile": [
         92,
         62
@@ -26404,7 +26646,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:75:45",
+      "record": "harvesting.txt:66:45",
       "oldTile": [
         113,
         173
@@ -26426,7 +26668,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:76:46",
+      "record": "harvesting.txt:67:46",
       "oldTile": [
         88,
         170
@@ -26448,7 +26690,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:77:47",
+      "record": "harvesting.txt:68:47",
       "oldTile": [
         146,
         91
@@ -26470,7 +26712,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:78:48",
+      "record": "harvesting.txt:69:48",
       "oldTile": [
         95,
         84
@@ -26492,7 +26734,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:79:49",
+      "record": "harvesting.txt:70:49",
       "oldTile": [
         94,
         41
@@ -26514,7 +26756,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:80:50",
+      "record": "harvesting.txt:71:50",
       "oldTile": [
         101,
         108
@@ -26536,7 +26778,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:81:51",
+      "record": "harvesting.txt:72:51",
       "oldTile": [
         103,
         60
@@ -26558,7 +26800,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:82:52",
+      "record": "harvesting.txt:73:52",
       "oldTile": [
         38,
         94
@@ -26580,7 +26822,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:83:53",
+      "record": "harvesting.txt:74:53",
       "oldTile": [
         60,
         79
@@ -26602,7 +26844,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:84:54",
+      "record": "harvesting.txt:75:54",
       "oldTile": [
         40,
         128
@@ -26624,7 +26866,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:85:55",
+      "record": "harvesting.txt:76:55",
       "oldTile": [
         184,
         131
@@ -26646,7 +26888,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:86:56",
+      "record": "harvesting.txt:77:56",
       "oldTile": [
         105,
         19
@@ -26668,7 +26910,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:87:57",
+      "record": "harvesting.txt:78:57",
       "oldTile": [
         138,
         86
@@ -26690,7 +26932,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:88:58",
+      "record": "harvesting.txt:79:58",
       "oldTile": [
         81,
         76
@@ -26712,7 +26954,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:89:59",
+      "record": "harvesting.txt:80:59",
       "oldTile": [
         141,
         87
@@ -26734,7 +26976,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:90:60",
+      "record": "harvesting.txt:81:60",
       "oldTile": [
         192,
         167
@@ -26756,7 +26998,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:91:61",
+      "record": "harvesting.txt:82:61",
       "oldTile": [
         138,
         114
@@ -26778,7 +27020,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:92:62",
+      "record": "harvesting.txt:83:62",
       "oldTile": [
         121,
         104
@@ -26800,7 +27042,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:93:63",
+      "record": "harvesting.txt:84:63",
       "oldTile": [
         100,
         143
@@ -26822,7 +27064,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:94:64",
+      "record": "harvesting.txt:85:64",
       "oldTile": [
         31,
         158
@@ -26844,7 +27086,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:95:65",
+      "record": "harvesting.txt:86:65",
       "oldTile": [
         113,
         86
@@ -26866,7 +27108,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:385:66",
+      "record": "harvesting.txt:376:66",
       "oldTile": [
         130,
         58
@@ -26888,7 +27130,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:386:67",
+      "record": "harvesting.txt:377:67",
       "oldTile": [
         136,
         58
@@ -26910,7 +27152,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:387:68",
+      "record": "harvesting.txt:378:68",
       "oldTile": [
         134,
         52
@@ -26932,7 +27174,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:388:69",
+      "record": "harvesting.txt:379:69",
       "oldTile": [
         208,
         74
@@ -26954,7 +27196,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:389:70",
+      "record": "harvesting.txt:380:70",
       "oldTile": [
         208,
         70
@@ -26976,7 +27218,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:390:71",
+      "record": "harvesting.txt:381:71",
       "oldTile": [
         212,
         76
@@ -26998,7 +27240,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:391:72",
+      "record": "harvesting.txt:382:72",
       "oldTile": [
         115,
         340
@@ -27020,7 +27262,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:392:73",
+      "record": "harvesting.txt:383:73",
       "oldTile": [
         110,
         338
@@ -27042,7 +27284,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:393:74",
+      "record": "harvesting.txt:384:74",
       "oldTile": [
         118,
         339
@@ -27064,7 +27306,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:394:75",
+      "record": "harvesting.txt:385:75",
       "oldTile": [
         289,
         216
@@ -27086,7 +27328,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:395:76",
+      "record": "harvesting.txt:386:76",
       "oldTile": [
         281,
         223
@@ -27108,7 +27350,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:396:77",
+      "record": "harvesting.txt:387:77",
       "oldTile": [
         281,
         219
@@ -27130,7 +27372,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:397:78",
+      "record": "harvesting.txt:388:78",
       "oldTile": [
         161,
         27
@@ -27152,7 +27394,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:398:79",
+      "record": "harvesting.txt:389:79",
       "oldTile": [
         163,
         33
@@ -27174,7 +27416,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:399:80",
+      "record": "harvesting.txt:390:80",
       "oldTile": [
         163,
         26
@@ -27196,7 +27438,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:400:81",
+      "record": "harvesting.txt:391:81",
       "oldTile": [
         124,
         232
@@ -27218,7 +27460,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:401:82",
+      "record": "harvesting.txt:392:82",
       "oldTile": [
         127,
         230
@@ -27240,7 +27482,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:402:83",
+      "record": "harvesting.txt:393:83",
       "oldTile": [
         170,
         383
@@ -27262,7 +27504,7 @@
     },
     {
       "region": "mirrorhold",
-      "record": "harvesting.txt:403:84",
+      "record": "harvesting.txt:394:84",
       "oldTile": [
         173,
         384
@@ -28802,7 +29044,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:359:0",
+      "record": "harvesting.txt:350:0",
       "oldTile": [
         202,
         71
@@ -28824,7 +29066,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:360:1",
+      "record": "harvesting.txt:351:1",
       "oldTile": [
         194,
         72
@@ -28846,7 +29088,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:361:2",
+      "record": "harvesting.txt:352:2",
       "oldTile": [
         171,
         222
@@ -28868,7 +29110,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:362:3",
+      "record": "harvesting.txt:353:3",
       "oldTile": [
         76,
         139
@@ -28890,7 +29132,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:363:4",
+      "record": "harvesting.txt:354:4",
       "oldTile": [
         166,
         221
@@ -28912,7 +29154,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:364:5",
+      "record": "harvesting.txt:355:5",
       "oldTile": [
         91,
         68
@@ -28934,7 +29176,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:365:6",
+      "record": "harvesting.txt:356:6",
       "oldTile": [
         47,
         80
@@ -28956,7 +29198,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:366:7",
+      "record": "harvesting.txt:357:7",
       "oldTile": [
         43,
         82
@@ -28978,7 +29220,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:367:8",
+      "record": "harvesting.txt:358:8",
       "oldTile": [
         46,
         51
@@ -29000,7 +29242,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:368:9",
+      "record": "harvesting.txt:359:9",
       "oldTile": [
         68,
         212
@@ -29022,7 +29264,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:369:10",
+      "record": "harvesting.txt:360:10",
       "oldTile": [
         66,
         193
@@ -29044,7 +29286,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:370:11",
+      "record": "harvesting.txt:361:11",
       "oldTile": [
         270,
         206
@@ -29066,7 +29308,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:371:12",
+      "record": "harvesting.txt:362:12",
       "oldTile": [
         320,
         236
@@ -29088,7 +29330,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:372:2013",
+      "record": "harvesting.txt:363:2013",
       "oldTile": [
         321,
         242
@@ -29110,7 +29352,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:373:2014",
+      "record": "harvesting.txt:364:2014",
       "oldTile": [
         284,
         318
@@ -29132,7 +29374,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:374:2015",
+      "record": "harvesting.txt:365:2015",
       "oldTile": [
         112,
         306
@@ -29154,7 +29396,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:375:2016",
+      "record": "harvesting.txt:366:2016",
       "oldTile": [
         108,
         282
@@ -29176,7 +29418,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:376:17",
+      "record": "harvesting.txt:367:17",
       "oldTile": [
         85,
         64
@@ -29198,7 +29440,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:377:18",
+      "record": "harvesting.txt:368:18",
       "oldTile": [
         344,
         203
@@ -29220,7 +29462,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:378:19",
+      "record": "harvesting.txt:369:19",
       "oldTile": [
         85,
         331
@@ -29242,7 +29484,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:505:2020",
+      "record": "harvesting.txt:501:2020",
       "oldTile": [
         172,
         81
@@ -29264,7 +29506,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:506:2021",
+      "record": "harvesting.txt:502:2021",
       "oldTile": [
         174,
         215
@@ -29286,7 +29528,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:507:2022",
+      "record": "harvesting.txt:503:2022",
       "oldTile": [
         80,
         135
@@ -29308,7 +29550,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:508:23",
+      "record": "harvesting.txt:504:23",
       "oldTile": [
         197,
         76
@@ -29330,7 +29572,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:509:24",
+      "record": "harvesting.txt:505:24",
       "oldTile": [
         77,
         129
@@ -29352,7 +29594,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:510:25",
+      "record": "harvesting.txt:506:25",
       "oldTile": [
         77,
         134
@@ -29374,7 +29616,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:511:26",
+      "record": "harvesting.txt:507:26",
       "oldTile": [
         205,
         76
@@ -29396,7 +29638,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:512:27",
+      "record": "harvesting.txt:508:27",
       "oldTile": [
         170,
         226
@@ -29418,7 +29660,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:513:28",
+      "record": "harvesting.txt:509:28",
       "oldTile": [
         174,
         218
@@ -29440,7 +29682,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:514:29",
+      "record": "harvesting.txt:510:29",
       "oldTile": [
         185,
         74
@@ -29462,7 +29704,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:515:30",
+      "record": "harvesting.txt:511:30",
       "oldTile": [
         180,
         71
@@ -29484,7 +29726,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:516:31",
+      "record": "harvesting.txt:512:31",
       "oldTile": [
         171,
         217
@@ -29506,7 +29748,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:517:32",
+      "record": "harvesting.txt:513:32",
       "oldTile": [
         50,
         86
@@ -29528,7 +29770,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:518:33",
+      "record": "harvesting.txt:514:33",
       "oldTile": [
         236,
         176
@@ -29550,7 +29792,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:519:34",
+      "record": "harvesting.txt:515:34",
       "oldTile": [
         236,
         182
@@ -29572,7 +29814,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:520:35",
+      "record": "harvesting.txt:516:35",
       "oldTile": [
         275,
         210
@@ -29594,7 +29836,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:521:36",
+      "record": "harvesting.txt:517:36",
       "oldTile": [
         270,
         210
@@ -29616,7 +29858,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:522:37",
+      "record": "harvesting.txt:518:37",
       "oldTile": [
         274,
         203
@@ -29638,7 +29880,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:523:38",
+      "record": "harvesting.txt:519:38",
       "oldTile": [
         315,
         84
@@ -29660,7 +29902,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:524:39",
+      "record": "harvesting.txt:520:39",
       "oldTile": [
         319,
         86
@@ -29682,7 +29924,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:525:40",
+      "record": "harvesting.txt:521:40",
       "oldTile": [
         258,
         137
@@ -29704,7 +29946,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:526:41",
+      "record": "harvesting.txt:522:41",
       "oldTile": [
         264,
         128
@@ -29726,7 +29968,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:527:42",
+      "record": "harvesting.txt:523:42",
       "oldTile": [
         312,
         297
@@ -29748,7 +29990,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:528:43",
+      "record": "harvesting.txt:524:43",
       "oldTile": [
         308,
         296
@@ -29770,7 +30012,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:529:44",
+      "record": "harvesting.txt:525:44",
       "oldTile": [
         337,
         197
@@ -29792,7 +30034,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:530:45",
+      "record": "harvesting.txt:526:45",
       "oldTile": [
         337,
         204
@@ -29814,7 +30056,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:531:46",
+      "record": "harvesting.txt:527:46",
       "oldTile": [
         342,
         198
@@ -29836,7 +30078,7 @@
     },
     {
       "region": "sunmane_steppe",
-      "record": "harvesting.txt:532:47",
+      "record": "harvesting.txt:528:47",
       "oldTile": [
         343,
         195
@@ -29850,6 +30092,72 @@
         364.082
       ],
       "displacementMetres": 0.12,
+      "maximumDisplacementMetres": 35,
+      "footprint": [
+        1,
+        1
+      ]
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "harvesting.txt:529:48",
+      "oldTile": [
+        333,
+        205
+      ],
+      "tile": [
+        341,
+        371
+      ],
+      "expectedTile": [
+        340.53,
+        370.67
+      ],
+      "displacementMetres": 0.574,
+      "maximumDisplacementMetres": 35,
+      "footprint": [
+        1,
+        1
+      ]
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "harvesting.txt:530:49",
+      "oldTile": [
+        336,
+        191
+      ],
+      "tile": [
+        341,
+        363
+      ],
+      "expectedTile": [
+        341.0,
+        363.16
+      ],
+      "displacementMetres": 0.16,
+      "maximumDisplacementMetres": 35,
+      "footprint": [
+        1,
+        1
+      ]
+    },
+    {
+      "region": "sunmane_steppe",
+      "record": "harvesting.txt:531:50",
+      "oldTile": [
+        333,
+        201
+      ],
+      "tile": [
+        338,
+        374
+      ],
+      "expectedTile": [
+        338.0,
+        373.16
+      ],
+      "displacementMetres": 0.84,
       "maximumDisplacementMetres": 35,
       "footprint": [
         1,
@@ -31904,7 +32212,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:122:496",
+      "record": "harvesting.txt:113:496",
       "oldTile": [
         226,
         117
@@ -31926,7 +32234,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:123:497",
+      "record": "harvesting.txt:114:497",
       "oldTile": [
         221,
         116
@@ -31948,7 +32256,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:124:498",
+      "record": "harvesting.txt:115:498",
       "oldTile": [
         233,
         123
@@ -31970,7 +32278,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:125:499",
+      "record": "harvesting.txt:116:499",
       "oldTile": [
         231,
         315
@@ -31992,7 +32300,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:126:2500",
+      "record": "harvesting.txt:117:2500",
       "oldTile": [
         239,
         313
@@ -32014,7 +32322,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:127:2501",
+      "record": "harvesting.txt:118:2501",
       "oldTile": [
         167,
         306
@@ -32036,7 +32344,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:128:2502",
+      "record": "harvesting.txt:119:2502",
       "oldTile": [
         174,
         291
@@ -32058,7 +32366,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:129:2503",
+      "record": "harvesting.txt:120:2503",
       "oldTile": [
         228,
         294
@@ -32080,7 +32388,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:130:2504",
+      "record": "harvesting.txt:121:2504",
       "oldTile": [
         230,
         301
@@ -32102,7 +32410,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:131:2505",
+      "record": "harvesting.txt:122:2505",
       "oldTile": [
         237,
         296
@@ -32124,7 +32432,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:132:2506",
+      "record": "harvesting.txt:123:2506",
       "oldTile": [
         240,
         110
@@ -32146,7 +32454,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:133:2507",
+      "record": "harvesting.txt:124:2507",
       "oldTile": [
         245,
         118
@@ -32168,7 +32476,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:134:2508",
+      "record": "harvesting.txt:125:2508",
       "oldTile": [
         236,
         116
@@ -32190,7 +32498,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:135:2509",
+      "record": "harvesting.txt:126:2509",
       "oldTile": [
         223,
         109
@@ -32212,7 +32520,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:136:2510",
+      "record": "harvesting.txt:127:2510",
       "oldTile": [
         217,
         113
@@ -32234,7 +32542,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:137:2511",
+      "record": "harvesting.txt:128:2511",
       "oldTile": [
         232,
         111
@@ -32256,7 +32564,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:138:2512",
+      "record": "harvesting.txt:129:2512",
       "oldTile": [
         223,
         124
@@ -32278,7 +32586,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:139:2513",
+      "record": "harvesting.txt:130:2513",
       "oldTile": [
         229,
         114
@@ -32300,7 +32608,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:140:514",
+      "record": "harvesting.txt:131:514",
       "oldTile": [
         239,
         121
@@ -32322,7 +32630,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:141:515",
+      "record": "harvesting.txt:132:515",
       "oldTile": [
         181,
         301
@@ -32344,7 +32652,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:142:516",
+      "record": "harvesting.txt:133:516",
       "oldTile": [
         179,
         295
@@ -32366,7 +32674,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:143:517",
+      "record": "harvesting.txt:134:517",
       "oldTile": [
         180,
         310
@@ -32388,7 +32696,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:426:632",
+      "record": "harvesting.txt:417:632",
       "oldTile": [
         229,
         129
@@ -32410,7 +32718,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:427:633",
+      "record": "harvesting.txt:418:633",
       "oldTile": [
         226,
         130
@@ -32432,7 +32740,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:428:634",
+      "record": "harvesting.txt:419:634",
       "oldTile": [
         232,
         129
@@ -32454,7 +32762,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:429:635",
+      "record": "harvesting.txt:420:635",
       "oldTile": [
         240,
         127
@@ -32476,7 +32784,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:430:636",
+      "record": "harvesting.txt:421:636",
       "oldTile": [
         241,
         116
@@ -32498,7 +32806,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:431:637",
+      "record": "harvesting.txt:422:637",
       "oldTile": [
         236,
         129
@@ -32520,7 +32828,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:432:638",
+      "record": "harvesting.txt:423:638",
       "oldTile": [
         230,
         106
@@ -32542,7 +32850,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:433:639",
+      "record": "harvesting.txt:424:639",
       "oldTile": [
         225,
         101
@@ -32564,7 +32872,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:434:640",
+      "record": "harvesting.txt:425:640",
       "oldTile": [
         233,
         107
@@ -32586,7 +32894,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:435:641",
+      "record": "harvesting.txt:426:641",
       "oldTile": [
         246,
         108
@@ -32608,7 +32916,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:436:642",
+      "record": "harvesting.txt:427:642",
       "oldTile": [
         246,
         104
@@ -32630,7 +32938,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:437:643",
+      "record": "harvesting.txt:428:643",
       "oldTile": [
         241,
         104
@@ -32652,7 +32960,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:438:644",
+      "record": "harvesting.txt:429:644",
       "oldTile": [
         175,
         309
@@ -32674,7 +32982,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:439:645",
+      "record": "harvesting.txt:430:645",
       "oldTile": [
         184,
         309
@@ -32696,7 +33004,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:440:646",
+      "record": "harvesting.txt:431:646",
       "oldTile": [
         170,
         300
@@ -32718,7 +33026,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:441:647",
+      "record": "harvesting.txt:432:647",
       "oldTile": [
         237,
         300
@@ -32740,7 +33048,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:442:648",
+      "record": "harvesting.txt:433:648",
       "oldTile": [
         230,
         306
@@ -32762,7 +33070,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:443:649",
+      "record": "harvesting.txt:434:649",
       "oldTile": [
         235,
         290
@@ -32784,7 +33092,7 @@
     },
     {
       "region": "four_gates",
-      "record": "harvesting.txt:444:650",
+      "record": "harvesting.txt:435:650",
       "oldTile": [
         226,
         301
@@ -33796,7 +34104,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:229:41",
+      "record": "harvesting.txt:220:41",
       "oldTile": [
         331,
         173
@@ -33818,7 +34126,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:230:42",
+      "record": "harvesting.txt:221:42",
       "oldTile": [
         334,
         169
@@ -33840,7 +34148,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:231:43",
+      "record": "harvesting.txt:222:43",
       "oldTile": [
         330,
         177
@@ -33862,7 +34170,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:232:44",
+      "record": "harvesting.txt:223:44",
       "oldTile": [
         146,
         156
@@ -33884,7 +34192,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:233:45",
+      "record": "harvesting.txt:224:45",
       "oldTile": [
         75,
         184
@@ -33906,7 +34214,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:234:46",
+      "record": "harvesting.txt:225:46",
       "oldTile": [
         349,
         168
@@ -33928,7 +34236,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:235:47",
+      "record": "harvesting.txt:226:47",
       "oldTile": [
         355,
         164
@@ -33950,7 +34258,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:236:48",
+      "record": "harvesting.txt:227:48",
       "oldTile": [
         343,
         160
@@ -33972,7 +34280,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:237:49",
+      "record": "harvesting.txt:228:49",
       "oldTile": [
         186,
         140
@@ -33994,7 +34302,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:238:50",
+      "record": "harvesting.txt:229:50",
       "oldTile": [
         186,
         134
@@ -34016,7 +34324,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:239:51",
+      "record": "harvesting.txt:230:51",
       "oldTile": [
         190,
         171
@@ -34038,7 +34346,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:240:52",
+      "record": "harvesting.txt:231:52",
       "oldTile": [
         186,
         133
@@ -34060,7 +34368,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:241:53",
+      "record": "harvesting.txt:232:53",
       "oldTile": [
         213,
         164
@@ -34082,7 +34390,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:242:54",
+      "record": "harvesting.txt:233:54",
       "oldTile": [
         311,
         297
@@ -34104,7 +34412,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:243:55",
+      "record": "harvesting.txt:234:55",
       "oldTile": [
         302,
         300
@@ -34126,7 +34434,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:244:56",
+      "record": "harvesting.txt:235:56",
       "oldTile": [
         306,
         301
@@ -34148,7 +34456,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:245:57",
+      "record": "harvesting.txt:236:57",
       "oldTile": [
         257,
         252
@@ -34170,7 +34478,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:246:58",
+      "record": "harvesting.txt:237:58",
       "oldTile": [
         262,
         260
@@ -34192,7 +34500,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:247:59",
+      "record": "harvesting.txt:238:59",
       "oldTile": [
         258,
         258
@@ -34214,7 +34522,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:248:60",
+      "record": "harvesting.txt:239:60",
       "oldTile": [
         303,
         289
@@ -34236,7 +34544,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:249:61",
+      "record": "harvesting.txt:240:61",
       "oldTile": [
         295,
         304
@@ -34258,7 +34566,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:250:62",
+      "record": "harvesting.txt:241:62",
       "oldTile": [
         307,
         298
@@ -34280,7 +34588,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:251:63",
+      "record": "harvesting.txt:242:63",
       "oldTile": [
         367,
         171
@@ -34302,7 +34610,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:252:64",
+      "record": "harvesting.txt:243:64",
       "oldTile": [
         342,
         160
@@ -34324,7 +34632,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:253:65",
+      "record": "harvesting.txt:244:65",
       "oldTile": [
         338,
         167
@@ -34346,7 +34654,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:254:66",
+      "record": "harvesting.txt:245:66",
       "oldTile": [
         354,
         169
@@ -34368,7 +34676,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:255:67",
+      "record": "harvesting.txt:246:67",
       "oldTile": [
         365,
         165
@@ -34390,7 +34698,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:256:68",
+      "record": "harvesting.txt:247:68",
       "oldTile": [
         359,
         179
@@ -34412,7 +34720,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:257:69",
+      "record": "harvesting.txt:248:69",
       "oldTile": [
         132,
         162
@@ -34434,7 +34742,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:258:70",
+      "record": "harvesting.txt:249:70",
       "oldTile": [
         186,
         133
@@ -34456,7 +34764,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:259:71",
+      "record": "harvesting.txt:250:71",
       "oldTile": [
         186,
         135
@@ -34478,7 +34786,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:599:72",
+      "record": "harvesting.txt:604:72",
       "oldTile": [
         369,
         161
@@ -34500,7 +34808,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:600:73",
+      "record": "harvesting.txt:605:73",
       "oldTile": [
         365,
         157
@@ -34522,7 +34830,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:601:74",
+      "record": "harvesting.txt:606:74",
       "oldTile": [
         360,
         171
@@ -34544,7 +34852,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:602:75",
+      "record": "harvesting.txt:607:75",
       "oldTile": [
         336,
         159
@@ -34566,7 +34874,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:603:76",
+      "record": "harvesting.txt:608:76",
       "oldTile": [
         332,
         158
@@ -34588,7 +34896,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:604:77",
+      "record": "harvesting.txt:609:77",
       "oldTile": [
         359,
         156
@@ -34610,7 +34918,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:605:78",
+      "record": "harvesting.txt:610:78",
       "oldTile": [
         360,
         167
@@ -34632,7 +34940,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:606:79",
+      "record": "harvesting.txt:611:79",
       "oldTile": [
         343,
         177
@@ -34654,7 +34962,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:607:80",
+      "record": "harvesting.txt:612:80",
       "oldTile": [
         339,
         173
@@ -34676,7 +34984,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:608:81",
+      "record": "harvesting.txt:613:81",
       "oldTile": [
         334,
         165
@@ -34698,7 +35006,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:609:82",
+      "record": "harvesting.txt:614:82",
       "oldTile": [
         359,
         173
@@ -34720,7 +35028,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:610:83",
+      "record": "harvesting.txt:615:83",
       "oldTile": [
         343,
         174
@@ -34742,7 +35050,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:611:84",
+      "record": "harvesting.txt:616:84",
       "oldTile": [
         353,
         160
@@ -34764,7 +35072,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:612:85",
+      "record": "harvesting.txt:617:85",
       "oldTile": [
         343,
         165
@@ -34786,7 +35094,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:613:86",
+      "record": "harvesting.txt:618:86",
       "oldTile": [
         349,
         161
@@ -34808,7 +35116,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:614:87",
+      "record": "harvesting.txt:619:87",
       "oldTile": [
         328,
         164
@@ -34830,7 +35138,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:615:88",
+      "record": "harvesting.txt:620:88",
       "oldTile": [
         329,
         167
@@ -34852,7 +35160,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:616:89",
+      "record": "harvesting.txt:621:89",
       "oldTile": [
         308,
         285
@@ -34874,7 +35182,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:617:90",
+      "record": "harvesting.txt:622:90",
       "oldTile": [
         289,
         296
@@ -34896,7 +35204,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:618:91",
+      "record": "harvesting.txt:623:91",
       "oldTile": [
         290,
         287
@@ -34918,7 +35226,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:619:92",
+      "record": "harvesting.txt:624:92",
       "oldTile": [
         262,
         254
@@ -34940,7 +35248,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:620:93",
+      "record": "harvesting.txt:625:93",
       "oldTile": [
         262,
         251
@@ -34962,7 +35270,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:621:94",
+      "record": "harvesting.txt:626:94",
       "oldTile": [
         266,
         258
@@ -34984,7 +35292,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:622:95",
+      "record": "harvesting.txt:627:95",
       "oldTile": [
         310,
         303
@@ -35006,7 +35314,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:623:96",
+      "record": "harvesting.txt:628:96",
       "oldTile": [
         307,
         305
@@ -35028,7 +35336,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:624:97",
+      "record": "harvesting.txt:629:97",
       "oldTile": [
         68,
         375
@@ -35050,7 +35358,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:625:98",
+      "record": "harvesting.txt:630:98",
       "oldTile": [
         66,
         377
@@ -35072,7 +35380,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:626:99",
+      "record": "harvesting.txt:631:99",
       "oldTile": [
         132,
         70
@@ -35094,7 +35402,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:627:100",
+      "record": "harvesting.txt:632:100",
       "oldTile": [
         125,
         70
@@ -35116,7 +35424,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:628:101",
+      "record": "harvesting.txt:633:101",
       "oldTile": [
         324,
         223
@@ -35138,7 +35446,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:629:102",
+      "record": "harvesting.txt:634:102",
       "oldTile": [
         315,
         223
@@ -35160,7 +35468,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:630:103",
+      "record": "harvesting.txt:635:103",
       "oldTile": [
         73,
         237
@@ -35182,7 +35490,7 @@
     },
     {
       "region": "westhaven",
-      "record": "harvesting.txt:631:104",
+      "record": "harvesting.txt:636:104",
       "oldTile": [
         68,
         226
@@ -36194,7 +36502,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:298:52",
+      "record": "harvesting.txt:289:52",
       "oldTile": [
         68,
         371
@@ -36216,7 +36524,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:299:53",
+      "record": "harvesting.txt:290:53",
       "oldTile": [
         67,
         367
@@ -36238,7 +36546,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:300:54",
+      "record": "harvesting.txt:291:54",
       "oldTile": [
         120,
         317
@@ -36260,7 +36568,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:301:55",
+      "record": "harvesting.txt:292:55",
       "oldTile": [
         145,
         317
@@ -36282,7 +36590,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:302:56",
+      "record": "harvesting.txt:293:56",
       "oldTile": [
         120,
         321
@@ -36304,7 +36612,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:303:57",
+      "record": "harvesting.txt:294:57",
       "oldTile": [
         222,
         347
@@ -36326,7 +36634,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:304:58",
+      "record": "harvesting.txt:295:58",
       "oldTile": [
         142,
         304
@@ -36348,7 +36656,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:305:59",
+      "record": "harvesting.txt:296:59",
       "oldTile": [
         263,
         266
@@ -36370,7 +36678,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:306:60",
+      "record": "harvesting.txt:297:60",
       "oldTile": [
         295,
         253
@@ -36392,7 +36700,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:307:61",
+      "record": "harvesting.txt:298:61",
       "oldTile": [
         463,
         349
@@ -36414,7 +36722,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:308:62",
+      "record": "harvesting.txt:299:62",
       "oldTile": [
         416,
         363
@@ -36436,7 +36744,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:309:63",
+      "record": "harvesting.txt:300:63",
       "oldTile": [
         372,
         236
@@ -36458,7 +36766,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:310:64",
+      "record": "harvesting.txt:301:64",
       "oldTile": [
         375,
         245
@@ -36480,7 +36788,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:311:65",
+      "record": "harvesting.txt:302:65",
       "oldTile": [
         161,
         325
@@ -36502,7 +36810,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:312:66",
+      "record": "harvesting.txt:303:66",
       "oldTile": [
         131,
         299
@@ -36524,7 +36832,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:313:67",
+      "record": "harvesting.txt:304:67",
       "oldTile": [
         172,
         299
@@ -36546,7 +36854,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:314:68",
+      "record": "harvesting.txt:305:68",
       "oldTile": [
         374,
         256
@@ -36568,7 +36876,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:315:69",
+      "record": "harvesting.txt:306:69",
       "oldTile": [
         339,
         242
@@ -36590,7 +36898,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:316:70",
+      "record": "harvesting.txt:307:70",
       "oldTile": [
         82,
         338
@@ -36612,7 +36920,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:317:71",
+      "record": "harvesting.txt:308:71",
       "oldTile": [
         263,
         337
@@ -36634,7 +36942,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:318:72",
+      "record": "harvesting.txt:309:72",
       "oldTile": [
         69,
         359
@@ -36656,7 +36964,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:319:73",
+      "record": "harvesting.txt:310:73",
       "oldTile": [
         426,
         73
@@ -36678,7 +36986,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:320:74",
+      "record": "harvesting.txt:311:74",
       "oldTile": [
         455,
         65
@@ -36700,7 +37008,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:321:75",
+      "record": "harvesting.txt:312:75",
       "oldTile": [
         430,
         87
@@ -36722,7 +37030,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:322:76",
+      "record": "harvesting.txt:313:76",
       "oldTile": [
         85,
         241
@@ -36744,7 +37052,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:323:77",
+      "record": "harvesting.txt:314:77",
       "oldTile": [
         96,
         238
@@ -36766,7 +37074,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:324:78",
+      "record": "harvesting.txt:315:78",
       "oldTile": [
         84,
         233
@@ -36788,7 +37096,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:325:79",
+      "record": "harvesting.txt:316:79",
       "oldTile": [
         135,
         316
@@ -36810,7 +37118,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:326:80",
+      "record": "harvesting.txt:317:80",
       "oldTile": [
         168,
         306
@@ -36832,7 +37140,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:327:81",
+      "record": "harvesting.txt:318:81",
       "oldTile": [
         163,
         328
@@ -36854,7 +37162,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:685:82",
+      "record": "harvesting.txt:692:82",
       "oldTile": [
         257,
         355
@@ -36876,7 +37184,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:686:83",
+      "record": "harvesting.txt:693:83",
       "oldTile": [
         141,
         310
@@ -36898,7 +37206,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:687:84",
+      "record": "harvesting.txt:694:84",
       "oldTile": [
         127,
         320
@@ -36920,7 +37228,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:688:85",
+      "record": "harvesting.txt:695:85",
       "oldTile": [
         233,
         358
@@ -36942,7 +37250,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:689:86",
+      "record": "harvesting.txt:696:86",
       "oldTile": [
         126,
         297
@@ -36964,7 +37272,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:690:87",
+      "record": "harvesting.txt:697:87",
       "oldTile": [
         158,
         294
@@ -36986,7 +37294,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:691:88",
+      "record": "harvesting.txt:698:88",
       "oldTile": [
         250,
         226
@@ -37008,7 +37316,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:692:89",
+      "record": "harvesting.txt:699:89",
       "oldTile": [
         345,
         241
@@ -37030,7 +37338,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:693:90",
+      "record": "harvesting.txt:700:90",
       "oldTile": [
         358,
         223
@@ -37052,7 +37360,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:694:91",
+      "record": "harvesting.txt:701:91",
       "oldTile": [
         380,
         230
@@ -37074,7 +37382,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:695:92",
+      "record": "harvesting.txt:702:92",
       "oldTile": [
         375,
         229
@@ -37096,7 +37404,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:696:93",
+      "record": "harvesting.txt:703:93",
       "oldTile": [
         277,
         269
@@ -37118,7 +37426,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:697:94",
+      "record": "harvesting.txt:704:94",
       "oldTile": [
         262,
         356
@@ -37140,7 +37448,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:698:95",
+      "record": "harvesting.txt:705:95",
       "oldTile": [
         254,
         344
@@ -37162,7 +37470,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:699:96",
+      "record": "harvesting.txt:706:96",
       "oldTile": [
         246,
         361
@@ -37184,7 +37492,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:700:97",
+      "record": "harvesting.txt:707:97",
       "oldTile": [
         459,
         54
@@ -37206,7 +37514,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:701:98",
+      "record": "harvesting.txt:708:98",
       "oldTile": [
         79,
         78
@@ -37228,7 +37536,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:702:99",
+      "record": "harvesting.txt:709:99",
       "oldTile": [
         148,
         294
@@ -37250,7 +37558,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:703:100",
+      "record": "harvesting.txt:710:100",
       "oldTile": [
         117,
         304
@@ -37272,7 +37580,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:704:101",
+      "record": "harvesting.txt:711:101",
       "oldTile": [
         177,
         294
@@ -37294,7 +37602,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:705:102",
+      "record": "harvesting.txt:712:102",
       "oldTile": [
         381,
         295
@@ -37316,7 +37624,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:706:103",
+      "record": "harvesting.txt:713:103",
       "oldTile": [
         393,
         298
@@ -37338,7 +37646,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:707:104",
+      "record": "harvesting.txt:714:104",
       "oldTile": [
         152,
         293
@@ -37360,7 +37668,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:708:105",
+      "record": "harvesting.txt:715:105",
       "oldTile": [
         180,
         295
@@ -37382,7 +37690,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:709:106",
+      "record": "harvesting.txt:716:106",
       "oldTile": [
         67,
         375
@@ -37404,7 +37712,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:710:107",
+      "record": "harvesting.txt:717:107",
       "oldTile": [
         75,
         349
@@ -37426,7 +37734,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:711:108",
+      "record": "harvesting.txt:718:108",
       "oldTile": [
         95,
         264
@@ -37448,7 +37756,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:712:109",
+      "record": "harvesting.txt:719:109",
       "oldTile": [
         385,
         290
@@ -37470,7 +37778,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:713:110",
+      "record": "harvesting.txt:720:110",
       "oldTile": [
         252,
         259
@@ -37492,7 +37800,7 @@
     },
     {
       "region": "manymouth_delta",
-      "record": "harvesting.txt:714:111",
+      "record": "harvesting.txt:721:111",
       "oldTile": [
         249,
         257
@@ -39032,7 +39340,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:96:54",
+      "record": "harvesting.txt:87:54",
       "oldTile": [
         193,
         59
@@ -39054,7 +39362,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:97:55",
+      "record": "harvesting.txt:88:55",
       "oldTile": [
         80,
         187
@@ -39076,7 +39384,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:98:56",
+      "record": "harvesting.txt:89:56",
       "oldTile": [
         186,
         56
@@ -39098,7 +39406,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:99:57",
+      "record": "harvesting.txt:90:57",
       "oldTile": [
         362,
         270
@@ -39120,7 +39428,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:100:58",
+      "record": "harvesting.txt:91:58",
       "oldTile": [
         356,
         264
@@ -39142,7 +39450,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:101:59",
+      "record": "harvesting.txt:92:59",
       "oldTile": [
         161,
         167
@@ -39164,7 +39472,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:102:60",
+      "record": "harvesting.txt:93:60",
       "oldTile": [
         183,
         158
@@ -39186,7 +39494,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:103:61",
+      "record": "harvesting.txt:94:61",
       "oldTile": [
         116,
         197
@@ -39208,7 +39516,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:104:62",
+      "record": "harvesting.txt:95:62",
       "oldTile": [
         152,
         365
@@ -39230,7 +39538,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:105:63",
+      "record": "harvesting.txt:96:63",
       "oldTile": [
         141,
         377
@@ -39252,7 +39560,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:106:64",
+      "record": "harvesting.txt:97:64",
       "oldTile": [
         147,
         368
@@ -39274,7 +39582,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:107:65",
+      "record": "harvesting.txt:98:65",
       "oldTile": [
         163,
         115
@@ -39296,7 +39604,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:108:66",
+      "record": "harvesting.txt:99:66",
       "oldTile": [
         158,
         176
@@ -39318,7 +39626,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:109:67",
+      "record": "harvesting.txt:100:67",
       "oldTile": [
         105,
         78
@@ -39340,7 +39648,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:110:68",
+      "record": "harvesting.txt:101:68",
       "oldTile": [
         104,
         78
@@ -39362,7 +39670,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:111:69",
+      "record": "harvesting.txt:102:69",
       "oldTile": [
         109,
         78
@@ -39384,7 +39692,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:112:70",
+      "record": "harvesting.txt:103:70",
       "oldTile": [
         109,
         78
@@ -39406,7 +39714,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:113:71",
+      "record": "harvesting.txt:104:71",
       "oldTile": [
         287,
         107
@@ -39428,7 +39736,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:114:72",
+      "record": "harvesting.txt:105:72",
       "oldTile": [
         288,
         110
@@ -39450,7 +39758,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:115:73",
+      "record": "harvesting.txt:106:73",
       "oldTile": [
         287,
         96
@@ -39472,7 +39780,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:116:74",
+      "record": "harvesting.txt:107:74",
       "oldTile": [
         306,
         178
@@ -39494,7 +39802,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:117:75",
+      "record": "harvesting.txt:108:75",
       "oldTile": [
         314,
         187
@@ -39516,7 +39824,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:118:76",
+      "record": "harvesting.txt:109:76",
       "oldTile": [
         311,
         197
@@ -39538,7 +39846,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:119:77",
+      "record": "harvesting.txt:110:77",
       "oldTile": [
         63,
         211
@@ -39560,7 +39868,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:120:78",
+      "record": "harvesting.txt:111:78",
       "oldTile": [
         58,
         198
@@ -39582,7 +39890,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:121:79",
+      "record": "harvesting.txt:112:79",
       "oldTile": [
         79,
         209
@@ -39604,7 +39912,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:406:80",
+      "record": "harvesting.txt:397:80",
       "oldTile": [
         73,
         183
@@ -39626,7 +39934,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:407:81",
+      "record": "harvesting.txt:398:81",
       "oldTile": [
         171,
         55
@@ -39648,7 +39956,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:408:82",
+      "record": "harvesting.txt:399:82",
       "oldTile": [
         172,
         74
@@ -39670,7 +39978,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:409:83",
+      "record": "harvesting.txt:400:83",
       "oldTile": [
         168,
         64
@@ -39692,7 +40000,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:410:84",
+      "record": "harvesting.txt:401:84",
       "oldTile": [
         184,
         75
@@ -39714,7 +40022,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:411:85",
+      "record": "harvesting.txt:402:85",
       "oldTile": [
         174,
         63
@@ -39736,7 +40044,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:412:86",
+      "record": "harvesting.txt:403:86",
       "oldTile": [
         283,
         108
@@ -39758,7 +40066,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:413:87",
+      "record": "harvesting.txt:404:87",
       "oldTile": [
         281,
         99
@@ -39780,7 +40088,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:414:88",
+      "record": "harvesting.txt:405:88",
       "oldTile": [
         293,
         103
@@ -39802,7 +40110,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:415:89",
+      "record": "harvesting.txt:406:89",
       "oldTile": [
         318,
         192
@@ -39824,7 +40132,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:416:90",
+      "record": "harvesting.txt:407:90",
       "oldTile": [
         299,
         176
@@ -39846,7 +40154,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:417:91",
+      "record": "harvesting.txt:408:91",
       "oldTile": [
         308,
         182
@@ -39868,7 +40176,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:418:92",
+      "record": "harvesting.txt:409:92",
       "oldTile": [
         71,
         215
@@ -39890,7 +40198,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:419:93",
+      "record": "harvesting.txt:410:93",
       "oldTile": [
         63,
         199
@@ -39912,7 +40220,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:420:94",
+      "record": "harvesting.txt:411:94",
       "oldTile": [
         351,
         269
@@ -39934,7 +40242,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:421:95",
+      "record": "harvesting.txt:412:95",
       "oldTile": [
         356,
         277
@@ -39956,7 +40264,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:422:96",
+      "record": "harvesting.txt:413:96",
       "oldTile": [
         156,
         361
@@ -39978,7 +40286,7 @@
     },
     {
       "region": "crownwater",
-      "record": "harvesting.txt:423:97",
+      "record": "harvesting.txt:414:97",
       "oldTile": [
         145,
         381
@@ -41738,7 +42046,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:260:45",
+      "record": "harvesting.txt:251:45",
       "oldTile": [
         80,
         108
@@ -41760,7 +42068,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:261:46",
+      "record": "harvesting.txt:252:46",
       "oldTile": [
         43,
         186
@@ -41782,7 +42090,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:262:47",
+      "record": "harvesting.txt:253:47",
       "oldTile": [
         44,
         142
@@ -41804,7 +42112,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:263:48",
+      "record": "harvesting.txt:254:48",
       "oldTile": [
         177,
         159
@@ -41826,7 +42134,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:264:49",
+      "record": "harvesting.txt:255:49",
       "oldTile": [
         208,
         144
@@ -41848,7 +42156,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:265:50",
+      "record": "harvesting.txt:256:50",
       "oldTile": [
         170,
         125
@@ -41870,7 +42178,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:266:51",
+      "record": "harvesting.txt:257:51",
       "oldTile": [
         85,
         188
@@ -41892,7 +42200,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:267:52",
+      "record": "harvesting.txt:258:52",
       "oldTile": [
         160,
         161
@@ -41914,7 +42222,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:268:53",
+      "record": "harvesting.txt:259:53",
       "oldTile": [
         142,
         40
@@ -41936,7 +42244,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:269:54",
+      "record": "harvesting.txt:260:54",
       "oldTile": [
         42,
         180
@@ -41958,7 +42266,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:270:55",
+      "record": "harvesting.txt:261:55",
       "oldTile": [
         60,
         105
@@ -41980,7 +42288,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:271:56",
+      "record": "harvesting.txt:262:56",
       "oldTile": [
         111,
         63
@@ -42002,7 +42310,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:272:57",
+      "record": "harvesting.txt:263:57",
       "oldTile": [
         74,
         98
@@ -42024,7 +42332,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:273:58",
+      "record": "harvesting.txt:264:58",
       "oldTile": [
         219,
         138
@@ -42046,7 +42354,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:274:59",
+      "record": "harvesting.txt:265:59",
       "oldTile": [
         174,
         144
@@ -42068,7 +42376,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:275:60",
+      "record": "harvesting.txt:266:60",
       "oldTile": [
         196,
         53
@@ -42090,7 +42398,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:276:61",
+      "record": "harvesting.txt:267:61",
       "oldTile": [
         146,
         102
@@ -42112,7 +42420,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:277:62",
+      "record": "harvesting.txt:268:62",
       "oldTile": [
         196,
         56
@@ -42134,7 +42442,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:278:63",
+      "record": "harvesting.txt:269:63",
       "oldTile": [
         46,
         142
@@ -42156,7 +42464,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:279:64",
+      "record": "harvesting.txt:270:64",
       "oldTile": [
         194,
         33
@@ -42178,7 +42486,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:280:65",
+      "record": "harvesting.txt:271:65",
       "oldTile": [
         203,
         157
@@ -42200,7 +42508,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:281:66",
+      "record": "harvesting.txt:272:66",
       "oldTile": [
         115,
         60
@@ -42222,7 +42530,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:634:67",
+      "record": "harvesting.txt:639:67",
       "oldTile": [
         272,
         176
@@ -42244,7 +42552,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:635:68",
+      "record": "harvesting.txt:640:68",
       "oldTile": [
         270,
         179
@@ -42266,7 +42574,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:636:69",
+      "record": "harvesting.txt:641:69",
       "oldTile": [
         277,
         184
@@ -42288,7 +42596,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:637:70",
+      "record": "harvesting.txt:642:70",
       "oldTile": [
         229,
         201
@@ -42310,7 +42618,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:638:71",
+      "record": "harvesting.txt:643:71",
       "oldTile": [
         226,
         198
@@ -42332,7 +42640,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:639:72",
+      "record": "harvesting.txt:644:72",
       "oldTile": [
         229,
         189
@@ -42354,7 +42662,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:640:73",
+      "record": "harvesting.txt:645:73",
       "oldTile": [
         265,
         28
@@ -42376,7 +42684,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:641:74",
+      "record": "harvesting.txt:646:74",
       "oldTile": [
         259,
         30
@@ -42398,7 +42706,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:642:75",
+      "record": "harvesting.txt:647:75",
       "oldTile": [
         260,
         33
@@ -42420,7 +42728,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:643:76",
+      "record": "harvesting.txt:648:76",
       "oldTile": [
         298,
         136
@@ -42442,7 +42750,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:644:77",
+      "record": "harvesting.txt:649:77",
       "oldTile": [
         295,
         128
@@ -42464,7 +42772,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:645:78",
+      "record": "harvesting.txt:650:78",
       "oldTile": [
         288,
         132
@@ -42486,7 +42794,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:646:79",
+      "record": "harvesting.txt:651:79",
       "oldTile": [
         153,
         274
@@ -42508,7 +42816,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:647:80",
+      "record": "harvesting.txt:652:80",
       "oldTile": [
         162,
         272
@@ -42530,7 +42838,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:648:81",
+      "record": "harvesting.txt:653:81",
       "oldTile": [
         151,
         271
@@ -42552,7 +42860,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:649:82",
+      "record": "harvesting.txt:654:82",
       "oldTile": [
         197,
         193
@@ -42574,7 +42882,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:650:83",
+      "record": "harvesting.txt:655:83",
       "oldTile": [
         189,
         203
@@ -42596,7 +42904,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:651:84",
+      "record": "harvesting.txt:656:84",
       "oldTile": [
         190,
         194
@@ -42618,7 +42926,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:652:85",
+      "record": "harvesting.txt:657:85",
       "oldTile": [
         187,
         83
@@ -42640,7 +42948,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:653:86",
+      "record": "harvesting.txt:658:86",
       "oldTile": [
         192,
         88
@@ -42662,7 +42970,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:654:87",
+      "record": "harvesting.txt:659:87",
       "oldTile": [
         46,
         272
@@ -42684,7 +42992,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:655:88",
+      "record": "harvesting.txt:660:88",
       "oldTile": [
         39,
         272
@@ -42706,7 +43014,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:656:89",
+      "record": "harvesting.txt:661:89",
       "oldTile": [
         202,
         338
@@ -42728,7 +43036,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:657:90",
+      "record": "harvesting.txt:662:90",
       "oldTile": [
         200,
         354
@@ -42750,7 +43058,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:658:91",
+      "record": "harvesting.txt:663:91",
       "oldTile": [
         100,
         309
@@ -42772,7 +43080,7 @@
     },
     {
       "region": "verdant_stair",
-      "record": "harvesting.txt:659:92",
+      "record": "harvesting.txt:664:92",
       "oldTile": [
         98,
         297
@@ -44136,7 +44444,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:282:36",
+      "record": "harvesting.txt:273:36",
       "oldTile": [
         258,
         133
@@ -44158,7 +44466,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:283:37",
+      "record": "harvesting.txt:274:37",
       "oldTile": [
         273,
         138
@@ -44180,7 +44488,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:284:38",
+      "record": "harvesting.txt:275:38",
       "oldTile": [
         278,
         128
@@ -44202,7 +44510,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:285:39",
+      "record": "harvesting.txt:276:39",
       "oldTile": [
         259,
         127
@@ -44224,7 +44532,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:286:40",
+      "record": "harvesting.txt:277:40",
       "oldTile": [
         314,
         47
@@ -44246,7 +44554,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:287:41",
+      "record": "harvesting.txt:278:41",
       "oldTile": [
         293,
         68
@@ -44268,7 +44576,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:288:42",
+      "record": "harvesting.txt:279:42",
       "oldTile": [
         272,
         268
@@ -44290,7 +44598,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:289:43",
+      "record": "harvesting.txt:280:43",
       "oldTile": [
         295,
         270
@@ -44312,7 +44620,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:290:44",
+      "record": "harvesting.txt:281:44",
       "oldTile": [
         353,
         206
@@ -44334,7 +44642,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:291:45",
+      "record": "harvesting.txt:282:45",
       "oldTile": [
         356,
         200
@@ -44356,7 +44664,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:292:46",
+      "record": "harvesting.txt:283:46",
       "oldTile": [
         87,
         215
@@ -44378,7 +44686,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:293:47",
+      "record": "harvesting.txt:284:47",
       "oldTile": [
         67,
         221
@@ -44400,7 +44708,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:294:48",
+      "record": "harvesting.txt:285:48",
       "oldTile": [
         58,
         227
@@ -44422,7 +44730,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:295:49",
+      "record": "harvesting.txt:286:49",
       "oldTile": [
         118,
         132
@@ -44444,7 +44752,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:296:50",
+      "record": "harvesting.txt:287:50",
       "oldTile": [
         123,
         131
@@ -44466,7 +44774,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:297:51",
+      "record": "harvesting.txt:288:51",
       "oldTile": [
         127,
         132
@@ -44488,7 +44796,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:662:52",
+      "record": "harvesting.txt:667:52",
       "oldTile": [
         118,
         128
@@ -44510,7 +44818,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:663:53",
+      "record": "harvesting.txt:668:53",
       "oldTile": [
         265,
         134
@@ -44532,7 +44840,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:664:54",
+      "record": "harvesting.txt:669:54",
       "oldTile": [
         254,
         126
@@ -44554,7 +44862,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:665:55",
+      "record": "harvesting.txt:670:55",
       "oldTile": [
         264,
         128
@@ -44576,7 +44884,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:666:56",
+      "record": "harvesting.txt:671:56",
       "oldTile": [
         280,
         133
@@ -44598,7 +44906,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:667:57",
+      "record": "harvesting.txt:672:57",
       "oldTile": [
         278,
         139
@@ -44620,7 +44928,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:668:58",
+      "record": "harvesting.txt:673:58",
       "oldTile": [
         296,
         78
@@ -44642,7 +44950,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:669:59",
+      "record": "harvesting.txt:674:59",
       "oldTile": [
         300,
         38
@@ -44664,7 +44972,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:670:60",
+      "record": "harvesting.txt:675:60",
       "oldTile": [
         294,
         75
@@ -44686,7 +44994,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:671:61",
+      "record": "harvesting.txt:676:61",
       "oldTile": [
         266,
         137
@@ -44708,7 +45016,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:672:62",
+      "record": "harvesting.txt:677:62",
       "oldTile": [
         248,
         143
@@ -44730,7 +45038,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:673:63",
+      "record": "harvesting.txt:678:63",
       "oldTile": [
         277,
         135
@@ -44752,7 +45060,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:674:64",
+      "record": "harvesting.txt:679:64",
       "oldTile": [
         118,
         125
@@ -44774,7 +45082,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:675:65",
+      "record": "harvesting.txt:680:65",
       "oldTile": [
         121,
         126
@@ -44796,7 +45104,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:676:66",
+      "record": "harvesting.txt:681:66",
       "oldTile": [
         114,
         125
@@ -44818,7 +45126,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:677:67",
+      "record": "harvesting.txt:682:67",
       "oldTile": [
         357,
         208
@@ -44840,7 +45148,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:678:68",
+      "record": "harvesting.txt:683:68",
       "oldTile": [
         370,
         195
@@ -44862,7 +45170,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:679:69",
+      "record": "harvesting.txt:684:69",
       "oldTile": [
         308,
         259
@@ -44884,7 +45192,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:680:70",
+      "record": "harvesting.txt:685:70",
       "oldTile": [
         287,
         249
@@ -44906,7 +45214,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:681:71",
+      "record": "harvesting.txt:686:71",
       "oldTile": [
         63,
         222
@@ -44928,7 +45236,7 @@
     },
     {
       "region": "ssarathi_ruins",
-      "record": "harvesting.txt:682:72",
+      "record": "harvesting.txt:687:72",
       "oldTile": [
         74,
         210
@@ -44940,6 +45248,50 @@
       "expectedTile": [
         257.0,
         215.0
+      ],
+      "displacementMetres": 0.0,
+      "maximumDisplacementMetres": 35,
+      "footprint": [
+        1,
+        1
+      ]
+    },
+    {
+      "region": "ssarathi_ruins",
+      "record": "harvesting.txt:688:73",
+      "oldTile": [
+        282,
+        127
+      ],
+      "tile": [
+        465,
+        131
+      ],
+      "expectedTile": [
+        465.0,
+        132.0
+      ],
+      "displacementMetres": 1.0,
+      "maximumDisplacementMetres": 35,
+      "footprint": [
+        1,
+        1
+      ]
+    },
+    {
+      "region": "ssarathi_ruins",
+      "record": "harvesting.txt:689:74",
+      "oldTile": [
+        262,
+        122
+      ],
+      "tile": [
+        445,
+        127
+      ],
+      "expectedTile": [
+        445.0,
+        127.0
       ],
       "displacementMetres": 0.0,
       "maximumDisplacementMetres": 35,
@@ -80162,7 +80514,7 @@
       },
       "hubReachableAfterStorageTiles": 47371,
       "updatedAuthoredMarkers": 75,
-      "terrainRevision": "diagonal-spine-v1:340b259fa1f352d0dfb620a3ddc809761ef09ac7934bd270a49fc9c309500f62",
+      "terrainRevision": "diagonal-spine-v1:827a7ead90f7c5ecc7e8584dd1f54e3149789d96ecc83bbc1ecc41ac8638df9a",
       "servedTileContinuity": {
         "keptServedTile": 278,
         "movedTogether": 0,
@@ -80247,7 +80599,7 @@
       },
       "hubReachableAfterStorageTiles": 139688,
       "updatedAuthoredMarkers": 8,
-      "terrainRevision": "diagonal-spine-v1:eabb7f75c81bfecdbe46c00ac087b2059ba466a4e9cd04fdd79185d2c549a280",
+      "terrainRevision": "diagonal-spine-v1:595da741ba9f949696ef72249029d9f4136b0e19ade83d9e0596c0888c1a3b09",
       "servedTileContinuity": {
         "keptServedTile": 288,
         "movedTogether": 0,
@@ -80351,11 +80703,11 @@
       },
       "hubReachableAfterStorageTiles": 46040,
       "updatedAuthoredMarkers": 49,
-      "terrainRevision": "diagonal-spine-v1:609a965be8fd6d5c97ef69a9ec09668e6250f870865f3fdb0b15b1b6ff285e56",
+      "terrainRevision": "diagonal-spine-v1:c954e7697142ba9409d599c01d102d0527393a615a123b8e91ec19f2d59f3f10",
       "servedTileContinuity": {
-        "keptServedTile": 304,
+        "keptServedTile": 303,
         "movedTogether": 0,
-        "movedFromServedTile": 0
+        "movedFromServedTile": 1
       }
     },
     "amethyst_barrens": {
@@ -80401,7 +80753,7 @@
       },
       "hubReachableAfterStorageTiles": 140496,
       "updatedAuthoredMarkers": 7,
-      "terrainRevision": "diagonal-spine-v1:fd1819c9c98221bfcee709854fceace037f68c50b12d79b8b507e0322f1dc0e3",
+      "terrainRevision": "diagonal-spine-v1:3880d76114886d908c5d393f6c37c2306658ab7923e340e1af89bc3724f2182b",
       "servedTileContinuity": {
         "keptServedTile": 267,
         "movedTogether": 0,
@@ -80569,7 +80921,7 @@
       },
       "hubReachableAfterStorageTiles": 170044,
       "updatedAuthoredMarkers": 40,
-      "terrainRevision": "diagonal-spine-v1:9d8f04e5a7b15b6f3ab588c934fb7b8f48908ef26675fdd4953510cbb4a27005",
+      "terrainRevision": "diagonal-spine-v1:fe875358cf23b1c027393b486cf3449d6f4663be2d35733225db02249a1b42b5",
       "servedTileContinuity": {
         "keptServedTile": 254,
         "movedTogether": 0,
@@ -81107,7 +81459,7 @@
       },
       "hubReachableAfterStorageTiles": 133818,
       "updatedAuthoredMarkers": 7,
-      "terrainRevision": "diagonal-spine-v1:3d27f88469541f780e39fed684ea2dbf102c13287f0dac1af4f0b8c12bc659c1",
+      "terrainRevision": "diagonal-spine-v1:c04742f6235005c6a176ead738129efa35789777f80d66bbaa8a1bb3e592ea0a",
       "servedTileContinuity": {
         "keptServedTile": 222,
         "movedTogether": 0,
@@ -81116,9 +81468,9 @@
     }
   },
   "sourceProfileSha256": {
-    "client_content_manifest.json": "7d502491b6fb53508af978ebeb53daa66b0ed96e354ff38558075b29f2821425",
+    "client_content_manifest.json": "b32f00ca967eba75f068911340d00c614665f7a313c8d3ee5c6814220bd09cc7",
     "creatures.txt": "1a66842a45645a6ff83ade9ff5a9473df2ed46685405e56307bf39bee2c1a24f",
-    "harvesting.txt": "50b3f36e595f191d66929a749cbf01a41b9978f47a7be9d3668b5309ed6df4b4",
+    "harvesting.txt": "cedad7dc7357f15e20e90fff31479c0469b08557bc0f050e0574ed77e908feed",
     "instances/amberwood_gauntlet_low.def": "423a22c5001578126c44b7e3be09e3d5f17a7cc6c8480065198dfb14c3042dd4",
     "instances/amberwood_gauntlet_mid.def": "1addd800086bd3f661fcd9cd9444ab7feccc09fa6d0190ea50ebc883e5f0fa90",
     "instances/amethyst_gauntlet_high.def": "8dd5285ec2ad4602c129821f6fe292c6c9c8157a6bb4c26aa653a347e721bf14",
@@ -81141,17 +81493,17 @@
     "questlines.txt": "b9c85d4906c36d2a39f75871cc81e80f7402b60cc49598745e3f5c48112392dd",
     "spawn_groups/invasion/bosses.def": "2a9a5d528bb882b24a9594354852524361a08abdee068990cea6a9cf5c0c237b",
     "spawn_groups/invasion/gauntlets_nymara.def": "e31c1e5e79813b09188fc573c013c5ee9e72751b057a3bfa6df2f5204d455d56",
-    "spawn_groups/invasion/invasion_nymara.def": "c5854796ee7fe20331d79cb5c375cb435a0ff74519ebe63508359ec4ae7ee014",
+    "spawn_groups/invasion/invasion_nymara.def": "ba6e4598a2426f20198f5551118a84fcc91a9cdf1c7faa52ee02f35a18737aa1",
     "spawns.txt": "4d424ebdd22de7cd67a012ba74f1f2225ac12502843f4bf6bf12c6258d9037d2",
     "special_areas.txt": "2317401894789e84bee58ff8155429fc2c1787564d3b5ce9275c6b7f1f3bfc27",
     "territories.txt": "22b4260c84cf68b90951a66f2cd3c3a38a8b8640daee854e6dc282594fe92c6e"
   },
   "sourceCodeSha256": {
-    "eloria/daily_quests.py": "ed693e3ea03862340b078a56d1ae9c628f7967739d418c0e87700bbc08f1141a",
-    "eloria/world.py": "c4bd8195346f7fa40e48a3961b4605a31a5c77a9dbe0f5c6454b5f4a2a663752",
-    "eloria/walkthrough.py": "394bbe4e93e0b2e6f7c5495b61598a2d2e5a6981b4cf53a28598c21c6d393ccb",
+    "eloria/daily_quests.py": "06fa515a95998f71992a5337e18ab51438210ba15fa989cec1fd4e0c9088865b",
+    "eloria/world.py": "c2b039456546c01e283e1ddc4c380823e1bab890eac1ade4bd0125c1f6bbae1e",
+    "eloria/walkthrough.py": "06024c6d0dce473a9b00dfcda30cf1e4d2416b0a7f308f191c0ca9812ae6b7a4",
     "eloria/pk.py": "e89cb845c21aa3fe41c2b49a8a5597b91c5729774e9f19636fd2d6d03ea731df"
   },
-  "baselineSha256": "56b8da2679dec633f3986f9f998fbef59eb4a90743720213da4ef607b0ee4cc1",
+  "baselineSha256": "853fed7ce35392363a77718a2b065020bf865d1223e08a8b1d3dd138e091473f",
   "ready": true
 }

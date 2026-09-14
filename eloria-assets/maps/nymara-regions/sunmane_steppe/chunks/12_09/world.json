@@ -3027,7 +3027,7 @@
     ],
     "geometryMode": "continent-chunks-v1"
   },
-  "terrainRevision": "diagonal-spine-v1:9d8f04e5a7b15b6f3ab588c934fb7b8f48908ef26675fdd4953510cbb4a27005",
+  "terrainRevision": "diagonal-spine-v1:fe875358cf23b1c027393b486cf3449d6f4663be2d35733225db02249a1b42b5",
   "sources": [
     "_continent/diagonal-plan.json",
     "_continent/build_continent.py",
@@ -3052,6 +3052,6 @@
     "revision": "diagonal-spine-v1",
     "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
     "collisionSha256": "aef1a1fa1600445cc7e89386216062c1631f6ebd5147a3705bb1d7bf859fe7cb",
-    "terrainRevision": "diagonal-spine-v1:9d8f04e5a7b15b6f3ab588c934fb7b8f48908ef26675fdd4953510cbb4a27005"
+    "terrainRevision": "diagonal-spine-v1:fe875358cf23b1c027393b486cf3449d6f4663be2d35733225db02249a1b42b5"
   }
 }

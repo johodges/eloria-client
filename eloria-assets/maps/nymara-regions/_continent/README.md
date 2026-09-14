@@ -5,21 +5,27 @@ exported. X runs east, Z runs south, and sea level is Y = 0. Named territories
 are server and content identities. Their boundaries do not determine the
 height, water level, ground colour, or vegetation of the landscape.
 
-**QA state: verified for the twelfth publication (2026-09-14).** Master
-`120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1`, publication
-`0be9c273bc50580efee55c2c017c48d503ec8b5502afd02d14213647866d8b22`
-(`work-output/diagonal-continent/after/twelfth-freeze.json`). On these bytes the
-strict contracts passed with 0 failures over 3,644 placements, the full audit
-passed and verified the publication, the 24 primary, 9 supplement and 2 atlas
-gameplay views were captured with the published registry and no overrides
-(`final-review/`, `final-repairs/`), and the seven native loopback suites
-walked 240 routes with 0 failures on a real server (`after/live-walk/
-final-live-summary.json`). Known limitations are listed in
-`STATUS-2026-09-13-takeover.md`: road cores steeper than 0.65 that the server
-routes around, boats inside rigid assemblies not settled on water, and props
-that floated in their regional surveys keeping that offset. Any later change to
-a shaping or export source returns this notice to provisional until the same
-chain is repeated.
+**QA state: thirteenth publication (2026-09-14), verified with one open live suite.**
+Master `120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1`
+(unchanged since the twelfth), publication
+`494ffb6089326c451030fd924d89418851b6f12eda86888e4fcc30194f90c6fa`
+(`work-output/diagonal-continent/after/thirteenth-freeze.json`), after origin/develop
+was merged into both branches and the frozen profile baseline advanced to it.
+On these bytes the strict contracts passed with 0 failures over 3,660
+placements, the full audit passed and verified the publication, the 24
+primary, 9 supplement and 2 atlas gameplay views were captured with the
+published registry and no overrides (`final-review/`, `final-repairs/`), and
+six of the seven native loopback suites walked their 168 routes with 0
+failures on a real server; the interior round-trip suite completed 12 of 72
+routes and then the client produced no frame for 75 minutes (a recurring
+client freeze during chunk streaming, recorded by the harness watchdog),
+while the same 72 routes walked with 0 failures on the twelfth publication,
+whose geometry this one shares (`after/live-walk/final-live-summary.json`).
+Known limitations are listed in `STATUS-2026-09-13-takeover.md`: that client
+freeze, road cores steeper than 0.65 that the server routes around, boats
+inside rigid assemblies not settled on water, and props that floated in their
+regional surveys keeping that offset. Any later change to a shaping or export
+source returns this notice to provisional until the same chain is repeated.
 
 `diagonal-plan.json` describes the coast, connected mountain chain, river
 catchments, islands, territory centres, and placement controls. `landscape.py`

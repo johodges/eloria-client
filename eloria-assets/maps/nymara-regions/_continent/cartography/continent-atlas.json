@@ -3,7 +3,7 @@
   "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
   "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
   "inputs": {
-    "res://../eloria-assets/maps/nymara-regions/continent-geography.json": "4893de175c763e5365f0e82852e25069ace450399fbe19a239afd0310160ffe4",
+    "res://../eloria-assets/maps/nymara-regions/continent-geography.json": "c18c504c8dd4b47099706dab4c12bbdf74c1e180329ce135a9df9d9bf56c3a00",
     "res://../eloria-assets/maps/nymara-regions/_continent/atlas_export.py": "a19b270692eb12e5bba7e8a63dc10888134d48b807af22afbc7a1ed6305f6799",
     "res://../eloria-assets/tools/render_region_cartography.py": "07fa6e1c3a3c0026d5a76790fdd8cf457340060647eec54159248afdbead08b9",
     "res://../eloria-assets/tools/build_continent_map.py": "3a4f1e5c0ad0a58bd97edd6d4fe4a42727c8dc383651b45e1519abc4b42b3298",
@@ -24,7 +24,7 @@
     "res://../eloria-assets/maps/nymara-regions/_continent/crossings.py": "330edbd6b57112e6c903963396c110e233393578da34dff33d4864ca237b50d2",
     "res://../eloria-assets/maps/nymara-regions/_continent/crown_support.py": "b5b2ea4de9abb1bafca495bdf06f779b1ebb376b01ab9b4558e4a9e41945ae59",
     "res://../eloria-assets/maps/nymara-regions/_continent/door_approaches.py": "9d956b702807777cba4dd2c4323e2e9cba196de1a261aa6369646bf99ccf9616",
-    "res://../eloria-assets/maps/nymara-regions/_continent/export_contracts.py": "62683d2bd85e2a6942eaa3e76b73a0e4ee792ede8d3bfb95684752068a292081",
+    "res://../eloria-assets/maps/nymara-regions/_continent/export_contracts.py": "5d67a076961add5a1d1f2b1e4e117fe8afa685339df1d7d5f1ed6f42a43e6b14",
     "res://../eloria-assets/maps/nymara-regions/_continent/ferry_export.py": "b62c3920560a902fe1197c6e9b4a2fe8067948d4218a50db2f366e7ef7d38453",
     "res://../eloria-assets/maps/nymara-regions/_continent/ferry_support.py": "ed9305d6a05f51a7b15529db6335d11e4fc70a3aaf14825135df19ac03c87828",
     "res://../eloria-assets/maps/nymara-regions/_continent/four_gates_sage.py": "42c3527e73d59c31877027d8f443b2504d4b61d6ea360451223f6477ae4e5f1c",
