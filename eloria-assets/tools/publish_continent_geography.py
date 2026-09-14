@@ -316,57 +316,16 @@ def shift_markers(value, region, maps):
 
 def runtime_migration_source(maps):
     """A restart-safe database hook; no database is opened by publication."""
-    saved = {k: {n: v[n] for n in ('nativeServerOrigin', 'serverOrigin', 'serverCells', 'arrival', 'nativeRevision') if n in v}
+    saved = {k: {n: v[n] for n in ('nativeServerOrigin', 'serverOrigin', 'serverCells', 'arrival', 'nativeRevision', 'terrainRevision') if n in v}
              for k, v in sorted(maps.items())}
-    return '''"""Generated integer grid migration; native physical positions are retained."""
-import json
+    return '''"""Generated continent migration data; rebuilt with the paired map publication."""
+from .geography_migration import migrate_geography
 
 MAPS = ''' + repr(saved) + '''
 STATE_KEY = 'continent_geography_origins_v1'
 
 def migrate(db):
-    row = db.execute('SELECT value FROM global_state WHERE key=?', (STATE_KEY,)).fetchone()
-    state = json.loads(row[0]) if row else {}
-    previous = state.get('origins', state)
-    old_revisions = state.get('nativeRevisions', {})
-    current = {name: spec['serverOrigin'] for name, spec in MAPS.items()}
-    revisions = {name: spec['nativeRevision'] for name, spec in MAPS.items() if 'nativeRevision' in spec}
-    if previous == current and old_revisions == revisions:
-        return
-    deltas = {name: [spec['serverOrigin'][i] - previous.get(name, spec['nativeServerOrigin'])[i]
-                    for i in range(2)] for name, spec in MAPS.items()}
-    # The caller owns the transaction. The marker is committed with all moves.
-    for name, delta in deltas.items():
-        spec = MAPS[name]
-        if name in revisions and old_revisions.get(name) != revisions[name]:
-            # Native terrain was compacted, unlike an address-grid padding.
-            # Preserve all character state and move only its standing point.
-            db.execute('UPDATE characters SET x=?,y=? WHERE map_id=?', (*spec['arrival'], name))
-            deltas[name] = [0, 0]  # Do not invent nonlinear saved quest positions.
-            continue
-        if delta == [0, 0]:
-            continue
-        db.execute('UPDATE characters SET x=x+?, y=y+? WHERE map_id=?', (*delta, name))
-        db.execute('UPDATE characters SET x=?,y=? WHERE map_id=? AND '
-                   '(x<0 OR y<0 OR x>=? OR y>=?)', (*spec['arrival'], name, *spec['serverCells']))
-    for username, raw in db.execute('SELECT username,quest_state FROM characters'):
-        quest = json.loads(raw or '{}')
-        positions = quest.get('daily_positions')
-        if not positions:
-            continue
-        moved = []
-        for position in positions.split(','):
-            parts = position.rsplit(':', 2)
-            if len(parts) == 3 and parts[0] in deltas:
-                delta = deltas[parts[0]]
-                position = f'{parts[0]}:{int(parts[1])+delta[0]}:{int(parts[2])+delta[1]}'
-            moved.append(position)
-        value = ','.join(sorted(moved))
-        if value != positions:
-            quest['daily_positions'] = value
-            db.execute('UPDATE characters SET quest_state=? WHERE username=?', (json.dumps(quest), username))
-    db.execute('INSERT OR REPLACE INTO global_state(key,value) VALUES (?,?)',
-               (STATE_KEY, json.dumps({'origins': current, 'nativeRevisions': revisions}, sort_keys=True)))
+    migrate_geography(db, MAPS, STATE_KEY)
 '''
 
 

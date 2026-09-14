@@ -197,6 +197,13 @@ def missing_stream_members(manifest, document):
 def run(client, report_path, server=None, maps=None, selected=None):
     started=time.time();base=client/'eloria-assets/maps/nymara-regions';plan_path=base/'continent-geography.json'
     plan=json.loads(plan_path.read_text(encoding='utf-8'));regions=plan['regions']
+    if plan.get('geometryMode') == 'continent-chunks-v1':
+        if selected:
+            raise ValueError('Shared-continent ownership must be audited as a whole; --regions is legacy-only')
+        sys.path.insert(0,str(base/'_continent'))
+        import audit_continent
+        return audit_continent.run(client,base/'_continent/generated',report_path,
+                                   Path(server).resolve() if server else None,require_collision=True)
     names=list(regions) if not selected else list(selected)
     packages={n:(client/'eloria-assets/maps/four-gates' if n=='four_gates' else base/n) for n in regions}
     manifests={n:json.loads((packages[n]/'world.json').read_text(encoding='utf-8')) for n in regions}

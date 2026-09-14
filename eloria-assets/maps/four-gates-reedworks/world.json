@@ -89,9 +89,9 @@
       "radius": 1.6,
       "targetMap": "four_gates",
       "targetPosition": [
-        64.0,
-        31.08,
-        70.35000000000001
+        64.5,
+        22.343976974487305,
+        56.5
       ],
       "label": "Out to the street"
     }

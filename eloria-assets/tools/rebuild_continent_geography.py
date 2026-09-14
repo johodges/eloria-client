@@ -291,6 +291,9 @@ def main():
     parser.add_argument('--region', action='append', choices=tuple(BUILDERS))
     parser.add_argument('--stage', choices=('all','geometry','prepare','collision','content','publish'), default='all')
     args = parser.parse_args()
+    geography_path = REGIONS / 'continent-geography.json'
+    if geography_path.is_file() and json.loads(geography_path.read_text(encoding='utf-8')).get('geometryMode') == 'continent-chunks-v1':
+        raise SystemExit('This continent is authored as one shared master. Rebuild with eloria-assets/maps/nymara-regions/_continent/build_pipeline.py --server SERVER --data DATA --artifacts ARTIFACTS. The legacy per-region geography rebuild would replace its canonical terrain and contracts.')
     server, data, artifacts = args.server.resolve(), args.data.resolve(), args.artifacts.resolve()
     artifacts.mkdir(parents=True, exist_ok=True)
     regions = args.region or list(BUILDERS)

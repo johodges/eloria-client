@@ -26,6 +26,28 @@ def test_prop_height_matches_the_rendered_triangles_on_a_saddle():
     assert terrain.height_at(-2, -4) > terrain.mesh_height_at(-2, -4) + 3
 
 
+
+def world_anchor(doc, index):
+    """The world-space origin of a node, composed through its parents."""
+    nodes = doc["nodes"]
+    parent = {child: i for i, node in enumerate(nodes) for child in node.get("children", [])}
+    matrix = np.eye(4)
+    while index is not None:
+        node = nodes[index]
+        local = np.eye(4)
+        if "matrix" in node:
+            local = np.array(node["matrix"], dtype=float).reshape(4, 4).T
+        else:
+            qx, qy, qz, qw = node.get("rotation", [0, 0, 0, 1])
+            rotation = np.array([[1 - 2 * (qy * qy + qz * qz), 2 * (qx * qy - qz * qw), 2 * (qx * qz + qy * qw)],
+                                 [2 * (qx * qy + qz * qw), 1 - 2 * (qx * qx + qz * qz), 2 * (qy * qz - qx * qw)],
+                                 [2 * (qx * qz - qy * qw), 2 * (qy * qz + qx * qw), 1 - 2 * (qx * qx + qy * qy)]])
+            local[:3, :3] = rotation @ np.diag(node.get("scale", [1, 1, 1]))
+            local[:3, 3] = node.get("translation", [0, 0, 0])
+        matrix = local @ matrix
+        index = parent.get(index)
+    return [float(v) for v in matrix[:3, 3]]
+
 @pytest.mark.parametrize("region,name", [
     ("amberwood", "Prop_BurntBrazier_2"),
     ("verdant_stair", "Signpost_TempleCourt"),
@@ -41,7 +63,9 @@ def test_corrected_prop_anchor_touches_the_actual_floor_in_each_lod(region, name
             assert path.name == "world-lod2.glb", f"Missing prop in {path}"
             continue
         rays = VerticalRayIndex(G.triangles(doc, body, G.named(doc, "Terrain_") + G.named(doc, "Walk_")))
-        x, y, z = matches[0]["translation"]
+        # Continent packages wrap each placed prop in a `<region>_<name>_WorldPlacement`
+        # parent that carries the world transform; the prop's own translation is local.
+        x, y, z = world_anchor(doc, doc["nodes"].index(matches[0]))
         floor = rays.top_hit(x, z)
         assert floor is not None
         assert abs(y - floor) < .025, (region, name, path.name, y, floor)

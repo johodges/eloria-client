@@ -3,6 +3,7 @@ extends Node3D
 
 const WORLD_COLLISION_LAYER := 1
 const NAVIGATION_SURFACE_LAYER := 8
+const ExternalTexturePool := preload("res://src/world/external_texture_pool.gd")
 
 # Static-instance batching. A region such as Four Gates imports ~1700 mesh
 # nodes that between them reference only 42 meshes, so almost every draw call
@@ -93,6 +94,8 @@ var world_root: Node3D
 ## than parsed out of its package. Read by the benchmarks and by the tests that
 ## prove a second visit hits.
 var loaded_from_cache := false
+## A resident territory can be adopted even when a ferry is discontinuous.
+var loaded_by_adoption := false
 
 ## What the last load did about the cache, one of `&"disabled"`, `&"miss"`,
 ## `&"hit"`, `&"unreadable"` or `&"no_digest"`. A miss is the normal state of a
@@ -129,11 +132,11 @@ var detached_build := false
 var detached_cache_enabled := true
 var _prepared_visuals: Dictionary = {}
 
-static func prepare_detached(path: String, cache_enabled: bool, visual_paths := PackedStringArray()) -> WorldLoader:
+static func prepare_detached(path: String, cache_enabled: bool, visual_paths := PackedStringArray(), arrival := Vector3.INF) -> WorldLoader:
 	var builder := WorldLoader.new()
 	builder.detached_build = true
 	builder.detached_cache_enabled = cache_enabled
-	builder.load_world(path)
+	builder.load_world(path, arrival)
 	if builder.world_root != null:
 		var start := Time.get_ticks_usec()
 		builder._prepared_visuals = GlbSceneCache.prepare(visual_paths)
@@ -157,6 +160,7 @@ func release_world(detach := true) -> Dictionary:
 
 func adopt_world(resident: Dictionary) -> void:
 	unload_world()
+	loaded_by_adoption = true
 	GlbSceneCache.install_prepared(resident.get("visuals", {}))
 	world_root = resident.root as Node3D
 	manifest = resident.manifest as WorldManifest
@@ -180,8 +184,9 @@ func adopt_world(resident: Dictionary) -> void:
 	MapSceneCache.note_local_digest(manifest.asset_id(), package_digest)
 	load_completed.emit(manifest)
 
-func load_world(manifest_path: String) -> void:
+func load_world(manifest_path: String, arrival := Vector3.INF, wait_for_arrival := false) -> void:
 	unload_world()
+	loaded_by_adoption = false
 	var began: int = Time.get_ticks_usec()
 	var mark: int = began
 	load_phases = {}
@@ -208,6 +213,31 @@ func load_world(manifest_path: String) -> void:
 		MapSceneCache.note_local_digest(manifest.asset_id(), package_digest)
 	cache_file = MapSceneCache.cache_path(manifest.asset_id(), package_digest)
 	mark = _phase(&"digest", mark)
+	if manifest.has_streaming_chunks():
+		# A partially resident territory must never be packed/read as a complete
+		# map cache. Individual independent chunk packages use the normal loader.
+		cache_status = &"chunked"
+		cache_file = ""
+		var chunks := ContinentChunkStream.new()
+		chunks.name = "ImportedWorld_" + manifest.asset_id()
+		chunks.configure(manifest, detached_cache_enabled if detached_build else MapSceneCache.is_enabled())
+		world_root = chunks
+		add_child(chunks)
+		if not wait_for_arrival:
+			if not arrival.is_finite():
+				var spawns: Array = manifest.data.get("spawnPoints", [])
+				var position: Array = spawns[0].get("position", [0,0,0]) if not spawns.is_empty() else [0,0,0]
+				arrival = Vector3(float(position[0]), float(position[1]), float(position[2]))
+			chunks.prime(arrival)
+		mark = _phase(&"chunks", mark)
+		load_phases[&"total"] = mark - began
+		load_completed.emit(manifest)
+		return
+	var external_errors := manifest.verify_external_resources()
+	if not external_errors.is_empty():
+		load_failed.emit(external_errors)
+		push_error("world_load stage=external_resources errors=%s" % [external_errors])
+		return
 	if _load_from_cache(mark, began):
 		return
 
@@ -221,6 +251,7 @@ func load_world(manifest_path: String) -> void:
 		return
 	print_debug("world_load stage=glb_imported path=", resolved_glb_path)
 	mark = _phase(&"parse", mark)
+	ExternalTexturePool.share(state, manifest.data.get("externalResources", {}))
 	var mipped: int = _build_texture_mipmaps(state)
 	print_debug("world_load stage=texture_mipmaps rebuilt=", mipped)
 	mark = _phase(&"mipmaps", mark)
@@ -280,6 +311,11 @@ func load_world(manifest_path: String) -> void:
 	if cache_status == &"miss" and not detached_build:
 		_cache_write_countdown = CACHE_WRITE_DELAY_FRAMES
 		set_process(true)
+
+func ensure_chunk_arrival(position: Vector3) -> bool:
+	if not world_root is ContinentChunkStream:
+		return false
+	return (world_root as ContinentChunkStream).ensure_position(position)
 
 # --------------------------------------------------------------------------
 # The map cache
@@ -668,32 +704,31 @@ func _build_texture_mipmaps(state: GLTFState) -> int:
 ## mode, but leaves `vertex_color_use_as_albedo` off, and without it the vertex
 ## alpha never reaches the shader and every class draws over its whole quad.
 ##
-## Only alpha-tested materials get the coverage flag, and only where the mesh
-## carries colours. Turning it on elsewhere would multiply albedo by a colour
-## the mesh does not have, and Godot substitutes white for a missing COLOR_0,
-## so it is harmless but pointless; restricting it keeps the flag where it
-## means something. The colours the ground carries are white apart from their
-## alpha, so albedo is unchanged.
+## Legacy coverage colours are white apart from alpha. The shared continent
+## also stores opaque biome and worn-road RGB in COLOR_0; those materials use
+## the same flag. Transparent water retains its authored material behaviour.
 ##
 ## Returns how many materials the coverage flag reached.
 func _apply_continent_water(mesh_instances: Array) -> int:
 	if manifest == null or not manifest.data.has("continentGeography"):
 		return 0
-	var borders: Array = manifest.data.get("streamingBorders", [])
-	if borders.is_empty():
-		return 0
-	var translation: Array = borders[0].get("globalTranslation", [])
+	# Islands with ferry-only connections still belong to the same sea. Their
+	# canonical placement must not depend on having a walking-border record.
+	var translation: Array = manifest.data.continentGeography.get("translation", [])
+	if translation.size() != 3:
+		var borders: Array = manifest.data.get("streamingBorders", [])
+		if not borders.is_empty():
+			translation = borders[0].get("globalTranslation", [])
 	if translation.size() != 3:
 		return 0
 	var origin := Vector3(float(translation[0]), float(translation[1]), float(translation[2]))
-	var wave_texture: Texture2D
+	var shared_drainage := str(manifest.data.continentGeography.get("geometryMode", "")) == "continent-chunks-v1"
+	var territory := manifest.asset_id().get_slice("__chunk_", 0)
 	# Shared pixels are exported unchanged from the toolkit's water_lake.
 	# Loading the PNG directly also works without an editor import or a local
 	# water_lake material (Grey Moors only packages its regional bog material).
-	var waves := Image.load_from_file("res://assets/world/continent-water.png")
-	if waves != null and not waves.is_empty():
-		waves.generate_mipmaps()
-		wave_texture = ImageTexture.create_from_image(waves)
+	var wave_texture := preload("res://src/world/external_texture_pool.gd").load_image(
+		"res://assets/world/continent-water.png")
 	var applied := 0
 	for value: Variant in mesh_instances:
 		var node := value as MeshInstance3D
@@ -706,13 +741,26 @@ func _apply_continent_water(mesh_instances: Array) -> int:
 			parent = parent.get_parent()
 		var to_continent := Transform3D(Basis.IDENTITY, origin) * local
 		var bounds := to_continent * node.mesh.get_aabb()
-		# Only the shared sea-level plane. Raised ponds, fountains, waterfalls
-		# and authored river surfaces retain their own regional materials.
-		if absf(bounds.position.y) > .06 or absf(bounds.end.y) > .06:
-			continue
+		if shared_drainage:
+			# The global terrain exporter names both sea and elevated/sloping
+			# drainage Water_<territory>_<cellX>_<cellZ>, with water_sea material.
+			# Require both declarations so retained fountains and authored pools
+			# keep their own material even when their world height is zero.
+			var prefix := "Water_" + territory + "_"
+			if not str(node.name).begins_with(prefix):
+				continue
+			var cell := str(node.name).trim_prefix(prefix).split("_", false)
+			if cell.size() != 2 or not cell[0].is_valid_int() or not cell[1].is_valid_int():
+				continue
+		else:
+			# Preserve the sea-only rule for legacy territory exports.
+			if absf(bounds.position.y) > .06 or absf(bounds.end.y) > .06:
+				continue
 		for surface: int in node.mesh.get_surface_count():
 			var original := node.mesh.surface_get_material(surface) as BaseMaterial3D
 			if original == null:
+				continue
+			if shared_drainage and original.resource_name != "water_sea":
 				continue
 			var water := ShaderMaterial.new()
 			water.resource_name = "continent_sea"
@@ -727,6 +775,8 @@ func _apply_continent_water(mesh_instances: Array) -> int:
 
 func _apply_material_passes(mesh_instances: Array) -> int:
 	var applied := 0
+	var continent_colors := manifest != null and str(manifest.data.get("continentGeography", {}).get(
+		"geometryMode", "")) == "continent-chunks-v1"
 	var filtered: Dictionary = {}
 	var covered: Dictionary = {}
 	var soft_materials: Dictionary = {}
@@ -764,9 +814,12 @@ func _apply_material_passes(mesh_instances: Array) -> int:
 				continue
 			if covered.has(id):
 				continue
-			if material.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR:
+			if material.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR and not (
+				continent_colors and material.transparency == BaseMaterial3D.TRANSPARENCY_DISABLED):
 				continue
 			covered[id] = true
+			# The shared continent stores biome and worn-road RGB in opaque
+			# COLOR_0. glTF import otherwise leaves those colours disabled.
 			material.vertex_color_use_as_albedo = true
 			applied += 1
 	return applied
@@ -1031,7 +1084,7 @@ func _trimesh_shape(mesh: Mesh) -> ConcavePolygonShape3D:
 func _group_streaming_views() -> void:
 	if manifest.data.get("streamingBorders", []).is_empty():
 		return
-	if manifest.data.streamingBorders[0].get("geometryMode", "") in ["shared-cells-v2", "continent-owned-v1"]:
+	if manifest.data.streamingBorders[0].get("geometryMode", "") in ["shared-cells-v2", "continent-owned-v1", "continent-chunks-v1"]:
 		_group_shared_streaming_cells()
 		return
 	var views: Array[Node3D] = []

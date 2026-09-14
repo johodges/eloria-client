@@ -99,9 +99,12 @@ def test_compact_atlas_preserves_every_declared_connection_and_ferry_type():
     graph=tool.load_json(tool.CONNECTIONS)['connections']
     assert {(e['from'],e['to'],e['type']) for e in atlas} == {
         (e['from'],e['to'],e['type']) for e in graph}
-    assert len(atlas)==24 and sum(e['type']=='ferry' for e in atlas)==7
-    assert not any(e['from']=='sunmane_steppe' and e['to'] not in {
-        'four_gates','verdant_stair'} for e in atlas)
+    # The published graph is the authority for counts: the diagonal continent
+    # declares 18 land links and 3 ferries; the legacy compact layout had 24/7.
+    assert len(atlas)==len(graph) and len(graph)>=21
+    assert sum(e['type']=='ferry' for e in atlas)==sum(e['type']=='ferry' for e in graph)
+    declared={frozenset((e['from'],e['to'])) for e in graph}
+    assert all(frozenset((e['from'],e['to'])) in declared for e in atlas)
 
 
 def test_compact_atlas_does_not_reintroduce_large_empty_gaps():
@@ -112,9 +115,12 @@ def test_compact_atlas_does_not_reintroduce_large_empty_gaps():
     # Real minimaps cover over half the atlas, instead of the former~18%.
     assert area/(width*height)>.55
     rects={r['serverMap']:r['continentRect'] for r in cartography['regions']}
-    for a,b in [('mirrorhold','four_gates'),('four_gates','sunmane_steppe'),
-                ('sunmane_steppe','verdant_stair'),('verdant_stair','ssarathi_ruins'),
-                ('mirrorhold','amethyst_barrens'),('amberwood','mirrorhold')]:
+    # Every published land link joins two territories that touch on the common
+    # atlas lattice; the pair list follows the graph rather than a fixed layout.
+    graph=tool.load_json(tool.CONNECTIONS)['connections']
+    pairs=sorted({tuple(sorted((e['from'],e['to']))) for e in graph if e['type']!='ferry'})
+    assert len(pairs)>=6
+    for a,b in pairs:
         x,y,w,h=rects[a];xx,yy,ww,hh=rects[b]
         gap_x=max(0,x-(xx+ww),xx-(x+w))
         gap_y=max(0,y-(yy+hh),yy-(y+h))

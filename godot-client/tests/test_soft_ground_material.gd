@@ -28,6 +28,14 @@ func _init() -> void:
 	loader._apply_material_passes([node])
 	assert(ordinary.transparency == BaseMaterial3D.TRANSPARENCY_ALPHA)
 	assert(not ordinary.vertex_color_use_as_albedo)
+	var continental := StandardMaterial3D.new()
+	continental.resource_name = "continental_ground"
+	mesh.surface_set_material(0,continental)
+	loader.manifest = WorldManifest.new()
+	loader.manifest.data = {"continentGeography":{"geometryMode":"continent-chunks-v1"}}
+	loader._apply_material_passes([node])
+	assert(continental.vertex_color_use_as_albedo)
+	assert(continental.transparency == BaseMaterial3D.TRANSPARENCY_DISABLED)
 	node.free()
 	loader.free()
 	print("soft ground material: PASS")

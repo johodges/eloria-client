@@ -11,6 +11,7 @@ reach. `eloria-assets/tools/sync_package_content.py` moves the models onto the
 server's tiles; this holds them there.
 """
 import json
+import math
 import unittest
 from pathlib import Path
 
@@ -65,9 +66,12 @@ class PackageContentPlacement(unittest.TestCase):
                     placement = entry.get(field)
                     if not tile or not placement or len(placement) != 3:
                         continue
-                    # invertServerY: the server's y runs north to south.
-                    rounded = [round(placement[0] / metres + origin_x),
-                               round(origin_y - placement[2] / metres)]
+                    # invertServerY: the server's y runs north to south. A
+                    # marker stands on the tile that contains it: with the
+                    # tile-centres-v1 convention every centre lies at x.5,
+                    # which round() would split by parity, so floor.
+                    rounded = [math.floor(placement[0] / metres + origin_x),
+                               math.floor(origin_y - placement[2] / metres)]
                     self.assertEqual(
                         rounded, list(tile),
                         f"{relative} {'/'.join(section)} {entry.get('id')} is "

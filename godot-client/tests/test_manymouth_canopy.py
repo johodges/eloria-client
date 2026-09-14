@@ -29,6 +29,10 @@ def probe():
     import build_manymouth_delta as B
     import continent_geography as GEO
     from amberwood import mesh as M
+    # This regression exercises the retained landing recipe before its source
+    # geometry is assembled into the new master. Keep its original coordinates.
+    legacy = json.loads((ROOT/'eloria-assets/maps/nymara-regions/_continent/legacy-geography.json').read_text(encoding='utf-8'))
+    GEO.plan = lambda: legacy
     changed={'palm_0049','palm_0802','palm_0845','palm_0957'}
     before={}
     original=B.COMPACT._open_east_landing_canopy

@@ -3,6 +3,9 @@
 Run after rebuilding a paired border. Ferries retain their deliberate journeys.
 Only reciprocal, surveyed collars permit a continuous visual handoff; every land
 connection can still preload its destination without changing server authority.
+
+The single-master continent publishes its graph with its geometry and server
+contracts. This legacy builder must not replace those surveyed physical edges.
 """
 import json
 import argparse
@@ -12,6 +15,17 @@ from pathlib import Path
 
 CLIENT = Path(__file__).resolve().parents[2]
 REGIONS = CLIENT / 'eloria-assets/maps/nymara-regions'
+
+
+def guard_shared_continent(geography, manifests=()):
+    """Reject both published chunk worlds and an export awaiting publication."""
+    if geography.get('geometryMode') == 'continent-chunks-v1' or any(
+            manifest.get('streamingChunks') or manifest.get('continentGeography', {}).get(
+                'geometryMode') == 'continent-chunks-v1' for manifest in manifests):
+        raise ValueError('The shared continent graph is published together with its named chunk '
+                         'exports. Use eloria-assets/maps/nymara-regions/_continent/build_pipeline.py '
+                         'instead of build_exterior_streaming.py; the legacy builder cannot '
+                         'reconstruct its surveyed physical preload edges and visual neighbours.')
 
 
 def physical_edges(geography):
@@ -71,9 +85,19 @@ def add_geographic_views(result, registry):
 
 
 def build(server=None):
+    geography_path = REGIONS / 'continent-geography.json'
+    geography = json.loads(geography_path.read_text(encoding='utf-8')) if geography_path.is_file() else {}
+    guard_shared_continent(geography)
     graph = json.loads((REGIONS / 'region-connections.json').read_text(encoding='utf-8'))
     registry = json.loads((CLIENT / 'godot-client/data/maps/registry.json').read_text(encoding='utf-8'))
     registry = registry.get('maps', registry)
+    region_ids = {link[key] for link in graph['connections'] if link['type'] in ('walk', 'causeway')
+                  for key in ('from', 'to')}
+    manifests = {}
+    for region in sorted(region_ids):
+        path = Path(registry[region]['manifest'].replace('res://', str(CLIENT / 'godot-client') + '/')).resolve()
+        manifests[region] = json.loads(path.read_text(encoding='utf-8'))
+    guard_shared_continent(geography, manifests.values())
     actors = json.loads((CLIENT / 'godot-client/data/actors/models.json').read_text(encoding='utf-8'))
     objects = json.loads((CLIENT / 'godot-client/data/world/objects.json').read_text(encoding='utf-8'))
     npc_types = {}
@@ -89,8 +113,7 @@ def build(server=None):
         ends = []
         for key in ('from', 'to'):
             region = link[key]
-            path = Path(registry[region]['manifest'].replace('res://', str(CLIENT / 'godot-client') + '/')).resolve()
-            manifest = json.loads(path.read_text(encoding='utf-8'))
+            manifest = manifests[region]
             entries = manifest.get('portals', []) + manifest.get('interactives', [])
             portal = next(p for p in entries if p.get('id') == link[key + '_portal'])
             frame = next((s for s in manifest.get('streamingBorders', []) if s['portal'] == portal['id']), {})

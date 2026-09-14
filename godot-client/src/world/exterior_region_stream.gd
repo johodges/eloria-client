@@ -60,6 +60,12 @@ func activate(map_id: String, imported: Node3D, manifest: WorldManifest) -> void
 
 func update_position(position: Vector3) -> void:
 	_last_position = position
+	if active_root is ContinentChunkStream:
+		(active_root as ContinentChunkStream).update_focus(position)
+	for resident: Dictionary in residents.values():
+		var imported: Node3D = resident.root
+		if imported is ContinentChunkStream:
+			(imported as ContinentChunkStream).update_focus(imported.transform.affine_inverse() * position)
 	if Time.get_ticks_msec() < _next_update or active_map.is_empty():
 		return
 	_next_update = Time.get_ticks_msec() + 250
@@ -79,7 +85,10 @@ func update_position(position: Vector3) -> void:
 	_thread = Thread.new()
 	var path := ProjectSettings.globalize_path(str(entry.get("manifest", "")))
 	var visuals := GlbSceneCache.missing(PackedStringArray(candidate.there.get("visualScenes", [])))
-	var error := _thread.start(WorldLoader.prepare_detached.bind(path, MapSceneCache.is_enabled(), visuals))
+	var arrival := Vector3.INF
+	if candidate.here.has("frame") and candidate.there.has("frame"):
+		arrival = frame_transform(candidate.here.frame, candidate.there.frame).affine_inverse() * position
+	var error := _thread.start(WorldLoader.prepare_detached.bind(path, MapSceneCache.is_enabled(), visuals, arrival))
 	if error != OK:
 		_thread = null
 		_retry_after[map_id] = Time.get_ticks_msec() + 30000
@@ -109,6 +118,7 @@ func _preload_candidate(candidates: Array[Dictionary], wanted: Dictionary) -> Di
 
 func _process(_delta: float) -> void:
 	_drain_retired()
+	ContinentChunkStream.reap_orphans()
 	if _thread == null or _thread.is_alive():
 		return
 	var builder := _thread.wait_to_finish() as WorldLoader
@@ -188,6 +198,16 @@ func _candidates(position: Vector3) -> Array[Dictionary]:
 
 ## Transfer already-instantiated nodes. A surveyed join rebases the old world
 ## and camera into the destination's coordinate frame; nothing moves on screen.
+## Server steps are one metre and the rendered traveller interpolates up to a
+## few steps behind the authoritative crossing packet, so a crossing is judged
+## continuous within this slack of the seam even when the frame's collar is
+## only the continent's two-metre threshold-floor extent. Teleports and other
+## remote map changes stay far outside it.
+const CONTINUOUS_CROSSING_SLACK_METRES := 8.0
+
+static func continuous_crossing(seamless: bool, crossing_distance: float, collar: float) -> bool:
+	return seamless and crossing_distance < maxf(collar, CONTINUOUS_CROSSING_SLACK_METRES)
+
 func take_ready(destination: String, loader: WorldLoader, position: Vector3) -> Dictionary:
 	last_handoff = {}
 	if not residents.has(destination):
@@ -197,11 +217,8 @@ func take_ready(destination: String, loader: WorldLoader, position: Vector3) -> 
 		if str(candidate.map) == destination:
 			join = candidate
 			break
-	# Render interpolation can trail an authoritative crossing during a slow
-	# frame. The surveyed approach, not a tiny radius around the trigger, is
-	# the continuous-travel zone.
 	var collar := float(join.get("here", {}).get("frame", {}).get("collarDepth", 42))
-	var continuous := bool(join.get("seamless", false)) and float(join.get("crossing_distance", INF)) < collar
+	var continuous := continuous_crossing(bool(join.get("seamless", false)), float(join.get("crossing_distance", INF)), collar)
 	var resident: Dictionary = residents[destination]
 	residents.erase(destination)
 	var rebase := Transform3D.IDENTITY
@@ -237,7 +254,7 @@ func _refresh_views() -> void:
 		var imported := residents[map_id].root as Node3D
 		if bool(candidate.seamless) or bool(candidate.visual_only):
 			var identity := str(candidate.there.frame.id)
-			var full_owned := str(candidate.there.frame.get("geometryMode", "")) == "continent-owned-v1"
+			var full_owned := str(candidate.there.frame.get("geometryMode", "")) in ["continent-owned-v1", "continent-chunks-v1"]
 			imported.transform = frame_transform(candidate.here.frame, candidate.there.frame)
 			imported.visible = true
 			_set_view(imported, identity, full_owned)
@@ -270,6 +287,8 @@ static func _vector(raw: Array) -> Vector3:
 	return Vector3(float(raw[0]), float(raw[1]), float(raw[2]))
 
 static func _set_collision(imported: Node3D, enabled: bool, preview_enabled := false, border := "", full_owned := false) -> void:
+	if imported is ContinentChunkStream:
+		(imported as ContinentChunkStream).set_physics_mode(enabled, preview_enabled)
 	var mode := str(enabled) + ":" + str(preview_enabled) + ":" + border + ":" + str(full_owned)
 	if imported.get_meta("stream_physics", "") == mode:
 		return
@@ -321,6 +340,8 @@ func _can_dispatch_preload() -> bool:
 
 func _retire(resident: Dictionary, map_id: String) -> void:
 	var imported := resident.root as Node3D
+	if imported is ContinentChunkStream:
+		(imported as ContinentChunkStream).pause_streaming()
 	imported.visible = false
 	_set_collision(imported, false)
 	imported.process_mode = Node.PROCESS_MODE_DISABLED
@@ -338,6 +359,9 @@ func _drain_retired(max_nodes := RETIRE_NODES_PER_FRAME,
 	var freed := 0
 	while not _retiring.is_empty() and freed < max_nodes and Time.get_ticks_usec() - began < budget_usec:
 		var retired: Dictionary = _retiring[0]
+		var imported: Variant = retired.resident.root
+		if is_instance_valid(imported) and imported is ContinentChunkStream and not (imported as ContinentChunkStream).can_retire():
+			break
 		var stack: Array = retired.stack
 		var visual_keys: Array = retired.visual_keys
 		if stack.is_empty():
@@ -459,7 +483,7 @@ func pick_neighbor(space: PhysicsDirectSpaceState3D, origin: Vector3, direction:
 		# Owned footprints can wrap behind the road plane at a shared corner.
 		# Their real geometry, foreground occlusion and served bounds decide the
 		# target; a local collar still needs the legacy outward-side restriction.
-		var full_owned := str(candidate.there.frame.get("geometryMode", "")) == "continent-owned-v1"
+		var full_owned := str(candidate.there.frame.get("geometryMode", "")) in ["continent-owned-v1", "continent-chunks-v1"]
 		if not full_owned and (point - anchor).dot(outward) <= 0:
 			continue
 		var target_manifest := residents[map_id].manifest as WorldManifest
@@ -587,7 +611,8 @@ func _first_walk_leg(source: String, destination: String) -> Dictionary:
 	return {}
 
 func is_idle() -> bool:
-	return _thread == null and _retiring.is_empty()
+	ContinentChunkStream.reap_orphans()
+	return _thread == null and _retiring.is_empty() and ContinentChunkStream.orphans_pending() == 0
 
 func _record(kind: String, map_id: String, detail := {}) -> void:
 	var entry := {"event": kind, "map": map_id, "at_ms": Time.get_ticks_msec()}

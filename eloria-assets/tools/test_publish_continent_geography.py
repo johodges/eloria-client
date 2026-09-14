@@ -1,12 +1,26 @@
 """Coordinate publication must preserve identities and be repeatable."""
 import json
 from pathlib import Path
-import sqlite3
 import struct
+import sys
 import tempfile
+import types
 import unittest
+from unittest.mock import patch
 
 import publish_continent_geography as P
+
+
+def migration_namespace(spec, calls):
+    """Validate publisher delegation; server tests exercise actual save upgrades."""
+    package = types.ModuleType('eloria')
+    package.__path__ = []
+    helper = types.ModuleType('eloria.geography_migration')
+    helper.migrate_geography = lambda *args: calls.append(args)
+    namespace = {'__package__': 'eloria', '__name__': 'eloria.continent_geography_test'}
+    with patch.dict(sys.modules, {'eloria': package, 'eloria.geography_migration': helper}):
+        exec(P.runtime_migration_source(spec), namespace)
+    return namespace
 
 
 def maps():
@@ -77,26 +91,19 @@ class PublicationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'strictly monotone'):
             P.native_mapper(data, [174, 174])
 
-    def test_native_compact_save_reset_is_once_then_padding_preserves_later_travel(self):
+    def test_generated_migration_delegates_native_and_terrain_revisions(self):
         spec = maps()
         spec['four_gates']['nativeRevision'] = 'native-compact-v1'
-        namespace = {}
-        exec(P.runtime_migration_source(spec), namespace)
-        db = sqlite3.connect(':memory:')
-        db.execute('CREATE TABLE global_state(key TEXT PRIMARY KEY,value TEXT)')
-        db.execute('CREATE TABLE characters(username TEXT,map_id TEXT,x INTEGER,y INTEGER,quest_state TEXT,inventory TEXT)')
-        quest = '{"quest":7,"daily_positions":"four_gates:7:8"}'
-        db.execute('INSERT INTO characters VALUES (?,?,?,?,?,?)', ('resident', 'four_gates', 7, 8, quest, '{"Coin":42}'))
+        spec['four_gates']['terrainRevision'] = 'diagonal-spine-v1'
+        calls = []
+        namespace = migration_namespace(spec, calls)
+        db = object()
         namespace['migrate'](db)
-        row = db.execute('SELECT x,y,quest_state,inventory FROM characters').fetchone()
-        self.assertEqual(row, (13, 19, quest, '{"Coin":42}'))
-        db.execute('UPDATE characters SET x=15,y=20')
-        namespace['migrate'](db)
-        self.assertEqual(db.execute('SELECT x,y FROM characters').fetchone(), (15, 20))
-        namespace['MAPS']['four_gates']['serverOrigin'] = [13, 18]
-        namespace['migrate'](db)
-        self.assertEqual(db.execute('SELECT x,y FROM characters').fetchone(), (16, 20))
-        db.close()
+        self.assertEqual(calls, [(db, namespace['MAPS'], 'continent_geography_origins_v1')])
+        self.assertEqual(namespace['MAPS']['four_gates']['nativeRevision'], 'native-compact-v1')
+        self.assertEqual(namespace['MAPS']['four_gates']['terrainRevision'], 'diagonal-spine-v1')
+        self.assertNotIn('translation', namespace['MAPS']['four_gates'])
+        self.assertNotIn('delta', namespace['MAPS']['four_gates'])
 
     def test_quest_stages_shift_visit_coordinates_without_reward_changes(self):
         text = ('key: unchanged_quest\n[stage]\nkind: visit\nmap: four_gates\nx: 7\ny: 8\n'
@@ -127,34 +134,14 @@ class PublicationTests(unittest.TestCase):
         self.assertIn('"four_gates",7,14,11,18,40,True', result)
         self.assertIn('"westhaven",1,2,5,6,60,True', result)
 
-    def test_saved_characters_translate_once_preserving_progress_and_later_travel(self):
-        namespace = {}
-        exec(P.runtime_migration_source(maps()), namespace)
-        db = sqlite3.connect(':memory:')
-        db.execute('CREATE TABLE global_state(key TEXT PRIMARY KEY,value TEXT)')
-        db.execute('CREATE TABLE characters(username TEXT PRIMARY KEY,map_id TEXT,x INTEGER,y INTEGER,quest_state TEXT,inventory TEXT)')
-        quest = json.dumps({'quest': 7, 'daily_positions': 'four_gates:7:8,westhaven:1:2'})
-        db.executemany('INSERT INTO characters VALUES (?,?,?,?,?,?)', [
-            ('resident', 'four_gates', 7, 8, quest, '{"Coin":42}'),
-            ('invalid', 'four_gates', 900, 900, '{}', '{}'),
-            ('outside', 'room', 2, 3, '{}', '{}'),
-            ('no_shift', 'westhaven', 5, 6, '{}', '{}')])
-        namespace['migrate'](db)
-        row = db.execute('SELECT x,y,quest_state,inventory FROM characters WHERE username="resident"').fetchone()
-        self.assertEqual(row[:2], (13, 20))
-        self.assertEqual(row[3], '{"Coin":42}')
-        self.assertEqual(json.loads(row[2]), {'quest': 7, 'daily_positions': 'four_gates:13:20,westhaven:1:2'})
-        self.assertEqual(db.execute('SELECT x,y FROM characters WHERE username="invalid"').fetchone(), (13, 19))
-        self.assertEqual(db.execute('SELECT x,y FROM characters WHERE username="outside"').fetchone(), (2, 3))
-        self.assertEqual(db.execute('SELECT x,y FROM characters WHERE username="no_shift"').fetchone(), (5, 6))
-        db.execute('UPDATE characters SET x=14,y=21 WHERE username="resident"')
-        namespace['migrate'](db)
-        self.assertEqual(db.execute('SELECT x,y FROM characters WHERE username="resident"').fetchone(), (14, 21))
-        # A later revision moves from the recorded origin, never from baseline again.
-        namespace['MAPS']['four_gates']['serverOrigin'] = [13, 18]
-        namespace['migrate'](db)
-        self.assertEqual(db.execute('SELECT x,y FROM characters WHERE username="resident"').fetchone(), (15, 21))
-        db.close()
+    def test_generated_migration_preserves_legacy_release_fields_without_inventing_revisions(self):
+        spec = maps()
+        calls = []
+        namespace = migration_namespace(spec, calls)
+        for region, value in namespace['MAPS'].items():
+            self.assertEqual(value, {field: spec[region][field] for field in (
+                'nativeServerOrigin', 'serverOrigin', 'serverCells', 'arrival')})
+        self.assertEqual(calls, [])
 
     def test_invalid_grid_and_fractional_shift_fail_before_publication(self):
         data = self.geography()

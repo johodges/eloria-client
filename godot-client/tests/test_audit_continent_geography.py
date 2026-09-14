@@ -1,10 +1,29 @@
 """Independent emitted-geometry audit: reject concave leaks and actor offsets."""
 from pathlib import Path
+import json
 import sys
+from types import SimpleNamespace
 import numpy as np
 import pytest
 sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'eloria-assets/tools'))
 import audit_continent_geography as A
+
+
+def test_chunk_mode_dispatches_to_whole_continent_audit_with_collision_required(tmp_path, monkeypatch):
+    geography = tmp_path / 'eloria-assets/maps/nymara-regions/continent-geography.json'
+    geography.parent.mkdir(parents=True)
+    geography.write_text(json.dumps({'geometryMode': 'continent-chunks-v1', 'regions': {'test': {}}}))
+    calls = []
+    def run(*args, **kwargs):
+        calls.append((args, kwargs))
+        return {'verified': 'independent shared-continent auditor'}
+    monkeypatch.setitem(sys.modules, 'audit_continent', SimpleNamespace(run=run))
+    server, report = tmp_path / 'server', tmp_path / 'report.json'
+    assert A.run(tmp_path, report, server=server)['verified'] == 'independent shared-continent auditor'
+    assert calls == [((tmp_path, geography.parent / '_continent/generated', report, server.resolve()), {'require_collision': True})]
+    with pytest.raises(ValueError, match='audited as a whole'):
+        A.run(tmp_path, report, selected=['test'])
+    assert len(calls) == 1
 
 
 def test_concave_triangle_leak_with_all_vertices_and_centroid_inside():

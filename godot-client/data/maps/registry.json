@@ -6,28 +6,28 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          203,
-          210
+          310,
+          164
+        ],
+        "serverCells": [
+          594,
+          594
         ],
         "origin": [
           0,
-          31.1,
+          0,
           0
         ],
-        "walkingHeight": 31.1,
+        "walkingHeight": 22.343976974487305,
         "invertServerY": true,
-        "serverCells": [
-          414,
-          414
-        ],
         "addressableWorldBounds": {
           "min": [
-            -203,
-            -204
+            -310,
+            -430
           ],
           "max": [
-            211,
-            210
+            284,
+            164
           ]
         }
       },
@@ -35,11 +35,11 @@
       "landscapeTransitions": true,
       "continentGeography": {
         "translation": [
-          1050.0,
-          -19,
-          1016.0
+          530.0,
+          0,
+          840.0
         ],
-        "geometryMode": "continent-owned-v1"
+        "geometryMode": "continent-chunks-v1"
       }
     },
     "mirrorhold": {
@@ -47,28 +47,28 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          129,
-          103
+          228,
+          350
+        ],
+        "serverCells": [
+          600,
+          600
         ],
         "origin": [
-          0.0,
-          0.0,
-          0.0
+          0,
+          0,
+          0
         ],
-        "walkingHeight": 17.0,
+        "walkingHeight": 98.7447280883789,
         "invertServerY": true,
-        "serverCells": [
-          402,
-          402
-        ],
         "addressableWorldBounds": {
           "min": [
-            -129,
-            -299
+            -228,
+            -250
           ],
           "max": [
-            273,
-            103
+            372,
+            350
           ]
         }
       },
@@ -77,11 +77,11 @@
       "landscapeTransitions": true,
       "continentGeography": {
         "translation": [
-          978.0,
+          840.0,
           0,
-          716.0
+          650.0
         ],
-        "geometryMode": "continent-owned-v1"
+        "geometryMode": "continent-chunks-v1"
       }
     },
     "crownwater": {
@@ -89,28 +89,28 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          120,
-          120
+          294,
+          114
+        ],
+        "serverCells": [
+          774,
+          774
         ],
         "origin": [
-          0.0,
-          0.0,
-          0.0
+          0,
+          0,
+          0
         ],
-        "walkingHeight": 4.5,
+        "walkingHeight": 4.525000095367432,
         "invertServerY": true,
-        "serverCells": [
-          402,
-          402
-        ],
         "addressableWorldBounds": {
           "min": [
-            -120,
-            -282
+            -294,
+            -660
           ],
           "max": [
-            282,
-            120
+            480,
+            114
           ]
         }
       },
@@ -119,11 +119,11 @@
       "landscapeTransitions": true,
       "continentGeography": {
         "translation": [
-          572.0,
+          290.0,
           0,
-          1042.0
+          1570.0
         ],
-        "geometryMode": "continent-owned-v1"
+        "geometryMode": "continent-chunks-v1"
       }
     },
     "whitehorn_range": {
@@ -131,28 +131,28 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          126,
-          129
+          362,
+          186
+        ],
+        "serverCells": [
+          708,
+          708
         ],
         "origin": [
-          0.0,
-          0.0,
-          0.0
+          0,
+          0,
+          0
         ],
-        "walkingHeight": 19.66,
+        "walkingHeight": 139.35452270507812,
         "invertServerY": true,
-        "serverCells": [
-          414,
-          414
-        ],
         "addressableWorldBounds": {
           "min": [
-            -126,
-            -285
+            -362,
+            -522
           ],
           "max": [
-            288,
-            129
+            346,
+            186
           ]
         }
       },
@@ -161,11 +161,11 @@
       "landscapeTransitions": true,
       "continentGeography": {
         "translation": [
-          972.0,
+          550.0,
           0,
-          298.0
+          220.0
         ],
-        "geometryMode": "continent-owned-v1"
+        "geometryMode": "continent-chunks-v1"
       }
     },
     "amethyst_barrens": {
@@ -173,28 +173,28 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          125,
-          126
+          246,
+          166
+        ],
+        "serverCells": [
+          804,
+          804
         ],
         "origin": [
-          0.0,
-          0.0,
-          0.0
+          0,
+          0,
+          0
         ],
-        "walkingHeight": 5.24,
+        "walkingHeight": 30.003276824951172,
         "invertServerY": true,
-        "serverCells": [
-          402,
-          402
-        ],
         "addressableWorldBounds": {
           "min": [
-            -125,
-            -276
+            -246,
+            -638
           ],
           "max": [
-            277,
-            126
+            558,
+            166
           ]
         }
       },
@@ -212,11 +212,11 @@
       "landscapeTransitions": true,
       "continentGeography": {
         "translation": [
-          1369.0,
+          950.0,
           0,
-          696.0
+          400.0
         ],
-        "geometryMode": "continent-owned-v1"
+        "geometryMode": "continent-chunks-v1"
       }
     },
     "sunmane_steppe": {
@@ -224,30 +224,30 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          124,
-          125
+          194,
+          292
+        ],
+        "serverCells": [
+          792,
+          792
         ],
         "origin": [
           0,
           0,
           0
         ],
-        "walkingHeight": 9.6,
+        "walkingHeight": 26.635101318359375,
         "invertServerY": true,
         "addressableWorldBounds": {
           "min": [
-            -124,
-            -277
+            -194,
+            -500
           ],
           "max": [
-            278,
-            125
+            598,
+            292
           ]
-        },
-        "serverCells": [
-          402,
-          402
-        ]
+        }
       },
       "status": "production",
       "lodManifests": {
@@ -256,11 +256,11 @@
       "landscapeTransitions": true,
       "continentGeography": {
         "translation": [
-          1374.0,
+          1200.0,
           0,
-          1092.0
+          720.0
         ],
-        "geometryMode": "continent-owned-v1"
+        "geometryMode": "continent-chunks-v1"
       }
     },
     "amberwood": {
@@ -269,28 +269,28 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          146,
-          146
+          242,
+          170
+        ],
+        "serverCells": [
+          444,
+          444
         ],
         "origin": [
-          0.0,
-          0.0,
-          0.0
+          0,
+          0,
+          0
         ],
-        "walkingHeight": 40.8,
+        "walkingHeight": 57.5399169921875,
         "invertServerY": true,
-        "serverCells": [
-          426,
-          426
-        ],
         "addressableWorldBounds": {
           "min": [
-            -146,
-            -280
+            -242,
+            -274
           ],
           "max": [
-            280,
-            146
+            202,
+            170
           ]
         }
       },
@@ -298,11 +298,11 @@
       "requiresServerMap": "64x64 server tiles (384 cells)",
       "continentGeography": {
         "translation": [
-          579.0,
+          510.0,
           0,
-          650.0
+          540.0
         ],
-        "geometryMode": "continent-owned-v1"
+        "geometryMode": "continent-chunks-v1"
       }
     },
     "grey_moors": {
@@ -310,28 +310,28 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          116,
-          128
+          224,
+          326
+        ],
+        "serverCells": [
+          750,
+          750
         ],
         "origin": [
-          0.0,
-          0.0,
-          0.0
+          0,
+          0,
+          0
         ],
-        "walkingHeight": 2.73,
+        "walkingHeight": 29.82876968383789,
         "invertServerY": true,
-        "serverCells": [
-          426,
-          426
-        ],
         "addressableWorldBounds": {
           "min": [
-            -116,
-            -298
+            -224,
+            -424
           ],
           "max": [
-            310,
-            128
+            526,
+            326
           ]
         }
       },
@@ -340,11 +340,11 @@
       "landscapeTransitions": true,
       "continentGeography": {
         "translation": [
-          174.0,
+          220.0,
           0,
-          1086.0
+          420.0
         ],
-        "geometryMode": "continent-owned-v1"
+        "geometryMode": "continent-chunks-v1"
       }
     },
     "westhaven": {
@@ -352,28 +352,28 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          120,
-          172
+          174,
+          244
+        ],
+        "serverCells": [
+          588,
+          588
         ],
         "origin": [
-          0.0,
-          0.0,
-          0.0
+          0,
+          0,
+          0
         ],
-        "walkingHeight": 3.4,
+        "walkingHeight": 13.261550903320312,
         "invertServerY": true,
-        "serverCells": [
-          438,
-          438
-        ],
         "addressableWorldBounds": {
           "min": [
-            -120,
-            -266
+            -174,
+            -344
           ],
           "max": [
-            318,
-            172
+            414,
+            244
           ]
         }
       },
@@ -382,11 +382,11 @@
       "landscapeTransitions": true,
       "continentGeography": {
         "translation": [
-          132.0,
+          170.0,
           0,
-          1426.0
+          1060.0
         ],
-        "geometryMode": "continent-owned-v1"
+        "geometryMode": "continent-chunks-v1"
       }
     },
     "verdant_stair": {
@@ -394,28 +394,28 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          113,
-          108
+          298,
+          164
+        ],
+        "serverCells": [
+          702,
+          702
         ],
         "origin": [
-          0.0,
-          0.0,
-          0.0
+          0,
+          0,
+          0
         ],
-        "walkingHeight": 12.0,
+        "walkingHeight": 78.8840560913086,
         "invertServerY": true,
-        "serverCells": [
-          372,
-          372
-        ],
         "addressableWorldBounds": {
           "min": [
-            -113,
-            -264
+            -298,
+            -538
           ],
           "max": [
-            259,
-            108
+            404,
+            164
           ]
         }
       },
@@ -424,11 +424,11 @@
       "landscapeTransitions": true,
       "continentGeography": {
         "translation": [
-          1523.0,
+          1100.0,
           0,
-          1470.0
+          1120.0
         ],
-        "geometryMode": "continent-owned-v1"
+        "geometryMode": "continent-chunks-v1"
       }
     },
     "ssarathi_ruins": {
@@ -436,28 +436,28 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          153,
-          116
+          376,
+          244
+        ],
+        "serverCells": [
+          780,
+          780
         ],
         "origin": [
-          0.0,
-          0.0,
-          0.0
+          0,
+          0,
+          0
         ],
-        "walkingHeight": 1.45,
+        "walkingHeight": 2.2521300315856934,
         "invertServerY": true,
-        "serverCells": [
-          426,
-          426
-        ],
         "addressableWorldBounds": {
           "min": [
-            -153,
-            -310
+            -376,
+            -536
           ],
           "max": [
-            273,
-            116
+            404,
+            244
           ]
         }
       },
@@ -466,11 +466,11 @@
       "landscapeTransitions": true,
       "continentGeography": {
         "translation": [
-          1144.0,
+          1100.0,
           0,
-          1500.0
+          1440.0
         ],
-        "geometryMode": "continent-owned-v1"
+        "geometryMode": "continent-chunks-v1"
       }
     },
     "manymouth_delta": {
@@ -478,28 +478,28 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          177,
-          120
+          208,
+          310
+        ],
+        "serverCells": [
+          510,
+          510
         ],
         "origin": [
-          0.0,
-          0.0,
-          0.0
+          0,
+          0,
+          0
         ],
-        "walkingHeight": 1.88,
+        "walkingHeight": 2.200000047683716,
         "invertServerY": true,
-        "serverCells": [
-          558,
-          558
-        ],
         "addressableWorldBounds": {
           "min": [
-            -177,
-            -438
+            -208,
+            -200
           ],
           "max": [
-            381,
-            120
+            302,
+            310
           ]
         }
       },
@@ -507,11 +507,11 @@
       "requiresServerMap": "96x96 server tiles (576 cells)",
       "continentGeography": {
         "translation": [
-          618,
+          520.0,
           0,
-          1490
+          1140.0
         ],
-        "geometryMode": "continent-owned-v1"
+        "geometryMode": "continent-chunks-v1"
       },
       "landscapeTransitions": true
     },

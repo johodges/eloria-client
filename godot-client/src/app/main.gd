@@ -1223,7 +1223,8 @@ func _process(delta: float) -> void:
 		_update_carried_item()
 		_update_map_viewports()
 		_update_local_actor_follow()
-		exterior_stream.update_position(camera_rig.focus)
+		if AppState.actors.has(AppState.local_actor_id):
+			exterior_stream.update_position(camera_rig.focus)
 		if Time.get_ticks_msec() >= _stream_lighting_at:
 			_stream_lighting_at = Time.get_ticks_msec() + 100
 			_update_border_lighting()
@@ -3836,7 +3837,9 @@ func _load_server_map() -> void:
 	else:
 		occluder_fade.reset()
 		exterior_stream.clear(true) # A preload miss must not cancel the expected road continuation.
-		world_loader.load_world(manifest_path)
+		# CHANGE_MAP precedes the destination actor packet. Delay chunk disk
+		# reads until that packet supplies the actual login/teleport arrival.
+		world_loader.load_world(manifest_path, Vector3.INF, true)
 
 func _rebase_streamed_world(rebase: Transform3D) -> void:
 	camera_rig.rebase_world(rebase)
@@ -3852,6 +3855,7 @@ func _rebase_streamed_world(rebase: Transform3D) -> void:
 func _on_world_loaded(manifest: WorldManifest) -> void:
 	var binding_started := Time.get_ticks_usec()
 	exterior_stream.activate(loaded_server_map, world_loader.world_root, manifest)
+	_watch_chunk_surfaces()
 	_bind_shared_world()
 	if is_instance_valid(lantern_scene):
 		lantern_scene.queue_free()
@@ -3995,15 +3999,25 @@ func _bind_ambient_audio(manifest: WorldManifest) -> void:
 
 func _populate_ambient_life(manifest: WorldManifest) -> void:
 	# Scenery livestock declared by the map. Networked actors are untouched.
-	if ambient_population == null:
+	var chunk_stream := world_loader.world_root as ContinentChunkStream
+	if chunk_stream != null:
+		if is_instance_valid(ambient_population) and ambient_population.get_parent() == world_root:
+			ambient_population.clear()
+			ambient_population.queue_free()
+		ambient_population = chunk_stream.get_node_or_null("AmbientPopulation") as AmbientPopulation
+		if ambient_population == null:
+			ambient_population = AmbientPopulation.new()
+			ambient_population.name = "AmbientPopulation"
+			chunk_stream.add_child(ambient_population)
+	elif not is_instance_valid(ambient_population) or ambient_population.get_parent() != world_root:
 		ambient_population = AmbientPopulation.new()
 		ambient_population.name = "AmbientPopulation"
 		world_root.add_child(ambient_population)
 	await get_tree().physics_frame
-	if gameplay_world == null:
+	if gameplay_world == null or world_loader.manifest != manifest:
 		return
 	var spawned: int = ambient_population.populate(manifest,
-		gameplay_world.direct_space_state)
+		gameplay_world.direct_space_state, chunk_stream)
 	if spawned > 0:
 		print_debug("ambient_population map=", AppState.current_map, " spawned=", spawned)
 
@@ -4031,6 +4045,11 @@ func _on_world_load_failed(errors: Array[String]) -> void:
 ## An actor with no node yet is built either way, at most ACTOR_SPAWN_BUDGET
 ## of them per pass; the rest are picked up on the following frames.
 func _sync_world(changed: Variant = null) -> void:
+	if adapter != null and AppState.actors.has(AppState.local_actor_id):
+		var arrival_actor: Dictionary = AppState.actors[AppState.local_actor_id]
+		if world_loader.ensure_chunk_arrival(adapter.tile_center(int(arrival_actor.x), int(arrival_actor.y))):
+			_actor_surface_samples.clear()
+			_snap_all_map_objects_to_surface.call_deferred()
 	map_label.text = "Map: " + (AppState.current_map if not AppState.current_map.is_empty() else "loading")
 	for id: Variant in actor_nodes.keys():
 		if AppState.actors.has(id):
@@ -10477,6 +10496,19 @@ func _snap_all_map_objects_to_surface() -> void:
 		_place_map_marker_on_surface(raw_marker as MapMarker3D)
 	for raw_marker: Variant in player_mark_nodes.values():
 		_place_map_marker_on_surface(raw_marker as MapMarker3D)
+
+## Map objects and markers are placed on the rendered navigation surface when
+## the server lists them. On a streamed territory the chunk beneath a distant
+## object attaches later, so each chunk arrival places them again; otherwise a
+## harvestable far from the arrival stayed ungrounded until the next map change.
+func _watch_chunk_surfaces() -> void:
+	var chunk_stream := world_loader.world_root as ContinentChunkStream
+	if chunk_stream == null or chunk_stream.cell_ready.is_connected(_on_chunk_surface_ready):
+		return
+	chunk_stream.cell_ready.connect(_on_chunk_surface_ready)
+
+func _on_chunk_surface_ready(_identity: String, _imported: Node3D) -> void:
+	_snap_all_map_objects_to_surface.call_deferred()
 
 ## The "now harvesting" indicator. The stock client drove this by matching an
 ## exact English phrase out of the chat stream; this reads the authoritative

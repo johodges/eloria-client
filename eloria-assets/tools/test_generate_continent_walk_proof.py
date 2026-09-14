@@ -4,8 +4,10 @@ The production World pathfinder, ELM loader and storage collision participate;
 no server process or database is constructed.
 """
 import os
+import copy
 import itertools
 import json
+import math
 from pathlib import Path
 import struct
 import tempfile
@@ -15,32 +17,166 @@ import unittest
 import generate_continent_walk_proof as P
 
 
+class ChunkGraphTests(unittest.TestCase):
+    def generator(self):
+        g=P.Generator.__new__(P.Generator);g.chunk_mode=True
+        polygons={'a':[[0,0],[4,0],[4,4],[0,4]],'b':[[4,0],[8,0],[8,2],[4,2]],
+                  'c':[[4,2],[8,2],[8,4],[4,4]]}
+        g.geography={'ownershipRasterMetres':2,'regions':{n:{'ownershipPolygon':p} for n,p in polygons.items()},
+                     'connections':[{'id':'ab','ends':[{'region':'a'},{'region':'b'}]}]}
+        g.landscape_plan={'bounds':[0,0,8,4]}
+        g.specs={n:{'translation':[0,0,0],'serverOrigin':[0,0]} for n in polygons}
+        edges={('a','b'):[[[4,0],[4,2]]],('a','c'):[[[4,2],[4,4]]],('b','c'):[[[4,2],[8,2]]]}
+        def link(identity,pair,visual=False):
+            points=edges[pair];anchor=[sum(p[0] for p in points[0])/2,0,sum(p[1] for p in points[0])/2]
+            return {'id':identity,'visualOnly':visual,'seamless':True,'ends':[
+                {'map':n,'coordinateTransform':{'serverOrigin':[0,0]},'preloadEdges':copy.deepcopy(points),
+                 'frame':{'geometryMode':'continent-chunks-v1','anchor':anchor.copy(),'halfWidthTiles':3}}
+                for n in pair]}
+        g.links=[link('ab',('a','b'))]
+        g.visual_links=[link('view-ac',('a','c'),True),link('view-bc',('b','c'),True)]
+        g.publication={'connections':[{'id':'ab','type':'walk','ends':[
+            {'region':n,'frame':{'halfWidthTiles':3},'lanes':[{'tile':[i,0],'arrival':[i,1]} for i in range(7)]} for n in ('a','b')]},
+            {'id':'bc-ferry','type':'ferry','ends':[{'region':'b'},{'region':'c'}]}]}
+        return g
+
+    def test_nonlegacy_counts_are_derived_from_complete_ownership(self):
+        result=self.generator().graph_integrity()
+        self.assertEqual((result['roadPairs'],result['visualPairs'],result['physicalPairs'],result['ferryPairs']),(1,2,3,1))
+        self.assertEqual(result['boundarySource'],'independent ownership polygon scan conversion')
+
+    def test_missing_visual_edge_and_false_continuous_span_fail(self):
+        g=self.generator();g.visual_links.pop()
+        with self.assertRaisesRegex(P.AuditError,'exact remaining owned boundaries'):g.graph_integrity()
+        g=self.generator();g.visual_links[0]['ends'][0]['preloadEdges']=[[[4,0],[4,4]]]
+        with self.assertRaisesRegex(P.AuditError,'finite preload edges differ'):g.graph_integrity()
+
+    def test_published_road_cannot_be_silently_removed_or_duplicated(self):
+        g=self.generator();g.links=[]
+        with self.assertRaisesRegex(P.AuditError,'Runtime roads differ'):g.graph_integrity()
+        g=self.generator();g.links.append(copy.deepcopy(g.links[0]))
+        with self.assertRaisesRegex(P.AuditError,'Runtime roads differ'):g.graph_integrity()
+
+    def test_missing_ferry_leaves_island_unreachable(self):
+        g=self.generator();g.publication['connections'].pop()
+        with self.assertRaisesRegex(P.AuditError,'no declared continent travel route'):g.graph_integrity()
+
+    def test_ownership_gaps_overlaps_and_displaced_frames_fail(self):
+        for change in (-2,2):
+            g=self.generator();polygon=g.geography['regions']['a']['ownershipPolygon']
+            polygon[1][0]+=change;polygon[2][0]+=change
+            with self.assertRaisesRegex(P.AuditError,'Ownership has'):g.graph_integrity()
+        g=self.generator()
+        for end in g.links[0]['ends']:end['frame']['anchor'][0]=2
+        with self.assertRaisesRegex(P.AuditError,'outside its physical boundary'):g.graph_integrity()
+
+    def test_ferry_only_visual_route_is_explicit_and_not_a_walk_claim(self):
+        g=self.generator();g.errors=[];g.visual_links=[g.visual_links[1]]
+        g.links[0]['ends'][0]['map']='a';g.links[0]['ends'][1]['map']='b'
+        result=g.visual_road_requests()
+        self.assertEqual(len(result),2);self.assertFalse(g.errors)
+        self.assertTrue(all(r['travelMode']=='ferry-required' and not r['oneClickWalkAvailable'] for r in result))
+        self.assertTrue(all(r['ferryConnections']==['bc-ferry'] for r in result))
+
+
 class ClickFramingTests(unittest.TestCase):
-    def test_only_raised_manymouth_to_grey_target_uses_wider_camera(self):
+    LINK = {'id': 'manymouth_delta--grey_moors'}
+    MANY = {'map': 'manymouth_delta', 'frame': {'outward': [-1, 0]}}
+    GREY = {'map': 'grey_moors', 'frame': {'outward': [1, 0]}}
+
+    def generator(self, surface):
         # Exercise fixture emission only; the full occupied path audit remains
-        # a separate required gate and is not replaced by this framing test.
+        # a separate required gate and is not replaced by these framing tests.
         generator = P.Generator.__new__(P.Generator)
         portal = SimpleNamespace(x=20, y=401, destination_x=403, destination_y=5)
         generator.sorted_lanes = lambda a, b: [portal] * 7
-        requests = []
-        generator.audit = SimpleNamespace(exact_path=lambda *args, **kwargs:
-                                         requests.append((args, kwargs)))
-        link = {'id': 'manymouth_delta--grey_moors'}
-        many = {'map': 'manymouth_delta', 'frame': {'outward': [-1, 0]}}
-        grey = {'map': 'grey_moors', 'frame': {'outward': [1, 0]}}
-        route = generator.click_route(link, many, grey, 12)
+        generator.requests = []
+        # Grey tile (403,5) continues one metre beyond the Manymouth trigger (20,401).
+        generator.specs = {'manymouth_delta': {'arrival': [60, 401], 'serverOrigin': [0, 0], 'translation': [0, 0, 0]},
+                           'grey_moors': {'arrival': [380, 5], 'serverOrigin': [0, 0], 'translation': [-384, 0, -396]}}
+        # Route references follow the real server road toward each arrival;
+        # a straight stub road reproduces the classic inward offsets exactly.
+        def straight(region, start, target, blocked):
+            step = 1 if target[0] > start[0] else -1
+            return [(x, start[1]) for x in range(start[0] + step, target[0] + step, step)]
+        generator.world = SimpleNamespace(find_path=straight)
+        generator.audit = SimpleNamespace(exact_path=lambda *args, **kwargs: generator.requests.append((args, kwargs)),
+                                          standing=lambda region, tile: True, occupied=lambda region: set(),
+                                          automatic={'manymouth_delta': set(), 'grey_moors': set()})
+        generator.surface_height = surface
+        return generator
+
+    def test_harness_projection_matches_the_gameplay_camera(self):
+        focus = (10.0, 5.0, -20.0)
+        self.assertEqual(self.generator(lambda region, tile: 0.0).godot_xz('grey_moors', 403.5, 5.5), (19.5, -401.5))
+        centre = P.harness_screen_position(focus, 0.0, 32, (10.0, 5.0 + P.HARNESS_AIM_HEIGHT, -20.0))
+        self.assertAlmostEqual(centre[0], 720.0); self.assertAlmostEqual(centre[1], 450.0)
+        # Yaw 0 puts the camera at +z looking toward -z: points ahead rise on
+        # screen, points at the actor's right (+x) land right of centre.
+        ahead = P.harness_screen_position(focus, 0.0, 32, (10.0, 5.0, -30.0))
+        self.assertAlmostEqual(ahead[0], 720.0); self.assertLess(ahead[1], centre[1])
+        self.assertGreater(P.harness_screen_position(focus, 0.0, 32, (14.0, 5.0, -20.0))[0], 720.0)
+        # Above and behind the camera (it sits 16 m toward +z, 27.7 m up).
+        self.assertIsNone(P.harness_screen_position(focus, 0.0, 32, (10.0, 40.0, 40.0)))
+        self.assertLess(P.visible_margin(P.harness_screen_position(focus, 0.0, 32, (10.0, 5.0, -60.0))), 0)
+        self.assertEqual(P.visible_margin(None), -math.inf)
+        self.assertEqual(P.visible_margin((100.0, 30.0)), 30.0)
+        self.assertEqual(P.visible_margin((1430.0, 300.0)), 10.0)
+
+    def test_deep_click_target_is_the_farthest_visible_road_tile(self):
+        generator = self.generator(lambda region, tile: 0.0)
+        route = generator.click_route(self.LINK, self.MANY, self.GREY, 12)
         identity = 'manymouth_delta--grey_moors-manymouth_delta-click-12'
-        self.assertEqual(route, {'id': identity, 'map': 'manymouth_delta',
-            'start': [28, 401], 'startTolerance': 0, 'yaw': 90.0, 'distance': 40,
-            'walkTimeout': 60, 'steps': [{'tile': [391, 5], 'destination': 'grey_moors',
-                'clickNeighbor': True, 'label': 'exact visible resident target',
-                'capture': identity}]})
-        self.assertEqual(requests, [
+        steps = route['targetSteps']; target = tuple(route['steps'][0]['tile'])
+        self.assertTrue(2 < steps <= 12)
+        self.assertEqual(target, (403 - steps, 5))
+        self.assertEqual(route, {'id': identity, 'map': 'manymouth_delta', 'start': [28, 401], 'startTolerance': 0,
+            'yaw': 90.0, 'distance': 32, 'walkTimeout': 60, 'requestedSteps': 12, 'targetSteps': steps,
+            'screenMarginPx': route['screenMarginPx'],
+            'steps': [{'tile': list(target), 'destination': 'grey_moors', 'clickNeighbor': True,
+                       'label': 'exact visible resident target', 'capture': identity}]})
+        self.assertGreaterEqual(route['screenMarginPx'], P.CLICK_VISIBLE_MARGIN_PX)
+        if steps < 12:
+            deeper = generator.harness_screen('manymouth_delta', (28, 401), 'grey_moors', (403 - steps - 1, 5), 90.0, 32)
+            self.assertLess(P.visible_margin(deeper), P.CLICK_VISIBLE_MARGIN_PX)
+        self.assertEqual(generator.requests, [
             (('manymouth_delta', (28, 401), (20, 401)), {'allowed': [(20, 401)]}),
-            (('grey_moors', (403, 5), (391, 5)), {})])
-        self.assertEqual(generator.click_route(link, many, grey, 2)['distance'], 32)
-        self.assertEqual(generator.click_route(link, grey, many, 12)['distance'], 32)
-        self.assertEqual(generator.click_route({'id': 'another-road'}, many, grey, 12)['distance'], 32)
+            (('grey_moors', (403, 5), target), {})])
+        shallow = generator.click_route(self.LINK, self.MANY, self.GREY, 2)
+        self.assertEqual((shallow['targetSteps'], shallow['steps'][0]['tile'], shallow['distance']), (2, [401, 5], 32))
+
+    def test_climbing_roads_take_shallower_targets_and_walls_are_rejected(self):
+        flat = self.generator(lambda region, tile: 0.0).click_route(self.LINK, self.MANY, self.GREY, 12)
+        ramp = self.generator(lambda region, tile: 0.0 if region == 'manymouth_delta' else (403 - tile[0]) * 1.5)
+        climbing = ramp.click_route(self.LINK, self.MANY, self.GREY, 12)
+        self.assertLess(climbing['targetSteps'], flat['targetSteps'])
+        self.assertGreater(climbing['targetSteps'], 2)
+        self.assertGreaterEqual(climbing['screenMarginPx'], P.CLICK_VISIBLE_MARGIN_PX)
+        wall = self.generator(lambda region, tile: 0.0 if region == 'manymouth_delta' else 60.0)
+        with self.assertRaisesRegex(P.AuditError, 'no route tile 3-12 steps beyond \\(403, 5\\) is visible'):
+            wall.click_route(self.LINK, self.MANY, self.GREY, 12)
+        with self.assertRaisesRegex(P.AuditError, 'no route tile 1-2 steps beyond'):
+            wall.click_route(self.LINK, self.MANY, self.GREY, 2)
+        missing = self.generator(lambda region, tile: None if tile == (391, 5) else 0.0)
+        self.assertNotEqual(missing.click_route(self.LINK, self.MANY, self.GREY, 12)['steps'][0]['tile'], [391, 5])
+
+
+class FerryArrivalFixtureTests(unittest.TestCase):
+    def test_published_arrival_uses_destination_tile_center_and_nonzero_transform(self):
+        generator=P.Generator.__new__(P.Generator)
+        generator.specs={'island':{'arrival':[1,2],'serverOrigin':[20,80],'translation':[350,5,1200]}}
+        destination={'region':'island','tile':[15,36],'arrival':[12,34]}
+        self.assertEqual(generator.ferry_arrival(destination),{
+            'map':'island','tile':[12,34],'global':[342.5,1245.5],
+            'units':'metres','point':'tile-center'})
+        self.assertEqual(destination['arrival'],[12,34])
+
+    def test_missing_transform_or_fractional_authoritative_tile_is_rejected(self):
+        generator=P.Generator.__new__(P.Generator);generator.specs={'island':{}}
+        with self.assertRaisesRegex(P.AuditError,'published continent transform'):
+            generator.ferry_arrival({'region':'island','arrival':[12,34]})
+        with self.assertRaisesRegex(P.AuditError,'exact authoritative tile'):
+            generator.ferry_arrival({'region':'island','arrival':[12.5,34]})
 
 
 @unittest.skipUnless(os.environ.get('ELORIA_PROOF_SERVER'), 'Set ELORIA_PROOF_SERVER to run paired path regressions')
@@ -61,6 +197,34 @@ class PathProofTests(unittest.TestCase):
 
     def portal(self,source,x,y,destination,dx,dy):
         return self.R['maps'].Portal(source,x,y,destination,dx,dy)
+
+    def test_new_ferry_fixtures_require_actual_dock_access_and_safe_return(self):
+        g=P.Generator.__new__(P.Generator);g.chunk_mode=True;g.world=self.world(24,12)
+        g.specs={'a':{'arrival':[2,5],'serverOrigin':[1,9],'translation':[-20,0,40]},
+                 'b':{'arrival':[2,5],'serverOrigin':[3,12],'translation':[100,0,300]}}
+        g.publication={'connections':[{'id':'a-b-ferry','type':'ferry','ends':[
+            {'region':name,'tile':[10,5],'arrival':[8,5]} for name in ('a','b')]}]}
+        g.portals=[self.portal('a',10,5,'b',8,5),self.portal('b',10,5,'a',8,5)]
+        g.audit=P.WalkAudit(g.world,g.portals);g.errors=[]
+        routes=g.ferry_routes();self.assertEqual(len(routes),2);self.assertFalse(g.errors)
+        self.assertTrue(all(len([s for s in r['steps'] if 'destination' in s])==2 for r in routes))
+        self.assertTrue(all(r['travelMode']=='ferry' for r in routes))
+        expected={'a':[-12.5,43.5],'b':[105.5,306.5]}
+        for route in routes:
+            for step in route['steps']:
+                if 'destination' not in step:continue
+                self.assertEqual(step['expectedArrival'],{'map':step['destination'],'tile':[8,5],
+                    'global':expected[step['destination']],'units':'metres','point':'tile-center'})
+        self.assertTrue(all(not leg['syntheticBlockers'] for leg in g.audit.legs))
+        g.world.npcs={1:(SimpleNamespace(x=8,y=5),'b',0,())};g.errors=[]
+        self.assertEqual(g.ferry_routes(),[])
+        self.assertTrue(any('ferry arrival cannot safely depart' in e['error'] for e in g.errors))
+        g.world.npcs={};g.errors=[]
+        raw=bytearray([10])*288
+        for y in range(12):raw[y*24+9]=0
+        g.world.collision_maps['a']=self.R['collision'].with_step_mask(self.R['collision'].CollisionMap(24,12,bytes(raw)),2)
+        self.assertEqual(g.ferry_routes(),[])
+        self.assertTrue(g.errors)
 
     def test_waypoints_avoid_incidental_door_on_real_unmodified_paths(self):
         world=self.world(24,12)

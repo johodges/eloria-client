@@ -90,8 +90,8 @@
       ],
       "returnMap": "sunmane_steppe",
       "returnTile": [
-        247,
-        300
+        274,
+        443
       ],
       "bounds": {
         "min": [
@@ -201,8 +201,8 @@
       ],
       "returnMap": "sunmane_steppe",
       "returnTile": [
-        327,
-        283
+        334,
+        432
       ],
       "bounds": {
         "min": [
@@ -1236,8 +1236,8 @@
       ],
       "destinationMap": "sunmane_steppe",
       "destinationTile": [
-        247,
-        300
+        274,
+        443
       ],
       "section": "sunmane_wind_caves",
       "label": "Back out to the Sunmane Steppe (Sunmane Wind Caves)"
@@ -1256,8 +1256,8 @@
       ],
       "destinationMap": "sunmane_steppe",
       "destinationTile": [
-        327,
-        283
+        334,
+        432
       ],
       "section": "sunmane_crystal_hollow",
       "label": "Back out to the Sunmane Steppe (Amethyst Crystal Hollow)"

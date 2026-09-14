@@ -1,0 +1,2733 @@
+{
+  "schema": 1,
+  "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba",
+  "entranceProfileSha256": "874627beb1c09d24ea6761924e59bb9bd569848bf92658b70083ddbf3cd0c0c9",
+  "compositionAlgorithmSha256": "00bf3afabf5eeba651eb380df31ab83e23ce9a3dd7eaef50cde19f31756a64cc",
+  "library": {
+    "whitehorn_range": "42e087f58943b5db56a4c42027ac3ef64b7681fdf4945d10893d0d5325f68ed9",
+    "grey_moors": "909e457b10da47d0282067578931521d40c9a4d993bf5d7a3721f97ff24b4101",
+    "amberwood": "ffc52b75c1ed3d44c134d49758543403cee61691e2ad9f0f085c2336c52be55e",
+    "amethyst_barrens": "9a3dd408d16eb54dd5ed47ba5510fbad94a466a4982ab04aea3c6ae9e0bfe6b3",
+    "mirrorhold": "9c6ea456656803a1da7fa7e5cbc879397722755853264610c79fe661ebba8d7a",
+    "sunmane_steppe": "ca021441cfacaee47dc1bce62040e31217e117c033e0f24403fdd9e3cace51f0",
+    "four_gates": "e9f52a8c4a285e914db3a29b4c10f5f39cadcfda6a0c951911dae8b34498a2d3",
+    "westhaven": "828d75527390d4a3215f7f4f5cb7dbbc4b7688eac00ac2380f055ed20d6c8900",
+    "manymouth_delta": "c0a91c0db6d15232ca179bd9c73211b9364ca00bd1c8d4a6dfb7ca79b1b01679",
+    "crownwater": "7c401eba08c3db1243d2868737592f7b6bbb9fff07f54a3191c0598da776cb9a",
+    "verdant_stair": "bb3caec9fe785169a205d9cf96ac7678912ca8f209f73271af94b15fc1169f49",
+    "ssarathi_ruins": "feb38c3f51245b40fe51b46d4c1a0dec927045547e5471d1a04aee9a77bc8aeb"
+  },
+  "sources": {
+    "eloria-assets\\maps\\nymara-regions\\_continent\\amberwood_access.py": "86f4f68f59c597f9818f60d7130d908d06e008833930dc4aac81c59939124b49",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\amberwood_support.py": "41baa364b83da706436961ad81a8377a33cd8825acfd65fdc3531149db1dd2a3",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\assemblies.py": "e82b4786be226739af59d3746aa3a05ae999a8ac9e2ddce2bb908ae6f79dd2f7",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\atlas_export.py": "a19b270692eb12e5bba7e8a63dc10888134d48b807af22afbc7a1ed6305f6799",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\audit_continent.py": "e0568bd475459f5c79aa792463a8c93ba6e04c521adf0b5981681c77c041589c",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\bridge_export.py": "0a80fc24106acb6a2e8b60a272b35692fbdb79c48c6407430cb4f9a812c8196d",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\build_continent.py": "1abcefb0e802da876fe04fbe243ea601678f0812a6b7fe4aecea50720d238cfb",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\build_library.py": "0b97ef43268c4e08fa05884b1e781c34bb76d806ae3766a5ae8ed811e4374a08",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\build_pipeline.py": "e9f7aa4d628a04a50974b1318f5438822375a5805c426e0fe26e98281cf21f1e",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\collision_export.py": "7a360c964db0524b61892d200916344a0c2238cb31357b2dec1573c371038609",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\content.py": "1438f0a1056c7b26b5ac991a3f7c1199d72dc533ef65d31d69ef84b138c32baa",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\crossings.py": "330edbd6b57112e6c903963396c110e233393578da34dff33d4864ca237b50d2",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\crown_support.py": "b5b2ea4de9abb1bafca495bdf06f779b1ebb376b01ab9b4558e4a9e41945ae59",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\export_contracts.py": "42d05b60b618ab5eab22745e2399b5f1d24d5f3bc5d1e686dd71b726a02259d5",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\ferry_export.py": "b62c3920560a902fe1197c6e9b4a2fe8067948d4218a50db2f366e7ef7d38453",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\ferry_support.py": "ed9305d6a05f51a7b15529db6335d11e4fc70a3aaf14825135df19ac03c87828",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\four_gates_support.py": "1abbdc9354f7a7b3e88f80b7f9a593adbea71a474c5e9bb6706b9b5c6ab55c45",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\grey_crossings.py": "46bf2b3f8227af2e01ba88dc68d7d80fedfc4ef9410dad3cba1edc1663256d2f",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\landscape.py": "2ac3d2bad8f7810c9c56bb2f190698909b7ffb4664e9885a10b196a3b0212c05",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\manymouth_access.py": "384d8da2abfc40895fe4dc64cbe8ffd7a2d1cbad98e573a2fa254895b3d65eb7",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\manymouth_boats.py": "f484f0804942fd52004e0991510978b3dafe93245e532a9d9552ff09a162c2bd",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\manymouth_support.py": "eae7acdb0aa0aeb0a714114ad769f807cb336118b1f6506ce02a59223d081380",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\manymouth_village_streets.py": "da0b44781e8a6202c7031ed36e34047e2c33abca5404c8500b7fbeac82f0e862",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\mirror_access_geometry.py": "c54bbde0f2b0861e4d232e961f2be84d5be59ec798c5a16306c03b8f42400e41",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\mirror_lake_support.py": "a473fc8ce7add5b39fcf2ad564216405f92353f8649072ed9df6478185150fc2",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\mirror_streets.py": "fd503b08be603a28d478896937af2d550a39bc09a1982d4601d6e5fc58a2ed0d",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\mirror_support.py": "c14e24c8e135ebe77a5a4f5aed6e1fb1b05c7884239fa8e49da39ff00c4162e7",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\scene_io.py": "9691cc8d611cf1fd6939c9de9ac20dd013c34f62c1cdc9833791d9416481f9dc",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\ssarathi_bank_support.py": "589ebd84cce3201908103c623b07fd0ae6b8c513a5d1c0acc070650e6ff81638",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\terrain_export.py": "8172b53f4fc2b65780120e68b945e86991aa8ea2f70e4bfa05a49af809cbccb6",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\westhaven_support.py": "9e69ff36cca87f91effdc72ee87ead30e23db76b93110323846580a26b15d19a",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\world_layout.py": "f9ec74a76d5cc89e4cddbd7763c62634963f0f3cf375dd6d8b74bd33dc17dd1b"
+  },
+  "objects": 5125,
+  "roads": 306,
+  "assemblies": {
+    "amberwood.great-arch": {
+      "id": "amberwood.great-arch",
+      "members": 9,
+      "nodes": [
+        "Landmark_GreatArch",
+        "Landmark_ArchColumn_0",
+        "Landmark_ArchColumn_1",
+        "Landmark_ArchColumn_2",
+        "Landmark_ArchColumn_3",
+        "Landmark_ArchColumn_4",
+        "Landmark_ArchColumn_5",
+        "Landmark_ArchColumn_6",
+        "Landmark_ArchColumn_7"
+      ],
+      "referenceXZ": [
+        132.9427,
+        -49.1381
+      ],
+      "referenceY": 39.70614766387038,
+      "datum": "terrain",
+      "sourceBounds": [
+        [
+          122.3459904356748,
+          36.47672986984253,
+          -58.661430688476564
+        ],
+        [
+          143.54566500085204,
+          54.69102478027344,
+          -33.901187272644044
+        ]
+      ],
+      "foundationFootprints": 9,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        465.75874400000004,
+        3.1530649502892345,
+        631.052492
+      ]
+    },
+    "amberwood.canopy-village": {
+      "id": "amberwood.canopy-village",
+      "members": 21,
+      "nodes": [
+        "Landmark_GreatTree_Wood",
+        "Landmark_Giant_1_Wood",
+        "Landmark_Giant_1_Canopy",
+        "Landmark_Giant_3_Wood",
+        "Landmark_Giant_3_Canopy",
+        "Landmark_Giant_5_Wood",
+        "Landmark_Giant_5_Canopy",
+        "Landmark_Giant_6_Wood",
+        "Landmark_Giant_6_Canopy",
+        "Landmark_CanopyPlatform_0",
+        "Landmark_CanopyDwelling",
+        "Landmark_CanopyPlatform_1",
+        "Landmark_CanopyPlatform_2",
+        "Landmark_CanopyPlatform_3",
+        "Landmark_CanopyPlatform_4",
+        "Landmark_CanopyPlatform_5",
+        "Landmark_CanopyWalkway_0",
+        "Landmark_CanopyWalkway_1",
+        "Landmark_CanopyWalkway_2",
+        "Landmark_CanopyWalkway_3",
+        "Landmark_CanopyWalkway_4"
+      ],
+      "referenceXZ": [
+        61.2229,
+        -141.8745
+      ],
+      "referenceY": 49.12456439643643,
+      "datum": "terrain",
+      "sourceBounds": [
+        [
+          -89.71455540552095,
+          3.5244213298424665,
+          -261.8091065917969
+        ],
+        [
+          109.54054406840577,
+          113.80490966614093,
+          -133.1087882884235
+        ]
+      ],
+      "foundationFootprints": 2,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        451.04986413862946,
+        -3.084825743915715,
+        679.7640761569869
+      ]
+    },
+    "amberwood.garden": {
+      "id": "amberwood.garden",
+      "members": 6,
+      "nodes": [
+        "Landmark_GardenFountain",
+        "Landmark_GardenStatue_0",
+        "Landmark_GardenStatue_1",
+        "Landmark_GardenStatue_2",
+        "Landmark_GardenStatue_3",
+        "Landmark_GardenRotunda"
+      ],
+      "referenceXZ": [
+        122.2803,
+        29.841
+      ],
+      "referenceY": 20.724573493760936,
+      "datum": "terrain",
+      "sourceBounds": [
+        [
+          116.0942226911081,
+          20.695490972519867,
+          16.410668530558226
+        ],
+        [
+          128.4662773088919,
+          28.844578403429143,
+          35.13588040512637
+        ]
+      ],
+      "foundationFootprints": 6,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        468.104472,
+        7.593516921832446,
+        613.67709
+      ]
+    },
+    "amberwood.ridge-camp": {
+      "id": "amberwood.ridge-camp",
+      "members": 9,
+      "nodes": [
+        "Landmark_Watchtower_1",
+        "Prop_Tent_ridge_camp_01",
+        "Prop_Tent_ridge_camp_02",
+        "Prop_Tent_ridge_camp_03",
+        "Prop_Tent_ridge_camp_04",
+        "Prop_Tent_ridge_camp_05",
+        "Brazier_ridge_camp_01",
+        "Brazier_ridge_camp_02",
+        "Brazier_ridge_camp_03"
+      ],
+      "referenceXZ": [
+        161.3758,
+        -224.9205
+      ],
+      "referenceY": 57.03870978660085,
+      "datum": "terrain",
+      "sourceBounds": [
+        [
+          151.0973529702997,
+          57.010655320402314,
+          -234.442071829109
+        ],
+        [
+          177.34429174257193,
+          75.62021223561172,
+          -217.04073503529068
+        ]
+      ],
+      "foundationFootprints": 9,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        416.6242,
+        65.69763795601048,
+        674.9205
+      ]
+    },
+    "mirrorhold.city": {
+      "id": "mirrorhold.city",
+      "members": 164,
+      "nodes": [
+        "Landmark_Orrery",
+        "Landmark_OrreryDrum",
+        "Landmark_CitadelHigh",
+        "Landmark_CitadelCourt",
+        "Landmark_Basin_0",
+        "Landmark_Basin_1",
+        "Landmark_Basin_2",
+        "Landmark_GateWall",
+        "Landmark_GateWing_-1",
+        "Landmark_GateWing_1",
+        "Landmark_Gallery",
+        "Landmark_RoseWindow",
+        "Landmark_lens_tower_west",
+        "Landmark_lens_tower_east",
+        "Landmark_Fountain",
+        "Prop_PlazaLamp_0",
+        "Prop_PlazaLamp_1",
+        "Prop_PlazaLamp_2",
+        "Prop_PlazaLamp_3",
+        "Prop_PlazaLamp_4",
+        "Prop_PlazaLamp_5",
+        "Prop_PlazaLamp_6",
+        "Prop_PlazaLamp_7",
+        "Landmark_PlazaStatue_0",
+        "Landmark_PlazaStatue_1",
+        "Landmark_PlazaStatue_2",
+        "Landmark_PlazaStatue_3",
+        "Landmark_Channel_0",
+        "Landmark_Channel_1",
+        "Landmark_Channel_2",
+        "Landmark_Channel_3",
+        "Landmark_Channel_4",
+        "Landmark_Fall_0",
+        "Landmark_Fall_1",
+        "Landmark_Fall_2",
+        "Landmark_Retaining_0",
+        "Landmark_Retaining_1",
+        "Landmark_Retaining_3",
+        "Landmark_Aqueduct",
+        "Landmark_Overlook",
+        "Prop_OverlookRail_0",
+        "Prop_OverlookRail_1",
+        "Building_CliffHouse_0",
+        "Building_CliffHouse_1",
+        "Building_CliffHouse_2",
+        "Building_CliffHouse_3",
+        "Building_CliffHouse_4",
+        "Building_CliffHouse_5",
+        "Building_CliffHouse_6",
+        "Building_CliffHouse_7",
+        "Building_CliffHouse_8",
+        "Building_CliffHouse_9",
+        "Building_CliffHouse_10",
+        "Building_CliffHouse_11",
+        "Building_CliffHouse_12",
+        "Building_CliffHouse_13",
+        "Building_CliffHouse_14",
+        "Building_VaultEntry_lens-vault-stair",
+        "Building_VaultEntry_cistern-door",
+        "Building_VaultEntry_stair-cellars-door",
+        "Walk_Landmark_EastStair",
+        "Landmark_Ring",
+        "Landmark_LakeLink_Sanctuary",
+        "Landmark_LakeLink_City",
+        "Landmark_LakeLink_WestPier",
+        "Landmark_LakeLink_EastPier",
+        "Landmark_Quay",
+        "Landmark_Dock_0",
+        "Prop_Boat_0",
+        "Landmark_Dock_1",
+        "Prop_Boat_1",
+        "Prop_Boat_2",
+        "Prop_PierCrate_0",
+        "Prop_PierSkiff_0",
+        "Prop_PierCrate_1",
+        "Prop_PierSkiff_1",
+        "Landmark_SouthWatch",
+        "Landmark_east_islet",
+        "Landmark_west_islet",
+        "Building_west-bench_0",
+        "Building_west-bench_1",
+        "Landmark_west-shrine",
+        "Landmark_gorge-head",
+        "Building_lower-terrace_0",
+        "Building_lower-terrace_1",
+        "Building_mid-bench_0",
+        "Building_mid-bench_1",
+        "Landmark_cistern-yard",
+        "Prop_cistern-yard_bollard_0",
+        "Prop_cistern-yard_bollard_1",
+        "Prop_cistern-yard_bollard_2",
+        "Landmark_lens-works",
+        "Prop_lens-works_bollard_0",
+        "Prop_lens-works_bollard_1",
+        "Prop_lens-works_bollard_2",
+        "Building_east-bench_0",
+        "Building_east-bench_1",
+        "Landmark_east-post",
+        "Landmark_north-post",
+        "Landmark_upper-shrine",
+        "Landmark_quarry-shelf",
+        "Prop_quarry-shelf_bollard_0",
+        "Prop_quarry-shelf_bollard_1",
+        "Prop_quarry-shelf_bollard_2",
+        "Building_lake-north_0",
+        "Building_lake-north_1",
+        "Building_west-shore_0",
+        "Building_west-shore_1",
+        "Landmark_far-west",
+        "Landmark_RoadWall_0",
+        "Landmark_RoadWall_1",
+        "Prop_RoadLamp_0",
+        "Prop_HarbourGoods_0",
+        "Prop_HarbourGoods_1",
+        "Prop_HarbourGoods_2",
+        "Prop_HarbourGoods_3",
+        "Prop_HarbourGoods_4",
+        "Prop_HarbourGoods_5",
+        "Prop_HarbourGoods_6",
+        "Prop_HarbourGoods_7",
+        "Prop_HarbourGoods_8",
+        "Prop_HarbourGoods_9",
+        "Prop_HarbourGoods_10",
+        "Prop_HarbourGoods_11",
+        "Prop_HarbourGoods_12",
+        "Prop_HarbourGoods_13",
+        "Prop_Brazier_0_-1",
+        "Prop_Brazier_0_1",
+        "Prop_Brazier_1_-1",
+        "Prop_Brazier_1_1",
+        "Prop_Brazier_2_-1",
+        "Prop_Brazier_2_1",
+        "Prop_Brazier_3_-1",
+        "Prop_Brazier_3_1",
+        "Prop_Brazier_4_-1",
+        "Prop_Brazier_4_1",
+        "Prop_Signpost_0",
+        "Prop_Signpost_1",
+        "Prop_Signpost_2",
+        "Lore_ringing_quarry",
+        "Secret_mirror_reed_cut",
+        "Secret_mirror_lens_garden",
+        "Secret_mirror_orrery_vault",
+        "Secret_mirror_stair_pit",
+        "Secret_mirror_rose_school",
+        "Secret_mirror_basin_spring",
+        "Secret_mirror_watch_butts",
+        "Secret_mirror_citadel_reliquary",
+        "Secret_mirror_cistern_well",
+        "Secret_mirror_lens_focus",
+        "Secret_mirror_adit",
+        "Secret_mirror_waystone",
+        "Secret_mirror_overlook_eyrie",
+        "Secret_mirror_icebore_mouth",
+        "Prop_WorkingStores_0",
+        "Prop_WorkingStores_1",
+        "Prop_WorkingStores_2",
+        "Prop_WorkingStores_3",
+        "Prop_WorkingStores_4",
+        "Prop_WorkingStores_5",
+        "Prop_WorkingStores_6",
+        "Prop_WorkingStores_7",
+        "Prop_WorkingStores_8",
+        "Prop_WorkingStores_9"
+      ],
+      "referenceXZ": [
+        68.56170930290222,
+        -66.25615427703858
+      ],
+      "referenceY": 59.454285640544896,
+      "datum": "terrain",
+      "sourceBounds": [
+        [
+          -90.68746519088745,
+          -12.0,
+          -226.69640019073486
+        ],
+        [
+          227.81088379669188,
+          141.44999990463256,
+          94.18409163665771
+        ]
+      ],
+      "foundationFootprints": 83,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        800.0,
+        80.0,
+        789.0
+      ]
+    },
+    "sunmane_steppe.encampment": {
+      "id": "sunmane_steppe.encampment",
+      "members": 30,
+      "nodes": [
+        "Landmark_sunmane_great_hall",
+        "Encampment_Pavilion_00",
+        "Encampment_Pavilion_01",
+        "Encampment_Pavilion_02",
+        "Encampment_Pavilion_03",
+        "Encampment_Pavilion_04",
+        "Encampment_Pavilion_05",
+        "Landmark_sunmane_well_00",
+        "Encampment_ToolRack_00",
+        "Encampment_ToolRack_01",
+        "Encampment_FirePit_00",
+        "Encampment_FirePit_01",
+        "Encampment_FirePit_02",
+        "Encampment_FirePit_03",
+        "Encampment_Cart_00",
+        "Encampment_Cart_01",
+        "Encampment_Cart_02",
+        "Encampment_Hitching_00",
+        "Encampment_Hitching_01",
+        "Encampment_DryingRack_00",
+        "Encampment_WallTower_00",
+        "Encampment_WallTower_01",
+        "Encampment_WallTower_02",
+        "Encampment_WallTower_03",
+        "Landmark_orun_banner_shrine_04",
+        "Landmark_orun_banner_shrine_05",
+        "Landmark_orun_banner_shrine_06",
+        "Landmark_orun_banner_shrine_07",
+        "Landmark_sunmane_secret_steppe-hall-vault",
+        "Structure_Palisade"
+      ],
+      "referenceXZ": [
+        0.0,
+        0.0
+      ],
+      "referenceY": 9.6,
+      "datum": "terrain",
+      "sourceBounds": [
+        [
+          -27.97926113444909,
+          7.929749755436331,
+          -24.694061279296875
+        ],
+        [
+          28.900776786273216,
+          24.619999885559082,
+          26.902610529011277
+        ]
+      ],
+      "foundationFootprints": 26,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        1183.62,
+        17.055473971827716,
+        703.62
+      ]
+    },
+    "four_gates.civic": {
+      "id": "four_gates.civic",
+      "members": 146,
+      "nodes": [
+        "Plaza_Monument",
+        "Plaza_Monument_Crystal",
+        "Plaza_Fountain_0",
+        "Plaza_Fountain_1",
+        "Plaza_Fountain_2",
+        "Plaza_Fountain_3",
+        "Plaza_Bench_0",
+        "Plaza_Lamp_0",
+        "Plaza_Bench_1",
+        "Plaza_Lamp_1",
+        "Plaza_Bench_2",
+        "Plaza_Lamp_2",
+        "Plaza_Bench_3",
+        "Plaza_Lamp_3",
+        "Plaza_Bench_4",
+        "Plaza_Lamp_4",
+        "Plaza_Bench_5",
+        "Plaza_Lamp_5",
+        "Plaza_Bench_6",
+        "Plaza_Lamp_6",
+        "Plaza_Bench_7",
+        "Plaza_Lamp_7",
+        "Plaza_Bench_8",
+        "Plaza_Lamp_8",
+        "Plaza_Bench_9",
+        "Plaza_Lamp_9",
+        "Plaza_Bench_10",
+        "Plaza_Lamp_10",
+        "Plaza_Bench_11",
+        "Plaza_Lamp_11",
+        "Plaza_Arcade_0",
+        "Plaza_Arcade_1",
+        "Plaza_Arcade_2",
+        "Plaza_Arcade_3",
+        "Shopfront_four-gates-lantern-row",
+        "Sign_four-gates-lantern-row",
+        "Goods_four-gates-lantern-row",
+        "Shopfront_four-gates-reedworks",
+        "Sign_four-gates-reedworks",
+        "Goods_four-gates-reedworks",
+        "Shopfront_four-gates-stormglass-house",
+        "Sign_four-gates-stormglass-house",
+        "Goods_four-gates-stormglass-house",
+        "Shopfront_four-gates-mirrorsmith-forge",
+        "Sign_four-gates-mirrorsmith-forge",
+        "Goods_four-gates-mirrorsmith-forge",
+        "Shopfront_four-gates-ferrymans-rest",
+        "Sign_four-gates-ferrymans-rest",
+        "Goods_four-gates-ferrymans-rest",
+        "Shopfront_four-gates-deposit-four-keys",
+        "Sign_four-gates-deposit-four-keys",
+        "Goods_four-gates-deposit-four-keys",
+        "District_House_02",
+        "District_House_09",
+        "District_House_22",
+        "Gate_North",
+        "Gate_North_Portcullis",
+        "Gate_South_Inner",
+        "Gate_South_Inner_Portcullis",
+        "Gate_East",
+        "Gate_East_Portcullis",
+        "Gate_West",
+        "Gate_West_Portcullis",
+        "City_Wall_02",
+        "City_Wall_03",
+        "City_Wall_04",
+        "City_Wall_05",
+        "City_Wall_06",
+        "City_Wall_07",
+        "City_Wall_08",
+        "City_Wall_09",
+        "City_Wall_10",
+        "City_Wall_11",
+        "City_Wall_12",
+        "City_Wall_13",
+        "City_Wall_18",
+        "City_Wall_19",
+        "City_Wall_20",
+        "City_Wall_21",
+        "City_Wall_22",
+        "City_Wall_23",
+        "City_Wall_24",
+        "City_Wall_25",
+        "City_Wall_26",
+        "City_Wall_27",
+        "City_Wall_28",
+        "City_Wall_29",
+        "City_Wall_34",
+        "City_Wall_35",
+        "City_Wall_36",
+        "City_Wall_37",
+        "City_Wall_38",
+        "City_Wall_39",
+        "City_Wall_40",
+        "City_Wall_41",
+        "City_Wall_42",
+        "City_Wall_43",
+        "City_Wall_44",
+        "City_Wall_45",
+        "City_Wall_50",
+        "City_Wall_51",
+        "City_Wall_52",
+        "City_Wall_53",
+        "City_Wall_54",
+        "City_Wall_55",
+        "City_Wall_56",
+        "City_Wall_57",
+        "City_Wall_58",
+        "City_Wall_59",
+        "City_Wall_60",
+        "City_Wall_61",
+        "Market_Stall_0",
+        "Market_Cart_0",
+        "Market_Stall_1",
+        "Market_Cart_1",
+        "Market_Stall_2",
+        "Market_Cart_2",
+        "Market_Stall_3",
+        "Market_Cart_3",
+        "Market_Stall_4",
+        "Market_Cart_4",
+        "Market_Stall_5",
+        "Market_Cart_5",
+        "Avenue_Standard_0",
+        "Avenue_Standard_1",
+        "Avenue_Standard_2",
+        "Avenue_Standard_3",
+        "Avenue_Standard_4",
+        "Avenue_Standard_5",
+        "Avenue_Standard_6",
+        "Avenue_Standard_7",
+        "Garden_Rail_0",
+        "Garden_Rail_1",
+        "Garden_Rail_2",
+        "Secret_gates_sunleaf_hollow",
+        "Secret_gates_reedworks_garden",
+        "Secret_gates_lantern_cache",
+        "Secret_gates_deposit_vault",
+        "Secret_gates_stormglass_school",
+        "Secret_gates_plaza_spring",
+        "Secret_gates_ferry_butts",
+        "Secret_gates_mirrorsmith_well",
+        "Secret_gates_civic_focus",
+        "Secret_gates_waystone",
+        "Secret_gates_wall_eyrie",
+        "Secret_gates_drain_mouth"
+      ],
+      "referenceXZ": [
+        0.0,
+        0.0
+      ],
+      "referenceY": 31.0,
+      "datum": "terrain",
+      "sourceBounds": [
+        [
+          -131.39500045776367,
+          23.018109622434224,
+          -131.39500045776367
+        ],
+        [
+          131.39500045776367,
+          99.10000038146973,
+          131.39500045776367
+        ]
+      ],
+      "foundationFootprints": 113,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        530.0,
+        -8.656023850005134,
+        824.595954889701
+      ]
+    },
+    "four_gates.south-gate": {
+      "id": "four_gates.south-gate",
+      "members": 3,
+      "nodes": [
+        "Gate_South_Outer",
+        "SouthOuter_Foundation_-1",
+        "SouthOuter_Foundation_1"
+      ],
+      "referenceXZ": [
+        0.5,
+        172.0
+      ],
+      "referenceY": 23.0,
+      "datum": "terrain",
+      "sourceBounds": [
+        [
+          -23.17799949645996,
+          17.01000009536743,
+          164.02349996566772
+        ],
+        [
+          24.17799949645996,
+          63.959999084472656,
+          179.97650003433228
+        ]
+      ],
+      "foundationFootprints": 3,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        529.95,
+        -11.617830408052145,
+        773.3
+      ]
+    },
+    "four_gates.sanctuary": {
+      "id": "four_gates.sanctuary",
+      "members": 7,
+      "nodes": [
+        "Northern_Sanctuary",
+        "Walk_Sanctuary_Stairs",
+        "Walk_Sanctuary_Porch",
+        "Sanctuary_Beacon",
+        "Sanctuary_Beacon_Flame",
+        "Sanctuary_Portal",
+        "Secret_gates_sanctuary_reliquary"
+      ],
+      "referenceXZ": [
+        -115.0,
+        -162.0
+      ],
+      "referenceY": 37.0,
+      "datum": "terrain",
+      "sourceBounds": [
+        [
+          -155.0,
+          35.08111111111111,
+          -193.20000076293945
+        ],
+        [
+          -75.0,
+          105.40000009536743,
+          -142.39999997615814
+        ]
+      ],
+      "foundationFootprints": 5,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        587.2628767720244,
+        -23.504020217320104,
+        893.0525587785155
+      ]
+    },
+    "westhaven.harbour": {
+      "id": "westhaven.harbour",
+      "members": 242,
+      "nodes": [
+        "Mole_Run_00",
+        "Mole_Run_01",
+        "Mole_Run_02",
+        "Mole_Run_03",
+        "Mole_Run_04",
+        "Mole_Run_05",
+        "Mole_Run_06",
+        "Mole_Run_07",
+        "Landmark_Mole_Bastion",
+        "Landmark_Mole_Light",
+        "Prop_Mole_Bollard_00",
+        "Prop_Mole_Bollard_01",
+        "Prop_Mole_Bollard_02",
+        "Prop_Mole_Bollard_03",
+        "Prop_Mole_Bollard_04",
+        "Prop_Mole_Bollard_05",
+        "Prop_Mole_Bollard_06",
+        "Prop_Mole_Bollard_07",
+        "Prop_Mole_Bollard_08",
+        "Prop_Mole_Bollard_09",
+        "Prop_Mole_Bollard_10",
+        "Prop_Mole_Bollard_11",
+        "Prop_Mole_Bollard_12",
+        "Prop_Mole_Bollard_13",
+        "Quay_Wall_00",
+        "Quay_Wall_01",
+        "Quay_Wall_02",
+        "Quay_Wall_03",
+        "Quay_Wall_04",
+        "Quay_Wall_05",
+        "Quay_Wall_06",
+        "Quay_Wall_07",
+        "Quay_Wall_08",
+        "Prop_Quay_Bollard_00",
+        "Prop_Quay_Bollard_01",
+        "Prop_Quay_Bollard_02",
+        "Prop_Quay_Bollard_03",
+        "Prop_Quay_Bollard_04",
+        "Prop_Quay_Bollard_05",
+        "Prop_Quay_Bollard_06",
+        "Prop_Quay_Bollard_07",
+        "Prop_Quay_Bollard_08",
+        "Prop_Quay_Bollard_09",
+        "Prop_Quay_Bollard_10",
+        "Prop_Quay_Bollard_11",
+        "Prop_Quay_Bollard_12",
+        "Prop_Quay_Bollard_13",
+        "Prop_Quay_Bollard_14",
+        "Prop_Quay_Bollard_15",
+        "Prop_Quay_Bollard_16",
+        "Prop_Quay_Bollard_17",
+        "Prop_Quay_Bollard_18",
+        "Prop_Quay_Bollard_19",
+        "Prop_Quay_Bollard_20",
+        "Prop_Quay_Bollard_21",
+        "Prop_Quay_Bollard_22",
+        "Prop_Quay_Bollard_23",
+        "Prop_Quay_Bollard_24",
+        "Prop_Quay_Bollard_25",
+        "Landmark_Warehouse_00",
+        "Landmark_Warehouse_04",
+        "Landmark_Warehouse_08",
+        "Landmark_Warehouse_12",
+        "Landmark_Warehouse_16",
+        "Landmark_Quay_Arch",
+        "Landmark_Fish_Market",
+        "Prop_Fish_Stall_00",
+        "Prop_Fish_Stall_01",
+        "Prop_Fish_Stall_02",
+        "Prop_Fish_Stall_03",
+        "Prop_Fish_Stall_04",
+        "Prop_Fish_Stall_05",
+        "Prop_Fish_Stall_06",
+        "Prop_Fish_Stall_07",
+        "Prop_Fish_Stall_08",
+        "Landmark_Pier_A",
+        "Landmark_Pier_B",
+        "Landmark_Gantry",
+        "Ship_At_Cargo_Pier",
+        "Landmark_Harbour_Crane",
+        "Ship_At_Crane_Pier",
+        "Ship_Anchored_00",
+        "Ship_Anchored_02",
+        "Ship_Anchored_04",
+        "Jetty_00",
+        "Jetty_01",
+        "Jetty_02",
+        "Jetty_03",
+        "Jetty_04",
+        "Jetty_05",
+        "Jetty_10",
+        "Jetty_11",
+        "Landmark_Harbour_Gate",
+        "Landmark_Custom_House",
+        "Landmark_Shipyard_Hull",
+        "Landmark_Yard_Shed_0",
+        "Landmark_Yard_Shed_1",
+        "Prop_Timber_Stack_00",
+        "Prop_Timber_Stack_01",
+        "Prop_Timber_Stack_02",
+        "Prop_Timber_Stack_03",
+        "Prop_Timber_Stack_04",
+        "Prop_Timber_Stack_05",
+        "Prop_Timber_Stack_06",
+        "Prop_Timber_Stack_07",
+        "Prop_Timber_Stack_08",
+        "Landmark_Ropewalk",
+        "House_lower_0",
+        "Yard_lower_0_bench",
+        "Yard_lower_0_sacks",
+        "Yard_lower_0_fence",
+        "House_lower_1",
+        "Yard_lower_1_bench",
+        "Yard_lower_1_sacks",
+        "Yard_lower_1_fence",
+        "House_lower_2",
+        "Yard_lower_2_bench",
+        "Yard_lower_2_sacks",
+        "Yard_lower_2_fence",
+        "House_lower_3",
+        "Yard_lower_3_bench",
+        "Yard_lower_3_sacks",
+        "Yard_lower_3_fence",
+        "House_lower_4",
+        "Yard_lower_4_bench",
+        "Yard_lower_4_sacks",
+        "Yard_lower_4_fence",
+        "Landmark_Guild_Hall",
+        "Prop_Lamp_market_climb_00",
+        "Prop_Lamp_market_climb_01",
+        "Prop_Lamp_market_climb_02",
+        "Prop_Lamp_market_climb_03",
+        "Prop_Lamp_market_climb_04",
+        "Prop_Lamp_market_climb_05",
+        "Prop_Lamp_quayside_00",
+        "Prop_Lamp_quayside_01",
+        "Prop_Lamp_quayside_02",
+        "Prop_Lamp_quayside_03",
+        "Prop_Lamp_quayside_04",
+        "Prop_Lamp_quayside_05",
+        "Prop_Lamp_quayside_06",
+        "Prop_Lamp_quayside_07",
+        "Prop_Lamp_quayside_08",
+        "Prop_Lamp_quayside_09",
+        "Prop_Lamp_quayside_10",
+        "Prop_Lamp_quayside_11",
+        "Prop_Lamp_quayside_12",
+        "Landmark_Gullstone_Watch",
+        "Landmark_Sea_Arch",
+        "Landmark_Route_quay_mole_ramp",
+        "Landmark_Route_yard_bridge",
+        "Landmark_Route_gullstone_bridge",
+        "Prop_Quay_000",
+        "Prop_Quay_001",
+        "Prop_Quay_002",
+        "Prop_Quay_003",
+        "Prop_Quay_004",
+        "Prop_Quay_005",
+        "Prop_Quay_006",
+        "Prop_Quay_007",
+        "Prop_Quay_008",
+        "Prop_Quay_010",
+        "Prop_Quay_011",
+        "Prop_Quay_012",
+        "Prop_Quay_013",
+        "Prop_Quay_014",
+        "Prop_Quay_015",
+        "Prop_Quay_016",
+        "Prop_Quay_017",
+        "Prop_Quay_018",
+        "Prop_Quay_019",
+        "Prop_Quay_020",
+        "Prop_Quay_021",
+        "Prop_Quay_022",
+        "Prop_Quay_023",
+        "Prop_Quay_024",
+        "Prop_Quay_025",
+        "Prop_Quay_026",
+        "Prop_Quay_027",
+        "Prop_Quay_028",
+        "Prop_Quay_029",
+        "Prop_Quay_030",
+        "Prop_Quay_031",
+        "Prop_Quay_032",
+        "Prop_Quay_033",
+        "Prop_Quay_034",
+        "Prop_Quay_053",
+        "Prop_Quay_054",
+        "Prop_Quay_057",
+        "Prop_Quay_058",
+        "Prop_Quay_059",
+        "Prop_Quay_060",
+        "Prop_Quay_061",
+        "Prop_Quay_062",
+        "Prop_Quay_063",
+        "Prop_Quay_064",
+        "Prop_Quay_065",
+        "Prop_Quay_066",
+        "Prop_Quay_067",
+        "Prop_Quay_068",
+        "Prop_Quay_069",
+        "Prop_Quay_070",
+        "Prop_Quay_071",
+        "Prop_Quay_072",
+        "Prop_Quay_073",
+        "Prop_Quay_074",
+        "Prop_Quay_075",
+        "Prop_Quay_076",
+        "Prop_Quay_077",
+        "Prop_Quay_078",
+        "Prop_Quay_079",
+        "Prop_Quay_080",
+        "Prop_Quay_081",
+        "Prop_Quay_082",
+        "Prop_Quay_083",
+        "Prop_Quay_084",
+        "Prop_Quay_085",
+        "Prop_Quay_086",
+        "Prop_Quay_087",
+        "Prop_Quay_088",
+        "Prop_Quay_089",
+        "Prop_Quay_090",
+        "Prop_Quay_091",
+        "Prop_Quay_092",
+        "Prop_Quay_093",
+        "Prop_Quay_094",
+        "Prop_Quay_095",
+        "Prop_Boat_02",
+        "Prop_Boat_03",
+        "Prop_Boat_04",
+        "Prop_Boat_05",
+        "Lore_league_post_house",
+        "Secret_haven_wrack_hollow",
+        "Secret_haven_ropewalk_garden",
+        "Secret_haven_guild_vault",
+        "Secret_haven_mole_pit",
+        "Secret_haven_lamp_spring",
+        "Secret_haven_shipyard_butts",
+        "Secret_haven_smuggle",
+        "Secret_haven_waystone",
+        "Entry_bonded_vaults_door",
+        "Entry_gullstone_door"
+      ],
+      "referenceXZ": [
+        34.0,
+        6.0
+      ],
+      "referenceY": 0.0,
+      "datum": "water",
+      "sourceBounds": [
+        [
+          -83.17180347442627,
+          -10.000000190734863,
+          -55.670000076293945
+        ],
+        [
+          211.19025802612305,
+          44.145181179158214,
+          106.35764546394348
+        ]
+      ],
+      "foundationFootprints": 63,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        120.0,
+        0.0,
+        1120.0
+      ]
+    },
+    "westhaven.lamp-island": {
+      "id": "westhaven.lamp-island",
+      "members": 6,
+      "nodes": [
+        "Landmark_Great_Lighthouse",
+        "Landmark_Route_lamp_causeway",
+        "Prop_Boat_00",
+        "Prop_Boat_01",
+        "Secret_haven_lighthouse_eyrie",
+        "Entry_lamp_rock_door"
+      ],
+      "referenceXZ": [
+        260.0,
+        23.0
+      ],
+      "referenceY": 0.0,
+      "datum": "water",
+      "sourceBounds": [
+        [
+          202.1769999885559,
+          -10.000000381469727,
+          20.10852865081357
+        ],
+        [
+          270.2407693862915,
+          52.45000076293945,
+          92.43500045776366
+        ]
+      ],
+      "foundationFootprints": 1,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        45.0,
+        0.0,
+        1130.0
+      ]
+    },
+    "manymouth_delta.great-arch": {
+      "id": "manymouth_delta.great-arch",
+      "members": 7,
+      "nodes": [
+        "Landmark_GreatArch",
+        "arch_platform",
+        "Landmark_DeckStudy",
+        "Secret_delta_study_school",
+        "Secret_delta_arch_focus",
+        "Landing_arch_stair",
+        "SecretAccess_delta_study_school"
+      ],
+      "referenceXZ": [
+        108.96047980956422,
+        -97.68252372878746
+      ],
+      "referenceY": -0.55,
+      "datum": "terrain",
+      "sourceBounds": [
+        [
+          85.37590026855469,
+          -7.159961128234864,
+          -120.25568103636613
+        ],
+        [
+          169.38409423828125,
+          12.865934944152832,
+          -81.24398803710938
+        ]
+      ],
+      "foundationFootprints": 0,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        478.0395201904358,
+        4.937934519509797,
+        1221.6825237287874
+      ]
+    },
+    "manymouth_delta.stelae-court": {
+      "id": "manymouth_delta.stelae-court",
+      "members": 4,
+      "nodes": [
+        "Landmark_StelaeCourt",
+        "Secret_delta_stelae_reliquary",
+        "Landing_ruin_stelae",
+        "SecretAccess_delta_stelae_reliquary"
+      ],
+      "referenceXZ": [
+        207.3035,
+        -169.0664
+      ],
+      "referenceY": 1.4320780004828362,
+      "datum": "terrain",
+      "sourceBounds": [
+        [
+          202.33349609375,
+          -2.1553897857666016,
+          -193.1946563720703
+        ],
+        [
+          254.02610778808594,
+          4.326084377817441,
+          -163.19261358631167
+        ]
+      ],
+      "foundationFootprints": 0,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        482.6965,
+        6.928017812024519,
+        1309.0664
+      ]
+    },
+    "manymouth_delta.green-temple": {
+      "id": "manymouth_delta.green-temple",
+      "members": 2,
+      "nodes": [
+        "Landmark_GreenTemple",
+        "Landing_green_temple"
+      ],
+      "referenceXZ": [
+        260.08404918038485,
+        -218.86008126097346
+      ],
+      "referenceY": 14.80994523033288,
+      "datum": "terrain",
+      "sourceBounds": [
+        [
+          239.7476043701172,
+          -1.0,
+          -237.23057631085024
+        ],
+        [
+          279.1023763108502,
+          34.63557327516747,
+          -198.04580688476562
+        ]
+      ],
+      "foundationFootprints": 0,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        401.6843590033118,
+        -2.754267202830089,
+        1242.013635821129
+      ]
+    },
+    "manymouth_delta.boardwalk-town": {
+      "id": "manymouth_delta.boardwalk-town",
+      "members": 38,
+      "nodes": [
+        "town_house_00",
+        "town_house_01",
+        "town_house_02",
+        "town_house_03",
+        "town_house_04",
+        "town_house_05",
+        "town_house_06",
+        "town_house_07",
+        "town_house_08",
+        "Landmark_MootHall",
+        "Landmark_MarketHall",
+        "town_quay_deck",
+        "market_stall_00",
+        "market_stall_01",
+        "market_stall_02",
+        "market_stall_03",
+        "market_stall_04",
+        "market_stall_05",
+        "MooredMarketBoat_0",
+        "MooredMarketBoat_2",
+        "MooredMarketBoat_3",
+        "MooredMarketBoat_4",
+        "MooredMarketBoat_5",
+        "MooredMarketBoat_6",
+        "MooredMarketBoat_7",
+        "PacketLateen",
+        "Secret_delta_moot_vault",
+        "Landing_stilt_town",
+        "Landing_floating_market",
+        "town_porch_00",
+        "town_porch_01",
+        "town_porch_02",
+        "town_porch_03",
+        "town_porch_04",
+        "town_porch_05",
+        "town_porch_06",
+        "town_porch_07",
+        "town_porch_08"
+      ],
+      "referenceXZ": [
+        39.3459,
+        -55.3715
+      ],
+      "referenceY": 0.0,
+      "datum": "water",
+      "sourceBounds": [
+        [
+          -45.3829156747818,
+          -7.8111467361450195,
+          -99.49227958265102
+        ],
+        [
+          77.28324316809086,
+          13.451444816589355,
+          11.628500000000003
+        ]
+      ],
+      "foundationFootprints": 28,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        475.9741,
+        0.0,
+        1184.8415
+      ]
+    },
+    "manymouth_delta.paddy_hamlet": {
+      "id": "manymouth_delta.paddy_hamlet",
+      "members": 17,
+      "nodes": [
+        "paddy_hamlet_house_00",
+        "paddy_hamlet_house_01",
+        "paddy_hamlet_house_02",
+        "paddy_hamlet_house_03",
+        "paddy_hamlet_house_04",
+        "paddy_hamlet_house_05",
+        "paddy_hamlet_house_06",
+        "paddy_hamlet_house_07",
+        "Landing_paddy_hamlet",
+        "paddy_hamlet_porch_00",
+        "paddy_hamlet_porch_01",
+        "paddy_hamlet_porch_02",
+        "paddy_hamlet_porch_03",
+        "paddy_hamlet_porch_04",
+        "paddy_hamlet_porch_05",
+        "paddy_hamlet_porch_06",
+        "paddy_hamlet_porch_07"
+      ],
+      "referenceXZ": [
+        -78.01766873912936,
+        -151.93527661270136
+      ],
+      "referenceY": 0.0,
+      "datum": "water",
+      "sourceBounds": [
+        [
+          -95.9009582438457,
+          -10.643765449523926,
+          -177.55369567871094
+        ],
+        [
+          -60.134379234413025,
+          6.216000080108643,
+          -126.31685754669179
+        ]
+      ],
+      "foundationFootprints": 17,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        501.79408512260846,
+        2.4,
+        1206.0855308547941
+      ]
+    },
+    "manymouth_delta.east_hamlet": {
+      "id": "manymouth_delta.east_hamlet",
+      "members": 22,
+      "nodes": [
+        "east_hamlet_house_00",
+        "east_hamlet_house_01",
+        "east_hamlet_house_02",
+        "east_hamlet_house_03",
+        "east_hamlet_house_04",
+        "east_hamlet_house_05",
+        "east_hamlet_house_06",
+        "east_hamlet_house_07",
+        "east_hamlet_house_08",
+        "Lore_stelae_court",
+        "Landing_east_hamlet",
+        "Landing_lore_court",
+        "Landing_shore_lore_court",
+        "east_hamlet_porch_00",
+        "east_hamlet_porch_01",
+        "east_hamlet_porch_02",
+        "east_hamlet_porch_03",
+        "east_hamlet_porch_04",
+        "east_hamlet_porch_05",
+        "east_hamlet_porch_06",
+        "east_hamlet_porch_07",
+        "east_hamlet_porch_08"
+      ],
+      "referenceXZ": [
+        292.06279895504485,
+        -120.97237631493502
+      ],
+      "referenceY": 0.0,
+      "datum": "terrain",
+      "sourceBounds": [
+        [
+          261.7411,
+          -7.881580352783203,
+          -147.3103485107422
+        ],
+        [
+          320.60374334687947,
+          7.988882657175255,
+          -83.5352000858307
+        ]
+      ],
+      "foundationFootprints": 22,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        420.37638222989017,
+        12.614215231901184,
+        1199.2736927892856
+      ]
+    },
+    "manymouth_delta.south_hamlet": {
+      "id": "manymouth_delta.south_hamlet",
+      "members": 20,
+      "nodes": [
+        "south_hamlet_house_00",
+        "south_hamlet_house_01",
+        "south_hamlet_house_02",
+        "south_hamlet_house_03",
+        "south_hamlet_house_04",
+        "south_hamlet_house_05",
+        "south_hamlet_house_06",
+        "south_hamlet_house_07",
+        "south_hamlet_house_08",
+        "Landing_south_hamlet",
+        "Landing_shore_south_hamlet",
+        "south_hamlet_porch_00",
+        "south_hamlet_porch_01",
+        "south_hamlet_porch_02",
+        "south_hamlet_porch_03",
+        "south_hamlet_porch_04",
+        "south_hamlet_porch_05",
+        "south_hamlet_porch_06",
+        "south_hamlet_porch_07",
+        "south_hamlet_porch_08"
+      ],
+      "referenceXZ": [
+        161.1570311411129,
+        51.07085055240857
+      ],
+      "referenceY": 0.0,
+      "datum": "water",
+      "sourceBounds": [
+        [
+          145.17383183360067,
+          -6.971288681030273,
+          16.230131149291992
+        ],
+        [
+          177.14023044862512,
+          9.434723662727496,
+          85.91156995552515
+        ]
+      ],
+      "foundationFootprints": 20,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        449.1756511489552,
+        0.0,
+        1161.4241828784702
+      ]
+    },
+    "manymouth_delta.west_hamlet": {
+      "id": "manymouth_delta.west_hamlet",
+      "members": 15,
+      "nodes": [
+        "west_hamlet_house_00",
+        "west_hamlet_house_01",
+        "west_hamlet_house_02",
+        "west_hamlet_house_03",
+        "west_hamlet_house_04",
+        "west_hamlet_house_05",
+        "west_hamlet_house_06",
+        "Landing_west_hamlet",
+        "west_hamlet_porch_00",
+        "west_hamlet_porch_01",
+        "west_hamlet_porch_02",
+        "west_hamlet_porch_03",
+        "west_hamlet_porch_04",
+        "west_hamlet_porch_05",
+        "west_hamlet_porch_06"
+      ],
+      "referenceXZ": [
+        -81.55732512880314,
+        22.951789813411622
+      ],
+      "referenceY": 0.0,
+      "datum": "water",
+      "sourceBounds": [
+        [
+          -108.13469696044922,
+          -10.079946517944336,
+          3.9220542056806655
+        ],
+        [
+          -54.97995329715706,
+          6.488480530461535,
+          41.98152542114258
+        ]
+      ],
+      "foundationFootprints": 15,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        499.55732512880314,
+        0.0,
+        1195.0482101865884
+      ]
+    },
+    "manymouth_delta.north_fishing": {
+      "id": "manymouth_delta.north_fishing",
+      "members": 9,
+      "nodes": [
+        "north_fishing_house_00",
+        "north_fishing_house_01",
+        "north_fishing_house_02",
+        "north_fishing_house_03",
+        "Landing_north_fishing",
+        "north_fishing_porch_00",
+        "north_fishing_porch_01",
+        "north_fishing_porch_02",
+        "north_fishing_porch_03"
+      ],
+      "referenceXZ": [
+        92.0790836406851,
+        -238.45599668954367
+      ],
+      "referenceY": 0.0,
+      "datum": "water",
+      "sourceBounds": [
+        [
+          69.42346421740537,
+          -6.971288681030273,
+          -251.92388587908144
+        ],
+        [
+          114.73470306396484,
+          6.216000080108643,
+          -224.98810750000587
+        ]
+      ],
+      "foundationFootprints": 9,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        482.9209163593149,
+        0.0,
+        1538.4559966895436
+      ]
+    },
+    "manymouth_delta.boat_yard": {
+      "id": "manymouth_delta.boat_yard",
+      "members": 13,
+      "nodes": [
+        "boat_yard_house_00",
+        "boat_yard_house_01",
+        "boat_yard_house_02",
+        "boat_yard_house_03",
+        "boat_yard_house_04",
+        "boat_yard_house_05",
+        "Landing_boat_yard",
+        "boat_yard_porch_00",
+        "boat_yard_porch_01",
+        "boat_yard_porch_02",
+        "boat_yard_porch_03",
+        "boat_yard_porch_04",
+        "boat_yard_porch_05"
+      ],
+      "referenceXZ": [
+        -27.618856568313262,
+        57.279608369485956
+      ],
+      "referenceY": 0.0,
+      "datum": "water",
+      "sourceBounds": [
+        [
+          -51.390057125045104,
+          -6.971288681030273,
+          43.29932224621593
+        ],
+        [
+          -3.847656011581421,
+          6.216000080108643,
+          71.25989449275599
+        ]
+      ],
+      "foundationFootprints": 0,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        500.6188565683133,
+        0.0,
+        1192.720391630514
+      ]
+    },
+    "manymouth_delta.far_bar": {
+      "id": "manymouth_delta.far_bar",
+      "members": 9,
+      "nodes": [
+        "far_bar_house_00",
+        "far_bar_house_01",
+        "far_bar_house_02",
+        "far_bar_house_03",
+        "Landing_far_bar",
+        "far_bar_porch_00",
+        "far_bar_porch_01",
+        "far_bar_porch_02",
+        "far_bar_porch_03"
+      ],
+      "referenceXZ": [
+        240.13286762659237,
+        53.59779931446457
+      ],
+      "referenceY": 0.0,
+      "datum": "water",
+      "sourceBounds": [
+        [
+          214.57814370045037,
+          -6.971288681030273,
+          39.29149606196477
+        ],
+        [
+          265.6875915527344,
+          6.216000080108643,
+          67.90410256696435
+        ]
+      ],
+      "foundationFootprints": 9,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        431.80096712214964,
+        0.0,
+        1160.8682541508178
+      ]
+    },
+    "manymouth_delta.sea_landing": {
+      "id": "manymouth_delta.sea_landing",
+      "members": 11,
+      "nodes": [
+        "sea_landing_house_00",
+        "sea_landing_house_01",
+        "sea_landing_house_02",
+        "sea_landing_house_03",
+        "sea_landing_house_04",
+        "Landing_sea_landing",
+        "sea_landing_porch_00",
+        "sea_landing_porch_01",
+        "sea_landing_porch_02",
+        "sea_landing_porch_03",
+        "sea_landing_porch_04"
+      ],
+      "referenceXZ": [
+        -94.15317391011206,
+        -221.45794233542804
+      ],
+      "referenceY": 0.0,
+      "datum": "water",
+      "sourceBounds": [
+        [
+          -111.3032840387166,
+          -13.935449600219727,
+          -236.53526306152344
+        ],
+        [
+          -77.0030637815075,
+          6.216000080108643,
+          -206.38062160933265
+        ]
+      ],
+      "foundationFootprints": 11,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        514.0486384722157,
+        0.0,
+        1232.5867113155248
+      ]
+    },
+    "manymouth_delta.temple_quay": {
+      "id": "manymouth_delta.temple_quay",
+      "members": 13,
+      "nodes": [
+        "temple_quay_house_00",
+        "temple_quay_house_01",
+        "temple_quay_house_02",
+        "temple_quay_house_03",
+        "temple_quay_house_04",
+        "temple_quay_house_05",
+        "Landing_temple_quay",
+        "temple_quay_porch_00",
+        "temple_quay_porch_01",
+        "temple_quay_porch_02",
+        "temple_quay_porch_03",
+        "temple_quay_porch_04",
+        "temple_quay_porch_05"
+      ],
+      "referenceXZ": [
+        223.62156498878068,
+        -187.10043786465536
+      ],
+      "referenceY": 0.0,
+      "datum": "water",
+      "sourceBounds": [
+        [
+          207.2076517521865,
+          -6.962912285790936,
+          -208.22744750976562
+        ],
+        [
+          240.03547822537487,
+          7.88914581626161,
+          -165.9734282195451
+        ]
+      ],
+      "foundationFootprints": 0,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        438.3784350112193,
+        9.0,
+        1269.1004378646553
+      ]
+    },
+    "manymouth_delta.deep_grove": {
+      "id": "manymouth_delta.deep_grove",
+      "members": 11,
+      "nodes": [
+        "deep_grove_house_00",
+        "deep_grove_house_01",
+        "deep_grove_house_02",
+        "deep_grove_house_03",
+        "deep_grove_house_04",
+        "Landing_deep_grove",
+        "deep_grove_porch_00",
+        "deep_grove_porch_01",
+        "deep_grove_porch_02",
+        "deep_grove_porch_03",
+        "deep_grove_porch_04"
+      ],
+      "referenceXZ": [
+        171.24550283696362,
+        -119.9818699510819
+      ],
+      "referenceY": 0.0,
+      "datum": "water",
+      "sourceBounds": [
+        [
+          148.95986248545066,
+          -6.449520398037992,
+          -133.89523419013895
+        ],
+        [
+          193.53114318847656,
+          6.863996120039291,
+          -106.06850571202484
+        ]
+      ],
+      "foundationFootprints": 11,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        463.7544971630364,
+        0.0,
+        1269.981869951082
+      ]
+    },
+    "crownwater.causeway-city": {
+      "id": "crownwater.causeway-city",
+      "members": 203,
+      "nodes": [
+        "Causeway_spoke_pavilion_east",
+        "Causeway_spoke_pavilion_southeast",
+        "Causeway_spoke_pavilion_south",
+        "Causeway_spoke_harbour_isle",
+        "Causeway_spoke_pavilion_west",
+        "Causeway_spoke_pavilion_northwest",
+        "Causeway_spoke_pavilion_north",
+        "Causeway_spoke_pavilion_northeast",
+        "Causeway_ring_pavilion_east_pavilion_southeast",
+        "Causeway_ring_pavilion_southeast_pavilion_south",
+        "Causeway_ring_pavilion_south_harbour_isle",
+        "Causeway_ring_harbour_isle_pavilion_west",
+        "Causeway_ring_pavilion_west_pavilion_northwest",
+        "Causeway_ring_pavilion_northwest_pavilion_north",
+        "Causeway_ring_pavilion_north_pavilion_northeast",
+        "Causeway_ring_pavilion_northeast_pavilion_east",
+        "Causeway_reach_outer_east",
+        "Causeway_reach_outer_southeast",
+        "Causeway_reach_outer_south",
+        "Causeway_reach_outer_west",
+        "Causeway_reach_outer_northwest",
+        "Causeway_reach_outer_north",
+        "Causeway_reach_outer_southwest",
+        "Causeway_reach_outer_northeast",
+        "Landmark_Cathedral",
+        "Landmark_Campanile",
+        "Walk_CrownPlaza_Rose",
+        "Prop_CrownFountain",
+        "Prop_CrownStatue_0",
+        "Prop_CrownStatue_1",
+        "Prop_CrownStatue_2",
+        "Prop_CrownStatue_3",
+        "Prop_CrownStatue_4",
+        "Prop_CrownStatue_5",
+        "Prop_CrownStatue_6",
+        "Prop_CrownStatue_7",
+        "Walk_QuayRun_crown_quay_south",
+        "Prop_Bollard_crown_quay_south_0",
+        "Prop_Bollard_crown_quay_south_1",
+        "Prop_Bollard_crown_quay_south_2",
+        "Prop_Bollard_crown_quay_south_3",
+        "Walk_QuayRun_crown_quay_north",
+        "Prop_Bollard_crown_quay_north_0",
+        "Prop_Bollard_crown_quay_north_1",
+        "Prop_Bollard_crown_quay_north_2",
+        "Prop_Bollard_crown_quay_north_3",
+        "Landmark_Pavilion_pavilion_east",
+        "Landmark_Pavilion_pavilion_southeast",
+        "Landmark_Pavilion_pavilion_south",
+        "Landmark_Pavilion_pavilion_west",
+        "Walk_Quay_pavilion_west_0",
+        "Walk_Quay_pavilion_west_2",
+        "Landmark_Pavilion_pavilion_northwest",
+        "Landmark_Pavilion_pavilion_north",
+        "Landmark_Pavilion_pavilion_northeast",
+        "Landmark_Outer_outer_east",
+        "Landmark_Outer_outer_southeast",
+        "Landmark_Outer_outer_south",
+        "Landmark_Outer_outer_southwest",
+        "Landmark_Outer_outer_west",
+        "Landmark_Outer_outer_northwest",
+        "Landmark_Outer_outer_north",
+        "Landmark_Outer_outer_northeast",
+        "Walk_QuayRun_harbour_quay",
+        "Prop_Bollard_harbour_quay_0",
+        "Prop_Bollard_harbour_quay_1",
+        "Prop_Bollard_harbour_quay_2",
+        "Prop_Bollard_harbour_quay_3",
+        "Prop_Bollard_harbour_quay_4",
+        "Prop_Bollard_harbour_quay_5",
+        "Walk_QuayRun_harbour_lamp_walk",
+        "Prop_Bollard_harbour_lamp_walk_0",
+        "Prop_Bollard_harbour_lamp_walk_1",
+        "Prop_Bollard_harbour_lamp_walk_2",
+        "Prop_Bollard_harbour_lamp_walk_3",
+        "Prop_Bollard_harbour_lamp_walk_4",
+        "Prop_Lamp_Harbour_0",
+        "Prop_Lamp_Harbour_1",
+        "Prop_Lamp_Harbour_2",
+        "Prop_Lamp_Harbour_3",
+        "Prop_Lamp_Harbour_4",
+        "Prop_Lamp_Harbour_5",
+        "Prop_Lamp_Harbour_6",
+        "Prop_Boat_Harbour_0",
+        "Prop_Boat_Harbour_1",
+        "Prop_Boat_Harbour_2",
+        "Prop_Boat_Harbour_3",
+        "Prop_Banner_Harbour_0",
+        "Prop_Banner_Harbour_1",
+        "Prop_Banner_Harbour_2",
+        "Landmark_CustomsHouse",
+        "Harbour_ServiceRoof",
+        "Prop_Stall_0",
+        "Prop_Stall_1",
+        "Prop_Stall_2",
+        "Prop_Stall_3",
+        "Prop_Stall_4",
+        "Prop_Stall_5",
+        "Prop_Stall_6",
+        "Walk_CustomsCargoRamp",
+        "Landmark_UndercroftPorch",
+        "Prop_CampanileDoor",
+        "Landmark_SunkenCourt",
+        "Prop_SunkenColumn_0",
+        "Prop_SunkenColumn_1",
+        "Prop_SunkenColumn_2",
+        "Prop_SunkenColumn_3",
+        "Prop_SunkenColumn_4",
+        "Prop_SunkenColumn_5",
+        "Prop_SunkenColumn_6",
+        "Prop_SunkenColumn_7",
+        "Prop_SunkenColumn_8",
+        "Building_Shore_net-menders",
+        "Prop_ShoreCargo_net-menders",
+        "Building_Shore_ferriers",
+        "Prop_ShoreCargo_ferriers",
+        "Building_Shore_market-cook",
+        "Prop_ShoreCargo_market-cook",
+        "Building_Shore_garden-tender",
+        "Prop_ShoreCargo_garden-tender",
+        "Building_Shore_pearl-factors",
+        "Prop_ShoreCargo_pearl-factors",
+        "Building_Shore_chart-house",
+        "Prop_ShoreCargo_chart-house",
+        "Building_Shore_north-packet-crew",
+        "Prop_ShoreCargo_north-packet-crew",
+        "Building_Shore_west-packet-crew",
+        "Prop_ShoreCargo_west-packet-crew",
+        "Walk_PacketPier_north-quay",
+        "Prop_PacketBoat_north-quay",
+        "Walk_PacketPier_north-quay-east",
+        "Prop_PacketBoat_north-quay-east",
+        "Walk_PacketPier_west-quay",
+        "Prop_PacketBoat_west-quay",
+        "Walk_PacketPier_west-quay-south",
+        "Prop_PacketBoat_west-quay-south",
+        "Walk_PacketPier_south-quay",
+        "Prop_PacketBoat_south-quay",
+        "Walk_PacketPier_south-quay-east",
+        "Prop_PacketBoat_south-quay-east",
+        "Prop_GardenFountain",
+        "Prop_Lamp_pavilion_east_0",
+        "Prop_Lamp_pavilion_east_1",
+        "Prop_Lamp_pavilion_east_2",
+        "Prop_Lamp_pavilion_east_3",
+        "Prop_Lamp_pavilion_east_4",
+        "Prop_Lamp_pavilion_east_5",
+        "Prop_Lamp_pavilion_southeast_0",
+        "Prop_Lamp_pavilion_southeast_1",
+        "Prop_Lamp_pavilion_southeast_2",
+        "Prop_Lamp_pavilion_southeast_3",
+        "Prop_Lamp_pavilion_southeast_4",
+        "Prop_Lamp_pavilion_southeast_5",
+        "Prop_Lamp_pavilion_south_0",
+        "Prop_Lamp_pavilion_south_1",
+        "Prop_Lamp_pavilion_south_2",
+        "Prop_Lamp_pavilion_south_3",
+        "Prop_Lamp_pavilion_south_4",
+        "Prop_Lamp_pavilion_south_5",
+        "Prop_Lamp_harbour_isle_0",
+        "Prop_Lamp_harbour_isle_1",
+        "Prop_Lamp_harbour_isle_2",
+        "Prop_Lamp_harbour_isle_3",
+        "Prop_Lamp_harbour_isle_4",
+        "Prop_Lamp_harbour_isle_5",
+        "Prop_Lamp_pavilion_west_0",
+        "Prop_Lamp_pavilion_west_1",
+        "Prop_Lamp_pavilion_west_2",
+        "Prop_Lamp_pavilion_west_3",
+        "Prop_Lamp_pavilion_west_4",
+        "Prop_Lamp_pavilion_west_5",
+        "Prop_Lamp_pavilion_northwest_0",
+        "Prop_Lamp_pavilion_northwest_1",
+        "Prop_Lamp_pavilion_northwest_2",
+        "Prop_Lamp_pavilion_northwest_3",
+        "Prop_Lamp_pavilion_northwest_4",
+        "Prop_Lamp_pavilion_northwest_5",
+        "Prop_Lamp_pavilion_north_0",
+        "Prop_Lamp_pavilion_north_1",
+        "Prop_Lamp_pavilion_north_2",
+        "Prop_Lamp_pavilion_north_3",
+        "Prop_Lamp_pavilion_north_4",
+        "Prop_Lamp_pavilion_north_5",
+        "Prop_Lamp_pavilion_northeast_0",
+        "Prop_Lamp_pavilion_northeast_1",
+        "Prop_Lamp_pavilion_northeast_2",
+        "Prop_Lamp_pavilion_northeast_3",
+        "Prop_Lamp_pavilion_northeast_4",
+        "Prop_Lamp_pavilion_northeast_5",
+        "Lore_court_grating",
+        "Secret_crown_pearl_hollow",
+        "Secret_crown_kelp_garden",
+        "Secret_crown_campanile_vault",
+        "Secret_crown_crab_pit",
+        "Secret_crown_cathedral_school",
+        "Secret_crown_warm_spring",
+        "Secret_crown_pavilion_butts",
+        "Secret_crown_court_reliquary",
+        "Secret_crown_cistern_well",
+        "Secret_crown_lake_focus",
+        "Secret_crown_drain",
+        "Secret_crown_waystone",
+        "Secret_crown_campanile_eyrie"
+      ],
+      "referenceXZ": [
+        23.0,
+        8.0
+      ],
+      "referenceY": 0.0,
+      "datum": "water",
+      "sourceBounds": [
+        [
+          -111.20000004768372,
+          -17.32191276550293,
+          -266.2000000476837
+        ],
+        [
+          242.88048205411712,
+          47.66352768156432,
+          111.20000004768372
+        ]
+      ],
+      "foundationFootprints": 31,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        290.0,
+        0.0,
+        1562.0
+      ]
+    },
+    "ssarathi_ruins.ruin-city": {
+      "id": "ssarathi_ruins.ruin-city",
+      "members": 150,
+      "nodes": [
+        "Bridge_great_causeway__channel_main",
+        "Bridge_great_causeway__channel_south",
+        "Bridge_spur_stela__channel_main",
+        "Bridge_street_courts__channel_main",
+        "Bridge_street_far_e__channel_east",
+        "Dock_east_dock_0",
+        "Dock_east_dock_1",
+        "Dock_east_dock_2",
+        "Dock_west_dock_0",
+        "Dock_west_dock_1",
+        "Dock_west_dock_2",
+        "Dock_south_dock_0",
+        "Dock_south_dock_1",
+        "Dock_cistern_walk",
+        "SerpentColumn_0_-1",
+        "SerpentColumn_0_1",
+        "SerpentColumn_1_-1",
+        "SerpentColumn_1_1",
+        "SerpentColumn_2_-1",
+        "SerpentColumn_2_1",
+        "Obelisk_street_market_0",
+        "Obelisk_street_market_64",
+        "Obelisk_street_market_128",
+        "Obelisk_street_market_192",
+        "Obelisk_street_north_0",
+        "Obelisk_street_north_69",
+        "Obelisk_street_north_139",
+        "Obelisk_street_far_e_99",
+        "Temple_Ssarathi",
+        "Structure_TempleSummitRoof",
+        "Temple_VaultPortal",
+        "TempleGuardian_-1",
+        "TempleGuardian_1",
+        "Waterfall_north",
+        "Waterfall_east",
+        "Colonnade_lily_court",
+        "CourtShrine_lily_court",
+        "Colonnade_ritual_plaza",
+        "CourtShrine_ritual_plaza",
+        "SunStela",
+        "RootArch",
+        "WaterGate",
+        "SerpentGateColumn_-1",
+        "SerpentGateColumn_1",
+        "Shrine_west_shrine",
+        "Shrine_east_shrine",
+        "Shrine_south_shrine",
+        "MarketStall_0",
+        "MarketStall_1",
+        "MarketStall_2",
+        "MarketStall_3",
+        "MarketStall_4",
+        "MarketStall_5",
+        "MarketStall_6",
+        "MarketStall_7",
+        "MarketStall_8",
+        "MarketStall_9",
+        "MarketShrine",
+        "DrownedColumn_0",
+        "DrownedRubble_1",
+        "DrownedRubble_2",
+        "DrownedColumn_3",
+        "DrownedRubble_4",
+        "DrownedRubble_5",
+        "DrownedColumn_6",
+        "DrownedColumn_9",
+        "DrownedRubble_11",
+        "DrownedColumn_12",
+        "DrownedRubble_13",
+        "DrownedRubble_14",
+        "DrownedRubble_16",
+        "DrownedColumn_21",
+        "DrownedRubble_22",
+        "DrownedRubble_23",
+        "DrownedColumn_24",
+        "DrownedRubble_25",
+        "Ruin_0",
+        "Ruin_1",
+        "RuinTower_1",
+        "Ruin_2",
+        "Ruin_3",
+        "Ruin_4",
+        "Ruin_5",
+        "Ruin_6",
+        "RuinTower_6",
+        "Ruin_7",
+        "Ruin_8",
+        "Rubble_street_courts_40",
+        "Rubble_street_market_0",
+        "Rubble_street_north_0",
+        "Rubble_street_north_93",
+        "Rubble_spur_arrival_0",
+        "Rubble_spur_stela_69",
+        "Rubble_spur_east_shrine_0",
+        "Rubble_spur_south_shrine_0",
+        "AxisLamp_0",
+        "AxisLamp_1",
+        "AxisLamp_2",
+        "AxisLamp_3",
+        "AxisLamp_4",
+        "AxisLamp_5",
+        "AxisLamp_6",
+        "AxisLamp_7",
+        "TerraceRelic_0",
+        "TerraceRelic_1",
+        "CisternShaft",
+        "HatcheryDescent",
+        "HatcheryColumn_-1",
+        "HatcheryColumn_1",
+        "UndercroftMouth",
+        "QuayShelter_0",
+        "QuayShelter_1",
+        "QuayRecordsBench_0",
+        "QuayLedger_0_0",
+        "QuayLedger_0_1",
+        "QuayLedger_0_2",
+        "QuayStool_0",
+        "QuayRecordsBench_1",
+        "QuayLedger_1_0",
+        "QuayLedger_1_1",
+        "QuayLedger_1_2",
+        "QuayStool_1",
+        "StoreBundle_0",
+        "StoreBundle_1",
+        "StoreBundle_2",
+        "StoreBundle_3",
+        "StoreBundle_4",
+        "StoreBundle_5",
+        "StoreBundle_6",
+        "StoreBundle_7",
+        "StoreBundle_8",
+        "House_archive-workers",
+        "House_quay-stores",
+        "House_market-poler",
+        "House_market-copyist",
+        "House_lily-copyists",
+        "House_lineage-house",
+        "MooredPunt_0",
+        "MooredPunt_1",
+        "MooredPunt_2",
+        "QuayCargo_0",
+        "QuayCargo_1",
+        "QuayCargo_2",
+        "QuayCargo_3",
+        "QuayCargo_5",
+        "Secret_ruins_moss_hollow",
+        "Secret_ruins_gate_cache",
+        "Secret_ruins_stela_reliquary",
+        "Secret_ruins_rootrun",
+        "Secret_ruins_culvert_mouth"
+      ],
+      "referenceXZ": [
+        51.75112017912711,
+        -87.25345720832851
+      ],
+      "referenceY": 2.208431641026429,
+      "datum": "terrain",
+      "sourceBounds": [
+        [
+          -122.24775964174577,
+          -7.8214287757873535,
+          -280.8733596801758
+        ],
+        [
+          225.75,
+          93.64126586914062,
+          106.36644526351876
+        ]
+      ],
+      "foundationFootprints": 114,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        1060.0,
+        0.0,
+        1563.0
+      ]
+    },
+    "ssarathi_ruins.temple-focus": {
+      "id": "ssarathi_ruins.temple-focus",
+      "members": 1,
+      "nodes": [
+        "Secret_ruins_temple_focus"
+      ],
+      "referenceXZ": [
+        25.0,
+        -122.0
+      ],
+      "referenceY": 13.0,
+      "datum": "terrain",
+      "sourceBounds": [
+        [
+          23.38561637065405,
+          12.95,
+          -123.61438362934595
+        ],
+        [
+          26.61438362934595,
+          13.169999998807906,
+          -120.38561637065405
+        ]
+      ],
+      "foundationFootprints": 0,
+      "geometryScale": 1.0,
+      "placementPolicy": "One common translation; preserve all relative XYZ offsets and metadata.",
+      "translation": [
+        1086.0,
+        0.0,
+        1554.0
+      ]
+    }
+  },
+  "mirrorLakeSupport": {
+    "policy": "Physical bank around the unchanged80m lake; open western outlet; rigid city and exposed walking floors retained.",
+    "lakeLevel": 80.0,
+    "coreMetres": 8.0,
+    "featherMetres": 40.0,
+    "changedTerrainVertices": 2674,
+    "maximumFill": 12.499775114408607,
+    "floorConstrainedSamples": 63,
+    "beforeShore": [
+      {
+        "outwardOffsetMetres": 0.0,
+        "closedBankSamples": 317,
+        "belowLakeDatumSamples": 188,
+        "uncontainedWaterEdgeSamples": 188,
+        "sampleRole": "contained shoreline",
+        "minimumClosedBankHeight": 69.0,
+        "worstGlobalXZ": [
+          941.6788,
+          831.4641
+        ]
+      },
+      {
+        "outwardOffsetMetres": 0.25,
+        "closedBankSamples": 317,
+        "belowLakeDatumSamples": 188,
+        "uncontainedWaterEdgeSamples": 188,
+        "sampleRole": "contained shoreline",
+        "minimumClosedBankHeight": 69.0,
+        "worstGlobalXZ": [
+          941.9288,
+          831.4641
+        ]
+      },
+      {
+        "outwardOffsetMetres": 2.0,
+        "closedBankSamples": 316,
+        "belowLakeDatumSamples": 184,
+        "uncontainedWaterEdgeSamples": 184,
+        "sampleRole": "contained shoreline",
+        "minimumClosedBankHeight": 69.0,
+        "worstGlobalXZ": [
+          943.6788,
+          831.4641
+        ]
+      },
+      {
+        "outwardOffsetMetres": 5.0,
+        "closedBankSamples": 316,
+        "belowLakeDatumSamples": 178,
+        "uncontainedWaterEdgeSamples": 0,
+        "sampleRole": "outer retaining slope toward lower city",
+        "minimumClosedBankHeight": 69.0,
+        "worstGlobalXZ": [
+          946.6788,
+          831.4641
+        ]
+      }
+    ],
+    "afterShore": [
+      {
+        "outwardOffsetMetres": 0.0,
+        "closedBankSamples": 317,
+        "belowLakeDatumSamples": 0,
+        "uncontainedWaterEdgeSamples": 0,
+        "sampleRole": "contained shoreline",
+        "minimumClosedBankHeight": 80.27333136608851,
+        "worstGlobalXZ": [
+          849.8286180331552,
+          844.8864092215015
+        ]
+      },
+      {
+        "outwardOffsetMetres": 0.25,
+        "closedBankSamples": 317,
+        "belowLakeDatumSamples": 0,
+        "uncontainedWaterEdgeSamples": 0,
+        "sampleRole": "contained shoreline",
+        "minimumClosedBankHeight": 80.27980356883639,
+        "worstGlobalXZ": [
+          849.6002316687445,
+          844.9880933822704
+        ]
+      },
+      {
+        "outwardOffsetMetres": 2.0,
+        "closedBankSamples": 316,
+        "belowLakeDatumSamples": 0,
+        "uncontainedWaterEdgeSamples": 0,
+        "sampleRole": "contained shoreline",
+        "minimumClosedBankHeight": 80.08472638070066,
+        "worstGlobalXZ": [
+          926.4817514495254,
+          805.049264692203
+        ]
+      },
+      {
+        "outwardOffsetMetres": 5.0,
+        "closedBankSamples": 316,
+        "belowLakeDatumSamples": 4,
+        "uncontainedWaterEdgeSamples": 0,
+        "sampleRole": "outer retaining slope toward lower city",
+        "minimumClosedBankHeight": 78.29030895480189,
+        "worstGlobalXZ": [
+          930.4956936343268,
+          804.1291875871312
+        ]
+      }
+    ],
+    "beforeFloor": {
+      "samples": 11217,
+      "buriedSamples": 850,
+      "maximumBurial": 3.1060585522562008,
+      "minimumClearance": -3.1060585522562008,
+      "worstGlobalXZ": [
+        924.6788320434571,
+        799.7458563535894
+      ]
+    },
+    "afterFloor": {
+      "samples": 11217,
+      "buriedSamples": 850,
+      "maximumBurial": 3.1060585522562008,
+      "minimumClearance": -3.1060585522562008,
+      "worstGlobalXZ": [
+        924.6788320434571,
+        799.7458563535894
+      ],
+      "newlyBuriedSamples": 0,
+      "maximumAddedBurial": 0.0,
+      "addedBurialWorstGlobalXZ": [
+        972.6788320434571,
+        780.7458563535894
+      ],
+      "addedBurialWorstFloor": 102.115782953369
+    },
+    "finalShore": [
+      {
+        "outwardOffsetMetres": 0.0,
+        "closedBankSamples": 317,
+        "belowLakeDatumSamples": 0,
+        "uncontainedWaterEdgeSamples": 0,
+        "sampleRole": "contained shoreline",
+        "minimumClosedBankHeight": 80.27333136608851,
+        "worstGlobalXZ": [
+          849.8286180331552,
+          844.8864092215015
+        ]
+      },
+      {
+        "outwardOffsetMetres": 0.25,
+        "closedBankSamples": 317,
+        "belowLakeDatumSamples": 0,
+        "uncontainedWaterEdgeSamples": 0,
+        "sampleRole": "contained shoreline",
+        "minimumClosedBankHeight": 80.27980356883639,
+        "worstGlobalXZ": [
+          849.6002316687445,
+          844.9880933822704
+        ]
+      },
+      {
+        "outwardOffsetMetres": 2.0,
+        "closedBankSamples": 316,
+        "belowLakeDatumSamples": 0,
+        "uncontainedWaterEdgeSamples": 0,
+        "sampleRole": "contained shoreline",
+        "minimumClosedBankHeight": 80.08472638070066,
+        "worstGlobalXZ": [
+          926.4817514495254,
+          805.049264692203
+        ]
+      },
+      {
+        "outwardOffsetMetres": 5.0,
+        "closedBankSamples": 316,
+        "belowLakeDatumSamples": 4,
+        "uncontainedWaterEdgeSamples": 0,
+        "sampleRole": "outer retaining slope toward lower city",
+        "minimumClosedBankHeight": 78.29030895480189,
+        "worstGlobalXZ": [
+          930.4956936343268,
+          804.1291875871312
+        ]
+      }
+    ],
+    "finalFloor": {
+      "samples": 11217,
+      "buriedSamples": 730,
+      "maximumBurial": 3.1060585522562008,
+      "minimumClearance": -3.1060585522562008,
+      "worstGlobalXZ": [
+        924.6788320434571,
+        799.7458563535894
+      ],
+      "newlyBuriedSamples": 0,
+      "maximumAddedBurial": 0.0,
+      "addedBurialWorstGlobalXZ": [
+        972.6788320434571,
+        780.7458563535894
+      ],
+      "addedBurialWorstFloor": 102.115782953369
+    },
+    "finalRestoredVertices": 305
+  },
+  "ssarathiBankSupport": {
+    "policy": "Natural river bank restored outside real ritual bridge and descent floors",
+    "changedVertices": 1846,
+    "maximumFill": 7.6608369592988526,
+    "riverLevelUnchanged": true,
+    "retainedGeometryUnchanged": true,
+    "maximumAddedFloorBurial": {
+      "Bridge_spur_stela__channel_main": 0.0,
+      "HatcheryDescent": 0.0
+    },
+    "walkClearance": {
+      "Bridge_spur_stela__channel_main": {
+        "samples": 3236,
+        "buriedSamples": 0,
+        "maximumBurial": 0.0,
+        "minimumClearance": 0.04692818661600384,
+        "worstGlobal": [
+          1177.1383672342097,
+          1486.9146059244042
+        ],
+        "worstFloor": 2.0404386152414142
+      },
+      "HatcheryDescent": {
+        "samples": 545,
+        "buriedSamples": 150,
+        "maximumBurial": 3.6577644592211196,
+        "minimumClearance": -3.6577644592211196,
+        "worstGlobal": [
+          1170.388000011444,
+          1463.9479995727538
+        ],
+        "worstFloor": -2.0912118831039486
+      }
+    }
+  },
+  "manymouthBoats": {
+    "boats": [
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.014999999999999902,
+        "maximumGroundClearance": 2.1010146254083573,
+        "terrainIntersectionVertices": 186,
+        "sourceToWorldY": 1.465501749950626,
+        "node": "moored_boat_000",
+        "deltaY": 0.12448007330770205,
+        "positionXZ": [
+          508.205464,
+          1147.7094419999999
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 1.0,
+        "waterLevelRange": [
+          0.9625063213527402,
+          0.9805514860069162
+        ],
+        "minimumGroundClearance": 0.015000000000000013,
+        "maximumGroundClearance": 3.5131583870516634,
+        "terrainIntersectionVertices": 251,
+        "sourceToWorldY": 1.2979099831484977,
+        "node": "moored_boat_001",
+        "deltaY": -1.7184014467859272,
+        "positionXZ": [
+          492.265618,
+          1156.453554
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.9999999999791793,
+        "waterLevelRange": [
+          0.7888724983675657,
+          0.8071231848451672
+        ],
+        "minimumGroundClearance": 0.015000000000000013,
+        "maximumGroundClearance": 2.958060353346398,
+        "terrainIntersectionVertices": 259,
+        "sourceToWorldY": 0.9274249019096273,
+        "node": "moored_boat_002",
+        "deltaY": -1.5261100110572734,
+        "positionXZ": [
+          475.716046,
+          1168.73988
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.5800637814137842,
+        "waterLevelRange": [
+          1.2396525249024528,
+          1.260926525439447
+        ],
+        "minimumGroundClearance": 0.014999999999999791,
+        "maximumGroundClearance": 2.1557816709799065,
+        "terrainIntersectionVertices": 276,
+        "sourceToWorldY": 1.7344138602837906,
+        "node": "moored_boat_003",
+        "deltaY": -0.17205431167419305,
+        "positionXZ": [
+          543.1466560000001,
+          1140.133536
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.01499999999999968,
+        "maximumGroundClearance": 1.8626581227585355,
+        "terrainIntersectionVertices": 241,
+        "sourceToWorldY": 7.166510935452124,
+        "node": "moored_boat_005",
+        "deltaY": -2.683611061236923,
+        "positionXZ": [
+          577.2594880000001,
+          1138.005306
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000124,
+        "maximumGroundClearance": 2.747517169834028,
+        "terrainIntersectionVertices": 216,
+        "sourceToWorldY": 2.684590328256185,
+        "node": "moored_boat_006",
+        "deltaY": -4.4794240151837466,
+        "positionXZ": [
+          658.541806,
+          1143.808818
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000568,
+        "maximumGroundClearance": 1.9223126315687722,
+        "terrainIntersectionVertices": 265,
+        "sourceToWorldY": 14.330078509266702,
+        "node": "moored_boat_010",
+        "deltaY": -2.5435561131165763,
+        "positionXZ": [
+          718.311022,
+          1079.9686260000003
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 1.0,
+        "waterLevelRange": [
+          0.01634899707996446,
+          0.185065624799671
+        ],
+        "minimumGroundClearance": 0.015000000000000013,
+        "maximumGroundClearance": 3.4468937579778123,
+        "terrainIntersectionVertices": 190,
+        "sourceToWorldY": 0.6401736865153873,
+        "node": "moored_boat_013",
+        "deltaY": -2.2895813968507284,
+        "positionXZ": [
+          608.7586180000001,
+          1221.8502360000002
+        ]
+      },
+      {
+        "mode": "afloat",
+        "footprintWaterCoverage": 1.0,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": 2.4360550500247444,
+        "maximumGroundClearance": 4.489601857400761,
+        "terrainIntersectionVertices": 196,
+        "sourceToWorldY": 0.0,
+        "node": "moored_boat_016",
+        "deltaY": -3.032993043530695,
+        "positionXZ": [
+          531.460072,
+          1101.3335279999997
+        ]
+      },
+      {
+        "mode": "afloat",
+        "footprintWaterCoverage": 1.0,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": 5.689495382866883,
+        "maximumGroundClearance": 8.237064583532476,
+        "terrainIntersectionVertices": 243,
+        "sourceToWorldY": 0.0,
+        "node": "moored_boat_017",
+        "deltaY": 1.523082410987831,
+        "positionXZ": [
+          539.516926,
+          1088.991042
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.01499999999999968,
+        "maximumGroundClearance": 1.6852403109654839,
+        "terrainIntersectionVertices": 218,
+        "sourceToWorldY": 1.8813363937490906,
+        "node": "moored_boat_021",
+        "deltaY": -6.884479694525141,
+        "positionXZ": [
+          428.758642,
+          1194.019602
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000124,
+        "maximumGroundClearance": 3.113217782020538,
+        "terrainIntersectionVertices": 257,
+        "sourceToWorldY": 4.028864543711243,
+        "node": "moored_boat_022",
+        "deltaY": -4.344274588358432,
+        "positionXZ": [
+          417.78911199999993,
+          1194.3956399999997
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.01499999999999968,
+        "maximumGroundClearance": 2.139567280911672,
+        "terrainIntersectionVertices": 290,
+        "sourceToWorldY": 1.8414879373832067,
+        "node": "moored_boat_023",
+        "deltaY": -0.3948818769840947,
+        "positionXZ": [
+          413.268154,
+          1206.740388
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.01499999999999968,
+        "maximumGroundClearance": 2.368132272339311,
+        "terrainIntersectionVertices": 223,
+        "sourceToWorldY": 4.50676030597841,
+        "node": "moored_boat_027",
+        "deltaY": -7.036760229346915,
+        "positionXZ": [
+          460.200208,
+          1071.247992
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.2928010902098407,
+        "waterLevelRange": [
+          2.0068029015612043,
+          2.025974910100393
+        ],
+        "minimumGroundClearance": 0.015000000000000124,
+        "maximumGroundClearance": 1.742328112429779,
+        "terrainIntersectionVertices": 258,
+        "sourceToWorldY": 2.7212812791494048,
+        "node": "moored_boat_029",
+        "deltaY": -0.13269013281988107,
+        "positionXZ": [
+          415.57944999999995,
+          1071.662874
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.9665285606657781,
+        "waterLevelRange": [
+          2.1824688835638697,
+          2.2011640664250334
+        ],
+        "minimumGroundClearance": 0.015000000000000124,
+        "maximumGroundClearance": 3.951698210547138,
+        "terrainIntersectionVertices": 289,
+        "sourceToWorldY": 2.9214082456631814,
+        "node": "moored_boat_031",
+        "deltaY": -8.735360339581423,
+        "positionXZ": [
+          424.721128,
+          1049.064636
+        ]
+      },
+      {
+        "mode": "afloat",
+        "footprintWaterCoverage": 0.9999999999856024,
+        "waterLevelRange": [
+          3.3345885252839107,
+          3.453425682742795
+        ],
+        "minimumGroundClearance": 0.1472756074930226,
+        "maximumGroundClearance": 1.773374648922382,
+        "terrainIntersectionVertices": 245,
+        "sourceToWorldY": 3.394007104013353,
+        "node": "moored_boat_032",
+        "deltaY": -9.28678833318354,
+        "positionXZ": [
+          492.80171200000007,
+          1008.7090740000001
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.22307798967576511,
+        "waterLevelRange": [
+          0.0,
+          0.0
+        ],
+        "minimumGroundClearance": 0.015000000000000013,
+        "maximumGroundClearance": 4.388060928787008,
+        "terrainIntersectionVertices": 226,
+        "sourceToWorldY": 1.5442507202261766,
+        "node": "moored_boat_036",
+        "deltaY": -5.167803977406332,
+        "positionXZ": [
+          403.95589,
+          997.608738
+        ]
+      },
+      {
+        "mode": "hauled-up",
+        "footprintWaterCoverage": 0.0,
+        "waterLevelRange": null,
+        "minimumGroundClearance": 0.015000000000000568,
+        "maximumGroundClearance": 1.7778999948000003,
+        "terrainIntersectionVertices": 225,
+        "sourceToWorldY": 14.287715202301184,
+        "node": "moored_boat_037",
+        "deltaY": -0.016105390753129,
+        "positionXZ": [
+          718.584724,
+          1076.282268
+        ]
+      }
+    ],
+    "afloat": 3,
+    "hauledUp": 16,
+    "policy": "Actual complete hull water coverage and terrain triangle contact; rigid Y only."
+  },
+  "greyCrossings": {
+    "retiredSpans": [
+      "Landmark_boardwalk_gate",
+      "Landmark_boardwalk_centre",
+      "Landmark_boardwalk_south"
+    ],
+    "authoredPoints": {
+      "[145, 178]": [
+        237.635264,
+        26.650652085158416,
+        373.459628
+      ],
+      "[152, 100]": [
+        236.540463,
+        23.613306093937172,
+        432.749464
+      ],
+      "[230, 86]": [
+        314.540463,
+        29.211701528922543,
+        446.749464
+      ],
+      "[221, 88]": [
+        305.540463,
+        28.787054142348158,
+        444.749464
+      ]
+    }
+  },
+  "elapsedSeconds": 219.56
+}

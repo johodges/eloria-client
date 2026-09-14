@@ -1,0 +1,1242 @@
+{
+  "version": 1,
+  "name": "The Diagonal Mountain Spine",
+  "units": "metres",
+  "axes": {
+    "x": "east",
+    "z": "south",
+    "y": "up"
+  },
+  "bounds": [
+    0,
+    0,
+    1500,
+    1680
+  ],
+  "sea_level": 0.0,
+  "seed": 2042,
+  "regions": [
+    {
+      "id": "whitehorn_range",
+      "name": "Whitehorn Range",
+      "center": [
+        550,
+        220
+      ],
+      "purpose": "Alpine refuges and the headwaters of the western river"
+    },
+    {
+      "id": "grey_moors",
+      "name": "Grey Moors",
+      "center": [
+        220,
+        420
+      ],
+      "purpose": "Exposed Atlantic heath and peatland tributaries"
+    },
+    {
+      "id": "amberwood",
+      "name": "Amberwood",
+      "center": [
+        510,
+        540
+      ],
+      "purpose": "Sheltered western woodland and valley settlements"
+    },
+    {
+      "id": "amethyst_barrens",
+      "name": "Amethyst Barrens",
+      "center": [
+        950,
+        400
+      ],
+      "purpose": "Dry mineral uplands in the mountain rain shadow"
+    },
+    {
+      "id": "mirrorhold",
+      "name": "Mirrorhold",
+      "center": [
+        840,
+        650
+      ],
+      "purpose": "Fortified trade pass between the two watersheds"
+    },
+    {
+      "id": "sunmane_steppe",
+      "name": "Sunmane Steppe",
+      "center": [
+        1200,
+        720
+      ],
+      "purpose": "Open eastern grassland between dry uplands and the coast"
+    },
+    {
+      "id": "four_gates",
+      "name": "Four Gates",
+      "center": [
+        530,
+        840
+      ],
+      "purpose": "Western valley crossroads and market"
+    },
+    {
+      "id": "westhaven",
+      "name": "Westhaven",
+      "center": [
+        170,
+        1060
+      ],
+      "purpose": "Sheltered western harbour"
+    },
+    {
+      "id": "manymouth_delta",
+      "name": "Manymouth Delta",
+      "center": [
+        520,
+        1140
+      ],
+      "purpose": "Low distributary country below the western watershed"
+    },
+    {
+      "id": "crownwater",
+      "name": "Crownwater",
+      "center": [
+        290,
+        1570
+      ],
+      "purpose": "Sheltered estuary islands, ferries and maritime trade"
+    },
+    {
+      "id": "verdant_stair",
+      "name": "Verdant Stair",
+      "center": [
+        1100,
+        1120
+      ],
+      "purpose": "Wet southeastern limestone foothills"
+    },
+    {
+      "id": "ssarathi_ruins",
+      "name": "Ssarathi Ruins",
+      "center": [
+        1100,
+        1440
+      ],
+      "purpose": "Warm southern terraces and overgrown temple country"
+    }
+  ],
+  "coastline": [
+    [
+      70,
+      340
+    ],
+    [
+      120,
+      220
+    ],
+    [
+      300,
+      180
+    ],
+    [
+      410,
+      95
+    ],
+    [
+      590,
+      55
+    ],
+    [
+      730,
+      140
+    ],
+    [
+      900,
+      165
+    ],
+    [
+      1010,
+      220
+    ],
+    [
+      1210,
+      245
+    ],
+    [
+      1380,
+      330
+    ],
+    [
+      1440,
+      570
+    ],
+    [
+      1390,
+      840
+    ],
+    [
+      1430,
+      1000
+    ],
+    [
+      1410,
+      1200
+    ],
+    [
+      1450,
+      1440
+    ],
+    [
+      1320,
+      1600
+    ],
+    [
+      1060,
+      1610
+    ],
+    [
+      890,
+      1510
+    ],
+    [
+      790,
+      1310
+    ],
+    [
+      670,
+      1220
+    ],
+    [
+      540,
+      1320
+    ],
+    [
+      400,
+      1260
+    ],
+    [
+      360,
+      1170
+    ],
+    [
+      170,
+      1160
+    ],
+    [
+      55,
+      1080
+    ],
+    [
+      110,
+      900
+    ],
+    [
+      80,
+      690
+    ],
+    [
+      30,
+      530
+    ]
+  ],
+  "islands": [
+    {
+      "name": "Crownwater crown isle",
+      "center": [
+        368.0,
+        1484.0
+      ],
+      "radii": [
+        69.96,
+        59.4
+      ],
+      "height": 7.6,
+      "angle": -0.15,
+      "crownSourceIsland": "crown_isle",
+      "crownSourceCenter": [
+        78,
+        -78
+      ],
+      "crownShelfRadii": [
+        96.46,
+        81.9
+      ]
+    },
+    {
+      "name": "Crownwater harbour isle",
+      "center": [
+        290.0,
+        1562.0
+      ],
+      "radii": [
+        45.36,
+        39.06
+      ],
+      "height": 4.5,
+      "angle": 0.15,
+      "crownSourceIsland": "harbour_isle",
+      "crownSourceCenter": [
+        0,
+        0
+      ],
+      "crownShelfRadii": [
+        65.88,
+        56.73
+      ]
+    },
+    {
+      "name": "Crownwater pavilion east",
+      "center": [
+        468.0,
+        1482.0
+      ],
+      "radii": [
+        27.9,
+        34.1
+      ],
+      "height": 4.0,
+      "angle": 0.25,
+      "crownSourceIsland": "pavilion_east",
+      "crownSourceCenter": [
+        178,
+        -80
+      ],
+      "crownShelfRadii": [
+        44.1,
+        53.9
+      ]
+    },
+    {
+      "name": "Crownwater pavilion southeast",
+      "center": [
+        445.0,
+        1567.0
+      ],
+      "radii": [
+        26,
+        26
+      ],
+      "height": 4.1,
+      "angle": 0,
+      "crownSourceIsland": "pavilion_southeast",
+      "crownSourceCenter": [
+        155,
+        5
+      ],
+      "crownShelfRadii": [
+        44,
+        44
+      ]
+    },
+    {
+      "name": "Crownwater pavilion south",
+      "center": [
+        360.0,
+        1610.0
+      ],
+      "radii": [
+        26,
+        26
+      ],
+      "height": 4.3,
+      "angle": 0,
+      "crownSourceIsland": "pavilion_south",
+      "crownSourceCenter": [
+        70,
+        48
+      ],
+      "crownShelfRadii": [
+        44,
+        44
+      ]
+    },
+    {
+      "name": "Crownwater pavilion west",
+      "center": [
+        248.0,
+        1482.0
+      ],
+      "radii": [
+        31.03,
+        24.94
+      ],
+      "height": 4.5,
+      "angle": -0.35,
+      "crownSourceIsland": "pavilion_west",
+      "crownSourceCenter": [
+        -42,
+        -80
+      ],
+      "crownShelfRadii": [
+        52.43,
+        42.14
+      ]
+    },
+    {
+      "name": "Crownwater pavilion northwest",
+      "center": [
+        290.0,
+        1397.0
+      ],
+      "radii": [
+        26,
+        26
+      ],
+      "height": 4.2,
+      "angle": 0,
+      "crownSourceIsland": "pavilion_northwest",
+      "crownSourceCenter": [
+        0,
+        -165
+      ],
+      "crownShelfRadii": [
+        46,
+        46
+      ]
+    },
+    {
+      "name": "Crownwater pavilion north",
+      "center": [
+        379.0,
+        1379.0
+      ],
+      "radii": [
+        27,
+        27
+      ],
+      "height": 4.3,
+      "angle": 0,
+      "crownSourceIsland": "pavilion_north",
+      "crownSourceCenter": [
+        89,
+        -183
+      ],
+      "crownShelfRadii": [
+        46,
+        46
+      ]
+    },
+    {
+      "name": "Crownwater pavilion northeast",
+      "center": [
+        462.0,
+        1396.0
+      ],
+      "radii": [
+        29,
+        29
+      ],
+      "height": 4.2,
+      "angle": 0,
+      "crownSourceIsland": "pavilion_northeast",
+      "crownSourceCenter": [
+        172,
+        -166
+      ],
+      "crownShelfRadii": [
+        47,
+        47
+      ]
+    },
+    {
+      "name": "Crownwater outer east",
+      "center": [
+        500.0,
+        1539.0
+      ],
+      "radii": [
+        23,
+        23
+      ],
+      "height": 4,
+      "angle": 0,
+      "crownSourceIsland": "outer_east",
+      "crownSourceCenter": [
+        210,
+        -23
+      ],
+      "crownShelfRadii": [
+        38,
+        38
+      ]
+    },
+    {
+      "name": "Crownwater outer southeast",
+      "center": [
+        443.0,
+        1652.0
+      ],
+      "radii": [
+        21,
+        21
+      ],
+      "height": 3.2,
+      "angle": 0,
+      "crownSourceIsland": "outer_southeast",
+      "crownSourceCenter": [
+        153,
+        90
+      ],
+      "crownShelfRadii": [
+        38,
+        38
+      ]
+    },
+    {
+      "name": "Crownwater outer south",
+      "center": [
+        310.0,
+        1650.0
+      ],
+      "radii": [
+        22,
+        22
+      ],
+      "height": 4.1,
+      "angle": 0,
+      "crownSourceIsland": "outer_south",
+      "crownSourceCenter": [
+        20,
+        88
+      ],
+      "crownShelfRadii": [
+        37,
+        37
+      ]
+    },
+    {
+      "name": "Crownwater outer southwest",
+      "center": [
+        217.0,
+        1601.0
+      ],
+      "radii": [
+        24.2,
+        18.04
+      ],
+      "height": 3.4,
+      "angle": -0.5,
+      "crownSourceIsland": "outer_southwest",
+      "crownSourceCenter": [
+        -73,
+        39
+      ],
+      "crownShelfRadii": [
+        44.0,
+        32.8
+      ]
+    },
+    {
+      "name": "Crownwater outer west",
+      "center": [
+        202.0,
+        1419.0
+      ],
+      "radii": [
+        18.4,
+        25.76
+      ],
+      "height": 2.8,
+      "angle": -0.4,
+      "crownSourceIsland": "outer_west",
+      "crownSourceCenter": [
+        -88,
+        -143
+      ],
+      "crownShelfRadii": [
+        31.2,
+        43.68
+      ]
+    },
+    {
+      "name": "Crownwater outer northwest",
+      "center": [
+        313.0,
+        1311.0
+      ],
+      "radii": [
+        16.38,
+        22.47
+      ],
+      "height": 3.3,
+      "angle": 0.35,
+      "crownSourceIsland": "outer_northwest",
+      "crownSourceCenter": [
+        23,
+        -251
+      ],
+      "crownShelfRadii": [
+        30.42,
+        41.73
+      ]
+    },
+    {
+      "name": "Crownwater outer north",
+      "center": [
+        441.0,
+        1323.0
+      ],
+      "radii": [
+        26.68,
+        18.86
+      ],
+      "height": 3.8,
+      "angle": 0.2,
+      "crownSourceIsland": "outer_north",
+      "crownSourceCenter": [
+        151,
+        -239
+      ],
+      "crownShelfRadii": [
+        46.4,
+        32.8
+      ]
+    },
+    {
+      "name": "Crownwater outer northeast",
+      "center": [
+        530.0,
+        1404.0
+      ],
+      "radii": [
+        21.12,
+        25.92
+      ],
+      "height": 3.4,
+      "angle": 0.4,
+      "crownSourceIsland": "outer_northeast",
+      "crownSourceCenter": [
+        240,
+        -158
+      ],
+      "crownShelfRadii": [
+        36.08,
+        44.28
+      ]
+    },
+    {
+      "name": "Outer western isle",
+      "center": [
+        100,
+        1570
+      ],
+      "radii": [
+        39,
+        61
+      ],
+      "height": 18,
+      "angle": -0.4
+    },
+    {
+      "name": "Estuary middle isle",
+      "center": [
+        580,
+        1360
+      ],
+      "radii": [
+        58,
+        40
+      ],
+      "height": 9,
+      "angle": 0.7
+    },
+    {
+      "name": "Outer eastern isle",
+      "center": [
+        700,
+        1510
+      ],
+      "radii": [
+        49,
+        65
+      ],
+      "height": 13,
+      "angle": 0.3
+    }
+  ],
+  "ridges": [
+    {
+      "name": "Continental spine",
+      "points": [
+        [
+          470,
+          190,
+          116,
+          90
+        ],
+        [
+          570,
+          310,
+          152,
+          113
+        ],
+        [
+          670,
+          430,
+          126,
+          109
+        ],
+        [
+          770,
+          560,
+          106,
+          107
+        ],
+        [
+          870,
+          730,
+          87,
+          113
+        ],
+        [
+          950,
+          950,
+          67,
+          104
+        ],
+        [
+          1110,
+          1170,
+          49,
+          89
+        ],
+        [
+          1180,
+          1350,
+          31,
+          83
+        ]
+      ],
+      "foothill_width": 2.3,
+      "foothill_height": 0.23
+    },
+    {
+      "name": "Western moor shoulder",
+      "points": [
+        [
+          170,
+          290,
+          21,
+          72
+        ],
+        [
+          140,
+          420,
+          27,
+          75
+        ],
+        [
+          175,
+          555,
+          19,
+          68
+        ],
+        [
+          180,
+          690,
+          11,
+          63
+        ]
+      ],
+      "foothill_width": 1.8,
+      "foothill_height": 0.22
+    },
+    {
+      "name": "Eastern coastal downs",
+      "points": [
+        [
+          1260,
+          410,
+          20,
+          74
+        ],
+        [
+          1310,
+          590,
+          25,
+          71
+        ],
+        [
+          1295,
+          800,
+          16,
+          77
+        ],
+        [
+          1350,
+          975,
+          12,
+          66
+        ]
+      ],
+      "foothill_width": 1.8,
+      "foothill_height": 0.18
+    }
+  ],
+  "rivers": [
+    {
+      "id": "western_river",
+      "name": "Western River",
+      "mouth": "sea",
+      "width": 11,
+      "depth": 2.6,
+      "valley_width": 130,
+      "bank_height": 4.0,
+      "points": [
+        [
+          480,
+          340,
+          83
+        ],
+        [
+          435,
+          420,
+          43
+        ],
+        [
+          405,
+          510,
+          27
+        ],
+        [
+          390,
+          630,
+          18
+        ],
+        [
+          445,
+          720,
+          13
+        ],
+        [
+          355,
+          800,
+          9
+        ],
+        [
+          380,
+          890,
+          6
+        ],
+        [
+          510,
+          1020,
+          3
+        ],
+        [
+          500,
+          1110,
+          1.5
+        ],
+        [
+          460,
+          1240,
+          0
+        ],
+        [
+          460,
+          1330,
+          0
+        ]
+      ]
+    },
+    {
+      "id": "moor_tributary",
+      "name": "Moorwater",
+      "joins": "western_river",
+      "width": 5.0,
+      "depth": 1.4,
+      "valley_width": 60,
+      "bank_height": 3,
+      "points": [
+        [
+          255,
+          350,
+          27
+        ],
+        [
+          250,
+          470,
+          22
+        ],
+        [
+          300,
+          565,
+          20
+        ],
+        [
+          390,
+          630,
+          18
+        ]
+      ]
+    },
+    {
+      "id": "amber_tributary",
+      "name": "Amberwater",
+      "joins": "western_river",
+      "width": 4.5,
+      "depth": 1.3,
+      "valley_width": 67,
+      "bank_height": 3,
+      "points": [
+        [
+          635,
+          540,
+          58
+        ],
+        [
+          585,
+          625,
+          29
+        ],
+        [
+          530,
+          685,
+          19
+        ],
+        [
+          445,
+          720,
+          13
+        ]
+      ]
+    },
+    {
+      "id": "western_distributary",
+      "name": "Harbourwater",
+      "joins_from": "western_river",
+      "delta": true,
+      "width": 10,
+      "depth": 2.5,
+      "valley_width": 58,
+      "bank_height": 1.4,
+      "points": [
+        [
+          510,
+          1020,
+          3
+        ],
+        [
+          395,
+          1070,
+          1.8
+        ],
+        [
+          350,
+          1100,
+          0.8
+        ],
+        [
+          312,
+          1134,
+          0
+        ],
+        [
+          300,
+          1160,
+          0
+        ]
+      ]
+    },
+    {
+      "id": "eastern_distributary",
+      "name": "Reedwater",
+      "joins_from": "western_river",
+      "delta": true,
+      "width": 7.5,
+      "depth": 2.0,
+      "valley_width": 56,
+      "bank_height": 1.6,
+      "points": [
+        [
+          500,
+          1110,
+          1.5
+        ],
+        [
+          585,
+          1160,
+          1.0
+        ],
+        [
+          620,
+          1230,
+          0
+        ],
+        [
+          670,
+          1300,
+          0
+        ]
+      ]
+    },
+    {
+      "id": "southern_river",
+      "name": "Limestone River",
+      "mouth": "sea",
+      "width": 6.5,
+      "depth": 1.8,
+      "valley_width": 73,
+      "bank_height": 3.1,
+      "points": [
+        [
+          1080,
+          550,
+          30
+        ],
+        [
+          1180,
+          750,
+          24
+        ],
+        [
+          1250,
+          920,
+          15
+        ],
+        [
+          1280,
+          1080,
+          10
+        ],
+        [
+          1200,
+          1200,
+          7
+        ],
+        [
+          1140,
+          1350,
+          4
+        ],
+        [
+          1250,
+          1580,
+          0
+        ],
+        [
+          1250,
+          1650,
+          0
+        ]
+      ]
+    },
+    {
+      "id": "mirror_outlet",
+      "name": "Mirrorwater",
+      "joins": "western_river",
+      "width": 4,
+      "depth": 1.2,
+      "valley_width": 65,
+      "bank_height": 2.0,
+      "points": [
+        [
+          845.6788,
+          831.4641,
+          80
+        ],
+        [
+          790,
+          880,
+          65
+        ],
+        [
+          685,
+          955,
+          25
+        ],
+        [
+          510,
+          1020,
+          3
+        ]
+      ]
+    }
+  ],
+  "lakes": [
+    {
+      "name": "Moor headwater tarn",
+      "center": [
+        255,
+        350
+      ],
+      "radii": [
+        25,
+        18
+      ],
+      "level": 27,
+      "depth": 2.5
+    },
+    {
+      "name": "Moorwater pool",
+      "center": [
+        250,
+        470
+      ],
+      "radii": [
+        21,
+        32
+      ],
+      "level": 22,
+      "depth": 2.3
+    },
+    {
+      "name": "Mirror Lake",
+      "center": [
+        893.6788,
+        831.4641
+      ],
+      "radii": [
+        48,
+        33
+      ],
+      "level": 80,
+      "depth": 4
+    }
+  ],
+  "foundations": [],
+  "design_notes": [
+    "The land surface is evaluated globally before territory ownership or export boundaries are applied.",
+    "The western watershed gathers tributaries before Four Gates and splits only in the Manymouth floodplain.",
+    "Eastern mineral badlands grade through steppe to coastal downs; the southeastern ridge becomes warm limestone.",
+    "Crownwater is an archipelago beyond the delta. Sea crossings need authored ferry or bridge connections.",
+    "Foundations can supply center, radius, elevation and feather in metres; they are applied after natural drainage.",
+    "Mirror Lake occupies a sheltered basin below the fortress; its outlet descends west into the Western River.",
+    "The upper Western River follows low ground west of the spine, preserving a gradual alpine valley rather than excavating a parallel trench.",
+    "The Western River bends around the inhabited Four Gates terrace; civic buildings are not used as dams across its channel.",
+    "Crownwater lies farther south so its connected causeway city fits its named island territory without extending into mainland server ownership."
+  ],
+  "assembly_sites": {
+    "ssarathi_ruins.temple-focus": {
+      "translation": [
+        1086,
+        0,
+        1554
+      ]
+    },
+    "westhaven.harbour": {
+      "center": [
+        154,
+        1126
+      ],
+      "water_level": 0
+    },
+    "westhaven.lamp-island": {
+      "center": [
+        305,
+        1153
+      ],
+      "water_level": 0
+    },
+    "manymouth_delta.north_fishing": {
+      "center": [
+        575,
+        1300
+      ],
+      "water_level": 0
+    },
+    "manymouth_delta.paddy_hamlet": {
+      "center": [
+        423.7764163834791,
+        1054.1502542420928
+      ],
+      "water_level": 2.4
+    },
+    "manymouth_delta.east_hamlet": {
+      "center": [
+        712.439181184935,
+        1078.3013164743506
+      ]
+    },
+    "manymouth_delta.temple_quay": {
+      "center": [
+        662,
+        1082
+      ],
+      "water_level": 9
+    },
+    "manymouth_delta.great-arch": {
+      "center": [
+        587,
+        1124
+      ]
+    },
+    "manymouth_delta.deep_grove": {
+      "center": [
+        635,
+        1150
+      ],
+      "water_level": 0
+    },
+    "manymouth_delta.stelae-court": {
+      "center": [
+        690,
+        1140
+      ]
+    },
+    "manymouth_delta.boat_yard": {
+      "center": [
+        473,
+        1250
+      ],
+      "water_level": 0
+    },
+    "manymouth_delta.west_hamlet": {
+      "center": [
+        418,
+        1218
+      ],
+      "water_level": 0
+    },
+    "amberwood.ridge-camp": {
+      "center": [
+        578,
+        450
+      ]
+    }
+  },
+  "inhabited_hubs": {
+    "ssarathi_ruins": [
+      1060,
+      1563
+    ],
+    "mirrorhold": [
+      773.5,
+      802.5
+    ]
+  },
+  "connection_sites": {
+    "ssarathi_ruins--verdant_stair": [
+      1069,
+      1280
+    ]
+  },
+  "retained_transforms": {
+    "ssarathi_ruins": [
+      1060,
+      0,
+      1563
+    ],
+    "mirrorhold": [
+      800,
+      80,
+      789
+    ],
+    "crownwater": [
+      290.0,
+      0.0,
+      1562.0
+    ]
+  },
+  "ownership_bias": {
+    "mirrorhold": 20000,
+    "crownwater": 70000
+  },
+  "bridge_approach_aprons": {
+    "amberwood": 42.0
+  },
+  "bridge_approach_connections": {
+    "amberwood--whitehorn_range": 42.0
+  }
+}

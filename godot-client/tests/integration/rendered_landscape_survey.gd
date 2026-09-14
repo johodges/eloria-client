@@ -36,6 +36,30 @@ func _run() -> void:
 	await process_frame
 	state = root.get_node("AppState")
 	var specs: Array = JSON.parse_string(FileAccess.get_file_as_string(OS.get_environment("ELORIA_SURVEY_SPEC")))
+	# A complete composed continent can be inspected before server publication.
+	# Every coordinate below comes from its real exported manifest and generated
+	# crossing graph; the override only lives in this renderer process.
+	var world_override := OS.get_environment("ELORIA_SURVEY_WORLD")
+	if not world_override.is_empty():
+		var composed: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(world_override))
+		var registry: Dictionary = main.get("map_registry")
+		for map_id: String in composed.maps:
+			var path := str(composed.maps[map_id])
+			var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(path))
+			var entry := MapRegistry.resolve(registry,map_id)
+			if entry.is_empty() or str(data.get("asset", {}).get("id", "")) != map_id:
+				push_error("Composed survey manifest identity mismatch: " + map_id)
+				quit(2)
+				return
+			registry[str(entry.registryKey)]["manifest"] = path
+			registry[str(entry.registryKey)]["coordinateTransform"] = data.coordinateTransform.duplicate(true)
+		var stream: ExteriorRegionStream = main.get("exterior_stream")
+		stream.registry = registry
+		stream.links = composed.graph.connections.duplicate(true)
+		stream.links.append_array(composed.graph.get("visualConnections", []))
+		stream.preload_distance = float(composed.graph.get("preloadDistance",320))
+		stream.retain_distance = float(composed.graph.get("retainDistance",420))
+		print("SURVEY_COMPOSED_WORLD source=",world_override," maps=",composed.maps.size())
 	var override_path := OS.get_environment("ELORIA_SURVEY_MANIFEST")
 	var override_key := ""
 	if not override_path.is_empty():
@@ -56,6 +80,11 @@ func _run() -> void:
 	state.call("_on_packet", 5, PackedByteArray([180, 0]))
 	for spec: Dictionary in specs:
 		if state.get("current_map") != spec.map:
+			# Survey viewpoints jump across the continent; they are not actor
+			# movement packets continuing over a nearby border. Clear the prior
+			# actor before world_loaded can interpret its old tile in a new map.
+			state.set("actors", {})
+			state.set("local_actor_id", -1)
 			state.set("current_map", spec.map)
 			main.call("_load_server_map")
 			var loader: WorldLoader = main.get("world_loader")
@@ -109,6 +138,16 @@ func _run() -> void:
 					push_error("Neighbor failed to preload for survey")
 					quit(2)
 					return
+		var chunk_deadline := Time.get_ticks_msec() + 90000
+		while not _resident_chunks_ready(active_loader.world_root, stream) and Time.get_ticks_msec() < chunk_deadline:
+			await process_frame
+		if not _resident_chunks_ready(active_loader.world_root, stream):
+			push_error("Selected geometry chunks failed to become ready for survey")
+			quit(2)
+			return
+		# A cold neighbor import can finish after the initial settling period.
+		# Let the HUD's one-second FPS window expire before a steady-view capture.
+		await create_timer(1.1).timeout
 		var actor: Node3D = main.get("actor_nodes").get(1)
 		var times: Array = []
 		for i in 30:
@@ -122,6 +161,10 @@ func _run() -> void:
 			"actor":[actor.position.x,actor.position.y,actor.position.z] if actor else [],
 			"resident_maps":stream.residents.keys(), "preload_distance":stream.preload_distance,
 			"camera":str(rig.call("camera_diagnostics")), "frame_ms":times,
+			"chunkResidents":_chunk_report(active_loader.world_root, stream),
+			"staticMemoryBytes":Performance.get_monitor(Performance.MEMORY_STATIC),
+			"videoMemoryBytes":Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED),
+			"textureMemoryBytes":Performance.get_monitor(Performance.RENDER_TEXTURE_MEM_USED),
 			"draw_calls":Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),
 			"primitives":Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME)})
 		print("SURVEY saved ", spec.id)
@@ -136,3 +179,31 @@ func _run() -> void:
 	main.queue_free()
 	await process_frame
 	quit()
+
+func _resident_chunks_ready(active: Node3D, stream: ExteriorRegionStream) -> bool:
+	var roots: Array = [active]
+	for resident: Dictionary in stream.residents.values():
+		roots.append(resident.root)
+	for imported: Node3D in roots:
+		if not imported is ContinentChunkStream:
+			continue
+		var chunks := imported as ContinentChunkStream
+		if not chunks.has_focus or chunks._thread != null or not chunks._retiring.is_empty():
+			return false
+		for entry: Dictionary in chunks.selection(chunks.focus,true):
+			if float(entry.distance) <= chunks.preload_distance and not chunks.cells.has(str(entry.id)):
+				return false
+	return true
+
+func _chunk_report(active: Node3D, stream: ExteriorRegionStream) -> Dictionary:
+	var result: Dictionary = {}
+	var roots: Array = [active]
+	for resident: Dictionary in stream.residents.values():
+		roots.append(resident.root)
+	for imported: Node3D in roots:
+		if imported is ContinentChunkStream:
+			var chunks := imported as ContinentChunkStream
+			result[chunks.territory.asset_id()] = {"cells":chunks.cells.keys(),
+				"estimatedResidentBytes":chunks.resident_bytes,"maximumResidentBytes":chunks.maximum_resident_bytes,
+				"preloadDistance":chunks.preload_distance,"focus":str(chunks.focus)}
+	return result
