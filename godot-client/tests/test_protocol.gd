@@ -671,6 +671,22 @@ func _init() -> void:
 			PackedFloat32Array([0.2, 0.05, 0.35, 0.2, 0.21]), 0.6), 0.2)
 		and is_equal_approx(ReplicatedActor3D.median_of(PackedFloat32Array(), 0.6), 0.6),
 		"the pace is the median of recent steps, so a burst and a hold do not move it")
+	# A gap is a pause, not a cadence, once it is later than a network hold
+	# could make it: a second stood looting between two running steps is not a
+	# step that took a second, and a walking step's 600 ms is not late at all.
+	_expect(ReplicatedActor3D.is_pause_gap(1.0, 0.2)
+		and not ReplicatedActor3D.is_pause_gap(0.35, 0.2)
+		and not ReplicatedActor3D.is_pause_gap(0.9, 0.6)
+		and ReplicatedActor3D.is_pause_gap(1.1, 0.6),
+		"a gap past what a network hold explains is a pause")
+	_expect(ReplicatedActor3D.pace_gait(32, false) != ReplicatedActor3D.pace_gait(22, false)
+		and ReplicatedActor3D.pace_gait(22, true) != ReplicatedActor3D.pace_gait(22, false)
+		and ReplicatedActor3D.pace_gait(46, false) == ReplicatedActor3D.pace_gait(22, false),
+		"running, walking and hastened steps are paced from separate histories")
+	_expect(ReplicatedActor3D.confirms_new_pace(PackedFloat32Array([1.0, 1.02, 0.97, 1.05, 1.0]))
+		and not ReplicatedActor3D.confirms_new_pace(PackedFloat32Array([1.0, 1.02, 0.97, 1.05]))
+		and not ReplicatedActor3D.confirms_new_pace(PackedFloat32Array([0.8, 1.2, 0.9, 1.4, 1.0])),
+		"only gaps that repeat themselves are taken for a pace that has slowed")
 
 	var reduced_actor: Dictionary = ActorReducer.apply_command(actor, 21)
 	_expect(int(reduced_actor.get("x", -1)) == 11
@@ -1248,11 +1264,11 @@ func _init() -> void:
 			# stale along with every fixture below. What the catalog was built
 			# from is now asserted where both halves are visible - the
 			# server's client_content_manifest.json and its content-sync test.
-			# 532: the thirty-two hand-authored recipes, which stay first in
-			# the file and so stay first here, and the five hundred the
+			# 540: the forty-two hand-authored recipes, which stay first in
+			# the file and so stay first here, and the 498 the
 			# crafting ladder generates below them.
 			_expect(str(sources.get("profile", "")) == "eloria"
-				and manufacturing_recipes.size() == 532
+				and manufacturing_recipes.size() == 540
 				and str((manufacturing_recipes[0] as Dictionary).get("output", "")) == "Torch",
 				"manufacturing catalog matches the served profile's own recipes")
 			# Both catalogs come out of one generator run, so an index into the
@@ -1405,27 +1421,26 @@ func _init() -> void:
 				"spell icon resolves at native aspect")
 			var ready_reasons: Array[String] = spell_catalog.unavailable_reasons(0,
 				[0, 7], {"magic": 0, "ether": 5}, {
-					0: {"image_id": 68, "quantity": 1},
-					1: {"image_id": 16, "quantity": 1},
-					2: {"image_id": 67, "quantity": 1}})
+					0: {"image_id": 584, "quantity": 1},
+					1: {"image_id": 67, "quantity": 1}})
 			_expect(ready_reasons.is_empty(),
 				"owned Heal requirements are locally ready")
 			var blocked_reasons: Array[String] = spell_catalog.unavailable_reasons(0,
 				[0], {"magic": 0, "ether": 4}, {})
-			_expect(blocked_reasons.size() == 5,
-				"the missing sigil, the mana, and each of the three reagents are explicit")
+			# Heal is a self spell: one distillate and its anchor.
+			_expect(blocked_reasons.size() == 4,
+				"the missing sigil, the mana, and each of the two reagents are explicit")
 			# A reagent is stated by the server's name for the item, not by
 			# the number the catalog files it under.
-			_expect(blocked_reasons.has("Requires 1 Cinder Resin (have 0)"),
+			_expect(blocked_reasons.has("Requires 1 Life Distillate (have 0)"),
 				"a missing reagent is named: %s" % str(blocked_reasons))
 			# The two ids are not interchangeable: a backpack holding the
 			# item id rather than the image id is not holding the reagent.
 			var mistaken_reasons: Array[String] = spell_catalog.unavailable_reasons(0,
 				[0, 7], {"magic": 0, "ether": 5}, {
-					0: {"image_id": 70, "quantity": 1},
-					1: {"image_id": 20, "quantity": 1},
-					2: {"image_id": 69, "quantity": 1}})
-			_expect(mistaken_reasons.size() == 3,
+					0: {"image_id": 1850, "quantity": 1},
+					1: {"image_id": 69, "quantity": 1}})
+			_expect(mistaken_reasons.size() == 2,
 				"reagents are counted by image id, not by the server's item id: %s"
 					% str(mistaken_reasons))
 

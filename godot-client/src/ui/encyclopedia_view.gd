@@ -41,6 +41,22 @@ const CATEGORY_GLYPHS := {
 ## How far Back can walk. Long enough for any real trail through the pages,
 ## short enough that a session cannot grow it without bound.
 const HISTORY_LIMIT := 64
+## The window is 640 wide and holds three panes, so its type is set smaller
+## than the rest of the HUD: at the HUD's own size the two side panes grew to
+## fit their longest link and left the page itself a column a few words wide.
+const FONT_SIZE := 13
+const TITLE_FONT_SIZE := 18
+## The side panes are fixed rather than sized by what is in them. A link too
+## long for its pane is cut short with its whole name in the tooltip, because
+## a pane that widens for one long title narrows the page for every title.
+const BROWSE_WIDTH := 138
+const ASIDE_WIDTH := 132
+const PANE_GAP := 6
+const BROWSE_ICON_SIZE := 18
+## The label column of a fact table. Labels wrap inside it rather than push
+## the values over: a value squeezed to nothing wraps a letter to a line.
+const FACT_LABEL_WIDTH := 104
+const FACT_ICON_WIDTH := 16
 
 signal bookmarks_changed(bookmarks: Array)
 
@@ -58,6 +74,7 @@ var browse_list: VBoxContainer
 var entry_page: VBoxContainer
 var page_contents: VBoxContainer
 var related_list: VBoxContainer
+var aside_pane: VBoxContainer
 var content_scroll: ScrollContainer
 #: Section heading by title, so "On this page" can scroll to one.
 var _anchors: Dictionary = {}
@@ -308,7 +325,7 @@ func _written_entry(raw: Dictionary, category_id: String) -> Dictionary:
 		for fact_value: Variant in raw_facts as Array:
 			if fact_value is Array and (fact_value as Array).size() >= 2:
 				facts.append([str((fact_value as Array)[0]),
-					str((fact_value as Array)[1])])
+					_escape(str((fact_value as Array)[1]))])
 	return _entry_record(str(raw.get("id", "")), str(raw.get("title", "")),
 		str(raw.get("summary", "")), body, facts, {}, category_id)
 
@@ -602,6 +619,9 @@ func _render() -> void:
 	var built: bool = kind == "entry"
 	entry_page.visible = built
 	entry_body.visible = not built
+	# A list has no sections and nothing beside it, and an empty pane's width
+	# is better spent on the list.
+	aside_pane.visible = built
 	if not built:
 		_clear(entry_page)
 		_clear(page_contents)
@@ -757,6 +777,10 @@ static func _escape(text: String) -> String:
 ## that an entry is built from controls rather than written as bbcode, because
 ## a fact table with an icon in every row is a table and not a paragraph.
 func _build() -> void:
+	var compact := Theme.new()
+	compact.default_font_size = FONT_SIZE
+	theme = compact
+	add_theme_constant_override("separation", 2)
 	var shell := VBoxContainer.new()
 	shell.name = "Shell"
 	shell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -802,13 +826,14 @@ func _build() -> void:
 	var panes := HBoxContainer.new()
 	panes.name = "Panes"
 	panes.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	panes.add_theme_constant_override("separation", 12)
+	panes.add_theme_constant_override("separation", PANE_GAP)
 	shell.add_child(panes)
 
 	# Left: everything there is to read, always on screen.
 	var browse_column := VBoxContainer.new()
 	browse_column.name = "Browse"
-	browse_column.custom_minimum_size = Vector2(190, 0)
+	browse_column.custom_minimum_size = Vector2(BROWSE_WIDTH, 0)
+	browse_column.add_theme_constant_override("separation", 2)
 	panes.add_child(browse_column)
 	browse_column.add_child(_shell_heading("BROWSE"))
 	var browse_scroll := ScrollContainer.new()
@@ -819,6 +844,7 @@ func _build() -> void:
 	browse_list = VBoxContainer.new()
 	browse_list.name = "BrowseList"
 	browse_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	browse_list.add_theme_constant_override("separation", 2)
 	browse_scroll.add_child(browse_list)
 
 	# Middle: either a built page or, for the lists, the document renderer
@@ -851,8 +877,10 @@ func _build() -> void:
 	# Right: what is on this page, and what sits beside it.
 	var aside := VBoxContainer.new()
 	aside.name = "Aside"
-	aside.custom_minimum_size = Vector2(200, 0)
+	aside.custom_minimum_size = Vector2(ASIDE_WIDTH, 0)
+	aside.add_theme_constant_override("separation", 0)
 	panes.add_child(aside)
+	aside_pane = aside
 	aside.add_child(_shell_heading("ON THIS PAGE"))
 	page_contents = VBoxContainer.new()
 	page_contents.name = "OnThisPage"
@@ -913,11 +941,12 @@ func _sync_browse() -> void:
 		if icon != null:
 			row.icon = icon
 			row.text = str(category.get("title", id))
-			row.add_theme_constant_override("h_separation", 8)
+			row.add_theme_constant_override("h_separation", 5)
+			row.add_theme_constant_override("icon_max_width", BROWSE_ICON_SIZE)
 		else:
 			row.text = "%s  %s" % [CATEGORY_GLYPHS.get(id, "•"),
 				str(category.get("title", id))]
-		row.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		_fit_to_pane(row)
 		row.focus_mode = Control.FOCUS_NONE
 		row.toggle_mode = true
 		row.button_pressed = id == here
@@ -944,7 +973,8 @@ func _render_entry_page(category_id: String, entry_id: String) -> void:
 	var title := Label.new()
 	title.name = "Title"
 	title.text = str(entry.get("title", ""))
-	title.add_theme_font_size_override("font_size", 24)
+	title.add_theme_font_size_override("font_size", TITLE_FONT_SIZE)
+	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	title.add_theme_color_override("font_color", Color(0.91, 0.71, 0.32))
 	entry_page.add_child(title)
 	entry_page.add_child(_breadcrumbs(category, entry))
@@ -967,7 +997,8 @@ func _render_entry_page(category_id: String, entry_id: String) -> void:
 		var link := Button.new()
 		link.name = "Related%s" % _slug(str(related.get("id", "")))
 		link.text = str(related.get("title", ""))
-		link.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		link.tooltip_text = link.text
+		_fit_to_pane(link)
 		link.focus_mode = Control.FOCUS_NONE
 		link.flat = true
 		link.pressed.connect(open_entry.bind(str(related.get("category", "")),
@@ -980,11 +1011,19 @@ func _add_anchor(title: String) -> void:
 	var link := Button.new()
 	link.name = "Anchor%s" % _slug(title)
 	link.text = title
-	link.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	link.tooltip_text = title
+	_fit_to_pane(link)
 	link.focus_mode = Control.FOCUS_NONE
 	link.flat = true
 	link.pressed.connect(_scroll_to_section.bind(title))
 	page_contents.add_child(link)
+
+## A button in a side pane: left-aligned, and cut short with an ellipsis rather
+## than widening the pane it sits in.
+static func _fit_to_pane(button: Button) -> void:
+	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	button.clip_text = true
+	button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 
 func _scroll_to_section(title: String) -> void:
 	var target: Variant = _anchors.get(title)
@@ -1002,7 +1041,10 @@ func _breadcrumbs(category: Dictionary, entry: Dictionary) -> Control:
 	root.focus_mode = Control.FOCUS_NONE
 	root.pressed.connect(show_index)
 	row.add_child(root)
-	row.add_child(_shell_note("/"))
+	var separator: Label = _shell_note("/")
+	separator.size_flags_horizontal = Control.SIZE_FILL
+	separator.autowrap_mode = TextServer.AUTOWRAP_OFF
+	row.add_child(separator)
 	var here := Button.new()
 	here.name = "CrumbCategory"
 	here.text = str(category.get("title", ""))
@@ -1027,18 +1069,26 @@ func _fact_table(rows: Array) -> Control:
 		line.name = "Fact"
 		var icon := Control.new()
 		icon.name = "Icon"
-		icon.custom_minimum_size = Vector2(26, 0)
+		icon.custom_minimum_size = Vector2(FACT_ICON_WIDTH, 0)
 		line.add_child(icon)
 		var label := Label.new()
 		label.name = "Label"
 		label.text = str(pair[0])
-		label.custom_minimum_size = Vector2(170, 0)
+		label.custom_minimum_size = Vector2(FACT_LABEL_WIDTH, 0)
+		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		label.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 		line.add_child(label)
-		var value := Label.new()
+		# A value is bbcode: a recipe's materials carry their item icons and a
+		# recipe's book is a link to the book's page.
+		var value := RichTextLabel.new()
 		value.name = "Value"
-		value.text = str(pair[1])
+		value.bbcode_enabled = true
+		value.fit_content = true
+		value.scroll_active = false
 		value.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		value.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		value.meta_clicked.connect(_on_meta_clicked)
+		value.text = str(pair[1])
 		line.add_child(value)
 		table.add_child(line)
 	return table

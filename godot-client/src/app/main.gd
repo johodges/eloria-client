@@ -305,6 +305,8 @@ var minimap_marker_overlay: Control
 ## Short-lived world effects the server announced. Kept only so a test can see
 ## what is on screen; each one frees itself when it finishes.
 var world_effects: Array = []
+## The glitter around the player while they harvest; null when they are not.
+var harvest_sparkle: HarvestSparkle3D
 ## The sky and the fires the server placed on this map.
 var weather_layer: Weather3D
 ## Objects the server placed into this map after it loaded, by object id.
@@ -324,6 +326,7 @@ var reference_window: Control
 var _shadows_enabled := true
 var _effects_enabled := true
 var _nameplates_enabled := true
+var _name_distance_metres := NAME_DISTANCE_DEFAULT_METRES
 var _fps_limit := 0
 var _camera_follows_player := true
 var _player_notes := ""
@@ -444,13 +447,13 @@ var _chat_tab := "all"
 var _last_chat_activity_msec := 0
 var _current_map_display_name := "Unknown map"
 var _minimap_scale := 1.0
-var _minimap_orientation := "north_up"
+var _minimap_orientation := MINIMAP_DEFAULT_ORIENTATION
 var _minimap_zoom := MINIMAP_ZOOM_DEFAULT
 var _minimap_marker_scale := 1.0
-var _minimap_border := MINIMAP_DRAG_BORDER
+var _minimap_border := MINIMAP_DEFAULT_BORDER
 ## "square" or "round". A round minimap is the map masked to the circle its
 ## frame holds, which is the shape the compass letters were always arranged in.
-var _minimap_shape := "square"
+var _minimap_shape := MINIMAP_DEFAULT_SHAPE
 ## Which marker types are drawn, keyed by MINIMAP_MARKER_TYPES.
 var _minimap_marker_types: Dictionary = _default_minimap_marker_types()
 var _map_environment: Environment
@@ -645,7 +648,6 @@ var _last_skill_experience_msec := -100000
 var _banner_option_boxes: Dictionary = {}
 var _banner_background_style: StyleBoxFlat
 
-const FLOATING_FEEDBACK_BASE_OFFSET := 78.0
 const FLOATING_FEEDBACK_ROW_HEIGHT := 21.0
 const FLOATING_FEEDBACK_MAX_ROWS := 4
 const FLOATING_FEEDBACK_RISE := 58.0
@@ -697,6 +699,8 @@ const RANGE_WEAPON_FIRST := 64
 const RANGE_WEAPON_LAST := 68
 ## interface.c defaults instance_mode_banner_height to five banner lines.
 const BANNER_INSTANCE_LIFT_ROWS := 5.0
+## World metres between the top of your head and the foot of your own banner.
+const BANNER_HEAD_CLEARANCE := 0.15
 const SPEECH_BUBBLE_MSEC := 6000
 
 const CHAT_FADE_DELAY_MSEC := 7000
@@ -722,10 +726,6 @@ const INVENTORY_TOOL_LABELS := {
 	"grab": "Move", "use": "Use", "equip": "Equip", "unequip": "Unequip",
 	"inspect": "Inspect",
 }
-## Doubles as the black margin around the minimap render and the band that
-## drags the window. 54 left more empty frame than map; half of it still
-## grabs comfortably and hands the render the rest.
-const MINIMAP_DRAG_BORDER := 27.0
 ## The widths that border can be set to, narrowest first. The band is also the
 ## only thing the minimap window can be dragged by, so the narrowest is a band
 ## a mouse can still find rather than none at all: a minimap that cannot be
@@ -747,6 +747,12 @@ void fragment() {
 """
 const MINIMAP_BORDER_STEPS: Array[float] = [8.0, 16.0, 27.0, 40.0]
 const MINIMAP_BORDER_LABELS: Array[String] = ["Minimal", "Thin", "Normal", "Wide"]
+## How a fresh installation shows the minimap, before the player picks
+## anything: a round map with the least frame, turned the way the camera
+## faces so up on the minimap is ahead on screen.
+const MINIMAP_DEFAULT_ORIENTATION := "viewport_up"
+const MINIMAP_DEFAULT_SHAPE := "round"
+const MINIMAP_DEFAULT_BORDER: float = MINIMAP_BORDER_STEPS[0]
 ## What the minimap window's size option offers, matching the range the
 ## settings window's slider already moves between so the two cannot disagree.
 const MINIMAP_SIZE_STEPS: Array[float] = [0.75, 1.0, 1.25, 1.5, 1.75]
@@ -852,6 +858,15 @@ const ANIMATION_GATE_REFRESH_MSEC := 100
 ## open enough to read the names of everyone on a pavilion a hundred and sixty
 ## metres away, stacked over the water in front of the player.
 const ACTOR_DRAW_DISTANCE_METRES := 80.0
+## How far from the player another actor's name, title and health bar still
+## show. The block is drawn at a fixed screen size so it stays readable at any
+## zoom, which also means a name sixty metres off is as large as one at arm's
+## length, and a castle gate read as a field of labels. So the block
+## fades out over the last few metres before this distance, the body carries on
+## to the draw distance, and the player can move it from the Graphics settings.
+## The slider's range lives with the slider, in settings_window.gd.
+const NAME_DISTANCE_DEFAULT_METRES := SettingsWindowScript.NAME_DISTANCE_DEFAULT
+const NAME_FADE_METRES := 5.0
 ## How many actors `_sync_world` builds in one pass. A spawn is a couple of
 ## milliseconds of model, skin and equipment work, so a pack of twenty
 ## arriving together was one long frame; the rest follow on the next frames.
@@ -4152,6 +4167,8 @@ func _spawn_actor(id: Variant) -> void:
 	node.set_nameplate_visible(_nameplate_visible_for(int(id)))
 	node.set_title(str(AppState.actor_titles.get(int(id), "")))
 	_place_actor_on_surface(node, true)
+	if int(id) == AppState.local_actor_id:
+		_sync_harvest_sparkle()
 
 ## Push the worn titles onto the actors wearing them.
 ##
@@ -4906,6 +4923,7 @@ func _update_animation_gate(delta: float) -> void:
 	var local_value: Variant = actor_nodes.get(AppState.local_actor_id)
 	var local_node: Node3D = local_value as Node3D if is_instance_valid(local_value) else null
 	var here: Vector3 = local_node.global_position if local_node != null else Vector3.ZERO
+	var fighting: int = _combat_target_actor_id()
 	for raw_id: Variant in actor_nodes:
 		var actor_value: Variant = actor_nodes[raw_id]
 		if not is_instance_valid(actor_value):
@@ -4919,9 +4937,20 @@ func _update_animation_gate(delta: float) -> void:
 		else:
 			tier = animation_gate.classify(actor.global_position + Vector3.UP,
 				actor.view_radius())
-			actor.set_drawn(local_node == null
-				or here.distance_to(actor.global_position) <= ACTOR_DRAW_DISTANCE_METRES)
+			var distance: float = (0.0 if local_node == null
+				else here.distance_to(actor.global_position))
+			actor.set_drawn(distance <= ACTOR_DRAW_DISTANCE_METRES)
+			# Whoever the player is fighting keeps their name and bar at any
+			# range: a shot lined up from across a field still needs both.
+			actor.set_overhead_fade(1.0 if int(raw_id) == fighting
+				else nameplate_fade(distance, _name_distance_metres))
 		actor.set_animation_tier(tier, animation_gate)
+
+## How much of an actor's overhead block shows at this distance from the
+## player: all of it up to `NAME_FADE_METRES` short of the name distance,
+## nothing from the name distance on, and a straight fade between.
+static func nameplate_fade(distance: float, name_distance: float) -> float:
+	return clampf((name_distance - distance) / NAME_FADE_METRES, 0.0, 1.0)
 
 ## Interiors are closed boxes, so the isometric rig would render their ceiling
 ## and near wall. The manifest names the nodes to cut away; maps without a
@@ -5182,9 +5211,9 @@ func _load_hud_settings() -> void:
 		_show_through_obstacles = bool(config.get_value(
 			"hud", "show_through_obstacles", true))
 		_minimap_orientation = str(config.get_value(
-			"hud", "minimap_orientation", "north_up"))
+			"hud", "minimap_orientation", MINIMAP_DEFAULT_ORIENTATION))
 		if _minimap_orientation not in ["north_up", "player_up", "viewport_up"]:
-			_minimap_orientation = "north_up"
+			_minimap_orientation = MINIMAP_DEFAULT_ORIENTATION
 		_minimap_zoom = clampf(float(config.get_value(
 			"hud", "minimap_zoom", MINIMAP_ZOOM_DEFAULT)),
 			MINIMAP_ZOOM_MIN, MINIMAP_ZOOM_MAX)
@@ -5192,11 +5221,12 @@ func _load_hud_settings() -> void:
 			"hud", "minimap_marker_scale", 1.0)),
 			MINIMAP_MARKER_SCALES[0], MINIMAP_MARKER_SCALES[-1])
 		_minimap_border = clampf(float(config.get_value(
-			"hud", "minimap_border", MINIMAP_DRAG_BORDER)),
+			"hud", "minimap_border", MINIMAP_DEFAULT_BORDER)),
 			MINIMAP_BORDER_STEPS[0], MINIMAP_BORDER_STEPS[-1])
-		_minimap_shape = str(config.get_value("hud", "minimap_shape", "square"))
+		_minimap_shape = str(config.get_value(
+			"hud", "minimap_shape", MINIMAP_DEFAULT_SHAPE))
 		if _minimap_shape not in ["square", "round"]:
-			_minimap_shape = "square"
+			_minimap_shape = MINIMAP_DEFAULT_SHAPE
 		for type: StringName in MINIMAP_MARKER_TYPES:
 			_minimap_marker_types[type] = bool(config.get_value(
 				"hud", "minimap_marker_%s" % type, true))
@@ -5264,6 +5294,8 @@ func _load_hud_settings() -> void:
 		_effects_enabled = bool(config.get_value("graphics", "particles", true))
 		_nameplates_enabled = bool(
 			config.get_value("graphics", "nameplates", true))
+		_set_name_distance(config.get_value(
+			"graphics", "name_distance", NAME_DISTANCE_DEFAULT_METRES))
 		camera_rig.rotation_sensitivity = float(config.get_value(
 			"camera", "rotation_sensitivity", camera_rig.rotation_sensitivity))
 		camera_rig.pan_sensitivity = float(config.get_value(
@@ -5307,6 +5339,7 @@ func _load_hud_settings() -> void:
 	show_through_obstacles.set_pressed_no_signal(_show_through_obstacles)
 	settings_window.call("restore_toggle", "combat_hud",
 		bool(extension_windows.get("combat_hud_enabled")))
+	settings_window.call("restore_name_distance", _name_distance_metres)
 	for option_key: String in _hud_element_options:
 		settings_window.call("restore_toggle", option_key,
 			bool(_hud_element_options[option_key]))
@@ -5383,6 +5416,7 @@ func _save_hud_settings() -> void:
 	config.set_value("graphics", "shadows", _shadows_enabled)
 	config.set_value("graphics", "particles", _effects_enabled)
 	config.set_value("graphics", "nameplates", _nameplates_enabled)
+	config.set_value("graphics", "name_distance", _name_distance_metres)
 	config.set_value("graphics", "fps_limit", _fps_limit)
 	config.set_value("hud", "combat_hud",
 		bool(extension_windows.get("combat_hud_enabled")))
@@ -7667,8 +7701,7 @@ func _update_actor_resource_overlay() -> void:
 	if not actor_value is Node3D or not is_instance_valid(actor_value as Node3D):
 		actor_resource_overlay.hide()
 		return
-	var actor_node: Node3D = actor_value as Node3D
-	var world_position: Vector3 = actor_node.global_position + Vector3(0.0, 2.8, 0.0)
+	var world_position: Vector3 = _above_head(actor_value as Node3D)
 	if gameplay_camera.is_position_behind(world_position):
 		actor_resource_overlay.hide()
 		return
@@ -7690,6 +7723,15 @@ func _update_actor_resource_overlay() -> void:
 		clampf(overlay_position.y, 34.0,
 			maxf(34.0, game_view.size.y - actor_resource_overlay.size.y - 86.0)))
 	actor_resource_overlay.show()
+
+## Just over an actor's head, where your own banner and the experience that
+## floats up out of it are hung: from the top of the body rather than a fixed
+## height over the feet, which left a head's height of empty air above a
+## human-sized player.
+func _above_head(actor_node: Node3D) -> Vector3:
+	var head: float = (float(actor_node.call("head_height"))
+		if actor_node.has_method("head_height") else 2.8 - BANNER_HEAD_CLEARANCE)
+	return actor_node.global_position + Vector3(0.0, head + BANNER_HEAD_CLEARANCE, 0.0)
 
 func _banner_has_content() -> bool:
 	if _banner_option("show_names"):
@@ -7928,8 +7970,7 @@ func _spawn_floating_feedback(feedback: Dictionary) -> void:
 	var actor_value: Variant = actor_nodes.get(AppState.local_actor_id)
 	if not actor_value is Node3D or not is_instance_valid(actor_value as Node3D):
 		return
-	var actor_node: Node3D = actor_value as Node3D
-	var world_position: Vector3 = actor_node.global_position + Vector3(0.0, 3.15, 0.0)
+	var world_position: Vector3 = _above_head(actor_value as Node3D)
 	if gameplay_camera.is_position_behind(world_position):
 		return
 	var viewport_position: Vector2 = gameplay_camera.unproject_position(world_position)
@@ -7953,8 +7994,12 @@ func _spawn_floating_feedback(feedback: Dictionary) -> void:
 		label.add_theme_color_override("font_color", Color(0.45, 1.0, 0.38, 1.0))
 	_floating_feedback_layer.add_child(label)
 	label.reset_size()
+	# Out of the top of your own banner, a line clear of the name, or out of
+	# the top of your head when the banner is switched off.
+	var floor_y: float = ((actor_resource_overlay.position.y
+		if actor_resource_overlay.visible else screen_position.y) - label.size.y)
 	label.position = Vector2(screen_position.x - label.size.x * 0.5,
-		_floating_feedback_row(screen_position.y - FLOATING_FEEDBACK_BASE_OFFSET))
+		_floating_feedback_row(floor_y - FLOATING_FEEDBACK_ROW_HEIGHT, floor_y))
 	_active_floating_labels.append(label)
 	var tween: Tween = create_tween().set_parallel(true)
 	tween.tween_property(label, "position",
@@ -7967,9 +8012,11 @@ func _spawn_floating_feedback(feedback: Dictionary) -> void:
 		_active_floating_labels.erase(label)
 		label.queue_free())
 
-func _floating_feedback_row(preferred_y: float) -> float:
+func _floating_feedback_row(preferred_y: float, lowest_y: float) -> float:
 	# Messages drift upwards, so a new one takes the first free row at or below
-	# the preferred height rather than landing on top of one still on screen.
+	# the preferred height rather than landing on top of one still on screen -
+	# down as far as `lowest_y`, which keeps it off the banner, and upwards
+	# from the preferred row once that room is used.
 	var occupied: Array[float] = []
 	for index: int in range(_active_floating_labels.size() - 1, -1, -1):
 		var other: Label = _active_floating_labels[index]
@@ -7977,16 +8024,22 @@ func _floating_feedback_row(preferred_y: float) -> float:
 			occupied.append(other.position.y)
 		else:
 			_active_floating_labels.remove_at(index)
-	occupied.sort()
+	var candidates: Array[float] = []
 	var row_y: float = preferred_y
-	var lowest_row: float = preferred_y + FLOATING_FEEDBACK_ROW_HEIGHT * float(
-		FLOATING_FEEDBACK_MAX_ROWS)
-	for y: float in occupied:
-		if row_y > lowest_row:
-			break
-		if absf(y - row_y) < FLOATING_FEEDBACK_ROW_HEIGHT:
-			row_y = y + FLOATING_FEEDBACK_ROW_HEIGHT
-	return minf(row_y, lowest_row)
+	while row_y <= lowest_y:
+		candidates.append(row_y)
+		row_y += FLOATING_FEEDBACK_ROW_HEIGHT
+	for step: int in range(1, FLOATING_FEEDBACK_MAX_ROWS + 1):
+		candidates.append(preferred_y - FLOATING_FEEDBACK_ROW_HEIGHT * float(step))
+	for candidate: float in candidates:
+		var free := true
+		for y: float in occupied:
+			if absf(y - candidate) < FLOATING_FEEDBACK_ROW_HEIGHT:
+				free = false
+				break
+		if free:
+			return candidate
+	return candidates[candidates.size() - 1]
 
 func _on_window_size_changed() -> void:
 	# Match the render viewport to the actual drawable area so resizing changes
@@ -8653,6 +8706,16 @@ func _apply_fps_limit(value: Variant) -> void:
 	Engine.max_fps = _fps_limit
 	settings_window.call("restore_fps_limit", _fps_limit)
 
+## An old or hand-edited preference is held to the slider's range. The fades
+## are worked out on the animation gate's clock, so the next frame is asked to
+## rather than waiting out the rest of its tenth of a second.
+func _set_name_distance(value: Variant) -> void:
+	var metres: float = (float(value) if value is float or value is int
+		else NAME_DISTANCE_DEFAULT_METRES)
+	_name_distance_metres = clampf(metres, SettingsWindowScript.NAME_DISTANCE_MIN,
+		SettingsWindowScript.NAME_DISTANCE_MAX)
+	_animation_gate_refresh_msec = 0
+
 ## A client setting the player changed. Everything under Graphics and Camera
 ## is about this machine; everything under Gameplay is a command the server
 ## owns, sent as the player's own words rather than applied here.
@@ -8674,9 +8737,12 @@ func _on_client_setting_changed(section: String, key: String,
 			for actor_value: Variant in actor_nodes.values():
 				if is_instance_valid(actor_value):
 					(actor_value as ReplicatedActor3D).set_combat_effects_enabled(_effects_enabled)
+			_sync_harvest_sparkle()
 		"nameplates":
 			_nameplates_enabled = bool(value)
 			_apply_banner_options()
+		"name_distance":
+			_set_name_distance(value)
 		"combat_hud":
 			extension_windows.call("set_combat_hud_enabled", bool(value))
 		"rotation_sensitivity":
@@ -10523,6 +10589,7 @@ func _sync_harvest_indicator() -> void:
 		var map_object: MapObject3D = raw_object as MapObject3D
 		if is_instance_valid(map_object):
 			map_object.set_active(active and map_object.object_id == active_object)
+	_sync_harvest_sparkle()
 	if harvest_banner == null:
 		return
 	if not active:
@@ -10530,6 +10597,28 @@ func _sync_harvest_indicator() -> void:
 		return
 	harvest_banner.text = "Harvesting %s" % str(AppState.harvest.get("resource", ""))
 	harvest_banner.show()
+
+## Glitter around the player for as long as the server says they are
+## harvesting, the way the legacy client's harvesting eye candy did. Only the
+## local player's run is on the wire, so only the local player glitters.
+func _sync_harvest_sparkle() -> void:
+	var active: bool = bool(AppState.harvest.get("active", false))
+	# Checked before the cast: `as` on a freed node raises.
+	var actor_value: Variant = actor_nodes.get(AppState.local_actor_id)
+	var actor: ReplicatedActor3D = (actor_value as ReplicatedActor3D
+		) if is_instance_valid(actor_value) else null
+	var wanted: bool = active and _effects_enabled and actor != null
+	if is_instance_valid(harvest_sparkle):
+		if wanted and harvest_sparkle.is_following(actor):
+			return
+		harvest_sparkle.stop()
+	harvest_sparkle = null
+	if not wanted:
+		return
+	harvest_sparkle = HarvestSparkle3D.new()
+	harvest_sparkle.name = "HarvestSparkle"
+	world_root.add_child(harvest_sparkle)
+	harvest_sparkle.configure(actor)
 
 func _pick_ground_bag(viewport_position: Vector2) -> int:
 	if gameplay_world == null:

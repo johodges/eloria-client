@@ -19,6 +19,12 @@ const PANEL_SIZE := Vector2(560.0, 430.0)
 ## Nothing may cover the fixed resource rail down the right-hand edge.
 const RESERVED_RIGHT_RAIL := 96.0
 const FPS_LIMITS: Array[int] = [0, 30, 60, 75, 90, 120, 144, 165, 240, 360]
+## How far away other actors' names still show, in metres. The top of the range
+## is main.gd's ACTOR_DRAW_DISTANCE_METRES: past it there is no body to hang a
+## name over.
+const NAME_DISTANCE_MIN := 10.0
+const NAME_DISTANCE_MAX := 80.0
+const NAME_DISTANCE_DEFAULT := 30.0
 
 ## Preloaded rather than reached by its global class name, for the same reason
 ## this script declares none: the global class cache is a build artifact, and
@@ -57,6 +63,8 @@ var capture_label: Label
 ## What the map cache is costing on disk, refreshed when the window opens.
 var map_cache_size: Label
 var fps_limit_option: OptionButton
+var name_distance_slider: HSlider
+var name_distance_value: Label
 
 ## The action waiting for a key. While this is set the window swallows every
 ## key press, so a rebind cannot fire the action it is rebinding.
@@ -284,6 +292,7 @@ func _build_graphics() -> void:
 	_add_toggle(page, "shadows", tr("ELORIA_SETTINGS_SHADOWS"), true)
 	_add_toggle(page, "particles", tr("ELORIA_SETTINGS_PARTICLES"), true)
 	_add_toggle(page, "nameplates", tr("ELORIA_SETTINGS_NAMEPLATES"), true)
+	_add_name_distance_row(page)
 	# The combat box can also be dismissed from its own right-click menu, so
 	# this is the way back once a player has done that.
 	_add_toggle(page, "combat_hud", tr("ELORIA_SETTINGS_COMBAT_HUD"), true)
@@ -311,6 +320,40 @@ func _add_fps_limit_row(page: VBoxContainer) -> void:
 func restore_fps_limit(value: int) -> void:
 	# Selecting an item programmatically does not emit item_selected.
 	fps_limit_option.select(fps_limit_option.get_item_index(value))
+
+## A slider with its reading beside it: unlike the camera's sensitivities, a
+## distance is a number the player can check against the world.
+func _add_name_distance_row(page: VBoxContainer) -> void:
+	var row := HBoxContainer.new()
+	page.add_child(row)
+	var caption := Label.new()
+	caption.text = tr("ELORIA_SETTINGS_NAME_DISTANCE")
+	caption.custom_minimum_size = Vector2(200.0, 0.0)
+	row.add_child(caption)
+	name_distance_slider = HSlider.new()
+	name_distance_slider.name = "name_distance"
+	name_distance_slider.min_value = NAME_DISTANCE_MIN
+	name_distance_slider.max_value = NAME_DISTANCE_MAX
+	name_distance_slider.step = 5.0
+	name_distance_slider.value = NAME_DISTANCE_DEFAULT
+	name_distance_slider.custom_minimum_size = Vector2(220.0, 0.0)
+	name_distance_slider.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	name_distance_slider.tooltip_text = tr("ELORIA_SETTINGS_NAME_DISTANCE_HINT")
+	name_distance_slider.value_changed.connect(func(moved: float) -> void:
+		_show_name_distance(moved)
+		setting_changed.emit(page.name, "name_distance", moved))
+	row.add_child(name_distance_slider)
+	name_distance_value = Label.new()
+	name_distance_value.name = "NameDistanceValue"
+	row.add_child(name_distance_value)
+	_show_name_distance(NAME_DISTANCE_DEFAULT)
+
+func restore_name_distance(metres: float) -> void:
+	name_distance_slider.set_value_no_signal(metres)
+	_show_name_distance(metres)
+
+func _show_name_distance(metres: float) -> void:
+	name_distance_value.text = "%d m" % roundi(metres)
 
 ## The map cache: a switch, what it is costing, and a way to be rid of it.
 ##

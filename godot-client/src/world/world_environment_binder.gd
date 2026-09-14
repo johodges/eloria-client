@@ -25,6 +25,18 @@ const DEFAULT_SUN_ENERGY := 1.15
 ## Cover tall casters outside the view, including the low daytime sun, without
 ## increasing the maximum shadow distance from the camera.
 const SUN_SHADOW_CASTER_DEPTH := 256.0
+## How much sun energy reaches the ground inside a shadow. The compatibility
+## renderer has no GI or screen-space occlusion, so an opaque shadow is lit by
+## ambient alone and every region's shadows read as holes in the ground.
+## Raising ambient does not fix that: `ambient_light_energy` does nothing to the
+## sky's share, and five regions take all of their ambient from the sky. Letting
+## part of the sun through does. It is an amount of energy rather than a fixed
+## opacity because the same opacity that suits Westhaven's 1.22 sun all but
+## erased the shadows under Ssarathi's 2.35 one.
+const SUN_SHADOW_LEAK_ENERGY := 0.42
+## However weak a package's sun, its shadows still block at least this much, so
+## an overcast map keeps enough shadow to ground what stands in it.
+const MIN_SUN_SHADOW_OPACITY := 0.5
 
 ## Point lights spawned from a manifest are tagged so the next map can clear
 ## them without touching lights that belong to the scene.
@@ -132,6 +144,7 @@ static func apply(manifest: WorldManifest, world_environment: WorldEnvironment,
 		# A hidden key light must also stop casting: an interior that declares
 		# no sun should get no directional shadows across its floor.
 		sun.shadow_enabled = sun.visible and bool(declared_sun.get("shadows", true))
+		sun.shadow_opacity = sun_shadow_opacity(declared_sun)
 	elif sun != null:
 		sun.visible = true
 		_restore_defaults(sun)
@@ -211,6 +224,18 @@ static func _restore_defaults(sun: DirectionalLight3D) -> void:
 	sun.light_color = Color.WHITE
 	sun.light_energy = DEFAULT_SUN_ENERGY
 	sun.light_indirect_energy = 1.0
+	sun.shadow_opacity = sun_shadow_opacity({})
+
+## The shadow opacity for a package's noon sun: its own `shadowOpacity` if it
+## declares one, otherwise whatever lets SUN_SHADOW_LEAK_ENERGY through.
+static func sun_shadow_opacity(declared_sun: Dictionary) -> float:
+	var declared: Variant = declared_sun.get("shadowOpacity")
+	if declared is float or declared is int:
+		return clampf(float(declared), 0.0, 1.0)
+	var energy: float = float(_number(declared_sun.get("energy"), DEFAULT_SUN_ENERGY))
+	if energy <= 0.0:
+		return 1.0
+	return clampf(1.0 - SUN_SHADOW_LEAK_ENERGY / energy, MIN_SUN_SHADOW_OPACITY, 1.0)
 
 ## First of two accepted spellings that the manifest actually declares.
 static func _either(block: Dictionary, canonical: String, alias: String) -> Variant:

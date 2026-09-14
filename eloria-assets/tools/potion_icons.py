@@ -235,6 +235,39 @@ SHELF = [
            "A tonic the colour of deep water, for spells that are meant "
            "to hold.",
            "flask_round", 0.82, (48, 128, 176), glow=True),
+    # -- the ten distillates spells are cast with, one per school. Narrow
+    #    phials rather than bottles, because nobody drinks them; the colour
+    #    names the school. Ids continue after the armour set's sabatons.
+    Potion("Life Distillate", "Catalysts", 1, {},
+           "Sage and hearthroot pressed down to a green drop that remembers growing.",
+           "phial", 0.82, (86, 190, 82)),
+    Potion("Fire Distillate", "Catalysts", 1, {},
+           "Coal and flint reduced to an ember-bright drop that will not stay cool.",
+           "phial", 0.82, (236, 104, 36), motif="spark"),
+    Potion("Water Distillate", "Catalysts", 1, {},
+           "Kelp and watercress drawn down to a clear blue drop that is always moving.",
+           "phial", 0.82, (52, 132, 222)),
+    Potion("Earth Distillate", "Catalysts", 1, {},
+           "Clay and peat settled into a brown drop as heavy as a field.",
+           "phial", 0.82, (150, 104, 58), motif="dots"),
+    Potion("Matter Distillate", "Catalysts", 1, {},
+           "Quartz and bog iron ground into a grey drop that holds its shape.",
+           "phial", 0.82, (142, 148, 158), motif="dots"),
+    Potion("Air Distillate", "Catalysts", 1, {},
+           "Seed and reed winnowed to a pale drop that barely weighs the glass.",
+           "phial", 0.82, (200, 226, 236)),
+    Potion("Death Distillate", "Catalysts", 1, {},
+           "Toadstool and thistle rotted down to a bruise-coloured drop. Stopper it.",
+           "phial", 0.82, (104, 70, 112)),
+    Potion("Energy Distillate", "Catalysts", 1, {},
+           "Stormglass and verdigris charged into a yellow drop that hums.",
+           "phial", 0.82, (238, 206, 52), motif="spark", glow=True),
+    Potion("Spirit Distillate", "Catalysts", 1, {},
+           "Silverleaf and lichen drawn into a pale violet drop that seems to look back.",
+           "phial", 0.82, (190, 176, 246), glow=True),
+    Potion("Magic Distillate", "Catalysts", 1, {},
+           "Lotus and resin refined into a deep purple drop of pure working.",
+           "phial", 0.82, (150, 66, 216), motif="frost", glow=True),
 ]
 
 #: Where the shelf stopped when the torso designs took the ids and icons
@@ -245,11 +278,21 @@ SHELF_BEFORE_TORSO = 32
 #: The first id and icon after the torso designs' tail.
 CONTINUED_ITEM_ID = 1746
 CONTINUED_IMAGE_ID = 570
+#: Where the shelf stopped the second time: the armour set's eight sabatons
+#: took icons 576-583 and the practice items took item ids up to 1833. Frozen
+#: for the same reason as SHELF_BEFORE_TORSO.
+SHELF_BEFORE_SABATONS = 38
+#: The distillates' first id and icon. Item ids leave the practice items room.
+DISTILLATE_ITEM_ID = 1850
+DISTILLATE_IMAGE_ID = 584
 
 for index, potion in enumerate(SHELF):
     if index < SHELF_BEFORE_TORSO:
         potion.item_id = FIRST_ITEM_ID + index
         potion.image_id = FIRST_IMAGE_ID + index
+    elif index >= SHELF_BEFORE_SABATONS:
+        potion.item_id = DISTILLATE_ITEM_ID + index - SHELF_BEFORE_SABATONS
+        potion.image_id = DISTILLATE_IMAGE_ID + index - SHELF_BEFORE_SABATONS
     else:
         potion.item_id = CONTINUED_ITEM_ID + index - SHELF_BEFORE_TORSO
         potion.image_id = CONTINUED_IMAGE_ID + index - SHELF_BEFORE_TORSO
@@ -299,6 +342,11 @@ def _vessel_paths(shape: str, scale: float):
                  (74, 70), (66, 84), (34, 84), (26, 70), (26, 44),
                  (30, 30), (40, 24)]
         return glass, 36, (43, 57, 10, 18)
+    if shape == "phial":
+        glass = [(46, 20), (54, 20), (54, 34), (62, 50), (63, 68),
+                 (56, 84), (50, 88), (44, 84), (37, 68), (38, 50),
+                 (46, 34)]
+        return glass, 52, (46, 54, 12, 22)
     if shape == "square":
         glass = [(42, 14), (58, 14), (58, 24), (68, 28), (68, 82),
                  (62, 88), (38, 88), (32, 82), (32, 28), (42, 24)]

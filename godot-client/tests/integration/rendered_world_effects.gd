@@ -144,6 +144,30 @@ func _run() -> void:
 	await _capture("world-effect-missile.png",
 		"the arrow the server loosed, between the two actors it named")
 
+	# Harvesting is state rather than an event: the glitter lasts the run.
+	for live: Variant in (main.get("world_effects") as Array):
+		if is_instance_valid(live):
+			(live as Node).queue_free()
+	app_state.set("local_actor_id", 0x5b)
+	var harvesting := PackedByteArray([1, 0xf0, 0x01])
+	harvesting.append_array("Reed".to_utf8_buffer())
+	harvesting.append(0)
+	app_state.call("_on_packet", 237, harvesting)
+	for _settle: int in range(20):
+		await process_frame
+	var sparkle: HarvestSparkle3D = main.get("harvest_sparkle") as HarvestSparkle3D
+	_expect(sparkle != null and sparkle.is_following(
+		(main.get("actor_nodes") as Dictionary).get(0x5b) as Node3D),
+		"the harvesting player glitters")
+	camera.global_position = Vector3(4.0, 5.5, 6.0)
+	camera.look_at(Vector3(4.0, 1.0, -4.0), Vector3.UP)
+	await _capture("world-effect-harvest-sparkle.png",
+		"the glitter around a player for as long as they harvest")
+	app_state.call("_on_packet", 237, PackedByteArray([0, 0, 0, 0]))
+	await process_frame
+	_expect(main.get("harvest_sparkle") == null and sparkle.is_stopping(),
+		"the glitter stops when the server ends the run")
+
 	app_state.set("authenticated", false)
 	main.queue_free()
 	await process_frame

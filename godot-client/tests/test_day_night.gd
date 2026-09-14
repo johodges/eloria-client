@@ -152,6 +152,47 @@ func _run() -> void:
 		and environment.ambient_light_color.get_luminance() > 0.3,
 		"the `skyColor` spelling of the ambient colour is read too")
 
+	# Shadows let part of the sun through: the renderer has no bounce light, so
+	# an opaque shadow is ambient alone. The same energy gets through whatever
+	# the sun's strength, the hour does not move it, and a package may set its
+	# own opacity.
+	DayNightBinder.apply(outdoor, world_environment, sun, 180.0)
+	var leaked: float = (1.0 - sun.shadow_opacity) * 1.4
+	_expect(sun.shadow_opacity < 1.0 and is_equal_approx(leaked,
+			WorldEnvironmentBinder.SUN_SHADOW_LEAK_ENERGY),
+		"a shadow lets the leak energy of the noon sun through: %f" % sun.shadow_opacity)
+	var noon_opacity: float = sun.shadow_opacity
+	DayNightBinder.apply(outdoor, world_environment, sun, 100.0)
+	_expect(is_equal_approx(sun.shadow_opacity, noon_opacity),
+		"the opacity is the noon sun's at every hour: %f" % sun.shadow_opacity)
+	var strong := WorldManifest.new()
+	strong.data = {"environment": {"sun": {"enabled": true, "energy": 2.35}}}
+	DayNightBinder.apply(strong, world_environment, sun, 180.0)
+	_expect(sun.shadow_opacity > noon_opacity and is_equal_approx(
+			(1.0 - sun.shadow_opacity) * 2.35,
+			WorldEnvironmentBinder.SUN_SHADOW_LEAK_ENERGY),
+		"a stronger sun gets a more opaque shadow, not a washed-out one: %f"
+			% sun.shadow_opacity)
+	DayNightBinder.apply(overcast, world_environment, sun, 180.0)
+	_expect(sun.shadow_opacity >= WorldEnvironmentBinder.MIN_SUN_SHADOW_OPACITY,
+		"a weak sun still keeps enough shadow to ground things: %f" % sun.shadow_opacity)
+	var declared_opacity := WorldManifest.new()
+	declared_opacity.data = {"environment": {
+		"sun": {"enabled": true, "energy": 1.0, "shadowOpacity": 0.9}}}
+	DayNightBinder.apply(declared_opacity, world_environment, sun, 180.0)
+	_expect(is_equal_approx(sun.shadow_opacity, 0.9),
+		"the hour keeps a package's declared shadow opacity: %f" % sun.shadow_opacity)
+	sun.shadow_opacity = 1.0
+	WorldEnvironmentBinder.apply(declared_opacity, world_environment, sun)
+	_expect(is_equal_approx(sun.shadow_opacity, 0.9),
+		"binding a package applies its declared shadow opacity: %f" % sun.shadow_opacity)
+	WorldEnvironmentBinder.apply(outdoor, world_environment, sun)
+	_expect(is_equal_approx(sun.shadow_opacity, noon_opacity),
+		"a package that declares none gets the leak-derived opacity: %f"
+			% sun.shadow_opacity)
+	# The binder replaces the Environment; carry on with the one it bound.
+	environment = world_environment.environment
+
 	DayNightBinder.apply(outdoor, world_environment, sun, 90.0)
 	var dawn_colour: Color = sun.light_color
 	DayNightBinder.apply(outdoor, world_environment, sun, 180.0)

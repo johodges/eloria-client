@@ -170,7 +170,7 @@ func _run() -> void:
 	var blocked_reagents: Label = window.get_node(
 		body + "SpellDetails/SpellReagents") as Label
 	_expect(blocked_reagents.text
-			== "Reagents: !Storm Crystal x1, !Frost Reed x1, !Portal Shard x1",
+			== "Reagents: !Air Distillate x1, !Portal Shard x1",
 		"reagents nothing carries are named and marked: "
 			+ blocked_reagents.text)
 	_expect(not cast.disabled, "selecting a spell enables Cast")
@@ -186,9 +186,8 @@ func _run() -> void:
 	stats["magic"] = 5
 	stats["ether"] = 50
 	var inventory: Dictionary = app_state.get("inventory") as Dictionary
-	inventory[0] = {"image_id": 68, "quantity": 10}
-	inventory[1] = {"image_id": 16, "quantity": 10}
-	inventory[2] = {"image_id": 67, "quantity": 10}
+	inventory[0] = {"image_id": 584, "quantity": 10}
+	inventory[1] = {"image_id": 67, "quantity": 10}
 	app_state.emit_signal("state_changed", &"stats")
 	await process_frame
 	_expect(is_equal_approx(heal_button.modulate.a, 1.0),
@@ -214,7 +213,7 @@ func _run() -> void:
 	var reagents: Label = window.get_node(
 		body + "SpellDetails/SpellReagents") as Label
 	_expect(reagents.text
-			== "Reagents: Cinder Resin x1, Sunleaf x1, Woven Charm x1",
+			== "Reagents: Life Distillate x1, Woven Charm x1",
 		"reagents are named and counted: " + reagents.text)
 	cast.pressed.emit()
 	_expect(cast_ids == [5, 0],

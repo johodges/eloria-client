@@ -23,6 +23,15 @@ const JITTER_DECAY := 0.98
 ## and earns the buffer nothing. Wireless holds run to a couple of hundred
 ## milliseconds; a pause between two clicks starts at about half a second.
 const JITTER_PAUSE_SECONDS := 0.4
+## How many steps a gait has to have measured before a gap is judged a pause
+## against them, so one odd sample cannot make every real step look late.
+const PACE_MINIMUM_REFERENCE := 3
+## How many pause-length gaps in a row, agreeing within PACE_CONFIRM_SPREAD of
+## each other, it takes to believe the pace itself has slowed.
+## Network jitter on a one-second step is under a tenth of it; a player's
+## looting pauses rarely line up that closely five times over.
+const PACE_CONFIRM_STEPS := 5
+const PACE_CONFIRM_SPREAD := 1.15
 ## How much longer than the observed server cadence one step is scheduled to
 ## take when nothing is late: the base of the playout buffer. At 1.05 any
 ## jitter finished the step before the next one arrived and the actor stopped
@@ -101,8 +110,16 @@ var _last_movement_update_msec := -1
 ## Seconds the server spends on one tile, measured over whatever ground the
 ## last update actually covered rather than assumed to be one step's worth.
 var _smoothed_server_interval := 0.6
-## The per-tile intervals the pace is the median of; see PACE_WINDOW.
-var _interval_history := PackedFloat32Array()
+## The per-tile intervals the pace is the median of, one history per gait (see
+## `pace_gait`), each at most PACE_WINDOW long.
+var _pace_histories := {}
+## Gaps that read as pauses, in a row and all from one gait. Enough of them
+## that agree are a pace that has really slowed; see `confirms_new_pace`.
+var _unconfirmed_paces := PackedFloat32Array()
+var _unconfirmed_gait := -1
+## The gait of the step before this one, whose hold the gap before this
+## packet is - the same off-by-one as `_previous_step_tiles`.
+var _previous_step_gait := 0
 ## Seconds the body is held behind the newest tile, beyond the arrival
 ## margin, to cover the late packets this link has been showing.
 var _jitter_allowance := 0.0
@@ -220,6 +237,11 @@ var _health_label: Label3D
 var _health_current := -1
 var _health_maximum := -1
 var _overhead_visible := true
+## How much of the name, title and health bar shows, from 0 to 1. The block is
+## drawn at a fixed screen size, so distance alone never made a far name any
+## less legible than a near one; main.gd fades it out past the player's name
+## distance instead. See `set_overhead_fade`.
+var _overhead_fade := 1.0
 ## Whether this actor's health is drawn over its head. main.gd's
 ## `_overhead_health_for` is what decides it.
 var _health_shown := false
@@ -310,6 +332,7 @@ const OVERHEAD_OUTLINE_SIZE := 4
 const HEALTH_BAR_WIDTH := 56.0
 const HEALTH_BAR_THICKNESS := 7.0
 const HEALTH_BAR_BORDER := 2.0
+const HEALTH_BAR_BACKING := Color(0.05, 0.04, 0.03, 0.78)
 const HEALTH_BAR_DROP := 16.0
 const HEALTH_LABEL_DROP := 32.0
 ## The speech bubble sits above the name instead, and wraps well short of the
@@ -881,7 +904,7 @@ func _add_health_bar() -> void:
 		HEALTH_BAR_THICKNESS + HEALTH_BAR_BORDER) * OVERHEAD_PIXEL
 	background_quad.center_offset = Vector3(
 		0.0, -HEALTH_BAR_DROP * OVERHEAD_PIXEL, 0.0)
-	background_quad.material = _overhead_material(Color(0.05, 0.04, 0.03, 0.78), 1)
+	background_quad.material = _overhead_material(HEALTH_BAR_BACKING, 1)
 	background.mesh = background_quad
 	background.position.y = NAMEPLATE_HEIGHT
 	background.layers = GAMEPLAY_ONLY_VISUAL_LAYER
@@ -983,14 +1006,33 @@ func set_health_visible(enabled: bool) -> void:
 ## condition: a corpse at zero health keeps its empty frame rather than a
 ## sliver of colour.
 func _refresh_overhead_health() -> void:
-	var showing: bool = (_overhead_visible and _health_shown
+	var showing: bool = (_overhead_shown() and _health_shown
 		and _health_maximum > 0)
 	if is_instance_valid(_health_bar_background):
 		_health_bar_background.visible = showing
+		_fade_quad(_health_bar_background, HEALTH_BAR_BACKING.a)
 	if is_instance_valid(_health_bar_fill):
 		_health_bar_fill.visible = showing and _health_current > 0
+		# `apply_vitals` repaints the fill opaque, and calls this straight after.
+		_fade_quad(_health_bar_fill, 1.0)
 	if is_instance_valid(_health_label):
 		_health_label.visible = showing
+		_fade_label(_health_label)
+
+## Whether the overhead block is drawn at all: the banner options allow it,
+## the actor is inside the name distance, and it is inside the draw distance.
+## The last matters because `set_drawn` hides these nodes itself, and a label
+## switched back on while the actor is out of range would float over nothing.
+func _overhead_shown() -> bool:
+	return _overhead_visible and _overhead_fade > 0.0 and _drawn
+
+func _fade_label(label: Label3D) -> void:
+	label.modulate.a = _overhead_fade
+	label.outline_modulate.a = _overhead_fade
+
+func _fade_quad(quad: MeshInstance3D, opacity: float) -> void:
+	var material := (quad.mesh as QuadMesh).material as StandardMaterial3D
+	material.albedo_color.a = opacity * _overhead_fade
 
 static func _health_colour(ratio: float) -> Color:
 	if ratio > 0.6:
@@ -1001,10 +1043,29 @@ static func _health_colour(ratio: float) -> Color:
 
 func set_nameplate_visible(enabled: bool) -> void:
 	_overhead_visible = enabled
+	_refresh_overhead()
+
+## Fades the name, title and health bar together: 1 draws them as they are,
+## 0 hides them. main.gd works it out from how far this actor is from the
+## player. The speech bubble is not part of it - what somebody said is worth
+## seeing as long as they can be seen.
+func set_overhead_fade(fade: float) -> void:
+	var next: float = clampf(fade, 0.0, 1.0)
+	if next == _overhead_fade:
+		return
+	_overhead_fade = next
+	_refresh_overhead()
+
+func overhead_fade() -> float:
+	return _overhead_fade
+
+func _refresh_overhead() -> void:
 	if is_instance_valid(_nameplate):
-		_nameplate.visible = enabled
+		_nameplate.visible = _overhead_shown()
+		_fade_label(_nameplate)
 	if is_instance_valid(_title_line):
-		_title_line.visible = enabled and not _title_line.text.is_empty()
+		_title_line.visible = _overhead_shown() and not _title_line.text.is_empty()
+		_fade_label(_title_line)
 	_refresh_overhead_health()
 
 ## The title a player chose from the achievements that grant one, drawn as its
@@ -1043,7 +1104,8 @@ func set_title(title: String) -> void:
 		add_child(label)
 		_title_line = label
 	_title_line.text = title
-	_title_line.visible = _overhead_visible
+	_title_line.visible = _overhead_shown()
+	_fade_label(_title_line)
 
 ## Eternal Lands repeats local chat over the speaker's head while "Show Speech
 ## Bubbles" is on (text.c check_chat_text_to_overtext), sitting above the
@@ -1103,12 +1165,19 @@ func _apply_model_scale() -> void:
 			model.scale = Vector3.ONE * total
 	_lift_overhead(server_scale)
 
+## The top of the body as drawn, above this actor's foot point: the authored
+## bounds through both model scales, or the fallback nameplate height less its
+## clearance when no native body loaded. main.gd hangs your own banner from it.
+func head_height() -> float:
+	if is_instance_valid(_native_model) and _native_body_bounds.size.y > 0.0:
+		return (_native_model.transform * _native_body_bounds).end.y
+	return (NAMEPLATE_HEIGHT - NAMEPLATE_CLEARANCE) * server_scale
+
 ## Keep the overhead furniture above the model as it grows.
 func _lift_overhead(factor: float) -> void:
 	var height: float = NAMEPLATE_HEIGHT * factor
 	if is_instance_valid(_native_model) and _native_body_bounds.size.y > 0.0:
-		var body_bounds: AABB = _native_model.transform * _native_body_bounds
-		height = body_bounds.end.y + NAMEPLATE_CLEARANCE
+		height = head_height() + NAMEPLATE_CLEARANCE
 	# One height for the lot: the bar, the numbers and the bubble sit above or
 	# below the name inside the block rather than at world heights of their
 	# own, so the gaps between them hold their size along with the text.
@@ -1306,10 +1375,13 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 		_segment_duration = 0.0
 		_last_movement_update_msec = -1
 		_smoothed_server_interval = initial_server_interval
-		_interval_history.clear()
+		_pace_histories.clear()
+		_unconfirmed_paces.clear()
+		_unconfirmed_gait = -1
 		_jitter_allowance = 0.0
 		_schedule_due = -1.0
 		_previous_step_tiles = 1.0
+		_previous_step_gait = pace_gait(facing_command, _hastened)
 		_movement_coast_remaining = 0.0
 		_snap_pending = false
 		_travel_yaw_active = false
@@ -1330,33 +1402,67 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 			# The gap before this packet is the hold the server gave the step
 			# before it, so it is measured per tile of that step.
 			var gap_tiles: float = maxf(_previous_step_tiles, 0.001)
-			if observed_interval <= maximum_segment_duration * 2.0 * gap_tiles:
-				_interval_history.append(clampf(
-					observed_interval / gap_tiles, 0.05, maximum_segment_duration))
-				if _interval_history.size() > PACE_WINDOW:
-					_interval_history = _interval_history.slice(
-						_interval_history.size() - PACE_WINDOW)
-				_smoothed_server_interval = median_of(
-					_interval_history, _smoothed_server_interval)
-				# How late this step was against the cadence, if it was. The
-				# allowance keeps the worst of it for a while, so the steps
-				# after a hold are scheduled far enough behind their packets
-				# that the next hold of the same size lands before the body
-				# needs the tile. A gap long enough to be a player pausing
-				# rather than the network holding a packet earns nothing.
-				var expected_gap: float = _smoothed_server_interval * gap_tiles
-				var lateness: float = observed_interval - expected_gap
-				_jitter_allowance = jitter_allowance(_jitter_allowance,
-					lateness if lateness <= minf(expected_gap, JITTER_PAUSE_SECONDS) else 0.0,
-					JITTER_DECAY, maximum_buffer_seconds)
-			# A long stationary pause is idle time, not a cadence. Folding it
-			# in would pace the next burst by how long the player stood still,
-			# and resetting to the constant lurched the first step of every
-			# burst at any pace but the walking one. The measured pace is kept
-			# instead: standing still is not what changes it - #run and #walk
-			# are, and the step after those corrects it.
+			var gap_pace: float = maxf(observed_interval / gap_tiles, 0.05)
+			var history: PackedFloat32Array = _pace_histories.get(
+				_previous_step_gait, PackedFloat32Array())
+			# A stationary pause is idle time, not a cadence. Folding it in
+			# paced the next burst by how long the player stood still: a few
+			# single steps from bag to bag with a second's looting between them
+			# were enough to make the median a second a tile, and the run after
+			# them crawled for its first steps while the body fell tiles behind.
+			# A pause is told from the cadence by the same lateness a network
+			# hold is allowed, against the pace this gait has already shown, so
+			# it is only ever judged against steps of its own kind - #walk after
+			# #run is a different history, not a late step. A gait still being
+			# learned has nothing to judge against and takes what it is given,
+			# short of a gap longer than any step the server holds.
+			var idle: bool = gap_pace > maximum_segment_duration
+			var standing: bool = idle
+			if not standing and history.size() >= PACE_MINIMUM_REFERENCE:
+				standing = is_pause_gap(observed_interval,
+					median_of(history, _smoothed_server_interval) * gap_tiles)
+			if idle:
+				_unconfirmed_paces.clear()
+			elif standing:
+				# Pauses are not a cadence, but a pace that really has slowed -
+				# a creature back from a pursuit to its ordinary walk - looks
+				# like one pause after another. Those agree with each other and
+				# a player's looting does not, so enough of them in a row that
+				# agree replace what the gait knew.
+				if _unconfirmed_gait != _previous_step_gait:
+					_unconfirmed_paces.clear()
+					_unconfirmed_gait = _previous_step_gait
+				_unconfirmed_paces.append(gap_pace)
+				if confirms_new_pace(_unconfirmed_paces):
+					history = _unconfirmed_paces.slice(
+						_unconfirmed_paces.size() - PACE_CONFIRM_STEPS)
+					_unconfirmed_paces.clear()
+			else:
+				_unconfirmed_paces.clear()
+				history.append(gap_pace)
+				if history.size() > PACE_WINDOW:
+					history = history.slice(history.size() - PACE_WINDOW)
+			_pace_histories[_previous_step_gait] = history
+			_smoothed_server_interval = median_of(history, _smoothed_server_interval)
+			# How late this step was against the cadence, if it was. The
+			# allowance keeps the worst of it for a while, so the steps after a
+			# hold are scheduled far enough behind their packets that the next
+			# hold of the same size lands before the body needs the tile. A gap
+			# long enough to be a player pausing earns nothing.
+			var expected_gap: float = _smoothed_server_interval * gap_tiles
+			var lateness: float = observed_interval - expected_gap
+			_jitter_allowance = jitter_allowance(_jitter_allowance,
+				0.0 if standing or is_pause_gap(observed_interval, expected_gap) else lateness,
+				JITTER_DECAY, maximum_buffer_seconds)
+		# The arriving step is held for its own gait's length, so that is the
+		# pace it is shown at: #run and #walk change it on the step they apply
+		# to rather than after half a window of steps has outvoted the other.
+		var gait: int = pace_gait(facing_command, _hastened)
+		_smoothed_server_interval = median_of(
+			_pace_histories.get(gait, PackedFloat32Array()), _smoothed_server_interval)
 		_last_movement_update_msec = now_msec
 		_previous_step_tiles = step_tiles
+		_previous_step_gait = gait
 		_segment_start = global_position
 		_segment_elapsed = 0.0
 		_movement_coast_remaining = 0.0
@@ -2609,6 +2715,34 @@ static func median_of(values: PackedFloat32Array, fallback: float) -> float:
 		return ordered[middle]
 	return (ordered[middle - 1] + ordered[middle]) * 0.5
 
+## Which pace history a step belongs to. The server holds a running step, a
+## walking one and a hastened one for different lengths, so each is measured
+## on its own: judged against one history, the first walking gap after a run
+## was three steps late and a run after a walk three times early.
+static func pace_gait(command: int, hastened: bool) -> int:
+	return (1 if command >= 30 and command <= 37 else 0) | (2 if hastened else 0)
+
+## Whether a gap before a step is the actor standing still rather than the
+## server's cadence arriving late: later than `expected_gap` by more than the
+## gap itself or JITTER_PAUSE_SECONDS, whichever is less - past what any
+## network hold the playout buffer covers.
+static func is_pause_gap(observed: float, expected_gap: float) -> bool:
+	return observed - expected_gap > minf(expected_gap, JITTER_PAUSE_SECONDS)
+
+## Whether the last PACE_CONFIRM_STEPS pause-length gaps agree closely enough
+## to be a cadence. A slowed pace repeats itself to within network jitter; a
+## player stopping to loot between clicks does not.
+static func confirms_new_pace(gaps: PackedFloat32Array) -> bool:
+	if gaps.size() < PACE_CONFIRM_STEPS:
+		return false
+	var recent: PackedFloat32Array = gaps.slice(gaps.size() - PACE_CONFIRM_STEPS)
+	var shortest: float = recent[0]
+	var longest: float = recent[0]
+	for gap: float in recent:
+		shortest = minf(shortest, gap)
+		longest = maxf(longest, gap)
+	return longest <= shortest * PACE_CONFIRM_SPREAD
+
 ## The seconds of lateness the playout schedule keeps in hand, updated for one
 ## more step. A late step raises it to its own lateness at once; every step
 ## lets it decay by `decay`, so the allowance a hold earns outlives the next
@@ -2742,6 +2876,9 @@ func set_drawn(enabled: bool) -> void:
 			if is_instance_valid(node):
 				node.visible = true
 		_hidden_by_range.clear()
+		# What was showing when it went out of range need not be now: the name
+		# may have faded, or the banner options changed, in the meantime.
+		_refresh_overhead()
 		return
 	# Swept on every call rather than only on the way out. An actor out of range
 	# still takes packets: it can change what it is wearing, or lose the model it

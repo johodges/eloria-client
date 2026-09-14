@@ -133,6 +133,50 @@ func _run() -> void:
 	for _drain: int in range(4):
 		await create_timer(cadence).timeout
 
+	# Walking from bag to bag after a fight: one running step, a second or so
+	# stood looting, another step. Every one of those gaps is a player standing
+	# still, not the server's cadence, and it was folded into the pace anyway -
+	# a handful of them and the median said a tile took a second, so the run
+	# that followed crawled for its first steps while the body fell tiles
+	# behind the server. Measured just before each step lands, the way the
+	# lag above is.
+	await _run_east(actor, adapter, 12, 0.2, true)
+	for pause: float in [0.8, 1.2, 0.9, 1.4, 1.0, 0.7, 1.3, 1.1]:
+		await create_timer(pause).timeout
+		await _run_east(actor, adapter, 1, 0.0, false)
+	await create_timer(1.0).timeout
+	var worst_lag := 0.0
+	for _hop_step: int in range(6):
+		await _run_east(actor, adapter, 1, 0.2, false)
+		worst_lag = maxf(worst_lag, actor.global_position.distance_to(actor.server_target))
+	_expect(worst_lag < 0.8,
+		"standing between bags does not slow the run that follows (fell %.2f m behind)"
+			% worst_lag)
+	for _drain_hops: int in range(6):
+		await create_timer(cadence).timeout
+
+	# The other side of it: a pace that really does slow - a creature that
+	# stops pursuing and goes back to its ordinary walk sends its steps a
+	# second apart from then on - must still be taken up, and quickly, even
+	# though each of those gaps on its own looks like a pause.
+	actor.apply_server_state({"actor_id": 7, "x": 0, "y": 0, "rotation": 0,
+		"command": 22}, adapter, true)
+	_run_x = 0
+	await _run_east(actor, adapter, 12, 0.25, false, 22)
+	var slow_speeds: Array[float] = []
+	for _slow_step: int in range(8):
+		await _run_east(actor, adapter, 1, 1.0, false, 22)
+		if actor._segment_duration > 0.0:
+			slow_speeds.append(actor._segment_start.distance_to(actor.server_target)
+				/ actor._segment_duration)
+		else:
+			slow_speeds.append(0.0)
+	_expect(not slow_speeds.is_empty() and slow_speeds[slow_speeds.size() - 1] < 1.5,
+		"a pace that really slows is taken up within a few steps (%.2f m/s)"
+			% slow_speeds[slow_speeds.size() - 1])
+	for _drain_slow: int in range(3):
+		await create_timer(1.0).timeout
+
 	# A redirect mid-path - clicking a new spot while a path still runs - must turn
 	# the body to the new heading at once, since the facing is taken fresh from
 	# each step rather than averaged over a window that would drag the old one in.
@@ -237,6 +281,24 @@ func _expect(value: bool, label: String) -> void:
 		push_error("FAIL: " + label)
 
 const JITTER_STEPS := 26
+
+var _run_x := 0
+
+## `steps` steps east from wherever the last call left off, each held for
+## `wait` seconds after it is sent - the server's convention, where a step's
+## own length follows it. `reset` teleports back to the origin first.
+func _run_east(actor: ReplicatedActor3D, adapter: CoordinateAdapter, steps: int,
+		wait: float, reset: bool, command: int = 32) -> void:
+	if reset:
+		_run_x = 0
+		actor.apply_server_state({"actor_id": 7, "x": 0, "y": 0, "rotation": 0,
+			"command": command}, adapter, true)
+	for _step: int in range(steps):
+		_run_x += 1
+		actor.apply_server_state({"actor_id": 7, "x": _run_x, "y": 0, "rotation": 0,
+			"command": command}, adapter)
+		if wait > 0.0:
+			await create_timer(wait).timeout
 
 ## Running steps east at a 200 ms cadence, with every fourth step from the
 ## seventh held back 120 ms and the step behind it arriving when it would have

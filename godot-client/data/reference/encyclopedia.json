@@ -211,7 +211,7 @@
           "id": "perks-overview",
           "title": "How perks work",
           "summary": "Pick points, tiers, exclusions and gear",
-          "body": "A perk is bought with pick points, and most of them are bought more than once. There are 32 perks on the shelf and 32 of them come in tiers.\n\nPick points come from overall levels: one for each, spent on attributes, nexus or perks, and never spent twice. A tiered perk costs 3 pick points for its first tier, 6 for its second and 9 for its third, so owning one outright is 18.\n\nSome perks cannot be held together - Lucky Hitter and Lucky Dodger answer the same question from opposite sides, and so do Mirror and Life Stealing. The page for each perk says what it clashes with.\n\nWorn gear can carry a perk. A cape does not simply grant one: it adds a tier, which means it is worth the same to a player who has bought all three as to one who has bought none - and it is the only way to reach the tiers above the third.\n\nA removal stone takes back one tier and returns what that tier cost. At its highest tier a perk that says so can be switched off with the #perk command, which hands back the effect and not the pick points.\n\n#list_perks names everything you hold, the tier you are at, and what that tier does.",
+          "body": "A perk is bought with pick points, and most of them are bought more than once. There are 32 perks on the shelf and 32 of them come in tiers.\n\nPick points come from overall levels: two for each, spent on attributes, nexus or perks, and never spent twice. Every tier of a perk costs 3 pick points, so owning one outright is 9; what climbs from tier to tier is the gold.\n\nSome perks cannot be held together - Lucky Hitter and Lucky Dodger answer the same question from opposite sides, and so do Mirror and Life Stealing. The page for each perk says what it clashes with.\n\nWorn gear can carry a perk. A cape does not simply grant one: it adds a tier, which means it is worth the same to a player who has bought all three as to one who has bought none - and it is the only way to reach the tiers above the third.\n\nA removal stone takes back one tier and returns what that tier cost. At its highest tier a perk that says so can be switched off with the #perk command, which hands back the effect and not the pick points.\n\n#list_perks names everything you hold, the tier you are at, and what that tier does.",
           "facts": [
             [
               "Perks",
@@ -227,7 +227,7 @@
             ],
             [
               "A tier costs",
-              "3, 6 then 9 pick points"
+              "3 pick points"
             ],
             [
               "Highest with gear",
@@ -255,11 +255,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 4,000 gold. Two fifths of a target's armour is ignored."
+                  "3 pick points, 4,000 gold. Two fifths of a target's armour is ignored."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 20,000 gold. Three fifths of a target's armour is ignored."
+                  "3 pick points, 20,000 gold. Three fifths of a target's armour is ignored."
                 ]
               ]
             },
@@ -293,7 +293,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 100 gold. A fifth of a target's armour is ignored, in melee and at range.\nTier 2 - 6 pick points, 4,000 gold. Two fifths of a target's armour is ignored.\nTier 3 - 9 pick points, 20,000 gold. Three fifths of a target's armour is ignored.\n\nWorn gear adds tiers on top of what pick points buy, so this perk goes further than tier 3 for anybody who owns the right piece:\nTier 4 - Three quarters of a target's armour is ignored.\nTier 5 - Nine tenths of a target's armour is ignored.\n\nCarried by: Body Piercing Cloak.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 100 gold. A fifth of a target's armour is ignored, in melee and at range.\nTier 2 - 3 pick points, 4,000 gold. Two fifths of a target's armour is ignored.\nTier 3 - 3 pick points, 20,000 gold. Three fifths of a target's armour is ignored.\n\nWorn gear adds tiers on top of what pick points buy, so this perk goes further than tier 3 for anybody who owns the right piece:\nTier 4 - Three quarters of a target's armour is ignored.\nTier 5 - Nine tenths of a target's armour is ignored.\n\nCarried by: Body Piercing Cloak.",
           "facts": [
             [
               "Tiers",
@@ -301,7 +301,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -337,11 +337,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 3,000 gold. Ten more damage on every blow, and ten defense lost."
+                  "3 pick points, 3,000 gold. Ten more damage on every blow, and ten defense lost."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 15,000 gold. Twenty more damage on every blow, and twenty defense lost."
+                  "3 pick points, 15,000 gold. Twenty more damage on every blow, and twenty defense lost."
                 ]
               ]
             },
@@ -357,7 +357,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 400 gold. Five more damage on every blow you land, and five defense lost.\nTier 2 - 6 pick points, 3,000 gold. Ten more damage on every blow, and ten defense lost.\nTier 3 - 9 pick points, 15,000 gold. Twenty more damage on every blow, and twenty defense lost.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 400 gold. Five more damage on every blow you land, and five defense lost.\nTier 2 - 3 pick points, 3,000 gold. Ten more damage on every blow, and ten defense lost.\nTier 3 - 3 pick points, 15,000 gold. Twenty more damage on every blow, and twenty defense lost.",
           "facts": [
             [
               "Tiers",
@@ -365,7 +365,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -397,11 +397,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 3,000 gold. It holds two tiles nearer."
+                  "3 pick points, 3,000 gold. It holds two tiles nearer."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 15,000 gold. It holds three tiles nearer."
+                  "3 pick points, 15,000 gold. It holds three tiles nearer."
                 ]
               ]
             },
@@ -417,7 +417,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 400 gold. A creature with reach holds one tile nearer to you than it would to anyone else.\nTier 2 - 6 pick points, 3,000 gold. It holds two tiles nearer.\nTier 3 - 9 pick points, 15,000 gold. It holds three tiles nearer.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 400 gold. A creature with reach holds one tile nearer to you than it would to anyone else.\nTier 2 - 3 pick points, 3,000 gold. It holds two tiles nearer.\nTier 3 - 3 pick points, 15,000 gold. It holds three tiles nearer.",
           "facts": [
             [
               "Tiers",
@@ -425,7 +425,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -457,11 +457,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 2,000 gold. Two defense lost for each extra opponent."
+                  "3 pick points, 2,000 gold. Two defense lost for each extra opponent."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 12,000 gold. One defense lost for each extra opponent."
+                  "3 pick points, 12,000 gold. One defense lost for each extra opponent."
                 ]
               ]
             },
@@ -491,7 +491,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 300 gold. Three defense lost for each extra opponent instead of five.\nTier 2 - 6 pick points, 2,000 gold. Two defense lost for each extra opponent.\nTier 3 - 9 pick points, 12,000 gold. One defense lost for each extra opponent.\n\nWorn gear carries this perk, and adds a tier to it for anybody who has already bought one.\n\nCarried by: Echo Practice Cape.\n\nCannot be held with There is no Fork, I can't dance.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 300 gold. Three defense lost for each extra opponent instead of five.\nTier 2 - 3 pick points, 2,000 gold. Two defense lost for each extra opponent.\nTier 3 - 3 pick points, 12,000 gold. One defense lost for each extra opponent.\n\nWorn gear carries this perk, and adds a tier to it for anybody who has already bought one.\n\nCarried by: Echo Practice Cape.\n\nCannot be held with There is no Fork, I can't dance.",
           "facts": [
             [
               "Tiers",
@@ -499,7 +499,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -539,11 +539,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 20,000 gold. Combat equipment wears half as fast."
+                  "3 pick points, 20,000 gold. Combat equipment wears half as fast."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 100,000 gold. Combat equipment wears a quarter as fast."
+                  "3 pick points, 100,000 gold. Combat equipment wears a quarter as fast."
                 ]
               ]
             },
@@ -577,7 +577,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 1,000 gold. Combat equipment wears a quarter more slowly.\nTier 2 - 6 pick points, 20,000 gold. Combat equipment wears half as fast.\nTier 3 - 9 pick points, 100,000 gold. Combat equipment wears a quarter as fast.\n\nWorn gear adds tiers on top of what pick points buy, so this perk goes further than tier 3 for anybody who owns the right piece:\nTier 4 - Combat equipment wears at a sixth of its usual rate.\nTier 5 - Combat equipment wears a tenth as fast.\n\nCarried by: Cape Of No More Warlock, No More Tears Cape.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 1,000 gold. Combat equipment wears a quarter more slowly.\nTier 2 - 3 pick points, 20,000 gold. Combat equipment wears half as fast.\nTier 3 - 3 pick points, 100,000 gold. Combat equipment wears a quarter as fast.\n\nWorn gear adds tiers on top of what pick points buy, so this perk goes further than tier 3 for anybody who owns the right piece:\nTier 4 - Combat equipment wears at a sixth of its usual rate.\nTier 5 - Combat equipment wears a tenth as fast.\n\nCarried by: Cape Of No More Warlock, No More Tears Cape.",
           "facts": [
             [
               "Tiers",
@@ -585,7 +585,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -621,11 +621,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 4,000 gold. A fifth more damage from the side or back."
+                  "3 pick points, 4,000 gold. A fifth more damage from the side or back."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 20,000 gold. Three tenths more damage from the side or back."
+                  "3 pick points, 20,000 gold. Three tenths more damage from the side or back."
                 ]
               ]
             },
@@ -641,7 +641,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 500 gold. A tenth more damage when you strike from a target's side or back.\nTier 2 - 6 pick points, 4,000 gold. A fifth more damage from the side or back.\nTier 3 - 9 pick points, 20,000 gold. Three tenths more damage from the side or back.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 500 gold. A tenth more damage when you strike from a target's side or back.\nTier 2 - 3 pick points, 4,000 gold. A fifth more damage from the side or back.\nTier 3 - 3 pick points, 20,000 gold. Three tenths more damage from the side or back.",
           "facts": [
             [
               "Tiers",
@@ -649,7 +649,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -681,11 +681,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 3,000 gold. A seventh more damage against anything standing on nine tiles or more."
+                  "3 pick points, 3,000 gold. A seventh more damage against anything standing on nine tiles or more."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 15,000 gold. A fifth more damage against anything standing on four tiles or more."
+                  "3 pick points, 15,000 gold. A fifth more damage against anything standing on four tiles or more."
                 ]
               ]
             },
@@ -701,7 +701,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 500 gold. A tenth more damage against anything standing on sixteen tiles or more.\nTier 2 - 6 pick points, 3,000 gold. A seventh more damage against anything standing on nine tiles or more.\nTier 3 - 9 pick points, 15,000 gold. A fifth more damage against anything standing on four tiles or more.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 500 gold. A tenth more damage against anything standing on sixteen tiles or more.\nTier 2 - 3 pick points, 3,000 gold. A seventh more damage against anything standing on nine tiles or more.\nTier 3 - 3 pick points, 15,000 gold. A fifth more damage against anything standing on four tiles or more.",
           "facts": [
             [
               "Tiers",
@@ -709,7 +709,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -741,11 +741,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 5,000 gold. Each blow you land in melee returns two health to you."
+                  "3 pick points, 5,000 gold. Each blow you land in melee returns two health to you."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 25,000 gold. Each blow you land in melee returns three health to you."
+                  "3 pick points, 25,000 gold. Each blow you land in melee returns three health to you."
                 ]
               ]
             },
@@ -767,7 +767,7 @@
           "related": [
             "perk-mirror"
           ],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 600 gold. Each blow you land in melee returns one health to you.\nTier 2 - 6 pick points, 5,000 gold. Each blow you land in melee returns two health to you.\nTier 3 - 9 pick points, 25,000 gold. Each blow you land in melee returns three health to you.\n\nCannot be held with Mirror.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 600 gold. Each blow you land in melee returns one health to you.\nTier 2 - 3 pick points, 5,000 gold. Each blow you land in melee returns two health to you.\nTier 3 - 3 pick points, 25,000 gold. Each blow you land in melee returns three health to you.\n\nCannot be held with Mirror.",
           "facts": [
             [
               "Tiers",
@@ -775,7 +775,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -811,11 +811,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 3,000 gold. A fifth more of your dodges succeed."
+                  "3 pick points, 3,000 gold. A fifth more of your dodges succeed."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 15,000 gold. Three tenths more of your dodges succeed."
+                  "3 pick points, 15,000 gold. Three tenths more of your dodges succeed."
                 ]
               ]
             },
@@ -841,7 +841,7 @@
           "related": [
             "perk-lucky-hitter"
           ],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 500 gold. A tenth more of your dodges succeed, whatever your combat stats say.\nTier 2 - 6 pick points, 3,000 gold. A fifth more of your dodges succeed.\nTier 3 - 9 pick points, 15,000 gold. Three tenths more of your dodges succeed.\n\nCannot be held with Lucky Hitter.\n\nAt its highest tier it can be switched off and on again with #perk lucky dodger.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 500 gold. A tenth more of your dodges succeed, whatever your combat stats say.\nTier 2 - 3 pick points, 3,000 gold. A fifth more of your dodges succeed.\nTier 3 - 3 pick points, 15,000 gold. Three tenths more of your dodges succeed.\n\nCannot be held with Lucky Hitter.\n\nAt its highest tier it can be switched off and on again with #perk lucky dodger.",
           "facts": [
             [
               "Tiers",
@@ -849,7 +849,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -885,11 +885,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 3,000 gold. A fifth more of your blows land."
+                  "3 pick points, 3,000 gold. A fifth more of your blows land."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 15,000 gold. Three tenths more of your blows land."
+                  "3 pick points, 15,000 gold. Three tenths more of your blows land."
                 ]
               ]
             },
@@ -911,7 +911,7 @@
           "related": [
             "perk-lucky-dodger"
           ],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 500 gold. A tenth more of your blows land, whatever your combat stats say.\nTier 2 - 6 pick points, 3,000 gold. A fifth more of your blows land.\nTier 3 - 9 pick points, 15,000 gold. Three tenths more of your blows land.\n\nCannot be held with Lucky Dodger.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 500 gold. A tenth more of your blows land, whatever your combat stats say.\nTier 2 - 3 pick points, 3,000 gold. A fifth more of your blows land.\nTier 3 - 3 pick points, 15,000 gold. Three tenths more of your blows land.\n\nCannot be held with Lucky Dodger.",
           "facts": [
             [
               "Tiers",
@@ -919,7 +919,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -955,11 +955,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 4,000 gold. A fifth of the damage dealt to you is dealt back."
+                  "3 pick points, 4,000 gold. A fifth of the damage dealt to you is dealt back."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 20,000 gold. Three tenths of the damage dealt to you is dealt back."
+                  "3 pick points, 20,000 gold. Three tenths of the damage dealt to you is dealt back."
                 ]
               ]
             },
@@ -999,7 +999,7 @@
           "related": [
             "perk-life-stealing"
           ],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 500 gold. A tenth of the damage dealt to you is dealt back, never less than one. You still take the blow in full.\nTier 2 - 6 pick points, 4,000 gold. A fifth of the damage dealt to you is dealt back.\nTier 3 - 9 pick points, 20,000 gold. Three tenths of the damage dealt to you is dealt back.\n\nWorn gear adds tiers on top of what pick points buy, so this perk goes further than tier 3 for anybody who owns the right piece:\nTier 4 - Two fifths of the damage dealt to you is dealt back.\nTier 5 - Half the damage dealt to you is dealt back.\n\nCarried by: Mirror Cloak.\n\nCannot be held with Life Stealing.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 500 gold. A tenth of the damage dealt to you is dealt back, never less than one. You still take the blow in full.\nTier 2 - 3 pick points, 4,000 gold. A fifth of the damage dealt to you is dealt back.\nTier 3 - 3 pick points, 20,000 gold. Three tenths of the damage dealt to you is dealt back.\n\nWorn gear adds tiers on top of what pick points buy, so this perk goes further than tier 3 for anybody who owns the right piece:\nTier 4 - Two fifths of the damage dealt to you is dealt back.\nTier 5 - Half the damage dealt to you is dealt back.\n\nCarried by: Mirror Cloak.\n\nCannot be held with Life Stealing.",
           "facts": [
             [
               "Tiers",
@@ -1007,7 +1007,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -1047,11 +1047,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 4,000 gold. Party members within five tiles of you gain eight armour."
+                  "3 pick points, 4,000 gold. Party members within five tiles of you gain eight armour."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 20,000 gold. Party members within eight tiles of you gain twelve armour."
+                  "3 pick points, 20,000 gold. Party members within eight tiles of you gain twelve armour."
                 ]
               ]
             },
@@ -1067,7 +1067,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 600 gold. Party members within three tiles of you gain four armour. On your own it does nothing at all.\nTier 2 - 6 pick points, 4,000 gold. Party members within five tiles of you gain eight armour.\nTier 3 - 9 pick points, 20,000 gold. Party members within eight tiles of you gain twelve armour.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 600 gold. Party members within three tiles of you gain four armour. On your own it does nothing at all.\nTier 2 - 3 pick points, 4,000 gold. Party members within five tiles of you gain eight armour.\nTier 3 - 3 pick points, 20,000 gold. Party members within eight tiles of you gain twelve armour.",
           "facts": [
             [
               "Tiers",
@@ -1075,7 +1075,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -1107,11 +1107,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 5,000 gold. A fifth more damage against a boss, scaled by its roll."
+                  "3 pick points, 5,000 gold. A fifth more damage against a boss, scaled by its roll."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 25,000 gold. Three tenths more damage against a boss, scaled by its roll."
+                  "3 pick points, 25,000 gold. Three tenths more damage against a boss, scaled by its roll."
                 ]
               ]
             },
@@ -1127,7 +1127,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 600 gold. A tenth more damage against a boss, and more again the stronger it rolled.\nTier 2 - 6 pick points, 5,000 gold. A fifth more damage against a boss, scaled by its roll.\nTier 3 - 9 pick points, 25,000 gold. Three tenths more damage against a boss, scaled by its roll.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 600 gold. A tenth more damage against a boss, and more again the stronger it rolled.\nTier 2 - 3 pick points, 5,000 gold. A fifth more damage against a boss, scaled by its roll.\nTier 3 - 3 pick points, 25,000 gold. Three tenths more damage against a boss, scaled by its roll.",
           "facts": [
             [
               "Tiers",
@@ -1135,7 +1135,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -1167,11 +1167,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 6,000 gold. A two-handed weapon hits two fifths harder, and you may hold a weapon in each hand instead of a shield at a cost of twenty-five defense."
+                  "3 pick points, 6,000 gold. A two-handed weapon hits two fifths harder, and you may hold a weapon in each hand instead of a shield at a cost of twenty-five defense."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 30,000 gold. A two-handed weapon hits three fifths harder, and a weapon in each hand costs only fifteen defense."
+                  "3 pick points, 30,000 gold. A two-handed weapon hits three fifths harder, and a weapon in each hand costs only fifteen defense."
                 ]
               ]
             },
@@ -1187,7 +1187,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 800 gold. A two-handed weapon hits a quarter harder.\nTier 2 - 6 pick points, 6,000 gold. A two-handed weapon hits two fifths harder, and you may hold a weapon in each hand instead of a shield at a cost of twenty-five defense.\nTier 3 - 9 pick points, 30,000 gold. A two-handed weapon hits three fifths harder, and a weapon in each hand costs only fifteen defense.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 800 gold. A two-handed weapon hits a quarter harder.\nTier 2 - 3 pick points, 6,000 gold. A two-handed weapon hits two fifths harder, and you may hold a weapon in each hand instead of a shield at a cost of twenty-five defense.\nTier 3 - 3 pick points, 30,000 gold. A two-handed weapon hits three fifths harder, and a weapon in each hand costs only fifteen defense.",
           "facts": [
             [
               "Tiers",
@@ -1195,7 +1195,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -1227,11 +1227,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 2,500 gold. A fifth more of your shots land."
+                  "3 pick points, 2,500 gold. A fifth more of your shots land."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 12,000 gold. Three tenths more of your shots land."
+                  "3 pick points, 12,000 gold. Three tenths more of your shots land."
                 ]
               ]
             },
@@ -1247,7 +1247,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 300 gold. A tenth more of your shots land.\nTier 2 - 6 pick points, 2,500 gold. A fifth more of your shots land.\nTier 3 - 9 pick points, 12,000 gold. Three tenths more of your shots land.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 300 gold. A tenth more of your shots land.\nTier 2 - 3 pick points, 2,500 gold. A fifth more of your shots land.\nTier 3 - 3 pick points, 12,000 gold. Three tenths more of your shots land.",
           "facts": [
             [
               "Tiers",
@@ -1255,7 +1255,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -1287,11 +1287,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 2,500 gold. Six percent of your shots are guaranteed hits."
+                  "3 pick points, 2,500 gold. Six percent of your shots are guaranteed hits."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 12,000 gold. Ten percent of your shots are guaranteed hits."
+                  "3 pick points, 12,000 gold. Ten percent of your shots are guaranteed hits."
                 ]
               ]
             },
@@ -1307,7 +1307,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 300 gold. Three percent of your shots are guaranteed hits.\nTier 2 - 6 pick points, 2,500 gold. Six percent of your shots are guaranteed hits.\nTier 3 - 9 pick points, 12,000 gold. Ten percent of your shots are guaranteed hits.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 300 gold. Three percent of your shots are guaranteed hits.\nTier 2 - 3 pick points, 2,500 gold. Six percent of your shots are guaranteed hits.\nTier 3 - 3 pick points, 12,000 gold. Ten percent of your shots are guaranteed hits.",
           "facts": [
             [
               "Tiers",
@@ -1315,7 +1315,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -1347,11 +1347,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 3,000 gold. Summoning costs half the normal ethereal points."
+                  "3 pick points, 3,000 gold. Summoning costs half the normal ethereal points."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 15,000 gold. Summoning costs a quarter of the normal ethereal points."
+                  "3 pick points, 15,000 gold. Summoning costs a quarter of the normal ethereal points."
                 ]
               ]
             },
@@ -1385,7 +1385,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 200 gold. Summoning costs three quarters of the normal ethereal points.\nTier 2 - 6 pick points, 3,000 gold. Summoning costs half the normal ethereal points.\nTier 3 - 9 pick points, 15,000 gold. Summoning costs a quarter of the normal ethereal points.\n\nWorn gear adds tiers on top of what pick points buy, so this perk goes further than tier 3 for anybody who owns the right piece:\nTier 4 - Summoning costs a seventh of the normal ethereal points.\nTier 5 - Summoning costs a tenth of the normal ethereal points.\n\nCarried by: Conjurer Cloak.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 200 gold. Summoning costs three quarters of the normal ethereal points.\nTier 2 - 3 pick points, 3,000 gold. Summoning costs half the normal ethereal points.\nTier 3 - 3 pick points, 15,000 gold. Summoning costs a quarter of the normal ethereal points.\n\nWorn gear adds tiers on top of what pick points buy, so this perk goes further than tier 3 for anybody who owns the right piece:\nTier 4 - Summoning costs a seventh of the normal ethereal points.\nTier 5 - Summoning costs a tenth of the normal ethereal points.\n\nCarried by: Conjurer Cloak.",
           "facts": [
             [
               "Tiers",
@@ -1393,7 +1393,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -1429,11 +1429,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 3,000 gold. As though your Magic Defense were four higher."
+                  "3 pick points, 3,000 gold. As though your Magic Defense were four higher."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 15,000 gold. As though your Magic Defense were six higher."
+                  "3 pick points, 15,000 gold. As though your Magic Defense were six higher."
                 ]
               ]
             },
@@ -1449,7 +1449,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 400 gold. Spells cast at you resist as though your Magic Defense were two higher.\nTier 2 - 6 pick points, 3,000 gold. As though your Magic Defense were four higher.\nTier 3 - 9 pick points, 15,000 gold. As though your Magic Defense were six higher.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 400 gold. Spells cast at you resist as though your Magic Defense were two higher.\nTier 2 - 3 pick points, 3,000 gold. As though your Magic Defense were four higher.\nTier 3 - 3 pick points, 15,000 gold. As though your Magic Defense were six higher.",
           "facts": [
             [
               "Tiers",
@@ -1457,7 +1457,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -1489,11 +1489,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 3,000 gold. Your spells cost a fifth less ethereal power."
+                  "3 pick points, 3,000 gold. Your spells cost a fifth less ethereal power."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 15,000 gold. Your spells cost three tenths less ethereal power."
+                  "3 pick points, 15,000 gold. Your spells cost three tenths less ethereal power."
                 ]
               ]
             },
@@ -1509,7 +1509,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 400 gold. Your spells cost a tenth less ethereal power.\nTier 2 - 6 pick points, 3,000 gold. Your spells cost a fifth less ethereal power.\nTier 3 - 9 pick points, 15,000 gold. Your spells cost three tenths less ethereal power.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 400 gold. Your spells cost a tenth less ethereal power.\nTier 2 - 3 pick points, 3,000 gold. Your spells cost a fifth less ethereal power.\nTier 3 - 3 pick points, 15,000 gold. Your spells cost three tenths less ethereal power.",
           "facts": [
             [
               "Tiers",
@@ -1517,7 +1517,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -1549,11 +1549,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 3,000 gold. What you summon has half again as much health."
+                  "3 pick points, 3,000 gold. What you summon has half again as much health."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 15,000 gold. What you summon has twice the health."
+                  "3 pick points, 15,000 gold. What you summon has twice the health."
                 ]
               ]
             },
@@ -1569,7 +1569,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 400 gold. What you summon has a quarter more health.\nTier 2 - 6 pick points, 3,000 gold. What you summon has half again as much health.\nTier 3 - 9 pick points, 15,000 gold. What you summon has twice the health.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 400 gold. What you summon has a quarter more health.\nTier 2 - 3 pick points, 3,000 gold. What you summon has half again as much health.\nTier 3 - 3 pick points, 15,000 gold. What you summon has twice the health.",
           "facts": [
             [
               "Tiers",
@@ -1577,7 +1577,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -1609,11 +1609,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 3,000 gold. As though your Magic Offense were four higher."
+                  "3 pick points, 3,000 gold. As though your Magic Offense were four higher."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 15,000 gold. As though your Magic Offense were six higher."
+                  "3 pick points, 15,000 gold. As though your Magic Offense were six higher."
                 ]
               ]
             },
@@ -1629,7 +1629,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 400 gold. Your attack spells land as though your Magic Offense were two higher.\nTier 2 - 6 pick points, 3,000 gold. As though your Magic Offense were four higher.\nTier 3 - 9 pick points, 15,000 gold. As though your Magic Offense were six higher.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 400 gold. Your attack spells land as though your Magic Offense were two higher.\nTier 2 - 3 pick points, 3,000 gold. As though your Magic Offense were four higher.\nTier 3 - 3 pick points, 15,000 gold. As though your Magic Offense were six higher.",
           "facts": [
             [
               "Tiers",
@@ -1637,7 +1637,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -1669,11 +1669,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 3,000 gold. Summoned creatures gain a fifth more attack and defense."
+                  "3 pick points, 3,000 gold. Summoned creatures gain a fifth more attack and defense."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 15,000 gold. Summoned creatures gain three tenths more attack and defense."
+                  "3 pick points, 15,000 gold. Summoned creatures gain three tenths more attack and defense."
                 ]
               ]
             },
@@ -1689,7 +1689,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 200 gold. Summoned creatures gain a tenth more attack and defense.\nTier 2 - 6 pick points, 3,000 gold. Summoned creatures gain a fifth more attack and defense.\nTier 3 - 9 pick points, 15,000 gold. Summoned creatures gain three tenths more attack and defense.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 200 gold. Summoned creatures gain a tenth more attack and defense.\nTier 2 - 3 pick points, 3,000 gold. Summoned creatures gain a fifth more attack and defense.\nTier 3 - 3 pick points, 15,000 gold. Summoned creatures gain three tenths more attack and defense.",
           "facts": [
             [
               "Tiers",
@@ -1697,7 +1697,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -1729,11 +1729,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 30,000 gold. Twice as many rare mixes."
+                  "3 pick points, 30,000 gold. Twice as many rare mixes."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 60,000 gold. Two and a half times as many rare mixes."
+                  "3 pick points, 60,000 gold. Two and a half times as many rare mixes."
                 ]
               ]
             },
@@ -1767,7 +1767,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 6,000 gold. Half again as many rare mixes.\nTier 2 - 6 pick points, 30,000 gold. Twice as many rare mixes.\nTier 3 - 9 pick points, 60,000 gold. Two and a half times as many rare mixes.\n\nWorn gear adds tiers on top of what pick points buy, so this perk goes further than tier 3 for anybody who owns the right piece:\nTier 4 - Three times as many rare mixes.\nTier 5 - Three and a half times as many rare mixes.\n\nCarried by: The Artificer Cape.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 6,000 gold. Half again as many rare mixes.\nTier 2 - 3 pick points, 30,000 gold. Twice as many rare mixes.\nTier 3 - 3 pick points, 60,000 gold. Two and a half times as many rare mixes.\n\nWorn gear adds tiers on top of what pick points buy, so this perk goes further than tier 3 for anybody who owns the right piece:\nTier 4 - Three times as many rare mixes.\nTier 5 - Three and a half times as many rare mixes.\n\nCarried by: The Artificer Cape.",
           "facts": [
             [
               "Tiers",
@@ -1775,7 +1775,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -1811,11 +1811,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 2,500 gold. A fifth of ruined mixes leave their ingredients behind."
+                  "3 pick points, 2,500 gold. A fifth of ruined mixes leave their ingredients behind."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 12,000 gold. Three tenths of ruined mixes leave their ingredients behind."
+                  "3 pick points, 12,000 gold. Three tenths of ruined mixes leave their ingredients behind."
                 ]
               ]
             },
@@ -1831,7 +1831,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 300 gold. A tenth of ruined mixes leave their ingredients behind.\nTier 2 - 6 pick points, 2,500 gold. A fifth of ruined mixes leave their ingredients behind.\nTier 3 - 9 pick points, 12,000 gold. Three tenths of ruined mixes leave their ingredients behind.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 300 gold. A tenth of ruined mixes leave their ingredients behind.\nTier 2 - 3 pick points, 2,500 gold. A fifth of ruined mixes leave their ingredients behind.\nTier 3 - 3 pick points, 12,000 gold. Three tenths of ruined mixes leave their ingredients behind.",
           "facts": [
             [
               "Tiers",
@@ -1839,7 +1839,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -1871,11 +1871,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 2,500 gold. Mixing costs half as much food."
+                  "3 pick points, 2,500 gold. Mixing costs half as much food."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 12,000 gold. Mixing costs a quarter of the food."
+                  "3 pick points, 12,000 gold. Mixing costs a quarter of the food."
                 ]
               ]
             },
@@ -1891,7 +1891,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 300 gold. Mixing costs a quarter less food.\nTier 2 - 6 pick points, 2,500 gold. Mixing costs half as much food.\nTier 3 - 9 pick points, 12,000 gold. Mixing costs a quarter of the food.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 300 gold. Mixing costs a quarter less food.\nTier 2 - 3 pick points, 2,500 gold. Mixing costs half as much food.\nTier 3 - 3 pick points, 12,000 gold. Mixing costs a quarter of the food.",
           "facts": [
             [
               "Tiers",
@@ -1899,7 +1899,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -1931,11 +1931,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 2,500 gold. Two mixes in a hundred keep their ingredients."
+                  "3 pick points, 2,500 gold. Two mixes in a hundred keep their ingredients."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 12,000 gold. Four mixes in a hundred keep their ingredients."
+                  "3 pick points, 12,000 gold. Four mixes in a hundred keep their ingredients."
                 ]
               ]
             },
@@ -1951,7 +1951,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 300 gold. One mix in a hundred keeps its ingredients as well as its result.\nTier 2 - 6 pick points, 2,500 gold. Two mixes in a hundred keep their ingredients.\nTier 3 - 9 pick points, 12,000 gold. Four mixes in a hundred keep their ingredients.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 300 gold. One mix in a hundred keeps its ingredients as well as its result.\nTier 2 - 3 pick points, 2,500 gold. Two mixes in a hundred keep their ingredients.\nTier 3 - 3 pick points, 12,000 gold. Four mixes in a hundred keep their ingredients.",
           "facts": [
             [
               "Tiers",
@@ -1959,7 +1959,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -1991,11 +1991,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 2,500 gold. One harvest in three yields a second item."
+                  "3 pick points, 2,500 gold. One harvest in three yields a second item."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 12,000 gold. One harvest in two yields a second item."
+                  "3 pick points, 12,000 gold. One harvest in two yields a second item."
                 ]
               ]
             },
@@ -2029,7 +2029,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 300 gold. One harvest in five yields a second item.\nTier 2 - 6 pick points, 2,500 gold. One harvest in three yields a second item.\nTier 3 - 9 pick points, 12,000 gold. One harvest in two yields a second item.\n\nWorn gear adds tiers on top of what pick points buy, so this perk goes further than tier 3 for anybody who owns the right piece:\nTier 4 - Two harvests in three yield a second item.\nTier 5 - Four harvests in five yield a second item.\n\nCarried by: Excavator Cape.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 300 gold. One harvest in five yields a second item.\nTier 2 - 3 pick points, 2,500 gold. One harvest in three yields a second item.\nTier 3 - 3 pick points, 12,000 gold. One harvest in two yields a second item.\n\nWorn gear adds tiers on top of what pick points buy, so this perk goes further than tier 3 for anybody who owns the right piece:\nTier 4 - Two harvests in three yield a second item.\nTier 5 - Four harvests in five yield a second item.\n\nCarried by: Excavator Cape.",
           "facts": [
             [
               "Tiers",
@@ -2037,7 +2037,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -2073,11 +2073,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 2,500 gold. A fifth more lucky finds."
+                  "3 pick points, 2,500 gold. A fifth more lucky finds."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 12,000 gold. Three tenths more lucky finds."
+                  "3 pick points, 12,000 gold. Three tenths more lucky finds."
                 ]
               ]
             },
@@ -2093,7 +2093,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 300 gold. A tenth more of the lucky finds a harvest can turn up.\nTier 2 - 6 pick points, 2,500 gold. A fifth more lucky finds.\nTier 3 - 9 pick points, 12,000 gold. Three tenths more lucky finds.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 300 gold. A tenth more of the lucky finds a harvest can turn up.\nTier 2 - 3 pick points, 2,500 gold. A fifth more lucky finds.\nTier 3 - 3 pick points, 12,000 gold. Three tenths more lucky finds.",
           "facts": [
             [
               "Tiers",
@@ -2101,7 +2101,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -2133,11 +2133,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 4,000 gold. Bones every two seconds, and one meal in fifty empties you instead."
+                  "3 pick points, 4,000 gold. Bones every two seconds, and one meal in fifty empties you instead."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 20,000 gold. Bones as fast as you can eat them, and no risk."
+                  "3 pick points, 20,000 gold. Bones as fast as you can eat them, and no risk."
                 ]
               ]
             },
@@ -2157,7 +2157,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 500 gold. Bones are worth thirty food, eaten no oftener than every four seconds, and one meal in twenty-five empties you instead.\nTier 2 - 6 pick points, 4,000 gold. Bones every two seconds, and one meal in fifty empties you instead.\nTier 3 - 9 pick points, 20,000 gold. Bones as fast as you can eat them, and no risk.\n\nCannot be held with I Eat Dead People.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 500 gold. Bones are worth thirty food, eaten no oftener than every four seconds, and one meal in twenty-five empties you instead.\nTier 2 - 3 pick points, 4,000 gold. Bones every two seconds, and one meal in fifty empties you instead.\nTier 3 - 3 pick points, 20,000 gold. Bones as fast as you can eat them, and no risk.\n\nCannot be held with I Eat Dead People.",
           "facts": [
             [
               "Tiers",
@@ -2165,7 +2165,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -2201,11 +2201,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 5,000 gold. A fifth sooner."
+                  "3 pick points, 5,000 gold. A fifth sooner."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 25,000 gold. Just over a third sooner."
+                  "3 pick points, 25,000 gold. Just over a third sooner."
                 ]
               ]
             },
@@ -2221,7 +2221,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 600 gold. Everything you wait on comes back a tenth sooner.\nTier 2 - 6 pick points, 5,000 gold. A fifth sooner.\nTier 3 - 9 pick points, 25,000 gold. Just over a third sooner.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 600 gold. Everything you wait on comes back a tenth sooner.\nTier 2 - 3 pick points, 5,000 gold. A fifth sooner.\nTier 3 - 3 pick points, 25,000 gold. Just over a third sooner.",
           "facts": [
             [
               "Tiers",
@@ -2229,7 +2229,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -2261,11 +2261,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 2,000 gold. Health and ether return twice as fast."
+                  "3 pick points, 2,000 gold. Health and ether return twice as fast."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 10,000 gold. Health and ether return three times as fast."
+                  "3 pick points, 10,000 gold. Health and ether return three times as fast."
                 ]
               ]
             },
@@ -2299,7 +2299,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 200 gold. Health and ether return half again as fast.\nTier 2 - 6 pick points, 2,000 gold. Health and ether return twice as fast.\nTier 3 - 9 pick points, 10,000 gold. Health and ether return three times as fast.\n\nWorn gear adds tiers on top of what pick points buy, so this perk goes further than tier 3 for anybody who owns the right piece:\nTier 4 - Health and ether return four times as fast.\nTier 5 - Health and ether return five times as fast.\n\nCarried by: Fast Regeneration Cape.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 200 gold. Health and ether return half again as fast.\nTier 2 - 3 pick points, 2,000 gold. Health and ether return twice as fast.\nTier 3 - 3 pick points, 10,000 gold. Health and ether return three times as fast.\n\nWorn gear adds tiers on top of what pick points buy, so this perk goes further than tier 3 for anybody who owns the right piece:\nTier 4 - Health and ether return four times as fast.\nTier 5 - Health and ether return five times as fast.\n\nCarried by: Fast Regeneration Cape.",
           "facts": [
             [
               "Tiers",
@@ -2307,7 +2307,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",
@@ -2343,11 +2343,11 @@
                 ],
                 [
                   "Tier 2",
-                  "6 pick points, 3,000 gold. You can hold forty more food."
+                  "3 pick points, 3,000 gold. You can hold forty more food."
                 ],
                 [
                   "Tier 3",
-                  "9 pick points, 15,000 gold. You can hold eighty more food."
+                  "3 pick points, 15,000 gold. You can hold eighty more food."
                 ]
               ]
             },
@@ -2363,7 +2363,7 @@
             }
           ],
           "related": [],
-          "body": "Bought in 3 tiers, each one costing 3 pick points more than the last.\n\nTier 1 - 3 pick points, 400 gold. You can hold twenty more food.\nTier 2 - 6 pick points, 3,000 gold. You can hold forty more food.\nTier 3 - 9 pick points, 15,000 gold. You can hold eighty more food.",
+          "body": "Bought in 3 tiers, each one costing 3 pick points and more gold than the last.\n\nTier 1 - 3 pick points, 400 gold. You can hold twenty more food.\nTier 2 - 3 pick points, 3,000 gold. You can hold forty more food.\nTier 3 - 3 pick points, 15,000 gold. You can hold eighty more food.",
           "facts": [
             [
               "Tiers",
@@ -2371,7 +2371,7 @@
             ],
             [
               "All tiers",
-              "18 pick points"
+              "9 pick points"
             ],
             [
               "Gold",

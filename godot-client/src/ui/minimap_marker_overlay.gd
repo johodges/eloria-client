@@ -99,10 +99,24 @@ func mark_point(mark: Dictionary) -> Variant:
 		return null
 	return _texture_position(_camera.unproject_position(world))
 
+## The marks in the order they are drawn, later ones on top. The player's own
+## mark goes last whatever order it was handed over in: it is the one mark a
+## player looks for, and in a crowd of NPCs or a field of harvest nodes the
+## dots standing next to it would otherwise cover it.
+func draw_order(marks: Array[Dictionary]) -> Array[Dictionary]:
+	var others: Array[Dictionary] = []
+	var own: Array[Dictionary] = []
+	for mark: Dictionary in marks:
+		if mark.get("type", &"") == &"self":
+			own.append(mark)
+		else:
+			others.append(mark)
+	return others + own
+
 func _draw() -> void:
 	if not is_instance_valid(_camera) or _marks.is_empty():
 		return
-	for mark: Dictionary in _marks:
+	for mark: Dictionary in draw_order(_marks):
 		var type: StringName = mark.get("type", &"") as StringName
 		if not type_enabled(type):
 			continue

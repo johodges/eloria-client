@@ -125,6 +125,11 @@ static func apply(manifest: WorldManifest, world_environment: WorldEnvironment,
 	# until the shadow it would throw has come down to a sane length.
 	sun.shadow_enabled = bool(declared_sun.get("shadows", true)) \
 		and sun.rotation_degrees.x < SHADOW_ELEVATION_CUTOFF
+	# Border blending hands this a neighbour's manifest, so the opacity follows
+	# the region whose light is being applied rather than the one loaded. It is
+	# taken from the noon sun, not the current one, so it does not drift with
+	# the hour.
+	sun.shadow_opacity = WorldEnvironmentBinder.sun_shadow_opacity(declared_sun)
 
 	var declared_ambient: Dictionary = declared.get("ambient", {}) as Dictionary
 	var noon_ambient: float = float(declared_ambient.get("energy", 0.85))
