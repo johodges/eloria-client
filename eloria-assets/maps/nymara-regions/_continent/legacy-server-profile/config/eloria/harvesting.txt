@@ -1,39 +1,30 @@
 # Original independent harvesting profile.
 resource | Sunleaf | 0 | 4 | 3.5 | -
-resource | Frost Reed | 8 | 12 | 4 | -
-resource | Copper | 15 | 20 | 4.5 | -
+resource | Copper | 15 | 20 | 4.5 | Pickaxe
 resource | Ember Crystal | 32 | 42 | 6 | Pickaxe
 resource | Slate | 12 | 16 | 5 | Pickaxe
 resource | Lavender | 3 | 7 | 3.5 | -
-resource | Flax | 6 | 10 | 4 | -
-resource | Garden Sage | 10 | 14 | 4 | -
 resource | Rosemary | 12 | 16 | 4 | -
 resource | Moss | 18 | 24 | 5 | -
-resource | Winter Wheat | 2 | 5 | 3.5 | -
-resource | Cotton | 7 | 11 | 4 | -
-resource | Deep Coal | 10 | 14 | 4.5 | Pickaxe
 resource | Iron Ore | 18 | 24 | 5 | Pickaxe
-resource | Clear Quartz | 4 | 8 | 4 | Pickaxe
 resource | Sulfur | 8 | 12 | 4 | Pickaxe
-resource | Storm Crystal | 24 | 32 | 5.5 | Pickaxe
-resource | Moon Salt | 20 | 28 | 5 | Pickaxe
-node | glasswind | 7 | 39 | 72 | Garden Sage
+node | glasswind | 7 | 39 | 72 | Sage
 node | glasswind | 8 | 75 | 67 | Rosemary
-node | glasswind | 9 | 88 | 62 | Storm Crystal
-node | glasswind | 10 | 29 | 49 | Moon Salt
-node | frostmere | 6 | 38 | 69 | Frost Reed
-node | frostmere | 7 | 73 | 76 | Flax
+node | glasswind | 9 | 88 | 62 | Stormglass
+node | glasswind | 10 | 29 | 49 | Salt
+node | frostmere | 6 | 38 | 69 | Reed
+node | frostmere | 7 | 73 | 76 | Riverflax
 node | frostmere | 8 | 83 | 47 | Iron Ore
-node | frostmere | 9 | 27 | 78 | Moon Salt
+node | frostmere | 9 | 27 | 78 | Salt
 node | mirefen | 6 | 42 | 71 | Moss
-node | mirefen | 8 | 82 | 79 | Cotton
+node | mirefen | 8 | 82 | 79 | Moorcotton
 node | mirefen | 9 | 29 | 79 | Copper
 node | verdant_reach | 6 | 39 | 67 | Sunleaf
 node | verdant_reach | 7 | 73 | 68 | Lavender
-node | verdant_reach | 8 | 80 | 45 | Winter Wheat
+node | verdant_reach | 8 | 80 | 45 | Wheat
 node | verdant_reach | 9 | 27 | 52 | Rosemary
 node | cinder_wastes | 6 | 39 | 72 | Ember Crystal
-node | cinder_wastes | 7 | 76 | 78 | Deep Coal
+node | cinder_wastes | 7 | 76 | 78 | Coal
 node | cinder_wastes | 8 | 84 | 47 | Sulfur
 node | cinder_wastes | 9 | 28 | 78 | Slate
 
@@ -471,6 +462,9 @@ node | whitehorn_range | 86 | 324 | 266 | Crystal
 node | whitehorn_range | 87 | 327 | 287 | Crystal
 node | whitehorn_range | 88 | 225 | 68 | Peat
 node | whitehorn_range | 89 | 216 | 68 | Peat
+node | whitehorn_range | 90 | 277 | 288 | Copper
+node | whitehorn_range | 91 | 285 | 283 | Copper
+node | whitehorn_range | 92 | 368 | 289 | Copper
 
 # amethyst_barrens
 node | amethyst_barrens | 65 | 244 | 143 | Crystal
@@ -500,6 +494,8 @@ node | amethyst_barrens | 88 | 323 | 184 | Coal
 node | amethyst_barrens | 89 | 313 | 198 | Coal
 node | amethyst_barrens | 90 | 42 | 334 | Toadstool
 node | amethyst_barrens | 91 | 36 | 334 | Toadstool
+node | amethyst_barrens | 92 | 313 | 288 | Copper
+node | amethyst_barrens | 93 | 308 | 293 | Copper
 
 # sunmane_steppe
 node | sunmane_steppe | 2020 | 172 | 81 | Wheat
@@ -530,6 +526,9 @@ node | sunmane_steppe | 44 | 337 | 197 | Verdigris
 node | sunmane_steppe | 45 | 337 | 204 | Verdigris
 node | sunmane_steppe | 46 | 342 | 198 | Coal
 node | sunmane_steppe | 47 | 343 | 195 | Coal
+node | sunmane_steppe | 48 | 333 | 205 | Copper
+node | sunmane_steppe | 49 | 336 | 191 | Copper
+node | sunmane_steppe | 50 | 333 | 201 | Copper
 
 # amberwood
 node | amberwood | 31 | 242 | 329 | Resin
@@ -561,6 +560,9 @@ node | amberwood | 56 | 313 | 48 | Bog Iron
 node | amberwood | 57 | 241 | 74 | Sage
 node | amberwood | 58 | 226 | 61 | Sage
 node | amberwood | 59 | 232 | 80 | Sage
+node | amberwood | 60 | 133 | 360 | Moss
+node | amberwood | 61 | 150 | 346 | Moss
+node | amberwood | 62 | 146 | 361 | Moss
 
 # grey_moors
 node | grey_moors | 81 | 242 | 141 | Peat
@@ -594,6 +596,9 @@ node | grey_moors | 108 | 246 | 52 | Thistle
 node | grey_moors | 109 | 244 | 64 | Thistle
 node | grey_moors | 110 | 128 | 303 | Flint
 node | grey_moors | 111 | 125 | 303 | Flint
+node | grey_moors | 112 | 57 | 136 | Moss
+node | grey_moors | 113 | 292 | 162 | Moss
+node | grey_moors | 114 | 66 | 131 | Moss
 
 # westhaven
 node | westhaven | 72 | 369 | 161 | Kelp
@@ -680,6 +685,8 @@ node | ssarathi_ruins | 69 | 308 | 259 | Geode
 node | ssarathi_ruins | 70 | 287 | 249 | Geode
 node | ssarathi_ruins | 71 | 63 | 222 | Flint
 node | ssarathi_ruins | 72 | 74 | 210 | Flint
+node | ssarathi_ruins | 73 | 282 | 127 | Moss
+node | ssarathi_ruins | 74 | 262 | 122 | Moss
 
 # manymouth_delta
 node | manymouth_delta | 82 | 257 | 355 | Lotus
@@ -719,10 +726,10 @@ node | manymouth_delta | 111 | 249 | 257 | Toadstool
 # map's furniture 600+, its harvest nodes 700+. Re-run `secrets` after a
 # secrets package or a region package changes.
 # amberwood_secrets
-node | amberwood_secrets | 700 | 222 | 154 | Garden Sage
-node | amberwood_secrets | 701 | 224 | 154 | Garden Sage
-node | amberwood_secrets | 702 | 225 | 154 | Garden Sage
-node | amberwood_secrets | 703 | 220 | 152 | Garden Sage
+node | amberwood_secrets | 700 | 222 | 154 | Sage
+node | amberwood_secrets | 701 | 224 | 154 | Sage
+node | amberwood_secrets | 702 | 225 | 154 | Sage
+node | amberwood_secrets | 703 | 220 | 152 | Sage
 node | amberwood_secrets | 704 | 228 | 154 | Rosemary
 node | amberwood_secrets | 705 | 230 | 154 | Rosemary
 node | amberwood_secrets | 706 | 231 | 154 | Rosemary
@@ -779,9 +786,9 @@ node | amethyst_barrens_secrets | 719 | 220 | 152 | Stormglass
 node | amethyst_barrens_secrets | 720 | 228 | 154 | Sulfur
 node | amethyst_barrens_secrets | 721 | 230 | 154 | Sulfur
 node | amethyst_barrens_secrets | 722 | 231 | 154 | Sulfur
-node | amethyst_barrens_secrets | 723 | 234 | 154 | Clear Quartz
-node | amethyst_barrens_secrets | 724 | 236 | 154 | Clear Quartz
-node | amethyst_barrens_secrets | 725 | 237 | 154 | Clear Quartz
+node | amethyst_barrens_secrets | 723 | 234 | 154 | Quartz
+node | amethyst_barrens_secrets | 724 | 236 | 154 | Quartz
+node | amethyst_barrens_secrets | 725 | 237 | 154 | Quartz
 node | amethyst_barrens_secrets | 726 | 222 | 145 | Quartz
 node | amethyst_barrens_secrets | 727 | 224 | 145 | Quartz
 node | amethyst_barrens_secrets | 728 | 225 | 145 | Quartz
@@ -828,23 +835,23 @@ node | crownwater_secrets | 732 | 156 | 156 | Shell
 node | four_gates_secrets | 700 | 4 | 13 | Rosemary
 node | four_gates_secrets | 701 | 8 | 13 | Rosemary
 node | four_gates_secrets | 702 | 11 | 13 | Rosemary
-node | four_gates_secrets | 703 | 15 | 13 | Clear Quartz
-node | four_gates_secrets | 704 | 4 | 11 | Clear Quartz
-node | four_gates_secrets | 705 | 8 | 11 | Clear Quartz
-node | four_gates_secrets | 706 | 150 | 153 | Flax
-node | four_gates_secrets | 707 | 152 | 153 | Flax
-node | four_gates_secrets | 708 | 153 | 153 | Flax
-node | four_gates_secrets | 709 | 148 | 151 | Flax
-node | four_gates_secrets | 710 | 156 | 153 | Cotton
-node | four_gates_secrets | 711 | 158 | 153 | Cotton
-node | four_gates_secrets | 712 | 159 | 153 | Cotton
-node | four_gates_secrets | 713 | 154 | 151 | Cotton
-node | four_gates_secrets | 714 | 162 | 153 | Winter Wheat
-node | four_gates_secrets | 715 | 164 | 153 | Winter Wheat
-node | four_gates_secrets | 716 | 165 | 153 | Winter Wheat
-node | four_gates_secrets | 717 | 150 | 144 | Garden Sage
-node | four_gates_secrets | 718 | 152 | 144 | Garden Sage
-node | four_gates_secrets | 719 | 153 | 144 | Garden Sage
+node | four_gates_secrets | 703 | 15 | 13 | Quartz
+node | four_gates_secrets | 704 | 4 | 11 | Quartz
+node | four_gates_secrets | 705 | 8 | 11 | Quartz
+node | four_gates_secrets | 706 | 150 | 153 | Riverflax
+node | four_gates_secrets | 707 | 152 | 153 | Riverflax
+node | four_gates_secrets | 708 | 153 | 153 | Riverflax
+node | four_gates_secrets | 709 | 148 | 151 | Riverflax
+node | four_gates_secrets | 710 | 156 | 153 | Moorcotton
+node | four_gates_secrets | 711 | 158 | 153 | Moorcotton
+node | four_gates_secrets | 712 | 159 | 153 | Moorcotton
+node | four_gates_secrets | 713 | 154 | 151 | Moorcotton
+node | four_gates_secrets | 714 | 162 | 153 | Wheat
+node | four_gates_secrets | 715 | 164 | 153 | Wheat
+node | four_gates_secrets | 716 | 165 | 153 | Wheat
+node | four_gates_secrets | 717 | 150 | 144 | Sage
+node | four_gates_secrets | 718 | 152 | 144 | Sage
+node | four_gates_secrets | 719 | 153 | 144 | Sage
 node | four_gates_secrets | 720 | 90 | 144 | Sunleaf
 node | four_gates_secrets | 721 | 80 | 146 | Sunleaf
 node | four_gates_secrets | 722 | 92 | 153 | Sunleaf
@@ -927,9 +934,9 @@ node | manymouth_delta_secrets | 732 | 222 | 145 | Kelp
 node | manymouth_delta_secrets | 733 | 224 | 145 | Kelp
 node | manymouth_delta_secrets | 734 | 225 | 145 | Kelp
 # mirrorhold_secrets
-node | mirrorhold_secrets | 700 | 7 | 150 | Clear Quartz
-node | mirrorhold_secrets | 701 | 4 | 144 | Clear Quartz
-node | mirrorhold_secrets | 702 | 7 | 138 | Clear Quartz
+node | mirrorhold_secrets | 700 | 7 | 150 | Quartz
+node | mirrorhold_secrets | 701 | 4 | 144 | Quartz
+node | mirrorhold_secrets | 702 | 7 | 138 | Quartz
 node | mirrorhold_secrets | 703 | 4 | 131 | Slate
 node | mirrorhold_secrets | 704 | 7 | 125 | Slate
 node | mirrorhold_secrets | 705 | 4 | 119 | Slate
@@ -943,15 +950,15 @@ node | mirrorhold_secrets | 712 | 222 | 154 | Quartz
 node | mirrorhold_secrets | 713 | 224 | 154 | Quartz
 node | mirrorhold_secrets | 714 | 225 | 154 | Quartz
 node | mirrorhold_secrets | 715 | 220 | 152 | Quartz
-node | mirrorhold_secrets | 716 | 228 | 154 | Clear Quartz
-node | mirrorhold_secrets | 717 | 230 | 154 | Clear Quartz
-node | mirrorhold_secrets | 718 | 231 | 154 | Clear Quartz
-node | mirrorhold_secrets | 719 | 226 | 152 | Clear Quartz
-node | mirrorhold_secrets | 720 | 234 | 154 | Moon Salt
-node | mirrorhold_secrets | 721 | 236 | 154 | Moon Salt
-node | mirrorhold_secrets | 722 | 237 | 154 | Moon Salt
-node | mirrorhold_secrets | 723 | 222 | 145 | Storm Crystal
-node | mirrorhold_secrets | 724 | 224 | 145 | Storm Crystal
+node | mirrorhold_secrets | 716 | 228 | 154 | Quartz
+node | mirrorhold_secrets | 717 | 230 | 154 | Quartz
+node | mirrorhold_secrets | 718 | 231 | 154 | Quartz
+node | mirrorhold_secrets | 719 | 226 | 152 | Quartz
+node | mirrorhold_secrets | 720 | 234 | 154 | Salt
+node | mirrorhold_secrets | 721 | 236 | 154 | Salt
+node | mirrorhold_secrets | 722 | 237 | 154 | Salt
+node | mirrorhold_secrets | 723 | 222 | 145 | Stormglass
+node | mirrorhold_secrets | 724 | 224 | 145 | Stormglass
 node | mirrorhold_secrets | 725 | 162 | 145 | Reed
 node | mirrorhold_secrets | 726 | 152 | 147 | Reed
 node | mirrorhold_secrets | 727 | 164 | 154 | Reed
@@ -1016,10 +1023,10 @@ node | sunmane_steppe_secrets | 715 | 150 | 153 | Sage
 node | sunmane_steppe_secrets | 716 | 152 | 153 | Sage
 node | sunmane_steppe_secrets | 717 | 153 | 153 | Sage
 node | sunmane_steppe_secrets | 718 | 148 | 151 | Sage
-node | sunmane_steppe_secrets | 719 | 156 | 153 | Flax
-node | sunmane_steppe_secrets | 720 | 158 | 153 | Flax
-node | sunmane_steppe_secrets | 721 | 159 | 153 | Flax
-node | sunmane_steppe_secrets | 722 | 154 | 151 | Flax
+node | sunmane_steppe_secrets | 719 | 156 | 153 | Riverflax
+node | sunmane_steppe_secrets | 720 | 158 | 153 | Riverflax
+node | sunmane_steppe_secrets | 721 | 159 | 153 | Riverflax
+node | sunmane_steppe_secrets | 722 | 154 | 151 | Riverflax
 node | sunmane_steppe_secrets | 723 | 162 | 153 | Wheat
 node | sunmane_steppe_secrets | 724 | 164 | 153 | Wheat
 node | sunmane_steppe_secrets | 725 | 165 | 153 | Wheat
@@ -1071,13 +1078,13 @@ node | westhaven_secrets | 706 | 222 | 154 | Riverflax
 node | westhaven_secrets | 707 | 224 | 154 | Riverflax
 node | westhaven_secrets | 708 | 225 | 154 | Riverflax
 node | westhaven_secrets | 709 | 220 | 152 | Riverflax
-node | westhaven_secrets | 710 | 228 | 154 | Cotton
-node | westhaven_secrets | 711 | 230 | 154 | Cotton
-node | westhaven_secrets | 712 | 231 | 154 | Cotton
-node | westhaven_secrets | 713 | 226 | 152 | Cotton
-node | westhaven_secrets | 714 | 234 | 154 | Flax
-node | westhaven_secrets | 715 | 236 | 154 | Flax
-node | westhaven_secrets | 716 | 237 | 154 | Flax
+node | westhaven_secrets | 710 | 228 | 154 | Moorcotton
+node | westhaven_secrets | 711 | 230 | 154 | Moorcotton
+node | westhaven_secrets | 712 | 231 | 154 | Moorcotton
+node | westhaven_secrets | 713 | 226 | 152 | Moorcotton
+node | westhaven_secrets | 714 | 234 | 154 | Riverflax
+node | westhaven_secrets | 715 | 236 | 154 | Riverflax
+node | westhaven_secrets | 716 | 237 | 154 | Riverflax
 node | westhaven_secrets | 717 | 222 | 145 | Verdigris
 node | westhaven_secrets | 718 | 224 | 145 | Verdigris
 node | westhaven_secrets | 719 | 225 | 145 | Verdigris
@@ -1097,10 +1104,10 @@ node | westhaven_secrets | 732 | 155 | 142 | Shell
 node | westhaven_secrets | 733 | 156 | 156 | Shell
 node | westhaven_secrets | 734 | 163 | 145 | Shell
 # whitehorn_range_secrets
-node | whitehorn_range_secrets | 700 | 222 | 154 | Frost Reed
-node | whitehorn_range_secrets | 701 | 224 | 154 | Frost Reed
-node | whitehorn_range_secrets | 702 | 225 | 154 | Frost Reed
-node | whitehorn_range_secrets | 703 | 220 | 152 | Frost Reed
+node | whitehorn_range_secrets | 700 | 222 | 154 | Reed
+node | whitehorn_range_secrets | 701 | 224 | 154 | Reed
+node | whitehorn_range_secrets | 702 | 225 | 154 | Reed
+node | whitehorn_range_secrets | 703 | 220 | 152 | Reed
 node | whitehorn_range_secrets | 704 | 228 | 154 | Copper
 node | whitehorn_range_secrets | 705 | 230 | 154 | Copper
 node | whitehorn_range_secrets | 706 | 231 | 154 | Copper
@@ -1120,9 +1127,9 @@ node | whitehorn_range_secrets | 719 | 152 | 12 | Slate
 node | whitehorn_range_secrets | 720 | 7 | 150 | Salt
 node | whitehorn_range_secrets | 721 | 4 | 144 | Salt
 node | whitehorn_range_secrets | 722 | 7 | 138 | Salt
-node | whitehorn_range_secrets | 723 | 4 | 131 | Frost Reed
-node | whitehorn_range_secrets | 724 | 7 | 125 | Frost Reed
-node | whitehorn_range_secrets | 725 | 4 | 119 | Frost Reed
+node | whitehorn_range_secrets | 723 | 4 | 131 | Reed
+node | whitehorn_range_secrets | 724 | 7 | 125 | Reed
+node | whitehorn_range_secrets | 725 | 4 | 119 | Reed
 node | whitehorn_range_secrets | 726 | 162 | 145 | Silverleaf
 node | whitehorn_range_secrets | 727 | 152 | 147 | Silverleaf
 node | whitehorn_range_secrets | 728 | 164 | 154 | Silverleaf

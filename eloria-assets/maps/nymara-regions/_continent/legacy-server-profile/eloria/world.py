@@ -6,6 +6,7 @@ import logging
 import math
 import random
 import struct
+import sys
 import time
 from collections import Counter, defaultdict, deque
 from collections.abc import Mapping, Sequence
@@ -48,7 +49,8 @@ from .map_layout import FOUR_GATES_ARRIVAL
 from .maps import load_maps
 from .profile import PROFILE
 from .pk import PKZone, capped_level, pk_zone_at, shared_pk_zone
-from .stats import award_combat_xp, combat_experience, stats_packet
+from .stats import (award_combat_xp, award_experience, combat_experience,
+                    stats_packet)
 from .magic import (AIMED_OFFENSIVE_SPELL_IDS, BASE_XP,
                     OFFENSIVE_PLAYER_SPELL_IDS, SIGIL_IDS, Spell,
                     active_focus,
@@ -81,7 +83,7 @@ from .perks import (ATTRIBUTE_MAXIMUM, ATTRIBUTE_MINIMUM, PERKS_BY_NAME,
                     combat_wear_scale, cooldown_scale, extra_food_capacity,
                     flanker_bonus, giantslayer_bonus, harvest_extra_chance,
                     life_steal, magic_defense_bonus, magic_offense_bonus,
-                    melee_dodge_luck, melee_hit_luck, mirror_share,
+                    melee_dodge_luck, melee_hit_luck, mirror_share, next_tier,
                     mixing_food_scale, multicombat_penalty_per_opponent,
                     owned_tier, perk_blocker, rare_harvest_bonus,
                     rare_mix_multiplier, ranging_critical, recycler_chance,
@@ -756,6 +758,10 @@ BAG_IDLE_TIMEOUT_SECONDS = 10 * 60
 BAG_CLEANUP_INTERVAL_SECONDS = 1
 NEW_PLAYER_DEATH_LEVEL = 20
 DEATH_RESPAWN_HEALTH = 5
+#: Deaths being carried out. The event loop holds tasks weakly, and a respawn
+#: whose caller was cancelled must not be collected mid-flight - see
+#: `World.player_died`.
+RESPAWN_TASKS: set[asyncio.Task] = set()
 #: Where a character stands before anything moves them, matching
 #: `Character.map_id`. Anything that has to put something down without being
 #: told where takes this, so the two cannot drift: they already had, and a
@@ -1033,6 +1039,12 @@ class Session:
     # The 64-bit experience view this client was last told about. None before
     # it has been told anything, so the first pass always sends.
     experience_signature: tuple | None = None
+    # The perk catalogue rows this client was last sent, or None before it
+    # has been sent any. The rows carry the server's refusals - not enough
+    # pick points, not enough gold, a conflict - and every one of those moves
+    # on paths that have nothing to do with perks, so the catalogue is
+    # reconciled against this rather than restated from each of them.
+    perk_catalog_rows: list | None = None
     # The worn-slot mask this client was last told, or -1 before it has been
     # told anything. Starting at -1 rather than 0 means a character carrying
     # nothing worn is still sent an explicit empty mask once, instead of the
@@ -4289,7 +4301,7 @@ class World(MagicRuntime):
             # Refresh once per batch, even when overall did not advance.
             await session.send(stats_packet(session.character))
         if overall_advanced and session.character:
-            # An overall level is a new pick point, so perks that were out of
+            # An overall level is new pick points, so perks that were out of
             # reach may not be any more. The catalogue carries the refusals,
             # so it is restated rather than left for the client to recompute.
             await self.send_perk_catalog(session)
@@ -4649,7 +4661,7 @@ class World(MagicRuntime):
         await self.broadcast_map(c.map_id, p.missile_fire_at_ground(c.actor_id, x, y))
         await self.consume_ranging_ammunition(
             session, weapon_name, ammunition_name)
-        await self.create_bag(x, y, [(ammunition_name, 1)], c.map_id)
+        await self.drop_into_bag(x, y, [(ammunition_name, 1)], c.map_id)
 
     def weather_on(self, map_id: str) -> tuple[int, int]:
         """The sky over a map as (kind, intensity). Clear until rolled."""
@@ -6007,7 +6019,7 @@ class World(MagicRuntime):
                 f"{quantity} {name}" for name, quantity in drops)))
             await self.walkthrough_event(session, "loot")
         elif drops:
-            drop_bag_id = await self.create_bag(
+            drop_bag_id = await self.drop_into_bag(
                 animal.x, animal.y, drops, animal.map_id)
             self.create_tracked_bag_items(
                 drop_bag_id, drops,
@@ -7221,7 +7233,7 @@ class World(MagicRuntime):
                 f"{quantity} {name}" for name, quantity in drops)))
             await self.walkthrough_event(session, "loot")
         elif drops:
-            post_combat_bag = await self.create_bag(a.x, a.y, drops, a.map_id)
+            post_combat_bag = await self.drop_into_bag(a.x, a.y, drops, a.map_id)
             self.create_tracked_bag_items(
                 post_combat_bag, drops,
                 source=f"creature_drop:{a.species}",
@@ -7419,8 +7431,14 @@ class World(MagicRuntime):
                             cause: str = "Unknown") -> bool:
         """Apply lethal player damage and return whether the player died."""
         c = session.character
-        if not c or session.dying or c.health <= 0:
-            return bool(session.dying or (c and c.health <= 0))
+        if not c or session.dying:
+            return session.dying
+        if c.health <= 0:
+            # On zero health and not being respawned means a death that went
+            # wrong. Answering "already dead" left them standing there for
+            # good; carry the death out again instead.
+            await self.player_died(session, cause=cause)
+            return True
         damage = min(c.health, max(0, amount))
         roads.emit(self,session,"incoming",amount=1,damage=damage)
         if len(session.aggressors | ({session.combat_target} if session.combat_target else set()))>=2:
@@ -7463,6 +7481,7 @@ class World(MagicRuntime):
             "Creature food",
         }
         drop_chance = 0.4 if c.has_perk("Careful Guy") else 0.5
+        kept = (dict(c.inventory), dict(c.equipment), dict(c.equipment_instances))
         dropped: list[tuple[str, int]] = []
         dropped_instances: list[int] = []
         for name, quantity in list(c.inventory.items()):
@@ -7484,7 +7503,18 @@ class World(MagicRuntime):
         if not dropped:
             session.inventory_slots = self.sync_inventory_slots(c)
             return None
-        bag_id = await self.create_bag(c.x, c.y, dropped, c.map_id)
+        try:
+            bag_id = await self.drop_into_bag(c.x, c.y, dropped, c.map_id)
+        except Exception:
+            # No bag to put them in (a map out of bag ids after an invasion's
+            # kills, say). Keep the items rather than deleting them, and let
+            # the respawn go on: raising here used to abandon it, leaving the
+            # player where they fell on zero health.
+            log.exception("Death drops for %s on %s could not be bagged",
+                          c.username, c.map_id)
+            c.inventory, c.equipment, c.equipment_instances = kept
+            session.inventory_slots = self.sync_inventory_slots(c)
+            return None
         for instance_id in dropped_instances:
             self.db.item_instances.transfer(
                 instance_id, 1, "bag", str(bag_id),
@@ -7505,15 +7535,49 @@ class World(MagicRuntime):
         c = session.character
         if not c or session.dying:
             return
-        if await roads.rescue(self, session):
-            return
-        if await sky.rescue(self, session):
-            return True
-        if await bell.rescue(self, session):
-            return True
-        if await lantern.rescue(self, session):
-            return
+        # Claimed before the first await, so a second blow landing while the
+        # respawn runs is answered "already dead" instead of starting another.
         session.dying = True
+        # The respawn is a string of awaits, and it used to run inside whatever
+        # task landed the killing blow - which the fight itself then cancels.
+        # A creature's retaliation is a child of the player's `attack()` loop:
+        # the respawn clears `combat_target`, which wakes that loop, and it
+        # cancels the retaliation from its `finally` while it is still inside
+        # `change_map` - leaving the player standing where they fell. Walking during the
+        # death does the same to `move_task`. The shielded task finishes the
+        # respawn whatever happens to its caller.
+        #
+        # Started eagerly where the runtime allows, so the death runs up to its
+        # first real suspension right here, as it did when it was inline -
+        # before the killing blow's own task, or a loop that never yields,
+        # gets another look at a player still on zero health.
+        death = self._carry_out_death(session, cause)
+        if sys.version_info >= (3, 12):
+            respawn = asyncio.Task(death, loop=asyncio.get_running_loop(),
+                                   eager_start=True)
+        else:
+            respawn = asyncio.create_task(death)
+        RESPAWN_TASKS.add(respawn)
+        respawn.add_done_callback(RESPAWN_TASKS.discard)
+        await asyncio.shield(respawn)
+
+    async def _carry_out_death(self, session: Session, cause: str) -> None:
+        c = session.character
+        try:
+            if await roads.rescue(self, session):
+                return
+            if await sky.rescue(self, session):
+                return
+            if await bell.rescue(self, session):
+                return
+            if await lantern.rescue(self, session):
+                return
+            await self._respawn_after_death(session, c, cause)
+        finally:
+            session.dying = False
+
+    async def _respawn_after_death(self, session: Session, c: Character,
+                                   cause: str) -> None:
         # A same-map respawn keeps the actor id. Drop the creature-side
         # memories before yielding so retaliation cannot follow that id to
         # the beam after the player's combat state has been cleared.
@@ -7529,19 +7593,30 @@ class World(MagicRuntime):
                 animal.pursuit_path.clear()
                 animal.pursuit_retry_at = 0.0
         self.clear_actor_magic(c)
-        await self.record_activity(session, ACTIVITY_DEATHS,
-                                   detail=cause or "Unknown")
         self.stop_poison(session)
         try:
-            death_zone = pk_zone_at(c.map_id, c.x, c.y)
             raid = self.territory_raids.active
             raid_team = self.territory_raids.team_for(c.username)
-            if (raid and not raid.finished and raid_team
-                    and c.map_id == raid.defender.map_id):
-                death_zone = PKZone(c.map_id, no_drops=True, multi_combat=True,
-                                    label="territory raid")
-            await self.create_player_death_bag(session, death_zone)
-            await self.broadcast_actor(c, p.actor_command(c.actor_id, p.CMD_DIE1))
+            # Everything before the teleport is bookkeeping around the death,
+            # and none of it may stop the respawn. An exception here used to
+            # leave the player where they fell on zero health, with no message:
+            # every later blow was answered "already dead", regeneration
+            # refilled the bar, and the next hit did it all again.
+            try:
+                await self.record_activity(session, ACTIVITY_DEATHS,
+                                           detail=cause or "Unknown")
+                death_zone = pk_zone_at(c.map_id, c.x, c.y)
+                if (raid and not raid.finished and raid_team
+                        and c.map_id == raid.defender.map_id):
+                    death_zone = PKZone(c.map_id, no_drops=True,
+                                        multi_combat=True,
+                                        label="territory raid")
+                await self.create_player_death_bag(session, death_zone)
+                await self.broadcast_actor(
+                    c, p.actor_command(c.actor_id, p.CMD_DIE1))
+            except Exception:
+                log.exception("Death of %s on %s failed before the respawn",
+                              c.username, c.map_id)
             current_task = asyncio.current_task()
             if (session.move_task and session.move_task is not current_task
                     and not session.move_task.done()):
@@ -7579,7 +7654,6 @@ class World(MagicRuntime):
             await self.send_stats(session, force=True)
         finally:
             session.fleeing = False
-            session.dying = False
 
     async def send_combat_state(self, session: Session, target: Animal,
                                 event: int = 0, damage: int = 0) -> None:
@@ -7634,6 +7708,13 @@ class World(MagicRuntime):
                         animal, p.missile_aim(animal.actor_id, c.actor_id))
                     await self.broadcast_actor(
                         animal, p.missile_fire(animal.actor_id, c.actor_id))
+                # The swing itself, which is what the client plays the attack
+                # clip on. This loop resolved the round without ever naming it,
+                # so a creature the player attacked stood in its combat idle
+                # and hit back invisibly; only invasion_attack, the aggressor's
+                # loop, sent one.
+                await self.broadcast_actor(
+                    animal, p.actor_command(animal.actor_id, p.CMD_ATTACK_UP_1))
                 creature_hit = self.resolve_melee_hit(
                     attack=animal.attack,
                     dexterity=creature_dexterity(definition),
@@ -7890,7 +7971,7 @@ class World(MagicRuntime):
                 f"{quantity} {name}" for name, quantity in drops)))
             roads.emit(self,owner,"loot",amount=len(drops))
         elif drops:
-            drop_bag_id = await self.create_bag(
+            drop_bag_id = await self.drop_into_bag(
                 target.x, target.y, drops, target.map_id)
             self.create_tracked_bag_items(
                 drop_bag_id, drops,
@@ -8496,6 +8577,10 @@ class World(MagicRuntime):
             await session.send(p.raw_text(message))
             return
         await self.send_perks(session)
+        # A stone hands pick points back and may clear a conflict, so what
+        # the shelf refuses has moved; restate it rather than leave the
+        # window showing yesterday's refusals.
+        await self.send_perk_catalog(session)
 
         c.inventory[name] -= 1
         if c.inventory[name] <= 0:
@@ -8664,19 +8749,13 @@ class World(MagicRuntime):
                 ITEMS[book.item_name].image_id, c.inventory[book.item_name], pos,
                 ITEMS[book.item_name].flags))
         if book.repeatable:
-            old_level = c.skills[book.experience_skill]
-            c.experience[book.experience_skill] = min(
-                0xFFFFFFFF, c.experience[book.experience_skill] + book.experience)
-            while (c.skills[book.experience_skill] < 179
-                   and c.experience[book.experience_skill]
-                   >= next_level_experience(c.skills[book.experience_skill])):
-                c.skills[book.experience_skill] += 1
+            level_ups = award_experience(
+                c, ((book.experience_skill, book.experience),))
             await session.send(p.colored_text(
                 f"You read {book.item_name} and gained {book.experience} "
                 f"{book.experience_skill} experience.", p.EL_COLOR_GREEN3))
-            if c.skills[book.experience_skill] != old_level:
-                await self.announce_levels(session, [(
-                    book.experience_skill, old_level, c.skills[book.experience_skill])])
+            if level_ups:
+                await self.announce_levels(session, level_ups)
             await self.send_stats(session, force=True)
         else:
             c.reading_book = book.knowledge
@@ -9241,6 +9320,19 @@ class World(MagicRuntime):
             item.equip_type, description, stats_text,
             comparison_name, comparison))
 
+    def stop_harvesting(self, session: Session) -> bool:
+        """Cancel a running harvest; True when there was one to stop.
+
+        Only the cancel lives here. The harvest loop's own exit path sends
+        the stock "You stopped harvesting." line and clears the client's
+        harvest state, so every interruption reads the same to the player.
+        """
+        task = session.harvest_task
+        if not task or task.done() or task is asyncio.current_task():
+            return False
+        task.cancel()
+        return True
+
     async def start_harvesting(self, session: Session, object_id: int):
         c = session.character
         if self.special_day_has("green") and not lantern.on_island(c) and not bell.on_map(c) and not sky.on_map(c):
@@ -9795,12 +9887,13 @@ class World(MagicRuntime):
                 if event == 1 and xp_awarded:
                     self.increment_achievement(c, "lucky_finds")
                     bonus = random.randint(200, 700)
-                    c.experience["harvesting"] = min(0xFFFFFFFF,
-                                                       c.experience["harvesting"] + bonus)
+                    level_ups = award_experience(c, (("harvesting", bonus),))
                     await session.send(p.colored_text(
                         f"Mother Nature blesses you with {bonus} harvesting experience!",
                         p.EL_COLOR_GREEN3))
-                    await session.send(p.partial_stats([(51, c.experience["harvesting"])]))
+                    await session.send(p.partial_stats([
+                        (51, c.experience["harvesting"]), (55, c.experience["overall"])]))
+                    await self.announce_levels(session, level_ups)
                     await self.broadcast_map(c.map_id, p.special_effect(14, c.actor_id))
                     await self.send_stats(session, force=True)
                     return
@@ -10501,15 +10594,7 @@ class World(MagicRuntime):
     async def reward_walkthrough_panel(self, session: Session,
                                        panel: wt.Panel) -> None:
         c = session.character
-        level_ups = []
-        for skill, amount in panel.experience:
-            old = c.skills[skill]
-            c.experience[skill] = c.experience[skill] + amount
-            while (c.skills[skill] < max_level_for(skill)
-                   and c.experience[skill] >= next_level_experience(c.skills[skill])):
-                c.skills[skill] += 1
-            if c.skills[skill] != old:
-                level_ups.append((skill, old, c.skills[skill]))
+        level_ups = award_experience(c, panel.experience)
         if panel.experience:
             await self.send_stats(session, force=True)
         if level_ups:
@@ -10947,11 +11032,19 @@ class World(MagicRuntime):
         session.pending_wraith = (kind, value)
         if kind == "perk":
             perk = next(perk for perk in WRAITH_PERKS if perk.name == value)
-            pp = (f"costs {perk.pickpoints} pick points" if perk.pickpoints > 0
-                  else f"gives {-perk.pickpoints} pick points" if perk.pickpoints < 0
+            # Price the step this character would buy, not the perk's first
+            # tier: the second tier of a perk asks for more gold than the
+            # first, and a confirmation that quoted the wrong sum would be
+            # agreed to and then refused.
+            tier = next_tier(c, perk) or perk.max_tier
+            step = perk.tier(tier)
+            pp = (f"costs {step.pickpoints} pick points" if step.pickpoints > 0
+                  else f"gives {-step.pickpoints} pick points" if step.pickpoints < 0
                   else "costs no pick points")
-            gold = f" and {perk.gold:,} gold coins" if perk.gold else ""
-            text = f"{perk.name} {pp}{gold}. {perk.description} Are you sure?"
+            gold = f" and {step.gold:,} gold coins" if step.gold else ""
+            what = (f"Tier {tier} of {perk.name}" if perk.max_tier > 1
+                    else perk.name)
+            text = f"{what} {pp}{gold}. {step.description} Are you sure?"
         else:
             text = f"Increase {value.title()} by one for 1 pick point? Are you sure?"
         await session.send(p.npc_text(text))
@@ -11232,20 +11325,18 @@ class World(MagicRuntime):
                 await session.send(p.raw_text(f"New daily quest: {objective}"))
             elif response_id == 8001 and can_complete_daily(c, npc_name):
                 before_inventory = dict(c.inventory)
+                before_levels = dict(c.skills)
                 task, xp, gold, _ = reward_daily(c)
                 self.record_inventory_economy_delta(
                     c, before_inventory, "daily_quest_reward",
                     counterparty=npc_name,
                     metadata={"task_kind": task.kind,
                               "task_target": task.target})
-                level_ups = []
-                for skill in xp:
-                    old = c.skills[skill]
-                    while (c.skills[skill] < max_level_for(skill)
-                           and c.experience[skill] >= next_level_experience(c.skills[skill])):
-                        c.skills[skill] += 1
-                    if c.skills[skill] != old:
-                        level_ups.append((skill, old, c.skills[skill]))
+                # The reward levels as it pays (overall included), so the
+                # announcement is read off the before/after levels.
+                level_ups = [(skill, before_levels[skill], level)
+                             for skill, level in c.skills.items()
+                             if level != before_levels.get(skill, level)]
                 session.inventory_slots = self.sync_inventory_slots(c)
                 self.db.save(c)
                 await session.send(p.inventory_packet(
@@ -11640,17 +11731,9 @@ class World(MagicRuntime):
         arriving with a full pack at the last one.
         """
         c = session.character
-        level_ups = []
-        for skill, amount in reward.experience:
-            if skill not in c.experience:
-                continue
-            before = c.skills[skill]
-            c.experience[skill] = c.experience[skill] + amount
-            while (c.skills[skill] < max_level_for(skill)
-                   and c.experience[skill] >= next_level_experience(c.skills[skill])):
-                c.skills[skill] += 1
-            if c.skills[skill] != before:
-                level_ups.append((skill, before, c.skills[skill]))
+        level_ups = award_experience(
+            c, [(skill, amount) for skill, amount in reward.experience
+                if skill in c.experience])
         stored: list[str] = []
         if reward.gold:
             self.add_inventory(c, "Gold Coins", reward.gold, source="quest")
@@ -12500,6 +12583,7 @@ class World(MagicRuntime):
         c = session.character
         name = npc_name.casefold()
         message = None
+        journey_levels = []
 
         if response_id == 7200 and name == "lasud":
             c.quest_state["past_quest_started"] = True
@@ -12542,7 +12626,7 @@ class World(MagicRuntime):
                           "potion", "summoning", "manufacturing", "crafting",
                           "engineering", "tailoring", "ranging")
                 skill = skills[response_id - 7300]
-                c.experience[skill] = c.experience[skill] + 1000
+                journey_levels = award_experience(c, ((skill, 1000),))
                 c.quest_state["seridia_journey_complete"] = True
                 c.quest_state["seridian_journey"] = True
                 message = f"Seridia Journey complete. You receive 1,000 {skill.title()} experience."
@@ -12554,6 +12638,8 @@ class World(MagicRuntime):
         await session.send(p.inventory_packet(
             c.inventory, ITEMS, c.equipment, c.inventory_slots))
         await self.send_stats(session, force=True)
+        if journey_levels:
+            await self.announce_levels(session, journey_levels)
         await session.send(p.npc_text(message or "Quest updated."))
         await session.send(p.npc_options(actor_id, [(900, "Close")]))
         return True
@@ -12632,15 +12718,7 @@ class World(MagicRuntime):
             10: (("magic", 1000),),
             11: (("manufacturing", 1000), ("magic", 1000)),
         }
-        level_ups = []
-        for skill, amount in xp.get(stage, ()):
-            old = c.skills[skill]
-            c.experience[skill] = c.experience[skill] + amount
-            while (c.skills[skill] < max_level_for(skill)
-                   and c.experience[skill] >= next_level_experience(c.skills[skill])):
-                c.skills[skill] += 1
-            if c.skills[skill] != old:
-                level_ups.append((skill, old, c.skills[skill]))
+        level_ups = award_experience(c, xp.get(stage, ()))
         rewards = {3: (("Homespun Shirt", 1),),
                    4: (("Militia Arming Sword", 1), ("Bonehook Jerkin", 1)),
                    9: (("Gold Coins", 500),),
@@ -12753,6 +12831,14 @@ class World(MagicRuntime):
         tiers = categories or "perk_catalog_v2" in session.client_capabilities
         if not tiers and "perk_catalog_v1" not in session.client_capabilities:
             return
+        rows = self.perk_catalog_rows(character)
+        session.perk_catalog_rows = rows
+        await session.send(p.perk_catalog_packet(
+            rows, tiers=tiers, categories=categories))
+
+    @staticmethod
+    def perk_catalog_rows(character: Character) -> list[tuple]:
+        """Every buyable perk as the catalogue states it, refusals included."""
         rows = []
         for perk in WRAITH_PERKS:
             if perk.hidden:
@@ -12765,8 +12851,42 @@ class World(MagicRuntime):
             rows.append((perk.name, step.description, step.pickpoints,
                          step.gold, perk_blocker(character, perk) or "",
                          owned, perk.max_tier, perk.category))
-        await session.send(p.perk_catalog_packet(
-            rows, tiers=tiers, categories=categories))
+        return rows
+
+    async def restate_perk_catalog(self, session: Session) -> bool:
+        """Resend the catalogue if any refusal in it has stopped being true.
+
+        A row's refusal is a snapshot: "not enough gold" was true when the
+        catalogue was sent and stops being true the moment a sale goes
+        through, and gold moves in fifty places that know nothing about
+        perks. The sites that *do* know - a purchase, a level, a stone -
+        restate it at once; this catches everything else, so a perk that has
+        become affordable is offered rather than left greyed out until the
+        next overall level happens to restate the shelf.
+
+        Nothing is sent to a client that has never been sent the catalogue:
+        it either cannot read the packet or has not logged in yet.
+        """
+        character = session.character
+        if not character or session.perk_catalog_rows is None:
+            return False
+        if self.perk_catalog_rows(character) == session.perk_catalog_rows:
+            return False
+        await self.send_perk_catalog(session)
+        return True
+
+    async def restate_perk_catalogs(self) -> int:
+        """One reconcile pass over every session. Returns how many were resent."""
+        resent = 0
+        for session in list(self.sessions):
+            try:
+                if await self.restate_perk_catalog(session):
+                    resent += 1
+            except (ConnectionError, OSError):
+                # A socket that has gone is the disconnect path's to reap;
+                # one dead client must not cost the others their pass.
+                continue
+        return resent
 
     async def send_attribute_state(self, session: Session) -> None:
         """State every attribute this character can buy, and its ceiling.
@@ -14078,29 +14198,11 @@ class World(MagicRuntime):
             await session.send(p.inventory_update(item.image_id, c.inventory[name], pos,
                                                    item.flags))
         await self.record_activity(session, ACTIVITY_DROPS, amount)
-        existing = next((bag_id for bag_id, (x, y, _) in self.bags.items()
-                         if (x, y) == (c.x, c.y)
-                         and self.bag_maps.get(bag_id, "") == c.map_id), None)
-        if existing is None:
-            bag_id = await self.create_bag(
-                c.x, c.y, [(name, amount)], c.map_id)
-        else:
-            bag_id = existing
-            drops = self.bags[existing][2]
-            match = next((index for index, (item_name, item_quantity)
-                          in enumerate(drops)
-                          if item_quantity > 0 and item_name == name), None)
-            if match is not None:
-                drops[match] = (name, drops[match][1] + amount)
-            else:
-                free = next((index for index, (_, item_quantity)
-                             in enumerate(drops) if item_quantity <= 0), None)
-                if free is None:
-                    drops.append((name, amount))
-                else:
-                    drops[free] = (name, amount)
-            self.bag_activity[existing] = time.monotonic()
-            await self.refresh_bag_viewers(existing)
+        bag_id = await self.drop_into_bag(
+            c.x, c.y, [(name, amount)], c.map_id)
+        # Handling a bag is a break from the node, both ways: putting
+        # something down ends the harvest just as picking something up does.
+        self.stop_harvesting(session)
         for instance_id in instance_ids:
             self.db.item_instances.transfer(
                 instance_id, 1, "bag", str(bag_id),
@@ -14135,6 +14237,41 @@ class World(MagicRuntime):
                     name, 1, "bag", str(bag_id),
                     durability=100, max_durability=100,
                     source=source, actor=actor)
+
+    async def drop_into_bag(self, x: int, y: int,
+                            items: list[tuple[str, int]], map_id: str) -> int:
+        """Put items on a tile, adding them to a bag already lying there.
+
+        Anything that leaves items on the ground - a player's drop, a creature
+        killed on a bag, a player dying on one - goes through here. Calling
+        `create_bag` on an occupied tile made a second bag at the same spot,
+        so a kill on top of a bag looked like it replaced the first one.
+        """
+        existing = next((bag_id for bag_id, (bag_x, bag_y, _)
+                         in self.bags.items()
+                         if (bag_x, bag_y) == (x, y)
+                         and self.bag_maps.get(bag_id, "") == map_id), None)
+        if existing is None:
+            return await self.create_bag(x, y, list(items), map_id)
+        drops = self.bags[existing][2]
+        for name, amount in items:
+            if amount <= 0:
+                continue
+            match = next((index for index, (item_name, item_quantity)
+                          in enumerate(drops)
+                          if item_quantity > 0 and item_name == name), None)
+            if match is not None:
+                drops[match] = (name, drops[match][1] + amount)
+                continue
+            free = next((index for index, (_, item_quantity)
+                         in enumerate(drops) if item_quantity <= 0), None)
+            if free is None:
+                drops.append((name, amount))
+            else:
+                drops[free] = (name, amount)
+        self.bag_activity[existing] = time.monotonic()
+        await self.refresh_bag_viewers(existing)
+        return existing
 
     async def create_bag(self, x: int, y: int, items: list[tuple[str, int]],
                          map_id: str) -> int:
@@ -14299,6 +14436,9 @@ class World(MagicRuntime):
                 c, name, amount, source="bag_pickup",
                 create_instances=False):
             await session.send(p.raw_text("Your inventory is full.")); return
+        # Taking something out of a bag ends the harvest, the same as
+        # dropping into one; a refused pickup above leaves it running.
+        self.stop_harvesting(session)
         moved_instance_ids = []
         for item in bag_instances[:amount]:
             moved_instance_ids.append(self.db.item_instances.transfer(

@@ -410,8 +410,8 @@ ROADS_PANELS: dict[int, Panel] = {panel.stage: panel for panel in (
             "decides who it reaches and how. Change the anchor and the same "
             "spell finds a different target.",
             "Buy Change and Move from Sigil Keeper Ansa at 400 Gold Coins each. "
-            "She also sells Heal's reagents: one Cinder Resin, one Sunleaf, and "
-            "one Woven Charm per cast. Withdraw gold from Dellin if it is stored.",
+            "She also sells Heal's reagents: one Life Distillate and one Woven "
+            "Charm per cast. Withdraw gold from Dellin if it is stored.",
             "Choose Power 1 and cast Heal. Higher power makes the same spell stronger; "
             "there are no separate Greater Heal or Greater Poison spells.",
             "Early casts often fail. A failed cast keeps the reagents but spends ether. "

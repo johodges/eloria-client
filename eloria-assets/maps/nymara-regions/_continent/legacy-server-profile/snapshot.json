@@ -4,7 +4,7 @@
   "files": {
     "config/eloria/client_content_manifest.json": "df6eb753b8d2e914f2d8a9478e22b34bdfcc9db203e8016474c4d4c9153e0809",
     "config/eloria/creatures.txt": "1a66842a45645a6ff83ade9ff5a9473df2ed46685405e56307bf39bee2c1a24f",
-    "config/eloria/harvesting.txt": "19e37747fbbc5ff042b9eb2e4dd0d59df55f2dab48b2a047bb8387b181cabd3c",
+    "config/eloria/harvesting.txt": "b8ad7d7e1bc89c47635f4ec772fe712a4be460de9c1fb4b3621fea2a02ef17c3",
     "config/eloria/instances/amberwood_gauntlet_low.def": "bc4b63d6cb103216e45a5e5397af9ce604c917cd2edede608e20c7a3def24d49",
     "config/eloria/instances/amberwood_gauntlet_mid.def": "e690629c583104fcc09cc39827a9d76f3ab65ee12649fbc7fba9a2c7980c0a62",
     "config/eloria/instances/amethyst_gauntlet_high.def": "2b4b65e43285bce12cd1366acf05620ed433f8c0f97e2a71f8d82c043fb1afe8",
@@ -31,9 +31,22 @@
     "config/eloria/spawns.txt": "cd778aa02461b74ffe00391a1d806a001eeb10aa9739a52ee87eb8f4ce69c899",
     "config/eloria/special_areas.txt": "2317401894789e84bee58ff8155429fc2c1787564d3b5ce9275c6b7f1f3bfc27",
     "config/eloria/territories.txt": "de46f5b1c47c9dbf392be8551e3b389b0e23a7a0e0f630943725f78e8325218d",
-    "eloria/daily_quests.py": "287190df6cc4f90c75a64f6f99663ae98bbd27ab60d5776406f5931e70a71f82",
+    "eloria/daily_quests.py": "2b4735642d1db3a09f069b14fdf477897eb1e16492fb0a8fb5787c97a866e218",
     "eloria/pk.py": "57adf011f24b2f806ce337620504065b95cd88fb756ebe23e437e35e9075aa91",
-    "eloria/walkthrough.py": "9a0d4bbe9113c11165e0d85eae2f0d5354cf29ae46159ac38a3b6e474d30d260",
-    "eloria/world.py": "9a1c297363e4c3f9f3ddd974ec9231dc16dbc935e1f5a19e287d56003a166ac9"
-  }
+    "eloria/walkthrough.py": "069d3adbe13012f52ad3b9072fc2867995e5ca0596753a9ff5ecffdc98f933f7",
+    "eloria/world.py": "50ccb897985f3320c11b960ea3660509ae3608a4df9a1b5702b2273d04d55d59"
+  },
+  "reconciliations": [
+    {
+      "date": "2026-09-14",
+      "developCommit": "edf561f",
+      "files": [
+        "config/eloria/harvesting.txt",
+        "eloria/daily_quests.py",
+        "eloria/walkthrough.py",
+        "eloria/world.py"
+      ],
+      "reason": "develop changed authored content after the twelfth publication; the served copies are regenerated through the current publication and the next contracts stage places the new records"
+    }
+  ]
 }

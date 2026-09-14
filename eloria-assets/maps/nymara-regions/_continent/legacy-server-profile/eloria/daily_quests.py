@@ -7,6 +7,8 @@ import random
 import time
 from typing import Iterable
 
+from .stats import award_experience
+
 
 @dataclass(frozen=True)
 class DailyTask:
@@ -238,8 +240,7 @@ def reward(c) -> tuple[DailyTask, dict[str, int], int, str]:
         xp = {"harvesting": task.xp_rate * c.skills["harvesting"]}
     elif key == "nymara_supply" and task.reward_skill:
         xp = {task.reward_skill: task.base_xp}
-    for skill, amount in xp.items():
-        c.experience[skill] = min(0xFFFFFFFF, c.experience[skill] + amount)
+    award_experience(c, xp.items())
     if task.gold:
         c.inventory["Gold Coins"] = c.inventory.get("Gold Coins", 0) + task.gold
     clear(c)
