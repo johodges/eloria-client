@@ -24,7 +24,7 @@
       ],
       "max": [
         400.0,
-        289.5703820442666,
+        289.5703820345275,
         240.0
       ]
     },
@@ -36,7 +36,7 @@
       ],
       "max": [
         400.0,
-        289.5703820442666,
+        289.5703820345275,
         240.0
       ]
     },
@@ -50,7 +50,7 @@
       ],
       "max": [
         400.0,
-        289.5703820442666,
+        289.5703820345275,
         240.0
       ]
     }
@@ -234,7 +234,7 @@
     },
     "walkableCells": 614579,
     "walkableFraction": 0.252539,
-    "sourceGlbSha256": "c7f3f2c59fdcb5515bdc889e6d43e50c5a3aa32381815d4b0cd408a9ee3bcf93",
+    "sourceGlbSha256": "e28956d1f41c33e35fc75e43e46149ed8c07d176c5b5c542e35ca322cf8d396b",
     "exportStatistics": {
       "walkMeshes": 40,
       "structuralMeshes": 245,
@@ -257,47 +257,47 @@
     "collisionFile": "collision.bin",
     "crossings": [
       {
-        "id": "ContinentalBridgeUnion_023",
+        "id": "ContinentalBridgeUnion_022",
         "endpoints": [
-          [
-            32.3,
-            4.739787115950996,
-            -123.3
-          ],
           [
             48.3,
-            4.599301097829519,
-            -121.3
+            4.596466064453125,
+            -119.3
+          ],
+          [
+            31.3,
+            4.816192030906677,
+            -123.3
           ]
         ]
       },
       {
-        "id": "ContinentalBridgeUnion_025",
+        "id": "ContinentalBridgeUnion_024",
         "endpoints": [
           [
-            70.3,
-            2.9824562597535054,
-            -28.3
+            68.3,
+            2.5255481004714966,
+            4.7
           ],
           [
-            67.3,
-            2.5618328457184845,
-            3.7
+            69.3,
+            2.965876817703247,
+            -29.3
           ]
         ]
       },
       {
-        "id": "ContinentalBridgeUnion_026",
+        "id": "ContinentalBridgeUnion_027",
         "endpoints": [
           [
-            66.3,
-            2.512248320921136,
-            28.7
+            -119.7,
+            2.0,
+            79.7
           ],
           [
-            75.3,
-            1.9407156484308352,
-            33.7
+            -122.7,
+            1.9104943871498108,
+            68.7
           ]
         ]
       },
@@ -305,14 +305,14 @@
         "id": "ContinentalBridgeUnion_028",
         "endpoints": [
           [
-            -121.7,
-            2.258925664936131,
-            69.7
+            89.3,
+            2.015163481235504,
+            181.7
           ],
           [
-            -119.7,
-            1.1686774900609143,
-            79.7
+            60.3,
+            0.9814562797546387,
+            161.7
           ]
         ]
       },
@@ -320,29 +320,14 @@
         "id": "ContinentalBridgeUnion_029",
         "endpoints": [
           [
-            61.3,
-            0.5192509949001415,
-            162.7
-          ],
-          [
-            88.3,
-            1.6850674550326614,
-            180.7
-          ]
-        ]
-      },
-      {
-        "id": "ContinentalBridgeUnion_030",
-        "endpoints": [
-          [
             108.3,
-            0.3111012437263068,
-            196.7
+            0.6541332006454468,
+            194.7
           ],
           [
-            126.3,
-            -5.929605519727089,
-            207.7
+            122.3,
+            0.8500000238418579,
+            208.7
           ]
         ]
       }
@@ -1733,7 +1718,7 @@
       "resource": "orchid",
       "position": [
         -119.11000000000001,
-        17.61366026211414,
+        17.613660221889898,
         -16.779999999999973
       ],
       "serverTile": [
@@ -2280,7 +2265,7 @@
       ],
       "max": [
         400.0,
-        289.5703820442666,
+        289.5703820345275,
         240.0
       ]
     },
@@ -2302,7 +2287,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
+      "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
       "globalMin": [
         728.0,
         1280.0
@@ -2321,7 +2306,7 @@
     }
   },
   "performance": {
-    "glbBytes": 12467556,
+    "glbBytes": 12467544,
     "nodes": 3040,
     "meshes": 449,
     "externalResources": {
@@ -3012,11 +2997,11 @@
     ],
     "max": [
       400.0,
-      289.5703820442666,
+      289.5703820345275,
       240.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:720590d63cc6f6a7f80adc8dfdc007ff2d933e4a9cd26f1439f56ebbed523e5c",
+  "terrainRevision": "diagonal-spine-v1:3d27f88469541f780e39fed684ea2dbf102c13287f0dac1af4f0b8c12bc659c1",
   "externalResources": {
     "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -3090,7 +3075,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
+    "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
     "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba"
   },
   "streamingChunks": {
@@ -3424,13 +3409,13 @@
           ],
           "max": [
             -136.713864492526,
-            34.78515090599835,
+            34.78515091127485,
             96.0
           ]
         },
-        "estimatedResidentBytes": 30809104,
-        "glbBytes": 604364,
-        "geometryResidentBytes": 3021820,
+        "estimatedResidentBytes": 30809084,
+        "glbBytes": 604360,
+        "geometryResidentBytes": 3021800,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -3475,7 +3460,7 @@
           ],
           "max": [
             -140.0,
-            14.66972507821375,
+            14.66972507959279,
             192.0
           ]
         },
@@ -3524,7 +3509,7 @@
           ],
           "max": [
             -33.52417794469716,
-            63.70530263579652,
+            63.70532388380666,
             -93.6406610696506
           ]
         },
@@ -3564,12 +3549,12 @@
         "bounds": {
           "min": [
             -151.33134306583497,
-            0.8062803170134023,
+            0.8062803220125812,
             -105.19085542987546
           ],
           "max": [
             -30.412669993813097,
-            53.00641138190496,
+            53.00641137503393,
             0.0
           ]
         },
@@ -3614,7 +3599,7 @@
           ],
           "max": [
             -36.190513610839844,
-            21.32443754781991,
+            21.324437556250736,
             97.79947203499364
           ]
         },
@@ -3669,7 +3654,7 @@
           ],
           "max": [
             -38.029253451754585,
-            28.827609984715828,
+            28.82760998416733,
             192.0
           ]
         },
@@ -3762,7 +3747,7 @@
           ],
           "max": [
             58.62710217550648,
-            69.74212234922918,
+            69.74217247709569,
             -96.0
           ]
         },
@@ -3852,7 +3837,7 @@
           ],
           "max": [
             52.0,
-            28.257472609509282,
+            28.257472608146607,
             96.0
           ]
         },
@@ -3909,7 +3894,7 @@
           ],
           "max": [
             55.272842340191346,
-            28.543706596545732,
+            28.543706601077112,
             192.66666666666674
           ]
         },
@@ -4124,13 +4109,13 @@
           ],
           "max": [
             156.7697913930806,
-            44.39392248945375,
+            44.39392248861593,
             115.07321548461914
           ]
         },
-        "estimatedResidentBytes": 39845696,
-        "glbBytes": 1275724,
-        "geometryResidentBytes": 6378620,
+        "estimatedResidentBytes": 39845676,
+        "glbBytes": 1275720,
+        "geometryResidentBytes": 6378600,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -4183,7 +4168,7 @@
           ],
           "max": [
             148.0,
-            33.09284759255542,
+            33.09284760316419,
             194.60406214019486
           ]
         },
@@ -4312,7 +4297,7 @@
           ],
           "max": [
             256.226277173517,
-            56.68163861557211,
+            56.6816386270794,
             8.363492430285987
           ]
         },
@@ -4757,12 +4742,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:720590d63cc6f6a7f80adc8dfdc007ff2d933e4a9cd26f1439f56ebbed523e5c"
+    "terrainRevision": "diagonal-spine-v1:3d27f88469541f780e39fed684ea2dbf102c13287f0dac1af4f0b8c12bc659c1"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
-    "collisionSha256": "6d62937469b6a4c5c80d6b65a649b3ed56f76561dfbec5e7a7f4e5ef63f15217",
-    "terrainRevision": "diagonal-spine-v1:720590d63cc6f6a7f80adc8dfdc007ff2d933e4a9cd26f1439f56ebbed523e5c"
+    "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
+    "collisionSha256": "9f54a82e8b3ed607ec70d4cd02aa4bb94ae016b1248326c02b2f28a577394bdf",
+    "terrainRevision": "diagonal-spine-v1:3d27f88469541f780e39fed684ea2dbf102c13287f0dac1af4f0b8c12bc659c1"
   }
 }

@@ -24,7 +24,7 @@
       ],
       "max": [
         296.0,
-        289.5703820442666,
+        289.5703820345275,
         306.0
       ]
     },
@@ -36,7 +36,7 @@
       ],
       "max": [
         296.0,
-        289.5703820442666,
+        289.5703820345275,
         306.0
       ]
     },
@@ -50,7 +50,7 @@
       ],
       "max": [
         296.0,
-        289.5703820442666,
+        289.5703820345275,
         306.0
       ]
     }
@@ -362,7 +362,7 @@
     },
     "walkableCells": 441118,
     "walkableFraction": 0.423989,
-    "sourceGlbSha256": "056e1c7e13cefd7e52c4513b8af655d52440bfee2641e0a20eaf19fa06b88db9",
+    "sourceGlbSha256": "7ff99346bfbc5d187b825499999c07ae58f3a3841df96e30c9f65fa494d314ba",
     "exportStatistics": {
       "walkMeshes": 204,
       "structuralMeshes": 433,
@@ -388,14 +388,14 @@
         "id": "ContinentalBridgeUnion_015",
         "endpoints": [
           [
-            -7.7,
-            3.173948185431424,
-            -134.3
+            -48.7,
+            1.4338706135749817,
+            -1.3
           ],
           [
-            -46.7,
-            1.3116367886714908,
-            -1.3
+            -6.7,
+            3.2308233976364136,
+            -135.3
           ]
         ]
       },
@@ -404,13 +404,28 @@
         "endpoints": [
           [
             -30.7,
-            2.803556377864684,
+            2.803556442260742,
             -98.3
           ],
           [
-            -84.7,
-            2.4654454079182067,
-            -103.3
+            -83.7,
+            2.4133166074752808,
+            -102.3
+          ]
+        ]
+      },
+      {
+        "id": "ContinentalBridgeUnion_018",
+        "endpoints": [
+          [
+            -122.7,
+            2.1766114234924316,
+            -51.3
+          ],
+          [
+            -171.7,
+            1.1224831938743591,
+            -56.3
           ]
         ]
       },
@@ -418,14 +433,14 @@
         "id": "ContinentalBridgeUnion_020",
         "endpoints": [
           [
-            74.3,
-            1.2622280274022053,
-            16.7
+            51.3,
+            1.339334785938263,
+            20.7
           ],
           [
-            53.3,
-            1.242219652011713,
-            22.7
+            75.3,
+            1.360462486743927,
+            16.7
           ]
         ]
       }
@@ -469,7 +484,7 @@
       "node": "Landmark_LabyrinthMouth",
       "position": [
         113.66237315707804,
-        -0.636927787783355,
+        -0.6369277877555781,
         29.36733026232696
       ],
       "serverTile": [
@@ -574,7 +589,7 @@
       "node": "Landmark_EastWatch",
       "position": [
         212.6855469346949,
-        8.391368305436767,
+        8.391368305447067,
         13.242618710345141
       ],
       "serverTile": [
@@ -604,7 +619,7 @@
       "node": "Landmark_GreatBanyan",
       "position": [
         27.1899043049317,
-        7.667628928324869,
+        7.667628922842948,
         -78.1128914440917
       ],
       "serverTile": [
@@ -655,7 +670,7 @@
       "type": "transition",
       "position": [
         203.21482262158202,
-        8.615463264461036,
+        8.615463264457903,
         4.067029212493935
       ],
       "note": "Where the Manymouth Delta gives way to the Ssarathi Ruins: ssarathi road furniture, a march stone, a waystation, and 16 pieces of the country beyond."
@@ -667,7 +682,7 @@
       "type": "waystation",
       "position": [
         190.82892262158202,
-        5.885463264461036,
+        5.885463264457902,
         -2.1329707875061104
       ]
     },
@@ -799,7 +814,7 @@
       "type": "mechanism",
       "position": [
         -67.84200884204097,
-        2.776013299871311,
+        2.7760133027760414,
         -113.57653119628912
       ],
       "authority": "server"
@@ -1335,7 +1350,7 @@
       "role": "farmer",
       "position": [
         -79.83230884204102,
-        2.676013299871311,
+        2.6760133027760413,
         -115.57383119628912
       ],
       "authority": "server"
@@ -1345,7 +1360,7 @@
       "role": "farmer",
       "position": [
         -70.39200884204098,
-        2.676013299871311,
+        2.6760133027760413,
         -106.53983119628901
       ],
       "authority": "server"
@@ -1365,7 +1380,7 @@
       "role": "farmer",
       "position": [
         -72.47200884204102,
-        2.676013299871311,
+        2.6760133027760413,
         -125.53593119628908
       ],
       "authority": "server"
@@ -1375,7 +1390,7 @@
       "role": "farmer",
       "position": [
         -59.562008842040996,
-        2.676013299871311,
+        2.6760133027760413,
         -121.70103119628902
       ],
       "authority": "server"
@@ -1577,7 +1592,7 @@
       "species": "delta-crocodile",
       "position": [
         -123.31803895373537,
-        -3.477017122878257,
+        -3.477017122871707,
         -67.92690883911132
       ],
       "authority": "server"
@@ -1588,7 +1603,7 @@
       "species": "delta-crocodile",
       "position": [
         -107.1467389537354,
-        2.2329828771217435,
+        2.2329828771282934,
         -45.02840883911131
       ],
       "authority": "server"
@@ -1654,7 +1669,7 @@
       "species": "drowned-sentinel",
       "position": [
         54.02837430921841,
-        8.236979241214964,
+        8.236979229638512,
         -60.09550426023111
       ],
       "authority": "server"
@@ -1709,7 +1724,7 @@
       "species": "labyrinth-crawler",
       "position": [
         127.97577315707804,
-        -1.7269277877833549,
+        -1.726927787755578,
         22.687330262326896
       ],
       "authority": "server"
@@ -1853,7 +1868,7 @@
       "resource": "lotus-root",
       "position": [
         -59.312008842040996,
-        2.076013299871311,
+        2.0760133027760412,
         -97.70243119628913
       ],
       "authority": "server"
@@ -1863,7 +1878,7 @@
       "resource": "lotus-root",
       "position": [
         -61.98200884204101,
-        2.676013299871311,
+        2.6760133027760413,
         -120.90823119628908
       ],
       "authority": "server"
@@ -1873,7 +1888,7 @@
       "resource": "lotus-root",
       "position": [
         -69.17200884204101,
-        2.216013299871311,
+        2.2160133027760414,
         -119.41483119628901
       ],
       "authority": "server"
@@ -1883,7 +1898,7 @@
       "resource": "lotus-root",
       "position": [
         -74.60700884204101,
-        2.076013299871311,
+        2.0760133027760412,
         -125.50513119628908
       ],
       "authority": "server"
@@ -1903,7 +1918,7 @@
       "resource": "lotus-root",
       "position": [
         -82.09270884204102,
-        2.076013299871311,
+        2.0760133027760412,
         -116.59403119628905
       ],
       "authority": "server"
@@ -1923,7 +1938,7 @@
       "resource": "lotus-root",
       "position": [
         -76.48040884204102,
-        2.096013299871311,
+        2.0960133027760413,
         -127.80363119628896
       ],
       "authority": "server"
@@ -2033,7 +2048,7 @@
       "resource": "mangrove-bark",
       "position": [
         -124.20833895373539,
-        0.4029828771217434,
+        0.4029828771282933,
         -54.06240883911141
       ],
       "authority": "server"
@@ -2053,7 +2068,7 @@
       "resource": "mangrove-bark",
       "position": [
         -99.55263895373537,
-        1.8829828771217434,
+        1.8829828771282933,
         -45.089808839111356
       ],
       "authority": "server"
@@ -2063,7 +2078,7 @@
       "resource": "mangrove-bark",
       "position": [
         -104.60763895373537,
-        2.2829828771217433,
+        2.282982877128293,
         -64.73740883911137
       ],
       "authority": "server"
@@ -2073,7 +2088,7 @@
       "resource": "mangrove-bark",
       "position": [
         -97.34643895373534,
-        2.2829828771217433,
+        2.282982877128293,
         -61.129908839111295
       ],
       "authority": "server"
@@ -2083,7 +2098,7 @@
       "resource": "banyan-resin",
       "position": [
         23.329904304931688,
-        3.447628928324869,
+        3.447628922842948,
         -62.41709144409174
       ],
       "authority": "server"
@@ -2093,7 +2108,7 @@
       "resource": "banyan-resin",
       "position": [
         34.852737785766635,
-        5.592367606219978,
+        5.592367601977692,
         -70.94208661010748
       ],
       "authority": "server"
@@ -2113,7 +2128,7 @@
       "resource": "banyan-resin",
       "position": [
         40.20273778576666,
-        5.602367606219977,
+        5.602367601977692,
         -73.26518661010732
       ],
       "authority": "server"
@@ -2123,7 +2138,7 @@
       "resource": "banyan-resin",
       "position": [
         42.592737785766644,
-        5.802367606219978,
+        5.802367601977692,
         -78.90678661010747
       ],
       "authority": "server"
@@ -2849,7 +2864,7 @@
       ],
       "max": [
         296.0,
-        289.5703820442666,
+        289.5703820345275,
         306.0
       ]
     },
@@ -2871,7 +2886,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
+      "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
       "globalMin": [
         316.0,
         984.0
@@ -2890,7 +2905,7 @@
     }
   },
   "performance": {
-    "glbBytes": 8337804,
+    "glbBytes": 8337808,
     "nodes": 1812,
     "meshes": 513,
     "externalResources": {
@@ -4663,11 +4678,11 @@
     ],
     "max": [
       296.0,
-      289.5703820442666,
+      289.5703820345275,
       306.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:e9d5e9433dcfc8897e25d94f7b953a6b9ad6698e49c08bd9b17cd0a6e18c01bd",
+  "terrainRevision": "diagonal-spine-v1:6e48af8890edfa2a3a8d5b0ce5e9069f89bb7bb7c3c18ad89837a5723ad851b8",
   "externalResources": {
     "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -4754,7 +4769,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
+    "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
     "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba"
   },
   "streamingChunks": {
@@ -4771,7 +4786,7 @@
         "bounds": {
           "min": [
             -164.0,
-            2.0840854900736754,
+            2.0840854900737242,
             -156.0
           ],
           "max": [
@@ -4802,7 +4817,7 @@
           ],
           "max": [
             -121.0,
-            8.975572152219296,
+            8.975572152282947,
             12.0
           ]
         },
@@ -4828,7 +4843,7 @@
           ],
           "max": [
             -136.0,
-            3.578292604987162,
+            3.5782926048208554,
             108.0
           ]
         },
@@ -4915,7 +4930,7 @@
           ],
           "max": [
             -40.0,
-            9.531559079973112,
+            9.531559064475402,
             12.06621602886139
           ]
         },
@@ -5295,9 +5310,9 @@
             13.4111328125
           ]
         },
-        "estimatedResidentBytes": 31764886,
-        "glbBytes": 795520,
-        "geometryResidentBytes": 3977600,
+        "estimatedResidentBytes": 31764906,
+        "glbBytes": 795524,
+        "geometryResidentBytes": 3977620,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -5345,7 +5360,7 @@
           ],
           "max": [
             152.0,
-            10.061907976981647,
+            10.061907977009424,
             108.0
           ]
         },
@@ -5504,9 +5519,9 @@
             14.167028434295617
           ]
         },
-        "estimatedResidentBytes": 39030114,
-        "glbBytes": 885416,
-        "geometryResidentBytes": 4427080,
+        "estimatedResidentBytes": 39030094,
+        "glbBytes": 885412,
+        "geometryResidentBytes": 4427060,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "4d2b6f27be220e450bcb89dbffba0b651ad081621c0db5e675f45b5b0e4ea3b2": 1398102,
@@ -5560,7 +5575,7 @@
           ],
           "max": [
             248.0,
-            13.994129025917033,
+            13.994129025927332,
             108.43163302332414
           ]
         },
@@ -5678,7 +5693,7 @@
         "bounds": {
           "min": [
             248.0,
-            18.454948327725678,
+            18.454948327725447,
             -142.0
           ],
           "max": [
@@ -5703,7 +5718,7 @@
         "bounds": {
           "min": [
             248.0,
-            13.602415829655383,
+            13.602415826483384,
             -84.0
           ],
           "max": [
@@ -5843,12 +5858,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:e9d5e9433dcfc8897e25d94f7b953a6b9ad6698e49c08bd9b17cd0a6e18c01bd"
+    "terrainRevision": "diagonal-spine-v1:6e48af8890edfa2a3a8d5b0ce5e9069f89bb7bb7c3c18ad89837a5723ad851b8"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
+    "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
     "collisionSha256": "cc6f1e5ac3cc6b28f70c7e53badba024b4252620eac2e3024fcfa57029edf9eb",
-    "terrainRevision": "diagonal-spine-v1:e9d5e9433dcfc8897e25d94f7b953a6b9ad6698e49c08bd9b17cd0a6e18c01bd"
+    "terrainRevision": "diagonal-spine-v1:6e48af8890edfa2a3a8d5b0ce5e9069f89bb7bb7c3c18ad89837a5723ad851b8"
   }
 }

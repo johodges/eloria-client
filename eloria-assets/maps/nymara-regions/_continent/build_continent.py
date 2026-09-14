@@ -33,7 +33,7 @@ from terrain_export import partition_surface
 from crossings import prepare_contracts,apply_manifest
 from amberwood import gltf as G,mesh as M
 from continent_geography import polygon_rectangles,clip_owned_mesh
-SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py')
+SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py')
 
 
 def package(region):return MAPS/'four-gates' if region=='four_gates' else REGIONS/region
@@ -107,6 +107,8 @@ def prepare(library,output):
     prepare_grey_crossings(world,content)
     from four_gates_sage import prepare_four_gates_sage,refresh_four_gates_sage_heights
     prepare_four_gates_sage(world,content)
+    from door_approaches import prepare_door_approaches,door_road_end,door_road_end_near
+    prepare_door_approaches(world,content)
     from crown_support import apply_crown_support
     from westhaven_support import apply_westhaven_support
     from manymouth_support import apply_manymouth_support
@@ -157,7 +159,8 @@ def prepare(library,output):
             if int(world.owner_at(*point))!=world.ids.index(region):continue
             if any(np.linalg.norm(point-p)<7 for p in seen):continue
             seen.append(point)
-            path=world.route(hub,point,region=region)
+            # A door inside a retained pavilion gets its road on the pavilion's open side.
+            path=world.route(hub,door_road_end(content,region,entry.get('id'),point),region=region)
             world.add_road(path,width=1.65,name='door-'+region+'-'+str(entry.get('id','entry')))
     # The server also declares hidden rooms and instance returns that are not
     # client portal markers. Give these discoveries narrow branches from the
@@ -179,6 +182,8 @@ def prepare(library,output):
         for number,point in entries:
             if any(np.linalg.norm(point-p)<5 for p in seen):continue
             seen.append(point)
+            # A server portal beside a pinned door shares that door's road end.
+            point=door_road_end_near(content,region,point)
             candidates=np.vstack([np.asarray(road['points'])[:,[0,2]] for road in world.roads])
             candidates=candidates[world.owner_at(candidates[:,0],candidates[:,1])==world.ids.index(region)]
             distances=np.linalg.norm(candidates-point,axis=1)
@@ -220,6 +225,7 @@ def prepare(library,output):
         'objects':len(content.objects),'roads':len(world.roads),'assemblies':content.assembly_records,
         'mirrorLakeSupport':world.mirror_lake_support,'ssarathiBankSupport':world.ssarathi_bank_support,
         'manymouthBoats':world.manymouth_boats,'greyCrossings':world.grey_crossings,'fourGatesSage':world.four_gates_sage,
+        'doorApproaches':world.door_approaches,
         'elapsedSeconds':round(time.monotonic()-started,2)})
     return world,content
 
@@ -247,14 +253,6 @@ def bridge_scene(world,path):
 
 def local_point(point,center):
     p=np.array(point,float).copy();p[[0,2]]-=center;return p.tolist()
-
-
-def crossing_local(point,center,origin):
-    """A declared crossing end in package metres, placed so the server's rounding
-    (round(ox+x), round(oy-z)) names the tile that actually contains it."""
-    x,y,z=local_point(point,center)
-    tile_x=int(np.floor(x+origin[0]));tile_y=int(np.floor(origin[1]-z))
-    return [tile_x+.5-origin[0]-.2,y,origin[1]-tile_y-.5+.2]
 
 
 def manifest_for(world,content,region):
@@ -397,9 +395,6 @@ def export_geometry(world,content,output):
     for region in world.ids:
         root=package(region);shared=HERE/'shared-assets';center=np.array(world.regions[region]['center'])
         manifest=manifest_for(world,content,region)
-        origin=manifest['coordinateTransform']['serverOrigin']
-        manifest['navigation']['crossings']=[{'id':c['id'],'endpoints':[crossing_local(p,center,origin) for p in c['endpoints']]}
-                                             for c in world.bridge_crossings.get(region,[])]
         objects=by_region[region];bridges=by_bridge[region]
         manifest['collision']['nodeNames'].extend(part['node'] for part in bridges if part.get('collides'))
         # Retired Grey survey spans keep their generic identities on the actual emitted crossing floors.

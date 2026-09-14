@@ -162,6 +162,11 @@ def freeze_return_targets(baseline, publisher):
     return data['targets']
 
 
+def profile_fields(text):
+    """A pipe-delimited profile's rows as stripped fields, blank lines dropped."""
+    return [[field.strip() for field in line.split('|')] for line in text.splitlines() if line.strip()]
+
+
 def verify_current_profile(server, baseline, certificate, previous, shared, publisher):
     """Reject content edits that an old snapshot would silently overwrite."""
     if previous is None:
@@ -199,7 +204,14 @@ def verify_current_profile(server, baseline, certificate, previous, shared, publ
             text = publisher.rewrite_gameplay_source(old_text, kind, mappings)
         else:
             text = old_text
-        if path.read_text(encoding='utf-8') != text:
+        current = path.read_text(encoding='utf-8')
+        same = current == text
+        if not same and (name in publisher.CONTENT or name in shared.RULES):
+            # The publisher pads a coordinate to the width its field had in the
+            # text it rewrote, so a record served through two publications can
+            # carry an earlier padding; only the fields themselves are content.
+            same = profile_fields(current) == profile_fields(text)
+        if not same:
             if relative in BUILD_REGENERATED:
                 regenerated.append(relative)
                 continue
@@ -808,6 +820,7 @@ def export_contracts(world, content, manifests, output, server_path):
     if str(HERE) not in sys.path:
         sys.path.insert(0, str(HERE))
     from collision_export import export_collision
+    from crossing_contracts import GR, POLICY as CROSSING_POLICY, declare_crossings
     world_digest = None
     try:
         for region in world.ids:
@@ -817,18 +830,25 @@ def export_contracts(world, content, manifests, output, server_path):
             center = world.regions[region]['center']
             world_path = Path(exported['regions'][region]['world']).resolve()
             collision_path = world_path.parent / 'collision.bin'
+            glb_path = world_path.parent / manifest['asset'].get('glb', 'world.glb')
             result = getattr(world, 'collision_exports', {}).get(region)
             if result is None:
                 if world_digest is None:
                     world_digest = collision_world_digest(world)
-                result = cached_collision(world, region, manifest,
-                    world_path.parent / manifest['asset'].get('glb', 'world.glb'), collision_path, output, world_digest)
+                result = cached_collision(world, region, manifest, glb_path, collision_path, output, world_digest)
             elif not collision_path.exists():
                 raise ValueError(f'{region}: cached collision requires its matching exported EWCG file')
             manifest['collision'] = copy.deepcopy(result['collision'])
             grid, factor, largest, detail = fold_server_grid(result, sources, sync)
+            # Declared crossings come from this served fold, never from the geometry stage.
+            document, body = GR.load(glb_path)
+            crossings, declared, not_walkable = declare_crossings(document, body, region, grid, sync.CLIMB_LIMIT,
+                                                                  origin, cells, result['heights'])
+            del document, body
+            manifest.setdefault('navigation', {})['crossings'] = crossings
             report['regions'][region] = {'stageFactor': factor, 'stageMetres': factor * .2,
-                'walkableServerTiles': int((grid != 0).sum()), 'largestComponentTiles': int(largest.sum()), **detail}
+                'walkableServerTiles': int((grid != 0).sum()), 'largestComponentTiles': int(largest.sum()), **detail,
+                'crossings': {'declared': declared, 'notWalkable': not_walkable, 'climbLimit': sync.CLIMB_LIMIT, 'policy': CROSSING_POLICY}}
             spec = {'serverOrigin': list(origin), 'serverCells': list(cells),
                 'translation': [float(center[0]), 0, float(center[1])], 'arrival': list(origin),
                 'terrainRevision': REVISION,

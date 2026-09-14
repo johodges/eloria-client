@@ -24,7 +24,7 @@
       ],
       "max": [
         276.0,
-        289.5703820442666,
+        289.5703820345275,
         160.0
       ]
     },
@@ -39,7 +39,7 @@
       ],
       "max": [
         276.0,
-        289.5703820442666,
+        289.5703820345275,
         160.0
       ]
     },
@@ -52,7 +52,7 @@
       ],
       "max": [
         276.0,
-        289.5703820442666,
+        289.5703820345275,
         160.0
       ]
     }
@@ -199,7 +199,7 @@
       "type": "training-yard",
       "position": [
         -155.70000000000005,
-        10.726441489479015,
+        10.726441489444372,
         101.70000000000005
       ]
     },
@@ -210,7 +210,7 @@
       "type": "training-yard",
       "position": [
         157.39999999999998,
-        17.879716549909794,
+        17.879716548014994,
         100.0
       ]
     }
@@ -2050,7 +2050,7 @@
       ],
       "max": [
         276.0,
-        289.5703820442666,
+        289.5703820345275,
         160.0
       ]
     },
@@ -2072,7 +2072,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
+      "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
       "globalMin": [
         224.0,
         684.0
@@ -2182,8 +2182,8 @@
       164.0
     ],
     "heightEncoding": {
-      "origin": 2.6392909387714547,
-      "step": 0.3467623315627097,
+      "origin": 2.639290938782191,
+      "step": 0.3467623315519735,
       "range": [
         1,
         255
@@ -2203,7 +2203,7 @@
     },
     "walkableCells": 394897,
     "walkableFraction": 0.279802,
-    "sourceGlbSha256": "47b07ebd8bfea958e203368533910e0732b7c1d75e2de94224f3c22acb2e8730",
+    "sourceGlbSha256": "ff9ba108136ce413d6ea485ec2fdcbae6bd11d09247d5a26cc4fd4e161de576c",
     "exportStatistics": {
       "walkMeshes": 9,
       "structuralMeshes": 313,
@@ -2226,24 +2226,39 @@
     "collisionFile": "collision.bin",
     "crossings": [
       {
+        "id": "ContinentalBridgeUnion_009",
+        "endpoints": [
+          [
+            8.3,
+            19.257546424865723,
+            -134.3
+          ],
+          [
+            16.3,
+            21.447185039520264,
+            -151.3
+          ]
+        ]
+      },
+      {
         "id": "ContinentalBridgeUnion_013",
         "endpoints": [
           [
-            -155.7,
-            6.743521573036158,
-            20.7
+            -160.7,
+            6.072014212608337,
+            55.7
           ],
           [
-            -159.7,
-            5.975078457743665,
-            54.7
+            -154.7,
+            6.829437613487244,
+            19.7
           ]
         ]
       }
     ]
   },
   "performance": {
-    "glbBytes": 7819016,
+    "glbBytes": 7819020,
     "nodes": 1555,
     "meshes": 718,
     "externalResources": {
@@ -2485,7 +2500,7 @@
     ],
     "max": [
       276.0,
-      289.5703820442666,
+      289.5703820345275,
       160.0
     ]
   },
@@ -4314,7 +4329,7 @@
     ],
     "geometryMode": "continent-chunks-v1"
   },
-  "terrainRevision": "diagonal-spine-v1:4efc0d56e3511b2e12dab7f0603b60e7a1ea8289f8cf190b92f4d25b1ad9e60b",
+  "terrainRevision": "diagonal-spine-v1:75edf8c2d8ebebef362ad8cd477920fdffca64d5dff6cdca8d74a85f912e6d5c",
   "externalResources": {
     "../nymara-regions/_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../nymara-regions/_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -4429,7 +4444,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
+    "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
     "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba"
   },
   "streamingChunks": {
@@ -4630,7 +4645,7 @@
           ],
           "max": [
             -146.0,
-            12.32901602556162,
+            12.329016025605576,
             146.0
           ]
         },
@@ -4920,7 +4935,7 @@
         "bounds": {
           "min": [
             -50.0,
-            3.149580548549289,
+            3.1495805486862984,
             -154.0
           ],
           "max": [
@@ -5208,7 +5223,7 @@
           ],
           "max": [
             136.0,
-            39.68996736664327,
+            39.68996737105259,
             -71.48308826212883
           ]
         },
@@ -5461,7 +5476,7 @@
           ],
           "max": [
             196.0,
-            91.53488176859301,
+            91.53488175890428,
             24.0
           ]
         },
@@ -5498,9 +5513,9 @@
             120.0
           ]
         },
-        "estimatedResidentBytes": 9449458,
-        "glbBytes": 177216,
-        "geometryResidentBytes": 886080,
+        "estimatedResidentBytes": 9449498,
+        "glbBytes": 177224,
+        "geometryResidentBytes": 886120,
         "sharedResourceResidentBytes": {
           "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035": 87382,
           "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -5586,12 +5601,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:4efc0d56e3511b2e12dab7f0603b60e7a1ea8289f8cf190b92f4d25b1ad9e60b"
+    "terrainRevision": "diagonal-spine-v1:75edf8c2d8ebebef362ad8cd477920fdffca64d5dff6cdca8d74a85f912e6d5c"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
+    "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
     "collisionSha256": "8afb19df6918221695c48839dfafe55801b533b527a1f949c5cf109fdf8fe677",
-    "terrainRevision": "diagonal-spine-v1:4efc0d56e3511b2e12dab7f0603b60e7a1ea8289f8cf190b92f4d25b1ad9e60b"
+    "terrainRevision": "diagonal-spine-v1:75edf8c2d8ebebef362ad8cd477920fdffca64d5dff6cdca8d74a85f912e6d5c"
   }
 }

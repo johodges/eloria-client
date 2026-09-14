@@ -5,12 +5,12 @@ exported. X runs east, Z runs south, and sea level is Y = 0. Named territories
 are server and content identities. Their boundaries do not determine the
 height, water level, ground colour, or vegetation of the landscape.
 
-**QA state: verified for the eleventh publication (2026-09-14).** Master
-`856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f`, publication
-`b022f13923d7adae280bb354c0e228c6d9acd0cea8ed9bf551905ea5705de975`
-(`work-output/diagonal-continent/after/eleventh-freeze.json`). On these bytes the
+**QA state: verified for the twelfth publication (2026-09-14).** Master
+`120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1`, publication
+`0be9c273bc50580efee55c2c017c48d503ec8b5502afd02d14213647866d8b22`
+(`work-output/diagonal-continent/after/twelfth-freeze.json`). On these bytes the
 strict contracts passed with 0 failures over 3,644 placements, the full audit
-passed and verified the publication, the 24 primary, 8 supplement and 2 atlas
+passed and verified the publication, the 24 primary, 9 supplement and 2 atlas
 gameplay views were captured with the published registry and no overrides
 (`final-review/`, `final-repairs/`), and the seven native loopback suites
 walked 240 routes with 0 failures on a real server (`after/live-walk/
@@ -72,6 +72,8 @@ Use these source responsibilities when changing the world:
 | `manymouth_village_streets.py` | Graded timber streets connecting the other delta hamlets to their actual porch floors. |
 | `grey_crossings.py` | Retirement of the three duplicate Grey Moors boardwalk spans, the four pinned server positions they anchored, and their landmark identities on the actual continental crossing floors. |
 | `four_gates_sage.py` | The six Four Gates tutorial Sage records pinned 48 tiles from the arrival beside the plaza approach, keeping their surveyed layout. |
+| `door_approaches.py` | Authored road ends for doors inside retained pavilions (the Shrine of the Nine Lost on the South Quay), shared by the server-declared discovery branch to the same door, so the road meets the pavilion's open side and no deck is built onto its threshold. |
+| `crossing_contracts.py` | Contracts-stage declaration of each continental bridge floor's two standing points from the served collision fold, with every floor's walkable parts reported. |
 | `ferry_export.py`, `ferry_support.py` | Actual quay/boat fit and preservation of its complete shoreline footprint through road grading. |
 | `world_layout.py` | Ownership polygons, server address envelopes, common road grading, foundation reconciliation and drainage protection. |
 | `bridge_export.py` | One union of visible continental bridge decks, fitted to the common road surface and actual banks. |
@@ -240,7 +242,7 @@ shaping modules (`landscape`, `world_layout`, `content`, `assemblies`,
 `mirror_support`, `manymouth_support`, `mirror_streets`, `four_gates_support`,
 `amberwood_support`, `amberwood_access`, `mirror_lake_support`,
 `ssarathi_bank_support`, `manymouth_boats`, `terrain_export`, `scene_io`,
-`grey_crossings`, `four_gates_sage`),
+`grey_crossings`, `four_gates_sage`, `door_approaches`),
 the composition algorithm, the authoritative
 entrance profile and each retained library certificate. A changed source must
 be recomposed rather than accepted by editing a certificate.

@@ -43306,14 +43306,14 @@
         58
       ],
       "tile": [
-        396,
-        119
+        398,
+        121
       ],
       "expectedTile": [
         389.873,
         123.14
       ],
-      "displacementMetres": 7.394,
+      "displacementMetres": 8.404,
       "maximumDisplacementMetres": 80,
       "footprint": [
         1,
@@ -80127,6 +80127,30 @@
       "reachableByStage": {
         "15": 47380
       },
+      "crossings": {
+        "declared": [
+          {
+            "id": "ContinentalBridgeUnion_001",
+            "deckTiles": 1678,
+            "parts": [
+              1678
+            ],
+            "endTiles": [
+              [
+                312,
+                30
+              ],
+              [
+                267,
+                152
+              ]
+            ]
+          }
+        ],
+        "notWalkable": [],
+        "climbLimit": 2,
+        "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
+      },
       "hubReachableTiles": 47380,
       "arrivalSelection": {
         "method": "largest component within hub budget",
@@ -80138,11 +80162,11 @@
       },
       "hubReachableAfterStorageTiles": 47371,
       "updatedAuthoredMarkers": 75,
-      "terrainRevision": "diagonal-spine-v1:22640a437186cd93f5b71c5b95c07f0117751e582123e94fae18ec68e344c966",
+      "terrainRevision": "diagonal-spine-v1:340b259fa1f352d0dfb620a3ddc809761ef09ac7934bd270a49fc9c309500f62",
       "servedTileContinuity": {
-        "keptServedTile": 271,
-        "movedTogether": 1,
-        "movedFromServedTile": 6
+        "keptServedTile": 278,
+        "movedTogether": 0,
+        "movedFromServedTile": 0
       }
     },
     "grey_moors": {
@@ -80152,6 +80176,65 @@
       "largestComponentTiles": 139702,
       "reachableByStage": {
         "5": 139702
+      },
+      "crossings": {
+        "declared": [
+          {
+            "id": "ContinentalBridgeUnion_002",
+            "deckTiles": 203,
+            "parts": [
+              151,
+              52
+            ],
+            "endTiles": [
+              [
+                243,
+                384
+              ],
+              [
+                218,
+                404
+              ]
+            ]
+          },
+          {
+            "id": "ContinentalBridgeUnion_003",
+            "deckTiles": 147,
+            "parts": [
+              147
+            ],
+            "endTiles": [
+              [
+                244,
+                334
+              ],
+              [
+                262,
+                341
+              ]
+            ]
+          },
+          {
+            "id": "ContinentalBridgeUnion_004",
+            "deckTiles": 544,
+            "parts": [
+              544
+            ],
+            "endTiles": [
+              [
+                275,
+                268
+              ],
+              [
+                245,
+                326
+              ]
+            ]
+          }
+        ],
+        "notWalkable": [],
+        "climbLimit": 2,
+        "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
       "hubReachableTiles": 139702,
       "arrivalSelection": {
@@ -80164,7 +80247,7 @@
       },
       "hubReachableAfterStorageTiles": 139688,
       "updatedAuthoredMarkers": 8,
-      "terrainRevision": "diagonal-spine-v1:c9fc019a60e438022714d94e630e5aec0f7bd65c60b194cf785bced7aab13750",
+      "terrainRevision": "diagonal-spine-v1:eabb7f75c81bfecdbe46c00ac087b2059ba466a4e9cd04fdd79185d2c549a280",
       "servedTileContinuity": {
         "keptServedTile": 288,
         "movedTogether": 0,
@@ -80179,6 +80262,84 @@
       "reachableByStage": {
         "14": 46049
       },
+      "crossings": {
+        "declared": [
+          {
+            "id": "ContinentalBridgeUnion_001",
+            "deckTiles": 618,
+            "parts": [
+              618
+            ],
+            "endTiles": [
+              [
+                225,
+                333
+              ],
+              [
+                272,
+                303
+              ]
+            ]
+          },
+          {
+            "id": "ContinentalBridgeUnion_005",
+            "deckTiles": 2434,
+            "parts": [
+              2426,
+              5,
+              3
+            ],
+            "endTiles": [
+              [
+                360,
+                74
+              ],
+              [
+                329,
+                230
+              ]
+            ]
+          },
+          {
+            "id": "ContinentalBridgeUnion_006",
+            "deckTiles": 1913,
+            "parts": [
+              1913
+            ],
+            "endTiles": [
+              [
+                220,
+                23
+              ],
+              [
+                110,
+                188
+              ]
+            ]
+          },
+          {
+            "id": "ContinentalBridgeUnion_009",
+            "deckTiles": 577,
+            "parts": [
+              552,
+              25
+            ],
+            "endTiles": [
+              [
+                300,
+                44
+              ],
+              [
+                237,
+                62
+              ]
+            ]
+          }
+        ],
+        "notWalkable": [],
+        "climbLimit": 2,
+        "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
+      },
       "hubReachableTiles": 46049,
       "arrivalSelection": {
         "method": "largest component within hub budget",
@@ -80190,11 +80351,11 @@
       },
       "hubReachableAfterStorageTiles": 46040,
       "updatedAuthoredMarkers": 49,
-      "terrainRevision": "diagonal-spine-v1:9ca4fa75c880c7588d641ff5308d59a0ca376bfb9fc3148f1523811275338ccb",
+      "terrainRevision": "diagonal-spine-v1:609a965be8fd6d5c97ef69a9ec09668e6250f870865f3fdb0b15b1b6ff285e56",
       "servedTileContinuity": {
-        "keptServedTile": 280,
-        "movedTogether": 3,
-        "movedFromServedTile": 21
+        "keptServedTile": 304,
+        "movedTogether": 0,
+        "movedFromServedTile": 0
       }
     },
     "amethyst_barrens": {
@@ -80204,6 +80365,30 @@
       "largestComponentTiles": 140505,
       "reachableByStage": {
         "6": 140505
+      },
+      "crossings": {
+        "declared": [
+          {
+            "id": "ContinentalBridgeUnion_007",
+            "deckTiles": 163,
+            "parts": [
+              163
+            ],
+            "endTiles": [
+              [
+                388,
+                20
+              ],
+              [
+                369,
+                24
+              ]
+            ]
+          }
+        ],
+        "notWalkable": [],
+        "climbLimit": 2,
+        "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
       "hubReachableTiles": 140505,
       "arrivalSelection": {
@@ -80216,7 +80401,7 @@
       },
       "hubReachableAfterStorageTiles": 140496,
       "updatedAuthoredMarkers": 7,
-      "terrainRevision": "diagonal-spine-v1:1a18d0f1ae12594e0264a13e58d1c3574949097e3182b9c7e1ceee46115528d7",
+      "terrainRevision": "diagonal-spine-v1:fd1819c9c98221bfcee709854fceace037f68c50b12d79b8b507e0322f1dc0e3",
       "servedTileContinuity": {
         "keptServedTile": 267,
         "movedTogether": 0,
@@ -80231,6 +80416,47 @@
       "reachableByStage": {
         "16": 70507
       },
+      "crossings": {
+        "declared": [
+          {
+            "id": "ContinentalBridgeUnion_005",
+            "deckTiles": 822,
+            "parts": [
+              822
+            ],
+            "endTiles": [
+              [
+                38,
+                328
+              ],
+              [
+                63,
+                413
+              ]
+            ]
+          },
+          {
+            "id": "ContinentalBridgeUnion_012",
+            "deckTiles": 583,
+            "parts": [
+              583
+            ],
+            "endTiles": [
+              [
+                199,
+                87
+              ],
+              [
+                157,
+                153
+              ]
+            ]
+          }
+        ],
+        "notWalkable": [],
+        "climbLimit": 2,
+        "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
+      },
       "hubReachableTiles": 70507,
       "arrivalSelection": {
         "method": "largest component within hub budget",
@@ -80242,7 +80468,7 @@
       },
       "hubReachableAfterStorageTiles": 70498,
       "updatedAuthoredMarkers": 3,
-      "terrainRevision": "diagonal-spine-v1:df64978354e910a80e617f75acd5c25e9d0cdec71ba606284207a4309959a8a9",
+      "terrainRevision": "diagonal-spine-v1:b5f0b9d8071d5a9bd596afdaf714fcb65ccdd0198a369ea8ecdbab38365ad013",
       "servedTileContinuity": {
         "keptServedTile": 222,
         "movedTogether": 0,
@@ -80257,6 +80483,81 @@
       "reachableByStage": {
         "11": 170063
       },
+      "crossings": {
+        "declared": [
+          {
+            "id": "ContinentalBridgeUnion_007",
+            "deckTiles": 236,
+            "parts": [
+              236
+            ],
+            "endTiles": [
+              [
+                105,
+                449
+              ],
+              [
+                79,
+                459
+              ]
+            ]
+          },
+          {
+            "id": "ContinentalBridgeUnion_008",
+            "deckTiles": 63,
+            "parts": [
+              63
+            ],
+            "endTiles": [
+              [
+                128,
+                365
+              ],
+              [
+                121,
+                384
+              ]
+            ]
+          },
+          {
+            "id": "ContinentalBridgeUnion_010",
+            "deckTiles": 154,
+            "parts": [
+              154
+            ],
+            "endTiles": [
+              [
+                175,
+                234
+              ],
+              [
+                197,
+                235
+              ]
+            ]
+          },
+          {
+            "id": "ContinentalBridgeUnion_011",
+            "deckTiles": 152,
+            "parts": [
+              152
+            ],
+            "endTiles": [
+              [
+                183,
+                216
+              ],
+              [
+                200,
+                228
+              ]
+            ]
+          }
+        ],
+        "notWalkable": [],
+        "climbLimit": 2,
+        "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
+      },
       "hubReachableTiles": 170063,
       "arrivalSelection": {
         "method": "largest component within hub budget",
@@ -80268,7 +80569,7 @@
       },
       "hubReachableAfterStorageTiles": 170044,
       "updatedAuthoredMarkers": 40,
-      "terrainRevision": "diagonal-spine-v1:8520b1a286ff9fb80e2d777876d795199b1bb94faaa6aca817e6e19797a88ee2",
+      "terrainRevision": "diagonal-spine-v1:9d8f04e5a7b15b6f3ab588c934fb7b8f48908ef26675fdd4953510cbb4a27005",
       "servedTileContinuity": {
         "keptServedTile": 254,
         "movedTogether": 0,
@@ -80283,6 +80584,54 @@
       "reachableByStage": {
         "8": 87600
       },
+      "crossings": {
+        "declared": [
+          {
+            "id": "ContinentalBridgeUnion_009",
+            "deckTiles": 142,
+            "parts": [
+              142
+            ],
+            "endTiles": [
+              [
+                318,
+                298
+              ],
+              [
+                326,
+                315
+              ]
+            ]
+          },
+          {
+            "id": "ContinentalBridgeUnion_013",
+            "deckTiles": 254,
+            "parts": [
+              254
+            ],
+            "endTiles": [
+              [
+                149,
+                108
+              ],
+              [
+                155,
+                144
+              ]
+            ]
+          }
+        ],
+        "notWalkable": [
+          {
+            "id": "ContinentalBridgeUnion_006",
+            "deckTiles": 0,
+            "parts": [],
+            "reason": "no deck tile the fold serves"
+          }
+        ],
+        "climbLimit": 2,
+        "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
+      },
       "hubReachableTiles": 87600,
       "arrivalSelection": {
         "method": "largest component within hub budget",
@@ -80294,11 +80643,11 @@
       },
       "hubReachableAfterStorageTiles": 87591,
       "updatedAuthoredMarkers": 49,
-      "terrainRevision": "diagonal-spine-v1:4efc0d56e3511b2e12dab7f0603b60e7a1ea8289f8cf190b92f4d25b1ad9e60b",
+      "terrainRevision": "diagonal-spine-v1:75edf8c2d8ebebef362ad8cd477920fdffca64d5dff6cdca8d74a85f912e6d5c",
       "servedTileContinuity": {
-        "keptServedTile": 219,
+        "keptServedTile": 225,
         "movedTogether": 0,
-        "movedFromServedTile": 6
+        "movedFromServedTile": 0
       }
     },
     "westhaven": {
@@ -80308,6 +80657,65 @@
       "largestComponentTiles": 93849,
       "reachableByStage": {
         "4": 93849
+      },
+      "crossings": {
+        "declared": [
+          {
+            "id": "ContinentalBridgeUnion_018",
+            "deckTiles": 595,
+            "parts": [
+              595
+            ],
+            "endTiles": [
+              [
+                313,
+                116
+              ],
+              [
+                326,
+                237
+              ]
+            ]
+          },
+          {
+            "id": "ContinentalBridgeUnion_019",
+            "deckTiles": 897,
+            "parts": [
+              875,
+              22
+            ],
+            "endTiles": [
+              [
+                44,
+                138
+              ],
+              [
+                110,
+                198
+              ]
+            ]
+          },
+          {
+            "id": "ContinentalBridgeUnion_021",
+            "deckTiles": 102,
+            "parts": [
+              102
+            ],
+            "endTiles": [
+              [
+                154,
+                95
+              ],
+              [
+                146,
+                111
+              ]
+            ]
+          }
+        ],
+        "notWalkable": [],
+        "climbLimit": 2,
+        "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
       "hubReachableTiles": 93849,
       "arrivalSelection": {
@@ -80320,7 +80728,7 @@
       },
       "hubReachableAfterStorageTiles": 93840,
       "updatedAuthoredMarkers": 8,
-      "terrainRevision": "diagonal-spine-v1:6a8b0f69e21200ab23bbb340244e30f0f8f97dcbc35afd6a6acae538b6d88eb5",
+      "terrainRevision": "diagonal-spine-v1:5a583f915b9c2a7ee073d07ba0b33d1f040d7bad04fa967a020b952fcd55547c",
       "servedTileContinuity": {
         "keptServedTile": 238,
         "movedTogether": 0,
@@ -80336,6 +80744,84 @@
         "3": 106570,
         "4": 106649
       },
+      "crossings": {
+        "declared": [
+          {
+            "id": "ContinentalBridgeUnion_015",
+            "deckTiles": 1561,
+            "parts": [
+              1558,
+              3
+            ],
+            "endTiles": [
+              [
+                159,
+                311
+              ],
+              [
+                201,
+                445
+              ]
+            ]
+          },
+          {
+            "id": "ContinentalBridgeUnion_017",
+            "deckTiles": 247,
+            "parts": [
+              243,
+              3,
+              1
+            ],
+            "endTiles": [
+              [
+                177,
+                408
+              ],
+              [
+                124,
+                412
+              ]
+            ]
+          },
+          {
+            "id": "ContinentalBridgeUnion_018",
+            "deckTiles": 394,
+            "parts": [
+              394
+            ],
+            "endTiles": [
+              [
+                85,
+                361
+              ],
+              [
+                36,
+                366
+              ]
+            ]
+          },
+          {
+            "id": "ContinentalBridgeUnion_020",
+            "deckTiles": 178,
+            "parts": [
+              178
+            ],
+            "endTiles": [
+              [
+                259,
+                289
+              ],
+              [
+                283,
+                293
+              ]
+            ]
+          }
+        ],
+        "notWalkable": [],
+        "climbLimit": 2,
+        "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
+      },
       "hubReachableTiles": 106570,
       "arrivalSelection": {
         "method": "largest component within hub budget",
@@ -80347,7 +80833,7 @@
       },
       "hubReachableAfterStorageTiles": 106561,
       "updatedAuthoredMarkers": 11,
-      "terrainRevision": "diagonal-spine-v1:e9d5e9433dcfc8897e25d94f7b953a6b9ad6698e49c08bd9b17cd0a6e18c01bd",
+      "terrainRevision": "diagonal-spine-v1:6e48af8890edfa2a3a8d5b0ce5e9069f89bb7bb7c3c18ad89837a5723ad851b8",
       "servedTileContinuity": {
         "keptServedTile": 262,
         "movedTogether": 0,
@@ -80364,6 +80850,56 @@
         "3": 40928,
         "4": 40928
       },
+      "crossings": {
+        "declared": [
+          {
+            "id": "ContinentalBridgeUnion_023",
+            "deckTiles": 2446,
+            "parts": [
+              2157,
+              114,
+              72,
+              61,
+              17,
+              15,
+              9,
+              1
+            ],
+            "endTiles": [
+              [
+                335,
+                56
+              ],
+              [
+                456,
+                286
+              ]
+            ]
+          },
+          {
+            "id": "ContinentalBridgeUnion_026",
+            "deckTiles": 446,
+            "parts": [
+              231,
+              213,
+              2
+            ],
+            "endTiles": [
+              [
+                429,
+                171
+              ],
+              [
+                458,
+                213
+              ]
+            ]
+          }
+        ],
+        "notWalkable": [],
+        "climbLimit": 2,
+        "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
+      },
       "hubReachableTiles": 40927,
       "arrivalSelection": {
         "method": "largest component within hub budget",
@@ -80375,7 +80911,7 @@
       },
       "hubReachableAfterStorageTiles": 40918,
       "updatedAuthoredMarkers": 9,
-      "terrainRevision": "diagonal-spine-v1:75460c482d527cf643de6f5485c431d59235b4ad58b5b0047b69ba0466508a40",
+      "terrainRevision": "diagonal-spine-v1:382e9d2815bfd56e949bcf53dae7f1856a45abc730138dd8b9f5f472cdfffac7",
       "servedTileContinuity": {
         "keptServedTile": 255,
         "movedTogether": 0,
@@ -80385,12 +80921,53 @@
     "verdant_stair": {
       "stageFactor": 9,
       "stageMetres": 1.8,
-      "walkableServerTiles": 183580,
-      "largestComponentTiles": 182133,
+      "walkableServerTiles": 183568,
+      "largestComponentTiles": 182130,
       "reachableByStage": {
-        "9": 182133
+        "9": 182130
       },
-      "hubReachableTiles": 182133,
+      "crossings": {
+        "declared": [
+          {
+            "id": "ContinentalBridgeUnion_014",
+            "deckTiles": 82,
+            "parts": [
+              82
+            ],
+            "endTiles": [
+              [
+                476,
+                305
+              ],
+              [
+                454,
+                315
+              ]
+            ]
+          },
+          {
+            "id": "ContinentalBridgeUnion_016",
+            "deckTiles": 134,
+            "parts": [
+              134
+            ],
+            "endTiles": [
+              [
+                470,
+                240
+              ],
+              [
+                481,
+                271
+              ]
+            ]
+          }
+        ],
+        "notWalkable": [],
+        "climbLimit": 2,
+        "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
+      },
+      "hubReachableTiles": 182130,
       "arrivalSelection": {
         "method": "largest component within hub budget",
         "tile": [
@@ -80399,13 +80976,13 @@
         ],
         "displacementMetres": 0.707
       },
-      "hubReachableAfterStorageTiles": 182124,
+      "hubReachableAfterStorageTiles": 182121,
       "updatedAuthoredMarkers": 11,
-      "terrainRevision": "diagonal-spine-v1:d42e9e2ea6407aed0980c83af32ce654f54ef5c495283662d42d04998986e6e5",
+      "terrainRevision": "diagonal-spine-v1:a3815a0206be2b5d18b768ff96c1fb5a135f6dac4406bf403eb0c83128225bde",
       "servedTileContinuity": {
-        "keptServedTile": 236,
+        "keptServedTile": 237,
         "movedTogether": 0,
-        "movedFromServedTile": 1
+        "movedFromServedTile": 0
       }
     },
     "ssarathi_ruins": {
@@ -80415,6 +80992,109 @@
       "largestComponentTiles": 133827,
       "reachableByStage": {
         "5": 133827
+      },
+      "crossings": {
+        "declared": [
+          {
+            "id": "ContinentalBridgeUnion_022",
+            "deckTiles": 56,
+            "parts": [
+              56
+            ],
+            "endTiles": [
+              [
+                424,
+                363
+              ],
+              [
+                407,
+                367
+              ]
+            ]
+          },
+          {
+            "id": "ContinentalBridgeUnion_024",
+            "deckTiles": 97,
+            "parts": [
+              97
+            ],
+            "endTiles": [
+              [
+                444,
+                239
+              ],
+              [
+                445,
+                273
+              ]
+            ]
+          },
+          {
+            "id": "ContinentalBridgeUnion_027",
+            "deckTiles": 35,
+            "parts": [
+              35
+            ],
+            "endTiles": [
+              [
+                256,
+                164
+              ],
+              [
+                253,
+                175
+              ]
+            ]
+          },
+          {
+            "id": "ContinentalBridgeUnion_028",
+            "deckTiles": 92,
+            "parts": [
+              92
+            ],
+            "endTiles": [
+              [
+                465,
+                62
+              ],
+              [
+                436,
+                82
+              ]
+            ]
+          },
+          {
+            "id": "ContinentalBridgeUnion_029",
+            "deckTiles": 67,
+            "parts": [
+              67
+            ],
+            "endTiles": [
+              [
+                484,
+                49
+              ],
+              [
+                498,
+                35
+              ]
+            ]
+          }
+        ],
+        "notWalkable": [
+          {
+            "id": "ContinentalBridgeUnion_025",
+            "deckTiles": 13,
+            "parts": [
+              6,
+              5,
+              2
+            ],
+            "reason": "largest walkable part holds 6 of 13 deck tiles"
+          }
+        ],
+        "climbLimit": 2,
+        "policy": "Largest climb-connected part of the tiles each union floor fully covers on the served fold, joined through at most one plain walkable ground tile; declared when it holds at least three deck tiles and more than half of the floor; ends are its extreme tiles along the long axis."
       },
       "hubReachableTiles": 133827,
       "arrivalSelection": {
@@ -80427,7 +81107,7 @@
       },
       "hubReachableAfterStorageTiles": 133818,
       "updatedAuthoredMarkers": 7,
-      "terrainRevision": "diagonal-spine-v1:720590d63cc6f6a7f80adc8dfdc007ff2d933e4a9cd26f1439f56ebbed523e5c",
+      "terrainRevision": "diagonal-spine-v1:3d27f88469541f780e39fed684ea2dbf102c13287f0dac1af4f0b8c12bc659c1",
       "servedTileContinuity": {
         "keptServedTile": 222,
         "movedTogether": 0,
@@ -80436,9 +81116,9 @@
     }
   },
   "sourceProfileSha256": {
-    "client_content_manifest.json": "16b426e92d758e6a596356812a0e59b13eac99047dd3c5657a438e24aa72ddfc",
+    "client_content_manifest.json": "7d502491b6fb53508af978ebeb53daa66b0ed96e354ff38558075b29f2821425",
     "creatures.txt": "1a66842a45645a6ff83ade9ff5a9473df2ed46685405e56307bf39bee2c1a24f",
-    "harvesting.txt": "9c29bb1ef19f7ca461328c594736a85fb35baa259948d42e3b1d3d2dedd4001f",
+    "harvesting.txt": "50b3f36e595f191d66929a749cbf01a41b9978f47a7be9d3668b5309ed6df4b4",
     "instances/amberwood_gauntlet_low.def": "423a22c5001578126c44b7e3be09e3d5f17a7cc6c8480065198dfb14c3042dd4",
     "instances/amberwood_gauntlet_mid.def": "1addd800086bd3f661fcd9cd9444ab7feccc09fa6d0190ea50ebc883e5f0fa90",
     "instances/amethyst_gauntlet_high.def": "8dd5285ec2ad4602c129821f6fe292c6c9c8157a6bb4c26aa653a347e721bf14",
@@ -80455,20 +81135,20 @@
     "instances/sunmane_gauntlet_mid.def": "5fd405233a9cce890de4184fdb313a516a18e0e06f6c5da43fb94d560dcd9798",
     "instances/whitehorn_gauntlet_high.def": "c6c7f64bfe2e52039033737d367dc3978237c6885b943aa0af6df6719eb980e8",
     "instances/whitehorn_gauntlet_low.def": "79a5216581ce5a6ef03ecf1d891f7ddb70937ae81d1a0298916e628545979297",
-    "interactives.txt": "9a2c3b1be3155a3e612a1ca3e53794c0ee7806ade5346efe0be030bb6ac825f7",
-    "maps.txt": "57c4636bbf1e12aeed2476ab211204b359dacc0456f5c8f1e629ad19a9672b78",
-    "npcs.txt": "212a7f29fe783a1652ea4de79768fbed7eb3a1b3a99e2ae81b1d946b1e623bcb",
+    "interactives.txt": "5a82a314bced30822142f69357b145809b6122fb4c7f3e244dd6567289b7279f",
+    "maps.txt": "f1ffa9b7f3f57f5767942fb80fb89b0b8f4a61c2ca91338e5be24f33e78525e0",
+    "npcs.txt": "53d7110606589101573f79d8105ebac037401b102db8bfa6efa59fd0b0ba1aac",
     "questlines.txt": "b9c85d4906c36d2a39f75871cc81e80f7402b60cc49598745e3f5c48112392dd",
     "spawn_groups/invasion/bosses.def": "2a9a5d528bb882b24a9594354852524361a08abdee068990cea6a9cf5c0c237b",
     "spawn_groups/invasion/gauntlets_nymara.def": "e31c1e5e79813b09188fc573c013c5ee9e72751b057a3bfa6df2f5204d455d56",
-    "spawn_groups/invasion/invasion_nymara.def": "8f3cb10ac4aea3e1fb5cbbc67210f72a6ad421103c1c9692f3e1be186bd667a9",
-    "spawns.txt": "d00fbf1511a8fc04f40e06cd4393099be36a62f64bffae9b180d168224644c7a",
+    "spawn_groups/invasion/invasion_nymara.def": "c5854796ee7fe20331d79cb5c375cb435a0ff74519ebe63508359ec4ae7ee014",
+    "spawns.txt": "4d424ebdd22de7cd67a012ba74f1f2225ac12502843f4bf6bf12c6258d9037d2",
     "special_areas.txt": "2317401894789e84bee58ff8155429fc2c1787564d3b5ce9275c6b7f1f3bfc27",
     "territories.txt": "22b4260c84cf68b90951a66f2cd3c3a38a8b8640daee854e6dc282594fe92c6e"
   },
   "sourceCodeSha256": {
     "eloria/daily_quests.py": "ed693e3ea03862340b078a56d1ae9c628f7967739d418c0e87700bbc08f1141a",
-    "eloria/world.py": "3eccafc44330230fba6d9f78a67851bb1e01652f65943f5e668dc816887aa251",
+    "eloria/world.py": "c4bd8195346f7fa40e48a3961b4605a31a5c77a9dbe0f5c6454b5f4a2a663752",
     "eloria/walkthrough.py": "394bbe4e93e0b2e6f7c5495b61598a2d2e5a6981b4cf53a28598c21c6d393ccb",
     "eloria/pk.py": "e89cb845c21aa3fe41c2b49a8a5597b91c5729774e9f19636fd2d6d03ea731df"
   },

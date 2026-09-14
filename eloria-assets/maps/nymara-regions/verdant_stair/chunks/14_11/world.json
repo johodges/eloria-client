@@ -36,7 +36,7 @@
       ],
       "max": [
         400.0,
-        289.5703820442666,
+        289.5703820345275,
         160.0
       ]
     },
@@ -50,7 +50,7 @@
       ],
       "max": [
         400.0,
-        289.5703820442666,
+        289.5703820345275,
         160.0
       ]
     }
@@ -100,54 +100,7 @@
     ],
     "terrainConforming": true,
     "authority": "server",
-    "defaultSpawn": "continent-arrival",
-    "crossings": [
-      {
-        "id": "ContinentalBridgeUnion_014",
-        "endpoints": [
-          [
-            157.3,
-            13.661387746632037,
-            -152.3
-          ],
-          [
-            176.3,
-            13.167377343423329,
-            -139.3
-          ]
-        ]
-      },
-      {
-        "id": "ContinentalBridgeUnion_016",
-        "endpoints": [
-          [
-            179.3,
-            11.298768801759822,
-            -107.3
-          ],
-          [
-            174.3,
-            11.247722711730653,
-            -76.3
-          ]
-        ]
-      },
-      {
-        "id": "ContinentalBridgeUnion_021",
-        "endpoints": [
-          [
-            101.3,
-            7.432441418944433,
-            61.7
-          ],
-          [
-            107.3,
-            8.240276468755823,
-            61.7
-          ]
-        ]
-      }
-    ]
+    "defaultSpawn": "continent-arrival"
   },
   "streamingBorders": [
     {
@@ -483,7 +436,7 @@
       ],
       "max": [
         400.0,
-        289.5703820442666,
+        289.5703820345275,
         160.0
       ]
     },
@@ -1588,7 +1541,7 @@
       48.45770041179367
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:d42e9e2ea6407aed0980c83af32ce654f54ef5c495283662d42d04998986e6e5",
+  "terrainRevision": "diagonal-spine-v1:a3815a0206be2b5d18b768ff96c1fb5a135f6dac4406bf403eb0c83128225bde",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -1613,13 +1566,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
+    "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
     "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
-    "collisionSha256": "fdbcf4b39b8515893bf6774b5603b9e6e8ea8aa5ff9434eec3d3d677b4f02e76",
-    "terrainRevision": "diagonal-spine-v1:d42e9e2ea6407aed0980c83af32ce654f54ef5c495283662d42d04998986e6e5"
+    "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
+    "collisionSha256": "c656c070c32592925a85dcb7f84d6e9267ed5a548451c072800fc470f739c5cf",
+    "terrainRevision": "diagonal-spine-v1:a3815a0206be2b5d18b768ff96c1fb5a135f6dac4406bf403eb0c83128225bde"
   }
 }

@@ -2,7 +2,7 @@
   "schema": 1,
   "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba",
   "entranceProfileSha256": "874627beb1c09d24ea6761924e59bb9bd569848bf92658b70083ddbf3cd0c0c9",
-  "compositionAlgorithmSha256": "e175d18b2379dcd8cd346fc8dbc15d34eb4e5a2031569b9bd3360c04485b7223",
+  "compositionAlgorithmSha256": "c23497fb19f67add75e4237dee44464be6b74f4625dd755610a421bf6fb002fe",
   "library": {
     "whitehorn_range": "42e087f58943b5db56a4c42027ac3ef64b7681fdf4945d10893d0d5325f68ed9",
     "grey_moors": "909e457b10da47d0282067578931521d40c9a4d993bf5d7a3721f97ff24b4101",
@@ -22,16 +22,18 @@
     "eloria-assets\\maps\\nymara-regions\\_continent\\amberwood_support.py": "41baa364b83da706436961ad81a8377a33cd8825acfd65fdc3531149db1dd2a3",
     "eloria-assets\\maps\\nymara-regions\\_continent\\assemblies.py": "e82b4786be226739af59d3746aa3a05ae999a8ac9e2ddce2bb908ae6f79dd2f7",
     "eloria-assets\\maps\\nymara-regions\\_continent\\atlas_export.py": "a19b270692eb12e5bba7e8a63dc10888134d48b807af22afbc7a1ed6305f6799",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\audit_continent.py": "914ad4d7cb1b683404eb8394e4857ec5619d50dd3203694eba29c8c8369ec2c0",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\bridge_export.py": "96ccbf2ebd4f062a698b236e373c77ab9794c5cae3d8124910dcdef8be9f4026",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\build_continent.py": "f9876756b54c4e60a76b39e176e53e96c792f737fa0dc0ac929f6c0835c08a31",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\audit_continent.py": "d62f8ca1de735a8abde3c34817c79121ddcc512878f09743191881604b2b97f9",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\bridge_export.py": "0a80fc24106acb6a2e8b60a272b35692fbdb79c48c6407430cb4f9a812c8196d",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\build_continent.py": "884ec8f201247cc2e28a468517d2617d4f8d09f6dd849be6aad29b8c9a718e7b",
     "eloria-assets\\maps\\nymara-regions\\_continent\\build_library.py": "0b97ef43268c4e08fa05884b1e781c34bb76d806ae3766a5ae8ed811e4374a08",
     "eloria-assets\\maps\\nymara-regions\\_continent\\build_pipeline.py": "0e6d5ec550a83b362834d4a12db2fc087bc72fdabfed4e06fb500a4a25e4dff8",
     "eloria-assets\\maps\\nymara-regions\\_continent\\collision_export.py": "7a360c964db0524b61892d200916344a0c2238cb31357b2dec1573c371038609",
     "eloria-assets\\maps\\nymara-regions\\_continent\\content.py": "0c1227902596d61538ffbe6b6e1f246f15af3ec33852bc8d204fa0a0699cb897",
     "eloria-assets\\maps\\nymara-regions\\_continent\\crossings.py": "330edbd6b57112e6c903963396c110e233393578da34dff33d4864ca237b50d2",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\crossing_contracts.py": "6b823b5e20895375129b7590e77f8d0de6d7093ebcab6191e6dbdbfb2702794f",
     "eloria-assets\\maps\\nymara-regions\\_continent\\crown_support.py": "b5b2ea4de9abb1bafca495bdf06f779b1ebb376b01ab9b4558e4a9e41945ae59",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\export_contracts.py": "ecb9cd206f1f0898f08df3711fb260f55e2b68811b805177b13d51876a069053",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\door_approaches.py": "9d956b702807777cba4dd2c4323e2e9cba196de1a261aa6369646bf99ccf9616",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\export_contracts.py": "62683d2bd85e2a6942eaa3e76b73a0e4ee792ede8d3bfb95684752068a292081",
     "eloria-assets\\maps\\nymara-regions\\_continent\\ferry_export.py": "b62c3920560a902fe1197c6e9b4a2fe8067948d4218a50db2f366e7ef7d38453",
     "eloria-assets\\maps\\nymara-regions\\_continent\\ferry_support.py": "ed9305d6a05f51a7b15529db6335d11e4fc70a3aaf14825135df19ac03c87828",
     "eloria-assets\\maps\\nymara-regions\\_continent\\four_gates_sage.py": "42c3527e73d59c31877027d8f443b2504d4b61d6ea360451223f6477ae4e5f1c",
@@ -2440,11 +2442,11 @@
           1.260926525439447
         ],
         "minimumGroundClearance": 0.014999999999999791,
-        "maximumGroundClearance": 2.1557816709799065,
+        "maximumGroundClearance": 2.155781671346117,
         "terrainIntersectionVertices": 276,
         "sourceToWorldY": 1.7344138602837906,
         "node": "moored_boat_003",
-        "deltaY": -0.17205431167419305,
+        "deltaY": -0.17205431167357066,
         "positionXZ": [
           543.1466560000001,
           1140.133536
@@ -2455,11 +2457,11 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.01499999999999968,
-        "maximumGroundClearance": 1.8626581227585355,
+        "maximumGroundClearance": 1.8626581227846977,
         "terrainIntersectionVertices": 241,
-        "sourceToWorldY": 7.166510935452124,
+        "sourceToWorldY": 7.166510935447508,
         "node": "moored_boat_005",
-        "deltaY": -2.683611061236923,
+        "deltaY": -2.6836110612359727,
         "positionXZ": [
           577.2594880000001,
           1138.005306
@@ -2470,11 +2472,11 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000124,
-        "maximumGroundClearance": 2.747517169834028,
+        "maximumGroundClearance": 2.7475171699963155,
         "terrainIntersectionVertices": 216,
-        "sourceToWorldY": 2.684590328256185,
+        "sourceToWorldY": 2.6845903283191976,
         "node": "moored_boat_006",
-        "deltaY": -4.4794240151837466,
+        "deltaY": -4.47942401504005,
         "positionXZ": [
           658.541806,
           1143.808818
@@ -2485,11 +2487,11 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 1.9223126315687722,
+        "maximumGroundClearance": 1.9223126315687384,
         "terrainIntersectionVertices": 265,
-        "sourceToWorldY": 14.330078509266702,
+        "sourceToWorldY": 14.33007850926665,
         "node": "moored_boat_010",
-        "deltaY": -2.5435561131165763,
+        "deltaY": -2.543556113116507,
         "positionXZ": [
           718.311022,
           1079.9686260000003
@@ -2554,11 +2556,11 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.01499999999999968,
-        "maximumGroundClearance": 1.6852403109654839,
+        "maximumGroundClearance": 1.6852403116144705,
         "terrainIntersectionVertices": 218,
-        "sourceToWorldY": 1.8813363937490906,
+        "sourceToWorldY": 1.8813363926553295,
         "node": "moored_boat_021",
-        "deltaY": -6.884479694525141,
+        "deltaY": -6.8844796952225416,
         "positionXZ": [
           428.758642,
           1194.019602
@@ -2568,12 +2570,12 @@
         "mode": "hauled-up",
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
-        "minimumGroundClearance": 0.015000000000000124,
-        "maximumGroundClearance": 3.113217782020538,
+        "minimumGroundClearance": 0.01499999999999968,
+        "maximumGroundClearance": 3.1132177829155916,
         "terrainIntersectionVertices": 257,
-        "sourceToWorldY": 4.028864543711243,
+        "sourceToWorldY": 4.02886454379109,
         "node": "moored_boat_022",
-        "deltaY": -4.344274588358432,
+        "deltaY": -4.344274587601142,
         "positionXZ": [
           417.78911199999993,
           1194.3956399999997
@@ -2583,12 +2585,12 @@
         "mode": "hauled-up",
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
-        "minimumGroundClearance": 0.01499999999999968,
-        "maximumGroundClearance": 2.139567280911672,
+        "minimumGroundClearance": 0.014999999999999902,
+        "maximumGroundClearance": 2.1395672808001134,
         "terrainIntersectionVertices": 290,
-        "sourceToWorldY": 1.8414879373832067,
+        "sourceToWorldY": 1.8414879372849275,
         "node": "moored_boat_023",
-        "deltaY": -0.3948818769840947,
+        "deltaY": -0.39488187706140665,
         "positionXZ": [
           413.268154,
           1206.740388
@@ -2598,12 +2600,12 @@
         "mode": "hauled-up",
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
-        "minimumGroundClearance": 0.01499999999999968,
-        "maximumGroundClearance": 2.368132272339311,
+        "minimumGroundClearance": 0.014999999999999236,
+        "maximumGroundClearance": 2.3681322723239164,
         "terrainIntersectionVertices": 223,
-        "sourceToWorldY": 4.50676030597841,
+        "sourceToWorldY": 4.506760305071931,
         "node": "moored_boat_027",
-        "deltaY": -7.036760229346915,
+        "deltaY": -7.036760229103311,
         "positionXZ": [
           460.200208,
           1071.247992
@@ -2690,7 +2692,7 @@
         "terrainIntersectionVertices": 225,
         "sourceToWorldY": 14.287715202301184,
         "node": "moored_boat_037",
-        "deltaY": -0.016105390753129,
+        "deltaY": -0.01610539075312012,
         "positionXZ": [
           718.584724,
           1076.282268
@@ -2710,7 +2712,7 @@
     "authoredPoints": {
       "[145, 178]": [
         237.635264,
-        26.650652085158416,
+        26.650652085157972,
         373.459628
       ],
       "[152, 100]": [
@@ -2720,12 +2722,12 @@
       ],
       "[230, 86]": [
         314.540463,
-        29.211701528922543,
+        29.211701528309625,
         446.749464
       ],
       "[221, 88]": [
         305.540463,
-        28.787054142348158,
+        28.787054142299766,
         444.749464
       ]
     }
@@ -2765,5 +2767,14 @@
     },
     "policy": "Six compact Sage records pinned 48 tiles from the arrival with their surveyed layout; placement resolves standing ground."
   },
-  "elapsedSeconds": 202.58
+  "doorApproaches": {
+    "roadEnds": {
+      "verdant_stair:nine-lost-door": [
+        1206.5,
+        1175.5
+      ]
+    },
+    "policy": "A door inside a retained pavilion gets its road on the pavilion's open side; the retained floor carries the last metres."
+  },
+  "elapsedSeconds": 201.9
 }

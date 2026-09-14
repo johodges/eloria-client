@@ -428,29 +428,6 @@ def encoded_floor_vertices(world,component,xz):
     return np.c_[xz[:,0],y.astype(np.float32).astype(float),xz[:,1]]
 
 
-def crossing_ends(centers,owners,surface):
-    """Two standing points on one union floor, one cell inside each end of its long axis.
-
-    ``centers`` are the floor cells' (x,z) centres, ``owners`` their territory
-    index and ``surface(x,z)`` the deck height. None when the floor is shorter
-    than three cells or its ends lie in different territories: a crossing that
-    itself spans a seam is proven by the streaming suites, not by one map's grid.
-    """
-    centers=np.asarray(centers,float);owners=np.asarray(owners)
-    if len(centers)<3:return None
-    spread=centers-centers.mean(axis=0)
-    axis=np.linalg.svd(spread,full_matrices=False)[2][0]
-    along=spread@axis;across=np.abs(spread@np.array([-axis[1],axis[0]]))
-    # At least one full cell inside each end, on the floor's centreline.
-    inside=np.flatnonzero((along>=along.min()+CELL)&(along<=along.max()-CELL))
-    if not len(inside):return None
-    first=int(inside[np.lexsort((across[inside],along[inside]))[0]])
-    last=int(inside[np.lexsort((across[inside],-along[inside]))[0]])
-    if owners[first]!=owners[last]:return None
-    ends=[[float(centers[i][0]),float(surface(float(centers[i][0]),float(centers[i][1]))),float(centers[i][1])] for i in (first,last)]
-    return int(owners[first]),ends
-
-
 def deck_mesh(world,component):
     sl=component['slice'];mask=component['cells'];heights=component['height']
     gx,gz=np.meshgrid(world.x0+np.arange(sl[1].start,sl[1].stop+1)*CELL,
@@ -616,21 +593,13 @@ def build_bridges(world,path, *, water_fields=None):
     builder.add_material(G.Material('bridge_timber',base_color_texture='continental_bridge_planks',roughness=.93))
     builder.add_material(G.Material('bridge_edge_timber',base_color=(.085,.061,.04,1),roughness=.95,double_sided=True))
     builder.add_material(G.Material('threshold_invisible',base_color=(0,0,0,0),alpha_mode='BLEND'))
-    result=[];triangles=[];support_reports=[];crossings={region:[] for region in world.ids}
+    result=[];triangles=[];support_reports=[]
     def add(region,name,mesh):
         builder.add_mesh(name,mesh,with_tangents=False)
         root=builder.add_node(G.Node(name,mesh=name))
         result.append({'region':region,'roots':[root],'bounds':mesh.bounds(),'node':name,'segment':[]})
     for component in field['components']:
         mesh,owners=deck_mesh(world,component)
-        # Declare each floor's two ends so the served collision fold can be
-        # walked end to end on that territory's own grid (navigation.crossings).
-        sl=component['slice'];row,col=np.nonzero(component['cells'])
-        cell_centers=np.c_[world.x0+(sl[1].start+col+.5)*CELL,world.z0+(sl[0].start+row+.5)*CELL]
-        cell_owners=world.owner_at(cell_centers[:,0],cell_centers[:,1]).astype(int)
-        declared=crossing_ends(cell_centers,cell_owners,lambda x,z:float(surface_at(world,x,z,field)))
-        if declared is not None:
-            crossings[world.ids[declared[0]]].append({'id':f"ContinentalBridgeUnion_{component['id']:03d}",'endpoints':declared[1]})
         faces=mesh.positions[mesh.indices.reshape(-1,3)]
         encoded=faces.astype(np.float32).astype(float)
         normal=np.cross(encoded[:,1]-encoded[:,0],encoded[:,2]-encoded[:,0])
@@ -660,7 +629,6 @@ def build_bridges(world,path, *, water_fields=None):
             placed.append(fit['position']);region=world.ids[int(world.owner_at(*fit['position']))]
             add(region,f"BridgeUnionPier_{component['id']:03d}_{ix}_{iz}",support)
         support_reports.append(dict(component=component['id'],**support_spacing(world,encoded,planned,placed),piers=fitted))
-    world.bridge_crossings=crossings
     world.bridge_triangles=np.concatenate(triangles) if triangles else np.empty((0,3,3))
     world.bridge_field={key:value for key,value in field.items() if key!='components'}
     for connection in world.connections:

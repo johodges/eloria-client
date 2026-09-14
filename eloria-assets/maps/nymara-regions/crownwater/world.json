@@ -24,7 +24,7 @@
       ],
       "max": [
         476.0,
-        289.5703820442666,
+        289.5703820345275,
         110.0
       ]
     },
@@ -36,7 +36,7 @@
       ],
       "max": [
         476.0,
-        289.5703820442666,
+        289.5703820345275,
         110.0
       ]
     },
@@ -50,7 +50,7 @@
       ],
       "max": [
         476.0,
-        289.5703820442666,
+        289.5703820345275,
         110.0
       ]
     }
@@ -262,7 +262,7 @@
     },
     "walkableCells": 233317,
     "walkableFraction": 0.097365,
-    "sourceGlbSha256": "e2329eb7200592d356360ea58da897b6a9d91cfb43b6cc10d11a86ee83c00d8a",
+    "sourceGlbSha256": "38b491f4f48b69bd6ff27dc4859763fc044984dc8da864fb88fcaec501840e9e",
     "exportStatistics": {
       "walkMeshes": 87,
       "structuralMeshes": 278,
@@ -285,32 +285,32 @@
     "collisionFile": "collision.bin",
     "crossings": [
       {
-        "id": "ContinentalBridgeUnion_024",
+        "id": "ContinentalBridgeUnion_023",
         "endpoints": [
           [
-            170.3,
-            4.2,
-            -170.3
+            41.3,
+            0.8500000238418579,
+            57.7
           ],
           [
-            43.3,
-            0.85,
-            61.7
+            162.3,
+            4.223766088485718,
+            -172.3
           ]
         ]
       },
       {
-        "id": "ContinentalBridgeUnion_027",
+        "id": "ContinentalBridgeUnion_026",
         "endpoints": [
           [
-            161.3,
-            3.9995212967280658,
-            -98.3
+            135.3,
+            3.7839914560317993,
+            -57.3
           ],
           [
-            178.3,
-            2.2387034162189896,
-            -4.3
+            164.3,
+            4.025000095367432,
+            -99.3
           ]
         ]
       }
@@ -1908,7 +1908,7 @@
       ],
       "max": [
         476.0,
-        289.5703820442666,
+        289.5703820345275,
         110.0
       ]
     },
@@ -1930,7 +1930,7 @@
     "renderedFrom": "shared continent.glb (common world pixel lattice)",
     "cartographyRender": {
       "generator": "eloria-assets/maps/nymara-regions/_continent/atlas_export.py",
-      "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
+      "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
       "globalMin": [
         0.0,
         1226.0
@@ -3478,11 +3478,11 @@
     ],
     "max": [
       476.0,
-      289.5703820442666,
+      289.5703820345275,
       110.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:75460c482d527cf643de6f5485c431d59235b4ad58b5b0047b69ba0466508a40",
+  "terrainRevision": "diagonal-spine-v1:382e9d2815bfd56e949bcf53dae7f1856a45abc730138dd8b9f5f472cdfffac7",
   "externalResources": {
     "../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -3559,7 +3559,7 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
+    "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
     "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba"
   },
   "streamingChunks": {
@@ -3852,7 +3852,7 @@
           ],
           "max": [
             -2.0,
-            8.029414945283918,
+            8.02941495467637,
             -322.0
           ]
         },
@@ -5038,12 +5038,12 @@
         }
       }
     ],
-    "terrainRevision": "diagonal-spine-v1:75460c482d527cf643de6f5485c431d59235b4ad58b5b0047b69ba0466508a40"
+    "terrainRevision": "diagonal-spine-v1:382e9d2815bfd56e949bcf53dae7f1856a45abc730138dd8b9f5f472cdfffac7"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
+    "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
     "collisionSha256": "c9cf825fa66bb86d430ebdc8bd85f379175cd87d2ccd67794dd087216ae918d2",
-    "terrainRevision": "diagonal-spine-v1:75460c482d527cf643de6f5485c431d59235b4ad58b5b0047b69ba0466508a40"
+    "terrainRevision": "diagonal-spine-v1:382e9d2815bfd56e949bcf53dae7f1856a45abc730138dd8b9f5f472cdfffac7"
   }
 }

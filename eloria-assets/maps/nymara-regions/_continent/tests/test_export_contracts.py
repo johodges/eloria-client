@@ -73,6 +73,24 @@ class ServedProfileTests(unittest.TestCase):
                 E.verify_current_profile(server, baseline, certificate, previous, shared, publisher)
 
 
+    def test_a_coordinate_padded_by_an_earlier_publication_is_not_a_content_edit(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder); server = root/'server'; baseline = root/'baseline'
+            relative = 'config/eloria/harvesting.txt'
+            (baseline/relative).parent.mkdir(parents=True); (server/relative).parent.mkdir(parents=True)
+            (baseline/relative).write_text('node | four_gates | 2506 | 240 | 110 | Sage\n')
+            # The tenth publication padded 79 to the width of 110; the eleventh rewrote that text in place.
+            (server/relative).write_text('node | four_gates | 2506 | 329 |  115 | Sage\n')
+            certificate = {'files': {relative: 'x'}}; previous = {'regions': {}, 'connections': []}
+            shared = types.SimpleNamespace(RULES={}, rewrite_definition=lambda text, mappings: (text, None))
+            publisher = types.SimpleNamespace(CONTENT={'harvesting.txt': None}, transform_tile=None,
+                rewrite_content=lambda text, name, specs, flag: ('node | four_gates | 2506 | 329 | 115 | Sage\n', None))
+            E.verify_current_profile(server, baseline, certificate, previous, shared, publisher)
+            (server/relative).write_text('node | four_gates | 2506 | 329 |  116 | Sage\n')
+            with self.assertRaisesRegex(ValueError, 'beyond the previous coordinated publication'):
+                E.verify_current_profile(server, baseline, certificate, previous, shared, publisher)
+
+
 class StaticBodyTests(unittest.TestCase):
     def test_a_static_body_never_seals_a_pocket_and_withdraws_only_its_own_tile(self):
         grid = np.ones((30, 30), dtype=np.uint8); grid[:, 20] = 0; grid[10, 20] = 1  # one-tile mouth at (20, 10)
@@ -361,6 +379,10 @@ class ExportTests(unittest.TestCase):
         half=np.ones((60,60),dtype=np.uint8)
         if doorway:half[:,38:40]=0
         (package/'collision.bin').write_bytes(struct.pack('<4sHHII',b'EWCG',2,0,60,60)+half.tobytes())
+        # The contracts stage declares crossings from the package's own floors; this one has none.
+        sys.path.insert(0,str(HERE.parent/'_toolkit'))
+        from amberwood import gltf as G
+        G.GltfBuilder().write_glb(str(package/'world.glb'))
         collision={'grid':half,'heights':np.full((60,60),10,np.float32),
                    'collision':{'sourceGlbSha256':'a'*64,'heightEncoding':{'origin':9.8,'step':.2},'gridAlignment':'tile-centres-v1','authoredSurfaceExport':True}}
         world=types.SimpleNamespace(ids=['test'],regions={'test':{'center':[0,0]}},publication_connections=[],
@@ -370,7 +392,7 @@ class ExportTests(unittest.TestCase):
         class Transform:
             def __init__(self,**kwargs):self.__dict__.update(kwargs)
         sources=types.SimpleNamespace(GridTransform=Transform,requantise=lambda g,t:g.astype(np.int32),reachable_from=Sources.reachable_from)
-        sync=types.SimpleNamespace(choose_stage=lambda g:(1,g!=0,{}),rescale=lambda g,f:g.astype(np.uint8))
+        sync=types.SimpleNamespace(choose_stage=lambda g:(1,g!=0,{}),rescale=lambda g,f:g.astype(np.uint8),CLIMB_LIMIT=2)
         modules={'collision_sources':sources,'sync_authored_collision':sync,'publish_continent_geography':shared,
                  'publish_diagonal_continent':publisher,'eloria.creatures':types.SimpleNamespace(load_creatures=lambda p:{})}
         patches=[mock.patch.object(E,'HERE',root/'authored'),mock.patch.object(E,'server_modules',return_value=modules),

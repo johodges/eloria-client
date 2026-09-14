@@ -19,7 +19,7 @@
     "bounds": {
       "min": [
         -92.16531070646442,
-        28.69113124340722,
+        28.691131239977114,
         -22.16280975064342
       ],
       "max": [
@@ -36,7 +36,7 @@
       ],
       "max": [
         550.0,
-        289.5703820442666,
+        289.5703820345275,
         162.0
       ]
     },
@@ -50,7 +50,7 @@
       ],
       "max": [
         550.0,
-        289.5703820442666,
+        289.5703820345275,
         162.0
       ]
     }
@@ -208,8 +208,7 @@
     ],
     "terrainConforming": true,
     "authority": "server",
-    "defaultSpawn": "continent-arrival",
-    "crossings": []
+    "defaultSpawn": "continent-arrival"
   },
   "environment": {
     "sky": {
@@ -381,7 +380,7 @@
       ],
       "max": [
         550.0,
-        289.5703820442666,
+        289.5703820345275,
         162.0
       ]
     },
@@ -3175,7 +3174,7 @@
   "bounds": {
     "min": [
       -92.16531070646442,
-      28.69113124340722,
+      28.691131239977114,
       -22.16280975064342
     ],
     "max": [
@@ -3184,7 +3183,7 @@
       80.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:1a18d0f1ae12594e0264a13e58d1c3574949097e3182b9c7e1ceee46115528d7",
+  "terrainRevision": "diagonal-spine-v1:fd1819c9c98221bfcee709854fceace037f68c50b12d79b8b507e0322f1dc0e3",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/6fff540a6fe89e81d4ad635f8feefc5f634417d37d6269f32053c446375a6343.png": "6fff540a6fe89e81d4ad635f8feefc5f634417d37d6269f32053c446375a6343",
@@ -3202,13 +3201,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
+    "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
     "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
+    "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
     "collisionSha256": "da8f1158a27cb7b28f35f76e585f9a8432c59aedc3d460ef3b36db21e577b58f",
-    "terrainRevision": "diagonal-spine-v1:1a18d0f1ae12594e0264a13e58d1c3574949097e3182b9c7e1ceee46115528d7"
+    "terrainRevision": "diagonal-spine-v1:fd1819c9c98221bfcee709854fceace037f68c50b12d79b8b507e0322f1dc0e3"
   }
 }

@@ -33,18 +33,18 @@
       "grey_moors:geometry": "3e59d62a52a17a19f47b44c8ae905fae4c4450b5f35530dbe829022174fba9b0",
       "westhaven": "b97a9ec5c864dc4a392137bc60e8481641a3f8e1e3f30205ab6481382bb76643",
       "westhaven:geometry": "087804d7cf60d4fda4b83b2ecd49b0ff9adb6dd605208d02dff4b033de77aaad",
-      "verdant_stair": "c0f07a19cee29cc7efa4f0bae7b51acc492e323c2a36349296b7d50c6cf0acb6",
-      "verdant_stair:geometry": "19e5da0f14322cebdbc1587cf78f28abadb8b3b14b3a29215042d299791547bc",
-      "ssarathi_ruins": "a078b7decd5e55ed7b8dc98a8cc09c9a33b018c0ec77fa2ec59e2cd5fb968c22",
-      "ssarathi_ruins:geometry": "580b4b49e9cdabf3cb352884ac4544ca259e8f3fd2d045ea03b2e835d287354a",
+      "verdant_stair": "8936f3ba40f2f5ba00ea26ab6c9560add12c3d6dfe793df22ed0dd9b23428da8",
+      "verdant_stair:geometry": "9001378f8cbcb626f208cc77260b4b1554e98d93e59049de773b1fd0e724ed2d",
+      "ssarathi_ruins": "17a93ad7d8e48ec69a72cb540fb1265cd94642afc4739ffdd8c7ba707bd8e3e0",
+      "ssarathi_ruins:geometry": "d8586dd84f7610b2ccd14afbcf408eaf4536c1e74e907e4617d425df75cc5c78",
       "manymouth_delta": "816561c5764bcd2299583f16f5574fa5f702bef3dd74b66541bbe13fe162e05c",
       "manymouth_delta:geometry": "b7a45873870307e0357cf9a108b06e4c1ae54e6fb60cb81f4fce91db4b186c29"
     },
-    "geographySha256": "af6443c09fe62de4f946a4da675c3f669520ef67c93429475ba2572a84124b6e",
+    "geographySha256": "4893de175c763e5365f0e82852e25069ace450399fbe19a239afd0310160ffe4",
     "masterGeometry": {
-      "imageSha256": "8e1011d41b13fcd09cf2e6378cd71419256a298dd287ae66008e33bb482f7792",
-      "masterSha256": "856c6971b703b796f510311937ef3be9fdd4a0ad031c1631355dd3e700c4fe6f",
-      "reportSha256": "b241ae95ac3614a59afa815ee75cdca47bcbfef659daaa8955791fa3a669c219"
+      "imageSha256": "2fb9a30f85db90ffe73eb4eea6baccf31dba54e5833224c91043cc17989be8e5",
+      "masterSha256": "120f488856c160586654e925887cbef1611a9c18a40923806cd677ab966165b1",
+      "reportSha256": "79a7567970dfe49be991845a65cc99ffe81164a9aa8a9b95d51fa50d58a736b8"
     }
   },
   "regions": [

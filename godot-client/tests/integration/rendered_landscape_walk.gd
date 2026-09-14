@@ -14,6 +14,17 @@ const NEIGHBOUR_SURFACE_TIMEOUT := 20.0
 # still this long, as a player clicks again; every repeat is recorded and the
 # exact target is still required within the same budget.
 const REISSUE_AFTER_IDLE := 3.0
+# A frame gap this long is recorded as a stall (with its tick time), and a
+# liveness line is printed every 30 s, so a client that stops rendering while
+# a route waits can be located in the log rather than inferred afterwards.
+const STALL_GAP_MS := 2000
+const LIVENESS_EVERY_MS := 30000
+## A route's start teleport is asked up to this many times, each waited this
+## long, when a wandering body on the start tile makes the arrival land beside it.
+const START_ATTEMPTS := 3
+const START_WAIT_SECONDS := 40.0
+## Seconds to wait for a body standing where a neighbour click would land.
+const OCCUPIED_TARGET_TIMEOUT := 20.0
 
 var _failures := 0
 var _artifacts := ""
@@ -32,6 +43,7 @@ func _run() -> void:
 		_artifacts = ProjectSettings.globalize_path("res://test-artifacts/transition")
 	DirAccess.make_dir_recursive_absolute(_artifacts)
 	root.size = SCREEN
+	_watchdog()
 	_main = (load("res://src/app/main.tscn") as PackedScene).instantiate() as Control
 	root.add_child(_main)
 	await process_frame
@@ -82,11 +94,21 @@ func _run() -> void:
 			if not items_ready: continue
 		var map_id: String = str(route.get("map", "amberwood"))
 		var start: Array = route.start
-		_network.call("send_chat", "#invasion_assistant teleport %s %d %d" % [map_id, int(start[0]), int(start[1])])
 		# Admin arrivals may move to a nearby unoccupied tile. Only fixtures
 		# that explicitly allow it relax their start; route targets remain exact.
-		var arrived: bool = await _wait(func() -> bool:
-			return _near(map_id, start, int(route.get("startTolerance", 0))), 120)
+		# A wandering body on the start tile makes the arrival land beside it:
+		# the same teleport is asked again once that body has moved on, and
+		# every repeat is recorded.
+		var arrived := false
+		var start_attempts := 0
+		while not arrived and start_attempts < START_ATTEMPTS:
+			start_attempts += 1
+			_network.call("send_chat", "#invasion_assistant teleport %s %d %d" % [map_id, int(start[0]), int(start[1])])
+			arrived = await _wait(func() -> bool:
+				return _near(map_id, start, int(route.get("startTolerance", 0))), START_WAIT_SECONDS)
+		if start_attempts > 1:
+			if not _report.has("start_retries"): _report["start_retries"] = []
+			(_report["start_retries"] as Array).append({"route": str(route.id), "attempts": start_attempts, "arrived": arrived})
 		_expect(arrived, str(route.id) + " start")
 		if not arrived: continue
 		await _settle(20)
@@ -469,11 +491,38 @@ func _issue_walk(step: Dictionary) -> void:
 	var camera: Camera3D = _main.get("gameplay_camera")
 	var screen := camera.unproject_position(point)
 	_expect(Rect2(Vector2.ZERO, Vector2(camera.get_viewport().size)).has_point(screen), "neighbor destination is visible in the gameplay camera")
+	# A wandering body between the camera and the target takes the click (the
+	# client's own picker would attack it). Wait for it to move on, as a player
+	# would, and record the wait; the click itself stays the ordinary one.
+	var occupied_from := Time.get_ticks_msec()
+	var picked: int = int(_main.call("_pick_actor", screen))
+	while picked >= 0 and Time.get_ticks_msec() - occupied_from < roundi(OCCUPIED_TARGET_TIMEOUT * 1000.0):
+		await process_frame
+		picked = int(_main.call("_pick_actor", screen))
+	if picked >= 0 or Time.get_ticks_msec() - occupied_from > 0:
+		if not _report.has("occupied_waits"): _report["occupied_waits"] = []
+		(_report["occupied_waits"] as Array).append({"destination": str(step.destination), "tile": target,
+			"waited_ms": Time.get_ticks_msec() - occupied_from, "still_occupied_by": picked})
 	var click := InputEventMouseButton.new()
 	click.button_index = MOUSE_BUTTON_LEFT
 	click.pressed = true
 	click.position = screen
 	_main.call("_handle_world_click", click, screen)
+
+func _watchdog() -> void:
+	var last: int = Time.get_ticks_msec()
+	var spoke: int = last
+	while true:
+		await process_frame
+		var now: int = Time.get_ticks_msec()
+		if now - last >= STALL_GAP_MS:
+			if not _report.has("stalls"): _report["stalls"] = []
+			(_report["stalls"] as Array).append({"at_ms": last, "gap_ms": now - last})
+			print("harness_stall ", JSON.stringify({"at_ms": last, "gap_ms": now - last}))
+		if now - spoke >= LIVENESS_EVERY_MS:
+			print("harness_alive ", JSON.stringify({"at_ms": now, "routes_completed": int(_report.get("routes_completed", 0))}))
+			spoke = now
+		last = now
 
 func _write_report() -> void:
 	_report["failures"] = _failures
