@@ -227,6 +227,30 @@ def _drainage_height(x, z, h, plan):
     return h
 
 
+def retained_affine(transform):
+    """A retained transform as (translation[3], scale_xz[2], about_xz[2]): a list is one rigid translation of the
+    whole source layout; a dict carries 'translation' and may squeeze the layout north-south ('squeeze_z', a factor
+    in (0, 1], about the source row 'about_z'), so a source whose crown would stand beyond the world's edge at
+    full length keeps its crown inside it. Optional 'datum': 'ground' stands each compound on the composed relief."""
+    if isinstance(transform, dict):
+        translation = np.asarray(transform["translation"], float)
+        scale = np.array([1.0, float(transform.get("squeeze_z", 1.0))])
+        about = np.array([0.0, float(transform.get("about_z", 0.0))])
+    else:
+        translation = np.asarray(transform, float); scale = np.ones(2); about = np.zeros(2)
+    if translation.shape != (3,) or not np.isfinite(translation).all():
+        raise ValueError("retained transform: the translation must contain three finite metres")
+    if not 0.0 < scale[1] <= 1.0:
+        raise ValueError("retained transform: squeeze_z must lie in (0, 1]")
+    return translation, scale, about
+
+
+def retained_map_xz(transform, points):
+    """Source-frame xz points carried to continent metres by a retained transform."""
+    translation, scale, about = retained_affine(transform)
+    return translation[[0, 2]] + about + (np.asarray(points, float) - about) * scale
+
+
 @lru_cache(maxsize=4)
 def _relief_samples(name):
     data = np.load(PLAN_PATH.with_name(name) if "/" not in name else PLAN_PATH.parent / name)
@@ -238,7 +262,10 @@ def _relief_height(x, z, source):
     beyond the crop's edge the edge's own height continues as a shoulder fading out over ``feather`` metres."""
     sx, sz, sh = _relief_samples(source["samples"])
     tx, ty, tz = source["translation"]
-    lx, lz = x - tx, z - tz
+    # The same north-south squeeze the territory's retained transform carries,
+    # so the relief stands under the layout it was surveyed with.
+    squeeze = float(source.get("squeeze_z", 1.0)); about = float(source.get("about_z", 0.0))
+    lx, lz = x - tx, about + (z - tz - about) / squeeze
     x0, z0, x1, z1 = source.get("crop", [sx[0], sz[0], sx[-1], sz[-1]])
     # Distance outside the crop rectangle (Euclidean, so the shoulder rounds the corners).
     outside = np.hypot(np.maximum(np.maximum(x0 - lx, lx - x1), 0.0), np.maximum(np.maximum(z0 - lz, lz - z1), 0.0))

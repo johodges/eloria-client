@@ -1191,12 +1191,12 @@
         [
           474.0,
           392.0,
-          87.8
+          83.3
         ],
         [
           446.0,
           404.0,
-          70.6
+          60.5
         ],
         [
           420.0,
@@ -1258,7 +1258,7 @@
     "The upper Western River follows low ground west of the spine, preserving a gradual alpine valley rather than excavating a parallel trench.",
     "The Western River bends around the inhabited Four Gates terrace; civic buildings are not used as dams across its channel.",
     "Crownwater lies farther south so its connected causeway city fits its named island territory without extending into mainland server ownership.",
-    "Whitehorn Range: the legacy relief stands at full scale under its retained transform, raised 1.3 times about the gate court on a 70 m base; foothills on the Moor and Barrens sides and headlands at the coast carry the range down into its neighbours; the continental spine keeps its dome under Amberwood; the western river rises on that dome's west flank."
+    "Whitehorn Range: the legacy relief stands under its retained transform, squeezed north-south about the gate court so the old map's north wall and crown stand inland behind the glacier temple, raised 1.3 times about the court on a 70 m base, the coast under the wall a sea cliff; compounds stand on the composed relief; foothills on the Moor and Barrens sides and headlands at the coast carry the range down into its neighbours; the continental spine keeps its dome under Amberwood; the western river rises on that dome's west flank."
   ],
   "assembly_sites": {
     "ssarathi_ruins.temple-focus": {
@@ -1385,11 +1385,16 @@
       0.0,
       1562.0
     ],
-    "whitehorn_range": [
-      477.0,
-      70.0,
-      272.0
-    ]
+    "whitehorn_range": {
+      "translation": [
+        477.0,
+        70.0,
+        272.0
+      ],
+      "squeeze_z": 0.85,
+      "about_z": 60.0,
+      "datum": "ground"
+    }
   },
   "ownership_bias": {
     "mirrorhold": 20000,
@@ -1411,6 +1416,8 @@
         70.0,
         272.0
       ],
+      "squeeze_z": 0.85,
+      "about_z": 60.0,
       "crop": [
         -105,
         -291,
@@ -1418,7 +1425,7 @@
         95
       ],
       "feather": 56,
-      "coast_feather": 30,
+      "coast_feather": 8.0,
       "pivot": 20.0,
       "scale": 1.3
     }

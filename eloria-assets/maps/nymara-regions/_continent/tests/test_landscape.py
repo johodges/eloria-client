@@ -3,6 +3,7 @@ import copy
 import importlib.util
 from pathlib import Path
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 
@@ -86,6 +87,28 @@ class ContinentGeographyTests(unittest.TestCase):
         x = np.linspace(350, 1000, 651)
         rgb = landscape.terrain_color(x, np.full_like(x, 590))
         self.assertLess(float(np.max(np.linalg.norm(np.diff(rgb, axis=0), axis=1))), 0.035)
+
+    def test_relief_source_and_retained_transform_share_one_squeeze(self):
+        transform = {"translation": [477., 70., 272.], "squeeze_z": .85, "about_z": 60.}
+        # x is translated; z is squeezed about source row 60 and translated: 272 + 60 + (z - 60) * .85.
+        np.testing.assert_allclose(landscape.retained_map_xz(transform, [[70., 40.], [76., -192.]]), [[547., 315.], [553., 117.8]])
+        np.testing.assert_allclose(landscape.retained_map_xz([477., 70., 272.], [70., 40.]), [547., 312.])
+        translation, scale, about = landscape.retained_affine(transform)
+        self.assertEqual((translation.tolist(), scale.tolist(), about.tolist()), ([477., 70., 272.], [1., .85], [0., 60.]))
+        with self.assertRaisesRegex(ValueError, "squeeze_z"):
+            landscape.retained_affine({"translation": [0, 0, 0], "squeeze_z": 0.})
+        with self.assertRaisesRegex(ValueError, "three finite metres"):
+            landscape.retained_affine([1., 2.])
+        # A relief source with the same squeeze samples its rows where the transform put them.
+        rows = (np.array([-10., 0., 10.]), np.array([-300., -200., -100.]), np.array([[10.] * 3, [20.] * 3, [30.] * 3]))
+        with patch.object(landscape, "_relief_samples", lambda name: rows):
+            source = {"samples": "x.npz", "translation": [477., 70., 272.], "crop": [-10, -300, 10, -100], "feather": 10,
+                      "squeeze_z": .85, "about_z": 60.}
+            height, weight = landscape._relief_height(np.array([477.]), np.array([111.]), source)   # row -200 -> 332 - 221
+            self.assertAlmostEqual(float(height[0]), 20. + 70., places=6)
+            self.assertEqual(float(weight[0]), 1.)
+            height, _ = landscape._relief_height(np.array([477.]), np.array([72.]), dict(source, squeeze_z=1., about_z=0.))
+            self.assertAlmostEqual(float(height[0]), 20. + 70., places=6)
 
     def test_optional_foundation_feathers_into_shared_surface(self):
         plan = copy.deepcopy(landscape.load_plan())

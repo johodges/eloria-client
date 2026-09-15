@@ -69,11 +69,32 @@ class DoorApproachTests(unittest.TestCase):
     def test_a_designed_climb_lists_its_waypoints_in_order_and_other_doors_none(self):
         w = world(); w.ids = ['whitehorn_range']
         prepared = SimpleNamespace()
-        with patch.dict(D.DOOR_ROAD_WAYPOINTS, {('whitehorn_range', 'whitehorn-glacier-temple-door'): [(500., 300.), (520., 200.)]}, clear=True):
+        with patch.dict(D.DOOR_ROAD_WAYPOINTS, {('whitehorn_range', 'whitehorn-glacier-temple-door'): [(500., 300.), (520., 200.)]}, clear=True),              patch.dict(D.RETAINED_DOOR_ROAD_WAYPOINTS, {}, clear=True):
             D.prepare_door_approaches(w, prepared)
         self.assertEqual([p.tolist() for p in D.door_road_waypoints(prepared, 'whitehorn_range', 'whitehorn-glacier-temple-door')], [[500., 300.], [520., 200.]])
         self.assertEqual(D.door_road_waypoints(prepared, 'whitehorn_range', 'whitehorn-mine-adit'), [])
         self.assertEqual(w.door_approaches['waypoints'], {'whitehorn_range:whitehorn-glacier-temple-door': [[500., 300.], [520., 200.]]})
+
+    def test_source_frame_waypoints_follow_the_retained_transform(self):
+        w = world(); w.ids = ['whitehorn_range']
+        w.plan = {'retained_transforms': {'whitehorn_range': {'translation': [477., 70., 272.], 'squeeze_z': .85, 'about_z': 60.}}}
+        prepared = SimpleNamespace()
+        temple = ('whitehorn_range', 'whitehorn-glacier-temple-door')
+        with patch.dict(D.DOOR_ROAD_WAYPOINTS, {}, clear=True), patch.dict(D.RETAINED_DOOR_ROAD_WAYPOINTS, {temple: [(70., 40.), (76., -192.)]}, clear=True):
+            D.prepare_door_approaches(w, prepared)
+        points = [p.tolist() for p in D.door_road_waypoints(prepared, 'whitehorn_range', 'whitehorn-glacier-temple-door')]
+        # x is translated; z is squeezed about source row 60 then translated: 272 + 60 + (z - 60) * .85.
+        np.testing.assert_allclose(points, [[547., 315.], [553., 117.8]])
+        # A rigid list transform is a plain translation.
+        w.plan = {'retained_transforms': {'whitehorn_range': [477., 70., 272.]}}
+        with patch.dict(D.DOOR_ROAD_WAYPOINTS, {}, clear=True), patch.dict(D.RETAINED_DOOR_ROAD_WAYPOINTS, {temple: [(70., 40.)]}, clear=True):
+            D.prepare_door_approaches(w, SimpleNamespace())
+        self.assertEqual(w.door_approaches['waypoints'], {'whitehorn_range:whitehorn-glacier-temple-door': [[547., 312.]]})
+        # Without a transform the source frame has no place in the continent.
+        w.plan = {}
+        with patch.dict(D.DOOR_ROAD_WAYPOINTS, {}, clear=True), patch.dict(D.RETAINED_DOOR_ROAD_WAYPOINTS, {temple: [(70., 40.)]}, clear=True):
+            with self.assertRaisesRegex(ValueError, 'retained transform'):
+                D.prepare_door_approaches(w, SimpleNamespace())
 
     def test_doors_without_a_pin_keep_their_own_point(self):
         content = SimpleNamespace(door_road_ends={})

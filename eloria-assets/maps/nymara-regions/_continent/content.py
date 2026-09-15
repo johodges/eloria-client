@@ -46,6 +46,13 @@ def walk_through(name):
     return any(word in WALK_THROUGH_WORDS for word in name_words(name))
 
 
+def retained_source_center(transform,center):
+    """(source centre, xz scale) that send mapped_xz through a retained transform: the source point the
+    territory's centre stands on, and the north-south squeeze (1 for a rigid translation)."""
+    translation,scale,about=L.retained_affine(transform)
+    return (np.asarray(center,float)-translation[[0,2]]-about*(1.-scale))/scale,scale
+
+
 def retained_source_placements(region, placements):
     """Discard Manymouth's former inter-district route assemblies as roots.
 
@@ -152,8 +159,9 @@ class Content:
             self.scales[region]=.78 if region!='four_gates' else .90
             region_transform=self.world.plan.get('retained_transforms',{}).get(region)
             if region_transform:
-                self.scales[region]=1.
-                self.source_centers[region]=np.asarray(self.world.regions[region]['center'])-np.asarray(region_transform)[[0,2]]
+                # One transform for the whole layout: a rigid translation, or a
+                # translation with a north-south squeeze about a source row.
+                self.source_centers[region],self.scales[region]=retained_source_center(region_transform,self.world.regions[region]['center'])
             ground=np.load(folder/'foundation-samples.npz')
             sample=RegularGridInterpolator((ground['z'],ground['x']),ground['height'],bounds_error=False,fill_value=None)
             def source_height(x,z):
@@ -165,7 +173,16 @@ class Content:
             group_shifts={}
             for identity,assembly in groups.items():
                 site=self.world.plan.get('assembly_sites',{}).get(identity,{})
-                authored_transform=site.get('translation',region_transform)
+                authored_transform=site.get('translation')
+                if authored_transform is None and region_transform:
+                    # The territory's transform taken at the compound's reference
+                    # point, so a squeezed layout moves each compound whole; with
+                    # a ground datum the compound stands on the composed relief.
+                    translation=L.retained_affine(region_transform)[0];reference=np.asarray(assembly.reference_xz,float)
+                    mapped=self.mapped_xz(region,reference)
+                    grounded=isinstance(region_transform,dict) and region_transform.get('datum')=='ground'
+                    lift=float(self.world.height_at(*mapped))-float(assembly.reference_y) if grounded else float(translation[1])
+                    authored_transform=[float(mapped[0]-reference[0]),lift,float(mapped[1]-reference[1])]
                 shift=assembly.shift_to(lambda p:self.mapped_xz(region,p),self.world.height_at,
                     water_level=site.get('water_level',0.),target_xz=site.get('center'))
                 if authored_transform is not None:
