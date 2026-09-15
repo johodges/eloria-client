@@ -234,18 +234,24 @@ def _relief_samples(name):
 
 
 def _relief_height(x, z, source):
-    """(height, weight) of a sampled relief source at global x, z: bilinear inside its crop, feathered at the edge."""
+    """(height, weight) of a sampled relief source at global x, z: bilinear inside its crop, whole there, and
+    beyond the crop's edge the edge's own height continues as a shoulder fading out over ``feather`` metres."""
     sx, sz, sh = _relief_samples(source["samples"])
     tx, ty, tz = source["translation"]
     lx, lz = x - tx, z - tz
     x0, z0, x1, z1 = source.get("crop", [sx[0], sz[0], sx[-1], sz[-1]])
-    inside = np.minimum(np.minimum(lx - x0, x1 - lx), np.minimum(lz - z0, z1 - lz))
-    weight = smoothstep(0.0, float(source.get("feather", 40.0)), inside)
-    cx = np.clip(lx, sx[0], sx[-1]); cz = np.clip(lz, sz[0], sz[-1])
+    # Distance outside the crop rectangle (Euclidean, so the shoulder rounds the corners).
+    outside = np.hypot(np.maximum(np.maximum(x0 - lx, lx - x1), 0.0), np.maximum(np.maximum(z0 - lz, lz - z1), 0.0))
+    weight = 1.0 - smoothstep(0.0, float(source.get("feather", 40.0)), outside)
+    cx = np.clip(lx, max(x0, sx[0]), min(x1, sx[-1])); cz = np.clip(lz, max(z0, sz[0]), min(z1, sz[-1]))
     ix = np.clip(np.searchsorted(sx, cx) - 1, 0, len(sx) - 2); iz = np.clip(np.searchsorted(sz, cz) - 1, 0, len(sz) - 2)
     fx = (cx - sx[ix]) / (sx[ix + 1] - sx[ix]); fz = (cz - sz[iz]) / (sz[iz + 1] - sz[iz])
     h = (sh[iz, ix] * (1 - fx) * (1 - fz) + sh[iz, ix + 1] * fx * (1 - fz)
          + sh[iz + 1, ix] * (1 - fx) * fz + sh[iz + 1, ix + 1] * fx * fz)
+    # Vertical exaggeration about a pivot in the source's own heights: the
+    # base (a gate court) keeps its level while the relief above it grows.
+    pivot = float(source.get("pivot", 0.0))
+    h = pivot + (h - pivot) * float(source.get("scale", 1.0))
     return h + ty, weight
 
 

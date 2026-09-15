@@ -136,11 +136,15 @@
     ],
     [
       300,
-      180
+      150
+    ],
+    [
+      352,
+      70
     ],
     [
       440,
-      40
+      34
     ],
     [
       520,
@@ -779,6 +783,124 @@
       ],
       "foothill_width": 1.8,
       "foothill_height": 0.18
+    },
+    {
+      "name": "Moor foothills",
+      "foothill_width": 1.6,
+      "foothill_height": 0.2,
+      "points": [
+        [
+          300,
+          190,
+          18,
+          60
+        ],
+        [
+          332,
+          250,
+          34,
+          62
+        ],
+        [
+          352,
+          315,
+          40,
+          62
+        ],
+        [
+          372,
+          380,
+          26,
+          60
+        ]
+      ]
+    },
+    {
+      "name": "Barrens foothills",
+      "foothill_width": 1.6,
+      "foothill_height": 0.2,
+      "points": [
+        [
+          812,
+          180,
+          22,
+          60
+        ],
+        [
+          800,
+          250,
+          38,
+          62
+        ],
+        [
+          792,
+          320,
+          36,
+          62
+        ],
+        [
+          800,
+          385,
+          20,
+          60
+        ]
+      ]
+    },
+    {
+      "name": "West headland",
+      "foothill_width": 1.5,
+      "foothill_height": 0.15,
+      "points": [
+        [
+          350,
+          30,
+          40,
+          40
+        ],
+        [
+          366,
+          100,
+          96,
+          42
+        ],
+        [
+          382,
+          150,
+          112,
+          40
+        ],
+        [
+          396,
+          200,
+          50,
+          42
+        ]
+      ]
+    },
+    {
+      "name": "East headland",
+      "foothill_width": 1.5,
+      "foothill_height": 0.15,
+      "points": [
+        [
+          790,
+          30,
+          36,
+          40
+        ],
+        [
+          792,
+          100,
+          62,
+          44
+        ],
+        [
+          800,
+          160,
+          40,
+          44
+        ]
+      ]
     }
   ],
   "rivers": [
@@ -792,14 +914,9 @@
       "bank_height": 4.0,
       "points": [
         [
-          470.0,
-          400.0,
-          57.5
-        ],
-        [
-          435,
-          420,
-          43
+          420.0,
+          424.0,
+          46.0
         ],
         [
           405,
@@ -1060,6 +1177,33 @@
           3
         ]
       ]
+    },
+    {
+      "id": "whitehorn_torrent",
+      "name": "Whitehorn torrent",
+      "joins": "western_river",
+      "width": 4.0,
+      "valley_width": 30,
+      "bank_height": 2.5,
+      "depth": 1.5,
+      "bank_shelf_width": 5,
+      "points": [
+        [
+          474.0,
+          392.0,
+          87.8
+        ],
+        [
+          446.0,
+          404.0,
+          70.6
+        ],
+        [
+          420.0,
+          424.0,
+          46.0
+        ]
+      ]
     }
   ],
   "lakes": [
@@ -1114,7 +1258,7 @@
     "The upper Western River follows low ground west of the spine, preserving a gradual alpine valley rather than excavating a parallel trench.",
     "The Western River bends around the inhabited Four Gates terrace; civic buildings are not used as dams across its channel.",
     "Crownwater lies farther south so its connected causeway city fits its named island territory without extending into mainland server ownership.",
-    "Whitehorn Range: the legacy relief stands at full scale under its retained transform inside its crop (south gate court at 55 m, the valley climbing north past the camps, caves and mine to the glacier temple under the sea cliff); the continental spine keeps its dome, whose south flank carries Amberwood's northern hills, so the gate court meets Amberwood over a pass climb."
+    "Whitehorn Range: the legacy relief stands at full scale under its retained transform, raised 1.3 times about the gate court on a 70 m base; foothills on the Moor and Barrens sides and headlands at the coast carry the range down into its neighbours; the continental spine keeps its dome under Amberwood; the western river rises on that dome's west flank."
   ],
   "assembly_sites": {
     "ssarathi_ruins.temple-focus": {
@@ -1243,7 +1387,7 @@
     ],
     "whitehorn_range": [
       477.0,
-      35.0,
+      70.0,
       272.0
     ]
   },
@@ -1264,17 +1408,19 @@
       "samples": "legacy-relief/whitehorn_range.npz",
       "translation": [
         477.0,
-        35.0,
+        70.0,
         272.0
       ],
       "crop": [
-        -115,
+        -105,
         -291,
-        268,
+        280,
         95
       ],
-      "feather": 24,
-      "coast_feather": 30
+      "feather": 56,
+      "coast_feather": 30,
+      "pivot": 20.0,
+      "scale": 1.3
     }
   ],
   "basins": []

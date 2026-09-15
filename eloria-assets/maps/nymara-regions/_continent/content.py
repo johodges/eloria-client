@@ -57,14 +57,20 @@ def retained_source_placements(region, placements):
     """
     obsolete={'manymouth_delta':('Survey_','Walk_Survey_'),
               'mirrorhold':('Landmark_MeltwaterBridge_',),
-              'whitehorn_range':('Landmark_rope_bridge_',),
+              # Whitehorn's boundary marches dressed the old map's exits; under the
+              # retained transform they stand in the continent's seam zones at the
+              # relief's edge, where the seam roads are the exits.
+              'whitehorn_range':('Landmark_rope_bridge_','March_west_pass_','March_east_pass_','March_south_gate_'),
               'amberwood':('Landmark_Survey_ridge-bridge',)}
     # Wilderness spans were surveyed against the retired regional ravines.
     # Their new crossings are built from the continent's actual drainage.
     # Named discoveries at the old bridge abutments retain their own geometry.
     # Grey Moors keeps its other spans, causeway bridges and boardwalk cache;
     # only the three duplicate crossings are retired, by exact root name.
-    retired={'grey_moors':set(RETIRED_GREY_SPANS)}
+    # The Whitehorn north shrine stood on the old map's crest beyond the continent's
+    # north edge; under the retained transform it lands on the shore two metres
+    # from the sea with a 164 m legacy footing. Retired until the crest returns.
+    retired={'grey_moors':set(RETIRED_GREY_SPANS),'whitehorn_range':{'Landmark_shrine_01'}}
     return [p for p in placements if not p['node'].startswith(obsolete.get(region,())) and p['node'] not in retired.get(region,())]
 
 
