@@ -115,15 +115,34 @@ def add_mirror_streets(world, content):
     return report
 
 
+CIVIC_RUN_GAP_STATIONS = 2   # stations off the street inside a civic run that are a cut corner, not a departure
+
+
 def trim_civic_approach(world, points):
-    """Attach an exterior/door branch once, keeping existing streets narrow."""
+    """Attach an exterior/door branch once, keeping existing streets narrow.
+
+    The branch keeps its alignment from the station where it first leaves
+    the civic network (a gap of up to CIVIC_RUN_GAP_STATIONS inside a street
+    run is a cut corner). Trimming at the last civic station instead dropped
+    everything between: with the terrain terms on, the verdant seam road
+    left the streets at the hub, descended the bank, crossed the channel and
+    touched the south-shore yard link once on its way to the seam; cut at
+    that touch it lost its descent and its bridge, and the south shore stood
+    unconnected (seventeen contract failures).
+    """
     points = np.asarray(points, float)
     ix = np.clip(np.rint((points[:, 0] - world.x0) / 2).astype(int), 0, len(world.x) - 1)
     iz = np.clip(np.rint((points[:, 1] - world.z0) / 2).astype(int), 0, len(world.z) - 1)
     civic = world.mirror_street_distance[iz, ix] <= 1.25
     if len(points) < 3 or not civic[0]:
         return points
-    last = min(int(np.flatnonzero(civic)[-1]), len(points) - 2)
+    last = 0
+    for index in range(1, len(points)):
+        if civic[index]:
+            last = index
+        elif index - last > CIVIC_RUN_GAP_STATIONS:
+            break
+    last = min(last, len(points) - 2)
     if last == 0:
         return points
     if not hasattr(world, 'mirror_street_attachments'):

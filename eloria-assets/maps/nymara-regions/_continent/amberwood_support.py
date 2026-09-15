@@ -6,10 +6,34 @@ canopy compound, kiln buildings and authored discovery identities stay fixed.
 from __future__ import annotations
 import numpy as np
 import landscape as L
-from world_layout import corridor_grade
+from world_layout import corridor_grade,graded_profile
 from four_gates_support import path_field
 
 REGION='amberwood'
+# Routed branches graded as approaches (approach name -> road id). The ridge
+# camp's discovery branch (maps.txt 473, the boar-run door) climbs the
+# plateau's north feather from whichever public road stands nearest. The
+# shared road solve holds a footing feather at its blended ground, so the
+# branch climbed it at 1.1-1.4 once the terrain terms took the seam and door
+# roads off the ridge (the fifteenth's three roads had graded that hillside
+# together); its bed is one authored earth surface here like the paths above.
+APPROACH_BRANCHES={'amber-ridge-camp-branch':'discovery-amberwood-473'}
+APPROACH_GRADE=.45
+
+
+def branch_routes(world):
+    """The routed branches graded as approaches, by approach name, as XZ stations."""
+    routes={}
+    for name,road_id in APPROACH_BRANCHES.items():
+        road=next((r for r in world.roads if r['id']==road_id),None)
+        if road is None:raise ValueError(f'{name}: branch {road_id} was not routed')
+        routes[name]=np.asarray(road['points'],float)[:,[0,2]]
+    return routes
+
+
+def branch_profile(levels,stations,maximum_grade=APPROACH_GRADE):
+    """A routed branch keeps its ends and its general rise; the feather step is cut and filled to the grade."""
+    return graded_profile(levels,stations,maximum_grade=maximum_grade)
 
 
 def authored_routes(world):
@@ -42,12 +66,13 @@ def prepare_amberwood_routes(world,content):
 def apply_amberwood_support(world,content):
     if REGION not in world.ids:return {}
     rows=[]
-    for name,points in authored_routes(world).items():
+    for name,points in list(authored_routes(world).items())+list(branch_routes(world).items()):
         # Final road ends join the actual current earth, not a cached camera Y.
         levels=world.height_at(points[:,0],points[:,1])
         stations=np.r_[0,np.cumsum(np.linalg.norm(np.diff(points,axis=0),axis=1))]
-        profile=np.interp(stations,[0,stations[-1]],[levels[0],levels[-1]])
-        if abs(levels[-1]-levels[0])/stations[-1]>.48:
+        branch=name in APPROACH_BRANCHES
+        profile=branch_profile(levels,stations) if branch else np.interp(stations,[0,stations[-1]],[levels[0],levels[-1]])
+        if abs(levels[-1]-levels[0])/stations[-1]>(APPROACH_GRADE if branch else .48):
             raise ValueError(f'{name}: authored climb must be lengthened')
         half_width=3.6;shoulder=10.
         low=points.min(axis=0)-half_width-shoulder;high=points.max(axis=0)+half_width+shoulder
@@ -80,7 +105,7 @@ def apply_amberwood_support(world,content):
         world.height[sl]=new
         rows.append({'road':name,'lengthMetres':float(length),'changedVertices':int(np.count_nonzero(abs(new-old)>1e-8)),
                      'maximumCut':float(np.max(old-new,initial=0)),'maximumFill':float(np.max(new-old,initial=0))})
-        road=next((r for r in world.roads if r['id']==name),None)
+        road=next((r for r in world.roads if r['id']==APPROACH_BRANCHES.get(name,name)),None)
         if road is not None:
             p=np.asarray(road['points']);p[:,1]=world.height_at(p[:,0],p[:,2]);road['points']=p.tolist()
     world.amberwood_support={'approaches':rows}

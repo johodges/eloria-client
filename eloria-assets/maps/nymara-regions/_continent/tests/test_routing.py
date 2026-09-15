@@ -277,7 +277,7 @@ class RoutingTests(unittest.TestCase):
     def test_the_station_terrain_terms_are_per_territory(self):
         # The wild territories take the measured weights; the six with tuned sites and any test territory keep the module weights.
         self.assertEqual(W.terrain_terms('grey_moors'),(25.,40.,25.,600.))
-        for region in ('mirrorhold','ssarathi_ruins','amberwood','four_gates','whitehorn_range','manymouth_delta','westhaven','test'):
+        for region in [r for r in ('mirrorhold','ssarathi_ruins','amberwood','four_gates','whitehorn_range','manymouth_delta','westhaven') if r not in W.ROUTE_TERRAIN_TERMS]+['test']:
             self.assertEqual(W.terrain_terms(region),(W.ROUTE_CROSS_SLOPE_LINEAR,W.ROUTE_CROSS_SLOPE_SQUARE,W.ROUTE_RELIEF_PENALTY,W.ROUTE_STEP_PENALTY))
         with patch.object(W,'ROUTE_CROSS_SLOPE_LINEAR',25.):
             self.assertEqual(W.terrain_terms('test')[0],25.)

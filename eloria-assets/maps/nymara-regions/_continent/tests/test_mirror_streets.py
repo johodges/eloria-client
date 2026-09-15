@@ -156,6 +156,21 @@ def test_exterior_approach_follows_civic_switchback_then_attaches_without_wideni
     np.testing.assert_array_equal(ordinary[-1], goal)
 
 
+def test_branch_that_leaves_the_streets_keeps_its_departure_not_a_later_touch():
+    world, _ = city()
+    world.mirror_street_distance = np.full_like(world.height, np.inf)
+    points = np.array([[-50. + 4 * k, 0.] for k in range(16)])
+    def mark(index):
+        ix = int(np.rint((points[index, 0] - world.x0) / 2)); iz = int(np.rint((points[index, 1] - world.z0) / 2))
+        world.mirror_street_distance[iz, ix] = 0.
+    # A street run with a cut corner at station 2, then open ground, then one later touch at station 11.
+    for index in (0, 1, 3, 11):
+        mark(index)
+    trimmed = M.trim_civic_approach(world, points)
+    np.testing.assert_array_equal(trimmed, points[3:])
+    assert world.mirror_street_attachments[-1]['retainedCivicStations'] == 3
+
+
 def test_branch_that_starts_off_the_civic_network_keeps_its_original_start():
     world, _ = city()
     world.mirror_street_distance = np.full_like(world.height, np.inf)

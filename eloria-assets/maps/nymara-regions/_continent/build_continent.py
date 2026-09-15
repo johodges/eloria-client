@@ -134,7 +134,13 @@ def prepare(library,output):
                 outward=normal if side==0 else -normal
                 hub=world.hub(region)
                 terminal=anchor-outward*9
-                path=world.route(hub,terminal,region=region)
+                # A seam terminal stands on open ground by construction (the crossing
+                # choice charges terminals inside solids), so the road's own solids are
+                # the hub's only: its last stretch threads a city wall's gate instead of
+                # crossing the wall its terminal stands beside (measured at Four Gates
+                # with the terrain terms on: 31 m through City_Wall_44 and _45, and the
+                # seam's crossing and return records unreachable).
+                path=world.route(hub,terminal,region=region,own=world.solids_at_ends(hub))
                 path=np.vstack([path,anchor-outward*4,anchor,anchor+outward*4])
                 world.add_road(path,width=4,name=link['id']+'-'+region)
                 print(f'Road {region} to {link["id"]}: {len(path)} stations',flush=True)

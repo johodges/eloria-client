@@ -74,7 +74,8 @@ ROUTE_STEP_PENALTY=0.
 # through Yard Shed 1 on flat ground (the shed's cells carry a neighbour's
 # solid id, so the alignment could not see it).
 ROUTE_TERRAIN_TERMS={region:(25.,40.,25.,600.) for region in
-    ('grey_moors','crownwater','verdant_stair','amethyst_barrens','sunmane_steppe')}
+    ('grey_moors','crownwater','verdant_stair','amethyst_barrens','sunmane_steppe','mirrorhold',
+     'ssarathi_ruins','amberwood','four_gates','whitehorn_range','manymouth_delta','westhaven')}
 
 
 def terrain_terms(region):

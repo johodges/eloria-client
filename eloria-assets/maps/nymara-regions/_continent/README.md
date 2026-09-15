@@ -69,13 +69,13 @@ Use these source responsibilities when changing the world:
 | `build_library.py` | Certified reconstruction of retained assets from those recipes, with trusted intermediate caches. |
 | `assemblies.py`, `content.py` | Connected structure grouping, common transforms, actual footing categories, mapped content and ecological placement. |
 | `crown_support.py`, `westhaven_support.py`, `manymouth_support.py`, `mirror_support.py` | Local island, harbour, landing and bank support fitted to retained structures. |
-| `mirror_streets.py`, `four_gates_support.py` | Civic circulation, actual building footings and the graded east-gate approach. |
+| `mirror_streets.py`, `four_gates_support.py` | Civic circulation, actual building footings and the graded east-gate approach; an exterior branch that starts on a civic street is trimmed where it first leaves the street network (a later touch keeps the descent and the bridge between). |
 | `mirror_access_geometry.py` | Low stone bank ramps and the physical opening onto the sanctuary walkway. |
 | `mirror_lake_support.py`, `ssarathi_bank_support.py` | Containing lake shores and natural river banks fitted around retained walking floors. |
 | `manymouth_boats.py` | Actual hull contact with water or ground for independent decorative dugouts. |
 | `hull_settle.py` | Every other decorative watercraft, standalone or inside a rigid assembly, settled by rigid Y only onto the actual water surface or hauled up on the ground, with rigs and cargo standing within a hull following it. |
 | `resource_trails.py` | A narrow trail from the nearest road station to every cluster of authored harvest nodes and territory markers that stands on ground steeper than the walkable grade with no road corridor within 12 m, so the served fold keeps a walkable corridor at each site. |
-| `amberwood_support.py`, `amberwood_access.py` | Woodland workyard paths, coherent camp layout and visible canopy/root entrance construction; the market stair and the root ramp onto the Great Tree's root plateau, both built on the final ground with their strips reserved before routing. |
+| `amberwood_support.py`, `amberwood_access.py` | Woodland workyard paths, coherent camp layout and visible canopy/root entrance construction; the market stair and the root ramp onto the Great Tree's root plateau, both built on the final ground with their strips reserved before routing; the ridge camp's discovery branch is graded as an approach (one earth surface at .45 from a bounded-grade profile of its own stations), because the shared road solve holds the camp's footing feather. |
 | `manymouth_access.py` | Visible tidal fishing boardwalks linking retained porches and the landing. |
 | `manymouth_village_streets.py` | Graded timber streets connecting the other delta hamlets to their actual porch floors. |
 | `grey_crossings.py` | Retirement of the three duplicate Grey Moors boardwalk spans, the four pinned server positions they anchored, and their landmark identities on the actual continental crossing floors. |
@@ -83,10 +83,10 @@ Use these source responsibilities when changing the world:
 | `door_approaches.py` | Authored road ends for doors inside retained pavilions (the Shrine of the Nine Lost on the South Quay), shared by the server-declared discovery branch to the same door, so the road meets the pavilion's open side and no deck is built onto its threshold. |
 | `crossing_contracts.py` | Contracts-stage declaration of each continental bridge floor's two standing points from the served collision fold, with every floor's walkable parts reported. |
 | `ferry_export.py`, `ferry_support.py` | Actual quay/boat fit and preservation of its complete shoreline footprint through road grading. |
-| `world_layout.py` | Ownership polygons, server address envelopes, road alignment (retained solids impassable, hubs and terminals joined to open ground, gentle traverses preferred), common road grading, foundation reconciliation and drainage protection. |
+| `world_layout.py` | Ownership polygons, server address envelopes, road alignment (retained solids impassable, hubs and terminals joined to open ground, gentle traverses preferred, the station terrain terms per territory), common road grading, foundation reconciliation and drainage protection. |
 | `bridge_export.py` | One union of visible continental bridge decks, fitted to the common road surface and actual banks. |
 | `terrain_export.py` | Shared terrain faces and physically clipped shorelines, partitioned from the complete world surface. |
-| `build_continent.py`, `scene_io.py` | Global composition, master scene, named packages, independent loading cells and shared image dependencies. |
+| `build_continent.py`, `scene_io.py` | Global composition (seam roads route with the hub's own solids only, so a terminal beside a city wall threads the gate), master scene, named packages, independent loading cells and shared image dependencies. |
 | `crossings.py`, `export_contracts.py` | Reciprocal crossing lanes and authoritative standing positions derived from actual exported walking surfaces. |
 | `../../../tools/publish_diagonal_continent.py` | Coordinated client/server publication, remaps, package digests and save-migration data. |
 | `atlas_export.py` | Actual-master overview, matching territory crops and Tab-map publication. |
