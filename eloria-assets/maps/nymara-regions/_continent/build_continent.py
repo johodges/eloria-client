@@ -33,7 +33,16 @@ from terrain_export import partition_surface
 from crossings import prepare_contracts,apply_manifest
 from amberwood import gltf as G,mesh as M
 from continent_geography import polygon_rectangles,clip_owned_mesh
-SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py')
+SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py','object_edits.py')
+
+
+EMPTY_SHA256=hashlib.sha256(b'').hexdigest()
+
+
+def object_edits_digest():
+    # An absent continent-edits.json is the empty edit set, as for every earlier composition.
+    path=HERE/'continent-edits.json'
+    return digest(path) if path.exists() else EMPTY_SHA256
 
 
 def package(region):return MAPS/'four-gates' if region=='four_gates' else REGIONS/region
@@ -91,6 +100,7 @@ def ferry_landing(world,region,toward):
 
 def prepare(library,output):
     plan_sha=digest(HERE/'diagonal-plan.json')
+    edits_sha=object_edits_digest()
     profile_sha=digest(HERE/'legacy-server-profile/config/eloria/maps.txt')
     algorithm_sha=hashlib.sha256((inspect.getsource(prepare)+inspect.getsource(ferry_landing)).encode()).hexdigest()
     sources={str(p.relative_to(CLIENT)):digest(p) for p in HERE.glob('*.py')}
@@ -243,11 +253,12 @@ def prepare(library,output):
     if any(digest(HERE/name)!=sha for name,sha in shaping.items()):
         raise ValueError('Landscape shaping source changed during composition; run prepare again')
     if digest(HERE/'diagonal-plan.json')!=plan_sha:raise ValueError('Landscape plan changed during composition')
+    if object_edits_digest()!=edits_sha:raise ValueError('Object edits changed during composition')
     if digest(profile)!=profile_sha:raise ValueError('Authored entrances changed during composition')
     # Cache is local generated state with exact source certificates. Never load
     # an arbitrary downloaded pickle as an authored continent.
     with (output/'composed.pkl').open('wb') as handle:pickle.dump((world,content),handle,protocol=5)
-    json_write(output/'composition.json',{'schema':1,'planSha256':plan_sha,'entranceProfileSha256':profile_sha,'compositionAlgorithmSha256':algorithm_sha,
+    json_write(output/'composition.json',{'schema':1,'planSha256':plan_sha,'objectEditsSha256':edits_sha,'objectEdits':{'document':content.edits.doc,'report':content.edits.report},'entranceProfileSha256':profile_sha,'compositionAlgorithmSha256':algorithm_sha,
         'library':{r:digest(Path(library)/r/'source-certificate.json') for r in world.ids},
         'sources':sources,
         'objects':len(content.objects),'roads':len(world.roads),'assemblies':content.assembly_records,
@@ -262,6 +273,7 @@ def prepare(library,output):
 def load_composed(output,library):
     certificate=json.loads((output/'composition.json').read_text())
     if certificate['planSha256']!=digest(HERE/'diagonal-plan.json'):raise ValueError('Landscape plan changed; recompose before export')
+    if certificate.get('objectEditsSha256',EMPTY_SHA256)!=object_edits_digest():raise ValueError('Object edits changed; recompose before export')
     if certificate.get('entranceProfileSha256')!=digest(HERE/'legacy-server-profile/config/eloria/maps.txt'):raise ValueError('Authored entrance profile changed; recompose before export')
     algorithm_sha=hashlib.sha256((inspect.getsource(prepare)+inspect.getsource(ferry_landing)).encode()).hexdigest()
     if certificate.get('compositionAlgorithmSha256')!=algorithm_sha:raise ValueError('Composition algorithm changed; recompose before export')
