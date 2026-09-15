@@ -107,7 +107,7 @@ def prepare(library,output):
     prepare_grey_crossings(world,content)
     from four_gates_sage import prepare_four_gates_sage,refresh_four_gates_sage_heights
     prepare_four_gates_sage(world,content)
-    from door_approaches import prepare_door_approaches,door_road_end,door_road_end_near,server_road_end,SERVER_ROAD_END_LEG_METRES
+    from door_approaches import prepare_door_approaches,door_road_end,door_road_end_near,server_road_end,door_road_waypoints,SERVER_ROAD_END_LEG_METRES
     prepare_door_approaches(world,content)
     from crown_support import apply_crown_support
     from westhaven_support import apply_westhaven_support
@@ -168,8 +168,10 @@ def prepare(library,output):
             if int(world.owner_at(*point))!=world.ids.index(region):continue
             if any(np.linalg.norm(point-p)<7 for p in seen):continue
             seen.append(point)
-            # A door inside a retained pavilion gets its road on the pavilion's open side.
-            path=world.route(hub,door_road_end(content,region,entry.get('id'),point),region=region)
+            # A door inside a retained pavilion gets its road on the pavilion's open side;
+            # a designed climb is routed through its authored waypoints in legs.
+            legs=[hub]+door_road_waypoints(content,region,entry.get('id'))+[door_road_end(content,region,entry.get('id'),point)]
+            path=np.vstack([world.route(a,b,region=region)[:-1 if index<len(legs)-2 else None] for index,(a,b) in enumerate(zip(legs,legs[1:]))])
             world.add_road(path,width=1.65,name='door-'+region+'-'+str(entry.get('id','entry')))
     # The server also declares hidden rooms and instance returns that are not
     # client portal markers. Give these discoveries narrow branches from the

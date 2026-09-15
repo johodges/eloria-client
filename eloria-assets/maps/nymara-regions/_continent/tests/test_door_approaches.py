@@ -2,6 +2,7 @@ import sys
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import patch
 
 import numpy as np
 
@@ -64,6 +65,15 @@ class DoorApproachTests(unittest.TestCase):
         D.prepare_door_approaches(w, prepared)
         self.assertEqual(len(prepared.server_road_ends[('sunmane_steppe', 'sunmane_steppe', 'sunmane_steppe_secrets')]), 3)
         self.assertEqual(w.door_approaches['serverRoadEnds']['sunmane_steppe:sunmane_steppe->sunmane_steppe_secrets'], [[1216., 732.], [1196., 760.], [1232., 734.]])
+
+    def test_a_designed_climb_lists_its_waypoints_in_order_and_other_doors_none(self):
+        w = world(); w.ids = ['whitehorn_range']
+        prepared = SimpleNamespace()
+        with patch.dict(D.DOOR_ROAD_WAYPOINTS, {('whitehorn_range', 'whitehorn-glacier-temple-door'): [(500., 300.), (520., 200.)]}, clear=True):
+            D.prepare_door_approaches(w, prepared)
+        self.assertEqual([p.tolist() for p in D.door_road_waypoints(prepared, 'whitehorn_range', 'whitehorn-glacier-temple-door')], [[500., 300.], [520., 200.]])
+        self.assertEqual(D.door_road_waypoints(prepared, 'whitehorn_range', 'whitehorn-mine-adit'), [])
+        self.assertEqual(w.door_approaches['waypoints'], {'whitehorn_range:whitehorn-glacier-temple-door': [[500., 300.], [520., 200.]]})
 
     def test_doors_without_a_pin_keep_their_own_point(self):
         content = SimpleNamespace(door_road_ends={})

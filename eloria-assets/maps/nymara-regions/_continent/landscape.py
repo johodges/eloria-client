@@ -227,11 +227,48 @@ def _drainage_height(x, z, h, plan):
     return h
 
 
+@lru_cache(maxsize=4)
+def _relief_samples(name):
+    data = np.load(PLAN_PATH.with_name(name) if "/" not in name else PLAN_PATH.parent / name)
+    return (np.asarray(data["x"], float), np.asarray(data["z"], float), np.asarray(data["height"], float))
+
+
+def _relief_height(x, z, source):
+    """(height, weight) of a sampled relief source at global x, z: bilinear inside its crop, feathered at the edge."""
+    sx, sz, sh = _relief_samples(source["samples"])
+    tx, ty, tz = source["translation"]
+    lx, lz = x - tx, z - tz
+    x0, z0, x1, z1 = source.get("crop", [sx[0], sz[0], sx[-1], sz[-1]])
+    inside = np.minimum(np.minimum(lx - x0, x1 - lx), np.minimum(lz - z0, z1 - lz))
+    weight = smoothstep(0.0, float(source.get("feather", 40.0)), inside)
+    cx = np.clip(lx, sx[0], sx[-1]); cz = np.clip(lz, sz[0], sz[-1])
+    ix = np.clip(np.searchsorted(sx, cx) - 1, 0, len(sx) - 2); iz = np.clip(np.searchsorted(sz, cz) - 1, 0, len(sz) - 2)
+    fx = (cx - sx[ix]) / (sx[ix + 1] - sx[ix]); fz = (cz - sz[iz]) / (sz[iz + 1] - sz[iz])
+    h = (sh[iz, ix] * (1 - fx) * (1 - fz) + sh[iz, ix + 1] * fx * (1 - fz)
+         + sh[iz + 1, ix] * (1 - fx) * fz + sh[iz + 1, ix + 1] * fx * fz)
+    return h + ty, weight
+
+
 def height_at(x, z, plan=None):
     """Evaluate the shared ground height without reference to territory ownership."""
     plan = load_plan() if plan is None else plan
     x, z = _coords(x, z)
     h = _drainage_height(x, z, _natural_height(x, z, plan), plan)
+    # Legacy relief sources: a territory's old map relief placed by its retained
+    # transform replaces the plan landform inside a crop that leaves the old
+    # map's edge walls out, feathered at the crop's edge and damped by the coast.
+    for source in plan.get("relief_sources", []):
+        relief, weight = _relief_height(x, z, source)
+        weight = weight * smoothstep(-8, float(source.get("coast_feather", 60.0)), coastline_distance(x, z, plan))
+        h = h * (1 - weight) + relief * weight
+    # Dry basins (cirques, corries, hanging hollows): an ellipse carved into
+    # the crest after drainage, its floor rising as a shallow bowl toward the
+    # rim and feathered over it; no water stands in it.
+    for basin in plan.get("basins", []):
+        r = _ellipse_distance(x, z, basin)
+        blend = 1 - smoothstep(basin.get("rim", 0.85), basin.get("feather", 1.5), r)
+        floor = basin["floor"] + basin.get("bowl", 6.0) * np.clip(r, 0, 1.5) ** 2
+        h = h * (1 - blend) + np.minimum(h, floor) * blend
     for pad in plan.get("foundations", []):
         distance = np.hypot(x - pad["center"][0], z - pad["center"][1])
         blend = 1 - smoothstep(pad["radius"], pad["radius"] + pad.get("feather", 24), distance)

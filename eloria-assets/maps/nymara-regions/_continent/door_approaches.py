@@ -54,6 +54,19 @@ SERVER_ROAD_ENDS = {
     ('sunmane_steppe', 'sunmane_steppe', 'sunmane_steppe_secrets'): [(1216., 732.), (1196., 760.), (1232., 734.)],
 }
 SERVER_ROAD_END_LEG_METRES = 2.   # a pin closer than this to its portal is the road's end itself
+# (region, portal id) -> authored waypoints in continent metres: the door road is
+# routed hub -> waypoint -> ... -> door end in legs, so a designed climb passes
+# its overlook, refuge or shrine instead of taking the router's shortest line.
+DOOR_ROAD_WAYPOINTS = {
+    # Whitehorn Range (design H, the legacy relief at full scale): the climbs the old
+    # map's valley suggests, from the gate court at the south seams.
+    ('whitehorn_range', 'whitehorn-glacier-temple-door'): [(547., 312.), (565., 214.), (553., 80.)],   # lower camp, bridge watch, temple rest
+    ('whitehorn_range', 'whitehorn-mine-adit'): [(653., 290.), (714., 246.), (677., 152.)],             # high overlook, east camp, mine yard
+    ('whitehorn_range', 'snowline-cell-door'): [(714., 246.), (728., 170.)],                            # east camp, the east valley
+    ('whitehorn_range', 'whitehorn-ice-cave-mouth'): [(384., 234.)],                                    # the old west pass station
+    ('whitehorn_range', 'west-watch-cave-mouth'): [(384., 234.), (396., 176.)],                         # west pass station, the west valley
+    ('whitehorn_range', 'whitehorn-barrow-door'): [(384., 234.), (396., 176.), (392., 122.)],           # ... and past the watch cave
+}
 MINIMUM_DRY_METRES = .8
 MAXIMUM_DOOR_DISTANCE_METRES = 12.
 
@@ -80,12 +93,23 @@ def prepare_door_approaches(world, content):
         if region in world.ids:
             pins = [pins] if not isinstance(pins, list) else pins
             server_ends[(region, source, target)] = [validated(region, f'{source}->{target}', x, z) for x, z in pins]
+    waypoints = {}
+    for (region, portal), points in DOOR_ROAD_WAYPOINTS.items():
+        if region in world.ids:
+            waypoints[(region, portal)] = [validated(region, f'{portal} waypoint {index}', x, z) for index, (x, z) in enumerate(points)]
     content.door_road_ends = ends
     content.server_road_ends = server_ends
+    content.door_road_waypoints = waypoints
     world.door_approaches = {'roadEnds': {f'{region}:{portal}': point.tolist() for (region, portal), point in ends.items()},
                              'serverRoadEnds': {f'{region}:{source}->{target}': [point.tolist() for point in points] for (region, source, target), points in server_ends.items()},
+                             'waypoints': {f'{region}:{portal}': [point.tolist() for point in points] for (region, portal), points in waypoints.items()},
                              'policy': 'A door inside a retained pavilion gets its road on the pavilion\'s open side; the retained floor carries the last metres.'}
     return world.door_approaches
+
+
+def door_road_waypoints(content, region, portal):
+    """The authored waypoints a door road passes on its way from the hub, in order (none for most doors)."""
+    return list(getattr(content, 'door_road_waypoints', {}).get((region, portal), []))
 
 
 def door_road_end(content, region, portal, door_point):

@@ -139,16 +139,24 @@
       180
     ],
     [
-      410,
-      95
+      440,
+      40
     ],
     [
-      590,
-      55
+      520,
+      14
     ],
     [
-      730,
-      140
+      600,
+      8
+    ],
+    [
+      680,
+      14
+    ],
+    [
+      750,
+      56
     ],
     [
       900,
@@ -784,9 +792,9 @@
       "bank_height": 4.0,
       "points": [
         [
-          480,
-          340,
-          83
+          470.0,
+          400.0,
+          57.5
         ],
         [
           435,
@@ -1105,7 +1113,8 @@
     "Mirror Lake occupies a sheltered basin below the fortress; its outlet descends west into the Western River.",
     "The upper Western River follows low ground west of the spine, preserving a gradual alpine valley rather than excavating a parallel trench.",
     "The Western River bends around the inhabited Four Gates terrace; civic buildings are not used as dams across its channel.",
-    "Crownwater lies farther south so its connected causeway city fits its named island territory without extending into mainland server ownership."
+    "Crownwater lies farther south so its connected causeway city fits its named island territory without extending into mainland server ownership.",
+    "Whitehorn Range: the legacy relief stands at full scale under its retained transform inside its crop (south gate court at 55 m, the valley climbing north past the camps, caves and mine to the glacier temple under the sea cliff); the continental spine keeps its dome, whose south flank carries Amberwood's northern hills, so the gate court meets Amberwood over a pass climb."
   ],
   "assembly_sites": {
     "ssarathi_ruins.temple-focus": {
@@ -1204,6 +1213,10 @@
     "mirrorhold": [
       773.5,
       802.5
+    ],
+    "whitehorn_range": [
+      462.5,
+      332.0
     ]
   },
   "connection_sites": {
@@ -1227,6 +1240,11 @@
       290.0,
       0.0,
       1562.0
+    ],
+    "whitehorn_range": [
+      477.0,
+      35.0,
+      272.0
     ]
   },
   "ownership_bias": {
@@ -1239,5 +1257,25 @@
   },
   "bridge_approach_connections": {
     "amberwood--whitehorn_range": 42.0
-  }
+  },
+  "relief_sources": [
+    {
+      "name": "Whitehorn legacy relief",
+      "samples": "legacy-relief/whitehorn_range.npz",
+      "translation": [
+        477.0,
+        35.0,
+        272.0
+      ],
+      "crop": [
+        -115,
+        -291,
+        268,
+        95
+      ],
+      "feather": 24,
+      "coast_feather": 30
+    }
+  ],
+  "basins": []
 }
