@@ -3,7 +3,7 @@ from __future__ import annotations
 import heapq
 import math
 import numpy as np
-from scipy.ndimage import gaussian_filter, distance_transform_edt, binary_dilation
+from scipy.ndimage import gaussian_filter, distance_transform_edt, binary_dilation, maximum_filter
 from scipy.spatial import cKDTree
 from scipy.sparse import coo_matrix
 from scipy.sparse.linalg import cg
@@ -18,6 +18,48 @@ ROAD_APRON_CONTENT_MARGIN_METRES=4.
 # Ground that retained content stands on, or that a footing feather blends
 # toward it at this weight or more, is never moved by a road pass.
 ROAD_STANDING_WEIGHT=.5
+# Road alignment. A retained solid (a compact colliding structure, its box
+# widened by two metres so a four-metre road surface clears it) is impassable
+# for the alignment and for every edge between stations; colliding boxes over
+# 1600 square metres (enclosures, plazas, halls with walked interiors) keep the
+# former soft clearance penalty. A hub inside a solid starts its roads at the
+# nearest open ground. Ground steeper than the walkable grade across a station
+# is penalised so roads traverse hillsides on their gentle parts.
+SOLID_MARGIN_METRES=2.
+SOLID_MAXIMUM_AREA_SQUARE_METRES=1600.
+SOLID_SOFT_PENALTY=400.
+ROUTE_RETRY_STEP_METRES=4.
+ROUTE_EDGE_SAMPLE_METRES=2.
+ROUTE_EXIT_SEARCH_METRES=30.
+ROUTE_END_CANDIDATES=6
+ROUTE_END_CANDIDATES_PER_CLASS=2
+ROUTE_END_SOLID_RADIUS_METRES=6.
+# Terrain terms of the alignment cost. All four are available and tested but
+# stand at zero for the fifteenth publication: with them on (cross-slope 25/40,
+# relief 25, step 600, seam terminal 60) six of ten public roads re-align by
+# more than 6 m, steep road-core samples fall from 8,827 to 4,712, and the
+# strict contracts lose 59 records to site arrangements tuned around the
+# former alignments (the Mirrorhold civic junction, the Ssarathi temple entry,
+# the Amberwood--Four Gates seam approach, the Amberwood estate posts, the
+# Whitehorn and Manymouth doors). Turning them on is per-site work.
+SEAM_TERMINAL_SOLID_PENALTY=0.  # metres per road terminal of a seam crossing standing in a retained solid
+ROUTE_CROSS_SLOPE_START=.55
+ROUTE_CROSS_SLOPE_LINEAR=0.     # per metre of station cross-slope beyond the start
+ROUTE_CROSS_SLOPE_SQUARE=0.     # per metre, times the square of that excess
+# Ground between two stations that drops below the lower station, or rises
+# above the higher one, is a chasm or a ridge the stations alone cannot see: a
+# road there is a deck or a cut as deep as the relief. Penalised per metre of
+# relief beyond what a graded profile absorbs within one station spacing.
+ROUTE_RELIEF_ALLOWANCE_METRES=2.
+ROUTE_RELIEF_PENALTY=0.
+ROUTE_RELIEF_APRON_METRES=42.   # the outer reach of the natural bank apron the drainage restoration keeps
+# A station step steeper than the road's own profile grade (.35) is a deck or
+# a cut as tall as the excess, and the excess accumulates down an escarpment:
+# a direct descent at grade 1 leaves the road fifteen metres in the air. The
+# square of the excess is charged so traverses win over direct descents.
+ROUTE_STEP_GRADE=.35
+ROUTE_STEP_PENALTY=0.
+ROAD_WADE_DEPTH_METRES=.3   # a road bed in shallow water stays this close to the surface (the fold wades .35)
 CHUNK=96.0
 
 
@@ -182,6 +224,8 @@ class World:
         self.owner=owners.reshape(self.height.shape[0]-1,self.height.shape[1]-1)
         self.polygons={r:outline(self.owner==i,self.x0,self.z0) for i,r in enumerate(self.ids)}
         self.obstacles=np.zeros_like(self.height,dtype=bool)
+        self.solids=np.zeros_like(self.height,dtype=bool)
+        self.routing=[]
         self.roads=[]
         self.road_distance=np.full_like(self.height,np.inf)
         self.road_nearest=np.full_like(self.height,np.inf)
@@ -304,12 +348,31 @@ class World:
         self.assembly_target[sl]=np.where(replace,target,self.assembly_target[sl])
         self.assembly_weight[sl]=np.maximum(self.assembly_weight[sl],weight)
 
-    def structure_obstacle(self,low,high,clearance=6):
-        """Keep road and grove placement outside actual structure bounds."""
+    def structure_obstacle(self,low,high,clearance=6,solid=True):
+        """Keep road and grove placement outside actual structure bounds.
+
+        A compact structure is also a solid: no road alignment passes through
+        its box (widened by SOLID_MARGIN_METRES). Boxes over
+        SOLID_MAXIMUM_AREA_SQUARE_METRES are enclosures, plazas or halls whose
+        interiors are walked, and a caller passes ``solid=False`` for a gate,
+        arch or arcade built to be passed; those only carry the soft
+        clearance penalty.
+        """
         lo=np.asarray(low)[[0,2]]-clearance;hi=np.asarray(high)[[0,2]]+clearance
         ix0=max(0,int((lo[0]-self.x0)/CELL));ix1=min(len(self.x),int((hi[0]-self.x0)/CELL)+2)
         iz0=max(0,int((lo[1]-self.z0)/CELL));iz1=min(len(self.z),int((hi[1]-self.z0)/CELL)+2)
         self.obstacles[iz0:iz1,ix0:ix1]=True
+        size=np.asarray(high)[[0,2]]-np.asarray(low)[[0,2]]
+        if not hasattr(self,'solids'):self.solids=np.zeros_like(self.obstacles)
+        if solid and np.all(np.isfinite(size)) and np.all(size>=0) and float(size.prod())<=SOLID_MAXIMUM_AREA_SQUARE_METRES:
+            lo=np.asarray(low)[[0,2]]-SOLID_MARGIN_METRES;hi=np.asarray(high)[[0,2]]+SOLID_MARGIN_METRES
+            ix0=max(0,int((lo[0]-self.x0)/CELL));ix1=min(len(self.x),int((hi[0]-self.x0)/CELL)+2)
+            iz0=max(0,int((lo[1]-self.z0)/CELL));iz1=min(len(self.z),int((hi[1]-self.z0)/CELL)+2)
+            self.solids[iz0:iz1,ix0:ix1]=True
+            # Each solid keeps its own identity, so a road end inside one
+            # structure frees that structure alone, never a whole village.
+            if not hasattr(self,'solid_ids'):self.solid_ids=np.zeros(self.obstacles.shape,np.int32)
+            self.solid_ids[iz0:iz1,ix0:ix1]=int(self.solid_ids.max())+1
 
     def prepare_quay_court(self,center):
         d=np.hypot(self.gx-center[0],self.gz-center[1])
@@ -444,7 +507,15 @@ class World:
             identity='--'.join(sorted((ra,rb)))
             authored=self.plan.get('connection_sites',{}).get(identity)
             if authored is None:
-                index=int(candidates[np.argmin(score[candidates])])
+                # A crossing whose road terminals stand inside retained solids
+                # (a ruined watch-post on the pass) costs sixty metres per
+                # terminal, so an open crossing nearby wins.
+                penalties=np.zeros(len(candidates))
+                for k,candidate in enumerate(candidates):
+                    vertical=abs(segments[candidate,0,0]-segments[candidate,1,0])<1e-8
+                    normal=np.array([1.,0.]) if vertical else np.array([0.,1.])
+                    penalties[k]=self.seam_terminal_penalty(mid[candidate],normal)
+                index=int(candidates[np.argmin(score[candidates]+penalties)])
             else:
                 delta=np.linalg.norm(mid[candidates]-np.asarray(authored,float),axis=1)
                 if delta.min()>1e-6:
@@ -459,15 +530,181 @@ class World:
         for ra,rb in (('westhaven','crownwater'),('manymouth_delta','crownwater'),('ssarathi_ruins','crownwater')):
             self.connections.append({'id':'--'.join(sorted((ra,rb))),'type':'ferry','regions':[ra,rb]})
 
+    def natural_channel_apron(self):
+        """Vertices within the natural bank apron: there the drainage restoration returns the original ground under any road."""
+        cached=getattr(self,'_natural_channel_apron',None)
+        if cached is None:
+            if getattr(self,'original_height',None) is None or not getattr(self,'plan',None):return None
+            try:natural=L.water_fields(self.gx,self.gz,height=self.original_height,plan=self.plan)
+            except KeyError:return None
+            channel=natural.get('river_mask')
+            cached=np.zeros_like(self.height,dtype=bool) if channel is None or not np.any(channel) else distance_transform_edt(~channel)*CELL<=ROUTE_RELIEF_APRON_METRES
+            self._natural_channel_apron=cached
+        return cached
+
+    def cell_of(self,point):
+        return (int(np.clip(round((point[1]-self.z0)/CELL),0,self.height.shape[0]-1)),
+                int(np.clip(round((point[0]-self.x0)/CELL),0,self.height.shape[1]-1)))
+
     def route(self,start,goal,region=None,step=6):
-        """A* road alignment that favours manageable grades and narrow crossings."""
+        """A* road alignment that favours manageable grades, gentle traverses and narrow crossings.
+
+        Retained solids are impassable for every station and for every edge
+        between stations, except the solid that holds one of the road's own
+        ends (a door, a discovery, a hub inside a hall). When no alignment
+        exists at the normal station spacing the search threads closer
+        stations between the solids; when none exists at all it runs once more
+        with solids as a heavy penalty only, and the road is recorded as a
+        solid fallback.
+        """
+        routing=self.__dict__.setdefault('routing',[])
+        start=np.asarray(start,float);goal=np.asarray(goal,float)
+        origins=self.open_ground_candidates(start,region);targets=self.open_ground_candidates(goal,region)
+        own=self.solids_at_ends(start,goal)
+        pairs=sorted(((i+j,i,j) for i in range(len(origins)) for j in range(len(targets))))
+        attempts=[(origins[i],targets[j],spacing,True) for _,i,j in pairs for spacing in (step,ROUTE_RETRY_STEP_METRES)]
+        attempts.append((origins[0],targets[0],step,False))
+        for origin,target,spacing,hard in attempts:
+            result=self._route(origin,target,region,spacing,hard,own)
+            if result is not None:
+                points,record=result
+                record['solidFallback']=not hard
+                if origin is not start:
+                    points=np.vstack([self.end_leg(start,origin,region,own),points[1:]]);record['exitMetres']=round(float(np.linalg.norm(origin-start)),2)
+                if target is not goal:
+                    points=np.vstack([points[:-1],self.end_leg(target,goal,region,own)]);record['entryMetres']=round(float(np.linalg.norm(target-goal)),2)
+                routing.append(record)
+                return points
+        raise ValueError(f'No road alignment from {start} to {goal} in {region}')
+
+    def end_leg(self,a,b,region,own):
+        """The short run between a road end and its open ground: a close-station search that crosses
+        the end's own solids freely and any other only as a heavy penalty, so it threads a gap
+        between tents or finds the gate in a wall where a straight line would cut through them."""
+        result=self._route(a,b,region,ROUTE_RETRY_STEP_METRES,False,own)
+        if result is None:return np.vstack([np.asarray(a,float)[None,:],np.asarray(b,float)[None,:]])
+        return result[0]
+
+    def seam_terminal_penalty(self,anchor,normal,reach=9.):
+        """Metres of penalty for a seam crossing whose road terminals stand in retained solids."""
+        solids=getattr(self,'solids',None)
+        if solids is None or not solids.any():return 0.
+        anchor=np.asarray(anchor,float);normal=np.asarray(normal,float)
+        return SEAM_TERMINAL_SOLID_PENALTY*sum(1 for point in (anchor-normal*reach,anchor,anchor+normal*reach) if solids[self.cell_of(point)])
+
+    def solids_at_ends(self,*points,radius=ROUTE_END_SOLID_RADIUS_METRES):
+        """Identities of the retained solids within ``radius`` of a road's ends: its own hall, market platform or gate towers."""
+        ids=getattr(self,'solid_ids',None)
+        if ids is None:return set()
+        own=set()
+        cells=int(math.ceil(radius/CELL))
+        for point in points:
+            z,x=self.cell_of(point)
+            window=ids[max(0,z-cells):z+cells+1,max(0,x-cells):x+cells+1]
+            wz,wx=np.mgrid[max(0,z-cells):z+cells+1,max(0,x-cells):x+cells+1]
+            near=np.hypot((wz-z)*CELL,(wx-x)*CELL)<=radius
+            own.update(int(v) for v in np.unique(window[near]) if v)
+        return own
+
+    def open_ground_candidates(self,point,region=None,limit=ROUTE_END_CANDIDATES,toward=None):
+        """The point itself, or open ground near it for a road end that stands inside a retained solid.
+
+        A hub inside a hall or on a market platform starts its roads at the
+        structure's open side instead of threading its own walls; a seam
+        terminal inside a ruined watch-post is entered by a leg from open
+        ground. Candidates within ROUTE_EXIT_SEARCH_METRES are ordered by the
+        retained solids their straight leg would cross (none first), then by
+        distance (or by distance to ``toward`` when given: ranking by the
+        road's other end sent the Whitehorn watch-cave road in through the
+        watch house instead of the cave mouth, so the default stays nearest
+        first); the caller tries them in turn because the nearest open cell
+        can lie in a pocket the structures seal.
+        """
+        solids=getattr(self,'solids',None)
+        if solids is None or not solids[self.cell_of(point)]:return [point]
+        ids=getattr(self,'solid_ids',None)
+        own=self.solids_at_ends(point)
+        region_id=self.ids.index(region) if region else None
+        point=np.asarray(point,float);found=[]
+        for radius in np.arange(CELL,ROUTE_EXIT_SEARCH_METRES+1e-9,CELL):
+            for angle in np.linspace(0,2*math.pi,16,endpoint=False):
+                candidate=point+radius*np.array([math.cos(angle),math.sin(angle)])
+                if not (self.x0<=candidate[0]<=self.x1 and self.z0<=candidate[1]<=self.z1):continue
+                if solids[self.cell_of(candidate)]:continue
+                if region_id is not None and int(self.owner_at(candidate[0],candidate[1]))!=region_id:continue
+                count=max(1,int(math.ceil(radius)))
+                crossed={int(ids[self.cell_of(point+(candidate-point)*k/count)]) for k in range(1,count)} if ids is not None else set()
+                rank=float(radius) if toward is None else float(np.linalg.norm(candidate-np.asarray(toward,float)))
+                found.append((len(crossed-own-{0}),rank,len(found),candidate))
+        if not found:return [point]
+        found.sort(key=lambda item:item[:3])
+        # The nearest open cells can all lie in one pocket the structures seal:
+        # keep the two nearest of each crossing class so an exit that crosses a
+        # wall is still tried after the pocket.
+        chosen=[];per_class={}
+        for crossings,_,_,candidate in found:
+            if per_class.get(crossings,0)>=ROUTE_END_CANDIDATES_PER_CLASS:continue
+            per_class[crossings]=per_class.get(crossings,0)+1;chosen.append(candidate)
+            if len(chosen)>=limit:break
+        return chosen
+
+    def open_ground_near(self,point,region=None):
+        return self.open_ground_candidates(point,region)[0]
+
+    def _route(self,start,goal,region,step,hard,own=None):
         stride=max(1,int(step/CELL));h=self.height[::stride,::stride];spacing=stride*CELL
+        rows,columns=self.height.shape
         def node(point): return (int(np.clip(round((point[1]-self.z0)/spacing),0,h.shape[0]-1)),int(np.clip(round((point[0]-self.x0)/spacing),0,h.shape[1]-1)))
         origin,target=node(start),node(goal)
-        if origin==target:return np.vstack([np.asarray(start,float),np.asarray(goal,float)])
+        record={'start':[float(start[0]),float(start[1])],'goal':[float(goal[0]),float(goal[1])],'region':region,'stations':2,'maximumSlope':0.,'stationMetres':float(spacing)}
+        if origin==target:return np.vstack([np.asarray(start,float),np.asarray(goal,float)]),record
         region_id=self.ids.index(region) if region else None
         civic=(self.mirror_street_distance[::stride,::stride]<=1.25
                if region=='mirrorhold' and hasattr(self,'mirror_street_distance') else None)
+        # Ground steepness across the whole corridor width at each station: the
+        # steepest 2 m gradient within the station's block.
+        gz,gx=np.gradient(self.height,CELL)
+        slope=maximum_filter(np.hypot(gx,gz),size=stride)[::stride,::stride]
+        solids=getattr(self,'solids',None)
+        if solids is None:solids=np.zeros_like(self.obstacles)
+        station_clear=edge_clear=None
+        zz,xx=np.mgrid[0:h.shape[0],0:h.shape[1]]
+        if solids.any():
+            ids=getattr(self,'solid_ids',None)
+            if ids is None:ids=solids.astype(np.int32)
+            if own is None:own=self.solids_at_ends(start,goal)
+            passable=~solids if not own else ~(solids&~np.isin(ids,list(own)))
+            # Station solids and, per direction, solids on the edge to that neighbour.
+            station_clear=passable[np.minimum(zz*stride,rows-1),np.minimum(xx*stride,columns-1)]
+            edge_clear={}
+            for dz,dx in ((-1,0),(1,0),(0,-1),(0,1),(-1,-1),(-1,1),(1,-1),(1,1)):
+                clear=np.ones(h.shape,bool);count=int(math.ceil(math.hypot(dz,dx)*spacing/ROUTE_EDGE_SAMPLE_METRES))
+                for k in range(1,count):
+                    f=k/count
+                    sz=np.clip(np.rint((zz+dz*f)*stride).astype(int),0,rows-1);sx=np.clip(np.rint((xx+dx*f)*stride).astype(int),0,columns-1)
+                    clear&=passable[sz,sx]
+                edge_clear[(dz,dx)]=clear
+        # Relief between stations, per direction: how far the ground between a
+        # station and its neighbour drops below the lower of the two or rises
+        # above the higher (a slot gorge, a stream cut, a knife ridge). Inside
+        # the natural bank apron the original ground is the relief: a
+        # foundation pad may have filled a canyon for now, but the drainage
+        # restoration returns the channel and its banks under any road.
+        apron=self.natural_channel_apron()
+        relief_height=self.height if apron is None else np.where(apron,self.original_height,self.height)
+        hr=relief_height[::stride,::stride]
+        relief={}
+        for dz,dx in ((-1,0),(1,0),(0,-1),(0,1),(-1,-1),(-1,1),(1,-1),(1,1)):
+            count=int(math.ceil(math.hypot(dz,dx)*spacing/ROUTE_EDGE_SAMPLE_METRES))
+            nz_=np.clip(zz+dz,0,h.shape[0]-1);nx_=np.clip(xx+dx,0,h.shape[1]-1)
+            low=np.minimum(hr,hr[nz_,nx_]);high=np.maximum(hr,hr[nz_,nx_])
+            deepest=np.zeros(h.shape);tallest=np.zeros(h.shape)
+            for k in range(1,count):
+                f=k/count
+                sz=np.clip(np.rint((zz+dz*f)*stride).astype(int),0,rows-1);sx=np.clip(np.rint((xx+dx*f)*stride).astype(int),0,columns-1)
+                sample=relief_height[sz,sx]
+                deepest=np.maximum(deepest,low-sample);tallest=np.maximum(tallest,sample-high)
+            relief[(dz,dx)]=np.maximum(0.,np.maximum(deepest,tallest)-ROUTE_RELIEF_ALLOWANCE_METRES)
         costs={origin:0.};parents={};queue=[(0.,origin)];done=set()
         while queue:
             _,current=heapq.heappop(queue)
@@ -479,11 +716,20 @@ class World:
                 if not(0<=nz<h.shape[0] and 0<=nx<h.shape[1]):continue
                 neighbor=(nz,nx)
                 if neighbor in done:continue
-                gx,gz=self.x0+nx*spacing,self.z0+nz*spacing
-                if region_id is not None and int(self.owner_at(gx,gz))!=region_id:continue
+                gx_,gz_=self.x0+nx*spacing,self.z0+nz*spacing
+                # The goal is authoritative: its own station may round onto a neighbour's ground.
+                if region_id is not None and neighbor!=target and int(self.owner_at(gx_,gz_))!=region_id:continue
+                solid=station_clear is not None and not (station_clear[nz,nx] and edge_clear[(dz,dx)][z,x])
+                if solid and hard:continue
                 length=math.hypot(dx,dz)*spacing;grade=abs(h[nz,nx]-h[z,x])/length
-                blocked=self.obstacles[min(nz*stride,self.height.shape[0]-1),min(nx*stride,self.height.shape[1]-1)]
-                penalty=1+grade*grade*32+max(0,grade-.4)*70+(65 if h[nz,nx]<.3 else 0)+(150 if blocked and neighbor not in (origin,target) else 0)
+                blocked=self.obstacles[min(nz*stride,rows-1),min(nx*stride,columns-1)]
+                excess=max(0.,float(slope[nz,nx])-ROUTE_CROSS_SLOPE_START)
+                steep=max(0.,grade-ROUTE_STEP_GRADE)
+                penalty=(1+grade*grade*32+max(0,grade-.4)*70+steep*steep*ROUTE_STEP_PENALTY
+                         +excess*ROUTE_CROSS_SLOPE_LINEAR+excess*excess*ROUTE_CROSS_SLOPE_SQUARE
+                         +float(relief[(dz,dx)][z,x])*ROUTE_RELIEF_PENALTY
+                         +(65 if h[nz,nx]<.3 else 0)+(150 if blocked and neighbor not in (origin,target) else 0)
+                         +(SOLID_SOFT_PENALTY if solid else 0))
                 # In the steep city, the surveyed civic network provides the
                 # real switchbacks between terraces. Prefer its circulation
                 # over cutting a competing shortcut through the city slope.
@@ -494,11 +740,13 @@ class World:
                     heuristic=math.hypot(nx-target[1],nz-target[0])*spacing
                     if civic is not None:heuristic*=.05
                     heapq.heappush(queue,(cost+heuristic,neighbor))
-        if target not in costs: raise ValueError(f'No road alignment from {start} to {goal} in {region}')
+        if target not in costs:return None
         path=[target]
         while path[-1]!=origin:path.append(parents[path[-1]])
-        points=np.array([[self.x0+x*spacing,self.z0+z*spacing] for z,x in reversed(path)])
+        path=list(reversed(path))
+        points=np.array([[self.x0+x*spacing,self.z0+z*spacing] for z,x in path])
         points[0]=start;points[-1]=goal
+        steepest=float(max(slope[z,x] for z,x in path[1:-1]) if len(path)>2 else 0.)
         # A broad low-pass bend removes eight-direction grid kinks; endpoints
         # remain the exact surveyed road mouths.
         if len(points)>5:
@@ -507,11 +755,46 @@ class World:
             # A curve must not cut the inside of a bend through a building.
             iz=np.clip(((smoothed[:,1]-self.z0)/CELL).astype(int),0,len(self.z)-1)
             ix=np.clip(((smoothed[:,0]-self.x0)/CELL).astype(int),0,len(self.x)-1)
-            valid=~self.obstacles[iz,ix];points[valid]=smoothed[valid]
+            valid=~(self.obstacles[iz,ix]|solids[iz,ix]);points[valid]=smoothed[valid]
         if civic is not None:
             from mirror_streets import trim_civic_approach
             points=trim_civic_approach(self,points)
-        return points
+        record.update(stations=int(len(points)),maximumSlope=round(steepest,3))
+        return points,record
+
+    def solid_crossings(self,solids):
+        """Road stations inside retained solids, per road and structure, in metres of alignment."""
+        crossings=[]
+        boxes=[(region,node,np.asarray(low,float)[[0,2]],np.asarray(high,float)[[0,2]]) for region,node,low,high in solids]
+        for road in self.roads:
+            points=np.asarray(road['points'],float)[:,[0,2]]
+            if len(points)<2:continue
+            dense=[]
+            for a,b in zip(points,points[1:]):
+                count=max(1,int(math.ceil(np.linalg.norm(b-a))))
+                dense.extend(a+(b-a)*k/count for k in range(count))
+            dense=np.vstack([dense,points[-1]])
+            low=dense.min(axis=0);high=dense.max(axis=0)
+            for region,node,lo,hi in boxes:
+                if np.any(hi<low) or np.any(lo>high):continue
+                inside=(dense[:,0]>=lo[0])&(dense[:,0]<=hi[0])&(dense[:,1]>=lo[1])&(dense[:,1]<=hi[1])
+                if inside.any():
+                    crossings.append({'road':road['id'],'region':region,'node':node,'metres':int(inside.sum())})
+        crossings.sort(key=lambda c:(-c['metres'],c['road'],c['node']))
+        return crossings
+
+    def routing_report(self):
+        routes=getattr(self,'routing',[])
+        return {'routes':len(routes),'solidFallbacks':[r for r in routes if r.get('solidFallback')],
+                'steepestStationSlope':max((r['maximumSlope'] for r in routes),default=0.),
+                'solidMarginMetres':SOLID_MARGIN_METRES,'solidMaximumAreaSquareMetres':SOLID_MAXIMUM_AREA_SQUARE_METRES,
+                'retryStationMetres':ROUTE_RETRY_STEP_METRES,'closeStationRoutes':sum(1 for r in routes if r.get('stationMetres',6.)<6. and not r.get('solidFallback')),
+                'hubExits':sum(1 for r in routes if r.get('exitMetres')),'endEntries':sum(1 for r in routes if r.get('entryMetres')),
+                'exitSearchMetres':ROUTE_EXIT_SEARCH_METRES,'endSolidRadiusMetres':ROUTE_END_SOLID_RADIUS_METRES,'seamTerminalSolidPenalty':SEAM_TERMINAL_SOLID_PENALTY,
+                'crossSlope':{'start':ROUTE_CROSS_SLOPE_START,'linear':ROUTE_CROSS_SLOPE_LINEAR,'square':ROUTE_CROSS_SLOPE_SQUARE},
+                'relief':{'allowanceMetres':ROUTE_RELIEF_ALLOWANCE_METRES,'penaltyPerMetre':ROUTE_RELIEF_PENALTY,'naturalApronMetres':ROUTE_RELIEF_APRON_METRES},
+                'stepGrade':{'grade':ROUTE_STEP_GRADE,'penalty':ROUTE_STEP_PENALTY},
+                'policy':'Retained solids up to 1600 square metres, widened by 2 m, are impassable for alignments and their edges except the solids within 6 m of a road end, first at 6 m stations then at 4 m; a road end inside a solid starts or ends with a close-station leg from open ground; a sealed end falls back to solids as a heavy penalty; larger boxes keep the soft clearance penalty; the cross-slope, relief, step-grade and seam-terminal terms stand at their listed weights (zero: off).'}
 
     def add_road(self,points,width=3.5,name='road'):
         points=np.asarray(points,float)
@@ -522,7 +805,11 @@ class World:
         points=np.vstack([dense,points[-1]])
         heights=self.height_at(points[:,0],points[:,1])
         water=L.water_fields(points[:,0],points[:,1],height=heights,plan=self.plan)
-        floor=np.where(water['mask']&(water['depth']>.35),water['surface']+.85,-np.inf)
+        # Deeper than the wade limit the road is a deck above the water; shallower,
+        # its bed stays within the wade depth of the surface, so the corridor cut
+        # never sinks a tile the fold would refuse.
+        floor=np.where(water['mask']&(water['depth']>.35),water['surface']+.85,
+                       np.where(water['mask'],water['surface']-ROAD_WADE_DEPTH_METRES,-np.inf))
         distances=np.r_[0,np.cumsum(np.linalg.norm(np.diff(points,axis=0),axis=1))]
         profile=graded_profile(heights,distances,floor)
         self.roads.append({'id':name,'points':np.c_[points[:,0],profile,points[:,1]].tolist(),'width':width})

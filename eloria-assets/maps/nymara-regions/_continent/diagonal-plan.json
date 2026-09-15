@@ -1234,7 +1234,8 @@
     "crownwater": 70000
   },
   "bridge_approach_aprons": {
-    "amberwood": 42.0
+    "amberwood": 42.0,
+    "ssarathi_ruins": 12.0
   },
   "bridge_approach_connections": {
     "amberwood--whitehorn_range": 42.0

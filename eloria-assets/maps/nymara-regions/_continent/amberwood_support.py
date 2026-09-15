@@ -20,6 +20,11 @@ def authored_routes(world):
         'amber-motherroot-yard':np.array([[510,522],[510,517],[512,513]],float)+offset,
         'amber-moot-path':np.array([[496,500],[495,505],[500,508],[503,504]],float)+offset,
         'amber-ridge-camp':np.array([[604,435],[605,445],[599,452],[591,456],[584,456],[578,450]],float)+offset,
+        # With the structures registered where they stand (content.register_obstacles,
+        # not called yet) the cinder chapel door road takes a direct line up the hill
+        # and the chapel foot at (626, 491) lies 26 m lower: this 28 m line then
+        # climbs at .54 and must bend east between the two ruins, for instance
+        # [[626,491],[634,491],[641,487],[647,486],[650,481],[647,476]] (33.8 m, .45).
         'amber-undercut-path':np.array([[626,491],[634,491],[640,485],[646,480],[647,476]],float)+offset,
     }
 
@@ -65,6 +70,12 @@ def apply_amberwood_support(world,content):
             a,b=obj['low'],obj['high']
             occupied|=(gx>=a[0]-.25)&(gx<=b[0]+.25)&(gz>=a[2]-.25)&(gz<=b[2]+.25)
         weight*=~occupied
+        # Routed roads crossing an approach are regraded with it: the approach
+        # is one authored earth surface and the corridors it crosses become
+        # part of it. Two guards were tried in the fifteenth publication and
+        # each stepped a served corridor at the crossing (excluding the other
+        # road's core cut the ridge camp approach at its own stations; blending
+        # into the core made the kilnyard yard steep beside the Hamlet Elder).
         old=world.height[sl].copy();new=old*(1-weight)+target*weight
         world.height[sl]=new
         rows.append({'road':name,'lengthMetres':float(length),'changedVertices':int(np.count_nonzero(abs(new-old)>1e-8)),

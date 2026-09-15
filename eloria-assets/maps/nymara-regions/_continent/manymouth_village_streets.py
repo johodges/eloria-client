@@ -113,6 +113,8 @@ def station(content,name,matrices):
 def public_road_station(world,content,target):
     samples=[]
     for road in world.roads:
+        # A resource trail is not a public approach for a village street.
+        if str(road.get('id','')).startswith('trail-'):continue
         p=np.asarray(road['points'])[:,[0,2]]
         for a,b in zip(p,p[1:]):
             d=b-a;t=np.clip(np.dot(target['xz']-a,d)/max(np.dot(d,d),1e-9),0,1)

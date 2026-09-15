@@ -14,6 +14,31 @@ from ferry_export import ribbon
 
 REGION='amberwood'
 HATCH='Motherroot_RootHatch'
+# The market stair descends from the canopy platform deck to whatever ground
+# the final composition leaves at its foot: the shortest straight run that
+# keeps a walkable grade, between these lengths, along the authored line.
+MARKET_STAIR_MINIMUM_METRES=17.
+MARKET_STAIR_MAXIMUM_METRES=45.   # the line runs down the natural hillside: 12 m below the deck at the landing, 19 m at 37 m out
+MARKET_STAIR_GRADE=.58
+MARKET_STAIR_LEVEL_METRES=4.
+MARKET_STAIR_CLEARANCE_METRES=2.6
+
+
+def market_stair_line(world):
+    """(landing, unit direction from the foot up to the landing) of the authored market stair line."""
+    offset=np.asarray(world.regions[REGION]['center'])-[510.,540.]
+    landing=np.array([510.,541.5])+offset;foot=np.array([503.,557.])+offset
+    direction=(landing-foot)/np.linalg.norm(landing-foot)
+    return landing,direction
+
+
+def market_stair_run(height_at,landing,direction,deck):
+    """(length, start, ground) of the shortest stair run that keeps MARKET_STAIR_GRADE on the given ground."""
+    for length in np.arange(MARKET_STAIR_MINIMUM_METRES,MARKET_STAIR_MAXIMUM_METRES+1e-9,2.):
+        start=landing-direction*length;ground=float(height_at(*start))+.025
+        if abs(deck-ground)/(length-MARKET_STAIR_LEVEL_METRES)<=MARKET_STAIR_GRADE:
+            return float(length),start,ground
+    raise ValueError(f'Market stair needs a longer actual approach: {abs(deck-ground):.2f} m of rise within {MARKET_STAIR_MAXIMUM_METRES:.0f} m')
 
 
 def prepare_camp_source(document,body,metadata,folder):
@@ -193,6 +218,24 @@ def prepare_amberwood_access(world,content):
     stall=content.placement_by_name[(REGION,'Prop_MarketStall_6')]
     delta=np.array([15.,0.,4.]);stall['shift']+=delta;stall['low']+=delta;stall['high']+=delta
     content.mapping[(REGION,stall['node'])]=stall['shift'];content.bounds_by_name[(REGION,stall['node'])]=(stall['low'],stall['high'])
+    # The stair's length follows the final ground (build_amberwood_access).
+    # Reserve its longest strip now, so no road alignment or grove crosses
+    # it, and move loose props off it as the stall row was moved.
+    landing,direction=market_stair_line(world);perp=np.array([-direction[1],direction[0]])
+    far=landing-direction*MARKET_STAIR_MAXIMUM_METRES
+    reserve_low=np.minimum(landing,far)-MARKET_STAIR_CLEARANCE_METRES;reserve_high=np.maximum(landing,far)+MARKET_STAIR_CLEARANCE_METRES
+    world.structure_obstacle([reserve_low[0],0.,reserve_low[1]],[reserve_high[0],0.,reserve_high[1]])
+    cleared=[]
+    for obj in content.objects:
+        if obj['region']!=REGION or obj.get('assembly') or obj.get('kind')!='prop':continue
+        centre=((np.asarray(obj['low'])+np.asarray(obj['high']))*.5)[[0,2]];rel=centre-landing
+        along=-float(rel@direction);across=float(rel@perp)
+        half=float(np.hypot(obj['high'][0]-obj['low'][0],obj['high'][2]-obj['low'][2])*.5)
+        if not (6.<along<MARKET_STAIR_MAXIMUM_METRES and abs(across)-half<MARKET_STAIR_CLEARANCE_METRES):continue
+        move=perp*(1. if across>=0 else -1.)*(MARKET_STAIR_CLEARANCE_METRES+half-abs(across))
+        delta=np.array([move[0],0.,move[1]]);obj['shift']+=delta;obj['low']+=delta;obj['high']+=delta
+        content.mapping[(REGION,obj['node'])]=obj['shift'];content.bounds_by_name[(REGION,obj['node'])]=(obj['low'],obj['high'])
+        cleared.append({'node':obj['node'],'displacement':[round(float(v),2) for v in delta]})
     doc,body=content.documents[REGION]
     upper=content.placement_by_name[(REGION,'Landmark_CanopyWalkway_0')]
     lower=content.placement_by_name[(REGION,'Landmark_CanopyWalkway_2')]
@@ -206,7 +249,8 @@ def prepare_amberwood_access(world,content):
     matrices,_=S.GR.hierarchy(doc);low,high=S.subtree_bounds(doc,body,lower['index'],matrices)
     lower['low'][...]=low+lower['shift'];lower['high'][...]=high+lower['shift']
     content.bounds_by_name[(REGION,lower['node'])]=(lower['low'],lower['high'])
-    world.amberwood_access={'hatch':target.tolist(),'canopyJunction':report,'marketRailOpening':opening,'marketStallDisplacement':[15,0,4],'charcoalHatchDisplacement':[7,0,0]}
+    world.amberwood_access={'hatch':target.tolist(),'canopyJunction':report,'marketRailOpening':opening,'marketStallDisplacement':[15,0,4],'charcoalHatchDisplacement':[7,0,0],
+        'marketStairReserve':[reserve_low.tolist(),reserve_high.tolist()],'marketStairClearance':cleared}
     return world.amberwood_access
 
 
@@ -230,11 +274,9 @@ def build_amberwood_access(world,content,path):
     landing=np.array([510.,541.5])+offset
     near=floor.reshape(-1,3);near=near[np.linalg.norm(near[:,[0,2]]-landing,axis=1)<3]
     if not len(near):raise ValueError('Market stair has no retained platform landing')
-    deck=float(np.max(near[:,1]));start=np.array([503.,557.])+offset
-    delta=landing-start;length=np.linalg.norm(delta);direction=delta/length;side=np.array([-direction[1],direction[0]])
-    h0=float(world.height_at(*start))+.025
-    level_length=4.
-    if abs(deck-h0)/(length-level_length)>.60:raise ValueError('Market stair needs a longer actual approach')
+    deck=float(np.max(near[:,1]));landing,direction=market_stair_line(world);side=np.array([-direction[1],direction[0]])
+    length,start,h0=market_stair_run(world.height_at,landing,direction,deck)
+    delta=landing-start;level_length=MARKET_STAIR_LEVEL_METRES
     centres=np.array([start,landing-direction*level_length,landing]);heights=np.array([h0,deck,deck])
     add('Walk_Amber_MarketCanopyStair',ribbon(centres,heights,side,1.65,'amber_access_timber'))
     supports=[]
@@ -259,7 +301,8 @@ def build_amberwood_access(world,content,path):
     parts.append({'region':REGION,'node':HATCH,'roots':[hatch_parent],
                   'bounds':np.array([np.asarray(hatch_bounds)[:,0].min(axis=0),np.asarray(hatch_bounds)[:,1].max(axis=0)]),'segment':[],'collides':True})
     Path(path).parent.mkdir(parents=True,exist_ok=True);builder.write_glb(str(path))
-    world.amberwood_access['marketRamp']={'start':[float(start[0]),h0,float(start[1])],'landing':[float(landing[0]),deck,float(landing[1])],'levelLandingMetres':level_length,'grade':float(abs(deck-h0)/(length-level_length))}
+    world.amberwood_access['marketRamp']={'start':[float(start[0]),h0,float(start[1])],'landing':[float(landing[0]),deck,float(landing[1])],'levelLandingMetres':level_length,
+        'lengthMetres':float(length),'grade':float(abs(deck-h0)/(length-level_length))}
     return parts
 
 

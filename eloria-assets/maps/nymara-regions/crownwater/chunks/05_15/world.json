@@ -36,7 +36,7 @@
       ],
       "max": [
         476.0,
-        289.5703820345275,
+        289.57038202907705,
         110.0
       ]
     },
@@ -50,7 +50,7 @@
       ],
       "max": [
         476.0,
-        289.5703820345275,
+        289.57038202907705,
         110.0
       ]
     }
@@ -70,7 +70,7 @@
       0,
       0
     ],
-    "walkingHeight": 4.525000095367432,
+    "walkingHeight": 4.5,
     "invertServerY": true,
     "addressableWorldBounds": {
       "min": [
@@ -299,7 +299,7 @@
       ],
       "max": [
         476.0,
-        289.5703820345275,
+        289.57038202907705,
         110.0
       ]
     },
@@ -1772,7 +1772,7 @@
       -34.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:679d9f50ed5c214352584f0ed828e2a8b5300e5db9468bd69bd4c713b619c316",
+  "terrainRevision": "diagonal-spine-v1:a949daff0b1ab657b9f04305739772b3a086f2af1761fa5690d4c4d51cd0b09d",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",
@@ -1809,13 +1809,13 @@
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "221fb20a7614da32024138d2efaf93e72e675d2c6ea5b7470e41f27d989de2f5",
-    "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba"
+    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
+    "planSha256": "81a1d27b9f127000862c1b5749e47a814e0839eebb3a4f8c9af07c827f01afa2"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "221fb20a7614da32024138d2efaf93e72e675d2c6ea5b7470e41f27d989de2f5",
-    "collisionSha256": "c9cf825fa66bb86d430ebdc8bd85f379175cd87d2ccd67794dd087216ae918d2",
-    "terrainRevision": "diagonal-spine-v1:679d9f50ed5c214352584f0ed828e2a8b5300e5db9468bd69bd4c713b619c316"
+    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
+    "collisionSha256": "35cfe6d283f8a601fb39d990e0c9d02de9a9f93168649f91d3f7fccbf7e141de",
+    "terrainRevision": "diagonal-spine-v1:a949daff0b1ab657b9f04305739772b3a086f2af1761fa5690d4c4d51cd0b09d"
   }
 }

@@ -7,6 +7,7 @@ The river profile, sea level, retained architecture and entrances never move.
 """
 import math
 import numpy as np
+from scipy.ndimage import binary_dilation, distance_transform_edt
 import landscape as L
 import scene_io as S
 from mirror_support import upper_floor_field, sample_upper_clearance
@@ -15,6 +16,7 @@ REGION='ssarathi_ruins'
 COURT='Colonnade_ritual_plaza'
 WALKS=('Bridge_spur_stela__channel_main','HatcheryDescent')
 GRID_MARGIN=math.sqrt(2.)*2.
+ROAD_BENCH_METRES=8.   # a graded road core keeps its corridor through the restored bank, feathered over this distance
 
 
 def bank_field(x,z,current,natural,river,plan,walking):
@@ -75,6 +77,15 @@ def apply_ssarathi_banks(world,content):
     # the restored landform. Outside the court's old apron nothing is changed.
     edge=np.minimum.reduce((x-low[0],high[0]-x,z-low[1],high[1]-z))
     corrected=old+(corrected-old)*L.smoothstep(0.,20.,edge)
+    # A graded road keeps its corridor through the restored bank: the core
+    # stays as the road grading left it and the bank returns beside it over
+    # eight metres. The secrets-door branch, kept out of the lineage house by
+    # the retained solids, otherwise climbed the restored bank at a 1.5 grade.
+    if getattr(world,'roads',None):
+        core=binary_dilation(world.road_distance[sl]<=1.65,iterations=1)
+        if core.any():
+            keep=1.-L.smoothstep(0.,ROAD_BENCH_METRES,distance_transform_edt(~core)*2.)
+            corrected=old*keep+corrected*(1.-keep)
     delta=corrected-old;changed=delta>1e-8
     world.height[sl]=corrected
     additional_burial={}

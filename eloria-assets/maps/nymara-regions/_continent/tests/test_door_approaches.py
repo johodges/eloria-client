@@ -39,6 +39,17 @@ class DoorApproachTests(unittest.TestCase):
         self.assertTrue(np.array_equal(D.door_road_end_near(content, 'mirrorhold', shrine), shrine))
         self.assertTrue(np.array_equal(D.door_road_end_near(SimpleNamespace(), 'verdant_stair', shrine), shrine))
 
+    def test_a_server_only_portal_with_its_own_pin_is_routed_to_it_not_to_the_neighbouring_door(self):
+        content = SimpleNamespace(door_road_ends={('amberwood', 'gate-undercroft-stair'): np.array([616.5, 589.5])},
+                                  server_road_ends={('amberwood', 'amberwood', 'amberwood_estate'): np.array([600., 590.])})
+        estate = np.array([608., 590.])
+        # The estate door is 8.5 m from the undercroft pin and would share it by distance; its own pin wins.
+        self.assertEqual(D.server_road_end(content, 'amberwood', estate, 'amberwood', 'amberwood_estate').tolist(), [600., 590.])
+        self.assertIsNone(D.server_road_end(content, 'amberwood', estate, 'amberwood', 'amberwood_secrets'))
+        self.assertEqual(D.door_road_end_near(content, 'amberwood', estate).tolist(), [616.5, 589.5])
+        # Another entrance to the same map, out of the pin's reach, keeps the default handling.
+        self.assertIsNone(D.server_road_end(content, 'amberwood', np.array([640., 590.]), 'amberwood', 'amberwood_estate'))
+
     def test_doors_without_a_pin_keep_their_own_point(self):
         content = SimpleNamespace(door_road_ends={})
         self.assertTrue(np.array_equal(D.door_road_end(content, 'verdant_stair', 'other-door', DOOR), DOOR))

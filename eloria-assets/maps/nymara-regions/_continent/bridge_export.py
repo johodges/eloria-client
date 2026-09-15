@@ -21,11 +21,17 @@ from scipy.sparse.linalg import spsolve
 HERE=Path(__file__).resolve().parent
 sys.path.insert(0,str(HERE.parent/'_toolkit'))
 import landscape as L
+from world_layout import triangle_sample
 from amberwood import gltf as G, mesh as M
 
 CELL=1.
 GRADE=.65
 SOLVE_GRADE=.64  # Margin for narrow clipped faces in float32 continent coordinates.
+NEGLIGIBLE_FLOOR_AREA=1e-6  # square metres; a clipped outline below this is a sliver, not a floor
+PRECISION_REMNANT_AREA=1e-4      # square metres: an encoded face failing the grade under this area is a remnant
+PRECISION_REMNANT_ALTITUDE=.01   # metres: or thinner than this across its longest edge
+SPAN_CLEARANCE_METRES=1.    # a road profile this far above the ground, in a run that touches water, is a span
+SPAN_MAXIMUM_METRES=24.     # a floating run longer than this is a hillside road the grading did not build, not a gap
 CROSS=np.array([[0,1,0],[1,1,1],[0,1,0]],bool)
 CAP_ARC_STEPS=12
 POLYGON_EPS=1e-9
@@ -175,9 +181,21 @@ class RoadOutline:
         return loops
 
 
+def precision_remnants(faces,areas):
+    """Faces too small or too thin to carry a floor grade: area under a square centimetre, or altitude under a centimetre."""
+    xz=np.asarray(faces)[:,:,[0,2]]
+    longest=np.max(np.linalg.norm(np.roll(xz,-1,axis=1)-xz,axis=2),axis=1)
+    altitude=2*np.asarray(areas)/np.maximum(longest,1e-12)
+    return (np.asarray(areas)<PRECISION_REMNANT_AREA)|(altitude<PRECISION_REMNANT_ALTITUDE)
+
+
 def triangulate_floor(polygon):
     """Stable ear clipping of a clockwise, possibly concave floor outline."""
     polygon=np.asarray(polygon)
+    # A deck cell clipped at a tangent of the road outline can leave a sliver
+    # a tenth of a millimetre across (float32 at continent coordinates): no
+    # floor at all, not a failure.
+    if len(polygon)<3 or abs(_area_xz(polygon))<NEGLIGIBLE_FLOOR_AREA:return []
     # Collapse redundant outside-boundary vertices at sub-millimetre scale.
     # This is below GLB precision at continent coordinates, not an art change.
     changed=True
@@ -308,8 +326,83 @@ def common_surface(world, *, water_fields=None, maximum_extension=96):
     water=water_fields(x,z,height=ground,plan=world.plan)
     # Conservative shoulder cells must not invent a bridge on a dry road
     # merely because nearby water reaches an invisible grid-cell centre.
-    wet=np.zeros_like(road);wet[rows,cols]=water['mask']&(water['depth']>.35)&outline.contains(x,z)
-    cells=wet.copy()
+    inside=outline.contains(x,z)
+    wet=np.zeros_like(road);wet[rows,cols]=water['mask']&(water['depth']>.35)&inside
+    # A road profile held above the ground it crosses is a span whether or
+    # not deep water runs there: a shallow creek kept by a footing feather,
+    # a drained natural channel, and the banks the profile floats over on
+    # its way back to the ground. The floating run must touch water (any
+    # depth today, or the original ground's channels), so that a profile
+    # left above a pinned settlement footing far from water builds no deck;
+    # it must be gap-sized, since a profile floating for tens of metres up
+    # a river bank is a hillside road the grading did not build; it must
+    # hold no deep water, which the wet rule decks with its own approaches;
+    # the road's own centreline must float in it, since a shore or
+    # cliff-edge road floats only at the shoulder that falls away beside
+    # it; and the ground under the road inside the run must dip below the
+    # ground under the road where it meets the run at either end, the
+    # shape of a creek or gully rather than of a bank the road descends or
+    # a terrace edge. Runs failing these are reported, not decked.
+    span=np.zeros_like(road);span_all=span;spanned_runs=[];skipped_runs=[]
+    if getattr(world,'roads',None):
+        watery=np.zeros_like(road);watery[rows,cols]=water['mask']
+        original=getattr(world,'original_height',None)
+        if original is not None:
+            terrain_cell=float(world.x[1]-world.x[0])
+            natural=water_fields(x,z,height=triangle_sample(original,x,z,world.x0,world.z0,terrain_cell),plan=world.plan)
+            watery[rows,cols]|=np.asarray(natural.get('river_mask',np.zeros(len(x),bool)),bool)
+        if watery.any():
+            # Each road stamps its own profile across its footprint width, so
+            # the whole width spans, shoulders included, as the per-vertex
+            # water test does for a wet crossing; a neighbouring road higher
+            # up a hillside lends its profile to no cell of this one.
+            profile=np.full(road.shape,-np.inf);centre_lift=np.full(road.shape,-np.inf);centre_ground=np.full(road.shape,np.inf);bed=np.full(road.shape,np.inf);bed[rows,cols]=ground
+            for r in world.roads:
+                pts=np.asarray(r['points'],float);half=float(r['width'])+CELL/math.sqrt(2)
+                offsets=np.arange(-half,half+1e-9,CELL*.5)
+                for a,b in zip(pts,pts[1:]):
+                    d=b[[0,2]]-a[[0,2]];length=float(np.linalg.norm(d))
+                    if length<1e-9:continue
+                    n=np.array([-d[1],d[0]])/length;count=max(1,int(math.ceil(length*2)))
+                    samples=a[None,:]+(b-a)[None,:]*(np.arange(count+1)/count)[:,None]
+                    px=samples[:,0][:,None]+n[0]*offsets[None,:];pz=samples[:,2][:,None]+n[1]*offsets[None,:]
+                    iz=((pz-world.z0)/CELL).astype(int);ix=((px-world.x0)/CELL).astype(int)
+                    keep=(iz>=0)&(iz<road.shape[0])&(ix>=0)&(ix<road.shape[1])
+                    np.maximum.at(profile,(iz[keep],ix[keep]),np.broadcast_to(samples[:,1][:,None],iz.shape)[keep])
+                    # The road's own lift, at its samples against the ground under them: on a
+                    # steep cross-slope the centre of the cell a sample falls in lies lower.
+                    under=np.asarray(world.height_at(samples[:,0],samples[:,2]),float);lift=samples[:,1]-under
+                    cz=((samples[:,2]-world.z0)/CELL).astype(int);cx=((samples[:,0]-world.x0)/CELL).astype(int)
+                    keep=(cz>=0)&(cz<road.shape[0])&(cx>=0)&(cx<road.shape[1])
+                    np.maximum.at(centre_lift,(cz[keep],cx[keep]),lift[keep]);np.minimum.at(centre_ground,(cz[keep],cx[keep]),under[keep])
+            floating=road&(profile-bed>SPAN_CLEARANCE_METRES);centre_floating=road&(centre_lift>SPAN_CLEARANCE_METRES)
+            labels,_=label(floating,structure=np.ones((3,3)))
+            touching=np.unique(labels[floating&watery]);touching=touching[touching>0]
+            objects=find_objects(labels)
+            for run in touching:
+                sl=objects[run-1]
+                extent=math.hypot((sl[0].stop-sl[0].start)*CELL,(sl[1].stop-sl[1].start)*CELL)
+                padded=(slice(max(0,sl[0].start-1),sl[0].stop+1),slice(max(0,sl[1].start-1),sl[1].stop+1))
+                inside_run=labels[padded]==run
+                deep=bool((inside_run&wet[padded]).any())
+                centred=inside_run&centre_floating[padded]
+                landing=binary_dilation(centred,structure=np.ones((3,3)))&~centred&np.isfinite(centre_ground[padded])&~centre_floating[padded]
+                lowest=float(np.min(centre_ground[padded][centred])) if centred.any() else np.inf
+                landing_floor=float(np.min(centre_ground[padded][landing])) if landing.any() else -np.inf
+                record={'cells':int(inside_run.sum()),'extentMetres':round(extent,1),'maximumLiftMetres':round(float(np.max((profile-bed)[padded][inside_run])),2),
+                        'dipMetres':round(landing_floor-lowest,2) if np.isfinite(landing_floor) and np.isfinite(lowest) else None,'deepWater':deep,'centrelineFloats':bool(centred.any()),
+                        'bounds':[round(world.x0+sl[1].start*CELL,1),round(world.z0+sl[0].start*CELL,1),round(world.x0+sl[1].stop*CELL,1),round(world.z0+sl[0].stop*CELL,1)]}
+                reasons=[]
+                if extent>SPAN_MAXIMUM_METRES:reasons.append('longer than a gap')
+                if deep:reasons.append('holds deep water')
+                if not centred.any():reasons.append('road on the ground, only a shoulder floats')
+                elif not (landing_floor-lowest>SPAN_CLEARANCE_METRES):reasons.append('no dip below its landings')
+                if reasons:
+                    record['reasons']=reasons;skipped_runs.append(record)
+                else:
+                    spanned_runs.append(record);span_all|=labels==run
+            span=np.zeros_like(road);span[rows,cols]=span_all[rows,cols]&inside
+    cells=wet|span
     for _ in range(6):cells=binary_dilation(cells,structure=CROSS)&road
     approach_coverage={}
     # Some authored river valleys preserve a broad natural bank apron through
@@ -359,7 +452,8 @@ def common_surface(world, *, water_fields=None, maximum_extension=96):
             wf=water_fields(gx,gz,height=bed,plan=world.plan)
             water_vertices=wf['mask']&(wf['depth']>.35)
             lower=np.where(water_vertices,np.maximum(bed+.025,wf['surface']+.85),bed+.025)
-            deck=bounded_floor(bank_profile(lower,active,water_vertices),active)
+            spanned=water_vertices|vertices_for_cells(mask&span_all[sl])
+            deck=bounded_floor(bank_profile(lower,active,spanned),active)
             bank=frontier[iz0:iz1+1,ix0:ix1+1]&active
             error=float(np.max(deck[bank]-bed[bank],initial=0))
             if bank.any() and error>=maximum_bank_error:
@@ -376,7 +470,7 @@ def common_surface(world, *, water_fields=None, maximum_extension=96):
         cells|=grow
     for component in components:component['outline']=outline
     return {'x0':world.x0,'z0':world.z0,'cell':CELL,'mask':cells,'height':final,'components':components,'outline':outline,
-            'wetCells':int(wet.sum()),'maximumBankError':maximum_bank_error,'approachCoverage':approach_coverage,
+            'wetCells':int(wet.sum()),'spanCells':int(span.sum()),'floatingRunsSpanned':spanned_runs,'floatingRunsSkipped':skipped_runs,'maximumBankError':maximum_bank_error,'approachCoverage':approach_coverage,
             'connectionApproachCoverage':connection_coverage}
 
 
@@ -451,11 +545,15 @@ def deck_mesh(world,component):
     faces=positions[remap.reshape(-1,3)]
     normal=np.cross(faces[:,1]-faces[:,0],faces[:,2]-faces[:,0])
     invalid=(normal[:,1]<=0)|(np.hypot(normal[:,0],normal[:,2])>GRADE*normal[:,1])
-    # Only microscopic polygon remnants can be unrepresentable as float32
-    # floor faces. This unchanged 1 cm² bound is not an exemption for a narrow
-    # ordinary face: every retained encoded face still receives the strict
-    # grade, winding and non-degeneracy check in build_bridges.
-    cleanup=invalid&(np.asarray(areas)<1e-4)
+    # Only remnants can fail as encoded floor faces: a face under a square
+    # centimetre, or one thinner than a centimetre across its longest edge (a
+    # clipped sliver a metre long and a quarter of a millimetre wide lying
+    # across the crease between two bounded grid triangles takes the crease's
+    # grade). Nothing walks either and the served grid never samples them.
+    # This is no exemption for a narrow ordinary face: every retained encoded
+    # face still receives the strict grade, winding and non-degeneracy check
+    # in build_bridges.
+    cleanup=invalid&precision_remnants(faces,np.asarray(areas))
     component['precisionCleanupArea']=float(np.sum(np.asarray(areas)[cleanup]))
     remap=remap.reshape(-1,3)[~cleanup]
     clipped_owners=np.asarray(clipped_owners)[~cleanup]
@@ -647,7 +745,7 @@ def build_bridges(world,path, *, water_fields=None):
             add(region,'Walk__StreamThreshold_'+connection['id']+'_'+region,mesh)
     Path(path).parent.mkdir(parents=True,exist_ok=True);builder.write_glb(str(path))
     world.bridge_report={'components':len(field['components']),'visibleCells':int(field['mask'].sum()),
-        'visibleTriangles':len(world.bridge_triangles),'wetCells':field['wetCells'],
+        'visibleTriangles':len(world.bridge_triangles),'wetCells':field['wetCells'],'spanCells':field['spanCells'],'floatingRunsSpanned':field['floatingRunsSpanned'],'floatingRunsSkipped':field['floatingRunsSkipped'],
         'approachCoverage':field['approachCoverage'],
         'connectionApproachCoverage':field['connectionApproachCoverage'],
         'maximumBankErrorMetres':field['maximumBankError'],'maximumGrade':GRADE,

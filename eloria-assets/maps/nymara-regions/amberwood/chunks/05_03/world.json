@@ -19,12 +19,12 @@
     "bounds": {
       "min": [
         -30.0,
-        74.61912180180721,
+        73.37227361456485,
         -166.0
       ],
       "max": [
         44.0,
-        128.58125267123376,
+        128.24368604660523,
         -156.0
       ]
     },
@@ -36,7 +36,7 @@
       ],
       "max": [
         198.0,
-        289.5703820345275,
+        289.57038202907705,
         166.0
       ]
     },
@@ -50,7 +50,7 @@
       ],
       "max": [
         198.0,
-        289.5703820345275,
+        289.57038202907705,
         166.0
       ]
     }
@@ -271,7 +271,7 @@
       ],
       "max": [
         198.0,
-        289.5703820345275,
+        289.57038202907705,
         166.0
       ]
     },
@@ -291,7 +291,7 @@
     "pixelsPerMetre": 1
   },
   "performance": {
-    "glbBytes": 17680,
+    "glbBytes": 17672,
     "nodes": 11,
     "meshes": 4,
     "externalResources": {
@@ -324,12 +324,12 @@
       "destination": "whitehorn_range",
       "anchor": [
         -13.0,
-        91.43718355646018,
+        88.51044188640591,
         -164.0
       ],
       "globalAnchor": [
         497.0,
-        91.43718355646018,
+        88.51044188640591,
         376.0
       ],
       "globalTranslation": [
@@ -392,12 +392,12 @@
       "destination": "mirrorhold",
       "anchor": [
         128.0,
-        65.22831614673629,
+        64.5145227358496,
         73.0
       ],
       "globalAnchor": [
         638.0,
-        65.22831614673629,
+        64.5145227358496,
         613.0
       ],
       "globalTranslation": [
@@ -1645,29 +1645,29 @@
   "bounds": {
     "min": [
       -30.0,
-      74.61912180180721,
+      73.37227361456485,
       -166.0
     ],
     "max": [
       44.0,
-      128.58125267123376,
+      128.24368604660523,
       -156.0
     ]
   },
-  "terrainRevision": "diagonal-spine-v1:c8dc3895dc30af01a49516b86486359b53f15566d376af40881c548e6bf6bb5c",
+  "terrainRevision": "diagonal-spine-v1:4e08467da8a2da81dedb3ffb93eadd671b1acc6913685ad4b3178cd27fb12ee2",
   "externalResources": {
     "../../../_continent/shared-assets/884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035.png": "884fe4c3eca79b4492bc9d6baefe1f14965e1ceebbcbad1a0676314117542035",
     "../../../_continent/shared-assets/d575609332890a0fdce2def3286959f4f752d1a35d7f2b83c7a667295268ee5e.png": "d575609332890a0fdce2def3286959f4f752d1a35d7f2b83c7a667295268ee5e"
   },
   "singleContinentSource": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "221fb20a7614da32024138d2efaf93e72e675d2c6ea5b7470e41f27d989de2f5",
-    "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba"
+    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
+    "planSha256": "81a1d27b9f127000862c1b5749e47a814e0839eebb3a4f8c9af07c827f01afa2"
   },
   "continentPublication": {
     "revision": "diagonal-spine-v1",
-    "masterSha256": "221fb20a7614da32024138d2efaf93e72e675d2c6ea5b7470e41f27d989de2f5",
-    "collisionSha256": "b704575b62bf68df52d77f55e94abad562ef7ebe594cfb4a34160df226da236b",
-    "terrainRevision": "diagonal-spine-v1:c8dc3895dc30af01a49516b86486359b53f15566d376af40881c548e6bf6bb5c"
+    "masterSha256": "314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36",
+    "collisionSha256": "18935addec8eeee9319e3c1458738e985b7d2c9587f78f4c6515036dd13cc86b",
+    "terrainRevision": "diagonal-spine-v1:4e08467da8a2da81dedb3ffb93eadd671b1acc6913685ad4b3178cd27fb12ee2"
   }
 }

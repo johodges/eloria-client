@@ -22,12 +22,12 @@
             "destination": "grey_moors",
             "anchor": [
               -170.0,
-              49.527535718160905,
+              49.505322791765664,
               93.0
             ],
             "globalAnchor": [
               380.0,
-              49.527535718160905,
+              49.505322791765664,
               313.0
             ],
             "globalTranslation": [
@@ -65,7 +65,7 @@
               0,
               0
             ],
-            "walkingHeight": 139.35452270507812,
+            "walkingHeight": 136.06863403320312,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [
@@ -3016,7 +3016,7 @@
           "portal": "road-to-whitehorn_range",
           "position": [
             161.5,
-            49.98793446504628,
+            49.976828001848666,
             -107.5
           ],
           "frame": {
@@ -3025,12 +3025,12 @@
             "destination": "whitehorn_range",
             "anchor": [
               160.0,
-              49.527535718160905,
+              49.505322791765664,
               -107.0
             ],
             "globalAnchor": [
               380.0,
-              49.527535718160905,
+              49.505322791765664,
               313.0
             ],
             "globalTranslation": [
@@ -6025,7 +6025,7 @@
           "portal": "road-to-amberwood",
           "position": [
             -52.5,
-            91.56950348852257,
+            88.66954091217288,
             156.5
           ],
           "frame": {
@@ -6034,12 +6034,12 @@
             "destination": "amberwood",
             "anchor": [
               -53.0,
-              91.43718355646018,
+              88.51044188640591,
               156.0
             ],
             "globalAnchor": [
               497.0,
-              91.43718355646018,
+              88.51044188640591,
               376.0
             ],
             "globalTranslation": [
@@ -6077,7 +6077,7 @@
               0,
               0
             ],
-            "walkingHeight": 139.35452270507812,
+            "walkingHeight": 136.06863403320312,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [
@@ -7758,7 +7758,7 @@
           "portal": "road-to-whitehorn_range",
           "position": [
             -12.5,
-            91.41949483995886,
+            88.66954091217288,
             -165.5
           ],
           "frame": {
@@ -7767,12 +7767,12 @@
             "destination": "whitehorn_range",
             "anchor": [
               -13.0,
-              91.43718355646018,
+              88.51044188640591,
               -164.0
             ],
             "globalAnchor": [
               497.0,
-              91.43718355646018,
+              88.51044188640591,
               376.0
             ],
             "globalTranslation": [
@@ -9549,7 +9549,7 @@
               0,
               0
             ],
-            "walkingHeight": 139.35452270507812,
+            "walkingHeight": 136.06863403320312,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [
@@ -12542,7 +12542,7 @@
               0,
               0
             ],
-            "walkingHeight": 30.003276824951172,
+            "walkingHeight": 31.012304306030273,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [
@@ -23013,7 +23013,7 @@
           "portal": "road-to-mirrorhold",
           "position": [
             129.5,
-            66.16205748642682,
+            65.35396865702097,
             72.5
           ],
           "frame": {
@@ -23022,12 +23022,12 @@
             "destination": "mirrorhold",
             "anchor": [
               128.0,
-              65.22831614673629,
+              64.5145227358496,
               73.0
             ],
             "globalAnchor": [
               638.0,
-              65.22831614673629,
+              64.5145227358496,
               613.0
             ],
             "globalTranslation": [
@@ -24946,7 +24946,7 @@
           "portal": "road-to-amberwood",
           "position": [
             -202.5,
-            65.24952084048863,
+            64.06735315758216,
             -37.5
           ],
           "frame": {
@@ -24955,12 +24955,12 @@
             "destination": "amberwood",
             "anchor": [
               -202.0,
-              65.22831614673629,
+              64.5145227358496,
               -37.0
             ],
             "globalAnchor": [
               638.0,
-              65.22831614673629,
+              64.5145227358496,
               613.0
             ],
             "globalTranslation": [
@@ -30697,7 +30697,7 @@
           "portal": "road-to-amethyst_barrens",
           "position": [
             81.5,
-            57.10922994040922,
+            59.80178908173768,
             -155.5
           ],
           "frame": {
@@ -30706,12 +30706,12 @@
             "destination": "amethyst_barrens",
             "anchor": [
               81.0,
-              57.66607653059363,
+              60.35863567192209,
               -154.0
             ],
             "globalAnchor": [
               921.0,
-              57.66607653059363,
+              60.35863567192209,
               496.0
             ],
             "globalTranslation": [
@@ -33380,7 +33380,7 @@
           "portal": "road-to-mirrorhold",
           "position": [
             -28.5,
-            57.74562604347712,
+            60.438185184805576,
             96.5
           ],
           "frame": {
@@ -33389,12 +33389,12 @@
             "destination": "mirrorhold",
             "anchor": [
               -29.0,
-              57.66607653059363,
+              60.35863567192209,
               96.0
             ],
             "globalAnchor": [
               921.0,
-              57.66607653059363,
+              60.35863567192209,
               496.0
             ],
             "globalTranslation": [
@@ -33432,7 +33432,7 @@
               0,
               0
             ],
-            "walkingHeight": 30.003276824951172,
+            "walkingHeight": 31.012304306030273,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [
@@ -46938,7 +46938,7 @@
               0,
               0
             ],
-            "walkingHeight": 78.8840560913086,
+            "walkingHeight": 78.24848175048828,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [
@@ -48597,7 +48597,7 @@
               0,
               0
             ],
-            "walkingHeight": 30.003276824951172,
+            "walkingHeight": 31.012304306030273,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [
@@ -59512,7 +59512,7 @@
               0,
               0
             ],
-            "walkingHeight": 78.8840560913086,
+            "walkingHeight": 78.24848175048828,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [
@@ -76020,7 +76020,7 @@
               0,
               0
             ],
-            "walkingHeight": 78.8840560913086,
+            "walkingHeight": 78.24848175048828,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [
@@ -77549,7 +77549,7 @@
               0,
               0
             ],
-            "walkingHeight": 78.8840560913086,
+            "walkingHeight": 78.24848175048828,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [
@@ -89510,7 +89510,7 @@
               0,
               0
             ],
-            "walkingHeight": 4.525000095367432,
+            "walkingHeight": 4.5,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [
@@ -95983,7 +95983,7 @@
               0,
               0
             ],
-            "walkingHeight": 4.525000095367432,
+            "walkingHeight": 4.5,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [
@@ -100116,7 +100116,7 @@
               0,
               0
             ],
-            "walkingHeight": 4.525000095367432,
+            "walkingHeight": 4.5,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [
@@ -101722,7 +101722,7 @@
               0,
               0
             ],
-            "walkingHeight": 30.003276824951172,
+            "walkingHeight": 31.012304306030273,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [
@@ -101915,7 +101915,7 @@
               0,
               0
             ],
-            "walkingHeight": 78.8840560913086,
+            "walkingHeight": 78.24848175048828,
             "invertServerY": true,
             "addressableWorldBounds": {
               "min": [

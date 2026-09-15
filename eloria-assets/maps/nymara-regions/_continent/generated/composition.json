@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "planSha256": "8fc0e6d17a28d6d35da4dd201294729069a4730b0c128bd770f7ebe583518fba",
+  "planSha256": "81a1d27b9f127000862c1b5749e47a814e0839eebb3a4f8c9af07c827f01afa2",
   "entranceProfileSha256": "874627beb1c09d24ea6761924e59bb9bd569848bf92658b70083ddbf3cd0c0c9",
-  "compositionAlgorithmSha256": "0f5efece02fa1f31feb6adcb38cb0870ecf48138b5aad90cf8d508e89b64e871",
+  "compositionAlgorithmSha256": "ef2c6322dfb676f70f75875e15abf5269e26d83f1d8ff7d1507b16e4e23f2f9b",
   "library": {
     "whitehorn_range": "42e087f58943b5db56a4c42027ac3ef64b7681fdf4945d10893d0d5325f68ed9",
     "grey_moors": "909e457b10da47d0282067578931521d40c9a4d993bf5d7a3721f97ff24b4101",
@@ -18,21 +18,21 @@
     "ssarathi_ruins": "feb38c3f51245b40fe51b46d4c1a0dec927045547e5471d1a04aee9a77bc8aeb"
   },
   "sources": {
-    "eloria-assets\\maps\\nymara-regions\\_continent\\amberwood_access.py": "86f4f68f59c597f9818f60d7130d908d06e008833930dc4aac81c59939124b49",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\amberwood_support.py": "41baa364b83da706436961ad81a8377a33cd8825acfd65fdc3531149db1dd2a3",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\amberwood_access.py": "c918350e8fec2d7d10b68c372d3383e44146ab536e5adf62f5f0a03939cf85ef",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\amberwood_support.py": "5725868ac3dc39f57fc5520ee12c9e2f038feacc14ebfe11e6c72c23f4b9d192",
     "eloria-assets\\maps\\nymara-regions\\_continent\\assemblies.py": "e82b4786be226739af59d3746aa3a05ae999a8ac9e2ddce2bb908ae6f79dd2f7",
     "eloria-assets\\maps\\nymara-regions\\_continent\\atlas_export.py": "a19b270692eb12e5bba7e8a63dc10888134d48b807af22afbc7a1ed6305f6799",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\audit_continent.py": "7e6f7d52bcc656ecf3262bae1a027815707ffdce4413ea57051ab75930cc132c",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\bridge_export.py": "0a80fc24106acb6a2e8b60a272b35692fbdb79c48c6407430cb4f9a812c8196d",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\build_continent.py": "afd96c5fb25d863968234f2cb033660026bfc7779101b42a19ff6296aa6a04b8",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\audit_continent.py": "5f2205a96d1aff2b217e9e72f7da330125e929e9be3a6c2113d5df2230147293",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\bridge_export.py": "5101240f104d7cd9ce3f9bdda88c2f8e51b54ddaac84ca6fae5ccb6923e58ed8",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\build_continent.py": "6e0784bbe5643dacb22077470989c64f9294675b60ba7b5686dc8406b485ae47",
     "eloria-assets\\maps\\nymara-regions\\_continent\\build_library.py": "0b97ef43268c4e08fa05884b1e781c34bb76d806ae3766a5ae8ed811e4374a08",
     "eloria-assets\\maps\\nymara-regions\\_continent\\build_pipeline.py": "0e6d5ec550a83b362834d4a12db2fc087bc72fdabfed4e06fb500a4a25e4dff8",
     "eloria-assets\\maps\\nymara-regions\\_continent\\collision_export.py": "7a360c964db0524b61892d200916344a0c2238cb31357b2dec1573c371038609",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\content.py": "30798fb6f6ba991f531d0a93bcc8803247aeec35d75b696c882fff63caa467c5",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\content.py": "304f578311e5783c8bc3304f163357b2a301f1e1b5041862410b05e35bc46e19",
     "eloria-assets\\maps\\nymara-regions\\_continent\\crossings.py": "330edbd6b57112e6c903963396c110e233393578da34dff33d4864ca237b50d2",
     "eloria-assets\\maps\\nymara-regions\\_continent\\crossing_contracts.py": "6b823b5e20895375129b7590e77f8d0de6d7093ebcab6191e6dbdbfb2702794f",
     "eloria-assets\\maps\\nymara-regions\\_continent\\crown_support.py": "b5b2ea4de9abb1bafca495bdf06f779b1ebb376b01ab9b4558e4a9e41945ae59",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\door_approaches.py": "9d956b702807777cba4dd2c4323e2e9cba196de1a261aa6369646bf99ccf9616",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\door_approaches.py": "9cc01a2a3ff22ceb1dea0749ca6342c0aa182f692c04494a54b284c9589fccf9",
     "eloria-assets\\maps\\nymara-regions\\_continent\\export_contracts.py": "5d67a076961add5a1d1f2b1e4e117fe8afa685339df1d7d5f1ed6f42a43e6b14",
     "eloria-assets\\maps\\nymara-regions\\_continent\\ferry_export.py": "b62c3920560a902fe1197c6e9b4a2fe8067948d4218a50db2f366e7ef7d38453",
     "eloria-assets\\maps\\nymara-regions\\_continent\\ferry_support.py": "e1b5412e3a1737b6a5fafbbfaba3e53a626ddeef3807b1b4c507de5f2ddb2da9",
@@ -44,19 +44,20 @@
     "eloria-assets\\maps\\nymara-regions\\_continent\\manymouth_access.py": "384d8da2abfc40895fe4dc64cbe8ffd7a2d1cbad98e573a2fa254895b3d65eb7",
     "eloria-assets\\maps\\nymara-regions\\_continent\\manymouth_boats.py": "f484f0804942fd52004e0991510978b3dafe93245e532a9d9552ff09a162c2bd",
     "eloria-assets\\maps\\nymara-regions\\_continent\\manymouth_support.py": "eae7acdb0aa0aeb0a714114ad769f807cb336118b1f6506ce02a59223d081380",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\manymouth_village_streets.py": "da0b44781e8a6202c7031ed36e34047e2c33abca5404c8500b7fbeac82f0e862",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\manymouth_village_streets.py": "e693e424b4269174e38b1cca80eb51c7d2f0243a12deb6b95e46aa232cbe8ea7",
     "eloria-assets\\maps\\nymara-regions\\_continent\\mirror_access_geometry.py": "0e80b614cc1215c9536e9930a47ef1921889414d17d103cd03572724e71bb2fe",
     "eloria-assets\\maps\\nymara-regions\\_continent\\mirror_lake_support.py": "a473fc8ce7add5b39fcf2ad564216405f92353f8649072ed9df6478185150fc2",
     "eloria-assets\\maps\\nymara-regions\\_continent\\mirror_streets.py": "fd503b08be603a28d478896937af2d550a39bc09a1982d4601d6e5fc58a2ed0d",
     "eloria-assets\\maps\\nymara-regions\\_continent\\mirror_support.py": "c14e24c8e135ebe77a5a4f5aed6e1fb1b05c7884239fa8e49da39ff00c4162e7",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\resource_trails.py": "73f2a5b967536fbaa04a16f369911883c051d2d8bbced142748b537a1a3b7465",
     "eloria-assets\\maps\\nymara-regions\\_continent\\scene_io.py": "9691cc8d611cf1fd6939c9de9ac20dd013c34f62c1cdc9833791d9416481f9dc",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\ssarathi_bank_support.py": "589ebd84cce3201908103c623b07fd0ae6b8c513a5d1c0acc070650e6ff81638",
+    "eloria-assets\\maps\\nymara-regions\\_continent\\ssarathi_bank_support.py": "4e49194746047e52664c3a868631f43680db3fcce25ace0372a6bbe5f16d55d1",
     "eloria-assets\\maps\\nymara-regions\\_continent\\terrain_export.py": "8172b53f4fc2b65780120e68b945e86991aa8ea2f70e4bfa05a49af809cbccb6",
     "eloria-assets\\maps\\nymara-regions\\_continent\\westhaven_support.py": "9e69ff36cca87f91effdc72ee87ead30e23db76b93110323846580a26b15d19a",
-    "eloria-assets\\maps\\nymara-regions\\_continent\\world_layout.py": "17f46c789b78bd6981b44dc4392cbe174f1c8beb4ae7dd156c2bfdbc48d1805e"
+    "eloria-assets\\maps\\nymara-regions\\_continent\\world_layout.py": "756919cf33f3c82f34d8622666bb43e06774b8bce1a50a64c4f300fea4aa455a"
   },
-  "objects": 5112,
-  "roads": 306,
+  "objects": 5097,
+  "roads": 309,
   "assemblies": {
     "amberwood.great-arch": {
       "id": "amberwood.great-arch",
@@ -2349,7 +2350,7 @@
   },
   "ssarathiBankSupport": {
     "policy": "Natural river bank restored outside real ritual bridge and descent floors",
-    "changedVertices": 1846,
+    "changedVertices": 1740,
     "maximumFill": 7.6608369592988526,
     "riverLevelUnchanged": true,
     "retainedGeometryUnchanged": true,
@@ -2362,12 +2363,12 @@
         "samples": 3236,
         "buriedSamples": 0,
         "maximumBurial": 0.0,
-        "minimumClearance": 0.04692818661600384,
+        "minimumClearance": 0.23999999244118153,
         "worstGlobal": [
-          1177.1383672342097,
-          1486.9146059244042
+          1176.1383672342097,
+          1479.9146059244042
         ],
-        "worstFloor": 2.0404386152414142
+        "worstFloor": 2.2049070092601286
       },
       "HatcheryDescent": {
         "samples": 545,
@@ -2443,11 +2444,11 @@
           1.260926525439447
         ],
         "minimumGroundClearance": 0.014999999999999791,
-        "maximumGroundClearance": 2.155781671346117,
+        "maximumGroundClearance": 2.155791327689796,
         "terrainIntersectionVertices": 276,
         "sourceToWorldY": 1.7344138602837906,
         "node": "moored_boat_003",
-        "deltaY": -0.17205431167357066,
+        "deltaY": -0.17205258365924236,
         "positionXZ": [
           543.1466560000001,
           1140.133536
@@ -2458,11 +2459,11 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.01499999999999968,
-        "maximumGroundClearance": 1.8626581227846977,
+        "maximumGroundClearance": 1.862658119003755,
         "terrainIntersectionVertices": 241,
-        "sourceToWorldY": 7.166510935447508,
+        "sourceToWorldY": 7.166510935676701,
         "node": "moored_boat_005",
-        "deltaY": -2.6836110612359727,
+        "deltaY": -2.683611061308234,
         "positionXZ": [
           577.2594880000001,
           1138.005306
@@ -2473,11 +2474,11 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000124,
-        "maximumGroundClearance": 2.7475171699963155,
+        "maximumGroundClearance": 2.7316838226702336,
         "terrainIntersectionVertices": 216,
-        "sourceToWorldY": 2.6845903283191976,
+        "sourceToWorldY": 2.6658968071592906,
         "node": "moored_boat_006",
-        "deltaY": -4.47942401504005,
+        "deltaY": -4.4820537891009815,
         "positionXZ": [
           658.541806,
           1143.808818
@@ -2488,11 +2489,11 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 1.9223126315687384,
+        "maximumGroundClearance": 1.9223126315684063,
         "terrainIntersectionVertices": 265,
-        "sourceToWorldY": 14.33007850926665,
+        "sourceToWorldY": 14.330078509266112,
         "node": "moored_boat_010",
-        "deltaY": -2.543556113116507,
+        "deltaY": -2.543556113111393,
         "positionXZ": [
           718.311022,
           1079.9686260000003
@@ -2556,12 +2557,12 @@
         "mode": "hauled-up",
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
-        "minimumGroundClearance": 0.01499999999999968,
-        "maximumGroundClearance": 1.6852403116144705,
+        "minimumGroundClearance": 0.014999999999999902,
+        "maximumGroundClearance": 1.6852403049005464,
         "terrainIntersectionVertices": 218,
-        "sourceToWorldY": 1.8813363926553295,
+        "sourceToWorldY": 1.8813363852014964,
         "node": "moored_boat_021",
-        "deltaY": -6.8844796952225416,
+        "deltaY": -6.884479701405565,
         "positionXZ": [
           428.758642,
           1194.019602
@@ -2572,11 +2573,11 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.01499999999999968,
-        "maximumGroundClearance": 3.1132177829155916,
+        "maximumGroundClearance": 3.113217774543206,
         "terrainIntersectionVertices": 257,
-        "sourceToWorldY": 4.02886454379109,
+        "sourceToWorldY": 4.028864542833097,
         "node": "moored_boat_022",
-        "deltaY": -4.344274587601142,
+        "deltaY": -4.344274594768719,
         "positionXZ": [
           417.78911199999993,
           1194.3956399999997
@@ -2587,11 +2588,11 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.014999999999999902,
-        "maximumGroundClearance": 2.1395672808001134,
+        "maximumGroundClearance": 2.1395672858897825,
         "terrainIntersectionVertices": 290,
-        "sourceToWorldY": 1.8414879372849275,
+        "sourceToWorldY": 1.8414879427675375,
         "node": "moored_boat_023",
-        "deltaY": -0.39488187706140665,
+        "deltaY": -0.3948818753070824,
         "positionXZ": [
           413.268154,
           1206.740388
@@ -2602,11 +2603,11 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.014999999999999236,
-        "maximumGroundClearance": 2.3681322723239164,
+        "maximumGroundClearance": 2.3681322802209572,
         "terrainIntersectionVertices": 223,
-        "sourceToWorldY": 4.506760305071931,
+        "sourceToWorldY": 4.506760317115707,
         "node": "moored_boat_027",
-        "deltaY": -7.036760229103311,
+        "deltaY": -7.036760231850095,
         "positionXZ": [
           460.200208,
           1071.247992
@@ -2693,7 +2694,7 @@
         "terrainIntersectionVertices": 225,
         "sourceToWorldY": 14.287715202301184,
         "node": "moored_boat_037",
-        "deltaY": -0.01610539075312012,
+        "deltaY": -0.016105390753033078,
         "positionXZ": [
           718.584724,
           1076.282268
@@ -2713,7 +2714,7 @@
     "authoredPoints": {
       "[145, 178]": [
         237.635264,
-        26.650652085157972,
+        26.650691966849692,
         373.459628
       ],
       "[152, 100]": [
@@ -2723,12 +2724,12 @@
       ],
       "[230, 86]": [
         314.540463,
-        29.211701528309625,
+        29.21494902301394,
         446.749464
       ],
       "[221, 88]": [
         305.540463,
-        28.787054142299766,
+        28.795791465947325,
         444.749464
       ]
     }
@@ -2773,6 +2774,16 @@
       "verdant_stair:nine-lost-door": [
         1206.5,
         1175.5
+      ],
+      "amberwood:gate-undercroft-stair": [
+        616.5,
+        589.5
+      ]
+    },
+    "serverRoadEnds": {
+      "amberwood:amberwood->amberwood_estate": [
+        600.0,
+        590.0
       ]
     },
     "policy": "A door inside a retained pavilion gets its road on the pavilion's open side; the retained floor carries the last metres."
@@ -2807,13 +2818,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 0.9256312592603635,
+        "maximumGroundClearance": 0.907848200214751,
         "terrainIntersectionVertices": 298,
-        "sourceToWorldY": 17.892118279832804,
+        "sourceToWorldY": 17.869553531728535,
         "region": "amberwood",
         "node": "Prop_RowingBoat_0",
         "assembly": null,
-        "deltaY": -1.9774670623975759,
+        "deltaY": -1.9879641873537572,
         "movedXZ": [
           0.0,
           0.0
@@ -2830,13 +2841,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 0.9260708311538437,
+        "maximumGroundClearance": 0.9204655920668223,
         "terrainIntersectionVertices": 303,
-        "sourceToWorldY": 17.69842144662219,
+        "sourceToWorldY": 17.69281620753517,
         "region": "amberwood",
         "node": "Prop_RowingBoat_1",
         "assembly": null,
-        "deltaY": -5.428121107550215,
+        "deltaY": -5.432421896694006,
         "movedXZ": [
           0.0,
           0.0
@@ -2853,13 +2864,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 0.9161297022915207,
+        "maximumGroundClearance": 0.9107009945980771,
         "terrainIntersectionVertices": 314,
-        "sourceToWorldY": 17.575153985271456,
+        "sourceToWorldY": 17.569725277578012,
         "region": "amberwood",
         "node": "Prop_RowingBoat_2",
         "assembly": null,
-        "deltaY": -5.317825454659356,
+        "deltaY": -5.32235042806397,
         "movedXZ": [
           0.0,
           0.0
@@ -2876,13 +2887,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 0.897054282477793,
+        "maximumGroundClearance": 0.896951550370062,
         "terrainIntersectionVertices": 309,
-        "sourceToWorldY": 17.37985241059306,
+        "sourceToWorldY": 17.37974967848533,
         "region": "amberwood",
         "node": "Prop_RowingBoat_3",
         "assembly": null,
-        "deltaY": -9.940140687294711,
+        "deltaY": -9.940243419402442,
         "movedXZ": [
           0.0,
           0.0
@@ -2899,13 +2910,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 0.881808670777982,
+        "maximumGroundClearance": 0.881682054810291,
         "terrainIntersectionVertices": 305,
-        "sourceToWorldY": 17.265218548087663,
+        "sourceToWorldY": 17.265091932119972,
         "region": "amberwood",
         "node": "Prop_RowingBoat_4",
         "assembly": null,
-        "deltaY": -10.060968602235324,
+        "deltaY": -10.061095218203015,
         "movedXZ": [
           0.0,
           0.0
@@ -2922,13 +2933,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 0.8689909725092129,
+        "maximumGroundClearance": 0.8735085614577898,
         "terrainIntersectionVertices": 291,
-        "sourceToWorldY": 16.14744974717759,
+        "sourceToWorldY": 16.151967336126166,
         "region": "amberwood",
         "node": "Prop_KelpBoat",
         "assembly": null,
-        "deltaY": -0.5446076725980973,
+        "deltaY": -0.5407430980186945,
         "movedXZ": [
           0.0,
           0.0
@@ -2945,13 +2956,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 2.240291598443065,
+        "maximumGroundClearance": 2.231559911533939,
         "terrainIntersectionVertices": 503,
-        "sourceToWorldY": 17.845442879071495,
+        "sourceToWorldY": 17.83671119216237,
         "region": "amberwood",
         "node": "Prop_HarbourPacket",
         "assembly": null,
-        "deltaY": -7.290666544045511,
+        "deltaY": -7.299398230954637,
         "movedXZ": [
           0.0,
           0.0
@@ -2970,13 +2981,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 0.6290804661059433,
+        "maximumGroundClearance": 0.6281267813560696,
         "terrainIntersectionVertices": 354,
-        "sourceToWorldY": 24.91001580511619,
+        "sourceToWorldY": 24.89153260880972,
         "region": "amethyst_barrens",
         "node": "PacketTender",
         "assembly": null,
-        "deltaY": -0.8948098140707401,
+        "deltaY": -0.8910894676600769,
         "movedXZ": [
           0.0,
           0.0
@@ -3315,7 +3326,7 @@
           0.0,
           0.0
         ],
-        "minimumGroundClearance": 0.3619901681375368,
+        "minimumGroundClearance": 0.3619901606517515,
         "maximumGroundClearance": 6.921633580692457,
         "terrainIntersectionVertices": 538,
         "sourceToWorldY": 0.0,
@@ -3341,11 +3352,11 @@
           0.0,
           0.0
         ],
-        "minimumGroundClearance": -0.5953196469539033,
+        "minimumGroundClearance": -0.5953196486423731,
         "maximumGroundClearance": 2.328997285667461,
         "terrainIntersectionVertices": 603,
         "sourceToWorldY": 0.0,
-        "bankIntrusionMetres": 0.5953196469539033,
+        "bankIntrusionMetres": 0.5953196486423731,
         "region": "manymouth_delta",
         "node": "MooredMarketBoat_4",
         "assembly": "manymouth_delta.boardwalk-town",
@@ -3444,13 +3455,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.01499999999999968,
-        "maximumGroundClearance": 8.109208192357341,
+        "maximumGroundClearance": 8.099244596917622,
         "terrainIntersectionVertices": 513,
-        "sourceToWorldY": 4.767846078511033,
+        "sourceToWorldY": 4.7204299197012585,
         "region": "manymouth_delta",
         "node": "PacketLateen",
         "assembly": "manymouth_delta.boardwalk-town",
-        "deltaY": 4.767846078511033,
+        "deltaY": 4.7204299197012585,
         "movedXZ": [
           0.0,
           0.0
@@ -3762,7 +3773,7 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 1.862842930716667,
+        "maximumGroundClearance": 1.8628780022966822,
         "terrainIntersectionVertices": 392,
         "sourceToWorldY": 54.27756621965327,
         "region": "verdant_stair",
@@ -3785,13 +3796,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 3.111400269164392,
+        "maximumGroundClearance": 3.1110753126647808,
         "terrainIntersectionVertices": 320,
-        "sourceToWorldY": 58.23041775202136,
+        "sourceToWorldY": 58.22976465470601,
         "region": "verdant_stair",
         "node": "Boat_03",
         "assembly": null,
-        "deltaY": -5.683461461294783,
+        "deltaY": -5.683638936298237,
         "movedXZ": [
           0.0,
           0.0
@@ -3808,13 +3819,13 @@
         "footprintWaterCoverage": 0.0,
         "waterLevelRange": null,
         "minimumGroundClearance": 0.015000000000000568,
-        "maximumGroundClearance": 2.7374621127772514,
+        "maximumGroundClearance": 2.7375926467327787,
         "terrainIntersectionVertices": 284,
-        "sourceToWorldY": 67.90313440725981,
+        "sourceToWorldY": 67.90301883188971,
         "region": "verdant_stair",
         "node": "Boat_04",
         "assembly": null,
-        "deltaY": -1.3558333938235592,
+        "deltaY": -1.3557591053214395,
         "movedXZ": [
           0.0,
           0.0
@@ -3965,7 +3976,7 @@
       {
         "region": "amberwood",
         "node": "Prop_HarbourPacket",
-        "spreadMetres": 2.23
+        "spreadMetres": 2.22
       },
       {
         "region": "mirrorhold",
@@ -3985,7 +3996,7 @@
       {
         "region": "manymouth_delta",
         "node": "PacketLateen",
-        "spreadMetres": 8.09
+        "spreadMetres": 8.08
       },
       {
         "region": "crownwater",
@@ -4024,7 +4035,7 @@
       }
     ],
     "assemblyDeviations": 11,
-    "maximumMoveMetres": 10.060968602235324,
+    "maximumMoveMetres": 10.061095218203015,
     "policy": "Rigid translation: afloat on the actual water surface with a complete navigable footprint, moored at the water line with the hull edge against the bank when most of the footprint is water, otherwise hauled up on the ground; a hull hauled up across a slope moves to the nearest spot within 12 m where it floats level, if one exists; companions within a hull footprint follow it; gameplay-linked hulls untouched."
   },
   "roadGradingPasses": [
@@ -4032,12 +4043,1884 @@
       "pass": 1,
       "respectsStandingGround": false,
       "standingVertices": 0,
-      "corridorVertices": 69281,
+      "corridorVertices": 72355,
       "targetMaximumTriangleGrade": 0.45,
-      "fixedFootingVertices": 9223,
-      "conflictingFootingCorridorVertices": 3585,
+      "fixedFootingVertices": 9704,
+      "conflictingFootingCorridorVertices": 3956,
       "exceptions": "Original drainage beds and surveyed assembly support remain authoritative; exported collision and bridge tests verify actual traversability."
     }
   ],
-  "elapsedSeconds": 240.61
+  "resourceTrails": {
+    "trails": [
+      {
+        "id": "trail-amberwood-0",
+        "region": "amberwood",
+        "sites": [
+          "harvesting.txt:349:3"
+        ],
+        "from": [
+          618.0,
+          570.0
+        ],
+        "to": [
+          647.3394641647087,
+          553.9991169115524
+        ],
+        "stations": 9,
+        "roadDistanceMetres": 33.4
+      },
+      {
+        "id": "trail-mirrorhold-0",
+        "region": "mirrorhold",
+        "sites": [
+          "harvesting.txt:393:3",
+          "harvesting.txt:394:3",
+          "territories.txt:34:6"
+        ],
+        "from": [
+          854.0106920306519,
+          538.0133338311056
+        ],
+        "to": [
+          836.5,
+          507.8333333333333
+        ],
+        "stations": 6,
+        "roadDistanceMetres": 34.9
+      },
+      {
+        "id": "trail-verdant_stair-0",
+        "region": "verdant_stair",
+        "sites": [
+          "harvesting.txt:270:3"
+        ],
+        "from": [
+          1172.0103532147536,
+          1141.9779383069
+        ],
+        "to": [
+          1163.57,
+          1178.11
+        ],
+        "stations": 7,
+        "roadDistanceMetres": 37.1
+      }
+    ],
+    "sitesRead": 667,
+    "postsRead": 0,
+    "steepSites": 49,
+    "servedSites": 41,
+    "postsServed": 0,
+    "postsOutOfReach": 0,
+    "reachGrade": 0.65,
+    "postBudgetMetres": 12.0,
+    "trailWidthMetres": 1.65,
+    "steepSiteGrade": 0.65,
+    "budgetMetres": 35.0,
+    "steepGroundShare": 0.6,
+    "roadReachMetres": 30.0,
+    "clusterMetres": 20.0,
+    "skipped": [
+      {
+        "region": "whitehorn_range",
+        "reason": "alignment 243 m for a 69 m gap",
+        "sites": [
+          "harvesting.txt:151:3",
+          "harvesting.txt:456:3"
+        ]
+      },
+      {
+        "region": "manymouth_delta",
+        "reason": "alignment 247 m for a 37 m gap",
+        "sites": [
+          "harvesting.txt:717:3"
+        ]
+      }
+    ],
+    "policy": "A harvest node or territory marker on ground steeper than .65 across a station, with most ground within its 35 m budget as steep and no road station within 30 m, gets a 1.65 m trail from the nearest road station of its territory to its cluster; an NPC post with a station within 30 m but none within its 12 m budget nor within .65 of its height across the gap gets one whatever its ground, and a post with no station within 30 m follows the site rule; clusters join sites within 20 m."
+  },
+  "routing": {
+    "routes": 271,
+    "solidFallbacks": [],
+    "steepestStationSlope": 7.554,
+    "solidMarginMetres": 2.0,
+    "solidMaximumAreaSquareMetres": 1600.0,
+    "retryStationMetres": 4.0,
+    "closeStationRoutes": 6,
+    "hubExits": 72,
+    "endEntries": 188,
+    "exitSearchMetres": 30.0,
+    "endSolidRadiusMetres": 6.0,
+    "seamTerminalSolidPenalty": 0.0,
+    "crossSlope": {
+      "start": 0.55,
+      "linear": 0.0,
+      "square": 0.0
+    },
+    "relief": {
+      "allowanceMetres": 2.0,
+      "penaltyPerMetre": 0.0,
+      "naturalApronMetres": 42.0
+    },
+    "stepGrade": {
+      "grade": 0.35,
+      "penalty": 0.0
+    },
+    "policy": "Retained solids up to 1600 square metres, widened by 2 m, are impassable for alignments and their edges except the solids within 6 m of a road end, first at 6 m stations then at 4 m; a road end inside a solid starts or ends with a close-station leg from open ground; a sealed end falls back to solids as a heavy penalty; larger boxes keep the soft clearance penalty; the cross-slope, relief, step-grade and seam-terminal terms stand at their listed weights (zero: off).",
+    "solidCrossings": [
+      {
+        "road": "discovery-sunmane_steppe-306",
+        "region": "sunmane_steppe",
+        "node": "Structure_Palisade",
+        "metres": 53
+      },
+      {
+        "road": "door-amberwood-motherroot-mouth",
+        "region": "amberwood",
+        "node": "Landmark_GreatTree_Wood",
+        "metres": 50
+      },
+      {
+        "road": "street-mirrorhold-east-working-road",
+        "region": "mirrorhold",
+        "node": "Landmark_Quay",
+        "metres": 34
+      },
+      {
+        "road": "discovery-amethyst_barrens-701",
+        "region": "amethyst_barrens",
+        "node": "Landmark_GeodeCave_2",
+        "metres": 31
+      },
+      {
+        "road": "discovery-amberwood-479",
+        "region": "amberwood",
+        "node": "Landmark_HollowTreeHall",
+        "metres": 30
+      },
+      {
+        "road": "discovery-amethyst_barrens-706",
+        "region": "amethyst_barrens",
+        "node": "Landmark_GeodeCave_2",
+        "metres": 30
+      },
+      {
+        "road": "discovery-verdant_stair-367",
+        "region": "verdant_stair",
+        "node": "Landmark_GreatTemple",
+        "metres": 27
+      },
+      {
+        "road": "discovery-sunmane_steppe-310",
+        "region": "sunmane_steppe",
+        "node": "Landmark_sunmane_animal_pen_04",
+        "metres": 25
+      },
+      {
+        "road": "discovery-amberwood-467",
+        "region": "amberwood",
+        "node": "Landmark_GreatArch",
+        "metres": 24
+      },
+      {
+        "road": "door-verdant_stair-temple-sanctum-door",
+        "region": "verdant_stair",
+        "node": "Landmark_GreatTemple",
+        "metres": 24
+      },
+      {
+        "road": "discovery-amethyst_barrens-706",
+        "region": "amethyst_barrens",
+        "node": "Landmark_StormRuin_3",
+        "metres": 23
+      },
+      {
+        "road": "street-mirrorhold-rose-gallery-lane",
+        "region": "mirrorhold",
+        "node": "Landmark_CitadelCourt",
+        "metres": 23
+      },
+      {
+        "road": "discovery-amethyst_barrens-703",
+        "region": "amethyst_barrens",
+        "node": "Landmark_GeodeCave_3",
+        "metres": 22
+      },
+      {
+        "road": "discovery-whitehorn_range-539",
+        "region": "whitehorn_range",
+        "node": "Landmark_glacier_temple",
+        "metres": 20
+      },
+      {
+        "road": "street-mirrorhold-rose-gallery-lane",
+        "region": "mirrorhold",
+        "node": "Landmark_Basin_0",
+        "metres": 20
+      },
+      {
+        "road": "amber-moot-path",
+        "region": "amberwood",
+        "node": "Landmark_GreatTree_Wood",
+        "metres": 19
+      },
+      {
+        "road": "discovery-ssarathi_ruins-442",
+        "region": "ssarathi_ruins",
+        "node": "Temple_Ssarathi",
+        "metres": 19
+      },
+      {
+        "road": "discovery-sunmane_steppe-310",
+        "region": "sunmane_steppe",
+        "node": "Landmark_orun_round_tent_06",
+        "metres": 19
+      },
+      {
+        "road": "door-ssarathi_ruins-tenth-mouth-door",
+        "region": "ssarathi_ruins",
+        "node": "Colonnade_lily_court",
+        "metres": 19
+      },
+      {
+        "road": "discovery-whitehorn_range-538",
+        "region": "whitehorn_range",
+        "node": "Landmark_glacier_temple",
+        "metres": 18
+      },
+      {
+        "road": "door-ssarathi_ruins-hatchery-descent",
+        "region": "ssarathi_ruins",
+        "node": "Colonnade_ritual_plaza",
+        "metres": 18
+      },
+      {
+        "road": "street-mirrorhold-rose-gallery-lane",
+        "region": "mirrorhold",
+        "node": "Landmark_Basin_1",
+        "metres": 18
+      },
+      {
+        "road": "discovery-ssarathi_ruins-437",
+        "region": "ssarathi_ruins",
+        "node": "Colonnade_ritual_plaza",
+        "metres": 17
+      },
+      {
+        "road": "discovery-sunmane_steppe-306",
+        "region": "sunmane_steppe",
+        "node": "Gate_South",
+        "metres": 17
+      },
+      {
+        "road": "discovery-crownwater-906",
+        "region": "crownwater",
+        "node": "Landmark_Pavilion_pavilion_south",
+        "metres": 16
+      },
+      {
+        "road": "discovery-amethyst_barrens-1276",
+        "region": "amethyst_barrens",
+        "node": "Landmark_GlasswardenObservatory",
+        "metres": 15
+      },
+      {
+        "road": "door-amethyst_barrens-resonant-vault-stair",
+        "region": "amethyst_barrens",
+        "node": "Landmark_GlasswardenObservatory",
+        "metres": 15
+      },
+      {
+        "road": "street-mirrorhold-west-shore-yard-link",
+        "region": "mirrorhold",
+        "node": "Building_west-shore_0",
+        "metres": 15
+      },
+      {
+        "road": "street-mirrorhold-lower-terrace-yard-link",
+        "region": "mirrorhold",
+        "node": "Building_lower-terrace_0",
+        "metres": 14
+      },
+      {
+        "road": "amber-motherroot-yard",
+        "region": "amberwood",
+        "node": "Landmark_GreatTree_Wood",
+        "metres": 13
+      },
+      {
+        "road": "discovery-sunmane_steppe-301",
+        "region": "sunmane_steppe",
+        "node": "Landmark_orun_round_tent_06",
+        "metres": 13
+      },
+      {
+        "road": "door-amethyst_barrens-sour-cut-mouth",
+        "region": "amethyst_barrens",
+        "node": "Landmark_GeodeCave_3",
+        "metres": 13
+      },
+      {
+        "road": "street-mirrorhold-civic-ascent",
+        "region": "mirrorhold",
+        "node": "Landmark_Basin_2",
+        "metres": 13
+      },
+      {
+        "road": "discovery-four_gates-264",
+        "region": "four_gates",
+        "node": "Shopfront_four-gates-reedworks",
+        "metres": 12
+      },
+      {
+        "road": "amethyst_barrens--sunmane_steppe-sunmane_steppe",
+        "region": "sunmane_steppe",
+        "node": "Structure_Palisade",
+        "metres": 11
+      },
+      {
+        "road": "discovery-amethyst_barrens-702",
+        "region": "amethyst_barrens",
+        "node": "Landmark_GeodeCave_1",
+        "metres": 11
+      },
+      {
+        "road": "discovery-ssarathi_ruins-442",
+        "region": "ssarathi_ruins",
+        "node": "Temple_VaultPortal",
+        "metres": 11
+      },
+      {
+        "road": "door-sunmane_steppe-cave-crystal_hollow",
+        "region": "sunmane_steppe",
+        "node": "Structure_Palisade",
+        "metres": 11
+      },
+      {
+        "road": "door-sunmane_steppe-cave-wind_caves",
+        "region": "sunmane_steppe",
+        "node": "Structure_Palisade",
+        "metres": 11
+      },
+      {
+        "road": "mirrorhold--sunmane_steppe-sunmane_steppe",
+        "region": "sunmane_steppe",
+        "node": "Structure_Palisade",
+        "metres": 11
+      },
+      {
+        "road": "street-mirrorhold-western-lens-lane",
+        "region": "mirrorhold",
+        "node": "Landmark_north-post",
+        "metres": 11
+      },
+      {
+        "road": "sunmane_steppe--verdant_stair-sunmane_steppe",
+        "region": "sunmane_steppe",
+        "node": "Structure_Palisade",
+        "metres": 11
+      },
+      {
+        "road": "amberwood--mirrorhold-amberwood",
+        "region": "amberwood",
+        "node": "Landmark_Watchtower_5",
+        "metres": 10
+      },
+      {
+        "road": "discovery-amberwood-475",
+        "region": "amberwood",
+        "node": "Landmark_HollowTreeHall",
+        "metres": 10
+      },
+      {
+        "road": "discovery-amethyst_barrens-706",
+        "region": "amethyst_barrens",
+        "node": "Secret_barrens_sap",
+        "metres": 10
+      },
+      {
+        "road": "door-whitehorn_range-whitehorn-glacier-temple-door",
+        "region": "whitehorn_range",
+        "node": "Landmark_glacier_temple",
+        "metres": 10
+      },
+      {
+        "road": "street-mirrorhold-rose-gallery-lane",
+        "region": "mirrorhold",
+        "node": "Landmark_upper-shrine",
+        "metres": 10
+      },
+      {
+        "road": "amberwood--four_gates-amberwood",
+        "region": "amberwood",
+        "node": "Landmark_CanopyPlatform_0",
+        "metres": 9
+      },
+      {
+        "road": "amberwood--grey_moors-amberwood",
+        "region": "amberwood",
+        "node": "Landmark_CanopyPlatform_0",
+        "metres": 9
+      },
+      {
+        "road": "amberwood--mirrorhold-amberwood",
+        "region": "amberwood",
+        "node": "Landmark_CanopyPlatform_0",
+        "metres": 9
+      },
+      {
+        "road": "amberwood--whitehorn_range-amberwood",
+        "region": "amberwood",
+        "node": "Landmark_CanopyPlatform_0",
+        "metres": 9
+      },
+      {
+        "road": "discovery-crownwater-903",
+        "region": "crownwater",
+        "node": "Building_Shore_net-menders",
+        "metres": 9
+      },
+      {
+        "road": "discovery-sunmane_steppe-307",
+        "region": "sunmane_steppe",
+        "node": "Landmark_orun_round_tent_06",
+        "metres": 9
+      },
+      {
+        "road": "discovery-verdant_stair-363",
+        "region": "verdant_stair",
+        "node": "Hut_quarry_00",
+        "metres": 9
+      },
+      {
+        "road": "discovery-verdant_stair-366",
+        "region": "verdant_stair",
+        "node": "Landmark_GreatTemple",
+        "metres": 9
+      },
+      {
+        "road": "door-amberwood-amber-hall-door",
+        "region": "amberwood",
+        "node": "Landmark_CanopyPlatform_0",
+        "metres": 9
+      },
+      {
+        "road": "door-amberwood-cinder-chapel-door",
+        "region": "amberwood",
+        "node": "Landmark_CanopyPlatform_0",
+        "metres": 9
+      },
+      {
+        "road": "door-amberwood-gate-undercroft-stair",
+        "region": "amberwood",
+        "node": "Landmark_CanopyPlatform_0",
+        "metres": 9
+      },
+      {
+        "road": "door-amberwood-motherroot-mouth",
+        "region": "amberwood",
+        "node": "Landmark_CanopyPlatform_0",
+        "metres": 9
+      },
+      {
+        "road": "door-crownwater-grating-mouth",
+        "region": "crownwater",
+        "node": "Landmark_Pavilion_pavilion_south",
+        "metres": 9
+      },
+      {
+        "road": "door-ssarathi_ruins-archive-vault-door",
+        "region": "ssarathi_ruins",
+        "node": "Temple_Ssarathi",
+        "metres": 9
+      },
+      {
+        "road": "door-whitehorn_range-whitehorn-mine-adit",
+        "region": "whitehorn_range",
+        "node": "Landmark_mine_portal",
+        "metres": 9
+      },
+      {
+        "road": "street-mirrorhold-lake-north-yard-link",
+        "region": "mirrorhold",
+        "node": "Landmark_RoadWall_0",
+        "metres": 9
+      },
+      {
+        "road": "street-mirrorhold-quay-descent",
+        "region": "mirrorhold",
+        "node": "Building_lake-north_1",
+        "metres": 9
+      },
+      {
+        "road": "street-mirrorhold-quay-descent",
+        "region": "mirrorhold",
+        "node": "Landmark_RoadWall_0",
+        "metres": 9
+      },
+      {
+        "road": "amethyst_barrens--sunmane_steppe-sunmane_steppe",
+        "region": "sunmane_steppe",
+        "node": "Encampment_WallTower_00",
+        "metres": 8
+      },
+      {
+        "road": "discovery-amberwood-478",
+        "region": "amberwood",
+        "node": "Landmark_GreatTree_Wood",
+        "metres": 8
+      },
+      {
+        "road": "discovery-whitehorn_range-539",
+        "region": "whitehorn_range",
+        "node": "Landmark_frozen_cascade_00",
+        "metres": 8
+      },
+      {
+        "road": "door-sunmane_steppe-cave-crystal_hollow",
+        "region": "sunmane_steppe",
+        "node": "Encampment_WallTower_00",
+        "metres": 8
+      },
+      {
+        "road": "door-sunmane_steppe-cave-wind_caves",
+        "region": "sunmane_steppe",
+        "node": "Encampment_WallTower_00",
+        "metres": 8
+      },
+      {
+        "road": "door-whitehorn_range-west-watch-cave-mouth",
+        "region": "whitehorn_range",
+        "node": "Landmark_WatchCave",
+        "metres": 8
+      },
+      {
+        "road": "door-whitehorn_range-whitehorn-ice-cave-mouth",
+        "region": "whitehorn_range",
+        "node": "Landmark_ice_cave",
+        "metres": 8
+      },
+      {
+        "road": "mirrorhold--sunmane_steppe-sunmane_steppe",
+        "region": "sunmane_steppe",
+        "node": "Encampment_WallTower_00",
+        "metres": 8
+      },
+      {
+        "road": "street-mirrorhold-quarry-road",
+        "region": "mirrorhold",
+        "node": "Lore_ringing_quarry",
+        "metres": 8
+      },
+      {
+        "road": "street-mirrorhold-quay-descent",
+        "region": "mirrorhold",
+        "node": "Building_lake-north_0",
+        "metres": 8
+      },
+      {
+        "road": "street-mirrorhold-quay-descent",
+        "region": "mirrorhold",
+        "node": "Landmark_Quay",
+        "metres": 8
+      },
+      {
+        "road": "sunmane_steppe--verdant_stair-sunmane_steppe",
+        "region": "sunmane_steppe",
+        "node": "Encampment_WallTower_00",
+        "metres": 8
+      },
+      {
+        "road": "discovery-amethyst_barrens-707",
+        "region": "amethyst_barrens",
+        "node": "Landmark_ResonantCluster_3",
+        "metres": 7
+      },
+      {
+        "road": "discovery-four_gates-260",
+        "region": "four_gates",
+        "node": "Shopfront_four-gates-lantern-row",
+        "metres": 7
+      },
+      {
+        "road": "discovery-grey_moors-774",
+        "region": "grey_moors",
+        "node": "Landmark_Tower_3",
+        "metres": 7
+      },
+      {
+        "road": "discovery-ssarathi_ruins-1144",
+        "region": "ssarathi_ruins",
+        "node": "WaterGate",
+        "metres": 7
+      },
+      {
+        "road": "discovery-sunmane_steppe-306",
+        "region": "sunmane_steppe",
+        "node": "Landmark_orun_seasonal_market_00",
+        "metres": 7
+      },
+      {
+        "road": "discovery-whitehorn_range-538",
+        "region": "whitehorn_range",
+        "node": "Secret_horn_temple_eyrie",
+        "metres": 7
+      },
+      {
+        "road": "door-grey_moors-fifth-chamber-mouth",
+        "region": "grey_moors",
+        "node": "Landmark_Tower_3",
+        "metres": 7
+      },
+      {
+        "road": "door-verdant_stair-anchor-hollow-mouth",
+        "region": "verdant_stair",
+        "node": "Landmark_Waygate",
+        "metres": 7
+      },
+      {
+        "road": "door-verdant_stair-banyan-hollow-arch",
+        "region": "verdant_stair",
+        "node": "Landmark_Waygate",
+        "metres": 7
+      },
+      {
+        "road": "door-verdant_stair-cenote-deeps-stair",
+        "region": "verdant_stair",
+        "node": "Landmark_Waygate",
+        "metres": 7
+      },
+      {
+        "road": "door-verdant_stair-nine-lost-door",
+        "region": "verdant_stair",
+        "node": "Landmark_Waygate",
+        "metres": 7
+      },
+      {
+        "road": "door-verdant_stair-physick-still-door",
+        "region": "verdant_stair",
+        "node": "Landmark_Waygate",
+        "metres": 7
+      },
+      {
+        "road": "door-verdant_stair-stair-quarry-adit",
+        "region": "verdant_stair",
+        "node": "Landmark_Waygate",
+        "metres": 7
+      },
+      {
+        "road": "door-verdant_stair-temple-sanctum-door",
+        "region": "verdant_stair",
+        "node": "Landmark_Waygate",
+        "metres": 7
+      },
+      {
+        "road": "manymouth_delta--verdant_stair-verdant_stair",
+        "region": "verdant_stair",
+        "node": "Landmark_Waygate",
+        "metres": 7
+      },
+      {
+        "road": "mirrorhold--verdant_stair-verdant_stair",
+        "region": "verdant_stair",
+        "node": "Landmark_Waygate",
+        "metres": 7
+      },
+      {
+        "road": "ssarathi_ruins--verdant_stair-verdant_stair",
+        "region": "verdant_stair",
+        "node": "Landmark_Waygate",
+        "metres": 7
+      },
+      {
+        "road": "street-mirrorhold-civic-ascent",
+        "region": "mirrorhold",
+        "node": "Landmark_GateWall",
+        "metres": 7
+      },
+      {
+        "road": "sunmane_steppe--verdant_stair-verdant_stair",
+        "region": "verdant_stair",
+        "node": "Landmark_Waygate",
+        "metres": 7
+      },
+      {
+        "road": "amber-ridge-camp",
+        "region": "amberwood",
+        "node": "Prop_Tent_ridge_camp_04",
+        "metres": 6
+      },
+      {
+        "road": "discovery-amberwood-477",
+        "region": "amberwood",
+        "node": "Secret_amber_lookout_butts",
+        "metres": 6
+      },
+      {
+        "road": "discovery-amethyst_barrens-1276",
+        "region": "amethyst_barrens",
+        "node": "Landmark_GeodeCave_0",
+        "metres": 6
+      },
+      {
+        "road": "discovery-crownwater-910",
+        "region": "crownwater",
+        "node": "Secret_crown_warm_spring",
+        "metres": 6
+      },
+      {
+        "road": "discovery-four_gates-262",
+        "region": "four_gates",
+        "node": "Shopfront_four-gates-reedworks",
+        "metres": 6
+      },
+      {
+        "road": "discovery-manymouth_delta-1015",
+        "region": "manymouth_delta",
+        "node": "deep_grove_house_00",
+        "metres": 6
+      },
+      {
+        "road": "discovery-sunmane_steppe-310",
+        "region": "sunmane_steppe",
+        "node": "Landmark_sunmane_secret_steppe-spring",
+        "metres": 6
+      },
+      {
+        "road": "discovery-whitehorn_range-1111",
+        "region": "whitehorn_range",
+        "node": "Landmark_mine_portal",
+        "metres": 6
+      },
+      {
+        "road": "discovery-whitehorn_range-537",
+        "region": "whitehorn_range",
+        "node": "Landmark_frozen_cascade_01",
+        "metres": 6
+      },
+      {
+        "road": "door-amberwood-cinder-chapel-door",
+        "region": "amberwood",
+        "node": "Stone_RuinFragment_B_ash_chapel_03",
+        "metres": 6
+      },
+      {
+        "road": "door-four_gates-interior-four-gates-lantern-row",
+        "region": "four_gates",
+        "node": "Shopfront_four-gates-lantern-row",
+        "metres": 6
+      },
+      {
+        "road": "door-four_gates-interior-four-gates-reedworks",
+        "region": "four_gates",
+        "node": "Shopfront_four-gates-reedworks",
+        "metres": 6
+      },
+      {
+        "road": "street-mirrorhold-stair-town-2",
+        "region": "mirrorhold",
+        "node": "Building_VaultEntry_stair-cellars-door",
+        "metres": 6
+      },
+      {
+        "road": "discovery-amberwood-472",
+        "region": "amberwood",
+        "node": "Landmark_Watchtower_2",
+        "metres": 5
+      },
+      {
+        "road": "discovery-amberwood-473",
+        "region": "amberwood",
+        "node": "Secret_amber_boar_run",
+        "metres": 5
+      },
+      {
+        "road": "discovery-amberwood-474",
+        "region": "amberwood",
+        "node": "Landmark_Watchtower_5",
+        "metres": 5
+      },
+      {
+        "road": "discovery-ssarathi_ruins-436",
+        "region": "ssarathi_ruins",
+        "node": "Secret_ruins_moss_hollow",
+        "metres": 5
+      },
+      {
+        "road": "discovery-sunmane_steppe-306",
+        "region": "sunmane_steppe",
+        "node": "Landmark_orun_seasonal_market_02",
+        "metres": 5
+      },
+      {
+        "road": "discovery-sunmane_steppe-307",
+        "region": "sunmane_steppe",
+        "node": "Landmark_orun_round_tent_07",
+        "metres": 5
+      },
+      {
+        "road": "discovery-sunmane_steppe-307",
+        "region": "sunmane_steppe",
+        "node": "Landmark_sunmane_windmill_00",
+        "metres": 5
+      },
+      {
+        "road": "discovery-sunmane_steppe-313",
+        "region": "sunmane_steppe",
+        "node": "Landmark_sunmane_secret_steppe-well-garden",
+        "metres": 5
+      },
+      {
+        "road": "door-amberwood-cinder-chapel-door",
+        "region": "amberwood",
+        "node": "Stone_RuinFragment_B_ash_chapel_06",
+        "metres": 5
+      },
+      {
+        "road": "door-crownwater-eleventh-bell-door",
+        "region": "crownwater",
+        "node": "Landmark_Pavilion_pavilion_northeast",
+        "metres": 5
+      },
+      {
+        "road": "door-ssarathi_ruins-tenth-mouth-door",
+        "region": "ssarathi_ruins",
+        "node": "CourtShrine_lily_court",
+        "metres": 5
+      },
+      {
+        "road": "amber-moot-path",
+        "region": "amberwood",
+        "node": "Landmark_Building_Lodge_00",
+        "metres": 4
+      },
+      {
+        "road": "amberwood--four_gates-amberwood",
+        "region": "amberwood",
+        "node": "Prop_MarketStall_6",
+        "metres": 4
+      },
+      {
+        "road": "amberwood--grey_moors-amberwood",
+        "region": "amberwood",
+        "node": "Prop_MarketStall_6",
+        "metres": 4
+      },
+      {
+        "road": "amberwood--mirrorhold-amberwood",
+        "region": "amberwood",
+        "node": "Prop_MarketStall_6",
+        "metres": 4
+      },
+      {
+        "road": "amberwood--whitehorn_range-amberwood",
+        "region": "amberwood",
+        "node": "Prop_MarketStall_6",
+        "metres": 4
+      },
+      {
+        "road": "discovery-amberwood-1078",
+        "region": "amberwood",
+        "node": "Landmark_CharcoalKiln_0",
+        "metres": 4
+      },
+      {
+        "road": "discovery-amberwood-479",
+        "region": "amberwood",
+        "node": "Secret_amber_resin_hollow",
+        "metres": 4
+      },
+      {
+        "road": "discovery-crownwater-907",
+        "region": "crownwater",
+        "node": "Secret_crown_lake_focus",
+        "metres": 4
+      },
+      {
+        "road": "discovery-crownwater-908",
+        "region": "crownwater",
+        "node": "Landmark_Pavilion_pavilion_north",
+        "metres": 4
+      },
+      {
+        "road": "discovery-grey_moors-769",
+        "region": "grey_moors",
+        "node": "Secret_moor_hound_pit",
+        "metres": 4
+      },
+      {
+        "road": "discovery-grey_moors-771",
+        "region": "grey_moors",
+        "node": "Secret_moor_peatcut",
+        "metres": 4
+      },
+      {
+        "road": "discovery-grey_moors-773",
+        "region": "grey_moors",
+        "node": "Secret_moor_shrine_school",
+        "metres": 4
+      },
+      {
+        "road": "discovery-sunmane_steppe-306",
+        "region": "sunmane_steppe",
+        "node": "Encampment_WallTower_00",
+        "metres": 4
+      },
+      {
+        "road": "discovery-sunmane_steppe-307",
+        "region": "sunmane_steppe",
+        "node": "Landmark_sunmane_secret_steppe-mill-cache",
+        "metres": 4
+      },
+      {
+        "road": "discovery-verdant_stair-359",
+        "region": "verdant_stair",
+        "node": "Secret_stair_culvert",
+        "metres": 4
+      },
+      {
+        "road": "discovery-verdant_stair-361",
+        "region": "verdant_stair",
+        "node": "Building_TownHall",
+        "metres": 4
+      },
+      {
+        "road": "discovery-verdant_stair-363",
+        "region": "verdant_stair",
+        "node": "Landmark_GreatTemple",
+        "metres": 4
+      },
+      {
+        "road": "discovery-whitehorn_range-540",
+        "region": "whitehorn_range",
+        "node": "Landmark_WatchCave",
+        "metres": 4
+      },
+      {
+        "road": "door-amberwood-cinder-chapel-door",
+        "region": "amberwood",
+        "node": "Prop_MarketStall_6",
+        "metres": 4
+      },
+      {
+        "road": "door-amberwood-gate-undercroft-stair",
+        "region": "amberwood",
+        "node": "Prop_MarketStall_6",
+        "metres": 4
+      },
+      {
+        "road": "door-amethyst_barrens-geode-hollow-mouth",
+        "region": "amethyst_barrens",
+        "node": "Landmark_GeodeCave_1",
+        "metres": 4
+      },
+      {
+        "road": "door-ssarathi_ruins-water-gate-undercut-mouth",
+        "region": "ssarathi_ruins",
+        "node": "WaterGate",
+        "metres": 4
+      },
+      {
+        "road": "door-verdant_stair-physick-still-door",
+        "region": "verdant_stair",
+        "node": "Building_Herbalist",
+        "metres": 4
+      },
+      {
+        "road": "door-whitehorn_range-snowline-cell-door",
+        "region": "whitehorn_range",
+        "node": "Secret_horn_ram_pit",
+        "metres": 4
+      },
+      {
+        "road": "street-mirrorhold-quay-descent",
+        "region": "mirrorhold",
+        "node": "Landmark_RoadWall_1",
+        "metres": 4
+      },
+      {
+        "road": "street-mirrorhold-stair-town-2",
+        "region": "mirrorhold",
+        "node": "Landmark_far-west",
+        "metres": 4
+      },
+      {
+        "road": "amberwood--grey_moors-amberwood",
+        "region": "amberwood",
+        "node": "Landmark_ForestGate_0",
+        "metres": 3
+      },
+      {
+        "road": "amberwood--grey_moors-amberwood",
+        "region": "amberwood",
+        "node": "Landmark_SeaArch",
+        "metres": 3
+      },
+      {
+        "road": "discovery-amberwood-472",
+        "region": "amberwood",
+        "node": "Landmark_Building_Lodge_27",
+        "metres": 3
+      },
+      {
+        "road": "discovery-amberwood-475",
+        "region": "amberwood",
+        "node": "Lore_deep_grove_scar",
+        "metres": 3
+      },
+      {
+        "road": "discovery-amberwood-479",
+        "region": "amberwood",
+        "node": "Lore_deep_grove_scar",
+        "metres": 3
+      },
+      {
+        "road": "discovery-amberwood-480",
+        "region": "amberwood",
+        "node": "Secret_amber_stone_ring_well",
+        "metres": 3
+      },
+      {
+        "road": "discovery-amethyst_barrens-702",
+        "region": "amethyst_barrens",
+        "node": "Secret_barrens_geode_hollow",
+        "metres": 3
+      },
+      {
+        "road": "discovery-amethyst_barrens-706",
+        "region": "amethyst_barrens",
+        "node": "Secret_barrens_waystone",
+        "metres": 3
+      },
+      {
+        "road": "discovery-crownwater-904",
+        "region": "crownwater",
+        "node": "Secret_crown_crab_pit",
+        "metres": 3
+      },
+      {
+        "road": "discovery-crownwater-907",
+        "region": "crownwater",
+        "node": "Landmark_Pavilion_pavilion_southeast",
+        "metres": 3
+      },
+      {
+        "road": "discovery-four_gates-261",
+        "region": "four_gates",
+        "node": "Shopfront_four-gates-mirrorsmith-forge",
+        "metres": 3
+      },
+      {
+        "road": "discovery-grey_moors-767",
+        "region": "grey_moors",
+        "node": "Secret_moor_croft_garden",
+        "metres": 3
+      },
+      {
+        "road": "discovery-grey_moors-772",
+        "region": "grey_moors",
+        "node": "Secret_moor_croft_garden",
+        "metres": 3
+      },
+      {
+        "road": "discovery-manymouth_delta-1002",
+        "region": "manymouth_delta",
+        "node": "Secret_delta_arch_focus",
+        "metres": 3
+      },
+      {
+        "road": "discovery-ssarathi_ruins-438",
+        "region": "ssarathi_ruins",
+        "node": "Secret_ruins_moss_hollow",
+        "metres": 3
+      },
+      {
+        "road": "discovery-sunmane_steppe-301",
+        "region": "sunmane_steppe",
+        "node": "Landmark_sunmane_windmill_00",
+        "metres": 3
+      },
+      {
+        "road": "discovery-sunmane_steppe-310",
+        "region": "sunmane_steppe",
+        "node": "Landmark_sunmane_windmill_00",
+        "metres": 3
+      },
+      {
+        "road": "discovery-verdant_stair-360",
+        "region": "verdant_stair",
+        "node": "Secret_stair_hanging_garden",
+        "metres": 3
+      },
+      {
+        "road": "discovery-verdant_stair-361",
+        "region": "verdant_stair",
+        "node": "Secret_stair_house_school",
+        "metres": 3
+      },
+      {
+        "road": "discovery-verdant_stair-363",
+        "region": "verdant_stair",
+        "node": "Secret_stair_quarry_pit",
+        "metres": 3
+      },
+      {
+        "road": "discovery-verdant_stair-366",
+        "region": "verdant_stair",
+        "node": "Secret_stair_quarry_pit",
+        "metres": 3
+      },
+      {
+        "road": "discovery-verdant_stair-369",
+        "region": "verdant_stair",
+        "node": "Arcade_UpperCourt",
+        "metres": 3
+      },
+      {
+        "road": "door-crownwater-cistern-stair",
+        "region": "crownwater",
+        "node": "Landmark_Pavilion_pavilion_west",
+        "metres": 3
+      },
+      {
+        "road": "door-four_gates-interior-four-gates-mirrorsmith-forge",
+        "region": "four_gates",
+        "node": "Shopfront_four-gates-mirrorsmith-forge",
+        "metres": 3
+      },
+      {
+        "road": "door-manymouth_delta-temple-sanctum-door",
+        "region": "manymouth_delta",
+        "node": "Landmark_GreenTemple",
+        "metres": 3
+      },
+      {
+        "road": "door-verdant_stair-anchor-hollow-mouth",
+        "region": "verdant_stair",
+        "node": "Building_TownHall",
+        "metres": 3
+      },
+      {
+        "road": "door-verdant_stair-banyan-hollow-arch",
+        "region": "verdant_stair",
+        "node": "Building_TownHall",
+        "metres": 3
+      },
+      {
+        "road": "door-verdant_stair-cenote-deeps-stair",
+        "region": "verdant_stair",
+        "node": "Building_TownHall",
+        "metres": 3
+      },
+      {
+        "road": "door-verdant_stair-nine-lost-door",
+        "region": "verdant_stair",
+        "node": "Building_TownHall",
+        "metres": 3
+      },
+      {
+        "road": "door-verdant_stair-physick-still-door",
+        "region": "verdant_stair",
+        "node": "Building_TownHall",
+        "metres": 3
+      },
+      {
+        "road": "door-verdant_stair-stair-quarry-adit",
+        "region": "verdant_stair",
+        "node": "Building_TownHall",
+        "metres": 3
+      },
+      {
+        "road": "door-verdant_stair-temple-sanctum-door",
+        "region": "verdant_stair",
+        "node": "Building_TownHall",
+        "metres": 3
+      },
+      {
+        "road": "manymouth_delta--verdant_stair-verdant_stair",
+        "region": "verdant_stair",
+        "node": "Building_TownHall",
+        "metres": 3
+      },
+      {
+        "road": "mirrorhold--verdant_stair-verdant_stair",
+        "region": "verdant_stair",
+        "node": "Building_TownHall",
+        "metres": 3
+      },
+      {
+        "road": "ssarathi_ruins--verdant_stair-verdant_stair",
+        "region": "verdant_stair",
+        "node": "Building_TownHall",
+        "metres": 3
+      },
+      {
+        "road": "street-mirrorhold-citadel-service-road",
+        "region": "mirrorhold",
+        "node": "Landmark_GateWing_1",
+        "metres": 3
+      },
+      {
+        "road": "street-mirrorhold-east-bench-yard-link",
+        "region": "mirrorhold",
+        "node": "Building_east-bench_0",
+        "metres": 3
+      },
+      {
+        "road": "sunmane_steppe--verdant_stair-verdant_stair",
+        "region": "verdant_stair",
+        "node": "Building_TownHall",
+        "metres": 3
+      },
+      {
+        "road": "amber-undercut-path",
+        "region": "amberwood",
+        "node": "Secret_amber_undercut",
+        "metres": 2
+      },
+      {
+        "road": "amberwood--four_gates-amberwood",
+        "region": "amberwood",
+        "node": "Prop_MarketStall_7",
+        "metres": 2
+      },
+      {
+        "road": "amberwood--grey_moors-amberwood",
+        "region": "amberwood",
+        "node": "Prop_MarketStall_7",
+        "metres": 2
+      },
+      {
+        "road": "amberwood--mirrorhold-amberwood",
+        "region": "amberwood",
+        "node": "Prop_MarketStall_7",
+        "metres": 2
+      },
+      {
+        "road": "amberwood--whitehorn_range-amberwood",
+        "region": "amberwood",
+        "node": "Prop_MarketStall_7",
+        "metres": 2
+      },
+      {
+        "road": "discovery-amberwood-1078",
+        "region": "amberwood",
+        "node": "Prop_Ruin_027",
+        "metres": 2
+      },
+      {
+        "road": "discovery-amberwood-474",
+        "region": "amberwood",
+        "node": "Prop_Ruin_027",
+        "metres": 2
+      },
+      {
+        "road": "discovery-amberwood-475",
+        "region": "amberwood",
+        "node": "Secret_amber_grove_school",
+        "metres": 2
+      },
+      {
+        "road": "discovery-amberwood-479",
+        "region": "amberwood",
+        "node": "Prop_Ruin_008",
+        "metres": 2
+      },
+      {
+        "road": "discovery-amberwood-479",
+        "region": "amberwood",
+        "node": "Secret_amber_grove_school",
+        "metres": 2
+      },
+      {
+        "road": "discovery-amberwood-481",
+        "region": "amberwood",
+        "node": "Secret_amber_undercut",
+        "metres": 2
+      },
+      {
+        "road": "discovery-amethyst_barrens-705",
+        "region": "amethyst_barrens",
+        "node": "Landmark_StoneRing",
+        "metres": 2
+      },
+      {
+        "road": "discovery-amethyst_barrens-705",
+        "region": "amethyst_barrens",
+        "node": "Secret_barrens_resonance_spring",
+        "metres": 2
+      },
+      {
+        "road": "discovery-amethyst_barrens-706",
+        "region": "amethyst_barrens",
+        "node": "Secret_barrens_storm_well",
+        "metres": 2
+      },
+      {
+        "road": "discovery-amethyst_barrens-707",
+        "region": "amethyst_barrens",
+        "node": "Secret_barrens_shard_garden",
+        "metres": 2
+      },
+      {
+        "road": "discovery-crownwater-903",
+        "region": "crownwater",
+        "node": "Secret_crown_court_reliquary",
+        "metres": 2
+      },
+      {
+        "road": "discovery-crownwater-909",
+        "region": "crownwater",
+        "node": "Secret_crown_pearl_hollow",
+        "metres": 2
+      },
+      {
+        "road": "discovery-grey_moors-765",
+        "region": "grey_moors",
+        "node": "Secret_moor_boardwalk_cache",
+        "metres": 2
+      },
+      {
+        "road": "discovery-grey_moors-768",
+        "region": "grey_moors",
+        "node": "Secret_moor_hanged_spring",
+        "metres": 2
+      },
+      {
+        "road": "discovery-grey_moors-775",
+        "region": "grey_moors",
+        "node": "Secret_moor_undercut_mouth",
+        "metres": 2
+      },
+      {
+        "road": "discovery-manymouth_delta-1003",
+        "region": "manymouth_delta",
+        "node": "Secret_delta_banyan_eyrie",
+        "metres": 2
+      },
+      {
+        "road": "discovery-manymouth_delta-1005",
+        "region": "manymouth_delta",
+        "node": "Secret_delta_crab_pit",
+        "metres": 2
+      },
+      {
+        "road": "discovery-manymouth_delta-1006",
+        "region": "manymouth_delta",
+        "node": "Secret_delta_lotus_hollow",
+        "metres": 2
+      },
+      {
+        "road": "discovery-manymouth_delta-1015",
+        "region": "manymouth_delta",
+        "node": "Secret_delta_waystone",
+        "metres": 2
+      },
+      {
+        "road": "discovery-ssarathi_ruins-431",
+        "region": "ssarathi_ruins",
+        "node": "Secret_ruins_culvert_mouth",
+        "metres": 2
+      },
+      {
+        "road": "discovery-sunmane_steppe-301",
+        "region": "sunmane_steppe",
+        "node": "Landmark_sunmane_secret_steppe-banner-focus",
+        "metres": 2
+      },
+      {
+        "road": "discovery-sunmane_steppe-310",
+        "region": "sunmane_steppe",
+        "node": "Landmark_orun_banner_shrine_02",
+        "metres": 2
+      },
+      {
+        "road": "discovery-sunmane_steppe-310",
+        "region": "sunmane_steppe",
+        "node": "Landmark_sunmane_secret_steppe-banner-focus",
+        "metres": 2
+      },
+      {
+        "road": "discovery-sunmane_steppe-313",
+        "region": "sunmane_steppe",
+        "node": "Landmark_sunmane_animal_pen_03",
+        "metres": 2
+      },
+      {
+        "road": "discovery-sunmane_steppe-713",
+        "region": "sunmane_steppe",
+        "node": "Landmark_sunmane_secret_steppe-sap-mouth",
+        "metres": 2
+      },
+      {
+        "road": "discovery-verdant_stair-364",
+        "region": "verdant_stair",
+        "node": "Arcade_RidgeShrine",
+        "metres": 2
+      },
+      {
+        "road": "discovery-verdant_stair-364",
+        "region": "verdant_stair",
+        "node": "Secret_stair_ridge_reliquary",
+        "metres": 2
+      },
+      {
+        "road": "discovery-verdant_stair-365",
+        "region": "verdant_stair",
+        "node": "Secret_stair_summit_eyrie",
+        "metres": 2
+      },
+      {
+        "road": "discovery-verdant_stair-367",
+        "region": "verdant_stair",
+        "node": "Secret_stair_temple_vault",
+        "metres": 2
+      },
+      {
+        "road": "discovery-whitehorn_range-531",
+        "region": "whitehorn_range",
+        "node": "Secret_horn_cascade_spring",
+        "metres": 2
+      },
+      {
+        "road": "discovery-whitehorn_range-534",
+        "region": "whitehorn_range",
+        "node": "Secret_horn_icebore",
+        "metres": 2
+      },
+      {
+        "road": "discovery-whitehorn_range-537",
+        "region": "whitehorn_range",
+        "node": "Secret_horn_cascade_spring",
+        "metres": 2
+      },
+      {
+        "road": "discovery-whitehorn_range-537",
+        "region": "whitehorn_range",
+        "node": "Secret_horn_silver_hollow",
+        "metres": 2
+      },
+      {
+        "road": "discovery-whitehorn_range-539",
+        "region": "whitehorn_range",
+        "node": "Secret_horn_temple_vault",
+        "metres": 2
+      },
+      {
+        "road": "door-amberwood-amber-hall-door",
+        "region": "amberwood",
+        "node": "Prop_MarketStall_7",
+        "metres": 2
+      },
+      {
+        "road": "door-amberwood-cinder-chapel-door",
+        "region": "amberwood",
+        "node": "Prop_MarketStall_7",
+        "metres": 2
+      },
+      {
+        "road": "door-amberwood-gate-undercroft-stair",
+        "region": "amberwood",
+        "node": "Prop_MarketStall_7",
+        "metres": 2
+      },
+      {
+        "road": "door-amberwood-motherroot-mouth",
+        "region": "amberwood",
+        "node": "Prop_MarketStall_7",
+        "metres": 2
+      },
+      {
+        "road": "door-crownwater-case-room-door",
+        "region": "crownwater",
+        "node": "Landmark_Pavilion_pavilion_east",
+        "metres": 2
+      },
+      {
+        "road": "door-ssarathi_ruins-cistern-shaft",
+        "region": "ssarathi_ruins",
+        "node": "CisternShaft",
+        "metres": 2
+      },
+      {
+        "road": "door-verdant_stair-temple-sanctum-door",
+        "region": "verdant_stair",
+        "node": "Hut_high_camp_01",
+        "metres": 2
+      },
+      {
+        "road": "door-whitehorn_range-snowline-cell-door",
+        "region": "whitehorn_range",
+        "node": "Landmark_shrine_02",
+        "metres": 2
+      },
+      {
+        "road": "street-mirrorhold-canal-sluice-lane",
+        "region": "mirrorhold",
+        "node": "Landmark_Retaining_0",
+        "metres": 2
+      },
+      {
+        "road": "street-mirrorhold-cistern-yard-lane",
+        "region": "mirrorhold",
+        "node": "Landmark_cistern-yard",
+        "metres": 2
+      },
+      {
+        "road": "street-mirrorhold-east-working-road",
+        "region": "mirrorhold",
+        "node": "Prop_Signpost_1",
+        "metres": 2
+      },
+      {
+        "road": "street-mirrorhold-lake-north-yard-link",
+        "region": "mirrorhold",
+        "node": "Building_lake-north_0",
+        "metres": 2
+      },
+      {
+        "road": "street-mirrorhold-quarry-road",
+        "region": "mirrorhold",
+        "node": "Landmark_quarry-shelf",
+        "metres": 2
+      },
+      {
+        "road": "amber-undercut-path",
+        "region": "amberwood",
+        "node": "Prop_Ruin_011",
+        "metres": 1
+      },
+      {
+        "road": "amberwood--mirrorhold-amberwood",
+        "region": "amberwood",
+        "node": "Prop_BurntCamp_2",
+        "metres": 1
+      },
+      {
+        "road": "amberwood--mirrorhold-amberwood",
+        "region": "amberwood",
+        "node": "Prop_Ruin_028",
+        "metres": 1
+      },
+      {
+        "road": "discovery-amberwood-472",
+        "region": "amberwood",
+        "node": "Secret_amber_beekeepers_garden",
+        "metres": 1
+      },
+      {
+        "road": "discovery-amberwood-473",
+        "region": "amberwood",
+        "node": "LogPile_Large_coppice_06",
+        "metres": 1
+      },
+      {
+        "road": "discovery-amberwood-474",
+        "region": "amberwood",
+        "node": "Prop_BurntCamp_2",
+        "metres": 1
+      },
+      {
+        "road": "discovery-amberwood-478",
+        "region": "amberwood",
+        "node": "Secret_amber_moot_vault",
+        "metres": 1
+      },
+      {
+        "road": "discovery-amberwood-482",
+        "region": "amberwood",
+        "node": "Secret_amber_warm_spring",
+        "metres": 1
+      },
+      {
+        "road": "discovery-amberwood-484",
+        "region": "amberwood",
+        "node": "Landmark_Building_Lodge_14",
+        "metres": 1
+      },
+      {
+        "road": "discovery-amberwood-484",
+        "region": "amberwood",
+        "node": "Secret_amber_waystone",
+        "metres": 1
+      },
+      {
+        "road": "discovery-amethyst_barrens-699",
+        "region": "amethyst_barrens",
+        "node": "Secret_barrens_beetle_pit",
+        "metres": 1
+      },
+      {
+        "road": "discovery-amethyst_barrens-704",
+        "region": "amethyst_barrens",
+        "node": "Secret_barrens_observatory_vault",
+        "metres": 1
+      },
+      {
+        "road": "discovery-amethyst_barrens-708",
+        "region": "amethyst_barrens",
+        "node": "Secret_barrens_station_cache",
+        "metres": 1
+      },
+      {
+        "road": "discovery-crownwater-900",
+        "region": "crownwater",
+        "node": "Secret_crown_campanile_vault",
+        "metres": 1
+      },
+      {
+        "road": "discovery-crownwater-901",
+        "region": "crownwater",
+        "node": "Secret_crown_cathedral_school",
+        "metres": 1
+      },
+      {
+        "road": "discovery-crownwater-908",
+        "region": "crownwater",
+        "node": "Secret_crown_pavilion_butts",
+        "metres": 1
+      },
+      {
+        "road": "discovery-crownwater-910",
+        "region": "crownwater",
+        "node": "Landmark_Pavilion_pavilion_west",
+        "metres": 1
+      },
+      {
+        "road": "discovery-four_gates-265",
+        "region": "four_gates",
+        "node": "Shopfront_four-gates-stormglass-house",
+        "metres": 1
+      },
+      {
+        "road": "discovery-grey_moors-1001",
+        "region": "grey_moors",
+        "node": "Secret_moor_bund_mouth",
+        "metres": 1
+      },
+      {
+        "road": "discovery-grey_moors-764",
+        "region": "grey_moors",
+        "node": "Landmark_Barrow_1",
+        "metres": 1
+      },
+      {
+        "road": "discovery-grey_moors-764",
+        "region": "grey_moors",
+        "node": "Secret_moor_barrow_well",
+        "metres": 1
+      },
+      {
+        "road": "discovery-grey_moors-766",
+        "region": "grey_moors",
+        "node": "Secret_moor_court_vault",
+        "metres": 1
+      },
+      {
+        "road": "discovery-grey_moors-769",
+        "region": "grey_moors",
+        "node": "Landmark_Tower_5",
+        "metres": 1
+      },
+      {
+        "road": "discovery-grey_moors-771",
+        "region": "grey_moors",
+        "node": "Landmark_PeatCutting_3",
+        "metres": 1
+      },
+      {
+        "road": "discovery-grey_moors-772",
+        "region": "grey_moors",
+        "node": "Secret_moor_ring_butts",
+        "metres": 1
+      },
+      {
+        "road": "discovery-grey_moors-773",
+        "region": "grey_moors",
+        "node": "Landmark_Shrine_1",
+        "metres": 1
+      },
+      {
+        "road": "discovery-grey_moors-774",
+        "region": "grey_moors",
+        "node": "Secret_moor_tower_eyrie",
+        "metres": 1
+      },
+      {
+        "road": "discovery-grey_moors-776",
+        "region": "grey_moors",
+        "node": "Secret_moor_waystone",
+        "metres": 1
+      },
+      {
+        "road": "discovery-manymouth_delta-1004",
+        "region": "manymouth_delta",
+        "node": "Secret_delta_bund_run",
+        "metres": 1
+      },
+      {
+        "road": "discovery-manymouth_delta-1008",
+        "region": "manymouth_delta",
+        "node": "Secret_delta_bund_run",
+        "metres": 1
+      },
+      {
+        "road": "discovery-manymouth_delta-1010",
+        "region": "manymouth_delta",
+        "node": "Secret_delta_shrine_well",
+        "metres": 1
+      },
+      {
+        "road": "discovery-ssarathi_ruins-433",
+        "region": "ssarathi_ruins",
+        "node": "House_quay-stores",
+        "metres": 1
+      },
+      {
+        "road": "discovery-ssarathi_ruins-438",
+        "region": "ssarathi_ruins",
+        "node": "Secret_ruins_rootrun",
+        "metres": 1
+      },
+      {
+        "road": "discovery-ssarathi_ruins-441",
+        "region": "ssarathi_ruins",
+        "node": "Secret_ruins_stela_reliquary",
+        "metres": 1
+      },
+      {
+        "road": "discovery-ssarathi_ruins-442",
+        "region": "ssarathi_ruins",
+        "node": "Secret_ruins_temple_focus",
+        "metres": 1
+      },
+      {
+        "road": "discovery-sunmane_steppe-301",
+        "region": "sunmane_steppe",
+        "node": "Landmark_sunmane_animal_pen_04",
+        "metres": 1
+      },
+      {
+        "road": "discovery-sunmane_steppe-309",
+        "region": "sunmane_steppe",
+        "node": "Landmark_sunmane_secret_steppe-seed-hollow",
+        "metres": 1
+      },
+      {
+        "road": "discovery-sunmane_steppe-310",
+        "region": "sunmane_steppe",
+        "node": "Landmark_sunmane_standing_stone_100",
+        "metres": 1
+      },
+      {
+        "road": "discovery-sunmane_steppe-310",
+        "region": "sunmane_steppe",
+        "node": "Landmark_sunmane_standing_stone_101",
+        "metres": 1
+      },
+      {
+        "road": "discovery-sunmane_steppe-713",
+        "region": "sunmane_steppe",
+        "node": "Landmark_sunmane_outpost_05",
+        "metres": 1
+      },
+      {
+        "road": "discovery-verdant_stair-362",
+        "region": "verdant_stair",
+        "node": "Secret_stair_lookout_butts",
+        "metres": 1
+      },
+      {
+        "road": "discovery-verdant_stair-365",
+        "region": "verdant_stair",
+        "node": "Arcade_SummitWatch",
+        "metres": 1
+      },
+      {
+        "road": "discovery-westhaven-833",
+        "region": "westhaven",
+        "node": "Landmark_Upland_Farm",
+        "metres": 1
+      },
+      {
+        "road": "discovery-whitehorn_range-532",
+        "region": "whitehorn_range",
+        "node": "Secret_horn_gate_cache",
+        "metres": 1
+      },
+      {
+        "road": "discovery-whitehorn_range-540",
+        "region": "whitehorn_range",
+        "node": "Secret_horn_waystone",
+        "metres": 1
+      },
+      {
+        "road": "door-amberwood-cinder-chapel-door",
+        "region": "amberwood",
+        "node": "Landmark_AshChapel",
+        "metres": 1
+      },
+      {
+        "road": "door-amethyst_barrens-sour-cut-mouth",
+        "region": "amethyst_barrens",
+        "node": "Landmark_ResonantCluster_7",
+        "metres": 1
+      },
+      {
+        "road": "door-crownwater-customs-door",
+        "region": "crownwater",
+        "node": "Landmark_CustomsHouse",
+        "metres": 1
+      },
+      {
+        "road": "door-four_gates-interior-four-gates-deposit-four-keys",
+        "region": "four_gates",
+        "node": "Shopfront_four-gates-deposit-four-keys",
+        "metres": 1
+      },
+      {
+        "road": "door-four_gates-interior-four-gates-ferrymans-rest",
+        "region": "four_gates",
+        "node": "Shopfront_four-gates-ferrymans-rest",
+        "metres": 1
+      },
+      {
+        "road": "door-four_gates-interior-four-gates-stormglass-house",
+        "region": "four_gates",
+        "node": "Shopfront_four-gates-stormglass-house",
+        "metres": 1
+      },
+      {
+        "road": "door-ssarathi_ruins-archive-vault-door",
+        "region": "ssarathi_ruins",
+        "node": "Temple_VaultPortal",
+        "metres": 1
+      },
+      {
+        "road": "door-westhaven-gullscar-farmhouse-door",
+        "region": "westhaven",
+        "node": "Landmark_Upland_Farm",
+        "metres": 1
+      },
+      {
+        "road": "street-mirrorhold-citadel-service-road",
+        "region": "mirrorhold",
+        "node": "Prop_OverlookRail_0",
+        "metres": 1
+      },
+      {
+        "road": "street-mirrorhold-civic-ascent",
+        "region": "mirrorhold",
+        "node": "Building_VaultEntry_cistern-door",
+        "metres": 1
+      },
+      {
+        "road": "street-mirrorhold-icebore-lane",
+        "region": "mirrorhold",
+        "node": "Landmark_north-post",
+        "metres": 1
+      }
+    ]
+  },
+  "elapsedSeconds": 339.27
 }

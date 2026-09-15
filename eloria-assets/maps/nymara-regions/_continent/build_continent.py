@@ -33,7 +33,7 @@ from terrain_export import partition_surface
 from crossings import prepare_contracts,apply_manifest
 from amberwood import gltf as G,mesh as M
 from continent_geography import polygon_rectangles,clip_owned_mesh
-SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py')
+SHAPING_SOURCES=('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py')
 
 
 def package(region):return MAPS/'four-gates' if region=='four_gates' else REGIONS/region
@@ -107,7 +107,7 @@ def prepare(library,output):
     prepare_grey_crossings(world,content)
     from four_gates_sage import prepare_four_gates_sage,refresh_four_gates_sage_heights
     prepare_four_gates_sage(world,content)
-    from door_approaches import prepare_door_approaches,door_road_end,door_road_end_near
+    from door_approaches import prepare_door_approaches,door_road_end,door_road_end_near,server_road_end,SERVER_ROAD_END_LEG_METRES
     prepare_door_approaches(world,content)
     from crown_support import apply_crown_support
     from westhaven_support import apply_westhaven_support
@@ -120,6 +120,9 @@ def prepare(library,output):
     world.settle_foundations()
     from mirror_lake_support import prepare_mirror_lake_support,finish_mirror_lake_support
     prepare_mirror_lake_support(world,content)
+    # content.register_obstacles would register the structures here, where
+    # they finally stand; see its docstring for why the fifteenth left the
+    # load-time registration in place.
     world.plan_connections()
     add_mirror_streets(world,content)
     from ferry_export import fit_landing
@@ -176,22 +179,37 @@ def prepare(library,output):
         for region,tile in ((source,fields[start:start+2]),(target,fields[start+3:start+5])):
             if region not in world.ids:continue
             point=content.mapped_server_point(region,list(map(int,tile)))[[0,2]]
-            if int(world.owner_at(*point))==world.ids.index(region):destinations[region].append((number,point))
+            if int(world.owner_at(*point))==world.ids.index(region):destinations[region].append((number,point,source,target))
     for region,entries in destinations.items():
         seen=[]
-        for number,point in entries:
+        for number,point,source,target in entries:
             if any(np.linalg.norm(point-p)<5 for p in seen):continue
             seen.append(point)
-            # A server portal beside a pinned door shares that door's road end.
-            point=door_road_end_near(content,region,point)
+            # A server portal with its own pin is routed to that dry ground from
+            # the network on that side of the portal and runs straight on to the
+            # portal (a deck over water); one beside a pinned door shares the
+            # door's road end.
+            pin=server_road_end(content,region,point,source,target)
+            end=pin if pin is not None else door_road_end_near(content,region,point)
             candidates=np.vstack([np.asarray(road['points'])[:,[0,2]] for road in world.roads])
             candidates=candidates[world.owner_at(candidates[:,0],candidates[:,1])==world.ids.index(region)]
-            distances=np.linalg.norm(candidates-point,axis=1)
+            if pin is not None:
+                side=(candidates-point)@(end-point)>0
+                if side.any():candidates=candidates[side]
+            distances=np.linalg.norm(candidates-end,axis=1)
             nearest=int(np.argmin(distances))
-            if distances[nearest]<4:continue
-            path=world.route(candidates[nearest],point,region=region)
+            if distances[nearest]<4 and pin is None:continue
+            path=world.route(candidates[nearest],end,region=region)
+            if pin is not None and np.linalg.norm(pin-point)>SERVER_ROAD_END_LEG_METRES:path=np.vstack([path,point])
             world.add_road(path,width=1.65,name=f'discovery-{region}-{number}')
+    # Authored resource sites on steep ground that no corridor serves get a trail.
+    from resource_trails import prepare_resource_trails
+    trails=prepare_resource_trails(world,content,HERE/'legacy-server-profile/config/eloria')
+    print(f"Resource trails: {len(trails['trails'])} for {trails['steepSites']} steep sites ({trails['servedSites']} already beside a road)",flush=True)
     prepare_amberwood_routes(world,content)
+    # Every alignment exists now: record the retained solids any road still crosses.
+    world.road_solid_crossings=world.solid_crossings(content.solid_boxes())
+    print(f'Roads through retained solids: {len(world.road_solid_crossings)} (solid fallbacks {len(world.routing_report()["solidFallbacks"])})',flush=True)
     world.settle_roads()
     from mirror_support import apply_mirror_support
     from four_gates_support import apply_four_gates_support
@@ -227,7 +245,8 @@ def prepare(library,output):
         'objects':len(content.objects),'roads':len(world.roads),'assemblies':content.assembly_records,
         'mirrorLakeSupport':world.mirror_lake_support,'ssarathiBankSupport':world.ssarathi_bank_support,
         'manymouthBoats':world.manymouth_boats,'greyCrossings':world.grey_crossings,'fourGatesSage':world.four_gates_sage,
-        'doorApproaches':world.door_approaches,'hullSettle':world.hull_settle,'roadGradingPasses':world.road_grading_passes,
+        'doorApproaches':world.door_approaches,'hullSettle':world.hull_settle,'roadGradingPasses':world.road_grading_passes,'resourceTrails':world.resource_trails,
+        'routing':{**world.routing_report(),'solidCrossings':world.road_solid_crossings},
         'elapsedSeconds':round(time.monotonic()-started,2)})
     return world,content
 

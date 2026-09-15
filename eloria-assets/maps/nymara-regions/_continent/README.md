@@ -5,22 +5,20 @@ exported. X runs east, Z runs south, and sea level is Y = 0. Named territories
 are server and content identities. Their boundaries do not determine the
 height, water level, ground colour, or vegetation of the landscape.
 
-**QA state: verified for the fourteenth publication (2026-09-14).** Master
-`221fb20a7614da32024138d2efaf93e72e675d2c6ea5b7470e41f27d989de2f5`, publication
-`9cbb8e62e74abefbfc061144cf89750f1f0825cc375a247186178d5ade102679`
-(`work-output/diagonal-continent/after/fourteenth-freeze.json`). On these bytes the
-strict contracts passed with 0 failures over 3,660 placements, the full audit
-passed and verified the publication, the 24 primary, 9 supplement and 2 atlas
-gameplay views were captured with the published registry and no overrides
-(`final-review/`, `final-repairs/`), and the seven native loopback suites
-walked 240 routes with 0 failures on a real server (`after/live-walk/
-final-live-summary.json`). Known limitations are listed in
-`STATUS-2026-09-13-takeover.md`: road cores steeper than 0.65 in settlement
-feathers and pinned city footings that the server routes around, twelve
-decorative hulls resting across a slope with no water within 12 m, and ramp
-heads meeting banks with angular facets. Any later change to
-a shaping or export source returns this notice to provisional until the same
-chain is repeated.
+**QA state: provisional for the fifteenth publication (2026-09-15).** Master
+`314e7b02f92a031fae74519ef7fa9266aaf3a90b697db476de563f5c21ab6e36`, publication
+`9e41ee1fa49d95a28b02db43427933257487a42dfbb5809cd5b289c0b31e9b1d`
+(`work-output/diagonal-continent/after/fifteenth-freeze.json`). On these bytes the
+strict contracts passed with 0 failures over 3,660 placements and the full audit
+passed and verified the publication; the 24 primary, 9 supplement and 2 atlas
+gameplay views were captured with the published registry and no overrides. The
+seven native loopback suites, the server, client and continent suites and the
+headless set were running when this notice was written; it becomes verified
+when they pass. Known limitations are listed in
+`STATUS-2026-09-13-takeover.md` (road cores steeper than 0.65 in settlement
+feathers and pinned city footings, 58 alignments through compact retained
+solids, 51 floating road runs reported and not decked, twelve decorative hulls
+across slopes, ramp heads with angular facets).
 
 `diagonal-plan.json` describes the coast, connected mountain chain, river
 catchments, islands, territory centres, and placement controls. `landscape.py`
@@ -69,6 +67,7 @@ Use these source responsibilities when changing the world:
 | `mirror_lake_support.py`, `ssarathi_bank_support.py` | Containing lake shores and natural river banks fitted around retained walking floors. |
 | `manymouth_boats.py` | Actual hull contact with water or ground for independent decorative dugouts. |
 | `hull_settle.py` | Every other decorative watercraft, standalone or inside a rigid assembly, settled by rigid Y only onto the actual water surface or hauled up on the ground, with rigs and cargo standing within a hull following it. |
+| `resource_trails.py` | A narrow trail from the nearest road station to every cluster of authored harvest nodes and territory markers that stands on ground steeper than the walkable grade with no road corridor within 12 m, so the served fold keeps a walkable corridor at each site. |
 | `amberwood_support.py`, `amberwood_access.py` | Woodland workyard paths, coherent camp layout and visible canopy/root entrance construction. |
 | `manymouth_access.py` | Visible tidal fishing boardwalks linking retained porches and the landing. |
 | `manymouth_village_streets.py` | Graded timber streets connecting the other delta hamlets to their actual porch floors. |
@@ -77,7 +76,7 @@ Use these source responsibilities when changing the world:
 | `door_approaches.py` | Authored road ends for doors inside retained pavilions (the Shrine of the Nine Lost on the South Quay), shared by the server-declared discovery branch to the same door, so the road meets the pavilion's open side and no deck is built onto its threshold. |
 | `crossing_contracts.py` | Contracts-stage declaration of each continental bridge floor's two standing points from the served collision fold, with every floor's walkable parts reported. |
 | `ferry_export.py`, `ferry_support.py` | Actual quay/boat fit and preservation of its complete shoreline footprint through road grading. |
-| `world_layout.py` | Ownership polygons, server address envelopes, common road grading, foundation reconciliation and drainage protection. |
+| `world_layout.py` | Ownership polygons, server address envelopes, road alignment (retained solids impassable, hubs and terminals joined to open ground, gentle traverses preferred), common road grading, foundation reconciliation and drainage protection. |
 | `bridge_export.py` | One union of visible continental bridge decks, fitted to the common road surface and actual banks. |
 | `terrain_export.py` | Shared terrain faces and physically clipped shorelines, partitioned from the complete world surface. |
 | `build_continent.py`, `scene_io.py` | Global composition, master scene, named packages, independent loading cells and shared image dependencies. |
@@ -244,7 +243,7 @@ shaping modules (`landscape`, `world_layout`, `content`, `assemblies`,
 `mirror_support`, `manymouth_support`, `mirror_streets`, `four_gates_support`,
 `amberwood_support`, `amberwood_access`, `mirror_lake_support`,
 `ssarathi_bank_support`, `manymouth_boats`, `terrain_export`, `scene_io`,
-`grey_crossings`, `four_gates_sage`, `door_approaches`, `hull_settle`),
+`grey_crossings`, `four_gates_sage`, `door_approaches`, `hull_settle`, `resource_trails`),
 the composition algorithm, the authoritative
 entrance profile and each retained library certificate. A changed source must
 be recomposed rather than accepted by editing a certificate.

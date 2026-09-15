@@ -349,7 +349,7 @@ def composition_algorithm_sha(path):
 def audit_shaping(client, continent, composition, inputs):
     plan_sha=inputs.digest(continent/'diagonal-plan.json')
     require(composition['planSha256']==plan_sha,'Composition uses a different landscape plan')
-    shaping={name:[] for name in ('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py')}
+    shaping={name:[] for name in ('landscape.py','world_layout.py','content.py','assemblies.py','crown_support.py','westhaven_support.py','ferry_export.py','ferry_support.py','mirror_support.py','manymouth_support.py','mirror_streets.py','four_gates_support.py','amberwood_support.py','amberwood_access.py','mirror_lake_support.py','ssarathi_bank_support.py','manymouth_boats.py','terrain_export.py','scene_io.py','grey_crossings.py','four_gates_sage.py','door_approaches.py','hull_settle.py','resource_trails.py')}
     for relative,expected in composition['sources'].items():
         path=Path(relative.replace('\\','/'))
         if path.name in shaping:shaping[path.name].append((path,expected))

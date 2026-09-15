@@ -19,29 +19,54 @@ import numpy as np
 # (region, portal id) -> global XZ metres where the door road ends.
 ROAD_ENDS = {
     ('verdant_stair', 'nine-lost-door'): (1206.5, 1175.5),   # north threshold of the South Quay pavilion
+    # The gate undercroft stair opens east out of the Great Arch's base masonry
+    # onto a pocket of level ground; a road routed to the door itself ends inside
+    # the masonry, and every earlier publication reached the served tile only
+    # over a bridge deck the raised road profile built 14 m above the arch. The
+    # pin stands seven metres clear of the arch so the road goes round it.
+    ('amberwood', 'gate-undercroft-stair'): (616.5, 589.5),
 }
+# (region, portal source map, portal target map) -> global XZ metres of dry
+# ground where the discovery branch to a server-only portal is routed to; the
+# branch then runs straight from there to the portal itself, a deck where the
+# ground is water, and approaches from that side of the portal. The Amber Gate
+# estate door opens west out of the Great Arch's base onto the stream the arch
+# spans, 3 m from the undercroft stair that opens east: too close to tell the
+# two apart by distance, so its branch is pinned to the dry court west of the
+# stream and reaches the door over the water.
+SERVER_ROAD_ENDS = {
+    ('amberwood', 'amberwood', 'amberwood_estate'): (600., 590.),
+}
+SERVER_ROAD_END_LEG_METRES = 2.   # a pin closer than this to its portal is the road's end itself
 MINIMUM_DRY_METRES = .8
 MAXIMUM_DOOR_DISTANCE_METRES = 12.
 
 
 def prepare_door_approaches(world, content):
     """Validate and expose the pinned road ends before door roads are routed."""
-    ends = {}
-    for (region, portal), (x, z) in ROAD_ENDS.items():
-        if region not in world.ids:
-            continue
+    def validated(region, label, x, z):
         if int(world.owner_at(x, z)) != world.ids.index(region):
-            raise ValueError(f'{region}:{portal}: authored door road end lies outside its territory')
+            raise ValueError(f'{region}:{label}: authored door road end lies outside its territory')
         height = float(world.height_at(x, z))
         if height < MINIMUM_DRY_METRES:
-            raise ValueError(f'{region}:{portal}: authored door road end is not dry ground ({height:.2f} m)')
+            raise ValueError(f'{region}:{label}: authored door road end is not dry ground ({height:.2f} m)')
         ix = int(round((x - world.x0) / (world.x[1] - world.x[0])))
         iz = int(round((z - world.z0) / (world.z[1] - world.z[0])))
         if world.water['mask'][iz, ix]:
-            raise ValueError(f'{region}:{portal}: authored door road end stands in water')
-        ends[(region, portal)] = np.array([x, z], dtype=float)
+            raise ValueError(f'{region}:{label}: authored door road end stands in water')
+        return np.array([x, z], dtype=float)
+    ends = {}
+    for (region, portal), (x, z) in ROAD_ENDS.items():
+        if region in world.ids:
+            ends[(region, portal)] = validated(region, portal, x, z)
+    server_ends = {}
+    for (region, source, target), (x, z) in SERVER_ROAD_ENDS.items():
+        if region in world.ids:
+            server_ends[(region, source, target)] = validated(region, f'{source}->{target}', x, z)
     content.door_road_ends = ends
+    content.server_road_ends = server_ends
     world.door_approaches = {'roadEnds': {f'{region}:{portal}': point.tolist() for (region, portal), point in ends.items()},
+                             'serverRoadEnds': {f'{region}:{source}->{target}': point.tolist() for (region, source, target), point in server_ends.items()},
                              'policy': 'A door inside a retained pavilion gets its road on the pavilion\'s open side; the retained floor carries the last metres.'}
     return world.door_approaches
 
@@ -54,6 +79,18 @@ def door_road_end(content, region, portal, door_point):
     if np.linalg.norm(pinned - np.asarray(door_point, dtype=float)) > MAXIMUM_DOOR_DISTANCE_METRES:
         raise ValueError(f'{region}:{portal}: authored door road end is further than {MAXIMUM_DOOR_DISTANCE_METRES} m from the door')
     return pinned
+
+
+def server_road_end(content, region, point, source, target):
+    """The pinned dry ground a server-only portal's branch is routed to, or None.
+
+    A map can have several entrances from the same territory; the pin serves
+    the portal within its reach and the others keep the default handling.
+    """
+    own = getattr(content, 'server_road_ends', {}).get((region, source, target))
+    if own is None or np.linalg.norm(own - np.asarray(point, dtype=float)) > MAXIMUM_DOOR_DISTANCE_METRES:
+        return None
+    return own
 
 
 def door_road_end_near(content, region, point):

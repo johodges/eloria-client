@@ -101,7 +101,7 @@
           0,
           0
         ],
-        "walkingHeight": 4.525000095367432,
+        "walkingHeight": 4.5,
         "invertServerY": true,
         "addressableWorldBounds": {
           "min": [
@@ -143,7 +143,7 @@
           0,
           0
         ],
-        "walkingHeight": 139.35452270507812,
+        "walkingHeight": 136.06863403320312,
         "invertServerY": true,
         "addressableWorldBounds": {
           "min": [
@@ -185,7 +185,7 @@
           0,
           0
         ],
-        "walkingHeight": 30.003276824951172,
+        "walkingHeight": 31.012304306030273,
         "invertServerY": true,
         "addressableWorldBounds": {
           "min": [
@@ -406,7 +406,7 @@
           0,
           0
         ],
-        "walkingHeight": 78.8840560913086,
+        "walkingHeight": 78.24848175048828,
         "invertServerY": true,
         "addressableWorldBounds": {
           "min": [

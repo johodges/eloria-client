@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import json
 import math
+import re
 from pathlib import Path
 import numpy as np
 from scipy.interpolate import RegularGridInterpolator
@@ -26,6 +27,23 @@ BURIED_PROP_METRES=.2
 FLOATING_PROP_METRES=.5
 HULL_WORDS=('boat','skiff','dugout','canoe','punt','lateen','packet','tender','barge','raft','wherry')
 FLOATING_BY_DESIGN=('wisp','light','flame','spark','orb','crystal','shard','lantern')
+# Structures built to be passed keep the soft road clearance but are no solid
+# for road alignment. Whole name words only: a shopfront on Four Gates street,
+# a march track and an archive are solids, as are an arch's columns and a
+# gate's walls and wings.
+WALK_THROUGH_WORDS=('gate','arch','arcade','colonnade','causeway','portal','waygate')
+WALK_THROUGH_EXCEPTIONS=('archcolumn','gatecolumn','gatewall','gatewing')
+
+
+def name_words(name):
+    """The whole words of a node name: separators and camel case both split ('Landmark_GreatArch' -> landmark, great, arch)."""
+    return [w.lower() for w in re.findall(r'[A-Z]+(?=[A-Z][a-z])|[A-Z]?[a-z]+|[A-Z]+|\d+',str(name))]
+
+
+def walk_through(name):
+    """A gate, arch, arcade, colonnade, causeway or portal, by the whole words of its node name."""
+    if any(word in str(name).lower() for word in WALK_THROUGH_EXCEPTIONS):return False
+    return any(word in WALK_THROUGH_WORDS for word in name_words(name))
 
 
 def retained_source_placements(region, placements):
@@ -69,6 +87,38 @@ class Content:
     def mapped_xz(self,region,points):
         points=np.asarray(points,float)
         return (points-self.source_centers[region])*self.scales[region]+self.world.regions[region]['center']
+
+    def solid_boxes(self):
+        """Retained colliding solids no road alignment should cross: (region, node, low, high)."""
+        return [(o['region'],o['node'],np.asarray(o['low'],float),np.asarray(o['high'],float))
+                for o in self.objects if o.get('collides') and not o.get('walk') and o.get('kind') not in A.NATURE]
+
+    def register_obstacles(self):
+        """Register every retained colliding structure with the router where it finally stands.
+
+        Meant to run after the prepare stages have moved what they move (the
+        Amberwood stall row, the props cleared off the market stair strip):
+        a structure registered at load and moved afterwards leaves the router
+        a phantom solid where nothing stands and none where the structure
+        does, and the fifteenth's hub roads were aligned through two moved
+        market stalls. Not called yet: with the structures registered where
+        they stand, the Amberwood hub roads left the platform east and the
+        cinder chapel door road took a direct line up the hill (234 m, a 21 m
+        cut, in place of a 495 m loop with a 45 m cut), the discovery
+        branches south of the Great Tree moved with them, and the Motherroot
+        Voice lost the only hub-connected ground within her 12 m budget: the
+        Great Tree's root plateau is a rigid footing nine metres above the
+        village floor whose flanks no corridor can grade, reached only where
+        a branch corridor happened to pass. The switch waits for a served
+        approach to that plateau. A gate, arch, arcade, colonnade, causeway
+        or portal is built to be passed: it keeps the soft clearance but is
+        no solid for alignment.
+        """
+        count=0
+        for o in self.objects:
+            if o.get('collides') and not o.get('walk'):
+                self.world.structure_obstacle(o['low'],o['high'],solid=not walk_through(o['node']));count+=1
+        return count
 
     def load(self):
         for region in self.ids:
@@ -235,7 +285,13 @@ class Content:
                 self.placement_by_name[(region,name)]=obj
                 self.bounds_by_name[(region,name)]=(low+shift,high+shift)
                 if p.get('collides',False) and not p.get('walk_surface',False):
-                    self.world.structure_obstacle(low+shift,high+shift)
+                    # A gate, arch, arcade, colonnade, causeway or portal is
+                    # built to be passed: it keeps the soft clearance but is no
+                    # solid for road alignment. Registration happens here, at
+                    # load: register_obstacles below would do it after the
+                    # prepare stages have moved what they move, and the
+                    # fifteenth publication measured why it is not called yet.
+                    self.world.structure_obstacle(low+shift,high+shift,solid=not walk_through(name))
                 # Avoid raising seabed for docks; their piers are authored to
                 # support the walk surface above the common estuary water.
                 if not assembly_id and (source_ground>=1.5 or target_ground>=1.5 or region not in ('manymouth_delta','crownwater')):
